@@ -6,11 +6,17 @@ class DataPointIndicator(models.Model):
 	is_reported = models.BooleanField(default=True)
 	parent_indicator_id = models.IntegerField(null=True)
 
+	class Meta:
+		db_table = 'datapoint_indicator'
+
 
 class DataPoint(models.Model):
 	indicator = models.ForeignKey(DataPointIndicator)
 	value = models.IntegerField(default=0)
 	note = models.CharField(max_length=255)
+
+	class Meta:
+		db_table = 'datapoint'
 
 ### DataPoiint Extras ###
 	# status_id
