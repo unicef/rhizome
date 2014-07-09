@@ -4,36 +4,38 @@ class DataPointIndicator(models.Model):
     name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    parent_indicator_id = models.IntegerField(null=True)
+    parent_indicator_id = models.ForeignKey("DataPointIndicator")
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'datapoint_indicator'
 
-
-class DataPoint(models.Model):
-    indicator = models.ForeignKey(DataPointIndicator)
-    value = models.IntegerField(default=0)
-    note = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'datapoint'
-
 class Region(models.Model):
     full_name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=55)
-    description = models.CharField(max_length=255)
-    parent_region_id = models.IntegerField(null=True)
-    shape_file_path  = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=12, decimal_places =10)
-    longitude = models.DecimalField(max_digits=13, decimal_places =10)
+    description = models.CharField(max_length=255,null=True)
+    parent_region_id = models.ForeignKey("Region")
+    shape_file_path  = models.CharField(max_length=255,null=True)
+    latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True)
+    longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True)
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'region'
 
+class DataPoint(models.Model):
+    indicator = models.ForeignKey(DataPointIndicator)
+    region = models.ForeignKey(Region)
+    value = models.IntegerField(default=0)
+    note = models.CharField(max_length=255,null=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'datapoint'
+
+
 ## TO DO ##
-# -> Time Stamps
 # -> Audit Table
-# -> Self Referential FKs (parent_region_id, parent_indicator_id)
 
 
 ### DataPoiint Extras ###
