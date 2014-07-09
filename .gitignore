@@ -4,6 +4,7 @@ bin
 lib
 include
 .DS_Store
-.pyc
+*.pyc
+*.pyo
 /venv
 .coverage
