@@ -1,0 +1,4 @@
+#!/bin/sh
+
+coverage run manage.py test datapoints --settings=polio.settings_test 
+coverage html --omit='venv/*.py,datapoints/tests/*.py'
