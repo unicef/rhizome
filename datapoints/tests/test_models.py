@@ -13,7 +13,6 @@ class DataPointIndicatorTest(TestCase):
         self.assertTrue(isinstance,(dpi,DataPointIndicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
 
-
 class RegionTest(TestCase):
 
     def create_region(self, full_name="test", short_name = "short test"):
