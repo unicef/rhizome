@@ -1,0 +1,9 @@
+{% if latest_datapoints %}
+    <ul>
+    {% for datapoint in latest_datapoints %}
+        <li><a href="/datapoints/{{ datapoint.id }}/">{{ datapoint.value }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No datapoints are available.</p>
+{% endif %}
