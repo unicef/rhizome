@@ -12,7 +12,7 @@ printf "           RUNNING TESTS             "
 printf "=====================================\n\n"
 
 
-coverage run manage.py test datapoints --settings=polio.settings_test 
+coverage run manage.py test datapoints.models datapoints.views  --settings=polio.settings_test
 coverage html --omit='venv/*.py,datapoints/tests/*.py,*__init__.py,*settings*.py,manage.py'
 
 printf "\n\n====================================="
