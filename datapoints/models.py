@@ -8,7 +8,7 @@ class DataPointIndicator(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
 
     class Meta:
@@ -19,13 +19,13 @@ class Region(models.Model):
     short_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255,null=True)
     parent_region_id = models.ForeignKey("Region",null=True, blank=True)
-    shape_file_path  = models.CharField(max_length=255,null=True)
-    latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True)
-    longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True)
+    shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
+    latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
+    longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.short_name
+        return unicode(self.short_name)
 
     class Meta:
         db_table = 'region'
@@ -33,12 +33,12 @@ class Region(models.Model):
 class DataPoint(models.Model):
     indicator = models.ForeignKey(DataPointIndicator)
     region = models.ForeignKey(Region)
-    value = models.IntegerField(default=0)
-    note = models.CharField(max_length=255,null=True)
+    value = models.DecimalField(max_digits=12, decimal_places =4)
+    note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return self.value
+    # def __unicode__(self):
+    #     return unicode(self.value)
 
     class Meta:
         db_table = 'datapoint'

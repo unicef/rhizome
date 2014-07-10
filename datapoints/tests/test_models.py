@@ -25,11 +25,11 @@ class RegionTest(TestCase):
 
 class DataPointTest(TestCase):
 
-    def create_datapoint(self, note="test"):
-        return DataPoint.objects.create(note=note, indicator_id=99, region_id = 99)
+    def create_datapoint(self, note="test", indicator_id=99, region_id = 99, value=100.01):
+        return DataPoint.objects.create(note=note, indicator_id=indicator_id, region_id = region_id, value=value)
         ## This should break on a foreign key violation but it doesnt!!
 
     def test_datapoint_createion(self):
         dp = self.create_datapoint()
         self.assertTrue(isinstance,(dp,DataPoint))
-        self.assertEqual(dp.__unicode__(),dp.value)
+        # self.assertEqual(dp.__unicode__(),dp.value.__un)
