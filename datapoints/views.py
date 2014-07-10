@@ -1,15 +1,21 @@
-from django.shortcuts import render,get_object_or_404
-from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views import generic
 
 from datapoints.models import DataPoint
+import pprint as pp
 
 
-def index(request):
-    latest_datapoints = DataPoint.objects.order_by('-created_at')[:5]
-    context = {'latest_datapoints': latest_datapoints}
-    return render(request, 'datapoints/index.html',context)
+class IndexView(generic.ListView):
+    template_name = 'datapoints/index.html'
+    context_object_name = 'latest_datapoints'
+
+    def get_queryset(self):
+        pp.pprint(DataPoint.objects.order_by('-created_at')[:5])
+        return DataPoint.objects.order_by('-created_at')[:5]  
 
 
-def show(request, datapoint_id):
-    datapoint = get_object_or_404(DataPoint, pk=datapoint_id)
-    return render(request, 'datapoints/show.html', {'datapoint':datapoint})
+class DetailView(generic.DetailView):
+    model = DataPoint
+    template_name = 'datapoints/detail.html'
