@@ -1,18 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import RequestContext, loader
+from django.shortcuts import render,get_object_or_404
+from django.http import HttpResponse, Http404
 
 from datapoints.models import DataPoint
 
+
 def index(request):
     latest_datapoints = DataPoint.objects.order_by('-created_at')[:5]
-    template = loader.get_template('datapoints/index.html')
-    context = RequestContext(request, {
-            'latest_datapoints': latest_datapoints,
-        })
-
-    return HttpResponse(template.render(context))
+    context = {'latest_datapoints': latest_datapoints}
+    return render(request, 'datapoints/index.html',context)
 
 
 def show(request, datapoint_id):
-    return HttpResponse("You're looking at datapoint %s." % datapoint_id)
+    datapoint = get_object_or_404(DataPoint, pk=datapoint_id)
+    return render(request, 'datapoints/show.html', {'datapoint':datapoint})
