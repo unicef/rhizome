@@ -37,8 +37,8 @@ class DataPoint(models.Model):
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
-    # def __unicode__(self):
-    #     return unicode(self.value)
+    def __unicode__(self):
+        return unicode(self.value)
 
     class Meta:
         db_table = 'datapoint'
@@ -48,7 +48,7 @@ class DataPoint(models.Model):
 # -> Audit Table
 
 
-### DataPoiint Extras ###
+### DataPoint Extras ###
     # status_id
     # geography # change to geo_id
     # source_id

@@ -32,4 +32,4 @@ class DataPointTest(TestCase):
     def test_datapoint_createion(self):
         dp = self.create_datapoint()
         self.assertTrue(isinstance,(dp,DataPoint))
-        # self.assertEqual(dp.__unicode__(),dp.value.__un)
+        # self.assertEqual(dp.__unicode__(),dp.value) 
