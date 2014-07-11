@@ -1,12 +1,19 @@
 #!/bin/sh
 
+start_prod
+
+sudo /var/www/clients.seedscientific.com/uf/polio/venv/bin/pip install -r requirements.txt 
+
+#!/bin/sh
+
 printf "\n\n==========================================="
 printf "  INITIATE VENV AND INSTALL REQUIREMENTS   "
 printf "==========================================\n\n"
 
 
 source venv/bin/activate
-sudo pip install -r requirements.txt
+# sudo /var/www/clients.seedscientific.com/uf/polio/venv/bin/pip install -r requirements.txt 
+
 
 printf "\n\n====================================="
 printf "           RUNNING TESTS             "
