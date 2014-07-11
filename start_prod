@@ -12,24 +12,27 @@ printf "==========================================\n\n"
 
 
 source venv/bin/activate
-# sudo /var/www/clients.seedscientific.com/uf/polio/venv/bin/pip install -r requirements.txt 
+sudo /var/www/clients.seedscientific.com/uf/polio/venv/bin/pip install -r requirements.txt 
+
+# WHEN I RUN SUDO PIP INSTALL ...
+# EVEN WHEN VENV IS ACTIVATED IT INSTALLS GLOBALLY
 
 
-printf "\n\n====================================="
-printf "           RUNNING TESTS             "
-printf "=====================================\n\n"
+# printf "\n\n====================================="
+# printf "           RUNNING TESTS             "
+# printf "=====================================\n\n"
 
 
-coverage run manage.py test datapoints.models datapoints.views  --settings=polio.settings_test
-coverage html --omit='venv/*.py,datapoints/tests/*.py,*__init__.py,*settings*.py,manage.py'
+# coverage run manage.py test datapoints.models datapoints.views  --settings=polio.settings_test
+# coverage html --omit='venv/*.py,datapoints/tests/*.py,*__init__.py,*settings*.py,manage.py'
 
-printf "\n\n====================================="
-printf "           MIGRATING DATABASE           "
-printf "=====================================\n\n"
+# printf "\n\n====================================="
+# printf "           MIGRATING DATABASE           "
+# printf "=====================================\n\n"
 
-# migrate db
-python manage.py syncdb
-python manage.py migrate
+# # migrate db
+# python manage.py syncdb
+# python manage.py migrate
 
 printf "\n\n====================================="
 printf "           STARTING SERVER           "
