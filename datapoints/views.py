@@ -20,7 +20,9 @@ class DetailView(generic.DetailView):
     model = DataPoint
     template_name = 'datapoints/detail.html'
 
-######
+            ###### REGIONS ######
+
+## -> Can I subclass these so i dont repeat myself
 
 class RegionIndexView(generic.ListView):
     template_name = 'regions/index.html'
