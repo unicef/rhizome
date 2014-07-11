@@ -37,3 +37,16 @@ class RegionIndexView(generic.ListView):
 class RegionDetailView(generic.DetailView):
     model = Region
     template_name = 'regions/detail.html'
+
+ 
+def create_region(request):
+    if request.method == 'GET':
+        return render(request, 'regions/create_region.html/', {})
+    elif request.method == 'POST':
+        region = Region.objects.create(content=request.POST['content'])
+        # No need to call post.save() at this point -- it's already saved.
+        return HttpResponseRedirect(reverse('region_detail', kwargs={'region_id': region.id}))
+
+
+
+
