@@ -1,7 +1,7 @@
 {% if latest_datapoints %}
     <ul>
     {% for datapoint in latest_datapoints %}
-        <li><a href="{% url 'datapoints:detail' datapoint.id %}">{{datapoint.value}}  </a></li>
+        <li>{{datapoint.value}}</li>
         
     {% endfor %}
     </ul>

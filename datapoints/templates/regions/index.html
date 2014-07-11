@@ -1,0 +1,11 @@
+{% if top_regions %}
+    <ul>
+    {% for region in top_regions %}
+        <li>{{region.full_name}}</li>
+
+
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No regions are available.</p>
+{% endif %}

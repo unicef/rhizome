@@ -6,7 +6,7 @@ printf "==========================================\n\n"
 
 
 source venv/bin/activate
-sudo pip install -r requirements.txt
+pip install -r requirements.txt
 
 printf "\n\n====================================="
 printf "           RUNNING TESTS             "
