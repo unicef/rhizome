@@ -20,21 +20,12 @@ class DataPointDetailView(generic.DetailView):
     template_name = 'datapoints/detail.html'
 
 
-def create_datapoint(request):
-    if request.method == 'GET':
-        form = DataPointForm()
-    else:
-        form = DataPointForm(request.POST)
-        if form.is_valid():
-            content = form.cleaned_data
-            datapoint = DataPoint.objects.create(**content)
-
-            return HttpResponseRedirect('/datapoints')
-
-    return render(request, 'datapoints/create_datapoint.html',{'form':form,})
+class CreateView(generic.CreateView):
+    pass # template name and model passed via the URL.
 
 
-            ###### REGIONS ######
+
+    ###### REGIONS ######
 
 
 class RegionIndexView(generic.ListView):
@@ -49,20 +40,6 @@ class RegionIndexView(generic.ListView):
 class RegionDetailView(generic.DetailView):
     model = Region
     template_name = 'regions/detail.html'
-
-
-def create_region(request):
-    if request.method == 'GET':
-        form = RegionForm()
-    else:
-        form = RegionForm(request.POST)
-        if form.is_valid():
-            content = form.cleaned_data
-            region = Region.objects.create(**content)
-
-            return HttpResponseRedirect('/datapoints/regions')
-
-    return render(request, 'regions/create_region.html',{'form':form,})
 
 
             ###### INDICATORS ######

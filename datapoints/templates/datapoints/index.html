@@ -9,6 +9,7 @@
             <th>indicator</th>
             <th>region</th>
             <th>value</th>
+            <th>note</th>
             <th>details</th>
         </tr>
     </thead>
@@ -19,6 +20,7 @@
             <th>{{ datapoint.indicator }}</th>
             <th>{{ datapoint.region }}</th>
             <th>{{ datapoint.value }}</th>
+            <th>{{ datapoint.note }}</th>
             <th><a href="{% url 'datapoints:datapoint_detail' datapoint.id %}"> view </a></th>
         </tr>
         {% endfor %}
