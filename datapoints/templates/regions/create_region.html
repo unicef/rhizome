@@ -1,6 +1,18 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+{% endblock %}
+
+
 <form action = "" method = "post" class="form">
     {% csrf_token %}
     {{ form }}
     <button type="submit" class="btn btn-primary"> Submit </button>
 </form>
+
+{% for entry in blog_entries %}
+    <h2>{{ entry.title }}</h2>
+    <p>{{ entry.body }}</p>
+{% endfor %}

@@ -1,4 +1,6 @@
-{% load bootstrap3 %}
+{% extends "datapoints/base.html" %}
+
+{% block content %}
 {% if top_regions %}
     <ul>
     {% for region in top_regions %}
@@ -8,3 +10,4 @@
 {% else %}
     <p>No regions are available.</p>
 {% endif %}
+{% endblock %}
