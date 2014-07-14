@@ -34,6 +34,7 @@ urlpatterns = [
 
     ## INDEX ##
     url(r'^regions$', views.IndexView.as_view(
+        model = Region,
         template_name = 'regions/index.html',
         context_object_name = 'top_regions'),
     name='region_index'),

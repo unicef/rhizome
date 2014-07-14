@@ -13,7 +13,6 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]  
 
-
 class DetailView(generic.DetailView):
     pass # template name and model passed via the URL.
 
