@@ -1,5 +1,6 @@
-<form method = "post" action = "">
-{% csrf_token %}
-{{ form }}
-<input type="submit" />
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<form action = "" method = "post" class="form">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-primary"> Submit </button>
 </form>

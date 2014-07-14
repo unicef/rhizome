@@ -39,8 +39,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
     'datapoints',
     'coverage',
+
 )
 
 MIDDLEWARE_CLASSES = (
