@@ -1,9 +1,7 @@
 {% if top_regions %}
     <ul>
     {% for region in top_regions %}
-        <li>{{region.full_name}}</li>
-
-
+        <li><a href="{% url 'datapoints:region_detail' region.id %}">{{region.short_name}}  </a></li>
     {% endfor %}
     </ul>
 {% else %}
