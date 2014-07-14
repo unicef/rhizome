@@ -1,10 +1,10 @@
 from django.db import models
 
-class DataPointIndicator(models.Model):
+class Indicator(models.Model):
     name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    parent_indicator_id = models.ForeignKey("DataPointIndicator",null=True, blank=True)
+    parent_indicator_id = models.ForeignKey("Indicator",null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -12,7 +12,7 @@ class DataPointIndicator(models.Model):
 
 
     class Meta:
-        db_table = 'datapoint_indicator'
+        db_table = 'indicator'
 
 class Region(models.Model):
     full_name = models.CharField(max_length=255)
@@ -31,7 +31,7 @@ class Region(models.Model):
         db_table = 'region'
 
 class DataPoint(models.Model):
-    indicator = models.ForeignKey(DataPointIndicator)
+    indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)

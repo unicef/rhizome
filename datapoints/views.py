@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 
-from datapoints.models import DataPoint,Region
-from datapoints.forms import RegionForm
+from datapoints.models import DataPoint,Region,Indicator
+from datapoints.forms import RegionForm,IndicatorForm
 
 import pprint as pp
 
@@ -51,5 +51,35 @@ def create_region(request):
 
     return render(request, 'regions/create_region.html',{'form':form,})
 
+
+            ###### INDICATORS ######
+
+
+class IndicatorIndexView(generic.ListView):
+    template_name = 'indicators/index.html'
+    context_object_name = 'top_indicators'
+
+
+    def get_queryset(self):
+        return Indicator.objects.order_by('-created_at')[:10]  
+
+
+class IndicatorDetailView(generic.DetailView):
+    model = Indicator
+    template_name = 'indicators/detail.html'
+
+
+def create_indicator(request):
+    if request.method == 'GET':
+        form = IndicatorForm()
+    else:
+        form = IndicatorForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data
+            indicator = Indicator.objects.create(**content)
+
+            return HttpResponseRedirect('/datapoints/indicators')
+
+    return render(request, 'indicators/create_indicator.html',{'form':form,})
 
 

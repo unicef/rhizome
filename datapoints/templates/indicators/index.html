@@ -1,0 +1,30 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+    {% if top_indicators %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>description</th>
+            <th>details</th>
+        </tr>
+    </thead>
+
+        {% for indicator in top_indicators %}
+        <tr>
+            <th>{{ indicator.name }}</th>
+            <th>{{ indicator.description }}</th>
+            <th><a href="{% url 'datapoints:indicator_detail' indicator.id %}"> view </a></th>
+        </tr>
+        {% endfor %}
+
+    </table>
+{% else %}
+    <p>No indicators are available.</p>
+{% endif %}
+    <div align="right">
+    <a href="/datapoints/indicators/create_indicator" <button type="submit" class="btn btn-primary"> Create New Indicator </button></a>
+    </div>
+
+{% endblock %}

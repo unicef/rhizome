@@ -3,14 +3,14 @@ from datapoints.models import DataPointIndicator, Region, DataPoint
 from django.core.urlresolvers import reverse
 
 
-class DataPointIndicatorTest(TestCase):
+class IndicatorTest(TestCase):
 
-    def create_data_point_indicator(self, name="test", description = "dtest"):
-        return DataPointIndicator.objects.create(name=name,description=description)
+    def create_indicator(self, name="test", description = "dtest"):
+        return Indicator.objects.create(name=name,description=description)
 
-    def test_datapoint_indicator_createion(self):
-        dpi = self.create_data_point_indicator()
-        self.assertTrue(isinstance,(dpi,DataPointIndicator))
+    def test_datapoint_indicator_creation(self):
+        dpi = self.create_indicator()
+        self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
 
 class RegionTest(TestCase):
@@ -18,7 +18,7 @@ class RegionTest(TestCase):
     def create_region(self, full_name="test", short_name = "short test"):
         return Region.objects.create(full_name=full_name,short_name=short_name)
 
-    def test_datapoint_indicator_createion(self):
+    def test_region_creation(self):
         r = self.create_region()
         self.assertTrue(isinstance,(r,Region))
         self.assertEqual(r.__unicode__(),r.short_name)
