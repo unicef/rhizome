@@ -1,3 +1,5 @@
+{% extends "datapoints/base.html" %}
+{% block content %}
 
 {% if latest_datapoints %}
     <ul>
@@ -9,3 +11,5 @@
 {% else %}
     <p>No datapoints are available.</p>
 {% endif %}
+
+{% endblock %}

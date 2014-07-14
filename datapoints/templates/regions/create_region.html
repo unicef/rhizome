@@ -1,10 +1,7 @@
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
 {% extends "datapoints/base.html" %}
 
 {% block content %}
-{% endblock %}
-
 
 <form action = "" method = "post" class="form">
     {% csrf_token %}
@@ -16,3 +13,6 @@
     <h2>{{ entry.title }}</h2>
     <p>{{ entry.body }}</p>
 {% endfor %}
+
+
+{% endblock %}
