@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 
@@ -38,15 +38,16 @@ class RegionDetailView(generic.DetailView):
     model = Region
     template_name = 'regions/detail.html'
 
- 
+
 def create_region(request):
     if request.method == 'GET':
         return render(request, 'regions/create_region.html/', {})
     elif request.method == 'POST':
-        region = Region.objects.create(content=request.POST['content'])
-        # No need to call post.save() at this point -- it's already saved.
-        return HttpResponseRedirect(reverse('region_detail', kwargs={'region_id': region.id}))
-
+        user_input = request.POST['content']
+        # region = Region.objects.create(**user_input_dict)
+        region = Region.objects.create(short_name=user_input,full_name=user_input)
+        # # No need to call post.save() at this point -- it's already saved.
+        return HttpResponseRedirect('/datapoints/regions')
 
 
 
