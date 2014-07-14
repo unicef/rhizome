@@ -2,11 +2,24 @@
 
 {% block content %}
     {% if top_regions %}
-    <ul>
-    {% for region in top_regions %}
-        <li><a href="{% url 'datapoints:region_detail' region.id %}">{{region.short_name}}  </a></li>
-    {% endfor %}
-    </ul>
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>short name</th>
+            <th>full name</th>
+            <th>details</th>
+        </tr>
+    </thead>
+
+        {% for region in top_regions %}
+        <tr>
+            <th>{{ region.short_name }}</th>
+            <th>{{ region.full_name }}</th>
+            <th><a href="{% url 'datapoints:region_detail' region.id %}"> view </a></th>
+        </tr>
+        {% endfor %}
+
+    </table>
 {% else %}
     <p>No regions are available.</p>
 {% endif %}
