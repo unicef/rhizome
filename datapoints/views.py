@@ -4,16 +4,16 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 
 from datapoints.models import DataPoint,Region
-import pprint as pp
+from datapoints.forms import RegionForm
 
+import pprint as pp
 
 class IndexView(generic.ListView):
     template_name = 'datapoints/index.html'
     context_object_name = 'latest_datapoints'
 
     def get_queryset(self):
-        pp.pprint(DataPoint.objects.order_by('-created_at')[:5])
-        return DataPoint.objects.order_by('-created_at')[:5]  
+        return DataPoint.objects.order_by('-created_at')[:10]  
 
 
 class DetailView(generic.DetailView):
@@ -30,8 +30,7 @@ class RegionIndexView(generic.ListView):
 
 
     def get_queryset(self):
-        pp.pprint(Region.objects.order_by('-created_at')[:5])
-        return Region.objects.order_by('-created_at')[:5]  
+        return Region.objects.order_by('-created_at')[:10]  
 
 
 class RegionDetailView(generic.DetailView):
@@ -41,13 +40,16 @@ class RegionDetailView(generic.DetailView):
 
 def create_region(request):
     if request.method == 'GET':
-        return render(request, 'regions/create_region.html/', {})
-    elif request.method == 'POST':
-        user_input = request.POST['content']
-        # region = Region.objects.create(**user_input_dict)
-        region = Region.objects.create(short_name=user_input,full_name=user_input)
-        # # No need to call post.save() at this point -- it's already saved.
-        return HttpResponseRedirect('/datapoints/regions')
+        form = RegionForm()
+    else:
+        form = RegionForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data
+            region = Region.objects.create(**content)
+
+            return HttpResponseRedirect('/datapoints/regions')
+
+    return render(request, 'regions/create_region.html',{'form':form,})
 
 
 

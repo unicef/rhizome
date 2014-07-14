@@ -9,7 +9,6 @@ urlpatterns = [
     ## REGIONS ##
     url(r'^regions$', views.RegionIndexView.as_view(), name='region_index'),
     url(r'^regions/create_region/$', views.create_region, name='create_region'),
-    # url(r'^regions_detail/(?P<pk>[0-9]+)/$', views.RegionDetailView.as_view(), name='region_detail'),
-    url(r'^region/(?P<pk>\d+)/detail.html$',views.RegionDetailView.as_view(), name='region_detail'),
+    url(r'^regions/(?P<pk>[0-9]+)/$',views.RegionDetailView.as_view(), name='region_detail'),
 
 ]

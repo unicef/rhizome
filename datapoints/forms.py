@@ -6,7 +6,7 @@ from datapoints.models import Region
 class RegionForm(ModelForm):
     class Meta:
         model = Region
-        fields = ['full_name']
+        fields = ['full_name','short_name']
 
 # python manage.py shell
 # from datapoints.forms import RegionForm

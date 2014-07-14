@@ -1,7 +1,5 @@
-<form action= "/datapoints/regions/create_region/" method="post">
-
-  {% csrf_token %}
-  <label for="content"></label>
-  <input type="text" name="content" id="content" />
-  <input type="submit" />
+<form method = "post" action = "">
+{% csrf_token %}
+{{ form }}
+<input type="submit" />
 </form>
