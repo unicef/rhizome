@@ -1,15 +1,34 @@
 {% extends "datapoints/base.html" %}
-{% block content %}
 
-{% if latest_datapoints %}
-    <ul>
-    {% for datapoint in latest_datapoints %}
-        <li><a href="{% url 'datapoints:detail' datapoint.id %}">{{datapoint.value}}  </a></li>
-        
-    {% endfor %}
-    </ul>
+{% block content %}
+    {% if latest_datapoints %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>indicator</th>
+            <th>region</th>
+            <th>value</th>
+            <th>details</th>
+        </tr>
+    </thead>
+
+        {% for datapoint in latest_datapoints %}
+        <tr>
+            <th>{{ datapoint.id }}</th>
+            <th>{{ datapoint.indicator }}</th>
+            <th>{{ datapoint.region }}</th>
+            <th>{{ datapoint.value }}</th>
+            <th><a href="{% url 'datapoints:datapoint_detail' datapoint.id %}"> view </a></th>
+        </tr>
+        {% endfor %}
+
+    </table>
 {% else %}
     <p>No datapoints are available.</p>
 {% endif %}
+    <div align="right">
+    <a href="/datapoints/create_datapoint" <button type="submit" class="btn btn-primary"> Create New Data Point </button></a>
+    </div>
 
 {% endblock %}

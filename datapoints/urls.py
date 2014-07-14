@@ -3,8 +3,9 @@ from datapoints import views
 
 urlpatterns = [
     ## DATAPOINTS ##
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),   
+    url(r'^$', views.DataPointIndexView.as_view(), name='datapoint_index'),
+    url(r'^create_datapoint/$', views.create_datapoint, name='create_datapoint'),
+    url(r'^(?P<pk>[0-9]+)/$', views.DataPointDetailView.as_view(), name='datapoint_detail'),   
 
     ## REGIONS ##
     url(r'^regions$', views.RegionIndexView.as_view(), name='region_index'),

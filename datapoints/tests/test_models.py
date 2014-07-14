@@ -1,5 +1,5 @@
 from django.test import TestCase
-from datapoints.models import DataPointIndicator, Region, DataPoint
+from datapoints.models import Indicator, Region, DataPoint
 from django.core.urlresolvers import reverse
 
 

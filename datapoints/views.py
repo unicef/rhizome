@@ -4,11 +4,10 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 
 from datapoints.models import DataPoint,Region,Indicator
-from datapoints.forms import RegionForm,IndicatorForm
+from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
 
-import pprint as pp
 
-class IndexView(generic.ListView):
+class DataPointIndexView(generic.ListView):
     template_name = 'datapoints/index.html'
     context_object_name = 'latest_datapoints'
 
@@ -16,13 +15,27 @@ class IndexView(generic.ListView):
         return DataPoint.objects.order_by('-created_at')[:10]  
 
 
-class DetailView(generic.DetailView):
+class DataPointDetailView(generic.DetailView):
     model = DataPoint
     template_name = 'datapoints/detail.html'
 
+
+def create_datapoint(request):
+    if request.method == 'GET':
+        form = DataPointForm()
+    else:
+        form = DataPointForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data
+            datapoint = DataPoint.objects.create(**content)
+
+            return HttpResponseRedirect('/datapoints')
+
+    return render(request, 'datapoints/create_datapoint.html',{'form':form,})
+
+
             ###### REGIONS ######
 
-## -> Can I subclass these so i dont repeat myself
 
 class RegionIndexView(generic.ListView):
     template_name = 'regions/index.html'
