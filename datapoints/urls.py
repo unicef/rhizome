@@ -27,7 +27,14 @@ urlpatterns = [
         success_url="/datapoints",
         template_name='datapoints/create_datapoint.html'),
     name='create_datapoint'),
-    
+
+    ## META DATA ##
+    url(r'^metadata/$', views.IndexView.as_view(
+        model=RegionRelationshipType,
+        template_name = 'datapoints/metadata.html',
+        context_object_name = 'top_metadata'),
+    name='metadata_index'),
+
         #############
         ## REGIONS ##
         #############
@@ -48,7 +55,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^regions/create_region/$', views.CreateView.as_view(
         model=Region,
-        success_url="/datapoints/region_relationships/create_region_relationship",
+        success_url="/datapoints/region_relationships/create",
         template_name='regions/create_region.html'),
     name='create_region'),
 
@@ -120,10 +127,33 @@ urlpatterns = [
     name='region_relationship_detail'),
 
     ## CREATE ##
-    url(r'^region_relationships/create_region_relationship/$', views.CreateView.as_view(
+    url(r'^region_relationships/create/$', views.CreateView.as_view(
         model=RegionRelationship,
         success_url="/datapoints/regions",
-        template_name='region_relationships/create_region_relationship.html'),
+        template_name='region_relationships/create.html'),
     name='create_region_relationship'),
+
+    ## REL TYPE INDEX ##
+    url(r'^region_relationship_types$', views.IndexView.as_view(
+        model=RegionRelationshipType,
+        template_name = 'region_relationships/type_index.html',
+        context_object_name = 'top_region_relationship_types'),
+    name='region_relationship_type_index'),
+
+    ## REL TYPE CREATE ##
+    url(r'^region_relationship_types/create/$', views.CreateView.as_view(
+        model=RegionRelationshipType,
+        success_url="/datapoints/regions",
+        template_name='region_relationships/type_create.html'),
+    name='create_region_relationship_type'),
+
+
+## TO DO ## 
+## -> Change URL from 
+   ## region_relationships/create_region_relationship/
+   #### to ####
+   ## region_relationships/create/
+   
+
 
 ]

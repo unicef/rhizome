@@ -18,3 +18,5 @@ class DetailView(generic.DetailView):
 
 class CreateView(generic.CreateView):
     pass # template name and model passed via the URL.
+
+

@@ -1,0 +1,15 @@
+
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+
+<form action = "" method = "post" class="form">
+    {% csrf_token %}
+    {{ form.as_ul }}
+    <br>
+    <button type="submit" class="btn btn-primary"> Submit </button>
+</form>
+    <br>
+    <a href="/datapoints/region_relationships"> <button type class="btn btn-danger"> Cancel </button> </a>
+
+{% endblock %}
