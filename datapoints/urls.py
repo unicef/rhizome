@@ -48,7 +48,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^regions/create_region/$', views.CreateView.as_view(
         model=Region,
-        success_url="/datapoints/regions",
+        success_url="/datapoints/region_relationships/create_region_relationship",
         template_name='regions/create_region.html'),
     name='create_region'),
 
@@ -102,8 +102,6 @@ urlpatterns = [
         template_name='reporting_periods/create_reporting_period.html'),
     name='create_reporting_period'),
 
-
-
         ##########################
         ## REGION RELATIONSHIPS ##
         ##########################
@@ -124,7 +122,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^region_relationships/create_region_relationship/$', views.CreateView.as_view(
         model=RegionRelationship,
-        success_url="/datapoints/region_relationships",
+        success_url="/datapoints/regions",
         template_name='region_relationships/create_region_relationship.html'),
     name='create_region_relationship'),
 
