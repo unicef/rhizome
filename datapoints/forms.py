@@ -15,3 +15,7 @@ class IndicatorForm(ModelForm):
 class DataPointForm(ModelForm):
     class Meta:
         model = DataPoint
+
+class ReportingPeriodForm(ModelForm):
+    class Meta:
+        model = ReportingPeriod
