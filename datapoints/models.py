@@ -4,7 +4,6 @@ class Indicator(models.Model):
     name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    # parent_indicator_id = models.ForeignKey("Indicator",null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -45,7 +44,7 @@ class ReportingPeriod(models.Model):
 class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
-    reporting_period = models.ForeignKey(ReportingPeriod,null=True, blank=True)
+    reporting_period = models.ForeignKey(ReportingPeriod)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)

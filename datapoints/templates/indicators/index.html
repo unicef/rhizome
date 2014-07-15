@@ -22,7 +22,7 @@
             <th>{{ indicator.id }}</th>
             <th>{{ indicator.name }}</th>
             <th>{{ indicator.description }}</th>
-            <th><a href="{% url 'datapoints:indicator_detail' indicator.id %}"> view </a></th>
+            <th><a href="{% url 'indicators:indicator_detail' indicator.id %}"> view </a></th>
         </tr>
         {% endfor %}
 

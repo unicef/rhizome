@@ -22,7 +22,7 @@
             <th>{{ region.id }}</th>
             <th>{{ region.short_name }}</th>
             <th>{{ region.full_name }}</th>
-            <th><a href="{% url 'datapoints:region_detail' region.id %}"> view </a></th>
+            <th><a href="{% url 'regions:region_detail' region.id %}"> view </a></th>
         </tr>
         {% endfor %}
 
@@ -31,7 +31,7 @@
     <p>No regions are available.</p>
 {% endif %}
     <div align="right">
-    <a href="/datapoints/regions/create" <button type="submit" class="btn btn-primary"> Create New Region </button></a>
+    <a href="{% url 'regions:create_region' %}"<button type="submit" class="btn btn-primary"> Create New Region </button></a>
     </div>
 
 {% endblock %}
