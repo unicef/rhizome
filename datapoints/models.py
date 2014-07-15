@@ -4,7 +4,7 @@ class Indicator(models.Model):
     name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    parent_indicator_id = models.ForeignKey("Indicator",null=True, blank=True)
+    # parent_indicator_id = models.ForeignKey("Indicator",null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -56,6 +56,32 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
+
+class IndicatorRelationshipType(models.Model):
+    display_name = models.CharField(max_length=55)
+    description = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.display_name)
+
+    class Meta:
+        db_table = 'indicator_relationship_type'
+
+
+class IndicatorRelationship(models.Model):
+    indicator_0 = models.ForeignKey(Indicator, related_name='ind_0')
+    indicator_1 = models.ForeignKey(Indicator, related_name='ind_1')
+    indicator_relationship_type = models.ForeignKey(IndicatorRelationshipType)
+    note = models.CharField(max_length=255,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.indicator_0 + '>' + self.indicator_relationship_type + '>' + self.indicator_1)
+
+    class Meta:
+        db_table = 'indicator_relationship'
+
 
 ## TO DO ##
 # -> Audit Table
