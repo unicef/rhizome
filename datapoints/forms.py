@@ -1,6 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
-from datapoints.models import Region, Indicator, DataPoint, ReportingPeriod
+from datapoints.models import *
 
 
 class RegionForm(ModelForm):
@@ -19,3 +19,5 @@ class DataPointForm(ModelForm):
 class ReportingPeriodForm(ModelForm):
     class Meta:
         model = ReportingPeriod
+
+

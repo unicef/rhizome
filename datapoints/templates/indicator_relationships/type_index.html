@@ -1,0 +1,32 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+    {% if top_indicator_relationship_types %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>display name</th>
+            <th>inverse name</th>
+
+        </tr>
+    </thead>
+
+        {% for rrt in top_indicator_relationship_types %}
+        <tr>
+            <th>{{ rrt.id }}</th>
+            <th>{{ rrt.display_name }}</th>
+            <th>{{ rrt.inverse_display_name }}</th>
+        </tr>
+        {% endfor %}
+
+    </table>
+{% else %}
+    <p>No Indicator Relationship Types available.</p>
+{% endif %}
+    <div align="right">
+    <a href="/datapoints/indicator_relationship_types/create" <button type="submit" class="btn btn-primary"> Create New Indicator Relationship Type </button></a>
+    </div>
+
+
+{% endblock %}
