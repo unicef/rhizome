@@ -22,10 +22,10 @@ urlpatterns = [
     name='datapoint_detail'),
 
     ## CREATE ##
-    url(r'^create_datapoint/$', views.CreateView.as_view(
+    url(r'^create/$', views.CreateView.as_view(
         model=DataPoint,
         success_url="/datapoints",
-        template_name='datapoints/create_datapoint.html'),
+        template_name='datapoints/create.html'),
     name='create_datapoint'),
 
     ## META DATA ##
@@ -53,12 +53,11 @@ urlpatterns = [
     name='region_detail'),
 
     ## CREATE ##
-    url(r'^regions/create_region/$', views.CreateView.as_view(
+    url(r'^regions/create/$', views.CreateView.as_view(
         model=Region,
         success_url="/datapoints/region_relationships/create",
-        template_name='regions/create_region.html'),
+        template_name='regions/create.html'),
     name='create_region'),
-
 
         ################
         ## INDICATORS ##
@@ -78,10 +77,10 @@ urlpatterns = [
     name='indicator_detail'),
 
     ## CREATE ##
-    url(r'^indicators/create_indicator/$', views.CreateView.as_view(
+    url(r'^indicators/create/$', views.CreateView.as_view(
         model=Indicator,
         success_url="/datapoints/indicators",
-        template_name='indicators/create_indicator.html'),
+        template_name='indicators/create.html'),
     name='create_indicator'),
 
 
@@ -103,10 +102,10 @@ urlpatterns = [
     name='reporting_period_detail'),
 
     ## CREATE ##
-    url(r'^reporting_periods/create_reporting_period/$', views.CreateView.as_view(
+    url(r'^reporting_periods/create/$', views.CreateView.as_view(
         model=ReportingPeriod,
         success_url="/datapoints/reporting_periods",
-        template_name='reporting_periods/create_reporting_period.html'),
+        template_name='reporting_periods/create.html'),
     name='create_reporting_period'),
 
         ##########################
