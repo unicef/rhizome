@@ -39,7 +39,6 @@ class ReportingPeriod(models.Model):
 
     def __unicode__(self):
         return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' + self.end_date.strftime('%Y-%m-%d'))
-        # return unicode(note)
 
     class Meta:
         db_table = 'reporting_period'
@@ -47,7 +46,7 @@ class ReportingPeriod(models.Model):
 class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
-    reporing_period = models.ForeignKey(ReportingPeriod,null=True, blank=True)
+    reporting_period = models.ForeignKey(ReportingPeriod,null=True, blank=True)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
