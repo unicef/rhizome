@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^$', views.IndexView.as_view(
         model=DataPoint,
         template_name = 'datapoints/index.html',
-        context_object_name = 'latest_datapoints'),
+        context_object_name = 'top_datapoints'),
     name='datapoint_index'),
 
     ## DETAIL ##
