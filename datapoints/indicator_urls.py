@@ -4,6 +4,10 @@ from datapoints.models import *
 
 urlpatterns = [
 
+        ################
+        ## INDICATORS ##
+        ################
+        
     ## INDEX ##
     url(r'^indicators$', views.IndexView.as_view(
         model=Indicator,
@@ -23,4 +27,44 @@ urlpatterns = [
         success_url="/datapoints/indicator_relationships/create",
         template_name='indicators/create.html'),
     name='create_indicator'),
+
+
+        #############################
+        ## INDICATOR RELATIONSHIPS ##
+        #############################
+
+    ## INDEX ##
+    url(r'^indicator_relationships$', views.IndexView.as_view(
+        model=IndicatorRelationship,
+        template_name = 'indicator_relationships/index.html',
+        context_object_name = 'top_indicator_relationships'),
+    name='indicator_relationship_index'),
+
+    ## DETAIL ##
+    url(r'^indicator_relationships/(?P<pk>[0-9]+)/$', views.DetailView.as_view(
+        model=IndicatorRelationship,
+        template_name='indicator_relationships/detail.html'),
+    name='indicator_relationship_detail'),
+
+    ## CREATE ##
+    url(r'^indicator_relationships/create/$', views.CreateView.as_view(
+        model=IndicatorRelationship,
+        success_url="/datapoints/indicators",
+        template_name='indicator_relationships/create.html'),
+    name='create_indicator_relationship'),
+
+    ## REL TYPE INDEX ##
+    url(r'^indicator_relationship_types$', views.IndexView.as_view(
+        model=IndicatorRelationshipType,
+        template_name = 'indicator_relationships/type_index.html',
+        context_object_name = 'top_indicator_relationship_types'),
+    name='indicator_relationship_type_index'),
+
+    ## REL TYPE CREATE ##
+    url(r'^indicator_relationship_types/create/$', views.CreateView.as_view(
+        model=IndicatorRelationshipType,
+        success_url="/datapoints/indicators",
+        template_name='indicator_relationships/type_create.html'),
+    name='create_indicator_relationship_type'),
+
 ]
