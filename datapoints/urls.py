@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from datapoints import views
-from datapoints.models import DataPoint, Region, Indicator, ReportingPeriod
+from datapoints.models import * 
 
 urlpatterns = [
 
@@ -102,5 +102,30 @@ urlpatterns = [
         template_name='reporting_periods/create_reporting_period.html'),
     name='create_reporting_period'),
 
+
+
+        ##########################
+        ## REGION RELATIONSHIPS ##
+        ##########################
+
+    ## INDEX ##
+    url(r'^region_relationships$', views.IndexView.as_view(
+        model=RegionRelationship,
+        template_name = 'region_relationships/index.html',
+        context_object_name = 'top_region_relationships'),
+    name='region_relationship_index'),
+
+    ## DETAIL ##
+    url(r'^region_relationships/(?P<pk>[0-9]+)/$', views.DetailView.as_view(
+        model=RegionRelationship,
+        template_name='region_relationships/detail.html'),
+    name='region_relationship_detail'),
+
+    ## CREATE ##
+    url(r'^region_relationships/create_region_relationship/$', views.CreateView.as_view(
+        model=RegionRelationship,
+        success_url="/datapoints/region_relationships",
+        template_name='region_relationships/create_region_relationship.html'),
+    name='create_region_relationship'),
 
 ]

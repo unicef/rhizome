@@ -18,14 +18,13 @@ class Region(models.Model):
     full_name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255,null=True)
-    parent_region_id = models.ForeignKey("Region",null=True, blank=True)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.short_name)
+        return unicode(self.full_name)
 
     class Meta:
         db_table = 'region'
@@ -59,6 +58,7 @@ class DataPoint(models.Model):
 
 class IndicatorRelationshipType(models.Model):
     display_name = models.CharField(max_length=55)
+    inverse_display_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
@@ -81,6 +81,34 @@ class IndicatorRelationship(models.Model):
 
     class Meta:
         db_table = 'indicator_relationship'
+
+
+class RegionRelationshipType(models.Model):
+    display_name = models.CharField(max_length=55)
+    inverse_display_name = models.CharField(max_length=55)
+    description = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.display_name)
+
+    class Meta:
+        db_table = 'region_relationship_type'
+
+
+class RegionRelationship(models.Model):
+    region_0 = models.ForeignKey(Region, related_name='ind_0')
+    region_1 = models.ForeignKey(Region, related_name='ind_1')
+    region_relationship_type = models.ForeignKey(RegionRelationshipType)
+    note = models.CharField(max_length=255,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.region_0 + '>' + self.region_relationship_type + '>' + self.region_0)
+
+    class Meta:
+        db_table = 'region_relationship'
+
 
 
 ## TO DO ##

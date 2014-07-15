@@ -1,6 +1,11 @@
 {% extends "datapoints/base.html" %}
 
 {% block content %}
+ 
+    <li><a href="/datapoints/region_relationships">Region Rel</a></li>
+    
+    <br>
+
     {% if top_regions %}
     <table class="table table-hover table-bordered">
     <thead>
@@ -23,7 +28,7 @@
 
     </table>
 {% else %}
-    <p>No rgions are available.</p>
+    <p>No regions are available.</p>
 {% endif %}
     <div align="right">
     <a href="/datapoints/regions/create_region" <button type="submit" class="btn btn-primary"> Create New Region </button></a>
