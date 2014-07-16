@@ -3,5 +3,8 @@ South==1.0
 coverage==3.7.1
 django-admin-bootstrapped==1.6.5
 django-discover-runner==1.0
+django-simple-history==1.4.0
+django-tables2==0.15.0
 psycopg2==2.5.3
+six==1.7.3
 wsgiref==0.1.2
