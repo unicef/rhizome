@@ -37,9 +37,8 @@ WSGI_APPLICATION = 'polio.wsgi.application'
 
 ## DATABASE ##
 
-# DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
 DATABASES = {
-    'default': { # I HAVENT SET THIS UP YET
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'polio',
         'USER': 'djangoapp',
