@@ -26,7 +26,7 @@
     <p>No reporting Periods are available.</p>
 {% endif %}
     <div align="right">
-    <a href="/datapoints/reporting_periods/create_reporting_period" <button type="submit" class="btn btn-primary"> Create New Reporing Period </button></a>
+    <a href="{% url 'datapoints:create_reporting_period' %}"> <button type="submit" class="btn btn-primary">   Create New Reporing Period </button></a>
     </div>
 
 {% endblock %}

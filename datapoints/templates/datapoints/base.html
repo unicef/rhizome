@@ -16,10 +16,10 @@
               </div>
               <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                  <li><a href="/datapoints">Datapoints</a></li>
-                  <li><a href="/datapoints/indicators">Indicators</a></li>
-                  <li><a href="/datapoints/regions">Regions</a></li>
-                  <li><a href="/datapoints/metadata">Metadata</a></li>
+                  <li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
+                  <li><a href="{% url 'indicators:indicator_index' %}">Indicators</a></li>
+                  <li><a href="{% url 'regions:region_index' %}">Regions</a></li>
+                  <li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
                 </ul> 
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="/admin">Admin</a></li>

@@ -1,7 +1,7 @@
 {% extends "datapoints/base.html" %}
 
 {% block content %}
-    {% if latest_datapoints %}
+    {% if top_datapoints %}
     <table class="table table-hover table-bordered">
     <thead>
         <tr>
@@ -32,7 +32,7 @@
     <p>No datapoints are available.</p>
 {% endif %}
     <div align="right">
-    <a href="/datapoints/create" <button type="submit" class="btn btn-primary"> Create New Data Point </button></a>
+    <a href="{% url 'datapoints:create_datapoint' %}" <button type="submit" class="btn btn-primary"> Create New Data Point </button></a>
     </div>
 
 {% endblock %}

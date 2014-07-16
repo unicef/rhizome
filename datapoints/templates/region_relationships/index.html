@@ -19,8 +19,9 @@
             <th>{{ region_relationship.region_0 }}</th>
             <th>{{ region_relationship.region_relationship_type }}</th>
             <th>{{ region_relationship.region_1 }}</th>
-            <th><a href="{% url 'datapoints:region_relationship_detail' region_relationship.id %}"> view </a></th>
-        </tr>
+            <th><a href="{% url 'regions:region_relationship_detail' region_relationship.id %}"> view </a></th>
+        
+            </tr>
         {% endfor %}
 
     </table>
@@ -28,7 +29,7 @@
     <p>No Region Relationships are available.</p>
 {% endif %}
     <div align="right">
-    <a href="/datapoints/region_relationships/create" <button type="submit" class="btn btn-primary"> Create New Region Relationship </button></a>
+    <a href="{% url 'regions:create_region_relationship' %}" <button type="submit" class="btn btn-primary"> Create New Region Relationship </button></a>
     </div>
 
 {% endblock %}

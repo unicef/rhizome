@@ -19,7 +19,7 @@
             <th>{{ indicator_relationship.indicator_0 }}</th>
             <th>{{ indicator_relationship.indicator_relationship_type }}</th>
             <th>{{ indicator_relationship.indicator_1 }}</th>
-            <th><a href="{% url 'datapoints:indicator_relationship_detail' indicator_relationship.id %}"> view </a></th>
+            <th><a href="{% url 'indicators:indicator_relationship_detail' indicator_relationship.id %}"> view </a></th>
         </tr>
         {% endfor %}
 
@@ -28,7 +28,7 @@
     <p>No Indicator Relationships are available.</p>
 {% endif %}
     <div align="right">
-    <a href="/datapoints/indicator_relationships/create" <button type="submit" class="btn btn-primary"> Create New Indicator Relationship </button></a>
+    <a href="{% url 'indicators:create_indicator_relationship' %}" <button type="submit" class="btn btn-primary"> Create New Indicator Relationship </button></a>
     </div>
 
 {% endblock %}
