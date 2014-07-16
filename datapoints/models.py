@@ -16,13 +16,13 @@ class Indicator(models.Model):
         db_table = 'indicator'
 
 
-class HistoricalDataPoint(models.Model):
+# class HistoricalDataPoint(models.Model):
     
-    def __str__(self):
-        return 'hello'
+#     def __str__(self):
+#         return 'hello'
         
-    class Meta:
-        db_table = 'audit_datapoint'
+#     class Meta:
+#         db_table = 'audit_datapoint'
 
 
 
