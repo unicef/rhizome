@@ -7,9 +7,9 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'polio.views.home', name='home'),
 
-    url(r'^datapoints/', include('datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/indicators/', include('datapoints.app_urls.indicator_urls', namespace="indicators")),
-    url(r'^datapoints/regions/', include('datapoints.app_urls.region_urls', namespace="regions")),
+    url(r'^uf04/datapoints/', include('datapoints.app_urls.urls', namespace="datapoints")),
+    url(r'^uf04/datapoints/indicators/', include('datapoints.app_urls.indicator_urls', namespace="indicators")),
+    url(r'^uf04/datapoints/regions/', include('datapoints.app_urls.region_urls', namespace="regions")),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^uf04/admin/', include(admin.site.urls)),
 )
