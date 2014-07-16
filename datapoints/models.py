@@ -12,9 +12,20 @@ class Indicator(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-
     class Meta:
         db_table = 'indicator'
+
+
+class HistoricalDataPoint(models.Model):
+    
+    def __str__(self):
+        return 'hello'
+        
+    class Meta:
+        db_table = 'audit_datapoint'
+
+
+
 
 class Region(models.Model):
     full_name = models.CharField(max_length=255)
@@ -129,7 +140,6 @@ class RegionRelationship(models.Model):
 
     class Meta:
         db_table = 'region_relationship'
-
 
 
 ### DataPoint Extras ###

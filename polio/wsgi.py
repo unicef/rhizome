@@ -8,7 +8,11 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "polio.prod_settings")
+import sys
+sys.path.append('/var/www/clients.seedscientific.com/uf/polio')
+sys.path.append('/var/www/clients.seedscientific.com/uf/polio/polio')
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
