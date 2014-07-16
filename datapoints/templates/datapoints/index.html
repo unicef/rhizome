@@ -11,7 +11,7 @@
             <th>reporting period</th>
             <th>value</th>
             <th>note</th>
-            <th>details</th>
+            <th>edit</th>
         </tr>
     </thead>
 
@@ -23,7 +23,7 @@
             <th>{{ datapoint.reporting_period }}</th>
             <th>{{ datapoint.value }}</th>
             <th>{{ datapoint.note }}</th>
-            <th><a href="{% url 'datapoints:datapoint_detail' datapoint.id %}"> view </a></th>
+            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> view </a></th>
         </tr>
         {% endfor %}
 

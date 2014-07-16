@@ -1,13 +1,12 @@
-
 {% extends "datapoints/base.html" %}
 
 {% block content %}
 
 <form action="" method="post">{% csrf_token %}
-    {{ form.as_ul }}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
     <button type="submit" class="btn btn-primary"> Submit </button>
+
 </form>
-    <br>
-    <a href="{% url 'regions:delete_region' region.id%}"<button type="submit" class="btn btn-danger"> Delete Region </button></a>
+
 
 {% endblock %}
