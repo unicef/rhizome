@@ -28,6 +28,21 @@ urlpatterns = [
         template_name='regions/create.html'),
     name='create_region'),
 
+    ## UPDATE ##
+    url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
+        model=Region,
+        success_url="/datapoints/regions",
+        template_name='regions/update.html'),
+    name='update_region'),
+
+    ## DELETE ##
+    url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
+        model=Region,
+        success_url="/datapoints/regions",
+        template_name="regions/confirm_delete.html"),
+    name='delete_region'),
+
+
         ##########################
         ## REGION RELATIONSHIPS ##
         ##########################
