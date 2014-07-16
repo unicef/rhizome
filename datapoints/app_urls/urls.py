@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from datapoints import views
 from datapoints.models import * 
+from datapoints.forms import DataPointForm
 
 urlpatterns = [
 
@@ -25,7 +26,8 @@ urlpatterns = [
     url(r'^create/$', views.CreateView.as_view(
         model=DataPoint,
         success_url="/datapoints",
-        template_name='datapoints/create.html'),
+        template_name='datapoints/create.html',
+        form_class=DataPointForm),
     name='create_datapoint'),
 
     ## META DATA ##

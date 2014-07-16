@@ -16,16 +16,6 @@ class Indicator(models.Model):
         db_table = 'indicator'
 
 
-# class HistoricalDataPoint(models.Model):
-    
-#     def __str__(self):
-#         return 'hello'
-        
-#     class Meta:
-#         db_table = 'audit_datapoint'
-
-
-
 
 class Region(models.Model):
     full_name = models.CharField(max_length=255)
@@ -67,12 +57,19 @@ class DataPoint(models.Model):
     reporting_period = models.ForeignKey(ReportingPeriod)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
+    # changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     #
     history = HistoricalRecords()
 
-    def __unicode__(self):
-        return unicode(self.value)
+    # @property
+    # def _history_user(self):
+    #     return self.changed_by
+
+    # @_history_user.setter
+    # def _history_user(self, value):
+    #     self.changed_by = value
+    #     print value
 
     class Meta:
         db_table = 'datapoint'
