@@ -24,7 +24,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^create/$', views.CreateView.as_view(
         model=Region,
-        success_url="/datapoints/region_relationships/create",
+        success_url="/datapoints/regions/region_relationships/create",
         template_name='regions/create.html'),
     name='create_region'),
 

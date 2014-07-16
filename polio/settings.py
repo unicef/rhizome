@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'datapoints',
     'coverage',
-
+    'simple_history',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -24,7 +24,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^create/$', views.CreateView.as_view(
         model=Indicator,
-        success_url="/datapoints/indicator_relationships/create",
+        success_url="/datapoints/indicators/indicator_relationships/create",
         template_name='indicators/create.html'),
     name='create_indicator'),
 

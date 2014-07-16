@@ -1,10 +1,13 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 class Indicator(models.Model):
     name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
+    #
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return unicode(self.name)
@@ -21,6 +24,9 @@ class Region(models.Model):
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
+    #
+    history = HistoricalRecords()
+
 
     def __unicode__(self):
         return unicode(self.full_name)
@@ -34,6 +40,9 @@ class ReportingPeriod(models.Model):
     end_date = models.DateField()
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
+    #
+    history = HistoricalRecords()
+
 
     def __unicode__(self):
         return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' + self.end_date.strftime('%Y-%m-%d'))
@@ -48,6 +57,8 @@ class DataPoint(models.Model):
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
+    #
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return unicode(self.value)
@@ -60,6 +71,8 @@ class IndicatorRelationshipType(models.Model):
     inverse_display_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    #
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return unicode(self.display_name)
@@ -74,6 +87,9 @@ class IndicatorRelationship(models.Model):
     indicator_relationship_type = models.ForeignKey(IndicatorRelationshipType)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
+    # AUDIT #
+    history = HistoricalRecords()
+
 
     def __unicode__(self):
         return unicode(self.indicator_0 + '>' + self.indicator_relationship_type + '>' + self.indicator_1)
@@ -87,6 +103,9 @@ class RegionRelationshipType(models.Model):
     inverse_display_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    # AUDIT #
+    history = HistoricalRecords()
+
 
     def __unicode__(self):
         return unicode(self.display_name)
@@ -101,6 +120,9 @@ class RegionRelationship(models.Model):
     region_relationship_type = models.ForeignKey(RegionRelationshipType)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
+    # AUDIT #
+    history = HistoricalRecords()
+
 
     def __unicode__(self):
         return unicode(self.region_0 + '>' + self.region_relationship_type + '>' + self.region_0)
@@ -108,10 +130,6 @@ class RegionRelationship(models.Model):
     class Meta:
         db_table = 'region_relationship'
 
-
-
-## TO DO ##
-# -> Audit Table
 
 
 ### DataPoint Extras ###
