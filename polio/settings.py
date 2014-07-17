@@ -54,8 +54,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'polio.urls'
-
 WSGI_APPLICATION = 'polio.wsgi.application'
+# FORCE_SCRIPT_NAME = '/uf04'
 
 
 # Database

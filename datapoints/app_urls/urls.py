@@ -25,7 +25,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^create/$', views.CreateView.as_view(
         model=DataPoint,
-        success_url="/datapoints",
+        success_url="/uf04/datapoints",
         template_name='datapoints/create.html',
         form_class=DataPointForm),
     name='create_datapoint'),
@@ -40,14 +40,14 @@ urlpatterns = [
     ## UPDATE ##
     url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
         model=DataPoint,
-        success_url="/datapoints",
+        success_url="/uf04/datapoints",
         template_name='datapoints/update.html'),
     name='update_datapoint'),
 
     ## DELETE ##
     url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
         model=DataPoint,
-        success_url="/datapoints",
+        success_url="/uf04/datapoints",
         template_name="datapoints/confirm_delete.html"),
     name='delete_datapoint'),
 
@@ -73,7 +73,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^reporting_periods/create/$', views.CreateView.as_view(
         model=ReportingPeriod,
-        success_url="/datapoints/reporting_periods",
+        success_url="/uf04/datapoints/reporting_periods",
         template_name='reporting_periods/create.html'),
     name='create_reporting_period'),   
 

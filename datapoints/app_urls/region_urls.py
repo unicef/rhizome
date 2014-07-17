@@ -24,21 +24,21 @@ urlpatterns = [
     ## CREATE ##
     url(r'^create/$', views.CreateView.as_view(
         model=Region,
-        success_url="/datapoints/regions/region_relationships/create",
+        success_url="/uf04/datapoints/regions/region_relationships/create",
         template_name='regions/create.html'),
     name='create_region'),
 
     ## UPDATE ##
     url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
         model=Region,
-        success_url="/datapoints/regions",
+        success_url="/uf04/datapoints/regions",
         template_name='regions/update.html'),
     name='update_region'),
 
     ## DELETE ##
     url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
         model=Region,
-        success_url="/datapoints/regions",
+        success_url="/uf04/datapoints/regions",
         template_name="regions/confirm_delete.html"),
     name='delete_region'),
 
@@ -63,7 +63,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^region_relationships/create/$', views.CreateView.as_view(
         model=RegionRelationship,
-        success_url="/datapoints/regions",
+        success_url="/uf04/datapoints/regions",
         template_name='region_relationships/create.html'),
     name='create_region_relationship'),
 
@@ -82,7 +82,7 @@ urlpatterns = [
     ## REL TYPE CREATE ##
     url(r'^region_relationship_types/create/$', views.CreateView.as_view(
         model=RegionRelationshipType,
-        success_url="/datapoints/regions",
+        success_url="/uf04/datapoints/regions",
         template_name='region_relationships/type_create.html'),
     name='create_region_relationship_type'),
 
