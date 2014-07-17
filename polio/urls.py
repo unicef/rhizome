@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.views import login, logout
 from django.contrib import admin
-from datapoints.views import UserCreateView
+from polio.views import UserCreateView
 
 admin.autodiscover()
 

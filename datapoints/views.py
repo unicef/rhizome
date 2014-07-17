@@ -2,13 +2,10 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from stronghold.decorators import public
 
 from datapoints.models import DataPoint,Region,Indicator
-from datapoints.forms import RegionForm,IndicatorForm,DataPointForm,UserForm
+from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
 
 
 class IndexView(generic.ListView):
@@ -69,15 +66,5 @@ class DataPointUpdateView(generic.UpdateView):
 ## the changed by field will be whoever touched that row last NOT
 ## who made the delete.   Not horrible, but still wrong
 
-
-class UserCreateView(generic.CreateView):
-    model = User
-    form_class = UserForm
-    template_name = 'registration/create.html'
-    success_url="/datapoints"
-
-    @method_decorator(public)
-    def dispatch(self, *args, **kwargs):
-        return super(UserCreateView, self).dispatch(*args, **kwargs)
 
 
