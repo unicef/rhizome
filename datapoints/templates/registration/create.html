@@ -1,0 +1,14 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+
+<form method="post" action="" class="form-horizontal">
+    {% csrf_token %}
+    {{ form.as_ul }}
+    <br>
+    <input type="submit" value="Create new user account" />
+</form>
+
+
+
+{% endblock %}

@@ -4,16 +4,14 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from stronghold.decorators import public
 
 from datapoints.models import DataPoint,Region,Indicator
-from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
+from datapoints.forms import RegionForm,IndicatorForm,DataPointForm,UserForm
 
 
 class IndexView(generic.ListView):
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):        
-        return super(IndexView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]  
@@ -44,7 +42,7 @@ class DataPointCreateView(CreateView):
         obj.save()        
         return HttpResponseRedirect(self.success_url)
 
-class UpdateView(generic.UpdateView):
+class DataPointUpdateView(generic.UpdateView):
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/update.html'
@@ -57,19 +55,29 @@ class UpdateView(generic.UpdateView):
         obj.save()        
         return HttpResponseRedirect(self.success_url)
 
-    ## NOTE ON AUDITING DELETES ##
-    ## Right now i am not tracking who makes the delete
-    ## the audit table will store the delete as the last person who 
-    ## changed that record.  This will be difficult to code up because
-    ## of the way that the audit trail works.
+## NOTE ON AUDITING DELETES ##
+## Right now i am not tracking who makes the delete
+## the audit table will store the delete as the last person who 
+## changed that record.  This will be difficult to code up because
+## of the way that the audit trail works.
 
-    ## the audit table creates one record for whatever is in the 
-    ## database at the time the request is complete (or made in the 
-    ## case of a delete)
-    
-    ## the reason this does not work is because, when the delete is made
-    ## the changed by field will be whoever touched that row last NOT
-    ## who made the delete.   Not horrible, but still wrong
+## the audit table creates one record for whatever is in the 
+## database at the time the request is complete (or made in the 
+## case of a delete)
 
+## the reason this does not work is because, when the delete is made
+## the changed by field will be whoever touched that row last NOT
+## who made the delete.   Not horrible, but still wrong
+
+
+class UserCreateView(generic.CreateView):
+    model = User
+    form_class = UserForm
+    template_name = 'registration/create.html'
+    success_url="/datapoints"
+
+    @method_decorator(public)
+    def dispatch(self, *args, **kwargs):
+        return super(UserCreateView, self).dispatch(*args, **kwargs)
 
 

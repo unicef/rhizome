@@ -33,7 +33,7 @@ urlpatterns = [
     name='metadata_index'),
 
     ## UPDATE ##
-    url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
+    url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view( # 
         model=DataPoint,
         success_url="/datapoints",
         template_name='datapoints/update.html'),
