@@ -24,21 +24,21 @@ urlpatterns = [
     ## CREATE ##
     url(r'^create/$', views.CreateView.as_view(
         model=Indicator,
-        success_url="/uf04/datapoints/indicators/indicator_relationships/create",
+        success_url="/datapoints/indicators/indicator_relationships/create",
         template_name='indicators/create.html'),
     name='create_indicator'),
 
     ## UPDATE ##
     url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
         model=Indicator,
-        success_url="/uf04/datapoints/indicators",
+        success_url="/datapoints/indicators",
         template_name='indicators/update.html'),
     name='update_indicator'),
 
     ## DELETE ##
     url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
         model=Indicator,
-        success_url="/uf04/datapoints/indicators",
+        success_url="/datapoints/indicators",
         template_name="indicators/confirm_delete.html"),
     name='delete_indicator'),
 
@@ -63,7 +63,7 @@ urlpatterns = [
     ## CREATE ##
     url(r'^indicator_relationships/create/$', views.CreateView.as_view(
         model=IndicatorRelationship,
-        success_url="/uf04/datapoints/indicators",
+        success_url="/datapoints/indicators",
         template_name='indicator_relationships/create.html'),
     name='create_indicator_relationship'),
 
@@ -77,7 +77,7 @@ urlpatterns = [
     ## REL TYPE CREATE ##
     url(r'^indicator_relationship_types/create/$', views.CreateView.as_view(
         model=IndicatorRelationshipType,
-        success_url="/uf04/datapoints/indicators",
+        success_url="/datapoints/indicators",
         template_name='indicator_relationships/type_create.html'),
     name='create_indicator_relationship_type'),
 
