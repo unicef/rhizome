@@ -25,3 +25,15 @@ class UpdateView(generic.UpdateView):
 class DeleteView(generic.DeleteView):
     pass # template name and model passed via the URL.
 
+
+class DataPointCreateView(CreateView):
+    model=DataPoint
+    success_url="/datapoints"
+    template_name='datapoints/create.html'
+    form_class=DataPointForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.changed_by = self.request.user
+        obj.save()        
+        return HttpResponseRedirect(self.success_url)

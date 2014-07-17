@@ -23,12 +23,7 @@ urlpatterns = [
     name='datapoint_detail'),
 
     ## CREATE ##
-    url(r'^create/$', views.CreateView.as_view(
-        model=DataPoint,
-        success_url="/datapoints",
-        template_name='datapoints/create.html',
-        form_class=DataPointForm),
-    name='create_datapoint'),
+    url(r'^create/$', views.DataPointCreateView.as_view(),name='create_datapoint'),
 
     ## META DATA ##
     url(r'^metadata/$', views.IndexView.as_view(
