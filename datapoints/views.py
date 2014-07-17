@@ -2,13 +2,18 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from datapoints.models import DataPoint,Region,Indicator
 from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
 
 
 class IndexView(generic.ListView):
-    pass # template name and model passed via the URL.
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):        
+        return super(IndexView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]  

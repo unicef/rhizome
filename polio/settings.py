@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+LOGIN_REDIRECT_URL = '/datapoints'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
+       
 )
 
 MIDDLEWARE_CLASSES = (
