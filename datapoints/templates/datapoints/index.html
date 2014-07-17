@@ -5,13 +5,13 @@
     <table class="table table-hover table-bordered">
     <thead>
         <tr>
-            <th>id</th>
-            <th>indicator</th>
-            <th>region</th>
-            <th>reporting period</th>
-            <th>value</th>
-            <th>note</th>
-            <th>edit</th>
+            <th>ID</th>
+            <th>Indicator</th>
+            <th>Region</th>
+            <th>Reporting Period</th>
+            <th>Value</th>
+            <th>Note</th>
+            <th>Edit</th>
         </tr>
     </thead>
 
@@ -23,7 +23,7 @@
             <th>{{ datapoint.reporting_period }}</th>
             <th>{{ datapoint.value }}</th>
             <th>{{ datapoint.note }}</th>
-            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> view </a></th>
+            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
         </tr>
         {% endfor %}
 

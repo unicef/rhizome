@@ -6,8 +6,6 @@ class Indicator(models.Model):
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
-    #
-    history = HistoricalRecords()
 
     def __unicode__(self):
         return unicode(self.name)
@@ -24,8 +22,6 @@ class Region(models.Model):
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
-    #
-    history = HistoricalRecords()
 
 
     def __unicode__(self):
@@ -40,8 +36,6 @@ class ReportingPeriod(models.Model):
     end_date = models.DateField()
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
-    #
-    history = HistoricalRecords()
 
 
     def __unicode__(self):
@@ -69,8 +63,6 @@ class IndicatorRelationshipType(models.Model):
     inverse_display_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
-    #
-    history = HistoricalRecords()
 
     def __unicode__(self):
         return unicode(self.display_name)
@@ -85,8 +77,6 @@ class IndicatorRelationship(models.Model):
     indicator_relationship_type = models.ForeignKey(IndicatorRelationshipType)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
-    # AUDIT #
-    history = HistoricalRecords()
 
 
     def __unicode__(self):
@@ -101,8 +91,6 @@ class RegionRelationshipType(models.Model):
     inverse_display_name = models.CharField(max_length=55)
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
-    # AUDIT #
-    history = HistoricalRecords()
 
 
     def __unicode__(self):
@@ -118,9 +106,6 @@ class RegionRelationship(models.Model):
     region_relationship_type = models.ForeignKey(RegionRelationshipType)
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
-    # AUDIT #
-    history = HistoricalRecords()
-
 
     def __unicode__(self):
         return unicode(self.region_0 + '>' + self.region_relationship_type + '>' + self.region_0)
@@ -128,17 +113,3 @@ class RegionRelationship(models.Model):
     class Meta:
         db_table = 'region_relationship'
 
-
-### DataPoint Extras ###
-    # status_id
-    # geography # change to geo_id
-    # source_id
-    # time_period 
-    # updated_by_user_id
-    # group_id 
-
-
-### Indicator Extras ###    
-    # time_interval 
-    # evaluation_levels
-    # aggregation_details
