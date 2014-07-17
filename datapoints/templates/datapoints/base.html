@@ -23,7 +23,12 @@
                 </ul> 
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="/admin">Admin</a></li>
-                  <li><a href="#">Log In</a></li>
+                  {% if user.is_authenticated %}
+                  <li><a href="{% url 'logout' %}?next=/">Log Out</a></li>
+                  {% else %}
+                  <li><a href="{% url 'login' %}">Log In</a></li>
+                  {% endif %}
+
                 </ul>
               </div><!--/.nav-collapse -->
             </div><!--/.container-fluid -->
