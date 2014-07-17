@@ -15,5 +15,8 @@
             <br>
     <button type="submit" class="btn btn-primary"> Login </button>
     <input type="hidden" name="next" value="{{ next }}" />
+    <br><br>
+    <a href="{% url 'create_user' %}"<button type="submit" class="btn btn-success"> Create Account! </button></a>
+
     </form>
 {% endblock %}
