@@ -9,6 +9,13 @@ urlpatterns = [
         ## DATAPOINTS ##
         ################
 
+     ## DASHBOARD ##
+    url(r'^dashboard/$', views.DashBoardView.as_view(
+        model=DataPoint,
+        template_name = 'datapoints/index.html',
+        context_object_name = 'top_datapoints'),
+    name='dashboard'),
+
     ## INDEX ##
     url(r'^$', views.IndexView.as_view(
         model=DataPoint,

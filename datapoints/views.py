@@ -52,6 +52,12 @@ class DataPointUpdateView(generic.UpdateView):
         obj.save()        
         return HttpResponseRedirect(self.success_url)
 
+
+class DashBoardView(generic.ListView):
+ 
+    def get_queryset(self):
+        return self.model.objects.order_by('-created_at')[:1]  
+
 ## NOTE ON AUDITING DELETES ##
 ## Right now i am not tracking who makes the delete
 ## the audit table will store the delete as the last person who 
