@@ -1,0 +1,28 @@
+
+
+## GROUPS ##
+
+What groups do we need, and what should each of their permissions be:
+
+# Regional Groups #
+    - Nigeria Office
+        -> Has access to DataPoints where region is Nigeria ( or NG is parent)
+    - Pakistan Office
+        -> Has access to Datapoitns where region is Pakistan
+    - Afganistan Office
+        -> Has access to Datapoitns where region is Afganistan
+
+    ** Perhaps i need to think about a "Parent Region ID" here to make permissions simpler **
+
+# Read / Write Groups #
+    - Insert Data Point Group
+        -> this group will be allowed to create new datapoints
+    - Update Data Point Group
+        -> this group will be allowed to update datapoints
+    - Delete Data Point Group
+        -> this group will be allowed to delete datapoints
+
+
+- Superuser
+    -> Has the ability to view, insert, update, and delete all models.
+    -> For now, this will be the only group that can create objects outside of "datapoints"
