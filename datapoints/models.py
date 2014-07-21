@@ -57,6 +57,7 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
+        unique_together = ('indicator','region','reporting_period')
 
 class IndicatorRelationshipType(models.Model):
     display_name = models.CharField(max_length=55)
@@ -112,7 +113,7 @@ class RegionRelationship(models.Model):
 
     class Meta:
         db_table = 'region_relationship'
-   
+
 
 class IndicatorPct(models.Model):
     indicator_part = models.ForeignKey(Indicator,related_name = 'ind_part')
@@ -125,8 +126,3 @@ class IndicatorPct(models.Model):
 
     class Meta:
         db_table = 'indicator_pct'
-
-
-
-
-
