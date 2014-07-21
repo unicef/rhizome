@@ -21,8 +21,9 @@ printf "           MIGRATING DATABASE           "
 printf "=====================================\n\n"
 
 # migrate db
-python manage.py syncdb
-python manage.py migrate
+#python manage.py syncdb
+#python manage.py migrate
+# python manage.py migrate datapoints --settings=polio.prod_settings
 
 printf "\n\n====================================="
 printf "           STARTING SERVER           "

@@ -67,18 +67,44 @@ urlpatterns = [
         template_name='indicator_relationships/create.html'),
     name='create_indicator_relationship'),
 
-    ## REL TYPE INDEX ##
+    ## INDICATOR TYPE INDEX ##
     url(r'^indicator_relationship_types$', views.IndexView.as_view(
         model=IndicatorRelationshipType,
         template_name = 'indicator_relationships/type_index.html',
         context_object_name = 'top_indicator_relationship_types'),
     name='indicator_relationship_type_index'),
 
-    ## REL TYPE CREATE ##
+    ## INDICATOR TYPE CREATE ##
     url(r'^indicator_relationship_types/create/$', views.CreateView.as_view(
         model=IndicatorRelationshipType,
         success_url="/datapoints/indicators",
         template_name='indicator_relationships/type_create.html'),
     name='create_indicator_relationship_type'),
+
+        ###################
+        ## INDICATOR PCT ##
+        ###################
+
+
+    ## INDEX ##
+    url(r'^indicator_pct$', views.IndexView.as_view(
+        model=IndicatorPct,
+        template_name = 'indicator_pct/index.html',
+        context_object_name = 'top_indicator_pct'),
+    name='indicator_pct_index'),
+
+    ## CREATE ##
+    url(r'^indicator_pct/create/$', views.CreateView.as_view(
+        model=IndicatorPct,
+        success_url="/datapoints/indicators/indicator_pct",
+        template_name='indicator_pct/create.html'),
+    name='create_indicator_pct'),
+
+    # ## DETAIL ##
+    ## UPDATE ##
+    ## DELETE ##
+
+
+
 
 ]
