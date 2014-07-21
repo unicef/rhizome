@@ -78,10 +78,6 @@ urlpatterns = [
         template_name='reporting_periods/create.html'),
     name='create_reporting_period'),
 
-    ### FILE UPLOAD ###
-
-    url(r'^list/$', views.list, name='list'),
-
 
 
 ]

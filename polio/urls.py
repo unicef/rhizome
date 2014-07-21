@@ -23,10 +23,7 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/$', logout, name='logout'),
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
 
-    # (r'^$', RedirectView.as_view(url='/datapoints/list/')), # Just for ease of use.
-    # ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-
-    (r'^upload/', include('datapoints.app_urls.urls')),
+    (r'^upload/', include('datapoints.app_urls.upload_urls')),
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 
 )

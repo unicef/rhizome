@@ -102,7 +102,7 @@ class DashBoardView(generic.ListView):
 
         return rows
 
-def list(request):
+def file_upload(request):
     # Handle file upload
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -111,7 +111,7 @@ def list(request):
             newdoc.save()
 
             # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('datapoints.views.list'))
+            return HttpResponseRedirect(reverse('datapoints.views.file_upload'))
     else:
         form = DocumentForm() # A empty, unbound form
 
@@ -120,7 +120,7 @@ def list(request):
 
     # Render list page with the documents and the form
     return render_to_response(
-        'datapoints/list.html',
+        'datapoints/file_upload.html',
         {'documents': documents, 'form': form},
         context_instance=RequestContext(request)
     )
