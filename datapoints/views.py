@@ -111,7 +111,9 @@ def file_upload(request):
             newdoc.save()
 
             # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('datapoints.views.file_upload'))
+            # return HttpResponseRedirect(reverse('datapoints.views.file_upload'))
+            ##### ^ this isnt working but it doesnt matter. ^ ####
+
     else:
         form = DocumentForm() # A empty, unbound form
 

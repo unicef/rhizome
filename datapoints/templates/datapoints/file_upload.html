@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Minimal Django File Upload Example</title>
-    </head>
+{% extends "datapoints/base.html" %}
+  {% block content %}
     <body>
     <!-- List of uploaded documents -->
     {% if documents %}
@@ -17,7 +13,7 @@
     {% endif %}
 
         <!-- Upload form. Note enctype attribute! -->
-        <form action="{% url 'datapoints:file_upload' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'upload:file_upload' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
             <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
@@ -25,7 +21,10 @@
                 {{ form.docfile.errors }}
                 {{ form.docfile }}
             </p>
-            <p><input type="submit" value="Upload" /></p>
+            <!-- <p><input type="submit" value="Upload" /></p> -->
+            <button type="submit" class="btn btn-primary"> Upload! </button></a>
+
         </form>
     </body>
-</html>
+
+{% endblock %}
