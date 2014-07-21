@@ -8,10 +8,6 @@
             <th>region</th>
             <th>indicator</th>
             <th>value</th>
-           <!--  <th>Reporting Period</th>
-            <th>Value</th>
-            <th>Note</th>
-            <th>Edit</th> -->
         </tr>
     </thead>
 
@@ -19,11 +15,8 @@
         <tr>
 
             <th>{{ item.2 }}</th>
-            <th>{{ item.1 }}</th>
             <th>{{ item.0 }}</th>
-            <!-- <th>{{ datapoint.reporting_period }}</th> -->
-            <!-- <th>{{ datapoint.value }}</th> -->
-            <!-- <th>{{ datapoint.note }}</th> -->
+            <th>{{ item.1 }}</th>
         </tr>
         {% endfor %}
 

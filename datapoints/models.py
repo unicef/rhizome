@@ -115,8 +115,8 @@ class RegionRelationship(models.Model):
    
 
 class IndicatorPct(models.Model):
-    indicator_part_id = models.ForeignKey(Indicator,related_name = 'ind_part')
-    indicator_whole_id  = models.ForeignKey(Indicator,related_name = 'ind_whole')
+    indicator_part = models.ForeignKey(Indicator,related_name = 'ind_part')
+    indicator_whole  = models.ForeignKey(Indicator,related_name = 'ind_whole')
     indicator_pct_display_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
