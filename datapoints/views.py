@@ -10,6 +10,7 @@ from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
 
 
 class IndexView(generic.ListView):
+    paginate_by = 5
 
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]  
