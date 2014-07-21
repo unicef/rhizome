@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 
 from datapoints.models import DataPoint,Region,Indicator
 from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
@@ -56,7 +57,40 @@ class DataPointUpdateView(generic.UpdateView):
 class DashBoardView(generic.ListView):
  
     def get_queryset(self):
-        return self.model.objects.order_by('-created_at')[:1]  
+        cursor = connection.cursor()
+
+        raw_sql = '''select 
+                d.value / d2.value as pct
+                ,i.name
+                ,reg.full_name
+            from datapoint d
+            inner join region reg
+            on d.region_id = reg.id
+            inner join indicator i
+            on d.indicator_id = i.id
+            inner join indicator_relationship r 
+            on 1=1
+            and i.id = r.indicator_0_id
+            inner join indicator_relationship_type rt
+                on r.indicator_relationship_type_id = rt.id
+                and rt.display_name = 'Part to whole'
+            inner join datapoint d2
+                on 1=1
+                and d2.indicator_id = r.indicator_1_id;
+            -- and region_id = region_id
+            -- and reporting period = reporting period'''
+        
+        cursor.execute(raw_sql)
+
+        rows = cursor.fetchall()
+
+        print rows #+ '\n' 
+        print rows #+ '\n' 
+        print rows #+ '\n' 
+        print rows #+ '\n' 
+
+        return DataPoint.objects.order_by('-created_at')[:1]
+
 
 ## NOTE ON AUDITING DELETES ##
 ## Right now i am not tracking who makes the delete
