@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Document'
-        db.create_table(u'datapoints_document', (
+        db.create_table(u'document', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('docfile', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
         ))
