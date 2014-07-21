@@ -65,12 +65,11 @@ class DashBoardView(generic.ListView):
                 ,reg.full_name
             from datapoint d
             inner join region reg
-            on d.region_id = reg.id
+                on d.region_id = reg.id
             inner join indicator i
-            on d.indicator_id = i.id
+                on d.indicator_id = i.id
             inner join indicator_relationship r 
-            on 1=1
-            and i.id = r.indicator_0_id
+                on i.id = r.indicator_0_id
             inner join indicator_relationship_type rt
                 on r.indicator_relationship_type_id = rt.id
                 and rt.display_name = 'Part to whole'
@@ -84,12 +83,11 @@ class DashBoardView(generic.ListView):
 
         rows = cursor.fetchall()
 
-        print rows #+ '\n' 
-        print rows #+ '\n' 
-        print rows #+ '\n' 
-        print rows #+ '\n' 
+        for r in rows:
+            print r[0]
+        return rows
 
-        return DataPoint.objects.order_by('-created_at')[:1]
+        # return DataPoint.objects.order_by('-created_at')[:1]
 
 
 ## NOTE ON AUDITING DELETES ##

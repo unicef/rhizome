@@ -1,0 +1,42 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <title>Polio Data Management App</title>
+</head>
+
+<body>
+    <div class="container">
+          <!-- Static navbar -->
+          <div class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <a class="navbar-brand" href="#">POLIO </a>
+              </div>
+              <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                  <li><a href="{% url 'datapoints:dashboard' %}">Dashboard</a></li>
+                  <li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
+                  <li><a href="{% url 'indicators:indicator_index' %}">Indicators</a></li>
+                  <li><a href="{% url 'regions:region_index' %}">Regions</a></li>
+                  <li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
+                </ul> 
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a href="/admin">Admin</a></li>
+                  {% if user.is_authenticated %}
+                  <li><a href="{% url 'logout' %}?next=/">Log Out</a></li>
+                  {% else %}
+                  <li><a href="{% url 'login' %}">Log In</a></li>
+                  {% endif %}
+
+                </ul>
+              </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+          </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

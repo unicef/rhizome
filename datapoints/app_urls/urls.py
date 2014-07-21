@@ -18,8 +18,8 @@ urlpatterns = [
 
      ## DASHBOARD ##
     url(r'^dashboard/$', views.DashBoardView.as_view(
-        template_name = 'datapoints/index.html',
-        context_object_name = 'top_datapoints'),
+        template_name = 'dashboard/index.html',
+        context_object_name = 'user_dashboard'),
     name='dashboard'),
 
     ## DETAIL ##
