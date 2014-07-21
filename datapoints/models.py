@@ -126,3 +126,6 @@ class IndicatorPct(models.Model):
 
     class Meta:
         db_table = 'indicator_pct'
+
+class Document(models.Model):
+    docfile = models.FileField(upload_to='documents/%Y/%m/%d')

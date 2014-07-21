@@ -22,7 +22,8 @@ INSTALLED_APPS = (
     'coverage',
     'simple_history',
     'stronghold',
-       
+    'csvimport',
+
 )
 
 MIDDLEWARE_CLASSES = (

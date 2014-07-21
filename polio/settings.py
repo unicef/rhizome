@@ -27,6 +27,9 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_ROOT = '/Users/johndingee_seed/code/polio/media/'
+MEDIA_URL = 'http://127.0.0.1:8000/media/'
+
 
 # Application definition
 
@@ -42,7 +45,8 @@ INSTALLED_APPS = (
     'coverage',
     'simple_history',
     'stronghold',
-       
+    'csvimport',
+
 )
 
 MIDDLEWARE_CLASSES = (

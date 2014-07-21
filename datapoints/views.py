@@ -1,19 +1,20 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.db import connection
+from django.template import RequestContext
 
-from datapoints.models import DataPoint,Region,Indicator
-from datapoints.forms import RegionForm,IndicatorForm,DataPointForm
+from datapoints.models import DataPoint,Region,Indicator,Document
+from datapoints.forms import RegionForm,IndicatorForm,DataPointForm,DocumentForm
 
 
 class IndexView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return self.model.objects.order_by('-created_at')[:10]  
+        return self.model.objects.order_by('-created_at')[:10]
 
 class DetailView(generic.DetailView):
     pass # template name and model passed via the URL.
@@ -38,7 +39,7 @@ class DataPointCreateView(CreateView):
     # this inserts into the changed_by field with  the user who made the insert
         obj = form.save(commit=False)
         obj.changed_by = self.request.user
-        obj.save()        
+        obj.save()
         return HttpResponseRedirect(self.success_url)
 
 class DataPointUpdateView(generic.UpdateView):
@@ -51,48 +52,48 @@ class DataPointUpdateView(generic.UpdateView):
     # this sets the changed_by field to the user who made the update
         obj = form.save(commit=False)
         obj.changed_by = self.request.user
-        obj.save()        
+        obj.save()
         return HttpResponseRedirect(self.success_url)
 
 
 class DashBoardView(generic.ListView):
- 
+
     def get_queryset(self):
         cursor = connection.cursor()
 
         raw_sql = '''
-        SELECT 
+        SELECT
              i.indicator_pct_display_name
             , d.value / d2.value as pct
             , r.full_name
-        FROM datapoint d 
+        FROM datapoint d
         INNER JOIN indicator_pct i
             ON d.indicator_id = i.indicator_part_id
-        INNER JOIN datapoint d2 
+        INNER JOIN datapoint d2
             ON i.indicator_whole_id = d2.indicator_id
             AND d.reporting_period_id = d2.reporting_period_id
             AND d.region_id = d2.region_id
         INNER JOIN region r
             ON d.region_id = r.id
 
-        UNION ALL 
+        UNION ALL
 
-        SELECT 
+        SELECT
             i.name
             , SUM(d.value) as value
             , r.full_name
         FROM region_relationship rr
         INNER JOIN datapoint d
             ON rr.region_1_id = d.region_id
-        INNER JOIN indicator i 
+        INNER JOIN indicator i
             ON d.indicator_id = i.id
         INNER JOIN region r
             ON rr.region_0_id = r.id
         GROUP BY r.full_name, i.name,i.id ,d.reporting_period_id
 
         '''
-        
-        ## this should show in red if the COUNT is less than the total 
+
+        ## this should show in red if the COUNT is less than the total
         ## number of regions that exist for that relationshiop
 
 
@@ -101,20 +102,25 @@ class DashBoardView(generic.ListView):
 
         return rows
 
+def list(request):
+    # Handle file upload
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            newdoc = Document(docfile = request.FILES['docfile'])
+            newdoc.save()
 
-## NOTE ON AUDITING DELETES ##
-## Right now i am not tracking who makes the delete
-## the audit table will store the delete as the last person who 
-## changed that record.  This will be difficult to code up because
-## of the way that the audit trail works.
+            # Redirect to the document list after POST
+            return HttpResponseRedirect(reverse('datapoints.views.list'))
+    else:
+        form = DocumentForm() # A empty, unbound form
 
-## the audit table creates one record for whatever is in the 
-## database at the time the request is complete (or made in the 
-## case of a delete)
+    # Load documents for the list page
+    documents = Document.objects.all()
 
-## the reason this does not work is because, when the delete is made
-## the changed by field will be whoever touched that row last NOT
-## who made the delete.   Not horrible, but still wrong
-
-
-
+    # Render list page with the documents and the form
+    return render_to_response(
+        'datapoints/list.html',
+        {'documents': documents, 'form': form},
+        context_instance=RequestContext(request)
+    )

@@ -2,10 +2,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth.views import login, logout
 from django.contrib import admin
 from polio.views import UserCreateView
+from django.conf import settings
+from django.views.generic import RedirectView
+from django.conf.urls.static import static
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
+
     # Examples:
     url(r'^$', 'polio.views.home', name='home'),
 
@@ -18,4 +22,11 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
+
+    # (r'^$', RedirectView.as_view(url='/datapoints/list/')), # Just for ease of use.
+    # ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+
+    (r'^upload/', include('datapoints.app_urls.urls')),
+    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+
 )

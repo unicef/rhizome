@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm
+from django.forms import ModelForm, forms
 from datapoints.models import *
 
 class RegionForm(ModelForm):
@@ -20,3 +20,9 @@ class DataPointForm(ModelForm):
 class ReportingPeriodForm(ModelForm):
     class Meta:
         model = ReportingPeriod
+
+class DocumentForm(forms.Form):
+    docfile = forms.FileField(
+        label='Select a file',
+        help_text='max. 2 megabytes'
+    )

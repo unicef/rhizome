@@ -1,6 +1,6 @@
-from django.conf.urls import url
+from django.conf.urls import patterns,url
 from datapoints import views
-from datapoints.models import * 
+from datapoints.models import *
 from datapoints.forms import DataPointForm
 
 urlpatterns = [
@@ -39,14 +39,14 @@ urlpatterns = [
     name='metadata_index'),
 
     ## UPDATE ##
-    url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view( # 
+    url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view( #
         model=DataPoint,
         success_url="/datapoints",
         template_name='datapoints/update.html'),
     name='update_datapoint'),
 
     ## DELETE ##
-    url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
+    url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( #
         model=DataPoint,
         success_url="/datapoints",
         template_name="datapoints/confirm_delete.html"),
@@ -76,7 +76,12 @@ urlpatterns = [
         model=ReportingPeriod,
         success_url="/datapoints/reporting_periods",
         template_name='reporting_periods/create.html'),
-    name='create_reporting_period'),   
+    name='create_reporting_period'),
+
+    ### FILE UPLOAD ###
+
+    url(r'^list/$', views.list, name='list'),
+
 
 
 ]
