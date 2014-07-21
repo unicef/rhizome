@@ -113,3 +113,22 @@ class RegionRelationship(models.Model):
     class Meta:
         db_table = 'region_relationship'
 
+
+class IndicatorPct(models.Model):
+    indicator_part_id = models.ForeignKey(Indicator,related_name = 'ind_part')
+    indicator_whole_id  = models.ForeignKey(Indicator,related_name = 'ind_whole')
+    indicator_pct_display_name = models.CharField(max_length=255)
+
+    def __unicode__(self):
+            return unicode(indicator_pct_display_name)
+
+    class Meta:
+        db_table = 'region_relationship'
+
+
+
+
+
+
+
+
