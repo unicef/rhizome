@@ -73,17 +73,32 @@ class DashBoardView(generic.ListView):
             AND d.region_id = d2.region_id
         INNER JOIN region r
             ON d.region_id = r.id
+
+        UNION ALL 
+
+        SELECT 
+            i.name
+            , SUM(d.value) as value
+            , r.full_name
+        FROM region_relationship rr
+        INNER JOIN datapoint d
+            ON rr.region_1_id = d.region_id
+        INNER JOIN indicator i 
+            ON d.indicator_id = i.id
+        INNER JOIN region r
+            ON rr.region_0_id = r.id
+        GROUP BY r.full_name, i.name,i.id ,d.reporting_period_id
+
         '''
         
-        cursor.execute(raw_sql)
+        ## this should show in red if the COUNT is less than the total 
+        ## number of regions that exist for that relationshiop
 
+
+        cursor.execute(raw_sql)
         rows = cursor.fetchall()
 
-        for r in rows:
-            print r[0]
         return rows
-
-        # return DataPoint.objects.order_by('-created_at')[:1]
 
 
 ## NOTE ON AUDITING DELETES ##
