@@ -1,7 +1,0 @@
-filter indicator list to reported only
-create 'region group
-create region is aggregated flag
-status in datapoints table
-Expected Data Model -> sets up to create NULL values in dp table
-think about encoding aggregation
-put in the datapoints dashboard, aggregation dynamically

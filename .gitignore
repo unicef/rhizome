@@ -9,3 +9,5 @@ include
 /venv
 .coverage
 /htmlcov
+/media
+
