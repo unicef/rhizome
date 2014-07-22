@@ -72,12 +72,11 @@ def search(request):
       print kwargs
       results = DataPoint.objects.filter(**kwargs)
 
-      for r in results:
-          print r.value
-          
-      return render_to_response('datapoints/search.html',
-        {'form':DataPointSearchForm},
+      return render_to_response('datapoints/index.html',
+        {'top_datapoints':results},
         context_instance=RequestContext(request))
+
+
     else:
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
