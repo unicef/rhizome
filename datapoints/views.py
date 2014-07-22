@@ -6,11 +6,12 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.db import connection
 from django.template import RequestContext
-from datapoints.sql_queries import show_dashboard
 
+from datapoints.sql_queries import show_dashboard
 from datapoints.models import DataPoint,Region,Indicator,Document
 from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentForm,DataPointSearchForm
 
+from datapoints.mixins import PermissionRequiredMixin
 
 class IndexView(generic.ListView):
     paginate_by = 10
@@ -31,15 +32,12 @@ class UpdateView(generic.UpdateView):
 class DeleteView(generic.DeleteView):
     pass # template name and model passed via the URL.
 
-class DataPointCreateView(CreateView):
+class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/create.html'
     form_class = DataPointForm
-
-    @method_decorator(permission_required('datapoints.add_datapoint'))
-    def dispatch(self, *args, **kwargs):
-            return super(DataPointCreateView, self).dispatch(*args, **kwargs)
+    permission_required = 'datapoints.add_datapoint'
 
     def form_valid(self, form):
     # this inserts into the changed_by field with  the user who made the insert
