@@ -22,11 +22,13 @@
                   <li><a href="{% url 'regions:region_index' %}">Regions</a></li>
                   <li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
                   <li><a href="{% url 'upload:file_upload' %}">CSV Upload</a></li>
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="/admin">Admin</a></li>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'logout' %}?next=/">Log Out</a></li>
+                  <li>  </li>
+                  <li><a href="{% url 'logout' %}?next=/">Log Out As {{ user.username }} </a></li>
                   {% else %}
                   <li><a href="{% url 'login' %}">Log In</a></li>
                   {% endif %}

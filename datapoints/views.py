@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+from django.utils.decorators import method_decorator
 from django.db import connection
 from django.template import RequestContext
 
@@ -29,12 +30,15 @@ class UpdateView(generic.UpdateView):
 class DeleteView(generic.DeleteView):
     pass # template name and model passed via the URL.
 
-
 class DataPointCreateView(CreateView):
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/create.html'
     form_class = DataPointForm
+
+    @method_decorator(permission_required('datapoints.add_datapoint'))
+    def dispatch(self, *args, **kwargs):
+            return super(DataPointCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
     # this inserts into the changed_by field with  the user who made the insert
@@ -42,6 +46,7 @@ class DataPointCreateView(CreateView):
         obj.changed_by = self.request.user
         obj.save()
         return HttpResponseRedirect(self.success_url)
+
 
 class DataPointUpdateView(generic.UpdateView):
     model=DataPoint
