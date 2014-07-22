@@ -1,7 +1,6 @@
 from django.conf.urls import patterns,url
 from datapoints import views
 from datapoints.models import *
-from datapoints.forms import DataPointForm
 
 urlpatterns = [
 
@@ -51,6 +50,11 @@ urlpatterns = [
 
     ## SEARCH ##
     url(r'^search/$', views.search,name='search_datapoint'),
+
+    ## PERMISSIONS NEEDED ##
+    url(r'^permissions_needed/$', views.TemplateView.as_view(
+        template_name='datapoints/permissions_needed.html'),
+        name='permissions_needed'),
 
 
         #######################

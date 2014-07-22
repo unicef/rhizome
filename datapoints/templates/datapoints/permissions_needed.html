@@ -1,0 +1,20 @@
+
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+
+<h2>Sorry.. but you don't have the permissions to perform that task.</h2>
+
+<br>
+
+please contact your administrator or...
+
+<br><br>
+
+send an email John Dingee at dingee@seedscientific.com
+
+<br><br>
+
+<a href="{% url 'datapoints:datapoint_index' %}"<button type="submit" class="btn btn-primary"> Home </button></a>
+
+{% endblock %}

@@ -21,18 +21,22 @@ class IndexView(generic.ListView):
 
 
 class DetailView(generic.DetailView):
-    pass # template name and model passed via the URL.
+    pass
 
 class CreateView(generic.CreateView):
-    pass # template name and model passed via the URL.
+    pass
 
 class UpdateView(generic.UpdateView):
-    pass # template name and model passed via the URL.
+    pass
 
-class DeleteView(PermissionRequiredMixin,generic.DeleteView):
-    pass # template name and model passed via the URL.
+class DeleteView(generic.DeleteView):
+    pass
+
+class TemplateView(generic.TemplateView):
+    pass
 
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
+
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/create.html'
@@ -61,6 +65,7 @@ class DataPointUpdateView(generic.UpdateView):
         return HttpResponseRedirect(self.success_url)
 
 class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
+
     model=DataPoint
     success_url="/datapoints"
     template_name="datapoints/confirm_delete.html"
@@ -82,6 +87,7 @@ class DashBoardView(generic.ListView):
 #### FUNCTION BASED VIEWS ####
 
 def search(request):
+
     if request.method =='POST':
       ## THIS IS UGLY ##
       kwargs = {}

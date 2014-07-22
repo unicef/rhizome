@@ -7,7 +7,7 @@ class UserCheckMixin(object):
         return True
 
     def user_check_failed(self, request, *args, **kwargs):
-        return HttpResponseRedirect(self.user_check_failure_path)
+        return HttpResponseRedirect(self.user_check_failure_path,'sorry you dont have permissions bro!')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.check_user(request.user):
@@ -15,8 +15,7 @@ class UserCheckMixin(object):
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
 class PermissionRequiredMixin(UserCheckMixin):
-    user_check_failure_path = '/accounts/login'
-    # change this ^^^ to 'need_permissions.html'
+    user_check_failure_path = '/datapoints/permissions_needed'
     permission_required = None
 
     def check_user(self, user):
