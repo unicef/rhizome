@@ -17,6 +17,9 @@ class Office(models.Model):
     name = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return unicode(self.name)
+
     class Meta:
         db_table = 'office'
 
