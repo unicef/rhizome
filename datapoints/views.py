@@ -29,7 +29,7 @@ class CreateView(generic.CreateView):
 class UpdateView(generic.UpdateView):
     pass # template name and model passed via the URL.
 
-class DeleteView(generic.DeleteView):
+class DeleteView(PermissionRequiredMixin,generic.DeleteView):
     pass # template name and model passed via the URL.
 
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
@@ -46,7 +46,6 @@ class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
         obj.save()
         return HttpResponseRedirect(self.success_url)
 
-
 class DataPointUpdateView(generic.UpdateView):
 
     model=DataPoint
@@ -60,6 +59,13 @@ class DataPointUpdateView(generic.UpdateView):
         obj.changed_by = self.request.user
         obj.save()
         return HttpResponseRedirect(self.success_url)
+
+class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
+    model=DataPoint
+    success_url="/datapoints"
+    template_name="datapoints/confirm_delete.html"
+    permission_required = 'datapoints.add_datapoint'
+
 
 
 class DashBoardView(generic.ListView):

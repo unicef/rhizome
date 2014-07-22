@@ -39,18 +39,15 @@ urlpatterns = [
     name='metadata_index'),
 
     ## UPDATE ##
-    url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view( #
+    url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view(
         model=DataPoint,
         success_url="/datapoints",
         template_name='datapoints/update.html'),
     name='update_datapoint'),
 
     ## DELETE ##
-    url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( #
-        model=DataPoint,
-        success_url="/datapoints",
-        template_name="datapoints/confirm_delete.html"),
-    name='delete_datapoint'),
+    url(r'^delete/(?P<pk>[0-9]+)/$', views.DataPointDeleteView.as_view(),
+      name='delete_datapoint'),
 
     ## SEARCH ##
     url(r'^search/$', views.search,name='search_datapoint'),
