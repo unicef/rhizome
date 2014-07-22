@@ -50,6 +50,7 @@ class DataPointCreateView(CreateView):
 
 
 class DataPointUpdateView(generic.UpdateView):
+
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/update.html'
@@ -61,6 +62,20 @@ class DataPointUpdateView(generic.UpdateView):
         obj.changed_by = self.request.user
         obj.save()
         return HttpResponseRedirect(self.success_url)
+
+
+class DashBoardView(generic.ListView):
+
+    def get_queryset(self):
+        cursor = connection.cursor()
+        raw_sql = show_dashboard
+        cursor.execute(raw_sql)
+        rows = cursor.fetchall()
+
+        return rows
+
+
+#### FUNCTION BASED VIEWS ####
 
 def search(request):
     if request.method =='POST':
@@ -85,17 +100,6 @@ def search(request):
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
         context_instance=RequestContext(request))
-
-
-class DashBoardView(generic.ListView):
-
-    def get_queryset(self):
-        cursor = connection.cursor()
-        raw_sql = show_dashboard
-        cursor.execute(raw_sql)
-        rows = cursor.fetchall()
-
-        return rows
 
 
 def file_upload(request):
