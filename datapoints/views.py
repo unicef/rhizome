@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.db import connection
 from django.template import RequestContext
+from datapoints.sql_queries import show_dashboard
 
 from datapoints.models import DataPoint,Region,Indicator,Document
 from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentForm,DataPointSearchForm
@@ -90,43 +91,7 @@ class DashBoardView(generic.ListView):
 
     def get_queryset(self):
         cursor = connection.cursor()
-
-        raw_sql = '''
-        SELECT
-             i.indicator_pct_display_name
-            , d.value / d2.value as pct
-            , r.full_name
-        FROM datapoint d
-        INNER JOIN indicator_pct i
-            ON d.indicator_id = i.indicator_part_id
-        INNER JOIN datapoint d2
-            ON i.indicator_whole_id = d2.indicator_id
-            AND d.reporting_period_id = d2.reporting_period_id
-            AND d.region_id = d2.region_id
-        INNER JOIN region r
-            ON d.region_id = r.id
-
-        UNION ALL
-
-        SELECT
-            i.name
-            , SUM(d.value) as value
-            , r.full_name
-        FROM region_relationship rr
-        INNER JOIN datapoint d
-            ON rr.region_1_id = d.region_id
-        INNER JOIN indicator i
-            ON d.indicator_id = i.id
-        INNER JOIN region r
-            ON rr.region_0_id = r.id
-        GROUP BY r.full_name, i.name,i.id ,d.reporting_period_id
-
-        '''
-
-        ## this should show in red if the COUNT is less than the total
-        ## number of regions that exist for that relationshiop
-
-
+        raw_sql = show_dashboard
         cursor.execute(raw_sql)
         rows = cursor.fetchall()
 
