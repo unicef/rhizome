@@ -1,9 +1,12 @@
 {% extends "datapoints/base.html" %}
 
 {% block content %}
+Search For Data Points
+<br><br>
 <form action = "" method = "post" class="form">
     {% csrf_token %}
     {{ form.as_ul }}
+    <br>
     <button type="submit" class="btn btn-primary"> Submit </button>
 </form>
 

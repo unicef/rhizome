@@ -1,6 +1,7 @@
 from django.db import models
 from django.forms import ModelForm, forms, ModelChoiceField
 from datapoints.models import *
+from django.contrib.auth.models import User
 
 class RegionForm(ModelForm):
     class Meta:
@@ -28,5 +29,7 @@ class DocumentForm(forms.Form):
     )
 
 class DataPointSearchForm(forms.Form):
-    indicator = ModelChoiceField(queryset=Region.objects.all())
-    region = ModelChoiceField(queryset=Indicator.objects.all())
+    region = ModelChoiceField(queryset=Region.objects.all())
+    indicator = ModelChoiceField(queryset=Indicator.objects.all())
+    reporting_period = ModelChoiceField(queryset=ReportingPeriod.objects.all())
+    changed_by = ModelChoiceField(queryset=User.objects.all())

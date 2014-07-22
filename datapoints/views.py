@@ -16,6 +16,7 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]
 
+
 class DetailView(generic.DetailView):
     pass # template name and model passed via the URL.
 
@@ -54,6 +55,33 @@ class DataPointUpdateView(generic.UpdateView):
         obj.changed_by = self.request.user
         obj.save()
         return HttpResponseRedirect(self.success_url)
+
+def search(request):
+    if request.method =='POST':
+      ## THIS IS UGLY ##
+      kwargs = {}
+      if request.POST['indicator'] != u'':
+          kwargs.update({'indicator': request.POST['indicator']})
+      if request.POST['region'] != u'':
+          kwargs.update({'region': request.POST['region']})
+      if request.POST['changed_by'] != u'':
+          kwargs.update({'changed_by': request.POST['changed_by']})
+      if request.POST['reporting_period'] != u'':
+          kwargs.update({'reporting_period': request.POST['reporting_period']})
+
+      print kwargs
+      results = DataPoint.objects.filter(**kwargs)
+
+      for r in results:
+          print r.value
+          
+      return render_to_response('datapoints/search.html',
+        {'form':DataPointSearchForm},
+        context_instance=RequestContext(request))
+    else:
+      return render_to_response('datapoints/search.html',
+        {'form':DataPointSearchForm},
+        context_instance=RequestContext(request))
 
 
 class DashBoardView(generic.ListView):
@@ -101,11 +129,6 @@ class DashBoardView(generic.ListView):
         rows = cursor.fetchall()
 
         return rows
-
-def search(request):
-    if request.method =='GET':
-      return render_to_response('datapoints/search.html',
-        {'form':DataPointSearchForm})
 
 
 def file_upload(request):
