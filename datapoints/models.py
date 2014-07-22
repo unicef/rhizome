@@ -13,6 +13,12 @@ class Indicator(models.Model):
     class Meta:
         db_table = 'indicator'
 
+class Office(models.Model):
+    name = models.CharField(max_length=55)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'office'
 
 class Region(models.Model):
     full_name = models.CharField(max_length=255)

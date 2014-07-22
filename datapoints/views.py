@@ -69,13 +69,11 @@ def search(request):
       if request.POST['reporting_period'] != u'':
           kwargs.update({'reporting_period': request.POST['reporting_period']})
 
-      print kwargs
       results = DataPoint.objects.filter(**kwargs)
 
       return render_to_response('datapoints/index.html',
         {'top_datapoints':results},
         context_instance=RequestContext(request))
-
 
     else:
       return render_to_response('datapoints/search.html',
