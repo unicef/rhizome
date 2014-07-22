@@ -7,7 +7,7 @@ from django.db import connection
 from django.template import RequestContext
 
 from datapoints.models import DataPoint,Region,Indicator,Document
-from datapoints.forms import RegionForm,IndicatorForm,DataPointForm,DocumentForm
+from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentForm,DataPointSearchForm
 
 
 class IndexView(generic.ListView):
@@ -102,6 +102,12 @@ class DashBoardView(generic.ListView):
 
         return rows
 
+def search(request):
+    if request.method =='GET':
+      return render_to_response('datapoints/search.html',
+        {'form':DataPointSearchForm})
+
+
 def file_upload(request):
     # Handle file upload
     if request.method == 'POST':
@@ -109,10 +115,6 @@ def file_upload(request):
         if form.is_valid():
             newdoc = Document(docfile = request.FILES['docfile'])
             newdoc.save()
-
-            # Redirect to the document list after POST
-            # return HttpResponseRedirect(reverse('datapoints.views.file_upload'))
-            ##### ^ this isnt working but it doesnt matter. ^ ####
 
     else:
         form = DocumentForm() # A empty, unbound form

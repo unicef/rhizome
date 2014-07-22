@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm, forms
+from django.forms import ModelForm, forms, ModelChoiceField
 from datapoints.models import *
 
 class RegionForm(ModelForm):
@@ -26,3 +26,7 @@ class DocumentForm(forms.Form):
         label='Select a file',
         help_text='max. 2 megabytes'
     )
+
+class DataPointSearchForm(forms.Form):
+    indicator = ModelChoiceField(queryset=Region.objects.all())
+    region = ModelChoiceField(queryset=Indicator.objects.all())

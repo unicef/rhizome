@@ -52,6 +52,8 @@ urlpatterns = [
         template_name="datapoints/confirm_delete.html"),
     name='delete_datapoint'),
 
+    ## SEARCH ##
+    url(r'^search/$', views.search,name='search_datapoint'),
 
 
         #######################
