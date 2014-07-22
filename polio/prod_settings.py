@@ -10,6 +10,10 @@ TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = []
 
+
+MEDIA_ROOT = '/var/www/clients.seedscientific.com/uf/polio/media/'
+MEDIA_URL = '/var/www/clients.seedscientific.com/uf/polio/media/'
+
 INSTALLED_APPS = (
     'south',
     'django.contrib.admin',
