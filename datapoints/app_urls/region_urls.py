@@ -24,7 +24,6 @@ urlpatterns = [
     url(r'^delete/(?P<pk>[0-9]+)/$', views.RegionDeleteView.as_view(),
         name='delete_region'),
 
-
         ##########################
         ## REGION RELATIONSHIPS ##
         ##########################
@@ -41,7 +40,6 @@ urlpatterns = [
         ###############################
         ## REGION RELATIONSHIP TYPES ##
         ###############################
-
 
     ## REL TYPE INDEX ##
     url(r'^region_relationship_types$',

@@ -24,7 +24,6 @@ urlpatterns = [
     url(r'^delete/(?P<pk>[0-9]+)/$', views.IndicatorDeleteView.as_view(),
         name='delete_indicator'),
 
-
         ###################
         ## INDICATOR PCT ##
         ###################

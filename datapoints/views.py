@@ -80,7 +80,7 @@ class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
     model = DataPoint
     success_url = reverse_lazy('datapoints:datapoint_index');
     template_name ='datapoints/confirm_delete.html'
-    permission_required = 'datapoints.add_datapoint'
+    permission_required = 'datapoints.delete_datapoint'
 
     #########################
     ### REPORTING PERIODS ###
@@ -98,12 +98,15 @@ class ReportingPeriodCreateView(PermissionRequiredMixin,generic.CreateView):
     model = ReportingPeriod
     success_url = reverse_lazy('datapoints:reporting_period_index')
     template_name = 'reporting_periods/create.html'
+    permission_required = 'datapoints.add_reportingperiod'
+
 
     ##################
     ##################
     ### INDICATORS ###
     ##################
     ##################
+
 
 class IndicatorIndexView(IndexView):
 
@@ -116,18 +119,23 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
     model = Indicator
     success_url= reverse_lazy('indicators:indicator_index')
     template_name = 'indicators/create.html'
+    permission_required = 'datapoints.add_indicator'
+
 
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
     success_url = reverse_lazy('indicators:indicator_index')
     template_name = 'indicators/update.html'
+    permission_required = 'datapoints.change_indicator'
+
 
 class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
     model = Indicator
     success_url = reverse_lazy('indicators:indicator_index')
     template_name = 'indicators/confirm_delete.html'
+    permission_required = 'datapoints.delete_indicator'
 
     #####################
     ### INDICATOR PCT ###
@@ -139,11 +147,12 @@ class IndicatorPctIndexView(IndexView):
     template_name = 'indicator_pct/index.html'
     context_object_name = 'top_indicator_pct'
 
-class IndicatorPctCreateView(generic.CreateView):
+class IndicatorPctCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = IndicatorPct
     success_url = reverse_lazy('indicators:indicator_pct_index')
     template_name = 'indicator_pct/create.html'
+    permission_required = 'datapoints.add_indicatorpct'
 
 
     ###############
@@ -164,19 +173,22 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     model=Region
     success_url = reverse_lazy('regions:create_region_relationship')
     template_name='regions/create.html'
+    permission_required = 'datapoints.add_region'
+
 
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Region
     success_url = reverse_lazy('regions:region_index')
     template_name = 'regions/update.html'
+    permission_required = 'datapoints.change_region'
 
 class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
     model=Region
     success_url = reverse_lazy('regions:region_index')
     template_name = 'regions/confirm_delete.html'
-
+    permission_required = 'datapoints.delete_region'
 
     ############################
     ### REGION RELATIONSHIPS ###
@@ -192,6 +204,8 @@ class RegionRelationshipCreateView(PermissionRequiredMixin,generic.CreateView):
     model = RegionRelationship
     success_url = reverse_lazy('regions:region_index')
     template_name = 'region_relationships/create.html'
+    permission_required = 'datapoints.add_regionrelationship'
+
 
     ##################################
     ### REGION RELATIONSHIPS TYPES ###
@@ -206,15 +220,18 @@ class RegionRelagionshipTypeIndexView(IndexView):
 class RegionRelationshipTypeCreateView(PermissionRequiredMixin,
     generic.CreateView):
 
-    model = RegionRelationshipType,
+    model = RegionRelationshipType
     success_url = reverse_lazy('regions:region_index')
     template_name = 'region_relationships/type_create.html'
+    permission_required = 'datapoints.add_regionrelationship'
+
 
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####
     ##############################
     ##############################
+
 
 def search(request):
 
