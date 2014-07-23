@@ -17,6 +17,16 @@
     - Rest API
     - status in datapoints table
 
-########################
-## HOW THIS APP WORKS ##
-########################
+
+#################
+## PERMISSIONS ##
+#################
+
+user can be in multiple groups
+
+GROUPS
+   - general data entry (add datapoints)
+   - advanced data entry (update and delete data points)
+   - regional view (view all data points in your regional office)
+   - advanced view ( view all data points in all regions )
+   - superuser (everything under the sun)

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
@@ -14,16 +14,14 @@ from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentF
 from datapoints.mixins import PermissionRequiredMixin
 
 class IndexView(generic.ListView):
-    paginate_by = 10
+    paginate_by = 5
 
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]
 
     ###################
     ###################
-    ###################
     ### DATA POINTS ###
-    ###################
     ###################
     ###################
 
@@ -50,7 +48,7 @@ class DashBoardView(IndexView):
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
 
     model=DataPoint
-    success_url="/datapoints"
+    success_url=reverse_lazy('datapoints:datapoint_index')
     template_name='datapoints/create.html'
     form_class = DataPointForm
     permission_required = 'datapoints.add_datapoint'
@@ -65,8 +63,8 @@ class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
 class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model=DataPoint
-    success_url="/datapoints"
-    template_name='datapoints/update.html'
+    success_url = reverse_lazy('datapoints:datapoint_index')
+    template_name = 'datapoints/update.html'
     form_class = DataPointForm
     permission_required = 'datapoints.change_datapoint'
 
@@ -79,9 +77,9 @@ class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
 class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
-    model=DataPoint
-    success_url="/datapoints"
-    template_name="datapoints/confirm_delete.html"
+    model = DataPoint
+    success_url = reverse_lazy('datapoints:datapoint_index');
+    template_name ='datapoints/confirm_delete.html'
     permission_required = 'datapoints.add_datapoint'
 
     #########################
@@ -97,42 +95,39 @@ class ReportingPeriodIndexView(IndexView):
 
 class ReportingPeriodCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model=ReportingPeriod
-    success_url="/datapoints/reporting_periods"
-    template_name='reporting_periods/create.html'
+    model = ReportingPeriod
+    success_url = reverse_lazy('datapoints:reporting_period_index')
+    template_name = 'reporting_periods/create.html'
 
-    ##################
     ##################
     ##################
     ### INDICATORS ###
     ##################
     ##################
-    ##################
 
 class IndicatorIndexView(IndexView):
 
-    model=Indicator
+    model = Indicator
     template_name = 'indicators/index.html'
     context_object_name = 'top_indicators'
 
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model=Indicator
-    success_url="/datapoints/indicators
-    "
-    template_name='indicators/create.html'
+    model = Indicator
+    success_url= reverse_lazy('indicators:indicator_index')
+    template_name = 'indicators/create.html'
 
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
-    model=Indicator
-    success_url="/datapoints/indicators"
-    template_name='indicators/update.html'
+    model = Indicator
+    success_url = reverse_lazy('indicators:indicator_index')
+    template_name = 'indicators/update.html'
 
 class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
-    model=Indicator
-    success_url="/datapoints/indicators"
-    template_name="indicators/confirm_delete.html"
+    model = Indicator
+    success_url = reverse_lazy('indicators:indicator_index')
+    template_name = 'indicators/confirm_delete.html'
 
     #####################
     ### INDICATOR PCT ###
@@ -140,23 +135,23 @@ class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
 class IndicatorPctIndexView(IndexView):
 
-    model=IndicatorPct
+    model = IndicatorPct
     template_name = 'indicator_pct/index.html'
     context_object_name = 'top_indicator_pct'
 
 class IndicatorPctCreateView(generic.CreateView):
 
-    model=IndicatorPct
-    success_url="/datapoints/indicators/indicator_pct"
-    template_name='indicator_pct/create.html'
+    model = IndicatorPct
+    success_url = reverse_lazy('indicators:indicator_pct_index')
+    template_name = 'indicator_pct/create.html'
 
-    ###############
+
     ###############
     ###############
     ### REGIONS ###
     ###############
     ###############
-    ###############
+
 
 class RegionIndexView(IndexView):
 
@@ -167,20 +162,20 @@ class RegionIndexView(IndexView):
 class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model=Region
-    success_url="/datapoints/regions/region_relationships/create"
+    success_url = reverse_lazy('regions:create_region_relationship')
     template_name='regions/create.html'
 
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
-    model=Region
-    success_url="/datapoints/regions"
-    template_name='regions/update.html'
+    model = Region
+    success_url = reverse_lazy('regions:region_index')
+    template_name = 'regions/update.html'
 
 class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
     model=Region
-    success_url="/datapoints/regions"
-    template_name="regions/confirm_delete.html"
+    success_url = reverse_lazy('regions:region_index')
+    template_name = 'regions/confirm_delete.html'
 
 
     ############################
@@ -188,15 +183,15 @@ class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
     ############################
 
 class RegionRelationshipIndexView(IndexView):
-    model=RegionRelationship
+    model = RegionRelationship
     template_name = 'region_relationships/index.html'
     context_object_name = 'top_region_relationships'
 
 class RegionRelationshipCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model=RegionRelationship
-    success_url="/datapoints/regions"
-    template_name='region_relationships/create.html'
+    model = RegionRelationship
+    success_url = reverse_lazy('regions:region_index')
+    template_name = 'region_relationships/create.html'
 
     ##################################
     ### REGION RELATIONSHIPS TYPES ###
@@ -204,22 +199,20 @@ class RegionRelationshipCreateView(PermissionRequiredMixin,generic.CreateView):
 
 class RegionRelagionshipTypeIndexView(IndexView):
 
-    model=RegionRelationshipType
+    model = RegionRelationshipType
     template_name = 'region_relationships/type_index.html'
     context_object_name = 'top_region_relationship_types'
 
 class RegionRelationshipTypeCreateView(PermissionRequiredMixin,
     generic.CreateView):
 
-    model=RegionRelationshipType,
-    success_url="/datapoints/regions"
-    template_name='region_relationships/type_create.html'
+    model = RegionRelationshipType,
+    success_url = reverse_lazy('regions:region_index')
+    template_name = 'region_relationships/type_create.html'
 
     ##############################
     ##############################
-    ##############################
     #### FUNCTION BASED VIEWS ####
-    ##############################
     ##############################
     ##############################
 

@@ -15,7 +15,7 @@ class IndicatorForm(ModelForm):
 class DataPointForm(ModelForm):
     class Meta:
         model = DataPoint
-        fields = ['indicator','region', 'reporting_period', 'value']
+        fields = ['indicator','region', 'reporting_period', 'office', 'value']
 
 
 class ReportingPeriodForm(ModelForm):
