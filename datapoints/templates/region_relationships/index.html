@@ -9,7 +9,6 @@
             <th>region 0</th>
             <th>relationship type</th>
             <th>region 1</th>
-            <th>details</th>
         </tr>
     </thead>
 
@@ -19,8 +18,6 @@
             <th>{{ region_relationship.region_0 }}</th>
             <th>{{ region_relationship.region_relationship_type }}</th>
             <th>{{ region_relationship.region_1 }}</th>
-            <th><a href="{% url 'regions:region_relationship_detail' region_relationship.id %}"> view </a></th>
-        
             </tr>
         {% endfor %}
 

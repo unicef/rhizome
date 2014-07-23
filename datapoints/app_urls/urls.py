@@ -1,6 +1,7 @@
 from django.conf.urls import patterns,url
 from datapoints import views
 from datapoints.models import *
+from django.views.generic import TemplateView
 
 urlpatterns = [
 
@@ -29,18 +30,14 @@ urlpatterns = [
     url(r'^search/$', views.search,name='search_datapoint'),
 
     ## META DATA ##
-    url(r'^metadata/$', views.TemplateView.as_view(
+    url(r'^metadata/$', TemplateView.as_view(
         template_name = 'datapoints/metadata.html'),
         name='metadata_index'),
 
     ## PERMISSIONS NEEDED ##
-    url(r'^permissions_needed/$', views.TemplateView.as_view(
+    url(r'^permissions_needed/$', TemplateView.as_view(
         template_name='datapoints/permissions_needed.html'),
         name='permissions_needed'),
-
-    # ## DETAIL ##
-    # url(r'^(?P<pk>[0-9]+)/$', views.DataPointDetailView.as_view(),
-    #     name='datapoint_detail'),
 
 
         #######################
@@ -52,7 +49,8 @@ urlpatterns = [
         name='reporting_period_index'),
 
     ## CREATE ##
-    url(r'^reporting_periods/create/$', views.CreateView.as_view(),
+    url(r'^reporting_periods/create/$',
+        views.ReportingPeriodCreateView.as_view(),
         name='create_reporting_period'),
 
 

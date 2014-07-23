@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from datapoints import views
-from datapoints.models import * 
+from datapoints.models import *
 
 urlpatterns = [
 
@@ -9,38 +9,20 @@ urlpatterns = [
         #############
 
     ## INDEX ##
-    url(r'^$', views.IndexView.as_view(
-        model = Region,
-        template_name = 'regions/index.html',
-        context_object_name = 'top_regions'),
-    name='region_index'),
-
-    ## DETAIL ##
-    url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(
-        model=Region,
-        template_name='regions/detail.html'),
-    name='region_detail'),
+    url(r'^$', views.RegionIndexView.as_view(),
+        name='region_index'),
 
     ## CREATE ##
-    url(r'^create/$', views.CreateView.as_view(
-        model=Region,
-        success_url="/datapoints/regions/region_relationships/create",
-        template_name='regions/create.html'),
-    name='create_region'),
+    url(r'^create/$', views.RegionCreateView.as_view(),
+        name='create_region'),
 
     ## UPDATE ##
-    url(r'^update/(?P<pk>[0-9]+)/$', views.UpdateView.as_view( # 
-        model=Region,
-        success_url="/datapoints/regions",
-        template_name='regions/update.html'),
-    name='update_region'),
+    url(r'^update/(?P<pk>[0-9]+)/$', views.RegionUpdateView.as_view(),
+        name='update_region'),
 
     ## DELETE ##
-    url(r'^delete/(?P<pk>[0-9]+)/$', views.DeleteView.as_view( # 
-        model=Region,
-        success_url="/datapoints/regions",
-        template_name="regions/confirm_delete.html"),
-    name='delete_region'),
+    url(r'^delete/(?P<pk>[0-9]+)/$', views.RegionDeleteView.as_view(),
+        name='delete_region'),
 
 
         ##########################
@@ -48,24 +30,13 @@ urlpatterns = [
         ##########################
 
     ## INDEX ##
-    url(r'^region_relationships$', views.IndexView.as_view(
-        model=RegionRelationship,
-        template_name = 'region_relationships/index.html',
-        context_object_name = 'top_region_relationships'),
-    name='region_relationship_index'),
-
-    ## DETAIL ##
-    url(r'^region_relationships/(?P<pk>[0-9]+)/$', views.DetailView.as_view(
-        model=RegionRelationship,
-        template_name='region_relationships/detail.html'),
-    name='region_relationship_detail'),
+    url(r'^region_relationships$', views.RegionRelationshipIndexView.as_view(),
+        name='region_relationship_index'),
 
     ## CREATE ##
-    url(r'^region_relationships/create/$', views.CreateView.as_view(
-        model=RegionRelationship,
-        success_url="/datapoints/regions",
-        template_name='region_relationships/create.html'),
-    name='create_region_relationship'),
+    url(r'^region_relationships/create/$',
+        views.RegionRelationshipCreateView.as_view(),
+        name='create_region_relationship'),
 
         ###############################
         ## REGION RELATIONSHIP TYPES ##
@@ -73,18 +44,13 @@ urlpatterns = [
 
 
     ## REL TYPE INDEX ##
-    url(r'^region_relationship_types$', views.IndexView.as_view(
-        model=RegionRelationshipType,
-        template_name = 'region_relationships/type_index.html',
-        context_object_name = 'top_region_relationship_types'),
-    name='region_relationship_type_index'),
+    url(r'^region_relationship_types$',
+        views.RegionRelagionshipTypeIndexView.as_view(),
+        name='region_relationship_type_index'),
 
     ## REL TYPE CREATE ##
-    url(r'^region_relationship_types/create/$', views.CreateView.as_view(
-        model=RegionRelationshipType,
-        success_url="/datapoints/regions",
-        template_name='region_relationships/type_create.html'),
-    name='create_region_relationship_type'),
+    url(r'^region_relationship_types/create/$',
+        views.RegionRelationshipTypeCreateView.as_view(),
+        name='create_region_relationship_type'),
 
 ]
-

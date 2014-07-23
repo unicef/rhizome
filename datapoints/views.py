@@ -19,23 +19,12 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]
 
-class DetailView(generic.DetailView):
-    pass
-
-class CreateView(generic.CreateView):
-    pass
-
-class UpdateView(generic.UpdateView):
-    pass
-
-class DeleteView(generic.DeleteView):
-    pass
-
-class TemplateView(generic.TemplateView):
-    pass
-
+    ###################
+    ###################
     ###################
     ### DATA POINTS ###
+    ###################
+    ###################
     ###################
 
 class DataPointIndexView(IndexView):
@@ -46,6 +35,7 @@ class DataPointIndexView(IndexView):
 
 
 class DashBoardView(IndexView):
+
     template_name = 'dashboard/index.html'
     context_object_name = 'user_dashboard'
 
@@ -94,11 +84,6 @@ class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
     template_name="datapoints/confirm_delete.html"
     permission_required = 'datapoints.add_datapoint'
 
-#class DataPointDetailView(PermissionRequiredMixin, generic.DetailView):
-
-    # model=DataPoint
-    # template_name='datapoints/detail.html'
-
     #########################
     ### REPORTING PERIODS ###
     #########################
@@ -110,14 +95,132 @@ class ReportingPeriodIndexView(IndexView):
     context_object_name = 'top_reporting_periods'
 
 
-class ReportingPeriodCreateView(generic.CreateView):
+class ReportingPeriodCreateView(PermissionRequiredMixin,generic.CreateView):
+
     model=ReportingPeriod
     success_url="/datapoints/reporting_periods"
     template_name='reporting_periods/create.html'
 
+    ##################
+    ##################
+    ##################
+    ### INDICATORS ###
+    ##################
+    ##################
+    ##################
+
+class IndicatorIndexView(IndexView):
+
+    model=Indicator
+    template_name = 'indicators/index.html'
+    context_object_name = 'top_indicators'
+
+class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model=Indicator
+    success_url="/datapoints/indicators
+    "
+    template_name='indicators/create.html'
+
+class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
+
+    model=Indicator
+    success_url="/datapoints/indicators"
+    template_name='indicators/update.html'
+
+class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
+
+    model=Indicator
+    success_url="/datapoints/indicators"
+    template_name="indicators/confirm_delete.html"
+
+    #####################
+    ### INDICATOR PCT ###
+    #####################
+
+class IndicatorPctIndexView(IndexView):
+
+    model=IndicatorPct
+    template_name = 'indicator_pct/index.html'
+    context_object_name = 'top_indicator_pct'
+
+class IndicatorPctCreateView(generic.CreateView):
+
+    model=IndicatorPct
+    success_url="/datapoints/indicators/indicator_pct"
+    template_name='indicator_pct/create.html'
+
+    ###############
+    ###############
+    ###############
+    ### REGIONS ###
+    ###############
+    ###############
+    ###############
+
+class RegionIndexView(IndexView):
+
+    model = Region
+    template_name = 'regions/index.html'
+    context_object_name = 'top_regions'
+
+class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model=Region
+    success_url="/datapoints/regions/region_relationships/create"
+    template_name='regions/create.html'
+
+class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
+
+    model=Region
+    success_url="/datapoints/regions"
+    template_name='regions/update.html'
+
+class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
+
+    model=Region
+    success_url="/datapoints/regions"
+    template_name="regions/confirm_delete.html"
+
+
+    ############################
+    ### REGION RELATIONSHIPS ###
+    ############################
+
+class RegionRelationshipIndexView(IndexView):
+    model=RegionRelationship
+    template_name = 'region_relationships/index.html'
+    context_object_name = 'top_region_relationships'
+
+class RegionRelationshipCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model=RegionRelationship
+    success_url="/datapoints/regions"
+    template_name='region_relationships/create.html'
+
+    ##################################
+    ### REGION RELATIONSHIPS TYPES ###
+    ##################################
+
+class RegionRelagionshipTypeIndexView(IndexView):
+
+    model=RegionRelationshipType
+    template_name = 'region_relationships/type_index.html'
+    context_object_name = 'top_region_relationship_types'
+
+class RegionRelationshipTypeCreateView(PermissionRequiredMixin,
+    generic.CreateView):
+
+    model=RegionRelationshipType,
+    success_url="/datapoints/regions"
+    template_name='region_relationships/type_create.html'
 
     ##############################
+    ##############################
+    ##############################
     #### FUNCTION BASED VIEWS ####
+    ##############################
+    ##############################
     ##############################
 
 def search(request):
