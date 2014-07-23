@@ -8,7 +8,6 @@
             <th>id</th>
             <th>start date</th>
             <th>end date</th>
-            <th>details</th>
         </tr>
     </thead>
 
@@ -17,7 +16,6 @@
             <th>{{ reporting_period.id }}</th>
             <th>{{ reporting_period.start_date }}</th>
             <th>{{ reporting_period.end_date }}</th>
-            <th><a href="{% url 'datapoints:reporting_period_detail' reporting_period.id %}"> view </a></th>
         </tr>
         {% endfor %}
 

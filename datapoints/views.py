@@ -19,7 +19,6 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')[:10]
 
-
 class DetailView(generic.DetailView):
     pass
 
@@ -34,6 +33,29 @@ class DeleteView(generic.DeleteView):
 
 class TemplateView(generic.TemplateView):
     pass
+
+    ###################
+    ### DATA POINTS ###
+    ###################
+
+class DataPointIndexView(IndexView):
+
+    model=DataPoint
+    template_name = 'datapoints/index.html'
+    context_object_name = 'top_datapoints'
+
+
+class DashBoardView(IndexView):
+    template_name = 'dashboard/index.html'
+    context_object_name = 'user_dashboard'
+
+    def get_queryset(self):
+        cursor = connection.cursor()
+        raw_sql = show_dashboard
+        cursor.execute(raw_sql)
+        rows = cursor.fetchall()
+
+        return rows
 
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
 
@@ -50,12 +72,13 @@ class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
         obj.save()
         return HttpResponseRedirect(self.success_url)
 
-class DataPointUpdateView(generic.UpdateView):
+class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model=DataPoint
     success_url="/datapoints"
     template_name='datapoints/update.html'
     form_class = DataPointForm
+    permission_required = 'datapoints.change_datapoint'
 
     def form_valid(self, form):
     # this sets the changed_by field to the user who made the update
@@ -71,20 +94,31 @@ class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
     template_name="datapoints/confirm_delete.html"
     permission_required = 'datapoints.add_datapoint'
 
+#class DataPointDetailView(PermissionRequiredMixin, generic.DetailView):
+
+    # model=DataPoint
+    # template_name='datapoints/detail.html'
+
+    #########################
+    ### REPORTING PERIODS ###
+    #########################
+
+class ReportingPeriodIndexView(IndexView):
+
+    model=ReportingPeriod
+    template_name = 'reporting_periods/index.html'
+    context_object_name = 'top_reporting_periods'
 
 
-class DashBoardView(generic.ListView):
-
-    def get_queryset(self):
-        cursor = connection.cursor()
-        raw_sql = show_dashboard
-        cursor.execute(raw_sql)
-        rows = cursor.fetchall()
-
-        return rows
+class ReportingPeriodCreateView(generic.CreateView):
+    model=ReportingPeriod
+    success_url="/datapoints/reporting_periods"
+    template_name='reporting_periods/create.html'
 
 
-#### FUNCTION BASED VIEWS ####
+    ##############################
+    #### FUNCTION BASED VIEWS ####
+    ##############################
 
 def search(request):
 

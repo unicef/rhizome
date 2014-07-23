@@ -2,17 +2,20 @@
 ######## TO DOs ########
 ########################
 
-    Add GROUP ID to datapoints
     Add STATUS to datapoints
     Checkout MY WORLD cdv Uploader
 
     CONCENTRATE ON
 
-    - Filter Page
     - Permissions
+        -> complete all permissions decorators
+        -> create groups on production and DOCUMENT
+        -> add logic to define permissions by Office and Region
+    - DataBase Backup
+
     - Expected Data Framework
     - Rest API
-    - DataBase Backup
+    - status in datapoints table
 
 ########################
 ## HOW THIS APP WORKS ##
