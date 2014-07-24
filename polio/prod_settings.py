@@ -16,6 +16,8 @@ MEDIA_URL = '/var/www/clients.seedscientific.com/uf/polio/media/'
 
 INSTALLED_APPS = (
     'south',
+    'django_admin_bootstrapped.bootstrap3',
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
