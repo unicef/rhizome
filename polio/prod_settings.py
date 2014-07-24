@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'simple_history',
     'stronghold',
     'csvimport',
+    'guardian',
 
 )
 
@@ -40,6 +41,12 @@ MIDDLEWARE_CLASSES = (
     'stronghold.middleware.LoginRequiredMiddleware'
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+ANONYMOUS_USER_ID = -1
 
 ROOT_URLCONF = 'polio.urls'
 WSGI_APPLICATION = 'polio.wsgi.application'

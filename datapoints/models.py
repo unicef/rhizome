@@ -75,6 +75,10 @@ class DataPoint(models.Model):
         db_table = 'datapoint'
         unique_together = ('indicator','region','reporting_period')
 
+        permissions = (
+            ('view_datapoint', 'View datapoint'),
+        )
+
 class IndicatorRelationshipType(models.Model):
 
     display_name = models.CharField(max_length=55)

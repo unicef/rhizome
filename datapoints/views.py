@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.db import connection
 from django.template import RequestContext
+from guardian.shortcuts import get_objects_for_user
 
 from datapoints.sql_queries import show_dashboard
 from datapoints.models import DataPoint,Region,Indicator,Document
@@ -17,7 +18,7 @@ class IndexView(generic.ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        return self.model.objects.order_by('-created_at')[:10]
+        return self.model.objects.order_by('-created_at')
 
     ###################
     ###################
@@ -31,6 +32,12 @@ class DataPointIndexView(IndexView):
     template_name = 'datapoints/index.html'
     context_object_name = 'top_datapoints'
 
+    permission_required = 'datapoints.view_datapoint'
+
+    def get_queryset(self):
+        dps = get_objects_for_user(self.request.user, 'datapoints.view_datapoint')
+
+        return dps
 
 class DashBoardView(IndexView):
 
