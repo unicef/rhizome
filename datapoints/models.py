@@ -66,7 +66,6 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     reporting_period = models.ForeignKey(ReportingPeriod)
-    office = models.ForeignKey(Office)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
