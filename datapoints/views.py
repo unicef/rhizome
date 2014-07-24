@@ -33,9 +33,26 @@ class DataPointIndexView(IndexView):
     context_object_name = 'top_datapoints'
 
     def get_queryset(self):
-        regions = get_objects_for_user(self.request.user, 'datapoints.view_region')
 
-        dps = DataPoint.objects.filter(region=regions)
+        ## if this user has permissions to view entire office
+        ## then find the regions that fall under that
+        offices = get_objects_for_user(self.request.user,
+            'datapoints.view_office')
+        if offices:
+            regions = Region.objects.filter(office=offices)
+
+        ## now check to see if they have region level permissions
+        else:
+            regions = get_objects_for_user(self.request.user
+                , 'datapoints.view_region')
+
+        ## TO DO : find all of the sub regions of the regions
+        ##         the user is permitted to see
+
+        regions_leaf_level = regions #some recursive query
+
+        ## now get all the relevant data points
+        dps = DataPoint.objects.filter(region=regions_leaf_level)
 
         return dps
 

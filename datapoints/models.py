@@ -25,6 +25,10 @@ class Office(models.Model):
     class Meta:
         db_table = 'office'
 
+        permissions = (
+            ('view_office', 'View office'),
+        )
+
 class Region(models.Model):
 
     full_name = models.CharField(max_length=255)
