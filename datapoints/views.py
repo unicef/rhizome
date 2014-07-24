@@ -32,10 +32,10 @@ class DataPointIndexView(IndexView):
     template_name = 'datapoints/index.html'
     context_object_name = 'top_datapoints'
 
-    permission_required = 'datapoints.view_datapoint'
-
     def get_queryset(self):
-        dps = get_objects_for_user(self.request.user, 'datapoints.view_datapoint')
+        regions = get_objects_for_user(self.request.user, 'datapoints.view_region')
+
+        dps = DataPoint.objects.filter(region=regions)
 
         return dps
 

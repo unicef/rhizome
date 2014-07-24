@@ -43,6 +43,9 @@ class Region(models.Model):
     class Meta:
         db_table = 'region'
 
+        permissions = (
+            ('view_region', 'View region'),
+        )
 
 class ReportingPeriod(models.Model):
 
