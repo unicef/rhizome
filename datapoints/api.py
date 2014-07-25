@@ -46,6 +46,13 @@ class DataPointResource(PolioApiResource):
         excludes = ['note']
 
 
+class OfficeResource(PolioApiResource):
+
+    class Meta(PolioApiResource.Meta):
+        queryset = Office.objects.all()
+        resource_name = 'office'
+
+
 #### INTERACTING W THE API FROM CURL ####
 # curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"name": "hello", "description": "world"}' http://localhost:8000/api/v1/indicator/?username=john&password=Dinginator06
   ## ^^ this doesnt work because the request needs to be logged in...
