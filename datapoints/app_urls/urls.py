@@ -39,9 +39,9 @@ urlpatterns = [
         template_name='datapoints/permissions_needed.html'),
         name='permissions_needed'),
 
-        #######################
-        ## REPORTING PERIODS ##
-        #######################
+        ###############
+        ## CAMPAIGNS ##
+        ###############
 
     ## INDEX ##
     url(r'^campaigns$', views.CampaignIndexView.as_view(),

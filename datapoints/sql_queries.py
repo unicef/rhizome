@@ -12,7 +12,7 @@ show_dashboard = '''
             ON d.indicator_id = i.indicator_part_id
         INNER JOIN datapoint d2
             ON i.indicator_whole_id = d2.indicator_id
-            AND d.reporting_period_id = d2.reporting_period_id
+            AND d.campaign_id = d2.campaign_id
             AND d.region_id = d2.region_id
         INNER JOIN region r
             ON d.region_id = r.id
@@ -30,5 +30,5 @@ show_dashboard = '''
             ON d.indicator_id = i.id
         INNER JOIN region r
             ON rr.region_0_id = r.id
-        GROUP BY r.full_name, i.name,i.id ,d.reporting_period_id
+        GROUP BY r.full_name, i.name,i.id ,d.campaign_id
         '''
