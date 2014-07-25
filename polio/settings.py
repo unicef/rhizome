@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'stronghold',
     'csvimport',
     'guardian',
+    'tastypie',
 
 )
 

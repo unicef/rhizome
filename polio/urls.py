@@ -5,19 +5,26 @@ from polio.views import UserCreateView
 from django.conf import settings
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
+from datapoints.api import *
+from tastypie.api import Api
 
 admin.autodiscover()
 
+v1_api = Api(api_name='v1')
+v1_api.register(RegionResource())
+v1_api.register(DataPointResource())
+v1_api.register(IndicatorResource())
+
 urlpatterns = patterns('',
-
-    # Examples:
+    ##
+    (r'^api/', include(v1_api.urls)),
+    ##
     url(r'^$', 'polio.views.home', name='home'),
-
-    # url(r'^uf04/datapoints/', ),
+    ##
     url(r'^datapoints/', include('datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/indicators/', include('datapoints.app_urls.indicator_urls', namespace="indicators")),
     url(r'^datapoints/regions/', include('datapoints.app_urls.region_urls', namespace="regions")),
-
+    ##
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
@@ -25,5 +32,6 @@ urlpatterns = patterns('',
 
     (r'^upload/', include('datapoints.app_urls.upload_urls', namespace="upload")),
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+
 
 )
