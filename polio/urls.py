@@ -14,6 +14,8 @@ v1_api = Api(api_name='v1')
 v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(IndicatorResource())
+v1_api.register(CampaignResource())
+
 
 urlpatterns = patterns('',
     ##
