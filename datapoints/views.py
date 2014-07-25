@@ -106,23 +106,23 @@ class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
     template_name ='datapoints/confirm_delete.html'
     permission_required = 'datapoints.delete_datapoint'
 
-    #########################
-    ### REPORTING PERIODS ###
-    #########################
+    #################
+    ### CAMPAIGNS ###
+    #################
 
-class ReportingPeriodIndexView(IndexView):
-
-    model = Campaign
-    template_name = 'reporting_periods/index.html'
-    context_object_name = 'top_reporting_periods'
-
-
-class ReportingPeriodCreateView(PermissionRequiredMixin,generic.CreateView):
+class CampaignIndexView(IndexView):
 
     model = Campaign
-    success_url = reverse_lazy('datapoints:reporting_period_index')
-    template_name = 'reporting_periods/create.html'
-    permission_required = 'datapoints.add_reportingperiod'
+    template_name = 'campaigns/index.html'
+    context_object_name = 'top_campaigns'
+
+
+class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = Campaign
+    success_url = reverse_lazy('datapoints:campaign_index')
+    template_name = 'campaigns/create.html'
+    permission_required = 'datapoints.add_campaign'
 
 
     ##################
@@ -268,8 +268,8 @@ def search(request):
           kwargs.update({'region': request.POST['region']})
       if request.POST['changed_by'] != u'':
           kwargs.update({'changed_by': request.POST['changed_by']})
-      if request.POST['reporting_period'] != u'':
-          kwargs.update({'reporting_period': request.POST['reporting_period']})
+      if request.POST['campaign'] != u'':
+          kwargs.update({'campaign': request.POST['campaign']})
 
       results = DataPoint.objects.filter(**kwargs)
 

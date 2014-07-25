@@ -28,10 +28,10 @@ class RegionTest(TestCase):
 class DataPointTest(TestCase):
 
     def create_datapoint(self, note="test", indicator_id=99, region_id = 99,
-        reporting_period_id=99, value=100.01, changed_by_id = 1):
+        campaign_id=99, value=100.01, changed_by_id = 1):
 
         return DataPoint.objects.create(note=note, indicator_id=indicator_id,
-         region_id = region_id, reporting_period_id=reporting_period_id,
+         region_id = region_id, campaign_id=campaign_id,
          value=value,changed_by_id=changed_by_id)
 
         ## This should break on a foreign key violation but it doesnt!!

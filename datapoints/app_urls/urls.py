@@ -44,13 +44,13 @@ urlpatterns = [
         #######################
 
     ## INDEX ##
-    url(r'^reporting_periods$', views.ReportingPeriodIndexView.as_view(),
-        name='reporting_period_index'),
+    url(r'^campaigns$', views.CampaignIndexView.as_view(),
+        name='campaign_index'),
 
     ## CREATE ##
-    url(r'^reporting_periods/create/$',
-        views.ReportingPeriodCreateView.as_view(),
-        name='create_reporting_period'),
+    url(r'^campaign/create/$',
+        views.CampaignCreateView.as_view(),
+        name='create_campaign'),
 
 
 ]
