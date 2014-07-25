@@ -112,14 +112,14 @@ class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
 class ReportingPeriodIndexView(IndexView):
 
-    model=ReportingPeriod
+    model = Campaign
     template_name = 'reporting_periods/index.html'
     context_object_name = 'top_reporting_periods'
 
 
 class ReportingPeriodCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model = ReportingPeriod
+    model = Campaign
     success_url = reverse_lazy('datapoints:reporting_period_index')
     template_name = 'reporting_periods/create.html'
     permission_required = 'datapoints.add_reportingperiod'

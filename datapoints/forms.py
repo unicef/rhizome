@@ -18,12 +18,12 @@ class DataPointForm(ModelForm):
 
     class Meta:
         model = DataPoint
-        fields = ['indicator','region', 'reporting_period', 'value']
+        fields = ['indicator','region', 'campaign', 'value']
 
-class ReportingPeriodForm(ModelForm):
+class CampaignForm(ModelForm):
 
     class Meta:
-        model = ReportingPeriod
+        model = Campaign
 
 class DocumentForm(forms.Form):
 
@@ -35,5 +35,5 @@ class DocumentForm(forms.Form):
 class DataPointSearchForm(forms.Form):
     region = ModelChoiceField(queryset=Region.objects.all())
     indicator = ModelChoiceField(queryset=Indicator.objects.all())
-    reporting_period = ModelChoiceField(queryset=ReportingPeriod.objects.all())
+    campaign = ModelChoiceField(queryset=Campaign.objects.all())
     changed_by = ModelChoiceField(queryset=User.objects.all())

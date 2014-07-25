@@ -51,7 +51,7 @@ class Region(models.Model):
             ('view_region', 'View region'),
         )
 
-class ReportingPeriod(models.Model):
+class Campaign(models.Model):
 
     start_date = models.DateField()
     end_date = models.DateField()
@@ -63,13 +63,13 @@ class ReportingPeriod(models.Model):
         return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' + self.end_date.strftime('%Y-%m-%d'))
 
     class Meta:
-        db_table = 'reporting_period'
+        db_table = 'campaign'
 
 class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
-    reporting_period = models.ForeignKey(ReportingPeriod)
+    campaign = models.ForeignKey(Campaign)
     value = models.DecimalField(max_digits=12, decimal_places =4)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
@@ -79,7 +79,7 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','region','reporting_period')
+        unique_together = ('indicator','region','campaign')
 
         permissions = (
             ('view_datapoint', 'View datapoint'),
