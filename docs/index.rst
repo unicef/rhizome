@@ -1,5 +1,5 @@
 .. polio documentation master file, created by
-   sphinx-quickstart on Fri Jul 25 11:23:18 2014.
+   sphinx-quickstart on Mon Jul 28 14:42:24 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -8,15 +8,18 @@ Welcome to polio's documentation!
 
 Contents:
 
+Hello, polio is bad vaccinations are good.
+
 .. toctree::
    :maxdepth: 2
+
+   api
+   tutorial
+   project
 
 
 
 Indices and tables
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-

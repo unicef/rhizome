@@ -17,6 +17,11 @@ class PolioApiResource(ModelResource):
         authorization = Authorization()
 
 class RegionResource(PolioApiResource):
+    '''
+    This is the top level class all other Resource Classes inherit from this.
+    The API Key authentication is defined here and thus is required by all
+    other reso
+    '''
 
     class Meta(PolioApiResource.Meta):
         queryset = Region.objects.all()
@@ -56,7 +61,7 @@ class OfficeResource(PolioApiResource):
 #### INTERACTING W THE API FROM CURL ####
 # curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"name": "hello", "description": "world"}' http://localhost:8000/api/v1/indicator/?username=john&password=Dinginator06
   ## ^^ this doesnt work because the request needs to be logged in...
-
+  ##
 
 ## CREATING AN API KEY ##
 # from tastypie.models import ApiKey
