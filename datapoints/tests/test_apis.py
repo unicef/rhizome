@@ -10,8 +10,6 @@ from django.test import TestCase
 ENDPOINT = 'http://127.0.0.1:8000/api/v1/indicator/'
 USERNAME = 'john'
 API_KEY  = '3018e5d944e1a37d2e2af952198bef4ab0d9f9fc'
-DATABASES = {}#['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
-DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
 
 class IndicatorTest(TestCase):
 
