@@ -3,57 +3,68 @@ from datapoints.models import *
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
+from django.utils.decorators import method_decorator
+from stronghold.decorators import public
 
 
-class PolioApiResource(ModelResource):
+class ApiResource(ModelResource):
     '''
     This is the top level class all other Resource Classes inherit from this.
     The API Key authentication is defined here and thus is required by all
-    other resources.
+    other resources.  This class enherits fro the Tastyppie "ModelResource"
+
+    See Here: http://django-tastypie.readthedocs.org/en/latest/resources.html?highlight=modelresource
     '''
 
     class Meta:
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
-class RegionResource(PolioApiResource):
-    '''
-    This is the top level class all other Resource Classes inherit from this.
-    The API Key authentication is defined here and thus is required by all
-    other reso
-    '''
+    @method_decorator(public)
+    def dispatch(self, *args, **kwargs):
+        return super(ApiResource, self).dispatch(*args, **kwargs)
 
-    class Meta(PolioApiResource.Meta):
+
+class RegionResource(ApiResource):
+    '''Region Resource'''
+
+    class Meta(ApiResource.Meta):
         queryset = Region.objects.all()
         resource_name = 'region'
 
-class IndicatorResource(PolioApiResource):
+class IndicatorResource(ApiResource):
+    '''Indicator Resource'''
 
-    class Meta(PolioApiResource.Meta):
+    class Meta(ApiResource.Meta):
         queryset = Indicator.objects.all()
         resource_name = 'indicator'
 
-class CampaignResource(PolioApiResource):
+class CampaignResource(ApiResource):
+    '''Campaign Resource'''
 
-    class Meta(PolioApiResource.Meta):
+
+    class Meta(ApiResource.Meta):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
 
-class DataPointResource(PolioApiResource):
+class DataPointResource(ApiResource):
+    '''Datapoint Resource'''
 
     region = fields.ForeignKey(RegionResource, 'region')
     indicator = fields.ForeignKey(IndicatorResource, 'indicator')
     campaign = fields.ForeignKey(CampaignResource, 'campaign')
 
-    class Meta(PolioApiResource.Meta):
+    class Meta(ApiResource.Meta):
         queryset = DataPoint.objects.all()
         resource_name = 'datapoint'
         excludes = ['note']
 
 
-class OfficeResource(PolioApiResource):
+class OfficeResource(ApiResource):
+    '''Office Resource'''
 
-    class Meta(PolioApiResource.Meta):
+
+    class Meta(ApiResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'
 
@@ -61,7 +72,7 @@ class OfficeResource(PolioApiResource):
 #### INTERACTING W THE API FROM CURL ####
 # curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"name": "hello", "description": "world"}' http://localhost:8000/api/v1/indicator/?username=john&password=Dinginator06
   ## ^^ this doesnt work because the request needs to be logged in...
-  ##
+
 
 ## CREATING AN API KEY ##
 # from tastypie.models import ApiKey

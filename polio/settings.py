@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
-    'stronghold',
+    # 'stronghold',
     'csvimport',
     'guardian',
     'tastypie',
@@ -60,7 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'stronghold.middleware.LoginRequiredMiddleware'
+    # 'stronghold.middleware.LoginRequiredMiddleware'
 )
 
 AUTHENTICATION_BACKENDS = (
