@@ -7,7 +7,7 @@ class Indicator(models.Model):
     name = models.CharField(max_length=55,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    slug = AutoSlugField(populate_from='name',unique=True)
+    slug = AutoSlugField(populate_from='name',unique=True,max_length=55)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -33,12 +33,12 @@ class Office(models.Model):
 
 class Region(models.Model):
 
-    full_name = models.CharField(max_length=255,unique=True)
+    full_name = models.CharField(max_length=55,unique=True)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
-    slug = AutoSlugField(populate_from='short_name')
+    slug = AutoSlugField(populate_from='short_name',max_length=55)
     created_at = models.DateTimeField(auto_now=True)
 
 

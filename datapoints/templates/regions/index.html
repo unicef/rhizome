@@ -14,6 +14,7 @@
             <th>id</th>
             <th>full name</th>
             <th>office</th>
+            <th>slug</th>
             <th>edit</th>
         </tr>
     </thead>
@@ -23,6 +24,7 @@
             <th>{{ region.id }}</th>
             <th>{{ region.full_name }}</th>
             <th>{{ region.office }}</th>
+            <th>{{ region.slug }}</th>
             <th><a href="{% url 'regions:update_region' region.id %}"> Edit </a></th>
         </tr>
         {% endfor %}

@@ -11,6 +11,7 @@
             <th>id</th>
             <th>name</th>
             <th>description</th>
+            <th>slug</th>
             <th>edit</th>
         </tr>
     </thead>
@@ -20,6 +21,7 @@
             <th>{{ indicator.id }}</th>
             <th>{{ indicator.name }}</th>
             <th>{{ indicator.description }}</th>
+            <th>{{ indicator.slug }}</th>
             <th><a href="{% url 'indicators:update_indicator' indicator.id %}"> edit </a></th>
         </tr>
         {% endfor %}
