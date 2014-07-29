@@ -5,7 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
 from django.utils.decorators import method_decorator
 from stronghold.decorators import public
-
+from django.contrib.auth.models import User
 
 class ApiResource(ModelResource):
     '''
@@ -47,12 +47,24 @@ class CampaignResource(ApiResource):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
 
+class UserResource(ApiResource):
+    '''User Resource'''
+
+    class Meta(ApiResource.Meta):
+        queryset = User.objects.all()
+        resource_name = 'user'
+        excludes = ['password', 'username']
+        allowed_methods = ['get']
+
+
 class DataPointResource(ApiResource):
     '''Datapoint Resource'''
 
-    region = fields.ForeignKey(RegionResource, 'region')
-    indicator = fields.ForeignKey(IndicatorResource, 'indicator')
-    campaign = fields.ForeignKey(CampaignResource, 'campaign')
+    region = fields.ToOneField(RegionResource, 'region')
+    indicator = fields.ToOneField(IndicatorResource, 'indicator')
+    campaign = fields.ToOneField(CampaignResource, 'campaign')
+    changed_by_id = fields.ToOneField(UserResource, 'changed_by')
+
 
     class Meta(ApiResource.Meta):
         queryset = DataPoint.objects.all()

@@ -15,7 +15,9 @@ v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(IndicatorResource())
 v1_api.register(CampaignResource())
+v1_api.register(UserResource())
 v1_api.register(OfficeResource())
+v1_api.register(UserResource())
 
 urlpatterns = patterns('',
     ##
@@ -33,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
 
     (r'^upload/', include('datapoints.app_urls.upload_urls', namespace="upload")),
-    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 
 
 )
