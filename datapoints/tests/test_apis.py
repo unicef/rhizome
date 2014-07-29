@@ -10,13 +10,14 @@ from django.test import TestCase
 ENDPOINT = 'http://127.0.0.1:8000/api/v1/indicator/'
 USERNAME = 'john'
 API_KEY  = '3018e5d944e1a37d2e2af952198bef4ab0d9f9fc'
-
+DATABASES = {}#['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
 
 class IndicatorTest(TestCase):
 
     def test_indicator_POST(self):
 
-        data = '{"name": "this is a testxx","description": "this is a test"}'
+        data = '{"name": "this is a testxyzHALLA","description": "this is a test"}'
 
         payload = ast.literal_eval(data)
         url = ENDPOINT + '?username=' + USERNAME + '&api_key=' + API_KEY
@@ -24,10 +25,18 @@ class IndicatorTest(TestCase):
 
         r = requests.post(url, data=json.dumps(payload), headers=headers)
 
+        print r.status_code
+
         ## now look this up in the database
 
         posted_name = payload['name']
+
         # i = Indicator.objects.get(name=posted_name)
+
+        print
+        i = Indicator.objects.all()
+        print i
+
         # print posted_name
 
 
