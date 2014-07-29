@@ -4,10 +4,10 @@ from autoslug import AutoSlugField
 
 class Indicator(models.Model):
 
-    name = models.CharField(max_length=55)
+    name = models.CharField(max_length=55,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    slug = AutoSlugField(populate_from='name')
+    slug = AutoSlugField(populate_from='name',unique=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -33,9 +33,7 @@ class Office(models.Model):
 
 class Region(models.Model):
 
-    full_name = models.CharField(max_length=255)
-    short_name = models.CharField(max_length=55)
-    description = models.CharField(max_length=255,null=True)
+    full_name = models.CharField(max_length=255,unique=True)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
@@ -87,35 +85,6 @@ class DataPoint(models.Model):
         permissions = (
             ('view_datapoint', 'View datapoint'),
         )
-
-class IndicatorRelationshipType(models.Model):
-
-    display_name = models.CharField(max_length=55)
-    inverse_display_name = models.CharField(max_length=55)
-    description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return unicode(self.display_name)
-
-    class Meta:
-        db_table = 'indicator_relationship_type'
-
-
-class IndicatorRelationship(models.Model):
-
-    indicator_0 = models.ForeignKey(Indicator, related_name='ind_0')
-    indicator_1 = models.ForeignKey(Indicator, related_name='ind_1')
-    indicator_relationship_type = models.ForeignKey(IndicatorRelationshipType)
-    note = models.CharField(max_length=255,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-
-    def __unicode__(self):
-        return unicode(self.indicator_0 + '>' + self.indicator_relationship_type + '>' + self.indicator_1)
-
-    class Meta:
-        db_table = 'indicator_relationship'
 
 
 class RegionRelationshipType(models.Model):

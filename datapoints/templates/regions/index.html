@@ -12,7 +12,6 @@
     <thead>
         <tr>
             <th>id</th>
-            <th>short name</th>
             <th>full name</th>
             <th>office</th>
             <th>edit</th>
@@ -22,7 +21,6 @@
         {% for region in top_regions %}
         <tr>
             <th>{{ region.id }}</th>
-            <th>{{ region.short_name }}</th>
             <th>{{ region.full_name }}</th>
             <th>{{ region.office }}</th>
             <th><a href="{% url 'regions:update_region' region.id %}"> Edit </a></th>
