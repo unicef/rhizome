@@ -81,9 +81,18 @@ class OfficeResource(ApiResource):
         resource_name = 'office'
 
 
-#### INTERACTING W THE API FROM CURL ####
-# curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"name": "hello", "description": "world"}' http://localhost:8000/api/v1/indicator/?username=john&password=Dinginator06
-  ## ^^ this doesnt work because the request needs to be logged in...
+#### INTERACTING W THE API FROM POSTMAN ####
+
+  # save RAW data as:
+    # {"indicator": "/api/v1/indicator/47/"
+    # ,"region": "/api/v1/region/9/"
+    # ,"campaign": "/api/v1/campaign/1/"
+    # ,"value": "1.00"
+    # ,"changed_by_id": "/api/v1/user/1/"}
+
+  # header: application/json
+  # URL : http://127.0.0.1:8000/api/v1/datapoint/?username=john&
+    # api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc
 
 
 ## CREATING AN API KEY ##
