@@ -107,6 +107,14 @@ class DataPointResource(ApiResource):
 
         return bundle
 
+    def hydrate_campaign(self, bundle):
+        '''convert campaign slug into resource uri'''
+        slug = bundle.data['campaign']
+        campaign_uri = self.convert_slug_to_resource(slug,'campaign',Campaign)
+        bundle.data['campaign'] = campaign_uri
+
+        return bundle
+
 
 class OfficeResource(ApiResource):
     '''Office Resource'''

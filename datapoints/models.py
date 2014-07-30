@@ -58,12 +58,17 @@ class Campaign(models.Model):
     office = models.ForeignKey(Office)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='name')
+    slug = AutoSlugField(populate_from='get_full_name')
     created_at = models.DateTimeField(auto_now=True)
 
 
     def __unicode__(self):
-        return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' + self.end_date.strftime('%Y-%m-%d'))
+        return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' +
+            self.end_date.strftime('%Y-%m-%d'))
+
+    def get_full_name(self):
+        full_name = self.office.name + '-' + self.__unicode__()
+        return full_name
 
     class Meta:
         db_table = 'campaign'
