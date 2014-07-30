@@ -54,9 +54,11 @@ class Region(models.Model):
 
 class Campaign(models.Model):
 
+    name = models.CharField(max_length=255)
+    office = models.ForeignKey(Office)
     start_date = models.DateField()
     end_date = models.DateField()
-    note = models.CharField(max_length=255,null=True,blank=True)
+    slug = AutoSlugField(populate_from='name')
     created_at = models.DateTimeField(auto_now=True)
 
 
