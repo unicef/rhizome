@@ -73,14 +73,40 @@ class DataPointResource(ApiResource):
         excludes = ['note']
 
     def hydrate(self, bundle):
+        '''determine changed_by_id from the username param'''
         username = bundle.request.GET['username']
-
-        print username * 100
         user_id = User.objects.get(username=username).id
         user_resource_uri = "/api/v1/user/" + str(user_id) + "/"
         bundle.data['changed_by_id'] = user_resource_uri
 
         return bundle
+
+    def convert_slug_to_resource(self,slug,resource_string,model):
+        '''this is a generic method that converts the slug in the request
+           string into a resource URI that can be saved to the DB'''
+
+        object_id = model.objects.get(slug=slug).id
+        object_resource_uri = "/api/v1/%s/%s/" % (resource_string , object_id)
+
+        return object_resource_uri
+
+    def hydrate_region(self, bundle):
+        '''convert region slug into resource uri'''
+        slug = bundle.data['region']
+        region_uri = self.convert_slug_to_resource(slug,'region',Region)
+        bundle.data['region'] = region_uri
+
+        return bundle
+
+    def hydrate_indicator(self, bundle):
+        '''convert indicator slug into resource uri'''
+        slug = bundle.data['indicator']
+        indicator_uri = self.convert_slug_to_resource(slug,'indicator'
+            ,Indicator)
+        bundle.data['indicator'] = indicator_uri
+
+        return bundle
+
 
 class OfficeResource(ApiResource):
     '''Office Resource'''
