@@ -17,9 +17,9 @@ class ApiResource(ModelResource):
     '''
 
     class Meta:
-        pass
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
+        always_return_data = True
 
     @method_decorator(public)
     def dispatch(self, *args, **kwargs):

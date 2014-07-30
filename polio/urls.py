@@ -17,7 +17,6 @@ v1_api.register(IndicatorResource())
 v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
-v1_api.register(UserResource())
 
 urlpatterns = patterns('',
     ##
