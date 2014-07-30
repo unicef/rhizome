@@ -1,55 +1,83 @@
-import ast
-import json
-import urllib2
-import pprint as pp
-import requests
-import sys
+import datetime
+from tastypie.test import ResourceTestCase
 from datapoints.models import Indicator
-from django.test import TestCase
+from django.contrib.auth.models import User
+from tastypie.models import ApiKey
 
-ENDPOINT = 'http://127.0.0.1:8000/api/v1/indicator/'
-USERNAME = 'john'
-API_KEY  = '3018e5d944e1a37d2e2af952198bef4ab0d9f9fc'
+import pprint as pp
 
-class IndicatorTest(TestCase):
+# http://django-tastypie.readthedocs.org/en/latest/testing.html
 
-    def test_indicator_POST(self):
+class IndicatorResourceTest(ResourceTestCase):
+    # Use ``fixtures`` & ``urls`` as normal. See Django's ``TestCase``
+    # documentation for the gory details.
+    # fixtures = ['test_indicators.json']
 
-        data = '{"name": "this is a testxyzHALLA","description": "this is a test"}'
+    ## ^ not sure what this means ^ ##
 
-        payload = ast.literal_eval(data)
-        url = ENDPOINT + '?username=' + USERNAME + '&api_key=' + API_KEY
-        headers = {'content-type': 'application/json'}
+    def setUp(self):
+        super(IndicatorResourceTest, self).setUp()
 
-        r = requests.post(url, data=json.dumps(payload), headers=headers)
+        # Create a user.
+        self.username = 'john'
+        self.password = 'pas'
+        self.user = User.objects.create_user(self.username,
+            'john@john.com', self.password)
 
-        print r.status_code
-
-        ## now look this up in the database
-
-        posted_name = payload['name']
-
-        # i = Indicator.objects.get(name=posted_name)
-
-        print
-        i = Indicator.objects.all()
-        print i
-
-        # print posted_name
+        # create their api_key
+        self.api_key = ApiKey.objects.create(user=self.user)
 
 
-    def test_indicator_GET(self):
+        # first create an indicator
+        Indicator.objects.create(name='First Indicator',
+            description='First Indicator Description')
 
-        url = ENDPOINT + '?username=' + USERNAME + '&api_key=' + API_KEY
-        response = requests.get(url)
+        # Fetch the ``Datapoint`` object we'll use in testing.
+        # Note that we aren't using PKs because they can change depending
+        # on what other tests are running.
+        self.indicator_1 = Indicator.objects.get(slug='first-indicator')
 
-        status_code = response.status_code
-        data = response.text
+        # We also build a detail URI, since we will be using it all over.
+        # DRY, baby. DRY.
+        self.detail_url = '/api/v1/indicator/{0}/'.format(self.indicator_1.pk)
 
-        return status_code, data
+        # The data we'll send on POST requests. Again, because we'll use it
+        # frequently (enough).
+        self.post_data = {
+            'description': 'Second Indicator Description',
+            'name': 'Second Indicator',
+            'slug': 'second-indicator',
+            'created': '2012-05-01T22:05:12'
+        }
 
-    def do_something():
-        print 'hello'
+    def get_credentials(self):
+        return self.create_basic(username=self.username, password=self.password)
 
-## TO RUN THIS:
-# coverage run manage.py test  datapoints.api --settings=polio.settings_test
+    # def test_get_list_unauthorzied(self):
+    #     self.assertHttpUnauthorized(self.api_client.get('/api/v1/indicator/',
+    #         format='json'))
+
+    def test_get_list_json(self):
+        resp = self.api_client.get('/api/v1/indicator/', format='json',
+            usernmae='john',api_key=self.api_key,
+            authentication=self.get_credentials())
+
+        # x = resp.__dict__
+        # pp.pprint(x)
+
+        self.assertValidJSONResponse(resp)
+
+        # Scope out the data for correctness.
+        ## IN THE DOCS THE ASSERTION HAD 12... dunno why that was but i expect 1
+        self.assertEqual(len(self.deserialize(resp)['objects']), 1)
+
+        # Here, we're checking an entire structure for the expected data.
+        self.assertEqual(self.deserialize(resp)['objects'][0]['name'],
+        'First Indicator')
+        # {
+        #     'pk': str(self.indicator_1.pk),
+        #     'name': 'First Indicator',
+        #     'slug': 'first-indicator',
+        #     'created': '2012-05-01T19:13:42',
+        #     'resource_uri': '/api/v1/indicator/{0}/'.format(self.indicator_1.pk)
+        # })

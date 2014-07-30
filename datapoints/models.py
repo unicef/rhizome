@@ -38,7 +38,7 @@ class Region(models.Model):
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
-    slug = AutoSlugField(populate_from='short_name',max_length=55)
+    slug = AutoSlugField(populate_from='full_name',max_length=55)
     created_at = models.DateTimeField(auto_now=True)
 
 

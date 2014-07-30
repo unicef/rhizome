@@ -15,10 +15,8 @@ class IndicatorTest(TestCase):
 
 class RegionTest(TestCase):
 
-    def create_region(self, full_name="test", short_name = "short test",
-          office_id=1):
-        return Region.objects.create(full_name=full_name,
-          short_name=short_name,office_id=office_id)
+    def create_region(self, full_name = "full test", office_id=1):
+        return Region.objects.create(full_name=full_name,office_id=office_id)
 
     def test_region_creation(self):
         r = self.create_region()
