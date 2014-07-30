@@ -2,7 +2,7 @@
 ## this should show in red if the COUNT is less than the total
 ## number of regions that exist for that relationshiop
 
-show_dashboard = '''
+show_indicator_pct_aggregation = '''
         SELECT
              i.indicator_pct_display_name
             , d.value / d2.value as pct
@@ -16,9 +16,9 @@ show_dashboard = '''
             AND d.region_id = d2.region_id
         INNER JOIN region r
             ON d.region_id = r.id
+        '''
 
-        UNION ALL
-
+show_region_aggregation = '''
         SELECT
             i.name
             , SUM(d.value) as value

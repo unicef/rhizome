@@ -8,7 +8,7 @@ from django.db import connection
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 
-from datapoints.sql_queries import show_dashboard
+from datapoints.sql_queries import *
 from datapoints.models import DataPoint,Region,Indicator,Document
 from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentForm,DataPointSearchForm
 
@@ -57,15 +57,29 @@ class DataPointIndexView(IndexView):
         return dps
 
 class DashBoardView(IndexView):
+    paginate_by = 50
 
     template_name = 'dashboard/index.html'
     context_object_name = 'user_dashboard'
 
+    def raw_query(self, sql_string):
+      cursor = connection.cursor()
+      cursor.execute(sql_string)
+      rows = cursor.fetchall()
+
+      return rows
+
     def get_queryset(self):
-        cursor = connection.cursor()
-        raw_sql = show_dashboard
-        cursor.execute(raw_sql)
-        rows = cursor.fetchall()
+        rows = []
+        ind_pct = self.raw_query(show_indicator_pct_aggregation)
+        region_agg = self.raw_query(show_region_aggregation)
+
+        for row in ind_pct:
+            rows.append(row)
+
+        for row in region_agg:
+            rows.append(row)
+
 
         return rows
 
