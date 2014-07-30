@@ -53,9 +53,9 @@ class IndicatorResourceTest(ResourceTestCase):
     def get_credentials(self):
         return self.create_basic(username=self.username, password=self.password)
 
-    # def test_get_list_unauthorzied(self):
-    #     self.assertHttpUnauthorized(self.api_client.get('/api/v1/indicator/',
-    #         format='json'))
+    def test_get_list_unauthorzied(self):
+        self.assertHttpUnauthorized(self.api_client.get('/api/v1/indicator/',
+            format='json'))
 
     def test_get_list_json(self):
         resp = self.api_client.get('/api/v1/indicator/', format='json',
@@ -81,3 +81,6 @@ class IndicatorResourceTest(ResourceTestCase):
         #     'created': '2012-05-01T19:13:42',
         #     'resource_uri': '/api/v1/indicator/{0}/'.format(self.indicator_1.pk)
         # })
+
+### RUN THIS BY USING THE FOLLOWING COMMAND ###
+# coverage run manage.py test datapoints.api  --settings=polio.settings_test

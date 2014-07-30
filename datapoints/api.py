@@ -18,8 +18,8 @@ class ApiResource(ModelResource):
 
     class Meta:
         pass
-        # authentication = ApiKeyAuthentication()
-        # authorization = Authorization()
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
     @method_decorator(public)
     def dispatch(self, *args, **kwargs):
@@ -72,6 +72,15 @@ class DataPointResource(ApiResource):
         resource_name = 'datapoint'
         excludes = ['note']
 
+    def hydrate(self, bundle):
+        username = bundle.request.GET['username']
+
+        print username * 100
+        user_id = User.objects.get(username=username).id
+        user_resource_uri = "/api/v1/user/" + str(user_id) + "/"
+        bundle.data['changed_by_id'] = user_resource_uri
+
+        return bundle
 
 class OfficeResource(ApiResource):
     '''Office Resource'''
