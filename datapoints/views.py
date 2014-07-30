@@ -80,7 +80,6 @@ class DashBoardView(IndexView):
         for row in region_agg:
             rows.append(row)
 
-
         return rows
 
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):

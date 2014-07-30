@@ -21,6 +21,7 @@ class ApiResource(ModelResource):
         authorization = Authorization()
         always_return_data = True
 
+
     @method_decorator(public)
     def dispatch(self, *args, **kwargs):
         return super(ApiResource, self).dispatch(*args, **kwargs)
@@ -39,6 +40,11 @@ class IndicatorResource(ApiResource):
     class Meta(ApiResource.Meta):
         queryset = Indicator.objects.all()
         resource_name = 'indicator'
+        filtering = {
+            "slug": ('exact'),
+            "id":('exact','gt','lt','range'),
+        }
+
 
 class CampaignResource(ApiResource):
     '''Campaign Resource'''
@@ -71,6 +77,9 @@ class DataPointResource(ApiResource):
         queryset = DataPoint.objects.all()
         resource_name = 'datapoint'
         excludes = ['note']
+        filtering = {
+            "value": ('exact','lt','gt','lte','gte','range'),
+        }
 
     def hydrate(self, bundle):
         '''determine changed_by_id from the username param'''

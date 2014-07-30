@@ -1,6 +1,72 @@
 API
 ===
 
+
+
+**GET REQUESTS**
+
+For the sake of brevity, the username and api key parameters are not
+contained in the example strings below.  WHen testing these in your
+application or in curl, dont forget to append your api key.
+
+
+
+**Filtering**
+
+For the Datapoint Resource, the following filtering methods are available
+
+These numeric filters are  available on the ID, value, and created_at columns.
+
+Greater Than
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/datapoint/format=json&id__gt=9
+
+Less Than
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/indicator/format=json&id__lt=9
+
+Greater Than or Equal to
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/datapoint/format=json&id__gte=9
+
+Less Than or Equal to
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/indicator/format=json&id__lte=9
+
+Range
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/indicator/format=json&id__id__range=9,12
+
+
+
+Lets say that i wanted to query for all datapoints with IDs between 10 and 20
+created after July 1 2014.
+
+
+
+**Ordering**
+
+
+**POST REQUESTS**
+
+When posting to the datapoint resource, provide the *slug* of the indicator
+region, and campaign.  Click here for the reference data information.
+
 Here is an Example on posting a Datapoint using Python
 
 .. code-block:: python
@@ -36,11 +102,7 @@ Here is an Example on posting a Datapoint using Python
     if __name__ == "__main__":
         test_datapoint_POST()
 
-
-When posting to the datapoint resource, provide the *slug* of the indicator
-region, and campaign.  Click here for the reference data information
-
-
+**AUTO GENERATED DOCUMENTATION FROM DATAPOINTS API**
 
 .. automodule:: datapoints.api
    :members:
