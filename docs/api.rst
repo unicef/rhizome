@@ -29,7 +29,7 @@ Less Than
 .. code-block:: python
    :linenos:
 
-    http://localhost:8000/api/v1/indicator/format=json&id__lt=9
+    http://localhost:8000/api/v1/datapoint/format=json&id__lt=9
 
 Greater Than or Equal to
 
@@ -43,7 +43,7 @@ Less Than or Equal to
 .. code-block:: python
    :linenos:
 
-    http://localhost:8000/api/v1/indicator/format=json&id__lte=9
+    http://localhost:8000/api/v1/datapoint/format=json&id__lte=9
 
 Range
 
@@ -56,6 +56,26 @@ Range
 
 Lets say that i wanted to query for all datapoints with IDs between 10 and 20
 created after July 1 2014.
+
+
+**Filtering By Resource**
+
+In order to filter by campaign, region, or indicator you must pass in the slug
+of the resource you are filtering on.
+
+For instance to see all datapoints for indicator "Pct of children missed
+due to child not available" you would pass the following:
+
+Range
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/indicator/format=json&indicator=pct-of-children-missed-due-to-child-not-available
+
+
+
+
 
 
 

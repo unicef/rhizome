@@ -79,6 +79,8 @@ class DataPointResource(ApiResource):
         excludes = ['note']
         filtering = {
             "value": ('exact','lt','gt','lte','gte','range'),
+            "created_at":('exact','lt','gt','lte','gte','range'),
+            "indicator":('exact')
         }
 
     def hydrate(self, bundle):
@@ -90,12 +92,17 @@ class DataPointResource(ApiResource):
 
         return bundle
 
-    def convert_slug_to_resource(self,slug,resource_string,model):
+    def convert_slug_to_resource(self,slug,resource_string,model,id_only=False):
         '''this is a generic method that converts the slug in the request
            string into a resource URI that can be saved to the DB'''
 
         object_id = model.objects.get(slug=slug).id
-        object_resource_uri = "/api/v1/%s/%s/" % (resource_string , object_id)
+
+        if id_only:
+            object_resource_uri = object_id
+
+        else:
+            object_resource_uri = "/api/v1/%s/%s/" % (resource_string , object_id)
 
         return object_resource_uri
 
@@ -121,6 +128,19 @@ class DataPointResource(ApiResource):
         slug = bundle.data['campaign']
         campaign_uri = self.convert_slug_to_resource(slug,'campaign',Campaign)
         bundle.data['campaign'] = campaign_uri
+
+        return bundle
+
+
+    def dehydrate(self, bundle):
+        '''convert indicator slug into resource object id for filtering GET'''
+
+        slug = bundle.request.GET['indicator_slug']
+
+        indicator_uri = self.convert_slug_to_resource(slug,'indicator',
+            Indicator,True)
+
+        bundle.data['indicator'] = indicator_uri
 
         return bundle
 
@@ -155,3 +175,5 @@ class OfficeResource(ApiResource):
 # api_key = ApiKey.objects.create(user=john)
 
 # http://127.0.0.1:8000/api/v1/datapoint/?username=john&api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc&format=json
+
+# http://polio.seedscientific.com/api/v1/datapoint/?username=john&api_key=b8f139e164a2a1811da57b4eaeddd554b7683ea8&format=json
