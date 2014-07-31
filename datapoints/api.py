@@ -6,6 +6,7 @@ from tastypie import fields
 from django.utils.decorators import method_decorator
 from stronghold.decorators import public
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 class ApiResource(ModelResource):
     '''
@@ -80,7 +81,9 @@ class DataPointResource(ApiResource):
         filtering = {
             "value": ('exact','lt','gt','lte','gte','range'),
             "created_at":('exact','lt','gt','lte','gte','range'),
-            "indicator":('exact')
+            "indicator":('exact'),
+            "indicator_slug":('exact')
+
         }
 
     def hydrate(self, bundle):
@@ -132,17 +135,25 @@ class DataPointResource(ApiResource):
         return bundle
 
 
-    def dehydrate(self, bundle):
-        '''convert indicator slug into resource object id for filtering GET'''
+    def get_object_list(self, request):
+        '''this method does custom filtering for the SLUG fields by filtering
+        the object list according the slug in the query string'''
 
-        slug = bundle.request.GET['indicator_slug']
+        object_list = super(DataPointResource, self).get_object_list(request)
+        query_dict = request.GET
 
-        indicator_uri = self.convert_slug_to_resource(slug,'indicator',
-            Indicator,True)
+        try:
+            indicator_slug = query_dict['indicator_slug']
+            indicator_id = Indicator.objects.get(slug=indicator_slug).id
+            object_list = object_list.filter(indicator=indicator_id)
+        except KeyError:
+            print 'there was an no indicator_slug in request\n'
+        except ObjectDoesNotExist:
+            print 'there was an indicator slug in request but there is no \
+                  cooresponding object\n'
 
-        bundle.data['indicator'] = indicator_uri
+        return object_list
 
-        return bundle
 
 
 class OfficeResource(ApiResource):

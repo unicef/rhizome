@@ -60,23 +60,25 @@ created after July 1 2014.
 
 **Filtering By Resource**
 
-In order to filter by campaign, region, or indicator you must pass in the slug
-of the resource you are filtering on.
+In order to filter by campaign, region, or indicator you can either pass the slug
+of the resource you are filtering on or, the ID.
 
 For instance to see all datapoints for indicator "Pct of children missed
-due to child not available" you would pass the following:
-
-Range
+due to child not available" you could pass either
 
 .. code-block:: python
    :linenos:
 
-    http://localhost:8000/api/v1/indicator/format=json&indicator=pct-of-children-missed-due-to-child-not-available
+    http://localhost:8000/api/v1/indicator/format=json&indicator_slug=pct-of-children-missed-due-to-child-not-available
 
+or if you have the ID and you want to pass that
 
+.. code-block:: python
+   :linenos:
 
+    http://localhost:8000/api/v1/indicator/format=json&indicator=11
 
-
+Both Return the same exact data.
 
 
 **Ordering**
