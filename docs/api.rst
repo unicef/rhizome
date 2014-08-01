@@ -80,6 +80,16 @@ or if you have the ID and you want to pass that
 
 Both Return the same exact data.
 
+Here is an example of filtering on both indicator and region using the slug
+
+.. code-block:: python
+   :linenos:
+
+
+    http://127.0.0.1:8000/api/v1/datapoint/?format=json&region_slug=kandahar-city&indicator_slug=number-of-children-missed-due-to-refusal-to-accept-opv
+
+
+
 
 **Ordering**
 

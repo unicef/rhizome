@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from stronghold.decorators import public
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+# from django.utils.datastructures import MultiValueDictKeyError
 
 class ApiResource(ModelResource):
     '''
@@ -82,8 +83,8 @@ class DataPointResource(ApiResource):
             "value": ('exact','lt','gt','lte','gte','range'),
             "created_at":('exact','lt','gt','lte','gte','range'),
             "indicator":('exact'),
-            "indicator_slug":('exact')
-
+            "region":('exact'),
+            "campaign":('exact'),
         }
 
     def hydrate(self, bundle):
@@ -134,13 +135,25 @@ class DataPointResource(ApiResource):
 
         return bundle
 
-    def get_id_from_slug_param(self,slug_key,object_list,query_dict):
+    def get_id_from_slug_param(self,slug_key,object_list,query_dict,model):
 
         try:
             slug = query_dict[slug_key]
-            obj_id = Indicator.objects.get(slug=slug).id
-        except KeyError:
-            print 'there was an no indicator_slug in request\n'
+            print (slug + '\n' ) * 10
+
+            obj_id = model.objects.get(slug=slug).id
+            print obj_id * 10
+
+
+        except KeyError: #MultiValueDictKeyError
+            obj_id = None
+            print 'NOT IN THE QUERY DICT'
+            # there was an no indicator_slug in request
+        except ObjectDoesNotExist:
+            obj_id = -1
+            # print 'OBJ DOESNT EXIST'
+            ## TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
+            # there was a slug in request but there is no cooresponding object
 
         return obj_id
 
@@ -151,16 +164,26 @@ class DataPointResource(ApiResource):
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
-        indicator_id = self.get_id_from_slug_param('indicator_slug',object_list,query_dict)
+        indicator_id = self.get_id_from_slug_param('indicator_slug', \
+            object_list,query_dict,Indicator)
 
+        region_id = self.get_id_from_slug_param('region_slug', \
+            object_list,query_dict,Region)
 
-        try:
+        campaign_id = self.get_id_from_slug_param('campaign_slug', \
+            object_list,query_dict,Campaign)
+
+        if indicator_id:
             object_list = object_list.filter(indicator=indicator_id)
-        except ObjectDoesNotExist:
-            print 'there was an indicator slug in request but there is no \
-                  cooresponding object\n'
+
+        if region_id:
+            object_list = object_list.filter(region=region_id)
+
+        if campaign_id:
+            object_list = object_list.filter(campaign=campaign_id)
 
         return object_list
+        ## THIS METHOD SUCCCKS -> FIX THIS TO BE DRY! ##
 
 
 
