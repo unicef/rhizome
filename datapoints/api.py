@@ -134,6 +134,15 @@ class DataPointResource(ApiResource):
 
         return bundle
 
+    def get_id_from_slug_param(self,slug_key,object_list,query_dict):
+
+        try:
+            slug = query_dict[slug_key]
+            obj_id = Indicator.objects.get(slug=slug).id
+        except KeyError:
+            print 'there was an no indicator_slug in request\n'
+
+        return obj_id
 
     def get_object_list(self, request):
         '''this method does custom filtering for the SLUG fields by filtering
@@ -142,12 +151,11 @@ class DataPointResource(ApiResource):
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
+        indicator_id = self.get_id_from_slug_param('indicator_slug',object_list,query_dict)
+
+
         try:
-            indicator_slug = query_dict['indicator_slug']
-            indicator_id = Indicator.objects.get(slug=indicator_slug).id
             object_list = object_list.filter(indicator=indicator_id)
-        except KeyError:
-            print 'there was an no indicator_slug in request\n'
         except ObjectDoesNotExist:
             print 'there was an indicator slug in request but there is no \
                   cooresponding object\n'
