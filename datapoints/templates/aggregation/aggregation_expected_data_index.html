@@ -1,0 +1,36 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+    <div align="right"><a href="{% url 'datapoints:search_datapoint' %}"> Search Page </a></div>
+    <br><br>
+
+    {% if top_aggregation_expected %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>name</th>
+            <th>content type</th>
+            <th>param type</th>
+        </tr>
+    </thead>
+
+        {% for agg in top_aggregation_expected %}
+        <tr>
+            <th>{{ agg.id }}</th>
+            <th>{{ agg.aggregation_type }}</th>
+            <th>{{ agg.content_type }}</th>
+            <th>{{ agg.param_type }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+{% else %}
+    <p>No expected aggregation is available.</p>
+{% endif %}
+    <div align="right">
+    <a href="{% url 'datapoints:create_aggregation_expected_data' %}" <button type="submit" class="btn btn-primary"> Create New Aggregation Expected</button></a>
+    </div>
+
+{% endblock %}

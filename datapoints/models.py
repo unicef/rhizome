@@ -152,6 +152,9 @@ class AggregationType(models.Model):
     display_name_w_sub = models.CharField(max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return unicode(self.name)
+
     class Meta:
         db_table = 'aggregation_type'
 

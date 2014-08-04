@@ -280,6 +280,19 @@ class AggregationCreateView(PermissionRequiredMixin,
     success_url = reverse_lazy('datapoints:aggregation_index')
     template_name = 'aggregation/aggregation_create.html'
 
+class AggregationExpectedDataView(IndexView):
+    model = AggregationExpectedData
+    template_name = 'aggregation/aggregation_expected_data_index.html'
+    context_object_name = 'top_aggregation_expected'
+
+
+class AggregationExpectedDataCreateView(PermissionRequiredMixin,
+    generic.CreateView):
+
+    model = AggregationExpectedData
+    success_url = reverse_lazy('datapoints:aggregation_expected_data_index')
+    template_name = 'aggregation/aggregation_expected_data_create.html'
+
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####

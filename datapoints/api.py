@@ -8,6 +8,9 @@ from stronghold.decorators import public
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 # from django.utils.datastructures import MultiValueDictKeyError
+from datapoints.fn_lookup import FnLookUp
+
+
 
 class ApiResource(ModelResource):
     '''
@@ -147,7 +150,6 @@ class DataPointResource(ApiResource):
 
         except KeyError: #MultiValueDictKeyError
             obj_id = None
-            print 'NOT IN THE QUERY DICT'
             # there was an no indicator_slug in request
         except ObjectDoesNotExist:
             obj_id = -1
@@ -160,9 +162,18 @@ class DataPointResource(ApiResource):
     def get_object_list(self, request):
         '''this method does custom filtering for the SLUG fields by filtering
         the object list according the slug in the query string'''
+        # see here: http://django-tastypie.readthedocs.org/en/latest/
+        # cookbook.html#using-non-pk-data-for-your-urls
 
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
+
+        try:
+            api_method = query_dict['api_method']
+            self.get_data_by_api_method(api_method,query_dict)
+        except KeyError:
+            pass
+
 
         indicator_id = self.get_id_from_slug_param('indicator_slug', \
             object_list,query_dict,Indicator)
@@ -184,6 +195,17 @@ class DataPointResource(ApiResource):
 
         return object_list
         ## THIS METHOD SUCCCKS -> FIX THIS TO BE DRY! ##
+
+
+    def get_data_by_api_method(self,api_method,query_dict):
+
+        try:
+            fn = AggregationType.objects.get(fn_lookup=api_method)
+            fl_instance = FnLookUp()
+            data = FnLookUp.prep_data(fl_instance,fn,query_dict)
+        except AggregationType.DoesNotExist:
+            pass
+            # somehow report this to the get request
 
 
 
