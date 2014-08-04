@@ -164,6 +164,8 @@ class AggregationExpectedData(models.Model):
     aggregation_type = models.ForeignKey(AggregationType)
     content_type = models.CharField(max_length=20)
     param_type = models.CharField(max_length=20)
+    slug = AutoSlugField(populate_from=('aggregation_type','content_type'), \
+        unique=True,max_length=55)
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:

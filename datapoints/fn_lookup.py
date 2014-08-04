@@ -28,17 +28,18 @@ class FnLookUp(object):
             line_item_dict['param_type'] = d.param_type
 
             try:
-                line_item_dict['data'] = query_dict[d.param_type]
+                line_item_dict['data'] = query_dict[d.slug]
             except KeyError:
                 pass
+
+            print 'EXPECTED DATA SLUG'
+            pp.pprint(d.slug)
 
             prepped_data.append(line_item_dict)
 
         # pp.pprint(expected_data)
         fn = self.function_mappings[api_method.fn_lookup]
         fn(prepped_data)
-
-
 
 
     def calc_pct_single_reg_single_campaign(self,**kwargs):
