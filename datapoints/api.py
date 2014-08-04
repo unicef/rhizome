@@ -198,13 +198,14 @@ class DataPointResource(ApiResource):
 
 
     def get_data_by_api_method(self,api_method,query_dict):
-
         try:
             fn = AggregationType.objects.get(fn_lookup=api_method)
             fl_instance = FnLookUp()
             data = FnLookUp.prep_data(fl_instance,fn,query_dict)
+
         except AggregationType.DoesNotExist:
             pass
+            print 'no agg exists\n' * 10
             # somehow report this to the get request
 
 
