@@ -53,4 +53,17 @@ urlpatterns = [
         name='create_campaign'),
 
 
+        #################
+        ## AGGREGATION ##
+        #################
+
+    ## INDEX ##
+    url(r'^aggregation$', views.AggregationIndexView.as_view(),
+        name='aggregation_index'),
+
+    ## CREATE ##
+    url(r'^aggregation/create/$',
+        views.AggregationCreateView.as_view(),
+        name='create_aggregation'),
+
 ]

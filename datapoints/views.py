@@ -263,6 +263,23 @@ class RegionRelationshipTypeCreateView(PermissionRequiredMixin,
     permission_required = 'datapoints.add_regionrelationship'
 
 
+    ###################
+    ### AGGREGATION ###
+    ###################
+
+class AggregationIndexView(IndexView):
+    model = AggregationType
+    template_name = 'aggregation/aggregation_index.html'
+    context_object_name = 'top_aggregation_types'
+
+
+class AggregationCreateView(PermissionRequiredMixin,
+    generic.CreateView):
+
+    model = AggregationType
+    success_url = reverse_lazy('datapoints:aggregation_index')
+    template_name = 'aggregation/aggregation_create.html'
+
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####

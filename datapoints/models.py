@@ -143,3 +143,25 @@ class Document(models.Model):
 
     class Meta:
         db_table = 'document'
+
+
+class AggregationType(models.Model):
+
+    name = models.CharField(max_length=255,unique=True)
+    fn_lookup = models.CharField(max_length=255,unique=True)
+    display_name_w_sub = models.CharField(max_length=255,unique=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'aggregation_type'
+
+
+class AggregationExpectedData(models.Model):
+
+    aggregation_type = models.ForeignKey(AggregationType)
+    content_type = models.CharField(max_length=20)
+    param_type = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'aggregation_expected_data'
