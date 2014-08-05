@@ -1,4 +1,4 @@
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ModelResource,Resource, ALL
 from datapoints.models import *
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -8,9 +8,83 @@ from stronghold.decorators import public
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 # from django.utils.datastructures import MultiValueDictKeyError
-from datapoints.fn_lookup import FnLookUp
+from datapoints.fn_lookup import FnLookUp, ResultObject
+import pprint as pp
+from tastypie.bundle import Bundle
+
+class AggregateResource(Resource):
+    '''This resource is our own resource that we wrote from scratch to implement
+    complex aggregate queries that dont just rely on the "model resource" class
+    from tastypie.  Here Just like a Django ``Form`` or ``Model``, we're
+    defining all the fields we're going to handle with the API here.'''
+
+    uuid = fields.CharField(attribute='uuid')
+    # message = fields.CharField(attribute='message')
+    created = fields.IntegerField(attribute='created')
+
+    class Meta:
+        resource_name = 'aggregate'
+        object_class = ResultObject
+        authorization = Authorization()
+        allowed_methods = ['get']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+        always_return_data = True
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        if isinstance(bundle_or_obj, Bundle):
+            kwargs['pk'] = bundle_or_obj.obj.uuid
+        else:
+            kwargs['pk'] = bundle_or_obj.uuid
+
+        return kwargs
 
 
+    def get_object_list(self, requst):
+        print 'TRYING TO GET THE OBJECT LIST MY DUDE!\n' * 10
+        cust_object_list = []
+
+        query = DataPoint.objects.all()
+
+        for result in query:
+            print 'results!!!!\n' * 10
+            print result.id
+
+            new_obj = ResultObject(initial='some_data')
+            new_obj.uuid = 'some_uq_id'
+            new_obj.created = '1'
+
+            cust_object_list.append(new_obj)
+
+
+            pp.pprint(cust_object_list)
+
+        return cust_object_list
+
+    def obj_get_list(self, bundle, **kwargs):
+        # Filtering disabled for brevity...
+        return self.get_object_list(bundle.request)
+
+    def obj_get(self):
+        bucket = self._bucket()
+        message = bucket.get(kwargs['pk'])
+        return AggregateObject(initial=message.get_data())
+
+    def rollback(self):
+        pass
+
+    @method_decorator(public)
+    def dispatch(self, *args, **kwargs):
+        return super(AggregateResource, self).dispatch(*args, **kwargs)
+
+
+
+
+#######
+#######
+#######
 
 class ApiResource(ModelResource):
     '''
@@ -174,6 +248,8 @@ class DataPointResource(ApiResource):
 
 
         object_list = super(DataPointResource, self).get_object_list(request)
+        help(obect_list)
+
         error = None
         query_dict = request.GET
 
@@ -187,24 +263,23 @@ class DataPointResource(ApiResource):
         print "API_METHOD:"   + str(api_method)
 
         if api_method > 0:
-
-            data,error = FnLookUp.prep_data(FnLookUp(),api_method,query_dict, \
+            data = FnLookUp.prep_data(FnLookUp(),api_method,query_dict, \
                 indicator_id, region_id, campaign_id)
-            return data, error
+
+            return data
 
         else:
-            print 'this is hard!'
-            if indicator_id:
+
+            if indicator_id > 0:
                 object_list = object_list.filter(indicator=indicator_id)
 
-            if region_id:
+            if region_id > 0:
                 object_list = object_list.filter(region=region_id)
 
-            if campaign_id:
+            if campaign_id > 0:
                 object_list = object_list.filter(campaign=campaign_id)
 
-
-        return object_list
+            return object_list
 
 
     def parse_slugs_from_url(self,query_dict,object_list):
