@@ -16,11 +16,13 @@ class AggregateResource(Resource):
     '''This resource is our own resource that we wrote from scratch to implement
     complex aggregate queries that dont just rely on the "model resource" class
     from tastypie.  Here Just like a Django ``Form`` or ``Model``, we're
-    defining all the fields we're going to handle with the API here.'''
+    defining all the fields we're going to handle with the API here. for more
+    information on how i built this resource see
+    http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
+    '''
 
-    uuid = fields.CharField(attribute='uuid')
-    # message = fields.CharField(attribute='message')
-    created = fields.IntegerField(attribute='created')
+    key = fields.CharField(attribute='key')
+    value = fields.CharField(attribute='value')
 
     class Meta:
         resource_name = 'aggregate'
@@ -34,32 +36,31 @@ class AggregateResource(Resource):
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
 
-        if isinstance(bundle_or_obj, Bundle):
-            kwargs['pk'] = bundle_or_obj.obj.uuid
-        else:
-            kwargs['pk'] = bundle_or_obj.uuid
+        # if isinstance(bundle_or_obj, Bundle):
+        #     kwargs['pk'] = bundle_or_obj.obj.uuid
+        # else:
+        #     kwargs['pk'] = bundle_or_obj.uuid
 
         return kwargs
 
 
-    def get_object_list(self, requst):
-        print 'TRYING TO GET THE OBJECT LIST MY DUDE!\n' * 10
+    def get_object_list(self, request):
+        '''in this method we pass the query dictionary to the prep data method
+        which prepares the data to be aggregated, and then passes the relevant
+        data to the api_method in the request.'''
+
         cust_object_list = []
+        aggregate_data = FnLookUp.prep_data(FnLookUp(),request.GET)
+        # x = aggregate_data[:3]
 
-        query = DataPoint.objects.all()
-
-        for result in query:
+        for k,v in aggregate_data.iteritems():
             print 'results!!!!\n' * 10
-            print result.id
 
             new_obj = ResultObject(initial='some_data')
-            new_obj.uuid = 'some_uq_id'
-            new_obj.created = '1'
+            new_obj.key = k
+            new_obj.value = v
 
             cust_object_list.append(new_obj)
-
-
-            pp.pprint(cust_object_list)
 
         return cust_object_list
 
@@ -223,9 +224,9 @@ class DataPointResource(ApiResource):
             # there was an no indicator_slug in request
         except ObjectDoesNotExist:
             obj_id = -1
-            # print 'OBJ DOESNT EXIST'
-            ## TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
+            # TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
             # there was a slug in request but there is no cooresponding object
+
 
         return obj_id
 
@@ -233,15 +234,7 @@ class DataPointResource(ApiResource):
         '''this method overides the get_object_list of the model resource
         class taken from tastypie.  The idea here is that for GET Requests
         we parse out the additional params that wer not passed as resources
-
-        in addition, this method routes requests with simple filtering, and
-        complex requests that are routed via the api_method argument.  The
-        API method if parsed successfuly and turned into an aggregation type
-        object is routed to the fn_lookup module in which data is prepared
-        and the function specified with the api method arg is executed.
-
-        If there is no api_method in the request, we filter based on the
-        indicator, region and campaign'''
+        for when the end point is hit with a SLUG as opposed to RESOURCE'''
 
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
