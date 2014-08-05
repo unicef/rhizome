@@ -142,13 +142,12 @@ class DataPointResource(ApiResource):
 
         try:
             slug = query_dict[slug_key]
-            print (slug + '\n' ) * 10
+            # print (slug + '\n' ) * 10
 
             obj_id = model.objects.get(slug=slug).id
-            print obj_id * 10
+            # print obj_id * 10
 
-
-        except KeyError: #MultiValueDictKeyError
+        except KeyError:
             obj_id = None
             # there was an no indicator_slug in request
         except ObjectDoesNotExist:
@@ -160,20 +159,55 @@ class DataPointResource(ApiResource):
         return obj_id
 
     def get_object_list(self, request):
-        '''this method does custom filtering for the SLUG fields by filtering
-        the object list according the slug in the query string'''
-        # see here: http://django-tastypie.readthedocs.org/en/latest/
-        # cookbook.html#using-non-pk-data-for-your-urls
+        '''this method overides the get_object_list of the model resource
+        class taken from tastypie.  The idea here is that for GET Requests
+        we parse out the additional params that wer not passed as resources
+
+        in addition, this method routes requests with simple filtering, and
+        complex requests that are routed via the api_method argument.  The
+        API method if parsed successfuly and turned into an aggregation type
+        object is routed to the fn_lookup module in which data is prepared
+        and the function specified with the api method arg is executed.
+
+        If there is no api_method in the request, we filter based on the
+        indicator, region and campaign'''
+
 
         object_list = super(DataPointResource, self).get_object_list(request)
+        error = None
         query_dict = request.GET
 
-        try:
-            api_method = query_dict['api_method']
-            self.get_data_by_api_method(api_method,query_dict)
-        except KeyError:
-            pass
 
+        indicator_id, region_id, campaign_id, api_method = \
+            self.parse_slugs_from_url(query_dict, object_list)
+
+        print "INDICATOR_ID:" + str(indicator_id)
+        print "REGION_ID:"    + str(region_id)
+        print "CAMPAIGN_ID:"  + str(campaign_id)
+        print "API_METHOD:"   + str(api_method)
+
+        if api_method > 0:
+
+            data,error = FnLookUp.prep_data(FnLookUp(),api_method,query_dict, \
+                indicator_id, region_id, campaign_id)
+            return data, error
+
+        else:
+            print 'this is hard!'
+            if indicator_id:
+                object_list = object_list.filter(indicator=indicator_id)
+
+            if region_id:
+                object_list = object_list.filter(region=region_id)
+
+            if campaign_id:
+                object_list = object_list.filter(campaign=campaign_id)
+
+
+        return object_list
+
+
+    def parse_slugs_from_url(self,query_dict,object_list):
 
         indicator_id = self.get_id_from_slug_param('indicator_slug', \
             object_list,query_dict,Indicator)
@@ -184,30 +218,10 @@ class DataPointResource(ApiResource):
         campaign_id = self.get_id_from_slug_param('campaign_slug', \
             object_list,query_dict,Campaign)
 
-        if indicator_id:
-            object_list = object_list.filter(indicator=indicator_id)
+        api_method = self.get_id_from_slug_param('api_method', \
+            object_list,query_dict,AggregationType)
 
-        if region_id:
-            object_list = object_list.filter(region=region_id)
-
-        if campaign_id:
-            object_list = object_list.filter(campaign=campaign_id)
-
-        return object_list
-        ## THIS METHOD SUCCCKS -> FIX THIS TO BE DRY! ##
-
-
-    def get_data_by_api_method(self,api_method,query_dict):
-        try:
-            fn = AggregationType.objects.get(fn_lookup=api_method)
-            fl_instance = FnLookUp()
-            data = FnLookUp.prep_data(fl_instance,fn,query_dict)
-
-        except AggregationType.DoesNotExist:
-            pass
-            print 'no agg exists\n' * 10
-            # somehow report this to the get request
-
+        return indicator_id, region_id, campaign_id, api_method
 
 
 class OfficeResource(ApiResource):

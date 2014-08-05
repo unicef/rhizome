@@ -118,7 +118,8 @@ class RegionRelationship(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.region_0 + '>' + self.region_relationship_type + '>' + self.region_0)
+        return unicode(self.region_0 + '>' + self.region_relationship_type + \
+            '>' + self.region_0)
 
     class Meta:
         db_table = 'region_relationship'
@@ -148,7 +149,7 @@ class Document(models.Model):
 class AggregationType(models.Model):
 
     name = models.CharField(max_length=255,unique=True)
-    fn_lookup = models.CharField(max_length=255,unique=True)
+    slug = models.CharField(max_length=255,unique=True)
     display_name_w_sub = models.CharField(max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
 
