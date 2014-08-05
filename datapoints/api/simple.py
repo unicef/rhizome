@@ -8,7 +8,7 @@ from stronghold.decorators import public
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 # from django.utils.datastructures import MultiValueDictKeyError
-from datapoints.fn_lookup import FnLookUp, ResultObject
+from datapoints.api.fn_lookup import FnLookUp, ResultObject
 import pprint as pp
 from tastypie.bundle import Bundle
 
