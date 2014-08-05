@@ -4,6 +4,7 @@ from datapoints.models import DataPoint, Indicator, Region, Campaign
 from django.db.models.query import QuerySet
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.http import HttpBadRequest
+from django.core.exceptions import ObjectDoesNotExist
 
 import pprint as pp
 
@@ -77,19 +78,36 @@ class FnLookUp(object):
     def match_data(self,query_dict,aggregation_type_id):
 
         ## parse the slugs and find the relevant IDs
-        indicator_id, region_id, campaign_id = self.parse_slugs_from_url( \
-            query_dict)
+        indicator_id, region_id, campaign_id, indicator_part_id, \
+          indicator_whole_id = self.parse_slugs_from_url(query_dict)
 
         expected_data = AggregationExpectedData.objects.filter(
             aggregation_type = aggregation_type_id)
 
         prepped_data = []
+
         for d in expected_data:
             expected_data_dict = {}
             expected_data_dict[d.content_type] = [d.param_type]
+
+            if d.content_type == 'INDICATOR' and indicator_id:
+                expected_data_dict['pk'] = indicator_id
+
+            if d.slug == 'indicator-part' and indicator_part_id:
+                expected_data_dict['pk'] = indicator_part_id
+
+            if d.slug == 'indicator-whole' and indicator_whole_id:
+                expected_data_dict['pk'] = indicator_whole_id
+
+            if d.content_type == 'REGION' and region_id:
+                expected_data_dict['pk'] = region_id
+
+            if d.content_type == 'CAMPAIGN' and campaign_id:
+                expected_data_dict['pk'] = campaign_id
+
             prepped_data.append(expected_data_dict)
 
-
+        pp.pprint(prepped_data)
         return prepped_data
 
     def parse_slugs_from_url(self,query_dict):
@@ -103,7 +121,15 @@ class FnLookUp(object):
         campaign_id = self.get_id_from_slug_param('campaign_slug', \
             query_dict,Campaign)
 
-        return indicator_id, region_id, campaign_id
+        indicator_part_id = self.get_id_from_slug_param('indicator_part', \
+            query_dict,Indicator)
+
+        indicator_whole_id = self.get_id_from_slug_param('indicator_whole', \
+            query_dict,Indicator)
+
+
+        return indicator_id, region_id, campaign_id, indicator_part_id \
+            ,indicator_whole_id
 
     def get_id_from_slug_param(self,slug_key,query_dict,model):
 
@@ -114,42 +140,13 @@ class FnLookUp(object):
             obj_id = None
             # there was an no indicator_slug in request
         except ObjectDoesNotExist:
-            obj_id = -1
-            # TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
-            # there was a slug in request but there is no cooresponding object
+            obj_id = None
 
+        return obj_id
 
-
-      #   print 'DEBUG'
-      #   frameinfo = getframeinfo(currentframe())
-      #   print frameinfo.filename, frameinfo.lineno
-      #
-      #   for d in expected_data:
-      #       line_item_dict = {}
-      #       line_item_dict['content_type'] = d.content_type
-      #       line_item_dict['param_type'] = d.param_type
-      #
-      #       if d.param_type == 'SOLO' and d.content_type == 'INDICATOR':
-      #           line_item_dict['data'] = indicator_id
-      #
-      #       if d.param_type == 'SOLO' and d.content_type == 'CAMPAIGN':
-      #           line_item_dict['data'] = campaign_id
-      #
-      # #     if d.param_type == 'SOLO' and d.content_type == 'REGION':
-      # #         line_item_dict['data'] = region_id
-      #
-      #       try:
-      #           line_item_dict['data'] is not None
-      #       except KeyError:
-      #           return data
-      #
-      #       prepped_data.append(line_item_dict)
-      #   fn = self.function_mappings[query_dict['api_method']]
-      #   # data = fn(prepped_data)
-      #
-      #   ## NEED TO GIVE BACK AN OBJECT LIST FROM WHAT WEVE GOTTEN ##
-
-
+    #####################################################
+    #### THESE ARE ALL OF THE AGGREGATION FUNCTINOS #####
+    #####################################################
 
 
     def calc_pct_single_reg_single_campaign(self,**kwargs):
@@ -164,7 +161,10 @@ class FnLookUp(object):
         pass
 
     def calc_avg_pct_many_region_solo_campaign(self,prepped_data):
-        print 'the function is being called\n' * 10
-        b_s_data = {"a":"b"}
+
+        b_s_data = {"calc_avg_pct_many_region_solo_campaign":"is being called"}
 
         return b_s_data
+
+
+## for testing: http://localhost:8000/api/v1/aggregate/?api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc&format=json&username=john&api_method=calc_avg_pct_many_region_solo_campaign&region_slug=11-lpds-of-south-region&indicator_part=number-of-children-missed-due-to-refusal-to-accept-opv&indicator_whole=number-of-children-missed-total&campaign_slug=nigeria-2019-10-01

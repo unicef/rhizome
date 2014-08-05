@@ -51,10 +51,8 @@ class AggregateResource(Resource):
 
         cust_object_list = []
         aggregate_data = FnLookUp.prep_data(FnLookUp(),request.GET)
-        # x = aggregate_data[:3]
 
         for k,v in aggregate_data.iteritems():
-            print 'results!!!!\n' * 10
 
             new_obj = ResultObject(initial='some_data')
             new_obj.key = k
