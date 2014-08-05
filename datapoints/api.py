@@ -79,9 +79,6 @@ class AggregateResource(Resource):
     def dispatch(self, *args, **kwargs):
         return super(AggregateResource, self).dispatch(*args, **kwargs)
 
-
-
-
 #######
 #######
 #######
@@ -246,41 +243,23 @@ class DataPointResource(ApiResource):
         If there is no api_method in the request, we filter based on the
         indicator, region and campaign'''
 
-
         object_list = super(DataPointResource, self).get_object_list(request)
-        help(obect_list)
-
-        error = None
         query_dict = request.GET
 
+        indicator_id, region_id, campaign_id = self.parse_slugs_from_url( \
+            query_dict, object_list)
 
-        indicator_id, region_id, campaign_id, api_method = \
-            self.parse_slugs_from_url(query_dict, object_list)
+        ## CLEAN THIS UP ##
+        if indicator_id > 0:
+            object_list = object_list.filter(indicator=indicator_id)
 
-        print "INDICATOR_ID:" + str(indicator_id)
-        print "REGION_ID:"    + str(region_id)
-        print "CAMPAIGN_ID:"  + str(campaign_id)
-        print "API_METHOD:"   + str(api_method)
+        if region_id > 0:
+            object_list = object_list.filter(region=region_id)
 
-        if api_method > 0:
-            data = FnLookUp.prep_data(FnLookUp(),api_method,query_dict, \
-                indicator_id, region_id, campaign_id)
+        if campaign_id > 0:
+            object_list = object_list.filter(campaign=campaign_id)
 
-            return data
-
-        else:
-
-            if indicator_id > 0:
-                object_list = object_list.filter(indicator=indicator_id)
-
-            if region_id > 0:
-                object_list = object_list.filter(region=region_id)
-
-            if campaign_id > 0:
-                object_list = object_list.filter(campaign=campaign_id)
-
-            return object_list
-
+        return object_list
 
     def parse_slugs_from_url(self,query_dict,object_list):
 
@@ -293,10 +272,7 @@ class DataPointResource(ApiResource):
         campaign_id = self.get_id_from_slug_param('campaign_slug', \
             object_list,query_dict,Campaign)
 
-        api_method = self.get_id_from_slug_param('api_method', \
-            object_list,query_dict,AggregationType)
-
-        return indicator_id, region_id, campaign_id, api_method
+        return indicator_id, region_id, campaign_id
 
 
 class OfficeResource(ApiResource):
