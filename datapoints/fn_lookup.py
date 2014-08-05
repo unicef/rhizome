@@ -1,7 +1,9 @@
 from datapoints.models import AggregationExpectedData,AggregationType
 from inspect import currentframe, getframeinfo
-from datapoints.models import DataPoint
+from datapoints.models import DataPoint, Indicator, Region, Campaign
 from django.db.models.query import QuerySet
+from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.http import HttpBadRequest
 
 import pprint as pp
 
@@ -48,31 +50,74 @@ class FnLookUp(object):
 
     def prep_data(self,query_dict):
 
-        print 'START PREP DATA METHOD\n' * 5
-
-        all_data = DataPoint.objects.all()
-        data = all_data[:5]
-
+        ## Ensure that the request has an api_method argument ##
         try:
             request_api_method = query_dict['api_method']
         except KeyError as e:
-            data = {}
-            data['error'] = 'api_method is a required parameter for the \
-                aggregate resource'
-            return data
+            # data = {}
+            raise ImmediateHttpResponse(HttpBadRequest('"api_method" is a \
+            required parameter for the aggregate resource.  Please try again \
+            specifing the api_method you would like to aggregate on\
+            for more information see <LINK TO DOCS>'))
+
+        ## Ensure that the api method exists in the database ##
+        try:
+            at = AggregationType.objects.get(slug=request_api_method)
+            fn = self.function_mappings[at.slug]
+        except AggregationType.DoesNotExist as e:
+            raise ImmediateHttpResponse(HttpBadRequest('"' + request_api_method\
+            + ' is not a recognized api method. Please check your request \
+            and try again'))
+
+        prepped_data = self.match_data(query_dict, at.id)
+        final_data = fn(prepped_data)
+
+        return final_data
+
+    def match_data(self,query_dict,aggregation_type_id):
+
+        ## parse the slugs and find the relevant IDs
+        indicator_id, region_id, campaign_id = self.parse_slugs_from_url( \
+            query_dict)
+
+        expected_data = AggregationExpectedData.objects.filter(
+            aggregation_type = aggregation_type_id)
+
+        prepped_data = []
+        for d in expected_data:
+            expected_data_dict = {}
+            expected_data_dict[d.content_type] = [d.param_type]
+            prepped_data.append(expected_data_dict)
 
 
-        # try:
-        #     at = AggregationType.objects.get(id=fn_id)
-        #     fn = at.slug
-        #     expected_data = AggregationExpectedData.objects.filter(
-        #         aggregation_type = fn_id)
-        #
-        # except AggregationExpectedData.DoesNotExist as e:
-        #     error['error_msg']= 'there is no expected data for that agg \
-        #     type.  Please make sure your api_method is correct, and contact \
-        #     your systems administrator for further issues'
-        #     return None
+        return prepped_data
+
+    def parse_slugs_from_url(self,query_dict):
+
+        indicator_id = self.get_id_from_slug_param('indicator_slug', \
+            query_dict,Indicator)
+
+        region_id = self.get_id_from_slug_param('region_slug', \
+            query_dict,Region)
+
+        campaign_id = self.get_id_from_slug_param('campaign_slug', \
+            query_dict,Campaign)
+
+        return indicator_id, region_id, campaign_id
+
+    def get_id_from_slug_param(self,slug_key,query_dict,model):
+
+        try:
+            slug = query_dict[slug_key]
+            obj_id = model.objects.get(slug=slug).id
+        except KeyError:
+            obj_id = None
+            # there was an no indicator_slug in request
+        except ObjectDoesNotExist:
+            obj_id = -1
+            # TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
+            # there was a slug in request but there is no cooresponding object
+
 
 
       #   print 'DEBUG'
@@ -80,7 +125,6 @@ class FnLookUp(object):
       #   print frameinfo.filename, frameinfo.lineno
       #
       #   for d in expected_data:
-      #
       #       line_item_dict = {}
       #       line_item_dict['content_type'] = d.content_type
       #       line_item_dict['param_type'] = d.param_type
@@ -97,25 +141,16 @@ class FnLookUp(object):
       #       try:
       #           line_item_dict['data'] is not None
       #       except KeyError:
-      #           data_is_prepped = False
-      #           error['error_msg'] = 'can not match expected data with request'
-      #           error['expected_data'] = expected_data
-      #           error['query_dict'] = query_dict
-      #
-      #
       #           return data
       #
       #       prepped_data.append(line_item_dict)
-      #
-      #
       #   fn = self.function_mappings[query_dict['api_method']]
       #   # data = fn(prepped_data)
       #
       #   ## NEED TO GIVE BACK AN OBJECT LIST FROM WHAT WEVE GOTTEN ##
 
 
-        print 'WE MADE IT TO THE END OF THE PREP DATA METHOD'
-        return data
+
 
     def calc_pct_single_reg_single_campaign(self,**kwargs):
         pass
@@ -130,3 +165,6 @@ class FnLookUp(object):
 
     def calc_avg_pct_many_region_solo_campaign(self,prepped_data):
         print 'the function is being called\n' * 10
+        b_s_data = {"a":"b"}
+
+        return b_s_data
