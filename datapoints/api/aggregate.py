@@ -1,14 +1,17 @@
 from datapoints.models import AggregationExpectedData,AggregationType
 from datapoints.models import DataPoint, Indicator, Region, Campaign
-from datapoints.api.base import BaseApiResource
+from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 
 from django.db.models.query import QuerySet
 from django.core.exceptions import ObjectDoesNotExist
 
+
 from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.resources import ModelResource,Resource, ALL
+from tastypie.bundle import Bundle
 from tastypie.http import HttpBadRequest
 from tastypie import fields
-from tastypie.bundle import Bundle
+
 
 import pprint as pp
 
@@ -39,7 +42,7 @@ class ResultObject(object):
     def _query(self):
         pass
 
-class AggregateResource(BaseApiResource):
+class AggregateResource(Resource):
     '''
     This resource is our own resource that we wrote from scratch to implement
     complex aggregate queries that dont just rely on the "model resource" class
@@ -64,7 +67,7 @@ class AggregateResource(BaseApiResource):
               self.calc_avg_pct_many_region_solo_campaign
         }
 
-    class Meta(BaseApiResource.Meta):
+    class Meta:
         resource_name = 'aggregate'
         object_class = ResultObject
         allowed_methods = ['get']

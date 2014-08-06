@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 # from datapoints.api.aggregate import FnLookUp, ResultObject
 import pprint as pp
 from tastypie.bundle import Bundle
-from datapoints.api.base import BaseApiResource
+from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 
 class SimpleApiResource(ModelResource):
     '''
@@ -61,6 +61,16 @@ class UserResource(SimpleApiResource):
         excludes = ['password', 'username']
         allowed_methods = ['get']
 
+class OfficeResource(SimpleApiResource):
+    '''Office Resource'''
+
+    class Meta(SimpleApiResource.Meta):
+        queryset = Office.objects.all()
+        resource_name = 'office'
+
+    #############################################
+    #############################################
+    #############################################
 
 class DataPointResource(SimpleApiResource):
     '''Datapoint Resource'''
@@ -131,26 +141,6 @@ class DataPointResource(SimpleApiResource):
 
         return bundle
 
-    def get_id_from_slug_param(self,slug_key,object_list,query_dict,model):
-
-        try:
-            slug = query_dict[slug_key]
-            # print (slug + '\n' ) * 10
-
-            obj_id = model.objects.get(slug=slug).id
-            # print obj_id * 10
-
-        except KeyError:
-            obj_id = None
-            # there was an no indicator_slug in request
-        except ObjectDoesNotExist:
-            obj_id = -1
-            # TO DO -> APPEND TO THE BUNDLE SOMETHING LIKE 'slug doesnt exist'
-            # there was a slug in request but there is no cooresponding object
-
-
-        return obj_id
-
     def get_object_list(self, request):
         '''this method overides the get_object_list of the model resource
         class taken from tastypie.  The idea here is that for GET Requests
@@ -160,10 +150,10 @@ class DataPointResource(SimpleApiResource):
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
-        indicator_id, region_id, campaign_id = self.parse_slugs_from_url( \
-            query_dict, object_list)
+        indicator_id, region_id, campaign_id,indicator_part_id \
+            ,indicator_whole_id = parse_slugs_from_url( query_dict)
 
-        ## CLEAN THIS UP ##
+        # ## CLEAN THIS UP ##
         if indicator_id > 0:
             object_list = object_list.filter(indicator=indicator_id)
 
@@ -174,28 +164,6 @@ class DataPointResource(SimpleApiResource):
             object_list = object_list.filter(campaign=campaign_id)
 
         return object_list
-
-    def parse_slugs_from_url(self,query_dict,object_list):
-
-        indicator_id = self.get_id_from_slug_param('indicator_slug', \
-            object_list,query_dict,Indicator)
-
-        region_id = self.get_id_from_slug_param('region_slug', \
-            object_list,query_dict,Region)
-
-        campaign_id = self.get_id_from_slug_param('campaign_slug', \
-            object_list,query_dict,Campaign)
-
-        return indicator_id, region_id, campaign_id
-
-
-class OfficeResource(SimpleApiResource):
-    '''Office Resource'''
-
-
-    class Meta(SimpleApiResource.Meta):
-        queryset = Office.objects.all()
-        resource_name = 'office'
 
 
 #### INTERACTING W THE API FROM POSTMAN ####
