@@ -41,10 +41,6 @@ class BaseApiResource(Resource):
         indicator_whole_id = self.get_id_from_slug_param('indicator_whole', \
             query_dict,Indicator)
 
-        api_method_id = self.get_id_from_slug_param('api_method', \
-            query_dict,Indicator)
-
-
         return indicator_id, region_id, campaign_id, indicator_part_id \
             ,indicator_whole_id
 

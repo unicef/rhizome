@@ -1,23 +1,23 @@
 from datapoints.models import AggregationExpectedData,AggregationType
-from inspect import currentframe, getframeinfo
 from datapoints.models import DataPoint, Indicator, Region, Campaign
+from datapoints.api.base import BaseApiResource
+
 from django.db.models.query import QuerySet
 from django.core.exceptions import ObjectDoesNotExist
+
 from tastypie.exceptions import ImmediateHttpResponse
-# from tastypie.resources import ModelResource,Resource, ALL
 from tastypie.http import HttpBadRequest
 from tastypie import fields
-from django.utils.decorators import method_decorator
-
-from datapoints.api.base import BaseApiResource
 from tastypie.bundle import Bundle
 
 import pprint as pp
 
 class ResultObject(object):
-    '''We need a generic object to shove data in/get data from.
+    '''
+    We need a generic object to shove data in/get data from.
     This object will store either results or errors as dictionary, so we'll lightly
-    wrap that with this class'''
+    wrap that with this class
+    '''
 
     def __init__(self,initial=None):
 
@@ -40,7 +40,8 @@ class ResultObject(object):
         pass
 
 class AggregateResource(BaseApiResource):
-    '''This resource is our own resource that we wrote from scratch to implement
+    '''
+    This resource is our own resource that we wrote from scratch to implement
     complex aggregate queries that dont just rely on the "model resource" class
     from tastypie.  Here Just like a Django ``Form`` or ``Model``, we're
     defining all the fields we're going to handle with the API here. for more
@@ -73,14 +74,12 @@ class AggregateResource(BaseApiResource):
         I AM OVERIDING THIS METHOD, BUT DO NOT THINK I NEED TO.  I SPENT ALOT
         OF TIME TRYING TO FIGURE OUR HOW AND WHY I WAS NOT GETTING DATA BACK
         FROM the FULL_DEHYDRATE METHOD IN THIS CUSTOM IMPLEMENTATION
-
         """
         if obj is None and self._meta.object_class:
             obj = self._meta.object_class()
 
         custom_data = {}
         custom_data[obj.key] = obj.value
-
 
         return Bundle(
             obj=obj,
@@ -90,64 +89,42 @@ class AggregateResource(BaseApiResource):
         )
 
 
-
-    def detail_uri_kwargs(self, bundle_or_obj):
-        kwargs = {}
-
-        if isinstance(bundle_or_obj,Bundle):
-              kwargs['pk'] = bundle_or_obj.obj.key
-        else:
-              kwargs['pk'] = bundle_or_obj.key
-
-
-        return kwargs
-
     def full_dehydrate(self,bundle,for_list):
-
-        print 'full dehydrate method bundle.. FOR LIST'
-
-        pp.pprint(bundle.data)
-
-        # bundle.data = {'x':'y'}
-
+        '''
+        Help!  When i dont overide this method, i get a maximum recursion error.
+        When i do, and i do not overide 'build bundle' the objects get returned
+        but there is no data associated with each object.
+        '''
         return bundle
 
-
     def get_object_list(self, request):
-        '''in this method we pass the query dictionary to the prep data method
+        '''
+        in this method we pass the query dictionary to the prep data method
         which prepares the data to be aggregated, and then passes the relevant
-        data to the api_method in the request.'''
+        IDs to the api_method in the request.
+        '''
 
         cust_object_list = []
         aggregate_data = self.prep_data(request.GET)
 
         for k,v in aggregate_data.iteritems():
 
-            new_obj = ResultObject(initial='some_data')
+            new_obj = ResultObject()
             new_obj.key = k
             new_obj.value = v
 
             cust_object_list.append(new_obj)
 
-        ## DEBUG ##
-        # print 'THIS IS COMING FROM GET OBJECT LIST'
-        #
-        # for obj in cust_object_list:
-        #     print 'key:' + obj.key
-        #     print 'value:'   + obj.value
-
-
         return cust_object_list
 
     def obj_get_list(self, bundle, **kwargs):
-        # Filtering disabled for brevity...
         return self.get_object_list(bundle.request)
 
     def obj_get(self,bundle, **kwargs):
-        return bundle #AggregateObject(initial=message.get_data())
+        return bundle
 
-    def rollback(self):
-        pass
+            ### PREP DATA AND MATCH DATA ARE MY OWN METHODS ###
+    ### THE METHODS ABOVE ARE OVERRIDDEN FROM THE TASTYPIE RESOURCE CLASS
 
     def prep_data(self,query_dict):
 
@@ -171,11 +148,30 @@ class AggregateResource(BaseApiResource):
             and try again'))
 
         prepped_data = self.match_data(query_dict, at.id)
+
+        for d in prepped_data:
+            pp.pprint(d)
+            try:
+                d['pk']
+
+            except KeyError:
+                pp.pprint(d)
+                raise ImmediateHttpResponse(HttpBadRequest('you are either \
+                    missing, or have provided an incorrect value for \
+                    parameter: ' + str(d['slug'])))
+
+
         final_data = fn(prepped_data)
 
         return final_data
 
     def match_data(self,query_dict,aggregation_type_id):
+        '''
+        this method attempted to match the slugs in the request URL with the
+        data specified in aggregation_expected data.  Once the data is prepared
+        and the IDs needed to make the calculation are generated, we pass the
+        data to the fn in the api_method param.
+        '''
 
         ## parse the slugs and find the relevant IDs
         indicator_id, region_id, campaign_id, indicator_part_id, \
@@ -188,16 +184,12 @@ class AggregateResource(BaseApiResource):
 
         for d in expected_data:
             expected_data_dict = {}
-            expected_data_dict[d.content_type] = [d.param_type]
+            expected_data_dict['content_type'] = d.content_type
+            expected_data_dict['param_type'] = d.param_type
+            expected_data_dict['slug'] = [d.slug]
 
             if d.content_type == 'INDICATOR' and indicator_id:
                 expected_data_dict['pk'] = indicator_id
-
-            if d.slug == 'indicator-part' and indicator_part_id:
-                expected_data_dict['pk'] = indicator_part_id
-
-            if d.slug == 'indicator-whole' and indicator_whole_id:
-                expected_data_dict['pk'] = indicator_whole_id
 
             if d.content_type == 'REGION' and region_id:
                 expected_data_dict['pk'] = region_id
@@ -205,10 +197,21 @@ class AggregateResource(BaseApiResource):
             if d.content_type == 'CAMPAIGN' and campaign_id:
                 expected_data_dict['pk'] = campaign_id
 
+            if d.slug == 'indicator-part' and indicator_part_id:
+                expected_data_dict['pk'] = indicator_part_id
+
+            if d.slug == 'indicator-whole' and indicator_whole_id:
+                expected_data_dict['pk'] = indicator_whole_id
+
             prepped_data.append(expected_data_dict)
 
         return prepped_data
 
+    def get_sub_regions_by_parent(self,parent_region_id):
+        sub_region_ids = []
+        # sub_region_ids = RegionRelationships.filter(region_id_0=parent_retion_id)
+
+        return sub_region_ids
 
     #####################################################
     #### THESE ARE ALL OF THE AGGREGATION FUNCTINOS #####
@@ -223,7 +226,6 @@ class AggregateResource(BaseApiResource):
 
     def calc_mean_single_ind_parent_region_single_campaign(self,**kwargs):
         pass
-
 
     def calc_mean_single_ind_single_region_array_campaign(self,data):
         pass

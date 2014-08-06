@@ -6,13 +6,12 @@ from tastypie import fields
 from django.utils.decorators import method_decorator
 from stronghold.decorators import public
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 # from datapoints.api.aggregate import FnLookUp, ResultObject
 import pprint as pp
 from tastypie.bundle import Bundle
 from datapoints.api.base import BaseApiResource
 
-class SimpleApiResource(ModelResource,BaseApiResource):
+class SimpleApiResource(ModelResource):
     '''
     This is the top level class all other Resource Classes inherit from this.
     The API Key authentication is defined here and thus is required by all
@@ -21,15 +20,10 @@ class SimpleApiResource(ModelResource,BaseApiResource):
     See Here: http://django-tastypie.readthedocs.org/en/latest/resources.html?highlight=modelresource
     '''
 
-    class Meta(BaseApiResource.Meta):
+    class Meta():
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True
-
-
-    @method_decorator(public)
-    def dispatch(self, *args, **kwargs):
-        return super(ApiResource, self).dispatch(*args, **kwargs)
 
 
 class RegionResource(SimpleApiResource):
@@ -39,7 +33,7 @@ class RegionResource(SimpleApiResource):
         queryset = Region.objects.all()
         resource_name = 'region'
 
-class IndicatorResource(BaseApiResource):
+class IndicatorResource(SimpleApiResource):
     '''Indicator Resource'''
 
     class Meta(SimpleApiResource.Meta):
@@ -49,7 +43,6 @@ class IndicatorResource(BaseApiResource):
             "slug": ('exact'),
             "id":('exact','gt','lt','range'),
         }
-
 
 class CampaignResource(SimpleApiResource):
     '''Campaign Resource'''
