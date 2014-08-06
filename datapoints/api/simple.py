@@ -1,4 +1,4 @@
-from tastypie.resources import ModelResource,Resource, ALL
+from tastypie.resources import ModelResource, ALL
 from datapoints.models import *
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -7,82 +7,12 @@ from django.utils.decorators import method_decorator
 from stronghold.decorators import public
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-# from django.utils.datastructures import MultiValueDictKeyError
-from datapoints.api.fn_lookup import FnLookUp, ResultObject
+# from datapoints.api.aggregate import FnLookUp, ResultObject
 import pprint as pp
 from tastypie.bundle import Bundle
+from datapoints.api.base import BaseApiResource
 
-class AggregateResource(Resource):
-    '''This resource is our own resource that we wrote from scratch to implement
-    complex aggregate queries that dont just rely on the "model resource" class
-    from tastypie.  Here Just like a Django ``Form`` or ``Model``, we're
-    defining all the fields we're going to handle with the API here. for more
-    information on how i built this resource see
-    http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
-    '''
-
-    key = fields.CharField(attribute='key')
-    value = fields.CharField(attribute='value')
-
-    class Meta:
-        resource_name = 'aggregate'
-        object_class = ResultObject
-        authorization = Authorization()
-        allowed_methods = ['get']
-        authentication = ApiKeyAuthentication()
-        authorization = Authorization()
-        always_return_data = True
-
-    def detail_uri_kwargs(self, bundle_or_obj):
-        kwargs = {}
-
-        # if isinstance(bundle_or_obj, Bundle):
-        #     kwargs['pk'] = bundle_or_obj.obj.uuid
-        # else:
-        #     kwargs['pk'] = bundle_or_obj.uuid
-
-        return kwargs
-
-
-    def get_object_list(self, request):
-        '''in this method we pass the query dictionary to the prep data method
-        which prepares the data to be aggregated, and then passes the relevant
-        data to the api_method in the request.'''
-
-        cust_object_list = []
-        aggregate_data = FnLookUp.prep_data(FnLookUp(),request.GET)
-
-        for k,v in aggregate_data.iteritems():
-
-            new_obj = ResultObject(initial='some_data')
-            new_obj.key = k
-            new_obj.value = v
-
-            cust_object_list.append(new_obj)
-
-        return cust_object_list
-
-    def obj_get_list(self, bundle, **kwargs):
-        # Filtering disabled for brevity...
-        return self.get_object_list(bundle.request)
-
-    def obj_get(self):
-        bucket = self._bucket()
-        message = bucket.get(kwargs['pk'])
-        return AggregateObject(initial=message.get_data())
-
-    def rollback(self):
-        pass
-
-    @method_decorator(public)
-    def dispatch(self, *args, **kwargs):
-        return super(AggregateResource, self).dispatch(*args, **kwargs)
-
-#######
-#######
-#######
-
-class ApiResource(ModelResource):
+class SimpleApiResource(ModelResource,BaseApiResource):
     '''
     This is the top level class all other Resource Classes inherit from this.
     The API Key authentication is defined here and thus is required by all
@@ -91,7 +21,7 @@ class ApiResource(ModelResource):
     See Here: http://django-tastypie.readthedocs.org/en/latest/resources.html?highlight=modelresource
     '''
 
-    class Meta:
+    class Meta(BaseApiResource.Meta):
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True
@@ -102,17 +32,17 @@ class ApiResource(ModelResource):
         return super(ApiResource, self).dispatch(*args, **kwargs)
 
 
-class RegionResource(ApiResource):
+class RegionResource(SimpleApiResource):
     '''Region Resource'''
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = Region.objects.all()
         resource_name = 'region'
 
-class IndicatorResource(ApiResource):
+class IndicatorResource(BaseApiResource):
     '''Indicator Resource'''
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = Indicator.objects.all()
         resource_name = 'indicator'
         filtering = {
@@ -121,25 +51,25 @@ class IndicatorResource(ApiResource):
         }
 
 
-class CampaignResource(ApiResource):
+class CampaignResource(SimpleApiResource):
     '''Campaign Resource'''
 
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
 
-class UserResource(ApiResource):
+class UserResource(SimpleApiResource):
     '''User Resource'''
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = User.objects.all()
         resource_name = 'user'
         excludes = ['password', 'username']
         allowed_methods = ['get']
 
 
-class DataPointResource(ApiResource):
+class DataPointResource(SimpleApiResource):
     '''Datapoint Resource'''
 
     region = fields.ToOneField(RegionResource, 'region')
@@ -148,7 +78,7 @@ class DataPointResource(ApiResource):
     changed_by_id = fields.ToOneField(UserResource, 'changed_by')
 
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = DataPoint.objects.all()
         resource_name = 'datapoint'
         excludes = ['note']
@@ -266,11 +196,11 @@ class DataPointResource(ApiResource):
         return indicator_id, region_id, campaign_id
 
 
-class OfficeResource(ApiResource):
+class OfficeResource(SimpleApiResource):
     '''Office Resource'''
 
 
-    class Meta(ApiResource.Meta):
+    class Meta(SimpleApiResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'
 

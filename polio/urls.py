@@ -5,7 +5,8 @@ from polio.views import UserCreateView
 from django.conf import settings
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
-from datapoints.api import *
+from datapoints.api.simple import *
+from datapoints.api.aggregate import AggregateResource
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -18,6 +19,7 @@ v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(AggregateResource())
+
 
 urlpatterns = patterns('',
     ##

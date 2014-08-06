@@ -2,9 +2,14 @@ from datapoints.models import AggregationExpectedData,AggregationType
 from inspect import currentframe, getframeinfo
 from datapoints.models import DataPoint, Indicator, Region, Campaign
 from django.db.models.query import QuerySet
-from tastypie.exceptions import ImmediateHttpResponse
-from tastypie.http import HttpBadRequest
 from django.core.exceptions import ObjectDoesNotExist
+from tastypie.exceptions import ImmediateHttpResponse
+# from tastypie.resources import ModelResource,Resource, ALL
+from tastypie.http import HttpBadRequest
+from tastypie import fields
+from django.utils.decorators import method_decorator
+
+from datapoints.api.base import BaseApiResource
 
 import pprint as pp
 
@@ -30,11 +35,17 @@ class ResultObject(object):
     def to_dict(self):
         return self._data
 
-    def _query(self):
-        pass
+class AggregateResource(BaseApiResource):
+    '''This resource is our own resource that we wrote from scratch to implement
+    complex aggregate queries that dont just rely on the "model resource" class
+    from tastypie.  Here Just like a Django ``Form`` or ``Model``, we're
+    defining all the fields we're going to handle with the API here. for more
+    information on how i built this resource see
+    http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
+    '''
 
-
-class FnLookUp(object):
+    key = fields.CharField(attribute='key')
+    value = fields.CharField(attribute='value')
 
     def __init__(self):
         self.function_mappings = {
@@ -48,6 +59,58 @@ class FnLookUp(object):
               self.calc_avg_pct_many_region_solo_campaign
         }
 
+    class Meta(BaseApiResource.Meta):
+        resource_name = 'aggregate'
+        object_class = ResultObject
+        allowed_methods = ['get']
+
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        # if isinstance(bundle_or_obj, Bundle):
+        #     kwargs['pk'] = bundle_or_obj.obj.uuid
+        # else:
+        #     kwargs['pk'] = bundle_or_obj.uuid
+
+        return kwargs
+
+    def full_dehydrate(self,bundle,for_list):
+        return bundle
+
+    def get_object_list(self, request):
+        '''in this method we pass the query dictionary to the prep data method
+        which prepares the data to be aggregated, and then passes the relevant
+        data to the api_method in the request.'''
+
+        cust_object_list = []
+        aggregate_data = self.prep_data(request.GET)
+
+        print 'AGG DATA'
+        pp.pprint(aggregate_data)
+
+        for k,v in aggregate_data.iteritems():
+
+            new_obj = ResultObject(initial='some_data')
+            new_obj.key = k
+            new_obj.value = v
+
+            cust_object_list.append(new_obj)
+
+        return cust_object_list
+
+
+    def obj_get_list(self, bundle, **kwargs):
+        # Filtering disabled for brevity...
+        return self.get_object_list(bundle.request)
+
+    def obj_get(self):
+        bucket = self._bucket()
+        message = bucket.get(kwargs['pk'])
+        return AggregateObject(initial=message.get_data())
+
+    def rollback(self):
+        pass
 
     def prep_data(self,query_dict):
 
@@ -72,6 +135,8 @@ class FnLookUp(object):
 
         prepped_data = self.match_data(query_dict, at.id)
         final_data = fn(prepped_data)
+
+        print 'FINAL DATA: ' + str(final_data)
 
         return final_data
 
@@ -110,48 +175,17 @@ class FnLookUp(object):
         pp.pprint(prepped_data)
         return prepped_data
 
-    def parse_slugs_from_url(self,query_dict):
-
-        indicator_id = self.get_id_from_slug_param('indicator_slug', \
-            query_dict,Indicator)
-
-        region_id = self.get_id_from_slug_param('region_slug', \
-            query_dict,Region)
-
-        campaign_id = self.get_id_from_slug_param('campaign_slug', \
-            query_dict,Campaign)
-
-        indicator_part_id = self.get_id_from_slug_param('indicator_part', \
-            query_dict,Indicator)
-
-        indicator_whole_id = self.get_id_from_slug_param('indicator_whole', \
-            query_dict,Indicator)
-
-
-        return indicator_id, region_id, campaign_id, indicator_part_id \
-            ,indicator_whole_id
-
-    def get_id_from_slug_param(self,slug_key,query_dict,model):
-
-        try:
-            slug = query_dict[slug_key]
-            obj_id = model.objects.get(slug=slug).id
-        except KeyError:
-            obj_id = None
-            # there was an no indicator_slug in request
-        except ObjectDoesNotExist:
-            obj_id = None
-
-        return obj_id
 
     #####################################################
     #### THESE ARE ALL OF THE AGGREGATION FUNCTINOS #####
     #####################################################
 
 
-    def calc_pct_single_reg_single_campaign(self,**kwargs):
-        pass
+    def calc_pct_single_reg_single_campaign(self , prepped_data):
 
+        b_s_data = {"x","y"}
+
+        return b_s_data
 
     def calc_mean_single_ind_parent_region_single_campaign(self,**kwargs):
         pass
@@ -163,6 +197,12 @@ class FnLookUp(object):
     def calc_avg_pct_many_region_solo_campaign(self,prepped_data):
 
         b_s_data = {"calc_avg_pct_many_region_solo_campaign":"is being called"}
+        print b_s_data
+        print b_s_data
+        print b_s_data
+        print b_s_data
+        print b_s_data
+
 
         return b_s_data
 
