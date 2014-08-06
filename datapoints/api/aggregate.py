@@ -10,6 +10,7 @@ from tastypie import fields
 from django.utils.decorators import method_decorator
 
 from datapoints.api.base import BaseApiResource
+from tastypie.bundle import Bundle
 
 import pprint as pp
 
@@ -34,6 +35,9 @@ class ResultObject(object):
 
     def to_dict(self):
         return self._data
+
+    def _query(self):
+        pass
 
 class AggregateResource(BaseApiResource):
     '''This resource is our own resource that we wrote from scratch to implement
@@ -64,19 +68,50 @@ class AggregateResource(BaseApiResource):
         object_class = ResultObject
         allowed_methods = ['get']
 
+    def build_bundle(self, obj=None, data=None, request=None, objects_saved=None):
+        """
+        I AM OVERIDING THIS METHOD, BUT DO NOT THINK I NEED TO.  I SPENT ALOT
+        OF TIME TRYING TO FIGURE OUR HOW AND WHY I WAS NOT GETTING DATA BACK
+        FROM the FULL_DEHYDRATE METHOD IN THIS CUSTOM IMPLEMENTATION
+
+        """
+        if obj is None and self._meta.object_class:
+            obj = self._meta.object_class()
+
+        custom_data = {}
+        custom_data[obj.key] = obj.value
+
+
+        return Bundle(
+            obj=obj,
+            data=custom_data,
+            request=request,
+            objects_saved=objects_saved
+        )
+
+
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
 
-        # if isinstance(bundle_or_obj, Bundle):
-        #     kwargs['pk'] = bundle_or_obj.obj.uuid
-        # else:
-        #     kwargs['pk'] = bundle_or_obj.uuid
+        if isinstance(bundle_or_obj,Bundle):
+              kwargs['pk'] = bundle_or_obj.obj.key
+        else:
+              kwargs['pk'] = bundle_or_obj.key
+
 
         return kwargs
 
     def full_dehydrate(self,bundle,for_list):
+
+        print 'full dehydrate method bundle.. FOR LIST'
+
+        pp.pprint(bundle.data)
+
+        # bundle.data = {'x':'y'}
+
         return bundle
+
 
     def get_object_list(self, request):
         '''in this method we pass the query dictionary to the prep data method
@@ -86,9 +121,6 @@ class AggregateResource(BaseApiResource):
         cust_object_list = []
         aggregate_data = self.prep_data(request.GET)
 
-        print 'AGG DATA'
-        pp.pprint(aggregate_data)
-
         for k,v in aggregate_data.iteritems():
 
             new_obj = ResultObject(initial='some_data')
@@ -97,17 +129,22 @@ class AggregateResource(BaseApiResource):
 
             cust_object_list.append(new_obj)
 
-        return cust_object_list
+        ## DEBUG ##
+        # print 'THIS IS COMING FROM GET OBJECT LIST'
+        #
+        # for obj in cust_object_list:
+        #     print 'key:' + obj.key
+        #     print 'value:'   + obj.value
 
+
+        return cust_object_list
 
     def obj_get_list(self, bundle, **kwargs):
         # Filtering disabled for brevity...
         return self.get_object_list(bundle.request)
 
-    def obj_get(self):
-        bucket = self._bucket()
-        message = bucket.get(kwargs['pk'])
-        return AggregateObject(initial=message.get_data())
+    def obj_get(self,bundle, **kwargs):
+        return bundle #AggregateObject(initial=message.get_data())
 
     def rollback(self):
         pass
@@ -135,8 +172,6 @@ class AggregateResource(BaseApiResource):
 
         prepped_data = self.match_data(query_dict, at.id)
         final_data = fn(prepped_data)
-
-        print 'FINAL DATA: ' + str(final_data)
 
         return final_data
 
@@ -172,7 +207,6 @@ class AggregateResource(BaseApiResource):
 
             prepped_data.append(expected_data_dict)
 
-        pp.pprint(prepped_data)
         return prepped_data
 
 
@@ -197,12 +231,9 @@ class AggregateResource(BaseApiResource):
     def calc_avg_pct_many_region_solo_campaign(self,prepped_data):
 
         b_s_data = {"calc_avg_pct_many_region_solo_campaign":"is being called"}
-        print b_s_data
-        print b_s_data
-        print b_s_data
-        print b_s_data
-        print b_s_data
-
+        b_s_data["x"]="y"
+        b_s_data["a"]="b"
+        b_s_data["lunch"]="time"
 
         return b_s_data
 
