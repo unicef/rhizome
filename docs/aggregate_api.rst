@@ -28,6 +28,7 @@ our aggregation framework allows for flexible analysis on the core data set.
 
 
 **When the Aggregate API receives a Request**
+
 * parse the argument passed into "api_method"
 * parse the indicator, region, campaign from the URL and find their IDs
 * for that api_method, look up the value in the aggregation_type table
