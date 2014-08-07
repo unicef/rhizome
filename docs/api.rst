@@ -6,7 +6,7 @@ API
 **GET REQUESTS**
 
 For the sake of brevity, the username and api key parameters are not
-contained in the example strings below.  WHen testing these in your
+contained in the example strings below.  When testing these in your
 application or in curl, dont forget to append your api key.
 
 
