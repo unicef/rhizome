@@ -1,5 +1,5 @@
-AGGREGATE API
-===
+Aggregate Api
+=============
 
 **GET REQUESTS**
 
@@ -31,7 +31,6 @@ to with a URL or curl request.
               "api_key": API_KEY,
               "format": "json",
               "username" : "john",
-              # "api_method" : "calc_avg_pct_many_region_solo_campaign",
               "api_method" : "calc_pct_single_reg_single_campaign",
               "region_slug" : "11-lpds-of-south-region",
               "indicator_part" : "number-of-children-missed-due-to-refusal-to-accept-opv",

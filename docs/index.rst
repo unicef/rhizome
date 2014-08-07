@@ -8,14 +8,13 @@ Welcome to polio's documentation!
 
 Contents:
 
-Hello, polio is bad vaccinations are good.
-
 .. toctree::
    :maxdepth: 2
 
    api
-   tutorial
+   aggregate_api
    project
+   odk
 
 
 
