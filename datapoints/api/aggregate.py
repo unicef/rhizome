@@ -126,8 +126,8 @@ class AggregateResource(Resource):
     def obj_get(self,bundle, **kwargs):
         return bundle
 
+    ### THE METHODS ABOVE ARE OVERRIDDEN FROM THE TASTYPIE RESOURCE CLASS ###
             ### PREP DATA AND MATCH DATA ARE MY OWN METHODS ###
-    ### THE METHODS ABOVE ARE OVERRIDDEN FROM THE TASTYPIE RESOURCE CLASS
 
     def prep_data(self,query_dict):
 
@@ -156,7 +156,6 @@ class AggregateResource(Resource):
             pp.pprint(d)
             try:
                 d['pk']
-
             except KeyError:
                 pp.pprint(d)
                 raise ImmediateHttpResponse(HttpBadRequest('you are either \
