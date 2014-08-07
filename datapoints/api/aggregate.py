@@ -222,7 +222,7 @@ class AggregateResource(Resource):
 
     def calc_pct_single_reg_single_campaign(self , prepped_data):
 
-        b_s_data = {"x","y"}
+        b_s_data = {"x":"y"}
 
         return b_s_data
 
