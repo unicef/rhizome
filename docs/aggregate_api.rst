@@ -11,6 +11,37 @@ In the example below, given the length of some of the requests we make, i will
 write a sample script in which i interface with the API from python as opposed
 to with a URL or curl request.
 
+**How the Aggregate API Works**
+
+The idea behind the Aggregate resource, is that we want for our api, and our
+front end reporting and visualization framework to be able to retrieve data
+with a number of aggregation techniques.  A few example, that our aggregation
+framework is meant to support:
+
+* Show me the average number of children missed per region in Nigeria
+* Show me the median percentage of refusals over the last two campaigns in
+Region x
+* Sow me the min and max number of children vacinated for x,y, and z regions
+
+The idea here is that given the data that we capture and store around polio,
+our aggregation framework allows for flexible analysis on the core data set.
+
+
+**When the Aggregate API receives a Request**
+* parse the argument passed into "api_method"
+* parse the indicator, region, campaign from the URL and find their IDs
+* for that api_method, look up the value in the aggregation_type table
+* for that aggregation type, join to find the relevant data in
+aggregation_expcected_data
+    * at this point you should know what data is required in order to make the
+      necessary calculation given the campaign, region, indicator etc
+* Match the "expected data" with the data parsed from the URL
+* If the data passed through the URL matches the requirements from the
+  expected_data, then call the function passed through the api_method param with
+  the keyword arguments of indicator, region, campaign etc.
+* Execute the function passed in and return the relevant data back to the API.
+
+
 .. code-block:: python
    :linenos:
 
