@@ -66,5 +66,5 @@ to with a URL or curl request.
 
 **AUTO GENERATED DOCUMENTATION FROM DATAPOINTS API**
 
-.. automodule:: datapoints.api.aggregate
+.. automodule:: aggregate
    :members:
