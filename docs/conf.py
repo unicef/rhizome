@@ -21,7 +21,7 @@ import os
 # sys.path.insert(0, os.path.abspath('/Users/johndingee_seed/code/polio/datapoints'))
 
 sys.path.append('/Users/johndingee_seed/code/polio')
-sys.path.append('/Users/johndingee_seed/code/polio/datapoints/')
+sys.path.append('/var/www/clients.seedscientific.com/uf/polio')
 
 
 # -- General configuration ------------------------------------------------

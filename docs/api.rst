@@ -136,5 +136,5 @@ Here is an Example on posting a Datapoint using Python
 
 **AUTO GENERATED DOCUMENTATION FROM DATAPOINTS API**
 
-.. automodule:: api.simple
+.. automodule:: datapoints.api.simple
    :members:
