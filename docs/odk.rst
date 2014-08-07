@@ -21,6 +21,8 @@ In Addition the following ODK products are also
 * `ODK Brief Case <http://opendatakit.org/use/briefcase/>`_ -  Tool to push and pull data from ODK Aggregate
 * `Enekto Web Forms <http://opendatakit.org/2014/02/odk-aggregate-1-4-1-with-enketo-webforms-integration-is-now-available/>`_ -  Not sure about this yet, but this may be a way to build a web form for the Android input forms used in Collect
 
+.. image:: http://oi60.tinypic.com/68ag3p.jpg
+
 **Tutorials and Resources**
 
 https://www.google.com/earth/outreach/tutorials/odk_gettingstarted.html

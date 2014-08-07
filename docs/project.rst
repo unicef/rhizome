@@ -2,8 +2,8 @@
 Project
 *******
 
-Functionality:
-=============================================
+Functionality
+=============
 
     - GET and POST api methods that allow for retrieval, and insert of
       datapoints
@@ -14,8 +14,8 @@ Functionality:
     - Audit Functionality using django-simple-history
       (https://github.com/treyhunner/django-simple-history)
 
-Dependencies:
-=============================================
+Dependencies
+============
 
     - coverage (3.7.1)
     - Django (1.6.5)
@@ -29,7 +29,7 @@ Dependencies:
 
 
 Permissions
-====================
+===========
     - The permissioning system is based mainly on django's authentication
       system with an extension using django-gaurdian that allows for object
       level permissions.
