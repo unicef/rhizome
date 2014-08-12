@@ -71,11 +71,7 @@ class DashBoardView(IndexView):
 
     def get_queryset(self):
         rows = []
-        ind_pct = self.raw_query(show_indicator_pct_aggregation)
         region_agg = self.raw_query(show_region_aggregation)
-
-        for row in ind_pct:
-            rows.append(row)
 
         for row in region_agg:
             rows.append(row)
@@ -173,23 +169,6 @@ class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
     success_url = reverse_lazy('indicators:indicator_index')
     template_name = 'indicators/confirm_delete.html'
     permission_required = 'datapoints.delete_indicator'
-
-    #####################
-    ### INDICATOR PCT ###
-    #####################
-
-class IndicatorPctIndexView(IndexView):
-
-    model = IndicatorPct
-    template_name = 'indicator_pct/index.html'
-    context_object_name = 'top_indicator_pct'
-
-class IndicatorPctCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = IndicatorPct
-    success_url = reverse_lazy('indicators:indicator_pct_index')
-    template_name = 'indicator_pct/create.html'
-    permission_required = 'datapoints.add_indicatorpct'
 
 
     ###############

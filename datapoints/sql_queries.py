@@ -2,21 +2,6 @@
 ## this should show in red if the COUNT is less than the total
 ## number of regions that exist for that relationshiop
 
-show_indicator_pct_aggregation = '''
-        SELECT
-             i.indicator_pct_display_name
-            , d.value / d2.value as pct
-            , r.full_name
-        FROM datapoint d
-        INNER JOIN indicator_pct i
-            ON d.indicator_id = i.indicator_part_id
-        INNER JOIN datapoint d2
-            ON i.indicator_whole_id = d2.indicator_id
-            AND d.campaign_id = d2.campaign_id
-            AND d.region_id = d2.region_id
-        INNER JOIN region r
-            ON d.region_id = r.id
-        '''
 
 show_region_aggregation = '''
         SELECT
