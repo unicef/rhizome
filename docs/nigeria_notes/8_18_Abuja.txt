@@ -1,0 +1,117 @@
+Abuja Meeting 8/18/2014
+
+-- POLIO OVERVIEW --
+
+- 11 High Level States
+    - Bauchi, Borno, Jigawa, Kaduno, Kano, Katsina, KEbbi, Niger, Sokoto, Yobe, Zamfara
+- 6 Cases in Nigeria (5 in Kano)
+
+-- INDEPENDENT MONITORING --
+
+    Not the vaccination team... 3rd party hired by WHO
+  Checking children inside and outside (the house)
+  Outside is a better indicator of
+
+-- QUESTIONS FROM IPDs --
+
+  Where does info come from?  (radio, mosque etc.)
+  Who influenced the decision to vaccinate HR
+  Reasons for Missed Children by state
+  % of children missed because they are absent
+  Reasons for Non Compliance
+  Non Compliance Resolved by Different Groups
+
+-- CORE TEAM --
+
+  - One Vaccination, Supervisor, Recorder, VCM
+  - Community Leader ( man )
+  - VCM ( Female )
+
+-- VCMs --
+
+  - Footprint of VCMs is small, but they put them in difficiult places.
+  - Usually one per settlement
+  - Influential in the community
+  - In between Campaign
+      - Track New Born Children
+      - Track first dose of polio new born children..
+      - Safe household practices ( hand washing, Feeding Children)
+
+  - Often unable to read or write
+  - One supervisor per 10 VCM (is literate)
+      - supervisor Collects new birth information from VCMs
+      - supervisor inputs information via ODK
+
+-- DATA --
+
+Receiving Monthly Excel Files
+People WHo enter ODK data have to wait for data aggregation from Noah
+Must be able to APPROVE data from ODK.
+
+To Track:
+  New Children Per Settlement (per week)
+  GPS from Supervisor entry
+  Health Camp Information
+
+
+-- PREFERENCE --
+
+Mix of Both Email, and Online tracking
+
+-- OFLINE FUNCTIONALITY --
+
+- Problem with Dev Info - Had to download EVERYTHING whenever an update came.
+- Give ability to Download based on Indicator, Region, and Time Range
+- Should be able to upload data and visualize without internet access.
+- Idea: Desktop installer that runs the code in your browser.  Allows you to upload XLS / CSV data and export when you are done.
+
+
+-- BEST CASE SCENARIO --
+
+Android App
+   -> VCM Supervisors SHOULD NOT BE ABLE TO CHANGE DATA
+   -> VCM Supervisors should be able to EDIT.  Can insert
+
+
+-- THINGS WE NEED FROM NOAH --
+
+- Region hierarchy.  What LGA contains what settlement.  What State contains what LGA etc.
+- What time series do we need to provide for?  Campaign?  In between Campaing?  What else
+- ODK Form information
+- google app spot credentials
+- Froms that Noah has created
+    -> Build these on my local
+
+
+-- HEIRARCHY --
+
+- State level
+- Cluster Level - Cluster Supervisor (50)
+- LGA level - LGA Consultant (220)
+- Settlement - VCMs / Vaccinators
+
+-- ODK --
+
+- vcm-ng.appspot.com
+- Sometimes duplicitious data comes in for campaign and time region (if for example there was a mistake made)
+
+-- NOTES FOR SPECIFICATIONS --
+
+- Evan and I should write up technical specifications
+- Status Flag
+- Own tomcat / Postgres instance
+- Basic Error Checking... flag for Noah
+- Export to CSV
+- Offline capabilities is essential
+- DHIS connection
+
+
+-- DATA VIA SMS --
+
+- Two forms
+  - PCOM Mosque - Report on the announcement ()
+  - ERM Update (Evening Review Meetings)
+- On the phone... generator for the SMS message to structure messages.
+- Must Register with Nigeria U-Report
+- Asch -> Voice activated survey system
+- ODK has SMS Service

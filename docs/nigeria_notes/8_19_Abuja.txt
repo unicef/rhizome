@@ -1,0 +1,53 @@
+
+state -> LGA -> ward -> settlement
+
+
+--- WHAT I NEED ----
+
+- Forms that they have implemented
+- Regional Hierarchy and Shapefiles
+- Put Password protection on polio app
+
+-- TO DO --
+Form for new case.
+LQA?
+
+
+-- NG ODK SERVER DETAILS --
+admin
+P@ssword
+
+
+-- QUESTIONS --
+What about the old Data that has been flushed from ODK?
+  -> Where is that ish
+What are the exact requirements of offline access.
+Who EXACTLY are the users of this application
+  -> Cluster Consultants - Look after 3-5 LGA consultants
+  -> LGA Consultants
+  -> State Team Leads (international consultants)
+  -> Government
+
+What Devices are these people using?
+  -> Windows Laptops
+
+Offline Mode:
+  -> Data from last login
+  -> CSV upload
+
+
+-- RUNNING A FORM HUB INSTANCE ON AWS --
+- Hitting the API this way seems to be what Noah wants to do
+
+
+-- QUALTIY CHECKS --
+> 100%
+Collusion between supervisor and VCM
+
+
+
+-- PERSONEL --
+Noah
+Godfrey
+Reg
+Mellissa
