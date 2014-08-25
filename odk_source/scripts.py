@@ -144,5 +144,17 @@ def ingest_vcm_summary_new():
                     KEY = row[98]
                     )
 
+def create_new_indicators_from_vcm_summary():
+    with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/New_VCM_Summary.csv") as f:
+        f_reader = csv.reader(f, delimiter = ',', quotechar='"')
+        for i, row in enumerate(f_reader):
+            if i == 0:
+                print row
+
+
+
+
+
+
 if __name__ == "__main__":
-    ingest_vcm_summary_new()
+    create_new_indicators_from_vcm_summary()
