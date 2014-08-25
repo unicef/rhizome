@@ -1,22 +1,26 @@
 from django.db import models
 
-class VCM_Birth_Record(models.Model):
+class VCMBirthRecord(models.Model):
+    # THIS IS WRONG it should be VCMBirthRecord
 
-    SubmissionDate = models.DateTimeField()
-    deviceid = models.IntegerField()
-    simserial = models.IntegerField()
-    phonenumber = models.IntegerField()
-    DateOfReport = models.DateField()
-    DateReport = models.DateField()
-    SettlementCode = models.IntegerField()
-    HouseHoldNumber = models.IntegerField()
-    DOB = models.DateField()
-    NameOfChild  = models.CharField(max_length=100)
-    VCM0Dose  = models.CharField(max_length=3)
-    VCMRILink = models.CharField(max_length=3)
-    VCMNameCAttended = models.CharField(max_length=3)
-    meta_instanceID = models.CharField(max_length=55,unique=True)
-    KEY = models.CharField(max_length=55,unique=True)
+    SubmissionDate = models.CharField(max_length=255)
+    deviceid = models.CharField(max_length=255)
+    simserial = models.CharField(max_length=255)
+    phonenumber = models.CharField(max_length=255)
+    DateOfReport = models.CharField(max_length=255)
+    DateReport = models.CharField(max_length=255)
+    SettlementCode = models.CharField(max_length=255)
+    HouseHoldNumber = models.CharField(max_length=255)
+    DOB = models.CharField(max_length=255)
+    NameOfChild = models.CharField(max_length=255)
+    VCM0Dose = models.CharField(max_length=255)
+    VCMRILink = models.CharField(max_length=255)
+    VCMNameCAttended = models.CharField(max_length=255)
+    meta_instanceID = models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255)
 
     def __unicode__(self):
         return unicode(self.full_name)
+
+    class Meta:
+        app_label = 'odk_source'
