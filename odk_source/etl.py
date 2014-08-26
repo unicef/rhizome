@@ -35,12 +35,13 @@ def vcm_summary():
     slice_columns = meta_columns + indicator_columns
 
     sliced_df = to_process[slice_columns]
+    column_list = sliced_df.columns.tolist()
 
     for row in sliced_df.values:
-        new_dp = proces_row(row,sliced_df.columns.tolist())
+        new_dp = proces_row(row,column_list,column_to_indicator_map)
 
 
-def proces_row(row,column_names):
+def proces_row(row,column_names,column_to_indicator_map):
 
     try:
         region_id = Region.objects.get(full_name=row[column_names.index \
@@ -55,6 +56,22 @@ def proces_row(row,column_names):
         print campaign_id
     except ObjectDoesNotExist:
         return None
+
+    for i, value in enumerate(row):
+        try:
+            indicator_id =  column_to_indicator_map[column_names[i]]
+            datapoint_value = row[i]
+            dp = DataPoint.objects.create(
+                indicator_id = indicator_id, \
+                region_id = region_id, \
+                campaign_id = campaign_id, \
+                value =  datapoint_value, \
+                changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
+            )
+        except KeyError:
+            pass # means its one of the meta data columns
+
+
 
 
 
