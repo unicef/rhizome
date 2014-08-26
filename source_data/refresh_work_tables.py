@@ -148,4 +148,4 @@ def ingest_vcm_summary_new():
 
 
 if __name__ == "__main__":
-    create_new_indicators_from_vcm_summary()
+    ingest_vcm_summary_new()

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign
-from odk_source.models import VCMSummaryNew
+from source_data.models import VCMSummaryNew
 
 from dateutil import parser
 
@@ -86,7 +86,6 @@ class VcmEtl(object):
             )
         except IntegrityError:
             return # means this is a duplicative datapoint.
-            ## NOTE ##
             # we are going to have to deal with the situation in which
             # the VWS re-enters the data.  This will have to be a merge
             # i.e. try to enter, if integrity error, then update.

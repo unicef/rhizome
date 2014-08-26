@@ -1,7 +1,6 @@
 from django.db import models
 
 class VCMBirthRecord(models.Model):
-    # THIS IS WRONG it should be VCMBirthRecord
 
     SubmissionDate = models.CharField(max_length=255)
     deviceid = models.CharField(max_length=255)
@@ -23,7 +22,7 @@ class VCMBirthRecord(models.Model):
         return unicode(self.NameOfChild)
 
     class Meta:
-        app_label = 'odk_source'
+        app_label = 'source_data'
 
 class VCMSummaryNew(models.Model):
     SubmissionDate = models.CharField(max_length=255)
@@ -131,4 +130,4 @@ class VCMSummaryNew(models.Model):
         return unicode('Hello')
 
     class Meta:
-        app_label = 'odk_source'
+        app_label = 'source_data'

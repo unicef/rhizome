@@ -8,8 +8,29 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'VCMBirthRecord'
+        db.create_table(u'source_data_vcmbirthrecord', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('SubmissionDate', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('deviceid', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('simserial', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('phonenumber', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('DateOfReport', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('DateReport', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('SettlementCode', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('HouseHoldNumber', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('DOB', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('NameOfChild', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('VCM0Dose', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('VCMRILink', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('VCMNameCAttended', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('meta_instanceID', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('KEY', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('source_data', ['VCMBirthRecord'])
+
         # Adding model 'VCMSummaryNew'
-        db.create_table(u'odk_source_vcmsummarynew', (
+        db.create_table(u'source_data_vcmsummarynew', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('SubmissionDate', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('deviceid', self.gf('django.db.models.fields.CharField')(max_length=255)),
@@ -112,16 +133,19 @@ class Migration(SchemaMigration):
             ('meta_instanceID', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('KEY', self.gf('django.db.models.fields.CharField')(max_length=255)),
         ))
-        db.send_create_signal('odk_source', ['VCMSummaryNew'])
+        db.send_create_signal('source_data', ['VCMSummaryNew'])
 
 
     def backwards(self, orm):
+        # Deleting model 'VCMBirthRecord'
+        db.delete_table(u'source_data_vcmbirthrecord')
+
         # Deleting model 'VCMSummaryNew'
-        db.delete_table(u'odk_source_vcmsummarynew')
+        db.delete_table(u'source_data_vcmsummarynew')
 
 
     models = {
-        'odk_source.vcmbirthrecord': {
+        'source_data.vcmbirthrecord': {
             'DOB': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'DateOfReport': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'DateReport': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -140,7 +164,7 @@ class Migration(SchemaMigration):
             'phonenumber': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'simserial': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
-        'odk_source.vcmsummarynew': {
+        'source_data.vcmsummarynew': {
             'Census12_59MoF': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'Census12_59MoM': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'Census2_11MoF': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -246,4 +270,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['odk_source']
+    complete_apps = ['source_data']
