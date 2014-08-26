@@ -4,15 +4,15 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign
 from odk_source.models import VCMSummaryNew
 
 from dateutil import parser
 
-
-
 import pprint as pp
 import pandas as pd
+
 
 def vcm_summary():
 
@@ -38,7 +38,7 @@ def vcm_summary():
     column_list = sliced_df.columns.tolist()
 
     for row in sliced_df.values:
-        new_dp = proces_row(row,column_list,column_to_indicator_map)
+        proces_row(row,column_list,column_to_indicator_map)
 
 
 def proces_row(row,column_names,column_to_indicator_map):
@@ -58,25 +58,29 @@ def proces_row(row,column_names,column_to_indicator_map):
         return None
 
     for i, value in enumerate(row):
-        try:
-            indicator_id =  column_to_indicator_map[column_names[i]]
-            datapoint_value = row[i]
-            dp = DataPoint.objects.create(
-                indicator_id = indicator_id, \
-                region_id = region_id, \
-                campaign_id = campaign_id, \
-                value =  datapoint_value, \
-                changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
-            )
-        except KeyError:
-            pass # means its one of the meta data columns
+        dp = process_cell(region_id, campaign_id, row,column_to_indicator_map,column_names, i)
 
 
+def process_cell(region_id, campaign_id, row, column_to_indicator_map, column_names, column_index):
 
-
-
-
-
+    try:
+        indicator_id =  column_to_indicator_map[column_names[column_index]]
+        datapoint_value = row[column_index]
+        dp = DataPoint.objects.create(
+            indicator_id = indicator_id, \
+            region_id = region_id, \
+            campaign_id = campaign_id, \
+            value =  datapoint_value, \
+            changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
+        )
+    except KeyError:
+        return # means it is a meta data column
+    except IntegrityError:
+        return # means this is a duplicative datapoint.
+        ## NOTE ##
+        # we are going to have to deal with the situation in which
+        # the VWS re-enters the data.  This will have to be a merge
+        # i.e. try to enter, if integrity error, then update.
 
 
 if __name__ == "__main__":
