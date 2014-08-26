@@ -17,9 +17,12 @@ django-stronghold==0.2.6
 django-tables2==0.15.0
 django-tastypie==0.11.1
 docutils==0.12
+numpy==1.8.2
+pandas==0.14.1
 psycopg2==2.5.3
 python-dateutil==2.2
 python-mimeparse==0.1.4
+pytz==2014.4
 requests==2.3.0
 six==1.7.3
 wsgiref==0.1.2
