@@ -15,7 +15,7 @@ from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentF
 from datapoints.mixins import PermissionRequiredMixin
 
 class IndexView(generic.ListView):
-    paginate_by = 5
+    paginate_by = 20
 
     def get_queryset(self):
         return self.model.objects.order_by('-created_at')
