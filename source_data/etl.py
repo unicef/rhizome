@@ -9,9 +9,11 @@ from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
 from source_data.models import VCMSummaryNew
 
 from dateutil import parser
+from decimal import InvalidOperation
 
 import pprint as pp
 import pandas as pd
+import csv
 
 
 class MetaDataEtl(object):
@@ -19,7 +21,9 @@ class MetaDataEtl(object):
         print 'Begin Meta Data Ingest'
 
         # self.ingest_indicators()
-        self.ingest_campaigns()
+        # self.ingest_campaigns()
+        self.ingest_regions()
+
 
     def ingest_indicators(self):
 
@@ -43,7 +47,28 @@ class MetaDataEtl(object):
                 pass
 
     def ingest_regions(self):
-        pass
+        # Hacking this for the sept deliverable
+        with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv") as f:
+            f_reader = csv.reader(f, delimiter = ',', quotechar='"')
+            for i, row in enumerate(f_reader):
+                if i > 0:
+                    header = 'SubmissionDate,deviceid,simserial,phonenumber,DateRecorded,SettlementCode,SettlementName,VCMName,VCMPhone,SettlementGPS-Latitude,SettlementGPS-Longitude,SettlementGPS-Altitude,SettlementGPS-Accuracy,meta-instanceID,KEY'
+                    header_list = header.split(',')
+
+                    try:
+                        created = Region.objects.create(
+                            full_name = row[6] ,\
+                            settlement_code = row[5] ,\
+                            office = Office.objects.get(name="Nigeria")   ,\
+                            latitude = row[9]  ,\
+                            longitude = row[10]  \
+                        )
+
+                    except IntegrityError:
+                        print row
+                    except InvalidOperation:
+                      # decimal.InvalidOperation
+                        print 'decimal error'
 
     def ingest_campaigns(self):
         all_data = VCMSummaryNew.objects.all()

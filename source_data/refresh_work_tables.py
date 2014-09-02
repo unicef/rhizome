@@ -4,7 +4,6 @@ sys.path.append('/Users/johndingee_seed/code/polio/polio')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from django.conf import settings
 
-
 from models import VCMBirthRecord,VCMSummaryNew
 
 

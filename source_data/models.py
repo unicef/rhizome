@@ -133,7 +133,7 @@ class VCMSummaryNew(models.Model):
         app_label = 'source_data'
 
 
-class VCMSettCoordinates(object):
+class VCMSettlement(object):
 
     SubmissionDate = models.CharField(max_length=255)
     deviceid = models.CharField(max_length=255)
@@ -149,13 +149,16 @@ class VCMSettCoordinates(object):
     SettlementGPS_Altitude = models.CharField(max_length=255)
     SettlementGPS_Accuracy = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
-    KEY = models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
 
     def __unicode__(self):
-        return unicode(self.SettlementName)
+        return unicode('hi')
 
     class Meta:
         app_label = 'source_data'
 
 class Test(object):
-    x = models.IntegerField()
+    deviceid = models.CharField(max_length=255)
+
+    class Meta:
+        app_label = 'source_data'
