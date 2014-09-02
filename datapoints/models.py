@@ -34,6 +34,7 @@ class Office(models.Model):
 class Region(models.Model):
 
     full_name = models.CharField(max_length=55,unique=True)
+    settlement_code = models.IntegerField(unique=True)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
@@ -56,8 +57,8 @@ class Campaign(models.Model):
 
     name = models.CharField(max_length=255)
     office = models.ForeignKey(Office)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(unique=True)
+    end_date = models.DateField(unique=True)
     slug = AutoSlugField(populate_from='get_full_name')
     created_at = models.DateTimeField(auto_now=True)
 

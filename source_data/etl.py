@@ -59,12 +59,15 @@ class MetaDataEtl(object):
         for row in all_data:
             print row.Date_Implement
 
-            created = Campaign.objects.create(
-                name = 'Nigeria Starting:' + row.Date_Implement, \
-                office = ng_office_id, \
-                start_date = parser.parse(row.Date_Implement), \
-                end_date = parser.parse(row.Date_Implement)
-            )
+            try:
+                created = Campaign.objects.create(
+                    name = 'Nigeria Starting:' + row.Date_Implement, \
+                    office = ng_office_id, \
+                    start_date = parser.parse(row.Date_Implement), \
+                    end_date = parser.parse(row.Date_Implement)
+                )
+            except IntegrityError:
+                pass
 
 
 class VcmEtl(object):

@@ -144,6 +144,18 @@ def ingest_vcm_summary_new():
                     KEY = row[98]
                     )
 
+    def ingest_sett_coordinates():
+
+          with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv") as f:
+              f_reader = csv.reader(f, delimiter = ',', quotechar='"')
+              for i, row in enumerate(f_reader):
+                  if i > 0:
+                      print i
+                      # created = VCMSettCoordinates.objects.create(
+                      #   SubmissionDate = row[0], \
+                      #   deviceid = row[1], \
+                      #   )
+
 
 if __name__ == "__main__":
     ingest_vcm_summary_new()

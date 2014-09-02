@@ -156,3 +156,6 @@ class VCMSettCoordinates(object):
 
     class Meta:
         app_label = 'source_data'
+
+class Test(object):
+    x = models.IntegerField()
