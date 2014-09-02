@@ -145,7 +145,5 @@ def ingest_vcm_summary_new():
                     )
 
 
-
-
 if __name__ == "__main__":
     ingest_vcm_summary_new()

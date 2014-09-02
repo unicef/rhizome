@@ -5,13 +5,67 @@ from django.conf import settings
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from datapoints.models import Indicator, DataPoint, Region, Campaign
+from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
 from source_data.models import VCMSummaryNew
 
 from dateutil import parser
 
 import pprint as pp
 import pandas as pd
+
+
+class MetaDataEtl(object):
+    def __init__(self):
+        print 'Begin Meta Data Ingest'
+
+        # self.ingest_indicators()
+        self.ingest_campaigns()
+
+    def ingest_indicators(self):
+
+        non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
+            'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
+            'meta_instanceID','KEY']
+
+        v = VCMSummaryNew()
+        all_fields = v._meta.fields
+
+        indicators = []
+        for f in all_fields:
+            if f.name not in non_indicator_fields:
+                indicators.append(f.name)
+
+        for i in indicators:
+            try:
+                created = Indicator.objects.create(name = i,description = i, \
+                  is_reported = 1)
+            except IntegrityError:
+                pass
+
+    def ingest_regions(self):
+        pass
+
+    def ingest_campaigns(self):
+        all_data = VCMSummaryNew.objects.all()
+        all_campaigns = []
+
+        # Ensure the Office ID is in there
+        try:
+            ng_office_id = Office.objects.get(name='Nigeria')
+        except ObjectDoesNotExist:
+            ng_office = Office.objects.create(name='Nigeria')
+            ng_office_id = ng_office.id
+
+        for row in all_data:
+            print row.Date_Implement
+
+            created = Campaign.objects.create(
+                name = 'Nigeria Starting:' + row.Date_Implement, \
+                office = ng_office_id, \
+                start_date = parser.parse(row.Date_Implement), \
+                end_date = parser.parse(row.Date_Implement)
+            )
+
 
 class VcmEtl(object):
     def __init__(self):
@@ -40,10 +94,10 @@ class VcmEtl(object):
         column_list = sliced_df.columns.tolist()
 
         for row in sliced_df.values:
-            self.proces_row(row,column_list,self.column_to_indicator_map)
+            self.proces_row(row,column_list)
 
 
-    def proces_row(self,row,column_names,column_to_indicator_map):
+    def proces_row(self,row,column_names):
 
         try:
             region_id = Region.objects.get(full_name=row[column_names.index \
@@ -63,11 +117,11 @@ class VcmEtl(object):
 
             try:
                 indicator_id =  self.column_to_indicator_map[column_names[i]]
-            except KeyError:
-                return # means it is a meta data column
-
-            cell_value = row[i]
-            dp = self.process_cell(region_id,campaign_id,indicator_id,cell_value)
+                cell_value = row[i]
+                dp = self.process_cell(region_id,campaign_id,indicator_id,cell_value)
+                ## Clean this up ^^ ##
+            except KeyError as e:
+                pass # means it is a meta data column
 
 
 
@@ -81,7 +135,7 @@ class VcmEtl(object):
                 indicator_id = indicator_id, \
                 region_id = region_id, \
                 campaign_id = campaign_id, \
-                value =  datapoint_value, \
+                value =  cell_value, \
                 changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
             )
         except IntegrityError:
@@ -92,6 +146,7 @@ class VcmEtl(object):
 
 
 if __name__ == "__main__":
-    # vcm_summary()
-    v = VcmEtl()
-    v.process_data()
+    m = MetaDataEtl()
+    m.ingest_indicators()
+    # v = VcmEtl()
+    # v.process_data()
