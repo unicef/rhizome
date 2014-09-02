@@ -3,7 +3,7 @@ sys.path.append('/Users/johndingee_seed/code/polio')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
 from source_data.models import VCMSummaryNew
@@ -20,10 +20,9 @@ class MetaDataEtl(object):
     def __init__(self):
         print 'Begin Meta Data Ingest'
 
-        # self.ingest_indicators()
-        # self.ingest_campaigns()
+        self.ingest_indicators()
+        self.ingest_campaigns()
         self.ingest_regions()
-
 
     def ingest_indicators(self):
 
@@ -109,6 +108,7 @@ class VcmEtl(object):
                 self.column_to_indicator_map[col] = Indicator.objects.get(name=col).id
 
 
+
     def process_data(self):
 
         # map rows to region / campaigns {<row_id>:(<region_id>,<campaign_id>)}  #
@@ -128,16 +128,19 @@ class VcmEtl(object):
     def proces_row(self,row,column_names):
 
         try:
-            region_id = Region.objects.get(full_name=row[column_names.index \
+            region_id = Region.objects.get(settlement_code=row[column_names.index \
                 ('SettlementCode')]).id ## evaluate this by settlement code not name
 
         except ObjectDoesNotExist:
             return None
 
+        except ValueError:
+            return None
+            # WHAT DOES THIS ERROR MEAN!!
+
         try:
             the_date = parser.parse(row[column_names.index('Date_Implement')])
             campaign_id = Campaign.objects.get(start_date=the_date).id
-            print campaign_id
         except ObjectDoesNotExist:
             return None
 
@@ -171,10 +174,14 @@ class VcmEtl(object):
             # we are going to have to deal with the situation in which
             # the VWS re-enters the data.  This will have to be a merge
             # i.e. try to enter, if integrity error, then update.
+        except ValidationError:
+            pass
+            # NO IDEA WHAT THIS MEANS
+            # THESE NEED TO GET FLAGGED FOR REVIEW
 
 
 if __name__ == "__main__":
-    m = MetaDataEtl()
-    m.ingest_indicators()
-    # v = VcmEtl()
-    # v.process_data()
+    # m = MetaDataEtl()
+    # m.ingest_indicators()
+    v = VcmEtl()
+    v.process_data()
