@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## DEFINE VARIABLES ##
 JAR_FILE="/Users/johndingee_seed/ODK_local/Briefcase_v1.4.4.jar"

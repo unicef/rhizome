@@ -4,7 +4,7 @@ from tastypie.authorization import Authorization
 from source_data.models import EtlJob
 from time import strftime
 
-
+import subprocess
 
 class EtlResource(ModelResource):
     '''Region Resource'''
@@ -32,7 +32,8 @@ class EtlResource(ModelResource):
             status = 'PENDING'
         )
 
-        et = EtlTask(task_string)
+        ## MAKE THIS A CALL BACK FUNCTION ##
+        et = EtlTask(task_string,created.guid)
 
         return EtlJob.objects.filter(guid=created.guid)
 
@@ -40,8 +41,11 @@ class EtlResource(ModelResource):
 class EtlTask(object):
     '''one of three tasks in the data integration pipeline'''
 
-    def __init__(self,task_string):
+    def __init__(self,task_string,task_guid):
+
         print 'initializing etl task\n'
+
+        self.task_guid = task_guid
 
         self.function_mappings = {
               'pull_odk':self.pull_odk,
@@ -50,13 +54,12 @@ class EtlTask(object):
             }
 
         fn = self.function_mappings[task_string]
+        fn()
 
 
     def pull_odk(self):
-
-        status = 'COMPLETE'
-        print 'I AM PULLING ODK!\n' * 10
-        return status
+        subprocess.call(['bash',\
+            '/Users/johndingee_seed/code/polio/source_data/prod_interface.sh'])
 
 
     def refresh_work_tables(self):
