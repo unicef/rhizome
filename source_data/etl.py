@@ -20,8 +20,8 @@ class MetaDataEtl(object):
     def __init__(self):
         print 'Begin Meta Data Ingest'
 
-        self.ingest_indicators()
-        self.ingest_campaigns()
+        # self.ingest_indicators()
+        # self.ingest_campaigns()
         self.ingest_regions()
 
     def ingest_indicators(self):
@@ -51,9 +51,6 @@ class MetaDataEtl(object):
             f_reader = csv.reader(f, delimiter = ',', quotechar='"')
             for i, row in enumerate(f_reader):
                 if i > 0:
-                    header = 'SubmissionDate,deviceid,simserial,phonenumber,DateRecorded,SettlementCode,SettlementName,VCMName,VCMPhone,SettlementGPS-Latitude,SettlementGPS-Longitude,SettlementGPS-Altitude,SettlementGPS-Accuracy,meta-instanceID,KEY'
-                    header_list = header.split(',')
-
                     try:
                         created = Region.objects.create(
                             full_name = row[6] ,\
@@ -121,7 +118,8 @@ class VcmEtl(object):
         sliced_df = self.to_process[slice_columns]
         column_list = sliced_df.columns.tolist()
 
-        for row in sliced_df.values:
+        for i, row in enumerate(sliced_df.values):
+            print 'processing row: ' + str(i)
             self.proces_row(row,column_list)
 
 
@@ -133,6 +131,7 @@ class VcmEtl(object):
 
         except ObjectDoesNotExist:
             return None
+            print 'no sett code'
 
         except ValueError:
             return None
@@ -141,11 +140,13 @@ class VcmEtl(object):
         try:
             the_date = parser.parse(row[column_names.index('Date_Implement')])
             campaign_id = Campaign.objects.get(start_date=the_date).id
+            print campaign_id
         except ObjectDoesNotExist:
             return None
+            print 'no camp'
 
         for i, value in enumerate(row):
-
+            print value
             try:
                 indicator_id =  self.column_to_indicator_map[column_names[i]]
                 cell_value = row[i]
@@ -158,7 +159,7 @@ class VcmEtl(object):
 
     def process_cell(self,region_id,campaign_id,indicator_id,cell_value):
 
-        if cell_value == "":
+        if cell_value == "" or cell_value == 0.00:
             return
 
         try:

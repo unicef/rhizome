@@ -1,4 +1,18 @@
 from django.db import models
+import hashlib
+import random
+
+class EtlJob(models.Model):
+
+    date_attempted = models.DateField()
+    status = models.CharField(max_length=10)
+    guid = models.CharField(primary_key=True, max_length=40)
+
+    def save(self, *args, **kwargs):
+      if not self.guid:
+        self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+      super(EtlJob, self).save(*args, **kwargs)
 
 class VCMBirthRecord(models.Model):
 

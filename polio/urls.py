@@ -7,6 +7,7 @@ from django.views.generic import RedirectView
 from django.conf.urls.static import static
 from datapoints.api.simple import *
 from datapoints.api.aggregate import AggregateResource
+from source_data.api import EtlResource
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -19,6 +20,7 @@ v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(AggregateResource())
+v1_api.register(EtlResource())
 
 
 urlpatterns = patterns('',
