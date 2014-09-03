@@ -1,6 +1,8 @@
-# from tastypie.resources import ModelResource,Resource, ALL
 from tastypie.resources import ModelResource
+from tastypie.authorization import Authorization
+
 from source_data.models import EtlJob
+from time import strftime
 
 
 
@@ -10,26 +12,36 @@ class EtlResource(ModelResource):
     class Meta():
         queryset = EtlJob.objects.all()
         resource_name = 'etl'
+        always_return_data = True
+        allowed_methods = ['get']
+
+        authorization = Authorization()
         # authentication = ApiKeyAuthentication()
-        # authorization = Authorization()
 
     # http://localhost:8000/api/v1/etl/?task=pull_odk
     def get_object_list(self, request):
-        # run
-        try:
-            task = request.GET['task']
-            et = EtlTask(task)
-        except KeyError:
-            return EtlJob.objects.all()
 
-        return EtlJob.objects.all()
+        task_string = request.GET['task']
+        print task_string
+        tic = strftime("%Y-%m-%d %H:%M:%S")
+
+        ## stage the job ##
+        created = EtlJob.objects.create(
+            date_attempted = tic,
+            task_name = task_string,
+            status = 'PENDING'
+        )
+
+        et = EtlTask(task_string)
+
+        return EtlJob.objects.filter(guid=created.guid)
 
 
 class EtlTask(object):
     '''one of three tasks in the data integration pipeline'''
 
     def __init__(self,task_string):
-        print 'INITIALIZING ETL TASK\n' * 10
+        print 'initializing etl task\n'
 
         self.function_mappings = {
               'pull_odk':self.pull_odk,
@@ -37,15 +49,13 @@ class EtlTask(object):
               'refresh_datapoints' : self.refresh_datapoints,
             }
 
-        print task_string * 100
-
         fn = self.function_mappings[task_string]
 
 
     def pull_odk(self):
 
-
         status = 'COMPLETE'
+        print 'I AM PULLING ODK!\n' * 10
         return status
 
 

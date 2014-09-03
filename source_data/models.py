@@ -4,7 +4,9 @@ import random
 
 class EtlJob(models.Model):
 
-    date_attempted = models.DateField()
+    date_attempted = models.DateTimeField()
+    date_completed = models.DateTimeField(null=True)
+    task_name = models.CharField(max_length=20)
     status = models.CharField(max_length=10)
     guid = models.CharField(primary_key=True, max_length=40)
 
