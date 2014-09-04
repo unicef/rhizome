@@ -34,6 +34,7 @@ class VCMBirthRecord(models.Model):
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255,unique=True)
     process_status = models.IntegerField(default=0)
+    api_request_guid = models.CharField(max_length=255)
 
     def __unicode__(self):
         return unicode(self.NameOfChild)
@@ -143,6 +144,7 @@ class VCMSummaryNew(models.Model):
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255, unique=True)
     process_status = models.IntegerField(default=0)
+    api_request_guid = models.CharField(max_length=255)
 
     def __unicode__(self):
         return unicode('Hello')
@@ -151,8 +153,29 @@ class VCMSummaryNew(models.Model):
         app_label = 'source_data'
 
 
-class Test(object):
+class VCMSettlement(models.Model):
+
+    SubmissionDate = models.CharField(max_length=255)
     deviceid = models.CharField(max_length=255)
+    simserial = models.CharField(max_length=255)
+    phonenumber = models.CharField(max_length=255)
+    DateRecorded = models.CharField(max_length=255)
+    SettlementCode = models.CharField(max_length=255)
+    SettlementName = models.CharField(max_length=255)
+    VCMName = models.CharField(max_length=255)
+    VCMPhone = models.CharField(max_length=255)
+    SettlementGPS_Latitude = models.CharField(max_length=255)
+    SettlementGPS_Longitude = models.CharField(max_length=255)
+    SettlementGPS_Altitude = models.CharField(max_length=255)
+    SettlementGPS_Accuracy = models.CharField(max_length=255)
+    meta_instanceID = models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.IntegerField(default=0)
+    api_request_guid = models.CharField(max_length=255)
+
+
+    def __unicode__(self):
+        return unicode(self.SettlementName)
 
     class Meta:
         app_label = 'source_data'

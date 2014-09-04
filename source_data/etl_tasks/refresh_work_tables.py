@@ -1,10 +1,12 @@
 import csv
 import sys, os
-sys.path.append('/Users/johndingee_seed/code/polio/polio')
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+import pandas as pd
+
+sys.path.append('/Users/johndingee_seed/code/polio') #BAD
+os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
 
-from models import VCMBirthRecord,VCMSummaryNew
+from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement
 
 
 def ingest_birth_records():
@@ -143,18 +145,40 @@ def ingest_vcm_summary_new():
                     KEY = row[98]
                     )
 
-    def ingest_sett_coordinates():
+def ingest_sett_coordinates():
 
-          with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv") as f:
-              f_reader = csv.reader(f, delimiter = ',', quotechar='"')
-              for i, row in enumerate(f_reader):
-                  if i > 0:
-                      print i
-                      # created = VCMSettCoordinates.objects.create(
-                      #   SubmissionDate = row[0], \
-                      #   deviceid = row[1], \
-                      #   )
+    f = "/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv"
+
+    df = pd.read_csv(f,error_bad_lines=False) # YOU NEED TO HANDLE ERRORS!
+
+def i_need_to_handle_errors():
+
+    ingested_keys =  list(df['KEY'])
+
+    f = open(f,'rb')
+
+    header = f.readline()
+    header_list = header.split(',')
+    key_index = header_list.index('KEY\n')
+
+    all_keys = []
+
+    f_reader = csv.reader(f, delimiter = ',', quotechar='"')
+    for line in f_reader:
+        all_keys.append(line[key_index])
+
+    error_keys = list(set(all_keys) - set(ingested_keys))
+
+    for k in error_keys:
+        if k in ingested_keys:
+            print 'yay'
+        else:
+            print 'nooo'
+            print k
+
+    # print key_index
+
 
 
 if __name__ == "__main__":
-    ingest_vcm_summary_new()
+    ingest_sett_coordinates()
