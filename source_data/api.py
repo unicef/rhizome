@@ -5,6 +5,11 @@ from source_data.models import EtlJob
 from time import strftime
 
 import subprocess
+import sys
+
+## FIX THIS!!!! NEED TO GET THIS INTO A BETTER CONF FILE
+sys.path.append('/Users/johndingee_seed/code/polio/source_data/etl_tasks')
+import odk_settings
 
 class EtlResource(ModelResource):
     '''Region Resource'''
@@ -48,7 +53,7 @@ class EtlTask(object):
         self.task_guid = task_guid
 
         self.function_mappings = {
-              'pull_odk':self.pull_odk,
+              'pull_odk' : self.pull_odk,
               'refresh_work_tables' : self.refresh_work_tables,
               'refresh_datapoints' : self.refresh_datapoints,
             }
@@ -56,10 +61,19 @@ class EtlTask(object):
         fn = self.function_mappings[task_string]
         fn()
 
-
     def pull_odk(self):
-        subprocess.call(['bash',\
-            '/Users/johndingee_seed/code/polio/source_data/prod_interface.sh'])
+
+        for form_id in odk_settings.SECONDARY_FORM_LIST:
+
+            subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+                '--form_id',form_id, \
+                '--export_filename',form_id+'.csv', \
+                '--aggregate_url',odk_settings.AGGREGATE_URL, \
+                '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
+                '--export_directory',odk_settings.EXPORT_DIRECTORY, \
+                '--odk_username',odk_settings.USERNAME, \
+                '--odk_password',odk_settings.PASSWORD \
+              ])
 
 
     def refresh_work_tables(self):

@@ -4,7 +4,7 @@
 JAR_FILE="/Users/johndingee_seed/ODK_local/Briefcase_v1.4.4.jar"
 FORM_ID="VCM_Summary"
 AGGREGATE_URL="https://vcm-ng.appspot.com/"
-STORAGE_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/"
+STORAGE_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/mg"
 EXPORT_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/csv_exports"
 EXPORT_FILENAME=$FORM_ID".csv"
 USERNAME="admin"
@@ -20,9 +20,9 @@ java -jar $JAR_FILE \
  --odk_username $USERNAME \
  --odk_password $PASSWORD \
  --export_directory $EXPORT_DIRECTORY \
- --export_filename $EXPORT_FILENAME \
- -start $START_DATE \
- -end $END_DATE;
+ --export_filename $EXPORT_FILENAME;
+# -start $START_DATE \
+# -end $END_DATE;
 
 ## PARAMS FOR JAR FILE ##
 
