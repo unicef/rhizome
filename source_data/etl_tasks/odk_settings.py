@@ -2,7 +2,7 @@
 
 JAR_FILE="/Users/johndingee_seed/ODK_local/Briefcase_v1.4.4.jar"
 AGGREGATE_URL="https://vcm-ng.appspot.com/"
-STORAGE_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/mg"
+STORAGE_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/"
 EXPORT_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/csv_exports"
 USERNAME="admin"
 PASSWORD="P@ssword"

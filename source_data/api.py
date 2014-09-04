@@ -58,6 +58,8 @@ class EtlTask(object):
               'refresh_datapoints' : self.refresh_datapoints,
             }
 
+        print task_string + '\n' * 100
+
         fn = self.function_mappings[task_string]
         fn()
 
@@ -75,9 +77,10 @@ class EtlTask(object):
                 '--odk_password',odk_settings.PASSWORD \
               ])
 
-
     def refresh_work_tables(self):
-        pass
+
+        print 'ODB IS ALIVE \n' * 10
 
     def refresh_datapoints(self):
-        pass
+
+        print 'ODB IS DEAD \n' * 10
