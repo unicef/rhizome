@@ -7,8 +7,10 @@ EXPORT_DIRECTORY="/Users/johndingee_seed/code/polio/static/odk_source/csv_export
 USERNAME="admin"
 PASSWORD="P@ssword"
 
-FORM_LIST = ['VCM_Sett_Coordinates_1.2','New_VCM_Summary', \
-    'activity_report','VCM_Birth_Record']
+FORM_LIST = ['VCM_Sett_Coordinates_1.2']
+
+# FORM_LIST = ['VCM_Sett_Coordinates_1.2','New_VCM_Summary', \
+#     'activity_report','VCM_Birth_Record']
 
 
 SECONDARY_FORM_LIST = ['Health_Camps_Bauchi','Health_Camps_Sokoto',\

@@ -32,7 +32,8 @@ class VCMBirthRecord(models.Model):
     VCMRILink = models.CharField(max_length=255)
     VCMNameCAttended = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
-    KEY = models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255,unique=True)
+    process_status = models.IntegerField(default=0)
 
     def __unicode__(self):
         return unicode(self.NameOfChild)
@@ -140,7 +141,8 @@ class VCMSummaryNew(models.Model):
     group_spec_events_Spec_OtherDisease = models.CharField(max_length=255)
     group_spec_events_Spec_FIC = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
-    KEY = models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.IntegerField(default=0)
 
     def __unicode__(self):
         return unicode('Hello')
@@ -148,30 +150,6 @@ class VCMSummaryNew(models.Model):
     class Meta:
         app_label = 'source_data'
 
-
-class VCMSettlement(object):
-
-    SubmissionDate = models.CharField(max_length=255)
-    deviceid = models.CharField(max_length=255)
-    simserial = models.CharField(max_length=255)
-    phonenumber = models.CharField(max_length=255)
-    DateRecorded = models.CharField(max_length=255)
-    SettlementCode = models.CharField(max_length=255)
-    SettlementName = models.CharField(max_length=255)
-    VCMName = models.CharField(max_length=255)
-    VCMPhone = models.CharField(max_length=255)
-    SettlementGPS_Latitude = models.CharField(max_length=255)
-    SettlementGPS_Longitude = models.CharField(max_length=255)
-    SettlementGPS_Altitude = models.CharField(max_length=255)
-    SettlementGPS_Accuracy = models.CharField(max_length=255)
-    meta_instanceID = models.CharField(max_length=255)
-    KEY = models.CharField(max_length=255, unique=True)
-
-    def __unicode__(self):
-        return unicode('hi')
-
-    class Meta:
-        app_label = 'source_data'
 
 class Test(object):
     deviceid = models.CharField(max_length=255)
