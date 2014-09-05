@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
-from source_data.models import VCMSummaryNew,VCMSettlement
+from source_data.models import VCMSummaryNew,VCMSettlement,ProcessStatus
 
 from dateutil import parser
 from decimal import InvalidOperation
@@ -47,8 +47,9 @@ class MetaDataEtl(object):
 
     def ingest_regions(self):
 
-        to_process = VCMSettlement.objects.filter(process_status=0)
+        to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
         for row in to_process:
+
             try:
                 created = Region.objects.create(
                   full_name = row.SettlementName ,\
@@ -57,9 +58,14 @@ class MetaDataEtl(object):
                   latitude = row.SettlementGPS_Latitude ,\
                   longitude = row.SettlementGPS_Longitude ,\
                 )
+                row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
+                row.save()
                 print created
+
             except IntegrityError:
+                # updated =
                 pass
+
 
 
 

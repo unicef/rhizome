@@ -12,10 +12,22 @@ class EtlJob(models.Model):
     guid = models.CharField(primary_key=True, max_length=40)
 
     def save(self, *args, **kwargs):
-      if not self.guid:
-        self.guid = hashlib.sha1(str(random.random())).hexdigest()
+        if not self.guid:
+            self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
-      super(EtlJob, self).save(*args, **kwargs)
+        super(EtlJob, self).save(*args, **kwargs)
+
+
+class ProcessStatus(models.Model):
+    status_text = models.CharField(max_length=25)
+    status_description = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return unicode(self.status_text)
+
+    class Meta:
+        app_label = 'source_data'
+
 
 class VCMBirthRecord(models.Model):
 
@@ -34,7 +46,7 @@ class VCMBirthRecord(models.Model):
     VCMNameCAttended = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255,unique=True)
-    process_status = models.IntegerField(default=0)
+    process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
@@ -145,7 +157,7 @@ class VCMSummaryNew(models.Model):
     group_spec_events_Spec_FIC = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255, unique=True)
-    process_status = models.IntegerField(default=0)
+    process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
@@ -173,7 +185,7 @@ class VCMSettlement(models.Model):
     SettlementGPS_Accuracy = models.CharField(max_length=255)
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255, unique=True)
-    process_status = models.IntegerField(default=0)
+    process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at  = models.DateTimeField(default=datetime.now())
 
