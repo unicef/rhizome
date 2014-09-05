@@ -1,6 +1,7 @@
 from django.db import models
 import hashlib
 import random
+from datetime import datetime
 
 class EtlJob(models.Model):
 
@@ -34,7 +35,8 @@ class VCMBirthRecord(models.Model):
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255,unique=True)
     process_status = models.IntegerField(default=0)
-    api_request_guid = models.CharField(max_length=255)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
 
     def __unicode__(self):
         return unicode(self.NameOfChild)
@@ -144,7 +146,8 @@ class VCMSummaryNew(models.Model):
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255, unique=True)
     process_status = models.IntegerField(default=0)
-    api_request_guid = models.CharField(max_length=255)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
 
     def __unicode__(self):
         return unicode('Hello')
@@ -171,7 +174,8 @@ class VCMSettlement(models.Model):
     meta_instanceID = models.CharField(max_length=255)
     KEY = models.CharField(max_length=255, unique=True)
     process_status = models.IntegerField(default=0)
-    api_request_guid = models.CharField(max_length=255)
+    request_guid = models.CharField(max_length=255)
+    created_at  = models.DateTimeField(default=datetime.now())
 
 
     def __unicode__(self):

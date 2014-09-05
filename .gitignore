@@ -6,6 +6,7 @@ include
 .DS_Store
 *.pyc
 *.pyo
+*.jar
 /venv
 .coverage
 /htmlcov

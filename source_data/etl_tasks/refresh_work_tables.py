@@ -10,6 +10,8 @@ from django.conf import settings
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement
 
+CSV_DIR = '/Users/johndingee_seed/code/polio/static/odk_source/csv_exports/'
+
 
 def ingest_birth_records():
 
@@ -149,7 +151,7 @@ def ingest_vcm_summary_new():
 
 def ingest_sett_coordinates():
 
-    f = "/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv"
+    f = CSV_DIR + "VCM_Sett_Coordinates_1_2.csv"
     df = pd.read_csv(f, error_bad_lines=False) # YOU NEED TO HANDLE ERRORS!
 
     columns = [col for col in df]

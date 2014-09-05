@@ -65,7 +65,7 @@ class EtlTask(object):
 
     def pull_odk(self):
 
-        for form_id in odk_settings.SECONDARY_FORM_LIST:
+        for form_id in odk_settings.FORM_LIST:
 
             subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
