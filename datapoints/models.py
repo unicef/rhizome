@@ -2,6 +2,16 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from autoslug import AutoSlugField
 
+class Source(models.Model):
+    source_name = models.CharField(max_length=55,unique=True)
+    source_description = models.CharField(max_length=255,unique=True)
+
+    def __unicode__(self):
+        return unicode(self.source_name)
+
+    class Meta:
+        db_table = 'source'
+
 class Indicator(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
@@ -85,6 +95,7 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     #
     history = HistoricalRecords()
+
 
     class Meta:
         db_table = 'datapoint'

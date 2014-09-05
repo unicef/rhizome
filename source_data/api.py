@@ -3,6 +3,7 @@ from tastypie.authorization import Authorization
 
 from source_data.models import EtlJob
 from source_data.etl_tasks.etl import MetaDataEtl
+from source_data.etl_tasks.refresh_work_tables import WorkTableTask
 from time import strftime
 
 import subprocess,sys,time
@@ -57,6 +58,8 @@ class EtlTask(object):
 
         self.task_guid = task_guid
 
+        x = task_string + '\n'
+
         self.function_mappings = {
               'pull_odk' : self.pull_odk,
               'refresh_work_tables' : self.refresh_work_tables,
@@ -64,14 +67,20 @@ class EtlTask(object):
               'refresh_metadata' : self.refresh_metadata,
             }
 
-        print task_string + '\n' * 100
-
         fn = self.function_mappings[task_string]
+        # print fn
         fn()
 
     def pull_odk(self):
 
         for form_id in odk_settings.FORM_LIST:
+
+            # truncate the file csv file
+            full_file_path = odk_settings.EXPORT_DIRECTORY + '/' + \
+                form_id.replace('.','_') + '.csv'
+
+            f = open(full_file_path,'w')
+            f.close()
 
             subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
@@ -85,7 +94,7 @@ class EtlTask(object):
 
     def refresh_work_tables(self):
 
-        print 'ODB IS ALIVE \n' * 10
+        t = WorkTableTask(self.task_guid)
 
     def refresh_datapoints(self):
 
@@ -93,4 +102,8 @@ class EtlTask(object):
 
     def refresh_metadata(self):
 
-        m = MetaDataEtl()
+        m = MetaDataEtl(self.task_guid)
+
+if __name__ == "__main__":
+    t = EtlTask
+    t.refresh_work_tables()
