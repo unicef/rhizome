@@ -2,6 +2,8 @@ import csv
 import sys, os
 import pandas as pd
 
+from django.db.utils import IntegrityError
+
 sys.path.append('/Users/johndingee_seed/code/polio') #BAD
 os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
@@ -148,37 +150,36 @@ def ingest_vcm_summary_new():
 def ingest_sett_coordinates():
 
     f = "/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv"
+    df = pd.read_csv(f, error_bad_lines=False) # YOU NEED TO HANDLE ERRORS!
 
-    df = pd.read_csv(f,error_bad_lines=False) # YOU NEED TO HANDLE ERRORS!
+    columns = [col for col in df]
 
-def i_need_to_handle_errors():
-
-    ingested_keys =  list(df['KEY'])
-
-    f = open(f,'rb')
-
-    header = f.readline()
-    header_list = header.split(',')
-    key_index = header_list.index('KEY\n')
-
-    all_keys = []
-
-    f_reader = csv.reader(f, delimiter = ',', quotechar='"')
-    for line in f_reader:
-        all_keys.append(line[key_index])
-
-    error_keys = list(set(all_keys) - set(ingested_keys))
-
-    for k in error_keys:
-        if k in ingested_keys:
-            print 'yay'
-        else:
-            print 'nooo'
-            print k
-
-    # print key_index
+    for row in df.values:
+        try:
+            created = VCMSettlement.objects.create(
+              SubmissionDate = row[columns.index('SubmissionDate')],\
+              deviceid =  row[columns.index('deviceid')],\
+              simserial = row[columns.index('simserial')] ,\
+              phonenumber =  row[columns.index('phonenumber')],\
+              DateRecorded = row[columns.index('DateRecorded')] ,\
+              SettlementCode =  row[columns.index('SettlementCode')],\
+              SettlementName =  row[columns.index('SettlementName')],\
+              VCMName =  row[columns.index('VCMName')],\
+              VCMPhone =  row[columns.index('VCMPhone')],\
+              SettlementGPS_Latitude =  row[columns.index('SettlementGPS-Latitude')],\
+              SettlementGPS_Longitude =  row[columns.index('SettlementGPS-Longitude')],\
+              SettlementGPS_Altitude =  row[columns.index('SettlementGPS-Altitude')],\
+              SettlementGPS_Accuracy =  row[columns.index('SettlementGPS-Accuracy')],\
+              meta_instanceID =  row[columns.index('meta-instanceID')],\
+              KEY = row[columns.index('KEY')],\
+              process_status = 0 ,\
+              request_guid = 'thisisnotyetimplemented'# row[columns.index('KEY')],\
+            )
+        except IntegrityError:
+            print 'key: ' +  row[columns.index('KEY')] + ' already exists...'
 
 
 
 if __name__ == "__main__":
+    print 'hi'
     ingest_sett_coordinates()
