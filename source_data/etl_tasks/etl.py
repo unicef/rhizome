@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
-from source_data.models import VCMSummaryNew
+from source_data.models import VCMSummaryNew,VCMSettlement
 
 from dateutil import parser
 from decimal import InvalidOperation
@@ -46,25 +46,23 @@ class MetaDataEtl(object):
                 pass
 
     def ingest_regions(self):
-        # Hacking this for the sept deliverable
-        with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/VCM_Sett_Coordinates_1_2.csv") as f:
-            f_reader = csv.reader(f, delimiter = ',', quotechar='"')
-            for i, row in enumerate(f_reader):
-                if i > 0:
-                    try:
-                        created = Region.objects.create(
-                            full_name = row[6] ,\
-                            settlement_code = row[5] ,\
-                            office = Office.objects.get(name="Nigeria")   ,\
-                            latitude = row[9]  ,\
-                            longitude = row[10]  \
-                        )
 
-                    except IntegrityError:
-                        print row
-                    except InvalidOperation:
-                      # decimal.InvalidOperation
-                        print 'decimal error'
+        to_process = VCMSettlement.objects.filter(process_status=0)
+        for row in to_process:
+            try:
+                created = Region.objects.create(
+                  full_name = row.SettlementName ,\
+                  settlement_code = row.SettlementCode ,\
+                  office = Office.objects.get(name='Nigeria') ,\
+                  latitude = row.SettlementGPS_Latitude ,\
+                  longitude = row.SettlementGPS_Longitude ,\
+                )
+                print created
+            except IntegrityError:
+                pass
+
+
+
 
     def ingest_campaigns(self):
         all_data = VCMSummaryNew.objects.all()
@@ -182,7 +180,8 @@ class VcmEtl(object):
 
 
 if __name__ == "__main__":
-    # m = MetaDataEtl()
-    # m.ingest_indicators()
-    v = VcmEtl()
-    v.process_data()
+    m = MetaDataEtl()
+    m.ingest_regions()
+
+    # v = VcmEtl()
+    # v.process_data()

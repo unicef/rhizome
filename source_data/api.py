@@ -2,10 +2,11 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
 from source_data.models import EtlJob
+from source_data.etl_tasks.etl import MetaDataEtl
 from time import strftime
 
-import subprocess
-import sys
+import subprocess,sys,time
+
 
 ## FIX THIS!!!! NEED TO GET THIS INTO A BETTER CONF FILE
 sys.path.append('/Users/johndingee_seed/code/polio/source_data/etl_tasks')
@@ -40,6 +41,10 @@ class EtlResource(ModelResource):
         ## MAKE THIS A CALL BACK FUNCTION ##
         et = EtlTask(task_string,created.guid)
 
+        toc = strftime("%Y-%m-%d %H:%M:%S")
+        created.date_completed = toc
+        created.save()
+
         return EtlJob.objects.filter(guid=created.guid)
 
 
@@ -56,6 +61,7 @@ class EtlTask(object):
               'pull_odk' : self.pull_odk,
               'refresh_work_tables' : self.refresh_work_tables,
               'refresh_datapoints' : self.refresh_datapoints,
+              'refresh_metadata' : self.refresh_metadata,
             }
 
         print task_string + '\n' * 100
@@ -84,3 +90,7 @@ class EtlTask(object):
     def refresh_datapoints(self):
 
         print 'ODB IS DEAD \n' * 10
+
+    def refresh_metadata(self):
+
+        m = MetaDataEtl()
