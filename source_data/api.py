@@ -44,6 +44,8 @@ class EtlResource(ModelResource):
 
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
+        created.status = 'COMPLETE'
+
         created.save()
 
         return EtlJob.objects.filter(guid=created.guid)
@@ -103,7 +105,3 @@ class EtlTask(object):
     def refresh_metadata(self):
 
         m = MetaDataEtl(self.task_guid)
-
-if __name__ == "__main__":
-    t = EtlTask
-    t.refresh_work_tables()

@@ -41,6 +41,7 @@ class Office(models.Model):
             ('view_office', 'View office'),
         )
 
+
 class Region(models.Model):
 
     full_name = models.CharField(max_length=55)
@@ -51,7 +52,8 @@ class Region(models.Model):
     longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
     slug = AutoSlugField(populate_from='full_name',max_length=55)
     created_at = models.DateTimeField(auto_now=True)
-
+    source = models.ForeignKey(Source)
+    source_guid = models.CharField(max_length=255)
 
     def __unicode__(self):
         return unicode(self.full_name)
@@ -62,6 +64,9 @@ class Region(models.Model):
         permissions = (
             ('view_region', 'View region'),
         )
+
+        unique_together = ('source','source_guid')
+
 
 class Campaign(models.Model):
 
@@ -93,13 +98,16 @@ class DataPoint(models.Model):
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
+    source = models.ForeignKey(Source)
+    source_guid = models.CharField(max_length=255)
+
     #
     history = HistoricalRecords()
 
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','region','campaign')
+        unique_together = (('indicator','region','campaign'),('source','source_guid'))
 
         permissions = (
             ('view_datapoint', 'View datapoint'),

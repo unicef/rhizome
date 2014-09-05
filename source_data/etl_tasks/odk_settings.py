@@ -21,3 +21,8 @@ SECONDARY_FORM_LIST = ['Health_Camps_Bauchi','Health_Camps_Sokoto',\
         'Practice_VCM_Sett_Coordinates_1.2','Health_Camps_Katsina',\
         'Practice_VCM_Summary','cluster_supervisor','Health_Camps_Kebbi'\
         'Pax_List_Report_Training']
+
+# WHEN I OUTPUT THE CSV VIA THE COMMAND LINE TOOLS THE HEADER IS NOT INCLUDED :(
+HEADER_DICT = {
+    'VCM_Sett_Coordinates_1_2': ['SubmissionDate','deviceid','simserial','phonenumber','DateRecorded','SettlementCode','SettlementName','VCMName','VCMPhone','SettlementGPS-Latitude','SettlementGPS-Longitude','SettlementGPS-Altitude','SettlementGPS-Accuracy','meta-instanceID','KEY']
+}

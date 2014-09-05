@@ -1,12 +1,14 @@
 import csv
 import sys, os
 import pandas as pd
+import odk_settings
 
 from django.db.utils import IntegrityError
 
 sys.path.append('/Users/johndingee_seed/code/polio') #BAD
 os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
+
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement, ProcessStatus
 
@@ -24,11 +26,13 @@ class WorkTableTask(object):
 
     def ingest_sett_coordinates(self):
 
+        f = self.csv_dir  + "VCM_Sett_Coordinates_1_2.csv"
 
-        f = self.csv_dir + "VCM_Sett_Coordinates_1_2.csv"
+        print f
+
         df = pd.read_csv(f, error_bad_lines=False) # YOU NEED TO HANDLE ERRORS!
 
-        columns = [col for col in df]
+        columns = odk_settings.HEADER_DICT['VCM_Sett_Coordinates_1_2']#[col for col in df]
 
         for i,row in enumerate(df.values):
             print i
@@ -195,4 +199,4 @@ class WorkTableTask(object):
 
 
 if __name__ == "__main__":
-    t = WorkTableTask()
+    t = WorkTableTask('blasfbafbfa')
