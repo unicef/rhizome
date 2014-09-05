@@ -5,7 +5,7 @@ from django.conf import settings
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
-from datapoints.models import Indicator, DataPoint, Region, Campaign, Office
+from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, Source
 from source_data.models import VCMSummaryNew,VCMSettlement,ProcessStatus
 
 from dateutil import parser
@@ -17,11 +17,14 @@ import csv
 
 
 class MetaDataEtl(object):
-    def __init__(self):
+    def __init__(self,request_guid):
         print 'Begin Meta Data Ingest'
+        self.request_guid = request_guid
+
 
         # self.ingest_indicators()
         # self.ingest_campaigns()
+
         self.ingest_regions()
 
     def ingest_indicators(self):
@@ -49,6 +52,7 @@ class MetaDataEtl(object):
 
         to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
         for row in to_process:
+            print row
 
             try:
                 created = Region.objects.create(
@@ -57,11 +61,15 @@ class MetaDataEtl(object):
                   office = Office.objects.get(name='Nigeria') ,\
                   latitude = row.SettlementGPS_Latitude ,\
                   longitude = row.SettlementGPS_Longitude ,\
+                  source = Source.objects.get(source_name='odk') ,\
+                  source_guid = row.KEY
                 )
                 row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
                 row.save()
 
             except IntegrityError:
+                # THIS SHOULD BE AN UPDATE SO THAT NEWER REGIONS ARE INSERTED #
+                # AND THE OLD ONES ARE BROUGTH UP FOR REVIEW #
                 row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
                 row.save()
 
@@ -93,7 +101,10 @@ class MetaDataEtl(object):
 
 
 class VcmEtl(object):
-    def __init__(self):
+    def __init__(self,request_guid):
+        print 'initializing VCM ETL Object'
+
+        self.request_guid = request_guid
 
         self.inds = Indicator.objects.all()
         self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.all().values())) # where processed = 0

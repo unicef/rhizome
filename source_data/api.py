@@ -2,7 +2,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
 from source_data.models import EtlJob
-from source_data.etl_tasks.etl import MetaDataEtl
+from source_data.etl_tasks.refresh_master import MetaDataEtl
 from source_data.etl_tasks.refresh_work_tables import WorkTableTask
 from time import strftime
 
@@ -67,6 +67,8 @@ class EtlTask(object):
               'refresh_work_tables' : self.refresh_work_tables,
               'refresh_datapoints' : self.refresh_datapoints,
               'refresh_metadata' : self.refresh_metadata,
+              'refresh_master' : self.refresh_master,
+
             }
 
         fn = self.function_mappings[task_string]
@@ -105,3 +107,7 @@ class EtlTask(object):
     def refresh_metadata(self):
 
         m = MetaDataEtl(self.task_guid)
+
+    def refresh_master(self):
+
+        pass
