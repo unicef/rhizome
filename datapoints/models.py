@@ -33,7 +33,7 @@ class Office(models.Model):
 
 class Region(models.Model):
 
-    full_name = models.CharField(max_length=55,unique=True)
+    full_name = models.CharField(max_length=55)
     settlement_code = models.IntegerField(unique=True)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)

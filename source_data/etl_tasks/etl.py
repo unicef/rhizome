@@ -60,13 +60,10 @@ class MetaDataEtl(object):
                 )
                 row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
                 row.save()
-                print created
 
             except IntegrityError:
-                # updated =
-                pass
-
-
+                row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
+                row.save()
 
 
 
