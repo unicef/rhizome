@@ -288,3 +288,47 @@ class VCMSummaryOld(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+class ClusterSupervisor(models.Model):
+    SubmissionDate=models.CharField(max_length=255)
+    DateRecorded=models.CharField(max_length=255)
+    start_time=models.CharField(max_length=255)
+    end_time=models.CharField(max_length=255)
+    instruction=models.CharField(max_length=255)
+    supervision_location_Latitude=models.CharField(max_length=255)
+    supervision_location_Longitude=models.CharField(max_length=255)
+    supervision_location_Altitude=models.CharField(max_length=255)
+    supervision_location_Accuracy=models.CharField(max_length=255)
+    supervisor_title=models.CharField(max_length=255)
+    supervisor_name=models.CharField(max_length=255)
+    state=models.CharField(max_length=255)
+    lga=models.CharField(max_length=255)
+    supervisee_name=models.CharField(max_length=255)
+    num_LGAC=models.CharField(max_length=255)
+    hrop_endorsed=models.CharField(max_length=255)
+    hrop_socialdata=models.CharField(max_length=255)
+    hrop_special_pop=models.CharField(max_length=255)
+    hrop_activities_planned=models.CharField(max_length=255)
+    hrop_activities_conducted=models.CharField(max_length=255)
+    hrop_implementation=models.CharField(max_length=255)
+    hrop_workplan_aligned=models.CharField(max_length=255)
+    coord_smwg_meetings=models.CharField(max_length=255)
+    coord_vcm_meeting=models.CharField(max_length=255)
+    coord_rfp_meeting=models.CharField(max_length=255)
+    vcm_supervision=models.CharField(max_length=255)
+    vcm_data=models.CharField(max_length=255)
+    vcm_birthtracking=models.CharField(max_length=255)
+    ri_supervision=models.CharField(max_length=255)
+    fund_transparency=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'
