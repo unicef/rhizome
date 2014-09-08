@@ -98,7 +98,9 @@ class EtlTask(object):
 
     def refresh_work_tables(self):
 
-        t = WorkTableTask(self.task_guid)
+        for source_file, column_list in odk_settings.HEADER_DICT.iteritems():
+            print source_file * 10
+            t = WorkTableTask(self.task_guid,source_file)
 
 
     def refresh_datapoints(self):

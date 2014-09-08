@@ -1,5 +1,6 @@
 import csv
 import sys, os
+import pprint as pp
 import pandas as pd
 import odk_settings
 
@@ -32,14 +33,25 @@ class WorkTableTask(object):
             "New_VCM_Summary.csv" : self.ingest_vcm_summary_new
         }
 
-        #prep the data frame
+        # prep the data frame
         self.df = self.build_dataframe(self.file_to_process)
-
-
+        # execute the relevant function
         fn = self.file_to_function_map[self.file_to_process]
 
         x = fn()
 
+
+    def df_row_to_dict(self,row):
+
+        output_dict = {}
+
+        for col in self.columns:
+            output_dict[col] = row[self.columns.index(col)]
+
+        output_dict['process_status'] = ProcessStatus.objects.get(status_text='TO_PROCESS')
+        output_dict['request_guid'] = self.request_guid
+
+        return output_dict
 
 
     def build_dataframe(self,file_name):
@@ -52,147 +64,24 @@ class WorkTableTask(object):
 
     def ingest_sett_coordinates(self):
 
-        columns = self.columns
-
         for i,row in enumerate(self.df.values):
-            print i
-            try:
-                created = VCMSettlement.objects.create(
-                  SubmissionDate = row[columns.index('SubmissionDate')],\
-                  deviceid =  row[columns.index('deviceid')],\
-                  simserial = row[columns.index('simserial')] ,\
-                  phonenumber =  row[columns.index('phonenumber')],\
-                  DateRecorded = row[columns.index('DateRecorded')] ,\
-                  SettlementCode =  row[columns.index('SettlementCode')],\
-                  SettlementName =  row[columns.index('SettlementName')],\
-                  VCMName =  row[columns.index('VCMName')],\
-                  VCMPhone =  row[columns.index('VCMPhone')],\
-                  SettlementGPS_Latitude =  row[columns.index('SettlementGPS-Latitude')],\
-                  SettlementGPS_Longitude =  row[columns.index('SettlementGPS-Longitude')],\
-                  SettlementGPS_Altitude =  row[columns.index('SettlementGPS-Altitude')],\
-                  SettlementGPS_Accuracy =  row[columns.index('SettlementGPS-Accuracy')],\
-                  meta_instanceID =  row[columns.index('meta-instanceID')],\
-                  KEY = row[columns.index('KEY')],\
-                  process_status =  ProcessStatus.objects.get(status_text='TO_PROCESS'),\
-                  request_guid = self.request_guid
-                )
-                print 'CREATED!'
-            except IntegrityError:
-                print 'key: ' +  row[columns.index('KEY')] + ' already exists...'
+            to_create = self.df_row_to_dict(row)
 
+            try:
+                created = VCMSettlement.objects.create(**to_create)
+            except IntegrityError:
+                print 'key: ' +  row[self.columns.index('KEY')] + ' already exists...'
 
 
     def ingest_vcm_summary_new(self):
 
-        with open ("/Users/johndingee_seed/Desktop/ALL_ODK_DATA_8_25/New_VCM_Summary.csv") as f:
-            f_reader = csv.reader(f, delimiter = ',', quotechar='"')
-            for i, row in enumerate(f_reader):
-                if i > 0:
-                    # print row
-                    print i
-                    created = VCMSummaryNew.objects.create(
-                    # created = VCMSummaryNew.objects.get_or_create(
-                        SubmissionDate = row[0], \
-                        deviceid = row[1], \
-                        simserial = row[2], \
-                        phonenumber = row[3], \
-                        DateOfReport = row[4], \
-                        Date_Implement = row[5], \
-                        SettlementCode = row[6], \
-                        CensusNewBornsF = row[7], \
-                        CensusNewBornsM = row[8], \
-                        Tot_Newborns = row[9], \
-                        Census2_11MoF = row[10], \
-                        Census2_11MoM = row[11], \
-                        Tot_2_11Months = row[12], \
-                        Census12_59MoF = row[13], \
-                        Census12_59MoM = row[14], \
-                        Tot_12_59Months = row[15], \
-                        Tot_Census = row[16], \
-                        VaxNewBornsF = row[17], \
-                        VaxNewBornsM = row[18], \
-                        Tot_VaxNewBorn = row[19], \
-                        display_vax2 = row[20], \
-                        display_vax3 = row[21], \
-                        display_vax1 = row[22], \
-                        Vax2_11MoF = row[23], \
-                        Vax2_11MoM = row[24], \
-                        Tot_Vax2_11Mo = row[25], \
-                        display_vax4 = row[26], \
-                        display_vax5 = row[27], \
-                        display_vax6 = row[28], \
-                        Vax12_59MoF = row[29], \
-                        Vax12_59MoM = row[30], \
-                        Tot_Vax12_59Mo = row[31], \
-                        Tot_Vax = row[32], \
-                        Tot_Missed = row[33], \
-                        display_vax7 = row[34], \
-                        display_vax8 = row[35], \
-                        display_vax9 = row[36], \
-                        display_msd1 = row[37], \
-                        display_msd2 = row[38], \
-                        group_msd_chd_Msd_PlaygroundF = row[39], \
-                        group_msd_chd_Msd_PlaygroundM = row[40], \
-                        group_msd_chd_Msd_SocEventF = row[41], \
-                        group_msd_chd_Msd_SocEventM = row[42], \
-                        group_msd_chd_Msd_MarketF = row[43], \
-                        group_msd_chd_Msd_MarketM = row[44], \
-                        group_msd_chd_Msd_FarmF = row[45], \
-                        group_msd_chd_Msd_FarmM = row[46], \
-                        group_msd_chd_Msd_SchoolF = row[47], \
-                        group_msd_chd_Msd_SchoolM = row[48], \
-                        group_msd_chd_Msd_ChildSickF = row[49], \
-                        group_msd_chd_Msd_ChildSickM = row[50], \
-                        group_msd_chd_Msd_SideEffectsF = row[51], \
-                        group_msd_chd_Msd_SideEffectsM = row[52], \
-                        group_msd_chd_Msd_NoFeltNeedF = row[53], \
-                        group_msd_chd_Msd_NoFeltNeedM = row[54], \
-                        group_msd_chd_Msd_TooManyRoundsF = row[55], \
-                        group_msd_chd_Msd_TooManyRoundsM = row[56], \
-                        group_msd_chd_Msd_RelBeliefsF = row[57], \
-                        group_msd_chd_Msd_RelBeliefsM = row[58], \
-                        group_msd_chd_Msd_PolDiffsF = row[59], \
-                        group_msd_chd_Msd_PolDiffsM = row[60], \
-                        group_msd_chd_Msd_UnhappyWTeamF = row[61], \
-                        group_msd_chd_Msd_UnhappyWTeamM = row[62], \
-                        group_msd_chd_Msd_NoPlusesF = row[63], \
-                        group_msd_chd_Msd_NoPlusesM = row[64], \
-                        group_msd_chd_Msd_NoGovtServicesF = row[65], \
-                        group_msd_chd_Msd_NoGovtServicesM = row[66], \
-                        group_msd_chd_Msd_PolioUncommonF = row[67], \
-                        group_msd_chd_Msd_PolioUncommonM = row[68], \
-                        group_msd_chd_Msd_PolioHasCureF = row[69], \
-                        group_msd_chd_Msd_PolioHasCureM = row[70], \
-                        group_msd_chd_Msd_OtherProtectionF = row[71], \
-                        group_msd_chd_Msd_OtherProtectionM = row[72], \
-                        group_msd_chd_Msd_NoConsentF = row[73], \
-                        group_msd_chd_Msd_NoConsentM = row[74], \
-                        group_msd_chd_Msd_HHNotVisitedF = row[75], \
-                        group_msd_chd_Msd_HHNotVisitedM = row[76], \
-                        group_msd_chd_Msd_SecurityF = row[76], \
-                        group_msd_chd_Msd_SecurityM = row[77], \
-                        group_msd_chd_Msd_AgedOutF = row[78], \
-                        group_msd_chd_Msd_AgedOutM = row[79], \
-                        group_msd_chd_Msd_FamilyMovedF = row[80], \
-                        group_msd_chd_Msd_FamilyMovedM = row[81], \
-                        group_msd_chd_Msd_ChildDiedF = row[82], \
-                        group_msd_chd_Msd_ChildDiedM = row[83], \
-                        group_msd_chd_Tot_Missed_Check = row[84], \
-                        group_msd_chd_display_msd3 = row[85], \
-                        spec_grp_choice = row[86], \
-                        group_spec_events_Spec_ZeroDose = row[87], \
-                        group_spec_events_Spec_PregnantMother = row[88], \
-                        group_spec_events_Spec_Newborn = row[89], \
-                        group_spec_events_Spec_VCMAttendedNCer = row[90], \
-                        group_spec_events_Spec_CMAMReferral = row[91], \
-                        group_spec_events_Spec_RIReferral = row[92], \
-                        group_spec_events_Spec_AFPCase = row[93], \
-                        group_spec_events_Spec_MslsCase = row[94], \
-                        group_spec_events_Spec_OtherDisease = row[95], \
-                        group_spec_events_Spec_FIC = row[96], \
-                        meta_instanceID = row[97], \
-                        KEY = row[98]
-                        )
+        for i, row in enumerate(self.df.values):
+            to_create = self.df_row_to_dict(row)
+            try:
+                created = VCMSummaryNew.objects.create(**to_create)
+            except IntegrityError:
+                print 'key: ' +  row[self.columns.index('KEY')] + ' already exists...'
+
 
 
     def ingest_birth_records(self):
