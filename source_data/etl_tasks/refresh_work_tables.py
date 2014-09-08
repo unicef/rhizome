@@ -12,11 +12,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
 from django.conf import settings
 
 
-from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement,\
-    ProcessStatus,VCMSummaryOld, ClusterSupervisor,PhoneInventory,\
-    ActivityReport,VWSRegister, HealthCamp, PracticeVCMSettCoordinates,\
-    PaxListReportTraining,PracticeVCMSummary
-
+from source_data.models import *
 
 
 class WorkTableTask(object):
@@ -26,6 +22,7 @@ class WorkTableTask(object):
 
         self.request_guid = request_guid
         self.file_to_process = file_to_process
+
 
         self.file_to_function_map = {
             "VCM_Sett_Coordinates_1_2.csv" : VCMSettlement,
@@ -39,6 +36,7 @@ class WorkTableTask(object):
             "Practice_VCM_Sett_Coordinates_1_2.csv": PracticeVCMSettCoordinates,
             "Pax_List_Report_Training.csv" :PaxListReportTraining,
             "Practice_VCM_Summary.csv":PracticeVCMSummary,
+            "Practice_VCM_Birth_Record.csv": PracticeVCMBirthRecord,
 
             "Health_Camps_Yobe.csv": HealthCamp,
             "Health_Camps_Kebbi.csv": HealthCamp,
@@ -48,8 +46,6 @@ class WorkTableTask(object):
             'Health_Camps_Katsina.csv': HealthCamp,
             'Health_Camps_Sokoto.csv': HealthCamp,
             'Health_Camps_Kaduna.csv': HealthCamp,
-
-
         }
 
         # this below shoudl be a configuration
