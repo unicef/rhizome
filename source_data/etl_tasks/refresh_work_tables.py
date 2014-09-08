@@ -14,7 +14,7 @@ from django.conf import settings
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement,\
     ProcessStatus,VCMSummaryOld, ClusterSupervisor,PhoneInventory,\
-    ActivityReport,VWSRegister
+    ActivityReport,VWSRegister, HealthCamp
 
 
 
@@ -32,8 +32,18 @@ class WorkTableTask(object):
             "cluster_supervisor.csv" : ClusterSupervisor,
             "Phone Inventory.csv": PhoneInventory,
             "VCM_Birth_Record.csv": VCMBirthRecord,
-            "activity_report.csv":ActivityReport,
-            "VWS_Register.csv":VWSRegister ,
+            "activity_report.csv": ActivityReport,
+            "VWS_Register.csv" :VWSRegister ,
+            "Health_Camps_Yobe.csv": HealthCamp,
+            "Health_Camps_Kebbi.csv": HealthCamp,
+            'Health_Camps_Bauchi.csv': HealthCamp,
+            'Health_Camps_Jigawa.csv': HealthCamp,
+            'Health_Camps_Kano.csv': HealthCamp,
+            'Health_Camps_Katsina.csv': HealthCamp,
+            'Health_Camps_Sokoto.csv': HealthCamp,
+            'Health_Camps_Kaduna.csv': HealthCamp,
+
+
         }
 
         # this below shoudl be a configuration
@@ -42,8 +52,10 @@ class WorkTableTask(object):
 
         # execute the relevant function
         work_table_obj = self.file_to_function_map[self.file_to_process]
-        self.csv_to_work_table(work_table_obj)
 
+        # only process if the file is not empty
+        if os.path.getsize(self.csv_dir + file_to_process) > 0:
+            self.csv_to_work_table(work_table_obj)
 
     def df_row_to_dict(self,row):
 
@@ -54,6 +66,13 @@ class WorkTableTask(object):
 
         output_dict['process_status'] = ProcessStatus.objects.get(status_text='TO_PROCESS')
         output_dict['request_guid'] = self.request_guid
+
+        if 'Health_Camps' in self.file_to_process:
+              region = self.file_to_process.replace('Health_Camps_','').replace('.csv','')
+
+              output_dict['region'] = region
+
+
 
         return output_dict
 
@@ -69,6 +88,7 @@ class WorkTableTask(object):
     def csv_to_work_table(self, work_table_object):
 
         df = self.build_dataframe()
+
 
         for i, row in enumerate(df.values):
             to_create = self.df_row_to_dict(row)

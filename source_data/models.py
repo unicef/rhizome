@@ -447,3 +447,51 @@ class VWSRegister(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+class HealthCamp(models.Model):
+    region = models.CharField(max_length=255)
+    SubmissionDate=models.CharField(max_length=255)
+    formhub_uuid=models.CharField(max_length=255)
+    phonenumber=models.CharField(max_length=255)
+    userid=models.CharField(max_length=255)
+    DateRecorded=models.CharField(max_length=255)
+    start_time=models.CharField(max_length=255)
+    lga=models.CharField(max_length=255)
+    ward=models.CharField(max_length=255)
+    settlementname=models.CharField(max_length=255)
+    names=models.CharField(max_length=255)
+    agencyname=models.CharField(max_length=255)
+    townannouncer=models.CharField(max_length=255)
+    megaphone=models.CharField(max_length=255)
+    opvvaccinator=models.CharField(max_length=255)
+    recorder_opv=models.CharField(max_length=255)
+    separatetally=models.CharField(max_length=255)
+    clinician1=models.CharField(max_length=255)
+    clinician2=models.CharField(max_length=255)
+    recorder_ri=models.CharField(max_length=255)
+    crowdcontroller=models.CharField(max_length=255)
+    nc_location=models.CharField(max_length=255)
+    appropriate_location=models.CharField(max_length=255)
+    hc_stockout=models.CharField(max_length=255)
+    num_opv=models.CharField(max_length=255)
+    num_measles=models.CharField(max_length=255)
+    num_penta=models.CharField(max_length=255)
+    num_patients=models.CharField(max_length=255)
+    hc_photo=models.CharField(max_length=255)
+    SettlementGPS_Latitude=models.CharField(max_length=255)
+    SettlementGPS_Longitude=models.CharField(max_length=255)
+    SettlementGPS_Altitude=models.CharField(max_length=255)
+    SettlementGPS_Accuracy=models.CharField(max_length=255)
+    endtime=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'
