@@ -495,3 +495,30 @@ class HealthCamp(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+class PracticeVCMSettCoordinates(models.Model):
+    SubmissionDate=models.CharField(max_length=255)
+    deviceid=models.CharField(max_length=255)
+    simserial=models.CharField(max_length=255)
+    phonenumber=models.CharField(max_length=255)
+    DateRecorded=models.CharField(max_length=255)
+    SettlementCode=models.CharField(max_length=255)
+    SettlementName=models.CharField(max_length=255)
+    VCMName=models.CharField(max_length=255)
+    VCMPhone=models.CharField(max_length=255)
+    SettlementGPS_Latitude=models.CharField(max_length=255)
+    SettlementGPS_Longitude=models.CharField(max_length=255)
+    SettlementGPS_Altitude=models.CharField(max_length=255)
+    SettlementGPS_Accuracy=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'

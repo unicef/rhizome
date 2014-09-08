@@ -14,7 +14,7 @@ from django.conf import settings
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement,\
     ProcessStatus,VCMSummaryOld, ClusterSupervisor,PhoneInventory,\
-    ActivityReport,VWSRegister, HealthCamp
+    ActivityReport,VWSRegister, HealthCamp, PracticeVCMSettCoordinates
 
 
 
@@ -34,6 +34,7 @@ class WorkTableTask(object):
             "VCM_Birth_Record.csv": VCMBirthRecord,
             "activity_report.csv": ActivityReport,
             "VWS_Register.csv" :VWSRegister ,
+            "Practice_VCM_Sett_Coordinates_1_2.csv": PracticeVCMSettCoordinates,
             "Health_Camps_Yobe.csv": HealthCamp,
             "Health_Camps_Kebbi.csv": HealthCamp,
             'Health_Camps_Bauchi.csv': HealthCamp,
