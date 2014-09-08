@@ -636,6 +636,7 @@ class PracticeVCMSummary(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
 class PracticeVCMBirthRecord(models.Model):
       SubmissionDate=models.CharField(max_length=255)
       deviceid=models.CharField(max_length=255)
@@ -661,3 +662,25 @@ class PracticeVCMBirthRecord(models.Model):
 
       class Meta:
           app_label = 'source_data'
+
+
+class KnowThePeople(models.Model):
+    SubmissionDate=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    NameOfPax=models.CharField(max_length=255)
+    State_country=models.CharField(max_length=255)
+    DOB=models.CharField(max_length=255)
+    Brothers=models.CharField(max_length=255)
+    Sisters=models.CharField(max_length=255)
+    PrefferedCity=models.CharField(max_length=255)
+    CitiesVisited=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'

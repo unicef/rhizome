@@ -37,7 +37,7 @@ class WorkTableTask(object):
             "Pax_List_Report_Training.csv" :PaxListReportTraining,
             "Practice_VCM_Summary.csv":PracticeVCMSummary,
             "Practice_VCM_Birth_Record.csv": PracticeVCMBirthRecord,
-
+            "KnowThePeople.csv": KnowThePeople,
             "Health_Camps_Yobe.csv": HealthCamp,
             "Health_Camps_Kebbi.csv": HealthCamp,
             'Health_Camps_Bauchi.csv': HealthCamp,
