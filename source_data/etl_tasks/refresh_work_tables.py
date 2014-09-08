@@ -30,6 +30,7 @@ class WorkTableTask(object):
             "VCM_Summary.csv" : VCMSummaryOld,
             "cluster_supervisor.csv" : ClusterSupervisor,
             "Phone Inventory.csv": PhoneInventory,
+            "VCM_Birth_Record.csv": VCMBirthRecord,
         }
 
         # this below shoudl be a configuration
