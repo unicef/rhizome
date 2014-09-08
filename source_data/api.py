@@ -2,7 +2,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
 from source_data.models import EtlJob
-from source_data.etl_tasks.refresh_master import MetaDataEtl
+from source_data.etl_tasks.refresh_master import MetaDataEtl, VcmEtl
 from source_data.etl_tasks.refresh_work_tables import WorkTableTask
 from time import strftime
 
@@ -100,14 +100,18 @@ class EtlTask(object):
 
         t = WorkTableTask(self.task_guid)
 
+
     def refresh_datapoints(self):
 
-        print 'ODB IS DEAD \n' * 10
+        dp = VcmEtl(self)
 
     def refresh_metadata(self):
 
         m = MetaDataEtl(self.task_guid)
 
     def refresh_master(self):
+        results = 'this is ok'
 
-        pass
+        print results
+
+        return results

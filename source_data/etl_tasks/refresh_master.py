@@ -21,7 +21,6 @@ class MetaDataEtl(object):
         print 'Begin Meta Data Ingest'
         self.request_guid = request_guid
 
-
         # self.ingest_indicators()
         # self.ingest_campaigns()
 
@@ -105,17 +104,23 @@ class VcmEtl(object):
         print 'initializing VCM ETL Object'
 
         self.request_guid = request_guid
+        self.column_to_indicator_map = self.build_indicator_map()
+
+        self.process_data()
+
+    def build_indicator_map(self):
 
         self.inds = Indicator.objects.all()
-        self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.all().values())) # where processed = 0
+        self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.all().values())) # where processe
         self.source_columns = VCMSummaryNew._meta.get_all_field_names()
 
         # map columns to indicators #
-        self.column_to_indicator_map = {}
+        column_to_indicator_map = {}
         for col in self.source_columns:
             if col in [ind.name for ind in self.inds]:
-                self.column_to_indicator_map[col] = Indicator.objects.get(name=col).id
+                column_to_indicator_map[col] = Indicator.objects.get(name=col).id
 
+        return column_to_indicator_map
 
 
     def process_data(self):
