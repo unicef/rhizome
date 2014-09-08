@@ -13,7 +13,7 @@ from django.conf import settings
 
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement,\
-    ProcessStatus,VCMSummaryOld, ClusterSupervisor
+    ProcessStatus,VCMSummaryOld, ClusterSupervisor,PhoneInventory
 
 
 
@@ -28,7 +28,8 @@ class WorkTableTask(object):
             "VCM_Sett_Coordinates_1_2.csv" : VCMSettlement,
             "New_VCM_Summary.csv" : VCMSummaryNew,
             "VCM_Summary.csv" : VCMSummaryOld,
-            "cluster_supervisor.csv" : ClusterSupervisor
+            "cluster_supervisor.csv" : ClusterSupervisor,
+            "Phone Inventory.csv": PhoneInventory,
         }
 
         # this below shoudl be a configuration

@@ -332,3 +332,25 @@ class ClusterSupervisor(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+class PhoneInventory(models.Model):
+    SubmissionDate=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    Name=models.CharField(max_length=255)
+    State=models.CharField(max_length=255)
+    LGA=models.CharField(max_length=255)
+    Colour_phone=models.CharField(max_length=255)
+    Asset_number=models.CharField(max_length=255)
+    telephone_no=models.CharField(max_length=255)
+    DeviceID=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'
