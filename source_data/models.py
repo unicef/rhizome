@@ -522,3 +522,25 @@ class PracticeVCMSettCoordinates(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+
+class PaxListReportTraining(models.Model):
+    SubmissionDate=models.CharField(max_length=255)
+    meta_instanceID=models.CharField(max_length=255)
+    State=models.CharField(max_length=255)
+    NameOfParticipant=models.CharField(max_length=255)
+    Title=models.CharField(max_length=255)
+    PhoneNumber=models.CharField(max_length=255)
+    EmailAddr=models.CharField(max_length=255)
+    TimeStamp=models.CharField(max_length=255)
+    KEY = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode('hello')
+
+    class Meta:
+        app_label = 'source_data'

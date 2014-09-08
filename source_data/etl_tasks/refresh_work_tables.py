@@ -14,7 +14,7 @@ from django.conf import settings
 
 from source_data.models import VCMBirthRecord,VCMSummaryNew,VCMSettlement,\
     ProcessStatus,VCMSummaryOld, ClusterSupervisor,PhoneInventory,\
-    ActivityReport,VWSRegister, HealthCamp, PracticeVCMSettCoordinates
+    ActivityReport,VWSRegister, HealthCamp, PracticeVCMSettCoordinates, PaxListReportTraining
 
 
 
@@ -25,6 +25,7 @@ class WorkTableTask(object):
 
         self.request_guid = request_guid
         self.file_to_process = file_to_process
+
         self.file_to_function_map = {
             "VCM_Sett_Coordinates_1_2.csv" : VCMSettlement,
             "New_VCM_Summary.csv" : VCMSummaryNew,
@@ -35,6 +36,8 @@ class WorkTableTask(object):
             "activity_report.csv": ActivityReport,
             "VWS_Register.csv" :VWSRegister ,
             "Practice_VCM_Sett_Coordinates_1_2.csv": PracticeVCMSettCoordinates,
+            "Pax_List_Report_Training.csv" :PaxListReportTraining,
+
             "Health_Camps_Yobe.csv": HealthCamp,
             "Health_Camps_Kebbi.csv": HealthCamp,
             'Health_Camps_Bauchi.csv': HealthCamp,
