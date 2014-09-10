@@ -30,7 +30,7 @@ class MetaDataEtl(object):
 
         non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
             'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
-            'meta_instanceID','KEY']
+            'meta_instanceID','KEY', 'id']
 
         v = VCMSummaryNew()
         all_fields = v._meta.fields
@@ -105,8 +105,13 @@ class VcmEtl(object):
 
         self.request_guid = request_guid
         self.column_to_indicator_map = self.build_indicator_map()
+        self.non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
+            'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
+            'meta_instanceID','KEY', 'id']
 
         self.process_data()
+
+
 
     def build_indicator_map(self):
 
@@ -145,61 +150,58 @@ class VcmEtl(object):
                 for row_i,cell in enumerate(row):
                     row_dict[column_list[row_i]] = cell
 
-                self.process_row(row_dict)
+                row_process_status = self.process_row(row_dict)
+                process_status = ProcessStatus.objects.get(status_text=row_process_status)
+                row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
+                row_obj.process_status = process_status
+                row_obj.save()
+
 
 
 
     def process_row(self,row_dict):
 
         sett_code = row_dict['SettlementCode'].replace('.0','')
+        date_impl = parser.parse(row_dict['Date_Implement'])
 
-        print sett_code
         try:
             region_id = Region.objects.get(settlement_code=sett_code).id
-            print region_id
         except ObjectDoesNotExist:
-            process_status = ProcessStatus.objects.get(status_text = 'VCM_SUMMARY_NO_SETT_CODE')
-            row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
-            row_obj.process_status = process_status
-            row_obj.save()
+            return 'VCM_SUMMARY_NO_SETT_CODE'
 
-        #
-        # except ValueError:
-        #     return None
-        #
-        #     # WHAT DOES THIS ERROR MEAN!!
-        #
-        # try:
-        #     the_date = parser.parse(row[column_names.index('Date_Implement')])
-        #     campaign_id = Campaign.objects.get(start_date=the_date).id
-        #     print campaign_id
-        # except ObjectDoesNotExist:
-        #     return None
-        #     print 'no camp'
-        #
-        # for i, value in enumerate(row):
-        #     print value
-        #     try:
-        #         indicator_id =  self.column_to_indicator_map[column_names[i]]
-        #         cell_value = row[i]
-        #         dp = self.process_cell(region_id,campaign_id,indicator_id,cell_value)
-        #         ## Clean this up ^^ ##
-        #     except KeyError as e:
-        #         pass # means it is a meta data column
+        try:
+            campaign_id = Campaign.objects.get(start_date=date_impl).id
+        except ObjectDoesNotExist:
+            return 'VCM_SUMMARY_NO_CAMPAIGN'
+
+        # remove all non indicator fields from the row we are processing
+        # [row_dict.pop(field,None) for field in self.non_indicator_fields]
+
+        # process all cells in the row
+        for column_name,cell_value, in row_dict.iteritems():
+              self.process_cell(region_id,campaign_id,column_name,cell_value)
+
+        return 'SUCESS_INSERT'
 
 
+    def process_cell(self,region_id,campaign_id,column_name,cell_value):
 
-    def process_cell(self,region_id,campaign_id,indicator_id,cell_value):
-
-        if cell_value == "" or cell_value == 0.00:
+        if cell_value == "nan":
             return
+
+        if column_name in self.non_indicator_fields:
+            return
+
+        indicator_id = Indicator.objects.get(name = column_name).id
+
+        cleaned_cell_value = self.clean_cell_value(cell_value)
 
         try:
             dp = DataPoint.objects.create(
                 indicator_id = indicator_id, \
                 region_id = region_id, \
                 campaign_id = campaign_id, \
-                value =  cell_value, \
+                value =  cleaned_cell_value, \
                 changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
             )
         except IntegrityError:
@@ -207,10 +209,20 @@ class VcmEtl(object):
             # we are going to have to deal with the situation in which
             # the VWS re-enters the data.  This will have to be a merge
             # i.e. try to enter, if integrity error, then update.
-        except ValidationError:
-            pass
-            # NO IDEA WHAT THIS MEANS
-            # THESE NEED TO GET FLAGGED FOR REVIEW
+
+    def clean_cell_value(self,cell_value):
+
+        cell_value = cell_value.lower()
+
+        if cell_value == 'yes':
+            cleaned = 1
+        elif cell_value == 'no':
+            cleaned = 0
+        else:
+            cleaned = cell_value
+
+        return cleaned
+
 
 
 if __name__ == "__main__":
