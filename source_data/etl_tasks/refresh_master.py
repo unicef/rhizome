@@ -141,20 +141,17 @@ class VcmEtl(object):
         column_list = sliced_df.columns.tolist()
 
         for i, row in enumerate(sliced_df.values):
-            ## REMOVE ##
-            if i < 10:
-            ## REMOVE ##
-                print 'processing row: ' + str(i)
+            print 'processing row: ' + str(i)
 
-                row_dict = {}
-                for row_i,cell in enumerate(row):
-                    row_dict[column_list[row_i]] = cell
+            row_dict = {}
+            for row_i,cell in enumerate(row):
+                row_dict[column_list[row_i]] = cell
 
-                row_process_status = self.process_row(row_dict)
-                process_status = ProcessStatus.objects.get(status_text=row_process_status)
-                row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
-                row_obj.process_status = process_status
-                row_obj.save()
+            row_process_status = self.process_row(row_dict)
+            process_status = ProcessStatus.objects.get(status_text=row_process_status)
+            row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
+            row_obj.process_status = process_status
+            row_obj.save()
 
 
 
@@ -174,14 +171,19 @@ class VcmEtl(object):
         except ObjectDoesNotExist:
             return 'VCM_SUMMARY_NO_CAMPAIGN'
 
-        # remove all non indicator fields from the row we are processing
-        # [row_dict.pop(field,None) for field in self.non_indicator_fields]
+
+        all_cell_status = []
 
         # process all cells in the row
         for column_name,cell_value, in row_dict.iteritems():
-              self.process_cell(region_id,campaign_id,column_name,cell_value)
+              cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value)
+              all_cell_status.append(cell_status)
 
-        return 'SUCESS_INSERT'
+        # HANDLE DUPE ENTRIES BETTER #
+        if 'ALREADY_EXISTS' in all_cell_status:
+            return 'ALREADY_EXISTS'
+        else:
+            return 'SUCESS_INSERT'
 
 
     def process_cell(self,region_id,campaign_id,column_name,cell_value):
@@ -193,22 +195,27 @@ class VcmEtl(object):
             return
 
         indicator_id = Indicator.objects.get(name = column_name).id
+        source_id = Source.objects.get(source_name = 'odk').id
 
         cleaned_cell_value = self.clean_cell_value(cell_value)
 
         try:
-            dp = DataPoint.objects.create(
+            dp = DataPoint.objects.get_or_create(
                 indicator_id = indicator_id, \
                 region_id = region_id, \
                 campaign_id = campaign_id, \
                 value =  cleaned_cell_value, \
+                source_id = source_id, \
                 changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
             )
         except IntegrityError:
-            return # means this is a duplicative datapoint.
-            # we are going to have to deal with the situation in which
-            # the VWS re-enters the data.  This will have to be a merge
-            # i.e. try to enter, if integrity error, then update.
+            return 'ALREADY_EXISTS'
+            # NEED TO HANDLE DUPE DATA POINTS BETTER #
+
+        return 'SUCESS_INSERT'
+
+
+
 
     def clean_cell_value(self,cell_value):
 
@@ -222,7 +229,6 @@ class VcmEtl(object):
             cleaned = cell_value
 
         return cleaned
-
 
 
 if __name__ == "__main__":
