@@ -105,6 +105,7 @@ class EtlTask(object):
 
     def refresh_datapoints(self):
 
+
         dp = VcmEtl(self)
 
     def refresh_metadata(self):
@@ -112,8 +113,5 @@ class EtlTask(object):
         m = MetaDataEtl(self.task_guid)
 
     def refresh_master(self):
-        results = 'this is ok'
 
-        print results
-
-        return results
+        ma = VcmEtl(self.task_guid)

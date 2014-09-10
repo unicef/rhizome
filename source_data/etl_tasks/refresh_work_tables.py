@@ -51,6 +51,7 @@ class WorkTableTask(object):
         # this below shoudl be a configuration
         self.csv_dir = '/Users/johndingee_seed/code/polio/static/odk_source/csv_exports/'
         self.columns = odk_settings.HEADER_DICT[self.file_to_process]
+        self.columns = [col.lower() for col in self.columns ]
 
         # execute the relevant function
         work_table_obj = self.file_to_function_map[self.file_to_process]
@@ -73,7 +74,6 @@ class WorkTableTask(object):
               region = self.file_to_process.replace('Health_Camps_','').replace('.csv','')
 
               output_dict['region'] = region
-
 
 
         return output_dict

@@ -136,41 +136,56 @@ class VcmEtl(object):
         column_list = sliced_df.columns.tolist()
 
         for i, row in enumerate(sliced_df.values):
-            print 'processing row: ' + str(i)
-            self.proces_row(row,column_list)
+            ## REMOVE ##
+            if i < 10:
+            ## REMOVE ##
+                print 'processing row: ' + str(i)
+
+                row_dict = {}
+                for row_i,cell in enumerate(row):
+                    row_dict[column_list[row_i]] = cell
+
+                self.process_row(row_dict)
 
 
-    def proces_row(self,row,column_names):
 
+    def process_row(self,row_dict):
+
+        sett_code = row_dict['SettlementCode'].replace('.0','')
+
+        print sett_code
         try:
-            region_id = Region.objects.get(settlement_code=row[column_names.index \
-                ('SettlementCode')]).id ## evaluate this by settlement code not name
-
+            region_id = Region.objects.get(settlement_code=sett_code).id
+            print region_id
         except ObjectDoesNotExist:
-            return None
-            print 'no sett code'
+            process_status = ProcessStatus.objects.get(status_text = 'VCM_SUMMARY_NO_SETT_CODE')
+            row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
+            row_obj.process_status = process_status
+            row_obj.save()
 
-        except ValueError:
-            return None
-            # WHAT DOES THIS ERROR MEAN!!
-
-        try:
-            the_date = parser.parse(row[column_names.index('Date_Implement')])
-            campaign_id = Campaign.objects.get(start_date=the_date).id
-            print campaign_id
-        except ObjectDoesNotExist:
-            return None
-            print 'no camp'
-
-        for i, value in enumerate(row):
-            print value
-            try:
-                indicator_id =  self.column_to_indicator_map[column_names[i]]
-                cell_value = row[i]
-                dp = self.process_cell(region_id,campaign_id,indicator_id,cell_value)
-                ## Clean this up ^^ ##
-            except KeyError as e:
-                pass # means it is a meta data column
+        #
+        # except ValueError:
+        #     return None
+        #
+        #     # WHAT DOES THIS ERROR MEAN!!
+        #
+        # try:
+        #     the_date = parser.parse(row[column_names.index('Date_Implement')])
+        #     campaign_id = Campaign.objects.get(start_date=the_date).id
+        #     print campaign_id
+        # except ObjectDoesNotExist:
+        #     return None
+        #     print 'no camp'
+        #
+        # for i, value in enumerate(row):
+        #     print value
+        #     try:
+        #         indicator_id =  self.column_to_indicator_map[column_names[i]]
+        #         cell_value = row[i]
+        #         dp = self.process_cell(region_id,campaign_id,indicator_id,cell_value)
+        #         ## Clean this up ^^ ##
+        #     except KeyError as e:
+        #         pass # means it is a meta data column
 
 
 
@@ -199,8 +214,4 @@ class VcmEtl(object):
 
 
 if __name__ == "__main__":
-    m = MetaDataEtl()
-    m.ingest_regions()
-
-    # v = VcmEtl()
-    # v.process_data()
+      t = VcmEtl('thisistheguidbro')
