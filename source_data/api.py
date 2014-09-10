@@ -117,4 +117,5 @@ class EtlTask(object):
 
     def refresh_master(self):
 
-        ma = VcmEtl(self.task_guid)
+        e = VcmEtl(self.task_guid)
+        e.ingest_vcm_datapoints()

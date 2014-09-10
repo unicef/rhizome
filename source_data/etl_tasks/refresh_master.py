@@ -21,12 +21,12 @@ class VcmEtl(object):
         print 'initializing VCM ETL Object'
 
         self.request_guid = request_guid
-        self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(process_status__status_text='TO_PROCESS').values()))
 
         self.column_to_indicator_map = self.build_indicator_map()
         self.non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
             'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
-            'meta_instanceID','KEY', 'id']
+            'meta_instanceID','KEY', 'id','process_status_id','request_guid',\
+            'created_at']
 
 
     def build_indicator_map(self):
@@ -43,9 +43,11 @@ class VcmEtl(object):
         return column_to_indicator_map
 
 
-    def process_data(self):
+    def ingest_vcm_datapoints(self):
+        to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(process_status__status_text='TO_PROCESS').values()))
 
-        print 'ROWS TO PROCESS: ' + str(len(self.to_process))
+
+        print 'ROWS TO PROCESS: ' + str(len(to_process))
 
         # map rows to region / campaigns {<row_id>:(<region_id>,<campaign_id>)}  #
         row_to_region_campaign_map = {}
@@ -54,11 +56,10 @@ class VcmEtl(object):
         indicator_columns = [col for col,ind_id in self.column_to_indicator_map.iteritems()]
         slice_columns = meta_columns + indicator_columns
 
-        sliced_df = self.to_process[slice_columns]
-        column_list = sliced_df.columns.tolist()
+        # sliced_df = to_process[slice_columns]
+        column_list = to_process.columns.tolist()
 
-        for i, row in enumerate(sliced_df.values):
-            # if i == 163:
+        for i, row in enumerate(to_process.values):
             print 'processing row: ' + str(i)
 
             row_dict = {}
@@ -96,10 +97,13 @@ class VcmEtl(object):
 
         all_cell_status = []
 
-        # process all cells in the row
+        # process all cells in the row that represnet an indicator value
         for column_name,cell_value, in row_dict.iteritems():
-              cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value)
-              all_cell_status.append(cell_status)
+
+              if column_name not in self.non_indicator_fields:
+
+                  cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value)
+                  all_cell_status.append(cell_status)
 
         # HANDLE DUPE ENTRIES BETTER #
         if 'ALREADY_EXISTS' in all_cell_status:
@@ -141,7 +145,7 @@ class VcmEtl(object):
 
     def clean_cell_value(self,cell_value):
 
-        cell_value = cell_value.lower()
+        # cell_value = cell_value.lower()
 
         if cell_value == 'yes':
             cleaned = 1
