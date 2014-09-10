@@ -16,89 +16,6 @@ import pandas as pd
 import csv
 
 
-class MetaDataEtl(object):
-    def __init__(self,request_guid):
-        print 'Begin Meta Data Ingest'
-        self.request_guid = request_guid
-
-        # self.ingest_indicators()
-        # self.ingest_campaigns()
-
-        self.ingest_regions()
-
-    def ingest_indicators(self):
-
-        non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
-            'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
-            'meta_instanceID','KEY', 'id']
-
-        v = VCMSummaryNew()
-        all_fields = v._meta.fields
-
-        indicators = []
-        for f in all_fields:
-            if f.name not in non_indicator_fields:
-                indicators.append(f.name)
-
-        for i in indicators:
-            try:
-                created = Indicator.objects.create(name = i,description = i, \
-                  is_reported = 1)
-            except IntegrityError:
-                pass
-
-    def ingest_regions(self):
-
-        to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
-        for row in to_process:
-            print row
-
-            try:
-                created = Region.objects.create(
-                  full_name = row.SettlementName ,\
-                  settlement_code = row.SettlementCode ,\
-                  office = Office.objects.get(name='Nigeria') ,\
-                  latitude = row.SettlementGPS_Latitude ,\
-                  longitude = row.SettlementGPS_Longitude ,\
-                  source = Source.objects.get(source_name='odk') ,\
-                  source_guid = row.KEY
-                )
-                row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
-                row.save()
-
-            except IntegrityError:
-                # THIS SHOULD BE AN UPDATE SO THAT NEWER REGIONS ARE INSERTED #
-                # AND THE OLD ONES ARE BROUGTH UP FOR REVIEW #
-                row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
-                row.save()
-
-
-
-    def ingest_campaigns(self):
-        all_data = VCMSummaryNew.objects.all()
-        all_campaigns = []
-
-        # Ensure the Office ID is in there
-        try:
-            ng_office_id = Office.objects.get(name='Nigeria')
-        except ObjectDoesNotExist:
-            ng_office = Office.objects.create(name='Nigeria')
-            ng_office_id = ng_office.id
-
-        for row in all_data:
-            print row.Date_Implement
-
-            try:
-                created = Campaign.objects.create(
-                    name = 'Nigeria Starting:' + row.Date_Implement, \
-                    office = ng_office_id, \
-                    start_date = parser.parse(row.Date_Implement), \
-                    end_date = parser.parse(row.Date_Implement)
-                )
-            except IntegrityError:
-                pass
-
-
 class VcmEtl(object):
     def __init__(self,request_guid):
         print 'initializing VCM ETL Object'
@@ -106,14 +23,11 @@ class VcmEtl(object):
         self.request_guid = request_guid
         self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(process_status__status_text='TO_PROCESS').values()))
 
-        print 'rows to process: ' + str(len(self.to_process))
-
         self.column_to_indicator_map = self.build_indicator_map()
         self.non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
             'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
             'meta_instanceID','KEY', 'id']
 
-        self.process_data()
 
     def build_indicator_map(self):
 
@@ -130,6 +44,8 @@ class VcmEtl(object):
 
 
     def process_data(self):
+
+        print 'ROWS TO PROCESS: ' + str(len(self.to_process))
 
         # map rows to region / campaigns {<row_id>:(<region_id>,<campaign_id>)}  #
         row_to_region_campaign_map = {}
@@ -236,6 +152,84 @@ class VcmEtl(object):
 
         return cleaned
 
+        ##########################
+        #### META DATA INGEST ####
+        ##########################
+
+    def ingest_indicators(self):
+
+        v = VCMSummaryNew()
+        all_fields = v._meta.fields
+
+        indicators = []
+        for f in all_fields:
+            if f.name not in self.non_indicator_fields:
+                indicators.append(f.name)
+
+        for i in indicators:
+            try:
+                created = Indicator.objects.create(name = i,description = i, \
+                  is_reported = 1)
+            except IntegrityError:
+                pass
+
+    def ingest_regions(self):
+
+        to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
+        for row in to_process:
+            print row
+
+            try:
+                created = Region.objects.create(
+                  full_name = row.settlementname ,\
+                  settlement_code = row.settlementcode ,\
+                  office = Office.objects.get(name='Nigeria') ,\
+                  latitude = row.settlementgps_latitude ,\
+                  longitude = row.settlementgps_longitude ,\
+                  source = Source.objects.get(source_name='odk') ,\
+                  source_guid = row.key
+                )
+                row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
+                row.save()
+
+            except IntegrityError:
+                # THIS SHOULD BE AN UPDATE SO THAT NEWER REGIONS ARE INSERTED #
+                # AND THE OLD ONES ARE BROUGTH UP FOR REVIEW #
+
+                # THIS SHOULD ALSO BE ABSTRACTED TO WORK FOR ALL' MASTER' OBJECTS
+                row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
+                row.save()
+
+
+
+    def ingest_campaigns(self):
+        all_data = VCMSummaryNew.objects.all()
+        all_campaigns = []
+
+        # Ensure the Office ID is in there
+        try:
+            ng_office_id = Office.objects.get(name='Nigeria')
+        except ObjectDoesNotExist:
+            ng_office = Office.objects.create(name='Nigeria')
+            ng_office_id = ng_office.id
+
+        for row in all_data:
+            if row.Date_Implement == 'nan':
+                return
+
+            try:
+                created = Campaign.objects.create(
+                    name = 'Nigeria Starting:' + row.Date_Implement, \
+                    office = ng_office_id, \
+                    start_date = parser.parse(row.Date_Implement), \
+                    end_date = parser.parse(row.Date_Implement)
+                )
+            except IntegrityError:
+                pass
+
+
+
 
 if __name__ == "__main__":
       t = VcmEtl('thisistheguidbro')
+      t.ingest_regions()

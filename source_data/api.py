@@ -2,7 +2,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
 from source_data.models import EtlJob
-from source_data.etl_tasks.refresh_master import MetaDataEtl, VcmEtl
+from source_data.etl_tasks.refresh_master import VcmEtl
 from source_data.etl_tasks.refresh_work_tables import WorkTableTask
 from time import strftime
 
@@ -105,12 +105,15 @@ class EtlTask(object):
 
     def refresh_datapoints(self):
 
-
         dp = VcmEtl(self)
 
     def refresh_metadata(self):
 
-        m = MetaDataEtl(self.task_guid)
+        e = VcmEtl(self.task_guid)
+
+        e.ingest_indicators()
+        e.ingest_campaigns()
+        e.ingest_regions()
 
     def refresh_master(self):
 
