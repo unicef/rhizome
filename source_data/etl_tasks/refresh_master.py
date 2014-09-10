@@ -104,6 +104,10 @@ class VcmEtl(object):
         print 'initializing VCM ETL Object'
 
         self.request_guid = request_guid
+        self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(process_status__status_text='TO_PROCESS').values()))
+
+        print 'rows to process: ' + str(len(self.to_process))
+
         self.column_to_indicator_map = self.build_indicator_map()
         self.non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
             'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
@@ -111,12 +115,9 @@ class VcmEtl(object):
 
         self.process_data()
 
-
-
     def build_indicator_map(self):
 
         self.inds = Indicator.objects.all()
-        self.to_process = pd.DataFrame(list(VCMSummaryNew.objects.all().values())) # where processe
         self.source_columns = VCMSummaryNew._meta.get_all_field_names()
 
         # map columns to indicators #
@@ -141,6 +142,7 @@ class VcmEtl(object):
         column_list = sliced_df.columns.tolist()
 
         for i, row in enumerate(sliced_df.values):
+            # if i == 163:
             print 'processing row: ' + str(i)
 
             row_dict = {}
@@ -154,20 +156,24 @@ class VcmEtl(object):
             row_obj.save()
 
 
-
-
     def process_row(self,row_dict):
 
-        sett_code = row_dict['SettlementCode'].replace('.0','')
-        date_impl = parser.parse(row_dict['Date_Implement'])
+        print row_dict['SettlementCode']
 
         try:
+            sett_code = row_dict['SettlementCode'].replace('.0','')
             region_id = Region.objects.get(settlement_code=sett_code).id
+        except ValueError:
+            return 'VCM_SUMMARY_NO_SETT_CODE'
+            ## Settlement Is Null
         except ObjectDoesNotExist:
             return 'VCM_SUMMARY_NO_SETT_CODE'
 
         try:
+            date_impl = parser.parse(row_dict['Date_Implement'])
             campaign_id = Campaign.objects.get(start_date=date_impl).id
+        except ValueError:
+            return 'VCM_SUMMARY_NO_CAMPAIGN'
         except ObjectDoesNotExist:
             return 'VCM_SUMMARY_NO_CAMPAIGN'
 
@@ -186,6 +192,7 @@ class VcmEtl(object):
             return 'SUCESS_INSERT'
 
 
+
     def process_cell(self,region_id,campaign_id,column_name,cell_value):
 
         if cell_value == "nan":
@@ -194,10 +201,11 @@ class VcmEtl(object):
         if column_name in self.non_indicator_fields:
             return
 
+        cleaned_cell_value = self.clean_cell_value(cell_value)
+
         indicator_id = Indicator.objects.get(name = column_name).id
         source_id = Source.objects.get(source_name = 'odk').id
 
-        cleaned_cell_value = self.clean_cell_value(cell_value)
 
         try:
             dp = DataPoint.objects.get_or_create(
@@ -213,8 +221,6 @@ class VcmEtl(object):
             # NEED TO HANDLE DUPE DATA POINTS BETTER #
 
         return 'SUCESS_INSERT'
-
-
 
 
     def clean_cell_value(self,cell_value):
