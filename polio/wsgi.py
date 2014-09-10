@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 
 import os
 import sys
-sys.path.append('/var/www/clients.seedscientific.com/uf/polio')
-sys.path.append('/var/www/clients.seedscientific.com/uf/polio/polio')
+sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio')
+sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio/polio')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
 
