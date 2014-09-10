@@ -89,12 +89,14 @@ class VcmEtl(object):
 
         all_cell_status = []
 
+
         # process all cells in the row that represnet an indicator value
         for column_name,cell_value, in row_dict.iteritems():
 
               if column_name not in self.non_indicator_fields:
 
-                  cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value)
+                  source_guid = row_dict['KEY'] + '_' + column_name
+                  cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value,source_guid)
                   all_cell_status.append(cell_status)
 
         # HANDLE DUPE ENTRIES BETTER #
@@ -105,7 +107,7 @@ class VcmEtl(object):
 
 
 
-    def process_cell(self,region_id,campaign_id,column_name,cell_value):
+    def process_cell(self,region_id,campaign_id,column_name,cell_value,src_key):
 
         if cell_value == "nan":
             return
@@ -118,7 +120,6 @@ class VcmEtl(object):
         indicator_id = Indicator.objects.get(name = column_name).id
         source_id = Source.objects.get(source_name = 'odk').id
 
-
         try:
             dp = DataPoint.objects.get_or_create(
                 indicator_id = indicator_id, \
@@ -126,9 +127,10 @@ class VcmEtl(object):
                 campaign_id = campaign_id, \
                 value =  cleaned_cell_value, \
                 source_id = source_id, \
+                source_guid = src_key, \
                 changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
             )
-        except IntegrityError:
+        except IntegrityError as e:
             return 'ALREADY_EXISTS'
             # NEED TO HANDLE DUPE DATA POINTS BETTER #
 
