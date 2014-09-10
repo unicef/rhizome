@@ -49,14 +49,6 @@ class VcmEtl(object):
 
         print 'ROWS TO PROCESS: ' + str(len(to_process))
 
-        # map rows to region / campaigns {<row_id>:(<region_id>,<campaign_id>)}  #
-        row_to_region_campaign_map = {}
-
-        meta_columns = ['id','Date_Implement','SettlementCode',]
-        indicator_columns = [col for col,ind_id in self.column_to_indicator_map.iteritems()]
-        slice_columns = meta_columns + indicator_columns
-
-        # sliced_df = to_process[slice_columns]
         column_list = to_process.columns.tolist()
 
         for i, row in enumerate(to_process.values):
@@ -232,8 +224,6 @@ class VcmEtl(object):
                 pass
 
 
-
-
 if __name__ == "__main__":
       t = VcmEtl('thisistheguidbro')
-      t.ingest_regions()
+      t.ingest_vcm_datapoints()
