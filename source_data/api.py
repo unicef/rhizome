@@ -11,6 +11,7 @@ import subprocess,sys,time
 
 ## FIX THIS!!!! NEED TO GET THIS INTO A BETTER CONF FILE
 sys.path.append('/Users/johndingee_seed/code/polio/source_data/etl_tasks')
+sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio/source_data/etl_tasks')
 import odk_settings
 
 class EtlResource(ModelResource):
