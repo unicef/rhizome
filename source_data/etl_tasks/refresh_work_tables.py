@@ -51,7 +51,7 @@ class WorkTableTask(object):
         # this below shoudl be a configuration
         self.csv_dir = '/Users/johndingee_seed/code/polio/static/odk_source/csv_exports/'
         self.columns = odk_settings.HEADER_DICT[self.file_to_process]
-        self.columns = [col.lower() for col in self.columns ]
+        # self.columns = [col.lower() for col in self.columns ]
 
         # execute the relevant function
         work_table_obj = self.file_to_function_map[self.file_to_process]
@@ -91,7 +91,6 @@ class WorkTableTask(object):
 
         df = self.build_dataframe()
 
-
         for i, row in enumerate(df.values):
             to_create = self.df_row_to_dict(row)
 
@@ -103,6 +102,6 @@ class WorkTableTask(object):
 
 
 if __name__ == "__main__":
-    t = WorkTableTask('blasfbafbfa')
-    t.ingest_sett_coordinates()
+    to_process = 'Health_Camps_Katsina.csv'
+    t = WorkTableTask('blasfbafbfa',to_process)
     # t.build_dataframe('VCM_Sett_Coordinates_1_2.csv')
