@@ -197,7 +197,7 @@ class VCMSettlement(models.Model):
         app_label = 'source_data'
 
 
-class VCMSummaryOld(models.Model):
+class VCMSummary(models.Model):
     submissiondate=models.CharField(max_length=255)
     deviceid=models.CharField(max_length=255)
     simserial=models.CharField(max_length=255)
