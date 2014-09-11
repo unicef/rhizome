@@ -25,47 +25,47 @@ class WorkTableTask(object):
 
 
         self.file_to_function_map = {
-            "VCM_Sett_Coordinates_1_2.csv" : VCMSettlement,
-            "New_VCM_Summary.csv" : VCMSummaryNew,
-            "VCM_Summary.csv" : VCMSummaryOld,
-            "cluster_supervisor.csv" : ClusterSupervisor,
-            "Phone Inventory.csv": PhoneInventory,
-            "VCM_Birth_Record.csv": VCMBirthRecord,
-            "activity_report.csv": ActivityReport,
-            "VWS_Register.csv" :VWSRegister ,
-            "Practice_VCM_Sett_Coordinates_1_2.csv": PracticeVCMSettCoordinates,
-            "Pax_List_Report_Training.csv" :PaxListReportTraining,
-            "Practice_VCM_Summary.csv":PracticeVCMSummary,
-            "Practice_VCM_Birth_Record.csv": PracticeVCMBirthRecord,
-            "KnowThePeople.csv": KnowThePeople,
-            "Health_Camps_Yobe.csv": HealthCamp,
-            "Health_Camps_Kebbi.csv": HealthCamp,
-            'Health_Camps_Bauchi.csv': HealthCamp,
-            'Health_Camps_Jigawa.csv': HealthCamp,
-            'Health_Camps_Kano.csv': HealthCamp,
-            'Health_Camps_Katsina.csv': HealthCamp,
-            'Health_Camps_Sokoto.csv': HealthCamp,
-            'Health_Camps_Kaduna.csv': HealthCamp,
+            "VCM_Sett_Coordinates_1.2" : VCMSettlement,
+            "New_VCM_Summary" : VCMSummaryNew,
+            "VCM_Summary" : VCMSummary,
+            "cluster_supervisor" : ClusterSupervisor,
+            "Phone Inventory": PhoneInventory,
+            "VCM_Birth_Record": VCMBirthRecord,
+            "activity_report": ActivityReport,
+            "VWS_Register" :VWSRegister ,
+            "Practice_VCM_Sett_Coordinates_1.2": PracticeVCMSettCoordinates,
+            "Pax_List_Report_Training" :PaxListReportTraining,
+            "Practice_VCM_Summary":PracticeVCMSummary,
+            "Practice_VCM_Birth_Record": PracticeVCMBirthRecord,
+            "KnowThePeople": KnowThePeople,
+            "Health_Camps_Yobe": HealthCamp,
+            "Health_Camps_Kebbi": HealthCamp,
+            'Health_Camps_Bauchi': HealthCamp,
+            'Health_Camps_Jigawa': HealthCamp,
+            'Health_Camps_Kano': HealthCamp,
+            'Health_Camps_Katsina': HealthCamp,
+            'Health_Camps_Sokoto': HealthCamp,
+            'Health_Camps_Kaduna': HealthCamp,
         }
 
         # this below shoudl be a configuration
         self.csv_dir = '/Users/johndingee_seed/code/polio/static/odk_source/csv_exports/'
-        self.columns = odk_settings.HEADER_DICT[self.file_to_process]
-        # self.columns = [col.lower() for col in self.columns ]
 
         # execute the relevant function
         work_table_obj = self.file_to_function_map[self.file_to_process]
 
         # only process if the file is not empty
-        if os.path.getsize(self.csv_dir + file_to_process) > 0:
+        self.full_file_path = self.csv_dir + self.file_to_process.replace('.',"_") + '.csv'
+
+        if os.path.getsize(self.full_file_path) > 0:
             self.csv_to_work_table(work_table_obj)
 
-    def df_row_to_dict(self,row):
+    def df_row_to_dict(self,row,columns):
 
         output_dict = {}
 
-        for col in self.columns:
-            output_dict[col] = row[self.columns.index(col)]
+        for col in columns:
+            output_dict[col] = row[columns.index(col)]
 
         output_dict['process_status'] = ProcessStatus.objects.get(status_text='TO_PROCESS')
         output_dict['request_guid'] = self.request_guid
@@ -81,27 +81,21 @@ class WorkTableTask(object):
 
     def build_dataframe(self):
 
-        f = self.csv_dir + self.file_to_process
 
-        df = pd.read_csv(f, error_bad_lines = False)  # YOU NEED TO HANDLE ERRORS!
+
+        df = pd.read_csv(self.full_file_path, error_bad_lines = False)  # YOU NEED TO HANDLE ERRORS!
 
         return df
 
     def csv_to_work_table(self, work_table_object):
 
         df = self.build_dataframe()
+        df_columns = [col.lower().replace('-','_') for col in df.columns]
 
         for i, row in enumerate(df.values):
-            to_create = self.df_row_to_dict(row)
+            to_create = self.df_row_to_dict(row,df_columns)
 
             try:
                 created = work_table_object.objects.create(**to_create)
             except IntegrityError:
-                print 'key: ' +  row[self.columns.index('KEY')] + ' already exists...'
-
-
-
-if __name__ == "__main__":
-    to_process = 'Health_Camps_Katsina.csv'
-    t = WorkTableTask('blasfbafbfa',to_process)
-    # t.build_dataframe('VCM_Sett_Coordinates_1_2.csv')
+                print 'key: ' +  row[df_columns.index('KEY')] + ' already exists...'

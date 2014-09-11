@@ -73,7 +73,7 @@ class EtlTask(object):
             }
 
         fn = self.function_mappings[task_string]
-        # print fn
+
         fn()
 
     def pull_odk(self):
@@ -94,10 +94,8 @@ class EtlTask(object):
 
     def refresh_work_tables(self):
 
-        for source_file, column_list in odk_settings.HEADER_DICT.iteritems():
-            print source_file * 10
+        for source_file in odk_settings.FORM_LIST:
             t = WorkTableTask(self.task_guid,source_file)
-
 
     def refresh_datapoints(self):
 
