@@ -80,13 +80,6 @@ class EtlTask(object):
 
         for form_id in odk_settings.FORM_LIST:
 
-            # truncate the file csv file
-            full_file_path = odk_settings.EXPORT_DIRECTORY + '/' + \
-                form_id.replace('.','_') + '.csv'
-
-            f = open(full_file_path,'w')
-            f.close()
-
             subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
                 '--export_filename',form_id+'.csv', \
@@ -94,7 +87,9 @@ class EtlTask(object):
                 '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
                 '--export_directory',odk_settings.EXPORT_DIRECTORY, \
                 '--odk_username',odk_settings.USERNAME, \
-                '--odk_password',odk_settings.PASSWORD \
+                '--odk_password',odk_settings.PASSWORD, \
+                '--overwrite_csv_export' ,\
+                '--exclude_media_export' \
               ])
 
     def refresh_work_tables(self):

@@ -72,19 +72,24 @@ class VcmEtl(object):
         try:
             sett_code = row_dict['SettlementCode'].replace('.0','')
             region_id = Region.objects.get(settlement_code=sett_code).id
-        except ValueError:
+        except TypeError:
             return 'VCM_SUMMARY_NO_SETT_CODE'
             ## Settlement Is Null
+        except ValueError:
+            return 'VCM_SUMMARY_NO_CAMPAIGN'
         except ObjectDoesNotExist:
             return 'VCM_SUMMARY_NO_SETT_CODE'
 
         try:
             date_impl = parser.parse(row_dict['Date_Implement'])
             campaign_id = Campaign.objects.get(start_date=date_impl).id
+        except TypeError:
+            return 'VCM_SUMMARY_NO_CAMPAIGN'
         except ValueError:
             return 'VCM_SUMMARY_NO_CAMPAIGN'
+
         except ObjectDoesNotExist:
-            return 'VCM_SUMMARY_NO_CAMPAIGN'
+              return 'VCM_SUMMARY_NO_CAMPAIGN'
 
 
         all_cell_status = []
