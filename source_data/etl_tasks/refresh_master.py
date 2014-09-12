@@ -1,7 +1,4 @@
 import sys, os
-sys.path.append('/Users/johndingee_seed/code/polio')
-os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
-from django.conf import settings
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError

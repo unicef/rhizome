@@ -11,9 +11,10 @@ except ImportError:
 from django.db.utils import IntegrityError
 from pandas import DataFrame, concat
 
-sys.path.append('/Users/johndingee_seed/code/polio') #BAD
-os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
-from django.conf import settings
+## to run stand alone ##
+# sys.path.append('/Users/johndingee_seed/code/polio')
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
+# from django.conf import settings
 
 
 from source_data.models import *
