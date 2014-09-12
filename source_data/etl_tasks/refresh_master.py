@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, Source
 from source_data.models import VCMSummaryNew,VCMSettlement,ProcessStatus
+from django.contrib.auth.models import User
 
 from dateutil import parser
 from decimal import InvalidOperation
@@ -133,7 +134,7 @@ class VcmEtl(object):
                 value =  cleaned_cell_value, \
                 source_id = source_id, \
                 source_guid = src_key, \
-                changed_by_id = 1  # FIX THIS! User should be "ODK ETL"
+                changed_by_id = User.objects.get(source_name='odk')
             )
         except IntegrityError as e:
             return 'ALREADY_EXISTS'

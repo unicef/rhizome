@@ -1,5 +1,7 @@
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
+from tastypie.authentication import ApiKeyAuthentication
+
 
 from source_data.models import EtlJob
 from source_data.etl_tasks.refresh_master import VcmEtl
@@ -24,7 +26,7 @@ class EtlResource(ModelResource):
         allowed_methods = ['get']
 
         authorization = Authorization()
-        # authentication = ApiKeyAuthentication()
+        authentication = ApiKeyAuthentication()
 
     # http://localhost:8000/api/v1/etl/?task=pull_odk
     def get_object_list(self, request):
@@ -69,7 +71,7 @@ class EtlTask(object):
               'refresh_datapoints' : self.refresh_datapoints,
               'refresh_metadata' : self.refresh_metadata,
               'refresh_master' : self.refresh_master,
-
+              'test_api' : self.test_api,
             }
 
         fn = self.function_mappings[task_string]
@@ -113,3 +115,7 @@ class EtlTask(object):
 
         e = VcmEtl(self.task_guid)
         e.ingest_vcm_datapoints()
+
+    def test_api(self):
+
+        print 'THIS WORKS\n' * 10
