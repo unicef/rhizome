@@ -2,7 +2,12 @@ import csv
 import sys, os
 import pprint as pp
 import pandas as pd
-import odk_settings
+
+try:
+    import prod_odk_settings as odk_settings
+except ImportError:
+    import dev_odk_settings as odk_settings
+
 
 from django.db.utils import IntegrityError
 from pandas import DataFrame, concat
