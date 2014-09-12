@@ -10,15 +10,10 @@ from time import strftime
 
 import subprocess,sys,time
 
-
-## FIX THIS!!!! NEED TO GET THIS INTO A BETTER CONF FILE
-sys.path.append('/Users/johndingee_seed/code/polio/source_data/etl_tasks')
-sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio/source_data/etl_tasks')
-
 try:
-    import prod_odk_settings as odk_settings
+    import source_data.prod_odk_settings as odk_settings
 except ImportError:
-    import dev_odk_settings as odk_settings
+    import source_data.dev_odk_settings as odk_settings
 
 class EtlResource(ModelResource):
     '''Region Resource'''
@@ -101,7 +96,8 @@ class EtlTask(object):
     def refresh_work_tables(self):
 
         for source_file in odk_settings.FORM_LIST:
-            t = WorkTableTask(self.task_guid,source_file)
+
+              t = WorkTableTask(self.task_guid,source_file)
 
     def refresh_datapoints(self):
 
@@ -123,7 +119,3 @@ class EtlTask(object):
     def test_api(self):
 
         print 'THIS WORKS\n' * 10
-
-
-if __name__ == '__main__':
-    print 'hello'

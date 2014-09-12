@@ -4,10 +4,9 @@ import pprint as pp
 import pandas as pd
 
 try:
-    import prod_odk_settings as odk_settings
+    import source_data.prod_odk_settings as odk_settings
 except ImportError:
-    import dev_odk_settings as odk_settings
-
+    import source_data.dev_odk_settings as odk_settings
 
 from django.db.utils import IntegrityError
 from pandas import DataFrame, concat
@@ -27,7 +26,6 @@ class WorkTableTask(object):
 
         self.request_guid = request_guid
         self.file_to_process = file_to_process
-
 
         self.file_to_function_map = {
             "VCM_Sett_Coordinates_1.2" : VCMSettlement,
@@ -53,15 +51,13 @@ class WorkTableTask(object):
             'Health_Camps_Kaduna': HealthCamp,
         }
 
-        # this below shoudl be a configuration
-        self.csv_dir = '/Users/johndingee_seed/code/polio/static/odk_source/csv_exports/'
 
         # execute the relevant function
         work_table_obj = self.file_to_function_map[self.file_to_process]
 
         # only process if the file is not empty
-        self.full_file_path = self.csv_dir + self.file_to_process.replace('.',"_") + '.csv'
-
+        self.full_file_path = odk_settings.EXPORT_DIRECTORY + self.file_to_process.replace('.',"_") + '.csv'
+        #
         if os.path.getsize(self.full_file_path) > 0:
             self.csv_to_work_table(work_table_obj)
 
@@ -86,8 +82,6 @@ class WorkTableTask(object):
 
     def build_dataframe(self):
 
-
-
         df = pd.read_csv(self.full_file_path, error_bad_lines = False)  # YOU NEED TO HANDLE ERRORS!
 
         return df
@@ -99,8 +93,13 @@ class WorkTableTask(object):
 
         for i, row in enumerate(df.values):
             to_create = self.df_row_to_dict(row,df_columns)
+            # print to_create
 
             try:
                 created = work_table_object.objects.create(**to_create)
             except IntegrityError:
-                print 'key: ' +  row[df_columns.index('KEY')] + ' already exists...'
+                print 'key: ' +  row[df_columns.index('key')] + ' already exists...'
+
+
+# if __name__ =="__main__":
+#       t = WorkTableTask('asfasfasfascacavwdvwarbaetbadtbtsb','Health_Camps_Katsina')

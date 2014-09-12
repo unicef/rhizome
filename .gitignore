@@ -15,5 +15,5 @@ include
 /docs/_static
 /docs/_templates
 /static
-/source_data/etl_tasks/prod_odk_settings.py
-/source_data/etl_tasks/dev_odk_settings.py
+/source_data/prod_odk_settings.py
+/source_data/dev_odk_settings.py
