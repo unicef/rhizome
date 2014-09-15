@@ -58,9 +58,14 @@ class WorkTableTask(object):
 
         # only process if the file is not empty
         self.full_file_path = odk_settings.EXPORT_DIRECTORY + self.file_to_process.replace('.',"_") + '.csv'
-        #
-        if os.path.getsize(self.full_file_path) > 0:
-            self.csv_to_work_table(work_table_obj)
+
+        try:
+            if os.path.getsize(self.full_file_path) > 0:
+                self.csv_to_work_table(work_table_obj)
+        except OSError:
+            pass # file does not exist
+            ## LOG THIS ERROR ##
+
 
     def df_row_to_dict(self,row,columns):
 
