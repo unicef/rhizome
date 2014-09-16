@@ -21,9 +21,9 @@ class VcmEtl(object):
         self.request_guid = request_guid
 
         self.column_to_indicator_map = self.build_indicator_map()
-        self.non_indicator_fields = ['SubmissionDate','deviceid','simserial',\
-            'phonenumber','DateOfReport','Date_Implement','SettlementCode',\
-            'meta_instanceID','KEY', 'id','process_status_id','request_guid',\
+        self.non_indicator_fields = ['submissiondate','deviceid','simserial',\
+            'phonenumber','dateofreport','date_implement','settlementcode',\
+            'meta_instanceid','key', 'id','process_status_id','request_guid',\
             'created_at']
 
 
@@ -79,7 +79,7 @@ class VcmEtl(object):
             return 'VCM_SUMMARY_NO_SETT_CODE'
 
         try:
-            date_impl = parser.parse(row_dict['Date_Implement'])
+            date_impl = parser.parse(row_dict['date_implement'])
             campaign_id = Campaign.objects.get(start_date=date_impl).id
         except TypeError:
             return 'VCM_SUMMARY_NO_CAMPAIGN'
@@ -215,20 +215,15 @@ class VcmEtl(object):
             ng_office_id = ng_office.id
 
         for row in all_data:
-            if row.Date_Implement == 'nan':
+            if row.date_implement == 'nan':
                 return
 
             try:
                 created = Campaign.objects.create(
-                    name = 'Nigeria Starting:' + row.Date_Implement, \
+                    name = 'Nigeria Starting:' + row.date_implement, \
                     office = ng_office_id, \
-                    start_date = parser.parse(row.Date_Implement), \
-                    end_date = parser.parse(row.Date_Implement)
+                    start_date = parser.parse(row.date_implement), \
+                    end_date = parser.parse(row.date_implement)
                 )
             except IntegrityError:
                 pass
-
-
-if __name__ == "__main__":
-      t = VcmEtl('thisistheguidbro')
-      t.ingest_vcm_datapoints()

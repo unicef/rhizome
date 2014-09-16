@@ -114,4 +114,4 @@ class EtlTask(object):
 
     def test_api(self):
 
-        print 'THIS WORKS\n' * 10
+        print 'API TEST IS WORKING \n' * 5
