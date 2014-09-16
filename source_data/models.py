@@ -3,6 +3,11 @@ import hashlib
 import random
 from datetime import datetime
 
+
+    ###################
+    ####### ETL #######
+    ###################
+
 class EtlJob(models.Model):
 
     date_attempted = models.DateTimeField()
@@ -27,6 +32,34 @@ class ProcessStatus(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
+
+    ##########################
+    ####### CSV UPLOAD #######
+    ##########################
+
+
+class CsvUpload(models.Model):
+
+    region_string = models.CharField(max_length=255)
+    campaign_string = models.CharField(max_length=255)
+    column_value = models.CharField(max_length=255)
+    cell_value = models.CharField(max_length=255)
+    row_number= models.IntegerField()
+    status = models.ForeignKey(ProcessStatus)
+    guid = models.CharField(primary_key=True, max_length=40)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def save(self, *args, **kwargs):
+        if not self.guid:
+            self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+        super(CsvUpload, self).save(*args, **kwargs)
+
+
+    ###################
+    ####### ODK #######
+    ###################
 
 
 class VCMBirthRecord(models.Model):
