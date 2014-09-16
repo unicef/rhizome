@@ -65,10 +65,8 @@ class VcmEtl(object):
 
     def process_row(self,row_dict):
 
-        print row_dict['SettlementCode']
-
         try:
-            sett_code = row_dict['SettlementCode'].replace('.0','')
+            sett_code = row_dict['settlementcode'].replace('.0','')
             region_id = Region.objects.get(settlement_code=sett_code).id
         except TypeError:
             return 'VCM_SUMMARY_NO_SETT_CODE'
@@ -98,7 +96,7 @@ class VcmEtl(object):
 
               if column_name not in self.non_indicator_fields:
 
-                  source_guid = row_dict['KEY'] + '_' + column_name
+                  source_guid = row_dict['key'] + '_' + column_name
                   cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value,source_guid)
                   all_cell_status.append(cell_status)
 
