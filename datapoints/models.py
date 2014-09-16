@@ -145,14 +145,6 @@ class RegionRelationship(models.Model):
         db_table = 'region_relationship'
 
 
-class Document(models.Model):
-
-    docfile = models.FileField(upload_to='documents/%Y/%m/%d')
-
-    class Meta:
-        db_table = 'document'
-
-
 class AggregationType(models.Model):
 
     name = models.CharField(max_length=255,unique=True)

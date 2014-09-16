@@ -38,6 +38,10 @@ class ProcessStatus(models.Model):
     ####### CSV UPLOAD #######
     ##########################
 
+class Document(models.Model):
+
+    docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+
 
 class CsvUpload(models.Model):
 
@@ -45,6 +49,7 @@ class CsvUpload(models.Model):
     campaign_string = models.CharField(max_length=255)
     column_value = models.CharField(max_length=255)
     cell_value = models.CharField(max_length=255)
+    document = models.ForeignKey(Document)
     row_number= models.IntegerField()
     status = models.ForeignKey(ProcessStatus)
     guid = models.CharField(primary_key=True, max_length=40)
@@ -55,6 +60,7 @@ class CsvUpload(models.Model):
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
         super(CsvUpload, self).save(*args, **kwargs)
+
 
 
     ###################

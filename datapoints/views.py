@@ -9,8 +9,8 @@ from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 
 from datapoints.sql_queries import *
-from datapoints.models import DataPoint,Region,Indicator,Document
-from datapoints.forms import * #RegionForm,IndicatorForm,DataPointForm,DocumentForm,DataPointSearchForm
+from datapoints.models import DataPoint,Region,Indicator
+from datapoints.forms import * 
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -303,25 +303,3 @@ def search(request):
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
         context_instance=RequestContext(request))
-
-
-def file_upload(request):
-    # Handle file upload
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            newdoc = Document(docfile = request.FILES['docfile'])
-            newdoc.save()
-
-    else:
-        form = DocumentForm() # A empty, unbound form
-
-    # Load documents for the list page
-    documents = Document.objects.all()
-
-    # Render list page with the documents and the form
-    return render_to_response(
-        'datapoints/file_upload.html',
-        {'documents': documents, 'form': form},
-        context_instance=RequestContext(request)
-    )

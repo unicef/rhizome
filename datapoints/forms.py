@@ -25,13 +25,6 @@ class CampaignForm(ModelForm):
     class Meta:
         model = Campaign
 
-class DocumentForm(forms.Form):
-
-    docfile = forms.FileField(
-        label='Select a file',
-        help_text='max. 2 megabytes'
-    )
-
 class DataPointSearchForm(forms.Form):
     region = ModelChoiceField(queryset=Region.objects.all())
     indicator = ModelChoiceField(queryset=Indicator.objects.all())
