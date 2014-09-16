@@ -28,7 +28,7 @@ class WorkTableTask(object):
         self.request_guid = request_guid
         self.file_to_process = file_to_process
 
-        self.file_to_function_map = {
+        self.file_to_object_map = {
             "VCM_Sett_Coordinates_1.2" : VCMSettlement,
             "New_VCM_Summary" : VCMSummaryNew,
             "VCM_Summary" : VCMSummary,
@@ -54,12 +54,17 @@ class WorkTableTask(object):
 
 
         # execute the relevant function
-        work_table_obj = self.file_to_function_map[self.file_to_process]
-
-        # only process if the file is not empty
-        self.full_file_path = odk_settings.EXPORT_DIRECTORY + self.file_to_process.replace('.',"_") + '.csv'
+        try:
+            work_table_obj = self.file_to_object_map[self.file_to_process]
+        except KeyError:
+            return
+            ## LOG THIS ERROR ##
 
         try:
+            # only process if the file is not empty and it exists
+            self.full_file_path = odk_settings.EXPORT_DIRECTORY + \
+                self.file_to_process.replace('.',"_") + '.csv'
+
             if os.path.getsize(self.full_file_path) > 0:
                 self.csv_to_work_table(work_table_obj)
         except OSError:

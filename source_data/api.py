@@ -67,7 +67,6 @@ class EtlTask(object):
         self.function_mappings = {
               'pull_odk' : self.pull_odk,
               'refresh_work_tables' : self.refresh_work_tables,
-              'refresh_datapoints' : self.refresh_datapoints,
               'refresh_metadata' : self.refresh_metadata,
               'refresh_master' : self.refresh_master,
               'test_api' : self.test_api,
@@ -99,9 +98,6 @@ class EtlTask(object):
 
               t = WorkTableTask(self.task_guid,source_file)
 
-    def refresh_datapoints(self):
-
-        dp = VcmEtl(self)
 
     def refresh_metadata(self):
 
