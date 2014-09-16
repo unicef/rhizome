@@ -129,7 +129,7 @@ class VcmEtl(object):
                 value =  cleaned_cell_value, \
                 source_id = source_id, \
                 source_guid = src_key, \
-                changed_by_id = Source.objects.get(source_name='odk')
+                changed_by_id = User.objects.get(username='odk')
             )
         except IntegrityError as e:
             return 'ALREADY_EXISTS'
