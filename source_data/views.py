@@ -4,6 +4,8 @@ from source_data.models import Document
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+import xlrd
+import csv
 
 def file_upload(request):
     # Handle file upload
@@ -25,3 +27,23 @@ def file_upload(request):
         {'documents': documents, 'form': form},
         context_instance=RequestContext(request)
     )
+
+def process_xls():
+
+        f_path = '/Users/johndingee_seed/code/polio/media/documents/2014/09/16/SocMob.xlsx'
+
+        wb = xlrd.open_workbook(f_path)
+
+        for sheet in wb.sheets():
+            # process_sheet(sheet)
+
+            if sheet.nrows == 0:
+                pass
+            else:
+                process_sheet(f_path,sheet.name)
+
+def process_sheet(file_path,sheet_name):
+
+    df = read_excel(file_path,sheet_name)
+
+    print df
