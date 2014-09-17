@@ -61,6 +61,9 @@ class CsvUpload(models.Model):
 
         super(CsvUpload, self).save(*args, **kwargs)
 
+    class Meta:
+        app_label = 'source_data'
+        unique_together = ('document','row_number')
 
 
     ###################
