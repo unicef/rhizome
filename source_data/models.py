@@ -454,7 +454,7 @@ class ActivityReport(models.Model):
     ipds_issue_resolved=models.CharField(max_length=255)
     ipds_team_allowances=models.CharField(max_length=255)
     ipds_community_leader_present=models.CharField(max_length=255)
-    meta_instanceID=models.CharField(max_length=255)
+    meta_instanceid=models.CharField(max_length=255)
     key = models.CharField(max_length=255, unique=True)
     process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
