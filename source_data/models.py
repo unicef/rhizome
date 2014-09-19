@@ -1,8 +1,9 @@
-from django.db import models
 import hashlib
 import random
-from datetime import datetime
 
+from datetime import datetime
+from django.db import models
+from django.contrib.auth.models import User
 
     ###################
     ####### ETL #######
@@ -41,6 +42,7 @@ class ProcessStatus(models.Model):
 class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+    created_by = models.ForeignKey(User)
 
 
 class CsvUpload(models.Model):
@@ -63,7 +65,7 @@ class CsvUpload(models.Model):
 
     class Meta:
         app_label = 'source_data'
-        unique_together = ('document','row_number')
+        unique_together = ('document','row_number','column_value')
 
 
     ###################

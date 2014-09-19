@@ -16,6 +16,7 @@ def file_upload(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = Document(docfile = request.FILES['docfile'])
+            newdoc.created_by = request.user
             newdoc.save()
 
             file_path = newdoc.docfile.url
@@ -27,16 +28,20 @@ def file_upload(request):
         form = DocumentForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = Document.objects.all()
 
     # Render list page with the documents and the form
     return render_to_response(
-        'datapoints/file_upload.html',
-        {'documents': documents, 'form': form},
+        'upload/file_upload.html',
+        {'form': form},
         context_instance=RequestContext(request)
     )
 
 
+def view_all_docs():
+    # documents = Document.objects.all()
+
+    # THIS CAN BE CLASS BASED
+    pass
 
 def process_xls(f_path,document_id):
 
