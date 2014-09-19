@@ -27,7 +27,6 @@ INSTALLED_APPS = (
     'datapoints',
     'source_data',
     'coverage',
-    'simple_history',
     # 'stronghold',
     'csvimport',
     'guardian',

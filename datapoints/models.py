@@ -1,5 +1,4 @@
 from django.db import models
-from simple_history.models import HistoricalRecords
 from autoslug import AutoSlugField
 
 class Source(models.Model):
@@ -100,8 +99,6 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
-
-    history = HistoricalRecords()
 
 
     class Meta:
