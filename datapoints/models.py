@@ -101,8 +101,7 @@ class DataPoint(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
-    #
-    # history = HistoricalRecords()
+    history = HistoricalRecords()
 
 
     class Meta:
