@@ -9,8 +9,8 @@ from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 
 from datapoints.sql_queries import *
-from datapoints.models import DataPoint,Region,Indicator
-from datapoints.forms import * 
+from datapoints.models import DataPoint,Region,Indicator,Source
+from datapoints.forms import *
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -90,6 +90,7 @@ class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
     # this inserts into the changed_by field with  the user who made the insert
         obj = form.save(commit=False)
         obj.changed_by = self.request.user
+        obj.source_id = Source.objects.get(source_name='data entry').id
         obj.save()
         return HttpResponseRedirect(self.success_url)
 

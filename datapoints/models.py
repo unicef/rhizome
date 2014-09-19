@@ -1,5 +1,6 @@
 from django.db import models
 from autoslug import AutoSlugField
+from simple_history.models import HistoricalRecords
 
 class Source(models.Model):
     source_name = models.CharField(max_length=55,unique=True)
@@ -100,6 +101,7 @@ class DataPoint(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'datapoint'
@@ -166,3 +168,6 @@ class AggregationExpectedData(models.Model):
 
     class Meta:
         db_table = 'aggregation_expected_data'
+
+
+## For Reversion
