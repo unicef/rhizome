@@ -10,7 +10,7 @@ TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = []
 
-
+LOGIN_REDIRECT_URL = '/datapoints'
 MEDIA_ROOT = '/var/www/clients.seedscientific.com/uf/polio/media/'
 MEDIA_URL = '/var/www/clients.seedscientific.com/uf/polio/media/'
 
