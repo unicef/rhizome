@@ -24,7 +24,15 @@
             <tr>
                 <th>{{ error.problem }}</th>
                 <th>{{ error.recs }}</th>
-                <th>something else eeee</th>
+
+                {% if error.model == 'indicator' %}
+                    <th><a href="{% url 'source_data:map_indicator' %}"> Edit </a></th>
+                {% elif error.model == 'region' %}
+                    <th><a href="{% url 'source_data:map_region' %}"> Edit </a></th>
+                {% elif error.model == 'campaign' %}
+                    <th><a href="{% url 'source_data:map_campaign' %}"> Edit </a></th>
+                {% endif %}
+
             </tr>
         </tbody>
         {% endfor %}

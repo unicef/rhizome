@@ -163,9 +163,9 @@ def document_review(request,document_id,mappings):
 
     doc_data = []
 
-    r = {'problem':'Indicators to Map','recs':len(mappings['indicators'])}
-    r2 = {'problem':'Campaigns to Map','recs':len(mappings['campaigns'])}
-    r3 = {'problem':'Regions To Map','recs':len(mappings['regions'])}
+    r = {'problem':'Indicators to Map','recs':len(mappings['indicators']),'model':'indicator'}
+    r2 = {'problem':'Campaigns to Map','recs':len(mappings['campaigns']),'model':'campaign'}
+    r3 = {'problem':'Regions To Map','recs':len(mappings['regions']),'model':'region'}
 
 
     doc_data.append(r)
