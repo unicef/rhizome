@@ -1,15 +1,18 @@
-import xlrd, csv, pandas
+import xlrd, csv, pandas, pprint as pp
 
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 
 from pandas.io.excel import read_excel
 
 from source_data.forms import DocumentForm
 from source_data.models import Document,CsvUpload,ProcessStatus
+from datapoints.models import Source
+from meta_map.models import *
 
 
 def file_upload(request):
@@ -24,17 +27,17 @@ def file_upload(request):
             file_path = newdoc.docfile.url
 
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
-                doc_data =  process_xls(file_path,newdoc.id)
 
-                return document_review(request,newdoc.id,doc_data)
+                mappings = process_xls(file_path,newdoc.id)
 
+                return document_review(request,newdoc.id,mappings)
 
             else:
                 messages.add_message(request, messages.INFO, 'Please\
                     upload either .CSV, .XLS or .XLSX file format')
 
     else:
-        form = DocumentForm() # A empty, unbound form
+        form = DocumentForm()
 
     return render_to_response(
         'upload/file_upload.html',
@@ -43,11 +46,6 @@ def file_upload(request):
     )
 
 
-def view_all_docs():
-    # documents = Document.objects.all()
-
-    # THIS CAN BE CLASS BASED
-    pass
 
 def process_xls(f_path,document_id):
 
@@ -59,66 +57,113 @@ def process_xls(f_path,document_id):
         if sheet.nrows == 0:
             pass
         else:
-            process_sheet(f_path,sheet.name,document_id)
+            mappings = process_sheet(f_path,sheet.name,document_id)
+            return mappings
 
-    doc_data = CsvUpload.objects.where(document_id=document_id)
-
-    return doc_data
 
 def process_sheet(file_path,sheet_name,document_id):
 
-    print 'PROCESSING SHEET!!'
     df = read_excel(file_path,sheet_name)
-
     cols = [col.lower() for col in df]
 
-    row_basics = {}
+    mappings = auto_map_metadata(df)
 
+    return mappings
 
-    for i,(row) in enumerate(df.values):
-
-        region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
-            + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlement')])
-
-        row_basics['row_number'] = i
-        row_basics['region_string'] = region_string
-        row_basics['campaign_string'] = str(row[cols.index('datesoc')])
-        # row_basics['uniquesoc'] = row[cols.index('uniquesoc')]
-
-        for i,(cell) in enumerate(row):
-
-            print cell
-            to_create = row_basics
-            to_create['column_value'] = cols[i]
-            to_create['cell_value'] = cell
-            to_create['status_id'] = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-            to_create['document_id'] = document_id
-
-            try:
-                CsvUpload.objects.create(**to_create)
-
-            except IntegrityError as e:
-                print e
-
-
-def ingest_document_to_master(request, document_id):
-
-    print 'PERFORMING SOME ETL!'
+    # for i,(row) in enumerate(df.values):
+    #
+    #     row_basics = {}
+    #
+    #     region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
+    #         + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlement')])
+    #
+    #     row_basics['row_number'] = i
+    #     row_basics['region_string'] = region_string
+    #     row_basics['campaign_string'] = str(row[cols.index('datesoc')])
+    #     # row_basics['uniquesoc'] = row[cols.index('uniquesoc')]
+    #
+    #     for i,(cell) in enumerate(row):
+    #
+    #         to_create = row_basics
+    #         to_create['column_value'] = cols[i]
+    #         to_create['cell_value'] = cell
+    #         to_create['status_id'] = ProcessStatus.objects.get(status_text='TO_PROCESS').id
+    #         to_create['document_id'] = document_id
+    #
+    #         try:
+    #             CsvUpload.objects.create(**to_create)
+    #
+    #         except IntegrityError as e:
+    #             print e
 
 
 
-    return document_review(request, document_id, doc_data)
+def auto_map_metadata(sheet_df):
+
+    all_meta_mappings = {}
+    source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
+
+    all_meta_mappings['campaigns'] = map_campaigns(sheet_df,source_id)
+    all_meta_mappings['indicators'] = map_indicators(sheet_df,source_id)
+    all_meta_mappings['regions'] = map_regions(sheet_df,source_id)
+
+    return all_meta_mappings
+
+def map_indicators(sheet_df,source_id):
+    indicator_mapping = {}
+    cols = [col.lower() for col in sheet_df]
+
+    for col_name in cols:
+
+        source_indicator, created = SourceIndicator.objects.get_or_create(
+            source_id = source_id,
+            indicator_string = col_name
+        )
+
+        try:
+            indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id)
+            indicator_mapping[col_name] = indicator_id
+            source_indicator.mapped_status='MAPPED'
+        except ObjectDoesNotExist:
+            indicator_mapping[col_name] = None
+
+    return indicator_mapping
 
 
-# def document_review(request, document_id, doc_data):
-def document_review(request, pk):
+def map_campaigns(sheet_df,source_id):
 
-    # doc_data = CsvUpload.objects.filter(document_id=pk)
+    ## CAMPAIGN MAPPING ##
+    campaign_mapping = {}
+    campaigns = sheet_df.groupby('DateSoc')
+
+    for campaign in campaigns:
+        print campaign[0]
+
+        source_campaign, created = SourceCampaign.objects.get_or_create(
+            source_id = source_id,
+            campaign_string = campaign[0]
+        )
+        try:
+            campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id)
+            campaign_mapping[campaign] = campaign_id
+            source_indicator.mapped_status='MAPPED'
+        except ObjectDoesNotExist:
+            campaign_mapping[source_campaign] = None
+
+    return campaign_mapping
+
+def map_regions(sheet_df,source_id):
+
+    return {'foo':'bar'}
+
+def document_review(request,document_id,mappings):
+
     doc_data = []
 
-    r = {'problem':'3 regions where unrecogmized','recs':231}
-    r2 = {'problem':'6 indicators where unrecogmized','recs':4}
-    r3 = {'problem':'3- campaigns where un recogmized','recs':1}
+    r = {'problem':'Indicators to Map','recs':len(mappings['indicators'])}
+    r2 = {'problem':'Campaigns to Map','recs':len(mappings['campaigns'])}
+    r3 = {'problem':'Regions To Map','recs':len(mappings['regions'])}
+
 
     doc_data.append(r)
     doc_data.append(r2)

@@ -7,6 +7,8 @@ class SourceRegion(models.Model):
     region_string = models.CharField(max_length=255)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
 
     def __unicode__(self):
         return self.region_string
@@ -16,6 +18,8 @@ class SourceIndicator(models.Model):
     indicator_string = models.CharField(max_length=255)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
 
     def __unicode__(self):
         return self.indicator_string
@@ -26,6 +30,8 @@ class SourceCampaign(models.Model):
     campaign_string = models.CharField(max_length=255)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
 
     def __unicode__(self):
         return self.campaign_string
