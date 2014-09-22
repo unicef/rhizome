@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'datapoints',
     'simple_history',
+    'source_data',
     'coverage',
     # 'stronghold',
     'csvimport',
