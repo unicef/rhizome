@@ -25,7 +25,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'datapoints',
-    'source_data',
     'meta_map',
     'simple_history',
     'coverage',

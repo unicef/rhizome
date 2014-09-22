@@ -4,6 +4,8 @@ import random
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from datapoints.models import Source, Indicator, Region, Campaign
+
 
     ###################
     ####### ETL #######
@@ -42,6 +44,7 @@ class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
     created_by = models.ForeignKey(User)
+    guid = models.CharField(max_length=40)
 
 
 class CsvUpload(models.Model):
@@ -65,6 +68,70 @@ class CsvUpload(models.Model):
     class Meta:
         app_label = 'source_data'
         unique_together = ('document','row_number','column_value')
+
+
+
+    ###################
+    #### META MAP #####
+    ###################
+
+
+class SourceRegion(models.Model):
+
+    region_string = models.CharField(max_length=255)
+    source = models.ForeignKey(Source)
+    source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
+
+    def __unicode__(self):
+        return self.region_string
+
+class SourceIndicator(models.Model):
+
+    indicator_string = models.CharField(max_length=255)
+    source = models.ForeignKey(Source)
+    source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
+
+    def __unicode__(self):
+        return self.indicator_string
+
+
+class SourceCampaign(models.Model):
+
+    campaign_string = models.CharField(max_length=255)
+    source = models.ForeignKey(Source)
+    source_guid = models.CharField(max_length=255)
+    mapped_status = models.CharField(max_length=55,default='TO_MAP')
+
+
+    def __unicode__(self):
+        return self.campaign_string
+
+
+class RegionMap(models.Model):
+
+    master_region = models.ForeignKey(Region)
+    source_region = models.ForeignKey(SourceRegion)
+    mapped_by = models.ForeignKey(User)
+
+
+class IndicatorMap(models.Model):
+
+    master_indicator = models.ForeignKey(Indicator)
+    source_indicator = models.ForeignKey(SourceIndicator)
+    mapped_by = models.ForeignKey(User)
+
+
+class CampaignMap(models.Model):
+
+    master_campaign = models.ForeignKey(Campaign)
+    source_campaign = models.ForeignKey(SourceCampaign)
+    mapped_by = models.ForeignKey(User)
+
+
 
 
     ###################

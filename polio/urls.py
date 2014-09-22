@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
 
     ##
-    url(r'^meta_map/', include('meta_map.urls', namespace="meta_map")),
+    url(r'^source_data/', include('source_data.urls', namespace="source_data")),
 
     ##
     (r'^upload/', include('source_data.urls', namespace="upload")),

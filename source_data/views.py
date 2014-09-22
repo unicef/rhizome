@@ -1,18 +1,21 @@
 import xlrd, csv, pandas, pprint as pp
 
-from django.shortcuts import render
-from django.shortcuts import render_to_response
+from django.shortcuts import render,render_to_response
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.views import generic
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.http import HttpResponseRedirect, HttpResponse
+from datapoints.mixins import PermissionRequiredMixin
+
 
 from pandas.io.excel import read_excel
 
-from source_data.forms import DocumentForm
-from source_data.models import Document,CsvUpload,ProcessStatus
+from source_data.forms import *
+from source_data.models import *
 from datapoints.models import Source
-from meta_map.models import *
 
 
 def file_upload(request):
@@ -175,3 +178,39 @@ def document_review(request,document_id,mappings):
         {'doc_data': doc_data},
         context_instance=RequestContext(request),
     )
+
+
+######### META MAPPING ##########
+
+
+class CreateMap(PermissionRequiredMixin, generic.CreateView):
+
+    template_name='map.html'
+    success_url=reverse_lazy('datapoints:datapoint_index')
+    # permission_required = 'datapoints.add_datapoint'
+
+    def form_valid(self, form):
+    # this inserts into the changed_by field with  the user who made the insert
+        obj = form.save(commit=False)
+        obj.mapped_by = self.request.user
+        # obj.source_id = Source.objects.get(source_name='data entry').id
+        obj.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+class IndicatorMapCreateView(CreateMap):
+
+    model=IndicatorMap
+    form_class = IndicatorMapForm
+
+
+class RegionMapCreateView(CreateMap):
+
+    model=RegionMap
+    form_class = RegionMapForm
+
+
+class CampaignMapCreateView(CreateMap):
+
+    model=CampaignMap
+    form_class = CampaignMapForm
