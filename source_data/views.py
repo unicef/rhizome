@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.db import IntegrityError
+from django.contrib import messages
+
 from pandas.io.excel import read_excel
 
 from source_data.forms import DocumentForm
@@ -23,6 +25,9 @@ def file_upload(request):
 
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
                 process_xls(file_path,newdoc.id)
+            else:
+                messages.add_message(request, messages.INFO, 'Please\
+                    upload either .CSV, .XLS or .XLSX file format')
 
     else:
         form = DocumentForm() # A empty, unbound form

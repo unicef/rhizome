@@ -1,8 +1,15 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
     <body>
-    <!-- List of uploaded documents -->
-        <!-- Upload form. Note enctype attribute! -->
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <form action="{% url 'upload:file_upload' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
