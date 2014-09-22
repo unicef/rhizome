@@ -33,8 +33,8 @@ class SourceCampaign(models.Model):
 
 class RegionMap(models.Model):
 
-    master_region = models.ForeignKey(Indicator)
-    source_region = models.ForeignKey(SourceIndicator)
+    master_region = models.ForeignKey(Region)
+    source_region = models.ForeignKey(SourceRegion)
     mapped_by = models.ForeignKey(User)
 
 
@@ -47,6 +47,6 @@ class IndicatorMap(models.Model):
 
 class CampaignMap(models.Model):
 
-    master_campaign = models.ForeignKey(Indicator)
-    source_campaign = models.ForeignKey(SourceIndicator)
+    master_campaign = models.ForeignKey(Campaign)
+    source_campaign = models.ForeignKey(SourceCampaign)
     mapped_by = models.ForeignKey(User)
