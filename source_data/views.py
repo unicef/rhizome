@@ -185,7 +185,7 @@ def document_review(request,document_id,mappings):
 
 class CreateMap(PermissionRequiredMixin, generic.CreateView):
 
-    template_name='map.html'
+    template_name='map/map.html'
     success_url=reverse_lazy('datapoints:datapoint_index')
     # permission_required = 'datapoints.add_datapoint'
 
