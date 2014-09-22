@@ -25,6 +25,10 @@ def file_upload(request):
 
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
                 process_xls(file_path,newdoc.id)
+
+                return document_review(request,newdoc.id)
+
+
             else:
                 messages.add_message(request, messages.INFO, 'Please\
                     upload either .CSV, .XLS or .XLSX file format')
@@ -32,9 +36,6 @@ def file_upload(request):
     else:
         form = DocumentForm() # A empty, unbound form
 
-    # Load documents for the list page
-
-    # Render list page with the documents and the form
     return render_to_response(
         'upload/file_upload.html',
         {'form': form},
@@ -49,6 +50,7 @@ def view_all_docs():
     pass
 
 def process_xls(f_path,document_id):
+    print 'SHIT IS HAPPENING \n' * 10
 
     wb = xlrd.open_workbook(f_path)
 
@@ -63,6 +65,7 @@ def process_xls(f_path,document_id):
 
 def process_sheet(file_path,sheet_name,document_id):
 
+    print 'PROCESSING SHEET!!'
     df = read_excel(file_path,sheet_name)
 
     cols = [col.lower() for col in df]
@@ -82,6 +85,7 @@ def process_sheet(file_path,sheet_name,document_id):
 
         for i,(cell) in enumerate(row):
 
+            print cell
             to_create = row_basics
             to_create['column_value'] = cols[i]
             to_create['cell_value'] = cell
@@ -90,5 +94,25 @@ def process_sheet(file_path,sheet_name,document_id):
 
             try:
                 CsvUpload.objects.create(**to_create)
-            except IntegrityError:
-                pass
+
+            except IntegrityError as e:
+                print e
+
+
+def ingest_document_to_master(request, document_id):
+
+    print 'PERFORMING SOME ETL!'
+
+    return document_review(request)
+
+
+
+def document_review(request, document_id):
+
+    print 'reviewing document'
+
+    return render_to_response(
+        'upload/document_review.html',
+        # {'': form},
+        context_instance=RequestContext(request)
+    )
