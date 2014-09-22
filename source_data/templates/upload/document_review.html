@@ -1,3 +1,27 @@
+{% extends "datapoints/base.html" %}
+  {% block content %}
+    <body>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
 
-REVIEWING THE DOUCMENT!!!!
+        {% if doc_data %}
+            {% for doc in doc_data %}
+                <p>{{ doc }}</p>
+
+            {% endfor %}
+
+        {% else %}
+            <h1>THERE IS NO DATA</h1>
+        {% endif %}
+
+
+
+
+{% endblock %}

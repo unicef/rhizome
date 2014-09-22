@@ -24,9 +24,9 @@ def file_upload(request):
             file_path = newdoc.docfile.url
 
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
-                process_xls(file_path,newdoc.id)
+                doc_data =  process_xls(file_path,newdoc.id)
 
-                return document_review(request,newdoc.id)
+                return document_review(request,newdoc.id,doc_data)
 
 
             else:
@@ -50,7 +50,6 @@ def view_all_docs():
     pass
 
 def process_xls(f_path,document_id):
-    print 'SHIT IS HAPPENING \n' * 10
 
     wb = xlrd.open_workbook(f_path)
 
@@ -62,6 +61,9 @@ def process_xls(f_path,document_id):
         else:
             process_sheet(f_path,sheet.name,document_id)
 
+    doc_data = CsvUpload.objects.where(document_id=document_id)
+
+    return doc_data
 
 def process_sheet(file_path,sheet_name,document_id):
 
@@ -103,16 +105,18 @@ def ingest_document_to_master(request, document_id):
 
     print 'PERFORMING SOME ETL!'
 
-    return document_review(request)
+    doc_data = CsvUpload.objects.get(id=document_id)
+
+    return document_review(request, document_id, doc_data)
 
 
+# def document_review(request, document_id, doc_data):
+def document_review(request, pk):
 
-def document_review(request, document_id):
-
-    print 'reviewing document'
+    doc_data = CsvUpload.objects.filter(document_id=pk)
 
     return render_to_response(
         'upload/document_review.html',
-        # {'': form},
-        context_instance=RequestContext(request)
+        {'doc_data': doc_data},
+        context_instance=RequestContext(request),
     )
