@@ -105,7 +105,7 @@ def ingest_document_to_master(request, document_id):
 
     print 'PERFORMING SOME ETL!'
 
-    doc_data = CsvUpload.objects.get(id=document_id)
+
 
     return document_review(request, document_id, doc_data)
 
@@ -113,7 +113,17 @@ def ingest_document_to_master(request, document_id):
 # def document_review(request, document_id, doc_data):
 def document_review(request, pk):
 
-    doc_data = CsvUpload.objects.filter(document_id=pk)
+    # doc_data = CsvUpload.objects.filter(document_id=pk)
+    doc_data = []
+
+    r = {'problem':'3 regions where unrecogmized','recs':231}
+    r2 = {'problem':'6 indicators where unrecogmized','recs':4}
+    r3 = {'problem':'3- campaigns where un recogmized','recs':1}
+
+    doc_data.append(r)
+    doc_data.append(r2)
+    doc_data.append(r3)
+
 
     return render_to_response(
         'upload/document_review.html',

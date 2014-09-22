@@ -10,18 +10,24 @@
             </ul>
         {% endif %}
 
-
         {% if doc_data %}
-            {% for doc in doc_data %}
-                <p>{{ doc }}</p>
-
-            {% endfor %}
-
-        {% else %}
-            <h1>THERE IS NO DATA</h1>
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Error</th>
+                <th>Affected Records</th>
+                <th>Validate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for error in doc_data %}
+            <tr>
+                <th>{{ error.problem }}</th>
+                <th>{{ error.recs }}</th>
+                <th>something else eeee</th>
+            </tr>
+        </tbody>
+        {% endfor %}
+        </table>
         {% endif %}
-
-
-
-
 {% endblock %}
