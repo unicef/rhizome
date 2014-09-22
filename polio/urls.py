@@ -38,8 +38,11 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/$', logout, name='logout'),
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
 
+    ##
+    url(r'^meta_map/', include('meta_map.urls', namespace="meta_map")),
+
+    ##
     (r'^upload/', include('source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-
 
 )

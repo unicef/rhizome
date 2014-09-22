@@ -34,7 +34,6 @@ class ProcessStatus(models.Model):
     class Meta:
         app_label = 'source_data'
 
-
     ##########################
     ####### CSV UPLOAD #######
     ##########################

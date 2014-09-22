@@ -168,6 +168,3 @@ class AggregationExpectedData(models.Model):
 
     class Meta:
         db_table = 'aggregation_expected_data'
-
-
-## For Reversion

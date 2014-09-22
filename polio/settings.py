@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'datapoints',
     'source_data',
+    'meta_map',
     'coverage',
     'simple_history',
     # 'stronghold',
