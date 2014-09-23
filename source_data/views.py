@@ -15,7 +15,7 @@ from pandas.io.excel import read_excel
 
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.ingest_document import process_sheet_df
+from source_data.etl_tasks.ingest_document import DocIngest
 from datapoints.models import Source
 
 
@@ -27,12 +27,18 @@ def file_upload(request):
             newdoc = Document(docfile = request.FILES['docfile'])
             newdoc.created_by = request.user
             newdoc.save()
+            document_id = newdoc.id
 
             file_path = newdoc.docfile.url
 
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
 
-                mappings = process_xls(file_path,newdoc.id)
+                ## FIND MAPPINGS ##
+                mappings = pre_process_xls(file_path,newdoc.id)
+
+                ## MOVE XLS INTO DATAPOINTS TABLE ##
+                d = DocIngest(document_id,mappings)
+                # process_sheet_df(df,document_id,mappings)
 
                 return document_review(request,newdoc.id,mappings)
 
@@ -51,7 +57,9 @@ def file_upload(request):
 
 
 
-def process_xls(f_path,document_id):
+def pre_process_xls(f_path,document_id):
+    ''' in this method we create or find the source metadata and return the
+    values as a dictionary.'''
 
     wb = xlrd.open_workbook(f_path)
 
@@ -61,23 +69,15 @@ def process_xls(f_path,document_id):
         if sheet.nrows == 0:
             pass
         else:
-            mappings = process_sheet(f_path,sheet.name,document_id)
+            mappings = pre_process_sheet(f_path,sheet.name,document_id)
             return mappings
 
 
-def process_sheet(file_path,sheet_name,document_id):
+def pre_process_sheet(file_path,sheet_name,document_id):
 
-    df = read_excel(file_path,sheet_name)
-    cols = [col.lower() for col in df]
+    sheet_df = read_excel(file_path,sheet_name)
+    cols = [col.lower() for col in sheet_df]
 
-    mappings = auto_map_metadata(df)
-
-    process_sheet_df(df,document_id)
-
-    return mappings
-
-
-def auto_map_metadata(sheet_df):
 
     all_meta_mappings = {}
     source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
@@ -87,6 +87,7 @@ def auto_map_metadata(sheet_df):
     all_meta_mappings['regions'] = map_regions(sheet_df,source_id)
 
     return all_meta_mappings
+
 
 def map_indicators(sheet_df,source_id):
     indicator_mapping = {}
@@ -100,7 +101,7 @@ def map_indicators(sheet_df,source_id):
         )
 
         try:
-            indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id)
+            indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id).master_indicator_id
             indicator_mapping[col_name] = indicator_id
             source_indicator.mapped_status='MAPPED'
         except ObjectDoesNotExist:
@@ -123,17 +124,37 @@ def map_campaigns(sheet_df,source_id):
             campaign_string = campaign[0]
         )
         try:
-            campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id)
-            campaign_mapping[campaign] = campaign_id
-            source_indicator.mapped_status='MAPPED'
+            campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id).master_campaign_id
+            campaign_mapping[campaign[0]] = campaign_id
         except ObjectDoesNotExist:
             campaign_mapping[source_campaign] = None
 
     return campaign_mapping
 
-def map_regions(sheet_df,source_id):
+def map_regions(df,source_id):
+    ## REGION MAPPING ##
+    region_mapping = {}
 
-    return {'foo':'bar'}
+    # df['region_string'] = df['Lga'] + '-' + df['State'] + df['Ward']
+    df['region_string'] = df['Lga'] + '-' + df['State'] + df['Ward'] + '-' + str(df['Settlement'])
+
+    regions = df.groupby('region_string')
+
+    for region in regions:
+        print 'THIS IS A REGION: ' + region[0]
+
+        source_region_id, created = SourceRegion.objects.get_or_create(
+            source_id = source_id,
+            region_string = region[0]
+        )
+
+        try:
+            region_id = RegionMap.objects.get(source_region_id = source_region_id.id)
+            region_mapping[region[0]] = region_id
+        except ObjectDoesNotExist:
+            region_mapping[region[0]] = None
+
+    return region_mapping
 
 def document_review(request,document_id,mappings):
 
