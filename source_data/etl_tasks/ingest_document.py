@@ -3,29 +3,29 @@ import pprint as pp
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from source_data.models import ProcessStatus, CsvUpload, SourceIndicator, IndicatorMap
+from datapoints.models import DataPoint, Source
 
 class DocIngest(object):
 
-    def __init__(self,document_id,mappings):
+    def __init__(self,document_id,mappings,df,uploaded_by_user_id):
 
         self.document_id = document_id
         self.mappings = mappings
+        self.df = df
+        self.uploaded_by_user_id = uploaded_by_user_id
 
-        pp.pprint(mappings)
+        self.process_sheet_df()
 
+    def process_sheet_df(self):
 
-    def process_sheet_df(self,df,document_id):
+        self.sheet_df_to_work_table()
+        self.ingest_doc_to_master()
 
-        sheet_df_to_work_table(df,document_id)
-        ingest_doc_to_master(document_id)
+    def sheet_df_to_work_table(self):
 
-    def sheet_df_to_work_table(self,df,document_id):
+        cols = [col.lower() for col in self.df]
 
-        cols = [col.lower() for col in df]
-        print '=' * 50
-        pp.pprint(cols)
-
-        for i,(row) in enumerate(df.values):
+        for i,(row) in enumerate(self.df.values):
 
             row_basics = {}
             #
@@ -45,37 +45,56 @@ class DocIngest(object):
 
 
                 to_create['status_id'] = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-                to_create['document_id'] = document_id
+                to_create['document_id'] = self.document_id
 
                 try:
                     CsvUpload.objects.create(**to_create)
-
                 except IntegrityError as e:
                     print e
 
 
-    def ingest_doc_to_master(self,document_id):
+    def ingest_doc_to_master(self):
 
-        to_process = CsvUpload.objects.filter(document_id=document_id)
+        to_process = CsvUpload.objects.filter(document_id=self.document_id)
 
-        for record in to_process:
-            csv_upload_record_to_datapoint(record)
+        for i,(record) in enumerate(to_process):
+
+            if i == 1:
+                self.csv_upload_record_to_datapoint(record)
 
 
     def csv_upload_record_to_datapoint(self,record):
 
-        source_ind_id = SourceIndicator.objects.get(indicator_string=record.column_value).id
-
         try:
-            master_ind_id = IndicatorMap.objects.get(source_indicator_id=source_ind_id).master_indicator_id
-        except ObjectDoesNotExist:
+            indicator_id = self.mappings['indicators'][record.column_value]
+            print 'INDICATOR ID: ' + str(indicator_id)
+        except KeyError:
             return
 
-    # DataPoint.objects.get_or_create(
-    #     indicator_id = master_ind_id,
-    #     region_id = master_reg_id,
-    #     campaign_id = master_camp_id,
-    #     value = record.cell_value,
-    #     source_id = Source.objects.get(source_name='Spreadsheet Upload'),
-    #     source_guid = record.guid
-    # )
+        try:
+            region_id = self.mappings['regions'][record.region_string]
+            print 'REGION ID: ' + str(region_id)
+        except KeyError:
+            return
+
+        try:
+            campaign_id = self.mappings['campaigns'][record.campaign_string]
+            print 'CAMPAIGN ID: ' + str(campaign_id)
+        except KeyError:
+            print 'THIS CAMPAIGN DIDNT WORK: ' + record.campaign_string
+            print self.mappings['campaigns']
+            return
+
+        print 'WE MADE IT'
+
+        datapoint, created = DataPoint.objects.get_or_create(
+            indicator_id = indicator_id,
+            region_id = region_id,
+            campaign_id = campaign_id,
+            value = record.cell_value,
+            source_id = Source.objects.get(source_name='Spreadsheet Upload').id,
+            changed_by_id = self.uploaded_by_user_id
+            # source_guid = record.guid
+        )
+
+        return datapoint.id

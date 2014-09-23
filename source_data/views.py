@@ -34,13 +34,16 @@ def file_upload(request):
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
 
                 ## FIND MAPPINGS ##
-                mappings = pre_process_xls(file_path,newdoc.id)
+                df, mappings = pre_process_xls(file_path,newdoc.id)
 
                 ## MOVE XLS INTO DATAPOINTS TABLE ##
-                d = DocIngest(document_id,mappings)
+                current_user_id = request.user.id
+                d = DocIngest(document_id,mappings,df,current_user_id)
                 # process_sheet_df(df,document_id,mappings)
 
                 return document_review(request,newdoc.id,mappings)
+
+            # if file is csv...
 
             else:
                 messages.add_message(request, messages.INFO, 'Please\
@@ -86,7 +89,7 @@ def pre_process_sheet(file_path,sheet_name,document_id):
     all_meta_mappings['indicators'] = map_indicators(sheet_df,source_id)
     all_meta_mappings['regions'] = map_regions(sheet_df,source_id)
 
-    return all_meta_mappings
+    return sheet_df,all_meta_mappings
 
 
 def map_indicators(sheet_df,source_id):
@@ -103,9 +106,8 @@ def map_indicators(sheet_df,source_id):
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id).master_indicator_id
             indicator_mapping[col_name] = indicator_id
-            source_indicator.mapped_status='MAPPED'
         except ObjectDoesNotExist:
-            indicator_mapping[col_name] = None
+            pass
 
     return indicator_mapping
 
@@ -117,7 +119,8 @@ def map_campaigns(sheet_df,source_id):
     campaigns = sheet_df.groupby('DateSoc')
 
     for campaign in campaigns:
-        print campaign[0]
+
+
 
         source_campaign, created = SourceCampaign.objects.get_or_create(
             source_id = source_id,
@@ -125,9 +128,11 @@ def map_campaigns(sheet_df,source_id):
         )
         try:
             campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id).master_campaign_id
-            campaign_mapping[campaign[0]] = campaign_id
+
+
+            campaign_mapping[str(campaign[0])] = campaign_id
         except ObjectDoesNotExist:
-            campaign_mapping[source_campaign] = None
+            pass
 
     return campaign_mapping
 
@@ -147,10 +152,10 @@ def map_regions(df,source_id):
         )
 
         try:
-            region_id = RegionMap.objects.get(source_region_id = source_region_id.id)
+            region_id = RegionMap.objects.get(source_region_id = source_region_id.id).master_region_id
             region_mapping[region[0]] = region_id
         except ObjectDoesNotExist:
-            region_mapping[region[0]] = None
+            pass
 
     return region_mapping
 
