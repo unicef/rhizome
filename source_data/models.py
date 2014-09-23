@@ -57,6 +57,7 @@ class CsvUpload(models.Model):
     row_number= models.IntegerField()
     status = models.ForeignKey(ProcessStatus)
     guid = models.CharField(primary_key=True, max_length=40)
+    uniquesoc = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
     def save(self, *args, **kwargs):

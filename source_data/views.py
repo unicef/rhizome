@@ -15,7 +15,7 @@ from pandas.io.excel import read_excel
 
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.ingest_document import main
+from source_data.etl_tasks.ingest_document import process_sheet_df
 from datapoints.models import Source
 
 
@@ -72,7 +72,7 @@ def process_sheet(file_path,sheet_name,document_id):
 
     mappings = auto_map_metadata(df)
 
-    process_sheet_df(df)
+    process_sheet_df(df,document_id)
 
     return mappings
 
