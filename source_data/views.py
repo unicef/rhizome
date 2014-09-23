@@ -135,13 +135,11 @@ def map_regions(df,source_id):
     ## REGION MAPPING ##
     region_mapping = {}
 
-    # df['region_string'] = df['Lga'] + '-' + df['State'] + df['Ward']
-    df['region_string'] = df['Lga'] + '-' + df['State'] + df['Ward'] + '-' + str(df['Settlement'])
+    df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + df['Ward'] + '-' + df['Settlement'].apply(str)
 
     regions = df.groupby('region_string')
 
     for region in regions:
-        print 'THIS IS A REGION: ' + region[0]
 
         source_region_id, created = SourceRegion.objects.get_or_create(
             source_id = source_id,
