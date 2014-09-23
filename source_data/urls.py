@@ -10,4 +10,6 @@ urlpatterns = [
   url(r'^map_region/$', RegionMapCreateView.as_view(),name='map_region'),
   url(r'^map_campaign/$', CampaignMapCreateView.as_view(),name='map_campaign'),
 
+  url(r'^to_map/$', ToMap.as_view(),name='to_map'),
+
 ]

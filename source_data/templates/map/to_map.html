@@ -1,0 +1,33 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+    <br><br>
+
+    {% if items %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Indicator String</th>
+            <th>Source</th>
+            <th>Mapped_status</th>
+            <th>Map It!</th>
+
+        </tr>
+    </thead>
+
+        {% for item in items %}
+        <tr>
+            <th>{{ item.indicator_string }}</th>
+            <th>{{ item.source }}</th>
+            <th>{{ item.mapped_status }}</th>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+
+{% else %}
+    <p> everything is mapped </p>
+{% endif %}
+
+{% endblock %}

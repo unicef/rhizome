@@ -163,10 +163,9 @@ def document_review(request,document_id,mappings):
 
     doc_data = []
 
-    r = {'problem':'Indicators to Map','recs':len(mappings['indicators']),'model':'indicator'}
+    r =  {'problem':'Indicators to Map','recs':len(mappings['indicators']),'model':'indicator'}
     r2 = {'problem':'Campaigns to Map','recs':len(mappings['campaigns']),'model':'campaign'}
     r3 = {'problem':'Regions To Map','recs':len(mappings['regions']),'model':'region'}
-
 
     doc_data.append(r)
     doc_data.append(r2)
@@ -214,3 +213,14 @@ class CampaignMapCreateView(CreateMap):
 
     model=CampaignMap
     form_class = CampaignMapForm
+
+
+class ToMap(generic.ListView):
+
+    model = SourceIndicator
+    template_name = 'map/to_map.html'
+    context_object_name = 'items'
+
+
+    # def get_queryset(self):
+    #     return .objects.all()
