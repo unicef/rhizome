@@ -202,6 +202,12 @@ class IndicatorMapCreateView(CreateMap):
     model=IndicatorMap
     form_class = IndicatorMapForm
 
+    # initial = { 'source_indicator': 61 }
+
+    def get_initial(self):
+        return { 'source_indicator': self.kwargs['pk'] }
+
+
 
 class RegionMapCreateView(CreateMap):
 
@@ -221,6 +227,11 @@ class ToMap(generic.ListView):
     template_name = 'map/to_map.html'
     context_object_name = 'items'
 
+class ShowSourceIndicator(generic.DetailView):
+
+    context_object_name = "source_indicator"
+    template_name = 'map/source_indicator.html'
+    model = SourceIndicator
 
     # def get_queryset(self):
-    #     return .objects.all()
+        # return SourceIndicator.objects.filter(id=pk)

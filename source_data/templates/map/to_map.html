@@ -20,7 +20,8 @@
             <th>{{ item.indicator_string }}</th>
             <th>{{ item.source }}</th>
             <th>{{ item.mapped_status }}</th>
-
+            <th><a href="{% url 'source_data:map_indicator' item.id %}"<button type=\
+                "submit" class="btn btn-primary btn-sm"> Map it! </button></a></th>
         </tr>
         {% endfor %}
     </table>

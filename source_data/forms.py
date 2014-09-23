@@ -14,17 +14,17 @@ class IndicatorMapForm(ModelForm):
 
     class Meta:
         model = IndicatorMap
-        fields = ['master_indicator','source_indicator']
+        fields = ['source_indicator','master_indicator']
 
 
 class RegionMapForm(ModelForm):
 
     class Meta:
         model = RegionMap
-        fields = ['master_region','source_region']
+        fields = ['source_region','master_region']
 
 class CampaignMapForm(ModelForm):
 
     class Meta:
         model = CampaignMap
-        fields = ['master_campaign','source_campaign']
+        fields = ['source_campaign','master_campaign']
