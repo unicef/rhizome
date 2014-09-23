@@ -82,6 +82,9 @@ class SourceRegion(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
+    class Meta:
+        unique_together = ('source','region_string')
+
     def __unicode__(self):
         return self.region_string
 
@@ -90,6 +93,9 @@ class SourceIndicator(models.Model):
     indicator_string = models.CharField(max_length=255)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('source','indicator_string')
 
     def __unicode__(self):
         return self.indicator_string
@@ -101,6 +107,10 @@ class SourceCampaign(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
+    class Meta:
+        unique_together = ('source','campaign_string')
+
+
     def __unicode__(self):
         return self.campaign_string
 
@@ -108,21 +118,21 @@ class SourceCampaign(models.Model):
 class RegionMap(models.Model):
 
     master_region = models.ForeignKey(Region)
-    source_region = models.ForeignKey(SourceRegion)
+    source_region = models.ForeignKey(SourceRegion,unique=True)
     mapped_by = models.ForeignKey(User)
 
 
 class IndicatorMap(models.Model):
 
     master_indicator = models.ForeignKey(Indicator)
-    source_indicator = models.ForeignKey(SourceIndicator)
+    source_indicator = models.ForeignKey(SourceIndicator,unique=True)
     mapped_by = models.ForeignKey(User)
 
 
 class CampaignMap(models.Model):
 
     master_campaign = models.ForeignKey(Campaign)
-    source_campaign = models.ForeignKey(SourceCampaign)
+    source_campaign = models.ForeignKey(SourceCampaign,unique=True)
     mapped_by = models.ForeignKey(User)
 
 

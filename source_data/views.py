@@ -15,6 +15,7 @@ from pandas.io.excel import read_excel
 
 from source_data.forms import *
 from source_data.models import *
+from source_data.etl_tasks.ingest_document import main
 from datapoints.models import Source
 
 
@@ -71,34 +72,9 @@ def process_sheet(file_path,sheet_name,document_id):
 
     mappings = auto_map_metadata(df)
 
+    process_sheet_df(df)
+
     return mappings
-
-    # for i,(row) in enumerate(df.values):
-    #
-    #     row_basics = {}
-    #
-    #     region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
-    #         + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlement')])
-    #
-    #     row_basics['row_number'] = i
-    #     row_basics['region_string'] = region_string
-    #     row_basics['campaign_string'] = str(row[cols.index('datesoc')])
-    #     # row_basics['uniquesoc'] = row[cols.index('uniquesoc')]
-    #
-    #     for i,(cell) in enumerate(row):
-    #
-    #         to_create = row_basics
-    #         to_create['column_value'] = cols[i]
-    #         to_create['cell_value'] = cell
-    #         to_create['status_id'] = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-    #         to_create['document_id'] = document_id
-    #
-    #         try:
-    #             CsvUpload.objects.create(**to_create)
-    #
-    #         except IntegrityError as e:
-    #             print e
-
 
 
 def auto_map_metadata(sheet_df):
