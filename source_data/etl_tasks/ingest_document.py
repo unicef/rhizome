@@ -59,8 +59,7 @@ class DocIngest(object):
 
         for i,(record) in enumerate(to_process):
 
-            if i == 1:
-                self.csv_upload_record_to_datapoint(record)
+            self.csv_upload_record_to_datapoint(record)
 
 
     def csv_upload_record_to_datapoint(self,record):
@@ -85,16 +84,16 @@ class DocIngest(object):
             print self.mappings['campaigns']
             return
 
-        print 'WE MADE IT'
+        try:
+            datapoint, created = DataPoint.objects.get_or_create(
+                indicator_id = indicator_id,
+                region_id = region_id,
+                campaign_id = campaign_id,
+                value = record.cell_value,
+                source_id = Source.objects.get(source_name='Spreadsheet Upload').id,
+                changed_by_id = self.uploaded_by_user_id,
+                source_guid = record.guid
+            )
 
-        datapoint, created = DataPoint.objects.get_or_create(
-            indicator_id = indicator_id,
-            region_id = region_id,
-            campaign_id = campaign_id,
-            value = record.cell_value,
-            source_id = Source.objects.get(source_name='Spreadsheet Upload').id,
-            changed_by_id = self.uploaded_by_user_id
-            # source_guid = record.guid
-        )
-
-        return datapoint.id
+        except Exception as e:
+            print e
