@@ -23,6 +23,7 @@ class RegionMapForm(ModelForm):
         model = RegionMap
         fields = ['source_region','master_region']
 
+
 class CampaignMapForm(ModelForm):
 
     class Meta:
