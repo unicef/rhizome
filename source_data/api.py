@@ -67,9 +67,9 @@ class EtlTask(object):
         self.function_mappings = {
               'pull_odk' : self.pull_odk,
               'refresh_odk_work_tables' : self.refresh_work_tables,
-              # 'refresh_master' : self.refresh_master,
               'ingest_odk_vcm_summary' : self.ingest_odk_vcm_summary,
               'ingest_odk_vcm_settlement' : self.ingest_odk_vcm_settlement,
+            # 'refresh_master' : self.refresh_master,
               'test_api' : self.test_api,
             }
 
@@ -102,14 +102,14 @@ class EtlTask(object):
     def ingest_odk_vcm_summary(self):
 
         vst = VcmSummaryTransform(self.task_guid)
-        mappings = vst.pre_process_odk()
+        # mappings = vst.pre_process_odk()
         source_records_to_process = vst.vcm_summary_to_source_datapoints()
+
 
     def ingest_odk_vcm_settlement(self):
 
         v_sett_t = VcmSettlementTransform(self.task_guid)
         v_sett_t.refresh_source_regions()
-
 
     # def refresh_master(self):
     #     e = VcmEtl(self.task_guid)

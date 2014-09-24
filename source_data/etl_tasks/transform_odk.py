@@ -73,10 +73,10 @@ class VcmSummaryTransform(object):
         return all_meta_mappings
 
 
-
         ##########################
         #### META DATA INGEST ####
         ##########################
+
 
     def get_region_mappings(self,df):
 
@@ -115,114 +115,83 @@ class VcmSummaryTransform(object):
         return campaign_mapping
 
 
-        def vcm_summary_to_source_datapoints(self):
-            to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(process_status__status_text='TO_PROCESS').values()))
+    def vcm_summary_to_source_datapoints(self):
+        to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
+            process_status__status_text='TO_PROCESS').values()))
 
-            print 'ROWS TO PROCESS: ' + str(len(to_process))
+        print 'ROWS TO PROCESS: ' + str(len(to_process))
 
-            column_list = to_process.columns.tolist()
+        column_list = to_process.columns.tolist()
 
-            for i, row in enumerate(to_process.values):
-                print 'processing row: ' + str(i)
+        for i, row in enumerate(to_process.values):
+            print 'processing row: ' + str(i)
 
-                row_dict = {}
-                for row_i,cell in enumerate(row):
-                    row_dict[column_list[row_i]] = cell
+            row_dict = {}
+            for row_i,cell in enumerate(row):
+                row_dict[column_list[row_i]] = cell
 
-                row_process_status = self.process_row(row_dict)
-                process_status = ProcessStatus.objects.get(status_text=row_process_status)
-                row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
-                row_obj.process_status = process_status
-                row_obj.save()
-
-
-        def process_row(self,row_dict):
-
-            try:
-                sett_code = row_dict['settlementcode'].replace('.0','')
-                region_id = Region.objects.get(settlement_code=sett_code).id
-            except TypeError:
-                return 'VCM_SUMMARY_NO_SETT_CODE'
-                ## Settlement Is Null
-            except ValueError:
-                return 'VCM_SUMMARY_NO_CAMPAIGN'
-            except ObjectDoesNotExist:
-                return 'VCM_SUMMARY_NO_SETT_CODE'
-
-            try:
-                date_impl = parser.parse(row_dict['date_implement'])
-                campaign_id = Campaign.objects.get(start_date=date_impl).id
-            except TypeError:
-                return 'VCM_SUMMARY_NO_CAMPAIGN'
-            except ValueError:
-                return 'VCM_SUMMARY_NO_CAMPAIGN'
-
-            except ObjectDoesNotExist:
-                  return 'VCM_SUMMARY_NO_CAMPAIGN'
+            row_process_status = self.process_row(row_dict)
+            # process_status = ProcessStatus.objects.get(status_text=row_process_status)
+            row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
+            # row_obj.process_status = process_status
+            row_obj.save()
 
 
-            all_cell_status = []
+    def process_row(self,row_dict):
 
+        # row level variables
+        region_string = row_dict['settlementcode']
+        campaign_string = row_dict['date_implement']
+        source_guid = row_dict['key']
 
-            # process all cells in the row that represnet an indicator value
-            for column_name,cell_value, in row_dict.iteritems():
+        for indicator_string, cell_value in row_dict.iteritems():
 
-                  if column_name not in self.non_indicator_fields:
-
-                      source_guid = row_dict['key'] + '_' + column_name
-                      cell_status = self.process_cell(region_id,campaign_id,column_name,cell_value,source_guid)
-                      all_cell_status.append(cell_status)
-
-            # HANDLE DUPE ENTRIES BETTER #
-            if 'ALREADY_EXISTS' in all_cell_status:
-                return 'ALREADY_EXISTS'
-            else:
-                return 'SUCESS_INSERT'
+            self.process_cell(region_string,campaign_string,indicator_string,\
+                cell_value,source_guid)
 
 
 
-        def process_cell(self,region_id,campaign_id,column_name,cell_value,src_key):
 
-            if cell_value == "nan":
-                return
+    def process_cell(self,region_string,campaign_string,indicator_string,\
+            cell_value,src_key):
 
-            if column_name in self.non_indicator_fields:
-                return
+        if cell_value == "nan":
+            return
 
-            cleaned_cell_value = self.clean_cell_value(cell_value)
+        cleaned_cell_value = self.clean_cell_value(cell_value)
 
-            indicator_id = Indicator.objects.get(name = column_name).id
-            source_id = Source.objects.get(source_name = 'odk').id
+        try:
+            sdp = SourceDataPoint.objects.get_or_create(
+                region_string = region_string,
+                campaign_string = campaign_string,
+                indicator_string =  indicator_string,
+                cell_value = cleaned_cell_value,
+                row_number = 1,
+                source = Source.objects.get(source_name='odk'),
+                document_id = 1,
+                source_guid = src_key,
+                status = ProcessStatus.objects.get(status_text='TO_PROCESS')
+            )
+        except Exception as e:
+            print e
+            return 'ALREADY_EXISTS'
+        #     # NEED TO HANDLE DUPE DATA POINTS BETTER #
 
-            try:
-                dp = DataPoint.objects.get_or_create(
-                    indicator_id = indicator_id, \
-                    region_id = region_id, \
-                    campaign_id = campaign_id, \
-                    value =  cleaned_cell_value, \
-                    source_id = source_id, \
-                    source_guid = src_key, \
-                    changed_by_id = User.objects.get(username='odk').id
-                )
-            except IntegrityError as e:
-                return 'ALREADY_EXISTS'
-                # NEED TO HANDLE DUPE DATA POINTS BETTER #
-
-            return 'SUCESS_INSERT'
+        return 'SUCESS_INSERT'
 
 
-        def clean_cell_value(self,cell_value):
+    def clean_cell_value(self,cell_value):
 
-            # cell_value = cell_value.lower()
+        # cell_value = cell_value.lower()
 
-            if cell_value == 'yes':
-                cleaned = 1
-            elif cell_value == 'no':
-                cleaned = 0
-            else:
-                cleaned = cell_value
+        if cell_value == 'yes':
+            cleaned = 1
+        elif cell_value == 'no':
+            cleaned = 0
+        else:
+            cleaned = cell_value
 
-            return cleaned
+        return cleaned
 
 
     ###########################
