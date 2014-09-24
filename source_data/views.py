@@ -1,4 +1,7 @@
-import xlrd, csv, pandas, pprint as pp
+import xlrd
+import csv
+import pandas
+import pprint as pp
 
 from django.shortcuts import render,render_to_response
 from django.template import RequestContext
@@ -7,15 +10,14 @@ from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
-from datapoints.mixins import PermissionRequiredMixin
-
-
 from pandas.io.excel import read_excel
+from itertools import chain
 
+from datapoints.mixins import PermissionRequiredMixin
 from source_data.forms import *
 from source_data.models import *
+from source_data.etl_tasks.pre_process_document import PreIngest
 from source_data.etl_tasks.ingest_document import DocIngest
-from source_data.etl_tasks.pre_process_document import pre_process_xls
 
 
 def file_upload(request):
@@ -33,7 +35,7 @@ def file_upload(request):
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
 
                 ## FIND MAPPINGS ##
-                df, mappings = pre_process_xls(file_path,newdoc.id)
+                df, mappings = PreIngest(file_path,newdoc.id)
 
                 ## MOVE XLS INTO DATAPOINTS TABLE ##
                 current_user_id = request.user.id
@@ -106,22 +108,31 @@ class IndicatorMapCreateView(CreateMap):
     success_url=reverse_lazy('source_data:to_map')
 
 
-
     def get_initial(self):
         return { 'source_indicator': self.kwargs['pk'] }
-
 
 
 class RegionMapCreateView(CreateMap):
 
     model=RegionMap
     form_class = RegionMapForm
+    success_url=reverse_lazy('source_data:to_map')
+
+
+    def get_initial(self):
+        return { 'source_campaign': self.kwargs['pk'] }
 
 
 class CampaignMapCreateView(CreateMap):
 
     model=CampaignMap
     form_class = CampaignMapForm
+    success_url=reverse_lazy('source_data:to_map')
+
+
+    def get_initial(self):
+        return { 'source_campaign': self.kwargs['pk'] }
+
 
 
 class ToMap(generic.ListView):
@@ -132,7 +143,11 @@ class ToMap(generic.ListView):
 
     def get_queryset(self):
 
-        return SourceIndicator.objects.filter(indicatormap__isnull=True)
+        si = SourceIndicator.objects.filter(indicatormap__isnull=True)
+        cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
+        rg = SourceRegion.objects.filter(regionmap__isnull=True)
+
+        return chain(si,cp,rg)
 
 
 

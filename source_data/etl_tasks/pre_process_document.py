@@ -6,100 +6,109 @@ from pandas.io.excel import read_excel
 from datapoints.models import Source
 from source_data.models import *
 
-def pre_process_xls(f_path,document_id):
-    ''' in this method we create or find the source metadata and return the
-    values as a dictionary.'''
 
-    pass
-    wb = xlrd.open_workbook(f_path)
+class PreIngest(object):
 
-    for sheet in wb.sheets():
-
-        if sheet.nrows == 0:
-            pass
-        else:
-            mappings = pre_process_sheet(f_path,sheet.name,document_id)
-            return mappings
+    def __init__(self,file_path,document_id):
+        self.file_path = file_path
+        self.document_id = document_id
 
 
-def pre_process_sheet(file_path,sheet_name,document_id):
+    def main(self):
+        ''' in this method we create or find the source metadata and return the
+        values as a dictionary.'''
 
-    sheet_df = read_excel(file_path,sheet_name)
-    cols = [col.lower() for col in sheet_df]
+        pass
+        wb = xlrd.open_workbook(f_path)
 
+        for sheet in wb.sheets():
 
-    all_meta_mappings = {}
-    source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
+            if sheet.nrows == 0:
+                pass
+            else:
+                mappings = pre_process_sheet(f_path,sheet.name,document_id)
+                return mappings
 
-    all_meta_mappings['campaigns'] = map_campaigns(sheet_df,source_id)
-    all_meta_mappings['indicators'] = map_indicators(sheet_df,source_id)
-    all_meta_mappings['regions'] = map_regions(sheet_df,source_id)
-
-    return sheet_df,all_meta_mappings
-
-def map_indicators(sheet_df,source_id):
-    indicator_mapping = {}
-    cols = [col.lower() for col in sheet_df]
-
-    for col_name in cols:
-
-        source_indicator, created = SourceIndicator.objects.get_or_create(
-            source_id = source_id,
-            indicator_string = col_name
-        )
-
-        try:
-            indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id).master_indicator_id
-            indicator_mapping[col_name] = indicator_id
-        except ObjectDoesNotExist:
-            pass
-
-    return indicator_mapping
+        return df, mappings
 
 
-def map_campaigns(sheet_df,source_id):
+    def pre_process_sheet(self,file_path,sheet_name,document_id):
 
-    ## CAMPAIGN MAPPING ##
-    campaign_mapping = {}
-    campaigns = sheet_df.groupby('DateSoc')
-
-    for campaign in campaigns:
+        sheet_df = read_excel(file_path,sheet_name)
+        cols = [col.lower() for col in sheet_df]
 
 
+        all_meta_mappings = {}
+        source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
 
-        source_campaign, created = SourceCampaign.objects.get_or_create(
-            source_id = source_id,
-            campaign_string = campaign[0]
-        )
-        try:
-            campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id).master_campaign_id
+        all_meta_mappings['campaigns'] = map_campaigns(sheet_df,source_id)
+        all_meta_mappings['indicators'] = map_indicators(sheet_df,source_id)
+        all_meta_mappings['regions'] = map_regions(sheet_df,source_id)
+
+        return sheet_df,all_meta_mappings
+
+    def map_indicators(self,sheet_df,source_id):
+        indicator_mapping = {}
+        cols = [col.lower() for col in sheet_df]
+
+        for col_name in cols:
+
+            source_indicator, created = SourceIndicator.objects.get_or_create(
+                source_id = source_id,
+                indicator_string = col_name
+            )
+
+            try:
+                indicator_id = IndicatorMap.objects.get(source_indicator_id = source_indicator.id).master_indicator_id
+                indicator_mapping[col_name] = indicator_id
+            except ObjectDoesNotExist:
+                pass
+
+        return indicator_mapping
 
 
-            campaign_mapping[str(campaign[0])] = campaign_id
-        except ObjectDoesNotExist:
-            pass
+    def map_campaigns(self,sheet_df,source_id):
 
-    return campaign_mapping
+        ## CAMPAIGN MAPPING ##
+        campaign_mapping = {}
+        campaigns = sheet_df.groupby('DateSoc')
 
-def map_regions(df,source_id):
-    ## REGION MAPPING ##
-    region_mapping = {}
+        for campaign in campaigns:
 
-    df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + df['Ward'] + '-' + df['Settlement'].apply(str)
 
-    regions = df.groupby('region_string')
+            source_campaign, created = SourceCampaign.objects.get_or_create(
+                source_id = source_id,
+                campaign_string = campaign[0]
+            )
+            try:
+                campaign_id = CampaignMap.objects.get(source_campaign_id = source_campaign.id).master_campaign_id
 
-    for region in regions:
 
-        source_region_id, created = SourceRegion.objects.get_or_create(
-            source_id = source_id,
-            region_string = region[0]
-        )
+                campaign_mapping[str(campaign[0])] = campaign_id
+            except ObjectDoesNotExist:
+                pass
 
-        try:
-            region_id = RegionMap.objects.get(source_region_id = source_region_id.id).master_region_id
-            region_mapping[region[0]] = region_id
-        except ObjectDoesNotExist:
-            pass
+        return campaign_mapping
 
-    return region_mapping
+    def map_regions(df,source_id):
+        ## REGION MAPPING ##
+        region_mapping = {}
+
+        df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + df['Ward'] + '-' + df['Settlement'].apply(str)
+
+        regions = df.groupby('region_string')
+
+        for region in regions:
+
+            source_region_id, created = SourceRegion.objects.get_or_create(
+                source_id = source_id,
+                region_string = region[0]
+            )
+
+            try:
+                region_id = RegionMap.objects.get(source_region_id = source_region_id.id).master_region_id
+                region_mapping[region[0]] = region_id
+            except ObjectDoesNotExist:
+                pass
+
+        return region_mapping
