@@ -1,30 +1,51 @@
-import sys, os
-
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import IntegrityError
-from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, Source
-from source_data.models import VCMSummaryNew,VCMSettlement,ProcessStatus
-from django.contrib.auth.models import User
-
-from dateutil import parser
-from decimal import InvalidOperation
-
+import sys
+import os
 import pprint as pp
 import pandas as pd
 import csv
 
+from dateutil import parser
+from decimal import InvalidOperation
 
-class VcmEtl(object):
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
+from django.contrib.auth.models import User
+
+from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, Source
+from source_data.models import *
+from source_data.etl_tasks.shared_utils import map_indicators, map_campaigns
+
+
+
+class VcmTransform(object):
     def __init__(self,request_guid):
         print 'initializing VCM ETL Object'
 
         self.request_guid = request_guid
+        self.source_id = Source.objects.get(source_name ='odk').id
+
 
         self.column_to_indicator_map = self.build_indicator_map()
         self.non_indicator_fields = ['submissiondate','deviceid','simserial',\
             'phonenumber','dateofreport','date_implement','settlementcode',\
             'meta_instanceid','key', 'id','process_status_id','request_guid',\
             'created_at']
+
+
+    def pre_process_odk(self):
+
+        all_meta_mappings = {}
+
+        to_process_df = pd.DataFrame(list(VCMSummaryNew.objects.filter\
+            (process_status__status_text='TO_PROCESS').values()))
+
+        all_meta_mappings['campaigns'] = self.map_campaigns(to_process_df)
+        all_meta_mappings['indicators'] = map_indicators(to_process_df,self.source_id)
+        # all_meta_mappings['regions'] = self.map_regions(to_process_df)
+
+        pp.pprint(all_meta_mappings)
+
+        return to_process_df, all_meta_mappings
 
 
     def build_indicator_map(self):
@@ -155,24 +176,35 @@ class VcmEtl(object):
         #### META DATA INGEST ####
         ##########################
 
-    def ingest_indicators(self):
+    def map_regions(self,df):
 
-        v = VCMSummaryNew()
-        all_fields = v._meta.fields
+        print df
 
-        indicators = []
-        for f in all_fields:
-            if f.name not in self.non_indicator_fields:
-                indicators.append(f.name)
+        return {'x':'y'}
 
-        for i in indicators:
-            try:
-                created = Indicator.objects.create(name = i,description = i, \
-                  is_reported = 1)
-            except IntegrityError:
-                pass
 
-    def ingest_regions(self):
+    def map_campaigns(self,df):
+
+        source_campaign_strings = []
+
+        gb_df = df.groupby('date_implement')
+        for record in gb_df['date_implement']:
+            source_campaign_strings.append(record[0])
+
+        print ' source strings '
+
+        print source_campaign_strings
+
+        campaign_mapping = map_campaigns(source_campaign_strings,self.source_id)
+
+        return campaign_mapping
+
+
+    ###########################
+    ##### VCM SETTLEMENT ######
+    ###########################
+
+    def map_vcm_settlement_regions(self):
 
         to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
         for row in to_process:
@@ -198,30 +230,3 @@ class VcmEtl(object):
                 # THIS SHOULD ALSO BE ABSTRACTED TO WORK FOR ALL' MASTER' OBJECTS
                 row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
                 row.save()
-
-
-
-    def ingest_campaigns(self):
-        all_data = VCMSummaryNew.objects.all()
-        all_campaigns = []
-
-        # Ensure the Office ID is in there
-        try:
-            ng_office_id = Office.objects.get(name='Nigeria')
-        except ObjectDoesNotExist:
-            ng_office = Office.objects.create(name='Nigeria')
-            ng_office_id = ng_office.id
-
-        for row in all_data:
-            if row.date_implement == 'nan':
-                return
-
-            try:
-                created = Campaign.objects.create(
-                    name = 'Nigeria Starting:' + row.date_implement, \
-                    office = ng_office_id, \
-                    start_date = parser.parse(row.date_implement), \
-                    end_date = parser.parse(row.date_implement)
-                )
-            except IntegrityError:
-                pass

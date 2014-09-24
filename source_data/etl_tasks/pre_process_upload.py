@@ -5,6 +5,7 @@ from pandas.io.excel import read_excel
 
 from datapoints.models import Source
 from source_data.models import *
+from source_data.etl_tasks.shared_utils import map_indicators
 
 
 class PreIngest(object):
@@ -12,6 +13,8 @@ class PreIngest(object):
     def __init__(self,file_path,document_id):
         self.file_path = file_path
         self.document_id = document_id
+        self.source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
+
 
         self.df, self.mappings = self.main(file_path, document_id)
 
@@ -38,39 +41,37 @@ class PreIngest(object):
         sheet_df = read_excel(file_path,sheet_name)
         cols = [col.lower() for col in sheet_df]
 
-
         all_meta_mappings = {}
-        source_id = Source.objects.get(source_name ='Spreadsheet Upload').id
 
-        all_meta_mappings['campaigns'] = self.map_campaigns(sheet_df,source_id)
-        all_meta_mappings['indicators'] = self.map_indicators(sheet_df,source_id)
-        all_meta_mappings['regions'] = self.map_regions(sheet_df,source_id)
+        all_meta_mappings['campaigns'] = self.map_campaigns(sheet_df)
+        all_meta_mappings['indicators'] = map_indicators(sheet_df,self.source_id)
+        all_meta_mappings['regions'] = self.map_regions(sheet_df)
 
         return sheet_df,all_meta_mappings
 
-    def map_indicators(self,sheet_df,source_id):
-        indicator_mapping = {}
-        cols = [col.lower() for col in sheet_df]
+    # def map_indicators(self,sheet_df):
+    #     indicator_mapping = {}
+    #     cols = [col.lower() for col in sheet_df]
+    #
+    #     for col_name in cols:
+    #
+    #         source_indicator, created = SourceIndicator.objects.get_or_create(
+    #             source_id = self.source_id,
+    #             indicator_string = col_name
+    #         )
+    #
+    #         try:
+    #             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
+    #                 source_indicator.id).master_indicator_id
+    #
+    #             indicator_mapping[col_name] = indicator_id
+    #         except ObjectDoesNotExist:
+    #             pass
+    #
+    #     return indicator_mapping
 
-        for col_name in cols:
 
-            source_indicator, created = SourceIndicator.objects.get_or_create(
-                source_id = source_id,
-                indicator_string = col_name
-            )
-
-            try:
-                indicator_id = IndicatorMap.objects.get(source_indicator_id = \
-                    source_indicator.id).master_indicator_id
-
-                indicator_mapping[col_name] = indicator_id
-            except ObjectDoesNotExist:
-                pass
-
-        return indicator_mapping
-
-
-    def map_campaigns(self,sheet_df,source_id):
+    def map_campaigns(self,sheet_df,):
 
         ## CAMPAIGN MAPPING ##
         campaign_mapping = {}
@@ -80,7 +81,7 @@ class PreIngest(object):
 
 
             source_campaign, created = SourceCampaign.objects.get_or_create(
-                source_id = source_id,
+                source_id = self.source_id,
                 campaign_string = campaign[0]
             )
             try:
@@ -93,7 +94,7 @@ class PreIngest(object):
 
         return campaign_mapping
 
-    def map_regions(self,df,source_id):
+    def map_regions(self,df):
         ## REGION MAPPING ##
         region_mapping = {}
 
@@ -105,7 +106,7 @@ class PreIngest(object):
         for region in regions:
 
             source_region_id, created = SourceRegion.objects.get_or_create(
-                source_id = source_id,
+                source_id = self.source_id,
                 region_string = region[0]
             )
 

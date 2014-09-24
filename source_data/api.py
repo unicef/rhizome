@@ -4,8 +4,8 @@ from tastypie.authentication import ApiKeyAuthentication
 
 
 from source_data.models import EtlJob
-from source_data.etl_tasks.transform_odk import VcmEtl
-from source_data.etl_tasks.refresh_work_tables import WorkTableTask
+from source_data.etl_tasks.transform_odk import VcmTransform
+from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from time import strftime
 
 import subprocess,sys,time
@@ -66,9 +66,10 @@ class EtlTask(object):
 
         self.function_mappings = {
               'pull_odk' : self.pull_odk,
-              'refresh_work_tables' : self.refresh_work_tables,
-              'refresh_metadata' : self.refresh_metadata,
-              'refresh_master' : self.refresh_master,
+              'refresh_odk_work_tables' : self.refresh_work_tables,
+              'pre_process_odk' : self.pre_process_odk,
+              # 'refresh_master' : self.refresh_master,
+              'transform_odk' : self.transform_odk,
               'test_api' : self.test_api,
             }
 
@@ -99,18 +100,19 @@ class EtlTask(object):
               t = WorkTableTask(self.task_guid,source_file)
 
 
-    def refresh_metadata(self):
+    def pre_process_odk(self):
 
-        e = VcmEtl(self.task_guid)
+        e = VcmTransform(self.task_guid)
+        e.pre_process_odk()
 
-        e.ingest_indicators()
-        e.ingest_campaigns()
-        e.ingest_regions()
+    # def refresh_master(self):
+    #
+    #     e = VcmEtl(self.task_guid)
+    #     e.ingest_vcm_datapoints()
 
-    def refresh_master(self):
+    def transform_odk(self):
 
-        e = VcmEtl(self.task_guid)
-        e.ingest_vcm_datapoints()
+        v = VcmTransform(self.task_guid)
 
     def test_api(self):
 

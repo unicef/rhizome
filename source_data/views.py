@@ -37,7 +37,6 @@ def file_upload(request):
 
                 ## FIND MAPPINGS ##
                 p = PreIngest(file_path,newdoc.id)
-                # p.df , p.mappings
 
                 ## MOVE XLS INTO SOURCE DATAPOINTS TABLE ##
                 current_user_id = request.user.id

@@ -18,9 +18,8 @@ class DocTransform(object):
         self.df = df
         self.uploaded_by_user_id = uploaded_by_user_id
 
+        # Ingest Data frame and insert source_datapoint records
         self.sheet_df_to_source_datapoints()
-
-
 
 
     def sheet_df_to_source_datapoints(self):
