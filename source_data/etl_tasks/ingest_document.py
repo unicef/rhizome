@@ -1,9 +1,12 @@
 import pprint as pp
 
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+
 from source_data.models import ProcessStatus, SourceDataPoint, SourceIndicator, IndicatorMap
 from datapoints.models import DataPoint, Source
+
 
 class DocIngest(object):
 
@@ -67,22 +70,17 @@ class DocIngest(object):
 
         try:
             indicator_id = self.mappings['indicators'][record.indicator_string]
-            print 'INDICATOR ID: ' + str(indicator_id)
         except KeyError:
             return
 
         try:
             region_id = self.mappings['regions'][record.region_string]
-            print 'REGION ID: ' + str(region_id)
         except KeyError:
             return
 
         try:
             campaign_id = self.mappings['campaigns'][record.campaign_string]
-            print 'CAMPAIGN ID: ' + str(campaign_id)
         except KeyError:
-            print 'THIS CAMPAIGN DIDNT WORK: ' + record.campaign_string
-            print self.mappings['campaigns']
             return
 
         try:
@@ -95,5 +93,9 @@ class DocIngest(object):
                 source_datapoint_id = record.id
             )
 
-        except Exception as e:
-            print e
+        ## STORE THE ERROR MESSAGE SOMEWHERE FOR USER TO REVIEW ##
+        except IntegrityError:
+            pass
+        except ValidationError:
+            pass
+            # NEEDS TO BE HANDLED BY GENERIC VALIDATION MODULE
