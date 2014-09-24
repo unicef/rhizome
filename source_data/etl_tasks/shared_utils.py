@@ -1,23 +1,26 @@
-from source_data.models import *
+import pprint as pp
+
 from django.core.exceptions import ObjectDoesNotExist
 
-def map_indicators(df,source_id):
+from source_data.models import *
+
+
+def map_indicators(indicator_strings,source_id):
 
     indicator_mapping = {}
-    cols = [col.lower() for col in df]
 
-    for col_name in cols:
+    for indicator_string in indicator_strings:
 
         source_indicator, created = SourceIndicator.objects.get_or_create(
             source_id = source_id,
-            indicator_string = col_name
+            indicator_string = indicator_string
         )
 
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
                 source_indicator.id).master_indicator_id
 
-            indicator_mapping[col_name] = indicator_id
+            indicator_mapping[indicator_string] = indicator_id
         except ObjectDoesNotExist:
             pass
 
@@ -27,7 +30,6 @@ def map_indicators(df,source_id):
 def map_campaigns(campaign_strings,source_id):
 
     campaign_mapping = {}
-
 
     for campaign in campaign_strings:
 
@@ -44,3 +46,24 @@ def map_campaigns(campaign_strings,source_id):
             pass
 
     return campaign_mapping
+
+
+def map_regions(region_dict_list, source_id):
+
+    region_mapping = {}
+
+    for region_dict in region_dict_list:
+
+        region_dict['source_id'] = source_id
+
+        source_region, created = SourceRegion.objects.get_or_create(**region_dict)
+
+        try:
+            region_id = RegionMap.objects.get(source_region_id = \
+                source_region.id).master_region_id
+
+            region_mapping[region_dict['settlement_code']] = region_id
+        except ObjectDoesNotExist:
+            pass
+
+    return region_mapping

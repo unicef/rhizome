@@ -126,7 +126,7 @@ class RegionMapCreateView(CreateMap):
     success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
-        return { 'source_campaign': self.kwargs['pk'] }
+        return { 'source_region': self.kwargs['pk'] }
 
 
 class CampaignMapCreateView(CreateMap):

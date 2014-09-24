@@ -49,36 +49,14 @@ class PreIngest(object):
 
         return sheet_df,all_meta_mappings
 
-    # def map_indicators(self,sheet_df):
-    #     indicator_mapping = {}
-    #     cols = [col.lower() for col in sheet_df]
-    #
-    #     for col_name in cols:
-    #
-    #         source_indicator, created = SourceIndicator.objects.get_or_create(
-    #             source_id = self.source_id,
-    #             indicator_string = col_name
-    #         )
-    #
-    #         try:
-    #             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
-    #                 source_indicator.id).master_indicator_id
-    #
-    #             indicator_mapping[col_name] = indicator_id
-    #         except ObjectDoesNotExist:
-    #             pass
-    #
-    #     return indicator_mapping
 
-
-    def map_campaigns(self,sheet_df,):
+    def map_campaigns(self,sheet_df):
 
         ## CAMPAIGN MAPPING ##
         campaign_mapping = {}
         campaigns = sheet_df.groupby('DateSoc')
 
         for campaign in campaigns:
-
 
             source_campaign, created = SourceCampaign.objects.get_or_create(
                 source_id = self.source_id,
