@@ -16,8 +16,8 @@ from itertools import chain
 from datapoints.mixins import PermissionRequiredMixin
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.pre_process_document import PreIngest
-from source_data.etl_tasks.ingest_document import DocIngest
+from source_data.etl_tasks.pre_process_upload import PreIngest
+from source_data.etl_tasks.transform_upload import DocIngest
 
 
 def file_upload(request):
