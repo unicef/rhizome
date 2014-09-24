@@ -47,28 +47,36 @@ class Document(models.Model):
     guid = models.CharField(max_length=40)
 
 
-class CsvUpload(models.Model):
+class SourceDataPoint(models.Model):
+    '''
+    source will be odk or csv upload. source_id (for odk) is the guid
+    of the submissions.  This is not unique to this table as there are many
+    indicators per submission. For a CSV upload the source_id is csv upload,
+    the source guid is the uniquesoc and the document id is traced here as well.
+    for ODK, the document ID will coorespond to the form (vcm_summary_new)
+    '''
 
     region_string = models.CharField(max_length=255)
     campaign_string = models.CharField(max_length=255)
-    column_value = models.CharField(max_length=255)
+    indicator_string = models.CharField(max_length=255)
     cell_value = models.CharField(max_length=255)
-    document = models.ForeignKey(Document)
     row_number= models.IntegerField()
+    source = models.ForeignKey(Source)
+    document = models.ForeignKey(Document)
+    source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
-    guid = models.CharField(primary_key=True, max_length=40)
-    uniquesoc = models.CharField(max_length=255)
+    guid = models.CharField(unique=True, max_length=40)
     created_at = models.DateTimeField(default=datetime.now())
 
     def save(self, *args, **kwargs):
         if not self.guid:
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
-        super(CsvUpload, self).save(*args, **kwargs)
+        super(SourceDataPoint, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'source_data'
-        unique_together = ('document','row_number','column_value')
+        # unique_together = ('document','row_number','indicator_string')
 
 
 

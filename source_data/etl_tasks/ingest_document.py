@@ -2,7 +2,7 @@ import pprint as pp
 
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
-from source_data.models import ProcessStatus, CsvUpload, SourceIndicator, IndicatorMap
+from source_data.models import ProcessStatus, SourceDataPoint, SourceIndicator, IndicatorMap
 from datapoints.models import DataPoint, Source
 
 class DocIngest(object):
@@ -18,10 +18,10 @@ class DocIngest(object):
 
     def process_sheet_df(self):
 
-        self.sheet_df_to_work_table()
+        self.sheet_df_to_source_datapoints()
         self.ingest_doc_to_master()
 
-    def sheet_df_to_work_table(self):
+    def sheet_df_to_source_datapoints(self):
 
         cols = [col.lower() for col in self.df]
 
@@ -35,27 +35,28 @@ class DocIngest(object):
             row_basics['row_number'] = i
             row_basics['region_string'] = region_string
             row_basics['campaign_string'] = str(row[cols.index('datesoc')])
-            row_basics['uniquesoc'] = row[cols.index('uniquesoc')]
+            row_basics['source_guid'] = row[cols.index('uniquesoc')]
             #
             for i,(cell) in enumerate(row):
 
                 to_create = row_basics
-                to_create['column_value'] = cols[i]
+                to_create['indicator_string'] = cols[i]
                 to_create['cell_value'] = cell
 
 
                 to_create['status_id'] = ProcessStatus.objects.get(status_text='TO_PROCESS').id
+                to_create['source_id'] = Source.objects.get(source_name='Spreadsheet Upload').id
                 to_create['document_id'] = self.document_id
 
                 try:
-                    CsvUpload.objects.create(**to_create)
+                    SourceDataPoint.objects.create(**to_create)
                 except IntegrityError as e:
                     print e
 
 
     def ingest_doc_to_master(self):
 
-        to_process = CsvUpload.objects.filter(document_id=self.document_id)
+        to_process = SourceDataPoint.objects.filter(document_id=self.document_id)
 
         for i,(record) in enumerate(to_process):
 
@@ -65,7 +66,7 @@ class DocIngest(object):
     def csv_upload_record_to_datapoint(self,record):
 
         try:
-            indicator_id = self.mappings['indicators'][record.column_value]
+            indicator_id = self.mappings['indicators'][record.indicator_string]
             print 'INDICATOR ID: ' + str(indicator_id)
         except KeyError:
             return

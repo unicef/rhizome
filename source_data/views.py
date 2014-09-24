@@ -64,20 +64,24 @@ def file_upload(request):
 
 def document_review(request,document_id,mappings):
 
-    doc_data = []
+    to_map_message = []
 
-    r =  {'problem':'Indicators to Map','recs':len(mappings['indicators']),'model':'indicator'}
-    r2 = {'problem':'Campaigns to Map','recs':len(mappings['campaigns']),'model':'campaign'}
-    r3 = {'problem':'Regions To Map','recs':len(mappings['regions']),'model':'region'}
+    to_map_ind_count = SourceIndicator.objects.count() - IndicatorMap.objects.count()
+    to_map_reg_count = SourceRegion.objects.count() - RegionMap.objects.count()
+    to_map_cam_count = SourceCampaign.objects.count() - CampaignMap.objects.count()
 
-    doc_data.append(r)
-    doc_data.append(r2)
-    doc_data.append(r3)
+    r =  {'to_map_count': to_map_ind_count, 'model':'indicator'}
+    r2 = {'to_map_count': to_map_reg_count, 'model':'region'}
+    r3 = {'to_map_count': to_map_cam_count, 'model':'campaign'}
+
+    to_map_message.append(r)
+    to_map_message.append(r2)
+    to_map_message.append(r3)
 
 
     return render_to_response(
         'upload/document_review.html',
-        {'doc_data': doc_data},
+        {'doc_data': to_map_message},
         context_instance=RequestContext(request),
     )
 

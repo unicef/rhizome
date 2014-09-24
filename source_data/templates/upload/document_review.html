@@ -15,17 +15,16 @@
         <thead>
             <tr>
                 <th>Error</th>
-                <th>Affected Records</th>
+                <th>Records to Map </th>
                 <th>Validate</th>
             </tr>
         </thead>
         <tbody>
             {% for error in doc_data %}
             <tr>
-                <th>{{ error.problem }}</th>
-                <th>{{ error.recs }}</th>
-                <th><a href="{% url 'source_data:to_map' %}"> Edit </a></th>
-
+                <th>{{ error.model }}s to Map</th>
+                <th>{{ error.to_map_count }}</th>
+                <th><a href="{% url 'source_data:to_map' %}"> Map </a></th>
             </tr>
         </tbody>
         {% endfor %}
