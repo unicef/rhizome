@@ -8,21 +8,20 @@ from source_data.models import ProcessStatus, SourceDataPoint, SourceIndicator, 
 from datapoints.models import DataPoint, Source
 
 
-class DocIngest(object):
+class DocTransform(object):
 
-    def __init__(self,document_id,mappings,df,uploaded_by_user_id):
+    def __init__(self,document_id,df,uploaded_by_user_id):
+
+        self.source_datapoints = []
 
         self.document_id = document_id
-        self.mappings = mappings
         self.df = df
         self.uploaded_by_user_id = uploaded_by_user_id
 
-        self.process_sheet_df()
-
-    def process_sheet_df(self):
-
         self.sheet_df_to_source_datapoints()
-        self.ingest_doc_to_master()
+
+
+
 
     def sheet_df_to_source_datapoints(self):
 
@@ -52,50 +51,7 @@ class DocIngest(object):
                 to_create['document_id'] = self.document_id
 
                 try:
-                    SourceDataPoint.objects.create(**to_create)
+                    created = SourceDataPoint.objects.create(**to_create)
+                    self.source_datapoints.append(created)
                 except IntegrityError as e:
                     print e
-
-
-    def ingest_doc_to_master(self):
-
-        to_process = SourceDataPoint.objects.filter(document_id=self.document_id)
-
-        for i,(record) in enumerate(to_process):
-
-            self.csv_upload_record_to_datapoint(record)
-
-
-    def csv_upload_record_to_datapoint(self,record):
-
-        try:
-            indicator_id = self.mappings['indicators'][record.indicator_string]
-        except KeyError:
-            return
-
-        try:
-            region_id = self.mappings['regions'][record.region_string]
-        except KeyError:
-            return
-
-        try:
-            campaign_id = self.mappings['campaigns'][record.campaign_string]
-        except KeyError:
-            return
-
-        try:
-            datapoint, created = DataPoint.objects.get_or_create(
-                indicator_id = indicator_id,
-                region_id = region_id,
-                campaign_id = campaign_id,
-                value = record.cell_value,
-                changed_by_id = self.uploaded_by_user_id,
-                source_datapoint_id = record.id
-            )
-
-        ## STORE THE ERROR MESSAGE SOMEWHERE FOR USER TO REVIEW ##
-        except IntegrityError:
-            pass
-        except ValidationError:
-            pass
-            # NEEDS TO BE HANDLED BY GENERIC VALIDATION MODULE

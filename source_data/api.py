@@ -4,7 +4,7 @@ from tastypie.authentication import ApiKeyAuthentication
 
 
 from source_data.models import EtlJob
-from source_data.etl_tasks.refresh_master import VcmEtl
+from source_data.etl_tasks.transform_odk import VcmEtl
 from source_data.etl_tasks.refresh_work_tables import WorkTableTask
 from time import strftime
 

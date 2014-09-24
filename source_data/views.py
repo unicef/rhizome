@@ -17,7 +17,8 @@ from datapoints.mixins import PermissionRequiredMixin
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.pre_process_upload import PreIngest
-from source_data.etl_tasks.transform_upload import DocIngest
+from source_data.etl_tasks.transform_upload import DocTransform
+from source_data.etl_tasks.refresh_master import MasterRefresh
 
 
 def file_upload(request):
@@ -38,10 +39,13 @@ def file_upload(request):
                 p = PreIngest(file_path,newdoc.id)
                 # p.df , p.mappings
 
-                ## MOVE XLS INTO DATAPOINTS TABLE ##
+                ## MOVE XLS INTO SOURCE DATAPOINTS TABLE ##
                 current_user_id = request.user.id
-                d = DocIngest(document_id,p.mappings,p.df,current_user_id)
-                # process_sheet_df(df,document_id,mappings)
+                d = DocTransform(document_id,p.df,current_user_id)
+
+                ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
+                m = MasterRefresh(p.mappings,d.source_datapoints,\
+                    current_user_id)
 
                 return document_review(request,newdoc.id,p.mappings)
 
