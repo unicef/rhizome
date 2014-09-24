@@ -20,7 +20,6 @@ class PreIngest(object):
         ''' in this method we create or find the source metadata and return the
         values as a dictionary.'''
 
-        pass
         wb = xlrd.open_workbook(file_path)
 
         for sheet in wb.sheets():

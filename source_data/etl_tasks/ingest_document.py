@@ -91,9 +91,8 @@ class DocIngest(object):
                 region_id = region_id,
                 campaign_id = campaign_id,
                 value = record.cell_value,
-                source_id = Source.objects.get(source_name='Spreadsheet Upload').id,
                 changed_by_id = self.uploaded_by_user_id,
-                source_guid = record.guid
+                source_datapoint_id = record.id
             )
 
         except Exception as e:

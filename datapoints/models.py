@@ -2,6 +2,7 @@ from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 
+
 class Source(models.Model):
     source_name = models.CharField(max_length=55,unique=True)
     source_description = models.CharField(max_length=255,unique=True)
@@ -98,14 +99,13 @@ class DataPoint(models.Model):
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
-    source = models.ForeignKey(Source)
-    source_guid = models.CharField(max_length=255)
+    source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
     history = HistoricalRecords()
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = (('indicator','region','campaign'),('source','source_guid'))
+        unique_together = ('indicator','region','campaign')
 
         permissions = (
             ('view_datapoint', 'View datapoint'),
