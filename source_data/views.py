@@ -35,14 +35,15 @@ def file_upload(request):
             if file_path.endswith('xls') or file_path.endswith('xlsx'):
 
                 ## FIND MAPPINGS ##
-                df, mappings = PreIngest(file_path,newdoc.id)
+                p = PreIngest(file_path,newdoc.id)
+                # p.df , p.mappings
 
                 ## MOVE XLS INTO DATAPOINTS TABLE ##
                 current_user_id = request.user.id
-                d = DocIngest(document_id,mappings,df,current_user_id)
+                d = DocIngest(document_id,p.mappings,p.df,current_user_id)
                 # process_sheet_df(df,document_id,mappings)
 
-                return document_review(request,newdoc.id,mappings)
+                return document_review(request,newdoc.id,p.mappings)
 
             # if file is csv...
 
@@ -107,7 +108,6 @@ class IndicatorMapCreateView(CreateMap):
     template_name = 'map/map.html'
     success_url=reverse_lazy('source_data:to_map')
 
-
     def get_initial(self):
         return { 'source_indicator': self.kwargs['pk'] }
 
@@ -117,7 +117,6 @@ class RegionMapCreateView(CreateMap):
     model=RegionMap
     form_class = RegionMapForm
     success_url=reverse_lazy('source_data:to_map')
-
 
     def get_initial(self):
         return { 'source_campaign': self.kwargs['pk'] }
@@ -129,10 +128,8 @@ class CampaignMapCreateView(CreateMap):
     form_class = CampaignMapForm
     success_url=reverse_lazy('source_data:to_map')
 
-
     def get_initial(self):
         return { 'source_campaign': self.kwargs['pk'] }
-
 
 
 class ToMap(generic.ListView):
