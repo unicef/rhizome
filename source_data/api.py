@@ -17,7 +17,6 @@ except ImportError:
     import source_data.dev_odk_settings as odk_settings
 
 class EtlResource(ModelResource):
-    '''Region Resource'''
 
     class Meta():
         queryset = EtlJob.objects.all()
@@ -28,11 +27,12 @@ class EtlResource(ModelResource):
         authorization = Authorization()
         authentication = ApiKeyAuthentication()
 
-    # http://localhost:8000/api/v1/etl/?task=pull_odk
+
     def get_object_list(self, request):
+        '''this is the only method from tastypie that is overriden all logic
+        for the etl api is dealt with inside this method'''
 
         task_string = request.GET['task']
-        print task_string
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
         ## stage the job ##
@@ -45,9 +45,18 @@ class EtlResource(ModelResource):
         ## MAKE THIS A CALL BACK FUNCTION ##
         et = EtlTask(task_string,created.guid)
 
+        self.err, self.data = et.err, et.data
+
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
-        created.status = 'COMPLETE'
+
+        if self.err:
+            created.status = 'ERROR'
+            created.error_msg = self.err['message']
+
+        elif self.data:
+            created.status = 'COMPLETE'
+            created.success_msg = self.data['message']
 
         created.save()
 
@@ -64,32 +73,39 @@ class EtlTask(object):
         self.task_guid = task_guid
         self.user_id = User.objects.get(username='odk').id
 
-        x = task_string + '\n'
-
         self.function_mappings = {
-              'odk_full_refresh' : self.odk_full_refresh,
-              'odk_vcm_summary_refresh' : self.odk_vcm_summary_refresh,
-              # 'refresh_odk_work_tables' : self.refresh_work_tables,
-              # 'ingest_odk_vcm_summary' : self.ingest_odk_vcm_summary,
-              # 'ingest_odk_vcm_settlement' : self.ingest_odk_vcm_settlement,
-              # 'refresh_master' : self.refresh_master,
               'test_api' : self.test_api,
+              'odk_refresh_all' : self.odk_refresh_all,
+              'odk_refresh_vcm_summary' : self.odk_refresh_vcm_summary,
+              'odk_refresh_regions' : self.odk_refresh_regions,
             }
 
         fn = self.function_mappings[task_string]
 
-        fn()
+        self.err, self.data = fn()
 
-    def odk_full_refresh(self):
+
+    def test_api(self):
+
+        try:
+            data = {'message' : 'API TEST IS WORKING'}
+        except Exception as e:
+            err = {'message' : e}
+            return err, None
+
+        return None, data
+
+
+    def odk_refresh_all(self):
 
         self.odk_pull_raw_form_data()
         self.odk_refresh_work_tables()
 
 
-    def odk_vcm_summary_refresh(self):
+    def odk_refresh_vcm_summary(self):
 
-        # self.odk_pull_raw_form_data('New_VCM_Summary')
-        # self.odk_refresh_work_tables('New_VCM_Summary')
+        self.odk_pull_raw_form_data('New_VCM_Summary')
+        self.odk_refresh_work_tables('New_VCM_Summary')
 
         vst = VcmSummaryTransform(self.task_guid)
 
@@ -97,6 +113,16 @@ class EtlTask(object):
         source_dps = vst.vcm_summary_to_source_datapoints()
 
         results = self.refresh_master(mappings,source_dps)
+
+    def odk_refresh_regions(self):
+
+        v_sett_t = VcmSettlementTransform(self.task_guid)
+        v_sett_t.refresh_source_regions()
+
+
+    ######################################################################
+    ########## HELPER METHODS BELOW USED BY API CALLS ABOVE ##############
+    ######################################################################
 
 
     def odk_pull_raw_form_data(self,form_id=None):
@@ -138,20 +164,7 @@ class EtlTask(object):
               t = WorkTableTask(self.task_guid,source_file)
 
 
-    def odk_pre_transform(self):
-
-        v = VcmTransform(self.task_guid)
-
-    def ingest_odk_regions(self):
-
-        v_sett_t = VcmSettlementTransform(self.task_guid)
-        v_sett_t.refresh_source_regions()
-
     def refresh_master(self,mappings,source_datapoints):
 
         m = MasterRefresh(mappings,source_datapoints,self.user_id)
         m.main()
-
-    def test_api(self):
-
-        print 'API TEST IS WORKING \n' * 5
