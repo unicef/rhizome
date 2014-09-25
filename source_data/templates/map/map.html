@@ -5,10 +5,11 @@
 
 <form action = "" method = "post" class="form">
     {% csrf_token %}
-
     {{ form.as_ul }}
     <button type="submit" class="btn btn-primary"> Map! </button>
+
     <a href="{% url 'indicators:create_indicator' %}"<button type="submit" class="btn btn-success"> Create New indicator </button></a>
+
 
 </form>
 

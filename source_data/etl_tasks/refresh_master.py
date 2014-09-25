@@ -1,4 +1,4 @@
-
+import pprint as pp
 
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -20,26 +20,28 @@ class MasterRefresh(object):
       def main(self):
 
           for record in self.records:
-              self.process_source_datapoint_record(record)
+              err, datapoint_id = self.process_source_datapoint_record(record)
+              if err:
+                  print err
 
 
       def process_source_datapoint_record(self,record):
 
           try:
+              # indicator_string = record.indicator_string
               indicator_id = self.mappings['indicators'][record.indicator_string]
-          except KeyError:
-              return
+          except KeyError as err:
+              return err, None
 
           try:
               region_id = self.mappings['regions'][record.region_string]
-          except KeyError:
-              return
-
+          except KeyError as err:
+              return err, None
 
           try:
               campaign_id = self.mappings['campaigns'][record.campaign_string]
-          except KeyError:
-              return
+          except KeyError as err:
+              return err, None
 
 
           try:
@@ -53,8 +55,11 @@ class MasterRefresh(object):
               )
 
           ## STORE THE ERROR MESSAGE SOMEWHERE FOR USER TO REVIEW ##
-          except IntegrityError:
-              pass
+          except IntegrityError as err:
+              return err, None
           except ValidationError:
-              pass
+              return err, None
               # NEEDS TO BE HANDLED BY GENERIC VALIDATION MODULE
+
+
+          return None, datapoint_id

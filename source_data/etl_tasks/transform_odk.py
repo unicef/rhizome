@@ -116,6 +116,9 @@ class VcmSummaryTransform(object):
 
 
     def vcm_summary_to_source_datapoints(self):
+
+        source_datapoints = []
+        
         to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
             process_status__status_text='TO_PROCESS').values()))
 
@@ -135,6 +138,10 @@ class VcmSummaryTransform(object):
             row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
             # row_obj.process_status = process_status
             row_obj.save()
+
+
+
+        return source_datapoints
 
 
     def process_row(self,row_dict):
