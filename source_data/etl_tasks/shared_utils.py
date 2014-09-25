@@ -41,7 +41,7 @@ def map_campaigns(campaign_strings,source_id):
             campaign_id = CampaignMap.objects.get(source_campaign_id = \
                 source_campaign.id).master_campaign_id
 
-            campaign_mapping[str(campaign[0])] = campaign_id
+            campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:
             pass
 
@@ -55,6 +55,9 @@ def map_regions(region_dict_list, source_id):
     for region_dict in region_dict_list:
 
         region_dict['source_id'] = source_id
+
+        # if not region_dict['region_string'] and region_dict['settlement_code']:
+        #     region_dict['region_string'] = region_dict['settlement_code']
 
         source_region, created = SourceRegion.objects.get_or_create(**region_dict)
 

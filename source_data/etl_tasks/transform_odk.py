@@ -51,7 +51,6 @@ class VcmSettlementTransform(object):
 
 class VcmSummaryTransform(object):
     def __init__(self,request_guid):
-        print 'initializing VCM ETL Object'
 
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
@@ -68,8 +67,6 @@ class VcmSummaryTransform(object):
         all_meta_mappings['campaigns'] = self.get_campaign_mappings(to_process_df)
         all_meta_mappings['indicators'] = self.get_indicator_mappings(to_process_df)
         all_meta_mappings['regions'] = self.get_region_mappings(to_process_df)
-
-        pp.pprint(all_meta_mappings)
 
         return all_meta_mappings
 
@@ -91,6 +88,7 @@ class VcmSummaryTransform(object):
             region_dict_list.append(region_dict)
 
         region_mapping = map_regions(region_dict_list,self.source_id)
+        pp.pprint(region_dict_list)
 
         return region_mapping
 
@@ -178,9 +176,7 @@ class VcmSummaryTransform(object):
             )
             self.source_datapoints.append(sdp)
         except Exception as e:
-            print e
             return 'ALREADY_EXISTS'
-            # NEED TO HANDLE DUPE DATA POINTS BETTER #
 
         return 'SUCESS_INSERT'
 
