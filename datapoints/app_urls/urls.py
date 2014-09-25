@@ -66,8 +66,9 @@ urlpatterns = [
         views.AggregationCreateView.as_view(),
         name='create_aggregation'),
 
-
-        ## EXPECTED DATA
+        ###################
+        ## EXPECTED DATA ##
+        ###################
 
     url(r'^aggregation/expected_data$', views.AggregationExpectedDataView.as_view(),
         name='aggregation_expected_data_index'),
@@ -77,5 +78,10 @@ urlpatterns = [
         views.AggregationExpectedDataCreateView.as_view(),
         name='create_aggregation_expected_data'),
 
+        ############
+        ## EXPORT ##
+        ############
+
+    url(r'^export/$', views.export, name='export'),
 
 ]
