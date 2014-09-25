@@ -78,7 +78,7 @@ class SourceDataPoint(models.Model):
 
     class Meta:
         app_label = 'source_data'
-        # unique_together = ('document','row_number','indicator_string')
+        unique_together = ('source','source_guid','indicator_string')
 
 
     ###################

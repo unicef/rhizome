@@ -55,6 +55,7 @@ class VcmSummaryTransform(object):
 
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
+        self.source_datapoints = []
 
 
     def pre_process_odk(self):
@@ -114,11 +115,13 @@ class VcmSummaryTransform(object):
 
         return campaign_mapping
 
+        ### ABOVE IS ABOUT MAPPING ###
+        ## BELOW IS ABOUT TRANSFORM ##
+
 
     def vcm_summary_to_source_datapoints(self):
 
-        source_datapoints = []
-        
+
         to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
             process_status__status_text='TO_PROCESS').values()))
 
@@ -140,10 +143,6 @@ class VcmSummaryTransform(object):
             row_obj.save()
 
 
-
-        return source_datapoints
-
-
     def process_row(self,row_dict):
 
         # row level variables
@@ -157,8 +156,6 @@ class VcmSummaryTransform(object):
                 cell_value,source_guid)
 
 
-
-
     def process_cell(self,region_string,campaign_string,indicator_string,\
             cell_value,src_key):
 
@@ -168,21 +165,22 @@ class VcmSummaryTransform(object):
         cleaned_cell_value = self.clean_cell_value(cell_value)
 
         try:
-            sdp = SourceDataPoint.objects.get_or_create(
+            sdp = SourceDataPoint.objects.create(
                 region_string = region_string,
                 campaign_string = campaign_string,
                 indicator_string =  indicator_string,
                 cell_value = cleaned_cell_value,
-                row_number = 1,
+                row_number = 1, ## FIX ##
                 source = Source.objects.get(source_name='odk'),
-                document_id = 1,
+                document_id = 1, ## FIX ##
                 source_guid = src_key,
                 status = ProcessStatus.objects.get(status_text='TO_PROCESS')
             )
+            self.source_datapoints.append(sdp)
         except Exception as e:
             print e
             return 'ALREADY_EXISTS'
-        #     # NEED TO HANDLE DUPE DATA POINTS BETTER #
+            # NEED TO HANDLE DUPE DATA POINTS BETTER #
 
         return 'SUCESS_INSERT'
 

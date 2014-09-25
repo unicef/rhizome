@@ -107,20 +107,21 @@ class EtlTask(object):
 
             # ## DUMP THE ODK DATA INTO THE WORK TABLE ##
             # self.odk_refresh_work_tables('New_VCM_Summary')
-            #
+
             # ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
             vst = VcmSummaryTransform(self.task_guid)
-            #
+
             # ## PREPROCESS THIS DATA, THAT IS FIND THE META DATA MAPPINGS ##
             mappings = vst.pre_process_odk()
-            #
-            # ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
-            source_dps = vst.vcm_summary_to_source_datapoints()
 
+            # ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
+            vst.vcm_summary_to_source_datapoints()
+            source_dps = vst.source_datapoints
+            results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
             # ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
-            dps = self.refresh_master(mappings,source_dps)
-            results['new_datapoint_count'] = self.handle_results(dps)
+            # dps = self.refresh_master(mappings,source_dps)
+            # results['new_datapoint_count'] = self.handle_results(dps)
 
 
         except Exception as err:
@@ -195,7 +196,3 @@ class EtlTask(object):
 
         m = MasterRefresh(mappings,source_datapoints,self.user_id)
         m.main()
-
-#
-# Tomorrow night.. come out and suppor ya boy EARLY!  Spinning 10-1130 and trying to get that friend wealth on the dance floor!!
-# https://www.facebook.com/events/845741092132410/
