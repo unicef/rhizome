@@ -47,16 +47,18 @@ class EtlResource(ModelResource):
 
         self.err, self.data = et.err, et.data
 
+        print self.err, self.data
+
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
 
         if self.err:
             created.status = 'ERROR'
-            created.error_msg = self.err['message']
+            created.error_msg = self.err
 
         elif self.data:
             created.status = 'COMPLETE'
-            created.success_msg = self.data['message']
+            created.success_msg = self.data
 
         created.save()
 
@@ -75,9 +77,9 @@ class EtlTask(object):
 
         self.function_mappings = {
               'test_api' : self.test_api,
-              'odk_refresh_all' : self.odk_refresh_all,
               'odk_refresh_vcm_summary' : self.odk_refresh_vcm_summary,
               'odk_refresh_regions' : self.odk_refresh_regions,
+              'odk_refresh_all' : self.odk_refresh_all,
             }
 
         fn = self.function_mappings[task_string]
@@ -88,12 +90,48 @@ class EtlTask(object):
     def test_api(self):
 
         try:
-            data = {'message' : 'API TEST IS WORKING'}
-        except Exception as e:
-            err = {'message' : e}
+            data = 'API TEST IS WORKING'
+        except Exception as err:
             return err, None
 
         return None, data
+
+
+    def odk_refresh_vcm_summary(self):
+
+        try:
+            results = {}
+
+            ## PULL THE ODK DATA FROM APP ENGINE ##
+            # self.odk_pull_raw_form_data('New_VCM_Summary')
+
+            # ## DUMP THE ODK DATA INTO THE WORK TABLE ##
+            # self.odk_refresh_work_tables('New_VCM_Summary')
+            #
+            # ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
+            vst = VcmSummaryTransform(self.task_guid)
+            #
+            # ## PREPROCESS THIS DATA, THAT IS FIND THE META DATA MAPPINGS ##
+            mappings = vst.pre_process_odk()
+            #
+            # ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
+            source_dps = vst.vcm_summary_to_source_datapoints()
+
+
+            # ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
+            dps = self.refresh_master(mappings,source_dps)
+            results['new_datapoint_count'] = self.handle_results(dps)
+
+
+        except Exception as err:
+            return err, None
+
+        return None, results
+
+    def odk_refresh_regions(self):
+
+        v_sett_t = VcmSettlementTransform(self.task_guid)
+        v_sett_t.refresh_source_regions()
 
 
     def odk_refresh_all(self):
@@ -102,27 +140,16 @@ class EtlTask(object):
         self.odk_refresh_work_tables()
 
 
-    def odk_refresh_vcm_summary(self):
-
-        self.odk_pull_raw_form_data('New_VCM_Summary')
-        self.odk_refresh_work_tables('New_VCM_Summary')
-
-        vst = VcmSummaryTransform(self.task_guid)
-
-        mappings = vst.pre_process_odk()
-        source_dps = vst.vcm_summary_to_source_datapoints()
-
-        results = self.refresh_master(mappings,source_dps)
-
-    def odk_refresh_regions(self):
-
-        v_sett_t = VcmSettlementTransform(self.task_guid)
-        v_sett_t.refresh_source_regions()
-
-
     ######################################################################
     ########## HELPER METHODS BELOW USED BY API CALLS ABOVE ##############
     ######################################################################
+
+    def handle_results(self,objects):
+
+        if objects:
+            return len(objects)
+        else:
+            return 0
 
 
     def odk_pull_raw_form_data(self,form_id=None):
@@ -168,3 +195,7 @@ class EtlTask(object):
 
         m = MasterRefresh(mappings,source_datapoints,self.user_id)
         m.main()
+
+#
+# Tomorrow night.. come out and suppor ya boy EARLY!  Spinning 10-1130 and trying to get that friend wealth on the dance floor!!
+# https://www.facebook.com/events/845741092132410/
