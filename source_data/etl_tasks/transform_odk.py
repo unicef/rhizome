@@ -132,16 +132,16 @@ class VcmSummaryTransform(object):
 
         column_list = to_process.columns.tolist()
 
-        for i, row in enumerate(to_process.values):
+        for row_number, row in enumerate(to_process.values):
             # print 'processing row: ' + str(i)
 
             row_dict = {}
             for row_i,cell in enumerate(row):
                 row_dict[column_list[row_i]] = cell
 
-            print 'processing row number: ' + str(i)
+            print 'processing row number: ' + str(row_number)
 
-            self.process_row(row_dict)
+            self.process_row(row_dict,row_number)
 
             process_status_id = ProcessStatus.objects.get(status_text='SUCESS_INSERT').id
             row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
@@ -149,7 +149,7 @@ class VcmSummaryTransform(object):
             row_obj.save()
 
 
-    def process_row(self,row_dict):
+    def process_row(self,row_dict,row_number):
 
 
         # row level variables
@@ -160,11 +160,11 @@ class VcmSummaryTransform(object):
         for indicator_string, cell_value in row_dict.iteritems():
 
             self.process_cell(region_string,campaign_string,indicator_string,\
-                cell_value,source_guid)
+                cell_value,source_guid,row_number)
 
 
     def process_cell(self,region_string,campaign_string,indicator_string,\
-            cell_value,src_key):
+            cell_value,src_key,row_number):
 
         if cell_value == "nan":
             return
@@ -177,7 +177,7 @@ class VcmSummaryTransform(object):
             campaign_string = campaign_string,
             indicator_string =  indicator_string,
             cell_value = cleaned_cell_value,
-            row_number = 1, ## FIX ##
+            row_number = row_number,
             source = Source.objects.get(source_name='odk'),
             document_id = 1, ## FIX ##
             source_guid = src_key,
