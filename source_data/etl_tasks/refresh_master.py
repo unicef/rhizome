@@ -1,4 +1,5 @@
 import pprint as pp
+import traceback
 
 from decimal import InvalidOperation
 from django.db import IntegrityError
@@ -19,13 +20,15 @@ class MasterRefresh(object):
 
           self.new_datapoints = []
 
-          self.main()
-
       def main(self):
 
           for record in self.records:
               err, datapoint_id = self.process_source_datapoint_record(record)
-              print err
+
+              if err:
+                  record.error_msg = err
+                  record.save()
+
 
 
       def process_source_datapoint_record(self,record):
@@ -33,18 +36,20 @@ class MasterRefresh(object):
           try:
               # indicator_string = record.indicator_string
               indicator_id = self.mappings['indicators'][record.indicator_string]
-          except KeyError as err:
-              print err
+          except KeyError:
+              err = traceback.print_exc()
               return err, None
 
           try:
               region_id = self.mappings['regions'][record.region_string]
-          except KeyError as err:
+          except KeyError:
+              err = traceback.print_exc()
               return err, None
 
           try:
               campaign_id = self.mappings['campaigns'][record.campaign_string]
-          except KeyError as err:
+          except KeyError:
+              err = traceback.print_exc()
               return err, None
 
           print 'SHIT IS MAPPED'
@@ -59,17 +64,18 @@ class MasterRefresh(object):
               )
               self.new_datapoints.append(datapoint.id)
 
-          ## STORE THE ERROR MESSAGE SOMEWHERE FOR USER TO REVIEW ##
-          except IntegrityError as err:
+          # STORE THE ERROR MESSAGE SOMEWHERE FOR USER TO REVIEW ##
+          except IntegrityError:
+              err = traceback.print_exc()
               return err, None
-          except ValidationError as err:
+          except ValidationError:
+              err = traceback.print_exc()
               return err, None
-          except InvalidOperation as err:
+          except InvalidOperation:
+              err = traceback.print_exc()
               return err, None
-          except Exception as err:
+          except Exception:
+              err = traceback.print_exc()
               return err, None
-
-              # NEEDS TO BE HANDLED BY GENERIC VALIDATION MODULE
-
 
           return None, datapoint.id

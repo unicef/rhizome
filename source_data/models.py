@@ -74,6 +74,7 @@ class SourceDataPoint(models.Model):
     source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
     guid = models.CharField(unique=True, max_length=40)
+    error_msg = models.CharField(max_length=255,null=True)
     created_at = models.DateTimeField(default=datetime.now())
 
     def save(self, *args, **kwargs):
