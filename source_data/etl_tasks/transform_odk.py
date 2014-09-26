@@ -118,6 +118,7 @@ class VcmSummaryTransform(object):
         return campaign_mapping
 
         ### ABOVE IS ABOUT MAPPING ###
+        ##############################
         ## BELOW IS ABOUT TRANSFORM ##
 
 
@@ -132,20 +133,24 @@ class VcmSummaryTransform(object):
         column_list = to_process.columns.tolist()
 
         for i, row in enumerate(to_process.values):
-            print 'processing row: ' + str(i)
+            # print 'processing row: ' + str(i)
 
             row_dict = {}
             for row_i,cell in enumerate(row):
                 row_dict[column_list[row_i]] = cell
 
-            row_process_status = self.process_row(row_dict)
-            # process_status = ProcessStatus.objects.get(status_text=row_process_status)
+            print 'processing row number: ' + str(i)
+
+            self.process_row(row_dict)
+
+            process_status_id = ProcessStatus.objects.get(status_text='SUCESS_INSERT').id
             row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
-            # row_obj.process_status = process_status
+            row_obj.process_status_id = process_status_id
             row_obj.save()
 
 
     def process_row(self,row_dict):
+
 
         # row level variables
         region_string = row_dict['settlementcode']
@@ -166,28 +171,22 @@ class VcmSummaryTransform(object):
 
         cleaned_cell_value = self.clean_cell_value(cell_value)
 
-        try:
-            sdp = SourceDataPoint.objects.create(
-                region_string = region_string,
-                campaign_string = campaign_string,
-                indicator_string =  indicator_string,
-                cell_value = cleaned_cell_value,
-                row_number = 1, ## FIX ##
-                source = Source.objects.get(source_name='odk'),
-                document_id = 1, ## FIX ##
-                source_guid = src_key,
-                status = ProcessStatus.objects.get(status_text='TO_PROCESS')
-            )
-            self.source_datapoints.append(sdp)
-        except Exception as e:
-            return 'ALREADY_EXISTS'
 
-        return 'SUCESS_INSERT'
+        sdp = SourceDataPoint.objects.create(
+            region_string = region_string,
+            campaign_string = campaign_string,
+            indicator_string =  indicator_string,
+            cell_value = cleaned_cell_value,
+            row_number = 1, ## FIX ##
+            source = Source.objects.get(source_name='odk'),
+            document_id = 1, ## FIX ##
+            source_guid = src_key,
+            status = ProcessStatus.objects.get(status_text='TO_PROCESS')
+        )
+        self.source_datapoints.append(sdp)
 
 
     def clean_cell_value(self,cell_value):
-
-        # cell_value = cell_value.lower()
 
         if cell_value == 'yes':
             cleaned = 1
