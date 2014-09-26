@@ -64,6 +64,10 @@ class VcmSummaryTransform(object):
         to_process_df = pd.DataFrame(list(VCMSummaryNew.objects.filter\
             (process_status__status_text='TO_PROCESS').values()))
 
+        # if the data frame is empty, dont collect mappings
+        if len(to_process_df) == 0:
+            return {}
+
         all_meta_mappings['campaigns'] = self.get_campaign_mappings(to_process_df)
         all_meta_mappings['indicators'] = self.get_indicator_mappings(to_process_df)
         all_meta_mappings['regions'] = self.get_region_mappings(to_process_df)
