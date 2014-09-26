@@ -194,7 +194,7 @@ class VcmSummaryTransform(object):
             cell_value = cleaned_cell_value,
             row_number = row_number,
             source = Source.objects.get(source_name='odk'),
-            document_id = 1, ## FIX ##
+            document_id = self.document_id,
             source_guid = src_key,
             status = ProcessStatus.objects.get(status_text='TO_PROCESS')
         )
