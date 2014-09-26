@@ -48,6 +48,12 @@ class Document(models.Model):
     created_by = models.ForeignKey(User)
     guid = models.CharField(max_length=40)
 
+    def save(self, *args, **kwargs):
+        if not self.guid:
+            self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+        super(Document, self).save(*args, **kwargs)
+
 
 class SourceDataPoint(models.Model):
     '''

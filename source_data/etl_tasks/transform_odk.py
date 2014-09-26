@@ -15,6 +15,11 @@ from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, So
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import map_indicators, map_campaigns, map_regions
 
+try:
+    import source_data.prod_odk_settings as odk_settings
+except ImportError:
+    import source_data.dev_odk_settings as odk_settings
+
 class VcmSettlementTransform(object):
 
     def __init__(self,request_guid):
@@ -55,7 +60,17 @@ class VcmSummaryTransform(object):
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
         self.source_datapoints = []
+        self.document_id = self.get_document_id()
 
+
+    def get_document_id(self):
+
+        doc, created = Document.objects.get_or_create(
+            docfile = odk_settings.EXPORT_DIRECTORY + 'New_VCM_Summary.csv',
+            created_by_id = Source.objects.get(source_name='odk').id
+        )
+
+        return doc.id
 
     def pre_process_odk(self):
 
