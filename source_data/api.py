@@ -104,10 +104,10 @@ class EtlTask(object):
             results = {}
 
             # ## PULL THE ODK DATA FROM APP ENGINE ##
-            # self.odk_pull_raw_form_data('New_VCM_Summary')
+            self.odk_pull_raw_form_data('New_VCM_Summary')
 
             # ## DUMP THE ODK DATA INTO THE WORK TABLE ##
-            # self.odk_refresh_work_tables('New_VCM_Summary')
+            self.odk_refresh_work_tables('New_VCM_Summary')
 
             ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
             vst = VcmSummaryTransform(self.task_guid)
