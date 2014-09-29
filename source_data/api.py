@@ -1,4 +1,5 @@
 import subprocess,sys,time,pprint as pp
+import traceback
 
 from time import strftime
 from tastypie.resources import ModelResource
@@ -102,11 +103,11 @@ class EtlTask(object):
         try:
             results = {}
 
-            ## PULL THE ODK DATA FROM APP ENGINE ##
-            self.odk_pull_raw_form_data('New_VCM_Summary')
+            # ## PULL THE ODK DATA FROM APP ENGINE ##
+            # self.odk_pull_raw_form_data('New_VCM_Summary')
 
             # ## DUMP THE ODK DATA INTO THE WORK TABLE ##
-            self.odk_refresh_work_tables('New_VCM_Summary')
+            # self.odk_refresh_work_tables('New_VCM_Summary')
 
             ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
             vst = VcmSummaryTransform(self.task_guid)
@@ -116,7 +117,7 @@ class EtlTask(object):
 
             ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
             vst.vcm_summary_to_source_datapoints()
-            source_dps = vst.source_datapoints
+            source_dps = vst.source_datapoint[:10]
             results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
             ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
@@ -125,7 +126,8 @@ class EtlTask(object):
 
             return None, results
 
-        except Exception as err:
+        except Exception:
+            err = traceback.format_exc()
             return err, None
 
     def odk_refresh_regions(self):

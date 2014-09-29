@@ -18,7 +18,7 @@ class EtlJob(models.Model):
     task_name = models.CharField(max_length=55)
     status = models.CharField(max_length=10)
     guid = models.CharField(primary_key=True, max_length=40)
-    error_msg = models.CharField(max_length=255)
+    error_msg = models.TextField(null=True)
     success_msg = models.CharField(max_length=255)
 
     def save(self, *args, **kwargs):
