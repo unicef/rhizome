@@ -112,16 +112,14 @@ class EtlTask(object):
             ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
             vst = VcmSummaryTransform(self.task_guid)
 
-            ## PREPROCESS THIS DATA, THAT IS FIND THE META DATA MAPPINGS ##
-            mappings = vst.pre_process_odk()
 
             ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
             vst.vcm_summary_to_source_datapoints()
-            source_dps = vst.source_datapoint[:10]
+            source_dps = vst.source_datapoint
             results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
             ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
-            dps = self.refresh_master(mappings,source_dps)
+            dps = self.refresh_maste(source_dps)
             results['new_datapoint_count'] = self.handle_results(dps)
 
             return None, results
