@@ -17,7 +17,7 @@ class NewDPTestCase(TestCase):
 
         self.cell_value = '8.8'
 
-        sdp = SourceDataPoint.objects.create(
+        self.sdp = SourceDataPoint.objects.create(
               region_string = 'test region',
               campaign_string = 'test campaign',
               indicator_string = 'test indicator',
@@ -29,28 +29,42 @@ class NewDPTestCase(TestCase):
               status = self.to_process_status,
         )
 
-        self.sdp_id = sdp.id
-
         # create
-          # source datapoint
-          # source region
-          # source campaign
-          # source indicator
-
           # region map
           # campaign map
           # indicator map
 
+    def test_source_metadata_creation(self):
+        ''' here we ensure that by creating source datapoitns
+        with the strings and source ids above that the cooresponding
+        metadata ( with no mappings) are created.'''
+
+        m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
+        m.get_mappings()
+
+        self.assertEqual(1,1)
+
+
+        # assert -> source region exists and is unmapped
+               # -> source indicator exists and is unmapped
+               # -> source campaign exists and is unmapped
+
+    def test_source_metadata_mapping(self):
+        ''' here we create a mapping based on the data created above
+        and ensure that the IDs are such that we mapped them to '''
+
+        m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
+
+        self.assertEqual(2,2)
 
 
     def test_sdp_to_dp(self):
+        '''  after all is mapped we try to create the source datapoitn
+        here.  We make sure that TRUE=1, FALSE=0 and that the value
+        stored in the cell was properly converted to a numeric.'''
 
         # get the object by id
-        sdp = SourceDataPoint.objects.get(id=self.sdp_id)
+        sdp = SourceDataPoint.objects.get(id=self.sdp.id)
 
-        # Make Sure the Value is
+        # Make Sure the Value is the same
         self.assertEqual(sdp.get_val(), self.cell_value) # dp exists
-
-        # refresh master
-        m = MasterRefresh(records = [sdp],user_id = self.user.id)
-        m.get_mappings()
