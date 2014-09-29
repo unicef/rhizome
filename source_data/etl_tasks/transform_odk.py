@@ -120,7 +120,7 @@ class VcmSummaryTransform(object):
     def process_cell(self,region_string,campaign_string,indicator_string,\
             cell_value,src_key,row_number):
 
-        if cell_value == "" or cell_value = "nan":
+        if cell_value == "" or cell_value == "nan":
             return
 
         cleaned_cell_value = self.clean_cell_value(cell_value)
