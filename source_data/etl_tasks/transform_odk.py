@@ -72,68 +72,7 @@ class VcmSummaryTransform(object):
 
         return doc.id
 
-    def pre_process_odk(self):
 
-        all_meta_mappings = {}
-
-        to_process_df = pd.DataFrame(list(VCMSummaryNew.objects.filter\
-            (process_status__status_text='TO_PROCESS').values()))
-
-        # if the data frame is empty, dont collect mappings
-        if len(to_process_df) == 0:
-            return {}
-
-        all_meta_mappings['campaigns'] = self.get_campaign_mappings(to_process_df)
-        all_meta_mappings['indicators'] = self.get_indicator_mappings(to_process_df)
-        all_meta_mappings['regions'] = self.get_region_mappings(to_process_df)
-
-        return all_meta_mappings
-
-
-        ##########################
-        #### META DATA INGEST ####
-        ##########################
-
-
-    def get_region_mappings(self,df):
-
-        region_dict_list = []
-
-        sett_codes = df.groupby('settlementcode')
-
-        for sett_code in sett_codes:
-
-            region_dict = {'settlement_code':sett_code[0]}
-            region_dict_list.append(region_dict)
-
-        region_mapping = map_regions(region_dict_list,self.source_id)
-        pp.pprint(region_dict_list)
-
-        return region_mapping
-
-    def get_indicator_mappings(self,df):
-
-        indicator_strings = [col.lower() for col in df]
-        indicator_mapping = map_indicators(indicator_strings,self.source_id)
-
-        return indicator_mapping
-
-
-    def get_campaign_mappings(self,df):
-
-        source_campaign_strings = []
-
-        gb_df = df.groupby('date_implement')
-
-        for record in gb_df['date_implement']:
-            source_campaign_strings.append(record[0])
-
-        campaign_mapping = map_campaigns(source_campaign_strings,self.source_id)
-
-        return campaign_mapping
-
-        ### ABOVE IS ABOUT MAPPING ###
-        ##############################
         ## BELOW IS ABOUT TRANSFORM ##
 
 
@@ -181,11 +120,10 @@ class VcmSummaryTransform(object):
     def process_cell(self,region_string,campaign_string,indicator_string,\
             cell_value,src_key,row_number):
 
-        if cell_value == "nan":
+        if cell_value == "":
             return
 
         cleaned_cell_value = self.clean_cell_value(cell_value)
-
 
         sdp = SourceDataPoint.objects.create(
             region_string = region_string,
