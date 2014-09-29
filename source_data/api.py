@@ -115,7 +115,7 @@ class EtlTask(object):
 
             ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
             vst.vcm_summary_to_source_datapoints()
-            source_dps = vst.source_datapoint
+            source_dps = vst.source_datapoints
             results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
             ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
