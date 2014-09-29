@@ -110,7 +110,3 @@ class WorkTableTask(object):
                 created = work_table_object.objects.create(**to_create)
             except IntegrityError:
                 print 'key: ' +  row[df_columns.index('key')] + ' already exists...'
-
-
-# if __name__ =="__main__":
-#       t = WorkTableTask('asfasfasfascacavwdvwarbaetbadtbtsb','Health_Camps_Katsina')

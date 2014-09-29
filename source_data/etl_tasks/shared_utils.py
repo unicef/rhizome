@@ -22,7 +22,7 @@ def map_indicators(indicator_strings,source_id):
 
             indicator_mapping[indicator_string] = indicator_id
         except ObjectDoesNotExist:
-            pass
+            indicator_mapping[indicator_string] = None
 
     return indicator_mapping
 
@@ -43,30 +43,27 @@ def map_campaigns(campaign_strings,source_id):
 
             campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:
-            pass
+            campaign_mapping[str(campaign)] = None
 
     return campaign_mapping
 
 
-def map_regions(region_dict_list, source_id):
+def map_regions(region_strings, source_id):
 
     region_mapping = {}
 
-    for region_dict in region_dict_list:
+    for region_string in region_strings:
 
-        region_dict['source_id'] = source_id
-
-        # if not region_dict['region_string'] and region_dict['settlement_code']:
-        #     region_dict['region_string'] = region_dict['settlement_code']
-
-        source_region, created = SourceRegion.objects.get_or_create(**region_dict)
+        source_region, created = SourceRegion.objects.get_or_create(\
+            region_string=region_string,source_id=source_id)
 
         try:
             region_id = RegionMap.objects.get(source_region_id = \
                 source_region.id).master_region_id
 
-            region_mapping[region_dict['settlement_code']] = region_id
+            region_mapping[region_string] = region_id
         except ObjectDoesNotExist:
-            pass
+            region_mapping[region_string] = None
+
 
     return region_mapping

@@ -1,24 +1,24 @@
 import pprint as pp
 import traceback
-
 from decimal import InvalidOperation
+
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 
-
+from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from datapoints.models import DataPoint
 
 
 class MasterRefresh(object):
 
 
-      def __init__(self,mappings,records,user_id):
+      def __init__(self,records,user_id):
 
-          self.mappings = mappings
           self.records = records
           self.user_id = user_id
 
           self.new_datapoints = []
+
 
       def main(self):
 
@@ -28,6 +28,20 @@ class MasterRefresh(object):
               if err:
                   record.error_msg = err
                   record.save()
+
+
+      def get_mappings(self):
+
+          # THIS IS FLAWED make sure there are no dupe sources for the sdps
+          source_id = self.records[0].source_id
+
+          mappings = {}
+
+          mappings['regions'] = map_regions([sdp.region_string for sdp in self.records],source_id)
+          mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.records],source_id)
+          mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.records],source_id)
+
+          pp.pprint(mappings)
 
 
 
@@ -52,7 +66,6 @@ class MasterRefresh(object):
               err = traceback.format_exc()
               return err, None
 
-          print 'SHIT IS MAPPED'
           try:
               datapoint,created = DataPoint.objects.get_or_create(
                   indicator_id = indicator_id,
