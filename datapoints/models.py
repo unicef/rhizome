@@ -82,7 +82,7 @@ class Campaign(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-        
+
     def get_full_name(self):
         full_name = self.office.name + '-' + self.__unicode__()
         return full_name
@@ -102,6 +102,11 @@ class DataPoint(models.Model):
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
     history = HistoricalRecords()
+
+    def get_val(self):
+
+        return self.value
+        
 
     class Meta:
         db_table = 'datapoint'

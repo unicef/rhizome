@@ -1,4 +1,5 @@
 import time
+import decimal
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -117,16 +118,17 @@ class NewDPTestCase(TestCase):
         self.assertEqual(self.indicator.id,mappings_post['indicators'][self.indicator_string])
 
 
-        self.assertEqual(2,2)
-
-
     def test_sdp_to_dp(self):
         '''  after all is mapped we try to create the source datapoitn
         here.  We make sure that TRUE=1, FALSE=0 and that the value
         stored in the cell was properly converted to a numeric.'''
 
-        # get the object by id
-        sdp = SourceDataPoint.objects.get(id=self.sdp.id)
+        self.test_source_metadata_mapping()
+        m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
+        # this refreshes master, so that newly mapped data makes it in!
+        m.main()
+
+        dp = DataPoint.objects.get(source_datapoint_id = self.sdp.id)
 
         # Make Sure the Value is the same
-        self.assertEqual(sdp.get_val(), self.cell_value) # dp exists
+        self.assertEqual(float(self.sdp.get_val()), float(dp.value))

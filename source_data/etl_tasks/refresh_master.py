@@ -22,10 +22,16 @@ class MasterRefresh(object):
 
       def main(self):
 
+
+          self.mappings = self.get_mappings()
+
+
           for record in self.records:
+
               err, datapoint_id = self.process_source_datapoint_record(record)
 
               if err:
+                  print err
                   record.error_msg = err
                   record.save()
 
@@ -47,24 +53,11 @@ class MasterRefresh(object):
 
       def process_source_datapoint_record(self,record):
 
-          try:
-              # indicator_string = record.indicator_string
-              indicator_id = self.mappings['indicators'][record.indicator_string]
-          except KeyError:
-              err = traceback.format_exc()
-              return err, None
+          # KEY ERROR WONT CATCH THIS #
 
-          try:
-              region_id = self.mappings['regions'][record.region_string]
-          except KeyError:
-              err = traceback.format_exc()
-              return err, None
-
-          try:
-              campaign_id = self.mappings['campaigns'][record.campaign_string]
-          except KeyError:
-              err = traceback.format_exc()
-              return err, None
+          indicator_id = self.mappings['indicators'][record.indicator_string]
+          region_id = self.mappings['regions'][record.region_string]
+          campaign_id = self.mappings['campaigns'][record.campaign_string]
 
           try:
               datapoint,created = DataPoint.objects.get_or_create(
@@ -89,7 +82,8 @@ class MasterRefresh(object):
           except Exception:
               err = traceback.format_exc()
               return err, None
-
+          #
+          
           return None, datapoint.id
 
       def handle_dupe_record(self,record,datapoint):
