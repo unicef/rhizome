@@ -25,9 +25,9 @@ class MasterRefresh(object):
           for record in self.records:
               err, datapoint_id = self.process_source_datapoint_record(record)
 
-              # if err:
-              #     record.error_msg = err
-              #     record.save()
+              if err:
+                  record.error_msg = err
+                  record.save()
 
 
 

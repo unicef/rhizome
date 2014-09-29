@@ -83,6 +83,11 @@ class SourceDataPoint(models.Model):
 
         super(SourceDataPoint, self).save(*args, **kwargs)
 
+
+    def get_val(self):
+        return self.cell_value
+
+
     class Meta:
         app_label = 'source_data'
         unique_together = ('source','source_guid','indicator_string')
@@ -108,6 +113,7 @@ class SourceRegion(models.Model):
 
     def __unicode__(self):
         return self.region_string
+
 
 class SourceIndicator(models.Model):
 

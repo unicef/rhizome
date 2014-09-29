@@ -324,8 +324,7 @@ def export(request,**kwargs):
         indicator_ids = params['indicator_id'].split(',')
         kwargs['indicator_id__in'] = indicator_ids
     except KeyError:
-        indicator_ids = None
-
+        indicator_ids = Nonen
     try:
         campaign_ids = params['campaign_id'].split(',')
         kwargs['campaign_id__in'] = campaign_ids
