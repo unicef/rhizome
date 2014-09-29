@@ -107,7 +107,6 @@ class SourceRegion(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
-
     # class Meta:
         # unique_together = ('source','region_string')
 

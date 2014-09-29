@@ -41,8 +41,8 @@ class MasterRefresh(object):
           mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.records],source_id)
           mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.records],source_id)
 
-          pp.pprint(mappings)
 
+          return mappings
 
 
       def process_source_datapoint_record(self,record):

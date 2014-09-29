@@ -1,26 +1,34 @@
+import time
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 
 from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.models import SourceDataPoint, Document, ProcessStatus
-from datapoints.models import Source
+from source_data.models import *
+from datapoints.models import *
 
 class NewDPTestCase(TestCase):
 
     def setUp(self):
 
         self.user = User.objects.create(username='test_user')
+        self.office = Office.objects.create(name='test_office')
         self.source = Source.objects.create(source_name='test_source')
         self.document = Document.objects.create(docfile='asfasfasf',created_by=self.user)
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
         self.success_insert_status = ProcessStatus.objects.create(status_text='SUCESS_INSERT')
 
+        self.region_string = 'test region'
+        self.campaign_string = 'test campaign'
+        self.indicator_string = 'test indicator'
+
         self.cell_value = '8.8'
 
+        # create source datapoint
         self.sdp = SourceDataPoint.objects.create(
-              region_string = 'test region',
-              campaign_string = 'test campaign',
-              indicator_string = 'test indicator',
+              region_string = self.region_string,
+              campaign_string = self.campaign_string,
+              indicator_string = self.indicator_string,
               cell_value = self.cell_value,
               row_number= 1,
               source_id = self.source.id,
@@ -29,31 +37,85 @@ class NewDPTestCase(TestCase):
               status = self.to_process_status,
         )
 
-        # create
-          # region map
-          # campaign map
-          # indicator map
+        # create indicator (master)
+
+        self.indicator = Indicator.objects.create(
+            name = 'FAKE',
+            description = 'this is a fake descriptino'
+        )
+
+        # create region (master)
+        self.region = Region.objects.create(
+            full_name = 'some region',
+            settlement_code = 12414,
+            office = self.office,
+            latitude = 1.2,
+            longitude = 2.1,
+            source = self.source,
+            source_guid = 'somethingfake'
+        )
+
+        # create campaign (master)
+        self.campaign = Campaign.objects.create(
+            name = 'fake campaign',
+            office = self.office,
+            start_date = time.strftime("%Y-%m-%d"),
+            end_date = time.strftime("%Y-%m-%d"),
+        )
+
 
     def test_source_metadata_creation(self):
         ''' here we ensure that by creating source datapoitns
         with the strings and source ids above that the cooresponding
-        metadata ( with no mappings) are created.'''
+        metadata'''
 
         m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
         m.get_mappings()
 
-        self.assertEqual(1,1)
+        src_reg = SourceRegion.objects.get(region_string=self.region_string,source_id=self.source.id)
+        src_camp = SourceCampaign.objects.get(campaign_string=self.campaign_string,source_id=self.source.id)
+        src_ind = SourceIndicator.objects.get(indicator_string=self.indicator_string,source_id=self.source.id)
 
 
-        # assert -> source region exists and is unmapped
-               # -> source indicator exists and is unmapped
-               # -> source campaign exists and is unmapped
 
     def test_source_metadata_mapping(self):
-        ''' here we create a mapping based on the data created above
+        ''' here we create mappings based on the data created above
         and ensure that the IDs are such that we mapped them to '''
 
         m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
+
+        # THIS STEP INSERTS THE SOURCE META DATA THAT WE WILL MAP#
+        mappings_pre = m.get_mappings()
+
+
+        rmap = RegionMap.objects.create(
+            master_region = self.region,
+            source_region = SourceRegion.objects.get(region_string=\
+                self.region_string,source_id=self.source.id),
+            mapped_by = self.user
+        )
+
+        imap = IndicatorMap.objects.create(
+            master_indicator = self.indicator,
+            source_indicator = SourceIndicator.objects.get(indicator_string=\
+                self.indicator_string,source=self.source),
+            mapped_by = self.user
+        )
+
+        cmap = CampaignMap.objects.create(
+            master_campaign = self.campaign,
+            source_campaign = SourceCampaign.objects.get(campaign_string=\
+                self.campaign_string,source=self.source),
+            mapped_by = self.user
+        )
+
+
+        mappings_post = m.get_mappings()
+
+        self.assertEqual(self.region.id,mappings_post['regions'][self.region_string])
+        self.assertEqual(self.campaign.id,mappings_post['campaigns'][self.campaign_string])
+        self.assertEqual(self.indicator.id,mappings_post['indicators'][self.indicator_string])
+
 
         self.assertEqual(2,2)
 

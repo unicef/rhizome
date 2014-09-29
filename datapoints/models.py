@@ -80,9 +80,9 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.start_date.strftime('%Y-%m-%d') + ' to ' +
-            self.end_date.strftime('%Y-%m-%d'))
+        return unicode(self.name)
 
+        
     def get_full_name(self):
         full_name = self.office.name + '-' + self.__unicode__()
         return full_name
