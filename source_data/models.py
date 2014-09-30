@@ -107,8 +107,8 @@ class SourceRegion(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
 
-    # class Meta:
-        # unique_together = ('source','region_string')
+    class Meta:
+        unique_together = ('source','region_string')
 
     def __unicode__(self):
         return self.region_string

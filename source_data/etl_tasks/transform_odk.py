@@ -3,6 +3,7 @@ import os
 import pprint as pp
 import pandas as pd
 import csv
+import json
 
 from dateutil import parser
 from decimal import InvalidOperation
@@ -29,28 +30,32 @@ class VcmSettlementTransform(object):
 
     def refresh_source_regions(self):
 
-        region_dict_list = []
+        try:
+            region_strings = []
 
-        to_process_df = pd.DataFrame(list(VCMSettlement.objects.filter\
-            (process_status__status_text='TO_PROCESS').values()))
+            to_process_df = pd.DataFrame(list(VCMSettlement.objects.filter\
+                (process_status__status_text='TO_PROCESS').values()))
 
-        cols = [col.lower() for col in to_process_df]
+            cols = [col.lower() for col in to_process_df]
 
-        for row in to_process_df.values:
-            row_dict = {}
+            for row in to_process_df.values:
+                row_dict = {}
 
-            row_dict['region_string'] = row[cols.index('settlementname')]
-            row_dict['settlement_code'] = row[cols.index('settlementcode')]
-            row_dict['lat'] = row[cols.index('settlementgps_latitude')]
-            row_dict['lon'] = row[cols.index('settlementgps_latitude')]
-            row_dict['source_guid'] = row[cols.index('key')]
+                row_dict['region_string'] = row[cols.index('settlementname')]
+                row_dict['settlement_code'] = row[cols.index('settlementcode')]
+                row_dict['lat'] = row[cols.index('settlementgps_latitude')]
+                row_dict['lon'] = row[cols.index('settlementgps_latitude')]
 
-            region_dict_list.append(row_dict)
+                row_data = json.dumps(row_dict)
 
-        mappings = map_regions(region_dict_list,self.source_id)
-        pp.pprint(mappings)
+                region_strings.append(row_data)
 
-        return mappings
+            mappings = map_regions(region_strings,self.source_id)
+        except Exception:
+            err = traceback.format_exc()
+            return err, None
+
+        return None, 'ODK SOURCE REGIONS REFRESHED'
 
 
 

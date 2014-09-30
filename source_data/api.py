@@ -7,7 +7,7 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 
-from source_data.models import EtlJob
+from source_data.models import EtlJob, SourceDataPoint, ProcessStatus
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform,VcmSettlementTransform
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -81,9 +81,12 @@ class EtlTask(object):
               'odk_refresh_vcm_summary' : self.odk_refresh_vcm_summary,
               'odk_refresh_regions' : self.odk_refresh_regions,
               'odk_refresh_all' : self.odk_refresh_all,
+              'refresh_master' : self.refresh_master,
+
             }
 
         fn = self.function_mappings[task_string]
+
 
         self.err, self.data = fn()
 
@@ -118,7 +121,7 @@ class EtlTask(object):
             source_dps = vst.source_datapoints
             results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
-            ## FINALLY GET ALL DATAPOINTS BASED ON MAPPINGS AND SOURCE DPs ##
+            ## FINALLY ADD ALL DATAPOINTS BASED ON SOURCE DPs ##
             dps = self.refresh_maste(source_dps)
             results['new_datapoint_count'] = self.handle_results(dps)
 
@@ -131,7 +134,9 @@ class EtlTask(object):
     def odk_refresh_regions(self):
 
         v_sett_t = VcmSettlementTransform(self.task_guid)
-        v_sett_t.refresh_source_regions()
+        err, mappings = v_sett_t.refresh_source_regions()
+
+        return err, mappings
 
 
     def odk_refresh_all(self):
@@ -191,9 +196,12 @@ class EtlTask(object):
               t = WorkTableTask(self.task_guid,source_file)
 
 
-    def refresh_master(self,mappings,source_datapoints):
+    def refresh_master(self):
 
-        m = MasterRefresh(mappings,source_datapoints,self.user_id)
+        source_datapoints = SourceDataPoint.objects.filter(status_id = \
+            ProcessStatus.objects.get(status_text='TO_PROCESS'))
+
+        m = MasterRefresh(source_datapoints,self.user_id)
         m.main()
 
         return m.new_datapoints
