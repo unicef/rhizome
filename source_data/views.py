@@ -43,7 +43,7 @@ def file_upload(request):
                 d = DocTransform(document_id,p.df,current_user_id)
 
                 ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
-                m = MasterRefresh(p.mappings,d.source_datapoints,\
+                m = MasterRefresh(d.source_datapoints,\
                     current_user_id)
 
                 return document_review(request,newdoc.id,p.mappings)

@@ -122,7 +122,7 @@ class EtlTask(object):
             results['new_source_datapoint_count'] = self.handle_results(source_dps)
 
             ## FINALLY ADD ALL DATAPOINTS BASED ON SOURCE DPs ##
-            dps = self.refresh_maste(source_dps)
+            dps = self.refresh_master(source_dps)
             results['new_datapoint_count'] = self.handle_results(dps)
 
             return None, results
