@@ -22,7 +22,8 @@ def map_indicators(indicator_strings,source_id):
 
             indicator_mapping[indicator_string] = indicator_id
         except ObjectDoesNotExist:
-            indicator_mapping[indicator_string] = None
+            pass
+
 
     return indicator_mapping
 
@@ -43,8 +44,9 @@ def map_campaigns(campaign_strings,source_id):
 
             campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:
-            campaign_mapping[str(campaign)] = None
+            pass
 
+            
     return campaign_mapping
 
 
@@ -63,7 +65,7 @@ def map_regions(region_strings, source_id):
 
             region_mapping[region_string] = region_id
         except ObjectDoesNotExist:
-            region_mapping[region_string] = None
+            pass
 
 
     return region_mapping

@@ -201,6 +201,7 @@ class EtlTask(object):
         source_datapoints = SourceDataPoint.objects.filter(status_id = \
             ProcessStatus.objects.get(status_text='TO_PROCESS'))
 
+
         m = MasterRefresh(source_datapoints,self.user_id)
         m.main()
 

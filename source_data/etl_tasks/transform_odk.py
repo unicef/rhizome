@@ -44,7 +44,7 @@ class VcmSettlementTransform(object):
                 row_dict['region_string'] = row[cols.index('settlementname')]
                 row_dict['settlement_code'] = row[cols.index('settlementcode')]
                 row_dict['lat'] = row[cols.index('settlementgps_latitude')]
-                row_dict['lon'] = row[cols.index('settlementgps_latitude')]
+                row_dict['lon'] = row[cols.index('settlementgps_longitude')]
 
                 row_data = json.dumps(row_dict)
 
