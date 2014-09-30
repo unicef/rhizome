@@ -15,7 +15,7 @@ class Source(models.Model):
 
 class Indicator(models.Model):
 
-    name = models.CharField(max_length=55,unique=True)
+    name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     slug = AutoSlugField(populate_from='name',unique=True,max_length=55)
@@ -106,7 +106,7 @@ class DataPoint(models.Model):
     def get_val(self):
 
         return self.value
-        
+
 
     class Meta:
         db_table = 'datapoint'
