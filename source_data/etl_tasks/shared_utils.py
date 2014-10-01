@@ -9,7 +9,9 @@ def map_indicators(indicator_strings,source_id):
 
     indicator_mapping = {}
 
-    for indicator_string in indicator_strings:
+    distinct_indicator_strings = list(set(indicator_strings))
+
+    for indicator_string in distinct_indicator_strings:
 
         source_indicator, created = SourceIndicator.objects.get_or_create(
             source_id = source_id,
@@ -30,10 +32,16 @@ def map_indicators(indicator_strings,source_id):
 
 def map_campaigns(campaign_strings,source_id):
 
+    print 'MAPPING CAMPAIGNS'
+
     campaign_mapping = {}
 
-    for campaign in campaign_strings:
+    distinct_campaign_strings = list(set(campaign_strings))
 
+    for campaign in distinct_campaign_strings:
+
+        print campaign
+        
         source_campaign, created = SourceCampaign.objects.get_or_create(
             source_id = source_id,
             campaign_string = campaign
@@ -46,7 +54,7 @@ def map_campaigns(campaign_strings,source_id):
         except ObjectDoesNotExist:
             pass
 
-            
+
     return campaign_mapping
 
 
@@ -54,7 +62,11 @@ def map_regions(region_strings, source_id):
 
     region_mapping = {}
 
-    for region_string in region_strings:
+    distinct_region_strings =  list(set(region_strings))
+
+    for region_string in distinct_region_strings:
+
+        print region_string
 
         source_region, created = SourceRegion.objects.get_or_create(\
             region_string=region_string,source_id=source_id)

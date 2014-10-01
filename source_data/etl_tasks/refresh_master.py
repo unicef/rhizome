@@ -21,8 +21,12 @@ class MasterRefresh(object):
 
 
       def main(self):
-        
+
+          print 'getting mappppingssss!!!'
+
           self.mappings = self.get_mappings()
+
+          print 'mappppingssss gt!!!'
 
           for record in self.records:
 
@@ -43,7 +47,6 @@ class MasterRefresh(object):
           mappings['regions'] = map_regions([sdp.region_string for sdp in self.records],source_id)
           mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.records],source_id)
           mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.records],source_id)
-
 
           return mappings
 
@@ -81,7 +84,6 @@ class MasterRefresh(object):
           except Exception:
               err = traceback.format_exc()
               return err, None
-          #
 
           return None, datapoint.id
 

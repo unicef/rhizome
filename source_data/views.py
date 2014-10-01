@@ -151,6 +151,9 @@ class ToMap(generic.ListView):
         cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
         rg = SourceRegion.objects.filter(regionmap__isnull=True)
 
+        for r in rg:
+            print r.source
+
         return chain(si,cp,rg)
 
 

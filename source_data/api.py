@@ -201,8 +201,13 @@ class EtlTask(object):
         source_datapoints = SourceDataPoint.objects.filter(status_id = \
             ProcessStatus.objects.get(status_text='TO_PROCESS'))
 
+        source_datapoints = source_datapoints
+        print 'refreshing master'
 
         m = MasterRefresh(source_datapoints,self.user_id)
         m.main()
 
-        return m.new_datapoints
+        dp_count = len(m.new_datapoints)
+        success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
+
+        return None, success_msg
