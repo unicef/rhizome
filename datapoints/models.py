@@ -18,7 +18,7 @@ class Indicator(models.Model):
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
-    slug = AutoSlugField(populate_from='name',unique=True,max_length=55)
+    slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):

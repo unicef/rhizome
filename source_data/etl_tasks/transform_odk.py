@@ -5,7 +5,7 @@ import pandas as pd
 import csv
 import json
 
-import traceack
+import traceback
 
 from dateutil import parser
 from decimal import InvalidOperation

@@ -5,7 +5,7 @@ import traceback
 sys.path.append('/Users/johndingee_seed/code/UF04/polio')
 sys.path.append('/Users/johndingee_seed/code/UF04/polio/polio')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
 
 from source_data.models import VCMSettlement, SourceRegion
 from datapoints.models import Indicator,Region,Source,Office
