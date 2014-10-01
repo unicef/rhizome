@@ -23,20 +23,65 @@ class DocTransform(object):
 
 
     def sheet_df_to_source_datapoints(self):
+        ## I AM HACKING THE SHIT OUT OF THIS RIGHT NOW TO GET SPREADSHEETS IN ##
 
         cols = [col.lower() for col in self.df]
 
         for i,(row) in enumerate(self.df.values):
 
             row_basics = {}
-            #
-            region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
-                + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlement')])
+
+            # HACK ALERT #
+            try:
+                region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
+                    + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlement')])
+            except ValueError:
+                pass
+
+            try:
+                region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
+                    + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlename')])
+            except ValueError:
+                pass
+
+            try:
+                region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
+                    + '-' + row[cols.index('ward')] + '-' + str(row[cols.index('settlements')])
+            except ValueError:
+                pass
+
+            try:
+                region_string = row[cols.index('lga')] + '-' + row[cols.index('state')] \
+                    + '-' + row[cols.index('ward')]
+            except ValueError:
+                pass
+
 
             row_basics['row_number'] = i
             row_basics['region_string'] = region_string
-            row_basics['campaign_string'] = str(row[cols.index('datesoc')])
-            row_basics['source_guid'] = row[cols.index('uniquesoc')]
+
+            try:
+                row_basics['campaign_string'] = str(row[cols.index('datesoc')])
+            except ValueError:
+                pass
+
+            try:
+                row_basics['campaign_string'] = str(row[cols.index('datemonitor')])
+            except ValueError:
+                pass
+
+            try:
+                row_basics['source_guid'] = row[cols.index('mainmonid')]
+            except ValueError:
+                pass
+
+            try:
+                row_basics['source_guid'] = row[cols.index('uniquekey')]
+            except ValueError:
+                pass
+
+
+
             #
             for i,(cell) in enumerate(row):
 

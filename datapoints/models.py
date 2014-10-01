@@ -15,6 +15,7 @@ class Source(models.Model):
 
 class Indicator(models.Model):
 
+    short_name = models.CharField(max_length=55,unique=False) # FIX UNIQUE HERE!
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)

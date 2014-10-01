@@ -76,8 +76,21 @@ class PreIngest(object):
         ## REGION MAPPING ##
         region_mapping = {}
 
-        df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + \
-            df['Ward'] + '-' + df['Settlement'].apply(str)
+
+        # HACKING FOR NOW TO DEAL WITH DIFFERENT COLUMN HEADERS
+        try:
+            df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + \
+                df['Ward'] + '-' + df['Settlement'].apply(str)
+        except KeyError:
+            pass
+
+        try:
+            df['region_string']  = df['Lga'] + '-' + df['State'] + '-' + \
+                df['Ward'] + '-' + df['SettleName'].apply(str)
+        except KeyError:
+            pass
+
+
 
         regions = df.groupby('region_string')
 
