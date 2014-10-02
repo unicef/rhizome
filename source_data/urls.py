@@ -11,6 +11,9 @@ urlpatterns = [
   url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),name='map_campaign'),
 
   url(r'^to_map/$', ToMap.as_view(),name='to_map'),
+  url(r'^refresh_master/$', refresh_master,name='refresh_master'),
+
   url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
+
 
 ]

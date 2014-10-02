@@ -1,6 +1,7 @@
 import xlrd
 import csv
 import pandas
+import hashlib
 import pprint as pp
 
 from django.shortcuts import render,render_to_response
@@ -19,7 +20,7 @@ from source_data.models import *
 from source_data.etl_tasks.pre_process_upload import PreIngest
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
-
+from source_data.api import EtlTask
 
 def file_upload(request):
     # Handle file upload
@@ -157,9 +158,23 @@ class ToMap(generic.ListView):
         return chain(si,cp,rg)
 
 
-
 class ShowSourceIndicator(generic.DetailView):
 
     context_object_name = "source_indicator"
     template_name = 'map/source_indicator.html'
     model = SourceIndicator
+
+
+
+def refresh_master(request):
+
+    job_guid = hashlib.sha1(str(random.random())).hexdigest()
+
+    t = EtlTask('refresh_master',job_guid)
+
+    task_data = t.data
+
+    print task_data
+
+    return render_to_response('map/master_refresh.html',
+    {'task_data': task_data})

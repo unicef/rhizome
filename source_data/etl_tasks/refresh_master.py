@@ -22,12 +22,7 @@ class MasterRefresh(object):
 
       def main(self):
 
-          print 'getting mappppingssss!!!'
-
           self.mappings = self.get_mappings()
-
-          print 'mappppingssss gt!!!'
-
           for record in self.records:
 
               err, datapoint_id = self.process_source_datapoint_record(record)

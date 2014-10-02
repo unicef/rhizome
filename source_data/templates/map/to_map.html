@@ -1,6 +1,8 @@
 {% extends "datapoints/base.html" %}
 
 {% block content %}
+    <br>
+    <a href="{% url 'source_data:refresh_master' %}"<button type="submit" class="btn btn-success"> Refresh Master! </button></a>
     <br><br>
 
     {% if items %}
