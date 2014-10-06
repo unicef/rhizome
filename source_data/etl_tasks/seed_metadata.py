@@ -5,11 +5,12 @@ import traceback
 sys.path.append('/Users/johndingee_seed/code/UF04/polio')
 sys.path.append('/Users/johndingee_seed/code/UF04/polio/polio')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
 
 from source_data.models import VCMSettlement, SourceRegion
 from datapoints.models import Indicator,Region,Source,Office,RegionRelationshipType,RegionRelationship
 from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 def seed_regions():
 
@@ -109,6 +110,32 @@ def create_region_heirarchy():
 
     ## CREATE LGA -> SETTLEMENT RELATIONSHIP
 
+def lga_sett_relationships():
+    setts = Region.objects.filter(region_type='SETTLEMENT')
+    for sett in setts:
+
+        sett_first_four = sett.region_code[:4]
+        print sett.region_code
+
+        try:
+            lga = Region.objects.get(region_type='LGA',region_code=sett_first_four)
+            print lga.id
+
+            rr_dict = {}
+            rr_dict['region_0'] = lga
+            rr_dict['region_1'] = sett
+            rr_dict['region_relationship_type'] = RegionRelationshipType.objects.get(display_name = 'contains')
+
+            rr, created = RegionRelationship.objects.get_or_create(**rr_dict)
+
+            print "CREATED!"
+            print rr.id
+
+        except ObjectDoesNotExist as e:
+            print e
+
+        except IntegrityError as e:
+              print e
 
 
 
@@ -116,3 +143,4 @@ def create_region_heirarchy():
 
 if __name__ == "__main__":
     create_region_heirarchy()
+    lga_sett_relationships()
