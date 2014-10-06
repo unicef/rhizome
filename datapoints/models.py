@@ -47,7 +47,7 @@ class Office(models.Model):
 class Region(models.Model):
 
     full_name = models.CharField(max_length=55,unique=True)
-    region_code = models.IntegerField(unique=True)
+    region_code = models.CharField(max_length=10,unique=True)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
