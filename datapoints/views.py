@@ -150,6 +150,8 @@ class IndicatorIndexView(IndexView):
 
     paginate_by = 10000
 
+    
+
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
