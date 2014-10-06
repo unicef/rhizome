@@ -5,10 +5,10 @@ import traceback
 sys.path.append('/Users/johndingee_seed/code/UF04/polio')
 sys.path.append('/Users/johndingee_seed/code/UF04/polio/polio')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from source_data.models import VCMSettlement, SourceRegion
-from datapoints.models import Indicator,Region,Source,Office
+from datapoints.models import Indicator,Region,Source,Office,RegionRelationshipType,RegionRelationship
 from django.db import IntegrityError
 
 def seed_regions():
@@ -20,9 +20,8 @@ def seed_regions():
         row_dict = {}
 
         row_dict['full_name'] = row[cols.index('settlementname')]
-        row_dict['settlement_code'] = row[cols.index('settlementcode')]
+        row_dict['region_code'] = row[cols.index('settlementcode')]
         row_dict['latitude'] = row[cols.index('settlementgps_latitude')]
-        row_dict['longitude'] = row[cols.index('settlementgps_longitude')]
         row_dict['longitude'] = row[cols.index('settlementgps_longitude')]
         row_dict['source_guid'] = row[cols.index('key')]
         row_dict['source_id'] = Source.objects.get(source_name='data entry').id
@@ -38,8 +37,6 @@ def seed_indicators():
 
     df = pd.read_csv('/Users/johndingee_seed/Desktop/johns_inds.csv')
 
-
-
     for row in df.values:
         to_create = {}
 
@@ -53,7 +50,69 @@ def seed_indicators():
         except Exception as e:
             print e
 
+def create_region_heirarchy():
+
+    df = pd.read_csv('/Users/johndingee_seed/code/UF04/polio/source_data/nigeria_regions.csv')
+
+    cols = df.columns
+    cols = list(cols)
+
+    for row in df.values:
+        print row
+
+    ## CREATE STATES ##
+
+        state_dict = {}
+        state_dict['full_name'] = row[cols.index('State')]
+        state_dict['region_type'] = 'STATE'
+        state_dict['region_code'] = row[cols.index('StateCode')]
+        state_dict['source_guid'] = row[cols.index('State')] + ' - ' + row[cols.index('LGAName')]
+        state_dict['source_id'] = Source.objects.get(source_name='data entry').id
+        state_dict['office_id'] = Office.objects.get(name='Nigeria').id
+
+        try:
+            state, created = Region.objects.get_or_create(**state_dict)
+            print state.id
+        except IntegrityError as e:
+              print e
+
+    ## CREATE LGAS ##
+
+        lga_dict = {}
+        lga_dict['full_name'] = row[cols.index('LGAName')]
+        lga_dict['region_type'] = 'LGA'
+        lga_dict['region_code'] = row[cols.index('LGACodetxt')]
+        lga_dict['source_guid'] = row[cols.index('LGAName')] + ' - ' + str(row[cols.index('LGACodetxt')])
+        lga_dict['source_id'] = Source.objects.get(source_name='data entry').id
+        lga_dict['office_id'] = Office.objects.get(name='Nigeria').id
+
+        try:
+            lga, created = Region.objects.get_or_create(**lga_dict)
+            print state.id
+        except IntegrityError as e:
+              print e
+
+
+    ## CREATE STATE -> LGA RELATIONSHIP ##
+
+        state_to_lga_dict = {}
+
+        state_to_lga_dict['region_0'] = Region.objects.get(full_name=row[cols.index('State')])
+        state_to_lga_dict['region_1'] = Region.objects.get(full_name=row[cols.index('LGAName')])
+        state_to_lga_dict['region_relationship_type'] = RegionRelationshipType.objects.get(display_name = 'contains')
+
+        try:
+            rr, created = RegionRelationship.objects.get_or_create(**state_to_lga_dict)
+            print rr.id
+        except IntegrityError as e:
+              print e
+
+    ## CREATE LGA -> SETTLEMENT RELATIONSHIP
+
+
+
+
+
 
 if __name__ == "__main__":
-    seed_indicators()
-    seed_regions()
+    create_region_heirarchy()
