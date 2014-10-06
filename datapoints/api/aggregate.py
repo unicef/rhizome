@@ -72,33 +72,6 @@ class AggregateResource(Resource):
         object_class = ResultObject
         allowed_methods = ['get']
 
-    def build_bundle(self, obj=None, data=None, request=None, objects_saved=None):
-        """
-        I AM OVERIDING THIS METHOD, BUT DO NOT THINK I NEED TO.  I SPENT ALOT
-        OF TIME TRYING TO FIGURE OUR HOW AND WHY I WAS NOT GETTING DATA BACK
-        FROM the FULL_DEHYDRATE METHOD IN THIS CUSTOM IMPLEMENTATION
-        """
-        if obj is None and self._meta.object_class:
-            obj = self._meta.object_class()
-
-        custom_data = {}
-        custom_data[obj.key] = obj.value
-
-        return Bundle(
-            obj=obj,
-            data=custom_data,
-            request=request,
-            objects_saved=objects_saved
-        )
-
-
-    def full_dehydrate(self,bundle,for_list):
-        '''
-        Help!  When i dont overide this method, i get a maximum recursion error.
-        When i do, and i do not overide 'build bundle' the objects get returned
-        but there is no data associated with each object.
-        '''
-        return bundle
 
     def get_object_list(self, request):
         '''
@@ -160,7 +133,6 @@ class AggregateResource(Resource):
 
 
         # for d in prepped_data:
-        #     pp.pprint(d)
         #     try:
         #         d['pk']
         #     except KeyError:
@@ -251,6 +223,39 @@ class AggregateResource(Resource):
         b_s_data["lunch"]="time"
 
         return b_s_data
+
+    ## I DONT NEED THIS CODE!!! ##
+
+    def build_bundle(self, obj=None, data=None, request=None, objects_saved=None):
+        """
+        I AM OVERIDING THIS METHOD, BUT DO NOT THINK I NEED TO.  I SPENT ALOT
+        OF TIME TRYING TO FIGURE OUR HOW AND WHY I WAS NOT GETTING DATA BACK
+        FROM the FULL_DEHYDRATE METHOD IN THIS CUSTOM IMPLEMENTATION
+        """
+        if obj is None and self._meta.object_class:
+            obj = self._meta.object_class()
+
+        custom_data = {}
+        custom_data[obj.key] = obj.value
+
+        return Bundle(
+            obj=obj,
+            data=custom_data,
+            request=request,
+            objects_saved=objects_saved
+        )
+
+
+    def full_dehydrate(self,bundle,for_list):
+        '''
+        Help!  When i dont overide this method, i get a maximum recursion error.
+        When i do, and i do not overide 'build bundle' the objects get returned
+        but there is no data associated with each object.
+        '''
+        return bundle
+
+
+
 
 
 ## for testing: http://localhost:8000/api/v1/aggregate/?api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc&format=json&username=john&api_method=calc_avg_pct_many_region_solo_campaign&region_slug=11-lpds-of-south-region&indicator_part=number-of-children-missed-due-to-refusal-to-accept-opv&indicator_whole=number-of-children-missed-total&campaign_slug=nigeria-2019-10-01
