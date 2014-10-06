@@ -148,6 +148,8 @@ class IndicatorIndexView(IndexView):
     template_name = 'indicators/index.html'
     context_object_name = 'top_indicators'
 
+    paginate_by = 10000
+
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
