@@ -48,6 +48,8 @@ class Region(models.Model):
 
     full_name = models.CharField(max_length=55)
     settlement_code = models.IntegerField(unique=True)
+    region_code = models.IntegerField()
+    region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
