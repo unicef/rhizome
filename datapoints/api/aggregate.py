@@ -113,7 +113,7 @@ class AggregateResource(Resource):
     def prep_data(self,query_dict):
 
 
-        prepped_data = []
+        prepped_data = {}
 
         ## Ensure that the request has an api_method argument ##
         try:
@@ -139,40 +139,49 @@ class AggregateResource(Resource):
 
             try:
                 expected_data_id = query_dict[ed.slug]
+                prepped_data[ed.slug] = expected_data_id
             except KeyError as e:
                 err = 'Missing Parameter. The api method "' + request_api_method + '" requires the '  + str(e) + ' parameter.'
                 return err, None
 
-        
-        return None, 'this is data'
+        err, final_data = self.calc_value(prepped_data,request_api_method)
 
+        return err, final_data
 
-    def calc_value(self,prepped_data):
+    def calc_value(self,prepped_data,request_api_method):
 
-        pp.pprint(prepped_data)
+        fn = self.function_mappings[request_api_method]
+        err, value = fn(prepped_data)
 
+        return err, value
 
-
-        return None, 1.0
-
-
-
-    def get_sub_regions_by_parent(self,parent_region_id):
-        sub_region_ids = []
-        # sub_region_ids = RegionRelationships.filter(region_id_0=parent_retion_id)
-
-        return sub_region_ids
 
     #####################################################
     #### THESE ARE ALL OF THE AGGREGATION FUNCTINOS #####
     #####################################################
 
 
-    def calc_pct_single_reg_single_campaign(self , prepped_data):
+    def calc_pct_single_reg_single_campaign(self, prepped_data):
 
-        b_s_data = {"x":"y"}
+        region_id = prepped_data['region_solo']
+        campaign_id = prepped_data['campaign_solo']
 
-        return b_s_data
+        part = DataPoint.objects.get(
+          region_id = region_id,
+          campaign_id = campaign_id,
+          indicator_id = prepped_data['indicator_part']
+        ).value
+
+        whole = DataPoint.objects.get(
+          region_id = region_id,
+          campaign_id = campaign_id,
+          indicator_id = prepped_data['indicator_whole']
+        ).value
+
+
+        result = part / whole
+  
+        return None, result
 
     def calc_mean_single_ind_parent_region_single_campaign(self,**kwargs):
         pass

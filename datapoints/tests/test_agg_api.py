@@ -143,17 +143,14 @@ class AggApiTestCase(ResourceTestCase):
         params['campaign_solo'] = self.campaign.id
 
         url = base_url + '?' + urllib.urlencode(params)
-        print (url + '\n') * 10
+        print (url + '\n') * 5
         response = self.api_client.get(url,follow=True)
 
         data = json.loads(response.content)
 
         objects = data['objects']
-        print objects
-        # result = objects[0]['DATA']
+        result = objects[0]['DATA']
+        result = float(result)
 
-        # print result
-
-        # final_val = self.ind_part_val  / self.ind_whole_val
-        # self.assertEqual(result,final_val)
-        self.assertEqual(1,1)
+        final_val = self.ind_part_val  / self.ind_whole_val
+        self.assertEqual(result,final_val)
