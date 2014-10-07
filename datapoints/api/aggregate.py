@@ -214,7 +214,7 @@ class AggregateResource(Resource):
 
         regions = []
 
-        # This is going to need to be recurrrrrsive #
+        # This is going to need to be RECURSIVE #
         for r in rrs:
             regions.append(r.region_1_id)
 
