@@ -81,26 +81,28 @@ class AggregateResource(Resource):
         '''
 
         cust_object_list = []
+        print 'THIS IS HAPPENEING NOW'
+
         err, data = self.prep_data(request.GET)
+
 
         if err:
 
-            new_obj = ResultObject()
-            new_obj.key = 'ERROR'
-            new_obj.value = err
+            error_obj = ResultObject()
+            error_obj.key = 'ERROR'
+            error_obj.value = err
 
-            cust_object_list.append(new_obj)
+            cust_object_list.append(error_obj)
 
         elif data:
 
-            for k,v in aggregate_data.iteritems():
-                new_obj = ResultObject()
-                # new_obj.key = 'DATA'
-                # new_obj.value = {k,v}
-                new_obj.key = k
-                new_obj.value = v
+            data_obj = ResultObject()
+            data_obj.key = 'DATA'
+            data_obj.value = data
 
-                cust_obj_list.append(new_obj)
+            cust_object_list.append(data_obj)
+
+
 
         return cust_object_list
 
@@ -110,6 +112,8 @@ class AggregateResource(Resource):
 
     def prep_data(self,query_dict):
 
+
+        prepped_data = []
 
         ## Ensure that the request has an api_method argument ##
         try:
@@ -121,76 +125,37 @@ class AggregateResource(Resource):
         ## Ensure that the api method exists in the database ##
         try:
             at = AggregationType.objects.get(slug=request_api_method)
-            fn = self.function_mappings[at.slug]
         except AggregationType.DoesNotExist as e:
             err =  "'" + request_api_method + "'" + " is not a recognized api method. Please check your request and try again"
             return err, None
 
-        err, prepped_data = self.match_data(query_dict, at.id)
+        ## Find the Data expected by that api method
+        expected_data = AggregationExpectedData.objects.filter(
+            aggregation_type = at.id)
 
-        if err:
-            return err, None
+        ## Make sure all of the params were passed by comparing the request
+        ## to the expected data for that api method
+        for ed in expected_data:
+
+            try:
+                expected_data_id = query_dict[ed.slug]
+            except KeyError as e:
+                err = 'Missing Parameter. The api method "' + request_api_method + '" requires the '  + str(e) + ' parameter.'
+                return err, None
+
+        
+        return None, 'this is data'
 
 
-        # for d in prepped_data:
-        #     try:
-        #         d['pk']
-        #     except KeyError:
-        #         pp.pprint(d)
-        #         raise ImmediateHttpResponse(HttpBadRequest('you are either \
-        #             missing, or have provided an incorrect value for \
-        #             parameter: ' + str(d['slug'])))
-        #
-        #
-        # final_data = fn(prepped_data)
-        #
-        # return final_data
+    def calc_value(self,prepped_data):
 
-    def match_data(self,query_dict,aggregation_type_id):
-        '''
-        this method attempted to match the slugs in the request URL with the
-        data specified in aggregation_expected data.  Once the data is prepared
-        and the IDs needed to make the calculation are generated, we pass the
-        data to the fn in the api_method param.
-        '''
+        pp.pprint(prepped_data)
 
-        if 1==1:
-            err = '1 equals 1 and that is not true! (hehehe)'
-            return err, None
 
-        ## parse the slugs and find the relevant IDs
-        # indicator_id, region_id, campaign_id, indicator_part_id, \
-        #   indicator_whole_id = self.parse_slugs_from_url(query_dict)
-        #
-        # expected_data = AggregationExpectedData.objects.filter(
-        #     aggregation_type = aggregation_type_id)
-        #
-        # prepped_data = []
-        #
-        # for d in expected_data:
-        #     expected_data_dict = {}
-        #     expected_data_dict['content_type'] = d.content_type
-        #     expected_data_dict['param_type'] = d.param_type
-        #     expected_data_dict['slug'] = [d.slug]
-        #
-        #     if d.content_type == 'INDICATOR' and indicator_id:
-        #         expected_data_dict['pk'] = indicator_id
-        #
-        #     if d.content_type == 'REGION' and region_id:
-        #         expected_data_dict['pk'] = region_id
-        #
-        #     if d.content_type == 'CAMPAIGN' and campaign_id:
-        #         expected_data_dict['pk'] = campaign_id
-        #
-        #     if d.slug == 'indicator-part' and indicator_part_id:
-        #         expected_data_dict['pk'] = indicator_part_id
-        #
-        #     if d.slug == 'indicator-whole' and indicator_whole_id:
-        #         expected_data_dict['pk'] = indicator_whole_id
-        #
-        #     prepped_data.append(expected_data_dict)
 
-        return None,prepped_data
+        return None, 1.0
+
+
 
     def get_sub_regions_by_parent(self,parent_region_id):
         sub_region_ids = []

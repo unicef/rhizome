@@ -1,6 +1,7 @@
 import time
 import pprint as pp
 import urllib
+import json
 
 from tastypie.test import ResourceTestCase
 from django.core.urlresolvers import reverse
@@ -56,8 +57,8 @@ class AggApiTestCase(ResourceTestCase):
 
         ## REF DATA ##
 
-        self.ind_part_val = 68
-        self.ind_whole_val = 100
+        self.ind_part_val = 68.00
+        self.ind_whole_val = 100.00
 
         self.user = User.objects.create(username='test_user')
         self.source = Source.objects.create(source_name='test_source')
@@ -72,7 +73,7 @@ class AggApiTestCase(ResourceTestCase):
             end_date = time.strftime("%Y-%m-%d"),
         )
         self.region = Region.objects.create(
-            full_name = 'some region',
+            # full_name = 'some region',
             region_code = 12414,
             office = self.office,
             latitude = 1.2,
@@ -138,17 +139,21 @@ class AggApiTestCase(ResourceTestCase):
         params['api_method'] = 'calc_pct_single_reg_single_campaign'
         params['indicator_part'] = self.ind_part.id
         params['indicator_whole'] = self.ind_whole.id
-        params['region'] = self.region.id
-        params['campaign'] = self.campaign.id
-
+        params['region_solo'] = self.region.id
+        params['campaign_solo'] = self.campaign.id
 
         url = base_url + '?' + urllib.urlencode(params)
-        print url
-
+        print (url + '\n') * 10
         response = self.api_client.get(url,follow=True)
 
-        print response.content
+        data = json.loads(response.content)
 
+        objects = data['objects']
+        print objects
+        # result = objects[0]['DATA']
 
+        # print result
 
+        # final_val = self.ind_part_val  / self.ind_whole_val
+        # self.assertEqual(result,final_val)
         self.assertEqual(1,1)
