@@ -45,9 +45,6 @@ class OdkTestCase(TestCase):
         self.assertEqual(int(sdp_2.cell_value),34)
 
 
-
-
-
 class NewDPTestCase(TestCase):
     ''' this test goes through creating all of the metadata and mapping needed
     to create a datapoint.  the datapoint is not inserted here directly but all
@@ -92,7 +89,7 @@ class NewDPTestCase(TestCase):
         # create region (master)
         self.region = Region.objects.create(
             full_name = 'some region',
-            settlement_code = 12414,
+            region_code = 12414,
             office = self.office,
             latitude = 1.2,
             longitude = 2.1,

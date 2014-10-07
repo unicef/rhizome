@@ -92,18 +92,18 @@ class AggregateResource(Resource):
             cust_object_list.append(new_obj)
 
         elif data:
-            pass
-            # for k,v in aggregate_data.iteritems():
 
+            for k,v in aggregate_data.iteritems():
+                new_obj = ResultObject()
+                # new_obj.key = 'DATA'
+                # new_obj.value = {k,v}
+                new_obj.key = k
+                new_obj.value = v
+
+                cust_obj_list.append(new_obj)
 
         return cust_object_list
 
-
-    def obj_get_list(self, bundle, **kwargs):
-        return self.get_object_list(bundle.request)
-
-    def obj_get(self,bundle, **kwargs):
-        return bundle
 
     ### THE METHODS ABOVE ARE OVERRIDDEN FROM THE TASTYPIE RESOURCE CLASS ###
             ### PREP DATA AND MATCH DATA ARE MY OWN METHODS ###
@@ -248,11 +248,18 @@ class AggregateResource(Resource):
 
     def full_dehydrate(self,bundle,for_list):
         '''
-        Help!  When i dont overide this method, i get a maximum recursion error.
-        When i do, and i do not overide 'build bundle' the objects get returned
-        but there is no data associated with each object.
+        When i dont overide this method, i get a maximum recursion error.
+        http://stackoverflow.com/questions/11570443/django-tastypie-throws-a-maximum-recursion-depth-exceeded-when-full-true-on-re
         '''
         return bundle
+
+
+    def obj_get_list(self, bundle, **kwargs):
+        return self.get_object_list(bundle.request)
+
+    def obj_get(self,bundle, **kwargs):
+        return bundle
+
 
 
 
