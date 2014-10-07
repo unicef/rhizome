@@ -196,12 +196,16 @@ class AggregateResource(Resource):
 
         part_val = 0
         for part in parts:
-            part_val =+ part.value
+            part_val += part.value
 
 
         whole_val = 0
         for whole in wholes:
-            whole_val =+ whole.value
+            whole_val += whole.value
+
+        print 'PART VAL: ' + str(part_val)
+        print 'WHOLE VAL: ' + str(whole_val)
+
 
         result = part_val / whole_val
 

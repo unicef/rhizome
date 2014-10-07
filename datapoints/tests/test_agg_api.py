@@ -368,4 +368,4 @@ class CalcPctParentRegionSoloCampaign(ResourceTestCase):
 
 
         # final_val = str(self.ind_part_val  / self.ind_whole_val)
-        self.assertEqual(1,1)
+        self.assertEqual(1,1) ## FIX THIS!  I'm using random vals.. so fix that
