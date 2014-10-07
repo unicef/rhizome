@@ -1,8 +1,8 @@
 import time
+import pprint as pp
 
 from tastypie.test import ResourceTestCase
 from django.core.urlresolvers import reverse
-from django.test.client import Client
 
 from datapoints.models import *
 from source_data.models import *
@@ -128,20 +128,14 @@ class AggApiTestCase(ResourceTestCase):
 
     def test_something_fake(self):
 
-        # a = AggregationType.objects.all()
-        # ed = AggregationExpectedData.objects.filter(aggregation_type=a)
+        url = '/api/v1/aggregate/?api_method=assfa'
 
-        # dps = DataPoint.objects.all()
-        #
-        # for d in dps:
-        #     print d.value
-        #
-
-        response = self.api_client.get('/api/v1/aggregate',format='json')
-        print response.status_code
+        response = self.api_client.get(url,follow=True)
+        print response.__dict__
 
         print 'PRINTING CONTEnt'
-        print response.content
+        print response.status_code
+        pp.pprint(response.content)
 
 
         self.assertEqual(1,1)
