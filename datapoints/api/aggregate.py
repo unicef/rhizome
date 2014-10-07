@@ -57,8 +57,8 @@ class AggregateResource(Resource):
 
     def __init__(self):
         self.function_mappings = {
-          'calc_pct_single_reg_single_campaign' :
-              self.calc_pct_single_reg_single_campaign,
+          'calc_pct_solo_region_solo_campaign' :
+              self.calc_pct_solo_region_solo_campaign,
           'calc_mean_single_ind_parent_region_single_campaign' :
               self.calc_mean_single_ind_parent_region_single_campaign,
           'calc_mean_single_ind_single_region_array_campaign' :
@@ -161,7 +161,7 @@ class AggregateResource(Resource):
     #####################################################
 
 
-    def calc_pct_single_reg_single_campaign(self, prepped_data):
+    def calc_pct_solo_region_solo_campaign(self, prepped_data):
 
         region_id = prepped_data['region_solo']
         campaign_id = prepped_data['campaign_solo']
@@ -178,9 +178,8 @@ class AggregateResource(Resource):
           indicator_id = prepped_data['indicator_whole']
         ).value
 
-
         result = part / whole
-  
+
         return None, result
 
     def calc_mean_single_ind_parent_region_single_campaign(self,**kwargs):
@@ -233,9 +232,6 @@ class AggregateResource(Resource):
 
     def obj_get(self,bundle, **kwargs):
         return bundle
-
-
-
 
 
 
