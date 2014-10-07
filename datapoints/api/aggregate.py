@@ -1,5 +1,5 @@
 from datapoints.models import AggregationExpectedData,AggregationType
-from datapoints.models import DataPoint, Indicator, Region, Campaign
+from datapoints.models import DataPoint, Indicator, Region, Campaign, RegionRelationship
 from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 
 from django.db.models.query import QuerySet
@@ -59,12 +59,8 @@ class AggregateResource(Resource):
         self.function_mappings = {
           'calc_pct_solo_region_solo_campaign' :
               self.calc_pct_solo_region_solo_campaign,
-          'calc_mean_single_ind_parent_region_single_campaign' :
-              self.calc_mean_single_ind_parent_region_single_campaign,
-          'calc_mean_single_ind_single_region_array_campaign' :
-              self.calc_mean_single_ind_single_region_array_campaign,
-          'calc_avg_pct_many_region_solo_campaign' :
-              self.calc_avg_pct_many_region_solo_campaign
+          'calc_pct_parent_region_solo_campaign' :
+              self.calc_pct_parent_region_solo_campaign
         }
 
     class Meta:
@@ -81,7 +77,6 @@ class AggregateResource(Resource):
         '''
 
         cust_object_list = []
-        print 'THIS IS HAPPENEING NOW'
 
         err, data = self.prep_data(request.GET)
 
@@ -160,7 +155,6 @@ class AggregateResource(Resource):
     #### THESE ARE ALL OF THE AGGREGATION FUNCTINOS #####
     #####################################################
 
-
     def calc_pct_solo_region_solo_campaign(self, prepped_data):
 
         region_id = prepped_data['region_solo']
@@ -182,22 +176,55 @@ class AggregateResource(Resource):
 
         return None, result
 
-    def calc_mean_single_ind_parent_region_single_campaign(self,**kwargs):
-        pass
+    def calc_pct_parent_region_solo_campaign(self, prepped_data):
 
-    def calc_mean_single_ind_single_region_array_campaign(self,data):
-        pass
+        region_list = self.get_sub_regions(prepped_data['region_parent'])
+        campaign_id = prepped_data['campaign_solo']
 
-    def calc_avg_pct_many_region_solo_campaign(self,prepped_data):
+        parts = DataPoint.objects.filter(
+          region_id__in=region_list,
+          campaign_id = campaign_id,
+          indicator_id = prepped_data['indicator_part']
+        )
 
-        b_s_data = {"calc_avg_pct_many_region_solo_campaign":"is being called"}
-        b_s_data["x"]="y"
-        b_s_data["a"]="b"
-        b_s_data["lunch"]="time"
+        wholes = DataPoint.objects.filter(
+          region_id__in=region_list,
+          campaign_id = campaign_id,
+          indicator_id = prepped_data['indicator_whole']
+        )
 
-        return b_s_data
 
-    ## I DONT NEED THIS CODE!!! ##
+        part_val = 0
+        for part in parts:
+            part_val =+ part.value
+
+
+        whole_val = 0
+        for whole in wholes:
+            whole_val =+ whole.value
+
+        result = part_val / whole_val
+
+
+        return None, result
+
+    def get_sub_regions(self,parent_region_id):
+
+        rrs = RegionRelationship.objects.filter(region_0 = parent_region_id)
+
+        regions = []
+
+        # This is going to need to be recurrrrrsive #
+        for r in rrs:
+            regions.append(r.region_1_id)
+
+        return regions
+
+
+
+
+
+    ## TASTY PIE MODEL RESOURCE PARAMS THAT I AM OVERRIDING ##
 
     def build_bundle(self, obj=None, data=None, request=None, objects_saved=None):
         """

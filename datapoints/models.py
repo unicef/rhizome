@@ -142,9 +142,6 @@ class RegionRelationship(models.Model):
     note = models.CharField(max_length=255,null=True,blank=True)
     created_at = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return unicode(self.region_0 + '>' + self.region_relationship_type + \
-            '>' + self.region_0)
 
     class Meta:
         db_table = 'region_relationship'
