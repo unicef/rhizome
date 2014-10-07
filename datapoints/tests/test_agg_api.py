@@ -1,5 +1,6 @@
 import time
 import pprint as pp
+import urllib
 
 from tastypie.test import ResourceTestCase
 from django.core.urlresolvers import reverse
@@ -16,9 +17,12 @@ class AggApiTestCase(ResourceTestCase):
         super(AggApiTestCase, self).setUp()
 
         ## AGGREGATION ##
+
+        self.api_method_string = 'calc_pct_single_reg_single_campaign'
+
         a = AggregationType.objects.create(
-            name = 'calc_pct_single_reg_single_campaign',
-            slug = 'calc_pct_single_reg_single_campaign',
+            name = self.api_method_string,
+            slug = self.api_method_string,
             display_name_w_sub = 'doesntmatter'
         )
 
@@ -52,38 +56,38 @@ class AggApiTestCase(ResourceTestCase):
 
         ## REF DATA ##
 
-        ind_part_val = 68
-        ind_whole_val = 100
+        self.ind_part_val = 68
+        self.ind_whole_val = 100
 
-        user = User.objects.create(username='test_user')
-        source = Source.objects.create(source_name='test_source')
-        office = Office.objects.create(name='test_office')
-        to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
-        document = Document.objects.create(docfile='asfasfasf',created_by=user)
+        self.user = User.objects.create(username='test_user')
+        self.source = Source.objects.create(source_name='test_source')
+        self.office = Office.objects.create(name='test_office')
+        self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
+        self.document = Document.objects.create(docfile='asfasfasf',created_by=self.user)
 
-        campaign = Campaign.objects.create(
+        self.campaign = Campaign.objects.create(
             name = 'fake campaign',
-            office = office,
+            office = self.office,
             start_date = time.strftime("%Y-%m-%d"),
             end_date = time.strftime("%Y-%m-%d"),
         )
-        region = Region.objects.create(
+        self.region = Region.objects.create(
             full_name = 'some region',
             region_code = 12414,
-            office = office,
+            office = self.office,
             latitude = 1.2,
             longitude = 2.1,
-            source = source,
+            source = self.source,
             source_guid = 'somethingfake'
         )
 
-        ind_part = Indicator.objects.create(
+        self.ind_part = Indicator.objects.create(
             short_name = 'Number of Children Missed Due to Refusal',
             name = 'Number of Children Missed Due to Refusal',
             description = 'Number of Children Missed Due to Refusal'
         )
 
-        ind_whole = Indicator.objects.create(
+        self.ind_whole = Indicator.objects.create(
             short_name = 'Total Children Missed',
             name = 'Total Children Missed',
             description = 'Total Children Missed'
@@ -92,50 +96,59 @@ class AggApiTestCase(ResourceTestCase):
 
         # need this for the foreign key to datapints table #
 
-        sdp = SourceDataPoint.objects.create(
+        self.sdp = SourceDataPoint.objects.create(
             region_string = 'easye',
             campaign_string = 'icecube',
             indicator_string = 'snoopdog',
             cell_value = 1.9,
             row_number= 0,
-            source = source,
-            document = document,
+            source = self.source,
+            document = self.document,
             source_guid = 'asfasfasfasfasfsa',
-            status = to_process_status
+            status = self.to_process_status
         )
 
         ## Indicator Part #
-        dp_ind_part = DataPoint.objects.create(
-            indicator = ind_part,
-            region = region,
-            campaign = campaign,
-            value = ind_part_val,
-            changed_by = user,
-            source_datapoint = sdp
+        self.dp_ind_part = DataPoint.objects.create(
+            indicator = self.ind_part,
+            region = self.region,
+            campaign = self.campaign,
+            value = self.ind_part_val,
+            changed_by = self.user,
+            source_datapoint = self.sdp
         )
 
 
         ## Indicator Whole #
-        ind_whole = DataPoint.objects.create(
-            indicator = ind_whole,
-            region = region,
-            campaign = campaign,
-            value = ind_whole_val,
-            changed_by = user,
-            source_datapoint = sdp
+        self.dp_ind_whole = DataPoint.objects.create(
+            indicator = self.ind_whole,
+            region = self.region,
+            campaign = self.campaign,
+            value = self.ind_whole_val,
+            changed_by = self.user,
+            source_datapoint = self.sdp
         )
 
 
-    def test_something_fake(self):
+    def test_simple_pct_calc(self):
 
-        url = '/api/v1/aggregate/?api_method=assfa'
+        base_url = '/api/v1/aggregate/'
+
+        params = {}
+        params['api_method'] = 'calc_pct_single_reg_single_campaign'
+        params['indicator_part'] = self.ind_part.id
+        params['indicator_whole'] = self.ind_whole.id
+        params['region'] = self.region.id
+        params['campaign'] = self.campaign.id
+
+
+        url = base_url + '?' + urllib.urlencode(params)
+        print url
 
         response = self.api_client.get(url,follow=True)
-        print response.__dict__
 
-        print 'PRINTING CONTEnt'
-        print response.status_code
-        pp.pprint(response.content)
+        print response.content
+
 
 
         self.assertEqual(1,1)
