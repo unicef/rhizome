@@ -4,13 +4,13 @@ from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 
 from django.db.models.query import QuerySet
 from django.core.exceptions import ObjectDoesNotExist
-
-
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ModelResource,Resource, ALL
 from tastypie.bundle import Bundle
 from tastypie.http import HttpBadRequest
 from tastypie import fields
+from tastypie.authorization import Authorization
+from tastypie.authentication import ApiKeyAuthentication
 
 
 import pprint as pp
@@ -67,6 +67,9 @@ class AggregateResource(Resource):
         resource_name = 'aggregate'
         object_class = ResultObject
         allowed_methods = ['get']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+        always_return_data = True
 
 
     def get_object_list(self, request):
