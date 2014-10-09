@@ -1,15 +1,19 @@
+import pprint as pp
+from dateutil import parser
+
 from tastypie.resources import ModelResource, ALL
-from datapoints.models import *
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
 from django.utils.decorators import method_decorator
-from stronghold.decorators import public
 from django.contrib.auth.models import User
-# from datapoints.api.aggregate import FnLookUp, ResultObject
-import pprint as pp
+from django.core.exceptions import ValidationError
 from tastypie.bundle import Bundle
+
+from stronghold.decorators import public
+
 from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
+from datapoints.models import *
 
 class SimpleApiResource(ModelResource):
     '''
@@ -92,100 +96,50 @@ class DataPointResource(SimpleApiResource):
             "region": ALL ,
             "campaign": ALL,
         }
+        allowed_methods = ['get']
 
-    def hydrate(self, bundle):
-        '''determine changed_by_id from the username param'''
-        username = bundle.request.GET['username']
-        user_id = User.objects.get(username=username).id
-        user_resource_uri = "/api/v1/user/" + str(user_id) + "/"
-        bundle.data['changed_by_id'] = user_resource_uri
 
-        return bundle
+    def parse_campaign_st_end(self,query_param,query_dict):
 
-    def convert_slug_to_resource(self,slug,resource_string,model,id_only=False):
-        '''this is a generic method that converts the slug in the request
-           string into a resource URI that can be saved to the DB'''
+        try:
+            param = query_dict[query_param]
+        except KeyError:
+            campaign_list = Campaign.objects.all()
 
-        object_id = model.objects.get(slug=slug).id
+        if query_param == 'campaign_start':
 
-        if id_only:
-            object_resource_uri = object_id
+            try:
+                campaign_list = Campaign.objects.filter(start_date__gte=param)
+            except ValidationError:
+                return None
 
-        else:
-            object_resource_uri = "/api/v1/%s/%s/" % (resource_string , object_id)
+        elif query_param == 'campaign_end':
 
-        return object_resource_uri
+            try:
+                campaign_list = Campaign.objects.filter(end_date__lte=param)
+            except ValidationError:
+                return None
 
-    def hydrate_region(self, bundle):
-        '''convert region slug into resource uri'''
-        slug = bundle.data['region']
-        region_uri = self.convert_slug_to_resource(slug,'region',Region)
-        bundle.data['region'] = region_uri
+        campaign_list_ids = [c.id for c in campaign_list]
 
-        return bundle
+        print campaign_list_ids
+        return campaign_list_ids
 
-    def hydrate_indicator(self, bundle):
-        '''convert indicator slug into resource uri'''
-        slug = bundle.data['indicator']
-        indicator_uri = self.convert_slug_to_resource(slug,'indicator'
-            ,Indicator)
-        bundle.data['indicator'] = indicator_uri
 
-        return bundle
-
-    def hydrate_campaign(self, bundle):
-        '''convert campaign slug into resource uri'''
-        slug = bundle.data['campaign']
-        campaign_uri = self.convert_slug_to_resource(slug,'campaign',Campaign)
-        bundle.data['campaign'] = campaign_uri
-
-        return bundle
 
     def get_object_list(self, request):
-        '''this method overides the get_object_list of the model resource
-        class taken from tastypie.  The idea here is that for GET Requests
-        we parse out the additional params that wer not passed as resources
-        for when the end point is hit with a SLUG as opposed to RESOURCE'''
+        '''This method contains all custom filtering.
+           Specifically, getting datapoints by campaign date range'''
 
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
-        indicator_id, region_id, campaign_id,indicator_part_id \
-            ,indicator_whole_id = parse_slugs_from_url( query_dict)
+        camp_st_list = self.parse_campaign_st_end('campaign_start',query_dict)
+        camp_ed_list = self.parse_campaign_st_end('campaign_end',query_dict)
 
-        # ## CLEAN THIS UP ##
-        if indicator_id > 0:
-            object_list = object_list.filter(indicator=indicator_id)
+        campaign_ids = set(camp_st_list).intersection(camp_ed_list)
 
-        if region_id > 0:
-            object_list = object_list.filter(region=region_id)
-
-        if campaign_id > 0:
-            object_list = object_list.filter(campaign=campaign_id)
-
-        return object_list
+        filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
 
 
-#### INTERACTING W THE API FROM POSTMAN ####
-
-  # save RAW data as:
-    # {"indicator": "/api/v1/indicator/47/"
-    # ,"region": "/api/v1/region/9/"
-    # ,"campaign": "/api/v1/campaign/1/"
-    # ,"value": "1.00"
-    # ,"changed_by_id": "/api/v1/user/1/"}
-
-  # header: application/json
-  # URL : http://127.0.0.1:8000/api/v1/datapoint/?username=john&
-    # api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc
-
-
-## CREATING AN API KEY ##
-# from tastypie.models import ApiKey
-# from django.contrib.auth.models import User
-# john = User.objects.get(username='john')
-# api_key = ApiKey.objects.create(user=john)
-
-# http://127.0.0.1:8000/api/v1/datapoint/?username=john&api_key=3018e5d944e1a37d2e2af952198bef4ab0d9f9fc&format=json
-
-# http://polio.seedscientific.com/api/v1/datapoint/?username=john&api_key=b8f139e164a2a1811da57b4eaeddd554b7683ea8&format=json
+        return filtered_object_list
