@@ -53,6 +53,22 @@ Range
     http://polio.seedscientific.com/api/v1/indicator/format=json&id__id__range=9,12
 
 
+Multiple Objects
+
+Lets say that i want to see data 5 regions (14589,15863,17562,17940)
+
+.. code-block:: python
+   :linenos:
+
+    localhost:8000/api/v1/datapoint/?region__in=14589,15863,17562,17940
+
+
+Filter By Data of Campaign
+
+  ## TO DO ##
+
+
+
 
 Lets say that i wanted to query for all datapoints with IDs between 10 and 20
 created after July 1 2014.
