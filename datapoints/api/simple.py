@@ -100,6 +100,8 @@ class DataPointResource(SimpleApiResource):
 
 
     def parse_campaign_st_end(self,query_param,query_dict):
+        ''' this method parses the (optional) params for campaign st/end
+        and returns the campagign ids for both the start and end params '''
 
         try:
             param = query_dict[query_param]
@@ -122,9 +124,21 @@ class DataPointResource(SimpleApiResource):
 
         campaign_list_ids = [c.id for c in campaign_list]
 
-        print campaign_list_ids
         return campaign_list_ids
 
+
+    def filter_by_campaign(self,object_list,query_dict):
+        ''' using the parse_campaign_st_end find the relevant campaign ids and
+        return a result set where datpoitns are filtered by this list'''
+
+        camp_st_list = self.parse_campaign_st_end('campaign_start',query_dict)
+        camp_ed_list = self.parse_campaign_st_end('campaign_end',query_dict)
+
+        campaign_ids = set(camp_st_list).intersection(camp_ed_list)
+
+        filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
+
+        return filtered_object_list
 
 
     def get_object_list(self, request):
@@ -134,12 +148,7 @@ class DataPointResource(SimpleApiResource):
         object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
-        camp_st_list = self.parse_campaign_st_end('campaign_start',query_dict)
-        camp_ed_list = self.parse_campaign_st_end('campaign_end',query_dict)
-
-        campaign_ids = set(camp_st_list).intersection(camp_ed_list)
-
-        filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
+        filtered_object_list = self.filter_by_campaign(object_list,query_dict)
 
 
         return filtered_object_list
