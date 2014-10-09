@@ -86,11 +86,11 @@ class DataPointResource(SimpleApiResource):
         resource_name = 'datapoint'
         excludes = ['note']
         filtering = {
-            "value": ('exact','lt','gt','lte','gte','range'),
-            "created_at":('exact','lt','gt','lte','gte','range'),
-            "indicator":('exact'),
-            "region":('exact'),
-            "campaign":('exact'),
+            "value": ALL,
+            "created_at":ALL,
+            "indicator":ALL,
+            "region": ALL ,
+            "campaign": ALL,
         }
 
     def hydrate(self, bundle):
