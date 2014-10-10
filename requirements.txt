@@ -12,6 +12,7 @@ django-autoslug==1.7.2
 django-csvimport==1.0
 django-discover-runner==1.0
 django-guardian==1.2.4
+django-simple-history==1.5.0
 django-stronghold==0.2.6
 django-tables2==0.15.0
 django-tastypie==0.11.1
