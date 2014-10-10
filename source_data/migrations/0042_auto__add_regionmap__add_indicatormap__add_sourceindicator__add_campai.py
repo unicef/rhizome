@@ -7,8 +7,9 @@ from django.db import models
 
 class Migration(SchemaMigration):
     depends_on = (
-        ('datapoints','0001_init_datapoints_db.py')
+        ("datapoints","0001_init_datapoints_db.py"),
     )
+
 
     def forwards(self, orm):
         # Adding model 'RegionMap'
