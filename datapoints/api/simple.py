@@ -25,8 +25,8 @@ class SimpleApiResource(ModelResource):
     '''
 
     class Meta():
-        authentication = ApiKeyAuthentication()
-        authorization = Authorization()
+        # authentication = ApiKeyAuthentication()
+        # authorization = Authorization()
         always_return_data = True
 
 
@@ -99,46 +99,40 @@ class DataPointResource(SimpleApiResource):
         allowed_methods = ['get']
 
 
-    def parse_campaign_st_end(self,query_param,query_dict):
-        ''' this method parses the (optional) params for campaign st/end
-        and returns the campagign ids for both the start and end params '''
-
-        try:
-            param = query_dict[query_param]
-        except KeyError:
-            campaign_list = Campaign.objects.all()
-
-        if query_param == 'campaign_start':
-
-            try:
-                campaign_list = Campaign.objects.filter(start_date__gte=param)
-            except ValidationError:
-                return None
-
-        elif query_param == 'campaign_end':
-
-            try:
-                campaign_list = Campaign.objects.filter(end_date__lte=param)
-            except ValidationError:
-                return None
-
-        campaign_list_ids = [c.id for c in campaign_list]
-
-        return campaign_list_ids
-
-
     def filter_by_campaign(self,object_list,query_dict):
         ''' using the parse_campaign_st_end find the relevant campaign ids and
         return a result set where datpoitns are filtered by this list'''
 
-        camp_st_list = self.parse_campaign_st_end('campaign_start',query_dict)
-        camp_ed_list = self.parse_campaign_st_end('campaign_end',query_dict)
+        ## Find Start Date IDs ##
+        campaigns_to_filter = Campaign.objects.all()
 
-        campaign_ids = set(camp_st_list).intersection(camp_ed_list)
+
+        try:
+            c_st = query_dict['campaign_start']
+            campaigns_to_filter = campaigns_to_filter.filter(start_date__gte=c_st)
+        except KeyError:
+             pass # campaigns_to_filter is all
+        except ValidationError:
+             campaigns_to_filter = []
+
+        ## Find End Date IDs ##
+
+        try:
+            c_ed = query_dict['campaign_end']
+            campaigns_to_filter = campaigns_to_filter.filter(end_date__lte=c_ed)
+        except KeyError:
+             pass
+        except ValidationError:
+             campaigns_to_filter = []
+
+        campaign_ids = [c.id for c in campaigns_to_filter]
+
 
         filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
 
         return filtered_object_list
+
+
 
 
     def get_object_list(self, request):
