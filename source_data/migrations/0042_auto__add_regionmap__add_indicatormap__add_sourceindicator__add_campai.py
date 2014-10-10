@@ -8,6 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
     depends_on = (
         ("datapoints","0001_init_datapoints_db.py"),
+        ("datapoints","0004_add_model_Source.py"),
+
     )
 
 
