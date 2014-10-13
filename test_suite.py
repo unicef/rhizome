@@ -2,6 +2,10 @@ import unittest
 from unittest import TestResult
 
 from datapoints.tests.test_api_filters import CampaignDateFilterTestCase
+from datapoints.tests.test_agg_api import CalcPctSoloRegionSoloCampaign
+from datapoints.tests.test_agg_api import CalcPctParentRegionSoloCampaign
+
+
 from source_data.tests.all_tests import NewDPTestCase
 
 # python manage.py test test_suite.run_all --settings=polio.settings_test
@@ -13,7 +17,6 @@ def build_suite():
     """
     test_suite = unittest.TestSuite()
 
-
     ## ODK ##
     ## CSV UPLOAD ##
     ## POST REQUESTS ##
@@ -24,12 +27,19 @@ def build_suite():
     ## CUSTOM FILTERS ##
     test_suite.addTest(unittest.makeSuite(CampaignDateFilterTestCase))
     ## AGGREGATE QUERIES ##
+    test_suite.addTest(unittest.makeSuite(CalcPctSoloRegionSoloCampaign))
+    test_suite.addTest(unittest.makeSuite(CalcPctParentRegionSoloCampaign))
+
 
     return test_suite
 
 def run_all():
-    test_results = TestResult()
+    result = TestResult()
     my_suite = build_suite()
-    my_suite.run(test_results)
+    my_suite.run(result)
+
+    print 'WHAT FAILED\n' * 10
+
+    print result.failures
 
     return my_suite

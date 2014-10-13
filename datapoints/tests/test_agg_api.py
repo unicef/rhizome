@@ -6,6 +6,7 @@ from random import randrange
 
 
 from tastypie.test import ResourceTestCase
+from tastypie.models import ApiKey
 from django.core.urlresolvers import reverse
 
 from datapoints.models import *
@@ -67,6 +68,7 @@ class CalcPctSoloRegionSoloCampaign(ResourceTestCase):
         self.ind_whole_val = 100.00
 
         self.user = User.objects.create(username='test_user')
+        self.api_key = ApiKey.objects.create(user=self.user)
         self.source = Source.objects.create(source_name='test_source')
         self.office = Office.objects.create(name='test_office')
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
@@ -147,10 +149,17 @@ class CalcPctSoloRegionSoloCampaign(ResourceTestCase):
         params['indicator_whole'] = self.ind_whole.id
         params['region_solo'] = self.region.id
         params['campaign_solo'] = self.campaign.id
+        params['username'] = self.user.username
+        params['api_key'] = self.api_key.key
 
         url = base_url + '?' + urllib.urlencode(params)
 
         response = self.api_client.get(url,follow=True)
+
+        print url
+        print 'DEBUG\n' * 10
+        print response.content
+        print response.status_code
 
         data = json.loads(response.content)
 
@@ -159,6 +168,7 @@ class CalcPctSoloRegionSoloCampaign(ResourceTestCase):
 
         final_val = str(self.ind_part_val  / self.ind_whole_val)
         self.assertEqual(result,final_val)
+
 
 
 class CalcPctParentRegionSoloCampaign(ResourceTestCase):
@@ -205,6 +215,7 @@ class CalcPctParentRegionSoloCampaign(ResourceTestCase):
 
 
         self.user = User.objects.create(username='test_user')
+        self.api_key = ApiKey.objects.create(user=self.user)
         self.source = Source.objects.create(source_name='test_source')
         self.office = Office.objects.create(name='test_office')
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
@@ -352,6 +363,9 @@ class CalcPctParentRegionSoloCampaign(ResourceTestCase):
         params['indicator_whole'] = self.ind_whole.id
         params['region_parent'] = self.parent_region.id
         params['campaign_solo'] = self.campaign.id
+        params['username'] = self.user.username
+        params['api_key'] = self.api_key.key
+
 
         url = base_url + '?' + urllib.urlencode(params)
 
