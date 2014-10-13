@@ -9,41 +9,6 @@ from source_data.etl_tasks.transform_odk import VcmSummaryTransform
 from source_data.models import *
 from datapoints.models import *
 
-class OdkTestCase(TestCase):
-    ''' this test takes a record from the VCM Summary table, and inserts ALL
-    records into the source datapoints table '''
-
-    def setUp(self):
-
-        Source.objects.create(source_name='odk',source_description='thisisfake')
-
-        self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
-        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCESS_INSERT')
-
-        self.vcm_sum = VCMSummaryNew.objects.create(
-          key = 'blabfalbfslfb',
-          process_status = self.to_process_status,
-          request_guid = 'somethignfake',
-          dateofreport = '2014-01-01',
-          date_implement = '2014-02-01',
-          settlementcode = 12345,
-
-          tot_newborns = 345,
-          census2_11mof = 34,
-        )
-
-    def test_source_datapoint_creation(self):
-
-        v= VcmSummaryTransform('thisisafakerequestid')
-        v.vcm_summary_to_source_datapoints()
-
-
-        sdp_1 = SourceDataPoint.objects.get(indicator_string='tot_newborns')
-        self.assertEqual(int(sdp_1.cell_value),345)
-
-        sdp_2 = SourceDataPoint.objects.get(indicator_string='census2_11mof')
-        self.assertEqual(int(sdp_2.cell_value),34)
-
 
 class NewDPTestCase(TestCase):
     ''' this test goes through creating all of the metadata and mapping needed
