@@ -155,12 +155,6 @@ class CalcPctSoloRegionSoloCampaign(ResourceTestCase):
         url = base_url + '?' + urllib.urlencode(params)
 
         response = self.api_client.get(url,follow=True)
-
-        print url
-        print 'DEBUG\n' * 10
-        print response.content
-        print response.status_code
-
         data = json.loads(response.content)
 
         objects = data['objects']

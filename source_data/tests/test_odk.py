@@ -130,3 +130,22 @@ class OdkTestCase(TestCase):
 
         sdps = self.create_source_dps()
         mappings = self.add_mappings(sdps)
+
+        # Adding the ODK data via the Refresh Master Method
+        m = MasterRefresh(sdps,self.user.id)
+        m.main()
+
+        dp_1 = DataPoint.objects.get(
+            region=self.region,
+            campaign=self.campaign,
+            indicator=self.indicator_01
+        )
+
+        dp_2 = DataPoint.objects.get(
+            region=self.region,
+            campaign=self.campaign,
+            indicator=self.indicator_02
+        )
+
+        self.assertEqual(dp_1.value,int(self.cnt_tot_newborns))
+        self.assertEqual(dp_2.value,int(self.cnt_census2_11mof))

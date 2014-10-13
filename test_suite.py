@@ -4,7 +4,7 @@ from unittest import TestResult
 from datapoints.tests.test_api_filters import CampaignDateFilterTestCase
 from datapoints.tests.test_agg_api import CalcPctSoloRegionSoloCampaign
 from datapoints.tests.test_agg_api import CalcPctParentRegionSoloCampaign
-
+from source_data.tests.test_odk import OdkTestCase
 
 from source_data.tests.all_tests import NewDPTestCase
 
@@ -18,6 +18,7 @@ def build_suite():
     test_suite = unittest.TestSuite()
 
     ## ODK ##
+    OdkTestCase
     ## CSV UPLOAD ##
     ## POST REQUESTS ##
     ## META DATA ##
