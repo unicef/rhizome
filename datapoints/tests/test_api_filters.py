@@ -13,14 +13,14 @@ from source_data.models import *
 from datapoints.models import *
 
 
-class ApiFilterTestCase(ResourceTestCase):
+class CampaignDateFilterTestCase(ResourceTestCase):
     ''' this test goes through creating all of the metadata and mapping needed
     to create a datapoint.  the datapoint is not inserted here directly but all
     of the requisite data is first, finally allowing the "refresh_master" method
     to sync the DB '''
 
     def setUp(self):
-        super(ApiFilterTestCase, self).setUp()
+        super(CampaignDateFilterTestCase, self).setUp()
 
 
         self.user = User.objects.create(username='test_user')
