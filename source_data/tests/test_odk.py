@@ -1,7 +1,12 @@
+import pprint as pp
+
 from django.test import TestCase
 
+from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform
+from source_data.etl_tasks.refresh_master import MasterRefresh
+
 
 # from datapoints.models import *
 
@@ -12,7 +17,8 @@ class OdkTestCase(TestCase):
 
     def setUp(self):
 
-        Source.objects.create(source_name='odk',source_description='thisisfake')
+        self.source = Source.objects.create(source_name='odk',source_description='thisisfake')
+        self.user = User.objects.create(username='test_user')
 
         self.cnt_tot_newborns = '345'
         self.cnt_census2_11mof = '34'
@@ -33,8 +39,39 @@ class OdkTestCase(TestCase):
           census2_11mof = self.cnt_census2_11mof,
         )
 
+        ## Master Meta Data ##
+        self.office = Office.objects.create(name='FAKE')
 
-    def test_source_datapoint_creation(self):
+        self.region = Region.objects.create(
+            full_name = 'Da Bronx',
+            region_code = 42424,
+            region_type = 'LGA',
+            office = self.office,
+            source = self.source,
+            source_guid = 'somethingtotallyfake'
+        )
+
+        self.campaign = Campaign.objects.create(
+            name = 'test campaign',
+            office = self.office,
+            start_date = '2014-01-01',
+            end_date = '2014-01-01',
+        )
+
+        self.indicator_01 = Indicator.objects.create(
+            short_name = 'fake',
+            name = 'faker',
+            description = 'fakest'
+        )
+
+        self.indicator_02 = Indicator.objects.create(
+            short_name = 'extra fake',
+            name = 'super fake',
+            description = 'super duper fake'
+        )
+
+
+    def create_source_dps(self):
 
         v= VcmSummaryTransform('thisisafakerequestid')
         v.vcm_summary_to_source_datapoints()
@@ -47,3 +84,49 @@ class OdkTestCase(TestCase):
 
         self.assertEqual(self.sett_code,sdp_1.region_string)
         self.assertEqual(self.date_implement,sdp_1.campaign_string)
+
+        return [sdp_1,sdp_2]
+
+    def add_mappings(self,records):
+
+        m = MasterRefresh(records,self.user.id)
+
+        # CREATE THE SOURCE DATAPOINTS #
+        mappings = m.get_mappings()
+
+        RegionMap.objects.create(
+          source_region= SourceRegion.objects.get(region_string=self.sett_code\
+              ,source=self.source),
+          master_region=self.region,
+          mapped_by=self.user
+        )
+
+        IndicatorMap.objects.create(
+          source_indicator= SourceIndicator.objects.get(indicator_string=\
+              'tot_newborns',source=self.source),
+          master_indicator=self.indicator_01,
+          mapped_by=self.user
+        )
+
+        IndicatorMap.objects.create(
+          source_indicator= SourceIndicator.objects.get(indicator_string=\
+              'census2_11mof',source=self.source),
+          master_indicator=self.indicator_02,
+          mapped_by=self.user
+        )
+
+        CampaignMap.objects.create(
+          source_campaign= SourceCampaign.objects.get(campaign_string=\
+              self.date_implement,source=self.source),
+          master_campaign=self.campaign,
+          mapped_by=self.user
+        )
+
+
+        return mappings
+
+
+    def test_(self):
+
+        sdps = self.create_source_dps()
+        mappings = self.add_mappings(sdps)
