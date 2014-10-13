@@ -1,9 +1,25 @@
-#!/usr/bash
+import unittest
+from unittest import TestResult
+
+from datapoints.tests.test_api_filters import CampaignDateFilterTestCase
 
 
-SETTINGS="polio.settings_test"
+def suite():
+    """
+        Gather all the tests from this module in a test suite.
+    """
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(unittest.makeSuite(CampaignDateFilterTestCase))
+    return test_suite
 
-# python manage.py test source_data --settings=$SETTINGS
+def run_all():
+
+    test_results = TestResult()
+    my_suite = suite()
+    my_suite.run(test_results)
+
+    return my_suite
+
 
 
     # INSERTING DATA
@@ -43,7 +59,7 @@ SETTINGS="polio.settings_test"
 
 ## CUSTOM FILTERS ##
 # Test Campaign Filters
-python manage.py test datapoints.tests.test_api_filters.CampaignDateFilterTestCase --settings=$SETTINGS
+# python manage.py test datapoints.tests.test_api_filters.CampaignDateFilterTestCase --settings=$SETTINGS
 
 
 
