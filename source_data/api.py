@@ -1,13 +1,14 @@
 import subprocess,sys,time,pprint as pp
 import traceback
-
 from time import strftime
+
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 
 from source_data.models import EtlJob, SourceDataPoint, ProcessStatus
+from datapoints.models import Source
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform,VcmSettlementTransform
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -79,15 +80,17 @@ class EtlTask(object):
         self.function_mappings = {
               'test_api' : self.test_api,
               'odk_pull_vcm_summary_raw' : self.odk_pull_vcm_summary_raw,
-              # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-              # 'odk_refresh_master' : self.odk_refresh_master,
-              # 'refresh_master' : self.refresh_master,
-            }
+              'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
+              'odk_refresh_master' : self.odk_refresh_master,
+              }
 
         fn = self.function_mappings[task_string]
 
         self.err, self.data = fn()
 
+    ###############################################################
+    ########## METHODS BELOW USED BY API CALLS ABOVE ##############
+    ###############################################################
 
     def test_api(self):
 
@@ -97,19 +100,6 @@ class EtlTask(object):
             return err, None
 
         return None, data
-
-
-    ###############################################################
-    ########## METHODS BELOW USED BY API CALLS ABOVE ##############
-    ###############################################################
-
-
-    def handle_results(self,objects):
-
-        if objects:
-            return len(objects)
-        else:
-            return 0
 
 
     def odk_pull_vcm_summary_raw(self):
@@ -132,35 +122,32 @@ class EtlTask(object):
             err = traceback.format_exc()
             return err, None
 
-        return None, 'Successfully Retrieved Data from ODK'
+        return None, 'Successfully Retrieved Data for form: ' + form_id
 
-    def odk_refresh_work_tables(self,form_id=None):
+    def odk_refresh_vcm_summary_work_table(self):
 
-        forms_to_pull = []
+        form_id = 'New_VCM_Summary'
 
-        if form_id:
-            forms_to_pull.append(form_id)
-        else:
-            forms_to_pull = odk_settings.FORM_LIST
+        t = WorkTableTask(self.task_guid,form_id)
+        err, data = t.main()
 
-        for source_file in forms_to_pull:
-              print 'refreshing work table form: ' +  source_file
+        return err, data
 
-              t = WorkTableTask(self.task_guid,source_file)
+    def odk_refresh_master(self):
 
+        try:
+            source_datapoints = SourceDataPoint.objects.filter(
+                status_id = ProcessStatus.objects.get(status_text='TO_PROCESS'),
+                source_id = Source.objects.get(source_name='odk'))
 
-    def refresh_master(self):
+            m = MasterRefresh(source_datapoints,self.user_id)
+            m.main()
 
-        source_datapoints = SourceDataPoint.objects.filter(status_id = \
-            ProcessStatus.objects.get(status_text='TO_PROCESS'))
+            dp_count = len(m.new_datapoints)
+            success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
 
-        source_datapoints = source_datapoints
-        print 'refreshing master'
-
-        m = MasterRefresh(source_datapoints,self.user_id)
-        m.main()
-
-        dp_count = len(m.new_datapoints)
-        success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
+        except Exception:
+            err = traceback.format_exc()
+            return err, None
 
         return None, success_msg

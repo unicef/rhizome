@@ -53,23 +53,33 @@ class WorkTableTask(object):
         }
 
 
+    def main(self):
+
+        err = None
+        data = None
+
         # execute the relevant function
         try:
             work_table_obj = self.file_to_object_map[self.file_to_process]
         except KeyError:
-            return
-            ## LOG THIS ERROR ##
+            err = traceback.format_exc()
+            return err, data
 
         try:
             # only process if the file is not empty and it exists
             self.full_file_path = odk_settings.EXPORT_DIRECTORY + \
                 self.file_to_process.replace('.',"_") + '.csv'
 
-            if os.path.getsize(self.full_file_path) > 0:
-                self.csv_to_work_table(work_table_obj)
+            if os.path.getsize(self.full_file_path) < 0:
+                data = 'Nothing To Process'
+            else:
+                data = self.csv_to_work_table(work_table_obj)
+
         except OSError:
-            pass # file does not exist
-            ## LOG THIS ERROR ##
+            err = traceback.format_exc()
+            return err, data
+
+        return err, data
 
 
     def df_row_to_dict(self,row,columns):
@@ -99,14 +109,18 @@ class WorkTableTask(object):
 
     def csv_to_work_table(self, work_table_object):
 
+        created_count = 0
+
         df = self.build_dataframe()
         df_columns = [col.lower().replace('-','_') for col in df.columns]
 
         for i, row in enumerate(df.values):
             to_create = self.df_row_to_dict(row,df_columns)
-            # print to_create
 
             try:
                 created = work_table_object.objects.create(**to_create)
+                created_count +=1
             except IntegrityError:
                 print 'key: ' +  row[df_columns.index('key')] + ' already exists...'
+
+        return 'successfully created ' + str(created_count) + ' work table rows'
