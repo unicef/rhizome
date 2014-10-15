@@ -91,6 +91,8 @@ class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
         obj = form.save(commit=False)
         obj.changed_by = self.request.user
         obj.source_id = Source.objects.get(source_name='data entry').id
+        obj.source_datapoint_id = -1
+
         obj.save()
         return HttpResponseRedirect(self.success_url)
 
@@ -150,7 +152,7 @@ class IndicatorIndexView(IndexView):
 
     paginate_by = 10000
 
-    
+
 
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
