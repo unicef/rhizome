@@ -78,15 +78,13 @@ class EtlTask(object):
 
         self.function_mappings = {
               'test_api' : self.test_api,
-              'odk_refresh_vcm_summary' : self.odk_refresh_vcm_summary,
-              'odk_refresh_regions' : self.odk_refresh_regions,
-              'odk_refresh_all' : self.odk_refresh_all,
-              'refresh_master' : self.refresh_master,
-
+              'odk_pull_vcm_summary_raw' : self.odk_pull_vcm_summary_raw,
+              # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
+              # 'odk_refresh_master' : self.odk_refresh_master,
+              # 'refresh_master' : self.refresh_master,
             }
 
         fn = self.function_mappings[task_string]
-
 
         self.err, self.data = fn()
 
@@ -101,53 +99,10 @@ class EtlTask(object):
         return None, data
 
 
-    def odk_refresh_vcm_summary(self):
+    ###############################################################
+    ########## METHODS BELOW USED BY API CALLS ABOVE ##############
+    ###############################################################
 
-        try:
-            results = {}
-
-            # ## PULL THE ODK DATA FROM APP ENGINE ##
-            self.odk_pull_raw_form_data('New_VCM_Summary')
-
-            # ## DUMP THE ODK DATA INTO THE WORK TABLE ##
-            self.odk_refresh_work_tables('New_VCM_Summary')
-
-            ## CREATE AN OBJECT FOR A VCM SUMMARY TRANSFORMATION ##
-            vst = VcmSummaryTransform(self.task_guid)
-
-
-            ## CREATE SOURCE DPS FROM WHAT WE INSERTED INTO THE WORK TABLE ##
-            vst.vcm_summary_to_source_datapoints()
-            source_dps = vst.source_datapoints
-            results['new_source_datapoint_count'] = self.handle_results(source_dps)
-
-            ## FINALLY ADD ALL DATAPOINTS BASED ON SOURCE DPs ##
-            dps = self.refresh_master(source_dps)
-            results['new_datapoint_count'] = self.handle_results(dps)
-
-            return None, results
-
-        except Exception:
-            err = traceback.format_exc()
-            return err, None
-
-    def odk_refresh_regions(self):
-
-        v_sett_t = VcmSettlementTransform(self.task_guid)
-        err, mappings = v_sett_t.refresh_source_regions()
-
-        return err, mappings
-
-
-    def odk_refresh_all(self):
-
-        self.odk_pull_raw_form_data()
-        self.odk_refresh_work_tables()
-
-
-    ######################################################################
-    ########## HELPER METHODS BELOW USED BY API CALLS ABOVE ##############
-    ######################################################################
 
     def handle_results(self,objects):
 
@@ -157,18 +112,11 @@ class EtlTask(object):
             return 0
 
 
-    def odk_pull_raw_form_data(self,form_id=None):
+    def odk_pull_vcm_summary_raw(self):
 
-        forms_to_pull = []
+        form_id = 'New_VCM_Summary'
 
-        if form_id:
-            forms_to_pull.append(form_id)
-        else:
-            forms_to_pull = odk_settings.FORM_LIST
-
-
-        for form_id in forms_to_pull:
-            print form_id
+        try:
             subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
                 '--export_filename',form_id+'.csv', \
@@ -180,6 +128,11 @@ class EtlTask(object):
                 '--overwrite_csv_export' ,\
                 '--exclude_media_export' \
               ])
+        except Exception:
+            err = traceback.format_exc()
+            return err, None
+
+        return None, 'Successfully Retrieved Data from ODK'
 
     def odk_refresh_work_tables(self,form_id=None):
 
