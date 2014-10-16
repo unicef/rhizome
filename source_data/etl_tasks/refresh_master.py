@@ -1,12 +1,14 @@
 import pprint as pp
 import traceback
+import datetime
 from decimal import InvalidOperation
 
 from django.db import IntegrityError
+from django.db import transaction
 from django.core.exceptions import ValidationError
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
-from source_data.models import ProcessStatus
+from source_data.models import ProcessStatus,SourceDataPoint
 from datapoints.models import DataPoint
 
 
@@ -26,7 +28,7 @@ class MasterRefresh(object):
           self.mappings = self.get_mappings()
           for record in self.records:
 
-              err, datapoint_id = self.process_source_datapoint_record(record)
+              err, datapoint = self.process_source_datapoint_record(record)
 
               if err:
                   record.error_msg = err
@@ -48,6 +50,8 @@ class MasterRefresh(object):
 
 
       def process_source_datapoint_record(self,record):
+          print 'TRYING \n' *10
+
 
           try:
               indicator_id = self.mappings['indicators'][record.indicator_string]
@@ -58,23 +62,21 @@ class MasterRefresh(object):
               return err, None
 
           try:
-              datapoint,created = DataPoint.objects.get_or_create(
-                  indicator_id = indicator_id,
-                  region_id = region_id,
-                  campaign_id = campaign_id,
-                  value = record.cell_value,
-                  changed_by_id = self.user_id,
-                  source_datapoint_id = record.id
-              )
+              with transaction.atomic():
+                  datapoint = DataPoint.objects.create(
+                      indicator_id = indicator_id,
+                      region_id = region_id,
+                      campaign_id = campaign_id,
+                      value = record.cell_value,
+                      changed_by_id = self.user_id,
+                      source_datapoint_id = record.id
+                  )
+              record.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
               self.new_datapoints.append(datapoint.id)
-              if created:
-                  print 'CREATED\n' * 10
 
-                  record.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
-
-
-              if not created:
-                  self.handle_dupe_record(record, datapoint)
+          except IntegrityError:
+              err, datapoint = self.handle_dupe_record(record,indicator_id,region_id,campaign_id)
+              return err, datapoint
 
           except ValidationError:
               err = traceback.format_exc()
@@ -84,17 +86,44 @@ class MasterRefresh(object):
               return err, None
           except Exception:
               err = traceback.format_exc()
-              print err
               return err, None
 
-          return None, datapoint.id
+          return None, datapoint
 
-      def handle_dupe_record(self,record,datapoint):
+      def handle_dupe_record(self,sdp,indicator_id,region_id,campaign_id):
 
-          datapoint.value = record.value
-          datapoint.source_datapoint_id = record.id
 
-          datapoint.save()
+          datapoint = DataPoint.objects.get(
+            indicator_id = indicator_id,
+            region_id = region_id,
+            campaign_id = campaign_id,
+          )
 
-          record.status = Status.objects.get(status_text= "SUCESS_UPDATE").id
-          record.save()
+          original_sdp = SourceDataPoint.objects.get(id=datapoint.source_datapoint_id)
+
+          print original_sdp.created_at
+          print sdp.created_at
+
+
+          if original_sdp.created_at.replace(tzinfo=None) <= sdp.created_at.replace(tzinfo=None):
+
+              datapoint.value = sdp.cell_value
+              datapoint.source_datapoint_id = sdp.id
+
+              datapoint.save()
+
+              sdp.status = ProcessStatus.objects.get(status_text= "SUCCESS_UPDATE")
+              sdp.save()
+
+              original_sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDEN")
+              original_sdp.save()
+
+              return None, datapoint
+
+          else:
+              print 'wudddup\n' *10
+
+              sdp.status = Status.objects.get(status_text= "OVERRIDEN")
+              record.save()
+
+              return None, datapoint

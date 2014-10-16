@@ -32,8 +32,6 @@ def map_indicators(indicator_strings,source_id):
 
 def map_campaigns(campaign_strings,source_id):
 
-    print 'MAPPING CAMPAIGNS'
-
     campaign_mapping = {}
 
     distinct_campaign_strings = list(set(campaign_strings))
@@ -41,7 +39,7 @@ def map_campaigns(campaign_strings,source_id):
     for campaign in distinct_campaign_strings:
 
         print campaign
-        
+
         source_campaign, created = SourceCampaign.objects.get_or_create(
             source_id = source_id,
             campaign_string = campaign

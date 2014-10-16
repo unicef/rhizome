@@ -44,3 +44,10 @@ def run_all():
     print result.failures
 
     return my_suite
+
+
+## Refresh Master Test:
+  # Test SDP.value = DP.value
+  # Test that a successfull insert went down
+  # Test that a successfull Update went down
+  # Test that an Error Was Logged

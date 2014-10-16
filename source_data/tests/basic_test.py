@@ -1,5 +1,6 @@
 import time
 import decimal
+from datetime import timedelta
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -23,7 +24,11 @@ class NewDPTestCase(TestCase):
         self.source = Source.objects.create(source_name='test_source')
         self.document = Document.objects.create(docfile='asfasfasf',created_by=self.user)
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
-        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCESS_INSERT')
+        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCCESS_INSERT')
+        self.success_update_status = ProcessStatus.objects.create(status_text='SUCCESS_UPDATE')
+        self.overriden_status = ProcessStatus.objects.create(status_text='OVERRIDEN')
+
+
 
         self.region_string = 'test region'
         self.campaign_string = 'test campaign'
@@ -70,16 +75,6 @@ class NewDPTestCase(TestCase):
             end_date = time.strftime("%Y-%m-%d"),
         )
 
-        # Create Some Proess Status IDs
-        self.process_status_to_process = ProcessStatus.objects.create(
-            status_text = 'TO_PROCESS',
-            status_description = 'TO_PROCESS',
-        )
-
-        self.process_status_sucess = ProcessStatus.objects.create(
-            status_text = 'SUCCESS_INSERT',
-            status_description = 'SUCCESS_INSERT',
-        )
 
 
 
@@ -137,9 +132,9 @@ class NewDPTestCase(TestCase):
 
 
     def test_sdp_to_dp(self):
-        '''  after all is mapped we try to create the source datapoitn
-        here.  We make sure that TRUE=1, FALSE=0 and that the value
-        stored in the cell was properly converted to a numeric.'''
+        '''This tests the behavior of the refresh_master method. Test that a
+        new SDP gets inserted, an update gets update, and the existing value
+        is overriden.'''
 
         self.source_metadata_mapping()
         m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
@@ -155,3 +150,29 @@ class NewDPTestCase(TestCase):
 
         self.assertEqual(self.sdp.status_id,
           ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id)
+
+        ## now create another SDP, and update the original, checking the process status in both cases
+
+        new_cell_val = 99
+
+
+        sdp_new = SourceDataPoint.objects.create(
+            indicator_string =  self.sdp.indicator_string,
+            region_string = self.sdp.region_string,
+            campaign_string = self.sdp.campaign_string,
+            cell_value = new_cell_val,
+            row_number = 0,
+            source_id = self.source.id,
+            document_id = self.document.id,
+            status_id = self.to_process_status.id,
+            created_at = self.sdp.created_at + timedelta(days=1)
+
+        )
+
+        m = MasterRefresh(records = [sdp_new], user_id = self.user.id)
+        m.main()
+
+        updated_dp = DataPoint.objects.get(source_datapoint_id = sdp_new.id)
+
+        ## DID THE VALUE GET UPDATED
+        self.assertEqual(updated_dp.value,new_cell_val)
