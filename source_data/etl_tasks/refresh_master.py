@@ -49,14 +49,12 @@ class MasterRefresh(object):
           return mappings
 
 
-      def process_source_datapoint_record(self,record):
-          print 'TRYING \n' *10
-
+      def process_source_datapoint_record(self,sdp):
 
           try:
-              indicator_id = self.mappings['indicators'][record.indicator_string]
-              region_id = self.mappings['regions'][record.region_string]
-              campaign_id = self.mappings['campaigns'][record.campaign_string]
+              indicator_id = self.mappings['indicators'][sdp.indicator_string]
+              region_id = self.mappings['regions'][sdp.region_string]
+              campaign_id = self.mappings['campaigns'][sdp.campaign_string]
           except KeyError:
               err = traceback.format_exc()
               return err, None
@@ -67,15 +65,17 @@ class MasterRefresh(object):
                       indicator_id = indicator_id,
                       region_id = region_id,
                       campaign_id = campaign_id,
-                      value = record.cell_value,
+                      value = sdp.cell_value,
                       changed_by_id = self.user_id,
-                      source_datapoint_id = record.id
+                      source_datapoint_id = sdp.id
                   )
-              record.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
+                  self.new_datapoints.append(datapoint.id)
+              sdp.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
+              record.save()
               self.new_datapoints.append(datapoint.id)
 
           except IntegrityError:
-              err, datapoint = self.handle_dupe_record(record,indicator_id,region_id,campaign_id)
+              err, datapoint = self.handle_dupe_record(sdp,indicator_id,region_id,campaign_id)
               return err, datapoint
 
           except ValidationError:
@@ -101,10 +101,6 @@ class MasterRefresh(object):
 
           original_sdp = SourceDataPoint.objects.get(id=datapoint.source_datapoint_id)
 
-          print original_sdp.created_at
-          print sdp.created_at
-
-
           if original_sdp.created_at.replace(tzinfo=None) <= sdp.created_at.replace(tzinfo=None):
 
               datapoint.value = sdp.cell_value
@@ -115,15 +111,13 @@ class MasterRefresh(object):
               sdp.status = ProcessStatus.objects.get(status_text= "SUCCESS_UPDATE")
               sdp.save()
 
-              original_sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDEN")
+              original_sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDDEN")
               original_sdp.save()
 
               return None, datapoint
 
           else:
-              print 'wudddup\n' *10
-
-              sdp.status = Status.objects.get(status_text= "OVERRIDEN")
-              record.save()
+              sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDDEN")
+              sdp.save()
 
               return None, datapoint

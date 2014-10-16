@@ -5,8 +5,7 @@ from datapoints.tests.test_api_filters import CampaignDateFilterTestCase
 from datapoints.tests.test_agg_api import CalcPctSoloRegionSoloCampaign
 from datapoints.tests.test_agg_api import CalcPctParentRegionSoloCampaign
 from source_data.tests.test_odk import OdkTestCase
-
-from source_data.tests.all_tests import NewDPTestCase
+from source_data.tests.test_master_refresh import NewDPTestCase
 
 # python manage.py test test_suite.run_all --settings=polio.settings_test
 

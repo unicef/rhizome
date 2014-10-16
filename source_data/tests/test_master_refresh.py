@@ -26,7 +26,7 @@ class NewDPTestCase(TestCase):
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
         self.success_insert_status = ProcessStatus.objects.create(status_text='SUCCESS_INSERT')
         self.success_update_status = ProcessStatus.objects.create(status_text='SUCCESS_UPDATE')
-        self.overriden_status = ProcessStatus.objects.create(status_text='OVERRIDEN')
+        self.overriden_status = ProcessStatus.objects.create(status_text='OVERRIDDEN')
 
 
 
