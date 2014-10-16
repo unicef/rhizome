@@ -24,12 +24,13 @@ class OdkTestCase(TestCase):
         self.cnt_census2_11mof = '34'
         self.sett_code = '12345'
         self.date_implement = '2014-02-01'
+        self.odk_key = 'testkeyfromodk'
 
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
         self.success_insert_status = ProcessStatus.objects.create(status_text='SUCCESS_INSERT')
 
         self.vcm_sum = VCMSummaryNew.objects.create(
-          key = 'testkeyfromodk',
+          key = self.odk_key,
           process_status = self.to_process_status,
           request_guid = 'somethignfake',
           dateofreport = '2014-01-01',
@@ -129,6 +130,12 @@ class OdkTestCase(TestCase):
     def test_(self):
 
         sdps = self.create_source_dps()
+
+        ## Making Sure that the process status was set properly ##
+
+        self.assertEqual(self.success_insert_status.id,
+            VCMSummaryNew.objects.get(key=self.odk_key).process_status_id)
+
         mappings = self.add_mappings(sdps)
 
         # Adding the ODK data via the Refresh Master Method
