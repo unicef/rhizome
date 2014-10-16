@@ -81,8 +81,8 @@ class EtlTask(object):
               'test_api' : self.test_api,
               'odk_pull_vcm_summary_raw' : self.odk_pull_vcm_summary_raw,
               'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-              'odk_refresh_master' : self.odk_refresh_master,
               'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
+              'odk_refresh_master' : self.odk_refresh_master,
               }
 
         fn = self.function_mappings[task_string]
@@ -137,7 +137,9 @@ class EtlTask(object):
     def odk_vcm_summary_to_source_datapoints(self):
 
         v = VcmSummaryTransform(self.task_guid)
-        v.vcm_summary_to_source_datapoints()
+        err, data = v.vcm_summary_to_source_datapoints()
+
+        return err, data
 
     def odk_refresh_master(self):
 

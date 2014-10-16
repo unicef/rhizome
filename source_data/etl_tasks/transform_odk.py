@@ -4,6 +4,7 @@ import pprint as pp
 import pandas as pd
 import csv
 import json
+import traceback
 
 import traceback
 
@@ -80,34 +81,38 @@ class VcmSummaryTransform(object):
         return doc.id
 
 
-        ## BELOW IS ABOUT TRANSFORM ##
-
-
     def vcm_summary_to_source_datapoints(self):
 
+        try:
+            to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
+                process_status__status_text='TO_PROCESS').values()))
 
-        to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
-            process_status__status_text='TO_PROCESS').values()))
+            print 'ROWS TO PROCESS: ' + str(len(to_process))
 
-        print 'ROWS TO PROCESS: ' + str(len(to_process))
+            column_list = to_process.columns.tolist()
 
-        column_list = to_process.columns.tolist()
+            for row_number, row in enumerate(to_process.values):
+                # print 'processing row: ' + str(i)
 
-        for row_number, row in enumerate(to_process.values):
-            # print 'processing row: ' + str(i)
+                row_dict = {}
+                for row_i,cell in enumerate(row):
+                    row_dict[column_list[row_i]] = cell
 
-            row_dict = {}
-            for row_i,cell in enumerate(row):
-                row_dict[column_list[row_i]] = cell
+                print 'processing row number: ' + str(row_number)
 
-            print 'processing row number: ' + str(row_number)
+                self.process_row(row_dict,row_number)
 
-            self.process_row(row_dict,row_number)
+                process_status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
+                row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
+                row_obj.process_status_id = process_status_id
+                row_obj.save()
 
-            process_status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
-            row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
-            row_obj.process_status_id = process_status_id
-            row_obj.save()
+        except Exception:
+            err = traceback.format_exc()
+            return err, None
+
+
+        return None, 'processed : ' + str(to_process) + ' records'
 
 
     def process_row(self,row_dict,row_number):
