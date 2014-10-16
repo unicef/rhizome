@@ -28,7 +28,7 @@ class CampaignDateFilterTestCase(ResourceTestCase):
         self.source = Source.objects.create(source_name='test_source')
         self.document = Document.objects.create(docfile='asfasfasf',created_by=self.user)
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
-        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCESS_INSERT')
+        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCCESS_INSERT')
 
         self.region_string = 'test region'
         self.indicator_string = 'test indicator'

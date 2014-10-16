@@ -104,7 +104,7 @@ class VcmSummaryTransform(object):
 
             self.process_row(row_dict,row_number)
 
-            process_status_id = ProcessStatus.objects.get(status_text='SUCESS_INSERT').id
+            process_status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
             row_obj = VCMSummaryNew.objects.get(id=row_dict['id'])
             row_obj.process_status_id = process_status_id
             row_obj.save()
@@ -177,7 +177,7 @@ class VcmSummaryTransform(object):
                   source = Source.objects.get(source_name='odk') ,\
                   source_guid = row.key
                 )
-                row.process_status=ProcessStatus.objects.get(status_text='SUCESS_INSERT')
+                row.process_status=ProcessStatus.objects.get(status_text='SUCCESS_INSERT')
                 row.save()
 
             except IntegrityError:

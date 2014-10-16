@@ -26,7 +26,7 @@ class OdkTestCase(TestCase):
         self.date_implement = '2014-02-01'
 
         self.to_process_status = ProcessStatus.objects.create(status_text='TO_PROCESS')
-        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCESS_INSERT')
+        self.success_insert_status = ProcessStatus.objects.create(status_text='SUCCESS_INSERT')
 
         self.vcm_sum = VCMSummaryNew.objects.create(
           key = 'testkeyfromodk',
