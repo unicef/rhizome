@@ -70,6 +70,18 @@ class NewDPTestCase(TestCase):
             end_date = time.strftime("%Y-%m-%d"),
         )
 
+        # Create Some Proess Status IDs
+        self.process_status_to_process = ProcessStatus.objects.create(
+            status_text = 'TO_PROCESS',
+            status_description = 'TO_PROCESS',
+        )
+
+        self.process_status_sucess = ProcessStatus.objects.create(
+            status_text = 'SUCCESS_INSERT',
+            status_description = 'SUCCESS_INSERT',
+        )
+
+
 
     def test_source_metadata_creation(self):
         ''' here we ensure that by creating source datapoitns
@@ -85,7 +97,7 @@ class NewDPTestCase(TestCase):
 
 
 
-    def test_source_metadata_mapping(self):
+    def source_metadata_mapping(self):
         ''' here we create mappings based on the data created above
         and ensure that the IDs are such that we mapped them to '''
 
@@ -129,7 +141,7 @@ class NewDPTestCase(TestCase):
         here.  We make sure that TRUE=1, FALSE=0 and that the value
         stored in the cell was properly converted to a numeric.'''
 
-        self.test_source_metadata_mapping()
+        self.source_metadata_mapping()
         m = MasterRefresh(records = [self.sdp] ,user_id=self.user.id)
         # this refreshes master, so that newly mapped data makes it in!
         m.main()
@@ -138,3 +150,8 @@ class NewDPTestCase(TestCase):
 
         # Make Sure the Value is the same
         self.assertEqual(float(self.sdp.get_val()), float(dp.value))
+
+        # make sure the process status is correct
+
+        self.assertEqual(self.sdp.status_id,
+          ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id)

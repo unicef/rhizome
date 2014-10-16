@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
+from source_data.models import ProcessStatus
 from datapoints.models import DataPoint
 
 
@@ -66,6 +67,11 @@ class MasterRefresh(object):
                   source_datapoint_id = record.id
               )
               self.new_datapoints.append(datapoint.id)
+              if created:
+                  print 'CREATED\n' * 10
+
+                  record.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
+
 
               if not created:
                   self.handle_dupe_record(record, datapoint)
@@ -78,6 +84,7 @@ class MasterRefresh(object):
               return err, None
           except Exception:
               err = traceback.format_exc()
+              print err
               return err, None
 
           return None, datapoint.id
