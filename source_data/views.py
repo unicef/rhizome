@@ -29,8 +29,8 @@ def file_upload(request):
 
     # # Handle file upload
     if request.method == 'POST':
-        created_by = request.POST['user']
-
+        created_by = request.user
+        print created_by
 
         # form = DocumentForm(request.POST, request.FILES)
         # if form.is_valid():

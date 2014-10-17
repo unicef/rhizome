@@ -11,9 +11,14 @@ class UploadTestCase(TestCase):
     ''' various cases involved with xls and csv upload '''
 
     def setUp(self):
+
+        self.user = User.objects.create_user(username='test_user',password='thepassword')
+
+        self.client = Client()
+        self.client.login(username='test_user',password='thepassword')
+
         self.sample_xls = '/Users/johndingee_seed/Desktop/polio_xls/NG_2014_04.xlsx'
         self.sample_csv = '/Users/johndingee_seed/Desktop/polio_xls/NG_2014_04.csv'
-        self.user = User.objects.create(username='test_user')
 
     ## test the view
         ## csv or xls
@@ -23,18 +28,17 @@ class UploadTestCase(TestCase):
 
     def test_something(self):
 
-        client = Client()
         base_url = '/upload/file_upload/'
 
 
-
         with open(self.sample_xls) as doc:
-            response = client.post(base_url, {'docfile': doc, 'user': self.user})
+            response = self.client.post(base_url, {'docfile': doc})
 
-            print '=\n' * 10
-            response_user =  response.context['user']
-            print type(response_user)
 
-            print response_user
-
-        self.assertEqual(1,1)
+        #     print '=\n' * 10
+        #     response_user =  response.context['user']
+        #     print type(response_user)
+        #
+        #     print response_user
+        #
+        # self.assertEqual(1,1)
