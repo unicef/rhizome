@@ -26,11 +26,14 @@ def file_upload(request):
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
-
-    # # Handle file upload
+    # Handle file upload
     if request.method == 'POST':
         created_by = request.user
-        print created_by
+        newdoc = Document.objects.create(docfile=request.FILES['docfile']\
+            ,created_by=created_by)
+
+
+
 
         # form = DocumentForm(request.POST, request.FILES)
         # if form.is_valid():
@@ -66,7 +69,7 @@ def file_upload(request):
     return render_to_response(
         'upload/file_upload.html',
         # {'form': form, 'user': created_by},
-        # { 'user': created_by},
+        { 'document_id': newdoc.id},
         context_instance=RequestContext(request)
     )
 
