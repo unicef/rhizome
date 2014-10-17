@@ -23,15 +23,20 @@ class PreIngest(object):
         ''' in this method we create or find the source metadata and return the
         values as a dictionary.'''
 
-        wb = xlrd.open_workbook(file_path)
+        if file_path.endswith('.csv'):
+            print 'bla'
 
-        for sheet in wb.sheets():
+        else:
 
-            if sheet.nrows == 0:
-                pass
-            else:
-                mappings = self.pre_process_sheet(file_path,sheet.name,document_id)
-                return mappings
+            wb = xlrd.open_workbook(file_path)
+
+            for sheet in wb.sheets():
+
+                if sheet.nrows == 0:
+                    pass
+                else:
+                    mappings = self.pre_process_sheet(file_path,sheet.name,document_id)
+                    return mappings
 
         return df, mappings
 

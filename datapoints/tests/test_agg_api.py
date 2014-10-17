@@ -4,7 +4,6 @@ import urllib
 import json
 from random import randrange
 
-
 from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.core.urlresolvers import reverse

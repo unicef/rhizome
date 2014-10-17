@@ -23,44 +23,50 @@ from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
 def file_upload(request):
-    # Handle file upload
+
+    accepted_file_formats = ['.csv','.xls','.xlsx']
+
+
+    # # Handle file upload
     if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            newdoc = Document(docfile = request.FILES['docfile'])
-            newdoc.created_by = request.user
-            newdoc.save()
-            document_id = newdoc.id
+        created_by = request.POST['user']
 
-            file_path = newdoc.docfile.url
 
-            if file_path.endswith('xls') or file_path.endswith('xlsx'):
-
-                ## FIND MAPPINGS ##
-                p = PreIngest(file_path,newdoc.id)
-
-                ## MOVE XLS INTO SOURCE DATAPOINTS TABLE ##
-                current_user_id = request.user.id
-                d = DocTransform(document_id,p.df,current_user_id)
-
-                ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
-                m = MasterRefresh(d.source_datapoints,\
-                    current_user_id)
-
-                return document_review(request,newdoc.id,p.mappings)
-
-            # if file is csv...
-
-            else:
-                messages.add_message(request, messages.INFO, 'Please\
-                    upload either .CSV, .XLS or .XLSX file format')
-
-    else:
-        form = DocumentForm()
-
+        # form = DocumentForm(request.POST, request.FILES)
+        # if form.is_valid():
+        #     newdoc = Document(docfile = request.FILES['docfile'])
+        #     newdoc.created_by = request.user
+        #     newdoc.save()
+        #     document_id = newdoc.id
+        #
+        #     file_path = newdoc.docfile.url
+        #
+        #     if any(file_path.endswith(ext) for ext in accepted_file_formats):
+        #
+        #         ## FIND MAPPINGS ##
+        #         p = PreIngest(file_path,newdoc.id)
+        #
+        #         ## MOVE XLS INTO SOURCE DATAPOINTS TABLE ##
+        #         current_user_id = request.user.id
+        #         d = DocTransform(document_id,p.df,current_user_id)
+        #
+        #         ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
+        #         m = MasterRefresh(d.source_datapoints,\
+        #             current_user_id)
+        #
+        #         return document_review(request,newdoc.id,p.mappings)
+            #
+            # else:
+            #     messages.add_message(request, messages.INFO, 'Please\
+            #         upload either .CSV, .XLS or .XLSX file format')
+    #
+    # else:
+    #     form = DocumentForm()
+    #
     return render_to_response(
         'upload/file_upload.html',
-        {'form': form},
+        # {'form': form, 'user': created_by},
+        # { 'user': created_by},
         context_instance=RequestContext(request)
     )
 
