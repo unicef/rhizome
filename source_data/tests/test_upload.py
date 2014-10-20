@@ -18,6 +18,7 @@ class UploadTestCase(TestCase):
     def setUp(self):
 
         self.user = User.objects.create_user(username='test_user',password='thepassword')
+        self.source = Source.objects.create(source_name="Spreadsheet Upload")
 
         self.client = Client()
         self.client.login(username='test_user',password='thepassword')

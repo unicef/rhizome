@@ -59,24 +59,12 @@ def pre_process_file(request):
 
 def document_review(request):
 
-    doc_transform = DocTransform(request.document_id)
-    df = doc_transform.create_df()
+    dt = DocTransform(request.document_id)
+    overrides = dt.get_essential_columns()
+    pp.pprint(overrides)
 
-    doc_header = list(df.columns.values)
 
-    # to_map_message = []
-
-    # to_map_ind_count = SourceIndicator.objects.count() - IndicatorMap.objects.count()
-    # to_map_reg_count = SourceRegion.objects.count() - RegionMap.objects.count()
-    # to_map_cam_count = SourceCampaign.objects.count() - CampaignMap.objects.count()
-    #
-    # r =  {'to_map_count': to_map_ind_count, 'model':'indicator'}
-    # r2 = {'to_map_count': to_map_reg_count, 'model':'region'}
-    # r3 = {'to_map_count': to_map_cam_count, 'model':'campaign'}
-    #
-    # to_map_message.append(r)
-    # to_map_message.append(r2)
-    # to_map_message.append(r3)
+    # region_col, campaign_co = dt.get_essential_columns()
 
     return render_to_response(
         'upload/document_review.html',
