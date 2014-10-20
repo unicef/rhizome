@@ -38,8 +38,6 @@ def file_upload(request):
     elif request.method == 'POST':
 
         to_upload = request.FILES['docfile']
-
-
         # If the document is of an invalid format
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
             msg = 'Please upload either .CSV, .XLS or .XLSX file format'
@@ -49,7 +47,6 @@ def file_upload(request):
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
         return HttpResponseRedirect(reverse('source_data:pre_process_file',kwargs={'pk':newdoc.id}))  # encode like done below
-        # <th><a href="{% url 'indicators:update_indicator' indicator.id %}"> edit </a></th>
 
 
 def pre_process_file(request,pk):
