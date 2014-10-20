@@ -42,63 +42,42 @@ def pre_process_file(request):
 
     to_upload = request.FILES['docfile']
 
-    # If the document is of an invalid format
+    # # If the document is of an invalid format
     if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
         msg = 'Please upload either .CSV, .XLS or .XLSX file format'
         return  basic_document_form(request,msg)
 
+    created_by = request.user
+    docfile = request.FILES[u'docfile']
 
-    #  if the format is validCreate The Doc, and Prepare the Header for Review
-        created_by = request.user
-        newdoc = Document.objects.create(docfile=request.FILES['docfile']\
-            ,created_by=created_by)
+    newdoc = Document.objects.create(docfile=docfile,created_by=created_by)
 
+    document_id = newdoc.id
+    request.document_id = document_id
 
-        # if form.is_valid():
-        #     newdoc = Document(docfile = request.FILES['docfile'])
-        #     newdoc.created_by = request.user
-        #     newdoc.save()
-        #     document_id = newdoc.id
-        #
-        #     file_path = newdoc.docfile.url
-        #
-        #
-        #         ## FIND MAPPINGS ##
-        #         p = PreIngest(file_path,newdoc.id)
-        #
-        #         ## MOVE XLS INTO SOURCE DATAPOINTS TABLE ##
-        #         current_user_id = request.user.id
-        #         d = DocTransform(document_id,p.df,current_user_id)
-        #
-        #         ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
-        #         m = MasterRefresh(d.source_datapoints,\
-        #             current_user_id)
-
-        # return document_review(request,newdoc.id,p.mappings)
-        return document_review(request,newdoc.id,{})
+    return document_review(request)
 
 
+def document_review(request):
 
-def document_review(request,document_id,mappings):
-
-    to_map_message = []
-
-    to_map_ind_count = SourceIndicator.objects.count() - IndicatorMap.objects.count()
-    to_map_reg_count = SourceRegion.objects.count() - RegionMap.objects.count()
-    to_map_cam_count = SourceCampaign.objects.count() - CampaignMap.objects.count()
-
-    r =  {'to_map_count': to_map_ind_count, 'model':'indicator'}
-    r2 = {'to_map_count': to_map_reg_count, 'model':'region'}
-    r3 = {'to_map_count': to_map_cam_count, 'model':'campaign'}
-
-    to_map_message.append(r)
-    to_map_message.append(r2)
-    to_map_message.append(r3)
-
+    # to_map_message = []
+    #
+    # to_map_ind_count = SourceIndicator.objects.count() - IndicatorMap.objects.count()
+    # to_map_reg_count = SourceRegion.objects.count() - RegionMap.objects.count()
+    # to_map_cam_count = SourceCampaign.objects.count() - CampaignMap.objects.count()
+    #
+    # r =  {'to_map_count': to_map_ind_count, 'model':'indicator'}
+    # r2 = {'to_map_count': to_map_reg_count, 'model':'region'}
+    # r3 = {'to_map_count': to_map_cam_count, 'model':'campaign'}
+    #
+    # to_map_message.append(r)
+    # to_map_message.append(r2)
+    # to_map_message.append(r3)
+    #
 
     return render_to_response(
         'upload/document_review.html',
-        {'doc_data': to_map_message},
+        # {'doc_data': to_map_message},
         context_instance=RequestContext(request),
     )
 
