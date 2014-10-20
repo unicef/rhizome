@@ -41,30 +41,29 @@ def pre_process_file(request):
 
     to_upload = request.FILES['docfile']
 
-    # # If the document is of an invalid format
+    # If the document is of an invalid format
     if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
         msg = 'Please upload either .CSV, .XLS or .XLSX file format'
         return  basic_document_form(request,msg)
 
     created_by = request.user
-    # docfile = request.FILES[u'docfile']
-
     newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
-
     document_id = newdoc.id
     request.document_id = document_id
 
     return document_review(request)
 
-
 def document_review(request):
 
+    print 'SOMETHING IS HAPPENING'
+
     dt = DocTransform(request.document_id)
-    overrides = dt.get_essential_columns()
-    pp.pprint(overrides)
+    overrides = dt.get_essential_columns
 
+    for x in overrides():
+        print x.header_string
+        print type(x)
 
-    # region_col, campaign_co = dt.get_essential_columns()
 
     return render_to_response(
         'upload/document_review.html',

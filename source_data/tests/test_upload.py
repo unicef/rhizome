@@ -31,6 +31,12 @@ class UploadTestCase(TestCase):
 
         self.delete_test_files()
 
+        HeaderOverride.objects.create(
+            content_type_id = 1,
+            header_string = 'Region',
+            created_by_id = self.user.id
+        )
+
 
     def delete_test_files(self):
         for root, dirs, files in os.walk(self.app_static_root):
@@ -49,7 +55,6 @@ class UploadTestCase(TestCase):
             response = self.client.post(base_url, {'docfile': doc})
 
         expected_doc_path = 'documents/' + strftime("%Y/%m/%d/",gmtime()) + self.sample_xls
-
         expected_doc_id = Document.objects.get(docfile=expected_doc_path).id
 
         # # ensure the doc ID was created

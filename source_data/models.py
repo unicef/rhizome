@@ -63,8 +63,7 @@ class HeaderOverride(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     header_string = models.CharField(max_length=255)
-    source = models.ForeignKey(Source)
-    added_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User)
     created_at = models.DateTimeField(default=datetime.now())
 
 

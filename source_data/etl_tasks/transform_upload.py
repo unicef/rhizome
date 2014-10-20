@@ -1,6 +1,8 @@
 import pprint as pp
 
 import xlrd
+import pandas as pd
+
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
@@ -37,9 +39,9 @@ class DocTransform(object):
     def get_essential_columns(self):
 
         header_list = list(self.df.columns.values)
+        header_list_str = [str(col) for col in header_list]
 
-        overrides = HeaderOverride.objects.filter( \
-            source_id= Source.objects.get(source_name="Spreadsheet Upload"),
-            header_string__in=header_list)
+        overrides = HeaderOverride.objects.filter(header_string__in=header_list_str)
+
 
         return overrides
