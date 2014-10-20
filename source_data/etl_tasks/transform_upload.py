@@ -43,10 +43,9 @@ class DocTransform(object):
             'Campaign':[]
         }
 
-        header_list = list(self.df.columns.values)
-        header_list_str = [str(col) for col in header_list]
+        header_list = [str(col) for col in self.df.columns.values]
 
-        overrides = HeaderOverride.objects.filter(header_string__in=header_list_str)
+        overrides = HeaderOverride.objects.filter(header_string__in=header_list)
 
         for o in overrides:
             try:
@@ -55,4 +54,4 @@ class DocTransform(object):
             except KeyError:
                 pass
 
-        print column_mapping
+        return column_mapping

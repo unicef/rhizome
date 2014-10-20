@@ -48,22 +48,19 @@ def pre_process_file(request):
 
     created_by = request.user
     newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
-    document_id = newdoc.id
-    request.document_id = document_id
+    document_id = newdoc.id # request.document_id = document_id
 
-    return document_review(request)
+    dt = DocTransform(document_id)
+    header_list  = dt.df.columns.values
+    column_mapping = dt.get_essential_columns()
+    to_map_message = [{'x':'y'},{'a':'b'}]
 
-def document_review(request):
-
-    print 'SOMETHING IS HAPPENING'
-
-    dt = DocTransform(request.document_id)
-    overrides = dt.get_essential_columns()
-
+    print to_map_message
+  
     return render_to_response(
         'upload/document_review.html',
-        # {'doc_data': to_map_message},
-        context_instance=RequestContext(request),
+        {'doc_data': to_map_message},
+        RequestContext(request),
     )
 
 

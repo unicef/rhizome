@@ -46,8 +46,10 @@ class UploadTestCase(TestCase):
                     full_path = os.path.join(root, file)
                     os.unlink(full_path)
 
+    def test_csv_post(self):
+        pass
 
-    def test_doc_post(self):
+    def test_xls_post(self):
 
         base_url = '/upload/pre_process_file/'
 

@@ -7,7 +7,7 @@ urlpatterns = [
   url(r'^pre_process_file/$', pre_process_file, name='pre_process_file'),
 
 
-  url(r'^document_review/(?P<pk>[0-9]+)/$', document_review, name='document_review'),
+  url(r'^pre_process_file/(?P<pk>[0-9]+)/$', pre_process_file, name='pre_process_file'),
 
   url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),name='map_indicator'),
   url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view(),name='map_region'),
