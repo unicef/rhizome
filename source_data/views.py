@@ -17,7 +17,6 @@ from itertools import chain
 from datapoints.mixins import PermissionRequiredMixin
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.pre_process_upload import PreIngest
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
@@ -48,9 +47,9 @@ def pre_process_file(request):
         return  basic_document_form(request,msg)
 
     created_by = request.user
-    docfile = request.FILES[u'docfile']
+    # docfile = request.FILES[u'docfile']
 
-    newdoc = Document.objects.create(docfile=docfile,created_by=created_by)
+    newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
     document_id = newdoc.id
     request.document_id = document_id
@@ -60,8 +59,11 @@ def pre_process_file(request):
 
 def document_review(request):
 
+    doc_transform = DocTransform(request.document_id)
+    print doc_transform.df
+
     # to_map_message = []
-    #
+
     # to_map_ind_count = SourceIndicator.objects.count() - IndicatorMap.objects.count()
     # to_map_reg_count = SourceRegion.objects.count() - RegionMap.objects.count()
     # to_map_cam_count = SourceCampaign.objects.count() - CampaignMap.objects.count()
@@ -73,7 +75,6 @@ def document_review(request):
     # to_map_message.append(r)
     # to_map_message.append(r2)
     # to_map_message.append(r3)
-    #
 
     return render_to_response(
         'upload/document_review.html',
