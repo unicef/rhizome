@@ -4,6 +4,8 @@ import random
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+
 from datapoints.models import Source, Indicator, Region, Campaign
 
 
@@ -29,6 +31,7 @@ class EtlJob(models.Model):
 
 
 class ProcessStatus(models.Model):
+
     status_text = models.CharField(max_length=25)
     status_description = models.CharField(max_length=255)
 
@@ -37,6 +40,7 @@ class ProcessStatus(models.Model):
 
     class Meta:
         app_label = 'source_data'
+
 
     ##########################
     ####### CSV UPLOAD #######
@@ -53,6 +57,16 @@ class Document(models.Model):
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
         super(Document, self).save(*args, **kwargs)
+
+
+class HeaderOverride(models.Model):
+
+    content_type = models.ForeignKey(ContentType)
+    header_string = models.CharField(max_length=255)
+    source = models.ForeignKey(Source)
+    added_by = models.ForeignKey(User)
+    created_at = models.DateTimeField(default=datetime.now())
+
 
 
 class SourceDataPoint(models.Model):
