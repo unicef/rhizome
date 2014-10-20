@@ -27,13 +27,35 @@ def file_upload(request):
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
     # Handle file upload
-    if request.method == 'POST':
-        created_by = request.user
-        newdoc = Document.objects.create(docfile=request.FILES['docfile']\
-            ,created_by=created_by)
+    if request.method == 'GET':
+        form = DocumentForm()
+
+        return render_to_response(
+            'upload/file_upload.html',
+            {'form': form},
+            context_instance=RequestContext(request)
+        )
 
 
+    elif request.method == 'POST':
 
+        to_upload = request.FILES['docfile']
+
+        if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
+
+            messages.add_message(request, messages.INFO, 'Please upload either .CSV, .XLS or .XLSX file format')
+
+            form = DocumentForm()
+
+            return render_to_response(
+                'upload/file_upload.html',
+                {'form': form},
+                context_instance=RequestContext(request)
+            )
+
+        # created_by = request.user
+        # newdoc = Document.objects.create(docfile=request.FILES['docfile']\
+        #     ,created_by=created_by)
 
         # form = DocumentForm(request.POST, request.FILES)
         # if form.is_valid():
@@ -44,7 +66,6 @@ def file_upload(request):
         #
         #     file_path = newdoc.docfile.url
         #
-        #     if any(file_path.endswith(ext) for ext in accepted_file_formats):
         #
         #         ## FIND MAPPINGS ##
         #         p = PreIngest(file_path,newdoc.id)
@@ -56,23 +77,9 @@ def file_upload(request):
         #         ## MOVE XLS INTO MASTER DATAPOINTS TABLE ##
         #         m = MasterRefresh(d.source_datapoints,\
         #             current_user_id)
-        #
-        #         return document_review(request,newdoc.id,p.mappings)
-            #
-            # else:
-            #     messages.add_message(request, messages.INFO, 'Please\
-            #         upload either .CSV, .XLS or .XLSX file format')
-    #
-    # else:
-    #     form = DocumentForm()
-    #
-    return render_to_response(
-        'upload/file_upload.html',
-        # {'form': form, 'user': created_by},
-        { 'document_id': newdoc.id},
-        context_instance=RequestContext(request)
-    )
 
+        # return document_review(request,newdoc.id,p.mappings)
+        # else:
 
 
 def document_review(request,document_id,mappings):

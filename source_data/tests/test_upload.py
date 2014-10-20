@@ -1,3 +1,4 @@
+
 import urllib
 import pprint as pp
 import os
@@ -23,6 +24,7 @@ class UploadTestCase(TestCase):
         self.source_static_root = '/Users/johndingee_seed/Desktop/polio_xls/'
         self.app_static_root = 'media/documents/'
 
+        self.sample_txt = 'test_NG.txt'
         self.sample_xls = 'test_NG.xlsx'
         self.sample_csv = 'test_NG.csv'
 
@@ -38,7 +40,7 @@ class UploadTestCase(TestCase):
                     os.unlink(full_path)
 
 
-    def test_doc_post(self):
+    def doc_post(self):
 
         base_url = '/upload/file_upload/'
 
@@ -50,8 +52,22 @@ class UploadTestCase(TestCase):
         request_doc_id = response.context['document_id']
         db_doc_id = Document.objects.get(docfile=expected_doc_path).id
 
-
+        # ensure the doc ID is correct
         self.assertEqual(request_doc_id,db_doc_id)
 
-        # # is the proper user in the request?
-        # self.assertEqual(self.client.session['_auth_user_id'], self.user.pk)
+        # is the proper user in the request?
+        self.assertEqual(self.client.session['_auth_user_id'], self.user.pk)
+
+    def test_doc_bad_file_ext(self):
+
+        base_url = '/upload/file_upload/'
+
+        with open(self.source_static_root + self.sample_txt) as doc:
+            response = self.client.post(base_url, {'docfile': doc})
+
+            msg = list(response.context['messages'])
+
+        msg_text = msg[0].message
+        expected_msg = 'Please upload either .CSV, .XLS or .XLSX file format'
+
+        self.assertEqual(msg_text,expected_msg)
