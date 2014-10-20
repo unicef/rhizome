@@ -60,7 +60,9 @@ def pre_process_file(request):
 def document_review(request):
 
     doc_transform = DocTransform(request.document_id)
-    print doc_transform.df
+    df = doc_transform.create_df()
+
+    doc_header = list(df.columns.values)
 
     # to_map_message = []
 

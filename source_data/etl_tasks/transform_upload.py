@@ -1,8 +1,11 @@
 import pprint as pp
 
+import xlrd
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
+from pandas.io.excel import read_excel
 
 from source_data.models import *
 from datapoints.models import DataPoint, Source
@@ -14,8 +17,8 @@ class DocTransform(object):
 
         self.source_datapoints = []
         self.document_id = document_id
-        self.file_path = Document.objects.get(id=document_id)
-        self.df = self.create_df
+        self.file_path = settings.MEDIA_ROOT + \
+            str(Document.objects.get(id=document_id).docfile)
 
     def create_df(self):
 
@@ -23,8 +26,10 @@ class DocTransform(object):
             df = pd.read_csv(self.file_path)
         else:
             wb = xlrd.open_workbook(self.file_path)
-            sheet = wb.sheet[0]
-            sheet_df = read_excel(self.file_path,sheet_name)
+            sheet = wb.sheets()[0]
+
+            df = read_excel(self.file_path,sheet.name)
+
 
         return df
 
@@ -132,7 +137,6 @@ class DocTransform(object):
 #
 #
 #         self.df, self.mappings = self.main(file_path, document_id)
-#
 #
 #     def main(self,file_path, document_id):
 #         ''' in this method we create or find the source metadata and return the
