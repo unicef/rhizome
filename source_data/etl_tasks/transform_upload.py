@@ -38,10 +38,21 @@ class DocTransform(object):
 
     def get_essential_columns(self):
 
+        column_mapping = {
+            'region':[],
+            'Campaign':[]
+        }
+
         header_list = list(self.df.columns.values)
         header_list_str = [str(col) for col in header_list]
 
         overrides = HeaderOverride.objects.filter(header_string__in=header_list_str)
 
+        for o in overrides:
+            try:
+                print o.content_type.name
+                column_mapping[o.content_type.name].append(o.header_string)
+            except KeyError:
+                pass
 
-        return overrides
+        print column_mapping

@@ -58,12 +58,7 @@ def document_review(request):
     print 'SOMETHING IS HAPPENING'
 
     dt = DocTransform(request.document_id)
-    overrides = dt.get_essential_columns
-
-    for x in overrides():
-        print x.header_string
-        print type(x)
-
+    overrides = dt.get_essential_columns()
 
     return render_to_response(
         'upload/document_review.html',

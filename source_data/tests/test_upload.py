@@ -32,7 +32,7 @@ class UploadTestCase(TestCase):
         self.delete_test_files()
 
         HeaderOverride.objects.create(
-            content_type_id = 1,
+            content_type_id = ContentType.objects.get(name='region').id,
             header_string = 'Region',
             created_by_id = self.user.id
         )
