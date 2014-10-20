@@ -22,42 +22,38 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
-def file_upload(request):
+def basic_document_form(request,msg=None):
+
+    form = DocumentForm()
+
+    if msg:
+        messages.add_message(request, messages.INFO,msg)
+
+    return render_to_response(
+        'upload/file_upload.html',
+        {'form': form},
+        context_instance=RequestContext(request)
+    )
+
+
+def pre_process_file(request):
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
-    # Handle file upload
-    if request.method == 'GET':
-        form = DocumentForm()
+    to_upload = request.FILES['docfile']
 
-        return render_to_response(
-            'upload/file_upload.html',
-            {'form': form},
-            context_instance=RequestContext(request)
-        )
+    # If the document is of an invalid format
+    if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
+        msg = 'Please upload either .CSV, .XLS or .XLSX file format'
+        return  basic_document_form(request,msg)
 
 
-    elif request.method == 'POST':
+    #  if the format is validCreate The Doc, and Prepare the Header for Review
+        created_by = request.user
+        newdoc = Document.objects.create(docfile=request.FILES['docfile']\
+            ,created_by=created_by)
 
-        to_upload = request.FILES['docfile']
 
-        if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
-
-            messages.add_message(request, messages.INFO, 'Please upload either .CSV, .XLS or .XLSX file format')
-
-            form = DocumentForm()
-
-            return render_to_response(
-                'upload/file_upload.html',
-                {'form': form},
-                context_instance=RequestContext(request)
-            )
-
-        # created_by = request.user
-        # newdoc = Document.objects.create(docfile=request.FILES['docfile']\
-        #     ,created_by=created_by)
-
-        # form = DocumentForm(request.POST, request.FILES)
         # if form.is_valid():
         #     newdoc = Document(docfile = request.FILES['docfile'])
         #     newdoc.created_by = request.user
@@ -79,7 +75,8 @@ def file_upload(request):
         #             current_user_id)
 
         # return document_review(request,newdoc.id,p.mappings)
-        # else:
+        return document_review(request,newdoc.id,{})
+
 
 
 def document_review(request,document_id,mappings):

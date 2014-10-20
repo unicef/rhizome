@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.test.client import Client
 from django.contrib.auth.models import User
 
-from source_data.views import file_upload
+from source_data.views import *
 from source_data.models import Document
 
 class UploadTestCase(TestCase):
@@ -42,7 +42,7 @@ class UploadTestCase(TestCase):
 
     def doc_post(self):
 
-        base_url = '/upload/file_upload/'
+        base_url = '/upload/pre_process_file/'
 
         with open(self.source_static_root + self.sample_xls) as doc:
             response = self.client.post(base_url, {'docfile': doc})
@@ -58,9 +58,10 @@ class UploadTestCase(TestCase):
         # is the proper user in the request?
         self.assertEqual(self.client.session['_auth_user_id'], self.user.pk)
 
+
     def test_doc_bad_file_ext(self):
 
-        base_url = '/upload/file_upload/'
+        base_url = '/upload/pre_process_file/'
 
         with open(self.source_static_root + self.sample_txt) as doc:
             response = self.client.post(base_url, {'docfile': doc})
