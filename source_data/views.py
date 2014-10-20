@@ -21,45 +21,51 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
-def basic_document_form(request,msg=None):
-
-    form = DocumentForm()
-
-    if msg:
-        messages.add_message(request, messages.INFO,msg)
-
-    return render_to_response(
-        'upload/file_upload.html',
-        {'form': form},
-        context_instance=RequestContext(request)
-    )
-
-
-def pre_process_file(request):
+def file_upload(request):
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
-    to_upload = request.FILES['docfile']
+    if request.method == 'GET':
+        form = DocumentForm()
 
-    # If the document is of an invalid format
-    if not any(to_upload.name.endswith(ext) for ext in accepted_file_formats):
-        msg = 'Please upload either .CSV, .XLS or .XLSX file format'
-        return  basic_document_form(request,msg)
+        return render_to_response(
+            'upload/file_upload.html',
+            {'form': form},
+            context_instance=RequestContext(request)
+        )
 
-    created_by = request.user
-    newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
-    document_id = newdoc.id # request.document_id = document_id
 
-    dt = DocTransform(document_id)
+    elif request.method == 'POST':
+
+        to_upload = request.FILES['docfile']
+
+
+        # If the document is of an invalid format
+        if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
+            msg = 'Please upload either .CSV, .XLS or .XLSX file format'
+            messages.add_message(request, messages.INFO,msg)
+
+        created_by = request.user
+        newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
+
+        return HttpResponseRedirect(reverse('source_data:pre_process_file',kwargs={'pk':newdoc.id}))  # encode like done below
+        # <th><a href="{% url 'indicators:update_indicator' indicator.id %}"> edit </a></th>
+
+
+def pre_process_file(request,pk):
+
+
+    dt = DocTransform(pk)
     header_list  = dt.df.columns.values
     column_mapping = dt.get_essential_columns()
-
 
     return render_to_response(
         'upload/document_review.html',
         {'doc_data': column_mapping,'header_list':header_list},
         RequestContext(request),
     )
+
+
 
 ######### META MAPPING ##########
 
