@@ -1,8 +1,7 @@
+
 {% extends "datapoints/base.html" %}
   {% block content %}
     <body>
-
-        <!-- {% if doc_data %} -->
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -12,14 +11,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for error in doc_data %}
+            {% for header in header_list %}
             <tr>
-                <th>{{ error.model }}s to Map</th>
-                <th>{{ error.to_map_count }}</th>
+                <th> to Map</th>
+                <th>{{ header }}</th>
+                <th>
+                  <select>
+                      {% for header in header_list %}
+                      <option value= {{ header }} > {{ header }}
+                      </option>
+                      {% endfor %}
+                  </select>
+                </th>
                 <th><a href="{% url 'source_data:to_map' %}"> Map </a></th>
             </tr>
         </tbody>
         {% endfor %}
         </table>
-        <!-- {% endif %} -->
 {% endblock %}

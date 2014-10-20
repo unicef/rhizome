@@ -53,16 +53,13 @@ def pre_process_file(request):
     dt = DocTransform(document_id)
     header_list  = dt.df.columns.values
     column_mapping = dt.get_essential_columns()
-    to_map_message = [{'x':'y'},{'a':'b'}]
 
-    print to_map_message
-  
+
     return render_to_response(
         'upload/document_review.html',
-        {'doc_data': to_map_message},
+        {'doc_data': column_mapping,'header_list':header_list},
         RequestContext(request),
     )
-
 
 ######### META MAPPING ##########
 
