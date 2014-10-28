@@ -1,6 +1,7 @@
 import pprint as pp
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 
 from source_data.models import *
 
@@ -13,10 +14,13 @@ def map_indicators(indicator_strings,document_id):
 
     for indicator_string in distinct_indicator_strings:
 
-        source_indicator, created = SourceIndicator.objects.get_or_create(
-            indicator_string = indicator_string,
-            document_id = document_id,
-        )
+        try:
+            source_indicator, created = SourceIndicator.objects.get_or_create(
+                indicator_string = indicator_string,
+                document_id = document_id,
+            )
+        except IntegrityErrror:
+            pass
 
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
@@ -38,13 +42,15 @@ def map_campaigns(campaign_strings,document_id):
 
     for campaign in distinct_campaign_strings:
 
-        print campaign
+        try:
+            source_campaign, created = SourceCampaign.objects.get_or_create(
+                campaign_string = campaign,
+                document_id = document_id,
+            )
+        except IntegrityErrror:
+            pass
 
-        source_campaign, created = SourceCampaign.objects.get_or_create(
-            campaign_string = campaign,
-            document_id = document_id,
 
-        )
         try:
             campaign_id = CampaignMap.objects.get(source_campaign_id = \
                 source_campaign.id).master_campaign_id
@@ -65,11 +71,12 @@ def map_regions(region_strings,document_id):
 
     for region_string in distinct_region_strings:
 
-        print region_string
-
-        source_region, created = SourceRegion.objects.get_or_create(\
-            region_string=region_string,
-            document_id = document_id)
+        try:
+            source_region, created = SourceRegion.objects.get_or_create(\
+                region_string=region_string,
+                document_id = document_id)
+        except IntegrityErrror:
+            pass
 
         try:
             region_id = RegionMap.objects.get(source_region_id = \
