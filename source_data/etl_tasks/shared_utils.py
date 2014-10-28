@@ -19,7 +19,7 @@ def map_indicators(indicator_strings,document_id):
                 indicator_string = indicator_string,
                 document_id = document_id,
             )
-        except IntegrityErrror:
+        except IntegrityError:
             source_indicator = None
 
         try:
@@ -48,7 +48,7 @@ def map_campaigns(campaign_strings,document_id):
                 campaign_string = campaign,
                 document_id = document_id,
             )
-        except IntegrityErrror:
+        except IntegrityError:
             source_campaign = None
 
 
