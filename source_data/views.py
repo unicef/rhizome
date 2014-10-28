@@ -23,9 +23,14 @@ from source_data.api import EtlTask
 
 def data_entry(request):
 
+
+  if request.method == 'GET':
+      form = DataEntryForm()
+
+
   return render_to_response(
       'data_entry/basic.html',
-      # {'doc_data': column_mapping,'header_list':header_list},
+      {'form': form },
       RequestContext(request),
   )
 

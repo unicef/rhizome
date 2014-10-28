@@ -2,7 +2,20 @@
   {% block content %}
     <body>
 
-        For Excel uploads, please upload one, sheet and place it as the first sheet in the workbook
+      This Screen should show all fof the datapints that the user needs to
+      enter in a list that they can insert interactively without having to refresh the page.
+
+      Additionally the user can paste data into a textbox and clicking save should decrease the
+      amount of work items they need to finish!
+
+    <form action = "" method = "post" class="form">
+        {% csrf_token %}
+        {{ form }}
+        <br>
+        <button type="submit" class="btn btn-primary"> Submit </button>
+    </form>
+
+
 
     </body>
 
