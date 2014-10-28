@@ -4,7 +4,13 @@ from django.contrib.auth.models import User
 
 class DataEntryForm(forms.Form):
 
-    data_blob = CharField(widget=forms.Textarea)
+    bulk_data = CharField(widget=forms.Textarea)
+
+class DataEntryReviewForm(ModelForm):
+
+    class Meta:
+        model = SourceDataPoint
+
 
 class DocumentForm(forms.Form):
 

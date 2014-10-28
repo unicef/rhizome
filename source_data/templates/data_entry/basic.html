@@ -10,7 +10,38 @@
 
     <form action = "" method = "post" class="form">
         {% csrf_token %}
-        {{ form }}
+        {{ data_entry_form }}
+
+        {% if to_review %}
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Indicator</th>
+                <th>Region</th>
+                <th>Reporting Period</th>
+                <th>Value</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+
+            {% for datapoint in to_review %}
+            <tr>
+                <th>{{ datapoint.id }}</th>
+                <th>{{ datapoint.indicator }}</th>
+                <th>{{ datapoint.region }}</th>
+                <th>{{ datapoint.campaign }}</th>
+                <th>{{ datapoint.value }}</th>
+                <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+    <p>No datapoints are available.</p>
+    {% endif %}
+
+
+
         <br>
         <button type="submit" class="btn btn-primary"> Submit </button>
     </form>

@@ -23,17 +23,24 @@ from source_data.api import EtlTask
 
 def data_entry(request):
 
+    data_entry_form = DataEntryForm()
 
-  if request.method == 'GET':
-      form = DataEntryForm()
+    if request.method == 'GET':
 
+        return render_to_response(
+            'data_entry/basic.html',
+            {'data_entry_form': data_entry_form },
+            RequestContext(request),
+        )
 
-  return render_to_response(
-      'data_entry/basic.html',
-      {'form': form },
-      RequestContext(request),
-  )
+    else:
+        to_review = SourceDataPoint.objects.all()[:10]
 
+        return render_to_response(
+            'data_entry/basic.html',
+            {'to_review': to_review ,'data_entry_form': data_entry_form },
+            RequestContext(request),
+        )
 
 
 def file_upload(request):
