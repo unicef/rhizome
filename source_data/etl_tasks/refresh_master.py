@@ -15,9 +15,9 @@ from datapoints.models import DataPoint
 class MasterRefresh(object):
 
 
-      def __init__(self,records,user_id):
+      def __init__(self,source_datapoints,user_id):
 
-          self.records = records
+          self.source_datapoints = source_datapoints
           self.user_id = user_id
 
           self.new_datapoints = []
@@ -26,25 +26,25 @@ class MasterRefresh(object):
       def main(self):
 
           self.mappings = self.get_mappings()
-          for record in self.records:
+          for sdp in self.source_datapoints:
 
-              err, datapoint = self.process_source_datapoint_record(record)
+              err, datapoint = self.process_source_datapoint_record(sdp=sdp)
 
               if err:
-                  record.error_msg = err
-                  record.save()
+                  sdp.error_msg = err
+                  sdp.save()
 
 
       def get_mappings(self):
 
           # THIS IS FLAWED make sure there are no dupe sources for the sdps
-          source_id = self.records[0].source_id
+          source_id = self.source_datapoints[0].source_id
 
           mappings = {}
 
-          mappings['regions'] = map_regions([sdp.region_string for sdp in self.records],source_id)
-          mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.records],source_id)
-          mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.records],source_id)
+          mappings['regions'] = map_regions([sdp.region_string for sdp in self.source_datapoints],source_id)
+          mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.source_datapoints],source_id)
+          mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.source_datapoints],source_id)
 
           return mappings
 
@@ -58,6 +58,7 @@ class MasterRefresh(object):
           except KeyError:
               err = traceback.format_exc()
               return err, None
+
 
           try:
               with transaction.atomic():
@@ -76,17 +77,20 @@ class MasterRefresh(object):
 
           except IntegrityError:
               err, datapoint = self.handle_dupe_record(sdp,indicator_id,region_id,campaign_id)
-              return err, datapoint
-
+              return err,datapoint
           except ValidationError:
               err = traceback.format_exc()
               return err, None
           except InvalidOperation:
               err = traceback.format_exc()
               return err, None
+          except TypeError:
+              err = traceback.format_exc()
+              return err, None
           except Exception:
               err = traceback.format_exc()
               return err, None
+
 
           return None, datapoint
 

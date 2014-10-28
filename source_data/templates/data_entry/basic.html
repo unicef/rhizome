@@ -14,41 +14,6 @@
         <br>
       <button type="submit" class="btn btn-primary"> Submit </button>
     </form>
-        <br>
-
-
-        {% if to_review %}
-        <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Region</th>
-                <th>Campaign</th>
-                <th>Indicator</th>
-                <th>Value</th>
-                <th>Flag</th>
-            </tr>
-        </thead>
-
-            {% for sdp in to_review %}
-            <tr>
-                <th>{{ sdp.id }}</th>
-                <th>{{ sdp.region_string }}</th>
-                <th>{{ sdp.campaign_string }}</th>
-                <th>{{ sdp.indicator_string }}</th>
-                <th>{{ sdp.cell_value }}</th>
-                <th> <button type="submit" class="btn btn-danger"> flag!</button></th>
-
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-    <p>No datapoints are available.</p>
-    {% endif %}
-
-
-
-
 
 
     </body>

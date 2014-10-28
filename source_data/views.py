@@ -15,6 +15,7 @@ from pandas.io.excel import read_excel
 from itertools import chain
 
 from datapoints.mixins import PermissionRequiredMixin
+from datapoints.models import DataPoint
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
@@ -50,8 +51,8 @@ def data_entry(request):
             delimiter = request.POST['delimiter'],
             document_id = document.id)
 
-        return HttpResponseRedirect(reverse('source_data:review_sdps_by_document',kwargs={'document_id':document.id}))  # encode like done below
-
+        return HttpResponseRedirect(reverse('source_data:review_sdps_by_document'\
+                ,kwargs={'document_id':document.id}))
 
 
 def review_sdps_by_document(request,document_id):
@@ -59,16 +60,34 @@ def review_sdps_by_document(request,document_id):
     source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
 
     return render_to_response(
-        'data_entry/basic.html',
-        {'to_review': source_datapoints ,'data_entry_form': DataEntryForm() },
+        'upload/document_review.html',
+        {'to_review': source_datapoints,'document_id': document_id},
         RequestContext(request),
     )
 
 
-def refresh_master_for_sdps(request,sdps):
+def refresh_master_by_document_id(request,document_id):
 
-    m = MasterRefresh(sdps,request.user)
+    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
+
+    m = MasterRefresh(source_datapoints,user_id = request.user.id)
     m.main()
+
+    si = SourceIndicator.objects.filter(indicatormap__isnull=True)
+    cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
+    rg = SourceRegion.objects.filter(regionmap__isnull=True)
+
+    to_map = chain(si,cp,rg)
+
+    doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
+        SourceDataPoint.objects.filter(document_id=document_id))
+
+    return render_to_response(
+        'data_entry/final_review.html',
+        {'datapoints': doc_datapoints, 'document_id': document_id, 'to_map':to_map},
+        RequestContext(request),
+    )
+
 
 
 def file_upload(request):
@@ -138,7 +157,7 @@ class IndicatorMapCreateView(CreateMap):
     form_class = IndicatorMapForm
     context_object_name = 'indicator_to_map'
     template_name = 'map/map.html'
-    success_url=reverse_lazy('source_data:to_map')
+    # success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
         return { 'source_indicator': self.kwargs['pk'] }
@@ -148,7 +167,7 @@ class RegionMapCreateView(CreateMap):
 
     model=RegionMap
     form_class = RegionMapForm
-    success_url=reverse_lazy('source_data:to_map')
+    # success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
         return { 'source_region': self.kwargs['pk'] }
@@ -158,25 +177,11 @@ class CampaignMapCreateView(CreateMap):
 
     model=CampaignMap
     form_class = CampaignMapForm
-    success_url=reverse_lazy('source_data:to_map')
+    # success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
         return { 'source_campaign': self.kwargs['pk'] }
 
-
-class ToMap(generic.ListView):
-
-    model = SourceIndicator
-    template_name = 'map/to_map.html'
-    context_object_name = 'items'
-
-    def get_queryset(self):
-
-        si = SourceIndicator.objects.filter(indicatormap__isnull=True)
-        cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
-        rg = SourceRegion.objects.filter(regionmap__isnull=True)
-
-        return chain(si,cp,rg)
 
 
 class ShowSourceIndicator(generic.DetailView):

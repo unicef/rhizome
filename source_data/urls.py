@@ -8,12 +8,13 @@ urlpatterns = [
   url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),name='map_indicator'),
   url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view(),name='map_region'),
   url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),name='map_campaign'),
-  url(r'^to_map/$', ToMap.as_view(),name='to_map'),
   url(r'^refresh_master/$', refresh_master,name='refresh_master'),
   url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
   url(r'^data_entry/$', data_entry, name='data_entry'),
-  # url(r'^refresh_master_for_sdps/$', refresh_master_for_sdps, name='refresh_master_for_sdps'),
   url(r'^review_sdps_by_document/(?P<document_id>[0-9]+)/$', review_sdps_by_document, name='review_sdps_by_document'),
+  url(r'^refresh_master_by_document_id/(?P<document_id>[0-9]+)/$', refresh_master_by_document_id, name='refresh_master_by_document_id'),
+
+
 
 
 ]
