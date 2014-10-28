@@ -3,7 +3,7 @@ import uuid
 from datapoints.models import Source
 from source_data.models import *
 
-def bulk_data_to_sdps(some_data,campaign_string):
+def bulk_data_to_sdps(some_data,campaign_string,delimiter):
 
     campaign_string = campaign_string
     source_datapoints = []
@@ -11,14 +11,14 @@ def bulk_data_to_sdps(some_data,campaign_string):
 
     rows = some_data.split('\r')
 
-    header = rows[0].split('\t')
+    header = rows[0].split(delimiter)
     del rows[0]
 
     for row_number ,(row) in enumerate(rows):
 
         source_guid = str(uuid.uuid4()) ## Each Row needs a unique ID
 
-        cells = row.split('\t')
+        cells = row.split(delimiter)
 
         for i,(cell) in enumerate(cells):
 

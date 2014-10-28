@@ -6,6 +6,7 @@ class DataEntryForm(forms.Form):
 
     bulk_data = CharField(widget=forms.Textarea)
     campaign = CharField()
+    delimiter = CharField(initial="\t")
 
 class DataEntryReviewForm(ModelForm):
 
