@@ -20,7 +20,7 @@ def map_indicators(indicator_strings,document_id):
                 document_id = document_id,
             )
         except IntegrityErrror:
-            pass
+            source_indicator = None
 
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
@@ -48,7 +48,7 @@ def map_campaigns(campaign_strings,document_id):
                 document_id = document_id,
             )
         except IntegrityErrror:
-            pass
+            source_campaign = None
 
 
         try:
@@ -76,7 +76,7 @@ def map_regions(region_strings,document_id):
                 region_string=region_string,
                 document_id = document_id)
         except IntegrityError:
-            pass
+            source_region = None
 
         try:
             region_id = RegionMap.objects.get(source_region_id = \
