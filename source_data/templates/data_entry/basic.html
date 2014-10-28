@@ -11,6 +11,10 @@
     <form action = "" method = "post" class="form">
         {% csrf_token %}
         {{ data_entry_form }}
+      <br>
+      <button type="submit" class="btn btn-primary"> Submit </button>
+    </form>
+
 
         {% if to_review %}
         <table class="table table-hover table-bordered">
@@ -21,18 +25,19 @@
                 <th>Region</th>
                 <th>Reporting Period</th>
                 <th>Value</th>
-                <th>Edit</th>
+                <th>flag</th>
             </tr>
         </thead>
 
-            {% for datapoint in to_review %}
+            {% for sdp in to_review %}
             <tr>
-                <th>{{ datapoint.id }}</th>
-                <th>{{ datapoint.indicator }}</th>
-                <th>{{ datapoint.region }}</th>
-                <th>{{ datapoint.campaign }}</th>
-                <th>{{ datapoint.value }}</th>
-                <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
+                <th>{{ sdp.id }}</th>
+                <th>{{ sdp.region_string }}</th>
+                <th>{{ sdp.campaign_string }}</th>
+                <th>{{ sdp.indicator_string }}</th>
+                <th>{{ sdp.cell_value }}</th>
+                <th> <button type="submit" class="btn btn-danger"> flag!</button></th>
+
             </tr>
             {% endfor %}
         </table>
@@ -42,9 +47,6 @@
 
 
 
-        <br>
-        <button type="submit" class="btn btn-primary"> Submit </button>
-    </form>
 
 
 

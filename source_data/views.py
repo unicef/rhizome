@@ -19,6 +19,7 @@ from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
 
 def data_entry(request):
@@ -27,6 +28,7 @@ def data_entry(request):
 
     if request.method == 'GET':
 
+
         return render_to_response(
             'data_entry/basic.html',
             {'data_entry_form': data_entry_form },
@@ -34,7 +36,11 @@ def data_entry(request):
         )
 
     else:
-        to_review = SourceDataPoint.objects.all()[:10]
+        bulk_data = request.POST['bulk_data']
+
+        source_datapoints, not_parsed = bulk_data_to_sdps(bulk_data)
+
+        to_review = source_datapoints
 
         return render_to_response(
             'data_entry/basic.html',
