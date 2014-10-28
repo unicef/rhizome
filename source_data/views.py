@@ -21,6 +21,16 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
+def data_entry(request):
+
+  return render_to_response(
+      'data_entry/basic.html',
+      # {'doc_data': column_mapping,'header_list':header_list},
+      RequestContext(request),
+  )
+
+
+
 def file_upload(request):
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
