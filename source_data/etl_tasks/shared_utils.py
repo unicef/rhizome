@@ -75,7 +75,7 @@ def map_regions(region_strings,document_id):
             source_region, created = SourceRegion.objects.get_or_create(\
                 region_string=region_string,
                 document_id = document_id)
-        except IntegrityErrror:
+        except IntegrityError:
             pass
 
         try:
