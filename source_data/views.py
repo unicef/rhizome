@@ -20,6 +20,7 @@ from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
+from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
 def data_entry(request):
@@ -37,19 +38,37 @@ def data_entry(request):
 
     else:
         bulk_data = request.POST['bulk_data']
-        campaign = request.POST['campaign']
-        delimiter = request.POST['delimiter']
+
+        document = Document.objects.create(
+            doc_text =bulk_data,
+            created_by = request.user,
+            )
+
+        source_datapoints, not_parsed = bulk_data_to_sdps(
+            bulk_data = bulk_data,
+            campaign_string = request.POST['campaign'],
+            delimiter = request.POST['delimiter'],
+            document_id = document.id)
+
+        return HttpResponseRedirect(reverse('source_data:review_sdps_by_document',kwargs={'document_id':document.id}))  # encode like done below
 
 
-        source_datapoints, not_parsed = bulk_data_to_sdps(bulk_data,campaign,delimiter)
 
-        to_review = source_datapoints
+def review_sdps_by_document(request,document_id):
 
-        return render_to_response(
-            'data_entry/basic.html',
-            {'to_review': to_review ,'data_entry_form': data_entry_form },
-            RequestContext(request),
-        )
+    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
+
+    return render_to_response(
+        'data_entry/basic.html',
+        {'to_review': source_datapoints ,'data_entry_form': DataEntryForm() },
+        RequestContext(request),
+    )
+
+
+def refresh_master_for_sdps(request,sdps):
+
+    m = MasterRefresh(sdps,request.user)
+    m.main()
 
 
 def file_upload(request):
@@ -156,9 +175,6 @@ class ToMap(generic.ListView):
         si = SourceIndicator.objects.filter(indicatormap__isnull=True)
         cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
         rg = SourceRegion.objects.filter(regionmap__isnull=True)
-
-        for r in rg:
-            print r.source
 
         return chain(si,cp,rg)
 

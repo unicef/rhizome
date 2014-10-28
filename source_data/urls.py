@@ -12,4 +12,8 @@ urlpatterns = [
   url(r'^refresh_master/$', refresh_master,name='refresh_master'),
   url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
   url(r'^data_entry/$', data_entry, name='data_entry'),
+  # url(r'^refresh_master_for_sdps/$', refresh_master_for_sdps, name='refresh_master_for_sdps'),
+  url(r'^review_sdps_by_document/(?P<document_id>[0-9]+)/$', review_sdps_by_document, name='review_sdps_by_document'),
+
+
 ]

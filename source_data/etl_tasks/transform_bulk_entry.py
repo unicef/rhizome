@@ -3,13 +3,13 @@ import uuid
 from datapoints.models import Source
 from source_data.models import *
 
-def bulk_data_to_sdps(some_data,campaign_string,delimiter):
+def bulk_data_to_sdps(bulk_data,campaign_string,delimiter,document_id):
 
     campaign_string = campaign_string
     source_datapoints = []
 
 
-    rows = some_data.split('\r')
+    rows = bulk_data.split('\r')
 
     header = rows[0].split(delimiter)
     del rows[0]
@@ -33,7 +33,7 @@ def bulk_data_to_sdps(some_data,campaign_string,delimiter):
                     source_guid = source_guid,
                     row_number= row_number,
                     source_id = Source.objects.get(source_name='data entry').id,
-                    document_id = Document.objects.all()[0].id, ## FIX! -> Create A Document for the text sumbission
+                    document_id = document_id,
                     status_id = ProcessStatus.objects.get(status_text='TO_PROCESS').id
                 )
                 source_datapoints.append(sdp)
