@@ -1,6 +1,10 @@
 import pprint as pp
 import traceback
+import locale
+locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
+
 import datetime
+
 from decimal import InvalidOperation
 
 from django.db import IntegrityError
@@ -15,8 +19,9 @@ from datapoints.models import DataPoint
 class MasterRefresh(object):
 
 
-      def __init__(self,source_datapoints,user_id):
+      def __init__(self,source_datapoints,user_id,document_id):
 
+          self.document_id = document_id
           self.source_datapoints = source_datapoints
           self.user_id = user_id
 
@@ -30,6 +35,11 @@ class MasterRefresh(object):
 
               err, datapoint = self.process_source_datapoint_record(sdp=sdp)
 
+              print '=='
+              print err
+              print '=='
+              print err
+
               if err:
                   sdp.error_msg = err
                   sdp.save()
@@ -37,14 +47,11 @@ class MasterRefresh(object):
 
       def get_mappings(self):
 
-          # THIS IS FLAWED make sure there are no dupe sources for the sdps
-          source_id = self.source_datapoints[0].source_id
-
           mappings = {}
 
-          mappings['regions'] = map_regions([sdp.region_string for sdp in self.source_datapoints],source_id)
-          mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.source_datapoints],source_id)
-          mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.source_datapoints],source_id)
+          mappings['regions'] = map_regions([sdp.region_string for sdp in self.source_datapoints],self.document_id)
+          mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.source_datapoints],self.document_id)
+          mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.source_datapoints],self.document_id)
 
           return mappings
 
@@ -66,7 +73,7 @@ class MasterRefresh(object):
                       indicator_id = indicator_id,
                       region_id = region_id,
                       campaign_id = campaign_id,
-                      value = sdp.cell_value,
+                      value = locale.atoi(sdp.cell_value),
                       changed_by_id = self.user_id,
                       source_datapoint_id = sdp.id
                   )
@@ -89,6 +96,10 @@ class MasterRefresh(object):
               return err, None
           except Exception:
               err = traceback.format_exc()
+              print '==='
+              print err
+              print '==='
+              print err
               return err, None
 
 

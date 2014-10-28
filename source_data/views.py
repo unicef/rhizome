@@ -21,7 +21,6 @@ from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
-from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
 def data_entry(request):
@@ -70,12 +69,12 @@ def refresh_master_by_document_id(request,document_id):
 
     source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
 
-    m = MasterRefresh(source_datapoints,user_id = request.user.id)
+    m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
 
-    si = SourceIndicator.objects.filter(indicatormap__isnull=True)
-    cp = SourceCampaign.objects.filter(campaignmap__isnull=True)
-    rg = SourceRegion.objects.filter(regionmap__isnull=True)
+    si = SourceIndicator.objects.filter(indicatormap__isnull=True,document_id=document_id)
+    cp = SourceCampaign.objects.filter(campaignmap__isnull=True,document_id=document_id)
+    rg = SourceRegion.objects.filter(regionmap__isnull=True,document_id=document_id)
 
     to_map = chain(si,cp,rg)
 

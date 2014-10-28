@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from source_data.models import *
 
 
-def map_indicators(indicator_strings,source_id):
+def map_indicators(indicator_strings,document_id):
 
     indicator_mapping = {}
 
@@ -14,8 +14,8 @@ def map_indicators(indicator_strings,source_id):
     for indicator_string in distinct_indicator_strings:
 
         source_indicator, created = SourceIndicator.objects.get_or_create(
-            source_id = source_id,
-            indicator_string = indicator_string
+            indicator_string = indicator_string,
+            document_id = document_id,
         )
 
         try:
@@ -30,7 +30,7 @@ def map_indicators(indicator_strings,source_id):
     return indicator_mapping
 
 
-def map_campaigns(campaign_strings,source_id):
+def map_campaigns(campaign_strings,document_id):
 
     campaign_mapping = {}
 
@@ -41,8 +41,9 @@ def map_campaigns(campaign_strings,source_id):
         print campaign
 
         source_campaign, created = SourceCampaign.objects.get_or_create(
-            source_id = source_id,
-            campaign_string = campaign
+            campaign_string = campaign,
+            document_id = document_id,
+
         )
         try:
             campaign_id = CampaignMap.objects.get(source_campaign_id = \
@@ -56,7 +57,7 @@ def map_campaigns(campaign_strings,source_id):
     return campaign_mapping
 
 
-def map_regions(region_strings, source_id):
+def map_regions(region_strings,document_id):
 
     region_mapping = {}
 
@@ -67,7 +68,8 @@ def map_regions(region_strings, source_id):
         print region_string
 
         source_region, created = SourceRegion.objects.get_or_create(\
-            region_string=region_string,source_id=source_id)
+            region_string=region_string,
+            document_id = document_id)
 
         try:
             region_id = RegionMap.objects.get(source_region_id = \

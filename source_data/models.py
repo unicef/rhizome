@@ -117,15 +117,13 @@ class SourceDataPoint(models.Model):
 
 class SourceRegion(models.Model):
 
-    region_string = models.CharField(max_length=255)
+    region_string = models.CharField(max_length=255,unique=True)
     settlement_code = models.CharField(max_length=255,null=True)
     lat = models.CharField(max_length=255,null=True)
     lon = models.CharField(max_length=255,null=True)
-    source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+    document = models.ForeignKey(Document)
 
-    class Meta:
-        unique_together = ('source','region_string')
 
     def __unicode__(self):
         return self.region_string
@@ -133,12 +131,11 @@ class SourceRegion(models.Model):
 
 class SourceIndicator(models.Model):
 
-    indicator_string = models.CharField(max_length=255)
-    source = models.ForeignKey(Source)
+    indicator_string = models.CharField(max_length=255,unique=True)
     source_guid = models.CharField(max_length=255)
+    document = models.ForeignKey(Document)
 
-    class Meta:
-        unique_together = ('source','indicator_string')
+
 
     def __unicode__(self):
         return self.indicator_string
@@ -146,13 +143,9 @@ class SourceIndicator(models.Model):
 
 class SourceCampaign(models.Model):
 
-    campaign_string = models.CharField(max_length=255)
-    source = models.ForeignKey(Source)
+    campaign_string = models.CharField(max_length=255,unique=True)
     source_guid = models.CharField(max_length=255)
-
-    class Meta:
-        unique_together = ('source','campaign_string')
-
+    document = models.ForeignKey(Document)
 
     def __unicode__(self):
         return self.campaign_string
