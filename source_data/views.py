@@ -37,8 +37,9 @@ def data_entry(request):
 
     else:
         bulk_data = request.POST['bulk_data']
+        campaign = request.POST['campaign']
 
-        source_datapoints, not_parsed = bulk_data_to_sdps(bulk_data)
+        source_datapoints, not_parsed = bulk_data_to_sdps(bulk_data,campaign)
 
         to_review = source_datapoints
 

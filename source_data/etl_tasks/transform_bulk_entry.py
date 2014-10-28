@@ -3,9 +3,11 @@ import uuid
 from datapoints.models import Source
 from source_data.models import *
 
-def bulk_data_to_sdps(some_data):
+def bulk_data_to_sdps(some_data,campaign_string):
 
+    campaign_string = campaign_string
     source_datapoints = []
+
 
     rows = some_data.split('\r')
 
@@ -26,7 +28,7 @@ def bulk_data_to_sdps(some_data):
                 sdp = SourceDataPoint.objects.create(
                     indicator_string = header[i],
                     region_string = cells[0],
-                    campaign_string = 'PLEASE ENTER',
+                    campaign_string = campaign_string,
                     cell_value = cell,
                     source_guid = source_guid,
                     row_number= row_number,

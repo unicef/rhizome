@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class DataEntryForm(forms.Form):
 
     bulk_data = CharField(widget=forms.Textarea)
+    campaign = CharField()
 
 class DataEntryReviewForm(ModelForm):
 

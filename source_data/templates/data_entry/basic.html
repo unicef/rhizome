@@ -10,7 +10,7 @@
 
     <form action = "" method = "post" class="form">
         {% csrf_token %}
-        {{ data_entry_form }}
+        {{ data_entry_form.as_ul }}
       <br>
       <button type="submit" class="btn btn-primary"> Submit </button>
     </form>
@@ -21,11 +21,11 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Indicator</th>
                 <th>Region</th>
-                <th>Reporting Period</th>
+                <th>Campaign</th>
+                <th>Indicator</th>
                 <th>Value</th>
-                <th>flag</th>
+                <th>Flag</th>
             </tr>
         </thead>
 
