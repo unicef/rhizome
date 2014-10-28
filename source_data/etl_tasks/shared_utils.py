@@ -29,7 +29,8 @@ def map_indicators(indicator_strings,document_id):
             indicator_mapping[indicator_string] = indicator_id
         except ObjectDoesNotExist:
             pass
-
+        except AttributeError:
+            pass
 
     return indicator_mapping
 
@@ -58,6 +59,8 @@ def map_campaigns(campaign_strings,document_id):
             campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:
             pass
+        except AttributeError:
+            pass
 
 
     return campaign_mapping
@@ -84,6 +87,8 @@ def map_regions(region_strings,document_id):
 
             region_mapping[region_string] = region_id
         except ObjectDoesNotExist:
+            pass
+        except AttributeError:
             pass
 
 
