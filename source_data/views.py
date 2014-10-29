@@ -188,7 +188,7 @@ def pre_process_file(request,pk):
 class CreateMap(PermissionRequiredMixin, generic.CreateView):
 
     template_name='map/map.html'
-    success_url=reverse_lazy('datapoints:datapoint_index')
+    success_url=reverse_lazy('source_data:user_portal')
     # permission_required = 'datapoints.add_datapoint'
 
     def form_valid(self, form):
@@ -206,7 +206,6 @@ class IndicatorMapCreateView(CreateMap):
     form_class = IndicatorMapForm
     context_object_name = 'indicator_to_map'
     template_name = 'map/map.html'
-    # success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
         return { 'source_indicator': self.kwargs['pk'] }
@@ -216,7 +215,7 @@ class RegionMapCreateView(CreateMap):
 
     model=RegionMap
     form_class = RegionMapForm
-    # success_url=reverse_lazy('source_data:to_map')
+
 
     def get_initial(self):
         return { 'source_region': self.kwargs['pk'] }
@@ -226,7 +225,6 @@ class CampaignMapCreateView(CreateMap):
 
     model=CampaignMap
     form_class = CampaignMapForm
-    # success_url=reverse_lazy('source_data:to_map')
 
     def get_initial(self):
         return { 'source_campaign': self.kwargs['pk'] }

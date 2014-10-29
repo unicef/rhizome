@@ -18,43 +18,10 @@
 </form>
 
 
-  <h2> Work Items </h2>
-
-
-  <br>
-
-    <table class="table table-hover table-bordered">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>Indicator</th>
-            <th>Region</th>
-
-        </tr>
-    </thead>
-        {% if to_do %}
-
-        {% for work_item in to_do %}
-
-            <tr>
-                <th>{{ work_item.id }}</th>
-                <th>{{ work_item.indicator }}</th>
-                <th>{{ work_item.region }}</th>
-
-
-            </tr>
-
-
-        {% endfor %}
-
-
-      {% endif %}
-
   {% if docs %}
 
   {% for doc in docs %}
 
-  <h2> Documents To Process </h2>
 
   <br>
 
@@ -90,6 +57,31 @@
 
 
     {% endif %}
+
+
+
+
+  <h2> Work Items </h2>
+
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Indicator</th>
+            <th>Region</th>
+
+        </tr>
+    </thead>
+        {% if to_do %}
+            {% for work_item in to_do %}
+              <tr>
+                  <th>{{ work_item.id }}</th>
+                  <th>{{ work_item.indicator }}</th>
+                  <th>{{ work_item.region }}</th>
+              </tr>
+            {% endfor %}
+        {% endif %}
+
 
 
 
