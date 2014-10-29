@@ -61,7 +61,7 @@ class MasterRefresh(object):
               err = traceback.format_exc()
               return err, None
 
-          sdp.cell_value = locale.atoi(sdp.cell_value)
+        #   sdp.cell_value = locale.atoi(sdp.cell_value)
           try:
               with transaction.atomic():
                   datapoint = DataPoint.objects.create(
