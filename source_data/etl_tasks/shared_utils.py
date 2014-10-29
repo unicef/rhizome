@@ -17,7 +17,7 @@ def map_indicators(indicator_strings,document_id):
 
 
         try:
-            source_indicator = SourceIndicator.objects.get_or_create(
+            source_indicator = SourceIndicator.objects.create(
                 indicator_string = indicator_string,
                 document_id = document_id,
             )
@@ -26,15 +26,19 @@ def map_indicators(indicator_strings,document_id):
             source_indicator = SourceIndicator.objects.get(
                 indicator_string = indicator_string)
 
+
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
                 source_indicator.id).master_indicator_id
 
             indicator_mapping[indicator_string] = indicator_id
 
-        except ObjectDoesNotExist:
+
+        except ObjectDoesNotExist as e:
+            print e
             pass
-        except AttributeError:
+        except AttributeError as e:
+            print e
             pass
 
     return indicator_mapping
