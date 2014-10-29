@@ -111,7 +111,7 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
-    history = HistoricalRecords()
+    # history = HistoricalRecords()
 
     def get_val(self):
 
