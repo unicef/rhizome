@@ -3,16 +3,17 @@ import csv
 import pandas
 import hashlib
 import pprint as pp
+from itertools import chain
+
 
 from django.shortcuts import render,render_to_response
 from django.template import RequestContext
-from django.db import IntegrityError
+from django.db import IntegrityError, connection
 from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 from pandas.io.excel import read_excel
-from itertools import chain
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
@@ -24,12 +25,25 @@ from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
 
 
-def user_portal(request):
+def user_portal(request,campaign_id=None):
+
+    if campaign_id is None:
+        campaign_id = Campaign.objects.all().order_by('-start_date')[0].id
+
+    raw_sql = '''select * from responsibility r
+            where user_id = 1
+            and not exists
+            (
+            	select 1 from datapoint d
+            	where campaign_id = 14043
+            	and r.indicator_id = d.indicator_id
+            	and r.region_id = d.region_id
+            )'''
+
+    to_do = Responsibility.objects.raw(raw_sql)
+
 
     docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
-
-    latest_campaign = Campaign.objects.all()[0] # FIX
-    to_do = Responsibility.objects.filter(user_id=request.user.id)
 
     return render_to_response(
         'data_entry/user_portal.html',

@@ -125,6 +125,9 @@ class Responsibility(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
 
+    class Meta:
+        db_table = 'responsibility'
+
 
 
 class RegionRelationshipType(models.Model):
