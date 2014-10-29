@@ -15,13 +15,28 @@ from pandas.io.excel import read_excel
 from itertools import chain
 
 from datapoints.mixins import PermissionRequiredMixin
-from datapoints.models import DataPoint
+from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
+
+
+def user_portal(request):
+
+    docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
+
+    latest_campaign = Campaign.objects.all()[0] # FIX
+    to_do = Responsibility.objects.filter(user_id=request.user.id)
+
+    return render_to_response(
+        'data_entry/user_portal.html',
+        {'docs':docs,'to_do':to_do},
+        RequestContext(request),
+    )
+
 
 def data_entry(request):
 
@@ -86,6 +101,23 @@ def refresh_master_by_document_id(request,document_id):
         {'datapoints': doc_datapoints, 'document_id': document_id, 'to_map':to_map},
         RequestContext(request),
     )
+
+def mark_doc_as_processed(request,document_id):
+
+    doc = Document.objects.get(id=document_id)
+    doc.is_processed = True
+    doc.save()
+
+    return HttpResponseRedirect(reverse('source_data:user_portal'))  # encode like done below
+
+
+
+
+### Bulk Upload Stuff Above ###
+
+            ####
+
+### File Upload Stuff Below ###
 
 
 

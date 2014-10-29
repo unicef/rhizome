@@ -57,6 +57,7 @@ class Region(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
+    is_high_risk = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.full_name)
@@ -117,6 +118,13 @@ class DataPoint(models.Model):
         permissions = (
             ('view_datapoint', 'View datapoint'),
         )
+
+class Responsibility(models.Model):
+
+    user = models.ForeignKey('auth.User')
+    indicator = models.ForeignKey(Indicator)
+    region = models.ForeignKey(Region)
+
 
 
 class RegionRelationshipType(models.Model):

@@ -13,6 +13,10 @@ urlpatterns = [
   url(r'^data_entry/$', data_entry, name='data_entry'),
   url(r'^review_sdps_by_document/(?P<document_id>[0-9]+)/$', review_sdps_by_document, name='review_sdps_by_document'),
   url(r'^refresh_master_by_document_id/(?P<document_id>[0-9]+)/$', refresh_master_by_document_id, name='refresh_master_by_document_id'),
+  url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$', mark_doc_as_processed, name='mark_doc_as_processed'),
+
+
+  url(r'^user_portal/$', user_portal, name='user_portal'),
 
 
 

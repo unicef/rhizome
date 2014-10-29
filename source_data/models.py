@@ -52,6 +52,8 @@ class Document(models.Model):
     doc_text = models.TextField(null=True)
     created_by = models.ForeignKey(User)
     guid = models.CharField(max_length=40)
+    is_processed = models.BooleanField(default=False)
+
 
     class Meta:
         unique_together = ('docfile','doc_text')
