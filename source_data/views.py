@@ -38,10 +38,11 @@ def user_portal(request,campaign_id=None):
             	where campaign_id = %s
             	and r.indicator_id = d.indicator_id
             	and r.region_id = d.region_id
+                order by r.indicator_id
             )'''
 
     to_do = Responsibility.objects.raw(raw_sql % (request.user.id,campaign_id))
-
+    
 
     docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
 

@@ -134,6 +134,8 @@ class Responsibility(models.Model):
 
     class Meta:
         db_table = 'responsibility'
+        ordering = ('indicator',)
+
 
 
 
