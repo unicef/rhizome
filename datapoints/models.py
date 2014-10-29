@@ -27,6 +27,7 @@ class Indicator(models.Model):
 
     class Meta:
         db_table = 'indicator'
+        ordering = ('name',)
 
 class Office(models.Model):
 
@@ -62,6 +63,8 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.full_name)
 
+
+
     class Meta:
         db_table = 'region'
 
@@ -70,6 +73,9 @@ class Region(models.Model):
         )
 
         unique_together = ('source','source_guid')
+
+        ordering = ('full_name',)
+
 
 
 class Campaign(models.Model):
@@ -92,6 +98,7 @@ class Campaign(models.Model):
 
     class Meta:
         db_table = 'campaign'
+        ordering = ('-start_date',)
 
 class DataPoint(models.Model):
 

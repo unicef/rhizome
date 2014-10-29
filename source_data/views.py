@@ -31,16 +31,16 @@ def user_portal(request,campaign_id=None):
         campaign_id = Campaign.objects.all().order_by('-start_date')[0].id
 
     raw_sql = '''select * from responsibility r
-            where user_id = 1
+            where user_id = %s
             and not exists
             (
             	select 1 from datapoint d
-            	where campaign_id = 14043
+            	where campaign_id = %s
             	and r.indicator_id = d.indicator_id
             	and r.region_id = d.region_id
             )'''
 
-    to_do = Responsibility.objects.raw(raw_sql)
+    to_do = Responsibility.objects.raw(raw_sql % (request.user.id,campaign_id))
 
 
     docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
