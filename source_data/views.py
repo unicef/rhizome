@@ -25,10 +25,14 @@ from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
 
 
-def user_portal(request,campaign_id=None):
+def user_portal(request):
 
-    if campaign_id is None:
+    # pRse the campaign param from url.. if none, default to latest
+    try:
+        campaign_id = request.GET['campaign_id']
+    except KeyError:
         campaign_id = Campaign.objects.all().order_by('-start_date')[0].id
+
 
     raw_sql = '''select * from responsibility r
             where user_id = %s
@@ -47,7 +51,7 @@ def user_portal(request,campaign_id=None):
 
     return render_to_response(
         'data_entry/user_portal.html',
-        {'docs':docs,'to_do':to_do,'campaigns':campaigns},
+        {'docs':docs,'to_do':to_do,'campaigns':campaigns,'campaign_id':campaign_id},
         RequestContext(request),
     )
 

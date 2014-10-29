@@ -2,7 +2,10 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
-<select id="org" name="org_list" onChange="redirectUrl()">
+<form action="{% url 'source_data:user_portal' %}" method="GET">
+
+
+<select id="campaign" name="campaign_id">
 
   {% for campaign in campaigns %}
      <option value="{{campaign.id}}"
@@ -11,6 +14,8 @@
      </option>
   {% endfor %}
 </select>
+<input class="btn btn-primary btn-sm" type="submit" value="Change Campaign" />
+</form>
 
 
   <h2> Work Items </h2>
