@@ -1,4 +1,5 @@
 import pprint as pp
+import traceback
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -14,20 +15,24 @@ def map_indicators(indicator_strings,document_id):
 
     for indicator_string in distinct_indicator_strings:
 
+
         try:
-            source_indicator, created = SourceIndicator.objects.get_or_create(
+            source_indicator = SourceIndicator.objects.get_or_create(
                 indicator_string = indicator_string,
                 document_id = document_id,
             )
         except IntegrityError:
-            source_indicator = None
+
+            source_indicator = SourceIndicator.objects.get(
+                indicator_string = indicator_string)
 
         try:
             indicator_id = IndicatorMap.objects.get(source_indicator_id = \
                 source_indicator.id).master_indicator_id
 
             indicator_mapping[indicator_string] = indicator_id
-        except ObjectDoesNotExist:
+
+    except ObjectDoesNotExist:
             pass
         except AttributeError:
             pass
@@ -41,15 +46,18 @@ def map_campaigns(campaign_strings,document_id):
 
     distinct_campaign_strings = list(set(campaign_strings))
 
+
+
     for campaign in distinct_campaign_strings:
 
         try:
-            source_campaign, created = SourceCampaign.objects.get_or_create(
+            source_campaign = SourceCampaign.objects.create(
                 campaign_string = campaign,
                 document_id = document_id,
             )
         except IntegrityError:
-            source_campaign = None
+            source_campaign = SourceCampaign.objects.get(
+                campaign_string = campaign)
 
 
         try:
@@ -75,11 +83,12 @@ def map_regions(region_strings,document_id):
     for region_string in distinct_region_strings:
 
         try:
-            source_region, created = SourceRegion.objects.get_or_create(\
+            source_region = SourceRegion.objects.create(\
                 region_string=region_string,
                 document_id = document_id)
         except IntegrityError:
-            source_region = None
+            source_region = SourceRegion.objects.get(region_string=region_string)
+
 
         try:
             region_id = RegionMap.objects.get(source_region_id = \

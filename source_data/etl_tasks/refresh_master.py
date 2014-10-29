@@ -35,11 +35,6 @@ class MasterRefresh(object):
 
               err, datapoint = self.process_source_datapoint_record(sdp=sdp)
 
-              print '=='
-              print err
-              print '=='
-              print err
-
               if err:
                   sdp.error_msg = err
                   sdp.save()
@@ -49,7 +44,7 @@ class MasterRefresh(object):
 
           mappings = {}
 
-          mappings['regions'] = map_regions([sdp.region_string for sdp in self.source_datapoints],self.document_id)
+          mappings['regions'] = map_regions([sdp.region_string.replace('\n','') for sdp in self.source_datapoints],self.document_id)
           mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.source_datapoints],self.document_id)
           mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.source_datapoints],self.document_id)
 
@@ -60,7 +55,7 @@ class MasterRefresh(object):
 
           try:
               indicator_id = self.mappings['indicators'][sdp.indicator_string]
-              region_id = self.mappings['regions'][sdp.region_string]
+              region_id = self.mappings['regions'][sdp.region_string.replace('\n','')] # hack!
               campaign_id = self.mappings['campaigns'][sdp.campaign_string]
           except KeyError:
               err = traceback.format_exc()
