@@ -2,8 +2,19 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
+<select id="org" name="org_list" onChange="redirectUrl()">
+
+  {% for campaign in campaigns %}
+     <option value="{{campaign.id}}"
+         {% if org == current_org %}selected="selected"{% endif %}>
+         {{campaign.name|capfirst}}
+     </option>
+  {% endfor %}
+</select>
+
 
   <h2> Work Items </h2>
+
 
   <br>
 

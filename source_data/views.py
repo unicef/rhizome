@@ -42,13 +42,12 @@ def user_portal(request,campaign_id=None):
             )'''
 
     to_do = Responsibility.objects.raw(raw_sql % (request.user.id,campaign_id))
-    
-
     docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
+    campaigns = Campaign.objects.all()
 
     return render_to_response(
         'data_entry/user_portal.html',
-        {'docs':docs,'to_do':to_do},
+        {'docs':docs,'to_do':to_do,'campaigns':campaigns},
         RequestContext(request),
     )
 
