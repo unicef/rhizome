@@ -32,7 +32,7 @@ def map_indicators(indicator_strings,document_id):
 
             indicator_mapping[indicator_string] = indicator_id
 
-    except ObjectDoesNotExist:
+        except ObjectDoesNotExist:
             pass
         except AttributeError:
             pass
