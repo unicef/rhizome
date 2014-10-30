@@ -1,6 +1,5 @@
 from datapoints.models import AggregationExpectedData,AggregationType
 from datapoints.models import DataPoint, Indicator, Region, Campaign, RegionRelationship
-from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 
 from django.db.models.query import QuerySet
 from django.core.exceptions import ObjectDoesNotExist
