@@ -2,6 +2,7 @@ import pprint as pp
 from dateutil import parser
 import StringIO
 import csv
+from collections import defaultdict
 
 from tastypie.serializers import Serializer
 from tastypie.resources import ModelResource, ALL
@@ -37,25 +38,49 @@ class CSVSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        raw_data = ''
+        all_data = ''
+
+        header = ['region','campaign']
+        tuple_dict = {}
 
         try:
             objects = data['objects']
-            header = [k for k,v, in objects[0].iteritems()]
 
-            raw_data = raw_data + str(header).replace('[','') \
-                .replace(']','') + '\n'
-
+            ## Build Header
             for row in objects:
-                to_write = [v for k,v in row.iteritems()]
+                indicator_name = Indicator.objects.get(id=row['indicator']).name
+                header.append(str(indicator_name))
 
-                raw_data = raw_data + str(to_write).replace('[','') \
-                    .replace(']','') + '\n'
+                tuple_dict[row['region'],row['campaign']] = { Indicator.objects.get(id=row['indicator']).name : row['value'] }
 
-        except KeyError:
+            distinct_headers = list(set(header))
+            all_data = all_data + str(distinct_headers).replace('[','').replace(']','') + '\n'
+
+            for k,v in tuple_dict.iteritems():
+                # K is a tuple with (campaign,region)
+                # V is a dictionary with {indicator : value}
+
+                to_write = ''
+
+                # evaluate the key by interating over the headers
+                for h in distinct_headers:
+                    to_write = to_write + v[h]
+
+                    print type(h)
+                    print h
+
+                to_write = to_write + str(k).replace('(','').replace(')','')
+
+                all_data = all_data + to_write + '\n'
+
+        except KeyError as e:
+            print e
             pass
+        except Exception as e:
+            print 'ERROR ALERT'
+            print e
 
-        csv = StringIO.StringIO(raw_data)
+        csv = StringIO.StringIO(str(all_data))
 
         return csv
 
