@@ -37,22 +37,27 @@ class CSVSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        raw_data = []#StringIO.StringIO()
+        raw_data = ''
 
         try:
             objects = data['objects']
-
             header = [k for k,v, in objects[0].iteritems()]
-            raw_data.append(header)
 
-            for item in objects:
-                item_list = [v for k,v, in item.iteritems()]
-                raw_data.append(item_list)
+            raw_data = raw_data + str(header).replace('[','') \
+                .replace(']','') + '\n'
+
+            for row in objects:
+                to_write = [v for k,v in row.iteritems()]
+
+                raw_data = raw_data + str(to_write).replace('[','') \
+                    .replace(']','') + '\n'
 
         except KeyError:
             pass
 
-        return raw_data
+        csv = StringIO.StringIO(raw_data)
+
+        return csv
 
 
 class SimpleApiResource(ModelResource):
