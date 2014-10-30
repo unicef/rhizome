@@ -105,9 +105,15 @@ def refresh_master_by_document_id(request,document_id):
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
 
-    si = SourceIndicator.objects.filter(indicatormap__isnull=True,document_id=document_id)
-    cp = SourceCampaign.objects.filter(campaignmap__isnull=True,document_id=document_id)
-    rg = SourceRegion.objects.filter(regionmap__isnull=True,document_id=document_id)
+    si = SourceIndicator.objects.filter(indicatormap__isnull=True,
+        indicator_string__in=[s.indicator_string for s in source_datapoints])
+
+    cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
+        campaign_string__in=[s.campaign_string for s in source_datapoints])
+
+    rg = SourceRegion.objects.filter(regionmap__isnull=True,
+        region_string__in=[s.region_string for s in source_datapoints])
+
 
     to_map = chain(si,cp,rg)
 

@@ -135,7 +135,7 @@ class Responsibility(models.Model):
     class Meta:
         db_table = 'responsibility'
         ordering = ('indicator',)
-
+        unique_together = ('user','indicator','region')
 
 
 
