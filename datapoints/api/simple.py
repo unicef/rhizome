@@ -1,19 +1,59 @@
 import pprint as pp
 from dateutil import parser
+import StringIO
+import csv
 
+from tastypie.serializers import Serializer
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
+from tastypie.bundle import Bundle
+from tastypie.serializers import Serializer
+
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from tastypie.bundle import Bundle
-
 from stronghold.decorators import public
 
-from datapoints.api.base import parse_slugs_from_url,get_id_from_slug_param
 from datapoints.models import *
+
+
+
+class CSVSerializer(Serializer):
+    formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'csv']
+    content_types = {
+        'json': 'application/json',
+        'jsonp': 'text/javascript',
+        'xml': 'application/xml',
+        'yaml': 'text/yaml',
+        'html': 'text/html',
+        'plist': 'application/x-plist',
+        'csv': 'text/csv',
+    }
+
+    def to_csv(self, data, options=None):
+
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        raw_data = []#StringIO.StringIO()
+
+        try:
+            objects = data['objects']
+
+            header = [k for k,v, in objects[0].iteritems()]
+            raw_data.append(header)
+
+            for item in objects:
+                item_list = [v for k,v, in item.iteritems()]
+                raw_data.append(item_list)
+
+        except KeyError:
+            pass
+
+        return raw_data
+
 
 class SimpleApiResource(ModelResource):
     '''
@@ -25,8 +65,8 @@ class SimpleApiResource(ModelResource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
-        # authorization = Authorization()
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
         always_return_data = True
 
 
@@ -97,6 +137,7 @@ class DataPointResource(SimpleApiResource):
             "campaign": ALL,
         }
         allowed_methods = ['get']
+        serializer = CSVSerializer()
 
 
     def filter_by_campaign(self,object_list,query_dict):
@@ -131,8 +172,6 @@ class DataPointResource(SimpleApiResource):
         filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
 
         return filtered_object_list
-
-
 
 
     def get_object_list(self, request):
