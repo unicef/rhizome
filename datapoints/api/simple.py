@@ -190,3 +190,14 @@ class DataPointResource(SimpleApiResource):
 
 
         return filtered_object_list
+
+
+    def dehydrate(self, bundle):
+
+        bundle.data['indicator'] = bundle.obj.indicator.id
+        bundle.data['campaign'] = bundle.obj.campaign.id
+        bundle.data['region'] = bundle.obj.region.id
+        bundle.data['changed_by_id'] = bundle.obj.changed_by.id
+
+
+        return bundle
