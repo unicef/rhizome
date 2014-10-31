@@ -41,29 +41,37 @@ class CSVSerializer(Serializer):
 
         all_data = 'region,campaign'
         header = []
-        tuple_dict = defaultdict(list)
 
 
         try:
             objects = data['objects']
             df = pd.DataFrame(objects)
-            grouped = df.groupby(['region', 'campaign'])
-            inds = [i[0] for i in df.groupby('indicator')] # distinct list of indicatorIDs
+            # pivoted = df.pivot('region','indicator','value')
+            pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
+                     columns=['indicator'],aggfunc = lambda x: x)
 
-            for i in inds: # writing the header
-                all_data += ',' + str(i)
 
-            all_data +='\n'
 
-            for g in grouped:
-                grouped_key, grouped_data = g[0],g[1]
-                all_data += str(grouped_key)
-                all_data +=  '\n'
+            pp.pprint(pivoted)
 
-                i_care = grouped_data[['indicator','value']]
+            # grouped = df.groupby(['region', 'campaign'])
+            # inds = [i[0] for i in df.groupby('indicator')] # distinct list of indicatorIDs
+            #
+            # for i in inds: # writing the header
+            #     all_data += ',' + str(i)
+            #
+            # all_data +='\n'
+            #
+            # for g in grouped:
+            #     grouped_key, grouped_data = g[0],g[1]
+            #     all_data += str(grouped_key)
+            #     all_data +=  '\n'
+            #
+            #     ind_val = grouped_data[['indicator','value']]
+            #     ind_val_dict = ind_val.to_dict()
+            #
+            #     for col
 
-                print type(i_care)
-                pp.pprint(i_care)
 
 
         except KeyError as e:
