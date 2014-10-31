@@ -60,6 +60,11 @@ class CSVSerializer(Serializer):
                 all_data += str(grouped_key)
                 all_data +=  '\n'
 
+                i_care = grouped_data[['indicator','value']]
+
+                print type(i_care)
+                pp.pprint(i_care)
+
 
         except KeyError as e:
             print 'KEY ERROR'
