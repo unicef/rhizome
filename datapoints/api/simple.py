@@ -35,10 +35,6 @@ class CSVSerializer(Serializer):
     }
 
     def to_csv(self, data, options=None):
-        # THIS CODE IS A DISCGRACE! FIX THIS! #
-        # THIS CODE IS A DISCGRACE! FIX THIS! #
-        # THIS CODE IS A DISCGRACE! FIX THIS! #
-                ## USE PANDAS! ##
 
         options = options or {}
         data = self.to_simple(data, options)
@@ -47,35 +43,31 @@ class CSVSerializer(Serializer):
         header = []
         tuple_dict = defaultdict(list)
 
+
         try:
             objects = data['objects']
             df = pd.DataFrame(objects)
-
             grouped = df.groupby(['region', 'campaign'])
             inds = [i[0] for i in df.groupby('indicator')] # distinct list of indicatorIDs
 
             for i in inds: # writing the header
                 all_data += ',' + str(i)
 
+            all_data +='\n'
+
             for g in grouped:
-                print '==='
-                all_data +=  '\n' + str(g[0]) # adding the region/campaign
-
-                for row in g[1].[indicator,:
-                    print row
-                    # print row.indicator
-                    # print row.value
-
+                grouped_key, grouped_data = g[0],g[1]
+                all_data += str(grouped_key)
+                all_data +=  '\n'
 
 
         except KeyError as e:
+            print 'KEY ERROR'
             print e
-            pass
 
         except Exception as e:
             print 'ERRRRRROR'
             print e
-            pass
 
 
         all_data = all_data.replace('(','').replace(')','').replace('[','')\
