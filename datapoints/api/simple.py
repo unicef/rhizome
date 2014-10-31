@@ -39,54 +39,18 @@ class CSVSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        all_data = 'region,campaign'
-        header = []
-
-
         try:
             objects = data['objects']
             df = pd.DataFrame(objects)
-            # pivoted = df.pivot('region','indicator','value')
             pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
                      columns=['indicator'],aggfunc = lambda x: x)
 
-
-
             pp.pprint(pivoted)
 
-            # grouped = df.groupby(['region', 'campaign'])
-            # inds = [i[0] for i in df.groupby('indicator')] # distinct list of indicatorIDs
-            #
-            # for i in inds: # writing the header
-            #     all_data += ',' + str(i)
-            #
-            # all_data +='\n'
-            #
-            # for g in grouped:
-            #     grouped_key, grouped_data = g[0],g[1]
-            #     all_data += str(grouped_key)
-            #     all_data +=  '\n'
-            #
-            #     ind_val = grouped_data[['indicator','value']]
-            #     ind_val_dict = ind_val.to_dict()
-            #
-            #     for col
-
-
-
         except KeyError as e:
-            print 'KEY ERROR'
-            print e
+            pass
 
-        except Exception as e:
-            print 'ERRRRRROR'
-            print e
-
-
-        all_data = all_data.replace('(','').replace(')','').replace('[','')\
-            .replace(']','').replace("u'",'').replace("'",'')
-
-        csv = StringIO.StringIO(str(all_data))
+        csv = StringIO.StringIO(str(pivoted.to_csv()))
 
         return csv
 
