@@ -40,38 +40,41 @@ class CSVSerializer(Serializer):
 
         all_data = ''
 
-        header = ['region','campaign']
-        tuple_dict = {}
+        header = []
+
+        tuple_dict = defaultdict(list)
 
         try:
             objects = data['objects']
 
-            ## Build Header
-            for row in objects:
-                indicator_name = Indicator.objects.get(id=row['indicator']).name
-                header.append(str(indicator_name))
+            # Build the Header, and transform the list of dicts into a Tuple Dict
+            for item in objects:
+                header.append(item['indicator'])
 
-                tuple_dict[row['region'],row['campaign']] = { Indicator.objects.get(id=row['indicator']).name : row['value'] }
+                reg_camp_tuple = (item['region'], item['campaign']) # KEY
+                indicator_value_dict = {item['indicator'] : item['value']} # VALUE
 
-            distinct_headers = list(set(header))
-            all_data = all_data + str(distinct_headers).replace('[','').replace(']','') + '\n'
+                tuple_dict[reg_camp_tuple].append(indicator_value_dict)
+
+            header_set = list(set(header))
+
+            # TRANSFORM THE HEADER TO HAVE IND STRING...
+            all_data += 'region,campaign,' + str(header_set).replace('[','').replace(']','') + '\n'
 
             for k,v in tuple_dict.iteritems():
-                # K is a tuple with (campaign,region)
-                # V is a dictionary with {indicator : value}
 
-                to_write = ''
+                to_write_list = []
+                to_write_list.append(k)
 
-                # evaluate the key by interating over the headers
-                for h in distinct_headers:
-                    to_write = to_write + v[h]
+                for header in header_set:
+                    for dct in v:
+                        try:
+                            to_write_list.append(dct[header])
+                        except KeyError:
+                            pass
 
-                    print type(h)
-                    print h
+                all_data += str(to_write_list) + '\n'
 
-                to_write = to_write + str(k).replace('(','').replace(')','')
-
-                all_data = all_data + to_write + '\n'
 
         except KeyError as e:
             print e
