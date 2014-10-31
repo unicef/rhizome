@@ -16,6 +16,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from stronghold.decorators import public
+import pandas as pd
 
 from datapoints.models import *
 
@@ -42,47 +43,40 @@ class CSVSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        all_data = 'region,campaign,'
+        all_data = 'region,campaign'
         header = []
         tuple_dict = defaultdict(list)
 
         try:
             objects = data['objects']
+            df = pd.DataFrame(objects)
 
-            # Build the Header, and transform the list of dicts into a Tuple Dict
-            for item in objects:
-                header.append(item['indicator'])
+            grouped = df.groupby(['region', 'campaign'])
+            inds = [i[0] for i in df.groupby('indicator')] # distinct list of indicatorIDs
 
-                reg_camp_tuple = (item['region'], item['campaign']) # KEY
-                indicator_value_dict = {item['indicator'] : item['value']} # VALUE
+            for i in inds: # writing the header
+                all_data += ',' + str(i)
 
-                tuple_dict[reg_camp_tuple].append(indicator_value_dict)
+            for g in grouped:
+                print '==='
+                all_data +=  '\n' + str(g[0]) # adding the region/campaign
 
-            header_set = list(set(header))
+                for row in g[1].[indicator,:
+                    print row
+                    # print row.indicator
+                    # print row.value
 
-            # TRANSFORM THE HEADER TO HAVE IND STRING...
-            for h in header_set:
-                all_data += Indicator.objects.get(id=h).name  + ','
 
-            all_data += '\n'
-
-            for k,v in tuple_dict.iteritems():
-
-                to_write_list = []
-                to_write_list.append(k)
-
-                for header in header_set:
-                    for dct in v:
-                        try:
-                            to_write_list.append(dct[header])
-                        except KeyError:
-                            pass
-
-                all_data += str(to_write_list) + '\n'
 
         except KeyError as e:
             print e
             pass
+
+        except Exception as e:
+            print 'ERRRRRROR'
+            print e
+            pass
+
 
         all_data = all_data.replace('(','').replace(')','').replace('[','')\
             .replace(']','').replace("u'",'').replace("'",'')
