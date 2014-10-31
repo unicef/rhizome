@@ -34,14 +34,16 @@ class CSVSerializer(Serializer):
     }
 
     def to_csv(self, data, options=None):
+        # THIS CODE IS A DISCGRACE! FIX THIS! #
+        # THIS CODE IS A DISCGRACE! FIX THIS! #
+        # THIS CODE IS A DISCGRACE! FIX THIS! #
+                ## USE PANDAS! ##
 
         options = options or {}
         data = self.to_simple(data, options)
 
-        all_data = ''
-
+        all_data = 'region,campaign,'
         header = []
-
         tuple_dict = defaultdict(list)
 
         try:
@@ -59,7 +61,10 @@ class CSVSerializer(Serializer):
             header_set = list(set(header))
 
             # TRANSFORM THE HEADER TO HAVE IND STRING...
-            all_data += 'region,campaign,' + str(header_set).replace('[','').replace(']','') + '\n'
+            for h in header_set:
+                all_data += Indicator.objects.get(id=h).name  + ','
+
+            all_data += '\n'
 
             for k,v in tuple_dict.iteritems():
 
@@ -75,13 +80,12 @@ class CSVSerializer(Serializer):
 
                 all_data += str(to_write_list) + '\n'
 
-
         except KeyError as e:
             print e
             pass
-        except Exception as e:
-            print 'ERROR ALERT'
-            print e
+
+        all_data = all_data.replace('(','').replace(')','').replace('[','')\
+            .replace(']','').replace("u'",'').replace("'",'')
 
         csv = StringIO.StringIO(str(all_data))
 
