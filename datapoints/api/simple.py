@@ -184,6 +184,8 @@ class DataPointResource(SimpleApiResource):
 
 
     def dehydrate(self, bundle):
+        ''' depending on the <uri_display> parameter, return to the bundle
+        the name, resurce_uri, slug or ID of the resource'''
 
         fk_columns = {'indicator':bundle.obj.indicator,\
             'campaign':bundle.obj.campaign,\
@@ -201,6 +203,11 @@ class DataPointResource(SimpleApiResource):
         if uri_display == 'slug':
             for f_str,f_obj in fk_columns.iteritems():
                 bundle.data[f_str] = f_obj.slug
+
+        elif uri_display == 'id':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.id
+
 
         elif uri_display == 'name':
             for f_str,f_obj in fk_columns.iteritems():
