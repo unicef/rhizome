@@ -33,13 +33,10 @@ class CustomSerializer(Serializer):
         'csv': 'text/csv',
     }
 
-    def to_csv(self, data, options=None):
-
-        options = options or {}
-        data = self.to_simple(data, options)
+    def campaign_region_pivot(self,list_of_dicts):
 
         try:
-            objects = data['objects']
+            objects = list_of_dicts['objects']
             df = pd.DataFrame(objects)
             pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
                      columns=['indicator'],aggfunc = lambda x: x)
@@ -47,9 +44,43 @@ class CustomSerializer(Serializer):
         except KeyError as e:
             pass
 
+        return pivoted
+
+
+    def to_csv(self, data, options=None):
+
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        pivoted = self.campaign_region_pivot(data)
+
         csv = StringIO.StringIO(str(pivoted.to_csv()))
 
         return csv
+
+
+    # def to_json(self, data, options=None):
+    #
+    #     options = options or {}
+    #     data = self.to_simple(data, options)
+    #
+    #     pivoted = self.campaign_region_pivot(data)
+    #
+    #     # df.T.to_dict().values()
+    #     pivoted_dict = pivoted.to_dict().values()
+    #
+    #     # try:
+    #     #     objects = data['objects']
+    #     #     df = pd.DataFrame(objects)
+    #     #     pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
+    #     #              columns=['indicator'],aggfunc = lambda x: x)
+    #     #
+    #     # except KeyError as e:
+    #     #     pass
+    #     #
+    #     # csv = StringIO.StringIO(str(pivoted.to_csv()))
+    #
+    #     return pivoted_dict
 
 
 class SimpleApiResource(ModelResource):

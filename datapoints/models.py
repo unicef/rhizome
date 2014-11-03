@@ -64,7 +64,6 @@ class Region(models.Model):
         return unicode(self.name)
 
 
-
     class Meta:
         db_table = 'region'
 
@@ -82,8 +81,8 @@ class Campaign(models.Model):
 
     name = models.CharField(max_length=255)
     office = models.ForeignKey(Office)
-    start_date = models.DateField(unique=True)
-    end_date = models.DateField(unique=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name')
     created_at = models.DateTimeField(auto_now=True)
 
@@ -99,6 +98,7 @@ class Campaign(models.Model):
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
+        unique_together = ('office','start_date')
 
 class DataPoint(models.Model):
 
