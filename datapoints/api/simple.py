@@ -21,8 +21,7 @@ import pandas as pd
 from datapoints.models import *
 
 
-
-class CSVSerializer(Serializer):
+class CustomSerializer(Serializer):
     formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'csv']
     content_types = {
         'json': 'application/json',
@@ -44,8 +43,6 @@ class CSVSerializer(Serializer):
             df = pd.DataFrame(objects)
             pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
                      columns=['indicator'],aggfunc = lambda x: x)
-
-            pp.pprint(pivoted)
 
         except KeyError as e:
             pass
@@ -137,7 +134,7 @@ class DataPointResource(SimpleApiResource):
             "campaign": ALL,
         }
         allowed_methods = ['get']
-        serializer = CSVSerializer()
+        serializer = CustomSerializer()
 
 
     def filter_by_campaign(self,object_list,query_dict):
@@ -183,16 +180,37 @@ class DataPointResource(SimpleApiResource):
 
         filtered_object_list = self.filter_by_campaign(object_list,query_dict)
 
-
         return filtered_object_list
 
 
     def dehydrate(self, bundle):
 
-        bundle.data['indicator'] = bundle.obj.indicator.id
-        bundle.data['campaign'] = bundle.obj.campaign.id
-        bundle.data['region'] = bundle.obj.region.id
-        bundle.data['changed_by_id'] = bundle.obj.changed_by.id
+        fk_columns = {'indicator':bundle.obj.indicator,\
+            'campaign':bundle.obj.campaign,\
+            'region':bundle.obj.region}
+
+
+        try: # Default to showing the ID of the resource
+            uri_display = bundle.request.GET['uri_display']
+        except KeyError:
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj
+            return bundle
+
+
+        if uri_display == 'slug':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.slug
+
+        elif uri_display == 'display_name':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.slug
+
+
+        # bundle.data['indicator'] = bundle.obj.indicator.id
+        # bundle.data['campaign'] = bundle.obj.campaign.id
+        # bundle.data['region'] = bundle.obj.region.id
+        # bundle.data['changed_by_id'] = bundle.obj.changed_by.id
 
 
         return bundle
