@@ -47,8 +47,7 @@ class Office(models.Model):
 
 class Region(models.Model):
 
-    full_name = models.CharField(max_length=55,unique=True)
-    name = models.CharField(max_length=55)
+    name = models.CharField(max_length=55,unique=True)
     region_code = models.CharField(max_length=10,unique=True)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
@@ -75,7 +74,7 @@ class Region(models.Model):
 
         unique_together = ('source','source_guid')
 
-        ordering = ('full_name',)
+        ordering = ('name',)
 
 
 
