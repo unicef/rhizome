@@ -48,7 +48,7 @@ class Office(models.Model):
 class Region(models.Model):
 
     full_name = models.CharField(max_length=55,unique=True)
-    name = models.CharField(max_length=55,unique=True)
+    name = models.CharField(max_length=55)
     region_code = models.CharField(max_length=10,unique=True)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
