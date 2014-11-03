@@ -1,7 +1,7 @@
 import pprint as pp
 from dateutil import parser
 import StringIO
-import csv
+import csv,json
 from collections import defaultdict
 
 from tastypie.serializers import Serializer
@@ -59,28 +59,35 @@ class CustomSerializer(Serializer):
         return csv
 
 
-    # def to_json(self, data, options=None):
-    #
-    #     options = options or {}
-    #     data = self.to_simple(data, options)
-    #
-    #     pivoted = self.campaign_region_pivot(data)
-    #
-    #     # df.T.to_dict().values()
-    #     pivoted_dict = pivoted.to_dict().values()
-    #
-    #     # try:
-    #     #     objects = data['objects']
-    #     #     df = pd.DataFrame(objects)
-    #     #     pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
-    #     #              columns=['indicator'],aggfunc = lambda x: x)
-    #     #
-    #     # except KeyError as e:
-    #     #     pass
-    #     #
-    #     # csv = StringIO.StringIO(str(pivoted.to_csv()))
-    #
-    #     return pivoted_dict
+    def to_json(self, data, options=None):
+
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        try:
+            objects = data['objects']
+            df = pd.DataFrame(objects)
+            pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
+                     columns=['indicator'],aggfunc = lambda x: x)
+
+            pivoted_dict = pivoted.to_dict()
+            pp.pprint(pivoted_dict)
+
+            json_data =''
+            # json_data = json.dumps(pivoted_dict)
+
+        except KeyError as e:
+            json_data = ''
+        except Exception as e:
+            print e
+            print e
+            print e
+            print e
+
+            json_data = ''
+
+        return json_data
+
 
 
 class SimpleApiResource(ModelResource):
