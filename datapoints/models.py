@@ -61,7 +61,7 @@ class Region(models.Model):
     is_high_risk = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return unicode(self.full_name)
+        return unicode(self.name)
 
 
 
