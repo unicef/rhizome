@@ -202,15 +202,12 @@ class DataPointResource(SimpleApiResource):
             for f_str,f_obj in fk_columns.iteritems():
                 bundle.data[f_str] = f_obj.slug
 
-        elif uri_display == 'display_name':
+        elif uri_display == 'name':
             for f_str,f_obj in fk_columns.iteritems():
-                bundle.data[f_str] = f_obj.slug
+                bundle.data[f_str] = f_obj.name
 
-
-        # bundle.data['indicator'] = bundle.obj.indicator.id
-        # bundle.data['campaign'] = bundle.obj.campaign.id
-        # bundle.data['region'] = bundle.obj.region.id
-        # bundle.data['changed_by_id'] = bundle.obj.changed_by.id
+        else: # if there is any other uri_display, return the full uri
+            pass
 
 
         return bundle
