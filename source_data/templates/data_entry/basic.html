@@ -8,6 +8,12 @@
       Additionally the user can paste data into a textbox and clicking save should decrease the
       amount of work items they need to finish!
 
+      <br>
+      <br>
+      {% if message %}
+              {{ message }}
+      {% endif %}
+
     <form action = "" method = "post" class="form">
         {% csrf_token %}
         {{ data_entry_form.as_ul }}

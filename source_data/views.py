@@ -72,10 +72,23 @@ def data_entry(request):
     else:
         bulk_data = request.POST['bulk_data']
 
-        document = Document.objects.create(
-            doc_text =bulk_data,
-            created_by = request.user,
+        try:
+            document = Document.objects.create(
+                doc_text =bulk_data,
+                created_by = request.user,
+                )
+        except IntegrityError:
+            msg = 'A submission with the EXACT same text, and campaign already exists. \n Please Upload data that does not conflict with an existing submission!!'
+            # messages.add_message(request, messages.INFO,msg)
+
+            return render_to_response(
+                'data_entry/basic.html',
+                {'data_entry_form': data_entry_form,'message':msg},
+                RequestContext(request),
             )
+
+
+
 
         source_datapoints, not_parsed = bulk_data_to_sdps(
             bulk_data = bulk_data,
@@ -166,6 +179,11 @@ def file_upload(request):
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
             msg = 'Please upload either .CSV, .XLS or .XLSX file format'
             messages.add_message(request, messages.INFO,msg)
+
+            return render_to_response(
+                'upload/file_upload.html',
+                context_instance=RequestContext(request)
+            )
 
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)

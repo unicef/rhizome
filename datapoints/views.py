@@ -312,7 +312,7 @@ def search(request):
         context_instance=RequestContext(request))
 
 
-def export(request,**kwargs):
+def export(request,**kwargs): # REMOVE THIS.  DONE IN API
 
     #input
     params = request.GET
