@@ -17,7 +17,7 @@ var path = {
 	images: './ui/img/**/*',
 	test: './ui/test/**/*.js',
 	output: './static',
-	clean: './static/**/*.{js,css,html}'
+	clean: ['./static/**/*.{js,css,html}', '!./static/bower_components/**/*']
 };
 
 var build = function (src, dst, opts) {
@@ -30,12 +30,17 @@ var build = function (src, dst, opts) {
 };
 
 gulp.task('styles', function () {
+	var filter = $.filter(['!ie.css', '!print.css']);
+
 	return gulp.src(path.sass)
 		.pipe($.rubySass({
+			compass: true,
 			style: 'expanded',
 			precision: 10
 		}))
+		.pipe(filter)
 		.pipe($.concat('main.css'))
+		.pipe(filter.restore())
 		.pipe($.autoprefixer('last 1 version'))
 		.pipe(gulp.dest(path.output));
 });

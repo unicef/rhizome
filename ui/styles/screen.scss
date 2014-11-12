@@ -1,0 +1,168 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "compass/utilities/general/clearfix";
+
+$offblack: #333;
+$lightgray: #d0d0d0;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #fafafa;
+}
+
+body {
+  color: #333;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0 5pt;
+}
+
+header {
+  h1 {
+    float: left;
+    padding: 10pt 20pt 10pt 0;
+  }
+}
+
+h1 {
+  font-weight: bold;
+}
+
+nav {
+  @include clearfix;
+
+  ul {
+    float: left;
+    list-style: none;
+
+    li {
+      display: inline-block;
+      padding: 10pt;
+    }
+
+    .selected {
+      background: #333;
+
+      &, a {
+        color: #fff;
+      }
+    }
+  }
+
+  .right {
+    float: right;
+  }
+
+  a {
+    color: #333;
+    text-decoration: none;
+
+    &:hover {
+      border-bottom: 2px solid #888;
+    }
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+form {
+  &.inline {
+    .form-group {
+      display: inline-block;
+    }
+  }
+}
+
+input {
+  padding: 6px 12px;
+  font-size: 12pt;
+  border-radius: 3px;
+  border: 1px solid $lightgray;
+}
+
+table {
+  border-collapse: collapse;
+  font-family: Verdana, Hevetica, Arial, sans-serif;
+  margin-top: 10px;
+  width: 100%;
+
+  th {
+    font-family: Hevetica, Arial, sans-serif;
+    padding: 5px 0;
+    text-align: left;
+  }
+
+  td {
+    background-color: white;
+    cursor: default;
+    font-size: 9pt;
+    padding: 3px 0;
+  }
+
+  .odd {
+    td {
+      background-color: #f0f0f0;
+    }
+  }
+
+  tr:hover {
+    td {
+      background-color: $lightgray;
+    }
+  }
+}
+
+.pagination {
+  margin-top: 0.3em;
+
+  a {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12pt;
+    height: 1.3em;
+    line-height: 1.3em;
+    padding: 0 0.3em;
+    text-align: center;
+
+    &.disabled {
+      color: $lightgray;
+      cursor: default;
+    }
+
+    &:not(.disabled):hover {
+      background-color: $offblack;
+      color: white;
+      text-decoration: underline;
+    }
+  }
+}
+
+button,
+.btn,
+*[role=button] {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: default;
+  display: inline-block;
+  padding: 10px;
+  transition: all 300ms ease;
+
+
+  &:hover {
+    border: 1px solid #888;
+  }
+}
+
+.hidden {
+  visibility: hidden;
+}
