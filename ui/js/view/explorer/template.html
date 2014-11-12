@@ -1,0 +1,30 @@
+<form class="inline">
+	<div class="form-group">
+		<label>Time Period</label>
+		<input name="start_dt" type="text"></input>
+		to
+		<input name="end_dt" type="text"></input>
+	</div>
+
+	<div class="form-group">
+		<label for="regions">Regions</label>
+		<vue-dropdown v-with="items : regions"
+				placeholder="Select regions"
+				multi="true"
+				searchable="true"></vue-dropdown>
+	</div>
+
+	<div class="form-group">
+		<label for="indicators">Indicators</label>
+		<vue-dropdown v-with="items : indicators"
+				placeholder="Select indicators"
+				multi="true"
+				searchable="true"></vue-dropdown>
+	</div>
+	<a class="btn" type="button" v-on="click : refresh()">
+		Update&emsp;<i class="fa fa-refresh"></i>
+	</a>
+</form>
+
+<vue-table v-with="table"></vue-table>
+<vue-pagination v-with="pagination"></vue-pagination>

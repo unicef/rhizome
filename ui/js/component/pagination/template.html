@@ -1,0 +1,35 @@
+<div v-if="pageCount > 0" class="pagination">
+	<a title="First page"
+			v-on="click : first()"
+			v-class="disabled : firstPage">
+		<i class="fa fa-angle-double-left"></i>
+	</a>
+	<a title="Previous page"
+			v-on="click : previousPage()"
+			v-class="disabled : firstPage">
+		<i class="fa fa-angle-left"></i>
+	</a>
+	<a v-if="jumpBack"
+			v-on="click: setPage(jumpBack)">
+		<i class="fa fa-ellipsis-h"></i>
+	</a>
+	<a v-repeat="pages"
+			v-on="click : setPage(number)"
+			v-class="current : current">
+		{{ number }}
+	</a>
+	<a v-if="jumpForward"
+			v-on="click : setPage(jumpForward)">
+		<i class="fa fa-ellipsis-h"></i>
+	</a>
+	<a title="Next page"
+			v-on="click : nextPage()"
+			v-class="disabled : lastPage">
+		<i class="fa fa-angle-right"></i>
+	</a>
+	<a title="Last page"
+			v-on="click : last()"
+			v-class="disabled : lastPage">
+		<i class="fa fa-angle-double-right"></i>
+	</a>
+</div>

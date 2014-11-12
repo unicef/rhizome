@@ -1,0 +1,12 @@
+<table>
+	<thead>
+		<tr>
+			<th v-repeat="columns">{{ $value | capitalize }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-repeat="rows" v-class="odd : $index | isOdd">
+			<td v-repeat="columns">{{ $parent[$value] }}</td>
+		</tr>
+	</tbody>
+</table>
