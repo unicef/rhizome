@@ -62,9 +62,7 @@ gulp.task('clean', function (cb) {
 	del(path.clean, cb);
 });
 
-gulp.task('default', ['clean'], function () {
-	gulp.start('watch');
-});
+gulp.task('default', ['clean', 'browserify', 'styles']);
 
 gulp.task('watch', ['browserify', 'styles'], function () {
 	var server = $.livereload();
