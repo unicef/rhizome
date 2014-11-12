@@ -18,3 +18,8 @@ include
 /source_data/prod_odk_settings.py
 /source_data/dev_odk_settings.py
 /viz
+ui/js/bower_components
+node_modules
+*.swp
+.sass-cache
+*.sublime-*

@@ -1,0 +1,8 @@
+{
+  "name": "uf04-polio",
+  "private": true,
+  "dependencies": {
+    "fontawesome": "~4.2.0"
+  },
+  "devDependencies": {}
+}
