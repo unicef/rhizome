@@ -2,43 +2,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <title>Polio Data Management App</title>
+	<meta charset="utf-8">
+
+	<title>Polio Data Management App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="{% static "bower_components/fontawesome/css/font-awesome.min.css" %}">
+	<link rel="stylesheet" href="{% static "screen.css" %}">
+	<link rel="stylesheet" href="{% static "print.css" %}">
 </head>
 
 <body>
-    <div class="container">
-          <!-- Static navbar -->
-          <div class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <a class="navbar-brand" href="#">POLIO </a>
-              </div>
-              <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                  <li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
-                  <li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
-                  <li><a href="{% url 'upload:file_upload' %}">CSV Upload</a></li>
-                  <li><a href="{% url 'source_data:data_entry' %}">Data Entry</a></li>
-                  <li><a href="{% url 'source_data:user_portal' %}">User Portal</a></li>
+	<header>
+		<h1>Polio</h1>
+		<nav>
+			<ul>
+				<li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
+				<li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
+				<li><a href="{% url 'upload:file_upload' %}">CSV Upload</a></li>
+				<li><a href="{% url 'source_data:data_entry' %}">Data Entry</a></li>
+				<li><a href="{% url 'source_data:user_portal' %}">User Portal</a></li>
+			</ul>
+			<ul class="right">
+				<li><a href="/admin">Admin</a></li>
+				{% if user.is_authenticated %}
+				<li>  </li>
+				<li><a href="{% url 'logout' %}?next=/" role="button">Log Out As {{ user.username }} </a></li>
+				{% else %}
+				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
+				{% endif %}
+			</ul>
+		</nav>
+	</header>
 
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                  <li><a href="/admin">Admin</a></li>
-                  {% if user.is_authenticated %}
-                  <li>  </li>
-                  <li><a href="{% url 'logout' %}?next=/">Log Out As {{ user.username }} </a></li>
-                  {% else %}
-                  <li><a href="{% url 'login' %}">Log In</a></li>
-                  {% endif %}
+	<div role="main">{% block content %}{% endblock %}</div>
 
-                </ul>
-              </div><!--/.nav-collapse -->
-            </div><!--/.container-fluid -->
-          </div>
+	<!-- Polyfill for Promises (not yet implemented in IE) and
+	     Promise.prototype.done (not standardized yet).
+	     -->
+	<script src="https://www.promisejs.org/polyfills/promise-done-6.0.0.min.js"></script>
 
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
 </body>
 </html>
