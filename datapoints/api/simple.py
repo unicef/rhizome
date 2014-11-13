@@ -71,20 +71,42 @@ class CustomSerializer(Serializer):
                      columns=['indicator'],aggfunc = lambda x: x)
 
             pivoted_dict = pivoted.to_dict()
+
+            cleaned_dict = {}
+
+            for indicator,tuple_dict in pivoted_dict.iteritems():
+
+                indicator_values = []
+
+                for reg_camp, value in tuple_dict.iteritems():
+
+                    reg_camp_dict = {}
+                    reg_camp_dict['region'] = reg_camp[0]
+                    reg_camp_dict['campaign'] = reg_camp[1]
+                    reg_camp_dict['value'] = value
+
+
+                    indicator_values.append(reg_camp_dict)
+
+
+                cleaned_dict[indicator] = indicator_values
+
+
+
+
+
             pp.pprint(pivoted_dict)
 
-            json_data =''
-            # json_data = json.dumps(pivoted_dict)
+            json_data = json.dumps(cleaned_dict)
 
         except KeyError as e:
             json_data = ''
-        except Exception as e:
+        except TypeError as e:
             print e
             print e
             print e
             print e
 
-            json_data = ''
 
         return json_data
 
