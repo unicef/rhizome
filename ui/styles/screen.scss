@@ -55,10 +55,6 @@ nav {
     }
   }
 
-  .right {
-    float: right;
-  }
-
   a {
     color: #333;
     text-decoration: none;
@@ -164,9 +160,11 @@ button,
   background-color: #eee;
   border: 1pt solid #ddd;
   border-radius: 3pt;
+  color: inherit;
   cursor: default;
   display: inline-block;
   padding: 10pt;
+  text-decoration: none;
   transition: border 300ms ease;
 
   &:hover {
@@ -176,6 +174,10 @@ button,
   &:active {
     box-shadow: rgba(0, 0, 0, 0.121569) 0pt 3pt 5pt 0pt inset;
   }
+}
+
+.right {
+  float: right;
 }
 
 .hidden {

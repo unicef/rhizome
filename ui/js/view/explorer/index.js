@@ -11,6 +11,7 @@ function selectedValues(items) {
 module.exports = {
 	template: require('./template.html'),
 	data: {
+		loading: false,
 		regions: [],
 		indicators: [],
 		pagination: {
@@ -43,21 +44,67 @@ module.exports = {
 			this.refresh(data);
 		});
 	},
+	computed: {
+		download: function () {
+			return api.datapoints.toString({
+				indicators: selectedValues(this.indicators),
+				regions: selectedValues(this.regions),
+				limit: 0,
+				format: 'csv'
+			});
+		}
+	},
 	methods: {
 		refresh: function (pagination) {
 			var indicators = selectedValues(this.indicators),
-				options = _.defaults({
-					indicators: indicators,
-					regions: selectedValues(this.regions)
-				}, pagination || {}),
+				regions = selectedValues(this.regions),
+				options = {},
 				self = this;
 
+			if (indicators.length > 0) {
+				options.indicator__in = indicators;
+			}
+
+			if (regions.length > 0) {
+				options.region__in = regions;
+			}
+
+			_.defaults(options, pagination || { limit : indicators.length * 20 });
+
+			this.loading = true;
 			this.table.columns = ['region', 'campaign'].concat(indicators);
 			this.table.rows = [];
 
 			api.datapoints(options).done(function (data) {
+				// data.objects is an object that maps an indicator name to an array of
+				// values that each correspond to one unique combination of (region,
+				// campaign). Here we pivot this data so we have an array of objects,
+				// one for each unique (region, campaign) combination with each
+				// indicator set as a property on the object.
+				var datapoints = _(data.objects).transform(function (result, value, key) {
+					// Convert the object to an array of objects, melting the properties
+					// of the original object into each object as the value of an
+					// `indicator` property.
+					value.forEach(function (o) {
+						o.indicator = key;
+						result.push(o);
+					});
+				}, []).transform(function (result, o) {
+					var key = String([o.region, o.campaign]);
+
+					if (!result.hasOwnProperty(key)) {
+						result[key] = _.omit(o, 'value', 'indicator');
+					}
+
+					result[key][o.indicator] = o.value;
+				}, {}).values().sortBy('region').value();
+
 				self.pagination = data.meta;
-				self.table.rows = data.objects;
+
+				self.table.columns = ['region', 'campaign'].concat(_.keys(data.objects));
+				self.table.rows = datapoints;
+
+				self.loading = false;
 			});
 		}
 	}

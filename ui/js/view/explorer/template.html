@@ -21,10 +21,19 @@
 				multi="true"
 				searchable="true"></vue-dropdown>
 	</div>
-	<a class="btn" type="button" v-on="click : refresh()">
-		Update&emsp;<i class="fa fa-refresh"></i>
+	<a role="button" v-on="click : refresh()">
+		Update&emsp;<i class="fa fa-refresh" v-class="fa-spin : loading"></i>
 	</a>
 </form>
 
 <vue-table v-with="table"></vue-table>
 <vue-pagination v-with="pagination"></vue-pagination>
+
+<a role="button" class="right" href="{{ download }}" v-on="click : downloading = true"
+		target="dltarget">
+	Download CSV
+	<i class="fa" v-class="fa-download : !downloading,
+												 fa-spinner : downloading,
+												 fa-spin : downloading"></i>
+</a>
+<iframe name="dltarget" width="0" height="0" onload="console.log('done')" v-on="ready : downloading = false"></iframe>

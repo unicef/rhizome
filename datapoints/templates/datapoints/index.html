@@ -2,11 +2,6 @@
 
 {% block content %}
 <uf-explorer></uf-explorer>
-<div align="right">
-  <a href="{% url 'datapoints:create_datapoint' %}" class="btn btn-primary">
-  	Create New Data Point
-  </a>
-</div>
 {% endblock %}
 {% block scripts %}
 <script>Polio.Explorer('#main');</script>
