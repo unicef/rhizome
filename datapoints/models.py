@@ -121,6 +121,8 @@ class DataPoint(models.Model):
     class Meta:
         db_table = 'datapoint'
         unique_together = ('indicator','region','campaign')
+        ordering = ['region', 'campaign']
+
 
         permissions = (
             ('view_datapoint', 'View datapoint'),
