@@ -64,14 +64,14 @@ nav {
     text-decoration: none;
 
     &:hover {
-      border-bottom: 2px solid #888;
+      border-bottom: 2pt solid #888;
     }
   }
 }
 
 label {
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 3pt;
 }
 
 form {
@@ -83,21 +83,24 @@ form {
 }
 
 input {
-  padding: 6px 12px;
+  padding: 6pt 12pt;
   font-size: 12pt;
-  border-radius: 3px;
-  border: 1px solid $lightgray;
+  border-radius: 3pt;
+  border-top: 1pt solid $lightgray;
+  border-left: 1pt solid $lightgray;
+  border-bottom: 1pt solid lighten($lightgray, 10%);
+  border-right: 1pt solid lighten($lightgray, 10%);
 }
 
 table {
   border-collapse: collapse;
   font-family: Verdana, Hevetica, Arial, sans-serif;
-  margin-top: 10px;
+  margin-top: 10pt;
   width: 100%;
 
   th {
     font-family: Hevetica, Arial, sans-serif;
-    padding: 5px 0;
+    padding: 5pt 0;
     text-align: left;
   }
 
@@ -105,7 +108,16 @@ table {
     background-color: white;
     cursor: default;
     font-size: 9pt;
-    padding: 3px 0;
+    padding: 3pt 0;
+  }
+
+  .empty {
+    td {
+      background-color: transparent;
+      font-size: 150%;
+      padding: 2em 0;
+      text-align: center;
+    }
   }
 
   .odd {
@@ -114,7 +126,7 @@ table {
     }
   }
 
-  tr:hover {
+  tr:not(.empty):hover {
     td {
       background-color: $lightgray;
     }
@@ -150,16 +162,19 @@ button,
 .btn,
 *[role=button] {
   background-color: #eee;
-  border: 1px solid #ddd;
-  border-radius: 3px;
+  border: 1pt solid #ddd;
+  border-radius: 3pt;
   cursor: default;
   display: inline-block;
-  padding: 10px;
-  transition: all 300ms ease;
-
+  padding: 10pt;
+  transition: border 300ms ease;
 
   &:hover {
-    border: 1px solid #888;
+    border: 1pt solid #888;
+  }
+
+  &:active {
+    box-shadow: rgba(0, 0, 0, 0.121569) 0pt 3pt 5pt 0pt inset;
   }
 }
 

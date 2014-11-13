@@ -35,7 +35,7 @@ module.exports = {
 		api.regions().done(function (data) {
 			self.$regions = _.indexBy(data, 'id');
 			self.$data.regions = data.objects.map(function (v) {
-				return { selected: false, value: v.id, title: v.full_name };
+				return { selected: false, value: v.id, title: v.name };
 			});
 		});
 

@@ -26,7 +26,6 @@
 			<ul class="right">
 				<li><a href="/admin">Admin</a></li>
 				{% if user.is_authenticated %}
-				<li>  </li>
 				<li><a href="{% url 'logout' %}?next=/" role="button">Log Out As {{ user.username }} </a></li>
 				{% else %}
 				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
@@ -35,12 +34,14 @@
 		</nav>
 	</header>
 
-	<div role="main">{% block content %}{% endblock %}</div>
+	<div id="main" role="main">{% block content %}{% endblock %}</div>
 
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).
 	     -->
 	<script src="https://www.promisejs.org/polyfills/promise-done-6.0.0.min.js"></script>
+	<script src="{% static 'main.js' %}"></script>
+	{% block scripts %}{% endblock %}
 
 </body>
 </html>

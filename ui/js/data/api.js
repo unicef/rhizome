@@ -11,14 +11,13 @@ function fetch(path, query) {
 		accumulator = { objects: [] },
 		q = _.defaults({}, query, {
 			offset: 0,
-			username: 'sheehan',
-			api_key: '6e7f6ecd706c5831e381bcd85d4a7448b1fd85d9',
+			username: 'evan',
+			api_key: '67bd6ab9a494e744a213de2641def88163652dad',
 			format: 'json'
 		}),
 		p = new Promise(function (fulfill) {
 			function get() {
 				prefix(request.get(path))
-					.set('Authorization', 'Basic dW5pY2VmOnN0b3Bwb2xpbwo=')
 					.query(q)
 					.end(got);
 			}

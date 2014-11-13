@@ -8,5 +8,8 @@
 		<tr v-repeat="rows" v-class="odd : $index | isOdd">
 			<td v-repeat="columns">{{ $parent[$value] }}</td>
 		</tr>
+		<tr v-if="rows.length < 1" class="empty">
+			<td colspan="{{ columns.length }}">No data.</td>
+		</tr>
 	</tbody>
 </table>
