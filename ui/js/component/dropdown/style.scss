@@ -1,0 +1,62 @@
+.dropdown {
+	cursor: default;
+	position: relative;
+
+	.menu {
+		background-color: white;
+		border-radius: 3px;
+		box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);
+		margin: 5px 5px 10px 0;
+		min-width: 300px;
+		position: absolute;
+		top: 100%;
+
+		.search {
+			border-bottom: 1px solid #888;
+			margin: 0 5px 5px 5px;
+			padding: 5px 0;
+
+			input {
+				box-sizing: border-box;
+				display: block;
+				width: 100%;
+			}
+		}
+
+		ul {
+			list-style: none;
+			min-height: 100px;
+			margin: 0;
+			padding: 0;
+			overflow-y: auto;
+
+			li {
+				margin: 0;
+				padding: 5px;
+				white-space: nowrap;
+
+				label {
+					display: block;
+					overflow: hidden;
+				}
+
+				&:hover {
+					background-color: blue;
+					color: white;
+				}
+
+				.fa-check {
+					visibility: hidden;
+				}
+			}
+
+			.selected {
+
+				.fa-check {
+					visibility: visible;
+				}
+			}
+		}
+	}
+
+}

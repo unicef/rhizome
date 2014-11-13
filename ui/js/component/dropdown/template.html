@@ -1,0 +1,15 @@
+<div class="dropdown" v-class="open: open">
+	<a class="btn" v-on="click: open = !open">
+		{{ title }}&emsp;<i class="fa fa-caret-down"></i>
+	</a>
+	<div v-class="hidden: !open" class="menu">
+		<form v-if="searchable" class="search">
+			<input type="text" v-model="pattern" tabindex="1">
+		</form>
+		<ul v-style="max-height: menuHeight + 'px'">
+			<li v-repeat="items | filterBy pattern 'title' | orderBy 'title'"
+					v-component="vue-dropdown-option">
+			</li>
+		</ul>
+	</div>
+</div>
