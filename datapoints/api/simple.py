@@ -35,6 +35,11 @@ class CustomSerializer(Serializer):
         except KeyError as e:
             objects = []
 
+        try:
+            meta = list_of_dicts['meta']
+        except KeyError as e:
+            meta = []
+
         df = pd.DataFrame(objects)
 
         try:
@@ -43,7 +48,7 @@ class CustomSerializer(Serializer):
         except KeyError:
             pivoted = pd.DataFrame()
 
-        return pivoted
+        return pivoted, meta
 
 
     def to_csv(self, data, options=None):
@@ -51,7 +56,7 @@ class CustomSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        pivoted = self.campaign_region_pivot(data)
+        pivoted,meta = self.campaign_region_pivot(data)
 
         csv = StringIO.StringIO(str(pivoted.to_csv()))
 
@@ -65,7 +70,7 @@ class CustomSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        pivoted = self.campaign_region_pivot(data)
+        pivoted,meta = self.campaign_region_pivot(data)
 
         pivoted_dict = pivoted.to_dict()
         cleaned_dict = {} ## JSON CANT SERIALIZE TUPLE_DICTS
@@ -89,6 +94,7 @@ class CustomSerializer(Serializer):
 
             cleaned_dict[indicator] = indicator_values
 
+        cleaned_dict['meta'] = meta
         json_data = json.dumps(cleaned_dict)
 
 
