@@ -22,14 +22,9 @@ from datapoints.models import *
 
 
 class CustomSerializer(Serializer):
-    formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'csv']
+    formats = ['json', 'csv']
     content_types = {
         'json': 'application/json',
-        'jsonp': 'text/javascript',
-        'xml': 'application/xml',
-        'yaml': 'text/yaml',
-        'html': 'text/html',
-        'plist': 'application/x-plist',
         'csv': 'text/csv',
     }
 
@@ -37,12 +32,13 @@ class CustomSerializer(Serializer):
 
         try:
             objects = list_of_dicts['objects']
-            df = pd.DataFrame(objects)
-            pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
-                     columns=['indicator'],aggfunc = lambda x: x)
-
         except KeyError as e:
-            pass
+            objects = []
+
+        df = pd.DataFrame(objects)
+        pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
+                 columns=['indicator'],aggfunc = lambda x: x)
+
 
         return pivoted
 
@@ -64,38 +60,38 @@ class CustomSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        try:
-            objects = data['objects']
-            df = pd.DataFrame(objects)
-            pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
-                     columns=['indicator'],aggfunc = lambda x: x)
+        pivoted = self.campaign_region_pivot(data)
 
-            pivoted_dict = pivoted.to_dict()
-            cleaned_dict = {}
+        pivoted_dict = pivoted.to_dict()
+        cleaned_dict = {} ## JSON CANT SERIALIZE TUPLE_DICTS
 
-            for indicator,tuple_dict in pivoted_dict.iteritems():
+        for indicator,tuple_dict in pivoted_dict.iteritems():
 
-                indicator_values = []
+            indicator_values = []
 
-                for reg_camp, value in tuple_dict.iteritems():
+            for reg_camp, value in tuple_dict.iteritems():
 
-                    if type(value) == float and math.isnan(value):
-                        value = None
+                if type(value) == float and math.isnan(value):
+                    value = None
 
-                    reg_camp_dict = {}
-                    reg_camp_dict['region'] = reg_camp[0]
-                    reg_camp_dict['campaign'] = reg_camp[1]
-                    reg_camp_dict['value'] = value
+                reg_camp_dict = {}
 
-                    indicator_values.append(reg_camp_dict)
+                print '======\n' * 100
+                print reg_camp
+                print reg_camp
+                print reg_camp
+                print reg_camp
 
-                cleaned_dict[indicator] = indicator_values
+                reg_camp_dict['region'] = reg_camp[0]
+                reg_camp_dict['campaign'] = reg_camp[1]
+                reg_camp_dict['value'] = value
 
-            json_data = json.dumps(cleaned_dict)
+                indicator_values.append(reg_camp_dict)
 
-        except Exception as e:
-            json_data = ''
-            print e
+            cleaned_dict[indicator] = indicator_values
+
+        json_data = json.dumps(cleaned_dict)
+
 
 
         return json_data
