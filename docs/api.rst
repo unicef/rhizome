@@ -12,9 +12,19 @@ application or in curl, dont forget to append your api key.
 
 
 Parameters Avalible in the API
+   - indicator,region,campaign
+
+        - <basic filter> http://localhost:8000/api/v1/datapoint/?username=evan&api_key=67bd6ab9a494e744a213de2641def88163652dad&region=116&indicator=26&campaign=3
+        - <__in filter> http://localhost:8000/api/v1/datapoint/?username=evan&api_key=67bd6ab9a494e744a213de2641def88163652dad&region=12&indicator__in=51,35&campaign=2
+
    - limit: the default limit for the application is 20.  This means that the API pulls the first 20 records from the database, and if those 20 contain only 3 indicators, you will only receive data forthose 3 indicators.
    - format: the default is JSON, but CSV is also avalible.  CSV gives one record per campaign/region combination, and uses indicators as column headers
-   - 
+   - uri_display 'slug' , 'id' , 'name'
+   - campaign_start : pass in date (format yyyy-mm-dd)
+   - campaign end : pass in date (format yyyy-mm-dd)
+
+  TO DO
+  - pivot_type: defaults to <indicator_key>, also available, <datapoint_key>, <region_key>, <campaign_key>
 
 
 
