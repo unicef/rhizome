@@ -36,9 +36,12 @@ class CustomSerializer(Serializer):
             objects = []
 
         df = pd.DataFrame(objects)
-        pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
-                 columns=['indicator'],aggfunc = lambda x: x)
 
+        try:
+            pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
+                     columns=['indicator'],aggfunc = lambda x: x)
+        except KeyError:
+            pivoted = pd.DataFrame()
 
         return pivoted
 
@@ -56,6 +59,8 @@ class CustomSerializer(Serializer):
 
 
     def to_json(self, data, options=None):
+
+        pp.pprint(options)
 
         options = options or {}
         data = self.to_simple(data, options)
@@ -76,12 +81,6 @@ class CustomSerializer(Serializer):
 
                 reg_camp_dict = {}
 
-                print '======\n' * 100
-                print reg_camp
-                print reg_camp
-                print reg_camp
-                print reg_camp
-
                 reg_camp_dict['region'] = reg_camp[0]
                 reg_camp_dict['campaign'] = reg_camp[1]
                 reg_camp_dict['value'] = value
@@ -93,8 +92,9 @@ class CustomSerializer(Serializer):
         json_data = json.dumps(cleaned_dict)
 
 
-
         return json_data
+        # return json.dumps(data)
+
 
 
 
