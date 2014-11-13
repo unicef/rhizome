@@ -24,21 +24,32 @@ module.exports = {
 		}
 	},
 	ready: function () {
+		function fetchAll(endPoint, container, cb) {
+			return function (data) {
+				data.objects.forEach(function (v) {
+					container.push({ selected: false, value: v.id, title: v.name });
+				});
+
+				if (data.meta.next) {
+					endPoint({
+						limit: data.meta.limit,
+						offset: data.meta.limit + data.meta.offset
+					}).done(fetchAll(endPoint, container, cb));
+				} else {
+					cb();
+				}
+			};
+		}
+
 		var self = this;
 
-		api.indicators().done(function (data) {
-			self.$indicators = _.indexBy(data, 'id');
-			self.$data.indicators = data.objects.map(function (v) {
-				return { selected: false, value: v.id, title: v.name };
-			});
-		});
+		api.indicators({ limit: 100 }).done(fetchAll(api.indicators, this.indicators, function () {
+			self.$broadcast('indicatorsLoaded');
+		}));
 
-		api.regions().done(function (data) {
-			self.$regions = _.indexBy(data, 'id');
-			self.$data.regions = data.objects.map(function (v) {
-				return { selected: false, value: v.id, title: v.name };
-			});
-		});
+		api.regions({ limit: 100 }).done(fetchAll(api.regions, this.regions, function () {
+			self.$broadcast('regionsLoaded');
+		}));
 
 		this.$on('page-changed', function (data) {
 			this.refresh(data);

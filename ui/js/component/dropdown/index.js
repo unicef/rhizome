@@ -9,6 +9,8 @@ module.exports = {
 		'placeholder',
 		'searchable',
 		'multi',
+		'loading',
+		'loadedEvent'
 	],
 	ready: function () {
 		_.defaults(this.$data,  {
@@ -21,6 +23,7 @@ module.exports = {
 		this.multi = this.multi === 'true';
 
 		this.$on('optionClick', this.onClick);
+		this.$on(this.loadedEvent, function () { this.loading = false; });
 		this.$watch('open', this.onToggle);
 	},
 	computed: {

@@ -11,7 +11,9 @@
 		<vue-dropdown v-with="items : regions"
 				placeholder="Select regions"
 				multi="true"
-				searchable="true"></vue-dropdown>
+				searchable="true"
+				loading="true"
+				loadedEvent="regionsLoaded"></vue-dropdown>
 	</div>
 
 	<div class="form-group">
@@ -19,7 +21,9 @@
 		<vue-dropdown v-with="items : indicators"
 				placeholder="Select indicators"
 				multi="true"
-				searchable="true"></vue-dropdown>
+				searchable="true"
+				loading="true"
+				loadedEvent="indicatorsLoaded"></vue-dropdown>
 	</div>
 	<a role="button" v-on="click : refresh()">
 		Update&emsp;<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>

@@ -1,6 +1,8 @@
 <div class="dropdown" v-class="open: open">
 	<a class="btn" v-on="click: open = !open">
-		{{ title }}&emsp;<i class="fa fa-caret-down"></i>
+		{{ title }}
+		<i class="fa fa-fw fa-spinner" v-class="fa-spin : loading, hidden : !loading"></i>
+		<i class="fa fa-fw fa-caret-down"></i>
 	</a>
 	<div v-class="hidden: !open" class="menu">
 		<form v-if="searchable" class="search">
@@ -9,6 +11,10 @@
 		<ul v-style="max-height: menuHeight + 'px'">
 			<li v-repeat="items | filterBy pattern 'title' | orderBy 'title'"
 					v-component="vue-dropdown-option">
+			</li>
+			<li v-if="loading">
+				Loading&hellip;
+				<i class="fa fa-fw fa-spinner fa-spin"></i>
 			</li>
 		</ul>
 	</div>
