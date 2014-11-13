@@ -30,15 +30,18 @@ class CustomSerializer(Serializer):
 
     def campaign_region_pivot(self,list_of_dicts):
 
+        meta = None
+
         try:
             objects = list_of_dicts['objects']
         except KeyError as e:
             objects = []
 
-        try:
-            meta = list_of_dicts['meta']
-        except KeyError as e:
-            meta = []
+        if not meta:
+            try:
+                meta = list_of_dicts['meta']
+            except KeyError as e:
+                pass
 
         df = pd.DataFrame(objects)
 
