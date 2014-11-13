@@ -11,6 +11,13 @@ application or in curl, dont forget to append your api key.
 
 
 
+Parameters Avalible in the API
+   - limit: the default limit for the application is 20.  This means that the API pulls the first 20 records from the database, and if those 20 contain only 3 indicators, you will only receive data forthose 3 indicators.
+   - format: the default is JSON, but CSV is also avalible.  CSV gives one record per campaign/region combination, and uses indicators as column headers
+   - 
+
+
+
 **Filtering**
 
 For the Datapoint Resource, the following filtering methods are available
@@ -18,6 +25,9 @@ For the Datapoint Resource, the following filtering methods are available
 These numeric filters are  available on the ID, value, and created_at columns.
 
 Greater Than
+
+blablablabla
+
 
 .. code-block:: python
    :linenos:
