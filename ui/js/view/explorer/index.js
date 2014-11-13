@@ -44,16 +44,6 @@ module.exports = {
 			this.refresh(data);
 		});
 	},
-	computed: {
-		download: function () {
-			return api.datapoints.toString({
-				indicators: selectedValues(this.indicators),
-				regions: selectedValues(this.regions),
-				limit: 0,
-				format: 'csv'
-			});
-		}
-	},
 	methods: {
 		refresh: function (pagination) {
 			var indicators = selectedValues(this.indicators),
@@ -106,6 +96,27 @@ module.exports = {
 
 				self.loading = false;
 			});
+		},
+		download: function () {
+			this.downloading = true;
+			var indicators = selectedValues(this.indicators),
+				regions = selectedValues(this.regions),
+				query = {
+					limit: 0,
+					format: 'csv'
+				};
+
+			if (indicators.length < 1) {
+				this.$data.src = '';
+				return;
+			}
+
+			query.indicator__in = indicators;
+			if (regions.length > 0) {
+				query.region__in = regions;
+			}
+
+			this.$data.src = api.datapoints.toString(query);
 		}
 	}
 };
