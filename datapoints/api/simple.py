@@ -1,7 +1,7 @@
 import pprint as pp
 from dateutil import parser
 import StringIO
-import csv,json
+import csv,json,math
 from collections import defaultdict
 
 from tastypie.serializers import Serializer
@@ -71,7 +71,6 @@ class CustomSerializer(Serializer):
                      columns=['indicator'],aggfunc = lambda x: x)
 
             pivoted_dict = pivoted.to_dict()
-
             cleaned_dict = {}
 
             for indicator,tuple_dict in pivoted_dict.iteritems():
@@ -80,31 +79,22 @@ class CustomSerializer(Serializer):
 
                 for reg_camp, value in tuple_dict.iteritems():
 
+                    if type(value) == float and math.isnan(value):
+                        value = None
+
                     reg_camp_dict = {}
                     reg_camp_dict['region'] = reg_camp[0]
                     reg_camp_dict['campaign'] = reg_camp[1]
                     reg_camp_dict['value'] = value
 
-
                     indicator_values.append(reg_camp_dict)
-
 
                 cleaned_dict[indicator] = indicator_values
 
-
-
-
-
-            pp.pprint(pivoted_dict)
-
             json_data = json.dumps(cleaned_dict)
 
-        except KeyError as e:
+        except Exception as e:
             json_data = ''
-        except TypeError as e:
-            print e
-            print e
-            print e
             print e
 
 
