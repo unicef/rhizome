@@ -1,5 +1,5 @@
 <table>
-	<thead>
+	<thead v-if="rows.length > 0">
 		<tr>
 			<th v-repeat="columns">{{ $value | capitalize }}</th>
 		</tr>
