@@ -21,6 +21,10 @@ module.exports = {
 		table: {
 			columns: ['region', 'campaign'],
 			rows: []
+		},
+		campaign: {
+			start: '',
+			end: ''
 		}
 	},
 	ready: function () {
@@ -68,6 +72,14 @@ module.exports = {
 
 			if (regions.length > 0) {
 				options.region__in = regions;
+			}
+
+			if (this.campaign.start) {
+				options.campaign_start = this.campaign.start;
+			}
+
+			if (this.campaign.end) {
+				options.campaign_end = this.campaign.end;
 			}
 
 			_.defaults(options, pagination || { limit : indicators.length * 20 });

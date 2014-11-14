@@ -4,8 +4,10 @@
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
 @import "compass";
+@import "compass/css3/user-interface";
 @import "compass/reset";
 @import "compass/utilities/general/clearfix";
+
 @import "settings";
 @import "mixins";
 
@@ -97,12 +99,19 @@ form {
   }
 }
 
-input {
+input[type="text"] {
   @include inset($lightgray);
 
   border-radius: 3pt;
   font-size: 12pt;
+  line-height: 14pt;
   padding: 6pt 12pt;
+
+  @include input-placeholder {
+    font-style: italic;
+    font-size: 9pt;
+    line-height: 15pt;
+  }
 }
 
 table {
