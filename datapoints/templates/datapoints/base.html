@@ -26,7 +26,13 @@
 			<ul class="right">
 				<li><a href="/admin">Admin</a></li>
 				{% if user.is_authenticated %}
-				<li>Hello, {{ user.username }} <a href="{% url 'logout' %}?next=/">[log out]</a></li>
+				<li>
+					Hello, {{ user.username }}
+					&emsp;
+					<a href="{% url 'logout' %}?next=/" title="logout">
+						<i class="fa fa-lg fa-sign-out"></i>
+					</a>
+				</li>
 				{% else %}
 				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
 				{% endif %}
