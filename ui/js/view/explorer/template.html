@@ -9,7 +9,7 @@
 	<div class="form-group">
 		<label for="regions">Regions</label>
 		<vue-dropdown v-with="items : regions"
-				placeholder="Select regions"
+				placeholder="All regions"
 				multi="true"
 				searchable="true"
 				loading="true"
@@ -19,23 +19,25 @@
 	<div class="form-group">
 		<label for="indicators">Indicators</label>
 		<vue-dropdown v-with="items : indicators"
-				placeholder="Select indicators"
+				placeholder="All indicators"
 				multi="true"
 				searchable="true"
 				loading="true"
 				loadedEvent="indicatorsLoaded"></vue-dropdown>
 	</div>
-	<a role="button" v-on="click : refresh()">
-		Update&emsp;<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>
+	<a class="primary" role="button" v-on="click : refresh()">
+		Load&emsp;<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>
 	</a>
 </form>
 
-<vue-table v-with="table"></vue-table>
+<div style="max-width: 100%; overflow-x: auto">
+	<vue-table v-with="table"></vue-table>
+</div>
 <vue-pagination v-with="pagination"></vue-pagination>
 
 <a role="button" class="right" v-on="click : download()"
 		target="dltarget">
-	Download CSV
+	Download All
 	<i class="fa fa-fw fa-download"></i>
 </a>
 

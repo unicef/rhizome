@@ -11,3 +11,18 @@
   border-bottom: 1pt solid $color;
   border-right: 1pt solid $color;
 }
+
+@mixin button($bg) {
+  @include outset(darken($bg, 20%));
+  @include background-image(linear-gradient(
+    transparentize($bg, 0),
+    transparentize(darken($bg, 10%), 0.6) 90%
+  ));
+
+  background-color: $bg;
+  transition: background-color 300ms ease;
+
+  &:hover {
+    background-color: lighten($bg, 5%);
+  }
+}

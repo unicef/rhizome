@@ -21,6 +21,7 @@ html {
 body {
   color: #333;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10pt;
 
   & > header,
   & > *[role="main"],
@@ -51,6 +52,10 @@ nav {
     float: left;
     list-style: none;
 
+    &.right:last-child {
+      margin-right: -10pt;
+    }
+
     li {
       display: inline-block;
       padding: 10pt;
@@ -76,7 +81,11 @@ nav {
 }
 
 label {
+  color: #aaa;
   display: block;
+  font-size: 9pt;
+  letter-spacing: 0.5pt;
+  text-transform: uppercase;
   margin-bottom: 3pt;
 }
 
@@ -100,7 +109,7 @@ table {
   border-collapse: collapse;
   font-family: Verdana, Hevetica, Arial, sans-serif;
   margin-top: 10pt;
-  width: 100%;
+  min-width: 100%;
 
   th {
     font-family: Hevetica, Arial, sans-serif;
@@ -162,11 +171,9 @@ table {
   }
 }
 
-*[role=button] {
-  @include background-image(linear-gradient(transparentize(#eee, 0), transparentize(darken(#eee, 10%), 0.6) 90%));
-  @include outset($lightgray);
+button, *[role=button] {
+  @include button(#eee);
 
-  background-color: #eee;
   border-radius: 3pt;
   color: inherit;
   cursor: default;
@@ -175,12 +182,53 @@ table {
   text-decoration: none;
   transition: background-color 300ms ease;
 
-  &:hover {
-    background-color: lighten(#eee, 5%);
+  &.small {
+    border: none;
+    background: none;
+    padding: 5pt;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus,
+    &:active {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  &.primary {
+    @include button($UNICEF);
+    color: white;
   }
 
   &:active {
     box-shadow: rgba(0, 0, 0, 0.121569) 0pt 3pt 5pt 0pt inset;
+  }
+}
+
+.buttonbar {
+  margin: 5pt 0;
+
+  &.center {
+    text-align: center;
+  }
+
+  &.right {
+    text-align: right;
+  }
+
+  button,
+  *[role="button"] {
+    margin: 0 5pt;
+  }
+}
+
+*[role="menuitem"] {
+  &:hover {
+    background-color: $UNICEF;
+    color: white;
   }
 }
 

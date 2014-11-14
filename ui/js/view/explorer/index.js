@@ -27,7 +27,7 @@ module.exports = {
 		function fetchAll(endPoint, container, cb) {
 			return function (data) {
 				data.objects.forEach(function (v) {
-					container.push({ selected: false, value: v.id, title: v.name });
+					container.push({ selected: false, value: v.id, title: v.short_name || v.name });
 				});
 
 				if (data.meta.next) {

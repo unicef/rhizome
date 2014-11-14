@@ -1,21 +1,30 @@
-<div class="dropdown" v-class="open: open">
+<div class="dropdown" role="menu" v-class="open: open">
 	<a role="button" v-on="click: open = !open">
 		{{ title }}
 		<i class="fa fa-fw fa-spinner" v-class="fa-spin : loading, hidden : !loading"></i>
 		<i class="fa fa-fw fa-caret-down"></i>
 	</a>
-	<div v-class="hidden: !open" class="menu">
-		<form v-if="searchable" class="search">
+	<div class="container" v-class="hidden: !open">
+		<form v-if="searchable" role="search">
 			<input type="text" v-model="pattern" tabindex="1">
 		</form>
-		<ul v-style="max-height: menuHeight + 'px'">
-			<li v-repeat="items | filterBy pattern 'title' | orderBy 'title'"
-					v-component="vue-dropdown-option">
+		<ul v-style="height: menuHeight + 'px',
+								 max-width: menuWidth + 'px'">
+			<li role="menuitem"
+					v-repeat="items | filterBy pattern 'title' | orderBy 'title'"
+					v-class="selected : selected"
+					v-on="click : onClick(this)">
+				<i class="fa fa-check fa-lg"></i>&nbsp;{{ title }}
 			</li>
 			<li v-if="loading">
 				Loading&hellip;
 				<i class="fa fa-fw fa-spinner fa-spin"></i>
 			</li>
 		</ul>
+		<div class="buttonbar center" role="group" v-if="multi">
+			<button class="small" type="button" title="Clear selection" v-on="click : clear()">clear selection</button>
+			<button class="small" type="button" title="Invert selection" v-on="click : invert()">invert selection</button>
+			<button class="small" type="button" title="Select all" v-on="click : selectAll()">select all</button>
+		</div>
 	</div>
 </div>
