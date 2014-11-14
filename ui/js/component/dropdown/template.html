@@ -8,7 +8,7 @@
 		<form v-if="searchable" role="search">
 			<input type="text" v-model="pattern" tabindex="1">
 		</form>
-		<ul v-style="height: menuHeight + 'px',
+		<ul v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
 			<li role="menuitem"
 					v-repeat="items | filterBy pattern 'title' | orderBy 'title'"

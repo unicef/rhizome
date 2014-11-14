@@ -25,9 +25,8 @@
 		}
 
 		ul {
-      height: 100px;
-			list-style: none;
-			min-height: 100px;
+      list-style: none;
+      max-height: 100px;
 			margin: 0;
 			padding: 0;
 			overflow-y: auto;
