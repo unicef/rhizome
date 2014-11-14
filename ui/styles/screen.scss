@@ -3,11 +3,12 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
+@import "compass";
 @import "compass/reset";
 @import "compass/utilities/general/clearfix";
+@import "settings";
+@import "mixins";
 
-$offblack: #333;
-$lightgray: #d0d0d0;
 
 * {
   box-sizing: border-box;
@@ -20,10 +21,19 @@ html {
 body {
   color: #333;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: 0 5pt;
+
+  & > header,
+  & > *[role="main"],
+  & > footer {
+    padding-left: 5pt;
+    padding-right: 5pt;
+  }
 }
 
 header {
+  background-color: #ddd;
+  margin-bottom: 10pt;
+
   h1 {
     float: left;
     padding: 10pt 20pt 10pt 0;
@@ -79,13 +89,11 @@ form {
 }
 
 input {
-  padding: 6pt 12pt;
-  font-size: 12pt;
+  @include inset($lightgray);
+
   border-radius: 3pt;
-  border-top: 1pt solid $lightgray;
-  border-left: 1pt solid $lightgray;
-  border-bottom: 1pt solid lighten($lightgray, 10%);
-  border-right: 1pt solid lighten($lightgray, 10%);
+  font-size: 12pt;
+  padding: 6pt 12pt;
 }
 
 table {
@@ -154,21 +162,21 @@ table {
   }
 }
 
-button,
-.btn,
 *[role=button] {
+  @include background-image(linear-gradient(transparentize(#eee, 0), transparentize(darken(#eee, 10%), 0.6) 90%));
+  @include outset($lightgray);
+
   background-color: #eee;
-  border: 1pt solid #ddd;
   border-radius: 3pt;
   color: inherit;
   cursor: default;
   display: inline-block;
   padding: 10pt;
   text-decoration: none;
-  transition: border 300ms ease;
+  transition: background-color 300ms ease;
 
   &:hover {
-    border: 1pt solid #888;
+    background-color: lighten(#eee, 5%);
   }
 
   &:active {

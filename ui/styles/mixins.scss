@@ -1,0 +1,13 @@
+@mixin inset($color) {
+  border-top: 1pt solid $color;
+  border-left: 1pt solid $color;
+  border-bottom: 1pt solid lighten($color, 10%);
+  border-right: 1pt solid lighten($color, 10%);
+}
+
+@mixin outset($color) {
+  border-top: 1pt solid lighten($color, 10%);
+  border-left: 1pt solid lighten($color, 10%);
+  border-bottom: 1pt solid $color;
+  border-right: 1pt solid $color;
+}

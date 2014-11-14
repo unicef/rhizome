@@ -26,7 +26,7 @@
 			<ul class="right">
 				<li><a href="/admin">Admin</a></li>
 				{% if user.is_authenticated %}
-				<li><a href="{% url 'logout' %}?next=/" role="button">Log Out As {{ user.username }} </a></li>
+				<li>Hello, {{ user.username }} <a href="{% url 'logout' %}?next=/">[log out]</a></li>
 				{% else %}
 				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
 				{% endif %}

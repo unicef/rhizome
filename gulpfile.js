@@ -13,7 +13,7 @@ var path = {
 	main: './ui/js/PolioScape.js',
 	components: './ui/js/**/*.{js,html,css,sass,scss}',
 	js: './ui/js/**/*.js',
-	sass: ['./ui/styles/**/*.{sass,scss}', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
+	sass: ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
 	images: './ui/img/**/*',
 	test: './ui/test/**/*.js',
 	output: './static',
