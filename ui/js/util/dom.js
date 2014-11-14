@@ -1,3 +1,4 @@
+/* global window, MouseEvent */
 'use strict';
 
 var _ = require('lodash');
