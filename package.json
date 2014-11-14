@@ -2,6 +2,7 @@
   "name": "uf04-polios",
   "version": "0.0.1",
   "dependencies": {
+    "d3": "^3.4.13",
     "lodash": "^2.4.1",
     "page": "^1.3.7",
     "superagent": "^0.20.0",

@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var api = require('../../data/api');
+var d3 = require('d3');
 
 function selectedValues(items) {
 	return items.filter(function (o) { return o.selected; })
@@ -85,7 +86,6 @@ module.exports = {
 			_.defaults(options, pagination || { limit : indicators.length * 20 });
 
 			this.loading = true;
-			this.table.columns = ['region', 'campaign'].concat(indicators);
 			this.table.rows = [];
 
 			api.datapoints(options).done(function (data) {
@@ -109,12 +109,20 @@ module.exports = {
 						result[key] = _.omit(o, 'value', 'indicator');
 					}
 
-					result[key][o.indicator] = o.value;
+					result[key][o.indicator] = (isNaN(o.value) || _.isNull(o.value)) ? o.value : Number(o.value);
 				}, {}).values().sortBy('region').value();
 
 				self.pagination = data.meta;
-
-				self.table.columns = ['region', 'campaign'].concat(_.keys(data.objects));
+				self.table.columns = ['region', 'campaign'].concat(_.map(data.objects, function (v, k) {
+					return {
+						prop: k,
+						display: k,
+						classes: 'numeric',
+						format: function (v) {
+							return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
+						}
+					};
+				}));
 				self.table.rows = datapoints;
 
 				self.loading = false;
