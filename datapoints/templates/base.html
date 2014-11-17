@@ -44,7 +44,10 @@
 		</nav>
 	</header>
 
-	<div id="main" role="main">{% block content %}{% endblock %}</div>
+	<div id="main" role="main">
+		{% block nav %}{% endblock %}
+		{% block content %}{% endblock %}
+	</div>
 
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).

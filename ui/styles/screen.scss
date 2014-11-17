@@ -34,10 +34,7 @@ body {
 }
 
 header {
-  @include clearfix;
-
   background-color: #ddd;
-  margin-bottom: 24pt;
 
   h1 {
     float: left;
@@ -51,17 +48,23 @@ h1 {
 }
 
 nav {
+  @include clearfix;
+
   ul {
     float: left;
     list-style: none;
 
     &.right:last-child {
-      margin-right: -10pt;
+      margin-right: -12pt;
     }
 
     li {
       display: inline-block;
       padding: 16pt 12pt 12pt;
+
+      &:first-child {
+        padding-left: 0;
+      }
     }
 
   }

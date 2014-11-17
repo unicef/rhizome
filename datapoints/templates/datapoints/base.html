@@ -1,2 +1,23 @@
 {% extends "base.html" %}
 {% block section %}data{% endblock %}
+{% block nav %}
+<nav>
+	<ul>
+		<li>
+			<a href="{% url 'datapoints:create_datapoint' %}">
+				<i class="fa fa-plus"></i> Enter Data
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'datapoints:campaign_index' %}">
+				<i class="fa fa-calendar"></i> Campaigns
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'regions:region_relationship_type_index' %}">
+				<i class="fa fa-globe"></i> Regions
+			</a>
+		</li>
+	</ul>
+</nav>
+{% endblock %}
