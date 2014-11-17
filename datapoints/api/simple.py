@@ -69,28 +69,52 @@ class CustomSerializer(Serializer):
     def to_json(self, data, options=None):
 
         # add this pivot functionatlity
+        # err / data functionality
         # allow param for one obj per datapoint record
-        # candy bar
         # email omalley
-        # read
 
-        response_dict = {}
+
+        response_objects = []
 
         options = options or {}
         data = self.to_simple(data, options)
 
         pivoted,meta = self.campaign_region_pivot(data)
 
-        for x in pivoted.iterrows():
-            print x
+        for r_c in pivoted.iterrows():
 
-        # response_dict['meta'] = meta
-        #
-        #
-        # json_data = json.dumps(response_dict)
-        #
-        # return json_data
-        return json.dumps(data)
+            r_c_dict = {}
+
+            region,campaign = r_c[0][0],r_c[0][1]
+
+            r_c_dict['region'] = region
+            r_c_dict['campaign'] = campaign
+
+            rows = ind = r_c[1] # zero = COLUMNS ; one = ROWS
+
+            ix = ind.index # the index is the indicator
+
+            indicator_list = []
+
+            for i,(value) in enumerate(rows):
+                ind_dict = {}
+
+                ind_dict['indicator'] = ix[i]
+
+                if type(value) == float and math.isnan(value):
+                    value = None
+
+                ind_dict['value'] = value
+
+                indicator_list.append(ind_dict)
+
+            r_c_dict['indicators'] = indicator_list
+
+
+
+            response_objects.append(r_c_dict)
+
+        return json.dumps(response_objects)
 
 
 
