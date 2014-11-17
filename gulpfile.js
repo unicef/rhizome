@@ -81,7 +81,7 @@ gulp.task('watch', ['browserify', 'styles'], function () {
 		server.changed(file.path);
 	});
 
-	gulp.watch(path.sass, ['styles']);
+	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
 	gulp.watch(path.images, ['images']);
 });
