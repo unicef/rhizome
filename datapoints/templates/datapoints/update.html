@@ -1,13 +1,14 @@
-
 {% extends "datapoints/base.html" %}
 
 {% block content %}
 
 <form action="" method="post">{% csrf_token %}
-    {{ form.as_ul }}
-    <button type="submit" class="btn btn-primary"> Submit </button>
+  {{ form.as_p }}
+	<button type="submit">Submit</button>
 </form>
-    <br>
-    <a href="{% url 'datapoints:delete_datapoint' datapoint.id%}"<button type="submit" class="btn btn-danger"> Delete Datapoint </button></a>
+
+<a href="{% url 'datapoints:delete_datapoint' datapoint.id%}">
+	<i class="fa fa-trash fa-fw"></i>&emsp;Delete Datapoint
+</a>
 
 {% endblock %}

@@ -87,13 +87,32 @@ label {
   font-size: 9pt;
   letter-spacing: 0.5pt;
   text-transform: uppercase;
-  margin-bottom: 3pt;
 }
 
 form {
+  h2 {
+    margin-bottom: 6pt;
+  }
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 14pt;
+
   &.inline {
+    margin-left: auto;
+    width: auto;
+
     .form-group {
       display: inline-block;
+    }
+
+    input, select, button, *[role=button] {
+      width: auto;
+    }
+
+    .primary {
+      float: right;
+      margin-top: 10pt;
     }
   }
 
@@ -102,9 +121,6 @@ form {
     margin: 100pt auto;
 
     button {
-      @include button($UNICEF);
-
-      color: white;
       display: block;
       font-size: 12pt;
       width: 100%;
@@ -115,7 +131,11 @@ form {
     }
   }
 
-  .form-group {
+  input, select, button, *[role=button] {
+    width: 100%;
+  }
+
+  p, .form-group {
     margin-bottom: 14pt;
   }
 
@@ -125,7 +145,12 @@ form {
   }
 }
 
-input {
+input, select, button, *[role=button] {
+  height: 42px;
+}
+
+
+input:not([type=file]) {
   @include inset($lightgray);
 
   border-radius: 3pt;
@@ -211,7 +236,8 @@ table {
   }
 }
 
-button, *[role=button] {
+button, *[role=button],
+select {
   @include button(#eee);
 
   border-radius: 3pt;
@@ -238,8 +264,10 @@ button, *[role=button] {
     }
   }
 
-  &.primary {
+  &.primary,
+  &[type="submit"] {
     @include button($UNICEF);
+
     color: white;
   }
 

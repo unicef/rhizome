@@ -4,10 +4,12 @@
 {% block content %}
 
 <form action="" method="post">{% csrf_token %}
-    {{ form.as_ul }}
-    <button type="submit" class="btn btn-primary"> Submit </button>
+	{{ form.as_p }}
+	<button type="submit">Submit</button>
 </form>
-    <br>
-    <a href="{% url 'indicators:delete_indicator' indicator.id%}"<button type="submit" class="btn btn-danger"> Delete Indicator </button></a>
+
+<a href="{% url 'indicators:delete_indicator' indicator.id%}" role="button">
+	<i class="fa fa-trash fa-fw"></i>&emsp;Delete Indicator
+</a>
 
 {% endblock %}
