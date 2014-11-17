@@ -68,6 +68,12 @@ class CustomSerializer(Serializer):
 
     def to_json(self, data, options=None):
 
+        # add this pivot functionatlity
+        # allow param for one obj per datapoint record
+        # candy bar
+        # email omalley
+        # read
+
         response_dict = {}
 
         options = options or {}
@@ -75,36 +81,16 @@ class CustomSerializer(Serializer):
 
         pivoted,meta = self.campaign_region_pivot(data)
 
-        pivoted_dict = pivoted.to_dict()
-        cleaned_dict = {} ## JSON CANT SERIALIZE TUPLE_DICTS
+        for x in pivoted.iterrows():
+            print x
 
-        for indicator,tuple_dict in pivoted_dict.iteritems():
-
-            indicator_values = []
-
-            for reg_camp, value in tuple_dict.iteritems():
-
-                if type(value) == float and math.isnan(value):
-                    value = None
-
-                reg_camp_dict = {}
-
-                reg_camp_dict['region'] = reg_camp[0]
-                reg_camp_dict['campaign'] = reg_camp[1]
-                reg_camp_dict['value'] = value
-
-                indicator_values.append(reg_camp_dict)
-
-            cleaned_dict[indicator] = indicator_values
-
-        response_dict['meta'] = meta
-        response_dict['objects'] = cleaned_dict
-
-        json_data = json.dumps(response_dict)
-
-
-        return json_data
-        # return json.dumps(data)
+        # response_dict['meta'] = meta
+        #
+        #
+        # json_data = json.dumps(response_dict)
+        #
+        # return json_data
+        return json.dumps(data)
 
 
 
