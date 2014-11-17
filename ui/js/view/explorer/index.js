@@ -48,11 +48,14 @@ module.exports = {
 
 		var self = this;
 
+		this.$campaigns = {};
+
 		api.indicators({ limit: 100 }).done(fetchAll(api.indicators, this.indicators, function () {
 			self.$broadcast('indicatorsLoaded');
 		}));
 
 		api.regions({ limit: 100 }).done(fetchAll(api.regions, this.regions, function () {
+			self.$regions = _.indexBy(self.regions, 'value');
 			self.$broadcast('regionsLoaded');
 		}));
 
@@ -62,14 +65,19 @@ module.exports = {
 	},
 	methods: {
 		refresh: function (pagination) {
-			var indicators = selectedValues(this.indicators),
-				regions = selectedValues(this.regions),
-				options = {},
+			var regions = selectedValues(this.regions),
+				options = { indicator__in : [] },
+				columns = [{
+					prop: 'region',
+					display: 'Region',
+					format: function (v) {
+						return self.$regions[v].title;
+					}
+				}, {
+					prop: 'campaign',
+					display: 'Campaign'
+				}],
 				self = this;
-
-			if (indicators.length > 0) {
-				options.indicator__in = indicators;
-			}
 
 			if (regions.length > 0) {
 				options.region__in = regions;
@@ -83,46 +91,44 @@ module.exports = {
 				options.campaign_end = this.campaign.end;
 			}
 
-			_.defaults(options, pagination || { limit : indicators.length * 20 });
-
-			this.loading = true;
-			this.table.rows = [];
-
-			api.datapoints(options).done(function (data) {
-				// data.objects is an object that maps an indicator name to an array of
-				// values that each correspond to one unique combination of (region,
-				// campaign). Here we pivot this data so we have an array of objects,
-				// one for each unique (region, campaign) combination with each
-				// indicator set as a property on the object.
-				var datapoints = _(data.objects).transform(function (result, value, key) {
-					// Convert the object to an array of objects, melting the properties
-					// of the original object into each object as the value of an
-					// `indicator` property.
-					value.forEach(function (o) {
-						o.indicator = key;
-						result.push(o);
-					});
-				}, []).transform(function (result, o) {
-					var key = String([o.region, o.campaign]);
-
-					if (!result.hasOwnProperty(key)) {
-						result[key] = _.omit(o, 'value', 'indicator');
-					}
-
-					result[key][o.indicator] = (isNaN(o.value) || _.isNull(o.value)) ? o.value : Number(o.value);
-				}, {}).values().sortBy('region').value();
-
-				self.pagination = data.meta;
-				self.table.columns = ['region', 'campaign'].concat(_.map(data.objects, function (v, k) {
-					return {
-						prop: k,
-						display: k,
+			this.indicators.forEach(function (indicator) {
+				if (indicator.selected) {
+					options.indicator__in.push(indicator.value);
+					columns.push({
+						prop: indicator.value,
+						display: indicator.title,
 						classes: 'numeric',
 						format: function (v) {
 							return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
 						}
-					};
-				}));
+					});
+				}
+			});
+
+			_.defaults(options, pagination || { limit : 20, uri_display : 'id' });
+
+			this.loading = true;
+			this.table.columns = columns;
+			this.table.rows = [];
+
+			api.datapoints(options).done(function (data) {
+				var campaigns = [],
+					datapoints = data.objects.map(function (v) {
+						var d = _.pick(v, 'region', 'campaign');
+
+						campaigns.push(d.campaign);
+
+						v.indicators.forEach(function (ind) {
+							d[ind.indicator] = ind.value;
+						});
+
+						return d;
+					});
+
+				self.pagination = data.meta;
+
+				// FIXME: Need to fetch campaign data for displaying proper campaign
+				// names instead of IDs in the table.
 				self.table.rows = datapoints;
 
 				self.loading = false;
