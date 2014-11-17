@@ -68,7 +68,7 @@ class CustomSerializer(Serializer):
 
     def to_json(self, data, options=None):
 
-        pp.pprint(options)
+        response_dict = {}
 
         options = options or {}
         data = self.to_simple(data, options)
@@ -97,8 +97,10 @@ class CustomSerializer(Serializer):
 
             cleaned_dict[indicator] = indicator_values
 
-        cleaned_dict['meta'] = meta
-        json_data = json.dumps(cleaned_dict)
+        response_dict['meta'] = meta
+        response_dict['objects'] = cleaned_dict
+
+        json_data = json.dumps(response_dict)
 
 
         return json_data
