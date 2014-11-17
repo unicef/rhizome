@@ -1,6 +1,7 @@
+/* global window */
+
 'use strict';
 
-var _ = require('lodash');
 var dom = require('../../util/dom');
 
 module.exports = {
@@ -9,18 +10,17 @@ module.exports = {
 		'placeholder',
 		'searchable',
 		'multi',
+		'loading',
+		'loadedEvent'
 	],
+	data: {
+		pattern: ''
+	},
 	ready: function () {
-		_.defaults(this.$data,  {
-			searchable: 'false',
-			multi: 'false',
-			pattern: '',
-		});
-
 		this.searchable = this.searchable === 'true';
 		this.multi = this.multi === 'true';
 
-		this.$on('optionClick', this.onClick);
+		this.$on(this.loadedEvent, function () { this.loading = false; });
 		this.$watch('open', this.onToggle);
 	},
 	computed: {
@@ -50,6 +50,8 @@ module.exports = {
 				window.addEventListener('click', this);
 				window.addEventListener('keyup', this);
 				this.invalidateSize();
+
+				this.$el.getElementsByTagName('ul')[0].scrollTop = 0;
 			} else {
 				window.removeEventListener('resize', this);
 				window.removeEventListener('click', this);
@@ -79,7 +81,7 @@ module.exports = {
 				}
 				break;
 			case 'click':
-				if (!dom.contains(this.$el.getElementsByClassName('menu')[0], evt)) {
+				if (!dom.contains(this.$el.getElementsByClassName('container')[0], evt)) {
 					this.open = false;
 				}
 				break;
@@ -91,15 +93,29 @@ module.exports = {
 			}
 		},
 		invalidateSize: function () {
-			var menu = this.$el.getElementsByClassName('menu')[0],
+			var menu = this.$el.getElementsByClassName('container')[0],
 				ul = menu.getElementsByTagName('ul')[0],
 				style = window.getComputedStyle(menu),
-				marginBottom = Number(style.getPropertyValue('margin-bottom').slice(0, -2));
+				marginBottom = parseInt(style.getPropertyValue('margin-bottom'), 10),
+				marginRight = parseInt(style.getPropertyValue('margin-right'), 10),
+				offset = dom.viewportOffset(ul);
 
-			this.menuHeight = window.innerHeight - dom.viewportOffset(ul).top - marginBottom;
+			if (this.multi) {
+				var dims = dom.dimensions(menu.getElementsByClassName('buttonbar')[0], true);
+				marginBottom += dims.height;
+			}
+
+			this.menuHeight = window.innerHeight - offset.top - marginBottom;
+			this.menuWidth = window.innerWidth - offset.left - marginRight;
+		},
+		clear: function () {
+			this.items.forEach(function (o) { o.selected = false; });
+		},
+		invert: function () {
+			this.items.forEach(function (o) { o.selected = !o.selected; });
+		},
+		selectAll: function () {
+			this.items.forEach(function (o) { o.selected = true; });
 		}
-	},
-	components: {
-		'vue-dropdown-option': require('../dropdown-option')
 	}
 };

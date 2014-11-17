@@ -1,46 +1,28 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-
-	<title>Polio Data Management App</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link rel="stylesheet" href="{% static "bower_components/fontawesome/css/font-awesome.min.css" %}">
-	<link rel="stylesheet" href="{% static "screen.css" %}">
-	<link rel="stylesheet" href="{% static "print.css" %}">
-</head>
-
-<body>
-	<header>
-		<h1>Polio</h1>
-		<nav>
-			<ul>
-				<li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
-				<li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
-				<li><a href="{% url 'upload:file_upload' %}">CSV Upload</a></li>
-				<li><a href="{% url 'source_data:data_entry' %}">Data Entry</a></li>
-				<li><a href="{% url 'source_data:user_portal' %}">User Portal</a></li>
-			</ul>
-			<ul class="right">
-				<li><a href="/admin">Admin</a></li>
-				{% if user.is_authenticated %}
-				<li>  </li>
-				<li><a href="{% url 'logout' %}?next=/" role="button">Log Out As {{ user.username }} </a></li>
-				{% else %}
-				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
-				{% endif %}
-			</ul>
-		</nav>
-	</header>
-
-	<div role="main">{% block content %}{% endblock %}</div>
-
-	<!-- Polyfill for Promises (not yet implemented in IE) and
-	     Promise.prototype.done (not standardized yet).
-	     -->
-	<script src="https://www.promisejs.org/polyfills/promise-done-6.0.0.min.js"></script>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block section %}data{% endblock %}
+{% block nav %}
+<nav>
+	<ul>
+		<li>
+			<a href="{% url 'datapoints:create_datapoint' %}">
+				<i class="fa fa-plus"></i> Enter Data
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'upload:file_upload' %}">
+				<i class="fa fa-upload"></i> Upload Data
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'datapoints:campaign_index' %}">
+				<i class="fa fa-calendar"></i> Campaigns
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'regions:region_relationship_type_index' %}">
+				<i class="fa fa-globe"></i> Regions
+			</a>
+		</li>
+	</ul>
+</nav>
+{% endblock %}

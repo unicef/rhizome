@@ -1,30 +1,43 @@
 <form class="inline">
 	<div class="form-group">
 		<label>Time Period</label>
-		<input name="start_dt" type="text"></input>
+		<input name="start_dt" type="text" placeholder="YYYY-MM-DD" v-model="campaign.start"></input>
 		to
-		<input name="end_dt" type="text"></input>
+		<input name="end_dt" type="text" placeholder="YYYY-MM-DD" v-model="campaign.end"></input>
 	</div>
 
 	<div class="form-group">
 		<label for="regions">Regions</label>
 		<vue-dropdown v-with="items : regions"
-				placeholder="Select regions"
+				placeholder="All regions"
 				multi="true"
-				searchable="true"></vue-dropdown>
+				searchable="true"
+				loading="true"
+				loadedEvent="regionsLoaded"></vue-dropdown>
 	</div>
 
 	<div class="form-group">
 		<label for="indicators">Indicators</label>
 		<vue-dropdown v-with="items : indicators"
-				placeholder="Select indicators"
+				placeholder="All indicators"
 				multi="true"
-				searchable="true"></vue-dropdown>
+				searchable="true"
+				loading="true"
+				loadedEvent="indicatorsLoaded"></vue-dropdown>
 	</div>
-	<a class="btn" type="button" v-on="click : refresh()">
-		Update&emsp;<i class="fa fa-refresh"></i>
+	<a class="primary" role="button" v-on="click : refresh()">
+		<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>&emsp;Load
 	</a>
 </form>
 
-<vue-table v-with="table"></vue-table>
+<div style="max-width: 100%; overflow-x: auto">
+	<vue-table v-with="table"></vue-table>
+</div>
 <vue-pagination v-with="pagination"></vue-pagination>
+
+<a role="button" class="right" v-on="click : download()">
+	<i class="fa fa-fw fa-download"></i>&emsp;Download All
+</a>
+
+<!-- Download target -->
+<iframe width="0" height="0" src="{{ src }}"></iframe>

@@ -11,9 +11,9 @@ var $ = require('gulp-load-plugins')();
 
 var path = {
 	main: './ui/js/PolioScape.js',
-	components: './ui/scripts/**/*.{js,html,css,sass,scss}',
+	components: './ui/js/**/*.{js,html,css,sass,scss}',
 	js: './ui/js/**/*.js',
-	sass: './ui/styles/**/*.{sass,scss}',
+	sass: ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
 	images: './ui/img/**/*',
 	test: './ui/test/**/*.js',
 	output: './static',
@@ -30,7 +30,7 @@ var build = function (src, dst, opts) {
 };
 
 gulp.task('styles', function () {
-	var filter = $.filter(['!ie.css', '!print.css']);
+	var filter = $.filter(['**/*', '!ie.css', '!print.css']);
 
 	return gulp.src(path.sass)
 		.pipe($.rubySass({
@@ -39,7 +39,7 @@ gulp.task('styles', function () {
 			precision: 10
 		}))
 		.pipe(filter)
-		.pipe($.concat('main.css'))
+		.pipe($.concat('screen.css'))
 		.pipe(filter.restore())
 		.pipe($.autoprefixer('last 1 version'))
 		.pipe(gulp.dest(path.output));
@@ -52,7 +52,10 @@ gulp.task('scripts', function () {
 });
 
 gulp.task('browserify', ['scripts'], function () {
-	return build(path.main, path.output, { debug: true });
+	return build(path.main, path.output, {
+		debug: true,
+		standalone: 'Polio'
+	});
 });
 
 gulp.task('fonts', function () {
@@ -78,7 +81,7 @@ gulp.task('watch', ['browserify', 'styles'], function () {
 		server.changed(file.path);
 	});
 
-	gulp.watch(path.sass, ['styles']);
+	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
 	gulp.watch(path.images, ['images']);
 });

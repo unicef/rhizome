@@ -1,12 +1,15 @@
 <table>
-	<thead>
+	<thead v-if="rows.length > 0">
 		<tr>
-			<th v-repeat="columns">{{ $value | capitalize }}</th>
+			<th v-repeat="col: columns" class="{{ col | classes }}">{{ col | header }}</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr v-repeat="rows" v-class="odd : $index | isOdd">
-			<td v-repeat="columns">{{ $parent[$value] }}</td>
+			<td v-repeat="col: columns" class="{{ col | classes }}">{{ col | cell }}</td>
+		</tr>
+		<tr v-if="rows.length < 1" class="empty">
+			<td colspan="{{ columns.length }}">No data.</td>
 		</tr>
 	</tbody>
 </table>

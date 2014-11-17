@@ -1,3 +1,4 @@
+/* global window, MouseEvent */
 'use strict';
 
 var _ = require('lodash');
@@ -40,8 +41,28 @@ function contains(el, pt) {
 		y >= 0 && y <= el.offsetHeight;
 }
 
+function dimensions(el, includeMargins) {
+	var dims = {
+		height: el.offsetHeight,
+		width: el.offsetWidth
+	};
+
+	if (includeMargins) {
+		var style = window.getComputedStyle(el);
+
+		dims.height += parseInt(style.getPropertyValue('margin-top'), 10) +
+				parseInt(style.getPropertyValue('margin-bottom'), 10);
+
+		dims.width += parseInt(style.getPropertyValue('margin-left'), 10) +
+				parseInt(style.getPropertyValue('margin-right'), 10);
+	}
+
+	return dims;
+}
+
 module.exports = {
 	documentOffset: documentOffset,
 	viewportOffset: viewportOffset,
-	contains: contains
+	contains: contains,
+	dimensions: dimensions
 };

@@ -1,29 +1,4 @@
-{% extends "datapoints/base.html" %}
-
+{% extends "dashboard/base.html" %}
 {% block content %}
-    {% if user_dashboard %}
-    <table class="table table-hover table-bordered">
-    <thead>
-        <tr>
-            <th>region</th>
-            <th>indicator</th>
-            <th>value</th>
-        </tr>
-    </thead>
-
-        {% for item in user_dashboard %}
-        <tr>
-
-            <th>{{ item.2 }}</th>
-            <th>{{ item.0 }}</th>
-            <th>{{ item.1 }}</th>
-        </tr>
-        {% endfor %}
-
-    </table>
-{% else %}
-    <p>No datapoints are available.</p>
-{% endif %}
-
-
+<h2>Dashboarded!</h2>
 {% endblock %}

@@ -1,112 +1,50 @@
 /* global Promise */
 'use strict';
 
+var BASE_URL = '/api/v1';
 var _ = require('lodash');
 var request = require('superagent');
-var prefix = require('superagent-prefix')('/api/v1');
+var prefix = require('superagent-prefix')(BASE_URL);
 
-function fetch(path, query) {
-
-	var fetchAll = (!query.limit || query.limit < 1),
-		accumulator = { objects: [] },
-		q = _.defaults({}, query, {
-			offset: 0,
-			username: 'sheehan',
-			api_key: '6e7f6ecd706c5831e381bcd85d4a7448b1fd85d9',
-			format: 'json'
-		}),
-		p = new Promise(function (fulfill) {
-			function get() {
-				prefix(request.get(path))
-					.set('Authorization', 'Basic dW5pY2VmOnN0b3Bwb2xpbwo=')
-					.query(q)
-					.end(got);
-			}
-
-			function got(res) {
-				accumulator.meta = res.body.meta;
-				accumulator.objects = accumulator.objects.concat(res.body.objects);
-
-				if (fetchAll && res.body.meta.next) {
-					q.offset += res.body.meta.limit;
-					get();
-				} else {
-					fulfill(accumulator);
-				}
-			}
-
-			get();
-		});
-
-	return p;
+function urlencode(query) {
+	return '?' + _.map(query, function (v, k) {
+		return encodeURIComponent(k) + '=' + encodeURIComponent(v);
+	}).join('&');
 }
 
-function encodeArray(a) {
-	if (!(a instanceof Array)) {
-		return String(a);
+function endPoint(path) {
+	var defaults = {
+		offset: 0,
+		username: 'evan',
+		api_key: '67bd6ab9a494e744a213de2641def88163652dad',
+		format: 'json'
+	};
+
+	function fetch(query) {
+		var q = _.defaults({}, query, defaults);
+
+		return new Promise(function (fulfill) {
+			prefix(request.get(path))
+				.query(q)
+				.end(function (res) {
+					fulfill({
+						meta: res.body.meta || {},
+						objects: res.body.objects || _.omit(res.body, 'meta')
+					});
+				});
+		});
 	}
 
-	return a.join(',');
+	fetch.toString = function (query) {
+		return BASE_URL + path + urlencode(_.defaults({}, query, defaults));
+	};
+
+	return fetch;
 }
 
 module.exports = {
-	campaign: function (query) {
-		var q = _.defaults({}, query, {
-			limit: 0
-		});
-
-		return fetch('/campaign/', q);
-	},
-	indicators: function (query) {
-		var q = _.defaults({}, query, {
-			limit: 0
-		});
-
-		return fetch('/indicator/', q);
-	},
-	regions: function (query) {
-		var q = _.defaults({}, query, {
-			limit: 0
-		});
-
-		return fetch('/region/', q);
-	},
-	datapoints: function (query) {
-		var q = _.defaults(_.omit(query, 'indicators', 'regions'), {
-				limit: 20
-			});
-
-		if (query.indicators && query.indicators.length) {
-			q.indicator__in = encodeArray(query.indicators);
-		}
-
-		if (query.regions && query.regions.length) {
-			q.region__in = encodeArray(query.regions);
-		}
-
-		// This is ugly...
-		return fetch('/datapoint/', q).then(function (res) {
-			// Group each data point by its campaign and region
-			var grouped = _.groupBy(res.objects, function (d) {
-				return [d.campaign, d.region];
-			});
-
-			var values = _.values(grouped);
-
-			// Map-reduce!
-			var rows = values.map(function (arr) {
-				return _.reduce(arr, function (result, d) {
-					_.defaults(result, _.pick(d, 'campaign', 'region'));
-
-					result[d.indicator] = d.value;
-					return result;
-				}, {});
-			});
-
-			return {
-				meta: res.meta,
-				objects: rows
-			};
-		});
-	}
+	campaign: endPoint('/campaign/'),
+	indicators: endPoint('/indicator/'),
+	regions: endPoint('/region/'),
+	datapoints: endPoint('/datapoint/')
 };
