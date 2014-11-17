@@ -34,8 +34,10 @@ body {
 }
 
 header {
+  @include clearfix;
+
   background-color: #ddd;
-  margin-bottom: 10pt;
+  margin-bottom: 24pt;
 
   h1 {
     float: left;
@@ -44,12 +46,11 @@ header {
 }
 
 h1 {
+  font-size: 17pt;
   font-weight: bold;
 }
 
 nav {
-  @include clearfix;
-
   ul {
     float: left;
     list-style: none;
@@ -60,26 +61,21 @@ nav {
 
     li {
       display: inline-block;
-      padding: 10pt;
+      padding: 16pt 12pt 12pt;
     }
 
-    .selected {
-      background: #333;
-
-      &, a {
-        color: #fff;
-      }
-    }
   }
 
   a {
     color: #333;
     text-decoration: none;
-
-    &:hover {
-      border-bottom: 2pt solid #888;
-    }
   }
+}
+
+body.dashboard nav .dashboard,
+body.data nav .data {
+  background: #cbcbcb;
+  border-bottom: 4px solid #333;
 }
 
 label {
@@ -97,9 +93,36 @@ form {
       display: inline-block;
     }
   }
+
+  &.login {
+    max-width: 300px;
+    margin: 100pt auto;
+
+    button {
+      @include button($UNICEF);
+
+      color: white;
+      display: block;
+      font-size: 12pt;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 14pt;
+  }
+
+  .error {
+    color: red;
+    margin-top: 1.3em;
+  }
 }
 
-input[type="text"] {
+input {
   @include inset($lightgray);
 
   border-radius: 3pt;

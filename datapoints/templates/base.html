@@ -12,19 +12,23 @@
 	<link rel="stylesheet" href="{% static "print.css" %}">
 </head>
 
-<body>
+<body class="{% block section %}{% endblock %}">
 	<header>
 		<h1>Polio</h1>
 		<nav>
 			<ul>
-				<li><a href="{% url 'datapoints:datapoint_index' %}">Datapoints</a></li>
-				<li><a href="{% url 'datapoints:metadata_index' %}">Metadata</a></li>
-				<li><a href="{% url 'upload:file_upload' %}">CSV Upload</a></li>
-				<li><a href="{% url 'source_data:data_entry' %}">Data Entry</a></li>
-				<li><a href="{% url 'source_data:user_portal' %}">User Portal</a></li>
+				<li class="dashboard"><a href="{% url 'datapoints:dashboard' %}">
+					<i class="fa fa-dashboard fa-lg"></i> Dashboard
+				</a></li>
+
+				<li class="data"><a href="{% url 'datapoints:datapoint_index' %}">
+					<i class="fa fa-table fa-lg"></i> Data
+				</a></li>
 			</ul>
 			<ul class="right">
-				<li><a href="/admin">Admin</a></li>
+				<li><a href="/admin">
+					<i class="fa fa-cog fa-lg"></i> Admin
+				</a></li>
 				{% if user.is_authenticated %}
 				<li>
 					Hello, {{ user.username }}
@@ -34,7 +38,7 @@
 					</a>
 				</li>
 				{% else %}
-				<li><a href="{% url 'login' %}" role="button">Log In</a></li>
+				<li><a href="{% url 'login' %}">Log In</a></li>
 				{% endif %}
 			</ul>
 		</nav>
