@@ -1,22 +1,38 @@
-{% extends "datapoints/base.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
 
-{% block content %}
+	<title>Polio Data Management App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+	<link rel="stylesheet" href="{% static "screen.css" %}">
+</head>
 
-    {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
-    <form method="post" action="{% url 'login' %}" class="form-horizontal">
+<body>
+	<form method="post" action="{% url 'login' %}" class="login">
+		{% csrf_token %}
 
-    {% csrf_token %}
-            <div>{{ form.username.label_tag }} {{ form.username }}</div>
-            <br>
-            <div>{{ form.password.label_tag }} {{ form.password }}</div>
-            <br>
-    <button type="submit" class="btn btn-primary"> Login </button>
-    <input type="hidden" name="next" value="{{ next }}" />
-    <br><br>
-    <a href="{% url 'create_user' %}"<button type="submit" class="btn btn-success"> Create Account! </button></a>
+		<div class="form-group">
+			{{ form.username.label_tag }}
+			{{ form.username }}
+		</div>
 
-    </form>
-{% endblock %}
+		<div class="form-group">
+			{{ form.password.label_tag }}
+			{{ form.password }}
+		</div>
+		<button type="submit">Login</button>
+
+		<input type="hidden" name="next" value="{{ next }}" />
+
+		{% if form.errors %}
+		<p class="error">
+			Your username and password didn't match. Please try again.
+		</p>
+		{% endif %}
+	</form>
+</body>
+
+</html>

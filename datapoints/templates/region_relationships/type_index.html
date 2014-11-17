@@ -24,10 +24,10 @@
 {% else %}
     <p>No Region Relationship Types available.</p>
 {% endif %}
-    <div align="right">
 
-    <a href="{% url 'regions:create_region_relationship_type' %}" <button type="submit" class="btn btn-primary"> Create New Region Relationship Type </button></a>
-    </div>
+<a href="{% url 'regions:create_region_relationship_type' %}" role="button" class="primary right">
+	<i class="fa fa-plus fa-fw"></i>&emsp;New Region Relationship Type
+</a>
 
 
 {% endblock %}

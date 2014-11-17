@@ -26,7 +26,7 @@
 				loadedEvent="indicatorsLoaded"></vue-dropdown>
 	</div>
 	<a class="primary" role="button" v-on="click : refresh()">
-		Load&emsp;<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>
+		<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>&emsp;Load
 	</a>
 </form>
 
@@ -35,10 +35,8 @@
 </div>
 <vue-pagination v-with="pagination"></vue-pagination>
 
-<a role="button" class="right" v-on="click : download()"
-		target="dltarget">
-	Download All
-	<i class="fa fa-fw fa-download"></i>
+<a role="button" class="right" v-on="click : download()">
+	<i class="fa fa-fw fa-download"></i>&emsp;Download All
 </a>
 
 <!-- Download target -->

@@ -35,7 +35,6 @@ body {
 
 header {
   background-color: #ddd;
-  margin-bottom: 10pt;
 
   h1 {
     float: left;
@@ -44,6 +43,7 @@ header {
 }
 
 h1 {
+  font-size: 17pt;
   font-weight: bold;
 }
 
@@ -55,31 +55,30 @@ nav {
     list-style: none;
 
     &.right:last-child {
-      margin-right: -10pt;
+      margin-right: -12pt;
     }
 
     li {
       display: inline-block;
-      padding: 10pt;
-    }
+      padding: 16pt 12pt 12pt;
 
-    .selected {
-      background: #333;
-
-      &, a {
-        color: #fff;
+      &:first-child {
+        padding-left: 0;
       }
     }
+
   }
 
   a {
     color: #333;
     text-decoration: none;
-
-    &:hover {
-      border-bottom: 2pt solid #888;
-    }
   }
+}
+
+body.dashboard nav .dashboard,
+body.data nav .data {
+  background: #cbcbcb;
+  border-bottom: 4px solid #333;
 }
 
 label {
@@ -88,18 +87,70 @@ label {
   font-size: 9pt;
   letter-spacing: 0.5pt;
   text-transform: uppercase;
-  margin-bottom: 3pt;
 }
 
 form {
+  h2 {
+    margin-bottom: 6pt;
+  }
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 14pt;
+
   &.inline {
+    margin-left: auto;
+    width: auto;
+
     .form-group {
       display: inline-block;
     }
+
+    input, select, button, *[role=button] {
+      width: auto;
+    }
+
+    .primary {
+      float: right;
+      margin-top: 10pt;
+    }
+  }
+
+  &.login {
+    max-width: 300px;
+    margin: 100pt auto;
+
+    button {
+      display: block;
+      font-size: 12pt;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+    }
+  }
+
+  input, select, button, *[role=button] {
+    width: 100%;
+  }
+
+  p, .form-group {
+    margin-bottom: 14pt;
+  }
+
+  .error {
+    color: red;
+    margin-top: 1.3em;
   }
 }
 
-input[type="text"] {
+input, select, button, *[role=button] {
+  height: 42px;
+}
+
+
+input:not([type=file]) {
   @include inset($lightgray);
 
   border-radius: 3pt;
@@ -185,7 +236,8 @@ table {
   }
 }
 
-button, *[role=button] {
+button, *[role=button],
+select {
   @include button(#eee);
 
   border-radius: 3pt;
@@ -212,8 +264,10 @@ button, *[role=button] {
     }
   }
 
-  &.primary {
+  &.primary,
+  &[type="submit"] {
     @include button($UNICEF);
+
     color: white;
   }
 

@@ -4,10 +4,12 @@
 {% block content %}
 
 <form action="" method="post">{% csrf_token %}
-    {{ form.as_ul }}
-    <button type="submit" class="btn btn-primary"> Submit </button>
+	{{ form.as_p }}
+	<button type="submit">Submit</button>
 </form>
-    <br>
-    <a href="{% url 'regions:delete_region' region.id%}"<button type="submit" class="btn btn-danger"> Delete Region </button></a>
+
+<a href="{% url 'regions:delete_region' region.id%}" role="button">
+	<i class="fa fa-trash fa-fw"></i>&emsp;Delete Region
+</a>
 
 {% endblock %}

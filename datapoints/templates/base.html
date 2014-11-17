@@ -1,0 +1,60 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title>Polio Data Management App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="{% static "bower_components/fontawesome/css/font-awesome.min.css" %}">
+	<link rel="stylesheet" href="{% static "screen.css" %}">
+	<link rel="stylesheet" href="{% static "print.css" %}">
+</head>
+
+<body class="{% block section %}{% endblock %}">
+	<header>
+		<h1>Polio</h1>
+		<nav>
+			<ul>
+				<li class="dashboard"><a href="{% url 'datapoints:dashboard' %}">
+					<i class="fa fa-dashboard fa-lg"></i> Dashboard
+				</a></li>
+
+				<li class="data"><a href="{% url 'datapoints:datapoint_index' %}">
+					<i class="fa fa-table fa-lg"></i> Data
+				</a></li>
+			</ul>
+			<ul class="right">
+				<li><a href="/admin">
+					<i class="fa fa-cog fa-lg"></i> Admin
+				</a></li>
+				{% if user.is_authenticated %}
+				<li>
+					Hello, {{ user.username }}
+					&emsp;
+					<a href="{% url 'logout' %}?next=/" title="logout">
+						<i class="fa fa-lg fa-sign-out"></i>
+					</a>
+				</li>
+				{% else %}
+				<li><a href="{% url 'login' %}">Log In</a></li>
+				{% endif %}
+			</ul>
+		</nav>
+	</header>
+
+	<div id="main" role="main">
+		{% block nav %}{% endblock %}
+		{% block content %}{% endblock %}
+	</div>
+
+	<!-- Polyfill for Promises (not yet implemented in IE) and
+	     Promise.prototype.done (not standardized yet).
+	     -->
+	<script src="https://www.promisejs.org/polyfills/promise-done-6.0.0.min.js"></script>
+	<script src="{% static 'main.js' %}"></script>
+	{% block scripts %}{% endblock %}
+
+</body>
+</html>

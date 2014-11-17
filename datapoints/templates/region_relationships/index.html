@@ -25,8 +25,9 @@
 {% else %}
     <p>No Region Relationships are available.</p>
 {% endif %}
-    <div align="right">
-    <a href="{% url 'regions:create_region_relationship' %}" <button type="submit" class="btn btn-primary"> Create New Region Relationship </button></a>
-    </div>
+
+<a href="{% url 'regions:create_region_relationship' %}" role="button" class="right">
+	<i class="fa fa-plus- fa-fw"></i>&emsp;New Region Relationship
+</a>
 
 {% endblock %}

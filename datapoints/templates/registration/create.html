@@ -3,13 +3,9 @@
 {% block content %}
 
 <form method="post" action="" class="form-horizontal">
-    {% csrf_token %}
-    {{ form.as_ul }}
-    <br>
-    <button type="submit" class="btn btn-primary"> Create new user account </button>
-    <!-- <input type="submit" value="Create new user account" /> -->
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Create new user account</button>
 </form>
-
-
 
 {% endblock %}

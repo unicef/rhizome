@@ -1,27 +1,23 @@
 {% extends "datapoints/base.html" %}
-  {% block content %}
-    <body>
+{% block content %}
+<p>
+	This Screen should show all fof the datapints that the user needs to enter in
+	a list that they can insert interactively without having to refresh the page.
+</p>
 
-      This Screen should show all fof the datapints that the user needs to
-      enter in a list that they can insert interactively without having to refresh the page.
+<p>
+	Additionally the user can paste data into a textbox and clicking save should
+	decrease the amount of work items they need to finish!
+</p>
 
-      Additionally the user can paste data into a textbox and clicking save should decrease the
-      amount of work items they need to finish!
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
 
-      <br>
-      <br>
-      {% if message %}
-              {{ message }}
-      {% endif %}
-
-    <form action = "" method = "post" class="form">
-        {% csrf_token %}
-        {{ data_entry_form.as_ul }}
-        <br>
-      <button type="submit" class="btn btn-primary"> Submit </button>
-    </form>
-
-
-    </body>
+<form action = "" method = "post" class="form">
+	{% csrf_token %}
+	{{ data_entry_form.as_p }}
+	<button type="submit">Submit</button>
+</form>
 
 {% endblock %}
