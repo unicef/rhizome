@@ -1,3 +1,4 @@
+
 import pprint as pp
 from dateutil import parser
 import StringIO
@@ -67,13 +68,9 @@ class CustomSerializer(Serializer):
 
 
     def to_json(self, data, options=None):
-
-        # add this pivot functionatlity
-        # err / data functionality
-        # allow param for one obj per datapoint record
-        # email omalley
-
-
+        ## This needs to get Cleaned up
+        ## also need a param that gives one obj per datapoint record
+        response = {}
         response_objects = []
 
         options = options or {}
@@ -85,14 +82,9 @@ class CustomSerializer(Serializer):
 
             r_c_dict = {}
 
-            region,campaign = r_c[0][0],r_c[0][1]
+            rows = r_c[1] # zero = COLUMNS ; one = ROWS
 
-            r_c_dict['region'] = region
-            r_c_dict['campaign'] = campaign
-
-            rows = ind = r_c[1] # zero = COLUMNS ; one = ROWS
-
-            ix = ind.index # the index is the indicator
+            ix = rows.index # the index is the indicator
 
             indicator_list = []
 
@@ -110,11 +102,17 @@ class CustomSerializer(Serializer):
 
             r_c_dict['indicators'] = indicator_list
 
+            region,campaign = r_c[0][0],r_c[0][1]
 
+            r_c_dict['region'] = region
+            r_c_dict['campaign'] = campaign
 
             response_objects.append(r_c_dict)
 
-        return json.dumps(response_objects)
+        response['meta'] = meta
+        response['objects'] = response_objects
+
+        return json.dumps(response)
 
 
 
