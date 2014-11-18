@@ -13,8 +13,8 @@ module.exports = {
 		'loading',
 		'loadedEvent'
 	],
-	data: {
-		pattern: ''
+	data: function () {
+		return { pattern: '' };
 	},
 	ready: function () {
 		this.searchable = this.searchable === 'true';

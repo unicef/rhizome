@@ -1,0 +1,11 @@
+<svg width="{{ width }}" height="{{ height }}" class="line">
+	<g transform="translate({{ margin.left }}, {{ margin.top }})">
+		<g class="axis y"></g>
+
+		<g>
+			<path v-repeat="s : series" d="{{ s | line }}">
+		</g>
+
+		<g class="axis x"></g>
+	</g>
+</svg>

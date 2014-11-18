@@ -2,10 +2,12 @@
 
 module.exports = {
 	template: require('./template.html'),
-	data: {
-		limit: 0,
-		offset: 0,
-		total_count: 0
+	data: function () {
+		return {
+			limit: 0,
+			offset: 0,
+			total_count: 0
+		};
 	},
 	methods: {
 		setPage: function (page) {
