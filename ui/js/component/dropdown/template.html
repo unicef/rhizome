@@ -1,5 +1,5 @@
 <div class="dropdown" role="menu" v-class="open: open">
-	<a role="button" v-on="click: open = !open">
+	<a role="button" class="menu-button" tabindex="0" v-on="click: open = !open">
 		{{ title }}
 		<i class="fa fa-fw fa-spinner" v-class="fa-spin : loading, hidden : !loading"></i>
 		<i class="fa fa-fw fa-caret-down"></i>
@@ -21,10 +21,25 @@
 				<i class="fa fa-fw fa-spinner fa-spin"></i>
 			</li>
 		</ul>
-		<div class="buttonbar center" role="group" v-if="multi">
-			<button class="small" type="button" title="Clear selection" v-on="click : clear()">clear selection</button>
-			<button class="small" type="button" title="Invert selection" v-on="click : invert()">invert selection</button>
-			<button class="small" type="button" title="Select all" v-on="click : selectAll()">select all</button>
+		<div class="selection-controls" role="group" v-if="multi">
+			<button class="tiny"
+					type="button"
+					title="Clear selection"
+					v-on="click : clear()">
+				clear selection
+			</button>&nbsp;<button
+					class="tiny"
+					type="button"
+					title="Invert selection"
+					v-on="click : invert()">
+				invert selection
+			</button>&nbsp;<button
+					class="tiny"
+					type="button"
+					title="Select all"
+					v-on="click : selectAll()">
+				select all
+			</button>
 		</div>
 	</div>
 </div>
