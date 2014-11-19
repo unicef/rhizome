@@ -3,6 +3,12 @@
 
 var _ = require('lodash');
 
+function intStyle(el, property) {
+	var style = window.getComputedStyle(el);
+
+	return parseInt(style.getPropertyValue(property), 10);
+}
+
 function documentOffset(el) {
 	if (!el.offsetParent) {
 		return {
@@ -48,21 +54,25 @@ function dimensions(el, includeMargins) {
 	};
 
 	if (includeMargins) {
-		var style = window.getComputedStyle(el);
-
-		dims.height += parseInt(style.getPropertyValue('margin-top'), 10) +
-				parseInt(style.getPropertyValue('margin-bottom'), 10);
-
-		dims.width += parseInt(style.getPropertyValue('margin-left'), 10) +
-				parseInt(style.getPropertyValue('margin-right'), 10);
+		dims.height += intStyle(el, 'margin-top') + intStyle(el, 'margin-bottom');
+		dims.width += intStyle(el, 'margin-left') + intStyle(el, 'margin-right');
 	}
 
 	return dims;
 }
 
+function contentArea(el) {
+	return {
+		width: el.clientWidth - intStyle(el, 'padding-left') - intStyle(el, 'padding-right'),
+		height: el.clientHeight - intStyle(el, 'padding-top') - intStyle(el, 'padding-bottom')
+	};
+}
+
+
 module.exports = {
 	documentOffset: documentOffset,
 	viewportOffset: viewportOffset,
 	contains: contains,
-	dimensions: dimensions
+	dimensions: dimensions,
+	contentArea: contentArea
 };

@@ -1,0 +1,33 @@
+svg {
+  .bg {
+    fill: $smoke;
+  }
+
+  .axis {
+		.domain {
+			display: none;
+		}
+
+    line {
+      fill: none;
+      stroke: $white;
+			stroke-width: 1px;
+      shape-rendering: cripsEdges;
+    }
+
+    text {
+      font-family: $font-family-sans-serif;
+      font-size: $axis-font-size;
+      fill: $iron;
+      stroke: none;
+    }
+  }
+
+	&.line {
+		path {
+			fill: none;
+			stroke: $charcoal;
+			stroke-width: 1px;
+		}
+	}
+}
