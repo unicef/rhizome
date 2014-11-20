@@ -95,7 +95,6 @@ module.exports = {
 					if (this.opening) {
 						this.opening = false;
 					} else {
-						console.log('Force close ' + this.placeholder);
 						this.open = false;
 					}
 				}
