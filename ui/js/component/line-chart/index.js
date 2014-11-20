@@ -18,44 +18,54 @@ function chain(matrix) {
 }
 
 module.exports = {
-	replace: false,
 	data: function () {
 		return {
 			height: 1,
 			margin: { top: 14, right: 7, bottom: 14, left: 7 },
+			series: [],
 			width: 1
 		};
 	},
+
 	created: function () {
 		var self = this;
 
-		this._x = d3.scale.linear();
-		this._y = d3.scale.linear();
+		this._x    = d3.scale.linear();
+		this._y    = d3.scale.linear();
 		this._line = d3.svg.line()
 			.x(function (d) { return self._x(d[0]); })
 			.y(function (d) { return self._y(d[1]); });
 	},
+
 	ready: function () {
-		this._svg = d3.select(this.$el).append('svg').attr('class', 'line');
+		this._svg   = d3.select(this.$el).append('svg').attr('class', 'line');
 		this._chart = this._svg.append('g');
+
 		this._chart.append('rect').attr('class', 'bg');
 		this._chart.append('g').attr('class', 'x axis');
 		this._chart.append('g').attr('class', 'y axis');
+		this._chart.append('g').attr('class', 'series');
 
 		// Trigger initial size calculation.
 		this.handleEvent();
 
 		// Update the element's size when the parent resizes.
 		window.addEventListener('resize', this);
+
+		this.$watch('series', this._invalidateSize);
 	},
+
 	computed: {
 		contentHeight: function () {
 			return Math.max(1, this.height - sum(_.pick(this.margin, 'top', 'bottom')));
 		},
+
 		contentWidth: function () {
 			return Math.max(1, this.width - sum(_.pick(this.margin, 'left', 'right')));
 		},
+
 	},
+
 	methods: {
 		handleEvent: function () {
 			var content = dom.contentArea(this.$el.parentElement);
@@ -65,6 +75,7 @@ module.exports = {
 
 			this._invalidateSize();
 		},
+
 		_invalidateSize: function () {
 			var points = chain(this.series);
 
@@ -76,6 +87,7 @@ module.exports = {
 
 			this._draw();
 		},
+
 		_draw: function () {
 			this._svg.attr('width', this.width)
 					.attr('height', this.height)
@@ -85,7 +97,7 @@ module.exports = {
 
 			this._chart.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
-			var series = this._chart.selectAll('path')
+			var series = this._chart.select('.series').selectAll('path')
 				.data(this.series);
 
 			series.transition()
@@ -114,5 +126,6 @@ module.exports = {
 					.attr('x', 4)
 					.attr('dy', -4);
 		}
-	},
+
+	}
 };
