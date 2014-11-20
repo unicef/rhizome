@@ -12,7 +12,7 @@
 @import "charts";
 
 header {
-  background-color: #ddd;
+  background-color: $gainsboro;
   padding-left: 10pt;
   padding-right: 10pt;
 
@@ -20,6 +20,12 @@ header {
     float: left;
     padding: 10pt 20pt 10pt 0;
   }
+}
+
+h3 {
+	border-bottom: 1px solid $gainsboro;
+	color: $gainsboro;
+	text-transform: uppercase;
 }
 
 nav {
