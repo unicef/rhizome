@@ -72,7 +72,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('default', ['clean', 'browserify', 'styles']);
 
-gulp.task('watch', ['browserify', 'styles'], function () {
+gulp.task('livereload', function () {
 	var server = $.livereload();
 
 	// watch for changes
@@ -80,7 +80,9 @@ gulp.task('watch', ['browserify', 'styles'], function () {
 	gulp.watch(path.output + '/**/*').on('change', function (file) {
 		server.changed(file.path);
 	});
+});
 
+gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
 	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
 	gulp.watch(path.images, ['images']);
