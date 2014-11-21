@@ -2,10 +2,13 @@
 
 var _ = require('lodash');
 var api = require('../../data/api.js');
-var lineChart = require('../../component/line-chart');
+
+var chart = require('../../component/chart');
 
 module.exports = {
 	template: require('./template.html'),
+	replace: true,
+
 	data: function () {
 		return {
 			missed: [],
@@ -33,7 +36,10 @@ module.exports = {
 						series[ind.indicator] = [];
 					}
 
-					series[ind.indicator].push([d.campaign, Number(ind.value)]);
+					series[ind.indicator].push({
+						x: d.campaign,
+						y: Number(ind.value)
+					});
 				}
 			}
 
@@ -41,6 +47,6 @@ module.exports = {
 		});
 	},
 	components: {
-		'vue-line-chart': lineChart
+		'chart-base': chart
 	}
 };
