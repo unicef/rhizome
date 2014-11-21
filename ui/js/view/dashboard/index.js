@@ -12,6 +12,7 @@ module.exports = {
 	data: function () {
 		return {
 			missed: [],
+			immunityGap: []
 		};
 	},
 	created: function () {
@@ -43,10 +44,12 @@ module.exports = {
 				}
 			}
 
-			self.missed = _.values(series);
+			self.missed = _.values(_.pick(series, '21', '22'));
+			self.immunityGap = [series[25]];
 		});
 	},
 	components: {
-		'chart-base': chart
+		'chart-base': chart,
+		'chart-line': require('../../component/line-chart')
 	}
 };

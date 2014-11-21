@@ -105,6 +105,8 @@ module.exports = {
 					label   : tick
 				};
 			});
+
+			this.$broadcast('invalidateDisplay');
 		}
 	},
 

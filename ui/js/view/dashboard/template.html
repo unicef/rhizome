@@ -21,17 +21,42 @@
 						<line v-attr="x2: contentWidth"></line>
 						<text dx="1" dy="-2" v-text="label"></text>
 					</g>
-				 </g>
+				</g>
 
-<!-- 				 <path v-repeat="src"
-				       v-component="chart-line"
-				       v-attr="d : d"
-				       class="line"></path> -->
+				<path v-repeat="datapoints: series"
+				      v-component="chart-line"
+				      v-attr="d : datapoints | line"
+				      fill="none"
+				      stroke="#888"
+				      stroke-width="1"
+				      class="line"></path>
 			</svg>
 		</section>
 
 		<section>
 			<h4>Immunity Gap</h4>
+
+			<svg v-component="chart-base"
+				   v-with="series: immunityGap"
+				   aspect="1.618">
+
+				<rect class="bg"
+				      v-attr="width : contentWidth,
+				              height: contentHeight"></rect>
+
+				<g class="y axis">
+					<g v-repeat="yTicks"
+						 v-attr="transform: 'translate(0,' + position + ')'">
+						<line v-attr="x2: contentWidth"></line>
+						<text dx="1" dy="-2" v-text="label"></text>
+					</g>
+				</g>
+
+				<path v-repeat="datapoints: series"
+							v-component="chart-line"
+				      v-attr="d : datapoints | area"
+				      fill="#888"></path>
+			</svg>
 		</section>
 
 	</section>
