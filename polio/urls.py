@@ -10,6 +10,10 @@ from datapoints.api.aggregate import AggregateResource
 from source_data.api import EtlResource
 from tastypie.api import Api
 
+from django.contrib.auth.decorators import login_required
+from decorator_include import decorator_include
+
+
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
@@ -29,11 +33,11 @@ urlpatterns = patterns('',
     ##
     url(r'^$', 'polio.views.home', name='home'),
     ##
-    url(r'^datapoints/', include('datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/indicators/', include('datapoints.app_urls.indicator_urls', namespace="indicators")),
-    url(r'^datapoints/regions/', include('datapoints.app_urls.region_urls', namespace="regions")),
+    url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
+    url(r'^datapoints/indicators/', decorator_include(login_required,'datapoints.app_urls.indicator_urls', namespace="indicators")),
+    url(r'^datapoints/regions/', decorator_include(login_required,'datapoints.app_urls.region_urls', namespace="regions")),
     ##
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
     url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
