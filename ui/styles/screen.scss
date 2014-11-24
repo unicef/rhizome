@@ -3,48 +3,22 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-@import "compass";
-@import "compass/css3/user-interface";
-@import "compass/reset";
+@import "settings";
+@import "foundation";
+
 @import "compass/utilities/general/clearfix";
 
-@import "settings";
-@import "mixins";
-
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  background: #fafafa;
-}
-
-body {
-  color: #333;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 10pt;
-
-  & > header,
-  & > *[role="main"],
-  & > footer {
-    padding-left: 5pt;
-    padding-right: 5pt;
-  }
-}
+@import "forms";
 
 header {
   background-color: #ddd;
+  padding-left: 10pt;
+  padding-right: 10pt;
 
   h1 {
     float: left;
     padding: 10pt 20pt 10pt 0;
   }
-}
-
-h1 {
-  font-size: 17pt;
-  font-weight: bold;
 }
 
 nav {
@@ -53,6 +27,7 @@ nav {
   ul {
     float: left;
     list-style: none;
+    margin: 0;
 
     &.right:last-child {
       margin-right: -12pt;
@@ -81,88 +56,9 @@ body.data nav .data {
   border-bottom: 4px solid #333;
 }
 
-label {
-  color: #aaa;
-  display: block;
-  font-size: 9pt;
-  letter-spacing: 0.5pt;
-  text-transform: uppercase;
-}
-
-form {
-  h2 {
-    margin-bottom: 6pt;
-  }
-
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 14pt;
-
-  &.inline {
-    margin-left: auto;
-    width: auto;
-
-    .form-group {
-      display: inline-block;
-    }
-
-    input, select, button, *[role=button] {
-      width: auto;
-    }
-
-    .primary {
-      float: right;
-      margin-top: 10pt;
-    }
-  }
-
-  &.login {
-    max-width: 300px;
-    margin: 100pt auto;
-
-    button {
-      display: block;
-      font-size: 12pt;
-      width: 100%;
-    }
-
-    input {
-      width: 100%;
-    }
-  }
-
-  input, select, button, *[role=button] {
-    width: 100%;
-  }
-
-  p, .form-group {
-    margin-bottom: 14pt;
-  }
-
-  .error {
-    color: red;
-    margin-top: 1.3em;
-  }
-}
-
-input, select, button, *[role=button] {
-  height: 42px;
-}
-
-
-input:not([type=file]) {
-  @include inset($lightgray);
-
-  border-radius: 3pt;
-  font-size: 12pt;
-  line-height: 14pt;
-  padding: 6pt 12pt;
-
-  @include input-placeholder {
-    font-style: italic;
-    font-size: 9pt;
-    line-height: 15pt;
-  }
+.error {
+  color: $alert-color;
+  margin-top: 1.3em;
 }
 
 table {
@@ -206,104 +102,18 @@ table {
 
   tr:not(.empty):hover {
     td {
-      background-color: $lightgray;
+      background-color: $ghost;
     }
-  }
-}
-
-.pagination {
-  margin-top: 0.3em;
-
-  a {
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12pt;
-    height: 1.3em;
-    line-height: 1.3em;
-    padding: 0 0.3em;
-    text-align: center;
-
-    &.disabled {
-      color: $lightgray;
-      cursor: default;
-    }
-
-    &:not(.disabled):hover {
-      background-color: $offblack;
-      color: white;
-      text-decoration: underline;
-    }
-  }
-}
-
-button, *[role=button],
-select {
-  @include button(#eee);
-
-  border-radius: 3pt;
-  color: inherit;
-  cursor: default;
-  display: inline-block;
-  padding: 10pt;
-  text-decoration: none;
-  transition: background-color 300ms ease;
-
-  &.small {
-    border: none;
-    background: none;
-    padding: 5pt;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    &:focus,
-    &:active {
-      box-shadow: none;
-      outline: none;
-    }
-  }
-
-  &.primary,
-  &[type="submit"] {
-    @include button($UNICEF);
-
-    color: white;
-  }
-
-  &:active {
-    box-shadow: rgba(0, 0, 0, 0.121569) 0pt 3pt 5pt 0pt inset;
-  }
-}
-
-.buttonbar {
-  margin: 5pt 0;
-
-  &.center {
-    text-align: center;
-  }
-
-  &.right {
-    text-align: right;
-  }
-
-  button,
-  *[role="button"] {
-    margin: 0 5pt;
   }
 }
 
 *[role="menuitem"] {
   &:hover {
-    background-color: $UNICEF;
+    background-color: $primary-color;
     color: white;
   }
 }
 
-.right {
-  float: right;
-}
-
-.hidden {
-  visibility: hidden;
+button, .button {
+  @include button($radius: true);
 }

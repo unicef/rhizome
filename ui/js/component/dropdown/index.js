@@ -101,7 +101,7 @@ module.exports = {
 				offset = dom.viewportOffset(ul);
 
 			if (this.multi) {
-				var dims = dom.dimensions(menu.getElementsByClassName('buttonbar')[0], true);
+				var dims = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true);
 				marginBottom += dims.height;
 			}
 

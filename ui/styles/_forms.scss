@@ -1,0 +1,37 @@
+form {
+  &.inline {
+    button, .button {
+      @include button($button-tny, $radius: true);
+      margin-bottom: rem-calc(5);
+    }
+  }
+
+  .dropdown {
+    .menu-button {
+      @include button($button-tny, $secondary-color, true, true);
+      margin-bottom: rem-calc(5);
+    }
+
+    .selection-controls {
+      button, .button {
+        @include button($button-tny, $secondary-color, true, false);
+        margin-bottom: rem-calc(5);
+      }
+    }
+  }
+
+  &.login {
+    max-width: 300px;
+    margin: 100pt auto;
+
+    button {
+      display: block;
+      font-size: 12pt;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+    }
+  }
+}
