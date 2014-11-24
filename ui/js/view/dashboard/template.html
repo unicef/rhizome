@@ -66,7 +66,24 @@
 			<div class="columns">
 				<h3>Performance of Front Line Workers</h3>
 			</div>
-			<div class="medium-4 columns"></div>
+			<div class="medium-4 columns">
+				<div style="width: 65px; float: left; padding-right: 15px">
+					<svg v-component="chart-base"
+						   v-with="series: microplans.series">
+						<g transform="translate(25, 25)">
+							<path v-repeat="slice: series"
+								    v-component="chart-pie"
+								    v-radius="inner: 0, outer: 25"
+								    v-attr="d:    slice | arc,
+								    	      fill: slice.color"></path>
+					  </g>
+					</svg>
+				</div>
+				<p>
+					{{ microplans.socialData }} / {{ microplans.total }} microplans with
+					social data
+				</p>
+			</div>
 			<div class="medium-6 columns"></div>
 			<div class="medium-2 columns"></div>
 		</div>

@@ -40,11 +40,17 @@ module.exports = {
 
 	computed: {
 		contentWidth: function () {
-			return this.width - this.margin.left - this.margin.right;
+			var left  = this.margin.left || 0;
+			var right = this.margin.right || 0;
+
+			return this.width - left - right;
 		},
 
 		contentHeight: function () {
-			return this.height - this.margin.top - this.margin.bottom;
+			var top    = this.margin.top || 0;
+			var bottom = this.margin.bottom || 0;
+
+			return this.height - top - bottom;
 		},
 
 		domain: {
@@ -59,7 +65,7 @@ module.exports = {
 		},
 
 		height: function () {
-			return this.width / this.aspect;
+			return this.width / (this.aspect || 1);
 		},
 
 		range: {
@@ -82,7 +88,7 @@ module.exports = {
 		handleEvent: function () {
 			var content = dom.contentArea(this.$el.parentElement);
 
-			this.width = content.width;
+			this.$data.width = content.width;
 		},
 
 		invalidateTicks: function () {
