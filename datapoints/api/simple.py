@@ -138,6 +138,11 @@ class RegionResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Region.objects.all()
         resource_name = 'region'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
 class IndicatorResource(SimpleApiResource):
     '''Indicator Resource'''
@@ -147,7 +152,7 @@ class IndicatorResource(SimpleApiResource):
         resource_name = 'indicator'
         filtering = {
             "slug": ('exact'),
-            "id":('exact','gt','lt','range'),
+            "id": ALL,
         }
 
 class CampaignResource(SimpleApiResource):
@@ -157,6 +162,11 @@ class CampaignResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
 class UserResource(SimpleApiResource):
     '''User Resource'''
@@ -173,6 +183,11 @@ class OfficeResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
     #############################################
     #############################################
