@@ -112,7 +112,8 @@ class CustomSerializer(Serializer):
         response['meta'] = meta
         response['objects'] = response_objects
 
-        return json.dumps(response)
+        # return json.dumps(response)
+        return json.dumps(data)
 
 
 
