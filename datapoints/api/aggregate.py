@@ -130,6 +130,10 @@ class AggregateResource(Resource):
         expected_data = AggregationExpectedData.objects.filter(
             aggregation_type = at.id)
 
+        if len(expected_data) < 1:
+            err = 'Aggregation Expected data is empty!  Please talk to your DB Admin to have the meta data inserted.'
+            return err, None
+
         ## Make sure all of the params were passed by comparing the request
         ## to the expected data for that api method
         for ed in expected_data:
@@ -159,57 +163,67 @@ class AggregateResource(Resource):
 
     def calc_pct_solo_region_solo_campaign(self, prepped_data):
 
-        region_id = prepped_data['region_solo']
-        campaign_id = prepped_data['campaign_solo']
+        try:
+            region_id = prepped_data['region_solo']
+            campaign_id = prepped_data['campaign_solo']
 
-        part = DataPoint.objects.get(
-          region_id = region_id,
-          campaign_id = campaign_id,
-          indicator_id = prepped_data['indicator_part']
-        ).value
+            part = DataPoint.objects.get(
+              region_id = region_id,
+              campaign_id = campaign_id,
+              indicator_id = prepped_data['indicator_part']
+            ).value
 
-        whole = DataPoint.objects.get(
-          region_id = region_id,
-          campaign_id = campaign_id,
-          indicator_id = prepped_data['indicator_whole']
-        ).value
+            whole = DataPoint.objects.get(
+              region_id = region_id,
+              campaign_id = campaign_id,
+              indicator_id = prepped_data['indicator_whole']
+            ).value
 
-        result = part / whole
+            result = part / whole
+
+        except Exception as err:
+
+            return err, None
 
         return None, result
 
     def calc_pct_parent_region_solo_campaign(self, prepped_data):
 
-        region_list = self.get_sub_regions(prepped_data['region_parent'])
-        campaign_id = prepped_data['campaign_solo']
+        try:
 
-        parts = DataPoint.objects.filter(
-          region_id__in=region_list,
-          campaign_id = campaign_id,
-          indicator_id = prepped_data['indicator_part']
-        )
+            region_list = self.get_sub_regions(prepped_data['region_parent'])
+            campaign_id = prepped_data['campaign_solo']
 
-        wholes = DataPoint.objects.filter(
-          region_id__in=region_list,
-          campaign_id = campaign_id,
-          indicator_id = prepped_data['indicator_whole']
-        )
+            parts = DataPoint.objects.filter(
+              region_id__in=region_list,
+              campaign_id = campaign_id,
+              indicator_id = prepped_data['indicator_part']
+            )
 
-
-        part_val = 0
-        for part in parts:
-            part_val += part.value
+            wholes = DataPoint.objects.filter(
+              region_id__in=region_list,
+              campaign_id = campaign_id,
+              indicator_id = prepped_data['indicator_whole']
+            )
 
 
-        whole_val = 0
-        for whole in wholes:
-            whole_val += whole.value
-
-        print 'PART VAL: ' + str(part_val)
-        print 'WHOLE VAL: ' + str(whole_val)
+            part_val = 0
+            for part in parts:
+                part_val += part.value
 
 
-        result = part_val / whole_val
+            whole_val = 0
+            for whole in wholes:
+                whole_val += whole.value
+
+            print 'PART VAL: ' + str(part_val)
+            print 'WHOLE VAL: ' + str(whole_val)
+
+            result = part_val / whole_val
+
+        except Exception as err:
+
+            return err, None
 
 
         return None, result
