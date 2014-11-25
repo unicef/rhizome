@@ -3,6 +3,7 @@ import pprint as pp
 from dateutil import parser
 import StringIO
 import csv,json,math
+import numpy as np
 from collections import defaultdict
 
 from tastypie.serializers import Serializer
@@ -78,7 +79,11 @@ class CustomSerializer(Serializer):
 
         pivoted,meta = self.campaign_region_pivot(data)
 
-        for r_c in pivoted.iterrows():
+        # replace NaN with None
+        cleaned = pivoted.astype(object).replace(np.nan, 'None')
+        # df1 = df.astype(object).replace(np.nan, 'None')
+
+        for r_c in cleaned.iterrows():
 
             r_c_dict = {}
 
@@ -93,7 +98,7 @@ class CustomSerializer(Serializer):
 
                 ind_dict['indicator'] = ix[i]
 
-                if type(value) == float and math.isnan(value):
+                if value == 'None':
                     value = None
 
                 ind_dict['value'] = value
@@ -110,11 +115,12 @@ class CustomSerializer(Serializer):
             response_objects.append(r_c_dict)
 
         response['meta'] = meta
+
+        # pp.pprint(response_objects)
         response['objects'] = response_objects
 
-        # return json.dumps(response)
-        return json.dumps(data)
-
+        return json.dumps(response)
+        # return json.dumps(data)
 
 
 
