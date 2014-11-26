@@ -10,7 +10,7 @@ from django.conf import settings
 from pandas.io.excel import read_excel
 
 from source_data.models import *
-from datapoints.models import DataPoint, Source
+from datapoints.models import DataPoint, Source, Office, Region
 
 
 class DocTransform(object):
@@ -66,9 +66,11 @@ class RegionTransform(DocTransform):
 
         if sorted(essential_columns) == sorted(intsct):
             valid_df = self.df[essential_columns]
+
             return None,valid_df
+
         else:
-            err = 'must have all of the following columns: ' + essential_columns
+            err = 'must have all of the following columns: ' + str(essential_columns)
             return err,None
 
 
@@ -76,10 +78,11 @@ class RegionTransform(DocTransform):
 
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
+        parent_regions = []
+
         for row in valid_df.iterrows():
             row_data = row[1]
-            # print valid_df
-            print row_data.region_name
+            parent_regions.append(row_data.parent_name)
 
             try:
                 SourceRegion.objects.create(
@@ -89,8 +92,54 @@ class RegionTransform(DocTransform):
                     parent_name = row_data.parent_name,\
                     region_type = row_data.region_type,\
                     country = row_data.country,\
+                    document_id = self.document.id,\
+                    source_guid = str(row_data.region_name) + ' - '  + str(row_data.code)
+                )
+            except IntegrityError as err:
+                print err
+
+        distinct_parent_regions = list(set(parent_regions))
+
+        for reg in distinct_parent_regions:
+
+            try:
+                SourceRegion.objects.create(
+                    region_string = reg,\
+                    region_code = reg,\
                     document_id = self.document.id
                 )
             except IntegrityError as err:
-                print 'errrrrror'
                 print err
+
+
+    def source_regions_to_regions(self):
+
+        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
+        source = Source.objects.get(source_name='region_upload')
+
+        for sr in src_regions:
+            print sr.country
+            print sr.country
+            print sr.region_string
+
+            try:
+                Region.objects.create(
+                    name = sr.region_string,\
+                    region_code = sr.region_code,\
+                    region_type = sr.region_type,\
+                    office = Office.objects.get(name=sr.country),\
+                    latitude = sr.lat,\
+                    longitude = sr.lon,\
+                    source = source,\
+                    source_guid = sr.source_guid
+                )
+            except IntegrityError as err:
+                print err
+
+            except ObjectDoesNotExist as err:
+                print err
+
+
+
+    def source_region_rels_to_region_rels(self):
+        pass

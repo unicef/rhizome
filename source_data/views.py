@@ -208,6 +208,8 @@ def pre_process_file(request,pk,file_type):
 
         dt = DocTransform(pk,file_type)
 
+        print dt.df
+
         header_list  = dt.df.columns.values
         column_mapping = dt.get_essential_columns()
 
@@ -222,6 +224,9 @@ def pre_process_file(request,pk,file_type):
         rt = RegionTransform(pk,file_type)
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
+        master_regions = rt.source_regions_to_regions()
+        master_region_relationships = rt.source_region_rels_to_region_rels()
+
 
 
         return render_to_response(
@@ -229,7 +234,6 @@ def pre_process_file(request,pk,file_type):
             {'document_id':pk},
             RequestContext(request),
         )
-
 
 
 ######### META MAPPING ##########
