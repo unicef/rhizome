@@ -15,13 +15,12 @@ from datapoints.models import DataPoint, Source
 
 class DocTransform(object):
 
-    def __init__(self,document_id):
+    def __init__(self,document_id,file_type):
 
         self.source_datapoints = []
-        # self.document_id = document_id
+        self.file_type = file_type
         self.document = Document.objects.get(id=document_id)
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
-            # str(Document.objects.get(id=document_id).docfile)
         self.df = self.create_df()
 
     def create_df(self):
@@ -55,3 +54,20 @@ class DocTransform(object):
                 pass
 
         return column_mapping
+
+class RegionTransform(DocTransform):
+
+
+
+    def validate(self):
+
+        essential_columns = ['name','code','parent_name','region_type','country']
+        df_cols = [col for col in self.df]
+        intsct = list(set(essential_columns).intersection(df_cols))
+
+        if sorted(essential_columns) == sorted(intsct):
+            valid_df = self.df[essential_columns]
+            return None,valid_df
+        else:
+            err = 'must have all of the following columns: ' + essential_columns
+            return err,None

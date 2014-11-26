@@ -19,7 +19,7 @@ from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.transform_upload import DocTransform
+from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
@@ -88,8 +88,6 @@ def data_entry(request):
             )
 
 
-
-
         source_datapoints, not_parsed = bulk_data_to_sdps(
             bulk_data = bulk_data,
             campaign_string = request.POST['campaign'],
@@ -156,11 +154,6 @@ def mark_doc_as_processed(request,document_id):
 
 ### File Upload Stuff Below ###
 
-def region_file_upload(request):
-
-    print 'something'
-
-    return render_to_response('HELLO')
 
 def file_upload(request):
 
@@ -210,15 +203,33 @@ def file_upload(request):
 
 def pre_process_file(request,pk,file_type):
 
-    dt = DocTransform(pk)
-    header_list  = dt.df.columns.values
-    column_mapping = dt.get_essential_columns()
 
-    return render_to_response(
-        'upload/document_review.html',
-        {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
-        RequestContext(request),
-    )
+    if file_type == 'Datapoint':
+
+        dt = DocTransform(pk,file_type)
+
+        header_list  = dt.df.columns.values
+        column_mapping = dt.get_essential_columns()
+
+        return render_to_response(
+            'upload/document_review.html',
+            {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
+            RequestContext(request),
+        )
+
+    elif file_type == 'Region':
+
+        rt = RegionTransform(pk,file_type)
+        err,valid_df = rt.validate()
+
+        print valid_df
+        print 'WOOOOOHO'
+
+        return render_to_response(
+            'upload/document_review.html',
+            {'document_id':pk},
+            RequestContext(request),
+        )
 
 
 
