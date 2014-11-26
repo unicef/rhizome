@@ -11,7 +11,7 @@ TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = '/datapoints'
-MEDIA_ROOT = '/var/www/clients.seedscientific.com/uf/UF04/polio/media'
+MEDIA_ROOT = '/var/www/clients.seedscientific.com/uf/UF04/polio/media/'
 MEDIA_URL = '/var/www/clients.seedscientific.com/uf/UF04/polio/media/'
 
 INSTALLED_APPS = (
