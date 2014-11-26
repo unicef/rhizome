@@ -58,7 +58,6 @@ class DocTransform(object):
 class RegionTransform(DocTransform):
 
 
-
     def validate(self):
 
         essential_columns = ['name','code','parent_name','region_type','country']
@@ -71,3 +70,27 @@ class RegionTransform(DocTransform):
         else:
             err = 'must have all of the following columns: ' + essential_columns
             return err,None
+
+
+    def insert_source_regions(self,valid_df):
+
+        valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
+
+        for row in valid_df.iterrows():
+            row_data = row[1]
+            # print valid_df
+            print row_data.region_name
+
+            try:
+                SourceRegion.objects.create(
+
+                    region_string = row_data.region_name,\
+                    region_code = row_data.code,\
+                    parent_name = row_data.parent_name,\
+                    region_type = row_data.region_type,\
+                    country = row_data.country,\
+                    document_id = self.document.id
+                )
+            except IntegrityError as err:
+                print 'errrrrror'
+                print err

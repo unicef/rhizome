@@ -221,9 +221,8 @@ def pre_process_file(request,pk,file_type):
 
         rt = RegionTransform(pk,file_type)
         err,valid_df = rt.validate()
+        src_regions = rt.insert_source_regions(valid_df)
 
-        print valid_df
-        print 'WOOOOOHO'
 
         return render_to_response(
             'upload/document_review.html',
