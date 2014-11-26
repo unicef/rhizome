@@ -3,6 +3,7 @@ import pprint as pp
 from dateutil import parser
 import StringIO
 import csv,json,math
+import numpy as np
 from collections import defaultdict
 
 from tastypie.serializers import Serializer
@@ -16,6 +17,7 @@ from tastypie.serializers import Serializer
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from stronghold.decorators import public
 import pandas as pd
 
@@ -78,7 +80,11 @@ class CustomSerializer(Serializer):
 
         pivoted,meta = self.campaign_region_pivot(data)
 
-        for r_c in pivoted.iterrows():
+        # replace NaN with None
+        cleaned = pivoted.astype(object).replace(np.nan, 'None')
+        # df1 = df.astype(object).replace(np.nan, 'None')
+
+        for r_c in cleaned.iterrows():
 
             r_c_dict = {}
 
@@ -93,7 +99,7 @@ class CustomSerializer(Serializer):
 
                 ind_dict['indicator'] = ix[i]
 
-                if type(value) == float and math.isnan(value):
+                if value == 'None':
                     value = None
 
                 ind_dict['value'] = value
@@ -110,10 +116,12 @@ class CustomSerializer(Serializer):
             response_objects.append(r_c_dict)
 
         response['meta'] = meta
+
+        # pp.pprint(response_objects)
         response['objects'] = response_objects
 
         return json.dumps(response)
-
+        # return json.dumps(data)
 
 
 
@@ -138,6 +146,11 @@ class RegionResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Region.objects.all()
         resource_name = 'region'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
 class IndicatorResource(SimpleApiResource):
     '''Indicator Resource'''
@@ -147,7 +160,7 @@ class IndicatorResource(SimpleApiResource):
         resource_name = 'indicator'
         filtering = {
             "slug": ('exact'),
-            "id":('exact','gt','lt','range'),
+            "id": ALL,
         }
 
 class CampaignResource(SimpleApiResource):
@@ -157,6 +170,11 @@ class CampaignResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
 class UserResource(SimpleApiResource):
     '''User Resource'''
@@ -173,6 +191,11 @@ class OfficeResource(SimpleApiResource):
     class Meta(SimpleApiResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
     #############################################
     #############################################

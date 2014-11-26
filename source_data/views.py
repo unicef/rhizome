@@ -19,7 +19,7 @@ from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
-from source_data.etl_tasks.transform_upload import DocTransform
+from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
@@ -86,8 +86,6 @@ def data_entry(request):
                 {'data_entry_form': data_entry_form,'message':msg},
                 RequestContext(request),
             )
-
-
 
 
         source_datapoints, not_parsed = bulk_data_to_sdps(
@@ -157,7 +155,6 @@ def mark_doc_as_processed(request,document_id):
 ### File Upload Stuff Below ###
 
 
-
 def file_upload(request):
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
@@ -174,7 +171,19 @@ def file_upload(request):
 
     elif request.method == 'POST':
 
-        to_upload = request.FILES['docfile']
+        file_type = request.POST['file_type']
+        try:
+            to_upload = request.FILES['docfile']
+
+        except KeyError:
+            msg = 'Please add a file to upload'
+            messages.add_message(request, messages.INFO,msg)
+
+            return render_to_response(
+                'upload/file_upload.html',
+                context_instance=RequestContext(request)
+            )
+
         # If the document is of an invalid format
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
             msg = 'Please upload either .CSV, .XLS or .XLSX file format'
@@ -188,22 +197,40 @@ def file_upload(request):
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        return HttpResponseRedirect(reverse('source_data:pre_process_file',kwargs={'pk':newdoc.id}))  # encode like done below
+        return HttpResponseRedirect(reverse('source_data:pre_process_file',\
+            kwargs={'pk':newdoc.id,'file_type':file_type}))  # encode like done below
 
 
-def pre_process_file(request,pk):
+def pre_process_file(request,pk,file_type):
 
 
-    dt = DocTransform(pk)
-    header_list  = dt.df.columns.values
-    column_mapping = dt.get_essential_columns()
+    if file_type == 'Datapoint':
 
-    return render_to_response(
-        'upload/document_review.html',
-        {'doc_data': column_mapping,'header_list':header_list},
-        RequestContext(request),
-    )
+        dt = DocTransform(pk,file_type)
 
+        print dt.df
+
+        header_list  = dt.df.columns.values
+        column_mapping = dt.get_essential_columns()
+
+        return render_to_response(
+            'upload/document_review.html',
+            {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
+            RequestContext(request),
+        )
+
+    elif file_type == 'Region':
+
+        rt = RegionTransform(pk,file_type)
+        err,valid_df = rt.validate()
+        src_regions = rt.insert_source_regions(valid_df)
+        master_regions = rt.source_regions_to_regions()
+
+        return render_to_response(
+            'upload/document_review.html',
+            {'document_id':pk},
+            RequestContext(request),
+        )
 
 
 ######### META MAPPING ##########
