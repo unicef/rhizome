@@ -24,6 +24,10 @@ urlpatterns = [
     url(r'^delete/(?P<pk>[0-9]+)/$', views.RegionDeleteView.as_view(),
         name='delete_region'),
 
+    # url(r'^region_file_upload/$', views.region_file_upload, name='region_file_upload'),
+
+
+
         ##########################
         ## REGION RELATIONSHIPS ##
         ##########################

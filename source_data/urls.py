@@ -5,6 +5,8 @@ from source_data.views import *
 urlpatterns = [
   url(r'^file_upload/$', file_upload, name='file_upload'),
   url(r'^pre_process_file/(?P<pk>[0-9]+)/$', pre_process_file, name='pre_process_file'),
+  # url(r'^process_region_file/(?P<pk>[0-9]+)/$', process_region_file, name='process_region_file'),
+
   url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),name='map_indicator'),
   url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view(),name='map_region'),
   url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),name='map_campaign'),
@@ -15,11 +17,4 @@ urlpatterns = [
   url(r'^refresh_master_by_document_id/(?P<document_id>[0-9]+)/$', refresh_master_by_document_id, name='refresh_master_by_document_id'),
   url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$', mark_doc_as_processed, name='mark_doc_as_processed'),
   url(r'^user_portal/$', user_portal, name='user_portal'),
-  # url(r'^user_portal/?campaign_id=(?P<campaign_id>[0-9]+)/$', user_portal, name='user_portal'),
-
-  # url(r'^user_portal/(?P<campaign_id>[0-9]+)/$', user_portal, name='user_portal'),
-
-
-
-
 ]

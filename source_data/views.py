@@ -156,7 +156,11 @@ def mark_doc_as_processed(request,document_id):
 
 ### File Upload Stuff Below ###
 
+def region_file_upload(request):
 
+    print 'something'
+
+    return render_to_response('HELLO')
 
 def file_upload(request):
 

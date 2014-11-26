@@ -11,7 +11,6 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 
-
 import pprint as pp
 
 class ResultObject(object):

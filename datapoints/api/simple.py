@@ -17,6 +17,7 @@ from tastypie.serializers import Serializer
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from stronghold.decorators import public
 import pandas as pd
 

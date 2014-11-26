@@ -5,11 +5,12 @@ TRUNCATE TABLE aggregation_type cascade;
 
 
 CREATE TEMP TABLE tmp AS
-select *,'calc_pct_solo_region_solo_campaign' as agg_type 
-from 
+select *,'calc_pct_solo_region_solo_campaign' as agg_type
+from
 (
 SELECT 'region_solo' as slug ,'region' as content_type,'solo' as param_type UNION ALL
 SELECT  'campaign_solo','campaign','solo' UNION ALL
+SELECT  'indicator_part','indicator','part' UNION ALL
 SELECT  'indicator_part','indicator','part' UNION ALL
 SELECT  'indicator_whole','indicator','whole'
 )x
@@ -17,7 +18,7 @@ SELECT  'indicator_whole','indicator','whole'
 UNION ALL
 
 SELECT *, 'calc_pct_parent_region_solo_campaign' as agg_type
-from 
+from
 (
 SELECT 'region_parent' as slug ,'region' as content_type, 'parent'as param_type UNION ALL
 SELECT 'indicator_whole','indicator','whole' UNION ALL
@@ -28,7 +29,7 @@ SELECT 'indicator_part' ,'indicator','part'
 
 INSERT INTO aggregation_type
 (name,slug,display_name_w_sub,created_at)
-SELECT DISTINCT agg_type, agg_type, agg_type, now() 
+SELECT DISTINCT agg_type, agg_type, agg_type, now()
 FROM tmp;
 
 INSERT INTO aggregation_expected_data
@@ -40,4 +41,3 @@ on t.agg_type = at.slug;
 
 
 select * from aggregation_expected_data
-

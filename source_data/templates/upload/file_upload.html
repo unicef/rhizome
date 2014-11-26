@@ -8,6 +8,8 @@
 </ul>
 {% endif %}
 
+
+<br><br>
 <p>
 	For Excel uploads, please upload one, sheet and place it as the first sheet
 	in the workbook
@@ -16,8 +18,19 @@
 <form action="{% url 'upload:file_upload' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <p>{{ form.non_field_errors }}</p>
+  <br><br>
   <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+  <br><br>
   <p>{{ form.docfile.errors }} {{ form.docfile }}</p>
+
+  <select name="file_type">
+    <option value="Datapoint">Datapoint</option>
+    <option value="Region">Region</option>
+  </select name="movie">
+
+
+<br><br>
+
 	<button type="submit" class="btn btn-primary"> Upload! </button></a>
 </form>
 
