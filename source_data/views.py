@@ -225,9 +225,6 @@ def pre_process_file(request,pk,file_type):
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
         master_regions = rt.source_regions_to_regions()
-        master_region_relationships = rt.source_region_rels_to_region_rels()
-
-
 
         return render_to_response(
             'upload/document_review.html',

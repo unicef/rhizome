@@ -213,41 +213,6 @@ class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
     template_name = 'regions/confirm_delete.html'
     permission_required = 'datapoints.delete_region'
 
-    ############################
-    ### REGION RELATIONSHIPS ###
-    ############################
-
-class RegionRelationshipIndexView(IndexView):
-    model = RegionRelationship
-    template_name = 'region_relationships/index.html'
-    context_object_name = 'top_region_relationships'
-
-class RegionRelationshipCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = RegionRelationship
-    success_url = reverse_lazy('regions:region_index')
-    template_name = 'region_relationships/create.html'
-    permission_required = 'datapoints.add_regionrelationship'
-
-
-    ##################################
-    ### REGION RELATIONSHIPS TYPES ###
-    ##################################
-
-class RegionRelagionshipTypeIndexView(IndexView):
-
-    model = RegionRelationshipType
-    template_name = 'region_relationships/type_index.html'
-    context_object_name = 'top_region_relationship_types'
-
-class RegionRelationshipTypeCreateView(PermissionRequiredMixin,
-    generic.CreateView):
-
-    model = RegionRelationshipType
-    success_url = reverse_lazy('regions:region_index')
-    template_name = 'region_relationships/type_create.html'
-    permission_required = 'datapoints.add_regionrelationship'
-
 
     ###################
     ### AGGREGATION ###

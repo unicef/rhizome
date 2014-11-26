@@ -75,6 +75,8 @@ class RegionTransform(DocTransform):
 
 
     def insert_source_regions(self,valid_df):
+        # http://localhost:8000/datapoints/regions
+        # http://localhost:8000/source_data/pre_process_file/595/Region/
 
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
@@ -118,9 +120,6 @@ class RegionTransform(DocTransform):
         source = Source.objects.get(source_name='region_upload')
 
         for sr in src_regions:
-            print sr.country
-            print sr.country
-            print sr.region_string
 
             try:
                 Region.objects.create(
@@ -131,15 +130,11 @@ class RegionTransform(DocTransform):
                     latitude = sr.lat,\
                     longitude = sr.lon,\
                     source = source,\
-                    source_guid = sr.source_guid
+                    source_guid = sr.source_guid,\
+                    parent_region = Region.objects.get(name=sr.parent_name)
                 )
             except IntegrityError as err:
                 print err
 
             except ObjectDoesNotExist as err:
                 print err
-
-
-
-    def source_region_rels_to_region_rels(self):
-        pass

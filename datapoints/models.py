@@ -59,6 +59,7 @@ class Region(models.Model):
     source = models.ForeignKey(Source)
     source_guid = models.CharField(max_length=255)
     is_high_risk = models.BooleanField(default=False)
+    parent_region = models.ForeignKey("self")
 
     def __unicode__(self):
         return unicode(self.name)
@@ -138,35 +139,6 @@ class Responsibility(models.Model):
         db_table = 'responsibility'
         ordering = ('indicator',)
         unique_together = ('user','indicator','region')
-
-
-
-class RegionRelationshipType(models.Model):
-
-    display_name = models.CharField(max_length=55)
-    inverse_display_name = models.CharField(max_length=55)
-    description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
-
-
-    def __unicode__(self):
-        return unicode(self.display_name)
-
-    class Meta:
-        db_table = 'region_relationship_type'
-
-
-class RegionRelationship(models.Model):
-
-    region_0 = models.ForeignKey(Region, related_name='ind_0')
-    region_1 = models.ForeignKey(Region, related_name='ind_1')
-    region_relationship_type = models.ForeignKey(RegionRelationshipType)
-    note = models.CharField(max_length=255,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-
-    class Meta:
-        db_table = 'region_relationship'
 
 
 class AggregationType(models.Model):

@@ -1,5 +1,5 @@
 from datapoints.models import AggregationExpectedData,AggregationType
-from datapoints.models import DataPoint, Indicator, Region, Campaign, RegionRelationship
+from datapoints.models import DataPoint, Indicator, Region, Campaign
 
 from django.db.models.query import QuerySet
 from django.core.exceptions import ObjectDoesNotExist
@@ -228,14 +228,9 @@ class AggregateResource(Resource):
         return None, result
 
     def get_sub_regions(self,parent_region_id):
-
-        rrs = RegionRelationship.objects.filter(region_0 = parent_region_id)
+        ''' FIX ME '''
 
         regions = []
-
-        # This is going to need to be RECURSIVE #
-        for r in rrs:
-            regions.append(r.region_1_id)
 
         return regions
 
