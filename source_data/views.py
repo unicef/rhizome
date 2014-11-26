@@ -178,7 +178,19 @@ def file_upload(request):
 
     elif request.method == 'POST':
 
-        to_upload = request.FILES['docfile']
+        file_type = request.POST['file_type']
+        try:
+            to_upload = request.FILES['docfile']
+
+        except KeyError:
+            msg = 'Please add a file to upload'
+            messages.add_message(request, messages.INFO,msg)
+
+            return render_to_response(
+                'upload/file_upload.html',
+                context_instance=RequestContext(request)
+            )
+
         # If the document is of an invalid format
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
             msg = 'Please upload either .CSV, .XLS or .XLSX file format'
@@ -192,11 +204,11 @@ def file_upload(request):
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        return HttpResponseRedirect(reverse('source_data:pre_process_file',kwargs={'pk':newdoc.id}))  # encode like done below
+        return HttpResponseRedirect(reverse('source_data:pre_process_file',\
+            kwargs={'pk':newdoc.id,'file_type':file_type}))  # encode like done below
 
 
-def pre_process_file(request,pk):
-
+def pre_process_file(request,pk,file_type):
 
     dt = DocTransform(pk)
     header_list  = dt.df.columns.values
@@ -204,7 +216,7 @@ def pre_process_file(request,pk):
 
     return render_to_response(
         'upload/document_review.html',
-        {'doc_data': column_mapping,'header_list':header_list},
+        {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
         RequestContext(request),
     )
 
