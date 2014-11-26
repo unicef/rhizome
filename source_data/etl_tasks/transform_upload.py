@@ -122,19 +122,28 @@ class RegionTransform(DocTransform):
         for sr in src_regions:
 
             try:
+                parent_region = Region.objects.get(name=sr.parent_name)
+                office = Office.objects.get(name=sr.country)
+
+            except ObjectDoesNotExist as err:
+                parent_region, office = None, None
+
+            try:
                 Region.objects.create(
                     name = sr.region_string,\
                     region_code = sr.region_code,\
                     region_type = sr.region_type,\
-                    office = Office.objects.get(name=sr.country),\
+                    office = office,\
                     latitude = sr.lat,\
                     longitude = sr.lon,\
                     source = source,\
                     source_guid = sr.source_guid,\
-                    parent_region = Region.objects.get(name=sr.parent_name)
+                    parent_region = parent_region
                 )
             except IntegrityError as err:
-                print err
-
-            except ObjectDoesNotExist as err:
-                print err
+                r = Region.objects.get(name=sr.region_string)
+                r.parent_region = parent_region
+                r.office = office
+                r.save()
+            except ValueError:
+                pass
