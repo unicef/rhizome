@@ -157,12 +157,10 @@ class RegionTransform(DocTransform):
                     'latitude':sr.lat,\
                     'longitude':sr.lon,\
                     'source':source,\
-                    'source_guid':sr.source_guid,\
-                    'parent_region':parent_region_lookup[sr.parent_name]})
-                #     except IntegrityError as err:
-                #         r = Region.objects.get(name=sr.region_string)
-                #         r.parent_region = parent_region
-                #         r.office = office
-                #         r.save()
-                #     except ValueError:
-                #         pass
+                    'source_region_id':sr.id,\
+                    'parent_region_id':parent_region_lookup[sr.parent_name]})
+
+                if created == 0:
+                    r.parent_region_id = parent_region_lookup[sr.parent_name]
+                    r.office = office
+                    r.save()
