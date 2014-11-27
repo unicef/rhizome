@@ -48,7 +48,7 @@ class Office(models.Model):
 class Region(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
-    region_code = models.CharField(max_length=10,unique=True)
+    region_code = models.CharField(max_length=55)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
@@ -57,9 +57,9 @@ class Region(models.Model):
     slug = AutoSlugField(populate_from='name',max_length=55)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    source_guid = models.CharField(max_length=255)
+    source_region = models.ForeignKey('source_data.SourceRegion')
     is_high_risk = models.BooleanField(default=False)
-    parent_region = models.ForeignKey("self")
+    parent_region = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -71,8 +71,6 @@ class Region(models.Model):
         permissions = (
             ('view_region', 'View region'),
         )
-
-        unique_together = ('source','source_guid')
 
         ordering = ('name',)
 
