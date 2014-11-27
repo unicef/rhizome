@@ -114,11 +114,9 @@ class RegionTransform(DocTransform):
                 print err
 
 
-    def source_regions_to_regions(self):
+    def add_source_parent_regions(self):
 
-        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
         source = Source.objects.get(source_name='region_upload')
-
 
         ## INSERT PARENT REGIONS
         parent_region_lookup = {}
@@ -135,36 +133,36 @@ class RegionTransform(DocTransform):
                     {'region_code':region_name,'office':office,'source':source,
                         'source_region_id':sr_id})
 
-                print r.id
+                parent_region_lookup[region_name] = r.id
 
-            # print p_id
+        return parent_region_lookup
 
+    def source_regions_to_regions(self,parent_region_lookup):
 
-        # for sr in src_regions:
-        #
-        #     try:
-        #         parent_region = Region.objects.get(name=sr.parent_name)
-        #         office = Office.objects.get(name=sr.country)
-        #
-        #     except ObjectDoesNotExist as err:
-        #         parent_region, office = None, None
-        #
-        #     try:
-        #         Region.objects.create(
-        #             name = sr.region_string,\
-        #             region_code = sr.region_code,\
-        #             region_type = sr.region_type,\
-        #             office = office,\
-        #             latitude = sr.lat,\
-        #             longitude = sr.lon,\
-        #             source = source,\
-        #             source_guid = sr.source_guid,\
-        #             parent_region = parent_region
-        #         )
-        #     except IntegrityError as err:
-        #         r = Region.objects.get(name=sr.region_string)
-        #         r.parent_region = parent_region
-        #         r.office = office
-        #         r.save()
-        #     except ValueError:
-        #         pass
+        source = Source.objects.get(source_name='region_upload')
+
+        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
+
+        for sr in src_regions:
+            #     try:
+
+            if sr.country is not None:
+                office = Office.objects.get(name=sr.country)
+
+                r,created = Region.objects.get_or_create(
+                    name = sr.region_string,defaults = {
+                    'region_code':sr.region_code,\
+                    'region_type':sr.region_type,\
+                    'office':office,\
+                    'latitude':sr.lat,\
+                    'longitude':sr.lon,\
+                    'source':source,\
+                    'source_guid':sr.source_guid,\
+                    'parent_region':parent_region_lookup[sr.parent_name]})
+                #     except IntegrityError as err:
+                #         r = Region.objects.get(name=sr.region_string)
+                #         r.parent_region = parent_region
+                #         r.office = office
+                #         r.save()
+                #     except ValueError:
+                #         pass
