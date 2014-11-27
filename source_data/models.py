@@ -119,7 +119,7 @@ class SourceDataPoint(models.Model):
 
 class SourceRegion(models.Model):
 
-    region_string = models.CharField(max_length=255,unique=True)
+    region_string = models.CharField(max_length=255)
     region_code = models.CharField(max_length=255,null=True)
     lat = models.CharField(max_length=255,null=True)
     lon = models.CharField(max_length=255,null=True)
@@ -129,6 +129,9 @@ class SourceRegion(models.Model):
     country = models.CharField(max_length=255,null=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
+
+    class Meta:
+        unique_together = ('region_string','document')
 
     def __unicode__(self):
         return self.region_string
