@@ -9,7 +9,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'SourceRegion', fields ['region_string']
-        db.delete_unique(u'source_data_sourceregion', ['region_string'])
+        try:
+            db.delete_unique(u'source_data_sourceregion', ['region_string'])
+        except Exception:
+            pass
 
         # Adding unique constraint on 'SourceRegion', fields ['region_string', 'document']
         db.create_unique(u'source_data_sourceregion', ['region_string', 'document_id'])
