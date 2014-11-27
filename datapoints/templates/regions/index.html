@@ -31,6 +31,22 @@
         {% endfor %}
 
     </table>
+  {% if is_paginated %}
+      <div class="pagination">
+          <span class="page-links">
+              {% if page_obj.has_previous %}
+                  <a href="/datapoints/regions?page={{ page_obj.previous_page_number }}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                  <a href="/datapoints/regions?page={{ page_obj.next_page_number }}">next</a>
+              {% endif %}
+          </span>
+      </div>
+  {% endif %}
+
 {% else %}
     <p>No regions are available.</p>
 {% endif %}
@@ -39,3 +55,19 @@
     </div>
 
 {% endblock %}
+
+
+
+
+
+{% for datapoint in top_datapoints %}
+        <tr>
+            <th>{{ datapoint.id }}</th>
+            <th>{{ datapoint.indicator }}</th>
+            <th>{{ datapoint.region }}</th>
+            <th>{{ datapoint.campaign }}</th>
+            <th>{{ datapoint.value }}</th>
+            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
+        </tr>
+        {% endfor %}
+    </table>

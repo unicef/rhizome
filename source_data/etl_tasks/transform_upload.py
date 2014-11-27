@@ -114,36 +114,53 @@ class RegionTransform(DocTransform):
                 print err
 
 
-    def source_regions_to_regions(self):
+    def add_source_parent_regions(self):
 
-        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
         source = Source.objects.get(source_name='region_upload')
 
-        for sr in src_regions:
+        ## INSERT PARENT REGIONS
+        parent_region_lookup = {}
+        parents = SourceRegion.objects.values('country','parent_name','id').distinct()
 
-            try:
-                parent_region = Region.objects.get(name=sr.parent_name)
+        for p in parents:
+
+            if p['country'] != None and p['parent_name'] != None:
+
+                office = Office.objects.get(name=p['country'])
+                region_name,sr_id = p['parent_name'],p['id']
+
+                r,created = Region.objects.get_or_create(name=region_name,defaults = \
+                    {'region_code':region_name,'office':office,'source':source,
+                        'source_region_id':sr_id})
+
+                parent_region_lookup[region_name] = r.id
+
+        return parent_region_lookup
+
+    def source_regions_to_regions(self,parent_region_lookup):
+
+        source = Source.objects.get(source_name='region_upload')
+
+        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
+
+        for sr in src_regions:
+            #     try:
+
+            if sr.country is not None:
                 office = Office.objects.get(name=sr.country)
 
-            except ObjectDoesNotExist as err:
-                parent_region, office = None, None
+                r,created = Region.objects.get_or_create(
+                    name = sr.region_string,defaults = {
+                    'region_code':sr.region_code,\
+                    'region_type':sr.region_type,\
+                    'office':office,\
+                    'latitude':sr.lat,\
+                    'longitude':sr.lon,\
+                    'source':source,\
+                    'source_region_id':sr.id,\
+                    'parent_region_id':parent_region_lookup[sr.parent_name]})
 
-            try:
-                Region.objects.create(
-                    name = sr.region_string,\
-                    region_code = sr.region_code,\
-                    region_type = sr.region_type,\
-                    office = office,\
-                    latitude = sr.lat,\
-                    longitude = sr.lon,\
-                    source = source,\
-                    source_guid = sr.source_guid,\
-                    parent_region = parent_region
-                )
-            except IntegrityError as err:
-                r = Region.objects.get(name=sr.region_string)
-                r.parent_region = parent_region
-                r.office = office
-                r.save()
-            except ValueError:
-                pass
+                if created == 0:
+                    r.parent_region_id = parent_region_lookup[sr.parent_name]
+                    r.office = office
+                    r.save()
