@@ -1,5 +1,5 @@
 import subprocess,sys,time,pprint as pp
-import traceback
+from traceback import format_exc
 from time import strftime
 
 from tastypie.resources import ModelResource
@@ -120,7 +120,7 @@ class EtlTask(object):
                 '--exclude_media_export' \
               ])
         except Exception:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, None
 
         return None, 'Successfully Retrieved Data for form: ' + form_id
@@ -155,7 +155,7 @@ class EtlTask(object):
             success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
 
         except Exception:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, None
 
         return None, success_msg
