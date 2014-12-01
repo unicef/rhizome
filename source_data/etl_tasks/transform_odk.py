@@ -75,7 +75,7 @@ class VcmSummaryTransform(object):
 
         doc, created = Document.objects.get_or_create(
             docfile = odk_settings.EXPORT_DIRECTORY + 'New_VCM_Summary.csv',
-            created_by_id = Source.objects.get(source_name='odk').id
+            created_by_id = User.objects.get(username='odk').id
         )
 
         return doc.id
