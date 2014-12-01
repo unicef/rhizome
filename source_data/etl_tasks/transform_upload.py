@@ -99,13 +99,10 @@ class RegionTransform(DocTransform):
                         + str(row_data.code)
                 )
             except UnicodeDecodeError as err:
-                print '=\n' * 10
-                print 'CANT DECODE'
-                print err
-
+                pass
             except IntegrityError as err:
-                print err
-
+                pass
+                
         distinct_parent_regions = list(set(parent_regions))
 
         for reg in distinct_parent_regions:

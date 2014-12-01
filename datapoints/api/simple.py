@@ -263,8 +263,25 @@ class DataPointResource(SimpleApiResource):
         '''This method contains all custom filtering.
            Specifically, getting datapoints by campaign date range'''
 
-        object_list = super(DataPointResource, self).get_object_list(request)
+        # object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
+
+        region_campaign_tuples = DataPoint.objects.values_list('region',\
+            'campaign').distinct()[:query_dict['the_limit']]
+
+        regions = [rc[0] for rc in region_campaign_tuples]
+        campaigns = [rc[1] for rc in region_campaign_tuples]
+
+        # print campaigns
+        # print regions
+
+
+        object_list = DataPoint.objects.filter(
+            region__in = regions,
+            campaign__in = campaigns,
+        )
+
+        print len(object_list)
 
         filtered_object_list = self.filter_by_campaign(object_list,query_dict)
 
