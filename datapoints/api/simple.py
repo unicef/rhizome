@@ -280,44 +280,52 @@ class DataPointResource(SimpleApiResource):
     def get_regions_and_campaigns_to_filter(self,query_dict):
         '''applying the limit to the region / campaign combo'''
 
+        # get the params from the query dict
         regions, campaigns, the_limit = self.parse_url_params(query_dict)
 
+        # find all of the distinct regions / campaigns in the db
         all_region_campaign_tuples = DataPoint.objects.values_list('region',\
             'campaign').distinct()
 
+        # if there was no region or campaign passed in just take the first
+        # x elements in the list ( where x is the_limit ) and return that
         if len(regions) == 0 and len(campaigns) == 0:
-
             return all_region_campaign_tuples[:the_limit]
 
+        final_region_campaign_tuples = []
 
-        # for r,c in all_region_campaign_tuples:
-        #
-        #     if len(final_region_campaign_tuples) = the_limit:
-        #         final_region_campaign_tuples.append(1)
+        # loop through all of the distinct campaigns/regions in the db and if
+        # the request matches then add to the array that will be returned
+        for r,c in all_region_campaign_tuples:
+            if r in regions and c in campaigns:
+                final_region_campaign_tuples.append((r,c))
+            elif r in regions and len(campaigns) == 0:
+                final_region_campaign_tuples.append((r,c))
+            elif len(regions) == 0 and c in campaigns:
+                final_region_campaign_tuples.append((r,c))
+            else:
+                pass
 
-
-        # return region_campaign_tuples
-        return all_region_campaign_tuples[:the_limit]
+        return final_region_campaign_tuples
 
 
     def get_object_list(self, request):
+        ''' evan needs ot be able to limit by region/campaign pairs so here
+        i override the get object list with a method that finds the regions
+        and campaigns that coorespond with the limit passed in conjunction
+        with the campaign / region list'''
 
-        object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
 
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
-        print regions
 
-        try:
-            object_list = DataPoint.objects.filter(
-                region__in = regions,
-                campaign__in = campaigns,
-            )
-        except Exception as err:
-            print err
+        object_list = DataPoint.objects.filter(
+            region__in = regions,
+            campaign__in = campaigns,
+        )
 
         return object_list
 
