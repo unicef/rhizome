@@ -108,7 +108,7 @@ class EtlTask(object):
         form_id = 'New_VCM_Summary'
 
         try:
-            subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+            subprocess.check_call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
                 '--export_filename',form_id+'.csv', \
                 '--aggregate_url',odk_settings.AGGREGATE_URL, \

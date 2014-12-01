@@ -95,8 +95,14 @@ class RegionTransform(DocTransform):
                     region_type = row_data.region_type,\
                     country = row_data.country,\
                     document_id = self.document.id,\
-                    source_guid = str(row_data.region_name) + ' - '  + str(row_data.code)
+                    source_guid = row_data.region_name.encode('utf-8') + ' - '\
+                        + str(row_data.code)
                 )
+            except UnicodeDecodeError as err:
+                print '=\n' * 10
+                print 'CANT DECODE'
+                print err
+
             except IntegrityError as err:
                 print err
 
