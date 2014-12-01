@@ -299,16 +299,22 @@ class DataPointResource(SimpleApiResource):
 
         for r,c in all_region_campaign_tuples:
 
-            if str(r) in regions and str(c) in campaigns:
+            if len(final_region_campaign_tuples) == the_limit:
+                return final_region_campaign_tuples
+
+            elif str(r) in regions and str(c) in campaigns:
                 final_region_campaign_tuples.append((r,c))
+
             elif str(r) in regions and len(campaigns) == 0:
                 final_region_campaign_tuples.append((r,c))
+
             elif len(regions) == 0 and str(c) in campaigns:
                 final_region_campaign_tuples.append((r,c))
+
             else:
                 pass
 
-        return final_region_campaign_tuples[:the_limit]
+        return final_region_campaign_tuples
 
 
     def get_object_list(self, request):
@@ -319,15 +325,9 @@ class DataPointResource(SimpleApiResource):
 
         query_dict = request.GET
 
-
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
-
-
-        try:
-            regions = list(set([rc[0] for rc in region_campaign_tuples]))
-            campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
-        except Exception as err:
-            print err
+        regions = list(set([rc[0] for rc in region_campaign_tuples]))
+        campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
 
         object_list = DataPoint.objects.filter(
             region__in = regions,
