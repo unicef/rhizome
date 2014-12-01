@@ -259,7 +259,7 @@ class DataPointResource(SimpleApiResource):
     def parse_url_params(self,query_dict):
 
         try:
-            the_limit = query_dict['the_limit']
+            the_limit = int(query_dict['the_limit'])
         except KeyError:
             the_limit = 10
 
@@ -296,17 +296,19 @@ class DataPointResource(SimpleApiResource):
 
         # loop through all of the distinct campaigns/regions in the db and if
         # the request matches then add to the array that will be returned
+
         for r,c in all_region_campaign_tuples:
-            if r in regions and c in campaigns:
+
+            if str(r) in regions and str(c) in campaigns:
                 final_region_campaign_tuples.append((r,c))
-            elif r in regions and len(campaigns) == 0:
+            elif str(r) in regions and len(campaigns) == 0:
                 final_region_campaign_tuples.append((r,c))
-            elif len(regions) == 0 and c in campaigns:
+            elif len(regions) == 0 and str(c) in campaigns:
                 final_region_campaign_tuples.append((r,c))
             else:
                 pass
 
-        return final_region_campaign_tuples
+        return final_region_campaign_tuples[:the_limit]
 
 
     def get_object_list(self, request):
@@ -317,10 +319,15 @@ class DataPointResource(SimpleApiResource):
 
         query_dict = request.GET
 
+
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
 
-        regions = list(set([rc[0] for rc in region_campaign_tuples]))
-        campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
+
+        try:
+            regions = list(set([rc[0] for rc in region_campaign_tuples]))
+            campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
+        except Exception as err:
+            print err
 
         object_list = DataPoint.objects.filter(
             region__in = regions,
@@ -329,6 +336,8 @@ class DataPointResource(SimpleApiResource):
 
         return object_list
 
+        object_list = super(DataPointResource, self).get_object_list(request)
+        return object_list
 
     def dehydrate(self, bundle):
         ''' depending on the <uri_display> parameter, return to the bundle
