@@ -223,6 +223,7 @@ class DataPointResource(SimpleApiResource):
         }
         allowed_methods = ['get']
         serializer = CustomSerializer()
+        max_limit = None
 
 
     def filter_by_campaign(self,object_list,query_dict):
@@ -253,39 +254,72 @@ class DataPointResource(SimpleApiResource):
 
         campaign_ids = [c.id for c in campaigns_to_filter]
 
+        return campaign_ids
 
-        filtered_object_list = object_list.filter(campaign_id__in=campaign_ids)
+    def parse_url_params(self,query_dict):
 
-        return filtered_object_list
+        try:
+            the_limit = query_dict['the_limit']
+        except KeyError:
+            the_limit = 10
+
+
+        try:
+            region_in = query_dict['region__in']
+        except KeyError:
+            region_in = []
+
+
+        try:
+            campaign_in = query_dict['campaign__in']
+        except KeyError:
+            campaign_in = []
+
+        return region_in, campaign_in, the_limit
+
+    def get_regions_and_campaigns_to_filter(self,query_dict):
+        '''applying the limit to the region / campaign combo'''
+
+        regions, campaigns, the_limit = self.parse_url_params(query_dict)
+
+        all_region_campaign_tuples = DataPoint.objects.values_list('region',\
+            'campaign').distinct()
+
+        if len(regions) == 0 and len(campaigns) == 0:
+
+            return all_region_campaign_tuples[:the_limit]
+
+
+        # for r,c in all_region_campaign_tuples:
+        #
+        #     if len(final_region_campaign_tuples) = the_limit:
+        #         final_region_campaign_tuples.append(1)
+
+
+        # return region_campaign_tuples
+        return all_region_campaign_tuples[:the_limit]
 
 
     def get_object_list(self, request):
-        '''This method contains all custom filtering.
-           Specifically, getting datapoints by campaign date range'''
 
-        # object_list = super(DataPointResource, self).get_object_list(request)
+        object_list = super(DataPointResource, self).get_object_list(request)
         query_dict = request.GET
 
-        region_campaign_tuples = DataPoint.objects.values_list('region',\
-            'campaign').distinct()[:query_dict['the_limit']]
+        region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
 
-        regions = [rc[0] for rc in region_campaign_tuples]
-        campaigns = [rc[1] for rc in region_campaign_tuples]
+        regions = list(set([rc[0] for rc in region_campaign_tuples]))
+        campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
+        print regions
 
-        # print campaigns
-        # print regions
+        try:
+            object_list = DataPoint.objects.filter(
+                region__in = regions,
+                campaign__in = campaigns,
+            )
+        except Exception as err:
+            print err
 
-
-        object_list = DataPoint.objects.filter(
-            region__in = regions,
-            campaign__in = campaigns,
-        )
-
-        print len(object_list)
-
-        filtered_object_list = self.filter_by_campaign(object_list,query_dict)
-
-        return filtered_object_list
+        return object_list
 
 
     def dehydrate(self, bundle):
