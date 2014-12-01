@@ -7,7 +7,6 @@ Vue.config.debug = true;
 Vue.component('vue-dropdown', require('./component/dropdown'));
 Vue.component('vue-table', require('./component/table'));
 Vue.component('vue-pagination', require('./component/pagination'));
-Vue.component('vue-line-chart', require('./component/line-chart'));
 
 module.exports = {
 	Explorer: function (el) {

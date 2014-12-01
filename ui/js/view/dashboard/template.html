@@ -8,55 +8,53 @@
 		<section>
 			<h4>Polio Cases</h4>
 			<svg v-component="chart-base"
-				   v-with="series: missed"
+				   v-with="missed: missed"
 				   aspect="1.618">
 
 				<rect class="bg"
 				      v-attr="width : contentWidth,
 				              height: contentHeight"></rect>
 
-				<g class="y axis">
-					<g v-repeat="yTicks"
-						 v-attr="transform: 'translate(0,' + position + ')'">
-						<line v-attr="x2: contentWidth"></line>
-						<text dx="1" dy="-2" v-text="label"></text>
-					</g>
-				</g>
+        <g class="line-chart"
+        	 v-component="chart-line"
+        	 v-with="lines : missed,
+        	         width : contentWidth,
+        	         height: contentHeight">
 
-				<path v-repeat="datapoints: series"
-				      v-component="chart-line"
-				      v-attr="d : datapoints | line"
-				      fill="none"
-				      stroke="#888"
-				      stroke-width="1"
-				      class="line"></path>
-			</svg>
-		</section>
+					<g class="y axis"></g>
+					<g class="x axis"
+						 v-attr="transform: 'translate(0,' + height + ')'"></g>
+        	<g class="areas"></g>
+					<g class="lines"></g>
+        </g>
+				</svg>
+			</section>
 
 		<section>
 			<h4>Immunity Gap</h4>
-
 			<svg v-component="chart-base"
-				   v-with="series: immunityGap"
+				   v-with="missed: missed,
+				           gap: immunityGap"
 				   aspect="1.618">
 
 				<rect class="bg"
 				      v-attr="width : contentWidth,
 				              height: contentHeight"></rect>
 
-				<g class="y axis">
-					<g v-repeat="yTicks"
-						 v-attr="transform: 'translate(0,' + position + ')'">
-						<line v-attr="x2: contentWidth"></line>
-						<text dx="1" dy="-2" v-text="label"></text>
-					</g>
-				</g>
+        <g class="line-chart"
+        	 v-component="chart-line"
+        	 v-with="lines : missed,
+        	         areas : gap,
+        	         width : contentWidth,
+        	         height: contentHeight">
 
-				<path v-repeat="datapoints: series"
-							v-component="chart-line"
-				      v-attr="d : datapoints | area"
-				      fill="#888"></path>
-			</svg>
+					<g class="y axis"></g>
+					<g class="x axis"
+						 v-attr="transform: 'translate(0,' + height + ')'"></g>
+        	<g class="areas"></g>
+					<g class="lines"></g>
+        </g>
+				</svg>
 		</section>
 
 	</section>
@@ -66,24 +64,26 @@
 			<div class="columns">
 				<h3>Performance of Front Line Workers</h3>
 			</div>
+
 			<div class="medium-4 columns">
-				<div style="width: 65px; float: left; padding-right: 15px">
-					<svg v-component="chart-base"
-						   v-with="series: microplans.series">
-						<g transform="translate(25, 25)">
-							<path v-repeat="slice: series"
-								    v-component="chart-pie"
-								    v-radius="inner: 0, outer: 25"
-								    v-attr="d:    slice | arc,
-								    	      fill: slice.color"></path>
-					  </g>
-					</svg>
+				<div class="row">
+					<div class="small-3 column">
+						<svg v-component="chart-base"
+							   v-with="series: microplans.series">
+<!-- 							<g v-component="chart-pie"
+								 v-with="data        : series,
+								         contentWidth: contentWidth"
+								 v-radius="outer: contentWidth / 2"></g>
+						  </g> -->
+						</svg>
+					</div>
+					<p class="small-9 columns">
+						{{ microplans.socialData }} / {{ microplans.total }} microplans with
+						social data
+					</p>
 				</div>
-				<p>
-					{{ microplans.socialData }} / {{ microplans.total }} microplans with
-					social data
-				</p>
 			</div>
+
 			<div class="medium-6 columns"></div>
 			<div class="medium-2 columns"></div>
 		</div>

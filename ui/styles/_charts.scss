@@ -23,11 +23,14 @@ svg {
     }
   }
 
-	&.line {
-		path {
-			fill: none;
-			stroke: $charcoal;
-			stroke-width: 1px;
-		}
+	.line {
+		fill: none;
+		stroke: $charcoal;
+		stroke-width: 1px;
+	}
+
+	.area {
+		fill: $iron;
+		fill-opacity: 0.6;
 	}
 }

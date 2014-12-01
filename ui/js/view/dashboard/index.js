@@ -83,11 +83,7 @@ module.exports = {
 
 	components: {
 		'chart-base': require('../../component/chart'),
-		'chart-line': require('../../component/line-chart'),
-		'chart-pie' : require('../../component/chart-pie')
-	},
-
-	directives: {
-		'pie': require('../../directives/pie')
+		'chart-line': require('../../component/chart/line'),
+		'chart-pie' : require('../../component/chart/pie')
 	}
 };
