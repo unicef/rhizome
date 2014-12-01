@@ -1,7 +1,6 @@
 'use strict';
 
 var _   = require('lodash');
-var d3  = require('d3');
 var api = require('../../data/api.js');
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
 			missed     : [],
 			immunityGap: [],
 			microplans : {
-				series    : [],
+				data    : [],
 				socialData: 'NA',
 				total     : 'NA'
 			}
@@ -63,19 +62,19 @@ module.exports = {
 			indicator__in: [27, 28],
 			uri_display  : 'id'
 		}).done(function (data) {
-			var pie        = d3.layout.pie();
 			var indicators = _.reduce(data.objects[0].indicators, function (r, v) {
 				r[v.indicator] = Number(v.value);
 				return r;
 			}, {});
 
-			var slices = pie([indicators[28], indicators[27] - indicators[28]]);
+			self.microplans.data = [{
+				value: indicators[28],
+				color: '#5F6566',
+			}, {
+				value: indicators[27] - indicators[28],
+				color: '#D5DFE2'
+			}];
 
-			slices.forEach(function (d, i) {
-				d.color = i % 2 === 1 ? '#D5DFE2' : '#5F6566';
-			});
-
-			self.microplans.series     = slices;
 			self.microplans.socialData = indicators[28];
 			self.microplans.total      = indicators[27];
 		});

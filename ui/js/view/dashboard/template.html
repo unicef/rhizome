@@ -69,12 +69,17 @@
 				<div class="row">
 					<div class="small-3 column">
 						<svg v-component="chart-base"
-							   v-with="series: microplans.series">
-<!-- 							<g v-component="chart-pie"
-								 v-with="data        : series,
-								         contentWidth: contentWidth"
-								 v-radius="outer: contentWidth / 2"></g>
-						  </g> -->
+							   v-with="microplans: microplans.data">
+							<g v-component="chart-pie"
+								 v-attr="transform: 'translate(' + width / 2 + ',' + height / 2 + ')'"
+								 v-with="slices      : microplans,
+								         radius.outer: contentWidth / 2,
+								         width       : contentWidth,
+								         height      : contentHeight">
+
+								<g class="pie"></g>
+							</g>
+						  </g>
 						</svg>
 					</div>
 					<p class="small-9 columns">
