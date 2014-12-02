@@ -372,10 +372,6 @@ class DataPointResource(SimpleApiResource):
         '''
 
         query_dict = request.GET
-        is_agg, object_list = self.agg_regions(query_dict)
-
-        if is_agg == 1:
-            return object_list
 
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
@@ -427,3 +423,18 @@ class DataPointResource(SimpleApiResource):
 
 
         return bundle
+
+class ParentRegionAggResource(SimpleApiResource):
+
+
+        class Meta(SimpleApiResource.Meta):
+            queryset = ParentRegionAgg.objects.all()
+            resource_name = 'parent_region_agg'
+            filtering = {
+                "indicator": ALL,
+                "parent_region":ALL,
+                "campaign":ALL,
+            }
+            allowed_methods = ['get']
+            # serializer = CustomSerializer()
+            max_limit = None
