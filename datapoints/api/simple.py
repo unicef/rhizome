@@ -18,6 +18,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
+from django.db.models import Sum
+
 from stronghold.decorators import public
 import pandas as pd
 
@@ -273,14 +275,27 @@ class DataPointResource(SimpleApiResource):
         except KeyError:
             campaign_in = []
 
+        try:
+            indicator_in = query_dict['indicator__in']
+        except KeyError:
+            indicator_in = []
 
-        return region_in, campaign_in, the_limit
+        try:
+            parent_region = query_dict['parent_region']
+        except KeyError:
+            parent_region = None
+
+
+        return region_in, campaign_in, indicator_in, parent_region, the_limit
 
     def get_regions_and_campaigns_to_filter(self,query_dict):
-        '''applying the limit to the region / campaign combo'''
+        '''
+        applying the limit to the region / campaign combo
+        '''
 
         # get the params from the query dict
-        regions, campaigns, the_limit = self.parse_url_params(query_dict)
+        regions, campaigns, indicators,parent_region,the_limit = \
+            self.parse_url_params(query_dict)
 
         # find all of the distinct regions / campaigns in the db
         all_region_campaign_tuples = DataPoint.objects.values_list('region',\
@@ -316,51 +331,50 @@ class DataPointResource(SimpleApiResource):
         return final_region_campaign_tuples
 
     def obj_get_list(self, bundle, **kwargs):
-        ''' overriding this method because if i dont, the filters are applied
-        to the aggregate and because of whcih i get no data'''
+        '''
+        Overriding this method because if i dont, the filters are applied
+        to the aggregate and because of whcih i get no data
+        '''
         # Filtering disabled for brevity...
         return self.get_object_list(bundle.request)
 
     def agg_regions(self,query_dict):
-        ''' see if there is a parent region param, then find the sub regions
-        get their values and aggregate'''
+        '''
+        see if there is a parent region param, then find the sub regions
+        get their values and aggregate
+        '''
 
-        try:
-            parent_region = query_dict['parent_region']
-        except KeyError:
+        region_ids, campaign_ids, indicator_ids, parent_region, the_limit\
+            = self.parse_url_params(query_dict)
+
+        if parent_region is None:
             return 0, None
 
-        try:
-            campaign_ids = list(query_dict['campaign__in'])
-        except KeyError:
-            campaign_ids = DataPoint.objects.values_list('campaign').distinct()[:1]
+        campaign_list = [c for c in campaign_ids.split(',')]
+        indicator_list = [c for c in indicator_ids.split(',')]
 
-        sub_regions = Region.objects.filter(parent_region_id=parent_region)
-
-        sub_region_ids = [sr.id for sr in sub_regions]
-
-        agg_object_list = DataPoint.objects.filter(
-            region__in = sub_region_ids,
-            campaign__in = campaign_ids,
+        agg_object_list = ParentRegionAgg.objects.filter(
+            campaign__in = campaign_list,
+            indicator__in = indicator_list,
+            parent_region_id = parent_region
         )
-
 
         return 1, agg_object_list
 
 
 
-
     def get_object_list(self, request):
-        ''' evan needs ot be able to limit by region/campaign pairs so here
+        '''
+        Evan needs ot be able to limit by region/campaign pairs so here
         i override the get object list with a method that finds the regions
         and campaigns that coorespond with the limit passed in conjunction
-        with the campaign / region list'''
+        with the campaign / region list
+        '''
 
         query_dict = request.GET
         is_agg, object_list = self.agg_regions(query_dict)
 
         if is_agg == 1:
-            print object_list
             return object_list
 
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
@@ -377,8 +391,10 @@ class DataPointResource(SimpleApiResource):
 
 
     def dehydrate(self, bundle):
-        ''' depending on the <uri_display> parameter, return to the bundle
-        the name, resurce_uri, slug or ID of the resource'''
+        '''
+        Depending on the <uri_display> parameter, return to the bundle
+        the name, resurce_uri, slug or ID of the resource
+        '''
 
         fk_columns = {'indicator':bundle.obj.indicator,\
             'campaign':bundle.obj.campaign,\

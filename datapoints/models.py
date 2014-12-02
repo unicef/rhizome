@@ -163,3 +163,15 @@ class AggregationExpectedData(models.Model):
 
     class Meta:
         db_table = 'aggregation_expected_data'
+
+
+class ParentRegionAgg(models.Model):
+
+    parent_region = models.ForeignKey(Region)
+    indicator = models.ForeignKey(Indicator)
+    campaign = models.ForeignKey(Campaign)
+    the_sum = models.FloatField()
+
+    class Meta:
+        db_table = 'parent_region_agg'
+        managed = False
