@@ -17,9 +17,8 @@ module.exports = {
 			var svg = d3.select(this.$el);
 
 			var stack = d3.layout.stack()
-				.values(function (d) { return d.values; })
-				.x(function (d) { return d.x; })
-				.y(function (d) { return d.y; });
+				.order('inside-out')
+				.values(function (d) { return d.values; });
 
 			var layers = stack(this.layers);
 
