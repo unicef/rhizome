@@ -130,7 +130,7 @@ class RegionTransform(DocTransform):
                 parent_defaults = {
                     'region_code': reg,\
                     'document': self.document,\
-                    'country': row_data.country
+                    'country': row_data.country,\
                     'source_guid': reg.encode('utf-8')}
 
             except UnicodeDecodeError as err:
