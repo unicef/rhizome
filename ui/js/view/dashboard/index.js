@@ -1,7 +1,9 @@
 'use strict';
 
-var _   = require('lodash');
-var api = require('../../data/api.js');
+var _        = require('lodash');
+var api      = require('../../data/api.js');
+
+var coolgray = require('../../colors/coolgray');
 
 module.exports = {
 	template: require('./template.html'),
@@ -9,10 +11,11 @@ module.exports = {
 
 	data: function () {
 		return {
+			polio      : [],
 			missed     : [],
 			immunityGap: [],
 			microplans : {
-				data    : [],
+				data      : [],
 				socialData: 'NA',
 				total     : 'NA'
 			}
@@ -53,10 +56,12 @@ module.exports = {
 				}
 			}
 
-			self.missed = _.values(_.pick(series, '21', '22'));
+			self.polio = _.values(_.pick(series, '21', '22'));
 			self.immunityGap = [series[25]];
 		});
 
+		// Just fetch a random pair of total microplans and microplans with social
+		// data for demoing.
 		api.datapoints({
 			limit        : 2,
 			indicator__in: [27, 28],
@@ -71,6 +76,9 @@ module.exports = {
 				value: indicators[28],
 				color: '#5F6566',
 			}, {
+				// Indicator 27 is the total number of microplans. For the pie chart we
+				// need the number of plans with data, and the number without, so we
+				// subtract the total from those with.
 				value: indicators[27] - indicators[28],
 				color: '#D5DFE2'
 			}];
@@ -78,11 +86,50 @@ module.exports = {
 			self.microplans.socialData = indicators[28];
 			self.microplans.total      = indicators[27];
 		});
+
+		api.datapoints({
+			limit        : 0,
+			indicator__in: [22, 24, 26],
+			region       : 13,
+			uri_display  : 'id'
+		}).done(function (data) {
+			var layers = {};
+			var color  = -1;
+
+			// Transform the returned data for easy use with d3's stack layout. Each
+			// indicator will correspond to one layer. Layers are represented by
+			// objects with a name property and a values property, which is an array
+			// of objects containing x and y properties. The campaign ID gets mapped
+			// to the x property, and the indicator value goes into the y property.
+			for (var i = data.objects.length - 1; i >= 0; i--) {
+				var row = data.objects[i];
+
+				for (var j = row.indicators.length - 1; j >= 0; j--) {
+					var indicator = row.indicators[j].indicator;
+
+					if (!layers.hasOwnProperty(indicator)) {
+						layers[indicator] = {
+							'name'  : indicator,
+							'color' : coolgray[++color % coolgray.length],
+							'values': []
+						};
+					}
+
+					layers[indicator].values.push({
+						x: row.campaign,
+						y: Number(row.indicators[j].value)
+					});
+				}
+			}
+
+			self.missed = _.values(layers);
+		});
 	},
 
 	components: {
-		'chart-base': require('../../component/chart'),
-		'chart-line': require('../../component/chart/line'),
-		'chart-pie' : require('../../component/chart/pie')
+		'chart-base'   : require('../../component/chart'),
+		'chart-line'   : require('../../component/chart/line'),
+		'chart-pie'    : require('../../component/chart/pie'),
+		'chart-stacked': require('../../component/chart/stacked')
 	}
 };

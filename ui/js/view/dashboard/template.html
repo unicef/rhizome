@@ -8,7 +8,7 @@
 		<section>
 			<h4>Polio Cases</h4>
 			<svg v-component="chart-base"
-				   v-with="missed: missed"
+				   v-with="missed: polio"
 				   aspect="1.618">
 
 				<rect class="bg"
@@ -33,7 +33,7 @@
 		<section>
 			<h4>Immunity Gap</h4>
 			<svg v-component="chart-base"
-				   v-with="missed: missed,
+				   v-with="missed: polio,
 				           gap: immunityGap"
 				   aspect="1.618">
 
@@ -48,12 +48,12 @@
         	         width : contentWidth,
         	         height: contentHeight">
 
-					<g class="y axis"></g>
-					<g class="x axis"
-						 v-attr="transform: 'translate(0,' + height + ')'"></g>
-        	<g class="areas"></g>
-					<g class="lines"></g>
-        </g>
+						<g class="y axis"></g>
+						<g class="x axis"
+							 v-attr="transform: 'translate(0,' + height + ')'"></g>
+	        	<g class="areas"></g>
+						<g class="lines"></g>
+	        </g>
 				</svg>
 		</section>
 
@@ -87,9 +87,45 @@
 						social data
 					</p>
 				</div>
+
+				<section>
+					<h4>Missed Children</h4>
+					<svg v-component="chart-base"
+						   v-with="missed: missed"
+						   aspect="1.618">
+
+						<rect class="bg"
+						      v-attr="width : contentWidth,
+						              height: contentHeight"></rect>
+
+		        <g class="stacked-area-chart"
+		        	 v-component="chart-stacked"
+		        	 v-with="layers: missed,
+		        	         width : contentWidth,
+		        	         height: contentHeight">
+
+							<g class="y axis"></g>
+							<g class="x axis"
+								 v-attr="transform: 'translate(0,' + height + ')'"></g>
+		        	<g class="layers"></g>
+		        </g>
+					</svg>
+				</section>
+
+				<section>
+					<h4>Conversions</h4>
+					<svg v-component="chart-base" aspect="1.618">
+
+						<rect class="bg"
+				      v-attr="width : contentWidth,
+				              height: contentHeight"></rect>
+
+					</svg>
+				</section>
 			</div>
 
-			<div class="medium-6 columns"></div>
+			<div class="medium-6 columns">
+			</div>
 			<div class="medium-2 columns"></div>
 		</div>
 	</section>

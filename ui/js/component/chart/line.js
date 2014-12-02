@@ -31,6 +31,8 @@ module.exports = {
 				.domain([0, d3.max(data, function (d) { return d.y; })])
 				.range([this.height, 0]);
 
+			// Lines
+
 			var line = d3.svg.line()
 				.x(function (d) { return x(d.x); })
 				.y(function (d) { return y(d.y); });
@@ -47,6 +49,8 @@ module.exports = {
 
 			paths.exit().remove();
 
+			// Areas
+
 			var area = d3.svg.area()
 				.x(function (d) { return x(d.x); })
 				.y0(this.height)
@@ -59,9 +63,12 @@ module.exports = {
 				.attr('class', 'area');
 
 			paths.transition().duration(300)
-				.attr('d', function (d) { return area(d); });
+				.attr('d', area);
 
 			paths.exit().remove();
+
+
+			// Draw axes
 
 			var axis = d3.svg.axis()
 				.scale(x)
