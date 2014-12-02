@@ -117,7 +117,6 @@ class CustomSerializer(Serializer):
 
         response['meta'] = meta
 
-        # pp.pprint(response_objects)
         response['objects'] = response_objects
 
         return json.dumps(response)
@@ -269,11 +268,11 @@ class DataPointResource(SimpleApiResource):
         except KeyError:
             region_in = []
 
-
         try:
             campaign_in = query_dict['campaign__in']
         except KeyError:
             campaign_in = []
+
 
         return region_in, campaign_in, the_limit
 
@@ -316,6 +315,40 @@ class DataPointResource(SimpleApiResource):
 
         return final_region_campaign_tuples
 
+    def obj_get_list(self, bundle, **kwargs):
+        ''' overriding this method because if i dont, the filters are applied
+        to the aggregate and because of whcih i get no data'''
+        # Filtering disabled for brevity...
+        return self.get_object_list(bundle.request)
+
+    def agg_regions(self,query_dict):
+        ''' see if there is a parent region param, then find the sub regions
+        get their values and aggregate'''
+
+        try:
+            parent_region = query_dict['parent_region']
+        except KeyError:
+            return 0, None
+
+        try:
+            campaign_ids = list(query_dict['campaign__in'])
+        except KeyError:
+            campaign_ids = DataPoint.objects.values_list('campaign').distinct()[:1]
+
+        sub_regions = Region.objects.filter(parent_region_id=parent_region)
+
+        sub_region_ids = [sr.id for sr in sub_regions]
+
+        agg_object_list = DataPoint.objects.filter(
+            region__in = sub_region_ids,
+            campaign__in = campaign_ids,
+        )
+
+
+        return 1, agg_object_list
+
+
+
 
     def get_object_list(self, request):
         ''' evan needs ot be able to limit by region/campaign pairs so here
@@ -324,6 +357,11 @@ class DataPointResource(SimpleApiResource):
         with the campaign / region list'''
 
         query_dict = request.GET
+        is_agg, object_list = self.agg_regions(query_dict)
+
+        if is_agg == 1:
+            print object_list
+            return object_list
 
         region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
@@ -334,10 +372,9 @@ class DataPointResource(SimpleApiResource):
             campaign__in = campaigns,
         )
 
+
         return object_list
 
-        object_list = super(DataPointResource, self).get_object_list(request)
-        return object_list
 
     def dehydrate(self, bundle):
         ''' depending on the <uri_display> parameter, return to the bundle
