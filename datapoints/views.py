@@ -62,21 +62,8 @@ class DashBoardView(IndexView):
     template_name = 'dashboard/index.html'
     context_object_name = 'user_dashboard'
 
-    def raw_query(self, sql_string):
-      cursor = connection.cursor()
-      cursor.execute(sql_string)
-      rows = cursor.fetchall()
-
-      return rows
-
     def get_queryset(self):
-        rows = []
-        region_agg = self.raw_query(show_region_aggregation)
-
-        for row in region_agg:
-            rows.append(row)
-
-        return rows
+        return DataPoint.objects.all()[:1]
 
 class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
 
@@ -194,7 +181,6 @@ class RegionIndexView(IndexView):
 class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model=Region
-    success_url = reverse_lazy('regions:create_region_relationship')
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
 
