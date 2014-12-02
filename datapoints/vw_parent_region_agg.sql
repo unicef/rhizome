@@ -6,7 +6,7 @@ SELECT
 	,r.parent_region_id
 	,d.indicator_id
 	,campaign_id
-	,sum(d.value) as the_sum
+	,sum(coalesce(d.value, 0)) as the_sum
 FROM datapoint d 
 INNER JOIN region r 
 ON d.region_id = r.id

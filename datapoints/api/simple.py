@@ -264,7 +264,6 @@ class DataPointResource(SimpleApiResource):
         except KeyError:
             the_limit = 10
 
-
         try:
             region_in = query_dict['region__in']
         except KeyError:
@@ -280,13 +279,8 @@ class DataPointResource(SimpleApiResource):
         except KeyError:
             indicator_in = []
 
-        try:
-            parent_region = query_dict['parent_region']
-        except KeyError:
-            parent_region = None
 
-
-        return region_in, campaign_in, indicator_in, parent_region, the_limit
+        return region_in, campaign_in, indicator_in, the_limit
 
     def get_regions_and_campaigns_to_filter(self,query_dict):
         '''
@@ -294,7 +288,7 @@ class DataPointResource(SimpleApiResource):
         '''
 
         # get the params from the query dict
-        regions, campaigns, indicators,parent_region,the_limit = \
+        regions, campaigns, indicators,the_limit = \
             self.parse_url_params(query_dict)
 
         # find all of the distinct regions / campaigns in the db
@@ -337,30 +331,6 @@ class DataPointResource(SimpleApiResource):
         '''
         # Filtering disabled for brevity...
         return self.get_object_list(bundle.request)
-
-    def agg_regions(self,query_dict):
-        '''
-        see if there is a parent region param, then find the sub regions
-        get their values and aggregate
-        '''
-
-        region_ids, campaign_ids, indicator_ids, parent_region, the_limit\
-            = self.parse_url_params(query_dict)
-
-        if parent_region is None:
-            return 0, None
-
-        campaign_list = [c for c in campaign_ids.split(',')]
-        indicator_list = [c for c in indicator_ids.split(',')]
-
-        agg_object_list = ParentRegionAgg.objects.filter(
-            campaign__in = campaign_list,
-            indicator__in = indicator_list,
-            parent_region_id = parent_region
-        )
-
-        return 1, agg_object_list
-
 
 
     def get_object_list(self, request):
