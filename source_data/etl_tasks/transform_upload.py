@@ -83,9 +83,6 @@ class RegionTransform(DocTransform):
         means for instance that if you upload a region with no lon/lat it could
         override the same region that currently has lon/lat'''
 
-        # http://localhost:8000/datapoints/regions
-        # http://localhost:8000/source_data/pre_process_file/595/Region/
-
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
         parent_regions = []
@@ -147,56 +144,3 @@ class RegionTransform(DocTransform):
                 updated_parent_sr = SourceRegion.objects.filter(id=parent_sr.id).\
                     update(**parent_defaults)
                 updated.append(parent_sr)
-
-
-
-    def add_source_parent_regions(self):
-
-        source = Source.objects.get(source_name='region_upload')
-
-        ## INSERT PARENT REGIONS
-        parent_region_lookup = {}
-        parents = SourceRegion.objects.values('country','parent_name','id').distinct()
-
-        for p in parents:
-
-            if p['country'] != None and p['parent_name'] != None:
-
-                office = Office.objects.get(name=p['country'])
-                region_name,sr_id = p['parent_name'],p['id']
-
-                r,created = Region.objects.get_or_create(name=region_name,defaults = \
-                    {'region_code':region_name,'office':office,'source':source,
-                        'source_region_id':sr_id})
-
-                parent_region_lookup[region_name] = r.id
-
-        return parent_region_lookup
-
-    def source_regions_to_regions(self,parent_region_lookup):
-
-        source = Source.objects.get(source_name='region_upload')
-
-        src_regions = SourceRegion.objects.filter(document_id = self.document.id)
-
-        for sr in src_regions:
-            #     try:
-
-            if sr.country is not None:
-                office = Office.objects.get(name=sr.country)
-
-                r,created = Region.objects.get_or_create(
-                    name = sr.region_string,defaults = {
-                    'region_code':sr.region_code,\
-                    'region_type':sr.region_type,\
-                    'office':office,\
-                    'latitude':sr.lat,\
-                    'longitude':sr.lon,\
-                    'source':source,\
-                    'source_region_id':sr.id,\
-                    'parent_region_id':parent_region_lookup[sr.parent_name]})
-
-                if created == 0:
-                    r.parent_region_id = parent_region_lookup[sr.parent_name]
-                    r.office = office
-                    r.save()
