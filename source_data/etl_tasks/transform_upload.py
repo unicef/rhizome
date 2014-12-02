@@ -75,6 +75,14 @@ class RegionTransform(DocTransform):
 
 
     def insert_source_regions(self,valid_df):
+        ''' in this method we take a datframe go through and create a source region
+        for each record.  If the source region exists ( the string exists ), we
+        update that record with the new values.  After this, we do the same with
+        the parent regions.  One fall back currently is that the only conflict
+        resolution for this is the fact that newer records take precedence.  This
+        means for instance that if you upload a region with no lon/lat it could
+        override the same region that currently has lon/lat'''
+
         # http://localhost:8000/datapoints/regions
         # http://localhost:8000/source_data/pre_process_file/595/Region/
 
@@ -88,40 +96,47 @@ class RegionTransform(DocTransform):
             row_data = row[1]
             parent_regions.append(row_data.parent_name)
 
-            child_defaults = {
-                'region_code': row_data.code,\
-                'parent_name': row_data.parent_name,\
-                'region_type': row_data.region_type,\
-                'country': row_data.country,\
-                'lat': row_data.lat,\
-                'lon': row_data.lon,\
-                'document': self.document,\
-                'source_guid': row_data.region_name.encode('utf-8') \
-                    + ' - ' + str(row_data.code)}
-
             try:
+                child_defaults = {
+                    'region_code': row_data.code,\
+                    'parent_name': row_data.parent_name,\
+                    'region_type': row_data.region_type,\
+                    'country': row_data.country,\
+                    'lat': row_data.lat,\
+                    'lon': row_data.lon,\
+                    'document': self.document,\
+                    'source_guid': row_data.region_name.encode('utf-8')}
+
                 sr,created = SourceRegion.objects.get_or_create(
                     region_string = row_data.region_name,\
                     defaults= child_defaults)
 
-                if created == 1:
-                    just_created.append(sr)
-                else: # update the row in the db with all of the new values.
-                    updated_sr = SourceRegion.objects.filter(id=sr.id).update(**child_defaults)
-                    updated.append(updated_sr)
-
             except UnicodeDecodeError as err:
                 errors.append(row_data.region_name)
 
-        ## Now process the parents
+            if created == 1:
+                just_created.append(sr)
+            else: # update the row in the db with all of the new values.
+                updated_sr = SourceRegion.objects.filter(id=sr.id).update(**child_defaults)
+                updated.append(updated_sr)
+
+
+        #############################
+        ## Now process the parents ##
+        #############################
+
         distinct_parent_regions = list(set(parent_regions))
 
         for reg in distinct_parent_regions:
-            parent_defaults = {
-                'region_code': reg,\
-                'document': self.document,\
-                'source_guid': 'parent_reg :' + reg + ' from doc_id: ' + \
-                    str(self.document.id)}
+
+            try:
+                parent_defaults = {
+                    'region_code': reg,\
+                    'document': self.document,\
+                    'source_guid': reg.encode('utf-8')}
+
+            except UnicodeDecodeError as err:
+                errors.append(row_data.region_name)
 
             parent_sr, created = SourceRegion.objects.get_or_create(
                 region_string = reg,defaults = parent_defaults)
