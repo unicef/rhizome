@@ -20,6 +20,7 @@ function endPoint(path) {
 		format: 'json'
 	};
 
+
 	function fetch(query) {
 		var q = _.defaults({}, query, defaults);
 

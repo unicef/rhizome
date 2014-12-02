@@ -2,8 +2,6 @@
 
 
 {% block content %}
-        <li><a href="{% url 'regions:region_relationship_index' %}">Region Relationships</a></li>
-
 
     <br>
 
@@ -13,6 +11,7 @@
         <tr>
             <th>id</th>
             <th>name</th>
+            <th>parent_region</th>
             <th>longitude</th>
             <th>latitude</th>
             <th>edit</th>
@@ -23,6 +22,7 @@
         <tr>
             <th>{{ region.id }}</th>
             <th>{{ region.name }}</th>
+            <th>{{ region.parent_region }}</th>
             <th>{{ region.longitude }}</th>
             <th>{{ region.latitude }}</th>
 
@@ -31,6 +31,22 @@
         {% endfor %}
 
     </table>
+  {% if is_paginated %}
+      <div class="pagination">
+          <span class="page-links">
+              {% if page_obj.has_previous %}
+                  <a href="/datapoints/regions?page={{ page_obj.previous_page_number }}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                  <a href="/datapoints/regions?page={{ page_obj.next_page_number }}">next</a>
+              {% endif %}
+          </span>
+      </div>
+  {% endif %}
+
 {% else %}
     <p>No regions are available.</p>
 {% endif %}
@@ -39,3 +55,19 @@
     </div>
 
 {% endblock %}
+
+
+
+
+
+{% for datapoint in top_datapoints %}
+        <tr>
+            <th>{{ datapoint.id }}</th>
+            <th>{{ datapoint.indicator }}</th>
+            <th>{{ datapoint.region }}</th>
+            <th>{{ datapoint.campaign }}</th>
+            <th>{{ datapoint.value }}</th>
+            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
+        </tr>
+        {% endfor %}
+    </table>

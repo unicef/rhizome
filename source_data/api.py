@@ -1,5 +1,5 @@
 import subprocess,sys,time,pprint as pp
-import traceback
+from traceback import format_exc
 from time import strftime
 
 from tastypie.resources import ModelResource
@@ -108,7 +108,7 @@ class EtlTask(object):
         form_id = 'New_VCM_Summary'
 
         try:
-            subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+            subprocess.check_call(['java','-jar',odk_settings.JAR_FILE,\
                 '--form_id',form_id, \
                 '--export_filename',form_id+'.csv', \
                 '--aggregate_url',odk_settings.AGGREGATE_URL, \
@@ -120,7 +120,7 @@ class EtlTask(object):
                 '--exclude_media_export' \
               ])
         except Exception:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, None
 
         return None, 'Successfully Retrieved Data for form: ' + form_id
@@ -155,7 +155,7 @@ class EtlTask(object):
             success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
 
         except Exception:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, None
 
         return None, success_msg
