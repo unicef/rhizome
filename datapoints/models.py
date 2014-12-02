@@ -48,17 +48,18 @@ class Office(models.Model):
 class Region(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
-    region_code = models.CharField(max_length=10,unique=True)
+    region_code = models.CharField(max_length=55)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
-    latitude = models.DecimalField(max_digits=12, decimal_places =10,null=True,blank=True)
-    longitude = models.DecimalField(max_digits=13, decimal_places =10,null=True,blank=True)
+    latitude = models.FloatField(null=True,blank=True)
+    longitude = models.FloatField(null=True,blank=True)
     slug = AutoSlugField(populate_from='name',max_length=55)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    source_guid = models.CharField(max_length=255)
+    source_region = models.ForeignKey('source_data.SourceRegion')
     is_high_risk = models.BooleanField(default=False)
+    parent_region = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -70,8 +71,6 @@ class Region(models.Model):
         permissions = (
             ('view_region', 'View region'),
         )
-
-        unique_together = ('source','source_guid')
 
         ordering = ('name',)
 
@@ -105,7 +104,7 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.DecimalField(max_digits=12, decimal_places =4)
+    value = models.FloatField()
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -138,35 +137,6 @@ class Responsibility(models.Model):
         db_table = 'responsibility'
         ordering = ('indicator',)
         unique_together = ('user','indicator','region')
-
-
-
-class RegionRelationshipType(models.Model):
-
-    display_name = models.CharField(max_length=55)
-    inverse_display_name = models.CharField(max_length=55)
-    description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
-
-
-    def __unicode__(self):
-        return unicode(self.display_name)
-
-    class Meta:
-        db_table = 'region_relationship_type'
-
-
-class RegionRelationship(models.Model):
-
-    region_0 = models.ForeignKey(Region, related_name='ind_0')
-    region_1 = models.ForeignKey(Region, related_name='ind_1')
-    region_relationship_type = models.ForeignKey(RegionRelationshipType)
-    note = models.CharField(max_length=255,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-
-    class Meta:
-        db_table = 'region_relationship'
 
 
 class AggregationType(models.Model):

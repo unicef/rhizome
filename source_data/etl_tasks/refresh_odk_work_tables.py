@@ -3,6 +3,8 @@ import sys, os
 import pprint as pp
 import pandas as pd
 
+from traceback import format_exc
+
 try:
     import source_data.prod_odk_settings as odk_settings
 except ImportError:
@@ -62,7 +64,7 @@ class WorkTableTask(object):
         try:
             work_table_obj = self.file_to_object_map[self.file_to_process]
         except KeyError:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, data
 
         try:
@@ -76,7 +78,7 @@ class WorkTableTask(object):
                 data = self.csv_to_work_table(work_table_obj)
 
         except OSError:
-            err = traceback.format_exc()
+            err = format_exc()
             return err, data
 
         return err, data
