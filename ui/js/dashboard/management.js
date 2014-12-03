@@ -7,7 +7,7 @@ var moment   = require('moment');
 
 var api      = require('../data/api');
 var ratio    = require('../data/transform/ratio');
-var Campaign = require('../data/model/campaign');
+var campaign = require('../data/model/campaign');
 
 function indicators(ids, opts) {
 	// Create a copy of the options so that we can modify the query object
@@ -36,7 +36,7 @@ function indicators(ids, opts) {
 
 				// Replace the campaign IDs with campaign objects
 				for (var i = data.objects.length - 1; i >= 0; --i) {
-					data.objects[i].campaign = new Campaign(campaigns[data.objects[i].campaign]);
+					data.objects[i].campaign = campaign(campaigns[data.objects[i].campaign]);
 				}
 
 				fulfill(data);
