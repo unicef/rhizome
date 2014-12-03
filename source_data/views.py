@@ -111,7 +111,9 @@ def review_sdps_by_document(request,document_id):
 
 def refresh_master_by_document_id(request,document_id):
 
-    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
+    source_datapoints = SourceDataPoint.objects.filter(
+        document_id=document_id,\
+        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))[:1000]
 
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()

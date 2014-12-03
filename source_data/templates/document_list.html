@@ -35,15 +35,7 @@
                     "submit" class="btn btn-primary btn-sm"> Review Source </button></a></th>
                 <th><a href="{% url 'source_data:refresh_master_by_document_id' document.id %}"<button type=\
                     "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
-
                 <th>{{ document.is_processed }}</th>
-
-
-
-                <!-- url(r'^review_sdps_by_document/(?P<document_id>[0-9]+)/$', review_sdps_by_document, name='review_sdps_by_document'),
-                 url(r'^refresh_master_by_document_id/(?P<document_id>[0-9]+)/$', refresh_master_by_document_id, name='refresh_master_by_document_id'), -->
-
-
             </tr>
 
 
