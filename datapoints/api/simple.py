@@ -396,15 +396,35 @@ class DataPointResource(SimpleApiResource):
 
 class ParentRegionAggResource(SimpleApiResource):
 
+    parent_region = fields.ToOneField(RegionResource, 'parent_region')
+    indicator = fields.ToOneField(IndicatorResource, 'indicator')
+    campaign = fields.ToOneField(CampaignResource, 'campaign')
 
-        class Meta(SimpleApiResource.Meta):
-            queryset = ParentRegionAgg.objects.all()
-            resource_name = 'parent_region_agg'
-            filtering = {
-                "indicator": ALL,
-                "parent_region":ALL,
-                "campaign":ALL,
-            }
-            allowed_methods = ['get']
-            # serializer = CustomSerializer()
-            max_limit = None
+
+    class Meta(SimpleApiResource.Meta):
+        queryset = ParentRegionAgg.objects.all()
+        resource_name = 'parent_region_agg'
+        filtering = {
+            "indicator": ALL,
+            "parent_region":ALL,
+            "campaign":ALL,
+        }
+        allowed_methods = ['get']
+        # serializer = CustomSerializer()
+        max_limit = None
+
+    def dehydrate(self, bundle):
+        ''' overriden from tastypie '''
+        return bundle
+
+    def obj_get_list(self, bundle, **kwargs):
+        ''' overriden from tastypie '''
+
+        return self.get_object_list(bundle.request)
+
+    def get_object_list(self, request):
+
+        object_list = []
+        object_list = ParentRegionAgg.objects.all()[:5]
+
+        return object_list
