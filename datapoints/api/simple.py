@@ -288,7 +288,7 @@ class DataPointResource(SimpleApiResource):
         '''
 
         # get the params from the query dict
-        regions, campaigns, indicators,the_limit = \
+        regions, campaigns, indicators, the_limit = \
             self.parse_url_params(query_dict)
 
         # find all of the distinct regions / campaigns in the db
@@ -298,7 +298,7 @@ class DataPointResource(SimpleApiResource):
         # if there was no region or campaign passed in just take the first
         # x elements in the list ( where x is the_limit ) and return that
         if len(regions) == 0 and len(campaigns) == 0:
-            return all_region_campaign_tuples[:the_limit]
+            return all_region_campaign_tuples[:the_limit], indicators
 
         final_region_campaign_tuples = []
 
@@ -322,7 +322,7 @@ class DataPointResource(SimpleApiResource):
             else:
                 pass
 
-        return final_region_campaign_tuples
+        return final_region_campaign_tuples, indicators
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -343,13 +343,15 @@ class DataPointResource(SimpleApiResource):
 
         query_dict = request.GET
 
-        region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
+        region_campaign_tuples, indicators = self.get_regions_and_campaigns_to_filter(query_dict)
+
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
 
         object_list = DataPoint.objects.filter(
             region__in = regions,
             campaign__in = campaigns,
+            indicator__in = indicators.split(',')
         )
 
 
