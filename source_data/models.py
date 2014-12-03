@@ -54,9 +54,9 @@ class Document(models.Model):
     guid = models.CharField(max_length=40)
     is_processed = models.BooleanField(default=False)
 
-
     class Meta:
         unique_together = ('docfile','doc_text')
+        ordering = ('-id',)
 
     def save(self, *args, **kwargs):
         if not self.guid:

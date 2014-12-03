@@ -427,7 +427,6 @@ class ParentRegionAggResource(SimpleApiResource):
         query_dict = request.GET
         query_kwargs = self.parse_query_params(query_dict)
 
-        # object_list = ParentRegionAgg.objects.all()[:5]
         object_list = ParentRegionAgg.objects.filter(**query_kwargs)
 
         return object_list

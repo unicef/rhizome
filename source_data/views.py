@@ -235,6 +235,14 @@ def pre_process_file(request,pk,file_type):
             RequestContext(request),
         )
 
+######### DOCUMENT RELATED VIEWS ##########
+
+class DocumentIndex(generic.ListView):
+
+    context_object_name = "documents"
+    template_name = 'document_list.html'
+    model = Document
+
 
 ######### META MAPPING ##########
 
@@ -290,7 +298,6 @@ class ShowSourceIndicator(generic.DetailView):
     context_object_name = "source_indicator"
     template_name = 'map/source_indicator.html'
     model = SourceIndicator
-
 
 
 def refresh_master(request):
