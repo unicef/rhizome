@@ -1,6 +1,17 @@
 <svg v-attr="width : width,
              height: height">
 	<g v-attr="transform: transform">
-		<content></content>
+
+		<rect class="bg"
+		      v-attr="width : contentWidth,
+		              height: contentHeight"></rect>
+
+		<g v-if="empty" v-attr="transform: 'translate(' + contentWidth / 2 + ',' + contentHeight / 2 + ')'">
+			<text text-anchor="middle">No data</text>
+		</g>
+
+		<g v-if="!empty">
+			<content></content>
+		</g>
 	</g>
 </svg>

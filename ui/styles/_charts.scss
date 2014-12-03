@@ -1,27 +1,27 @@
 svg {
-  .bg {
-    fill: $smoke;
-  }
+	.bg {
+		fill: $smoke;
+	}
 
-  .axis {
+	.axis {
 		.domain {
 			display: none;
 		}
 
-    line {
-      fill: none;
-      stroke: $white;
+		line {
+			fill: none;
+			stroke: $white;
 			stroke-width: 1px;
-      shape-rendering: cripsEdges;
-    }
+			shape-rendering: cripsEdges;
+		}
 
-    text {
-      font-family: $font-family-sans-serif;
-      font-size: $axis-font-size;
-      fill: $iron;
-      stroke: none;
-    }
-  }
+		text {
+			font-family: $font-family-sans-serif;
+			font-size: $axis-font-size;
+			fill: $iron;
+			stroke: none;
+		}
+	}
 
 	.line {
 		fill: none;
@@ -29,7 +29,8 @@ svg {
 		stroke-width: 1px;
 	}
 
-	.area {
+	.area,
+	.layer {
 		fill: $iron;
 		fill-opacity: 0.6;
 	}

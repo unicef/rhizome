@@ -7,6 +7,7 @@ var moment   = require('moment');
 
 var api      = require('../data/api');
 var ratio    = require('../data/transform/ratio');
+var sort     = require('../data/transform/sort');
 var campaign = require('../data/model/campaign');
 
 function indicators(ids, opts) {
@@ -76,6 +77,7 @@ module.exports = {
 		indicators([], q).done(set('immunity'));
 
 		indicators([20, 21, 22, 55], q)
+			.then(sort(function (d) { return d.campaign.start_date; }))
 			.then(ratio([20, 21, 22], 55))
 			.done(set('missed'));
 	},

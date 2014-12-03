@@ -4,30 +4,6 @@
 			<h3>Impact</h3>
 			<section>
 				<h4>{{ cases }} Polio cases this year</h4>
-				<svg v-component="chart-base"
-				     v-with="cases: cases,
-				             empty: cases.length < 1">
-
-<!-- 					<g class="y axis"
-					   v-partial="y-grid"
-					   v-component="chart-axis"
-					   v-with="domainLower: cases | min value,
-					           domainUpper: cases | max value,
-					           rangeLower : contentHeight"
-					   rangeUpper="0"></g>
-
-					<g class="x axis"
-					   v-partial="x-ticks"
-					   v-component="chart-axis"
-					   v-attr="transform: 'translate(0,' + contentHeight + ')'"
-					   v-with="domainLower: cases | min campaign.start_date,
-					           domainUpper: cases | max campaign.start_date,
-					           rangeUpper : contentWidth"></g>
-
-					<g class="lines">
-						<path v-repeat="cases.years"
-					</g> -->
-				</svg>
 			</section>
 			<section>
 				<h4>{{ gap }} Immunity Gap</h4>
@@ -38,7 +14,28 @@
 			<h3>Performance of Front Line Workers</h3>
 
 			<div class="row">
-				<div class="medium-3 columns"></div>
+				<div class="medium-3 columns">
+
+				<section>
+					<h4>Missed Children</h4>
+					<svg v-component="chart-base"
+					     data-margin-bottom="24"
+					     data-aspect="1.618"
+					     v-with="layers: missed,
+					             empty : false">
+
+						<g v-component="chart-stackedTime"
+						   v-with="layers: layers,
+						           width : contentWidth,
+						           height: contentHeight">
+							<g class="x axis"
+							   v-attr="transform: 'translate(0,' + height + ')'"></g>
+							<g class="y axis"></g>
+							<g class="layers"></g>
+						</g>
+					</svg>
+				</section>
+				</div>
 				<div class="medium-3 columns"></div>
 				<div class="medium-1 column"></div>
 			</div>

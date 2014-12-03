@@ -8,19 +8,21 @@ module.exports = {
 	replace: true,
 
 	paramAttributes: [
-		'aspect'
+		'data-aspect',
+		'data-margin-top',
+		'data-margin-right',
+		'data-margin-bottom',
+		'data-margin-left'
 	],
 
 	data: function () {
 		return {
-			empty : true,
-			width : 200,
-			margin: {
-				top   : 0,
-				right : 0,
-				bottom: 0,
-				left  : 0
-			}
+			empty       : true,
+			width       : 200,
+			marginTop   : 0,
+			marginRight : 0,
+			marginBottom: 0,
+			marginLeft  : 0
 		};
 	},
 
@@ -34,15 +36,15 @@ module.exports = {
 
 	computed: {
 		contentWidth: function () {
-			var left  = this.margin.left || 0;
-			var right = this.margin.right || 0;
+			var left  = this.marginLeft || 0;
+			var right = this.marginRight || 0;
 
 			return this.width - left - right;
 		},
 
 		contentHeight: function () {
-			var top    = this.margin.top || 0;
-			var bottom = this.margin.bottom || 0;
+			var top    = this.marginTop || 0;
+			var bottom = this.marginBottom || 0;
 
 			return this.height - top - bottom;
 		},
@@ -52,7 +54,7 @@ module.exports = {
 		},
 
 		transform: function () {
-			return 'translate(' + this.margin.left + ',' + this.margin.top + ')';
+			return 'translate(' + this.marginLeft + ',' + this.marginTop + ')';
 		}
 	},
 

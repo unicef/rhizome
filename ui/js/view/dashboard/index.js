@@ -20,7 +20,8 @@ module.exports = {
 		'chart-pie'           : require('../../component/chart/pie'),
 		'chart-arc'           : require('../../component/chart/arc'),
 		'chart-stacked'       : require('../../component/chart/stacked'),
-		'chart-bullet'        : require('../../component/chart/bullet')
+		'chart-bullet'        : require('../../component/chart/bullet'),
+		'chart-stackedTime'   : require('../../component/chart/stackedTime')
 	},
 
 	partials: {
