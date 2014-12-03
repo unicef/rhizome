@@ -98,3 +98,36 @@ Please Pass the date format as 'YYYY-MM-DD'
    :linenos:
 
     http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
+
+
+Aggregating By Region
+
+When aggregating my parent region use the 'parent_region_agg' resource
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/parent_region_agg/?format=json&indicator__in=25&parent_region=23
+
+
+Using This Resource
+  - campaign__in, indicator__in and parent_region are the filter parameters for this resource
+
+About the result set
+  - currently i have NOT enabled the same pivoting as in the simple resource
+  - currently this resource does not have the uri_display option that allows the client to request data based on slug, id or name
+  - this is totally doable but i will only do this once i am asked.
+  
+.. code-block:: python
+   :linenos:
+
+    "objects": [
+      {
+          "campaign": "/api/v1/campaign/2/",
+          "id": 69,
+          "indicator": "/api/v1/indicator/25/",
+          "parent_region": "/api/v1/region/23/",
+          "resource_uri": "/api/v1/parent_region_agg/69/",
+          "the_sum": 144665
+      },
+      ...
