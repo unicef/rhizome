@@ -424,7 +424,35 @@ class ParentRegionAggResource(SimpleApiResource):
 
     def get_object_list(self, request):
 
-        object_list = []
-        object_list = ParentRegionAgg.objects.all()[:5]
+        query_dict = request.GET
+        query_kwargs = self.parse_query_params(query_dict)
+
+        # object_list = ParentRegionAgg.objects.all()[:5]
+        object_list = ParentRegionAgg.objects.filter(**query_kwargs)
 
         return object_list
+
+    def parse_query_params(self,query_dict):
+
+        query_kwargs = {}
+
+        try:
+            indicator__in = query_dict['indicator__in'].split(',')
+            query_kwargs['indicator__in'] = indicator__in
+        except KeyError:
+            pass
+
+        try:
+            campaign__in = query_dict['campaign__in'].split(',')
+            query_kwargs['campaign__in'] = campaign__in
+        except KeyError:
+            pass
+
+        try:
+            parent_region = query_dict['parent_region']
+            query_kwargs['parent_region'] = parent_region
+        except KeyError:
+            pass
+
+
+        return query_kwargs
