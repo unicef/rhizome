@@ -134,18 +134,21 @@ class VcmSummaryTransform(object):
 
         cleaned_cell_value = self.clean_cell_value(cell_value)
 
-        sdp = SourceDataPoint.objects.create(
-            region_string = region_string,
-            campaign_string = campaign_string,
-            indicator_string =  indicator_string,
-            cell_value = cleaned_cell_value,
-            row_number = row_number,
-            source = Source.objects.get(source_name='odk'),
-            document_id = self.document_id,
-            source_guid = src_key,
-            status = ProcessStatus.objects.get(status_text='TO_PROCESS')
-        )
-        self.source_datapoints.append(sdp)
+        try:
+            sdp = SourceDataPoint.objects.create(
+                region_string = region_string,
+                campaign_string = campaign_string,
+                indicator_string =  indicator_string,
+                cell_value = cleaned_cell_value,
+                row_number = row_number,
+                source = Source.objects.get(source_name='odk'),
+                document_id = self.document_id,
+                source_guid = src_key,
+                status = ProcessStatus.objects.get(status_text='TO_PROCESS')
+            )
+            self.source_datapoints.append(sdp)
+        except IntegrityError:
+            pass
 
 
     def clean_cell_value(self,cell_value):

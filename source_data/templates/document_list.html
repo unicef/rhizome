@@ -1,0 +1,52 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+    <br>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+    <br><br>
+
+
+    {% if documents %}
+
+    <div class="container">
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Document_id</th>
+            <th>file_path</th>
+            <th>created_by</th>
+            <th>doc_text</th>
+            <th>review source dps</th>
+            <th>refresh master</th>
+            <th>is_processed</th>
+        </tr>
+    </thead>
+
+
+
+        {% for document in documents %}
+            <tr>
+                <th>{{ document.id }}</th>
+                <th>{{ document.docfile }}</th>
+                <th>{{ document.created_by }}</th>
+                <th>{{ document.doc_text }}</th>
+                <th><a href="{% url 'source_data:review_sdps_by_document' document.id %}"<button type=\
+                    "submit" class="btn btn-primary btn-sm"> Review Source </button></a></th>
+                <th><a href="{% url 'source_data:refresh_master_by_document_id' document.id %}"<button type=\
+                    "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
+                <th>{{ document.is_processed }}</th>
+            </tr>
+
+
+        {% endfor %}
+    </table>
+  </div>
+
+
+{% else %}
+    <p> everything is mapped </p>
+{% endif %}
+
+
+{% endblock %}
