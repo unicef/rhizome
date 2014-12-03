@@ -1,0 +1,69 @@
+<div>
+	<div class="row">
+		<div class="medium-2 columns">
+			<h3>Impact</h3>
+			<section>
+				<h4>{{ cases }} Polio cases this year</h4>
+				<svg v-component="chart-base"
+				     v-with="cases: cases,
+				             empty: cases.length < 1">
+
+<!-- 					<g class="y axis"
+					   v-partial="y-grid"
+					   v-component="chart-axis"
+					   v-with="domainLower: cases | min value,
+					           domainUpper: cases | max value,
+					           rangeLower : contentHeight"
+					   rangeUpper="0"></g>
+
+					<g class="x axis"
+					   v-partial="x-ticks"
+					   v-component="chart-axis"
+					   v-attr="transform: 'translate(0,' + contentHeight + ')'"
+					   v-with="domainLower: cases | min campaign.start_date,
+					           domainUpper: cases | max campaign.start_date,
+					           rangeUpper : contentWidth"></g>
+
+					<g class="lines">
+						<path v-repeat="cases.years"
+					</g> -->
+				</svg>
+			</section>
+			<section>
+				<h4>{{ gap }} Immunity Gap</h4>
+			</section>
+		</div>
+
+		<div class="medium-5 columns">
+			<h3>Performance of Front Line Workers</h3>
+
+			<div class="row">
+				<div class="medium-3 columns"></div>
+				<div class="medium-3 columns"></div>
+				<div class="medium-1 column"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="medium-2 columns">
+			<h3>FLWs' Capacity to Perform</h3>
+		</div>
+
+		<div class="medium-1 column">
+			<h3>Supply</h3>
+		</div>
+
+		<div class="medium-1 column">
+			<h3>Polio+</h3>
+		</div>
+
+		<div class="medium-1 column">
+			<h3>Resources</h3>
+		</div>
+
+		<div class="medium-2 columns">
+			<h3>Inaccessible Children</h3>
+		</div>
+	</div>
+</div>

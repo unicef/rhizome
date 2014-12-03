@@ -4,7 +4,8 @@
 
 'use strict';
 
-var _ = require('lodash');
+var _  = require('lodash');
+var d3 = require('d3');
 
 module.export = {
 
@@ -25,6 +26,17 @@ module.export = {
 		var dy = _.isUndefined(value[y]) ? y : value[y];
 
 		return 'translate(' + dx + ',' + dy + ')';
-	}
+	},
 
+	min: function (value, keypath) {
+		return d3.min(value, function (d) {
+			return keypath ? d.$get(keypath) : Number(d);
+		});
+	},
+
+	max: function (value, keypath) {
+		return d3.max(value, function (d) {
+			return keypath ? d.$get(keypath) : Number(d);
+		});
+	}
 };
