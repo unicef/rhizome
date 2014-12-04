@@ -3,20 +3,25 @@
 var d3 = require('d3');
 
 module.exports = {
+	replace : true,
+	template: require('./bullet.html'),
+
 	paramAttributes: [
 		'width',
 		'height',
-		'scale'
+		'data-scale',
+		'data-marker-width'
 	],
 
 	data: function () {
 		return {
-			scale : 'linear',
-			width : 100,
-			height: 100,
-			value : 0,
-			marker: 0,
-			ranges: [{
+			scale      : 'linear',
+			width      : 100,
+			height     : 100,
+			value      : 0,
+			marker     : 0,
+			markerWidth: 3,
+			ranges     : [{
 				name : '',
 				start: 0,
 				end  : 1
@@ -36,6 +41,10 @@ module.exports = {
 				.domain([0, d3.max(this.ranges, function (d) { return d.end; })])
 				.range([0, this.width]);
 
+			var color = d3.scale.ordinal()
+				.domain(['bad', 'ok', 'good'])
+				.range(['#B3B3B3', '#CCCCCC', '#E6E6E6']);
+
 			var bg = svg.select('.ranges').selectAll('.range')
 				.data(this.ranges);
 
@@ -45,13 +54,34 @@ module.exports = {
 				height: this.height,
 				width : function (d) { return x(d.end - d.start); },
 				x     : function (d) { return x(d.start); }
-			}).style('fill', '#fff');
+			}).style('fill', function (d) {
+				return color(d.name);
+			});
 
 			bg.exit().remove();
 
+			var labels = svg.select('.ranges').selectAll('.range-label')
+				.data(this.ranges);
+
+			labels.enter().append('text')
+				.attr({
+					'class': 'range-label',
+					'dy': -3,
+					'dx': 2
+				});
+
+			labels.attr({
+				x: function (d) { return x(d.start); },
+				y: this.height
+			})
+				.style('font-size', this.height / 6)
+				.text(function (d) { return d.name; });
+
+			labels.exit().remove();
+
 			svg.select('.marker').attr({
 				height: this.height * 3 / 4,
-				width : this.width / 20,
+				width : this.markerWidth,
 				y     : this.height / 8,
 				x     : x(this.marker)
 			});
@@ -61,6 +91,17 @@ module.exports = {
 				width : x(this.value),
 				y     : this.height / 4
 			});
+
+			var format = d3.format('%');
+
+			svg.select('.label').attr({
+				y: this.height / 2,
+				dy: this.height / 8,
+			})
+				.style({
+					'font-size': this.height / 4
+				})
+				.text(format(this.value));
 		}
 	},
 

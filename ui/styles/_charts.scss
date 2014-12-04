@@ -34,4 +34,26 @@ svg {
 		fill: $iron;
 		fill-opacity: 0.6;
 	}
+
+	.bullet {
+		rect {
+			shape-rendering: crispEdges;
+			stroke: none;
+		}
+
+		.value,
+		.marker {
+			fill: $coolgray5;
+		}
+
+		.label {
+			fill: $white;
+		}
+
+		.ranges {
+			.range-label {
+				fill: #666666;
+			}
+		}
+	}
 }

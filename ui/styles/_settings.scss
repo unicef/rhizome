@@ -123,6 +123,16 @@ $primary-color: #0099ff;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
 
+// Cool grays for charts
+
+$coolgray1: rgb(213,223,226);
+$coolgray2: rgb(194,202,204);
+$coolgray3: rgb(167,174,175);
+$coolgray4: rgb(144,151,153);
+$coolgray5: rgb(112,118,119);
+$coolgray6: rgb(95,101,102);
+$coolgray7: rgb(65,72,73);
+
 $lightblue: #d3e1b1;
 
 // We use these to control various global styles
@@ -209,8 +219,8 @@ $global-radius: 3px;
 // We use these to control header font sizes
 $h1-font-size: rem-calc(24);
 // $h2-font-size: rem-calc(37);
-$h3-font-size: rem-calc(16);
-// $h4-font-size: rem-calc(23);
+$h3-font-size: rem-calc(14);
+$h4-font-size: rem-calc(14);
 // $h5-font-size: rem-calc(18);
 // $h6-font-size: 1rem;
 
@@ -379,7 +389,7 @@ $h3-font-size: rem-calc(16);
 // $include-xl-html-block-grid-classes: false;
 
 // We use this to control the maximum number of block grid elements per row
-// $block-grid-elements: 12;
+$block-grid-elements: 7;
 // $block-grid-default-spacing: rem-calc(20);
 // $align-block-grid-to-grid: false;
 

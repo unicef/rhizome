@@ -45,25 +45,24 @@
 	<div class="row">
 		<section class="medium-2 columns">
 			<h3>FLWs' Capacity to Perform</h3>
-			<div v-repeat="ind: capacity">
-				<h4 v-text="ind.title"></h4>
-				<svg v-component="chart-base"
-				     data-aspect="3"
-				     v-with="ind  : ind,
-				             empty: false">
+			<ul class="medium-block-grid-2">
+				<li v-repeat="ind: capacity">
+					<h4 v-text="ind.title"></h4>
+					<svg v-component="chart-base"
 
-					<g v-component="chart-bullet"
-					   v-with="value : ind.value,
-					           marker: ind.marker,
-					           ranges: ind.ranges,
-					           width : contentWidth,
-					           height: contentHeight">
-						<g class="ranges"></g>
-						<rect class="marker"></rect>
-						<rect class="value"></rect>
-					</g>
-				</svg>
-			</div>
+					     data-aspect="3"
+					     v-with="ind  : ind,
+					             empty: false">
+
+						<g v-component="chart-bullet"
+						   v-with="value : ind.value,
+						           marker: ind.marker,
+						           ranges: ind.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
 		</section>
 
 		<div class="medium-1 column">
