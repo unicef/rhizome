@@ -113,7 +113,7 @@ class RegionTransform(DocTransform):
                     'lat': row_data.lat,\
                     'lon': row_data.lon,\
                     'document': self.document,\
-                    'source_guid': row_data.region_name.encode('utf-8')}
+                    'source_guid': str(row_data.region_name)}
 
                 sr,created = SourceRegion.objects.get_or_create(
                     region_string = row_data.region_name,\
@@ -142,7 +142,7 @@ class RegionTransform(DocTransform):
                     'region_code': reg,\
                     'document': self.document,\
                     'country': row_data.country,\
-                    'source_guid': reg.encode('utf-8')}
+                    'source_guid': 'uploaded_as_parent: ' + str(reg)}
 
             except UnicodeDecodeError as err:
                 errors.append(row_data.region_name)

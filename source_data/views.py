@@ -231,7 +231,7 @@ def pre_process_file(request,pk,file_type):
 
     elif file_type == 'Region':
 
-        rt = RegionTransform(pk,file_type)
+        rt = RegionTransform(pk,file_type,{})
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
 
