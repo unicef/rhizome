@@ -154,7 +154,7 @@ class SimpleApiResource(ModelResource):
 class RegionResource(SimpleApiResource):
     '''Region Resource'''
 
-    parent_region = fields.ForeignKey('datapoints.api.simple.RegionResource', 'parent_region', full=True, null=True)
+    parent_region = fields.ForeignKey('datapoints.api.simple.RegionResource', 'parent_region', full=False, null=True)
 
     class Meta(SimpleApiResource.Meta):
         queryset = Region.objects.all()
