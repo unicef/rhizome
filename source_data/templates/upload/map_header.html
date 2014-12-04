@@ -1,0 +1,18 @@
+{% extends "datapoints/base.html" %}
+{% block content %}
+{% if messages %}
+<h3><ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul></h3>
+{% endif %}
+
+
+
+<form action="{% url 'upload:file_upload' %}" method="post" enctype="multipart/form-data">
+
+  <button type="submit" class="btn btn-primary"> Upload! </button></a>
+</form>
+
+{% endblock %}

@@ -149,7 +149,6 @@ def mark_doc_as_processed(request,document_id):
 
 
 
-
 ### Bulk Upload Stuff Above ###
 
             ####
@@ -174,15 +173,6 @@ def file_upload(request):
     elif request.method == 'POST':
 
         file_type = request.POST['file_type']
-
-        indicator_col = request.POST['indicator_col']
-        region_col = request.POST['region_col']
-        campaign_col = request.POST['campaign_col']
-
-        if indicator_col == '':
-            indicator_col = 'HEADERS_ARE_INDICATORS'
-            print indicator_col
-
 
 
         try:
@@ -210,10 +200,18 @@ def file_upload(request):
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        return HttpResponseRedirect(reverse('source_data:pre_process_file',\
-            kwargs={'pk':newdoc.id,'file_type':file_type}))
+        return HttpResponseRedirect(reverse('source_data:map_header',\
+            kwargs={'document_id':newdoc.id,'file_type':file_type}))
 
-def pre_process_file(request,pk,file_type):
+def map_header(request,document_id,file_type):
+
+    if file_type == 'Region':
+        return HttpResponseRedirect(reverse('source_data:pre_process_file',\
+            kwargs={'document_id':document_id,'file_type':file_type}))
+
+
+
+def pre_process_file(request,document_id,file_type):
 
 
     if file_type == 'Datapoint':
@@ -222,25 +220,24 @@ def pre_process_file(request,pk,file_type):
         dt = DocTransform(pk,file_type,column_mappings)
         sdps = dt.dp_df_to_source_datapoints()
 
-
         return render_to_response(
             'upload/document_review.html',
-            {'document_id':pk,'to_review':sdps},
+            {'document_id':document_id,'to_review':sdps},
             RequestContext(request),
         )
 
     elif file_type == 'Region':
 
-        rt = RegionTransform(pk,file_type,{})
+        rt = RegionTransform(document_id,file_type,{})
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
 
         to_map = SourceRegion.objects.filter(regionmap__isnull=True,
-            document_id = pk)
+            document_id = document_id)
 
         return render_to_response(
             'data_entry/final_review.html',
-            {'document_id': pk, 'to_map':to_map},
+            {'document_id': document_id, 'to_map':to_map},
             RequestContext(request),
         )
 
