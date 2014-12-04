@@ -2,16 +2,50 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
-        <a href="{% url 'source_data:refresh_master_by_document_id' document_id %}"<button type=\
-            "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
-
-
-        <h> </h>
-        <br>
-        <br>
+        <h1>Please Map The columns of your Upload</h1>
         <br>
 
-        {% if to_review %}
+        Campaign Column : <select id="campaign" name="campaign">
+
+          {% for header in header_list %}
+            <option value= "{{header}}">
+             {{header}}
+             </option>
+          {% endfor %}
+        </select>
+
+        <br><br>
+
+      Region Column:  <select id="region" name="region">
+        {% for header in header_list %}
+          <option value= "{{header}}">
+           {{header}}
+           </option>
+        {% endfor %}
+        </select>
+
+      <br><br>
+
+      Indicator Column:  <select id="indicator" name="indicator">
+        {% for header in header_list %}
+          <option value= "{{header}}">
+           {{header}}
+           </option>
+        {% endfor %}
+        </select>
+
+
+
+      <br><br><br>
+
+      <!-- <input class="btn btn-primary btn-sm" type="submit" value="Map Headers!" /> -->
+
+      <a href="{% url 'source_data:refresh_master_by_document_id' document_id %}"<button type=\
+          "submit" class="btn btn-primary btn-sm"> Map Headers and Continue </button></a></th>
+      </form>
+
+
+      {% if to_review %}
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -37,7 +71,7 @@
             {% endfor %}
         </table>
         {% else %}
-    <p>No datapoints are available.</p>
+    <p>No Source Datapoints Have Been Created yet....</p>
     {% endif %}
 
 {% endblock %}

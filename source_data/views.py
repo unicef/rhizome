@@ -174,6 +174,10 @@ def file_upload(request):
     elif request.method == 'POST':
 
         file_type = request.POST['file_type']
+        # indicator_col = request.POST['indicator_col']
+        # region_col = request.POST['region_col']
+        # campaign_col = request.POST['campaign_col']
+
         try:
             to_upload = request.FILES['docfile']
 
@@ -185,6 +189,7 @@ def file_upload(request):
                 'upload/file_upload.html',
                 context_instance=RequestContext(request)
             )
+
 
         # If the document is of an invalid format
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
@@ -210,14 +215,12 @@ def pre_process_file(request,pk,file_type):
 
         dt = DocTransform(pk,file_type)
 
-        print dt.df
-
         header_list  = dt.df.columns.values
-        column_mapping = dt.get_essential_columns()
+        print header_list
 
         return render_to_response(
             'upload/document_review.html',
-            {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
+            {'header_list':header_list,'document_id':pk},
             RequestContext(request),
         )
 

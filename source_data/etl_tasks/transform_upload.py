@@ -33,6 +33,7 @@ class DocTransform(object):
 
             df = read_excel(self.file_path,sheet.name)
 
+
         return df
 
     def get_essential_columns(self):
@@ -54,6 +55,11 @@ class DocTransform(object):
                 pass
 
         return column_mapping
+
+    def dp_df_to_source_datapoints(self,region_col,campaign_col):
+
+        pass
+
 
 class RegionTransform(DocTransform):
 

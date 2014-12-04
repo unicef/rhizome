@@ -22,13 +22,19 @@
   <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
   <br><br>
   <p>{{ form.docfile.errors }} {{ form.docfile }}</p>
-
+  <br>
   <select name="file_type">
     <option value="Datapoint">Datapoint</option>
     <option value="Region">Region</option>
   </select name="movie">
 
-
+  <br><br>
+  Indicator Column <input type="text" name="indicator_col" size="25"> leave blank if indicators are column headers
+  <br><br>
+  Region Column <input type="text" name="region_col" size="25">
+  <br><br>
+  Campaign Column <input type="text" name="campaign_col" size="25">
+  <br>
 <br><br>
 
 	<button type="submit" class="btn btn-primary"> Upload! </button></a>
