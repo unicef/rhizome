@@ -174,9 +174,16 @@ def file_upload(request):
     elif request.method == 'POST':
 
         file_type = request.POST['file_type']
-        # indicator_col = request.POST['indicator_col']
-        # region_col = request.POST['region_col']
-        # campaign_col = request.POST['campaign_col']
+
+        indicator_col = request.POST['indicator_col']
+        region_col = request.POST['region_col']
+        campaign_col = request.POST['campaign_col']
+
+        if indicator_col == '':
+            indicator_col = 'HEADERS_ARE_INDICATORS'
+            print indicator_col
+
+
 
         try:
             to_upload = request.FILES['docfile']
@@ -189,7 +196,6 @@ def file_upload(request):
                 'upload/file_upload.html',
                 context_instance=RequestContext(request)
             )
-
 
         # If the document is of an invalid format
         if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
@@ -205,22 +211,21 @@ def file_upload(request):
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
         return HttpResponseRedirect(reverse('source_data:pre_process_file',\
-            kwargs={'pk':newdoc.id,'file_type':file_type}))  # encode like done below
-
+            kwargs={'pk':newdoc.id,'file_type':file_type}))
 
 def pre_process_file(request,pk,file_type):
 
 
     if file_type == 'Datapoint':
+        column_mappings = {}
 
-        dt = DocTransform(pk,file_type)
+        dt = DocTransform(pk,file_type,column_mappings)
+        sdps = dt.dp_df_to_source_datapoints()
 
-        header_list  = dt.df.columns.values
-        print header_list
 
         return render_to_response(
             'upload/document_review.html',
-            {'header_list':header_list,'document_id':pk},
+            {'document_id':pk,'to_review':sdps},
             RequestContext(request),
         )
 
@@ -232,7 +237,6 @@ def pre_process_file(request,pk,file_type):
 
         to_map = SourceRegion.objects.filter(regionmap__isnull=True,
             document_id = pk)
-
 
         return render_to_response(
             'data_entry/final_review.html',

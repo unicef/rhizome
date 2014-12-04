@@ -15,13 +15,15 @@ from datapoints.models import DataPoint, Source, Office, Region
 
 class DocTransform(object):
 
-    def __init__(self,document_id,file_type):
+    def __init__(self,document_id,file_type,column_mappings):
 
         self.source_datapoints = []
         self.file_type = file_type
         self.document = Document.objects.get(id=document_id)
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
+        self.column_mappings = column_mappings
         self.df = self.create_df()
+
 
     def create_df(self):
 
@@ -36,29 +38,32 @@ class DocTransform(object):
 
         return df
 
-    def get_essential_columns(self):
 
-        column_mapping = {
-            'region':[],
-            'Campaign':[]
-        }
+    def dp_df_to_source_datapoints(self):
 
-        header_list = [str(col) for col in self.df.columns.values]
+        source_datapoints = []
 
-        overrides = HeaderOverride.objects.filter(header_string__in=header_list)
+        df_cols = [col for col in self.df]
 
-        for o in overrides:
-            try:
-                print o.content_type.name
-                column_mapping[o.content_type.name].append(o.header_string)
-            except KeyError:
-                pass
+        for i,(row) in enumerate(self.df.values):
+            print 'row_number'
+            print i
+            sdp, created = SourceDataPoint.objects.get_or_create(
+                source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
+                defaults = {
+                'indicator_string': row[df_cols.index('Indicator')],
+                'region_string': row[df_cols.index('Area Name')],
+                'campaign_string': row[df_cols.index('Time Period')],
+                'cell_value': row[df_cols.index('Data Value')],
+                'row_number': i,
+                'source_id': Source.objects.get(source_name='data entry').id,
+                'document_id': self.document.id,
+                'status_id': ProcessStatus.objects.get(status_text='TO_PROCESS').id
+            })
+            source_datapoints.append(sdp)
 
-        return column_mapping
 
-    def dp_df_to_source_datapoints(self,region_col,campaign_col):
-
-        pass
+        return source_datapoints
 
 
 class RegionTransform(DocTransform):
