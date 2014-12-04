@@ -35,6 +35,7 @@ class CustomSerializer(Serializer):
 
     def campaign_region_pivot(self,list_of_dicts):
 
+
         meta = None
 
         try:
@@ -50,7 +51,16 @@ class CustomSerializer(Serializer):
 
         df = pd.DataFrame(objects)
 
-        try:
+        try: # this block is used to pivot the parent region aggregate query
+            pivoted = pd.pivot_table(df, values='the_sum', index=['parent_region', 'campaign'],
+                     columns=['indicator'],aggfunc = lambda x: x)
+
+            return pivoted, meta
+
+        except KeyError as err:
+            pass
+
+        try: # this block is used to pivot basic api requests
             pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
                      columns=['indicator'],aggfunc = lambda x: x)
         except KeyError:
@@ -81,6 +91,8 @@ class CustomSerializer(Serializer):
         data = self.to_simple(data, options)
 
         pivoted,meta = self.campaign_region_pivot(data)
+
+        print pivoted
 
         # replace NaN with None
         cleaned = pivoted.astype(object).replace(np.nan, 'None')
@@ -412,7 +424,7 @@ class ParentRegionAggResource(SimpleApiResource):
             "campaign":ALL,
         }
         allowed_methods = ['get']
-        # serializer = CustomSerializer()
+        serializer = CustomSerializer()
         max_limit = None
 
     def dehydrate(self, bundle):
