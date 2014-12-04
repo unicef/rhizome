@@ -35,6 +35,7 @@ class CustomSerializer(Serializer):
 
     def campaign_region_pivot(self,list_of_dicts):
 
+
         meta = None
 
         try:
@@ -50,7 +51,16 @@ class CustomSerializer(Serializer):
 
         df = pd.DataFrame(objects)
 
-        try:
+        try: # this block is used to pivot the parent region aggregate query
+            pivoted = pd.pivot_table(df, values='the_sum', index=['parent_region', 'campaign'],
+                     columns=['indicator'],aggfunc = lambda x: x)
+
+            return pivoted, meta
+
+        except KeyError as err:
+            pass
+
+        try: # this block is used to pivot basic api requests
             pivoted = pd.pivot_table(df, values='value', index=['region', 'campaign'],
                      columns=['indicator'],aggfunc = lambda x: x)
         except KeyError:
@@ -288,27 +298,34 @@ class DataPointResource(SimpleApiResource):
         '''
 
         # get the params from the query dict
+
         regions, campaigns, indicators, the_limit = \
             self.parse_url_params(query_dict)
+
 
         # find all of the distinct regions / campaigns in the db
         all_region_campaign_tuples = DataPoint.objects.values_list('region',\
             'campaign').distinct()
+
+
 
         # if there was no region or campaign passed in just take the first
         # x elements in the list ( where x is the_limit ) and return that
         if len(regions) == 0 and len(campaigns) == 0:
             return all_region_campaign_tuples[:the_limit], indicators
 
+
+
         final_region_campaign_tuples = []
 
         # loop through all of the distinct campaigns/regions in the db and if
         # the request matches then add to the array that will be returned
 
+
         for r,c in all_region_campaign_tuples:
 
             if len(final_region_campaign_tuples) == the_limit:
-                return final_region_campaign_tuples
+                return final_region_campaign_tuples, indicators
 
             elif str(r) in regions and str(c) in campaigns:
                 final_region_campaign_tuples.append((r,c))
@@ -322,7 +339,9 @@ class DataPointResource(SimpleApiResource):
             else:
                 pass
 
+
         return final_region_campaign_tuples, indicators
+
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -340,9 +359,7 @@ class DataPointResource(SimpleApiResource):
         and campaigns that coorespond with the limit passed in conjunction
         with the campaign / region list
         '''
-
         query_dict = request.GET
-
         region_campaign_tuples, indicators = self.get_regions_and_campaigns_to_filter(query_dict)
 
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
@@ -353,7 +370,6 @@ class DataPointResource(SimpleApiResource):
             campaign__in = campaigns,
             indicator__in = indicators.split(',')
         )
-
 
         return object_list
 
@@ -412,12 +428,12 @@ class ParentRegionAggResource(SimpleApiResource):
             "campaign":ALL,
         }
         allowed_methods = ['get']
-        # serializer = CustomSerializer()
+        serializer = CustomSerializer()
         max_limit = None
 
-    def dehydrate(self, bundle):
-        ''' overriden from tastypie '''
-        return bundle
+    # def dehydrate(self, bundle):
+    #     ''' overriden from tastypie '''
+    #     return bundle
 
     def obj_get_list(self, bundle, **kwargs):
         ''' overriden from tastypie '''
@@ -457,3 +473,42 @@ class ParentRegionAggResource(SimpleApiResource):
 
 
         return query_kwargs
+
+    def dehydrate(self, bundle):
+        '''
+        # Depending on the <uri_display> parameter, return to the bundle
+        # the name, resurce_uri, slug or ID of the resource
+        # '''
+
+        fk_columns = {'indicator':bundle.obj.indicator,\
+            'campaign':bundle.obj.campaign,\
+            'parent_region':bundle.obj.parent_region}
+
+
+        try: # Default to showing the ID of the resource
+            uri_display = bundle.request.GET['uri_display']
+        except KeyError:
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj
+            return bundle
+
+
+        if uri_display == 'slug':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.slug
+
+        elif uri_display == 'id':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.id
+
+
+        elif uri_display == 'name':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.name
+
+        else: # if there is any other uri_display, return the full uri
+            pass
+
+
+
+        return bundle
