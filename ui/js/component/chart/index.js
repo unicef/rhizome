@@ -55,6 +55,14 @@ module.exports = {
 
 		transform: function () {
 			return 'translate(' + this.marginLeft + ',' + this.marginTop + ')';
+		},
+
+		empty: function () {
+			if (this.values instanceof Array) {
+				return this.values.length === 0;
+			}
+
+			return (typeof this.values === 'undefined') || this.values === null || this.values === '';
 		}
 	},
 

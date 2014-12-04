@@ -4,9 +4,13 @@
 			<h3>Impact</h3>
 			<section>
 				<h4>{{ cases }} Polio cases this year</h4>
+				<svg v-component="chart-base"
+				     data-aspect="1.8"></svg>
 			</section>
 			<section>
 				<h4>{{ gap }} Immunity Gap</h4>
+				<svg v-component="chart-base"
+				     data-aspect="1.8"></svg>
 			</section>
 		</div>
 
@@ -14,30 +18,46 @@
 			<h3>Performance of Front Line Workers</h3>
 
 			<div class="row">
-				<div class="medium-3 columns">
+				<div class="medium-2 columns">
 
-				<section>
-					<h4>Missed Children</h4>
-					<svg v-component="chart-base"
-					     data-margin-bottom="24"
-					     data-aspect="1.618"
-					     v-with="layers: missed,
-					             empty : false">
+					<section>
+						<h4>Missed Children</h4>
+						<svg v-component="chart-base"
+						     data-margin-bottom="24"
+						     data-aspect="1.618"
+						     v-with="values: missed,
+						             empty : false">
 
-						<g v-component="chart-stackedTime"
-						   v-with="layers: layers,
-						           width : contentWidth,
-						           height: contentHeight">
-							<g class="x axis"
-							   v-attr="transform: 'translate(0,' + height + ')'"></g>
-							<g class="y axis"></g>
-							<g class="layers"></g>
-						</g>
-					</svg>
-				</section>
+							<g v-component="chart-stackedTime"
+							   v-with="layers: values,
+							           width : contentWidth,
+							           height: contentHeight">
+								<g class="x axis"
+								   v-attr="transform: 'translate(0,' + height + ')'"></g>
+								<g class="y axis"></g>
+								<g class="layers"></g>
+							</g>
+						</svg>
+					</section>
+
+					<section>
+						<h4>Conversions</h4>
+						<svg v-component="chart-base"
+						     data-aspect="1.618"></svg>
+					</section>
+
+					<section>
+						<p style="margin-bottom: 0">microplans incorporate social data</p>
+					</section>
+
 				</div>
+
 				<div class="medium-3 columns"></div>
-				<div class="medium-1 column"></div>
+
+				<div class="medium-2 column">
+					<h4>Transit Points</h4>
+					<p>No data</p>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -49,15 +69,13 @@
 				<li v-repeat="ind: capacity">
 					<h4 v-text="ind.title"></h4>
 					<svg v-component="chart-base"
-
 					     data-aspect="3"
-					     v-with="ind  : ind,
-					             empty: false">
+					     v-with="values: ind">
 
 						<g v-component="chart-bullet"
-						   v-with="value : ind.value,
-						           marker: ind.marker,
-						           ranges: ind.ranges,
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
 						           width : contentWidth,
 						           height: contentHeight"></g>
 					</svg>
@@ -79,6 +97,8 @@
 
 		<div class="medium-2 columns">
 			<h3>Inaccessible Children</h3>
+			<svg v-component="chart-base"
+			     data-aspect="2"></svg>
 		</div>
 	</div>
 </div>

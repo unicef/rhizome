@@ -38,5 +38,6 @@ module.export = {
 		return d3.max(value, function (d) {
 			return keypath ? d.$get(keypath) : Number(d);
 		});
-	}
+	},
+
 };
