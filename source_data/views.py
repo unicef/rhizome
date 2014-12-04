@@ -206,18 +206,32 @@ def file_upload(request):
 def map_header(request,document_id,file_type):
 
     if file_type == 'Region':
+
         return HttpResponseRedirect(reverse('source_data:pre_process_file',\
             kwargs={'document_id':document_id,'file_type':file_type}))
 
+    else:
+        dt = DocTransform(document_id,file_type,{})
+        file_columns = [col for col in dt.df]
 
+        return render_to_response(
+            'upload/map_header.html',
+            { 'file_columns':file_columns,
+              'document_id':document_id,
+              'file_type':file_type },
+            RequestContext(request))
 
 def pre_process_file(request,document_id,file_type):
 
-
     if file_type == 'Datapoint':
-        column_mappings = {}
 
-        dt = DocTransform(pk,file_type,column_mappings)
+        column_mappings = {}
+        column_mappings['campaign_col'] = request.GET['campaign_col']
+        column_mappings['value_col'] = request.GET['value_col']
+        column_mappings['region_col'] = request.GET['region_col']
+        column_mappings['indicator_col'] = request.GET['indicator_col']        
+
+        dt = DocTransform(document_id,file_type,column_mappings)
         sdps = dt.dp_df_to_source_datapoints()
 
         return render_to_response(

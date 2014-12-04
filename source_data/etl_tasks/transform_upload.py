@@ -43,6 +43,7 @@ class DocTransform(object):
 
         source_datapoints = []
 
+
         df_cols = [col for col in self.df]
 
         for i,(row) in enumerate(self.df.values):
@@ -51,10 +52,10 @@ class DocTransform(object):
             sdp, created = SourceDataPoint.objects.get_or_create(
                 source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
                 defaults = {
-                'indicator_string': row[df_cols.index('Indicator')],
-                'region_string': row[df_cols.index('Area Name')],
-                'campaign_string': row[df_cols.index('Time Period')],
-                'cell_value': row[df_cols.index('Data Value')],
+                'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
+                'region_string': row[df_cols.index(self.column_mappings['region_col'])],
+                'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
+                'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
                 'row_number': i,
                 'source_id': Source.objects.get(source_name='data entry').id,
                 'document_id': self.document.id,
