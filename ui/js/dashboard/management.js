@@ -14,8 +14,9 @@ var bullet   = require('../data/model/bullet');
 // FIXME: Hard-coded mapping from office ID to region ID for countries because
 // region_type currently doesn't distinguish states and countries.
 var OFFICE = {
-	1: 23,
-	2: 4404
+	1: 23,   // Nigeria
+	2: 4404, // Afghanistan
+	3: 128   // Pakistan
 };
 
 /**
@@ -44,7 +45,8 @@ function indicators(ids, opts) {
 	function emptyPromise(fulfill) {
 		fulfill({
 			meta: {},
-			objects: []
+			objects: [],
+			conversions: [],
 		});
 	}
 
@@ -172,6 +174,11 @@ module.exports = {
 				.then(sort(campaignStart))
 				.then(ratio([20, 21, 22], 55))
 				.done(set('missed'));
+
+			indicators([25, 26], q)
+				.then(sort(campaignStart))
+				.then(ratio(25, 26))
+				.done(set('conversions'));
 
 			q.campaign_start = (self.start ?
 				moment(self.start) :

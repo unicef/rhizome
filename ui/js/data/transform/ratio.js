@@ -32,14 +32,14 @@ module.exports = function ratio(numerator, denominator) {
 					region    : row.region,
 					campaign  : row.campaign,
 					indicators: row.indicators,
-					value     : d === 0 ? 0 : n / d
+					value     : n / d
 				});
 			}
 
 			collection.push(series);
 		}
 
-		return collection.length === 1 ? collection[0] : collection;
+		return collection;
 	}
 
 	return model;

@@ -1,40 +1,9 @@
 'use strict';
 
-var d3 = require('d3');
+var d3       = require('d3');
 
 var coolgray = require('../../colors/coolgray');
-
-function min(data, accessor) {
-	var m = Infinity;
-
-	accessor = accessor || Number;
-
-	if (data instanceof Array) {
-		for (var i = data.length - 1; i >= 0; i--) {
-			m = Math.min(m, min(data[i], accessor));
-		}
-	} else {
-		m = Math.min(m, accessor(data));
-	}
-
-	return m;
-}
-
-function max(data, accessor) {
-	var m = -Infinity;
-
-	accessor = accessor || Number;
-
-	if (data instanceof Array) {
-		for (var i = data.length - 1; i >= 0; i--) {
-			m = Math.max(m, max(data[i], accessor));
-		}
-	} else {
-		m = Math.max(m, accessor(data));
-	}
-
-	return m;
-}
+var util     = require('../../util/data');
 
 module.exports = {
 	replace: true,
@@ -55,6 +24,10 @@ module.exports = {
 				return d.y0 + d.y;
 			}
 
+			function defined(d) {
+				return util.defined(getY(d));
+			}
+
 			if (!this.layers) {
 				return;
 			}
@@ -69,10 +42,10 @@ module.exports = {
 
 			var layers = stack(this.layers);
 
-			var start  = new Date(min(layers, getX));
-			var end    = new Date(max(layers, getX));
-			var lower  = min(layers, function (d) { return d.y0; });
-			var upper  = max(layers, getY);
+			var start  = new Date(util.min(layers, getX));
+			var end    = new Date(util.max(layers, getX));
+			var lower  = util.min(layers, function (d) { return d.y0; });
+			var upper  = util.max(layers, getY);
 
 			var x = d3.time.scale()
 				.domain([start, end])
@@ -87,6 +60,7 @@ module.exports = {
 				.range(coolgray);
 
 			var area = d3.svg.area()
+				.defined(defined)
 				.x(function (d) { return x(getX(d)); })
 				.y0(function (d) { return y(d.y0); })
 				.y1(function (d) { return y(getY(d)); });

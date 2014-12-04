@@ -1,9 +1,22 @@
 'use strict';
 
-var _  = require('lodash');
-var d3 = require('d3');
+var d3   = require('d3');
+
+var util = require('../../util/data');
 
 module.exports = {
+	paramAttributes: [
+		'data-lines',
+		'data-areas',
+		'data-width',
+		'data-height'
+	],
+
+	mixins: [
+		require('./yGrid'),
+		require('./xAxis')
+	],
+
 	data: function () {
 		return {
 			lines : [],
@@ -13,91 +26,94 @@ module.exports = {
 		};
 	},
 
+	created: function () {
+		if (!this.$options.hasOwnProperty('x')) {
+			this.$options.x = d3.time.scale();
+		}
+
+		if (!this.$options.hasOwnProperty('y')) {
+			this.$options.y = d3.scale.linear();
+		}
+	},
+
 	methods: {
 		draw: function () {
+			function getX(d) {
+				return d.campaign.start_date;
+			}
+
+			function getY(d) {
+				return d.value;
+			}
+
+			function getScaledX(d) {
+				return x(getX(d));
+			}
+
+			function getScaledY(d) {
+				return y(getY(d));
+			}
+
+			function defined(d) {
+				return util.defined(getY(d));
+			}
+
 			var svg = d3.select(this.$el);
 
-			var data = _.reduce(this.lines, function (result, d) {
-				return result.concat(d);
-			}, []).concat(_.reduce(this.areas, function (result, d) {
-				return result.concat(d);
-			}, []));
+			var dataset = [this.lines, this.areas];
+			var start   = util.min(dataset, getX);
+			var end     = util.max(dataset, getX);
+			var lower   = util.min(dataset, getY);
+			var upper   = util.max(dataset, getY);
 
-			var x = d3.scale.linear()
-				.domain(d3.extent(data, function (d) { return d.x; }))
+			var x = this.$options.x;
+			var y = this.$options.y;
+
+			x.domain([start, end])
 				.range([0, this.width]);
-
-			var y = d3.scale.linear()
-				.domain([0, d3.max(data, function (d) { return d.y; })])
+			y.domain([lower, upper])
 				.range([this.height, 0]);
 
-			// Lines
-
-			var line = d3.svg.line()
-				.x(function (d) { return x(d.x); })
-				.y(function (d) { return y(d.y); });
-
-			var paths = svg.select('.lines').selectAll('.line')
-				.data(this.lines);
-
-			paths.enter().append('path')
-				.attr('class', 'line');
-
-			paths.style('stroke', function (d) { return d.color; })
-				.transition().duration(300)
-				.attr('d', function (d) { return line(d); });
-
-			paths.exit().remove();
-
-			// Areas
-
 			var area = d3.svg.area()
-				.x(function (d) { return x(d.x); })
-				.y0(this.height)
-				.y1(function (d) { return y(d.y); });
+				.defined(defined)
+				.x(getScaledX)
+				.y(getScaledY);
 
-			paths = svg.select('.areas').selectAll('.area')
-				.data(this.areas);
+			var areas = svg.selectAll('.area').data(this.areas);
 
-			paths.enter().append('path')
+			areas.enter().append('path')
 				.attr('class', 'area');
 
-			paths.transition().duration(300)
-				.attr('d', area);
+			areas.attr({
+				d: area
+			});
 
-			paths.exit().remove();
+			var line = d3.svg.line()
+				.defined(defined)
+				.x(getScaledX)
+				.y(getScaledY);
 
+			var lines = svg.selectAll('.line').data(this.lines);
 
-			// Draw axes
+			lines.enter().append('path')
+				.attr('class', 'line');
 
-			var axis = d3.svg.axis()
-				.scale(x)
-				.tickSize(0)
-				.orient('bottom');
+			lines.attr({
+				d: line
+			});
 
-			svg.select('.x.axis').call(axis);
-
-			axis = d3.svg.axis()
-				.scale(y)
-				.tickSize(this.width)
-				.ticks(3)
-				.orient('right');
-
-			svg.select('.y.axis').call(axis);
-			svg.select('.y.axis').selectAll('text')
-				.attr('x', 0)
-				.attr('dy', '-.2em');
+			this._callHook('drawn');
 		}
 	},
 
 	on: {
-		'hook:attached'  : 'draw',
+		'hook:attached': 'draw'
 	},
 
 	watch: {
-		lines : 'draw',
-		areas : 'draw',
-		width : 'draw',
-		height: 'draw'
+		'lines' : 'draw',
+		'areas' : 'draw',
+		'width' : 'draw',
+		'height': 'draw'
 	}
 };

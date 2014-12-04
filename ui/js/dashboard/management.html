@@ -49,7 +49,16 @@
 					<section>
 						<h4>Conversions</h4>
 						<svg v-component="chart-base"
-						     data-aspect="1.618"></svg>
+						     data-aspect="1.618"
+						     data-margin-bottom="24"
+						     v-with="values: conversions">
+
+							<g v-component="chart-line"
+							   data-width="{{contentWidth}}"
+							   data-height="{{contentHeight}}"
+							   data-lines="{{values}}"></g>
+
+						</svg>
 					</section>
 
 					<section>
