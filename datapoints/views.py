@@ -8,7 +8,7 @@ from django.db import connection
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 
-from datapoints.sql_queries import *
+
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
 

@@ -76,7 +76,7 @@ class MasterRefresh(object):
                   )
                   self.new_datapoints.append(datapoint.id)
               sdp.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
-              record.save()
+              sdp.save()
               self.new_datapoints.append(datapoint.id)
 
           except IntegrityError:

@@ -48,7 +48,7 @@ class Office(models.Model):
 class Region(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
-    region_code = models.CharField(max_length=55)
+    region_code = models.CharField(max_length=55, unique=True)
     region_type = models.CharField(max_length=55)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
@@ -163,3 +163,15 @@ class AggregationExpectedData(models.Model):
 
     class Meta:
         db_table = 'aggregation_expected_data'
+
+
+class ParentRegionAgg(models.Model):
+
+    parent_region = models.ForeignKey(Region)
+    indicator = models.ForeignKey(Indicator)
+    campaign = models.ForeignKey(Campaign)
+    the_sum = models.FloatField()
+
+    class Meta:
+        db_table = 'parent_region_agg'
+        managed = False

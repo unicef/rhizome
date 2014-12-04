@@ -111,7 +111,9 @@ def review_sdps_by_document(request,document_id):
 
 def refresh_master_by_document_id(request,document_id):
 
-    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
+    source_datapoints = SourceDataPoint.objects.filter(
+        document_id=document_id,\
+        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))[:1000]
 
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
@@ -224,14 +226,24 @@ def pre_process_file(request,pk,file_type):
         rt = RegionTransform(pk,file_type)
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
-        parent_region_lookup = rt.add_source_parent_regions()
-        # master_regions = rt.source_regions_to_regions(parent_region_lookup)
+
+        to_map = SourceRegion.objects.filter(regionmap__isnull=True,
+            document_id = pk)
+
 
         return render_to_response(
-            'upload/document_review.html',
-            {'document_id':pk},
+            'data_entry/final_review.html',
+            {'document_id': pk, 'to_map':to_map},
             RequestContext(request),
         )
+
+######### DOCUMENT RELATED VIEWS ##########
+
+class DocumentIndex(generic.ListView):
+
+    context_object_name = "documents"
+    template_name = 'document_list.html'
+    model = Document
 
 
 ######### META MAPPING ##########
@@ -288,7 +300,6 @@ class ShowSourceIndicator(generic.DetailView):
     context_object_name = "source_indicator"
     template_name = 'map/source_indicator.html'
     model = SourceIndicator
-
 
 
 def refresh_master(request):

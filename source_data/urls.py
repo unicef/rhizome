@@ -18,4 +18,6 @@ urlpatterns = [
   url(r'^refresh_master_by_document_id/(?P<document_id>[0-9]+)/$', refresh_master_by_document_id, name='refresh_master_by_document_id'),
   url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$', mark_doc_as_processed, name='mark_doc_as_processed'),
   url(r'^user_portal/$', user_portal, name='user_portal'),
+  url(r'^document_index/$', DocumentIndex.as_view(),name='document_index'),
+
 ]

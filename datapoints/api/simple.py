@@ -18,6 +18,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
+from django.db.models import Sum
+
 from stronghold.decorators import public
 import pandas as pd
 
@@ -117,7 +119,6 @@ class CustomSerializer(Serializer):
 
         response['meta'] = meta
 
-        # pp.pprint(response_objects)
         response['objects'] = response_objects
 
         return json.dumps(response)
@@ -263,25 +264,32 @@ class DataPointResource(SimpleApiResource):
         except KeyError:
             the_limit = 10
 
-
         try:
             region_in = query_dict['region__in']
         except KeyError:
             region_in = []
-
 
         try:
             campaign_in = query_dict['campaign__in']
         except KeyError:
             campaign_in = []
 
-        return region_in, campaign_in, the_limit
+        try:
+            indicator_in = query_dict['indicator__in']
+        except KeyError:
+            indicator_in = []
+
+
+        return region_in, campaign_in, indicator_in, the_limit
 
     def get_regions_and_campaigns_to_filter(self,query_dict):
-        '''applying the limit to the region / campaign combo'''
+        '''
+        applying the limit to the region / campaign combo
+        '''
 
         # get the params from the query dict
-        regions, campaigns, the_limit = self.parse_url_params(query_dict)
+        regions, campaigns, indicators, the_limit = \
+            self.parse_url_params(query_dict)
 
         # find all of the distinct regions / campaigns in the db
         all_region_campaign_tuples = DataPoint.objects.values_list('region',\
@@ -290,7 +298,7 @@ class DataPointResource(SimpleApiResource):
         # if there was no region or campaign passed in just take the first
         # x elements in the list ( where x is the_limit ) and return that
         if len(regions) == 0 and len(campaigns) == 0:
-            return all_region_campaign_tuples[:the_limit]
+            return all_region_campaign_tuples[:the_limit], indicators
 
         final_region_campaign_tuples = []
 
@@ -314,34 +322,47 @@ class DataPointResource(SimpleApiResource):
             else:
                 pass
 
-        return final_region_campaign_tuples
+        return final_region_campaign_tuples, indicators
+
+    def obj_get_list(self, bundle, **kwargs):
+        '''
+        Overriding this method because if i dont, the filters are applied
+        to the aggregate and because of whcih i get no data
+        '''
+        # Filtering disabled for brevity...
+        return self.get_object_list(bundle.request)
 
 
     def get_object_list(self, request):
-        ''' evan needs ot be able to limit by region/campaign pairs so here
+        '''
+        Evan needs ot be able to limit by region/campaign pairs so here
         i override the get object list with a method that finds the regions
         and campaigns that coorespond with the limit passed in conjunction
-        with the campaign / region list'''
+        with the campaign / region list
+        '''
 
         query_dict = request.GET
 
-        region_campaign_tuples = self.get_regions_and_campaigns_to_filter(query_dict)
+        region_campaign_tuples, indicators = self.get_regions_and_campaigns_to_filter(query_dict)
+
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
 
         object_list = DataPoint.objects.filter(
             region__in = regions,
             campaign__in = campaigns,
+            indicator__in = indicators.split(',')
         )
 
+
         return object_list
 
-        object_list = super(DataPointResource, self).get_object_list(request)
-        return object_list
 
     def dehydrate(self, bundle):
-        ''' depending on the <uri_display> parameter, return to the bundle
-        the name, resurce_uri, slug or ID of the resource'''
+        '''
+        Depending on the <uri_display> parameter, return to the bundle
+        the name, resurce_uri, slug or ID of the resource
+        '''
 
         fk_columns = {'indicator':bundle.obj.indicator,\
             'campaign':bundle.obj.campaign,\
@@ -374,3 +395,65 @@ class DataPointResource(SimpleApiResource):
 
 
         return bundle
+
+class ParentRegionAggResource(SimpleApiResource):
+
+    parent_region = fields.ToOneField(RegionResource, 'parent_region')
+    indicator = fields.ToOneField(IndicatorResource, 'indicator')
+    campaign = fields.ToOneField(CampaignResource, 'campaign')
+
+
+    class Meta(SimpleApiResource.Meta):
+        queryset = ParentRegionAgg.objects.all()
+        resource_name = 'parent_region_agg'
+        filtering = {
+            "indicator": ALL,
+            "parent_region":ALL,
+            "campaign":ALL,
+        }
+        allowed_methods = ['get']
+        # serializer = CustomSerializer()
+        max_limit = None
+
+    def dehydrate(self, bundle):
+        ''' overriden from tastypie '''
+        return bundle
+
+    def obj_get_list(self, bundle, **kwargs):
+        ''' overriden from tastypie '''
+
+        return self.get_object_list(bundle.request)
+
+    def get_object_list(self, request):
+
+        query_dict = request.GET
+        query_kwargs = self.parse_query_params(query_dict)
+
+        object_list = ParentRegionAgg.objects.filter(**query_kwargs)
+
+        return object_list
+
+    def parse_query_params(self,query_dict):
+
+        query_kwargs = {}
+
+        try:
+            indicator__in = query_dict['indicator__in'].split(',')
+            query_kwargs['indicator__in'] = indicator__in
+        except KeyError:
+            pass
+
+        try:
+            campaign__in = query_dict['campaign__in'].split(',')
+            query_kwargs['campaign__in'] = campaign__in
+        except KeyError:
+            pass
+
+        try:
+            parent_region = query_dict['parent_region']
+            query_kwargs['parent_region'] = parent_region
+        except KeyError:
+            pass
+
+
+        return query_kwargs
