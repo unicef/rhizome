@@ -476,13 +476,13 @@ class ParentRegionAggResource(SimpleApiResource):
 
     def dehydrate(self, bundle):
         '''
-        Depending on the <uri_display> parameter, return to the bundle
-        the name, resurce_uri, slug or ID of the resource
-        '''
+        # Depending on the <uri_display> parameter, return to the bundle
+        # the name, resurce_uri, slug or ID of the resource
+        # '''
 
         fk_columns = {'indicator':bundle.obj.indicator,\
             'campaign':bundle.obj.campaign,\
-            'region':bundle.obj.region}
+            'parent_region':bundle.obj.parent_region}
 
 
         try: # Default to showing the ID of the resource
@@ -508,6 +508,7 @@ class ParentRegionAggResource(SimpleApiResource):
 
         else: # if there is any other uri_display, return the full uri
             pass
+
 
 
         return bundle
