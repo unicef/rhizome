@@ -32,7 +32,7 @@ module.exports = function ratio(numerator, denominator) {
 					region    : row.region,
 					campaign  : row.campaign,
 					indicators: row.indicators,
-					value     : n / d
+					value     : d === 0 ? 0 : n / d
 				});
 			}
 
