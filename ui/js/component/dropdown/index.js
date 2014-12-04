@@ -29,12 +29,26 @@ module.exports = {
 		this.$on(this.loadedEvent, function () { this.loading = false; });
 	},
 	computed: {
-		value: function () {
-			return this.items.filter(function (o) { return o.selected; })
-				.map(function (o) { return o.value; });
+		selected: function () {
+			return this.items.filter(function (o) {
+				return o.selected;
+			});
 		},
+
+		value: function () {
+			var selected = this.selected;
+
+			return this.multi ?
+				selected.map(function (o) { return o.value; }) :
+				selected[0].value;
+		},
+
 		title: function () {
-			return this.placeholder;
+			var selected = this.selected;
+
+			return selected.length === 0 ? this.placeholder :
+				this.multi ? selected.map(function (o) { return o.title; }).join(', ') :
+					selected[0].title;
 		},
 	},
 	methods: {
@@ -78,7 +92,7 @@ module.exports = {
 			}
 
 			this.$dispatch('selection-changed', {
-				selected: this.items.filter(function (o) { return o.selected; }),
+				selected: this.multi ? this.selected : this.selected[0],
 				changed: item
 			});
 		},

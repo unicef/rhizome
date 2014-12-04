@@ -17,6 +17,7 @@ module.exports = {
 		'chart-base'          : require('../../component/chart'),
 		'chart-bullet'        : require('../../component/chart/bullet'),
 		'chart-pie'           : require('../../component/chart/pie'),
-		'chart-stackedTime'   : require('../../component/chart/stackedTime')
+		'chart-stackedTime'   : require('../../component/chart/stackedTime'),
+		'vue-dropdown'        : require('../../component/dropdown')
 	}
 };

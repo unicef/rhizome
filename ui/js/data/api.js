@@ -44,9 +44,22 @@ function endPoint(path) {
 	return fetch;
 }
 
+function datapoint(q) {
+	var fetch = q.hasOwnProperty('parent_region') ?
+		endPoint('/parent_region_agg/') :
+		endPoint('/datapoint/');
+
+	return fetch(q);
+}
+
+datapoint.toString = function (query) {
+	return endPoint('/datapoint/').toString(query);
+};
+
 module.exports = {
-	campaign: endPoint('/campaign/'),
+	campaign  : endPoint('/campaign/'),
 	indicators: endPoint('/indicator/'),
-	regions: endPoint('/region/'),
-	datapoints: endPoint('/datapoint/')
+	regions   : endPoint('/region/'),
+	datapoints: datapoint,
+	office    : endPoint('/office/')
 };

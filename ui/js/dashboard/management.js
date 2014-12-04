@@ -11,6 +11,13 @@ var sort     = require('../data/transform/sort');
 var campaign = require('../data/model/campaign');
 var bullet   = require('../data/model/bullet');
 
+// FIXME: Hard-coded mapping from office ID to region ID for countries because
+// region_type currently doesn't distinguish states and countries.
+var OFFICE = {
+	1: 23,
+	2: 4404
+};
+
 /**
  * Utility for filling in default ranges.
  *
@@ -34,13 +41,28 @@ function rangeFactory(data) {
 }
 
 function indicators(ids, opts) {
+	function emptyPromise(fulfill) {
+		fulfill({
+			meta: {},
+			objects: []
+		});
+	}
+
 	// Create a copy of the options so that we can modify the query object
 	var q = _.assign({}, opts);
 
 	if (ids instanceof Array) {
-		q.indicator__in = ids;
+		if (ids.length === 0) {
+			return new Promise(emptyPromise);
+		}
+
+		q.indicator__in = ids.join(',');
 	} else {
-		q.indicator = ids;
+		if (typeof ids === 'undefined' || ids === null || ids === '') {
+			return new Promise(emptyPromise);
+		}
+
+		q.indicator__in = ids;
 	}
 
 	// Return a promise so we can chain the requests for datapoints with the
@@ -74,77 +96,110 @@ module.exports = {
 	template: require('./management.html'),
 
 	data: function () {
-		return {};
+		return {
+			offices: [],
+			region : null,
+			start  : new Date()
+		};
 	},
 
 	created: function () {
-		// Curried function for setting a keypath on the VM that can be used as a
-		// callback for when API calls complete.
-		function set(keypath) {
-			return function (data) {
-				self.$set(keypath, data);
-			};
-		}
-
-		function add(keypath) {
-			return function (data) {
-				var arr = self.$get(keypath);
-
-				if (!arr) {
-					arr = [];
-					self.$set(keypath, arr);
-				}
-
-				arr.push(data);
-			};
-		}
-
-		function campaignStart(d) {
-			return d.campaign.start_date;
-		}
-
 		var self  = this;
-		var start = (this.start ? moment(this.start) : moment()).subtract(2, 'years').format('YYYY-MM-DD');
 
-		// Query parameters shared by all queries
-		var q = {
-			region        : this.region,
-			campaign_start: start
-		};
+		this.$on('selection-changed', function (data) {
+			self.region = OFFICE[data.selected.value];
+			self.loadData();
+		});
 
-		indicators(1, q).done(set('cases'));
+		api.office().done(function (data) {
+			var offices = data.objects.map(function (o) {
+				return {
+					title   : o.name,
+					value   : o.id,
+					selected: false
+				};
+			});
 
-		indicators([], q).done(set('immunity'));
+			offices[0].selected = true;
+			self.region = OFFICE[offices[0].value];
+			self.offices = offices;
+			self.loadData();
+		});
+	},
 
-		indicators([20, 21, 22, 55], q)
-			.then(sort(campaignStart))
-			.then(ratio([20, 21, 22], 55))
-			.done(set('missed'));
+	methods: {
+		loadData: function () {
+			console.log('loadData');
+			// Curried function for setting a keypath on the VM that can be used as a
+			// callback for when API calls complete.
+			function set(keypath) {
+				return function (data) {
+					self.$set(keypath, data);
+				};
+			}
 
-		q.campaign_start = (this.start ?
-			moment(this.start) :
-			moment()).subtract(4, 'months').format('YYYY-MM-DD');
+			function add(keypath) {
+				return function (data) {
+					var arr = self.$get(keypath);
 
-		var capacity = [{
-			name: 'Soc. Mob. Coverage',
-			indicators: [34, 33]
-		}, {
-			name: 'Network Size',
-			indicators: [36, 35]
-		}, {
-			name: 'Female mobilizers',
-			indicators: [40, 36]
-		}];
+					if (!arr) {
+						arr = [];
+						self.$set(keypath, arr);
+					}
 
-		capacity.forEach(rangeFactory);
+					arr.push(data);
+				};
+			}
 
-		for (var i = capacity.length - 1; i >= 0; --i) {
-			var ind = capacity[i];
+			function campaignStart(d) {
+				return d.campaign.start_date;
+			}
 
-			indicators(ind.indicators, q)
+			var self  = this;
+			var start = (this.start ? moment(this.start) : moment()).subtract(2, 'years').format('YYYY-MM-DD');
+
+			// Query parameters shared by all queries
+			var q = {
+				parent_region : self.region,
+				campaign_start: start
+			};
+
+			indicators(1, q).done(set('cases'));
+
+			indicators([], q).done(set('immunity'));
+
+			indicators([20, 21, 22, 55], q)
 				.then(sort(campaignStart))
-				.then(bullet(ind.name, ind.indicators[0], ind.indicators[1], ind.ranges))
-				.done(add('capacity'));
+				.then(ratio([20, 21, 22], 55))
+				.done(set('missed'));
+
+			q.campaign_start = (self.start ?
+				moment(self.start) :
+				moment()).subtract(4, 'months').format('YYYY-MM-DD');
+
+			var capacity = [{
+				name: 'Soc. Mob. Coverage',
+				indicators: [34, 33]
+			}, {
+				name: 'Network Size',
+				indicators: [36, 35]
+			}, {
+				name: 'Female mobilizers',
+				indicators: [40, 36]
+			}];
+
+			capacity.forEach(rangeFactory);
+
+			self.$set('capacity', []);
+
+			for (var i = capacity.length - 1; i >= 0; --i) {
+				var ind = capacity[i];
+
+				indicators(ind.indicators, q)
+					.then(sort(campaignStart))
+					.then(bullet(ind.name, ind.indicators[0], ind.indicators[1], ind.ranges))
+					.done(add('capacity'));
+			}
 		}
 	},
 };
