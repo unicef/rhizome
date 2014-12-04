@@ -431,9 +431,9 @@ class ParentRegionAggResource(SimpleApiResource):
         serializer = CustomSerializer()
         max_limit = None
 
-    def dehydrate(self, bundle):
-        ''' overriden from tastypie '''
-        return bundle
+    # def dehydrate(self, bundle):
+    #     ''' overriden from tastypie '''
+    #     return bundle
 
     def obj_get_list(self, bundle, **kwargs):
         ''' overriden from tastypie '''
@@ -473,3 +473,41 @@ class ParentRegionAggResource(SimpleApiResource):
 
 
         return query_kwargs
+
+    def dehydrate(self, bundle):
+        '''
+        Depending on the <uri_display> parameter, return to the bundle
+        the name, resurce_uri, slug or ID of the resource
+        '''
+
+        fk_columns = {'indicator':bundle.obj.indicator,\
+            'campaign':bundle.obj.campaign,\
+            'region':bundle.obj.region}
+
+
+        try: # Default to showing the ID of the resource
+            uri_display = bundle.request.GET['uri_display']
+        except KeyError:
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj
+            return bundle
+
+
+        if uri_display == 'slug':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.slug
+
+        elif uri_display == 'id':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.id
+
+
+        elif uri_display == 'name':
+            for f_str,f_obj in fk_columns.iteritems():
+                bundle.data[f_str] = f_obj.name
+
+        else: # if there is any other uri_display, return the full uri
+            pass
+
+
+        return bundle
