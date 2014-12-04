@@ -43,25 +43,29 @@ class DocTransform(object):
 
         source_datapoints = []
 
-
         df_cols = [col for col in self.df]
 
-        for i,(row) in enumerate(self.df.values):
-            print 'row_number'
-            print i
-            sdp, created = SourceDataPoint.objects.get_or_create(
-                source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
-                defaults = {
-                'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                'region_string': row[df_cols.index(self.column_mappings['region_col'])],
-                'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
-                'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
-                'row_number': i,
-                'source_id': Source.objects.get(source_name='data entry').id,
-                'document_id': self.document.id,
-                'status_id': ProcessStatus.objects.get(status_text='TO_PROCESS').id
-            })
-            source_datapoints.append(sdp)
+        indicator_col = self.column_mappings['indicator_col']
+        if indicator_col == 'cols_are_indicators':
+            print 'THIS ISNT HANDLED YET!'
+
+        else:
+
+            for i,(row) in enumerate(self.df.values):
+
+                sdp, created = SourceDataPoint.objects.get_or_create(
+                    source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
+                    defaults = {
+                    'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
+                    'region_string': row[df_cols.index(self.column_mappings['region_col'])],
+                    'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
+                    'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
+                    'row_number': i,
+                    'source_id': Source.objects.get(source_name='data entry').id,
+                    'document_id': self.document.id,
+                    'status_id': ProcessStatus.objects.get(status_text='TO_PROCESS').id
+                })
+                source_datapoints.append(sdp)
 
 
         return source_datapoints
