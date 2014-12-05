@@ -176,6 +176,7 @@ class RegionResource(SimpleApiResource):
             "slug": ('exact'),
             "id": ALL,
             "office": ALL,
+            "region_type": ALL,
         }
 
 
