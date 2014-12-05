@@ -48,6 +48,7 @@ class DocTransform(object):
         indicator_col = self.column_mappings['indicator_col']
         if indicator_col == 'cols_are_indicators':
             print 'THIS ISNT HANDLED YET!'
+            # do stuff #
 
         else:
 

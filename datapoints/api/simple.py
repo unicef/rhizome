@@ -35,7 +35,6 @@ class CustomSerializer(Serializer):
 
     def campaign_region_pivot(self,list_of_dicts):
 
-
         meta = None
 
         try:
