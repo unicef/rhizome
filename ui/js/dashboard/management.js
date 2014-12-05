@@ -274,7 +274,12 @@ module.exports = {
 							.then(objects)
 							.then(sort(campaignStart))
 							.then(bullet(o.name, o.indicators[0], o.indicators[1], o.ranges))
-							.done(set(keypath + '[' + i + ']'));
+							.done(function (data) {
+								// FIXME: This is really redundant with the existing set
+								// function, should just modify set to take a keypath and the
+								// VM on which the keypath is set
+								section.$set(i, data);
+							});
 					} else {
 						o.value  = null;
 						o.marker = null;
