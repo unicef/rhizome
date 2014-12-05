@@ -4,15 +4,28 @@ var _ = require('lodash');
 module.exports = function bullet(name, numerator, denominator, ranges) {
 
 	function model(data) {
-		var obj;
+		var obj   = {
+			campaign: {
+				start_date: 0
+			},
+			value: null
+		};
 		var whole = 0;
 		var part  = 0;
 
 		for (var i = data.objects.length - 1; i >= 0; i--) {
 			var d          = data.objects[i];
 			var indicators = _.indexBy(d.indicators, 'indicator');
-			var w          = Number(indicators[denominator].value);
-			var p          = Number(indicators[numerator].value);
+
+			if (!indicators.hasOwnProperty(denominator) ||
+				!indicators.hasOwnProperty(numerator)) {
+
+				console.warn(name + ': ' + d.campaign.name + ' only has indicators ' + _.keys(indicators));
+				continue;
+			}
+
+			var w = Number(indicators[denominator].value);
+			var p = Number(indicators[numerator].value);
 
 			if (!obj || d.campaign.start_date > obj.campaign.start_date) {
 				obj = d;
@@ -24,7 +37,7 @@ module.exports = function bullet(name, numerator, denominator, ranges) {
 		}
 
 		return _.assign(obj, {
-			title : name,
+			name  : name,
 			marker: part / whole,
 			ranges: ranges
 		});

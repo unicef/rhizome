@@ -80,9 +80,9 @@
 	<div class="row">
 		<section class="medium-2 columns">
 			<h3>FLWs' Capacity to Perform</h3>
-			<ul class="medium-block-grid-2">
+			<ul class="small-block-grid-2">
 				<li v-repeat="ind: capacity">
-					<h4 v-text="ind.title"></h4>
+					<h4 v-text="ind.name"></h4>
 					<svg v-component="chart-base"
 					     data-aspect="3"
 					     v-with="values: ind">
@@ -100,14 +100,62 @@
 
 		<div class="medium-1 column">
 			<h3>Supply</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: supply">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Polio+</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: polio">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Resources</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: resources">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
 		</div>
 
 		<div class="medium-2 columns">

@@ -5,8 +5,6 @@ var d3 = require('d3');
 module.exports = {
 	created: function () {
 		this.$on('hook:drawn', function () {
-			console.log('yGrid.draw');
-
 			var svg = d3.select(this.$el);
 			var g   = svg.select('.y.axis');
 

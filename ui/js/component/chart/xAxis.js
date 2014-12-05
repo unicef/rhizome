@@ -3,14 +3,8 @@
 var d3 = require('d3');
 
 module.exports = {
-	attached: function () {
-		d3.select(this.$el).append('g').attr('class', 'x axis');
-	},
-
 	created: function () {
 		this.$on('hook:drawn', function () {
-			console.log('xAxis.draw');
-
 			var svg = d3.select(this.$el);
 			var g   = svg.select('.x.axis');
 

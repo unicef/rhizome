@@ -26,6 +26,10 @@ var OFFICE = {
  * indicators not currently supporting qualitative ranges.
  */
 function rangeFactory(data) {
+	if (data.hasOwnProperty('ranges')) {
+		return;
+	}
+
 	data.ranges = [{
 		name: 'bad',
 		start: 0,
@@ -45,8 +49,7 @@ function indicators(ids, opts) {
 	function emptyPromise(fulfill) {
 		fulfill({
 			meta: {},
-			objects: [],
-			conversions: [],
+			objects: []
 		});
 	}
 
@@ -99,14 +102,124 @@ module.exports = {
 
 	data: function () {
 		return {
-			offices: [],
-			region : null,
-			start  : new Date()
+			offices    : [],
+			region     : null,
+			start      : new Date(),
+			conversions: [],
+			capacity   : [{
+				name: 'Soc. Mob. Coverage',
+				indicators: [34, 35]
+			}, {
+				name: 'IPC Skills',
+				indicators: []
+			}, {
+				name: 'Network Size',
+				indicators: [36, 35]
+			}, {
+				name: 'Training on Polio+',
+				indicators: []
+			}, {
+				name: 'Local Vaccinators',
+				indicators: []
+			}, {
+				name: 'Supervision',
+				indicators: []
+			}, {
+				name: 'Female Vaccinators',
+				indicators: [37, 38]
+			}, {
+				name: 'Timely Payment',
+				indicators: [46, 36]
+			}, {
+				name: 'Female Mobilizers',
+				indicators: [40, 36]
+			}],
+			supply     : [{
+				name: 'DPT3 Coverage',
+				indicators: [48, 47]
+			}, {
+				name: 'RI Knowledge',
+				indicators: [50, 29]
+			}, {
+				name: 'RI Defaulters Tracking',
+				indicators: []
+			}, {
+				name: 'Convergence Activities',
+				indicators: []
+			}, {
+				name: 'RI Stockouts',
+				indicators: [66, 65],
+				ranges: [{
+					name: 'bad',
+					start: 0.5,
+					end: 1
+				}, {
+					name: 'ok',
+					start: 0.3,
+					end: 0.5
+				}, {
+					name: 'good',
+					start: 0,
+					end: 0.3
+				}]
+			}],
+			polio      : [{
+				name: 'Delayed OPV Supply',
+				indicators: [],
+				ranges: [{
+					name: 'bad',
+					start: 0.5,
+					end: 1
+				}, {
+					name: 'ok',
+					start: 0.3,
+					end: 0.5
+				}, {
+					name: 'good',
+					start: 0,
+					end: 0.3
+				}]
+			}, {
+				name: 'OPV Wastage Rate',
+				indicators: [],
+				ranges: [{
+					name: 'bad',
+					start: 0.5,
+					end: 1
+				}, {
+					name: 'ok',
+					start: 0.3,
+					end: 0.5
+				}, {
+					name: 'good',
+					start: 0,
+					end: 0.3
+				}]
+			}, {
+				name: 'Cold Chain Function',
+				indicators: []
+			}, {
+				name: 'Stock Reporting',
+				indicators: []
+			}],
+			resources  : [{
+				name: 'Funding',
+				indicators: []
+			}, {
+				name: 'Human Resources',
+				indicators: []
+			}]
 		};
 	},
 
 	created: function () {
 		var self  = this;
+
+		// FIXME: Hack to fill out hard-coded bullet chart VMs
+		this.capacity.forEach(rangeFactory);
+		this.supply.forEach(rangeFactory);
+		this.polio.forEach(rangeFactory);
+		this.resources.forEach(rangeFactory);
 
 		this.$on('selection-changed', function (data) {
 			self.region = OFFICE[data.selected.value];
@@ -140,21 +253,21 @@ module.exports = {
 				};
 			}
 
-			function add(keypath) {
-				return function (data) {
-					var arr = self.$get(keypath);
-
-					if (!arr) {
-						arr = [];
-						self.$set(keypath, arr);
-					}
-
-					arr.push(data);
-				};
-			}
-
 			function campaignStart(d) {
 				return d.campaign.start_date;
+			}
+
+			function fetchBullets(keypath, q) {
+				var section = self.$get(keypath);
+
+				section.forEach(function (o, i) {
+					if (o.indicators.length === 2) {
+						indicators(o.indicators, q)
+							.then(sort(campaignStart))
+							.then(bullet(o.name, o.indicators[0], o.indicators[1], o.ranges))
+							.done(set(keypath + '[' + i + ']'));
+					}
+				});
 			}
 
 			var self  = this;
@@ -184,29 +297,10 @@ module.exports = {
 				moment(self.start) :
 				moment()).subtract(4, 'months').format('YYYY-MM-DD');
 
-			var capacity = [{
-				name: 'Soc. Mob. Coverage',
-				indicators: [34, 33]
-			}, {
-				name: 'Network Size',
-				indicators: [36, 35]
-			}, {
-				name: 'Female mobilizers',
-				indicators: [40, 36]
-			}];
-
-			capacity.forEach(rangeFactory);
-
-			self.$set('capacity', []);
-
-			for (var i = capacity.length - 1; i >= 0; --i) {
-				var ind = capacity[i];
-
-				indicators(ind.indicators, q)
-					.then(sort(campaignStart))
-					.then(bullet(ind.name, ind.indicators[0], ind.indicators[1], ind.ranges))
-					.done(add('capacity'));
-			}
+			fetchBullets('capacity', q);
+			fetchBullets('supply', q);
+			fetchBullets('polio', q);
+			fetchBullets('resources', q);
 		}
 	},
 };

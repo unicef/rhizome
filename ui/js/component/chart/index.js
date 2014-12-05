@@ -68,6 +68,10 @@ module.exports = {
 
 	methods: {
 		handleEvent: function () {
+			if (!this.$el || !this.$el.parentElement) {
+				return;
+			}
+
 			var content = dom.contentArea(this.$el.parentElement);
 
 			this.width = content.width;
