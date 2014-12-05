@@ -300,24 +300,20 @@ module.exports = {
 					function (d) { return d.value; },
 					function (d, v) { d.value = v; return d; }
 					)))
-				.then(function (data) {
-					console.log(data);
-					return data;
-				})
 				.done(set('cases'));
 
 			indicators([], q).done(set('immunity'));
 
-			indicators([20, 21, 22, 55], q)
+			indicators([20, 22, 23, 24, 55], q)
 				.then(objects)
 				.then(sort(campaignStart))
-				.then(ratio([20, 21, 22], 55))
+				.then(ratio([20, 22, 23, 24], 55))
 				.done(set('missed'));
 
 			indicators([25, 26], q)
 				.then(objects)
 				.then(sort(campaignStart))
-				.then(ratio(25, 26))
+				.then(ratio(26, 25))
 				.done(set('conversions'));
 
 			q.campaign_start = (self.start ?
