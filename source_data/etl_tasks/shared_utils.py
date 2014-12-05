@@ -6,33 +6,42 @@ from django.db import IntegrityError
 
 from source_data.models import *
 
-def pivot_and_insert_src_datapoints(self,df):
+def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
-    for row_number ,(row) in enumerate(df.values):
+    header = [col for col in df]
+    source_datapoints = []
 
-        source_guid = str(uuid.uuid4()) ## Each Row needs a unique ID
+    print 'HEADER: '
+    print header
 
-        cells = row.split(delimiter)
+    for row_number,(row) in enumerate(df.values):
+        print row_number
 
-        for i,(cell) in enumerate(cells):
+        region_string = row[header.index(column_mappings['region_col'])]
+        campaign_string = row[header.index(column_mappings['campaign_col'])]
+        source_id = Source.objects.get(source_name='data entry').id
+        to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
 
-            if i > 0: # this assumes the region is always zero indexed
+        for cell_no,(cell) in enumerate(row):
 
-                # try:
-                sdp = SourceDataPoint.objects.create(
-                    indicator_string = header[i],
-                    region_string = cells[0],
-                    campaign_string = campaign_string,
-                    cell_value = cell,
-                    source_guid = source_guid,
-                    row_number= row_number,
-                    source_id = Source.objects.get(source_name='data entry').id,
-                    document_id = document_id,
-                    status_id = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-                )
-                source_datapoints.append(sdp)
-                # except
+            indicator_string = header[row_number]
 
+            sdp = SourceDataPoint.objects.get_or_create(
+                source_guid = 'doc_id: ' + str(document_id) + \
+                    ' row_no: ' + str(row_number) + ' cell_no: ' + str(cell_no),
+                defaults = {
+                    'indicator_string': indicator_string,
+                    'region_string':region_string,
+                    'campaign_string':campaign_string,
+                    'cell_value':cell,
+                    'row_number':row_number,
+                    'source_id':source_id,
+                    'document_id':document_id,
+                    'status_id':to_process_status
+                })
+
+            source_datapoints.append(sdp)
+    return source_datapoints
 
 def map_indicators(indicator_strings,document_id):
     ## THESE METHODS NEED TO BE ABSTRACTED SO THAT YOU PASS DOCUMENT_ID  ##

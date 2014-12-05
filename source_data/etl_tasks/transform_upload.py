@@ -10,6 +10,7 @@ from django.conf import settings
 from pandas.io.excel import read_excel
 
 from source_data.models import *
+from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
 from datapoints.models import DataPoint, Source, Office, Region
 
 
@@ -21,6 +22,8 @@ class DocTransform(object):
         self.file_type = file_type
         self.document = Document.objects.get(id=document_id)
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
+        self.source_id = Source.objects.get(source_name='data entry').id
+        self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
         self.column_mappings = column_mappings
         self.df = self.create_df()
 
@@ -49,6 +52,9 @@ class DocTransform(object):
         if indicator_col == 'cols_are_indicators':
             print 'THIS ISNT HANDLED YET!'
             # do stuff #
+            source_datapoints = pivot_and_insert_src_datapoints(self.df,\
+                self.document.id,self.column_mappings)
+
 
         else:
 
@@ -62,9 +68,9 @@ class DocTransform(object):
                     'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
                     'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
                     'row_number': i,
-                    'source_id': Source.objects.get(source_name='data entry').id,
+                    'source_id': self.source_id,
                     'document_id': self.document.id,
-                    'status_id': ProcessStatus.objects.get(status_text='TO_PROCESS').id
+                    'status_id': self.to_process_status
                 })
                 source_datapoints.append(sdp)
 
