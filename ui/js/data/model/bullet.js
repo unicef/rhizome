@@ -37,9 +37,10 @@ module.exports = function bullet(name, numerator, denominator, ranges) {
 		}
 
 		return _.assign(obj, {
-			name  : name,
-			marker: part / whole,
-			ranges: ranges
+			name      : name,
+			marker    : part / whole,
+			ranges    : ranges,
+			indicators: [numerator, denominator]
 		});
 	}
 
