@@ -2,16 +2,12 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
-        <a href="{% url 'source_data:refresh_master_by_document_id' document_id %}"<button type=\
-            "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
+            <a href="{% url 'source_data:refresh_master_by_document_id' document_id %}"<button type=\
+          "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
+      </form>
 
 
-        <h> </h>
-        <br>
-        <br>
-        <br>
-
-        {% if to_review %}
+      {% if to_review %}
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -37,7 +33,7 @@
             {% endfor %}
         </table>
         {% else %}
-    <p>No datapoints are available.</p>
+    <p>No Source Datapoints Have Been Created yet....</p>
     {% endif %}
 
 {% endblock %}

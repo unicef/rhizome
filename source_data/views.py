@@ -149,7 +149,6 @@ def mark_doc_as_processed(request,document_id):
 
 
 
-
 ### Bulk Upload Stuff Above ###
 
             ####
@@ -174,6 +173,8 @@ def file_upload(request):
     elif request.method == 'POST':
 
         file_type = request.POST['file_type']
+
+
         try:
             to_upload = request.FILES['docfile']
 
@@ -199,41 +200,58 @@ def file_upload(request):
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
+        return HttpResponseRedirect(reverse('source_data:map_header',\
+            kwargs={'document_id':newdoc.id,'file_type':file_type}))
+
+def map_header(request,document_id,file_type):
+
+    if file_type == 'Region':
+
         return HttpResponseRedirect(reverse('source_data:pre_process_file',\
-            kwargs={'pk':newdoc.id,'file_type':file_type}))  # encode like done below
+            kwargs={'document_id':document_id,'file_type':file_type}))
 
+    else:
+        dt = DocTransform(document_id,file_type,{})
+        file_columns = [col for col in dt.df]
 
-def pre_process_file(request,pk,file_type):
+        return render_to_response(
+            'upload/map_header.html',
+            { 'file_columns':file_columns,
+              'document_id':document_id,
+              'file_type':file_type },
+            RequestContext(request))
 
+def pre_process_file(request,document_id,file_type):
 
     if file_type == 'Datapoint':
 
-        dt = DocTransform(pk,file_type)
+        column_mappings = {}
+        column_mappings['campaign_col'] = request.GET['campaign_col']
+        column_mappings['value_col'] = request.GET['value_col']
+        column_mappings['region_col'] = request.GET['region_col']
+        column_mappings['indicator_col'] = request.GET['indicator_col']        
 
-        print dt.df
-
-        header_list  = dt.df.columns.values
-        column_mapping = dt.get_essential_columns()
+        dt = DocTransform(document_id,file_type,column_mappings)
+        sdps = dt.dp_df_to_source_datapoints()
 
         return render_to_response(
             'upload/document_review.html',
-            {'doc_data': column_mapping,'header_list':header_list,'document_id':pk},
+            {'document_id':document_id,'to_review':sdps},
             RequestContext(request),
         )
 
     elif file_type == 'Region':
 
-        rt = RegionTransform(pk,file_type)
+        rt = RegionTransform(document_id,file_type,{})
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
 
         to_map = SourceRegion.objects.filter(regionmap__isnull=True,
-            document_id = pk)
-
+            document_id = document_id)
 
         return render_to_response(
             'data_entry/final_review.html',
-            {'document_id': pk, 'to_map':to_map},
+            {'document_id': document_id, 'to_map':to_map},
             RequestContext(request),
         )
 

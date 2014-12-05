@@ -35,7 +35,6 @@ class CustomSerializer(Serializer):
 
     def campaign_region_pivot(self,list_of_dicts):
 
-
         meta = None
 
         try:
@@ -150,11 +149,25 @@ class SimpleApiResource(ModelResource):
         authorization = Authorization()
         always_return_data = True
 
+class OfficeResource(SimpleApiResource):
+    '''Office Resource'''
+
+
+    class Meta(SimpleApiResource.Meta):
+        queryset = Office.objects.all()
+        resource_name = 'office'
+        filtering = {
+            "slug": ('exact'),
+            "id": ALL,
+        }
+
 
 class RegionResource(SimpleApiResource):
     '''Region Resource'''
 
     parent_region = fields.ForeignKey('datapoints.api.simple.RegionResource', 'parent_region', full=False, null=True)
+    office = fields.ToOneField(OfficeResource, 'office')
+
 
     class Meta(SimpleApiResource.Meta):
         queryset = Region.objects.all()
@@ -162,6 +175,7 @@ class RegionResource(SimpleApiResource):
         filtering = {
             "slug": ('exact'),
             "id": ALL,
+            "office": ALL,
         }
 
 
@@ -179,6 +193,8 @@ class IndicatorResource(SimpleApiResource):
 class CampaignResource(SimpleApiResource):
     '''Campaign Resource'''
 
+    office = fields.ToOneField(OfficeResource, 'office')
+
 
     class Meta(SimpleApiResource.Meta):
         queryset = Campaign.objects.all()
@@ -186,6 +202,7 @@ class CampaignResource(SimpleApiResource):
         filtering = {
             "slug": ('exact'),
             "id": ALL,
+            "office": ALL,
         }
 
 

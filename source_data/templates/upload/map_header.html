@@ -1,0 +1,62 @@
+{% extends "datapoints/base.html" %}
+{% block content %}
+{% if messages %}
+<h3><ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul></h3>
+{% endif %}
+
+
+
+<form action="{% url 'source_data:pre_process_file' document_id file_type %}" method="GET">
+
+Select Campaign Column <select id="campaign_col" name="campaign_col">
+  {% for column in file_columns %}
+     <option value="{{column}}">
+         {{column}}
+     </option>
+  {% endfor %}
+</select>
+
+<br><br>
+
+Select Region Column <select id="region_col" name="region_col">
+  {% for column in file_columns %}
+     <option value="{{column}}">
+         {{column}}
+     </option>
+  {% endfor %}
+
+
+</select>
+<br><br>
+Select Indicator Column <select id="indicator_col" name="indicator_col">
+  <option value = "cols_are_indicators"> Columns Are Indicators
+
+  {% for column in file_columns %}
+     <option value="{{column}}">
+         {{column}}
+     </option>
+  {% endfor %}
+
+</select>
+<br><br>
+
+  Select Value Column <select id="value_col" name="value_col">
+  <option value = "cols_are_indicators"> Columns Are Indicators
+  {% for column in file_columns %}
+     <option value="{{column}}">
+         {{column}}
+     </option>
+  {% endfor %}
+
+</select>
+<br><br>
+
+
+<button type="submit" class="btn btn-primary"> Map! </button></a>
+</form>
+
+{% endblock %}

@@ -1,11 +1,11 @@
 {% extends "datapoints/base.html" %}
 {% block content %}
 {% if messages %}
-<ul class="messages">
+<h3><ul class="messages">
   {% for message in messages %}
   <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
   {% endfor %}
-</ul>
+</ul></h3>
 {% endif %}
 
 
@@ -22,14 +22,11 @@
   <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
   <br><br>
   <p>{{ form.docfile.errors }} {{ form.docfile }}</p>
-
+  <br>
   <select name="file_type">
     <option value="Datapoint">Datapoint</option>
     <option value="Region">Region</option>
   </select name="movie">
-
-
-<br><br>
 
 	<button type="submit" class="btn btn-primary"> Upload! </button></a>
 </form>
