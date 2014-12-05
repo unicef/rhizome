@@ -114,20 +114,45 @@ Using This Resource
   - campaign__in, indicator__in and parent_region are the filter parameters for this resource
 
 About the result set
-  - currently i have NOT enabled the same pivoting as in the simple resource
-  - currently this resource does not have the uri_display option that allows the client to request data based on slug, id or name
-  - this is totally doable but i will only do this once i am asked.
-  
+  - currently i have enabled the same pivoting as in the simple resource, so expect the same data format as for the simple resource
+  - This resource has the uri_display option that allows the client to request data based on slug, id or name
+
 .. code-block:: python
    :linenos:
 
-    "objects": [
+    http://localhost:8000/api/v1/parent_region_agg/?format=json&parent_region=23&indicator__in=21,23
+
+    meta: {
+      total_count: 18,
+      limit: 0,
+      offset: 0
+    },
+    objects: [
       {
-          "campaign": "/api/v1/campaign/2/",
-          "id": 69,
-          "indicator": "/api/v1/indicator/25/",
-          "parent_region": "/api/v1/region/23/",
-          "resource_uri": "/api/v1/parent_region_agg/69/",
-          "the_sum": 144665
+        indicators: [
+          {
+            indicator: "Number of all missed children",
+            value: null
+          },
+          {
+            indicator: "Number of children missed due to no team/team did not visit",
+            value: 865
+          }
+      ],
+      region: "Nigeria",
+      campaign: "Nigeria April 2013"
       },
-      ...
+      {
+      indicators: [
+        {
+          indicator: "Number of all missed children",
+          value: 5293
+        },
+        {
+          indicator: "Number of children missed due to no team/team did not visit",
+          value: 968
+        }
+      ],
+      region: "Nigeria",
+      campaign: "Nigeria April 2014"
+    },

@@ -26,6 +26,7 @@ v1_api.register(OfficeResource())
 v1_api.register(AggregateResource())
 v1_api.register(EtlResource())
 v1_api.register(ParentRegionAggResource())
+v1_api.register(OfficeResource())
 
 
 urlpatterns = patterns('',

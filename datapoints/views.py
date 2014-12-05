@@ -124,6 +124,15 @@ class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
     permission_required = 'datapoints.add_campaign'
 
 
+class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
+
+    model=Campaign
+    success_url = reverse_lazy('datapoints:campaign_index')
+    template_name = 'campaigns/create.html'
+    form_class = CampaignForm
+    # permission_required = 'datapoints.change_campaign'
+
+
     ##################
     ##################
     ### INDICATORS ###

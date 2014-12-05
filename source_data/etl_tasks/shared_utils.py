@@ -6,8 +6,48 @@ from django.db import IntegrityError
 
 from source_data.models import *
 
+def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
+
+    header = [col for col in df]
+    source_datapoints = []
+
+    print 'HEADER: '
+    print header
+
+    for row_number,(row) in enumerate(df.values):
+        print row_number
+
+        region_string = row[header.index(column_mappings['region_col'])]
+        campaign_string = row[header.index(column_mappings['campaign_col'])]
+        source_id = Source.objects.get(source_name='data entry').id
+        to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
+
+        for cell_no,(column_header) in enumerate(header):
+
+            indicator_string = header[cell_no]
+
+            defaults = {
+                'region_string':region_string,
+                'campaign_string':campaign_string,
+                'cell_value':row[cell_no],
+                'row_number':row_number,
+                'source_id':source_id,
+                'document_id':document_id,
+                'status_id':to_process_status
+            }
+            sdp,created = SourceDataPoint.objects.get_or_create(
+                source_guid = 'doc_id: ' + str(document_id) + \
+                    ' row_no: ' + str(row_number) + ' cell_no: ' + str(cell_no),
+                indicator_string = indicator_string,
+                defaults=defaults)
+
+            source_datapoints.append(sdp)
+
+    return source_datapoints
 
 def map_indicators(indicator_strings,document_id):
+    ## THESE METHODS NEED TO BE ABSTRACTED SO THAT YOU PASS DOCUMENT_ID  ##
+    ## STRINGS_TO_MAP AND STRING_TYPE.  THE CODE SHOULD HANDLE ALL CASES ##
 
     indicator_mapping = {}
 
@@ -17,6 +57,7 @@ def map_indicators(indicator_strings,document_id):
 
 
         try:
+            ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
             source_indicator = SourceIndicator.objects.create(
                 indicator_string = indicator_string,
                 document_id = document_id,
@@ -47,15 +88,13 @@ def map_indicators(indicator_strings,document_id):
 def map_campaigns(campaign_strings,document_id):
 
     campaign_mapping = {}
-
     distinct_campaign_strings = list(set(campaign_strings))
-
-
 
     for campaign in distinct_campaign_strings:
 
         try:
             source_campaign = SourceCampaign.objects.create(
+            ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
                 campaign_string = campaign,
                 document_id = document_id,
             )
@@ -88,6 +127,7 @@ def map_regions(region_strings,document_id):
 
         try:
             source_region = SourceRegion.objects.create(\
+                ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
                 region_string=region_string,
                 document_id = document_id)
         except IntegrityError:

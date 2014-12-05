@@ -18,6 +18,11 @@
     <td>{{ campaign.start_date }}</td>
     <td>{{ campaign.end_date }}</td>
     <td>{{ campaign.slug }}</td>
+		<!-- <td> Update! <a href="{% url 'datapoints:update_campaign' campaign.id %}"></td> -->
+		<th><a href="{% url 'datapoints:update_campaign' campaign.id %}"<button type=\
+				"submit" class="btn btn-primary btn-sm"> Update! </button></a></th>
+
+
   </tr>
   {% endfor %}
 </table>

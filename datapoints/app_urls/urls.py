@@ -52,6 +52,10 @@ urlpatterns = [
         views.CampaignCreateView.as_view(),
         name='create_campaign'),
 
+    ## UPDATE ##
+    url(r'^campaign/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
+        name='update_campaign'),
+
 
         #################
         ## AGGREGATION ##
