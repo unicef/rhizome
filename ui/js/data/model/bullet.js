@@ -18,9 +18,8 @@ module.exports = function bullet(name, numerator, denominator, ranges) {
 			var indicators = _.indexBy(d.indicators, 'indicator');
 
 			if (!indicators.hasOwnProperty(denominator) ||
-				!indicators.hasOwnProperty(numerator)) {
+					!indicators.hasOwnProperty(numerator)) {
 
-				console.warn(name + ': ' + d.campaign.name + ' only has indicators ' + _.keys(indicators));
 				continue;
 			}
 

@@ -90,14 +90,14 @@ module.exports = {
 				height: this.height * 3 / 4,
 				width : this.markerWidth,
 				y     : this.height / 8,
-				x     : x(this.marker)
+				x     : x(this.marker) || 0
 			}).style({
 				display: display(this.marker)
 			});
 
 			svg.select('.value').attr({
 				height: this.height / 2,
-				width : x(this.value),
+				width : x(this.value) || 0,
 				y     : this.height / 4
 			}).style({
 				'display': display(this.value)
