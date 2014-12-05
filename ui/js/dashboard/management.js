@@ -6,10 +6,15 @@ var _        = require('lodash');
 var moment   = require('moment');
 
 var api      = require('../data/api');
+var add      = require('../data/transform/add');
+var cumsum   = require('../data/transform/cumsum');
+var each     = require('../data/transform/each');
+var facet    = require('../data/transform/facet');
+var map      = require('../data/transform/map');
 var ratio    = require('../data/transform/ratio');
 var sort     = require('../data/transform/sort');
-var campaign = require('../data/model/campaign');
 var bullet   = require('../data/model/bullet');
+var campaign = require('../data/model/campaign');
 
 // FIXME: Hard-coded mapping from office ID to region ID for countries because
 // region_type currently doesn't distinguish states and countries.
@@ -94,6 +99,10 @@ function indicators(ids, opts) {
 			});
 		});
 	});
+}
+
+function objects(data) {
+	return data.objects || data;
 }
 
 module.exports = {
@@ -244,7 +253,6 @@ module.exports = {
 
 	methods: {
 		loadData: function () {
-			console.log('loadData');
 			// Curried function for setting a keypath on the VM that can be used as a
 			// callback for when API calls complete.
 			function set(keypath) {
@@ -263,6 +271,7 @@ module.exports = {
 				section.forEach(function (o, i) {
 					if (o.indicators.length === 2) {
 						indicators(o.indicators, q)
+							.then(objects)
 							.then(sort(campaignStart))
 							.then(bullet(o.name, o.indicators[0], o.indicators[1], o.ranges))
 							.done(set(keypath + '[' + i + ']'));
@@ -282,16 +291,31 @@ module.exports = {
 				campaign_start: start
 			};
 
-			indicators(1, q).done(set('cases'));
+			indicators([69, 70], q)
+				.then(objects)
+				.then(add([69, 70]))
+				.then(facet(function (d) { return d.campaign.start_date.getFullYear(); }))
+				.then(map(sort(campaignStart)))
+				.then(each(cumsum(
+					function (d) { return d.value; },
+					function (d, v) { d.value = v; return d; }
+					)))
+				.then(function (data) {
+					console.log(data);
+					return data;
+				})
+				.done(set('cases'));
 
 			indicators([], q).done(set('immunity'));
 
 			indicators([20, 21, 22, 55], q)
+				.then(objects)
 				.then(sort(campaignStart))
 				.then(ratio([20, 21, 22], 55))
 				.done(set('missed'));
 
 			indicators([25, 26], q)
+				.then(objects)
 				.then(sort(campaignStart))
 				.then(ratio(25, 26))
 				.done(set('conversions'));

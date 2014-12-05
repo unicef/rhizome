@@ -13,8 +13,8 @@ module.exports = function bullet(name, numerator, denominator, ranges) {
 		var whole = 0;
 		var part  = 0;
 
-		for (var i = data.objects.length - 1; i >= 0; i--) {
-			var d          = data.objects[i];
+		for (var i = data.length - 1; i >= 0; i--) {
+			var d          = data[i];
 			var indicators = _.indexBy(d.indicators, 'indicator');
 
 			if (!indicators.hasOwnProperty(denominator) ||

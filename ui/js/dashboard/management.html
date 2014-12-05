@@ -9,9 +9,17 @@
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
 			<section>
-				<h4>{{ cases }} Polio cases this year</h4>
+				<h4>Polio cases this year</h4>
 				<svg v-component="chart-base"
-				     data-aspect="1.8"></svg>
+				     data-aspect="1.8"
+				     data-margin-bottom="24"
+				     v-with="values: cases">
+
+					<g v-component="chart-line"
+					   data-width="{{contentWidth}}"
+					   data-height="{{contentHeight}}"
+					   data-lines="{{values}}"></g>
+				</svg>
 			</section>
 			<section>
 				<h4>{{ gap }} Immunity Gap</h4>

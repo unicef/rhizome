@@ -22,8 +22,8 @@ module.exports = function ratio(numerator, denominator) {
 		for (var j = numerator.length - 1; j >= 0; --j) {
 			var series = [];
 
-			for (var i = data.objects.length - 1; i >= 0; i--) {
-				var row        = data.objects[i];
+			for (var i = data.length - 1; i >= 0; i--) {
+				var row        = data[i];
 				var indicators = _.indexBy(row.indicators, 'indicator');
 				var n          = Number(indicators[numerator[j]].value);
 				var d          = Number(indicators[denominator].value);
