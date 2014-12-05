@@ -22,25 +22,27 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
         source_id = Source.objects.get(source_name='data entry').id
         to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
 
-        for cell_no,(cell) in enumerate(row):
+        for cell_no,(column_header) in enumerate(header):
 
-            indicator_string = header[row_number]
+            indicator_string = header[cell_no]
 
-            sdp = SourceDataPoint.objects.get_or_create(
+            defaults = {
+                'region_string':region_string,
+                'campaign_string':campaign_string,
+                'cell_value':row[cell_no],
+                'row_number':row_number,
+                'source_id':source_id,
+                'document_id':document_id,
+                'status_id':to_process_status
+            }
+            sdp,created = SourceDataPoint.objects.get_or_create(
                 source_guid = 'doc_id: ' + str(document_id) + \
                     ' row_no: ' + str(row_number) + ' cell_no: ' + str(cell_no),
-                defaults = {
-                    'indicator_string': indicator_string,
-                    'region_string':region_string,
-                    'campaign_string':campaign_string,
-                    'cell_value':cell,
-                    'row_number':row_number,
-                    'source_id':source_id,
-                    'document_id':document_id,
-                    'status_id':to_process_status
-                })
+                indicator_string = indicator_string,
+                defaults=defaults)
 
             source_datapoints.append(sdp)
+
     return source_datapoints
 
 def map_indicators(indicator_strings,document_id):
@@ -86,10 +88,7 @@ def map_indicators(indicator_strings,document_id):
 def map_campaigns(campaign_strings,document_id):
 
     campaign_mapping = {}
-
     distinct_campaign_strings = list(set(campaign_strings))
-
-
 
     for campaign in distinct_campaign_strings:
 
