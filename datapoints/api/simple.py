@@ -130,8 +130,8 @@ class CustomSerializer(Serializer):
 
         response['objects'] = response_objects
 
-        # return json.dumps(response)
-        return json.dumps(data)
+        return json.dumps(response)
+        # return json.dumps(data)
 
 
 
@@ -377,30 +377,28 @@ class DataPointResource(SimpleApiResource):
         return self.get_object_list(bundle.request)
 
 
-    def get_object_list(self, request):
-        '''
-        Evan needs ot be able to limit by region/campaign pairs so here
-        i override the get object list with a method that finds the regions
-        and campaigns that coorespond with the limit passed in conjunction
-        with the campaign / region list
-        '''
-        query_dict = request.GET
-        region_campaign_tuples, indicators = self.get_regions_and_campaigns_to_filter(query_dict)
-
-        regions = list(set([rc[0] for rc in region_campaign_tuples]))
-        campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
-
-        print indicators
-
-        object_list = DataPoint.objects.filter(
-            region__in = regions,
-            campaign__in = campaigns,
-            indicator__in = indicators
-        )
-        print 'THIS IS SOMETHING '
-        print object_list
-
-        return object_list
+    # def get_object_list(self, request):
+    #     '''
+    #     Evan needs ot be able to limit by region/campaign pairs so here
+    #     i override the get object list with a method that finds the regions
+    #     and campaigns that coorespond with the limit passed in conjunction
+    #     with the campaign / region list
+    #     '''
+    #     query_dict = request.GET
+    #     region_campaign_tuples, indicators = self.get_regions_and_campaigns_to_filter(query_dict)
+    #
+    #     regions = list(set([rc[0] for rc in region_campaign_tuples]))
+    #     campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
+    #
+    #     object_list = DataPoint.objects.filter(
+    #         region__in = regions,
+    #         campaign__in = campaigns,
+    #         indicator__in = indicators
+    #     )
+    #     print 'THIS IS SOMETHING '
+    #     print object_list
+    #
+    #     return object_list
 
 
     def dehydrate(self, bundle):
