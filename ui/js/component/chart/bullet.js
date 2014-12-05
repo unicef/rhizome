@@ -1,6 +1,7 @@
 'use strict';
 
-var d3 = require('d3');
+var d3   = require('d3');
+var util = require('../../util/data');
 
 module.exports = {
 	replace : true,
@@ -31,8 +32,14 @@ module.exports = {
 
 	methods: {
 		draw: function () {
-			if (!this.ranges || !this.value || !this.marker) {
-				return;
+			function display(d) {
+				return util.defined(d) ?
+					'default' :
+					'none';
+			}
+
+			if (!this.ranges) {
+				this._data.ranges = [];
 			}
 
 			var svg = d3.select(this.$el);
@@ -84,12 +91,16 @@ module.exports = {
 				width : this.markerWidth,
 				y     : this.height / 8,
 				x     : x(this.marker)
+			}).style({
+				display: display(this.marker)
 			});
 
 			svg.select('.value').attr({
 				height: this.height / 2,
 				width : x(this.value),
 				y     : this.height / 4
+			}).style({
+				'display': display(this.value)
 			});
 
 			var format = d3.format('%');
@@ -97,10 +108,10 @@ module.exports = {
 			svg.select('.label').attr({
 				y: this.height / 2,
 				dy: this.height / 8,
+			}).style({
+				'font-size': this.height / 4,
+				'display': display(this.value)
 			})
-				.style({
-					'font-size': this.height / 4
-				})
 				.text(format(this.value));
 		}
 	},

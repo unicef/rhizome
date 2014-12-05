@@ -266,6 +266,9 @@ module.exports = {
 							.then(sort(campaignStart))
 							.then(bullet(o.name, o.indicators[0], o.indicators[1], o.ranges))
 							.done(set(keypath + '[' + i + ']'));
+					} else {
+						o.value  = null;
+						o.marker = null;
 					}
 				});
 			}
