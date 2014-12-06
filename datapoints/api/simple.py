@@ -289,6 +289,19 @@ class DataPointResource(SimpleApiResource):
 
     def parse_url_params(self,query_dict):
 
+
+        ## ABSTRACT THIS USING THE DICTIONARY BELOW ##
+
+        # region__in, campaign__in, indicator__in, the_limit = [],[],[],[]
+        # expected_params = { 'the_limit':the_limit,'region__in':region__in,\
+        #     'campaign__in':campaign__in,'indicator__in':indicator__in\,
+        #     'the_offset':the_ofset }
+
+        try:
+            the_offset = int(query_dict['the_offset'])
+        except KeyError:
+            the_offset = 0
+
         try:
             the_limit = int(query_dict['the_limit'])
         except KeyError:
@@ -310,21 +323,24 @@ class DataPointResource(SimpleApiResource):
             indicator_in = []
 
 
-        return region_in, campaign_in, indicator_in, the_limit
+        return region_in, campaign_in, indicator_in, the_limit, the_offset
 
     def get_regions_and_campaigns_to_filter(self,query_dict):
         '''
-        applying the limit to the region / campaign combo
+        Applying the limit to the region / campaign combo/
+        THis needs alot of cleanup
         '''
-
         # get the params from the query dict
-
-        regions, campaigns, indicators, the_limit = \
+        regions, campaigns, indicators, the_limit, the_offset = \
             self.parse_url_params(query_dict)
 
+        start_at = the_offset * the_limit
+        end_at = the_offset * the_limit + the_limit
+
+
+        # find all of the distinct regions / campaigns in the db
         if isinstance(indicators,list):
             # this means the indicator request is null
-            # find all of the distinct regions / campaigns in the db
             indicator_list = indicators
             all_region_campaign_tuples = DataPoint.objects.values_list('region',\
                 'campaign').distinct()
@@ -340,7 +356,7 @@ class DataPointResource(SimpleApiResource):
         # x elements in the list ( where x is the_limit ) and return that
 
         if len(regions) == 0 and len(campaigns) == 0:
-            return all_region_campaign_tuples[:the_limit], indicator_list
+            return all_region_campaign_tuples[start_at:end_at], indicator_list
 
         final_region_campaign_tuples = []
 
@@ -348,26 +364,39 @@ class DataPointResource(SimpleApiResource):
         # the request matches then add to the array that will be returned
 
 
-        for r,c in all_region_campaign_tuples:
+        for i, (r,c) in enumerate(all_region_campaign_tuples):
 
-            if len(final_region_campaign_tuples) == the_limit:
-                return final_region_campaign_tuples, indicator_list
+            if start_at <= i <= end_at:
 
-            elif str(r) in regions and str(c) in campaigns:
-                final_region_campaign_tuples.append((r,c))
+                if len(final_region_campaign_tuples) == the_limit:
+                    return final_region_campaign_tuples, indicator_list
 
-            elif str(r) in regions and len(campaigns) == 0:
-                final_region_campaign_tuples.append((r,c))
+                elif str(r) in regions and str(c) in campaigns:
+                    final_region_campaign_tuples.append((r,c))
 
-            elif len(regions) == 0 and str(c) in campaigns:
-                final_region_campaign_tuples.append((r,c))
+                elif str(r) in regions and len(campaigns) == 0:
+                    final_region_campaign_tuples.append((r,c))
 
-            else:
-                pass
+                elif len(regions) == 0 and str(c) in campaigns:
+                    final_region_campaign_tuples.append((r,c))
+
+                else:
+                    pass
 
 
         return final_region_campaign_tuples, indicator_list
 
+    def alter_list_data_to_serialize(self, request, data):
+
+        query_dict = dict(request.GET)
+        query_dict.pop("username",None)
+        query_dict.pop("api_key",None)
+        data['meta']['query_dict'] = query_dict
+
+        data['meta'].pop("limit",None)
+        data['meta'].pop("offset",None)
+
+        return data
 
     def obj_get_list(self, bundle, **kwargs):
         '''
