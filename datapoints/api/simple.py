@@ -391,17 +391,21 @@ class DataPointResource(SimpleApiResource):
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
 
-        print regions
-        print campaigns
-        print indicators
+        if len(indicators) > 0:
 
-        object_list = DataPoint.objects.filter(
-            region__in = regions,
-            campaign__in = campaigns,
-            indicator__in = indicators
-        )
-        print 'THIS IS THE OBJECT LIST '
-        print object_list
+            object_list = DataPoint.objects.filter(
+                region__in = regions,
+                campaign__in = campaigns,
+                indicator__in = indicators
+            )
+
+        else:
+            object_list = DataPoint.objects.filter(
+                region__in = regions,
+                campaign__in = campaigns,
+            )
+
+
 
         return object_list
 
