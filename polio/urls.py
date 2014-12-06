@@ -6,7 +6,7 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 from datapoints.api.simple import *
-from datapoints.api.aggregate import AggregateResource
+from datapoints.api.aggregate import ParentRegionAggResource
 from source_data.api import EtlResource
 from tastypie.api import Api
 
@@ -23,7 +23,6 @@ v1_api.register(IndicatorResource())
 v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
-v1_api.register(AggregateResource())
 v1_api.register(EtlResource())
 v1_api.register(ParentRegionAggResource())
 v1_api.register(OfficeResource())
