@@ -323,23 +323,24 @@ class DataPointResource(SimpleApiResource):
             self.parse_url_params(query_dict)
 
         if isinstance(indicators,list):
+            # this means the indicator request is null
+            # find all of the distinct regions / campaigns in the db
             indicator_list = indicators
+            all_region_campaign_tuples = DataPoint.objects.values_list('region',\
+                'campaign').distinct()
 
         else:
+            # find the distinct campaing / region tuples for those indicators
             indicator_list = [int(ind) for ind in indicators.split(',')]
 
-        # find all of the distinct regions / campaigns in the db
-        all_region_campaign_tuples = DataPoint.objects.values_list('region',\
-            'campaign').distinct()
-
-
+            all_region_campaign_tuples =DataPoint.objects.filter(indicator__in=\
+                indicator_list).values_list('region','campaign').distinct()
 
         # if there was no region or campaign passed in just take the first
         # x elements in the list ( where x is the_limit ) and return that
+
         if len(regions) == 0 and len(campaigns) == 0:
             return all_region_campaign_tuples[:the_limit], indicator_list
-
-
 
         final_region_campaign_tuples = []
 
@@ -390,12 +391,16 @@ class DataPointResource(SimpleApiResource):
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
 
+        print regions
+        print campaigns
+        print indicators
+
         object_list = DataPoint.objects.filter(
             region__in = regions,
             campaign__in = campaigns,
             indicator__in = indicators
         )
-        print 'THIS IS SOMETHING '
+        print 'THIS IS THE OBJECT LIST '
         print object_list
 
         return object_list
