@@ -14,10 +14,14 @@ module.exports = {
 			}
 
 			var yAxis = d3.svg.axis()
-				.scale(this.$options.y)
+				.scale(this.y)
 				.ticks(3)
 				.orient('right')
 				.tickSize(this.width);
+
+			if (this.yFmt) {
+				yAxis.tickFormat(this.yFmt);
+			}
 
 			g.call(yAxis);
 

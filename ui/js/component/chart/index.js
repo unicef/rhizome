@@ -17,7 +17,6 @@ module.exports = {
 
 	data: function () {
 		return {
-			empty       : true,
 			width       : 200,
 			marginTop   : 0,
 			marginRight : 0,

@@ -2,23 +2,25 @@
 
 'use strict';
 
-var _        = require('lodash');
-var moment   = require('moment');
+var d3        = require('d3');
+var _         = require('lodash');
+var moment    = require('moment');
 
-var coolgray = require('../colors/coolgray');
+var coolgray  = require('../colors/coolgray');
 
-var api      = require('../data/api');
+var api       = require('../data/api');
 
-var bullet   = require('../data/model/bullet');
-var campaign = require('../data/model/campaign');
+var bullet    = require('../data/model/bullet');
+var campaign  = require('../data/model/campaign');
 
-var add      = require('../data/transform/add');
-var cumsum   = require('../data/transform/cumsum');
-var each     = require('../data/transform/each');
-var facet    = require('../data/transform/facet');
-var map      = require('../data/transform/map');
-var ratio    = require('../data/transform/ratio');
-var sort     = require('../data/transform/sort');
+var add       = require('../data/transform/add');
+var cumsum    = require('../data/transform/cumsum');
+var each      = require('../data/transform/each');
+var facet     = require('../data/transform/facet');
+var map       = require('../data/transform/map');
+var ratio     = require('../data/transform/ratio');
+var sort      = require('../data/transform/sort');
+var variables = require('../data/transform/variables');
 
 // FIXME: Hard-coded mapping from office ID to region ID for countries because
 // region_type currently doesn't distinguish states and countries.
@@ -118,7 +120,18 @@ module.exports = {
 			offices    : [],
 			region     : null,
 			start      : new Date(),
-			conversions: [],
+			cases      : {
+				lines: [],
+				domain: [1,12],
+				xFmt : function (d) {
+					return moment(d, 'M').format('MMM');
+				}
+			},
+			conversions: {
+				lines: [],
+				x    : d3.time.scale(),
+				yFmt : d3.format('.0%')
+			},
 			capacity   : [{
 				name: 'Soc. Mob. Coverage',
 				indicators: [34, 35]
@@ -310,7 +323,11 @@ module.exports = {
 					function (d) { return d.value; },
 					function (d, v) { d.value = v; return d; }
 					)))
-				.done(set('cases'));
+				.then(each(variables({
+					x: function (d) { return d.campaign.start_date.getMonth() + 1; },
+					y: function (d) { return d.value; }
+				})))
+				.done(set('cases.lines'));
 
 			indicators([], q).done(set('immunity'));
 
@@ -324,7 +341,11 @@ module.exports = {
 				.then(objects)
 				.then(sort(campaignStart))
 				.then(ratio(26, 25))
-				.done(set('conversions'));
+				.then(each(variables({
+					x: function (d) { return d.campaign.start_date; },
+					y: function (d) { return d.value; }
+				})))
+				.done(set('conversions.lines'));
 
 			indicators([27, 28], q)
 				.then(objects)

@@ -18,9 +18,13 @@ module.exports = {
 			g.attr('transform', 'translate(0,' + this.height + ')');
 
 			var xAxis = d3.svg.axis()
-				.scale(this.$options.x)
+				.scale(this.x)
 				.ticks(3)
 				.orient('bottom');
+
+			if (this.xFmt) {
+				xAxis.tickFormat(this.xFmt);
+			}
 
 			g.call(xAxis);
 		});

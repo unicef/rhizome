@@ -1,10 +1,11 @@
 'use strict';
 
 var d3   = require('d3');
+var Vue  = require('vue');
 
 var util = require('../../util/data');
 
-module.exports = {
+module.exports = Vue.extend({
 	paramAttributes: [
 		'data-lines',
 		'data-areas',
@@ -22,7 +23,9 @@ module.exports = {
 			lines : [],
 			areas : [],
 			width : 100,
-			height: 100
+			height: 100,
+			x     : d3.scale.linear(),
+			y     : d3.scale.linear()
 		};
 	},
 
@@ -38,36 +41,26 @@ module.exports = {
 
 	methods: {
 		draw: function () {
-			function getX(d) {
-				return d.campaign.start_date;
-			}
+			function getX(d) { return d.x; }
 
-			function getY(d) {
-				return d.value;
-			}
+			function getY(d) { return d.y; }
 
-			function getScaledX(d) {
-				return x(getX(d));
-			}
+			function getScaledX(d) { return x(getX(d)); }
 
-			function getScaledY(d) {
-				return y(getY(d));
-			}
+			function getScaledY(d) { return y(getY(d)); }
 
-			function defined(d) {
-				return util.defined(getY(d));
-			}
+			function defined(d) { return util.defined(getY(d)); }
 
 			var svg = d3.select(this.$el);
 
 			var dataset = [this.lines, this.areas];
-			var start   = util.min(dataset, getX);
-			var end     = util.max(dataset, getX);
+			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
+			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
 			var lower   = util.min(dataset, getY);
 			var upper   = util.max(dataset, getY);
 
-			var x = this.$options.x;
-			var y = this.$options.y;
+			var x = this.x;
+			var y = this.y;
 
 			x.domain([start, end])
 				.range([0, this.width]);
@@ -116,4 +109,4 @@ module.exports = {
 		'width' : 'draw',
 		'height': 'draw'
 	}
-};
+});

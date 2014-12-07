@@ -13,12 +13,17 @@
 				<svg v-component="chart-base"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     v-with="values: cases">
+				     v-with="values: cases.lines,
+				             xFmt  : cases.xFmt,
+				             domain: cases.domain">
 
 					<g v-component="chart-line"
 					   data-width="{{contentWidth}}"
 					   data-height="{{contentHeight}}"
-					   data-lines="{{values}}"></g>
+					   data-lines="{{values}}"
+					   v-with="xFmt  : xFmt,
+					           domain: domain"></g>
+
 				</svg>
 			</section>
 			<section>
@@ -39,8 +44,7 @@
 						<svg v-component="chart-base"
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
-						     v-with="values: missed,
-						             empty : false">
+						     v-with="values: missed">
 
 							<g v-component="chart-stackedTime"
 							   v-with="layers: values,
@@ -59,13 +63,15 @@
 						<svg v-component="chart-base"
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
-						     v-with="values: conversions">
+						     v-with="values: conversions.lines,
+						             x     : conversions.x,
+						             yFmt  : conversions.yFmt">
 
 							<g v-component="chart-line"
 							   data-width="{{contentWidth}}"
 							   data-height="{{contentHeight}}"
-							   data-lines="{{values}}"></g>
-
+							   data-lines="{{values}}"
+							   v-with="x: x, yFmt: yFmt"></g>
 						</svg>
 					</section>
 
