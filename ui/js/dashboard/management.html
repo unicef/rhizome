@@ -70,7 +70,21 @@
 					</section>
 
 					<section>
-						<p style="margin-bottom: 0">microplans incorporate social data</p>
+						<p v-if="microplans.length === 2"
+						   style="margin-bottom: 0">
+
+							<svg width="26" height="26" style="float:left;margin-right:10px">
+								<g v-component="chart-pie"
+								   data-outer-radius="13"
+								   data-slices="{{ microplans }}"
+								   transform="translate(13,13)"></g>
+							</svg>
+
+							{{ microplans[0].value }} / {{ microplans[0].value + microplans[1].value }}
+							microplans incorporate social data
+
+						</p>
+						<p v-if="microplans.length !== 2">No microplan data available.</p>
 					</section>
 
 				</div>

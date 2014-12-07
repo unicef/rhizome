@@ -5,7 +5,13 @@
 var _        = require('lodash');
 var moment   = require('moment');
 
+var coolgray = require('../colors/coolgray');
+
 var api      = require('../data/api');
+
+var bullet   = require('../data/model/bullet');
+var campaign = require('../data/model/campaign');
+
 var add      = require('../data/transform/add');
 var cumsum   = require('../data/transform/cumsum');
 var each     = require('../data/transform/each');
@@ -13,8 +19,6 @@ var facet    = require('../data/transform/facet');
 var map      = require('../data/transform/map');
 var ratio    = require('../data/transform/ratio');
 var sort     = require('../data/transform/sort');
-var bullet   = require('../data/model/bullet');
-var campaign = require('../data/model/campaign');
 
 // FIXME: Hard-coded mapping from office ID to region ID for countries because
 // region_type currently doesn't distinguish states and countries.
@@ -217,7 +221,8 @@ module.exports = {
 			}, {
 				name: 'Human Resources',
 				indicators: []
-			}]
+			}],
+			microplans: []
 		};
 	},
 
@@ -320,6 +325,28 @@ module.exports = {
 				.then(sort(campaignStart))
 				.then(ratio(26, 25))
 				.done(set('conversions'));
+
+			indicators([27, 28], q)
+				.then(objects)
+				.then(sort(campaignStart))
+				.then(function (data) {
+					if (!data || data.length < 1) {
+						return [];
+					}
+
+					var d          = data[data.length - 1];
+					var indicators = _.indexBy(d.indicators, 'indicator');
+					var microplans = indicators[27].value;
+					var socialData = indicators[28].value;
+
+					return [{
+						value: socialData,
+						color: coolgray[5]
+					}, {
+						value: microplans - socialData,
+						color: coolgray[0]
+					}];
+				}).done(set('microplans'));
 
 			q.campaign_start = (self.start ?
 				moment(self.start) :

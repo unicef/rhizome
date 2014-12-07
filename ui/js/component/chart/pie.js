@@ -6,43 +6,46 @@
 var d3 = require('d3');
 
 module.exports = {
-	replace : true,
+	paramAttributes: [
+		'data-slices',
+		'data-inner-radius',
+		'data-outer-radius'
+	],
 
 	data: function () {
 		return {
-			slices: [],
-			radius: {
-				inner: 0,
-				outer: 100,
-			}
+			slices     : [],
+			innerRadius: 0,
+			outerRadius: 100,
 		};
-	},
-
-	ready: function () {
-		this.$watch('radius', this.draw, true);
 	},
 
 	methods: {
 		draw: function () {
 			var svg = d3.select(this.$el);
 
-			var arc = d3.svg.arc()
-				.innerRadius(this.radius.inner)
-				.outerRadius(this.radius.outer);
-
 			var pie = d3.layout.pie()
 				.value(function (d) { return d.value; });
 
-			var paths = svg.select('.pie').selectAll('.arc')
+			var arc = d3.svg.arc()
+				.innerRadius(this.innerRadius)
+				.outerRadius(this.outerRadius);
+
+			var slice = svg.selectAll('.slice')
 				.data(pie(this.slices));
 
-			paths.enter().append('path')
-				.attr('class', 'arc');
+			slice.enter().append('path')
+				.attr({
+					'class': 'slice'
+				});
 
-			paths.attr({
-				d   : arc,
+			slice.attr({
+				d: arc
+			}).style({
 				fill: function (d) { return d.data.color; }
 			});
+
+			slice.exit().remove();
 		}
 	},
 
@@ -51,6 +54,8 @@ module.exports = {
 	},
 
 	watch: {
-		slices  : 'draw'
+		'innerRadius': 'draw',
+		'outerRadius': 'draw',
+		'slices': 'draw'
 	}
 };
