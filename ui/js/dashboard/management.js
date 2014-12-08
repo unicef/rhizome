@@ -11,7 +11,6 @@ var coolgray  = require('../colors/coolgray');
 var api       = require('../data/api');
 
 var bullet    = require('../data/model/bullet');
-var campaign  = require('../data/model/campaign');
 
 var add       = require('../data/transform/add');
 var cumsum    = require('../data/transform/cumsum');
@@ -81,30 +80,7 @@ function indicators(ids, opts) {
 		q.indicator__in = ids;
 	}
 
-	// Return a promise so we can chain the requests for datapoints with the
-	// campaign lookups.
-	return new Promise(function (fulfill) {
-
-		// Fetch datapoints first, then look up the campaigns. Once campaign data
-		// has been filled in, fulfill the promise.
-
-		api.datapoints(q).done(function (data) {
-			var campaigns = data.objects.map(function (d) { return d.campaign; });
-
-			api.campaign({
-				id__in: campaigns
-			}).done(function (campaignData) {
-				var campaigns = _.indexBy(campaignData.objects, 'id');
-
-				// Replace the campaign IDs with campaign objects
-				for (var i = data.objects.length - 1; i >= 0; --i) {
-					data.objects[i].campaign = campaign(campaigns[data.objects[i].campaign]);
-				}
-
-				fulfill(data);
-			});
-		});
-	});
+	return api.datapoints(q);
 }
 
 function objects(data) {

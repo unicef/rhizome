@@ -133,11 +133,10 @@ module.exports = {
 					return;
 				}
 
-				var campaigns  = [];
 				var datapoints = data.objects.map(function (v) {
-					var d = _.pick(v, 'region', 'campaign');
+					var d = _.pick(v, 'region');
 
-					campaigns.push(d.campaign);
+					d.campaign = v.campaign.name;
 
 					v.indicators.forEach(function (ind) {
 						d[ind.indicator] = ind.value;
@@ -148,8 +147,6 @@ module.exports = {
 
 				self.pagination.the_offset = Number(data.meta.query_dict.the_offset[0]);
 
-				// FIXME: Need to fetch campaign data for displaying proper campaign
-				// names instead of IDs in the table.
 				self.table.rows = datapoints;
 
 				self.loading = false;
