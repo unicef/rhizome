@@ -6,6 +6,7 @@ var dom = require('../../util/dom');
 
 module.exports = {
 	template: require('./template.html'),
+
 	paramAttributes: [
 		'placeholder',
 		'searchable',
@@ -13,6 +14,7 @@ module.exports = {
 		'loading',
 		'loadedEvent'
 	],
+
 	data: function () {
 		return {
 			pattern    : '',
@@ -22,12 +24,14 @@ module.exports = {
 			menuWdith  : 0
 		};
 	},
+
 	ready: function () {
 		this.searchable = this.searchable === 'true';
 		this.multi      = this.multi === 'true';
 
 		this.$on(this.loadedEvent, function () { this.loading = false; });
 	},
+
 	computed: {
 		selected: function () {
 			return this.items.filter(function (o) {
@@ -51,12 +55,10 @@ module.exports = {
 					selected[0].title;
 		},
 	},
-	methods: {
-		toggle: function (e) {
-			e.stopImmediatePropagation();
 
-			this.open    = !this.open;
-			this.opening = true;
+	methods: {
+		toggle: function () {
+			this.opening = this.open = !this.open;
 
 			if (this.searchable) {
 				var inpt = this.$el.getElementsByTagName('input')[0];
@@ -70,6 +72,7 @@ module.exports = {
 			}
 
 			if (this.open) {
+
 				window.addEventListener('resize', this);
 				window.addEventListener('click', this);
 				window.addEventListener('keyup', this);
@@ -82,6 +85,7 @@ module.exports = {
 				window.removeEventListener('keyup', this);
 			}
 		},
+
 		onClick: function (item) {
 			if (this.multi) {
 				item.selected = !item.selected;
@@ -96,6 +100,7 @@ module.exports = {
 				changed: item
 			});
 		},
+
 		handleEvent: function (evt) {
 			switch (evt.type) {
 			case 'keyup':
@@ -105,12 +110,10 @@ module.exports = {
 				}
 				break;
 			case 'click':
-				if (!dom.contains(this.$el.getElementsByClassName('container')[0], evt)) {
-					if (this.opening) {
-						this.opening = false;
-					} else {
-						this.open = false;
-					}
+				if (this.opening) {
+					this.opening = false;
+				} else if (!dom.contains(this.$el.getElementsByClassName('container')[0], evt)) {
+					this.open = false;
 				}
 				break;
 			case 'resize':
@@ -120,6 +123,7 @@ module.exports = {
 				break;
 			}
 		},
+
 		invalidateSize: function () {
 			var menu         = this.$el.getElementsByClassName('container')[0];
 			var ul           = menu.getElementsByTagName('ul')[0];
@@ -136,12 +140,15 @@ module.exports = {
 			this.menuHeight = window.innerHeight - offset.top - marginBottom;
 			this.menuWidth  = window.innerWidth - offset.left - marginRight;
 		},
+
 		clear: function () {
 			this.items.forEach(function (o) { o.selected = false; });
 		},
+
 		invert: function () {
 			this.items.forEach(function (o) { o.selected = !o.selected; });
 		},
+
 		selectAll: function () {
 			this.items.forEach(function (o) { o.selected = true; });
 		}
