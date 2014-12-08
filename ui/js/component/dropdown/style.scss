@@ -2,6 +2,23 @@
 	cursor: default;
 	position: relative;
 
+	.menu-button {
+		padding-right: 2rem;
+		position: relative;
+
+		label {
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.icon {
+			margin-top: -0.4rem;
+			position: absolute;
+			right: 0.5rem;
+			top: 50%;
+		}
+	}
+
 	.container {
 		background-color: white;
 		border-radius: 3px;
