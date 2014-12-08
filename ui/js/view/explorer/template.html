@@ -1,21 +1,21 @@
 <form class="inline">
 	<div class="row">
 
-			<div class="large-5 columns">
+			<div class="medium-4 columns">
 				<label>
 					<div class="row">
-						<div class="small-12 columns">Time Period</div>
+						<div class="small-7 columns">Time Period</div>
 					</div>
 					<div class="row">
-						<div class="small-5 columns">
+						<div class="small-3 columns">
 							<input name="start_dt"
 									type="text"
 									placeholder="YYYY-MM-DD"
 									aria-label="Start Date"
 									v-model="campaign.start"></input>
 						</div>
-						<div class="small-2 columns inline centered">to</div>
-						<div class="small-5 columns">
+						<div class="small-1 columns inline centered">to</div>
+						<div class="small-3 columns">
 							<input name="end_dt"
 									type="text"
 									placeholder="YYYY-MM-DD"
@@ -26,7 +26,7 @@
 				</label>
 			</div>
 
-			<div class="large-2 columns">
+			<div class="medium-1 columns">
 				<label>
 					Regions
 					<vue-dropdown v-with="items : regions"
@@ -38,7 +38,7 @@
 				</label>
 			</div>
 
-			<div class="large-2 columns">
+			<div class="medium-1 columns">
 				<label>
 					Indicators
 					<vue-dropdown v-with="items : indicators"
@@ -51,7 +51,7 @@
 			</div>
 
 			<!-- FIXME: Remove inline style -->
-			<div class="medium-3 large-2 columns" style="text-align: right">
+			<div class="medium-1 columns" style="text-align: right">
 				<!-- FIXME: Remove blank line for alignment -->
 				&nbsp;<br>
 				<a class="button primary" role="button" v-on="click : refresh()">
@@ -67,10 +67,19 @@
 	</div>
 
 	<div class="small-12 columns">
-		<vue-pagination v-with="pagination"></vue-pagination>
+		<!-- FIXME: Placeholder for real pagination once the pivoting stuff gets
+		     worked out. -->
+		<a v-class="disabled: pagination.the_offset == 0"
+			 v-on="click: previous()"
+			 style="margin-right:1.2rem">
+			<i class="fa fa-angle-left"></i>&emsp;Prev
+		</a>
+		<a v-on="click: next()">
+			Next&emsp;<i class="fa fa-angle-right"></i>
+		</a>
 	</div>
 
-	<div class="medium-3 large-2 columns">
+	<div class="medium-2 large-1 columns">
 		<a role="button" class="button expand" aria-label="Download All"
 				v-on="click : download()">
 			<i class="fa fa-fw fa-download"></i>&emsp;Download All

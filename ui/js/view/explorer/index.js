@@ -11,14 +11,15 @@ function selectedValues(items) {
 
 module.exports = {
 	template: require('./template.html'),
+
 	data: function () {
 		return {
 			loading: false,
 			regions: [],
 			indicators: [],
 			pagination: {
-				limit: 0,
-				offset: 0
+				the_limit: 20,
+				the_offset: 0
 			},
 			table: {
 				columns: ['region', 'campaign'],
@@ -30,6 +31,7 @@ module.exports = {
 			}
 		};
 	},
+
 	ready: function () {
 		function fetchAll(endPoint, container, cb) {
 			return function (data) {
@@ -65,11 +67,14 @@ module.exports = {
 			this.refresh(data);
 		});
 	},
+
 	methods: {
-		refresh: function (pagination) {
-			var regions = selectedValues(this.regions),
-				options = { indicator__in : [] },
-				columns = [{
+		refresh: function () {
+			var self    = this;
+
+			var regions = selectedValues(this.regions);
+			var options = { indicator__in : [] };
+			var columns = [{
 					prop: 'region',
 					display: 'Region',
 					format: function (v) {
@@ -78,8 +83,7 @@ module.exports = {
 				}, {
 					prop: 'campaign',
 					display: 'Campaign'
-				}],
-				self = this;
+				}];
 
 			if (regions.length > 0) {
 				options.region__in = regions;
@@ -107,27 +111,31 @@ module.exports = {
 				}
 			});
 
-			_.defaults(options, pagination || { limit : 20, uri_display : 'id' });
+			_.defaults(options, this.pagination);
 
 			this.loading = true;
 			this.table.columns = columns;
 			this.table.rows = [];
 
 			api.datapoints(options).done(function (data) {
-				var campaigns = [],
-					datapoints = data.objects.map(function (v) {
-						var d = _.pick(v, 'region', 'campaign');
+				if (!data.objects || data.objects.length < 1) {
+					return;
+				}
 
-						campaigns.push(d.campaign);
+				var campaigns  = [];
+				var datapoints = data.objects.map(function (v) {
+					var d = _.pick(v, 'region', 'campaign');
 
-						v.indicators.forEach(function (ind) {
-							d[ind.indicator] = ind.value;
-						});
+					campaigns.push(d.campaign);
 
-						return d;
+					v.indicators.forEach(function (ind) {
+						d[ind.indicator] = ind.value;
 					});
 
-				self.pagination = data.meta;
+					return d;
+				});
+
+				self.pagination.the_offset = Number(data.meta.query_dict.the_offset[0]);
 
 				// FIXME: Need to fetch campaign data for displaying proper campaign
 				// names instead of IDs in the table.
@@ -136,6 +144,7 @@ module.exports = {
 				self.loading = false;
 			});
 		},
+
 		download: function () {
 			this.downloading = true;
 			var indicators = selectedValues(this.indicators),
@@ -156,6 +165,20 @@ module.exports = {
 			}
 
 			this.$data.src = api.datapoints.toString(query);
+		},
+
+		previous: function () {
+			if (this.pagination.the_offset < 1) {
+				return;
+			}
+
+			this.pagination.the_offset = Math.max(0, this.pagination.the_offset - this.pagination.the_limit);
+			this.refresh();
+		},
+
+		next: function () {
+			this.pagination.the_offset += this.pagination.the_limit;
+			this.refresh();
 		}
 	}
 };
