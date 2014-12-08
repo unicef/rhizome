@@ -134,3 +134,8 @@ button, .button {
 [class*="block-grid-"] > li {
 	padding-bottom: 0;
 }
+
+.disabled {
+	cursor: $button-disabled-cursor;
+	opacity: $button-disabled-opacity;
+}
