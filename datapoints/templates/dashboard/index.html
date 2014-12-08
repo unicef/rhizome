@@ -1,4 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% block content %}
-<h2>Dashboarded!</h2>
+<uf-dashboard></uf-dashboard>
+{% endblock %}
+{% block scripts %}
+<script>Polio.Dashboard('#main');</script>
 {% endblock %}

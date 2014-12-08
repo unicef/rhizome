@@ -2,9 +2,12 @@
 'use strict';
 
 var BASE_URL = '/api/v1';
-var _ = require('lodash');
-var request = require('superagent');
-var prefix = require('superagent-prefix')(BASE_URL);
+
+var _        = require('lodash');
+var request  = require('superagent');
+var prefix   = require('superagent-prefix')(BASE_URL);
+
+var campaign = require('../data/model/campaign');
 
 function urlencode(query) {
 	return '?' + _.map(query, function (v, k) {
@@ -14,10 +17,11 @@ function urlencode(query) {
 
 function endPoint(path) {
 	var defaults = {
-		offset: 0,
-		username: 'evan',
-		api_key: '67bd6ab9a494e744a213de2641def88163652dad',
-		format: 'json'
+		offset     : 0,
+		username   : 'evan',
+		api_key    : '67bd6ab9a494e744a213de2641def88163652dad',
+		format     : 'json',
+		uri_display: 'id'
 	};
 
 
@@ -43,9 +47,45 @@ function endPoint(path) {
 	return fetch;
 }
 
+function datapoint(q) {
+	var fetch = q.hasOwnProperty('parent_region') ?
+		endPoint('/parent_region_agg/') :
+		endPoint('/datapoint/');
+
+	// Return a promise so we can chain the requests for datapoints with the
+	// campaign lookups.
+	return new Promise(function (fulfill) {
+
+		// Fetch datapoints first, then look up the campaigns. Once campaign data
+		// has been filled in, fulfill the promise.
+
+		fetch(q).done(function (data) {
+			var campaigns = data.objects.map(function (d) { return d.campaign; });
+
+			endPoint('/campaign/')({
+				id__in: campaigns
+			}).done(function (campaignData) {
+				var campaigns = _.indexBy(campaignData.objects, 'id');
+
+				// Replace the campaign IDs with campaign objects
+				for (var i = data.objects.length - 1; i >= 0; --i) {
+					data.objects[i].campaign = campaign(campaigns[data.objects[i].campaign]);
+				}
+
+				fulfill(data);
+			});
+		});
+	});
+}
+
+datapoint.toString = function (query) {
+	return endPoint('/datapoint/').toString(query);
+};
+
 module.exports = {
-	campaign: endPoint('/campaign/'),
+	campaign  : endPoint('/campaign/'),
 	indicators: endPoint('/indicator/'),
-	regions: endPoint('/region/'),
-	datapoints: endPoint('/datapoint/')
+	regions   : endPoint('/region/'),
+	datapoints: datapoint,
+	office    : endPoint('/office/')
 };

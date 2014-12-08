@@ -1,8 +1,10 @@
 <div class="dropdown" role="menu" v-class="open: open">
-	<a role="button" class="menu-button" tabindex="0" v-on="click: open = !open">
-		{{ title }}
-		<i class="fa fa-fw fa-spinner" v-class="fa-spin : loading, hidden : !loading"></i>
-		<i class="fa fa-fw fa-caret-down"></i>
+	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
+		<label>{{ title }}</label>
+		<div class="icon">
+			<i class="fa fa-fw fa-spinner fa-spin" v-if="loading"></i>
+			<i class="fa fa-fw fa-caret-down" v-if="!loading"></i>
+		</div>
 	</a>
 	<div class="container" v-class="hidden: !open">
 		<form v-if="searchable" role="search">
