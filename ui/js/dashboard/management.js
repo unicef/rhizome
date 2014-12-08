@@ -295,8 +295,7 @@ module.exports = {
 			indicators([69, 70], q)
 				.then(objects)
 				.then(add([69, 70]))
-				.then(facet('name', function (d) { return d.campaign.start_date.getFullYear(); }))
-				.then(color(coolgray))
+				.then(facet(function (d) { return d.campaign.start_date.getFullYear(); }))
 				.then(map(sort(campaignStart)))
 				.then(each(cumsum(
 					function (d) { return d.value; },
@@ -306,6 +305,9 @@ module.exports = {
 					x: function (d) { return d.campaign.start_date.getMonth() + 1; },
 					y: function (d) { return d.value; }
 				})))
+				.then(map(function (data) {
+					return { points: data };
+				}))
 				.done(set('cases.lines'));
 
 			// Immunity Gap

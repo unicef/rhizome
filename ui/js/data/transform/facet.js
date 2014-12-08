@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function facet(name, get) {
+module.exports = function facet(get) {
 	'use strict';
 
 	if (typeof get !== 'function') {
@@ -10,15 +10,7 @@ module.exports = function facet(name, get) {
 	}
 
 	function transform(data) {
-		return _.map(_.groupBy(data, get), function (points, facet) {
-			var o = {
-				'points': points
-			};
-
-			o[name] = facet;
-
-			return o;
-		});
+		return _.values(_.groupBy(data, get));
 	}
 
 	return transform;
