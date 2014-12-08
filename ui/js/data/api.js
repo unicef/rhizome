@@ -14,10 +14,11 @@ function urlencode(query) {
 
 function endPoint(path) {
 	var defaults = {
-		offset: 0,
-		username: 'evan',
-		api_key: '67bd6ab9a494e744a213de2641def88163652dad',
-		format: 'json'
+		offset     : 0,
+		username   : 'evan',
+		api_key    : '67bd6ab9a494e744a213de2641def88163652dad',
+		format     : 'json',
+		uri_display: 'id'
 	};
 
 
@@ -43,9 +44,22 @@ function endPoint(path) {
 	return fetch;
 }
 
+function datapoint(q) {
+	var fetch = q.hasOwnProperty('parent_region') ?
+		endPoint('/parent_region_agg/') :
+		endPoint('/datapoint/');
+
+	return fetch(q);
+}
+
+datapoint.toString = function (query) {
+	return endPoint('/datapoint/').toString(query);
+};
+
 module.exports = {
-	campaign: endPoint('/campaign/'),
+	campaign  : endPoint('/campaign/'),
 	indicators: endPoint('/indicator/'),
-	regions: endPoint('/region/'),
-	datapoints: endPoint('/datapoint/')
+	regions   : endPoint('/region/'),
+	datapoints: datapoint,
+	office    : endPoint('/office/')
 };

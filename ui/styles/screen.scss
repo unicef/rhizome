@@ -9,111 +9,128 @@
 @import "compass/utilities/general/clearfix";
 
 @import "forms";
+@import "charts";
 
 header {
-  background-color: #ddd;
-  padding-left: 10pt;
-  padding-right: 10pt;
+	background-color: $gainsboro;
+	padding-left: 10pt;
+	padding-right: 10pt;
 
-  h1 {
-    float: left;
-    padding: 10pt 20pt 10pt 0;
-  }
+	h1 {
+		float: left;
+		padding: 10pt 20pt 10pt 0;
+	}
+}
+
+h3 {
+	border-bottom: 1px solid $gainsboro;
+	color: $gainsboro;
+	text-transform: uppercase;
+}
+
+h4 {
+	margin: 0;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 nav {
-  @include clearfix;
+	@include clearfix;
 
-  ul {
-    float: left;
-    list-style: none;
-    margin: 0;
+	ul {
+		float: left;
+		list-style: none;
+		margin: 0;
 
-    &.right:last-child {
-      margin-right: -12pt;
-    }
+		&.right:last-child {
+			margin-right: -12pt;
+		}
 
-    li {
-      display: inline-block;
-      padding: 16pt 12pt 12pt;
+		li {
+			display: inline-block;
+			padding: 16pt 12pt 12pt;
 
-      &:first-child {
-        padding-left: 0;
-      }
-    }
+			&:first-child {
+				padding-left: 0;
+			}
+		}
 
-  }
+	}
 
-  a {
-    color: #333;
-    text-decoration: none;
-  }
+	a {
+		color: #333;
+		text-decoration: none;
+	}
 }
 
 body.dashboard nav .dashboard,
 body.data nav .data {
-  background: #cbcbcb;
-  border-bottom: 4px solid #333;
+	background: #cbcbcb;
+	border-bottom: 4px solid #333;
 }
 
 .error {
-  color: $alert-color;
-  margin-top: 1.3em;
+	color: $alert-color;
+	margin-top: 1.3em;
 }
 
 table {
-  border-collapse: collapse;
-  font-family: Verdana, Hevetica, Arial, sans-serif;
-  margin-top: 10pt;
-  min-width: 100%;
+	border-collapse: collapse;
+	font-family: Verdana, Hevetica, Arial, sans-serif;
+	margin-top: 10pt;
+	min-width: 100%;
 
-  th {
-    font-family: Hevetica, Arial, sans-serif;
-    padding: 5pt 0;
-    text-align: left;
-  }
+	th {
+		font-family: Hevetica, Arial, sans-serif;
+		padding: 5pt 0;
+		text-align: left;
+	}
 
-  td {
-    background-color: white;
-    cursor: default;
-    font-size: 9pt;
-    padding: 3pt 0;
+	td {
+		background-color: white;
+		cursor: default;
+		font-size: 9pt;
+		padding: 3pt 0;
 
-  }
+	}
 
-  .numeric {
-    text-align: right;
-  }
+	.numeric {
+		text-align: right;
+	}
 
-  .empty {
-    td {
-      background-color: transparent;
-      font-size: 150%;
-      padding: 2em 0;
-      text-align: center;
-    }
-  }
+	.empty {
+		td {
+			background-color: transparent;
+			font-size: 150%;
+			padding: 2em 0;
+			text-align: center;
+		}
+	}
 
-  .odd {
-    td {
-      background-color: #f0f0f0;
-    }
-  }
+	.odd {
+		td {
+			background-color: #f0f0f0;
+		}
+	}
 
-  tr:not(.empty):hover {
-    td {
-      background-color: $ghost;
-    }
-  }
+	tr:not(.empty):hover {
+		td {
+			background-color: $ghost;
+		}
+	}
 }
 
 *[role="menuitem"] {
-  &:hover {
-    background-color: $primary-color;
-    color: white;
-  }
+	&:hover {
+		background-color: $primary-color;
+		color: white;
+	}
 }
 
 button, .button {
-  @include button($radius: true);
+	@include button($radius: true);
+}
+
+[class*="block-grid-"] > li {
+	padding-bottom: 0;
 }

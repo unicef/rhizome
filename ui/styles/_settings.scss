@@ -2,8 +2,6 @@
 // foundation.zurb.com
 // Licensed under MIT Open Source
 
-//
-
 // Table of Contents
 // Foundation Settings
 //
@@ -57,6 +55,8 @@
 // Allows the use of rem-calc() or lower-bound() in your settings
 @import "foundation/functions";
 
+$axis-font-size: rem-calc(10);
+
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
 
@@ -66,7 +66,7 @@
 // $base-font-size: 100%;
 
 // The $base-font-size is 100% while $base-line-height is 150%
-// $base-line-height: 150%;
+$base-line-height: 120%;
 
 // We use this to control whether or not CSS classes come through in the gem files.
 $include-html-classes: true;
@@ -80,8 +80,8 @@ $include-html-global-classes: $include-html-classes;
 // $include-xl-html-grid-classes: false;
 
 $row-width: 100%;
-// $total-columns: 12;
-// $column-gutter: rem-calc(30);
+$total-columns: 7;
+$column-gutter: rem-calc(20);
 
 // c. Global
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,6 +122,16 @@ $primary-color: #0099ff;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
+
+// Cool grays for charts
+
+$coolgray1: rgb(213,223,226);
+$coolgray2: rgb(194,202,204);
+$coolgray3: rgb(167,174,175);
+$coolgray4: rgb(144,151,153);
+$coolgray5: rgb(112,118,119);
+$coolgray6: rgb(95,101,102);
+$coolgray7: rgb(65,72,73);
 
 $lightblue: #d3e1b1;
 
@@ -208,9 +218,9 @@ $global-radius: 3px;
 
 // We use these to control header font sizes
 $h1-font-size: rem-calc(24);
-// $h2-font-size: rem-calc(37);
-// $h3-font-size: rem-calc(27);
-// $h4-font-size: rem-calc(23);
+$h2-font-size: rem-calc(18);
+$h3-font-size: rem-calc(14);
+$h4-font-size: rem-calc(14);
 // $h5-font-size: rem-calc(18);
 // $h6-font-size: 1rem;
 
@@ -236,7 +246,7 @@ $h1-font-size: rem-calc(24);
 // We use these to style paragraphs
 // $paragraph-font-family: inherit;
 // $paragraph-font-weight: $font-weight-normal;
-// $paragraph-font-size: 1rem;
+$paragraph-font-size: rem-calc(11);
 // $paragraph-line-height: 1.6;
 // $paragraph-margin-bottom: rem-calc(20);
 // $paragraph-aside-font-size: rem-calc(14);
@@ -379,7 +389,7 @@ $h1-font-size: rem-calc(24);
 // $include-xl-html-block-grid-classes: false;
 
 // We use this to control the maximum number of block grid elements per row
-// $block-grid-elements: 12;
+$block-grid-elements: 7;
 // $block-grid-default-spacing: rem-calc(20);
 // $align-block-grid-to-grid: false;
 

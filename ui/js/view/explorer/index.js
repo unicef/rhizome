@@ -11,22 +11,24 @@ function selectedValues(items) {
 
 module.exports = {
 	template: require('./template.html'),
-	data: {
-		loading: false,
-		regions: [],
-		indicators: [],
-		pagination: {
-			limit: 0,
-			offset: 0
-		},
-		table: {
-			columns: ['region', 'campaign'],
-			rows: []
-		},
-		campaign: {
-			start: '',
-			end: ''
-		}
+	data: function () {
+		return {
+			loading: false,
+			regions: [],
+			indicators: [],
+			pagination: {
+				limit: 0,
+				offset: 0
+			},
+			table: {
+				columns: ['region', 'campaign'],
+				rows: []
+			},
+			campaign: {
+				start: '',
+				end: ''
+			}
+		};
 	},
 	ready: function () {
 		function fetchAll(endPoint, container, cb) {

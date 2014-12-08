@@ -13,27 +13,51 @@ module.exports = {
 		'loading',
 		'loadedEvent'
 	],
-	data: {
-		pattern: ''
+	data: function () {
+		return {
+			pattern    : '',
+			open       : false,
+			opening    : false,
+			menuHeight : 0,
+			menuWdith  : 0
+		};
 	},
 	ready: function () {
 		this.searchable = this.searchable === 'true';
-		this.multi = this.multi === 'true';
+		this.multi      = this.multi === 'true';
 
 		this.$on(this.loadedEvent, function () { this.loading = false; });
-		this.$watch('open', this.onToggle);
 	},
 	computed: {
-		value: function () {
-			return this.items.filter(function (o) { return o.selected; })
-				.map(function (o) { return o.value; });
+		selected: function () {
+			return this.items.filter(function (o) {
+				return o.selected;
+			});
 		},
+
+		value: function () {
+			var selected = this.selected;
+
+			return this.multi ?
+				selected.map(function (o) { return o.value; }) :
+				selected[0].value;
+		},
+
 		title: function () {
-			return this.placeholder;
+			var selected = this.selected;
+
+			return selected.length === 0 ? this.placeholder :
+				this.multi ? selected.map(function (o) { return o.title; }).join(', ') :
+					selected[0].title;
 		},
 	},
 	methods: {
-		onToggle: function () {
+		toggle: function (e) {
+			e.stopImmediatePropagation();
+
+			this.open    = !this.open;
+			this.opening = true;
+
 			if (this.searchable) {
 				var inpt = this.$el.getElementsByTagName('input')[0];
 
@@ -68,7 +92,7 @@ module.exports = {
 			}
 
 			this.$dispatch('selection-changed', {
-				selected: this.items.filter(function (o) { return o.selected; }),
+				selected: this.multi ? this.selected : this.selected[0],
 				changed: item
 			});
 		},
@@ -82,7 +106,11 @@ module.exports = {
 				break;
 			case 'click':
 				if (!dom.contains(this.$el.getElementsByClassName('container')[0], evt)) {
-					this.open = false;
+					if (this.opening) {
+						this.opening = false;
+					} else {
+						this.open = false;
+					}
 				}
 				break;
 			case 'resize':
@@ -93,20 +121,20 @@ module.exports = {
 			}
 		},
 		invalidateSize: function () {
-			var menu = this.$el.getElementsByClassName('container')[0],
-				ul = menu.getElementsByTagName('ul')[0],
-				style = window.getComputedStyle(menu),
-				marginBottom = parseInt(style.getPropertyValue('margin-bottom'), 10),
-				marginRight = parseInt(style.getPropertyValue('margin-right'), 10),
-				offset = dom.viewportOffset(ul);
+			var menu         = this.$el.getElementsByClassName('container')[0];
+			var ul           = menu.getElementsByTagName('ul')[0];
+			var style        = window.getComputedStyle(menu);
+			var marginBottom = parseInt(style.getPropertyValue('margin-bottom'), 10);
+			var marginRight  = parseInt(style.getPropertyValue('margin-right'), 10);
+			var offset       = dom.viewportOffset(ul);
 
 			if (this.multi) {
-				var dims = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true);
+				var dims     = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true);
 				marginBottom += dims.height;
 			}
 
 			this.menuHeight = window.innerHeight - offset.top - marginBottom;
-			this.menuWidth = window.innerWidth - offset.left - marginRight;
+			this.menuWidth  = window.innerWidth - offset.left - marginRight;
 		},
 		clear: function () {
 			this.items.forEach(function (o) { o.selected = false; });

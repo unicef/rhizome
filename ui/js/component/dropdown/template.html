@@ -1,5 +1,5 @@
 <div class="dropdown" role="menu" v-class="open: open">
-	<a role="button" class="menu-button" tabindex="0" v-on="click: open = !open">
+	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle">
 		{{ title }}
 		<i class="fa fa-fw fa-spinner" v-class="fa-spin : loading, hidden : !loading"></i>
 		<i class="fa fa-fw fa-caret-down"></i>
