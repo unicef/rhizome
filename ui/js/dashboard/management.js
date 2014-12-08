@@ -11,6 +11,7 @@ var coolgray  = require('../colors/coolgray');
 var api       = require('../data/api');
 
 var bullet    = require('../data/model/bullet');
+var series    = require('../data/model/series');
 
 var add       = require('../data/transform/add');
 var color     = require('../data/transform/color');
@@ -305,9 +306,9 @@ module.exports = {
 					x: function (d) { return d.campaign.start_date.getMonth() + 1; },
 					y: function (d) { return d.value; }
 				})))
-				.then(map(function (data) {
-					return { points: data };
-				}))
+				.then(map(series(function (d) {
+					return d[0].campaign.start_date.getFullYear();
+				})))
 				.done(set('cases.lines'));
 
 			// Immunity Gap
