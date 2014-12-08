@@ -17,7 +17,7 @@ module.exports = {
 	methods: {
 		draw: function () {
 			function getX(d) {
-				return d.campaign.start_date;
+				return d.x;
 			}
 
 			function getY(d) {
@@ -36,8 +36,8 @@ module.exports = {
 
 			var stack = d3.layout.stack()
 				.x(getX)
-				.y(function (d) {
-					return d.value;
+				.values(function (d) {
+					return d.points;
 				});
 
 			var layers = stack(this.layers);

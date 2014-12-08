@@ -51,9 +51,11 @@ module.exports = Vue.extend({
 
 			function defined(d) { return util.defined(getY(d)); }
 
+			function getPoints(d) { return d.points; }
+
 			var svg = d3.select(this.$el);
 
-			var dataset = [this.lines, this.areas];
+			var dataset = [this.lines.map(getPoints), this.areas.map(getPoints)];
 			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
 			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
 			var lower   = util.min(dataset, getY);
@@ -91,9 +93,10 @@ module.exports = Vue.extend({
 			lines.enter().append('path')
 				.attr('class', 'line');
 
-			lines.attr({
-				d: line
-			});
+			lines.attr('d', function (d) {
+				return line(getPoints(d));
+			})
+				.style('stroke', function (d) { return d.color; });
 
 			this._callHook('drawn');
 		}

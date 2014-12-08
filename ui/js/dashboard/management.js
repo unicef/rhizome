@@ -13,6 +13,7 @@ var api       = require('../data/api');
 var bullet    = require('../data/model/bullet');
 
 var add       = require('../data/transform/add');
+var color     = require('../data/transform/color');
 var cumsum    = require('../data/transform/cumsum');
 var each      = require('../data/transform/each');
 var facet     = require('../data/transform/facet');
@@ -98,7 +99,7 @@ module.exports = {
 			start      : new Date(),
 			cases      : {
 				lines: [],
-				domain: [1,12],
+				domain: [1, 12],
 				xFmt : function (d) {
 					return moment(d, 'M').format('MMM');
 				}
@@ -290,10 +291,12 @@ module.exports = {
 				campaign_start: start
 			};
 
+			// Polio Cases YTD
 			indicators([69, 70], q)
 				.then(objects)
 				.then(add([69, 70]))
-				.then(facet(function (d) { return d.campaign.start_date.getFullYear(); }))
+				.then(facet('name', function (d) { return d.campaign.start_date.getFullYear(); }))
+				.then(color(coolgray))
 				.then(map(sort(campaignStart)))
 				.then(each(cumsum(
 					function (d) { return d.value; },
@@ -305,14 +308,26 @@ module.exports = {
 				})))
 				.done(set('cases.lines'));
 
+			// Immunity Gap
 			indicators([], q).done(set('immunity'));
 
+			// Missed Children
 			indicators([20, 22, 23, 24, 55], q)
 				.then(objects)
 				.then(sort(campaignStart))
 				.then(ratio([20, 22, 23, 24], 55))
+				.then(each(variables({
+					x: function (d) { return d.campaign.start_date; },
+					y: function (d) { return d.value; }
+				})))
+				.then(map(function (data) {
+					// The line chart expects an array of objects with a points property
+					return { points: data };
+				}))
+				.then(each(color(coolgray)))
 				.done(set('missed'));
 
+			// Conversions
 			indicators([25, 26], q)
 				.then(objects)
 				.then(sort(campaignStart))
@@ -321,8 +336,12 @@ module.exports = {
 					x: function (d) { return d.campaign.start_date; },
 					y: function (d) { return d.value; }
 				})))
+				.then(map(function (data) {
+					return { points: data };
+				}))
 				.done(set('conversions.lines'));
 
+			// Microplans with social data
 			indicators([27, 28], q)
 				.then(objects)
 				.then(sort(campaignStart))
