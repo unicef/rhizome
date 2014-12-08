@@ -1,0 +1,195 @@
+<div>
+	<div class="row">
+		<h2 class="small-12 columns">
+			<div v-component="vue-dropdown"
+			     v-with="items: offices"></div>
+		</h2>
+	</div>
+	<div class="row">
+		<div class="medium-2 columns">
+			<h3>Impact</h3>
+			<section>
+				<h4>Polio cases this year</h4>
+				<svg v-component="chart-base"
+				     data-aspect="1.8"
+				     data-margin-bottom="24"
+				     v-with="values: cases.lines,
+				             xFmt  : cases.xFmt,
+				             domain: cases.domain">
+
+					<g v-component="chart-line"
+					   data-width="{{contentWidth}}"
+					   data-height="{{contentHeight}}"
+					   data-lines="{{values}}"
+					   v-with="xFmt  : xFmt,
+					           domain: domain"></g>
+
+				</svg>
+			</section>
+			<section>
+				<h4>{{ gap }} Immunity Gap</h4>
+				<svg v-component="chart-base"
+				     data-aspect="1.8"></svg>
+			</section>
+		</div>
+
+		<div class="medium-5 columns">
+			<h3>Performance of Front Line Workers</h3>
+
+			<div class="row">
+				<div class="medium-2 columns">
+
+					<section>
+						<h4>Missed Children</h4>
+						<svg v-component="chart-base"
+						     data-margin-bottom="24"
+						     data-aspect="1.618"
+						     v-with="values: missed">
+
+							<g v-component="chart-stackedTime"
+							   v-with="layers: values,
+							           width : contentWidth,
+							           height: contentHeight">
+								<g class="x axis"
+								   v-attr="transform: 'translate(0,' + height + ')'"></g>
+								<g class="y axis"></g>
+								<g class="layers"></g>
+							</g>
+						</svg>
+					</section>
+
+					<section>
+						<h4>Conversions</h4>
+						<svg v-component="chart-base"
+						     data-aspect="1.618"
+						     data-margin-bottom="24"
+						     v-with="values: conversions.lines,
+						             x     : conversions.x,
+						             yFmt  : conversions.yFmt">
+
+							<g v-component="chart-line"
+							   data-width="{{contentWidth}}"
+							   data-height="{{contentHeight}}"
+							   data-lines="{{values}}"
+							   v-with="x: x, yFmt: yFmt"></g>
+						</svg>
+					</section>
+
+					<section>
+						<p v-if="microplans.length === 2"
+						   style="margin-bottom: 0">
+
+							<svg width="26" height="26" style="float:left;margin-right:10px">
+								<g v-component="chart-pie"
+								   data-outer-radius="13"
+								   data-slices="{{ microplans }}"
+								   transform="translate(13,13)"></g>
+							</svg>
+
+							{{ microplans[0].value }} / {{ microplans[0].value + microplans[1].value }}
+							microplans incorporate social data
+
+						</p>
+						<p v-if="microplans.length !== 2">No microplan data available.</p>
+					</section>
+
+				</div>
+
+				<div class="medium-3 columns"></div>
+
+				<div class="medium-2 column">
+					<h4>Transit Points</h4>
+					<p>No data</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<section class="medium-2 columns">
+			<h3>FLWs' Capacity to Perform</h3>
+			<ul class="small-block-grid-2">
+				<li v-repeat="ind: capacity">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
+		</section>
+
+		<div class="medium-1 column">
+			<h3>Supply</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: supply">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
+		</div>
+
+		<div class="medium-1 column">
+			<h3>Polio+</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: polio">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
+		</div>
+
+		<div class="medium-1 column">
+			<h3>Resources</h3>
+			<ul class="small-block-grid-2 medium-block-grid-1">
+				<li v-repeat="ind: resources">
+					<h4 v-text="ind.name"></h4>
+					<svg v-component="chart-base"
+					     data-aspect="3"
+					     v-with="values: ind">
+
+						<g v-component="chart-bullet"
+						   v-with="value : values.value,
+						           marker: values.marker,
+						           ranges: values.ranges,
+						           width : contentWidth,
+						           height: contentHeight"></g>
+					</svg>
+				</li>
+			</ul>
+		</div>
+
+		<div class="medium-2 columns">
+			<h3>Inaccessible Children</h3>
+			<svg v-component="chart-base"
+			     data-aspect="2"></svg>
+		</div>
+	</div>
+</div>

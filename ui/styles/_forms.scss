@@ -10,6 +10,9 @@ form {
     .menu-button {
       @include button($button-tny, $secondary-color, true, true);
       margin-bottom: rem-calc(5);
+      padding-left: rem-calc(12);
+      padding-right: 2rem;
+      text-align: left;
     }
 
     .selection-controls {

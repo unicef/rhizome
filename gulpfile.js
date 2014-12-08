@@ -10,14 +10,14 @@ var del = require('del');
 var $ = require('gulp-load-plugins')();
 
 var path = {
-	main: './ui/js/PolioScape.js',
+	main      : './ui/js/PolioScape.js',
 	components: './ui/js/**/*.{js,html,css,sass,scss}',
-	js: './ui/js/**/*.js',
-	sass: ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
-	images: './ui/img/**/*',
-	test: './ui/test/**/*.js',
-	output: './static',
-	clean: ['./static/**/*.{js,css,html}', '!./static/bower_components/**/*']
+	js        : './ui/js/**/*.js',
+	sass      : ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
+	images    : './ui/img/**/*',
+	test      : './ui/test/**/*.js',
+	output    : './static',
+	clean     : ['./static/**/*.{js,css,html}', '!./static/bower_components/**/*']
 };
 
 var build = function (src, dst, opts) {
@@ -72,7 +72,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('default', ['clean', 'browserify', 'styles']);
 
-gulp.task('watch', ['browserify', 'styles'], function () {
+gulp.task('livereload', function () {
 	var server = $.livereload();
 
 	// watch for changes
@@ -80,7 +80,9 @@ gulp.task('watch', ['browserify', 'styles'], function () {
 	gulp.watch(path.output + '/**/*').on('change', function (file) {
 		server.changed(file.path);
 	});
+});
 
+gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
 	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
 	gulp.watch(path.images, ['images']);
