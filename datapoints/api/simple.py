@@ -308,17 +308,17 @@ class DataPointResource(SimpleApiResource):
             the_limit = 10
 
         try:
-            region_in = query_dict['region__in']
+            region_in = [int(r) for r in query_dict['region__in'].split(',')]
         except KeyError:
             region_in = []
 
         try:
-            campaign_in = query_dict['campaign__in']
+            campaign_in = [int(c) for c in query_dict['campaign__in'].split(',')]
         except KeyError:
             campaign_in = []
 
         try:
-            indicator_in = query_dict['indicator__in']
+            indicator_in = [int(i) for i in query_dict['indicator__in'].split(',')]
         except KeyError:
             indicator_in = []
 
@@ -338,53 +338,68 @@ class DataPointResource(SimpleApiResource):
         end_at = the_offset * the_limit + the_limit
 
 
+        print type(indicators)
+        print indicators
+
         # find all of the distinct regions / campaigns in the db
-        if isinstance(indicators,list):
-            # this means the indicator request is null
+        if len(indicators) == 0:
             indicator_list = indicators
             all_region_campaign_tuples = DataPoint.objects.values_list('region',\
                 'campaign').distinct()
 
         else:
             # find the distinct campaing / region tuples for those indicators
-            indicator_list = [int(ind) for ind in indicators.split(',')]
 
             all_region_campaign_tuples =DataPoint.objects.filter(indicator__in=\
-                indicator_list).values_list('region','campaign').distinct()
+                indicators).values_list('region','campaign').distinct()
+            print all_region_campaign_tuples
+
 
         # if there was no region or campaign passed in just take the first
         # x elements in the list ( where x is the_limit ) and return that
 
         if len(regions) == 0 and len(campaigns) == 0:
-            return all_region_campaign_tuples[start_at:end_at], indicator_list
+            return all_region_campaign_tuples[start_at:end_at], indicators
 
         final_region_campaign_tuples = []
 
         # loop through all of the distinct campaigns/regions in the db and if
         # the request matches then add to the array that will be returned
 
+        # print all_region_campaign_tuples
+
 
         for i, (r,c) in enumerate(all_region_campaign_tuples):
 
-            if start_at <= i <= end_at:
 
-                if len(final_region_campaign_tuples) == the_limit:
-                    return final_region_campaign_tuples, indicator_list
-
-                elif str(r) in regions and str(c) in campaigns:
-                    final_region_campaign_tuples.append((r,c))
-
-                elif str(r) in regions and len(campaigns) == 0:
-                    final_region_campaign_tuples.append((r,c))
-
-                elif len(regions) == 0 and str(c) in campaigns:
-                    final_region_campaign_tuples.append((r,c))
-
-                else:
-                    pass
+            if r in regions:
+                print r
+                print len(campaigns)
+                print 'wow!!!'
 
 
-        return final_region_campaign_tuples, indicator_list
+            if len(final_region_campaign_tuples) == the_limit:
+                print 'a'
+                return final_region_campaign_tuples, indicators
+
+            elif r in regions and c in campaigns:
+                print 'b'
+                final_region_campaign_tuples.append((r,c))
+
+            elif r in regions and len(campaigns) == 0:
+                print 'c'
+                final_region_campaign_tuples.append((r,c))
+
+            elif len(regions) == 0 and c in campaigns:
+                print 'd'
+                final_region_campaign_tuples.append((r,c))
+
+            else:
+                print 'z'
+                pass
+
+
+        return final_region_campaign_tuples, indicators
 
     def alter_list_data_to_serialize(self, request, data):
 
@@ -419,6 +434,7 @@ class DataPointResource(SimpleApiResource):
 
         regions = list(set([rc[0] for rc in region_campaign_tuples]))
         campaigns = list(set([rc[1] for rc in region_campaign_tuples]))
+
 
         if len(indicators) > 0:
 
