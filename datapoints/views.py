@@ -192,6 +192,20 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     model=Region
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
+    form_class = RegionForm
+    success_url=reverse_lazy('regions:region_index')
+
+
+    def form_valid(self, form):
+        # this inserts into the changed_by field with  the user who made the insert
+
+        obj = form.save(commit=False)
+        obj.changed_by = self.request.user
+        obj.source_id = Source.objects.get(source_name='data entry').id
+        obj.source_region_id = -1
+
+        obj.save()
+        return HttpResponseRedirect(self.success_url)
 
 
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):

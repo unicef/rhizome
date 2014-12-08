@@ -7,7 +7,8 @@ class RegionForm(ModelForm):
 
     class Meta:
         model = Region
-        # fields = ['full_name','short_name']
+        # fields = ['name', 'source', 'source_region']
+        exclude = ['source','source_region']
 
 class IndicatorForm(ModelForm):
 
