@@ -30,7 +30,7 @@
 				<label>
 					Regions
 					<vue-dropdown v-with="items : regions"
-							placeholder="All regions"
+							placeholder="0 selected"
 							multi="true"
 							searchable="true"
 							loading="true"
@@ -42,7 +42,7 @@
 				<label>
 					Indicators
 					<vue-dropdown v-with="items : indicators"
-							placeholder="All indicators"
+							placeholder="0 selected"
 							multi="true"
 							searchable="true"
 							loading="true"
@@ -54,7 +54,8 @@
 			<div class="medium-1 columns" style="text-align: right">
 				<!-- FIXME: Remove blank line for alignment -->
 				&nbsp;<br>
-				<a class="button primary" role="button" v-on="click : refresh()">
+				<a class="button primary" role="button" v-on="click : refresh()"
+				   v-class="disabled: !hasSelection">
 					<i class="fa fa-fw fa-refresh" v-class="fa-spin : loading"></i>&emsp;Load
 				</a>
 			</div>
@@ -81,7 +82,8 @@
 
 	<div class="medium-2 large-1 columns">
 		<a role="button" class="button expand" aria-label="Download All"
-				v-on="click : download()">
+		   v-class="disabled: !hasSelection"
+			 v-on="click : download()">
 			<i class="fa fa-fw fa-download"></i>&emsp;Download All
 		</a>
 	</div>

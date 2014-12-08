@@ -68,8 +68,19 @@ module.exports = {
 		});
 	},
 
+	computed: {
+		hasSelection: function () {
+			return selectedValues(this.regions).length > 0 &&
+				selectedValues(this.indicators).length > 0;
+		}
+	},
+
 	methods: {
 		refresh: function () {
+			if (!this.hasSelection) {
+				return;
+			}
+
 			var self    = this;
 
 			var regions = selectedValues(this.regions);
@@ -146,6 +157,10 @@ module.exports = {
 		},
 
 		download: function () {
+			if (!this.hasSelection) {
+				return;
+			}
+
 			this.downloading = true;
 
 			var indicators   = selectedValues(this.indicators);
