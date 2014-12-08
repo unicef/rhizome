@@ -147,12 +147,15 @@ module.exports = {
 
 		download: function () {
 			this.downloading = true;
-			var indicators = selectedValues(this.indicators),
-				regions = selectedValues(this.regions),
-				query = {
-					limit: 0,
-					format: 'csv'
-				};
+
+			var indicators   = selectedValues(this.indicators);
+			var regions      = selectedValues(this.regions);
+			var query        = {
+				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
+				'the_limit'  : 10000000,
+				'format'     : 'csv',
+				'uri_display': 'slug'
+			};
 
 			if (indicators.length < 1) {
 				this.$data.src = '';
@@ -164,7 +167,7 @@ module.exports = {
 				query.region__in = regions;
 			}
 
-			this.$data.src = api.datapoints.toString(query);
+			this.$set('src', api.datapoints.toString(query));
 		},
 
 		previous: function () {
