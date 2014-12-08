@@ -14,7 +14,6 @@ module.exports = {
 
 	data: function () {
 		return {
-			loading: false,
 			regions: [],
 			indicators: [],
 			pagination: {
@@ -22,6 +21,7 @@ module.exports = {
 				the_offset: 0
 			},
 			table: {
+				loading: false,
 				columns: ['region', 'campaign'],
 				rows: []
 			},
@@ -124,11 +124,13 @@ module.exports = {
 
 			_.defaults(options, this.pagination);
 
-			this.loading = true;
+			this.table.loading = true;
 			this.table.columns = columns;
 			this.table.rows = [];
 
 			api.datapoints(options).done(function (data) {
+				self.table.loading = false;
+
 				if (!data.objects || data.objects.length < 1) {
 					return;
 				}
@@ -148,8 +150,6 @@ module.exports = {
 				self.pagination.the_offset = Number(data.meta.query_dict.the_offset[0]);
 
 				self.table.rows = datapoints;
-
-				self.loading = false;
 			});
 		},
 
