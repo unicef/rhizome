@@ -11,6 +11,10 @@
 @import "forms";
 @import "charts";
 
+body {
+	background-color: $white;
+}
+
 header {
 	background-color: $gainsboro;
 	padding-left: 10pt;
