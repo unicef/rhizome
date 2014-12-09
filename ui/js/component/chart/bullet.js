@@ -38,6 +38,32 @@ module.exports = {
 					'none';
 			}
 
+			function fill(value, marker, ranges) {
+				// FIXME: Hack for getting fill colors for good and bad performance.
+				// This should probably be encapsulated outside of this chart, applied
+				// to the VM before it is rendered, and the chart should just read a
+				// color property
+				var delta = value - marker;
+
+				if (delta > 0.25) {
+					return '#2B8CBE';
+				}
+
+				if (delta < 0) {
+					return '#AF373E';
+				}
+
+				for (var i = ranges.length - 1; i >= 0; i--) {
+					var range = ranges[i];
+
+					if (range.start <= value && range.end > value && range.name === 'bad') {
+						return '#AF373E';
+					}
+				}
+
+				return '#707677';
+			}
+
 			if (!this.ranges) {
 				this._data.ranges = [];
 			}
@@ -48,6 +74,9 @@ module.exports = {
 				.domain([0, d3.max(this.ranges, function (d) { return d.end; })])
 				.range([0, this.width]);
 
+			// FIXME: color scale shouldn't be hard-coded. It should be generated
+			// according to the number of qualitative ranges and not depend on the
+			// ranges being "good," "bad," and "ok."
 			var color = d3.scale.ordinal()
 				.domain(['bad', 'ok', 'good'])
 				.range(['#B3B3B3', '#CCCCCC', '#E6E6E6']);
@@ -86,13 +115,16 @@ module.exports = {
 
 			labels.exit().remove();
 
+			var fillColor = fill(this.value, this.marker, this.ranges);
+
 			svg.select('.marker').attr({
 				height: this.height * 3 / 4,
 				width : this.markerWidth,
 				y     : this.height / 8,
 				x     : x(this.marker) || 0
 			}).style({
-				display: display(this.marker)
+				display: display(this.marker),
+				fill: fillColor
 			});
 
 			svg.select('.value').attr({
@@ -100,7 +132,8 @@ module.exports = {
 				width : x(this.value) || 0,
 				y     : this.height / 4
 			}).style({
-				'display': display(this.value)
+				display: display(this.value),
+				fill: fillColor
 			});
 
 			var format = d3.format('%');
