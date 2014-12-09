@@ -280,9 +280,9 @@ module.exports = {
 			};
 
 			// Polio Cases YTD
-			indicators([69, 70], q)
+			indicators([69, 70, 159, 160, 161, 162], q)
 				.then(objects)
-				.then(add([69, 70]))
+				.then(add([69, 70, 159, 160, 161, 162]))
 				.then(facet(function (d) { return d.campaign.start_date.getFullYear(); }))
 				.then(map(sort(campaignStart)))
 				.then(each(cumsum(
