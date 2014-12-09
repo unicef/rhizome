@@ -152,7 +152,7 @@ module.exports = {
 				indicators: []
 			}, {
 				name: 'RI Stockouts',
-				indicators: [66, 65],
+				indicators: [53, 52],
 				ranges: [{
 					name: 'bad',
 					start: 0.5,
