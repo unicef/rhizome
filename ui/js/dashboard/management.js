@@ -324,7 +324,7 @@ module.exports = {
 				.then(ratio(26, 25))
 				.then(each(variables({
 					x: function (d) { return d.campaign.start_date; },
-					y: function (d) { return d.value; }
+					y: function (d) { return 1 - d.value; }
 				})))
 				.then(map(function (data) {
 					return { points: data };

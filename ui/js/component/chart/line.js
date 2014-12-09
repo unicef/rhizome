@@ -60,7 +60,7 @@ module.exports = Vue.extend({
 			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
 			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
 			var lower   = Math.min(0, util.min(dataset, getY));
-			var upper   = util.max(dataset, getY);
+			var upper   = util.max(dataset, getY) * 1.1;
 
 			var x       = this.x;
 			var y       = this.y;
