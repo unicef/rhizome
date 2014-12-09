@@ -56,4 +56,14 @@ svg {
 			}
 		}
 	}
+
+	.point {
+		fill: $white;
+		stroke: $coolgray5;
+		stroke-width: 1px;
+
+		&.hover {
+			fill: $coolgray5;
+		}
+	}
 }

@@ -17,11 +17,15 @@ module.exports = {
 	methods: {
 		draw: function () {
 			function getX(d) {
-				return d.campaign.start_date;
+				return d.x;
 			}
 
 			function getY(d) {
 				return d.y0 + d.y;
+			}
+
+			function getValues(d) {
+				return d.points;
 			}
 
 			function defined(d) {
@@ -36,16 +40,15 @@ module.exports = {
 
 			var stack = d3.layout.stack()
 				.x(getX)
-				.y(function (d) {
-					return d.value;
-				});
+				.values(getValues);
 
-			var layers = stack(this.layers);
+			var layers  = stack(this.layers);
 
-			var start  = new Date(util.min(layers, getX));
-			var end    = new Date(util.max(layers, getX));
-			var lower  = util.min(layers, function (d) { return d.y0; });
-			var upper  = util.max(layers, getY);
+			var dataset = this.layers.map(getValues);
+			var start   = new Date(util.min(dataset, getX));
+			var end     = new Date(util.max(dataset, getX));
+			var lower   = Math.min(0, util.min(dataset, function (d) { return d.y0; }));
+			var upper   = util.max(dataset, getY);
 
 			var x = d3.time.scale()
 				.domain([start, end])
@@ -71,7 +74,7 @@ module.exports = {
 			paths.enter().append('path')
 				.attr('class', 'layer');
 
-			paths.attr('d', area)
+			paths.attr('d', function (d) { return area(getValues(d)); })
 				.style('fill', function (d, i) { return color(i); });
 
 			paths.exit().remove();

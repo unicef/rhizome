@@ -1,3 +1,4 @@
+var _ = require('lodash');
 
 /**
  * Apply fn to each element in an array.
@@ -9,7 +10,7 @@ module.exports = function map(fn) {
 	'use strict';
 
 	function transform(data) {
-		return data.map(fn);
+		return _.map(data, fn);
 	}
 
 	return transform;

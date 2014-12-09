@@ -51,16 +51,19 @@ module.exports = Vue.extend({
 
 			function defined(d) { return util.defined(getY(d)); }
 
-			var svg = d3.select(this.$el);
+			function getPoints(d) { return d.points; }
 
-			var dataset = [this.lines, this.areas];
+			var self    = this;
+			var svg     = d3.select(this.$el);
+
+			var dataset = [this.lines.map(getPoints), this.areas.map(getPoints)];
 			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
 			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
-			var lower   = util.min(dataset, getY);
+			var lower   = Math.min(0, util.min(dataset, getY));
 			var upper   = util.max(dataset, getY);
 
-			var x = this.x;
-			var y = this.y;
+			var x       = this.x;
+			var y       = this.y;
 
 			x.domain([start, end])
 				.range([0, this.width]);
@@ -91,8 +94,72 @@ module.exports = Vue.extend({
 			lines.enter().append('path')
 				.attr('class', 'line');
 
-			lines.attr({
-				d: line
+			lines.attr('d', function (d) {
+				return line(getPoints(d));
+			})
+				.style('stroke', function (d) { return d.color; });
+
+			var hover = svg.selectAll('.hover').data(this.lines);
+			hover.enter().append('g').attr('class', 'hover');
+
+			var point = hover.selectAll('.point')
+				.data(function (d) { return d.points; });
+
+			point.enter().append('circle')
+				.attr({
+					'class': 'point',
+					'r'    : 3,
+				})
+				.style('opacity', '0')
+				.on('mouseover', function (d) {
+					var s = getY(d);
+					var attr = {
+						'x'          : getScaledX(d),
+						'y'          : getScaledY(d),
+						'dx'         : '-4',
+						'text-anchor': 'end',
+						'class'      : 'hover-label'
+					};
+
+					if (self.yFmt) {
+						s = self.yFmt(s);
+					}
+
+					d3.select(this)
+						.style('opacity', '1');
+
+					svg.append('text').attr(attr)
+						.attr('dy', '1.1em')
+						.style('opacity', '0')
+						.text(s);
+
+					var seriesData = d3.select(this.parentNode).datum();
+
+					if (seriesData && seriesData.name) {
+						svg.append('text').attr(attr)
+							.attr('dy', '-.2em')
+							.style('opacity', '0')
+							.text(seriesData.name);
+					}
+
+					svg.selectAll('.hover-label')
+						.transition().duration(300)
+						.style('opacity', '1');
+				})
+				.on('mouseout', function () {
+					d3.select(this)
+						.transition().duration(300)
+						.style('opacity', '0');
+
+					svg.selectAll('.hover-label')
+						.transition().duration(300)
+						.style('opacity', '0')
+						.remove();
+				});
+
+			point.attr({
+				'cx': getScaledX,
+				'cy': getScaledY
 			});
 
 			this._callHook('drawn');
