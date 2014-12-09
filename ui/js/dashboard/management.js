@@ -98,7 +98,7 @@ module.exports = {
 			start      : new Date(),
 			cases      : {
 				lines: [],
-				domain: [1,12],
+				domain: [1, 12],
 				xFmt : function (d) {
 					return moment(d, 'M').format('MMM');
 				}
