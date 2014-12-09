@@ -151,21 +151,8 @@ module.exports = {
 				name: 'Convergence Activities',
 				indicators: []
 			}, {
-				name: 'RI Stockouts',
+				name: 'RI No Stockouts',
 				indicators: [53, 52],
-				ranges: [{
-					name: 'bad',
-					start: 0.5,
-					end: 1
-				}, {
-					name: 'ok',
-					start: 0.3,
-					end: 0.5
-				}, {
-					name: 'good',
-					start: 0,
-					end: 0.3
-				}]
 			}],
 			polio      : [{
 				name: 'Delayed OPV Supply',
