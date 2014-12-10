@@ -1,11 +1,13 @@
 
 from tastypie.resources import ALL
+from tastypie.resources import Resource
 from tastypie.bundle import Bundle
 from tastypie import fields
+from pandas import DataFrame
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
-from tastypie.resources import Resource
+
 
 
 class ResultObject(object):
@@ -46,19 +48,10 @@ class DataPointResource(Resource):
 
 
     class Meta(BaseApiResource.Meta):
-        # queryset = DataPoint.objects.all()
-        # object_class = ResultObject
+        object_class = ResultObject
         resource_name = 'datapoint'
-        excludes = ['note']
-        filtering = {
-            "value": ALL,
-            "created_at":ALL,
-            "indicator":ALL,
-            "region": ALL ,
-            "campaign": ALL,
-        }
-        # serializer = CustomSerializer()
         max_limit = None
+        # serializer = CustomSerializer()
 
 
     # def get_resource_uri(self, bundle_or_obj):
@@ -80,12 +73,17 @@ class DataPointResource(Resource):
 
         results = []
 
+        all_region_campaign_tuples =DataPoint.objects.values_list('region',\
+            'campaign','indicator').distinct()
+
+
+        df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
+            'campaign','indicator'])
+        print df
 
         for result in range(0,5):
-            print result
 
             new_obj = ResultObject()
-
             new_obj.id = result
             results.append(new_obj)
 
@@ -95,15 +93,37 @@ class DataPointResource(Resource):
     def obj_get_list(self,bundle,**kwargs):
         '''
         Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional filtering may be applied
+        could be a point at which additional filtering may be applied.
         '''
 
         return self.get_object_list(bundle.request)
 
-    def obj_get():
+    def obj_get(self):
         # get one object from data source
         pk = int(kwargs['pk'])
         try:
             return data[pk]
         except KeyError:
             raise NotFound("Object not found")
+
+    ##########################
+    ##### HELPER METHODS #####
+    ##########################
+
+    def parse_url_params(self,query_dict):
+
+        params = {
+            'indicator_in':None,
+            'region_in':None,
+            'campaign_in':None,
+            'campaign_end':None,
+            'campaign_start':None,
+            'uri_format':None,
+            'agg_level':None,
+            'the_limit':None,
+            'the_offset':0
+        }
+
+
+        # for k,v in query_dict.iteritems():
+        #     print k,v
