@@ -4,22 +4,40 @@ from tastypie.bundle import Bundle
 from tastypie import fields
 
 from datapoints.models import *
-from datapoints.api.base import BaseApiResource
 from datapoints.api.meta_data import *
+from tastypie.resources import Resource
+
 
 class ResultObject(object):
 
-    id = None
+    pk = None
     # campaign = None
     # region = None
     # changed_by_id = None
     # indicators = []
 
 
-class DataPointResource(BaseApiResource):
-    '''Datapoint Resource'''
+class IndicatorObject(object):
+    '''
+    This object represents the indicators and values for the region/campaign
+    combinations.  Within each Result Object, there are N Inidcator objects
+    with the attributes listed below.
+    '''
+    indicator = None
+    value = None
+    is_agg = None
 
-    id = fields.IntegerField(attribute = 'id')
+
+class DataPointResource(Resource):
+    '''
+    This Resource is custom and builds upon the tastypie Model Resource by
+    overriding the methods coorsponding to GET requests.  For more information
+    on creating custom api functionality see :
+      https://gist.github.com/nomadjourney/794424
+      http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
+    '''
+
+    pk = fields.IntegerField(attribute = 'id')
 
     # region = fields.ToOneField(RegionResource, 'region')
     # indicator = fields.ToOneField(IndicatorResource, 'indicator')
@@ -44,28 +62,17 @@ class DataPointResource(BaseApiResource):
 
 
     # def get_resource_uri(self, bundle_or_obj):
-    #     kwargs = {
-    #         'resource_name': self._meta.resource_name,
-    #     }
-    #
-    #     if isinstance(bundle_or_obj, Bundle):
-    #         kwargs['pk'] = bundle_or_obj.obj.id # pk is referenced in ModelResource
-    #     else:
-    #         kwargs['pk'] = bundle_or_obj.id
-    #
-    #     if self._meta.api_name is not None:
-    #         kwargs['api_name'] = self._meta.api_name
-    #
-    #     return self._build_reverse_url('api_dispatch_detail', kwargs = kwargs)
+        # https://gist.github.com/nomadjourney/794424
+        # return self._build_reverse_url('api_dispatch_detail', kwargs = {})
 
 
     def detail_uri_kwargs(self, bundle_or_obj):
             kwargs = {}
 
             if isinstance(bundle_or_obj, Bundle):
-                kwargs['pk'] = bundle_or_obj.obj.id
+                kwargs['pk'] = bundle_or_obj.obj.pk
             else:
-                kwargs['pk'] = bundle_or_obj.id
+                kwargs['pk'] = bundle_or_obj.pk
 
             return kwargs
 
@@ -73,7 +80,8 @@ class DataPointResource(BaseApiResource):
 
         results = []
 
-        for result in range(0,10):
+
+        for result in range(0,5):
             print result
 
             new_obj = ResultObject()
@@ -85,7 +93,17 @@ class DataPointResource(BaseApiResource):
 
 
     def obj_get_list(self,bundle,**kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional filtering may be applied
+        '''
 
         return self.get_object_list(bundle.request)
 
-    # def obj_get():
+    def obj_get():
+        # get one object from data source
+        pk = int(kwargs['pk'])
+        try:
+            return data[pk]
+        except KeyError:
+            raise NotFound("Object not found")
