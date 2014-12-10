@@ -11,6 +11,11 @@ from datapoints.api.meta_data import *
 
 
 class ResultObject(object):
+    '''
+    This is the same as a row in the CSV export in which one row has a distinct
+    region / campaign combination, and the remaing columns represent the
+    indicators requested.  Indicators are a list of IndicatorObjects.
+    '''
 
     pk = None
     # campaign = None
@@ -53,6 +58,9 @@ class DataPointResource(Resource):
         max_limit = None
         # serializer = CustomSerializer()
 
+    def __init__(self):
+        self.error = None
+
 
     # def get_resource_uri(self, bundle_or_obj):
         # https://gist.github.com/nomadjourney/794424
@@ -73,13 +81,18 @@ class DataPointResource(Resource):
 
         results = []
 
-        all_region_campaign_tuples =DataPoint.objects.values_list('region',\
-            'campaign','indicator').distinct()
+        err, params = self.parse_url_params(request.GET)
 
+        if err:
+            self.error = err
+            return results
+
+        ## get distinct regions/campaigns for the provided indicators
+        all_region_campaign_tuples = DataPoint.objects.filter(indicator__in=\
+            params['indicator__in']).values_list('region','campaign').distinct()
 
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
-            'campaign','indicator'])
-        print df
+            'campaign'])
 
         for result in range(0,5):
 
@@ -106,24 +119,49 @@ class DataPointResource(Resource):
         except KeyError:
             raise NotFound("Object not found")
 
+    def alter_list_data_to_serialize(self, request, data):
+
+        # print self.error
+        if self.error:
+            data['error'] = self.error
+        else:
+            data['error'] = None
+
+
+        return data
+
     ##########################
     ##### HELPER METHODS #####
     ##########################
 
     def parse_url_params(self,query_dict):
 
-        params = {
-            'indicator_in':None,
-            'region_in':None,
-            'campaign_in':None,
+        parsed_params = {}
+
+        optional_params = {
+            'region__in':None,
+            'campaign__in':None,
             'campaign_end':None,
             'campaign_start':None,
-            'uri_format':None,
-            'agg_level':None,
             'the_limit':None,
-            'the_offset':0
+            'the_offset':0,
+            'uri_format':'id',
+            'agg_level':'mixed',
+
+        }
+
+        required_params = {
+            'indicator__in':None,
         }
 
 
-        # for k,v in query_dict.iteritems():
-        #     print k,v
+        for k,v in required_params.iteritems():
+            try:
+                parsed_params[k] = query_dict[k].split(',')
+            except KeyError as err:
+                print 'THIS IS HAPPENING\n' * 10
+
+                return str(err) + ' is a required paramater!', None
+
+
+        return None, parsed_params
