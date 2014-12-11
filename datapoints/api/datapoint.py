@@ -86,11 +86,15 @@ class DataPointResource(Resource):
         indicators = parsed_params['indicator__in']
 
         ## get datapoints according to regions/campaigns/indicators ##
-        dps = DataPoint.objects.filter(
+        dp_columns = ['id','indicator_id','campaign_id','region_id','value']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
             region__in = regions,\
             campaign__in = campaigns,\
-            indicator__in = indicators)
+            indicator__in = indicators).values()))[dp_columns]
 
+        re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
+
+        print re_indexed_df
 
         ## pivot the dataframe so that indicators are columns ##
 
