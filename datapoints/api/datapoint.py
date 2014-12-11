@@ -19,7 +19,7 @@ class ResultObject(object):
 
     campaign = None
     region = None
-    # indicators = []
+    indicators = dict()
 
 
 class IndicatorObject(object):
@@ -48,6 +48,7 @@ class DataPointResource(Resource):
     total_count = 0
     campaign = fields.IntegerField(attribute = 'campaign')
     region = fields.IntegerField(attribute = 'region')
+    indicators = fields.Diction
 
 
     class Meta(BaseApiResource.Meta):
@@ -94,16 +95,26 @@ class DataPointResource(Resource):
 
         re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
 
-        print re_indexed_df
+        pivoted_dict = re_indexed_df.transpose().to_dict()
 
         ## pivot the dataframe so that indicators are columns ##
 
-        for row in r_c_df.values:
+        for rc_tuple, indicator_dict in pivoted_dict.iteritems():
 
             new_obj = ResultObject()
-            new_obj.region = row[0]
-            new_obj.campaign = row[1]
+            new_obj.region = rc_tuple[0]
+            new_obj.campaign = rc_tuple[1]
+            new_obj.indicators = indicator_dict
 
+            # ind_obj = IndicatorObject()
+            #
+            # ind_obj.indicator = row_data.indicator_id
+            # ind_obj.value = row_data.value
+            # ind_obj.is_agg = 0
+            # ind_obj.datapoint_id = row_data.id
+            #
+            # new_obj.indicators = ind_obj
+            #
             results.append(new_obj)
 
         return results
