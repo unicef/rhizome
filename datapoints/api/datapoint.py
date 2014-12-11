@@ -1,4 +1,6 @@
 import pprint as pp
+from collections import defaultdict
+
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
@@ -16,10 +18,10 @@ class ResultObject(object):
     region / campaign combination, and the remaing columns represent the
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
-
-    campaign = None
     region = None
-    indicators = dict()
+    campaign = None
+    is_agg = 0
+    indicators = list()
 
 
 class DataPointResource(Resource):
@@ -33,9 +35,10 @@ class DataPointResource(Resource):
 
     error = None
     total_count = 0
-    campaign = fields.IntegerField(attribute = 'campaign')
     region = fields.IntegerField(attribute = 'region')
-    indicators = fields.DictField(attribute = 'indicators')
+    campaign = fields.IntegerField(attribute = 'campaign')
+    is_agg = fields.BooleanField(attribute = 'is_agg')
+    indicators = fields.ListField(attribute = 'indicators')
 
 
     class Meta(BaseApiResource.Meta):
@@ -82,26 +85,28 @@ class DataPointResource(Resource):
 
         re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
 
-        pivoted_dict = re_indexed_df.transpose().to_dict()
+        # key: tuple (region/campaign) value: list of dicts
+        results_dict = defaultdict(list)
 
-        ## pivot the dataframe so that indicators are columns ##
+        for rc_tuple, indicators in re_indexed_df.iterrows():
+            indicator_dict = {}
+            indicator_dict['indicator_id'] = indicators.indicator_id
+            indicator_dict['value'] = indicators.value
+            indicator_dict['datapoint_id'] = indicators.id
 
-        for rc_tuple, indicator_dict in pivoted_dict.iteritems():
+            results_dict[rc_tuple].append(indicator_dict)
 
+
+        pp.pprint(results_dict)
+
+
+        for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
             new_obj = ResultObject()
             new_obj.region = rc_tuple[0]
             new_obj.campaign = rc_tuple[1]
-            new_obj.indicators = indicator_dict
+            new_obj.is_agg = 0
+            new_obj.indicators = indicator_list_of_dicts
 
-            # ind_obj = IndicatorObject()
-            #
-            # ind_obj.indicator = row_data.indicator_id
-            # ind_obj.value = row_data.value
-            # ind_obj.is_agg = 0
-            # ind_obj.datapoint_id = row_data.id
-            #
-            # new_obj.indicators = ind_obj
-            #
             results.append(new_obj)
 
         return results
@@ -178,7 +183,6 @@ class DataPointResource(Resource):
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])[the_offset:the_limit + the_offset]
 
-        print df
         return None, df
 
 
