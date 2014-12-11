@@ -138,7 +138,7 @@ module.exports = {
 				name: 'Female Mobilizers',
 				indicators: [40, 36]
 			}],
-			supply     : [{
+			polio     : [{
 				name: 'Penta3 Coverage',
 				indicators: [48, 47]
 			}, {
@@ -154,7 +154,7 @@ module.exports = {
 				name: 'RI No Stockouts',
 				indicators: [53, 52],
 			}],
-			polio      : [{
+			supply     : [{
 				name: 'Delayed OPV Supply',
 				indicators: [],
 				ranges: [{
