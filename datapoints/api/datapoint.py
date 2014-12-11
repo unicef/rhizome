@@ -17,8 +17,8 @@ class ResultObject(object):
     '''
 
     pk = None
-    # campaign = None
-    # region = None
+    campaign = None
+    region = None
     # changed_by_id = None
     # indicators = []
 
@@ -44,6 +44,8 @@ class DataPointResource(Resource):
     '''
     error = None
     pk = fields.IntegerField(attribute = 'pk')
+    campaign = fields.IntegerField(attribute = 'campaign')
+    region = fields.IntegerField(attribute = 'region')
 
     # region = fields.ToOneField(RegionResource, 'region')
     # indicator = fields.ToOneField(IndicatorResource, 'indicator')
@@ -79,31 +81,30 @@ class DataPointResource(Resource):
             return results
 
         ## get distinct regions/campaigns for the provided indicators
-        all_region_campaign_tuples = DataPoint.objects.filter(indicator__in=\
-            params['indicator__in']).values_list('region','campaign').distinct()
+        all_region_campaign_tuples = DataPoint.objects.filter(
+            indicator__in=params['indicator__in'],\
+            region__in=params['region__in']).values_list('region','campaign').distinct()
 
         ## throw error if the indicators yield no r/c couples
         if len(all_region_campaign_tuples) == 0:
-            self.error = 'There are No datapoints for the indicators requested'
+            self.error = 'There are no datapoints for the parameters requested'
             return results
+
+        the_offset, the_limit = int(params['the_offset']), int(params['the_limit'])
 
         ## build a dataframe with the region / campaign tuples and slice it
         ## in accordance to the_offset and the_limit
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
-            'campaign'])
+            'campaign'])[the_offset:the_limit + the_offset]
 
-        the_offset, the_limit = int(params['the_offset']), int(params['the_limit'])
+        for row in df.values:
 
-        # print the_offset
-        # print the_limit
-        # print the_limit + the_offset
-
-        print df[the_offset:the_limit+the_offset]
-
-        for result in range(0,5):
-
+            print row
             new_obj = ResultObject()
-            new_obj.pk = result
+            new_obj.pk = 0
+            new_obj.region = row[0]
+            new_obj.campaign = row[1]
+
             results.append(new_obj)
 
         return results
@@ -148,11 +149,11 @@ class DataPointResource(Resource):
         parsed_params = {}
 
         optional_params = {
-            'region__in':None,'campaign__in':None,'campaign_end':None,\
+            'campaign__in':None,'campaign_end':None,\
             'campaign_start':None,'the_limit':10000,'the_offset':0,
             'uri_format':'id','agg_level':'mixed'}
 
-        required_params = {'indicator__in':None}
+        required_params = {'indicator__in': None,'region__in': None}
 
         for k,v in optional_params.iteritems():
             try:
