@@ -1,3 +1,4 @@
+import pprint as pp
 
 from tastypie.resources import ALL
 from tastypie.resources import Resource
@@ -44,7 +45,7 @@ class DataPointResource(Resource):
       http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
     '''
 
-    pk = fields.IntegerField(attribute = 'id')
+    pk = fields.IntegerField(attribute = 'pk')
 
     # region = fields.ToOneField(RegionResource, 'region')
     # indicator = fields.ToOneField(IndicatorResource, 'indicator')
@@ -98,7 +99,7 @@ class DataPointResource(Resource):
 
             new_obj = ResultObject()
             new_obj.id = result
-            results.append(new_obj)
+            results.append('new_obj')
 
         return results
 
@@ -117,9 +118,13 @@ class DataPointResource(Resource):
         try:
             return data[pk]
         except KeyError:
+            print 'blasblasbfalsfbs\n' * 10
             raise NotFound("Object not found")
 
     def alter_list_data_to_serialize(self, request, data):
+        '''
+        If there is an error for this resource, add that to the response.  If
+        there is no error, than add this key, but set the value to null'''
 
         # print self.error
         if self.error:
@@ -129,6 +134,16 @@ class DataPointResource(Resource):
 
 
         return data
+
+    def full_dehydrate(self,bundle,for_list):
+        '''
+        When i dont overide this method, i get a maximum recursion error.
+        http://stackoverflow.com/questions/11570443/django-tastypie-throws-a-maximum-recursion-depth-exceeded-when-full-true-on-re
+        '''
+        print bundle.data
+
+        return bundle
+
 
     ##########################
     ##### HELPER METHODS #####
@@ -156,12 +171,13 @@ class DataPointResource(Resource):
 
 
         for k,v in required_params.iteritems():
+
             try:
                 parsed_params[k] = query_dict[k].split(',')
             except KeyError as err:
                 print 'THIS IS HAPPENING\n' * 10
 
-                return str(err) + ' is a required paramater!', None
+                return str(err).replace('"','') + ' is a required paramater!', None
 
 
         return None, parsed_params
