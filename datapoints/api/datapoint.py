@@ -22,19 +22,6 @@ class ResultObject(object):
     indicators = dict()
 
 
-class IndicatorObject(object):
-    '''
-    This object represents the indicators and values for the region/campaign
-    combinations.  Within each Result Object, there are N Inidcator objects
-    with the attributes listed below.
-    '''
-    indicator = None
-    value = None
-    is_agg = None
-    datapoint_id = None
-
-
-
 class DataPointResource(Resource):
     '''
     This Resource is custom and builds upon the tastypie Model Resource by
@@ -48,7 +35,7 @@ class DataPointResource(Resource):
     total_count = 0
     campaign = fields.IntegerField(attribute = 'campaign')
     region = fields.IntegerField(attribute = 'region')
-    indicators = fields.Diction
+    indicators = fields.DictField(attribute = 'indicators')
 
 
     class Meta(BaseApiResource.Meta):
