@@ -112,7 +112,7 @@ module.exports = {
 			},
 			capacity   : [{
 				name: 'Soc. Mob. Coverage',
-				indicators: [34, 33]
+				indicators: []
 			}, {
 				name: 'IPC Skills',
 				indicators: []
