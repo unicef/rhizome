@@ -79,12 +79,14 @@ class DataPointResource(Resource):
 
         ## get datapoints according to regions/campaigns/indicators ##
         dp_columns = ['id','indicator_id','campaign_id','region_id','value']
+
         dp_df = DataFrame(list(DataPoint.objects.filter(
             region__in = regions,\
             campaign__in = campaigns,\
             indicator__in = indicators).values()))[dp_columns]
 
         re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
+
 
         # key: tuple (region/campaign) value: list of dicts
         results_dict = defaultdict(list)
@@ -143,22 +145,17 @@ class DataPointResource(Resource):
 
         ## iterate over parsed_params
         meta_dict = {}
-
         for k,v in self.parsed_params.iteritems():
             meta_dict[k] = v
 
-
+        # add metadata to response
         data['meta'] = meta_dict
-        # data['meta']['the_limit'] = self.parsed_params['the_limit']
-        # data['meta']['total_count'] = self.parsed_params['total_count']
 
-
-
+        ## add errors if it exists
         if self.error:
             data['error'] = self.error
         else:
             data['error'] = None
-
 
 
         return data
