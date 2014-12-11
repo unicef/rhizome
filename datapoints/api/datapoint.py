@@ -87,11 +87,18 @@ class DataPointResource(Resource):
             self.error = 'There are No datapoints for the indicators requested'
             return results
 
-
+        ## build a dataframe with the region / campaign tuples and slice it
+        ## in accordance to the_offset and the_limit
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])
 
-        # print df
+        the_offset, the_limit = int(params['the_offset']), int(params['the_limit'])
+
+        # print the_offset
+        # print the_limit
+        # print the_limit + the_offset
+
+        print df[the_offset:the_limit+the_offset]
 
         for result in range(0,5):
 
@@ -142,11 +149,16 @@ class DataPointResource(Resource):
 
         optional_params = {
             'region__in':None,'campaign__in':None,'campaign_end':None,\
-            'campaign_start':None,'the_limit':None,'the_offset':0,
+            'campaign_start':None,'the_limit':10000,'the_offset':0,
             'uri_format':'id','agg_level':'mixed'}
 
         required_params = {'indicator__in':None}
 
+        for k,v in optional_params.iteritems():
+            try:
+                parsed_params[k] = query_dict[k]
+            except KeyError:
+                parsed_params[k] = v
 
         for k,v in required_params.iteritems():
 
