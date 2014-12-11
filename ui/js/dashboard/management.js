@@ -139,7 +139,7 @@ module.exports = {
 				indicators: [40, 36]
 			}],
 			supply     : [{
-				name: 'DPT3 Coverage',
+				name: 'Penta3 Coverage',
 				indicators: [48, 47]
 			}, {
 				name: 'RI Knowledge',
