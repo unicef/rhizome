@@ -16,7 +16,6 @@ class ResultObject(object):
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
 
-    pk = None
     campaign = None
     region = None
     # changed_by_id = None
@@ -32,6 +31,8 @@ class IndicatorObject(object):
     indicator = None
     value = None
     is_agg = None
+    datapoint_id = None
+
 
 
 class DataPointResource(Resource):
@@ -42,15 +43,11 @@ class DataPointResource(Resource):
       https://gist.github.com/nomadjourney/794424
       http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
     '''
+
     error = None
-    pk = fields.IntegerField(attribute = 'pk')
     campaign = fields.IntegerField(attribute = 'campaign')
     region = fields.IntegerField(attribute = 'region')
 
-    # region = fields.ToOneField(RegionResource, 'region')
-    # indicator = fields.ToOneField(IndicatorResource, 'indicator')
-    # campaign = fields.ToOneField(CampaignResource, 'campaign')
-    # changed_by_id = fields.ToOneField(UserResource, 'changed_by')
 
 
     class Meta(BaseApiResource.Meta):
@@ -59,16 +56,6 @@ class DataPointResource(Resource):
         max_limit = None
         # serializer = CustomSerializer()
 
-
-    def detail_uri_kwargs(self, bundle_or_obj):
-            kwargs = {}
-
-            if isinstance(bundle_or_obj, Bundle):
-                kwargs['pk'] = bundle_or_obj.obj.pk
-            else:
-                kwargs['pk'] = bundle_or_obj.pk
-
-            return kwargs
 
     def get_object_list(self,request):
 
@@ -101,7 +88,6 @@ class DataPointResource(Resource):
 
             print row
             new_obj = ResultObject()
-            new_obj.pk = 0
             new_obj.region = row[0]
             new_obj.campaign = row[1]
 
