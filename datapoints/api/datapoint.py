@@ -43,7 +43,7 @@ class DataPointResource(Resource):
       http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
     '''
     error = None
-    pk = fields.IntegerField(attribute = 'id')
+    pk = fields.IntegerField(attribute = 'pk')
 
     # region = fields.ToOneField(RegionResource, 'region')
     # indicator = fields.ToOneField(IndicatorResource, 'indicator')
@@ -78,20 +78,25 @@ class DataPointResource(Resource):
             self.error = err
             return results
 
-
         ## get distinct regions/campaigns for the provided indicators
         all_region_campaign_tuples = DataPoint.objects.filter(indicator__in=\
             params['indicator__in']).values_list('region','campaign').distinct()
 
+        ## throw error if the indicators yield no r/c couples
+        if len(all_region_campaign_tuples) == 0:
+            self.error = 'There are No datapoints for the indicators requested'
+            return results
+
+
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])
 
-        print df
+        # print df
 
         for result in range(0,5):
 
             new_obj = ResultObject()
-            new_obj.id = result
+            new_obj.pk = result
             results.append(new_obj)
 
         return results
