@@ -47,6 +47,10 @@ module.exports = {
 				selected[0].value;
 		},
 
+		sortValue: function () {
+			return this.sortVal || this.title;
+		},
+
 		title: function () {
 			var selected = this.selected;
 

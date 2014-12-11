@@ -23,8 +23,6 @@ var ratio     = require('../data/transform/ratio');
 var sort      = require('../data/transform/sort');
 var variables = require('../data/transform/variables');
 
-// FIXME: Hard-coded mapping from office ID to region ID for countries because
-// region_type currently doesn't distinguish states and countries.
 var OFFICE = {
 	1: 23,   // Nigeria
 	2: 4404, // Afghanistan
@@ -96,6 +94,7 @@ module.exports = {
 	data: function () {
 		return {
 			offices    : [],
+			campaigns  : [],
 			region     : null,
 			start      : new Date(),
 			cases      : {
@@ -213,9 +212,20 @@ module.exports = {
 		this.polio.forEach(rangeFactory);
 		this.resources.forEach(rangeFactory);
 
-		this.$on('selection-changed', function (data) {
-			self.region = OFFICE[data.selected.value];
-			self.loadData();
+		this.$on('selection-changed', function () {
+			function isSelected(d) {
+				return d.selected;
+			}
+
+			var office = self.offices.filter(isSelected)[0].value;
+			var region = OFFICE[office];
+
+			if (region !== self.region) {
+				self.region = region;
+				api.campaign({ office: office }).done(self.loadCampaigns);
+			} else {
+				self.loadData();
+			}
 		});
 
 		api.office().done(function (data) {
@@ -230,11 +240,29 @@ module.exports = {
 			offices[0].selected = true;
 			self.region = OFFICE[offices[0].value];
 			self.offices = offices;
-			self.loadData();
+
+			api.campaign({ office: offices[0].value }).done(self.loadCampaigns);
 		});
 	},
 
 	methods: {
+		loadCampaigns: function (data) {
+			this.campaigns = data.objects.map(function (o) {
+				var startDate = moment(o.start_date, 'YYYY-MM-DD');
+
+				return {
+					title   : startDate.format('MMM YYYY'),
+					value   : o.start_date,
+					sortVal : startDate.format('YYYYMMDD'),
+					selected: false
+				};
+			});
+
+			this.campaigns[0].selected = true;
+
+			this.loadData();
+		},
+
 		loadData: function () {
 			// Curried function for setting a keypath on the VM that can be used as a
 			// callback for when API calls complete.
@@ -271,12 +299,16 @@ module.exports = {
 			}
 
 			var self  = this;
-			var start = (this.start ? moment(this.start) : moment()).subtract(2, 'years').format('YYYY-MM-DD');
+			var start = moment(this.campaigns.filter(function (d) {
+					return d.selected;
+				})[0].value, 'YYYY-MM-DD');
+
 
 			// Query parameters shared by all queries
 			var q = {
 				parent_region : self.region,
-				campaign_start: start
+				campaign_start: start.clone().subtract(2, 'years').format('YYYY-MM-DD'),
+				campaign_end  : start.format('YYYY-MM-DD')
 			};
 
 			// Polio Cases YTD
@@ -354,9 +386,7 @@ module.exports = {
 					}];
 				}).done(set('microplans'));
 
-			q.campaign_start = (self.start ?
-				moment(self.start) :
-				moment()).subtract(4, 'months').format('YYYY-MM-DD');
+			q.campaign_start = start.clone().subtract(4, 'months').format('YYYY-MM-DD');
 
 			fetchBullets('capacity', q);
 			fetchBullets('supply', q);
