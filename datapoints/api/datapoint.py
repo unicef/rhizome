@@ -34,7 +34,7 @@ class DataPointResource(Resource):
     '''
 
     error = None
-    total_count = 0
+    parsed_params = {}
     region = fields.IntegerField(attribute = 'region')
     campaign = fields.IntegerField(attribute = 'campaign')
     is_agg = fields.BooleanField(attribute = 'is_agg')
@@ -46,6 +46,7 @@ class DataPointResource(Resource):
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
+
         # serializer = CustomSerializer()
 
 
@@ -90,7 +91,7 @@ class DataPointResource(Resource):
 
         for rc_tuple, indicators in re_indexed_df.iterrows():
             indicator_dict = {}
-            indicator_dict['indicator_id'] = indicators.indicator_id
+            indicator_dict['indicator'] = indicators.indicator_id
             indicator_dict['value'] = indicators.value
             indicator_dict['datapoint_id'] = indicators.id
 
@@ -133,9 +134,25 @@ class DataPointResource(Resource):
         '''
         If there is an error for this resource, add that to the response.  If
         there is no error, than add this key, but set the value to null.  Also
-        add the total_count to the meta object as well'''
+        add the total_count to the meta object as well
+        '''
 
-        data['meta']['total_count'] = self.total_count
+        ## get rid of the meta_dict. i will add my own meta data.
+        data['meta'].pop("limit",None)
+
+
+        ## iterate over parsed_params
+        meta_dict = {}
+
+        for k,v in self.parsed_params.iteritems():
+            meta_dict[k] = v
+
+
+        data['meta'] = meta_dict
+        # data['meta']['the_limit'] = self.parsed_params['the_limit']
+        # data['meta']['total_count'] = self.parsed_params['total_count']
+
+
 
         if self.error:
             data['error'] = self.error
@@ -166,7 +183,7 @@ class DataPointResource(Resource):
             ('region','campaign').distinct()
 
         ## will save this to the meta object to allow for pagination
-        self.total_count = len(all_region_campaign_tuples)
+        self.parsed_params['total_count'] = len(all_region_campaign_tuples)
 
         ## throw error if the indicators yield no r/c couples
         if len(all_region_campaign_tuples) == 0:
@@ -220,6 +237,9 @@ class DataPointResource(Resource):
                 parsed_params[k] = query_dict[k].split(',')
             except KeyError as err:
                 return str(err).replace('"','') + ' is a required paramater!', None
+
+
+        self.parsed_params = parsed_params
 
         return None, parsed_params
 
