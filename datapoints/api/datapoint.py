@@ -50,7 +50,6 @@ class DataPointResource(Resource):
     region = fields.IntegerField(attribute = 'region')
 
 
-
     class Meta(BaseApiResource.Meta):
 
         object_class = ResultObject # use the class above to devine the response
@@ -82,10 +81,21 @@ class DataPointResource(Resource):
             self.error = err
             return results
 
+        campaigns = list(r_c_df.campaign.unique())
+        regions = list(r_c_df.region.unique())
+        indicators = parsed_params['indicator__in']
+
+        ## get datapoints according to regions/campaigns/indicators ##
+        dps = DataPoint.objects.filter(
+            region__in = regions,\
+            campaign__in = campaigns,\
+            indicator__in = indicators)
+
+
+        ## pivot the dataframe so that indicators are columns ##
 
         for row in r_c_df.values:
 
-            print row
             new_obj = ResultObject()
             new_obj.region = row[0]
             new_obj.campaign = row[1]
@@ -142,9 +152,6 @@ class DataPointResource(Resource):
         we only return region/campaingns that actually have data in the db.
         '''
         ## get distinct regions/campaigns for the provided indicators
-
-        pp.pprint(parsed_params)
-
         all_region_campaign_tuples = DataPoint.objects.filter(
             indicator__in = parsed_params['indicator__in'],\
             region__in = parsed_params['region__in'],\
@@ -170,8 +177,6 @@ class DataPointResource(Resource):
             'campaign'])[the_offset:the_limit + the_offset]
 
         print df
-
-
         return None, df
 
 
