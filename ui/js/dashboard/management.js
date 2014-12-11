@@ -217,8 +217,15 @@ module.exports = {
 				return d.selected;
 			}
 
-			self.region = OFFICE[self.offices.filter(isSelected)[0].value];
-			self.loadData();
+			var office = self.offices.filter(isSelected)[0].value;
+			var region = OFFICE[office];
+
+			if (region !== self.region) {
+				self.region = region;
+				api.campaign({ office: office }).done(self.loadCampaigns);
+			} else {
+				self.loadData();
+			}
 		});
 
 		api.office().done(function (data) {
@@ -234,26 +241,28 @@ module.exports = {
 			self.region = OFFICE[offices[0].value];
 			self.offices = offices;
 
-			api.campaign({ office: offices[0].value }).done(function (data) {
-				self.$set('campaigns', data.objects.map(function (o) {
-					var startDate = moment(o.start_date, 'YYYY-MM-DD');
-
-					return {
-						title   : startDate.format('MMM YYYY'),
-						value   : o.start_date,
-						sortVal : startDate.format('YYYYMMDD'),
-						selected: false
-					};
-				}));
-
-				self.campaigns[0].selected = true;
-
-				self.loadData();
-			});
+			api.campaign({ office: offices[0].value }).done(self.loadCampaigns);
 		});
 	},
 
 	methods: {
+		loadCampaigns: function (data) {
+			this.campaigns = data.objects.map(function (o) {
+				var startDate = moment(o.start_date, 'YYYY-MM-DD');
+
+				return {
+					title   : startDate.format('MMM YYYY'),
+					value   : o.start_date,
+					sortVal : startDate.format('YYYYMMDD'),
+					selected: false
+				};
+			});
+
+			this.campaigns[0].selected = true;
+
+			this.loadData();
+		},
+
 		loadData: function () {
 			// Curried function for setting a keypath on the VM that can be used as a
 			// callback for when API calls complete.
@@ -301,8 +310,6 @@ module.exports = {
 				campaign_start: start.clone().subtract(2, 'years').format('YYYY-MM-DD'),
 				campaign_end  : start.format('YYYY-MM-DD')
 			};
-
-			console.log(q.campaign_start);
 
 			// Polio Cases YTD
 			indicators([69, 70, 159, 160, 161, 162], q)
@@ -380,8 +387,6 @@ module.exports = {
 				}).done(set('microplans'));
 
 			q.campaign_start = start.clone().subtract(4, 'months').format('YYYY-MM-DD');
-
-			console.log(q.campaign_start);
 
 			fetchBullets('capacity', q);
 			fetchBullets('supply', q);
