@@ -77,12 +77,6 @@ class DataPointResource(Resource):
         regions = list(r_c_df.region.unique())
         indicators = parsed_params['indicator__in']
 
-        print campaigns
-        print '====\n' * 5
-        print regions
-        print '====\n' * 5
-        print indicators
-
         ## get datapoints according to regions/campaigns/indicators ##
         dp_columns = ['id','indicator_id','campaign_id','region_id','value']
 
@@ -104,10 +98,6 @@ class DataPointResource(Resource):
             indicator_dict['datapoint_id'] = indicators.id
 
             results_dict[rc_tuple].append(indicator_dict)
-
-
-        pp.pprint(results_dict)
-
 
         for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
             new_obj = ResultObject()
@@ -190,6 +180,7 @@ class DataPointResource(Resource):
         self.parsed_params['total_count'] = len(all_region_campaign_tuples)
 
         ## throw error if the indicators yield no r/c couples
+        print all_region_campaign_tuples
         if len(all_region_campaign_tuples) == 0:
             err = 'There are no datapoints for the parameters requested'
             return err, None
@@ -207,7 +198,7 @@ class DataPointResource(Resource):
 
 
         if len(df) == 0:
-            err = 'the offset is greater than the total number of objects!'
+            err = 'the offset must be less than the total number of objects!'
             return err, None
 
 
