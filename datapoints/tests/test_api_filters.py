@@ -321,7 +321,7 @@ class CampaignDateFilterTestCase(ResourceTestCase):
         # Make Sure the Value is the same
         self.assertEqual(float(self.sdp_04.get_val()), float(dp_04.value))
 
-    ### NOWWWWWW WE ACTUALLY TEST THE FUNCTIONALITY!!! ####
+    ### NOW WE ACTUALLY TEST THE FUNCTIONALITY! ###
 
     def test_campaign_st_end(self):
 

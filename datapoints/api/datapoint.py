@@ -77,6 +77,12 @@ class DataPointResource(Resource):
         regions = list(r_c_df.region.unique())
         indicators = parsed_params['indicator__in']
 
+        print campaigns
+        print '====\n' * 5
+        print regions
+        print '====\n' * 5
+        print indicators
+
         ## get datapoints according to regions/campaigns/indicators ##
         dp_columns = ['id','indicator_id','campaign_id','region_id','value']
 
@@ -179,6 +185,7 @@ class DataPointResource(Resource):
             campaign__in = parsed_params['campaign__in']).values_list\
             ('region','campaign').distinct()
 
+
         ## will save this to the meta object to allow for pagination
         self.parsed_params['total_count'] = len(all_region_campaign_tuples)
 
@@ -196,6 +203,13 @@ class DataPointResource(Resource):
         ## in accordance to the_offset and the_limit
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])[the_offset:the_limit + the_offset]
+
+
+
+        if len(df) == 0:
+            err = 'the offset is greater than the total number of objects!'
+            return err, None
+
 
         return None, df
 
