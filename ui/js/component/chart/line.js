@@ -5,6 +5,8 @@ var Vue  = require('vue');
 
 var util = require('../../util/data');
 
+var TRANSITION_SPEED = 500;
+
 module.exports = Vue.extend({
 	paramAttributes: [
 		'data-lines',
@@ -89,15 +91,20 @@ module.exports = Vue.extend({
 				.x(getScaledX)
 				.y(getScaledY);
 
-			var lines = svg.selectAll('.line').data(this.lines);
+			var lines = svg.selectAll('.line').data(this.lines, function (d, i) {
+				return d.name || i;
+			});
 
 			lines.enter().append('path')
 				.attr('class', 'line');
 
-			lines.attr('d', function (d) {
-				return line(getPoints(d));
-			})
+			lines.transition().duration(TRANSITION_SPEED)
+				.attr('d', function (d) {
+					return line(getPoints(d));
+				})
 				.style('stroke', function (d) { return d.color; });
+
+			lines.exit().remove();
 
 			var point = svg.selectAll('.point')
 				.data(Array.prototype.concat.apply([], dataset[0]));
@@ -116,10 +123,12 @@ module.exports = Vue.extend({
 					self.$emit('hide-annotation', d);
 				});
 
-			point.attr({
+			point.transition().duration(TRANSITION_SPEED).attr({
 				'cx': getScaledX,
 				'cy': getScaledY
 			});
+
+			point.exit().remove();
 
 			this._callHook('drawn');
 		}
