@@ -6,14 +6,10 @@ module.exports = {
 	created: function () {
 		this.$on('hook:drawn', function () {
 			var svg = d3.select(this.$el);
-			var g   = svg.select('.x.axis');
+			var g   = svg.selectAll('.x.axis').data([0]);
 
-			if (g.size() === 0) {
-				g = svg.insert('g', ':first-child')
-					.attr('class', 'x axis');
-
-				g = svg.select('.x.axis');
-			}
+			g.enter().insert('g', ':first-child')
+				.attr('class', 'x axis');
 
 			g.attr('transform', 'translate(0,' + this.height + ')');
 
@@ -27,6 +23,40 @@ module.exports = {
 			}
 
 			g.call(xAxis);
+		});
+
+		this.$on('show-annotation', function (d) {
+			var axis = d3.select(this.$el).select('.x.axis');
+
+			axis.selectAll('.tick')
+				.transition().duration(300)
+				.style('opacity', 0);
+
+			axis.append('text')
+				.attr({
+					'class'      : 'annotation',
+					'text-anchor': 'middle',
+					'x'          : this.x(d.x),
+					'y'          : '9',
+					'dy'         : '.71em'
+				})
+				.text(this.xFmt ? this.xFmt(d.x) : d.x)
+				.style('opacity', '0')
+				.transition().duration(300)
+				.style('opacity', '1');
+		});
+
+		this.$on('hide-annotation', function () {
+			var axis = d3.select(this.$el).select('.x.axis');
+
+			axis.selectAll('.tick')
+				.transition().duration(300)
+				.style('opacity', 1);
+
+			axis.selectAll('.annotation')
+				.transition().duration(300)
+				.style('opacity', '0')
+				.remove();
 		});
 	}
 };

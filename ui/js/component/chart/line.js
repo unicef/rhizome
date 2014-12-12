@@ -99,62 +99,21 @@ module.exports = Vue.extend({
 			})
 				.style('stroke', function (d) { return d.color; });
 
-			var hover = svg.selectAll('.hover').data(this.lines);
-			hover.enter().append('g').attr('class', 'hover');
-
-			var point = hover.selectAll('.point')
-				.data(function (d) { return d.points; });
+			var point = svg.selectAll('.point')
+				.data(Array.prototype.concat.apply([], dataset[0]));
 
 			point.enter().append('circle')
 				.attr({
 					'class': 'point',
-					'r'    : 3,
+					'r'    : 2,
 				})
-				.style('opacity', '0')
 				.on('mouseover', function (d) {
-					var s = getY(d);
-					var attr = {
-						'x'          : getScaledX(d),
-						'y'          : getScaledY(d),
-						'dx'         : '-4',
-						'text-anchor': 'end',
-						'class'      : 'hover-label'
-					};
-
-					if (self.yFmt) {
-						s = self.yFmt(s);
-					}
-
-					d3.select(this)
-						.style('opacity', '1');
-
-					svg.append('text').attr(attr)
-						.attr('dy', '1.1em')
-						.style('opacity', '0')
-						.text(s);
-
-					var seriesData = d3.select(this.parentNode).datum();
-
-					if (seriesData && seriesData.name) {
-						svg.append('text').attr(attr)
-							.attr('dy', '-.2em')
-							.style('opacity', '0')
-							.text(seriesData.name);
-					}
-
-					svg.selectAll('.hover-label')
-						.transition().duration(300)
-						.style('opacity', '1');
+					self.$dispatch('show-annotation', d);
+					self.$emit('show-annotation', d);
 				})
-				.on('mouseout', function () {
-					d3.select(this)
-						.transition().duration(300)
-						.style('opacity', '0');
-
-					svg.selectAll('.hover-label')
-						.transition().duration(300)
-						.style('opacity', '0')
-						.remove();
+				.on('mouseout', function (d) {
+					self.$dispatch('hide-annotation', d);
+					self.$emit('hide-annotation', d);
 				});
 
 			point.attr({
