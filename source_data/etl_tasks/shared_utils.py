@@ -56,16 +56,9 @@ def map_indicators(indicator_strings,document_id):
     for indicator_string in distinct_indicator_strings:
 
 
-        try:
-            ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
-            source_indicator = SourceIndicator.objects.create(
-                indicator_string = indicator_string,
-                document_id = document_id,
-            )
-        except IntegrityError:
-
-            source_indicator = SourceIndicator.objects.get(
-                indicator_string = indicator_string)
+        source_indicator,created = SourceIndicator.objects.get_or_create(
+            indicator_string = indicator_string,
+            defaults = {'document_id': document_id})
 
 
         try:
@@ -92,16 +85,9 @@ def map_campaigns(campaign_strings,document_id):
 
     for campaign in distinct_campaign_strings:
 
-        try:
-            source_campaign = SourceCampaign.objects.create(
-            ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
-                campaign_string = campaign,
-                document_id = document_id,
-            )
-        except IntegrityError:
-            source_campaign = SourceCampaign.objects.get(
-                campaign_string = campaign)
-
+        source_campaign,created = SourceCampaign.objects.get_or_create(
+            campaign_string = campaign,
+            defaults = {'document_id':document_id})
 
         try:
             campaign_id = CampaignMap.objects.get(source_campaign_id = \
@@ -125,13 +111,9 @@ def map_regions(region_strings,document_id):
 
     for region_string in distinct_region_strings:
 
-        try:
-            source_region = SourceRegion.objects.create(\
-                ## TO DO - CHANGE THIS TO GET_OR_CREATE ##
+        source_region,created = SourceRegion.objects.get_or_create(\
                 region_string=region_string,
-                document_id = document_id)
-        except IntegrityError:
-            source_region = SourceRegion.objects.get(region_string=region_string)
+                defaults = {'document_id':document_id})
 
 
         try:

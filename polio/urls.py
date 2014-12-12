@@ -1,17 +1,18 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.views import login, logout
 from django.contrib import admin
-from polio.views import UserCreateView
 from django.conf import settings
-from django.views.generic import RedirectView
 from django.conf.urls.static import static
-from datapoints.api.simple import *
-from datapoints.api.aggregate import ParentRegionAggResource
+from django.contrib.auth.decorators import login_required
+from decorator_include import decorator_include
+
+from datapoints.api.meta_data import *
+from datapoints.api.datapoint import DataPointResource
+
 from source_data.api import EtlResource
 from tastypie.api import Api
 
-from django.contrib.auth.decorators import login_required
-from decorator_include import decorator_include
+from polio.views import UserCreateView
 
 
 admin.autodiscover()
@@ -24,7 +25,6 @@ v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(EtlResource())
-v1_api.register(ParentRegionAggResource())
 v1_api.register(OfficeResource())
 
 
