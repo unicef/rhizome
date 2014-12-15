@@ -80,6 +80,19 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def get_all_children(self, include_self=True):
+
+        r = []
+
+        if include_self:
+            r.append(self)
+        for i,(c) in enumerate(Region.objects.filter(parent_region=self)):
+            r.append(c)
+
+            # r.append(c.get_all_children(include_self=False))
+
+        return r
+
 
     class Meta:
         db_table = 'region'
