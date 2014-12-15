@@ -147,7 +147,7 @@ module.exports = {
 					return d;
 				});
 
-				self.pagination.the_offset = Number(data.meta.query_dict.the_offset[0]);
+				self.pagination.the_offset = Number(data.meta.the_offset[0]);
 
 				self.table.rows = datapoints;
 			});
