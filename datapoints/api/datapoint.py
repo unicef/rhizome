@@ -9,6 +9,7 @@ from tastypie.resources import Resource
 from pandas import DataFrame
 from pandas import concat
 from django.db.models import Sum
+from django.db import connection
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
@@ -62,11 +63,6 @@ class DataPointResource(Resource):
         as well as the requirements of the front end application.
         '''
 
-        '''
-        build a dataframe with region
-
-        '''
-
         err,parsed_params = self.parse_url_params(request.GET)
 
         if err:
@@ -93,7 +89,18 @@ class DataPointResource(Resource):
             campaign__in = campaigns).values_list(\
                 'campaign','indicator','region').distinct())
 
+        key_combos_missing_data_list_of_dicts = []
         key_combos_missing_data = expected_data.difference(key_combos_with_data)
+
+        for c,i,r in key_combos_missing_data:
+
+            dct = {}
+            dct['campaign_id'] = c
+            dct['indicator_id'] = i
+            dct['region_id'] = r
+
+            key_combos_missing_data_list_of_dicts.append(dct)
+
 
         ## get datapoints according to regions/campaigns/indicators ##
         dp_columns = ['id','indicator_id','campaign_id','region_id','value']
@@ -108,14 +115,17 @@ class DataPointResource(Resource):
             dp_df = DataFrame(columns=dp_columns)
 
 
-        aggregated_dp_df = self.build_aggregated_df(key_combos_missing_data,indicators)
+        aggregated_dp_df = self.build_aggregated_df(\
+            key_combos_missing_data_list_of_dicts,indicators)
 
+        ### FIX THIS ###
+        ### FIX THIS ###
+        ### FIX THIS ###
         # final_df = concat(dp_df,aggregated_dp_df)
 
         results = self.dp_df_to_list_of_results(aggregated_dp_df)
 
         return results
-
 
 
     def obj_get_list(self,bundle,**kwargs):
@@ -318,35 +328,30 @@ class DataPointResource(Resource):
 
         return results
 
-    def build_aggregated_df(self,r_c_to_agg,indicators):
+    def build_aggregated_df(self,c_i_r_to_agg,indicators):
         '''
-        YOU HAVE A MAJOR ISSUE HERE IN THAT YOU ARE EXPECTED THE ORDER OF THE
-        TUPLES TO BE C,I,R.  This is BADDDDD and needs to be fixed immediately
+        Taking the keys that are missing data.. find the hcild regions
+        and query the datapoints table, returning the aggregate value for
+        each parent region, indicator, campaign combo.
         '''
 
         all_dps = []
 
-        parent_regions = [Region.objects.get(id=int(r)) for c,i,r in r_c_to_agg]
+        for cir in c_i_r_to_agg:
 
-        for enum, (c,i,r) in enumerate(r_c_to_agg):
-
-            parent_region = Region.objects.get(id=int(r))
+            parent_region = Region.objects.get(id=int(cir['region_id']))
             child_regions = parent_region.get_all_children()
 
-            sum_of_child_regions = DataPoint.objects.filter(campaign_id=c,\
-                    indicator__in=indicators,\
+            sum_of_child_regions = DataPoint.objects.filter(
+                    campaign_id = cir['campaign_id'],\
+                    indicator_id =  cir['indicator_id'],\
                     region__in=child_regions).aggregate(Sum('value'))
 
-            sum_of_child_regions['region_id'] = parent_region.id
-            sum_of_child_regions['campaign_id'] = c
-            sum_of_child_regions['indicator_id'] = i
-            sum_of_child_regions['value'] = sum_of_child_regions['value__sum']
-            sum_of_child_regions['id'] = -1
+            cir['value'] = sum_of_child_regions['value__sum']
+            cir['id'] = -1
 
-            all_dps.append(sum_of_child_regions)
 
-        # all_dp_df = DataFrame(list(all_dps.values()))
+            all_dps.append(cir)
 
-        pp.pprint(all_dps)
 
         return DataFrame(all_dps)
