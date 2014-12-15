@@ -20,6 +20,10 @@ svg {
 			font-size: $axis-font-size;
 			fill: $iron;
 			stroke: none;
+
+			&.annotation {
+				fill: $oil;
+			}
 		}
 	}
 
@@ -58,7 +62,8 @@ svg {
 	}
 
 	.point {
-		fill: $coolgray5;
-		stroke: none;
+		fill: $white;
+		stroke: $coolgray5;
+		stroke-width: 1px;
 	}
 }

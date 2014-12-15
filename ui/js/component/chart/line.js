@@ -9,36 +9,25 @@ var TRANSITION_SPEED = 500;
 
 module.exports = Vue.extend({
 	paramAttributes: [
-		'data-lines',
-		'data-areas',
+		'data-series',
 		'data-width',
 		'data-height'
 	],
 
 	mixins: [
+		require('./labels'),
 		require('./yGrid'),
 		require('./xAxis')
 	],
 
 	data: function () {
 		return {
-			lines : [],
-			areas : [],
+			series: [],
 			width : 100,
 			height: 100,
 			x     : d3.scale.linear(),
 			y     : d3.scale.linear()
 		};
-	},
-
-	created: function () {
-		if (!this.$options.hasOwnProperty('x')) {
-			this.$options.x = d3.time.scale();
-		}
-
-		if (!this.$options.hasOwnProperty('y')) {
-			this.$options.y = d3.scale.linear();
-		}
 	},
 
 	methods: {
@@ -58,7 +47,7 @@ module.exports = Vue.extend({
 			var self    = this;
 			var svg     = d3.select(this.$el);
 
-			var dataset = [this.lines.map(getPoints), this.areas.map(getPoints)];
+			var dataset = this.series.map(getPoints);
 			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
 			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
 			var lower   = Math.min(0, util.min(dataset, getY));
@@ -72,26 +61,12 @@ module.exports = Vue.extend({
 			y.domain([lower, upper])
 				.range([this.height, 0]);
 
-			var area = d3.svg.area()
-				.defined(defined)
-				.x(getScaledX)
-				.y(getScaledY);
-
-			var areas = svg.selectAll('.area').data(this.areas);
-
-			areas.enter().append('path')
-				.attr('class', 'area');
-
-			areas.attr({
-				d: area
-			});
-
 			var line = d3.svg.line()
 				.defined(defined)
 				.x(getScaledX)
 				.y(getScaledY);
 
-			var lines = svg.selectAll('.line').data(this.lines, function (d, i) {
+			var lines = svg.selectAll('.line').data(this.series, function (d, i) {
 				return d.name || i;
 			});
 
@@ -107,14 +82,15 @@ module.exports = Vue.extend({
 			lines.exit().remove();
 
 			var point = svg.selectAll('.point')
-				.data(Array.prototype.concat.apply([], dataset[0]));
+				.data(Array.prototype.concat.apply([], dataset));
 
 			point.enter().append('circle')
 				.attr({
 					'class': 'point',
-					'r'    : 2,
+					'r'    : 3,
 				})
 				.on('mouseover', function (d) {
+					console.log('mouseover');
 					self.$dispatch('show-annotation', d);
 					self.$emit('show-annotation', d);
 				})
@@ -139,8 +115,7 @@ module.exports = Vue.extend({
 	},
 
 	watch: {
-		'lines' : 'draw',
-		'areas' : 'draw',
+		'series': 'draw',
 		'width' : 'draw',
 		'height': 'draw'
 	}

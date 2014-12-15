@@ -23,12 +23,12 @@
 				             domain: cases.domain">
 
 					<g v-component="chart-line"
+					   class="data"
 					   data-width="{{contentWidth}}"
 					   data-height="{{contentHeight}}"
-					   data-lines="{{values}}"
+					   data-series="{{values}}"
 					   v-with="xFmt  : xFmt,
 					           domain: domain"></g>
-
 				</svg>
 			</section>
 			<section>
@@ -75,7 +75,7 @@
 							<g v-component="chart-line"
 							   data-width="{{contentWidth}}"
 							   data-height="{{contentHeight}}"
-							   data-lines="{{values}}"
+							   data-series="{{values}}"
 							   v-with="x: x, yFmt: yFmt"></g>
 						</svg>
 					</section>
