@@ -2,6 +2,20 @@
 	cursor: default;
 	position: relative;
 
+	form[role="search"] {
+		position: relative;
+
+		input[type="text"] {
+			padding-right: 2rem;
+		}
+
+		.clear-btn {
+			position: absolute;
+			right: 0.5rem;
+			top: 1rem;
+		}
+	}
+
 	.menu-button {
 		padding-right: 2rem;
 		position: relative;

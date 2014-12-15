@@ -11,6 +11,11 @@
 	     v-style="left: this.menuX + 'px'">
 		<form v-if="searchable" role="search">
 			<input type="text" v-model="pattern" tabindex="1">
+			<a class="clear-btn"
+			   v-on="click: pattern = ''"
+			   v-show="pattern.length > 0">
+			   <i class="fa fa-times-circle"></i>
+			</a>
 		</form>
 		<ul v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
