@@ -223,36 +223,6 @@ class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
     permission_required = 'datapoints.delete_region'
 
 
-    ###################
-    ### AGGREGATION ###
-    ###################
-
-class AggregationIndexView(IndexView):
-    model = AggregationType
-    template_name = 'aggregation/aggregation_index.html'
-    context_object_name = 'top_aggregation_types'
-
-
-class AggregationCreateView(PermissionRequiredMixin,
-    generic.CreateView):
-
-    model = AggregationType
-    success_url = reverse_lazy('datapoints:aggregation_index')
-    template_name = 'aggregation/aggregation_create.html'
-
-class AggregationExpectedDataView(IndexView):
-    model = AggregationExpectedData
-    template_name = 'aggregation/aggregation_expected_data_index.html'
-    context_object_name = 'top_aggregation_expected'
-
-
-class AggregationExpectedDataCreateView(PermissionRequiredMixin,
-    generic.CreateView):
-
-    model = AggregationExpectedData
-    success_url = reverse_lazy('datapoints:aggregation_expected_data_index')
-    template_name = 'aggregation/aggregation_expected_data_create.html'
-
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####
@@ -284,33 +254,3 @@ def search(request):
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
         context_instance=RequestContext(request))
-
-
-def export(request,**kwargs): # REMOVE THIS.  DONE IN API
-
-    #input
-    params = request.GET
-    #output
-    kwargs = {}
-
-
-    try:
-        region_ids = params['region_id'].split(',')
-        kwargs['region_id__in'] = region_ids
-    except KeyError:
-        region_ids = None
-
-    try:
-        indicator_ids = params['indicator_id'].split(',')
-        kwargs['indicator_id__in'] = indicator_ids
-    except KeyError:
-        indicator_ids = Nonen
-    try:
-        campaign_ids = params['campaign_id'].split(',')
-        kwargs['campaign_id__in'] = campaign_ids
-    except KeyError:
-        campaign_ids = None
-
-    all_data = DataPoint.objects.filter(**kwargs)
-
-    return HttpResponse(all_data)
