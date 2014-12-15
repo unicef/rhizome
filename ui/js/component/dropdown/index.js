@@ -2,6 +2,8 @@
 
 'use strict';
 
+var _ = require('lodash');
+
 var dom = require('../../util/dom');
 
 module.exports = {
@@ -21,7 +23,7 @@ module.exports = {
 			open       : false,
 			opening    : false,
 			menuHeight : 0,
-			menuWdith  : 0
+			menuX      : 0
 		};
 	},
 
@@ -76,7 +78,7 @@ module.exports = {
 			}
 
 			if (this.open) {
-
+				window.addEventListener('scroll', this);
 				window.addEventListener('resize', this);
 				window.addEventListener('click', this);
 				window.addEventListener('keyup', this);
@@ -84,6 +86,7 @@ module.exports = {
 
 				this.$el.getElementsByTagName('ul')[0].scrollTop = 0;
 			} else {
+				window.removeEventListener('scroll', this);
 				window.removeEventListener('resize', this);
 				window.removeEventListener('click', this);
 				window.removeEventListener('keyup', this);
@@ -120,6 +123,7 @@ module.exports = {
 					this.open = false;
 				}
 				break;
+			case 'scroll':
 			case 'resize':
 				this.invalidateSize();
 				break;
@@ -128,22 +132,25 @@ module.exports = {
 			}
 		},
 
-		invalidateSize: function () {
+		invalidateSize: _.throttle(function () {
 			var menu         = this.$el.getElementsByClassName('container')[0];
 			var ul           = menu.getElementsByTagName('ul')[0];
 			var style        = window.getComputedStyle(menu);
 			var marginBottom = parseInt(style.getPropertyValue('margin-bottom'), 10);
 			var marginRight  = parseInt(style.getPropertyValue('margin-right'), 10);
 			var offset       = dom.viewportOffset(ul);
+			var dims;
 
 			if (this.multi) {
-				var dims     = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true);
+				dims          = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true);
 				marginBottom += dims.height;
 			}
 
+			dims = dom.dimensions(menu);
+
 			this.menuHeight = window.innerHeight - offset.top - marginBottom;
-			this.menuWidth  = window.innerWidth - offset.left - marginRight;
-		},
+			this.menuX = Math.min(0, window.innerWidth - dom.viewportOffset(this.$el).left - dims.width - marginRight);
+		}, 100, { leading: false }),
 
 		clear: function () {
 			this.items.forEach(function (o) { o.selected = false; });
