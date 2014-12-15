@@ -29,6 +29,22 @@ class Indicator(models.Model):
         db_table = 'indicator'
         ordering = ('name',)
 
+class CalculatedIndicatorComponent(models.Model):
+
+    indicator = models.ForeignKey(Indicator, related_name='indicator_master')
+    indicator_component = models.ForeignKey(Indicator,related_name='indicator_component')
+    calculation = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'calculated_indicator_component'
+
+
+
 class Office(models.Model):
 
     name = models.CharField(max_length=55)

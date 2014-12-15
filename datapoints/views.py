@@ -173,6 +173,24 @@ class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
     template_name = 'indicators/confirm_delete.html'
     permission_required = 'datapoints.delete_indicator'
 
+    ####################################
+    ###### CALCULATED INDICATORS #######
+    ####################################
+
+class CalculatedIndicatorIndexView(IndexView):
+
+    model = CalculatedIndicatorComponent
+    template_name = 'indicators/calculated_index.html'
+    context_object_name = 'top_calculated_indicators'
+
+
+class CalculatedIndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = CalculatedIndicatorComponent
+    success_url= reverse_lazy('indicators:calculated_indicator_index')
+    template_name = 'indicators/create_calculated.html'
+    # permission_required = 'datapoints.add_indicator'
+
 
     ###############
     ###############
