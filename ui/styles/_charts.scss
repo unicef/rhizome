@@ -20,6 +20,10 @@ svg {
 			font-size: $axis-font-size;
 			fill: $iron;
 			stroke: none;
+
+			&.annotation {
+				fill: $oil;
+			}
 		}
 	}
 
@@ -61,9 +65,5 @@ svg {
 		fill: $white;
 		stroke: $coolgray5;
 		stroke-width: 1px;
-
-		&.hover {
-			fill: $coolgray5;
-		}
 	}
 }
