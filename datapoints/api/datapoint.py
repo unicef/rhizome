@@ -92,6 +92,9 @@ class DataPointResource(Resource):
         ## find the distinct regions/campaigns and slice by limit/offset
         err, r_c_df = self.build_campaign_region_df(parsed_params)
 
+        print 'r_c_df'
+        print r_c_df
+
         if err:
             self.error = err
             return []
@@ -200,13 +203,12 @@ class DataPointResource(Resource):
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = regions).values_list(\
-                'campaign','indicator','region').distinct()),columns=\
-                     ['campaign','indicator','region'])
-        except ValueError:
-            df_w_data = DataFrame(columns= ['campaign','indicator','region'])
+                'campaign','region').distinct()),columns=['campaign','region'])
 
-        # parent_lookup_df.drop('child_region')
-        de_duped_agg_df = self.build_agg_df(campaigns,indicators,regions)
+        except ValueError:
+            df_w_data = DataFrame(columns= ['campaign','region'])
+
+        de_duped_agg_df = self.build_agg_rc_df(campaigns,indicators,regions)
         unioned_df = concat([df_w_data,de_duped_agg_df])
 
         ## slice the unioned DF with the offset / limit provided
@@ -406,7 +408,7 @@ class DataPointResource(Resource):
         return DataFrame(all_dps)
 
 
-    def build_agg_df(self,campaigns,indicators,regions):
+    def build_agg_rc_df(self,campaigns,indicators,regions):
         '''
         This method lets me find the region / campaign couples for which there
         is aggregated data.
@@ -454,6 +456,6 @@ class DataPointResource(Resource):
         ## dedupe the dataframe findinf the regions/campaings/indicators
         ## that have data at the level of the child.
         de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = \
-         ['campaign','indicator','region'])
+         ['campaign','region'])
 
         return de_duped_agg_df
