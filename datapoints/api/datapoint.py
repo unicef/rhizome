@@ -24,7 +24,6 @@ class ResultObject(object):
     '''
     region = None
     campaign = None
-    is_agg = 0
     indicators = list()
 
 
@@ -41,7 +40,6 @@ class DataPointResource(Resource):
     parsed_params = {}
     region = fields.IntegerField(attribute = 'region')
     campaign = fields.IntegerField(attribute = 'campaign')
-    is_agg = fields.BooleanField(attribute = 'is_agg')
     indicators = fields.ListField(attribute = 'indicators')
 
 
@@ -76,56 +74,21 @@ class DataPointResource(Resource):
             return []
 
         indicators = [ int(ind) for ind in parsed_params['indicator__in'] ]
-        campaigns,regions = list(r_c_df.campaign.apply(int).unique()), list(r_c_df.region.apply(int).unique())
-
-        ## we should get back one row for each of the tuples below
-        expected_data = set(product(campaigns,indicators,regions))
+        campaigns,regions = list(r_c_df.campaign.apply(int).unique()), \
+            list(r_c_df.region.apply(int).unique())
 
 
-        ## this is the data that exists for the keys given
-        key_combos_with_data = set(DataPoint.objects.filter(
-            indicator__in = indicators,\
-            region__in = regions,\
-            campaign__in = campaigns).values_list(\
-                'campaign','indicator','region').distinct())
-
-        key_combos_missing_data_list_of_dicts = []
-        key_combos_missing_data = expected_data.difference(key_combos_with_data)
-
-
-        for c,i,r in key_combos_missing_data:
-
-            dct = {}
-            dct['campaign_id'] = c
-            dct['indicator_id'] = i
-            dct['region_id'] = r
-
-            key_combos_missing_data_list_of_dicts.append(dct)
-
-
-        ## get datapoints according to regions/campaigns/indicators ##
-        dp_columns = ['id','indicator_id','campaign_id','region_id','value']
-
-        ## find data for the requested regions campaigns and indicators
-        try:
-            dp_df = DataFrame(list(DataPoint.objects.filter(
-                region__in = regions,\
-                campaign__in = campaigns,\
-                indicator__in = indicators).values()))[dp_columns]
-        except KeyError:
-            print ' THERE WAS AN ERROR! '
-            dp_df = DataFrame(columns=dp_columns)
-
-        aggregated_dp_df = self.build_aggregated_df(\
-            key_combos_missing_data_list_of_dicts,indicators)
+        dp_df = self.build_stored_df(campaigns,indicators,regions)
+        aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
         dp_df['is_agg'] = 0
         aggregated_dp_df['is_agg'] = 1
 
         final_df = concat([dp_df,aggregated_dp_df])
-        results = self.dp_df_to_list_of_results(final_df)
 
         print final_df
+        results = self.dp_df_to_list_of_results(final_df)
+
 
         return results
 
@@ -205,12 +168,6 @@ class DataPointResource(Resource):
             parsed_params['indicator__in']
 
         all_region_campaign_tuples = list(product(regions,campaigns))
-
-
-        # ## throw error if the indicators yield no r/c couples
-        # if len(all_region_campaign_tuples) == 0:
-        #     err = 'There are no datapoints for the parameters requested... aggregating data'
-        #     return err, None
 
         ## find the offset and the limit
         the_offset, the_limit = int(parsed_params['the_offset']), \
@@ -323,7 +280,6 @@ class DataPointResource(Resource):
             indicator_dict['datapoint_id'] = indicators.id
             indicator_dict['is_agg'] = indicators.is_agg
 
-
             results_dict[rc_tuple].append(indicator_dict)
 
         for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
@@ -336,25 +292,68 @@ class DataPointResource(Resource):
 
         return results
 
-    def build_aggregated_df(self,c_i_r_to_agg,indicators):
+
+    def build_stored_df(self,campaigns,indicators,regions):
+
+        ## find data for the requested regions campaigns and indicators
+        ## get datapoints according to regions/campaigns/indicators ##
+        dp_columns = ['id','indicator_id','campaign_id','region_id','value']
+
+        try:
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                region__in = regions,\
+                campaign__in = campaigns,\
+                indicator__in = indicators).values()))[dp_columns]
+        except KeyError:
+            dp_df = DataFrame(columns=dp_columns)
+
+        return dp_df
+
+
+    def build_aggregate_df(self,campaigns,indicators,regions):
         '''
-        Taking the keys that are missing data.. find the hcild regions
+        Taking the keys that are missing data.. find the child regions
         and query the datapoints table, returning the aggregate value for
         each parent region, indicator, campaign combo.
+
+        I would really like to be explicit about the c,i,r thing tuple set.
+        I'm usign the convention for alphabetical order, but i want to make this
+        explicit with either a dictionary or dataframe.
         '''
+
+        ## we should get back one row for each of the tuples below
+        expected_data = set(product(campaigns,indicators,regions))
+
+        ## this is the data that exists for the keys given
+        key_combos_with_data = set(DataPoint.objects.filter(
+            indicator__in = indicators,\
+            region__in = regions,\
+            campaign__in = campaigns).values_list(\
+                'campaign','indicator','region').distinct())
+
+        key_combos_missing_data = expected_data.difference(key_combos_with_data)
+
+
+        ## TO DO - dont use an iterator here, but make one query to the regions
+        ## /datapoints table, group by parent region id and return that
+        ## as your dataframe
 
         all_dps = []
 
-        for cir in c_i_r_to_agg:
+        for c,i,r in key_combos_missing_data:
 
-            parent_region = Region.objects.get(id=int(cir['region_id']))
+            parent_region = Region.objects.get(id=r)
             child_regions = parent_region.get_all_children()
 
             sum_of_child_regions = DataPoint.objects.filter(
-                    campaign_id = cir['campaign_id'],\
-                    indicator_id =  cir['indicator_id'],\
+                    campaign_id = c,\
+                    indicator_id = i ,\
                     region__in=child_regions).aggregate(Sum('value'))
 
+            cir = {}
+            cir ['campaign_id'] = c
+            cir ['indicator_id'] = i
+            cir ['region_id'] = r
             cir['value'] = sum_of_child_regions['value__sum']
             cir['id'] = -1
 
