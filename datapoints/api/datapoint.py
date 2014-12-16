@@ -1,6 +1,8 @@
 import pprint as pp
+from math import isnan
 from collections import defaultdict
 from itertools import product
+
 
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
@@ -358,8 +360,10 @@ class DataPointResource(Resource):
             cir['value'] = sum_of_child_regions['value__sum']
             cir['id'] = -1
 
+            print sum_of_child_regions['value__sum']
 
-            all_dps.append(cir)
+            if sum_of_child_regions['value__sum']:
+                all_dps.append(cir)
 
 
         return DataFrame(all_dps)
