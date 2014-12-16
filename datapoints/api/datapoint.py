@@ -234,13 +234,11 @@ class DataPointResource(Resource):
         # parent_lookup_df.drop('child_region')
         de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = shared_df_cols)
 
-        print 'de_duped_agg_df\n' * 10
-        print de_duped_agg_df
 
+        print 'LEN DATA DF \n' * 10
+
+        print len(df_w_data)
         unioned_df = concat([df_w_data,de_duped_agg_df])
-        print 'unioned_df\n' * 10
-        print unioned_df
-
 
         ## slice the unioned DF with the offset / limit provided
         offset_df = unioned_df[the_offset:the_limit + the_offset]
@@ -251,7 +249,8 @@ class DataPointResource(Resource):
 
         # will save this to the meta object to allow for pagination
         self.parsed_params['total_count'] = len(unioned_df)
-
+        self.parsed_params['total_count_agg'] = len(de_duped_agg_df)
+        self.parsed_params['total_count_no_agg'] = len(df_w_data)
 
         return None, offset_df
 
