@@ -27,27 +27,27 @@
 			</div>
 
 			<div class="medium-1 columns">
-				<label>
-					Regions
-					<vue-dropdown v-with="items : regions"
-							placeholder="0 selected"
-							multi="true"
-							searchable="true"
-							loading="true"
-							loadedEvent="regionsLoaded"></vue-dropdown>
-				</label>
+				<label for="regions">Regions</label>
+				<div id="regions"
+				     v-component="vue-dropdown"
+				     v-with="items : regions"
+						 placeholder="0 selected"
+						 multi="true"
+						 searchable="true"
+						 loading="true"
+						 loadedEvent="regionsLoaded"></div>
 			</div>
 
 			<div class="medium-1 columns">
-				<label>
-					Indicators
-					<vue-dropdown v-with="items : indicators"
-							placeholder="0 selected"
-							multi="true"
-							searchable="true"
-							loading="true"
-							loadedEvent="indicatorsLoaded"></vue-dropdown>
-				</label>
+				<label for="indicators">Indicators</label>
+				<div id="indicators"
+				     v-component="vue-dropdown"
+				     v-with="items : indicators"
+						 placeholder="0 selected"
+						 multi="true"
+						 searchable="true"
+						 loading="true"
+						 loadedEvent="indicatorsLoaded"></div>
 			</div>
 
 			<!-- FIXME: Remove inline style -->
