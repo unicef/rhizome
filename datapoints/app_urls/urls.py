@@ -57,35 +57,4 @@ urlpatterns = [
         name='update_campaign'),
 
 
-        #################
-        ## AGGREGATION ##
-        #################
-
-    ## INDEX ##
-    url(r'^aggregation$', views.AggregationIndexView.as_view(),
-        name='aggregation_index'),
-
-    ## CREATE ##
-    url(r'^aggregation/create/$',
-        views.AggregationCreateView.as_view(),
-        name='create_aggregation'),
-
-        ###################
-        ## EXPECTED DATA ##
-        ###################
-
-    url(r'^aggregation/expected_data$', views.AggregationExpectedDataView.as_view(),
-        name='aggregation_expected_data_index'),
-
-    ## CREATE ##
-    url(r'^aggregation/expected_data/create/$',
-        views.AggregationExpectedDataCreateView.as_view(),
-        name='create_aggregation_expected_data'),
-
-        ############
-        ## EXPORT ##
-        ############
-
-    url(r'^export/$', views.export, name='export'),
-
 ]

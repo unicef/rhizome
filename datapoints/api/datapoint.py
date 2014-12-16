@@ -1,11 +1,17 @@
 import pprint as pp
+from math import isnan
 from collections import defaultdict
+from itertools import product
+
 
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
 from tastypie.resources import Resource
 from pandas import DataFrame
+from pandas import concat
+from django.db.models import Sum
+from django.db import connection
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
@@ -20,7 +26,6 @@ class ResultObject(object):
     '''
     region = None
     campaign = None
-    is_agg = 0
     indicators = list()
 
 
@@ -37,7 +42,6 @@ class DataPointResource(Resource):
     parsed_params = {}
     region = fields.IntegerField(attribute = 'region')
     campaign = fields.IntegerField(attribute = 'campaign')
-    is_agg = fields.BooleanField(attribute = 'is_agg')
     indicators = fields.ListField(attribute = 'indicators')
 
 
@@ -46,7 +50,6 @@ class DataPointResource(Resource):
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
-
         # serializer = CustomSerializer()
 
 
@@ -59,54 +62,35 @@ class DataPointResource(Resource):
         as well as the requirements of the front end application.
         '''
 
-        results = []
-
         err,parsed_params = self.parse_url_params(request.GET)
 
         if err:
             self.error = err
-            return results
+            return []
 
+        ## find the distinct regions/campaigns and slice by limit/offset
         err, r_c_df = self.build_campaign_region_df(parsed_params)
 
         if err:
             self.error = err
-            return results
+            return []
 
-        campaigns = list(r_c_df.campaign.unique())
-        regions = list(r_c_df.region.unique())
-        indicators = parsed_params['indicator__in']
-
-        ## get datapoints according to regions/campaigns/indicators ##
-        dp_columns = ['id','indicator_id','campaign_id','region_id','value']
-
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            region__in = regions,\
-            campaign__in = campaigns,\
-            indicator__in = indicators).values()))[dp_columns]
-
-        re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
+        indicators = [ int(ind) for ind in parsed_params['indicator__in'] ]
+        campaigns,regions = list(r_c_df.campaign.apply(int).unique()), \
+            list(r_c_df.region.apply(int).unique())
 
 
-        # key: tuple (region/campaign) value: list of dicts
-        results_dict = defaultdict(list)
+        dp_df = self.build_stored_df(campaigns,indicators,regions)
+        aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
-        for rc_tuple, indicators in re_indexed_df.iterrows():
-            indicator_dict = {}
-            indicator_dict['indicator'] = indicators.indicator_id
-            indicator_dict['value'] = indicators.value
-            indicator_dict['datapoint_id'] = indicators.id
+        dp_df['is_agg'] = 0
+        aggregated_dp_df['is_agg'] = 1
 
-            results_dict[rc_tuple].append(indicator_dict)
+        final_df = concat([dp_df,aggregated_dp_df])
 
-        for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
-            new_obj = ResultObject()
-            new_obj.region = rc_tuple[0]
-            new_obj.campaign = rc_tuple[1]
-            new_obj.is_agg = 0
-            new_obj.indicators = indicator_list_of_dicts
+        print final_df
+        results = self.dp_df_to_list_of_results(final_df)
 
-            results.append(new_obj)
 
         return results
 
@@ -135,16 +119,16 @@ class DataPointResource(Resource):
         add the total_count to the meta object as well
         '''
 
+
         ## get rid of the meta_dict. i will add my own meta data.
         data['meta'].pop("limit",None)
-
 
         ## iterate over parsed_params
         meta_dict = {}
         for k,v in self.parsed_params.iteritems():
             meta_dict[k] = v
 
-        # add metadata to response
+        ## add metadata to response
         data['meta'] = meta_dict
 
         ## add errors if it exists
@@ -156,35 +140,36 @@ class DataPointResource(Resource):
 
         return data
 
+    def dehydrate(self, bundle):
+        '''
+        This method allws me to remove or add information to each data object,
+        for instance the resource_uri.
+        '''
+
+        bundle.data.pop('resource_uri')
+
+        return bundle
+
 
     ##########################
     ##### HELPER METHODS #####
     ##########################
 
+
     def build_campaign_region_df(self,parsed_params):
         '''
         Build a dataframe that represents the regions and campaigns relevant to
-        the request.  These tuples fit the offset / limit bounds, as well as the
-        region / campaign / indicator filters on the datapoints table.  This way
-        we only return region/campaingns that actually have data in the db.
+        the request.  These tuples fit the offset / limit bounds.  This method
+        does not check if there is data for the region/campaign combo for the
+        indicator(s) provided, because for queries in which the region
+        does not have the data we will need to aggregate by the parents children
         '''
-        ## get distinct regions/campaigns for the provided indicators
-        all_region_campaign_tuples = DataPoint.objects.filter(
-            indicator__in = parsed_params['indicator__in'],\
-            region__in = parsed_params['region__in'],\
-            campaign__in = parsed_params['campaign__in']).values_list\
-            ('region','campaign').distinct()
 
+        regions, campaigns, indicators = parsed_params['region__in'],\
+            parsed_params['campaign__in'],\
+            parsed_params['indicator__in']
 
-        ## will save this to the meta object to allow for pagination
-        self.parsed_params['total_count'] = len(all_region_campaign_tuples)
-
-        ## throw error if the indicators yield no r/c couples
-        print all_region_campaign_tuples
-        if len(all_region_campaign_tuples) == 0:
-            err = 'There are no datapoints for the parameters requested'
-            return err, None
-
+        all_region_campaign_tuples = list(product(regions,campaigns))
 
         ## find the offset and the limit
         the_offset, the_limit = int(parsed_params['the_offset']), \
@@ -192,14 +177,16 @@ class DataPointResource(Resource):
 
         ## build a dataframe with the region / campaign tuples and slice it
         ## in accordance to the_offset and the_limit
+
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])[the_offset:the_limit + the_offset]
-
-
 
         if len(df) == 0:
             err = 'the offset must be less than the total number of objects!'
             return err, None
+
+        ## will save this to the meta object to allow for pagination
+        self.parsed_params['total_count'] = len(all_region_campaign_tuples)
 
 
         return None, df
@@ -238,7 +225,8 @@ class DataPointResource(Resource):
             try:
                 parsed_params[k] = query_dict[k].split(',')
             except KeyError as err:
-                return str(err).replace('"','') + ' is a required paramater!', None
+                err_msg = str(err).replace('"','') + ' is a required paramater!'
+                return err_msg , None
 
 
         self.parsed_params = parsed_params
@@ -277,3 +265,105 @@ class DataPointResource(Resource):
         campaign__in = [c.id for c in cs]
 
         return campaign__in
+
+
+    def dp_df_to_list_of_results(self,dp_df):
+
+        results = []
+
+        re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
+
+        # key: tuple (region/campaign) value: list of dicts
+        results_dict = defaultdict(list)
+
+        for rc_tuple, indicators in re_indexed_df.iterrows():
+            indicator_dict = {}
+            indicator_dict['indicator'] = indicators.indicator_id
+            indicator_dict['value'] = indicators.value
+            indicator_dict['datapoint_id'] = indicators.id
+            indicator_dict['is_agg'] = indicators.is_agg
+
+            results_dict[rc_tuple].append(indicator_dict)
+
+        for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
+            new_obj = ResultObject()
+            new_obj.region = rc_tuple[0]
+            new_obj.campaign = rc_tuple[1]
+            new_obj.indicators = indicator_list_of_dicts
+
+            results.append(new_obj)
+
+        return results
+
+
+    def build_stored_df(self,campaigns,indicators,regions):
+
+        ## find data for the requested regions campaigns and indicators
+        ## get datapoints according to regions/campaigns/indicators ##
+        dp_columns = ['id','indicator_id','campaign_id','region_id','value']
+
+        try:
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                region__in = regions,\
+                campaign__in = campaigns,\
+                indicator__in = indicators).values()))[dp_columns]
+        except KeyError:
+            dp_df = DataFrame(columns=dp_columns)
+
+        return dp_df
+
+
+    def build_aggregate_df(self,campaigns,indicators,regions):
+        '''
+        Taking the keys that are missing data.. find the child regions
+        and query the datapoints table, returning the aggregate value for
+        each parent region, indicator, campaign combo.
+
+        I would really like to be explicit about the c,i,r thing tuple set.
+        I'm usign the convention for alphabetical order, but i want to make this
+        explicit with either a dictionary or dataframe.
+        '''
+
+        ## we should get back one row for each of the tuples below
+        expected_data = set(product(campaigns,indicators,regions))
+
+        ## this is the data that exists for the keys given
+        key_combos_with_data = set(DataPoint.objects.filter(
+            indicator__in = indicators,\
+            region__in = regions,\
+            campaign__in = campaigns).values_list(\
+                'campaign','indicator','region').distinct())
+
+        key_combos_missing_data = expected_data.difference(key_combos_with_data)
+
+
+        ## TO DO - dont use an iterator here, but make one query to the regions
+        ## /datapoints table, group by parent region id and return that
+        ## as your dataframe
+
+        all_dps = []
+
+        for c,i,r in key_combos_missing_data:
+
+            parent_region = Region.objects.get(id=r)
+            child_regions = parent_region.get_all_children()
+
+            sum_of_child_regions = DataPoint.objects.filter(
+                    campaign_id = c,\
+                    indicator_id = i ,\
+                    region__in=child_regions).aggregate(Sum('value'))
+
+            cir = {}
+            cir ['campaign_id'] = c
+            cir ['indicator_id'] = i
+            cir ['region_id'] = r
+            cir['value'] = sum_of_child_regions['value__sum']
+            cir['id'] = -1
+
+            print sum_of_child_regions['value__sum']
+
+            if sum_of_child_regions['value__sum']:
+                all_dps.append(cir)
+
+
+        return DataFrame(all_dps)

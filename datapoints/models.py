@@ -29,6 +29,22 @@ class Indicator(models.Model):
         db_table = 'indicator'
         ordering = ('name',)
 
+class CalculatedIndicatorComponent(models.Model):
+
+    indicator = models.ForeignKey(Indicator, related_name='indicator_master')
+    indicator_component = models.ForeignKey(Indicator,related_name='indicator_component')
+    calculation = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'calculated_indicator_component'
+
+
+
 class Office(models.Model):
 
     name = models.CharField(max_length=55)
@@ -63,6 +79,19 @@ class Region(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    def get_all_children(self, include_self=True):
+
+        r = []
+
+        if include_self:
+            r.append(self)
+        for i,(c) in enumerate(Region.objects.filter(parent_region=self)):
+            r.append(c)
+
+            # r.append(c.get_all_children(include_self=False))
+
+        return r
 
 
     class Meta:
@@ -137,32 +166,6 @@ class Responsibility(models.Model):
         db_table = 'responsibility'
         ordering = ('indicator',)
         unique_together = ('user','indicator','region')
-
-
-class AggregationType(models.Model):
-
-    name = models.CharField(max_length=255,unique=True)
-    slug = models.CharField(max_length=255,unique=True)
-    display_name_w_sub = models.CharField(max_length=255,unique=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return unicode(self.name)
-
-    class Meta:
-        db_table = 'aggregation_type'
-
-
-class AggregationExpectedData(models.Model):
-
-    aggregation_type = models.ForeignKey(AggregationType)
-    content_type = models.CharField(max_length=20)
-    param_type = models.CharField(max_length=20)
-    slug = AutoSlugField(populate_from=('aggregation_type','content_type'),max_length=55)
-    created_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'aggregation_expected_data'
 
 
 class ParentRegionAgg(models.Model):
