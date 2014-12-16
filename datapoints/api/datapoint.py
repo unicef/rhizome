@@ -50,7 +50,6 @@ class DataPointResource(Resource):
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
-
         # serializer = CustomSerializer()
 
 
@@ -76,11 +75,14 @@ class DataPointResource(Resource):
             self.error = err
             return []
 
-        indicators = parsed_params['indicator__in']
-        campaigns,regions = list(r_c_df.campaign.unique()), list(r_c_df.region.unique())
+        indicators = [ int(ind) for ind in parsed_params['indicator__in'] ]
+        campaigns,regions = list(r_c_df.campaign.apply(int).unique()), list(r_c_df.region.apply(int).unique())
 
         ## we should get back one row for each of the tuples below
         expected_data = set(product(campaigns,indicators,regions))
+
+        print ' expected_data '
+        pp.pprint(expected_data)
 
         ## this is the data that exists for the keys given
         key_combos_with_data = set(DataPoint.objects.filter(
@@ -89,8 +91,20 @@ class DataPointResource(Resource):
             campaign__in = campaigns).values_list(\
                 'campaign','indicator','region').distinct())
 
+        print ' === key_combos_with_data === '
+        pp.pprint(key_combos_with_data)
+        print ' === TYPE key_combos_with_data === '
+        print type(key_combos_with_data)
+
+
         key_combos_missing_data_list_of_dicts = []
         key_combos_missing_data = expected_data.difference(key_combos_with_data)
+
+        print ' === key_combos_missing_data === '
+        pp.pprint(key_combos_missing_data)
+        print ' === TYPE key_combos_missing_data === '
+        print type(key_combos_missing_data)
+
 
         for c,i,r in key_combos_missing_data:
 
@@ -115,6 +129,7 @@ class DataPointResource(Resource):
             dp_df = DataFrame(columns=dp_columns)
 
 
+        # pp.pprint(key_combos_missing_data_list_of_dicts)
         aggregated_dp_df = self.build_aggregated_df(\
             key_combos_missing_data_list_of_dicts,indicators)
 
@@ -194,7 +209,6 @@ class DataPointResource(Resource):
 
         all_region_campaign_tuples = list(product(regions,campaigns))
 
-        print all_region_campaign_tuples
 
         # ## throw error if the indicators yield no r/c couples
         # if len(all_region_campaign_tuples) == 0:
@@ -210,9 +224,6 @@ class DataPointResource(Resource):
 
         df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
             'campaign'])[the_offset:the_limit + the_offset]
-
-        print df
-
 
         if len(df) == 0:
             err = 'the offset must be less than the total number of objects!'
