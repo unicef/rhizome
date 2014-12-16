@@ -9,7 +9,7 @@ from tastypie.bundle import Bundle
 from tastypie import fields
 from tastypie.resources import Resource
 from pandas import DataFrame
-from pandas import concat
+from pandas import concat, merge, unique
 from django.db.models import Sum
 from django.db import connection
 
@@ -31,7 +31,7 @@ class CustomSerializer(Serializer):
         options = options or {}
         data = self.to_simple(data, options)
 
-        print DataFrame(data['objects'])
+        # print DataFrame(data['objects'])
 
         # csv = StringIO.StringIO(str(pivoted.to_csv()))
 
@@ -96,6 +96,7 @@ class DataPointResource(Resource):
             return []
 
         indicators = [int(ind) for ind in parsed_params['indicator__in']]
+
         campaigns,regions = list(r_c_df.campaign.apply(int).unique()), \
             list(r_c_df.region.apply(int).unique())
 
@@ -108,7 +109,6 @@ class DataPointResource(Resource):
 
         final_df = concat([dp_df,aggregated_dp_df])
 
-        print dp_df
         results = self.dp_df_to_list_of_results(final_df)
 
 
@@ -185,34 +185,75 @@ class DataPointResource(Resource):
         does not have the data we will need to aggregate by the parents children
 
         I also need to make sure that i filter out the records here that dont
-        have any data at all, but NOT records for which their children have data
+        have any data at all, but NOT records for which their children have data.
+        That means that i build two DFs, one for which there is data stored,
+        and another for which there is data stored for its children ( with
+        the indicator and campaign stored as well)
         '''
 
-        regions, campaigns, indicators = parsed_params['region__in'],\
-            parsed_params['campaign__in'],\
-            parsed_params['indicator__in']
+        shared_df_cols = ['campaign','indicator','region']
 
-        all_region_campaign_tuples = list(product(regions,campaigns))
-
-        ## find the offset and the limit
-        the_offset, the_limit = int(parsed_params['the_offset']), \
+        # regions, campaigns, indicators, the_offset, the_limit =
+        campaigns, indicators, regions, the_offset, the_limit = parsed_params['campaign__in'],\
+            parsed_params['indicator__in'],\
+            parsed_params['region__in'],\
+            int(parsed_params['the_offset']), \
             int(parsed_params['the_limit'])
 
-        ## build a dataframe with the region / campaign tuples and slice it
-        ## in accordance to the_offset and the_limit
+        df_w_data = DataFrame(list(DataPoint.objects.filter(
+            campaign__in = campaigns,\
+            indicator__in = indicators,\
+            region__in = regions).values_list(\
+            'campaign','indicator','region').distinct()),columns=shared_df_cols)
 
-        df = DataFrame(list(all_region_campaign_tuples),columns=['region',\
-            'campaign'])[the_offset:the_limit + the_offset]
+        parent_region_lookup = []
+        all_children = []
 
-        if len(df) == 0:
+        for r in regions:
+
+            r_obj = Region.objects.get(id=r)
+
+            for chld in r_obj.get_all_children():
+                parent_region_lookup.append([chld.id,r])
+                all_children.append(chld.id) ## this is kinda lame
+
+        children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
+            campaign__in = campaigns,\
+            indicator__in = indicators,\
+            region__in = set(all_children)).values_list(\
+            'campaign','indicator','region').distinct()),columns= \
+                ['campaign','indicator','child_region'])
+
+
+        region_lookup_df = DataFrame(parent_region_lookup,columns=\
+            ['child_region','region'])
+
+        parent_lookup_df = merge(children_regions_with_data_df,region_lookup_df,\
+            on='child_region')
+
+        # parent_lookup_df.drop('child_region')
+        de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = shared_df_cols)
+
+        print 'de_duped_agg_df\n' * 10
+        print de_duped_agg_df
+
+        unioned_df = concat([df_w_data,de_duped_agg_df])
+        print 'unioned_df\n' * 10
+        print unioned_df
+
+
+        ## slice the unioned DF with the offset / limit provided
+        offset_df = unioned_df[the_offset:the_limit + the_offset]
+
+        if len(df_w_data) <= the_offset:
             err = 'the offset must be less than the total number of objects!'
             return err, None
 
-        ## will save this to the meta object to allow for pagination
-        self.parsed_params['total_count'] = len(all_region_campaign_tuples)
+        # will save this to the meta object to allow for pagination
+        self.parsed_params['total_count'] = len(unioned_df)
 
 
-        return None, df
+        return None, offset_df
 
 
 
