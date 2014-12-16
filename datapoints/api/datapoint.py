@@ -81,8 +81,6 @@ class DataPointResource(Resource):
         ## we should get back one row for each of the tuples below
         expected_data = set(product(campaigns,indicators,regions))
 
-        print ' expected_data '
-        pp.pprint(expected_data)
 
         ## this is the data that exists for the keys given
         key_combos_with_data = set(DataPoint.objects.filter(
@@ -91,19 +89,8 @@ class DataPointResource(Resource):
             campaign__in = campaigns).values_list(\
                 'campaign','indicator','region').distinct())
 
-        print ' === key_combos_with_data === '
-        pp.pprint(key_combos_with_data)
-        print ' === TYPE key_combos_with_data === '
-        print type(key_combos_with_data)
-
-
         key_combos_missing_data_list_of_dicts = []
         key_combos_missing_data = expected_data.difference(key_combos_with_data)
-
-        print ' === key_combos_missing_data === '
-        pp.pprint(key_combos_missing_data)
-        print ' === TYPE key_combos_missing_data === '
-        print type(key_combos_missing_data)
 
 
         for c,i,r in key_combos_missing_data:
@@ -126,19 +113,19 @@ class DataPointResource(Resource):
                 campaign__in = campaigns,\
                 indicator__in = indicators).values()))[dp_columns]
         except KeyError:
+            print ' THERE WAS AN ERROR! '
             dp_df = DataFrame(columns=dp_columns)
 
-
-        # pp.pprint(key_combos_missing_data_list_of_dicts)
         aggregated_dp_df = self.build_aggregated_df(\
             key_combos_missing_data_list_of_dicts,indicators)
 
-        ### FIX THIS ###
-        ### FIX THIS ###
-        ### FIX THIS ###
-        # final_df = concat(dp_df,aggregated_dp_df)
+        dp_df['is_agg'] = 0
+        aggregated_dp_df['is_agg'] = 1
 
-        results = self.dp_df_to_list_of_results(aggregated_dp_df)
+        final_df = concat([dp_df,aggregated_dp_df])
+        results = self.dp_df_to_list_of_results(final_df)
+
+        print final_df
 
         return results
 
@@ -227,7 +214,6 @@ class DataPointResource(Resource):
 
         if len(df) == 0:
             err = 'the offset must be less than the total number of objects!'
-            print err
             return err, None
 
         ## will save this to the meta object to allow for pagination
@@ -325,6 +311,8 @@ class DataPointResource(Resource):
             indicator_dict['indicator'] = indicators.indicator_id
             indicator_dict['value'] = indicators.value
             indicator_dict['datapoint_id'] = indicators.id
+            indicator_dict['is_agg'] = indicators.is_agg
+
 
             results_dict[rc_tuple].append(indicator_dict)
 
@@ -332,7 +320,6 @@ class DataPointResource(Resource):
             new_obj = ResultObject()
             new_obj.region = rc_tuple[0]
             new_obj.campaign = rc_tuple[1]
-            new_obj.is_agg = 0
             new_obj.indicators = indicator_list_of_dicts
 
             results.append(new_obj)
