@@ -2,6 +2,7 @@ from tastypie.resources import ModelResource, ALL
 from tastypie import fields
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from datapoints.api.base import BaseApiResource
 from datapoints.models import *
@@ -38,7 +39,13 @@ class RegionResource(BaseApiResource):
     def dehydrate(self, bundle):
 
         bundle.data['office'] = bundle.obj.office.id
-        bundle.data['parent_region'] = bundle.obj.parent_region.id
+
+        try:
+            bundle.data['parent_region'] = bundle.obj.parent_region.id
+        except ObjectDoesNotExist:
+            pass
+        except AttributeError:
+            pass
 
         return bundle
 

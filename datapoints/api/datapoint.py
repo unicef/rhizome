@@ -3,7 +3,7 @@ from math import isnan
 from collections import defaultdict
 from itertools import product
 
-
+from tastypie.serializers import Serializer
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
@@ -17,6 +17,26 @@ from datapoints.models import *
 from datapoints.api.meta_data import *
 
 
+
+class CustomSerializer(Serializer):
+    formats = ['json', 'csv']
+    content_types = {
+        'json': 'application/json',
+        'csv': 'text/csv',
+    }
+
+
+    def to_csv(self, data, options=None):
+
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        print DataFrame(data['objects'])
+
+        # csv = StringIO.StringIO(str(pivoted.to_csv()))
+
+        # return csv
+        return data
 
 class ResultObject(object):
     '''
@@ -50,7 +70,7 @@ class DataPointResource(Resource):
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
-        # serializer = CustomSerializer()
+        serializer = CustomSerializer()
 
 
     def get_object_list(self,request):
@@ -75,20 +95,20 @@ class DataPointResource(Resource):
             self.error = err
             return []
 
-        indicators = [ int(ind) for ind in parsed_params['indicator__in'] ]
+        indicators = [int(ind) for ind in parsed_params['indicator__in']]
         campaigns,regions = list(r_c_df.campaign.apply(int).unique()), \
             list(r_c_df.region.apply(int).unique())
 
-
         dp_df = self.build_stored_df(campaigns,indicators,regions)
         aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
+
 
         dp_df['is_agg'] = 0
         aggregated_dp_df['is_agg'] = 1
 
         final_df = concat([dp_df,aggregated_dp_df])
 
-        print final_df
+        print dp_df
         results = self.dp_df_to_list_of_results(final_df)
 
 
@@ -163,6 +183,9 @@ class DataPointResource(Resource):
         does not check if there is data for the region/campaign combo for the
         indicator(s) provided, because for queries in which the region
         does not have the data we will need to aggregate by the parents children
+
+        I also need to make sure that i filter out the records here that dont
+        have any data at all, but NOT records for which their children have data
         '''
 
         regions, campaigns, indicators = parsed_params['region__in'],\
@@ -223,7 +246,7 @@ class DataPointResource(Resource):
         for k,v in required_params.iteritems():
 
             try:
-                parsed_params[k] = query_dict[k].split(',')
+                parsed_params[k] = [ int(p) for p in  query_dict[k].split(',') ]
             except KeyError as err:
                 err_msg = str(err).replace('"','') + ' is a required paramater!'
                 return err_msg , None
@@ -242,7 +265,7 @@ class DataPointResource(Resource):
         try:
             ## if the campaign_in parameter exists return this
             ## and ignore the campaign_start and end parameters.
-            campaign__in = query_dict['campaign__in'].split(',')
+            campaign__in = [int(c) for c in query_dict['campaign__in'].split(',')]
             return campaign__in
         except KeyError:
             pass
@@ -359,8 +382,6 @@ class DataPointResource(Resource):
             cir ['region_id'] = r
             cir['value'] = sum_of_child_regions['value__sum']
             cir['id'] = -1
-
-            print sum_of_child_regions['value__sum']
 
             if sum_of_child_regions['value__sum']:
                 all_dps.append(cir)
