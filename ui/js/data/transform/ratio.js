@@ -25,8 +25,19 @@ module.exports = function ratio(numerator, denominator) {
 			for (var i = data.length - 1; i >= 0; i--) {
 				var row        = data[i];
 				var indicators = _.indexBy(row.indicators, 'indicator');
-				var n          = Number(indicators[numerator[j]].value);
-				var d          = Number(indicators[denominator].value);
+				var n, d;
+
+				try {
+					n = Number(indicators[numerator[j]].value);
+				} catch (e) {
+					n = 0;
+				}
+
+				try {
+					d = Number(indicators[denominator].value);
+				} catch (e) {
+					d = 0;
+				}
 
 				series.push({
 					region    : row.region,
