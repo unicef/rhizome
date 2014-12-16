@@ -2,6 +2,7 @@ import pprint as pp
 from math import isnan
 from collections import defaultdict
 from itertools import product
+from datetime import datetime
 
 from tastypie.serializers import Serializer
 from tastypie.resources import ALL
@@ -179,10 +180,7 @@ class DataPointResource(Resource):
     def build_campaign_region_df(self,parsed_params):
         '''
         Build a dataframe that represents the regions and campaigns relevant to
-        the request.  These tuples fit the offset / limit bounds.  This method
-        does not check if there is data for the region/campaign combo for the
-        indicator(s) provided, because for queries in which the region
-        does not have the data we will need to aggregate by the parents children
+        the request.  These tuples fit the offset / limit bounds.
 
         I also need to make sure that i filter out the records here that dont
         have any data at all, but NOT records for which their children have data.
@@ -191,9 +189,6 @@ class DataPointResource(Resource):
         the indicator and campaign stored as well)
         '''
 
-        shared_df_cols = ['campaign','indicator','region']
-
-        # regions, campaigns, indicators, the_offset, the_limit =
         campaigns, indicators, regions, the_offset, the_limit = parsed_params['campaign__in'],\
             parsed_params['indicator__in'],\
             parsed_params['region__in'],\
@@ -205,49 +200,13 @@ class DataPointResource(Resource):
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = regions).values_list(\
-                'campaign','indicator','region').distinct()),columns=shared_df_cols)
+                'campaign','indicator','region').distinct()),columns=\
+                     ['campaign','indicator','region'])
         except ValueError:
-            df_w_data = DataFrame(columns=shared_df_cols)
-
-        parent_region_lookup = []
-        all_children = []
-
-        for r in regions:
-
-            r_obj = Region.objects.get(id=r)
-
-            for chld in r_obj.get_all_children():
-                parent_region_lookup.append([chld.id,r])
-                all_children.append(chld.id) ## this is kinda lame
-
-        try:
-            children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
-                campaign__in = campaigns,\
-                indicator__in = indicators,\
-                region__in = set(all_children)).values_list(\
-                'campaign','indicator','region').distinct()),columns= \
-                    ['campaign','indicator','child_region'])
-
-        except ValueError:
-            children_regions_with_data_df = DataFrame(columns= \
-                ['campaign','indicator','child_region'])
-
-        try:
-            region_lookup_df = DataFrame(parent_region_lookup,columns=\
-                ['child_region','region'])
-        except ValueError:
-            region_lookup_df = DataFrame(columns=['child_region','region'])
-
-        parent_lookup_df = merge(children_regions_with_data_df,region_lookup_df,\
-            on='child_region')
+            df_w_data = DataFrame(columns= ['campaign','indicator','region'])
 
         # parent_lookup_df.drop('child_region')
-        de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = shared_df_cols)
-
-
-        print 'LEN DATA DF \n' * 10
-
-        print len(df_w_data)
+        de_duped_agg_df = self.build_agg_df(campaigns,indicators,regions)
         unioned_df = concat([df_w_data,de_duped_agg_df])
 
         ## slice the unioned DF with the offset / limit provided
@@ -397,6 +356,10 @@ class DataPointResource(Resource):
         explicit with either a dictionary or dataframe.
         '''
 
+        print ' STARTING TO BUILD THE AGG DF '
+        print datetime.now()
+
+
         ## we should get back one row for each of the tuples below
         expected_data = set(product(campaigns,indicators,regions))
 
@@ -436,5 +399,61 @@ class DataPointResource(Resource):
             if sum_of_child_regions['value__sum']:
                 all_dps.append(cir)
 
+        print ' DONE BUILDING THE AGG DF '
+        print datetime.now()
+
 
         return DataFrame(all_dps)
+
+
+    def build_agg_df(self,campaigns,indicators,regions):
+        '''
+        This method lets me find the region / campaign couples for which there
+        is aggregated data.
+        '''
+
+        parent_region_lookup = []
+        all_children = []
+
+        ## create a lookup where the key is the child
+        ## region and the parent is the value
+        for r in regions:
+
+            r_obj = Region.objects.get(id=r)
+
+            for chld in r_obj.get_all_children():
+                parent_region_lookup.append([chld.id,r])
+                all_children.append(chld.id) ## this is kinda lame
+
+        ## build a dataframe where we trying to find all of the distinct
+        ## campaign/indicator/child_region combbos.  # if none, return empty df
+        try:
+            children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
+                campaign__in = campaigns,\
+                indicator__in = indicators,\
+                region__in = set(all_children)).values_list(\
+                'campaign','indicator','region').distinct()),columns= \
+                    ['campaign','indicator','child_region'])
+
+        except ValueError:
+            children_regions_with_data_df = DataFrame(columns= \
+                ['campaign','indicator','child_region'])
+
+        ## create a data frame from the parent_region lookup created above ##
+        try:
+            region_lookup_df = DataFrame(parent_region_lookup,columns=\
+                ['child_region','region'])
+        except ValueError:
+            region_lookup_df = DataFrame(columns=['child_region','region'])
+
+        ## inner join the two dataframes above wtih the objective of finding
+        ## the distinct campaing, indicators and PARENT_region
+        parent_lookup_df = merge(children_regions_with_data_df,region_lookup_df,\
+            on='child_region')
+
+        ## dedupe the dataframe findinf the regions/campaings/indicators
+        ## that have data at the level of the child.
+        de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = \
+         ['campaign','indicator','region'])
+
+        return de_duped_agg_df
