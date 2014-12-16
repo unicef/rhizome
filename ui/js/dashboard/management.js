@@ -306,7 +306,7 @@ module.exports = {
 
 			// Query parameters shared by all queries
 			var q = {
-				parent_region : self.region,
+				region__in    : self.region,
 				campaign_start: start.clone().subtract(2, 'years').format('YYYY-MM-DD'),
 				campaign_end  : start.format('YYYY-MM-DD')
 			};
