@@ -154,16 +154,16 @@ class DataPointResource(Resource):
         add the total_count to the meta object as well
         '''
 
+
         ## get rid of the meta_dict. i will add my own meta data.
         data['meta'].pop("limit",None)
-
 
         ## iterate over parsed_params
         meta_dict = {}
         for k,v in self.parsed_params.iteritems():
             meta_dict[k] = v
 
-        # add metadata to response
+        ## add metadata to response
         data['meta'] = meta_dict
 
         ## add errors if it exists
@@ -174,6 +174,16 @@ class DataPointResource(Resource):
 
 
         return data
+
+    def dehydrate(self, bundle):
+        '''
+        This method allws me to remove or add information to each data object,
+        for instance the resource_uri.
+        '''
+
+        bundle.data.pop('resource_uri')
+
+        return bundle
 
 
     ##########################
