@@ -200,11 +200,14 @@ class DataPointResource(Resource):
             int(parsed_params['the_offset']), \
             int(parsed_params['the_limit'])
 
-        df_w_data = DataFrame(list(DataPoint.objects.filter(
-            campaign__in = campaigns,\
-            indicator__in = indicators,\
-            region__in = regions).values_list(\
-            'campaign','indicator','region').distinct()),columns=shared_df_cols)
+        try:
+            df_w_data = DataFrame(list(DataPoint.objects.filter(
+                campaign__in = campaigns,\
+                indicator__in = indicators,\
+                region__in = regions).values_list(\
+                'campaign','indicator','region').distinct()),columns=shared_df_cols)
+        except ValueError:
+            df_w_data = DataFrame(columns=shared_df_cols)
 
         parent_region_lookup = []
         all_children = []
@@ -243,7 +246,7 @@ class DataPointResource(Resource):
         ## slice the unioned DF with the offset / limit provided
         offset_df = unioned_df[the_offset:the_limit + the_offset]
 
-        if len(df_w_data) <= the_offset:
+        if len(unioned_df) <= the_offset:
             err = 'the offset must be less than the total number of objects!'
             return err, None
 
