@@ -80,13 +80,13 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_all_children(self):
+    def get_all_children(self,max_depth=3):
 
         r = []
 
-        for i,(c) in enumerate(Region.objects.filter(parent_region=self)):
+        for c in Region.objects.filter(parent_region=self):
+            # r.append(c.get_all_children())
             r.append(c)
-            # r.append(c.get_all_children(include_self=False))
 
         return r
 

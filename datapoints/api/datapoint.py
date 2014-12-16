@@ -220,16 +220,23 @@ class DataPointResource(Resource):
                 parent_region_lookup.append([chld.id,r])
                 all_children.append(chld.id) ## this is kinda lame
 
-        children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
-            campaign__in = campaigns,\
-            indicator__in = indicators,\
-            region__in = set(all_children)).values_list(\
-            'campaign','indicator','region').distinct()),columns= \
+        try:
+            children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
+                campaign__in = campaigns,\
+                indicator__in = indicators,\
+                region__in = set(all_children)).values_list(\
+                'campaign','indicator','region').distinct()),columns= \
+                    ['campaign','indicator','child_region'])
+
+        except ValueError:
+            children_regions_with_data_df = DataFrame(columns= \
                 ['campaign','indicator','child_region'])
 
-
-        region_lookup_df = DataFrame(parent_region_lookup,columns=\
-            ['child_region','region'])
+        try:
+            region_lookup_df = DataFrame(parent_region_lookup,columns=\
+                ['child_region','region'])
+        except ValueError:
+            region_lookup_df = DataFrame(columns=['child_region','region'])
 
         parent_lookup_df = merge(children_regions_with_data_df,region_lookup_df,\
             on='child_region')
