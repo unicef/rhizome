@@ -18,7 +18,8 @@ module.exports = {
 			indicators: [],
 			pagination: {
 				the_limit: 20,
-				the_offset: 0
+				the_offset: 0,
+				total_count: 0
 			},
 			table: {
 				loading: false,
@@ -76,7 +77,7 @@ module.exports = {
 	},
 
 	methods: {
-		refresh: function () {
+		refresh: function (pagination) {
 			if (!this.hasSelection) {
 				return;
 			}
@@ -95,6 +96,11 @@ module.exports = {
 					prop: 'campaign',
 					display: 'Campaign'
 				}];
+
+			if (pagination) {
+				options.the_limit  = pagination.limit;
+				options.the_offset = pagination.offset;
+			}
 
 			if (regions.length > 0) {
 				options.region__in = regions;
@@ -131,6 +137,10 @@ module.exports = {
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
 
+				self.pagination.the_limit   = Number(data.meta.the_limit);
+				self.pagination.the_offset  = Number(data.meta.the_offset);
+				self.pagination.total_count = Number(data.meta.total_count);
+
 				if (!data.objects || data.objects.length < 1) {
 					return;
 				}
@@ -146,8 +156,6 @@ module.exports = {
 
 					return d;
 				});
-
-				self.pagination.the_offset = Number(data.meta.the_offset[0]);
 
 				self.table.rows = datapoints;
 			});
