@@ -223,7 +223,8 @@ class DataPointResource(Resource):
             try:
                 parsed_params[k] = query_dict[k].split(',')
             except KeyError as err:
-                return str(err).replace('"','') + ' is a required paramater!', None
+                err_msg = str(err).replace('"','') + ' is a required paramater!'
+                return err_msg , None
 
 
         self.parsed_params = parsed_params
