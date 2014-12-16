@@ -48,9 +48,7 @@ function endPoint(path) {
 }
 
 function datapoint(q) {
-	var fetch = q.hasOwnProperty('parent_region') ?
-		endPoint('/parent_region_agg/') :
-		endPoint('/datapoint/');
+	var fetch = endPoint('/datapoint/');
 
 	// Return a promise so we can chain the requests for datapoints with the
 	// campaign lookups.
