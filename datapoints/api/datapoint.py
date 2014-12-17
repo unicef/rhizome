@@ -10,7 +10,7 @@ from tastypie.bundle import Bundle
 from tastypie import fields
 from tastypie.resources import Resource
 from pandas import DataFrame
-from pandas import concat, merge, unique
+from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
 
@@ -98,7 +98,6 @@ class DataPointResource(Resource):
 
         ## MAKE THESE AN ATTRIBUTE OF THE RESOURCE OBJECT !! DRY !!
         indicators = [int(ind) for ind in parsed_params['indicator__in']]
-
         campaigns,regions = list(r_c_df.campaign_id.apply(int).unique()), \
             list(r_c_df.region_id.apply(int).unique())
 
@@ -323,50 +322,39 @@ class DataPointResource(Resource):
         '''
 
         results = []
-
-
+        
         # key: tuple (region/campaign) value: list of dicts
         results_dict = defaultdict(list)
 
-        # for rc_tuple, indicators in re_indexed_df.iterrows():
-        #     indicator_dict = {}
-        #     indicator_dict['indicator'] = indicators.indicator_id
-        #     indicator_dict['value'] = indicators.value
-        #     indicator_dict['datapoint_id'] = indicators.id
-        #     indicator_dict['is_agg'] = indicators.is_agg
-        #
-        #     results_dict[rc_tuple].append(indicator_dict)
-
-        print '=== PRINTING INDEX DATA ==='
-        print r_c_df
-        print '=== PRINTING INDEX DATA ==='
-        print dp_df
-
-        joined_df = r_c_df.merge(dp_df,on=['region_id','campaign_id'])
+        pivoted_dp_df = pivot_table(dp_df, values='value', index=['region_id',\
+            'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)
 
 
-        print joined_df
+        pivoted_dp_dict = pivoted_dp_df.transpose().to_dict()
+        pp.pprint(pivoted_dp_dict)
 
-        for row in r_c_df.iterrows():
+        for row_ix, row_data in r_c_df.iterrows():
 
-            print '==='
-            print row
+            region_id = int(row_data.region_id)
+            campaign_id = int(row_data.campaign_id)
 
+            indicators =  pivoted_dp_dict[(region_id,campaign_id)]
+            indicator_list = []
 
+            for k,v in indicators.iteritems():
+                ind_dict = {}
+                ind_dict['indicator'] = k
+                ind_dict['value'] = v
+                indicator_list.append(ind_dict)
 
+            # pp.pprint(indicators)
             new_obj = ResultObject()
-            new_obj.region = 1# index_data[0]
-            new_obj.campaign = 2# index_data[1]
+            new_obj.region = region_id
+            new_obj.campaign = campaign_id
+            new_obj.indicators = indicator_list
+
             results.append(new_obj)
 
-        # for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
-        #     new_obj = ResultObject()
-        #     new_obj.region = rc_tuple[0]
-        #     new_obj.campaign = rc_tuple[1]
-        #     new_obj.indicators = indicator_list_of_dicts
-        #
-        #     results.append(new_obj)
-        #
         return results
 
 
