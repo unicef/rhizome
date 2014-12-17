@@ -92,29 +92,29 @@ class DataPointResource(Resource):
         ## find the distinct regions/campaigns and slice by limit/offset
         err, r_c_df = self.build_campaign_region_df(parsed_params)
 
-        print 'r_c_df'
-        print r_c_df
-
         if err:
             self.error = err
             return []
 
+        ## MAKE THESE AN ATTRIBUTE OF THE RESOURCE OBJECT !! DRY !!
         indicators = [int(ind) for ind in parsed_params['indicator__in']]
 
-        campaigns,regions = list(r_c_df.campaign.apply(int).unique()), \
-            list(r_c_df.region.apply(int).unique())
+        campaigns,regions = list(r_c_df.campaign_id.apply(int).unique()), \
+            list(r_c_df.region_id.apply(int).unique())
 
         dp_df = self.build_stored_df(campaigns,indicators,regions)
-        aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
+        # if len dp_df == the limit RETURN AND DONT TRY TO AGGREGATE #
+        aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
         dp_df['is_agg'] = 0
         aggregated_dp_df['is_agg'] = 1
 
+
         final_df = concat([dp_df,aggregated_dp_df])
+        print final_df
 
-        results = self.dp_df_to_list_of_results(final_df)
-
+        results = self.dp_df_to_list_of_results(final_df,r_c_df)
 
         return results
 
@@ -203,12 +203,17 @@ class DataPointResource(Resource):
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = regions).values_list(\
-                'campaign','region').distinct()),columns=['campaign','region'])
+                'campaign','region').distinct()),columns=['campaign_id','region_id'])
 
         except ValueError:
-            df_w_data = DataFrame(columns= ['campaign','region'])
+            df_w_data = DataFrame(columns= ['campaign_id','region_id'])
 
+        ## get all of the r/c combos that have data ##
         de_duped_agg_df = self.build_agg_rc_df(campaigns,indicators,regions)
+        df_w_data['is_agg'] = 0
+        de_duped_agg_df['is_agg'] = 1
+
+        # union the two data frames but differentiate aggregation
         unioned_df = concat([df_w_data,de_duped_agg_df])
 
         ## slice the unioned DF with the offset / limit provided
@@ -222,6 +227,8 @@ class DataPointResource(Resource):
         self.parsed_params['total_count'] = len(unioned_df)
         self.parsed_params['total_count_agg'] = len(de_duped_agg_df)
         self.parsed_params['total_count_no_agg'] = len(df_w_data)
+
+
 
         return None, offset_df
 
@@ -301,32 +308,65 @@ class DataPointResource(Resource):
         return campaign__in
 
 
-    def dp_df_to_list_of_results(self,dp_df):
+    def dp_df_to_list_of_results(self,dp_df,r_c_df):
+        '''
+        One problem with the way this code is writen is that when querying for
+        region / campaign tuples, i chose to query where region__in [rs] and
+        indicator__in [is].  THis means that the query you get back may result
+        in more region / campaign couples that you initially expected.
+
+        The alternative is to query one time per r / c couple but that isnt
+        efficient.  So instead my code categorically ignores this when getting
+        the data for regions and campaigns provided, and instead i use this method
+        to filter (based on the r_c_df) the results in the dp_df with the keys that
+        i must return to the api ( which exists in r_c_df )
+        '''
 
         results = []
 
-        re_indexed_df = dp_df.set_index(['region_id','campaign_id'])
 
         # key: tuple (region/campaign) value: list of dicts
         results_dict = defaultdict(list)
 
-        for rc_tuple, indicators in re_indexed_df.iterrows():
-            indicator_dict = {}
-            indicator_dict['indicator'] = indicators.indicator_id
-            indicator_dict['value'] = indicators.value
-            indicator_dict['datapoint_id'] = indicators.id
-            indicator_dict['is_agg'] = indicators.is_agg
+        # for rc_tuple, indicators in re_indexed_df.iterrows():
+        #     indicator_dict = {}
+        #     indicator_dict['indicator'] = indicators.indicator_id
+        #     indicator_dict['value'] = indicators.value
+        #     indicator_dict['datapoint_id'] = indicators.id
+        #     indicator_dict['is_agg'] = indicators.is_agg
+        #
+        #     results_dict[rc_tuple].append(indicator_dict)
 
-            results_dict[rc_tuple].append(indicator_dict)
+        print '=== PRINTING INDEX DATA ==='
+        print r_c_df
+        print '=== PRINTING INDEX DATA ==='
+        print dp_df
 
-        for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
+        joined_df = r_c_df.merge(dp_df,on=['region_id','campaign_id'])
+
+
+        print joined_df
+
+        for row in r_c_df.iterrows():
+
+            print '==='
+            print row
+
+
+
             new_obj = ResultObject()
-            new_obj.region = rc_tuple[0]
-            new_obj.campaign = rc_tuple[1]
-            new_obj.indicators = indicator_list_of_dicts
-
+            new_obj.region = 1# index_data[0]
+            new_obj.campaign = 2# index_data[1]
             results.append(new_obj)
 
+        # for rc_tuple, indicator_list_of_dicts in results_dict.iteritems():
+        #     new_obj = ResultObject()
+        #     new_obj.region = rc_tuple[0]
+        #     new_obj.campaign = rc_tuple[1]
+        #     new_obj.indicators = indicator_list_of_dicts
+        #
+        #     results.append(new_obj)
+        #
         return results
 
 
@@ -434,28 +474,30 @@ class DataPointResource(Resource):
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = set(all_children)).values_list(\
-                'campaign','indicator','region').distinct()),columns= \
-                    ['campaign','indicator','child_region'])
+                'campaign','region').distinct()),columns= \
+                    ['campaign_id','child_region_id'])
 
         except ValueError:
             children_regions_with_data_df = DataFrame(columns= \
-                ['campaign','indicator','child_region'])
+                ['campaign_id','child_region_id'])
 
         ## create a data frame from the parent_region lookup created above ##
         try:
             region_lookup_df = DataFrame(parent_region_lookup,columns=\
-                ['child_region','region'])
+                ['child_region_id','region_id'])
         except ValueError:
-            region_lookup_df = DataFrame(columns=['child_region','region'])
+            region_lookup_df = DataFrame(columns=['child_region_id','region_id'])
 
         ## inner join the two dataframes above wtih the objective of finding
         ## the distinct campaing, indicators and PARENT_region
         parent_lookup_df = merge(children_regions_with_data_df,region_lookup_df,\
-            on='child_region')
+            on='child_region_id')
 
         ## dedupe the dataframe findinf the regions/campaings/indicators
         ## that have data at the level of the child.
         de_duped_agg_df = parent_lookup_df.drop_duplicates(subset = \
-         ['campaign','region'])
+         ['campaign_id','region_id'])
 
-        return de_duped_agg_df
+        r_c_df = de_duped_agg_df.drop('child_region_id', 1)
+
+        return r_c_df
