@@ -332,6 +332,10 @@ class DataPointResource(Resource):
             'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
             .transpose().to_dict()
 
+        pivoted_is_agg_dict = pivot_table(dp_df, values='is_agg', index=['region_id',\
+            'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
+            .transpose().to_dict()
+
 
         for row_ix, row_data in r_c_df.iterrows():
 
@@ -345,10 +349,13 @@ class DataPointResource(Resource):
                 ind_dict = {}
 
                 datapoint_id = pivoted_id_dict[(region_id,campaign_id)][k]
+                is_agg = pivoted_is_agg_dict[(region_id,campaign_id)][k]
+
                 ind_dict['datapoint_id'] = None if isnan(float(datapoint_id)) else datapoint_id
                 ind_dict['indicator'] = k
                 ind_dict['value'] = None if isnan(float(v)) else v
-                ind_dict['is_agg'] = 0 if datapoint_id > 0 else 1
+                ind_dict['is_agg'] =  None if isnan(float(is_agg)) else is_agg
+
                 indicator_list.append(ind_dict)
 
             new_obj = ResultObject()
