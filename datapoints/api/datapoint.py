@@ -111,7 +111,6 @@ class DataPointResource(Resource):
 
 
         final_df = concat([dp_df,aggregated_dp_df])
-        print final_df
 
         results = self.dp_df_to_list_of_results(final_df,r_c_df)
 
@@ -391,10 +390,6 @@ class DataPointResource(Resource):
         explicit with either a dictionary or dataframe.
         '''
 
-        print ' STARTING TO BUILD THE AGG DF '
-        print datetime.now()
-
-
         ## we should get back one row for each of the tuples below
         expected_data = set(product(campaigns,indicators,regions))
 
@@ -433,9 +428,6 @@ class DataPointResource(Resource):
 
             if sum_of_child_regions['value__sum']:
                 all_dps.append(cir)
-
-        print ' DONE BUILDING THE AGG DF '
-        print datetime.now()
 
 
         return DataFrame(all_dps)
