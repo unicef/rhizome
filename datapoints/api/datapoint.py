@@ -242,8 +242,10 @@ class DataPointResource(Resource):
         parsed_params = {}
 
         ## find the campaign__in parameter via the method below
-        parsed_params['campaign__in'] = self.find_campaigns(query_dict)
+        err, parsed_params['campaign__in'] = self.find_campaigns(query_dict)
 
+        if err:
+            return err, None
         ## try to find optional parameters in the dictionary. If they are not
         ## there return the default values ( given in the dict below)
         optional_params = {'the_limit':10000,'the_offset':0,
@@ -278,6 +280,23 @@ class DataPointResource(Resource):
         Based on the parameters passed for campaigns, start/end or __in
         return to the parsed params dictionary a list of campaigns to query
         '''
+
+        ## this is a hack for now.. will have to fix this when getting relevant
+        ## region / campaign tuples... Also should consider ordering the campaigns
+        ## so the response gets newer ones first
+
+        region__in = [int(c) for c in query_dict['region__in'].split(',')]
+
+        office_list = Region.objects.filter(id__in=region__in).values_list(\
+            'office').distinct()
+
+        print office_list
+
+        if len(office_list) > 1:
+            return 'please pass regions within the same office', None
+
+        office_id = office_list[0]
+
         try:
             ## if the campaign_in parameter exists return this
             ## and ignore the campaign_start and end parameters.
@@ -299,11 +318,12 @@ class DataPointResource(Resource):
         cs = Campaign.objects.filter(
             start_date__gte = campaign_start,\
             start_date__lte = campaign_end,\
+            office_id = office_id
         )
 
         campaign__in = [c.id for c in cs]
 
-        return campaign__in
+        return None, campaign__in
 
 
     def dp_df_to_list_of_results(self,dp_df,r_c_df):
