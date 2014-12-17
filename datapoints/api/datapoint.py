@@ -323,14 +323,7 @@ class DataPointResource(Resource):
 
         results = []
 
-        # key: tuple (region/campaign) value: list of dicts
         results_dict = defaultdict(list)
-
-        ## need to add is_agg here and not at the indicato rlevel ##
-        ## ensure that aggregation happens separately for each region/campaign
-        ## indicator combination, not just region / campaign.
-
-        pp.pprint(dp_df.transpose().to_dict())
 
         pivoted_dp_dict = pivot_table(dp_df, values='value', index=['region_id',\
             'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
@@ -353,10 +346,9 @@ class DataPointResource(Resource):
                 ind_dict = {}
 
                 datapoint_id = pivoted_id_dict[(region_id,campaign_id)][k]
-                ind_dict['datapoint_id'] = datapoint_id
+                ind_dict['datapoint_id'] = None if isnan(float(datapoint_id)) else datapoint_id
                 ind_dict['indicator'] = k
-                ## WHY IS THIS NULL
-                ind_dict['value'] = float(v)
+                ind_dict['value'] = None if isnan(float(v)) else v
                 ind_dict['is_agg'] = 0 if datapoint_id > 0 else 1
                 indicator_list.append(ind_dict)
 
