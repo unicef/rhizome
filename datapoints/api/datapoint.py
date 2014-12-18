@@ -96,22 +96,20 @@ class DataPointResource(Resource):
             self.error = err
             return []
 
-        ## MAKE THESE AN ATTRIBUTE OF THE RESOURCE OBJECT !! DRY !!
         indicators = [int(ind) for ind in parsed_params['indicator__in']]
         campaigns,regions = list(r_c_df.campaign_id.apply(int).unique()), \
             list(r_c_df.region_id.apply(int).unique())
 
         dp_df = self.build_stored_df(campaigns,indicators,regions)
 
-        # if len dp_df == the limit RETURN AND DONT TRY TO AGGREGATE #
+        ## You should check first to see if you have enough
+        ## results to return to the api before you try to aggregate
         aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
         dp_df['is_agg'] = 0
         aggregated_dp_df['is_agg'] = 1
 
-
         final_df = concat([dp_df,aggregated_dp_df])
-
         results = self.dp_df_to_list_of_results(final_df,r_c_df)
 
         return results
@@ -120,7 +118,7 @@ class DataPointResource(Resource):
     def obj_get_list(self,bundle,**kwargs):
         '''
         Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional filtering may be applied
+        could be a point at which additional build_agg_rc_dfing may be applied
         '''
 
         return self.get_object_list(bundle.request)
@@ -190,8 +188,16 @@ class DataPointResource(Resource):
         the indicator and campaign stored as well)
         '''
 
-        campaigns, indicators, regions, the_offset, the_limit = parsed_params['campaign__in'],\
-            parsed_params['indicator__in'],\
+        pp.pprint(parsed_params)
+
+        ## find the campaign__in parameter via the method below.. note however
+        ## this method only filters on start / end.. not office id.
+        err, campaigns = self.filter_campaigns_by_date(parsed_params)
+
+        if err:
+            return err, None
+
+        indicators, regions, the_offset, the_limit = parsed_params['indicator__in'],\
             parsed_params['region__in'],\
             int(parsed_params['the_offset']), \
             int(parsed_params['the_limit'])
@@ -211,11 +217,12 @@ class DataPointResource(Resource):
         df_w_data['is_agg'] = 0
         de_duped_agg_df['is_agg'] = 1
 
-        # union the two data frames but differentiate aggregation
+        ##  union the two data frames but differentiate aggregation
         unioned_df = concat([df_w_data,de_duped_agg_df])
+        sorted_df = self.sort_rc_df(unioned_df,campaigns)
 
         ## slice the unioned DF with the offset / limit provided
-        offset_df = unioned_df[the_offset:the_limit + the_offset]
+        offset_df = sorted_df[the_offset:the_limit + the_offset]
 
         if len(unioned_df) <= the_offset:
             err = 'the offset must be less than the total number of objects!'
@@ -226,11 +233,7 @@ class DataPointResource(Resource):
         self.parsed_params['total_count_agg'] = len(de_duped_agg_df)
         self.parsed_params['total_count_no_agg'] = len(df_w_data)
 
-
-
         return None, offset_df
-
-
 
     def parse_url_params(self,query_dict):
         '''
@@ -241,15 +244,11 @@ class DataPointResource(Resource):
 
         parsed_params = {}
 
-        ## find the campaign__in parameter via the method below
-        err, parsed_params['campaign__in'] = self.find_campaigns(query_dict)
-
-        if err:
-            return err, None
         ## try to find optional parameters in the dictionary. If they are not
         ## there return the default values ( given in the dict below)
-        optional_params = {'the_limit':10000,'the_offset':0,
-            'uri_format':'id','agg_level':'mixed'}
+        optional_params = {'the_limit':10000,'the_offset':0,'agg_level':'mixed',\
+            'campaign_start':'2012-01-01','campaign_end':'2900-01-01' }
+
 
         for k,v in optional_params.iteritems():
             try:
@@ -275,27 +274,11 @@ class DataPointResource(Resource):
         return None, parsed_params
 
 
-    def find_campaigns(self,query_dict):
+    def filter_campaigns_by_date(self,query_dict):
         '''
         Based on the parameters passed for campaigns, start/end or __in
         return to the parsed params dictionary a list of campaigns to query
         '''
-
-        ## this is a hack for now.. will have to fix this when getting relevant
-        ## region / campaign tuples... Also should consider ordering the campaigns
-        ## so the response gets newer ones first
-
-        region__in = [int(c) for c in query_dict['region__in'].split(',')]
-
-        office_list = Region.objects.filter(id__in=region__in).values_list(\
-            'office').distinct()
-
-        print office_list
-
-        if len(office_list) > 1:
-            return 'please pass regions within the same office', None
-
-        office_id = office_list[0]
 
         try:
             ## if the campaign_in parameter exists return this
@@ -307,18 +290,19 @@ class DataPointResource(Resource):
 
         try:
             campaign_start = query_dict['campaign_start']
+
         except KeyError:
             campaign_start = '2001-01-01'
 
         try:
             campaign_end = query_dict['campaign_end']
+
         except KeyError:
             campaign_end = '2900-01-01'
 
         cs = Campaign.objects.filter(
             start_date__gte = campaign_start,\
             start_date__lte = campaign_end,\
-            office_id = office_id
         )
 
         campaign__in = [c.id for c in cs]
@@ -526,3 +510,24 @@ class DataPointResource(Resource):
             .transpose().to_dict()
 
         return pivoted_dict
+
+
+    def sort_rc_df(self,rc_df,campaigns):
+        '''
+        This sorts the result object and determines what will be sliced by
+        the offset and the limit.  For now i'm defaulting the sorting to be on
+        campaign date descending, but am setting this up to allow for more
+        complex filtering later on.
+        '''
+
+        ## find the start dates of the campaigns ##
+        campaign_id_start_date_df = DataFrame(list(Campaign.objects.filter(id__in = \
+            campaigns).values_list('id','start_date').distinct()),\
+            columns=['campaign_id','start_date'])
+
+        ## join the two dataframes, finding the start_date ##
+        r_c_w_start_date_df = rc_df.merge(campaign_id_start_date_df,on='campaign_id')
+        sorted_rc_df = r_c_w_start_date_df.sort(columns = 'start_date',\
+            ascending = False )
+
+        return sorted_rc_df
