@@ -71,4 +71,9 @@ svg {
 		fill-opacity: 0;
 		stroke: none;
 	}
+
+	.hover-line {
+		stroke: $oil;
+		shape-rendering: crispEdges;
+	}
 }

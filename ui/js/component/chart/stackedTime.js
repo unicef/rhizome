@@ -10,6 +10,7 @@ module.exports = {
 
 	mixins: [
 		require('./hover-tiles'),
+		require('./hover-line'),
 		require('./xAxis'),
 		require('./yGrid')
 	],
