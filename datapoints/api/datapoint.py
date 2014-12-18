@@ -344,27 +344,31 @@ class DataPointResource(Resource):
 
         results_dict = defaultdict(list)
 
-        pivoted_dp_dict = pivot_table(dp_df, values='value', index=['region_id',\
-            'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
-            .transpose().to_dict()
-
-        pivoted_id_dict = pivot_table(dp_df, values='id', index=['region_id',\
-            'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
-            .transpose().to_dict()
-
-        pivoted_is_agg_dict = pivot_table(dp_df, values='is_agg', index=['region_id',\
-            'campaign_id'], columns=['indicator_id'],aggfunc = lambda x: x)\
-            .transpose().to_dict()
-
+        pivoted_dp_dict = self.pivot_dp_df(dp_df,'value')
+        pivoted_id_dict = self.pivot_dp_df(dp_df,'id')
+        pivoted_is_agg_dict = self.pivot_dp_df(dp_df,'is_agg')
 
         for row_ix, row_data in r_c_df.iterrows():
 
+            # instantiate a result object ( one result per response )
+            new_obj = ResultObject()
+
+            # find the region and campaign from the row in the r_c dataframe
             region_id = int(row_data.region_id)
             campaign_id = int(row_data.campaign_id)
 
+            ## add region / campaign from the r_c_df created initially
+            new_obj.region = region_id
+            new_obj.campaign = campaign_id
+
+            ## look up the indicators from the dictonary created above
             indicators =  pivoted_dp_dict[(region_id,campaign_id)]
+
+            # prepare a list of dicts to add to the r/c key
             indicator_list = []
 
+            ## iterate through the indicators, create a dictionary with relevant
+            ## data and append it to the result object.
             for k,v in indicators.iteritems():
                 ind_dict = {}
 
@@ -378,11 +382,7 @@ class DataPointResource(Resource):
 
                 indicator_list.append(ind_dict)
 
-            new_obj = ResultObject()
-            new_obj.region = region_id
-            new_obj.campaign = campaign_id
             new_obj.indicators = indicator_list
-
 
             results.append(new_obj)
 
@@ -513,3 +513,16 @@ class DataPointResource(Resource):
         r_c_df = de_duped_agg_df.drop('child_region_id', 1)
 
         return r_c_df
+
+    def pivot_dp_df(self,dp_df,value_column):
+        '''
+        this method takes a dataframe with datapoints table like data and transforms
+        it into an object where the region / campaign is the key and the values
+        are dictionares with the keys specified via the value column.
+        '''
+
+        pivoted_dict = pivot_table(dp_df, values = value_column, index=['region_id',\
+            'campaign_id'], columns = ['indicator_id'], aggfunc = lambda x: x)\
+            .transpose().to_dict()
+
+        return pivoted_dict
