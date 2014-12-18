@@ -1,4 +1,5 @@
 import pprint as pp
+import StringIO
 from math import isnan
 from collections import defaultdict
 from itertools import product
@@ -31,13 +32,30 @@ class CustomSerializer(Serializer):
 
         options = options or {}
         data = self.to_simple(data, options)
+        data_objects = data['objects']
 
-        # print DataFrame(data['objects'])
+        list_of_rows = []
 
-        # csv = StringIO.StringIO(str(pivoted.to_csv()))
+        # indicator_dicts = [row['indicators'] for row in data_objects]
 
-        # return csv
-        return data
+        for row in data_objects:#.iteritems():
+            row_dict = {}
+            row_dict['region'] = row['region']
+            row_dict['campaign'] = row['campaign']
+
+            indicators = row['indicators']
+            for ind in indicators:
+                # indicator_name =
+                row_dict[int(ind['indicator'])] = ind['value']
+
+            list_of_rows.append(row_dict)
+
+
+        csv_df = DataFrame(list_of_rows,index=None)
+        csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
+
+        return csv
+        # return data
 
 class ResultObject(object):
     '''
@@ -498,19 +516,6 @@ class DataPointResource(Resource):
 
         return r_c_df
 
-    def pivot_dp_df(self,dp_df,value_column):
-        '''
-        this method takes a dataframe with datapoints table like data and transforms
-        it into an object where the region / campaign is the key and the values
-        are dictionares with the keys specified via the value column.
-        '''
-
-        pivoted_dict = pivot_table(dp_df, values = value_column, index=['region_id',\
-            'campaign_id'], columns = ['indicator_id'], aggfunc = lambda x: x)\
-            .transpose().to_dict()
-
-        return pivoted_dict
-
 
     def sort_rc_df(self,rc_df,campaigns):
         '''
@@ -531,3 +536,18 @@ class DataPointResource(Resource):
             ascending = False )
 
         return sorted_rc_df
+
+
+
+    def pivot_dp_df(self,dp_df,value_column):
+        '''
+        this method takes a dataframe with datapoints table like data and transforms
+        it into an object where the region / campaign is the key and the values
+        are dictionares with the keys specified via the value column.
+        '''
+
+        pivoted_dict = pivot_table(dp_df, values = value_column, index=['region_id',\
+            'campaign_id'], columns = ['indicator_id'], aggfunc = lambda x: x)\
+            .transpose().to_dict()
+
+        return pivoted_dict
