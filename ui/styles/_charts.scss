@@ -66,4 +66,9 @@ svg {
 		stroke: $coolgray5;
 		stroke-width: 1px;
 	}
+
+	.hover-tile {
+		fill-opacity: 0;
+		stroke: none;
+	}
 }

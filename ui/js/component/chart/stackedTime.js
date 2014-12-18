@@ -8,9 +8,17 @@ var util     = require('../../util/data');
 module.exports = {
 	replace: true,
 
+	mixins: [
+		require('./hover-tiles'),
+		require('./xAxis'),
+		require('./yGrid')
+	],
+
 	data: function () {
 		return {
-			layers: []
+			series: [],
+			x     : d3.scale.linear(),
+			y     : d3.scale.linear()
 		};
 	},
 
@@ -32,8 +40,8 @@ module.exports = {
 				return util.defined(getY(d));
 			}
 
-			if (!this.layers) {
-				return;
+			if (!this.series) {
+				this.$set('series', []);
 			}
 
 			var svg = d3.select(this.$el);
@@ -42,24 +50,24 @@ module.exports = {
 				.x(getX)
 				.values(getValues);
 
-			var layers  = stack(this.layers);
+			var layers  = stack(this.series);
 
-			var dataset = this.layers.map(getValues);
+			var dataset = this.series.map(getValues);
 			var start   = new Date(util.min(dataset, getX));
 			var end     = new Date(util.max(dataset, getX));
 			var lower   = Math.min(0, util.min(dataset, function (d) { return d.y0; }));
 			var upper   = util.max(dataset, getY);
 
-			var x = d3.time.scale()
+			var x = this.x
 				.domain([start, end])
 				.range([0, this.width]);
 
-			var y = d3.scale.linear()
+			var y = this.y
 				.domain([lower, upper])
 				.range([this.height, 0]);
 
 			var color = d3.scale.ordinal()
-				.domain([0, this.layers.length])
+				.domain([0, this.series.length])
 				.range(coolgray);
 
 			var area = d3.svg.area()
@@ -79,23 +87,14 @@ module.exports = {
 
 			paths.exit().remove();
 
-			var xAxis = d3.svg.axis()
-				.scale(x)
-				.ticks(3)
-				.orient('bottom');
+			this.$emit('chart-drawn', {
+				el    : this.$el,
+				series: dataset,
+				x     : x,
+				y     : y
+			});
 
-			var yAxis = d3.svg.axis()
-				.scale(y)
-				.ticks(3)
-				.orient('right')
-				.tickSize(this.width);
-
-			svg.select('.x.axis').call(xAxis);
-			svg.select('.y.axis').call(yAxis);
-
-			svg.selectAll('.y.axis text')
-				.attr('x', 3)
-				.attr('dy', -3);
+			this._callHook('drawn');
 		}
 	},
 
@@ -104,7 +103,7 @@ module.exports = {
 	},
 
 	watch: {
-		'layers': 'draw',
+		'series': 'draw',
 		'width' : 'draw',
 		'height': 'draw'
 	}
