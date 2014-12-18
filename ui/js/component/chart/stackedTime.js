@@ -11,6 +11,7 @@ module.exports = {
 	mixins: [
 		require('./hover-tiles'),
 		require('./hover-line'),
+		require('./labels'),
 		require('./xAxis'),
 		require('./yGrid')
 	],
@@ -19,7 +20,9 @@ module.exports = {
 		return {
 			series: [],
 			x     : d3.scale.linear(),
-			y     : d3.scale.linear()
+			y     : d3.scale.linear(),
+			xFmt: Object,
+			yFmt: Object
 		};
 	},
 

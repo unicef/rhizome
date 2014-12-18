@@ -49,12 +49,16 @@
 						<svg v-component="chart-base"
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
-						     v-with="values: missed">
+						     v-with="values: missed.layers,
+						             xFmt: missed.xFmt,
+						             yFmt: missed.yFmt">
 
 							<g v-component="chart-stackedTime"
 							   v-with="series: values,
 							           width : contentWidth,
-							           height: contentHeight">
+							           height: contentHeight,
+							           xFmt: xFmt,
+							           yFmt: yFmt">
 								<g class="x axis"
 								   v-attr="transform: 'translate(0,' + height + ')'"></g>
 								<g class="y axis"></g>

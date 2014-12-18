@@ -27,6 +27,8 @@ module.exports = {
 		}
 
 		function makeLabel(g) {
+			var yFmt = self.yFmt || Object;
+
 			g.each(function (d) {
 				var g = d3.select(this);
 
@@ -38,7 +40,7 @@ module.exports = {
 
 				var value = g.append('text')
 					.attr('text-anchor', 'end')
-					.text(d.datum.value);
+					.text(yFmt(d.datum.value));
 
 				if (d.name) {
 					value.attr('dy', '1.1em');
@@ -103,7 +105,7 @@ module.exports = {
 					.style('opacity', '1');
 		});
 
-		this.$on('hide-annotation', function () {
+		this.$on('hide-annotation', function (d) {
 			var svg = getAnnotationLayer();
 
 			svg.selectAll('.label')
@@ -111,6 +113,9 @@ module.exports = {
 					.style('opacity', '1');
 
 			svg.selectAll('.temp.label')
+				.filter(function (l) {
+					return l.x === d.x;
+				})
 				.transition().duration(300)
 					.style('opacity', '0')
 					.remove();

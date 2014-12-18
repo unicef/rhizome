@@ -104,6 +104,16 @@ module.exports = {
 					return moment(d, 'M').format('MMM');
 				}
 			},
+			missed: {
+				layers: [],
+				xFmt  : function (d) {
+					var date = new Date(d);
+					var fmt = date.getMonth() === 0 ? 'YYYY' : 'MMM';
+
+					return moment(date).format(fmt);
+				},
+				yFmt  : d3.format('.0%')
+			},
 			conversions: {
 				lines: [],
 				x    : d3.time.scale(),
@@ -347,7 +357,7 @@ module.exports = {
 					return { points: data };
 				}))
 				.then(each(color(coolgray)))
-				.done(set('missed'));
+				.done(set('missed.layers'));
 
 			// Conversions
 			indicators([25, 26], q)
