@@ -88,7 +88,6 @@ module.exports = {
 			tiles.enter().append('rect')
 				.attr('class', 'hover-tile')
 				.on('mouseover', function (d) {
-					console.log(new Date(d.value));
 					var o = { x: d.value };
 
 					self.$dispatch('show-annotation', o);
