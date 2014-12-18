@@ -5,7 +5,7 @@ from collections import defaultdict
 from itertools import product
 from datetime import datetime
 
-from tastypie.serializers import Serializer
+
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
@@ -17,45 +17,8 @@ from django.db import connection
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
+from datapoints.api.serialize import CustomSerializer
 
-
-
-class CustomSerializer(Serializer):
-    formats = ['json', 'csv']
-    content_types = {
-        'json': 'application/json',
-        'csv': 'text/csv',
-    }
-
-
-    def to_csv(self, data, options=None):
-
-        options = options or {}
-        data = self.to_simple(data, options)
-        data_objects = data['objects']
-
-        list_of_rows = []
-
-        # indicator_dicts = [row['indicators'] for row in data_objects]
-
-        for row in data_objects:#.iteritems():
-            row_dict = {}
-            row_dict['region'] = row['region']
-            row_dict['campaign'] = row['campaign']
-
-            indicators = row['indicators']
-            for ind in indicators:
-                # indicator_name =
-                row_dict[int(ind['indicator'])] = ind['value']
-
-            list_of_rows.append(row_dict)
-
-
-        csv_df = DataFrame(list_of_rows,index=None)
-        csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
-
-        return csv
-        # return data
 
 class ResultObject(object):
     '''
