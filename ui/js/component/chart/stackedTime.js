@@ -60,7 +60,7 @@ module.exports = {
 			var start   = new Date(util.min(dataset, getX));
 			var end     = new Date(util.max(dataset, getX));
 			var lower   = Math.min(0, util.min(dataset, function (d) { return d.y0; }));
-			var upper   = util.max(dataset, getY);
+			var upper   = util.max(dataset, getY) * 1.1;
 
 			var x = this.x
 				.domain([start, end])

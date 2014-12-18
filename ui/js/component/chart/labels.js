@@ -33,7 +33,7 @@ module.exports = {
 				var g = d3.select(this);
 
 				g.attr('transform', function (d) {
-					return 'translate(' + self.x(d.datum.x) + ',' + self.y(d.datum.y) + ')';
+					return 'translate(' + self.x(d.datum.x) + ',' + self.y((d.datum.y0 || 0) + d.datum.y) + ')';
 				});
 
 				g.selectAll('text').remove();

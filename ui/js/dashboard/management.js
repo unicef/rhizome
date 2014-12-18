@@ -112,7 +112,7 @@ module.exports = {
 
 					return moment(date).format(fmt);
 				},
-				yFmt  : d3.format('.0%')
+				yFmt  : d3.format('.1%')
 			},
 			conversions: {
 				lines: [],
