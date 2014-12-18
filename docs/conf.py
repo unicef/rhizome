@@ -20,8 +20,8 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('/Users/johndingee_seed/code/polio/datapoints'))
 
-sys.path.append('/Users/johndingee_seed/code/polio')
-sys.path.append('/var/www/clients.seedscientific.com/uf/polio')
+sys.path.append('/Users/johndingee_seed/code/UF04/polio')
+sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio')
 
 
 # -- General configuration ------------------------------------------------

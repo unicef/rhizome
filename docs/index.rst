@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    api
-   aggregate_api
+   api_source
    project
    odk
 

@@ -1,5 +1,4 @@
 import pprint as pp
-import StringIO
 from math import isnan
 from collections import defaultdict
 from itertools import product
@@ -36,8 +35,8 @@ class DataPointResource(Resource):
     This Resource is custom and builds upon the tastypie Model Resource by
     overriding the methods coorsponding to GET requests.  For more information
     on creating custom api functionality see :
-      https://gist.github.com/nomadjourney/794424
-      http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
+    https://gist.github.com/nomadjourney/794424
+    http://django-tastypie.readthedocs.org/en/latest/non_orm_data_sources.html
     '''
 
     error = None
