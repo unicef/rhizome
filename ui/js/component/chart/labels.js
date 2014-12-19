@@ -1,7 +1,9 @@
 'use strict';
 
-var _  = require('lodash');
-var d3 = require('d3');
+var _    = require('lodash');
+var d3   = require('d3');
+
+var util = require('../../util/data');
 
 module.exports = {
 	created: function () {
@@ -15,12 +17,20 @@ module.exports = {
 		}
 
 		function getLast(series) {
-			var o = {
-				datum: series.points[series.points.length - 1]
-			};
+			var o = null;
+			var x = -Infinity;
 
-			if (series.name) {
-				o.name = series.name;
+			for (var i = series.points.length - 1; i >= 0; i--) {
+				var p = series.points[i];
+
+				if (p.x > x && util.defined(p.value)) {
+					x = p.x;
+					o = { datum: p };
+
+					if (series.name) {
+						o.name = series.name;
+					}
+				}
 			}
 
 			return o;
@@ -39,7 +49,9 @@ module.exports = {
 				g.selectAll('text').remove();
 
 				var value = g.append('text')
-					.attr('text-anchor', 'end')
+					.attr({
+						'text-anchor': 'end',
+					})
 					.text(yFmt(d.datum.value));
 
 				if (d.name) {
@@ -59,7 +71,9 @@ module.exports = {
 
 		this.$on('hook:drawn', function () {
 			var svg   = getAnnotationLayer();
-			var label = svg.selectAll('.label').data(this.series.map(getLast));
+			var data  = this.series.map(getLast)
+				.filter(function (d) { return d !== null; });
+			var label = svg.selectAll('.label').data(data);
 
 			label.enter().append('g').attr('class', 'label');
 

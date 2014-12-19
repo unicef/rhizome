@@ -21,8 +21,6 @@ module.exports = {
 			series: [],
 			x     : d3.scale.linear(),
 			y     : d3.scale.linear(),
-			xFmt: Object,
-			yFmt: Object
 		};
 	},
 
