@@ -43,16 +43,22 @@ function tile(values, x) {
 		}];
 	}
 
+	var cloned = _.clone(values).sort(function (a, b) {
+		return a < b ? -1 : 1;
+	});
+
 	var previous = {
 		x     : x(domain[0]),
-		center: x(values[0]),
+		center: x(cloned[0]),
 		value : values[0]
 	};
 
-	for (var i = 1, l = values.length; i < l; i++) {
-		var v = values[i];
+	for (var i = 1, l = cloned.length; i < l; i++) {
+		var v = cloned[i];
 
 		previous.width = (previous.center + (Math.abs(x(v) - previous.center) / 2)) - previous.x;
+
+		console.log(previous.x, previous.center, previous.width, previous.value, typeof previous.value);
 
 		tiles.push(previous);
 
@@ -64,6 +70,7 @@ function tile(values, x) {
 	}
 
 	previous.width = x(domain[1]) - previous.x;
+	console.log(previous.x, previous.center, previous.width, previous.value);
 	tiles.push(previous);
 
 	return tiles;
