@@ -119,7 +119,7 @@ module.exports = {
 					.style('opacity', '1');
 		});
 
-		this.$on('hide-annotation', function (d) {
+		this.$on('hide-annotation', function () {
 			var svg = getAnnotationLayer();
 
 			svg.selectAll('.label')
@@ -127,9 +127,6 @@ module.exports = {
 					.style('opacity', '1');
 
 			svg.selectAll('.temp.label')
-				.filter(function (l) {
-					return l.x === d.x;
-				})
 				.transition().duration(300)
 					.style('opacity', '0')
 					.remove();
