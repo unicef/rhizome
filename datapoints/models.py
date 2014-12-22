@@ -60,12 +60,18 @@ class Office(models.Model):
             ('view_office', 'View office'),
         )
 
+class RegionType(models.Model):
+
+    name = models.CharField(max_length=55, unique=True)
+
+    class Meta:
+        db_table = 'region_type'
 
 class Region(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
     region_code = models.CharField(max_length=55, unique=True)
-    region_type = models.CharField(max_length=55)
+    region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.FloatField(null=True,blank=True)
