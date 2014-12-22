@@ -62,3 +62,10 @@ TRUNCATE TABLE source_data_sourcecampaign CASCADE;
 TRUNCATE TABLE source_data_sourceregion CASCADE;
 
 delete from source_data_document where guid != 'initialinsertfromoldmasterdb';
+
+
+insert into region_type (name)
+select 'Country' where not exists ( select 1 from region_type where name = 'Country') UNION ALL
+select 'Settlement' where not exists ( select 1 from region_type where name = 'Settlement')
+
+

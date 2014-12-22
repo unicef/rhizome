@@ -103,6 +103,7 @@ class Region(models.Model):
 
 
     class Meta:
+
         db_table = 'region'
         unique_together = ('name','region_type','office')
 
@@ -115,6 +116,12 @@ class Region(models.Model):
 class CampaignType(models.Model):
 
     name = models.CharField(max_length=55)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+    class Meta:
+        db_table = 'campaign_type'
 
 class Campaign(models.Model):
 
