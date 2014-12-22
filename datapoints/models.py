@@ -21,6 +21,7 @@ class Indicator(models.Model):
     is_reported = models.BooleanField(default=True)
     slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    source = models.ForeignKey(Source)
 
     def __unicode__(self):
         return unicode(self.name)
