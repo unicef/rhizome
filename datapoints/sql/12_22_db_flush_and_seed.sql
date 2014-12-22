@@ -66,6 +66,16 @@ delete from source_data_document where guid != 'initialinsertfromoldmasterdb';
 
 insert into region_type (name)
 select 'Country' where not exists ( select 1 from region_type where name = 'Country') UNION ALL
-select 'Settlement' where not exists ( select 1 from region_type where name = 'Settlement')
+select 'Settlement' where not exists ( select 1 from region_type where name = 'Settlement');
 
+insert into campaign_type
+(name)
+SELECT 'National Immunization Days (NID)' where not exists 
+	(select 1 from campaign_type where name = 'National Immunization Days (NID)') UNION ALL
+SELECT 'Sub-national Immunization Days (SNID)' where not exists 
+	(select 1 from campaign_type where name = 'Sub-national Immunization Days (SNID)') UNION ALL
+SELECT 'SIAD' where not exists 
+	(select 1 from campaign_type where name = 'SIAD') UNION ALL
+SELECT 'Mop-up' where not exists 
+	(select 1 from campaign_type where name = 'Mop-up') 
 
