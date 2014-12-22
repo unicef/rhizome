@@ -103,6 +103,7 @@ class Region(models.Model):
 
     class Meta:
         db_table = 'region'
+        unique_together = ('name','region_type','office')
 
         permissions = (
             ('view_region', 'View region'),
@@ -110,12 +111,14 @@ class Region(models.Model):
 
         ordering = ('name',)
 
+class CampaignType(models.Model):
 
+    name = models.CharField(max_length=55)
 
 class Campaign(models.Model):
 
-    name = models.CharField(max_length=255)
     office = models.ForeignKey(Office)
+    campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name')
@@ -123,7 +126,7 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.office + '-' + self.start_date)
 
 
     def get_full_name(self):
