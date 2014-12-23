@@ -70,7 +70,7 @@ class RegionType(models.Model):
 
 class Region(models.Model):
 
-    name = models.CharField(max_length=55,unique=True)
+    name = models.CharField(max_length=55)
     region_code = models.CharField(max_length=55, unique=True)
     region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)

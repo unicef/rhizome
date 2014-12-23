@@ -105,14 +105,22 @@ SELECT 'Settlement' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'S
 
 --1426
 
-
 INSERT INTO region
 (office_id,latitude,longitude,slug,created_at,source_id,region_code,is_high_risk,name,source_region_id,region_type_id)
 
+SELECT 
+	o.id
+	,sr.lat
+	,sr.lon
+	,replace(sr.region_string,' ','-')
+FROM source_region sr
+INNER JOIN office o 
+ON sr.country = o.name
+WHERE sr.region_type = 'Country'
 
 
---SELECT * from source_region
---WHERE region_type = 'Country'
+
+
 
 
 
