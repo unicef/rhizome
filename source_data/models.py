@@ -120,10 +120,12 @@ class SourceRegion(models.Model):
     country = models.CharField(max_length=255,null=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
+    is_high_risk = models.BooleanField(default=False)
+
 
     class Meta:
         db_table = 'source_region'
-        # unique_together = ('region_string','document','region_type','country')
+        unique_together = ('region_string','document','region_type','country')
 
     def __unicode__(self):
         return self.region_string

@@ -103,5 +103,16 @@ SELECT 'District' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Dis
 SELECT 'Ward' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Ward' )  UNION ALL  
 SELECT 'Settlement' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Settlement' ) 
 
+--1426
+
+
+INSERT INTO region
+(office_id,latitude,longitude,slug,created_at,source_id,region_code,is_high_risk,name,source_region_id,region_type_id)
+
+
+
+--SELECT * from source_region
+--WHERE region_type = 'Country'
+
 
 

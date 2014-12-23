@@ -83,7 +83,7 @@ class RegionTransform(DocTransform):
 
     def validate(self):
 
-        essential_columns = ['name','code','parent_name','region_type','country','lat','lon']
+        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014']
         df_cols = [col for col in self.df]
         intsct = list(set(essential_columns).intersection(df_cols))
 
@@ -122,6 +122,7 @@ class RegionTransform(DocTransform):
                 'lat': row_data.lat,\
                 'lon': row_data.lon,\
                 'document': self.document,\
+                'is_high_risk': row_data.high_risk_2014,\
                 'source_guid': str(row_data.region_name)}
 
             sr,created = SourceRegion.objects.get_or_create(
@@ -138,5 +139,3 @@ class RegionTransform(DocTransform):
                 ## this conflict resolution should be dealt w refrresh master ##
                 ## this condition will only really be met in error ( a region
                 ## with same name, type and country gets uploaded for one document )
-
-            
