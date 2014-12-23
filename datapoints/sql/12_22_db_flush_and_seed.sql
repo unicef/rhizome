@@ -1,4 +1,6 @@
 ﻿
+-- creating a document to attribute the new source datapoints to --
+
 insert into source_data_document
 (created_by_id, guid,doc_text,is_processed)
 select 1, 'initialinsertfromoldmasterdb','initialinsertfromoldmasterdb','t'
@@ -9,7 +11,7 @@ WHERE NOT EXISTS
 	
 );
 
-
+-- This is inserting the current master datapoints into the source datapoints table -- 
 INSERT INTO source_data_sourcedatapoint
 (region_string,campaign_string,indicator_string,cell_value,row_number,source_id,document_id,source_guid,status_id,guid,created_at)
 
@@ -78,4 +80,7 @@ SELECT 'SIAD' where not exists
 	(select 1 from campaign_type where name = 'SIAD') UNION ALL
 SELECT 'Mop-up' where not exists 
 	(select 1 from campaign_type where name = 'Mop-up') 
+
+
+
 
