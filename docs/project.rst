@@ -57,6 +57,22 @@ In addition the system maintains **source_indicators** , **source_regions**, and
 When a source_datapoint has mappings for region, campaign, and indicator, by using the **refresh_master** method for that document_id will create, or update ( if a conflicting datapoint exists ) the datapoint table.
 
 
+Regions
+=============
+
+Regions have a parent, lon / lat, region type
+
+**uniqueness for region is defined by region_name, region_type, country**
+
+Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
+
+We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
+
+
+We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
+
+
+
 Region Upload
 =============
 

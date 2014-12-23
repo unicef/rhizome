@@ -82,5 +82,26 @@ SELECT 'Mop-up' where not exists
 	(select 1 from campaign_type where name = 'Mop-up') 
 
 
+UPDATE source_datapoint as sr
+set region_string = x.new_str
+FROM
+(
+SELECT DISTINCT
+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+REPLACE(region_string,'2014',''),
+'2013',''),'2012',''),'January',''),'February',''),'March',''),'April',''),'May',''),'June',''),'July',''),'August',''),'September',''),'October',''),'November',''),'December',''),'   - ',' - ') as new_str
+,region_string
+FROM source_datapoint 
+)x
+WHERE x.region_string = sr.region_string
+
+
+INSERT INTO region_type (name)
+SELECT 'Country' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Country' ) UNION ALL  
+SELECT 'Province'WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Province' )   UNION ALL  
+SELECT 'District' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'District' )  UNION ALL  
+SELECT 'Ward' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Ward' )  UNION ALL  
+SELECT 'Settlement' WHERE NOT EXISTS ( SELECT 1 from region_type where name = 'Settlement' ) 
+
 
 

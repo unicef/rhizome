@@ -123,7 +123,7 @@ class SourceRegion(models.Model):
 
     class Meta:
         db_table = 'source_region'
-        unique_together = ('region_string','document')
+        # unique_together = ('region_string','document','region_type','country')
 
     def __unicode__(self):
         return self.region_string
