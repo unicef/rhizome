@@ -51,12 +51,14 @@
 						<svg v-component="chart-base"
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
-						     v-with="values: missed">
+						     v-with="values    : missed.layers,
+						             tickValues: missed.tickValues">
 
 							<g v-component="chart-stackedTime"
-							   v-with="layers: values,
-							           width : contentWidth,
-							           height: contentHeight">
+							   v-with="layers    : values,
+							           tickValues: tickValues,
+							           width     : contentWidth,
+							           height    : contentHeight">
 								<g class="x axis"
 								   v-attr="transform: 'translate(0,' + height + ')'"></g>
 								<g class="y axis"></g>
@@ -70,15 +72,20 @@
 						<svg v-component="chart-base"
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
-						     v-with="values: conversions.lines,
-						             x     : conversions.x,
-						             yFmt  : conversions.yFmt">
+						     v-with="values    : conversions.lines,
+						             tickValues: conversions.tickValues,
+						             x         : conversions.x,
+						             yFmt      : conversions.yFmt,
+						             xFmt      : conversions.xFmt">
 
 							<g v-component="chart-line"
 							   data-width="{{contentWidth}}"
 							   data-height="{{contentHeight}}"
 							   data-series="{{values}}"
-							   v-with="x: x, yFmt: yFmt"></g>
+							   v-with="tickValues: tickValues,
+							           x         : x,
+							           yFmt      : yFmt,
+							           xFmt      : xFmt"></g>
 						</svg>
 					</section>
 
