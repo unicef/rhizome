@@ -15,7 +15,7 @@ class Source(models.Model):
 
 class Indicator(models.Model):
 
-    short_name = models.CharField(max_length=55,unique=False) # FIX UNIQUE HERE!
+    short_name = models.CharField(max_length=55,unique=True)
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
@@ -70,14 +70,14 @@ class RegionType(models.Model):
 
 class Region(models.Model):
 
-    name = models.CharField(max_length=55)
+    name = models.CharField(max_length=55,unique=True)
     region_code = models.CharField(max_length=55, unique=True)
     region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.FloatField(null=True,blank=True)
     longitude = models.FloatField(null=True,blank=True)
-    slug = AutoSlugField(populate_from='name',max_length=55)
+    slug = AutoSlugField(populate_from='name',max_length=55,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
     source_region = models.ForeignKey('source_data.SourceRegion')
@@ -129,7 +129,7 @@ class Campaign(models.Model):
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name')
+    slug = AutoSlugField(populate_from='get_full_name',unique=True)
     created_at = models.DateTimeField(auto_now=True)
 
 
@@ -138,7 +138,7 @@ class Campaign(models.Model):
 
 
     def get_full_name(self):
-        full_name = self.office.name + '-' + self.__unicode__()
+        full_name = self.__unicode__()
         return full_name
 
     class Meta:
