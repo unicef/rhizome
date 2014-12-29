@@ -24,9 +24,9 @@ var sort      = require('../data/transform/sort');
 var variables = require('../data/transform/variables');
 
 var OFFICE = {
-	1: 12907,   // Nigeria
-	2: 4404, // Afghanistan
-	3: 128   // Pakistan
+	1: 12907, // Nigeria
+	2: 12908, // Afghanistan
+	3: 12909  // Pakistan
 };
 
 /**
