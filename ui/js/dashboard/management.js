@@ -141,10 +141,6 @@ module.exports = {
 			campaigns  : [],
 			region     : null,
 			start      : new Date(),
-			missed: {
-				layers    : [],
-				tickValues: timeTicks
-			},
 			cases      : {
 				lines: [],
 				domain: [1, 12],
@@ -154,14 +150,15 @@ module.exports = {
 				tickValues: ytdTicks
 			},
 			missed: {
-				layers: [],
-				xFmt  : function (d) {
+				layers    : [],
+				tickValues: timeTicks,
+				xFmt      : function (d) {
 					var date = new Date(d);
 					var fmt = date.getMonth() === 0 ? 'YYYY' : 'MMM';
 
 					return moment(date).format(fmt);
 				},
-				yFmt  : d3.format('.1%')
+				yFmt      : d3.format('.1%')
 			},
 			conversions: {
 				lines: [],
