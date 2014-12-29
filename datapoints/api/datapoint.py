@@ -71,6 +71,19 @@ class DataPointResource(Resource):
             self.error = err
             return []
 
+        ## look up indicators in db.. if ANY of the requested arent in db
+        ## throw error to api
+
+        tmp_indicators = [int(ind) for ind in parsed_params['indicator__in']]
+
+        err, indicators = self.check_db_for_indicators(tmp_indicators)
+
+        if err:
+            self.error = err
+            return []
+
+
+
         ## find the distinct regions/campaigns and slice by limit/offset
         err, r_c_df = self.build_campaign_region_df(parsed_params)
 
@@ -78,7 +91,6 @@ class DataPointResource(Resource):
             self.error = err
             return []
 
-        indicators = [int(ind) for ind in parsed_params['indicator__in']]
         campaigns,regions = list(r_c_df.campaign_id.apply(int).unique()), \
             list(r_c_df.region_id.apply(int).unique())
 
@@ -86,6 +98,8 @@ class DataPointResource(Resource):
 
         ## You should check first to see if you have enough
         ## results to return to the api before you try to aggregate
+        ## that is if 5 objects are requested, and there are 6 non aggregated
+        ## records of data... dont bother aggregating
         aggregated_dp_df = self.build_aggregate_df(campaigns,indicators,regions)
 
         dp_df['is_agg'] = 0
@@ -527,3 +541,16 @@ class DataPointResource(Resource):
             .transpose().to_dict()
 
         return pivoted_dict
+
+
+    def check_db_for_indicators(self,tmp_indicators):
+
+        indicator_ids = Indicator.objects.filter(id__in=tmp_indicators).values_list('id',flat=True)
+
+        not_in_db = set(tmp_indicators).difference(set(indicator_ids))
+
+        if len(not_in_db) > 0:
+            err = 'indicator_id: ' + str(list(not_in_db)[0]) + ' does not exists.'
+            return err, None
+
+        return None, list(indicator_ids)
