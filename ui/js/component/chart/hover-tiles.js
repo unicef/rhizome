@@ -58,8 +58,6 @@ function tile(values, x) {
 
 		previous.width = (previous.center + (Math.abs(x(v) - previous.center) / 2)) - previous.x;
 
-		console.log(previous.x, previous.center, previous.width, previous.value, typeof previous.value);
-
 		tiles.push(previous);
 
 		previous = {
@@ -70,7 +68,6 @@ function tile(values, x) {
 	}
 
 	previous.width = x(domain[1]) - previous.x;
-	console.log(previous.x, previous.center, previous.width, previous.value);
 	tiles.push(previous);
 
 	return tiles;
