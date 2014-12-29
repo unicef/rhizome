@@ -36,7 +36,6 @@ var OFFICE = {
  * Jan or Dec, then only Jan and Dec are used.
  */
 function ytdTicks(month) {
-	console.log(month);
 	// If the current month is between March and October, the ticks should be
 	// January, current month, December.
 	if (month > 1 && month < 10) {

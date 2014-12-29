@@ -32,6 +32,18 @@ module.exports = {
 			}
 
 			g.call(xAxis);
+
+			var domain = this.x.domain();
+
+			// Align tick labels to the edges of the chart if they are on the
+			// boundaries of the domain
+			g.selectAll('.tick').each(function (d) {
+				if (d === domain[0]) {
+					d3.select(this).selectAll('text').style('text-anchor', 'start');
+				} else if (d === domain[domain.length - 1]) {
+					d3.select(this).selectAll('text').style('text-anchor', 'end');
+				}
+			});
 		});
 
 		this.$on('show-annotation', function (d) {
