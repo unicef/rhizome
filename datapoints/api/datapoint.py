@@ -221,7 +221,7 @@ class DataPointResource(Resource):
         unioned_df = concat([df_w_data,de_duped_agg_df])
 
         if len(unioned_df) == 0:
-            err = 'There is no data (both aggregated and disaggregated) for the regions, campaigns, and indicators requested"'
+            err = 'There is no data (both aggregated and disaggregated) for the regions, campaigns, and indicators requested'
             return err, None
 
         sorted_df = self.sort_rc_df(unioned_df,campaigns)
