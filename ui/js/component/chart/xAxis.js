@@ -2,6 +2,8 @@
 
 var d3 = require('d3');
 
+var DEFAULT_TICKS = 3;
+
 module.exports = {
 	created: function () {
 		this.$on('hook:drawn', function () {
@@ -15,8 +17,15 @@ module.exports = {
 
 			var xAxis = d3.svg.axis()
 				.scale(this.x)
-				.ticks(3)
 				.orient('bottom');
+
+			if (this.tickValues) {
+				xAxis.tickValues((typeof this.tickValues === 'function') ?
+					this.tickValues() :
+					this.tickValues);
+			} else {
+				xAxis.ticks(this.ticks || DEFAULT_TICKS);
+			}
 
 			if (this.xFmt) {
 				xAxis.tickFormat(this.xFmt);

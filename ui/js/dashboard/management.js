@@ -30,6 +30,29 @@ var OFFICE = {
 };
 
 /**
+ * Utility for generating the tickValues array for a year-to-date chart.
+ *
+ * Ticks will be Jan, Dec, and the current month. If the current month is either
+ * Jan or Dec, then only Jan and Dec are used.
+ */
+function ytdTicks(month) {
+	console.log(month);
+	// If the current month is between March and October, the ticks should be
+	// January, current month, December.
+	if (month > 1 && month < 10) {
+		return [1, month + 1, 12];
+	}
+
+	// If the current month is January, or February, the ticks are just the
+	// current month and December.
+	if (month < 2) {
+		return [month + 1, 12];
+	}
+
+	// Otherwise the ticks are January and the current month
+	return [1, month + 1];
+}
+/**
  * Utility for filling in default ranges.
  *
  * Adds a default range property to each entry in the array. A stopgap for
@@ -102,7 +125,8 @@ module.exports = {
 				domain: [1, 12],
 				xFmt : function (d) {
 					return moment(d, 'M').format('MMM');
-				}
+				},
+				tickValues: ytdTicks
 			},
 			conversions: {
 				lines: [],
@@ -310,6 +334,8 @@ module.exports = {
 				campaign_start: start.clone().subtract(2, 'years').format('YYYY-MM-DD'),
 				campaign_end  : start.format('YYYY-MM-DD')
 			};
+
+			this.cases.tickValues = ytdTicks(start.month());
 
 			// Polio Cases YTD
 			indicators([69, 70, 159, 160, 161, 162], q)

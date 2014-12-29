@@ -18,17 +18,19 @@
 				<svg v-component="chart-base"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     v-with="values: cases.lines,
-				             xFmt  : cases.xFmt,
-				             domain: cases.domain">
+				     v-with="values    : cases.lines,
+				             xFmt      : cases.xFmt,
+				             domain    : cases.domain,
+				             tickValues: cases.tickValues">
 
 					<g v-component="chart-line"
 					   class="data"
 					   data-width="{{contentWidth}}"
 					   data-height="{{contentHeight}}"
 					   data-series="{{values}}"
-					   v-with="xFmt  : xFmt,
-					           domain: domain"></g>
+					   v-with="tickValues: tickValues,
+					           xFmt      : xFmt,
+					           domain    : domain"></g>
 				</svg>
 			</section>
 			<section>
