@@ -22,7 +22,7 @@ class OfficeResource(BaseApiResource):
 class RegionResource(BaseApiResource):
     '''Region Resource'''
 
-    parent_region = fields.ForeignKey('datapoints.api.simple.RegionResource', 'parent_region', full=False, null=True)
+    parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=False, null=True)
     office = fields.ToOneField(OfficeResource, 'office')
 
 
