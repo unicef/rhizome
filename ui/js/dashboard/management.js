@@ -30,6 +30,50 @@ var OFFICE = {
 };
 
 /**
+ * Utility for generating the tickValues array for a year-to-date chart.
+ *
+ * Ticks will be Jan, Dec, and the current month. If the current month is either
+ * Jan or Dec, then only Jan and Dec are used.
+ */
+function ytdTicks(month) {
+	return function (domain) {
+		var lower = domain[0];
+		var upper = domain[domain.length - 1];
+
+		// If the current month is between March and October, the ticks should be
+		// January, current month, December.
+		if (month > lower + 1 && month < upper - 1) {
+			return [lower, month, upper];
+		}
+
+		// If the current month is January, or February, the ticks are just the
+		// current month and December.
+		if (month <= lower + 1) {
+			return [month, upper];
+		}
+
+		// Otherwise the ticks are January and the current month
+		return [1, month];
+	};
+}
+
+function timeTicks(domain) {
+	var lower = moment(domain[0]);
+	var upper = moment(domain[domain.length - 1]);
+	var current = moment(upper).startOf('year');
+	var ticks = [lower.toDate().getTime()];
+
+	while (current.isAfter(lower)) {
+		ticks.push(current.toDate().getTime());
+		current = moment(current).subtract(1, 'year');
+	}
+
+	ticks.push(upper.toDate().getTime());
+
+	return ticks;
+}
+
+/**
  * Utility for filling in default ranges.
  *
  * Adds a default range property to each entry in the array. A stopgap for
@@ -97,17 +141,28 @@ module.exports = {
 			campaigns  : [],
 			region     : null,
 			start      : new Date(),
+			missed: {
+				layers    : [],
+				tickValues: timeTicks
+			},
 			cases      : {
 				lines: [],
 				domain: [1, 12],
 				xFmt : function (d) {
 					return moment(d, 'M').format('MMM');
-				}
+				},
+				tickValues: ytdTicks
 			},
 			conversions: {
 				lines: [],
-				x    : d3.time.scale(),
-				yFmt : d3.format('.0%')
+				x         : d3.scale.linear(),
+				xFmt      : function (d) {
+					var dt = moment(d);
+
+					return dt.format(dt.month() === 0 ? 'MMM YYYY' : 'MMM');
+				},
+				yFmt      : d3.format('.0%'),
+				tickValues: timeTicks
 			},
 			capacity   : [{
 				name: 'Soc. Mob. Coverage',
@@ -311,6 +366,8 @@ module.exports = {
 				campaign_end  : start.format('YYYY-MM-DD')
 			};
 
+			this.cases.tickValues = ytdTicks(start.month() + 1);
+
 			// Polio Cases YTD
 			indicators([69, 70, 159, 160, 161, 162], q)
 				.then(objects)
@@ -347,7 +404,7 @@ module.exports = {
 					return { points: data };
 				}))
 				.then(each(color(coolgray)))
-				.done(set('missed'));
+				.done(set('missed.layers'));
 
 			// Conversions
 			indicators([25, 26], q)
@@ -355,7 +412,7 @@ module.exports = {
 				.then(sort(campaignStart))
 				.then(ratio(26, 25))
 				.then(each(variables({
-					x: function (d) { return d.campaign.start_date; },
+					x: function (d) { return d.campaign.start_date.getTime(); },
 					y: function (d) { return 1 - d.value; }
 				})))
 				.then(map(function (data) {
