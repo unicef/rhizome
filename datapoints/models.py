@@ -134,7 +134,7 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.office + '-' + self.start_date)
+        return unicode(self.office.name + '-' + unicode(self.start_date))
 
 
     def get_full_name(self):

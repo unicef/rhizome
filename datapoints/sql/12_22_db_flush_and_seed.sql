@@ -314,21 +314,119 @@ where sr.id = r.source_region_id
 and r.name like '%(District%';
 
 
-
-
 -----------------------------------------------
 -- Bring Back Indicators ( along w source )  --
 -----------------------------------------------
+
+
+
+insert into indicator
+(name,description,is_reported,slug,created_at,short_name,source_id)
+select distinct indicator_string,indicator_string,CAST(1 as boolean),indicator_string,now(),indicator_string,1
+from source_datapoint sd
+where not exists 
+(
+	select 1 from indicator i 
+	where i.name = sd.indicator_string
+)
+
+
+insert into source_indicator
+(indicator_string,source_guid,document_id)
+select name,slug,sd.id
+from indicator i
+inner join source_data_document sd
+on sd.guid = 'initialinsertfromoldmasterdb'
+
+
+insert into indicator_map
+(master_indicator_id,source_indicator_id,mapped_by_id)
+select i.id,si.id,1 From indicator i 
+inner join source_indicator si
+on i.name = si.indicator_string
 
 -----------------------------------------------
 -- Bring Back campaigns ( along w office )  --
 -----------------------------------------------
 
+insert into source_campaign
+(campaign_string,source_guid,document_id,office_id)
 
-----------------------------------------------------
--- NOW BRING BACK THE DATAPOINTS BY  --
-----------------------------------------------------
+select x.campaign_string,x.campaign_string,d.id,o.id from 
+(
+select distinct campaign_string 
+,substring(campaign_string from 0 for position(' ' in campaign_string)) as office_name
+from source_datapoint sd
+)x
+inner join office o 
+on x.office_name = o.name
+inner join source_data_document d
+on d.guid = 'initialinsertfromoldmasterdb'
 
+
+--
+
+
+insert into campaign
+(office_id,start_date,end_date,slug,campaign_type_id,created_at)
+
+SELECT 
+	x.office_id
+	,to_date(x.the_date, 'Month YYYY')
+	,to_date(x.the_date, 'Month YYYY')
+	,LOWER(REPLACE(x.campaign_string,' ','-')) as slug
+	,1
+	,now()
+FROM (
+	SELECT 
+	office_id,
+	campaign_string,
+	REPLACE(REPLACE(REPLACE(campaign_string,'Afghanistan ',''),'Nigeria ',''),'Pakistan ','') as the_date
+	FROM source_campaign 
+) x
+
+
+insert into campaign_map
+(source_campaign_id,master_campaign_id,mapped_by_id)
+
+SELECT sc.id,c.id,1 From campaign c
+inner join source_campaign sc 
+on slug = lower(replace(sc.campaign_string,' ','-'))
+
+
+------------------------------------
+-- NOW BRING BACK THE DATAPOINTS  --
+------------------------------------
+
+
+--36799
+insert into datapoint
+(indicator_id,region_id,campaign_id,value,changed_by_id,source_datapoint_id,created_at)
+
+SELECT 
+	i.id
+	,r.id
+ 	,c.id
+	,CAST(sd.cell_value as float)
+	,1
+	,sd.id
+	,now()
+
+FROM source_datapoint sd 
+INNER JOIN indicator i
+	ON sd.indicator_string = i.name
+INNER JOIN campaign c
+	ON lower(replace(sd.campaign_string,' ','-')) = c.slug
+INNER JOIN region r
+	ON 1=1
+	AND r.name = REPLACE(REPLACE(REPLACE(sd.region_string,'Afghanistan - ',''),'Nigeria - ',''),'Pakistan - ','') 
+WHERE NOT EXISTS 
+(
+	SELECT 1 FROM datapoint d
+	where d.indicator_id = i.id
+	and d.region_id = r.id
+	and d.campaign_id = c.id
+)
 
 
 
