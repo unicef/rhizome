@@ -65,15 +65,6 @@ class Document(models.Model):
         super(Document, self).save(*args, **kwargs)
 
 
-class HeaderOverride(models.Model):
-
-    content_type = models.ForeignKey(ContentType)
-    header_string = models.CharField(max_length=255)
-    created_by = models.ForeignKey(User)
-    created_at = models.DateTimeField(default=datetime.now())
-
-
-
 class SourceDataPoint(models.Model):
     '''
     source will be odk or csv upload. source_id (for odk) is the guid
@@ -110,7 +101,7 @@ class SourceDataPoint(models.Model):
     class Meta:
         app_label = 'source_data'
         unique_together = ('source','source_guid','indicator_string')
-
+        db_table = 'source_datapoint'
 
     ###################
     #### META MAP #####
@@ -129,9 +120,12 @@ class SourceRegion(models.Model):
     country = models.CharField(max_length=255,null=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
+    is_high_risk = models.BooleanField(default=False)
+
 
     class Meta:
-        unique_together = ('region_string','document')
+        db_table = 'source_region'
+        unique_together = ('region_string','document','region_type','country')
 
     def __unicode__(self):
         return self.region_string
@@ -144,6 +138,8 @@ class SourceIndicator(models.Model):
     document = models.ForeignKey(Document)
 
 
+    class Meta:
+        db_table = 'source_indicator'
 
     def __unicode__(self):
         return self.indicator_string
@@ -154,6 +150,11 @@ class SourceCampaign(models.Model):
     campaign_string = models.CharField(max_length=255,unique=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
+    office =  models.ForeignKey('datapoints.Office')
+
+
+    class Meta:
+        db_table = 'source_campaign'
 
     def __unicode__(self):
         return self.campaign_string
@@ -165,12 +166,18 @@ class RegionMap(models.Model):
     source_region = models.ForeignKey(SourceRegion,unique=True)
     mapped_by = models.ForeignKey(User)
 
+    class Meta:
+        db_table = 'region_map'
+
 
 class IndicatorMap(models.Model):
 
     master_indicator = models.ForeignKey(Indicator)
     source_indicator = models.ForeignKey(SourceIndicator,unique=True)
     mapped_by = models.ForeignKey(User)
+
+    class Meta:
+        db_table = 'indicator_map'
 
 
 class CampaignMap(models.Model):
@@ -179,6 +186,8 @@ class CampaignMap(models.Model):
     source_campaign = models.ForeignKey(SourceCampaign,unique=True)
     mapped_by = models.ForeignKey(User)
 
+    class Meta:
+        db_table = 'campaign_map'
 
 
 

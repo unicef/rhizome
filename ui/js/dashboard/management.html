@@ -18,17 +18,19 @@
 				<svg v-component="chart-base"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     v-with="values: cases.lines,
-				             xFmt  : cases.xFmt,
-				             domain: cases.domain">
+				     v-with="values    : cases.lines,
+				             xFmt      : cases.xFmt,
+				             domain    : cases.domain,
+				             tickValues: cases.tickValues">
 
 					<g v-component="chart-line"
+					   class="data"
 					   data-width="{{contentWidth}}"
 					   data-height="{{contentHeight}}"
-					   data-lines="{{values}}"
-					   v-with="xFmt  : xFmt,
-					           domain: domain"></g>
-
+					   data-series="{{values}}"
+					   v-with="tickValues: tickValues,
+					           xFmt      : xFmt,
+					           domain    : domain"></g>
 				</svg>
 			</section>
 			<section>
@@ -49,12 +51,18 @@
 						<svg v-component="chart-base"
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
-						     v-with="values: missed">
+						     v-with="values    : missed.layers,
+						             tickValues: missed.tickValues,
+						             xFmt      : missed.xFmt,
+						             yFmt      : missed.yFmt">
 
 							<g v-component="chart-stackedTime"
-							   v-with="layers: values,
-							           width : contentWidth,
-							           height: contentHeight">
+							   v-with="series    : values,
+							           width     : contentWidth,
+							           height    : contentHeight,
+							           tickValues: tickValues,
+							           xFmt      : xFmt,
+							           yFmt      : yFmt">
 								<g class="x axis"
 								   v-attr="transform: 'translate(0,' + height + ')'"></g>
 								<g class="y axis"></g>
@@ -68,15 +76,20 @@
 						<svg v-component="chart-base"
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
-						     v-with="values: conversions.lines,
-						             x     : conversions.x,
-						             yFmt  : conversions.yFmt">
+						     v-with="values    : conversions.lines,
+						             tickValues: conversions.tickValues,
+						             x         : conversions.x,
+						             yFmt      : conversions.yFmt,
+						             xFmt      : conversions.xFmt">
 
 							<g v-component="chart-line"
 							   data-width="{{contentWidth}}"
 							   data-height="{{contentHeight}}"
-							   data-lines="{{values}}"
-							   v-with="x: x, yFmt: yFmt"></g>
+							   data-series="{{values}}"
+							   v-with="tickValues: tickValues,
+							           x         : x,
+							           yFmt      : yFmt,
+							           xFmt      : xFmt"></g>
 						</svg>
 					</section>
 

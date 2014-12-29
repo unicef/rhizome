@@ -15,12 +15,13 @@ class Source(models.Model):
 
 class Indicator(models.Model):
 
-    short_name = models.CharField(max_length=55,unique=False) # FIX UNIQUE HERE!
+    short_name = models.CharField(max_length=55,unique=True)
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    source = models.ForeignKey(Source)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -28,6 +29,22 @@ class Indicator(models.Model):
     class Meta:
         db_table = 'indicator'
         ordering = ('name',)
+
+class CalculatedIndicatorComponent(models.Model):
+
+    indicator = models.ForeignKey(Indicator, related_name='indicator_master')
+    indicator_component = models.ForeignKey(Indicator,related_name='indicator_component')
+    calculation = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'calculated_indicator_component'
+
+
 
 class Office(models.Model):
 
@@ -44,17 +61,23 @@ class Office(models.Model):
             ('view_office', 'View office'),
         )
 
+class RegionType(models.Model):
+
+    name = models.CharField(max_length=55, unique=True)
+
+    class Meta:
+        db_table = 'region_type'
 
 class Region(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
     region_code = models.CharField(max_length=55, unique=True)
-    region_type = models.CharField(max_length=55)
+    region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.FloatField(null=True,blank=True)
     longitude = models.FloatField(null=True,blank=True)
-    slug = AutoSlugField(populate_from='name',max_length=55)
+    slug = AutoSlugField(populate_from='name',max_length=55,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
     source_region = models.ForeignKey('source_data.SourceRegion')
@@ -64,9 +87,25 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def get_all_children(self):
+
+        r = []
+
+        for c in Region.objects.filter(parent_region=self):
+            # r.append(c.get_all_children())
+            r.append(c)
+
+        second_leaf = Region.objects.filter(parent_region__in=r)
+
+        r.extend(second_leaf)
+
+        return r
+
 
     class Meta:
+
         db_table = 'region'
+        unique_together = ('name','region_type','office')
 
         permissions = (
             ('view_region', 'View region'),
@@ -74,24 +113,32 @@ class Region(models.Model):
 
         ordering = ('name',)
 
+class CampaignType(models.Model):
 
-
-class Campaign(models.Model):
-
-    name = models.CharField(max_length=255)
-    office = models.ForeignKey(Office)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name')
-    created_at = models.DateTimeField(auto_now=True)
-
+    name = models.CharField(max_length=55)
 
     def __unicode__(self):
         return unicode(self.name)
 
+    class Meta:
+        db_table = 'campaign_type'
+
+class Campaign(models.Model):
+
+    office = models.ForeignKey(Office)
+    campaign_type = models.ForeignKey(CampaignType)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    slug = AutoSlugField(populate_from='get_full_name',unique=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+
+    def __unicode__(self):
+        return unicode(self.office.name + '-' + unicode(self.start_date))
+
 
     def get_full_name(self):
-        full_name = self.office.name + '-' + self.__unicode__()
+        full_name = self.__unicode__()
         return full_name
 
     class Meta:
@@ -137,32 +184,6 @@ class Responsibility(models.Model):
         db_table = 'responsibility'
         ordering = ('indicator',)
         unique_together = ('user','indicator','region')
-
-
-class AggregationType(models.Model):
-
-    name = models.CharField(max_length=255,unique=True)
-    slug = models.CharField(max_length=255,unique=True)
-    display_name_w_sub = models.CharField(max_length=255,unique=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return unicode(self.name)
-
-    class Meta:
-        db_table = 'aggregation_type'
-
-
-class AggregationExpectedData(models.Model):
-
-    aggregation_type = models.ForeignKey(AggregationType)
-    content_type = models.CharField(max_length=20)
-    param_type = models.CharField(max_length=20)
-    slug = AutoSlugField(populate_from=('aggregation_type','content_type'),max_length=55)
-    created_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'aggregation_expected_data'
 
 
 class ParentRegionAgg(models.Model):

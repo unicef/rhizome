@@ -83,7 +83,7 @@ class RegionTransform(DocTransform):
 
     def validate(self):
 
-        essential_columns = ['name','code','parent_name','region_type','country','lat','lon']
+        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014']
         df_cols = [col for col in self.df]
         intsct = list(set(essential_columns).intersection(df_cols))
 
@@ -108,63 +108,34 @@ class RegionTransform(DocTransform):
 
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
-        parent_regions = []
+        # parent_regions = []
 
         just_created, updated, errors = [],[],[]
 
         for row in valid_df.iterrows():
+
             row_data = row[1]
-            parent_regions.append(row_data.parent_name)
 
-            try:
-                child_defaults = {
-                    'region_code': row_data.code,\
-                    'parent_name': row_data.parent_name,\
-                    'region_type': row_data.region_type,\
-                    'country': row_data.country,\
-                    'lat': row_data.lat,\
-                    'lon': row_data.lon,\
-                    'document': self.document,\
-                    'source_guid': str(row_data.region_name)}
+            child_defaults = {
+                'region_code': row_data.code,\
+                'parent_name': row_data.parent_name,\
+                'lat': row_data.lat,\
+                'lon': row_data.lon,\
+                'document': self.document,\
+                'is_high_risk': row_data.high_risk_2014,\
+                'source_guid': str(row_data.region_name)}
 
-                sr,created = SourceRegion.objects.get_or_create(
-                    region_string = row_data.region_name,\
-                    defaults= child_defaults)
-
-            except UnicodeDecodeError as err:
-                errors.append(row_data.region_name)
+            sr,created = SourceRegion.objects.get_or_create(
+                region_string = row_data.region_name,\
+                region_type  = row_data.region_type,\
+                country = row_data.country,\
+                defaults= child_defaults)
 
             if created == 1:
                 just_created.append(sr)
-            else: # update the row in the db with all of the new values.
-                updated_sr = SourceRegion.objects.filter(id=sr.id).update(**child_defaults)
-                updated.append(updated_sr)
 
-
-        #############################
-        ## Now process the parents ##
-        #############################
-
-        distinct_parent_regions = list(set(parent_regions))
-
-        for reg in distinct_parent_regions:
-
-            try:
-                parent_defaults = {
-                    'region_code': reg,\
-                    'document': self.document,\
-                    'country': row_data.country,\
-                    'source_guid': 'uploaded_as_parent: ' + str(reg)}
-
-            except UnicodeDecodeError as err:
-                errors.append(row_data.region_name)
-
-            parent_sr, created = SourceRegion.objects.get_or_create(
-                region_string = reg,defaults = parent_defaults)
-
-            if created == 1:
-                just_created.append(parent_sr)
-            else: # update the row in the db with all of the new values.
-                updated_parent_sr = SourceRegion.objects.filter(id=parent_sr.id).\
-                    update(**parent_defaults)
-                updated.append(parent_sr)
+            else:
+                pass
+                ## this conflict resolution should be dealt w refrresh master ##
+                ## this condition will only really be met in error ( a region
+                ## with same name, type and country gets uploaded for one document )

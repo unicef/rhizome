@@ -2,6 +2,7 @@ from tastypie.resources import ModelResource, ALL
 from tastypie import fields
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from datapoints.api.base import BaseApiResource
 from datapoints.models import *
@@ -35,6 +36,20 @@ class RegionResource(BaseApiResource):
             "region_type": ALL,
         }
 
+    def dehydrate(self, bundle):
+
+        bundle.data['office'] = bundle.obj.office.id
+
+        try:
+            bundle.data['parent_region'] = bundle.obj.parent_region.id
+        except ObjectDoesNotExist:
+            pass
+        except AttributeError:
+            pass
+
+        return bundle
+
+
 
 class IndicatorResource(BaseApiResource):
     '''Indicator Resource'''
@@ -62,6 +77,11 @@ class CampaignResource(BaseApiResource):
             "office": ALL,
         }
 
+    def dehydrate(self, bundle):
+
+        bundle.data['office'] = bundle.obj.office.id
+
+        return bundle
 
 class UserResource(BaseApiResource):
     '''User Resource'''
@@ -71,14 +91,3 @@ class UserResource(BaseApiResource):
         resource_name = 'user'
         excludes = ['password', 'username']
         allowed_methods = ['get']
-
-class OfficeResource(BaseApiResource):
-    '''Office Resource'''
-
-    class Meta(BaseApiResource.Meta):
-        queryset = Office.objects.all()
-        resource_name = 'office'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-        }
