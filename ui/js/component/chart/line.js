@@ -16,6 +16,8 @@ module.exports = Vue.extend({
 
 	mixins: [
 		require('./labels'),
+		require('./hover-tiles'),
+		require('./hover-line'),
 		require('./yGrid'),
 		require('./xAxis')
 	],
@@ -44,10 +46,12 @@ module.exports = Vue.extend({
 
 			function getPoints(d) { return d.points; }
 
-			var self    = this;
 			var svg     = d3.select(this.$el);
 
-			var dataset = this.series.map(getPoints);
+			var dataset = this.series.map(getPoints).sort(function (a, b) {
+				return a.x < b.x ? -1 : 1;
+			});
+
 			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
 			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
 			var lower   = Math.min(0, util.min(dataset, getY));
@@ -87,16 +91,7 @@ module.exports = Vue.extend({
 			point.enter().append('circle')
 				.attr({
 					'class': 'point',
-					'r'    : 3,
-				})
-				.on('mouseover', function (d) {
-					console.log('mouseover');
-					self.$dispatch('show-annotation', d);
-					self.$emit('show-annotation', d);
-				})
-				.on('mouseout', function (d) {
-					self.$dispatch('hide-annotation', d);
-					self.$emit('hide-annotation', d);
+					'r'    : 2,
 				});
 
 			point.transition().duration(TRANSITION_SPEED).attr({
@@ -107,6 +102,12 @@ module.exports = Vue.extend({
 			point.exit().remove();
 
 			this._callHook('drawn');
+			this.$emit('chart-drawn', {
+				el    : this.$el,
+				series: dataset,
+				x     : this.x,
+				y     : this.y
+			});
 		}
 	},
 

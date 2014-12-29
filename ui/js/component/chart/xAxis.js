@@ -2,6 +2,8 @@
 
 var d3 = require('d3');
 
+var DEFAULT_TICKS = 3;
+
 module.exports = {
 	created: function () {
 		this.$on('hook:drawn', function () {
@@ -15,14 +17,31 @@ module.exports = {
 
 			var xAxis = d3.svg.axis()
 				.scale(this.x)
-				.ticks(3)
 				.orient('bottom');
+
+			if (this.tickValues) {
+				xAxis.tickValues(this.tickValues(this.x.domain()));
+			} else {
+				xAxis.ticks(this.ticks || DEFAULT_TICKS);
+			}
 
 			if (this.xFmt) {
 				xAxis.tickFormat(this.xFmt);
 			}
 
 			g.call(xAxis);
+
+			var domain = this.x.domain();
+
+			// Align tick labels to the edges of the chart if they are on the
+			// boundaries of the domain
+			g.selectAll('.tick').each(function (d) {
+				if (d === domain[0]) {
+					d3.select(this).selectAll('text').style('text-anchor', 'start');
+				} else if (d === domain[domain.length - 1]) {
+					d3.select(this).selectAll('text').style('text-anchor', 'end');
+				}
+			});
 		});
 
 		this.$on('show-annotation', function (d) {
