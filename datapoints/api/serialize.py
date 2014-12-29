@@ -38,7 +38,7 @@ class CustomSerializer(Serializer):
         campaign_ids = [int(row['campaign']) for row in data_objects]
         campaign_lookup = self.build_meta_lookup(Campaign,campaign_ids)
 
-        for row in data_objects:#.iteritems():
+        for row in data_objects:
             row_dict = {}
             row_dict['region'] = region_lookup[row['region']]
             row_dict['campaign'] = campaign_lookup[row['campaign']]
@@ -46,7 +46,10 @@ class CustomSerializer(Serializer):
             indicators = row['indicators']
             for ind in indicators:
 
-                row_dict[indicator_lookup[int(ind['indicator'])]] = ind['value']
+                try:
+                    row_dict[indicator_lookup[int(ind['indicator'])]] = ind['value']
+                except KeyError:
+                    pass
 
             list_of_rows.append(row_dict)
 
@@ -61,6 +64,6 @@ class CustomSerializer(Serializer):
 
         for the_id in set(meta_ids):
 
-            meta_lookup[the_id] = object_type.objects.get(id=the_id).name
+            meta_lookup[the_id] =  object_type.objects.get(id=the_id).__unicode__()
 
         return meta_lookup
