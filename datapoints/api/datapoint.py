@@ -13,6 +13,7 @@ from pandas import DataFrame
 from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
+from django.core.exceptions import ObjectDoesNotExist
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
@@ -62,6 +63,7 @@ class DataPointResource(Resource):
         and cooresponds to the business case that we need to accomidate
         as well as the requirements of the front end application.
         '''
+        self.error = None
 
         err,parsed_params = self.parse_url_params(request.GET)
 
@@ -168,8 +170,6 @@ class DataPointResource(Resource):
         the indicator and campaign stored as well)
         '''
 
-        pp.pprint(parsed_params)
-
         ## find the campaign__in parameter via the method below.. note however
         ## this method only filters on start / end.. not office id.
         err, campaigns = self.filter_campaigns_by_date(parsed_params)
@@ -182,6 +182,7 @@ class DataPointResource(Resource):
             int(parsed_params['the_offset']), \
             int(parsed_params['the_limit'])
 
+
         try:
             df_w_data = DataFrame(list(DataPoint.objects.filter(
                 campaign__in = campaigns,\
@@ -193,12 +194,22 @@ class DataPointResource(Resource):
             df_w_data = DataFrame(columns= ['campaign_id','region_id'])
 
         ## get all of the r/c combos that have data ##
-        de_duped_agg_df = self.build_agg_rc_df(campaigns,indicators,regions)
+        err, de_duped_agg_df = self.build_agg_rc_df(campaigns,indicators,regions)
+
+        if err:
+            return err, None
+
+
         df_w_data['is_agg'] = 0
         de_duped_agg_df['is_agg'] = 1
 
         ##  union the two data frames but differentiate aggregation
         unioned_df = concat([df_w_data,de_duped_agg_df])
+
+        if len(unioned_df) == 0:
+            err = 'There is no data (both aggregated and disaggregated) for the regions, campaigns, and indicators requested"'
+            return err, None
+
         sorted_df = self.sort_rc_df(unioned_df,campaigns)
 
         ## slice the unioned DF with the offset / limit provided
@@ -437,7 +448,10 @@ class DataPointResource(Resource):
         ## region and the parent is the value
         for r in regions:
 
-            r_obj = Region.objects.get(id=r)
+            try:
+                r_obj = Region.objects.get(id=r)
+            except ObjectDoesNotExist as err:
+                return str(err) + ' for region_id: ' + str(r) , None
 
             for chld in r_obj.get_all_children():
                 parent_region_lookup.append([chld.id,r])
@@ -476,7 +490,7 @@ class DataPointResource(Resource):
 
         r_c_df = de_duped_agg_df.drop('child_region_id', 1)
 
-        return r_c_df
+        return None, r_c_df
 
 
     def sort_rc_df(self,rc_df,campaigns):
