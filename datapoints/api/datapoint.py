@@ -83,7 +83,6 @@ class DataPointResource(Resource):
             return []
 
 
-
         ## find the distinct regions/campaigns and slice by limit/offset
         err, r_c_df = self.build_campaign_region_df(parsed_params)
 
@@ -106,7 +105,8 @@ class DataPointResource(Resource):
         aggregated_dp_df['is_agg'] = 1
 
         final_df = concat([dp_df,aggregated_dp_df])
-        results = self.dp_df_to_list_of_results(final_df,r_c_df)
+
+        results = self.dp_df_to_list_of_results(final_df,r_c_df,indicators)
 
         return results
 
@@ -315,7 +315,7 @@ class DataPointResource(Resource):
         return None, campaign__in
 
 
-    def dp_df_to_list_of_results(self,dp_df,r_c_df):
+    def dp_df_to_list_of_results(self,dp_df,r_c_df,indicators):
         '''
         One problem with the way this code is writen is that when querying for
         region / campaign tuples, i chose to query where region__in [rs] and
@@ -351,18 +351,36 @@ class DataPointResource(Resource):
             new_obj.campaign = campaign_id
 
             ## look up the indicators from the dictonary created above
-            indicators =  pivoted_dp_dict[(region_id,campaign_id)]
+            indicator_data = pivoted_dp_dict[(region_id,campaign_id)]
+
+            ## if there is no data for a requested indicator i need
+            ## to explicitly add none for that ID
+            for ind in indicators:
+                try:
+                    indicator_data[ind]
+                except KeyError:
+                    indicator_data[ind] = None
+
+            print ':-)\n' * 10
+            print type(indicator_data)
+            print indicator_data
+            print ':-(\n' * 10
 
             # prepare a list of dicts to add to the r/c key
             indicator_list = []
 
             ## iterate through the indicators, create a dictionary with relevant
             ## data and append it to the result object.
-            for k,v in indicators.iteritems():
+            for k,v in indicator_data.iteritems():
                 ind_dict = {}
 
-                datapoint_id = pivoted_id_dict[(region_id,campaign_id)][k]
-                is_agg = pivoted_is_agg_dict[(region_id,campaign_id)][k]
+                ## try to find the is_agg and datapoint id for the indicator / value
+                ## If there was no data, set the is_agg, dp_id and val = None
+                try:
+                    datapoint_id = pivoted_id_dict[(region_id,campaign_id)][k]
+                    is_agg = pivoted_is_agg_dict[(region_id,campaign_id)][k]
+                except KeyError:
+                    datapoint_id,is_agg,v = float('NaN'),float('NaN'),float('NaN')
 
                 ind_dict['datapoint_id'] = None if isnan(float(datapoint_id)) else datapoint_id
                 ind_dict['indicator'] = k
