@@ -54,7 +54,7 @@
 			<div class="medium-1 columns" style="text-align: right">
 				<!-- FIXME: Remove blank line for alignment -->
 				&nbsp;<br>
-				<a class="button primary" role="button" v-on="click : refresh()"
+				<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })"
 				   v-class="disabled: !hasSelection">
 					<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load
 				</a>
