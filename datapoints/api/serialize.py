@@ -1,4 +1,5 @@
 import StringIO
+import pprint as pp
 
 from tastypie.serializers import Serializer
 from pandas import DataFrame
@@ -25,45 +26,73 @@ class CustomSerializer(Serializer):
         data = self.to_simple(data, options)
         data_objects = data['objects']
 
-        list_of_rows = []
+        meta_lookup = self.build_meta_lookup(data_objects)
 
-        ## prep metadata (indicator/region/campaign names) for lookup later
-        indicator_dicts = [row['indicators'] for row in data_objects]
-        indicator_ids= [int(i_dct[0]['indicator']) for i_dct in indicator_dicts]
-        indicator_lookup = self.build_meta_lookup(Indicator,indicator_ids)
+        pp.pprint(meta_lookup)
 
-        region_ids = [int(row['region']) for row in data_objects]
-        region_lookup = self.build_meta_lookup(Region,region_ids)
+        expanded_objects = []
 
-        campaign_ids = [int(row['campaign']) for row in data_objects]
-        campaign_lookup = self.build_meta_lookup(Campaign,campaign_ids)
+        for obj in data_objects:
+            expanded_obj = {}
+            print '---'
+            print obj
+            expanded_obj['region'] = meta_lookup['region'][obj['region']]
+            expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
-        for row in data_objects:
-            row_dict = {}
-            row_dict['region'] = region_lookup[row['region']]
-            row_dict['campaign'] = campaign_lookup[row['campaign']]
+            for ind_dict in obj['indicators']:
+                ind = meta_lookup['indicator'][ind_dict['indicator']]
+                val = ind_dict['value']
+                expanded_obj[ind] = val
 
-            indicators = row['indicators']
-            for ind in indicators:
+            expanded_objects.append(expanded_obj)
 
-                try:
-                    row_dict[indicator_lookup[int(ind['indicator'])]] = ind['value']
-                except KeyError:
-                    pass
 
-            list_of_rows.append(row_dict)
+        some_df = DataFrame(expanded_objects)#[['region','campaign']]
+        print some_df
 
-        csv_df = DataFrame(list_of_rows,index=None)
-        csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
-
+        csv = StringIO.StringIO(str(some_df.to_csv(index=False)))
         return csv
 
-    def build_meta_lookup(self,object_type,meta_ids):
+    def build_meta_lookup(self,object_list):
 
         meta_lookup = {}
 
-        for the_id in set(meta_ids):
+        region_ids = [obj['region'] for obj in object_list]
+        campaign_ids = [obj['campaign'] for obj in object_list]
 
-            meta_lookup[the_id] =  object_type.objects.get(id=the_id).__unicode__()
+        indicator_dicts = [obj['indicators'] for obj in object_list]
 
+        indicator_ids = []
+
+        for ind in indicator_dicts:
+            for other_ind in ind:
+                indicator_ids.append(other_ind['indicator'])
+
+
+        regions = Region.objects.filter(id__in=region_ids)#.values_list('id','name')
+        campaigns = Campaign.objects.filter(id__in=campaign_ids)
+        indicators = Indicator.objects.filter(id__in=indicator_ids)
+
+
+        region_lookup = {}
+        for r in regions:
+            region_lookup[r.id] = r.__unicode__()
+
+
+        campaign_lookup = {}
+        for c in campaigns:
+            campaign_lookup[c.id] = c.__unicode__()
+
+
+        indicator_lookup = {}
+        for ind in indicators:
+            indicator_lookup[ind.id] = ind.__unicode__()
+
+
+        meta_lookup['region'] = region_lookup
+        meta_lookup['campaign'] = campaign_lookup
+        meta_lookup['indicator'] = indicator_lookup
+
+
+        pp.pprint(meta_lookup)
         return meta_lookup
