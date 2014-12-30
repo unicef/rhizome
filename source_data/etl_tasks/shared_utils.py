@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from source_data.models import *
+from datapoints.models import Office
 
 def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
@@ -80,14 +81,27 @@ def map_indicators(indicator_strings,document_id):
 
 def map_campaigns(campaign_strings,document_id):
 
+    offices = [u'Nigeria',u'Afghanistan',u'Pakistan']
+
     campaign_mapping = {}
+
     distinct_campaign_strings = list(set(campaign_strings))
+
 
     for campaign in distinct_campaign_strings:
 
+        ## parse the office string
+        campaign_split = set(campaign.split(' '))
+        office_string = str(list(campaign_split.intersection(set(offices)))[0])
+
+
+        office_obj = Office.objects.get(name = office_string)
+
+
+
         source_campaign,created = SourceCampaign.objects.get_or_create(
             campaign_string = campaign,
-            defaults = {'document_id':document_id})
+            defaults = {'document_id':document_id,'office':office_obj})
 
         try:
             campaign_id = CampaignMap.objects.get(source_campaign_id = \

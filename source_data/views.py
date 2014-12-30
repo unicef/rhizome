@@ -113,7 +113,7 @@ def refresh_master_by_document_id(request,document_id):
 
     source_datapoints = SourceDataPoint.objects.filter(
         document_id=document_id,\
-        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))[:1000]
+        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
 
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
@@ -229,7 +229,7 @@ def pre_process_file(request,document_id,file_type):
         column_mappings['campaign_col'] = request.GET['campaign_col']
         column_mappings['value_col'] = request.GET['value_col']
         column_mappings['region_col'] = request.GET['region_col']
-        column_mappings['indicator_col'] = request.GET['indicator_col']        
+        column_mappings['indicator_col'] = request.GET['indicator_col']
 
         dt = DocTransform(document_id,file_type,column_mappings)
         sdps = dt.dp_df_to_source_datapoints()
