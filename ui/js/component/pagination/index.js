@@ -2,83 +2,75 @@
 
 module.exports = {
 	template: require('./template.html'),
+
 	data: function () {
 		return {
-			limit: 0,
-			offset: 0,
-			total_count: 0
+			limit      : 0,
+			offset     : 0,
+			total_count: 0,
+			window_size: 1,
 		};
 	},
-	methods: {
-		setPage: function (page) {
-			if (page < 1 || page > this.pageCount || page === this.current) {
-				return;
-			}
 
-			this.$dispatch('page-changed', {
-				limit: this.limit,
-				offset: this.limit * (page - 1)
-			});
-		},
-		first: function () {
-			this.setPage(1);
-		},
-		previousPage: function () {
-			this.setPage(this.current - 1);
-		},
-		nextPage: function () {
-			this.setPage(this.current + 1);
-		},
-		last: function () {
-			this.setPage(this.pageCount);
-		}
-	},
 	computed: {
-		firstPage: function () {
-			return this.offset === 0;
+		hasPrevious: function () {
+			return this.offset > 0;
 		},
-		lastPage: function () {
-			return (this.total_count - this.offset) <= this.limit;
+
+		hasNext: function () {
+			return (this.offset + this.limit) < this.total_count;
 		},
+
 		pageCount: function () {
 			return this.limit < 1 ? 0 : Math.ceil(this.total_count / this.limit);
 		},
-		current: function () {
-			return this.offset / this.limit + 1;
-		},
-		jumpBack: function () {
-			var lower = this.current - 2;
-			if (lower < 3) {
-				return false;
+
+		current: {
+			get: function () {
+				return this.offset / this.limit + 1;
+			},
+
+			set: function (page) {
+				if (page < 1 || page > this.pageCount || page === this.current) {
+					return;
+				}
+
+				this.$dispatch('page-changed', {
+					limit: this.limit,
+					offset: this.limit * (page - 1)
+				});
 			}
-
-			return Math.ceil(lower / 2);
 		},
-		jumpForward: function () {
-			var upper = this.current + 2,
-				total = this.pageCount;
 
-			if (upper > (total - 2)) {
-				return false;
-			}
-
-			return upper + Math.floor((total - upper) / 2);
-		},
 		pages: function () {
-			var total = this.pageCount,
-				current = this.current,
-				lower = Math.max(1, current - 2),
-				upper = Math.min(total, lower + 4),
-				pages = [];
+			// Start with page 2 because page 1 is always shown.
+			var page  = Math.max(2, this.current - this.window_size);
+			var pages = [{ number: 1 }];
 
-			for (var i = lower; i <= upper; ++i) {
+			if (page > 2) {
 				pages.push({
-					number: i,
-					current: i === current
+					number: Math.floor((page - 1) / 2),
+					jump  : true
 				});
 			}
 
+			while (page <= Math.min(this.pageCount - 1, this.current + this.window_size)) {
+				pages.push({ number: page });
+				page++;
+			}
+
+			if (page < this.pageCount - 1) {
+				pages.push({
+					number: Math.ceil(page + (this.pageCount - page) / 2),
+					jump  : true
+				});
+			}
+
+			pages.push({ number: this.pageCount });
+
 			return pages;
 		}
+
 	}
+
 };
