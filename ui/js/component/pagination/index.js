@@ -15,7 +15,6 @@ module.exports = {
 				return;
 			}
 
-			console.log('set page: ' + page);
 			this.$dispatch('page-changed', {
 				limit: this.limit,
 				offset: this.limit * (page - 1)
