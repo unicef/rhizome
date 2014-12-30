@@ -65,6 +65,10 @@ class RegionType(models.Model):
 
     name = models.CharField(max_length=55, unique=True)
 
+    def __unicode__(self):
+        return unicode(self.name)
+
+
     class Meta:
         db_table = 'region_type'
 
