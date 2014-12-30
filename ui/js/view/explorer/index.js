@@ -18,7 +18,8 @@ module.exports = {
 			indicators: [],
 			pagination: {
 				the_limit: 20,
-				the_offset: 0
+				the_offset: 0,
+				total_count: 0
 			},
 			table: {
 				loading: false,
@@ -76,7 +77,7 @@ module.exports = {
 	},
 
 	methods: {
-		refresh: function () {
+		refresh: function (pagination) {
 			if (!this.hasSelection) {
 				return;
 			}
@@ -95,6 +96,15 @@ module.exports = {
 					prop: 'campaign',
 					display: 'Campaign'
 				}];
+
+			if (pagination) {
+				// Prepend "the_" to the pagination options (typically limit and offset)
+				// because the datapoint API uses the_limit and the_offset instead of
+				// limit and offset like the other paged APIs. See POLIO-194.
+				_.forOwn(pagination, function (v, k) {
+					options['the_' + k] = v;
+				});
+			}
 
 			if (regions.length > 0) {
 				options.region__in = regions;
@@ -131,6 +141,10 @@ module.exports = {
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
 
+				self.pagination.the_limit   = Number(data.meta.the_limit);
+				self.pagination.the_offset  = Number(data.meta.the_offset);
+				self.pagination.total_count = Number(data.meta.total_count);
+
 				if (!data.objects || data.objects.length < 1) {
 					return;
 				}
@@ -146,8 +160,6 @@ module.exports = {
 
 					return d;
 				});
-
-				self.pagination.the_offset = Number(data.meta.the_offset[0]);
 
 				self.table.rows = datapoints;
 			});
