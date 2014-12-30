@@ -28,14 +28,10 @@ class CustomSerializer(Serializer):
 
         meta_lookup = self.build_meta_lookup(data_objects)
 
-        pp.pprint(meta_lookup)
-
         expanded_objects = []
 
         for obj in data_objects:
             expanded_obj = {}
-            print '---'
-            print obj
             expanded_obj['region'] = meta_lookup['region'][obj['region']]
             expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
@@ -47,52 +43,39 @@ class CustomSerializer(Serializer):
             expanded_objects.append(expanded_obj)
 
 
-        some_df = DataFrame(expanded_objects)#[['region','campaign']]
-        print some_df
+        csv_df = DataFrame(expanded_objects)#[['region','campaign']]
 
-        csv = StringIO.StringIO(str(some_df.to_csv(index=False)))
+        csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
         return csv
 
     def build_meta_lookup(self,object_list):
+        '''
+        Instead of hitting the datbase every time you need to find the
+        string for a particular meta data item.. build a dictionary
+        once, store it in memory and access metadata values this way.
 
-        meta_lookup = {}
+        '''
+        # set up the lookup object
+        meta_lookup = {'region':{},'campaign':{},'indicator':{}}
 
+        ## find the region and campaign ids from the object list
         region_ids = [obj['region'] for obj in object_list]
         campaign_ids = [obj['campaign'] for obj in object_list]
 
-        indicator_dicts = [obj['indicators'] for obj in object_list]
-
-        indicator_ids = []
-
-        for ind in indicator_dicts:
-            for other_ind in ind:
-                indicator_ids.append(other_ind['indicator'])
+        ## every object has all indicators, so find the first one, and the IDs
+        ## for each indicator in that object
+        indicator_list = [obj['indicators'] for obj in object_list]
+        indicator_ids = [ind_dict['indicator'] for ind_dict in indicator_list[0]]
 
 
-        regions = Region.objects.filter(id__in=region_ids)#.values_list('id','name')
-        campaigns = Campaign.objects.filter(id__in=campaign_ids)
-        indicators = Indicator.objects.filter(id__in=indicator_ids)
+        for r in Region.objects.filter(id__in=region_ids):
+            meta_lookup['region'][r.id] = r.__unicode__()
+
+        for c in Campaign.objects.filter(id__in=campaign_ids):
+            meta_lookup['campaign'][c.id] = c.__unicode__()
+
+        for ind in Indicator.objects.filter(id__in=indicator_ids):
+            meta_lookup['indicator'][ind.id] = ind.__unicode__()
 
 
-        region_lookup = {}
-        for r in regions:
-            region_lookup[r.id] = r.__unicode__()
-
-
-        campaign_lookup = {}
-        for c in campaigns:
-            campaign_lookup[c.id] = c.__unicode__()
-
-
-        indicator_lookup = {}
-        for ind in indicators:
-            indicator_lookup[ind.id] = ind.__unicode__()
-
-
-        meta_lookup['region'] = region_lookup
-        meta_lookup['campaign'] = campaign_lookup
-        meta_lookup['indicator'] = indicator_lookup
-
-
-        pp.pprint(meta_lookup)
         return meta_lookup
