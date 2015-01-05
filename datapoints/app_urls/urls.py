@@ -9,11 +9,11 @@ urlpatterns = [
         ## DATAPOINTS ##
         ################
 
-    ## INDEX ##
-    url(r'^$', views.DataPointIndexView.as_view(),name='datapoint_index'),
+    ## DASHBOARD ##
+    url(r'^$', views.DashBoardView.as_view(),name='dashboard'),
 
-     ## DASHBOARD ##
-    url(r'^dashboard/$', views.DashBoardView.as_view(),name='dashboard'),
+    ## Data Table ##
+    url(r'^table/$', views.DataPointIndexView.as_view(),name='datapoint_index'),
 
     ## CREATE ##
     url(r'^create/$', views.DataPointCreateView.as_view(),name='create_datapoint'),
