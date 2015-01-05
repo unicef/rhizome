@@ -31,6 +31,10 @@ class Indicator(models.Model):
         ordering = ('name',)
 
 class CalculatedIndicatorComponent(models.Model):
+    '''
+    the indicator is for example "pct missed due to refusal," the component
+    "total missed" and calculation is "denominator"
+    '''
 
     indicator = models.ForeignKey(Indicator, related_name='indicator_master')
     indicator_component = models.ForeignKey(Indicator,related_name='indicator_component')
