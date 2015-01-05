@@ -2,7 +2,7 @@
 
 # find settings... script wont fail if file doesnt exists so try dev than prod
 source /Users/johndingee_seed/code/UF04/polio/source_data/dev_odk_settings.py
-source /var/www/clients.seedscientific.com/uf/UF04/polio/source_data
+source /var/www/clients.seedscientific.com/uf/UF04/polio/source_data/prod_odk_settings.py
 
 java -jar $JAR_FILE \
 --form_id $FORM_ID \
