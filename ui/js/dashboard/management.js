@@ -315,7 +315,7 @@ module.exports = {
 				return {
 					title   : startDate.format('MMM YYYY'),
 					value   : o.start_date,
-					sortVal : startDate.format('YYYYMMDD'),
+					date    : startDate.format('YYYYMMDD'),
 					selected: false
 				};
 			});

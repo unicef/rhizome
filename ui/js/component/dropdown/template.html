@@ -20,7 +20,7 @@
 		<ul v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
 			<li role="menuitem"
-					v-repeat="items | filterBy pattern 'title' | orderBy 'sortValue'"
+					v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortAsc"
 					v-class="selected : selected"
 					v-on="click : onClick(this)">
 				<i class="fa fa-check fa-lg"></i>&nbsp;{{ title }}

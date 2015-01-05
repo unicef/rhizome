@@ -10,20 +10,24 @@ module.exports = {
 	template: require('./template.html'),
 
 	paramAttributes: [
+		'loading',
+		'loadedEvent',
+		'multi',
 		'placeholder',
 		'searchable',
-		'multi',
-		'loading',
-		'loadedEvent'
+		'data-sort-asc',
+		'data-sort-by'
 	],
 
 	data: function () {
 		return {
-			pattern    : '',
-			open       : false,
-			opening    : false,
-			menuHeight : 0,
-			menuX      : 0
+			pattern   : '',
+			open      : false,
+			opening   : false,
+			menuHeight: 0,
+			menuX     : 0,
+			sortBy    : 'title',
+			sortAsc   : '1'
 		};
 	},
 
@@ -47,10 +51,6 @@ module.exports = {
 			return this.multi ?
 				selected.map(function (o) { return o.value; }) :
 				selected[0].value;
-		},
-
-		sortValue: function () {
-			return this.sortVal || this.title;
 		},
 
 		title: function () {
