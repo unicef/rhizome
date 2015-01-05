@@ -15,7 +15,8 @@ module.exports = {
 		'multi',
 		'placeholder',
 		'searchable',
-		'sort-by'
+		'data-sort-asc',
+		'data-sort-by'
 	],
 
 	data: function () {
@@ -25,7 +26,8 @@ module.exports = {
 			opening   : false,
 			menuHeight: 0,
 			menuX     : 0,
-			sortBy    : 'title'
+			sortBy    : 'title',
+			sortAsc   : '1'
 		};
 	},
 
