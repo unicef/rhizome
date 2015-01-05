@@ -27,7 +27,7 @@ class EtlResource(ModelResource):
         allowed_methods = ['get']
 
         authorization = Authorization()
-        authentication = ApiKeyAuthentication()
+        # authentication = ApiKeyAuthentication()
 
 
     def get_object_list(self, request):
@@ -83,6 +83,8 @@ class EtlTask(object):
               'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
               'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
               'odk_refresh_master' : self.odk_refresh_master,
+              'start_odk_jar' :self.start_odk_jar,
+              'finish_odk_jar' :self.finish_odk_jar
               }
 
         fn = self.function_mappings[task_string]
@@ -97,6 +99,26 @@ class EtlTask(object):
 
         try:
             data = 'API TEST IS WORKING'
+        except Exception as err:
+            return err, None
+
+        return None, data
+
+
+    def start_odk_jar(self):
+
+        try:
+            data = 'Starting to Pull data from ODK Aggregate...'
+        except Exception as err:
+            return err, None
+
+        return None, data
+
+
+    def finish_odk_jar(self):
+
+        try:
+            data = 'Done to Pulling data from ODK Aggregate!'
         except Exception as err:
             return err, None
 
