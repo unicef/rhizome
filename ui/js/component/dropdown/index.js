@@ -15,7 +15,7 @@ module.exports = {
 		'multi',
 		'placeholder',
 		'searchable',
-		'data-sort-asc',
+		'data-sort-dsc',
 		'data-sort-by'
 	],
 
@@ -27,13 +27,17 @@ module.exports = {
 			menuHeight: 0,
 			menuX     : 0,
 			sortBy    : 'title',
-			sortAsc   : '1'
+			sortDsc   : false,
 		};
 	},
 
 	ready: function () {
 		this.searchable = this.searchable === 'true';
 		this.multi      = this.multi === 'true';
+
+		if (this.sortDsc instanceof String) {
+			this.sortDsc = this.sortDsc === 'true';
+		}
 
 		this.$on(this.loadedEvent, function () { this.loading = false; });
 	},
