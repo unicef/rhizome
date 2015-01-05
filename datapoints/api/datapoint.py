@@ -360,11 +360,6 @@ class DataPointResource(Resource):
                 except KeyError:
                     indicator_data[ind] = None
 
-            print ':-)\n' * 10
-            print type(indicator_data)
-            print indicator_data
-            print ':-(\n' * 10
-
             # prepare a list of dicts to add to the r/c key
             indicator_list = []
 
