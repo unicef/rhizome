@@ -1,4 +1,5 @@
 <div class="dropdown" role="menu" v-class="open: open">
+
 	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
 		<label>{{ title }}</label>
 		<div class="icon">
@@ -6,9 +7,11 @@
 			<i class="fa fa-fw fa-caret-down" v-if="!loading"></i>
 		</div>
 	</a>
+
 	<div class="container"
 	     v-class="hidden: !open"
 	     v-style="left: this.menuX + 'px'">
+
 		<form v-if="searchable" role="search">
 			<input type="text" v-model="pattern" tabindex="1">
 			<a class="clear-btn"
@@ -17,19 +20,24 @@
 			   <i class="fa fa-times-circle"></i>
 			</a>
 		</form>
+
 		<ul v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
+
 			<li role="menuitem"
 					v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortDsc"
 					v-class="selected : selected"
 					v-on="click : onClick(this)">
 				<i class="fa fa-check fa-lg"></i>&nbsp;{{ title }}
 			</li>
+
 			<li v-if="loading">
 				Loading&hellip;
 				<i class="fa fa-fw fa-spinner fa-spin"></i>
 			</li>
+
 		</ul>
+
 		<div class="selection-controls" role="group" v-if="multi">
 			<button class="tiny"
 					type="button"
@@ -50,5 +58,8 @@
 				select all
 			</button>
 		</div>
+
 	</div>
+	<!-- End container -->
+
 </div>
