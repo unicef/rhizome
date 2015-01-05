@@ -198,7 +198,7 @@ class DataPointResource(Resource):
 
 
         try:
-            df_w_data = DataFrame(list(DataPoint.objects.filter(
+            df_w_data = DataFrame(list(AbstractedDataPoint.objects.filter(
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = regions).values_list(\
@@ -272,7 +272,6 @@ class DataPointResource(Resource):
             except KeyError as err:
                 err_msg = str(err).replace('"','') + ' is a required paramater!'
                 return err_msg , None
-
 
         self.parsed_params = parsed_params
 
@@ -403,7 +402,7 @@ class DataPointResource(Resource):
         dp_columns = ['id','indicator_id','campaign_id','region_id','value']
 
         try:
-            dp_df = DataFrame(list(DataPoint.objects.filter(
+            dp_df = DataFrame(list(AbstractedDataPoint.objects.filter(
                 region__in = regions,\
                 campaign__in = campaigns,\
                 indicator__in = indicators).values()))[dp_columns]
@@ -416,7 +415,7 @@ class DataPointResource(Resource):
     def build_aggregate_df(self,campaigns,indicators,regions):
         '''
         Taking the keys that are missing data.. find the child regions
-        and query the datapoints table, returning the aggregate value for
+        and query the AbstractedDataPoints table, returning the aggregate value for
         each parent region, indicator, campaign combo.
 
         I would really like to be explicit about the c,i,r thing tuple set.
@@ -428,7 +427,7 @@ class DataPointResource(Resource):
         expected_data = set(product(campaigns,indicators,regions))
 
         ## this is the data that exists for the keys given
-        key_combos_with_data = set(DataPoint.objects.filter(
+        key_combos_with_data = set(AbstractedDataPoint.objects.filter(
             indicator__in = indicators,\
             region__in = regions,\
             campaign__in = campaigns).values_list(\
@@ -448,7 +447,7 @@ class DataPointResource(Resource):
             parent_region = Region.objects.get(id=r)
             child_regions = parent_region.get_all_children()
 
-            sum_of_child_regions = DataPoint.objects.filter(
+            sum_of_child_regions = AbstractedDataPoint.objects.filter(
                     campaign_id = c,\
                     indicator_id = i ,\
                     region__in=child_regions).aggregate(Sum('value'))
@@ -492,7 +491,7 @@ class DataPointResource(Resource):
         ## build a dataframe where we trying to find all of the distinct
         ## campaign/indicator/child_region combbos.  # if none, return empty df
         try:
-            children_regions_with_data_df = DataFrame(list(DataPoint.objects.filter(
+            children_regions_with_data_df = DataFrame(list(AbstractedDataPoint.objects.filter(
                 campaign__in = campaigns,\
                 indicator__in = indicators,\
                 region__in = set(all_children)).values_list(\
