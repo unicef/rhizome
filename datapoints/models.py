@@ -190,13 +190,14 @@ class Responsibility(models.Model):
         unique_together = ('user','indicator','region')
 
 
-class ParentRegionAgg(models.Model):
+class AbstractedDataPoint(models.Model):
 
-    parent_region = models.ForeignKey(Region)
+    region = models.ForeignKey(Region)
     indicator = models.ForeignKey(Indicator)
     campaign = models.ForeignKey(Campaign)
-    the_sum = models.FloatField()
+    value = models.FloatField()
+    is_calc = models.BooleanField()
 
     class Meta:
-        db_table = 'parent_region_agg'
+        db_table = 'vw_datapoint'
         managed = False

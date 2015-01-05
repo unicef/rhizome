@@ -231,9 +231,6 @@ class DataPointResource(Resource):
         For the query dict return another dictionary ( or error ) in accordance
         to the expected ( both required and optional ) parameters in the request
         URL.
-
-        Here i will also generate a list of "indicator_to_calculate" and add
-        that to the parsed_params dictionary
         '''
 
         parsed_params = {}
@@ -262,11 +259,6 @@ class DataPointResource(Resource):
                 err_msg = str(err).replace('"','') + ' is a required paramater!'
                 return err_msg , None
 
-        indicators_to_calculate = CalculatedIndicatorComponent.objects.filter(
-            indicator_id__in = parsed_params['indicator__in']).\
-            values_list('indicator_component',flat=True)
-
-        parsed_params['indicators_to_calculate'] = indicators_to_calculate
 
         self.parsed_params = parsed_params
 
