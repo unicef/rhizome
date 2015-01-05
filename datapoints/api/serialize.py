@@ -32,6 +32,7 @@ class CustomSerializer(Serializer):
 
         for obj in data_objects:
             expanded_obj = {}
+
             expanded_obj['region'] = meta_lookup['region'][obj['region']]
             expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
@@ -42,8 +43,14 @@ class CustomSerializer(Serializer):
 
             expanded_objects.append(expanded_obj)
 
-
         csv_df = DataFrame(expanded_objects)#[['region','campaign']]
+
+        ## rearrange column order ( POLIO-200 ) ##
+        ## http://stackoverflow.com/questions/13148429 ##
+        cols = csv_df.columns.tolist()
+        cols = cols[-2:] + cols[:-2]
+        csv_df = csv_df[cols]
+
 
         csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
         return csv
