@@ -48,7 +48,8 @@ module.exports = Vue.extend({
 
 			var svg     = d3.select(this.$el);
 
-			var dataset = this.series.map(getPoints).sort(function (a, b) {
+			var series  = this.series || [];
+			var dataset = series.map(getPoints).sort(function (a, b) {
 				return a.x < b.x ? -1 : 1;
 			});
 
@@ -70,7 +71,7 @@ module.exports = Vue.extend({
 				.x(getScaledX)
 				.y(getScaledY);
 
-			var lines = svg.selectAll('.line').data(this.series, function (d, i) {
+			var lines = svg.selectAll('.line').data(series, function (d, i) {
 				return d.name || i;
 			});
 

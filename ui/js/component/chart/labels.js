@@ -70,10 +70,11 @@ module.exports = {
 		var self = this;
 
 		this.$on('hook:drawn', function () {
-			var svg   = getAnnotationLayer();
-			var data  = this.series.map(getLast)
+			var svg    = getAnnotationLayer();
+			var series = this.series || [];
+			var data   = series.map(getLast)
 				.filter(function (d) { return d !== null; });
-			var label = svg.selectAll('.label').data(data);
+			var label  = svg.selectAll('.label').data(data);
 
 			label.enter().append('g').attr('class', 'label');
 
