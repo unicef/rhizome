@@ -3,8 +3,8 @@
 	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
 		<label>{{ title }}</label>
 		<div class="icon">
-			<i class="fa fa-fw fa-spinner fa-spin" v-if="loading"></i>
-			<i class="fa fa-fw fa-caret-down" v-if="!loading"></i>
+			<i class="fa fa-fw fa-lg fa-spinner fa-spin" v-if="loading"></i>
+			<i class="fa fa-fw fa-lg fa-caret-down" v-if="!loading"></i>
 		</div>
 	</a>
 
@@ -24,17 +24,8 @@
 		<ul v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
 
-			<li role="menuitem"
-					v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortDsc"
-					v-class="selected : selected"
-					v-on="click : onClick(this)">
-				<i class="fa fa-check fa-lg"></i>&nbsp;{{ title }}
-			</li>
-
-			<li v-if="loading">
-				Loading&hellip;
-				<i class="fa fa-fw fa-spinner fa-spin"></i>
-			</li>
+			<li v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortDsc"
+					v-component="dropdown-item"></li>
 
 		</ul>
 

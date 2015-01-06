@@ -2,16 +2,48 @@
 
 'use strict';
 
-var _ = require('lodash');
+var _    = require('lodash');
+var Vue  = require('vue');
 
-var dom = require('../../util/dom');
+var dom  = require('../../util/dom');
+var util = require('../../util/data');
 
-module.exports = {
+function treeify(data) {
+	var index = _.indexBy(data, 'value');
+	var roots = [];
+
+	for (var i = data.length - 1; i >= 0; i--) {
+		var d = data[i];
+
+		if (d.parent && index[d.parent]) {
+			var p = index[d.parent];
+
+			if (!p.children) {
+				p.children = [];
+			}
+
+			p.children.push(d);
+		} else {
+			roots.push(d);
+		}
+	}
+
+	return roots;
+}
+
+module.exports = Vue.extend({
 	template: require('./template.html'),
+
+	// Object mapping property names of response objects to property names for the
+	// VM. Useful for setting the 'title,' 'value,' and 'parent' properties of the
+	// dropdown items.
+	mapping: {},
+
+	// (Optional) Function for fetching data.
+	source: null,
 
 	paramAttributes: [
 		'loading',
-		'loadedEvent',
 		'multi',
 		'placeholder',
 		'searchable',
@@ -28,18 +60,17 @@ module.exports = {
 			menuX     : 0,
 			sortBy    : 'title',
 			sortDsc   : false,
+			items     : [],
+			loading   : false
 		};
 	},
 
 	ready: function () {
-		this.searchable = this.searchable === 'true';
-		this.multi      = this.multi === 'true';
+		this.searchable = util.parseBool(this.searchable);
+		this.multi      = util.parseBool(this.multi);
+		this.sortDsc    = util.parseBool(this.sortDsc);
 
-		if (this.sortDsc instanceof String) {
-			this.sortDsc = this.sortDsc === 'true';
-		}
-
-		this.$on(this.loadedEvent, function () { this.loading = false; });
+		this.load();
 	},
 
 	computed: {
@@ -82,7 +113,6 @@ module.exports = {
 			}
 
 			if (this.open) {
-				window.addEventListener('scroll', this);
 				window.addEventListener('resize', this);
 				window.addEventListener('click', this);
 				window.addEventListener('keyup', this);
@@ -90,26 +120,10 @@ module.exports = {
 
 				this.$el.getElementsByTagName('ul')[0].scrollTop = 0;
 			} else {
-				window.removeEventListener('scroll', this);
 				window.removeEventListener('resize', this);
 				window.removeEventListener('click', this);
 				window.removeEventListener('keyup', this);
 			}
-		},
-
-		onClick: function (item) {
-			if (this.multi) {
-				item.selected = !item.selected;
-			} else {
-				this.items.forEach(function (o) { o.selected = false; });
-				item.selected = true;
-				this.open = false;
-			}
-
-			this.$dispatch('selection-changed', {
-				selected: this.multi ? this.selected : this.selected[0],
-				changed: item
-			});
 		},
 
 		handleEvent: function (evt) {
@@ -127,7 +141,6 @@ module.exports = {
 					this.open = false;
 				}
 				break;
-			case 'scroll':
 			case 'resize':
 				this.invalidateSize();
 				break;
@@ -157,15 +170,60 @@ module.exports = {
 		}, 100, { leading: false }),
 
 		clear: function () {
-			this.items.forEach(function (o) { o.selected = false; });
+			this.$broadcast('dropdown-clear');
 		},
 
 		invert: function () {
-			this.items.forEach(function (o) { o.selected = !o.selected; });
+			this.$broadcast('dropdown-invert');
 		},
 
 		selectAll: function () {
-			this.items.forEach(function (o) { o.selected = true; });
+			this.$broadcast('dropdown-select-all');
+		},
+
+		load: function (params, accumulator) {
+			if (!this.$options.source) {
+				return;
+			}
+
+			params       = params || {};
+			accumulator  = accumulator || [];
+
+			var self     = this;
+			var source   = self.$options.source;
+			var mapping  = self.$options.mapping;
+
+			self.loading = true;
+
+			source(params)
+				.then(function (data) {
+					return {
+						meta   : data.meta,
+						errors : data.errors,
+						objects: _.map(data.objects, function (v) {
+							return _.defaults(util.rename(v, mapping), { selected: false });
+						})
+					};
+				})
+				.done(function (data) {
+					var meta = data.meta;
+
+					accumulator = accumulator.concat(data.objects);
+
+					if (meta.limit + meta.offset < meta.total_count) {
+						self.load({
+							limit : meta.limit,
+							offset: meta.offset + meta.limit
+						}, accumulator);
+					} else {
+						self.items   = treeify(accumulator);
+						self.loading = false;
+					}
+				});
 		}
+	},
+
+	components: {
+		'dropdown-item': require('./item')
 	}
-};
+});

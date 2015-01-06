@@ -1,8 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
-var api = require('../../data/api');
-var d3 = require('d3');
+var _        = require('lodash');
+var d3       = require('d3');
+
+var api      = require('../../data/api');
+var Dropdown = require('../../component/dropdown');
 
 function selectedValues(items) {
 	return items.filter(function (o) { return o.selected; })
@@ -33,36 +35,29 @@ module.exports = {
 		};
 	},
 
-	ready: function () {
-		function fetchAll(endPoint, container, cb) {
-			return function (data) {
-				data.objects.forEach(function (v) {
-					container.push({ selected: false, value: v.id, title: v.short_name || v.name });
-				});
+	attached: function () {
+		var regions = new Dropdown({
+			el     : '#regions',
+			source : api.regions,
+			mapping: {
+				'parent_region': 'parent',
+				'name'         : 'title',
+				'id'           : 'value'
+			}
+		});
 
-				if (data.meta.next) {
-					endPoint({
-						limit: data.meta.limit,
-						offset: data.meta.limit + data.meta.offset
-					}).done(fetchAll(endPoint, container, cb));
-				} else {
-					cb();
-				}
-			};
-		}
+		this.regions = regions.selected;
 
-		var self = this;
+		var indicators = new Dropdown({
+			el     : '#indicators',
+			source : api.indicators,
+			mapping: {
+				'short_name': 'title',
+				'id'        : 'value'
+			}
+		});
 
-		this.$campaigns = {};
-
-		api.indicators({ limit: 100 }).done(fetchAll(api.indicators, this.indicators, function () {
-			self.$broadcast('indicatorsLoaded');
-		}));
-
-		api.regions({ limit: 100 }).done(fetchAll(api.regions, this.regions, function () {
-			self.$regions = _.indexBy(self.regions, 'value');
-			self.$broadcast('regionsLoaded');
-		}));
+		this.indicators = indicators.selected;
 
 		this.$on('page-changed', function (data) {
 			this.refresh(data);

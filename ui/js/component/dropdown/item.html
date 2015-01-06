@@ -1,0 +1,19 @@
+<li>
+	<div role="menuitem"
+	     v-class="folder: hasChildren, selected: selected">
+
+		<i class="fa fa-caret-right fa-lg"
+		   v-class="fa-rotate-90: open"
+		   v-on="click: open = !open"></i>
+
+		<i class="fa fa-check fa-lg"></i>
+
+		<span v-on="click: selected = !selected">{{ title }}</span>
+	</div>
+
+	<ul v-if="hasChildren && open">
+		<li v-repeat="children | filterBy pattern 'title' | orderBy sortBy sortDsc"
+		    v-with="pattern: pattern"
+		    v-component="dropdown-item"></li>
+	</ul>
+</li>
