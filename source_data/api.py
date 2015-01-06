@@ -79,7 +79,7 @@ class EtlTask(object):
 
         self.function_mappings = {
               'test_api' : self.test_api,
-              'odk_pull_vcm_summary_raw' : self.odk_pull_vcm_summary_raw,
+              'full_odk_transform' : self.full_odk_transform, # runs all odk methods
               'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
               'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
               'odk_refresh_master' : self.odk_refresh_master,
@@ -96,6 +96,8 @@ class EtlTask(object):
     ###############################################################
 
     def test_api(self):
+        '''
+        '''
 
         try:
             data = 'API TEST IS WORKING'
@@ -106,6 +108,8 @@ class EtlTask(object):
 
 
     def start_odk_jar(self):
+        '''
+        '''
 
         try:
             data = 'Starting to Pull data from ODK Aggregate...'
@@ -116,38 +120,48 @@ class EtlTask(object):
 
 
     def finish_odk_jar(self):
+        '''
+        '''
 
         try:
             data = 'Done to Pulling data from ODK Aggregate!'
         except Exception as err:
             return err, None
 
+
+
         return None, data
 
+    def full_odk_transform(self):
+        '''
+        '''
 
-    def odk_pull_vcm_summary_raw(self):
+        etl_report_dict = {}
 
-        form_id = 'New_VCM_Summary'
+        err, vcm_sum_data = self.odk_refresh_vcm_summary_work_table()
 
-        try:
-            subprocess.check_call(['java','-jar',odk_settings.JAR_FILE,\
-                '--form_id',form_id, \
-                '--export_filename',form_id+'.csv', \
-                '--aggregate_url',odk_settings.AGGREGATE_URL, \
-                '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
-                '--export_directory',odk_settings.EXPORT_DIRECTORY, \
-                '--odk_username',odk_settings.USERNAME, \
-                '--odk_password',odk_settings.PASSWORD, \
-                '--overwrite_csv_export' ,\
-                '--exclude_media_export' \
-              ])
-        except Exception:
-            err = format_exc()
+        if err:
             return err, None
 
-        return None, 'Successfully Retrieved Data for form: ' + form_id
+        err, source_dp_data = self.odk_vcm_summary_to_source_datapoints()
+
+        if err:
+            return err, None
+
+        # err, refresh_master_data = self.odk_refresh_master()
+
+        # if err:
+        #     return err, None
+
+        etl_report_dict['vcm_summary_report'] = vcm_sum_data
+        etl_report_dict['source_dp_report'] = source_dp_data
+
+        return None, etl_report_dict
+
 
     def odk_refresh_vcm_summary_work_table(self):
+        '''
+        '''
 
         form_id = 'New_VCM_Summary'
 
@@ -157,6 +171,8 @@ class EtlTask(object):
         return err, data
 
     def odk_vcm_summary_to_source_datapoints(self):
+        '''
+        '''
 
         v = VcmSummaryTransform(self.task_guid)
         err, data = v.vcm_summary_to_source_datapoints()
@@ -164,6 +180,8 @@ class EtlTask(object):
         return err, data
 
     def odk_refresh_master(self):
+        '''
+        '''
 
         try:
             source_datapoints = SourceDataPoint.objects.filter(

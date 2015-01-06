@@ -24,10 +24,8 @@ java -jar $JAR_FILE \
 wget -O/dev/null $API_ROOT/api/v1/etl/?task=finish_odk_jar\&username=$POLIO_USERNAME\&password=$POLIO_KEY
 
 
-# ## populate data into vcm summary table ##
-# wget -O/dev/null http://localhost:8000/api/v1/etl?task=odk_refresh_vcm_summary_work_table&username=$POLIO_USERNAME&password=$POLIO_PASSWORD
+## run the full odk transofrmation ##
+wget -O/dev/null $API_ROOT/api/v1/etl/?task=full_odk_transform\&username=$POLIO_USERNAME\&password=$POLIO_KEY
 
-# ## move data from vcm summary table into source datapoints ##
-# wget -O/dev/null http://localhost:8000/api/v1/etl?task=odk_vcm_summary_to_source_datapoints&username=$POLIO_USERNAME&password=$POLIO_PASSWORD
 
 wait
