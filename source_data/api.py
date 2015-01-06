@@ -79,7 +79,6 @@ class EtlTask(object):
 
         self.function_mappings = {
               'test_api' : self.test_api,
-              'full_odk_transform' : self.full_odk_transform, # runs all odk methods
               'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
               'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
               'odk_refresh_master' : self.odk_refresh_master,
@@ -131,32 +130,6 @@ class EtlTask(object):
 
 
         return None, data
-
-    def full_odk_transform(self):
-        '''
-        '''
-
-        etl_report_dict = {}
-
-        err, vcm_sum_data = self.odk_refresh_vcm_summary_work_table()
-
-        if err:
-            return err, None
-
-        err, source_dp_data = self.odk_vcm_summary_to_source_datapoints()
-
-        if err:
-            return err, None
-
-        # err, refresh_master_data = self.odk_refresh_master()
-
-        # if err:
-        #     return err, None
-
-        etl_report_dict['vcm_summary_report'] = vcm_sum_data
-        etl_report_dict['source_dp_report'] = source_dp_data
-
-        return None, etl_report_dict
 
 
     def odk_refresh_vcm_summary_work_table(self):

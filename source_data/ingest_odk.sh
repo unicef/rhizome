@@ -20,12 +20,21 @@ java -jar $JAR_FILE \
 --overwrite_csv_export \
 --exclude_media_export \
 
-# ## DONE WITH THE JAR FILE PROCESS ##
+JAR_PID=$!
+
+## DONE WITH THE JAR FILE PROCESS ##
 wget -O/dev/null $API_ROOT/api/v1/etl/?task=finish_odk_jar\&username=$POLIO_USERNAME\&password=$POLIO_KEY
 
+sleep 2
+## transform the ODK csv into work table records ##
+wget -O/dev/null $API_ROOT/api/v1/etl/?task=odk_refresh_vcm_summary_work_table\&username=$POLIO_USERNAME\&password=$POLIO_KEY
 
-## run the full odk transofrmation ##
-wget -O/dev/null $API_ROOT/api/v1/etl/?task=full_odk_transform\&username=$POLIO_USERNAME\&password=$POLIO_KEY
+sleep 2
+## transform work table records into source datapoints ##
+wget -O/dev/null $API_ROOT/api/v1/etl/?task=odk_vcm_summary_to_source_datapoints\&username=$POLIO_USERNAME\&password=$POLIO_KEY
+
+
+
 
 
 wait
