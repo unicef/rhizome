@@ -133,18 +133,11 @@ def refresh_master_by_document_id(request,document_id):
 
     to_map = chain(si,cp,rg)
 
-    print '==\n' * 10
-    pp.pprint(rg)
-    pp.pprint(rg)
-    pp.pprint(rg)
-    print '==\n' * 10
-
     i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
     c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
     r_m = RegionMap.objects.filter(source_region__document_id=document_id)
 
     all_mapped = chain(i_m, c_m, r_m)
-
 
 
     return render_to_response(

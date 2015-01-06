@@ -40,6 +40,11 @@ class MasterRefresh(object):
                   sdp.save()
 
 
+      def delete_un_mapped(self):
+
+
+
+
       def get_mappings(self):
 
           mappings = {}

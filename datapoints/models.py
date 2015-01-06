@@ -205,3 +205,13 @@ class AbstractedDataPoint(models.Model):
     class Meta:
         db_table = 'vw_datapoint'
         managed = False
+
+class MissingMappings(models.Model):
+
+    datapoint = models.ForeignKey(DataPoint)
+    document = models.ForeignKey('source_data.SourceDataPoint')
+    what_is_missing = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'vw_missing_mappings'
+        managed = False
