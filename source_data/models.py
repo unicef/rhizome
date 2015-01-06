@@ -23,11 +23,18 @@ class EtlJob(models.Model):
     error_msg = models.TextField(null=True)
     success_msg = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ('-date_attempted',)
+
+
     def save(self, *args, **kwargs):
         if not self.guid:
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
         super(EtlJob, self).save(*args, **kwargs)
+
+
+
 
 
 class ProcessStatus(models.Model):

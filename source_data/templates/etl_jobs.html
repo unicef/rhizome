@@ -1,0 +1,36 @@
+{% extends "datapoints/base.html" %}
+
+{% block content %}
+<br>
+
+<br><br>
+
+<div style="width:80%; margin-left:auto;margin-right:auto">
+  <table class="table table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>job_guid</th>
+        <th>date_attempted</th>
+        <th>date_completed</th>
+        <th>task_name</th>
+        <th>status</th>
+      </tr>
+    </thead>
+
+
+    {% for job in etl_jobs %}
+    <tr>
+      <th>{{ job.guid }}</th>
+      <th>{{ job.date_attempted }}</th>
+      <th>{{ job.date_completed }}</th>
+      <th>{{ job.task_name }}</th>
+      <th>{{ job.status }}</th>
+    </tr>
+
+
+    {% endfor %}
+  </table>
+</div>
+
+
+{% endblock %}

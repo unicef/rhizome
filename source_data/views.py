@@ -312,12 +312,21 @@ class CampaignMapCreateView(CreateMap):
         return { 'source_campaign': self.kwargs['pk'] }
 
 
-
 class ShowSourceIndicator(generic.DetailView):
 
     context_object_name = "source_indicator"
     template_name = 'map/source_indicator.html'
     model = SourceIndicator
+
+
+class EtlJobIndex(generic.ListView):
+
+    context_object_name = "etl_jobs"
+    template_name = 'etl_jobs.html'
+    model = EtlJob
+    paginate_by = 25
+
+
 
 
 def refresh_master(request):

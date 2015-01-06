@@ -20,5 +20,6 @@ urlpatterns = [
   url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$', mark_doc_as_processed, name='mark_doc_as_processed'),
   url(r'^user_portal/$', user_portal, name='user_portal'),
   url(r'^document_index/$', DocumentIndex.as_view(),name='document_index'),
+  url(r'^etl_job_index/$', EtlJobIndex.as_view(),name='etl_job_index'),
 
 ]
