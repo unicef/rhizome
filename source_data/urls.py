@@ -9,6 +9,10 @@ urlpatterns = [
   url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),name='map_indicator'),
   url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view(),name='map_region'),
   url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),name='map_campaign'),
+
+  url(r'^un_map/(?P<map_id>[0-9]+)/(?P<db_model>\w+)/(?P<document_id>[0-9]+) /$',un_map,name='un_map'),
+
+
   url(r'^refresh_master/$', refresh_master,name='refresh_master'),
   url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
   url(r'^data_entry/$', data_entry, name='data_entry'),

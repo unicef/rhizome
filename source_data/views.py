@@ -123,16 +123,21 @@ def refresh_master_by_document_id(request,document_id):
         SourceDataPoint.objects.filter(document_id=document_id))
 
     si = SourceIndicator.objects.filter(indicatormap__isnull=True,
-        indicator_string__in=[s.indicator_string for s in source_datapoints])
+        document_id=document_id)
 
     cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
-        campaign_string__in=[s.campaign_string for s in source_datapoints])
+        document_id=document_id)
 
     rg = SourceRegion.objects.filter(regionmap__isnull=True,
-        region_string__in=[s.region_string for s in source_datapoints])
+        document_id=document_id)
 
     to_map = chain(si,cp,rg)
 
+    print '==\n' * 10
+    pp.pprint(rg)
+    pp.pprint(rg)
+    pp.pprint(rg)
+    print '==\n' * 10
 
     i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
     c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
@@ -140,9 +145,6 @@ def refresh_master_by_document_id(request,document_id):
 
     all_mapped = chain(i_m, c_m, r_m)
 
-    print '======\n' * 10
-    pp.pprint(r_m)
-    print '======\n' * 10
 
 
     return render_to_response(
@@ -339,6 +341,26 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
+
+def un_map(request,map_id,db_model,document_id):
+
+    print 'THIS IS HAPPENING \n' * 10
+
+    if db_model == 'Region':
+
+        RegionMap.objects.get(id=map_id).delete()
+
+    elif db_model == 'Indicator':
+
+        IndicatorMap.objects.get(id=map_id).delete()
+
+    elif db_model == 'Campaign':
+
+        CampaignMap.objects.get(id=map_id).delete()
+
+
+    return HttpResponseRedirect(reverse('source_data:refresh_master_by_document_id'\
+        ,kwargs={'document_id':document_id}))
 
 
 def refresh_master(request):

@@ -99,6 +99,9 @@
           <th> {{ mapped.source_region }}</th>
           <th> {{ mapped.master_region.id }}</th>
           <th> {{ mapped.master_region }}</th>
+          <th><a href="{% url 'source_data:un_map' mapped.id 'Region' document_id %}"<button type=\
+            "submit" class="btn btn-primary btn-sm"> Remove Mapping </button></a></th>
+
 
         {% elif mapped.source_indicator %}
 
@@ -107,6 +110,8 @@
         <th> {{ mapped.source_indicator }}</th>
         <th> {{ mapped.master_indicator.id }}</th>
         <th> {{ mapped.master_indicator }}</th>
+        <th><a href="{% url 'source_data:un_map' mapped.id 'Indicator' document_id %}"<button type=\
+          "submit" class="btn btn-primary btn-sm"> Remove Mapping </button></a></th>
 
 
         {% elif mapped.source_campaign %}
@@ -116,10 +121,9 @@
         <th> {{ mapped.source_campaign }}</th>
         <th> {{ mapped.master_campaign.id }}</th>
         <th> {{ mapped.master_campaign }}</th>
+        <th><a href="{% url 'source_data:un_map' mapped.id 'Campaign' document_id %}"<button type=\
+          "submit" class="btn btn-primary btn-sm"> Remove Mapping </button></a></th>
         {% endif %}
-
-
-
 
 
         </tr>
