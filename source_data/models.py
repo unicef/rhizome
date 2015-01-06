@@ -20,6 +20,7 @@ class EtlJob(models.Model):
     task_name = models.CharField(max_length=55)
     status = models.CharField(max_length=10)
     guid = models.CharField(primary_key=True, max_length=40)
+    cron_guid = models.CharField(max_length=40)
     error_msg = models.TextField(null=True)
     success_msg = models.CharField(max_length=255)
 
@@ -32,8 +33,6 @@ class EtlJob(models.Model):
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
         super(EtlJob, self).save(*args, **kwargs)
-
-
 
 
 

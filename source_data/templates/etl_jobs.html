@@ -9,6 +9,7 @@
   <table class="table table-hover table-bordered">
     <thead>
       <tr>
+        <th>job.cron_guid</th>
         <th>job_guid</th>
         <th>date_attempted</th>
         <th>date_completed</th>
@@ -20,6 +21,7 @@
 
     {% for job in etl_jobs %}
     <tr>
+      <th>{{ job.cron_guid }}</th>
       <th>{{ job.guid }}</th>
       <th>{{ job.date_attempted }}</th>
       <th>{{ job.date_completed }}</th>

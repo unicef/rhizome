@@ -2,6 +2,7 @@ import subprocess,sys,time,pprint as pp
 from traceback import format_exc
 from time import strftime
 
+from tastypie.constants import ALL
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -25,6 +26,7 @@ class EtlResource(ModelResource):
         resource_name = 'etl'
         always_return_data = True
         allowed_methods = ['get']
+        filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
         # authentication = ApiKeyAuthentication()
@@ -35,12 +37,15 @@ class EtlResource(ModelResource):
         for the etl api is dealt with inside this method'''
 
         task_string = request.GET['task']
+        cron_guid = request.GET['cron_guid']
+
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
         ## stage the job ##
         created = EtlJob.objects.create(
             date_attempted = tic,
             task_name = task_string,
+            cron_guid = cron_guid,
             status = 'PENDING'
         )
 
