@@ -69,6 +69,68 @@
         {% endif %}
 
 
+        {% if all_mapped %}
+
+        <h3> Here are the mapping for the document id </h3>
+
+        <br>
+
+        <table class="table table-hover table-bordered">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Source String</th>
+              <th>Master Id</th>
+              <th>Master String</th>
+              <th>Source</th>
+              <th>Remove Mapping</th>
+
+            </tr>
+          </thead>
+
+
+        {% for mapped in all_mapped %}
+
+        {% if mapped.source_region %}
+
+        <tr>
+          <th> Region </th>
+          <th> {{ mapped.source_region.id }}</th>
+          <th> {{ mapped.source_region }}</th>
+          <th> {{ mapped.master_region.id }}</th>
+          <th> {{ mapped.master_region }}</th>
+
+        {% elif mapped.source_indicator %}
+
+        <th> Indicator </th>
+        <th> {{ mapped.source_indicator.id }}</th>
+        <th> {{ mapped.source_indicator }}</th>
+        <th> {{ mapped.master_indicator.id }}</th>
+        <th> {{ mapped.master_indicator }}</th>
+
+
+        {% elif mapped.source_campaign %}
+
+        <th> Campaign </th>
+        <th> {{ mapped.source_campaign.id }}</th>
+        <th> {{ mapped.source_campaign }}</th>
+        <th> {{ mapped.master_campaign.id }}</th>
+        <th> {{ mapped.master_campaign }}</th>
+        {% endif %}
+
+
+
+
+
+        </tr>
+
+        {% endfor %}
+
+        {% endif %}
+
+      </table>
+
+
 
         {% if datapoints %}
 

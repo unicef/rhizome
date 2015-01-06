@@ -109,6 +109,7 @@ def review_sdps_by_document(request,document_id):
     )
 
 
+
 def refresh_master_by_document_id(request,document_id):
 
     source_datapoints = SourceDataPoint.objects.filter(
@@ -117,6 +118,9 @@ def refresh_master_by_document_id(request,document_id):
 
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
+
+    doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
+        SourceDataPoint.objects.filter(document_id=document_id))
 
     si = SourceIndicator.objects.filter(indicatormap__isnull=True,
         indicator_string__in=[s.indicator_string for s in source_datapoints])
@@ -127,17 +131,25 @@ def refresh_master_by_document_id(request,document_id):
     rg = SourceRegion.objects.filter(regionmap__isnull=True,
         region_string__in=[s.region_string for s in source_datapoints])
 
-
     to_map = chain(si,cp,rg)
 
-    doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
-        SourceDataPoint.objects.filter(document_id=document_id))
+
+    i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
+    c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
+    r_m = RegionMap.objects.filter(source_region__document_id=document_id)
+
+    all_mapped = chain(i_m, c_m, r_m)
+
+    print '======\n' * 10
+    pp.pprint(r_m)
+    print '======\n' * 10
+
 
     return render_to_response(
         'data_entry/final_review.html',
-        {'datapoints': doc_datapoints, 'document_id': document_id, 'to_map':to_map},
-        RequestContext(request),
-    )
+        {'datapoints': doc_datapoints, 'document_id': document_id,\
+         'to_map':to_map, 'all_mapped':all_mapped },
+         RequestContext(request),)
 
 def mark_doc_as_processed(request,document_id):
 
