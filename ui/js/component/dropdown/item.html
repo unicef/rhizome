@@ -1,9 +1,9 @@
 <li>
 	<div role="menuitem"
-	     v-class="folder: hasChildren, selected: selected">
+	     v-class="folder: hasChildren, selected: selected, open: open">
 
-		<i class="fa fa-caret-right fa-lg"
-		   v-class="fa-rotate-90: open"
+		<i class="fa fa-lg"
+		   v-class="fa-caret-right: !open, fa-caret-down: open"
 		   v-on="click: open = !open"></i>
 
 		<i class="fa fa-check fa-lg"></i>

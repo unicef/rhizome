@@ -84,7 +84,8 @@
 			}
 
 			.folder {
-				& > .fa-caret-right {
+				& > .fa-caret-right,
+				& > .fa-caret-down {
 					visibility: visible;
 				}
 			}
