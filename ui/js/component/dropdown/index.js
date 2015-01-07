@@ -77,8 +77,9 @@ module.exports = Vue.extend({
 		selectedItems: function () {
 			var selection = [];
 
-			// Initial queue of items copied (hence splice()) from the root items in
-			// the dropdown.
+			// Initial queue of items copied (hence [].concat) from the root items in
+			// the dropdown. Using items directly as the queue results in empty menus
+			// as the items are removed from the array.
 			var q = [].concat(this.items || []);
 
 			// Check all items and their children in a breadth-first manner
