@@ -32,15 +32,15 @@ module.exports = {
 
 		'dropdown-select-all': function () {
 			this.selected = true;
+			this.$dispatch('dropdown-item-selected', this);
 		},
 
 		'dropdown-clear': function () {
 			this.selected = false;
+			this.$dispatch('dropdown-item-selected', this);
 		},
 
-		'dropdown-invert': function () {
-			this.selected = !this.selected;
-		}
+		'dropdown-invert': 'toggle'
 
 	},
 };
