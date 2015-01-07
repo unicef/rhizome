@@ -1,14 +1,17 @@
 <div class="dropdown" role="menu" v-class="open: open">
+
 	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
 		<label>{{ title }}</label>
 		<div class="icon">
-			<i class="fa fa-fw fa-spinner fa-spin" v-if="loading"></i>
-			<i class="fa fa-fw fa-caret-down" v-if="!loading"></i>
+			<i class="fa fa-fw fa-lg fa-spinner fa-spin" v-if="loading"></i>
+			<i class="fa fa-fw fa-lg fa-caret-down" v-if="!loading"></i>
 		</div>
 	</a>
+
 	<div class="container"
 	     v-class="hidden: !open"
 	     v-style="left: this.menuX + 'px'">
+
 		<form v-if="searchable" role="search">
 			<input type="text" v-model="pattern" tabindex="1">
 			<a class="clear-btn"
@@ -17,19 +20,32 @@
 			   <i class="fa fa-times-circle"></i>
 			</a>
 		</form>
-		<ul v-style="max-height: menuHeight + 'px',
-								 max-width: menuWidth + 'px'">
-			<li role="menuitem"
-					v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortDsc"
-					v-class="selected : selected"
-					v-on="click : onClick(this)">
-				<i class="fa fa-check fa-lg"></i>&nbsp;{{ title }}
-			</li>
-			<li v-if="loading">
-				Loading&hellip;
-				<i class="fa fa-fw fa-spinner fa-spin"></i>
+
+		<!-- Separate area for search results because I can't get the filtering to
+		     work with the nested components. I keep getting an undefined setter for
+		     the pattern property.
+		     -->
+		<ul v-if="filtered"
+			  v-style="max-height: menuHeight + 'px',
+			           max-width: menuWidth + 'px'">
+			<li v-repeat="items | flatten | filterBy pattern 'title' | orderBy sortBy sortDsc">
+				<div role="menuitem" v-class="selected: selected">
+					<i class="fa fa-check fa-lg"></i>
+					<span v-on="click: toggleItem(this)">{{ title }}</span>
+				</div>
 			</li>
 		</ul>
+
+		<ul v-if="!filtered"
+		    v-style="max-height: menuHeight + 'px',
+								 max-width: menuWidth + 'px'">
+
+			<li v-repeat="items | orderBy sortBy sortDsc"
+			    v-with="sortBy: sortBy, sortDsc: sortDsc"
+					v-component="dropdown-item"></li>
+
+		</ul>
+
 		<div class="selection-controls" role="group" v-if="multi">
 			<button class="tiny"
 					type="button"
@@ -50,5 +66,8 @@
 				select all
 			</button>
 		</div>
+
 	</div>
+	<!-- End container -->
+
 </div>
