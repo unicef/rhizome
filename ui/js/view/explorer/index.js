@@ -46,7 +46,7 @@ module.exports = {
 			}
 		});
 
-		this.regions = regions.selected;
+		this.regions = regions.selectedItems;
 
 		var indicators = new Dropdown({
 			el     : '#indicators',
@@ -57,7 +57,7 @@ module.exports = {
 			}
 		});
 
-		this.indicators = indicators.selected;
+		this.indicators = indicators.selectedItems;
 
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
@@ -66,8 +66,8 @@ module.exports = {
 
 	computed: {
 		hasSelection: function () {
-			return selectedValues(this.regions).length > 0 &&
-				selectedValues(this.indicators).length > 0;
+			return this.regions.length > 0 &&
+				this.indicators.length > 0;
 		}
 	},
 

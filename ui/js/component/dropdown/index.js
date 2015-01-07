@@ -74,26 +74,32 @@ module.exports = Vue.extend({
 	},
 
 	computed: {
-		selected: function () {
-			return this.items.filter(function (o) {
-				return o.selected;
-			});
-		},
+		selectedItems: function () {
+			var selection = [];
 
-		value: function () {
-			var selected = this.selected;
+			// Initial queue of items copied (hence splice()) from the root items in
+			// the dropdown.
+			var q = [].concat(this.items || []);
 
-			return this.multi ?
-				selected.map(function (o) { return o.value; }) :
-				selected[0].value;
+			// Check all items and their children in a breadth-first manner
+			while (q.length > 0) {
+				var item = q.shift();
+
+				if (item.selected) {
+					selection.push(item);
+				}
+
+				q = q.concat(item.children || []);
+			}
+
+			return selection;
 		},
 
 		title: function () {
-			var selected = this.selected;
+			var selected = this.selectedItems;
 
 			return selected.length === 0 ? this.placeholder :
-				this.multi ? selected.map(function (o) { return o.title; }).join(', ') :
-					selected[0].title;
+				selected.map(function (o) { return o.title; }).join(', ');
 		},
 	},
 
@@ -226,4 +232,5 @@ module.exports = Vue.extend({
 	components: {
 		'dropdown-item': require('./item')
 	}
+
 });
