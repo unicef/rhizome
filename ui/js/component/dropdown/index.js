@@ -253,6 +253,14 @@ module.exports = Vue.extend({
 
 	},
 
+	events: {
+
+		'dropdown-item-selected': function () {
+			this.$emit('dropdown-value-changed', this.selectedItems);
+		}
+
+	},
+
 	components: {
 		'dropdown-item': require('./item')
 	}

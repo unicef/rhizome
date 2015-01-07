@@ -36,7 +36,9 @@ module.exports = {
 	},
 
 	attached: function () {
-		var regions = new Dropdown({
+		var self = this;
+
+		this._regions = new Dropdown({
 			el     : '#regions',
 			source : api.regions,
 			mapping: {
@@ -46,9 +48,11 @@ module.exports = {
 			}
 		});
 
-		this.regions = regions.selectedItems;
+		this._regions.$on('dropdown-value-changed', function (items) {
+			self.regions = items;
+		});
 
-		var indicators = new Dropdown({
+		this._indicators = new Dropdown({
 			el     : '#indicators',
 			source : api.indicators,
 			mapping: {
@@ -57,7 +61,9 @@ module.exports = {
 			}
 		});
 
-		this.indicators = indicators.selectedItems;
+		this._indicators.$on('dropdown-value-changed', function (items) {
+			self.indicators = items;
+		});
 
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
@@ -65,13 +71,15 @@ module.exports = {
 	},
 
 	computed: {
+
 		hasSelection: function () {
-			return this.regions.length > 0 &&
-				this.indicators.length > 0;
+			return this.regions.length > 0 && this.indicators.length > 0;
 		}
+
 	},
 
 	methods: {
+
 		refresh: function (pagination) {
 			if (!this.hasSelection) {
 				return;
@@ -79,13 +87,13 @@ module.exports = {
 
 			var self    = this;
 
-			var regions = selectedValues(this.regions);
+			var regions = _.map(this.regions, 'value');
 			var options = { indicator__in : [] };
 			var columns = [{
 					prop: 'region',
 					display: 'Region',
 					format: function (v) {
-						return self.$regions[v].title;
+						return v.title;
 					}
 				}, {
 					prop: 'campaign',
@@ -114,24 +122,22 @@ module.exports = {
 			}
 
 			this.indicators.forEach(function (indicator) {
-				if (indicator.selected) {
-					options.indicator__in.push(indicator.value);
-					columns.push({
-						prop: indicator.value,
-						display: indicator.title,
-						classes: 'numeric',
-						format: function (v) {
-							return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
-						}
-					});
-				}
+				options.indicator__in.push(indicator.value);
+				columns.push({
+					prop   : indicator.value,
+					display: indicator.title,
+					classes: 'numeric',
+					format : function (v) {
+						return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
+					}
+				});
 			});
 
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
 			this.table.columns = columns;
-			this.table.rows = [];
+			this.table.rows    = [];
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
