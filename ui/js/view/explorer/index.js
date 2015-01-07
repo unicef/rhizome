@@ -2,14 +2,10 @@
 
 var _        = require('lodash');
 var d3       = require('d3');
+var moment   = require('moment');
 
 var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
-
-function selectedValues(items) {
-	return items.filter(function (o) { return o.selected; })
-		.map(function (o) { return o.value; });
-}
 
 module.exports = {
 	template: require('./template.html'),
@@ -85,15 +81,16 @@ module.exports = {
 				return;
 			}
 
-			var self    = this;
+			var self = this;
 
-			var regions = _.map(this.regions, 'value');
-			var options = { indicator__in : [] };
-			var columns = [{
+			var regionNames = _.indexBy(this.regions, 'value');
+			var regions     = _.map(this.regions, 'value');
+			var options     = { indicator__in : [] };
+			var columns     = [{
 					prop: 'region',
 					display: 'Region',
 					format: function (v) {
-						return v.title;
+						return regionNames[v].title;
 					}
 				}, {
 					prop: 'campaign',
@@ -153,7 +150,7 @@ module.exports = {
 				var datapoints = data.objects.map(function (v) {
 					var d = _.pick(v, 'region');
 
-					d.campaign = v.campaign.name;
+					d.campaign = moment(v.campaign.start_date).format('MMM YYYY');
 
 					v.indicators.forEach(function (ind) {
 						d[ind.indicator] = ind.value;
@@ -173,8 +170,8 @@ module.exports = {
 
 			this.downloading = true;
 
-			var indicators   = selectedValues(this.indicators);
-			var regions      = selectedValues(this.regions);
+			var indicators   = _.map(this.indicators, 'value');
+			var regions      = _.map(this.regions, 'value');
 			var query        = {
 				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
 				'the_limit'  : 10000000,
