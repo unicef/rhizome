@@ -31,7 +31,7 @@
 			<li v-repeat="items | flatten | filterBy pattern 'title' | orderBy sortBy sortDsc">
 				<div role="menuitem" v-class="selected: selected">
 					<i class="fa fa-check fa-lg"></i>
-					<span v-on="click: selected = !selected">{{ title }}</span>
+					<span v-on="click: toggleItem(this)">{{ title }}</span>
 				</div>
 			</li>
 		</ul>

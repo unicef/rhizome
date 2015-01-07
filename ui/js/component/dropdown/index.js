@@ -138,6 +138,11 @@ module.exports = Vue.extend({
 			}
 		},
 
+		toggleItem: function (item) {
+			item.selected = !item.selected;
+			this.$emit('dropdown-item-selected', item);
+		},
+
 		handleEvent: function (evt) {
 			switch (evt.type) {
 			case 'keyup':
