@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from source_data.models import ProcessStatus,SourceDataPoint
-from datapoints.models import DataPoint
+from datapoints.models import DataPoint, MissingMapping
 
 
 class MasterRefresh(object):
@@ -30,6 +30,8 @@ class MasterRefresh(object):
 
       def main(self):
 
+          self.delete_un_mapped()
+
           self.mappings = self.get_mappings()
           for sdp in self.source_datapoints:
 
@@ -42,7 +44,12 @@ class MasterRefresh(object):
 
       def delete_un_mapped(self):
 
+          datapoint_ids = MissingMapping.objects.filter(document_id=\
+            self.document_id).values_list('datapoint_id',flat=True)
 
+          MissingMapping.objects.filter(document_id=self.document_id).delete()
+
+          DataPoint.objects.filter(id__in=datapoint_ids).delete()
 
 
       def get_mappings(self):

@@ -1,4 +1,4 @@
-﻿DROP VIEW IF EXISTS vw_missing_mappings;
+﻿DROP VIEW IF EXISTS vw_missing_mappings CASCADE;
 CREATE VIEW vw_missing_mappings 
 AS
 
@@ -72,5 +72,10 @@ FROM
 		AND fj.source_campaign_id = cm.source_campaign_id
 
 	)
-)x
+	
+)x;
 
+GRANT SELECT, DELETE ON vw_missing_mappings to djangoapp;
+
+CREATE OR REPLACE RULE missing_mapping_DELETE AS ON DELETE TO vw_missing_mappings DO INSTEAD (
+     DELETE FROM datapoint WHERE id=OLD.datapoint_id;);

@@ -206,9 +206,9 @@ class AbstractedDataPoint(models.Model):
         db_table = 'vw_datapoint'
         managed = False
 
-class MissingMappings(models.Model):
+class MissingMapping(models.Model):
 
-    datapoint = models.ForeignKey(DataPoint)
+    datapoint = models.ForeignKey(DataPoint) # Fix this ASAP! -> http://stackoverflow.com/questions/9863355/
     document = models.ForeignKey('source_data.SourceDataPoint')
     what_is_missing = models.CharField(max_length=255)
 
