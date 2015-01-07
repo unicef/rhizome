@@ -20,7 +20,7 @@ module.exports = {
 	},
 
 	methods: {
-		onClick: function () {
+		toggle: function () {
 			this.selected = !this.selected;
 		}
 	},

@@ -8,7 +8,7 @@
 
 		<i class="fa fa-check fa-lg"></i>
 
-		<span v-on="click: selected = !selected">{{ title }}</span>
+		<span v-on="click: toggle">{{ title }}</span>
 	</div>
 
 	<ul v-if="hasChildren && open">
