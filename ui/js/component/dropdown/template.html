@@ -21,10 +21,26 @@
 			</a>
 		</form>
 
-		<ul v-style="max-height: menuHeight + 'px',
+		<!-- Separate area for search results because I can't get the filtering to
+		     work with the nested components. I keep getting an undefined setter for
+		     the pattern property.
+		     -->
+		<ul v-if="filtered"
+			  v-style="max-height: menuHeight + 'px',
+			           max-width: menuWidth + 'px'">
+			<li v-repeat="items | flatten | filterBy pattern 'title' | orderBy sortBy sortDsc">
+				<div role="menuitem" v-class="selected: selected">
+					<i class="fa fa-check fa-lg"></i>
+					<span v-on="click: selected = !selected">{{ title }}</span>
+				</div>
+			</li>
+		</ul>
+
+		<ul v-if="!filtered"
+		    v-style="max-height: menuHeight + 'px',
 								 max-width: menuWidth + 'px'">
 
-			<li v-repeat="items | filterBy pattern 'title' | orderBy sortBy sortDsc"
+			<li v-repeat="items | orderBy sortBy sortDsc"
 			    v-with="sortBy: sortBy, sortDsc: sortDsc"
 					v-component="dropdown-item"></li>
 

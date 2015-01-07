@@ -74,6 +74,11 @@ module.exports = Vue.extend({
 	},
 
 	computed: {
+
+		filtered: function () {
+			return this.pattern.length > 0;
+		},
+
 		selectedItems: function () {
 			var selection = [];
 
@@ -228,6 +233,24 @@ module.exports = Vue.extend({
 					}
 				});
 		}
+	},
+
+	filters: {
+
+		flatten: function (arr) {
+			var result = [];
+			var q      = [].concat(arr);
+
+			while (q.length > 0) {
+				var item = q.shift();
+
+				result.push(item);
+				q = q.concat(item.children || []);
+			}
+
+			return result;
+		},
+
 	},
 
 	components: {

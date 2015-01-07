@@ -12,7 +12,7 @@
 	</div>
 
 	<ul v-if="hasChildren && open">
-		<li v-repeat="children | filterBy pattern 'title' | orderBy sortBy sortDsc"
+		<li v-repeat="children | orderBy sortBy sortDsc"
 		    v-with="sortBy: sortBy, sortDsc: sortDsc"
 		    v-component="dropdown-item"></li>
 	</ul>

@@ -9,14 +9,16 @@ module.exports = {
 		return {
 			open    : false,
 			selected: false,
-			pattern : ''
+			children: []
 		};
 	},
 
 	computed: {
+
 		hasChildren: function () {
 			return this.children && this.children.length > 0;
-		}
+		},
+
 	},
 
 	methods: {
@@ -26,6 +28,7 @@ module.exports = {
 	},
 
 	events: {
+
 		'dropdown-select-all': function () {
 			this.selected = true;
 		},
@@ -37,6 +40,6 @@ module.exports = {
 		'dropdown-invert': function () {
 			this.selected = !this.selected;
 		}
-	}
 
+	},
 };
