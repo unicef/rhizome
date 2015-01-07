@@ -76,6 +76,3 @@ FROM
 )x;
 
 GRANT SELECT, DELETE ON vw_missing_mappings to djangoapp;
-
-CREATE OR REPLACE RULE missing_mapping_DELETE AS ON DELETE TO vw_missing_mappings DO INSTEAD (
-     DELETE FROM datapoint WHERE id=OLD.datapoint_id;);
