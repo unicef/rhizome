@@ -1,4 +1,6 @@
-import subprocess,sys,time,pprint as pp
+import subprocess,sys,time
+from pprint import pprint
+import json
 from traceback import format_exc
 from time import strftime
 
@@ -83,14 +85,14 @@ class EtlTask(object):
         self.user_id = User.objects.get(username='odk').id
 
         self.function_mappings = {
-              'test_api' : self.test_api,
-              'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-              'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
-              'odk_refresh_master' : self.odk_refresh_master,
-              'start_odk_jar' :self.start_odk_jar,
-              'finish_odk_jar' :self.finish_odk_jar,
-              'parse_geo_json' :self.parse_geo_json
-              }
+            'parse_geo_json' :self.parse_geo_json,
+            'test_api' : self.test_api,
+            'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
+            'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
+            'odk_refresh_master' : self.odk_refresh_master,
+            'start_odk_jar' :self.start_odk_jar,
+            'finish_odk_jar' :self.finish_odk_jar
+            }
 
         fn = self.function_mappings[task_string]
 
@@ -99,6 +101,47 @@ class EtlTask(object):
     ###############################################################
     ########## METHODS BELOW USED BY API CALLS ABOVE ##############
     ###############################################################
+
+
+    def parse_geo_json(self):
+
+
+        ## Fix This....
+        json_dir = '/Users/johndingee_seed/code/UF04/polio/geo/'
+
+        ## loop over all files in dir and create document id
+        with open(json_dir + 'nga_adm1.geojson') as f:
+            data = json.load(f)
+
+        # document_id = Document.objects.create()
+
+        for feature_dict in data['features']:
+
+            properties = feature_dict['properties']
+            geometry = feature_dict['geometry']['coordinates']
+
+            region_string = properties['ADM1_VIZ_N']
+            region_type = properties['LVL'] # create mapping for this
+            country = properties['ISO_3_CODE']
+
+            source_region_defaults = {
+                'region_code': properties['OBJECTID'],
+                'lat': properties['CENTER_LAT'],
+                'lon': properties['CENTER_LON'],
+                'source_guid': properties['GUID']
+            }
+
+            shape_defaults = {
+                'shape_len' : properties[u'SHAPE_Leng'],
+                'shape_area' : properties['SHAPE_Area'],
+                'geometry': geometry
+            }
+
+            pprint(shape_defaults)
+
+
+        return None, 'geo json parsed (hehe not really)'
+
 
     def test_api(self):
         '''
@@ -178,7 +221,3 @@ class EtlTask(object):
             return err, None
 
         return None, success_msg
-
-    def parse_geo_json(self):
-
-        return None, 'geo json parsed (hehe not really)'
