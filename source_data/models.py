@@ -135,7 +135,7 @@ class SourceRegion(models.Model):
         unique_together = ('region_string','document','region_type','country')
 
     def __unicode__(self):
-        return self.region_string
+        return self.region_string + ' (' + self.region_type + ')'
 
 class SourceShape(models.Model):
 

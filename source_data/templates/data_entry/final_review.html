@@ -40,7 +40,7 @@
                 {% elif item.region_string %}
 
                     <tr>
-                        <th>{{ item.region_string }}</th>
+                        <th>{{ item }}</th>
                         <th>Region</th>
                         <th>{{ item.source }}</th>
                         <th><a href="{% url 'source_data:map_region' item.id %}"<button type=\
