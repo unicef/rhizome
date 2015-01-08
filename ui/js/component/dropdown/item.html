@@ -1,0 +1,19 @@
+<li>
+	<div role="menuitem"
+	     v-class="folder: hasChildren, selected: selected, open: open">
+
+		<i class="fa fa-lg"
+		   v-class="fa-caret-right: !open, fa-caret-down: open"
+		   v-on="click: open = !open"></i>
+
+		<i class="fa fa-check fa-lg"></i>
+
+		<span v-on="click: toggle">{{ title }}</span>
+	</div>
+
+	<ul v-if="hasChildren && open">
+		<li v-repeat="children | orderBy sortBy sortDsc"
+		    v-with="sortBy: sortBy, sortDsc: sortDsc"
+		    v-component="dropdown-item"></li>
+	</ul>
+</li>

@@ -1,13 +1,11 @@
 'use strict';
 
-var _ = require('lodash');
-var api = require('../../data/api');
-var d3 = require('d3');
+var _        = require('lodash');
+var d3       = require('d3');
+var moment   = require('moment');
 
-function selectedValues(items) {
-	return items.filter(function (o) { return o.selected; })
-		.map(function (o) { return o.value; });
-}
+var api      = require('../../data/api');
+var Dropdown = require('../../component/dropdown');
 
 module.exports = {
 	template: require('./template.html'),
@@ -33,36 +31,35 @@ module.exports = {
 		};
 	},
 
-	ready: function () {
-		function fetchAll(endPoint, container, cb) {
-			return function (data) {
-				data.objects.forEach(function (v) {
-					container.push({ selected: false, value: v.id, title: v.short_name || v.name });
-				});
-
-				if (data.meta.next) {
-					endPoint({
-						limit: data.meta.limit,
-						offset: data.meta.limit + data.meta.offset
-					}).done(fetchAll(endPoint, container, cb));
-				} else {
-					cb();
-				}
-			};
-		}
-
+	attached: function () {
 		var self = this;
 
-		this.$campaigns = {};
+		this._regions = new Dropdown({
+			el     : '#regions',
+			source : api.regions,
+			mapping: {
+				'parent_region': 'parent',
+				'name'         : 'title',
+				'id'           : 'value'
+			}
+		});
 
-		api.indicators({ limit: 100 }).done(fetchAll(api.indicators, this.indicators, function () {
-			self.$broadcast('indicatorsLoaded');
-		}));
+		this._regions.$on('dropdown-value-changed', function (items) {
+			self.regions = items;
+		});
 
-		api.regions({ limit: 100 }).done(fetchAll(api.regions, this.regions, function () {
-			self.$regions = _.indexBy(self.regions, 'value');
-			self.$broadcast('regionsLoaded');
-		}));
+		this._indicators = new Dropdown({
+			el     : '#indicators',
+			source : api.indicators,
+			mapping: {
+				'short_name': 'title',
+				'id'        : 'value'
+			}
+		});
+
+		this._indicators.$on('dropdown-value-changed', function (items) {
+			self.indicators = items;
+		});
 
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
@@ -70,27 +67,30 @@ module.exports = {
 	},
 
 	computed: {
+
 		hasSelection: function () {
-			return selectedValues(this.regions).length > 0 &&
-				selectedValues(this.indicators).length > 0;
+			return this.regions.length > 0 && this.indicators.length > 0;
 		}
+
 	},
 
 	methods: {
+
 		refresh: function (pagination) {
 			if (!this.hasSelection) {
 				return;
 			}
 
-			var self    = this;
+			var self = this;
 
-			var regions = selectedValues(this.regions);
-			var options = { indicator__in : [] };
-			var columns = [{
+			var regionNames = _.indexBy(this.regions, 'value');
+			var regions     = _.map(this.regions, 'value');
+			var options     = { indicator__in : [] };
+			var columns     = [{
 					prop: 'region',
 					display: 'Region',
 					format: function (v) {
-						return self.$regions[v].title;
+						return regionNames[v].title;
 					}
 				}, {
 					prop: 'campaign',
@@ -119,24 +119,22 @@ module.exports = {
 			}
 
 			this.indicators.forEach(function (indicator) {
-				if (indicator.selected) {
-					options.indicator__in.push(indicator.value);
-					columns.push({
-						prop: indicator.value,
-						display: indicator.title,
-						classes: 'numeric',
-						format: function (v) {
-							return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
-						}
-					});
-				}
+				options.indicator__in.push(indicator.value);
+				columns.push({
+					prop   : indicator.value,
+					display: indicator.title,
+					classes: 'numeric',
+					format : function (v) {
+						return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
+					}
+				});
 			});
 
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
 			this.table.columns = columns;
-			this.table.rows = [];
+			this.table.rows    = [];
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
@@ -152,7 +150,7 @@ module.exports = {
 				var datapoints = data.objects.map(function (v) {
 					var d = _.pick(v, 'region');
 
-					d.campaign = v.campaign.name;
+					d.campaign = moment(v.campaign.start_date).format('MMM YYYY');
 
 					v.indicators.forEach(function (ind) {
 						d[ind.indicator] = ind.value;
@@ -172,8 +170,8 @@ module.exports = {
 
 			this.downloading = true;
 
-			var indicators   = selectedValues(this.indicators);
-			var regions      = selectedValues(this.regions);
+			var indicators   = _.map(this.indicators, 'value');
+			var regions      = _.map(this.regions, 'value');
 			var query        = {
 				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
 				'the_limit'  : 10000000,

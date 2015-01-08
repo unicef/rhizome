@@ -58,27 +58,38 @@
 
 		ul {
       list-style: none;
-      max-height: 100px;
 			margin: 0;
 			padding: 0;
 			overflow-y: auto;
 
 			*[role="menuitem"] {
 				margin: 0;
+				padding: 5pt;
         overflow: hidden;
-        padding: 5pt;
         white-space: nowrap;
 
-				.fa-check {
+				.fa {
 					visibility: hidden;
 				}
 			}
 
+			ul *[role="menuitem"] {
+				margin-left: 0.5rem;
+			}
+
 			.selected {
-				.fa-check {
+				& > .fa-check {
 					visibility: visible;
 				}
 			}
+
+			.folder {
+				& > .fa-caret-right,
+				& > .fa-caret-down {
+					visibility: visible;
+				}
+			}
+
 		}
 
     .selection-controls {
