@@ -121,6 +121,8 @@ class Region(models.Model):
 
         ordering = ('name',)
 
+# class RegionShape
+
 class CampaignType(models.Model):
 
     name = models.CharField(max_length=55)

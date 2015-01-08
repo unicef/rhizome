@@ -30,15 +30,13 @@ def main():
             for feature_dict in data['features']:
 
                 properties = feature_dict['properties']
-                polygon = feature_dict['geometry']['coordinates']
+                polygon = feature_dict['geometry']['coordinates'][0]
 
                 # pprint(properties)
                 region_level = properties['LVL']
                 parent_region_level = str(int(region_level) - 1) if region_level > 0 else 0
 
-                pprint(properties)
                 region_string = properties['ADM%s_NAME' % region_level]
-                print region_string
 
                 region_type = rg_type_map[region_level]
                 country = properties['ADM0_NAME']
@@ -74,7 +72,7 @@ def main():
                         'polygon': polygon
                     }
 
-                    SourceShape.objects.create(**shape_defaults)
+                    SourceRegionPolygon.objects.create(**shape_defaults)
 
 
     return None, 'geo json parsed!!'

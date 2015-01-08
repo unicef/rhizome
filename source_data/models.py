@@ -5,7 +5,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from jsonfield import JSONField
+from jsonfield import JSONCharField
 
 from datapoints.models import Source, Indicator, Region, Campaign
 
@@ -137,15 +137,15 @@ class SourceRegion(models.Model):
     def __unicode__(self):
         return self.region_string + ' (' + self.region_type + ')'
 
-class SourceShape(models.Model):
+class SourceRegionPolygon(models.Model):
 
     source_region = models.ForeignKey(SourceRegion,unique=True)
     shape_len  = models.FloatField()
     shape_area = models.FloatField()
-    polygon = JSONField()
+    polygon = models.TextField()
 
     class Meta:
-        db_table = 'source_shapes'
+        db_table = 'source_region_polygon'
 
 
 class SourceIndicator(models.Model):
