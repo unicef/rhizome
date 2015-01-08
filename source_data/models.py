@@ -142,7 +142,7 @@ class SourceShapes(models.Model):
     source_region = models.ForeignKey(SourceRegion,unique=True)
     shape_len  = models.FloatField()
     shape_area = models.FloatField()
-    geometry = JSONField()
+    polygon = JSONField()
 
     class Meta:
         db_table = 'source_shapes'

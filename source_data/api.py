@@ -9,8 +9,9 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
+from django.conf import settings
 
-from source_data.models import EtlJob, SourceDataPoint, ProcessStatus
+from source_data.models import *
 from datapoints.models import Source
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform,VcmSettlementTransform
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
@@ -107,18 +108,25 @@ class EtlTask(object):
 
 
         ## Fix This....
-        json_dir = '/Users/johndingee_seed/code/UF04/polio/geo/'
+        # json_dir = '/Users/johndingee_seed/code/UF04/polio/geo/'
+        json_dir = settings.MEDIA_ROOT + 'geo/'
 
         ## loop over all files in dir and create document id
+        doc_id = Document.objects.create(docfile=json_dir + 'nga_adm1.geojson'\
+            ,created_by_id=1)
+
+
         with open(json_dir + 'nga_adm1.geojson') as f:
             data = json.load(f)
+
+
 
         # document_id = Document.objects.create()
 
         for feature_dict in data['features']:
 
             properties = feature_dict['properties']
-            geometry = feature_dict['geometry']['coordinates']
+            polygon = feature_dict['geometry']['coordinates']
 
             region_string = properties['ADM1_VIZ_N']
             region_type = properties['LVL'] # create mapping for this
@@ -134,7 +142,7 @@ class EtlTask(object):
             shape_defaults = {
                 'shape_len' : properties[u'SHAPE_Leng'],
                 'shape_area' : properties['SHAPE_Area'],
-                'geometry': geometry
+                'polygon': polygon
             }
 
             pprint(shape_defaults)
