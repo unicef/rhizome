@@ -63,13 +63,12 @@ class MasterRefresh(object):
             source_polygon = SourceRegionPolygon.objects.get(source_region=\
                 sr.source_region)
 
-            master_polygon = RegionPolygon.objects.create(
-                region = sr.master_region ,
-                shape_len =  source_polygon.shape_len,
-                shape_area = source_polygon.shape_area,
-                polygon = source_polygon.polygon
-            )
-            print source_polygon
+            master_polygon = RegionPolygon.objects.get_or_create(
+                region = sr.master_region,
+                defaults = { 'shape_len': source_polygon.shape_len,
+                    'shape_area':source_polygon.shape_area,
+                    'polygon': source_polygon.polygon
+                })
 
         # SourceRegion.objects.filter(document_id=\
 
