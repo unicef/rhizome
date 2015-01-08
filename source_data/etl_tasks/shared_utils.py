@@ -12,11 +12,7 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
     header = [col for col in df]
     source_datapoints = []
 
-    print 'HEADER: '
-    print header
-
     for row_number,(row) in enumerate(df.values):
-        print row_number
 
         region_string = row[header.index(column_mappings['region_col'])]
         campaign_string = row[header.index(column_mappings['campaign_col'])]
@@ -92,12 +88,13 @@ def map_campaigns(campaign_strings,document_id):
 
         ## parse the office string
         campaign_split = set(campaign.split(' '))
+
+        print campaign_split
+
+        ## put a try / excpet here to ensure that the campaign exists
         office_string = str(list(campaign_split.intersection(set(offices)))[0])
 
-
         office_obj = Office.objects.get(name = office_string)
-
-
 
         source_campaign,created = SourceCampaign.objects.get_or_create(
             campaign_string = campaign,
@@ -125,9 +122,16 @@ def map_regions(region_strings,document_id):
 
     for region_string in distinct_region_strings:
 
-        source_region,created = SourceRegion.objects.get_or_create(\
-                region_string=region_string,
-                defaults = {'document_id':document_id})
+        print 'region string'
+
+        try:
+            source_region,created = SourceRegion.objects.get_or_create(\
+                    region_string=region_string,
+                    document_id = document_id,
+                    region_type = 'UKNOWN',
+                    country = 'UNKNOWN')
+        except IntegrityError:
+            source_region = None
 
 
         try:
