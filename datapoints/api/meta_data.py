@@ -50,6 +50,23 @@ class RegionResource(BaseApiResource):
         return bundle
 
 
+class RegionPolygonResource(BaseApiResource):
+
+    region_id = fields.ForeignKey(RegionResource,'region')
+
+    class Meta(BaseApiResource.Meta):
+        queryset = RegionPolygon.objects.all()
+        resource_name = 'polygon'
+        filtering = {
+            "region_id": ALL,
+        }
+
+    def dehydrate(self, bundle):
+
+        bundle.data['region_id'] = bundle.obj.region.id
+
+        return bundle
+
 
 class IndicatorResource(BaseApiResource):
     '''Indicator Resource'''

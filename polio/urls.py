@@ -26,7 +26,7 @@ v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(EtlResource())
 v1_api.register(OfficeResource())
-
+v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
     ##
