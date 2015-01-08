@@ -27,3 +27,5 @@ node_modules
 .htaccess
 sql_backups
 db.sql
+/geo
+

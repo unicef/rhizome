@@ -88,7 +88,8 @@ class EtlTask(object):
               'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
               'odk_refresh_master' : self.odk_refresh_master,
               'start_odk_jar' :self.start_odk_jar,
-              'finish_odk_jar' :self.finish_odk_jar
+              'finish_odk_jar' :self.finish_odk_jar,
+              'parse_geo_json' :self.parse_geo_json
               }
 
         fn = self.function_mappings[task_string]
@@ -177,3 +178,7 @@ class EtlTask(object):
             return err, None
 
         return None, success_msg
+
+    def parse_geo_json(self):
+
+        return None, 'geo json parsed (hehe not really)'
