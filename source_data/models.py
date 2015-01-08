@@ -137,7 +137,7 @@ class SourceRegion(models.Model):
     def __unicode__(self):
         return self.region_string
 
-class SourceShapes(models.Model):
+class SourceShape(models.Model):
 
     source_region = models.ForeignKey(SourceRegion,unique=True)
     shape_len  = models.FloatField()

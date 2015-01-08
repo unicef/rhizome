@@ -116,20 +116,30 @@ def refresh_master_by_document_id(request,document_id):
         document_id=document_id,\
         status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
 
+    source_regions = SourceRegion.objects.filter(document_id=document_id)
+
     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
     m.main()
+
+
+    ## Need to Handle region uploads here as well.
+    region_strings = [sd.region_string for sd in source_datapoints] + \
+        [sr.region_string for sr in source_regions]
+
+    indicator_strings = [sd.indicator_string for sd in source_datapoints]
+    campaign_strings = [sd.campaign_string for sc in source_datapoints]
 
     doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
         SourceDataPoint.objects.filter(document_id=document_id))
 
     si = SourceIndicator.objects.filter(indicatormap__isnull=True,
-        document_id=document_id)
+        indicator_string__in=indicator_strings)
 
     cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
-        document_id=document_id)
+        campaign_string__in=campaign_strings)
 
     rg = SourceRegion.objects.filter(regionmap__isnull=True,
-        document_id=document_id)
+        region_string__in=region_strings)
 
     to_map = chain(si,cp,rg)
 
