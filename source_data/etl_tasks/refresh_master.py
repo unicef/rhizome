@@ -9,7 +9,7 @@ from decimal import InvalidOperation
 
 from django.db import IntegrityError
 from django.db import transaction
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from source_data.models import *
@@ -60,9 +60,13 @@ class MasterRefresh(object):
 
         for sr in mapped_source_regions:
 
-            source_polygon = SourceRegionPolygon.objects.get(source_region=\
-                sr.source_region)
+            try:
+                source_polygon = SourceRegionPolygon.objects.get(source_region=\
+                    sr.source_region)
 
+            except ObjectDoesNotExist:
+                return
+                
             master_polygon = RegionPolygon.objects.get_or_create(
                 region = sr.master_region,
                 defaults = { 'shape_len': source_polygon.shape_len,
