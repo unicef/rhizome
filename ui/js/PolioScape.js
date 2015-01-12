@@ -20,5 +20,11 @@ module.exports = {
 			el: el,
 			components: { 'uf-dashboard': require('./view/dashboard') }
 		});
+	},
+	DataEntry: function (el) {
+		new Vue({
+			el: el,
+			components: { 'uf-entry-form': require('./view/entry-form') }
+		});
 	}
 };

@@ -15,6 +15,9 @@ urlpatterns = [
     ## Data Table ##
     url(r'^table/$', views.DataPointIndexView.as_view(),name='datapoint_index'),
 
+    ## Data Entry Form ##
+    url(r'^entry/$', views.DataEntryView.as_view(),name='datapoint_entry'),
+
     ## CREATE ##
     url(r'^create/$', views.DataPointCreateView.as_view(),name='create_datapoint'),
 
