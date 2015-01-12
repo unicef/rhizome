@@ -164,7 +164,7 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ prop: 'indicator', display: 'Indicator' }
+				{ prop: 'indicator', display: 'Indicator', isEditable: false }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
@@ -172,6 +172,8 @@ module.exports = {
 					prop: region_id,
 					display: regionNames[region_id].title,
 					classes: 'numeric',
+					isEditable: true,
+					isEditing: false,
 					format: function (v) {
 						return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
 					}
