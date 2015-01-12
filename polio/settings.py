@@ -51,7 +51,7 @@ INSTALLED_APPS = (
     'csvimport',
     'guardian',
     'tastypie',
-
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
