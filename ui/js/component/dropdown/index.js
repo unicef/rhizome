@@ -139,18 +139,19 @@ module.exports = Vue.extend({
 		},
 
 		toggleItem: function (item) {
-			item.selected = !item.selected;
-			this.$emit('dropdown-item-selected', item);
+			this.$emit('dropdown-item-toggle', item);
 		},
 
 		handleEvent: function (evt) {
 			switch (evt.type) {
+
 			case 'keyup':
 				// ESC
 				if (evt.keyCode === 27) {
 					this.open = false;
 				}
 				break;
+
 			case 'click':
 				if (this.opening) {
 					this.opening = false;
@@ -158,12 +159,16 @@ module.exports = Vue.extend({
 					this.open = false;
 				}
 				break;
+
 			case 'resize':
 				this.invalidateSize();
 				break;
+
 			default:
 				break;
+
 			}
+
 		},
 
 		invalidateSize: _.throttle(function () {
@@ -192,6 +197,7 @@ module.exports = Vue.extend({
 
 		invert: function () {
 			this.$broadcast('dropdown-invert');
+
 		},
 
 		selectAll: function () {
@@ -262,6 +268,17 @@ module.exports = Vue.extend({
 
 		'dropdown-item-selected': function () {
 			this.$emit('dropdown-value-changed', this.selectedItems);
+		},
+
+		'dropdown-item-toggle': function (item) {
+			if (!this.multi) {
+				this.$broadcast('dropdown-clear');
+				item.selected = true;
+			} else {
+				item.selected = !item.selected;
+			}
+
+			this.$emit('dropdown-item-selected');
 		}
 
 	},
