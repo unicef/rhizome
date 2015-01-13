@@ -18,7 +18,6 @@ module.exports = {
 
 		// switch editing mode
 		toggleEditing: function(op) {
-			console.log('toggle', op);
 			if (this.$data.isEditable === true) {
 				this.isEditing = op !== undefined ? op : !this.isEditing;
 
@@ -31,8 +30,6 @@ module.exports = {
 
 		// user has finished editing: update cell state
 		submit: function() {
-			console.log('submit');
-
 			// TO DO: submit value for saving (here?)
 			
 			// toggle editing mode
@@ -44,7 +41,14 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (!this.value) { return ''; }
+			if (this.type === 'summary') {
+				// special content if this is a summary cell
+				var row = this.$parent.rows[this.rowIndex];
+				return this.$parent.$parent.summarize(row, 'byRow');
+			}
+			else if (!this.value) { 
+				return ''; 
+			}
 			else {
 				// format according to attached method if it exists
 				return this.format ? this.format(this.value) : this.value;
@@ -53,6 +57,14 @@ module.exports = {
 
 		missing: function() {
 			return _.isNull(this.value);
+		},
+
+		hoverText: function() {
+			if (_.isNull(this.value)) {
+				return 'Missing value';
+			} else {
+				return this.value;
+			}
 		}
 
 	},

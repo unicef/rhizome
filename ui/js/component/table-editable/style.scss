@@ -3,7 +3,7 @@ table {
 	td.editable {
 
 		width: 150px;
-		padding: 1px;
+		padding: 2px;
 
 		.displayValue,
 		.editControl 
@@ -15,13 +15,13 @@ table {
 
 		.displayValue {
 			cursor: pointer;
-			min-height: 15px;
+			min-height: 20px;
 		}
 
 		.editControl {
 
 			display: none;
-			border: none;
+			border: 1px solid #aaa;
 			font-size: inherit;
 
 			&:focus {
@@ -43,6 +43,11 @@ table {
 			background-color: rgb(255, 235, 134);
 		}
 
+	}
+
+	td.completionStatus {
+		font-size: .8em;
+		width: 50px;
 	}
 
 }
