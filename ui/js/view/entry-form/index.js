@@ -103,14 +103,25 @@ module.exports = {
 		},
 
 		refresh: function (pagination) {
-			if (!this.hasSelection) {
-				return;
-			}
+			// if (!this.hasSelection) {
+			// 	return;
+			// }
 
 			var self = this;
 
-			var regionNames = _.indexBy(this.regions, 'value');
-			var regions     = _.map(this.regions, 'value');
+			// default values
+			var regionNames = {
+				12939: { title: 'Borno' },
+				12942: { title: 'Bauchi (Province)' },
+				13697: { title: 'Bauchi (LGA)' }
+			}; 
+			var regions = [ 12942, 12939, 13697 ];
+
+			// get from dropdown
+			if (this.hasSelection) {
+				regionNames = _.indexBy(this.regions, 'value');
+				regions     = _.map(this.regions, 'value');
+			}
 
 			var options     = { 
 				indicator__in : [],
@@ -164,21 +175,19 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ prop: 'indicator', display: 'Indicator', isEditable: false }
+				{ header: 'Indicator' }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
 				columns.push({
-					prop: region_id,
-					display: regionNames[region_id].title,
-					classes: 'numeric',
-					isEditable: true,
-					isEditing: false,
-					format: function (v) {
-						return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
-					}
+					header: regionNames[region_id].title,
 				});
-			});		
+			});
+
+			// cell formatters
+			var numericFormatter = function (v) {
+				return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v);
+			};
 
 			_.defaults(options, this.pagination);
 
@@ -201,6 +210,7 @@ module.exports = {
 
 				// pivot data so that each row contains all region datapoints for one indicator
 				// TO DO: this may be broken by pagination (?) and so would need to be grouped differently on the back end
+				// TO DO: move this to data transform utility
 				var byIndicator = {};
 				data.objects.forEach(function (d) {
 					d.indicators.forEach(function (ind) {
@@ -210,18 +220,32 @@ module.exports = {
 				});
 
 				// assemble data points into rows for table
-				var datapoints = [];
+				var rows = [];
 				options.indicator__in.forEach(function(ind) {
-					var row = {
-						'indicator': self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind
-					};
-					options.region__in.forEach(function(reg) {
-						row[reg] = byIndicator[ind] && byIndicator[ind][reg] ? byIndicator[ind][reg].value : null;
+					
+					var row = [];
+
+					// indicator name cell
+					row.push({
+						isEditable: false,
+						value: self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind
 					});
-					datapoints.push(row);
+
+					// regional values
+					options.region__in.forEach(function(reg) {
+						row.push({
+							isEditable: true,
+							format: numericFormatter,
+							classes: 'numeric',
+							value: byIndicator[ind] && byIndicator[ind][reg] ? byIndicator[ind][reg].value : null
+						});
+					});
+
+					// add row to main array
+					rows.push(row);
 				});
 
-				self.table.rows = datapoints;
+				self.table.rows = rows;
 			});
 		},
 

@@ -122,16 +122,7 @@ table {
 			background-color: $ghost;
 		}
 	}
-
-	.editControl,
-	.editing .displayValue 
-	{
-		display: none;
-	}
-	.editing .editControl {
-		display: block;
-	}
-
+	
 }
 
 *[role="menuitem"] {

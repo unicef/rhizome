@@ -1,0 +1,48 @@
+table {
+
+	td.editable {
+
+		width: 150px;
+		padding: 1px;
+
+		.displayValue,
+		.editControl 
+		{
+			width: 100%;
+			height: 100%;
+			padding: 4px 6px;
+		}
+
+		.displayValue {
+			cursor: pointer;
+			min-height: 15px;
+		}
+
+		.editControl {
+
+			display: none;
+			border: none;
+			font-size: inherit;
+
+			&:focus {
+				outline: 0;
+			}
+		}
+
+		&.editing .displayValue 
+		{
+			display: none;
+		}
+
+		&.editing .editControl {
+			display: block;
+		}
+
+		/* cell status */
+		&.missing .displayValue {
+			background-color: rgb(255, 235, 134);
+		}
+
+	}
+
+}

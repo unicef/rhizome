@@ -1,12 +1,14 @@
+<td v-class="editable: isEditable, editing: isEditing, missing: missing">
 
-test
+	<div v-on="click: toggleEditing(true)" class="displayValue">
+		{{ formatted }}
+	</div>
 
-<!-- <div v-on="click: isEditing = !isEditing" class="displayValue">
-	{{ col | cell }}
-</div>
+	<input v-if="isEditable" 
+		type="textfield"
+		class="editControl"
+		v-model="value | validator"
+		v-on="keyup: submit | key 13, blur: submit"
+		></input>
 
-<input v-if="col.isEditable" 
-	type="textfield"
-	class="editControl"
-	value="{{ col | value }}"></input>
- -->
+</td>

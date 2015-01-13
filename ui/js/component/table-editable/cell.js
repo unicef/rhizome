@@ -7,35 +7,86 @@ module.exports = {
 
 	template: require('./cell.html'),
 
-	data: function () {
+	data: function() {
 		return {
-			isEditing: false,
-			isEditable: false
+			isEditable: false,
+			isEditing: false
 		};
 	},
 
-	ready: function() {
-		console.log(this.$data.col.prop);
+	methods: {
+
+		// switch editing mode
+		toggleEditing: function(op) {
+			console.log('toggle', op);
+			if (this.$data.isEditable === true) {
+				this.isEditing = op !== undefined ? op : !this.isEditing;
+
+				// set focus on input
+				if (this.isEditing === true) {
+					this.$el.getElementsByTagName('input')[0].focus();
+				}
+			}
+		},
+
+		// user has finished editing: update cell state
+		submit: function() {
+			console.log('submit');
+
+			// TO DO: submit value for saving (here?)
+			
+			// toggle editing mode
+			this.toggleEditing(false);
+		}
+
 	},
 
 	computed: {
 
-		// format value for display
-		cell: function (col) {
-			var val = this.$parent[col.hasOwnProperty('prop') ? col.prop : col];
-
-			if (col.hasOwnProperty('format') && _.isFunction(col.format)) {
-				return col.format(val);
+		formatted: function() {
+			if (!this.value) { return ''; }
+			else {
+				// format according to attached method if it exists
+				return this.format ? this.format(this.value) : this.value;
 			}
-
-			return val;
 		},
 
-		// format value for editing
-		value: function (col) {
-			var val = this.$parent[col.hasOwnProperty('prop') ? col.prop : col];
+		missing: function() {
+			return _.isNull(this.value);
+		}
 
-			return val;
+	},
+
+	filters: {
+
+		// validate value
+		validator: { 
+
+			write: function(val) {
+
+				// string
+				if (_.isString(val)) {
+					if (val.length === 0) { val = null; }
+				} 
+				// number
+				else if (_.isNumber(val)) {
+
+				} 
+				// NaN
+				else if (_.isNaN(val)) {
+					val = null;
+				}
+
+				// custom validation
+				if (this.validate) {
+					val = this.validate(val);
+				}
+
+				// update value
+				return val;
+
+			}
+
 		}
 
 	}
