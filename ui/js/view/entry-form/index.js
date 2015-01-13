@@ -2,7 +2,6 @@
 
 var _        = require('lodash');
 var d3       = require('d3');
-var moment   = require('moment');
 
 var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
@@ -109,7 +108,7 @@ module.exports = {
 
 			var self = this;
 
-			// default values
+			// default values for testing
 			var regionNames = {
 				12939: { title: 'Borno' },
 				12942: { title: 'Bauchi (Province)' },
@@ -123,21 +122,10 @@ module.exports = {
 				regions     = _.map(this.regions, 'value');
 			}
 
-			var options     = { 
+			var options = { 
 				indicator__in : [],
 				region__in: []
 			};
-
-			// var columns     = [{
-			// 		prop: 'region',
-			// 		display: 'Region',
-			// 		format: function (v) {
-			// 			return regionNames[v].title;
-			// 		}
-			// 	}, {
-			// 		prop: 'campaign',
-			// 		display: 'Campaign'
-			// 	}];
 
 			if (pagination) {
 				// Prepend "the_" to the pagination options (typically limit and offset)
@@ -156,7 +144,6 @@ module.exports = {
 					return regionNames[a].title > regionNames[b].title ? 1 : -1;
 				});
 			}
-			// options.region__in = [12929, 12939, 12942];
 
 			if (this.campaign.start) {
 				options.campaign_start = this.campaign.start;
@@ -175,12 +162,15 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ header: 'Indicator' }
+				{ header: 'Indicator', type: 'label' },
+				{ header: 'Complete', type: 'summary' }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
 				columns.push({
 					header: regionNames[region_id].title,
+					type: 'value',
+					key: region_id
 				});
 			});
 
@@ -202,12 +192,6 @@ module.exports = {
 				self.pagination.the_offset  = Number(data.meta.the_offset);
 				self.pagination.total_count = Number(data.meta.total_count);
 
-				if (!data.objects || data.objects.length < 1) {
-					return;
-				}
-
-				console.log(data);
-
 				// pivot data so that each row contains all region datapoints for one indicator
 				// TO DO: this may be broken by pagination (?) and so would need to be grouped differently on the back end
 				// TO DO: move this to data transform utility
@@ -225,20 +209,39 @@ module.exports = {
 					
 					var row = [];
 
-					// indicator name cell
-					row.push({
-						isEditable: false,
-						value: self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind
-					});
+					// add columns 
+					columns.forEach(function(column) {
 
-					// regional values
-					options.region__in.forEach(function(reg) {
-						row.push({
-							isEditable: true,
-							format: numericFormatter,
-							classes: 'numeric',
-							value: byIndicator[ind] && byIndicator[ind][reg] ? byIndicator[ind][reg].value : null
-						});
+						var cell = {
+							isEditable: false,
+							type: column.type
+						};
+
+						switch (column.type) {
+
+							// editable value
+							case 'value':
+								cell.isEditable = true;
+								cell.format = numericFormatter;
+								cell.classes = 'numeric';
+								cell.value = byIndicator[ind] && byIndicator[ind][column.key] ? byIndicator[ind][column.key].value : null;
+								break;
+
+							// indicator name
+							case 'label':
+								cell.value = self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind;
+								break;
+
+							// summary
+							case 'summary':
+								cell.value = null;
+								cell.rowIndex = rows.length; // needed to access the row later for summary
+								break;
+
+						}
+
+						// add cell to row
+						row.push(cell);
 					});
 
 					// add row to main array

@@ -1,6 +1,6 @@
 <td v-class="editable: isEditable, editing: isEditing, missing: missing">
 
-	<div v-on="click: toggleEditing(true)" class="displayValue">
+	<div v-on="click: toggleEditing(true)" class="displayValue" title="{{ hoverText }}">
 		{{ formatted }}
 	</div>
 
