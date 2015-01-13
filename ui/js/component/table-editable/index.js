@@ -30,8 +30,13 @@ module.exports = {
 									.map(function(row) { return row[k]; })
 									.filter(function(d) { return (d) ? d.isEditable : false; })
 									.value();
-			} else {
-				// editableCells = this.$data.rows.filter(function(d,i) { return i==k && d.isEditable; });
+			} else if (type === 'all') {
+				console.log(k);
+				console.log(this.rows);
+				editableCells = [];
+				this.$data.rows.forEach(function(row) { 
+					editableCells.concat(row.filter(function(d) { return d.isEditable; }));
+				});
 			}
 
 			var valueCount = _.reduce(editableCells, function(count, cell) { 
