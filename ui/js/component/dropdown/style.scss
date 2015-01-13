@@ -3,17 +3,7 @@
 	position: relative;
 
 	form[role="search"] {
-		position: relative;
 
-		input[type="text"] {
-			padding-right: 2rem;
-		}
-
-		.clear-btn {
-			position: absolute;
-			right: 0.5rem;
-			top: 1rem;
-		}
 	}
 
 	.menu-button {
@@ -48,11 +38,19 @@
 			border-bottom: 1px solid #888;
 			margin: 0 5px 5px 5px;
 			padding: 5px 0;
+			position: relative;
 
 			input {
 				box-sizing: border-box;
 				display: block;
+				padding-right: 2rem;
 				width: 100%;
+			}
+
+			.clear-btn {
+				position: absolute;
+				right: 0.5rem;
+				top: 1rem;
 			}
 		}
 
