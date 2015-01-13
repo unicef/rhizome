@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 module.exports = {
 	replace : true,
 
@@ -7,17 +9,16 @@ module.exports = {
 
 	data: function () {
 		return {
-			isEditing    : false,
+			isEditing: false,
 			isEditable: false
 		};
 	},
 
-	filters: {
+	ready: function() {
+		console.log(this.$data.col.prop);
+	},
 
-		// is this column editable?
-		isEditable: function(col) {
-			return col.isEditable;
-		},
+	computed: {
 
 		// format value for display
 		cell: function (col) {
