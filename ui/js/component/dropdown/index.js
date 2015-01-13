@@ -227,7 +227,7 @@ module.exports = Vue.extend({
 
 					accumulator = accumulator.concat(data.objects);
 
-					if (meta.limit + meta.offset < meta.total_count) {
+					if (meta.limit !== 0 && meta.limit + meta.offset < meta.total_count) {
 						self.load({
 							limit : meta.limit,
 							offset: meta.offset + meta.limit

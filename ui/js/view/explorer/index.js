@@ -38,7 +38,7 @@ module.exports = {
 			el     : '#regions',
 			source : api.regions,
 			mapping: {
-				'parent_region': 'parent',
+				'parent_region_id': 'parent',
 				'name'         : 'title',
 				'id'           : 'value'
 			}
