@@ -56,6 +56,38 @@ class DataPointIndexView(IndexView):
 
         return dps
 
+class DataEntryView(IndexView):
+
+    model=DataPoint
+    template_name = 'data-entry/index.html'
+    context_object_name = 'top_datapoints'
+
+    def get_queryset(self):
+
+        ## TO DO: add indicator set page and permissions
+
+        ## if this user has permissions to view entire office
+        ## then find the regions that fall under that
+        offices = get_objects_for_user(self.request.user,
+            'datapoints.view_office')
+        if offices:
+            regions = Region.objects.filter(office=offices)
+
+        ## now check to see if they have region level permissions
+        else:
+            regions = get_objects_for_user(self.request.user
+                , 'datapoints.view_region')
+
+        ## TO DO : find all of the sub regions of the regions
+        ##         the user is permitted to see
+
+        regions_leaf_level = regions #some recursive query
+
+        ## now get all the relevant data points
+        dps = DataPoint.objects.filter(region=regions_leaf_level)
+
+        return dps
+
 class DashBoardView(IndexView):
     paginate_by = 50
 
