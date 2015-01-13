@@ -8,6 +8,7 @@ from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource
+from datapoints.api.base import debug
 
 from source_data.api import EtlResource
 from tastypie.api import Api
@@ -49,3 +50,8 @@ urlpatterns = patterns('',
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^debug/', debug),
+    )
