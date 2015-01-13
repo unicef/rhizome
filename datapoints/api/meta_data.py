@@ -1,4 +1,4 @@
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ModelResource,Resource, ALL
 from tastypie import fields
 
 from django.contrib.auth.models import User
@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from datapoints.api.base import BaseApiResource
 from datapoints.models import *
 
+import pprint as pp
 
 
 class OfficeResource(BaseApiResource):
@@ -18,37 +19,24 @@ class OfficeResource(BaseApiResource):
         resource_name = 'office'
 
 
-
-class RegionResource(BaseApiResource):
+class RegionResource(ModelResource):
     '''Region Resource'''
 
-    parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=False, null=True)
-    office = fields.ToOneField(OfficeResource, 'office')
+    # parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=True, null=True)
+    # name = fields.CharField('name')
 
 
-    class Meta(BaseApiResource.Meta):
-        queryset = Region.objects.all()
+    class Meta():
+        # queryset = Region.objects.raw("Select id, parent_region_id, name from region")
+        queryset = SimpleRegion.objects.all()
         resource_name = 'region'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-            "office": ALL,
-            "region_type": ALL,
-        }
+        max_limit = None # return all rows by default ( limit defaults to 20 )
+        # paginator_class = CustomPaginator
 
     def dehydrate(self, bundle):
 
-        bundle.data['office'] = bundle.obj.office.id
-
-        try:
-            bundle.data['parent_region'] = bundle.obj.parent_region.id
-        except ObjectDoesNotExist:
-            pass
-        except AttributeError:
-            pass
-
+        bundle.data.pop("resource_uri",None)# = bundle.obj.region.id
         return bundle
-
 
 class RegionPolygonResource(BaseApiResource):
 

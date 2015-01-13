@@ -109,7 +109,6 @@ class Region(models.Model):
 
         return r
 
-
     class Meta:
 
         db_table = 'region'
@@ -119,7 +118,17 @@ class Region(models.Model):
             ('view_region', 'View region'),
         )
 
-        ordering = ('name',)
+        # ordering = ('name',)
+
+
+class SimpleRegion(models.Model):
+
+    name = models.CharField(max_length=55,unique=True)
+    parent_region_id = models.IntegerField(null=True,blank=True)
+
+    class Meta:
+        db_table = 'vw_simple_region'
+        managed = False
 
 
 class RegionPolygon(models.Model):
