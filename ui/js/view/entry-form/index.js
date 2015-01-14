@@ -162,8 +162,7 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ header: 'Indicator', type: 'label' },
-				{ header: '', type: 'summary' }
+				{ header: 'Indicator', type: 'label' }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
@@ -228,12 +227,6 @@ module.exports = {
 							// indicator name
 							case 'label':
 								cell.value = self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind;
-								break;
-
-							// summary
-							case 'summary':
-								cell.value = null;
-								cell.rowIndex = rows.length; // needed to access the row later for summary
 								break;
 
 						}

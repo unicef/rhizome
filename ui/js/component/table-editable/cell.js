@@ -41,11 +41,7 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (this.type === 'summary') {
-				// special content if this is a summary cell
-				return this.$parent.$parent.summarize(this.rowIndex, 'row');
-			}
-			else if (!this.value) { 
+			if (!this.value) { 
 				return ''; 
 			}
 			else {

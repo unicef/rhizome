@@ -7,6 +7,10 @@ var formats = {
 	percent: d3.format('%')
 };
 
+var scales = {
+	completionColor: d3.scale.quantize().domain([0, 1]).range(['#FC5959', '#fc8d59', '#ffffbf', '#d9ef8b', '#91cf60'])
+}
+
 module.exports = {
 	template: require('./template.html'),
 
@@ -77,39 +81,18 @@ module.exports = {
 
 			self.$set('stats', stats);
 
-		},
-
-		summarize: function(i, type) {
-			var stats = this.$get('stats');
-			if (!stats) { return null; }
-
-			var statSet;
-			if (type === 'column') {
-				statSet = stats.byColumn;
-			} else if (type === 'row') {
-				statSet = stats.byRow;
-			}
-
-			if (statSet && i < statSet.length) {
-				var v = statSet[i];
-				return v.complete + ' / ' + v.total;
-			} else {
-				return null;
-			}
-
-		}		
-
+		}
+		
 	},
 
 	filters: {
 
-		// proxy to method
-		summarize: function(i, type) {
-			return this.$parent.summarize(i, type);
-		},
-
 		percent: function(v) {
 			return formats.percent(v);
+		},
+
+		completionColor: function(v) {
+			return scales.completionColor(v);
 		}
 
 	},
