@@ -197,7 +197,6 @@ module.exports = Vue.extend({
 
 		invert: function () {
 			this.$broadcast('dropdown-invert');
-
 		},
 
 		selectAll: function () {
@@ -267,7 +266,9 @@ module.exports = Vue.extend({
 	events: {
 
 		'dropdown-item-selected': function () {
-			this.$emit('dropdown-value-changed', this.selectedItems);
+			var items = this.selectedItems;
+			this.$emit('dropdown-value-changed', items);
+			this.$dispatch('dropdown-value-changed', items);
 		},
 
 		'dropdown-item-toggle': function (item) {
