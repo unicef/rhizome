@@ -4,7 +4,7 @@
 	</h5>
 </div>
 
-<table>
+<table v-if="!loading && rows.length > 0">
 	<thead v-if="rows.length > 0">
 		<tr>
 			<th v-repeat="col: columns">{{ col.header }}</th>
@@ -16,20 +16,17 @@
 		</tr>
 	</thead>
 	<tbody>
-
 		<tr v-repeat="row: rows">
 			<td v-repeat="row"
 				v-component="uf-cell"></td>
 		</tr>
-
-		<tr v-if="rows.length < 1" class="empty">
-
-			<td colspan="{{ columns.length }}">
-				<span v-if="loading">Loading&hellip;</span>
-				<span v-if="!loading">Use the options above to load a data entry form.</span>
-			</td>
-
-		</tr>
-
 	</tbody>
 </table>
+
+<div v-if="!loading && rows.length < 1" class="empty">
+	Use the options above to load a data entry form.
+</div>
+
+<div v-if="loading" class="loading">
+	Loading&hellip;
+</div>

@@ -182,8 +182,6 @@ module.exports = {
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
-			this.table.columns = columns;
-			this.table.rows    = [];
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
@@ -248,6 +246,7 @@ module.exports = {
 					rows.push(row);
 				});
 
+				self.table.columns = columns;
 				self.table.rows = rows;
 			});
 		},
