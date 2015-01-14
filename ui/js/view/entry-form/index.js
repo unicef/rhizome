@@ -163,7 +163,7 @@ module.exports = {
 			// define columns
 			var columns = [
 				{ header: 'Indicator', type: 'label' },
-				{ header: 'Complete', type: 'summary' }
+				{ header: '', type: 'summary' }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
@@ -246,8 +246,9 @@ module.exports = {
 					rows.push(row);
 				});
 
-				self.table.columns = columns;
 				self.table.rows = rows;
+				self.table.columns = columns;
+
 			});
 		},
 

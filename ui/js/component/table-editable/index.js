@@ -1,61 +1,115 @@
 'use strict';
 
 var _ = require('lodash');
+var d3 = require('d3');
+
+var formats = {
+	percent: d3.format('%')
+};
 
 module.exports = {
 	template: require('./template.html'),
 
 	ready: function () {
+		
 		_.defaults(this.$data, {
 			groupSize: 5
 		});
+
+		this.$watch('rows', function() {
+			this.updateStats();
+		}, true);
+
 	},
 
 	methods: {
 
-		// summarize completion
-		summarize: function(k, type) {
+		// update table stats
+		updateStats: function() {
+			var self = this;
 
-			// assemble editable cells according to which type of summarization we're doing
-			var editableCells; 
-			if (type === 'byRow') {
-				editableCells = k.filter(function(d) { return d.isEditable; });
+			var newCounter = function() {
+				return {
+					'complete': 0,
+					'total': 0
+				};
+			};
+
+			var stats = {
+				total: newCounter(),
+				byRow: [],
+				byColumn: []
+			};
+
+			if (self.rows.length > 0) {
+
+				_.forEach(self.rows, function(row, rowIndex) {
+
+					if (stats.byRow[rowIndex] === undefined) {
+						stats.byRow[rowIndex] = newCounter();
+					}
+
+					_.forEach(row, function(cell, colIndex) {
+
+						if (stats.byColumn[colIndex] === undefined) {
+							stats.byColumn[colIndex] = newCounter();
+						}
+
+						if (cell.isEditable) {
+
+							stats.total.total ++;
+							stats.byRow[rowIndex].total ++;
+							stats.byColumn[colIndex].total ++;
+
+							if (!_.isNull(cell.value)) {
+								stats.total.complete ++;
+								stats.byRow[rowIndex].complete ++;
+								stats.byColumn[colIndex].complete ++;
+							}
+
+						}
+
+					}); // end column loop
+
+				}); // end row loop
+
 			}
-			else if (type === 'byColumn') {
-				// return null immediately if this is not a "value" column
-				if (this.columns[k].type !== 'value') {
-					return '';
-				}
-				editableCells = _(this.rows)
-									.map(function(row) { return row[k]; })
-									.filter(function(d) { return (d) ? d.isEditable : false; })
-									.value();
-			} else if (type === 'all') {
-				console.log(k);
-				console.log(this.rows);
-				editableCells = [];
-				this.$data.rows.forEach(function(row) { 
-					editableCells.concat(row.filter(function(d) { return d.isEditable; }));
-				});
+
+			self.$set('stats', stats);
+
+		},
+
+		summarize: function(i, type) {
+			var stats = this.$get('stats');
+			if (!stats) { return null; }
+
+			var statSet;
+			if (type === 'column') {
+				statSet = stats.byColumn;
+			} else if (type === 'row') {
+				statSet = stats.byRow;
 			}
 
-			var valueCount = _.reduce(editableCells, function(count, cell) { 
-					if (!_.isNull(cell.value)) { count ++; }
-					return count;
-				}, 0);
-			var total = editableCells.length;
-			var summary = valueCount + ' / ' + total;
+			if (statSet && i < statSet.length) {
+				var v = statSet[i];
+				return v.complete + ' / ' + v.total;
+			} else {
+				return null;
+			}
 
-			return summary;
 		}		
 
 	},
 
 	filters: {
 
-		// summarize proxy as filter
-		summarize: function(k, type) {
-			return this.summarize(k, type);
+		// proxy to method
+		summarize: function(i, type) {
+			return this.$parent.summarize(i, type);
+		},
+
+		percent: function(v) {
+			return formats.percent(v);
 		}
 
 	},
