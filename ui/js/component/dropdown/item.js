@@ -23,8 +23,7 @@ module.exports = {
 
 	methods: {
 		toggle: function () {
-			this.selected = !this.selected;
-			this.$dispatch('dropdown-item-selected', this);
+			this.$dispatch('dropdown-item-toggle', this);
 		}
 	},
 
@@ -32,15 +31,17 @@ module.exports = {
 
 		'dropdown-select-all': function () {
 			this.selected = true;
-			this.$dispatch('dropdown-item-selected', this);
+			this.$dispatch('dropdown-item-selected');
 		},
 
 		'dropdown-clear': function () {
 			this.selected = false;
-			this.$dispatch('dropdown-item-selected', this);
+			this.$dispatch('dropdown-item-selected');
 		},
 
-		'dropdown-invert': 'toggle'
-
+		'dropdown-invert': function () {
+			this.selected = !this.selected;
+			this.$dispatch('dropdown-item-selected');
+		}
 	},
 };
