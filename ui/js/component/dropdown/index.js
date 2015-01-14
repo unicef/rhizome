@@ -275,6 +275,7 @@ module.exports = Vue.extend({
 			if (!this.multi) {
 				this.$broadcast('dropdown-clear');
 				item.selected = true;
+				this.open = false;
 			} else {
 				item.selected = !item.selected;
 			}
