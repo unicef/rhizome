@@ -1,10 +1,10 @@
 'use strict';
 // generated on 2014-10-10 using generator-gulp-webapp 0.1.0
 
-var source = require('vinyl-source-stream');
+var source     = require('vinyl-source-stream');
 var browserify = require('browserify');
-var gulp = require('gulp');
-var del = require('del');
+var gulp       = require('gulp');
+var del        = require('del');
 
 // load plugins
 var $ = require('gulp-load-plugins')();
@@ -21,7 +21,10 @@ var path = {
 };
 
 var build = function (src, dst, opts) {
-	var bundleStream = browserify(src, opts).bundle();
+	var bundleStream = browserify(src, opts).bundle().on('error', function (e) {
+		$.util.log(e.message);
+		this.emit('end');
+	});
 
 	return bundleStream
 		.pipe(source(src))
@@ -38,6 +41,10 @@ gulp.task('styles', function () {
 			style: 'expanded',
 			precision: 10
 		}))
+		.on('error', function (e) {
+			$.util.log(e.message);
+			this.emit('end');
+		})
 		.pipe(filter)
 		.pipe($.concat('screen.css'))
 		.pipe(filter.restore())
