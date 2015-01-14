@@ -1,0 +1,81 @@
+<h2>Data Entry Form</h2>
+
+<form class="inline">
+	<div class="row">
+
+			<div class="medium-4 columns">
+				<label>
+					<div class="row">
+						<div class="small-5 columns">Time Period</div>
+					</div>
+					<div class="row">
+						<div class="small-2 columns">
+							<input name="start_dt"
+									type="text"
+									placeholder="YYYY-MM-DD"
+									aria-label="Start Date"
+									v-model="campaign.start"></input>
+						</div>
+						<div class="small-1 columns inline centered">to</div>
+						<div class="small-2 columns">
+							<input name="end_dt"
+									type="text"
+									placeholder="YYYY-MM-DD"
+									aria-label="End Date"
+									v-model="campaign.end"></input>
+						</div>
+					</div>
+				</label>
+			</div>
+
+			<div class="medium-2 columns">
+				<label for="regions">Regions</label>
+				<div id="regions"
+						 placeholder="0 selected"
+						 multi="true"
+						 searchable="true"></div>
+			</div>
+<!-- 
+			<div class="medium-1 columns">
+				<label for="indicators">Indicators</label>
+				<div id="indicators"
+						 placeholder="0 selected"
+						 multi="true"
+						 searchable="true"></div>
+			</div>
+ -->
+			<!-- FIXME: Remove inline style -->
+			<div class="medium-1 columns" style="text-align: right">
+				<!-- FIXME: Remove blank line for alignment -->
+				&nbsp;<br>
+				<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })">
+					<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load
+				</a>
+			</div>
+	</div>
+</form>
+
+<div class="row">
+	<div class="small-7 columns">
+		<vue-table-editable v-with="table"></vue-table-editable>
+	</div>
+
+	<div class="medium-5 large-6 columns"
+	     v-component="vue-pagination"
+	     v-with="offset     : pagination.the_offset,
+	             limit      : pagination.the_limit,
+	             total_count: pagination.total_count"></div>
+
+<!-- 	
+	<div class="medium-2 large-1 columns">
+		<a role="button" class="button expand" aria-label="Download All"
+		   v-class="disabled: !hasSelection"
+			 v-on="click : download()">
+			<i class="fa fa-fw fa-download"></i>&emsp;Download All
+		</a>
+	</div>
+-->
+</div>
+
+<!-- Download target -->
+<iframe width="0" height="0" src="{{ src }}"></iframe>

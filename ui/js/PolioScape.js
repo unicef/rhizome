@@ -6,6 +6,7 @@ Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
 Vue.component('vue-table', require('./component/table'));
+Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));
 
 module.exports = {
@@ -19,6 +20,12 @@ module.exports = {
 		new Vue({
 			el: el,
 			components: { 'uf-dashboard': require('./view/dashboard') }
+		});
+	},
+	DataEntry: function (el) {
+		new Vue({
+			el: el,
+			components: { 'uf-entry-form': require('./view/entry-form') }
 		});
 	}
 };

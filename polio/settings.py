@@ -51,7 +51,7 @@ INSTALLED_APPS = (
     'csvimport',
     'guardian',
     'tastypie',
-
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,6 +62,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'stronghold.middleware.LoginRequiredMiddleware'
+)
+
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -88,6 +96,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
