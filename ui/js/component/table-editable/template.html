@@ -1,29 +1,36 @@
-<table>
-	<thead v-if="rows.length > 0">
-		<tr>
-			<th v-repeat="col: columns">{{ col.header }}</th>
-		</tr>
-		<tr>
-			<th v-repeat="col: columns" 
-				class="completionStatus"
-				v-text="$index | summarize byColumn"></th>
-		</tr>
-	</thead>
-	<tbody>
+<div v-if="!loading && rows.length > 0">
 
-		<tr v-repeat="row: rows">
-			<td v-repeat="row"
-				v-component="uf-cell"></td>
-		</tr>
+	<div class="completionStatus">
+		<h5>
+			Form is {{ stats.total.complete / stats.total.total | percent }} complete ({{ stats.total.complete }} / {{ stats.total.total }})
+		</h5>
+	</div>
 
-		<tr v-if="rows.length < 1" class="empty">
+	<table>
+		<thead v-if="rows.length > 0">
+			<tr>
+				<th v-repeat="col: columns">{{ col.header }}</th>
+			</tr>
+			<tr>
+				<th v-repeat="col: columns" class="completionStatus">
+					<span v-if="col.type == 'value'" v-text="$index | summarize column"></span>					
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-repeat="row: rows">
+				<td v-repeat="row"
+					v-component="uf-cell"></td>
+			</tr>
+		</tbody>
+	</table>
 
-			<td colspan="{{ columns.length }}">
-				<span v-if="loading">Loading&hellip;</span>
-				<span v-if="!loading">Use the options above to load a data entry form.</span>
-			</td>
+</div>
 
-		</tr>
+<div v-if="!loading && rows.length < 1" class="empty">
+	Use the options above to load a data entry form.
+</div>
 
-	</tbody>
-</table>
+<div v-if="loading" class="loading">
+	Loading&hellip;
+</div>

@@ -163,7 +163,7 @@ module.exports = {
 			// define columns
 			var columns = [
 				{ header: 'Indicator', type: 'label' },
-				{ header: 'Complete', type: 'summary' }
+				{ header: '', type: 'summary' }
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
@@ -182,8 +182,6 @@ module.exports = {
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
-			this.table.columns = columns;
-			this.table.rows    = [];
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
@@ -249,6 +247,8 @@ module.exports = {
 				});
 
 				self.table.rows = rows;
+				self.table.columns = columns;
+
 			});
 		},
 
