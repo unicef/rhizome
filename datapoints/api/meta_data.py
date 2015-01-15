@@ -49,7 +49,9 @@ class GeoJsonResult(object):
 class RegionPolygonResource(Resource):
 
     # region_id = fields.ForeignKey(RegionResource,'region')
-    geo_json = fields.DictField()
+    type = fields.CharField(attribute = 'type')
+    properties = fields.DictField(attribute = 'properties')
+    geometry = fields.DictField(attribute = 'geometry')
 
     class Meta(BaseApiResource.Meta):
         # queryset = RegionPolygon.objects.all()
@@ -59,26 +61,8 @@ class RegionPolygonResource(Resource):
             "region_id": ALL,
         }
 
-    # def obj_get(self):
-    #     # get one object from data source
-    #     pk = int(kwargs['pk'])
-    #     try:
-    #         return data[pk]
-    #     except KeyError:
-    #         raise NotFound("Object not found")
-
-
-    def obj_get_list(self,bundle,**kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
-
-        return self.get_object_list(bundle.request)
-
     def get_object_list(self,request):
 
-        print 'wuddup\n' * 10
         # results = RegionPolygon.objects.all()
         # region_values_list = RegionPolygon.objects.all().values()
         # pp.pprint(region_values_list)
@@ -87,7 +71,7 @@ class RegionPolygonResource(Resource):
         # "features": [
         features = []
 
-        f_1 = { "type": "Feature",
+        f_1 = {"type": "Feature",
              "geometry": {
                "type": "Polygon",
                "coordinates": [
@@ -109,15 +93,49 @@ class RegionPolygonResource(Resource):
         }
 
         f1_obj = GeoJsonResult()
-        f1_obj.geo_json = f_1
+        f1_obj.type = f_1['type']
+        f1_obj.properties = f_1['properties']
+        f1_obj.geometry = f_1['geometry']
 
         f2_obj = GeoJsonResult()
-        f2_obj.geo_json = f_2
+        f2_obj.type = f_1['type']
+        f2_obj.properties = f_1['properties']
+        f2_obj.geometry = f_1['geometry']
 
         features.append(f1_obj)
         features.append(f2_obj)
 
         return features
+
+    def obj_get_list(self,bundle,**kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional build_agg_rc_dfing may be applied
+        '''
+
+        return self.get_object_list(bundle.request)
+
+
+    def dehydrate(self, bundle):
+
+        bundle.data.pop("resource_uri",None)# = bundle.obj.region.id
+        return bundle
+
+    def alter_list_data_to_serialize(self, request, data):
+        '''
+        If there is an error for this resource, add that to the response.  If
+        there is no error, than add this key, but set the value to null.  Also
+        add the total_count to the meta object as well
+        '''
+        ## get rid of the meta_dict. i will add my own meta data.
+        data['type'] = "FeatureCollection"
+        data['features'] = data['objects']
+
+        data.pop("objects",None)
+        data.pop("meta",None)
+
+        return data
+
 
 
 class IndicatorResource(BaseApiResource):
