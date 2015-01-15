@@ -65,7 +65,7 @@ class RegionPolygonResource(Resource):
         ## since this is not a model resource i will filter explicitly
         try:
             region_id__in = [int(r) for r in request.GET['region_id__in']\
-                .split()]
+                .split(',')]
 
             polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
                 region_id__in).values()
