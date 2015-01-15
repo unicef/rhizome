@@ -39,16 +39,15 @@ class RegionResource(ModelResource):
         return bundle
 
 class GeoJsonResult(object):
-    '''
-    This is the same as a row in the CSV export in which one row has a distinct
-    region / campaign combination, and the remaing columns represent the
-    indicators requested.  Indicators are a list of IndicatorObjects.
-    '''
-    geo_json = dict()
+    region_id = int()
+    type = unicode()
+    properties = dict()
+    geometry = dict()
+
 
 class RegionPolygonResource(Resource):
 
-    # region_id = fields.ForeignKey(RegionResource,'region')
+    region_id = fields.IntegerField(attribute = 'region_id')
     type = fields.CharField(attribute = 'type')
     properties = fields.DictField(attribute = 'properties')
     geometry = fields.DictField(attribute = 'geometry')
@@ -63,47 +62,27 @@ class RegionPolygonResource(Resource):
 
     def get_object_list(self,request):
 
-        # results = RegionPolygon.objects.all()
-        # region_values_list = RegionPolygon.objects.all().values()
-        # pp.pprint(region_values_list)
+        polygon_values_list = RegionPolygon.objects.all().values()
 
-        # { "type": "FeatureCollection",
-        # "features": [
         features = []
 
-        f_1 = {"type": "Feature",
-             "geometry": {
-               "type": "Polygon",
-               "coordinates": [
-                 [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                   [100.0, 1.0], [100.0, 0.0] ]
-                 ]
-             },
-             "properties": { "region_id": 211 }
-        }
-        f_2 = { "type": "Feature",
-             "geometry": {
-               "type": "Polygon",
-               "coordinates": [
-                 [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                   [100.0, 1.0], [100.0, 0.0] ]
-                 ]
-             },
-             "properties": { "region_id": 122 }
-        }
+        for p in polygon_values_list:
+            # print p.keys()
 
-        f1_obj = GeoJsonResult()
-        f1_obj.type = f_1['type']
-        f1_obj.properties = f_1['properties']
-        f1_obj.geometry = f_1['geometry']
+            cleaned_shape_list = []
+            shape = p["polygon"].replace('\"[[','').replace(']]\"','')
+            shape_list = [pt for pt in shape.split('], [')]
 
-        f2_obj = GeoJsonResult()
-        f2_obj.type = f_1['type']
-        f2_obj.properties = f_1['properties']
-        f2_obj.geometry = f_1['geometry']
+            for i,(pt) in enumerate(shape_list):
+                lon_lat_list = [float(x.replace('[','').replace(']','')) for x in pt.split(', ')]
+                cleaned_shape_list.append(lon_lat_list)
 
-        features.append(f1_obj)
-        features.append(f2_obj)
+            geo_obj = GeoJsonResult()
+            geo_obj.type = "Feature"
+            geo_obj.properties = { "region_id": p['region_id'] }
+            geo_obj.geometry = { "type": "Polygon", "coordinates": [cleaned_shape_list] }
+            geo_obj.region_id = p['region_id']
+            features.append(geo_obj)
 
         return features
 
