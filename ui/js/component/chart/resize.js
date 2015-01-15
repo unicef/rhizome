@@ -3,6 +3,7 @@
 'use strict';
 
 var dom = require('../../util/dom');
+var log = require('../../util/log');
 
 module.exports = {
 	paramAttributes: [
@@ -17,12 +18,16 @@ module.exports = {
 	},
 
 	ready: function () {
+		log.debug('resize', 'ready');
 		window.addEventListener('resize', this.onResize);
 	},
 
 	methods: {
 		onResize: function () {
+			log.debug('resize', 'onResize enter');
+
 			if (!this.$el || !this.$el.parentElement) {
+				log.debug('resize', 'onResize missing DOM elements');
 				return;
 			}
 
@@ -32,12 +37,14 @@ module.exports = {
 			this.$set('height', content.width / Number(this.aspect));
 
 			this.$emit('invalidate-size');
+
+			log.debug('resize', 'onResize exit');
 		}
 	},
 
-	on: {
+	events: {
 		'hook:attached': function () {
-			console.log('resize:attached');
+			log.debug('resize', 'hook:attached');
 			this.onResize();
 		}
 	}
