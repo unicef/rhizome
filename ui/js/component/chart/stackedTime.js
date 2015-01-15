@@ -82,7 +82,8 @@ module.exports = {
 
 			var stack = d3.layout.stack()
 				.x(getX)
-				.values(getValues);
+				.values(getValues)
+				.order('inside-out');
 
 			var layers  = stack(this.layers);
 
