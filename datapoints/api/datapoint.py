@@ -5,15 +5,18 @@ from itertools import product
 from datetime import datetime
 
 
-from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
-from tastypie.resources import Resource
+from tastypie.authorization import Authorization
+from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.resources import ALL, ModelResource, Resource
+from tastypie.validation import Validation
 from pandas import DataFrame
 from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
@@ -45,7 +48,6 @@ class DataPointResource(Resource):
     region = fields.IntegerField(attribute = 'region')
     campaign = fields.IntegerField(attribute = 'campaign')
     indicators = fields.ListField(attribute = 'indicators')
-
 
     class Meta(BaseApiResource.Meta):
 
@@ -566,3 +568,162 @@ class DataPointResource(Resource):
             return err, None
 
         return None, list(indicator_ids)
+
+
+class DataPointEntryResource(ModelResource):
+
+    # for validation
+    required_keys = [
+        'datapoint_id', 'indicator_id', 'region_id', 
+        'campaign_id', 'value', 'changed_by_id', 
+    ]
+    # for validating foreign keys
+    keys_models = {
+        'region_id': Region,
+        'campaign_id': Campaign,
+        'indicator_id': Indicator
+    }
+
+    class Meta():
+        queryset = DataPoint.objects.all()
+        # authentication = ApiKeyAuthentication() # sup w this
+        authorization = Authorization()
+        allowed_methods = ['post','put','patch']
+        resource_name = 'datapointentry'
+        always_return_data = True
+
+
+    ##########
+    ###### TODO : WTF ABOUT DATAPOINT_ID?????
+
+
+    def obj_create(self, bundle, **kwargs):
+        """
+        Make sure the data is valid, then save it.
+        """
+        try:
+            self.validate_object(bundle.data)
+        except InputError, e:
+            bundle.data = self.error_response(e)
+            raise ImmediateHttpResponse(response=self.create_response(bundle.request, bundle))
+
+        # TODO: clean this up / make more efficient?
+        existing_datapoint = self.get_existing_datapoint(bundle.data)
+        if existing_datapoint is not None:
+            obj_kwargs = {
+                'region_id': existing_datapoint.region_id,
+                'campaign_id': existing_datapoint.campaign_id,
+                'indicator_id': existing_datapoint.indicator_id
+            }
+            bundle.response = self.success_response()
+            return super(DataPointEntryResource, self).obj_update(bundle, **obj_kwargs)
+        else:
+            bundle.response = self.success_response()
+            return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+
+    def get_existing_datapoint(self, data):
+        """
+        Assumes data is valid
+        (i.e. data should have passed validate_object first)
+        """
+        try:
+            obj = DataPoint.objects.get(region_id=int(data['region_id']),
+                campaign_id=int(data['campaign_id']),
+                indicator_id=int(data['indicator_id']),
+            )
+            return obj
+        except ObjectDoesNotExist:
+            return
+
+
+    def hydrate(self, bundle):
+
+        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint):
+            pass
+        else:
+            bundle.obj = DataPoint()
+
+            bundle.obj.source_datapoint_id = int(bundle.data['datapoint_id'])
+            bundle.obj.region_id = int(bundle.data['region_id'])
+            bundle.obj.campaign_id = int(bundle.data['campaign_id'])
+            bundle.obj.indicator_id = int(bundle.data['indicator_id'])
+            bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
+            bundle.obj.value = bundle.data['value']
+
+        return bundle
+
+    def dehydrate(self, bundle):
+        bundle.data = bundle.response
+        return bundle
+
+    def validate_object(self, obj):
+        """
+        Check that object has all the right fields, yadda yadda yadda.
+        """
+        for key in self.required_keys:
+            if not key in obj:
+                raise InputError(2, 'Required metadata missing: {0}'.format(key))
+
+        # ensure that metadata values are valid
+        for key, model in self.keys_models.iteritems():
+            try:
+                key_id = int(obj[key])
+            except ValueError:
+                raise InputError(4, 'Invalid metadata value: {0}'.format(key))
+            try:
+                instance = model.objects.get(id=key_id)
+            except (ValueError, ObjectDoesNotExist):
+                raise InputError(3, 'Could not find record for metadata value: {0}'.format(key))
+
+    def validate_object_update(self, obj):
+        """
+        When updating an object, validate the new data.
+        """
+        # what should we do about id, url, created_at ?
+        # those all get filled in automatically, right?
+
+        # should this be a required key? yeah
+        assert obj.has_key('changed_by_id')
+        user_id = int(obj['changed_by_id'])
+        User.objects.get(id=user_id)
+
+        # ensure that region, campaign, and indicator, if present, are valid values
+        if obj.has_key('region_id'):
+            region_id = int(obj['region_id'])
+            Region.objects.get(id=region_id)
+        
+        if obj.has_key('campaign_id'):
+            campaign_id = int(obj['campaign_id'])
+            Campaign.objects.get(id=campaign_id)
+
+        if obj.has_key('indicator_id'):
+            indicator_id = int(obj['indicator_id'])
+            Indicator.objects.get(id=indicator_id)
+
+    def success_response(self):
+        response = {
+            'success': 1
+        }
+        return response
+
+    def error_response(self, error):
+        response = {
+            'success': 0,
+            'error': {
+                'code': error.code,
+                'message': error.message
+            }
+        }
+        if hasattr(error, 'data'):
+            response['error']['data'] = error.data
+        return response
+        
+
+class InputError(Exception):
+    
+    def __init__(self, code, message, data=None):
+        self.code = code
+        self.message = message
+        if data is not None:
+            self.data = data
+        

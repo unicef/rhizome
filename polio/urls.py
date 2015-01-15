@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
-from datapoints.api.datapoint import DataPointResource
+from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import debug
 
 from source_data.api import EtlResource
@@ -21,6 +21,7 @@ admin.autodiscover()
 v1_api = Api(api_name='v1')
 v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
+v1_api.register(DataPointEntryResource())
 v1_api.register(IndicatorResource())
 v1_api.register(CampaignResource())
 v1_api.register(UserResource())
