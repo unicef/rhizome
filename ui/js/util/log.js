@@ -1,3 +1,4 @@
+/* jshint unused: false */
 'use strict';
 
 var OFF = -1;
@@ -15,7 +16,7 @@ function log(level, module) {
 		return;
 	}
 
-	if (log.level >= level) {
+	if (log.level < level) {
 		return;
 	}
 
@@ -25,26 +26,27 @@ function log(level, module) {
 	}
 
 	var logger = console[loggers[level]] || console.log;
+	var args   = Array.prototype.slice.call(arguments);
 
-	logger.apply(console, [module + '::'].concat(arguments.slice(2)));
+	logger.apply(console, [module + '::'].concat(args.slice(2)));
 }
 
 log.level = WRN;
 
 log.error = function (module) {
-	log.apply(null, [ERR].concat(arguments));
+	log.apply(null, [ERR].concat(Array.prototype.slice.call(arguments)));
 };
 
 log.warn = function (module) {
-	log.apply(null, [WRN].concat(arguments));
+	log.apply(null, [WRN].concat(Array.prototype.slice.call(arguments)));
 };
 
 log.info = function (module) {
-	log.apply(null, [INF].concat(arguments));
+	log.apply(null, [INF].concat(Array.prototype.slice.call(arguments)));
 };
 
 log.debug = function (module) {
-	log.apply(null, [DBG].concat(arguments));
+	log.apply(null, [DBG].concat(Array.prototype.slice.call(arguments)));
 };
 
 log.OFF = OFF;
