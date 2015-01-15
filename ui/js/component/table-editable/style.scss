@@ -46,8 +46,21 @@ table {
 	}
 
 	td.completionStatus {
-		font-size: .8em;
-		width: 50px;
+		font-size: .9em;
+		width: 15px;
 	}
 
+}
+
+.completionStatus {
+	font-weight: bold;
+}
+
+.empty,
+.loading
+{
+	background-color: #fafafa;
+	color: #999;
+	text-align: center;
+	padding: 40px 0;
 }

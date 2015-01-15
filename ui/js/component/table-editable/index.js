@@ -8,7 +8,19 @@ var formats = {
 };
 
 var scales = {
-	completionColor: d3.scale.quantize().domain([0, 1]).range(['#FC5959', '#fc8d59', '#ffffbf', '#d9ef8b', '#91cf60'])
+	completionColor: function(v) {
+		if (v === 0) { return '#EC1C24'; }
+		else if (v === 1) { return '#29A13A'; }
+		else if (v > 0 && v < 1) { return 'rgb(242, 129, 0)'; }
+
+		// if (v === 0) { return '#FC5959'; }
+		// else if (v === 1) { return '#91cf60'; }
+		// else if (v > 0 && v < 0.34) { return '#fc8d59'; }
+		// else if (v >= 0.34 && v < 0.67) { return '#fee08b'; }
+		// else if (v >= 0.67 && v < 1) { return '#d9ef8b'; }
+
+		else { return 'inherit'; }
+	}
 }
 
 module.exports = {
@@ -82,7 +94,7 @@ module.exports = {
 			self.$set('stats', stats);
 
 		}
-		
+
 	},
 
 	filters: {

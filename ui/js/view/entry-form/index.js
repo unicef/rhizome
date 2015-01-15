@@ -15,11 +15,22 @@ module.exports = {
 			indicators: [],
 			indicatorSet: [
 				{ 'id': 5 },
-				{ 'id': 51 }
+				{ 'id': 51 },
+				{ 'id': 69 }, 
+				{ 'id': 70 }, 
+				{ 'id': 160 }, 
+				{ 'id': 161 }, 
+				{ 'id': 44 }, 
+				{ 'id': 43 }, 
+				{ 'id': 32 }, 
+				{ 'id': 31 }, 
+				{ 'id': 158 }, 
+				{ 'id': 34 }, 
+				{ 'id': 33 }
 			],
 			pagination: {
-				the_limit: 20,
-				the_offset: 0,
+				// the_limit: 20,
+				// the_offset: 0,
 				total_count: 0
 			},
 			table: {

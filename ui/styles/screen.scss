@@ -80,7 +80,7 @@ body.data nav .data {
 
 table {
 	border-collapse: collapse;
-	font-family: Verdana, Hevetica, Arial, sans-serif;
+	font-family: Hevetica, Arial, sans-serif;
 	margin-top: 10pt;
 	min-width: 100%;
 
@@ -122,7 +122,7 @@ table {
 			background-color: $ghost;
 		}
 	}
-	
+
 }
 
 *[role="menuitem"] {
@@ -144,3 +144,60 @@ button, .button {
 	cursor: $button-disabled-cursor;
 	opacity: $button-disabled-opacity;
 }
+
+/* fixed-header tables */
+.fixed-table-container {
+
+	$defaultTableHeight: 500px;
+	$defaultHeaderHeight: 60px;
+
+	height: $defaultTableHeight;
+	background-color: white;
+	position: relative; /* could be absolute or relative */
+	padding-top: $defaultHeaderHeight; /* height of header */
+
+	.fixed-table-container-inner {
+		overflow-x: hidden;
+		overflow-y: auto;
+		height: 100%;
+	}
+
+	.header-background {
+		height: $defaultHeaderHeight; /* height of header */
+		background-color: #F5F5F5;
+		border: solid 1px #DDDDDD;
+		border-bottom: none;
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	}
+
+	table {
+		background-color: white;
+		width: 100%;
+		overflow-x: hidden;
+		overflow-y: auto;
+		margin-top: -18px;
+	}
+
+	th {
+		height: 0;
+	}
+
+	.th-inner {
+		position: absolute;
+		top: 0;
+		line-height: 30px; /* height of header */
+		text-align: left;
+		border-left: none;
+		padding-left: 5px;
+		margin-left: -5px;
+	}
+	.first .th-inner {
+		border-left: none;
+		padding-left: 6px;
+	}
+
+}
+

@@ -1,41 +1,51 @@
 <div v-if="!loading && rows.length > 0">
 
-	<div class="completionStatus">
+	<div>
 		<h5>
-			Form is {{ stats.total.complete / stats.total.total | percent }} complete ({{ stats.total.complete }} / {{ stats.total.total }})
+			Form is <span v-style="color: stats.total.complete / stats.total.total | completionColor" class="completionStatus">{{ stats.total.complete / stats.total.total | percent }}</span> complete ({{ stats.total.complete }} / {{ stats.total.total }} values entered)
 		</h5>
 	</div>
 
-	<table>
-		<thead v-if="rows.length > 0">
-			<tr>
-				<th></th>
-				<th v-repeat="col: columns">{{ col.header }}</th>
-			</tr>
-			<tr>
-				<th></th>
-				<th v-repeat="col: columns">
-					<span v-if="col.type == 'value'" v-style="background-color: stats.byColumn[$index].complete / stats.byColumn[$index].total | completionColor" class="completionStatus">
-						{{ stats.byColumn[$index].complete }} / {{ stats.byColumn[$index].total }}
-					</span>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr v-repeat="row: rows">
-				
-				<td>
-					<span v-style="background-color: stats.byRow[$index].complete / stats.byRow[$index].total | completionColor" class="completionStatus">
-						{{ stats.byRow[$index].complete }} / {{ stats.byRow[$index].total }}
-					</span>
-				</td>				
+	<div class="fixed-table-container">
+		<div class="header-background"></div>
+		<div class="fixed-table-container-inner">
 
-				<td v-repeat="row"
-					v-component="uf-cell"></td>
+			<table>
+				<thead v-if="rows.length > 0">
+<!--
+ 					<tr>
+						<th></th>
+						<th v-repeat="col: columns"></th>
+					</tr>
+ -->
+ 					<tr>
+						<th><div class="th-inner"></div></th>
+						<th v-repeat="col: columns">
+							<div class="th-inner">
+								{{ col.header }}
+								<div v-if="col.type == 'value'" class="completionStatus" v-style="color: stats.byColumn[$index].complete / stats.byColumn[$index].total | completionColor">
+									{{ stats.byColumn[$index].complete }} / {{ stats.byColumn[$index].total }}
+								</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-repeat="row: rows">
+						
+						<td v-style="color: stats.byRow[$index].complete / stats.byRow[$index].total | completionColor" class="completionStatus">
+							{{ stats.byRow[$index].complete }} / {{ stats.byRow[$index].total }}
+						</td>				
 
-			</tr>
-		</tbody>
-	</table>
+						<td v-repeat="row"
+							v-component="uf-cell"></td>
+
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
 
 </div>
 

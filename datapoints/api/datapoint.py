@@ -332,7 +332,15 @@ class DataPointResource(Resource):
 
         results_dict = defaultdict(list)
 
-        pivoted_dp_dict = self.pivot_dp_df(dp_df,'value')
+        try:
+            pivoted_dp_dict = self.pivot_dp_df(dp_df,'value')
+        except Exception as err:
+            print err
+            print err
+
+            self.error = err
+            return []
+
         pivoted_id_dict = self.pivot_dp_df(dp_df,'id')
         pivoted_is_agg_dict = self.pivot_dp_df(dp_df,'is_agg')
 
@@ -547,6 +555,8 @@ class DataPointResource(Resource):
         it into an object where the region / campaign is the key and the values
         are dictionares with the keys specified via the value column.
         '''
+
+        print dp_df
 
         pivoted_dict = pivot_table(dp_df, values = value_column, index=['region_id',\
             'campaign_id'], columns = ['indicator_id'], aggfunc = lambda x: x)\
