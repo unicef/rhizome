@@ -7,9 +7,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from datapoints.api.base import BaseApiResource
 from datapoints.models import *
 
-import pprint as pp
-
-
 class OfficeResource(BaseApiResource):
     '''Office Resource'''
 
@@ -53,22 +50,35 @@ class RegionPolygonResource(Resource):
     geometry = fields.DictField(attribute = 'geometry')
 
     class Meta(BaseApiResource.Meta):
-        # queryset = RegionPolygon.objects.all()
         object_class = GeoJsonResult
-        resource_name = 'polygon'
+        resource_name = 'geo'
         filtering = {
             "region_id": ALL,
         }
 
     def get_object_list(self,request):
+        '''
+        parse the region_id__in parameter, query the polygons table and do some
+        ugly data munging to convert the results from the DB into geojson
+        '''
 
-        polygon_values_list = RegionPolygon.objects.all().values()
+        ## since this is not a model resource i will filter explicitly
+        try:
+            region_id__in = [int(r) for r in request.GET['region_id__in']\
+                .split()]
+
+            polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
+                region_id__in).values()
+
+        except KeyError:
+            polygon_values_list = RegionPolygon.objects.all().values()
 
         features = []
 
         for p in polygon_values_list:
-            # print p.keys()
 
+            ## this should be cleaned up in the ingestion ##
+            ## so i don't need to process data on request ##
             cleaned_shape_list = []
             shape = p["polygon"].replace('\"[[','').replace(']]\"','')
             shape_list = [pt for pt in shape.split('], [')]
@@ -81,7 +91,6 @@ class RegionPolygonResource(Resource):
             geo_obj.type = "Feature"
             geo_obj.properties = { "region_id": p['region_id'] }
             geo_obj.geometry = { "type": "Polygon", "coordinates": [cleaned_shape_list] }
-            geo_obj.region_id = p['region_id']
             features.append(geo_obj)
 
         return features
@@ -93,7 +102,6 @@ class RegionPolygonResource(Resource):
         '''
 
         return self.get_object_list(bundle.request)
-
 
     def dehydrate(self, bundle):
 
