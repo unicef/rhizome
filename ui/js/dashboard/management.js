@@ -14,7 +14,6 @@ var bullet    = require('../data/model/bullet');
 var series    = require('../data/model/series');
 
 var add       = require('../data/transform/add');
-var color     = require('../data/transform/color');
 var cumsum    = require('../data/transform/cumsum');
 var each      = require('../data/transform/each');
 var facet     = require('../data/transform/facet');
@@ -149,17 +148,6 @@ module.exports = {
 					return moment(d, 'M').format('MMM');
 				},
 				tickValues: ytdTicks
-			},
-			missed: {
-				layers    : [],
-				tickValues: timeTicks,
-				xFmt      : function (d) {
-					var date = new Date(d);
-					var fmt = date.getMonth() === 0 ? 'YYYY' : 'MMM';
-
-					return moment(date).format(fmt);
-				},
-				yFmt      : d3.format('.1%')
 			},
 			conversions: {
 				lines: [],
@@ -316,8 +304,9 @@ module.exports = {
 				return;
 			}
 
-			self.campaign = items[0].value;
-			self.loadData();
+			this.campaign = items[0].value;
+			this.$broadcast('data-load');
+			this.loadData();
 		});
 	},
 
@@ -337,6 +326,7 @@ module.exports = {
 			this.campaigns[0].selected = true;
 			this.campaign = this.campaigns[0].value;
 
+			this.$broadcast('data-load');
 			this.loadData();
 		},
 
@@ -410,22 +400,6 @@ module.exports = {
 
 			// Immunity Gap
 			indicators([], q).done(set('immunity'));
-
-			// Missed Children
-			indicators([20, 22, 23, 24, 55], q)
-				.then(objects)
-				.then(sort(campaignStart))
-				.then(ratio([20, 22, 23, 24], 55))
-				.then(each(variables({
-					x: function (d) { return d.campaign.start_date.getTime(); },
-					y: function (d) { return d.value; }
-				})))
-				.then(map(function (data) {
-					// The line chart expects an array of objects with a points property
-					return { points: data };
-				}))
-				.then(each(color(coolgray)))
-				.done(set('missed.layers'));
 
 			// Conversions
 			indicators([25, 26], q)
