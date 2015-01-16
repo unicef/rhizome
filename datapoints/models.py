@@ -1,7 +1,7 @@
 from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
-
+from jsonfield import JSONField
 
 class Source(models.Model):
     source_name = models.CharField(max_length=55,unique=True)
@@ -136,7 +136,7 @@ class RegionPolygon(models.Model):
     region = models.ForeignKey(Region,unique=True)
     shape_len  = models.FloatField()
     shape_area = models.FloatField()
-    polygon = models.TextField()
+    polygon = JSONField()
 
     class Meta:
         db_table = 'region_polygon'
@@ -191,7 +191,6 @@ class DataPoint(models.Model):
     def get_val(self):
 
         return self.value
-
 
     class Meta:
         db_table = 'datapoint'

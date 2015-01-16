@@ -1,6 +1,10 @@
 'use strict';
 
 var Vue = require('vue');
+var log = require('./util/log');
+
+log.level = log.DBG;
+
 
 Vue.config.debug = true;
 
@@ -17,6 +21,8 @@ module.exports = {
 		});
 	},
 	Dashboard: function (el) {
+		log.info('Dashboard', 'init');
+
 		new Vue({
 			el: el,
 			components: { 'uf-dashboard': require('./view/dashboard') }
