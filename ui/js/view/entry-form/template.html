@@ -5,8 +5,12 @@
 	<form class="inline">
 		<div class="row">
 
-				<div class="medium-4 columns">
-					<label>
+				<div class="medium-2 columns">
+
+					<label for="campaigns">Campaign</label>
+					<select id="campaigns" v-model="campaign_id" options="campaigns"></select>
+
+<!-- 					<label>
 						<div class="row">
 							<div class="small-5 columns">Time Period</div>
 						</div>
@@ -28,7 +32,8 @@
 							</div>
 						</div>
 					</label>
-				</div>
+ -->				
+ 				</div>
 
 				<div class="medium-2 columns">
 					<label for="regions">Regions</label>
@@ -74,4 +79,4 @@
 	<!-- Download target -->
 	<!-- <iframe width="0" height="0" src="{{ src }}"></iframe> -->
 
-</div>
+</div>	

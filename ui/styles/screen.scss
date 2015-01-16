@@ -195,7 +195,7 @@ button, .button {
 		top: 1px;
 		line-height: $defaultHeaderLineHeight; /* height of header */
 		text-align: left;
-		height: $defaultHeaderHeight;
+		height: $defaultHeaderHeight + 1px;
 		padding-left: 5px;
 		margin-left: -10px;
 		z-index: 900;

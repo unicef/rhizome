@@ -39,10 +39,10 @@ module.exports = {
 				columns: ['region', 'campaign'],
 				rows: []
 			},
-			campaign: {
-				start: '2013-06-01',
-				end: '2013-06-30'
-			}
+			
+			campaigns: [],
+			campaign_id: null
+
 		};
 	},
 
@@ -64,7 +64,6 @@ module.exports = {
 				'id'           : 'value'
 			}
 		});
-
 		this._regions.$on('dropdown-value-changed', function (items) {
 			self.regions = items;
 		});
@@ -101,28 +100,6 @@ module.exports = {
 		load: function() {
 			var self = this;
 
-			// load all regions metadata
-			// var p1 = api.regions();
-		
-			// // p1.done(function(data) {
-			// // 	self.$data.regionData = {};
-			// // 	if (data.objects) {
-			// // 		data.objects.forEach(function(d) {
-			// // 			self.$data.regionData[d.id] = d;
-			// // 		});
-			// // 	}
-			// // });
-
-			// p1.then(function(data) {
-			// 	var ret = {};
-			// 	if (data.objects) {
-			// 		data.objects.forEach(function(d) {
-			// 			ret[d.id] = d;
-			// 		});
-			// 	}
-			// 	return ret;
-			// });
-
 			var makeMap = function(data) { 
 				if (data.objects) {
 					return _.indexBy(data.objects, 'id'); 
@@ -132,26 +109,40 @@ module.exports = {
 			};
 
 			Promise.all([
+
+					// regions data
 					api.regions().then(makeMap),
-					api.indicators().then(makeMap)
+
+					// indicators data
+					api.indicators().then(makeMap),
+
+					// campaigns data
+					api.campaign().then(function(data) {
+						if (!data.objects) { return null; }
+						return data.objects
+							.sort(function(a,b) {
+								return a.start_date > b.start_date ? -1 : 1;
+							})
+							.map(function(d) {
+								return {
+									text: d.slug,
+									value: d.id
+								};
+							});
+					})
+
 				]).done(function(allData) {
 
 					self.$data.regionData = allData[0];
 					self.$data.indicators = allData[1];
+					self.$data.campaigns = allData[2];
+
+					// set campaign id to first option
+					self.$data.campaign_id = self.$data.campaigns[0].value;
 
 					self.$data.loaded = true;
 
 				});
-
-			// // load all indicators metadata
-			// api.indicators().done(function(data) {
-			// 	self.$data.indicators = {};
-			// 	if (data.objects) {
-			// 		data.objects.forEach(function(d) {
-			// 			self.$data.indicators[d.id] = d;
-			// 		});
-			// 	}
-			// });
 
 		},
 
@@ -171,7 +162,10 @@ module.exports = {
 			}
 
 			var options = { 
-				indicator__in : [],
+				campaign_id__in: [ self.$data.campaign_id ],
+				// campaign_start: '2013-06-01',
+				// campaign_end: '2013-06-30',
+				indicator__in: [],
 				region__in: []
 			};
 
@@ -191,14 +185,6 @@ module.exports = {
 				options.region__in = options.region__in.sort(function(a,b) {
 					return self.$data.regionData[a].name > self.$data.regionData[b].name ? 1 : -1;
 				});
-			}
-
-			if (this.campaign.start) {
-				options.campaign_start = this.campaign.start;
-			}
-
-			if (this.campaign.end) {
-				options.campaign_end = this.campaign.end;
 			}
 
 			// add indicators to request
@@ -233,6 +219,8 @@ module.exports = {
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
+
+			console.log(options);
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
