@@ -21,7 +21,7 @@ var scales = {
 
 		else { return 'inherit'; }
 	}
-}
+};
 
 module.exports = {
 	template: require('./template.html'),

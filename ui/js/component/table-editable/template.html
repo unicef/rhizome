@@ -12,15 +12,9 @@
 
 			<table>
 				<thead v-if="rows.length > 0">
-<!--
- 					<tr>
-						<th></th>
-						<th v-repeat="col: columns"></th>
-					</tr>
- -->
  					<tr>
 						<th><div class="th-inner"></div></th>
-						<th v-repeat="col: columns">
+						<th v-repeat="col: columns" class="{{ col.headerClasses }}">
 							<div class="th-inner">
 								{{ col.header }}
 								<div v-if="col.type == 'value'" class="completionStatus" v-style="color: stats.byColumn[$index].complete / stats.byColumn[$index].total | completionColor">
@@ -33,9 +27,11 @@
 				<tbody>
 					<tr v-repeat="row: rows">
 						
-						<td v-style="color: stats.byRow[$index].complete / stats.byRow[$index].total | completionColor" class="completionStatus">
-							{{ stats.byRow[$index].complete }} / {{ stats.byRow[$index].total }}
-						</td>				
+						<td class="medium-1">
+							<div v-style="color: stats.byRow[$index].complete / stats.byRow[$index].total | completionColor" class="completionStatus">
+								{{ stats.byRow[$index].complete }} / {{ stats.byRow[$index].total }}
+							</td>
+						</div>
 
 						<td v-repeat="row"
 							v-component="uf-cell"></td>

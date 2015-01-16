@@ -149,7 +149,9 @@ button, .button {
 .fixed-table-container {
 
 	$defaultTableHeight: 500px;
-	$defaultHeaderHeight: 60px;
+	$defaultHeaderHeight: 50px;
+	$defaultHeaderLineHeight: 25px;
+	$innerBorderColor: #ddd;
 
 	height: $defaultTableHeight;
 	background-color: white;
@@ -181,18 +183,37 @@ button, .button {
 		margin-top: -18px;
 	}
 
-	th {
-		height: 0;
+	td {
+		border-left: 1px solid $innerBorderColor;
+		&:first-child {
+			border-left: none;
+		}
 	}
 
 	.th-inner {
 		position: absolute;
-		top: 0;
-		line-height: 30px; /* height of header */
+		top: 1px;
+		line-height: $defaultHeaderLineHeight; /* height of header */
 		text-align: left;
-		border-left: none;
+		height: $defaultHeaderHeight;
 		padding-left: 5px;
-		margin-left: -5px;
+		margin-left: -10px;
+		z-index: 900;
+
+		border: 1px solid $innerBorderColor;
+		border-top: none;
+		border-right: none;
+		background-color: #F5F5F5;
+		
+		/* to hide overflow text, and then reveal on hover: */
+		white-space: nowrap;
+		overflow-x: hidden;
+		&:hover {
+			overflow-x: visible;
+			z-index: 1000;
+			width: auto;
+			padding-right: 10px;
+		}
 	}
 	.first .th-inner {
 		border-left: none;

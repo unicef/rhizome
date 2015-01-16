@@ -11,6 +11,7 @@ module.exports = {
 
 	data: function () {
 		return {
+			loaded: false,
 			regions: [],
 			indicators: [],
 			indicatorSet: [
@@ -100,15 +101,57 @@ module.exports = {
 		load: function() {
 			var self = this;
 
-			// load all indicators metadata
-			api.indicators().done(function(data) {
-				self.$data.indicators = {};
+			// load all regions metadata
+			// var p1 = api.regions();
+		
+			// // p1.done(function(data) {
+			// // 	self.$data.regionData = {};
+			// // 	if (data.objects) {
+			// // 		data.objects.forEach(function(d) {
+			// // 			self.$data.regionData[d.id] = d;
+			// // 		});
+			// // 	}
+			// // });
+
+			// p1.then(function(data) {
+			// 	var ret = {};
+			// 	if (data.objects) {
+			// 		data.objects.forEach(function(d) {
+			// 			ret[d.id] = d;
+			// 		});
+			// 	}
+			// 	return ret;
+			// });
+
+			var makeMap = function(data) { 
 				if (data.objects) {
-					data.objects.forEach(function(d) {
-						self.$data.indicators[d.id] = d;
-					});
+					return _.indexBy(data.objects, 'id'); 
+				} else {
+					return null;
 				}
-			});
+			};
+
+			Promise.all([
+					api.regions().then(makeMap),
+					api.indicators().then(makeMap)
+				]).done(function(allData) {
+
+					self.$data.regionData = allData[0];
+					self.$data.indicators = allData[1];
+
+					self.$data.loaded = true;
+
+				});
+
+			// // load all indicators metadata
+			// api.indicators().done(function(data) {
+			// 	self.$data.indicators = {};
+			// 	if (data.objects) {
+			// 		data.objects.forEach(function(d) {
+			// 			self.$data.indicators[d.id] = d;
+			// 		});
+			// 	}
+			// });
 
 		},
 
@@ -120,16 +163,10 @@ module.exports = {
 			var self = this;
 
 			// default values for testing
-			var regionNames = {
-				12939: { title: 'Borno' },
-				12942: { title: 'Bauchi (Province)' },
-				13697: { title: 'Bauchi (LGA)' }
-			}; 
-			var regions = [ 12942, 12939, 13697 ];
+			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 
 			// get from dropdown
 			if (this.hasSelection) {
-				regionNames = _.indexBy(this.regions, 'value');
 				regions     = _.map(this.regions, 'value');
 			}
 
@@ -152,7 +189,7 @@ module.exports = {
 				options.region__in = regions;
 				// sort region order
 				options.region__in = options.region__in.sort(function(a,b) {
-					return regionNames[a].title > regionNames[b].title ? 1 : -1;
+					return self.$data.regionData[a].name > self.$data.regionData[b].name ? 1 : -1;
 				});
 			}
 
@@ -173,12 +210,16 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ header: 'Indicator', type: 'label' }
+				{ 
+					header: 'Indicator', 
+					type: 'label', 
+					headerClasses: 'medium-3' 
+				}
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
 				columns.push({
-					header: regionNames[region_id].title,
+					header: self.$data.regionData[region_id].name,
 					type: 'value',
 					key: region_id
 				});
