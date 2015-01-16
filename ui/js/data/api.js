@@ -28,14 +28,22 @@ function endPoint(path) {
 	function fetch(query) {
 		var q = _.defaults({}, query, defaults);
 
-		return new Promise(function (fulfill) {
+		return new Promise(function (fulfill, reject) {
 			prefix(request.get(path))
 				.query(q)
 				.end(function (res) {
-					fulfill({
-						meta: res.body.meta || {},
-						objects: res.body.objects || _.omit(res.body, 'meta')
-					});
+					if (res.error) {
+						reject({
+							status: res.status,
+							msg: res.body.error
+						});
+					} else {
+
+						fulfill({
+							meta: res.body.meta || {},
+							objects: res.body.objects || _.omit(res.body, 'meta')
+						});
+					}
 				});
 		});
 	}
@@ -52,7 +60,7 @@ function datapoint(q) {
 
 	// Return a promise so we can chain the requests for datapoints with the
 	// campaign lookups.
-	return new Promise(function (fulfill) {
+	return new Promise(function (fulfill, reject) {
 
 		// Fetch datapoints first, then look up the campaigns. Once campaign data
 		// has been filled in, fulfill the promise.
@@ -72,7 +80,9 @@ function datapoint(q) {
 
 				fulfill(data);
 			});
-		});
+
+		}, reject);
+
 	});
 }
 

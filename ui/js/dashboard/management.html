@@ -3,10 +3,12 @@
 		<div class="row">
 			<div class="medium-1 column"
 			     v-component="vue-dropdown"
+			     v-ref="offices"
 			     v-with="items: offices"></div>
 
 			<div class="medium-1 column end"
 			     v-component="vue-dropdown"
+			     v-ref="campaigns"
 			     v-with="items: campaigns"
 			     data-sort-by="date"
 			     data-sort-dsc="false"></div>

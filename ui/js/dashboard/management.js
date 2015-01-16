@@ -140,6 +140,7 @@ module.exports = {
 			offices    : [],
 			campaigns  : [],
 			region     : null,
+			campaign   : null,
 			start      : new Date(),
 			cases      : {
 				lines: [],
@@ -274,22 +275,6 @@ module.exports = {
 		this.polio.forEach(rangeFactory);
 		this.resources.forEach(rangeFactory);
 
-		this.$on('selection-changed', function () {
-			function isSelected(d) {
-				return d.selected;
-			}
-
-			var office = self.offices.filter(isSelected)[0].value;
-			var region = OFFICE[office];
-
-			if (region !== self.region) {
-				self.region = region;
-				api.campaign({ office: office }).done(self.loadCampaigns);
-			} else {
-				self.loadData();
-			}
-		});
-
 		api.office().done(function (data) {
 			var offices = data.objects.map(function (o) {
 				return {
@@ -307,6 +292,35 @@ module.exports = {
 		});
 	},
 
+	attached: function () {
+		var self = this;
+		this.$.offices.$on('dropdown-value-changed', function (items) {
+			// This event fires multiple times (oops) as the dropdown items update, so
+			// we have to guard against the dropdown being in a state where none of
+			// its items are currently selected.
+			if (items.length < 1) {
+				return;
+			}
+
+			var officeId = items[0].value;
+
+			self.region = OFFICE[officeId];
+			api.campaign({ office: officeId }).done(self.loadCampaigns);
+		});
+
+		this.$.campaigns.$on('dropdown-value-changed', function (items) {
+			// This event fires multiple times (oops) as the dropdown items update, so
+			// we have to guard against the dropdown being in a state where none of
+			// its items are currently selected
+			if (items.length < 1) {
+				return;
+			}
+
+			self.campaign = items[0].value;
+			self.loadData();
+		});
+	},
+
 	methods: {
 		loadCampaigns: function (data) {
 			this.campaigns = data.objects.map(function (o) {
@@ -321,6 +335,7 @@ module.exports = {
 			});
 
 			this.campaigns[0].selected = true;
+			this.campaign = this.campaigns[0].value;
 
 			this.loadData();
 		},
@@ -361,10 +376,7 @@ module.exports = {
 			}
 
 			var self  = this;
-			var start = moment(this.campaigns.filter(function (d) {
-					return d.selected;
-				})[0].value, 'YYYY-MM-DD');
-
+			var start = moment(this.campaign, 'YYYY-MM-DD');
 
 			// Query parameters shared by all queries
 			var q = {
@@ -376,7 +388,9 @@ module.exports = {
 			this.cases.tickValues = ytdTicks(start.month() + 1);
 
 			// Polio Cases YTD
-			indicators([69, 70, 159, 160, 161, 162], q)
+			indicators([69, 70, 159, 160, 161, 162], _.assign({}, q, {
+				campaign_start: moment(q.campaign_start, 'YYYY-MM-DD').startOf('year').format('YYYY-MM-DD')
+			}))
 				.then(objects)
 				.then(add([69, 70, 159, 160, 161, 162]))
 				.then(facet(function (d) { return d.campaign.start_date.getFullYear(); }))
