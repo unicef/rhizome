@@ -5,6 +5,7 @@ var d3       = require('d3');
 
 var api      = require('../../data/api');
 var coolgray = require('../../colors/coolgray');
+var format   = require('../../util/format');
 var util     = require('../../util/data');
 
 var sort     = require('../../data/transform/sort');
@@ -41,6 +42,7 @@ module.exports = {
 			error     : false,
 			x         : d3.scale.linear(),
 			y         : d3.scale.linear(),
+			xFmt      : format.timeAxis
 		};
 	},
 
