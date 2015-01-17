@@ -574,8 +574,8 @@ class DataPointEntryResource(ModelResource):
 
     # for validation
     required_keys = [
-        'datapoint_id', 'indicator_id', 'region_id', 
-        'campaign_id', 'value', 'changed_by_id', 
+        'datapoint_id', 'indicator_id', 'region_id',
+        'campaign_id', 'value', 'changed_by_id',
     ]
     # for validating foreign keys
     keys_models = {
@@ -691,7 +691,7 @@ class DataPointEntryResource(ModelResource):
         if obj.has_key('region_id'):
             region_id = int(obj['region_id'])
             Region.objects.get(id=region_id)
-        
+
         if obj.has_key('campaign_id'):
             campaign_id = int(obj['campaign_id'])
             Campaign.objects.get(id=campaign_id)
@@ -717,13 +717,12 @@ class DataPointEntryResource(ModelResource):
         if hasattr(error, 'data'):
             response['error']['data'] = error.data
         return response
-        
+
 
 class InputError(Exception):
-    
+
     def __init__(self, code, message, data=None):
         self.code = code
         self.message = message
         if data is not None:
             self.data = data
-        

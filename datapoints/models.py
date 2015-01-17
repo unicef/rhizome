@@ -141,6 +141,16 @@ class RegionPolygon(models.Model):
     class Meta:
         db_table = 'region_polygon'
 
+class RegionHeirarchy(models.Model):
+
+    lvl = models.IntegerField()
+    region_id = models.IntegerField()
+    parent_region_id = models.IntegerField()
+    region_type_id = models.IntegerField()
+
+    class Meta:
+        db_table = 'region_heirarchy_cache'
+        managed = False
 
 class CampaignType(models.Model):
 
