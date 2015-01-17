@@ -1,76 +1,57 @@
 ﻿
-DROP TABLE IF EXISTS region_heirarchy_cache;
+DROP TABLE IF EXISTS _tmp_heirarchy;
 
-CREATE TABLE region_heirarchy_cache
-(
-	region_id INTEGER NOT NULL
-	, contained_by INTEGER NOT NULL
-);
+CREATE TEMP TABLE _tmp_heirarchy  
+AS
+
+SELECT r.id as region_id, r.region_type_id, r.parent_region_id as  contained_by 
+FROM region r
+INNER JOIN region country
+ON r.parent_region_id = country.id
+and country.parent_region_id is null;
+
+--Insert my direct parent AND insert the "contained by" as a separate record
+INSERT INTO _tmp_heirarchy
+(region_id,region_type_id,contained_by)
 
 SELECT 
-	r.id
-	,r.parent_region_id
-FROM region r
-WHERE EXISTS (
-	SELECT 1 from region cntry
-	WHERE r.parent_region_id = cntry.id
-	AND cntry.parent_region_id is null
-)
+	x.region_id
+	, x.region_type_id
+	, contained_by
+FROM ( 	-- only 2 lvls so dont need to be recursive... yet --
+	SELECT 
+		r.id as region_id
+		, r.region_type_id
+		,r.parent_region_id as contained_by
+	FROM region r 
+	INNER JOIN _tmp_heirarchy rhc
+	ON r.parent_region_id = rhc.region_id
 
+	UNION ALL 
 
+	SELECT 
+		r.id as region_id
+		, r.region_type_id
+		, rhc.contained_by
+	FROM region r 
+	INNER JOIN _tmp_heirarchy rhc
+	ON r.parent_region_id = rhc.region_id
+)x
+WHERE NOT EXISTS ( 
+	SELECT 1 FROM _tmp_heirarchy rhc
+	WHERE rhc.region_id = x.region_id
+);
 
+-- Populate the Cache
+DROP TABLE IF EXISTS region_heirarchy_cache;
+CREATE TABLE region_heirarchy_cache
+AS 
+SELECT  
+	row_number() OVER (ORDER BY x.region_id,x.contained_by) as id
+	,x.*
+FROM ( SELECT DISTINCT * FROM _tmp_heirarchy ) x ; 
 
-
--- CREATE TABLE region_heirarchy_cache
--- AS
--- WITH RECURSIVE region_heirarchy AS (
---   (	
---   
--- 	SELECT 
--- 		  0 as lvl -- COUNTRIES
--- 		, r.id as region_id
--- 		, r.region_type_id
--- 		, r.parent_region_id
--- 	FROM region r
--- 	WHERE r.parent_region_id IS NULL
--- 
--- 	UNION ALL
--- 	
--- 	SELECT 
--- 		1 as lvl -- CHILDREN OF COUNTRIES
--- 		, id as region_id
--- 		, region_type_id
--- 		, parent_region_id
--- 	FROM region r
--- 	WHERE EXISTS (
--- 		SELECT 1 from region r_par
--- 		WHERE r.parent_region_id = r_par.id
--- 		AND r_par.parent_region_id IS NULL
--- 	)
--- 	AND r.parent_region_id IS NOT NULL
---   ) 
--- 
---   UNION ALL
--- 
---   SELECT   -- Recursive Term
--- 	  rh_c.lvl + 1 as lvl
--- 	, r.id as region_id
--- 	, r.region_type_id
--- 	, r.parent_region_id
---   FROM region_heirarchy rh, region r
---   WHERE r.parent_region_id = rh.region_id
--- )
--- 
--- SELECT DISTINCT 
--- 	ROW_NUMBER() OVER (ORDER by region_id) as id
--- 	,lvl
--- 	,region_id
--- 	,region_type_id
--- 	,parent_region_id
--- 	,x.something_else
--- FROM
--- (SELECT DISTINCT * FROM region_heirarchy) x;
--- 
--- ALTER TABLE region_heirarchy_cache ADD PRIMARY KEY (region_id);
--- GRANT SELECT on region_heirarchy_cache to djangoapp;
-
+-- grant select, create clustered ix --
+GRANT SELECT ON region_heirarchy_cache to djangoapp;
+CREATE INDEX rt_pr_ix ON region_heirarchy_cache ( contained_by, region_type_id) ;
+CLUSTER region_heirarchy_cache USING rt_pr_ix;

@@ -143,9 +143,8 @@ class RegionPolygon(models.Model):
 
 class RegionHeirarchy(models.Model):
 
-    lvl = models.IntegerField()
     region_id = models.IntegerField()
-    parent_region_id = models.IntegerField()
+    contained_by_region_id = models.IntegerField()
     region_type_id = models.IntegerField()
 
     class Meta:
