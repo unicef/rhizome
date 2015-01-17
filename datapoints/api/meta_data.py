@@ -93,9 +93,9 @@ class RegionPolygonResource(Resource):
     def get_regions_to_return_from_url(self,request):
         '''
         1  region__in returns geo data for the regions requested
-        3. parent_region__in + level should return the shapes for all the child
+        2. parent_region__in + level should return the shapes for all the child
            regions at the specified level that are within the region specified
-        2. passing only parent_region__in  should return the shapes for all the
+        3. passing only parent_region__in  should return the shapes for all the
            immediate children in that region if no level parameter is supplied
         3. any request for which there is no geo data, return an empty feature
            collection
@@ -124,8 +124,15 @@ class RegionPolygonResource(Resource):
                 region_type_id = self.region_type_id)\
                 .values_list('region_id',flat=True)
 
+        ## CASE 3 #
+        elif self.parent_region__in is not None and self.region_type_id is None:
+
+            region_ids = Region.objects.filter(parent_region__in = \
+                self.parent_region__in)
+
         else:
             region_ids = Region.objects.all().values_list('id',flat=True)[:5]
+
 
         return None, region_ids
 
