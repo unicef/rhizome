@@ -17,14 +17,17 @@ var path = {
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
 	output    : './static',
-	clean     : ['./static/**/*.{js,css,html}', '!./static/bower_components/**/*']
+	clean     : ['./dist', './static/**/*.{js,css,html}', '!./static/bower_components/**/*'],
+	dist      : 'dist',
+	zipfile   : 'uf04-frontend.zip'
 };
 
 var build = function (src, dst, opts) {
-	var bundleStream = browserify(src, opts).bundle().on('error', function (e) {
-		$.util.log(e.message);
-		this.emit('end');
-	});
+	var bundleStream = browserify(src, opts).bundle()
+		.on('error', function (e) {
+			$.util.log(e.message);
+			this.emit('end');
+		});
 
 	return bundleStream
 		.pipe(source(src))
@@ -98,3 +101,35 @@ gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
 gulp.task('test', ['scripts'], function () {
 	return gulp.src(path.test).pipe($.mocha());
 });
+
+gulp.task('collectstatic', function () {
+
+});
+
+gulp.task('dist-py', function () {
+	return gulp.src(['**/*.{py,sql}', '!sql_backups/**/*', '!db.sql'])
+		.pipe($.zip('uf04-backend.zip'))
+		.pipe($.size())
+		.pipe(gulp.dest(path.dist))
+});
+
+gulp.task('dist-ui', ['browserify', 'styles', 'collectstatic'], function () {
+	var jsFilter  = $.filter('**/main.js');
+	var cssFilter = $.filter('**/{print,screen,ie}.css');
+
+	return gulp.src(path.output + '/**/*')
+		.pipe(jsFilter)
+		.pipe($.uglify())
+		.pipe($.size({ title: 'JavaScript' }))
+		.pipe(jsFilter.restore())
+		.pipe(cssFilter)
+		.pipe($.csso())
+		.pipe($.size({ title: 'CSS' }))
+		.pipe(cssFilter.restore())
+		.pipe($.zip(path.zipfile))
+		.pipe($.filter('*.zip'))
+		.pipe($.size({ title: 'Zip' }))
+		.pipe(gulp.dest(path.dist));
+});
+
+gulp.task('dist', ['dist-py', 'dist-ui']);
