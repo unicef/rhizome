@@ -154,7 +154,8 @@ module.exports = {
 			var self = this;
 
 			// default values for testing
-			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
+			var regions = [ 12942, 12939, 12929, 12928 ];
+			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 
 			// get from dropdown
 			if (this.hasSelection) {
@@ -162,9 +163,9 @@ module.exports = {
 			}
 
 			var options = { 
-				campaign_id__in: [ self.$data.campaign_id ],
-				// campaign_start: '2013-06-01',
-				// campaign_end: '2013-06-30',
+				// campaign_id__in: [ self.$data.campaign_id ],
+				campaign_start: '2013-06-01',
+				campaign_end: '2013-06-30',
 				indicator__in: [],
 				region__in: []
 			};

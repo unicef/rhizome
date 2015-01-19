@@ -181,43 +181,46 @@ button, .button {
 		overflow-x: hidden;
 		overflow-y: auto;
 		margin-top: -18px;
-	}
 
-	td {
-		border-left: 1px solid $innerBorderColor;
-		&:first-child {
+		th {
+			border-bottom: 1px solid $innerBorderColor;
+		}
+
+		td {
+			border-left: 1px solid $innerBorderColor;
+			&:first-child {
+				border-left: none;
+			}
+		}
+
+		.th-inner {
+			position: absolute;
+			top: 1px;
+			line-height: $defaultHeaderLineHeight; /* height of header */
+			text-align: left;
+			height: $defaultHeaderHeight;
+			padding-left: 5px;
+			margin-left: -10px;
+			z-index: 900;
+
+			border-left: 1px solid $innerBorderColor;
+			background-color: #F5F5F5;
+			
+			/* to hide overflow text, and then reveal on hover: */
+			white-space: nowrap;
+			overflow-x: hidden;
+			&:hover {
+				overflow-x: visible;
+				z-index: 1000;
+				width: auto;
+				padding-right: 10px;
+			}
+		}
+		.first .th-inner {
 			border-left: none;
+			padding-left: 6px;
 		}
-	}
 
-	.th-inner {
-		position: absolute;
-		top: 1px;
-		line-height: $defaultHeaderLineHeight; /* height of header */
-		text-align: left;
-		height: $defaultHeaderHeight + 1px;
-		padding-left: 5px;
-		margin-left: -10px;
-		z-index: 900;
-
-		border: 1px solid $innerBorderColor;
-		border-top: none;
-		border-right: none;
-		background-color: #F5F5F5;
-		
-		/* to hide overflow text, and then reveal on hover: */
-		white-space: nowrap;
-		overflow-x: hidden;
-		&:hover {
-			overflow-x: visible;
-			z-index: 1000;
-			width: auto;
-			padding-right: 10px;
-		}
-	}
-	.first .th-inner {
-		border-left: none;
-		padding-left: 6px;
 	}
 
 }
