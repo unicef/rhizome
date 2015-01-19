@@ -42,18 +42,27 @@ you can run them from the copies installed in `node_modules` by running
 
 ## Setting up the database
 
-    $ createuser --no-createdb --no-createrole --no-superuser --password "w3b@p01i0" djangoapp
+    $ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
+    Password: 
     $ createdb --owner djangoapp polio
     $ python manage.py syncdb
     $ python manage.py migrate
+
+The password for the djangoapp user can be found in `settings.py`.
 
 ## Building
 
     $ gulp
 
+This will compile the SASS, pack the JavaScript, and place both in the `static/`
+directory along with all the fonts.
+
 ## Deploying
 
     $ gulp dist
+
+This will build the frontend, collect all of Django's static files, and then
+create zip files for the frontend and backend in the `dist/` directory.
 
 `gulp dist` will create two zip files in the `dist/` directory:
 
