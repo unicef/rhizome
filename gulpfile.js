@@ -100,7 +100,6 @@ gulp.task('livereload', function () {
 gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
 	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
-	gulp.watch(path.images, ['images']);
 });
 
 gulp.task('test', ['scripts'], function () {
