@@ -6,33 +6,13 @@
 		<div class="row">
 
 				<div class="medium-2 columns">
+					<label for="sets">Indicator Set</label>
+					<select id="sets" v-model="indicator_set_id" options="indicator_sets"></select>
+				</div>
 
+				<div class="medium-2 columns">
 					<label for="campaigns">Campaign</label>
 					<select id="campaigns" v-model="campaign_id" options="campaigns"></select>
-
-<!-- 					<label>
-						<div class="row">
-							<div class="small-5 columns">Time Period</div>
-						</div>
-						<div class="row">
-							<div class="small-2 columns">
-								<input name="start_dt"
-										type="text"
-										placeholder="YYYY-MM-DD"
-										aria-label="Start Date"
-										v-model="campaign.start"></input>
-							</div>
-							<div class="small-1 columns inline centered">to</div>
-							<div class="small-2 columns">
-								<input name="end_dt"
-										type="text"
-										placeholder="YYYY-MM-DD"
-										aria-label="End Date"
-										v-model="campaign.end"></input>
-							</div>
-						</div>
-					</label>
- -->				
  				</div>
 
 				<div class="medium-2 columns">
@@ -44,11 +24,11 @@
 				</div>
 
 				<!-- FIXME: Remove inline style -->
-				<div class="medium-1 columns" style="text-align: right">
+				<div class="medium-2 columns" style="text-align: right">
 					<!-- FIXME: Remove blank line for alignment -->
 					&nbsp;<br>
 					<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })">
-						<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load
+						<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load Entry Form
 					</a>
 				</div>
 		</div>

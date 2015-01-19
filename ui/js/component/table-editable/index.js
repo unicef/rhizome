@@ -24,6 +24,7 @@ var scales = {
 };
 
 module.exports = {
+	
 	template: require('./template.html'),
 
 	ready: function () {
@@ -32,9 +33,7 @@ module.exports = {
 			groupSize: 5
 		});
 
-		this.$watch('rows', function() {
-			this.updateStats();
-		}, true);
+		this.$watch('rows', this.updateStats, true, true);
 
 	},
 
@@ -91,6 +90,7 @@ module.exports = {
 
 			}
 
+			console.log(stats);
 			self.$set('stats', stats);
 
 		}
@@ -105,7 +105,16 @@ module.exports = {
 
 		completionColor: function(v) {
 			return scales.completionColor(v);
-		}
+		},
+
+		rowComplete: function() {
+			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].complete : null;
+		},
+
+		rowTotal: function() {
+			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].total : null;
+		},
+
 
 	},
 

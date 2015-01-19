@@ -7,28 +7,16 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 
 module.exports = {
+
 	template: require('./template.html'),
 
 	data: function () {
 		return {
+			indicator_set_id: 2,
+			indicator_sets: require('./structure/indicator_sets'),
 			loaded: false,
 			regions: [],
 			indicators: [],
-			indicatorSet: [
-				{ 'id': 5 },
-				{ 'id': 51 },
-				{ 'id': 69 }, 
-				{ 'id': 70 }, 
-				{ 'id': 160 }, 
-				{ 'id': 161 }, 
-				{ 'id': 44 }, 
-				{ 'id': 43 }, 
-				{ 'id': 32 }, 
-				{ 'id': 31 }, 
-				{ 'id': 158 }, 
-				{ 'id': 34 }, 
-				{ 'id': 33 }
-			],
 			pagination: {
 				// the_limit: 20,
 				// the_offset: 0,
@@ -44,6 +32,17 @@ module.exports = {
 			campaign_id: null
 
 		};
+	},
+
+	created: function() {
+
+		// processing on indicator sets data
+		_.forEach(this.indicator_sets, function(d) {
+			// copy values for v-select:
+			d.value = d.id;
+			d.text = d.title;
+		});
+
 	},
 
 	ready: function() {
@@ -189,9 +188,14 @@ module.exports = {
 			}
 
 			// add indicators to request
-			this.indicatorSet.forEach(function (row) {
-				if (row.id) {
-					options.indicator__in.push(row.id);
+			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id == self.indicator_set_id; });
+			// if (!indicatorSet) {
+			// 	alert('Error: unable to find indicator set');
+			// 	return;
+			// }
+			indicatorSet.indicators.forEach(function (ind) {
+				if (ind.id) {
+					options.indicator__in.push(ind.id);
 				}
 			});
 

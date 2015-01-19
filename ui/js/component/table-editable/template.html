@@ -28,10 +28,11 @@
 					<tr v-repeat="row: rows">
 						
 						<td class="medium-1">
-							<div v-style="color: stats.byRow[$index].complete / stats.byRow[$index].total | completionColor" class="completionStatus">
-								{{ stats.byRow[$index].complete }} / {{ stats.byRow[$index].total }}
-							</td>
-						</div>
+							<!-- <div v-style="color: {{ row | rowComplete }} / {{ row | rowTotal }} | completionColor" class="completionStatus"> -->
+							<div>
+								{{ row | rowComplete }} / {{ row | rowTotal }}
+							</div>
+						</td>
 
 						<td v-repeat="row"
 							v-component="uf-cell"></td>
