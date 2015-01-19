@@ -5,6 +5,7 @@ var source     = require('vinyl-source-stream');
 var browserify = require('browserify');
 var gulp       = require('gulp');
 var del        = require('del');
+var exec       = require('child_process').exec;
 
 // load plugins
 var $ = require('gulp-load-plugins')();
@@ -13,11 +14,11 @@ var path = {
 	main      : './ui/js/PolioScape.js',
 	components: './ui/js/**/*.{js,html,css,sass,scss}',
 	js        : './ui/js/**/*.js',
-	sass      : ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', '!./ui/js/bower_components/**/*'],
+	sass      : ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
 	output    : './static',
-	clean     : ['./dist', './static/**/*.{js,css,html}', '!./static/bower_components/**/*'],
+	clean     : ['./dist', './static', 'build'],
 	dist      : 'dist',
 	zipfile   : 'uf04-frontend.zip'
 };
@@ -36,7 +37,7 @@ var build = function (src, dst, opts) {
 };
 
 gulp.task('styles', function () {
-	var filter = $.filter(['**/*', '!ie.css', '!print.css']);
+	var filter = $.filter(['**/*', '!ie.css', '!print.css', '!font-awesome.min.css']);
 
 	return gulp.src(path.sass)
 		.pipe($.rubySass({
@@ -48,11 +49,12 @@ gulp.task('styles', function () {
 			$.util.log(e.message);
 			this.emit('end');
 		})
+		.pipe($.flatten())
 		.pipe(filter)
 		.pipe($.concat('screen.css'))
 		.pipe(filter.restore())
 		.pipe($.autoprefixer('last 1 version'))
-		.pipe(gulp.dest(path.output));
+		.pipe(gulp.dest(path.output + '/css'));
 });
 
 gulp.task('scripts', function () {
@@ -69,8 +71,10 @@ gulp.task('browserify', ['scripts'], function () {
 });
 
 gulp.task('fonts', function () {
+	var fonts = $.filter('**/*.{eot,svg,ttf,woff}');
+
 	return $.bowerFiles()
-		.pipe($.filter('**/*.{eot,svg,ttf,woff}'))
+		.pipe($.filter(['**/*.{eot,svg,ttf,woff}']))
 		.pipe($.flatten())
 		.pipe(gulp.dest(path.output + '/fonts'))
 		.pipe($.size());
@@ -80,7 +84,8 @@ gulp.task('clean', function (cb) {
 	del(path.clean, cb);
 });
 
-gulp.task('default', ['clean', 'browserify', 'styles']);
+gulp.task('build', ['fonts', 'browserify', 'styles']);
+gulp.task('default', ['clean', 'build']);
 
 gulp.task('livereload', function () {
 	var server = $.livereload();
@@ -102,8 +107,14 @@ gulp.task('test', ['scripts'], function () {
 	return gulp.src(path.test).pipe($.mocha());
 });
 
-gulp.task('collectstatic', function () {
+gulp.task('collectstatic', ['build'], function (cb) {
+	exec('python manage.py collectstatic --noinput -v 0', function (err) {
+		if (err) {
+			return cb(err);
+		}
 
+		cb();
+	});
 });
 
 gulp.task('dist-py', function () {
@@ -113,11 +124,11 @@ gulp.task('dist-py', function () {
 		.pipe(gulp.dest(path.dist))
 });
 
-gulp.task('dist-ui', ['browserify', 'styles', 'collectstatic'], function () {
+gulp.task('dist-ui', ['collectstatic'], function () {
 	var jsFilter  = $.filter('**/main.js');
 	var cssFilter = $.filter('**/{print,screen,ie}.css');
 
-	return gulp.src(path.output + '/**/*')
+	return gulp.src('build/**/*')
 		.pipe(jsFilter)
 		.pipe($.uglify())
 		.pipe($.size({ title: 'JavaScript' }))
