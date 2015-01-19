@@ -1,9 +1,9 @@
 import pprint as pp
-from math import isnan
+import traceback
 from collections import defaultdict
-from itertools import product
 from datetime import datetime
-
+from itertools import product
+from math import isnan
 
 from tastypie.bundle import Bundle
 from tastypie import fields
@@ -603,23 +603,35 @@ class DataPointEntryResource(ModelResource):
         """
         try:
             self.validate_object(bundle.data)
+
+            existing_datapoint = self.get_existing_datapoint(bundle.data)
+            if existing_datapoint is not None:
+                update_kwargs = {
+                    'region_id': existing_datapoint.region_id,
+                    'campaign_id': existing_datapoint.campaign_id,
+                    'indicator_id': existing_datapoint.indicator_id
+                }
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+            else:
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+        
         except InputError, e:
             bundle.data = self.error_response(e)
-            raise ImmediateHttpResponse(response=self.create_response(bundle.request, bundle))
+            response = self.create_response(bundle.request, bundle)
+            raise ImmediateHttpResponse(response=response)
+        
+        # catch all exceptions & format them the way the client is expecting
+        except Exception, e:
+            e.code = 0
+            e.data = traceback.format_exc()
+            print e.data
+            bundle.data = self.error_response(e)
+            response = self.create_response(bundle.request, bundle)
+            raise ImmediateHttpResponse(response=response)
 
-        # TODO: clean this up / make more efficient?
-        existing_datapoint = self.get_existing_datapoint(bundle.data)
-        if existing_datapoint is not None:
-            obj_kwargs = {
-                'region_id': existing_datapoint.region_id,
-                'campaign_id': existing_datapoint.campaign_id,
-                'indicator_id': existing_datapoint.indicator_id
-            }
-            bundle.response = self.success_response()
-            return super(DataPointEntryResource, self).obj_update(bundle, **obj_kwargs)
-        else:
-            bundle.response = self.success_response()
-            return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+
 
     def get_existing_datapoint(self, data):
         """
@@ -635,10 +647,12 @@ class DataPointEntryResource(ModelResource):
         except ObjectDoesNotExist:
             return
 
-
     def hydrate(self, bundle):
 
-        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint):
+        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint) \
+            and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
+            and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
+            and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
             pass
         else:
             bundle.obj = DataPoint()
