@@ -22,38 +22,38 @@ information see the documentation on [virtualenv][] and [virtualenvwrapper][].
 
 ### Installing backend dependencies
 
-  $ pip install -r requirements.txt
+    $ pip install -r requirements.txt
 
 If you are not installing in a virtual environment, you may require root
 privileges, so you'll need to `sudo` the above command.
 
 ### Installing frontend dependencies
 
-  $ npm install
-  $ npm install -g gulp bower
-  $ bower install
-  $ sudo gem install sass compass
+    $ npm install
+    $ npm install -g gulp bower
+    $ bower install
+    $ sudo gem install sass compass
 
 If you don't want to install `gulp` or `bower` globally (with the `-g` flag),
 you can run them from the copies installed in `node_modules` by running
 
-  $ ./node_modules/.bin/gulp
-  $ ./node_modules/.bin/bower
+    $ ./node_modules/.bin/gulp
+    $ ./node_modules/.bin/bower
 
 ## Setting up the database
 
-  $ createuser --no-createdb --no-createrole --no-superuser --password "w3b@p01i0" djangoapp
-  $ createdb --owner djangoapp polio
-  $ python manage.py syncdb
-  $ python manage.py migrate
+    $ createuser --no-createdb --no-createrole --no-superuser --password "w3b@p01i0" djangoapp
+    $ createdb --owner djangoapp polio
+    $ python manage.py syncdb
+    $ python manage.py migrate
 
 ## Building
 
-  $ gulp
+    $ gulp
 
 ## Deploying
 
-  $ gulp dist
+    $ gulp dist
 
 `gulp dist` will create two zip files in the `dist/` directory:
 
@@ -84,7 +84,7 @@ deploy the static files. ([Read more about static files in Django.][static-files
 The default task runs `clean`, `fonts`, `browserify`, and `styles` so that if
 you simply execute
 
-  $ gulp
+    $ gulp
 
 from the command line it will build the entire frontend for development.
 
