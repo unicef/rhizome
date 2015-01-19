@@ -97,8 +97,6 @@ class RegionPolygonResource(Resource):
            regions at the specified level that are within the region specified
         3. passing only parent_region__in  should return the shapes for all the
            immediate children in that region if no level parameter is supplied
-        3. any request for which there is no geo data, return an empty feature
-           collection
         4. no params - return top 10 regions
         '''
 
@@ -111,6 +109,8 @@ class RegionPolygonResource(Resource):
 
         ## CASE 1 ##
         if self.region__in is not None:
+
+            print 'this is this case...'
 
             region_ids = Region.objects.filter(id__in = self.region__in)\
                 .values_list('id',flat=True)
