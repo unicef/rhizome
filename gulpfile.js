@@ -122,7 +122,9 @@ gulp.task('dist-py', function () {
 			'requirements.txt',
 			'!sql_backups/**/*',
 			'!db.sql',
-			'!{node_modules,bower_components}/**/*'])
+			'!{node_modules,bower_components}/**/*',
+			'!**/prod_settings.py'
+		])
 		.pipe($.zip('uf04-backend.zip'))
 		.pipe($.size({ title: 'Backend'}))
 		.pipe(gulp.dest(path.dist))
