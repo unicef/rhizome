@@ -230,8 +230,6 @@ module.exports = {
 			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
 
-				console.log(data);
-
 				self.pagination.the_limit   = Number(data.meta.the_limit);
 				self.pagination.the_offset  = Number(data.meta.the_offset);
 				self.pagination.total_count = Number(data.meta.total_count);
