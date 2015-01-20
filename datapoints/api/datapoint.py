@@ -585,7 +585,8 @@ class DataPointEntryResource(ModelResource):
 
     # for validation
     required_keys = [
-        'datapoint_id', 'indicator_id', 'region_id',
+        # 'datapoint_id', 
+        'indicator_id', 'region_id',
         'campaign_id', 'value', #'changed_by_id',
     ]
     # for validating foreign keys
