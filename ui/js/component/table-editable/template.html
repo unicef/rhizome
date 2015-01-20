@@ -2,7 +2,7 @@
 
 	<div>
 		<h5>
-			Form is <span v-style="color: stats.total.complete / stats.total.total | completionColor" class="completionStatus">{{ stats.total.complete / stats.total.total | percent }}</span> complete ({{ stats.total.complete }} / {{ stats.total.total }} values entered)
+			Form is <span class="{{ stats.total.complete / stats.total.total | completionClass }}">{{ stats.total.complete / stats.total.total | percent }}</span> complete ({{ stats.total.complete }} / {{ stats.total.total }} values entered)
 		</h5>
 	</div>
 
@@ -14,10 +14,10 @@
 				<thead v-if="rows.length > 0">
  					<tr>
 						<th><div class="th-inner"></div></th>
-						<th v-repeat="col: columns" class="{{ col.headerClasses }}">
+						<th v-repeat="col: columns" class="{{ col.headerClasses }} completionStatus">
 							<div class="th-inner">
 								{{ col.header }}
-								<div v-if="col.type == 'value'" class="completionStatus" v-style="color: stats.byColumn[$index].complete / stats.byColumn[$index].total | completionColor">
+								<div v-if="col.type == 'value'" class="{{ stats.byColumn[$index].complete / stats.byColumn[$index].total | completionClass }}">
 									{{ stats.byColumn[$index].complete }} / {{ stats.byColumn[$index].total }}
 								</div>
 							</div>
@@ -29,7 +29,7 @@
 						
 						<td class="medium-1">
 							<!-- <div v-style="color: {{ row | rowComplete }} / {{ row | rowTotal }} | completionColor" class="completionStatus"> -->
-							<div>
+							<div class="{{ row | rowCompletionClass }} completionStatus">
 								{{ row | rowComplete }} / {{ row | rowTotal }}
 							</div>
 						</td>

@@ -8,18 +8,11 @@ var formats = {
 };
 
 var scales = {
-	completionColor: function(v) {
-		if (v === 0) { return '#EC1C24'; }
-		else if (v === 1) { return '#29A13A'; }
-		else if (v > 0 && v < 1) { return 'rgb(242, 129, 0)'; }
-
-		// if (v === 0) { return '#FC5959'; }
-		// else if (v === 1) { return '#91cf60'; }
-		// else if (v > 0 && v < 0.34) { return '#fc8d59'; }
-		// else if (v >= 0.34 && v < 0.67) { return '#fee08b'; }
-		// else if (v >= 0.67 && v < 1) { return '#d9ef8b'; }
-
-		else { return 'inherit'; }
+	completionClass: function(v) {
+		if (v === 0) { return 'statusText-bad'; }
+		else if (v === 1) { return 'statusText-good'; }
+		else if (v > 0 && v < 1) { return 'statusText-okay'; }
+		return null;
 	}
 };
 
@@ -90,7 +83,6 @@ module.exports = {
 
 			}
 
-			console.log(stats);
 			self.$set('stats', stats);
 
 		}
@@ -103,8 +95,8 @@ module.exports = {
 			return formats.percent(v);
 		},
 
-		completionColor: function(v) {
-			return scales.completionColor(v);
+		completionClass: function(v) {
+			return scales.completionClass(v);
 		},
 
 		rowComplete: function() {
@@ -115,8 +107,11 @@ module.exports = {
 			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].total : null;
 		},
 
-		rowCompletionColor: function() {
-			console.log(this);
+		rowCompletionClass: function() {
+			if (this.stats.byRow[this.$index] !== undefined) {
+				return scales.completionClass(this.stats.byRow[this.$index].complete / this.stats.byRow[this.$index].total);
+			}
+			return null;
 		}
 
 

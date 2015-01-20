@@ -23,8 +23,7 @@
 							 searchable="true"></div>
 				</div>
 
-				<!-- FIXME: Remove inline style -->
-				<div class="medium-2 columns" style="text-align: right">
+				<div class="medium-1 columns">
 					<!-- FIXME: Remove blank line for alignment -->
 					&nbsp;<br>
 					<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })">
@@ -44,19 +43,6 @@
 		     v-with="offset     : pagination.the_offset,
 		             limit      : pagination.the_limit,
 		             total_count: pagination.total_count"></div>
-
-	<!-- 	
-		<div class="medium-2 large-1 columns">
-			<a role="button" class="button expand" aria-label="Download All"
-			   v-class="disabled: !hasSelection"
-				 v-on="click : download()">
-				<i class="fa fa-fw fa-download"></i>&emsp;Download All
-			</a>
-		</div>
-	-->
 	</div>
-
-	<!-- Download target -->
-	<!-- <iframe width="0" height="0" src="{{ src }}"></iframe> -->
 
 </div>	

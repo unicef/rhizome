@@ -188,7 +188,7 @@ module.exports = {
 			}
 
 			// add indicators to request
-			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id == self.indicator_set_id; });
+			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(self.indicator_set_id); });
 			// if (!indicatorSet) {
 			// 	alert('Error: unable to find indicator set');
 			// 	return;
@@ -224,8 +224,6 @@ module.exports = {
 			_.defaults(options, this.pagination);
 
 			this.table.loading = true;
-
-			console.log(options);
 
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
