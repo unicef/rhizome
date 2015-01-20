@@ -153,8 +153,7 @@ module.exports = {
 			var self = this;
 
 			// default values for testing
-			var regions = [ 12942, 12939, 12929, 12928 ];
-			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
+			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 
 			// get from dropdown
 			if (this.hasSelection) {
@@ -162,7 +161,7 @@ module.exports = {
 			}
 
 			var options = { 
-				// campaign_id__in: [ self.$data.campaign_id ],
+				campaign_id: parseInt(self.$data.campaign_id),
 				campaign_start: '2013-06-01',
 				campaign_end: '2013-06-30',
 				indicator__in: [],
@@ -225,27 +224,34 @@ module.exports = {
 
 			this.table.loading = true;
 
-			api.datapoints(options).done(function (data) {
+			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
+
+				console.log(data);
 
 				self.pagination.the_limit   = Number(data.meta.the_limit);
 				self.pagination.the_offset  = Number(data.meta.the_offset);
 				self.pagination.total_count = Number(data.meta.total_count);
 
-				// pivot data so that each row contains all region datapoints for one indicator
-				// TO DO: this may be broken by pagination (?) and so would need to be grouped differently on the back end
-				// TO DO: move this to data transform utility
+				// OLD (for /datapoint/ response) pivot data so that each row contains all region datapoints for one indicator
+				// var byIndicator = {};
+				// data.objects.forEach(function (d) {
+				// 	d.indicators.forEach(function (ind) {
+				// 		if (!byIndicator[ind.indicator]) { byIndicator[ind.indicator] = {}; }
+				// 		byIndicator[ind.indicator][d.region] = ind;						
+				// 	});
+				// });
+
+				// arrange datapoints into an object of indicators > regions
 				var byIndicator = {};
-				data.objects.forEach(function (d) {
-					d.indicators.forEach(function (ind) {
-						if (!byIndicator[ind.indicator]) { byIndicator[ind.indicator] = {}; }
-						byIndicator[ind.indicator][d.region] = ind;						
-					});
+				data.objects.forEach(function(d) {
+					if (!byIndicator[d.indicator_id]) { byIndicator[d.indicator_id] = {}; }
+					byIndicator[d.indicator_id][d.region_id] = d;
 				});
 
 				// assemble data points into rows for table
 				var rows = [];
-				options.indicator__in.forEach(function(ind) {
+				options.indicator__in.forEach(function(indicator_id) {
 					
 					var row = [];
 
@@ -264,12 +270,35 @@ module.exports = {
 								cell.isEditable = true;
 								cell.format = numericFormatter;
 								cell.classes = 'numeric';
-								cell.value = byIndicator[ind] && byIndicator[ind][column.key] ? byIndicator[ind][column.key].value : null;
+								if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
+									cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id;
+									cell.value = byIndicator[indicator_id][column.key].value;
+									cell.note = byIndicator[indicator_id][column.key].note;
+								} else {
+									cell.datapoint_id = null;
+									cell.value = null;
+									cell.note = null;
+								}
+								// generate promise for submitting a new value to the API for saving
+								// cell.buildSubmitPromise = function(newVal) {
+								// 	var upsert_options = {
+								// 		campaign__in: options.campaign_id,
+								// 		indicator__in: indicator_id,
+								// 		region__in: column.key,
+								// 		value: parseFloat(newVal)
+								// 	};
+								// 	console.log(upsert_options);
+								// 	return api.upsertDatapoint(upsert_options);
+								// };
+								// callback to specifically handle response
+								cell.withResponse = function(response) {
+									console.log('done!');									
+								};
 								break;
 
 							// indicator name
 							case 'label':
-								cell.value = self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind;
+								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing Data for Indicator '+indicator_id;
 								break;
 
 						}

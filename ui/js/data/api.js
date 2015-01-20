@@ -95,5 +95,6 @@ module.exports = {
 	indicators: endPoint('/indicator/'),
 	regions   : endPoint('/region/'),
 	datapoints: datapoint,
+	datapointsRaw: endPoint('/datapointentry/'),
 	office    : endPoint('/office/')
 };

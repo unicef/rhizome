@@ -28,6 +28,10 @@ module.exports = {
 
 		this.$watch('rows', this.updateStats, true, true);
 
+		// this.$watch('rows', function(newVal, oldVal) {
+		// 	console.log('changed', newVal, oldVal);
+		// }, true);
+
 	},
 
 	methods: {
@@ -99,12 +103,11 @@ module.exports = {
 			return scales.completionClass(v);
 		},
 
-		rowComplete: function() {
-			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].complete : null;
-		},
-
-		rowTotal: function() {
-			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].total : null;
+		getStat: function(obj, by, prop) { 
+			if (this.stats[by] && this.stats[by][this.$index] !== undefined && this.stats[by][this.$index][prop] !== undefined) {
+				return this.stats[by][this.$index][prop];
+			}
+			return null;
 		},
 
 		rowCompletionClass: function() {
@@ -112,6 +115,12 @@ module.exports = {
 				return scales.completionClass(this.stats.byRow[this.$index].complete / this.stats.byRow[this.$index].total);
 			}
 			return null;
+		},
+
+		colCompletionClass: function() {
+			if (this.stats.byColumn[this.$index] !== undefined) {
+				return scales.completionClass(this.stats.byColumn[this.$index].complete / this.stats.byColumn[this.$index].total);
+			}
 		}
 
 

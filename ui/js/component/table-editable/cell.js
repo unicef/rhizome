@@ -30,10 +30,23 @@ module.exports = {
 
 		// user has finished editing: update cell state
 		submit: function() {
-			// TO DO: submit value for saving (here?)
+			var self = this;
+
+			// submit value for saving
+			if (self.buildSubmitPromise !== undefined) {
+				var value = self.$data.value;
+				// TODO: compare new value to old?
+				var promise = self.buildSubmitPromise(value);
+				promise.done(function(response) {
+					console.log(response);
+					if (self.withResponse) {
+						self.withResponse(response);
+					}
+				});
+			}
 			
 			// toggle editing mode
-			this.toggleEditing(false);
+			self.toggleEditing(false);
 		}
 
 	},

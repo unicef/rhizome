@@ -14,11 +14,11 @@
 				<thead v-if="rows.length > 0">
  					<tr>
 						<th><div class="th-inner"></div></th>
-						<th v-repeat="col: columns" class="{{ col.headerClasses }} completionStatus">
+						<th v-repeat="col: columns" class="{{ col.headerClasses }}">
 							<div class="th-inner">
 								{{ col.header }}
-								<div v-if="col.type == 'value'" class="{{ stats.byColumn[$index].complete / stats.byColumn[$index].total | completionClass }}">
-									{{ stats.byColumn[$index].complete }} / {{ stats.byColumn[$index].total }}
+								<div v-if="col.type == 'value'" class="{{ col | colCompletionClass }} completionStatus">
+									{{ col | getStat byColumn complete }} / {{ col | getStat byColumn total }}
 								</div>
 							</div>
 						</th>
@@ -28,9 +28,8 @@
 					<tr v-repeat="row: rows">
 						
 						<td class="medium-1">
-							<!-- <div v-style="color: {{ row | rowComplete }} / {{ row | rowTotal }} | completionColor" class="completionStatus"> -->
 							<div class="{{ row | rowCompletionClass }} completionStatus">
-								{{ row | rowComplete }} / {{ row | rowTotal }}
+								{{ row | getStat byRow complete }} / {{ row | getStat byRow total }}
 							</div>
 						</td>
 
