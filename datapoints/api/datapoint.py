@@ -603,7 +603,7 @@ class DataPointEntryResource(ModelResource):
         queryset = DataPoint.objects.all()
         # authentication = ApiKeyAuthentication() # sup w this
         authorization = Authorization()
-        allowed_methods = ['get'] # TODO FIXME: once obj_create is fully tested, add POST etc
+        allowed_methods = ['get', 'post']
         resource_name = 'datapointentry'
         always_return_data = True
         max_limit = None # no pagination
