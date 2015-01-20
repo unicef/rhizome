@@ -278,19 +278,21 @@ module.exports = {
 									cell.note = null;
 								}
 								// generate promise for submitting a new value to the API for saving
-								// cell.buildSubmitPromise = function(newVal) {
-								// 	var upsert_options = {
-								// 		campaign__in: options.campaign_id,
-								// 		indicator__in: indicator_id,
-								// 		region__in: column.key,
-								// 		value: parseFloat(newVal)
-								// 	};
-								// 	console.log(upsert_options);
-								// 	return api.upsertDatapoint(upsert_options);
-								// };
+								cell.buildSubmitPromise = function(newVal) {
+									var upsert_options = {
+										datapoint_id: cell.datapoint_id,
+										campaign_id: options.campaign__in,
+										indicator_id: indicator_id,
+										region_id: column.key,
+										value: parseFloat(newVal)
+									};
+									console.log(upsert_options);
+									return api.datapointUpsert(upsert_options);
+								};
 								// callback to specifically handle response
 								cell.withResponse = function(response) {
-									console.log('done!');									
+									// if (response.)
+									console.log('done!', response);
 								};
 								break;
 

@@ -15,7 +15,9 @@ function urlencode(query) {
 	}).join('&');
 }
 
-function endPoint(path) {
+function endPoint(path, mode) {
+	if (!mode) { mode = 'get'; }
+
 	var defaults = {
 		offset     : 0,
 		username   : 'evan',
@@ -26,19 +28,29 @@ function endPoint(path) {
 
 
 	function fetch(query) {
-		var q = _.defaults({}, query, defaults);
+		var req;
+
+		// form GET request
+		if (mode === 'get') {
+			var q = _.defaults({}, query, defaults);
+			req = prefix(request.get(path))
+					.query(q);
+		} 
+		// form POST request
+		else if (mode === 'post') {
+			req = prefix(request.post(path))
+					.query(defaults)
+					.send(query);
+		}
 
 		return new Promise(function (fulfill, reject) {
-			prefix(request.get(path))
-				.query(q)
-				.end(function (res) {
+			req.end(function (res) {
 					if (res.error) {
 						reject({
 							status: res.status,
 							msg: res.body.error
 						});
 					} else {
-
 						fulfill({
 							meta: res.body.meta || {},
 							objects: res.body.objects || _.omit(res.body, 'meta')
@@ -96,5 +108,6 @@ module.exports = {
 	regions   : endPoint('/region/'),
 	datapoints: datapoint,
 	datapointsRaw: endPoint('/datapointentry/'),
+	datapointUpsert: endPoint('/datapointentry/', 'post'),
 	office    : endPoint('/office/')
 };
