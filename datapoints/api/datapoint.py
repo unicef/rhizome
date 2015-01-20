@@ -669,17 +669,21 @@ class DataPointEntryResource(ModelResource):
             and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
+            # we get here if there's an existing datapoint being modified
             pass
         else:
+            # we get here if we're inserting a brand new datapoint
             bundle.obj = DataPoint()
-
-            bundle.obj.source_datapoint_id = int(bundle.data['datapoint_id'])
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
             # TODO uncomment once authorization is in place
             # bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
+            bundle.obj.changed_by_id = -1
+            # TODO: what should source_datapoint_id be?
+            bundle.obj.source_datapoint_id = -1
             bundle.obj.value = bundle.data['value']
+
 
         return bundle
 
