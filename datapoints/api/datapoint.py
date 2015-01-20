@@ -583,18 +583,24 @@ class DataPointEntryResource(ModelResource):
         'campaign_id': Campaign,
         'indicator_id': Indicator
     }
+    region = fields.IntegerField(attribute = 'region_id')
+    campaign = fields.IntegerField(attribute = 'campaign_id')
+    indicator = fields.IntegerField(attribute = 'indicator_id')
+
 
     class Meta():
         queryset = DataPoint.objects.all()
         # authentication = ApiKeyAuthentication() # sup w this
         authorization = Authorization()
-        allowed_methods = ['post','put','patch']
+        allowed_methods = ['post','put','patch', 'get']
         resource_name = 'datapointentry'
         always_return_data = True
-
-
-    ##########
-    ###### TODO : WTF ABOUT DATAPOINT_ID?????
+        max_limit = None # no pagination
+        filtering = {
+            'indicator': ALL,
+            'campaign': ALL,
+            'region': ALL,
+        }
 
 
     def obj_create(self, bundle, **kwargs):
@@ -618,7 +624,7 @@ class DataPointEntryResource(ModelResource):
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
         
         except InputError, e:
-            bundle.data = self.error_response(e)
+            bundle.data = self.make_error_response(e)
             response = self.create_response(bundle.request, bundle)
             raise ImmediateHttpResponse(response=response)
         
@@ -627,11 +633,9 @@ class DataPointEntryResource(ModelResource):
             e.code = 0
             e.data = traceback.format_exc()
             print e.data
-            bundle.data = self.error_response(e)
+            bundle.data = self.make_error_response(e)
             response = self.create_response(bundle.request, bundle)
             raise ImmediateHttpResponse(response=response)
-
-
 
     def get_existing_datapoint(self, data):
         """
@@ -667,7 +671,17 @@ class DataPointEntryResource(ModelResource):
         return bundle
 
     def dehydrate(self, bundle):
-        bundle.data = bundle.response
+        # hack: bundle will only have a response attr if this is a POST or PUT request
+        if hasattr(bundle, 'response'):
+            bundle.data = bundle.response
+        else: # otherwise, this is a GET request
+            bundle.data['datapoint_id'] = bundle.data['id']
+            del bundle.data['id']
+            for key in ['campaign', 'indicator', 'region']:
+                bundle.data['{0}_id'.format(key)] = bundle.data[key]
+                del bundle.data[key]
+            for key in ['created_at', 'resource_uri']:
+                del bundle.data[key]
         return bundle
 
     def validate_object(self, obj):
@@ -720,7 +734,7 @@ class DataPointEntryResource(ModelResource):
         }
         return response
 
-    def error_response(self, error):
+    def make_error_response(self, error):
         response = {
             'success': 0,
             'error': {
