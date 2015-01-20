@@ -120,7 +120,10 @@ module.exports = {
 						if (!data.objects) { return null; }
 						return data.objects
 							.sort(function(a,b) {
-								return a.start_date > b.start_date ? -1 : 1;
+								if (a.office === b.office) {
+									return a.start_date > b.start_date ? -1 : 1;
+								}
+								return a.office - b.office;
 							})
 							.map(function(d) {
 								return {
@@ -161,9 +164,9 @@ module.exports = {
 			}
 
 			var options = { 
-				campaign_id: parseInt(self.$data.campaign_id),
-				campaign_start: '2013-06-01',
-				campaign_end: '2013-06-30',
+				campaign__in: parseInt(self.$data.campaign_id),
+				// campaign_start: '2013-06-01',
+				// campaign_end: '2013-06-30',
 				indicator__in: [],
 				region__in: []
 			};
@@ -226,8 +229,6 @@ module.exports = {
 
 			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
-
-				console.log(data);
 
 				self.pagination.the_limit   = Number(data.meta.the_limit);
 				self.pagination.the_offset  = Number(data.meta.the_offset);
