@@ -24,7 +24,7 @@ var scales = {
 };
 
 module.exports = {
-	
+
 	template: require('./template.html'),
 
 	ready: function () {
@@ -114,6 +114,10 @@ module.exports = {
 		rowTotal: function() {
 			return (this.stats.byRow[this.$index] !== undefined) ? this.stats.byRow[this.$index].total : null;
 		},
+
+		rowCompletionColor: function() {
+			console.log(this);
+		}
 
 
 	},
