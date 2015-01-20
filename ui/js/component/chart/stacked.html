@@ -1,0 +1,34 @@
+<svg v-attr="width: width, height: height">
+
+	<g v-attr="transform: contentTransform">
+
+		<rect class="bg"
+		      v-attr="width: contentWidth, height: contentHeight"></rect>
+
+		<g v-show="!empty">
+			<g class="x axis" v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>
+			<g class="y axis"></g>
+			<g class="data"></g>
+			<g class="annotation"></g>
+			<g class="hover"></g>
+		</g>
+
+		<g v-if="empty || error"
+		   v-attr="transform: 'translate(' + contentWidth / 2 + ',' + contentHeight / 2 + ')'">
+
+		  <text v-if="empty" text-anchor="middle">No data</text>
+
+		  <text v-if="loading" text-anchor="middle">
+				<tspan class="spinner">&#xf110</tspan>
+				<tspan>Loading&hellip;</tspan>
+		  </text>
+
+		  <text v-if="error" text-anchor="middle">
+		  	We&rsquo;re sorry. An error occurred loading this chart.
+		  </text>
+
+		</g>
+
+	</g>
+
+</svg>

@@ -1,5 +1,6 @@
 'use strict';
 
+var _    = require('lodash');
 var d3   = require('d3');
 var Vue  = require('vue');
 
@@ -16,7 +17,6 @@ module.exports = Vue.extend({
 
 	mixins: [
 		require('./labels'),
-		require('./hover-tiles'),
 		require('./hover-line'),
 		require('./yGrid'),
 		require('./xAxis')
@@ -49,22 +49,25 @@ module.exports = Vue.extend({
 			var svg     = d3.select(this.$el);
 
 			var series  = this.series || [];
-			var dataset = series.map(getPoints).sort(function (a, b) {
+			var dataset = _(series.map(getPoints)).flatten().sortBy(function (a, b) {
 				return a.x < b.x ? -1 : 1;
-			});
+			}).value();
+			var empty   = dataset.length === 0;
 
-			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
-			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
-			var lower   = Math.min(0, util.min(dataset, getY));
-			var upper   = util.max(dataset, getY) * 1.1;
+			var start  = this.domain ? this.domain[0] : d3.min(dataset, getX) || 0;
+			var end    = this.domain ? this.domain[1] : d3.max(dataset, getX) || start + 1;
+			var lower  = empty ? 0 : Math.min(0, d3.min(dataset, getY)) || 0;
+			var upper  = empty ? 1 : (d3.max(dataset, getY) || 1) * 1.1;
+			var height = this.height || 0;
+			var width  = this.width || 0;
 
-			var x       = this.x;
-			var y       = this.y;
+			var x      = this.x;
+			var y      = this.y;
 
 			x.domain([start, end])
-				.range([0, this.width]);
+				.range([0, width]);
 			y.domain([lower, upper])
-				.range([this.height, 0]);
+				.range([height, 0]);
 
 			var line = d3.svg.line()
 				.defined(defined)
