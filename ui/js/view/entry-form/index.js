@@ -191,12 +191,9 @@ module.exports = {
 
 			// add indicators to request
 			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(self.indicator_set_id); });
-			// if (!indicatorSet) {
-			// 	alert('Error: unable to find indicator set');
-			// 	return;
-			// }
 			indicatorSet.indicators.forEach(function (ind) {
-				if (ind.id) {
+				// TODO: remove the second condition below when on production:
+				if (ind.id && self.$data.indicators[ind.id] !== undefined) {
 					options.indicator__in.push(ind.id);
 				}
 			});
@@ -299,7 +296,7 @@ module.exports = {
 
 							// indicator name
 							case 'label':
-								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing Data for Indicator '+indicator_id;
+								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
 								break;
 
 						}
