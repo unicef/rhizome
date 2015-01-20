@@ -117,7 +117,12 @@ gulp.task('collectstatic', ['build'], function (cb) {
 });
 
 gulp.task('dist-py', function () {
-	return gulp.src(['**/*.{py,sql}', 'requirements.txt', '!sql_backups/**/*', '!db.sql'])
+	return gulp.src([
+			'**/*.{py,sql,html}',
+			'requirements.txt',
+			'!sql_backups/**/*',
+			'!db.sql',
+			'!{node_modules,bower_components}/**/*'])
 		.pipe($.zip('uf04-backend.zip'))
 		.pipe($.size({ title: 'Backend'}))
 		.pipe(gulp.dest(path.dist))
