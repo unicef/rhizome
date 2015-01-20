@@ -21,15 +21,46 @@ module.exports = {
 	computed: {
 
 		contentHeight: function () {
-			return this.height - Number(this.marginTop) - Number(this.marginBottom);
+			if (!this.height) {
+				return 0;
+			}
+
+			var h = this.height;
+
+			if (this.marginTop) {
+				h -= Number(this.marginTop);
+			}
+
+			if (this.marginBottom) {
+				h -= Number(this.marginBottom);
+			}
+
+			return h;
 		},
 
 		contentTransform: function () {
-			return 'translate(' + this.marginLeft + ',' + this.marginTop + ')';
+			var x = this.marginLeft || 0;
+			var y = this.marginTop || 0;
+
+			return 'translate(' + x + ',' + y + ')';
 		},
 
 		contentWidth: function () {
-			return this.width - Number(this.marginLeft) - Number(this.marginRight);
+			if (!this.width) {
+				return 0;
+			}
+
+			var w = this.width;
+
+			if (this.marginLeft) {
+				w -= Number(this.marginLeft);
+			}
+
+			if (this.marginRight) {
+				w -= Number(this.marginRight);
+			}
+
+			return w;
 		}
 
 	}
