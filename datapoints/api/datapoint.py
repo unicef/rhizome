@@ -586,7 +586,7 @@ class DataPointEntryResource(ModelResource):
     # for validation
     required_keys = [
         'datapoint_id', 'indicator_id', 'region_id',
-        'campaign_id', 'value', 'changed_by_id',
+        'campaign_id', 'value', #'changed_by_id',
     ]
     # for validating foreign keys
     keys_models = {
@@ -676,7 +676,8 @@ class DataPointEntryResource(ModelResource):
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
-            bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
+            # TODO uncomment once authorization is in place
+            # bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
             bundle.obj.value = bundle.data['value']
 
         return bundle
@@ -721,10 +722,11 @@ class DataPointEntryResource(ModelResource):
         # what should we do about id, url, created_at ?
         # those all get filled in automatically, right?
 
+        # TODO uncomment once authorization is in place
         # should this be a required key? yeah
-        assert obj.has_key('changed_by_id')
-        user_id = int(obj['changed_by_id'])
-        User.objects.get(id=user_id)
+        # assert obj.has_key('changed_by_id')
+        # user_id = int(obj['changed_by_id'])
+        # User.objects.get(id=user_id)
 
         # ensure that region, campaign, and indicator, if present, are valid values
         if obj.has_key('region_id'):
