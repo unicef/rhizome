@@ -31,15 +31,23 @@ echo
 echo Deleting data from $DB database...
 
 # FIXME: Should exit with an error status if we fail to drop the database
-dropdb $DB
+psql -c"select pg_terminate_backend(pid)
+   from pg_stat_activity
+   where datname = '$DB';"
 
-psql -c "CREATE DATABASE polio
+echo "just terminated all of your psql connections.. dropping the database in 5..4.."
+
+sleep 5
+psql -c "DROP DATABASE IF EXISTS $DB;"
+
+psql -c "CREATE DATABASE $DB
   WITH OWNER = djangoapp
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
        LC_COLLATE = 'en_US.UTF-8'
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;" postgres > /dev/null
+
 
 echo Loading production data...
 psql -f db.sql $DB $USER
