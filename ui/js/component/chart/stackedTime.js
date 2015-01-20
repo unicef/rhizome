@@ -3,6 +3,8 @@
 var _        = require('lodash');
 var d3       = require('d3');
 
+var tile     = require('./tile');
+
 var api      = require('../../data/api');
 var coolgray = require('../../colors/coolgray');
 var format   = require('../../util/format');
@@ -23,7 +25,6 @@ module.exports = {
 		require('./margin'),
 		require('./time-period'),
 
-		require('./hover-tiles'),
 		require('./hover-line'),
 		require('./labels'),
 
@@ -80,7 +81,8 @@ module.exports = {
 				this.$set('series', []);
 			}
 
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			var stack = d3.layout.stack()
 				.x(getX)
@@ -89,11 +91,11 @@ module.exports = {
 
 			var layers  = stack(this.layers);
 
-			var dataset = this.layers.map(getValues);
-			var start   = new Date(util.min(dataset, getX));
-			var end     = new Date(util.max(dataset, getX));
-			var lower   = Math.min(0, util.min(dataset, function (d) { return d.y0; }));
-			var upper   = util.max(dataset, getY) * 1.1;
+			var dataset = _.flatten(this.layers, 'values');
+			var start   = d3.min(dataset, getX) || 0;
+			var end     = d3.max(dataset, getX) || start + 1;
+			var lower   = Math.min(0, d3.min(dataset, function (d) { return d.y0; }) || 0);
+			var upper   = (d3.max(dataset, getY) || lower + 1) * 1.1;
 
 			var x = this.x
 				.domain([start, end])
@@ -119,10 +121,36 @@ module.exports = {
 			paths.enter().append('path')
 				.attr('class', 'layer');
 
-			paths.attr('d', function (d) { return area(getValues(d)); })
+			paths.attr('d', function (d) {
+				return area(getValues(d));
+			})
 				.style('fill', function (d, i) { return color(i); });
 
 			paths.exit().remove();
+
+			var xs    = _.chain(dataset).pluck('x').sortBy().uniq(true).value();
+			var xTile = tile().domain(x.domain());
+			var tiles = svg.select('.hover').selectAll('.hover-tile').data(xTile(xs));
+
+			tiles.enter().append('rect')
+				.attr('class', 'hover-tile')
+				.on({
+					'mouseover': function (d) {
+						self.$emit('show-annotation', { x: d.value });
+					},
+					'mouseout': function (d) {
+						self.$emit('hide-annotation', { x: d.value });
+					}
+				});
+
+			tiles.attr({
+				'x'     : function (d) { return x(d.lower); },
+				'y'     : 0,
+				'width' : function (d) { return x(d.upper) - x(d.lower); },
+				'height': this.contentHeight
+			});
+
+			tiles.exit().remove();
 
 			this._callHook('drawn');
 		},

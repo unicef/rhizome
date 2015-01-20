@@ -2,7 +2,7 @@
 
 function tile() {
 	var domain = [0, 1];
-	var getValue = Object;
+	var getValue = Number;
 
 	function transform(data) {
 		var tiles  = [];
@@ -16,7 +16,7 @@ function tile() {
 			var v    = getValue(data[i]);
 			var next = previous.value + (Math.abs(v - previous.value) / 2);
 
-			previous.distance = next - previous.lower;
+			previous.upper = next;
 			tiles.push(previous);
 
 			// Moving on to the next previous object
@@ -26,7 +26,7 @@ function tile() {
 			};
 		}
 
-		previous.distance = domain[1] - previous.lower;
+		previous.upper = domain[1];
 		tiles.push(previous);
 
 		return tiles;
