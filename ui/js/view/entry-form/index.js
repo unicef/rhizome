@@ -286,12 +286,10 @@ module.exports = {
 										region_id: column.key,
 										value: parseFloat(newVal)
 									};
-									console.log(upsert_options);
 									return api.datapointUpsert(upsert_options);
 								};
 								// callback to specifically handle response
 								cell.withResponse = function(response) {
-									// if (response.)
 									console.log('done!', response);
 								};
 								break;

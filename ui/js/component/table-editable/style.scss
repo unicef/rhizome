@@ -29,19 +29,31 @@ table {
 			display: none;
 			border: 1px solid #aaa;
 			font-size: inherit;
+			min-width: 50px;
 
 			&:focus {
 				outline: 0;
 			}
 		}
 
-		&.editing .displayValue 
+		&.editing .displayValue,
+		&.saving .displayValue
 		{
 			display: none;
 		}
 
 		&.editing .editControl {
 			display: block;
+		}
+		&.saving .editControl {
+			display: none;
+		}
+
+		.saving-icon {
+			display: none;
+		}
+		&.saving .saving-icon {
+			display: inherit;
 		}
 
 		/* cell status */

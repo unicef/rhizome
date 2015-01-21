@@ -9,9 +9,18 @@ module.exports = {
 
 	data: function() {
 		return {
-			isEditable: false,
-			isEditing: false
+			previousValue: null, // save the previous value to compare with edited value
+			isSaving: false, // whether the cell is in the process of saving right now
+			isEditable: false, // whether the cell is editable
+			isEditing: false // whether the cell is currently being edited
 		};
+	},
+
+	created: function() {
+
+		// set previous value
+		this.previousValue = this.value || null;
+
 	},
 
 	methods: {
@@ -32,21 +41,41 @@ module.exports = {
 		submit: function() {
 			var self = this;
 
-			// submit value for saving
-			if (self.buildSubmitPromise !== undefined) {
-				var value = self.$data.value;
-				// TODO: compare new value to old?
-				var promise = self.buildSubmitPromise(value);
-				promise.done(function(response) {
-					console.log(response);
-					if (self.withResponse) {
-						self.withResponse(response);
+			if (self.isSaving === false) {
+
+				// only perform the save if value has changed
+				if (self.value !== self.previousValue) {
+
+					self.isSaving = true;
+
+					// submit value for saving
+					if (self.buildSubmitPromise !== undefined) {
+
+						var value = self.$data.value;
+						// TODO: validation of value
+
+						var promise = self.buildSubmitPromise(value);
+						promise.done(function(response) {
+							
+							if (self.withResponse) {
+								self.withResponse(response);
+							}
+
+							// done saving
+							self.previousValue = self.value;
+							self.isSaving = false; 
+
+						});
+
 					}
-				});
+
+				}
+				
+				// toggle editing mode
+				self.toggleEditing(false);
+
 			}
-			
-			// toggle editing mode
-			self.toggleEditing(false);
+
 		}
 
 	},
