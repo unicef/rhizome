@@ -1,0 +1,15 @@
+<svg v-attr="width: width, height: height"
+     class="choropleth reds">
+
+  <g class="geography">
+  </g>
+
+	<g v-if="loading">
+		<rect fill="#ddd" style="fill-opacity: 0.5"
+		      v-attr="width: width, height: height"></rect>
+		<text text-anchor="middle"
+		      v-attr="transform: 'translate(' + center[0] + ',' + center[1] + ')'">
+			Loading
+		</text>
+	</g>
+</svg>
