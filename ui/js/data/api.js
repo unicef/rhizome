@@ -16,7 +16,7 @@ function urlencode(query) {
 }
 
 function endPoint(path, mode) {
-	if (!mode) { mode = 'get'; }
+	mode = (mode) ? mode.toUpperCase() : 'GET';
 
 	var defaults = {
 		offset     : 0,
@@ -28,19 +28,18 @@ function endPoint(path, mode) {
 
 
 	function fetch(query) {
-		var req;
+
+		var req = prefix(request(mode, path));
 
 		// form GET request
-		if (mode === 'get') {
+		if (mode === 'GET') {
 			var q = _.defaults({}, query, defaults);
-			req = prefix(request.get(path))
-					.query(q);
+			req.query(q);
 		} 
 		// form POST request
-		else if (mode === 'post') {
-			req = prefix(request.post(path))
-					.query(defaults)
-					.send(query);
+		else if (mode === 'POST') {
+			req.query(defaults)
+				.send(query);
 		}
 
 		return new Promise(function (fulfill, reject) {
