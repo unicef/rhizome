@@ -19,16 +19,11 @@ class OfficeResource(BaseApiResource):
 class RegionResource(ModelResource):
     '''Region Resource'''
 
-    # parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=True, null=True)
-    # name = fields.CharField('name')
-
 
     class Meta():
-        # queryset = Region.objects.raw("Select id, parent_region_id, name from region")
         queryset = SimpleRegion.objects.all()
         resource_name = 'region'
         max_limit = None # return all rows by default ( limit defaults to 20 )
-        # paginator_class = CustomPaginator
 
     def dehydrate(self, bundle):
 
@@ -56,22 +51,108 @@ class RegionPolygonResource(Resource):
             "region_id": ALL,
         }
 
+
+    def parse_url_strings(self,query_dict):
+
+        self.region__in, self.region_type_id, self.parent_region__in = \
+            None, None, None
+
+        ## REGION_ID
+        try:
+            self.region__in = [int(r) for r in query_dict['region__in']\
+                .split(',')]
+        except KeyError:
+            pass
+
+        ## REGION TYPE ##
+        try:
+
+            self.region_type_id = RegionType.objects.get(name = query_dict\
+                ['region_type']).id
+
+        except KeyError:
+            pass
+
+        except ObjectDoesNotExist:
+
+            all_r_types = RegionType.objects.all().values_list('name',flat=True)
+
+            err = 'region type doesnt exist. options are' + str(all_r_types)
+
+            return err, []
+
+
+        try:
+            self.parent_region__in = [int(r) for r in query_dict['parent_region__in']\
+                .split(',')]
+        except KeyError:
+            pass
+
+        return None
+
+    def get_regions_to_return_from_url(self,request):
+        '''
+        1  region__in returns geo data for the regions requested
+        2. parent_region__in + level should return the shapes for all the child
+           regions at the specified level that are within the region specified
+        3. passing only parent_region__in  should return the shapes for all the
+           immediate children in that region if no level parameter is supplied
+        4. no params - return top 10 regions
+        '''
+
+        ## attach these to self and return only error #
+        err = self.parse_url_strings(request.GET)
+
+        if err:
+            self.err = err
+            return err, []
+
+        ## CASE 1 ##
+        if self.region__in is not None:
+
+            print 'this is this case...'
+
+            region_ids = Region.objects.filter(id__in = self.region__in)\
+                .values_list('id',flat=True)
+
+
+        ## CASE 2 ##
+        elif self.parent_region__in is not None and self.region_type_id is not None:
+
+            region_ids = RegionHeirarchy.objects.filter(
+                contained_by_region_id__in = self.parent_region__in, \
+                region_type_id = self.region_type_id)\
+                .values_list('region_id',flat=True)
+
+        ## CASE 3 #
+        elif self.parent_region__in is not None and self.region_type_id is None:
+
+            region_ids = Region.objects.filter(parent_region__in = \
+                self.parent_region__in)
+
+        else:
+            region_ids = Region.objects.all().values_list('id',flat=True)[:5]
+
+
+        return None, region_ids
+
+
     def get_object_list(self,request):
         '''
-        parse the region_id__in parameter, query the polygons table and do some
+        parse the url, query the polygons table and do some
         ugly data munging to convert the results from the DB into geojson
         '''
 
+        self.err = None
+        err, regions_to_return = self.get_regions_to_return_from_url(request)
         ## since this is not a model resource i will filter explicitly
-        try:
-            region_id__in = [int(r) for r in request.GET['region_id__in']\
-                .split(',')]
 
-            polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
-                region_id__in).values()
+        if err:
+            self.err = err
+            return []
 
-        except KeyError:
-            polygon_values_list = RegionPolygon.objects.all().values()
+        polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
+            regions_to_return).values()
 
         features = []
 
@@ -117,6 +198,7 @@ class RegionPolygonResource(Resource):
         ## get rid of the meta_dict. i will add my own meta data.
         data['type'] = "FeatureCollection"
         data['features'] = data['objects']
+        data['error'] = self.err
 
         data.pop("objects",None)
         data.pop("meta",None)

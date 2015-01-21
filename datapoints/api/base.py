@@ -17,7 +17,7 @@ class BaseApiResource(ModelResource):
         # authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True
-        allowed_methods = ['get']
+        allowed_methods = ['get','post','put','patch', 'delete']
         filtering = {
             "id": ALL,
         }
