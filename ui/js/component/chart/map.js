@@ -84,8 +84,7 @@ module.exports = {
 			var h = this.height || 0;
 
 			return [w/2, h/2];
-		}
-
+		},
 	},
 
 	methods: {
@@ -133,7 +132,6 @@ module.exports = {
 			});
 
 			path.exit().remove();
-
 		},
 
 		loadData: function () {
@@ -215,6 +213,8 @@ module.exports = {
 		'geo'               : 'loadData',
 		'indicator'         : 'loadData',
 
-		'invalidate-display': 'draw'
+		'invalidate-display': 'draw',
+		'width'             : 'draw',
+		'height'            : 'draw'
 	}
 };
