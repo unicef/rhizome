@@ -39,8 +39,8 @@ module.exports = {
 			source : api.regions,
 			mapping: {
 				'parent_region_id': 'parent',
-				'name'         : 'title',
-				'id'           : 'value'
+				'name'            : 'title',
+				'id'              : 'value'
 			}
 		});
 
