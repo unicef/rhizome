@@ -1,10 +1,12 @@
-<td v-class="editable: isEditable, editing: isEditing, missing: missing">
+<td v-class="editable: isEditable, editing: isEditing, missing: missing, saving: isSaving">
+
+	<i v-if="isEditable" class="fa fa-spinner fa-spin saving-icon"></i>
 
 	<div v-on="click: toggleEditing(true)" class="displayValue" title="{{ hoverText }}">
 		{{ formatted }}
 	</div>
 
-	<input v-if="isEditable" 
+	<input v-if="isEditable"
 		type="textfield"
 		class="editControl"
 		v-model="value | validator"

@@ -191,12 +191,9 @@ module.exports = {
 
 			// add indicators to request
 			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(self.indicator_set_id); });
-			// if (!indicatorSet) {
-			// 	alert('Error: unable to find indicator set');
-			// 	return;
-			// }
 			indicatorSet.indicators.forEach(function (ind) {
-				if (ind.id) {
+				// TODO: remove the second condition below when on production:
+				if (ind.id && self.$data.indicators[ind.id] !== undefined) {
 					options.indicator__in.push(ind.id);
 				}
 			});
@@ -281,25 +278,25 @@ module.exports = {
 									cell.note = null;
 								}
 								// generate promise for submitting a new value to the API for saving
-								// cell.buildSubmitPromise = function(newVal) {
-								// 	var upsert_options = {
-								// 		campaign__in: options.campaign_id,
-								// 		indicator__in: indicator_id,
-								// 		region__in: column.key,
-								// 		value: parseFloat(newVal)
-								// 	};
-								// 	console.log(upsert_options);
-								// 	return api.upsertDatapoint(upsert_options);
-								// };
+								cell.buildSubmitPromise = function(newVal) {
+									var upsert_options = {
+										datapoint_id: cell.datapoint_id,
+										campaign_id: options.campaign__in,
+										indicator_id: indicator_id,
+										region_id: column.key,
+										value: parseFloat(newVal)
+									};
+									return api.datapointUpsert(upsert_options);
+								};
 								// callback to specifically handle response
 								cell.withResponse = function(response) {
-									console.log('done!');									
+									console.log('done!', response);
 								};
 								break;
 
 							// indicator name
 							case 'label':
-								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing Data for Indicator '+indicator_id;
+								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
 								break;
 
 						}
