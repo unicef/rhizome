@@ -139,7 +139,20 @@ module.exports = Vue.extend({
 		},
 
 		toggleItem: function (item) {
-			this.$emit('dropdown-item-toggle', item);
+			if (item) {
+				if (!this.multi) {
+					this.$broadcast('dropdown-clear');
+					item.selected = true;
+					this.open = false;
+				} else {
+					item.selected = !item.selected;
+				}
+			}
+
+			var items = this.selectedItems;
+
+			this.$emit('dropdown-value-changed', items);
+			this.$dispatch('dropdown-value-changed', items);
 		},
 
 		handleEvent: function (evt) {
@@ -193,14 +206,17 @@ module.exports = Vue.extend({
 
 		clear: function () {
 			this.$broadcast('dropdown-clear');
+			Vue.nextTick(this.itemToggle);
 		},
 
 		invert: function () {
 			this.$broadcast('dropdown-invert');
+			Vue.nextTick(this.itemToggle);
 		},
 
 		selectAll: function () {
 			this.$broadcast('dropdown-select-all');
+			Vue.nextTick(this.itemToggle);
 		},
 
 		load: function (params, accumulator) {
@@ -227,7 +243,7 @@ module.exports = Vue.extend({
 						})
 					};
 				})
-				.done(function (data) {
+				.then(function (data) {
 					var meta = data.meta;
 
 					accumulator = accumulator.concat(data.objects);
@@ -240,6 +256,13 @@ module.exports = Vue.extend({
 					} else {
 						self.items   = treeify(accumulator);
 						self.loading = false;
+
+						if (self.$options.defaults) {
+							Vue.nextTick(function () {
+								self.$broadcast('dropdown-select', self.$options.defaults);
+								self.toggleItem();
+							});
+						}
 					}
 				});
 		}
@@ -265,23 +288,7 @@ module.exports = Vue.extend({
 
 	events: {
 
-		'dropdown-item-selected': function () {
-			var items = this.selectedItems;
-			this.$emit('dropdown-value-changed', items);
-			this.$dispatch('dropdown-value-changed', items);
-		},
-
-		'dropdown-item-toggle': function (item) {
-			if (!this.multi) {
-				this.$broadcast('dropdown-clear');
-				item.selected = true;
-				this.open = false;
-			} else {
-				item.selected = !item.selected;
-			}
-
-			this.$emit('dropdown-item-selected');
-		}
+		'dropdown-item-toggle': 'toggleItem'
 
 	},
 

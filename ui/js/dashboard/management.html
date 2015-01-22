@@ -1,10 +1,7 @@
 <div>
 	<form>
 		<div class="row">
-			<div class="medium-1 column"
-			     v-component="vue-dropdown"
-			     v-ref="offices"
-			     v-with="items: offices"></div>
+			<div id="regions" class="medium-1 column"></div>
 
 			<div class="medium-1 column end"
 			     v-component="vue-dropdown"
@@ -153,18 +150,12 @@
 			<h3>FLWs' Capacity to Perform</h3>
 			<ul class="small-block-grid-2">
 				<li v-repeat="ind: capacity">
-					<h4 v-text="ind.name"></h4>
-					<svg v-component="chart-base"
+					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     v-with="values: ind">
-
-						<g v-component="chart-bullet"
-						   v-with="value : values.value,
-						           marker: values.marker,
-						           ranges: values.ranges,
-						           width : contentWidth,
-						           height: contentHeight"></g>
-					</svg>
+					     data-indicator="{{ ind }}"
+					     data-period="5 months"
+					     v-with="campaign: campaign, region: region"></div>
+					</div>
 				</li>
 			</ul>
 		</section>
@@ -173,18 +164,12 @@
 			<h3>Supply</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="ind: supply">
-					<h4 v-text="ind.name"></h4>
-					<svg v-component="chart-base"
+					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     v-with="values: ind">
-
-						<g v-component="chart-bullet"
-						   v-with="value : values.value,
-						           marker: values.marker,
-						           ranges: values.ranges,
-						           width : contentWidth,
-						           height: contentHeight"></g>
-					</svg>
+					     data-indicator="{{ ind }}"
+					     data-period="5 months"
+					     v-with="campaign: campaign, region: region"></div>
+					</div>
 				</li>
 			</ul>
 		</div>
@@ -193,18 +178,12 @@
 			<h3>Polio+</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="ind: polio">
-					<h4 v-text="ind.name"></h4>
-					<svg v-component="chart-base"
+					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     v-with="values: ind">
-
-						<g v-component="chart-bullet"
-						   v-with="value : values.value,
-						           marker: values.marker,
-						           ranges: values.ranges,
-						           width : contentWidth,
-						           height: contentHeight"></g>
-					</svg>
+					     data-indicator="{{ ind }}"
+					     data-period="5 months"
+					     v-with="campaign: campaign, region: region"></div>
+					</div>
 				</li>
 			</ul>
 		</div>
@@ -213,26 +192,18 @@
 			<h3>Resources</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="ind: resources">
-					<h4 v-text="ind.name"></h4>
-					<svg v-component="chart-base"
+					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     v-with="values: ind">
-
-						<g v-component="chart-bullet"
-						   v-with="value : values.value,
-						           marker: values.marker,
-						           ranges: values.ranges,
-						           width : contentWidth,
-						           height: contentHeight"></g>
-					</svg>
+					     data-indicator="{{ ind }}"
+					     data-period="5 months"
+					     v-with="campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Inaccessible Children</h3>
-			<svg v-component="chart-base"
-			     data-aspect="2"></svg>
+			No data.
 		</div>
 	</div>
 </div>

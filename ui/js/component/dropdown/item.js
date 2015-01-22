@@ -1,8 +1,10 @@
 'use strict';
 
-module.exports = {
-	replace : true,
+var _ = require('lodash');
 
+module.exports = {
+
+	replace : true,
 	template: require('./item.html'),
 
 	data: function () {
@@ -22,26 +24,34 @@ module.exports = {
 	},
 
 	methods: {
+
 		toggle: function () {
+			this.selected = !this.selected;
 			this.$dispatch('dropdown-item-toggle', this);
 		}
+
 	},
 
 	events: {
 
+		'dropdown-select': function (value) {
+			this.selected = _.isArray(value) ?
+				value.indexOf(this.value) > -1 :
+				(this.value === value);
+		},
+
 		'dropdown-select-all': function () {
 			this.selected = true;
-			this.$dispatch('dropdown-item-selected');
 		},
 
 		'dropdown-clear': function () {
 			this.selected = false;
-			this.$dispatch('dropdown-item-selected');
 		},
 
 		'dropdown-invert': function () {
 			this.selected = !this.selected;
-			this.$dispatch('dropdown-item-selected');
 		}
-	},
+
+	}
+
 };
