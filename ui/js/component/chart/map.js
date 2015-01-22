@@ -22,6 +22,7 @@ module.exports = {
 
 	data: function () {
 		return {
+			error    : false,
 			loading  : false,
 			region   : null,
 			indicator: null,
@@ -170,9 +171,7 @@ module.exports = {
 				self.draw();
 
 				self.loading = false;
-			}, function (err) {
-				console.error(err);
-			});
+			}, this.onError);
 		},
 
 		loadFeatures: function () {
@@ -197,11 +196,15 @@ module.exports = {
 				self.border = data[1].objects.features[0];
 				console.debug('map::loadFeatures', 'border', self.border);
 				self.draw();
-			}, function (err) {
-				console.error('map::loadFeatures', err);
-				self.geo = null;
-			});
+			}, this.onError);
 
+		},
+
+		onError: function (err) {
+			console.error('map::onError', err);
+
+			this.loading = false;
+			this.error = true;
 		}
 
 	},
