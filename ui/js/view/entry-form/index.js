@@ -5,6 +5,7 @@ var d3       = require('d3');
 
 var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
+var flattenChildren = require('../../data/transform/flattenChildren');
 
 module.exports = {
 
@@ -15,6 +16,7 @@ module.exports = {
 			indicator_set_id: 2,
 			indicator_sets: require('./structure/indicator_sets'),
 			loaded: false,
+			lookupRegionChildren: false,
 			regions: [],
 			indicators: [],
 			pagination: {
@@ -107,10 +109,30 @@ module.exports = {
 				}
 			};
 
+			var connectChildren = function(map, parent_id_key, children_key) {
+				_.forIn(map, function(d, k) {
+					// obj has parent_id?
+					if (d[parent_id_key] !== undefined && d[parent_id_key] !== null) {
+						// parent found?
+						if (map[d[parent_id_key]]) {
+							var parent = map[d[parent_id_key]];
+							if (!parent[children_key]) { parent[children_key] = []; }
+							parent[children_key].push(d);
+						}
+					}
+				});
+				return map;
+			};
+
 			Promise.all([
 
 					// regions data
-					api.regions().then(makeMap),
+					api.regions()
+						.then(makeMap)
+						.then(function(map) {
+							// create array of children in each parent
+							return connectChildren(map, 'parent_region_id', 'children');
+						}),
 
 					// indicators data
 					api.indicators().then(makeMap),
@@ -156,6 +178,7 @@ module.exports = {
 			var self = this;
 
 			// default values for testing
+			// var regions = [ 12942 ];
 			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 
 			// get from dropdown
@@ -182,7 +205,23 @@ module.exports = {
 
 			// add regions to request
 			if (regions.length > 0) {
-				options.region__in = regions;
+				
+				// lookup children?
+				if (self.$data.lookupRegionChildren === true) {
+					options.region__in = [];
+					_.forEach(regions, function(region_id) {
+						var children = _.map(flattenChildren(self.$data.regionData[region_id], 'children'), function(d) { return d.id; });
+						options.region__in.push(region_id);
+						options.region__in = options.region__in.concat(children);						
+					});
+				}
+				// no children
+				else {
+					options.region__in = regions;
+				}
+
+				console.log(options.region__in);
+
 				// sort region order
 				options.region__in = options.region__in.sort(function(a,b) {
 					return self.$data.regionData[a].name > self.$data.regionData[b].name ? 1 : -1;
@@ -207,11 +246,12 @@ module.exports = {
 				}
 			];
 			// add region names as columns
-			options.region__in.forEach(function(region_id) {
+			regions.forEach(function(region_id) {
 				columns.push({
 					header: self.$data.regionData[region_id].name,
 					type: 'value',
-					key: region_id
+					key: region_id,
+					children: null
 				});
 			});
 
@@ -230,15 +270,6 @@ module.exports = {
 				self.pagination.the_limit   = Number(data.meta.the_limit);
 				self.pagination.the_offset  = Number(data.meta.the_offset);
 				self.pagination.total_count = Number(data.meta.total_count);
-
-				// OLD (for /datapoint/ response) pivot data so that each row contains all region datapoints for one indicator
-				// var byIndicator = {};
-				// data.objects.forEach(function (d) {
-				// 	d.indicators.forEach(function (ind) {
-				// 		if (!byIndicator[ind.indicator]) { byIndicator[ind.indicator] = {}; }
-				// 		byIndicator[ind.indicator][d.region] = ind;						
-				// 	});
-				// });
 
 				// arrange datapoints into an object of indicators > regions
 				var byIndicator = {};
@@ -313,49 +344,7 @@ module.exports = {
 				self.table.columns = columns;
 
 			});
-		},
-
-		download: function () {
-			// if (!this.hasSelection) {
-			// 	return;
-			// }
-
-			// this.downloading = true;
-
-			// var indicators   = _.map(this.indicators, 'value');
-			// var regions      = _.map(this.regions, 'value');
-			// var query        = {
-			// 	// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
-			// 	'the_limit'  : 10000000,
-			// 	'format'     : 'csv',
-			// 	'uri_display': 'slug'
-			// };
-
-			// if (indicators.length < 1) {
-			// 	this.$data.src = '';
-			// 	return;
-			// }
-
-			// query.indicator__in = indicators;
-			// if (regions.length > 0) {
-			// 	query.region__in = regions;
-			// }
-
-			// this.$set('src', api.datapoints.toString(query));
-		},
-
-		previous: function () {
-			if (this.pagination.the_offset < 1) {
-				return;
-			}
-
-			this.pagination.the_offset = Math.max(0, this.pagination.the_offset - this.pagination.the_limit);
-			this.refresh();
-		},
-
-		next: function () {
-			this.pagination.the_offset += this.pagination.the_limit;
-			this.refresh();
 		}
+
 	}
 };
