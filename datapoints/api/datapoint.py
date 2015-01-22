@@ -9,6 +9,7 @@ from datetime import datetime
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
+from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ALL, ModelResource, Resource
 from tastypie.authorization import Authorization
@@ -17,6 +18,7 @@ from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
@@ -621,7 +623,7 @@ class DataPointEntryResource(ModelResource):
         """
         try:
             self.validate_object(bundle.data)
-
+            
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
                 update_kwargs = {
@@ -636,17 +638,22 @@ class DataPointEntryResource(ModelResource):
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
         
         except InputError, e:
-            bundle.data = self.make_error_response(e)
-            response = self.create_response(bundle.request, bundle)
+            response = self.create_response(
+                bundle.request, 
+                self.make_error_response(e),
+                response_class=http.HttpBadRequest
+                )
             raise ImmediateHttpResponse(response=response)
-        
+
         # catch all exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
-            print e.data
-            bundle.data = self.make_error_response(e)
-            response = self.create_response(bundle.request, bundle)
+            response = self.create_response(
+                bundle.request, 
+                self.make_error_response(e),
+                response_class=http.HttpApplicationError
+                )
             raise ImmediateHttpResponse(response=response)
 
     def get_existing_datapoint(self, data):
@@ -756,7 +763,7 @@ class DataPointEntryResource(ModelResource):
         response = {
             'success': 0,
             'error': {
-                'code': error.code,
+                'code': getattr(error, 'code', 0),
                 'message': error.message
             }
         }
