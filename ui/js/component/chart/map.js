@@ -118,7 +118,7 @@ module.exports = {
 			var indicator = this.indicator;
 			var quantize  = d3.scale.quantize()
 				.domain(this.range)
-				.range([1, 2, 3, 4, 5]);
+				.range([1, 2, 3, 4, 5, 6]);
 
 			path.attr({
 				'd': geopath,
