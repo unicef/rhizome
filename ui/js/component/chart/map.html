@@ -1,0 +1,22 @@
+<div class="chart choropleth reds">
+	<svg v-attr="width: width, height: height">
+	  <g class="geography"></g>
+		<g class="legend"></g>
+	</svg>
+
+	<div class="overlay"
+	     v-show="loading"
+	     v-style="width: width + 'px', height: height + 'px'">
+		<div>
+			<div><i class="fa fa-spinner" v-class="fa-spin: loading"></i> Loading</div>
+		</div>
+	</div>
+
+	<div class="overlay"
+	     v-show="error"
+	     v-style="width: width + 'px', height: height + 'px'">
+		<div>
+			<div><i class="fa fa-warning"></i> Error!</div>
+		</div>
+	</div>
+</div>

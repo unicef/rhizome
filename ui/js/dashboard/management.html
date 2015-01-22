@@ -103,11 +103,46 @@
 
 				</div>
 
-				<div class="medium-3 columns"></div>
+				<div class="medium-3 columns">
+					<div v-component="chart-map"
+					     v-with="region: region, date: start"
+					     data-indicator="166"
+					     data-aspect="1"
+					     data-range="[0, 0.1]">
+					</div>
+				</div>
 
 				<div class="medium-2 column">
 					<h4>Transit Points</h4>
 					<p>No data</p>
+
+					<h6>Missed Children</h6>
+					<ul class="legend reds">
+						<li>
+							<div class="key q-6"></div>
+							10+%
+						</li>
+						<li>
+							<div class="key q-5"></div>
+							8&ndash;9%
+						</li>
+						<li>
+							<div class="key q-4"></div>
+							6&ndash;7%
+						</li>
+						<li>
+							<div class="key q-3"></div>
+							4&ndash;5%
+						</li>
+						<li>
+							<div class="key q-2"></div>
+							2&ndash;3%
+						</li>
+						<li>
+							<div class="key q-1"></div>
+							0&ndash;1%
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
