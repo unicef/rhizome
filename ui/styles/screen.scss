@@ -80,6 +80,7 @@ body.data nav .data {
 
 table {
 	border-collapse: collapse;
+	font-family: Hevetica, Arial, sans-serif;
 	margin-top: 10pt;
 	min-width: 100%;
 
@@ -143,3 +144,95 @@ button, .button {
 	cursor: $button-disabled-cursor;
 	opacity: $button-disabled-opacity;
 }
+
+/* fixed-header tables */
+.fixed-table-container {
+
+	$defaultTableHeight: 500px;
+	$defaultHeaderHeight: 50px;
+	$defaultHeaderLineHeight: 25px;
+	$innerBorderColor: #ddd;
+
+	height: $defaultTableHeight;
+	background-color: white;
+	position: relative; /* could be absolute or relative */
+	padding-top: $defaultHeaderHeight; /* height of header */
+
+	.fixed-table-container-inner {
+		overflow-x: hidden;
+		overflow-y: auto;
+		height: 100%;
+	}
+
+	.header-background {
+		height: $defaultHeaderHeight; /* height of header */
+		background-color: #F5F5F5;
+		border: solid 1px #DDDDDD;
+		border-bottom: none;
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	}
+
+	table {
+		background-color: white;
+		width: 100%;
+		overflow-x: hidden;
+		overflow-y: auto;
+		margin-top: -18px;
+
+		th {
+			border-bottom: 1px solid $innerBorderColor;
+		}
+
+		td {
+			border-left: 1px solid $innerBorderColor;
+			&:first-child {
+				border-left: none;
+			}
+		}
+
+		.th-inner {
+			position: absolute;
+			top: 1px;
+			line-height: $defaultHeaderLineHeight; /* height of header */
+			text-align: left;
+			height: $defaultHeaderHeight;
+			padding-left: 5px;
+			margin-left: -10px;
+			z-index: 900;
+
+			border-left: 1px solid $innerBorderColor;
+			background-color: #F5F5F5;
+			
+			/* to hide overflow text, and then reveal on hover: */
+			white-space: nowrap;
+			overflow-x: hidden;
+			&:hover {
+				overflow-x: visible;
+				z-index: 1000;
+				width: auto;
+				padding-right: 10px;
+			}
+		}
+		.first .th-inner {
+			border-left: none;
+			padding-left: 6px;
+		}
+
+	}
+
+}
+
+.statusText-good {
+	color: #29A13A;
+}
+.statusText-okay {
+	color: rgb(242, 129, 0);
+}
+.statusText-bad {
+	color: #EC1C24;
+}
+
+

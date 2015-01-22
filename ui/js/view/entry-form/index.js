@@ -7,19 +7,19 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 
 module.exports = {
+
 	template: require('./template.html'),
 
 	data: function () {
 		return {
+			indicator_set_id: 2,
+			indicator_sets: require('./structure/indicator_sets'),
+			loaded: false,
 			regions: [],
 			indicators: [],
-			indicatorSet: [
-				{ 'id': 5 },
-				{ 'id': 51 }
-			],
 			pagination: {
-				the_limit: 20,
-				the_offset: 0,
+				// the_limit: 20,
+				// the_offset: 0,
 				total_count: 0
 			},
 			table: {
@@ -27,11 +27,22 @@ module.exports = {
 				columns: ['region', 'campaign'],
 				rows: []
 			},
-			campaign: {
-				start: '2013-06-01',
-				end: '2013-06-30'
-			}
+			
+			campaigns: [],
+			campaign_id: null
+
 		};
+	},
+
+	created: function() {
+
+		// processing on indicator sets data
+		_.forEach(this.indicator_sets, function(d) {
+			// copy values for v-select:
+			d.value = d.id;
+			d.text = d.title;
+		});
+
 	},
 
 	ready: function() {
@@ -52,7 +63,6 @@ module.exports = {
 				'id'           : 'value'
 			}
 		});
-
 		this._regions.$on('dropdown-value-changed', function (items) {
 			self.regions = items;
 		});
@@ -89,15 +99,52 @@ module.exports = {
 		load: function() {
 			var self = this;
 
-			// load all indicators metadata
-			api.indicators().done(function(data) {
-				self.$data.indicators = {};
+			var makeMap = function(data) { 
 				if (data.objects) {
-					data.objects.forEach(function(d) {
-						self.$data.indicators[d.id] = d;
-					});
+					return _.indexBy(data.objects, 'id'); 
+				} else {
+					return null;
 				}
-			});
+			};
+
+			Promise.all([
+
+					// regions data
+					api.regions().then(makeMap),
+
+					// indicators data
+					api.indicators().then(makeMap),
+
+					// campaigns data
+					api.campaign().then(function(data) {
+						if (!data.objects) { return null; }
+						return data.objects
+							.sort(function(a,b) {
+								if (a.office === b.office) {
+									return a.start_date > b.start_date ? -1 : 1;
+								}
+								return a.office - b.office;
+							})
+							.map(function(d) {
+								return {
+									text: d.slug,
+									value: d.id
+								};
+							});
+					})
+
+				]).done(function(allData) {
+
+					self.$data.regionData = allData[0];
+					self.$data.indicators = allData[1];
+					self.$data.campaigns = allData[2];
+
+					// set campaign id to first option
+					self.$data.campaign_id = self.$data.campaigns[0].value;
+
+					self.$data.loaded = true;
+
+				});
 
 		},
 
@@ -109,21 +156,18 @@ module.exports = {
 			var self = this;
 
 			// default values for testing
-			var regionNames = {
-				12939: { title: 'Borno' },
-				12942: { title: 'Bauchi (Province)' },
-				13697: { title: 'Bauchi (LGA)' }
-			}; 
-			var regions = [ 12942, 12939, 13697 ];
+			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 
 			// get from dropdown
 			if (this.hasSelection) {
-				regionNames = _.indexBy(this.regions, 'value');
 				regions     = _.map(this.regions, 'value');
 			}
 
 			var options = { 
-				indicator__in : [],
+				campaign__in: parseInt(self.$data.campaign_id),
+				// campaign_start: '2013-06-01',
+				// campaign_end: '2013-06-30',
+				indicator__in: [],
 				region__in: []
 			};
 
@@ -141,34 +185,34 @@ module.exports = {
 				options.region__in = regions;
 				// sort region order
 				options.region__in = options.region__in.sort(function(a,b) {
-					return regionNames[a].title > regionNames[b].title ? 1 : -1;
+					return self.$data.regionData[a].name > self.$data.regionData[b].name ? 1 : -1;
 				});
 			}
 
-			if (this.campaign.start) {
-				options.campaign_start = this.campaign.start;
-			}
-
-			if (this.campaign.end) {
-				options.campaign_end = this.campaign.end;
-			}
-
 			// add indicators to request
-			this.indicatorSet.forEach(function (row) {
-				if (row.id) {
-					options.indicator__in.push(row.id);
+			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(self.indicator_set_id); });
+			// if (!indicatorSet) {
+			// 	alert('Error: unable to find indicator set');
+			// 	return;
+			// }
+			indicatorSet.indicators.forEach(function (ind) {
+				if (ind.id) {
+					options.indicator__in.push(ind.id);
 				}
 			});
 
 			// define columns
 			var columns = [
-				{ header: 'Indicator', type: 'label' },
-				{ header: '', type: 'summary' }
+				{ 
+					header: 'Indicator', 
+					type: 'label', 
+					headerClasses: 'medium-3' 
+				}
 			];
 			// add region names as columns
 			options.region__in.forEach(function(region_id) {
 				columns.push({
-					header: regionNames[region_id].title,
+					header: self.$data.regionData[region_id].name,
 					type: 'value',
 					key: region_id
 				});
@@ -183,27 +227,32 @@ module.exports = {
 
 			this.table.loading = true;
 
-			api.datapoints(options).done(function (data) {
+			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
 
 				self.pagination.the_limit   = Number(data.meta.the_limit);
 				self.pagination.the_offset  = Number(data.meta.the_offset);
 				self.pagination.total_count = Number(data.meta.total_count);
 
-				// pivot data so that each row contains all region datapoints for one indicator
-				// TO DO: this may be broken by pagination (?) and so would need to be grouped differently on the back end
-				// TO DO: move this to data transform utility
+				// OLD (for /datapoint/ response) pivot data so that each row contains all region datapoints for one indicator
+				// var byIndicator = {};
+				// data.objects.forEach(function (d) {
+				// 	d.indicators.forEach(function (ind) {
+				// 		if (!byIndicator[ind.indicator]) { byIndicator[ind.indicator] = {}; }
+				// 		byIndicator[ind.indicator][d.region] = ind;						
+				// 	});
+				// });
+
+				// arrange datapoints into an object of indicators > regions
 				var byIndicator = {};
-				data.objects.forEach(function (d) {
-					d.indicators.forEach(function (ind) {
-						if (!byIndicator[ind.indicator]) { byIndicator[ind.indicator] = {}; }
-						byIndicator[ind.indicator][d.region] = ind;						
-					});
+				data.objects.forEach(function(d) {
+					if (!byIndicator[d.indicator_id]) { byIndicator[d.indicator_id] = {}; }
+					byIndicator[d.indicator_id][d.region_id] = d;
 				});
 
 				// assemble data points into rows for table
 				var rows = [];
-				options.indicator__in.forEach(function(ind) {
+				options.indicator__in.forEach(function(indicator_id) {
 					
 					var row = [];
 
@@ -222,18 +271,35 @@ module.exports = {
 								cell.isEditable = true;
 								cell.format = numericFormatter;
 								cell.classes = 'numeric';
-								cell.value = byIndicator[ind] && byIndicator[ind][column.key] ? byIndicator[ind][column.key].value : null;
+								if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
+									cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id;
+									cell.value = byIndicator[indicator_id][column.key].value;
+									cell.note = byIndicator[indicator_id][column.key].note;
+								} else {
+									cell.datapoint_id = null;
+									cell.value = null;
+									cell.note = null;
+								}
+								// generate promise for submitting a new value to the API for saving
+								// cell.buildSubmitPromise = function(newVal) {
+								// 	var upsert_options = {
+								// 		campaign__in: options.campaign_id,
+								// 		indicator__in: indicator_id,
+								// 		region__in: column.key,
+								// 		value: parseFloat(newVal)
+								// 	};
+								// 	console.log(upsert_options);
+								// 	return api.upsertDatapoint(upsert_options);
+								// };
+								// callback to specifically handle response
+								cell.withResponse = function(response) {
+									console.log('done!');									
+								};
 								break;
 
 							// indicator name
 							case 'label':
-								cell.value = self.$data.indicators[ind] ? self.$data.indicators[ind].name : 'Missing Data for Indicator'+ind;
-								break;
-
-							// summary
-							case 'summary':
-								cell.value = null;
-								cell.rowIndex = rows.length; // needed to access the row later for summary
+								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing Data for Indicator '+indicator_id;
 								break;
 
 						}

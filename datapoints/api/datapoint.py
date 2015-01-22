@@ -1,9 +1,10 @@
 import pprint as pp
+import traceback
 from math import isnan
 from collections import defaultdict
-from itertools import product
 from datetime import datetime
-
+from itertools import product
+from math import isnan
 
 from tastypie.bundle import Bundle
 from tastypie import fields
@@ -334,7 +335,15 @@ class DataPointResource(Resource):
 
         results_dict = defaultdict(list)
 
-        pivoted_dp_dict = self.pivot_dp_df(dp_df,'value')
+        try:
+            pivoted_dp_dict = self.pivot_dp_df(dp_df,'value')
+        except Exception as err:
+            print err
+            print err
+
+            self.error = err
+            return []
+
         pivoted_id_dict = self.pivot_dp_df(dp_df,'id')
         pivoted_is_agg_dict = self.pivot_dp_df(dp_df,'is_agg')
 
@@ -550,6 +559,8 @@ class DataPointResource(Resource):
         are dictionares with the keys specified via the value column.
         '''
 
+        print dp_df
+
         pivoted_dict = pivot_table(dp_df, values = value_column, index=['region_id',\
             'campaign_id'], columns = ['indicator_id'], aggfunc = lambda x: x)\
             .transpose().to_dict()
@@ -583,18 +594,24 @@ class DataPointEntryResource(ModelResource):
         'campaign_id': Campaign,
         'indicator_id': Indicator
     }
+    region = fields.IntegerField(attribute = 'region_id')
+    campaign = fields.IntegerField(attribute = 'campaign_id')
+    indicator = fields.IntegerField(attribute = 'indicator_id')
+
 
     class Meta():
         queryset = DataPoint.objects.all()
         # authentication = ApiKeyAuthentication() # sup w this
         authorization = Authorization()
-        allowed_methods = ['post','put','patch']
+        allowed_methods = ['get'] # TODO FIXME: once obj_create is fully tested, add POST etc
         resource_name = 'datapointentry'
         always_return_data = True
-
-
-    ##########
-    ###### TODO : WTF ABOUT DATAPOINT_ID?????
+        max_limit = None # no pagination
+        filtering = {
+            'indicator': ALL,
+            'campaign': ALL,
+            'region': ALL,
+        }
 
 
     def obj_create(self, bundle, **kwargs):
@@ -603,23 +620,33 @@ class DataPointEntryResource(ModelResource):
         """
         try:
             self.validate_object(bundle.data)
-        except InputError, e:
-            bundle.data = self.error_response(e)
-            raise ImmediateHttpResponse(response=self.create_response(bundle.request, bundle))
 
-        # TODO: clean this up / make more efficient?
-        existing_datapoint = self.get_existing_datapoint(bundle.data)
-        if existing_datapoint is not None:
-            obj_kwargs = {
-                'region_id': existing_datapoint.region_id,
-                'campaign_id': existing_datapoint.campaign_id,
-                'indicator_id': existing_datapoint.indicator_id
-            }
-            bundle.response = self.success_response()
-            return super(DataPointEntryResource, self).obj_update(bundle, **obj_kwargs)
-        else:
-            bundle.response = self.success_response()
-            return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+            existing_datapoint = self.get_existing_datapoint(bundle.data)
+            if existing_datapoint is not None:
+                update_kwargs = {
+                    'region_id': existing_datapoint.region_id,
+                    'campaign_id': existing_datapoint.campaign_id,
+                    'indicator_id': existing_datapoint.indicator_id
+                }
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+            else:
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+
+        except InputError, e:
+            bundle.data = self.make_error_response(e)
+            response = self.create_response(bundle.request, bundle)
+            raise ImmediateHttpResponse(response=response)
+
+        # catch all exceptions & format them the way the client is expecting
+        except Exception, e:
+            e.code = 0
+            e.data = traceback.format_exc()
+            print e.data
+            bundle.data = self.make_error_response(e)
+            response = self.create_response(bundle.request, bundle)
+            raise ImmediateHttpResponse(response=response)
 
     def get_existing_datapoint(self, data):
         """
@@ -635,10 +662,12 @@ class DataPointEntryResource(ModelResource):
         except ObjectDoesNotExist:
             return
 
-
     def hydrate(self, bundle):
 
-        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint):
+        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint) \
+            and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
+            and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
+            and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
             pass
         else:
             bundle.obj = DataPoint()
@@ -653,7 +682,17 @@ class DataPointEntryResource(ModelResource):
         return bundle
 
     def dehydrate(self, bundle):
-        bundle.data = bundle.response
+        # hack: bundle will only have a response attr if this is a POST or PUT request
+        if hasattr(bundle, 'response'):
+            bundle.data = bundle.response
+        else: # otherwise, this is a GET request
+            bundle.data['datapoint_id'] = bundle.data['id']
+            del bundle.data['id']
+            for key in ['campaign', 'indicator', 'region']:
+                bundle.data['{0}_id'.format(key)] = bundle.data[key]
+                del bundle.data[key]
+            for key in ['created_at', 'resource_uri']:
+                del bundle.data[key]
         return bundle
 
     def validate_object(self, obj):
@@ -706,7 +745,7 @@ class DataPointEntryResource(ModelResource):
         }
         return response
 
-    def error_response(self, error):
+    def make_error_response(self, error):
         response = {
             'success': 0,
             'error': {
