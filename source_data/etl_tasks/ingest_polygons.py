@@ -17,7 +17,7 @@ def main():
 
         levels = []
 
-        if file.endswith(".geojson"):
+        if file.endswith("nga_adm0.geojson"):
 
             docfile = json_dir + file
 
@@ -30,7 +30,7 @@ def main():
             for feature_dict in data['features']:
 
                 properties = feature_dict['properties']
-                polygon = feature_dict['geometry']['coordinates'][0]
+                polygon = feature_dict['geometry']['coordinates']
 
                 # pprint(properties)
                 region_level = properties['LVL']
