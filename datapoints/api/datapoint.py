@@ -620,23 +620,38 @@ class DataPointEntryResource(ModelResource):
     def obj_create(self, bundle, **kwargs):
         """
         Make sure the data is valid, then save it.
+        All POST requests come through here, whether they're truly 
+        'obj_create' or actually 'obj_update'.
+        Also, if a request comes in with value=NULL, that means 
+        DELETE that object.
         """
         try:
             self.validate_object(bundle.data)
             
+            # Determine what kind of request this is: create, update, or delete
+
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
-                update_kwargs = {
-                    'region_id': existing_datapoint.region_id,
-                    'campaign_id': existing_datapoint.campaign_id,
-                    'indicator_id': existing_datapoint.indicator_id
-                }
-                bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+                if self.is_delete_request(bundle):
+                    # delete
+                    bundle.obj = existing_datapoint
+                    self.obj_delete(bundle, **kwargs)
+                else:
+                    # update
+                    update_kwargs = {
+                        'region_id': existing_datapoint.region_id,
+                        'campaign_id': existing_datapoint.campaign_id,
+                        'indicator_id': existing_datapoint.indicator_id
+                    }
+                    bundle.response = self.success_response()
+                    return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
             else:
+                # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
         
+        except ImmediateHttpResponse:
+            raise
         except InputError, e:
             response = self.create_response(
                 bundle.request, 
@@ -644,8 +659,7 @@ class DataPointEntryResource(ModelResource):
                 response_class=http.HttpBadRequest
                 )
             raise ImmediateHttpResponse(response=response)
-
-        # catch all exceptions & format them the way the client is expecting
+        # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
@@ -655,6 +669,26 @@ class DataPointEntryResource(ModelResource):
                 response_class=http.HttpApplicationError
                 )
             raise ImmediateHttpResponse(response=response)
+
+    def is_delete_request(self, bundle):
+        if bundle.data.has_key('value') and bundle.data['value'] == None:
+            return True
+        else:
+            return False
+
+    def obj_delete(self, bundle, **kwargs):
+        super(DataPointEntryResource, self).obj_delete(bundle, **kwargs)
+        response = self.create_response(
+            bundle.request,
+            self.success_response(),
+            response_class=http.HttpResponse
+        )
+        raise ImmediateHttpResponse(response=response)
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """This is here to prevent a list of objects from 
+        ever being deleted."""
+        pass
 
     def get_existing_datapoint(self, data):
         """
