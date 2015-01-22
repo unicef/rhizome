@@ -92,7 +92,10 @@ module.exports = {
 
 		draw: function () {
 			console.info('map::draw');
-			var svg = d3.select(this.$el).select('.geography');
+
+			var self = this;
+
+			var svg  = d3.select(this.$el).select('.geography');
 
 			var bounds     = this.boundingBox;
 			var projection = d3.geo.albers()
@@ -115,6 +118,10 @@ module.exports = {
 				.data(features, function (d) { return d.properties.region_id; });
 
 			path.enter().append('path')
+				.on('click', function (d) {
+					console.debug('map::click', d.properties.region_id);
+					self.region = d.properties.region_id;
+				});
 
 			var indicator = this.indicator;
 			var quantize  = d3.scale.quantize()
