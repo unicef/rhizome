@@ -77,30 +77,71 @@ svg {
 		shape-rendering: crispEdges;
 	}
 
-	&.choropleth {
-		.region {
-			fill: $white;
-			stroke: $iron;
+	.region {
+		fill: $white;
+		stroke: $iron;
+	}
+
+}
+
+.choropleth {
+	position: relative;
+
+	.legend: {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+
+		.key: {
+			position: relative;
+			width: 1rem;
+			height: 1rem;
+			display: inline-block;
+			margin-right: 0.3rem;
 		}
+	}
+}
 
-		&.reds {
-			.q-1 {
-				fill: $red1;
-			}
+.reds {
+	.q-1 {
+		background-color: $red1;
+		fill: $red1;
+	}
 
-			.q-2 {
-				fill: $red2;
-			}
+	.q-2 {
+		background-color: $red2;
+		fill: $red2;
+	}
 
-			.q-3 {
-				fill: $red3;
-			}
-			.q-4 {
-				fill: $red4;
-			}
-			.q-5 {
-				fill: $red5;
-			}
+	.q-3 {
+		background-color: $red3;
+		fill: $red3;
+	}
+	.q-4 {
+		background-color: $red4;
+		fill: $red4;
+	}
+
+	.q-5 {
+		background-color: $red5;
+		fill: $red5;
+	}
+}
+
+.chart {
+	.loading {
+		background-color: transparentize($ghost, 0.3);
+		color: $aluminum;
+
+		display: table;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		&>div {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
 		}
 	}
 }
