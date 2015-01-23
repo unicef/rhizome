@@ -27,6 +27,10 @@ module.exports = {
 		require('./resize')
 	],
 
+	partials: {
+		'loading-overlay': require('./partials/loading-overlay.html')
+	},
+
 	data: function () {
 		return {
 			datapoints : [],
@@ -99,9 +103,12 @@ module.exports = {
 	methods: {
 
 		load: function () {
+			console.info('bullet::load');
 			if (!this.indicator || !this.region || !this.campaign) {
 				return;
 			}
+
+			console.debug('bullet::load', 'indicator', this.indicator, 'region', this.region, 'campaign', this.campaign);
 
 			this.loading = true;
 
@@ -119,6 +126,8 @@ module.exports = {
 						dateUtil.parseDuration(this.period)
 					).format('YYYY-MM-DD');
 			}
+
+			console.debug('bullet::load', 'query', q);
 
 			api.datapoints(q).then(this.parseData, this.dataError);
 		},

@@ -20,6 +20,10 @@ module.exports = {
 		require('./resize')
 	],
 
+	partials: {
+		'loading-overlay': require('./partials/loading-overlay.html')
+	},
+
 	data: function () {
 		return {
 			error    : false,

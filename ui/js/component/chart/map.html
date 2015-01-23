@@ -4,13 +4,7 @@
 		<g class="legend"></g>
 	</svg>
 
-	<div class="overlay"
-	     v-show="loading"
-	     v-style="width: width + 'px', height: height + 'px'">
-		<div>
-			<div><i class="fa fa-spinner" v-class="fa-spin: loading"></i> Loading</div>
-		</div>
-	</div>
+	<div v-partial="loading-overlay"></div>
 
 	<div class="overlay"
 	     v-show="error"

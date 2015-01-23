@@ -1,13 +1,14 @@
-<div class="chart">
+<div>
 	<h6>{{ title }}</h6>
-  <svg class="bullet"
-       v-attr="width: width, height: height">
-    <rect class="bg"
-          v-attr="width: width, height: height"></rect>
-    <g class="ranges"></g>
-  </svg>
+  <div class="chart">
+  	<svg class="bullet"
+  	      v-attr="width: width, height: height">
+  	  <rect class="bg"
+  	        v-attr="width: width, height: height"></rect>
+  	  <g class="ranges"></g>
+  	</svg>
 
-  <!-- <div v-partial="loading-overlay"></div> -->
-  <!-- <div v-partial="error-overlay"></div> -->
-
+  	<div v-partial="loading-overlay"></div>
+  	<!-- <div v-partial="error-overlay"></div> -->
+  </div>
 </div>
