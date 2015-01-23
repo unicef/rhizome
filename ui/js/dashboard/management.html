@@ -149,13 +149,12 @@
 		<section class="medium-2 columns">
 			<h3>FLWs' Capacity to Perform</h3>
 			<ul class="small-block-grid-2">
-				<li v-repeat="ind: capacity">
+				<li v-repeat="indicator: capacity"
+				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
-					     data-indicator="{{ ind }}"
-					     data-period="5 months"
-					     v-with="campaign: campaign, region: region"></div>
-					</div>
+				       v-with="indicator: indicator, campaign: campaign, region: region"
+				       data-aspect="3"
+				       data-period="5 months"></div>
 				</li>
 			</ul>
 		</section>
@@ -163,13 +162,11 @@
 		<div class="medium-1 column">
 			<h3>Supply</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="ind: supply">
+				<li v-repeat="indicator: supply">
 					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     data-indicator="{{ ind }}"
 					     data-period="5 months"
-					     v-with="campaign: campaign, region: region"></div>
-					</div>
+					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>
@@ -177,13 +174,11 @@
 		<div class="medium-1 column">
 			<h3>Polio+</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="ind: polio">
+				<li v-repeat="indicator: polio">
 					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     data-indicator="{{ ind }}"
 					     data-period="5 months"
-					     v-with="campaign: campaign, region: region"></div>
-					</div>
+					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>
@@ -191,12 +186,12 @@
 		<div class="medium-1 column">
 			<h3>Resources</h3>
 			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="ind: resources">
+				<li v-repeat="indicator: resources"
+				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
 					     data-aspect="3"
-					     data-indicator="{{ ind }}"
 					     data-period="5 months"
-					     v-with="campaign: campaign, region: region"></div>
+					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>

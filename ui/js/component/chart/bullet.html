@@ -1,6 +1,13 @@
-<g class="bullet">
-	<g class="ranges"></g>
-	<rect class="marker"></rect>
-	<rect class="value"></rect>
-	<text class="label" dx="2"></text>
-</g>
+<div class="chart">
+	<h6>{{ title }}</h6>
+  <svg class="bullet"
+       v-attr="width: width, height: height">
+    <rect class="bg"
+          v-attr="width: width, height: height"></rect>
+    <g class="ranges"></g>
+  </svg>
+
+  <!-- <div v-partial="loading-overlay"></div> -->
+  <!-- <div v-partial="error-overlay"></div> -->
+
+</div>

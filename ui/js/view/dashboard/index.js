@@ -6,9 +6,7 @@ module.exports = {
 
 	data: function () {
 		return {
-			dashboard: 'management-dashboard',
-			region: 23, // Nigeria
-			date: ''
+			dashboard: 'management-dashboard'
 		};
 	},
 
