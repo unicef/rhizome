@@ -256,7 +256,7 @@ module.exports = {
 				.attr({
 					'class': 'label',
 					'dx'   : 2
-				});
+				}).text(0);
 
 			label.attr({
 					'y' : height / 2,
@@ -265,7 +265,14 @@ module.exports = {
 				.style({
 					'font-size': height / 4,
 				})
-				.text(format);
+				.transition().duration(300)
+					.tween('text', function (d) {
+						var i = d3.interpolateRound(Number(this.textContent), d);
+
+						return function (t) {
+							this.textContent = format(i(t));
+						};
+					});
 
 			label.exit()
 				.transition().duration(300)
