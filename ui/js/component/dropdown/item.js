@@ -34,12 +34,6 @@ module.exports = {
 
 	events: {
 
-		'dropdown-select': function (value) {
-			this.selected = _.isArray(value) ?
-				value.indexOf(this.value) > -1 :
-				(this.value === value);
-		},
-
 		'dropdown-select-all': function () {
 			this.selected = true;
 		},

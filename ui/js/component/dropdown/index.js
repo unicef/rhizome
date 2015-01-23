@@ -259,7 +259,7 @@ module.exports = Vue.extend({
 
 						if (self.$options.defaults) {
 							Vue.nextTick(function () {
-								self.$broadcast('dropdown-select', self.$options.defaults);
+								self.$emit('dropdown-select', self.$options.defaults);
 								self.toggleItem();
 							});
 						}
@@ -288,7 +288,27 @@ module.exports = Vue.extend({
 
 	events: {
 
-		'dropdown-item-toggle': 'toggleItem'
+		'dropdown-item-toggle': 'toggleItem',
+
+		'dropdown-select': function (values) {
+			if (!_.isArray(values)) {
+				values = [values];
+			}
+
+			// Initial queue of items copied (hence [].concat) from the root items in
+			// the dropdown. Using items directly as the queue results in empty menus
+			// as the items are removed from the array.
+			var q = [].concat(this.items || []);
+
+			// Check all items and their children in a breadth-first manner
+			while (q.length > 0) {
+				var item = q.shift();
+
+				item.selected = (values.indexOf(item.value) >= 0);
+
+				q = q.concat(item.children || []);
+			}
+		}
 
 	},
 

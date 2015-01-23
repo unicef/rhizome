@@ -82,6 +82,9 @@ svg {
 		stroke: $iron;
 	}
 
+	.clickable {
+		cursor: pointer;
+	}
 }
 
 .choropleth {

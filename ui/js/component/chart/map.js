@@ -26,7 +26,7 @@ module.exports = {
 			loading  : false,
 			region   : null,
 			indicator: null,
-			date     : null,
+			campaign : null,
 			geo      : null,
 			border   : null,
 			range    : [0, 1]
@@ -120,7 +120,7 @@ module.exports = {
 			path.enter().append('path')
 				.on('click', function (d) {
 					console.debug('map::click', d.properties.region_id);
-					self.region = d.properties.region_id;
+					self.$dispatch('region-changed', d.properties.region_id);
 				});
 
 			var indicator = this.indicator;
@@ -135,7 +135,7 @@ module.exports = {
 						return 'region';
 					}
 
-					return 'region q-' + quantize(d.properties[indicator]);
+					return 'region clickable q-' + quantize(d.properties[indicator]);
 				}
 			});
 
@@ -144,18 +144,18 @@ module.exports = {
 
 		loadData: function () {
 			console.info('map::loadData');
-			console.debug('map::loadData', 'date', this.date, 'indicator', this.indicator);
+			console.debug('map::loadData', 'date', this.campaign, 'indicator', this.indicator);
 
 			this.loading = true;
 
-			if (!this.date || !this.geo || !this.indicator) {
+			if (!this.campaign || !this.geo || !this.indicator) {
 				return;
 			}
 
 			var self = this;
 
 			api.datapoints({
-				// campaign_end : moment(this.date).format('YYYY-MM-DD'),
+				campaign_end : moment(this.campaign.end).format('YYYY-MM-DD'),
 				indicator__in: [this.indicator],
 				region__in   : this.mappedRegions,
 			}).done(function (data) {
@@ -219,7 +219,7 @@ module.exports = {
 	watch: {
 		'region'            : 'loadFeatures',
 
-		'date'              : 'loadData',
+		'campaign'          : 'loadData',
 		'geo'               : 'loadData',
 		'indicator'         : 'loadData',
 

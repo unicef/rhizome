@@ -84,11 +84,12 @@ module.exports = {
 
 		this._regions.$on('dropdown-value-changed', function (items) {
 			console.debug('management::dropdown-value-changed', 'region', items);
-			self.region = items[0].value;
+			self.region = (items && items.length > 0) ? items[0].value : null;
 		});
 
 		this.$.campaigns.$on('dropdown-value-changed', function (items) {
-			this.campaign = items[0].value;
+			console.debug('management::dropdown-value-changed', 'campaign', items);
+			self.campaign = (items && items.length > 0) ? null : items[0];
 		});
 	},
 
@@ -102,12 +103,13 @@ module.exports = {
 					title   : startDate.format('MMM YYYY'),
 					value   : o.start_date,
 					date    : startDate.format('YYYYMMDD'),
+					end     : o.end_date,
 					selected: false
 				};
 			});
 
 			this.campaigns[0].selected = true;
-			this.campaign = this.campaigns[0].value;
+			this.campaign = this.campaigns[0];
 		}
 
 	},
@@ -116,8 +118,15 @@ module.exports = {
 
 		'region': function () {
 			api.campaign({ region__in: this.region }).then(this.loadCampaigns);
+			this._regions.$emit('dropdown-select', this.region);
 		}
 
+	},
+
+	events: {
+		'region-changed': function (region) {
+			this.region = region;
+		}
 	}
 
 };
