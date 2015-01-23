@@ -57,14 +57,14 @@ module.exports = {
 
 	data: function () {
 		return {
-			region     : null,
-			campaign   : null,
-			campaigns  : [],
-			capacity   : [34, 36, 37, 40, 183, 231, 210, 226],
-			polio      : [48, 50, 192, 66],
-			supply     : [241, 220, 173, 197],
-			resources  : [169, 32],
-			microplans : []
+			region    : null,
+			campaign  : null,
+			campaigns : [],
+			capacity  : [34, 36, 37, 40, 183, 231, 210, 226],
+			polio     : [48, 50, 192, 66],
+			supply    : [241, 220, 173, 197],
+			resources : [169, 32],
+			microplans: []
 		};
 	},
 
