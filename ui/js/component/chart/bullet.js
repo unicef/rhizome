@@ -24,7 +24,8 @@ module.exports = {
 	],
 
 	mixins: [
-		require('./resize')
+		require('./resize'),
+		require('./with-indicator')
 	],
 
 	partials: {
@@ -330,31 +331,11 @@ module.exports = {
 
 			this.loading = false;
 			this.error   = true;
-		},
-
-		loadIndicator: function () {
-			console.info('bullet::indicator', 'watch');
-			console.debug('bullet::indicator', this.indicator);
-
-			var self = this;
-
-			if (!this.indicator) {
-				return;
-			}
-
-			if (_.isNumber(this.indicator) || _.isString(this.indicator)) {
-				api.indicators({ id: this.indicator })
-					.then(function (data) {
-						self.indicator = data.objects[0];
-					}, this.dataError);
-			} else {
-				self.load();
-			}
 		}
 	},
 
 	events: {
-		'hook:created': 'loadIndicator'
+		'indicator-changed': 'load'
 	},
 
 	watch: {
@@ -365,7 +346,5 @@ module.exports = {
 		'datapoints': 'draw',
 		'height'    : 'draw',
 		'width'     : 'draw',
-
-		'indicator' : 'loadIndicator'
 	}
 };
