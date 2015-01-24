@@ -128,11 +128,18 @@ svg {
 	.overlay {
 		background-color: transparentize($ghost, 0.3);
 		color: $aluminum;
+		opacity: 1;
+		transition: opacity 300ms ease;
 
 		display: table;
 		position: absolute;
 		top: 0;
 		left: 0;
+
+		&.fade-enter,
+		&.fade-leave {
+			opacity: 0;
+		}
 
 		&>div {
 			display: table-cell;
