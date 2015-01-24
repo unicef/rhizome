@@ -217,34 +217,6 @@ module.exports = {
 
 			var fillColor = fill(this.value, this.marker, ranges);
 
-			var marker = svg.selectAll('.marker')
-				.data(this.marker ? [this.marker] : []);
-
-			marker.transition().duration(300)
-				.style('fill', fillColor);
-
-			marker.enter().append('rect')
-				.attr({
-					'class': 'marker',
-					'x'    : 0
-				})
-				.style('fill', fillColor);
-
-			marker.attr({
-				'height': height * 3 / 4,
-				'width' : this.markerWidth,
-				'y'     : height / 8
-			})
-				.transition().duration(300)
-					.attr('x', d3.scale.linear()
-						.domain([0, this.max])
-						.range([0, this.width - this.markerWidth]));
-
-			marker.exit()
-				.transition().duration(300)
-					.attr('width', 0)
-				.remove();
-
 			var value = svg.selectAll('.value')
 				.data(this.value ? [this.value] : []);
 
@@ -305,6 +277,34 @@ module.exports = {
 			label.exit()
 				.transition().duration(300)
 					.style('opacity', 0)
+				.remove();
+
+			var marker = svg.selectAll('.marker')
+				.data(this.marker ? [this.marker] : []);
+
+			marker.transition().duration(300)
+				.style('fill', fillColor);
+
+			marker.enter().insert('rect', '.label')
+				.attr({
+					'class': 'marker',
+					'x'    : 0
+				})
+				.style('fill', fillColor);
+
+			marker.attr({
+				'height': height * 3 / 4,
+				'width' : this.markerWidth,
+				'y'     : height / 8
+			})
+				.transition().duration(300)
+					.attr('x', d3.scale.linear()
+						.domain([0, this.max])
+						.range([0, this.width - this.markerWidth]));
+
+			marker.exit()
+				.transition().duration(300)
+					.attr('width', 0)
 				.remove();
 		},
 
