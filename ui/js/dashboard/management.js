@@ -89,7 +89,7 @@ module.exports = {
 
 		this.$.campaigns.$on('dropdown-value-changed', function (items) {
 			console.debug('management::dropdown-value-changed', 'campaign', items);
-			self.campaign = (items && items.length > 0) ? null : items[0];
+			self.campaign = (items && items.length > 0) ? items[0] : null;
 		});
 	},
 
