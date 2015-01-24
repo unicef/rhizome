@@ -61,9 +61,11 @@ module.exports = {
 		},
 
 		marker: function () {
+			console.info('bullet::marker', this.indicator.id);
 			var length = this.length;
 
 			if (length < 2) {
+				console.info('bullet::marker', 'Not enough data points');
 				return null;
 			}
 
@@ -71,10 +73,15 @@ module.exports = {
 			var avg        = 0;
 
 			for (var i = length - 2; i >= 0; i--) {
-				avg += datapoints[i];
+				avg += datapoints[i].value;
 			}
 
-			avg /= length;
+			console.debug('bullet::marker', 'sum', avg);
+
+			avg /= (length - 1);
+
+			console.debug('bullet::marker', 'length', length);
+			console.debug('bullet::marker', 'average', avg);
 
 			return avg;
 		},
@@ -213,8 +220,15 @@ module.exports = {
 			var marker = svg.selectAll('.marker')
 				.data(this.marker ? [this.marker] : []);
 
+			marker.transition().duration(300)
+				.style('fill', fillColor);
+
 			marker.enter().append('rect')
-				.attr('class', 'marker');
+				.attr({
+					'class': 'marker',
+					'x'    : 0
+				})
+				.style('fill', fillColor);
 
 			marker.attr({
 				'height': height * 3 / 4,
@@ -222,12 +236,13 @@ module.exports = {
 				'y'     : height / 8
 			})
 				.transition().duration(300)
-					.attr('x', x)
-					.style('fill', fillColor);
+					.attr('x', d3.scale.linear()
+						.domain([0, this.max])
+						.range([0, this.width - this.markerWidth]));
 
 			marker.exit()
 				.transition().duration(300)
-					.style('opacity', 0)
+					.attr('width', 0)
 				.remove();
 
 			var value = svg.selectAll('.value')
@@ -255,8 +270,9 @@ module.exports = {
 					.style('opacity', 0)
 				.remove();
 
-
-			var format = this.indicator.format || String;
+			var format = d3.format(this.formatString) ||
+				this.indicator.format ||
+				String;
 
 			var label = svg.selectAll('.label')
 				.data(this.value ? [this.value] : []);
@@ -276,6 +292,9 @@ module.exports = {
 				})
 				.transition().duration(300)
 					.tween('text', function (d) {
+						// FIXME: We should generalize this text tween and decide between
+						// rounded and regular interpolation based on whether or not there
+						// is a fractional component to any of the numbers.
 						var i = d3.interpolateRound(Number(this.textContent), d);
 
 						return function (t) {
