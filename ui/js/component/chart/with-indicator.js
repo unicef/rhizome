@@ -17,7 +17,9 @@ function campaignComparator(a, b, arr) {
 
 function dataError(err) {
 	console.log(err);
-	this.$emit('data-load-error', err);
+
+	this.loading = false;
+	this.error   = true;
 }
 
 function parseData(data) {
@@ -49,52 +51,102 @@ function parseData(data) {
 		.sortBy(campaignComparator)
 		.value();
 
-	this.$emit('data-loaded', loaded);
+	this.datapoints = loaded.objects;
+	this.loading    = false;
+}
+
+function _loadIndicator () {
+	console.debug('with-indicator::loadIndicator', this.indicator);
+
+	var self = this;
+
+	if (!this.indicator) {
+		return;
+	}
+
+	if (_.isNumber(this.indicator) || _.isString(this.indicator)) {
+		this.loading = true;
+
+		api.indicators({ id: this.indicator })
+			.then(function (data) {
+				self.indicator = data.objects[0];
+			}, dataError.bind(this));
+	} else {
+		this._loadDatapoints()
+	}
+}
+
+function _loadDatapoints () {
+	console.info('with-indicator::loadDatapoints', 'enter');
+
+	if (!this.indicator || !this.campaign || !this.region) {
+		console.info('with-indicator::loadDatapoints', 'exit', 'missing parameters');
+		return;
+	}
+
+	var q = {
+		indicator__in: [this.indicator.id],
+		campaign_end : this.campaign.end,
+		region__in   : [this.region]
+	};
+
+	if (this.period) {
+		var start = moment(this.campaign.date, 'YYYYMMDD');
+
+		q.campaign_start = start.subtract.apply(
+				start,
+				dateUtil.parseDuration(this.period)
+			).format('YYYY-MM-DD');
+	}
+
+	console.debug('with-indicator::data-load', 'q', q);
+
+	api.datapoints(q).then(parseData.bind(this), dataError.bind(this));
+	console.info('with-indicator::loadDatapoints', 'exit');
 }
 
 module.exports = {
-	created: function () {
-		console.debug('with-indicator::created', 'enter');
+
+	paramAttributes: [
+		'data-indicator',
+		'data-period'
+	],
+
+	data: function () {
+		return {
+			campaign  : null,
+			datapoints: [],
+			error     : false,
+			indicator : null,
+			loading   : true,
+			region    : null,
+			period    :null
+		}
 	},
 
-	events: {
-		'data-indicator-load': function () {
-			console.debug('with-indicator::loadIndicator', this.indicator);
+	created: function () {
+		// Initialize private methods
+		this._loadIndicator  = _loadIndicator.bind(this);
+		this._loadDatapoints = _loadDatapoints.bind(this);
 
-			var self = this;
+		this.$watch('campaign', this._loadDatapoints);
+		this.$watch('region', this._loadDatapoints);
 
-			if (!this.indicator) {
-				return;
-			}
+		this.$watch('indicator', this._loadIndicator);
+		this._loadIndicator();
+	},
 
-			api.indicators({ id: this.indicator })
-				.then(function (data) {
-					self.indicator = data.objects[0];
-				}, dataError.bind(this));
+	computed: {
+		length: function () {
+			var datapoints = this.datapoints;
+
+			return (datapoints && datapoints.length) || 0;
 		},
 
-		'data-load': function () {
-			console.info('with-indicator::data-load', 'enter');
-			var q = {
-				indicator__in: [this.indicator.id],
-				campaign_end : this.campaign.end,
-				region__in   : [this.region]
-			};
+		empty: function () {
+			return this.length < 1;
+		}
 
-			if (this.period) {
-				var start = moment(this.campaign.date, 'YYYYMMDD');
-
-				q.campaign_start = start.subtract.apply(
-						start,
-						dateUtil.parseDuration(this.period)
-					).format('YYYY-MM-DD');
-			}
-
-			console.debug('with-indicator::data-load', 'q', q);
-
-			api.datapoints(q).then(parseData.bind(this), dataError.bind(this));
-			console.info('with-indicator::data-load', 'exit');
-		},
 	}
 
 };
