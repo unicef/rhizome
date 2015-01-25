@@ -15,12 +15,50 @@ function campaignComparator(a, b, arr) {
 		(a.campaign.start_date > b.campaign.start_date) ? 1 : 0;
 }
 
+function dataError(err) {
+	console.log(err);
+	this.$emit('data-load-error', err);
+}
+
+function parseData(data) {
+	var loaded = _.omit(data, 'objects');
+
+	// Convert the data from an array of unique (region, campaign) objects
+	// with multiple indicators into an array of objects for each
+	// (region, campaign, indicator) set. This is is identical to the form in
+	// which the data is stored in the datapoint table on the server, and is
+	// more flexible for plotting because it's easier to access values and
+	// facet on properties like indicator for creating multiple series.
+	loaded.objects = _(data.objects).map(function (o) {
+		var datapoints = [];
+		var indicators = o.indicators;
+		var props      = _.omit(o, 'indicators');
+
+		for (var i = indicators.length - 1; i >= 0; i--) {
+			var datum = indicators[i];
+
+			datapoints.push(_.assign({
+				indicator: datum.indicator,
+				value: datum.value
+			}, props));
+		}
+
+		return datapoints;
+	})
+		.flatten()
+		.sortBy(campaignComparator)
+		.value();
+
+	this.$emit('data-loaded', loaded);
+}
+
 module.exports = {
+	created: function () {
+		console.debug('with-indicator::created', 'enter');
+	},
 
-	methods: {
-
-		loadIndicator: function () {
-			console.info('with-indicator::loadIndicator', 'watch');
+	events: {
+		'data-indicator-load': function () {
 			console.debug('with-indicator::loadIndicator', this.indicator);
 
 			var self = this;
@@ -29,23 +67,14 @@ module.exports = {
 				return;
 			}
 
-			if (_.isNumber(this.indicator) || _.isString(this.indicator)) {
-				api.indicators({ id: this.indicator })
-					.then(function (data) {
-						self.indicator = data.objects[0];
-					}, this.dataError);
-			} else {
-				self.load();
-			}
+			api.indicators({ id: this.indicator })
+				.then(function (data) {
+					self.indicator = data.objects[0];
+				}, dataError.bind(this));
 		},
 
-		load: function () {
-			if (!this.indicator || !this.campaign || !this.region) {
-				return;
-			}
-
-			this.loading = true;
-
+		'data-load': function () {
+			console.info('with-indicator::data-load', 'enter');
 			var q = {
 				indicator__in: [this.indicator.id],
 				campaign_end : this.campaign.end,
@@ -61,62 +90,11 @@ module.exports = {
 					).format('YYYY-MM-DD');
 			}
 
-			api.datapoints(q).then(this.parseData, this.dataError);
+			console.debug('with-indicator::data-load', 'q', q);
+
+			api.datapoints(q).then(parseData.bind(this), dataError.bind(this));
+			console.info('with-indicator::data-load', 'exit');
 		},
-
-		parseData: function (data) {
-			var loaded = _.omit(data, 'objects');
-
-			// Convert the data from an array of unique (region, campaign) objects
-			// with multiple indicators into an array of objects for each
-			// (region, campaign, indicator) set. This is is identical to the form in
-			// which the data is stored in the datapoint table on the server, and is
-			// more flexible for plotting because it's easier to access values and
-			// facet on properties like indicator for creating multiple series.
-			loaded.objects = _(data.objects).map(function (o) {
-				var datapoints = [];
-				var indicators = o.indicators;
-				var props      = _.omit(o, 'indicators');
-
-				for (var i = indicators.length - 1; i >= 0; i--) {
-					var datum = indicators[i];
-
-					datapoints.push(_.assign({
-						indicator: datum.indicator,
-						value: datum.value
-					}, props));
-				}
-
-				return datapoints;
-			})
-				.flatten()
-				.sortBy(campaignComparator)
-				.value();
-
-			this.loading = false;
-
-			this.$emit('data-loaded', loaded);
-		},
-
-		dataError: function (err) {
-			console.log(err);
-
-			this.loading = false;
-			this.error   = true;
-
-			this.$emit('data-load-error', err);
-		}
-	},
-
-	events: {
-		'hook:created': 'loadIndicator'
-	},
-
-	watch: {
-		'indicator': 'loadIndicator',
-
-		'campaign' : 'load',
-		'period'   : 'load',
-		'region'   : 'load'
 	}
+
 };

@@ -1,6 +1,19 @@
 'use strict';
 
-var d3       = require('d3');
+var _  = require('lodash');
+var d3 = require('d3');
+
+function _indicatorChanged() {
+	console.info('bullet::indicator', 'enter');
+	if (_.isNumber(this.indicator) || _.isString(this.indicator)) {
+		console.debug('bullet::indicator', 'load indicator');
+		this.$emit('data-indicator-load');
+	} else if (this.indicator) {
+		console.debug('bullet::indicator', 'init for indicator', this.indicator);
+		this.init();
+	}
+	console.info('bullet::indicator', 'exit');
+}
 
 module.exports = {
 	replace : true,
@@ -23,13 +36,21 @@ module.exports = {
 
 	data: function () {
 		return {
+			campaign   : null,
 			datapoints : [],
-			markerWidth: 3,
-			loading    : false,
 			error      : false,
+			indicator  : null,
+			loading    : false,
+			markerWidth: 3,
 			period     : null,
-			indicator  : null
+			region     : null
 		};
+	},
+
+	created: function () {
+		this._indicatorChanged = _indicatorChanged.bind(this);
+		this.$watch('indicator', this._indicatorChanged);
+		this._indicatorChanged();
 	},
 
 	computed: {
@@ -98,6 +119,12 @@ module.exports = {
 	},
 
 	methods: {
+		init: function () {
+			if (this.region && this.campaign && this.indicator) {
+				this.loading = true;
+				this.$emit('data-load');
+			}
+		},
 
 		draw: function () {
 			function fill(value, marker, ranges) {
@@ -273,7 +300,14 @@ module.exports = {
 	events: {
 
 		'data-loaded': function (data) {
+			console.debug('bullet::data-loaded', data);
+			this.loading    = false;
 			this.datapoints = data.objects;
+		},
+
+		'data-load-error': function () {
+			this.loading = false;
+			this.error   = true;
 		}
 
 	},
@@ -282,5 +316,9 @@ module.exports = {
 		'datapoints': 'draw',
 		'height'    : 'draw',
 		'width'     : 'draw',
+
+		'region'    : 'init',
+		'campaign'  : 'init',
+		'period'    : 'init',
 	}
 };
