@@ -1,17 +1,6 @@
 'use strict';
 
-var _        = require('lodash');
 var d3       = require('d3');
-var moment   = require('moment');
-
-var util     = require('../../util/data');
-var dateUtil = require('../../util/date');
-var api      = require('../../data/api');
-
-function campaignComparator(a, b) {
-	return (a.campaign.start_date < b.campaign.start_date) ? -1 :
-		(a.campaign.start_date > b.campaign.start_date) ? 1 : 0;
-}
 
 module.exports = {
 	replace : true,
@@ -109,36 +98,6 @@ module.exports = {
 	},
 
 	methods: {
-
-		load: function () {
-			console.info('bullet::load');
-			if (!this.indicator || !this.region || !this.campaign) {
-				return;
-			}
-
-			console.debug('bullet::load', 'indicator', this.indicator, 'region', this.region, 'campaign', this.campaign);
-
-			this.loading = true;
-
-			var q = {
-				campaign_end : this.campaign.end,
-				indicator__in: [this.indicator.id],
-				region__in   : [this.region]
-			};
-
-			if (this.period) {
-				var start = moment(this.campaign.date, 'YYYYMMDD');
-
-				q.campaign_start = start.subtract.apply(
-						start,
-						dateUtil.parseDuration(this.period)
-					).format('YYYY-MM-DD');
-			}
-
-			console.debug('bullet::load', 'query', q);
-
-			api.datapoints(q).then(this.parseData, this.dataError);
-		},
 
 		draw: function () {
 			function fill(value, marker, ranges) {
@@ -307,42 +266,19 @@ module.exports = {
 				.transition().duration(300)
 					.attr('width', 0)
 				.remove();
-		},
-
-		parseData: function (data) {
-			var indicator = this.indicator.id;
-
-			data.objects.forEach(function (d) {
-				var indicators = _.indexBy(d.indicators, 'indicator');
-
-				d.value = indicators[indicator].value;
-			});
-
-			// Keep data sorted by campaign start date so that it's easier to
-			// compute the historical average.
-			data.objects.sort(campaignComparator);
-
-			this.loading    = false;
-			this.datapoints = data.objects;
-		},
-
-		dataError: function (err) {
-			console.log(err);
-
-			this.loading = false;
-			this.error   = true;
 		}
+
 	},
 
 	events: {
-		'indicator-changed': 'load'
+
+		'data-loaded': function (data) {
+			this.datapoints = data.objects;
+		}
+
 	},
 
 	watch: {
-		'campaign'  : 'load',
-		'period'    : 'load',
-		'region'    : 'load',
-
 		'datapoints': 'draw',
 		'height'    : 'draw',
 		'width'     : 'draw',
