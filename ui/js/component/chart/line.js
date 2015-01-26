@@ -26,6 +26,21 @@ module.exports = {
 
 	computed: {
 
+		renderer: function () {
+			var x = this.xScale;
+			var y = this.yScale;
+
+			var renderer = lineChart()
+				.x(function (d) {
+					return x(d.campaign.start_date.getTime());
+				})
+				.y(function (d) {
+					return y(d.value);
+				});
+
+			return renderer
+		},
+
 		series: function () {
 			console.info('line::series enter');
 
@@ -85,22 +100,13 @@ module.exports = {
 
 		draw: function () {
 			console.info('line::draw', 'enter');
-			var svg = d3.select(this.$el).select('.data');
-			var x   = this.xScale;
-			var y   = this.yScale;
+			var svg      = d3.select(this.$el).select('.data');
+			var renderer = this.renderer;
 
-			var render = lineChart()
-				.x(function (d) {
-					return x(d.campaign.start_date.getTime());
-				})
-				.y(function (d) {
-					return y(d.value);
-				});
-
-			var g = svg.selectAll('.' + render.className())
+			var g = svg.selectAll('.' + renderer.className())
 				.data(this.series, function (d, i) {
 					return d.name || i;
-				}).call(render);
+				}).call(renderer);
 
 			console.info('line::draw', 'exit');
 		}

@@ -1,6 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
+var _         = require('lodash');
+
+var lineChart = require('./line-chart');
 
 module.exports = {
 
@@ -14,6 +16,21 @@ module.exports = {
 	},
 
 	computed: {
+
+		renderer: function () {
+			var x = this.xScale;
+			var y = this.yScale;
+
+			var renderer = lineChart()
+				.x(function (d) {
+					return x(d.campaign.start_date.getMonth());
+				})
+				.y(function (d) {
+					return y(d.value)
+				});
+
+			return renderer;
+		},
 
 		series: function () {
 			console.info('year-over-year::series enter');
@@ -30,6 +47,14 @@ module.exports = {
 			console.debug('year-over-year::series', series);
 			console.info('year-over-year::series exit');
 			return series;
+		},
+
+		xScale: function () {
+			var scale = d3.scale.linear()
+				.domain([0, 11])
+				.range([0, this.contentWidth]);
+
+			return scale;
 		}
 
 	}
