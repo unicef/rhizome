@@ -14,30 +14,18 @@
 	<div class="row">
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
+
 			<section>
 				<h4>Polio Cases</h4>
-				<svg v-component="chart-base"
+				<div v-component="chart-line"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     v-with="values    : cases.lines,
-				             xFmt      : cases.xFmt,
-				             domain    : cases.domain,
-				             tickValues: cases.tickValues">
-
-					<g v-component="chart-line"
-					   class="data"
-					   data-width="{{contentWidth}}"
-					   data-height="{{contentHeight}}"
-					   data-series="{{values}}"
-					   v-with="tickValues: tickValues,
-					           xFmt      : xFmt,
-					           domain    : domain"></g>
-				</svg>
+				     data-indicator="161"></div>
 			</section>
+
 			<section>
 				<h4>{{ gap }} Immunity Gap</h4>
-				<svg v-component="chart-base"
-				     data-aspect="1.8"></svg>
+				<svg data-aspect="1.8"></svg>
 			</section>
 		</div>
 
@@ -60,24 +48,12 @@
 
 					<section>
 						<h4>Conversions</h4>
-						<svg v-component="chart-base"
+						<div v-component="chart-line"
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
-						     v-with="values    : conversions.lines,
-						             tickValues: conversions.tickValues,
-						             x         : conversions.x,
-						             yFmt      : conversions.yFmt,
-						             xFmt      : conversions.xFmt">
-
-							<g v-component="chart-line"
-							   data-width="{{contentWidth}}"
-							   data-height="{{contentHeight}}"
-							   data-series="{{values}}"
-							   v-with="tickValues: tickValues,
-							           x         : x,
-							           yFmt      : yFmt,
-							           xFmt      : xFmt"></g>
-						</svg>
+						     data-period="2 years"
+						     data-indicators="[40,48]"
+						     v-with="campaign: campaign, region: region"></div>
 					</section>
 
 					<section>
@@ -152,7 +128,7 @@
 				<li v-repeat="indicator: capacity"
 				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
-				       v-with="indicator: indicator, campaign: campaign, region: region"
+				       v-with="indicators: indicator, campaign: campaign, region: region"
 				       data-aspect="3"
 				       data-period="5 months"></div>
 				</li>
@@ -166,7 +142,7 @@
 					<div v-component="chart-bullet"
 					     data-aspect="3"
 					     data-period="5 months"
-					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
+					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>
@@ -178,7 +154,7 @@
 					<div v-component="chart-bullet"
 					     data-aspect="3"
 					     data-period="5 months"
-					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
+					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>
@@ -191,7 +167,7 @@
 					<div v-component="chart-bullet"
 					     data-aspect="3"
 					     data-period="5 months"
-					     v-with="indicator: indicator, campaign: campaign, region: region"></div>
+					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
 			</ul>
 		</div>

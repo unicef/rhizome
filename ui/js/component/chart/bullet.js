@@ -38,7 +38,7 @@ module.exports = {
 		},
 
 		marker: function () {
-			console.info('bullet::marker', this.indicator.id);
+			console.info('bullet::marker', this.indicator && this.indicator.id);
 			var length = this.length;
 
 			if (length < 2) {
@@ -72,6 +72,12 @@ module.exports = {
 
 			return Math.max(d3.max(ranges, function (d) { return d.end; }),
 				d3.max(this.datapoints, function (d) { return d.value; }));
+		},
+
+		indicator: function () {
+			var indicators = this.indicators;
+
+			return (indicators && indicators.length > 0) ? indicators[0] : null;
 		},
 
 		title: function () {
@@ -121,7 +127,7 @@ module.exports = {
 				.domain([0, this.max])
 				.range([0, width]);
 
-			var ranges = (this.indicator && this.indicator.ranges) || [];
+			var ranges = (this.indicator && this.indicators.ranges) || [];
 
 			var color = d3.scale.quantize()
 				.domain(ranges.map(function (r) { return r.name; }))

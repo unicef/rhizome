@@ -6,9 +6,9 @@ var moment   = require('moment');
 var api      = require('../../data/api');
 var dateUtil = require('../../util/date');
 
-function campaignComparator(a, b, arr) {
-	if (arr.length < 2) {
-		return -1;
+function campaignComparator(a, b) {
+	if (!b.campaign) {
+		return a.campaign ? -1 : 0;
 	}
 
 	return (a.campaign.start_date < b.campaign.start_date) ? -1 :
@@ -41,7 +41,7 @@ function parseData(data) {
 
 			datapoints.push(_.assign({
 				indicator: datum.indicator,
-				value: datum.value
+				value    : datum.value
 			}, props));
 		}
 
@@ -60,32 +60,50 @@ function _loadIndicator () {
 
 	var self = this;
 
-	if (!this.indicator) {
+	if (!this.indicators) {
 		return;
 	}
 
-	if (_.isNumber(this.indicator) || _.isString(this.indicator)) {
-		this.loading = true;
+	var indicators = this.indicators;
 
-		api.indicators({ id: this.indicator })
-			.then(function (data) {
-				self.indicator = data.objects[0];
-			}, dataError.bind(this));
-	} else {
-		this._loadDatapoints()
+	if (_.isString(indicators)) {
+		indicators = JSON.parse(indicators);
 	}
+
+	if (!_.isArray(indicators)) {
+		indicators = [indicators];
+	}
+
+	indicators = indicators.filter(function (d) {
+		return _.isNumber(d) || _.isString(d);
+	});
+
+	if (indicators.length < 1) {
+		// All indicators have been loaded. Begin loading the datapoints.
+		this._loadDatapoints();
+		return;
+	}
+
+	this.loading = true;
+
+	api.indicators({ id__in: indicators })
+		.then(function (data) {
+			self.indicators = data.objects;
+		}, dataError.bind(this));
+
+	console.debug('with-indicator::loadIndicator', 'exit');
 }
 
 function _loadDatapoints () {
 	console.info('with-indicator::loadDatapoints', 'enter');
 
-	if (!this.indicator || !this.campaign || !this.region) {
+	if (!this.indicators || !this.campaign || !this.region) {
 		console.info('with-indicator::loadDatapoints', 'exit', 'missing parameters');
 		return;
 	}
 
 	var q = {
-		indicator__in: [this.indicator.id],
+		indicator__in: _.pluck(this.indicators, 'id'),
 		campaign_end : this.campaign.end,
 		region__in   : [this.region]
 	};
@@ -108,7 +126,7 @@ function _loadDatapoints () {
 module.exports = {
 
 	paramAttributes: [
-		'data-indicator',
+		'data-indicators',
 		'data-period'
 	],
 
@@ -117,7 +135,7 @@ module.exports = {
 			campaign  : null,
 			datapoints: [],
 			error     : false,
-			indicator : null,
+			indicators: null,
 			loading   : true,
 			region    : null,
 			period    :null
@@ -132,11 +150,12 @@ module.exports = {
 		this.$watch('campaign', this._loadDatapoints);
 		this.$watch('region', this._loadDatapoints);
 
-		this.$watch('indicator', this._loadIndicator);
+		this.$watch('indicators', this._loadIndicator);
 		this._loadIndicator();
 	},
 
 	computed: {
+
 		length: function () {
 			var datapoints = this.datapoints;
 

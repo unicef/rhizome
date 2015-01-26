@@ -1,127 +1,111 @@
 'use strict';
 
-var _    = require('lodash');
-var d3   = require('d3');
-var Vue  = require('vue');
+var _         = require('lodash');
+var d3        = require('d3');
 
-var util = require('../../util/data');
+var lineChart = require('./line-chart');
 
-var TRANSITION_SPEED = 500;
+module.exports = {
+	replace : true,
+	template: require('./line.html'),
 
-module.exports = Vue.extend({
 	paramAttributes: [
-		'data-series',
+		'data-height',
 		'data-width',
-		'data-height'
 	],
 
 	mixins: [
-		require('./labels'),
-		require('./hover-line'),
-		require('./yGrid'),
-		require('./xAxis')
+		require('./resize'),
+		require('./margin'),
+		require('./with-indicator'),
 	],
 
-	data: function () {
-		return {
-			series: [],
-			width : 100,
-			height: 100,
-			x     : d3.scale.linear(),
-			y     : d3.scale.linear()
-		};
+	partials: {
+		'loading-overlay': require('./partials/loading-overlay.html')
+	},
+
+	computed: {
+
+		series: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			// Facet the datapoints by indicator
+			return _.values(_.groupBy(this.datapoints, 'indicator'));
+		},
+
+		xScale: function () {
+			function x (d) {
+				return d.campaign.start_date.getTime();
+			}
+
+			var datapoints = this.datapoints || [];
+
+			var start = this.domain ?
+				this.domain[0] :
+				d3.min(datapoints, x) || 0;
+
+			var end = this.domain ?
+				this.domain[1] :
+				d3.max(datapoints, x) || start + 1;
+
+			return d3.scale.linear()
+				.domain([start, end])
+				.range([0, this.contentWidth]);
+		},
+
+		yScale: function () {
+			function y(d) {
+				return d.value;
+			}
+
+			var datapoints = this.datapoints || [];
+
+			var lower = this.empty ?
+				0 :
+				Math.min(0, d3.min(datapoints, y)) || 0;
+
+			var upper = this.empty ?
+			1 :
+			(d3.max(datapoints, y) || 1) * 1.1;
+
+			return d3.scale.linear()
+				.domain([lower, upper])
+				.range([this.contentHeight, 0]);
+		}
+
 	},
 
 	methods: {
+
 		draw: function () {
-			function getX(d) { return d.x; }
+			console.info('line::draw', 'enter');
+			var svg = d3.select(this.$el).select('.data');
+			var x   = this.xScale;
+			var y   = this.yScale;
 
-			function getY(d) { return d.y; }
-
-			function getScaledX(d) { return x(getX(d)); }
-
-			function getScaledY(d) { return y(getY(d)); }
-
-			function defined(d) { return util.defined(getY(d)); }
-
-			function getPoints(d) { return d.points; }
-
-			var svg     = d3.select(this.$el);
-
-			var series  = this.series || [];
-			var dataset = _(series.map(getPoints)).flatten().sortBy(function (a, b) {
-				return a.x < b.x ? -1 : 1;
-			}).value();
-			var empty   = dataset.length === 0;
-
-			var start  = this.domain ? this.domain[0] : d3.min(dataset, getX) || 0;
-			var end    = this.domain ? this.domain[1] : d3.max(dataset, getX) || start + 1;
-			var lower  = empty ? 0 : Math.min(0, d3.min(dataset, getY)) || 0;
-			var upper  = empty ? 1 : (d3.max(dataset, getY) || 1) * 1.1;
-			var height = this.height || 0;
-			var width  = this.width || 0;
-
-			var x      = this.x;
-			var y      = this.y;
-
-			x.domain([start, end])
-				.range([0, width]);
-			y.domain([lower, upper])
-				.range([height, 0]);
-
-			var line = d3.svg.line()
-				.defined(defined)
-				.x(getScaledX)
-				.y(getScaledY);
-
-			var lines = svg.selectAll('.line').data(series, function (d, i) {
-				return d.name || i;
-			});
-
-			lines.enter().append('path')
-				.attr('class', 'line');
-
-			lines.transition().duration(TRANSITION_SPEED)
-				.attr('d', function (d) {
-					return line(getPoints(d));
+			var render = lineChart()
+				.x(function (d) {
+					return x(d.campaign.start_date.getTime());
 				})
-				.style('stroke', function (d) { return d.color; });
-
-			lines.exit().remove();
-
-			var point = svg.selectAll('.point')
-				.data(Array.prototype.concat.apply([], dataset));
-
-			point.enter().append('circle')
-				.attr({
-					'class': 'point',
-					'r'    : 2,
+				.y(function (d) {
+					return y(d.value);
 				});
 
-			point.transition().duration(TRANSITION_SPEED).attr({
-				'cx': getScaledX,
-				'cy': getScaledY
-			});
+			var g = svg.selectAll('.' + render.className())
+				.data(this.series, function (d, i) {
+					return d.name || i;
+				}).call(render);
 
-			point.exit().remove();
-
-			this._callHook('drawn');
-			this.$emit('chart-drawn', {
-				el    : this.$el,
-				series: dataset,
-				x     : this.x,
-				y     : this.y
-			});
+			console.info('line::draw', 'exit');
 		}
-	},
 
-	on: {
-		'hook:attached': 'draw'
 	},
 
 	watch: {
-		'series': 'draw',
-		'width' : 'draw',
-		'height': 'draw'
+		'datapoints': 'draw',
+		'width'     : 'draw',
+		'height'    : 'draw'
 	}
-});
+};

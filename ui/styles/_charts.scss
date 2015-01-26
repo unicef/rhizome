@@ -28,9 +28,11 @@ svg {
 	}
 
 	.line {
-		fill: none;
-		stroke: $charcoal;
-		stroke-width: 1px;
+		path {
+			fill: none;
+			stroke: $charcoal;
+			stroke-width: 1px;
+		}
 	}
 
 	.area,
