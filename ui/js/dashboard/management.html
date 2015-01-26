@@ -17,10 +17,12 @@
 
 			<section>
 				<h4>Polio Cases</h4>
-				<div v-component="chart-line"
+				<div v-component="chart-year-over-year"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     data-indicator="161"></div>
+				     data-indicators="69"
+				     data-period="2 years"
+				     v-with="campaign: campaign, region: region"></div>
 			</section>
 
 			<section>

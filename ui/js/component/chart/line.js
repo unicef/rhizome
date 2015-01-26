@@ -27,11 +27,15 @@ module.exports = {
 	computed: {
 
 		series: function () {
+			console.info('line::series enter');
+
 			if (this.empty) {
+				console.info('line::series empty');
 				return [];
 			}
 
 			// Facet the datapoints by indicator
+			console.info('line::series exit');
 			return _.values(_.groupBy(this.datapoints, 'indicator'));
 		},
 
