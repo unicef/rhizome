@@ -138,7 +138,9 @@ module.exports = {
 			var svg      = d3.select(this.$el);
 			var renderer = this.renderer;
 			var xScale   = this.xScale;
+			var yScale   = this.yScale;
 			var domain   = xScale.domain();
+			var range    = yScale.domain();
 
 			svg.select('.data').selectAll('.' + renderer.className())
 				.data(this.series, function (d, i) {
@@ -166,7 +168,7 @@ module.exports = {
 					.tickFormat(this.yFmt)
 					.tickValues(this.yTicks)
 					.tickSize(this.contentWidth)
-					.scale(this.yScale)
+					.scale(yScale)
 					.orient('right'));
 
 			gy.selectAll('text')
@@ -174,6 +176,10 @@ module.exports = {
 					'x' : 4,
 					'dy': -4
 				});
+
+			gy.selectAll('g').classed('minor', function (d) {
+				return d !== range[0];
+			});
 
 			console.info('line::draw', 'exit');
 		}

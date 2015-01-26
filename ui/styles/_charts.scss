@@ -10,9 +10,15 @@ svg {
 
 		line {
 			fill: none;
-			stroke: $white;
+			stroke: $iron;
 			stroke-width: 1px;
 			shape-rendering: cripsEdges;
+		}
+
+		.minor {
+			line {
+				stroke: $white;
+			}
 		}
 
 		text {
@@ -23,6 +29,12 @@ svg {
 
 			&.annotation {
 				fill: $oil;
+			}
+		}
+
+		&.x {
+			line {
+				display: none;
 			}
 		}
 	}

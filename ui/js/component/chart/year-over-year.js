@@ -49,7 +49,7 @@ module.exports = {
 					return x(d.campaign.start_date.getMonth());
 				})
 				.y(function (d) {
-					return y(d.value)
+					return y(d.value);
 				})
 				.color(function (d, i) {
 					return color(i);
