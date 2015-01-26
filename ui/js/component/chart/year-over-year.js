@@ -1,6 +1,7 @@
 'use strict';
 
 var _         = require('lodash');
+var moment    = require('moment');
 
 var lineChart = require('./line-chart');
 
@@ -53,12 +54,47 @@ module.exports = {
 			return series;
 		},
 
+		xFmt: function () {
+			return function (d) {
+				return moment().month(d).format('MMM');
+			};
+		},
+
 		xScale: function () {
 			var scale = d3.scale.linear()
 				.domain([0, 11])
 				.range([0, this.contentWidth]);
 
 			return scale;
+		},
+
+		xTicks: function () {
+			if (!this.campaign) {
+				return [0, 5, 11];
+			}
+
+			var ticks = [];
+			var now = moment(this.campaign.value, 'YYYY-MM-DD').month();
+			console.debug('year-over-year::xTicks now', now);
+
+			// If the current month is April or later, show January
+			if (now > 2) {
+				ticks.push(0);
+			}
+
+			// If the current month is after August, show June
+			if (now > 7) {
+				ticks.push(5);
+			}
+
+			ticks.push(now);
+
+			// if the current month is before November, show December
+			if (now < 9) {
+				ticks.push(11);
+			}
+
+			return ticks;
 		}
 
 	}

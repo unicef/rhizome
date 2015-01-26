@@ -27,9 +27,6 @@ module.exports = {
 
 		require('./hover-line'),
 		require('./labels'),
-
-		require('./xAxis'),
-		require('./yGrid')
 	],
 
 	data: function () {

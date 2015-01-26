@@ -67,9 +67,19 @@ module.exports = {
 			return _.values(_.groupBy(this.datapoints, 'indicator'));
 		},
 
+		xFmt: function () {
+			return function (d) {
+				var month   = d3.time.format('%b');
+				var newYear = d3.time.format('%b %Y');
+				var dt      = new Date(d);
+
+				return dt.getMonth() === 0 ? newYear(dt) : month(dt);
+			};
+		},
+
 		xScale: function () {
 			function x (d) {
-				return d.campaign.start_date.getTime();
+				return d.campaign.start_date;
 			}
 
 			var datapoints = this.datapoints || [];
@@ -82,9 +92,17 @@ module.exports = {
 				this.domain[1] :
 				d3.max(datapoints, x) || start + 1;
 
-			return d3.scale.linear()
+			return d3.time.scale()
 				.domain([start, end])
 				.range([0, this.contentWidth]);
+		},
+
+		xTicks: function () {
+			return this.xScale.ticks(d3.time.months, 3);
+		},
+
+		yFmt: function () {
+			return d3.format('s');
 		},
 
 		yScale: function () {
@@ -105,21 +123,57 @@ module.exports = {
 			return d3.scale.linear()
 				.domain([lower, upper])
 				.range([this.contentHeight, 0]);
-		}
+		},
 
+		yTicks: function () {
+			return this.yScale.ticks(3);
+		},
 	},
 
 	methods: {
 
 		draw: function () {
 			console.info('line::draw', 'enter');
-			var svg      = d3.select(this.$el).select('.data');
-			var renderer = this.renderer;
 
-			var g = svg.selectAll('.' + renderer.className())
+			var svg      = d3.select(this.$el);
+			var renderer = this.renderer;
+			var xScale   = this.xScale;
+			var domain   = xScale.domain();
+
+			svg.select('.data').selectAll('.' + renderer.className())
 				.data(this.series, function (d, i) {
 					return d.name || i;
 				}).call(renderer);
+
+			var gx = svg.select('.x.axis')
+				.call(d3.svg.axis()
+					.tickFormat(this.xFmt)
+					.tickValues(this.xTicks)
+					.scale(xScale)
+					.orient('bottom'));
+
+			gx.selectAll('text')
+				.style('text-anchor', function (d) {
+					return d === domain[0] ?
+						'start' :
+						d === domain[1] ?
+							'end' :
+							'middle';
+				});
+
+			var gy = svg.select('.y.axis')
+				.call(d3.svg.axis()
+					.tickFormat(this.yFmt)
+					.tickValues(this.yTicks)
+					.tickSize(this.contentWidth)
+					.scale(this.yScale)
+					.orient('right'));
+
+			gy.selectAll('text')
+				.attr({
+					'x' : 4,
+					'dy': -4
+				});
 
 			console.info('line::draw', 'exit');
 		}
