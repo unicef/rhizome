@@ -108,13 +108,9 @@ function _loadDatapoints () {
 		region__in   : [this.region]
 	};
 
-	if (this.period) {
-		var start = moment(this.campaign.date, 'YYYYMMDD');
-
-		q.campaign_start = start.subtract.apply(
-				start,
-				dateUtil.parseDuration(this.period)
-			).format('YYYY-MM-DD');
+	var start = this.campaign_start;
+	if (start) {
+		q.campaign_start = start;
 	}
 
 	console.debug('with-indicator::data-load', 'q', q);
@@ -155,6 +151,19 @@ module.exports = {
 	},
 
 	computed: {
+
+		campaign_start: function () {
+			if (!this.period) {
+				return null;
+			}
+
+			var start = moment(this.campaign.date, 'YYYYMMDD');
+
+			return start.subtract.apply(
+					start,
+					dateUtil.parseDuration(this.period)
+				).format('YYYY-MM-DD');
+		},
 
 		length: function () {
 			var datapoints = this.datapoints;

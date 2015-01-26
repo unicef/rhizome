@@ -1,7 +1,10 @@
 'use strict';
 
 var _         = require('lodash');
+var d3        = require('d3');
 var moment    = require('moment');
+
+var dateUtil  = require('../../util/date');
 
 var lineChart = require('./line-chart');
 
@@ -17,6 +20,24 @@ module.exports = {
 	},
 
 	computed: {
+
+		campaign_start: function () {
+			if (!this.period) {
+				return null;
+			}
+
+			var start = moment(this.campaign.date, 'YYYYMMDD');
+
+			start = start.subtract.apply(
+					start,
+					dateUtil.parseDuration(this.period)
+				)
+				.startOf('year')
+				.format('YYYY-MM-DD');
+
+			console.debug('year-over-year::campaign_start', start);
+			return start;
+		},
 
 		renderer: function () {
 			var x     = this.xScale;
