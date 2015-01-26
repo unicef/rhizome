@@ -1,6 +1,6 @@
 svg {
 	.bg {
-		fill: $smoke;
+		fill: $vapor;
 	}
 
 	.axis {
@@ -30,6 +30,12 @@ svg {
 	.line {
 		path {
 			fill: none;
+			stroke: $charcoal;
+			stroke-width: 2px;
+		}
+
+		circle {
+			fill: $white;
 			stroke: $charcoal;
 			stroke-width: 1px;
 		}

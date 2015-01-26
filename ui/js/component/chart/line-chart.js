@@ -9,6 +9,7 @@ module.exports = function lineChart() {
 	var className       = 'line';
 	var line            = d3.svg.line();
 	var values          = Object;
+	var color           = function () { return 'inherit'; };
 
 	function chart(selection) {
 		// The datum for each item in this selection should correspond to an
@@ -21,7 +22,7 @@ module.exports = function lineChart() {
 		// the last call
 		selection.attr('class', className);
 
-		selection.each(function (d) {
+		selection.each(function (d, i) {
 			// d should be an array of objects representing each data point
 			// in this series
 			var g = d3.select(this);
@@ -32,7 +33,8 @@ module.exports = function lineChart() {
 
 			path
 				.transition().duration(transitionSpeed)
-					.attr('d', line);
+					.attr('d', line)
+					.style('stroke', color(d, i));
 
 			path.exit()
 				.transition().duration(transitionSpeed)
@@ -46,7 +48,8 @@ module.exports = function lineChart() {
 					.attr({
 						'cx': line.x(),
 						'cy': line.y()
-					});
+					})
+					.style('stroke', color(d, i));
 
 			circle.enter()
 				.append('circle')
@@ -55,8 +58,9 @@ module.exports = function lineChart() {
 						'cy': line.y(),
 						'r' : 0
 					})
+					.style('stroke', color(d, i))
 				.transition().duration(transitionSpeed)
-					.attr('r', 2);
+					.attr('r', 3);
 
 			circle.exit()
 				.transition().duration(transitionSpeed)
@@ -79,6 +83,15 @@ module.exports = function lineChart() {
 		}
 
 		className = value;
+		return chart;
+	};
+
+	chart.color = function (value) {
+		if (!arguments.length) {
+			return color;
+		}
+
+		color = value;
 		return chart;
 	};
 

@@ -3,6 +3,7 @@
 var _         = require('lodash');
 var d3        = require('d3');
 
+var colors    = require('../../colors/coolgray');
 var lineChart = require('./line-chart');
 
 module.exports = {
@@ -26,9 +27,18 @@ module.exports = {
 
 	computed: {
 
+		colorScale: function () {
+			var scale = d3.scale.ordinal()
+				.domain(d3.range(colors.length))
+				.range(colors);
+
+			return scale;
+		},
+
 		renderer: function () {
-			var x = this.xScale;
-			var y = this.yScale;
+			var x     = this.xScale;
+			var y     = this.yScale;
+			var color = this.colorScale;
 
 			var renderer = lineChart()
 				.x(function (d) {
@@ -36,6 +46,9 @@ module.exports = {
 				})
 				.y(function (d) {
 					return y(d.value);
+				})
+				.color(function (d, i) {
+					return color(i);
 				});
 
 			return renderer

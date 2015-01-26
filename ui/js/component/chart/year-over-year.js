@@ -18,8 +18,9 @@ module.exports = {
 	computed: {
 
 		renderer: function () {
-			var x = this.xScale;
-			var y = this.yScale;
+			var x     = this.xScale;
+			var y     = this.yScale;
+			var color = this.colorScale;
 
 			var renderer = lineChart()
 				.x(function (d) {
@@ -27,6 +28,9 @@ module.exports = {
 				})
 				.y(function (d) {
 					return y(d.value)
+				})
+				.color(function (d, i) {
+					return color(i);
 				});
 
 			return renderer;
