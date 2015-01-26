@@ -135,7 +135,7 @@ module.exports = {
 			loading   : true,
 			region    : null,
 			period    :null
-		}
+		};
 	},
 
 	created: function () {

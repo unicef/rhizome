@@ -26,8 +26,14 @@
 			</section>
 
 			<section>
-				<h4>{{ gap }} Immunity Gap</h4>
-				<svg data-aspect="1.8"></svg>
+				<h4>Immunity Gap</h4>
+				<svg v-component="chart-stacked-area"
+						     data-margin-bottom="24"
+						     data-aspect="1.618"
+						     data-margin-bottom="12"
+						     data-indicators="[164,165,166,167]"
+						     data-duration="2 years"
+						     v-with="region: region, campaign: campaign"></svg>
 			</section>
 		</div>
 
@@ -39,13 +45,13 @@
 
 					<section>
 						<h4>Missed Children</h4>
-						<svg v-component="chart-stackedTime"
+						<svg v-component="chart-stacked-area"
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
 						     data-margin-bottom="12"
-						     data-indicators="164,165,166,167"
-						     data-duration="-2 years"
-						     v-with="region: region, date: campaign"></svg>
+						     data-indicators="[164,165,166,167]"
+						     data-duration="2 years"
+						     v-with="region: region, campaign: campaign"></svg>
 					</section>
 
 					<section>

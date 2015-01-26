@@ -8,7 +8,7 @@ var lineChart = require('./line-chart');
 
 module.exports = {
 	replace : true,
-	template: require('./line.html'),
+	template: require('./chart.html'),
 
 	paramAttributes: [
 		'data-height',
@@ -42,7 +42,7 @@ module.exports = {
 
 			var renderer = lineChart()
 				.x(function (d) {
-					return x(d.campaign.start_date.getTime());
+					return x(d.campaign.start_date);
 				})
 				.y(function (d) {
 					return y(d.value);
