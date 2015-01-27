@@ -20,10 +20,9 @@ module.exports = {
 	data: function () {
 		return {
 			aspect      : false, // Disable auto-setting height
-			barHeight   : 18,
+			barHeight   : 14,
 			marginBottom: 24,
-			marginLeft  : 120,
-			padding     : 2
+			padding     : 18
 		};
 	},
 
@@ -40,7 +39,7 @@ module.exports = {
 
 		height: function () {
 			var l       = this.series.length;
-			var padding = (l - 1) * this.padding;
+			var padding = l * this.padding;
 			var h       = Math.max(0, l * this.barHeight + padding);
 
 			return h + this.marginTop + this.marginBottom;
@@ -124,14 +123,23 @@ module.exports = {
 		},
 
 		xTicks: function () {
-			return this.xScale().ticks(4);
+			return this.xScale.ticks(4);
+		},
+
+		yScale: function () {
+			var padding = this.padding;
+			var step   = this.barHeight + padding;
+
+			return function (d, i) {
+				return padding + step * i;
+			}
 		}
 	},
 
 	methods: {
 
 		draw: function () {
-			var svg = d3.select(this.$el);
+			var svg      = d3.select(this.$el);
 			var renderer = this.renderer;
 
 			svg.select('.data').selectAll(renderer.selector())
@@ -139,20 +147,6 @@ module.exports = {
 					return d.id;
 				})
 				.call(renderer);
-
-			var gx = svg.select('.x.axis')
-				.call(d3.svg.axis()
-					.tickFormat(this.xFmt)
-					.tickValues(this.xTicks)
-					.tickSize(-this.contentHeight)
-					.scale(this.xScale)
-					.orient('bottom'));
-
-			gx.selectAll('g').classed('minor', true);
-
-			// FIXME: Need to adjust the CSS so that there is no need to override the
-			// display settings here.
-			gx.selectAll('line').style('display', 'inline');
 		}
 
 	},

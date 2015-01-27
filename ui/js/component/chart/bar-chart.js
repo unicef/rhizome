@@ -63,8 +63,7 @@ module.exports = function barChart() {
 			label.enter()
 				.append('text')
 					.attr({
-						'dx': -4,
-						'dy': '1.2em',
+						'dy': -4,
 						'class': 'label'
 					})
 					.style('opacity', 0)
@@ -75,6 +74,34 @@ module.exports = function barChart() {
 			label.text(String);
 
 			label.exit()
+				.transition().duration(transitionSpeed)
+					.style('opacity', 0)
+				.remove();
+
+			var value = g.selectAll('.value').data(values(d));
+
+			value.enter()
+				.append('text')
+					.attr({
+						'dx'       : 2,
+						'dy'       : -3,
+						'class'    : 'value',
+						'transform': function (d) {
+							return 'translate(' + x(d) + ',' + height(d) + ')';
+						}
+					})
+					.style('opacity', 0)
+					.text(function (d) {
+						return d.value;
+					})
+				.transition().duration(transitionSpeed)
+					.style('opacity', 1);
+
+			value.text(function (d) {
+				return d3.format('n')(d.value);
+			});
+
+			value.exit()
 				.transition().duration(transitionSpeed)
 					.style('opacity', 0)
 				.remove();
