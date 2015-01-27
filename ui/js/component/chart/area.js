@@ -1,5 +1,7 @@
 'use strict';
 
+var animation = require('./animation');
+
 module.exports = function areaChart() {
 	var area            = d3.svg.area();
 	var className       = 'area';
@@ -16,12 +18,18 @@ module.exports = function areaChart() {
 
 			var path = g.selectAll('path').data([d]);
 
-			path.enter().append('path');
-
 			path.transition()
 				.duration(transitionSpeed)
 					.attr('d', area)
 					.style('fill', color(d, i));
+
+			path.enter()
+				.append('path')
+					.style('fill', color(d, i))
+				.transition()
+					.duration(transitionSpeed)
+					.delay(i / selection.size() * transitionSpeed)
+					.attrTween('d', animation.enterArea().area(area));
 
 			path.exit()
 				.transition().duration(transitionSpeed)
