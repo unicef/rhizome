@@ -102,6 +102,8 @@ function _loadDatapoints () {
 		return;
 	}
 
+this.loading = true;
+
 	var q = {
 		indicator__in: _.pluck(this.indicators, 'id'),
 		campaign_end : this.campaign.end,
