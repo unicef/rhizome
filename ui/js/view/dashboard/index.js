@@ -1,5 +1,7 @@
 'use strict';
 
+var page = require('page')
+
 module.exports = {
 	template: require('./template.html'),
 	replace: true,
@@ -10,8 +12,19 @@ module.exports = {
 		};
 	},
 
+	created: function () {
+		var show = function (ctx) {
+			console.debug('dashboard::show', ctx.params.dashboard);
+			this.dashboard = ctx.params.dashboard || 'management-dashboard';
+		}.bind(this);
+
+		page('/datapoints/:dashboard', show);
+		page();
+	},
+
 	components: {
 		'management-dashboard': require('../../dashboard/management'),
+		'nco-dashboard'       : require('../../dashboard/nco'),
 
 		'chart-bullet'        : require('../../component/chart/bullet'),
 		'chart-map'           : require('../../component/chart/map'),
