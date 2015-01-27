@@ -29,43 +29,22 @@ module.exports = function lineChart() {
 
 			var path = g.selectAll('path').data([d]);
 
-			path.enter().append('path');
+			path
+				.transition().duration(transitionSpeed)
+					.style('stroke', color(d, i));
+
+			path.enter()
+				.append('path')
+					.style('stroke', color(d, i));
 
 			path
 				.transition().duration(transitionSpeed)
-					.attr('d', line)
-					.style('stroke', color(d, i));
+					.attr('d', line);
 
 			path.exit()
 				.transition().duration(transitionSpeed)
 					.style('opacity', 0)
 					.remove();
-
-			var circle = g.selectAll('circle').data(values);
-
-			circle
-				.transition().duration(transitionSpeed)
-					.attr({
-						'cx': line.x(),
-						'cy': line.y()
-					})
-					.style('stroke', color(d, i));
-
-			circle.enter()
-				.append('circle')
-					.attr({
-						'cx': line.x(),
-						'cy': line.y(),
-						'r' : 0
-					})
-					.style('stroke', color(d, i))
-				.transition().duration(transitionSpeed)
-					.attr('r', 3);
-
-			circle.exit()
-				.transition().duration(transitionSpeed)
-					.attr('r', 0)
-				.remove();
 		});
 
 		// FIXME: Fade out old series for now, but we really want to shrink the
