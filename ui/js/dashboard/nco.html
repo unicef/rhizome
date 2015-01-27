@@ -1,3 +1,55 @@
-<div>
-	<h1>Welcome to the Nigeria Country Office Dashboard</h1>
+<div id="nco-dashboard">
+	<div class="row">
+		<div class="large-7 columns">
+			<h3>Overview</h3>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Missed Children</h4>
+			<h4>Caregiver Awareness</h4>
+		</div>
+
+		<div class="medium-4 columns">
+			<h4>Inside Monitoring</h4>
+			<h4>Outside Monitoring</h4>
+		</div>
+
+		<div class="medium-3 large-2 columns"
+		     v-repeat="overview"
+		     v-with="region: region, campaign: campaign">
+			<h4>{{ title }}</h4>
+			<div v-component="{{ chart }}"
+			     v-with="indicators: indicators, region: region, campaign: campaign"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="small-7 columns">
+			<h3>Missed Children</h3>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="small-3 columns">
+			<h3>Absences</h3>
+		</div>
+		<div class="small-3 columns">
+			<h3>Non-Compliance</h3>
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class="small-2 columns">
+			<h3>Non-Compliance Resolutions</h3>
+		</div>
+
+		<div class="small-2 columns">
+			<h3>Influencers</h3>
+		</div>
+
+		<div class="small-2 columns">
+			<h3>Sources of Information</h3>
+		</div>
+	</div>
 </div>

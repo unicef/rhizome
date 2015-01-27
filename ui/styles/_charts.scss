@@ -59,6 +59,13 @@ svg {
 		fill-opacity: 0.6;
 	}
 
+	.bar {
+		.label {
+			font-size: rem-calc(9);
+			text-anchor: end;
+		}
+	}
+
 	.bullet {
 		rect {
 			shape-rendering: crispEdges;

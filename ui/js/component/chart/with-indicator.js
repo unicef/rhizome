@@ -102,22 +102,14 @@ function _loadDatapoints () {
 		return;
 	}
 
-this.loading = true;
+	this.loading = true;
 
-	var q = {
-		indicator__in: _.pluck(this.indicators, 'id'),
-		campaign_end : this.campaign.end,
-		region__in   : [this.region]
-	};
-
-	var start = this.campaign_start;
-	if (start) {
-		q.campaign_start = start;
-	}
+	var q = this.query;
 
 	console.debug('with-indicator::data-load', 'q', q);
 
 	api.datapoints(q).then(parseData.bind(this), dataError.bind(this));
+
 	console.info('with-indicator::loadDatapoints', 'exit');
 }
 
@@ -136,7 +128,7 @@ module.exports = {
 			indicators: null,
 			loading   : true,
 			region    : null,
-			period    :null
+			period    : null
 		};
 	},
 
@@ -175,6 +167,21 @@ module.exports = {
 
 		empty: function () {
 			return this.length < 1;
+		},
+
+		query: function () {
+			var q = {
+				indicator__in: _.pluck(this.indicators, 'id'),
+				campaign_end : this.campaign.end,
+				region__in   : [this.region]
+			};
+
+			var start = this.campaign_start;
+			if (start) {
+				q.campaign_start = start;
+			}
+
+			return q;
 		}
 
 	}

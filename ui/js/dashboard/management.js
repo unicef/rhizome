@@ -52,7 +52,6 @@ function timeTicks(domain) {
 
 module.exports = {
 
-	replace : true,
 	template: require('./management.html'),
 
 	data: function () {
