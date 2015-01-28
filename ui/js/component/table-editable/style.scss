@@ -65,10 +65,11 @@ table {
 
 	.completionStatus {
 		font-size: .9em;
+		min-width: 40px;
 	}
 
 	.rowCompletionStatus {
-		width: 80px;
+		width: $valueColumnWidth;
 		text-align: center;
 	}
 

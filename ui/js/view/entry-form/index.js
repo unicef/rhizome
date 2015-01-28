@@ -162,7 +162,8 @@ module.exports = {
 					self.$data.campaigns = allData[2];
 
 					// set campaign id to first option
-					self.$data.campaign_id = self.$data.campaigns[0].value;
+					// self.$data.campaign_id = self.$data.campaigns[0].value;
+					self.$data.campaign_id = 139; // for testing
 
 					self.$data.loaded = true;
 
@@ -179,7 +180,8 @@ module.exports = {
 
 			// default values for testing
 			// var regions = [ 12942 ];
-			var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
+			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
+			var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
 
 			// get from dropdown
 			if (this.hasSelection) {
@@ -299,6 +301,7 @@ module.exports = {
 								cell.isEditable = true;
 								cell.format = numericFormatter;
 								cell.classes = 'numeric';
+								cell.width = 80;
 								if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
 									cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id;
 									cell.value = byIndicator[indicator_id][column.key].value;
@@ -328,6 +331,7 @@ module.exports = {
 							// indicator name
 							case 'label':
 								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
+								cell.width = 200;
 								break;
 
 						}

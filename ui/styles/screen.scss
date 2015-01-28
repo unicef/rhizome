@@ -153,6 +153,7 @@ button, .button {
 	$defaultHeaderLineHeight: 25px;
 	$borderColor: #ddd;
 
+	display: inline-block; /* required to make horizontal scrolling work */
 	height: $defaultTableHeight;
 	background-color: white;
 	position: relative; /* could be absolute or relative */
