@@ -130,6 +130,18 @@ class SimpleRegion(models.Model):
         db_table = 'vw_simple_region'
         managed = False
 
+class SimpleRegionExtra(models.Model):
+    """Like SimpleRegion w a little more info"""
+
+    name = models.CharField(max_length=55,unique=True)
+    parent_region_id = models.IntegerField(null=True,blank=True)
+    region_type_id = models.IntegerField(null=True,blank=True)
+    is_high_risk = models.BooleanField()
+
+    class Meta:
+        db_table = 'vw_region_extra'
+        managed = False
+
 
 class RegionPolygon(models.Model):
 

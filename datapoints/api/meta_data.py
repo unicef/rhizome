@@ -21,11 +21,13 @@ class RegionResource(ModelResource):
 
     # parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=True, null=True)
     # name = fields.CharField('name')
+    region_type_id = fields.IntegerField(attribute='region_type_id')
+
 
 
     class Meta():
         # queryset = Region.objects.raw("Select id, parent_region_id, name from region")
-        queryset = SimpleRegion.objects.all()
+        queryset = SimpleRegionExtra.objects.all()
         resource_name = 'region'
         max_limit = None # return all rows by default ( limit defaults to 20 )
         # paginator_class = CustomPaginator
