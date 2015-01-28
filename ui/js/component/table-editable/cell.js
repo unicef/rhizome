@@ -55,16 +55,24 @@ module.exports = {
 						// TODO: validation of value
 
 						var promise = self.buildSubmitPromise(value);
-						promise.done(function(response) {
-							
+						promise.then(function(response) {
+							// fulfilled
 							if (self.withResponse) {
 								self.withResponse(response);
 							}
-
 							// done saving
 							self.previousValue = self.value;
-							self.isSaving = false; 
+							self.isSaving = false;
 
+						}, function(error) {
+							// or rejected
+							if (self.withError) {
+								self.withError(error);
+							} else {
+								console.log('Error', error);
+							}
+							// done saving; do not update value
+							self.isSaving = false;
 						});
 
 					}
@@ -97,7 +105,10 @@ module.exports = {
 		},
 
 		hoverText: function() {
-			if (_.isNull(this.value)) {
+			if (this.tooltip) {
+				return this.tooltip;
+			}
+			else if (_.isNull(this.value)) {
 				return 'Missing value';
 			} else {
 				return this.value;

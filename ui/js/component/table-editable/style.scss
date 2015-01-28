@@ -61,6 +61,10 @@ table {
 			background-color: rgb(255, 235, 134);
 		}
 
+		&.error {
+			background-color: #FF9081;
+		}
+
 	}
 
 	.completionStatus {

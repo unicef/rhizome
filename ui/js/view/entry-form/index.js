@@ -51,6 +51,13 @@ module.exports = {
 
 		this.load();
 
+		$(document).foundation({
+			tooltip: {
+				selector: '#test',
+
+			}
+		});
+
 	},
 
 	attached: function () {
@@ -311,6 +318,12 @@ module.exports = {
 									cell.value = null;
 									cell.note = null;
 								}
+								// tooltip
+								if (self.$data.regionData[column.key] && self.$data.indicators[indicator_id]) {
+									cell.tooltip = self.$data.indicators[indicator_id].name + ' value for ' + self.$data.regionData[column.key].name;
+								} else {
+									cell.tooltip = null;
+								}
 								// generate promise for submitting a new value to the API for saving
 								cell.buildSubmitPromise = function(newVal) {
 									var upsert_options = {
@@ -325,6 +338,12 @@ module.exports = {
 								// callback to specifically handle response
 								cell.withResponse = function(response) {
 									console.log('done!', response);
+								};
+								// callback to handle error
+								cell.withError = function(error) {
+									console.log(error);
+									if (error.msg && error.msg.message) { alert(error.msg.message); }
+									cell.hasError = true;
 								};
 								break;
 
