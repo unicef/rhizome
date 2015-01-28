@@ -16,6 +16,7 @@ function campaignComparator(a, b) {
 }
 
 function dataError(err) {
+	/* jshint validthis:true */
 	console.log(err);
 
 	this.loading = false;
@@ -23,6 +24,7 @@ function dataError(err) {
 }
 
 function parseData(data) {
+	/* jshint validthis:true */
 	var loaded = _.omit(data, 'objects');
 
 	// Convert the data from an array of unique (region, campaign) objects
@@ -56,6 +58,8 @@ function parseData(data) {
 }
 
 function _loadIndicator () {
+	/* jshint validthis:true */
+
 	console.debug('with-indicator::loadIndicator', this.indicator);
 
 	var self = this;
@@ -95,6 +99,8 @@ function _loadIndicator () {
 }
 
 function _loadDatapoints () {
+	/* jshint validthis:true */
+
 	console.info('with-indicator::loadDatapoints', 'enter');
 
 	if (!this.indicators || !this.campaign || !this.region) {
