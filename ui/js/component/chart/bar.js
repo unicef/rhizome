@@ -52,7 +52,7 @@ module.exports = {
 				}),
 				region__in   : [this.region],
 				limit        : 1
-			}
+			};
 		},
 
 		renderer: function () {
@@ -68,7 +68,7 @@ module.exports = {
 				.width(function (d) {
 					return x(d.value);
 				})
-				.x(function (d) {
+				.x(function () {
 					return x(0);
 				})
 				.y(y)
@@ -132,7 +132,7 @@ module.exports = {
 
 			return function (d, i) {
 				return padding + step * i;
-			}
+			};
 		}
 	},
 

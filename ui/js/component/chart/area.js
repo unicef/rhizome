@@ -1,5 +1,7 @@
 'use strict';
 
+var d3        = require('d3');
+
 var animation = require('./animation');
 
 module.exports = function areaChart() {

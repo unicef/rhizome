@@ -51,7 +51,7 @@ module.exports = {
 					return color(i);
 				});
 
-			return renderer
+			return renderer;
 		},
 
 		series: function () {

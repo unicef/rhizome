@@ -1,8 +1,6 @@
 'use strict';
 
-function interpolateSeries(s) {
-
-}
+var d3 = require('d3');
 
 exports.tweenSeries = function () {
 

@@ -28,7 +28,7 @@ module.exports = function barChart() {
 
 		selection.attr('class', className);
 
-		selection.each(function (d, i) {
+		selection.each(function (d) {
 			var g   = d3.select(this);
 			var bar = g.selectAll('rect').data(values(d));
 

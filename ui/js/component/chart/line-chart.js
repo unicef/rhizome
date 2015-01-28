@@ -2,8 +2,6 @@
 
 var d3   = require('d3');
 
-var util = require('../../util/data');
-
 module.exports = function lineChart() {
 	var transitionSpeed = 500;
 	var className       = 'line';
