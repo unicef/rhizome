@@ -19,7 +19,7 @@ module.exports = {
 		}.bind(this);
 
 		page('/datapoints/:dashboard', show);
-		page();
+		page({ click: false });
 	},
 
 	components: {
