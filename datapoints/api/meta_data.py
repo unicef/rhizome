@@ -27,7 +27,7 @@ class RegionResource(ModelResource):
 
     class Meta():
         # queryset = Region.objects.raw("Select id, parent_region_id, name from region")
-        queryset = SimpleRegionExtra.objects.all()
+        queryset = SimpleRegion.objects.all()
         resource_name = 'region'
         max_limit = None # return all rows by default ( limit defaults to 20 )
         # paginator_class = CustomPaginator
