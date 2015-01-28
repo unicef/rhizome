@@ -21,6 +21,8 @@ class RegionResource(ModelResource):
 
     # parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=True, null=True)
     # name = fields.CharField('name')
+    region_type_id = fields.IntegerField(attribute='region_type_id')
+
 
 
     class Meta():
