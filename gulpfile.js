@@ -66,7 +66,8 @@ gulp.task('scripts', function () {
 gulp.task('browserify', ['scripts'], function () {
 	return build(path.main, path.output, {
 		debug: true,
-		standalone: 'Polio'
+		standalone: 'Polio',
+		paths: ['./ui/js']
 	});
 });
 
