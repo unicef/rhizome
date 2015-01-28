@@ -4,9 +4,9 @@ var _         = require('lodash');
 var d3        = require('d3');
 var moment    = require('moment');
 
-var dateUtil  = require('../../util/date');
+var dateUtil  = require('util/date');
 
-var lineChart = require('./line-chart');
+var lineChart = require('./renderer/line');
 
 module.exports = {
 

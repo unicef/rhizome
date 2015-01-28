@@ -3,8 +3,8 @@
 var _        = require('lodash');
 var moment   = require('moment');
 
-var api      = require('../../data/api');
-var dateUtil = require('../../util/date');
+var api      = require('data/api');
+var dateUtil = require('util/date');
 
 function campaignComparator(a, b) {
 	if (!b.campaign) {

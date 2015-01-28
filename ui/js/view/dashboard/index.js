@@ -23,20 +23,20 @@ module.exports = {
 	},
 
 	components: {
-		'management-dashboard': require('../../dashboard/management'),
-		'nco-dashboard'       : require('../../dashboard/nco'),
+		'management-dashboard': require('dashboard/management'),
+		'nco-dashboard'       : require('dashboard/nco'),
 
-		'chart-bar'           : require('../../component/chart/bar'),
-		'chart-bullet'        : require('../../component/chart/bullet'),
-		'chart-map'           : require('../../component/chart/map'),
-		'chart-pie'           : require('../../component/chart/pie'),
-		'chart-stacked-area'  : require('../../component/chart/stacked-area'),
-		'chart-line'          : require('../../component/chart/line'),
-		'chart-year-over-year': require('../../component/chart/year-over-year'),
-		'vue-dropdown'        : require('../../component/dropdown')
+		'chart-bar'           : require('component/chart/bar'),
+		'chart-bullet'        : require('component/chart/bullet'),
+		'chart-choropleth'    : require('component/chart/choropleth'),
+		'chart-pie'           : require('component/chart/pie'),
+		'chart-stacked-area'  : require('component/chart/stacked-area'),
+		'chart-line'          : require('component/chart/line'),
+		'chart-year-over-year': require('component/chart/year-over-year'),
+		'vue-dropdown'        : require('component/dropdown')
 	},
 
 	partials: {
-		'loading-overlay': require('../../component/chart/partials/loading-overlay.html')
+		'loading-overlay': require('component/chart/partial/loading-overlay.html')
 	}
 };

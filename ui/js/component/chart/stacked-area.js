@@ -3,7 +3,7 @@
 var _         = require('lodash');
 var d3        = require('d3');
 
-var areaChart = require('./area');
+var areaChart = require('./renderer/area');
 
 module.exports = {
 	replace : true,

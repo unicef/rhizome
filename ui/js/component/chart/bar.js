@@ -3,18 +3,18 @@
 var _        = require('lodash');
 var d3       = require('d3');
 
-var barChart = require('./bar-chart');
-var colors   = require('../../colors/coolgray');
+var barChart = require('./renderer/bar');
+var colors   = require('colors/coolgray');
 
 module.exports = {
 
 	replace : true,
-	template: require('./bar-chart.html'),
+	template: require('./bar.html'),
 
 	mixins: [
-		require('./margin'),
-		require('./resize'),
-		require('./with-indicator')
+		require('./mixin/margin'),
+		require('./mixin/resize'),
+		require('./mixin/with-indicator')
 	],
 
 	data: function () {

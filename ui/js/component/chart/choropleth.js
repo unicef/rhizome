@@ -4,12 +4,12 @@ var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
 
-var api    = require('../../data/api');
+var api    = require('data/api');
 
 module.exports = {
 
 	replace: true,
-	template: require('./map.html'),
+	template: require('./choropleth.html'),
 
 	paramAttributes: [
 		'data-indicator',
@@ -17,11 +17,11 @@ module.exports = {
 	],
 
 	mixins: [
-		require('./resize')
+		require('./mixin/resize')
 	],
 
 	partials: {
-		'loading-overlay': require('./partials/loading-overlay.html')
+		'loading-overlay': require('./partial/loading-overlay.html')
 	},
 
 	data: function () {

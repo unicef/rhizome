@@ -3,8 +3,8 @@
 var _         = require('lodash');
 var d3        = require('d3');
 
-var colors    = require('../../colors/coolgray');
-var lineChart = require('./line-chart');
+var colors    = require('colors/coolgray');
+var lineChart = require('./renderer/line');
 
 module.exports = {
 	replace : true,
@@ -16,13 +16,13 @@ module.exports = {
 	],
 
 	mixins: [
-		require('./resize'),
-		require('./margin'),
-		require('./with-indicator'),
+		require('./mixin/resize'),
+		require('./mixin/margin'),
+		require('./mixin/with-indicator'),
 	],
 
 	partials: {
-		'loading-overlay': require('./partials/loading-overlay.html')
+		'loading-overlay': require('./partial/loading-overlay.html')
 	},
 
 	computed: {

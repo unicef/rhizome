@@ -2,8 +2,8 @@
 
 'use strict';
 
-var dom = require('../../util/dom');
-var log = require('../../util/log');
+var dom = require('util/dom');
+var log = require('util/log');
 
 module.exports = {
 	paramAttributes: [

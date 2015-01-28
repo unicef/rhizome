@@ -11,12 +11,12 @@ module.exports = {
 	],
 
 	mixins: [
-		require('./resize'),
-		require('./with-indicator')
+		require('./mixin/resize'),
+		require('./mixin/with-indicator')
 	],
 
 	partials: {
-		'loading-overlay': require('./partials/loading-overlay.html')
+		'loading-overlay': require('./partial/loading-overlay.html')
 	},
 
 	data: function () {

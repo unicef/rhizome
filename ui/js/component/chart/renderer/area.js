@@ -2,7 +2,7 @@
 
 var d3        = require('d3');
 
-var animation = require('./animation');
+var animation = require('component/chart/animation');
 
 module.exports = function areaChart() {
 	var area            = d3.svg.area();
