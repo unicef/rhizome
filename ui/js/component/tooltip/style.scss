@@ -1,0 +1,30 @@
+.tooltip {
+	position: absolute;
+
+	background-color: $white;
+
+	max-width: 50em;
+	min-width: 40em;
+	padding: 1em;
+
+	transition: opacity 300ms ease;
+
+	&.fade-enter {
+		opacity: 1;
+	}
+
+	&.fade-leave {
+		opacity: 0;
+	}
+
+	.pointer {
+		position: absolute;
+
+		border-color: $white;
+		border-width: 8px;
+
+		height: 0px;
+		width: 0px;
+
+	}
+}

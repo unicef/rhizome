@@ -1,0 +1,10 @@
+<div class="tooltip"
+     v-style="top: top, right: right, bottom: bottom, left: left"
+     v-if="show"
+     v-transition="fade">
+	<content>
+		{{ text }}
+	</content>
+
+	<div class="pointer"></div>
+</div>
