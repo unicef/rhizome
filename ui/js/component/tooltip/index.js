@@ -1,12 +1,11 @@
 'use strict';
 
 module.exports = {
-
 	replace : true,
 	template: require('./template.html'),
 
-	paramAttributes = [
-		'data-text'
+	paramAttributes: [
+		'data-orientation'
 	],
 
 	data: function () {
@@ -17,32 +16,17 @@ module.exports = {
 		};
 	},
 
-	computed: {
-
-		bottom: function () {
-			if (this.orientation !== 'top') {
-				return 'auto';
-			}
+	events: {
+		'tooltip-hide': function () {
+			this.show = false;
 		},
 
-		left: function () {
-			if (this.orientation === 'left') {
-				return 'auto';
-			}
+		'tooltip-show': function () {
+			this.show = true;
 		},
 
-		right: function () {
-			if (this.orientation !== 'left') {
-				return 'auto';
-			}
-		},
-
-		top: function () {
-			if (this.orientation === 'top') {
-				return 'auto';
-			}
-		},
-
+		'tooltip-toggle': function () {
+			this.show = !this.show;
+		}
 	}
-
 };
