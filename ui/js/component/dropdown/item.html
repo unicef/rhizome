@@ -11,8 +11,9 @@
 		<span v-on="click: toggle">{{ title }}</span>
 	</div>
 
-	<ul v-if="hasChildren && open">
+	<ul v-if="hasChildren" v-show="open">
 		<li v-repeat="children | orderBy sortBy sortDsc"
+		    track-by="value"
 		    v-with="sortBy: sortBy, sortDsc: sortDsc"
 		    v-component="dropdown-item"></li>
 	</ul>
