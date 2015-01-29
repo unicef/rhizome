@@ -21,6 +21,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
+from django.contrib.sessions.models import Session
+from django.contrib.auth.models import User
+
 from datapoints.models import *
 from datapoints.api.meta_data import *
 from datapoints.api.serialize import CustomSerializer
@@ -616,7 +619,6 @@ class DataPointEntryResource(ModelResource):
             'region': ALL,
         }
 
-
     def obj_create(self, bundle, **kwargs):
         """
         Make sure the data is valid, then save it.
@@ -629,6 +631,13 @@ class DataPointEntryResource(ModelResource):
             self.validate_object(bundle.data)
             
             # Determine what kind of request this is: create, update, or delete
+
+            # throw error if can't get a real user id
+            user_id = self.get_user_id(bundle)
+            if user_id is not None:
+                bundle.data['changed_by_id'] = user_id
+            else:
+                raise InputError(0, 'Could not get User ID from cookie')
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
@@ -661,6 +670,15 @@ class DataPointEntryResource(ModelResource):
                 response_class=http.HttpApplicationError
                 )
             raise ImmediateHttpResponse(response=response)
+
+    def get_user_id(self, bundle):
+        request = bundle.request
+
+        if 'sessionid' in request.COOKIES:
+            session = Session.objects.get(pk=request.COOKIES['sessionid'])
+            if '_auth_user_id' in session.get_decoded():
+                user = User.objects.get(id=session.get_decoded()['_auth_user_id'])
+                return user.id
 
     def is_delete_request(self, bundle):
         if bundle.data.has_key('value') and bundle.data['value'] == None:
@@ -710,13 +728,10 @@ class DataPointEntryResource(ModelResource):
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
-            # TODO uncomment once authorization is in place
-            # bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
-            bundle.obj.changed_by_id = -1
-            # TODO: what should source_datapoint_id be?
             bundle.obj.source_datapoint_id = -1
             bundle.obj.value = bundle.data['value']
 
+        bundle.obj.changed_by_id = bundle.data['changed_by_id']
 
         return bundle
 
