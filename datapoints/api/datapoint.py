@@ -8,6 +8,7 @@ from math import isnan
 
 from tastypie.bundle import Bundle
 from tastypie import fields
+from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ALL, ModelResource, Resource
@@ -17,6 +18,7 @@ from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from datapoints.models import *

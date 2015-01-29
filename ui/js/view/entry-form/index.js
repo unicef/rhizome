@@ -361,7 +361,16 @@ module.exports = {
 				self.table.columns = columns;
 
 			});
+		},
+
+		showTooltip: function() {
+			this.$broadcast('tooltip-show');
+		},
+
+		hideTooltip: function() {
+			this.$broadcast('tooltip-hide');
 		}
+
 
 	}
 };
