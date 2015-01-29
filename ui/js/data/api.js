@@ -103,6 +103,7 @@ datapoint.toString = function (query) {
 
 module.exports = {
 	campaign  : endPoint('/campaign/'),
+	geo       : endPoint('/geo/'),
 	indicators: endPoint('/indicator/'),
 	regions   : endPoint('/region/'),
 	datapoints: datapoint,

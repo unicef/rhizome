@@ -15,7 +15,7 @@ class Source(models.Model):
 
 class Indicator(models.Model):
 
-    short_name = models.CharField(max_length=55,unique=True)
+    short_name = models.CharField(max_length=255,unique=True)
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
@@ -142,6 +142,15 @@ class RegionPolygon(models.Model):
     class Meta:
         db_table = 'region_polygon'
 
+class RegionHeirarchy(models.Model):
+
+    region_id = models.IntegerField()
+    contained_by_region_id = models.IntegerField()
+    region_type_id = models.IntegerField()
+
+    class Meta:
+        db_table = 'region_heirarchy_cache'
+        managed = False
 
 class CampaignType(models.Model):
 

@@ -8,12 +8,7 @@ module.exports = {
 	created: function () {
 		this.$on('hook:drawn', function () {
 			var svg = d3.select(this.$el);
-			var g   = svg.selectAll('.x.axis').data([0]);
-
-			g.enter().insert('g', ':first-child')
-				.attr('class', 'x axis');
-
-			g.attr('transform', 'translate(0,' + this.height + ')');
+			var g   = svg.selectAll('.x.axis');
 
 			var xAxis = d3.svg.axis()
 				.scale(this.x)

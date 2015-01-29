@@ -76,4 +76,78 @@ svg {
 		stroke: $oil;
 		shape-rendering: crispEdges;
 	}
+
+	.region {
+		fill: $white;
+		stroke: $iron;
+	}
+
+}
+
+.choropleth {
+	position: relative;
+}
+
+.reds {
+	.q-1 {
+		background-color: $red1;
+		fill: $red1;
+	}
+
+	.q-2 {
+		background-color: $red2;
+		fill: $red2;
+	}
+
+	.q-3 {
+		background-color: $red3;
+		fill: $red3;
+	}
+	.q-4 {
+		background-color: $red4;
+		fill: $red4;
+	}
+
+	.q-5 {
+		background-color: $red5;
+		fill: $red5;
+	}
+
+	.q-6 {
+		background-color: $black;
+		fill: $black;
+	}
+}
+
+.chart {
+	.overlay {
+		background-color: transparentize($ghost, 0.3);
+		color: $aluminum;
+
+		display: table;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		&>div {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
+	}
+}
+
+.legend {
+	font-size: rem-calc(9);
+	list-style: none;
+	margin: 0;
+
+	.key {
+		display: inline-block;
+		position: relative;
+		width: 1.2em;
+		height: 1.2em;
+		margin-right: 0.2em;
+		margin-bottom: -0.2em;
+	}
 }

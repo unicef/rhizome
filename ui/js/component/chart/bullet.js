@@ -68,11 +68,13 @@ module.exports = {
 				this._data.ranges = [];
 			}
 
-			var svg = d3.select(this.$el);
+			var svg    = d3.select(this.$el);
+			var height = this.height || 0;
+			var width  = this.width || 0;
 
 			var x = d3.scale.linear()
 				.domain([0, d3.max(this.ranges, function (d) { return d.end; })])
-				.range([0, this.width]);
+				.range([0, width]);
 
 			// FIXME: color scale shouldn't be hard-coded. It should be generated
 			// according to the number of qualitative ranges and not depend on the
@@ -87,7 +89,7 @@ module.exports = {
 			bg.enter().append('rect').attr('class', 'range');
 
 			bg.attr({
-				height: this.height,
+				height: height,
 				width : function (d) { return x(d.end - d.start); },
 				x     : function (d) { return x(d.start); }
 			}).style('fill', function (d) {
@@ -108,9 +110,9 @@ module.exports = {
 
 			labels.attr({
 				x: function (d) { return x(d.start); },
-				y: this.height
+				y: height
 			})
-				.style('font-size', this.height / 6)
+				.style('font-size', height / 6)
 				.text(function (d) { return d.name; });
 
 			labels.exit().remove();
@@ -118,9 +120,9 @@ module.exports = {
 			var fillColor = fill(this.value, this.marker, this.ranges);
 
 			svg.select('.marker').attr({
-				height: this.height * 3 / 4,
+				height: height * 3 / 4,
 				width : this.markerWidth,
-				y     : this.height / 8,
+				y     : height / 8,
 				x     : x(this.marker) || 0
 			}).style({
 				display: display(this.marker),
@@ -128,9 +130,9 @@ module.exports = {
 			});
 
 			svg.select('.value').attr({
-				height: this.height / 2,
+				height: height / 2,
 				width : x(this.value) || 0,
-				y     : this.height / 4
+				y     : height / 4
 			}).style({
 				display: display(this.value),
 				fill: fillColor
@@ -139,10 +141,10 @@ module.exports = {
 			var format = d3.format('%');
 
 			svg.select('.label').attr({
-				y: this.height / 2,
-				dy: this.height / 8,
+				y: height / 2,
+				dy: height / 8,
 			}).style({
-				'font-size': this.height / 4,
+				'font-size': height / 4,
 				'display': display(this.value)
 			})
 				.text(format(this.value));
