@@ -6,6 +6,7 @@ var d3       = require('d3');
 var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 var flattenChildren = require('../../data/transform/flattenChildren');
+var treeify = require('../../data/transform/treeify');
 
 module.exports = {
 
@@ -56,16 +57,17 @@ module.exports = {
 	attached: function () {
 		var self = this;
 
-		this._regions = new Dropdown({
+		// setup regions dropdown
+		self._regions = new Dropdown({
 			el     : '#regions',
-			source : api.regions,
-			mapping: {
-				'parent_region_id': 'parent',
-				'name'         : 'title',
-				'id'           : 'value'
-			}
+			// source	: api.regions,
+			// mapping: {
+			// 	'parent_region_id': 'parent',
+			// 	'name'         : 'title',
+			// 	'id'           : 'value'
+			// }
 		});
-		this._regions.$on('dropdown-value-changed', function (items) {
+		self._regions.$on('dropdown-value-changed', function (items) {
 			self.regions = items;
 		});
 
@@ -167,8 +169,25 @@ module.exports = {
 
 					self.$data.loaded = true;
 
+					self.refreshRegionsDropdown();
+
 				});
 
+		},
+
+		refreshRegionsDropdown: function() {
+			var self = this;
+
+			var items = _.map(self.$data.regionData, function(d) {
+										return {
+											'parent': d.parent_region_id,
+											'title': d.name,
+											'value': d.id
+										};
+									});
+
+			console.log(items);
+			self._regions.items = treeify(items, 'value');
 		},
 
 		refresh: function (pagination) {

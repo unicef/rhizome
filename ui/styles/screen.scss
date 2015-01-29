@@ -42,6 +42,10 @@ h6 {
 	margin-bottom: 0.1rem;
 }
 
+select {
+	padding-right: 1.5em;
+}
+
 nav {
 	@include clearfix;
 
