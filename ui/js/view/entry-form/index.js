@@ -16,7 +16,7 @@ module.exports = {
 			indicator_set_id: 2,
 			indicator_sets: require('./structure/indicator_sets'),
 			loaded: false,
-			lookupRegionChildren: false,
+			includeSubRegions: true,
 			regions: [],
 			indicators: [],
 			pagination: {
@@ -50,13 +50,6 @@ module.exports = {
 	ready: function() {
 
 		this.load();
-
-		$(document).foundation({
-			tooltip: {
-				selector: '#test',
-
-			}
-		});
 
 	},
 
@@ -179,26 +172,19 @@ module.exports = {
 		},
 
 		refresh: function (pagination) {
-			// if (!this.hasSelection) {
-			// 	return;
-			// }
-
 			var self = this;
+
+			if (!self.hasSelection) {
+				return;
+			}
 
 			// default values for testing
 			// var regions = [ 12942 ];
 			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
-			var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
-
-			// get from dropdown
-			if (this.hasSelection) {
-				regions     = _.map(this.regions, 'value');
-			}
+			// var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
 
 			var options = { 
 				campaign__in: parseInt(self.$data.campaign_id),
-				// campaign_start: '2013-06-01',
-				// campaign_end: '2013-06-30',
 				indicator__in: [],
 				region__in: []
 			};
@@ -213,27 +199,33 @@ module.exports = {
 			}
 
 			// add regions to request
-			if (regions.length > 0) {
+			if (self.regions.length > 0) {
 				
-				// lookup children?
-				if (self.$data.lookupRegionChildren === true) {
-					options.region__in = [];
-					_.forEach(regions, function(region_id) {
-						var children = _.map(flattenChildren(self.$data.regionData[region_id], 'children'), function(d) { return d.id; });
-						options.region__in.push(region_id);
-						options.region__in = options.region__in.concat(children);						
-					});
-				}
-				// no children
-				else {
-					options.region__in = regions;
-				}
+				// get all high risk children of selected regions
+				_.forEach(self.regions, function(region) {
 
-				console.log(options.region__in);
+					options.region__in.push(region.value);
 
-				// sort region order
+					if (self.includeSubRegions) {
+						var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
+						if (children.length > 0) {
+							options.region__in = options.region__in.concat(_.map(children, 'value'));
+						}
+					}
+
+				});
+
+				// make unique
+				options.region__in = _.uniq(options.region__in);
+
+				// sort regions
 				options.region__in = options.region__in.sort(function(a,b) {
-					return self.$data.regionData[a].name > self.$data.regionData[b].name ? 1 : -1;
+					var ra = self.$data.regionData[a];
+					var rb = self.$data.regionData[b];
+					// sort by region type first
+					if (ra.region_type_id !== rb.region_type_id) { return ra.region_type_id - rb.region_type_id; }
+					// then name (alpha)
+					else { return ra.name > rb.name ? 1 : -1; }
 				});
 			}
 
@@ -255,7 +247,7 @@ module.exports = {
 				}
 			];
 			// add region names as columns
-			regions.forEach(function(region_id) {
+			_.forEach(options.region__in, function(region_id) {
 				columns.push({
 					header: self.$data.regionData[region_id].name,
 					type: 'value',
@@ -269,9 +261,11 @@ module.exports = {
 				return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v);
 			};
 
-			_.defaults(options, this.pagination);
+			_.defaults(options, self.pagination);
 
-			this.table.loading = true;
+			self.table.loading = true;
+
+			console.log(options);
 
 			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
