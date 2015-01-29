@@ -17,7 +17,7 @@ module.exports = {
 				.scale(this.y)
 				.ticks(3)
 				.orient('right')
-				.tickSize(this.width);
+				.tickSize(this.width || 0);
 
 			if (this.yFmt) {
 				yAxis.tickFormat(this.yFmt);

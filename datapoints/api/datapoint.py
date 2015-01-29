@@ -2,22 +2,23 @@ import pprint as pp
 import traceback
 from math import isnan
 from collections import defaultdict
-from itertools import product
 from datetime import datetime
+from itertools import product
+from math import isnan
 
-
-from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie import fields
+from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ALL, ModelResource, Resource
-from tastypie.authorization import Authorization
+from tastypie.validation import Validation
 from pandas import DataFrame
 from pandas import concat, merge, unique, pivot_table
 from django.db.models import Sum
 from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from datapoints.models import *
@@ -50,7 +51,6 @@ class DataPointResource(Resource):
     region = fields.IntegerField(attribute = 'region')
     campaign = fields.IntegerField(attribute = 'campaign')
     indicators = fields.ListField(attribute = 'indicators')
-
 
     class Meta(BaseApiResource.Meta):
 
@@ -649,16 +649,8 @@ class DataPointEntryResource(ModelResource):
                 # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        
         except ImmediateHttpResponse:
             raise
-        except InputError, e:
-            response = self.create_response(
-                bundle.request, 
-                self.make_error_response(e),
-                response_class=http.HttpBadRequest
-                )
-            raise ImmediateHttpResponse(response=response)
         # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0

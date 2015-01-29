@@ -61,14 +61,19 @@ table {
 			background-color: rgb(255, 235, 134);
 		}
 
+		&.error {
+			background-color: #FF9081;
+		}
+
 	}
 
 	.completionStatus {
 		font-size: .9em;
+		min-width: 40px;
 	}
 
 	.rowCompletionStatus {
-		width: 80px;
+		width: $valueColumnWidth;
 		text-align: center;
 	}
 

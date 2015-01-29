@@ -38,6 +38,14 @@ h4 {
 	overflow: hidden;
 }
 
+h6 {
+	margin-bottom: 0.1rem;
+}
+
+select {
+	padding-right: 1.5em;
+}
+
 nav {
 	@include clearfix;
 
@@ -153,6 +161,7 @@ button, .button {
 	$defaultHeaderLineHeight: 25px;
 	$borderColor: #ddd;
 
+	display: inline-block; /* required to make horizontal scrolling work */
 	height: $defaultTableHeight;
 	background-color: white;
 	position: relative; /* could be absolute or relative */
@@ -208,7 +217,7 @@ button, .button {
 
 			border-left: 1px solid $borderColor;
 			background-color: #F5F5F5;
-			
+
 			/* to hide overflow text, and then reveal on hover: */
 			white-space: nowrap;
 			overflow-x: hidden;
