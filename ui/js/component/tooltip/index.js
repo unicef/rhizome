@@ -16,6 +16,29 @@ module.exports = {
 		};
 	},
 
+	attached: function () {
+		this.$el.parentElement.addEventListener('mouseover', this);
+		this.$el.parentElement.addEventListener('mouseout', this);
+	},
+
+	methods: {
+		handleEvent: function (evt) {
+			console.debug('tooltip::handleEvent', evt.type, evt);
+			var type = evt.type;
+
+			switch (type) {
+			case 'mouseover':
+			case 'mouseout':
+				this.show = (type === 'mouseover');
+				break;
+
+			default:
+				break;
+			}
+
+		}
+	},
+
 	events: {
 		'tooltip-hide': function () {
 			this.show = false;
@@ -29,4 +52,5 @@ module.exports = {
 			this.show = !this.show;
 		}
 	}
+
 };
