@@ -19,18 +19,21 @@ class OfficeResource(BaseApiResource):
 class RegionResource(ModelResource):
     '''Region Resource'''
 
-    # parent_region = fields.ForeignKey('datapoints.api.meta_data.RegionResource', 'parent_region', full=True, null=True)
-    # name = fields.CharField('name')
     region_type_id = fields.IntegerField(attribute='region_type_id')
+    parent_region_id = fields.IntegerField(attribute='parent_region_id',null=True,blank=True)
+    office_id = fields.IntegerField(attribute='office_id',null=True,blank=True)
+    dehydrate_keys = ['created_at', 'latitude', 'longitude', 'region_code', 
+        'shape_file_path', 'slug', 'resource_uri']
 
     class Meta():
-        queryset = SimpleRegion.objects.all()
+        queryset = Region.objects.all()
         resource_name = 'region'
         max_limit = None # return all rows by default ( limit defaults to 20 )
 
     def dehydrate(self, bundle):
 
-        bundle.data.pop("resource_uri",None)# = bundle.obj.region.id
+        for key in self.dehydrate_keys:
+            bundle.data.pop(key, None)
         return bundle
 
 class GeoJsonResult(object):
