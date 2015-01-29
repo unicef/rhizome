@@ -105,6 +105,8 @@ module.exports = Vue.extend({
 					item.selected = !item.selected;
 				}
 			}
+
+			this.$emit('dropdown-item-toggle', item);
 		},
 
 		handleEvent: function (evt) {
