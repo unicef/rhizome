@@ -49,7 +49,7 @@ class DataPointResource(Resource):
     campaign = fields.IntegerField(attribute = 'campaign')
     indicators = fields.ListField(attribute = 'indicators')
 
-    class Meta(BaseApiResource.Meta):
+    class Meta(BaseNonModelResource.Meta):
 
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
@@ -622,12 +622,12 @@ class DataPointEntryResource(ModelResource):
             else:
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        
+
         except InputError, e:
             bundle.data = self.make_error_response(e)
             response = self.create_response(bundle.request, bundle)
             raise ImmediateHttpResponse(response=response)
-        
+
         # catch all exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
