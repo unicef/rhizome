@@ -23,8 +23,8 @@ INNER JOIN datapoint d_whole
 	AND d_part.region_id = d_whole.region_id;
 
 
-DROP TABLE IF EXISTS _region_campaign_with_data;
-CREATE TEMP TABLE _region_campaign_with_data
+DROP TABLE IF EXISTS datapoint_abstracted;
+CREATE TABLE datapoint_abstracted
 AS
 SELECT 
 	r.id as  region_id
@@ -80,9 +80,31 @@ WHILE _counter <= (SELECT MAX(looper) from _indicators_with_data)
 LOOP
 
    _loop_indicator_id = (SELECT indicator_id FROM _indicators_with_data WHERE looper = _counter);
+  
+
+   ALTER TABLE datapoint_abstracted
+   ADD COLUMN 
+
+
    RAISE NOTICE 'The indicator_id is %', _loop_indicator_id;  -- coerced to text automatically
+	
+
    _counter := _counter + 1;
 
 END LOOP;
 END
 $do$
+
+
+
+
+CREATE OR REPLACE FUNCTION alterscorecolumns()
+  RETURNS void AS
+$BODY$
+BEGIN
+  execute 'ALTER TABLE _indicators_with_data ADD total_score integer';
+--  execute 'UPDATE hi_scores SET total_score = score1+score2+score3';
+END
+$BODY$
+language plpgsql;
+
