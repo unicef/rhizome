@@ -3,7 +3,7 @@
 DROP VIEW IF EXISTS vw_datapoint;
 CREATE VIEW vw_datapoint AS
 
-SELECT 
+SELECT
 	ID
 	,indicator_id
 	,region_id
@@ -14,7 +14,7 @@ FROM datapoint
 
 UNION ALL
 
-SELECT 	
+SELECT
 	x.max_dp_id + row_number() OVER (ORDER BY d_part.campaign_id,part.indicator_id,d_part.region_id)  AS id
 	,part.indicator_id as master_indicator_id
  	,d_part.region_id
@@ -23,7 +23,7 @@ SELECT
  	,CAST(1 as BOOLEAN) as is_calc
 FROM
 (
-	SELECT max(id) as max_dp_id FROM datapoint	
+	SELECT max(id) as max_dp_id FROM datapoint
 ) x
 INNER JOIN calculated_indicator_component part
 ON 1=1
@@ -38,3 +38,4 @@ ON whole.indicator_component_id = d_whole.indicator_id
 AND d_part.campaign_id = d_whole.campaign_id
 AND d_part.region_id = d_whole.region_id;
 
+GRANT SELECT ON vw_datapoint TO djangoapp;
