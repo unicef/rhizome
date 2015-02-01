@@ -57,3 +57,11 @@ SELECT * FROM (
 		WHERE i.id = d.indicator_id
 	) -- Distinct Indicators --
 )
+
+
+
+SELECT generate_series AS date,
+       b.desc AS TYPE,
+       (random() * 10000 + 1)::int AS val
+FROM generate_series((now() - '100 days'::interval)::date, now()::date, '1 day'::interval),
+  (SELECT unnest(ARRAY['OSX', 'Windows', 'Linux']) AS DESC) b;
