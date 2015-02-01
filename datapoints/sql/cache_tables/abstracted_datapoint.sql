@@ -40,9 +40,18 @@ AND EXISTS (
 	SELECT 1 FROM datapoint d2
 	WHERE c.id = d2.campaign_id
 )
-ORDER BY c.start_date DESC
+ORDER BY c.start_date DESC;
 
-SELECT * FROM (
+
+DROP TABLE IF EXISTS _indicators_with_data;
+
+CREATE TEMP TABLE _indicators_with_data AS
+SELECT 
+	row_number() OVER (order by x.id) as looper
+	,x.id as indicator_id
+	,CAST(NULL AS TIMESTAMP) AS process_start_time
+	,CAST(0 AS BOOLEAN) AS processed_flag
+FROM (
 	SELECT
 		id
 	FROM indicator i
@@ -56,12 +65,24 @@ SELECT * FROM (
 		SELECT 1 FROM datapoint d
 		WHERE i.id = d.indicator_id
 	) -- Distinct Indicators --
-)
+)x;
+
+SELECT * FROM _indicators_with_data
 
 
+DO
+$do$
+DECLARE
+ _counter int := 0;
+ _loop_indicator_id INT = 1;
+BEGIN
+WHILE _counter <= (SELECT MAX(looper) from _indicators_with_data)
+LOOP
 
-SELECT generate_series AS date,
-       b.desc AS TYPE,
-       (random() * 10000 + 1)::int AS val
-FROM generate_series((now() - '100 days'::interval)::date, now()::date, '1 day'::interval),
-  (SELECT unnest(ARRAY['OSX', 'Windows', 'Linux']) AS DESC) b;
+   _loop_indicator_id = (SELECT indicator_id FROM _indicators_with_data WHERE looper = _counter);
+   RAISE NOTICE 'The indicator_id is %', _loop_indicator_id;  -- coerced to text automatically
+   _counter := _counter + 1;
+
+END LOOP;
+END
+$do$
