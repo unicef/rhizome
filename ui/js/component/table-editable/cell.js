@@ -23,6 +23,25 @@ module.exports = {
 
 	},
 
+	attached: function () {
+		var self = this;
+
+		this.$el.addEventListener('mouseover', function () {
+			self.$dispatch('tooltip-show', {
+				el  : self.$el,
+				data: {
+					text: self.hoverText
+				}
+			});
+		});
+
+		this.$el.addEventListener('mouseout', function () {
+			self.$dispatch('tooltip-hide', {
+				el: self.$el
+			});
+		});
+	},
+
 	methods: {
 
 		// switch editing mode
@@ -78,7 +97,7 @@ module.exports = {
 					}
 
 				}
-				
+
 				// toggle editing mode
 				self.toggleEditing(false);
 
@@ -91,8 +110,8 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (this.value === undefined || this.value === null) { 
-				return ''; 
+			if (this.value === undefined || this.value === null) {
+				return '';
 			}
 			else {
 				// format according to attached method if it exists
@@ -120,18 +139,18 @@ module.exports = {
 	filters: {
 
 		// validate value
-		validator: { 
+		validator: {
 
 			write: function(val) {
 
 				// string
 				if (_.isString(val)) {
 					if (val.length === 0) { val = null; }
-				} 
+				}
 				// number
 				else if (_.isNumber(val)) {
 
-				} 
+				}
 				// NaN
 				else if (_.isNaN(val)) {
 					val = null;
