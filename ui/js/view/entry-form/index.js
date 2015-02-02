@@ -169,7 +169,7 @@ module.exports = {
 			
 			var items = _.chain(self.$data.regionData)
 							.filter(function(d) {
-								return d.office_id == campaign.office;
+								return d.office_id === campaign.office;
 							})
 							.map(function(d) {
 								return {
@@ -214,14 +214,15 @@ module.exports = {
 			if (self.regions.length > 0) {
 				
 				// get all high risk children of selected regions
-				_.forEach(self.regions, function(region) {
+				_.forEach(self.regions, function(regionVue) {
 
-					options.region__in.push(region.value);
+					var region = self.$data.regionData[regionVue.value];
+					options.region__in.push(region.id);
 
 					if (self.includeSubRegions) {
 						var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
-							options.region__in = options.region__in.concat(_.map(children, 'value'));
+							options.region__in = options.region__in.concat(_.map(children, 'id'));
 						}
 					}
 
@@ -250,6 +251,8 @@ module.exports = {
 				}
 			});
 
+			console.log(options);
+
 			// define columns
 			var columns = [
 				{ 
@@ -275,11 +278,14 @@ module.exports = {
 
 			_.defaults(options, self.pagination);
 
-			self.table.loading = true;
-
 			// console.log(options);
 
+			// get datapoints from API
+			self.table.loading = true;
 			api.datapointsRaw(options).done(function (data) {
+
+
+				// finished fetching data
 				self.table.loading = false;
 
 				self.pagination.the_limit   = Number(data.meta.the_limit);

@@ -3,7 +3,7 @@
               margin-right : right,
               margin-bottom: bottom,
               margin-left  : left">
-	<div v-transition="fade">
+	<div v-if="show" v-transition="fade">
 		<content>{{ text }}</content>
 
 		<div class="pointer"></div>
