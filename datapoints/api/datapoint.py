@@ -88,9 +88,15 @@ class DataPointResource(BaseNonModelResource):
         cleaned = []
 
         for k,v in indicator_json.iteritems():
-            indicator_dict = {'indicator':k,'value':v}
 
-            cleaned.append(indicator_dict)
+            print k
+            print self.parsed_params['indicator__in']
+            print type(self.parsed_params['indicator__in'])
+
+            if int(k) in self.parsed_params['indicator__in']:
+
+                indicator_dict = {'indicator':k,'value':v}
+                cleaned.append(indicator_dict)
 
         return cleaned
 
