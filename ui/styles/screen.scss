@@ -203,6 +203,14 @@ button, .button {
 			&:first-child {
 				border-left: none;
 			}
+
+			&.section-header, &.section-header:hover {
+				font-size: 11px;
+				background-color: #999;
+				font-weight: 100;
+				color: #fff;
+				text-transform: uppercase;
+			}
 		}
 
 		.th-inner {

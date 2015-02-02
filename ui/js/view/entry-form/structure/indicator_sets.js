@@ -6,6 +6,7 @@ module.exports = [
 			'title': 'Management Dashboard: National Indicators',
 			'region_level': 1,
 			'indicators': [
+				{ 'type': 'section-header', 'title': 'Resources' },
 				{ 'id': 44 }, 
 				{ 'id': 43 }, 
 				{ 'id': 32 }, 
@@ -20,12 +21,16 @@ module.exports = [
 			'title': 'Management Dashboard: District Indicators',
 			'region_level': 4,
 			'indicators': [
+
+				{ 'type': 'section-header', 'title': 'Supply' },
 				{ 'id': 196 },
 				{ 'id': 197 },
 				{ 'id': 5 },
 				{ 'id': 51 },
 				{ 'id': 198 },
 				{ 'id': 199 },
+
+				{ 'type': 'section-header', 'title': 'Access' },
 				{ 'id': 201 },
 				{ 'id': 203 },
 				{ 'id': 158 },
@@ -34,6 +39,8 @@ module.exports = [
 				{ 'id': 176 },
 				{ 'id': 204 },
 				{ 'id': 177 },
+
+				{ 'type': 'section-header', 'title': 'Frontline Workers\' Capacity To Perform' },
 				{ 'id': 205 },
 				{ 'id': 34 },
 				{ 'id': 33 },
@@ -53,6 +60,8 @@ module.exports = [
 				{ 'id': 36 },
 				{ 'id': 46 },
 				{ 'id': 36 },
+
+				{ 'type': 'section-header', 'title': 'Performance of FLWs' },
 				{ 'id': 222 },
 				{ 'id': 20 },
 				{ 'id': 55 },
@@ -64,6 +73,8 @@ module.exports = [
 				{ 'id': 213 },
 				{ 'id': 214 },
 				{ 'id': 213 },
+
+				{ 'type': 'section-header', 'title': 'Polio+' },
 				{ 'id': 50 },
 				{ 'id': 29 },
 				{ 'id': 216 },
