@@ -44,7 +44,7 @@ class RegionPolygonResource(BaseNonModelResource):
     properties = fields.DictField(attribute = 'properties')
     geometry = fields.DictField(attribute = 'geometry')
 
-    class Meta(BaseModelResource.Meta):
+    class Meta(BaseNonModelResource.Meta):
         object_class = GeoJsonResult
         resource_name = 'geo'
         filtering = {

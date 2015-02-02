@@ -225,13 +225,13 @@ class Responsibility(models.Model):
 
 class DataPointAbstracted(models.Model):
 
-    region = models.ForeignKey(Region)
-    campaign = models.ForeignKey(Campaign)
+    region_id = models.IntegerField()
+    campaign_id = models.IntegerField()
     indicator_json = JSONField()
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('region','campaign')
+        unique_together = ('region_id','campaign_id')
 
 class MissingMapping(models.Model):
 
