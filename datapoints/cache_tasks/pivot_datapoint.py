@@ -67,8 +67,9 @@ def r_c_df_to_db(rc_df):
 
     column_create_string = "(region_id INTEGER, campaign_id INTEGER, "
 
-    not_in_cols = ['index','region_id','campaign_id']
+    not_in_cols = ['region_id','campaign_id']
     for c in rc_df.columns:
+
         if c not in not_in_cols:
 
             column_create_string += '"'
@@ -78,13 +79,26 @@ def r_c_df_to_db(rc_df):
     column_create_string += ')'
     column_create_string = column_create_string.replace(', )',')')
 
-    print column_create_string
+    print csv_path
 
 
-    x = DataPoint.objects.raw("\
+    create_statement = DataPoint.objects.raw("\
         DROP TABLE IF EXISTS abstacted_datapoint;\
+        \
         CREATE TABLE abstacted_datapoint %s;\
-        SELECT id from datapoint LIMIT 1" % column_create_string)
+        SELECT id from datapoint LIMIT 1\
+        " % column_create_string)
 
-    for y in x:
-        print y
+
+    for r in create_statement:
+        print r
+
+    copy_statement = DataPoint.objects.raw("\
+        COPY abstacted_datapoint FROM '%s' DELIMITER ',' CSV;\
+        SELECT id from datapoint LIMIT 1\
+        " % csv_path)
+
+    print csv_path
+
+    for r in copy_statement:
+        print r
