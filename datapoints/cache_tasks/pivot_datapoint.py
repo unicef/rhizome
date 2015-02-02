@@ -52,7 +52,9 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     raw_indicator_df = DataFrame(list(DataPoint.objects\
         .filter(indicator_id = i_id)\
         .values_list('region_id','campaign_id','value')),columns = column_header)
+
     merged_df = rc_df.merge(raw_indicator_df,how='left')
+    merged_df = merged_df.reset_index(drop=True)
 
     return merged_df
 
@@ -63,14 +65,26 @@ def r_c_df_to_db(rc_df):
 
     rc_df.to_csv(csv_path)
 
+    column_create_string = "(region_id INTEGER, campaign_id INTEGER, "
+
+    not_in_cols = ['index','region_id','campaign_id']
+    for c in rc_df.columns:
+        if c not in not_in_cols:
+
+            column_create_string += '"'
+            column_create_string += str(c)
+            column_create_string += '" INTEGER, '
+
+    column_create_string += ')'
+    column_create_string = column_create_string.replace(', )',')')
+
+    print column_create_string
+
+
     x = DataPoint.objects.raw("\
         DROP TABLE IF EXISTS abstacted_datapoint;\
-        CREATE TABLE abstacted_datapoint \
-        (ZIP char(5), LATITUDE double precision, LONGITUDE double precision, \
-        CITY varchar, STATE char(2), COUNTY varchar, ZIP_CLASS varchar);\
-        \
-        SELECT id from datapoint LIMIT 1")
-
+        CREATE TABLE abstacted_datapoint %s;\
+        SELECT id from datapoint LIMIT 1" % column_create_string)
 
     for y in x:
         print y
