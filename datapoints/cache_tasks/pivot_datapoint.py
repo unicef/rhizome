@@ -30,18 +30,27 @@ def full_cache_refresh():
 
 
     rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
+    rc_df = rc_df.reset_index(level=[0,1])
 
-    for i_id in indicator_ids:
+    for i,(i_id) in enumerate(indicator_ids):
+
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
-        rc_df[i_id] = np.nan
 
-    pprint(rc_df)
+
+    print rc_df[:22]
+
 
 
 def add_indicator_data_to_rc_df(rc_df, i_id):
 
-    print 'processing...'
+    column_header = ['region_id','campaign_id']
+    column_header.append(i_id)
 
-    rc_df[i_id] = np.nan
+    raw_indicator_df = DataFrame(list(DataPoint.objects\
+        .filter(indicator_id = i_id)\
+        .values_list('region_id','campaign_id','value')),columns = column_header)
+    merged_df = rc_df.merge(raw_indicator_df,how='left')
 
-    return rc_df
+    return merged_df
+
+    # return rc_df
