@@ -34,7 +34,7 @@ module.exports = {
 
 	methods: {
 		handleEvent: function (evt) {
-			console.debug('tooltip::handleEvent', evt.type, evt);
+			// console.debug('tooltip::handleEvent', evt.type, evt);
 			var type = evt.type;
 
 			switch (type) {
@@ -62,7 +62,7 @@ module.exports = {
 		'tooltip-reposition': function () {
 			var offset = dom.offset(this.$el.parentElement);
 
-			console.debug('tooltip::reposition offset', offset);
+			// console.debug('tooltip::reposition offset', offset);
 
 			switch (this.orientation) {
 			case 'right':
@@ -94,7 +94,7 @@ module.exports = {
 				break;
 			}
 
-			console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
+			// console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
 		},
 
 		'tooltip-show': function () {
