@@ -387,8 +387,6 @@ module.exports = {
 					rows.push(row);
 				});
 
-				console.log(rows);
-
 				self.table.rows = rows;
 				self.table.columns = columns;
 
