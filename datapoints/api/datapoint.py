@@ -47,7 +47,7 @@ class DataPointResource(BaseNonModelResource):
 
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
-        # max_limit = None # return all rows by default ( limit defaults to 20 )
+        max_limit = None # return all rows by default ( limit defaults to 20 )
         # serializer = CustomSerializer
 
     def get_object_list(self,request):
@@ -63,8 +63,16 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
+        err, region_ids = self.get_regions_to_return_from_url(request)
+        if err:
+            self.error = err
+            return []
+
+        print '====\n' * 5
+        print region_ids
+
         db_data = DataPointAbstracted.objects.filter(
-            region_id__in = self.parsed_params['region__in'],
+            region_id__in = region_ids,
             campaign_id__in = self.parsed_params['campaign__in'])
 
         for row in db_data:
@@ -169,7 +177,7 @@ class DataPointResource(BaseNonModelResource):
         ## there return the default values ( given in the dict below)
         optional_params = {'the_limit':10000,'the_offset':0,'agg_level':'mixed',\
             'campaign_start':'2012-01-01','campaign_end':'2900-01-01' ,\
-            'campaign__in':None}
+            'campaign__in':None,'region__in': None}
 
         for k,v in optional_params.iteritems():
             try:
@@ -179,7 +187,7 @@ class DataPointResource(BaseNonModelResource):
 
         ## find the Required Parameters and if they
         ## dont exists return an error to the response
-        required_params = {'indicator__in': None,'region__in': None}
+        required_params = {'indicator__in': None}
 
         for k,v in required_params.iteritems():
 
