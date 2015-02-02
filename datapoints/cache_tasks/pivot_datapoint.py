@@ -1,4 +1,5 @@
 from pprint import pprint
+import pandas as pd
 from pandas import DataFrame
 import numpy as np
 
@@ -61,7 +62,10 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
 
 def r_c_df_to_db(rc_df):
 
-    rc_dict = rc_df.transpose().to_dict()
+    nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
+
+    rc_dict = nan_to_null_df.transpose().to_dict()
+
 
 
     for r_no, r_data in rc_dict.iteritems():
