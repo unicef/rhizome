@@ -14,6 +14,32 @@ module.exports = {
 		};
 	},
 
+	created: function() {
+
+		// set previous value
+		this.previousValue = this.value || null;
+
+	},
+
+	attached: function () {
+		var self = this;
+
+		this.$el.addEventListener('mouseover', function () {
+			self.$dispatch('tooltip-show', {
+				el  : self.$el,
+				data: {
+					text: self.hoverText
+				}
+			});
+		});
+
+		this.$el.addEventListener('mouseout', function () {
+			self.$dispatch('tooltip-hide', {
+				el: self.$el
+			});
+		});
+	},
+
 	methods: {
 
 		// switch editing mode
@@ -41,7 +67,12 @@ module.exports = {
 					if (self.withResponse) {
 						self.withResponse(response);
 					}
-				});
+
+				}
+
+				// toggle editing mode
+				self.toggleEditing(false);
+
 			}
 
 			// toggle editing mode
@@ -53,7 +84,7 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (!this.value) {
+			if (this.value === undefined || this.value === null) {
 				return '';
 			}
 			else {
