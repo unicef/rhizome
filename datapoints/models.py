@@ -231,7 +231,7 @@ class DataPointAbstracted(models.Model):
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        managed = True
+        unique_together = ('region','campaign')
 
 class MissingMapping(models.Model):
 
