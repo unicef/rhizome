@@ -89,10 +89,6 @@ class DataPointResource(BaseNonModelResource):
 
         for k,v in indicator_json.iteritems():
 
-            print k
-            print self.parsed_params['indicator__in']
-            print type(self.parsed_params['indicator__in'])
-
             if int(k) in self.parsed_params['indicator__in']:
 
                 indicator_dict = {'indicator':k,'value':v}
