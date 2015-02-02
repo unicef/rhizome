@@ -1,4 +1,4 @@
-/* global window, MouseEvent */
+/* global document, window, MouseEvent */
 'use strict';
 
 var _ = require('lodash');
@@ -9,18 +9,32 @@ function intStyle(el, property) {
 	return parseInt(style.getPropertyValue(property), 10);
 }
 
+function offset(el) {
+	var offset = {
+		top : el.offsetTop,
+		left: el.offsetLeft
+	};
+
+	var dims      = dimensions(el, true);
+	var parent    = el.offsetParent || document.body;
+
+	offset.bottom = parent.scrollHeight - (offset.top + dims.height);
+	offset.right  = parent.scrollWidth - (offset.left + dims.width);
+
+	return offset;
+}
+
 function documentOffset(el) {
+	var off = offset(el);
+
 	if (!el.offsetParent) {
-		return {
-			top: el.offsetTop,
-			left: el.offsetLeft
-		};
+		return off;
 	}
 
-	return _.reduce(documentOffset(el.offsetParent), function (result, offset, key) {
-		result[key] += offset;
+	return _.reduce(documentOffset(el.offsetParent), function (result, off, key) {
+		result[key] += off;
 		return result;
-	}, { top: el.offsetTop, left: el.offsetLeft });
+	}, off);
 }
 
 function viewportOffset(el) {
@@ -70,6 +84,7 @@ function contentArea(el) {
 
 
 module.exports = {
+	offset        : offset,
 	documentOffset: documentOffset,
 	viewportOffset: viewportOffset,
 	contains      : contains,
