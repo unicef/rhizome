@@ -50,6 +50,8 @@ module.exports = {
 
 	ready: function() {
 
+		this.$watch('campaign_id', this.refreshRegionsDropdown);
+
 		this.load();
 
 	},
@@ -71,19 +73,6 @@ module.exports = {
 			self.regions = items;
 		});
 
-		// this._indicators = new Dropdown({
-		// 	el     : '#indicators',
-		// 	source : api.indicators,
-		// 	mapping: {
-		// 		'short_name': 'title',
-		// 		'id'        : 'value'
-		// 	}
-		// });
-
-		// this._indicators.$on('dropdown-value-changed', function (items) {
-		// 	self.indicators = items;
-		// });
-
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
 		});
@@ -93,7 +82,6 @@ module.exports = {
 
 		hasSelection: function () {
 			return this.regions.length > 0;
-			// return this.regions.length > 0 && this.indicators.length > 0;
 		}
 
 	},
@@ -150,10 +138,9 @@ module.exports = {
 								return a.office - b.office;
 							})
 							.map(function(d) {
-								return {
-									text: d.slug,
-									value: d.id
-								};
+								d.text = d.slug;
+								d.value = d.id;
+								return d;
 							});
 					})
 
@@ -177,6 +164,9 @@ module.exports = {
 
 		refreshRegionsDropdown: function() {
 			var self = this;
+
+			var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id); });
+			console.log(self.$data.campaign_id, campaign);
 
 			var items = _.map(self.$data.regionData, function(d) {
 										return {

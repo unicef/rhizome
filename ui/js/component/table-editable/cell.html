@@ -1,4 +1,4 @@
-<td v-class="editable: isEditable, editing: isEditing, missing: missing, saving: isSaving, error: hasError">
+<td v-class="editable: isEditable, editing: isEditing, missing: missing, saving: isSaving, error: hasError, tooltip-container: tooltip">
 
 	<i v-if="isEditable" class="fa fa-spinner fa-spin saving-icon"></i>
 
@@ -14,5 +14,7 @@
 		></input>
 
 	<div v-if="width > 0" v-style="width: width + 'px'" style="height: 1px">&nbsp;</div>
+
+	<div v-if="tooltip" v-component="vue-tooltip" data-orientation="bottom">{{ tooltip }}</div>
 
 </td>
