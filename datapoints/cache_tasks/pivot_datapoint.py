@@ -1,4 +1,5 @@
 from pprint import pprint
+import numpy as np
 from pandas import DataFrame
 
 from datapoints.models import DataPoint
@@ -6,7 +7,7 @@ from datapoints.models import DataPoint
 
 def full_cache_refresh():
 
-    indicator_ids = set(list(DataPoint.objects.all()\
+    indicator_ids = list(set(DataPoint.objects.all()\
         .values_list('indicator_id',flat=True)))
 
 
@@ -27,5 +28,20 @@ def full_cache_refresh():
         r_c_tuple = (rc.region_id,rc.campaign_id)
         rc_tuple_list.append(r_c_tuple)
 
+
     rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
+
+    for i_id in indicator_ids:
+        rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
+        rc_df[i_id] = np.nan
+
     pprint(rc_df)
+
+
+def add_indicator_data_to_rc_df(rc_df, i_id):
+
+    print 'processing...'
+
+    rc_df[i_id] = np.nan
+
+    return rc_df
