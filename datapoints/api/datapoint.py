@@ -55,6 +55,13 @@ class DataPointResource(BaseNonModelResource):
         '''
 
         results = []
+
+        err,parsed_params = self.parse_url_params(request.GET)
+
+        if err:
+            self.error = err
+            return []
+
         db_data = DataPointAbstracted.objects.all()[:5]
 
         for row in db_data:
@@ -63,12 +70,6 @@ class DataPointResource(BaseNonModelResource):
             r.campaign = row.campaign_id
 
             indicator_json = row.indicator_json
-            print type(indicator_json)
-            print type(indicator_json)
-            print type(indicator_json)
-            print type(indicator_json)
-
-
             cleaned = self.clean_indicator_json(indicator_json)
 
             r.indicators = cleaned
@@ -113,7 +114,6 @@ class DataPointResource(BaseNonModelResource):
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
-
 
         ## get rid of the meta_dict. i will add my own meta data.
         data['meta'].pop("limit",None)
