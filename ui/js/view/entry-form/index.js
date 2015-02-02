@@ -166,17 +166,20 @@ module.exports = {
 			var self = this;
 
 			var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id); });
-			console.log(self.$data.campaign_id, campaign);
+			
+			var items = _.chain(self.$data.regionData)
+							.filter(function(d) {
+								return d.office_id == campaign.office;
+							})
+							.map(function(d) {
+								return {
+									'parent': d.parent_region_id,
+									'title': d.name,
+									'value': d.id
+								};
+							})
+							.value();
 
-			var items = _.map(self.$data.regionData, function(d) {
-										return {
-											'parent': d.parent_region_id,
-											'title': d.name,
-											'value': d.id
-										};
-									});
-
-			console.log(items);
 			self._regions.items = treeify(items, 'value');
 		},
 
@@ -274,7 +277,7 @@ module.exports = {
 
 			self.table.loading = true;
 
-			console.log(options);
+			// console.log(options);
 
 			api.datapointsRaw(options).done(function (data) {
 				self.table.loading = false;
