@@ -251,8 +251,6 @@ module.exports = {
 				}
 			});
 
-			console.log(options);
-
 			// define columns
 			var columns = [
 				{ 
@@ -278,12 +276,9 @@ module.exports = {
 
 			_.defaults(options, self.pagination);
 
-			// console.log(options);
-
 			// get datapoints from API
 			self.table.loading = true;
 			api.datapointsRaw(options).done(function (data) {
-
 
 				// finished fetching data
 				self.table.loading = false;
@@ -301,79 +296,98 @@ module.exports = {
 
 				// assemble data points into rows for table
 				var rows = [];
-				options.indicator__in.forEach(function(indicator_id) {
+				indicatorSet.indicators.forEach(function(rowInfo) {
 					
 					var row = [];
 
-					// add columns 
-					columns.forEach(function(column) {
-
-						var cell = {
+					// section header row
+					if (rowInfo.type && rowInfo.type === 'section-header') {
+						row.push({
 							isEditable: false,
-							type: column.type
-						};
+							type: 'label',
+							value: rowInfo.title,
+							class: 'section-header',
+							colspan: columns.length
+						});
+					}
+					// normal indicator row
+					else {
 
-						switch (column.type) {
+						var indicator_id = rowInfo.id;
 
-							// editable value
-							case 'value':
-								cell.isEditable = true;
-								cell.format = numericFormatter;
-								cell.classes = 'numeric';
-								cell.width = 80;
-								if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
-									cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id;
-									cell.value = byIndicator[indicator_id][column.key].value;
-									cell.note = byIndicator[indicator_id][column.key].note;
-								} else {
-									cell.datapoint_id = null;
-									cell.value = null;
-									cell.note = null;
-								}
-								// tooltip
-								if (self.$data.regionData[column.key] && self.$data.indicators[indicator_id]) {
-									cell.tooltip = self.$data.indicators[indicator_id].name + ' value for ' + self.$data.regionData[column.key].name;
-								} else {
-									cell.tooltip = null;
-								}
-								// generate promise for submitting a new value to the API for saving
-								cell.buildSubmitPromise = function(newVal) {
-									var upsert_options = {
-										datapoint_id: cell.datapoint_id,
-										campaign_id: options.campaign__in,
-										indicator_id: indicator_id,
-										region_id: column.key,
-										value: parseFloat(newVal)
+						// add columns 
+						columns.forEach(function(column) {
+
+							var cell = {
+								isEditable: false,
+								type: column.type
+							};
+
+							switch (column.type) {
+
+								// editable value
+								case 'value':
+									cell.isEditable = true;
+									cell.format = numericFormatter;
+									cell.classes = 'numeric';
+									cell.width = 80;
+									if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
+										cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id;
+										cell.value = byIndicator[indicator_id][column.key].value;
+										cell.note = byIndicator[indicator_id][column.key].note;
+									} else {
+										cell.datapoint_id = null;
+										cell.value = null;
+										cell.note = null;
+									}
+									// tooltip
+									if (self.$data.regionData[column.key] && self.$data.indicators[indicator_id]) {
+										cell.tooltip = self.$data.indicators[indicator_id].name + ' value for ' + self.$data.regionData[column.key].name;
+									} else {
+										cell.tooltip = null;
+									}
+									// generate promise for submitting a new value to the API for saving
+									cell.buildSubmitPromise = function(newVal) {
+										var upsert_options = {
+											datapoint_id: cell.datapoint_id,
+											campaign_id: options.campaign__in,
+											indicator_id: indicator_id,
+											region_id: column.key,
+											value: parseFloat(newVal)
+										};
+										return api.datapointUpsert(upsert_options);
 									};
-									return api.datapointUpsert(upsert_options);
-								};
-								// callback to specifically handle response
-								cell.withResponse = function(response) {
-									console.log('done!', response);
-								};
-								// callback to handle error
-								cell.withError = function(error) {
-									console.log(error);
-									if (error.msg && error.msg.message) { alert(error.msg.message); }
-									cell.hasError = true;
-								};
-								break;
+									// callback to specifically handle response
+									cell.withResponse = function(response) {
+										console.log('done!', response);
+									};
+									// callback to handle error
+									cell.withError = function(error) {
+										console.log(error);
+										if (error.msg && error.msg.message) { alert(error.msg.message); }
+										cell.hasError = true;
+									};
+									break;
 
-							// indicator name
-							case 'label':
-								cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
-								cell.width = 200;
-								break;
+								// indicator name
+								case 'label':
+									cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
+									cell.width = 300;
+									break;
 
-						}
+							}
 
-						// add cell to row
-						row.push(cell);
-					});
+							// add cell to row
+							row.push(cell);
+						});
+
+					} // end normal indicator row
 
 					// add row to main array
 					rows.push(row);
 				});
+
+				console.log(rows);
 
 				self.table.rows = rows;
 				self.table.columns = columns;
