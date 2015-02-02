@@ -311,4 +311,4 @@ def pivot_datapoint(request):
 
     full_cache_refresh()
 
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/datapoints/regions/')
