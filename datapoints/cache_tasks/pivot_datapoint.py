@@ -1,7 +1,9 @@
 from pprint import pprint
-import numpy as np
 from pandas import DataFrame
+import numpy as np
 
+from django.db import connection as con
+from django.conf import settings
 from datapoints.models import DataPoint
 
 
@@ -36,12 +38,13 @@ def full_cache_refresh():
 
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
-
-    print rc_df[:22]
-
-
+    r_c_df_to_db(rc_df)
 
 def add_indicator_data_to_rc_df(rc_df, i_id):
+    '''
+    left join the region / campaign dataframe with the stored data for each
+    campaign.
+    '''
 
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
@@ -53,4 +56,9 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
 
     return merged_df
 
-    # return rc_df
+
+def r_c_df_to_db(rc_df):
+
+    csv_path = settings.MEDIA_ROOT + '_rc_df.csv'
+
+    rc_df.to_csv(csv_path)
