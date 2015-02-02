@@ -223,17 +223,15 @@ class Responsibility(models.Model):
         unique_together = ('user','indicator','region')
 
 
-class AbstractedDataPoint(models.Model):
+class DataPointAbstracted(models.Model):
 
     region = models.ForeignKey(Region)
-    indicator = models.ForeignKey(Indicator)
     campaign = models.ForeignKey(Campaign)
-    value = models.FloatField()
-    is_calc = models.BooleanField()
+    indicator_json = JSONField()
 
     class Meta:
-        db_table = 'vw_datapoint'
-        managed = False
+        db_table = 'datapoint_abstracted'
+        managed = True
 
 class MissingMapping(models.Model):
 

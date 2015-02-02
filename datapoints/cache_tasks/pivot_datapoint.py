@@ -4,7 +4,7 @@ import numpy as np
 
 from django.db import connection as con
 from django.conf import settings
-from datapoints.models import DataPoint
+from datapoints.models import DataPoint, DataPointAbstracted
 
 
 def full_cache_refresh():
@@ -65,40 +65,17 @@ def r_c_df_to_db(rc_df):
 
     rc_df.to_csv(csv_path)
 
-    column_create_string = "(region_id INTEGER, campaign_id INTEGER, "
+    rc_dict = rc_df.transpose().to_dict()
 
-    not_in_cols = ['region_id','campaign_id']
-    for c in rc_df.columns:
+    for r_no, r_data in rc_dict.iteritems():
+        region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
 
-        if c not in not_in_cols:
+        del r_data['region_id']
+        del r_data['campaign_id']
+        del r_data['index']
 
-            column_create_string += '"'
-            column_create_string += str(c)
-            column_create_string += '" INTEGER, '
-
-    column_create_string += ')'
-    column_create_string = column_create_string.replace(', )',')')
-
-    print csv_path
-
-
-    create_statement = DataPoint.objects.raw("\
-        DROP TABLE IF EXISTS abstacted_datapoint;\
-        \
-        CREATE TABLE abstacted_datapoint %s;\
-        SELECT id from datapoint LIMIT 1\
-        " % column_create_string)
-
-
-    for r in create_statement:
-        print r
-
-    copy_statement = DataPoint.objects.raw("\
-        COPY abstacted_datapoint FROM '%s' DELIMITER ',' CSV;\
-        SELECT id from datapoint LIMIT 1\
-        " % csv_path)
-
-    print csv_path
-
-    for r in copy_statement:
-        print r
+        DataPointAbstracted.objects.create(
+            region_id = region_id,\
+            campaign_id = campaign_id,\
+            indicator_json = r_data
+        )
