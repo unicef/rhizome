@@ -12,6 +12,7 @@ CREATE TABLE _ng_setts AS
 
 SELECT
    sr.id
+  ,LOWER(REPLACE(REPLACE(sr.region_string,' ','-'),'/','-')) as region_slug
   ,sr.region_string
   ,sr.region_type
   ,sr.region_code
@@ -84,7 +85,7 @@ INSERT INTO region
 
 SELECT 
 	o.id
-	,LOWER(REPLACE(REPLACE(ngs.region_string,' ','-'),'/','-'))
+	,region_slug
 	,s.id
 	,ngs.region_code
 	,is_high_risk
@@ -103,6 +104,10 @@ ON ngs.region_type = rt.name
 WHERE NOT EXISTS ( 
 	SELECT 1 FROM region r
 	WHERE ngs.region_string = r.name
+)
+AND NOT EXISTS ( 
+	SELECT 1 FROM region r2
+	WHERE ngs.region_code = r2.region_code
 )
 AND NOT EXISTS ( 
 	SELECT 1 FROM region r2
