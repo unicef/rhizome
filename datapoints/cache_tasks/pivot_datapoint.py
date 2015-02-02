@@ -62,3 +62,15 @@ def r_c_df_to_db(rc_df):
     csv_path = settings.MEDIA_ROOT + '_rc_df.csv'
 
     rc_df.to_csv(csv_path)
+
+    x = DataPoint.objects.raw("\
+        DROP TABLE IF EXISTS abstacted_datapoint;\
+        CREATE TABLE abstacted_datapoint \
+        (ZIP char(5), LATITUDE double precision, LONGITUDE double precision, \
+        CITY varchar, STATE char(2), COUNTY varchar, ZIP_CLASS varchar);\
+        \
+        SELECT id from datapoint LIMIT 1")
+
+
+    for y in x:
+        print y
