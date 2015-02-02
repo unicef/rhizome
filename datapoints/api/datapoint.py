@@ -54,15 +54,19 @@ class DataPointResource(BaseNonModelResource):
         '''
         '''
 
+        self.error = None
         results = []
 
-        err,parsed_params = self.parse_url_params(request.GET)
+        err = self.parse_url_params(request.GET)
 
         if err:
             self.error = err
             return []
 
-        db_data = DataPointAbstracted.objects.all()[:5]
+        db_data = DataPointAbstracted.objects.filter(
+            region_id__in = self.parsed_params['region__in'],
+            # campaign_id__in = self.parsed_params['campaign__in'],
+        )[:5]
 
         for row in db_data:
             r = ResultObject()
@@ -163,8 +167,8 @@ class DataPointResource(BaseNonModelResource):
         ## try to find optional parameters in the dictionary. If they are not
         ## there return the default values ( given in the dict below)
         optional_params = {'the_limit':10000,'the_offset':0,'agg_level':'mixed',\
-            'campaign_start':'2012-01-01','campaign_end':'2900-01-01' }
-
+            'campaign_start':'2012-01-01','campaign_end':'2900-01-01' ,\
+            'campaign__in':None}
 
         for k,v in optional_params.iteritems():
             try:
@@ -181,39 +185,32 @@ class DataPointResource(BaseNonModelResource):
             try:
                 parsed_params[k] = [ int(p) for p in  query_dict[k].split(',') ]
             except KeyError as err:
-                err_msg = str(err).replace('"','') + ' is a required paramater!'
+                err_msg = '%s is a required parameter!' % err
                 return err_msg , None
+
+
+        campaign_in_param = parsed_params['campaign__in']
+
+        if campaign_in_param:
+            campaign_ids = campaign_in_param.split(',')
+
+        else:
+            campaign_ids = self.get_campaign_list(
+                parsed_params['campaign_start'],parsed_params['campaign_end']
+            )
+
+        parsed_params['campaign__in'] = campaign_ids
 
         self.parsed_params = parsed_params
 
-        return None, parsed_params
+        return None
 
 
-    def filter_campaigns_by_date(self,query_dict):
+    def get_campaign_list(self,campaign_start,campaign_end):
         '''
         Based on the parameters passed for campaigns, start/end or __in
         return to the parsed params dictionary a list of campaigns to query
         '''
-
-        try:
-            ## if the campaign_in parameter exists return this
-            ## and ignore the campaign_start and end parameters.
-            campaign__in = [int(c) for c in query_dict['campaign__in'].split(',')]
-            return campaign__in
-        except KeyError:
-            pass
-
-        try:
-            campaign_start = query_dict['campaign_start']
-
-        except KeyError:
-            campaign_start = '2001-01-01'
-
-        try:
-            campaign_end = query_dict['campaign_end']
-
-        except KeyError:
-            campaign_end = '2900-01-01'
 
         cs = Campaign.objects.filter(
             start_date__gte = campaign_start,\
@@ -222,7 +219,7 @@ class DataPointResource(BaseNonModelResource):
 
         campaign__in = [c.id for c in cs]
 
-        return None, campaign__in
+        return campaign__in
 
 
 class DataPointEntryResource(ModelResource):
