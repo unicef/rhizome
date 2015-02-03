@@ -6,6 +6,14 @@ var d3        = require('d3');
 var colors    = require('colors/coolgray');
 var lineChart = require('./renderer/line');
 
+function x (d) {
+	return d.campaign.start_date;
+}
+
+function y(d) {
+	return d.value;
+}
+
 module.exports = {
 	replace : true,
 	template: require('./chart.html'),
@@ -78,10 +86,6 @@ module.exports = {
 		},
 
 		xScale: function () {
-			function x (d) {
-				return d.campaign.start_date;
-			}
-
 			var datapoints = this.datapoints || [];
 
 			var start = this.domain ?
@@ -106,10 +110,6 @@ module.exports = {
 		},
 
 		yScale: function () {
-			function y(d) {
-				return d.value;
-			}
-
 			var datapoints = this.datapoints || [];
 
 			var lower = this.empty ?
