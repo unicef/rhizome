@@ -236,7 +236,22 @@ FROM (
   SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Banner','part_to_be_summed' UNION ALL
   SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Relative','part_to_be_summed' UNION ALL
   SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Health worker','part_to_be_summed' UNION ALL
-  SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Community mobiliser','part_to_be_summed'
+  SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Community mobiliser','part_to_be_summed' UNION ALL
+
+  --2.3.2015 - POLIO-238
+
+  SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals before re-visit','part_of_difference' UNION ALL
+  SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals after re-visit','part_of_difference' UNION ALL
+  SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals resolved','difference_of_difference' UNION ALL
+  SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals before re-visit','whole_of_difference' UNION ALL
+  SELECT 'Percent of absences resolved during the previous month (both during campaigns and between rounds)','Number of absences before re-visit','part_of_difference' UNION ALL
+  SELECT 'Percent of absences resolved during the previous month (both during campaigns and between rounds)','Number of absences after re-visit','part_of_difference' UNION ALL
+  SELECT 'Percent of absences resolved during the previous month (both during campaigns and between rounds)','Number of absences resolved','difference_of_difference' UNION ALL
+  SELECT 'Percent of absences resolved during the previous month (both during campaigns and between rounds)','Number of absences before re-visit','whole_of_difference' UNION ALL
+  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Number of children seen','part_of_difference' UNION ALL
+  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Not aware','part_of_difference' UNION ALL
+  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Aware','difference_of_difference' UNION ALL
+  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Number of children seen','whole_of_difference'
 
 )x
 WHERE master_indicator IS NOT NULL;
