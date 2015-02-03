@@ -69,9 +69,6 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        print '====\n' * 5
-        print region_ids
-
         db_data = DataPointAbstracted.objects.filter(
             region_id__in = region_ids,
             campaign_id__in = self.parsed_params['campaign__in'])
@@ -293,7 +290,6 @@ class DataPointEntryResource(ModelResource):
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
-            print e.data
             bundle.data = self.make_error_response(e)
             response = self.create_response(bundle.request, bundle)
             raise ImmediateHttpResponse(response=response)
