@@ -17,6 +17,7 @@ def full_cache_refresh():
         False).values_list('id',flat=True))
 
     all_indicator_ids = indicator_ids + calc_indicator_ids
+    all_indicator_ids = [164]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
@@ -59,39 +60,31 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     #     .values_list('region_id','campaign_id','value')),columns = column_header)
 
     sql = """
-    SELECT
-    	COALESCE(x.region_id, y.region_id) as region_id
-    	,COALESCE(x.campaign_id, y.campaign_id) as campaign_id
-        ,COALESCE(x.value, y.value) as "%s"
-    FROM (
-    	SELECT
+        SELECT
     		d.region_id
-        	,d.campaign_id
-        	,d.indicator_id
-    		,value
-            ,'f' as is_agg
-    	FROM datapoint_with_computed d
-    	)x
-
-    	FULL JOIN (
-
-    	SELECT
-    		r.parent_region_id as region_id
     		,d.campaign_id
-    		,d.indicator_id
-    		,SUM(d.value) AS value
-            ,'t' as is_agg
-    	FROM datapoint_with_computed d
-    	INNER JOIN  region r
-    	ON d.region_id = r.id
-    	GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id
-    	) y
-    	ON x.campaign_id = y.campaign_id
-     	AND x.indicator_id = y.indicator_id
-	AND x.region_id = y.region_id
-    WHERE x.indicator_id = %s
-    """ % (i_id,i_id)
+    		,value as "%s"
+        FROM datapoint_with_computed d
+    	WHERE indicator_id  = %s
 
+		UNION ALL
+
+		SELECT
+			r.parent_region_id
+			, d.campaign_id
+			, SUM(d.value)
+		FROM datapoint_with_computed d
+		INNER JOIN region  r
+		ON d.region_id = r.id
+		AND indicator_id = %s
+		AND NOT EXISTS (
+			SELECT 1 FROM datapoint tid
+			WHERE r.parent_region_id = tid.region_id
+			AND d.campaign_id = tid.campaign_id
+			AND tid.indicator_id = d.indicator_id
+		)
+		GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
+        """ % (i_id,i_id,i_id)
 
     indicator_df = read_sql(sql,con,columns=column_header)
 
