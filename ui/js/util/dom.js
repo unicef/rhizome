@@ -72,7 +72,7 @@ function contentArea(el) {
 module.exports = {
 	documentOffset: documentOffset,
 	viewportOffset: viewportOffset,
-	contains: contains,
-	dimensions: dimensions,
-	contentArea: contentArea
+	contains      : contains,
+	dimensions    : dimensions,
+	contentArea   : contentArea
 };
