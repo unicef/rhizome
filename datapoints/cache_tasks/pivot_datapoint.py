@@ -50,22 +50,22 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
-    raw_indicator_df = DataFrame(list(DataPoint.objects\
-        .filter(indicator_id = i_id)\
-        .values_list('region_id','campaign_id','value')),columns = column_header)
+    # raw_indicator_df = DataFrame(list(DataPoint.objects\
+    #     .filter(indicator_id = i_id)\
+    #     .values_list('region_id','campaign_id','value')),columns = column_header)
 
     sql = """
     SELECT
-    	x.region_id
-    	,x.campaign_id
-    	,x.indicator_id
-    	,COALESCE(x.value, y.value) as value
+    	COALESCE(x.region_id, y.region_id) as region_id
+    	,COALESCE(x.campaign_id, y.campaign_id) as campaign_id
+        ,COALESCE(x.value, y.value) as "%s"
     FROM (
     	SELECT
     		d.region_id
         	,d.campaign_id
         	,d.indicator_id
     		,value
+            ,'f' as is_agg
     	FROM datapoint d
     	)x
 
@@ -76,6 +76,7 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     		,d.campaign_id
     		,d.indicator_id
     		,SUM(d.value) AS value
+            ,'t' as is_agg
     	FROM datapoint d
     	INNER JOIN  region r
     	ON d.region_id = r.id
@@ -83,21 +84,14 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     	) y
     	ON x.campaign_id = y.campaign_id
      	AND x.indicator_id = y.indicator_id
-    	AND x.region_id = y.region_id
+	AND x.region_id = y.region_id
     WHERE x.indicator_id = %s
+    """ % (i_id,i_id)
 
-    """ % i_id
 
-    parent_agg_df = read_sql(sql,con)
-    parent_agg_df['is_agg'] = 1
-    raw_indicator_df['is_agg'] = 0
+    indicator_df = read_sql(sql,con,columns=column_header)
 
-    # unioned_df_with_parent = concat([raw_indicator_df,parent_agg_df])
-
-    unioned_df_with_parent = raw_indicator_df
-    print unioned_df_with_parent[:10]
-
-    merged_df = rc_df.merge(unioned_df_with_parent,how='left')
+    merged_df = rc_df.merge(indicator_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
 
     return merged_df
