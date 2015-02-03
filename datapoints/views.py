@@ -11,6 +11,7 @@ from guardian.shortcuts import get_objects_for_user
 
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
+from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -304,3 +305,10 @@ def search(request):
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
         context_instance=RequestContext(request))
+
+
+def pivot_datapoint(request):
+
+    full_cache_refresh()
+
+    return HttpResponseRedirect('/datapoints/regions/')
