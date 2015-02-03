@@ -30,7 +30,8 @@ module.exports = {
 			self.$dispatch('tooltip-show', {
 				el  : self.$el,
 				data: {
-					text: self.hoverText
+					text: self.hoverText,
+					orientation: 'bottom'
 				}
 			});
 		});
