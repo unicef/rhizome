@@ -1,6 +1,6 @@
 #!/bin/bash
-SQL_DIR=$(pwd)'/datapoints/sql/views/'
+SQL_DIR=$(pwd)'/datapoints/sql/'
 
-psql polio -f $SQL_DIR'vw_datapoint.sql'
-psql polio -f $SQL_DIR'vw_missing_mappings.sql'
-psql polio -f $SQL_DIR'vw_region_simple.sql'
+psql polio -f $SQL_DIR'views/vw_missing_mappings.sql'
+psql polio -f $SQL_DIR'views/vw_region_simple.sql'
+psql polio -f $SQL_DIR'cache_tables/datapoint_plus_computed.sql'

@@ -5,7 +5,7 @@ import numpy as np
 
 from django.db import connection as con
 from django.conf import settings
-from datapoints.models import DataPoint, DataPointAbstracted
+from datapoints.models import *
 
 
 def full_cache_refresh():
@@ -13,8 +13,12 @@ def full_cache_refresh():
     indicator_ids = list(set(DataPoint.objects.all()\
         .values_list('indicator_id',flat=True)))
 
+    calc_indicator_ids = list(Indicator.objects.filter(is_reported=\
+        False).values_list('id',flat=True))
 
-    indicator_df = DataFrame(columns = indicator_ids)
+    all_indicator_ids = indicator_ids + calc_indicator_ids
+
+    indicator_df = DataFrame(columns = all_indicator_ids)
 
     distict_region_campaign_list = DataPoint.objects.raw("\
         SELECT \
@@ -35,7 +39,7 @@ def full_cache_refresh():
     rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
     rc_df = rc_df.reset_index(level=[0,1])
 
-    for i,(i_id) in enumerate(indicator_ids):
+    for i,(i_id) in enumerate(all_indicator_ids):
 
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
@@ -66,7 +70,7 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
         	,d.indicator_id
     		,value
             ,'f' as is_agg
-    	FROM datapoint d
+    	FROM datapoint_with_computed d
     	)x
 
     	FULL JOIN (
@@ -77,7 +81,7 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     		,d.indicator_id
     		,SUM(d.value) AS value
             ,'t' as is_agg
-    	FROM datapoint d
+    	FROM datapoint_with_computed d
     	INNER JOIN  region r
     	ON d.region_id = r.id
     	GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id
