@@ -59,5 +59,10 @@ urlpatterns = [
     url(r'^campaign/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
         name='update_campaign'),
 
+        #############
+        ## CACHING ##
+        #############
+    url(r'^pivot_datapoint/$', views.pivot_datapoint, name='pivot_datapoint'),
+
 
 ]

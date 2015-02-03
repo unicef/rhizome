@@ -50,7 +50,6 @@ class DocTransform(object):
 
         indicator_col = self.column_mappings['indicator_col']
         if indicator_col == 'cols_are_indicators':
-            print 'THIS ISNT HANDLED YET!'
             # do stuff #
             source_datapoints = pivot_and_insert_src_datapoints(self.df,\
                 self.document.id,self.column_mappings)
