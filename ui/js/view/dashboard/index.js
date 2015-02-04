@@ -62,6 +62,7 @@ module.exports = {
 					value   : o.start_date,
 					date    : startDate.format('YYYYMMDD'),
 					end     : o.end_date,
+					id      : o.id,
 					selected: false
 				};
 			});
@@ -91,6 +92,7 @@ module.exports = {
 		'nco-dashboard'       : require('dashboard/nco'),
 
 		'chart-bar'           : require('component/chart/bar'),
+		'chart-region-bar'    : require('component/chart/stacked-region-bar'),
 		'chart-bullet'        : require('component/chart/bullet'),
 		'chart-choropleth'    : require('component/chart/choropleth'),
 		'chart-pie'           : require('component/chart/pie'),

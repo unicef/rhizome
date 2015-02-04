@@ -61,25 +61,5 @@ module.exports = {
 			resources : [169, 170],
 			microplans: []
 		};
-	},
-
-	methods: {
-
-		loadCampaigns: function (data) {
-			this.campaigns = data.objects.map(function (o) {
-				var startDate = moment(o.start_date, 'YYYY-MM-DD');
-
-				return {
-					title   : startDate.format('MMM YYYY'),
-					value   : o.start_date,
-					date    : startDate.format('YYYYMMDD'),
-					end     : o.end_date,
-					selected: false
-				};
-			});
-
-			this.campaigns[0].selected = true;
-			this.campaign = this.campaigns[0];
-		}
 	}
 };
