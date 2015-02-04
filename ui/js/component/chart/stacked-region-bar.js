@@ -25,13 +25,11 @@ module.exports = {
 			var scale = d3.scale.ordinal()
 				.range(colors);
 
-			if (this.indicators) {
+			if (this.indicators && this.indicators.map) {
 				scale.domain(this.indicators.map(function (d) {
 					return d.id || d;
 				}));
 			}
-
-			console.debug('stacked-region-bar::colorScale domain', scale.domain());
 
 			return scale;
 		},
@@ -43,8 +41,6 @@ module.exports = {
 				.value()
 				.length;
 			var h = 12;
-
-			console.debug('stacked-region-bar::height', l, h);
 
 			return l * h;
 		},
