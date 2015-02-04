@@ -2,10 +2,6 @@
 
 var moment   = require('moment');
 
-var api      = require('../data/api');
-
-var Dropdown = require('../component/dropdown');
-
 /**
  * Utility for generating the tickValues array for a year-to-date chart.
  *
@@ -65,67 +61,5 @@ module.exports = {
 			resources : [169, 170],
 			microplans: []
 		};
-	},
-
-	attached: function () {
-		var self = this;
-
-		this._regions = new Dropdown({
-			el      : '#regions',
-			source  : api.regions,
-			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
-			mapping : {
-				'parent_region_id': 'parent',
-				'name'            : 'title',
-				'id'              : 'value'
-			}
-		});
-
-		this._regions.$on('dropdown-value-changed', function (items) {
-			console.debug('management::dropdown-value-changed', 'region', items);
-			self.region = (items && items.length > 0) ? items[0].value : null;
-		});
-
-		this.$.campaigns.$on('dropdown-value-changed', function (items) {
-			console.debug('management::dropdown-value-changed', 'campaign', items);
-			self.campaign = (items && items.length > 0) ? items[0] : null;
-		});
-	},
-
-	methods: {
-
-		loadCampaigns: function (data) {
-			this.campaigns = data.objects.map(function (o) {
-				var startDate = moment(o.start_date, 'YYYY-MM-DD');
-
-				return {
-					title   : startDate.format('MMM YYYY'),
-					value   : o.start_date,
-					date    : startDate.format('YYYYMMDD'),
-					end     : o.end_date,
-					selected: false
-				};
-			});
-
-			this.campaigns[0].selected = true;
-			this.campaign = this.campaigns[0];
-		}
-
-	},
-
-	watch: {
-
-		'region': function () {
-			api.campaign({ region__in: this.region }).then(this.loadCampaigns);
-			this._regions.$emit('dropdown-select', this.region);
-		}
-
-	},
-
-	events: {
-		'region-changed': function (region) {
-			this.region = region;
-		}
 	}
-
 };

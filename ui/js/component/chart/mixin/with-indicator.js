@@ -17,7 +17,7 @@ function campaignComparator(a, b) {
 
 function dataError(err) {
 	/* jshint validthis:true */
-	console.log(err);
+	console.error(err);
 
 	this.loading = false;
 	this.error   = true;
@@ -59,9 +59,6 @@ function parseData(data) {
 
 function _loadIndicator () {
 	/* jshint validthis:true */
-
-	console.debug('with-indicator::loadIndicator', this.indicator);
-
 	var self = this;
 
 	if (!this.indicators) {
@@ -94,17 +91,12 @@ function _loadIndicator () {
 		.then(function (data) {
 			self.indicators = data.objects;
 		}, dataError.bind(this));
-
-	console.debug('with-indicator::loadIndicator', 'exit');
 }
 
 function _loadDatapoints () {
 	/* jshint validthis:true */
 
-	console.info('with-indicator::loadDatapoints', 'enter');
-
 	if (!this.indicators || !this.campaign || !this.region) {
-		console.info('with-indicator::loadDatapoints', 'exit', 'missing parameters');
 		return;
 	}
 
@@ -112,11 +104,7 @@ function _loadDatapoints () {
 
 	var q = this.query;
 
-	console.debug('with-indicator::data-load', 'q', q);
-
 	api.datapoints(q).then(parseData.bind(this), dataError.bind(this));
-
-	console.info('with-indicator::loadDatapoints', 'exit');
 }
 
 module.exports = {

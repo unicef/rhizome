@@ -5,8 +5,8 @@ module.exports = {
 
 	data: function () {
 		return {
-			region  : 12907,
-			campaign: true,  // Trick with-indicator into loading without a campaign
+			region  : null,
+			campaign: null,
 
 			overview: [{
 				title     : 'Influencer',

@@ -1,14 +1,20 @@
 'use strict';
 
-var page = require('page');
+var moment   = require('moment');
+var page     = require('page');
+
+var api      = require('data/api');
+var Dropdown = require('component/dropdown');
 
 module.exports = {
 	template: require('./template.html'),
-	replace: true,
 
 	data: function () {
 		return {
-			dashboard: 'management-dashboard'
+			campaign : null,
+			campaigns: [],
+			dashboard: 'management-dashboard',
+			region   : null
 		};
 	},
 
@@ -22,11 +28,71 @@ module.exports = {
 		page({ click: false });
 	},
 
+	attached: function () {
+		var self = this;
+
+		this._regions = new Dropdown({
+			el      : '#regions',
+			source  : api.regions,
+			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
+			mapping : {
+				'parent_region_id': 'parent',
+				'name'            : 'title',
+				'id'              : 'value'
+			}
+		});
+
+		this._regions.$on('dropdown-value-changed', function (items) {
+			self.region = (items && items.length > 0) ? items[0].value : null;
+		});
+
+		this.$.campaigns.$on('dropdown-value-changed', function (items) {
+			self.campaign = (items && items.length > 0) ? items[0] : null;
+		});
+	},
+
+	methods: {
+
+		loadCampaigns: function (data) {
+			this.campaigns = data.objects.map(function (o) {
+				var startDate = moment(o.start_date, 'YYYY-MM-DD');
+
+				return {
+					title   : startDate.format('MMM YYYY'),
+					value   : o.start_date,
+					date    : startDate.format('YYYYMMDD'),
+					end     : o.end_date,
+					id      : o.id,
+					selected: false
+				};
+			});
+
+			this.campaigns[0].selected = true;
+			this.campaign = this.campaigns[0];
+		}
+	},
+
+	watch: {
+
+		'region': function () {
+			api.campaign({ region__in: this.region }).then(this.loadCampaigns);
+			this._regions.$emit('dropdown-select', this.region);
+		}
+
+	},
+
+	events: {
+		'region-changed': function (region) {
+			this.region = region;
+		}
+	},
+
 	components: {
 		'management-dashboard': require('dashboard/management'),
 		'nco-dashboard'       : require('dashboard/nco'),
 
 		'chart-bar'           : require('component/chart/bar'),
+		'chart-region-bar'    : require('component/chart/stacked-region-bar'),
 		'chart-bullet'        : require('component/chart/bullet'),
 		'chart-choropleth'    : require('component/chart/choropleth'),
 		'chart-pie'           : require('component/chart/pie'),
