@@ -55,10 +55,6 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
-    # raw_indicator_df = DataFrame(list(DataPoint.objects\
-    #     .filter(indicator_id = i_id)\
-    #     .values_list('region_id','campaign_id','value')),columns = column_header)
-
     sql = """
         SELECT
     		d.region_id
