@@ -62,25 +62,7 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     		,value as "%s"
         FROM datapoint_with_computed d
     	WHERE indicator_id  = %s
-
-		UNION ALL
-
-		SELECT
-			r.parent_region_id
-			, d.campaign_id
-			, SUM(d.value)
-		FROM datapoint_with_computed d
-		INNER JOIN region  r
-		ON d.region_id = r.id
-		AND indicator_id = %s
-		AND NOT EXISTS (
-			SELECT 1 FROM datapoint tid
-			WHERE r.parent_region_id = tid.region_id
-			AND d.campaign_id = tid.campaign_id
-			AND tid.indicator_id = d.indicator_id
-		)
-		GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
-        """ % (i_id,i_id,i_id)
+        """ % (i_id,i_id)
 
     indicator_df = read_sql(sql,con,columns=column_header)
 
