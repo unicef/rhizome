@@ -12,6 +12,13 @@ module.exports = {
 		require('./bar')
 	],
 
+	data: function () {
+		return {
+			marginBottom: 18,
+			marginLeft  : 40
+		}
+	},
+
 	computed: {
 		height: function () {
 			var l = _(this.datapoints)
@@ -125,6 +132,36 @@ module.exports = {
 			return d3.scale.ordinal()
 				.domain(domain)
 				.rangeRoundBands([this.contentHeight, 0], 0.08)
+		}
+	},
+
+	methods: {
+		draw: function () {
+			var svg = d3.select(this.$el)
+				.select('svg');
+
+			var renderer = this.renderer;
+
+			svg.select('.data')
+				.selectAll(renderer.selector())
+				.data(this.series, function (d) {
+					return d.id;
+				})
+				.call(renderer);
+
+			var xAxis = d3.svg.axis()
+				.scale(this.xScale)
+				.orient('bottom');
+
+			var gx = svg.select('.x.axis')
+				.call(xAxis);
+
+			var yAxis = d3.svg.axis()
+				.scale(this.yScale)
+				.orient('left');
+
+			var gy = svg.select('.y.axis')
+				.call(yAxis);
 		}
 	}
 };
