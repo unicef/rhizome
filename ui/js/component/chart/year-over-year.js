@@ -59,19 +59,24 @@ module.exports = {
 		},
 
 		series: function () {
-			console.info('year-over-year::series enter');
 
 			if (this.empty) {
-				console.info('year-over-year::series empty');
 				return [];
 			}
 
-			var series = _.values(_.groupBy(this.datapoints, function (d) {
-				return d.campaign.start_date.getFullYear();
-			}));
+			var series = _(this.datapoints)
+				.groupBy(function (d) {
+					return d.campaign.start_date.getFullYear()
+				})
+				.values()
+				.map(function (d) {
+					return _.sortBy(d, function (o) {
+						return o.campaign.start_date;
+					});
+				})
+				.value();
 
 			console.debug('year-over-year::series', series);
-			console.info('year-over-year::series exit');
 			return series;
 		},
 
