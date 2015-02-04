@@ -51,11 +51,17 @@ class DataPointResource(BaseNonModelResource):
         max_limit = None # return all rows by default ( limit defaults to 20 )
         # serializer = CustomSerializer
 
+    def __init__(self, *args, **kwargs):
+
+        super(DataPointResource, self).__init__(*args, **kwargs)
+        self.error = None
+        self.parsed_params = None
+
+
     def get_object_list(self,request):
         '''
         '''
 
-        self.error = None
         results = []
 
         err = self.parse_url_params(request.GET)
