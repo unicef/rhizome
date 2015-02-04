@@ -13,17 +13,16 @@
 
 body {
 	background-color: $white;
+	padding: 4px 0 4px 50px;
 }
 
 header {
-	background-color: $gainsboro;
-	padding-left: 10pt;
-	padding-right: 10pt;
+	background-color: #333;
 
-	h1 {
-		float: left;
-		padding: 10pt 20pt 10pt 0;
-	}
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
 }
 
 h3 {
@@ -46,7 +45,7 @@ nav {
 	@include clearfix;
 
 	ul {
-		float: left;
+		font-size: 14pt;
 		list-style: none;
 		margin: 0;
 
@@ -55,31 +54,38 @@ nav {
 		}
 
 		li {
-			display: inline-block;
-			padding: 16pt 12pt 12pt;
-
-			&:first-child {
-				padding-left: 0;
-			}
+			padding: 8pt 9pt 8pt 8pt;
+			border-left: 4px solid #333;
 		}
 
 	}
 
 	a {
-		color: #333;
+		color: #fff;
 		text-decoration: none;
 	}
 }
 
 body.dashboard nav .dashboard,
 body.data nav .data {
-	background: #cbcbcb;
-	border-bottom: 4px solid #333;
+	border-left: 4px solid #ffcc67;
+
+	a {
+		color: #ffcc67;
+	}
 }
 
 .error {
 	color: $alert-color;
 	margin-top: 1.3em;
+}
+
+a {
+	transition: color 300ms ease;
+
+	&:hover {
+		color: #ffcc67;
+	}
 }
 
 table {

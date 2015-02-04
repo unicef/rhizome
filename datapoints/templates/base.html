@@ -14,32 +14,25 @@
 
 <body class="{% block section %}{% endblock %}">
 	<header>
-		<h1>Polio</h1>
 		<nav>
 			<ul>
 				<li class="dashboard"><a href="{% url 'datapoints:dashboard' %}">
-					<i class="fa fa-dashboard fa-lg"></i> Dashboard
+					<i class="fa fa-dashboard fa-lg"></i>
 				</a></li>
 
 				<li class="data"><a href="{% url 'datapoints:datapoint_index' %}">
-					<i class="fa fa-table fa-lg"></i> Data
+					<i class="fa fa-table fa-lg"></i>
+				</a></li>
+
+				<li><a href="/admin">
+					<i class="fa fa-cog fa-lg"></i>
 				</a></li>
 			</ul>
 			<ul class="right">
-				<li><a href="/admin">
-					<i class="fa fa-cog fa-lg"></i> Admin
-				</a></li>
-				{% if user.is_authenticated %}
-				<li>
-					Hello, {{ user.username }}
-					&emsp;
 					<a href="{% url 'logout' %}?next=/" title="logout">
 						<i class="fa fa-lg fa-sign-out"></i>
 					</a>
 				</li>
-				{% else %}
-				<li><a href="{% url 'login' %}">Log In</a></li>
-				{% endif %}
 			</ul>
 		</nav>
 	</header>
