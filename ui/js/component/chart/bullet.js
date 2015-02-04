@@ -1,43 +1,98 @@
 'use strict';
 
-var d3   = require('d3');
-var util = require('../../util/data');
+var d3 = require('d3');
 
 module.exports = {
 	replace : true,
 	template: require('./bullet.html'),
 
 	paramAttributes: [
-		'width',
-		'height',
-		'data-scale',
-		'data-marker-width'
+		'data-marker-width',
 	],
+
+	mixins: [
+		require('./mixin/resize'),
+		require('./mixin/with-indicator')
+	],
+
+	partials: {
+		'loading-overlay': require('./partial/loading-overlay.html')
+	},
 
 	data: function () {
 		return {
-			scale      : 'linear',
-			width      : 100,
-			height     : 100,
-			value      : 0,
-			marker     : 0,
 			markerWidth: 3,
-			ranges     : [{
-				name : '',
-				start: 0,
-				end  : 1
-			}]
 		};
 	},
 
-	methods: {
-		draw: function () {
-			function display(d) {
-				return util.defined(d) ?
-					'default' :
-					'none';
+	computed: {
+
+		value: function () {
+			var length = this.length;
+
+			if (length < 1) {
+				return null;
 			}
 
+			return this.datapoints[length - 1].value;
+		},
+
+		marker: function () {
+			console.info('bullet::marker', this.indicator && this.indicator.id);
+			var length = this.length;
+
+			if (length < 2) {
+				console.info('bullet::marker', 'Not enough data points');
+				return null;
+			}
+
+			var datapoints = this.datapoints;
+			var avg        = 0;
+
+			for (var i = length - 2; i >= 0; i--) {
+				avg += datapoints[i].value;
+			}
+
+			console.debug('bullet::marker', 'sum', avg);
+
+			avg /= (length - 1);
+
+			console.debug('bullet::marker', 'length', length);
+			console.debug('bullet::marker', 'average', avg);
+
+			return avg;
+		},
+
+		max: function () {
+			if (this.length < 1 || !this.indicator) {
+				return 0;
+			}
+
+			var ranges = this.indicator.ranges || [{ end: 0 }];
+
+			return Math.max(d3.max(ranges, function (d) { return d.end; }),
+				d3.max(this.datapoints, function (d) { return d.value; }));
+		},
+
+		indicator: function () {
+			var indicators = this.indicators;
+
+			return (indicators && indicators.length > 0) ? indicators[0] : null;
+		},
+
+		title: function () {
+			if (!this.indicator) {
+				return '';
+			}
+
+			return this.indicator.short_name || '';
+		}
+
+	},
+
+	methods: {
+
+		draw: function () {
 			function fill(value, marker, ranges) {
 				// FIXME: Hack for getting fill colors for good and bad performance.
 				// This should probably be encapsulated outside of this chart, applied
@@ -64,102 +119,153 @@ module.exports = {
 				return '#707677';
 			}
 
-			if (!this.ranges) {
-				this._data.ranges = [];
-			}
-
-			var svg    = d3.select(this.$el);
+			var svg    = d3.select(this.$el).select('.bullet');
 			var height = this.height || 0;
 			var width  = this.width || 0;
 
 			var x = d3.scale.linear()
-				.domain([0, d3.max(this.ranges, function (d) { return d.end; })])
+				.domain([0, this.max])
 				.range([0, width]);
 
-			// FIXME: color scale shouldn't be hard-coded. It should be generated
-			// according to the number of qualitative ranges and not depend on the
-			// ranges being "good," "bad," and "ok."
-			var color = d3.scale.ordinal()
-				.domain(['bad', 'ok', 'good'])
-				.range(['#B3B3B3', '#CCCCCC', '#E6E6E6']);
+			var ranges = (this.indicator && this.indicators.ranges) || [];
+
+			var color = d3.scale.quantize()
+				.domain(ranges.map(function (r) { return r.name; }))
+				.range(['#B3B3B3', '#E6E6E6']);
 
 			var bg = svg.select('.ranges').selectAll('.range')
-				.data(this.ranges);
+				.data(ranges);
 
 			bg.enter().append('rect').attr('class', 'range');
 
-			bg.attr({
-				height: height,
-				width : function (d) { return x(d.end - d.start); },
-				x     : function (d) { return x(d.start); }
-			}).style('fill', function (d) {
-				return color(d.name);
-			});
+			bg.attr('height', height)
+				.transition().duration(300)
+					.attr({
+						'width': function (d) { return x(d.end - d.start); },
+						'x'    : function (d) { return x(d.start); }
+					}).style('fill', function (d) {
+						return color(d.name);
+					});
 
 			bg.exit().remove();
 
 			var labels = svg.select('.ranges').selectAll('.range-label')
-				.data(this.ranges);
+				.data(ranges);
 
 			labels.enter().append('text')
 				.attr({
 					'class': 'range-label',
-					'dy': -3,
-					'dx': 2
+					'dy'   : -3,
+					'dx'   : 2
 				});
 
 			labels.attr({
-				x: function (d) { return x(d.start); },
-				y: height
+				'x': function (d) { return x(d.start); },
+				'y': height
 			})
 				.style('font-size', height / 6)
 				.text(function (d) { return d.name; });
 
 			labels.exit().remove();
 
-			var fillColor = fill(this.value, this.marker, this.ranges);
+			var fillColor = fill(this.value, this.marker, ranges);
 
-			svg.select('.marker').attr({
-				height: height * 3 / 4,
-				width : this.markerWidth,
-				y     : height / 8,
-				x     : x(this.marker) || 0
-			}).style({
-				display: display(this.marker),
-				fill: fillColor
-			});
+			var value = svg.selectAll('.value')
+				.data(this.value ? [this.value] : []);
 
-			svg.select('.value').attr({
-				height: height / 2,
-				width : x(this.value) || 0,
-				y     : height / 4
-			}).style({
-				display: display(this.value),
-				fill: fillColor
-			});
+			value.transition().duration(300)
+				.style('fill', fillColor);
 
-			var format = d3.format('%');
+			value.enter().append('rect')
+				.attr({
+					'class': 'value',
+					'width': 0
+				})
+				.style('fill', fillColor);
 
-			svg.select('.label').attr({
-				y: height / 2,
-				dy: height / 8,
-			}).style({
-				'font-size': height / 4,
-				'display': display(this.value)
+			value.attr({
+					'height': height / 2,
+					'y'     : height / 4
+				})
+				.transition().duration(300)
+					.attr('width', x);
+
+			value.exit()
+				.transition().duration(300)
+					.style('opacity', 0)
+				.remove();
+
+			var format = d3.format(this.formatString) ||
+				this.indicator.format ||
+				String;
+
+			var label = svg.selectAll('.label')
+				.data(this.value ? [this.value] : []);
+
+			label.enter().append('text')
+				.attr({
+					'class': 'label',
+					'dx'   : 2
+				}).text(0);
+
+			label.attr({
+					'y' : height / 2,
+					'dy': height / 8,
+				})
+				.style({
+					'font-size': height / 4,
+				})
+				.transition().duration(300)
+					.tween('text', function (d) {
+						// FIXME: We should generalize this text tween and decide between
+						// rounded and regular interpolation based on whether or not there
+						// is a fractional component to any of the numbers.
+						var i = d3.interpolateRound(Number(this.textContent), d);
+
+						return function (t) {
+							this.textContent = format(i(t));
+						};
+					});
+
+			label.exit()
+				.transition().duration(300)
+					.style('opacity', 0)
+				.remove();
+
+			var marker = svg.selectAll('.marker')
+				.data(this.marker ? [this.marker] : []);
+
+			marker.transition().duration(300)
+				.style('fill', fillColor);
+
+			marker.enter().insert('rect', '.label')
+				.attr({
+					'class': 'marker',
+					'x'    : 0
+				})
+				.style('fill', fillColor);
+
+			marker.attr({
+				'height': height * 3 / 4,
+				'width' : this.markerWidth,
+				'y'     : height / 8
 			})
-				.text(format(this.value));
-		}
-	},
+				.transition().duration(300)
+					.attr('x', d3.scale.linear()
+						.domain([0, this.max])
+						.range([0, this.width - this.markerWidth]));
 
-	on: {
-		'hook:attached': 'draw',
+			marker.exit()
+				.transition().duration(300)
+					.attr('width', 0)
+				.remove();
+		}
+
 	},
 
 	watch: {
-		'width' : 'draw',
-		'height': 'draw',
-		'value' : 'draw',
-		'marker': 'draw',
-		'ranges': 'draw'
+		'datapoints': 'draw',
+		'height'    : 'draw',
+		'width'     : 'draw',
 	}
 };

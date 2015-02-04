@@ -6,7 +6,7 @@ module.exports = {
 	events: {
 
 		'show-annotation': function (d) {
-			var svg  = d3.select(this.$el).selectAll('.annotations').data([0]);
+			var svg  = d3.select(this.$el).select('.annotation');
 			var line = svg.selectAll('.hover-line').data([d]);
 			var x    = this.x(d.x);
 			var y    = this.y.range();

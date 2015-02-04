@@ -2,8 +2,8 @@
 
 'use strict';
 
-var dom = require('../../util/dom');
-var log = require('../../util/log');
+var dom = require('util/dom');
+var log = require('util/log');
 
 module.exports = {
 	paramAttributes: [
@@ -34,7 +34,10 @@ module.exports = {
 			var content = dom.contentArea(this.$el.parentElement);
 
 			this.$set('width', content.width);
-			this.$set('height', content.width / Number(this.aspect));
+
+			if (this.aspect) {
+				this.$set('height', content.width / Number(this.aspect));
+			}
 
 			this.$emit('invalidate-size');
 

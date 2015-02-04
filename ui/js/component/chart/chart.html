@@ -1,0 +1,20 @@
+<div class="chart">
+	<svg class="line"
+				v-attr="width: width, height: height">
+
+		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
+			<rect class="bg"
+						v-attr="width: contentWidth, height: contentHeight"></rect>
+
+			<g class="x axis"
+			   v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>
+			<g class="y axis"></g>
+			<g class="data"></g>
+			<g class="annotation"></g>
+		</g>
+
+	</svg>
+
+	<div v-partial="loading-overlay"></div>
+	<!-- <div v-partial="error-overlay"></div> -->
+</div>

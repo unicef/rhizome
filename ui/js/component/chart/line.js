@@ -1,127 +1,198 @@
 'use strict';
 
-var _    = require('lodash');
-var d3   = require('d3');
-var Vue  = require('vue');
+var _         = require('lodash');
+var d3        = require('d3');
 
-var util = require('../../util/data');
+var colors    = require('colors/coolgray');
+var lineChart = require('./renderer/line');
 
-var TRANSITION_SPEED = 500;
+function x (d) {
+	return d.campaign.start_date;
+}
 
-module.exports = Vue.extend({
+function y(d) {
+	return d.value;
+}
+
+module.exports = {
+	replace : true,
+	template: require('./chart.html'),
+
 	paramAttributes: [
-		'data-series',
+		'data-height',
 		'data-width',
-		'data-height'
 	],
 
 	mixins: [
-		require('./labels'),
-		require('./hover-line'),
-		require('./yGrid'),
-		require('./xAxis')
+		require('./mixin/resize'),
+		require('./mixin/margin'),
+		require('./mixin/with-indicator'),
 	],
 
-	data: function () {
-		return {
-			series: [],
-			width : 100,
-			height: 100,
-			x     : d3.scale.linear(),
-			y     : d3.scale.linear()
-		};
+	partials: {
+		'loading-overlay': require('./partial/loading-overlay.html')
+	},
+
+	computed: {
+
+		colorScale: function () {
+			var scale = d3.scale.ordinal()
+				.domain(d3.range(colors.length))
+				.range(colors);
+
+			return scale;
+		},
+
+		renderer: function () {
+			var x     = this.xScale;
+			var y     = this.yScale;
+			var color = this.colorScale;
+
+			var renderer = lineChart()
+				.x(function (d) {
+					return x(d.campaign.start_date);
+				})
+				.y(function (d) {
+					return y(d.value);
+				})
+				.color(function (d, i) {
+					return color(i);
+				});
+
+			return renderer;
+		},
+
+		series: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var series = _(this.datapoints)
+				.sortBy(function (d) {
+					return d.campaign.start_date;
+				})
+				.groupBy('indicator')
+				.values()
+				.value();
+
+			// Facet the datapoints by indicator
+			return series;
+		},
+
+		xFmt: function () {
+			return function (d) {
+				var month   = d3.time.format('%b');
+				var newYear = d3.time.format('%b %Y');
+				var dt      = new Date(d);
+
+				return dt.getMonth() === 0 ? newYear(dt) : month(dt);
+			};
+		},
+
+		xScale: function () {
+			var datapoints = this.datapoints || [];
+
+			var start = this.domain ?
+				this.domain[0] :
+				d3.min(datapoints, x) || 0;
+
+			var end = this.domain ?
+				this.domain[1] :
+				d3.max(datapoints, x) || start + 1;
+
+			return d3.time.scale()
+				.domain([start, end])
+				.range([0, this.contentWidth]);
+		},
+
+		xTicks: function () {
+			return this.xScale.ticks(d3.time.months, 3);
+		},
+
+		yFmt: function () {
+			return d3.format('s');
+		},
+
+		yScale: function () {
+			var datapoints = this.datapoints || [];
+
+			var lower = this.empty ?
+				0 :
+				Math.min(0, d3.min(datapoints, y)) || 0;
+
+			var upper = this.empty ?
+			1 :
+			(d3.max(datapoints, y) || 1) * 1.1;
+
+			return d3.scale.linear()
+				.domain([lower, upper])
+				.range([this.contentHeight, 0]);
+		},
+
+		yTicks: function () {
+			return this.yScale.ticks(3);
+		},
 	},
 
 	methods: {
+
 		draw: function () {
-			function getX(d) { return d.x; }
+			console.info('line::draw', 'enter');
 
-			function getY(d) { return d.y; }
+			var svg      = d3.select(this.$el);
+			var renderer = this.renderer;
+			var xScale   = this.xScale;
+			var yScale   = this.yScale;
+			var domain   = xScale.domain();
+			var range    = yScale.domain();
 
-			function getScaledX(d) { return x(getX(d)); }
+			svg.select('.data').selectAll('.' + renderer.className())
+				.data(this.series, function (d, i) {
+					return d.name || i;
+				}).call(renderer);
 
-			function getScaledY(d) { return y(getY(d)); }
+			var gx = svg.select('.x.axis')
+				.call(d3.svg.axis()
+					.tickFormat(this.xFmt)
+					.tickValues(this.xTicks)
+					.scale(xScale)
+					.orient('bottom'));
 
-			function defined(d) { return util.defined(getY(d)); }
-
-			function getPoints(d) { return d.points; }
-
-			var svg     = d3.select(this.$el);
-
-			var series  = this.series || [];
-			var dataset = _(series.map(getPoints)).flatten().sortBy(function (a, b) {
-				return a.x < b.x ? -1 : 1;
-			}).value();
-			var empty   = dataset.length === 0;
-
-			var start  = this.domain ? this.domain[0] : d3.min(dataset, getX) || 0;
-			var end    = this.domain ? this.domain[1] : d3.max(dataset, getX) || start + 1;
-			var lower  = empty ? 0 : Math.min(0, d3.min(dataset, getY)) || 0;
-			var upper  = empty ? 1 : (d3.max(dataset, getY) || 1) * 1.1;
-			var height = this.height || 0;
-			var width  = this.width || 0;
-
-			var x      = this.x;
-			var y      = this.y;
-
-			x.domain([start, end])
-				.range([0, width]);
-			y.domain([lower, upper])
-				.range([height, 0]);
-
-			var line = d3.svg.line()
-				.defined(defined)
-				.x(getScaledX)
-				.y(getScaledY);
-
-			var lines = svg.selectAll('.line').data(series, function (d, i) {
-				return d.name || i;
-			});
-
-			lines.enter().append('path')
-				.attr('class', 'line');
-
-			lines.transition().duration(TRANSITION_SPEED)
-				.attr('d', function (d) {
-					return line(getPoints(d));
-				})
-				.style('stroke', function (d) { return d.color; });
-
-			lines.exit().remove();
-
-			var point = svg.selectAll('.point')
-				.data(Array.prototype.concat.apply([], dataset));
-
-			point.enter().append('circle')
-				.attr({
-					'class': 'point',
-					'r'    : 2,
+			gx.selectAll('text')
+				.style('text-anchor', function (d) {
+					return d === domain[0] ?
+						'start' :
+						d === domain[1] ?
+							'end' :
+							'middle';
 				});
 
-			point.transition().duration(TRANSITION_SPEED).attr({
-				'cx': getScaledX,
-				'cy': getScaledY
+			var gy = svg.select('.y.axis')
+				.call(d3.svg.axis()
+					.tickFormat(this.yFmt)
+					.tickValues(this.yTicks)
+					.tickSize(this.contentWidth)
+					.scale(yScale)
+					.orient('right'));
+
+			gy.selectAll('text')
+				.attr({
+					'x' : 4,
+					'dy': -4
+				});
+
+			gy.selectAll('g').classed('minor', function (d) {
+				return d !== range[0];
 			});
 
-			point.exit().remove();
-
-			this._callHook('drawn');
-			this.$emit('chart-drawn', {
-				el    : this.$el,
-				series: dataset,
-				x     : this.x,
-				y     : this.y
-			});
+			console.info('line::draw', 'exit');
 		}
-	},
 
-	on: {
-		'hook:attached': 'draw'
 	},
 
 	watch: {
-		'series': 'draw',
-		'width' : 'draw',
-		'height': 'draw'
+		'datapoints': 'draw',
+		'width'     : 'draw',
+		'height'    : 'draw'
 	}
-});
+};

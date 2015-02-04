@@ -1,6 +1,6 @@
 svg {
 	.bg {
-		fill: $smoke;
+		fill: $vapor;
 	}
 
 	.axis {
@@ -10,9 +10,15 @@ svg {
 
 		line {
 			fill: none;
-			stroke: $white;
+			stroke: $iron;
 			stroke-width: 1px;
 			shape-rendering: cripsEdges;
+		}
+
+		.minor {
+			line {
+				stroke: $white;
+			}
 		}
 
 		text {
@@ -25,18 +31,38 @@ svg {
 				fill: $oil;
 			}
 		}
+
+		&.x {
+			line {
+				display: none;
+			}
+		}
 	}
 
 	.line {
-		fill: none;
-		stroke: $charcoal;
-		stroke-width: 1px;
+		path {
+			fill: none;
+			stroke: $charcoal;
+			stroke-width: 2px;
+		}
+
+		circle {
+			fill: $white;
+			stroke: $charcoal;
+			stroke-width: 1px;
+		}
 	}
 
 	.area,
 	.layer {
 		fill: $iron;
 		fill-opacity: 0.6;
+	}
+
+	.bar {
+		text{
+			font-size: rem-calc(9);
+		}
 	}
 
 	.bullet {
@@ -78,10 +104,13 @@ svg {
 	}
 
 	.region {
-		fill: $white;
-		stroke: $iron;
+		fill: $smoke;
+		stroke: $white;
 	}
 
+	.clickable {
+		cursor: pointer;
+	}
 }
 
 .choropleth {
@@ -114,20 +143,29 @@ svg {
 	}
 
 	.q-6 {
-		background-color: $black;
-		fill: $black;
+		background-color: #2D2525;
+		fill: #2D2525;
 	}
 }
 
 .chart {
+	position: relative;
+
 	.overlay {
 		background-color: transparentize($ghost, 0.3);
 		color: $aluminum;
+		opacity: 1;
+		transition: opacity 300ms ease;
 
 		display: table;
 		position: absolute;
 		top: 0;
 		left: 0;
+
+		&.fade-enter,
+		&.fade-leave {
+			opacity: 0;
+		}
 
 		&>div {
 			display: table-cell;
