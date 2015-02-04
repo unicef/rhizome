@@ -16,8 +16,9 @@ module.exports = function stackedBar() {
 	function chart(g) {
 		g.enter()
 			.append('g')
-			.attr('class', className)
-			.style('fill', color);
+			.attr('class', className);
+
+		g.style('fill', color);
 
 		var rect = g.selectAll('rect')
 			.data(function (d) { return values(d); });

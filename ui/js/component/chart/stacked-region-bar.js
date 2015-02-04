@@ -4,6 +4,7 @@ var _        = require('lodash');
 var d3       = require('d3');
 var moment   = require('moment');
 
+var colors     = require('colors/coolgray');
 var stackedBar = require('./renderer/stacked-bar');
 
 module.exports = {
@@ -20,6 +21,21 @@ module.exports = {
 	},
 
 	computed: {
+		colorScale: function () {
+			var scale = d3.scale.ordinal()
+				.range(colors);
+
+			if (this.indicators) {
+				scale.domain(this.indicators.map(function (d) {
+					return d.id || d;
+				}));
+			}
+
+			console.debug('stacked-region-bar::colorScale domain', scale.domain());
+
+			return scale;
+		},
+
 		height: function () {
 			var l = _(this.datapoints)
 				.pluck('region')
@@ -61,7 +77,7 @@ module.exports = {
 					return y(d.region);
 				})
 				.color(function (d, i) {
-					return color(d.indicator);
+					return color(d.id);
 				})
 				.values(function (d) {
 					return d.values;
