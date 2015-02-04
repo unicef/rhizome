@@ -17,7 +17,6 @@ def full_cache_refresh():
         False).values_list('id',flat=True))
 
     all_indicator_ids = indicator_ids + calc_indicator_ids
-    all_indicator_ids = [164]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
