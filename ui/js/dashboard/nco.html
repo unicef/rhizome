@@ -5,12 +5,14 @@
 		</div>
 
 		<div class="medium-2 large-1 columns">
+
 			<h4>Missed Children</h4>
 			<div v-component="chart-pie"
 			     data-indicators="[164,165,166,167]"
 			     data-width="150"
 			     data-height="150"
 			     v-with="campaign: campaign, region: region"></div>
+
 			<h4>Caregiver Awareness</h4>
 			<div v-component="chart-pie"
 			     data-indicators="[164,165,166,167]"
@@ -21,6 +23,11 @@
 
 		<div class="medium-3 large-2 columns">
 			<h4>Inside Monitoring</h4>
+			<div v-component="chart-scatter"
+			     data-indicators="[164,165]"
+			     data-x="164"
+			     data-y="165"
+			     v-with="campaign: campaign, region:region"></div>
 			<h4>Outside Monitoring</h4>
 		</div>
 

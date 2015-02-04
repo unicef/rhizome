@@ -96,6 +96,7 @@ module.exports = {
 		'chart-bullet'        : require('component/chart/bullet'),
 		'chart-choropleth'    : require('component/chart/choropleth'),
 		'chart-pie'           : require('component/chart/pie'),
+		'chart-scatter'       : require('component/chart/scatter'),
 		'chart-stacked-area'  : require('component/chart/stacked-area'),
 		'chart-line'          : require('component/chart/line'),
 		'chart-year-over-year': require('component/chart/year-over-year'),
