@@ -53,7 +53,13 @@ module.exports = {
 				});
 
 			// Facet by indicator
-			var series = _(this.datapoints).groupBy('indicator').values().value();
+			var series = _(this.datapoints)
+				.sortBy(function (d) {
+					return d.campaign.start_date;
+				})
+				.groupBy('indicator')
+				.values()
+				.value();
 
 			return stack(series);
 		},

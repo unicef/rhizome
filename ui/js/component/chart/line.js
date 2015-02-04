@@ -67,8 +67,16 @@ module.exports = {
 				return [];
 			}
 
+			var series = _(this.datapoints)
+				.sortBy(function (d) {
+					return d.campaign.start_date;
+				})
+				.groupBy('indicator')
+				.values()
+				.value();
+
 			// Facet the datapoints by indicator
-			return _.values(_.groupBy(this.datapoints, 'indicator'));
+			return series;
 		},
 
 		xFmt: function () {
