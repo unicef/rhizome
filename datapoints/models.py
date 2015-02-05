@@ -196,21 +196,28 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
-    # history = HistoricalRecords()
-
     def get_val(self):
-
         return self.value
 
     class Meta:
         db_table = 'datapoint'
         unique_together = ('indicator','region','campaign')
         ordering = ['region', 'campaign']
-
-
         permissions = (
             ('view_datapoint', 'View datapoint'),
         )
+
+class DataPointEntry(DataPoint):
+    """Proxy subclass of DataPoint, for use only in API 
+    methods used by the manual data entry form. This model 
+    stores records of all changes in a separate DB table.
+    """
+
+    history = HistoricalRecords()
+
+    class Meta:
+        proxy = True
+
 
 class Responsibility(models.Model):
 
