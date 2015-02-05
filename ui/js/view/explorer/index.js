@@ -130,9 +130,7 @@ module.exports = {
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
 
-				self.pagination.limit   = Number(data.meta.limit);
-				self.pagination.offset  = Number(data.meta.offset);
-				self.pagination.total_count = Number(data.meta.total_count);
+				_.assign(self.pagination, _.pluck(data.meta, 'limit', 'offset', 'total_count'));
 
 				if (!data.objects || data.objects.length < 1) {
 					return;
