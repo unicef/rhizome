@@ -7,6 +7,7 @@
 @import "foundation";
 
 @import "compass/utilities/general/clearfix";
+@import "compass/css3/images";
 
 @import "forms";
 @import "charts";
@@ -17,7 +18,7 @@ body {
 }
 
 header {
-	background-color: #333;
+	@include background(linear-gradient(right, #333, #3a3a3a));
 
 	position: fixed;
 	top: 0;
@@ -45,7 +46,7 @@ nav {
 	@include clearfix;
 
 	ul {
-		font-size: 14pt;
+		font-size: 10pt;
 		list-style: none;
 		margin: 0;
 
@@ -54,15 +55,22 @@ nav {
 		}
 
 		li {
-			padding: 8pt 9pt 8pt 8pt;
-			border-left: 4px solid #333;
+			padding: 10pt 11pt 10pt 10pt;
+			border-left: 4px solid #3a3a3a;
 		}
 
 	}
 
 	a {
 		color: #fff;
+		opacity: 0.5;
 		text-decoration: none;
+		transition: opacity 300ms ease;
+	}
+
+	a:hover {
+		color: #fff;
+		opacity: 1;
 	}
 }
 
@@ -71,8 +79,13 @@ body.data nav .data {
 	border-left: 4px solid #ffcc67;
 
 	a {
-		color: #ffcc67;
+		opacity: 1;
 	}
+}
+
+.bottom {
+	position: absolute;
+	bottom: 0;
 }
 
 .error {
@@ -81,8 +94,6 @@ body.data nav .data {
 }
 
 a {
-	transition: color 300ms ease;
-
 	&:hover {
 		color: #ffcc67;
 	}
