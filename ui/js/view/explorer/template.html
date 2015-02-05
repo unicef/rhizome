@@ -1,6 +1,10 @@
+<div class="row">
+	<div class="small-12 columns">
+		<h1 style="text-align:right">Raw Data</h1>
+	</div>
+</div>
 <form class="inline">
 	<div class="row">
-
 			<div class="medium-4 columns">
 				<label>
 					<div class="row">
@@ -44,10 +48,9 @@
 
 			<!-- FIXME: Remove inline style -->
 			<div class="medium-1 columns" style="text-align: right">
-				<!-- FIXME: Remove blank line for alignment -->
-				&nbsp;<br>
-				<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })"
-				   v-class="disabled: !hasSelection">
+				<a class="button success" role="button" v-on="click : refresh({ offset: 0 })"
+				   v-class="disabled: !hasSelection"
+				   style="margin-top:21px">
 					<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load
 				</a>
 			</div>
@@ -59,14 +62,14 @@
 		<vue-table v-with="table"></vue-table>
 	</div>
 
-	<div class="medium-5 large-6 columns"
+	<div class="medium-3 columns"
 	     v-component="vue-pagination"
 	     v-with="offset     : pagination.the_offset,
 	             limit      : pagination.the_limit,
 	             total_count: pagination.total_count"></div>
 
-	<div class="medium-2 large-1 columns">
-		<a role="button" class="button expand" aria-label="Download All"
+	<div class="medium-4 columns" style="text-align:right">
+		<a role="button" class="button success" aria-label="Download All"
 		   v-class="disabled: !hasSelection"
 			 v-on="click : download()">
 			<i class="fa fa-fw fa-download"></i>&emsp;Download All
@@ -75,4 +78,4 @@
 </div>
 
 <!-- Download target -->
-<iframe width="0" height="0" src="{{ src }}"></iframe>
+<iframe width="0" height="0" src="{{ src }}" class="hidden"></iframe>
