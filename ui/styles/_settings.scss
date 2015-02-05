@@ -87,7 +87,7 @@ $column-gutter: rem-calc(20);
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // We use these to define default font stacks
-// $font-family-sans-serif: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+$font-family-sans-serif: "Open Sans", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 // $font-family-serif: Georgia, Cambria, "Times New Roman", Times, serif;
 // $font-family-monospace: Consolas, "Liberation Mono", Courier, monospace;
 
@@ -95,7 +95,7 @@ $column-gutter: rem-calc(20);
 // $font-weight-normal: normal !default;
 // $font-weight-bold: bold !default;
 
-// $white       : #FFFFFF;
+$white       : #FFFFFF;
 $ghost       : #FAFAFA;
 // $snow        : #F9F9F9;
 // $vapor       : #F6F6F6;
@@ -117,9 +117,9 @@ $oil         : #333333;
 
 // We use these as default colors throughout
 $primary-color: #0099ff;
-// $secondary-color: #e7e7e7;
+$secondary-color: #ffcc67;
 // $alert-color: #f04124;
-// $success-color: #43AC6A;
+$success-color: $primary-color; // #43AC6A;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
 
@@ -139,12 +139,13 @@ $red3: #F58667;
 $red4: #D95449;
 $red5: #AF373E;
 
-
 $lightblue: #d3e1b1;
 
+$control-bg: scale-color($white, $lightness: -2%);
+
 // We use these to control various global styles
-$body-bg: $ghost;
-// $body-font-color: $jet;
+$body-bg: $white;
+$body-font-color: $oil;
 // $body-font-family: $font-family-sans-serif;
 // $body-font-weight: $font-weight-normal;
 // $body-font-style: normal;
@@ -159,7 +160,7 @@ $body-bg: $ghost;
 // $last-child-float: $opposite-direction;
 
 // We use these to make sure border radius matches unless we want it different.
-$global-radius: 3px;
+$global-radius: 5px;
 // $global-rounded: 1000px;
 
 // We use these to control inset shadow shiny edges and depressions.
@@ -253,7 +254,7 @@ $h6-font-size: rem-calc(9);
 // We use these to style paragraphs
 // $paragraph-font-family: inherit;
 // $paragraph-font-weight: $font-weight-normal;
-$paragraph-font-size: rem-calc(11);
+$paragraph-font-size: rem-calc(10);
 // $paragraph-line-height: 1.6;
 // $paragraph-margin-bottom: rem-calc(20);
 // $paragraph-aside-font-size: rem-calc(14);
@@ -440,7 +441,7 @@ $block-grid-elements: 7;
 // $include-html-button-classes: $include-html-classes;
 
 // We use these to build padding for buttons.
-// $button-tny: rem-calc(10);
+$button-tny: rem-calc(9);
 // $button-sml: rem-calc(14);
 // $button-med: rem-calc(16);
 // $button-lrg: rem-calc(18);
@@ -464,11 +465,11 @@ $block-grid-elements: 7;
 // $button-function-factor: -20%;
 
 // We use these to control button border and hover styles.
-// $button-border-width: 0px;
+$button-border-width: 1px;
 // $button-border-style: solid;
-// $button-bg-color: $primary-color;
-// $button-bg-hover: scale-color($button-bg-color, $lightness: $button-function-factor);
-// $button-border-color: $button-bg-hover;
+$button-bg-color: $control-bg;
+$button-bg-hover: $control-bg;
+$button-border-color: #667c89;
 // $secondary-button-bg-hover: scale-color($secondary-color, $lightness: $button-function-factor);
 // $secondary-button-border-color: $secondary-button-bg-hover;
 // $success-button-bg-hover: scale-color($success-color, $lightness: $button-function-factor);
@@ -643,17 +644,17 @@ $button-disabled-opacity: 0.4;
 // $form-label-bottom-margin: 0;
 // $input-font-family: inherit;
 // $input-font-color: rgba(0,0,0,0.75);
-// $input-font-size: rem-calc(14);
-// $input-bg-color: $white;
+$input-font-size: rem-calc(12);
+$input-bg-color: $control-bg;
 // $input-focus-bg-color: scale-color($white, $lightness: -2%);
-// $input-border-color: scale-color($white, $lightness: -20%);
-// $input-focus-border-color: scale-color($white, $lightness: -40%);
-// $input-border-style: solid;
+$input-border-color: $primary-color;
+$input-focus-border-color: $secondary-color;
+$input-border-style: none;
 // $input-border-width: 1px;
 // $input-border-radius: $global-radius;
-// $input-disabled-bg: $gainsboro;
+$input-disabled-bg: transparent;
 // $input-disabled-cursor: $cursor-default-value;
-// $input-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+$input-box-shadow: none;
 
 // We use these to style the fieldset border and spacing.
 // $fieldset-border-style: solid;

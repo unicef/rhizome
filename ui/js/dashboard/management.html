@@ -9,7 +9,7 @@
 				<div v-component="chart-year-over-year"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
-				     data-indicators="69"
+				     data-indicators="[168]"
 				     data-period="2 years"
 				     v-with="campaign: campaign, region: region"></div>
 			</section>
@@ -20,7 +20,6 @@
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
 						     data-margin-bottom="12"
-						     data-indicators="[164,165,166,167]"
 						     data-duration="2 years"
 						     v-with="region: region, campaign: campaign"></svg>
 			</section>
@@ -38,7 +37,7 @@
 						     data-margin-bottom="24"
 						     data-aspect="1.618"
 						     data-margin-bottom="12"
-						     data-indicators="[164,165,166,167]"
+						     data-indicators="[166,188,167,165]"
 						     data-duration="2 years"
 						     v-with="region: region, campaign: campaign"></svg>
 					</section>
@@ -49,7 +48,7 @@
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
 						     data-period="2 years"
-						     data-indicators="[40,48]"
+						     data-indicators="[187,189]"
 						     v-with="campaign: campaign, region: region"></div>
 					</section>
 
@@ -61,6 +60,7 @@
 								<g v-component="chart-pie"
 								   data-outer-radius="13"
 								   data-slices="{{ microplans }}"
+								   data-indicators="[222]"
 								   transform="translate(13,13)"></g>
 							</svg>
 
@@ -76,7 +76,7 @@
 				<div class="medium-3 columns">
 					<div v-component="chart-choropleth"
 					     v-with="region: region, campaign: campaign"
-					     data-indicator="166"
+					     data-indicator="[166]"
 					     data-aspect="1"
 					     data-range="[0, 0.1]">
 					</div>
@@ -84,6 +84,7 @@
 
 				<div class="medium-2 column">
 					<h4>Transit Points</h4>
+					<!-- 177 -->
 					<p>No data</p>
 
 					<h6>Missed Children</h6>
@@ -171,7 +172,19 @@
 
 		<div class="medium-2 columns">
 			<h3>Inaccessible Children</h3>
-			No data.
+			<div v-component="chart-line"
+			     data-aspect="1.618"
+			     data-margin-bottom="24"
+			     data-period="2 years"
+			     data-indicators="[158]"
+			     v-with="campaign: campaign, region: region"></div>
+
+			<h4>Districts Reporting Access Analysis</h4>
+			<div v-component="chart-pie"
+			     data-indicators="[174]"
+			     data-width="150"
+			     data-height="150"
+			     v-with="campaign: campaign, region: region"></div>
 		</div>
 	</div>
 </div>

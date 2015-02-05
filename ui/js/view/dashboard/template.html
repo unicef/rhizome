@@ -1,10 +1,13 @@
 <div class="clearfix"></div>
 
-<form>
+<form class="inline">
 	<div class="row">
-		<div id="regions" class="medium-1 column"></div>
+		<div class="medium-3 push-4 columns">
+			<h1 style="text-align:right">{{ title }}</h1>
+		</div>
+		<div id="regions" class="medium-1 pull-3 column"></div>
 
-		<div class="medium-1 column end"
+		<div class="medium-1 pull-3 column end"
 		     v-component="vue-dropdown"
 		     v-ref="campaigns"
 		     v-with="items: campaigns"

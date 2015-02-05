@@ -55,10 +55,10 @@ module.exports = {
 			region    : null,
 			campaign  : null,
 			campaigns : [],
-			capacity  : [34, 36, 37, 40, 183, 231, 210, 226],
-			polio     : [48, 50, 192, 66],
-			supply    : [241, 220, 173, 197],
-			resources : [169, 170],
+			capacity  : [178,183,179,184,180,185,181,186,182],
+			polio     : [190,192,193,191],
+			supply    : [194,219,173,172],
+			resources : [169,170],
 			microplans: []
 		};
 	}

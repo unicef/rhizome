@@ -1,44 +1,43 @@
 form {
   &.inline {
-    button, .button {
-      @include button($button-tny, $radius: true);
+    button,
+    .button {
+      @include button-size($button-tny, true);
       margin-bottom: rem-calc(5);
     }
   }
 
   .dropdown {
     .menu-button {
-      @include button($button-tny, $secondary-color, true, true);
       margin-bottom: rem-calc(5);
       padding-left: rem-calc(12);
       padding-right: 2rem;
       text-align: left;
+      border-bottom-width: 3px;
     }
 
     .selection-controls {
-      button, .button {
-        @include button($button-tny, $secondary-color, true, false);
+      button,
+      .button {
+      	@include button-size($button-tny);
+      	width: auto;
         margin-bottom: rem-calc(5);
       }
-    }
-  }
-
-  &.login {
-    max-width: 300px;
-    margin: 100pt auto;
-
-    button {
-      display: block;
-      font-size: 12pt;
-      width: 100%;
-    }
-
-    input {
-      width: 100%;
     }
   }
 
   .clear-btn {
   	color: $base;
   }
+}
+
+input[type="text"],
+input[type="password"] {
+	border-bottom: 2px solid $primary-color;
+	transition: border 300ms ease-in-out;
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
 }

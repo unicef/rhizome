@@ -24,7 +24,6 @@ module.exports = {
 	methods: {
 
 		toggle: function () {
-			this.selected = !this.selected;
 			this.$dispatch('dropdown-item-toggle', this);
 		}
 

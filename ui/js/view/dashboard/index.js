@@ -6,6 +6,11 @@ var page     = require('page');
 var api      = require('data/api');
 var Dropdown = require('component/dropdown');
 
+var titles = {
+	'management-dashboard': 'Polio Performance Dashboard',
+	'nco-dashboard': "NGA Country Office"
+};
+
 module.exports = {
 	template: require('./template.html'),
 
@@ -14,7 +19,8 @@ module.exports = {
 			campaign : null,
 			campaigns: [],
 			dashboard: 'management-dashboard',
-			region   : null
+			region   : null,
+			title    : titles['management-dashboard']
 		};
 	},
 
@@ -22,6 +28,7 @@ module.exports = {
 		var show = function (ctx) {
 			console.debug('dashboard::show', ctx.params.dashboard);
 			this.dashboard = ctx.params.dashboard || 'management-dashboard';
+			this.title = titles[this.dashboard];
 		}.bind(this);
 
 		page('/datapoints/:dashboard', show);
