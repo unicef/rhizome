@@ -1,11 +1,9 @@
 <div class="tooltip {{ orientation }}"
-     v-style="margin-top   : top,
-              margin-right : right,
-              margin-bottom: bottom,
-              margin-left  : left">
-	<div v-if="show" v-transition="fade">
-		<content>{{ text }}</content>
-
-		<div class="pointer"></div>
-	</div>
+     v-show="show"
+     v-style="top   : top,
+              right : right,
+              bottom: bottom,
+              left  : left">
+	<div v-if="show"
+	     v-partial="tooltip-default"></div>
 </div>

@@ -9,32 +9,49 @@ function intStyle(el, property) {
 	return parseInt(style.getPropertyValue(property), 10);
 }
 
+function dimensions(el, includeMargins) {
+	var dims = {
+		height: el.offsetHeight,
+		width: el.offsetWidth
+	};
+
+	if (includeMargins) {
+		dims.height += intStyle(el, 'margin-top') + intStyle(el, 'margin-bottom');
+		dims.width += intStyle(el, 'margin-left') + intStyle(el, 'margin-right');
+	}
+
+	return dims;
+}
+
 function offset(el) {
-	var offset = {
-		top : el.offsetTop,
-		left: el.offsetLeft
+	var off = {
+		top   : el.offsetTop,
+		right : 0,
+		bottom: 0,
+		left  : el.offsetLeft
 	};
 
 	var dims      = dimensions(el, true);
 	var parent    = el.offsetParent || document.body;
 
-	offset.bottom = parent.scrollHeight - (offset.top + dims.height);
-	offset.right  = parent.scrollWidth - (offset.left + dims.width);
+	if (parent) {
+		off.bottom = parent.scrollHeight - (off.top + dims.height);
+		off.right  = parent.scrollWidth - (off.left + dims.width);
+	}
 
-	return offset;
+	return off;
 }
 
 function documentOffset(el) {
-	var off = offset(el);
+	var bbox = el.getBoundingClientRect();
+	var doc  = el.ownerDocument.documentElement;
 
-	if (!el.offsetParent) {
-		return off;
-	}
-
-	return _.reduce(documentOffset(el.offsetParent), function (result, off, key) {
-		result[key] += off;
-		return result;
-	}, off);
+	return {
+		top   : bbox.top + doc.clientTop + window.pageYOffset,
+		right : bbox.right + doc.clientLeft + window.pageXOffset,
+		bottom: bbox.bottom + doc.clientTop + window.pageYOffset,
+		left  : bbox.left + doc.clientLeft + window.pageXOffset,
+	};
 }
 
 function viewportOffset(el) {
@@ -59,20 +76,6 @@ function contains(el, pt) {
 
 	return x >= 0 && x <= el.offsetWidth &&
 		y >= 0 && y <= el.offsetHeight;
-}
-
-function dimensions(el, includeMargins) {
-	var dims = {
-		height: el.offsetHeight,
-		width: el.offsetWidth
-	};
-
-	if (includeMargins) {
-		dims.height += intStyle(el, 'margin-top') + intStyle(el, 'margin-bottom');
-		dims.width += intStyle(el, 'margin-left') + intStyle(el, 'margin-right');
-	}
-
-	return dims;
 }
 
 function contentArea(el) {

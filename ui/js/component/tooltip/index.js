@@ -2,11 +2,15 @@
 
 'use strict';
 
+var _   = require('lodash');
+
 var dom = require('../../util/dom');
 
 module.exports = {
-	replace : true,
 	template: require('./template.html'),
+
+	inherit : true,
+	replace : true,
 
 	paramAttributes: [
 		'data-orientation'
@@ -16,7 +20,7 @@ module.exports = {
 		return {
 			orientation: 'top',
 			show       : false,
-			text       : null,
+			template   : 'tooltip-default',
 
 			top        : 0,
 			right      : 0,
@@ -25,51 +29,30 @@ module.exports = {
 		};
 	},
 
-	attached: function () {
-		this.$el.parentElement.addEventListener('mouseover', this);
-		this.$el.parentElement.addEventListener('mouseout', this);
-		window.addEventListener('resize', this);
-		this.$emit('tooltip-reposition');
+	ready: function () {
+		console.debug('tooltip::ready');
+		this.$log();
+		this.$root.$on('tooltip-show', this.showTooltip);
+		this.$root.$on('tooltip-hide', this.hideTooltip);
 	},
 
 	methods: {
-		handleEvent: function (evt) {
-			// console.debug('tooltip::handleEvent', evt.type, evt);
-			var type = evt.type;
-
-			switch (type) {
-			case 'mouseover':
-			case 'mouseout':
-				this.show = (type === 'mouseover');
-				break;
-
-			case 'resize':
-				this.$emit('tooltip-reposition');
-				break;
-
-			default:
-				break;
+		reposition: function () {
+			if (!this._parentEl) {
+				return;
 			}
 
-		}
-	},
+			var offset = dom.documentOffset(this._parentEl);
+			var doc = this._parentEl.ownerDocument.documentElement;
 
-	events: {
-		'tooltip-hide': function () {
-			this.show = false;
-		},
-
-		'tooltip-reposition': function () {
-			var offset = dom.offset(this.$el.parentElement);
-
-			// console.debug('tooltip::reposition offset', offset);
+			console.debug('tooltip::reposition offset', offset);
 
 			switch (this.orientation) {
 			case 'right':
 				this.top    = offset.top + 'px';
 				this.right  = 'auto';
 				this.bottom = 'auto';
-				this.left   = -offset.right + 'px';
+				this.left   = offset.right + 'px';
 				break;
 
 			case 'bottom':
@@ -81,7 +64,7 @@ module.exports = {
 
 			case 'left':
 				this.top    = offset.top + 'px';
-				this.right  = offset.left + 'px';
+				this.right  = (doc.clientWidth - offset.left) + 'px';
 				this.bottom = 'auto';
 				this.left   = 'auto';
 				break;
@@ -89,21 +72,43 @@ module.exports = {
 			default:
 				this.top    = 'auto';
 				this.right  = 'auto';
-				this.bottom = offset.top + 'px';
+				this.bottom = (doc.clientHeight - offset.top) + 'px';
 				this.left   = offset.left + 'px';
 				break;
 			}
 
-			// console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
+			console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
 		},
 
-		'tooltip-show': function () {
+		hideTooltip: function (options) {
+			console.debug('tooltip::hide', options);
+			if (this._parentEl === options.el) {
+				this.show      = false;
+				this._parentEl = null;
+
+				window.removeEventListener('resize', this.reposition);
+			}
+		},
+
+		showTooltip: function (options) {
+			console.debug('tooltip::show', options);
+			this._parentEl = options.el;
+
+			var self = this;
+
+			// FIXME: Crude version of Vue's mergeOptions...
+			_.forOwn(options.data, function (v, k) {
+				self.$set(k, v);
+			});
+
+			this.reposition();
+			window.addEventListener('resize', this.reposition);
 			this.show = true;
-		},
-
-		'tooltip-toggle': function () {
-			this.show = !this.show;
 		}
+	},
+
+	partials: {
+		'tooltip-default': '{{ text }}'
 	}
 
 };
