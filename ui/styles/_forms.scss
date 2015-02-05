@@ -1,23 +1,26 @@
 form {
   &.inline {
-    button, .button {
-      @include button($button-tny, $radius: true);
+    button,
+    .button {
+      @include button-size($button-tny, true);
       margin-bottom: rem-calc(5);
     }
   }
 
   .dropdown {
     .menu-button {
-      @include button($button-tny, $secondary-color, true, true);
       margin-bottom: rem-calc(5);
       padding-left: rem-calc(12);
       padding-right: 2rem;
       text-align: left;
+      border-bottom-width: 2px;
     }
 
     .selection-controls {
-      button, .button {
-        @include button($button-tny, $secondary-color, true, false);
+      button,
+      .button {
+      	@include button-size($button-tny);
+      	width: auto;
         margin-bottom: rem-calc(5);
       }
     }
@@ -41,4 +44,14 @@ form {
   .clear-btn {
   	color: $base;
   }
+}
+
+input[type="text"] {
+	border-bottom: 2px solid $primary-color;
+	transition: border 300ms ease-in-out;
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
 }

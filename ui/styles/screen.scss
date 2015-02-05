@@ -13,8 +13,8 @@
 @import "charts";
 
 body {
-	background-color: $white;
-	padding: 4px 0 4px 50px;
+	font-size: rem-calc(10);
+	padding: 11px 4px 11px 54px;
 }
 
 header {
@@ -153,8 +153,21 @@ table {
 	}
 }
 
-button, .button {
+button,
+.button,
+*[role="button"] {
 	@include button($radius: true);
+	border-bottom-width: 2px;
+
+	transition: all 300ms ease-in-out;
+
+	&:not(.disabled):not(.success):hover {
+		border-color: $secondary-color
+	}
+
+	&:focus {
+		outline: none;
+	}
 }
 
 [class*="block-grid-"] > li {
@@ -256,4 +269,6 @@ button, .button {
 	color: #EC1C24;
 }
 
-
+.hidden {
+	visibility: hidden;
+}
