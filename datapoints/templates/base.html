@@ -10,11 +10,12 @@
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
 	<link rel="stylesheet" href="{% static "css/screen.css" %}">
-	<link rel="stylesheet" href="{% static "css/print.css" %}">
+	<link rel="stylesheet" href="{% static "css/print.css" %}" media="print" />
+
 </head>
 
 <body class="{% block section %}{% endblock %}">
-	<header>
+	<header class="no-print">
 		<nav>
 			<ul>
 				<li class="dashboard"><a href="{% url 'datapoints:dashboard' %}">
