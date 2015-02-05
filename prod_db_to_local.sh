@@ -4,7 +4,7 @@ BACKUPDIR=sql_backups/
 COMPRESSION=4
 DATE=`date +%Y-%m-%dT%H:%M:%S`
 DB=polio
-HOST=polio_prod
+HOST=50.57.77.252
 USER=djangoapp
 
 # FIXME: It would be nice to have command-line switches for skipping back-up and
