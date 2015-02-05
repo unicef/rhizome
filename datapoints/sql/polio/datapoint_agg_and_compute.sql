@@ -1,36 +1,35 @@
-
 DROP TABLE IF EXISTS agg_datapoint;
 CREATE TABLE agg_datapoint
 AS
 
 SELECT
-		d.id
-		,d.region_id
-		,d.campaign_id
-		,d.indicator_id
-		,value
-		, CAST(0 AS BOOLEAN) AS is_agg
-	FROM datapoint d
+    d.id
+    ,d.region_id
+    ,d.campaign_id
+    ,d.indicator_id
+    ,value
+    , CAST(0 AS BOOLEAN) AS is_agg
+  FROM datapoint d
 
-	UNION ALL
+  UNION ALL
 
-	SELECT
-		-1 as id
-		, r.parent_region_id
-		, d.campaign_id
-		, d.indicator_id
-		, SUM(d.value) AS value
-		, CAST(1 AS BOOLEAN) AS is_agg
-	FROM datapoint d
-	INNER JOIN region  r
-	ON d.region_id = r.id
-	AND NOT EXISTS (
-		SELECT 1 FROM datapoint tid
-		WHERE r.parent_region_id = tid.region_id
-		AND d.campaign_id = tid.campaign_id
-		AND tid.indicator_id = d.indicator_id
-	)
-	GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
+  SELECT
+    -1 as id
+    , r.parent_region_id
+    , d.campaign_id
+    , d.indicator_id
+    , SUM(d.value) AS value
+    , CAST(1 AS BOOLEAN) AS is_agg
+  FROM datapoint d
+  INNER JOIN region  r
+  ON d.region_id = r.id
+  AND NOT EXISTS (
+    SELECT 1 FROM datapoint tid
+    WHERE r.parent_region_id = tid.region_id
+    AND d.campaign_id = tid.campaign_id
+    AND tid.indicator_id = d.indicator_id
+  )
+  GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
 
 ----
 ----
@@ -66,7 +65,7 @@ part.indicator_id as master_indicator_id
 ,d_part.value / NULLIF(d_whole.value,0) as value
 ,CAST(1 as BOOLEAN) as is_calc
 FROM(
-	SELECT max(id) as max_dp_id FROM datapoint_with_computed
+  SELECT max(id) as max_dp_id FROM datapoint_with_computed
 ) x
 INNER JOIN calculated_indicator_component part
 ON 1=1
@@ -100,35 +99,36 @@ GROUP BY i_part.indicator_id,region_id,campaign_id;
 
 GRANT SELECT ON datapoint_with_computed TO djangoapp;
 
-
--- SELECT
--- x.indicator_id
--- ,x.region_id
--- ,x.campaign_id
--- ,x.value
--- ,CAST(1 as BOOLEAN) as is_calc
--- FROM (
--- 	SELECT
--- 	part.to_calc_ind_id  as indicator_id
--- 	,part.region_id
--- 	,part.campaign_id
--- 	,(whole.value - part.value) / NULLIF(whole.value,0) as value
--- 	FROM (
--- 		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
--- 		FROM calculated_indicator_component cic
--- 		INNER JOIN datapoint d
--- 		ON cic.indicator_component_id = d.indicator_id
--- 		WHERE calculation = 'PART_OF_DIFFERENCE'
--- 	) part
--- 	INNER JOIN (
--- 		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
--- 		FROM calculated_indicator_component cic
--- 		INNER JOIN datapoint d
--- 		ON cic.indicator_component_id = d.indicator_id
--- 		WHERE calculation = 'WHOLE_OF_DIFFERENCE'
--- 	) whole
--- 	ON part.to_calc_ind_id = whole.to_calc_ind_id
--- 	AND part.region_id = whole.region_id
--- 	AND part.campaign_id = whole.campaign_id
--- )x
--- WHERE x.calc_value IS NOT NULL;
+INSERT INTO datapoint_with_computed
+(indicator_id,region_id,campaign_id,value,is_calc)
+SELECT
+x.indicator_id
+,x.region_id
+,x.campaign_id
+,x.value
+,CAST(1 as BOOLEAN) as is_calc
+FROM (
+	SELECT
+	part.to_calc_ind_id  as indicator_id
+	,part.region_id
+	,part.campaign_id
+	,(whole.value - part.value) / NULLIF(whole.value,0) as value
+	FROM (
+		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
+		FROM calculated_indicator_component cic
+		INNER JOIN datapoint d
+		ON cic.indicator_component_id = d.indicator_id
+		WHERE calculation = 'PART_OF_DIFFERENCE'
+	) part
+	INNER JOIN (
+		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
+		FROM calculated_indicator_component cic
+		INNER JOIN datapoint d
+		ON cic.indicator_component_id = d.indicator_id
+		WHERE calculation = 'WHOLE_OF_DIFFERENCE'
+	) whole
+	ON part.to_calc_ind_id = whole.to_calc_ind_id
+	AND part.region_id = whole.region_id
+	AND part.campaign_id = whole.campaign_id
+)x
+WHERE x.calc_value IS NOT NULL;

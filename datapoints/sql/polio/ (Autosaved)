@@ -1,4 +1,0 @@
-
-
-
-delete FROM source_datapoint where document_id = 880
