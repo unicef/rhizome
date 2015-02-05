@@ -465,7 +465,7 @@ $button-tny: rem-calc(9);
 // $button-function-factor: -20%;
 
 // We use these to control button border and hover styles.
-// $button-border-width: 0px;
+$button-border-width: 1px;
 // $button-border-style: solid;
 $button-bg-color: $control-bg;
 $button-bg-hover: $control-bg;
