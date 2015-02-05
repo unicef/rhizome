@@ -26,27 +26,13 @@ form {
     }
   }
 
-  &.login {
-    max-width: 300px;
-    margin: 100pt auto;
-
-    button {
-      display: block;
-      font-size: 12pt;
-      width: 100%;
-    }
-
-    input {
-      width: 100%;
-    }
-  }
-
   .clear-btn {
   	color: $base;
   }
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
 	border-bottom: 2px solid $primary-color;
 	transition: border 300ms ease-in-out;
 

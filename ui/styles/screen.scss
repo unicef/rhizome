@@ -272,3 +272,20 @@ button,
 .hidden {
 	visibility: hidden;
 }
+
+.login {
+	background-color: $oil;
+
+	form {
+    max-width: 300px;
+    margin: 100pt auto;
+
+		label {
+			color: $white;
+		}
+
+    input {
+      width: 100%;
+    }
+  }
+}
