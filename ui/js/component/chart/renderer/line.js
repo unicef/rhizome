@@ -43,6 +43,35 @@ module.exports = function lineChart() {
 				.transition().duration(transitionSpeed)
 					.style('opacity', 0)
 					.remove();
+
+			var point = g.selectAll('circle')
+				.data(d);
+
+			point
+				.transition()
+				.duration(transitionSpeed)
+				.attr({
+					'cx': line.x(),
+					'cy': line.y()
+				});
+
+			point.enter()
+				.append('circle')
+				.attr({
+					'cx'   : line.x(),
+					'cy'   : line.y(),
+					'r'    : 0,
+					'class': 'point'
+				})
+				.transition()
+				.duration(transitionSpeed)
+				.attr('r', 2);
+
+			point.exit()
+				.transition()
+				.duration(transitionSpeed)
+				.attr('r', 0)
+				.remove();
 		});
 
 		// FIXME: Fade out old series for now, but we really want to shrink the
