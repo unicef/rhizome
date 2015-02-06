@@ -42,9 +42,7 @@ module.exports = {
 				var svg = d3.select(this);
 				svg
 					.select('.annotation')
-					.selectAll('line')
-					.data([])
-					.exit()
+					.selectAll('line, text')
 					.transition()
 					.duration(300)
 					.style('opacity', 0)
@@ -288,7 +286,7 @@ module.exports = {
 
 			var label = d3.select(svg)
 				.select('.annotation')
-				.selectAll('text')
+				.selectAll('.axis')
 				.data(data);
 
 			var yTranslate = this.contentHeight;
@@ -299,10 +297,13 @@ module.exports = {
 					'text-anchor': 'middle',
 					'opacity'    : 0
 				})
-				.attr('transform', function (d) {
-					return 'translate(' + x(d) + ',' + yTranslate + ')';
-				})
-				.attr('dy', '9');
+				.attr({
+					'dy'       : '9',
+					'class'    : 'axis',
+					'transform': function (d) {
+						return 'translate(' + x(d) + ',' + yTranslate + ')';
+					}
+				});
 
 			label
 				.text(function (d) {
@@ -312,6 +313,50 @@ module.exports = {
 				.duration(300)
 				.attr('transform', function (d) {
 					return 'translate(' + x(d) + ',' + yTranslate + ')';
+				})
+				.style('opacity', 1);
+
+			label.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
+
+			var labelData = this.datapoints.filter(function (d) {
+				return d.campaign.start_date.getTime() === data[0].getTime();
+			});
+
+			var y = this.yScale;
+
+			label = d3.select(svg)
+				.select('.annotation')
+				.selectAll('.label')
+				.data(labelData);
+
+			label.enter()
+				.append('text')
+				.attr({
+					'class'    : 'label',
+					'dx'       : '-2',
+					'dy'       : '4',
+					'transform': function (d) {
+						return 'translate(' + x(d.campaign.start_date) + ',' + y(d.value) + ')';
+					}
+				})
+				.style({
+					'opacity': 0,
+					'text-anchor': 'end'
+				});
+
+			var fmt = this.yFmt;
+			label
+				.text(function (d) {
+					return fmt(d.value);
+				})
+				.transition()
+				.duration(300)
+				.attr('transform', function (d) {
+					return 'translate(' + x(d.campaign.start_date) + ',' + y(d.value) + ')';
 				})
 				.style('opacity', 1);
 
