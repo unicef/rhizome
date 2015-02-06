@@ -8,7 +8,7 @@ var Dropdown = require('component/dropdown');
 
 var titles = {
 	'management-dashboard': 'Polio Performance Dashboard',
-	'nco-dashboard': "NGA Country Office"
+	'nco-dashboard': 'NGA Country Office'
 };
 
 module.exports = {

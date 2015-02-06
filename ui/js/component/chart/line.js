@@ -209,7 +209,7 @@ module.exports = {
 			});
 		},
 
-		onMouseMove: function (evt) {
+		onMouseMove: function () {
 			if (this.empty) {
 				return;
 			}
@@ -239,7 +239,7 @@ module.exports = {
 				} else {
 					var r = range[right].getTime();
 					var l = range[left].getTime();
-					var m = dt.getTime()
+					var m = dt.getTime();
 
 					if ((m - l) / (r - l) > 0.5) {
 						data[0] = range[right];
