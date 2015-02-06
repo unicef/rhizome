@@ -66,7 +66,7 @@ module.exports = {
 
 			var series = _(this.datapoints)
 				.groupBy(function (d) {
-					return d.campaign.start_date.getFullYear()
+					return d.campaign.start_date.getFullYear();
 				})
 				.values()
 				.map(function (d) {
