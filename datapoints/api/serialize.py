@@ -31,13 +31,19 @@ class CustomSerializer(Serializer):
         expanded_objects = []
 
         for obj in data_objects:
+
             expanded_obj = {}
 
             expanded_obj['region'] = meta_lookup['region'][obj['region']]
             expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
             for ind_dict in obj['indicators']:
-                ind = meta_lookup['indicator'][ind_dict['indicator']]
+                try:
+                    ind = meta_lookup['indicator'][ind_dict['indicator']]
+                except KeyError:
+                    ind = ''
+                    pass
+
                 val = ind_dict['value']
                 expanded_obj[ind] = val
 
