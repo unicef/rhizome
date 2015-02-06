@@ -107,6 +107,7 @@ module.exports = {
 		'chart-stacked-area'  : require('component/chart/stacked-area'),
 		'chart-line'          : require('component/chart/line'),
 		'chart-year-over-year': require('component/chart/year-over-year'),
+		'chart-ytd'           : require('component/chart/ytd'),
 		'vue-dropdown'        : require('component/dropdown')
 	},
 
