@@ -31,6 +31,7 @@ class CustomSerializer(Serializer):
         expanded_objects = []
 
         for obj in data_objects:
+
             expanded_obj = {}
 
             expanded_obj['region'] = meta_lookup['region'][obj['region']]
