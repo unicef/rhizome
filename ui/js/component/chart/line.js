@@ -34,6 +34,22 @@ module.exports = {
 		'loading-overlay': require('./partial/loading-overlay.html')
 	},
 
+	ready: function () {
+		d3.select(this.$el)
+			.on('mousemove', this.onMouseMove)
+			.on('mouseout', function () {
+				d3.select(this)
+					.select('.annotation')
+					.selectAll('line')
+					.data([])
+					.exit()
+					.transition()
+					.duration(300)
+					.style('opacity', 0)
+					.remove();
+			});
+	},
+
 	computed: {
 
 		colorScale: function () {
@@ -138,8 +154,6 @@ module.exports = {
 	methods: {
 
 		draw: function () {
-			console.info('line::draw', 'enter');
-
 			var svg      = d3.select(this.$el);
 			var renderer = this.renderer;
 			var xScale   = this.xScale;
@@ -185,8 +199,67 @@ module.exports = {
 			gy.selectAll('g').classed('minor', function (d) {
 				return d !== range[0];
 			});
+		},
 
-			console.info('line::draw', 'exit');
+		onMouseMove: function (evt) {
+			if (this.empty) {
+				return;
+			}
+
+			var svg = this.$el.getElementsByTagName('svg')[0];
+
+			var cursor = d3.mouse(svg)[0];
+
+			var range = _(this.datapoints)
+				.map(function (d) {
+					return d.campaign.start_date;
+				})
+				.uniq()
+				.sortBy()
+				.value();
+
+			var x = this.xScale;
+
+			var t = d3.scale.quantize()
+				.domain(x.range())
+				.range(range);
+
+			var data = [];
+
+			if (cursor >= 0 || cursor <= this.contentWidth) {
+				data[0] = t(cursor);
+			}
+
+			var line = d3.select(svg)
+				.select('.annotation')
+				.selectAll('line')
+				.data(data);
+
+			line.enter()
+				.append('line')
+				.style({
+					'opacity': 0,
+					'stroke': '#ffcc67'
+				});
+
+			line
+				.attr({
+					'y1': 0,
+					'y2': this.contentHeight
+				})
+				.transition()
+				.duration(300)
+				.attr({
+					'x1': x,
+					'x2': x,
+				})
+				.style('opacity', 1);
+
+			line.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
 		}
 
 	},
