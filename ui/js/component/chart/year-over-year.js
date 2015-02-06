@@ -14,11 +14,6 @@ module.exports = {
 		require('./line')
 	],
 
-	ready: function () {
-		console.info('year-over-year::ready');
-		console.debug(this);
-	},
-
 	computed: {
 
 		campaign_start: function () {
@@ -66,7 +61,7 @@ module.exports = {
 
 			var series = _(this.datapoints)
 				.groupBy(function (d) {
-					return d.campaign.start_date.getFullYear()
+					return d.campaign.start_date.getFullYear();
 				})
 				.values()
 				.map(function (d) {
@@ -76,7 +71,6 @@ module.exports = {
 				})
 				.value();
 
-			console.debug('year-over-year::series', series);
 			return series;
 		},
 

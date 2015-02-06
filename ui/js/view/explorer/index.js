@@ -15,8 +15,8 @@ module.exports = {
 			regions: [],
 			indicators: [],
 			pagination: {
-				the_limit: 20,
-				the_offset: 0,
+				limit: 20,
+				offset: 0,
 				total_count: 0
 			},
 			table: {
@@ -97,15 +97,6 @@ module.exports = {
 					display: 'Campaign'
 				}];
 
-			if (pagination) {
-				// Prepend "the_" to the pagination options (typically limit and offset)
-				// because the datapoint API uses the_limit and the_offset instead of
-				// limit and offset like the other paged APIs. See POLIO-194.
-				_.forOwn(pagination, function (v, k) {
-					options['the_' + k] = v;
-				});
-			}
-
 			if (regions.length > 0) {
 				options.region__in = regions;
 			}
@@ -139,9 +130,7 @@ module.exports = {
 			api.datapoints(options).done(function (data) {
 				self.table.loading = false;
 
-				self.pagination.the_limit   = Number(data.meta.the_limit);
-				self.pagination.the_offset  = Number(data.meta.the_offset);
-				self.pagination.total_count = Number(data.meta.total_count);
+				_.assign(self.pagination, _.pluck(data.meta, 'limit', 'offset', 'total_count'));
 
 				if (!data.objects || data.objects.length < 1) {
 					return;
@@ -174,7 +163,7 @@ module.exports = {
 			var regions      = _.map(this.regions, 'value');
 			var query        = {
 				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
-				'the_limit'  : 10000000,
+				'limit'  : 10000000,
 				'format'     : 'csv',
 				'uri_display': 'slug'
 			};
@@ -193,16 +182,16 @@ module.exports = {
 		},
 
 		previous: function () {
-			if (this.pagination.the_offset < 1) {
+			if (this.pagination.offset < 1) {
 				return;
 			}
 
-			this.pagination.the_offset = Math.max(0, this.pagination.the_offset - this.pagination.the_limit);
+			this.pagination.offset = Math.max(0, this.pagination.offset - this.pagination.limit);
 			this.refresh();
 		},
 
 		next: function () {
-			this.pagination.the_offset += this.pagination.the_limit;
+			this.pagination.offset += this.pagination.limit;
 			this.refresh();
 		}
 	}

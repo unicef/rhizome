@@ -6,7 +6,7 @@
 
 			<section>
 				<h4>Polio Cases</h4>
-				<div v-component="chart-year-over-year"
+				<div v-component="chart-ytd"
 				     data-aspect="1.8"
 				     data-margin-bottom="24"
 				     data-indicators="[168]"
@@ -39,6 +39,7 @@
 						     data-margin-bottom="12"
 						     data-indicators="[166,188,167,165]"
 						     data-duration="2 years"
+						     data-format-string="%"
 						     v-with="region: region, campaign: campaign"></svg>
 					</section>
 
@@ -49,6 +50,7 @@
 						     data-margin-bottom="24"
 						     data-period="2 years"
 						     data-indicators="[187,189]"
+						     data-format-string="%"
 						     v-with="campaign: campaign, region: region"></div>
 					</section>
 
@@ -76,7 +78,7 @@
 				<div class="medium-3 columns">
 					<div v-component="chart-choropleth"
 					     v-with="region: region, campaign: campaign"
-					     data-indicator="[166]"
+					     data-indicator="166"
 					     data-aspect="1"
 					     data-range="[0, 0.1]">
 					</div>
@@ -177,6 +179,7 @@
 			     data-margin-bottom="24"
 			     data-period="2 years"
 			     data-indicators="[158]"
+					 data-format-string="%"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<h4>Districts Reporting Access Analysis</h4>

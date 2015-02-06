@@ -22,6 +22,7 @@ module.exports = {
 	data: function () {
 		return {
 			markerWidth: 3,
+			formatString: '%'
 		};
 	},
 
@@ -124,7 +125,7 @@ module.exports = {
 			var width  = this.width || 0;
 
 			var x = d3.scale.linear()
-				.domain([0, this.max])
+				.domain([0, 1])
 				.range([0, width]);
 
 			var ranges = (this.indicator && this.indicators.ranges) || [];
@@ -195,12 +196,14 @@ module.exports = {
 					.style('opacity', 0)
 				.remove();
 
-			var format = d3.format(this.formatString) ||
-				this.indicator.format ||
-				String;
+			var format = this.formatString ?
+				d3.format(this.formatString) :
+				this.indicator.format || String;
 
 			var label = svg.selectAll('.label')
-				.data(this.value ? [this.value] : []);
+				.data(this.value || this.value === 0 ?
+					[this.value] :
+					[]);
 
 			label.enter().append('text')
 				.attr({
@@ -215,17 +218,9 @@ module.exports = {
 				.style({
 					'font-size': height / 4,
 				})
-				.transition().duration(300)
-					.tween('text', function (d) {
-						// FIXME: We should generalize this text tween and decide between
-						// rounded and regular interpolation based on whether or not there
-						// is a fractional component to any of the numbers.
-						var i = d3.interpolateRound(Number(this.textContent), d);
-
-						return function (t) {
-							this.textContent = format(i(t));
-						};
-					});
+				.text(function (d) {
+					return format(d);
+				});
 
 			label.exit()
 				.transition().duration(300)
