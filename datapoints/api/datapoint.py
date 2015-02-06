@@ -49,7 +49,7 @@ class DataPointResource(BaseNonModelResource):
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
-        # serializer = CustomSerializer
+        serializer = CustomSerializer()
 
     def __init__(self, *args, **kwargs):
 
@@ -132,7 +132,7 @@ class DataPointResource(BaseNonModelResource):
         '''
 
         ## get rid of the meta_dict. i will add my own meta data.
-        data['meta'].pop("limit",None)
+        # data['meta'].pop("limit",None)
 
         ## iterate over parsed_params
         meta_dict = {}
@@ -140,7 +140,7 @@ class DataPointResource(BaseNonModelResource):
             meta_dict[k] = v
 
         ## add metadata to response
-        data['meta'] = meta_dict
+        data['requested_params'] = meta_dict
 
         ## add errors if it exists
         if self.error:

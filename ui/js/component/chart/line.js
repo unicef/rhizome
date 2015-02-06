@@ -21,6 +21,7 @@ module.exports = {
 	paramAttributes: [
 		'data-height',
 		'data-width',
+		'data-format-string'
 	],
 
 	mixins: [
@@ -110,7 +111,7 @@ module.exports = {
 		},
 
 		yFmt: function () {
-			return d3.format('s');
+			return d3.format(this.formatString || 's');
 		},
 
 		yScale: function () {
