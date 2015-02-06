@@ -56,7 +56,7 @@ module.exports = {
 			campaign  : null,
 			campaigns : [],
 			capacity  : [178,228,179,184,180,185,230,226,239],
-			polio     : [190,192,193,191],
+			polio     : [236,192,193,191],
 			supply    : [194,219,173,172],
 			resources : [169,233],
 			microplans: []
