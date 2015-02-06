@@ -2,6 +2,7 @@
 
 var _         = require('lodash');
 var d3        = require('d3');
+var moment    = require('moment');
 
 var colors    = require('colors/coolgray');
 var lineChart = require('./renderer/line');
@@ -38,7 +39,8 @@ module.exports = {
 		d3.select(this.$el)
 			.on('mousemove', this.onMouseMove)
 			.on('mouseout', function () {
-				d3.select(this)
+				var svg = d3.select(this);
+				svg
 					.select('.annotation')
 					.selectAll('line')
 					.data([])
@@ -47,6 +49,12 @@ module.exports = {
 					.duration(300)
 					.style('opacity', 0)
 					.remove();
+
+					svg
+						.select('.x.axis')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
 			});
 	},
 
@@ -206,8 +214,7 @@ module.exports = {
 				return;
 			}
 
-			var svg = this.$el.getElementsByTagName('svg')[0];
-
+			var svg    = this.$el.getElementsByTagName('svg')[0];
 			var cursor = d3.mouse(svg)[0];
 
 			var range = _(this.datapoints)
@@ -218,16 +225,28 @@ module.exports = {
 				.sortBy()
 				.value();
 
-			var x = this.xScale;
-
-			var t = d3.scale.quantize()
-				.domain(x.range())
-				.range(range);
-
-			var data = [];
+			var x     = this.xScale;
+			var dt    = x.invert(cursor);
+			var right = d3.bisect(range, dt);
+			var left  = right - 1;
+			var data  = [];
 
 			if (cursor >= 0 || cursor <= this.contentWidth) {
-				data[0] = t(cursor);
+				if (left < 0) {
+					data[0] = range[right];
+				} else if (right >= range.length) {
+					data[0] = range[left];
+				} else {
+					var r = range[right].getTime();
+					var l = range[left].getTime();
+					var m = dt.getTime()
+
+					if ((m - l) / (r - l) > 0.5) {
+						data[0] = range[right];
+					} else {
+						data[0] = range[left];
+					}
+				}
 			}
 
 			var line = d3.select(svg)
@@ -256,6 +275,47 @@ module.exports = {
 				.style('opacity', 1);
 
 			line.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
+
+			d3.select(svg)
+				.select('.x.axis')
+				.transition()
+				.duration(300)
+				.style('opacity', data.length ? 0 : 1);
+
+			var label = d3.select(svg)
+				.select('.annotation')
+				.selectAll('text')
+				.data(data);
+
+			var yTranslate = this.contentHeight;
+
+			label.enter()
+				.append('text')
+				.style({
+					'text-anchor': 'middle',
+					'opacity'    : 0
+				})
+				.attr('transform', function (d) {
+					return 'translate(' + x(d) + ',' + yTranslate + ')';
+				})
+				.attr('dy', '9');
+
+			label
+				.text(function (d) {
+					return moment(d).format('MMM YYYY');
+				})
+				.transition()
+				.duration(300)
+				.attr('transform', function (d) {
+					return 'translate(' + x(d) + ',' + yTranslate + ')';
+				})
+				.style('opacity', 1);
+
+			label.exit()
 				.transition()
 				.duration(300)
 				.style('opacity', 0)
