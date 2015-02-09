@@ -29,16 +29,19 @@ def build_suite():
     ## Test CSV Upload ##
 
 
+    #######################
+    ## Master Data Layer ##
+    #######################
+
+    ## DataPoint Models ##
+    # test_suite.addTest(unittest.makeSuite(IndicatorTest))
+    # test_suite.addTest(unittest.makeSuite(RegionTest))
+    test_suite.addTest(unittest.makeSuite(DataPointTest))
+
+
     ###########################
     ## Standardization Layer ##
     ###########################
-
-    ## DataPoint Models ##
-    test_suite.addTest(unittest.makeSuite(IndicatorTest))
-    test_suite.addTest(unittest.makeSuite(RegionTest))
-    # test_suite.addTest(unittest.makeSuite(DataPointTest))
-
-    # , RegionTest, DataPointTest
 
     ## Refresh Master ##
 

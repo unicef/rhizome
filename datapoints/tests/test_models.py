@@ -97,14 +97,47 @@ class RegionTest(MasterModelTestCase):
 
 class DataPointTest(MasterModelTestCase):
 
+    def prep(self):
+
+        status_id = ProcessStatus.objects.create(
+            status_text = 'test',
+            status_description = 'test'
+        ).id
+
+        self.set_up_dict = self.set_up()
+        self.set_up_dict['status_id'] = status_id
+
+
+    def create_source_datapoint(self):
+
+        self.prep()
+
+        sdp_id = SourceDataPoint.objects.create(
+            document_id = self.set_up_dict['document_id'],
+            row_number = 0,
+            source_id = self.set_up_dict['source_id'],
+            status_id = self.set_up_dict['status_id']
+            ).id
+
+
+        return sdp_id
+
+
     def create_datapoint(self, note="test", indicator_id=99, region_id = 99,
         campaign_id=99, value=100.01, changed_by_id = 1):
 
-        return DataPoint.objects.create(note=note, indicator_id=indicator_id,
-         region_id = region_id, campaign_id=campaign_id,
-         value=value,changed_by_id=changed_by_id)
+        sdp_id = self.create_source_datapoint()
 
-        ## This should break on a foreign key violation but it doesnt!!
+        dp = DataPoint.objects.create(
+            indicator_id=indicator_id,
+            region_id = region_id,
+            campaign_id=campaign_id,
+            value = value,
+            changed_by_id=changed_by_id,
+            source_datapoint_id = sdp_id,
+            )
+
+        return dp
 
     def test_datapoint_creation(self):
         dp = self.create_datapoint()
