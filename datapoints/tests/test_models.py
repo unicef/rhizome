@@ -1,15 +1,29 @@
 from django.test import TestCase
-from datapoints.models import Indicator, Region, DataPoint
+from datapoints.models import *
 from django.core.urlresolvers import reverse
 
 
+def set_up():
+
+    source_id = Source.objects.create(
+        source_name = 'test',
+        source_description = 'test').id
+
+    return source_id
+
 class IndicatorTest(TestCase):
 
-    def create_indicator(self, name="test", description = "dtest"):
-        return Indicator.objects.create(name=name,description=description)
 
     def test_datapoint_indicator_creation(self):
-        dpi = self.create_indicator()
+        source_id = set_up()
+
+        dpi = Indicator.objects.create(
+            name = 'test',
+            description = 'test',
+            is_reported = 0,
+            source_id = source_id
+        )
+
         self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
 
@@ -34,7 +48,7 @@ class DataPointTest(TestCase):
 
         ## This should break on a foreign key violation but it doesnt!!
 
-    def test_datapoint_createion(self):
+    def test_datapoint_creation(self):
         dp = self.create_datapoint()
         self.assertTrue(isinstance,(dp,DataPoint))
         # self.assertEqual(dp.__unicode__(),dp.value)
