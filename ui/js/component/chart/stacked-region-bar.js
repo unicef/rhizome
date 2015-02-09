@@ -2,7 +2,6 @@
 
 var _        = require('lodash');
 var d3       = require('d3');
-var moment   = require('moment');
 
 var colors     = require('colors/coolgray');
 var stackedBar = require('./renderer/stacked-bar');
@@ -17,7 +16,7 @@ module.exports = {
 		return {
 			marginBottom: 18,
 			marginLeft  : 40
-		}
+		};
 	},
 
 	computed: {
@@ -72,7 +71,7 @@ module.exports = {
 				.y(function (d) {
 					return y(d.region);
 				})
-				.color(function (d, i) {
+				.color(function (d) {
 					return color(d.id);
 				})
 				.values(function (d) {
@@ -86,8 +85,6 @@ module.exports = {
 			if (this.empty) {
 				return [];
 			}
-
-			var campaign = this.campaign;
 
 			var series = _(this.datapoints)
 				.groupBy('indicator')
@@ -143,7 +140,7 @@ module.exports = {
 
 			return d3.scale.ordinal()
 				.domain(domain)
-				.rangeRoundBands([this.contentHeight, 0], 0.08)
+				.rangeRoundBands([this.contentHeight, 0], 0.08);
 		}
 	},
 
@@ -165,14 +162,14 @@ module.exports = {
 				.scale(this.xScale)
 				.orient('bottom');
 
-			var gx = svg.select('.x.axis')
+			svg.select('.x.axis')
 				.call(xAxis);
 
 			var yAxis = d3.svg.axis()
 				.scale(this.yScale)
 				.orient('left');
 
-			var gy = svg.select('.y.axis')
+			svg.select('.y.axis')
 				.call(yAxis);
 		}
 	}

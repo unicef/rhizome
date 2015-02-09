@@ -196,14 +196,14 @@ module.exports = {
 					.style('opacity', 0)
 				.remove();
 
-			var format = this.formatString
-				? d3.format(this.formatString)
-				: this.indicator.format || String;
+			var format = this.formatString ?
+				d3.format(this.formatString) :
+				this.indicator.format || String;
 
 			var label = svg.selectAll('.label')
-				.data(this.value || this.value === 0
-					? [this.value]
-					: []);
+				.data(this.value || this.value === 0 ?
+					[this.value] :
+					[]);
 
 			label.enter().append('text')
 				.attr({
