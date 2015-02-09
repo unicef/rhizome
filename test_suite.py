@@ -13,9 +13,7 @@ def run_all():
     suite = build_suite() #
     suite.run(result)
 
-    print result.failures
     return suite
-
 
 def build_suite():
     """
