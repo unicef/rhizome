@@ -53,6 +53,7 @@ module.exports = {
 	data: function () {
 		return {
 			region    : null,
+			regionName: '',
 			campaign  : null,
 			campaigns : [],
 			capacity  : [178,183,179,184,180,185,181,186,182],
@@ -61,5 +62,11 @@ module.exports = {
 			resources : [169,170],
 			microplans: []
 		};
+	},
+
+	computed: {
+		campaignName: function () {
+			return moment(this.campaign.start_date).format('MMM YYYY');
+		}
 	}
 };

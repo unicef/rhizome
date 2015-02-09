@@ -16,11 +16,12 @@ module.exports = {
 
 	data: function () {
 		return {
-			campaign : null,
-			campaigns: [],
-			dashboard: 'management-dashboard',
-			region   : null,
-			title    : titles['management-dashboard']
+			campaign  : null,
+			campaigns : [],
+			dashboard : 'management-dashboard',
+			region    : null,
+			regionName: '',
+			title     : titles['management-dashboard']
 		};
 	},
 
@@ -50,7 +51,14 @@ module.exports = {
 		});
 
 		this._regions.$on('dropdown-value-changed', function (items) {
-			self.region = (items && items.length > 0) ? items[0].value : null;
+			if (items && items.length) {
+				console.debug('dashboard::dropdown-value-changed', items[0]);
+				self.region     = items[0].value;
+				self.regionName = items[0].title;
+			} else {
+				self.region     = null;
+				self.regionName = '';
+			}
 		});
 
 		this.$.campaigns.$on('dropdown-value-changed', function (items) {

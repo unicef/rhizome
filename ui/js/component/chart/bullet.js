@@ -11,7 +11,6 @@ module.exports = {
 	],
 
 	mixins: [
-		require('./mixin/resize'),
 		require('./mixin/with-indicator')
 	],
 
@@ -120,8 +119,8 @@ module.exports = {
 			}
 
 			var svg    = d3.select(this.$el).select('.bullet');
-			var height = this.height || 0;
-			var width  = this.width || 0;
+			var height = 100;
+			var width  = 318;
 
 			var x = d3.scale.linear()
 				.domain([0, this.max])

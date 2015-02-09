@@ -37,3 +37,33 @@ header {
 	@include grid-html-classes($size:large);
   @include block-grid-html-classes($size:large,$include-spacing:false);
 }
+
+#management-dashboard {
+	color: #a7aeaf;
+
+	h1 {
+		display    : inline-block;
+		font-size  : 25pt;
+		font-weight: bold;
+
+		.region {
+			text-transform: uppercase;
+		}
+
+		.campaign {
+			font-weight: normal;
+		}
+	}
+
+	h2 {
+		display    : inline-block;
+		font-size  : 6pt;
+		line-height: 1;
+	}
+}
+
+.logo {
+	display      : inline;
+	height       : 25pt;
+	float        : right;
+}

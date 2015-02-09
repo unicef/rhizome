@@ -1,5 +1,20 @@
 <div id="management-dashboard">
 
+	<div class="row print-only">
+		<div class="small-12 columns">
+			<h1>
+				<span class="campaign">{{ campaignName }}</span>
+				<span class="region">{{ regionName }}</span>
+			</h1>
+			<h2>
+				Polio<br />
+				Performance<br />
+				Dashboard
+			</h2>
+			<img src="/static/img/UNICEF.svg" class="logo"/>
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
@@ -18,7 +33,7 @@
 				<h4>Immunity Gap</h4>
 				<svg v-component="chart-stacked-area"
 						     data-margin-bottom="24"
-						     data-aspect="1.618"
+						     data-aspect="1.8"
 						     data-margin-bottom="12"
 						     data-duration="2 years"
 						     v-with="region: region, campaign: campaign"></svg>

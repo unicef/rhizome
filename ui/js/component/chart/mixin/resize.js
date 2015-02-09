@@ -22,12 +22,15 @@ module.exports = {
 		window.addEventListener('resize', this.onResize);
 	},
 
+	computed: {
+		viewBox: function () {
+			return '0 0 ' + this.width + ' ' + this.height;
+		}
+	},
+
 	methods: {
 		onResize: function () {
-			log.debug('resize', 'onResize enter');
-
 			if (!this.$el || !this.$el.parentElement) {
-				log.debug('resize', 'onResize missing DOM elements');
 				return;
 			}
 
@@ -40,8 +43,6 @@ module.exports = {
 			}
 
 			this.$emit('invalidate-size');
-
-			log.debug('resize', 'onResize exit');
 		}
 	},
 
