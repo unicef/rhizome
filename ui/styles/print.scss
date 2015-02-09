@@ -4,11 +4,19 @@
 
 @import "settings";
 
+// Make sure that importing these to components doesn't dump all the HTML
+// classes for screen-only grids into our print styles.
 $include-html-grid-classes: false;
+$include-html-block-grid-classes: false;
+@import "foundation/components/block-grid";
 @import "foundation/components/grid";
 
 @page {
 	margin: 0;
+}
+
+body {
+	margin: 0.25in;
 }
 
 form,
@@ -18,11 +26,14 @@ header {
 }
 
 @include grid-html-classes($size:small);
+@include block-grid-html-classes($size:small,$include-spacing:false);
 
 @media (min-width: 8in) {
 	@include grid-html-classes($size:medium);
+  @include block-grid-html-classes($size:medium,$include-spacing:false);
 }
 
 @media (min-width: 10.5in) {
 	@include grid-html-classes($size:large);
+  @include block-grid-html-classes($size:large,$include-spacing:false);
 }
