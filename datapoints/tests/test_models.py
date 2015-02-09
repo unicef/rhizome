@@ -1,5 +1,6 @@
 from django.test import TestCase
 from datapoints.models import *
+from source_data.models import *
 from django.core.urlresolvers import reverse
 
 
@@ -11,14 +12,26 @@ class MasterModelTestCase(TestCase):
 
     def set_up(self):
 
-        source_id = Source.objects.create(
+        set_up_dict = {}
+
+        set_up_dict['source_id'] = Source.objects.create(
             source_name = 'test',
             source_description = 'test').id
 
-        return source_id
+        ##
+
+        set_up_dict['user_id'] = User.objects.create(
+            username='john').id
+
+        ##
+
+        set_up_dict['document_id'] = Document.objects.create(
+            doc_text = 'test',
+            created_by_id = set_up_dict['user_id'],
+            guid = 'test').id
 
 
-
+        return set_up_dict
 
 
 class IndicatorTest(MasterModelTestCase):
@@ -26,12 +39,12 @@ class IndicatorTest(MasterModelTestCase):
 
     def test_datapoint_indicator_creation(self):
 
-        source_id = self.set_up()
+        set_up_dict = self.set_up()
         dpi = Indicator.objects.create(
             name = 'test',
             description = 'test',
             is_reported = 0,
-            source_id = source_id
+            source_id = set_up_dict['source_id']
         )
 
         self.assertTrue(isinstance,(dpi,Indicator))
@@ -39,25 +52,47 @@ class IndicatorTest(MasterModelTestCase):
 
 class RegionTest(MasterModelTestCase):
 
+
+    def prep(self):
+
+        self.set_up_dict = self.set_up()
+
+
     def create_region_type(self):
 
-        region_type_id = RegionType.objects.create(name='test')
+        region_type_id = RegionType.objects.create(name='test').id
 
         return region_type_id
 
+    def create_source_region(self):
+
+        self.prep()
+
+        source_region_id = SourceRegion.objects.create(
+            region_string = 'hello',
+            document_id = self.set_up_dict['document_id']).id
+
+        return source_region_id
+
+
     def create_region(self, name = "test", office_id=1):
 
-        source_id = set_up
-        region_type_id = create_region_type()
+        region_type_id = self.create_region_type()
+        source_region_id = self.create_source_region()
 
+        region = Region.objects.create(name = name\
+            ,office_id = office_id
+            ,region_type_id = region_type_id\
+            ,source_id = self.set_up_dict['source_id']
+            ,source_region_id = source_region_id)
 
-        return Region.objects.create(name=name,office_id=office_id)
+        return region
 
 
     def test_region_creation(self):
         r = self.create_region()
         self.assertTrue(isinstance,(r,Region))
-        self.assertEqual(r.__unicode__(),r.full_name)
+        self.assertEqual(r.__unicode__(),r.name)
 
 
 class DataPointTest(MasterModelTestCase):

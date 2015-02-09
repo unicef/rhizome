@@ -35,7 +35,7 @@ def build_suite():
 
     ## DataPoint Models ##
     test_suite.addTest(unittest.makeSuite(IndicatorTest))
-    # test_suite.addTest(unittest.makeSuite(RegionTest))
+    test_suite.addTest(unittest.makeSuite(RegionTest))
     # test_suite.addTest(unittest.makeSuite(DataPointTest))
 
     # , RegionTest, DataPointTest
