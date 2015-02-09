@@ -6,8 +6,11 @@ def run_all():
     '''
     this method runs all of the tests int he application.
 
-    To run tests:
+    To Run Tests:
         python manage.py test test_suite.run_all --settings=polio.settings_test
+
+    To Run Coverage:
+        coverage html --omit="venv/*,*migrations/*"
     '''
     result = unittest.TestResult()
     suite = build_suite() #
