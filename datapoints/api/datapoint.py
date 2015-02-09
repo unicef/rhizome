@@ -222,7 +222,7 @@ class DataPointResource(BaseNonModelResource):
         return campaign__in
 
 
-class DataPointEntryResource(ModelResource):
+class DataPointEntryResource(BaseModelResource):
 
     required_keys = [
         'datapoint_id', 'indicator_id', 'region_id',
