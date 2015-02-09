@@ -2,7 +2,27 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
 
-.no-print,
-.no-print * {
+@import "settings";
+
+$include-html-grid-classes: false;
+@import "foundation/components/grid";
+
+@page {
+	margin: 0;
+}
+
+form,
+nav,
+header {
 	display: none !important;
+}
+
+@include grid-html-classes($size:small);
+
+@media (min-width: 8in) {
+	@include grid-html-classes($size:medium);
+}
+
+@media (min-width: 10.5in) {
+	@include grid-html-classes($size:large);
 }
