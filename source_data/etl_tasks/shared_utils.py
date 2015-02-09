@@ -1,6 +1,3 @@
-import pprint as pp
-import traceback
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 

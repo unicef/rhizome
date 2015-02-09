@@ -1,8 +1,7 @@
-from tastypie.resources import ModelResource,Resource, ALL
+from tastypie.resources import ModelResource, ALL
 from tastypie import fields
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
@@ -16,7 +15,7 @@ class OfficeResource(BaseModelResource):
         resource_name = 'office'
 
 
-class RegionResource(ModelResource):
+class RegionResource(BaseModelResource):
     '''Region Resource'''
 
 

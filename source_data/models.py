@@ -4,8 +4,6 @@ import random
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
-from jsonfield import JSONCharField
 
 from datapoints.models import Source, Indicator, Region, Campaign
 

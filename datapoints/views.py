@@ -1,10 +1,7 @@
-from django.shortcuts import get_object_or_404, render, render_to_response
-from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import render_to_response
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
 from django.views import generic
-from django.contrib.auth.decorators import permission_required
-from django.utils.decorators import method_decorator
-from django.db import connection
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 

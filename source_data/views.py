@@ -1,18 +1,12 @@
-import xlrd
-import csv
-import pandas
 import hashlib
-import pprint as pp
 from itertools import chain
 
-
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db import IntegrityError, connection
 from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from pandas.io.excel import read_excel
 
 from datapoints.mixins import PermissionRequiredMixin
@@ -21,7 +15,6 @@ from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
 from source_data.api import EtlTask
 
 
@@ -56,48 +49,6 @@ def user_portal(request):
     )
 
 
-def data_entry(request):
-
-    data_entry_form = DataEntryForm()
-
-    if request.method == 'GET':
-
-
-        return render_to_response(
-            'data_entry/basic.html',
-            {'data_entry_form': data_entry_form },
-            RequestContext(request),
-        )
-
-    else:
-        bulk_data = request.POST['bulk_data']
-
-        try:
-            document = Document.objects.create(
-                doc_text =bulk_data,
-                created_by = request.user,
-                )
-        except IntegrityError:
-            msg = 'A submission with the EXACT same text, and campaign already exists. \n Please Upload data that does not conflict with an existing submission!!'
-            # messages.add_message(request, messages.INFO,msg)
-
-            return render_to_response(
-                'data_entry/basic.html',
-                {'data_entry_form': data_entry_form,'message':msg},
-                RequestContext(request),
-            )
-
-
-        source_datapoints, not_parsed = bulk_data_to_sdps(
-            bulk_data = bulk_data,
-            campaign_string = request.POST['campaign'],
-            delimiter = request.POST['delimiter'],
-            document_id = document.id)
-
-        return HttpResponseRedirect(reverse('source_data:review_sdps_by_document'\
-                ,kwargs={'document_id':document.id}))
-
-
 def review_sdps_by_document(request,document_id):
 
     source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
@@ -107,7 +58,6 @@ def review_sdps_by_document(request,document_id):
         {'to_review': source_datapoints,'document_id': document_id},
         RequestContext(request),
     )
-
 
 
 def refresh_master_by_document_id(request,document_id):
@@ -344,10 +294,7 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
-
 def un_map(request,map_id,db_model,document_id):
-
-    print 'THIS IS HAPPENING \n' * 10
 
     if db_model == 'Region':
 
@@ -376,5 +323,5 @@ def refresh_master(request):
 
     print task_data
 
-    return render_to_response('map/master_refresh.html',
-    {'task_data': task_data})
+    return render_to_response('map/master_refresh.html'
+        ,{'task_data': task_data})

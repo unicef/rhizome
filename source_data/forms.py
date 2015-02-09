@@ -1,6 +1,5 @@
 from django.forms import forms, CharField, ModelForm
 from source_data.models import *
-from django.contrib.auth.models import User
 
 class DataEntryForm(forms.Form):
 

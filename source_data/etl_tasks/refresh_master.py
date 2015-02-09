@@ -1,9 +1,4 @@
-import pprint as pp
 import traceback
-import locale
-locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
-
-import datetime
 
 from decimal import InvalidOperation
 
@@ -66,7 +61,7 @@ class MasterRefresh(object):
 
             except ObjectDoesNotExist:
                 return
-                
+
             master_polygon = RegionPolygon.objects.get_or_create(
                 region = sr.master_region,
                 defaults = { 'shape_len': source_polygon.shape_len,

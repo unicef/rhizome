@@ -1,4 +1,3 @@
-from django.db import models
 from django.forms import ModelForm, forms, ModelChoiceField
 from datapoints.models import *
 from django.contrib.auth.models import User

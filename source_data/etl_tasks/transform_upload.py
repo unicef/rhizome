@@ -3,15 +3,13 @@ import pprint as pp
 import xlrd
 import pandas as pd
 
-from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from pandas.io.excel import read_excel
 
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
-from datapoints.models import DataPoint, Source, Office, Region
+from datapoints.models import Source
 
 
 class DocTransform(object):

@@ -1,10 +1,7 @@
-from pprint import pprint
 import pandas as pd
-from pandas import DataFrame, read_sql, concat
-import numpy as np
+from pandas import DataFrame, read_sql
 
 from django.db import connection as con
-from django.conf import settings
 from datapoints.models import *
 
 

@@ -1,4 +1,4 @@
-from django.conf.urls import patterns,url
+from django.conf.urls import url
 from datapoints import views
 from datapoints.models import *
 from django.views.generic import TemplateView

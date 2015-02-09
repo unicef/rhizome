@@ -1,6 +1,5 @@
 import os
 import json
-from pprint import pprint
 
 from django.conf import settings
 

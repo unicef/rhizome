@@ -1,23 +1,13 @@
-import sys
-import os
-import pprint as pp
 import pandas as pd
-import csv
 import json
 import traceback
 
-import traceback
-
-from dateutil import parser
-from decimal import InvalidOperation
-
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 
-from datapoints.models import Indicator, DataPoint, Region, Campaign, Office, Source
+from datapoints.models import Region, Office, Source
 from source_data.models import *
-from source_data.etl_tasks.shared_utils import map_indicators, map_campaigns, map_regions
+from source_data.etl_tasks.shared_utils import map_regions
 
 try:
     import source_data.prod_odk_settings as odk_settings

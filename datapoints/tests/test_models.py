@@ -1,7 +1,6 @@
 from django.test import TestCase
 from datapoints.models import *
 from source_data.models import *
-from django.core.urlresolvers import reverse
 
 
 class MasterModelTestCase(TestCase):
@@ -36,7 +35,6 @@ class MasterModelTestCase(TestCase):
 
 class IndicatorTest(MasterModelTestCase):
 
-
     def test_datapoint_indicator_creation(self):
 
         set_up_dict = self.set_up()
@@ -49,6 +47,9 @@ class IndicatorTest(MasterModelTestCase):
 
         self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
+        print '...Done Testing Indicator Model...'
+
+
 
 class RegionTest(MasterModelTestCase):
 
@@ -90,10 +91,12 @@ class RegionTest(MasterModelTestCase):
 
 
     def test_region_creation(self):
+
         r = self.create_region()
         self.assertTrue(isinstance,(r,Region))
         self.assertEqual(r.__unicode__(),r.name)
 
+        print '...Done Testing Region Model...'
 
 class DataPointTest(MasterModelTestCase):
 
@@ -140,6 +143,9 @@ class DataPointTest(MasterModelTestCase):
         return dp
 
     def test_datapoint_creation(self):
+
         dp = self.create_datapoint()
         self.assertTrue(isinstance,(dp,DataPoint))
+        print '....Done Testing DataPoint Model...'
+
         # self.assertEqual(dp.__unicode__(),dp.value)
