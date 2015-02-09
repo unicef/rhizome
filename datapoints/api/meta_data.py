@@ -1,4 +1,4 @@
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ALL
 from tastypie import fields
 
 from django.contrib.auth.models import User

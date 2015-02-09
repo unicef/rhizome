@@ -1,9 +1,6 @@
-import pprint as pp
-
 import xlrd
 import pandas as pd
 
-from django.core.exceptions import ValidationError
 from django.conf import settings
 from pandas.io.excel import read_excel
 

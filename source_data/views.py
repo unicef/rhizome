@@ -7,7 +7,6 @@ from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
-from pandas.io.excel import read_excel
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
