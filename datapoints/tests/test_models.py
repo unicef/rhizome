@@ -13,9 +13,9 @@ class MasterModelTestCase(TestCase):
 
         set_up_dict = {}
 
-        set_up_dict['source_id'] = Source.objects.create(
+        self.source = Source.objects.create(
             source_name = 'test',
-            source_description = 'test').id
+            source_description = 'test')
 
         ##
 
@@ -42,8 +42,7 @@ class IndicatorTest(MasterModelTestCase):
             name = 'test',
             description = 'test',
             is_reported = 0,
-            source_id = set_up_dict['source_id']
-        )
+            source_id = self.source.id)
 
         self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
@@ -53,11 +52,11 @@ class IndicatorTest(MasterModelTestCase):
 
 class RegionTest(MasterModelTestCase):
 
+    def set_up(self):
 
-    def prep(self):
-
-        self.set_up_dict = self.set_up()
-
+        self.source = Source.objects.create(
+            source_name = 'test',
+            source_description = 'test')
 
     def create_region_type(self):
 
@@ -65,30 +64,19 @@ class RegionTest(MasterModelTestCase):
 
         return region_type_id
 
-    def create_source_region(self):
-
-        self.prep()
-
-        source_region_id = SourceRegion.objects.create(
-            region_string = 'hello',
-            document_id = self.set_up_dict['document_id']).id
-
-        return source_region_id
-
-
     def create_region(self, name = "test", office_id=1):
 
+        self.set_up()
+
         region_type_id = self.create_region_type()
-        source_region_id = self.create_source_region()
+        # source_region_id = self.create_source_region()
 
         region = Region.objects.create(name = name\
             ,office_id = office_id
             ,region_type_id = region_type_id\
-            ,source_id = self.set_up_dict['source_id']
-            ,source_region_id = source_region_id)
+            ,source_id = self.source.id)
 
         return region
-
 
     def test_region_creation(self):
 
@@ -118,9 +106,7 @@ class DataPointTest(MasterModelTestCase):
         sdp_id = SourceDataPoint.objects.create(
             document_id = self.set_up_dict['document_id'],
             row_number = 0,
-            source_id = self.set_up_dict['source_id'],
-            status_id = self.set_up_dict['status_id']
-            ).id
+            source_id =self.source.id).id
 
 
         return sdp_id

@@ -14,11 +14,12 @@ from datapoints.models import *
 class MasterRefresh(object):
 
 
-    def __init__(self,source_datapoints,user_id,document_id):
+    def __init__(self,source_datapoints,user_id,document_id,indicator_id):
 
         self.document_id = document_id
         self.source_datapoints = source_datapoints
         self.user_id = user_id
+        self.indicator_id = indicator_id
 
         self.new_datapoints = []
 
@@ -36,6 +37,13 @@ class MasterRefresh(object):
           if err:
               sdp.error_msg = err
               sdp.save()
+
+
+    def create_source_meta_data(self):
+
+        for row in self.source_datapoints:
+
+            print row
 
 
     def delete_un_mapped(self):

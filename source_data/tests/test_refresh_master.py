@@ -7,6 +7,8 @@ from datapoints.models import Indicator, Campaign, CampaignType,\
 from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
     SourceCampaign, SourceIndicator
 
+from source_data.etl_tasks.refresh_master import MasterRefresh
+
 
 class RefreshMasterTestCase(TestCase):
 
@@ -32,24 +34,6 @@ class RefreshMasterTestCase(TestCase):
             created_by_id  = self.user.id,
             guid = 'refresh_master_test')
 
-        # self.source_indicator = SourceIndicator.objects.create(
-        #     indicator_string = self.indicator_string)
-
-
-        # self.source_campaign= SourceCampaign.objects.create(
-        #     campaign_string = self.campaign_string,
-        #     document_id = self.document.id,
-        #     office_id = self.office.id)
-
-        # self.source_region_1 = SourceRegion.objects.create(
-        #     region_string = self.region_1_name,
-        #     document_id = self.document.id)
-        #
-        # self.source_region_2 = SourceRegion.objects.create(
-        #     region_string = self.region_2_name,
-        #     document_id = self.document.id)
-
-
         self.indicator = Indicator.objects.create(
                 name = self.indicator_string,
                 source_id = self.source.id)
@@ -58,8 +42,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.campaign_type = CampaignType.objects.create(name='global')
 
-
-        ## need a source_campaign_id column in here ##
         self.campaign = Campaign.objects.create(
             office_id = self.office.id,
             start_date = '2014-07-01',
@@ -73,18 +55,27 @@ class RefreshMasterTestCase(TestCase):
             region_type_id = self.region_type.id,
             office_id = self.office.id,
             source_id = self.source.id,
-            # source_region_id = self.source_region_1.id,
-            region_code = self.source_region_1.region_string.replace(' ','-'))
+            region_code = self.region_1_name)
 
         self.region_1 = Region.objects.create(
             name = self.region_2_name,
             region_type_id = self.region_type.id,
             office_id = self.office.id,
             source_id = self.source.id,
-            # source_region_id = self.source_region_2.id,
-            region_code = self.source_region_2.region_string.replace(' ','-'))
+            region_code = self.region_2_name)
 
         self.source_datapoints = self.build_source_datapoint_list()
+
+        ## at this point the refresh master call here should
+        ## create the source metadata
+
+        rm = MasterRefresh(self.source_datapoints,self.user.id\
+            ,self.document.id,self.indicator.id)
+
+        rm.create_source_meta_data()
+
+
+
 
 
     def build_source_datapoint_list(self):
