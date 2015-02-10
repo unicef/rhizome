@@ -38,12 +38,11 @@ class MasterRefresh(object):
               sdp.error_msg = err
               sdp.save()
 
-
     def create_source_meta_data(self):
 
         for row in self.source_datapoints:
-
-            print row
+            pass
+            # print row
 
 
     def delete_un_mapped(self):

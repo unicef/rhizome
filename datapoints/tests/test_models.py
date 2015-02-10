@@ -90,13 +90,11 @@ class DataPointTest(MasterModelTestCase):
 
     def prep(self):
 
-        status_id = ProcessStatus.objects.create(
+        self.status = ProcessStatus.objects.create(
             status_text = 'test',
-            status_description = 'test'
-        ).id
+            status_description = 'test')
 
         self.set_up_dict = self.set_up()
-        self.set_up_dict['status_id'] = status_id
 
 
     def create_source_datapoint(self):
@@ -106,7 +104,8 @@ class DataPointTest(MasterModelTestCase):
         sdp_id = SourceDataPoint.objects.create(
             document_id = self.set_up_dict['document_id'],
             row_number = 0,
-            source_id =self.source.id).id
+            source_id =self.source.id,
+            status_id = self.status.id).id
 
 
         return sdp_id

@@ -74,10 +74,6 @@ class RefreshMasterTestCase(TestCase):
 
         rm.create_source_meta_data()
 
-
-
-
-
     def build_source_datapoint_list(self):
 
         sdp_df = read_csv('datapoints/tests/_data/source_datapoint_msd_chd.csv')
