@@ -7,15 +7,7 @@ from django.contrib.auth.models import User
 
 from datapoints.models import Indicator
 from source_data.models import Source, Document
-# class DataPointApiTestCase(TestCase):
-#
-#     def set_up(self):
-#
-#         pass
-#
-#     def test_the_api(self):
-#
-#         self.set_up()
+
 
 class IndicatorResourceTest(ResourceTestCase):
 
@@ -41,8 +33,13 @@ class IndicatorResourceTest(ResourceTestCase):
             guid = 'test').id
 
         # # create create an indicator
-        Indicator.objects.create(name='First Indicator',
+        self.indicator = Indicator.objects.create(name='First Indicator',
             description='First Indicator Description',source=self.source)
+
+        print self.indicator.id
+        print self.indicator.id
+        print self.indicator.id
+        print self.indicator.id
 
 
      def test_indicator_get(self):
@@ -50,7 +47,8 @@ class IndicatorResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/indicator', format='json',\
             username='john',api_key=self.api_key)
 
-        print resp
+        # ensure the response is valid
+        self.assertValidJSONResponse(resp)
 
         pass
 
