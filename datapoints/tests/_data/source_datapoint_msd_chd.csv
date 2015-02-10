@@ -1,3 +1,4 @@
+id,region_string,campaign_string,indicator_string,cell_value,row_number,source_id,document_id,source_guid,status_id,guid,created_at
 526891,Pakistan - DI Khan,Pakistan July 2014,Number of all missed children,6697,5025,4,848,Pakistan July 2014 - DI Khan - Number of all missed children,1,orig_db_id: 5025,12/22/2014 17:32:41.544309-05
 541184,Afghanistan - Khas Urozgan,Afghanistan May 2014,Number of all missed children,114,28510,4,848,Afghanistan May 2014 - Khas Urozgan - Number of all missed children,1,orig_db_id: 28510,12/22/2014 17:32:41.544309-05
 536118,Nigeria - Jigawa,Nigeria May 2014,Number of all missed children,582,989,4,848,Nigeria May 2014 - Jigawa - Number of all missed children,1,orig_db_id: 989,12/22/2014 17:32:41.544309-05
