@@ -1,13 +1,17 @@
 <div class="chart">
-	<svg class="line"
-				v-attr="width: width, height: height">
+	<svg
+		class="line"
+		v-attr="viewBox: '0 0 ' + width + ' ' + height">
 
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
-			<rect class="bg"
-						v-attr="width: contentWidth, height: contentHeight"></rect>
+			<rect
+				class="bg"
+				v-attr="width: contentWidth, height: contentHeight"></rect>
 
-			<g class="x axis"
-			   v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>
+			<g
+				class="x axis"
+			 	v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>
+
 			<g class="y axis"></g>
 			<g class="data"></g>
 			<g class="annotation"></g>

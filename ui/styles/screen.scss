@@ -17,6 +17,11 @@ body {
 	padding: 11px 4px 11px 54px;
 }
 
+h6 {
+	white-space  : nowrap;
+	overflow     : hidden;
+	text-overflow: ellipsis;
+}
 header {
 	@include background(linear-gradient(right, #333, #3a3a3a));
 

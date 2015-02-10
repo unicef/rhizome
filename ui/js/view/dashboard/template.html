@@ -1,6 +1,6 @@
 <div class="clearfix"></div>
 
-<form class="inline">
+<form class="inline no-print">
 	<div class="row">
 		<div class="medium-3 push-4 columns">
 			<h1 style="text-align:right">{{ title }}</h1>
@@ -17,4 +17,4 @@
 </form>
 
 <div v-component="{{dashboard}}"
-     v-with="campaign: campaign, region: region"></div>
+     v-with="campaign: campaign, region: region, regionName: regionName"></div>

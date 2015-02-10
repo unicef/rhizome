@@ -1,5 +1,20 @@
 <div id="management-dashboard">
 
+	<div class="row print-only">
+		<div class="small-12 columns">
+			<h1>
+				<span class="campaign">{{ campaignName }}</span>
+				<span class="region">{{ regionName }}</span>
+			</h1>
+			<h2>
+				Polio<br />
+				Performance<br />
+				Dashboard
+			</h2>
+			<img src="/static/img/UNICEF.svg" class="logo"/>
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
@@ -18,7 +33,7 @@
 				<h4>Immunity Gap</h4>
 				<svg v-component="chart-stacked-area"
 						     data-margin-bottom="24"
-						     data-aspect="1.618"
+						     data-aspect="1.8"
 						     data-margin-bottom="12"
 						     data-duration="2 years"
 						     v-with="region: region, campaign: campaign"></svg>
@@ -90,31 +105,32 @@
 					<p>No data</p>
 
 					<h6>Missed Children</h6>
-					<ul class="legend reds">
-						<li>
-							<div class="key q-6"></div>
-							10+%
-						</li>
-						<li>
-							<div class="key q-5"></div>
-							8&ndash;9%
-						</li>
-						<li>
-							<div class="key q-4"></div>
-							6&ndash;7%
-						</li>
-						<li>
-							<div class="key q-3"></div>
-							4&ndash;5%
-						</li>
-						<li>
-							<div class="key q-2"></div>
-							2&ndash;3%
-						</li>
-						<li>
-							<div class="key q-1"></div>
-							0&ndash;1%
-						</li>
+
+					<svg class="legend reds" viewBox="0 0 177 84">
+						<g>
+							<rect width="11" height="11" class="q-6"></rect>
+							<text dx="14" dy="9">10+%</text>
+						</g>
+						<g transform="translate(0,14)">
+							<rect width="11" height="11" class="q-5"></rect>
+							<text dx="14" dy="9">8&ndash;9%</text>
+						</g>
+						<g transform="translate(0,28)">
+							<rect width="11" height="11" class="q-4"></rect>
+							<text dx="14" dy="9">6&ndash;7%</text>
+						</g>
+						<g transform="translate(0,42)">
+							<rect width="11" height="11" class="q-3"></rect>
+							<text dx="14" dy="9">4&ndash;5%</text>
+						</g>
+						<g transform="translate(0,56)">
+							<rect width="11" height="11" class="q-2"></rect>
+							<text dx="14" dy="9">2&ndash;3%</text>
+						</g>
+						<g transform="translate(0,70)">
+							<rect width="11" height="11" class="q-1"></rect>
+							<text dx="14" dy="9">0&ndash;1%</text>
+						</g>
 					</ul>
 				</div>
 			</div>
