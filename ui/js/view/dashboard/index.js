@@ -28,7 +28,6 @@ module.exports = {
 
 	created: function () {
 		var show = function (ctx) {
-			console.debug('dashboard::show', ctx.params.dashboard);
 			this.dashboard = ctx.params.dashboard || 'management-dashboard';
 			this.title = titles[this.dashboard];
 		}.bind(this);
@@ -53,7 +52,6 @@ module.exports = {
 
 		this._regions.$on('dropdown-value-changed', function (items) {
 			if (items && items.length) {
-				console.debug('dashboard::dropdown-value-changed', items[0]);
 				self.region     = items[0].value;
 				self.regionName = items[0].title;
 			} else {

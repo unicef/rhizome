@@ -95,7 +95,6 @@ module.exports = {
 	methods: {
 
 		draw: function () {
-			console.info('map::draw');
 
 			var self = this;
 
@@ -123,7 +122,6 @@ module.exports = {
 
 			path.enter().append('path')
 				.on('click', function (d) {
-					console.debug('map::click', d.properties.region_id);
 					self.$dispatch('region-changed', d.properties.region_id);
 				});
 
@@ -147,9 +145,6 @@ module.exports = {
 		},
 
 		loadData: function () {
-			console.info('map::loadData');
-			console.debug('map::loadData', 'date', this.campaign, 'indicator', this.indicator);
-
 			this.loading = true;
 
 			if (!this.campaign || !this.geo || !this.indicator) {
@@ -163,7 +158,6 @@ module.exports = {
 				indicator__in: [this.indicator],
 				region__in   : this.mappedRegions,
 			}).done(function (data) {
-				console.info('map::loadData data received');
 
 				var index    = _.indexBy(data.objects, 'region');
 				var features = self.geo.features;
@@ -186,9 +180,6 @@ module.exports = {
 		},
 
 		loadFeatures: function () {
-			console.info('map::loadFeatures');
-			console.debug('map::loadFeatures', 'region', this.region);
-
 			if (!this.region) {
 				return;
 			}
@@ -202,18 +193,15 @@ module.exports = {
 			}), api.geo({
 				region__in: [this.region]
 			})]).then(function (data) {
-				console.info('map::loadFeatures', 'data received');
 				self.geo    = data[0].objects;
 				self.border = data[1].objects.features[0];
-				console.debug('map::loadFeatures', 'border', self.border);
 				self.draw();
 			}, this.onError);
 
 		},
 
 		onError: function (err) {
-			console.error('map::onError', err);
-
+			console.err('choropleth', err);
 			this.loading = false;
 			this.error = true;
 		}

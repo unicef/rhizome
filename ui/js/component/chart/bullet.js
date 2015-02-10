@@ -38,11 +38,9 @@ module.exports = {
 		},
 
 		marker: function () {
-			console.info('bullet::marker', this.indicator && this.indicator.id);
 			var length = this.length;
 
 			if (length < 2) {
-				console.info('bullet::marker', 'Not enough data points');
 				return null;
 			}
 
@@ -53,12 +51,7 @@ module.exports = {
 				avg += datapoints[i].value;
 			}
 
-			console.debug('bullet::marker', 'sum', avg);
-
 			avg /= (length - 1);
-
-			console.debug('bullet::marker', 'length', length);
-			console.debug('bullet::marker', 'average', avg);
 
 			return avg;
 		},

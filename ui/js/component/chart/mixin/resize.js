@@ -3,7 +3,6 @@
 'use strict';
 
 var dom = require('util/dom');
-var log = require('util/log');
 
 module.exports = {
 	paramAttributes: [
@@ -18,7 +17,6 @@ module.exports = {
 	},
 
 	ready: function () {
-		log.debug('resize', 'ready');
 		window.addEventListener('resize', this.onResize);
 	},
 
@@ -48,7 +46,6 @@ module.exports = {
 
 	events: {
 		'hook:attached': function () {
-			log.debug('resize', 'hook:attached');
 			this.onResize();
 		}
 	}
