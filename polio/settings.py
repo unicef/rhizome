@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 MEDIA_ROOT = '/Users/johndingee_seed/code/UF04/polio/media/'
 MEDIA_URL = '/Users/johndingee_seed/code/UF04/polio/media/'
 
-
 # Application definition
 
 INSTALLED_APPS = (
