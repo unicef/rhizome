@@ -71,7 +71,7 @@ module.exports = {
 
 		loadCampaigns: function (data) {
 			this.campaigns = _.uniq(data.objects, function (d) {
-				return d.start_date
+				return d.start_date;
 				})
 				.map(function (o) {
 					var startDate = moment(o.start_date, 'YYYY-MM-DD');
