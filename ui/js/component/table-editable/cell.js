@@ -38,13 +38,12 @@ module.exports = {
 				// TODO: compare new value to old?
 				var promise = self.buildSubmitPromise(value);
 				promise.done(function(response) {
-					console.log(response);
 					if (self.withResponse) {
 						self.withResponse(response);
 					}
 				});
 			}
-			
+
 			// toggle editing mode
 			self.toggleEditing(false);
 		}
@@ -54,8 +53,8 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (!this.value) { 
-				return ''; 
+			if (!this.value) {
+				return '';
 			}
 			else {
 				// format according to attached method if it exists
@@ -80,18 +79,18 @@ module.exports = {
 	filters: {
 
 		// validate value
-		validator: { 
+		validator: {
 
 			write: function(val) {
 
 				// string
 				if (_.isString(val)) {
 					if (val.length === 0) { val = null; }
-				} 
+				}
 				// number
 				else if (_.isNumber(val)) {
 
-				} 
+				}
 				// NaN
 				else if (_.isNaN(val)) {
 					val = null;

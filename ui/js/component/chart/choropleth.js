@@ -90,40 +90,50 @@ module.exports = {
 
 			return [w/2, h/2];
 		},
+
+		centroid: function () {
+			var box = this.boundingBox;
+			var lat = box[1][1] + ((box[0][1] - box[1][1]) / 2);
+			var lng = box[0][0] + ((box[1][0] - box[0][0]) / 2);
+
+			console.debug('choropleth::centroid', lng, lat);
+			return [lng, lat];
+		}
 	},
 
 	methods: {
-
 		draw: function () {
-			console.info('map::draw');
-
 			var self = this;
 
 			var svg  = d3.select(this.$el).select('.geography');
 
 			var bounds     = this.boundingBox;
-			var projection = d3.geo.albers()
-				.parallels([bounds[0][1], bounds[1][1]])
-				.scale(1)
-				.translate([0, 0]);
 
-			var geopath  = d3.geo.path().projection(projection);
-			var features = this.features;
 			var width    = this.width || 0;
 			var height   = this.height || 0;
 
+			console.debug('choropleth::draw parallels', [bounds[0][1], bounds[1][1]]);
+			var projection = d3.geo.conicEqualArea()
+				.parallels([bounds[1][1], bounds[0][1]])
+				.rotate([-this.centroid[0], 0])     // Rotate the globe so that the country is centered horizontally
+				.center([0, this.centroid[1]])      // Set the center of the projection so that the polygon is moved vertically into the center of the viewport
+				.translate([width / 2, height / 2]) // Translate to the center of the viewport
+				.scale(1);
+
+			var geopath  = d3.geo.path().projection(projection);
+			var features = this.features;
+
+			// Calculate the scale required to fit the map within the SVG view box.
 			var b = [projection(bounds[0]), projection(bounds[1])];
 			var s = 1 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height);
-			var t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
 
-			projection.scale(s).translate(t);
+			projection.scale(s);
 
 			var path = svg.selectAll('.region')
 				.data(features, function (d) { return d.properties.region_id; });
 
 			path.enter().append('path')
 				.on('click', function (d) {
-					console.debug('map::click', d.properties.region_id);
 					self.$dispatch('region-changed', d.properties.region_id);
 				});
 
@@ -147,9 +157,6 @@ module.exports = {
 		},
 
 		loadData: function () {
-			console.info('map::loadData');
-			console.debug('map::loadData', 'date', this.campaign, 'indicator', this.indicator);
-
 			this.loading = true;
 
 			if (!this.campaign || !this.geo || !this.indicator) {
@@ -163,7 +170,6 @@ module.exports = {
 				indicator__in: [this.indicator],
 				region__in   : this.mappedRegions,
 			}).done(function (data) {
-				console.info('map::loadData data received');
 
 				var index    = _.indexBy(data.objects, 'region');
 				var features = self.geo.features;
@@ -186,9 +192,6 @@ module.exports = {
 		},
 
 		loadFeatures: function () {
-			console.info('map::loadFeatures');
-			console.debug('map::loadFeatures', 'region', this.region);
-
 			if (!this.region) {
 				return;
 			}
@@ -202,22 +205,17 @@ module.exports = {
 			}), api.geo({
 				region__in: [this.region]
 			})]).then(function (data) {
-				console.info('map::loadFeatures', 'data received');
 				self.geo    = data[0].objects;
 				self.border = data[1].objects.features[0];
-				console.debug('map::loadFeatures', 'border', self.border);
 				self.draw();
 			}, this.onError);
-
 		},
 
 		onError: function (err) {
-			console.error('map::onError', err);
-
+			console.err('choropleth', err);
 			this.loading = false;
 			this.error = true;
 		}
-
 	},
 
 	watch: {

@@ -30,7 +30,6 @@ module.exports = {
 				.startOf('year')
 				.format('YYYY-MM-DD');
 
-			console.debug('year-over-year::campaign_start', start);
 			return start;
 		},
 
@@ -95,7 +94,6 @@ module.exports = {
 
 			var ticks = [];
 			var now = moment(this.campaign.value, 'YYYY-MM-DD').month();
-			console.debug('year-over-year::xTicks now', now);
 
 			// If the current month is April or later, show January
 			if (now > 2) {
