@@ -21,6 +21,9 @@ class MasterRefresh(object):
         self.source_datapoint_ids = source_datapoint_ids
         self.user_id = user_id
         self.indicator_id = indicator_id
+        self.sdp_df = DataFrame(list(SourceDataPoint.objects.filter(id__in =\
+            self.source_datapoint_ids).values()))
+
 
         self.new_datapoints = []
 
@@ -40,13 +43,28 @@ class MasterRefresh(object):
               sdp.save()
 
     def create_source_meta_data(self):
+        '''
+        based on the source datapoints, create the source_regions /
+        source_campaigns / source indicators/
+        '''
 
-        sdp_df = DataFrame(self.source_datapoint_ids)
+        ## campaigns ##
+        campaign_strings = self.sdp_df['campaign_string'].unique()
 
-        sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
-            id__in=self.source_datapoint_ids).values()))
+        for c in campaign_strings:
 
-        print sdp_df[:2]
+            created, s_c_obj = SourceCampaign.objects.get_or_create(
+                campaign_string = c,
+                document_id = self.document_id,
+                source_guid = ('%s - %s',( self.document_id, c )))
+
+
+        ## indicators ##
+        indicator_strings = self.sdp_df['indicator_string'].unique()
+        region_codes = self.sdp_df['region_code'].unique()
+
+
+
 
 
     def delete_un_mapped(self):
