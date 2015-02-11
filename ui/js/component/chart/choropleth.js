@@ -96,7 +96,6 @@ module.exports = {
 			var lat = box[1][1] + ((box[0][1] - box[1][1]) / 2);
 			var lng = box[0][0] + ((box[1][0] - box[0][0]) / 2);
 
-			console.debug('choropleth::centroid', lng, lat);
 			return [lng, lat];
 		}
 	},
@@ -112,7 +111,6 @@ module.exports = {
 			var width    = this.width || 0;
 			var height   = this.height || 0;
 
-			console.debug('choropleth::draw parallels', [bounds[0][1], bounds[1][1]]);
 			var projection = d3.geo.conicEqualArea()
 				.parallels([bounds[1][1], bounds[0][1]])
 				.rotate([-this.centroid[0], 0])     // Rotate the globe so that the country is centered horizontally
