@@ -17,6 +17,7 @@ class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
 
+
         super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
@@ -73,13 +74,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.source_datapoints = self.build_source_datapoint_list()
 
-        ## at this point the refresh master call here should
-        ## create the source metadata
-
-        rm = MasterRefresh(self.source_datapoints,self.user.id\
-            ,self.document.id,self.indicator.id)
-
-        rm.create_source_meta_data()
 
     def build_source_datapoint_list(self):
 
@@ -96,6 +90,7 @@ class RefreshMasterTestCase(TestCase):
             sdp_dict = {
                 'id': sdp_data['id'],
                 'region_string': sdp_data['region_string'],
+                'region_code': sdp_data['region_code'],
                 'campaign_string': sdp_data['campaign_string'],
                 'indicator_string': sdp_data['indicator_string'],
                 'cell_value' : sdp_data['cell_value'],
@@ -121,4 +116,20 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        self.assertEqual(1,1)
+        ## instatiate the master refresh ##
+        rm = MasterRefresh(self.source_datapoints,self.user.id\
+            ,self.document.id,self.indicator.id)
+
+        ## create the source metadata ##
+        rm.create_source_meta_data()
+
+        ## does every region CODE has a cooresponding source_region? ##
+
+        ## does every campaign string has a cooresponding source_campaign? ##
+
+        ## does every Indicator string has a cooresponding source_campaign? ##
+
+
+
+
+        self.assertEqual(1,2)

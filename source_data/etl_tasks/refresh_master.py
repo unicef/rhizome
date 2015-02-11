@@ -48,14 +48,6 @@ class MasterRefresh(object):
 
         print sdp_df[:2]
 
-        # for row in self.source_datapoints:
-        #     print row
-
-        # for row in self.source_datapoints:
-        #     print row.region_string
-
-        # print row
-
 
     def delete_un_mapped(self):
 
