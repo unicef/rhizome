@@ -11,8 +11,9 @@ module.exports = {
 
 	data: function () {
 		return {
-			aspect: 1
-
+			aspect: 1,
+			height: 0,
+			width : 0
 		};
 	},
 
