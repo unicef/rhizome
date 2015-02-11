@@ -119,6 +119,7 @@ class RefreshMasterTestCase(TestCase):
         mr = MasterRefresh(self.source_datapoints,self.user.id\
             ,self.document.id,self.indicator.id)
 
+
         ## create the source metadata ( we are testing this method) ##
         mr.create_source_meta_data()
 
@@ -132,9 +133,7 @@ class RefreshMasterTestCase(TestCase):
 
         missing_campaign_rows = sum(1 for result in sc)
 
-        self.assertEqual(0,missing_campaign_rows)
-
-        ## does every Indicator string has a cooresponding source_campaign? ##
+        ## does every Indicator string has a cooresponding source_indicator? ##
         si = SourceIndicator.objects.raw("""
             SELECT sd.id FROM source_datapoint sd\
             WHERE document_id = %s\
@@ -145,7 +144,20 @@ class RefreshMasterTestCase(TestCase):
 
         missing_indicator_rows = sum(1 for result in si)
 
-        self.assertEqual(0,missing_indicator_rows)
+        ## does every region code has a cooresponding source_region? ##
+        sr = SourceRegion.objects.raw("""
+            SELECT sd.id FROM source_datapoint sd\
+            WHERE document_id = %s\
+            AND NOT EXISTS (\
+                SELECT 1 FROM source_region sr\
+                WHERE sd.region_code = sr.region_code)\
+            """, [self.document.id])
 
+        missing_region_rows = sum(1 for result in sr)
 
         ## does every region CODE has a cooresponding source_region? ##
+
+        self.assertTrue(isinstance,(mr,MasterRefresh))
+        self.assertEqual(0,missing_indicator_rows)
+        self.assertEqual(0,missing_campaign_rows)
+        self.assertEqual(0,missing_region_rows)

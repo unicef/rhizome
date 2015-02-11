@@ -18,12 +18,15 @@ class MasterRefresh(object):
     def __init__(self,source_datapoint_ids,user_id,document_id,indicator_id):
 
         self.document_id = document_id
-        self.source_datapoint_ids = source_datapoint_ids
         self.user_id = user_id
         self.indicator_id = indicator_id
+
+        self.source_datapoint_ids = source_datapoint_ids
+        self.source_region_ids, self.source_campaign_id\
+            , self.source_indicator_ids = [],[],[]
+
         self.sdp_df = DataFrame(list(SourceDataPoint.objects.filter(id__in =\
             self.source_datapoint_ids).values()))
-
 
         self.new_datapoints = []
 
@@ -67,12 +70,14 @@ class MasterRefresh(object):
                 document_id = self.document_id,
                 source_guid = ('%s - %s',( self.document_id, i )))
 
-
-
+        # regions #
         region_codes = self.sdp_df['region_code'].unique()
+        for r in region_codes:
 
-
-
+            created, s_r_obj = SourceRegion.objects.get_or_create(
+                region_code = r,
+                document_id = self.document_id,
+                source_guid = ('%s - %s',( self.document_id, r )))
 
 
     def delete_un_mapped(self):
