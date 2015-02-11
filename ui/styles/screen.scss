@@ -164,8 +164,6 @@ button,
 	@include button($radius: true);
 	border-bottom-width: 3px;
 
-
-
 	transition: all 300ms ease-in-out;
 
 	&:not(.disabled):not(.success):hover {
@@ -295,4 +293,8 @@ button,
       width: 100%;
     }
   }
+}
+
+svg {
+	width: 100%;
 }
