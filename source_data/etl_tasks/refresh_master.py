@@ -46,7 +46,7 @@ class MasterRefresh(object):
                 defaults = {
                     'document_id': self.document_id,
                     'source_guid': ('%s - %s',( self.document_id, c ))
-            })
+                })
 
 
         ## indicators ##
@@ -55,8 +55,10 @@ class MasterRefresh(object):
 
             created, s_i_obj = SourceIndicator.objects.get_or_create(
                 indicator_string = i,
-                document_id = self.document_id,
-                source_guid = ('%s - %s',( self.document_id, i )))
+                defaults = {
+                    'document_id': self.document_id,
+                    'source_guid': ('%s - %s',( self.document_id, i ))
+                })
 
         # regions #
         region_codes = self.sdp_df['region_code'].unique()
@@ -64,10 +66,11 @@ class MasterRefresh(object):
 
             created, s_r_obj = SourceRegion.objects.get_or_create(
                 region_code = r,
-                region_string = r,
-                document_id = self.document_id,
-                source_guid = ('%s - %s',( self.document_id, r )))
-
+                defaults = {
+                    'region_string': r,
+                    'document_id': self.document_id,
+                    'source_guid': ('%s - %s',( self.document_id, r ))
+                })
 
     def source_dps_to_dps(self):
 

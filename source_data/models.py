@@ -155,7 +155,7 @@ class SourceRegionPolygon(models.Model):
 
 class SourceIndicator(models.Model):
 
-    indicator_string = models.CharField(max_length=255, unique=True)
+    indicator_string = models.CharField(max_length=255,unique=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
 
@@ -172,7 +172,7 @@ class SourceCampaign(models.Model):
     campaign_string = models.CharField(max_length=255,unique=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
-    
+
     class Meta:
         db_table = 'source_campaign'
 
