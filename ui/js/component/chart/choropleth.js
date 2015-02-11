@@ -164,17 +164,18 @@ module.exports = {
 			var self = this;
 
 			api.datapoints({
-				campaign_end : moment(this.campaign.end).format('YYYY-MM-DD'),
+				campaign_end : this.campaign.end,
+				campaign_start: this.campaign.end,
 				indicator__in: [this.indicator],
 				region__in   : this.mappedRegions,
 			}).done(function (data) {
 
 				var index    = _.indexBy(data.objects, 'region');
-				var features = self.geo.features;
+				var features = self.features;
 
 				for (var i = features.length - 1; i >= 0; i--) {
-					var f = features[i].properties;
-					var d = index[f.region_id];
+					var f          = features[i].properties;
+					var d          = index[f.region_id];
 					var indicators = (d && d.indicators) || [];
 
 					for (var j = indicators.length - 1; j >= 0; j--) {
