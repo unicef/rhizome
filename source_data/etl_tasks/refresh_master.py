@@ -5,6 +5,7 @@ from decimal import InvalidOperation
 from django.db import IntegrityError
 from django.db import transaction
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from pandas import DataFrame
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from source_data.models import *
@@ -14,10 +15,10 @@ from datapoints.models import *
 class MasterRefresh(object):
 
 
-    def __init__(self,source_datapoints,user_id,document_id,indicator_id):
+    def __init__(self,source_datapoint_ids,user_id,document_id,indicator_id):
 
         self.document_id = document_id
-        self.source_datapoints = source_datapoints
+        self.source_datapoint_ids = source_datapoint_ids
         self.user_id = user_id
         self.indicator_id = indicator_id
 
@@ -30,7 +31,7 @@ class MasterRefresh(object):
         self.sync_regions()
 
         self.mappings = self.get_mappings()
-        for sdp in self.source_datapoints:
+        for sdp in self.source_datapoint_ids:
 
           err, datapoint = self.process_source_datapoint_record(sdp=sdp)
 
@@ -40,9 +41,20 @@ class MasterRefresh(object):
 
     def create_source_meta_data(self):
 
-        for row in self.source_datapoints:
-            pass
-            # print row
+        sdp_df = DataFrame(self.source_datapoint_ids)
+
+        sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
+            id__in=self.source_datapoint_ids).values()))
+
+        print sdp_df[:2]
+
+        # for row in self.source_datapoints:
+        #     print row
+
+        # for row in self.source_datapoints:
+        #     print row.region_string
+
+        # print row
 
 
     def delete_un_mapped(self):

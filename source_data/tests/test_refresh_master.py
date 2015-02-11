@@ -1,13 +1,16 @@
+import hashlib
+import random
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv
 
+from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
+    SourceCampaign, SourceIndicator, ProcessStatus
 from datapoints.models import Indicator, Campaign, CampaignType,\
     Region, DataPoint, Office, RegionType
-from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
-    SourceCampaign, SourceIndicator
 
-from source_data.etl_tasks.refresh_master import MasterRefresh
 
 
 class RefreshMasterTestCase(TestCase):
@@ -17,6 +20,10 @@ class RefreshMasterTestCase(TestCase):
         super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
+
+        self.status = ProcessStatus.objects.create(
+            status_text = 'test',
+            status_description = 'test')
 
         self.region_1_name = 'Pakistan - Balochistan'
         self.region_2_name ='Pakistan - Lakki Marwat'
@@ -78,27 +85,36 @@ class RefreshMasterTestCase(TestCase):
 
         sdp_df = read_csv('datapoints/tests/_data/source_datapoint_msd_chd.csv')
 
-        sdp_list = []
+        sdp_ids = []
+        sdp_insert_batch = []
 
         for sdp in sdp_df.iterrows():
 
             sdp_ix, sdp_data = sdp[0],sdp[1]
 
+
             sdp_dict = {
+                'id': sdp_data['id'],
                 'region_string': sdp_data['region_string'],
                 'campaign_string': sdp_data['campaign_string'],
                 'indicator_string': sdp_data['indicator_string'],
                 'cell_value' : sdp_data['cell_value'],
                 'row_number' : sdp_data['row_number'],
                 'source_guid': sdp_data['guid'],
+                'guid':hashlib.sha1(str(random.random())).hexdigest(),
                 'source_id' : self.source.id,
                 'document_id': self.document.id,
+                'status_id': self.status.id
             }
 
             sdp_obj = SourceDataPoint(**sdp_dict)
-            sdp_list.append(sdp_obj)
+            sdp_insert_batch.append(sdp_obj)
 
-        return sdp_list
+            sdp_ids.append(sdp_data.id)
+
+        SourceDataPoint.objects.bulk_create(sdp_insert_batch)
+
+        return sdp_ids
 
     # def test_refresh_master(self, indicator_id):
     def test_refresh_master(self):
