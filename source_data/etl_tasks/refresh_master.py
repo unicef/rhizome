@@ -50,7 +50,6 @@ class MasterRefresh(object):
 
         ## campaigns ##
         campaign_strings = self.sdp_df['campaign_string'].unique()
-
         for c in campaign_strings:
 
             created, s_c_obj = SourceCampaign.objects.get_or_create(
@@ -61,6 +60,15 @@ class MasterRefresh(object):
 
         ## indicators ##
         indicator_strings = self.sdp_df['indicator_string'].unique()
+        for i in indicator_strings:
+
+            created, s_i_obj = SourceIndicator.objects.get_or_create(
+                indicator_string = i,
+                document_id = self.document_id,
+                source_guid = ('%s - %s',( self.document_id, i )))
+
+
+
         region_codes = self.sdp_df['region_code'].unique()
 
 
