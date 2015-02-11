@@ -1,4 +1,5 @@
 import hashlib
+from django.utils import simplejson
 from itertools import chain
 
 from django.shortcuts import render_to_response
@@ -6,7 +7,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
@@ -187,6 +188,34 @@ def map_header(request,document_id,file_type):
               'file_type':file_type },
             RequestContext(request))
 
+def document_review(request,document_id):
+
+    raw_indicator_breakdown = SourceDataPoint.objects.raw('''
+        SELECT
+        	  MIN(sd.id) AS id
+        	  ,sd.indicator_string
+        	  ,COUNT(1) AS source_datapoint_count
+        FROM source_datapoint sd
+        WHERE sd.document_id = %s
+        GROUP BY sd.indicator_string''',[document_id])
+
+
+    source_indicator_breakdown = []
+
+    for row in raw_indicator_breakdown:
+        ind_dict = {}
+        ind_dict['indicator_string'] = row.indicator_string
+        ind_dict['source_datapoint_count'] = row.source_datapoint_count
+
+    to_review = simplejson.dumps(source_indicator_breakdown)
+
+    return render_to_response(
+        'upload/document_review.html',
+        {'to_review': to_review,'document_id': document_id},
+        RequestContext(request),
+    )
+
+
 def pre_process_file(request,document_id,file_type):
 
     if file_type == 'Datapoint':
@@ -194,7 +223,7 @@ def pre_process_file(request,document_id,file_type):
         column_mappings = {}
         column_mappings['campaign_col'] = request.GET['campaign_col']
         column_mappings['value_col'] = request.GET['value_col']
-        column_mappings['region_col'] = request.GET['region_col']
+        column_mappings['region_code_col'] = request.GET['region_code_col']
         column_mappings['indicator_col'] = request.GET['indicator_col']
 
         dt = DocTransform(document_id,file_type,column_mappings)

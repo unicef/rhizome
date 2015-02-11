@@ -15,7 +15,7 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
         batch = []
 
-        region_string = row[header.index(column_mappings['region_col'])]
+        region_string = row[header.index(column_mappings['region_code_col'])]
         campaign_string = row[header.index(column_mappings['campaign_col'])]
         to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
 
@@ -42,7 +42,6 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
             sdp = SourceDataPoint(**sdp_dict)
 
             batch.append(sdp)
-
 
         SourceDataPoint.objects.bulk_create(batch)
 

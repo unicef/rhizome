@@ -127,7 +127,6 @@ class MasterRefresh(object):
         DataPoint.objects.filter(id__in=datapoint_ids).delete()
 
 
-
     def sync_regions(self):
 
         mapped_source_regions = RegionMap.objects.filter(source_region__document_id=self.document_id)
