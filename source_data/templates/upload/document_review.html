@@ -4,11 +4,12 @@
 
       {% if to_review %}
 
+        <div class="container">
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th>Indicator String</th>
-                <th>Source DataPoint Count String</th>
+                <th>Source DataPoint Count</th>
                 <th>Master Indicator ID</th>
                 <th>Master DataPoint Count</th>
                 <th>Refresh Master For Indicator</th>
@@ -20,15 +21,21 @@
             <tr>
                 <th> {{ sdp.indicator_string }} </th>
                 <th> {{ sdp.source_datapoint_count }} </th>
-                <th> {{ sdp.master_indicator_id }}
+
+                {% if sdp.master_indicator_id %}
+                    <th> {{ sdp.master_indicator_id }}
+                {% else %}
+                  <th> <a href="{% url 'source_data:map_indicator' 1 %}"</a>map</th>
+                {% endif %}
+
                 <th> {{ sdp.datapoint_count }} </th>
                 <th> <a href="{% url 'source_data:sync_source_datapoints' document_id 1 %}"<button type=\
-               -          "submit" class="btn btn-primary btn-sm"> Sync Data </button></a></th>
+                "submit" class="btn btn-primary btn-sm"> Sync Data </button></a></th>
             </tr>
             {% endfor %}
         </table>
-        {% else %}
-    <p>No Source Datapoints Have Been Created yet....</p>
+      </div>
     {% endif %}
+
 
 {% endblock %}

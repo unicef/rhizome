@@ -43,8 +43,10 @@ class MasterRefresh(object):
 
             created, s_c_obj = SourceCampaign.objects.get_or_create(
                 campaign_string = c,
-                document_id = self.document_id,
-                source_guid = ('%s - %s',( self.document_id, c )))
+                defaults = {
+                    'document_id': self.document_id,
+                    'source_guid': ('%s - %s',( self.document_id, c ))
+            })
 
 
         ## indicators ##

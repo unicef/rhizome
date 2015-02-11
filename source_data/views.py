@@ -50,51 +50,50 @@ def user_portal(request):
     )
 
 
-def refresh_master_by_document_id(request,document_id):
-
-    source_datapoints = SourceDataPoint.objects.filter(
-        document_id=document_id,\
-        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
-
-    source_regions = SourceRegion.objects.filter(document_id=document_id)
-
-    m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
-    m.main()
-
-
-    ## Need to Handle region uploads here as well.
-    region_strings = [sd.region_string for sd in source_datapoints] + \
-        [sr.region_string for sr in source_regions]
-
-    indicator_strings = [sd.indicator_string for sd in source_datapoints]
-    campaign_strings = [sd.campaign_string for sc in source_datapoints]
-
-    doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
-        SourceDataPoint.objects.filter(document_id=document_id))
-
-    si = SourceIndicator.objects.filter(indicatormap__isnull=True,
-        indicator_string__in=indicator_strings)
-
-    cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
-        campaign_string__in=campaign_strings)
-
-    rg = SourceRegion.objects.filter(regionmap__isnull=True,
-        region_string__in=region_strings)
-
-    to_map = chain(si,cp,rg)
-
-    i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
-    c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
-    r_m = RegionMap.objects.filter(source_region__document_id=document_id)
-
-    all_mapped = chain(i_m, c_m, r_m)
-
-
-    return render_to_response(
-        'data_entry/final_review.html',
-        {'datapoints': doc_datapoints, 'document_id': document_id,\
-         'to_map':to_map, 'all_mapped':all_mapped },
-         RequestContext(request),)
+# def refresh_master_by_document_id(request,document_id):
+#
+#     source_datapoints = SourceDataPoint.objects.filter(
+#         document_id=document_id,\
+#         status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
+#
+#     source_regions = SourceRegion.objects.filter(document_id=document_id)
+#
+#     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
+#     m.main()
+#
+#     ## Need to Handle region uploads here as well.
+#     region_strings = [sd.region_string for sd in source_datapoints] + \
+#         [sr.region_string for sr in source_regions]
+#
+#     indicator_strings = [sd.indicator_string for sd in source_datapoints]
+#     campaign_strings = [sd.campaign_string for sc in source_datapoints]
+#
+#     doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
+#         SourceDataPoint.objects.filter(document_id=document_id))
+#
+#     si = SourceIndicator.objects.filter(indicatormap__isnull=True,
+#         indicator_string__in=indicator_strings)
+#
+#     cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
+#         campaign_string__in=campaign_strings)
+#
+#     rg = SourceRegion.objects.filter(regionmap__isnull=True,
+#         region_string__in=region_strings)
+#
+#     to_map = chain(si,cp,rg)
+#
+#     i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
+#     c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
+#     r_m = RegionMap.objects.filter(source_region__document_id=document_id)
+#
+#     all_mapped = chain(i_m, c_m, r_m)
+#
+#
+#     return render_to_response(
+#         'data_entry/final_review.html',
+#         {'datapoints': doc_datapoints, 'document_id': document_id,\
+#          'to_map':to_map, 'all_mapped':all_mapped },
+#          RequestContext(request),)
 
 def mark_doc_as_processed(request,document_id):
 
@@ -178,6 +177,16 @@ def map_header(request,document_id,file_type):
             RequestContext(request))
 
 def document_review(request,document_id):
+
+    sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
+        .values_list('id',flat=True)
+
+    # (self,source_datapoint_ids,user_id,document_id,indicator_id):
+
+    m = MasterRefresh(sdp_ids,user_id=request.user.id\
+        ,document_id=document_id,indicator_id=None)
+
+    m.create_source_meta_data()
 
     raw_indicator_breakdown = SourceDataPoint.objects.raw('''
         SELECT
