@@ -7,7 +7,8 @@ from pandas import read_csv
 
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
-    SourceCampaign, SourceIndicator, ProcessStatus
+    SourceCampaign, SourceIndicator, ProcessStatus, RegionMap, IndicatorMap,\
+    CampaignMap
 from datapoints.models import Indicator, Campaign, CampaignType,\
     Region, DataPoint, Office, RegionType
 
@@ -17,7 +18,6 @@ class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
 
-
         super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
@@ -26,8 +26,12 @@ class RefreshMasterTestCase(TestCase):
             status_text = 'test',
             status_description = 'test')
 
-        self.region_1_name = 'Pakistan - Balochistan'
+        self.region_1_name = 'Nigeria - Bauchi'
         self.region_2_name ='Pakistan - Lakki Marwat'
+
+        self.region_1_code = 'Nigeria---Bauchi'
+        self.region_2_code ='Pakistan---Lakki Marwat'
+
         self.indicator_string = 'Number of all missed children'
         self.campaign_string = 'Pakistan July 2014'
 
@@ -60,22 +64,32 @@ class RefreshMasterTestCase(TestCase):
 
         self.region_1 = Region.objects.create(
             name = self.region_1_name,
+            region_code = self.region_1_code,
             region_type_id = self.region_type.id,
             office_id = self.office.id,
-            source_id = self.source.id,
-            region_code = self.region_1_name)
+            source_id = self.source.id)
 
-        self.region_1 = Region.objects.create(
+        self.region_2 = Region.objects.create(
             name = self.region_2_name,
+            region_code = self.region_2_code,
             region_type_id = self.region_type.id,
             office_id = self.office.id,
-            source_id = self.source.id,
-            region_code = self.region_2_name)
+            source_id = self.source.id)
 
         self.source_datapoints = self.build_source_datapoint_list()
 
 
     def build_source_datapoint_list(self):
+        '''
+        Part of the set up method, this takes a csv and inserts it into the
+        source datapoints table.  This method in context of this test represents
+        what would happen when a user uploads a csv and the data flows through
+        "etl_tasks/transform_upload"
+
+        i.e. this testing method should actually just call "transform_upload"
+        with the csv directory below.
+        '''
+
 
         sdp_df = read_csv('datapoints/tests/_data/source_datapoint_msd_chd.csv')
 
@@ -111,7 +125,7 @@ class RefreshMasterTestCase(TestCase):
         return sdp_ids
 
     # def test_refresh_master(self, indicator_id):
-    def test_refresh_master(self):
+    def test_refresh_master_init(self):
 
         self.set_up()
 
@@ -119,6 +133,21 @@ class RefreshMasterTestCase(TestCase):
         mr = MasterRefresh(self.source_datapoints,self.user.id\
             ,self.document.id,self.indicator.id)
 
+        self.assertTrue(isinstance,(mr,MasterRefresh))
+        self.assertEqual(self.document.id,mr.document_id)
+
+
+    def test_source_metadata_creation(self):
+        '''
+        The first thing that should happen when the master refresh is
+        instatiated.  For the source Datapoints
+        '''
+
+        self.set_up()
+
+        ## instatiate the master refresh ##
+        mr = MasterRefresh(self.source_datapoints,self.user.id\
+            ,self.document.id,self.indicator.id)
 
         ## create the source metadata ( we are testing this method) ##
         mr.create_source_meta_data()
@@ -155,9 +184,64 @@ class RefreshMasterTestCase(TestCase):
 
         missing_region_rows = sum(1 for result in sr)
 
-        ## does every region CODE has a cooresponding source_region? ##
+        ## does every source_db row have a a cooresponding source_region? ##
 
-        self.assertTrue(isinstance,(mr,MasterRefresh))
         self.assertEqual(0,missing_indicator_rows)
         self.assertEqual(0,missing_campaign_rows)
         self.assertEqual(0,missing_region_rows)
+
+
+    def test_mapping(self):
+        '''
+        Here we ensure that after mapping all of the meta data that we have the
+        expected number of rows with the appropiate data associated.
+        '''
+
+        self.set_up()
+        mr = MasterRefresh(self.source_datapoints,self.user.id\
+            ,self.document.id,self.indicator.id)
+
+        ## create the source metadata ##
+        mr.create_source_meta_data()
+
+        ## create mappings ( this is mimicking how bo would map metadata ) ##
+        rm_1 = RegionMap.objects.create(
+            mapped_by_id = self.user.id,
+            source_region_id = SourceRegion.objects.get(region_code=self\
+                .region_1_code).id,
+            master_region_id = self.region_1.id)
+
+        cm_1 = CampaignMap.objects.create(
+            mapped_by_id = self.user.id,
+            source_campaign_id = SourceCampaign.objects.get(campaign_string=\
+                self.campaign_string).id,
+            master_campaign_id = self.campaign.id)
+
+        im_1 = IndicatorMap.objects.create(
+            mapped_by_id = self.user.id,
+            source_indicator_id = SourceIndicator.objects.get(indicator_string=\
+                self.indicator_string).id,
+            master_indicator_id = self.indicator.id)
+
+        mr.source_dps_to_dps()
+
+        x = DataPoint.objects.filter(
+            region_id = self.region_1.id,
+            campaign_id = self.campaign.id,
+            indicator_id = self.indicator.id,
+        )
+
+        self.assertEqual(len(x),1)
+
+
+
+
+
+
+
+    def test_unmapping(self):
+        '''
+        Here we ensure that if there is data in the datapoints table that
+        cooresponds to a non existing mapping that we remove it.
+        '''
+        pass
