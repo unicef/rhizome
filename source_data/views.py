@@ -1,6 +1,7 @@
 import hashlib
 from django.utils import simplejson
 from itertools import chain
+from pprint import pprint
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -45,17 +46,6 @@ def user_portal(request):
     return render_to_response(
         'data_entry/user_portal.html',
         {'docs':docs,'to_do':to_do,'campaigns':campaigns,'campaign_id':campaign_id},
-        RequestContext(request),
-    )
-
-
-def review_sdps_by_document(request,document_id):
-
-    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
-
-    return render_to_response(
-        'upload/document_review.html',
-        {'to_review': source_datapoints,'document_id': document_id},
         RequestContext(request),
     )
 
@@ -141,7 +131,6 @@ def file_upload(request):
 
         file_type = request.POST['file_type']
 
-
         try:
             to_upload = request.FILES['docfile']
 
@@ -194,26 +183,43 @@ def document_review(request,document_id):
         SELECT
         	  MIN(sd.id) AS id
         	  ,sd.indicator_string
-        	  ,COUNT(1) AS source_datapoint_count
+              ,im.master_indicator_id
+        	  ,COUNT(sd.id) AS source_datapoint_count
+        	  ,COUNT(d.id) AS datapoint_count
         FROM source_datapoint sd
+        LEFT JOIN source_indicator si
+            ON sd.indicator_string = si.indicator_string
+        LEFT JOIN indicator_map im
+            ON si.id = im.source_indicator_id
+        LEFT JOIN datapoint d
+            ON im.master_indicator_id = d.indicator_id
+            AND sd.id = d.source_datapoint_id
         WHERE sd.document_id = %s
-        GROUP BY sd.indicator_string''',[document_id])
-
+        GROUP BY sd.indicator_string,im.master_indicator_id
+        ORDER BY im.master_indicator_id''',[document_id])
 
     source_indicator_breakdown = []
 
     for row in raw_indicator_breakdown:
         ind_dict = {}
         ind_dict['indicator_string'] = row.indicator_string
+        ind_dict['master_indicator_id'] = row.master_indicator_id
         ind_dict['source_datapoint_count'] = row.source_datapoint_count
+        ind_dict['datapoint_count'] = row.datapoint_count
 
-    to_review = simplejson.dumps(source_indicator_breakdown)
+        source_indicator_breakdown.append(ind_dict)
 
     return render_to_response(
         'upload/document_review.html',
-        {'to_review': to_review,'document_id': document_id},
+        {'to_review': source_indicator_breakdown,'document_id': document_id},
         RequestContext(request),
     )
+
+def sync_source_datapoints(request,document_id,master_indicator_id):
+
+    mr = MasterRefresh()
+
+    pass
 
 
 def pre_process_file(request,document_id,file_type):
