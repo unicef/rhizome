@@ -46,6 +46,7 @@ class MasterRefresh(object):
             	ON sd.indicator_string = si.indicator_string
             INNER JOIN indicator_map im
             	ON si.id = im.source_indicator_id
+                AND im.master_indicator_id = %s
             INNER JOIN source_campaign sc
             	ON sd.campaign_string = sc.campaign_string
             INNER JOIN campaign_map cm
@@ -54,7 +55,7 @@ class MasterRefresh(object):
             AND NOT EXISTS (
                  SELECT 1 FROM datapoint d
                  WHERE sd.id = d.source_datapoint_id)
-            ''', [self.document_id])
+            ''', [self.indicator_id,self.document_id])
 
 
         for row in sdps_to_sync:
