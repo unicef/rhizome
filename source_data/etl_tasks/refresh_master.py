@@ -60,8 +60,6 @@ class MasterRefresh(object):
 
         for row in sdps_to_sync:
 
-            print '...TRYING...'
-
             created, dp = DataPoint.objects.get_or_create(
                 campaign_id = row.master_campaign_id,
                 indicator_id = row.master_indicator_id,
@@ -149,10 +147,6 @@ def create_source_meta_data(document_id):
 
     # regions #
     region_codes = sdp_df['region_code'].unique()
-
-    print sdp_df[:10]
-    print '====\n' * 5
-    print region_codes
 
     for r in region_codes:
 

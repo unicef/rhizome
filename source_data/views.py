@@ -335,7 +335,7 @@ def pre_process_file(request,document_id,file_type):
             sdps = SourceDataPoint.objects.filter(
                 document_id = document_id)
 
-        return HttpResponseRedirect(reverse('source_data:map_document_metadata'\
+        return HttpResponseRedirect(reverse('source_data:document_review'\
             , kwargs={'document_id': document_id}))
 
     elif file_type == 'Region':
