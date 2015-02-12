@@ -15,21 +15,19 @@ from datapoints.models import *
 class MasterRefresh(object):
 
 
-    def __init__(self,source_datapoint_ids,user_id,document_id,indicator_id):
+    def __init__(self,user_id,document_id,indicator_id):
 
         self.document_id = document_id
         self.user_id = user_id
         self.indicator_id = indicator_id
 
-        self.source_datapoint_ids = source_datapoint_ids
         self.source_region_ids, self.source_campaign_id\
             , self.source_indicator_ids = [],[],[]
 
-        self.sdp_df = DataFrame(list(SourceDataPoint.objects.filter(id__in =\
-            self.source_datapoint_ids).values()))
+        self.sdp_df = DataFrame(list(SourceDataPoint.objects\
+            .filter(document_id = self.document_id).values()))
 
         self.new_datapoints = []
-
 
     def source_dps_to_dps(self):
 

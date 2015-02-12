@@ -258,9 +258,6 @@ def document_review(request,document_id):
     sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
         .values_list('id',flat=True)
 
-    m = MasterRefresh(sdp_ids,user_id=request.user.id\
-        ,document_id=document_id,indicator_id=None)
-
     source_indicator_breakdown = populate_document_meta(document_id)
 
     return render_to_response(
@@ -271,9 +268,10 @@ def document_review(request,document_id):
 
 def sync_source_datapoints(request,document_id,master_indicator_id):
 
-    mr = MasterRefresh()
+    mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
 
-    pass
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        , kwargs={'document_id': document_id}))
 
 
 def pre_process_file(request,document_id,file_type):
@@ -294,7 +292,7 @@ def pre_process_file(request,document_id,file_type):
             sdps = SourceDataPoint.objects.filter(
                 document_id = document_id)
 
-        return HttpResponseRedirect(reverse('source_data:document_review'\
+        return HttpResponseRedirect(reverse('source_data:map_document_metadata'\
             , kwargs={'document_id': document_id}))
 
     elif file_type == 'Region':
