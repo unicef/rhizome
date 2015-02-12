@@ -37,7 +37,7 @@
                 {% if si.master_indicator_id == -1 %}
                   <th> please map indicator
                 {% else %}
-                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_indicator_id %}"</a>map</th>
+                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_indicator_id %}"</a> Sync Data</th>
                 {% endif %}
 
             </tr>

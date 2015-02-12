@@ -15,7 +15,7 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
         batch = []
 
-        region_string = row[header.index(column_mappings['region_code_col'])]
+        region_code = row[header.index(column_mappings['region_code_col'])]
         campaign_string = row[header.index(column_mappings['campaign_col'])]
         to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
 
@@ -30,7 +30,7 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
                 'source_guid':row_guid,
                 'guid':row_guid,
                 'indicator_string': indicator_string,
-                'region_string':region_string,
+                'region_code':region_code,
                 'campaign_string':campaign_string,
                 'cell_value':row[cell_no],
                 'row_number':row_number,

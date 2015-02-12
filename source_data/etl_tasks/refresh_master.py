@@ -149,6 +149,11 @@ def create_source_meta_data(document_id):
 
     # regions #
     region_codes = sdp_df['region_code'].unique()
+
+    print sdp_df[:10]
+    print '====\n' * 5
+    print region_codes
+
     for r in region_codes:
 
         created, s_r_obj = SourceRegion.objects.get_or_create(

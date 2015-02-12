@@ -140,6 +140,8 @@ def populate_document_meta(document_id):
 
     if has_meta == 0:
 
+        create_source_meta_data(document_id)
+
         doc_meta_raw = DocumentMeta.objects.raw('''
 
         DROP TABLE IF EXISTS _tmp_meta_for_doc;

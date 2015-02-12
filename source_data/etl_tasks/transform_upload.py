@@ -22,7 +22,6 @@ class DocTransform(object):
         self.column_mappings = column_mappings
         self.df = self.create_df()
 
-
     def create_df(self):
 
         if self.file_path.endswith('.csv'):
@@ -58,7 +57,7 @@ class DocTransform(object):
                     source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
                     defaults = {
                     'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                    'region_string': row[df_cols.index(self.column_mappings['region_col'])],
+                    'region_code': row[df_cols.index(self.column_mappings['region_col'])],
                     'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
                     'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
                     'row_number': i,
