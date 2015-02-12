@@ -269,12 +269,18 @@ def pre_process_file(request,document_id,file_type):
 
 def map_document_metadata(request,document_id):
 
-
+    to_map_raw = DocumentMeta.objects.raw('''
+    SELECT
+    	*
+    FROM document_meta
+    WHERE document_id = %s
+    and model_type != 'indicator'
+    ''',[document_id])
 
 
     return render_to_response(
-        'data_entry/final_review.html',
-        {'document_id': document_id, 'to_map':to_map},
+        'data_entry/meta_map.html',
+        {'document_id': document_id, 'to_map':to_map_raw},
         RequestContext(request),
     )
 

@@ -2,6 +2,11 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
+
+    <div align="center">
+    <a href="{% url 'source_data:map_document_metadata' document_id %}"<button class='button'> Map Meta Data </button></a>
+    <br><br>
+
   {% if to_review %}
 
         <div class="container">
