@@ -55,6 +55,8 @@ class Document(models.Model):
     doc_text = models.TextField(null=True)
     created_by = models.ForeignKey(User)
     guid = models.CharField(max_length=40)
+    source_datapoint_count = models.IntegerField(null=True)
+    master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
 
     class Meta:
@@ -218,7 +220,6 @@ class CampaignMap(models.Model):
 
     class Meta:
         db_table = 'campaign_map'
-
 
 
     ###################

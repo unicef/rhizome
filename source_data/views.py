@@ -213,6 +213,41 @@ def populate_document_meta(document_id):
 
         doc_meta_raw = DocumentMeta.objects.raw('''
 
+        -- gets the counts for source datapoints and datapoints --
+        DROP TABLE IF EXISTS _tmp_doc_dp_count;
+        CREATE TEMP TABLE _tmp_doc_dp_count
+        AS
+        SELECT
+        	x.document_id
+        	, source_datapoint_count
+        	, master_datapoint_count
+        FROM (
+        	SELECT
+        		document_id
+        		,COUNT(*) AS source_datapoint_count
+        	FROM source_datapoint sd
+            WHERE sd.document_id = %s
+        	GROUP BY document_id
+        )x
+        LEFT JOIN (
+        	SELECT
+        		document_id
+        		,COUNT(*) AS master_datapoint_count
+        	FROM source_datapoint sd
+        	INNER JOIN datapoint d
+        	ON sd.id = d.source_datapoint_id
+            AND sd.document_id = %s
+        	GROUP BY document_id
+        )y
+        ON x.document_id = y.document_id;
+
+        UPDATE source_data_document
+        SET source_datapoint_count = cnt.source_datapoint_count
+        	,master_datapoint_count = cnt.master_datapoint_count
+        FROM _tmp_doc_dp_count cnt
+        WHERE document_id = cnt.document_id;
+
+
         UPDATE document_meta
         SET master_object_id = im.master_indicator_id
         FROM indicator_map im
@@ -237,7 +272,7 @@ def populate_document_meta(document_id):
         SELECT * FROM document_meta
         WHERE document_id = %s
         ORDER BY master_object_id desc;''', [document_id,document_id,\
-            document_id,document_id])
+            document_id,document_id,document_id,document_id])
 
     for row in doc_meta_raw:
 
@@ -260,9 +295,15 @@ def document_review(request,document_id):
 
     source_indicator_breakdown = populate_document_meta(document_id)
 
+    doc_obj = Document.objects.get(id = document_id)
+    sdp_count, dp_count = doc_obj.source_datapoint_count\
+        , doc_obj.master_datapoint_count
+
+
     return render_to_response(
         'upload/document_review.html',
-        {'to_review': source_indicator_breakdown,'document_id': document_id},
+        {'to_review': source_indicator_breakdown,'document_id': document_id,
+        'sdp_count':sdp_count,'dp_count':dp_count},
         RequestContext(request),
     )
 

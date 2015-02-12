@@ -14,7 +14,6 @@ from datapoints.models import *
 
 class MasterRefresh(object):
 
-
     def __init__(self,user_id,document_id,indicator_id):
 
         self.document_id = document_id

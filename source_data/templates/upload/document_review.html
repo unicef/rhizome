@@ -5,7 +5,12 @@
 
     <div align="center">
     <a href="{% url 'source_data:map_document_metadata' document_id %}"<button class='button'> Map Meta Data </button></a>
+    <br>
+    <h2>Source DP Count: {{ sdp_count }} </h2>
+    <h2>DP Count: {{ dp_count }} </h2>
+
     <br><br>
+
 
   {% if to_review %}
 
