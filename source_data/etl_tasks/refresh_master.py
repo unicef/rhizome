@@ -31,47 +31,6 @@ class MasterRefresh(object):
         self.new_datapoints = []
 
 
-    def create_source_meta_data(self):
-        '''
-        based on the source datapoints, create the source_regions /
-        source_campaigns / source indicators/
-        '''
-
-        ## campaigns ##
-        campaign_strings = self.sdp_df['campaign_string'].unique()
-        for c in campaign_strings:
-
-            created, s_c_obj = SourceCampaign.objects.get_or_create(
-                campaign_string = c,
-                defaults = {
-                    'document_id': self.document_id,
-                    'source_guid': ('%s - %s',( self.document_id, c ))
-                })
-
-
-        ## indicators ##
-        indicator_strings = self.sdp_df['indicator_string'].unique()
-        for i in indicator_strings:
-
-            created, s_i_obj = SourceIndicator.objects.get_or_create(
-                indicator_string = i,
-                defaults = {
-                    'document_id': self.document_id,
-                    'source_guid': ('%s - %s',( self.document_id, i ))
-                })
-
-        # regions #
-        region_codes = self.sdp_df['region_code'].unique()
-        for r in region_codes:
-
-            created, s_r_obj = SourceRegion.objects.get_or_create(
-                region_code = r,
-                defaults = {
-                    'region_string': r,
-                    'document_id': self.document_id,
-                    'source_guid': ('%s - %s',( self.document_id, r ))
-                })
-
     def source_dps_to_dps(self):
 
         sdps_to_sync = SourceDataPoint.objects.raw('''
@@ -152,3 +111,50 @@ class MasterRefresh(object):
                     'shape_area':source_polygon.shape_area,
                     'polygon': source_polygon.polygon
                 })
+
+#####
+#####
+
+def create_source_meta_data(document_id):
+    '''
+    based on the source datapoints, create the source_regions /
+    source_campaigns / source indicators/
+    '''
+
+    sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
+        document_id = document_id).values()))
+
+    ## campaigns ##
+    campaign_strings = sdp_df['campaign_string'].unique()
+    for c in campaign_strings:
+
+        created, s_c_obj = SourceCampaign.objects.get_or_create(
+            campaign_string = c,
+            defaults = {
+                'document_id': document_id,
+                'source_guid': ('%s - %s',( document_id, c ))
+            })
+
+
+    ## indicators ##
+    indicator_strings = sdp_df['indicator_string'].unique()
+    for i in indicator_strings:
+
+        created, s_i_obj = SourceIndicator.objects.get_or_create(
+            indicator_string = i,
+            defaults = {
+                'document_id': document_id,
+                'source_guid': ('%s - %s',( document_id, i ))
+            })
+
+    # regions #
+    region_codes = sdp_df['region_code'].unique()
+    for r in region_codes:
+
+        created, s_r_obj = SourceRegion.objects.get_or_create(
+            region_code = r,
+            defaults = {
+                'region_string': r,
+                'document_id': document_id,
+                'source_guid': ('%s - %s',( document_id, r ))
+            })

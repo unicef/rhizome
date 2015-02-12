@@ -5,7 +5,8 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv
 
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.etl_tasks.refresh_master import MasterRefresh,
+    create_source_meta_data
 from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
     SourceCampaign, SourceIndicator, ProcessStatus, RegionMap, IndicatorMap,\
     CampaignMap
@@ -145,12 +146,8 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        ## instatiate the master refresh ##
-        mr = MasterRefresh(self.source_datapoints,self.user.id\
-            ,self.document.id,self.indicator.id)
-
         ## create the source metadata ( we are testing this method) ##
-        mr.create_source_meta_data()
+        create_source_meta_data()
 
         sc = SourceCampaign.objects.raw("""
             SELECT sd.id FROM source_datapoint sd\

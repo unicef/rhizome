@@ -9,13 +9,15 @@ from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect,HttpResponse
+from django.db.utils import IntegrityError
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.etl_tasks.refresh_master import MasterRefresh\
+    ,create_source_meta_data
 from source_data.api import EtlTask
 
 
@@ -104,12 +106,7 @@ def mark_doc_as_processed(request,document_id):
     return HttpResponseRedirect(reverse('source_data:user_portal'))  # encode like done below
 
 
-
-### Bulk Upload Stuff Above ###
-
-            ####
-
-### File Upload Stuff Below ###
+### File Upload Below ###
 
 
 def file_upload(request):
@@ -186,7 +183,7 @@ def document_review(request,document_id):
     m = MasterRefresh(sdp_ids,user_id=request.user.id\
         ,document_id=document_id,indicator_id=None)
 
-    m.create_source_meta_data()
+    create_source_meta_data(document_id)
 
     raw_indicator_breakdown = SourceDataPoint.objects.raw('''
         SELECT
@@ -242,13 +239,24 @@ def pre_process_file(request,document_id,file_type):
         column_mappings['indicator_col'] = request.GET['indicator_col']
 
         dt = DocTransform(document_id,file_type,column_mappings)
-        sdps = dt.dp_df_to_source_datapoints()
 
-        return render_to_response(
-            'upload/document_review.html',
-            {'document_id':document_id,'to_review':sdps},
-            RequestContext(request),
-        )
+        try:
+            sdps = dt.dp_df_to_source_datapoints()
+        except IntegrityError:
+            sdps = SourceDataPoint.objects.filter(
+                document_id = document_id)
+
+        # return HttpResponseRedirect(reverse('source_data:document_review'),
+        #     {'document_id':document_id})
+
+        return HttpResponseRedirect(reverse('source_data:document_review'\
+            , kwargs={'document_id': document_id}))
+
+        # return render_to_response(
+        #     'upload/document_review.html',
+        #     {'document_id':document_id,'to_review':sdps},
+        #     RequestContext(request),
+        # )
 
     elif file_type == 'Region':
 
