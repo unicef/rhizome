@@ -132,13 +132,21 @@ def populate_document_meta(document_id):
 
     source_indicator_breakdown = []
 
-    has_meta = DocumentMeta.objects.raw('''
+    doc_meta_limit_1 = DocumentMeta.objects.raw('''
         SELECT id FROM document_meta WHERE document_id = %s LIMIT 1'''\
         ,[document_id])
 
-    if not has_meta:
+    has_meta = sum(1 for dm in doc_meta_limit_1)
+
+    if has_meta == 0:
 
         doc_meta_raw = DocumentMeta.objects.raw('''
+
+        DROP TABLE IF EXISTS _tmp_meta_for_doc;
+        CREATE TEMP TABLE _tmp_meta_for_doc AS
+
+        SELECT * FROM source_datapoint where document_id = %s;
+
         INSERT INTO document_meta
         (document_id, source_string, model_type, source_object_id, master_object_id,source_datapoint_count)
 
@@ -149,7 +157,7 @@ def populate_document_meta(document_id):
         	,si.id as source_indicator_id
         	,COALESCE(im.master_indicator_id,-1)
         	,COUNT(*) AS C
-        FROM source_datapoint sd
+        FROM _tmp_meta_for_doc sd
         INNER JOIN source_indicator si
         	ON sd.indicator_string = si.indicator_string
         LEFT JOIN indicator_map im
@@ -157,8 +165,43 @@ def populate_document_meta(document_id):
         LEFT JOIN datapoint d
         	ON im.master_indicator_id = d.indicator_id
         	AND sd.id = d.source_datapoint_id
-        WHERE sd.document_id = %s
-        GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id;
+        GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
+
+        UNION ALL
+
+        SELECT DISTINCT
+        	sd.document_id
+        	,sr.region_code
+        	,'region'
+        	,sr.id as source_region_id
+        	,COALESCE(rm.master_region_id,-1)
+        	,0
+        FROM _tmp_meta_for_doc sd
+        INNER JOIN source_region sr
+        	ON sd.region_code = sr.region_code
+        LEFT JOIN region_map rm
+        	ON sr.id = rm.source_region_id
+        LEFT JOIN datapoint d
+        	ON rm.master_region_id = d.region_id
+        	AND sd.id = d.source_datapoint_id
+
+        UNION ALL
+
+        SELECT DISTINCT
+        	sd.document_id
+        	,sc.campaign_string
+        	,'campaign'
+        	,sc.id as source_campaign_id
+        	,COALESCE(cm.master_campaign_id,-1)
+        	,0
+        FROM _tmp_meta_for_doc sd
+        INNER JOIN source_campaign sc
+        	ON sd.campaign_string = sc.campaign_string
+        LEFT JOIN campaign_map cm
+        	ON sc.id = cm.source_campaign_id
+        LEFT JOIN datapoint d
+        	ON cm.master_campaign_id = d.campaign_id
+        	AND sd.id = d.source_datapoint_id;
 
         SELECT * FROM document_meta
         WHERE document_id = %s
@@ -269,18 +312,29 @@ def pre_process_file(request,document_id,file_type):
 
 def map_document_metadata(request,document_id):
 
+    meta_list = []
+
     to_map_raw = DocumentMeta.objects.raw('''
     SELECT
     	*
     FROM document_meta
     WHERE document_id = %s
-    and model_type != 'indicator'
+    AND model_type != 'indicator'
     ''',[document_id])
 
+    for row in to_map_raw:
+
+        meta_dict = {}
+        meta_dict['source_string'] = row.source_string
+        meta_dict['source_object_id'] = row.source_object_id
+        meta_dict['master_object_id'] = row.master_object_id
+        meta_dict['model_type'] = row.model_type
+
+        meta_list.append(meta_dict)
 
     return render_to_response(
         'data_entry/meta_map.html',
-        {'document_id': document_id, 'to_map':to_map_raw},
+        {'document_id': document_id, 'to_map':meta_list},
         RequestContext(request),
     )
 

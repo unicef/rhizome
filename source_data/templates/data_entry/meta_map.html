@@ -16,49 +16,26 @@
             <table class="table table-hover table-bordered">
             <thead>
                 <tr>
-                    <th>Source String</th>
                     <th>Model</th>
-                    <th>Source</th>
+                    <th>Source String</th>
+                    <th>Source Object ID</th>
+                    <th>Master Object ID</th>
                     <th>Map It!</th>
 
                 </tr>
             </thead>
-
-
                 {% for item in to_map %}
-
-                {% if item.indicator_string %}
-
                     <tr>
-                        <th>{{ item.indicator_string }}</th>
-                        <th>Indicator</th>
-                        <th>{{ item.source }}</th>
-                        <th><a href="{% url 'source_data:map_indicator' item.id %}"<button type=\
+                        <th>{{ item.model_type }}</th>
+                        <th>{{ item.source_string }}</th>
+                        <th>{{ item.source_object_id }}</th>
+                        <th>{{ item.master_object_id }}</th>
+                        {% if item.model_type == 'region'%}
+                        <th><a href="{% url 'source_data:map_region' item.source_object_id %}"<button type=\
                             "submit" class="btn btn-primary btn-sm"> Map it! </button></a></th>
+                        {% endif %}
+
                     </tr>
-
-                {% elif item.region_string %}
-
-                    <tr>
-                        <th>{{ item }}</th>
-                        <th>Region</th>
-                        <th>{{ item.source }}</th>
-                        <th><a href="{% url 'source_data:map_region' item.id %}"<button type=\
-                            "submit" class="btn btn-primary btn-sm"> Map it! </button></a></th>
-                    </tr>
-
-                {% elif item.campaign_string %}
-
-                    <tr>
-                        <th>{{ item.campaign_string }}</th>
-                        <th>Campaign</th>
-                        <th>{{ item.source }}</th>
-                        <th><a href="{% url 'source_data:map_campaign' item.id %}"<button type=\
-                            "submit" class="btn btn-primary btn-sm"> Map it! </button></a></th>
-                    </tr>
-
-                {% endif %}
-
 
                 {% endfor %}
             </table>
