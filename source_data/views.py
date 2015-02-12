@@ -311,6 +311,8 @@ def sync_source_datapoints(request,document_id,master_indicator_id):
 
     mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
 
+    mr.source_dps_to_dps()
+
     return HttpResponseRedirect(reverse('source_data:document_review'\
         , kwargs={'document_id': document_id}))
 
@@ -361,6 +363,8 @@ def map_document_metadata(request,document_id):
     FROM document_meta
     WHERE document_id = %s
     ''',[document_id])
+
+    populate_document_meta(document_id)
 
     for row in to_map_raw:
 

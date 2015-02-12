@@ -41,15 +41,15 @@ class MasterRefresh(object):
             INNER JOIN source_region sr
             	ON sd.region_code = sr.region_code
             INNER JOIN region_map rm
-             	ON sr.id = rm.source_region_id
+            	ON sr.id = rm.source_region_id
             INNER JOIN source_indicator si
             	ON sd.indicator_string = si.indicator_string
             INNER JOIN indicator_map im
-             	ON si.id = im.source_indicator_id
+            	ON si.id = im.source_indicator_id
             INNER JOIN source_campaign sc
             	ON sd.campaign_string = sc.campaign_string
             INNER JOIN campaign_map cm
-             	ON sc.id = im.source_indicator_id
+            	ON sc.id = cm.source_campaign_id
             WHERE sd.document_id = %s
             AND NOT EXISTS (
                  SELECT 1 FROM datapoint d
@@ -58,6 +58,8 @@ class MasterRefresh(object):
 
 
         for row in sdps_to_sync:
+
+            print '...TRYING...'
 
             created, dp = DataPoint.objects.get_or_create(
                 campaign_id = row.master_campaign_id,
