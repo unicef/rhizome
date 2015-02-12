@@ -132,13 +132,15 @@ def populate_document_meta(document_id):
 
     source_indicator_breakdown = []
 
-    to_review = DocumentMeta.objects.filter(document_id = document_id)
+    has_meta = DocumentMeta.objects.raw('''
+        SELECT id FROM document_meta WHERE document_id = %s LIMIT 1'''\
+        ,[document_id])
 
-    if not to_review:
+    if not has_meta:
 
-        to_review = DocumentMeta.objects.raw('''
+        doc_meta_raw = DocumentMeta.objects.raw('''
         INSERT INTO document_meta
-        (document_id, string_to_map, model_type, source_object_id, master_object_id,source_datapoint_count)
+        (document_id, source_string, model_type, source_object_id, master_object_id,source_datapoint_count)
 
         SELECT
         	sd.document_id
@@ -159,9 +161,40 @@ def populate_document_meta(document_id):
         GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id;
 
         SELECT * FROM document_meta
-        WHERE document_id = %s;''', [document_id,document_id])
+        WHERE document_id = %s
+        ORDER BY master_object_id desc;''', [document_id,document_id])
 
-    for row in to_review:
+    else:
+
+        doc_meta_raw = DocumentMeta.objects.raw('''
+
+        UPDATE document_meta
+        SET master_object_id = im.master_indicator_id
+        FROM indicator_map im
+        WHERE model_type = 'indicator'
+        AND source_object_id = im.source_indicator_id
+        AND document_id = %s;
+
+        UPDATE document_meta
+        SET master_object_id = rm.master_region_id
+        FROM region_map rm
+        WHERE model_type = 'region'
+        AND source_object_id = rm.source_region_id
+        AND document_id = %s;
+
+        UPDATE document_meta
+        SET master_object_id = cm.master_campaign_id
+        FROM campaign_map cm
+        WHERE model_type = 'campaign'
+        AND source_object_id = cm.source_campaign_id
+        AND document_id = %s;
+
+        SELECT * FROM document_meta
+        WHERE document_id = %s
+        ORDER BY master_object_id desc;''', [document_id,document_id,\
+            document_id,document_id])
+
+    for row in doc_meta_raw:
 
         if row.model_type == 'indicator':
 
@@ -169,6 +202,7 @@ def populate_document_meta(document_id):
             ind_dict['indicator_string'] = row.source_string
             ind_dict['master_indicator_id'] = row.master_object_id
             ind_dict['source_indicator_id'] = row.source_object_id
+            ind_dict['source_datapoint_count'] = row.source_datapoint_count
 
             source_indicator_breakdown.append(ind_dict)
 
