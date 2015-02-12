@@ -1,21 +1,9 @@
-import json
-import pprint as pp
 import traceback
-from math import isnan
-from collections import defaultdict
-from datetime import datetime
-from itertools import product
 
-from tastypie.bundle import Bundle
 from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.exceptions import ImmediateHttpResponse
-from tastypie.resources import ALL, ModelResource, Resource
-from tastypie.validation import Validation
-from pandas import DataFrame
-from pandas import concat, merge, unique, pivot_table
-from django.db.models import Sum
-from django.db import connection
+from tastypie.resources import ALL
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
@@ -234,9 +222,8 @@ class DataPointResource(BaseNonModelResource):
         return campaign__in
 
 
-class DataPointEntryResource(ModelResource):
+class DataPointEntryResource(BaseModelResource):
 
-    # for validation
     required_keys = [
         'datapoint_id', 'indicator_id', 'region_id',
         'campaign_id', 'value', 'changed_by_id',

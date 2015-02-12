@@ -1,17 +1,12 @@
-import pprint as pp
-
 import xlrd
 import pandas as pd
 
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from pandas.io.excel import read_excel
 
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
-from datapoints.models import DataPoint, Source, Office, Region
+from datapoints.models import Source
 
 
 class DocTransform(object):
@@ -26,7 +21,6 @@ class DocTransform(object):
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
         self.column_mappings = column_mappings
         self.df = self.create_df()
-
 
     def create_df(self):
 
@@ -63,7 +57,7 @@ class DocTransform(object):
                     source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
                     defaults = {
                     'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                    'region_string': row[df_cols.index(self.column_mappings['region_col'])],
+                    'region_code': row[df_cols.index(self.column_mappings['region_col'])],
                     'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
                     'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
                     'row_number': i,

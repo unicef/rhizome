@@ -1,5 +1,4 @@
 import StringIO
-import pprint as pp
 
 from tastypie.serializers import Serializer
 from pandas import DataFrame

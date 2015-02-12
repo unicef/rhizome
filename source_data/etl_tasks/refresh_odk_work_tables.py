@@ -1,8 +1,5 @@
-import csv
-import sys, os
-import pprint as pp
-import pandas as pd
-
+import os
+from pandas import read_csv
 from traceback import format_exc
 
 try:
@@ -11,12 +8,6 @@ except ImportError:
     import source_data.dev_odk_settings as odk_settings
 
 from django.db.utils import IntegrityError
-from pandas import DataFrame, concat
-
-## to run stand alone ##
-# sys.path.append('/Users/johndingee_seed/code/polio')
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'polio.settings'
-# from django.conf import settings
 
 
 from source_data.models import *
@@ -105,7 +96,7 @@ class WorkTableTask(object):
 
     def build_dataframe(self):
 
-        df = pd.read_csv(self.full_file_path, error_bad_lines = False)  # YOU NEED TO HANDLE ERRORS!
+        df = read_csv(self.full_file_path, error_bad_lines = False)  # YOU NEED TO HANDLE ERRORS!
 
         return df
 

@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 LOGIN_REDIRECT_URL = '/datapoints'
 
@@ -29,7 +28,6 @@ ALLOWED_HOSTS = []
 
 MEDIA_ROOT = '/Users/johndingee_seed/code/UF04/polio/media/'
 MEDIA_URL = '/Users/johndingee_seed/code/UF04/polio/media/'
-
 
 # Application definition
 

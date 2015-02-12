@@ -17,7 +17,7 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
@@ -35,6 +35,7 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True
 

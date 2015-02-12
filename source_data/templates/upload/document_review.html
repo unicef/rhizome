@@ -2,38 +2,55 @@
 {% extends "datapoints/base.html" %}
   {% block content %}
 
-            <a href="{% url 'source_data:refresh_master_by_document_id' document_id %}"<button type=\
-          "submit" class="btn btn-primary btn-sm"> Refresh Master </button></a></th>
-      </form>
+
+    <div align="center">
+    <a href="{% url 'source_data:map_document_metadata' document_id %}"<button class='button'> Map Meta Data </button></a>
+    <br>
+    <h2>Source DP Count: {{ sdp_count }} </h2>
+    <h2>DP Count: {{ dp_count }} </h2>
+
+    <br><br>
 
 
-      {% if to_review %}
+  {% if to_review %}
+
+        <div class="container">
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Region</th>
-                <th>Campaign</th>
-                <th>Indicator</th>
-                <th>Value</th>
-                <th>Flag</th>
+                <th>Source Indicator ID</th>
+                <th>Indicator String</th>
+                <th>Master Indicator ID</th>
+                <th>Source DataPoint Count</th>
+                <th>Sync Indicator Data</th>
+
             </tr>
         </thead>
 
-            {% for sdp in to_review %}
+            {% for si in to_review %}
             <tr>
-                <th>{{ sdp.id }}</th>
-                <th>{{ sdp.region_string }}</th>
-                <th>{{ sdp.campaign_string }}</th>
-                <th>{{ sdp.indicator_string }}</th>
-                <th>{{ sdp.cell_value }}</th>
-                <th> <button type="submit" class="btn btn-danger"> flag!</button></th>
+                <th> {{ si.source_indicator_id }} </th>
+                <th> {{ si.indicator_string }} </th>
+
+                {% if si.master_indicator_id == -1 %}
+                  <th> <a href="{% url 'source_data:map_indicator' si.source_indicator_id %}"</a>map</th>
+                {% else %}
+                  <th> {{ si.master_indicator_id }}
+                {% endif %}
+
+                <th> {{ si.source_datapoint_count }} </th>
+                {% if si.master_indicator_id == -1 %}
+                  <th> please map indicator
+                {% else %}
+                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_indicator_id %}"</a> Sync Data</th>
+                {% endif %}
 
             </tr>
             {% endfor %}
         </table>
-        {% else %}
-    <p>No Source Datapoints Have Been Created yet....</p>
+      </div>
+
     {% endif %}
+
 
 {% endblock %}

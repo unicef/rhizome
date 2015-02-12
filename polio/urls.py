@@ -13,9 +13,6 @@ from datapoints.api.base import debug
 from source_data.api import EtlResource
 from tastypie.api import Api
 
-from polio.views import UserCreateView
-
-
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
@@ -44,7 +41,6 @@ urlpatterns = patterns('',
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    url(r'^accounts/create/$', UserCreateView.as_view(), name='create_user'),
     ##
     url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
     ##

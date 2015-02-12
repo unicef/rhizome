@@ -1,6 +1,5 @@
 from django.db import models
 from autoslug import AutoSlugField
-from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
 class Source(models.Model):
@@ -88,7 +87,6 @@ class Region(models.Model):
     slug = AutoSlugField(populate_from='name',max_length=55,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    source_region = models.ForeignKey('source_data.SourceRegion')
     is_high_risk = models.BooleanField(default=False)
     parent_region = models.ForeignKey("self",null=True)
 
@@ -194,8 +192,6 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
-
-    # history = HistoricalRecords()
 
     def get_val(self):
 
