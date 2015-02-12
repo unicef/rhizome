@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv
 
-from source_data.etl_tasks.refresh_master import MasterRefresh,
+from source_data.etl_tasks.refresh_master import MasterRefresh,\
     create_source_meta_data
 from source_data.models import Source, Document, SourceDataPoint, SourceRegion,\
     SourceCampaign, SourceIndicator, ProcessStatus, RegionMap, IndicatorMap,\
@@ -147,7 +147,7 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
 
         ## create the source metadata ( we are testing this method) ##
-        create_source_meta_data()
+        create_source_meta_data(self.document.id)
 
         sc = SourceCampaign.objects.raw("""
             SELECT sd.id FROM source_datapoint sd\
@@ -195,11 +195,12 @@ class RefreshMasterTestCase(TestCase):
         '''
 
         self.set_up()
+
         mr = MasterRefresh(self.source_datapoints,self.user.id\
             ,self.document.id,self.indicator.id)
 
         ## create the source metadata ##
-        mr.create_source_meta_data()
+        create_source_meta_data(self.document.id)
 
         ## create mappings ( this is mimicking how bo would map metadata ) ##
         rm_1 = RegionMap.objects.create(

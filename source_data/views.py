@@ -189,11 +189,12 @@ def document_review(request,document_id):
         SELECT
         	  MIN(sd.id) AS id
         	  ,sd.indicator_string
+              ,si.id as source_indicator_id
               ,im.master_indicator_id
         	  ,COUNT(sd.id) AS source_datapoint_count
         	  ,COUNT(d.id) AS datapoint_count
         FROM source_datapoint sd
-        LEFT JOIN source_indicator si
+        INNER JOIN source_indicator si
             ON sd.indicator_string = si.indicator_string
         LEFT JOIN indicator_map im
             ON si.id = im.source_indicator_id
@@ -201,7 +202,7 @@ def document_review(request,document_id):
             ON im.master_indicator_id = d.indicator_id
             AND sd.id = d.source_datapoint_id
         WHERE sd.document_id = %s
-        GROUP BY sd.indicator_string,im.master_indicator_id
+        GROUP BY sd.indicator_string,im.master_indicator_id,si.id
         ORDER BY im.master_indicator_id''',[document_id])
 
     source_indicator_breakdown = []

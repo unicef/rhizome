@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^document_index/$', DocumentIndex.as_view(),name='document_index'),
     url(r'^etl_job_index/$', EtlJobIndex.as_view(),name='etl_job_index'),
 
+
     url(r'^pre_process_file/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',\
         pre_process_file, name='pre_process_file'),
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\
