@@ -319,7 +319,6 @@ def map_document_metadata(request,document_id):
     	*
     FROM document_meta
     WHERE document_id = %s
-    AND model_type != 'indicator'
     ''',[document_id])
 
     for row in to_map_raw:
