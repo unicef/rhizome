@@ -6,8 +6,9 @@ urlpatterns = [
     url(r'^file_upload/$', file_upload, name='file_upload'),
     url(r'^map_header/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',map_header\
         , name='map_header'),
-    url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),\
-        name='map_indicator'),
+
+    url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view(),name='map_indicator'),
+
     url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view()\
         ,name='map_region'),
     url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),\
@@ -22,7 +23,8 @@ urlpatterns = [
     url(r'^document_index/$', DocumentIndex.as_view(),name='document_index'),
     url(r'^etl_job_index/$', EtlJobIndex.as_view(),name='etl_job_index'),
 
-
+    url(r'^map_document_metadata/(?P<document_id>[0-9]+)',map_document_metadata\
+        , name='map_document_metadata'),
     url(r'^pre_process_file/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',\
         pre_process_file, name='pre_process_file'),
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\

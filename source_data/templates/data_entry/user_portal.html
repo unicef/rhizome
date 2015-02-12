@@ -19,70 +19,34 @@
 
 
   {% if docs %}
-
   {% for doc in docs %}
 
-
   <br>
-
   <table class="table table-hover table-bordered">
   <thead>
       <tr>
           <th>document_id</th>
           <th>file path</th>
           <th>Document Text</th>
-          <th>Manage Source Datapoints</th>
-          <th>Manage Datapoints</th>
+          <th>Map Document Meta Data</th>
+          <th>Review Document</th>
           <th>Mark as Complete</th>
 
       </tr>
   </thead>
-
-          <tr>
-              <th>{{ doc.id }}</th>
-              <th>{{ doc.docfile }}</th>
-              <th>{{ doc.doc_text }}</th>
-              <th> <a href="{% url 'source_data:review_sdps_by_document' doc.id %}"<button type=\
-                  "submit" class="btn btn-primary btn-sm"> Review Submission </button></a></th>
-              <th> <a href="{% url 'source_data:refresh_master_by_document_id' doc.id %}"<button type=\
-                  "submit" class="btn btn-primary btn-sm"> Review Refresh master
-                <th> <a href="{% url 'source_data:mark_doc_as_processed' doc.id %}"<button type=\
-                  "submit" class="btn btn-primary btn-sm"> Marks as Complete!
-
-
-          </tr>
-
-
-      {% endfor %}
-
-
-    {% endif %}
-
-
-
-
-  <h2> Work Items </h2>
-
-    <table class="table table-hover table-bordered">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>Indicator</th>
-            <th>Region</th>
-
-        </tr>
-    </thead>
-        {% if to_do %}
-            {% for work_item in to_do %}
-              <tr>
-                  <th>{{ work_item.id }}</th>
-                  <th>{{ work_item.indicator }}</th>
-                  <th>{{ work_item.region }}</th>
-              </tr>
-            {% endfor %}
-        {% endif %}
-
-
+      <tr>
+          <th>{{ doc.id }}</th>
+          <th>{{ doc.docfile }}</th>
+          <th>{{ doc.doc_text }}</th>
+          <th> <a href="{% url 'source_data:map_document_metadata' doc.id %}"<button type=\
+            "submit" class="btn btn-primary btn-sm"> Map Meta
+          <th> <a href="{% url 'source_data:document_review' doc.id %}"<button type=\
+            "submit" class="btn btn-primary btn-sm"> Review and Sync
+          <th> <a href="{% url 'source_data:mark_doc_as_processed' doc.id %}"<button type=\
+            "submit" class="btn btn-primary btn-sm"> Marks as Complete!
+      </tr>
+  {% endfor %}
+  {% endif %}
 
 
 {% endblock %}

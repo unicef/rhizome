@@ -52,51 +52,6 @@ def user_portal(request):
     )
 
 
-# def refresh_master_by_document_id(request,document_id):
-#
-#     source_datapoints = SourceDataPoint.objects.filter(
-#         document_id=document_id,\
-#         status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
-#
-#     source_regions = SourceRegion.objects.filter(document_id=document_id)
-#
-#     m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
-#     m.main()
-#
-#     ## Need to Handle region uploads here as well.
-#     region_strings = [sd.region_string for sd in source_datapoints] + \
-#         [sr.region_string for sr in source_regions]
-#
-#     indicator_strings = [sd.indicator_string for sd in source_datapoints]
-#     campaign_strings = [sd.campaign_string for sc in source_datapoints]
-#
-#     doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
-#         SourceDataPoint.objects.filter(document_id=document_id))
-#
-#     si = SourceIndicator.objects.filter(indicatormap__isnull=True,
-#         indicator_string__in=indicator_strings)
-#
-#     cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
-#         campaign_string__in=campaign_strings)
-#
-#     rg = SourceRegion.objects.filter(regionmap__isnull=True,
-#         region_string__in=region_strings)
-#
-#     to_map = chain(si,cp,rg)
-#
-#     i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
-#     c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
-#     r_m = RegionMap.objects.filter(source_region__document_id=document_id)
-#
-#     all_mapped = chain(i_m, c_m, r_m)
-#
-#
-#     return render_to_response(
-#         'data_entry/final_review.html',
-#         {'datapoints': doc_datapoints, 'document_id': document_id,\
-#          'to_map':to_map, 'all_mapped':all_mapped },
-#          RequestContext(request),)
-
 def mark_doc_as_processed(request,document_id):
 
     doc = Document.objects.get(id=document_id)
@@ -173,48 +128,61 @@ def map_header(request,document_id,file_type):
               'file_type':file_type },
             RequestContext(request))
 
+def populate_document_meta(document_id):
+
+    source_indicator_breakdown = []
+
+    to_review = DocumentMeta.objects.filter(document_id = document_id)
+
+    if not to_review:
+
+        to_review = DocumentMeta.objects.raw('''
+        INSERT INTO document_meta
+        (document_id, string_to_map, model_type, source_object_id, master_object_id,source_datapoint_count)
+
+        SELECT
+        	sd.document_id
+        	,si.indicator_string
+        	,'indicator'
+        	,si.id as source_indicator_id
+        	,COALESCE(im.master_indicator_id,-1)
+        	,COUNT(*) AS C
+        FROM source_datapoint sd
+        INNER JOIN source_indicator si
+        	ON sd.indicator_string = si.indicator_string
+        LEFT JOIN indicator_map im
+        	ON si.id = im.source_indicator_id
+        LEFT JOIN datapoint d
+        	ON im.master_indicator_id = d.indicator_id
+        	AND sd.id = d.source_datapoint_id
+        WHERE sd.document_id = %s
+        GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id;
+
+        SELECT * FROM document_meta
+        WHERE document_id = %s;''', [document_id,document_id])
+
+    for row in to_review:
+
+        if row.model_type == 'indicator':
+
+            ind_dict = {}
+            ind_dict['indicator_string'] = row.source_string
+            ind_dict['master_indicator_id'] = row.master_object_id
+            ind_dict['source_indicator_id'] = row.source_object_id
+
+            source_indicator_breakdown.append(ind_dict)
+
+    return source_indicator_breakdown
+
 def document_review(request,document_id):
 
     sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
         .values_list('id',flat=True)
 
-    # (self,source_datapoint_ids,user_id,document_id,indicator_id):
-
     m = MasterRefresh(sdp_ids,user_id=request.user.id\
         ,document_id=document_id,indicator_id=None)
 
-    create_source_meta_data(document_id)
-
-    raw_indicator_breakdown = SourceDataPoint.objects.raw('''
-        SELECT
-        	  MIN(sd.id) AS id
-        	  ,sd.indicator_string
-              ,si.id as source_indicator_id
-              ,im.master_indicator_id
-        	  ,COUNT(sd.id) AS source_datapoint_count
-        	  ,COUNT(d.id) AS datapoint_count
-        FROM source_datapoint sd
-        INNER JOIN source_indicator si
-            ON sd.indicator_string = si.indicator_string
-        LEFT JOIN indicator_map im
-            ON si.id = im.source_indicator_id
-        LEFT JOIN datapoint d
-            ON im.master_indicator_id = d.indicator_id
-            AND sd.id = d.source_datapoint_id
-        WHERE sd.document_id = %s
-        GROUP BY sd.indicator_string,im.master_indicator_id,si.id
-        ORDER BY im.master_indicator_id''',[document_id])
-
-    source_indicator_breakdown = []
-
-    for row in raw_indicator_breakdown:
-        ind_dict = {}
-        ind_dict['indicator_string'] = row.indicator_string
-        ind_dict['master_indicator_id'] = row.master_indicator_id
-        ind_dict['source_datapoint_count'] = row.source_datapoint_count
-        ind_dict['datapoint_count'] = row.datapoint_count
-
-        source_indicator_breakdown.append(ind_dict)
+    source_indicator_breakdown = populate_document_meta(document_id)
 
     return render_to_response(
         'upload/document_review.html',
@@ -247,17 +215,8 @@ def pre_process_file(request,document_id,file_type):
             sdps = SourceDataPoint.objects.filter(
                 document_id = document_id)
 
-        # return HttpResponseRedirect(reverse('source_data:document_review'),
-        #     {'document_id':document_id})
-
         return HttpResponseRedirect(reverse('source_data:document_review'\
             , kwargs={'document_id': document_id}))
-
-        # return render_to_response(
-        #     'upload/document_review.html',
-        #     {'document_id':document_id,'to_review':sdps},
-        #     RequestContext(request),
-        # )
 
     elif file_type == 'Region':
 
@@ -273,6 +232,17 @@ def pre_process_file(request,document_id,file_type):
             {'document_id': document_id, 'to_map':to_map},
             RequestContext(request),
         )
+
+def map_document_metadata(request,document_id):
+
+
+
+
+    return render_to_response(
+        'data_entry/final_review.html',
+        {'document_id': document_id, 'to_map':to_map},
+        RequestContext(request),
+    )
 
 ######### DOCUMENT RELATED VIEWS ##########
 

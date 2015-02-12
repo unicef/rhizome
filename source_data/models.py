@@ -34,7 +34,6 @@ class EtlJob(models.Model):
         super(EtlJob, self).save(*args, **kwargs)
 
 
-
 class ProcessStatus(models.Model):
 
     status_text = models.CharField(max_length=25)
@@ -45,7 +44,6 @@ class ProcessStatus(models.Model):
 
     class Meta:
         app_label = 'source_data'
-
 
     ##########################
     ####### CSV UPLOAD #######
@@ -69,6 +67,18 @@ class Document(models.Model):
 
         super(Document, self).save(*args, **kwargs)
 
+class DocumentMeta(models.Model):
+
+    document = models.ForeignKey(Document)
+    source_string = models.CharField(max_length=255)
+    model_type = models.CharField(max_length=255)
+    source_object_id = models.IntegerField()
+    master_object_id = models.IntegerField()
+    source_datapoint_count = models.IntegerField()
+
+    class Meta:
+        unique_together = ('document','source_string','model_type')
+        db_table = 'document_meta'
 
 class SourceDataPoint(models.Model):
     '''

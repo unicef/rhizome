@@ -232,11 +232,6 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(len(x),1)
 
 
-
-
-
-
-
     def test_unmapping(self):
         '''
         Here we ensure that if there is data in the datapoints table that
