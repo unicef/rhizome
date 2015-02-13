@@ -152,8 +152,8 @@ def create_source_meta_data(document_id):
 
         created, s_r_obj = SourceRegion.objects.get_or_create(
             region_code = r,
+            document_id = document_id,
             defaults = {
                 'region_string': r,
-                'document_id': document_id,
                 'source_guid': ('%s - %s',( document_id, r ))
             })
