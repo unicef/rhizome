@@ -133,6 +133,30 @@ module.exports = {
 			path.enter().append('path')
 				.on('click', function (d) {
 					self.$dispatch('region-changed', d.properties.region_id);
+				})
+				.on('mousemove', function (d) {
+					var evt = d3.event;
+
+					console.debug('choropleth::mousemove', evt.pageX, evt.pageY);
+
+					// Do not show a tooltip if we have no name
+					if (!d.properties.name) {
+						return;
+					}
+
+					self.$dispatch('tooltip-show', {
+						el      : this,
+						position: {
+							x: evt.pageX,
+							y: evt.pageY,
+						},
+						data: {
+							text: d.properties.name
+						}
+					});
+				})
+				.on('mouseout', function () {
+					self.$dispatch('tooltip-hide', { el: this });
 				});
 
 			var indicator = this.indicator;
@@ -164,10 +188,10 @@ module.exports = {
 			var self = this;
 
 			api.datapoints({
-				campaign_end : this.campaign.end,
+				campaign_end  : this.campaign.end,
 				campaign_start: this.campaign.end,
-				indicator__in: [this.indicator],
-				region__in   : this.mappedRegions,
+				indicator__in : [this.indicator],
+				region__in    : this.mappedRegions
 			}).done(function (data) {
 
 				var index    = _.indexBy(data.objects, 'region');
@@ -206,6 +230,17 @@ module.exports = {
 			})]).then(function (data) {
 				self.geo    = data[0].objects;
 				self.border = data[1].objects.features[0];
+
+				// FIXME: Can't filter regions by ID, so we have to fetch all of them
+				// and just pick out the ones we want.
+				api.regions().then(function (data) {
+					var regions = _.indexBy(data.objects, 'id');
+
+					self.geo.features.forEach(function (feature) {
+						feature.properties.name = regions[feature.properties.region_id].name;
+					});
+				});
+
 				self.draw();
 			}, this.onError);
 		},

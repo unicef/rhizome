@@ -1,3 +1,4 @@
+/* global window */
 'use strict';
 
 var _   = require('lodash');
@@ -27,22 +28,30 @@ module.exports = {
 	},
 
 	ready: function () {
-		console.debug('tooltip::ready');
-		this.$log();
 		this.$root.$on('tooltip-show', this.showTooltip);
 		this.$root.$on('tooltip-hide', this.hideTooltip);
 	},
 
 	methods: {
 		reposition: function () {
-			if (!this._parentEl) {
+			var offset;
+			var doc;
+
+			if (this._position) {
+				offset = {
+					top   : this._position.y,
+					right : this._position.x,
+					bottom: this._position.y,
+					left  : this._position.x
+				};
+
+				doc = window.document.body;
+			} else if (this._parentEl) {
+				offset = dom.documentOffset(this._parentEl);
+				doc    = this._parentEl.ownerDocument.documentElement;
+			} else {
 				return;
 			}
-
-			var offset = dom.documentOffset(this._parentEl);
-			var doc = this._parentEl.ownerDocument.documentElement;
-
-			console.debug('tooltip::reposition offset', offset);
 
 			switch (this.orientation) {
 			case 'right':
@@ -73,15 +82,13 @@ module.exports = {
 				this.left   = offset.left + 'px';
 				break;
 			}
-
-			console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
 		},
 
 		hideTooltip: function (options) {
-			console.debug('tooltip::hide', options);
 			if (this._parentEl === options.el) {
 				this.show      = false;
 				this._parentEl = null;
+				this._position = null;
 
 				window.removeEventListener('resize', this.reposition);
 			}
@@ -90,6 +97,7 @@ module.exports = {
 		showTooltip: function (options) {
 			console.debug('tooltip::show', options);
 			this._parentEl = options.el;
+			this._position = options.position;
 
 			var self = this;
 
