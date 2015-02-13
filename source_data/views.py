@@ -220,7 +220,7 @@ def populate_document_meta(document_id):
         	AND dm.document_id = x.document_id
 
         )
-        GROUP By x.document_id,model_type,source_string HAVING COUNT(*) > 1
+        GROUP By x.document_id,model_type,source_string HAVING COUNT(*) > 1;
 
         SELECT * FROM document_meta
         WHERE document_id = %s
