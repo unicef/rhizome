@@ -3,99 +3,94 @@ $pointer-size: 7px;
 $pointer-offset: -14px;
 $pointer-margin: 8px;
 
-.tooltip-container {
-	overflow: visible;
-	position: relative;
+.tooltip {
+	display: inline;
+	position: absolute;
 
-	.tooltip {
-		display: inline-block;
+	background-color: $tooltip-bg;
+
+	border-radius: 4px;
+	margin-bottom: $pointer-size;
+	max-width: 30em;
+	width: auto;
+	padding: 1em;
+
+	// Reset some of the tooltip crap from Foundation
+	left: auto;
+	right: auto;
+	bottom: auto;
+	top: auto;
+
+	transition: opacity 300ms ease;
+
+	&.fade-enter {
+		opacity: 0;
+	}
+
+	&.fade-leave {
+		opacity: 0;
+	}
+
+	.pointer {
 		position: absolute;
 
-		background-color: $tooltip-bg;
+		border-color: transparent;
+		border-style: solid;
+		border-width: $pointer-size;
 
-		border-radius: 4px;
-		margin-bottom: $pointer-size;
-		max-width: 30em;
-		min-width: 16em;
-		padding: 1em;
+		height: 0;
+		width: 0;
 
-		// Reset some of the tooltip crap from Foundation
-		left: auto;
-		right: auto;
-		bottom: auto;
-		top: auto;
+	}
 
-		transition: opacity 300ms ease;
-
-		&.fade-enter {
-			opacity: 0;
-		}
-
-		&.fade-leave {
-			opacity: 0;
-		}
+	&.top {
+		left: 0;
+		bottom: 100%;
 
 		.pointer {
-			position: absolute;
+			border-top-color: $tooltip-bg;
 
-			border-color: transparent;
-			border-style: solid;
-			border-width: $pointer-size;
-
-			height: 0;
-			width: 0;
-
+			left: $pointer-margin;
+			bottom: $pointer-offset;
 		}
+	}
 
-		&.top {
-			left: 0;
-			bottom: 100%;
+	&.right {
+		left: 100%;
+		top: -$pointer-margin;
+		margin-left: -$pointer-offset;
 
-			.pointer {
-				border-top-color: $tooltip-bg;
+		.pointer {
+			border-right-color: $tooltip-bg;
 
-				left: $pointer-margin;
-				bottom: $pointer-offset;
-			}
+			left: $pointer-offset;
+			top: $pointer-margin;
 		}
+	}
 
-		&.right {
-			left: 100%;
-			top: -$pointer-margin;
-			margin-left: -$pointer-offset;
+	&.bottom {
+		top: 100%;
+		left: 0;
+		margin-top: $pointer-size;
 
-			.pointer {
-				border-right-color: $tooltip-bg;
+		.pointer {
+			border-bottom-color: $tooltip-bg;
 
-				left: $pointer-offset;
-				top: $pointer-margin;
-			}
+			left: $pointer-margin;
+			top: $pointer-offset;
 		}
+	}
 
-		&.bottom {
-			top: 100%;
-			left: 0;
-			margin-top: $pointer-size;
+	&.left {
+		right: 100%;
+		top: -$pointer-margin;
+		margin-right: -$pointer-offset;
 
-			.pointer {
-				border-bottom-color: $tooltip-bg;
+		.pointer {
+			border-left-color: $tooltip-bg;
 
-				left: $pointer-margin;
-				top: $pointer-offset;
-			}
-		}
-
-		&.left {
-			right: 100%;
-			top: -$pointer-margin;
-			margin-right: -$pointer-offset;
-
-			.pointer {
-				border-left-color: $tooltip-bg;
-
-				top: $pointer-margin;
-				right: $pointer-offset;
-			}
+			top: $pointer-margin;
+			right: $pointer-offset;
 		}
 	}
 }
