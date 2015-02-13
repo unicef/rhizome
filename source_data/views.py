@@ -344,11 +344,29 @@ def pre_process_file(request,document_id,file_type):
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
 
-        to_map = SourceRegion.objects.filter(regionmap__isnull=True,
-            document_id = document_id)
+        to_map = []
+        to_map_raw = SourceRegion.objects.raw('''
+            SELECT
+                sr.id
+                ,sr.id as source_object_id
+                ,sr.region_string as source_string
+                ,COALESCE(rm.master_region_id,-1) as master_object_id
+            FROM source_region sr
+            LEFT JOIN region_map rm
+            ON sr.id = rm.source_region_id
+            WHERE sr.document_id = %s''',[document_id]
+        )
+
+        for row in to_map_raw:
+            row_dict = {}
+            row_dict['source_string'] = row.source_string
+            row_dict['source_object_id'] = row.source_object_id
+            row_dict['master_object_id'] = row.master_object_id
+            row_dict['model_type'] = 'region'
+
 
         return render_to_response(
-            'data_entry/final_review.html',
+            'data_entry/meta_map.html',
             {'document_id': document_id, 'to_map':to_map},
             RequestContext(request),
         )
