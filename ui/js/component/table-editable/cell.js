@@ -68,15 +68,11 @@ module.exports = {
 						self.withResponse(response);
 					}
 
-				}
+				});
 
 				// toggle editing mode
 				self.toggleEditing(false);
-
 			}
-
-			// toggle editing mode
-			self.toggleEditing(false);
 		}
 
 	},
