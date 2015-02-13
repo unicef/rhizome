@@ -2,7 +2,6 @@
 
 var _      = require('lodash');
 var d3     = require('d3');
-var moment = require('moment');
 
 var api    = require('data/api');
 
@@ -136,8 +135,6 @@ module.exports = {
 				})
 				.on('mousemove', function (d) {
 					var evt = d3.event;
-
-					console.debug('choropleth::mousemove', evt.pageX, evt.pageY);
 
 					// Do not show a tooltip if we have no name
 					if (!d.properties.name) {

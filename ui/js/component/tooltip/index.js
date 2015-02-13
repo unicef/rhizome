@@ -95,7 +95,6 @@ module.exports = {
 		},
 
 		showTooltip: function (options) {
-			console.debug('tooltip::show', options);
 			this._parentEl = options.el;
 			this._position = options.position;
 
