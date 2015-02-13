@@ -9,18 +9,49 @@ function intStyle(el, property) {
 	return parseInt(style.getPropertyValue(property), 10);
 }
 
-function documentOffset(el) {
-	if (!el.offsetParent) {
-		return {
-			top: el.offsetTop,
-			left: el.offsetLeft
-		};
+function dimensions(el, includeMargins) {
+	var dims = {
+		height: el.offsetHeight,
+		width: el.offsetWidth
+	};
+
+	if (includeMargins) {
+		dims.height += intStyle(el, 'margin-top') + intStyle(el, 'margin-bottom');
+		dims.width += intStyle(el, 'margin-left') + intStyle(el, 'margin-right');
 	}
 
-	return _.reduce(documentOffset(el.offsetParent), function (result, offset, key) {
-		result[key] += offset;
-		return result;
-	}, { top: el.offsetTop, left: el.offsetLeft });
+	return dims;
+}
+
+function offset(el) {
+	var off = {
+		top   : el.offsetTop,
+		right : 0,
+		bottom: 0,
+		left  : el.offsetLeft
+	};
+
+	var dims      = dimensions(el, true);
+	var parent    = el.offsetParent || document.body;
+
+	if (parent) {
+		off.bottom = parent.scrollHeight - (off.top + dims.height);
+		off.right  = parent.scrollWidth - (off.left + dims.width);
+	}
+
+	return off;
+}
+
+function documentOffset(el) {
+	var bbox = el.getBoundingClientRect();
+	var doc  = el.ownerDocument.documentElement;
+
+	return {
+		top   : bbox.top + doc.clientTop + window.pageYOffset,
+		right : bbox.right + doc.clientLeft + window.pageXOffset,
+		bottom: bbox.bottom + doc.clientTop + window.pageYOffset,
+		left  : bbox.left + doc.clientLeft + window.pageXOffset,
+	};
 }
 
 function viewportOffset(el) {
@@ -45,20 +76,6 @@ function contains(el, pt) {
 
 	return x >= 0 && x <= el.offsetWidth &&
 		y >= 0 && y <= el.offsetHeight;
-}
-
-function dimensions(el, includeMargins) {
-	var dims = {
-		height: el.offsetHeight,
-		width: el.offsetWidth
-	};
-
-	if (includeMargins) {
-		dims.height += intStyle(el, 'margin-top') + intStyle(el, 'margin-bottom');
-		dims.width += intStyle(el, 'margin-left') + intStyle(el, 'margin-right');
-	}
-
-	return dims;
 }
 
 function contentArea(el) {
