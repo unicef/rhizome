@@ -128,7 +128,7 @@ class SourceDataPoint(models.Model):
 
 class SourceRegion(models.Model):
 
-    region_string = models.CharField(max_length=255, unique=True)
+    region_string = models.CharField(max_length=255)
     region_code = models.CharField(max_length=255, null=True)
     lat = models.CharField(max_length=255, null=True)
     lon = models.CharField(max_length=255, null=True)
@@ -143,7 +143,7 @@ class SourceRegion(models.Model):
 
     class Meta:
         db_table = 'source_region'
-        unique_together = ('region_string','document','region_type','country')
+        unique_together = ('region_code','document')
 
     def __unicode__(self):
 
