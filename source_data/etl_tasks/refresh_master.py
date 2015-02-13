@@ -30,14 +30,20 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
+        print 'devils'
+        print self.indicator_id
+        print 'pie'
+
         if self.indicator_id:
             indicators = [self.indicator_id]
 
         else:
-            indicators = Indicator.objects.all().values('id',flat=True)
+            indicators = Indicator.objects.all().values_list('id',flat=True)
 
 
         for ind_id in indicators:
+
+            print ind_id
 
             sdps_to_sync = SourceDataPoint.objects.raw('''
                 SELECT

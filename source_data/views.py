@@ -421,6 +421,8 @@ def refresh_master_no_indicator(request,document_id):
 
     mr = MasterRefresh(document_id = document_id, indicator_id = None, user_id = request.user.id)
 
+    mr.source_dps_to_dps()
+
     return HttpResponseRedirect(reverse('source_data:document_review'\
         , kwargs={'document_id': document_id}))
 
