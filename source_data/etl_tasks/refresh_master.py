@@ -126,34 +126,39 @@ def create_source_meta_data(document_id):
     campaign_strings = sdp_df['campaign_string'].unique()
     for c in campaign_strings:
 
-        created, s_c_obj = SourceCampaign.objects.get_or_create(
-            campaign_string = c,
-            defaults = {
-                'document_id': document_id,
-                'source_guid': ('%s - %s',( document_id, c ))
-            })
+        try:
+            created, s_c_obj = SourceCampaign.objects.create(
+                campaign_string = c,
+                document_id = document_id,
+                source_guid = ('%s - %s',( document_id, c )))
+        except ObjectDoesNotExist:
+            pass
+
 
 
     ## indicators ##
     indicator_strings = sdp_df['indicator_string'].unique()
     for i in indicator_strings:
 
-        created, s_i_obj = SourceIndicator.objects.get_or_create(
-            indicator_string = i,
-            defaults = {
-                'document_id': document_id,
-                'source_guid': ('%s - %s',( document_id, i ))
-            })
+
+        try:
+            s_i_obj = SourceIndicator.objects.create(
+                indicator_string = i,
+                document_id = document_id,
+                source_guid =  ('%s - %s',( document_id, i )))
+        except ObjectDoesNotExist:
+            pass
 
     # regions #
     region_codes = sdp_df['region_code'].unique()
 
     for r in region_codes:
 
-        created, s_r_obj = SourceRegion.objects.get_or_create(
-            region_code = r,
-            document_id = document_id,
-            defaults = {
-                'region_string': r,
-                'source_guid': ('%s - %s',( document_id, r ))
-            })
+        try:
+            s_r_obj = SourceRegion.objects.create(
+                region_code = r,
+                document_id = document_id,
+                region_string = r,
+                source_guid = ('%s - %s',( document_id, r )))
+        except ObjectDoesNotExist:
+            pass
