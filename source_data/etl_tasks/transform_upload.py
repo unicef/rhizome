@@ -76,7 +76,7 @@ class RegionTransform(DocTransform):
 
     def validate(self):
 
-        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014']
+        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014','parent_code']
         df_cols = [col for col in self.df]
         intsct = list(set(essential_columns).intersection(df_cols))
 
