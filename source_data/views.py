@@ -416,6 +416,15 @@ def map_document_metadata(request,document_id):
         RequestContext(request),
     )
 
+
+def refresh_master_no_indicator(request,document_id):
+
+    mr = MasterRefresh(document_id = document_id, indicator_id = None, user_id = request.user.id)
+
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        , kwargs={'document_id': document_id}))
+
+
 ######### DOCUMENT RELATED VIEWS ##########
 
 class DocumentIndex(generic.ListView):

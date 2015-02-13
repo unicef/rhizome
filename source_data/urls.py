@@ -36,11 +36,17 @@ urlpatterns = [
 
     url(r'^pre_process_file/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',\
         pre_process_file, name='pre_process_file'),
+
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\
         name='document_review'),
+
     url(r'^sync_source_datapoints/(?P<document_id>[0-9]+)/\
         (?P<master_indicator_id>[0-9]+)/$',sync_source_datapoints,\
         name='sync_source_datapoints'),
+
+    url(r'^refresh_master_no_indicator/(?P<document_id>[0-9]+)/',refresh_master_no_indicator,\
+        name='refresh_master_no_indicator'),
+
 
 
 ]

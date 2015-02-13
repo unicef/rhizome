@@ -7,7 +7,7 @@ CREATE TABLE _ng_setts AS
 SELECT
 sr.id
 ,sr.region_code as region_slug
-,sr.region_string || '(' || sr.parent_name || ')' as region_string
+,sr.region_string || ' (' || sr.parent_name || ')' as region_string
 ,sr.region_type
 ,sr.region_code
 ,r.id as parent_region_id
@@ -16,9 +16,12 @@ sr.id
 ,sr.is_high_risk
 ,sr.parent_code
 FROM source_region sr
-INNER JOIN region r
+LEFT JOIN region r
 ON sr.parent_code = r.region_code
-WHERE sr.document_id = 915;
+WHERE sr.document_id = 917;
+
+SELECT distinct parent_code FROM _ng_setts
+WHERE parent_region_id is null
 
 
 INSERT INTO region
@@ -51,16 +54,16 @@ AND NOT EXISTS (
 )
 
 
--- INSERT INTO region_map
--- (master_region_id,source_region_id,mapped_by_id)
--- SELECT
--- 	r.id as master_region_id
--- 	,ngs.id as source_region_id
--- 	,1
--- FROM _ng_setts ngs
--- INNER JOIN region r
--- ON ngs.id = r.source_region_id
--- WHERE NOT EXISTS (
--- 	SELECT 1 from region_map rm
--- 	WHERE ngs.id = rm.source_region_id
--- );
+INSERT INTO region_map
+(master_region_id,source_region_id,mapped_by_id)
+SELECT
+	r.id as master_region_id
+	,ngs.id as source_region_id
+	,1
+FROM _ng_setts ngs
+INNER JOIN region r
+ON ngs.region_code = r.region_code
+WHERE NOT EXISTS (
+	SELECT 1 from region_map rm
+	WHERE ngs.id = rm.source_region_id
+);

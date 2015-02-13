@@ -14,7 +14,7 @@ from datapoints.models import *
 
 class MasterRefresh(object):
 
-    def __init__(self,user_id,document_id,indicator_id):
+    def __init__(self,user_id,document_id,indicator_id=None):
 
         self.document_id = document_id
         self.user_id = user_id
@@ -30,53 +30,62 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
-        sdps_to_sync = SourceDataPoint.objects.raw('''
-            SELECT
-                  sd.id
-                , sd.cell_value
-                , rm.master_region_id
-                , cm.master_campaign_id
-                , im.master_indicator_id
-            FROM source_datapoint sd
-            INNER JOIN source_region sr
-            	ON sd.region_code = sr.region_code
-            INNER JOIN region_map rm
-            	ON sr.id = rm.source_region_id
-            INNER JOIN source_indicator si
-            	ON sd.indicator_string = si.indicator_string
-            INNER JOIN indicator_map im
-            	ON si.id = im.source_indicator_id
-                AND im.master_indicator_id = %s
-            INNER JOIN source_campaign sc
-            	ON sd.campaign_string = sc.campaign_string
-            INNER JOIN campaign_map cm
-            	ON sc.id = cm.source_campaign_id
-            WHERE sd.document_id = %s
-            AND NOT EXISTS (
-                 SELECT 1 FROM datapoint d
-                 WHERE sd.id = d.source_datapoint_id)
-            ''', [self.indicator_id,self.document_id])
+        if self.indicator_id:
+            indicators = [self.indicator_id]
+
+        else:
+            indicators = Indicator.objects.all().values('id',flat=True)
 
 
-        for row in sdps_to_sync:
+        for ind_id in indicators:
 
-            created, dp = DataPoint.objects.get_or_create(
-                campaign_id = row.master_campaign_id,
-                indicator_id = row.master_indicator_id,
-                region_id = row.master_region_id,
-                defaults = {
-                    'value':row.cell_value,
-                    'source_datapoint_id': row.id,
-                    'changed_by_id': self.user_id
-                })
+            sdps_to_sync = SourceDataPoint.objects.raw('''
+                SELECT
+                      sd.id
+                    , sd.cell_value
+                    , rm.master_region_id
+                    , cm.master_campaign_id
+                    , im.master_indicator_id
+                FROM source_datapoint sd
+                INNER JOIN source_region sr
+                	ON sd.region_code = sr.region_code
+                INNER JOIN region_map rm
+                	ON sr.id = rm.source_region_id
+                INNER JOIN source_indicator si
+                	ON sd.indicator_string = si.indicator_string
+                INNER JOIN indicator_map im
+                	ON si.id = im.source_indicator_id
+                    AND im.master_indicator_id = %s
+                INNER JOIN source_campaign sc
+                	ON sd.campaign_string = sc.campaign_string
+                INNER JOIN campaign_map cm
+                	ON sc.id = cm.source_campaign_id
+                WHERE sd.document_id = %s
+                AND NOT EXISTS (
+                     SELECT 1 FROM datapoint d
+                     WHERE sd.id = d.source_datapoint_id)
+                ''', [ind_id,self.document_id])
 
-            ## if this datapoint exists and was not added by a human ##
-            if created == 0 and dp.source_datapoint_id > 0:
 
-                dp.source_datapoint_id = row.source_datapoint_id
-                dp.value = row.cell_value
-                dp.changed_by_id = self.user.id
-                dp.save()
+            for row in sdps_to_sync:
+
+                created, dp = DataPoint.objects.get_or_create(
+                    campaign_id = row.master_campaign_id,
+                    indicator_id = row.master_indicator_id,
+                    region_id = row.master_region_id,
+                    defaults = {
+                        'value':row.cell_value,
+                        'source_datapoint_id': row.id,
+                        'changed_by_id': self.user_id
+                    })
+
+                ## if this datapoint exists and was not added by a human ##
+                if created == 0 and dp.source_datapoint_id > 0:
+
+                    dp.source_datapoint_id = row.source_datapoint_id
+                    dp.value = row.cell_value
+                    dp.changed_by_id = self.user.id
+                    dp.save()
 
 
     def delete_un_mapped(self):
