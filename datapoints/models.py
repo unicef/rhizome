@@ -77,14 +77,14 @@ class RegionType(models.Model):
 
 class Region(models.Model):
 
-    name = models.CharField(max_length=55,unique=True)
-    region_code = models.CharField(max_length=55, unique=True)
+    name = models.CharField(max_length=255,unique=True)
+    region_code = models.CharField(max_length=255, unique=True)
     region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.FloatField(null=True,blank=True)
     longitude = models.FloatField(null=True,blank=True)
-    slug = AutoSlugField(populate_from='name',max_length=55,unique=True)
+    slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
     is_high_risk = models.BooleanField(default=False)
