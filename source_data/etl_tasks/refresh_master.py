@@ -131,7 +131,7 @@ def create_source_meta_data(document_id):
                 campaign_string = c,
                 document_id = document_id,
                 source_guid = ('%s - %s',( document_id, c )))
-        except ObjectDoesNotExist:
+        except IntegrityError:
             pass
 
 
@@ -146,7 +146,7 @@ def create_source_meta_data(document_id):
                 indicator_string = i,
                 document_id = document_id,
                 source_guid =  ('%s - %s',( document_id, i )))
-        except ObjectDoesNotExist:
+        except IntegrityError:
             pass
 
     # regions #
@@ -160,5 +160,5 @@ def create_source_meta_data(document_id):
                 document_id = document_id,
                 region_string = r,
                 source_guid = ('%s - %s',( document_id, r )))
-        except ObjectDoesNotExist:
+        except IntegrityError:
             pass
