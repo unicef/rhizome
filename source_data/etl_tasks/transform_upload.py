@@ -101,34 +101,22 @@ class RegionTransform(DocTransform):
 
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
-        # parent_regions = []
-
         just_created, updated, errors = [],[],[]
 
         for row in valid_df.iterrows():
 
             row_data = row[1]
 
-            child_defaults = {
-                'region_code': row_data.code,\
-                'parent_name': row_data.parent_name,\
-                'lat': row_data.lat,\
-                'lon': row_data.lon,\
-                'document': self.document,\
-                'is_high_risk': row_data.high_risk_2014,\
-                'source_guid': str(row_data.region_name)}
-
-            sr,created = SourceRegion.objects.get_or_create(
+            sr = SourceRegion.objects.get_or_create(
                 region_string = row_data.region_name,\
                 region_type  = row_data.region_type,\
-                country = row_data.country,\
-                defaults= child_defaults)
+                country = row_data.country,
+                region_code = row_data.code,\
+                parent_name = row_data.parent_name,\
+                lat = row_data.lat,\
+                lon = row_data.lon,\
+                document_id = self.document.id,\
+                is_high_risk = row_data.high_risk_2014,\
+                source_guid = str(self.document.id) + '-' + row_data.code)
 
-            if created == 1:
-                just_created.append(sr)
-
-            else:
-                pass
-                ## this conflict resolution should be dealt w refrresh master ##
-                ## this condition will only really be met in error ( a region
-                ## with same name, type and country gets uploaded for one document )
+            just_created.append(sr)

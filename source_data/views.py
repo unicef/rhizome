@@ -146,7 +146,6 @@ def populate_document_meta(document_id):
 
         DROP TABLE IF EXISTS _tmp_meta_for_doc;
         CREATE TEMP TABLE _tmp_meta_for_doc AS
-
         SELECT * FROM source_datapoint where document_id = %s;
 
         INSERT INTO document_meta
