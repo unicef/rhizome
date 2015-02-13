@@ -18,10 +18,6 @@ class Migration(SchemaMigration):
         # Changing field 'Region.slug'
         db.alter_column('region', 'slug', self.gf('autoslug.fields.AutoSlugField')(unique=True, max_length=255, populate_from='name', unique_with=()))
         # Adding field 'DataPoint.source_datapoint'
-        db.add_column('datapoint', 'source_datapoint',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['source_data.SourceDataPoint']),
-                      keep_default=False)
-
 
     def backwards(self, orm):
 
@@ -34,7 +30,6 @@ class Migration(SchemaMigration):
         # Changing field 'Region.slug'
         db.alter_column('region', 'slug', self.gf('autoslug.fields.AutoSlugField')(max_length=55, unique_with=(), unique=True, populate_from='name'))
         # Deleting field 'DataPoint.source_datapoint'
-        db.delete_column('datapoint', 'source_datapoint_id')
 
 
     models = {
