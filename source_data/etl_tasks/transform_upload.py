@@ -117,7 +117,7 @@ class RegionTransform(DocTransform):
                 lon = row_data.lon,\
                 document_id = self.document.id,\
                 is_high_risk = row_data.high_risk_2014,\
-                parent_code = row.parent_code,
+                parent_code = row_data.parent_code,
                 source_guid = str(self.document.id) + '-' + row_data.code)
 
             just_created.append(sr)
