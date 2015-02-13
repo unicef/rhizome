@@ -153,57 +153,74 @@ def populate_document_meta(document_id):
         (document_id, source_string, model_type, source_object_id, master_object_id,source_datapoint_count)
 
         SELECT
-        	sd.document_id
-        	,si.indicator_string
-        	,'indicator'
-        	,si.id as source_indicator_id
-        	,COALESCE(im.master_indicator_id,-1)
-        	,COUNT(*) AS C
-        FROM _tmp_meta_for_doc sd
-        INNER JOIN source_indicator si
-        	ON sd.indicator_string = si.indicator_string
-        LEFT JOIN indicator_map im
-        	ON si.id = im.source_indicator_id
-        LEFT JOIN datapoint d
-        	ON im.master_indicator_id = d.indicator_id
-        	AND sd.id = d.source_datapoint_id
-        GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
+        	x.document_id
+        	,source_string
+        	,model_type
+        	,MAX(source_object_id)
+        	,MAX(master_object_id)
+        	,MAX(source_datapoint_count)
+        FROM (
+        	SELECT DISTINCT
+        		sd.document_id
+        		,si.indicator_string as source_string
+        		,'indicator' as model_type
+        		,si.id as source_object_id
+        		,COALESCE(im.master_indicator_id,-1) as master_object_id
+        		,COUNT(*) AS source_datapoint_count
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_indicator si
+        		ON sd.indicator_string = si.indicator_string
+        	LEFT JOIN indicator_map im
+        		ON si.id = im.source_indicator_id
+        	LEFT JOIN datapoint d
+        		ON im.master_indicator_id = d.indicator_id
+        		AND sd.id = d.source_datapoint_id
+        	GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
 
-        UNION ALL
+        	UNION ALL
 
-        SELECT DISTINCT
-        	sd.document_id
-        	,sr.region_code
-        	,'region'
-        	,sr.id as source_region_id
-        	,COALESCE(rm.master_region_id,-1)
-        	,0
-        FROM _tmp_meta_for_doc sd
-        INNER JOIN source_region sr
-        	ON sd.region_code = sr.region_code
-        LEFT JOIN region_map rm
-        	ON sr.id = rm.source_region_id
-        LEFT JOIN datapoint d
-        	ON rm.master_region_id = d.region_id
-        	AND sd.id = d.source_datapoint_id
+        	SELECT DISTINCT
+        		sd.document_id
+        		,sr.region_code
+        		,'region'
+        		,sr.id as source_region_id
+        		,COALESCE(rm.master_region_id,-1)
+        		,0
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_region sr
+        		ON sd.region_code = sr.region_code
+        	LEFT JOIN region_map rm
+        		ON sr.id = rm.source_region_id
+        	LEFT JOIN datapoint d
+        		ON rm.master_region_id = d.region_id
+        		AND sd.id = d.source_datapoint_id
 
-        UNION ALL
+        	UNION ALL
 
-        SELECT DISTINCT
-        	sd.document_id
-        	,sc.campaign_string
-        	,'campaign'
-        	,sc.id as source_campaign_id
-        	,COALESCE(cm.master_campaign_id,-1)
-        	,0
-        FROM _tmp_meta_for_doc sd
-        INNER JOIN source_campaign sc
-        	ON sd.campaign_string = sc.campaign_string
-        LEFT JOIN campaign_map cm
-        	ON sc.id = cm.source_campaign_id
-        LEFT JOIN datapoint d
-        	ON cm.master_campaign_id = d.campaign_id
-        	AND sd.id = d.source_datapoint_id;
+        	SELECT DISTINCT
+        		sd.document_id
+        		,sc.campaign_string
+        		,'campaign'
+        		,sc.id as source_campaign_id
+        		,COALESCE(cm.master_campaign_id,-1)
+        		,0
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_campaign sc
+        		ON sd.campaign_string = sc.campaign_string
+        	LEFT JOIN campaign_map cm
+        		ON sc.id = cm.source_campaign_id
+        	LEFT JOIN datapoint d
+        		ON cm.master_campaign_id = d.campaign_id
+        		AND sd.id = d.source_datapoint_id
+        )x
+        WHERE NOT EXISTS (
+        	SELECT 1 from document_meta dm
+        	WHERE dm.source_string = x.source_string
+        	AND dm.model_type = x.model_type
+        	AND dm.document_id = x.document_id
+
+        )
+        GROUP By x.document_id,model_type,source_string HAVING COUNT(*) > 1
 
         SELECT * FROM document_meta
         WHERE document_id = %s
