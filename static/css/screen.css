@@ -7463,6 +7463,20 @@ svg {
   width: 100%;
 }
 
+.pagination a {
+  display: inline-block;
+  font-size: 9pt;
+  padding: 2pt;
+}
+.pagination a.current {
+  background-color: #0099ff;
+  color: #fff;
+}
+.pagination a:hover {
+  background-color: #ffcc67;
+  color: #fff;
+}
+
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
