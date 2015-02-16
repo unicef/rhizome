@@ -20,6 +20,8 @@ module.exports = {
 			orientation: 'top',
 			show       : false,
 
+			delay      : 500,
+
 			top        : 0,
 			right      : 0,
 			bottom     : 0,
@@ -90,24 +92,48 @@ module.exports = {
 				this._parentEl = null;
 				this._position = null;
 
+				// Preempt showing the tooltip
+				if (this._timer) {
+					window.clearTimeout(this._timer);
+				}
+
 				window.removeEventListener('resize', this.reposition);
 			}
 		},
 
 		showTooltip: function (options) {
-			this._parentEl = options.el;
+			// Update the position, if we have one, no matter what, this way the
+			// tooltip will show up at the right place, even if we haven't
+			// displayed it yet.
 			this._position = options.position;
+
+			// True if we've already started a timer for this tooltip
+			var timerStarted = this._timer && this._parentEl === options.el;
+
+			// Don't reset the timer if one's already started
+			if (timerStarted) return;
+
+			this._parentEl = options.el;
 
 			var self = this;
 
-			// FIXME: Crude version of Vue's mergeOptions...
-			_.forOwn(options.data, function (v, k) {
-				self.$set(k, v);
-			});
+			// Set the delay to 0 if we have already shown the tooltip
+			var delay = self.show ? 0 : self.delay;
 
-			this.reposition();
-			window.addEventListener('resize', this.reposition);
-			this.show = true;
+			// Wait for the delay
+			self._timer = setTimeout(function () {
+
+				// Crude version of Vue's mergeOptions...
+				_.forOwn(options.data, function (v, k) {
+					self.$set(k, v);
+				});
+
+				self.reposition();
+				window.addEventListener('resize', self.reposition);
+
+				self.show   = true;
+				self._timer = null;
+			}, delay);
 		}
 	},
 
