@@ -18,7 +18,7 @@ var path = {
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
 	output    : './static',
-	clean     : ['./dist', './static', 'build'],
+	clean     : ['dist', 'build', 'static/**/*.js', 'static/{css,fonts}'],
 	dist      : 'dist',
 	zipfile   : 'uf04-frontend.zip'
 };
