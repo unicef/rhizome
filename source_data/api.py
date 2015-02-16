@@ -23,7 +23,7 @@ class EtlResource(ModelResource):
         filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
-        authentication = ApiKeyAuthentication()
+        # authentication = ApiKeyAuthentication()
 
 
     def get_object_list(self, request):

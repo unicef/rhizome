@@ -137,43 +137,52 @@ def create_source_meta_data(document_id):
     sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
         document_id = document_id).values()))
 
-    ## campaigns ##
-    campaign_strings = sdp_df['campaign_string'].unique()
-    for c in campaign_strings:
+    sr_df = DataFrame(list(SourceRegion.objects.filter(
+        document_id = document_id).values()))
 
-        try:
-            created, s_c_obj = SourceCampaign.objects.create(
-                campaign_string = c,
-                document_id = document_id,
-                source_guid = ('%s - %s',( document_id, c )))
-        except IntegrityError:
-            pass
+    if len(sr_df) > 0:
+
+        pass
+
+    else:
+
+        ## campaigns ##
+        campaign_strings = sdp_df['campaign_string'].unique()
+
+        for c in campaign_strings:
+
+            try:
+                created, s_c_obj = SourceCampaign.objects.create(
+                    campaign_string = c,
+                    document_id = document_id,
+                    source_guid = ('%s - %s',( document_id, c )))
+            except IntegrityError:
+                pass
+
+        ## indicators ##
+        indicator_strings = sdp_df['indicator_string'].unique()
+
+        for i in indicator_strings:
 
 
+            try:
+                s_i_obj = SourceIndicator.objects.create(
+                    indicator_string = i,
+                    document_id = document_id,
+                    source_guid =  ('%s - %s',( document_id, i )))
+            except IntegrityError:
+                pass
 
-    ## indicators ##
-    indicator_strings = sdp_df['indicator_string'].unique()
-    for i in indicator_strings:
+        # regions #
+        region_codes = sdp_df['region_code'].unique()
 
+        for r in region_codes:
 
-        try:
-            s_i_obj = SourceIndicator.objects.create(
-                indicator_string = i,
-                document_id = document_id,
-                source_guid =  ('%s - %s',( document_id, i )))
-        except IntegrityError:
-            pass
-
-    # regions #
-    region_codes = sdp_df['region_code'].unique()
-
-    for r in region_codes:
-
-        try:
-            s_r_obj = SourceRegion.objects.create(
-                region_code = r,
-                document_id = document_id,
-                region_string = r,
-                source_guid = ('%s - %s',( document_id, r )))
-        except IntegrityError:
-            pass
+            try:
+                s_r_obj = SourceRegion.objects.create(
+                    region_code = r,
+                    document_id = document_id,
+                    region_string = r,
+                    source_guid = ('%s - %s',( document_id, r )))
+            except IntegrityError:
+                pass

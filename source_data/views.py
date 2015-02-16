@@ -211,6 +211,26 @@ def populate_document_meta(document_id):
         	LEFT JOIN datapoint d
         		ON cm.master_campaign_id = d.campaign_id
         		AND sd.id = d.source_datapoint_id
+
+            UNION ALL
+            -- region only documents --
+
+        	SELECT DISTINCT
+        		sr.document_id
+        		,sr.region_string
+        		,'region'
+        		,sr.id as source_region_id
+        		,COALESCE(rm.master_region_id,-1)
+        		,0
+        	FROM  source_region sr
+        	LEFT JOIN region_map rm
+                ON sr.id = rm.source_region_id
+            WHERE sr.document_id = %s
+            AND NOT EXISTS (
+                SELECT 1 FROM _tmp_meta_for_doc sd
+                WHERE sr.region_string = sd.region_string
+            )
+
         )x
         WHERE NOT EXISTS (
         	SELECT 1 from document_meta dm
@@ -223,7 +243,8 @@ def populate_document_meta(document_id):
 
         SELECT * FROM document_meta
         WHERE document_id = %s
-        ORDER BY master_object_id desc;''', [document_id,document_id])
+        ORDER BY master_object_id desc;''', [document_id,document_id\
+            ,document_id])
 
     else:
 
@@ -328,6 +349,7 @@ def sync_source_datapoints(request,document_id,master_indicator_id):
     mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
 
     mr.source_dps_to_dps()
+    mr.sync_regions()
 
     return HttpResponseRedirect(reverse('source_data:document_review'\
         , kwargs={'document_id': document_id}))
@@ -388,6 +410,8 @@ def pre_process_file(request,document_id,file_type):
         )
 
 def map_document_metadata(request,document_id):
+
+
 
     meta_list = []
 
