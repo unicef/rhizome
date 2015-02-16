@@ -49,8 +49,6 @@ class CustomSerializer(Serializer):
 
                 expanded_obj[indicator_string] = indicator_value
 
-                
-
             expanded_objects.append(expanded_obj)
 
         csv_df = DataFrame(expanded_objects)
