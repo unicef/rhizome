@@ -121,16 +121,16 @@ module.exports = {
 				});
 			});
 
-			_.defaults(options, this.pagination);
+			_.defaults(options, pagination, _.omit(this.pagination, 'total_count'));
 
 			this.table.loading = true;
 			this.table.columns = columns;
 			this.table.rows    = [];
 
-			api.datapoints(options).done(function (data) {
+			api.datapoints(options).then(function (data) {
 				self.table.loading = false;
 
-				_.assign(self.pagination, _.pluck(data.meta, 'limit', 'offset', 'total_count'));
+				_.assign(self.pagination, _.pick(data.meta, 'limit', 'offset', 'total_count'));
 
 				if (!data.objects || data.objects.length < 1) {
 					return;
