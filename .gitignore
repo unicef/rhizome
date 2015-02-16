@@ -15,7 +15,6 @@ include
 /docs/_build
 /docs/_static
 /docs/_templates
-/static
 /source_data/prod_odk_settings.py
 /source_data/dev_odk_settings.py
 /viz
@@ -30,4 +29,4 @@ node_modules
 sql_backups
 db.sql
 /geo
-datapoints/sql/polio/\ \(Autosaved\) 
+datapoints/sql/polio/\ \(Autosaved\)
