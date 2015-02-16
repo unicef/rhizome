@@ -1,22 +1,9 @@
 <div v-if="pageCount > 1" class="pagination">
 
-	<a title="Previous page"
-		 v-on="click: current -= 1"
-		 v-class="disabled: !hasPrevious">
-		<i class="fa fa-angle-left"></i>
-	</a>
-
 	<a v-repeat="pages"
-		 v-on="click: current = number"
+		 v-on="click: setPage(number)"
 		 v-class="current: current == number">
 		<i v-if="jump" class="fa fa-ellipsis-h"></i>
 		<span v-if="!jump">{{ number }}</span>
 	</a>
-
-	<a title="Next page"
-			v-on="click: current += 1"
-			v-class="disabled: !hasNext">
-		<i class="fa fa-angle-right"></i>
-	</a>
-
 </div>
