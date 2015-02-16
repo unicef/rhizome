@@ -111,6 +111,7 @@ class Region(models.Model):
 
         db_table = 'region'
         unique_together = ('name','region_type','office')
+        ordering = ('name',)
 
         permissions = (
             ('view_region', 'View region'),
