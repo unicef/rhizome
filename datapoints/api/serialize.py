@@ -2,6 +2,8 @@ import StringIO
 
 from tastypie.serializers import Serializer
 from pandas import DataFrame
+from pprint import pprint
+
 
 from datapoints.models import Campaign, Indicator, Region
 
@@ -27,6 +29,8 @@ class CustomSerializer(Serializer):
 
         meta_lookup = self.build_meta_lookup(data_objects)
 
+        print meta_lookup['indicator']
+
         expanded_objects = []
 
         for obj in data_objects:
@@ -37,18 +41,17 @@ class CustomSerializer(Serializer):
             expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
             for ind_dict in obj['indicators']:
-                try:
-                    ind = meta_lookup['indicator'][ind_dict['indicator']]
-                except KeyError:
-                    ind = ''
-                    pass
 
-                val = ind_dict['value']
-                expanded_obj[ind] = val
+                indicator_string = meta_lookup['indicator'][\
+                    int(ind_dict['indicator'])]
+
+                indicator_value = ind_dict['value']
+
+                expanded_obj[indicator_string] = indicator_value
 
             expanded_objects.append(expanded_obj)
 
-        csv_df = DataFrame(expanded_objects)#[['region','campaign']]
+        csv_df = DataFrame(expanded_objects)
 
         ## rearrange column order ( POLIO-200 ) ##
         ## http://stackoverflow.com/questions/13148429 ##
