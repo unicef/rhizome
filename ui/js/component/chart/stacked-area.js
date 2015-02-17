@@ -14,6 +14,30 @@ module.exports = {
 	],
 
 	computed: {
+		labels: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var x      = this.xScale;
+			var y      = this.yScale;
+			var series = this.series;
+
+			var labels = _.map(series, function (d) {
+				// lodash.max uses the accessor to find the comparison value, but
+				// returns the entire object; d3.max returns the value returned
+				// by the accessor
+				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
+
+				return {
+					text: d.name,
+					x   : x(last.campaign.start_date),
+					y   : y(last.y0 + last.y)
+				};
+			});
+
+			return labels;
+		},
 
 		renderer: function () {
 			var x     = this.xScale;
@@ -30,6 +54,7 @@ module.exports = {
 				.y1(function (d) {
 					return y(d.y0 + d.y);
 				})
+				.values(function (d) { return d.values; })
 				.color(function (d, i) {
 					return color(i);
 				});
@@ -50,6 +75,9 @@ module.exports = {
 				})
 				.y(function (d) {
 					return d.value;
+				})
+				.values(function (d) {
+					return d.values;
 				});
 
 			// Facet by indicator
@@ -58,7 +86,12 @@ module.exports = {
 					return d.campaign.start_date;
 				})
 				.groupBy('indicator')
-				.values()
+				.map(function (d, indicator) {
+					return {
+						name  : indicator,
+						values: d
+					};
+				})
 				.value();
 
 			return stack(series);
@@ -73,7 +106,11 @@ module.exports = {
 				.range([this.contentHeight, 0]);
 
 			if (!this.empty) {
-				var flat = _.flatten(this.series, true);
+				var flat = _(this.series)
+					.pluck('values')
+					.flatten(true)
+					.value();
+
 				scale.domain([
 					Math.min(0, d3.min(flat, y)),
 					d3.max(flat, y) * 1.1

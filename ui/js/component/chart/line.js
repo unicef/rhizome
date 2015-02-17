@@ -6,6 +6,7 @@ var moment    = require('moment');
 
 var colors    = require('colors/coolgray');
 var lineChart = require('./renderer/line');
+var label     = require('./renderer/label');
 
 function x (d) {
 	return d.campaign.start_date;
@@ -78,11 +79,37 @@ module.exports = {
 				.y(function (d) {
 					return y(d.value);
 				})
+				.values(function (d) { return d.values; })
 				.color(function (d, i) {
 					return color(i);
 				});
 
 			return renderer;
+		},
+
+		labels: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var x      = this.xScale;
+			var y      = this.yScale;
+			var series = this.series;
+
+			var labels = _.map(series, function (d) {
+				// lodash.max uses the accessor to find the comparison value, but
+				// returns the entire object; d3.max returns the value returned
+				// by the accessor
+				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
+
+				return {
+					text: d.name,
+					x   : x(last.campaign.start_date),
+					y   : y(last.value)
+				};
+			});
+
+			return labels;
 		},
 
 		series: function () {
@@ -95,7 +122,12 @@ module.exports = {
 					return d.campaign.start_date;
 				})
 				.groupBy('indicator')
-				.values()
+				.map(function (d, indicator) {
+					return {
+						name  : indicator,
+						values: d
+					};
+				})
 				.value();
 
 			// Facet the datapoints by indicator
@@ -171,6 +203,11 @@ module.exports = {
 				.data(this.series, function (d, i) {
 					return d.name || i;
 				}).call(renderer);
+
+			svg.select('.annotation')
+				.selectAll('.series.label')
+				.data(this.labels)
+				.call(label().addClass('series'));
 
 			var gx = svg.select('.x.axis')
 				.call(d3.svg.axis()

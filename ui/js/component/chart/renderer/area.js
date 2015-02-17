@@ -9,6 +9,7 @@ module.exports = function areaChart() {
 	var className       = 'area';
 	var color           = function () { return 'inherit'; };
 	var transitionSpeed = 500;
+	var values          = function (d) { return d; };
 
 	function chart(selection) {
 		selection.enter().append('g');
@@ -18,7 +19,7 @@ module.exports = function areaChart() {
 		selection.each(function (d, i) {
 			var g = d3.select(this);
 
-			var path = g.selectAll('path').data([d]);
+			var path = g.selectAll('path').data([values(d)]);
 
 			path.transition()
 				.duration(transitionSpeed)
@@ -64,6 +65,15 @@ module.exports = function areaChart() {
 		}
 
 		transitionSpeed = value;
+		return chart;
+	};
+
+	chart.values = function (value) {
+		if (!arguments.length) {
+			return values;
+		}
+
+		values = value;
 		return chart;
 	};
 

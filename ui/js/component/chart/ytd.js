@@ -24,11 +24,40 @@ module.exports = {
 				.y(function (d) {
 					return y(d.value);
 				})
+				.values(function (d) {
+					console.debug('ytd::renderer values', d);
+					return d.values;
+				})
 				.color(function (d, i) {
 					return color(i);
 				});
 
 			return renderer;
+		},
+
+		labels: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var x      = this.xScale;
+			var y      = this.yScale;
+			var series = this.series;
+
+			var labels = _.map(series, function (d) {
+				// lodash.max uses the accessor to find the comparison value, but
+				// returns the entire object; d3.max returns the value returned
+				// by the accessor
+				var last = _.max(d.values, function (v) { return v.month; });
+
+				return {
+					text: d.name,
+					x   : x(last.month),
+					y   : y(last.value)
+				};
+			});
+
+			return labels;
 		},
 
 		series: function () {
@@ -74,8 +103,8 @@ module.exports = {
 					var m = d.campaign.start_date.getMonth();
 					while (month < m) {
 						series[year].push({
-							month: month,
-							value: total
+							month   : month,
+							value   : total
 						});
 						month++;
 					}
@@ -88,7 +117,12 @@ module.exports = {
 					month++;
 				});
 
-			return _.values(series);
+			return _.map(series, function (d, year) {
+				return {
+					name  : year,
+					values: d
+				};
+			});
 		},
 
 		yScale: function () {
@@ -100,7 +134,10 @@ module.exports = {
 				.range([this.contentHeight, 0]);
 
 			if (!this.empty) {
-				var s = _.flatten(this.series, true);
+				var s = _(this.series)
+					.pluck('values')
+					.flatten(true)
+					.value();
 
 				scale.domain([
 					Math.min(d3.min(s, value)),
