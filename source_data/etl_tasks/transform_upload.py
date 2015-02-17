@@ -1,5 +1,6 @@
 import xlrd
 import pandas as pd
+from pprint import pprint
 
 from django.conf import settings
 from pandas.io.excel import read_excel
@@ -57,7 +58,7 @@ class DocTransform(object):
                     source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
                     defaults = {
                     'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                    'region_code': row[df_cols.index(self.column_mappings['region_col'])],
+                    'region_code': row[df_cols.index(self.column_mappings['region_code_col'])],
                     'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
                     'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
                     'row_number': i,
