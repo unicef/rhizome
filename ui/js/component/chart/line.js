@@ -43,7 +43,7 @@ module.exports = {
 				var svg = d3.select(this);
 				svg
 					.select('.annotation')
-					.selectAll('line, text')
+					.selectAll('line, .value, .axis')
 					.transition()
 					.duration(300)
 					.style('opacity', 0)
@@ -117,6 +117,8 @@ module.exports = {
 				return [];
 			}
 
+			var indicators = _.indexBy(this.indicators, 'id');
+
 			var series = _(this.datapoints)
 				.sortBy(function (d) {
 					return d.campaign.start_date;
@@ -124,7 +126,7 @@ module.exports = {
 				.groupBy('indicator')
 				.map(function (d, indicator) {
 					return {
-						name  : indicator,
+						name  : indicators[indicator].short_name,
 						values: d
 					};
 				})
@@ -367,13 +369,13 @@ module.exports = {
 
 			label = d3.select(svg)
 				.select('.annotation')
-				.selectAll('.label')
+				.selectAll('.value.label')
 				.data(labelData);
 
 			label.enter()
 				.append('text')
 				.attr({
-					'class'    : 'label',
+					'class'    : 'value label',
 					'dx'       : '-2',
 					'dy'       : '4',
 					'transform': function (d) {

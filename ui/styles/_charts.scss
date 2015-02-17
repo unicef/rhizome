@@ -65,7 +65,7 @@ svg {
 		}
 	}
 
-	.bullet {
+	&.bullet {
 		rect {
 			shape-rendering: crispEdges;
 			stroke: none;
@@ -78,6 +78,7 @@ svg {
 
 		.label {
 			fill: $white;
+			text-shadow: none;
 		}
 
 		.ranges {
@@ -110,6 +111,10 @@ svg {
 
 	.clickable {
 		cursor: pointer;
+	}
+
+	.label {
+		text-shadow: 0 1px 0 $white;
 	}
 }
 

@@ -80,6 +80,8 @@ module.exports = {
 					return d.values;
 				});
 
+			var indicators = _.indexBy(this.indicators, 'id');
+
 			// Facet by indicator
 			var series = _(this.datapoints)
 				.sortBy(function (d) {
@@ -88,7 +90,7 @@ module.exports = {
 				.groupBy('indicator')
 				.map(function (d, indicator) {
 					return {
-						name  : indicator,
+						name  : indicators[indicator].short_name,
 						values: d
 					};
 				})

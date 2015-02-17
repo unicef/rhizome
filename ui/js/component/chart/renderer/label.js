@@ -21,10 +21,15 @@ function label() {
 
 		selection.enter()
 			.append('text')
-			.style('opacity', 1)
+			.style({
+				'opacity'    : 0,
+				'text-anchor': 'end'
+			})
 			.attr({
-				'x'      : x,
-				'y'      : y
+				'dx': '-4',
+				'dy': '-4',
+				'x' : x,
+				'y' : y
 			})
 			.text(text)
 			.transition()
