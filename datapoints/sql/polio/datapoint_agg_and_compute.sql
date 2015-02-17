@@ -89,12 +89,12 @@ SELECT
 i_part.indicator_id
 ,region_id
 ,campaign_id
-,SUM(d.value) as value
+,SUM(ad.value) as value
 ,CAST(1 as BOOLEAN) as is_calc
-FROM agg_datapoint d
-INNER JOIN calculated_indicator_component i_part
-ON i_part.indicator_component_id = d.indicator_id
-AND i_part.calculation = 'PART_TO_BE_SUMMED'
+FROM calculated_indicator_component i_part
+INNER JOIN agg_datapoint ad
+ON i_part.indicator_component_id = ad.indicator_id
+WHERE i_part.calculation = 'PART_TO_BE_SUMMED'
 GROUP BY i_part.indicator_id,region_id,campaign_id;
 
 GRANT SELECT ON datapoint_with_computed TO djangoapp;
