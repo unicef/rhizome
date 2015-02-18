@@ -31,6 +31,35 @@ SELECT
   )
   GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
 
+  UNION ALL
+
+  SELECT  -- NCO dashboard --
+    r.id as region_id
+    , x.campaign_id
+    , x.indicator_id
+    , x.value
+    , CAST(1 AS BOOLEAN) AS is_agg
+  FROM (
+  SELECT
+       cic.indicator_component_id as indicator_id
+    , r.office_id
+    , d.campaign_id
+    , SUM(CASE WHEN value = 'NaN' then 0 else value end) as value
+  FROM calculated_indicator_component cic
+  INNER JOIN datapoint d
+  ON cic.indicator_component_id = d.indicator_id
+  INNER JOIN region r
+  ON d.region_id = r.id
+  WHERE cic.indicator_id in ( 274, 346 )
+  GROUP BY r.office_id, d.campaign_id, cic.indicator_component_id
+  )x
+  INNER JOIN office o
+  ON x.office_id = o.id
+  INNER JOIN region r
+  ON lower(o.name) = lower(r.name)
+
+
+
 ----
 ----
 
