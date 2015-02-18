@@ -13,26 +13,27 @@ def full_cache_refresh():
     calc_indicator_ids = list(Indicator.objects.filter(is_reported=\
         False).values_list('id',flat=True))
 
-    all_indicator_ids = indicator_ids + calc_indicator_ids
+    # all_indicator_ids = indicator_ids + calc_indicator_ids
 
-    # all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
-
+    all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
-    distict_region_campaign_list = DataPoint.objects.raw("\
-        SELECT \
-             max(id) as id \
-             ,region_id \
-            ,campaign_id \
-        FROM datapoint \
-        --WHERE campaign_id = 111 \
-        --AND region_id = 12907 \
-        GROUP BY region_id,campaign_id")
+    print ' ... QUERYING FOR DISTINCT REGION / CAMPAIGN ... '
+
+    distict_region_campaign_list = DataPoint.objects.raw("""
+        SELECT
+             max(id) as id
+             ,region_id
+            ,campaign_id
+        FROM datapoint
+        WHERE campaign_id = 111
+        AND region_id = 12907
+        GROUP BY region_id,campaign_id""")
 
     rc_tuple_list = []
     for rc in distict_region_campaign_list:
-        # print r
+        print 'region_id ... %s' % rc.region_id
         r_c_tuple = (rc.region_id,rc.campaign_id)
         rc_tuple_list.append(r_c_tuple)
 
@@ -41,6 +42,8 @@ def full_cache_refresh():
     rc_df = rc_df.reset_index(level=[0,1])
 
     for i,(i_id) in enumerate(all_indicator_ids):
+
+        print 'indicator_id.. %s' % i_id
 
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
@@ -51,10 +54,6 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     left join the region / campaign dataframe with the stored data for each
     campaign.
     '''
-
-    print '==='
-    print i_id
-
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
@@ -88,17 +87,13 @@ def r_c_df_to_db(rc_df):
         del r_data['campaign_id']
         del r_data['index']
 
-        if region_id == 12907:
+        # first delete #
+        DataPointAbstracted.objects.filter(region_id = region_id\
+            ,campaign_id = campaign_id).delete()
 
-            print 'TRYING!!!'
-
-            # first delete #
-            DataPointAbstracted.objects.filter(region_id = region_id\
-                ,campaign_id = campaign_id).delete()
-
-            # and then insert #
-            DataPointAbstracted.objects.create(
-                region_id = region_id,\
-                campaign_id = campaign_id,\
-                indicator_json = r_data
-            )
+        # and then insert #
+        DataPointAbstracted.objects.create(
+            region_id = region_id,\
+            campaign_id = campaign_id,\
+            indicator_json = r_data
+        )
