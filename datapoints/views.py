@@ -394,6 +394,8 @@ def agg_datapoint(request):
     SELECT
         region_id, campaign_id, indicator_id, value, 't'
     FROM datapoint d;
+
+    CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
     """)
 
     region_loop = {
@@ -418,6 +420,13 @@ def agg_datapoint(request):
             INNER JOIN region_type rt
                 ON r.region_type_id = rt.id
                 AND rt.name = %s
+            WHERE NOT EXISTS (
+            	SELECT 1 FROM agg_datapoint ag_2
+            	WHERE 1 = 1
+            	AND ag.indicator_id = ag_2.indicator_id
+            	AND ag.campaign_id = ag_2.campaign_id
+            	AND r.parent_region_id = ag_2.region_id
+            )
             GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
 
         SELECT id FROM agg_datapoint LIMIT 1;
