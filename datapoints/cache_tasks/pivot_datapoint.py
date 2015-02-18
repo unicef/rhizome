@@ -15,7 +15,7 @@ def full_cache_refresh():
 
     # all_indicator_ids = indicator_ids + calc_indicator_ids
 
-    all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310]#,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
+    all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
@@ -27,12 +27,13 @@ def full_cache_refresh():
         WHERE region_id = 12907
         AND campaign_id = 111
         AND value != 'NaN'
-        GROUP BY dwc.region_id, dwc.campaign_id, dwc.indicator_id
+        GROUP BY dwc.region_id, dwc.campaign_id
         """)
 
     rc_tuple_list = []
     for rc in distict_region_campaign_list:
         print 'region_id ... %s' % rc.region_id
+
         r_c_tuple = (rc.region_id,rc.campaign_id)
         rc_tuple_list.append(r_c_tuple)
 
@@ -64,9 +65,14 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
         SELECT
     		d.region_id
     		,d.campaign_id
-    		,value as "%s"
+    		,max(value) as "%s"
         FROM datapoint_with_computed d
-    	WHERE indicator_id  = %s
+        WHERE region_id = 12907
+        AND campaign_id = 111
+        AND d.value > 0
+        AND d.value != 'NaN'
+        AND indicator_id  = %s
+    	GROUP BY d.region_id, d.campaign_id
         """ % (i_id,i_id)
 
     print 'done query'
