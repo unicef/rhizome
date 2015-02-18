@@ -41,16 +41,18 @@ module.exports = {
 			.on('mousemove', this.onMouseMove)
 			.on('mouseout', function () {
 				var svg = d3.select(this);
-				svg
-					.select('.annotation')
-					.selectAll('line, .value, .axis')
+				svg.select('.annotation').selectAll('line, .value, .axis')
 					.transition()
 					.duration(300)
 					.style('opacity', 0)
 					.remove();
 
-					svg
-						.select('.x.axis')
+					svg.select('.x.axis')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
+
+					svg.selectAll('.annotation .series.label')
 						.transition()
 						.duration(300)
 						.style('opacity', 1);
@@ -178,8 +180,8 @@ module.exports = {
 				Math.min(0, d3.min(datapoints, y)) || 0;
 
 			var upper = this.empty ?
-			1 :
-			(d3.max(datapoints, y) || 1) * 1.1;
+				1 :
+				(d3.max(datapoints, y) || 1) * 1.1;
 
 			return d3.scale.linear()
 				.domain([lower, upper])
@@ -404,6 +406,11 @@ module.exports = {
 				.duration(300)
 				.style('opacity', 0)
 				.remove();
+
+			d3.select(svg).selectAll('.series.label')
+				.transition()
+				.duration(300)
+				.style('opacity', 0);
 		}
 
 	},
