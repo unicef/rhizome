@@ -15,21 +15,20 @@ def full_cache_refresh():
 
     # all_indicator_ids = indicator_ids + calc_indicator_ids
 
-    all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
+    all_indicator_ids = [272,274,276,287,288,289,290,291,292,293,294,307,308,309,310]#,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,345,346,347,348]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
     print ' ... QUERYING FOR DISTINCT REGION / CAMPAIGN ... '
 
     distict_region_campaign_list = DataPoint.objects.raw("""
-        SELECT
-             max(id) as id
-             ,region_id
-            ,campaign_id
-        FROM datapoint
-        WHERE campaign_id = 111
-        AND region_id = 12907
-        GROUP BY region_id,campaign_id""")
+        SELECT 1 as id dwc.region_id, dwc.campaign_id--, dwc.indicator_id, max(value)
+        FROM datapoint_with_computed dwc
+        WHERE region_id = 12907
+        AND campaign_id = 111
+        AND value != 'NaN'
+        GROUP BY dwc.region_id, dwc.campaign_id, dwc.indicator_id
+        """)
 
     rc_tuple_list = []
     for rc in distict_region_campaign_list:
@@ -47,6 +46,8 @@ def full_cache_refresh():
 
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
+    print 'DONE W THAT!'
+
     r_c_df_to_db(rc_df)
 
 def add_indicator_data_to_rc_df(rc_df, i_id):
@@ -57,6 +58,8 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
+    print 'start query'
+
     sql = """
         SELECT
     		d.region_id
@@ -66,6 +69,7 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     	WHERE indicator_id  = %s
         """ % (i_id,i_id)
 
+    print 'done query'
     indicator_df = read_sql(sql,con,columns=column_header)
 
     merged_df = rc_df.merge(indicator_df,how='left')
@@ -81,6 +85,7 @@ def r_c_df_to_db(rc_df):
     rc_dict = nan_to_null_df.transpose().to_dict()
 
     for r_no, r_data in rc_dict.iteritems():
+
         region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
 
         del r_data['region_id']
