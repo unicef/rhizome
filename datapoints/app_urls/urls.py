@@ -62,6 +62,8 @@ urlpatterns = [
         #############
         ## CACHING ##
         #############
+    url(r'^agg_datapoint/$', views.agg_datapoint, name='agg_datapoint'),
+    url(r'^calc_datapoint/$', views.calc_datapoint, name='calc_datapoint'),
     url(r'^pivot_datapoint/$', views.pivot_datapoint, name='pivot_datapoint'),
 
 

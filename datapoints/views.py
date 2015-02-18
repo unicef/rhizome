@@ -304,6 +304,62 @@ def search(request):
         context_instance=RequestContext(request))
 
 
+def calc_datapoint(request):
+
+    pass
+
+def agg_datapoint(request):
+
+    # insert leave level data #
+
+    DataPoint.objects.raw("""
+
+    TRUNCATE TABLE agg_datapoint;
+
+    INSERT INTO agg_datapoint
+    (region_id, campaign_id, indicator_id, value, is_agg)
+
+    SELECT
+        region_id, campaign_id, indicator_id, value, 't'
+    FROM datapoint d;
+    """)
+
+    region_loop = {
+        0 : 'settlement',
+        1 : 'sub-district',
+        2 : 'district',
+        3 : 'province',
+        # 4 : 'country',
+    }
+
+    for k,v in region_loop.iteritems():
+
+        curs = DataPoint.objects.raw("""
+            INSERT INTO agg_datapoint
+            (region_id, campaign_id, indicator_id, value, is_agg)
+
+            SELECT
+                r.parent_region_id, campaign_id, indicator_id, SUM(value), 't'
+            FROM agg_datapoint ag
+            INNER JOIN region r
+                ON ag.region_id = r.id
+            INNER JOIN region_type rt
+                ON r.region_type_id = rt.id
+                AND rt.name = %s
+            GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
+
+        SELECT id FROM agg_datapoint LIMIT 1;
+        """,[v])
+
+        for x in curs:
+            print x
+
+
+    return HttpResponseRedirect('/datapoints/regions/')
+
+
+
+
 def pivot_datapoint(request):
 
     full_cache_refresh()
