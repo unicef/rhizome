@@ -211,7 +211,7 @@ module.exports = {
 			svg.select('.annotation')
 				.selectAll('.series.label')
 				.data(this.labels)
-				.call(label().addClass('series'));
+				.call(label().addClass('series').width(this.contentWidth).height(this.contentHeight));
 
 			var gx = svg.select('.x.axis')
 				.call(d3.svg.axis()

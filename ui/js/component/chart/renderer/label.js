@@ -1,25 +1,19 @@
 'use strict';
 
 var _  = require('lodash');
+var d3 = require('d3');
 
 function label() {
 	var cls             = ['label'];
+	var height          = 1;
 	var text            = function (d) { return d.text; };
 	var transitionSpeed = 300;
+	var width           = 1;
 	var x               = function (d) { return d.x; };
 	var y               = function (d) { return d.y; };
 
-	function chart(selection) {
-		selection
-			.text(text)
-			.transition()
-			.duration(transitionSpeed)
-			.attr({
-				'x': x,
-				'y': y
-			});
-
-		selection.enter()
+	function chart(labels) {
+		var labelEnter = labels.enter()
 			.append('text')
 			.style({
 				'opacity'    : 0,
@@ -27,22 +21,56 @@ function label() {
 			})
 			.attr({
 				'dx': '-4',
-				'dy': '-4',
-				'x' : x,
-				'y' : y
+				'dy': '-4'
 			})
-			.text(text)
-			.transition()
-			.duration(transitionSpeed)
-			.style('opacity', 1);
+			.text(text);
 
-		selection.attr('class', cls.join(' '));
+		var labelData = labels.data();
 
-		selection.exit()
-			.transition()
-			.duration(300)
-			.style('opacity', 0)
-			.remove();
+		labelData.forEach(function (d) {
+			d.targetY = d.y;
+		});
+
+		d3.layout.force()
+			.nodes(labelData)
+			.charge(-10)
+			.gravity(0)
+			.size([width, height])
+			.on('tick', function (e) {
+				var k = 0.1 * e.alpha;
+
+				labelData.forEach(function (d) {
+					d.y += (d.targetY - d.y) * k;
+				});
+			})
+			.on('end', function () {
+				labels
+					.text(text)
+					.transition()
+					.duration(300)
+					.attr({
+						'x': x,
+						'y': y
+					});
+
+				labelEnter
+					.attr({
+						'x': x,
+						'y': y
+					})
+					.transition()
+					.duration(transitionSpeed)
+					.style('opacity', 1);
+
+				labels.attr('class', cls.join(' '));
+
+				labels.exit()
+					.transition()
+					.duration(300)
+					.style('opacity', 0)
+					.remove();
+			})
+			.start();
 	}
 
 	chart.addClass = function (value) {
@@ -73,6 +101,15 @@ function label() {
 		return cls.indexOf(value) > -1;
 	};
 
+	chart.height = function (value) {
+		if (!arguments.length) {
+			return height;
+		}
+
+		height = value;
+		return chart;
+	};
+
 	chart.removeClass = function (value) {
 		var i = cls.indexOf(value);
 
@@ -98,6 +135,15 @@ function label() {
 		}
 
 		transitionSpeed = value;
+		return chart;
+	};
+
+	chart.width = function (value) {
+		if (!arguments.length) {
+			return width;
+		}
+
+		width = value;
 		return chart;
 	};
 

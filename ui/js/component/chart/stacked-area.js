@@ -24,17 +24,17 @@ module.exports = {
 			var series = this.series;
 
 			var labels = _.map(series, function (d) {
-				// lodash.max uses the accessor to find the comparison value, but
-				// returns the entire object; d3.max returns the value returned
-				// by the accessor
-				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
+					// lodash.max uses the accessor to find the comparison value, but
+					// returns the entire object; d3.max returns the value returned
+					// by the accessor
+					var last = _.max(d.values, function (v) { return v.campaign.start_date; });
 
-				return {
-					text: d.name,
-					x   : x(last.campaign.start_date),
-					y   : y(last.y0 + last.y)
-				};
-			});
+					return {
+						text: d.name,
+						x   : x(last.campaign.start_date),
+						y   : y(last.y0 + last.y)
+					};
+				});
 
 			return labels;
 		},
