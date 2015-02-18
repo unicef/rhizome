@@ -22,7 +22,7 @@ def full_cache_refresh():
     print ' ... QUERYING FOR DISTINCT REGION / CAMPAIGN ... '
 
     distict_region_campaign_list = DataPoint.objects.raw("""
-        SELECT 1 as id dwc.region_id, dwc.campaign_id--, dwc.indicator_id, max(value)
+        SELECT 1 as id, dwc.region_id, dwc.campaign_id--, dwc.indicator_id, max(value)
         FROM datapoint_with_computed dwc
         WHERE region_id = 12907
         AND campaign_id = 111
