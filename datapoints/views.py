@@ -393,8 +393,11 @@ def agg_datapoint(request):
 
     SELECT
         region_id, campaign_id, indicator_id, value, 't'
-    FROM datapoint d;
+    FROM datapoint d
+    WHERE value != 'NaN';
 
+    --
+    DROP INDEX IF EXISTS ag_uq_ix;
     CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
     """)
 
@@ -413,7 +416,7 @@ def agg_datapoint(request):
             (region_id, campaign_id, indicator_id, value, is_agg)
 
             SELECT
-                r.parent_region_id, campaign_id, indicator_id, SUM(value), 't'
+                r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
             FROM agg_datapoint ag
             INNER JOIN region r
                 ON ag.region_id = r.id
