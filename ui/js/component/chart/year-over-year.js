@@ -45,6 +45,7 @@ module.exports = {
 				.y(function (d) {
 					return y(d.value);
 				})
+				.values(function (d) { return d.values; })
 				.color(function (d, i) {
 					return color(i);
 				});
@@ -53,7 +54,6 @@ module.exports = {
 		},
 
 		series: function () {
-
 			if (this.empty) {
 				return [];
 			}
@@ -62,11 +62,11 @@ module.exports = {
 				.groupBy(function (d) {
 					return d.campaign.start_date.getFullYear();
 				})
-				.values()
-				.map(function (d) {
-					return _.sortBy(d, function (o) {
-						return o.campaign.start_date;
-					});
+				.map(function (d, year) {
+					return {
+						name  : year,
+						values: _.sortBy(d, function (o) { return o.campaign.start_date; })
+					};
 				})
 				.value();
 

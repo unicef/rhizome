@@ -30,13 +30,12 @@ module.exports = {
 		},
 
 		pages: function () {
+			var pages = [];
 			// If the total number of pages is small enough that we can fit the entire
 			// thing in the same number of links it would take with jumps, just render
 			// all the numbers. This avoids pagination controls that do the following:
 			// 1...3 4, where the jump (...) just takes you to page 2.
 			if (this.pageCount <= (this.window_size * 2) + 5) {
-				var pages = [];
-
 				for (var i = 1; i <= this.pageCount; i++) {
 					pages.push({ number: i });
 				}
@@ -46,7 +45,7 @@ module.exports = {
 
 			// Start with page 2 because page 1 is always shown.
 			var page  = Math.max(2, this.current - this.window_size);
-			var pages = [{ number: 1 }];
+			pages[0] = { number: 1 };
 
 			if (page > 2) {
 				pages.push({

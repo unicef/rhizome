@@ -7074,18 +7074,19 @@ svg .layer {
 svg .bar text {
   font-size: 0.5625rem;
 }
-svg .bullet rect {
+svg.bullet rect {
   shape-rendering: crispEdges;
   stroke: none;
 }
-svg .bullet .value,
-svg .bullet .marker {
+svg.bullet .value,
+svg.bullet .marker {
   fill: #707677;
 }
-svg .bullet .label {
+svg.bullet .label {
   fill: #FFFFFF;
+  text-shadow: none;
 }
-svg .bullet .ranges .range-label {
+svg.bullet .ranges .range-label {
   fill: #666666;
 }
 svg .point {
@@ -7107,6 +7108,9 @@ svg .region {
 }
 svg .clickable {
   cursor: pointer;
+}
+svg .label {
+  text-shadow: 0 1px 0 #FFFFFF;
 }
 
 .choropleth {

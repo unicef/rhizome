@@ -3,11 +3,11 @@
 var d3   = require('d3');
 
 module.exports = function lineChart() {
-	var transitionSpeed = 500;
 	var className       = 'line';
-	var line            = d3.svg.line();
-	var values          = Object;
 	var color           = function () { return 'inherit'; };
+	var line            = d3.svg.line();
+	var transitionSpeed = 500;
+	var values          = function (d) { return d; };
 
 	function chart(selection) {
 		// The datum for each item in this selection should correspond to an
@@ -25,7 +25,7 @@ module.exports = function lineChart() {
 			// in this series
 			var g = d3.select(this);
 
-			var path = g.selectAll('path').data([d]);
+			var path = g.selectAll('path').data([values(d)]);
 
 			path
 				.transition().duration(transitionSpeed)
@@ -124,7 +124,7 @@ module.exports = function lineChart() {
 			return values;
 		}
 
-		value = values;
+		values = value;
 		return chart;
 	};
 
