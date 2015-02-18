@@ -2,12 +2,12 @@
 
 var _      = require('lodash');
 var d3     = require('d3');
-var moment = require('moment');
 
 function hoverLine() {
 	var datapoints = [];
 	var diff       = function (a, b) { return a - b; };
-	var format     = String;
+	var xFormat    = String;
+	var yFormat    = String;
 	var xScale     = d3.scale.linear();
 	var yScale     = d3.scale.linear();
 	var width      = 1;
@@ -39,12 +39,21 @@ function hoverLine() {
 		return chart;
 	};
 
-	chart.format = function (value) {
+	chart.xFormat = function (value) {
 		if (!arguments.length) {
-			return format;
+			return xFormat;
 		}
 
-		format = value;
+		xFormat = value;
+		return chart;
+	};
+
+	chart.yFormat = function (value) {
+		if (!arguments.length) {
+			return yFormat;
+		}
+
+		yFormat = value;
 		return chart;
 	};
 
@@ -189,7 +198,7 @@ function hoverLine() {
 
 		label
 			.text(function (d) {
-				return moment(d).format('MMM YYYY');
+				return xFormat(d);
 			})
 			.transition()
 			.duration(300)
@@ -230,7 +239,7 @@ function hoverLine() {
 
 		label
 			.text(function (d) {
-				return format(d.value);
+				return yFormat(y(d));
 			})
 			.transition()
 			.duration(300)
