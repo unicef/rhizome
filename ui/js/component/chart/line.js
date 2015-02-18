@@ -194,7 +194,7 @@ module.exports = {
 					.xScale(xScale)
 					.yScale(yScale)
 					.diff(this.diffX)
-					.datapoints(this.datapoints)
+					.datapoints(_(this.series).pluck('values').flatten().value())
 				);
 
 			svg.select('.data').selectAll('.' + renderer.className())

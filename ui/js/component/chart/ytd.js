@@ -155,7 +155,7 @@ module.exports = {
 		},
 
 		getX: function (d) {
-			return d.campaign.start_date.getMonth();
+			return d.month;
 		}
 	}
 };
