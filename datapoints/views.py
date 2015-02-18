@@ -408,7 +408,7 @@ def calc_datapoint(request):
         WHERE x.calc_value IS NOT NULL;
 
         SELECT id FROM agg_datapoint LIMIT 1;
-
+x
     """)
 
     for x in curs:
