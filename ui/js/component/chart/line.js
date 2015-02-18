@@ -2,11 +2,11 @@
 
 var _         = require('lodash');
 var d3        = require('d3');
-var moment    = require('moment');
 
 var colors    = require('colors/coolgray');
 var lineChart = require('./renderer/line');
 var label     = require('./renderer/label');
+var hoverLine = require('./behavior/hover-line');
 
 function x (d) {
 	return d.campaign.start_date;
@@ -34,29 +34,6 @@ module.exports = {
 
 	partials: {
 		'loading-overlay': require('./partial/loading-overlay.html')
-	},
-
-	ready: function () {
-		d3.select(this.$el)
-			.on('mousemove', this.onMouseMove)
-			.on('mouseout', function () {
-				var svg = d3.select(this);
-				svg.select('.annotation').selectAll('line, .value, .axis')
-					.transition()
-					.duration(300)
-					.style('opacity', 0)
-					.remove();
-
-					svg.select('.x.axis')
-						.transition()
-						.duration(300)
-						.style('opacity', 1);
-
-					svg.selectAll('.annotation .series.label')
-						.transition()
-						.duration(300)
-						.style('opacity', 1);
-			});
 	},
 
 	computed: {
@@ -194,6 +171,9 @@ module.exports = {
 	},
 
 	methods: {
+		diffX: function (a, b) {
+			return a.getTime() - b.getTime();
+		},
 
 		draw: function () {
 			var svg      = d3.select(this.$el);
@@ -202,6 +182,20 @@ module.exports = {
 			var yScale   = this.yScale;
 			var domain   = xScale.domain();
 			var range    = yScale.domain();
+
+			// Set up the hover interaction
+			svg.select('svg')
+				.call(hoverLine()
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.format(this.yFmt)
+					.x(this.getX)
+					.y(this.getY)
+					.xScale(xScale)
+					.yScale(yScale)
+					.diff(this.diffX)
+					.datapoints(this.datapoints)
+				);
 
 			svg.select('.data').selectAll('.' + renderer.className())
 				.data(this.series, function (d, i) {
@@ -248,169 +242,12 @@ module.exports = {
 			});
 		},
 
-		onMouseMove: function () {
-			if (this.empty) {
-				return;
-			}
+		getX: function (d) {
+			return d.campaign.start_date;
+		},
 
-			var svg    = this.$el.getElementsByTagName('svg')[0];
-			var cursor = d3.mouse(svg)[0];
-
-			var range = _(this.datapoints)
-				.map(function (d) {
-					return d.campaign.start_date;
-				})
-				.uniq()
-				.sortBy()
-				.value();
-
-			var x     = this.xScale;
-			var dt    = x.invert(cursor);
-			var right = d3.bisect(range, dt);
-			var left  = right - 1;
-			var data  = [];
-
-			if (cursor >= 0 || cursor <= this.contentWidth) {
-				if (left < 0) {
-					data[0] = range[right];
-				} else if (right >= range.length) {
-					data[0] = range[left];
-				} else {
-					var r = range[right].getTime();
-					var l = range[left].getTime();
-					var m = dt.getTime();
-
-					if ((m - l) / (r - l) > 0.5) {
-						data[0] = range[right];
-					} else {
-						data[0] = range[left];
-					}
-				}
-			}
-
-			var line = d3.select(svg)
-				.select('.annotation')
-				.selectAll('line')
-				.data(data);
-
-			line.enter()
-				.append('line')
-				.style({
-					'opacity': 0,
-					'stroke': '#ffcc67'
-				});
-
-			line
-				.attr({
-					'y1': 0,
-					'y2': this.contentHeight
-				})
-				.transition()
-				.duration(300)
-				.attr({
-					'x1': x,
-					'x2': x,
-				})
-				.style('opacity', 1);
-
-			line.exit()
-				.transition()
-				.duration(300)
-				.style('opacity', 0)
-				.remove();
-
-			d3.select(svg)
-				.select('.x.axis')
-				.transition()
-				.duration(300)
-				.style('opacity', data.length ? 0 : 1);
-
-			var label = d3.select(svg)
-				.select('.annotation')
-				.selectAll('.axis')
-				.data(data);
-
-			var yTranslate = this.contentHeight;
-
-			label.enter()
-				.append('text')
-				.style({
-					'text-anchor': 'middle',
-					'opacity'    : 0
-				})
-				.attr({
-					'dy'       : '9',
-					'class'    : 'axis',
-					'transform': function (d) {
-						return 'translate(' + x(d) + ',' + yTranslate + ')';
-					}
-				});
-
-			label
-				.text(function (d) {
-					return moment(d).format('MMM YYYY');
-				})
-				.transition()
-				.duration(300)
-				.attr('transform', function (d) {
-					return 'translate(' + x(d) + ',' + yTranslate + ')';
-				})
-				.style('opacity', 1);
-
-			label.exit()
-				.transition()
-				.duration(300)
-				.style('opacity', 0)
-				.remove();
-
-			var labelData = this.datapoints.filter(function (d) {
-				return d.campaign.start_date.getTime() === data[0].getTime();
-			});
-
-			var y = this.yScale;
-
-			label = d3.select(svg)
-				.select('.annotation')
-				.selectAll('.value.label')
-				.data(labelData);
-
-			label.enter()
-				.append('text')
-				.attr({
-					'class'    : 'value label',
-					'dx'       : '-2',
-					'dy'       : '4',
-					'transform': function (d) {
-						return 'translate(' + x(d.campaign.start_date) + ',' + y(d.value) + ')';
-					}
-				})
-				.style({
-					'opacity': 0,
-					'text-anchor': 'end'
-				});
-
-			var fmt = this.yFmt;
-			label
-				.text(function (d) {
-					return fmt(d.value);
-				})
-				.transition()
-				.duration(300)
-				.attr('transform', function (d) {
-					return 'translate(' + x(d.campaign.start_date) + ',' + y(d.value) + ')';
-				})
-				.style('opacity', 1);
-
-			label.exit()
-				.transition()
-				.duration(300)
-				.style('opacity', 0)
-				.remove();
-
-			d3.select(svg).selectAll('.series.label')
-				.transition()
-				.duration(300)
-				.style('opacity', 0);
+		getY: function (d) {
+			return d.value;
 		}
 
 	},

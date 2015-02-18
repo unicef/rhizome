@@ -147,5 +147,15 @@ module.exports = {
 
 			return scale;
 		}
+	},
+
+	methods: {
+		diffX: function (a, b) {
+			return a - b;
+		},
+
+		getX: function (d) {
+			return d.campaign.start_date.getMonth();
+		}
 	}
 };

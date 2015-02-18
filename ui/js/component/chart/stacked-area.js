@@ -122,6 +122,12 @@ module.exports = {
 			return scale;
 		}
 
+	},
+
+	methods: {
+		getY: function (d) {
+			return d.y0 + d.y;
+		}
 	}
 
 };
