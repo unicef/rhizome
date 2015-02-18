@@ -138,9 +138,8 @@ class CampaignResource(BaseModelResource):
 
     office = fields.ToOneField(OfficeResource, 'office')
 
-
     class Meta(BaseModelResource.Meta):
-        queryset = Campaign.objects.all()
+        queryset = Campaign.objects.filter(office_id = 1)
         resource_name = 'campaign'
         filtering = {
             "slug": ('exact'),
