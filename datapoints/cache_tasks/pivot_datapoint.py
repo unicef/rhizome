@@ -15,6 +15,8 @@ def full_cache_refresh():
 
     all_indicator_ids = indicator_ids + calc_indicator_ids
 
+    all_indicator_ids = [274,346]
+
     indicator_df = DataFrame(columns = all_indicator_ids)
 
     distict_region_campaign_list = DataPoint.objects.raw("\
@@ -48,6 +50,9 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     campaign.
     '''
 
+    print '==='
+    print i_id
+
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
@@ -74,8 +79,6 @@ def r_c_df_to_db(rc_df):
 
     rc_dict = nan_to_null_df.transpose().to_dict()
 
-
-
     for r_no, r_data in rc_dict.iteritems():
         region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
 
@@ -83,13 +86,17 @@ def r_c_df_to_db(rc_df):
         del r_data['campaign_id']
         del r_data['index']
 
-        # first delete #
-        DataPointAbstracted.objects.filter(region_id = region_id\
-            ,campaign_id = campaign_id).delete()
+        if region_id == 12907:
 
-        # and then insert #
-        DataPointAbstracted.objects.create(
-            region_id = region_id,\
-            campaign_id = campaign_id,\
-            indicator_json = r_data
-        )
+            print 'TRYING!!!'
+
+            # first delete #
+            DataPointAbstracted.objects.filter(region_id = region_id\
+                ,campaign_id = campaign_id).delete()
+
+            # and then insert #
+            DataPointAbstracted.objects.create(
+                region_id = region_id,\
+                campaign_id = campaign_id,\
+                indicator_json = r_data
+            )

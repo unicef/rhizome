@@ -29,12 +29,13 @@ SELECT
     AND d.campaign_id = tid.campaign_id
     AND tid.indicator_id = d.indicator_id
   )
-  GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id;
+  GROUP BY r.parent_region_id, d.campaign_id, d.indicator_id
 
   UNION ALL
 
   SELECT  -- NCO dashboard --
-    r.id as region_id
+  -2 as id
+  , r.id as region_id
     , x.campaign_id
     , x.indicator_id
     , x.value
@@ -56,7 +57,7 @@ SELECT
   INNER JOIN office o
   ON x.office_id = o.id
   INNER JOIN region r
-  ON lower(o.name) = lower(r.name)
+  ON LOWER(o.name) = LOWER(r.name);
 
 
 
@@ -134,30 +135,30 @@ SELECT
 x.indicator_id
 ,x.region_id
 ,x.campaign_id
-,x.value
+,x.calc_value
 ,CAST(1 as BOOLEAN) as is_calc
 FROM (
-	SELECT
-	part.to_calc_ind_id  as indicator_id
-	,part.region_id
-	,part.campaign_id
-	,(whole.value - part.value) / NULLIF(whole.value,0) as value
-	FROM (
-		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
-		FROM calculated_indicator_component cic
-		INNER JOIN datapoint d
-		ON cic.indicator_component_id = d.indicator_id
-		WHERE calculation = 'PART_OF_DIFFERENCE'
-	) part
-	INNER JOIN (
-		SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
-		FROM calculated_indicator_component cic
-		INNER JOIN datapoint d
-		ON cic.indicator_component_id = d.indicator_id
-		WHERE calculation = 'WHOLE_OF_DIFFERENCE'
-	) whole
-	ON part.to_calc_ind_id = whole.to_calc_ind_id
-	AND part.region_id = whole.region_id
-	AND part.campaign_id = whole.campaign_id
+  SELECT
+  part.to_calc_ind_id  as indicator_id
+  ,part.region_id
+  ,part.campaign_id
+  ,(whole.value - part.value) / NULLIF(whole.value,0) as calc_value
+  FROM (
+    SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
+    FROM calculated_indicator_component cic
+    INNER JOIN datapoint d
+    ON cic.indicator_component_id = d.indicator_id
+    WHERE calculation = 'PART_OF_DIFFERENCE'
+  ) part
+  INNER JOIN (
+    SELECT d.value, d.region_id, d.campaign_id, d.indicator_id, cic.calculation, cic.indicator_id as to_calc_ind_id
+    FROM calculated_indicator_component cic
+    INNER JOIN datapoint d
+    ON cic.indicator_component_id = d.indicator_id
+    WHERE calculation = 'WHOLE_OF_DIFFERENCE'
+  ) whole
+  ON part.to_calc_ind_id = whole.to_calc_ind_id
+  AND part.region_id = whole.region_id
+  AND part.campaign_id = whole.campaign_id
 )x
 WHERE x.calc_value IS NOT NULL;
