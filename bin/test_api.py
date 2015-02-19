@@ -23,7 +23,6 @@ def test_url(url, target_value):
     response = None
     passed = True
 
-
     # HTTP test
     try:
         response = urllib2.urlopen(url)
@@ -63,7 +62,7 @@ def test_nco_dash():
 
     signals_passed = 0
 
-    for row_ix, row_data in ng_dash_df[:4].iterrows():
+    for row_ix, row_data in ng_dash_df.iterrows():
         url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
             ,campaign_id)
 
