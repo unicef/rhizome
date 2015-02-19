@@ -29,3 +29,5 @@ sql_backups
 db.sql
 /geo
 datapoints/sql/polio/public
+static/odk_source
+
