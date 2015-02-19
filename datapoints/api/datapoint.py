@@ -73,6 +73,7 @@ class DataPointResource(BaseNonModelResource):
             r.campaign = row.campaign_id
 
             indicator_json = row.indicator_json
+
             cleaned = self.clean_indicator_json(indicator_json)
 
             r.indicators = cleaned
@@ -88,9 +89,15 @@ class DataPointResource(BaseNonModelResource):
 
         for k,v in indicator_json.iteritems():
 
-            if k in self.parsed_params['indicator__in']:
-                indicator_dict = {'indicator':k,'value':v}
-                cleaned.append(indicator_dict)
+            try:
+                if int(k) in self.parsed_params['indicator__in']:
+
+                    indicator_dict = {'indicator':k,'value':v}
+                    cleaned.append(indicator_dict)
+            except ValueError:
+                # fails on ind(k) because k = 'campaign_id' for one node
+                pass
+
 
         return cleaned
 

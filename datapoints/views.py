@@ -481,18 +481,6 @@ def populate_dummy_ngo_dash(request):
 
         DataPointAbstracted.objects.create(**dda_dict)
 
-        # for r_no, r_data in rc_dict.iteritems():
-        #
-        #     region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
-        #
-        #     dd_abstracted = {
-        #         "region_id": region_id,
-        #         "campaign_id":campaign_id,
-        #         "indicator_json": r_data
-        #     }
-        #
-        #     dda_obj = DataPointAbstracted(**dd_abstracted)
-
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
