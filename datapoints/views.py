@@ -379,8 +379,7 @@ def calc_datapoint(request):
     for x in curs:
         print x
 
-    return HttpResponseRedirect('/datapoints/regions/')
-
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 
 def agg_datapoint(request):
@@ -442,7 +441,7 @@ def agg_datapoint(request):
             print x
 
 
-    return HttpResponseRedirect('/datapoints/regions/')
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 
 def populate_dummy_ngo_dash(request):
@@ -475,11 +474,17 @@ def populate_dummy_ngo_dash(request):
         print x
 
 
-    return HttpResponseRedirect('/datapoints/regions/')
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 
 def pivot_datapoint(request):
 
     full_cache_refresh()
 
-    return HttpResponseRedirect('/datapoints/regions/')
+    return HttpResponseRedirect('/datapoints/cache_control/')
+
+def cache_control(request):
+
+
+    return render_to_response('cache_control.html',
+    context_instance=RequestContext(request))

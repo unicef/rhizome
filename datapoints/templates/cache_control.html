@@ -1,0 +1,33 @@
+{% extends "datapoints/base.html" %}
+
+
+
+{% block content %}
+
+    <table>
+    <thead>
+        <tr>
+            <th>task_name</th>
+            <th>run_task</th>
+        </tr>
+    </thead>
+        <tr>
+            <th>Agg Datapoint</th>
+            <th><a href="{% url 'datapoints:agg_datapoint' %}"> Agg </a></th>
+        </tr>
+        <tr>
+            <th>Calc Datapoint</th>
+            <th><a href="{% url 'datapoints:calc_datapoint' %}"> Cacl </a></th>
+        </tr>
+        <tr>
+            <th>Pivot Datapoint</th>
+            <th><a href="{% url 'datapoints:pivot_datapoint' %}"> Pivot </a></th>
+        </tr>
+        <tr>
+            <th>Pop Dummp NG Dash Data</th>
+            <th><a href="{% url 'datapoints:populate_dummy_ngo_dash' %}"> Fake NG Dash </a></th>
+        </tr>
+
+    </table>
+
+{% endblock %}
