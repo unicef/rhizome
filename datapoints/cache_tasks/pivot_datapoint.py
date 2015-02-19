@@ -1,7 +1,6 @@
 import pandas as pd
 from pandas import DataFrame, read_sql
 
-from django.db import connection as con
 from datapoints.models import *
 
 
@@ -26,6 +25,9 @@ def full_cache_refresh():
         INNER JOIN region r
         ON dwc.region_id = r.id
         AND r.office_id = 1
+        INNER JOIN region_type rt
+        ON r.region_type_id = rt.id
+        AND lower(rt.name) in ('country','province')
         """)
 
     rc_tuple_list = []
@@ -55,23 +57,28 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
-    print 'start query'
-
-    sql = """
+    curs = DataPoint.objects.raw("""
         SELECT
     		d.region_id
     		,d.campaign_id
-    		,value as "%s"
+    		,value
         FROM datapoint_with_computed d
-        INNER JOIN region r
-        ON d.region_id = r.id
-        AND r.office_id = 1
         WHERE indicator_id  = %s;
-        """ % (i_id,i_id)
 
-    indicator_df = read_sql(sql,con,columns=column_header)
+        SELECT ID FROM datapoint LIMIT 1;""",[i_id])
+
+    indicator_data = []
+
+    for row in curs:
+        row_dict = {}
+        row_dict['campaign_id'] = row.campaign_id
+        row_dict['indicator_id'] = row.indicator_id
+        row_dict['region_id'] = row.region_id
+        indicator_data.append(row_dict)
+
+    indicator_df = DataFrame(indicator_data,columns=column_header)
     print 'done query'
-    con.close()
+
     merged_df = rc_df.merge(indicator_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
 
@@ -84,21 +91,23 @@ def r_c_df_to_db(rc_df):
 
     rc_dict = nan_to_null_df.transpose().to_dict()
 
+    batch = []
+
+
     for r_no, r_data in rc_dict.iteritems():
 
         region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
 
-        del r_data['region_id']
-        del r_data['campaign_id']
-        del r_data['index']
+        dd_abstracted = {
+            "region_id": region_id,
+            "campaign_id":campaign_id,
+            "indicator_json": r_data
+        }
 
-        # first delete #
-        DataPointAbstracted.objects.filter(region_id = region_id\
-            ,campaign_id = campaign_id).delete()
+        dda_obj = DataPointAbstracted(**dd_abstracted)
 
-        # and then insert #
-        DataPointAbstracted.objects.create(
-            region_id = region_id,\
-            campaign_id = campaign_id,\
-            indicator_json = r_data
-        )
+        batch.append(dda_obj)
+
+    DataPointAbstracted.objects.all().delete()
+
+    DataPointAbstracted.objects.bulk_create(batch)

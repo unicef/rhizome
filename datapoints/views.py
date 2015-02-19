@@ -449,32 +449,52 @@ def agg_datapoint(request):
 
 def populate_dummy_ngo_dash(request):
 
-    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv'\
-        ,index_col='indicator_id')
+    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
+    campaign_id = 100
 
-    print ng_dash_df
+    region_ids = []
+    batch = []
 
-    x = ng_dash_df.to_dict()
+    dist_r = ng_dash_df['region_id'].unique()
 
-    # cleaned_json = json.loads(x['value'])
-    cleaned_json = json.dumps(x['value'], ensure_ascii=False)
+    for r in dist_r:
 
-    # cleaned_json = str(sub_json).replace("{,","{")
+        df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
+
+        valid_cols_df = df_filtered_by_region[['indicator_id','value']]
+        ix_df = valid_cols_df.set_index('indicator_id')
+
+        x = ix_df.to_dict()
+
+        # cleaned_json = json.loads(x['value'])
+        cleaned_json = json.dumps(x['value'], ensure_ascii=False)
+
+        dda_dict = {
+            'region_id': r,
+            'campaign_id':campaign_id,
+            'indicator_json':cleaned_json
+        }
 
 
-    curs = DataPoint.objects.raw("""
-    TRUNCATE TABLE datapoint_abstracted;
+        print r
+        print cleaned_json
 
-    INSERT INTO datapoint_abstracted
-    (region_id, campaign_id, indicator_json)
+        DataPointAbstracted.objects.filter(campaign_id = campaign_id\
+            , region_id = r).delete()
 
-    SELECT 12907, 111, %s;
+        DataPointAbstracted.objects.create(**dda_dict)
 
-    SELECT id from datapoint limit 1;
-    """,[cleaned_json])
-
-    for x in curs:
-        print x
+        # for r_no, r_data in rc_dict.iteritems():
+        #
+        #     region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
+        #
+        #     dd_abstracted = {
+        #         "region_id": region_id,
+        #         "campaign_id":campaign_id,
+        #         "indicator_json": r_data
+        #     }
+        #
+        #     dda_obj = DataPointAbstracted(**dd_abstracted)
 
 
     return HttpResponseRedirect('/datapoints/cache_control/')
