@@ -49,7 +49,8 @@ module.exports = {
 				indicator__in: _.map(this.indicators, function (d) {
 					return d.id || d;
 				}),
-				campaign__in     : [this.campaign.id],
+				campaign_start: this.campaign.end,
+				campaign_end  : this.campaign.end,
 				parent_region__in: [this.region],
 				level            : 'province'
 			};

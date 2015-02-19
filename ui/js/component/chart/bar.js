@@ -47,11 +47,12 @@ module.exports = {
 
 		query: function () {
 			return {
-				indicator__in: _.map(this.indicators, function (d) {
+				indicator__in : _.map(this.indicators, function (d) {
 					return d.id || d;
 				}),
-				region__in   : [this.region],
-				limit        : 1
+				region__in    : [this.region],
+				campaign_start: this.campaign.end,
+				campaign_end  : this.campaign.end
 			};
 		},
 
