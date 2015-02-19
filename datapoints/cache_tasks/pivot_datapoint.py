@@ -8,7 +8,8 @@ from datapoints.models import *
 def full_cache_refresh():
 
     indicator_raw = DataPoint.objects.raw("""
-        SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed""")
+        SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed
+        ORDER BY indicator_id DESC""")
 
     all_indicator_ids = [x.indicator_id for x in indicator_raw]
 
@@ -22,8 +23,9 @@ def full_cache_refresh():
             , dwc.region_id
             , dwc.campaign_id
         FROM datapoint_with_computed dwc
-        WHERE region_id = 12907
-        AND campaign_id = 111
+        INNER JOIN region r
+        ON dwc.region_id = r.id
+        AND r.office_id = 1
         """)
 
     rc_tuple_list = []
@@ -61,12 +63,15 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     		,d.campaign_id
     		,value as "%s"
         FROM datapoint_with_computed d
+        INNER JOIN region r
+        ON d.region_id = r.id
+        AND r.office_id = 1
         WHERE indicator_id  = %s;
         """ % (i_id,i_id)
 
-    print 'done query'
     indicator_df = read_sql(sql,con,columns=column_header)
-
+    print 'done query'
+    con.close()
     merged_df = rc_df.merge(indicator_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
 

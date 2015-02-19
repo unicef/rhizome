@@ -149,7 +149,7 @@ def create_source_meta_data(document_id):
         ## campaigns ##
         campaign_strings = sdp_df['campaign_string'].unique()
 
-        for c in campaign_strings:
+        for cntr,(c) in enumerate(campaign_strings):
 
             try:
                 created, s_c_obj = SourceCampaign.objects.create(
@@ -157,6 +157,8 @@ def create_source_meta_data(document_id):
                     document_id = document_id,
                     source_guid = ('%s - %s',( document_id, c )))
             except IntegrityError:
+                pass
+            except TypeError: # fix for POL-332
                 pass
 
         ## indicators ##

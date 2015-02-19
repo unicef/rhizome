@@ -373,6 +373,9 @@ def calc_datapoint(request):
             AND d_part.campaign_id = d_whole.campaign_id
             AND d_part.region_id = d_whole.region_id;
 
+        CREATE INDEX ind_ix on datapoint_with_computed (indicator_id);
+        CLUSTER datapoint_with_computed using ind_ix;
+
         SELECT id FROM agg_datapoint LIMIT 1;
     """)
 
