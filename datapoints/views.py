@@ -11,7 +11,6 @@ from pandas import read_csv
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
-from datapoints.cache_tasks.ngo_dash import populate_dummy_ngo_dash
 
 from datapoints.mixins import PermissionRequiredMixin
 
