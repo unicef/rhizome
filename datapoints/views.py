@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
@@ -446,9 +448,33 @@ def agg_datapoint(request):
 
 def populate_dummy_ngo_dash(request):
 
-    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
+    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv',sep='\t'
+        ,index_col='indicator_id')
 
     print ng_dash_df
+
+    x = ng_dash_df.to_dict()
+
+    # cleaned_json = json.loads(x['value'])
+    cleaned_json = json.dumps(x['value'], ensure_ascii=False)
+
+    # cleaned_json = str(sub_json).replace("{,","{")
+
+
+    curs = DataPoint.objects.raw("""
+    TRUNCATE TABLE datapoint_abstracted;
+
+    INSERT INTO datapoint_abstracted
+    (region_id, campaign_id, indicator_json)
+
+    SELECT 12907, 111, %s;
+
+    SELECT id from datapoint limit 1;
+    """,[cleaned_json])
+
+    for x in curs:
+        print x
+
 
     return HttpResponseRedirect('/datapoints/regions/')
 
