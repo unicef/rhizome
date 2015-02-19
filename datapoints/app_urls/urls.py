@@ -65,6 +65,8 @@ urlpatterns = [
     url(r'^agg_datapoint/$', views.agg_datapoint, name='agg_datapoint'),
     url(r'^calc_datapoint/$', views.calc_datapoint, name='calc_datapoint'),
     url(r'^pivot_datapoint/$', views.pivot_datapoint, name='pivot_datapoint'),
+    url(r'^populate_dummy_ngo_dash/$', views.populate_dummy_ngo_dash, name='populate_dummy_ngo_dash'),
+
 
 
 ]

@@ -4,13 +4,15 @@ from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
-
+from pandas import read_csv
 
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
+from datapoints.cache_tasks.ngo_dash import populate_dummy_ngo_dash
 
 from datapoints.mixins import PermissionRequiredMixin
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -442,6 +444,13 @@ def agg_datapoint(request):
     return HttpResponseRedirect('/datapoints/regions/')
 
 
+def populate_dummy_ngo_dash(request):
+
+    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
+
+    print ng_dash_df
+
+    return HttpResponseRedirect('/datapoints/regions/')
 
 
 def pivot_datapoint(request):
