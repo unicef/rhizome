@@ -472,15 +472,12 @@ def populate_dummy_ngo_dash(request):
         dda_dict = {
             'region_id': r,
             'campaign_id':campaign_id,
-            'indicator_json':cleaned_json
+            'indicator_json':x['value']
         }
-
-
-        print r
-        print cleaned_json
 
         DataPointAbstracted.objects.filter(campaign_id = campaign_id\
             , region_id = r).delete()
+
 
         DataPointAbstracted.objects.create(**dda_dict)
 
