@@ -448,7 +448,7 @@ def agg_datapoint(request):
 
 def populate_dummy_ngo_dash(request):
 
-    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv',sep='\t'
+    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv'\
         ,index_col='indicator_id')
 
     print ng_dash_df
