@@ -459,14 +459,14 @@ def populate_dummy_ngo_dash(request):
 
     for r in dist_r:
 
+        print r
+
         df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
 
         valid_cols_df = df_filtered_by_region[['indicator_id','value']]
         ix_df = valid_cols_df.set_index('indicator_id')
 
         x = ix_df.to_dict()
-
-        # cleaned_json = json.loads(x['value'])
         cleaned_json = json.dumps(x['value'], ensure_ascii=False)
 
         dda_dict = {
@@ -478,9 +478,7 @@ def populate_dummy_ngo_dash(request):
         DataPointAbstracted.objects.filter(campaign_id = campaign_id\
             , region_id = r).delete()
 
-
         DataPointAbstracted.objects.create(**dda_dict)
-
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
