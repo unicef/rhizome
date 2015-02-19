@@ -46,7 +46,8 @@ module.exports = {
 					return d.id || d;
 				}),
 
-				campaign__in : [this.campaign.id],
+				campaign_start: this.campaign.end,
+				campaign_end  : this.campaign.end,
 				parent_region: this.region,
 				level        : 'province'
 			};
