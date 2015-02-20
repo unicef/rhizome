@@ -21,12 +21,16 @@ def full_cache_refresh():
 
     distict_region_campaign_list = DataPoint.objects.raw("""
         SELECT DISTINCT
-            1 as id
-            , dwc.region_id
-            , dwc.campaign_id
+        	1 as id
+        	, dwc.region_id
+        	, dwc.campaign_id
         FROM datapoint_with_computed dwc
-        WHERE 1 = 1
-        AND region_id is NOT NULL;
+        INNER JOIN region r
+        ON dwc.region_id = r.id
+        INNER JOIN campaign c
+        ON dwc.campaign_id = c.id
+        AND r.office_id = c.office_id
+        WHERE region_id is NOT NULL;
         """)
 
     rc_tuple_list = []
