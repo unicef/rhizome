@@ -308,7 +308,7 @@ def init():
         help='Include successful tests in output as well as failures')
 
     # Inputs
-    parser.add_argument('cases', metavar='TESTS.CSV', type=argparse.FileType('r'),
+    parser.add_argument('cases', metavar='TESTS.CSV', type=argparse.FileType('rU'),
         help='CSV containing test caseDef definitions')
 
     args = parser.parse_args()
@@ -319,26 +319,26 @@ def init():
     return args
 
 
-def test(campaign, region, indicator, expected, threshold=0):
+def test(campaign_id, region_id, indicator_id, expected, threshold=0):
     try:
-        actual = DataPoint(campaign.id, region.id, indicator.id)
+        actual = DataPoint(campaign_id, region_id, indicator_id)
     except MultipleValuesError:
-        return MultipleValues(campaign, region, indicator)
+        return MultipleValues(campaign_id, region_id, indicator_id)
 
     try:
         if abs(float(expected) - actual.value) > threshold:
-            return IncorrectValue(campaign, region, indicator, expected, actual.value)
+            return IncorrectValue(campaign_id, region_id, indicator_id, expected, actual.value)
     except ValueError:
         if expected in ('', '#DIV/0!'):
             if actual.value:
-                return UnexpectedValue(campaign, region, indicator, actual.value)
+                return UnexpectedValue(campaign_id, region_id, indicator_id, actual.value)
         else:
             raise
     except TypeError:
         if expected not in ('', '#DIV/0!'):
-            return MissingValue(campaign, region, indicator, expected)
+            return MissingValue(campaign_id, region_id, indicator_id, expected)
 
-    return Success(campaign, region, indicator, expected, actual.value)
+    return Success(campaign_id, region_id, indicator_id, expected, actual.value)
 
 
 def runTests(cases):
@@ -346,12 +346,13 @@ def runTests(cases):
 
     for caseDef in cases:
         try:
+            print caseDef
             yield test(
-                Campaign.get(caseDef['Campaign']),
-                Region.get(caseDef['Region']),
-                Indicator(caseDef['Indicator ID'], caseDef['Indicator']),
-                caseDef['Value'],
-                args.threshold
+                caseDef['campaign_id'],
+                caseDef['region_id'],
+                caseDef['indicator_id'],
+                caseDef['value'],
+                # args.threshold
             )
         except Campaign.NotFoundError:
             yield CampaignNotFound(caseDef['Campaign'])
@@ -378,13 +379,15 @@ if __name__ == '__main__':
 
     start = time.clock()
     for result in runTests(csv.DictReader(args.cases)):
-        if args.verbose or isinstance(result, Failure):
-            print result
 
-        if writer:
-            writer.writerow(result.toDict())
-
-        summary.add(result)
+        print 1
+    #     if args.verbose or isinstance(result, Failure):
+    #         print result
+    #
+    #     if writer:
+    #         writer.writerow(result.toDict())
+    #
+    #     summary.add(result)
 
     end = time.clock()
     Record.disconnect()

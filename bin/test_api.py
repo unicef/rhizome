@@ -48,8 +48,11 @@ def test_url(url, target_value):
             passed = False
             response_value = -999
 
-    if (target_value - response_value) / (target_value + .00000000001) < .01:
-        passed = True
+    try:
+        if (abs(target_value - response_value)) / (target_value + .00000000001) < .01:
+            passed = True
+    except TypeError:
+        passed = False
 
     if passed is True:
         print "Passed test"
@@ -67,17 +70,16 @@ def test_nco_dash():
 
     for row_ix, row_data in ng_dash_df.iterrows():
 
-        if row_data.indicator_id == 348:
-            url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
-                ,campaign_id)
+        url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
+            ,campaign_id)
 
-            print url_string
+        print url_string
 
-            if test_url(url_string,row_data.value):
+        if test_url(url_string,row_data.value):
 
-                signals_passed += 1
+            signals_passed += 1
 
-            print "\n\n****************** Passed %d out of %d signal tests" % (signals_passed, len(ng_dash_df))
+        print "\n\n****************** Passed %d out of %d signal tests" % (signals_passed, len(ng_dash_df))
 
 
 if __name__ == "__main__":
