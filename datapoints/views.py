@@ -414,6 +414,8 @@ def agg_datapoint(request):
     FROM datapoint d
     WHERE value != 'NaN';
     --
+
+    DROP INDEX IF EXISTS ag_uq_ix;
     CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
 
     SELECT id from datapoint limit 1;
@@ -425,9 +427,9 @@ def agg_datapoint(request):
 
 
     region_loop = {
-        # 0 : 'settlement',
-        # 1 : 'sub-district',
-        # 2 : 'district',
+        0 : 'settlement',
+        1 : 'sub-district',
+        2 : 'district',
         3 : 'province',
         # 4 : 'country',
     }
