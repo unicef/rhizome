@@ -4,11 +4,12 @@
 
 		<i class="fa fa-lg"
 		   v-class="fa-caret-right: !open, fa-caret-down: open"
-		   v-on="click: open = !open"></i>
+		   v-on="click: open = !open"
+			 style="cursor: pointer"></i>
 
 		<i class="fa fa-check fa-lg"></i>
 
-		<span v-on="click: toggle">{{ title }}</span>
+		<span v-on="click: toggle" style="cursor: pointer">{{ title }}</span>
 	</div>
 
 	<ul v-if="hasChildren && open">
