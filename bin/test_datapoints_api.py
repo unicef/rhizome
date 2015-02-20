@@ -146,12 +146,13 @@ class DataPoint:
         cls.opener = urllib2.build_opener(handler)
 
     def __init__(self, campaign, region, indicator):
-        response = self.opener.open(self.url + '?' + urlencode(dict(
+        self.url_string = self.url + '?' + urlencode(dict(
             campaign__in=campaign,
             region__in=region,
-            indicator__in=indicator,
-            **self.auth
-        )))
+            indicator__in=indicator))
+
+        print 'trying...\n %s' % self.url_string
+        response = self.opener.open(self.url_string)
 
         objects = json.loads(response.read())['objects']
 
