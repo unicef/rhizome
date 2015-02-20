@@ -450,7 +450,7 @@ def agg_datapoint(request):
 def populate_dummy_ngo_dash(request):
 
     ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
-    campaign_id = 100
+    campaign_id = 201
 
     region_ids = []
     batch = []

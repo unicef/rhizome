@@ -40,8 +40,14 @@ def test_url(url, target_value):
     if response is not None:
 
         # parse_value #
-        response_value = response["objects"][0]["indicators"][0]["value"]
-        print response_value
+        try:
+            response_value = response["objects"]#[0]["indicators"][0]["value"]
+            print response_value
+            print target_value
+        except Exception as err:
+            print err
+            passed = False
+            return None
 
         if target_value == response_value:
             passed = True
@@ -57,20 +63,20 @@ def test_nco_dash():
 
     ng_dash_df = read_csv('/Users/johndingee_seed/code/UF04/polio/datapoints/tests/_data/ngo_dash.csv')
     campaign_id = 100
-    # for row in ng_dash_df.iteritems:
-    #     print row
 
     signals_passed = 0
 
     for row_ix, row_data in ng_dash_df.iterrows():
-        url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
-            ,campaign_id)
 
-        if test_url(url_string,row_data.value):
+        if row_data.indicator_id == 264:
+            url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
+                ,campaign_id)
 
-            signals_passed += 1
+            if test_url(url_string,row_data.value):
 
-        print "\n\n****************** Passed %d out of %d signal tests" % (signals_passed, len(ng_dash_df))
+                signals_passed += 1
+
+            print "\n\n****************** Passed %d out of %d signal tests" % (signals_passed, len(ng_dash_df))
 
 
 if __name__ == "__main__":

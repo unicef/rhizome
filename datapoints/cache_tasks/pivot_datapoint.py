@@ -10,9 +10,11 @@ def full_cache_refresh():
         SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed
         ORDER BY indicator_id DESC""")
 
-    all_indicator_ids = [x.indicator_id for x in indicator_raw]
+    # all_indicator_ids = [x.indicator_id for x in indicator_raw]
+    all_indicator_ids = [414,274]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
+
 
     print ' ... QUERYING FOR DISTINCT REGION / CAMPAIGN ... '
 
@@ -89,14 +91,23 @@ def r_c_df_to_db(rc_df):
 
     nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
 
-    rc_dict = nan_to_null_df.transpose().to_dict()
+    indexed_df = nan_to_null_df.reset_index(drop=True)
+    # rc_df = rc_df.reset_index(level=[0,1])
+
+    rc_dict = indexed_df.transpose().to_dict()
+
 
     batch = []
 
+    print nan_to_null_df
 
     for r_no, r_data in rc_dict.iteritems():
 
         region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
+
+        del r_data["index"]
+        del r_data["region_id"]
+        del r_data["campaign_id"]
 
         dd_abstracted = {
             "region_id": region_id,
