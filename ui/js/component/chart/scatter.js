@@ -65,12 +65,19 @@ module.exports = {
 				.groupBy('region')
 				.map(function (d, region) {
 					var indicators = _.indexBy(d, 'indicator');
-					return {
+
+					var isDefined = indicators.hasOwnProperty(xProp) &&
+						indicators.hasOwnProperty(yProp);
+
+					return isDefined ? {
 						id  : region,
 						name: region,
 						x   : indicators[xProp].value,
 						y   : indicators[yProp].value
-					};
+					} : null;
+				})
+				.filter(function (d) {
+					return d !== null;
 				})
 				.value();
 		},
