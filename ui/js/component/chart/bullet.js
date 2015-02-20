@@ -1,5 +1,6 @@
 'use strict';
 
+var _  = require('lodash');
 var d3 = require('d3');
 
 module.exports = {
@@ -163,8 +164,9 @@ module.exports = {
 
 			var fillColor = fill(this.value, this.marker, ranges);
 
+			var missing = _.isNull(this.value) || _.isUndefined(this.value);
 			var value = svg.selectAll('.value')
-				.data(this.value ? [this.value] : []);
+				.data(missing ? [] : [this.value]);
 
 			value.transition().duration(300)
 				.style('fill', fillColor);
@@ -193,9 +195,7 @@ module.exports = {
 				this.indicator.format || String;
 
 			var label = svg.selectAll('.label')
-				.data(this.value || this.value === 0 ?
-					[this.value] :
-					[]);
+				.data(missing ? [] : [this.value]);
 
 			label.enter().append('text')
 				.attr({

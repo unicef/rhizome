@@ -36,6 +36,7 @@
 						     data-aspect="1.8"
 						     data-margin-bottom="12"
 						     data-duration="2 years"
+						     data-indicators="[431,432,433]"
 						     v-with="region: region, campaign: campaign"></svg>
 			</section>
 		</div>
@@ -64,7 +65,7 @@
 						     data-aspect="1.618"
 						     data-margin-bottom="24"
 						     data-period="2 years"
-						     data-indicators="[187,189]"
+						     data-indicators="[167,189]"
 						     data-format-string="%"
 						     v-with="campaign: campaign, region: region"></div>
 					</section>
@@ -91,6 +92,7 @@
 				</div>
 
 				<div class="medium-3 columns">
+					<h4>Missed Children Due to Refusal</h4>
 					<div v-component="chart-choropleth"
 					     v-with="region: region, campaign: campaign"
 					     data-indicator="166"
@@ -104,7 +106,7 @@
 					<!-- 177 -->
 					<p>No data</p>
 
-					<h6>Missed Children</h6>
+					<h6>Missed Children Due to Refusal</h6>
 
 					<svg class="legend reds" viewBox="0 0 177 84">
 						<g>
