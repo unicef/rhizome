@@ -12,6 +12,7 @@ module.exports = {
 	],
 
 	mixins: [
+		require('./mixin/resize'),
 		require('./mixin/with-indicator')
 	],
 
@@ -21,7 +22,7 @@ module.exports = {
 
 	data: function () {
 		return {
-			markerWidth: 3,
+			markerWidth : 3,
 			formatString: '%'
 		};
 	},
