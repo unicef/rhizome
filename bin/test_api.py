@@ -62,15 +62,17 @@ def test_url(url, target_value):
 def test_nco_dash():
 
     ng_dash_df = read_csv('/Users/johndingee_seed/code/UF04/polio/datapoints/tests/_data/ngo_dash.csv')
-    campaign_id = 100
+    campaign_id = 111
 
     signals_passed = 0
 
     for row_ix, row_data in ng_dash_df.iterrows():
 
-        if row_data.indicator_id == 264:
+        if row_data.indicator_id == 348:
             url_string = "http://localhost:8000/api/v1/datapoint/?indicator__in=%s&region__in=%s&campaign__in=%s" % (row_data.indicator_id,row_data.region_id\
                 ,campaign_id)
+
+            print url_string
 
             if test_url(url_string,row_data.value):
 

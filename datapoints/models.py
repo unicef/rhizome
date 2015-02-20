@@ -230,6 +230,17 @@ class DataPointAbstracted(models.Model):
         db_table = 'datapoint_abstracted'
         unique_together = ('region_id','campaign_id')
 
+class DataPointComputed(models.Model):
+
+    region_id = models.IntegerField()
+    campaign_id = models.IntegerField()
+    indicator_id = models.IntegerField()
+    value = models.FloatField()
+
+    class Meta:
+        db_table = 'datapoint_with_computed'
+        managed = False
+
 class MissingMapping(models.Model):
 
     datapoint = models.ForeignKey(DataPoint) # Fix this ASAP! -> http://stackoverflow.com/questions/9863355/

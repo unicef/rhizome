@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas import DataFrame, read_sql
+from pandas.tools.pivot import pivot_table
 
 from datapoints.models import *
 
@@ -11,7 +12,7 @@ def full_cache_refresh():
         ORDER BY indicator_id DESC""")
 
     # all_indicator_ids = [x.indicator_id for x in indicator_raw]
-    all_indicator_ids = [414,274]
+    all_indicator_ids = [348,274,5]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
@@ -24,12 +25,10 @@ def full_cache_refresh():
             , dwc.region_id
             , dwc.campaign_id
         FROM datapoint_with_computed dwc
-        INNER JOIN region r
-        ON dwc.region_id = r.id
-        AND r.office_id = 1
-        INNER JOIN region_type rt
-        ON r.region_type_id = rt.id
-        AND lower(rt.name) in ('country','province')
+        WHERE 1 = 1
+        --WHERE region_id = 12907
+        --AND campaign_id = 111
+        AND region_id is NOT NULL;
         """)
 
     rc_tuple_list = []
@@ -47,6 +46,8 @@ def full_cache_refresh():
 
         print 'indicator_id.. %s' % i_id
 
+        print '...trying...'
+
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
     r_c_df_to_db(rc_df)
@@ -59,30 +60,51 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
-    curs = DataPoint.objects.raw("""
-        SELECT
-    		d.region_id
-    		,d.campaign_id
-    		,value
-        FROM datapoint_with_computed d
-        WHERE indicator_id  = %s;
+    print 'indicator_id: %s' % i_id
 
-        SELECT ID FROM datapoint LIMIT 1;""",[i_id])
+    indicator_df = DataFrame(list(DataPointComputed.objects.filter(
+        indicator_id = i_id).values()))
 
-    indicator_data = []
+    pivoted_indicator_df = pivot_table(indicator_df, values='value',\
+        columns=['indicator_id'],index = ['region_id','campaign_id'])
 
-    for row in curs:
-        row_dict = {}
-        row_dict['campaign_id'] = row.campaign_id
-        row_dict['indicator_id'] = row.indicator_id
-        row_dict['region_id'] = row.region_id
-        indicator_data.append(row_dict)
+    cleaned_df = pivoted_indicator_df.reset_index(drop=True)
 
-    indicator_df = DataFrame(indicator_data,columns=column_header)
-    print 'done query'
+    print cleaned_df
+
+
+    # for row in curs:
+    #
+    #     # print 'campaign_id: %s: ' % row.campaign_id
+    #     # print 'indicator_id: %s: ' % row.indicator_id
+    #     # print 'region_id: %s: ' % row.region_id
+    #     # print 'value: %s: ' % row.value
+    #     #
+    #     # print '=====\n' * 5
+    #
+    #     print row.value
+    #
+    #     row_dict = {}
+    #     row_dict['campaign_id'] = row.campaign_id
+    #     row_dict['indicator_id'] = row.indicator_id
+    #     row_dict['region_id'] = row.region_id
+    #     row_dict['value'] = row.value
+    #     indicator_data.append(row_dict)
+    #
+    # print indicator_data
+    #
+    # indicator_df = DataFrame(indicator_data)#,columns=column_header)
+    # indicator_df[i_id] = indicator_df['value']
+
+    # print indicator_df
+    #
+    # print 'done query'
 
     merged_df = rc_df.merge(indicator_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
+
+    # print 'merged_df'
+    # print merged_df
 
     return merged_df
 
@@ -90,16 +112,10 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
 def r_c_df_to_db(rc_df):
 
     nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
-
     indexed_df = nan_to_null_df.reset_index(drop=True)
-    # rc_df = rc_df.reset_index(level=[0,1])
-
     rc_dict = indexed_df.transpose().to_dict()
 
-
     batch = []
-
-    print nan_to_null_df
 
     for r_no, r_data in rc_dict.iteritems():
 
