@@ -2,6 +2,7 @@
 
 var _  = require('lodash');
 var d3 = require('d3');
+var moment = require('moment');
 
 module.exports = {
 	replace : true,
@@ -36,7 +37,14 @@ module.exports = {
 				return null;
 			}
 
-			return this.datapoints[length - 1].value;
+			for (var i = 0, l = this.datapoints.length; i < l; i++) {
+				var d = this.datapoints[i];
+				if (moment(d.campaign.start_date).format('YYYYMMDD') === this.campaign.date) {
+					return d.value;
+				}
+			}
+
+			return null;
 		},
 
 		marker: function () {
@@ -48,12 +56,16 @@ module.exports = {
 
 			var datapoints = this.datapoints;
 			var avg        = 0;
+			var l          = 0;
 
-			for (var i = length - 2; i >= 0; i--) {
-				avg += datapoints[i].value;
+			for (var i = length - 1; i >= 0; i--) {
+				if (!_.isNull(datapoints[i].value) && !_.isUndefined(datapoints[i].value)) {
+					avg += datapoints[i].value;
+					l++;
+				}
 			}
 
-			avg /= (length - 1);
+			avg /= l;
 
 			return avg;
 		},
