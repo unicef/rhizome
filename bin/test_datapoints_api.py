@@ -283,6 +283,9 @@ class UnexpectedValue(Failure):
 class IncorrectValue(Failure):
     type = 'Incorrect Value'
 
+class NoValue(Failure):
+    type = 'No Value'
+
 
 def init():
     parser = argparse.ArgumentParser(description='Test Polio backend API')
@@ -328,6 +331,9 @@ def test(campaign_id, region_id, indicator_id, expected, threshold=0):
     try:
         if abs(float(expected) - actual.value) > threshold:
             return IncorrectValue(campaign_id, region_id, indicator_id, expected, actual.value)
+    except AttributeError:
+        return NoValue(campaign_id, region_id, indicator_id, -1)
+
     except ValueError:
         if expected in ('', '#DIV/0!'):
             if actual.value:
