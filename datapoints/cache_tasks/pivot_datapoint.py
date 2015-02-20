@@ -11,8 +11,8 @@ def full_cache_refresh():
         SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed
         ORDER BY indicator_id DESC""")
 
-    # all_indicator_ids = [x.indicator_id for x in indicator_raw]
-    all_indicator_ids = [348,274,5]
+    all_indicator_ids = [x.indicator_id for x in indicator_raw]
+    # all_indicator_ids = [348,274,5]
 
     indicator_df = DataFrame(columns = all_indicator_ids)
 
@@ -26,8 +26,6 @@ def full_cache_refresh():
             , dwc.campaign_id
         FROM datapoint_with_computed dwc
         WHERE 1 = 1
-        --WHERE region_id = 12907
-        --AND campaign_id = 111
         AND region_id is NOT NULL;
         """)
 

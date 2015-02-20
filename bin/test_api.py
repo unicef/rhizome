@@ -21,7 +21,7 @@ print "****************\nTesting API: %s\n****************\n\n" % api_url
 def test_url(url, target_value):
 
     response = None
-    passed = True
+    passed = False
 
     # HTTP test
     try:
@@ -41,16 +41,15 @@ def test_url(url, target_value):
 
         # parse_value #
         try:
-            response_value = response["objects"]#[0]["indicators"][0]["value"]
+            response_value = response["objects"][0]["indicators"][0]["value"]
             print response_value
             print target_value
         except Exception as err:
-            print err
             passed = False
-            return None
+            response_value = -999
 
-        if target_value == response_value:
-            passed = True
+    if (target_value - response_value) / (target_value + .00000000001) < .01:
+        passed = True
 
     if passed is True:
         print "Passed test"
