@@ -402,7 +402,7 @@ def agg_datapoint(request):
 
     # insert leave level data #
 
-    DataPoint.objects.raw("""
+    curs = DataPoint.objects.raw("""
 
     TRUNCATE TABLE agg_datapoint;
 
@@ -413,21 +413,28 @@ def agg_datapoint(request):
         region_id, campaign_id, indicator_id, value, 't'
     FROM datapoint d
     WHERE value != 'NaN';
-
     --
-    DROP INDEX IF EXISTS ag_uq_ix;
     CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
+
+    SELECT id from datapoint limit 1;
+
     """)
 
+    for x in curs:
+        print x
+
+
     region_loop = {
-        0 : 'settlement',
-        1 : 'sub-district',
-        2 : 'district',
+        # 0 : 'settlement',
+        # 1 : 'sub-district',
+        # 2 : 'district',
         3 : 'province',
         # 4 : 'country',
     }
 
     for k,v in region_loop.iteritems():
+
+        print 'TRYING .... %s' % v
 
         curs = DataPoint.objects.raw("""
             INSERT INTO agg_datapoint
@@ -450,7 +457,7 @@ def agg_datapoint(request):
             )
             GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
 
-        SELECT id FROM agg_datapoint LIMIT 1;
+        SELECT id FROM datapoint LIMIT 1;
         """,[v])
 
         for x in curs:
