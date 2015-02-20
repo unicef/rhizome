@@ -185,11 +185,11 @@ class Summary:
 class Result:
     fields = [
         'Type',
-        'Campaign',
+        # 'Campaign',
         'Campaign ID',
-        'Region',
+        # 'Region',
         'Region ID',
-        'Indicator',
+        # 'Indicator',
         'Indicator ID',
         'Expected',
         'Actual'
@@ -197,19 +197,19 @@ class Result:
 
     type = ''
 
-    def __init__(self, campaign, region, indicator, expected=None, actual=None):
-        self.campaign = campaign
-        self.region = region
-        self.indicator = indicator
+    def __init__(self, campaign_id, region_id, indicator_id, expected=None, actual=None):
+        self.campaign_id = campaign_id
+        self.region_id = region_id
+        self.indicator_id = indicator_id
         self.expected = expected
         self.actual = actual
 
     def __str__(self):
         return '{}: {} {} {} expected {}, found {}'.format(
             self.type,
-            self.campaign,
-            self.region,
-            self.indicator,
+            self.campaign_id,
+            self.region_id,
+            self.indicator_id,
             self.expected,
             self.actual
         )
@@ -217,12 +217,10 @@ class Result:
     def toDict(self):
         return {
             'Type': self.type,
-            'Campaign': '{} {}'.format(self.campaign.office, self.campaign.date),
-            'Campaign ID': self.campaign.id,
-            'Region': self.region.name,
-            'Region ID': self.region.id,
-            'Indicator': self.indicator.name,
-            'Indicator ID': self.indicator.id,
+            'Campaign ID': self.campaign_id,
+            'Region ID': self.region_id,
+            # 'Indicator': self.indicator.name,
+            'Indicator ID': self.indicator_id,
             'Expected': self.expected,
             'Actual': self.actual
         }
@@ -386,14 +384,13 @@ if __name__ == '__main__':
     start = time.clock()
     for result in runTests(csv.DictReader(args.cases)):
 
-        print 1
-    #     if args.verbose or isinstance(result, Failure):
-    #         print result
-    #
-    #     if writer:
-    #         writer.writerow(result.toDict())
-    #
-    #     summary.add(result)
+        if args.verbose or isinstance(result, Failure):
+            print result
+
+        if writer:
+            writer.writerow(result.toDict())
+
+        summary.add(result)
 
     end = time.clock()
     Record.disconnect()
