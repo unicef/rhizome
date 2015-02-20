@@ -58,7 +58,17 @@ module.exports = {
 					return d.value;
 				});
 
-			return layout(this.datapoints);
+			var total = _.reduce(this.datapoints, function (result, d) {
+				return result + d.value;
+			}, 0);
+
+			// Assume that if the total value of the pie chart is < 1, it's meant to
+			// show a percentage out of 100 and fill in the missing piece.
+			var data = (total < 1) ?
+				[{ value: 1 - total, indicator: 'other' }].concat(this.datapoints) :
+				this.datapoints;
+
+			return layout(data);
 		}
 
 	},
