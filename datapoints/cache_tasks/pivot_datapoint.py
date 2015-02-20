@@ -68,39 +68,12 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     pivoted_indicator_df = pivot_table(indicator_df, values='value',\
         columns=['indicator_id'],index = ['region_id','campaign_id'])
 
-    cleaned_df = pivoted_indicator_df.reset_index(drop=True)
 
-    print cleaned_df
+    cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
 
+    print cleaned_df[:4]
 
-    # for row in curs:
-    #
-    #     # print 'campaign_id: %s: ' % row.campaign_id
-    #     # print 'indicator_id: %s: ' % row.indicator_id
-    #     # print 'region_id: %s: ' % row.region_id
-    #     # print 'value: %s: ' % row.value
-    #     #
-    #     # print '=====\n' * 5
-    #
-    #     print row.value
-    #
-    #     row_dict = {}
-    #     row_dict['campaign_id'] = row.campaign_id
-    #     row_dict['indicator_id'] = row.indicator_id
-    #     row_dict['region_id'] = row.region_id
-    #     row_dict['value'] = row.value
-    #     indicator_data.append(row_dict)
-    #
-    # print indicator_data
-    #
-    # indicator_df = DataFrame(indicator_data)#,columns=column_header)
-    # indicator_df[i_id] = indicator_df['value']
-
-    # print indicator_df
-    #
-    # print 'done query'
-
-    merged_df = rc_df.merge(indicator_df,how='left')
+    merged_df = rc_df.merge(cleaned_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
 
     # print 'merged_df'
