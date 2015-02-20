@@ -322,7 +322,20 @@ def calc_datapoint(request):
         ,value
         ,is_agg
         ,CAST(0 as BOOLEAN) as is_calc
-        FROM agg_datapoint;
+        FROM agg_datapoint
+
+        UNION ALL
+
+        SELECT
+
+        id
+        ,indicator_id
+        ,region_id
+        ,campaign_id
+        ,value
+        ,'f'
+        ,CAST(0 as BOOLEAN) as is_calc
+        FROM datapoint WHERE indicator_id in (431,432,433);
 
         -- make ID column auto increment
         DROP SEQUENCE IF EXISTS dwc_seq;
