@@ -6,14 +6,18 @@ var d3     = require('d3');
 function hoverLine() {
 	var datapoints = [];
 	var diff       = function (a, b) { return a - b; };
-	var xFormat    = String;
-	var yFormat    = String;
-	var xScale     = d3.scale.linear();
-	var yScale     = d3.scale.linear();
-	var width      = 1;
 	var height     = 1;
+	var seriesName = null;
+	var width      = 1;
 	var x          = function (d) { return d.x; };
+	var xFormat    = String;
+	var xScale     = d3.scale.linear();
 	var y          = function (d) { return d.y; };
+	var yFormat    = String;
+	var yScale     = d3.scale.linear();
+	var _value     = function (d) {
+		return d.value;
+	};
 
 	function chart(selection) {
 		selection
@@ -66,6 +70,15 @@ function hoverLine() {
 		return chart;
 	};
 
+	chart.seriesName = function (value) {
+		if (!arguments.length) {
+			return seriesName;
+		}
+
+		seriesName = value;
+		return chart;
+	};
+
 	chart.xScale = function (value) {
 		if (!arguments.length) {
 			return xScale;
@@ -111,6 +124,15 @@ function hoverLine() {
 		return chart;
 	};
 
+	chart.value = function (value) {
+		if (!arguments.length) {
+			return _value;
+		}
+
+		_value = value;
+		return chart;
+	};
+
 	function onMouseMove() {
 		/* jshint validthis: true */
 		var cursor = d3.mouse(this)[0];
@@ -136,7 +158,7 @@ function hoverLine() {
 				var l            = range[left];
 				var closeToRight = (diff(val, l) / diff(r, l) > 0.5);
 
-				data[0] = closeToRight? range[right] : range[left];
+				data[0] = closeToRight ? range[right] : range[left];
 			}
 		}
 
@@ -239,7 +261,8 @@ function hoverLine() {
 
 		label
 			.text(function (d) {
-				return yFormat(y(d));
+				var name = seriesName ? seriesName(d) + ' ' : '';
+				return name + yFormat(_value(d));
 			})
 			.transition()
 			.duration(300)

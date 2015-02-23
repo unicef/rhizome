@@ -43,6 +43,7 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
+			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
 				// lodash.max uses the accessor to find the comparison value, but
@@ -51,7 +52,7 @@ module.exports = {
 				var last = _.max(d.values, function (v) { return v.month; });
 
 				return {
-					text: d.name,
+					text: d.name + ' – ' + fmt(last.value),
 					x   : x(last.month),
 					y   : y(last.value)
 				};
@@ -87,8 +88,9 @@ module.exports = {
 						// Fill out entries for the rest of the year
 						while (month < 11) {
 							series[year].push({
-								month: month,
-								value: total
+								month : month,
+								value : total,
+								year  : year
 							});
 							month++;
 						}
@@ -103,16 +105,18 @@ module.exports = {
 					var m = d.campaign.start_date.getMonth();
 					while (month < m) {
 						series[year].push({
-							month   : month,
-							value   : total
+							month : month,
+							value : total,
+							year  : year
 						});
 						month++;
 					}
 
 					total += d.value;
 					series[year].push({
-						month: month,
-						value: total
+						month : month,
+						value : total,
+						year  : year
 					});
 					month++;
 				});
@@ -141,7 +145,7 @@ module.exports = {
 
 				scale.domain([
 					Math.min(d3.min(s, value)),
-					d3.max(s, value) * 1.1
+					d3.max(s, value) * 1.2
 				]);
 			}
 
@@ -152,6 +156,10 @@ module.exports = {
 	methods: {
 		diffX: function (a, b) {
 			return a - b;
+		},
+
+		getSeriesName: function (d) {
+			return d.year + ' –';
 		},
 
 		getX: function (d) {

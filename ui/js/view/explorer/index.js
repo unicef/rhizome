@@ -178,6 +178,14 @@ module.exports = {
 				query.region__in = regions;
 			}
 
+			if (this.campaign.start) {
+				query.campaign_start = this.campaign.start;
+			}
+
+			if (this.campaign.end) {
+				query.campaign_end = this.campaign.end;
+			}
+
 			this.$set('src', api.datapoints.toString(query));
 		},
 

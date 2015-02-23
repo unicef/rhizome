@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
@@ -7,10 +8,13 @@ from django.views import generic
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
+from pandas import DataFrame
+import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
+from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -389,6 +393,63 @@ def calc_datapoint(request):
         CREATE INDEX ind_ix on datapoint_with_computed (indicator_id);
         CLUSTER datapoint_with_computed using ind_ix;
 
+        INSERT INTO datapoint_with_computed
+        (indicator_id,region_id,campaign_id,value,is_calc)
+
+
+        SELECT
+				denom.master_indicator_id
+          		,denom.region_id
+          		,denom.campaign_id
+          		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
+               , CAST(1 AS BOOLEAN) as is_calc
+          FROM (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'PART_OF_DIFFERENCE'
+          )num_part
+
+          INNER JOIN (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'WHOLE_OF_DIFFERENCE'
+
+          )num_whole
+          ON num_part.master_indicator_id = num_whole.master_indicator_id
+          AND num_part.region_id = num_whole.region_id
+          AND num_part.campaign_id = num_whole.campaign_id
+
+          INNER JOIN
+          (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
+          )denom
+          ON num_whole.region_id = denom.region_id
+          AND num_whole.master_indicator_id = denom.master_indicator_id
+         AND num_whole.campaign_id = denom.campaign_id;
+
         SELECT id FROM agg_datapoint LIMIT 1;
     """)
 
@@ -516,3 +577,61 @@ def cache_control(request):
 
     return render_to_response('cache_control.html',
     context_instance=RequestContext(request))
+
+
+def gdoc_qa(request):
+
+    # gc = gspread.login(gdoc_u,gdoc_p)
+    # worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    # list_of_lists = worksheet.get_all_values()
+    # gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
+    #
+    # gd_df = gd_df[gd_df['region_id'] != '0']
+    # # gd_df = gd_df[gd_df['indicator_id'] == '239']
+    #
+    # gd_dict = gd_df.transpose().to_dict()
+    #
+    # final_qa_data = []
+    #
+    # for k,v in gd_dict.iteritems():
+    #
+    #     try:
+    #         dwc = DataPointComputed.objects.get(
+    #             region_id = v['region_id'],
+    #             campaign_id = v['campaign_id'],
+    #             indicator_id = v['indicator_id'],
+    #         )
+    #
+    #         v['computed_value'] = dwc.value
+    #
+    #         if abs(float(dwc.value) - float(v['value']))< .001:
+    #             passed = 1
+    #         else:
+    #             passed = 0
+    #
+    #     except Exception:
+    #         v['computed_value'] = -1
+    #         passed = 0
+    #
+    #     v['passed'] = passed
+    #
+    #     if passed == 0:
+    #         final_qa_data.append(v)
+    #
+    #
+    # indicator_breakdown = []
+    # missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+    #     .agg('count').transpose().to_dict()
+    #
+    # for k,v in missed_by_ind_id.iteritems():
+    #     ind_dict = {'indicator_id':k ,'count_missed': v['value']}
+    #     indicator_breakdown.append(ind_dict)
+    #
+    # qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
+
+    final_qa_data, indicator_breakdown, qa_score = [],[],0.0
+
+    return render_to_response('qa_data.html',
+        {'qa_data': final_qa_data, 'qa_score':qa_score\
+        ,'indicator_breakdown':indicator_breakdown},
+        context_instance=RequestContext(request))
