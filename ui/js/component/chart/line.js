@@ -74,17 +74,16 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
+			var target = this.highlight || this.campaign.date;
+			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
-				// lodash.max uses the accessor to find the comparison value, but
-				// returns the entire object; d3.max returns the value returned
-				// by the accessor
 				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 				return {
-					text: d.name,
-					x   : x(last.campaign.start_date),
-					y   : y(last.value)
+					series : d.name + ' ' + fmt(d.value),
+					x      : x(last.campaign.start_date),
+					y      : y(last.value)
 				};
 			});
 
@@ -158,7 +157,7 @@ module.exports = {
 
 			var upper = this.empty ?
 				1 :
-				(d3.max(datapoints, y) || 1) * 1.1;
+				(d3.max(datapoints, y) || 1) * 1.2;
 
 			return d3.scale.linear()
 				.domain([lower, upper])
@@ -176,12 +175,13 @@ module.exports = {
 		},
 
 		draw: function () {
-			var svg      = d3.select(this.$el);
-			var renderer = this.renderer;
-			var xScale   = this.xScale;
-			var yScale   = this.yScale;
-			var domain   = xScale.domain();
-			var range    = yScale.domain();
+			var svg        = d3.select(this.$el);
+			var renderer   = this.renderer;
+			var xScale     = this.xScale;
+			var yScale     = this.yScale;
+			var domain     = xScale.domain();
+			var range      = yScale.domain();
+			var indicators = _.indexBy(this.indicators, 'id');
 
 			// Set up the hover interaction
 			svg.select('svg')
@@ -195,6 +195,7 @@ module.exports = {
 					.xScale(xScale)
 					.yScale(yScale)
 					.diff(this.diffX)
+					.seriesName(this.getSeriesName)
 					.datapoints(_(this.series).pluck('values').flatten().value())
 				);
 
@@ -241,6 +242,10 @@ module.exports = {
 			gy.selectAll('g').classed('minor', function (d) {
 				return d !== range[0];
 			});
+		},
+
+		getSeriesName: function (d) {
+			return _.indexBy(this.indicators, 'id')[d.indicator].short_name;
 		},
 
 		getX: function (d) {

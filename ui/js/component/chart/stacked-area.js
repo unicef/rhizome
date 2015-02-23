@@ -22,6 +22,7 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
+			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
 					// lodash.max uses the accessor to find the comparison value, but
@@ -30,7 +31,7 @@ module.exports = {
 					var last = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 					return {
-						text: d.name,
+						text: d.name + ' ' + fmt(last.value),
 						x   : x(last.campaign.start_date),
 						y   : y(last.y0 + last.y)
 					};
@@ -68,7 +69,6 @@ module.exports = {
 			}
 
 			var stack = d3.layout.stack()
-				.order('inside-out')
 				.offset('zero')
 				.x(function (d) {
 					return d.campaign.start_date;
@@ -115,7 +115,7 @@ module.exports = {
 
 				scale.domain([
 					Math.min(0, d3.min(flat, y)),
-					d3.max(flat, y) * 1.1
+					d3.max(flat, y) * 1.2
 				]);
 			}
 
