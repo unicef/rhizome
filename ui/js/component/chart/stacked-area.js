@@ -68,7 +68,6 @@ module.exports = {
 			}
 
 			var stack = d3.layout.stack()
-				.order('inside-out')
 				.offset('zero')
 				.x(function (d) {
 					return d.campaign.start_date;
