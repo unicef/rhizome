@@ -529,11 +529,33 @@ def gdoc_qa(request):
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
-    gd_dict = gd_df[5].transpose().to_dict()
+    gd_dict = gd_df.transpose().to_dict()
 
     final_qa_data = []
 
     for k,v in gd_dict.iteritems():
+
+        try:
+            dwc = DataPointComputed.objects.get(
+                region_id = v['region_id'],
+                campaign_id = v['campaign_id'],
+                indicator_id = v['indicator_id'],
+            )
+
+            v['computed_value'] = dwc.value
+
+            if float(dwc.value) == float(v['value']):
+
+                passed = 1
+            else:
+                passed = 0
+
+        except Exception:
+            v['computed_value'] = -1
+            passed = 0
+
+        v['passed'] = passed
+
         final_qa_data.append(v)
 
 
