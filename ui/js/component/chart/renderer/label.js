@@ -29,6 +29,7 @@ function label() {
 
 		labelData.forEach(function (d) {
 			d.targetY = d.y;
+			d.targetX = d.x;
 		});
 
 		d3.layout.force()
@@ -45,6 +46,7 @@ function label() {
 					// off the chart. Based on the size of the labels inspected in
 					// Chrome, but should be calculated dynamically.
 					d.y = Math.min(Math.max(d.y, 20), height);
+					d.x = d.targetX;
 				});
 			})
 			.on('end', function () {

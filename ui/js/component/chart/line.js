@@ -175,12 +175,13 @@ module.exports = {
 		},
 
 		draw: function () {
-			var svg      = d3.select(this.$el);
-			var renderer = this.renderer;
-			var xScale   = this.xScale;
-			var yScale   = this.yScale;
-			var domain   = xScale.domain();
-			var range    = yScale.domain();
+			var svg        = d3.select(this.$el);
+			var renderer   = this.renderer;
+			var xScale     = this.xScale;
+			var yScale     = this.yScale;
+			var domain     = xScale.domain();
+			var range      = yScale.domain();
+			var indicators = _.indexBy(this.indicators, 'id');
 
 			// Set up the hover interaction
 			svg.select('svg')
@@ -194,6 +195,7 @@ module.exports = {
 					.xScale(xScale)
 					.yScale(yScale)
 					.diff(this.diffX)
+					.seriesName(this.getSeriesName)
 					.datapoints(_(this.series).pluck('values').flatten().value())
 				);
 
@@ -240,6 +242,10 @@ module.exports = {
 			gy.selectAll('g').classed('minor', function (d) {
 				return d !== range[0];
 			});
+		},
+
+		getSeriesName: function (d) {
+			return _.indexBy(this.indicators, 'id')[d.indicator].short_name;
 		},
 
 		getX: function (d) {
