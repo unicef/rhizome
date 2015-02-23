@@ -1,0 +1,37 @@
+{% extends "datapoints/base.html" %}
+
+
+
+{% block content %}
+
+    <div align="center">
+      <button class="button">
+        <a href="{% url 'datapoints:gdoc_qa' %}"> Test Data! </a>
+      </button>
+    </div>
+
+    <table>
+    <thead>
+        <tr>
+            <th> Region ID </th>
+            <th> Campaign ID </th>
+            <th> Indicator ID </th>
+            <th> Expected Value </th>
+
+
+        </tr>
+    </thead>
+    {% for row in qa_data %}
+    <tr>
+
+        <tr>
+            <th>{{ row.region_id }}</th>
+            <th>{{ row.campaign_id }}</th>
+            <th>{{ row.indicator_id }}</th>
+            <th>{{ row.value }}</th>
+        </tr>
+
+    {% endfor %}
+    </table>
+
+{% endblock %}

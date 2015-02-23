@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
@@ -7,10 +8,13 @@ from django.views import generic
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
+from pandas import DataFrame
+import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
+from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -516,3 +520,23 @@ def cache_control(request):
 
     return render_to_response('cache_control.html',
     context_instance=RequestContext(request))
+
+
+def gdoc_qa(request):
+
+    gc = gspread.login(gdoc_u,gdoc_p)
+    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    list_of_lists = worksheet.get_all_values()
+    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
+
+    gd_dict = gd_df[5].transpose().to_dict()
+
+    final_qa_data = []
+
+    for k,v in gd_dict.iteritems():
+        final_qa_data.append(v)
+
+
+    return render_to_response('qa_data.html',
+        {'qa_data': final_qa_data},
+        context_instance=RequestContext(request))
