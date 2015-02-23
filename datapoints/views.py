@@ -415,8 +415,8 @@ def calc_datapoint(request):
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'PART_OF_DIFFERENCE'
           )num_part
-          INNER JOIN (
 
+          INNER JOIN (
           	SELECT
           		cic.indicator_id as master_indicator_id
           		,ad.region_id
@@ -601,8 +601,7 @@ def gdoc_qa(request):
 
             v['computed_value'] = dwc.value
 
-            if float(dwc.value) == float(v['value']):
-
+            if abs(float(dwc.value) - float(v['value']))< .001:
                 passed = 1
             else:
                 passed = 0
@@ -613,9 +612,12 @@ def gdoc_qa(request):
 
         v['passed'] = passed
 
-        final_qa_data.append(v)
+        if passed == 0:
+            final_qa_data.append(v)
 
+
+    qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
 
     return render_to_response('qa_data.html',
-        {'qa_data': final_qa_data},
+        {'qa_data': final_qa_data, 'qa_score':qa_score},
         context_instance=RequestContext(request))
