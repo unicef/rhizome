@@ -194,10 +194,11 @@ svg {
 .down {
 	h6 {
 		color: $down-color;
+		font-weight: bold;
 	}
 
 	.bullet {
-		svg.value,
+		.value,
 		.marker {
 			fill: $down-color;
 		}

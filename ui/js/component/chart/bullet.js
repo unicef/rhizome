@@ -30,15 +30,21 @@ module.exports = {
 
 	computed: {
 		delta: function () {
-			return (this.marker - this.value) / this.marker;
+			return (this.value - this.marker);
 		},
 
-		up: function () {
-			return this.delta >= 0.25;
-		},
+		status: function () {
+			var delta = this.delta;
 
-		down: function () {
-			return this.delta < 0;
+			if (_.isNaN(delta)) {
+				return '';
+			}
+
+			if (delta < 0 || (this.value <= 0 && this.value !== null)) {
+				return 'down';
+			}
+
+			return delta >= 0.25 ? 'up' : '';
 		},
 
 		value: function () {
@@ -229,8 +235,8 @@ module.exports = {
 			})
 				.transition().duration(300)
 					.attr('x', d3.scale.linear()
-						.domain([0, this.max])
-						.range([0, this.width - this.markerWidth]));
+						.domain(x.domain())
+						.range([0, (width - this.markerWidth)]));
 
 			marker.exit()
 				.transition().duration(300)
