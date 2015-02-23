@@ -23,12 +23,15 @@ var path = {
 	zipfile   : 'uf04-frontend.zip'
 };
 
-var build = function (src, dst, opts) {
+function err(e) {
+	$.util.log(e.message);
+	exec('say -v Fred "Build failed"');
+	this.emit('end');
+}
+
+function build(src, dst, opts) {
 	var bundleStream = browserify(src, opts).bundle()
-		.on('error', function (e) {
-			$.util.log(e.message);
-			this.emit('end');
-		});
+		.on('error', err);
 
 	return bundleStream
 		.pipe(source(src))
@@ -45,10 +48,7 @@ gulp.task('styles', function () {
 			style: 'expanded',
 			precision: 10
 		}))
-		.on('error', function (e) {
-			$.util.log(e.message);
-			this.emit('end');
-		})
+		.on('error', err)
 		.pipe($.flatten())
 		.pipe(filter)
 		.pipe($.concat('screen.css'))
