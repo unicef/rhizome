@@ -189,3 +189,30 @@ svg {
 		margin-bottom: -0.2em;
 	}
 }
+
+// Bullet chart coloring
+.down {
+	h6 {
+		color: $down-color;
+	}
+
+	.bullet {
+		svg.value,
+		.marker {
+			fill: $down-color;
+		}
+	}
+}
+
+.up {
+	h6 {
+		color: $up-color;
+	}
+
+	svg.bullet {
+		.value,
+		.marker {
+			fill: $up-color;
+		}
+	}
+}
