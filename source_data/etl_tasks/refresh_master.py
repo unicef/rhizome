@@ -30,10 +30,6 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
-        print 'devils'
-        print self.indicator_id
-        print 'pie'
-
         if self.indicator_id:
             indicators = [self.indicator_id]
 
@@ -70,6 +66,7 @@ class MasterRefresh(object):
                 AND NOT EXISTS (
                      SELECT 1 FROM datapoint d
                      WHERE sd.id = d.source_datapoint_id)
+            	AND sd.cell_value != 'nan'
                 ''', [ind_id,self.document_id])
 
 
