@@ -586,6 +586,9 @@ def gdoc_qa(request):
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
+    gd_df = gd_df[gd_df['region_id'] != '0']
+    # gd_df = gd_df[gd_df['indicator_id'] == '239']
+
     gd_dict = gd_df.transpose().to_dict()
 
     final_qa_data = []
@@ -616,8 +619,18 @@ def gdoc_qa(request):
             final_qa_data.append(v)
 
 
+    indicator_breakdown = []
+    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+        .agg('count').transpose().to_dict()
+
+    for k,v in missed_by_ind_id.iteritems():
+        ind_dict = {'indicator_id':k ,'count_missed': v['value']}
+        indicator_breakdown.append(ind_dict)
+
     qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
 
+
     return render_to_response('qa_data.html',
-        {'qa_data': final_qa_data, 'qa_score':qa_score},
+        {'qa_data': final_qa_data, 'qa_score':qa_score\
+        ,'indicator_breakdown':indicator_breakdown},
         context_instance=RequestContext(request))
