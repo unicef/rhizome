@@ -158,7 +158,7 @@ module.exports = {
 
 			var upper = this.empty ?
 				1 :
-				(d3.max(datapoints, y) || 1) * 1.1;
+				(d3.max(datapoints, y) || 1) * 1.2;
 
 			return d3.scale.linear()
 				.domain([lower, upper])
