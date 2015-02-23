@@ -15,6 +15,7 @@ django-tables2==0.15.0
 django-tastypie==0.11.1
 docutils==0.12
 flake8==2.3.0
+gspread==0.2.2
 httplib2==0.9
 Jinja2==2.7.3
 jsonfield==1.0.0
