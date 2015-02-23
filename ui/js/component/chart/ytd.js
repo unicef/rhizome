@@ -43,6 +43,7 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
+			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
 				// lodash.max uses the accessor to find the comparison value, but
@@ -51,7 +52,7 @@ module.exports = {
 				var last = _.max(d.values, function (v) { return v.month; });
 
 				return {
-					text: d.name,
+					text: d.name + ' ' + fmt(last.value),
 					x   : x(last.month),
 					y   : y(last.value)
 				};

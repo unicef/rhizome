@@ -74,17 +74,16 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
+			var target = this.highlight || this.campaign.date;
+			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
-				// lodash.max uses the accessor to find the comparison value, but
-				// returns the entire object; d3.max returns the value returned
-				// by the accessor
 				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 				return {
-					text: d.name,
-					x   : x(last.campaign.start_date),
-					y   : y(last.value)
+					series : d.name + ' ' + fmt(d.value),
+					x      : x(last.campaign.start_date),
+					y      : y(last.value)
 				};
 			});
 
