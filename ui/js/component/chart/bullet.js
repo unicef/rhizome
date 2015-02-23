@@ -29,6 +29,27 @@ module.exports = {
 	},
 
 	computed: {
+		delta: function () {
+			return (this.value - this.marker);
+		},
+
+		status: function () {
+			var delta = this.delta;
+
+			if (_.isNaN(delta)) {
+				return '';
+			}
+
+			if (delta >= 0.25) {
+				return 'up';
+			}
+
+			if (delta < 0 || (this.value <= 0.5 && this.value !== null)) {
+				return 'down';
+			}
+
+			return '';
+		},
 
 		value: function () {
 			var length = this.length;
@@ -100,32 +121,6 @@ module.exports = {
 	methods: {
 
 		draw: function () {
-			function fill(value, marker, ranges) {
-				// FIXME: Hack for getting fill colors for good and bad performance.
-				// This should probably be encapsulated outside of this chart, applied
-				// to the VM before it is rendered, and the chart should just read a
-				// color property
-				var delta = value - marker;
-
-				if (delta > 0.25) {
-					return '#2B8CBE';
-				}
-
-				if (delta < 0) {
-					return '#AF373E';
-				}
-
-				for (var i = ranges.length - 1; i >= 0; i--) {
-					var range = ranges[i];
-
-					if (range.start <= value && range.end > value && range.name === 'bad') {
-						return '#AF373E';
-					}
-				}
-
-				return '#707677';
-			}
-
 			var svg    = d3.select(this.$el).select('.bullet');
 			var height = 100;
 			var width  = 318;
@@ -175,21 +170,15 @@ module.exports = {
 
 			labels.exit().remove();
 
-			var fillColor = fill(this.value, this.marker, ranges);
-
 			var missing = _.isNull(this.value) || _.isUndefined(this.value);
 			var value = svg.selectAll('.value')
 				.data(missing ? [] : [this.value]);
-
-			value.transition().duration(300)
-				.style('fill', fillColor);
 
 			value.enter().append('rect')
 				.attr({
 					'class': 'value',
 					'width': 0
-				})
-				.style('fill', fillColor);
+				});
 
 			value.attr({
 					'height': height / 2,
@@ -235,15 +224,13 @@ module.exports = {
 			var marker = svg.selectAll('.marker')
 				.data(this.marker ? [this.marker] : []);
 
-			marker.transition().duration(300)
-				.style('fill', fillColor);
+			marker.transition().duration(300);
 
 			marker.enter().insert('rect', '.label')
 				.attr({
 					'class': 'marker',
 					'x'    : 0
-				})
-				.style('fill', fillColor);
+				});
 
 			marker.attr({
 				'height': height * 3 / 4,
@@ -252,8 +239,8 @@ module.exports = {
 			})
 				.transition().duration(300)
 					.attr('x', d3.scale.linear()
-						.domain([0, this.max])
-						.range([0, this.width - this.markerWidth]));
+						.domain(x.domain())
+						.range([0, (width - this.markerWidth)]));
 
 			marker.exit()
 				.transition().duration(300)
