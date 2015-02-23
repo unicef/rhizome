@@ -40,11 +40,15 @@ module.exports = {
 				return '';
 			}
 
-			if (delta < 0 || (this.value <= 0 && this.value !== null)) {
+			if (delta >= 0.25) {
+				return 'up';
+			}
+
+			if (delta < 0 || (this.value <= 0.5 && this.value !== null)) {
 				return 'down';
 			}
 
-			return delta >= 0.25 ? 'up' : '';
+			return '';
 		},
 
 		value: function () {

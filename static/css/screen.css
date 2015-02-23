@@ -7174,6 +7174,23 @@ svg .label {
   margin-bottom: -0.2em;
 }
 
+.down h6 {
+  color: #AF373E;
+  font-weight: bold;
+}
+.down .bullet .value,
+.down .bullet .marker {
+  fill: #AF373E;
+}
+
+.up h6 {
+  color: #2B8CBE;
+}
+.up svg.bullet .value,
+.up svg.bullet .marker {
+  fill: #2B8CBE;
+}
+
 body {
   font-size: 0.625rem;
   padding: 11px 4px 11px 54px;
