@@ -8,8 +8,29 @@
       <button class="button">
         <a href="{% url 'datapoints:gdoc_qa' %}"> Test Data! </a>
       </button>
-    </div>
 
+    <h3> QA Score {{ qa_score }}</h3>
+    </div>
+    FAILED CALLS BY INDICATOR
+    <table>
+    <thead>
+        <tr>
+            <th> Indicator ID </th>
+            <th> Calls Failed </th>
+        </tr>
+    </thead>
+    {% for row in indicator_breakdown %}
+    <tr>
+
+        <tr>
+            <th>{{ row.indicator_id }}</th>
+            <th>{{ row.count_missed }}</th>
+        </tr>
+
+    {% endfor %}
+    </table>
+
+    ALL FAILED CALLS
     <table>
     <thead>
         <tr>
