@@ -21,8 +21,9 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'Region.source_region_id'
         raise RuntimeError("Cannot reverse this migration. 'Region.source_region_id' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration        # Adding field 'Region.source_region_id'
+
+        # The following code is provided here to aid in writing a correct migration
+        # Adding field 'Region.source_region_id'
         db.add_column('region', 'source_region_id',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['source_data.SourceRegion']),
                       keep_default=False)
@@ -185,7 +186,7 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['source_data.ProcessStatus']"})
         },
         u'source_data.sourceregion': {
-            'Meta': {'unique_together': "(('region_string', 'document'),)", 'object_name': 'SourceRegion'},
+            'Meta': {'unique_together': "(('region_string', 'document'),)", 'object_name': 'SourceRegion','db_table':"'source_region'"},
             'country': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['source_data.Document']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

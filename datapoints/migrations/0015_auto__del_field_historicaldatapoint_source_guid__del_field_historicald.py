@@ -38,7 +38,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'HistoricalDataPoint.source_guid'
         raise RuntimeError("Cannot reverse this migration. 'HistoricalDataPoint.source_guid' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'HistoricalDataPoint.source_guid'
         db.add_column(u'datapoints_historicaldatapoint', 'source_guid',
                       self.gf('django.db.models.fields.CharField')(max_length=255),
@@ -55,7 +55,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'DataPoint.source_guid'
         raise RuntimeError("Cannot reverse this migration. 'DataPoint.source_guid' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'DataPoint.source_guid'
         db.add_column('datapoint', 'source_guid',
                       self.gf('django.db.models.fields.CharField')(max_length=255),
@@ -64,7 +64,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'DataPoint.source'
         raise RuntimeError("Cannot reverse this migration. 'DataPoint.source' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'DataPoint.source'
         db.add_column('datapoint', 'source',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['datapoints.Source']),
@@ -235,7 +235,7 @@ class Migration(SchemaMigration):
             'status_text': ('django.db.models.fields.CharField', [], {'max_length': '25'})
         },
         'source_data.sourcedatapoint': {
-            'Meta': {'object_name': 'SourceDataPoint'},
+            'Meta': {'object_name': 'SourceDataPoint', 'db_table': "'source_datapoint'"},
             'campaign_string': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'cell_value': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 9, 24, 0, 0)'}),

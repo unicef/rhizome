@@ -191,7 +191,7 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['source_data.ProcessStatus']"})
         },
         u'source_data.sourceregion': {
-            'Meta': {'unique_together': "(('region_string', 'document'),)", 'object_name': 'SourceRegion'},
+            'Meta': {'unique_together': "(('region_string', 'document'),)", 'object_name': 'SourceRegion','db_table':"'source_region'"},
             'country': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['source_data.Document']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
