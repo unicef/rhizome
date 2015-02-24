@@ -7082,10 +7082,6 @@ svg.bullet .value,
 svg.bullet .marker {
   fill: #707677;
 }
-svg.bullet .label {
-  fill: #FFFFFF;
-  text-shadow: none;
-}
 svg.bullet .ranges .range-label {
   fill: #666666;
 }
@@ -7176,6 +7172,23 @@ svg .label {
   height: 1.2em;
   margin-right: 0.2em;
   margin-bottom: -0.2em;
+}
+
+.down h6 {
+  color: #AF373E;
+  font-weight: bold;
+}
+.down .bullet .value,
+.down .bullet .marker {
+  fill: #AF373E;
+}
+
+.up h6 {
+  color: #2B8CBE;
+}
+.up svg.bullet .value,
+.up svg.bullet .marker {
+  fill: #2B8CBE;
 }
 
 body {

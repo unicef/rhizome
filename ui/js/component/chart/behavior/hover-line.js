@@ -15,6 +15,9 @@ function hoverLine() {
 	var y          = function (d) { return d.y; };
 	var yFormat    = String;
 	var yScale     = d3.scale.linear();
+	var _value     = function (d) {
+		return d.value;
+	};
 
 	function chart(selection) {
 		selection
@@ -118,6 +121,15 @@ function hoverLine() {
 		}
 
 		y = value;
+		return chart;
+	};
+
+	chart.value = function (value) {
+		if (!arguments.length) {
+			return _value;
+		}
+
+		_value = value;
 		return chart;
 	};
 
@@ -250,7 +262,7 @@ function hoverLine() {
 		label
 			.text(function (d) {
 				var name = seriesName ? seriesName(d) + ' ' : '';
-				return name + yFormat(y(d));
+				return name + yFormat(_value(d));
 			})
 			.transition()
 			.duration(300)
