@@ -2,6 +2,7 @@
 
 var _         = require('lodash');
 var d3        = require('d3');
+var moment    = require('moment');
 
 var colors    = require('colors/coolgray');
 var lineChart = require('./renderer/line');
@@ -115,13 +116,7 @@ module.exports = {
 		},
 
 		xFmt: function () {
-			return function (d) {
-				var month   = d3.time.format('%b');
-				var newYear = d3.time.format('%b %Y');
-				var dt      = new Date(d);
-
-				return dt.getMonth() === 0 ? newYear(dt) : month(dt);
-			};
+			return d3.time.format('%b %Y');
 		},
 
 		xScale: function () {
@@ -141,7 +136,23 @@ module.exports = {
 		},
 
 		xTicks: function () {
-			return this.xScale.ticks(d3.time.months, 3);
+			var months = [0];
+			var domain = this.xScale.domain();
+			var dt = moment(domain[0]).clone().startOf('month');
+			var end = moment(domain[1]);
+			var ticks = [];
+
+			while (dt.isBefore(end)) {
+				if (months.indexOf(dt.month()) >= 0) {
+					ticks.push(dt.clone().toDate());
+				}
+
+				dt.add(1, 'months');
+			}
+
+			ticks.push(dt.clone().toDate());
+
+			return ticks;
 		},
 
 		yFmt: function () {
@@ -209,9 +220,21 @@ module.exports = {
 				.data(this.labels)
 				.call(label().addClass('series').width(this.contentWidth).height(this.contentHeight));
 
+			var xFmt = this.xFmt;
+
 			var gx = svg.select('.x.axis')
 				.call(d3.svg.axis()
-					.tickFormat(this.xFmt)
+					.tickFormat(function (d) {
+						if (d instanceof Date) {
+							if (d.getMonth() === 0) {
+								return moment(d).format('MMM YYYY');
+							}
+
+							return moment(d).format('MMM');
+						}
+
+						return xFmt(d);
+					})
 					.tickValues(this.xTicks)
 					.scale(xScale)
 					.orient('bottom'));

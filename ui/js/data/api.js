@@ -91,11 +91,11 @@ datapoint.toString = function (query) {
 };
 
 module.exports = {
-	campaign  : endPoint('/campaign/'),
-	geo       : endPoint('/geo/'),
-	indicators: endPoint('/indicator/'),
-	regions   : endPoint('/region/'),
-	datapoints: datapoint,
-	datapointsRaw: endPoint('/datapointentry/'),
-	office    : endPoint('/office/')
+	campaign      : endPoint('/campaign/'),
+	datapoints    : datapoint,
+	datapointsRaw : endPoint('/datapointentry/'),
+	geo           : endPoint('/geo/'),
+	indicators    : endPoint('/indicator/'),
+	office        : endPoint('/office/'),
+	regions       : endPoint('/region/')
 };
