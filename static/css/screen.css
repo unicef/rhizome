@@ -7494,6 +7494,23 @@ svg {
   color: #fff;
 }
 
+.highlight {
+  color: #ffcc67;
+  font-weight: bold;
+}
+
+#new-polio-cases {
+  background-color: #F6F6F6;
+  color: #AF373E;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 0 2pt;
+  font-size: 9pt;
+}
+
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
