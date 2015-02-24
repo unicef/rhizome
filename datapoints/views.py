@@ -314,54 +314,47 @@ def search(request):
 def calc_datapoint(request):
 
     curs = DataPoint.objects.raw("""
-        DROP TABLE IF EXISTS datapoint_with_computed;
+    	DROP TABLE IF EXISTS datapoint_with_computed;
 
-        CREATE TABLE datapoint_with_computed AS
+    	CREATE TABLE datapoint_with_computed
+    	(
+    		id SERIAL
+    		,indicator_id INTEGER
+    		,region_id INTEGER
+    		,campaign_id INTEGER
+    		,value FLOAT
+    		,is_agg BOOLEAN
+    		,is_calc BOOLEAN
+    	);
 
-        SELECT
-        id
-        ,indicator_id
-        ,region_id
-        ,campaign_id
-        ,value
-        ,is_agg
-        ,CAST(0 as BOOLEAN) as is_calc
-        FROM agg_datapoint
+    	INSERT INTO datapoint_with_computed
+    	(indicator_id,region_id,campaign_id,value,is_agg,is_calc)
 
-        UNION ALL
+    	SELECT
+    		indicator_id
+    		,region_id
+    		,campaign_id
+    		,value
+    		,is_agg
+    		,CAST(0 as BOOLEAN) as is_calc
+    	FROM agg_datapoint;
 
-        SELECT
-
-        id
-        ,indicator_id
-        ,region_id
-        ,campaign_id
-        ,value
-        ,'f'
-        ,CAST(0 as BOOLEAN) as is_calc
-        FROM datapoint WHERE indicator_id in (431,432,433);
-
-        -- make ID column auto increment
-        DROP SEQUENCE IF EXISTS dwc_seq;
-        CREATE SEQUENCE dwc_seq;
-        ALTER TABLE datapoint_with_computed ALTER COLUMN id SET DEFAULT nextval('dwc_seq');
-        --ALTER TABLE datapoint_with_computed ALTER COLUMN id SET NOT NULL;
-        ALTER SEQUENCE dwc_seq OWNED BY datapoint_with_computed.id;
+    	CREATE UNIQUE INDEX  dwc_uq_ix on datapoint_with_computed (region_id, indicator_id, campaign_id);
 
         ---- SUM OF PARTS ------
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,is_calc)
 
         SELECT
-        	cic.indicator_id
-        	,ad.region_id
-        	,ad.campaign_id
-        	,SUM(ad.value) as value
-            ,'t'
+    	 cic.indicator_id
+    	,ad.region_id
+    	,ad.campaign_id
+    	,SUM(ad.value) as value
+           ,'t'
         FROM agg_datapoint ad
         INNER JOIN calculated_indicator_component cic
-        ON ad.indicator_id = cic.indicator_component_id
-        AND cic.calculation = 'PART_TO_BE_SUMMED'
+            ON ad.indicator_id = cic.indicator_component_id
+            AND cic.calculation = 'PART_TO_BE_SUMMED'
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
         ----- PART / WHOLE ------
@@ -398,7 +391,7 @@ def calc_datapoint(request):
 
 
         SELECT
-				denom.master_indicator_id
+			denom.master_indicator_id
           		,denom.region_id
           		,denom.campaign_id
           		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
@@ -450,7 +443,7 @@ def calc_datapoint(request):
           AND num_whole.master_indicator_id = denom.master_indicator_id
          AND num_whole.campaign_id = denom.campaign_id;
 
-        SELECT id FROM agg_datapoint LIMIT 1;
+        SELECT id FROM datapoint_with_computed LIMIT 1;
     """)
 
     for x in curs:
@@ -473,7 +466,11 @@ def agg_datapoint(request):
     SELECT
         region_id, campaign_id, indicator_id, value, 't'
     FROM datapoint d
-    WHERE value != 'NaN';
+    WHERE value != 'NaN'
+    AND NOT EXISTS (
+        SELECT 1 FROM calculated_indicator_component cic
+        WHERE d.indicator_id = cic.indicator_id);
+        
     --
 
     DROP INDEX IF EXISTS ag_uq_ix;
@@ -496,8 +493,6 @@ def agg_datapoint(request):
     }
 
     for k,v in region_loop.iteritems():
-
-        print 'TRYING .... %s' % v
 
         curs = DataPoint.objects.raw("""
             INSERT INTO agg_datapoint
@@ -587,7 +582,8 @@ def gdoc_qa(request):
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
     gd_df = gd_df[gd_df['region_id'] != '0']
-    # gd_df = gd_df[gd_df['indicator_id'] == '164']
+    gd_df = gd_df[gd_df['indicator_id'] == '168']
+
 
     gd_dict = gd_df.transpose().to_dict()
 
@@ -604,7 +600,7 @@ def gdoc_qa(request):
 
             v['computed_value'] = dwc.value
 
-            if abs(float(dwc.value) - float(v['value']))< .001:
+            if abs(float(dwc.value) - float(v['value']))< .01:
                 passed = 1
             else:
                 passed = 0
@@ -620,16 +616,18 @@ def gdoc_qa(request):
 
 
     indicator_breakdown = []
-    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
-        .agg('count').transpose().to_dict()
+    try:
+        missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+            .agg('count').transpose().to_dict()
+    except KeyError:
+        missed_by_ind_id = {}
+
 
     for k,v in missed_by_ind_id.iteritems():
         ind_dict = {'indicator_id':k ,'count_missed': v['value']}
         indicator_breakdown.append(ind_dict)
 
     qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
-
-    final_qa_data, indicator_breakdown, qa_score = [],[],0.0
 
     return render_to_response('qa_data.html',
         {'qa_data': final_qa_data, 'qa_score':qa_score\
