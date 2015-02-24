@@ -587,7 +587,6 @@ def gdoc_qa(request):
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
     gd_df = gd_df[gd_df['region_id'] != '0']
-    # gd_df = gd_df[gd_df['indicator_id'] == '164']
 
     gd_dict = gd_df.transpose().to_dict()
 
@@ -602,16 +601,21 @@ def gdoc_qa(request):
                 indicator_id = v['indicator_id'],
             )
 
+            print dwc.value
+            print v['value']
             v['computed_value'] = dwc.value
 
             if abs(float(dwc.value) - float(v['value']))< .001:
                 passed = 1
+                print 'passed!'
             else:
                 passed = 0
+                print 'failed'
 
         except Exception:
             v['computed_value'] = -1
             passed = 0
+            print 'failed... no data'
 
         v['passed'] = passed
 
@@ -629,7 +633,8 @@ def gdoc_qa(request):
 
     qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
 
-    final_qa_data, indicator_breakdown, qa_score = [],[],0.0
+
+    print final_qa_data
 
     return render_to_response('qa_data.html',
         {'qa_data': final_qa_data, 'qa_score':qa_score\
