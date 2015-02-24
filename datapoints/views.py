@@ -467,7 +467,10 @@ def agg_datapoint(request):
         region_id, campaign_id, indicator_id, value, 't'
     FROM datapoint d
     WHERE value != 'NaN'
-    AND indicator_id != 168;
+    AND NOT EXISTS (
+        SELECT 1 FROM calculated_indicator_component cic
+        WHERE d.indicator_id = cic.indicator_id);
+        
     --
 
     DROP INDEX IF EXISTS ag_uq_ix;
