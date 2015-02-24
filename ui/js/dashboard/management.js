@@ -1,6 +1,9 @@
 'use strict';
 
-var moment   = require('moment');
+var _      = require('lodash');
+var moment = require('moment');
+
+var api    = require('data/api');
 
 /**
  * Utility for generating the tickValues array for a year-to-date chart.
@@ -52,15 +55,17 @@ module.exports = {
 
 	data: function () {
 		return {
-			region    : null,
-			regionName: '',
-			campaign  : null,
-			campaigns : [],
-			capacity  : [178,228,179,184,180,185,230,226,239],
-			polio     : [236,192,193,191],
-			supply    : [194,219,173,172],
-			resources : [169,233],
-			microplans: []
+			region     : null,
+			regionName : '',
+			campaign   : null,
+			campaigns  : [],
+			capacity   : [178,228,179,184,180,185,230,226,239],
+			polio      : [236,192,193,191],
+			supply     : [194,219,173,172],
+			resources  : [169,233],
+			microplans : [],
+			cases      : null,
+			newCases   : null
 		};
 	},
 
@@ -68,5 +73,39 @@ module.exports = {
 		campaignName: function () {
 			return moment(this.campaign.start_date).format('MMM YYYY');
 		}
+	},
+
+	watch: {
+		'campaign': function () {
+			var start = moment(this.campaign.end, 'YYYY-MM-DD').startOf('year');
+			var q     = {
+				indicator__in  : 168,
+				region__in     : [this.region],
+				campaign_start : start.format('YYYY-MM-DD'),
+				campaign_end   : this.campaign.end
+			};
+
+			var self = this;
+
+			api.datapoints(q)
+				.then(function (data) {
+					var cases = data.objects.map(function (obj) {
+							var datapoint  = _.pick(obj, 'campaign', 'region');
+							var indicators = _.indexBy(obj.indicators, 'indicator');
+
+							datapoint.value = indicators['168'].value;
+
+							return datapoint;
+						});
+
+					self.newCases = _.max(cases, function (c) {
+						return c.campaign.start_date;
+					}).value;
+
+					self.cases = _.reduce(cases, function (sum, c) {
+						return sum + c.value;
+					}, 0);
+				});
+		},
 	}
 };

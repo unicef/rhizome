@@ -20,13 +20,28 @@
 			<h3>Impact</h3>
 
 			<section>
-				<h4>Polio Cases</h4>
-				<div v-component="chart-ytd"
-				     data-aspect="1.8"
-				     data-margin-bottom="24"
-				     data-indicators="[168]"
-				     data-period="2 years"
-				     v-with="campaign: campaign, region: region"></div>
+				<h4>
+					<span v-if="cases != null">
+						<span class="highlight">{{ cases }}</span>
+						Polio cases this year
+					</span>
+					<span v-if="cases == null">
+						Polio Cases
+					</span>
+				</h4>
+				<div style="position:relative">
+					<div
+						v-if="newCases != null"
+						style="position:absolute;top:0;right:0:left:0">
+						<p>{{ newCases }} new {{ newCases | pluralize case }}</p>
+					</div>
+					<div v-component="chart-ytd"
+							 data-aspect="1.8"
+							 data-margin-bottom="24"
+							 data-indicators="[168]"
+							 data-period="2 years"
+							 v-with="campaign: campaign, region: region"></div>
+				</div>
 			</section>
 
 			<section>
@@ -51,13 +66,13 @@
 					<section>
 						<h4>Missed Children</h4>
 						<svg v-component="chart-stacked-area"
-						     data-margin-bottom="24"
-						     data-aspect="1.618"
-						     data-margin-bottom="12"
-						     data-indicators="[166,188,167,165]"
-						     data-duration="2 years"
-						     data-format-string="%"
-						     v-with="region: region, campaign: campaign"></svg>
+								 data-margin-bottom="24"
+								 data-aspect="1.618"
+								 data-margin-bottom="12"
+								 data-indicators="[166,188,167,165]"
+								 data-duration="2 years"
+								 data-format-string="%"
+								 v-with="region: region, campaign: campaign"></svg>
 					</section>
 
 					<section>
