@@ -581,53 +581,53 @@ def cache_control(request):
 
 def gdoc_qa(request):
 
-    # gc = gspread.login(gdoc_u,gdoc_p)
-    # worksheet = gc.open("Dashboard QA | February 2015").sheet1
-    # list_of_lists = worksheet.get_all_values()
-    # gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
-    #
-    # gd_df = gd_df[gd_df['region_id'] != '0']
-    # # gd_df = gd_df[gd_df['indicator_id'] == '239']
-    #
-    # gd_dict = gd_df.transpose().to_dict()
-    #
-    # final_qa_data = []
-    #
-    # for k,v in gd_dict.iteritems():
-    #
-    #     try:
-    #         dwc = DataPointComputed.objects.get(
-    #             region_id = v['region_id'],
-    #             campaign_id = v['campaign_id'],
-    #             indicator_id = v['indicator_id'],
-    #         )
-    #
-    #         v['computed_value'] = dwc.value
-    #
-    #         if abs(float(dwc.value) - float(v['value']))< .001:
-    #             passed = 1
-    #         else:
-    #             passed = 0
-    #
-    #     except Exception:
-    #         v['computed_value'] = -1
-    #         passed = 0
-    #
-    #     v['passed'] = passed
-    #
-    #     if passed == 0:
-    #         final_qa_data.append(v)
-    #
-    #
-    # indicator_breakdown = []
-    # missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
-    #     .agg('count').transpose().to_dict()
-    #
-    # for k,v in missed_by_ind_id.iteritems():
-    #     ind_dict = {'indicator_id':k ,'count_missed': v['value']}
-    #     indicator_breakdown.append(ind_dict)
-    #
-    # qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
+    gc = gspread.login(gdoc_u,gdoc_p)
+    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    list_of_lists = worksheet.get_all_values()
+    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
+
+    gd_df = gd_df[gd_df['region_id'] != '0']
+    gd_df = gd_df[gd_df['indicator_id'] == '164']
+
+    gd_dict = gd_df.transpose().to_dict()
+
+    final_qa_data = []
+
+    for k,v in gd_dict.iteritems():
+
+        try:
+            dwc = DataPointComputed.objects.get(
+                region_id = v['region_id'],
+                campaign_id = v['campaign_id'],
+                indicator_id = v['indicator_id'],
+            )
+
+            v['computed_value'] = dwc.value
+
+            if abs(float(dwc.value) - float(v['value']))< .001:
+                passed = 1
+            else:
+                passed = 0
+
+        except Exception:
+            v['computed_value'] = -1
+            passed = 0
+
+        v['passed'] = passed
+
+        if passed == 0:
+            final_qa_data.append(v)
+
+
+    indicator_breakdown = []
+    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+        .agg('count').transpose().to_dict()
+
+    for k,v in missed_by_ind_id.iteritems():
+        ind_dict = {'indicator_id':k ,'count_missed': v['value']}
+        indicator_breakdown.append(ind_dict)
+
+    qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
 
     final_qa_data, indicator_breakdown, qa_score = [],[],0.0
 
