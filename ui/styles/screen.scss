@@ -321,3 +321,15 @@ svg {
 	color       : $secondary-color;
 	font-weight : bold;
 }
+
+#new-polio-cases {
+	background-color : $vapor;
+	color            : $down-color;
+	position         : absolute;
+	top              : 0;
+	right            : 0;
+	left             : 0;
+	z-index          : 9999;
+	padding          : 0 2pt;
+	font-size        : 9pt
+}

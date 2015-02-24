@@ -98,9 +98,15 @@ module.exports = {
 							return datapoint;
 						});
 
-					self.newCases = _.max(cases, function (c) {
-						return c.campaign.start_date;
-					}).value;
+					var campaigns = _.indexBy(cases, function (c) {
+						return moment(c.campaign.start_date).format('YYYYMMDD');
+					});
+
+					if (campaigns.hasOwnProperty(self.campaign.date)) {
+						self.newCases = campaigns[self.campaign.date].value;
+					} else {
+						self.newCases = null;
+					}
 
 					self.cases = _.reduce(cases, function (sum, c) {
 						return sum + c.value;

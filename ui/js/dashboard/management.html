@@ -31,9 +31,8 @@
 				</h4>
 				<div style="position:relative">
 					<div
-						v-if="newCases != null"
-						style="position:absolute;top:0;right:0:left:0">
-						<p>{{ newCases }} new {{ newCases | pluralize case }}</p>
+						v-if="newCases != null">
+						<p id="new-polio-cases">{{ newCases }} new {{ newCases | pluralize case }}</p>
 					</div>
 					<div v-component="chart-ytd"
 							 data-aspect="1.8"
