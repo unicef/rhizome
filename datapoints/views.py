@@ -346,23 +346,15 @@ def calc_datapoint(request):
         (indicator_id,region_id,campaign_id,value,is_calc)
 
         SELECT
-        	cic.indicator_id
-        	,ad.region_id
-        	,ad.campaign_id
-        	,SUM(ad.value) as value
-            ,'t'
+    	 cic.indicator_id
+    	,ad.region_id
+    	,ad.campaign_id
+    	,SUM(ad.value) as value
+           ,'t'
         FROM agg_datapoint ad
         INNER JOIN calculated_indicator_component cic
-        ON ad.indicator_id = cic.indicator_component_id
-        AND cic.calculation = 'PART_TO_BE_SUMMED'
-        WHERE NOT EXISTS (
-            SELECT 1 FROM datapoint_with_computed dwc
-            WHERE 1 = 1
-            AND dwc.region_id = ad.region_id
-            AND dwc.indicator_id = ad.indicator_id
-            AND dwc.campaign_id = ad.campaign_id
-        )
-
+            ON ad.indicator_id = cic.indicator_component_id
+            AND cic.calculation = 'PART_TO_BE_SUMMED'
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
         ----- PART / WHOLE ------
@@ -474,7 +466,8 @@ def agg_datapoint(request):
     SELECT
         region_id, campaign_id, indicator_id, value, 't'
     FROM datapoint d
-    WHERE value != 'NaN';
+    WHERE value != 'NaN'
+    AND indicator_id != 168;
     --
 
     DROP INDEX IF EXISTS ag_uq_ix;
@@ -586,6 +579,8 @@ def gdoc_qa(request):
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
     gd_df = gd_df[gd_df['region_id'] != '0']
+    gd_df = gd_df[gd_df['indicator_id'] == '168']
+
 
     gd_dict = gd_df.transpose().to_dict()
 
@@ -602,7 +597,7 @@ def gdoc_qa(request):
 
             v['computed_value'] = dwc.value
 
-            if abs(float(dwc.value) - float(v['value']))< .001:
+            if abs(float(dwc.value) - float(v['value']))< .01:
                 passed = 1
             else:
                 passed = 0
@@ -618,8 +613,12 @@ def gdoc_qa(request):
 
 
     indicator_breakdown = []
-    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
-        .agg('count').transpose().to_dict()
+    try:
+        missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+            .agg('count').transpose().to_dict()
+    except KeyError:
+        missed_by_ind_id = {}
+
 
     for k,v in missed_by_ind_id.iteritems():
         ind_dict = {'indicator_id':k ,'count_missed': v['value']}
