@@ -5,9 +5,20 @@
 {% block content %}
 
     <div align="center">
+
+      <form action="{% url 'gdoc_qa' %}" method="GET" class="pure-form pure-form-aligned">
+      indicator_id <select id="indicator_id" name="indicator_id"data-style="btn-primary">
+        {% for i, column in indicator_ids %}
+           <option value={{i}}</option>
+         {{column}}
+        {% endfor %}
+      </select>
+
       <button class="button">
         <a href="{% url 'datapoints:gdoc_qa' %}"> Test Data! </a>
       </button>
+    </form>
+
 
     <h3> QA Score {{ qa_score }}</h3>
     </div>
