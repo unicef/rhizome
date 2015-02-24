@@ -490,8 +490,6 @@ def agg_datapoint(request):
 
     for k,v in region_loop.iteritems():
 
-        print 'TRYING .... %s' % v
-
         curs = DataPoint.objects.raw("""
             INSERT INTO agg_datapoint
             (region_id, campaign_id, indicator_id, value, is_agg)
@@ -580,7 +578,7 @@ def gdoc_qa(request):
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
 
     gd_df = gd_df[gd_df['region_id'] != '0']
-    gd_df = gd_df[gd_df['indicator_id'] == '431']
+    gd_df = gd_df[gd_df['indicator_id'] == '164']
 
 
     gd_dict = gd_df.transpose().to_dict()

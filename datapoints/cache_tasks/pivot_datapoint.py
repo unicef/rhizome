@@ -35,7 +35,6 @@ def full_cache_refresh():
 
     rc_tuple_list = []
     for rc in distict_region_campaign_list:
-        print 'region_id ... %s' % rc.region_id
 
         r_c_tuple = (rc.region_id,rc.campaign_id)
         rc_tuple_list.append(r_c_tuple)
@@ -45,10 +44,6 @@ def full_cache_refresh():
     rc_df = rc_df.reset_index(level=[0,1])
 
     for i,(i_id) in enumerate(all_indicator_ids):
-
-        print 'indicator_id.. %s' % i_id
-
-        print '...trying...'
 
         rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
 
@@ -62,8 +57,6 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
     column_header = ['region_id','campaign_id']
     column_header.append(i_id)
 
-    print 'indicator_id: %s' % i_id
-
     indicator_df = DataFrame(list(DataPointComputed.objects.filter(
         indicator_id = i_id).values()))
 
@@ -73,13 +66,8 @@ def add_indicator_data_to_rc_df(rc_df, i_id):
 
     cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
 
-    print cleaned_df[:4]
-
     merged_df = rc_df.merge(cleaned_df,how='left')
     merged_df = merged_df.reset_index(drop=True)
-
-    # print 'merged_df'
-    # print merged_df
 
     return merged_df
 
