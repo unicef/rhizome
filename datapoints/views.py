@@ -355,6 +355,14 @@ def calc_datapoint(request):
         INNER JOIN calculated_indicator_component cic
         ON ad.indicator_id = cic.indicator_component_id
         AND cic.calculation = 'PART_TO_BE_SUMMED'
+        WHERE NOT EXISTS (
+            SELECT 1 FROM datapoint_with_computed dwc
+            WHERE 1 = 1
+            AND dwc.region_id = ad.region_id
+            AND dwc.indicator_id = ad.indicator_id
+            AND dwc.campaign_id = ad.campaign_id
+        )
+
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
         ----- PART / WHOLE ------
