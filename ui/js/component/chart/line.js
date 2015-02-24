@@ -116,13 +116,7 @@ module.exports = {
 		},
 
 		xFmt: function () {
-			return function (d) {
-				var month   = d3.time.format('%b');
-				var newYear = d3.time.format('%b %Y');
-				var dt      = new Date(d);
-
-				return dt.getMonth() === 0 ? newYear(dt) : month(dt);
-			};
+			return d3.time.format('%b %Y');
 		},
 
 		xScale: function () {
