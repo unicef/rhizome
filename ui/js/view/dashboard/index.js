@@ -43,6 +43,9 @@ module.exports = {
 			el      : '#regions',
 			source  : api.regions,
 			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
+			data: {
+				placeholder: 'Loading regions'
+			},
 			mapping : {
 				'parent_region_id': 'parent',
 				'name'            : 'title',

@@ -7,9 +7,11 @@ module.exports = {
 
 	data: function () {
 		return {
-			open    : false,
-			selected: false,
-			children: []
+			padding  : 17,
+			level    : 0,
+			open     : false,
+			selected : false,
+			children : []
 		};
 	},
 
@@ -19,12 +21,21 @@ module.exports = {
 			return this.children && this.children.length > 0;
 		},
 
+		indent: function () {
+			return (this.padding * this.level) + 'px';
+		}
+
 	},
 
 	methods: {
 
-		toggle: function () {
+		onClick: function () {
 			this.$dispatch('dropdown-item-toggle', this);
+		},
+
+		toggleFolder: function (e) {
+			this.open = !this.open;
+			e.stopPropagation();
 		}
 
 	},
