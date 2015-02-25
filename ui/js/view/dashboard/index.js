@@ -69,7 +69,7 @@ module.exports = {
 			}
 
 			self.region     = region;
-			self.regionName = name;
+			self.regionName = name.title;
 		});
 
 		this.$.campaigns.$on('dropdown-value-changed', function (items) {
