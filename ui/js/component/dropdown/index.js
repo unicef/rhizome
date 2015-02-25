@@ -223,7 +223,7 @@ module.exports = Vue.extend({
 
 			this.forAll(function (item) {
 				if (!this.selection.hasOwnProperty(item.value)) {
-					selection[item.value] = item.title;
+					selection[item.value] = item;
 				}
 			});
 
@@ -235,7 +235,7 @@ module.exports = Vue.extend({
 			var selection = {};
 
 			this.forAll(function (item) {
-				selection[item.value] = item.title;
+				selection[item.value] = item;
 			});
 
 			this.selection = selection;
