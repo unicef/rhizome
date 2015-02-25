@@ -595,6 +595,8 @@ def missing_data(request):
         		INNER JOIN expected_data ed
         		ON 1 = 1
         		WHERE cic.indicator_id = 168
+        		--WHERE cic.indicator_id in(164,165,166,167,168,187,226,228,230,233,239,431,432)
+
         	)x_pect
         	WHERE NOT EXISTS (
         		SELECT 1 FROM datapoint d
@@ -623,8 +625,6 @@ def missing_data(request):
 
     return render_to_response('missing_data.html',{'missing_data':\
         md_array},context_instance=RequestContext(request))
-
-
 
 
 def gdoc_qa(request):
