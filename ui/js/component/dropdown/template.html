@@ -41,7 +41,9 @@
 								 max-width: menuWidth + 'px'">
 
 			<li v-repeat="items | orderBy sortBy sortDsc"
-			    v-with="sortBy: sortBy, sortDsc: sortDsc"
+			    v-with="sortBy    : sortBy,
+					        sortDsc   : sortDsc,
+									selection : selection"
 					v-component="dropdown-item"></li>
 
 		</ul>

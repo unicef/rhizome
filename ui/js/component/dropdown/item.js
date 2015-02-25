@@ -7,15 +7,20 @@ module.exports = {
 
 	data: function () {
 		return {
-			padding  : 17,
-			level    : 0,
-			open     : false,
-			selected : false,
-			children : []
+			padding   : 17,
+			level     : 0,
+			open      : false,
+			selected  : false,
+			children  : [],
+			selection : {}
 		};
 	},
 
 	computed: {
+
+		selected: function () {
+			return this.selection.hasOwnProperty(this.value);
+		},
 
 		hasChildren: function () {
 			return this.children && this.children.length > 0;
@@ -30,30 +35,19 @@ module.exports = {
 	methods: {
 
 		onClick: function () {
-			this.$dispatch('dropdown-item-toggle', this);
+			this.$dispatch('dropdown-item-toggle', {
+				value: this.value,
+				title: this.title
+			});
 		},
 
 		toggleFolder: function (e) {
 			this.open = !this.open;
+
+			// Prevent opening a folder from toggling that item
 			e.stopPropagation();
 		}
 
 	},
-
-	events: {
-
-		'dropdown-select-all': function () {
-			this.selected = true;
-		},
-
-		'dropdown-clear': function () {
-			this.selected = false;
-		},
-
-		'dropdown-invert': function () {
-			this.selected = !this.selected;
-		}
-
-	}
 
 };

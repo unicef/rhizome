@@ -17,11 +17,12 @@
 		</div>
 	</div>
 
-	<ul
-		v-if="hasChildren"
-		v-show="open">
+	<ul v-if="hasChildren && open">
 		<li v-repeat="children | orderBy sortBy sortDsc"
-		    v-with="sortBy: sortBy, sortDsc: sortDsc, level: level + 1"
+		    v-with="sortBy    : sortBy,
+				        sortDsc   : sortDsc,
+				        level     : level + 1,
+				        selection : selection"
 		    v-component="dropdown-item"></li>
 	</ul>
 </li>
