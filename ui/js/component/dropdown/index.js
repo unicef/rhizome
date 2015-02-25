@@ -139,6 +139,8 @@ module.exports = Vue.extend({
 				} else {
 					this.selection[item.value] = item;
 				}
+
+				this.selection.__ob__.notify();
 			}
 
 			this.$emit('dropdown-value-changed', this.selection);
