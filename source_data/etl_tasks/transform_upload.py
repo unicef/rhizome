@@ -64,17 +64,19 @@ class DocTransform(object):
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
                 }
-
-                sdp = SourceDataPoint.objects.create(**sdp_dict)
+                sdp = SourceDataPoint(**sdp_dict)
                 source_datapoint_batch.append(sdp)
 
-        # print len(source_datapoint_batch)
-        # SourceDataPoint.objects.bulk_create(source_datapoint_batch)
-        #
-        # source_datapoints = SourceDataPoint.objects.filter(document_id = \
-        #     self.document_id)
+        print len(source_datapoint_batch)
 
-        return source_datapoint_batch
+
+        # SourceDataPoint.objects.bulk_create(source_datapoint_batch)
+
+        source_datapoints = SourceDataPoint.objects.filter(document_id = \
+            self.document.id)
+
+
+        return source_datapoints
 
 
 class RegionTransform(DocTransform):
