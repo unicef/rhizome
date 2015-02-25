@@ -1,0 +1,35 @@
+{% extends "datapoints/base.html" %}
+
+
+{% block content %}
+
+
+    <table>
+    <thead>
+        <tr>
+            <th>regino_id</th>
+            <th>campaign_id</th>
+            <th>indicator_d</th>
+            <th>region name</th>
+            <th>campaign slug</th>
+            <th>indicator name</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for missing in missing_data %}
+    <tr>
+            <th>{{ missing.region_id }}</th>
+            <th>{{ missing.campaign_id }}</th>
+            <th>{{ missing.indicator_id }}</th>
+            <th>{{ missing.region_name }}</th>
+            <th>{{ missing.campaign_slug }}</th>
+            <th>{{ missing.indicator_name }}</th>
+
+    </tr>
+
+    </tbody>
+    {% endfor %}
+    </table>
+
+{% endblock %}
