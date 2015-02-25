@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 module.exports = {
 
 	replace : true,
@@ -35,10 +37,7 @@ module.exports = {
 	methods: {
 
 		onClick: function () {
-			this.$dispatch('dropdown-item-toggle', {
-				value: this.value,
-				title: this.title
-			});
+			this.$dispatch('dropdown-item-toggle', _.assign({}, this.$data));
 		},
 
 		toggleFolder: function (e) {

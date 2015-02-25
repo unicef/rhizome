@@ -62,7 +62,7 @@ module.exports = Vue.extend({
 			pattern    : '',
 			selection  : {},
 			sortBy     : 'title',
-			sortDsc    : false
+			sortDsc    : false,
 		};
 	},
 
@@ -88,7 +88,11 @@ module.exports = Vue.extend({
 				return this.placeholder;
 			}
 
-			return _.values(this.selection).join(', ');
+			return _(this.selection)
+				.values()
+				.pluck('title')
+				.value()
+				.join(', ');
 		},
 	},
 
@@ -125,7 +129,7 @@ module.exports = Vue.extend({
 			if (!this.multi) {
 				var selection = {};
 
-				selection[item.value] = item.title;
+				selection[item.value] = item;
 				this.selection = selection;
 
 				this.open = false;
@@ -133,7 +137,7 @@ module.exports = Vue.extend({
 				if (this.selection.hasOwnProperty(item.value)) {
 					delete this.selection[item.value];
 				} else {
-					this.selection[item.value] = item.title;
+					this.selection[item.value] = item;
 				}
 			}
 
@@ -199,7 +203,7 @@ module.exports = Vue.extend({
 			var selection = {};
 			this.forAll(function (item) {
 				if (item.value === value) {
-					selection[item.value] = item.title;
+					selection[item.value] = item;
 				}
 			});
 
@@ -275,6 +279,7 @@ module.exports = Vue.extend({
 						self.loading = false;
 
 						self.select(self.$options.defaults);
+						self.$emit('dropdown-value-changed', self.selection);
 					}
 				});
 		},
@@ -321,29 +326,7 @@ module.exports = Vue.extend({
 	},
 
 	events: {
-
 		'dropdown-item-toggle': 'toggleItem',
-
-		'dropdown-select': function (values) {
-			if (!_.isArray(values)) {
-				values = [values];
-			}
-
-			// Initial queue of items copied (hence [].concat) from the root items in
-			// the dropdown. Using items directly as the queue results in empty menus
-			// as the items are removed from the array.
-			var q = [].concat(this.items || []);
-
-			// Check all items and their children in a breadth-first manner
-			while (q.length > 0) {
-				var item = q.shift();
-
-				item.selected = (values.indexOf(item.value) >= 0);
-
-				q = q.concat(item.children || []);
-			}
-		}
-
 	},
 
 	components: {
