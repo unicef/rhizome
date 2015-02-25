@@ -35,12 +35,12 @@ module.exports = {
 		var self = this;
 
 		this._regions = new Dropdown({
-			el     : '#regions',
-			source : api.regions,
-			mapping: {
-				'parent_region_id': 'parent',
-				'name'            : 'title',
-				'id'              : 'value'
+			el      : '#regions',
+			source  : api.regions,
+			mapping : {
+				'parent_region_id' : 'parent',
+				'name'             : 'title',
+				'id'               : 'value'
 			}
 		});
 
@@ -49,11 +49,11 @@ module.exports = {
 		});
 
 		this._indicators = new Dropdown({
-			el     : '#indicators',
-			source : api.indicators,
-			mapping: {
-				'short_name': 'title',
-				'id'        : 'value'
+			el      : '#indicators',
+			source  : api.indicators,
+			mapping : {
+				'name' : 'title',
+				'id'   : 'value'
 			}
 		});
 

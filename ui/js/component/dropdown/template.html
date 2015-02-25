@@ -29,7 +29,7 @@
 			  v-style="max-height: menuHeight + 'px',
 			           max-width: menuWidth + 'px'">
 			<li v-repeat="items | flatten | filterBy pattern 'title' | orderBy sortBy sortDsc">
-				<div role="menuitem" v-class="selected: selected">
+				<div role="menuitem" v-class="selected: value | isSelected">
 					<i class="fa fa-check fa-lg"></i>
 					<span v-on="click: toggleItem(this)">{{ title }}</span>
 				</div>

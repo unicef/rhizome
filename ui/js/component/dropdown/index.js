@@ -325,6 +325,9 @@ module.exports = Vue.extend({
 			return result;
 		},
 
+		isSelected: function (value) {
+			return this.selection.hasOwnProperty(value);
+		}
 	},
 
 	events: {
