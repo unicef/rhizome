@@ -7595,6 +7595,59 @@ svg {
 
 /*# sourceMappingURL=style.css.map */
 
+table .th-inner {
+  min-width: 80px;
+}
+table td.editable {
+  width: 80px;
+  padding: 2px;
+  /* cell status */
+}
+table td.editable .displayValue,
+table td.editable .editControl {
+  width: 100%;
+  height: 100%;
+  padding: 4px 6px;
+}
+table td.editable .displayValue {
+  cursor: pointer;
+  min-height: 20px;
+}
+table td.editable .editControl {
+  display: none;
+  border: 1px solid #aaa;
+  font-size: inherit;
+}
+table td.editable .editControl:focus {
+  outline: 0;
+}
+table td.editable.editing .displayValue {
+  display: none;
+}
+table td.editable.editing .editControl {
+  display: block;
+}
+table td.editable.missing .displayValue {
+  background-color: #ffeb86;
+}
+table .completionStatus {
+  font-size: .9em;
+}
+
+.completionStatus {
+  font-weight: bold;
+}
+
+.empty,
+.loading {
+  background-color: #fafafa;
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
+}
+
+/*# sourceMappingURL=style.css.map */
+
 .tooltip {
   display: inline;
   position: absolute;
@@ -7662,57 +7715,4 @@ svg {
   border-left-color: rgba(72, 72, 77, 0.96);
   top: 8px;
   right: -14px;
-}
-
-/*# sourceMappingURL=style.css.map */
-
-table .th-inner {
-  min-width: 80px;
-}
-table td.editable {
-  width: 80px;
-  padding: 2px;
-  /* cell status */
-}
-table td.editable .displayValue,
-table td.editable .editControl {
-  width: 100%;
-  height: 100%;
-  padding: 4px 6px;
-}
-table td.editable .displayValue {
-  cursor: pointer;
-  min-height: 20px;
-}
-table td.editable .editControl {
-  display: none;
-  border: 1px solid #aaa;
-  font-size: inherit;
-}
-table td.editable .editControl:focus {
-  outline: 0;
-}
-table td.editable.editing .displayValue {
-  display: none;
-}
-table td.editable.editing .editControl {
-  display: block;
-}
-table td.editable.missing .displayValue {
-  background-color: #ffeb86;
-}
-table .completionStatus {
-  font-size: .9em;
-}
-
-.completionStatus {
-  font-weight: bold;
-}
-
-.empty,
-.loading {
-  background-color: #fafafa;
-  color: #999;
-  text-align: center;
-  padding: 40px 0;
 }
