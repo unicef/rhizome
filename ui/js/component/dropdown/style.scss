@@ -1,5 +1,5 @@
 .dropdown {
-	cursor: default;
+	cursor: pointer;
 	position: relative;
 
 	form[role="search"] {
@@ -71,21 +71,21 @@
 				.fa {
 					visibility: hidden;
 				}
-			}
 
-			ul *[role="menuitem"] {
-				margin-left: 0.5rem;
+				.fa-check {
+					float: right;
+				}
 			}
 
 			.selected {
-				& > .fa-check {
+				& .fa-check {
 					visibility: visible;
 				}
 			}
 
 			.folder {
-				& > .fa-caret-right,
-				& > .fa-caret-down {
+				& .fa-caret-right,
+				& .fa-caret-down {
 					visibility: visible;
 				}
 			}

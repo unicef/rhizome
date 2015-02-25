@@ -35,30 +35,30 @@ module.exports = {
 		var self = this;
 
 		this._regions = new Dropdown({
-			el     : '#regions',
-			source : api.regions,
-			mapping: {
-				'parent_region_id': 'parent',
-				'name'            : 'title',
-				'id'              : 'value'
+			el      : '#regions',
+			source  : api.regions,
+			mapping : {
+				'parent_region_id' : 'parent',
+				'name'             : 'title',
+				'id'               : 'value'
 			}
 		});
 
 		this._regions.$on('dropdown-value-changed', function (items) {
-			self.regions = items;
+			self.regions = _.values(items);
 		});
 
 		this._indicators = new Dropdown({
-			el     : '#indicators',
-			source : api.indicators,
-			mapping: {
-				'short_name': 'title',
-				'id'        : 'value'
+			el      : '#indicators',
+			source  : api.indicators,
+			mapping : {
+				'name' : 'title',
+				'id'   : 'value'
 			}
 		});
 
 		this._indicators.$on('dropdown-value-changed', function (items) {
-			self.indicators = items;
+			self.indicators = _.values(items);
 		});
 
 		this.$on('page-changed', function (data) {
