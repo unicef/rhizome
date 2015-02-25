@@ -51,15 +51,28 @@ class DocTransform(object):
 
         else:
 
-            for i,(row) in enumerate(self.df.values):
-                source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,i)
+            self.df.rename(columns={
+                self.column_mappings['indicator_col']:'indicator_string',\
+                self.column_mappings['region_code_col']:'region_code',\
+                self.column_mappings['campaign_col']:'campaign_string',\
+                self.column_mappings['value_col']:'cell_value',\
+            }, inplace=True)
+
+            # gb_df = self.df.groupby(['region_code','campaign_string',\
+            #     'indicator_string']).agg({'cell_value':'min'})
+
+
+
+            for row_ix, row_data in self.df.iterrows():
+
+                source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
                 sdp_dict = {
                     'source_guid': source_guid,
-                    'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                    'region_code': row[df_cols.index(self.column_mappings['region_code_col'])],
-                    'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
-                    'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
-                    'row_number': i,
+                    'indicator_string': row_data.indicator_string,
+                    'region_code': row_data.region_code,
+                    'campaign_string': row_data.campaign_string,
+                    'cell_value': row_data.cell_value,
+                    'row_number': row_ix,
                     'source_id': self.source_id,
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
@@ -67,14 +80,11 @@ class DocTransform(object):
                 sdp = SourceDataPoint(**sdp_dict)
                 source_datapoint_batch.append(sdp)
 
-        print len(source_datapoint_batch)
-
-
-        # SourceDataPoint.objects.bulk_create(source_datapoint_batch)
+        print source_datapoint_batch
+        SourceDataPoint.objects.bulk_create(~source_datapoint_batch)
 
         source_datapoints = SourceDataPoint.objects.filter(document_id = \
             self.document.id)
-
 
         return source_datapoints
 
