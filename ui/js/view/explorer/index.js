@@ -45,7 +45,7 @@ module.exports = {
 		});
 
 		this._regions.$on('dropdown-value-changed', function (items) {
-			self.regions = items;
+			self.regions = _.values(items);
 		});
 
 		this._indicators = new Dropdown({
@@ -58,7 +58,7 @@ module.exports = {
 		});
 
 		this._indicators.$on('dropdown-value-changed', function (items) {
-			self.indicators = items;
+			self.indicators = _.values(items);
 		});
 
 		this.$on('page-changed', function (data) {
