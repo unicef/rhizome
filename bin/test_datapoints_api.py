@@ -298,7 +298,7 @@ def init():
         help='The database name to connect to')
 
     # Test options
-    parser.add_argument('-t', '--threshold', default=0.0000001, type=float,
+    parser.add_argument('-t', '--threshold', default=0.001, type=float,
         help='Values whose difference is greater than this threshold will be considered failed tests')
     parser.add_argument('-a', '--api', default='uf04.seedscientific.com',
         help='Domain for API')
@@ -321,7 +321,7 @@ def init():
     return args
 
 
-def test(campaign_id, region_id, indicator_id, expected, threshold=0):
+def test(campaign_id, region_id, indicator_id, expected, threshold=0.0001):
     try:
         actual = DataPoint(campaign_id, region_id, indicator_id)
     except MultipleValuesError:

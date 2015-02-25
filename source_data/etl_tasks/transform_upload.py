@@ -39,7 +39,7 @@ class DocTransform(object):
 
     def dp_df_to_source_datapoints(self):
 
-        source_datapoints = []
+        source_datapoint_batch = []
 
         df_cols = [col for col in self.df]
 
@@ -49,14 +49,12 @@ class DocTransform(object):
             source_datapoints = pivot_and_insert_src_datapoints(self.df,\
                 self.document.id,self.column_mappings)
 
-
         else:
 
             for i,(row) in enumerate(self.df.values):
-
-                sdp, created = SourceDataPoint.objects.get_or_create(
-                    source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
-                    defaults = {
+                source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,i)
+                sdp_dict = {
+                    'source_guid': source_guid,
                     'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
                     'region_code': row[df_cols.index(self.column_mappings['region_code_col'])],
                     'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
@@ -65,8 +63,17 @@ class DocTransform(object):
                     'source_id': self.source_id,
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
-                })
-                source_datapoints.append(sdp)
+                }
+                sdp = SourceDataPoint(**sdp_dict)
+                source_datapoint_batch.append(sdp)
+
+        print len(source_datapoint_batch)
+
+
+        # SourceDataPoint.objects.bulk_create(source_datapoint_batch)
+
+        source_datapoints = SourceDataPoint.objects.filter(document_id = \
+            self.document.id)
 
 
         return source_datapoints

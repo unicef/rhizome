@@ -99,7 +99,7 @@ class SourceDataPoint(models.Model):
     row_number= models.IntegerField()
     source = models.ForeignKey(Source)
     document = models.ForeignKey(Document)
-    source_guid = models.CharField(max_length=255)
+    source_guid = models.CharField(max_length=255,unique=True)
     status = models.ForeignKey(ProcessStatus)
     guid = models.CharField(unique=True, max_length=40)
     created_at = models.DateTimeField(default=datetime.now())
@@ -118,7 +118,6 @@ class SourceDataPoint(models.Model):
 
     class Meta:
         app_label = 'source_data'
-        unique_together = ('source','source_guid','indicator_string')
         db_table = 'source_datapoint'
 
     ###################

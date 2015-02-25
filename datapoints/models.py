@@ -256,10 +256,21 @@ class AggDataPoint(models.Model):
 
 class MissingMapping(models.Model):
 
-    datapoint = models.ForeignKey(DataPoint) # Fix this ASAP! -> http://stackoverflow.com/questions/9863355/
+    datapoint = models.ForeignKey(DataPoint)
     document = models.ForeignKey('source_data.SourceDataPoint')
     what_is_missing = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'vw_missing_mappings'
         managed = False
+
+
+class ExpectedData(models.Model):
+
+    region = models.ForeignKey(Region,related_name='ex_child_region')
+    campaign = models.ForeignKey(Campaign)
+    parent_region = models.ForeignKey(Region,related_name='ex_parent_region')
+
+    class Meta:
+        db_table = 'expected_data'
+        unique_together = ('region','campaign')
