@@ -53,7 +53,6 @@ class DocTransform(object):
 
             for i,(row) in enumerate(self.df.values):
                 source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,i)
-                print i
                 sdp_dict = {
                     'source_guid': source_guid,
                     'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
@@ -66,13 +65,16 @@ class DocTransform(object):
                     'status_id': self.to_process_status
                 }
 
-                sdp = SourceDataPoint(**sdp_dict)
+                sdp = SourceDataPoint.objects.create(**sdp_dict)
                 source_datapoint_batch.append(sdp)
 
+        # print len(source_datapoint_batch)
+        # SourceDataPoint.objects.bulk_create(source_datapoint_batch)
+        #
+        # source_datapoints = SourceDataPoint.objects.filter(document_id = \
+        #     self.document_id)
 
-        source_datapoints = SourceDataPoint.objects.bulk_create(source_datapoint_batch)
-
-        return source_datapoints
+        return source_datapoint_batch
 
 
 class RegionTransform(DocTransform):

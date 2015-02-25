@@ -627,8 +627,6 @@ def missing_data(request):
         md_array},context_instance=RequestContext(request))
 
 
-
-
 def gdoc_qa(request):
 
     gc = gspread.login(gdoc_u,gdoc_p)
