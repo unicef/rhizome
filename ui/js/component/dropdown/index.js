@@ -53,59 +53,46 @@ module.exports = Vue.extend({
 
 	data: function () {
 		return {
-			pattern   : '',
-			open      : false,
-			opening   : false,
-			menuHeight: 0,
-			menuX     : 0,
-			sortBy    : 'title',
-			sortDsc   : false,
-			items     : [],
-			loading   : false
+			items      : [],
+			loading    : false,
+			menuHeight : 0,
+			menuX      : 0,
+			open       : false,
+			opening    : false,
+			pattern    : '',
+			selection  : {},
+			sortBy     : 'title',
+			sortDsc    : false,
 		};
 	},
 
 	ready: function () {
-		this.searchable = util.parseBool(this.searchable);
 		this.multi      = util.parseBool(this.multi);
+		this.searchable = util.parseBool(this.searchable);
 		this.sortDsc    = util.parseBool(this.sortDsc);
 
 		this.load();
 	},
 
 	computed: {
-
 		filtered: function () {
 			return this.pattern.length > 0;
 		},
 
-		selectedItems: function () {
-			var selection = [];
-
-			// Initial queue of items copied (hence [].concat) from the root items in
-			// the dropdown. Using items directly as the queue results in empty menus
-			// as the items are removed from the array.
-			var q = [].concat(this.items || []);
-
-			// Check all items and their children in a breadth-first manner
-			while (q.length > 0) {
-				var item = q.shift();
-
-				if (item.selected) {
-					selection.push(item);
-				}
-
-				q = q.concat(item.children || []);
-			}
-
-			return selection;
+		hasSelection: function () {
+			return _.keys(this.selection).length > 0;
 		},
 
 		title: function () {
-			var selected = this.selectedItems;
+			if (!this.hasSelection) {
+				return this.placeholder;
+			}
 
-			return selected.length === 0 ? this.placeholder :
-				selected.map(function (o) { return o.title; }).join(', ');
+			return _(this.selection)
+				.values()
+				.pluck('title')
+				.value()
+				.join(', ');
 		},
 	},
 
@@ -139,20 +126,24 @@ module.exports = Vue.extend({
 		},
 
 		toggleItem: function (item) {
-			if (item) {
-				if (!this.multi) {
-					this.$broadcast('dropdown-clear');
-					item.selected = true;
-					this.open = false;
+			if (!this.multi) {
+				var selection = {};
+
+				selection[item.value] = item;
+				this.selection = selection;
+
+				this.open = false;
+			} else {
+				if (this.selection.hasOwnProperty(item.value)) {
+					delete this.selection[item.value];
 				} else {
-					item.selected = !item.selected;
+					this.selection[item.value] = item;
 				}
+
+				this.selection.__ob__.notify();
 			}
 
-			var items = this.selectedItems;
-
-			this.$emit('dropdown-value-changed', items);
-			this.$dispatch('dropdown-value-changed', items);
+			this.$emit('dropdown-value-changed', this.selection);
 		},
 
 		handleEvent: function (evt) {
@@ -204,19 +195,51 @@ module.exports = Vue.extend({
 			this.menuX = Math.min(0, window.innerWidth - dom.viewportOffset(this.$el).left - dims.width - marginRight);
 		}, 100, { leading: false }),
 
+		select: function (value) {
+			if (!value) {
+				return;
+			}
+
+			// Collect the current selection outside of the VM to prevent too many
+			// updates to the UI
+			var selection = {};
+			this.forAll(function (item) {
+				if (item.value === value) {
+					selection[item.value] = item;
+				}
+			});
+
+			// Trigger an update of the VM
+			this.selection = selection;
+		},
+
 		clear: function () {
-			this.$broadcast('dropdown-clear');
-			Vue.nextTick(this.itemToggle);
+			this.selection = {};
+			this.$emit('dropdown-value-changed', this.selection);
 		},
 
 		invert: function () {
-			this.$broadcast('dropdown-invert');
-			Vue.nextTick(this.itemToggle);
+			var selection = {}
+
+			this.forAll(function (item) {
+				if (!this.selection.hasOwnProperty(item.value)) {
+					selection[item.value] = item;
+				}
+			});
+
+			this.selection = selection;
+			this.$emit('dropdown-value-changed', this.selection);
 		},
 
 		selectAll: function () {
-			this.$broadcast('dropdown-select-all');
-			Vue.nextTick(this.itemToggle);
+			var selection = {};
+
+			this.forAll(function (item) {
+				selection[item.value] = item;
+			});
+
+			this.selection = selection;
+			this.$emit('dropdown-value-changed', this.selection);
 		},
 
 		load: function (params, accumulator) {
@@ -257,14 +280,32 @@ module.exports = Vue.extend({
 						self.items   = treeify(accumulator);
 						self.loading = false;
 
-						if (self.$options.defaults) {
-							Vue.nextTick(function () {
-								self.$emit('dropdown-select', self.$options.defaults);
-								self.toggleItem();
-							});
-						}
+						self.select(self.$options.defaults);
+						self.$emit('dropdown-value-changed', self.selection);
 					}
 				});
+		},
+
+		/**
+		 * Apply a callback to each item in the dropdown.
+		 *
+		 * Traverses the item tree and runs `cb` on each item. The context for the
+		 * `cb` will always be the component.
+		 *
+		 * @param {function} cb The callback executed on each item
+		 */
+		forAll: function (cb) {
+			// Work queue needs to be copied from items so that we don't shift items
+			// off of the data model we use for display
+			var q = [].concat(this.items);
+
+			while (q.length > 0) {
+				var item = q.shift();
+
+				cb.call(this, item);
+
+				q.push.apply(q, item.children);
+			}
 		}
 	},
 
@@ -284,32 +325,13 @@ module.exports = Vue.extend({
 			return result;
 		},
 
+		isSelected: function (value) {
+			return this.selection.hasOwnProperty(value);
+		}
 	},
 
 	events: {
-
 		'dropdown-item-toggle': 'toggleItem',
-
-		'dropdown-select': function (values) {
-			if (!_.isArray(values)) {
-				values = [values];
-			}
-
-			// Initial queue of items copied (hence [].concat) from the root items in
-			// the dropdown. Using items directly as the queue results in empty menus
-			// as the items are removed from the array.
-			var q = [].concat(this.items || []);
-
-			// Check all items and their children in a breadth-first manner
-			while (q.length > 0) {
-				var item = q.shift();
-
-				item.selected = (values.indexOf(item.value) >= 0);
-
-				q = q.concat(item.children || []);
-			}
-		}
-
 	},
 
 	components: {

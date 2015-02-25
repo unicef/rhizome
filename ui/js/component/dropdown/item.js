@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 module.exports = {
 
 	replace : true,
@@ -7,42 +9,44 @@ module.exports = {
 
 	data: function () {
 		return {
-			open    : false,
-			selected: false,
-			children: []
+			padding   : 17,
+			level     : 0,
+			open      : false,
+			selected  : false,
+			children  : [],
+			selection : {}
 		};
 	},
 
 	computed: {
 
+		selected: function () {
+			return this.selection.hasOwnProperty(this.value);
+		},
+
 		hasChildren: function () {
 			return this.children && this.children.length > 0;
 		},
+
+		indent: function () {
+			return (this.padding * this.level) + 'px';
+		}
 
 	},
 
 	methods: {
 
-		toggle: function () {
-			this.$dispatch('dropdown-item-toggle', this);
+		onClick: function () {
+			this.$dispatch('dropdown-item-toggle', _.assign({}, this.$data));
+		},
+
+		toggleFolder: function (e) {
+			this.open = !this.open;
+
+			// Prevent opening a folder from toggling that item
+			e.stopPropagation();
 		}
 
 	},
-
-	events: {
-
-		'dropdown-select-all': function () {
-			this.selected = true;
-		},
-
-		'dropdown-clear': function () {
-			this.selected = false;
-		},
-
-		'dropdown-invert': function () {
-			this.selected = !this.selected;
-		}
-
-	}
 
 };

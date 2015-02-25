@@ -7504,9 +7504,8 @@ svg {
   color: #AF373E;
   position: absolute;
   top: 0;
-  right: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 999;
   padding: 0 2pt;
   font-size: 9pt;
 }
@@ -7514,7 +7513,7 @@ svg {
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
-  cursor: default;
+  cursor: pointer;
   position: relative;
 }
 .dropdown .menu-button {
@@ -7576,13 +7575,13 @@ svg {
 .dropdown .container ul *[role="menuitem"] .fa {
   visibility: hidden;
 }
-.dropdown .container ul ul *[role="menuitem"] {
-  margin-left: 0.5rem;
+.dropdown .container ul *[role="menuitem"] .fa-check {
+  float: right;
 }
-.dropdown .container ul .selected > .fa-check {
+.dropdown .container ul .selected .fa-check {
   visibility: visible;
 }
-.dropdown .container ul .folder > .fa-caret-right, .dropdown .container ul .folder > .fa-caret-down {
+.dropdown .container ul .folder .fa-caret-right, .dropdown .container ul .folder .fa-caret-down {
   visibility: visible;
 }
 .dropdown .container .selection-controls {

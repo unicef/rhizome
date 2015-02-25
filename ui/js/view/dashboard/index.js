@@ -34,6 +34,8 @@ module.exports = {
 
 		page('/datapoints/:dashboard', show);
 		page({ click: false });
+
+		api.campaign().then(this.loadCampaigns);
 	},
 
 	attached: function () {
@@ -43,6 +45,9 @@ module.exports = {
 			el      : '#regions',
 			source  : api.regions,
 			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
+			data: {
+				placeholder: 'Loading regions'
+			},
 			mapping : {
 				'parent_region_id': 'parent',
 				'name'            : 'title',
@@ -51,17 +56,33 @@ module.exports = {
 		});
 
 		this._regions.$on('dropdown-value-changed', function (items) {
-			if (items && items.length) {
-				self.region     = items[0].value;
-				self.regionName = items[0].title;
-			} else {
-				self.region     = null;
-				self.regionName = '';
+			var region = null;
+			var name   = '';
+
+			if (items) {
+				var pairs = _.pairs(items);
+
+				if (pairs.length > 0) {
+					region = pairs[0][0];
+					name   = pairs[0][1];
+				}
 			}
+
+			self.region     = region;
+			self.regionName = name;
 		});
 
 		this.$.campaigns.$on('dropdown-value-changed', function (items) {
-			self.campaign = (items && items.length > 0) ? items[0] : null;
+			var campaign = null;
+			if (items) {
+				var campaigns = _.values(items);
+
+				if (campaigns.length > 0) {
+					campaign = campaigns[0];
+				}
+			}
+
+			self.campaign = campaign;
 		});
 	},
 
@@ -84,23 +105,16 @@ module.exports = {
 					};
 				});
 
-			this.campaigns[0].selected = true;
+			this.$.campaigns.select(this.campaigns[0].value);
 			this.campaign = this.campaigns[0];
 		}
 	},
 
-	watch: {
-
-		'region': function () {
-			api.campaign({ region__in: this.region }).then(this.loadCampaigns);
-			this._regions.$emit('dropdown-select', this.region);
-		}
-
-	},
 
 	events: {
 		'region-changed': function (region) {
 			this.region = region;
+			this._regions.select(region);
 		}
 	},
 
