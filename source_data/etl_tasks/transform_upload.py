@@ -49,12 +49,16 @@ class DocTransform(object):
 
         else:
 
-            source_datapoints = pivot_and_insert_src_datapoints(self.df,\
-                self.document.id,self.column_mappings)
+            self.df.rename(columns=
+                {
+                  self.column_mappings['indicator_col']: 'indicator_string',
+                  self.column_mappings['region_code_col']: 'region_code',
+                  self.column_mappings['campaign_col']: 'campaign_string',
+                  self.column_mappings['value_col']: 'cell_value',
+                }
+            , inplace=True)
 
-
-            batch = []
-
+            source_datapoints = []
             for row_ix, row_data in self.df.iterrows():
 
                 source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
@@ -71,28 +75,10 @@ class DocTransform(object):
                     'status_id': self.to_process_status
                 }
 
-                batch.append(sdp)
-
-            print 'what is happening BROOOO'
-
-            SourceDataPoint.objects.bulk_create(batch)
-            source_datapoints = SourceDataPoint.objects\
-                .filter(document_id=self.document.id)
-
-            print 'PLEASE\n' *10
-
-            print 'what is happening'
-            print '==\n=='
-
-            print source_datapoints
-            # SourceDataPoint.objects.save()
-
-            #
-            # source_datapoints.save()
+                sdp = SourceDataPoint.objects.create(**sdp_dict)
+                source_datapoints.append(sdp)
 
             return source_datapoints
-
-
 
 
 class RegionTransform(DocTransform):

@@ -274,3 +274,17 @@ class ExpectedData(models.Model):
     class Meta:
         db_table = 'expected_data'
         unique_together = ('region','campaign')
+
+
+class ReconData(models.Model):
+
+    region = models.ForeignKey(Region)
+    campaign = models.ForeignKey(Campaign)
+    indicator = models.ForeignKey(Indicator)
+    target_value = models.FloatField()
+    is_raw = models.BooleanField()
+    success_flag = models.BooleanField()
+
+    class Meta:
+        db_table = 'recon_data'
+        unique_together = ('region','campaign','indicator')
