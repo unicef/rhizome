@@ -229,7 +229,7 @@
 					<ul class="pie">
 						<li
 							v-repeat="inaccessibility"
-							v-class="hide-for-print: value == 0">
+							v-class="hide-for-print: hiddenForPrint">
 							<span
 								v-component="chart-pie"
 								data-width="12"

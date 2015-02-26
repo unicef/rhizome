@@ -142,9 +142,10 @@ module.exports = {
 
 						o.indicators.forEach(function (d) {
 							indicators[d.indicator] = _.assign({
-								name       : index[d.indicator].short_name,
-								value      : d3.format('.1f')(d.value),
-								datapoints : [{
+								name           : index[d.indicator].short_name,
+								value          : d3.format('.1f')(d.value * 100),
+								hiddenForPrint : d.value === 0,
+								datapoints     : [{
 									indicator : d.indicator,
 									value     : d.value
 								}]
