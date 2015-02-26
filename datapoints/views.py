@@ -574,7 +574,67 @@ def cache_control(request):
     context_instance=RequestContext(request))
 
 
-def missing_data(request):
+def gdoc_qa(request):
+
+    gc = gspread.login(gdoc_u,gdoc_p)
+    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    list_of_lists = worksheet.get_all_values()
+    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
+    gd_df = gd_df[gd_df['region_id'] != '0']
+
+    gd_dict = gd_df.transpose().to_dict()
+
+    final_qa_data = []
+
+    for k,v in gd_dict.iteritems():
+
+        print k
+
+        try:
+            dwc = DataPointComputed.objects.get(
+                region_id = v['region_id'],
+                campaign_id = v['campaign_id'],
+                indicator_id = v['indicator_id'],
+            )
+
+            v['computed_value'] = dwc.value
+
+            if abs(float(dwc.value) - float(v['value']))< .001:
+                passed = 1
+            else:
+                passed = 0
+
+        except Exception:
+            v['computed_value'] = -1
+            passed = 0
+
+        v['passed'] = passed
+
+        if passed == 0:
+            final_qa_data.append(v)
+
+
+    indicator_breakdown = []
+    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
+        .agg('count').transpose().to_dict()
+
+    for k,v in missed_by_ind_id.iteritems():
+        ind_dict = {'indicator_id':k ,'count_missed': v['value']}
+        indicator_breakdown.append(ind_dict)
+
+    qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
+
+    return render_to_response('qa_data.html',
+        {'qa_data': final_qa_data, 'qa_score':qa_score\
+        ,'indicator_breakdown':indicator_breakdown},
+        context_instance=RequestContext(request))
+
+def qa_failed(request,region_id,campaign_id,indicator_id):
+
+    '''
+    for an indicator_id, region_id, campaign_id, value try to figure out
+    why the data is in correct.
+    '''
 
     md_array = []
 
@@ -594,7 +654,9 @@ def missing_data(request):
         		FROM calculated_indicator_component cic
         		INNER JOIN expected_data ed
         		ON 1 = 1
-        		WHERE cic.indicator_id = 168
+        		WHERE cic.indicator_id = %s
+
+
         		--WHERE cic.indicator_id in(164,165,166,167,168,187,226,228,230,233,239,431,432)
 
         	)x_pect
@@ -607,7 +669,9 @@ def missing_data(request):
         )y
         INNER JOIN campaign c on c.id = y.campaign_id
         INNER JOIN region r on r.id = y.region_id
-		INNER JOIN indicator i on i.id = y.indicator_component_id;''')
+		INNER JOIN indicator i on i.id = y.indicator_component_id
+        WHERE y.region_id = %s AND y.campaign_id = %s;''',[indicator_id\
+            ,region_id,campaign_id])
 
     for row in md:
         row_dict = {
@@ -621,53 +685,5 @@ def missing_data(request):
 
         md_array.append(row_dict)
 
-    pprint(md_array)
-
     return render_to_response('missing_data.html',{'missing_data':\
         md_array},context_instance=RequestContext(request))
-
-
-def gdoc_qa(request):
-
-    gc = gspread.login(gdoc_u,gdoc_p)
-    worksheet = gc.open("Dashboard QA | February 2015").sheet1
-    list_of_lists = worksheet.get_all_values()
-    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
-
-    gd_df = gd_df[gd_df['region_id'] != '0']
-
-    expected_data_batch = []
-
-    gd_dict = gd_df.transpose().to_dict()
-
-    final_qa_data = []
-
-
-    for k,v in gd_dict.iteritems():
-
-        ed = ExpectedData(**v)
-        expected_data_batch.append(ed)
-
-    ExpectedData.objects.all().delete()
-    ExpectedData.objects.bulk_create(expected_data_batch)
-
-    indicator_breakdown = []
-    # try:
-    #     missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
-    #         .agg('count').transpose().to_dict()
-    # except KeyError:
-    #     missed_by_ind_id = {}
-    #
-    #
-    # for k,v in missed_by_ind_id.iteritems():
-    #     ind_dict = {'indicator_id':k ,'count_missed': v['value']}
-    #     indicator_breakdown.append(ind_dict)
-    #
-    qa_score = 1 #1 - float((len(final_qa_data))/ float(len(gd_df)))
-
-
-
-    return render_to_response('qa_data.html',
-        {'qa_data': final_qa_data, 'qa_score':qa_score\
-        ,'indicator_breakdown':indicator_breakdown},
-        context_instance=RequestContext(request))

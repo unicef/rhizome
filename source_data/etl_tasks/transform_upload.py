@@ -3,11 +3,12 @@ import pandas as pd
 from pprint import pprint
 
 from django.conf import settings
+from django.db import transaction
 from pandas.io.excel import read_excel
 
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
-from datapoints.models import Source
+from datapoints.models import Source, DataPoint
 
 
 class DocTransform(object):
@@ -38,8 +39,6 @@ class DocTransform(object):
 
     def dp_df_to_source_datapoints(self):
 
-        source_datapoint_batch = []
-
         df_cols = [col for col in self.df]
 
         indicator_col = self.column_mappings['indicator_col']
@@ -50,19 +49,16 @@ class DocTransform(object):
 
         else:
 
-            self.df.rename(columns={
-                self.column_mappings['indicator_col']:'indicator_string',\
-                self.column_mappings['region_code_col']:'region_code',\
-                self.column_mappings['campaign_col']:'campaign_string',\
-                self.column_mappings['value_col']:'cell_value',\
-            }, inplace=True)
+            source_datapoints = pivot_and_insert_src_datapoints(self.df,\
+                self.document.id,self.column_mappings)
 
-            # gb_df = self.df.groupby(['region_code','campaign_string',\
-            #     'indicator_string']).agg({'cell_value':'min'})
+
+            batch = []
 
             for row_ix, row_data in self.df.iterrows():
 
                 source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
+
                 sdp_dict = {
                     'source_guid': source_guid,
                     'indicator_string': row_data.indicator_string,
@@ -74,13 +70,25 @@ class DocTransform(object):
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
                 }
-                sdp = SourceDataPoint.objects.create(**sdp_dict)
-                # sdp = SourceDataPoint(**sdp_dict)
-                # source_datapoint_batch.append(sdp)
 
-            # SourceDataPoint.objects.bulk_create(source_datapoint_batch[:2])
-            # print source_datapoint_batch
-            source_datapoints = SourceDataPoint.objects.filter(document_id=self.document.id)
+                batch.append(sdp)
+
+            print 'what is happening BROOOO'
+
+            SourceDataPoint.objects.bulk_create(batch)
+            source_datapoints = SourceDataPoint.objects\
+                .filter(document_id=self.document.id)
+
+            print 'PLEASE\n' *10
+
+            print 'what is happening'
+            print '==\n=='
+
+            print source_datapoints
+            # SourceDataPoint.objects.save()
+
+            #
+            # source_datapoints.save()
 
             return source_datapoints
 

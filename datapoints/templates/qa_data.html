@@ -39,6 +39,7 @@
             <th> Expected Value </th>
             <th>computed_value</th>
             <th> Passed </th>
+            <th> Investigate </th>
 
 
         </tr>
@@ -53,6 +54,7 @@
             <th>{{ row.value }}</th>
             <th>{{ row.computed_value }}</th>
             <th>{{ row.passed }}</th>
+            <th><a href="{% url 'datapoints:qa_failed' row.indicator_id row.region_id row.campaign_id %}"> Test NG Dash </a></th>
         </tr>
 
     {% endfor %}
