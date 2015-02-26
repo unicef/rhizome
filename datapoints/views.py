@@ -11,7 +11,7 @@ from pandas import read_csv
 from pandas import DataFrame
 import gspread
 
-from datapoints.models import DataPoint,Region,Indicator,Source
+from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
 from polio.secrets import gdoc_u, gdoc_p
