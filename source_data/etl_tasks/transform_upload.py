@@ -78,8 +78,6 @@ class DocTransform(object):
                 sdp = SourceDataPoint.objects.create(**sdp_dict)
                 source_datapoints.append(sdp)
 
-            SourceDataPoint.objects.bulk_create(batch)
-
             return source_datapoints
 
 
