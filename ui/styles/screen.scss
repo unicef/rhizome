@@ -13,22 +13,25 @@
 @import "charts";
 
 body {
-	font-size: rem-calc(10);
-	padding: 11px 4px 11px 54px;
+	font-size : rem-calc(10);
+	padding   : 11px 4px 11px 54px;
 }
 
 h6 {
-	white-space  : nowrap;
-	overflow     : hidden;
-	text-overflow: ellipsis;
+	margin-bottom : 0.1rem;
+	margin-top    : 3px;
+	overflow      : hidden;
+	text-overflow : ellipsis;
+	white-space   : nowrap;
 }
+
 header {
 	@include background(linear-gradient(right, #333, #3a3a3a));
 
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
+	position : fixed;
+	top      : 0;
+	left     : 0;
+	bottom   : 0;
 }
 
 h3 {
@@ -41,10 +44,6 @@ h4 {
 	margin: 0;
 	white-space: nowrap;
 	overflow: hidden;
-}
-
-h6 {
-	margin-bottom: 0.1rem;
 }
 
 nav {
