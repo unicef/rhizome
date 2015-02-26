@@ -25,7 +25,6 @@ module.exports = {
 					return y(d.value);
 				})
 				.values(function (d) {
-					console.debug('ytd::renderer values', d);
 					return d.values;
 				})
 				.color(function (d, i) {

@@ -55,28 +55,35 @@ module.exports = {
 
 	data: function () {
 		return {
-			region     : null,
-			regionName : '',
-			campaign   : null,
-			campaigns  : [],
-			capacity   : [178,228,179,184,180,185,230,226,239],
-			polio      : [245,236,192,193,191],
-			supply     : [194,219,173,172],
-			resources  : [169,233],
-			microplans : [],
-			cases      : null,
-			newCases   : null
+			region          : null,
+			regionName      : '',
+			campaign        : null,
+			campaigns       : [],
+			capacity        : [178,228,179,184,180,185,230,226,239],
+			polio           : [245,236,192,193,191],
+			supply          : [194,219,173,172],
+			resources       : [169,233],
+			inaccessibility : [],
+			microplans      : [],
+			cases           : null,
+			newCases        : null
 		};
 	},
 
 	computed: {
 		campaignName: function () {
-			return moment(this.campaign.start_date).format('MMM YYYY');
+			return moment(this.campaign.end, 'YYYY-MM-DD').format('MMM YYYY');
 		}
 	},
 
-	watch: {
-		'campaign': function () {
+	methods: {
+		fetch: function () {
+			if (!this.region || !this.campaign) {
+				return;
+			}
+
+			// Fetch polio cases data for this year to display over the polio cases
+			// line chart
 			var start = moment(this.campaign.end, 'YYYY-MM-DD').startOf('year');
 			var q     = {
 				indicator__in  : 168,
@@ -112,6 +119,55 @@ module.exports = {
 						return sum + c.value;
 					}, 0);
 				});
+
+			// Fetch inaccesibility data for this campaign
+			var inaccessibility = [442,443,444,445,446,447,448,449,450];
+
+			q = {
+				indicator__in  : inaccessibility,
+				region__in     : [this.region],
+				campaign_start : moment(this.campaign.end, 'YYYY-MM-DD').startOf('month').format('YYYY-MM-DD'),
+				campaign_end   : this.campaign.end
+			};
+
+			Promise.all([api.indicators({ id__in: inaccessibility }), api.datapoints(q)])
+				.then(function (results) {
+					var index      = _.indexBy(results[0].objects, 'id');
+					var data       = results[1];
+					var objects    = data.objects;
+					var indicators = {};
+
+					for (var i = objects.length - 1; i >= 0; i--) {
+						var o = objects[i];
+
+						o.indicators.forEach(function (d) {
+							indicators[d.indicator] = _.assign({
+								name           : index[d.indicator].short_name,
+								value          : d3.format('.1f')(d.value * 100),
+								hiddenForPrint : d.value === 0,
+								datapoints     : [{
+									indicator : d.indicator,
+									value     : d.value
+								}]
+							}, _.pick(o, 'campaign', 'region'));
+						});
+					}
+
+					self.inaccessibility = _(indicators)
+						.values()
+						.sortBy(function (d) {
+							return d.datapoints[0].value;
+						})
+						.reverse()
+						.value();
+
+					console.debug(self.inaccessibility)
+				});
 		},
+	},
+
+	watch: {
+		'campaign' : 'fetch',
+		'region'   : 'fetch'
 	}
 };
