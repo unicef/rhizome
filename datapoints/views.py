@@ -660,52 +660,44 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
     why the data is in correct.
     '''
 
+    expected_value = ReconData.objects.get(region_id=region_id\
+        ,campaign_id=campaign_id,indicator_id=indicator_id).target_value
+
     md_array = []
 
-    md = ExpectedData.objects.raw('''
-        SELECT
-            y.*
-           	,i.name as indicator_name
-          	,r.name as region_name
-          	,c.slug as campaign_slug
-         FROM (
-        	SELECT * FROM (
-        		SELECT
-        			ed.id
-                    ,indicator_component_id
-        			,ed.region_id
-        			,ed.campaign_id
-        		FROM calculated_indicator_component cic
-        		INNER JOIN expected_data ed
-        		ON 1 = 1
-        		WHERE cic.indicator_id = %s
-        	)x_pect
-        	WHERE NOT EXISTS (
-        		SELECT 1 FROM datapoint d
-        		WHERE x_pect.region_id = d.region_id
-        		AND x_pect.campaign_id = d.campaign_id
-        		AND x_pect.indicator_component_id = d.indicator_id
-        	)
-        )y
-        INNER JOIN campaign c on c.id = y.campaign_id
-        INNER JOIN region r on r.id = y.region_id
-		INNER JOIN indicator i on i.id = y.indicator_component_id
-        WHERE y.region_id = %s AND y.campaign_id = %s;''',[indicator_id\
-            ,region_id,campaign_id])
+    md = ReconData.objects.raw('''
+    SELECT
+    	rd.id
+    	,cic.indicator_component_id
+    	,cic.calculation
+    	,rd.region_id
+    	,rd.indicator_id
+    	,COALESCE(CAST(ad.value AS VARCHAR),'MISSING') as component_value
+    FROM recon_data rd
+    INNER JOIN calculated_indicator_component cic
+    ON rd.indicator_id = cic.indicator_id
+    AND cic.indicator_id = %s
+    AND rd.region_id = %s
+    AND rd.campaign_id = %s
+    LEFT JOIN agg_datapoint ad
+    ON cic.indicator_component_id = ad.indicator_id
+    AND ad.region_id = rd.region_id
+    AND ad.campaign_id = rd.campaign_id
+    ;''',[indicator_id,region_id,campaign_id])
 
 
     for row in md:
+        print row
         row_dict = {
-            'region_id': row.region_id,
             'campaign_id': row.campaign_id,
-            'indicator_id': row.indicator_component_id,
-            'indicator_name': row.indicator_name,
-            'region_name': row.region_name,
-            'campaign_slug': row.campaign_slug,
+            'indicator_id': row.indicator_id,
+            'region_id': row.region_id,
+            'target_value': row.component_value,
         }
 
         md_array.append(row_dict)
 
     return render_to_response('missing_data.html',{'missing_data':\
         md_array,'region_id':region_id,'campaign_id':campaign_id,\
-        'indicator_id':indicator_id},context_instance=RequestContext(request))
+        'indicator_id':indicator_id,'expected_value':expected_value}
+        ,context_instance=RequestContext(request))
