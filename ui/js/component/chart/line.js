@@ -79,12 +79,12 @@ module.exports = {
 			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
-				var last = _.max(d.values, function (v) { return v.campaign.start_date; });
+			var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 				return {
-					series : d.name + ' ' + fmt(d.value),
-					x      : x(last.campaign.start_date),
-					y      : y(last.value)
+					text : d.name + ' ' + fmt(last.value),
+					x    : x(last.campaign.start_date),
+					y    : y(last.value)
 				};
 			});
 
@@ -214,6 +214,10 @@ module.exports = {
 				.data(this.series, function (d, i) {
 					return d.name || i;
 				}).call(renderer);
+
+			if ([187,189].indexOf(this.indicators[0].id) > -1) {
+				console.debug('line::draw labels', this.labels);
+			}
 
 			svg.select('.annotation')
 				.selectAll('.series.label')
