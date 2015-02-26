@@ -663,6 +663,13 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
     expected_value = ReconData.objects.get(region_id=region_id\
         ,campaign_id=campaign_id,indicator_id=indicator_id).target_value
 
+    try:
+        actual_value = DataPointComputed.objects.get(region_id=region_id\
+            ,campaign_id=campaign_id,indicator_id=indicator_id).value
+    except ObjectDoesNotExist:
+        actual_value = None
+
+
     md_array = []
 
     md = ReconData.objects.raw('''
@@ -672,7 +679,7 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
     	,cic.calculation
     	,rd.region_id
     	,rd.indicator_id
-    	,COALESCE(CAST(ad.value AS VARCHAR),'MISSING') as component_value
+        ,COALESCE(CAST(ad.value AS VARCHAR),'MISSING') as actual_value
     FROM recon_data rd
     INNER JOIN calculated_indicator_component cic
     ON rd.indicator_id = cic.indicator_id
@@ -692,12 +699,14 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
             'campaign_id': row.campaign_id,
             'indicator_id': row.indicator_id,
             'region_id': row.region_id,
-            'target_value': row.component_value,
+            # 'target_value': row.target_value,
+            'actual_value': row.actual_value,
         }
 
         md_array.append(row_dict)
 
     return render_to_response('missing_data.html',{'missing_data':\
         md_array,'region_id':region_id,'campaign_id':campaign_id,\
-        'indicator_id':indicator_id,'expected_value':expected_value}
+        'indicator_id':indicator_id,'expected_value':expected_value
+        ,'actual_value':actual_value}
         ,context_instance=RequestContext(request))
