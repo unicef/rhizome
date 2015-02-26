@@ -144,6 +144,7 @@ def create_source_meta_data(document_id):
     else:
 
         ## campaigns ##
+
         campaign_strings = sdp_df['campaign_string'].unique()
 
         for cntr,(c) in enumerate(campaign_strings):

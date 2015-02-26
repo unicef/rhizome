@@ -33,7 +33,6 @@ class DocTransform(object):
 
             df = read_excel(self.file_path,sheet.name)
 
-
         return df
 
 
@@ -45,7 +44,7 @@ class DocTransform(object):
 
         indicator_col = self.column_mappings['indicator_col']
         if indicator_col == 'cols_are_indicators':
-            # do stuff #
+
             source_datapoints = pivot_and_insert_src_datapoints(self.df,\
                 self.document.id,self.column_mappings)
 
@@ -61,8 +60,6 @@ class DocTransform(object):
             # gb_df = self.df.groupby(['region_code','campaign_string',\
             #     'indicator_string']).agg({'cell_value':'min'})
 
-
-
             for row_ix, row_data in self.df.iterrows():
 
                 source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
@@ -77,16 +74,17 @@ class DocTransform(object):
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
                 }
-                sdp = SourceDataPoint(**sdp_dict)
-                source_datapoint_batch.append(sdp)
+                sdp = SourceDataPoint.objects.create(**sdp_dict)
+                # sdp = SourceDataPoint(**sdp_dict)
+                # source_datapoint_batch.append(sdp)
 
-        print source_datapoint_batch
-        SourceDataPoint.objects.bulk_create(~source_datapoint_batch)
+            # SourceDataPoint.objects.bulk_create(source_datapoint_batch[:2])
+            # print source_datapoint_batch
+            source_datapoints = SourceDataPoint.objects.filter(document_id=self.document.id)
 
-        source_datapoints = SourceDataPoint.objects.filter(document_id = \
-            self.document.id)
+            return source_datapoints
 
-        return source_datapoints
+
 
 
 class RegionTransform(DocTransform):
