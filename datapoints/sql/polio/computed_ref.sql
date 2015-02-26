@@ -238,7 +238,7 @@ FROM (
   SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Health worker','part_to_be_summed' UNION ALL
   SELECT 'Endprocess_All sources of info on IPDs','Endprocess_Source of info on IPDs - Community mobiliser','part_to_be_summed' UNION ALL
 
-  --2.3.2015 - POLIO-238
+  -- 2.3.2015 - POLIO-238 --
 
   SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals before re-visit','part_of_difference' UNION ALL
   SELECT 'Percent of refusals resolved during the previous month (both during campaigns and in between rounds)','Number of refusals after re-visit','part_of_difference' UNION ALL
@@ -251,7 +251,28 @@ FROM (
   SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Number of children seen','part_of_difference' UNION ALL
   SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Not aware','part_of_difference' UNION ALL
   SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Aware','difference_of_difference' UNION ALL
-  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Number of children seen','whole_of_difference'
+  SELECT 'Endprocess_Percent caregiver awareness','Endprocess_Number of children seen','whole_of_difference' UNION ALL
+
+  -- 2.26.2015 - POLIO-386 --
+
+  SELECT '% Reason for inaccessible children - Perception of fear','Reason for inaccessible children - Perception of fear','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Perception of fear','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Local community not supportive','Reason for inaccessible children - Local community not supportive','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Local community not supportive','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Crime','Reason for inaccessible children - Crime','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Crime','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Militant / Anti-Govt Elements','Reason for inaccessible children - Militant / Anti-Govt Elements','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Militant / Anti-Govt Elements','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Security Operations / Incidents','Reason for inaccessible children - Security Operations / Incidents','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Security Operations / Incidents','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Management issues','Reason for inaccessible children - Management issues','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Management issues','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Environment issues','Reason for inaccessible children - Environment issues','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Environment issues','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - Political issues','Reason for inaccessible children - Political issues','part' UNION ALL
+  SELECT '% Reason for inaccessible children - Political issues','Number of children missed due to all access issues','whole' UNION ALL
+  SELECT '% Reason for inaccessible children - No reason provided','Reason for inaccessible children - No reason','part' UNION ALL
+  SELECT '% Reason for inaccessible children - No reason provided','Number of children missed due to all access issues','whole'
 
 )x
 WHERE master_indicator IS NOT NULL;
