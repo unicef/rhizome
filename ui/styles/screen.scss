@@ -331,3 +331,28 @@ svg {
 	padding          : 0 2pt;
 	font-size        : 9pt
 }
+
+ul {
+	&.pie {
+		list-style     : none;
+		padding-left   : 16pt;
+		margin         : 0;
+
+		li {
+			font-size     : 8px;
+			line-height   : 1;
+			margin-bottom : 2pt;
+			min-height    : 14pt;
+			padding-top   : 3pt;
+		}
+
+		div.chart {
+			display     : inline-block;
+			float       : left;
+			margin-left : -14pt;
+			margin-top  : -3pt;
+			max-width   : 12pt;
+		}
+	}
+}
+

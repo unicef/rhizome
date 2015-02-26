@@ -56,6 +56,17 @@ module.exports = {
 			var layout = d3.layout.pie()
 				.value(function (d) {
 					return d.value;
+				})
+				.sort(function (a, b) {
+					if (a.indicator === 'other') {
+						return 1;
+					}
+
+					if (b.indicator === 'other') {
+						return -1;
+					}
+
+					return d3.descending(a.value, b.value);
 				});
 
 			var total = _.reduce(this.datapoints, function (result, d) {

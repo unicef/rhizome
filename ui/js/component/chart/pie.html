@@ -1,7 +1,8 @@
 <div class="chart" style="text-align: center">
 
-	<svg class="pie"
-	     v-attr="width: width, height: height">
+	<svg
+		class="pie"
+		v-attr="viewBox: '0 0 ' + width + ' ' + height">
 
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
 			<g class="data"
