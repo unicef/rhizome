@@ -131,13 +131,17 @@ def create_source_meta_data(document_id):
     source_campaigns / source indicators/
     '''
 
+
     sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
         document_id = document_id).values()))
+
+    print sdp_df[:1]
+
 
     sr_df = DataFrame(list(SourceRegion.objects.filter(
         document_id = document_id).values()))
 
-    if len(sr_df) > 0:
+    if len(sr_df) > 0 and len(sdp_df) == 0:
 
         pass
 
@@ -162,8 +166,11 @@ def create_source_meta_data(document_id):
         ## indicators ##
         indicator_strings = sdp_df['indicator_string'].unique()
 
-        for i in indicator_strings:
+        print indicator_strings
 
+        print '===\n' * 10
+
+        for i in indicator_strings:
 
             try:
                 s_i_obj = SourceIndicator.objects.create(
