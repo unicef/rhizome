@@ -569,64 +569,87 @@ def pivot_datapoint(request):
 
 def cache_control(request):
 
-
     return render_to_response('cache_control.html',
     context_instance=RequestContext(request))
 
+def load_gdoc_data(request):
 
-def gdoc_qa(request):
+    err_msg = 'none!'
 
     gc = gspread.login(gdoc_u,gdoc_p)
     worksheet = gc.open("Dashboard QA | February 2015").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
     gd_df = gd_df[gd_df['region_id'] != '0']
-
     gd_dict = gd_df.transpose().to_dict()
 
-    final_qa_data = []
+    batch = []
 
     for k,v in gd_dict.iteritems():
 
-        print k
+        print v
 
-        try:
-            dwc = DataPointComputed.objects.get(
-                region_id = v['region_id'],
-                campaign_id = v['campaign_id'],
-                indicator_id = v['indicator_id'],
-            )
+        v['success_flag'] = 0
+        recon_d = ReconData(**v)
+        batch.append(recon_d)
 
-            v['computed_value'] = dwc.value
+    ReconData.objects.all().delete()
 
-            if abs(float(dwc.value) - float(v['value']))< .001:
-                passed = 1
-            else:
-                passed = 0
-
-        except Exception:
-            v['computed_value'] = -1
-            passed = 0
-
-        v['passed'] = passed
-
-        if passed == 0:
-            final_qa_data.append(v)
-
-
-    indicator_breakdown = []
-    missed_by_ind_id = DataFrame(final_qa_data).groupby('indicator_id')\
-        .agg('count').transpose().to_dict()
-
-    for k,v in missed_by_ind_id.iteritems():
-        ind_dict = {'indicator_id':k ,'count_missed': v['value']}
-        indicator_breakdown.append(ind_dict)
-
-    qa_score = 1 - float((len(final_qa_data))/ float(len(gd_df)))
+    try:
+        ReconData.objects.bulk_create(batch)
+    except Exception as err:
+        err_msg = err
 
     return render_to_response('qa_data.html',
-        {'qa_data': final_qa_data, 'qa_score':qa_score\
-        ,'indicator_breakdown':indicator_breakdown},
+        {'err_msg': err_msg},context_instance=RequestContext(request))
+
+def test_data_coverage(request):
+
+    failed = ReconData.objects.raw("""
+    DROP TABLE IF EXISTS _test_results;
+    CREATE TEMP TABLE _test_results
+    AS
+    SELECT
+    	rd.id
+    	,rd.region_id
+    	,rd.campaign_id
+    	,rd.indicator_id
+    	,rd.target_value
+    	,dwc.value as actual_value
+    	,CAST(CASE WHEN ( ABS(rd.target_value - dwc.value) < 0.001) THEN 1 ELSE 0 END AS BOOLEAN) as success_flag
+    FROM recon_data rd
+    LEFT JOIN datapoint_with_computed dwc
+    ON rd.region_id = dwc.region_id
+    AND rd.campaign_id = dwc.campaign_id
+    AND rd.indicator_id = dwc.indicator_id;
+
+    UPDATE recon_data rd
+    SET success_flag = tr.success_flag
+    FROM _test_results tr
+    WHERE rd.id = tr.id;
+
+    SELECT
+    	id,region_id,campaign_id,indicator_id,target_value,actual_value
+    FROM _test_results
+    WHERE success_flag = 'f'""")
+
+    final_qa_data = []
+    for row in failed:
+        row_d = {'region_id':row.region_id,
+    	'campaign_id':row.campaign_id,
+        'indicator_id':row.indicator_id,
+        'target_value':row.target_value,
+        'actual_value':row.actual_value}
+
+        final_qa_data.append(row_d)
+
+    test_count = ReconData.objects.count()
+    qa_score = 1 - float((len(final_qa_data))/ float(test_count))
+
+
+    return render_to_response('qa_data.html',
+        {'qa_data': final_qa_data, 'qa_score':qa_score},\
+        # ,'indicator_breakdown':indicator_breakdown},
         context_instance=RequestContext(request))
 
 def qa_failed(request,region_id,campaign_id,indicator_id):
@@ -656,10 +679,6 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
         		INNER JOIN expected_data ed
         		ON 1 = 1
         		WHERE cic.indicator_id = %s
-
-
-        		--WHERE cic.indicator_id in(164,165,166,167,168,187,226,228,230,233,239,431,432)
-
         	)x_pect
         	WHERE NOT EXISTS (
         		SELECT 1 FROM datapoint d
