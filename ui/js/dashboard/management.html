@@ -212,15 +212,35 @@
 			     data-margin-bottom="24"
 			     data-period="2 years"
 			     data-indicators="[158]"
-					 data-format-string="%"
+					 data-format-string="s"
 			     v-with="campaign: campaign, region: region"></div>
 
-			<h4>Districts Reporting Access Analysis</h4>
-			<div v-component="chart-pie"
-			     data-indicators="[174]"
-			     data-width="150"
-			     data-height="150"
-			     v-with="campaign: campaign, region: region"></div>
+			<div class="row">
+				<div class="medium-3 columns">
+					<h6>Districts Reporting Access Analysis</h6>
+					<div v-component="chart-pie"
+							 data-indicators="[174]"
+							 data-width="150"
+							 data-height="150"
+							 v-with="campaign: campaign, region: region"></div>
+				</div>
+				<div class="medium-4 columns">
+					<h6>Inaccessibility Breakdown</h6>
+					<ul class="pie">
+						<li
+							v-repeat="inaccessibility"
+							v-class="hide-for-print: value == 0">
+							<span
+								v-component="chart-pie"
+								data-width="12"
+								data-height="12"
+								v-with="datapoints : datapoints,
+								        loading    : false"></span>
+								{{ value }} {{ name }}
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -215,10 +215,6 @@ module.exports = {
 					return d.name || i;
 				}).call(renderer);
 
-			if ([187,189].indexOf(this.indicators[0].id) > -1) {
-				console.debug('line::draw labels', this.labels);
-			}
-
 			svg.select('.annotation')
 				.selectAll('.series.label')
 				.data(this.labels)
