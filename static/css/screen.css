@@ -7197,9 +7197,11 @@ body {
 }
 
 h6 {
-  white-space: nowrap;
+  margin-bottom: 0.1rem;
+  margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 header {
@@ -7221,10 +7223,6 @@ h4 {
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
-}
-
-h6 {
-  margin-bottom: 0.1rem;
 }
 
 nav {
