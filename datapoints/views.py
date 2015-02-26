@@ -630,6 +630,7 @@ def gdoc_qa(request):
         context_instance=RequestContext(request))
 
 def qa_failed(request,region_id,campaign_id,indicator_id):
+    # http://localhost:8000/datapoints/qa_failed/233/12910/99
 
     '''
     for an indicator_id, region_id, campaign_id, value try to figure out
@@ -673,6 +674,7 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
         WHERE y.region_id = %s AND y.campaign_id = %s;''',[indicator_id\
             ,region_id,campaign_id])
 
+
     for row in md:
         row_dict = {
             'region_id': row.region_id,
@@ -686,4 +688,5 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
         md_array.append(row_dict)
 
     return render_to_response('missing_data.html',{'missing_data':\
-        md_array},context_instance=RequestContext(request))
+        md_array,'region_id':region_id,'campaign_id':campaign_id,\
+        'indicator_id':indicator_id},context_instance=RequestContext(request))

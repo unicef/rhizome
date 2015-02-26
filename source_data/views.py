@@ -412,7 +412,6 @@ def pre_process_file(request,document_id,file_type):
 def map_document_metadata(request,document_id):
 
 
-
     meta_list = []
 
     to_map_raw = DocumentMeta.objects.raw('''
