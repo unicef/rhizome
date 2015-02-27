@@ -4,6 +4,7 @@ from pprint import pprint
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
@@ -488,7 +489,8 @@ def agg_datapoint(request):
         0 : 'settlement',
         1 : 'sub-district',
         2 : 'district',
-        3 : 'province',
+        3 : 'district',
+        4 : 'province',
         # 4 : 'country',
     }
 
@@ -577,7 +579,7 @@ def load_gdoc_data(request):
     err_msg = 'none!'
 
     gc = gspread.login(gdoc_u,gdoc_p)
-    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    worksheet = gc.open("Mgmt Data QA | Feb 27 2014").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
     gd_df = gd_df[gd_df['region_id'] != '0']
