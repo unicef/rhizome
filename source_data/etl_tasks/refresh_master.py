@@ -36,10 +36,7 @@ class MasterRefresh(object):
         else:
             indicators = Indicator.objects.all().values_list('id',flat=True)
 
-
         for ind_id in indicators:
-
-            print ind_id
 
             sdps_to_sync = SourceDataPoint.objects.raw('''
                 SELECT
@@ -131,12 +128,8 @@ def create_source_meta_data(document_id):
     source_campaigns / source indicators/
     '''
 
-
     sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
         document_id = document_id).values()))
-
-    print sdp_df[:1]
-
 
     sr_df = DataFrame(list(SourceRegion.objects.filter(
         document_id = document_id).values()))
@@ -165,10 +158,6 @@ def create_source_meta_data(document_id):
 
         ## indicators ##
         indicator_strings = sdp_df['indicator_string'].unique()
-
-        print indicator_strings
-
-        print '===\n' * 10
 
         for i in indicator_strings:
 
