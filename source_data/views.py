@@ -140,6 +140,8 @@ def populate_document_meta(document_id):
 
     if has_meta == 0:
 
+        print 'creating source'
+
         create_source_meta_data(document_id)
 
         doc_meta_raw = DocumentMeta.objects.raw('''
@@ -171,9 +173,6 @@ def populate_document_meta(document_id):
         		ON sd.indicator_string = si.indicator_string
         	LEFT JOIN indicator_map im
         		ON si.id = im.source_indicator_id
-        	LEFT JOIN datapoint d
-        		ON im.master_indicator_id = d.indicator_id
-        		AND sd.id = d.source_datapoint_id
         	GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
 
         	UNION ALL
@@ -190,9 +189,6 @@ def populate_document_meta(document_id):
         		ON sd.region_code = sr.region_code
         	LEFT JOIN region_map rm
         		ON sr.id = rm.source_region_id
-        	LEFT JOIN datapoint d
-        		ON rm.master_region_id = d.region_id
-        		AND sd.id = d.source_datapoint_id
 
         	UNION ALL
 
@@ -208,9 +204,6 @@ def populate_document_meta(document_id):
         		ON sd.campaign_string = sc.campaign_string
         	LEFT JOIN campaign_map cm
         		ON sc.id = cm.source_campaign_id
-        	LEFT JOIN datapoint d
-        		ON cm.master_campaign_id = d.campaign_id
-        		AND sd.id = d.source_datapoint_id
 
             UNION ALL
             -- region only documents --
