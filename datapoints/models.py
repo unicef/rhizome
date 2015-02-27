@@ -1,6 +1,5 @@
 from django.db import models
 from autoslug import AutoSlugField
-from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
 class Source(models.Model):
@@ -78,17 +77,16 @@ class RegionType(models.Model):
 
 class Region(models.Model):
 
-    name = models.CharField(max_length=55,unique=True)
-    region_code = models.CharField(max_length=55, unique=True)
+    name = models.CharField(max_length=255,unique=True)
+    region_code = models.CharField(max_length=255, unique=True)
     region_type = models.ForeignKey(RegionType)
     office = models.ForeignKey(Office)
     shape_file_path  = models.CharField(max_length=255,null=True,blank=True)
     latitude = models.FloatField(null=True,blank=True)
     longitude = models.FloatField(null=True,blank=True)
-    slug = AutoSlugField(populate_from='name',max_length=55,unique=True)
+    slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    source_region = models.ForeignKey('source_data.SourceRegion')
     is_high_risk = models.BooleanField(default=False)
     parent_region = models.ForeignKey("self",null=True)
 
@@ -113,6 +111,7 @@ class Region(models.Model):
 
         db_table = 'region'
         unique_together = ('name','region_type','office')
+        ordering = ('name',)
 
         permissions = (
             ('view_region', 'View region'),
@@ -195,8 +194,6 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
-    # history = HistoricalRecords()
-
     def get_val(self):
 
         return self.value
@@ -223,24 +220,71 @@ class Responsibility(models.Model):
         unique_together = ('user','indicator','region')
 
 
-class AbstractedDataPoint(models.Model):
+class DataPointAbstracted(models.Model):
 
-    region = models.ForeignKey(Region)
-    indicator = models.ForeignKey(Indicator)
-    campaign = models.ForeignKey(Campaign)
-    value = models.FloatField()
-    is_calc = models.BooleanField()
+    region_id = models.IntegerField()
+    campaign_id = models.IntegerField()
+    indicator_json = JSONField()
 
     class Meta:
-        db_table = 'vw_datapoint'
+        db_table = 'datapoint_abstracted'
+        unique_together = ('region_id','campaign_id')
+
+class DataPointComputed(models.Model):
+
+    region_id = models.IntegerField()
+    campaign_id = models.IntegerField()
+    indicator_id = models.IntegerField()
+    value = models.FloatField()
+
+    class Meta:
+        db_table = 'datapoint_with_computed'
         managed = False
+
+
+class AggDataPoint(models.Model):
+
+    region_id = models.IntegerField()
+    campaign_id = models.IntegerField()
+    indicator_id = models.IntegerField()
+    value = models.FloatField()
+
+    class Meta:
+        db_table = 'agg_datapoint'
+        managed = False
+
 
 class MissingMapping(models.Model):
 
-    datapoint = models.ForeignKey(DataPoint) # Fix this ASAP! -> http://stackoverflow.com/questions/9863355/
+    datapoint = models.ForeignKey(DataPoint)
     document = models.ForeignKey('source_data.SourceDataPoint')
     what_is_missing = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'vw_missing_mappings'
         managed = False
+
+
+class ExpectedData(models.Model):
+
+    region = models.ForeignKey(Region,related_name='ex_child_region')
+    campaign = models.ForeignKey(Campaign)
+    parent_region = models.ForeignKey(Region,related_name='ex_parent_region')
+
+    class Meta:
+        db_table = 'expected_data'
+        unique_together = ('region','campaign')
+
+
+class ReconData(models.Model):
+
+    region = models.ForeignKey(Region)
+    campaign = models.ForeignKey(Campaign)
+    indicator = models.ForeignKey(Indicator)
+    target_value = models.FloatField()
+    is_raw = models.BooleanField()
+    success_flag = models.BooleanField()
+
+    class Meta:
+        db_table = 'recon_data'
+        unique_together = ('region','campaign','indicator')

@@ -14,6 +14,32 @@ module.exports = {
 		};
 	},
 
+	created: function() {
+
+		// set previous value
+		this.previousValue = this.value || null;
+
+	},
+
+	attached: function () {
+		var self = this;
+
+		this.$el.addEventListener('mouseover', function () {
+			self.$dispatch('tooltip-show', {
+				el  : self.$el,
+				data: {
+					text: self.hoverText
+				}
+			});
+		});
+
+		this.$el.addEventListener('mouseout', function () {
+			self.$dispatch('tooltip-hide', {
+				el: self.$el
+			});
+		});
+	},
+
 	methods: {
 
 		// switch editing mode
@@ -30,10 +56,23 @@ module.exports = {
 
 		// user has finished editing: update cell state
 		submit: function() {
-			// TO DO: submit value for saving (here?)
-			
-			// toggle editing mode
-			this.toggleEditing(false);
+			var self = this;
+
+			// submit value for saving
+			if (self.buildSubmitPromise !== undefined) {
+				var value = self.$data.value;
+				// TODO: compare new value to old?
+				var promise = self.buildSubmitPromise(value);
+				promise.done(function(response) {
+					if (self.withResponse) {
+						self.withResponse(response);
+					}
+
+				});
+
+				// toggle editing mode
+				self.toggleEditing(false);
+			}
 		}
 
 	},
@@ -41,12 +80,8 @@ module.exports = {
 	computed: {
 
 		formatted: function() {
-			if (this.type === 'summary') {
-				// special content if this is a summary cell
-				return this.$parent.$parent.summarize(this.rowIndex, 'row');
-			}
-			else if (!this.value) { 
-				return ''; 
+			if (this.value === undefined || this.value === null) {
+				return '';
 			}
 			else {
 				// format according to attached method if it exists
@@ -71,18 +106,18 @@ module.exports = {
 	filters: {
 
 		// validate value
-		validator: { 
+		validator: {
 
 			write: function(val) {
 
 				// string
 				if (_.isString(val)) {
 					if (val.length === 0) { val = null; }
-				} 
+				}
 				// number
 				else if (_.isNumber(val)) {
 
-				} 
+				}
 				// NaN
 				else if (_.isNaN(val)) {
 					val = null;

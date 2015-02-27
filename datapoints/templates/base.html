@@ -7,39 +7,34 @@
 	<title>Polio Data Management App</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="{% static "bower_components/fontawesome/css/font-awesome.min.css" %}">
-	<link rel="stylesheet" href="{% static "screen.css" %}">
-	<link rel="stylesheet" href="{% static "print.css" %}">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/screen.css" %}">
+	<link rel="stylesheet" href="{% static "css/print.css" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
-	<header>
-		<h1>Polio</h1>
+	<header class="no-print">
 		<nav>
 			<ul>
 				<li class="dashboard"><a href="{% url 'datapoints:dashboard' %}">
-					<i class="fa fa-dashboard fa-lg"></i> Dashboard
+					<i class="fa fa-dashboard fa-lg"></i>
 				</a></li>
 
 				<li class="data"><a href="{% url 'datapoints:datapoint_index' %}">
-					<i class="fa fa-table fa-lg"></i> Data
+					<i class="fa fa-table fa-lg"></i>
+				</a></li>
+
+				<li><a href="/admin">
+					<i class="fa fa-cog fa-lg"></i>
 				</a></li>
 			</ul>
-			<ul class="right">
-				<li><a href="/admin">
-					<i class="fa fa-cog fa-lg"></i> Admin
-				</a></li>
-				{% if user.is_authenticated %}
+			<ul class="bottom">
 				<li>
-					Hello, {{ user.username }}
-					&emsp;
 					<a href="{% url 'logout' %}?next=/" title="logout">
 						<i class="fa fa-lg fa-sign-out"></i>
 					</a>
 				</li>
-				{% else %}
-				<li><a href="{% url 'login' %}">Log In</a></li>
-				{% endif %}
 			</ul>
 		</nav>
 	</header>
@@ -47,11 +42,14 @@
 	<div id="main" role="main">
 		{% block nav %}{% endblock %}
 		{% block content %}{% endblock %}
+
+		<div id="tooltip" v-component="vue-tooltip"></div>
 	</div>
 
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).
 	     -->
+	<script src="https://www.promisejs.org/polyfills/promise-6.0.0.min.js"></script>
 	<script src="https://www.promisejs.org/polyfills/promise-done-6.0.0.min.js"></script>
 	<script src="{% static 'main.js' %}"></script>
 	{% block scripts %}{% endblock %}

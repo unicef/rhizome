@@ -1,6 +1,6 @@
 svg {
 	.bg {
-		fill: $smoke;
+		fill: $vapor;
 	}
 
 	.axis {
@@ -10,9 +10,15 @@ svg {
 
 		line {
 			fill: none;
-			stroke: $white;
+			stroke: $iron;
 			stroke-width: 1px;
 			shape-rendering: cripsEdges;
+		}
+
+		.minor {
+			line {
+				stroke: $white;
+			}
 		}
 
 		text {
@@ -25,12 +31,26 @@ svg {
 				fill: $oil;
 			}
 		}
+
+		&.x {
+			line {
+				display: none;
+			}
+		}
 	}
 
 	.line {
-		fill: none;
-		stroke: $charcoal;
-		stroke-width: 1px;
+		path {
+			fill: none;
+			stroke: $charcoal;
+			stroke-width: 2px;
+		}
+
+		circle {
+			fill: $white;
+			stroke: $charcoal;
+			stroke-width: 1px;
+		}
 	}
 
 	.area,
@@ -39,7 +59,13 @@ svg {
 		fill-opacity: 0.6;
 	}
 
-	.bullet {
+	.bar {
+		text{
+			font-size: rem-calc(9);
+		}
+	}
+
+	&.bullet {
 		rect {
 			shape-rendering: crispEdges;
 			stroke: none;
@@ -48,10 +74,6 @@ svg {
 		.value,
 		.marker {
 			fill: $coolgray5;
-		}
-
-		.label {
-			fill: $white;
 		}
 
 		.ranges {
@@ -75,5 +97,123 @@ svg {
 	.hover-line {
 		stroke: $oil;
 		shape-rendering: crispEdges;
+	}
+
+	.region {
+		fill: $smoke;
+		stroke: $white;
+	}
+
+	.clickable {
+		cursor: pointer;
+	}
+
+	.label {
+		text-shadow: 0 1px 0 $white;
+	}
+}
+
+.choropleth {
+	position: relative;
+}
+
+.reds {
+	.q-1 {
+		background-color: $red1;
+		fill: $red1;
+	}
+
+	.q-2 {
+		background-color: $red2;
+		fill: $red2;
+	}
+
+	.q-3 {
+		background-color: $red3;
+		fill: $red3;
+	}
+	.q-4 {
+		background-color: $red4;
+		fill: $red4;
+	}
+
+	.q-5 {
+		background-color: $red5;
+		fill: $red5;
+	}
+
+	.q-6 {
+		background-color: #2D2525;
+		fill: #2D2525;
+	}
+}
+
+.chart {
+	position: relative;
+
+	.overlay {
+		background-color: transparentize($ghost, 0.3);
+		color: $aluminum;
+		opacity: 1;
+		transition: opacity 300ms ease;
+
+		display: table;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		&.fade-enter,
+		&.fade-leave {
+			opacity: 0;
+		}
+
+		&>div {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
+	}
+}
+
+.legend {
+	font-size: rem-calc(9);
+	list-style: none;
+	margin: 0;
+
+	.key {
+		display: inline-block;
+		position: relative;
+		width: 1.2em;
+		height: 1.2em;
+		margin-right: 0.2em;
+		margin-bottom: -0.2em;
+	}
+}
+
+// Bullet chart coloring
+.down {
+	h6 {
+		color: $down-color;
+		font-weight: bold;
+	}
+
+	.bullet {
+		.value,
+		.marker {
+			fill: $down-color;
+		}
+	}
+}
+
+.up {
+	h6 {
+		color: $up-color;
+	}
+
+	svg.bullet {
+		.value,
+		.marker {
+			fill: $up-color;
+		}
 	}
 }

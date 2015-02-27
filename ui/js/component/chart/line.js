@@ -1,124 +1,289 @@
 'use strict';
 
-var d3   = require('d3');
-var Vue  = require('vue');
+var _         = require('lodash');
+var d3        = require('d3');
+var moment    = require('moment');
 
-var util = require('../../util/data');
+var colors    = require('colors/coolgray');
+var lineChart = require('./renderer/line');
+var label     = require('./renderer/label');
+var hoverLine = require('./behavior/hover-line');
 
-var TRANSITION_SPEED = 500;
+function x (d) {
+	return d.campaign.start_date;
+}
 
-module.exports = Vue.extend({
+function y(d) {
+	return d.value;
+}
+
+module.exports = {
+	replace : true,
+	template: require('./chart.html'),
+
 	paramAttributes: [
-		'data-series',
+		'data-height',
 		'data-width',
-		'data-height'
+		'data-format-string'
 	],
 
 	mixins: [
-		require('./labels'),
-		require('./hover-tiles'),
-		require('./hover-line'),
-		require('./yGrid'),
-		require('./xAxis')
+		require('./mixin/resize'),
+		require('./mixin/margin'),
+		require('./mixin/with-indicator'),
 	],
 
-	data: function () {
-		return {
-			series: [],
-			width : 100,
-			height: 100,
-			x     : d3.scale.linear(),
-			y     : d3.scale.linear()
-		};
+	partials: {
+		'loading-overlay': require('./partial/loading-overlay.html')
+	},
+
+	computed: {
+
+		colorScale: function () {
+			var scale = d3.scale.ordinal()
+				.domain(d3.range(colors.length))
+				.range(colors);
+
+			return scale;
+		},
+
+		renderer: function () {
+			var x     = this.xScale;
+			var y     = this.yScale;
+			var color = this.colorScale;
+
+			var renderer = lineChart()
+				.x(function (d) {
+					return x(d.campaign.start_date);
+				})
+				.y(function (d) {
+					return y(d.value);
+				})
+				.values(function (d) { return d.values; })
+				.color(function (d, i) {
+					return color(i);
+				});
+
+			return renderer;
+		},
+
+		labels: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var x      = this.xScale;
+			var y      = this.yScale;
+			var series = this.series;
+			var target = this.highlight || this.campaign.date;
+			var fmt    = this.yFmt;
+
+			var labels = _.map(series, function (d) {
+			var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
+
+				return {
+					text : d.name + ' ' + fmt(last.value),
+					x    : x(last.campaign.start_date),
+					y    : y(last.value)
+				};
+			});
+
+			return labels;
+		},
+
+		series: function () {
+			if (this.empty) {
+				return [];
+			}
+
+			var indicators = _.indexBy(this.indicators, 'id');
+
+			var series = _(this.datapoints)
+				.sortBy(function (d) {
+					return d.campaign.start_date;
+				})
+				.groupBy('indicator')
+				.map(function (d, indicator) {
+					return {
+						name  : indicators[indicator].short_name,
+						values: d
+					};
+				})
+				.value();
+
+			// Facet the datapoints by indicator
+			return series;
+		},
+
+		xFmt: function () {
+			return d3.time.format('%b %Y');
+		},
+
+		xScale: function () {
+			var datapoints = this.datapoints || [];
+
+			var start = this.domain ?
+				this.domain[0] :
+				d3.min(datapoints, x) || 0;
+
+			var end = this.domain ?
+				this.domain[1] :
+				d3.max(datapoints, x) || start + 1;
+
+			return d3.time.scale()
+				.domain([start, end])
+				.range([0, this.contentWidth]);
+		},
+
+		xTicks: function () {
+			var months = [0];
+			var domain = this.xScale.domain();
+			var dt = moment(domain[0]).clone().startOf('month');
+			var end = moment(domain[1]);
+			var ticks = [];
+
+			while (dt.isBefore(end)) {
+				if (months.indexOf(dt.month()) >= 0) {
+					ticks.push(dt.clone().toDate());
+				}
+
+				dt.add(1, 'months');
+			}
+
+			ticks.push(dt.clone().toDate());
+
+			return ticks;
+		},
+
+		yFmt: function () {
+			return d3.format(this.formatString || 's');
+		},
+
+		yScale: function () {
+			var datapoints = this.datapoints || [];
+
+			var lower = this.empty ?
+				0 :
+				Math.min(0, d3.min(datapoints, y)) || 0;
+
+			var upper = this.empty ?
+				1 :
+				(d3.max(datapoints, y) || 1) * 1.2;
+
+			return d3.scale.linear()
+				.domain([lower, upper])
+				.range([this.contentHeight, 0]);
+		},
+
+		yTicks: function () {
+			return this.yScale.ticks(3);
+		},
 	},
 
 	methods: {
+		diffX: function (a, b) {
+			return a.getTime() - b.getTime();
+		},
+
 		draw: function () {
-			function getX(d) { return d.x; }
+			var svg        = d3.select(this.$el);
+			var renderer   = this.renderer;
+			var xScale     = this.xScale;
+			var yScale     = this.yScale;
+			var domain     = xScale.domain();
+			var range      = yScale.domain();
+			var indicators = _.indexBy(this.indicators, 'id');
 
-			function getY(d) { return d.y; }
+			// Set up the hover interaction
+			svg.select('svg')
+				.call(hoverLine()
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.xFormat(this.xFmt)
+					.yFormat(this.yFmt)
+					.x(this.getX)
+					.y(this.getY)
+					.xScale(xScale)
+					.yScale(yScale)
+					.diff(this.diffX)
+					.seriesName(this.getSeriesName)
+					.datapoints(_(this.series).pluck('values').flatten().value())
+				);
 
-			function getScaledX(d) { return x(getX(d)); }
+			svg.select('.data').selectAll('.' + renderer.className())
+				.data(this.series, function (d, i) {
+					return d.name || i;
+				}).call(renderer);
 
-			function getScaledY(d) { return y(getY(d)); }
+			svg.select('.annotation')
+				.selectAll('.series.label')
+				.data(this.labels)
+				.call(label().addClass('series').width(this.contentWidth).height(this.contentHeight));
 
-			function defined(d) { return util.defined(getY(d)); }
+			var xFmt = this.xFmt;
 
-			function getPoints(d) { return d.points; }
+			var gx = svg.select('.x.axis')
+				.call(d3.svg.axis()
+					.tickFormat(function (d) {
+						if (d instanceof Date) {
+							if (d.getMonth() === 0) {
+								return moment(d).format('MMM YYYY');
+							}
 
-			var svg     = d3.select(this.$el);
+							return moment(d).format('MMM');
+						}
 
-			var series  = this.series || [];
-			var dataset = series.map(getPoints).sort(function (a, b) {
-				return a.x < b.x ? -1 : 1;
-			});
+						return xFmt(d);
+					})
+					.tickValues(this.xTicks)
+					.scale(xScale)
+					.orient('bottom'));
 
-			var start   = this.domain ? this.domain[0] : util.min(dataset, getX);
-			var end     = this.domain ? this.domain[1] : util.max(dataset, getX);
-			var lower   = Math.min(0, util.min(dataset, getY));
-			var upper   = util.max(dataset, getY) * 1.1;
-
-			var x       = this.x;
-			var y       = this.y;
-
-			x.domain([start, end])
-				.range([0, this.width]);
-			y.domain([lower, upper])
-				.range([this.height, 0]);
-
-			var line = d3.svg.line()
-				.defined(defined)
-				.x(getScaledX)
-				.y(getScaledY);
-
-			var lines = svg.selectAll('.line').data(series, function (d, i) {
-				return d.name || i;
-			});
-
-			lines.enter().append('path')
-				.attr('class', 'line');
-
-			lines.transition().duration(TRANSITION_SPEED)
-				.attr('d', function (d) {
-					return line(getPoints(d));
-				})
-				.style('stroke', function (d) { return d.color; });
-
-			lines.exit().remove();
-
-			var point = svg.selectAll('.point')
-				.data(Array.prototype.concat.apply([], dataset));
-
-			point.enter().append('circle')
-				.attr({
-					'class': 'point',
-					'r'    : 2,
+			gx.selectAll('text')
+				.style('text-anchor', function (d) {
+					return d === domain[0] ?
+						'start' :
+						d === domain[1] ?
+							'end' :
+							'middle';
 				});
 
-			point.transition().duration(TRANSITION_SPEED).attr({
-				'cx': getScaledX,
-				'cy': getScaledY
-			});
+			var gy = svg.select('.y.axis')
+				.call(d3.svg.axis()
+					.tickFormat(this.yFmt)
+					.tickValues(this.yTicks)
+					.tickSize(this.contentWidth)
+					.scale(yScale)
+					.orient('right'));
 
-			point.exit().remove();
+			gy.selectAll('text')
+				.attr({
+					'x' : 4,
+					'dy': -4
+				});
 
-			this._callHook('drawn');
-			this.$emit('chart-drawn', {
-				el    : this.$el,
-				series: dataset,
-				x     : this.x,
-				y     : this.y
+			gy.selectAll('g').classed('minor', function (d) {
+				return d !== range[0];
 			});
+		},
+
+		getSeriesName: function (d) {
+			return _.indexBy(this.indicators, 'id')[d.indicator].short_name;
+		},
+
+		getX: function (d) {
+			return d.campaign.start_date;
+		},
+
+		getY: function (d) {
+			return d.value;
 		}
-	},
 
-	on: {
-		'hook:attached': 'draw'
 	},
 
 	watch: {
-		'series': 'draw',
-		'width' : 'draw',
-		'height': 'draw'
+		'datapoints': 'draw',
+		'width'     : 'draw',
+		'height'    : 'draw'
 	}
-});
+};

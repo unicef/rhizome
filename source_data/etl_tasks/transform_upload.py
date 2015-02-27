@@ -1,17 +1,14 @@
-import pprint as pp
-
 import xlrd
 import pandas as pd
+from pprint import pprint
 
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from django.db import transaction
 from pandas.io.excel import read_excel
 
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
-from datapoints.models import DataPoint, Source, Office, Region
+from datapoints.models import Source, DataPoint
 
 
 class DocTransform(object):
@@ -27,7 +24,6 @@ class DocTransform(object):
         self.column_mappings = column_mappings
         self.df = self.create_df()
 
-
     def create_df(self):
 
         if self.file_path.endswith('.csv'):
@@ -38,44 +34,51 @@ class DocTransform(object):
 
             df = read_excel(self.file_path,sheet.name)
 
-
         return df
 
 
     def dp_df_to_source_datapoints(self):
 
-        source_datapoints = []
-
         df_cols = [col for col in self.df]
 
         indicator_col = self.column_mappings['indicator_col']
         if indicator_col == 'cols_are_indicators':
-            print 'THIS ISNT HANDLED YET!'
-            # do stuff #
+
             source_datapoints = pivot_and_insert_src_datapoints(self.df,\
                 self.document.id,self.column_mappings)
 
-
         else:
 
-            for i,(row) in enumerate(self.df.values):
+            self.df.rename(columns=
+                {
+                  self.column_mappings['indicator_col']: 'indicator_string',
+                  self.column_mappings['region_code_col']: 'region_code',
+                  self.column_mappings['campaign_col']: 'campaign_string',
+                  self.column_mappings['value_col']: 'cell_value',
+                }
+            , inplace=True)
 
-                sdp, created = SourceDataPoint.objects.get_or_create(
-                    source_guid = 'doc_id: ' + str(self.document.id) +' row_no: ' + str(i),
-                    defaults = {
-                    'indicator_string': row[df_cols.index(self.column_mappings['indicator_col'])],
-                    'region_string': row[df_cols.index(self.column_mappings['region_col'])],
-                    'campaign_string': row[df_cols.index(self.column_mappings['campaign_col'])],
-                    'cell_value': row[df_cols.index(self.column_mappings['value_col'])],
-                    'row_number': i,
+            source_datapoints = []
+            for row_ix, row_data in self.df.iterrows():
+
+                source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
+
+                sdp_dict = {
+                    'source_guid': source_guid,
+                    'indicator_string': row_data.indicator_string,
+                    'region_code': row_data.region_code,
+                    'campaign_string': row_data.campaign_string,
+                    'cell_value': row_data.cell_value,
+                    'row_number': row_ix,
                     'source_id': self.source_id,
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
-                })
+                }
+
+                sdp = SourceDataPoint.objects.create(**sdp_dict)
                 source_datapoints.append(sdp)
 
-
-        return source_datapoints
+            return source_datapoints
 
 
 class RegionTransform(DocTransform):
@@ -83,7 +86,7 @@ class RegionTransform(DocTransform):
 
     def validate(self):
 
-        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014']
+        essential_columns = ['name','code','parent_name','region_type','country','lat','lon','high_risk_2014','parent_code']
         df_cols = [col for col in self.df]
         intsct = list(set(essential_columns).intersection(df_cols))
 
@@ -108,34 +111,23 @@ class RegionTransform(DocTransform):
 
         valid_df['region_name'] = valid_df['name'] # unable to access name attr directly... fix this
 
-        # parent_regions = []
-
         just_created, updated, errors = [],[],[]
 
         for row in valid_df.iterrows():
 
             row_data = row[1]
 
-            child_defaults = {
-                'region_code': row_data.code,\
-                'parent_name': row_data.parent_name,\
-                'lat': row_data.lat,\
-                'lon': row_data.lon,\
-                'document': self.document,\
-                'is_high_risk': row_data.high_risk_2014,\
-                'source_guid': str(row_data.region_name)}
-
-            sr,created = SourceRegion.objects.get_or_create(
+            sr = SourceRegion.objects.get_or_create(
                 region_string = row_data.region_name,\
                 region_type  = row_data.region_type,\
-                country = row_data.country,\
-                defaults= child_defaults)
+                country = row_data.country,
+                region_code = row_data.code,\
+                parent_name = row_data.parent_name,\
+                lat = row_data.lat,\
+                lon = row_data.lon,\
+                document_id = self.document.id,\
+                is_high_risk = row_data.high_risk_2014,\
+                parent_code = row_data.parent_code,
+                source_guid = str(self.document.id) + '-' + str(row_data.code))
 
-            if created == 1:
-                just_created.append(sr)
-
-            else:
-                pass
-                ## this conflict resolution should be dealt w refrresh master ##
-                ## this condition will only really be met in error ( a region
-                ## with same name, type and country gets uploaded for one document )
+            just_created.append(sr)

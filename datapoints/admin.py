@@ -5,4 +5,3 @@ admin.site.register(DataPoint)
 admin.site.register(Indicator)
 admin.site.register(Region)
 
-# Register your models here.

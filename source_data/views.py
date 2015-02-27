@@ -1,27 +1,23 @@
-import xlrd
-import csv
-import pandas
 import hashlib
-import pprint as pp
+from django.utils import simplejson
 from itertools import chain
+from pprint import pprint
 
-
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db import IntegrityError, connection
 from django.contrib import messages
 from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect, HttpResponse
-from pandas.io.excel import read_excel
+from django.http import HttpResponseRedirect,HttpResponse
+from django.db.utils import IntegrityError
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.etl_tasks.transform_bulk_entry import bulk_data_to_sdps
+from source_data.etl_tasks.refresh_master import MasterRefresh\
+    ,create_source_meta_data
 from source_data.api import EtlTask
 
 
@@ -56,106 +52,6 @@ def user_portal(request):
     )
 
 
-def data_entry(request):
-
-    data_entry_form = DataEntryForm()
-
-    if request.method == 'GET':
-
-
-        return render_to_response(
-            'data_entry/basic.html',
-            {'data_entry_form': data_entry_form },
-            RequestContext(request),
-        )
-
-    else:
-        bulk_data = request.POST['bulk_data']
-
-        try:
-            document = Document.objects.create(
-                doc_text =bulk_data,
-                created_by = request.user,
-                )
-        except IntegrityError:
-            msg = 'A submission with the EXACT same text, and campaign already exists. \n Please Upload data that does not conflict with an existing submission!!'
-            # messages.add_message(request, messages.INFO,msg)
-
-            return render_to_response(
-                'data_entry/basic.html',
-                {'data_entry_form': data_entry_form,'message':msg},
-                RequestContext(request),
-            )
-
-
-        source_datapoints, not_parsed = bulk_data_to_sdps(
-            bulk_data = bulk_data,
-            campaign_string = request.POST['campaign'],
-            delimiter = request.POST['delimiter'],
-            document_id = document.id)
-
-        return HttpResponseRedirect(reverse('source_data:review_sdps_by_document'\
-                ,kwargs={'document_id':document.id}))
-
-
-def review_sdps_by_document(request,document_id):
-
-    source_datapoints = SourceDataPoint.objects.filter(document_id=document_id)
-
-    return render_to_response(
-        'upload/document_review.html',
-        {'to_review': source_datapoints,'document_id': document_id},
-        RequestContext(request),
-    )
-
-
-
-def refresh_master_by_document_id(request,document_id):
-
-    source_datapoints = SourceDataPoint.objects.filter(
-        document_id=document_id,\
-        status = ProcessStatus.objects.get(status_text='TO_PROCESS'))#[:1000]
-
-    source_regions = SourceRegion.objects.filter(document_id=document_id)
-
-    m = MasterRefresh(source_datapoints,user_id = request.user.id,document_id=document_id)
-    m.main()
-
-
-    ## Need to Handle region uploads here as well.
-    region_strings = [sd.region_string for sd in source_datapoints] + \
-        [sr.region_string for sr in source_regions]
-
-    indicator_strings = [sd.indicator_string for sd in source_datapoints]
-    campaign_strings = [sd.campaign_string for sc in source_datapoints]
-
-    doc_datapoints = DataPoint.objects.filter(source_datapoint_id__in=
-        SourceDataPoint.objects.filter(document_id=document_id))
-
-    si = SourceIndicator.objects.filter(indicatormap__isnull=True,
-        indicator_string__in=indicator_strings)
-
-    cp = SourceCampaign.objects.filter(campaignmap__isnull=True,
-        campaign_string__in=campaign_strings)
-
-    rg = SourceRegion.objects.filter(regionmap__isnull=True,
-        region_string__in=region_strings)
-
-    to_map = chain(si,cp,rg)
-
-    i_m = IndicatorMap.objects.filter(source_indicator__document_id=document_id)
-    c_m = CampaignMap.objects.filter(source_campaign__document_id=document_id)
-    r_m = RegionMap.objects.filter(source_region__document_id=document_id)
-
-    all_mapped = chain(i_m, c_m, r_m)
-
-
-    return render_to_response(
-        'data_entry/final_review.html',
-        {'datapoints': doc_datapoints, 'document_id': document_id,\
-         'to_map':to_map, 'all_mapped':all_mapped },
-         RequestContext(request),)
-
 def mark_doc_as_processed(request,document_id):
 
     doc = Document.objects.get(id=document_id)
@@ -165,12 +61,7 @@ def mark_doc_as_processed(request,document_id):
     return HttpResponseRedirect(reverse('source_data:user_portal'))  # encode like done below
 
 
-
-### Bulk Upload Stuff Above ###
-
-            ####
-
-### File Upload Stuff Below ###
+### File Upload Below ###
 
 
 def file_upload(request):
@@ -190,7 +81,6 @@ def file_upload(request):
     elif request.method == 'POST':
 
         file_type = request.POST['file_type']
-
 
         try:
             to_upload = request.FILES['docfile']
@@ -238,6 +128,226 @@ def map_header(request,document_id,file_type):
               'file_type':file_type },
             RequestContext(request))
 
+def populate_document_meta(document_id):
+
+    source_indicator_breakdown = []
+
+    doc_meta_limit_1 = DocumentMeta.objects.raw('''
+        SELECT id FROM document_meta WHERE document_id = %s LIMIT 1'''\
+        ,[document_id])
+
+    has_meta = sum(1 for dm in doc_meta_limit_1)
+
+    if has_meta == 0:
+
+        print 'creating source'
+
+        create_source_meta_data(document_id)
+
+        doc_meta_raw = DocumentMeta.objects.raw('''
+
+        DROP TABLE IF EXISTS _tmp_meta_for_doc;
+        CREATE TEMP TABLE _tmp_meta_for_doc AS
+        SELECT * FROM source_datapoint where document_id = %s;
+
+        INSERT INTO document_meta
+        (document_id, source_string, model_type, source_object_id, master_object_id,source_datapoint_count)
+
+        SELECT
+        	x.document_id
+        	,source_string
+        	,model_type
+        	,MAX(source_object_id)
+        	,MAX(master_object_id)
+        	,MAX(source_datapoint_count)
+        FROM (
+        	SELECT DISTINCT
+        		sd.document_id
+        		,si.indicator_string as source_string
+        		,'indicator' as model_type
+        		,si.id as source_object_id
+        		,COALESCE(im.master_indicator_id,-1) as master_object_id
+        		,COUNT(*) AS source_datapoint_count
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_indicator si
+        		ON sd.indicator_string = si.indicator_string
+        	LEFT JOIN indicator_map im
+        		ON si.id = im.source_indicator_id
+        	GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
+
+        	UNION ALL
+
+        	SELECT DISTINCT
+        		sd.document_id
+        		,sr.region_code
+        		,'region'
+        		,sr.id as source_region_id
+        		,COALESCE(rm.master_region_id,-1)
+        		,0
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_region sr
+        		ON sd.region_code = sr.region_code
+        	LEFT JOIN region_map rm
+        		ON sr.id = rm.source_region_id
+
+        	UNION ALL
+
+        	SELECT DISTINCT
+        		sd.document_id
+        		,sc.campaign_string
+        		,'campaign'
+        		,sc.id as source_campaign_id
+        		,COALESCE(cm.master_campaign_id,-1)
+        		,0
+        	FROM _tmp_meta_for_doc sd
+        	INNER JOIN source_campaign sc
+        		ON sd.campaign_string = sc.campaign_string
+        	LEFT JOIN campaign_map cm
+        		ON sc.id = cm.source_campaign_id
+
+            UNION ALL
+            -- region only documents --
+
+        	SELECT DISTINCT
+        		sr.document_id
+        		,sr.region_string
+        		,'region'
+        		,sr.id as source_region_id
+        		,COALESCE(rm.master_region_id,-1)
+        		,0
+        	FROM  source_region sr
+        	LEFT JOIN region_map rm
+                ON sr.id = rm.source_region_id
+            WHERE sr.document_id = %s
+            AND NOT EXISTS (
+                SELECT 1 FROM _tmp_meta_for_doc sd
+                WHERE sr.region_string = sd.region_string
+            )
+
+        )x
+        WHERE NOT EXISTS (
+        	SELECT 1 from document_meta dm
+        	WHERE dm.source_string = x.source_string
+        	AND dm.model_type = x.model_type
+        	AND dm.document_id = x.document_id
+
+        )
+        GROUP BY x.document_id,model_type,source_string;
+
+        SELECT * FROM document_meta
+        WHERE document_id = %s
+        ORDER BY master_object_id desc;''', [document_id,document_id\
+            ,document_id])
+
+    else:
+
+        doc_meta_raw = DocumentMeta.objects.raw('''
+
+        -- gets the counts for source datapoints and datapoints --
+        DROP TABLE IF EXISTS _tmp_doc_dp_count;
+        CREATE TEMP TABLE _tmp_doc_dp_count
+        AS
+        SELECT
+        	x.document_id
+        	, source_datapoint_count
+        	, master_datapoint_count
+        FROM (
+        	SELECT
+        		document_id
+        		,COUNT(*) AS source_datapoint_count
+        	FROM source_datapoint sd
+            WHERE sd.document_id = %s
+        	GROUP BY document_id
+        )x
+        LEFT JOIN (
+        	SELECT
+        		document_id
+        		,COUNT(*) AS master_datapoint_count
+        	FROM source_datapoint sd
+        	INNER JOIN datapoint d
+        	ON sd.id = d.source_datapoint_id
+            AND sd.document_id = %s
+        	GROUP BY document_id
+        )y
+        ON x.document_id = y.document_id;
+
+        UPDATE source_data_document
+        SET source_datapoint_count = cnt.source_datapoint_count
+        	,master_datapoint_count = cnt.master_datapoint_count
+        FROM _tmp_doc_dp_count cnt
+        WHERE document_id = cnt.document_id;
+
+
+        UPDATE document_meta
+        SET master_object_id = im.master_indicator_id
+        FROM indicator_map im
+        WHERE model_type = 'indicator'
+        AND source_object_id = im.source_indicator_id
+        AND document_id = %s;
+
+        UPDATE document_meta
+        SET master_object_id = rm.master_region_id
+        FROM region_map rm
+        WHERE model_type = 'region'
+        AND source_object_id = rm.source_region_id
+        AND document_id = %s;
+
+        UPDATE document_meta
+        SET master_object_id = cm.master_campaign_id
+        FROM campaign_map cm
+        WHERE model_type = 'campaign'
+        AND source_object_id = cm.source_campaign_id
+        AND document_id = %s;
+
+        SELECT * FROM document_meta
+        WHERE document_id = %s
+        ORDER BY master_object_id desc;''', [document_id,document_id,\
+            document_id,document_id,document_id,document_id])
+
+    for row in doc_meta_raw:
+
+        if row.model_type == 'indicator':
+
+            ind_dict = {}
+            ind_dict['indicator_string'] = row.source_string
+            ind_dict['master_indicator_id'] = row.master_object_id
+            ind_dict['source_indicator_id'] = row.source_object_id
+            ind_dict['source_datapoint_count'] = row.source_datapoint_count
+
+            source_indicator_breakdown.append(ind_dict)
+
+    return source_indicator_breakdown
+
+def document_review(request,document_id):
+
+    sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
+        .values_list('id',flat=True)
+
+    source_indicator_breakdown = populate_document_meta(document_id)
+
+    doc_obj = Document.objects.get(id = document_id)
+    sdp_count, dp_count = doc_obj.source_datapoint_count\
+        , doc_obj.master_datapoint_count
+
+
+    return render_to_response(
+        'upload/document_review.html',
+        {'to_review': source_indicator_breakdown,'document_id': document_id,
+        'sdp_count':sdp_count,'dp_count':dp_count},
+        RequestContext(request),
+    )
+
+def sync_source_datapoints(request,document_id,master_indicator_id):
+
+    mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
+
+    mr.source_dps_to_dps()
+    mr.sync_regions()
+
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        , kwargs={'document_id': document_id}))
+
+
 def pre_process_file(request,document_id,file_type):
 
     if file_type == 'Datapoint':
@@ -245,17 +355,19 @@ def pre_process_file(request,document_id,file_type):
         column_mappings = {}
         column_mappings['campaign_col'] = request.GET['campaign_col']
         column_mappings['value_col'] = request.GET['value_col']
-        column_mappings['region_col'] = request.GET['region_col']
+        column_mappings['region_code_col'] = request.GET['region_code_col']
         column_mappings['indicator_col'] = request.GET['indicator_col']
 
         dt = DocTransform(document_id,file_type,column_mappings)
-        sdps = dt.dp_df_to_source_datapoints()
 
-        return render_to_response(
-            'upload/document_review.html',
-            {'document_id':document_id,'to_review':sdps},
-            RequestContext(request),
-        )
+        try:
+            sdps = dt.dp_df_to_source_datapoints()
+        except IntegrityError:
+            sdps = SourceDataPoint.objects.filter(
+                document_id = document_id)
+
+        return HttpResponseRedirect(reverse('source_data:document_review'\
+            , kwargs={'document_id': document_id}))
 
     elif file_type == 'Region':
 
@@ -263,14 +375,73 @@ def pre_process_file(request,document_id,file_type):
         err,valid_df = rt.validate()
         src_regions = rt.insert_source_regions(valid_df)
 
-        to_map = SourceRegion.objects.filter(regionmap__isnull=True,
-            document_id = document_id)
+        to_map = []
+        to_map_raw = SourceRegion.objects.raw('''
+            SELECT
+                sr.id
+                ,sr.id as source_object_id
+                ,sr.region_string as source_string
+                ,COALESCE(rm.master_region_id,-1) as master_object_id
+            FROM source_region sr
+            LEFT JOIN region_map rm
+            ON sr.id = rm.source_region_id
+            WHERE sr.document_id = %s''',[document_id]
+        )
+
+        for row in to_map_raw:
+            row_dict = {}
+            row_dict['source_string'] = row.source_string
+            row_dict['source_object_id'] = row.source_object_id
+            row_dict['master_object_id'] = row.master_object_id
+            row_dict['model_type'] = 'region'
+
 
         return render_to_response(
-            'data_entry/final_review.html',
+            'data_entry/meta_map.html',
             {'document_id': document_id, 'to_map':to_map},
             RequestContext(request),
         )
+
+def map_document_metadata(request,document_id):
+
+
+    meta_list = []
+
+    to_map_raw = DocumentMeta.objects.raw('''
+    SELECT
+    	*
+    FROM document_meta
+    WHERE document_id = %s
+    ''',[document_id])
+
+    populate_document_meta(document_id)
+
+    for row in to_map_raw:
+
+        meta_dict = {}
+        meta_dict['source_string'] = row.source_string
+        meta_dict['source_object_id'] = row.source_object_id
+        meta_dict['master_object_id'] = row.master_object_id
+        meta_dict['model_type'] = row.model_type
+
+        meta_list.append(meta_dict)
+
+    return render_to_response(
+        'data_entry/meta_map.html',
+        {'document_id': document_id, 'to_map':meta_list},
+        RequestContext(request),
+    )
+
+
+def refresh_master_no_indicator(request,document_id):
+
+    mr = MasterRefresh(document_id = document_id, indicator_id = None, user_id = request.user.id)
+
+    mr.source_dps_to_dps()
+
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        , kwargs={'document_id': document_id}))
+
 
 ######### DOCUMENT RELATED VIEWS ##########
 
@@ -344,10 +515,7 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
-
 def un_map(request,map_id,db_model,document_id):
-
-    print 'THIS IS HAPPENING \n' * 10
 
     if db_model == 'Region':
 
@@ -376,5 +544,5 @@ def refresh_master(request):
 
     print task_data
 
-    return render_to_response('map/master_refresh.html',
-    {'task_data': task_data})
+    return render_to_response('map/master_refresh.html'
+        ,{'task_data': task_data})

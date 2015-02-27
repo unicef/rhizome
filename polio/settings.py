@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 LOGIN_REDIRECT_URL = '/datapoints'
 
@@ -29,7 +28,6 @@ ALLOWED_HOSTS = []
 
 MEDIA_ROOT = '/Users/johndingee_seed/code/UF04/polio/media/'
 MEDIA_URL = '/Users/johndingee_seed/code/UF04/polio/media/'
-
 
 # Application definition
 
@@ -115,7 +113,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_ROOT = '/var/www/clients.seedscientific.com/uf/UF04/static'
+STATIC_ROOT = './build'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),

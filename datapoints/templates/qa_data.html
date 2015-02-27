@@ -1,0 +1,63 @@
+{% extends "datapoints/base.html" %}
+
+
+
+{% block content %}
+
+
+    <div align="center">
+    <button><a href="{% url 'datapoints:load_gdoc_data' %}"> Load G Doc Data </a></button>
+    <br><br>
+    <button><th><a href="{% url 'datapoints:test_data_coverage' %}"> Test Expected </a></button>
+
+    <h2> errors:  {{err_msg}} </h2>
+
+    <h3> QA Score {{ qa_score }}</h3>
+    </div>
+    FAILED CALLS BY INDICATOR
+    <table>
+    <thead>
+        <tr>
+            <th> Indicator ID </th>
+            <th> Calls Failed </th>
+        </tr>
+    </thead>
+    {% for row in indicator_breakdown %}
+    <tr>
+
+        <tr>
+            <th>{{ row.indicator_id }}</th>
+            <th>{{ row.count_missed }}</th>
+        </tr>
+
+    {% endfor %}
+    </table>
+
+    ALL FAILED CALLS
+    <table>
+    <thead>
+        <tr>
+            <th> Region ID </th>
+            <th> Campaign ID </th>
+            <th> Indicator ID </th>
+            <th> Target Value </th>
+            <th> Actual Value</th>
+            <th> Investigate </th>
+        </tr>
+    </thead>
+    {% for row in qa_data %}
+    <tr>
+
+        <tr>
+            <th>{{ row.region_id }}</th>
+            <th>{{ row.campaign_id }}</th>
+            <th>{{ row.indicator_id }}</th>
+            <th>{{ row.target_value }}</th>
+            <th>{{ row.actual_value }}</th>
+            <th><a href="{% url 'datapoints:qa_failed' row.indicator_id row.region_id row.campaign_id %}"> Investigate</a></th>
+        </tr>
+
+    {% endfor %}
+    </table>
+
+{% endblock %}

@@ -1,4 +1,3 @@
-import subprocess,sys,time
 from traceback import format_exc
 from time import strftime
 
@@ -10,15 +9,9 @@ from django.contrib.auth.models import User
 
 from source_data.models import *
 from datapoints.models import Source
-from source_data.etl_tasks.transform_odk import VcmSummaryTransform,VcmSettlementTransform
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
-
-try:
-    import source_data.prod_odk_settings as odk_settings
-except ImportError:
-    import source_data.dev_odk_settings as odk_settings
 
 class EtlResource(ModelResource):
 

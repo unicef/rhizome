@@ -1,8 +1,14 @@
+$valueColumnWidth: 80px;
+
 table {
+
+	.th-inner {
+		min-width: $valueColumnWidth;
+	}
 
 	td.editable {
 
-		width: 150px;
+		width: $valueColumnWidth;
 		padding: 2px;
 
 		.displayValue,
@@ -45,9 +51,21 @@ table {
 
 	}
 
-	td.completionStatus {
-		font-size: .8em;
-		width: 50px;
+	.completionStatus {
+		font-size: .9em;
 	}
 
+}
+
+.completionStatus {
+	font-weight: bold;
+}
+
+.empty,
+.loading
+{
+	background-color: #fafafa;
+	color: #999;
+	text-align: center;
+	padding: 40px 0;
 }

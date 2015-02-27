@@ -1,0 +1,68 @@
+{% extends "datapoints/base.html" %}
+
+
+{% block content %}
+
+  <div align='center'>
+    <h2>REGION ID: {{region_id}}</h2>
+    <h2>CAMPAIGN ID: {{campaign_id}}</h2>
+    <h2>INDICATOR ID: {{indicator_id}}</h2>
+    <h2>TARGET VALUE: {{expected_value}}</h2>
+    <h2>ACTUAL VALUE: {{actual_value}}</h2>
+  </div>
+  <br>
+  <div align="center">
+    <h1>CALCULATION BREAKDOWN</h1>
+  </div>
+
+    <table>
+    <thead>
+        <tr>
+            <th>region_id</th>
+            <th>campaign_id</th>
+            <th>indicator_id</th>
+            <th>actual_value</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for missing in calculation_breakdown %}
+    <tr>
+            <th>{{ missing.region_id }}</th>
+            <th>{{ missing.campaign_id }}</th>
+            <th>{{ missing.indicator_id }}</th>
+            <th>{{ missing.actual_value }}</th>
+    </tr>
+    </tbody>
+    {% endfor %}
+    </table>
+
+    <div align="center">
+      <h1>SUB REGION CALCULATION BREAKDOWN</h1>
+    </div>
+
+      <table>
+      <thead>
+          <tr>
+              <th>region_id</th>
+              <th>campaign_id</th>
+              <th>indiator_id</th>
+              <th>actual_value</th>
+
+          </tr>
+      </thead>
+      <tbody>
+      {% for missing in sub_region_calculation_breakdown %}
+      <tr>
+              <th>{{ missing.region_id }}</th>
+              <th>{{ missing.campaign_id }}</th>
+              <th>{{ missing.indicator_id }}</th>
+              <th>{{ missing.actual_value }}</th>
+      </tr>
+      </tbody>
+      {% endfor %}
+      </table>
+
+
+
+{% endblock %}

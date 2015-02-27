@@ -7,7 +7,17 @@ var formats = {
 	percent: d3.format('%')
 };
 
+var scales = {
+	completionClass: function(v) {
+		if (v === 0) { return 'statusText-bad'; }
+		else if (v === 1) { return 'statusText-good'; }
+		else if (v > 0 && v < 1) { return 'statusText-okay'; }
+		return null;
+	}
+};
+
 module.exports = {
+
 	template: require('./template.html'),
 
 	ready: function () {
@@ -16,9 +26,11 @@ module.exports = {
 			groupSize: 5
 		});
 
-		this.$watch('rows', function() {
-			this.updateStats();
-		}, true);
+		this.$watch('rows', this.updateStats, true, true);
+
+		// this.$watch('rows', function(newVal, oldVal) {
+		// 	console.log('changed', newVal, oldVal);
+		// }, true);
 
 	},
 
@@ -77,40 +89,40 @@ module.exports = {
 
 			self.$set('stats', stats);
 
-		},
-
-		summarize: function(i, type) {
-			var stats = this.$get('stats');
-			if (!stats) { return null; }
-
-			var statSet;
-			if (type === 'column') {
-				statSet = stats.byColumn;
-			} else if (type === 'row') {
-				statSet = stats.byRow;
-			}
-
-			if (statSet && i < statSet.length) {
-				var v = statSet[i];
-				return v.complete + ' / ' + v.total;
-			} else {
-				return null;
-			}
-
-		}		
+		}
 
 	},
 
 	filters: {
 
-		// proxy to method
-		summarize: function(i, type) {
-			return this.$parent.summarize(i, type);
-		},
-
 		percent: function(v) {
 			return formats.percent(v);
+		},
+
+		completionClass: function(v) {
+			return scales.completionClass(v);
+		},
+
+		getStat: function(obj, by, prop) { 
+			if (this.stats[by] && this.stats[by][this.$index] !== undefined && this.stats[by][this.$index][prop] !== undefined) {
+				return this.stats[by][this.$index][prop];
+			}
+			return null;
+		},
+
+		rowCompletionClass: function() {
+			if (this.stats.byRow[this.$index] !== undefined) {
+				return scales.completionClass(this.stats.byRow[this.$index].complete / this.stats.byRow[this.$index].total);
+			}
+			return null;
+		},
+
+		colCompletionClass: function() {
+			if (this.stats.byColumn[this.$index] !== undefined) {
+				return scales.completionClass(this.stats.byColumn[this.$index].complete / this.stats.byColumn[this.$index].total);
+			}
 		}
+
 
 	},
 

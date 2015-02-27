@@ -1,15 +1,11 @@
-import pprint as pp
 import traceback
-import locale
-locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
-
-import datetime
 
 from decimal import InvalidOperation
 
 from django.db import IntegrityError
 from django.db import transaction
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from pandas import DataFrame
 
 from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from source_data.models import *
@@ -18,29 +14,78 @@ from datapoints.models import *
 
 class MasterRefresh(object):
 
-
-    def __init__(self,source_datapoints,user_id,document_id):
+    def __init__(self,user_id,document_id,indicator_id=None):
 
         self.document_id = document_id
-        self.source_datapoints = source_datapoints
         self.user_id = user_id
+        self.indicator_id = indicator_id
+
+        self.source_region_ids, self.source_campaign_id\
+            , self.source_indicator_ids = [],[],[]
+
+        self.sdp_df = DataFrame(list(SourceDataPoint.objects\
+            .filter(document_id = self.document_id).values()))
 
         self.new_datapoints = []
 
+    def source_dps_to_dps(self):
 
-    def main(self):
+        if self.indicator_id:
+            indicators = [self.indicator_id]
 
-        self.delete_un_mapped()
-        self.sync_regions()
+        else:
+            indicators = Indicator.objects.all().values_list('id',flat=True)
 
-        self.mappings = self.get_mappings()
-        for sdp in self.source_datapoints:
+        for ind_id in indicators:
 
-          err, datapoint = self.process_source_datapoint_record(sdp=sdp)
+            sdps_to_sync = SourceDataPoint.objects.raw('''
+                SELECT
+                      sd.id
+                    , sd.cell_value
+                    , rm.master_region_id
+                    , cm.master_campaign_id
+                    , im.master_indicator_id
+                FROM source_datapoint sd
+                INNER JOIN source_region sr
+                	ON sd.region_code = sr.region_code
+                INNER JOIN region_map rm
+                	ON sr.id = rm.source_region_id
+                INNER JOIN source_indicator si
+                	ON sd.indicator_string = si.indicator_string
+                INNER JOIN indicator_map im
+                	ON si.id = im.source_indicator_id
+                    AND im.master_indicator_id = %s
+                INNER JOIN source_campaign sc
+                	ON sd.campaign_string = sc.campaign_string
+                INNER JOIN campaign_map cm
+                	ON sc.id = cm.source_campaign_id
+                WHERE sd.document_id = %s
+                AND NOT EXISTS (
+                     SELECT 1 FROM datapoint d
+                     WHERE sd.id = d.source_datapoint_id)
+            	AND sd.cell_value != 'nan'
+                ''', [ind_id,self.document_id])
 
-          if err:
-              sdp.error_msg = err
-              sdp.save()
+
+            for row in sdps_to_sync:
+
+                created, dp = DataPoint.objects.get_or_create(
+                    campaign_id = row.master_campaign_id,
+                    indicator_id = row.master_indicator_id,
+                    region_id = row.master_region_id,
+                    defaults = {
+                        'value':row.cell_value,
+                        'source_datapoint_id': row.id,
+                        'changed_by_id': self.user_id
+                    })
+
+                ## if this datapoint exists and was not added by a human ##
+                if created == 0 and dp.source_datapoint_id > 0:
+
+                    dp.source_datapoint_id = row.source_datapoint_id
+                    dp.value = row.cell_value
+                    dp.changed_by_id = self.user.id
+                    dp.save()
 
 
     def delete_un_mapped(self):
@@ -66,7 +111,7 @@ class MasterRefresh(object):
 
             except ObjectDoesNotExist:
                 return
-                
+
             master_polygon = RegionPolygon.objects.get_or_create(
                 region = sr.master_region,
                 defaults = { 'shape_len': source_polygon.shape_len,
@@ -74,94 +119,66 @@ class MasterRefresh(object):
                     'polygon': source_polygon.polygon
                 })
 
-        # SourceRegion.objects.filter(document_id=\
+#####
+#####
 
+def create_source_meta_data(document_id):
+    '''
+    based on the source datapoints, create the source_regions /
+    source_campaigns / source indicators/
+    '''
 
-    def get_mappings(self):
+    sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
+        document_id = document_id).values()))
 
-        mappings = {}
+    sr_df = DataFrame(list(SourceRegion.objects.filter(
+        document_id = document_id).values()))
 
-        mappings['regions'] = map_regions([sdp.region_string for sdp in self.source_datapoints],self.document_id)
-        mappings['indicators'] = map_indicators([sdp.indicator_string for sdp in self.source_datapoints],self.document_id)
-        mappings['campaigns'] = map_campaigns([sdp.campaign_string for sdp in self.source_datapoints],self.document_id)
+    if len(sr_df) > 0 and len(sdp_df) == 0:
 
-        return mappings
+        pass
 
+    else:
 
-    def process_source_datapoint_record(self,sdp):
+        ## campaigns ##
 
-        try:
-            indicator_id = self.mappings['indicators'][sdp.indicator_string]
-            region_id = self.mappings['regions'][sdp.region_string] # hack!
-            campaign_id = self.mappings['campaigns'][sdp.campaign_string]
-        except KeyError:
-            err = traceback.format_exc()
-            return err, None
+        campaign_strings = sdp_df['campaign_string'].unique()
 
-        sdp.cell_value = sdp.cell_value.replace(',','')
-        sdp.save()
+        for cntr,(c) in enumerate(campaign_strings):
 
-        try:
-            with transaction.atomic():
-                datapoint = DataPoint.objects.create(
-                      indicator_id = indicator_id,
-                      region_id = region_id,
-                      campaign_id = campaign_id,
-                      value = sdp.cell_value,
-                      changed_by_id = self.user_id,
-                      source_datapoint_id = sdp.id
-                )
-                self.new_datapoints.append(datapoint.id)
-            sdp.status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
-            sdp.save()
-            self.new_datapoints.append(datapoint.id)
+            try:
+                created, s_c_obj = SourceCampaign.objects.create(
+                    campaign_string = c,
+                    document_id = document_id,
+                    source_guid = ('%s - %s',( document_id, c )))
+            except IntegrityError:
+                pass
+            except TypeError: # fix for POL-332
+                pass
 
-        except IntegrityError:
-            err, datapoint = self.handle_dupe_record(sdp,indicator_id,region_id,campaign_id)
-            return err,datapoint
-        except ValidationError:
-            err = traceback.format_exc()
-            return err, None
-        except InvalidOperation:
-            err = traceback.format_exc()
-            return err, None
-        except TypeError:
-            err = traceback.format_exc()
-            return err, None
-        except Exception:
-            err = traceback.format_exc()
-            return err, None
+        ## indicators ##
+        indicator_strings = sdp_df['indicator_string'].unique()
 
-        return None, datapoint
+        for i in indicator_strings:
 
+            try:
+                s_i_obj = SourceIndicator.objects.create(
+                    indicator_string = i,
+                    document_id = document_id,
+                    source_guid =  ('%s - %s',( document_id, i )))
+            except IntegrityError:
+                pass
 
-    def handle_dupe_record(self,sdp,indicator_id,region_id,campaign_id):
+        # regions #
+        region_codes = sdp_df['region_code'].unique()
 
-        datapoint = DataPoint.objects.get(
-            indicator_id = indicator_id,
-            region_id = region_id,
-            campaign_id = campaign_id,
-        )
+        for r in region_codes:
 
-        original_sdp = SourceDataPoint.objects.get(id=datapoint.source_datapoint_id)
-
-        if original_sdp.created_at.replace(tzinfo=None) <= sdp.created_at.replace(tzinfo=None):
-
-            datapoint.value = sdp.cell_value
-            datapoint.source_datapoint_id = sdp.id
-
-            datapoint.save()
-
-            sdp.status = ProcessStatus.objects.get(status_text= "SUCCESS_UPDATE")
-            sdp.save()
-
-            original_sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDDEN")
-            original_sdp.save()
-
-            return None, datapoint
-
-        else:
-            sdp.status = ProcessStatus.objects.get(status_text= "OVERRIDDEN")
-            sdp.save()
-
-            return None, datapoint
+            try:
+                s_r_obj = SourceRegion.objects.create(
+                    region_code = r,
+                    document_id = document_id,
+                    region_string = r,
+                    source_guid = ('%s - %s',( document_id, r )))
+            except IntegrityError:
+                pass

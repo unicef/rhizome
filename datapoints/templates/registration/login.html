@@ -6,12 +6,12 @@
 
 	<title>Polio Data Management App</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link rel="stylesheet" href="{% static "screen.css" %}">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{% static "css/screen.css" %}">
 </head>
 
-<body>
-	<form method="post" action="{% url 'login' %}" class="login">
+<body class="login">
+	<form method="post" action="{% url 'login' %}">
 		{% csrf_token %}
 
 		<div class="form-group">
@@ -23,7 +23,7 @@
 			{{ form.password.label_tag }}
 			{{ form.password }}
 		</div>
-		<button type="submit">Login</button>
+		<button type="submit" class="success expand">Login</button>
 
 		<input type="hidden" name="next" value="{{ next }}" />
 

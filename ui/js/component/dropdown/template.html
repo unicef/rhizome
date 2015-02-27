@@ -1,6 +1,6 @@
 <div class="dropdown" role="menu" v-class="open: open">
 
-	<a role="button" class="menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
+	<a role="button" class="button menu-button" tabindex="0" v-on="click: toggle" v-attr="title: title">
 		<label>{{ title }}</label>
 		<div class="icon">
 			<i class="fa fa-fw fa-lg fa-spinner fa-spin" v-if="loading"></i>
@@ -29,7 +29,7 @@
 			  v-style="max-height: menuHeight + 'px',
 			           max-width: menuWidth + 'px'">
 			<li v-repeat="items | flatten | filterBy pattern 'title' | orderBy sortBy sortDsc">
-				<div role="menuitem" v-class="selected: selected">
+				<div role="menuitem" v-class="selected: value | isSelected">
 					<i class="fa fa-check fa-lg"></i>
 					<span v-on="click: toggleItem(this)">{{ title }}</span>
 				</div>
@@ -41,7 +41,9 @@
 								 max-width: menuWidth + 'px'">
 
 			<li v-repeat="items | orderBy sortBy sortDsc"
-			    v-with="sortBy: sortBy, sortDsc: sortDsc"
+			    v-with="sortBy    : sortBy,
+					        sortDsc   : sortDsc,
+									selection : selection"
 					v-component="dropdown-item"></li>
 
 		</ul>

@@ -1,18 +1,24 @@
-from django.shortcuts import get_object_or_404, render, render_to_response
-from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse, reverse_lazy
+import json
+from pprint import pprint
+
+from django.shortcuts import render_to_response
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
-from django.contrib.auth.decorators import permission_required
-from django.utils.decorators import method_decorator
-from django.db import connection
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
+from pandas import read_csv
+from pandas import DataFrame
+import gspread
 
-
-from datapoints.models import DataPoint,Region,Indicator,Source
+from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
+from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
+from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -304,3 +310,434 @@ def search(request):
       return render_to_response('datapoints/search.html',
         {'form':DataPointSearchForm},
         context_instance=RequestContext(request))
+
+
+def calc_datapoint(request):
+
+    curs = DataPoint.objects.raw("""
+    	DROP TABLE IF EXISTS datapoint_with_computed;
+
+    	CREATE TABLE datapoint_with_computed
+    	(
+    		id SERIAL
+    		,indicator_id INTEGER
+    		,region_id INTEGER
+    		,campaign_id INTEGER
+    		,value FLOAT
+    		,is_agg BOOLEAN
+    		,is_calc BOOLEAN
+    	);
+
+    	INSERT INTO datapoint_with_computed
+    	(indicator_id,region_id,campaign_id,value,is_agg,is_calc)
+
+    	SELECT
+    		indicator_id
+    		,region_id
+    		,campaign_id
+    		,value
+    		,is_agg
+    		,CAST(0 as BOOLEAN) as is_calc
+    	FROM agg_datapoint;
+
+    	CREATE UNIQUE INDEX  dwc_uq_ix on datapoint_with_computed (region_id, indicator_id, campaign_id);
+
+        ---- SUM OF PARTS ------
+        INSERT INTO datapoint_with_computed
+        (indicator_id,region_id,campaign_id,value,is_calc)
+
+        SELECT
+    	 cic.indicator_id
+    	,ad.region_id
+    	,ad.campaign_id
+    	,SUM(ad.value) as value
+           ,'t'
+        FROM agg_datapoint ad
+        INNER JOIN calculated_indicator_component cic
+            ON ad.indicator_id = cic.indicator_component_id
+            AND cic.calculation = 'PART_TO_BE_SUMMED'
+        GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
+
+        ----- PART / WHOLE ------
+        INSERT INTO datapoint_with_computed
+        (indicator_id,region_id,campaign_id,value,is_calc)
+
+        SELECT
+        part.indicator_id as master_indicator_id
+        ,d_part.region_id
+        ,d_part.campaign_id
+        ,d_part.value / NULLIF(d_whole.value,0) as value
+        ,CAST(1 as BOOLEAN) as is_calc
+        FROM(
+          SELECT max(id) as max_dp_id FROM datapoint_with_computed
+        ) x
+        INNER JOIN calculated_indicator_component part
+            ON 1 = 1
+        INNER JOIN calculated_indicator_component whole
+            ON part.indicator_id = whole.indicator_id
+            AND whole.calculation = 'WHOLE'
+            AND part.calculation = 'PART'
+        INNER JOIN datapoint_with_computed d_part
+            ON part.indicator_component_id = d_part.indicator_id
+        INNER JOIN datapoint_with_computed d_whole
+            ON whole.indicator_component_id = d_whole.indicator_id
+            AND d_part.campaign_id = d_whole.campaign_id
+            AND d_part.region_id = d_whole.region_id;
+
+        CREATE INDEX ind_ix on datapoint_with_computed (indicator_id);
+        CLUSTER datapoint_with_computed using ind_ix;
+
+        INSERT INTO datapoint_with_computed
+        (indicator_id,region_id,campaign_id,value,is_calc)
+
+
+        SELECT
+			denom.master_indicator_id
+          		,denom.region_id
+          		,denom.campaign_id
+          		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
+               , CAST(1 AS BOOLEAN) as is_calc
+          FROM (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'PART_OF_DIFFERENCE'
+          )num_part
+
+          INNER JOIN (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'WHOLE_OF_DIFFERENCE'
+
+          )num_whole
+          ON num_part.master_indicator_id = num_whole.master_indicator_id
+          AND num_part.region_id = num_whole.region_id
+          AND num_part.campaign_id = num_whole.campaign_id
+
+          INNER JOIN
+          (
+          	SELECT
+          		cic.indicator_id as master_indicator_id
+          		,ad.region_id
+          		,ad.indicator_id
+          		,ad.campaign_id
+          		,ad.value
+          	FROM agg_datapoint ad
+          	INNER JOIN calculated_indicator_component cic
+          	ON cic.indicator_component_id = ad.indicator_id
+          	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
+          )denom
+          ON num_whole.region_id = denom.region_id
+          AND num_whole.master_indicator_id = denom.master_indicator_id
+         AND num_whole.campaign_id = denom.campaign_id;
+
+        SELECT id FROM datapoint_with_computed LIMIT 1;
+    """)
+
+    for x in curs:
+        print x
+
+    return HttpResponseRedirect('/datapoints/cache_control/')
+
+
+def agg_datapoint(request):
+
+    # insert leave level data #
+
+    curs = DataPoint.objects.raw("""
+
+    TRUNCATE TABLE agg_datapoint;
+
+    INSERT INTO agg_datapoint
+    (region_id, campaign_id, indicator_id, value, is_agg)
+
+    SELECT
+        region_id, campaign_id, indicator_id, value, 't'
+    FROM datapoint d
+    WHERE value != 'NaN'
+    AND NOT EXISTS (
+        SELECT 1 FROM calculated_indicator_component cic
+        WHERE d.indicator_id = cic.indicator_id);
+
+    --
+
+    DROP INDEX IF EXISTS ag_uq_ix;
+    CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
+
+    SELECT id from datapoint limit 1;
+
+    """)
+
+    for x in curs:
+        print x
+
+
+    region_loop = {
+        0 : 'settlement',
+        1 : 'sub-district',
+        2 : 'district',
+        3 : 'district',
+        4 : 'province',
+        # 4 : 'country',
+    }
+
+    for k,v in region_loop.iteritems():
+
+        curs = DataPoint.objects.raw("""
+            INSERT INTO agg_datapoint
+            (region_id, campaign_id, indicator_id, value, is_agg)
+
+            SELECT
+                r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
+            FROM agg_datapoint ag
+            INNER JOIN region r
+                ON ag.region_id = r.id
+            INNER JOIN region_type rt
+                ON r.region_type_id = rt.id
+                AND rt.name = %s
+            WHERE NOT EXISTS (
+            	SELECT 1 FROM agg_datapoint ag_2
+            	WHERE 1 = 1
+            	AND ag.indicator_id = ag_2.indicator_id
+            	AND ag.campaign_id = ag_2.campaign_id
+            	AND r.parent_region_id = ag_2.region_id
+            )
+            GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
+
+        SELECT id FROM datapoint LIMIT 1;
+        """,[v])
+
+        for x in curs:
+            print x
+
+
+    return HttpResponseRedirect('/datapoints/cache_control/')
+
+
+def populate_dummy_ngo_dash(request):
+
+    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
+    campaign_id = 201
+
+    region_ids = []
+    batch = []
+
+    dist_r = ng_dash_df['region_id'].unique()
+
+    for r in dist_r:
+
+        print r
+
+        df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
+
+        valid_cols_df = df_filtered_by_region[['indicator_id','value']]
+        ix_df = valid_cols_df.set_index('indicator_id')
+
+        x = ix_df.to_dict()
+        cleaned_json = json.dumps(x['value'], ensure_ascii=False)
+
+        dda_dict = {
+            'region_id': r,
+            'campaign_id':campaign_id,
+            'indicator_json':x['value']
+        }
+
+        DataPointAbstracted.objects.filter(campaign_id = campaign_id\
+            , region_id = r).delete()
+
+        DataPointAbstracted.objects.create(**dda_dict)
+
+    return HttpResponseRedirect('/datapoints/cache_control/')
+
+
+def pivot_datapoint(request):
+
+    full_cache_refresh()
+
+    return HttpResponseRedirect('/datapoints/cache_control/')
+
+def cache_control(request):
+
+    return render_to_response('cache_control.html',
+    context_instance=RequestContext(request))
+
+def load_gdoc_data(request):
+
+    err_msg = 'none!'
+
+    gc = gspread.login(gdoc_u,gdoc_p)
+    worksheet = gc.open("Mgmt Data QA | Feb 27 2014").sheet1
+    list_of_lists = worksheet.get_all_values()
+    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
+    gd_df = gd_df[gd_df['region_id'] != '0']
+    gd_dict = gd_df.transpose().to_dict()
+
+    batch = []
+
+    for k,v in gd_dict.iteritems():
+
+        print v
+
+        v['success_flag'] = 0
+        recon_d = ReconData(**v)
+        batch.append(recon_d)
+
+    ReconData.objects.all().delete()
+
+    try:
+        ReconData.objects.bulk_create(batch)
+    except Exception as err:
+        err_msg = err
+
+    return render_to_response('qa_data.html',
+        {'err_msg': err_msg},context_instance=RequestContext(request))
+
+def test_data_coverage(request):
+
+    failed = ReconData.objects.raw("""
+    DROP TABLE IF EXISTS _test_results;
+    CREATE TEMP TABLE _test_results
+    AS
+    SELECT
+    	rd.id
+    	,rd.region_id
+    	,rd.campaign_id
+    	,rd.indicator_id
+    	,rd.target_value
+    	,dwc.value as actual_value
+    	,CAST(CASE WHEN ( ABS(rd.target_value - dwc.value) < 0.001) THEN 1 ELSE 0 END AS BOOLEAN) as success_flag
+    FROM recon_data rd
+    LEFT JOIN datapoint_with_computed dwc
+    ON rd.region_id = dwc.region_id
+    AND rd.campaign_id = dwc.campaign_id
+    AND rd.indicator_id = dwc.indicator_id;
+
+    UPDATE recon_data rd
+    SET success_flag = tr.success_flag
+    FROM _test_results tr
+    WHERE rd.id = tr.id;
+
+    SELECT
+    	id,region_id,campaign_id,indicator_id,target_value,actual_value
+    FROM _test_results
+    WHERE success_flag = 'f'""")
+
+    final_qa_data = []
+    for row in failed:
+        row_d = {'region_id':row.region_id,
+    	'campaign_id':row.campaign_id,
+        'indicator_id':row.indicator_id,
+        'target_value':row.target_value,
+        'actual_value':row.actual_value}
+
+        final_qa_data.append(row_d)
+
+    test_count = ReconData.objects.count()
+    qa_score = 1 - float((len(final_qa_data))/ float(test_count))
+
+
+    return render_to_response('qa_data.html',
+        {'qa_data': final_qa_data, 'qa_score':qa_score},\
+        # ,'indicator_breakdown':indicator_breakdown},
+        context_instance=RequestContext(request))
+
+def qa_failed(request,region_id,campaign_id,indicator_id):
+    # http://localhost:8000/datapoints/qa_failed/233/12910/99
+
+    '''
+    for an indicator_id, region_id, campaign_id, value try to figure out
+    why the data is in correct.
+    '''
+
+    expected_value = ReconData.objects.get(region_id=region_id\
+        ,campaign_id=campaign_id,indicator_id=indicator_id).target_value
+
+    try:
+        actual_value = DataPointComputed.objects.get(region_id=region_id\
+            ,campaign_id=campaign_id,indicator_id=indicator_id).value
+    except ObjectDoesNotExist:
+        actual_value = None
+
+    md_array = []
+    sub_md_array = []
+
+    md = ReconData.objects.raw('''
+    SELECT
+    	rd.id
+    	,cic.indicator_component_id
+    	,cic.calculation
+    	,rd.region_id
+    	,rd.indicator_id
+        ,COALESCE(CAST(ad.value AS VARCHAR),'MISSING') as actual_value
+    FROM recon_data rd
+    INNER JOIN calculated_indicator_component cic
+    ON rd.indicator_id = cic.indicator_id
+    AND cic.indicator_id = %s
+    AND rd.region_id = %s
+    AND rd.campaign_id = %s
+    LEFT JOIN agg_datapoint ad
+    ON cic.indicator_component_id = ad.indicator_id
+    AND ad.region_id = rd.region_id
+    AND ad.campaign_id = rd.campaign_id
+    ;''',[indicator_id,region_id,campaign_id])
+
+    for row in md:
+        row_dict = {
+            'campaign_id': row.campaign_id,
+            'indicator_id': row.indicator_id,
+            'region_id': row.region_id,
+            'actual_value': row.actual_value,
+        }
+
+        md_array.append(row_dict)
+
+    sub_md = ReconData.objects.raw('''
+    SELECT
+    	rd.id
+    	,cic.indicator_component_id
+    	,cic.calculation
+    	,r.id as region_id
+    	,rd.indicator_id
+    	,COALESCE(CAST(ad.value AS VARCHAR),'MISSING') actual_value
+    FROM recon_data rd
+    INNER JOIN calculated_indicator_component cic
+    ON rd.indicator_id = cic.indicator_id
+    AND cic.indicator_id = %s
+    AND rd.region_id = %s
+    AND rd.campaign_id = %s
+    INNER JOIN region r
+    ON rd.region_id = r.parent_region_id
+    LEFT JOIN agg_datapoint ad
+    ON cic.indicator_component_id = ad.indicator_id
+    AND ad.region_id = r.id
+    AND ad.campaign_id = rd.campaign_id''',[indicator_id,region_id,campaign_id])
+
+    for row in sub_md:
+        row_dict = {
+            'campaign_id': row.campaign_id,
+            'indicator_id': row.indicator_id,
+            'region_id': row.region_id,
+            'actual_value': row.actual_value,
+        }
+
+        sub_md_array.append(row_dict)
+
+
+    return render_to_response('missing_data.html',{'calculation_breakdown':\
+        md_array,'region_id':region_id,'campaign_id':campaign_id,\
+        'indicator_id':indicator_id,'expected_value':expected_value
+        ,'actual_value':actual_value,'sub_region_calculation_breakdown':sub_md_array}
+        ,context_instance=RequestContext(request))
