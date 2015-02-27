@@ -3,9 +3,14 @@
 	<div class="chart">
 		<svg
 			class="bullet"
-			viewBox="0 0 318 100">
+			v-attr="viewBox : '0 0 ' + width + ' ' + height">
 
-			<rect class="bg" width="318" height="100"></rect>
+			<rect
+				class="bg"
+				v-attr="
+					width  : width,
+					height : height"></rect>
+
 			<g class="ranges"></g>
 		</svg>
 

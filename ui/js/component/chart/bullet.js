@@ -122,8 +122,8 @@ module.exports = {
 
 		draw: function () {
 			var svg    = d3.select(this.$el).select('.bullet');
-			var height = 100;
-			var width  = 318;
+			var height = this.height || 1;
+			var width  = this.width || 1;
 
 			var x = d3.scale.linear()
 				.domain([0, 1])
