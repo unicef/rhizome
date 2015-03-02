@@ -134,77 +134,106 @@ def document_review(request,document_id):
     sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
         .values_list('id',flat=True)
 
-    source_indicator_breakdown = get_document_meta(document_id)
+    meta_breakdown = populate_document_metadata(document_id)
 
     doc_obj = Document.objects.get(id = document_id)
     sdp_count, dp_count = doc_obj.source_datapoint_count\
         , doc_obj.master_datapoint_count
 
+    source_indicator_breakdown = meta_breakdown['indicator_breakdown']
 
     return render_to_response(
         'upload/document_review.html',
-        {'to_review': source_indicator_breakdown,'document_id': document_id,
-        'sdp_count':sdp_count,'dp_count':dp_count},
-        RequestContext(request),
-    )
+        {'source_indicator_breakdown': source_indicator_breakdown
+        ,'document_id': document_id,'sdp_count':sdp_count,'dp_count':dp_count}
+        ,RequestContext(request))
 
-def get_document_meta(document_id):
+def populate_document_metadata(document_id):
 
-    SQL = '''
-        -- INDICATORS --
+    meta_breakdown = {}
+    indicator_breakdown = []
 
-    SELECT
-    	x.indicator_string
-      	,si.id as source_indicator_id
-    	,im.master_indicator_id
-    FROM (
-    	SELECT DISTINCT
-    		indicator_string
-    	FROM source_datapoint sd
-    	WHERE sd.document_id = 970
-    )x
-    LEFT JOIN source_indicator si
-    	ON x.indicator_string = si.indicator_string
-    LEFT JOIN indicator_map im
-    	ON si.id = im.source_indicator_id
-
-    -- CAMPAIGNS --
-
-    SELECT
-    	x.campaign_string
-      	,sc.id as source_campaign_id
-    	,cm.master_campaign_id
-    FROM (
-    	SELECT DISTINCT
-    		campaign_string
-    	FROM source_datapoint sd
-    	WHERE sd.document_id = 970
-    )x
-    LEFT JOIN source_campaign sc
-    	ON x.campaign_string = sc.campaign_string
-    LEFT JOIN campaign_map cm
-    	ON sc.id = cm.source_campaign_id
-
-     -- REGIONS --
-
-    SELECT
-    	x.region_code
-      	,sr.id as source_region_id
-    	,rm.master_region_id
-    FROM (
-    	SELECT DISTINCT
-    		region_code
-    	FROM source_datapoint sd
-    	WHERE sd.document_id = 970
-    )x
-    LEFT JOIN source_region sr
-    	ON x.region_code = sr.region_code
-    LEFT JOIN region_map rm
-    	ON sr.id = rm.source_region_id
+    si_raw = SourceIndicator.objects.raw(
     '''
+    DROP TABLE IF EXISTS _indicator_doc_meta;
+    CREATE TEMP TABLE _indicator_doc_meta AS
+
+    SELECT DISTINCT
+          indicator_string
+        , document_id
+        , sd.indicator_string || '-' || sd.document_id as source_guid
+    FROM source_datapoint sd
+    WHERE document_id = %s;
+
+    INSERT INTO source_indicator
+    (indicator_string, document_id,source_guid)
+
+    SELECT indicator_string, document_id,source_guid
+    FROM _indicator_doc_meta idm
+    WHERE NOT EXISTS (
+    	SELECT 1 FROM source_indicator si
+    	WHERE idm.indicator_string = si.indicator_string
+    );
+
+    --
+
+    SELECT
+         si.id
+        ,si.indicator_string
+        ,COALESCE(im.master_indicator_id,-1) as master_indicator_id
+    FROM _indicator_doc_meta idm
+    INNER JOIN source_indicator si
+        ON idm.indicator_string = si.indicator_string
+    LEFT JOIN indicator_map im
+        ON si.id = im.master_indicator_id
+    ''',[document_id])
+
+    for row in si_raw:
+        row_dict = {
+            'source_indicator_id':row.id,
+            'indicator_string':row.indicator_string,
+            'master_indicator_id':row.master_indicator_id
+        }
+
+        indicator_breakdown.append(row_dict)
+
+    meta_breakdown['indicator_breakdown'] = indicator_breakdown
 
 
-    return []
+    # SELECT
+    # 	x.campaign_string
+    #   	,sc.id as source_campaign_id
+    # 	,cm.master_campaign_id
+    # FROM (
+    # 	SELECT DISTINCT
+    # 		campaign_string
+    # 	FROM source_datapoint sd
+    # 	WHERE sd.document_id = 970
+    # )x
+    # LEFT JOIN source_campaign sc
+    # 	ON x.campaign_string = sc.campaign_string
+    # LEFT JOIN campaign_map cm
+    # 	ON sc.id = cm.source_campaign_id
+    #
+    #  -- REGIONS --
+    #
+    # SELECT
+    # 	x.region_code
+    #   	,sr.id as source_region_id
+    # 	,rm.master_region_id
+    # FROM (
+    # 	SELECT DISTINCT
+    # 		region_code
+    # 	FROM source_datapoint sd
+    # 	WHERE sd.document_id = 970
+    # )x
+    # LEFT JOIN source_region sr
+    # 	ON x.region_code = sr.region_code
+    # LEFT JOIN region_map rm
+    # 	ON sr.id = rm.source_region_id
+
+
+    return meta_breakdown
 
 def sync_source_datapoints(request,document_id,master_indicator_id):
 
@@ -234,6 +263,8 @@ def pre_process_file(request,document_id,file_type):
         except IntegrityError:
             sdps = SourceDataPoint.objects.filter(
                 document_id = document_id)
+
+        populate_document_metadata(document_id)
 
         return HttpResponseRedirect(reverse('source_data:document_review'\
             , kwargs={'document_id': document_id}))
