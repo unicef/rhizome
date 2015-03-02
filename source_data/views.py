@@ -21,48 +21,15 @@ from source_data.etl_tasks.refresh_master import MasterRefresh\
 from source_data.api import EtlTask
 
 
-def user_portal(request):
-
-    # pRse the campaign param from url.. if none, default to latest
-    try:
-        campaign_id = request.GET['campaign_id']
-    except KeyError:
-        campaign_id = Campaign.objects.all().order_by('-start_date')[0].id
-
-
-    raw_sql = '''select * from responsibility r
-            where user_id = %s
-            and not exists
-            (
-            	select 1 from datapoint d
-            	where campaign_id = %s
-            	and r.indicator_id = d.indicator_id
-            	and r.region_id = d.region_id
-                order by r.indicator_id
-            )'''
-
-    to_do = Responsibility.objects.raw(raw_sql % (request.user.id,campaign_id))
-    docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
-    campaigns = Campaign.objects.all()
-
-    return render_to_response(
-        'data_entry/user_portal.html',
-        {'docs':docs,'to_do':to_do,'campaigns':campaigns,'campaign_id':campaign_id},
-        RequestContext(request),
-    )
-
-
 def mark_doc_as_processed(request,document_id):
 
     doc = Document.objects.get(id=document_id)
     doc.is_processed = True
     doc.save()
 
-    return HttpResponseRedirect(reverse('source_data:user_portal'))  # encode like done below
-
+    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 ### File Upload Below ###
-
 
 def file_upload(request):
 
@@ -327,7 +294,7 @@ class DocumentIndex(generic.ListView):
 class CreateMap(PermissionRequiredMixin, generic.CreateView):
 
     template_name='map/map.html'
-    success_url=reverse_lazy('source_data:user_portal')
+    success_url=reverse_lazy('source_data:document_index')
     # permission_required = 'datapoints.add_datapoint'
 
     def form_valid(self, form):

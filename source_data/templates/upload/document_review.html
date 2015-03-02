@@ -11,24 +11,22 @@
 
     <br><br>
 
+    <h1 align="center"> -- INDICATORS -- </h1>
 
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Source Indicator ID</th>
+            <th>Indicator String</th>
+            <th>Master Indicator ID</th>
+            <th>Source DataPoint Count</th>
+            <th>Sync Indicator Data</th>
 
-
-        <div class="container">
-        <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Source Indicator ID</th>
-                <th>Indicator String</th>
-                <th>Master Indicator ID</th>
-                <th>Source DataPoint Count</th>
-                <th>Sync Indicator Data</th>
-
-            </tr>
-        </thead>
+        </tr>
+    </thead>
 
         {% if source_indicator_breakdown %}
-        
+
             {% for si in source_indicator_breakdown %}
             <tr>
                 <th> {{ si.source_indicator_id }} </th>
@@ -50,9 +48,60 @@
             </tr>
             {% endfor %}
         </table>
-      </div>
 
     {% endif %}
+
+
+        <br><br>
+
+        <h1 align="center"> -- CAMPAIGNS -- </h1>
+
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Source Campaign ID</th>
+                <th>Campaign String</th>
+                <th>Master Campaign ID</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+          {% for sc in source_campaign_breakdown %}
+          <tr>
+              <th> {{ sc.source_indicator_id }} </th>
+              <th> {{ sc.campaign_string }} </th>
+              <th> {{ si.master_campaign_id }} </th>
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+
+
+
+        <br><br>
+
+        <h1 align="center"> -- REGIONS -- </h1>
+
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Source Region ID</th>
+                <th>Region String</th>
+                <th>Master Region ID</th>
+            </tr>
+        </thead>
+        <tbody>
+
+                {% for sr in source_region_breakdown %}
+                <tr>
+                    <th> {{ sr.source_region_id }} </th>
+                    <th> {{ sr.region_string }} </th>
+                    <th> {{ sr.master_region_id }}
+                </tr>
+                {% endfor %}
+            </table>
+       </tbody>
 
 
 {% endblock %}
