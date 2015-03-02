@@ -18,8 +18,8 @@
         <tr>
             <th>Source Indicator ID</th>
             <th>Indicator String</th>
-            <th>Master Indicator ID</th>
             <th>Source DataPoint Count</th>
+            <th>Master Indicator ID</th>
             <th>Sync Indicator Data</th>
 
         </tr>
@@ -31,6 +31,7 @@
             <tr>
                 <th> {{ si.source_indicator_id }} </th>
                 <th> {{ si.indicator_string }} </th>
+                <th> {{ si.source_datapoint_count }} </th>
 
                 {% if si.master_indicator_id == -1 %}
                   <th> <a href="{% url 'source_data:map_indicator' si.source_indicator_id %}"</a>map</th>
@@ -38,7 +39,6 @@
                   <th> {{ si.master_indicator_id }}
                 {% endif %}
 
-                <th> {{ si.source_datapoint_count }} </th>
                 {% if si.master_indicator_id == -1 %}
                   <th> please map indicator
                 {% else %}
@@ -69,15 +69,19 @@
         <tbody>
           {% for sc in source_campaign_breakdown %}
           <tr>
-              <th> {{ sc.source_indicator_id }} </th>
+              <th> {{ sc.source_campaign_id }} </th>
               <th> {{ sc.campaign_string }} </th>
-              <th> {{ si.master_campaign_id }} </th>
+
+              {% if sc.source_campaign_id == -1 %}
+              <th><a href="{% url 'source_data:map_campaign' sc.source_campaign_id %}"</a> Map!</th>
+              {% else %}
+              <th>{{ sc.master_campaign_id }}</th>
+              {% endif %}
+
           </tr>
           {% endfor %}
         </tbody>
         </table>
-
-
 
         <br><br>
 
@@ -97,7 +101,11 @@
                 <tr>
                     <th> {{ sr.source_region_id }} </th>
                     <th> {{ sr.region_string }} </th>
-                    <th> {{ sr.master_region_id }}
+                    {% if sr.master_region_id == -1 %}
+                    <th><a href="{% url 'source_data:map_region' sr.source_region_id %}"</a> Map!</th>
+                    {% else %}
+                    <th>{{ sr.master_region_id }}</th>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </table>

@@ -131,8 +131,10 @@ def populate_document_metadata(document_id):
           indicator_string
         , document_id
         , sd.indicator_string || '-' || sd.document_id as source_guid
+        , COUNT(1) as source_datapoint_count
     FROM source_datapoint sd
-    WHERE document_id = %s;
+    WHERE document_id = %s
+    GROUP by sd.document_id, sd.indicator_string ;
 
     INSERT INTO source_indicator
     (indicator_string, document_id,source_guid)
@@ -150,19 +152,21 @@ def populate_document_metadata(document_id):
          si.id
         ,si.indicator_string
         ,COALESCE(im.master_indicator_id,-1) as master_indicator_id
+        ,idm.source_datapoint_count
     FROM _indicator_doc_meta idm
     INNER JOIN source_indicator si
         ON idm.indicator_string = si.indicator_string
     LEFT JOIN indicator_map im
         ON si.id = im.source_indicator_id
-
+    ORDER BY 3
     ''',[document_id])
 
     for row in si_raw:
         row_dict = {
             'source_indicator_id':row.id,
             'indicator_string':row.indicator_string,
-            'master_indicator_id':row.master_indicator_id
+            'master_indicator_id':row.master_indicator_id,
+            'source_datapoint_count':row.source_datapoint_count,
         }
 
         indicator_breakdown.append(row_dict)
@@ -200,6 +204,7 @@ def populate_document_metadata(document_id):
             ON cdm.campaign_string = sc.campaign_string
         LEFT JOIN campaign_map cm
             ON sc.id = cm.source_campaign_id
+        ORDER BY 3
         ''',[document_id])
 
     for row in sc_raw:
@@ -211,7 +216,7 @@ def populate_document_metadata(document_id):
 
         campaign_breakdown.append(row_dict)
 
-    sc_raw = SourceCampaign.objects.raw(
+    sr_raw = SourceCampaign.objects.raw(
         '''
         DROP TABLE IF EXISTS _region_doc_meta;
         CREATE TEMP TABLE _region_doc_meta AS
@@ -245,9 +250,10 @@ def populate_document_metadata(document_id):
             ON rdm.region_code = sr.region_code
         LEFT JOIN region_map rm
             ON sr.id = rm.source_region_id
+        ORDER BY 3
         ''',[document_id])
 
-    for row in sc_raw:
+    for row in sr_raw:
         row_dict = {
             'source_region_id':row.id,
             'region_string':row.region_code,
