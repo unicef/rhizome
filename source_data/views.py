@@ -107,18 +107,20 @@ def document_review(request,document_id):
     sdp_count, dp_count = doc_obj.source_datapoint_count\
         , doc_obj.master_datapoint_count
 
-    source_indicator_breakdown = meta_breakdown['indicator_breakdown']
-
     return render_to_response(
         'upload/document_review.html',
-        {'source_indicator_breakdown': source_indicator_breakdown
-        ,'document_id': document_id,'sdp_count':sdp_count,'dp_count':dp_count}
+        {'source_indicator_breakdown': meta_breakdown['indicator_breakdown'],
+        'source_region_breakdown': meta_breakdown['region_breakdown'],
+        'source_campaign_breakdown': meta_breakdown['campaign_breakdown'],
+        'document_id': document_id,
+        'sdp_count':sdp_count,
+        'dp_count':dp_count}
         ,RequestContext(request))
 
 def populate_document_metadata(document_id):
 
     meta_breakdown = {}
-    indicator_breakdown = []
+    indicator_breakdown,region_breakdown,campaign_breakdown = [],[],[]
 
     si_raw = SourceIndicator.objects.raw(
     '''
@@ -152,7 +154,8 @@ def populate_document_metadata(document_id):
     INNER JOIN source_indicator si
         ON idm.indicator_string = si.indicator_string
     LEFT JOIN indicator_map im
-        ON si.id = im.master_indicator_id
+        ON si.id = im.source_indicator_id
+
     ''',[document_id])
 
     for row in si_raw:
@@ -164,40 +167,99 @@ def populate_document_metadata(document_id):
 
         indicator_breakdown.append(row_dict)
 
+    sc_raw = SourceCampaign.objects.raw(
+        '''
+        DROP TABLE IF EXISTS _campaign_doc_meta;
+        CREATE TEMP TABLE _campaign_doc_meta AS
+
+        SELECT DISTINCT
+              campaign_string
+            , document_id
+            , sd.campaign_string || '-' || sd.document_id as source_guid
+        FROM source_datapoint sd
+        WHERE document_id = %s;
+
+        INSERT INTO source_campaign
+        (campaign_string, document_id,source_guid)
+
+        SELECT campaign_string, document_id,source_guid
+        FROM _campaign_doc_meta cdm
+        WHERE NOT EXISTS (
+        	SELECT 1 FROM source_campaign sc
+        	WHERE cdm.campaign_string = sc.campaign_string
+        );
+
+        --
+
+        SELECT
+             sc.id
+            ,sc.campaign_string
+            ,COALESCE(cm.master_campaign_id,-1) as master_campaign_id
+        FROM _campaign_doc_meta cdm
+        INNER JOIN source_campaign sc
+            ON cdm.campaign_string = sc.campaign_string
+        LEFT JOIN campaign_map cm
+            ON sc.id = cm.source_campaign_id
+        ''',[document_id])
+
+    for row in sc_raw:
+        row_dict = {
+            'source_campaign_id':row.id,
+            'campaign_string':row.campaign_string,
+            'master_campaign_id':row.master_campaign_id
+        }
+
+        campaign_breakdown.append(row_dict)
+
+    sc_raw = SourceCampaign.objects.raw(
+        '''
+        DROP TABLE IF EXISTS _region_doc_meta;
+        CREATE TEMP TABLE _region_doc_meta AS
+
+        SELECT DISTINCT
+              region_code
+            , document_id
+            , sd.region_code || '-' || sd.document_id as source_guid
+            , CAST(0 AS BOOLEAN) as is_high_risk
+        FROM source_datapoint sd
+        WHERE document_id = %s;
+
+        INSERT INTO source_region
+        (region_code, document_id,source_guid,is_high_risk)
+
+        SELECT region_code, document_id,source_guid,is_high_risk
+        FROM _region_doc_meta rdm
+        WHERE NOT EXISTS (
+        	SELECT 1 FROM source_region sr
+        	WHERE rdm.region_code = sr.region_code
+        );
+
+        --
+
+        SELECT
+             sr.id
+            ,sr.region_code
+            ,COALESCE(rm.master_region_id,-1) as master_region_id
+        FROM _region_doc_meta rdm
+        INNER JOIN source_region sr
+            ON rdm.region_code = sr.region_code
+        LEFT JOIN region_map rm
+            ON sr.id = rm.source_region_id
+        ''',[document_id])
+
+    for row in sc_raw:
+        row_dict = {
+            'source_region_id':row.id,
+            'region_string':row.region_code,
+            'master_region_id':row.master_region_id
+        }
+
+        region_breakdown.append(row_dict)
+
+
     meta_breakdown['indicator_breakdown'] = indicator_breakdown
-
-
-    # SELECT
-    # 	x.campaign_string
-    #   	,sc.id as source_campaign_id
-    # 	,cm.master_campaign_id
-    # FROM (
-    # 	SELECT DISTINCT
-    # 		campaign_string
-    # 	FROM source_datapoint sd
-    # 	WHERE sd.document_id = 970
-    # )x
-    # LEFT JOIN source_campaign sc
-    # 	ON x.campaign_string = sc.campaign_string
-    # LEFT JOIN campaign_map cm
-    # 	ON sc.id = cm.source_campaign_id
-    #
-    #  -- REGIONS --
-    #
-    # SELECT
-    # 	x.region_code
-    #   	,sr.id as source_region_id
-    # 	,rm.master_region_id
-    # FROM (
-    # 	SELECT DISTINCT
-    # 		region_code
-    # 	FROM source_datapoint sd
-    # 	WHERE sd.document_id = 970
-    # )x
-    # LEFT JOIN source_region sr
-    # 	ON x.region_code = sr.region_code
-    # LEFT JOIN region_map rm
-    # 	ON sr.id = rm.source_region_id
+    meta_breakdown['region_breakdown'] = region_breakdown
+    meta_breakdown['campaign_breakdown'] = campaign_breakdown
 
 
     return meta_breakdown
