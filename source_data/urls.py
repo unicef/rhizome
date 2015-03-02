@@ -31,9 +31,6 @@ urlpatterns = [
 
     url(r'^etl_job_index/$', EtlJobIndex.as_view(),name='etl_job_index'),
 
-    url(r'^map_document_metadata/(?P<document_id>[0-9]+)',map_document_metadata\
-        , name='map_document_metadata'),
-
     url(r'^pre_process_file/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',\
         pre_process_file, name='pre_process_file'),
 
