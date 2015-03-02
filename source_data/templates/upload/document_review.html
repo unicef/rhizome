@@ -4,35 +4,33 @@
 
 
     <div align="center">
-    <a href="{% url 'source_data:map_document_metadata' document_id %}"<button class='button'> Map Meta Data </button></a>
-    <br>
     <a href="{% url 'source_data:refresh_master_no_indicator' document_id %}"<button class='button'>  Sync ALL Data </button></a>
     <br>
-    <h2>Source DP Count: {{ sdp_count }} </h2>
-    <h2>DP Count: {{ dp_count }} </h2>
-
     <br><br>
 
+    <h1 align="center"> -- INDICATORS -- </h1>
 
-  {% if to_review %}
+    <table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Source Indicator ID</th>
+            <th>Indicator String</th>
+            <th>Source DataPoint Count</th>
+            <th>Master DataPoint Count</th>
+            <th>Master Indicator ID</th>
+            <th>Sync Indicator Data</th>
 
-        <div class="container">
-        <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Source Indicator ID</th>
-                <th>Indicator String</th>
-                <th>Master Indicator ID</th>
-                <th>Source DataPoint Count</th>
-                <th>Sync Indicator Data</th>
+        </tr>
+    </thead>
 
-            </tr>
-        </thead>
+        {% if source_indicator_breakdown %}
 
-            {% for si in to_review %}
+            {% for si in source_indicator_breakdown %}
             <tr>
                 <th> {{ si.source_indicator_id }} </th>
                 <th> {{ si.indicator_string }} </th>
+                <th> {{ si.source_datapoint_count }} </th>
+                <th> {{ si.indicator_datapoint_count }} </th>
 
                 {% if si.master_indicator_id == -1 %}
                   <th> <a href="{% url 'source_data:map_indicator' si.source_indicator_id %}"</a>map</th>
@@ -40,7 +38,6 @@
                   <th> {{ si.master_indicator_id }}
                 {% endif %}
 
-                <th> {{ si.source_datapoint_count }} </th>
                 {% if si.master_indicator_id == -1 %}
                   <th> please map indicator
                 {% else %}
@@ -50,9 +47,68 @@
             </tr>
             {% endfor %}
         </table>
-      </div>
 
     {% endif %}
+
+
+        <br><br>
+
+        <h1 align="center"> -- CAMPAIGNS -- </h1>
+
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Source Campaign ID</th>
+                <th>Campaign String</th>
+                <th>Master Campaign ID</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+          {% for sc in source_campaign_breakdown %}
+          <tr>
+              <th> {{ sc.source_campaign_id }} </th>
+              <th> {{ sc.campaign_string }} </th>
+
+              {% if sc.source_campaign_id == -1 %}
+              <th><a href="{% url 'source_data:map_campaign' sc.source_campaign_id %}"</a> Map!</th>
+              {% else %}
+              <th>{{ sc.master_campaign_id }}</th>
+              {% endif %}
+
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+
+        <br><br>
+
+        <h1 align="center"> -- REGIONS -- </h1>
+
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Source Region ID</th>
+                <th>Region String</th>
+                <th>Master Region ID</th>
+            </tr>
+        </thead>
+        <tbody>
+
+                {% for sr in source_region_breakdown %}
+                <tr>
+                    <th> {{ sr.source_region_id }} </th>
+                    <th> {{ sr.region_string }} </th>
+                    {% if sr.master_region_id == -1 %}
+                    <th><a href="{% url 'source_data:map_region' sr.source_region_id %}"</a> Map!</th>
+                    {% else %}
+                    <th>{{ sr.master_region_id }}</th>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+       </tbody>
 
 
 {% endblock %}

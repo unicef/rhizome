@@ -69,18 +69,6 @@ class Document(models.Model):
 
         super(Document, self).save(*args, **kwargs)
 
-class DocumentMeta(models.Model):
-
-    document = models.ForeignKey(Document)
-    source_string = models.CharField(max_length=255)
-    model_type = models.CharField(max_length=255)
-    source_object_id = models.IntegerField()
-    master_object_id = models.IntegerField()
-    source_datapoint_count = models.IntegerField()
-
-    class Meta:
-        unique_together = ('document','source_string','model_type')
-        db_table = 'document_meta'
 
 class SourceDataPoint(models.Model):
     '''
@@ -91,7 +79,6 @@ class SourceDataPoint(models.Model):
     for ODK, the document ID will coorespond to the form (vcm_summary_new)
     '''
 
-    region_string = models.CharField(max_length=255)
     region_code = models.CharField(max_length=255)
     campaign_string = models.CharField(max_length=255)
     indicator_string = models.CharField(max_length=255)
@@ -128,8 +115,7 @@ class SourceDataPoint(models.Model):
 
 class SourceRegion(models.Model):
 
-    region_string = models.CharField(max_length=255)
-    region_code = models.CharField(max_length=255, null=True)
+    region_code = models.CharField(max_length=255, null=False, unique=True)
     lat = models.CharField(max_length=255, null=True)
     lon = models.CharField(max_length=255, null=True)
     parent_name = models.CharField(max_length=255, null=True)
@@ -140,10 +126,8 @@ class SourceRegion(models.Model):
     document = models.ForeignKey(Document)
     is_high_risk = models.BooleanField(default=False)
 
-
     class Meta:
         db_table = 'source_region'
-        unique_together = ('region_code','document')
 
     def __unicode__(self):
 

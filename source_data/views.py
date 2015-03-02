@@ -21,48 +21,15 @@ from source_data.etl_tasks.refresh_master import MasterRefresh\
 from source_data.api import EtlTask
 
 
-def user_portal(request):
-
-    # pRse the campaign param from url.. if none, default to latest
-    try:
-        campaign_id = request.GET['campaign_id']
-    except KeyError:
-        campaign_id = Campaign.objects.all().order_by('-start_date')[0].id
-
-
-    raw_sql = '''select * from responsibility r
-            where user_id = %s
-            and not exists
-            (
-            	select 1 from datapoint d
-            	where campaign_id = %s
-            	and r.indicator_id = d.indicator_id
-            	and r.region_id = d.region_id
-                order by r.indicator_id
-            )'''
-
-    to_do = Responsibility.objects.raw(raw_sql % (request.user.id,campaign_id))
-    docs = Document.objects.filter(created_by=request.user.id,is_processed=False)
-    campaigns = Campaign.objects.all()
-
-    return render_to_response(
-        'data_entry/user_portal.html',
-        {'docs':docs,'to_do':to_do,'campaigns':campaigns,'campaign_id':campaign_id},
-        RequestContext(request),
-    )
-
-
 def mark_doc_as_processed(request,document_id):
 
     doc = Document.objects.get(id=document_id)
     doc.is_processed = True
     doc.save()
 
-    return HttpResponseRedirect(reverse('source_data:user_portal'))  # encode like done below
-
+    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 ### File Upload Below ###
-
 
 def file_upload(request):
 
@@ -128,214 +95,189 @@ def map_header(request,document_id,file_type):
               'file_type':file_type },
             RequestContext(request))
 
-def populate_document_meta(document_id):
-
-    source_indicator_breakdown = []
-
-    doc_meta_limit_1 = DocumentMeta.objects.raw('''
-        SELECT id FROM document_meta WHERE document_id = %s LIMIT 1'''\
-        ,[document_id])
-
-    has_meta = sum(1 for dm in doc_meta_limit_1)
-
-    if has_meta == 0:
-
-        print 'creating source'
-
-        create_source_meta_data(document_id)
-
-        doc_meta_raw = DocumentMeta.objects.raw('''
-
-        DROP TABLE IF EXISTS _tmp_meta_for_doc;
-        CREATE TEMP TABLE _tmp_meta_for_doc AS
-        SELECT * FROM source_datapoint where document_id = %s;
-
-        INSERT INTO document_meta
-        (document_id, source_string, model_type, source_object_id, master_object_id,source_datapoint_count)
-
-        SELECT
-        	x.document_id
-        	,source_string
-        	,model_type
-        	,MAX(source_object_id)
-        	,MAX(master_object_id)
-        	,MAX(source_datapoint_count)
-        FROM (
-        	SELECT DISTINCT
-        		sd.document_id
-        		,si.indicator_string as source_string
-        		,'indicator' as model_type
-        		,si.id as source_object_id
-        		,COALESCE(im.master_indicator_id,-1) as master_object_id
-        		,COUNT(*) AS source_datapoint_count
-        	FROM _tmp_meta_for_doc sd
-        	INNER JOIN source_indicator si
-        		ON sd.indicator_string = si.indicator_string
-        	LEFT JOIN indicator_map im
-        		ON si.id = im.source_indicator_id
-        	GROUP BY sd.document_id, si.indicator_string, si.id, im.master_indicator_id
-
-        	UNION ALL
-
-        	SELECT DISTINCT
-        		sd.document_id
-        		,sr.region_code
-        		,'region'
-        		,sr.id as source_region_id
-        		,COALESCE(rm.master_region_id,-1)
-        		,0
-        	FROM _tmp_meta_for_doc sd
-        	INNER JOIN source_region sr
-        		ON sd.region_code = sr.region_code
-        	LEFT JOIN region_map rm
-        		ON sr.id = rm.source_region_id
-
-        	UNION ALL
-
-        	SELECT DISTINCT
-        		sd.document_id
-        		,sc.campaign_string
-        		,'campaign'
-        		,sc.id as source_campaign_id
-        		,COALESCE(cm.master_campaign_id,-1)
-        		,0
-        	FROM _tmp_meta_for_doc sd
-        	INNER JOIN source_campaign sc
-        		ON sd.campaign_string = sc.campaign_string
-        	LEFT JOIN campaign_map cm
-        		ON sc.id = cm.source_campaign_id
-
-            UNION ALL
-            -- region only documents --
-
-        	SELECT DISTINCT
-        		sr.document_id
-        		,sr.region_string
-        		,'region'
-        		,sr.id as source_region_id
-        		,COALESCE(rm.master_region_id,-1)
-        		,0
-        	FROM  source_region sr
-        	LEFT JOIN region_map rm
-                ON sr.id = rm.source_region_id
-            WHERE sr.document_id = %s
-            AND NOT EXISTS (
-                SELECT 1 FROM _tmp_meta_for_doc sd
-                WHERE sr.region_string = sd.region_string
-            )
-
-        )x
-        WHERE NOT EXISTS (
-        	SELECT 1 from document_meta dm
-        	WHERE dm.source_string = x.source_string
-        	AND dm.model_type = x.model_type
-        	AND dm.document_id = x.document_id
-
-        )
-        GROUP BY x.document_id,model_type,source_string;
-
-        SELECT * FROM document_meta
-        WHERE document_id = %s
-        ORDER BY master_object_id desc;''', [document_id,document_id\
-            ,document_id])
-
-    else:
-
-        doc_meta_raw = DocumentMeta.objects.raw('''
-
-        -- gets the counts for source datapoints and datapoints --
-        DROP TABLE IF EXISTS _tmp_doc_dp_count;
-        CREATE TEMP TABLE _tmp_doc_dp_count
-        AS
-        SELECT
-        	x.document_id
-        	, source_datapoint_count
-        	, master_datapoint_count
-        FROM (
-        	SELECT
-        		document_id
-        		,COUNT(*) AS source_datapoint_count
-        	FROM source_datapoint sd
-            WHERE sd.document_id = %s
-        	GROUP BY document_id
-        )x
-        LEFT JOIN (
-        	SELECT
-        		document_id
-        		,COUNT(*) AS master_datapoint_count
-        	FROM source_datapoint sd
-        	INNER JOIN datapoint d
-        	ON sd.id = d.source_datapoint_id
-            AND sd.document_id = %s
-        	GROUP BY document_id
-        )y
-        ON x.document_id = y.document_id;
-
-        UPDATE source_data_document
-        SET source_datapoint_count = cnt.source_datapoint_count
-        	,master_datapoint_count = cnt.master_datapoint_count
-        FROM _tmp_doc_dp_count cnt
-        WHERE document_id = cnt.document_id;
-
-
-        UPDATE document_meta
-        SET master_object_id = im.master_indicator_id
-        FROM indicator_map im
-        WHERE model_type = 'indicator'
-        AND source_object_id = im.source_indicator_id
-        AND document_id = %s;
-
-        UPDATE document_meta
-        SET master_object_id = rm.master_region_id
-        FROM region_map rm
-        WHERE model_type = 'region'
-        AND source_object_id = rm.source_region_id
-        AND document_id = %s;
-
-        UPDATE document_meta
-        SET master_object_id = cm.master_campaign_id
-        FROM campaign_map cm
-        WHERE model_type = 'campaign'
-        AND source_object_id = cm.source_campaign_id
-        AND document_id = %s;
-
-        SELECT * FROM document_meta
-        WHERE document_id = %s
-        ORDER BY master_object_id desc;''', [document_id,document_id,\
-            document_id,document_id,document_id,document_id])
-
-    for row in doc_meta_raw:
-
-        if row.model_type == 'indicator':
-
-            ind_dict = {}
-            ind_dict['indicator_string'] = row.source_string
-            ind_dict['master_indicator_id'] = row.master_object_id
-            ind_dict['source_indicator_id'] = row.source_object_id
-            ind_dict['source_datapoint_count'] = row.source_datapoint_count
-
-            source_indicator_breakdown.append(ind_dict)
-
-    return source_indicator_breakdown
 
 def document_review(request,document_id):
 
     sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
         .values_list('id',flat=True)
 
-    source_indicator_breakdown = populate_document_meta(document_id)
+    meta_breakdown = populate_document_metadata(document_id)
 
     doc_obj = Document.objects.get(id = document_id)
     sdp_count, dp_count = doc_obj.source_datapoint_count\
         , doc_obj.master_datapoint_count
 
-
     return render_to_response(
         'upload/document_review.html',
-        {'to_review': source_indicator_breakdown,'document_id': document_id,
-        'sdp_count':sdp_count,'dp_count':dp_count},
-        RequestContext(request),
-    )
+        {'source_indicator_breakdown': meta_breakdown['indicator_breakdown'],
+        'source_region_breakdown': meta_breakdown['region_breakdown'],
+        'source_campaign_breakdown': meta_breakdown['campaign_breakdown'],
+        'document_id': document_id }
+        ,RequestContext(request))
+
+def populate_document_metadata(document_id):
+
+    meta_breakdown = {}
+    indicator_breakdown,region_breakdown,campaign_breakdown = [],[],[]
+
+    si_raw = SourceIndicator.objects.raw(
+    '''
+    DROP TABLE IF EXISTS _indicator_doc_meta;
+    CREATE TEMP TABLE _indicator_doc_meta AS
+
+    SELECT DISTINCT
+          indicator_string
+        , document_id
+        , sd.indicator_string || '-' || sd.document_id as source_guid
+        , COUNT(1) as source_datapoint_count
+    FROM source_datapoint sd
+    WHERE document_id = %s
+    GROUP by sd.document_id, sd.indicator_string ;
+
+    INSERT INTO source_indicator
+    (indicator_string, document_id,source_guid)
+
+    SELECT indicator_string, document_id,source_guid
+    FROM _indicator_doc_meta idm
+    WHERE NOT EXISTS (
+    	SELECT 1 FROM source_indicator si
+    	WHERE idm.indicator_string = si.indicator_string
+    );
+
+    --
+
+    SELECT
+         si.id
+        ,si.indicator_string
+        ,COALESCE(im.master_indicator_id,-1) as master_indicator_id
+        ,idm.source_datapoint_count
+        ,x.indicator_datapoint_count
+    FROM _indicator_doc_meta idm
+    INNER JOIN source_indicator si
+        ON idm.indicator_string = si.indicator_string
+    LEFT JOIN indicator_map im
+        ON si.id = im.source_indicator_id
+    LEFT JOIN (
+        SELECT
+            d.indicator_id
+            ,count(*) AS indicator_datapoint_count
+        FROM source_datapoint sd
+        INNER JOIN datapoint d
+        ON sd.id = d.source_datapoint_id
+        WHERE document_id = %s
+        GROUP BY d.indicator_id
+    )x
+    ON im.master_indicator_id = x.indicator_id
+    ORDER BY 3
+    ''',[document_id,document_id])
+
+    for row in si_raw:
+        row_dict = {
+            'source_indicator_id':row.id,
+            'indicator_string':row.indicator_string,
+            'master_indicator_id':row.master_indicator_id,
+            'source_datapoint_count':row.source_datapoint_count,
+            'indicator_datapoint_count':row.indicator_datapoint_count
+        }
+
+        indicator_breakdown.append(row_dict)
+
+    sc_raw = SourceCampaign.objects.raw(
+        '''
+        DROP TABLE IF EXISTS _campaign_doc_meta;
+        CREATE TEMP TABLE _campaign_doc_meta AS
+
+        SELECT DISTINCT
+              campaign_string
+            , document_id
+            , sd.campaign_string || '-' || sd.document_id as source_guid
+        FROM source_datapoint sd
+        WHERE document_id = %s;
+
+        INSERT INTO source_campaign
+        (campaign_string, document_id,source_guid)
+
+        SELECT campaign_string, document_id,source_guid
+        FROM _campaign_doc_meta cdm
+        WHERE NOT EXISTS (
+        	SELECT 1 FROM source_campaign sc
+        	WHERE cdm.campaign_string = sc.campaign_string
+        );
+
+        --
+
+        SELECT
+             sc.id
+            ,sc.campaign_string
+            ,COALESCE(cm.master_campaign_id,-1) as master_campaign_id
+        FROM _campaign_doc_meta cdm
+        INNER JOIN source_campaign sc
+            ON cdm.campaign_string = sc.campaign_string
+        LEFT JOIN campaign_map cm
+            ON sc.id = cm.source_campaign_id
+        ORDER BY 3
+        ''',[document_id])
+
+    for row in sc_raw:
+        row_dict = {
+            'source_campaign_id':row.id,
+            'campaign_string':row.campaign_string,
+            'master_campaign_id':row.master_campaign_id
+        }
+
+        campaign_breakdown.append(row_dict)
+
+    sr_raw = SourceCampaign.objects.raw(
+        '''
+        DROP TABLE IF EXISTS _region_doc_meta;
+        CREATE TEMP TABLE _region_doc_meta AS
+
+        SELECT DISTINCT
+              region_code
+            , document_id
+            , sd.region_code || '-' || sd.document_id as source_guid
+            , CAST(0 AS BOOLEAN) as is_high_risk
+        FROM source_datapoint sd
+        WHERE document_id = %s;
+
+        INSERT INTO source_region
+        (region_code, document_id,source_guid,is_high_risk)
+
+        SELECT region_code, document_id,source_guid,is_high_risk
+        FROM _region_doc_meta rdm
+        WHERE NOT EXISTS (
+        	SELECT 1 FROM source_region sr
+        	WHERE rdm.region_code = sr.region_code
+        );
+
+        --
+
+        SELECT
+             sr.id
+            ,sr.region_code
+            ,COALESCE(rm.master_region_id,-1) as master_region_id
+        FROM _region_doc_meta rdm
+        INNER JOIN source_region sr
+            ON rdm.region_code = sr.region_code
+        LEFT JOIN region_map rm
+            ON sr.id = rm.source_region_id
+        ORDER BY 3
+        ''',[document_id])
+
+    for row in sr_raw:
+        row_dict = {
+            'source_region_id':row.id,
+            'region_string':row.region_code,
+            'master_region_id':row.master_region_id
+        }
+
+        region_breakdown.append(row_dict)
+
+    meta_breakdown['indicator_breakdown'] = indicator_breakdown
+    meta_breakdown['region_breakdown'] = region_breakdown
+    meta_breakdown['campaign_breakdown'] = campaign_breakdown
+
+    return meta_breakdown
 
 def sync_source_datapoints(request,document_id,master_indicator_id):
 
@@ -365,6 +307,8 @@ def pre_process_file(request,document_id,file_type):
         except IntegrityError:
             sdps = SourceDataPoint.objects.filter(
                 document_id = document_id)
+
+        populate_document_metadata(document_id)
 
         return HttpResponseRedirect(reverse('source_data:document_review'\
             , kwargs={'document_id': document_id}))
@@ -402,37 +346,6 @@ def pre_process_file(request,document_id,file_type):
             RequestContext(request),
         )
 
-def map_document_metadata(request,document_id):
-
-
-    meta_list = []
-
-    to_map_raw = DocumentMeta.objects.raw('''
-    SELECT
-    	*
-    FROM document_meta
-    WHERE document_id = %s
-    ''',[document_id])
-
-    populate_document_meta(document_id)
-
-    for row in to_map_raw:
-
-        meta_dict = {}
-        meta_dict['source_string'] = row.source_string
-        meta_dict['source_object_id'] = row.source_object_id
-        meta_dict['master_object_id'] = row.master_object_id
-        meta_dict['model_type'] = row.model_type
-
-        meta_list.append(meta_dict)
-
-    return render_to_response(
-        'data_entry/meta_map.html',
-        {'document_id': document_id, 'to_map':meta_list},
-        RequestContext(request),
-    )
-
-
 def refresh_master_no_indicator(request,document_id):
 
     mr = MasterRefresh(document_id = document_id, indicator_id = None, user_id = request.user.id)
@@ -458,7 +371,7 @@ class DocumentIndex(generic.ListView):
 class CreateMap(PermissionRequiredMixin, generic.CreateView):
 
     template_name='map/map.html'
-    success_url=reverse_lazy('source_data:user_portal')
+    success_url=reverse_lazy('source_data:document_index')
     # permission_required = 'datapoints.add_datapoint'
 
     def form_valid(self, form):
