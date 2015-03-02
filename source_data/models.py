@@ -79,7 +79,6 @@ class SourceDataPoint(models.Model):
     for ODK, the document ID will coorespond to the form (vcm_summary_new)
     '''
 
-    region_string = models.CharField(max_length=255)
     region_code = models.CharField(max_length=255)
     campaign_string = models.CharField(max_length=255)
     indicator_string = models.CharField(max_length=255)

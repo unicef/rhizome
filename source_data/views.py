@@ -262,11 +262,9 @@ def populate_document_metadata(document_id):
 
         region_breakdown.append(row_dict)
 
-
     meta_breakdown['indicator_breakdown'] = indicator_breakdown
     meta_breakdown['region_breakdown'] = region_breakdown
     meta_breakdown['campaign_breakdown'] = campaign_breakdown
-
 
     return meta_breakdown
 
