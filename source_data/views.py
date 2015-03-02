@@ -112,9 +112,7 @@ def document_review(request,document_id):
         {'source_indicator_breakdown': meta_breakdown['indicator_breakdown'],
         'source_region_breakdown': meta_breakdown['region_breakdown'],
         'source_campaign_breakdown': meta_breakdown['campaign_breakdown'],
-        'document_id': document_id,
-        'sdp_count':sdp_count,
-        'dp_count':dp_count}
+        'document_id': document_id }
         ,RequestContext(request))
 
 def populate_document_metadata(document_id):
@@ -153,13 +151,25 @@ def populate_document_metadata(document_id):
         ,si.indicator_string
         ,COALESCE(im.master_indicator_id,-1) as master_indicator_id
         ,idm.source_datapoint_count
+        ,x.indicator_datapoint_count
     FROM _indicator_doc_meta idm
     INNER JOIN source_indicator si
         ON idm.indicator_string = si.indicator_string
     LEFT JOIN indicator_map im
         ON si.id = im.source_indicator_id
+    LEFT JOIN (
+        SELECT
+            d.indicator_id
+            ,count(*) AS indicator_datapoint_count
+        FROM source_datapoint sd
+        INNER JOIN datapoint d
+        ON sd.id = d.source_datapoint_id
+        WHERE document_id = %s
+        GROUP BY d.indicator_id
+    )x
+    ON im.master_indicator_id = x.indicator_id
     ORDER BY 3
-    ''',[document_id])
+    ''',[document_id,document_id])
 
     for row in si_raw:
         row_dict = {
@@ -167,6 +177,7 @@ def populate_document_metadata(document_id):
             'indicator_string':row.indicator_string,
             'master_indicator_id':row.master_indicator_id,
             'source_datapoint_count':row.source_datapoint_count,
+            'indicator_datapoint_count':row.indicator_datapoint_count
         }
 
         indicator_breakdown.append(row_dict)

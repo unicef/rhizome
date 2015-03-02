@@ -6,9 +6,6 @@
     <div align="center">
     <a href="{% url 'source_data:refresh_master_no_indicator' document_id %}"<button class='button'>  Sync ALL Data </button></a>
     <br>
-    <h2>Source DP Count: {{ sdp_count }} </h2>
-    <h2>DP Count: {{ dp_count }} </h2>
-
     <br><br>
 
     <h1 align="center"> -- INDICATORS -- </h1>
@@ -19,6 +16,7 @@
             <th>Source Indicator ID</th>
             <th>Indicator String</th>
             <th>Source DataPoint Count</th>
+            <th>Master DataPoint Count</th>
             <th>Master Indicator ID</th>
             <th>Sync Indicator Data</th>
 
@@ -32,6 +30,7 @@
                 <th> {{ si.source_indicator_id }} </th>
                 <th> {{ si.indicator_string }} </th>
                 <th> {{ si.source_datapoint_count }} </th>
+                <th> {{ si.indicator_datapoint_count }} </th>
 
                 {% if si.master_indicator_id == -1 %}
                   <th> <a href="{% url 'source_data:map_indicator' si.source_indicator_id %}"</a>map</th>
