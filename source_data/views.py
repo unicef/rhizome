@@ -189,7 +189,7 @@ def populate_document_metadata(document_id):
         )x
         INNER JOIN (
         	SELECT document_id
-        	FROM _doc_meta LIMIT 1
+        	FROM _doc_data LIMIT 1
         )y
         ON 1=1;
 
