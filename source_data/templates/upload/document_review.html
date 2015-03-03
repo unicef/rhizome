@@ -29,13 +29,13 @@
             <tr>
                 <th> {{ si.source_object_id }} </th>
                 <th> {{ si.source_string }} </th>
-                <th> {{ si.source_datapoint_count }} </th>
-                <th> {{ si.indicator_datapoint_count }} </th>
+                <th> {{ si.source_object_count }} </th>
+                <th> {{ si.master_object_count }} </th>
 
-                {% if si.master_indicator_id == -1 %}
+                {% if si.master_object_id == -1 %}
                   <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>map</th>
                 {% else %}
-                  <th> {{ si.master_indicator_id }}
+                  <th> {{ si.master_object_id }}
                 {% endif %}
 
                 {% if si.master_indicator_id == -1 %}
@@ -60,8 +60,9 @@
             <tr>
                 <th>Source Campaign ID</th>
                 <th>Campaign String</th>
+                <th>Source Count</th>
+                <th>Master Count</th>
                 <th>Master Campaign ID</th>
-
             </tr>
         </thead>
 
@@ -70,6 +71,9 @@
           <tr>
               <th> {{ sc.source_object_id }} </th>
               <th> {{ sc.source_string }} </th>
+              <th> {{ sc.source_object_count }} </th>
+              <th> {{ sc.master_object_count }} </th>
+
 
               {% if sc.source_campaign_id == -1 %}
               <th><a href="{% url 'source_data:map_campaign' sc.source_object_id %}"</a> Map!</th>
@@ -91,7 +95,11 @@
             <tr>
                 <th>Source Region ID</th>
                 <th>Region String</th>
+                <th>Source Region Count</th>
+                <th>Master Region Count</th>
+
                 <th>Master Region ID</th>
+
             </tr>
         </thead>
         <tbody>
@@ -100,6 +108,9 @@
                 <tr>
                     <th> {{ sr.source_object_id }} </th>
                     <th> {{ sr.source_string }} </th>
+                    <th> {{ sr.source_object_count }} </th>
+                    <th> {{ sr.master_object_count }} </th>
+
                     {% if sr.master_object_id == -1 %}
                     <th><a href="{% url 'source_data:map_region' sr.source_object_id %}"</a> Map!</th>
                     {% else %}
