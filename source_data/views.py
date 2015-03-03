@@ -81,16 +81,11 @@ def file_upload(request):
 
 def get_doc_file_cols(to_upload):
 
-
     for i,(line) in enumerate(to_upload):
 
         if i == 0:
             header_data = line.split('\r')[0]
             header = header_data.split(',')
-
-
-
-            print header
 
     return header
 
