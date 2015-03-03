@@ -10,6 +10,7 @@ from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect,HttpResponse
 from django.db.utils import IntegrityError
+from pandas import DataFrame
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
@@ -109,34 +110,41 @@ def map_header(request,document_id):
 
 def document_review(request,document_id):
 
-    sdp_ids = SourceDataPoint.objects.filter(document_id = document_id)\
-        .values_list('id',flat=True)
-
     meta_breakdown = populate_document_metadata(document_id)
+    mb_df = DataFrame(meta_breakdown)
+    no_ix_df = mb_df.reset_index(drop=True)
 
-    doc_obj = Document.objects.get(id = document_id)
-    sdp_count, dp_count = doc_obj.source_datapoint_count\
-        , doc_obj.master_datapoint_count
+    ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
+        .transpose().to_dict()
+    ind_breakdown =  [v for k,v in ind_dict.iteritems()]
+
+    ##
+    camp_dict = no_ix_df[no_ix_df['db_model'] == 'source_campaign']\
+        .transpose().to_dict()
+    camp_breakdown =  [v for k,v in camp_dict.iteritems()]
+
+    ##
+    region_dict = no_ix_df[no_ix_df['db_model'] == 'source_region']\
+        .transpose().to_dict()
+    region_breakdown =  [v for k,v in region_dict.iteritems()]
 
     return render_to_response(
         'upload/document_review.html',
-        {'source_indicator_breakdown': meta_breakdown['indicator_breakdown'],
-        'source_region_breakdown': meta_breakdown['region_breakdown'],
-        'source_campaign_breakdown': meta_breakdown['campaign_breakdown'],
+        {'source_indicator_breakdown': ind_breakdown,
+        'source_region_breakdown': region_breakdown,
+        'source_campaign_breakdown': camp_breakdown,
         'document_id': document_id }
         ,RequestContext(request))
 
 def populate_document_metadata(document_id):
 
-    meta_breakdown = {}
-    indicator_breakdown,region_breakdown,campaign_breakdown = [],[],[]
+    meta_breakdown = []
 
     raw_qs = Document.objects.raw(
     '''
     -----					-----------
     -- BUILD TEMP TABLE TO WORK WITH --
     -----					-----------
-
 
     DROP TABLE IF EXISTS _doc_meta;
     CREATE TABLE _doc_meta AS
@@ -280,36 +288,28 @@ def populate_document_metadata(document_id):
     WHERE dmc.db_model = 'source_campaign'
     AND dmc.source_object_id = cm.source_campaign_id;
 
-
-
     --- RETURN TO RAW QUERYSET -----
 
     SELECT
-    	document_id
+    	document_id as id
     	,db_model
     	,source_string
     	,source_object_id
     	,master_object_id
     	,cnt
-    FROM _doc_meta_cnt;
+    FROM _doc_meta_cnt
+    ORDER BY db_model;''',[document_id,document_id])
 
-    ''',[document_id,document_id])
-
-    for row in si_raw:
+    for row in raw_qs:
         row_dict = {
-            'source_indicator_id':row.id,
-            'indicator_string':row.indicator_string,
-            'master_indicator_id':row.master_indicator_id,
-            'source_datapoint_count':row.source_datapoint_count,
-            'indicator_datapoint_count':row.indicator_datapoint_count
+            'db_model':row.db_model,
+            'source_object_id':row.source_object_id,
+            'source_string':row.source_string,
+            'master_object_id':row.master_object_id,
+            'source_datapoint_count':row.cnt,
         }
 
-        indicator_breakdown.append(row_dict)
-
-
-    meta_breakdown['indicator_breakdown'] = indicator_breakdown
-    meta_breakdown['region_breakdown'] = region_breakdown
-    meta_breakdown['campaign_breakdown'] = campaign_breakdown
+        meta_breakdown.append(row_dict)
 
     return meta_breakdown
 

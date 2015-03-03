@@ -27,13 +27,13 @@
 
             {% for si in source_indicator_breakdown %}
             <tr>
-                <th> {{ si.source_indicator_id }} </th>
-                <th> {{ si.indicator_string }} </th>
+                <th> {{ si.source_object_id }} </th>
+                <th> {{ si.source_string }} </th>
                 <th> {{ si.source_datapoint_count }} </th>
                 <th> {{ si.indicator_datapoint_count }} </th>
 
                 {% if si.master_indicator_id == -1 %}
-                  <th> <a href="{% url 'source_data:map_indicator' si.source_indicator_id %}"</a>map</th>
+                  <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>map</th>
                 {% else %}
                   <th> {{ si.master_indicator_id }}
                 {% endif %}
@@ -41,7 +41,7 @@
                 {% if si.master_indicator_id == -1 %}
                   <th> please map indicator
                 {% else %}
-                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_indicator_id %}"</a> Sync Data</th>
+                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
                 {% endif %}
 
             </tr>
@@ -72,7 +72,7 @@
               <th> {{ sc.campaign_string }} </th>
 
               {% if sc.source_campaign_id == -1 %}
-              <th><a href="{% url 'source_data:map_campaign' sc.source_campaign_id %}"</a> Map!</th>
+              <th><a href="{% url 'source_data:map_campaign' sc.source_object_id %}"</a> Map!</th>
               {% else %}
               <th>{{ sc.master_campaign_id }}</th>
               {% endif %}
@@ -101,7 +101,7 @@
                     <th> {{ sr.source_region_id }} </th>
                     <th> {{ sr.region_string }} </th>
                     {% if sr.master_region_id == -1 %}
-                    <th><a href="{% url 'source_data:map_region' sr.source_region_id %}"</a> Map!</th>
+                    <th><a href="{% url 'source_data:map_region' sr.source_object_id %}"</a> Map!</th>
                     {% else %}
                     <th>{{ sr.master_region_id }}</th>
                     {% endif %}
