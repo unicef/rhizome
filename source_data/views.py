@@ -128,6 +128,8 @@ def document_review(request,document_id):
         .transpose().to_dict()
     region_breakdown =  [v for k,v in region_dict.iteritems()]
 
+    print region_breakdown
+
     return render_to_response(
         'upload/document_review.html',
         {'source_indicator_breakdown': ind_breakdown,
@@ -142,10 +144,6 @@ def populate_document_metadata(document_id):
 
     raw_qs = Document.objects.raw(
     '''
-    -----					-----------
-    -- BUILD TEMP TABLE TO WORK WITH --
-    -----					-----------
-
     DROP TABLE IF EXISTS _doc_meta;
     CREATE TABLE _doc_meta AS
 
@@ -159,16 +157,16 @@ def populate_document_metadata(document_id):
 
     DROP TABLE IF EXISTS _doc_meta_cnt;
     CREATE TABLE _doc_meta_cnt AS
-
     SELECT
     	*
     	,CAST(NULL AS INT) AS source_object_id
     	,CAST(-1 AS INT) as master_object_id
+    	,CAST(-1 AS INT) as master_object_cnt
     FROM (
     	SELECT
     		'source_indicator' as db_model
     		,indicator_string as source_string
-    		,COUNT(1) AS cnt
+    		,COUNT(1) AS source_object_cnt
     	FROM _doc_meta
     	GROUP BY indicator_string
 
@@ -200,9 +198,9 @@ def populate_document_metadata(document_id):
     -----					-----
     -- insert source meta data --
     -----					------
-
-    -- INDICATORS --
-
+    ----------------
+    -- indicators --
+    ----------------
     INSERT INTO source_indicator
     (indicator_string, document_id,source_guid)
 
@@ -230,7 +228,10 @@ def populate_document_metadata(document_id):
     WHERE dmc.db_model = 'source_indicator'
     AND dmc.source_object_id = im.source_indicator_id;
 
+
+    -------------
     -- REGIONS --
+    -------------
 
     INSERT INTO source_region
     (region_code,document_id,source_guid)
@@ -251,6 +252,8 @@ def populate_document_metadata(document_id):
     WHERE dmc.db_model = 'source_region'
     AND dmc.source_string = sr.region_code;
 
+
+    -- MASTER REGION ID --
     UPDATE _doc_meta_cnt dmc
     SET
     	master_object_id = rm.master_region_id
@@ -258,7 +261,9 @@ def populate_document_metadata(document_id):
     WHERE dmc.db_model = 'source_region'
     AND dmc.source_object_id = rm.source_region_id;
 
+    -------------
     -- CAMPAIGNS --
+    -------------
 
     INSERT INTO source_campaign
     (campaign_string,document_id,source_guid)
@@ -288,17 +293,19 @@ def populate_document_metadata(document_id):
     WHERE dmc.db_model = 'source_campaign'
     AND dmc.source_object_id = cm.source_campaign_id;
 
-    --- RETURN TO RAW QUERYSET -----
 
+    --- RETURN TO RAW QUERYSET -----
+    -- DROP TABLE IF EXISTS _results;
+    -- CREATE TABLE _results AS
     SELECT
     	document_id as id
     	,db_model
     	,source_string
     	,source_object_id
     	,master_object_id
-    	,cnt
-    FROM _doc_meta_cnt
-    ORDER BY db_model;''',[document_id,document_id])
+    	,master_object_cnt
+    	,source_object_cnt
+    FROM _doc_meta_cnt;''',[document_id,document_id])
 
     for row in raw_qs:
         row_dict = {
@@ -306,7 +313,7 @@ def populate_document_metadata(document_id):
             'source_object_id':row.source_object_id,
             'source_string':row.source_string,
             'master_object_id':row.master_object_id,
-            'source_datapoint_count':row.cnt,
+            'source_object_count':row.source_object_cnt,
         }
 
         meta_breakdown.append(row_dict)
@@ -345,11 +352,6 @@ def pre_process_file(request,document_id):
     return HttpResponseRedirect(reverse('source_data:document_review'\
         , kwargs={'document_id': document_id}))
 
-    # return render_to_response(
-    #     'data_entry/meta_map.html',
-    #     {'document_id': document_id, 'to_map':to_map},
-    #     RequestContext(request),
-    # )
 
 def refresh_master_no_indicator(request,document_id):
 
