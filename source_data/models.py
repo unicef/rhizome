@@ -133,10 +133,10 @@ class SourceRegion(models.Model):
 
         if self.region_type:
 
-            return self.region_string + ' (' + self.region_type + ')'
+            return self.region_code + ' (' + self.region_type + ')'
 
         else:
-            return self.region_string + '( UNKNOWN REGION TYPE )'
+            return self.region_code + '( UNKNOWN REGION TYPE )'
 
 class SourceRegionPolygon(models.Model):
 
