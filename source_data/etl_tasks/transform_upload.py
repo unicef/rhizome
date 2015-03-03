@@ -13,10 +13,9 @@ from datapoints.models import Source, DataPoint
 
 class DocTransform(object):
 
-    def __init__(self,document_id,file_type,column_mappings):
+    def __init__(self,document_id,column_mappings):
 
         self.source_datapoints = []
-        self.file_type = file_type
         self.document = Document.objects.get(id=document_id)
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
         self.source_id = Source.objects.get(source_name='data entry').id

@@ -4,7 +4,7 @@ from source_data.views import *
 
 urlpatterns = [
     url(r'^file_upload/$', file_upload, name='file_upload'),
-    url(r'^map_header/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',map_header\
+    url(r'^map_header/(?P<document_id>[0-9]+)/',map_header\
         , name='map_header'),
 
     url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view()\
@@ -30,7 +30,7 @@ urlpatterns = [
 
     url(r'^etl_job_index/$', EtlJobIndex.as_view(),name='etl_job_index'),
 
-    url(r'^pre_process_file/(?P<document_id>[0-9]+)/(?P<file_type>\w+)/',\
+    url(r'^pre_process_file/(?P<document_id>[0-9]+)/',\
         pre_process_file, name='pre_process_file'),
 
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\

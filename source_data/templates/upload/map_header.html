@@ -10,7 +10,7 @@
 
 
 
-<form action="{% url 'source_data:pre_process_file' document_id file_type %}" method="GET">
+<form action="{% url 'source_data:pre_process_file' document_id %}" method="GET">
 
 Select Campaign Column <select id="campaign_col" name="campaign_col">
   {% for column in file_columns %}

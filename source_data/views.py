@@ -47,8 +47,6 @@ def file_upload(request):
 
     elif request.method == 'POST':
 
-        file_type = request.POST['file_type']
-
         try:
             to_upload = request.FILES['docfile']
 
@@ -73,27 +71,45 @@ def file_upload(request):
 
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
-
-        return HttpResponseRedirect(reverse('source_data:map_header',\
-            kwargs={'document_id':newdoc.id,'file_type':file_type}))
-
-def map_header(request,document_id,file_type):
-
-    if file_type == 'Region':
-
-        return HttpResponseRedirect(reverse('source_data:pre_process_file',\
-            kwargs={'document_id':document_id,'file_type':file_type}))
-
-    else:
-        dt = DocTransform(document_id,file_type,{})
-        file_columns = [col for col in dt.df]
+        file_columns = get_doc_file_cols(to_upload)
 
         return render_to_response(
             'upload/map_header.html',
-            { 'file_columns':file_columns,
-              'document_id':document_id,
-              'file_type':file_type },
-            RequestContext(request))
+            {'file_columns': file_columns,'document_id':newdoc.id},
+            context_instance=RequestContext(request)
+        )
+
+def get_doc_file_cols(to_upload):
+
+
+    for i,(line) in enumerate(to_upload):
+
+        if i == 0:
+            header_data = line.split('\r')[0]
+            header = header_data.split(',')
+
+
+
+            print header
+
+    return header
+
+def map_header(request,document_id):
+
+    column_mappings = {}
+    column_mappings['campaign_col'] = request.GET['campaign_col']
+    column_mappings['value_col'] = request.GET['value_col']
+    column_mappings['region_code_col'] = request.GET['region_code_col']
+    column_mappings['indicator_col'] = request.GET['indicator_col']
+
+    dt = DocTransform(document_id,column_mappings)
+    file_columns = [col for col in dt.df]
+
+    return render_to_response(
+        'upload/map_header.html',
+        { 'file_columns':file_columns,
+          'document_id':document_id },
+        RequestContext(request))
 
 
 def document_review(request,document_id):
@@ -290,61 +306,32 @@ def sync_source_datapoints(request,document_id,master_indicator_id):
         , kwargs={'document_id': document_id}))
 
 
-def pre_process_file(request,document_id,file_type):
+def pre_process_file(request,document_id):
 
-    if file_type == 'Datapoint':
+    column_mappings = {}
+    column_mappings['campaign_col'] = request.GET['campaign_col']
+    column_mappings['value_col'] = request.GET['value_col']
+    column_mappings['region_code_col'] = request.GET['region_code_col']
+    column_mappings['indicator_col'] = request.GET['indicator_col']
 
-        column_mappings = {}
-        column_mappings['campaign_col'] = request.GET['campaign_col']
-        column_mappings['value_col'] = request.GET['value_col']
-        column_mappings['region_code_col'] = request.GET['region_code_col']
-        column_mappings['indicator_col'] = request.GET['indicator_col']
+    dt = DocTransform(document_id,column_mappings)
 
-        dt = DocTransform(document_id,file_type,column_mappings)
+    try:
+        sdps = dt.dp_df_to_source_datapoints()
+    except IntegrityError:
+        sdps = SourceDataPoint.objects.filter(
+            document_id = document_id)
 
-        try:
-            sdps = dt.dp_df_to_source_datapoints()
-        except IntegrityError:
-            sdps = SourceDataPoint.objects.filter(
-                document_id = document_id)
+    populate_document_metadata(document_id)
 
-        populate_document_metadata(document_id)
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        , kwargs={'document_id': document_id}))
 
-        return HttpResponseRedirect(reverse('source_data:document_review'\
-            , kwargs={'document_id': document_id}))
-
-    elif file_type == 'Region':
-
-        rt = RegionTransform(document_id,file_type,{})
-        err,valid_df = rt.validate()
-        src_regions = rt.insert_source_regions(valid_df)
-
-        to_map = []
-        to_map_raw = SourceRegion.objects.raw('''
-            SELECT
-                sr.id
-                ,sr.id as source_object_id
-                ,sr.region_string as source_string
-                ,COALESCE(rm.master_region_id,-1) as master_object_id
-            FROM source_region sr
-            LEFT JOIN region_map rm
-            ON sr.id = rm.source_region_id
-            WHERE sr.document_id = %s''',[document_id]
-        )
-
-        for row in to_map_raw:
-            row_dict = {}
-            row_dict['source_string'] = row.source_string
-            row_dict['source_object_id'] = row.source_object_id
-            row_dict['master_object_id'] = row.master_object_id
-            row_dict['model_type'] = 'region'
-
-
-        return render_to_response(
-            'data_entry/meta_map.html',
-            {'document_id': document_id, 'to_map':to_map},
-            RequestContext(request),
-        )
+    # return render_to_response(
+    #     'data_entry/meta_map.html',
+    #     {'document_id': document_id, 'to_map':to_map},
+    #     RequestContext(request),
+    # )
 
 def refresh_master_no_indicator(request,document_id):
 
