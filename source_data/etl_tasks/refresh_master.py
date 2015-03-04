@@ -59,17 +59,12 @@ class MasterRefresh(object):
                 	ON sd.campaign_string = sc.campaign_string
                 INNER JOIN campaign_map cm
                 	ON sc.id = cm.source_campaign_id
-                WHERE sd.document_id = %s
-                AND NOT EXISTS (
-                     SELECT 1 FROM datapoint d
-                     WHERE sd.id = d.source_datapoint_id)
-            	AND sd.cell_value != 'nan'
-                ''', [ind_id,self.document_id])
+                WHERE sd.document_id = %s''', [ind_id,self.document_id])
 
 
             for row in sdps_to_sync:
 
-                created, dp = DataPoint.objects.get_or_create(
+                dp,created = DataPoint.objects.get_or_create(
                     campaign_id = row.master_campaign_id,
                     indicator_id = row.master_indicator_id,
                     region_id = row.master_region_id,
@@ -79,12 +74,15 @@ class MasterRefresh(object):
                         'changed_by_id': self.user_id
                     })
 
-                ## if this datapoint exists and was not added by a human ##
-                if created == 0 and dp.source_datapoint_id > 0:
+                print 'created ?  %s' % created
+                print 'dp_val ?  %s' % dp.value
 
-                    dp.source_datapoint_id = row.source_datapoint_id
+                ## if this datapoint exists and was not added by a human ##
+                if created == False and dp.id > 0:
+
+                    dp.source_datapoint_id = row.id
                     dp.value = row.cell_value
-                    dp.changed_by_id = self.user.id
+                    dp.changed_by_id = self.user_id
                     dp.save()
 
 

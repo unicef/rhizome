@@ -141,7 +141,7 @@ def populate_document_metadata(document_id):
 
     meta_breakdown = []
 
-    raw_qs = Document.objects.raw(base_meta_q,[document_id,document_id])
+    raw_qs = Document.objects.raw(base_meta_q,[document_id])
 
     for row in raw_qs:
         row_dict = {

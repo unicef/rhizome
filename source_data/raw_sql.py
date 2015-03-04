@@ -11,7 +11,7 @@ base_meta_q = '''
         	,campaign_string
         	,region_code
         FROM source_datapoint
-        WHERE document_id = 974;
+        WHERE document_id = %s;
 
         DROP TABLE IF EXISTS _doc_meta_cnt;
         CREATE TABLE _doc_meta_cnt AS
@@ -92,9 +92,9 @@ base_meta_q = '''
         -------------
 
         INSERT INTO source_region
-        (region_code,document_id,source_guid)
+        (region_code,document_id,source_guid,is_high_risk)
 
-        SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id
+        SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id, 'f'
         FROM _doc_meta_cnt dmc
         WHERE db_model = 'source_region'
         AND NOT EXISTS (
