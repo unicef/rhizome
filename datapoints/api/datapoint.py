@@ -65,7 +65,8 @@ class DataPointResource(BaseNonModelResource):
 
         db_data = DataPointAbstracted.objects.filter(
             region_id__in = region_ids,
-            campaign_id__in = self.parsed_params['campaign__in'])
+            campaign_id__in = self.parsed_params['campaign__in'])\
+            .order_by('-campaign__start_date')
 
         for row in db_data:
             r = ResultObject()

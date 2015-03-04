@@ -222,13 +222,13 @@ class Responsibility(models.Model):
 
 class DataPointAbstracted(models.Model):
 
-    region_id = models.IntegerField()
-    campaign_id = models.IntegerField()
+    region = models.ForeignKey(Region)
+    campaign = models.ForeignKey(Campaign)
     indicator_json = JSONField()
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('region_id','campaign_id')
+        unique_together = ('region','campaign')
 
 class DataPointComputed(models.Model):
 
