@@ -133,6 +133,19 @@ function hoverLine() {
 		return chart;
 	};
 
+	function translate(d) {
+		// jshint validthis:true
+		var box = this.getBBox();
+		var min = box.width / 2;
+		var max = width - min;
+
+		var x   = xScale(d);
+
+		return 'translate(' +
+			Math.max(min, Math.min(max, x)) + ',' +
+			height + ')';
+	}
+
 	function onMouseMove() {
 		/* jshint validthis: true */
 		var cursor = d3.mouse(this)[0];
@@ -197,12 +210,11 @@ function hoverLine() {
 			.duration(300)
 			.style('opacity', data.length ? 0 : 1);
 
+		// X-axis label
 		var label = svg
 			.select('.annotation')
 			.selectAll('.axis')
 			.data(data);
-
-		var yTranslate = height;
 
 		label.enter()
 			.append('text')
@@ -213,9 +225,7 @@ function hoverLine() {
 			.attr({
 				'dy'       : '9',
 				'class'    : 'axis',
-				'transform': function (d) {
-					return 'translate(' + xScale(d) + ',' + yTranslate + ')';
-				}
+				'transform': translate
 			});
 
 		label
@@ -224,9 +234,7 @@ function hoverLine() {
 			})
 			.transition()
 			.duration(300)
-			.attr('transform', function (d) {
-				return 'translate(' + xScale(d) + ',' + yTranslate + ')';
-			})
+			.attr('transform', translate)
 			.style('opacity', 1);
 
 		label.exit()
