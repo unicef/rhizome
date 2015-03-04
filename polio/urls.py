@@ -31,8 +31,6 @@ urlpatterns = patterns('',
     ##
     (r'^api/', include(v1_api.urls)),
     ##
-    url(r'^$', 'polio.views.home', name='home'),
-    ##
     url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+-dashboard$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/indicators/', decorator_include(login_required,'datapoints.app_urls.indicator_urls', namespace="indicators")),
