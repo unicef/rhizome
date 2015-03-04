@@ -19,7 +19,7 @@ base_meta_q = '''
         	*
         	,CAST(NULL AS INT) AS source_object_id
         	,CAST(-1 AS INT) as master_object_id
-        	,CAST(-1 AS INT) as master_object_cnt
+        	,CAST(0 AS INT) as master_object_cnt
         FROM (
         	SELECT
         		'source_indicator' as db_model
