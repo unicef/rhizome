@@ -31,17 +31,19 @@
                 <th> {{ si.source_string }} </th>
                 <th> {{ si.source_object_count }} </th>
                 <th> {{ si.master_object_count }} </th>
+                <th> {{ si.master_object_id }}
 
                 {% if si.master_object_id == -1 %}
-                  <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>map</th>
+                <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>Map!</th>
+                <th> Map </th>
+
                 {% else %}
-                  <th> {{ si.master_object_id }}
+                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
                 {% endif %}
 
                 {% if si.master_indicator_id == -1 %}
                   <th> please map indicator
                 {% else %}
-                  <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
                 {% endif %}
 
             </tr>
