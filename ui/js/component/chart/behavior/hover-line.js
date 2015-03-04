@@ -266,7 +266,10 @@ function hoverLine() {
 		labelGroup.each(function (datum) {
 
 			function translate(d) {
-				return 'translate(0,' + yScale(y(d)) + ')';
+				// Ensure that the label is at least 2 unites above the bottom
+				// of the chart
+				var yTranslate = Math.min(height - 2, yScale(y(d)))
+				return 'translate(0,' + yTranslate + ')';
 			}
 
 			// jshint validthis:true
