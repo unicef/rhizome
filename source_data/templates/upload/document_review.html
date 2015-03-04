@@ -35,8 +35,6 @@
 
                 {% if si.master_object_id == -1 %}
                 <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>Map!</th>
-                <th> Map </th>
-
                 {% else %}
                   <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
                 {% endif %}
