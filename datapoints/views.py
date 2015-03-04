@@ -445,7 +445,7 @@ def calc_datapoint(request):
          AND num_whole.campaign_id = denom.campaign_id;
 
         UPDATE datapoint_with_computed
-        SET value = ROUND(value,3);
+        SET value = ROUND(CAST(value AS NUMERIC),3);
 
         SELECT id FROM datapoint_with_computed LIMIT 1;
     """)
