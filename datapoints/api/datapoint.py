@@ -606,7 +606,7 @@ class DataPointEntryResource(ModelResource):
 
 
     class Meta():
-        queryset = DataPoint.objects.all()
+        queryset = DataPointEntry.objects.all()
         # authentication = ApiKeyAuthentication() # sup w this
         authorization = Authorization()
         allowed_methods = ['get', 'post']
@@ -706,7 +706,7 @@ class DataPointEntryResource(ModelResource):
         (i.e. data should have passed validate_object first)
         """
         try:
-            obj = DataPoint.objects.get(region_id=int(data['region_id']),
+            obj = DataPointEntry.objects.get(region_id=int(data['region_id']),
                 campaign_id=int(data['campaign_id']),
                 indicator_id=int(data['indicator_id']),
             )
@@ -716,7 +716,7 @@ class DataPointEntryResource(ModelResource):
 
     def hydrate(self, bundle):
 
-        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint) \
+        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPointEntry) \
             and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
@@ -724,7 +724,7 @@ class DataPointEntryResource(ModelResource):
             pass
         else:
             # we get here if we're inserting a brand new datapoint
-            bundle.obj = DataPoint()
+            bundle.obj = DataPointEntry()
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
