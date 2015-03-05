@@ -644,7 +644,7 @@ ON s.region_code = r.region_code
 WHERE NOT EXISTS (
 	SELECT 1 FROM region_map rm
 	WHERE s.source_region_id = rm.source_region_id
-)
+);
 
 UPDATE _sett
 	SET master_region_id = rm.master_region_id
