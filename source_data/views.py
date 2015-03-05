@@ -287,7 +287,7 @@ def un_map(request,map_id,db_model,document_id):
         CampaignMap.objects.get(id=map_id).delete()
 
 
-    return HttpResponseRedirect(reverse('source_data:refresh_master_by_document_id'\
+    return HttpResponseRedirect(reverse('source_data:document_review'\
         ,kwargs={'document_id':document_id}))
 
 

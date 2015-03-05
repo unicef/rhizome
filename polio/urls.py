@@ -27,9 +27,14 @@ v1_api.register(EtlResource())
 v1_api.register(OfficeResource())
 v1_api.register(RegionPolygonResource())
 
+from django.views.generic.base import RedirectView
+
+
 urlpatterns = patterns('',
     ##
     (r'^api/', include(v1_api.urls)),
+    ##
+    url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
     ##
     url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+-dashboard$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
