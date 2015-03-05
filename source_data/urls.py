@@ -16,8 +16,7 @@ urlpatterns = [
     url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),\
         name='map_campaign'),
 
-    url(r'^un_map/(?P<map_id>[0-9]+)/(?P<db_model>\w+)/(?P<document_id>[0-9]+)\
-        /$',un_map,name='un_map'),
+    url(r'^un_map/(?P<map_id>[0-9]+)/(?P<db_model>\w+)/(?P<document_id>[0-9]+)/$',un_map,name='un_map'),
 
     url(r'^refresh_master/$', refresh_master,name='refresh_master'),
 
