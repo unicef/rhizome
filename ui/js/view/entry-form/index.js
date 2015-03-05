@@ -101,7 +101,7 @@ module.exports = {
 			};
 
 			var connectChildren = function(map, parent_id_key, children_key) {
-				_.forIn(map, function(d, k) {
+				_.forIn(map, function(d) {
 					// obj has parent_id?
 					if (d[parent_id_key] !== undefined && d[parent_id_key] !== null) {
 						// parent found?
@@ -350,6 +350,12 @@ module.exports = {
 									} else {
 										cell.tooltip = null;
 									}
+									// generate validation for values
+									cell.validateValue = function(newVal) {
+										var value = parseFloat(newVal);
+										var passed = !_.isNaN(value);
+										return { 'value': value, 'passed': passed };
+									};
 									// generate promise for submitting a new value to the API for saving
 									cell.buildSubmitPromise = function(newVal) {
 										var upsert_options = {
@@ -367,7 +373,6 @@ module.exports = {
 									};
 									// callback to handle error
 									cell.withError = function(error) {
-										console.log('here');
 										console.log(error);
 										// if (error.msg && error.msg.message) { alert(error.msg.message); }
 										cell.hasError = true;

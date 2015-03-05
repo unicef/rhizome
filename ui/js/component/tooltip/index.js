@@ -30,7 +30,7 @@ module.exports = {
 	},
 
 	ready: function () {
-		console.debug('tooltip::ready');
+		// console.debug('tooltip::ready');
 		this.$log();
 		this.$root.$on('tooltip-show', this.showTooltip);
 		this.$root.$on('tooltip-hide', this.hideTooltip);
@@ -45,7 +45,7 @@ module.exports = {
 			var offset = dom.documentOffset(this._parentEl);
 			var doc = this._parentEl.ownerDocument.documentElement;
 
-			console.debug('tooltip::reposition offset', offset);
+			// console.debug('tooltip::reposition offset', offset);
 
 			switch (this.orientation) {
 			case 'right':
@@ -77,11 +77,11 @@ module.exports = {
 				break;
 			}
 
-			console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
+			// console.debug('tooltip::reposition position', this.top, this.right, this.bottom, this.left);
 		},
 
 		hideTooltip: function (options) {
-			console.debug('tooltip::hide', options);
+			// console.debug('tooltip::hide', options);
 			if (this._parentEl === options.el) {
 				this.show      = false;
 				this._parentEl = null;
@@ -91,7 +91,7 @@ module.exports = {
 		},
 
 		showTooltip: function (options) {
-			console.debug('tooltip::show', options);
+			// console.debug('tooltip::show', options);
 			this._parentEl = options.el;
 
 			var self = this;

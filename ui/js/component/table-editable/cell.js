@@ -70,11 +70,26 @@ module.exports = {
 				if (self.value !== self.previousValue) {
 
 					self.isSaving = true;
+					var passed = true;
+					var value = self.$data.value;
+
+					// validation
+					if (self.validateValue !== undefined) {
+						var validation = self.validateValue(value);
+						if (validation.passed === true) {
+							value = validation.value;
+						} else {
+							// did not pass validation
+							self.hasError = true;
+							// self.value = self.previousValue;
+							self.isSaving = false;
+							passed = false;
+						}
+					}
 
 					// submit value for saving
-					if (self.buildSubmitPromise !== undefined) {
+					if (passed === true && self.buildSubmitPromise !== undefined) {
 
-						var value = self.$data.value;
 						// TODO: validation of value
 
 						var promise = self.buildSubmitPromise(value);
