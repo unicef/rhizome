@@ -152,8 +152,7 @@ module.exports = {
 					self.$data.campaigns = allData[2];
 
 					// set campaign id to first option
-					// self.$data.campaign_id = self.$data.campaigns[0].value;
-					self.$data.campaign_id = 139; // for testing
+					self.$data.campaign_id = self.$data.campaigns[0].value;
 
 					self.$data.loaded = true;
 
@@ -185,7 +184,6 @@ module.exports = {
 
 			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
 			if (self.$data.campaign_office_id !== null && campaign.office !== self.$data.campaign_office_id) {
-				console.log('refresh needed');
 				self._regions.selectedItems = [];
 			}
 
@@ -369,8 +367,9 @@ module.exports = {
 									};
 									// callback to handle error
 									cell.withError = function(error) {
+										console.log('here');
 										console.log(error);
-										if (error.msg && error.msg.message) { alert(error.msg.message); }
+										// if (error.msg && error.msg.message) { alert(error.msg.message); }
 										cell.hasError = true;
 									};
 									break;
