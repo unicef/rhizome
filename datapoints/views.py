@@ -444,6 +444,9 @@ def calc_datapoint(request):
           AND num_whole.master_indicator_id = denom.master_indicator_id
          AND num_whole.campaign_id = denom.campaign_id;
 
+        UPDATE datapoint_with_computed
+        SET value = ROUND(CAST(value AS NUMERIC),3);
+
         SELECT id FROM datapoint_with_computed LIMIT 1;
     """)
 
@@ -579,7 +582,7 @@ def load_gdoc_data(request):
     err_msg = 'none!'
 
     gc = gspread.login(gdoc_u,gdoc_p)
-    worksheet = gc.open("Mgmt Data QA | Feb 27 2014").sheet1
+    worksheet = gc.open("Dashboard QA | February 2015").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
     gd_df = gd_df[gd_df['region_id'] != '0']
@@ -589,7 +592,8 @@ def load_gdoc_data(request):
 
     for k,v in gd_dict.iteritems():
 
-        print v
+        if v['region_id'] == '#N/A':
+            pass
 
         v['success_flag'] = 0
         recon_d = ReconData(**v)
