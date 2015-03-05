@@ -32,7 +32,8 @@ module.exports = {
 			},
 			
 			campaigns: [],
-			campaign_id: null
+			campaign_id: null,
+			campaign_office_id: null
 
 		};
 	},
@@ -166,7 +167,7 @@ module.exports = {
 			var self = this;
 
 			var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id); });
-			
+
 			var items = _.chain(self.$data.regionData)
 							.filter(function(d) {
 								return d.office_id === campaign.office;
@@ -181,6 +182,16 @@ module.exports = {
 							.value();
 
 			self._regions.items = treeify(items, 'value');
+
+			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
+			if (self.$data.campaign_office_id !== null && campaign.office !== self.$data.campaign_office_id) {
+				console.log('refresh needed');
+				self._regions.selectedItems = [];
+			}
+
+			// set office id to track when the office changes
+			self.$data.campaign_office_id = campaign.office;
+
 		},
 
 		refresh: function (pagination) {
@@ -189,11 +200,6 @@ module.exports = {
 			if (!self.hasSelection) {
 				return;
 			}
-
-			// default values for testing
-			// var regions = [ 12942 ];
-			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
-			// var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
 
 			var options = { 
 				campaign__in: parseInt(self.$data.campaign_id),
