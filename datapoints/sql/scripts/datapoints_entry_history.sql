@@ -1,4 +1,4 @@
-CREATE TABLE "datapoints_historicaldatapointentry" (
+CREATE TABLE IF NOT EXISTS "datapoints_historicaldatapointentry" (
 	    "id" integer NOT NULL,
 	    "indicator_id" integer,
 	    "region_id" integer,

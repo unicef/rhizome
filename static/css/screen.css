@@ -7029,6 +7029,9 @@ input[type="password"]:focus {
   outline: none;
 }
 
+svg {
+  overflow: hidden;
+}
 svg .bg {
   fill: #F6F6F6;
 }
@@ -7225,6 +7228,10 @@ h4 {
   overflow: hidden;
 }
 
+select {
+  padding-right: 1.5em;
+}
+
 nav {
   overflow: hidden;
   *zoom: 1;
@@ -7378,7 +7385,9 @@ button:focus,
 
 /* fixed-header tables */
 .fixed-table-container {
-  height: 500px;
+  display: inline-block;
+  /* required to make horizontal scrolling work */
+  height: 475px;
   background-color: white;
   position: relative;
   /* could be absolute or relative */
@@ -7389,12 +7398,15 @@ button:focus,
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-left: none;
 }
 .fixed-table-container .header-background {
   height: 50px;
   /* height of header */
   background-color: #F5F5F5;
-  border: solid 1px #DDDDDD;
+  border: solid 1px #ddd;
   border-bottom: none;
   position: absolute;
   top: 0;
@@ -7406,7 +7418,7 @@ button:focus,
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  margin-top: -18px;
+  margin: -18px 0 -1px 0;
 }
 .fixed-table-container table th {
   border-bottom: 1px solid #ddd;
@@ -7416,6 +7428,13 @@ button:focus,
 }
 .fixed-table-container table td:first-child {
   border-left: none;
+}
+.fixed-table-container table td.section-header, .fixed-table-container table td.section-header:hover {
+  font-size: 11px;
+  background-color: #999;
+  font-weight: 100;
+  color: #fff;
+  text-transform: uppercase;
 }
 .fixed-table-container table .th-inner {
   position: absolute;
@@ -7439,9 +7458,8 @@ button:focus,
   width: auto;
   padding-right: 10px;
 }
-.fixed-table-container table .first .th-inner {
+.fixed-table-container table th:first-child .th-inner {
   border-left: none;
-  padding-left: 6px;
 }
 
 .statusText-good {
@@ -7635,21 +7653,39 @@ table td.editable .editControl {
   display: none;
   border: 1px solid #aaa;
   font-size: inherit;
+  min-width: 50px;
 }
 table td.editable .editControl:focus {
   outline: 0;
 }
-table td.editable.editing .displayValue {
+table td.editable.editing .displayValue, table td.editable.saving .displayValue {
   display: none;
 }
 table td.editable.editing .editControl {
   display: block;
 }
+table td.editable.saving .editControl {
+  display: none;
+}
+table td.editable .saving-icon {
+  display: none;
+}
+table td.editable.saving .saving-icon {
+  display: inherit;
+}
 table td.editable.missing .displayValue {
   background-color: #ffeb86;
 }
+table td.editable.error {
+  background-color: #FF9081;
+}
 table .completionStatus {
   font-size: .9em;
+  min-width: 40px;
+}
+table .rowCompletionStatus {
+  width: 80px;
+  text-align: center;
 }
 
 .completionStatus {

@@ -30,7 +30,7 @@ module.exports = {
 				columns: ['region', 'campaign'],
 				rows: []
 			},
-			
+
 			campaigns: [],
 			campaign_id: null
 
@@ -70,7 +70,7 @@ module.exports = {
 			// }
 		});
 		self._regions.$on('dropdown-value-changed', function (items) {
-			self.regions = items;
+			self.regions = _.values(items);
 		});
 
 		this.$on('page-changed', function (data) {
@@ -91,9 +91,9 @@ module.exports = {
 		load: function() {
 			var self = this;
 
-			var makeMap = function(data) { 
+			var makeMap = function(data) {
 				if (data.objects) {
-					return _.indexBy(data.objects, 'id'); 
+					return _.indexBy(data.objects, 'id');
 				} else {
 					return null;
 				}
@@ -166,7 +166,7 @@ module.exports = {
 			var self = this;
 
 			var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id); });
-			
+
 			var items = _.chain(self.$data.regionData)
 							.filter(function(d) {
 								return d.office_id === campaign.office;
@@ -195,7 +195,7 @@ module.exports = {
 			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
 			// var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
 
-			var options = { 
+			var options = {
 				campaign__in: parseInt(self.$data.campaign_id),
 				indicator__in: [],
 				region__in: []
@@ -212,7 +212,7 @@ module.exports = {
 
 			// add regions to request
 			if (self.regions.length > 0) {
-				
+
 				// get all high risk children of selected regions
 				_.forEach(self.regions, function(regionVue) {
 
@@ -253,10 +253,10 @@ module.exports = {
 
 			// define columns
 			var columns = [
-				{ 
-					header: 'Indicator', 
-					type: 'label', 
-					headerClasses: 'medium-3' 
+				{
+					header: 'Indicator',
+					type: 'label',
+					headerClasses: 'medium-3'
 				}
 			];
 			// add region names as columns
@@ -297,7 +297,7 @@ module.exports = {
 				// assemble data points into rows for table
 				var rows = [];
 				indicatorSet.indicators.forEach(function(rowInfo) {
-					
+
 					var row = [];
 
 					// section header row
@@ -315,7 +315,7 @@ module.exports = {
 
 						var indicator_id = rowInfo.id;
 
-						// add columns 
+						// add columns
 						columns.forEach(function(column) {
 
 							var cell = {
