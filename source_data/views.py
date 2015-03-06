@@ -275,19 +275,23 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
-def un_map(request,map_id,db_model,document_id):
+def un_map(request,source_object_id,db_model,document_id):
 
-    if db_model == 'Region':
+    print source_object_id
 
-        RegionMap.objects.get(id=map_id).delete()
+    print '-----'
 
-    elif db_model == 'Indicator':
+    if db_model == 'region':
 
-        IndicatorMap.objects.get(id=map_id).delete()
+        RegionMap.objects.get(source_region_id=source_object_id).delete()
 
-    elif db_model == 'Campaign':
+    elif db_model == 'undicator':
 
-        CampaignMap.objects.get(id=map_id).delete()
+        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
+
+    elif db_model == 'campaign':
+
+        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
 
 
     return HttpResponseRedirect(reverse('source_data:document_review'\

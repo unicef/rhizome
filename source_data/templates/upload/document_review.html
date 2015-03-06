@@ -19,12 +19,9 @@
             <th>Master DataPoint Count</th>
             <th>Master Indicator ID</th>
             <th>Sync Indicator Data</th>
-
         </tr>
     </thead>
-
         {% if source_indicator_breakdown %}
-
             {% for si in source_indicator_breakdown %}
             <tr>
                 <th> {{ si.source_object_id }} </th>
@@ -63,6 +60,7 @@
                 <th>Source Count</th>
                 <th>Master Count</th>
                 <th>Master Campaign ID</th>
+                <th>Un Map</th>
             </tr>
         </thead>
 
@@ -75,10 +73,13 @@
               <th> {{ sc.master_object_count }} </th>
 
 
-              {% if sc.source_campaign_id == -1 %}
+              {% if sc.master_object_id == -1 %}
               <th><a href="{% url 'source_data:map_campaign' sc.source_object_id %}"</a> Map!</th>
               {% else %}
               <th>{{ sc.master_object_id }}</th>
+              <th><a href="{% url 'source_data:un_map' sc.source_object_id 'campaign' document_id %}"</a> UnMap!</th>
+
+
               {% endif %}
 
           </tr>
