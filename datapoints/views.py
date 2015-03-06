@@ -768,20 +768,36 @@ def api_campaign(request):
 
     request_meta = parse_url_args(request,meta_keys)
 
-    c_raw  = Campaign.objects.raw("""
-        SELECT * FROM campaign c
-        LIMIT %s
-        OFFSET %s;""",[request_meta['limit'],request_meta['offset']])
 
-    results = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
+    if request_meta['region__in']:
+
+        print request_meta['region__in']
+
+        print '==\n' * 5
+
+        c_raw = Campaign.objects.raw("""
+            SELECT * FROM campaign WHERE id in (
+                SELECT DISTINCT campaign_id FROM datapoint_with_computed
+                WHERE region_id IN (%s)
+            )
+            """,[request_meta['region__in']])
+    else:
+        pass
+        c_raw  = Campaign.objects.raw("""
+            SELECT * FROM campaign c
+            WHERE id = %s
+            LIMIT %s
+            OFFSET %s;""",[request_meta['id'],request_meta['limit']\
+            ,request_meta['offset']])
+
+
+    data = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
         'start_date': str(c.start_date)} for c in c_raw]
 
-    response_data = {'data':results}
-    response_data['meta'] = {
-        'limit': request_meta['limit'],
-        'offset': request_meta['offset'],
-        'total_count': len(results)
-    }
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(data)}
 
+    response_data = {'data':data, 'meta':meta}
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
