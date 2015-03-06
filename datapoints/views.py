@@ -771,10 +771,6 @@ def api_campaign(request):
 
     if request_meta['region__in']:
 
-        print request_meta['region__in']
-
-        print '==\n' * 5
-
         c_raw = Campaign.objects.raw("""
             SELECT * FROM campaign WHERE id in (
                 SELECT DISTINCT campaign_id FROM datapoint_with_computed
