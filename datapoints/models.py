@@ -1,5 +1,6 @@
 from django.db import models
 from autoslug import AutoSlugField
+from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
 class Source(models.Model):
@@ -207,8 +208,8 @@ class DataPoint(models.Model):
         )
 
 class DataPointEntry(DataPoint):
-    """Proxy subclass of DataPoint, for use only in API 
-    methods used by the manual data entry form. This model 
+    """Proxy subclass of DataPoint, for use only in API
+    methods used by the manual data entry form. This model
     stores records of all changes in a separate DB table.
     """
 
