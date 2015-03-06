@@ -12,7 +12,8 @@ module.exports = {
 			previousValue: null, // save the previous value to compare with edited value
 			isSaving: false, // whether the cell is in the process of saving right now
 			isEditable: false, // whether the cell is editable
-			isEditing: false // whether the cell is currently being edited
+			isEditing: false, // whether the cell is currently being edited
+			hasError: false
 		};
 	},
 
@@ -61,17 +62,34 @@ module.exports = {
 		submit: function() {
 			var self = this;
 
+			self.hasError = false;
+
 			if (self.isSaving === false) {
 
 				// only perform the save if value has changed
 				if (self.value !== self.previousValue) {
 
 					self.isSaving = true;
+					var passed = true;
+					var value = self.$data.value;
+
+					// validation
+					if (self.validateValue !== undefined) {
+						var validation = self.validateValue(value);
+						if (validation.passed === true) {
+							value = validation.value;
+						} else {
+							// did not pass validation
+							self.hasError = true;
+							// self.value = self.previousValue;
+							self.isSaving = false;
+							passed = false;
+						}
+					}
 
 					// submit value for saving
-					if (self.buildSubmitPromise !== undefined) {
+					if (passed === true && self.buildSubmitPromise !== undefined) {
 
-						var value = self.$data.value;
 						// TODO: validation of value
 
 						var promise = self.buildSubmitPromise(value);
@@ -85,12 +103,18 @@ module.exports = {
 							self.isSaving = false;
 
 						}, function(error) {
+						
 							// or rejected
 							if (self.withError) {
 								self.withError(error);
 							} else {
 								console.log('Error', error);
 							}
+							
+							// set to previous value
+							self.hasError = true;
+							self.value = self.previousValue;
+
 							// done saving; do not update value
 							self.isSaving = false;
 						});

@@ -32,7 +32,8 @@ module.exports = {
 			},
 
 			campaigns: [],
-			campaign_id: null
+			campaign_id: null,
+			campaign_office_id: null
 
 		};
 	},
@@ -100,7 +101,7 @@ module.exports = {
 			};
 
 			var connectChildren = function(map, parent_id_key, children_key) {
-				_.forIn(map, function(d, k) {
+				_.forIn(map, function(d) {
 					// obj has parent_id?
 					if (d[parent_id_key] !== undefined && d[parent_id_key] !== null) {
 						// parent found?
@@ -151,8 +152,7 @@ module.exports = {
 					self.$data.campaigns = allData[2];
 
 					// set campaign id to first option
-					// self.$data.campaign_id = self.$data.campaigns[0].value;
-					self.$data.campaign_id = 139; // for testing
+					self.$data.campaign_id = self.$data.campaigns[0].value;
 
 					self.$data.loaded = true;
 
@@ -181,6 +181,15 @@ module.exports = {
 							.value();
 
 			self._regions.items = treeify(items, 'value');
+
+			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
+			if (self.$data.campaign_office_id !== null && campaign.office !== self.$data.campaign_office_id) {
+				self._regions.selectedItems = [];
+			}
+
+			// set office id to track when the office changes
+			self.$data.campaign_office_id = campaign.office;
+
 		},
 
 		refresh: function (pagination) {
@@ -189,11 +198,6 @@ module.exports = {
 			if (!self.hasSelection) {
 				return;
 			}
-
-			// default values for testing
-			// var regions = [ 12942 ];
-			// var regions = [ 12942, 12939, 12929, 12928, 12927, 12926, 12925, 12920, 12913, 12911, 12910 ];
-			// var regions = [ 12908, 12959, 12963, 12970, 13057, 13065, 13068, 13071, 13080, 13083, 13094, 13095, 13096, 13105, 13118, 13124, 13125, 13159, 13175, 13176, 13178, 13182, 13186, 13188, 13191, 13192, 13194, 13196, 13198, 13210, 13222, 13231, 13239, 13240, 13241, 13250, 13266, 13267, 13274, 13278, 13280, 13285, 13292, 13296, 13302, 13303, 13308, 13311, 13312, 13317, 13319, 13346, 13353, 13355, 13380, 13386, 13394, 13395, 13405, 13410, 13413, 13414, 13420, 13425, 13428, 13431, 13443, 13449, 13451, 13454, 12966, 14394 ];
 
 			var options = {
 				campaign__in: parseInt(self.$data.campaign_id),
@@ -346,6 +350,12 @@ module.exports = {
 									} else {
 										cell.tooltip = null;
 									}
+									// generate validation for values
+									cell.validateValue = function(newVal) {
+										var value = parseFloat(newVal);
+										var passed = !_.isNaN(value);
+										return { 'value': value, 'passed': passed };
+									};
 									// generate promise for submitting a new value to the API for saving
 									cell.buildSubmitPromise = function(newVal) {
 										var upsert_options = {
@@ -364,7 +374,7 @@ module.exports = {
 									// callback to handle error
 									cell.withError = function(error) {
 										console.log(error);
-										if (error.msg && error.msg.message) { alert(error.msg.message); }
+										// if (error.msg && error.msg.message) { alert(error.msg.message); }
 										cell.hasError = true;
 									};
 									break;
