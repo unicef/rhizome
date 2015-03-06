@@ -7260,11 +7260,13 @@ nav a:hover {
 }
 
 body.dashboard nav .dashboard,
-body.data nav .data {
+body.data nav .data,
+body.data-entry nav .data-entry {
   border-left: 4px solid #ffcc67;
 }
 body.dashboard nav .dashboard a,
-body.data nav .data a {
+body.data nav .data a,
+body.data-entry nav .data-entry a {
   opacity: 1;
 }
 
