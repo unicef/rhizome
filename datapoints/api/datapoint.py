@@ -2,9 +2,14 @@ import traceback
 
 from tastypie import fields
 from tastypie.authorization import Authorization
+from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ALL
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 
 from datapoints.models import *
@@ -233,8 +238,9 @@ class DataPointResource(BaseNonModelResource):
 class DataPointEntryResource(BaseModelResource):
 
     required_keys = [
-        'datapoint_id', 'indicator_id', 'region_id',
-        'campaign_id', 'value', 'changed_by_id',
+        # 'datapoint_id',
+        'indicator_id', 'region_id',
+        'campaign_id', 'value', #'changed_by_id',
     ]
     # for validating foreign keys
     keys_models = {
@@ -248,10 +254,10 @@ class DataPointEntryResource(BaseModelResource):
 
 
     class Meta():
-        queryset = DataPoint.objects.all()
+        queryset = DataPointEntry.objects.all()
         # authentication = ApiKeyAuthentication() # sup w this
         authorization = Authorization()
-        allowed_methods = ['get'] # TODO FIXME: once obj_create is fully tested, add POST etc
+        allowed_methods = ['get', 'post']
         resource_name = 'datapointentry'
         always_return_data = True
         max_limit = None # no pagination
@@ -261,39 +267,86 @@ class DataPointEntryResource(BaseModelResource):
             'region': ALL,
         }
 
-
     def obj_create(self, bundle, **kwargs):
         """
         Make sure the data is valid, then save it.
+        All POST requests come through here, whether they're truly
+        'obj_create' or actually 'obj_update'.
+        Also, if a request comes in with value=NULL, that means
+        DELETE that object.
         """
         try:
             self.validate_object(bundle.data)
 
+            # Determine what kind of request this is: create, update, or delete
+
+            # throw error if can't get a real user id
+            user_id = self.get_user_id(bundle)
+            if user_id is not None:
+                bundle.data['changed_by_id'] = user_id
+            else:
+                raise InputError(0, 'Could not get User ID from cookie')
+
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
-                update_kwargs = {
-                    'region_id': existing_datapoint.region_id,
-                    'campaign_id': existing_datapoint.campaign_id,
-                    'indicator_id': existing_datapoint.indicator_id
-                }
-                bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+                if self.is_delete_request(bundle):
+                    # delete
+                    bundle.obj = existing_datapoint
+                    self.obj_delete(bundle, **kwargs)
+                else:
+                    # update
+                    update_kwargs = {
+                        'region_id': existing_datapoint.region_id,
+                        'campaign_id': existing_datapoint.campaign_id,
+                        'indicator_id': existing_datapoint.indicator_id
+                    }
+                    bundle.response = self.success_response()
+                    return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
             else:
+                # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-
-        except InputError, e:
-            bundle.data = self.make_error_response(e)
-            response = self.create_response(bundle.request, bundle)
-            raise ImmediateHttpResponse(response=response)
-
-        # catch all exceptions & format them the way the client is expecting
+        except ImmediateHttpResponse:
+            raise
+        # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
-            bundle.data = self.make_error_response(e)
-            response = self.create_response(bundle.request, bundle)
+            response = self.create_response(
+                bundle.request,
+                self.make_error_response(e),
+                response_class=http.HttpApplicationError
+                )
             raise ImmediateHttpResponse(response=response)
+
+    def get_user_id(self, bundle):
+        request = bundle.request
+
+        if 'sessionid' in request.COOKIES:
+            session = Session.objects.get(pk=request.COOKIES['sessionid'])
+            if '_auth_user_id' in session.get_decoded():
+                user = User.objects.get(id=session.get_decoded()['_auth_user_id'])
+                return user.id
+
+    def is_delete_request(self, bundle):
+        if bundle.data.has_key('value') and bundle.data['value'] == None:
+            return True
+        else:
+            return False
+
+    def obj_delete(self, bundle, **kwargs):
+        super(DataPointEntryResource, self).obj_delete(bundle, **kwargs)
+        response = self.create_response(
+            bundle.request,
+            self.success_response(),
+            response_class=http.HttpResponse
+        )
+        raise ImmediateHttpResponse(response=response)
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """This is here to prevent a list of objects from
+        ever being deleted."""
+        pass
 
     def get_existing_datapoint(self, data):
         """
@@ -301,7 +354,7 @@ class DataPointEntryResource(BaseModelResource):
         (i.e. data should have passed validate_object first)
         """
         try:
-            obj = DataPoint.objects.get(region_id=int(data['region_id']),
+            obj = DataPointEntry.objects.get(region_id=int(data['region_id']),
                 campaign_id=int(data['campaign_id']),
                 indicator_id=int(data['indicator_id']),
             )
@@ -311,20 +364,22 @@ class DataPointEntryResource(BaseModelResource):
 
     def hydrate(self, bundle):
 
-        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPoint) \
+        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPointEntry) \
             and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
             and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
+            # we get here if there's an existing datapoint being modified
             pass
         else:
-            bundle.obj = DataPoint()
-
-            bundle.obj.source_datapoint_id = int(bundle.data['datapoint_id'])
+            # we get here if we're inserting a brand new datapoint
+            bundle.obj = DataPointEntry()
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
-            bundle.obj.changed_by_id = int(bundle.data['changed_by_id'])
+            bundle.obj.source_datapoint_id = -1
             bundle.obj.value = bundle.data['value']
+
+        bundle.obj.changed_by_id = bundle.data['changed_by_id']
 
         return bundle
 
@@ -368,10 +423,11 @@ class DataPointEntryResource(BaseModelResource):
         # what should we do about id, url, created_at ?
         # those all get filled in automatically, right?
 
+        # TODO uncomment once authorization is in place
         # should this be a required key? yeah
-        assert obj.has_key('changed_by_id')
-        user_id = int(obj['changed_by_id'])
-        User.objects.get(id=user_id)
+        # assert obj.has_key('changed_by_id')
+        # user_id = int(obj['changed_by_id'])
+        # User.objects.get(id=user_id)
 
         # ensure that region, campaign, and indicator, if present, are valid values
         if obj.has_key('region_id'):
@@ -396,7 +452,7 @@ class DataPointEntryResource(BaseModelResource):
         response = {
             'success': 0,
             'error': {
-                'code': error.code,
+                'code': getattr(error, 'code', 0),
                 'message': error.message
             }
         }

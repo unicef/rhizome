@@ -19,8 +19,8 @@ module.exports = {
 		return {
 			orientation: 'top',
 			show       : false,
-
 			delay      : 500,
+			template   : 'tooltip-default',
 
 			top        : 0,
 			right      : 0,
@@ -140,4 +140,5 @@ module.exports = {
 	partials: {
 		'tooltip-default': '{{ text }}'
 	}
+
 };

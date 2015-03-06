@@ -26,11 +26,8 @@ module.exports = {
 			groupSize: 5
 		});
 
+		// update the stats object when the rows data changes
 		this.$watch('rows', this.updateStats, true, true);
-
-		// this.$watch('rows', function(newVal, oldVal) {
-		// 	console.log('changed', newVal, oldVal);
-		// }, true);
 
 	},
 

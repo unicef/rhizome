@@ -124,11 +124,12 @@ class SimpleRegion(models.Model):
 
     name = models.CharField(max_length=55,unique=True)
     parent_region_id = models.IntegerField(null=True,blank=True)
+    region_type_id = models.IntegerField(null=True,blank=True)
+    is_high_risk = models.BooleanField()
 
     class Meta:
         db_table = 'vw_simple_region'
         managed = False
-
 
 class RegionPolygon(models.Model):
 
@@ -195,18 +196,27 @@ class DataPoint(models.Model):
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
     def get_val(self):
-
         return self.value
 
     class Meta:
         db_table = 'datapoint'
         unique_together = ('indicator','region','campaign')
         ordering = ['region', 'campaign']
-
-
         permissions = (
             ('view_datapoint', 'View datapoint'),
         )
+
+class DataPointEntry(DataPoint):
+    """Proxy subclass of DataPoint, for use only in API 
+    methods used by the manual data entry form. This model 
+    stores records of all changes in a separate DB table.
+    """
+
+    history = HistoricalRecords()
+
+    class Meta:
+        proxy = True
+
 
 class Responsibility(models.Model):
 

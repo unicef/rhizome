@@ -15,7 +15,9 @@ function urlencode(query) {
 	}).join('&');
 }
 
-function endPoint(path) {
+function endPoint(path, mode) {
+	mode = (mode) ? mode.toUpperCase() : 'GET';
+
 	var defaults = {
 		offset     : 0,
 		username   : 'evan',
@@ -26,19 +28,28 @@ function endPoint(path) {
 
 
 	function fetch(query) {
-		var q = _.defaults({}, query, defaults);
+
+		var req = prefix(request(mode, path));
+
+		// form GET request
+		if (mode === 'GET') {
+			var q = _.defaults({}, query, defaults);
+			req.query(q);
+		}
+		// form POST request
+		else if (mode === 'POST') {
+			req.query(defaults)
+				.send(query);
+		}
 
 		return new Promise(function (fulfill, reject) {
-			prefix(request.get(path))
-				.query(q)
-				.end(function (res) {
+			req.end(function (res) {
 					if (res.error) {
 						reject({
 							status: res.status,
 							msg: res.body.error
 						});
 					} else {
-
 						fulfill({
 							meta: res.body.meta || {},
 							objects: res.body.objects || _.omit(res.body, 'meta')
@@ -91,11 +102,12 @@ datapoint.toString = function (query) {
 };
 
 module.exports = {
-	campaign      : endPoint('/campaign/'),
-	datapoints    : datapoint,
-	datapointsRaw : endPoint('/datapointentry/'),
-	geo           : endPoint('/geo/'),
-	indicators    : endPoint('/indicator/'),
-	office        : endPoint('/office/'),
-	regions       : endPoint('/region/')
+	campaign       : endPoint('/campaign/'),
+	datapoints     : datapoint,
+	datapointsRaw  : endPoint('/datapointentry/'),
+	datapointUpsert: endPoint('/datapointentry/', 'post'),
+	geo            : endPoint('/geo/'),
+	indicators     : endPoint('/indicator/'),
+	office         : endPoint('/office/'),
+	regions        : endPoint('/region/')
 };

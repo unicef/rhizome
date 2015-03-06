@@ -9,8 +9,10 @@ module.exports = {
 
 	data: function() {
 		return {
-			isEditable: false,
-			isEditing: false
+			previousValue: null, // save the previous value to compare with edited value
+			isSaving: false, // whether the cell is in the process of saving right now
+			isEditable: false, // whether the cell is editable
+			isEditing: false // whether the cell is currently being edited
 		};
 	},
 
@@ -28,7 +30,8 @@ module.exports = {
 			self.$dispatch('tooltip-show', {
 				el  : self.$el,
 				data: {
-					text: self.hoverText
+					text: self.hoverText,
+					orientation: 'bottom'
 				}
 			});
 		});
@@ -58,21 +61,49 @@ module.exports = {
 		submit: function() {
 			var self = this;
 
-			// submit value for saving
-			if (self.buildSubmitPromise !== undefined) {
-				var value = self.$data.value;
-				// TODO: compare new value to old?
-				var promise = self.buildSubmitPromise(value);
-				promise.done(function(response) {
-					if (self.withResponse) {
-						self.withResponse(response);
+			if (self.isSaving === false) {
+
+				// only perform the save if value has changed
+				if (self.value !== self.previousValue) {
+
+					self.isSaving = true;
+
+					// submit value for saving
+					if (self.buildSubmitPromise !== undefined) {
+
+						var value = self.$data.value;
+						// TODO: validation of value
+
+						var promise = self.buildSubmitPromise(value);
+						promise.then(function(response) {
+							// fulfilled
+							if (self.withResponse) {
+								self.withResponse(response);
+							}
+							// done saving
+							self.previousValue = self.value;
+							self.isSaving = false;
+
+						}, function(error) {
+							// or rejected
+							if (self.withError) {
+								self.withError(error);
+							} else {
+								console.log('Error', error);
+							}
+							// done saving; do not update value
+							self.isSaving = false;
+						});
+
 					}
 
-				});
+				}
 
 				// toggle editing mode
 				self.toggleEditing(false);
+
 			}
+
 		}
 
 	},
@@ -94,7 +125,10 @@ module.exports = {
 		},
 
 		hoverText: function() {
-			if (_.isNull(this.value)) {
+			if (this.tooltip) {
+				return this.tooltip;
+			}
+			else if (_.isNull(this.value)) {
 				return 'Missing value';
 			} else {
 				return this.value;

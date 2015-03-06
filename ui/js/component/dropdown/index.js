@@ -7,29 +7,7 @@ var Vue  = require('vue');
 
 var dom  = require('../../util/dom');
 var util = require('../../util/data');
-
-function treeify(data) {
-	var index = _.indexBy(data, 'value');
-	var roots = [];
-
-	for (var i = data.length - 1; i >= 0; i--) {
-		var d = data[i];
-
-		if (d.parent && index[d.parent]) {
-			var p = index[d.parent];
-
-			if (!p.children) {
-				p.children = [];
-			}
-
-			p.children.push(d);
-		} else {
-			roots.push(d);
-		}
-	}
-
-	return roots;
-}
+var treeify = require('../../data/transform/treeify');
 
 module.exports = Vue.extend({
 	template: require('./template.html'),
@@ -170,9 +148,7 @@ module.exports = Vue.extend({
 
 			default:
 				break;
-
 			}
-
 		},
 
 		invalidateSize: _.throttle(function () {
@@ -277,7 +253,7 @@ module.exports = Vue.extend({
 							offset: meta.offset + meta.limit
 						}, accumulator);
 					} else {
-						self.items   = treeify(accumulator);
+						self.items   = treeify(accumulator, 'value');
 						self.loading = false;
 
 						self.select(self.$options.defaults);
