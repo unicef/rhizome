@@ -3,6 +3,7 @@ from pprint import pprint
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
@@ -745,3 +746,16 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
         'indicator_id':indicator_id,'expected_value':expected_value
         ,'actual_value':actual_value,'sub_region_calculation_breakdown':sub_md_array}
         ,context_instance=RequestContext(request))
+
+####
+
+def api_campaign(request):
+
+    c_raw  = Campaign.objects.raw("""
+        SELECT * FROM campaign c;
+        """)
+
+    results = [{'id': c.id, 'slug':c.slug,'office_id':c.office_id,'start_date':str(c.start_date) } for c in c_raw]
+    response_data = {'data':results}
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

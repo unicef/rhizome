@@ -4,11 +4,13 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
+from django.views.generic.base import RedirectView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import debug
+from datapoints import views
 
 from source_data.api import EtlResource
 from tastypie.api import Api
@@ -20,19 +22,22 @@ v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
 v1_api.register(IndicatorResource())
-v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(EtlResource())
 v1_api.register(OfficeResource())
 v1_api.register(RegionPolygonResource())
-
-from django.views.generic.base import RedirectView
+# v1_api.register(CampaignResource())
 
 
 urlpatterns = patterns('',
-    ##
+    ## CUSTOM API ##
+    url(r'^api/v1/campaign/$', views.api_campaign, name='api_campaign'),
+
+
+    ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
+
     ##
     url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
     ##

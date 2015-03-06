@@ -121,7 +121,6 @@ class RegionPolygonResource(BaseNonModelResource):
         return data
 
 
-
 class IndicatorResource(BaseModelResource):
     '''Indicator Resource'''
 
@@ -133,25 +132,6 @@ class IndicatorResource(BaseModelResource):
             "id": ALL,
         }
 
-class CampaignResource(BaseModelResource):
-    '''Campaign Resource'''
-
-    office = fields.ToOneField(OfficeResource, 'office')
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Campaign.objects.all()
-        resource_name = 'campaign'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-            "office": ALL,
-        }
-
-    def dehydrate(self, bundle):
-
-        bundle.data['office'] = bundle.obj.office.id
-
-        return bundle
 
 class UserResource(BaseModelResource):
     '''User Resource'''
