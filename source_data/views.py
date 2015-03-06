@@ -35,6 +35,8 @@ def mark_doc_as_processed(request,document_id):
 
 def file_upload(request):
 
+    source_id = Source.objects.get(source_name='datapoint_upload').id
+
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
     if request.method == 'GET':
@@ -72,7 +74,8 @@ def file_upload(request):
             )
 
         created_by = request.user
-        newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
+        newdoc = Document.objects.create(docfile=to_upload,\
+            created_by=created_by,source_id=source_id)
         file_columns = get_doc_file_cols(to_upload)
 
         return render_to_response(

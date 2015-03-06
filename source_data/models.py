@@ -58,6 +58,7 @@ class Document(models.Model):
     source_datapoint_count = models.IntegerField(null=True)
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
+    source = models.ForeignKey(Source)
 
     class Meta:
         unique_together = ('docfile','doc_text')
