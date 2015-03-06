@@ -3,6 +3,7 @@ from pprint import pprint
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
@@ -745,3 +746,56 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
         'indicator_id':indicator_id,'expected_value':expected_value
         ,'actual_value':actual_value,'sub_region_calculation_breakdown':sub_md_array}
         ,context_instance=RequestContext(request))
+
+####
+
+def parse_url_args(request,keys):
+
+    request_meta = {}
+
+    for k in keys:
+
+        try:
+            request_meta[k] = request.GET[k]
+        except KeyError:
+            request_meta[k] = None
+
+    return request_meta
+
+def api_campaign(request):
+
+    meta_keys = ['id','region__in','start_date','limit','offset']
+
+    request_meta = parse_url_args(request,meta_keys)
+
+    if request_meta['region__in']:
+
+        c_raw = Campaign.objects.raw("""
+            SELECT * FROM campaign WHERE id in (
+                SELECT DISTINCT campaign_id FROM datapoint_with_computed
+                WHERE region_id IN (%s)
+            )
+            """,[request_meta['region__in']])
+
+    elif request_meta['id']:
+
+        c_raw  = Campaign.objects.raw("""
+            SELECT * FROM campaign c
+            WHERE id = %s
+            ;""",[request_meta['id'],request_meta['limit']\
+            ,request_meta['offset']])
+
+    else:
+
+        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c;""")
+
+    data = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
+        'start_date': str(c.start_date)} for c in c_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(data)}
+
+    response_data = {'data':data, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")

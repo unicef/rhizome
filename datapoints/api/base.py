@@ -50,6 +50,8 @@ class BaseNonModelResource(Resource):
                 .split(',')]
         except KeyError:
             pass
+        except ValueError:
+            pass
 
         ## REGION TYPE ##
         try:
@@ -59,20 +61,19 @@ class BaseNonModelResource(Resource):
 
         except KeyError:
             pass
-
+        except ValueError:
+            pass
         except ObjectDoesNotExist:
-
             all_r_types = RegionType.objects.all().values_list('name',flat=True)
-
             err = 'region type doesnt exist. options are' + str(all_r_types)
-
             return err, []
-
 
         try:
             self.parent_region__in = [int(r) for r in query_dict['parent_region__in']\
                 .split(',')]
         except KeyError:
+            pass
+        except ValueError:
             pass
 
         return None
