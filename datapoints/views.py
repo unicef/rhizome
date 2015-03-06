@@ -749,13 +749,39 @@ def qa_failed(request,region_id,campaign_id,indicator_id):
 
 ####
 
+def parse_url_args(request,keys):
+
+    request_meta = {}
+
+    for k in keys:
+
+        try:
+            request_meta[k] = request.GET[k]
+        except KeyError:
+            request_meta[k] = None
+
+    return request_meta
+
 def api_campaign(request):
 
-    c_raw  = Campaign.objects.raw("""
-        SELECT * FROM campaign c;
-        """)
+    meta_keys = ['id','region__in','start_date','limit','offset']
 
-    results = [{'id': c.id, 'slug':c.slug,'office_id':c.office_id,'start_date':str(c.start_date) } for c in c_raw]
+    request_meta = parse_url_args(request,meta_keys)
+
+    c_raw  = Campaign.objects.raw("""
+        SELECT * FROM campaign c
+        LIMIT %s
+        OFFSET %s;""",[request_meta['limit'],request_meta['offset']])
+
+    results = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
+        'start_date': str(c.start_date)} for c in c_raw]
+
     response_data = {'data':results}
+    response_data['meta'] = {
+        'limit': request_meta['limit'],
+        'offset': request_meta['offset'],
+        'total_count': len(results)
+    }
+
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
