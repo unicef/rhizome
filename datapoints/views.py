@@ -16,7 +16,7 @@ import gspread
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
-from polio.secrets import gdoc_u, gdoc_p
+# from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -582,7 +582,8 @@ def load_gdoc_data(request):
 
     err_msg = 'none!'
 
-    gc = gspread.login(gdoc_u,gdoc_p)
+    # gc = gspread.login(gdoc_u,gdoc_p)
+    gc = gspread.login('fix','me')
     worksheet = gc.open("Dashboard QA | February 2015").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
