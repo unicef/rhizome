@@ -277,15 +277,11 @@ class EtlJobIndex(generic.ListView):
 
 def un_map(request,source_object_id,db_model,document_id):
 
-    print source_object_id
-
-    print '-----'
-
     if db_model == 'region':
 
         RegionMap.objects.get(source_region_id=source_object_id).delete()
 
-    elif db_model == 'undicator':
+    elif db_model == 'indicator':
 
         IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
 

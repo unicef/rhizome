@@ -19,6 +19,7 @@
             <th>Master DataPoint Count</th>
             <th>Master Indicator ID</th>
             <th>Sync Indicator Data</th>
+            <th>Un Map</th>
         </tr>
     </thead>
         {% if source_indicator_breakdown %}
@@ -34,12 +35,10 @@
                 <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>Map!</th>
                 {% else %}
                   <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
+                  <th><a href="{% url 'source_data:un_map' si.source_object_id 'indicator' document_id %}"</a> UnMap!</th>
+
                 {% endif %}
 
-                {% if si.master_indicator_id == -1 %}
-                  <th> please map indicator
-                {% else %}
-                {% endif %}
 
             </tr>
             {% endfor %}
@@ -116,6 +115,8 @@
                     <th><a href="{% url 'source_data:map_region' sr.source_object_id %}"</a> Map!</th>
                     {% else %}
                     <th>{{ sr.master_object_id }}</th>
+                    <th><a href="{% url 'source_data:un_map' sr.source_object_id 'region' document_id %}"</a> UnMap!</th>
+
                     {% endif %}
                 </tr>
                 {% endfor %}
