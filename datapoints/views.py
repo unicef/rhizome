@@ -768,7 +768,6 @@ def api_campaign(request):
 
     request_meta = parse_url_args(request,meta_keys)
 
-
     if request_meta['region__in']:
 
         c_raw = Campaign.objects.raw("""
@@ -777,15 +776,18 @@ def api_campaign(request):
                 WHERE region_id IN (%s)
             )
             """,[request_meta['region__in']])
-    else:
-        pass
+
+    elif request_meta['id']:
+
         c_raw  = Campaign.objects.raw("""
             SELECT * FROM campaign c
             WHERE id = %s
-            LIMIT %s
-            OFFSET %s;""",[request_meta['id'],request_meta['limit']\
+            ;""",[request_meta['id'],request_meta['limit']\
             ,request_meta['offset']])
 
+    else:
+
+        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c;""")
 
     data = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
         'start_date': str(c.start_date)} for c in c_raw]
