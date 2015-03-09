@@ -948,6 +948,22 @@ header {
   font-size: 6pt;
   line-height: 1;
 }
+#management-dashboard #polio-cases-ytd svg {
+  width: 6.843cm;
+  height: 3.894cm;
+}
+#management-dashboard #immunity-gap svg {
+  width: 6.843cm;
+  height: 4.253cm;
+}
+#management-dashboard #inaccessible-children svg {
+  width: 8.714cm;
+  height: 3.27cm;
+}
+#management-dashboard svg.bullet {
+  width: 3.247cm;
+  height: 1.022cm;
+}
 
 .logo {
   display: inline;

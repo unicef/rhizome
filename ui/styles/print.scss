@@ -15,18 +15,6 @@ $include-html-block-grid-classes: false;
 	margin: 0;
 }
 
-// .no-ie {
-	// svg {
-		// width  : 100% !important;
-		// height : auto !important;
-	// }
-// }
-
-//svg.bullet {
-	//width: 1.191in;
-	//height: 0.401in;
-//}
-
 body {
 	margin: 0.25in;
 }
@@ -71,6 +59,26 @@ header {
 		display    : inline-block;
 		font-size  : 6pt;
 		line-height: 1;
+	}
+
+	#polio-cases-ytd svg {
+		width : 6.843cm;
+		height: 3.894cm;
+	}
+
+	#immunity-gap svg {
+		width : 6.843cm;
+		height: 4.253cm;
+	}
+
+	#inaccessible-children svg {
+		width: 8.714cm;
+		height: 3.27cm;
+	}
+
+	svg.bullet {
+		width: 3.247cm;
+		height: 1.022cm;
 	}
 }
 

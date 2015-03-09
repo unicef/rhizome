@@ -83,6 +83,11 @@ svg {
 				fill: #666666;
 			}
 		}
+
+		label {
+			text-shadow: none;
+			fill       : white;
+		}
 	}
 
 	.point {
