@@ -52,7 +52,10 @@ function endPoint(path, mode) {
 					} else {
 						fulfill({
 							meta: res.body.meta || {},
-							objects: res.body.objects || _.omit(res.body, 'meta')
+							// FIXME: Checking for res.body.data because the campaign API
+							// changed its response format so it no longer includes an
+							// 'objects' property. This should only be a temporary workaround
+							objects: res.body.objects || res.body.data || _.omit(res.body, 'meta')
 						});
 					}
 				});
