@@ -34,25 +34,29 @@
 						v-if="newCases != null">
 						<p id="new-polio-cases">{{ newCases }} new {{ newCases | pluralize case }}</p>
 					</div>
-					<div v-component="chart-ytd"
-							 data-aspect="1.8"
-							 data-margin-bottom="24"
-							 data-indicators="[168]"
-							 data-period="2 years"
-							 v-with="campaign: campaign, region: region"></div>
+					<div
+						id="polio-cases-ytd"
+						v-component="chart-ytd"
+						data-aspect="1.757"
+						data-margin-bottom="24"
+						data-indicators="[168]"
+						data-period="2 years"
+						v-with="campaign: campaign, region: region"></div>
 				</div>
 			</section>
 
 			<section>
 				<h4>Immunity Gap</h4>
-				<svg v-component="chart-stacked-area"
-						     data-margin-bottom="24"
-						     data-aspect="1.8"
-						     data-margin-bottom="12"
-						     data-duration="2 years"
-						     data-indicators="[431,432]"
-						     data-format-string="%"
-						     v-with="region: region, campaign: campaign"></svg>
+				<svg
+					id="immunity-gap"
+					v-component="chart-stacked-area"
+					data-margin-bottom="24"
+					data-aspect="1.609"
+					data-margin-bottom="12"
+					data-duration="2 years"
+					data-indicators="[431,432]"
+					data-format-string="%"
+					v-with="region: region, campaign: campaign"></svg>
 			</section>
 		</div>
 
@@ -64,25 +68,29 @@
 
 					<section>
 						<h4>Missed Children</h4>
-						<svg v-component="chart-stacked-area"
-								 data-margin-bottom="24"
-								 data-aspect="1.618"
-								 data-margin-bottom="12"
-								 data-indicators="[166,164,167,165]"
-								 data-duration="2 years"
-								 data-format-string=".1%"
-								 v-with="region: region, campaign: campaign"></svg>
+						<svg
+							id="missed-children"
+							v-component="chart-stacked-area"
+							data-margin-bottom="24"
+							data-aspect="1.757"
+							data-margin-bottom="12"
+							data-indicators="[166,164,167,165]"
+							data-duration="2 years"
+							data-format-string=".1%"
+							v-with="region: region, campaign: campaign"></svg>
 					</section>
 
 					<section>
 						<h4>Conversions</h4>
-						<div v-component="chart-line"
-						     data-aspect="1.618"
-						     data-margin-bottom="24"
-						     data-period="2 years"
-						     data-indicators="[187,189]"
-						     data-format-string="%"
-						     v-with="campaign: campaign, region: region"></div>
+						<div
+							id="conversions"
+							v-component="chart-line"
+						 	data-aspect="1.609"
+						 	data-margin-bottom="24"
+						 	data-period="2 years"
+						 	data-indicators="[187,189]"
+						 	data-format-string="%"
+						 	v-with="campaign: campaign, region: region"></div>
 					</section>
 
 					<section>
@@ -173,7 +181,7 @@
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="indicator: supply">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -185,7 +193,7 @@
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="indicator: polio">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -198,7 +206,7 @@
 				<li v-repeat="indicator: resources"
 				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -208,7 +216,7 @@
 		<div class="medium-2 columns">
 			<h3>Inaccessible Children</h3>
 			<div v-component="chart-line"
-			     data-aspect="1.618"
+			     data-aspect="2.665"
 			     data-margin-bottom="24"
 			     data-period="2 years"
 			     data-indicators="[158]"

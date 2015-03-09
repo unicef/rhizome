@@ -1,5 +1,8 @@
 <div class="chart">
-	<svg v-attr="width: width, height: height">
+	<svg v-attr="
+		viewBox: '0 0 ' + width + ' ' + height,
+		width  : width,
+		height : height">
 
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
 
