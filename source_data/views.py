@@ -35,6 +35,8 @@ def mark_doc_as_processed(request,document_id):
 
 def file_upload(request):
 
+    source_id = Source.objects.get(source_name='datapoint_upload').id
+
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
     if request.method == 'GET':
@@ -72,7 +74,8 @@ def file_upload(request):
             )
 
         created_by = request.user
-        newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
+        newdoc = Document.objects.create(docfile=to_upload,\
+            created_by=created_by,source_id=source_id)
         file_columns = get_doc_file_cols(to_upload)
 
         return render_to_response(
@@ -272,19 +275,19 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
-def un_map(request,map_id,db_model,document_id):
+def un_map(request,source_object_id,db_model,document_id):
 
-    if db_model == 'Region':
+    if db_model == 'region':
 
-        RegionMap.objects.get(id=map_id).delete()
+        RegionMap.objects.get(source_region_id=source_object_id).delete()
 
-    elif db_model == 'Indicator':
+    elif db_model == 'indicator':
 
-        IndicatorMap.objects.get(id=map_id).delete()
+        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
 
-    elif db_model == 'Campaign':
+    elif db_model == 'campaign':
 
-        CampaignMap.objects.get(id=map_id).delete()
+        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
 
 
     return HttpResponseRedirect(reverse('source_data:document_review'\
