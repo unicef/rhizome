@@ -108,6 +108,12 @@ class BaseNonModelResource(Resource):
                 region_type_id = self.region_type_id)\
                 .values_list('region_id',flat=True)
 
+            if len(region_ids) == 0:
+
+                err = 'no regions of region_type_id: %s exists under region_id\
+                    %s ' % (self.region_type_id, self.parent_region__in)
+
+                return err, region_ids
 
         ## CASE 3 #
         elif self.parent_region__in is not None and self.region_type_id is None:
