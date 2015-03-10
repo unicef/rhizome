@@ -493,9 +493,8 @@ def agg_datapoint(request):
         0 : 'settlement',
         1 : 'sub-district',
         2 : 'district',
-        3 : 'district',
+        3 : 'district', # Kirachi
         4 : 'province',
-        # 4 : 'country',
     }
 
     for k,v in region_loop.iteritems():
@@ -789,13 +788,14 @@ def api_campaign(request):
 
         c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c;""")
 
-    data = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
-        'start_date': str(c.start_date)} for c in c_raw]
+    objects = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
+        'start_date': str(c.start_date), 'end_date': str(c.end_date )} \
+            for c in c_raw]
 
     meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(data)}
+        'total_count': len(objects)}
 
-    response_data = {'data':data, 'meta':meta}
+    response_data = {'objects':objects, 'meta':meta}
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
