@@ -23,8 +23,7 @@ class Migration(SchemaMigration):
         	    "history_date" timestamp with time zone NOT NULL,
         	    "history_user_id" integer REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED,
         	    "history_type" varchar(1) NOT NULL
-        )
-        ;
+        );
 
         GRANT ALL PRIVILEGES ON datapoints_historicaldatapointentry TO djangoapp;
         GRANT USAGE, SELECT ON SEQUENCE datapoints_historicaldatapointentry_history_id_seq TO djangoapp;
