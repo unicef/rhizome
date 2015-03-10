@@ -60,6 +60,8 @@ class VcmSummaryTransform(object):
         self.source_datapoints = []
         self.document_id = self.get_document_id()
 
+        self.process_status_id = ProcessStatus.objects\
+            .get(status_text='SUCCESS_INSERT').id
 
     def get_document_id(self):
 
@@ -73,6 +75,7 @@ class VcmSummaryTransform(object):
 
 
     def vcm_summary_to_source_datapoints(self):
+
 
         try:
             to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
@@ -90,12 +93,6 @@ class VcmSummaryTransform(object):
 
                 self.process_row(row_dict,row_number)
 
-                process_status_id = ProcessStatus.objects.get(status_text='SUCCESS_INSERT').id
-                row_obj = VCMSummaryNew.objects.get(key=row_dict['key'])
-
-                row_obj.process_status_id = process_status_id
-                row_obj.save()
-
         except Exception:
             err = traceback.format_exc()
             return err, None
@@ -105,41 +102,45 @@ class VcmSummaryTransform(object):
 
     def process_row(self,row_dict,row_number):
 
+        row_batch = []
 
-        # row level variables
         region_code = row_dict['settlementcode']
         campaign_string = row_dict['date_implement']
         source_guid = row_dict['key']
 
-        for indicator_string, cell_value in row_dict.iteritems():
+        for cell_no, (indicator_string, cell_value) in enumerate(row_dict.iteritems()):
 
-            self.process_cell(region_code,campaign_string,indicator_string,\
-                cell_value,source_guid,row_number)
+            if cell_value != "" and cell_value != "nan":
+                pass
 
 
-    def process_cell(self,region_code,campaign_string,indicator_string,\
-            cell_value,src_key,row_number):
+            else:
 
-        if cell_value == "" or cell_value == "nan":
-            return
+                cell_guid =  'doc_id: ' + str(self.document_id) + ' row_no: ' + \
+                    str(row_number) + ' cell_no: ' + str(cell_no) \
+                    + ' indicator_string: ' + str(indicator_string)
 
-        cleaned_cell_value = self.clean_cell_value(cell_value)
 
-        try:
-            sdp = SourceDataPoint.objects.create(
-                region_code = region_code,
-                campaign_string = campaign_string,
-                indicator_string =  indicator_string,
-                cell_value = cleaned_cell_value,
-                row_number = row_number,
-                source = Source.objects.get(source_name='odk'),
-                document_id = self.document_id,
-                source_guid = src_key,
-                status = ProcessStatus.objects.get(status_text='TO_PROCESS')
-            )
-            self.source_datapoints.append(sdp)
-        except IntegrityError:
-            pass
+                cleaned_cell_value = self.clean_cell_value(cell_value)
+
+                sdp = SourceDataPoint(**{
+                    'region_code' : region_code,
+                    'campaign_string' : campaign_string,
+                    'indicator_string' : indicator_string,
+                    'cell_value' : cleaned_cell_value,
+                    'row_number' : row_number,
+                    'source_id': self.source_id,
+                    'document_id' : self.document_id,
+                    'source_guid' : source_guid,
+                    'status_id' : self.process_status_id,
+                    'guid': cell_guid
+                })
+                row_batch.append(sdp)
+
+            try:
+                SourceDataPoint.objects.bulk_create(row_batch)
+            except IntegrityError:
+                pass
 
 
     def clean_cell_value(self,cell_value):
