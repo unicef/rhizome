@@ -205,12 +205,6 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     permission_required = 'datapoints.change_indicator'
 
 
-class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
-
-    model = Indicator
-    success_url = reverse_lazy('indicators:indicator_index')
-    template_name = 'indicators/confirm_delete.html'
-    permission_required = 'datapoints.delete_indicator'
 
     ####################################
     ###### CALCULATED INDICATORS #######
