@@ -49,6 +49,7 @@ class DataPointResource(BaseNonModelResource):
     def get_object_list(self,request):
         '''
         '''
+        self.error = None
 
         results = []
 

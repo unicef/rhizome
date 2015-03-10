@@ -5,7 +5,7 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 
-from datapoints.models import RegionType,Region
+from datapoints.models import RegionType,Region,RegionHeirarchy
 
 class BaseModelResource(ModelResource):
     '''
@@ -41,6 +41,7 @@ class BaseNonModelResource(Resource):
 
     def parse_url_strings(self,query_dict):
 
+
         self.region__in, self.region_type_id, self.parent_region__in = \
             None, None, None
 
@@ -55,17 +56,13 @@ class BaseNonModelResource(Resource):
 
         ## REGION TYPE ##
         try:
-
             self.region_type_id = RegionType.objects.get(name = query_dict\
-                ['region_type']).id
-
+                ['level'].lower()).id
         except KeyError:
-            pass
-        except ValueError:
             pass
         except ObjectDoesNotExist:
             all_r_types = RegionType.objects.all().values_list('name',flat=True)
-            err = 'region type doesnt exist. options are' + str(all_r_types)
+            err = 'region type doesnt exist. options are:  %s' % all_r_types
             return err, []
 
         try:
@@ -110,6 +107,7 @@ class BaseNonModelResource(Resource):
                 contained_by_region_id__in = self.parent_region__in, \
                 region_type_id = self.region_type_id)\
                 .values_list('region_id',flat=True)
+
 
         ## CASE 3 #
         elif self.parent_region__in is not None and self.region_type_id is None:
