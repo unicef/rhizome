@@ -8,6 +8,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 
 from source_data.models import *
+from source_data.etl_tasks.transform_odk import VcmSummaryTransform 
 from datapoints.models import Source
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -30,6 +31,8 @@ class EtlResource(ModelResource):
         '''this is the only method from tastypie that is overriden all logic
         for the etl api is dealt with inside this method'''
 
+        ## http://localhost:8000/api/v1/etl/?task=odk_refresh_vcm_summary_work_table&cron_guid=john_is_testing
+
         task_string = request.GET['task']
         cron_guid = request.GET['cron_guid']
 
@@ -47,8 +50,6 @@ class EtlResource(ModelResource):
         et = EtlTask(task_string,created.guid)
 
         self.err, self.data = et.err, et.data
-
-        print self.err, self.data
 
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
@@ -71,13 +72,10 @@ class EtlTask(object):
 
     def __init__(self,task_string,task_guid):
 
-        print 'initializing etl task\n'
-
         self.task_guid = task_guid
         self.user_id = User.objects.get(username='odk').id
 
         self.function_mappings = {
-            'parse_geo_json' :self.parse_geo_json,
             'test_api' : self.test_api,
             'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
             'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,

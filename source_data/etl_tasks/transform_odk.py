@@ -24,7 +24,7 @@ class VcmSettlementTransform(object):
     def refresh_source_regions(self):
 
         try:
-            region_strings = []
+            region_codes = []
 
             to_process_df = pd.DataFrame(list(VCMSettlement.objects.filter\
                 (process_status__status_text='TO_PROCESS').values()))
@@ -34,16 +34,16 @@ class VcmSettlementTransform(object):
             for row in to_process_df.values:
                 row_dict = {}
 
-                row_dict['region_string'] = row[cols.index('settlementname')]
+                row_dict['region_code'] = row[cols.index('settlementname')]
                 row_dict['settlement_code'] = row[cols.index('settlementcode')]
                 row_dict['lat'] = row[cols.index('settlementgps_latitude')]
                 row_dict['lon'] = row[cols.index('settlementgps_longitude')]
 
                 row_data = json.dumps(row_dict)
 
-                region_strings.append(row_data)
+                region_codes.append(row_data)
 
-            mappings = map_regions(region_strings,self.source_id)
+            mappings = map_regions(region_codes,self.source_id)
         except Exception:
             err = traceback.format_exc()
             return err, None
@@ -65,7 +65,8 @@ class VcmSummaryTransform(object):
 
         doc, created = Document.objects.get_or_create(
             docfile = odk_settings.EXPORT_DIRECTORY + 'New_VCM_Summary.csv',
-            created_by_id = User.objects.get(username='odk').id
+            created_by_id = User.objects.get(username='odk').id,
+            source_id = Source.objects.get(source_name='odk').id,
         )
 
         return doc.id
@@ -106,17 +107,17 @@ class VcmSummaryTransform(object):
 
 
         # row level variables
-        region_string = row_dict['settlementcode']
+        region_code = row_dict['settlementcode']
         campaign_string = row_dict['date_implement']
         source_guid = row_dict['key']
 
         for indicator_string, cell_value in row_dict.iteritems():
 
-            self.process_cell(region_string,campaign_string,indicator_string,\
+            self.process_cell(region_code,campaign_string,indicator_string,\
                 cell_value,source_guid,row_number)
 
 
-    def process_cell(self,region_string,campaign_string,indicator_string,\
+    def process_cell(self,region_code,campaign_string,indicator_string,\
             cell_value,src_key,row_number):
 
         if cell_value == "" or cell_value == "nan":
@@ -126,7 +127,7 @@ class VcmSummaryTransform(object):
 
         try:
             sdp = SourceDataPoint.objects.create(
-                region_string = region_string,
+                region_code = region_code,
                 campaign_string = campaign_string,
                 indicator_string =  indicator_string,
                 cell_value = cleaned_cell_value,
