@@ -1,7 +1,9 @@
 'use strict';
 
-var _      = require('lodash');
-var d3     = require('d3');
+var _     = require('lodash');
+var d3    = require('d3');
+
+var label = require('../renderer/label');
 
 function hoverLine() {
 	var datapoints = [];
@@ -18,6 +20,10 @@ function hoverLine() {
 	var _value     = function (d) {
 		return d.value;
 	};
+
+	// Use this to keep track of what value we're currently hovering over so we
+	// can bail out of onMouseMove if the movement wouldn't change our display
+	var _currentTarget = null;
 
 	function chart(selection) {
 		selection
@@ -175,6 +181,12 @@ function hoverLine() {
 			}
 		}
 
+		if (data[0] === _currentTarget) {
+			return;
+		}
+
+		_currentTarget = data[0];
+
 		var svg  = d3.select(this);
 		var line = svg.select('.annotation').selectAll('line')
 			.data(data);
@@ -211,12 +223,12 @@ function hoverLine() {
 			.style('opacity', data.length ? 0 : 1);
 
 		// X-axis label
-		var label = svg
+		var xLabel = svg
 			.select('.annotation')
 			.selectAll('.axis')
 			.data(data);
 
-		label.enter()
+		xLabel.enter()
 			.append('text')
 			.style({
 				'text-anchor': 'middle',
@@ -228,7 +240,7 @@ function hoverLine() {
 				'transform': axisTranslate
 			});
 
-		label
+		xLabel
 			.text(function (d) {
 				return xFormat(d);
 			})
@@ -237,15 +249,27 @@ function hoverLine() {
 			.attr('transform', axisTranslate)
 			.style('opacity', 1);
 
-		label.exit()
+		xLabel.exit()
 			.transition()
 			.duration(300)
 			.style('opacity', 0)
 			.remove();
 
-		var labelData = datapoints.filter(function (d) {
-			return x(d) === data[0];
-		});
+		var labelData = _(datapoints)
+			.filter(function (d) {
+				return x(d) === data[0];
+			})
+			.map(function (d) {
+				var name = seriesName ? seriesName(d) + ' ' : '';
+
+				return {
+					x   : xScale(x(d)),
+					y   : yScale(y(d)),
+					text: name + yFormat(_value(d))
+				};
+			})
+			.sortBy('y')
+			.value();
 
 		// Use a g element to position the labels horizontally at the same
 		// position based on the width of the longest label
@@ -257,64 +281,15 @@ function hoverLine() {
 			.append('g')
 			.attr('class', 'label-group');
 
-		labelGroup.exit()
-			.transition()
-			.duration(300)
-			.style('opacity', 0)
-			.remove();
-
-		labelGroup.each(function (datum) {
-
-			function translate(d) {
-				// Ensure that the label is at least 2 unites above the bottom
-				// of the chart
-				var yTranslate = Math.min(height - 2, yScale(y(d)))
-				return 'translate(0,' + yTranslate + ')';
-			}
-
-			// jshint validthis:true
-			var g = d3.select(this);
-			var l = g.selectAll('.value.label')
-				.data(datum);
-
-			// Create all the necessary text elements and set their content so we
-			// will know what the bounding box is for the labels
-			l.enter()
-				.append('text')
-				.attr({
-					'class'    : 'value label',
-					'transform': translate
-				})
-				.style('opacity', 0);
-
-			l.text(function (d) {
-					var name = seriesName ? seriesName(d) + ' ' : '';
-					return name + yFormat(_value(d));
-				});
+		labelGroup.selectAll('.hover.label')
+			.data(function (d) { return d; })
+			.call(label().addClass('hover').width(width).height(height));
 
 			// Determine the label orientation based on the bounding box. We prefer
 			// left-aligned, but if that gets cut off, we will right-align the text
-			var box    = this.getBBox();
-			var pos    = xScale(data[0]);
-			var anchor = (pos + box.width + 2) < width ? 'start' : 'end';
-
-			g.transition()
-				.duration(300)
-				.attr('transform', 'translate(' + pos + ',0)');
-
-			l.attr('dx', anchor === 'start' ? '2' : '-2')
-				.transition()
-				.duration(300)
-				.style('text-anchor', anchor)
-				.style('opacity', 1);
-
-			l.exit()
-				.transition()
-				.duration(300)
-				.attr('transform', translate)
-				.style('opacity', 0)
-				.remove();
-		});
+			// var box    = this.getBBox();
+			// var pos    = xScale(data[0]);
+			// var anchor = (pos + box.width + 2) < width ? 'start' : 'end';
 
 		svg.selectAll('.series.label')
 			.transition()
@@ -326,7 +301,9 @@ function hoverLine() {
 		/* jshint validthis: true */
 		var svg = d3.select(this);
 
-		svg.select('.annotation').selectAll('line, .value, .axis')
+		_currentTarget = null;
+
+		svg.select('.annotation').selectAll('line, .hover.label, .axis')
 			.transition()
 			.duration(300)
 			.style('opacity', 0)

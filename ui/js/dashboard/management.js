@@ -1,6 +1,7 @@
 'use strict';
 
 var _      = require('lodash');
+var d3     = require('d3');
 var moment = require('moment');
 
 var api    = require('data/api');
@@ -160,8 +161,6 @@ module.exports = {
 						})
 						.reverse()
 						.value();
-
-					console.debug(self.inaccessibility)
 				});
 		},
 	},
