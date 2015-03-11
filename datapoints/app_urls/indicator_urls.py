@@ -20,11 +20,6 @@ urlpatterns = [
     url(r'^update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
 
-    ## DELETE ##
-    url(r'^delete/(?P<pk>[0-9]+)/$', views.IndicatorDeleteView.as_view(),
-        name='delete_indicator'),
-
-
     ### CALCULATED ###
 
     ## INDEX ##

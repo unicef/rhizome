@@ -205,12 +205,6 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     permission_required = 'datapoints.change_indicator'
 
 
-class IndicatorDeleteView(PermissionRequiredMixin,generic.DeleteView):
-
-    model = Indicator
-    success_url = reverse_lazy('indicators:indicator_index')
-    template_name = 'indicators/confirm_delete.html'
-    permission_required = 'datapoints.delete_indicator'
 
     ####################################
     ###### CALCULATED INDICATORS #######
@@ -787,7 +781,8 @@ def api_campaign(request):
 
     else:
 
-        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c;""")
+        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c ORDER BY \
+            c.start_date desc;""")
 
     objects = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
         'start_date': str(c.start_date), 'end_date': str(c.end_date )} \

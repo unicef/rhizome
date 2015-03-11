@@ -54,7 +54,7 @@ class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d',null=True)
     doc_text = models.TextField(null=True)
     created_by = models.ForeignKey(User)
-    guid = models.CharField(max_length=40)
+    guid = models.CharField(max_length=255)
     source_datapoint_count = models.IntegerField(null=True)
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
@@ -89,7 +89,7 @@ class SourceDataPoint(models.Model):
     document = models.ForeignKey(Document)
     source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
-    guid = models.CharField(unique=True, max_length=40)
+    guid = models.CharField(unique=True, max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
 
