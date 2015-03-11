@@ -195,7 +195,7 @@ module.exports = Vue.extend({
 		},
 
 		invert: function () {
-			var selection = {}
+			var selection = {};
 
 			this.forAll(function (item) {
 				if (!this.selection.hasOwnProperty(item.value)) {

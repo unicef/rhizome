@@ -111,7 +111,9 @@ module.exports = {
 			var timerStarted = this._timer && this._parentEl === options.el;
 
 			// Don't reset the timer if one's already started
-			if (timerStarted) return;
+			if (timerStarted) {
+				return;
+			}
 
 			this._parentEl = options.el;
 

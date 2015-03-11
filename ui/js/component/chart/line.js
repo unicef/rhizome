@@ -75,11 +75,10 @@ module.exports = {
 			var x      = this.xScale;
 			var y      = this.yScale;
 			var series = this.series;
-			var target = this.highlight || this.campaign.date;
 			var fmt    = this.yFmt;
 
 			var labels = _.map(series, function (d) {
-			var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
+				var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 				return {
 					text : d.name + ' ' + fmt(last.value),
@@ -192,7 +191,6 @@ module.exports = {
 			var yScale     = this.yScale;
 			var domain     = xScale.domain();
 			var range      = yScale.domain();
-			var indicators = _.indexBy(this.indicators, 'id');
 
 			// Set up the hover interaction
 			svg.select('svg')
