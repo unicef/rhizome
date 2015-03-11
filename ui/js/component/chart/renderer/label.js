@@ -119,15 +119,33 @@ function label() {
 		}
 	}
 
+	/**
+	 * @private
+	 * Return the text-anchor for a set of labels
+	 *
+	 * Calculates the text-anchor ("start" or "end") for a set of labels so that
+	 * all labels are oriented the same way, and so that labels don't get clipped
+	 * by the edge of the SVG. Prefer "start" over "end."
+	 */
+	function textAnchor(labels) {
+		var anchor = 'start';
+
+		labels.each(function (d) {
+			var bbox = this.getBBox();
+
+			if (d.x + bbox.width > width) {
+				anchor = 'end';
+			}
+		});
+
+		return anchor;
+	}
+
 	function chart(labels) {
 		labels.enter()
 			.append('text')
-			.style({
-				'opacity'    : 0,
-				'text-anchor': 'end'
-			})
+			.style('opacity', 0)
 			.attr({
-				'dx': '-4',
 				'dy': '-4',
 				'x' : x,
 				'y' : y
@@ -148,12 +166,16 @@ function label() {
 			splay(labels);
 
 			// Redraw everything with new positions to fix overlaps
+			var anchor = textAnchor(labels);
+			var dx     = anchor === 'start' ? '4' : '-4'
 			labels
 				.transition()
 				.duration(transitionSpeed)
 				.attr({
-					'x': x,
-					'y': y
+					'x'          : x,
+					'y'          : y,
+					'dx'         : dx,
+					'text-anchor': anchor
 				})
 				.style('opacity', 1);
 
