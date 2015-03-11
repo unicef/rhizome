@@ -1,11 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<![if !IE]>
-<html lang="en" class="no-ie">
-<![endif]>
-<!--[if IE]>
-<html lang="en" class="ie">
-<![endif]-->
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 
@@ -54,6 +49,13 @@
 
 		<div id="tooltip" v-component="vue-tooltip"></div>
 	</div>
+
+	<script>
+	if ('ActiveXObject' in window) {
+		var body = document.getElementsByTagName('body')[0];
+		body.classList.add('ie');
+	}
+	</script>
 
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).
