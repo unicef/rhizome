@@ -105,8 +105,9 @@ svg {
 	}
 
 	.region {
-		fill: $smoke;
-		stroke: $white;
+		fill: $white;
+		stroke: $aluminum;
+		stroke-width: 1px;
 	}
 
 	.clickable {
