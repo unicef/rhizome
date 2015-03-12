@@ -27,13 +27,13 @@ v1_api.register(OfficeResource())
 v1_api.register(EtlResource())
 v1_api.register(OfficeResource())
 v1_api.register(RegionPolygonResource())
-# v1_api.register(CampaignResource())
+v1_api.register(CampaignResource())
 
 
 urlpatterns = patterns('',
     ## CUSTOM API ##
-    url(r'^api/v1/campaign/$', views.api_campaign, name='api_campaign'),
-
+    url(r'^api/v1/campaign_from_vw/$', views.api_campaign, name='campaign_from_vw'),
+    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),

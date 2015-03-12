@@ -1,13 +1,13 @@
 ﻿
-DROP FUNCTION IF EXISTS fn_calc_datapoint();
-CREATE FUNCTION fn_calc_datapoint() 
-RETURNS TABLE(id int)
-    AS $$ 
+DROP FUNCTION IF EXISTS fn_calc_datapoint(indicator_id int);
+CREATE FUNCTION fn_calc_datapoint(indicator_id int) 
+RETURNS TABLE(id int) AS $$    
+  
+	-- delete before reinsert --
+	DELETE FROM  datapoint_with_computed
+	WHERE indicator_id = $1;
 
-	DROP INDEX IF EXISTS dwc_uq_ix;
-
-	TRUNCATE TABLE datapoint_with_computed;
-
+	-- insert agg data before calculating --
    	INSERT INTO datapoint_with_computed
     	(indicator_id,region_id,campaign_id,value,is_agg,is_calc)
 
@@ -18,11 +18,10 @@ RETURNS TABLE(id int)
     		,value
     		,is_agg
     		,CAST(0 as BOOLEAN) as is_calc
-    	FROM agg_datapoint;
+    	FROM agg_datapoint
+    	WHERE indicator_id = $1;
 
-    	CREATE UNIQUE INDEX  dwc_uq_ix on datapoint_with_computed (region_id, indicator_id, campaign_id);
-
-        ---- SUM OF PARTS ------
+--         ---- SUM OF PARTS ------
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,is_calc)
 
@@ -36,6 +35,7 @@ RETURNS TABLE(id int)
         INNER JOIN calculated_indicator_component cic
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
+        WHERE cic.indicator_id = $1
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
         ----- PART / WHOLE ------
@@ -62,7 +62,8 @@ RETURNS TABLE(id int)
         INNER JOIN datapoint_with_computed d_whole
             ON whole.indicator_component_id = d_whole.indicator_id
             AND d_part.campaign_id = d_whole.campaign_id
-            AND d_part.region_id = d_whole.region_id;
+            AND d_part.region_id = d_whole.region_id
+            WHERE part.indicator_id = $1;
 
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,is_calc)
@@ -84,6 +85,7 @@ RETURNS TABLE(id int)
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'PART_OF_DIFFERENCE'
+          	AND cic.indicator_id = $1
           )num_part
 
           INNER JOIN (
@@ -97,6 +99,7 @@ RETURNS TABLE(id int)
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE'
+		AND cic.indicator_id = $1
 
           )num_whole
           ON num_part.master_indicator_id = num_whole.master_indicator_id
@@ -115,18 +118,21 @@ RETURNS TABLE(id int)
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
+		AND cic.indicator_id = $1
           )denom
           ON num_whole.region_id = denom.region_id
           AND num_whole.master_indicator_id = denom.master_indicator_id
-         AND num_whole.campaign_id = denom.campaign_id;
+          AND num_whole.campaign_id = denom.campaign_id
+          AND num_whole.master_indicator_id = $1;
 
         UPDATE datapoint_with_computed
-        SET value = ROUND(CAST(value AS NUMERIC),3);
+        SET value = ROUND(CAST(value AS NUMERIC),3)
+        WHERE indicator_id = $1;
 
-        SELECT id FROM datapoint_with_computed LIMIT 1;
+        SELECT id FROM datapoint_with_computed 
+	WHERE indicator_id = $1
+	LIMIT 1;
 
     $$
+    
     LANGUAGE SQL;
-
---SELECT * FROM fn_calc_datapoint()
-

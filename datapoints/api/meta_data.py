@@ -14,6 +14,12 @@ class OfficeResource(BaseModelResource):
         queryset = Office.objects.all()
         resource_name = 'office'
 
+class CampaignResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+
+        queryset = DataPointAbstracted.objects.all()
+        resource_name = 'campaign'
 
 class RegionResource(BaseModelResource):
     '''Region Resource'''
@@ -21,7 +27,7 @@ class RegionResource(BaseModelResource):
     region_type_id = fields.IntegerField(attribute='region_type_id')
     parent_region_id = fields.IntegerField(attribute='parent_region_id',null=True,blank=True)
     office_id = fields.IntegerField(attribute='office_id',null=True,blank=True)
-    dehydrate_keys = ['created_at', 'latitude', 'longitude', 'region_code', 
+    dehydrate_keys = ['created_at', 'latitude', 'longitude', 'region_code',
         'shape_file_path', 'slug', 'resource_uri']
 
     class Meta():
