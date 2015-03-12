@@ -250,7 +250,6 @@ class DataPointComputed(models.Model):
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        managed = False
 
 
 class AggDataPoint(models.Model):
@@ -262,7 +261,6 @@ class AggDataPoint(models.Model):
 
     class Meta:
         db_table = 'agg_datapoint'
-        managed = False
 
 
 class MissingMapping(models.Model):
