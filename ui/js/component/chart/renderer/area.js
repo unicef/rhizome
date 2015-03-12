@@ -43,15 +43,6 @@ module.exports = function areaChart() {
 				.transition().duration(transitionSpeed)
 					.style('opacity', 0)
 				.remove();
-
-			// var circle = g.selectAll('circle').data([values(d)]);
-
-			// circle
-			// 	.transition()
-			// 	.duration(transitionSpeed)
-			// 	.attr({
-			// 		'cx':
-			// 	})
 		});
 	}
 
