@@ -323,18 +323,10 @@ def agg_datapoint(request):
     '''
     '''
 
-    region_loop = {
-        0 : 'settlement',
-        1 : 'sub-district',
-        2 : 'district',
-        3 : 'district', # Kirachi
-        4 : 'province',
-    }
+    curs = AggDataPoint.objects.raw("SELECT * FROM fn_agg_datapoint()")
 
-    for k,v in region_loop.iteritems():
-
-        curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_agg_datapoint_by_region_type")
+    for x in curs:
+        print x
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
