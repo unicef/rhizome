@@ -3,21 +3,12 @@ DROP FUNCTION IF EXISTS fn_calc_datapoint();
 CREATE FUNCTION fn_calc_datapoint() 
 RETURNS TABLE(dwc_id int)
     AS $$ 
-	        
-    	DROP TABLE IF EXISTS datapoint_with_computed;
 
-    	CREATE TABLE datapoint_with_computed
-    	(
-    		id SERIAL
-    		,indicator_id INTEGER
-    		,region_id INTEGER
-    		,campaign_id INTEGER
-    		,value FLOAT
-    		,is_agg BOOLEAN
-    		,is_calc BOOLEAN
-    	);
+	DROP INDEX IF EXISTS dwc_uq_ix;
 
-    	INSERT INTO datapoint_with_computed
+	TRUNCATE TABLE datapoint_with_computed;
+
+   	INSERT INTO datapoint_with_computed
     	(indicator_id,region_id,campaign_id,value,is_agg,is_calc)
 
     	SELECT
@@ -36,11 +27,11 @@ RETURNS TABLE(dwc_id int)
         (indicator_id,region_id,campaign_id,value,is_calc)
 
         SELECT
-    	 cic.indicator_id
-    	,ad.region_id
-    	,ad.campaign_id
-    	,SUM(ad.value) as value
-           ,'t'
+		cic.indicator_id
+		,ad.region_id
+		,ad.campaign_id
+		,SUM(ad.value) as value
+		,'t'
         FROM agg_datapoint ad
         INNER JOIN calculated_indicator_component cic
             ON ad.indicator_id = cic.indicator_component_id
@@ -52,11 +43,11 @@ RETURNS TABLE(dwc_id int)
         (indicator_id,region_id,campaign_id,value,is_calc)
 
         SELECT
-        part.indicator_id as master_indicator_id
-        ,d_part.region_id
-        ,d_part.campaign_id
-        ,d_part.value / NULLIF(d_whole.value,0) as value
-        ,CAST(1 as BOOLEAN) as is_calc
+		part.indicator_id as master_indicator_id
+		,d_part.region_id
+		,d_part.campaign_id
+		,d_part.value / NULLIF(d_whole.value,0) as value
+		,CAST(1 as BOOLEAN) as is_calc
         FROM(
           SELECT max(id) as max_dp_id FROM datapoint_with_computed
         ) x
@@ -73,18 +64,14 @@ RETURNS TABLE(dwc_id int)
             AND d_part.campaign_id = d_whole.campaign_id
             AND d_part.region_id = d_whole.region_id;
 
-        CREATE INDEX ind_ix on datapoint_with_computed (indicator_id);
-        CLUSTER datapoint_with_computed using ind_ix;
-
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,is_calc)
 
-
         SELECT
-			denom.master_indicator_id
-          		,denom.region_id
-          		,denom.campaign_id
-          		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
+		denom.master_indicator_id
+		,denom.region_id
+		,denom.campaign_id
+		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
                , CAST(1 AS BOOLEAN) as is_calc
           FROM (
           	SELECT
