@@ -19,7 +19,7 @@ svg {
 
 		.minor {
 			line {
-				stroke: $white;
+				stroke: $silver;
 			}
 		}
 
@@ -50,7 +50,6 @@ svg {
 
 		circle {
 			fill: $white;
-			stroke: $charcoal;
 			stroke-width: 1px;
 		}
 	}
@@ -92,7 +91,6 @@ svg {
 
 	.point {
 		fill: $white;
-		stroke: $coolgray5;
 		stroke-width: 1px;
 	}
 

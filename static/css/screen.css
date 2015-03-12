@@ -7045,7 +7045,7 @@ svg .axis line {
   shape-rendering: cripsEdges;
 }
 svg .axis .minor line {
-  stroke: #FFFFFF;
+  stroke: #EFEFEF;
 }
 svg .axis text {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
@@ -7066,7 +7066,6 @@ svg .line path {
 }
 svg .line circle {
   fill: #FFFFFF;
-  stroke: #555555;
   stroke-width: 1px;
 }
 svg .area,
@@ -7094,7 +7093,6 @@ svg.bullet label {
 }
 svg .point {
   fill: #FFFFFF;
-  stroke: #707677;
   stroke-width: 1px;
 }
 svg .hover-tile {
