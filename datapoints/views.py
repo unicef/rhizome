@@ -308,6 +308,8 @@ def search(request):
 
 
 def calc_datapoint(request):
+    '''
+    '''
 
     curs = DataPoint.objects.raw("SELECT * FROM fn_calc_datapoint();")
 
@@ -318,36 +320,8 @@ def calc_datapoint(request):
 
 
 def agg_datapoint(request):
-
-    # insert leave level data #
-
-    curs = DataPoint.objects.raw("""
-
-    TRUNCATE TABLE agg_datapoint;
-
-    INSERT INTO agg_datapoint
-    (region_id, campaign_id, indicator_id, value, is_agg)
-
-    SELECT
-        region_id, campaign_id, indicator_id, value, 't'
-    FROM datapoint d
-    WHERE value != 'NaN'
-    AND NOT EXISTS (
-        SELECT 1 FROM calculated_indicator_component cic
-        WHERE d.indicator_id = cic.indicator_id);
-
-    --
-
-    DROP INDEX IF EXISTS ag_uq_ix;
-    CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
-
-    SELECT id from datapoint limit 1;
-
-    """)
-
-    for x in curs:
-        print x
-
+    '''
+    '''
 
     region_loop = {
         0 : 'settlement',
@@ -359,33 +333,8 @@ def agg_datapoint(request):
 
     for k,v in region_loop.iteritems():
 
-        curs = DataPoint.objects.raw("""
-            INSERT INTO agg_datapoint
-            (region_id, campaign_id, indicator_id, value, is_agg)
-
-            SELECT
-                r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
-            FROM agg_datapoint ag
-            INNER JOIN region r
-                ON ag.region_id = r.id
-            INNER JOIN region_type rt
-                ON r.region_type_id = rt.id
-                AND rt.name = %s
-            WHERE NOT EXISTS (
-            	SELECT 1 FROM agg_datapoint ag_2
-            	WHERE 1 = 1
-            	AND ag.indicator_id = ag_2.indicator_id
-            	AND ag.campaign_id = ag_2.campaign_id
-            	AND r.parent_region_id = ag_2.region_id
-            )
-            GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
-
-        SELECT id FROM datapoint LIMIT 1;
-        """,[v])
-
-        for x in curs:
-            print x
-
+        curs = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_agg_datapoint_by_region_type")
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
