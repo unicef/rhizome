@@ -3,7 +3,6 @@ DROP FUNCTION IF EXISTS fn_calc_datapoint();
 CREATE FUNCTION fn_calc_datapoint() 
 RETURNS TABLE(dwc_id int)
     AS $$ 
-	--SELECT $1, CAST($1 AS text) || ' is text' 	
 	        
     	DROP TABLE IF EXISTS datapoint_with_computed;
 
