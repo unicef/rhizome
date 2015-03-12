@@ -413,33 +413,7 @@ def load_gdoc_data(request):
 
 def test_data_coverage(request):
 
-    failed = ReconData.objects.raw("""
-    DROP TABLE IF EXISTS _test_results;
-    CREATE TEMP TABLE _test_results
-    AS
-    SELECT
-    	rd.id
-    	,rd.region_id
-    	,rd.campaign_id
-    	,rd.indicator_id
-    	,rd.target_value
-    	,dwc.value as actual_value
-    	,CAST(CASE WHEN ( ABS(rd.target_value - dwc.value) < 0.001) THEN 1 ELSE 0 END AS BOOLEAN) as success_flag
-    FROM recon_data rd
-    LEFT JOIN datapoint_with_computed dwc
-    ON rd.region_id = dwc.region_id
-    AND rd.campaign_id = dwc.campaign_id
-    AND rd.indicator_id = dwc.indicator_id;
-
-    UPDATE recon_data rd
-    SET success_flag = tr.success_flag
-    FROM _test_results tr
-    WHERE rd.id = tr.id;
-
-    SELECT
-    	id,region_id,campaign_id,indicator_id,target_value,actual_value
-    FROM _test_results
-    WHERE success_flag = 'f'""")
+    failed = ReconData.objects.raw("SELECT * FROM fn_test_data_accuracy")
 
     final_qa_data = []
     for row in failed:
@@ -454,10 +428,8 @@ def test_data_coverage(request):
     test_count = ReconData.objects.count()
     qa_score = 1 - float((len(final_qa_data))/ float(test_count))
 
-
     return render_to_response('qa_data.html',
         {'qa_data': final_qa_data, 'qa_score':qa_score},\
-        # ,'indicator_breakdown':indicator_breakdown},
         context_instance=RequestContext(request))
 
 def qa_failed(request,region_id,campaign_id,indicator_id):
