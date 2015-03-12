@@ -7104,8 +7104,9 @@ svg .hover-line {
   shape-rendering: crispEdges;
 }
 svg .region {
-  fill: #EEEEEE;
-  stroke: #FFFFFF;
+  fill: #FFFFFF;
+  stroke: #999999;
+  stroke-width: 1px;
 }
 svg .clickable {
   cursor: pointer;
