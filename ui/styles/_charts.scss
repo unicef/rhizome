@@ -19,7 +19,7 @@ svg {
 
 		.minor {
 			line {
-				stroke: $white;
+				stroke: $silver;
 			}
 		}
 
@@ -50,7 +50,6 @@ svg {
 
 		circle {
 			fill: $white;
-			stroke: $charcoal;
 			stroke-width: 1px;
 		}
 	}
@@ -84,15 +83,18 @@ svg {
 			}
 		}
 
-		label {
+		.label {
 			text-shadow: none;
-			fill       : white;
+			fill       : $white;
+
+			&.dark {
+				fill: $oil;
+			}
 		}
 	}
 
 	.point {
 		fill: $white;
-		stroke: $coolgray5;
 		stroke-width: 1px;
 	}
 
@@ -107,8 +109,9 @@ svg {
 	}
 
 	.region {
-		fill: $smoke;
-		stroke: $white;
+		fill: $white;
+		stroke: $aluminum;
+		stroke-width: 1px;
 	}
 
 	.clickable {

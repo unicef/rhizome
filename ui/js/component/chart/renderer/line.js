@@ -45,7 +45,7 @@ module.exports = function lineChart() {
 					.remove();
 
 			var point = g.selectAll('circle')
-				.data(d);
+				.data(values(d));
 
 			point
 				.transition()
@@ -58,14 +58,15 @@ module.exports = function lineChart() {
 			point.enter()
 				.append('circle')
 				.attr({
-					'cx'   : line.x(),
-					'cy'   : line.y(),
-					'r'    : 0,
-					'class': 'point'
+					'cx': line.x(),
+					'cy': line.y(),
+					'r' : 0
 				})
 				.transition()
 				.duration(transitionSpeed)
-				.attr('r', 2);
+				.attr('r', 3);
+
+			point.attr('stroke', color(d, i));
 
 			point.exit()
 				.transition()
