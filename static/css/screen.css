@@ -7073,11 +7073,6 @@ svg .layer {
   fill: #CCCCCC;
   fill-opacity: 0.6;
 }
-svg .area circle,
-svg .layer circle {
-  fill: #FFFFFF;
-  stroke-width: 1px;
-}
 svg .bar text {
   font-size: 0.5625rem;
 }
