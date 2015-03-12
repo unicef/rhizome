@@ -12,12 +12,7 @@ def full_cache_refresh():
         ORDER BY indicator_id DESC""")
 
     all_indicator_ids = [x.indicator_id for x in indicator_raw]
-    # all_indicator_ids = [348,274,5]
-
     indicator_df = DataFrame(columns = all_indicator_ids)
-
-
-    print ' ... QUERYING FOR DISTINCT REGION / CAMPAIGN ... '
 
     distict_region_campaign_list = DataPoint.objects.raw("""
         SELECT DISTINCT

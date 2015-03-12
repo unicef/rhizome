@@ -16,7 +16,7 @@ import gspread
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
-# from polio.secrets import gdoc_u, gdoc_p
+from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -343,8 +343,6 @@ def populate_dummy_ngo_dash(request):
 
     for r in dist_r:
 
-        print r
-
         df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
 
         valid_cols_df = df_filtered_by_region[['indicator_id','value']]
@@ -382,9 +380,9 @@ def load_gdoc_data(request):
 
     err_msg = 'none!'
 
-    # gc = gspread.login(gdoc_u,gdoc_p)
-    gc = gspread.login('fix','me')
-    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    gc = gspread.login(gdoc_u,gdoc_p)
+    # gc = gspread.login('fix','me')
+    worksheet = gc.open("Master Dashboard QA").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
     gd_df = gd_df[gd_df['region_id'] != '0']
@@ -413,7 +411,7 @@ def load_gdoc_data(request):
 
 def test_data_coverage(request):
 
-    failed = ReconData.objects.raw("SELECT * FROM fn_test_data_accuracy")
+    failed = ReconData.objects.raw("SELECT * FROM fn_test_data_accuracy()")
 
     final_qa_data = []
     for row in failed:
