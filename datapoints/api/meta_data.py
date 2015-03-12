@@ -9,7 +9,6 @@ from datapoints.models import *
 class OfficeResource(BaseModelResource):
     '''Office Resource'''
 
-
     class Meta(BaseModelResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'

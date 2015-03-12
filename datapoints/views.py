@@ -311,10 +311,17 @@ def calc_datapoint(request):
     '''
     '''
 
-    curs = DataPoint.objects.raw("SELECT * FROM fn_calc_datapoint();")
+    indicator_ids = Indicator.objects.all().values_list('id',flat=True)
 
-    for x in curs:
-        print x
+    for i_id in indicator_ids:
+
+        print '===== PROCESSING: %s ===== \n' % i_id
+
+        curs = DataPointComputed.objects.raw("SELECT * FROM fn_calc_datapoint(%s);"
+            ,[i_id])
+
+        for x in curs:
+            print x
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
