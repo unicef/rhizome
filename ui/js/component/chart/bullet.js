@@ -205,7 +205,6 @@ module.exports = {
 
 			label.enter().append('text')
 				.attr({
-					'class': 'label',
 					'dx'   : 2
 				}).text(0);
 
@@ -219,6 +218,17 @@ module.exports = {
 				.text(function (d) {
 					return format(d);
 				});
+
+			label.each(function (d) {
+				var bbox = this.getBBox();
+				var cls = 'label';
+
+				if (bbox.width * 0.75 > x(d)) {
+					cls = 'label dark';
+				}
+
+				d3.select(this).attr('class', cls);
+			})
 
 			label.exit()
 				.transition().duration(300)

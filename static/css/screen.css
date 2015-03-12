@@ -7087,9 +7087,12 @@ svg.bullet .marker {
 svg.bullet .ranges .range-label {
   fill: #666666;
 }
-svg.bullet label {
+svg.bullet .label {
   text-shadow: none;
-  fill: white;
+  fill: #FFFFFF;
+}
+svg.bullet .label.dark {
+  fill: #333333;
 }
 svg .point {
   fill: #FFFFFF;

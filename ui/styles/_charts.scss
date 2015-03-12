@@ -83,9 +83,13 @@ svg {
 			}
 		}
 
-		label {
+		.label {
 			text-shadow: none;
-			fill       : white;
+			fill       : $white;
+
+			&.dark {
+				fill: $oil;
+			}
 		}
 	}
 
