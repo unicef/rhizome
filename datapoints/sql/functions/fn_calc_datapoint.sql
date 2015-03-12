@@ -1,7 +1,7 @@
 ﻿
 DROP FUNCTION IF EXISTS fn_calc_datapoint();
 CREATE FUNCTION fn_calc_datapoint() 
-RETURNS TABLE(dwc_id int)
+RETURNS TABLE(id int)
     AS $$ 
 
 	DROP INDEX IF EXISTS dwc_uq_ix;
@@ -128,4 +128,5 @@ RETURNS TABLE(dwc_id int)
     $$
     LANGUAGE SQL;
 
-SELECT * FROM fn_calc_datapoint();
+--SELECT * FROM fn_calc_datapoint()
+
