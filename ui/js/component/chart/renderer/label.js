@@ -167,7 +167,8 @@ function label() {
 
 			// Redraw everything with new positions to fix overlaps
 			var anchor = textAnchor(labels);
-			var dx     = anchor === 'start' ? '4' : '-4'
+			var dx     = anchor === 'start' ? '4' : '-4';
+
 			labels
 				.transition()
 				.duration(transitionSpeed)
