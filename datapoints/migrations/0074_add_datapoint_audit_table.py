@@ -9,7 +9,8 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.execute('''
-        CREATE TABLE IF NOT EXISTS "datapoints_historicaldatapointentry" (
+        DROP TABLE IF EXISTS "datapoints_historicaldatapointentry";
+        CREATE TABLE "datapoints_historicaldatapointentry" (
         	    "id" integer NOT NULL,
         	    "indicator_id" integer,
         	    "region_id" integer,
