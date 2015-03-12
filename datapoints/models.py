@@ -250,7 +250,8 @@ class DataPointComputed(models.Model):
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        managed = False
+        unique_together = ('region_id','campaign_id','indicator_id')
+
 
 
 class AggDataPoint(models.Model):
@@ -262,8 +263,7 @@ class AggDataPoint(models.Model):
 
     class Meta:
         db_table = 'agg_datapoint'
-        managed = False
-
+        unique_together = ('region_id','campaign_id','indicator_id')
 
 class MissingMapping(models.Model):
 

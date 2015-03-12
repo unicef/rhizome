@@ -87,3 +87,51 @@ The region upload is largely meant for internal use and will not be available wh
           -> Create Mapping for that new source_region_id
           -> Update Master with the Longitude, Latitude, Parent_id ( join to region table, if id is differnet update, if no match, keep parent_region_id
       - Else - user ( Bo ) will need to map these by accessing the document_id in accordance with the upload.
+
+
+
+Meta Data Mapping
+=================
+
+Regarding POLIO-205 - How are we to determine the semantic identities of Regions in a complex regional heirarchy.
+
+Consider the following wikipedia page:
+
+  http://en.wikipedia.org/wiki/Killa_Abdullah_District
+
+  "Killa Abdullah or Qilla Abdullah or Abdullah Qilla (Pashto: قلعہ عبد الله‎)"...
+
+In our system we map data from each source, to semantic identites in our system.  For instance, "# vaccinated" is the same as "num vaccinated," and "NG JUN 2014" is the same as "Nigeria June 2014."
+
+When ingesting a spreadsheet, here are the rules as to how datapoints are mapped and validated.
+  - each souce_datapoint must have a record explicilty mapping the indicator_string, campaign_string and region_code to their respective IDs.
+  - Regions are not Auto mapped on their Name, but rather their region code.
+
+*Region Codes*
+
+NIGERIA
+  - WHO has a naming convention for Settlements in Nigeria
+  - <province><district><sub-district><settlement>
+  - Bo created existing sub-districts with this convention so i was able to map a large part of the ODK data using this convention.
+
+AFGHANISTAN
+  - * i am not sure we need to ask bo *
+
+PAKISTAN
+  - * i am not sure we need to ask bo *
+
+
+Needs Documentation
+  - Shape File ingestion
+  - source datapoint -> datapoint process in depth
+  - transforming data into source_datapoints
+      ->CSV pivoted
+      ->CSV Non Pivoted
+      ->ODK
+  - document_ids and their significance
+
+
+Future Topics Regarding Regions
+  - is_high_risk changes over time
+  - when boundries change over time
+  - outbreak countries and new office_ids
