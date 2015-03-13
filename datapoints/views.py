@@ -343,14 +343,12 @@ def agg_datapoint(request):
 
     y = [x for x in init_curs]
 
-
     for rt in region_type_loop:
 
         rt_curs = AggDataPoint.objects\
             .raw("select * FROM fn_agg_datapoint_by_region_type(%s)",[rt])
 
         y = [x for x in rt_curs]
-
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
