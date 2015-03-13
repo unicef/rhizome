@@ -1,10 +1,10 @@
-﻿DROP VIEW IF EXISTS vw_missing_mappings CASCADE;
-CREATE VIEW vw_missing_mappings 
+DROP VIEW IF EXISTS vw_missing_mappings CASCADE;
+CREATE VIEW vw_missing_mappings
 AS
 
 WITH first_join AS
 (
-SELECT 
+SELECT
  	d.id as datapoint_id
  	,d.source_datapoint_id
  	,d.region_id
@@ -18,7 +18,7 @@ FROM datapoint d
 INNER JOIN source_datapoint sd
 	ON d.source_datapoint_id = sd.id
 INNER JOIN source_region sr
-	ON sr.region_string = sd.region_string
+	ON sr.region_code = sd.region_code
 INNER JOIN source_campaign sc
  	ON sc.campaign_string = sd.campaign_string
 INNER JOIN source_indicator si
@@ -26,19 +26,19 @@ INNER JOIN source_indicator si
 )
 
 
-SELECT 
+SELECT
 	row_number() OVER (ORDER BY datapoint_id, document_id, what_is_missing)  AS id
 	,*
-FROM 
+FROM
 (
-	SELECT 
+	SELECT
 		fj.datapoint_id
 		, fj.document_id
 		, 'indicator' AS what_is_missing
 	FROM first_join fj
-	WHERE NOT EXISTS 
+	WHERE NOT EXISTS
 	(
-		SELECT 1 FROM indicator_map im 
+		SELECT 1 FROM indicator_map im
 		WHERE fj.indicator_id = im.master_indicator_id
 		AND fj.source_indicator_id = im.source_indicator_id
 	)
@@ -46,37 +46,37 @@ FROM
 
 	UNION ALL
 
-	SELECT 
+	SELECT
 		fj.datapoint_id
 		, fj.document_id
 		,'region' ASwhat_is_missing
 	FROM first_join fj
-	WHERE NOT EXISTS 
+	WHERE NOT EXISTS
 	(
-		SELECT 1 FROM region_map rm 
+		SELECT 1 FROM region_map rm
 		WHERE fj.region_id = rm.master_region_id
 		AND fj.source_region_id = rm.source_region_id
 	)
 
 	UNION ALL
 
-	SELECT 
+	SELECT
 		fj.datapoint_id
 		, fj.document_id
 		,'campaign' AS what_is_missing
 	FROM first_join fj
-	WHERE NOT EXISTS 
+	WHERE NOT EXISTS
 	(
-		SELECT 1 FROM campaign_map cm 
+		SELECT 1 FROM campaign_map cm
 		WHERE fj.campaign_id = cm.master_campaign_id
 		AND fj.source_campaign_id = cm.source_campaign_id
 
 	)
-	
+
 )x;
 
 GRANT SELECT, DELETE ON vw_missing_mappings to djangoapp;
 
-CREATE OR REPLACE RULE missing_mapping_DELETE AS ON DELETE TO vw_missing_mappings DO INSTEAD (
-     DELETE FROM datapoint WHERE id=OLD.datapoint_id;);
-
+-- CREATE OR REPLACE RULE missing_mapping_DELETE AS ON DELETE TO vw_missing_mappings DO INSTEAD (
+--      DELETE FROM datapoint WHERE id=OLD.datapoint_id;);
+--

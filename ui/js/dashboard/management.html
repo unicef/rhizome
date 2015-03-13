@@ -34,122 +34,144 @@
 						v-if="newCases != null">
 						<p id="new-polio-cases">{{ newCases }} new {{ newCases | pluralize case }}</p>
 					</div>
-					<div v-component="chart-ytd"
-							 data-aspect="1.8"
-							 data-margin-bottom="24"
-							 data-indicators="[168]"
-							 data-period="2 years"
-							 v-with="campaign: campaign, region: region"></div>
+					<div
+						id="polio-cases-ytd"
+						v-component="chart-ytd"
+						data-aspect="1.757"
+						data-margin-top="24"
+						data-margin-right="4"
+						data-margin-left="4"
+						data-margin-bottom="24"
+						data-indicators="[168]"
+						data-period="2 years"
+						v-with="campaign: campaign, region: region"></div>
 				</div>
 			</section>
 
 			<section>
 				<h4>Immunity Gap</h4>
-				<svg v-component="chart-stacked-area"
-						     data-margin-bottom="24"
-						     data-aspect="1.8"
-						     data-margin-bottom="12"
-						     data-duration="2 years"
-						     data-indicators="[431,432]"
-						     data-format-string="%"
-						     v-with="region: region, campaign: campaign"></svg>
+				<svg
+					id="immunity-gap"
+					v-component="chart-stacked-area"
+					data-margin-bottom="24"
+					data-aspect="1.609"
+					data-margin-top="24"
+					data-margin-right="4"
+					data-margin-left="4"
+					data-margin-bottom="24"
+					data-period="2 years"
+					data-indicators="[431,432]"
+					data-format-string="%"
+					v-with="region: region, campaign: campaign"></svg>
 			</section>
 		</div>
 
-		<div class="medium-5 columns">
-			<h3>Performance of Front Line Workers</h3>
+		<div>
+			<div class="medium-5 columns">
+				<h3>Performance of Front Line Workers</h3>
+			</div>
 
-			<div class="row">
-				<div class="medium-2 columns">
+			<div class="medium-2 columns">
 
-					<section>
-						<h4>Missed Children</h4>
-						<svg v-component="chart-stacked-area"
-								 data-margin-bottom="24"
-								 data-aspect="1.618"
-								 data-margin-bottom="12"
-								 data-indicators="[166,164,167,165]"
-								 data-duration="2 years"
-								 data-format-string=".1%"
-								 v-with="region: region, campaign: campaign"></svg>
-					</section>
+				<section>
+					<h4>Missed Children</h4>
+					<svg
+						id="missed-children"
+						v-component="chart-stacked-area"
+						data-margin-top="24"
+						data-margin-right="4"
+						data-margin-left="4"
+						data-margin-bottom="24"
+						data-aspect="1.909344491"
+						data-margin-bottom="12"
+						data-indicators="[166,164,167,165]"
+						data-period="2 years"
+						data-format-string=".1%"
+						v-with="region: region, campaign: campaign"></svg>
+				</section>
 
-					<section>
-						<h4>Conversions</h4>
-						<div v-component="chart-line"
-						     data-aspect="1.618"
-						     data-margin-bottom="24"
-						     data-period="2 years"
-						     data-indicators="[187,189]"
-						     data-format-string="%"
-						     v-with="campaign: campaign, region: region"></div>
-					</section>
+				<section>
+					<h4>Conversions</h4>
+					<div
+						id="conversions"
+						v-component="chart-line"
+					 	data-aspect="2.260237781"
+						data-margin-top="24"
+						data-margin-right="4"
+						data-margin-left="4"
+						data-margin-bottom="24"
+					 	data-period="2 years"
+					 	data-indicators="[187,189]"
+					 	data-format-string="%"
+					 	v-with="campaign: campaign, region: region"></div>
+				</section>
 
-					<section>
-						<p v-if="microplans.length === 2"
-						   style="margin-bottom: 0">
+				<section>
+					<p v-if="microplans.length === 2"
+					   style="margin-bottom: 0">
 
-							<svg width="26" height="26" style="float:left;margin-right:10px">
-								<g v-component="chart-pie"
-								   data-outer-radius="13"
-								   data-slices="{{ microplans }}"
-								   data-indicators="[222]"
-								   transform="translate(13,13)"></g>
-							</svg>
+						<svg width="26" height="26" style="float:left;margin-right:10px">
+							<g v-component="chart-pie"
+							   data-outer-radius="13"
+							   data-slices="{{ microplans }}"
+							   data-indicators="[222]"
+							   transform="translate(13,13)"></g>
+						</svg>
 
-							{{ microplans[0].value }} / {{ microplans[0].value + microplans[1].value }}
-							microplans incorporate social data
+						{{ microplans[0].value }} / {{ microplans[0].value + microplans[1].value }}
+						microplans incorporate social data
 
-						</p>
-						<p v-if="microplans.length !== 2">No microplan data available.</p>
-					</section>
+					</p>
+					<p v-if="microplans.length !== 2">No microplan data available.</p>
+				</section>
 
+			</div>
+
+			<div class="medium-2 columns">
+				<h4>Missed Children Due to Refusal</h4>
+				<div
+					id="missed-children-map"
+					v-component="chart-choropleth"
+				  v-with="region: region, campaign: campaign"
+				  data-indicator="166"
+				  data-aspect="1"
+				  data-range="[0, 0.1]">
 				</div>
+			</div>
 
-				<div class="medium-3 columns">
-					<h4>Missed Children Due to Refusal</h4>
-					<div v-component="chart-choropleth"
-					     v-with="region: region, campaign: campaign"
-					     data-indicator="166"
-					     data-aspect="1"
-					     data-range="[0, 0.1]">
-					</div>
-				</div>
+			<div class="medium-1 column">
+				<h4>Transit Points</h4>
+				<!-- 177 -->
+				<p>No data</p>
 
-				<div class="medium-2 column">
-					<h4>Transit Points</h4>
-					<!-- 177 -->
-					<p>No data</p>
+				<h6>Missed Children Due to Refusal</h6>
 
-					<h6>Missed Children Due to Refusal</h6>
-
-					<svg class="legend reds" viewBox="0 0 177 84">
-						<g>
-							<rect width="11" height="11" class="q-6"></rect>
-							<text dx="14" dy="9">10+%</text>
-						</g>
-						<g transform="translate(0,14)">
-							<rect width="11" height="11" class="q-5"></rect>
-							<text dx="14" dy="9">8&ndash;9%</text>
-						</g>
-						<g transform="translate(0,28)">
-							<rect width="11" height="11" class="q-4"></rect>
-							<text dx="14" dy="9">6&ndash;7%</text>
-						</g>
-						<g transform="translate(0,42)">
-							<rect width="11" height="11" class="q-3"></rect>
-							<text dx="14" dy="9">4&ndash;5%</text>
-						</g>
-						<g transform="translate(0,56)">
-							<rect width="11" height="11" class="q-2"></rect>
-							<text dx="14" dy="9">2&ndash;3%</text>
-						</g>
-						<g transform="translate(0,70)">
-							<rect width="11" height="11" class="q-1"></rect>
-							<text dx="14" dy="9">0&ndash;1%</text>
-						</g>
-					</ul>
-				</div>
+				<svg class="legend reds" viewBox="0 0 177 84">
+					<g>
+						<rect width="11" height="11" class="q-6"></rect>
+						<text dx="14" dy="9">10+%</text>
+					</g>
+					<g transform="translate(0,14)">
+						<rect width="11" height="11" class="q-5"></rect>
+						<text dx="14" dy="9">8&ndash;9%</text>
+					</g>
+					<g transform="translate(0,28)">
+						<rect width="11" height="11" class="q-4"></rect>
+						<text dx="14" dy="9">6&ndash;7%</text>
+					</g>
+					<g transform="translate(0,42)">
+						<rect width="11" height="11" class="q-3"></rect>
+						<text dx="14" dy="9">4&ndash;5%</text>
+					</g>
+					<g transform="translate(0,56)">
+						<rect width="11" height="11" class="q-2"></rect>
+						<text dx="14" dy="9">2&ndash;3%</text>
+					</g>
+					<g transform="translate(0,70)">
+						<rect width="11" height="11" class="q-1"></rect>
+						<text dx="14" dy="9">0&ndash;1%</text>
+					</g>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -173,7 +195,7 @@
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="indicator: supply">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -185,7 +207,7 @@
 			<ul class="small-block-grid-2 medium-block-grid-1">
 				<li v-repeat="indicator: polio">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -198,7 +220,7 @@
 				<li v-repeat="indicator: resources"
 				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
-					     data-aspect="3"
+					     data-aspect="3.177"
 					     data-period="5 months"
 					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
 				</li>
@@ -208,7 +230,7 @@
 		<div class="medium-2 columns">
 			<h3>Inaccessible Children</h3>
 			<div v-component="chart-line"
-			     data-aspect="1.618"
+			     data-aspect="2.665"
 			     data-margin-bottom="24"
 			     data-period="2 years"
 			     data-indicators="[158]"

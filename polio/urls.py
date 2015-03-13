@@ -4,11 +4,13 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
+from django.views.generic.base import RedirectView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import debug
+from datapoints import views
 
 from source_data.api import EtlResource
 from tastypie.api import Api
@@ -16,22 +18,29 @@ from tastypie.api import Api
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
-v1_api.register(RegionResource())
+# v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
 v1_api.register(IndicatorResource())
-v1_api.register(CampaignResource())
 v1_api.register(UserResource())
 v1_api.register(OfficeResource())
 v1_api.register(EtlResource())
 v1_api.register(OfficeResource())
 v1_api.register(RegionPolygonResource())
+# v1_api.register(CampaignResource())
+
 
 urlpatterns = patterns('',
-    ##
+    ## CUSTOM API ##
+    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
+    url(r'^api/v1/region/$', views.api_region, name='region'),
+    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
+
+    ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
+
     ##
-    url(r'^$', 'polio.views.home', name='home'),
+    url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
     ##
     url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+-dashboard$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),

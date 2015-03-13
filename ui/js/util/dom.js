@@ -1,4 +1,4 @@
-/* global window, MouseEvent */
+/* global document, window, MouseEvent */
 'use strict';
 
 var _ = require('lodash');
@@ -87,6 +87,7 @@ function contentArea(el) {
 
 
 module.exports = {
+	offset        : offset,
 	documentOffset: documentOffset,
 	viewportOffset: viewportOffset,
 	contains      : contains,

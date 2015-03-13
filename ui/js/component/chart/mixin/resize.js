@@ -2,7 +2,10 @@
 
 'use strict';
 
-var dom = require('util/dom');
+var d3      = require('d3');
+
+var browser = require('util/browser');
+var dom     = require('util/dom');
 
 module.exports = {
 	paramAttributes: [
@@ -19,6 +22,25 @@ module.exports = {
 
 	ready: function () {
 		window.addEventListener('resize', this.onResize);
+
+		if (browser.isIE()) {
+			var svg = d3.select(this.$el.getElementsByTagName('svg')[0]);
+
+			svg.attr({
+				'width' : this.width,
+				'height': this.height,
+			});
+
+			var self = this;
+
+			this.$watch('width', function () {
+				svg.attr('width', self.width);
+			});
+
+			this.$watch('height', function () {
+				svg.attr('height', self.height);
+			});
+		}
 	},
 
 	computed: {

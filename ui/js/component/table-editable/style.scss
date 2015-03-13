@@ -29,13 +29,15 @@ table {
 			display: none;
 			border: 1px solid #aaa;
 			font-size: inherit;
+			min-width: 50px;
 
 			&:focus {
 				outline: 0;
 			}
 		}
 
-		&.editing .displayValue 
+		&.editing .displayValue,
+		&.saving .displayValue
 		{
 			display: none;
 		}
@@ -43,16 +45,36 @@ table {
 		&.editing .editControl {
 			display: block;
 		}
+		&.saving .editControl {
+			display: none;
+		}
+
+		.saving-icon {
+			display: none;
+		}
+		&.saving .saving-icon {
+			display: inherit;
+		}
 
 		/* cell status */
 		&.missing .displayValue {
 			background-color: rgb(255, 235, 134);
 		}
 
+		&.error {
+			background-color: #FF9081;
+		}
+
 	}
 
 	.completionStatus {
 		font-size: .9em;
+		min-width: 40px;
+	}
+
+	.rowCompletionStatus {
+		width: $valueColumnWidth;
+		text-align: center;
 	}
 
 }

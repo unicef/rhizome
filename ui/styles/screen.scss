@@ -46,6 +46,10 @@ h4 {
 	overflow: hidden;
 }
 
+select {
+	padding-right: 1.5em;
+}
+
 nav {
 	@include clearfix;
 
@@ -79,7 +83,8 @@ nav {
 }
 
 body.dashboard nav .dashboard,
-body.data nav .data {
+body.data nav .data,
+body.data-entry nav .data-entry {
 	border-left: 4px solid #ffcc67;
 
 	a {
@@ -186,11 +191,12 @@ button,
 /* fixed-header tables */
 .fixed-table-container {
 
-	$defaultTableHeight: 500px;
+	$defaultTableHeight: 475px;
 	$defaultHeaderHeight: 50px;
 	$defaultHeaderLineHeight: 25px;
-	$innerBorderColor: #ddd;
+	$borderColor: #ddd;
 
+	display: inline-block; /* required to make horizontal scrolling work */
 	height: $defaultTableHeight;
 	background-color: white;
 	position: relative; /* could be absolute or relative */
@@ -200,12 +206,15 @@ button,
 		overflow-x: hidden;
 		overflow-y: auto;
 		height: 100%;
+		border: 1px solid $borderColor;
+		border-top: none;
+		border-left: none;
 	}
 
 	.header-background {
 		height: $defaultHeaderHeight; /* height of header */
 		background-color: #F5F5F5;
-		border: solid 1px #DDDDDD;
+		border: solid 1px $borderColor;
 		border-bottom: none;
 		position: absolute;
 		top: 0;
@@ -218,16 +227,24 @@ button,
 		width: 100%;
 		overflow-x: hidden;
 		overflow-y: auto;
-		margin-top: -18px;
+		margin: -18px 0 -1px 0;
 
 		th {
-			border-bottom: 1px solid $innerBorderColor;
+			border-bottom: 1px solid $borderColor;
 		}
 
 		td {
-			border-left: 1px solid $innerBorderColor;
+			border-left: 1px solid $borderColor;
 			&:first-child {
 				border-left: none;
+			}
+
+			&.section-header, &.section-header:hover {
+				font-size: 11px;
+				background-color: #999;
+				font-weight: 100;
+				color: #fff;
+				text-transform: uppercase;
 			}
 		}
 
@@ -241,7 +258,7 @@ button,
 			margin-left: -10px;
 			z-index: 900;
 
-			border-left: 1px solid $innerBorderColor;
+			border-left: 1px solid $borderColor;
 			background-color: #F5F5F5;
 
 			/* to hide overflow text, and then reveal on hover: */
@@ -254,9 +271,8 @@ button,
 				padding-right: 10px;
 			}
 		}
-		.first .th-inner {
+		th:first-child .th-inner {
 			border-left: none;
-			padding-left: 6px;
 		}
 
 	}
@@ -322,7 +338,7 @@ svg {
 }
 
 #new-polio-cases {
-	background-color : $vapor;
+	background-color : $white;
 	color            : $down-color;
 	position         : absolute;
 	top              : 0;
@@ -342,7 +358,6 @@ ul {
 			font-size     : 8px;
 			line-height   : 1;
 			margin-bottom : 2pt;
-			min-height    : 14pt;
 			padding-top   : 3pt;
 		}
 
@@ -350,7 +365,7 @@ ul {
 			display     : inline-block;
 			float       : left;
 			margin-left : -14pt;
-			margin-top  : -3pt;
+			margin-top  : -2px;
 			max-width   : 12pt;
 		}
 	}

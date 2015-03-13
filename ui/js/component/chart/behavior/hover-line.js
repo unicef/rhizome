@@ -1,7 +1,9 @@
 'use strict';
 
-var _      = require('lodash');
-var d3     = require('d3');
+var _     = require('lodash');
+var d3    = require('d3');
+
+var label = require('../renderer/label');
 
 function hoverLine() {
 	var datapoints = [];
@@ -18,6 +20,10 @@ function hoverLine() {
 	var _value     = function (d) {
 		return d.value;
 	};
+
+	// Use this to keep track of what value we're currently hovering over so we
+	// can bail out of onMouseMove if the movement wouldn't change our display
+	var _currentTarget = null;
 
 	function chart(selection) {
 		selection
@@ -133,6 +139,19 @@ function hoverLine() {
 		return chart;
 	};
 
+	function axisTranslate(d) {
+		// jshint validthis:true
+		var box = this.getBBox();
+		var min = box.width / 2;
+		var max = width - min;
+
+		var x   = xScale(d);
+
+		return 'translate(' +
+			Math.max(min, Math.min(max, x)) + ',' +
+			height + ')';
+	}
+
 	function onMouseMove() {
 		/* jshint validthis: true */
 		var cursor = d3.mouse(this)[0];
@@ -161,6 +180,12 @@ function hoverLine() {
 				data[0] = closeToRight ? range[right] : range[left];
 			}
 		}
+
+		if (data[0] === _currentTarget) {
+			return;
+		}
+
+		_currentTarget = data[0];
 
 		var svg  = d3.select(this);
 		var line = svg.select('.annotation').selectAll('line')
@@ -197,14 +222,13 @@ function hoverLine() {
 			.duration(300)
 			.style('opacity', data.length ? 0 : 1);
 
-		var label = svg
+		// X-axis label
+		var xLabel = svg
 			.select('.annotation')
 			.selectAll('.axis')
 			.data(data);
 
-		var yTranslate = height;
-
-		label.enter()
+		xLabel.enter()
 			.append('text')
 			.style({
 				'text-anchor': 'middle',
@@ -213,69 +237,59 @@ function hoverLine() {
 			.attr({
 				'dy'       : '9',
 				'class'    : 'axis',
-				'transform': function (d) {
-					return 'translate(' + xScale(d) + ',' + yTranslate + ')';
-				}
+				'transform': axisTranslate
 			});
 
-		label
+		xLabel
 			.text(function (d) {
 				return xFormat(d);
 			})
 			.transition()
 			.duration(300)
-			.attr('transform', function (d) {
-				return 'translate(' + xScale(d) + ',' + yTranslate + ')';
-			})
+			.attr('transform', axisTranslate)
 			.style('opacity', 1);
 
-		label.exit()
+		xLabel.exit()
 			.transition()
 			.duration(300)
 			.style('opacity', 0)
 			.remove();
 
-		var labelData = datapoints.filter(function (d) {
-			return x(d) === data[0];
-		});
-
-		label = svg
-			.select('.annotation')
-			.selectAll('.value.label')
-			.data(labelData);
-
-		label.enter()
-			.append('text')
-			.attr({
-				'class'    : 'value label',
-				'dx'       : '-2',
-				'dy'       : '4',
-				'transform': function (d) {
-					return 'translate(' + xScale(x(d)) + ',' + yScale(y(d)) + ')';
-				}
+		var labelData = _(datapoints)
+			.filter(function (d) {
+				return x(d) === data[0];
 			})
-			.style({
-				'opacity': 0,
-				'text-anchor': 'end'
-			});
-
-		label
-			.text(function (d) {
+			.map(function (d) {
 				var name = seriesName ? seriesName(d) + ' ' : '';
-				return name + yFormat(_value(d));
-			})
-			.transition()
-			.duration(300)
-			.attr('transform', function (d) {
-				return 'translate(' + xScale(x(d)) + ',' + yScale(y(d)) + ')';
-			})
-			.style('opacity', 1);
 
-		label.exit()
-			.transition()
-			.duration(300)
-			.style('opacity', 0)
-			.remove();
+				return {
+					x   : xScale(x(d)),
+					y   : yScale(y(d)),
+					text: name + yFormat(_value(d))
+				};
+			})
+			.sortBy('y')
+			.value();
+
+		// Use a g element to position the labels horizontally at the same
+		// position based on the width of the longest label
+		var labelGroup = svg.select('.annotation')
+			.selectAll('.label-group')
+			.data([labelData]);
+
+		labelGroup.enter()
+			.append('g')
+			.attr('class', 'label-group');
+
+		labelGroup.selectAll('.hover.label')
+			.data(function (d) { return d; })
+			.call(label().addClass('hover').width(width).height(height));
+
+			// Determine the label orientation based on the bounding box. We prefer
+			// left-aligned, but if that gets cut off, we will right-align the text
+			// var box    = this.getBBox();
+			// var pos    = xScale(data[0]);
+			// var anchor = (pos + box.width + 2) < width ? 'start' : 'end';
 
 		svg.selectAll('.series.label')
 			.transition()
@@ -287,7 +301,9 @@ function hoverLine() {
 		/* jshint validthis: true */
 		var svg = d3.select(this);
 
-		svg.select('.annotation').selectAll('line, .value, .axis')
+		_currentTarget = null;
+
+		svg.select('.annotation').selectAll('line, .hover.label, .axis')
 			.transition()
 			.duration(300)
 			.style('opacity', 0)

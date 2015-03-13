@@ -13,7 +13,7 @@
 			<table>
 				<thead v-if="rows.length > 0">
  					<tr>
-						<th><div class="th-inner"></div></th>
+						<th></th>
 						<th v-repeat="col: columns" class="{{ col.headerClasses }}">
 							<div class="th-inner">
 								{{ col.header }}
@@ -27,7 +27,7 @@
 				<tbody>
 					<tr v-repeat="row: rows">
 						
-						<td class="medium-1">
+						<td class="rowCompletionStatus">
 							<div class="{{ row | rowCompletionClass }} completionStatus">
 								{{ row | getStat byRow complete }} / {{ row | getStat byRow total }}
 							</div>
@@ -50,5 +50,6 @@
 </div>
 
 <div v-if="loading" class="loading">
+	<i class="fa fa-spinner fa-spin"></i>
 	Loading&hellip;
 </div>

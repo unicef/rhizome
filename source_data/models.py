@@ -54,10 +54,11 @@ class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d',null=True)
     doc_text = models.TextField(null=True)
     created_by = models.ForeignKey(User)
-    guid = models.CharField(max_length=40)
+    guid = models.CharField(max_length=255)
     source_datapoint_count = models.IntegerField(null=True)
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
+    source = models.ForeignKey(Source)
 
     class Meta:
         unique_together = ('docfile','doc_text')
@@ -69,18 +70,6 @@ class Document(models.Model):
 
         super(Document, self).save(*args, **kwargs)
 
-class DocumentMeta(models.Model):
-
-    document = models.ForeignKey(Document)
-    source_string = models.CharField(max_length=255)
-    model_type = models.CharField(max_length=255)
-    source_object_id = models.IntegerField()
-    master_object_id = models.IntegerField()
-    source_datapoint_count = models.IntegerField()
-
-    class Meta:
-        unique_together = ('document','source_string','model_type')
-        db_table = 'document_meta'
 
 class SourceDataPoint(models.Model):
     '''
@@ -91,7 +80,6 @@ class SourceDataPoint(models.Model):
     for ODK, the document ID will coorespond to the form (vcm_summary_new)
     '''
 
-    region_string = models.CharField(max_length=255)
     region_code = models.CharField(max_length=255)
     campaign_string = models.CharField(max_length=255)
     indicator_string = models.CharField(max_length=255)
@@ -101,7 +89,7 @@ class SourceDataPoint(models.Model):
     document = models.ForeignKey(Document)
     source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
-    guid = models.CharField(unique=True, max_length=40)
+    guid = models.CharField(unique=True, max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
 
@@ -128,8 +116,7 @@ class SourceDataPoint(models.Model):
 
 class SourceRegion(models.Model):
 
-    region_string = models.CharField(max_length=255)
-    region_code = models.CharField(max_length=255, null=True)
+    region_code = models.CharField(max_length=255, null=False, unique=True)
     lat = models.CharField(max_length=255, null=True)
     lon = models.CharField(max_length=255, null=True)
     parent_name = models.CharField(max_length=255, null=True)
@@ -140,19 +127,17 @@ class SourceRegion(models.Model):
     document = models.ForeignKey(Document)
     is_high_risk = models.BooleanField(default=False)
 
-
     class Meta:
         db_table = 'source_region'
-        unique_together = ('region_code','document')
 
     def __unicode__(self):
 
         if self.region_type:
 
-            return self.region_string + ' (' + self.region_type + ')'
+            return self.region_code + ' (' + self.region_type + ')'
 
         else:
-            return self.region_string + '( UNKNOWN REGION TYPE )'
+            return self.region_code + '( UNKNOWN REGION TYPE )'
 
 class SourceRegionPolygon(models.Model):
 

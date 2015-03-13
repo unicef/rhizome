@@ -7029,6 +7029,9 @@ input[type="password"]:focus {
   outline: none;
 }
 
+svg {
+  overflow: hidden;
+}
 svg .bg {
   fill: #F6F6F6;
 }
@@ -7042,7 +7045,7 @@ svg .axis line {
   shape-rendering: cripsEdges;
 }
 svg .axis .minor line {
-  stroke: #FFFFFF;
+  stroke: #EFEFEF;
 }
 svg .axis text {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
@@ -7063,7 +7066,6 @@ svg .line path {
 }
 svg .line circle {
   fill: #FFFFFF;
-  stroke: #555555;
   stroke-width: 1px;
 }
 svg .area,
@@ -7085,9 +7087,15 @@ svg.bullet .marker {
 svg.bullet .ranges .range-label {
   fill: #666666;
 }
+svg.bullet .label {
+  text-shadow: none;
+  fill: #FFFFFF;
+}
+svg.bullet .label.dark {
+  fill: #333333;
+}
 svg .point {
   fill: #FFFFFF;
-  stroke: #707677;
   stroke-width: 1px;
 }
 svg .hover-tile {
@@ -7099,8 +7107,9 @@ svg .hover-line {
   shape-rendering: crispEdges;
 }
 svg .region {
-  fill: #EEEEEE;
-  stroke: #FFFFFF;
+  fill: #FFFFFF;
+  stroke: #999999;
+  stroke-width: 1px;
 }
 svg .clickable {
   cursor: pointer;
@@ -7225,6 +7234,10 @@ h4 {
   overflow: hidden;
 }
 
+select {
+  padding-right: 1.5em;
+}
+
 nav {
   overflow: hidden;
   *zoom: 1;
@@ -7253,11 +7266,13 @@ nav a:hover {
 }
 
 body.dashboard nav .dashboard,
-body.data nav .data {
+body.data nav .data,
+body.data-entry nav .data-entry {
   border-left: 4px solid #ffcc67;
 }
 body.dashboard nav .dashboard a,
-body.data nav .data a {
+body.data nav .data a,
+body.data-entry nav .data-entry a {
   opacity: 1;
 }
 
@@ -7378,7 +7393,9 @@ button:focus,
 
 /* fixed-header tables */
 .fixed-table-container {
-  height: 500px;
+  display: inline-block;
+  /* required to make horizontal scrolling work */
+  height: 475px;
   background-color: white;
   position: relative;
   /* could be absolute or relative */
@@ -7389,12 +7406,15 @@ button:focus,
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-left: none;
 }
 .fixed-table-container .header-background {
   height: 50px;
   /* height of header */
   background-color: #F5F5F5;
-  border: solid 1px #DDDDDD;
+  border: solid 1px #ddd;
   border-bottom: none;
   position: absolute;
   top: 0;
@@ -7406,7 +7426,7 @@ button:focus,
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  margin-top: -18px;
+  margin: -18px 0 -1px 0;
 }
 .fixed-table-container table th {
   border-bottom: 1px solid #ddd;
@@ -7416,6 +7436,13 @@ button:focus,
 }
 .fixed-table-container table td:first-child {
   border-left: none;
+}
+.fixed-table-container table td.section-header, .fixed-table-container table td.section-header:hover {
+  font-size: 11px;
+  background-color: #999;
+  font-weight: 100;
+  color: #fff;
+  text-transform: uppercase;
 }
 .fixed-table-container table .th-inner {
   position: absolute;
@@ -7439,9 +7466,8 @@ button:focus,
   width: auto;
   padding-right: 10px;
 }
-.fixed-table-container table .first .th-inner {
+.fixed-table-container table th:first-child .th-inner {
   border-left: none;
-  padding-left: 6px;
 }
 
 .statusText-good {
@@ -7498,7 +7524,7 @@ svg {
 }
 
 #new-polio-cases {
-  background-color: #F6F6F6;
+  background-color: #FFFFFF;
   color: #AF373E;
   position: absolute;
   top: 0;
@@ -7517,14 +7543,13 @@ ul.pie li {
   font-size: 8px;
   line-height: 1;
   margin-bottom: 2pt;
-  min-height: 14pt;
   padding-top: 3pt;
 }
 ul.pie div.chart {
   display: inline-block;
   float: left;
   margin-left: -14pt;
-  margin-top: -3pt;
+  margin-top: -2px;
   max-width: 12pt;
 }
 
@@ -7533,6 +7558,12 @@ ul.pie div.chart {
 .dropdown {
   cursor: pointer;
   position: relative;
+}
+.dropdown.open .container ul .selected .fa-check {
+  visibility: visible;
+}
+.dropdown.open .container ul .folder .fa-caret-right, .dropdown.open .container ul .folder .fa-caret-down {
+  visibility: visible;
 }
 .dropdown .menu-button {
   padding-right: 2rem;
@@ -7596,12 +7627,6 @@ ul.pie div.chart {
 .dropdown .container ul *[role="menuitem"] .fa-check {
   float: right;
 }
-.dropdown .container ul .selected .fa-check {
-  visibility: visible;
-}
-.dropdown .container ul .folder .fa-caret-right, .dropdown .container ul .folder .fa-caret-down {
-  visibility: visible;
-}
 .dropdown .container .selection-controls {
   margin: 5px;
   text-align: center;
@@ -7609,59 +7634,6 @@ ul.pie div.chart {
 }
 .dropdown .hidden {
   visibility: hidden;
-}
-
-/*# sourceMappingURL=style.css.map */
-
-table .th-inner {
-  min-width: 80px;
-}
-table td.editable {
-  width: 80px;
-  padding: 2px;
-  /* cell status */
-}
-table td.editable .displayValue,
-table td.editable .editControl {
-  width: 100%;
-  height: 100%;
-  padding: 4px 6px;
-}
-table td.editable .displayValue {
-  cursor: pointer;
-  min-height: 20px;
-}
-table td.editable .editControl {
-  display: none;
-  border: 1px solid #aaa;
-  font-size: inherit;
-}
-table td.editable .editControl:focus {
-  outline: 0;
-}
-table td.editable.editing .displayValue {
-  display: none;
-}
-table td.editable.editing .editControl {
-  display: block;
-}
-table td.editable.missing .displayValue {
-  background-color: #ffeb86;
-}
-table .completionStatus {
-  font-size: .9em;
-}
-
-.completionStatus {
-  font-weight: bold;
-}
-
-.empty,
-.loading {
-  background-color: #fafafa;
-  color: #999;
-  text-align: center;
-  padding: 40px 0;
 }
 
 /*# sourceMappingURL=style.css.map */
@@ -7733,4 +7705,75 @@ table .completionStatus {
   border-left-color: rgba(72, 72, 77, 0.96);
   top: 8px;
   right: -14px;
+}
+
+/*# sourceMappingURL=style.css.map */
+
+table .th-inner {
+  min-width: 80px;
+}
+table td.editable {
+  width: 80px;
+  padding: 2px;
+  /* cell status */
+}
+table td.editable .displayValue,
+table td.editable .editControl {
+  width: 100%;
+  height: 100%;
+  padding: 4px 6px;
+}
+table td.editable .displayValue {
+  cursor: pointer;
+  min-height: 20px;
+}
+table td.editable .editControl {
+  display: none;
+  border: 1px solid #aaa;
+  font-size: inherit;
+  min-width: 50px;
+}
+table td.editable .editControl:focus {
+  outline: 0;
+}
+table td.editable.editing .displayValue, table td.editable.saving .displayValue {
+  display: none;
+}
+table td.editable.editing .editControl {
+  display: block;
+}
+table td.editable.saving .editControl {
+  display: none;
+}
+table td.editable .saving-icon {
+  display: none;
+}
+table td.editable.saving .saving-icon {
+  display: inherit;
+}
+table td.editable.missing .displayValue {
+  background-color: #ffeb86;
+}
+table td.editable.error {
+  background-color: #FF9081;
+}
+table .completionStatus {
+  font-size: .9em;
+  min-width: 40px;
+}
+table .rowCompletionStatus {
+  width: 80px;
+  text-align: center;
+}
+
+.completionStatus {
+  font-weight: bold;
+}
+
+.empty,
+.loading {
+  background-color: #fafafa;
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
 }

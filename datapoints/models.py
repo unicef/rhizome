@@ -1,5 +1,6 @@
 from django.db import models
 from autoslug import AutoSlugField
+from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
 class Source(models.Model):
@@ -117,17 +118,6 @@ class Region(models.Model):
             ('view_region', 'View region'),
         )
 
-        # ordering = ('name',)
-
-
-class SimpleRegion(models.Model):
-
-    name = models.CharField(max_length=55,unique=True)
-    parent_region_id = models.IntegerField(null=True,blank=True)
-
-    class Meta:
-        db_table = 'vw_simple_region'
-        managed = False
 
 
 class RegionPolygon(models.Model):
@@ -195,18 +185,27 @@ class DataPoint(models.Model):
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
 
     def get_val(self):
-
         return self.value
 
     class Meta:
         db_table = 'datapoint'
         unique_together = ('indicator','region','campaign')
         ordering = ['region', 'campaign']
-
-
         permissions = (
             ('view_datapoint', 'View datapoint'),
         )
+
+class DataPointEntry(DataPoint):
+    """Proxy subclass of DataPoint, for use only in API
+    methods used by the manual data entry form. This model
+    stores records of all changes in a separate DB table.
+    """
+
+    history = HistoricalRecords()
+
+    class Meta:
+        proxy = True
+
 
 class Responsibility(models.Model):
 
@@ -222,13 +221,13 @@ class Responsibility(models.Model):
 
 class DataPointAbstracted(models.Model):
 
-    region_id = models.IntegerField()
-    campaign_id = models.IntegerField()
+    region = models.ForeignKey(Region)
+    campaign = models.ForeignKey(Campaign)
     indicator_json = JSONField()
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('region_id','campaign_id')
+        unique_together = ('region','campaign')
 
 class DataPointComputed(models.Model):
 
@@ -239,8 +238,7 @@ class DataPointComputed(models.Model):
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        managed = False
-
+        unique_together = ('region_id','campaign_id','indicator_id')
 
 class AggDataPoint(models.Model):
 
@@ -251,8 +249,7 @@ class AggDataPoint(models.Model):
 
     class Meta:
         db_table = 'agg_datapoint'
-        managed = False
-
+        unique_together = ('region_id','campaign_id','indicator_id')
 
 class MissingMapping(models.Model):
 

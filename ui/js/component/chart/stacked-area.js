@@ -4,6 +4,7 @@ var _         = require('lodash');
 var d3        = require('d3');
 
 var areaChart = require('./renderer/area');
+var data      = require('util/data');
 
 module.exports = {
 	replace : true,
@@ -24,18 +25,22 @@ module.exports = {
 			var series = this.series;
 			var fmt    = this.yFmt;
 
-			var labels = _.map(series, function (d) {
+			var labels = _(series)
+				.map(function (d) {
 					// lodash.max uses the accessor to find the comparison value, but
 					// returns the entire object; d3.max returns the value returned
 					// by the accessor
 					var last = _.max(d.values, function (v) { return v.campaign.start_date; });
 
 					return {
-						text: d.name + ' ' + fmt(last.value),
-						x   : x(last.campaign.start_date),
-						y   : y(last.y0 + last.y)
+						text   : d.name + ' ' + fmt(last.value),
+						x      : x(last.campaign.start_date),
+						y      : y(last.y0 + last.y),
+						defined: data.defined(last.y0) && data.defined(last.y)
 					};
-				});
+				})
+				.filter('defined')
+				.value();
 
 			return labels;
 		},
@@ -115,7 +120,7 @@ module.exports = {
 
 				scale.domain([
 					Math.min(0, d3.min(flat, y)),
-					d3.max(flat, y) * 1.2
+					d3.max(flat, y)
 				]);
 			}
 

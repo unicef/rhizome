@@ -46,7 +46,8 @@ module.exports = {
 			source  : api.regions,
 			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
 			data: {
-				placeholder: 'Loading regions'
+				placeholder: 'Loading regions',
+				searchable: true
 			},
 			mapping : {
 				'parent_region_id': 'parent',
@@ -99,7 +100,9 @@ module.exports = {
 						title   : startDate.format('MMM YYYY'),
 						value   : o.start_date,
 						date    : startDate.format('YYYYMMDD'),
-						end     : o.end_date,
+						// FIXME: For now end and start are the same because the end_date
+						// was removed
+						end     : o.start_date,
 						id      : o.id,
 						selected: false
 					};

@@ -25,6 +25,10 @@
 					<i class="fa fa-table fa-lg"></i>
 				</a></li>
 
+				<li class="data-entry"><a href="{% url 'datapoints:datapoint_entry' %}">
+					<i class="fa fa-edit fa-lg"></i>
+				</a></li>
+
 				<li><a href="/admin">
 					<i class="fa fa-cog fa-lg"></i>
 				</a></li>
@@ -45,6 +49,13 @@
 
 		<div id="tooltip" v-component="vue-tooltip"></div>
 	</div>
+
+	<script>
+	if ('ActiveXObject' in window) {
+		var body = document.getElementsByTagName('body')[0];
+		body.classList.add('ie');
+	}
+	</script>
 
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).

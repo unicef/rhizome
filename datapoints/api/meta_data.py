@@ -1,5 +1,6 @@
 from tastypie.resources import ALL
 from tastypie import fields
+from tastypie.bundle import Bundle
 
 from django.contrib.auth.models import User
 
@@ -9,25 +10,10 @@ from datapoints.models import *
 class OfficeResource(BaseModelResource):
     '''Office Resource'''
 
-
     class Meta(BaseModelResource.Meta):
         queryset = Office.objects.all()
         resource_name = 'office'
 
-
-class RegionResource(BaseModelResource):
-    '''Region Resource'''
-
-
-    class Meta():
-        queryset = SimpleRegion.objects.all()
-        resource_name = 'region'
-        max_limit = None # return all rows by default ( limit defaults to 20 )
-
-    def dehydrate(self, bundle):
-
-        bundle.data.pop("resource_uri",None)# = bundle.obj.region.id
-        return bundle
 
 class GeoJsonResult(object):
     region_id = int()
@@ -121,7 +107,6 @@ class RegionPolygonResource(BaseNonModelResource):
         return data
 
 
-
 class IndicatorResource(BaseModelResource):
     '''Indicator Resource'''
 
@@ -133,25 +118,6 @@ class IndicatorResource(BaseModelResource):
             "id": ALL,
         }
 
-class CampaignResource(BaseModelResource):
-    '''Campaign Resource'''
-
-    office = fields.ToOneField(OfficeResource, 'office')
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Campaign.objects.all()
-        resource_name = 'campaign'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-            "office": ALL,
-        }
-
-    def dehydrate(self, bundle):
-
-        bundle.data['office'] = bundle.obj.office.id
-
-        return bundle
 
 class UserResource(BaseModelResource):
     '''User Resource'''

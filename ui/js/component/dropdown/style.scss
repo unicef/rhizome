@@ -2,8 +2,23 @@
 	cursor: pointer;
 	position: relative;
 
-	form[role="search"] {
+	&.open {
+		.container {
+			ul {
+				.selected {
+					.fa-check {
+						visibility: visible;
+					}
+				}
 
+				.folder {
+					& .fa-caret-right,
+					& .fa-caret-down {
+						visibility: visible;
+					}
+				}
+			}
+		}
 	}
 
 	.menu-button {
@@ -76,20 +91,6 @@
 					float: right;
 				}
 			}
-
-			.selected {
-				& .fa-check {
-					visibility: visible;
-				}
-			}
-
-			.folder {
-				& .fa-caret-right,
-				& .fa-caret-down {
-					visibility: visible;
-				}
-			}
-
 		}
 
     .selection-controls {

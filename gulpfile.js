@@ -14,7 +14,7 @@ var path = {
 	main      : './ui/js/PolioScape.js',
 	components: './ui/js/**/*.{js,html,css,sass,scss}',
 	js        : './ui/js/**/*.js',
-	sass      : ['./ui/styles/**/{screen,print,ie}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
+	sass      : ['./ui/styles/**/{screen,print,ie,non-ie-print}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
 	output    : './static',
@@ -40,7 +40,7 @@ function build(src, dst, opts) {
 };
 
 gulp.task('styles', function () {
-	var filter = $.filter(['**/*', '!ie.css', '!print.css', '!font-awesome.min.css']);
+	var filter = $.filter(['**/*', '!non-ie-print.css', '!ie.css', '!print.css', '!font-awesome.min.css']);
 
 	return gulp.src(path.sass)
 		.pipe($.rubySass({
@@ -54,7 +54,10 @@ gulp.task('styles', function () {
 		.pipe($.concat('screen.css'))
 		.pipe(filter.restore())
 		.pipe($.autoprefixer('last 1 version'))
-		.pipe(gulp.dest(path.output + '/css'));
+		.pipe(gulp.dest(path.output + '/css'))
+		.on('end', function () {
+			exec('say -v Fred "CSS compiled"');
+		});
 });
 
 gulp.task('scripts', function () {
@@ -68,6 +71,9 @@ gulp.task('browserify', ['scripts'], function () {
 		debug: true,
 		standalone: 'Polio',
 		paths: ['./ui/js']
+	})
+	.on('end', function () {
+		exec('say -v Fred "App compiled"');
 	});
 });
 

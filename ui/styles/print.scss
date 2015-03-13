@@ -38,6 +38,12 @@ header {
   @include block-grid-html-classes($size:large,$include-spacing:false);
 }
 
+h4,
+h6 {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 #management-dashboard {
 	color: #a7aeaf;
 
@@ -62,8 +68,45 @@ header {
 	}
 }
 
+.ie #management-dashboard {
+	#polio-cases-ytd svg {
+		width : 6.843cm;
+		height: 3.894cm;
+	}
+
+	#immunity-gap svg {
+		width : 6.843cm;
+		height: 4.253cm;
+	}
+
+	#inaccessible-children svg {
+		width : 8.714cm;
+		height: 3.27cm;
+	}
+
+	#missed-children svg {
+		width : 6.845cm;
+		height: 3.585cm;
+	}
+
+	#conversions svg {
+		width : 6.845cm;
+		height: 3.028cm;
+	}
+
+	#missed-children-map svg {
+		width : 6.845cm;
+		height: 6.81672137cm;
+	}
+
+	svg.bullet {
+		width : 3.247cm;
+		height: 1.022cm;
+	}
+}
+
 .logo {
-	display      : inline;
-	height       : 25pt;
-	float        : right;
+	display: inline;
+	height : 25pt;
+	float  : right;
 }

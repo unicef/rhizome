@@ -8,6 +8,7 @@ from source_data.models import *
 
 def main():
 
+    source_id = Source.objects.get(source_name='region_upload').id
 
     rg_type_map = {0 : 'Country', 1:'Province',2:'District', 3 : 'Ward', 4:'Settlement'}
 
@@ -24,7 +25,7 @@ def main():
             print 'processing %s ' % docfile
 
             document_id = Document.objects.create(docfile=docfile\
-                ,created_by_id=1).id
+                ,created_by_id=1,source_id=source_id).id
 
             with open(docfile) as f:
                 data = json.load(f)
