@@ -120,7 +120,7 @@ module.exports = {
 
 				scale.domain([
 					Math.min(0, d3.min(flat, y)),
-					d3.max(flat, y) * 1.2
+					d3.max(flat, y)
 				]);
 			}
 

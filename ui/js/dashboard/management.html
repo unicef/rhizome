@@ -82,7 +82,7 @@
 						data-margin-right="4"
 						data-margin-left="4"
 						data-margin-bottom="24"
-						data-aspect="1.773976153"
+						data-aspect="1.909344491"
 						data-margin-bottom="12"
 						data-indicators="[166,164,167,165]"
 						data-period="2 years"
@@ -129,11 +129,13 @@
 
 			<div class="medium-2 columns">
 				<h4>Missed Children Due to Refusal</h4>
-				<div v-component="chart-choropleth"
-				     v-with="region: region, campaign: campaign"
-				     data-indicator="166"
-				     data-aspect="1"
-				     data-range="[0, 0.1]">
+				<div
+					id="missed-children-map"
+					v-component="chart-choropleth"
+				  v-with="region: region, campaign: campaign"
+				  data-indicator="166"
+				  data-aspect="1"
+				  data-range="[0, 0.1]">
 				</div>
 			</div>
 

@@ -105,8 +105,8 @@ module.exports = {
 			if (domain.length < 2) {
 				var datapoints = this.series;
 
-				domain[0] = Math.min(0, d3.min(datapoints, y)) * 1.1 || 0;
-				domain[1] = d3.max(datapoints, y) * 1.1 || domain[0] + 1;
+				domain[0] = Math.min(0, d3.min(datapoints, y)) || 0;
+				domain[1] = d3.max(datapoints, y) || domain[0] + 1;
 			}
 
 			var scale = d3.scale.linear()
