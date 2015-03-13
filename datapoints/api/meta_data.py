@@ -13,13 +13,6 @@ class OfficeResource(BaseModelResource):
         queryset = Office.objects.all()
         resource_name = 'office'
 
-class CampaignResource(BaseModelResource):
-
-    class Meta(BaseModelResource.Meta):
-
-        queryset = Campaign.objects.all()
-        resource_name = 'campaign'
-
 class RegionResource(BaseModelResource):
     '''Region Resource'''
 
