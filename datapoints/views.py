@@ -579,3 +579,23 @@ def api_campaign(request):
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
+
+
+
+def api_region(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    r_raw = Campaign.objects.raw("SELECT * FROM region")
+
+    objects = [{'id': r.id,'name': r.name, 'office_id':r.office_id, 'parent_region_id':\
+        r.parent_region_id, 'region_type_id': r.region_type_id} for r in r_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")

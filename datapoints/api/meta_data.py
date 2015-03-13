@@ -1,5 +1,6 @@
 from tastypie.resources import ALL
 from tastypie import fields
+from tastypie.bundle import Bundle
 
 from django.contrib.auth.models import User
 
@@ -13,25 +14,6 @@ class OfficeResource(BaseModelResource):
         queryset = Office.objects.all()
         resource_name = 'office'
 
-class RegionResource(BaseModelResource):
-    '''Region Resource'''
-
-    region_type_id = fields.IntegerField(attribute='region_type_id')
-    parent_region_id = fields.IntegerField(attribute='parent_region_id',null=True,blank=True)
-    office_id = fields.IntegerField(attribute='office_id',null=True,blank=True)
-    dehydrate_keys = ['created_at', 'latitude', 'longitude', 'region_code',
-        'shape_file_path', 'slug', 'resource_uri']
-
-    class Meta():
-        queryset = Region.objects.all()
-        resource_name = 'region'
-        max_limit = None # return all rows by default ( limit defaults to 20 )
-
-    def dehydrate(self, bundle):
-
-        for key in self.dehydrate_keys:
-            bundle.data.pop(key, None)
-        return bundle
 
 class GeoJsonResult(object):
     region_id = int()

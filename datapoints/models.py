@@ -118,8 +118,6 @@ class Region(models.Model):
             ('view_region', 'View region'),
         )
 
-        # ordering = ('name',)
-
 
 class SimpleRegion(models.Model):
 
@@ -131,6 +129,20 @@ class SimpleRegion(models.Model):
     class Meta:
         db_table = 'vw_simple_region'
         managed = False
+
+
+class SimpleCampaign(models.Model):
+
+    office_id = models.IntegerField()
+	# start_date = models.DateField()
+	# end_date = models.DateField()
+	# slug = models.CharField()
+	# region_id = models.IntegerField()
+
+    class Meta:
+        db_table = 'vw_simple_campaign'
+        managed = False
+
 
 class RegionPolygon(models.Model):
 
@@ -251,8 +263,6 @@ class DataPointComputed(models.Model):
     class Meta:
         db_table = 'datapoint_with_computed'
         unique_together = ('region_id','campaign_id','indicator_id')
-
-
 
 class AggDataPoint(models.Model):
 
