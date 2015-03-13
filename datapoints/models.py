@@ -119,30 +119,6 @@ class Region(models.Model):
         )
 
 
-class SimpleRegion(models.Model):
-
-    name = models.CharField(max_length=55,unique=True)
-    parent_region_id = models.IntegerField(null=True,blank=True)
-    region_type_id = models.IntegerField(null=True,blank=True)
-    is_high_risk = models.BooleanField()
-
-    class Meta:
-        db_table = 'vw_simple_region'
-        managed = False
-
-
-class SimpleCampaign(models.Model):
-
-    office_id = models.IntegerField()
-	# start_date = models.DateField()
-	# end_date = models.DateField()
-	# slug = models.CharField()
-	# region_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'vw_simple_campaign'
-        managed = False
-
 
 class RegionPolygon(models.Model):
 
