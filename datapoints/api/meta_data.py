@@ -17,7 +17,7 @@ class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
 
-        queryset = DataPointAbstracted.objects.all()
+        queryset = Campaign.objects.all()
         resource_name = 'campaign'
 
 class RegionResource(BaseModelResource):
