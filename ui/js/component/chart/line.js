@@ -5,9 +5,10 @@ var d3        = require('d3');
 var moment    = require('moment');
 
 var colors    = require('colors/coolgray');
-var lineChart = require('./renderer/line');
-var label     = require('./renderer/label');
+var data      = require('util/data');
 var hoverLine = require('./behavior/hover-line');
+var label     = require('./renderer/label');
+var lineChart = require('./renderer/line');
 
 function x (d) {
 	return d.campaign.start_date;
@@ -77,15 +78,19 @@ module.exports = {
 			var series = this.series;
 			var fmt    = this.yFmt;
 
-			var labels = _.map(series, function (d) {
-				var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
+			var labels = _(series)
+				.map(function (d) {
+					var last   = _.max(d.values, function (v) { return v.campaign.start_date; });
 
-				return {
-					text : d.name + ' ' + fmt(last.value),
-					x    : x(last.campaign.start_date),
-					y    : y(last.value)
-				};
-			});
+					return {
+						text   : d.name + ' ' + fmt(last.value),
+						x      : x(last.campaign.start_date),
+						y      : y(last.value),
+						defined: data.defined(last.value)
+					};
+				})
+				.filter('defined')
+				.value();
 
 			return labels;
 		},
@@ -98,6 +103,9 @@ module.exports = {
 			var indicators = _.indexBy(this.indicators, 'id');
 
 			var series = _(this.datapoints)
+				.filter(function (d) {
+					return data.defined(d.value);
+				})
 				.sortBy(function (d) {
 					return d.campaign.start_date;
 				})

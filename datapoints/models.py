@@ -118,19 +118,7 @@ class Region(models.Model):
             ('view_region', 'View region'),
         )
 
-        # ordering = ('name',)
 
-
-class SimpleRegion(models.Model):
-
-    name = models.CharField(max_length=55,unique=True)
-    parent_region_id = models.IntegerField(null=True,blank=True)
-    region_type_id = models.IntegerField(null=True,blank=True)
-    is_high_risk = models.BooleanField()
-
-    class Meta:
-        db_table = 'vw_simple_region'
-        managed = False
 
 class RegionPolygon(models.Model):
 
@@ -250,8 +238,7 @@ class DataPointComputed(models.Model):
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        managed = False
-
+        unique_together = ('region_id','campaign_id','indicator_id')
 
 class AggDataPoint(models.Model):
 
@@ -262,8 +249,7 @@ class AggDataPoint(models.Model):
 
     class Meta:
         db_table = 'agg_datapoint'
-        managed = False
-
+        unique_together = ('region_id','campaign_id','indicator_id')
 
 class MissingMapping(models.Model):
 

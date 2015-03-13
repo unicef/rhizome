@@ -4,6 +4,7 @@ var _         = require('lodash');
 var d3        = require('d3');
 
 var lineChart = require('./renderer/line');
+var data      = require('util/data');
 
 module.exports = {
 
@@ -44,18 +45,22 @@ module.exports = {
 			var series = this.series;
 			var fmt    = this.yFmt;
 
-			var labels = _.map(series, function (d) {
-				// lodash.max uses the accessor to find the comparison value, but
-				// returns the entire object; d3.max returns the value returned
-				// by the accessor
-				var last = _.max(d.values, function (v) { return v.month; });
+			var labels = _(series)
+				.map(function (d) {
+					// lodash.max uses the accessor to find the comparison value, but
+					// returns the entire object; d3.max returns the value returned
+					// by the accessor
+					var last = _.max(d.values, function (v) { return v.month; });
 
-				return {
-					text: d.name + ' – ' + fmt(last.value),
-					x   : x(last.month),
-					y   : y(last.value)
-				};
-			});
+					return {
+						text   : d.name + ' – ' + fmt(last.value),
+						x      : x(last.month),
+						y      : y(last.value),
+						defined: data.defined(last.value)
+					};
+				})
+				.filter('defined')
+				.value();
 
 			return labels;
 		},

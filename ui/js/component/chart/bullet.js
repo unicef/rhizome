@@ -36,7 +36,7 @@ module.exports = {
 		status: function () {
 			var delta = this.delta;
 
-			if (_.isNaN(delta)) {
+			if (this.missing || _.isNaN(delta)) {
 				return '';
 			}
 
@@ -100,6 +100,10 @@ module.exports = {
 
 			return Math.max(d3.max(ranges, function (d) { return d.end; }),
 				d3.max(this.datapoints, function (d) { return d.value; }));
+		},
+
+		missing: function () {
+			return _.isNull(this.value) || _.isUndefined(this.value);
 		},
 
 		indicator: function () {
@@ -170,7 +174,7 @@ module.exports = {
 
 			labels.exit().remove();
 
-			var missing = _.isNull(this.value) || _.isUndefined(this.value);
+			var missing = this.missing;
 			var value = svg.selectAll('.value')
 				.data(missing ? [] : [this.value]);
 
@@ -201,7 +205,6 @@ module.exports = {
 
 			label.enter().append('text')
 				.attr({
-					'class': 'label',
 					'dx'   : 2
 				}).text(0);
 
@@ -216,13 +219,24 @@ module.exports = {
 					return format(d);
 				});
 
+			label.each(function (d) {
+				var bbox = this.getBBox();
+				var cls = 'label';
+
+				if (bbox.width * 0.75 > x(d)) {
+					cls = 'label dark';
+				}
+
+				d3.select(this).attr('class', cls);
+			})
+
 			label.exit()
 				.transition().duration(300)
 					.style('opacity', 0)
 				.remove();
 
 			var marker = svg.selectAll('.marker')
-				.data(this.marker ? [this.marker] : []);
+				.data(!missing && this.marker ? [this.marker] : []);
 
 			marker.transition().duration(300);
 

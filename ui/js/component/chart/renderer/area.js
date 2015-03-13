@@ -3,9 +3,14 @@
 var d3        = require('d3');
 
 var animation = require('component/chart/animation');
+var data      = require('util/data');
+
+function defined(d) {
+	return data.defined(d.value);
+}
 
 module.exports = function areaChart() {
-	var area            = d3.svg.area();
+	var area            = d3.svg.area().defined(defined);
 	var className       = 'area';
 	var color           = function () { return 'inherit'; };
 	var transitionSpeed = 500;

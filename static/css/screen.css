@@ -7045,7 +7045,7 @@ svg .axis line {
   shape-rendering: cripsEdges;
 }
 svg .axis .minor line {
-  stroke: #FFFFFF;
+  stroke: #EFEFEF;
 }
 svg .axis text {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
@@ -7066,7 +7066,6 @@ svg .line path {
 }
 svg .line circle {
   fill: #FFFFFF;
-  stroke: #555555;
   stroke-width: 1px;
 }
 svg .area,
@@ -7088,13 +7087,15 @@ svg.bullet .marker {
 svg.bullet .ranges .range-label {
   fill: #666666;
 }
-svg.bullet label {
+svg.bullet .label {
   text-shadow: none;
-  fill: white;
+  fill: #FFFFFF;
+}
+svg.bullet .label.dark {
+  fill: #333333;
 }
 svg .point {
   fill: #FFFFFF;
-  stroke: #707677;
   stroke-width: 1px;
 }
 svg .hover-tile {
@@ -7106,8 +7107,9 @@ svg .hover-line {
   shape-rendering: crispEdges;
 }
 svg .region {
-  fill: #EEEEEE;
-  stroke: #FFFFFF;
+  fill: #FFFFFF;
+  stroke: #999999;
+  stroke-width: 1px;
 }
 svg .clickable {
   cursor: pointer;
@@ -7522,7 +7524,7 @@ svg {
 }
 
 #new-polio-cases {
-  background-color: #F6F6F6;
+  background-color: #FFFFFF;
   color: #AF373E;
   position: absolute;
   top: 0;
@@ -7556,6 +7558,12 @@ ul.pie div.chart {
 .dropdown {
   cursor: pointer;
   position: relative;
+}
+.dropdown.open .container ul .selected .fa-check {
+  visibility: visible;
+}
+.dropdown.open .container ul .folder .fa-caret-right, .dropdown.open .container ul .folder .fa-caret-down {
+  visibility: visible;
 }
 .dropdown .menu-button {
   padding-right: 2rem;
@@ -7618,12 +7626,6 @@ ul.pie div.chart {
 }
 .dropdown .container ul *[role="menuitem"] .fa-check {
   float: right;
-}
-.dropdown .container ul .selected .fa-check {
-  visibility: visible;
-}
-.dropdown .container ul .folder .fa-caret-right, .dropdown .container ul .folder .fa-caret-down {
-  visibility: visible;
 }
 .dropdown .container .selection-controls {
   margin: 5px;

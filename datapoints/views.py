@@ -16,7 +16,7 @@ import gspread
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
 from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
-# from polio.secrets import gdoc_u, gdoc_p
+from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -308,218 +308,32 @@ def search(request):
 
 
 def calc_datapoint(request):
+    '''
+    '''
 
-    curs = DataPoint.objects.raw("""
-    	DROP TABLE IF EXISTS datapoint_with_computed;
+    indicator_ids = Indicator.objects.all().values_list('id',flat=True)
 
-    	CREATE TABLE datapoint_with_computed
-    	(
-    		id SERIAL
-    		,indicator_id INTEGER
-    		,region_id INTEGER
-    		,campaign_id INTEGER
-    		,value FLOAT
-    		,is_agg BOOLEAN
-    		,is_calc BOOLEAN
-    	);
+    for i_id in indicator_ids:
 
-    	INSERT INTO datapoint_with_computed
-    	(indicator_id,region_id,campaign_id,value,is_agg,is_calc)
+        print '===== PROCESSING: %s ===== \n' % i_id
 
-    	SELECT
-    		indicator_id
-    		,region_id
-    		,campaign_id
-    		,value
-    		,is_agg
-    		,CAST(0 as BOOLEAN) as is_calc
-    	FROM agg_datapoint;
+        curs = DataPointComputed.objects.raw("SELECT * FROM fn_calc_datapoint(%s);"
+            ,[i_id])
 
-    	CREATE UNIQUE INDEX  dwc_uq_ix on datapoint_with_computed (region_id, indicator_id, campaign_id);
-
-        ---- SUM OF PARTS ------
-        INSERT INTO datapoint_with_computed
-        (indicator_id,region_id,campaign_id,value,is_calc)
-
-        SELECT
-    	 cic.indicator_id
-    	,ad.region_id
-    	,ad.campaign_id
-    	,SUM(ad.value) as value
-           ,'t'
-        FROM agg_datapoint ad
-        INNER JOIN calculated_indicator_component cic
-            ON ad.indicator_id = cic.indicator_component_id
-            AND cic.calculation = 'PART_TO_BE_SUMMED'
-        GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
-
-        ----- PART / WHOLE ------
-        INSERT INTO datapoint_with_computed
-        (indicator_id,region_id,campaign_id,value,is_calc)
-
-        SELECT
-        part.indicator_id as master_indicator_id
-        ,d_part.region_id
-        ,d_part.campaign_id
-        ,d_part.value / NULLIF(d_whole.value,0) as value
-        ,CAST(1 as BOOLEAN) as is_calc
-        FROM(
-          SELECT max(id) as max_dp_id FROM datapoint_with_computed
-        ) x
-        INNER JOIN calculated_indicator_component part
-            ON 1 = 1
-        INNER JOIN calculated_indicator_component whole
-            ON part.indicator_id = whole.indicator_id
-            AND whole.calculation = 'WHOLE'
-            AND part.calculation = 'PART'
-        INNER JOIN datapoint_with_computed d_part
-            ON part.indicator_component_id = d_part.indicator_id
-        INNER JOIN datapoint_with_computed d_whole
-            ON whole.indicator_component_id = d_whole.indicator_id
-            AND d_part.campaign_id = d_whole.campaign_id
-            AND d_part.region_id = d_whole.region_id;
-
-        CREATE INDEX ind_ix on datapoint_with_computed (indicator_id);
-        CLUSTER datapoint_with_computed using ind_ix;
-
-        INSERT INTO datapoint_with_computed
-        (indicator_id,region_id,campaign_id,value,is_calc)
-
-
-        SELECT
-			denom.master_indicator_id
-          		,denom.region_id
-          		,denom.campaign_id
-          		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
-               , CAST(1 AS BOOLEAN) as is_calc
-          FROM (
-          	SELECT
-          		cic.indicator_id as master_indicator_id
-          		,ad.region_id
-          		,ad.indicator_id
-          		,ad.campaign_id
-          		,ad.value
-          	FROM agg_datapoint ad
-          	INNER JOIN calculated_indicator_component cic
-          	ON cic.indicator_component_id = ad.indicator_id
-          	AND calculation = 'PART_OF_DIFFERENCE'
-          )num_part
-
-          INNER JOIN (
-          	SELECT
-          		cic.indicator_id as master_indicator_id
-          		,ad.region_id
-          		,ad.indicator_id
-          		,ad.campaign_id
-          		,ad.value
-          	FROM agg_datapoint ad
-          	INNER JOIN calculated_indicator_component cic
-          	ON cic.indicator_component_id = ad.indicator_id
-          	AND calculation = 'WHOLE_OF_DIFFERENCE'
-
-          )num_whole
-          ON num_part.master_indicator_id = num_whole.master_indicator_id
-          AND num_part.region_id = num_whole.region_id
-          AND num_part.campaign_id = num_whole.campaign_id
-
-          INNER JOIN
-          (
-          	SELECT
-          		cic.indicator_id as master_indicator_id
-          		,ad.region_id
-          		,ad.indicator_id
-          		,ad.campaign_id
-          		,ad.value
-          	FROM agg_datapoint ad
-          	INNER JOIN calculated_indicator_component cic
-          	ON cic.indicator_component_id = ad.indicator_id
-          	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
-          )denom
-          ON num_whole.region_id = denom.region_id
-          AND num_whole.master_indicator_id = denom.master_indicator_id
-         AND num_whole.campaign_id = denom.campaign_id;
-
-        UPDATE datapoint_with_computed
-        SET value = ROUND(CAST(value AS NUMERIC),3);
-
-        SELECT id FROM datapoint_with_computed LIMIT 1;
-    """)
-
-    for x in curs:
-        print x
+        for x in curs:
+            print x
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
 
 def agg_datapoint(request):
+    '''
+    '''
 
-    # insert leave level data #
-
-    curs = DataPoint.objects.raw("""
-
-    TRUNCATE TABLE agg_datapoint;
-
-    INSERT INTO agg_datapoint
-    (region_id, campaign_id, indicator_id, value, is_agg)
-
-    SELECT
-        region_id, campaign_id, indicator_id, value, 't'
-    FROM datapoint d
-    WHERE value != 'NaN'
-    AND NOT EXISTS (
-        SELECT 1 FROM calculated_indicator_component cic
-        WHERE d.indicator_id = cic.indicator_id);
-
-    --
-
-    DROP INDEX IF EXISTS ag_uq_ix;
-    CREATE UNIQUE INDEX  ag_uq_ix on agg_datapoint (region_id, indicator_id, campaign_id);
-
-    SELECT id from datapoint limit 1;
-
-    """)
+    curs = AggDataPoint.objects.raw("SELECT * FROM fn_agg_datapoint()")
 
     for x in curs:
         print x
-
-
-    region_loop = {
-        0 : 'settlement',
-        1 : 'sub-district',
-        2 : 'district',
-        3 : 'district', # Kirachi
-        4 : 'province',
-    }
-
-    for k,v in region_loop.iteritems():
-
-        curs = DataPoint.objects.raw("""
-            INSERT INTO agg_datapoint
-            (region_id, campaign_id, indicator_id, value, is_agg)
-
-            SELECT
-                r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
-            FROM agg_datapoint ag
-            INNER JOIN region r
-                ON ag.region_id = r.id
-            INNER JOIN region_type rt
-                ON r.region_type_id = rt.id
-                AND rt.name = %s
-            WHERE NOT EXISTS (
-            	SELECT 1 FROM agg_datapoint ag_2
-            	WHERE 1 = 1
-            	AND ag.indicator_id = ag_2.indicator_id
-            	AND ag.campaign_id = ag_2.campaign_id
-            	AND r.parent_region_id = ag_2.region_id
-            )
-            GROUP BY r.parent_region_id, ag.indicator_id, ag.campaign_id;
-
-        SELECT id FROM datapoint LIMIT 1;
-        """,[v])
-
-        for x in curs:
-            print x
-
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
@@ -535,8 +349,6 @@ def populate_dummy_ngo_dash(request):
     dist_r = ng_dash_df['region_id'].unique()
 
     for r in dist_r:
-
-        print r
 
         df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
 
@@ -575,9 +387,9 @@ def load_gdoc_data(request):
 
     err_msg = 'none!'
 
-    # gc = gspread.login(gdoc_u,gdoc_p)
-    gc = gspread.login('fix','me')
-    worksheet = gc.open("Dashboard QA | February 2015").sheet1
+    gc = gspread.login(gdoc_u,gdoc_p)
+    # gc = gspread.login('fix','me')
+    worksheet = gc.open("Master Dashboard QA").sheet1
     list_of_lists = worksheet.get_all_values()
     gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
     gd_df = gd_df[gd_df['region_id'] != '0']
@@ -606,33 +418,7 @@ def load_gdoc_data(request):
 
 def test_data_coverage(request):
 
-    failed = ReconData.objects.raw("""
-    DROP TABLE IF EXISTS _test_results;
-    CREATE TEMP TABLE _test_results
-    AS
-    SELECT
-    	rd.id
-    	,rd.region_id
-    	,rd.campaign_id
-    	,rd.indicator_id
-    	,rd.target_value
-    	,dwc.value as actual_value
-    	,CAST(CASE WHEN ( ABS(rd.target_value - dwc.value) < 0.001) THEN 1 ELSE 0 END AS BOOLEAN) as success_flag
-    FROM recon_data rd
-    LEFT JOIN datapoint_with_computed dwc
-    ON rd.region_id = dwc.region_id
-    AND rd.campaign_id = dwc.campaign_id
-    AND rd.indicator_id = dwc.indicator_id;
-
-    UPDATE recon_data rd
-    SET success_flag = tr.success_flag
-    FROM _test_results tr
-    WHERE rd.id = tr.id;
-
-    SELECT
-    	id,region_id,campaign_id,indicator_id,target_value,actual_value
-    FROM _test_results
-    WHERE success_flag = 'f'""")
+    failed = ReconData.objects.raw("SELECT * FROM fn_test_data_accuracy()")
 
     final_qa_data = []
     for row in failed:
@@ -647,10 +433,8 @@ def test_data_coverage(request):
     test_count = ReconData.objects.count()
     qa_score = 1 - float((len(final_qa_data))/ float(test_count))
 
-
     return render_to_response('qa_data.html',
         {'qa_data': final_qa_data, 'qa_score':qa_score},\
-        # ,'indicator_breakdown':indicator_breakdown},
         context_instance=RequestContext(request))
 
 def qa_failed(request,region_id,campaign_id,indicator_id):
@@ -787,6 +571,26 @@ def api_campaign(request):
     objects = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
         'start_date': str(c.start_date), 'end_date': str(c.end_date )} \
             for c in c_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+
+def api_region(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    r_raw = Campaign.objects.raw("SELECT * FROM region")
+
+    objects = [{'id': r.id,'name': r.name, 'office_id':r.office_id, 'parent_region_id':\
+        r.parent_region_id, 'region_type_id': r.region_type_id} for r in r_raw]
 
     meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
         'total_count': len(objects)}
