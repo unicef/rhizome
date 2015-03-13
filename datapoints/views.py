@@ -330,10 +330,27 @@ def agg_datapoint(request):
     '''
     '''
 
-    curs = AggDataPoint.objects.raw("SELECT * FROM fn_agg_datapoint()")
+    region_type_loop = [
+        2,# settlement',
+        5,# sub-district',
+        4,# district',
+        4,# district',
+        3 # province',
+    ]
 
-    for x in curs:
-        print x
+    init_curs = AggDataPoint.objects\
+        .raw("SELECT * FROM fn_init_agg_datapoint()")
+
+    y = [x for x in init_curs]
+
+
+    for rt in region_type_loop:
+
+        rt_curs = AggDataPoint.objects\
+            .raw("select * FROM fn_agg_datapoint_by_region_type(%s)",[rt])
+
+        y = [x for x in rt_curs]
+
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
