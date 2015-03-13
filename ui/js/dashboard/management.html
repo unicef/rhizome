@@ -141,8 +141,28 @@
 
 			<div class="medium-1 column">
 				<h4>Transit Points</h4>
-				<!-- 177 -->
-				<p>No data</p>
+				<p>
+					{{ transitPoints.vaccinated }} children vaccinated
+				</p>
+
+				<p>
+					<span
+						v-component="chart-pie"
+						v-with="datapoints: transitPoints.pctInplace, loading: false"
+						data-width="18"
+						data-height="18"></span>
+					{{ transitPoints.inPlace }} / {{ transitPoints.planned }} in place
+				</p>
+
+				<p>
+					<span
+						v-component="chart-pie"
+						v-with="datapoints: transitPoints.pctWithSM, loading: false"
+						data-width="18"
+						data-height="18"></span>
+					{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
+					social mobilizer
+				</p>
 
 				<h6>Missed Children Due to Refusal</h6>
 
