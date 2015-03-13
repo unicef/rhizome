@@ -8,31 +8,20 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.execute('''
-        DROP TABLE IF EXISTS "datapoints_historicaldatapointentry";
-        CREATE TABLE "datapoints_historicaldatapointentry" (
-        	    "id" integer NOT NULL,
-        	    "indicator_id" integer,
-        	    "region_id" integer,
-        	    "campaign_id" integer,
-        	    "value" double precision NOT NULL,
-        	    "note" varchar(255),
-        	    "changed_by_id" integer,
-        	    "created_at" timestamp with time zone NOT NULL,
-        	    "source_datapoint_id" integer,
-        	    "history_id" serial NOT NULL PRIMARY KEY,
-        	    "history_date" timestamp with time zone NOT NULL,
-        	    "history_user_id" integer REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED,
-        	    "history_type" varchar(1) NOT NULL
-        );
+        # Adding unique constraint on 'AggDataPoint', fields ['region_id', 'campaign_id', 'indicator_id']
+        db.create_unique('agg_datapoint', ['region_id', 'campaign_id', 'indicator_id'])
 
-        GRANT ALL PRIVILEGES ON datapoints_historicaldatapointentry TO djangoapp;
-        GRANT USAGE, SELECT ON SEQUENCE datapoints_historicaldatapointentry_history_id_seq TO djangoapp;
-        ''')
+        # Adding unique constraint on 'DataPointComputed', fields ['region_id', 'campaign_id', 'indicator_id']
+        db.create_unique('datapoint_with_computed', ['region_id', 'campaign_id', 'indicator_id'])
 
 
     def backwards(self, orm):
-        pass
+        # Removing unique constraint on 'DataPointComputed', fields ['region_id', 'campaign_id', 'indicator_id']
+        db.delete_unique('datapoint_with_computed', ['region_id', 'campaign_id', 'indicator_id'])
+
+        # Removing unique constraint on 'AggDataPoint', fields ['region_id', 'campaign_id', 'indicator_id']
+        db.delete_unique('agg_datapoint', ['region_id', 'campaign_id', 'indicator_id'])
+
 
     models = {
         u'auth.group': {
@@ -72,7 +61,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'datapoints.aggdatapoint': {
-            'Meta': {'object_name': 'AggDataPoint', 'db_table': "'agg_datapoint'", 'managed': 'False'},
+            'Meta': {'unique_together': "(('region_id', 'campaign_id', 'indicator_id'),)", 'object_name': 'AggDataPoint', 'db_table': "'agg_datapoint'"},
             'campaign_id': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'indicator_id': ('django.db.models.fields.IntegerField', [], {}),
@@ -122,7 +111,7 @@ class Migration(SchemaMigration):
             'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Region']"})
         },
         u'datapoints.datapointcomputed': {
-            'Meta': {'object_name': 'DataPointComputed', 'db_table': "'datapoint_with_computed'", 'managed': 'False'},
+            'Meta': {'unique_together': "(('region_id', 'campaign_id', 'indicator_id'),)", 'object_name': 'DataPointComputed', 'db_table': "'datapoint_with_computed'"},
             'campaign_id': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'indicator_id': ('django.db.models.fields.IntegerField', [], {}),
@@ -265,7 +254,7 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('source', 'source_guid', 'indicator_string'),)", 'object_name': 'SourceDataPoint', 'db_table': "'source_datapoint'"},
             'campaign_string': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'cell_value': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 3, 10, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 3, 12, 0, 0)'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['source_data.Document']"}),
             'guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
