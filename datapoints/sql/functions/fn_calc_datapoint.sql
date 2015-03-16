@@ -1,8 +1,8 @@
 ﻿
 DROP FUNCTION IF EXISTS fn_calc_datapoint(indicator_id int);
-CREATE FUNCTION fn_calc_datapoint(indicator_id int) 
-RETURNS TABLE(id int) AS $$    
-  
+CREATE FUNCTION fn_calc_datapoint(indicator_id int)
+RETURNS TABLE(id int) AS $$
+
 	-- delete before reinsert --
 	DELETE FROM  datapoint_with_computed
 	WHERE indicator_id = $1;
@@ -125,14 +125,10 @@ RETURNS TABLE(id int) AS $$
           AND num_whole.campaign_id = denom.campaign_id
           AND num_whole.master_indicator_id = $1;
 
-        UPDATE datapoint_with_computed
-        SET value = ROUND(CAST(value AS NUMERIC),3)
-        WHERE indicator_id = $1;
-
-        SELECT id FROM datapoint_with_computed 
+        SELECT id FROM datapoint_with_computed
 	WHERE indicator_id = $1
 	LIMIT 1;
 
     $$
-    
+
     LANGUAGE SQL;

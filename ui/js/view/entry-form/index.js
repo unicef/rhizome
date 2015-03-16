@@ -17,7 +17,7 @@ module.exports = {
 			indicator_set_id: 2,
 			indicator_sets: require('./structure/indicator_sets'),
 			loaded: false,
-			includeSubRegions: true,
+			includeSubRegions: false,
 			regions: [],
 			indicators: [],
 			pagination: {
