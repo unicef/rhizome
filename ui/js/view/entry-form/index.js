@@ -224,7 +224,10 @@ module.exports = {
 					options.region__in.push(region.id);
 
 					if (self.includeSubRegions) {
-						var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
+						// this will include all child regions:
+						var children = flattenChildren(region, 'children', null, function(d) { return true; });
+						// this will include only high risk child regions
+						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
 							options.region__in = options.region__in.concat(_.map(children, 'id'));
 						}
