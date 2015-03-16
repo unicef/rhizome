@@ -183,12 +183,12 @@ module.exports = {
 			self._regions.items = treeify(items, 'value');
 
 			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
-			if (self.$data.campaign_office_id !== null && campaign.office !== self.$data.campaign_office_id) {
-				self._regions.selectedItems = [];
+			if (self.$data.campaign_office_id !== null && campaign.office_id !== self.$data.campaign_office_id) {
+				self._regions.selection = {};
 			}
 
 			// set office id to track when the office changes
-			self.$data.campaign_office_id = campaign.office;
+			self.$data.campaign_office_id = campaign.office_id;
 
 		},
 
@@ -282,7 +282,7 @@ module.exports = {
 
 			// get datapoints from API
 			self.table.loading = true;
-			api.datapointsRaw(options).done(function (data) {
+			var withSuccess = function (data) {
 
 				// finished fetching data
 				self.table.loading = false;
@@ -400,7 +400,19 @@ module.exports = {
 				self.table.rows = rows;
 				self.table.columns = columns;
 
-			});
+			};
+
+			// var withError = function(err) {
+			// 	console.log(err);
+
+			// 	// finished fetching data
+			// 	self.table.loading = false;
+
+			// 	alert('There was an error loading the data.');
+
+			// };
+
+			api.datapointsRaw(options).then(withSuccess);
 		},
 
 		showTooltip: function() {
