@@ -7291,35 +7291,48 @@ a:hover {
 }
 
 table {
+  border: none;
+  border-collapse: separate;
+  border-spacing: 0.5em;
+}
+table tr {
+  background-color: transparent !important;
+}
+table tr td {
+  font-size: 0.625rem;
+  line-height: 1;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.data-table {
   border-collapse: collapse;
-  font-family: Hevetica, Arial, sans-serif;
   margin-top: 10pt;
   min-width: 100%;
 }
-table th {
-  font-family: Hevetica, Arial, sans-serif;
+.data-table th {
   padding: 5pt 0;
   text-align: left;
 }
-table td {
+.data-table td {
   background-color: white;
   cursor: default;
   font-size: 9pt;
   padding: 3pt 0;
 }
-table .numeric {
+.data-table .numeric {
   text-align: right;
 }
-table .empty td {
+.data-table .empty td {
   background-color: transparent;
   font-size: 150%;
   padding: 2em 0;
   text-align: center;
 }
-table .odd td {
+.data-table .odd td {
   background-color: #f0f0f0;
 }
-table tr:not(.empty):hover td {
+.data-table tr:not(.empty):hover td {
   background-color: #FAFAFA;
 }
 
@@ -7553,6 +7566,11 @@ ul.pie div.chart {
   max-width: 12pt;
 }
 
+.transit-points .chart svg {
+  width: auto;
+  max-width: 20px;
+}
+
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
@@ -7638,77 +7656,6 @@ ul.pie div.chart {
 
 /*# sourceMappingURL=style.css.map */
 
-.tooltip {
-  display: inline;
-  position: absolute;
-  background-color: rgba(72, 72, 77, 0.96);
-  border-radius: 4px;
-  margin-bottom: 7px;
-  max-width: 30em;
-  width: auto;
-  padding: 1em;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  top: auto;
-  transition: opacity 300ms ease;
-}
-.tooltip.fade-enter {
-  opacity: 0;
-}
-.tooltip.fade-leave {
-  opacity: 0;
-}
-.tooltip .pointer {
-  position: absolute;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 7px;
-  height: 0;
-  width: 0;
-}
-.tooltip.top {
-  left: 0;
-  bottom: 100%;
-}
-.tooltip.top .pointer {
-  border-top-color: rgba(72, 72, 77, 0.96);
-  left: 8px;
-  bottom: -14px;
-}
-.tooltip.right {
-  left: 100%;
-  top: -8px;
-  margin-left: 14px;
-}
-.tooltip.right .pointer {
-  border-right-color: rgba(72, 72, 77, 0.96);
-  left: -14px;
-  top: 8px;
-}
-.tooltip.bottom {
-  top: 100%;
-  left: 0;
-  margin-top: 7px;
-}
-.tooltip.bottom .pointer {
-  border-bottom-color: rgba(72, 72, 77, 0.96);
-  left: 8px;
-  top: -14px;
-}
-.tooltip.left {
-  right: 100%;
-  top: -8px;
-  margin-right: 14px;
-}
-.tooltip.left .pointer {
-  border-left-color: rgba(72, 72, 77, 0.96);
-  top: 8px;
-  right: -14px;
-}
-
-/*# sourceMappingURL=style.css.map */
-
 table .th-inner {
   min-width: 80px;
 }
@@ -7776,4 +7723,75 @@ table .rowCompletionStatus {
   color: #999;
   text-align: center;
   padding: 40px 0;
+}
+
+/*# sourceMappingURL=style.css.map */
+
+.tooltip {
+  display: inline;
+  position: absolute;
+  background-color: rgba(72, 72, 77, 0.96);
+  border-radius: 4px;
+  margin-bottom: 7px;
+  max-width: 30em;
+  width: auto;
+  padding: 1em;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  transition: opacity 300ms ease;
+}
+.tooltip.fade-enter {
+  opacity: 0;
+}
+.tooltip.fade-leave {
+  opacity: 0;
+}
+.tooltip .pointer {
+  position: absolute;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 7px;
+  height: 0;
+  width: 0;
+}
+.tooltip.top {
+  left: 0;
+  bottom: 100%;
+}
+.tooltip.top .pointer {
+  border-top-color: rgba(72, 72, 77, 0.96);
+  left: 8px;
+  bottom: -14px;
+}
+.tooltip.right {
+  left: 100%;
+  top: -8px;
+  margin-left: 14px;
+}
+.tooltip.right .pointer {
+  border-right-color: rgba(72, 72, 77, 0.96);
+  left: -14px;
+  top: 8px;
+}
+.tooltip.bottom {
+  top: 100%;
+  left: 0;
+  margin-top: 7px;
+}
+.tooltip.bottom .pointer {
+  border-bottom-color: rgba(72, 72, 77, 0.96);
+  left: 8px;
+  top: -14px;
+}
+.tooltip.left {
+  right: 100%;
+  top: -8px;
+  margin-right: 14px;
+}
+.tooltip.left .pointer {
+  border-left-color: rgba(72, 72, 77, 0.96);
+  top: 8px;
+  right: -14px;
 }

@@ -109,13 +109,28 @@ a {
 }
 
 table {
+	border          : none;
+	border-collapse : separate;
+	border-spacing  : 0.5em;
+
+	tr {
+		background-color: transparent !important;
+
+		td {
+			font-size      : 0.625rem;
+			line-height    : 1;
+			padding        : 0;
+			vertical-align : middle;
+		}
+	}
+}
+
+.data-table {
 	border-collapse: collapse;
-	font-family: Hevetica, Arial, sans-serif;
 	margin-top: 10pt;
 	min-width: 100%;
 
 	th {
-		font-family: Hevetica, Arial, sans-serif;
 		padding: 5pt 0;
 		text-align: left;
 	}
@@ -371,3 +386,11 @@ ul {
 	}
 }
 
+.transit-points {
+	.chart {
+		svg {
+			width     : auto;
+			max-width : 20px;
+		}
+	}
+}
