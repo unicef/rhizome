@@ -935,6 +935,10 @@ h6 {
   margin-bottom: 0;
 }
 
+.highlight {
+  color: #ffcc67 !important;
+}
+
 #management-dashboard {
   color: #a7aeaf;
 }
