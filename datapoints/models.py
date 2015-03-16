@@ -247,6 +247,7 @@ class AggDataPoint(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
+    calc_refreshed = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'agg_datapoint'
