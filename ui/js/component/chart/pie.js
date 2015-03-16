@@ -32,9 +32,26 @@ module.exports = {
 	computed: {
 
 		colorScale: function () {
+			var series = this.series;
+
+			var interpolate = d3.interpolate(
+				d3.rgb(colors[0]),
+				d3.rgb(colors[colors.length - 1]));
+
+			var scale = d3.scale.linear().domain([0, series.length - 1]);
+
+			// Build up a range of colors for the ordinal scale by interpolating the
+			// two extremes of the colors from the coolgray array
+			var range = [];
+			for (var i = 0, l = series.length; i < l; i++) {
+				range.push(interpolate(scale(i)));
+			}
+
 			return d3.scale.ordinal()
-				.domain(d3.range(colors.length))
-				.range(colors);
+				.domain(_.map(this.series, function (d) {
+					return d.data.indicator;
+				}))
+				.range(range);
 		},
 
 		query: function () {
@@ -73,9 +90,13 @@ module.exports = {
 				return result + d.value;
 			}, 0);
 
-			// Assume that if the total value of the pie chart is < 1, it's meant to
-			// show a percentage out of 100 and fill in the missing piece.
-			var data = (total < 1) ?
+			// Assume that if the total value of the pie chart is <= 1, it's meant to
+			// show a percentage out of 100 and fill in the missing piece. We want to
+			// include an "other" category even if the existing categories sum to 1
+			// (meaning other = 0) for the case when we have only one category and it
+			// is 100%. This ensures that there are at least two categories and
+			// "other" always gets the lightest color.
+			var data = (total <= 1) ?
 				[{ value: 1 - total, indicator: 'other' }].concat(this.datapoints) :
 				this.datapoints;
 
@@ -88,8 +109,12 @@ module.exports = {
 
 		draw: function () {
 			var colorScale = this.colorScale;
-			var color      = function (d, i) {
-				return colorScale(i);
+			var color      = function (d) {
+				var c = colorScale(d.data.indicator);
+
+				console.debug(c);
+
+				return c;
 			};
 
 			var svg = d3.select(this.$el);
