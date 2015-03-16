@@ -5,6 +5,7 @@ var d3     = require('d3');
 var moment = require('moment');
 
 var api    = require('data/api');
+var util   = require('util/data');
 
 /**
  * Utility for generating the tickValues array for a year-to-date chart.
@@ -69,12 +70,15 @@ module.exports = {
 			cases           : null,
 			newCases        : null,
 			transitPoints   : {
-				vaccinated : null,
-				planned    : null,
-				inPlace    : null,
-				withSM     : null,
-				pctInplace : [],
-				pctWithSM  : []
+				showVaccinated : false,
+				showInPlace    : false,
+				showWithSM     : false,
+				vaccinated     : null,
+				planned        : null,
+				inPlace        : null,
+				withSM         : null,
+				pctInplace     : [],
+				pctWithSM      : []
 			}
 		};
 	},
@@ -187,15 +191,16 @@ module.exports = {
 
 						switch(d.indicator) {
 							case '175':
-								self.transitPoints.inPlace = d.value;
+								self.transitPoints.inPlace     = d.value;
 								break;
 
 							case '176':
-								self.transitPoints.withSM = d.value;
+								self.transitPoints.withSM     = d.value;
 								break;
 
 							case '177':
-								self.transitPoints.vaccinated = d.value;
+								self.transitPoints.vaccinated     = d.value;
+								self.transitPoints.showVaccinated = util.defined(d.value);
 								break;
 
 							case '204':
@@ -206,6 +211,9 @@ module.exports = {
 								break;
 						}
 					}
+					var hasPlanned                 = util.defined(self.transitPoints.planned);
+					self.transitPoints.showInPlace = util.defined(self.transitPoints.inPlace) && hasPlanned;
+					self.transitPoints.showWithSM  = util.defined(self.transitPoints.withSM) && hasPlanned;
 
 					self.transitPoints.pctInplace = [{
 						indicator : 'Transit Points in Place',
