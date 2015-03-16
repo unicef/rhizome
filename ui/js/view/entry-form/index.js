@@ -355,8 +355,13 @@ module.exports = {
 									}
 									// generate validation for values
 									cell.validateValue = function(newVal) {
-										var value = parseFloat(newVal);
-										var passed = !_.isNaN(value);
+										if (_.isNull(newVal)) {
+											var value = null;
+											var passed = true;
+										} else {
+											var value = parseFloat(newVal);
+											var passed = !_.isNaN(value);
+										}
 										return { 'value': value, 'passed': passed };
 									};
 									// generate promise for submitting a new value to the API for saving
