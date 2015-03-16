@@ -7,14 +7,6 @@ from django.contrib.auth.models import User
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 
-class OfficeResource(BaseModelResource):
-    '''Office Resource'''
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Office.objects.all()
-        resource_name = 'office'
-
-
 class GeoJsonResult(object):
     region_id = int()
     type = unicode()
