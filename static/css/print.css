@@ -929,6 +929,12 @@ header {
     clear: both;
   }
 }
+h4,
+h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 #management-dashboard {
   color: #a7aeaf;
 }
@@ -960,6 +966,18 @@ header {
 .ie #management-dashboard #inaccessible-children svg {
   width: 8.714cm;
   height: 3.27cm;
+}
+.ie #management-dashboard #missed-children svg {
+  width: 6.845cm;
+  height: 3.585cm;
+}
+.ie #management-dashboard #conversions svg {
+  width: 6.845cm;
+  height: 3.028cm;
+}
+.ie #management-dashboard #missed-children-map svg {
+  width: 6.845cm;
+  height: 6.81672137cm;
 }
 .ie #management-dashboard svg.bullet {
   width: 3.247cm;

@@ -54,7 +54,10 @@ gulp.task('styles', function () {
 		.pipe($.concat('screen.css'))
 		.pipe(filter.restore())
 		.pipe($.autoprefixer('last 1 version'))
-		.pipe(gulp.dest(path.output + '/css'));
+		.pipe(gulp.dest(path.output + '/css'))
+		.on('end', function () {
+			exec('say -v Fred "CSS compiled"');
+		});
 });
 
 gulp.task('scripts', function () {
@@ -68,6 +71,9 @@ gulp.task('browserify', ['scripts'], function () {
 		debug: true,
 		standalone: 'Polio',
 		paths: ['./ui/js']
+	})
+	.on('end', function () {
+		exec('say -v Fred "App compiled"');
 	});
 });
 

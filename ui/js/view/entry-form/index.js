@@ -169,7 +169,7 @@ module.exports = {
 
 			var items = _.chain(self.$data.regionData)
 							.filter(function(d) {
-								return d.office_id === campaign.office;
+								return d.office_id === campaign.office_id;
 							})
 							.map(function(d) {
 								return {
