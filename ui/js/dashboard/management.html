@@ -145,24 +145,37 @@
 					{{ transitPoints.vaccinated }} children vaccinated
 				</p>
 
-				<p>
-					<span
-						v-component="chart-pie"
-						v-with="datapoints: transitPoints.pctInplace, loading: false"
-						data-width="18"
-						data-height="18"></span>
-					{{ transitPoints.inPlace }} / {{ transitPoints.planned }} in place
-				</p>
+				<table>
+					<tbody>
+						<tr>
+							<td>
+								<div
+									v-component="chart-pie"
+									v-with="datapoints: transitPoints.pctInplace, loading: false"
+									data-width="18"
+									data-height="18"></div>
+							</td>
+							<td>
+								{{ transitPoints.inPlace }} / {{ transitPoints.planned }}
+								in place
+							</td>
+						</tr>
 
-				<p>
-					<span
-						v-component="chart-pie"
-						v-with="datapoints: transitPoints.pctWithSM, loading: false"
-						data-width="18"
-						data-height="18"></span>
-					{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
-					social mobilizer
-				</p>
+						<tr>
+							<td>
+								<div
+									v-component="chart-pie"
+									v-with="datapoints: transitPoints.pctWithSM, loading: false"
+									data-width="18"
+									data-height="18"></div>
+							</td>
+							<td>
+								{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
+								social mobilizer
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
 				<h6>Missed Children Due to Refusal</h6>
 

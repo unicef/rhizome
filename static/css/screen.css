@@ -7291,35 +7291,48 @@ a:hover {
 }
 
 table {
+  border: none;
+  border-collapse: separate;
+  border-spacing: 0.5em;
+}
+table tr {
+  background-color: transparent !important;
+}
+table tr td {
+  font-size: 0.625rem;
+  line-height: 1;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.data-table {
   border-collapse: collapse;
-  font-family: Hevetica, Arial, sans-serif;
   margin-top: 10pt;
   min-width: 100%;
 }
-table th {
-  font-family: Hevetica, Arial, sans-serif;
+.data-table th {
   padding: 5pt 0;
   text-align: left;
 }
-table td {
+.data-table td {
   background-color: white;
   cursor: default;
   font-size: 9pt;
   padding: 3pt 0;
 }
-table .numeric {
+.data-table .numeric {
   text-align: right;
 }
-table .empty td {
+.data-table .empty td {
   background-color: transparent;
   font-size: 150%;
   padding: 2em 0;
   text-align: center;
 }
-table .odd td {
+.data-table .odd td {
   background-color: #f0f0f0;
 }
-table tr:not(.empty):hover td {
+.data-table tr:not(.empty):hover td {
   background-color: #FAFAFA;
 }
 
@@ -7553,13 +7566,9 @@ ul.pie div.chart {
   max-width: 12pt;
 }
 
-.transit-points p .chart {
-  display: inline-block;
-  float: left;
-  margin-right: 0.5em;
-}
-.transit-points p .chart svg {
+.transit-points .chart svg {
   width: auto;
+  max-width: 20px;
 }
 
 /*# sourceMappingURL=screen.css.map */
