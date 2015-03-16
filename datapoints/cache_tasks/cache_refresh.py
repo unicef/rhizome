@@ -14,7 +14,7 @@ class CacheRefresh(object):
         if datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
-        self.rc_loop = self.get_rc_loop()
+        # self.rc_loop = self.get_rc_loop()
 
 
     def get_datapoints_to_cache(self):

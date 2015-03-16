@@ -67,6 +67,7 @@ urlpatterns = [
     url(r'^agg_datapoint/$', views.agg_datapoint, name='agg_datapoint'),
     url(r'^calc_datapoint/$', views.calc_datapoint, name='calc_datapoint'),
     url(r'^pivot_datapoint/$', views.pivot_datapoint, name='pivot_datapoint'),
+    url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
     url(r'^populate_dummy_ngo_dash/$', views.populate_dummy_ngo_dash, name='populate_dummy_ngo_dash'),
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^load_gdoc_data/$', views.load_gdoc_data, name='load_gdoc_data'),
