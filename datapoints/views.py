@@ -15,7 +15,9 @@ import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks.pivot_datapoint import full_cache_refresh
+from datapoints.cache_tasks.pivot_datapoint import\
+    computed_datapoint_to_abstracted_datapoint
+from datapoints.cache_tasks.cache_refresh import CacheRefresh
 from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
@@ -311,7 +313,8 @@ def calc_datapoint(request):
     '''
     '''
 
-    indicator_ids = Indicator.objects.all().values_list('id',flat=True)
+    indicator_ids = Indicator.objects.all().values_list('id',flat=True)\
+        .order_by('-id')
 
     for i_id in indicator_ids:
 
@@ -389,7 +392,7 @@ def populate_dummy_ngo_dash(request):
 
 def pivot_datapoint(request):
 
-    full_cache_refresh()
+    computed_datapoint_to_abstracted_datapoint()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
@@ -397,6 +400,13 @@ def cache_control(request):
 
     return render_to_response('cache_control.html',
     context_instance=RequestContext(request))
+
+
+def refresh_cache(request):
+
+    cr = CacheRefresh()
+
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 def load_gdoc_data(request):
 

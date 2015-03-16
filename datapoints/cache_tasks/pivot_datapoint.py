@@ -5,7 +5,7 @@ from pandas.tools.pivot import pivot_table
 from datapoints.models import *
 
 
-def full_cache_refresh():
+def computed_datapoint_to_abstracted_datapoint():
 
     indicator_raw = DataPoint.objects.raw("""
         SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed

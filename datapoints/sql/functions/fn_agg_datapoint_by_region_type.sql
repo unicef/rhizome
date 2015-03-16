@@ -1,5 +1,4 @@
 ﻿
-
 DROP FUNCTION IF EXISTS fn_agg_datapoint_by_region_type(region_type_id int);
 CREATE FUNCTION fn_agg_datapoint_by_region_type(region_type_id int)
 RETURNS TABLE(id int)
@@ -12,24 +11,29 @@ RETURNS TABLE(id int)
 	);
 
 	INSERT INTO agg_datapoint
-	(region_id, campaign_id, indicator_id, value, is_agg)
+	(region_id, campaign_id, indicator_id, value, is_agg, calc_refreshed)
 
 	SELECT
-		region_id, campaign_id, indicator_id, value, 'f'
+		region_id, campaign_id, indicator_id, value, 'f', 'f'
 	FROM datapoint d
 	WHERE NOT EXISTS (
 		SELECT 1 FROM agg_datapoint ad
 		WHERE d.indicator_id = ad.indicator_id
 		AND d.campaign_id = ad.campaign_id
 		AND d.region_id = ad.indicator_id
+	)
+	AND EXISTS ( 
+		SELECT 1 FROM region r
+		WHERE r.region_type_id = $1
+		AND d.region_id = r.id
 	);
 
 
 	INSERT INTO agg_datapoint
-	(region_id, campaign_id, indicator_id, value, is_agg)
+	(region_id, campaign_id, indicator_id, value, is_agg, calc_refreshed)
 
 	SELECT
-		r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
+		r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't', 'f'
 	FROM agg_datapoint ag
 	INNER JOIN region r
 		ON ag.region_id = r.id
