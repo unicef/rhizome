@@ -2,8 +2,7 @@ import traceback
 
 # from pandas import DataFrame
 
-from datapoints.models import DataPoint
-
+from datapoints.models import DataPoint, Indicator
 
 class CacheRefresh(object):
 
@@ -14,7 +13,49 @@ class CacheRefresh(object):
         if datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
-        # self.rc_loop = self.get_rc_loop()
+        self.indicator_ids = self.get_indicator_ids()
+
+        task_result = self.main()
+
+    def main(self):
+
+        task_result = 'SUCCESS'
+
+        self.mark_datapoints_as_cached()
+
+        return task_result
+
+
+    def get_indicator_ids(self):
+
+
+        curs = Indicator.objects.raw('''
+
+            SELECT distinct indicator_id as id
+            FROM datapoint
+            WHERE id = ANY (%s);
+
+        ''',[self.datapoint_id_list])
+
+        indicator_ids = [ind.id for ind in curs]
+
+        return indicator_ids
+
+    def mark_datapoints_as_cached(self):
+        '''
+        After successfully caching the changed datapoints, mark them as cached.
+        '''
+        dp = DataPoint.objects.raw('''
+
+            UPDATE datapoint
+            SET is_cached = 't'
+            WHERE id = ANY (%s);
+
+            SELECT id FROM datapoint limit 1;
+
+        ''',[self.datapoint_id_list])
+
+        x = [d.id for d in dp]
 
 
     def get_datapoints_to_cache(self):

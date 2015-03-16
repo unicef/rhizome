@@ -406,8 +406,7 @@ def refresh_cache(request):
 
     cr = CacheRefresh()
 
-    return render_to_response('cache_control.html',
-    context_instance=RequestContext(request))
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 def load_gdoc_data(request):
 
