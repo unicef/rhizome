@@ -69,12 +69,12 @@ module.exports = {
 			cases           : null,
 			newCases        : null,
 			transitPoints   : {
-				vaccinated: null,
-				planned   : null,
-				inPlace   : null,
-				withSM    : null,
-				pctInplace: null,
-				pctWithSM : null
+				vaccinated : null,
+				planned    : null,
+				inPlace    : null,
+				withSM     : null,
+				pctInplace : [],
+				pctWithSM  : []
 			}
 		};
 	},
@@ -207,10 +207,15 @@ module.exports = {
 						}
 					}
 
-					self.transitPoints.pctInplace = [self.transitPoints.inPlace / self.transitPoints.planned];
-					self.transitPoints.pctWithSM  = [self.transitPoints.withSM / self.transitPoints.inPlace];
+					self.transitPoints.pctInplace = [{
+						indicator : 'Transit Points in Place',
+						value     : self.transitPoints.inPlace / self.transitPoints.planned
+					}];
 
-					console.debug(self.transitPoints);
+					self.transitPoints.pctWithSM  = [{
+						indicator : 'Transit Points with SM',
+						value     : self.transitPoints.withSM / self.transitPoints.inPlace
+					}];
 				});
 		},
 	},

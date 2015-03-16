@@ -7553,6 +7553,15 @@ ul.pie div.chart {
   max-width: 12pt;
 }
 
+.transit-points p .chart {
+  display: inline-block;
+  float: left;
+  margin-right: 0.5em;
+}
+.transit-points p .chart svg {
+  width: auto;
+}
+
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
@@ -7638,77 +7647,6 @@ ul.pie div.chart {
 
 /*# sourceMappingURL=style.css.map */
 
-.tooltip {
-  display: inline;
-  position: absolute;
-  background-color: rgba(72, 72, 77, 0.96);
-  border-radius: 4px;
-  margin-bottom: 7px;
-  max-width: 30em;
-  width: auto;
-  padding: 1em;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  top: auto;
-  transition: opacity 300ms ease;
-}
-.tooltip.fade-enter {
-  opacity: 0;
-}
-.tooltip.fade-leave {
-  opacity: 0;
-}
-.tooltip .pointer {
-  position: absolute;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 7px;
-  height: 0;
-  width: 0;
-}
-.tooltip.top {
-  left: 0;
-  bottom: 100%;
-}
-.tooltip.top .pointer {
-  border-top-color: rgba(72, 72, 77, 0.96);
-  left: 8px;
-  bottom: -14px;
-}
-.tooltip.right {
-  left: 100%;
-  top: -8px;
-  margin-left: 14px;
-}
-.tooltip.right .pointer {
-  border-right-color: rgba(72, 72, 77, 0.96);
-  left: -14px;
-  top: 8px;
-}
-.tooltip.bottom {
-  top: 100%;
-  left: 0;
-  margin-top: 7px;
-}
-.tooltip.bottom .pointer {
-  border-bottom-color: rgba(72, 72, 77, 0.96);
-  left: 8px;
-  top: -14px;
-}
-.tooltip.left {
-  right: 100%;
-  top: -8px;
-  margin-right: 14px;
-}
-.tooltip.left .pointer {
-  border-left-color: rgba(72, 72, 77, 0.96);
-  top: 8px;
-  right: -14px;
-}
-
-/*# sourceMappingURL=style.css.map */
-
 table .th-inner {
   min-width: 80px;
 }
@@ -7776,4 +7714,75 @@ table .rowCompletionStatus {
   color: #999;
   text-align: center;
   padding: 40px 0;
+}
+
+/*# sourceMappingURL=style.css.map */
+
+.tooltip {
+  display: inline;
+  position: absolute;
+  background-color: rgba(72, 72, 77, 0.96);
+  border-radius: 4px;
+  margin-bottom: 7px;
+  max-width: 30em;
+  width: auto;
+  padding: 1em;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  transition: opacity 300ms ease;
+}
+.tooltip.fade-enter {
+  opacity: 0;
+}
+.tooltip.fade-leave {
+  opacity: 0;
+}
+.tooltip .pointer {
+  position: absolute;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 7px;
+  height: 0;
+  width: 0;
+}
+.tooltip.top {
+  left: 0;
+  bottom: 100%;
+}
+.tooltip.top .pointer {
+  border-top-color: rgba(72, 72, 77, 0.96);
+  left: 8px;
+  bottom: -14px;
+}
+.tooltip.right {
+  left: 100%;
+  top: -8px;
+  margin-left: 14px;
+}
+.tooltip.right .pointer {
+  border-right-color: rgba(72, 72, 77, 0.96);
+  left: -14px;
+  top: 8px;
+}
+.tooltip.bottom {
+  top: 100%;
+  left: 0;
+  margin-top: 7px;
+}
+.tooltip.bottom .pointer {
+  border-bottom-color: rgba(72, 72, 77, 0.96);
+  left: 8px;
+  top: -14px;
+}
+.tooltip.left {
+  right: 100%;
+  top: -8px;
+  margin-right: 14px;
+}
+.tooltip.left .pointer {
+  border-left-color: rgba(72, 72, 77, 0.96);
+  top: 8px;
+  right: -14px;
 }

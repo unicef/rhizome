@@ -371,3 +371,16 @@ ul {
 	}
 }
 
+.transit-points {
+	p {
+		.chart {
+			display      : inline-block;
+			float        : left;
+			margin-right : 0.5em;
+
+			svg {
+				width : auto;
+			}
+		}
+	}
+}
