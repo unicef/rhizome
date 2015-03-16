@@ -1,7 +1,7 @@
 ﻿
 
-DROP FUNCTION IF EXISTS fn_agg_datapoint(region_type_id int);
-CREATE FUNCTION fn_agg_datapoint(region_type_id int)
+DROP FUNCTION IF EXISTS fn_agg_datapoint_by_region_type(region_type_id int);
+CREATE FUNCTION fn_agg_datapoint_by_region_type(region_type_id int)
 RETURNS TABLE(id int)
     AS $$
 
@@ -47,4 +47,4 @@ RETURNS TABLE(id int)
     $$
     LANGUAGE SQL;
 
---SELECT * FROM fn_agg_datapoint(1)
+--SELECT * FROM fn_agg_datapoint_by_region_type(1)

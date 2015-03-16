@@ -183,6 +183,7 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
+    is_cached = models.BooleanField()
 
     def get_val(self):
         return self.value
