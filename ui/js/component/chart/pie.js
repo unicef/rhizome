@@ -110,11 +110,7 @@ module.exports = {
 		draw: function () {
 			var colorScale = this.colorScale;
 			var color      = function (d) {
-				var c = colorScale(d.data.indicator);
-
-				console.debug(c);
-
-				return c;
+				return colorScale(d.data.indicator);
 			};
 
 			var svg = d3.select(this.$el);
