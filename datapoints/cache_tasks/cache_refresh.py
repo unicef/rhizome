@@ -21,13 +21,24 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
+        self.agg_datapoints()
+        self.calc_datapoints()
+
         self.mark_datapoints_as_cached()
 
         return task_result
 
+    def agg_datapoints(self):
+        
+
+        init_curs = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_init_agg_datapoint()")
+
+        y = [x for x in init_curs]
+
+
 
     def get_indicator_ids(self):
-
 
         curs = Indicator.objects.raw('''
 

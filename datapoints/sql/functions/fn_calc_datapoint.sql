@@ -1,6 +1,5 @@
-﻿
-DELETE FROM datapoint d
-WHERE indicator_id in (select indicator_id from calculated_indicator_component)
+
+
 
 DROP FUNCTION IF EXISTS fn_calc_datapoint(indicator_id int);
 CREATE FUNCTION fn_calc_datapoint(indicator_id int)
@@ -22,7 +21,7 @@ RETURNS TABLE(id int) AS $$
     		,is_agg
     		,CAST(0 as BOOLEAN) as is_calc
     	FROM agg_datapoint
-    	WHERE indicator_id = 195--$1
+    	WHERE indicator_id = $1
     	AND calc_refreshed = 'f';
 
 --         ---- SUM OF PARTS ------
@@ -39,7 +38,7 @@ RETURNS TABLE(id int) AS $$
         INNER JOIN calculated_indicator_component cic
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
-        WHERE cic.indicator_id = 195--$1
+        WHERE cic.indicator_id = $1
     	AND calc_refreshed = 'f'
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
@@ -134,7 +133,7 @@ RETURNS TABLE(id int) AS $$
           AND num_whole.master_indicator_id = $1
           AND (num_whole.calc_refreshed ='f' OR num_part.calc_refreshed = 'f' or denom.calc_refreshed = 'f');
 
-	UPDATE agg_datapoint 
+	UPDATE agg_datapoint
 	SET calc_refreshed = 't'
 	WHERE indicator_id = $1;
 
@@ -145,15 +144,3 @@ RETURNS TABLE(id int) AS $$
     $$
 
     LANGUAGE SQL;
-
-
--- SELECT * FROM agg_datapoint 
--- WHERE indicator_id = 195
--- 
--- SELECT * FROM datapoint_with_computed 
--- WHERE indicator_id = 195
-
-
-
-SELECT * FROM calculated_indicator_component
-WHERE indicator_id = 205
