@@ -1,14 +1,22 @@
-import traceback
 
-# from pandas import DataFrame
-
-from datapoints.models import DataPoint, Indicator
+from datapoints.models import DataPoint, Indicator, AggDataPoint
+from source_data.models import EtlJob
 
 class CacheRefresh(object):
 
     def __init__(self,datapoint_id_list=None):
         '''
+        Create a table in the ETL Job table.  If the datapoint_id list is empty
+        get the default (limit to 1000) list of datapoint_ids to run through
+        the cache process.
         '''
+
+        cache_job = EtlJob.objects.create(
+            task_name = 'cache_refresh',
+            status = 'pending',
+            cron_guid = 'test_cron_guid',
+            success_msg = 'test',
+        )
 
         if datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
@@ -17,25 +25,25 @@ class CacheRefresh(object):
 
         task_result = self.main()
 
+        cache_job.status = task_result
+
     def main(self):
 
         task_result = 'SUCCESS'
 
         self.agg_datapoints()
-        self.calc_datapoints()
+        # self.calc_datapoints()
 
         self.mark_datapoints_as_cached()
 
         return task_result
 
     def agg_datapoints(self):
-        
 
         init_curs = AggDataPoint.objects\
             .raw("SELECT * FROM fn_init_agg_datapoint()")
 
         y = [x for x in init_curs]
-
 
 
     def get_indicator_ids(self):
@@ -69,18 +77,22 @@ class CacheRefresh(object):
         x = [d.id for d in dp]
 
 
-    def get_datapoints_to_cache(self):
+    def get_datapoints_to_cache(self,limit=None):
         '''
         Called on __init__ to find the unprocessed datapoints that need to be
         cached.  If the datapoint_id_list parameter is provided when the class
-        is instantiated, this method need not be called.
+        is instantiated, this method need not be called.  If there is no
+        limit provided to this method, the default limit is set to 1000.
         '''
+
+        if limit is None:
+            limit = 1000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
             WHERE is_cached = 'f'
-            LIMIT 1000
-        ''')
+            LIMIT %s
+        ''',[limit])
 
         dp_ids = [row.id for row in dps]
 

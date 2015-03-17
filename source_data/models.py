@@ -14,7 +14,7 @@ from datapoints.models import Source, Indicator, Region, Campaign
 
 class EtlJob(models.Model):
 
-    date_attempted = models.DateTimeField()
+    date_attempted = models.DateTimeField(default=datetime.now())
     date_completed = models.DateTimeField(null=True)
     task_name = models.CharField(max_length=55)
     status = models.CharField(max_length=10)
@@ -28,10 +28,15 @@ class EtlJob(models.Model):
 
 
     def save(self, *args, **kwargs):
+
         if not self.guid:
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
 
+        if not self.date_completed:
+            self.date_completed = datetime.now()
+
         super(EtlJob, self).save(*args, **kwargs)
+
 
 
 class ProcessStatus(models.Model):
