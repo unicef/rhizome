@@ -36,7 +36,15 @@ on build server... how we want it to work w/Jenkins
 ## in back-end folder do stuff in deploy.sh (and delete pyc files)
 ## in front-end folder, change everything to www-data
 
+NEXT STEPS
+* set up nightly push to Rackspace (AWS will be manual)
+* create polio user on RS
+* set up SSH stuff
+* work on script
 
 Also... (maybe)
 ===
 * separate runtime & development dependencies
+* server configuration - apache, django / wsgi)
+* take prod settings out of git
+* remove database passwords from git
