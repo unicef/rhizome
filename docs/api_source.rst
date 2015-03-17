@@ -7,28 +7,32 @@ ETL
 
 There are two ways that information gets into the system.
 
-1. ETL Process
-  - Each file, or incoming data stream has a corresponding *document_id*
-  - Each fact in a document is then translated to a *source_datapoint* which
-contains principally a *campaign_string*, *region_string*, *indicator_string*
-and *value*.
-  - The RefreshMaster class is instantiated for a document_id which in turn:
-      -> Creates an necessary meta_data rows (ex. source_indicator) from the
-         raw data.
-      -> INSERTs a datapoint for each source_datapoint that has a corresponding
-         mapping for the region, campaign, and indicator.
-      -> UPDATEs datapoints only in the case when that original datapoint was
-         the result of another source_datapoint. That is, this method will NOT
-         override data that was inserted via the data_entry form.
-           - * a datapoint that has been inserted from the data_entry form
-             will have the source_datapoint_id =-1.
-      -> DELETEs datapoints for which a mapping has expired.  If the mappings
-         that were the result of that document_id
-            - so if you load a csv with 10 source_datapoints, map everything,
-              then refresh master you should see 10 datapoints.
-            - if then you delete the mapping for a region in this document that
-              has attached to it 2 datapoints, and refreshed master, you would
-              then see that the document_id has 8 datapoints instead of 10.
+1. Data Entry Form (DataEntryResource API)
+2. ETL Process
+
+The flow of data in the ETL Process is as follows:
+
+- Each file, or incoming data stream has a corresponding *document_id*
+- Each fact in a document is then translated to a *source_datapoint* which
+  contains principally a *campaign_string*, *region_string*,
+  *indicator_string* and *value*.
+- The RefreshMaster class is instantiated for a document_id which in turn:
+- Creates an necessary meta_data rows (ex. source_indicator) from the
+  raw data.
+- **INSERT** a datapoint for each source_datapoint that has a corresponding
+  mapping for the region, campaign, and indicator.
+- **UPDATE** datapoints only in the case when that original datapoint was
+  the result of another source_datapoint. That is, this method will NOT
+  override data that was inserted via the data_entry form (a datapoint that
+  has been inserted from the data_entry form will have the
+  source_datapoint_id =-1).
+- **DELETE** datapoints for which a mapping has expired.  If the mappings
+   that were the result of that document_id
+      - so if you load a csv with 10 source_datapoints, map everything,
+        then refresh master you should see 10 datapoints.
+      - if then you delete the mapping for a region in this document that
+        has attached to it 2 datapoints, and refreshed master, you would
+        then see that the document_id has 8 datapoints instead of 10.
 
 Mapping
 -------
