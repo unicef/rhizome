@@ -1,4 +1,4 @@
-
+from pandas import read_csv
 from django.test import TestCase
 
 
@@ -10,19 +10,15 @@ class CacheRefreshTestCase(TestCase):
 
     def set_up(self):
 
-        print 'TESTING\n' * 10
+        print 'TESTING\n' * 2
 
-        # self.source = Source.objects.create(
-        #     source_name = 'test',
-        #     source_description = 'test')
-        #
-        # self.user = User.objects.create(
-        #     username='john')
-        #
-        # self.document = Document.objects.create(
-        #     doc_text = 'test',
-        #     created_by_id = self.user.id,
-        #     guid = 'test')
+        test_df = read_csv('datapoints/tests/_data/calc_data.csv')
+
+        print test_df
+
+    def create_raw_datapoints(self,raw_df):
+
+        pass
 
     def test_basic(self):
 
