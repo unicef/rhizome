@@ -10,22 +10,24 @@ class CacheRefresh(object):
     Any time a user wants to refresh the cache, that is make any changes in the
     datapoint table avalaible to the API and the platform as a whole, the
     CacheRefresh object is instatiated.  The flow of data is as follows:
-     - Create a table in the ETL Job table.  This record will track the
-       time each tasks takes, and in addition this ID is used as a key
-       in the datapoints table so we can see when and why the cache was
-       updated for this datapoint.
-     - If the datapoint_id list is empty get the default (limit to 1000)
-       list of datapoint_ids to process.
-     - Find the indicator_ids (both computed and raw) that need to be
-       processed.
-     - Executes stored pSQL stored procedures to first aggregate, then
-       calculat information.
-     - Deletes, then re-inserts relevant rows in the datapoint_abstracted
-       table.
+        - Create a row in the ETL Job table.  This record will track the
+          time each tasks takes, and in addition this ID is used as a key
+          in the datapoints table so we can see when and why the cache was
+          updated for this datapoint.
+        - If the datapoint_id list is empty get the default (limit to 1000)
+          list of datapoint_ids to process.
+        - Find the indicator_ids (both computed and raw) that need to be
+          processed.
+        - Executes stored pSQL stored procedures to first aggregate, then
+          calculate information.
+        - Deletes, then re-inserts relevant rows in the datapoint_abstracted
+          table.
     '''
 
     def __init__(self,datapoint_id_list=None):
         '''
+        HELLO HELLOs
+
         '''
 
         self.datapoint_id_list = datapoint_id_list
@@ -37,8 +39,25 @@ class CacheRefresh(object):
 
     def set_up(self):
         '''
-        Create a row in the etl_job table.  Find all required meta data needed
-        for later in the cache process.
+        First reate a row in the ``source_data_etl_job`` table.  This table
+        will store when the cache_task was created, when it was complete, and
+        what the status of the job is.
+
+        Next, this method finds the datapoint ids that it will use to run the
+        cache job using ``CacheRefresh.get_datapoints_to_cache()``.  Only data that is relevenat to these datapoint ids should be
+        altered.  That includes any data for parents of the associated datapoints
+        as well as any indicators that are stored as the result of the
+        calculation on the underlying datapoints.
+
+        Finall this method calls ``CacheRefresh.get_indicator_ids()`` to get
+        indicators needed to loop through ( both raw and computed ) that will
+        need to be refreshed.
+
+        TO DO
+        -----
+        Every datapoint should have a cache_job_id so we can see when and why
+        a particular datapoint was cached.
+
         '''
         cache_job = EtlJob.objects.create(
             task_name = 'cache_refresh',
@@ -56,8 +75,9 @@ class CacheRefresh(object):
 
     def main(self):
         '''
-          - execute the "agg_datapoint" sproc for the given datapoint_ids.
-          - excecute the "calc_datapoint" sproc for the given datapoint_id.
+        For the given datapoint_ids ( self.datapoint_id_list )
+          - execute the "agg_datapoint".
+          - excecute the "calc_datapoint" sproc.
           - return the result to be stored in the etl_job table.
         '''
 
@@ -72,7 +92,27 @@ class CacheRefresh(object):
 
     def agg_datapoints(self):
         '''
-        agg_datapoints
+        Datapoints are aggregated in two steps with two separate stored
+        procedures.
+
+            - init_agg_datapoints : save all of the raw (non aggregated) data
+            - agg_datapoints_by_region_type: given
+
+        This method first calls the ``fn_init_agg_datapoint`` and then calls ``
+        agg_datapoints_by_region_type`` for each region_type starting from the
+        leaf level and moving up to the country level.
+
+        It is important that this function touches as little data as possible
+        while altering exactly the data that needs to be altered for the latest
+        updates to effect aggregation
+
+        TO DO:
+            - add region_type_sproc in this method
+            - Add datapoint_id_list as a param to both of these sprocs
+            - look into more closely why a purely recursive query wont work.
+              My initial diagnosis was that there was bad parent/child data in
+              the regions table but currenlty when i look at regions with parents
+              of the same region_type all I see is Kirachi.
         '''
 
         init_curs = AggDataPoint.objects\
@@ -81,20 +121,51 @@ class CacheRefresh(object):
         y = [x for x in init_curs]
 
 
+    def calc_datapoints(self):
+        '''
+        When the agg_datapoint method runs, it will leave the agg_datapoitn table
+        in a state that all of the rows that were altered, and need to be cached
+        thats is the ``calc_refreshed`` column will = 'f' for all of the rows
+        that this task effected.
+
+        To find out more about how calculation works, take a look at the
+        fn_calc_datapoint stored procedures
+
+        '''
+
+        calc_curs = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_init_calc_datapoint()")
+
+        y = [x for x in calc_curs]
+
+
     def get_indicator_ids(self):
         '''
-        TO DO - Make sure you get the computed indicators as well
+        Given the raw indicator ids for the datapoints to process, find all
+        of the indicator ids that will need to be effected by the calculations.
+        That includes the computed indicators that need to be effected by
+        updates in the underliying data, as well as the raw indicators.
         '''
 
         curs = Indicator.objects.raw('''
+        DROP TABLE IF EXISTS _raw_indicators;
+        CREATE TEMP TABLE _raw_indicators
+        AS
+        SELECT distinct indicator_id
+        FROM datapoint
+        WHERE id = ANY (%s);
 
-            SELECT distinct indicator_id as id
-            FROM datapoint
-            WHERE id = ANY (%s);
+    	SELECT cic.indicator_id
+    	FROM calculated_indicator_component cic
+        	INNER JOIN _raw_indicators ri
+        	ON cic.indicator_component_id = ri.indicator_id
 
+        UNION ALL
+
+        SELECT indicator_id from _raw_indicators;
         ''',[self.datapoint_id_list])
 
-        indicator_ids = [ind.id for ind in curs]
+        indicator_ids = [ind.indicator_id for ind in curs]
 
         return indicator_ids
 
@@ -117,10 +188,11 @@ class CacheRefresh(object):
 
     def get_datapoints_to_cache(self,limit=None):
         '''
-        Called on __init__ to find the unprocessed datapoints that need to be
-        cached.  If the datapoint_id_list parameter is provided when the class
-        is instantiated, this method need not be called.  If there is no
-        limit provided to this method, the default limit is set to 1000.
+        Called as a part of the ``set_up()`` method to find the unprocessed
+        datapoints that need to be cached.  If the datapoint_id_list parameter
+        is provided when the class is instantiated, this method need not be
+        called.  If there is no limit provided to this method, the default
+        limit is set to 1000.
         '''
 
         if limit is None:

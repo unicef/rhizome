@@ -166,16 +166,29 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-The ``__init__()`` functions calls two methods.
-
-  -``set_up()`` : Get all meta data neccessary to run the cache task
-  -``main()`` : aggregate, compute and store new data to be used by the API.
-
   .. autoclass:: datapoints.cache_tasks.CacheRefresh
-    ::members::
 
+**When the __init__() method is called two subsequent methods are called:**
 
+  - ``set_up()`` - get all metadata required to refresh cache
+  - ``main()`` - aggregate, calculatd and save new information
 
+the set_up() method
+-------------------
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.set_up
+
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.get_indicator_ids
+
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.get_datapoints_to_cache
+
+the main() method
+-----------------
+
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.main
+
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.agg_datapoints
+
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.calc_datapoints
 
 
 
@@ -208,22 +221,24 @@ Testing Expected Data
 Reference Sheet
 ===============
 
+Here are some terms you should get familiar with when working in this
+application.
 
-socument_id -
-source_datapoint -
-datapoint -
-region
-  - Regions have a parent, lon / lat, region type
-  - **uniqueness for region is defined by region_name, region_type, country**
-  - Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
-  - We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
-  - We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
+- document_id
+- source_datapoint
+- datapoint
+- region
+  Regions have a parent, lon / lat, region type
+  **uniqueness for region is defined by region_name, region_type, country**
+  Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
+  We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
+  We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
 
-indicator -
-campaign -
-map -
-agg_datapoint -
-datapoint_with_computed -
-calculated_indicator_component -
-etl_job -
-audit_table -
+- indicator
+- campaign
+- map
+- agg_datapoint
+- datapoint_with_computed
+- calculated_indicator_component
+- etl_job
+- audit_table
