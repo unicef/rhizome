@@ -15,9 +15,8 @@ import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks.pivot_datapoint import\
-    computed_datapoint_to_abstracted_datapoint
-from datapoints.cache_tasks.cache_refresh import CacheRefresh
+from datapoints.cache_tasks import computed_datapoint_to_abstracted_datapoint
+from datapoints.cache_tasks import CacheRefresh
 from polio.secrets import gdoc_u, gdoc_p
 
 from datapoints.mixins import PermissionRequiredMixin
