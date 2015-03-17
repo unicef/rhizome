@@ -166,18 +166,9 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-The ``__init__()`` functions calls two methods.
-
-  -``set_up()`` : Get all meta data neccessary to run the cache task
-  -``main()`` : aggregate, compute and store new data to be used by the API.
-
   .. autoclass:: datapoints.cache_tasks.CacheRefresh
-    ::members::
 
-
-
-
-
+  .. automethod:: datapoints.cache_tasks.CacheRefresh.get_abstracted_datapoint_ids
 
 
 Permissions
@@ -213,11 +204,11 @@ socument_id -
 source_datapoint -
 datapoint -
 region
-  - Regions have a parent, lon / lat, region type
-  - **uniqueness for region is defined by region_name, region_type, country**
-  - Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
-  - We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
-  - We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
+- Regions have a parent, lon / lat, region type
+- **uniqueness for region is defined by region_name, region_type, country**
+- Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
+- We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
+- We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
 
 indicator -
 campaign -

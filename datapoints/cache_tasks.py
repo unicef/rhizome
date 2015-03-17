@@ -10,18 +10,18 @@ class CacheRefresh(object):
     Any time a user wants to refresh the cache, that is make any changes in the
     datapoint table avalaible to the API and the platform as a whole, the
     CacheRefresh object is instatiated.  The flow of data is as follows:
-     - Create a table in the ETL Job table.  This record will track the
-       time each tasks takes, and in addition this ID is used as a key
-       in the datapoints table so we can see when and why the cache was
-       updated for this datapoint.
-     - If the datapoint_id list is empty get the default (limit to 1000)
-       list of datapoint_ids to process.
-     - Find the indicator_ids (both computed and raw) that need to be
-       processed.
-     - Executes stored pSQL stored procedures to first aggregate, then
-       calculat information.
-     - Deletes, then re-inserts relevant rows in the datapoint_abstracted
-       table.
+        - Create a row in the ETL Job table.  This record will track the
+          time each tasks takes, and in addition this ID is used as a key
+          in the datapoints table so we can see when and why the cache was
+          updated for this datapoint.
+        - If the datapoint_id list is empty get the default (limit to 1000)
+          list of datapoint_ids to process.
+        - Find the indicator_ids (both computed and raw) that need to be
+          processed.
+        - Executes stored pSQL stored procedures to first aggregate, then
+          calculate information.
+        - Deletes, then re-inserts relevant rows in the datapoint_abstracted
+          table.
     '''
 
     def __init__(self,datapoint_id_list=None):
