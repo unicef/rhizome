@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
@@ -12,6 +14,28 @@ class Source(models.Model):
 
     class Meta:
         db_table = 'source'
+
+class CacheJob(models.Model):
+
+    date_attempted = models.DateTimeField(default=datetime.now())
+    date_completed = models.DateTimeField(null=True)
+    is_error = models.BooleanField()
+    response_msg = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'cache_job'
+        ordering = ('-date_attempted',)
+
+    def save(self, *args, **kwargs):
+
+        if not self.guid:
+            self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+        if not self.date_completed:
+            self.date_completed = datetime.now()
+
+        super(EtlJob, self).save(*args, **kwargs)
+
 
 class Indicator(models.Model):
 
