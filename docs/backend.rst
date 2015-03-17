@@ -123,10 +123,58 @@ Future Topics Regarding Regions
 Caching
 =======
 
-blablabla bla bla!
+Datapoints are stored at four levels.  Each represent a database table as well
+as a stage in the cache process.  The data from each step of the aggregation /
+calculation cycle are available to you for debugging missing and incorrect
+information
 
-  .. autoclass:: datapoints.cache_tasks.cache_refresh.CacheRefresh
-    :members:
+- ``datapoint`` - the level at which raw data is stored
+- ``agg_datapoint`` - raw data aggregated regionally.
+- ``datapoint_with_computed`` - both raw and aggregated data stored including
+  data for calculated indicators.
+- ``datapoint_abstracted`` - the aggregated and calculated data stored in a
+  format that mimics the response format of the ``api/v1/datapoint`` API.
+
+The Cache is refresh by instatiating the CacheRefresh Object.
+
+For example:
+  .. code-block:: python
+
+    from datapoints.cache_tasks import CacheRefresh
+
+    ## refresh the cache with the default behavior
+    cr = CacheRefresh()
+    print cr.status
+
+    >> 'SUCCESS'
+
+Or In the case where you want to refresh the cache for a list of datapoint_ids:
+  .. code-block:: python
+
+    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.models import DataPoint
+
+    ## get a List of DataPoint IDs for the region Arghestan ##
+    dp_ids = DataPoint.objects.filter(region_id = 13317).values_list('id',flat=True)
+
+    ## refresh the cache for the datapoint_ids retrieved above ##
+    cr = CacheRefresh(datapoint_id_list = dp_ids)
+    print cr.status
+
+    >> 'SUCCESS'
+
+The Cache Refresh Class
+-----------------------
+
+  .. autoclass:: datapoints.cache_tasks.CacheRefresh
+
+The ``__init__()`` functions calls two methods.
+
+  -``set_up()``
+  -``main()``
+
+
+
 
 
 Permissions
@@ -144,6 +192,13 @@ PERMISSIONS SCHEMA
     - auth_group
     - auth_user_permission
     - auth_group_permission
+
+
+QA Calculation and Aggregation
+==============================
+
+Google Doc
+Testing Expected Data
 
 
 
