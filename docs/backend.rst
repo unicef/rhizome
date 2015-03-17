@@ -166,12 +166,15 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-  .. autoclass:: datapoints.cache_tasks.CacheRefresh
-
 The ``__init__()`` functions calls two methods.
 
-  -``set_up()``
-  -``main()``
+  -``set_up()`` : Get all meta data neccessary to run the cache task
+  -``main()`` : aggregate, compute and store new data to be used by the API.
+
+  .. autoclass:: datapoints.cache_tasks.CacheRefresh
+    ::members::
+
+
 
 
 
