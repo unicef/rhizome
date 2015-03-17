@@ -28,8 +28,10 @@ class CacheRefresh(object):
         '''
         '''
 
-        self.set_up()
-        self.main()
+        self.datapoint_id_list = datapoint_id_list
+
+        cache_job = self.set_up()
+        task_result = self.main()
 
         cache_job.status = task_result
 
@@ -45,15 +47,12 @@ class CacheRefresh(object):
             success_msg = 'test',
         )
 
-        if datapoint_id_list is None:
+        if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
-        else:
-            self.datapoint_id_list = datapoint_id_list
 
         self.indicator_ids = self.get_indicator_ids()
 
-        task_result = self.main()
-
+        return cache_job
 
     def main(self):
         '''
