@@ -11,20 +11,29 @@
 				v-component="chart-pie"
 				data-width="150"
 				data-height="150"
-				v-with="datapoints : overview.missed.inside"></div>
+				data-inner-radius="45"
+				v-with="
+					datapoints : overview.missed.inside,
+					loading    : overview.loading"></div>
 
 			<div
 				v-component="chart-pie"
 				data-width="150"
 				data-height="150"
-				v-with="datapoints : overview.missed.outside"></div>
+				data-inner-radius="45"
+				v-with="
+					datapoints : overview.missed.outside,
+					loading    : overview.loading"></div>
 
 			<h4>Caregiver Awareness</h4>
 			<div
 				v-component="chart-pie"
 				data-width="150"
 				data-height="150"
-				v-with="datapoints : overview.awareness"></div>
+				data-inner-radius="45"
+				v-with="
+					datapoints : overview.awareness,
+					loading    : overview.loading"></div>
 		</div>
 
 		<div class="medium-3 columns">

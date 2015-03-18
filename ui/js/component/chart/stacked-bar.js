@@ -119,7 +119,6 @@ module.exports = {
 					.remove();
 			});
 
-			console.log(this.tickCount);
 			var xAxis = d3.svg.axis()
 				.orient('bottom')
 				.tickSize(-this.contentHeight)

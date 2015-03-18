@@ -66,12 +66,15 @@ module.exports = {
 			campaign      : null,
 
 			overview      : {
+				loading : true,
 				missed : {
 					inside  : [],
-					outside : []
+					outside : [],
 				},
-				awareness       : [],
-				influencer      : {
+				inside     : [],
+				outside    : [],
+				awareness  : [],
+				influencer : {
 					domain : [0, 1],
 					series : []
 				},
@@ -169,6 +172,25 @@ module.exports = {
 						'value'                : 'x',
 						'indicator.short_name' : 'y'
 					};
+
+					self.overview.loading       = false;
+					self.overview.missed.inside = datapoints
+						.pick(272)
+						.values()
+						.flatten()
+						.value();
+
+					self.overview.missed.outside = datapoints
+						.pick(274)
+						.values()
+						.flatten()
+						.value();
+
+					self.overview.awareness = datapoints
+						.pick(276)
+						.values()
+						.flatten()
+						.value();
 
 					self.overview.influencer.series = formatData(
 						datapoints,
