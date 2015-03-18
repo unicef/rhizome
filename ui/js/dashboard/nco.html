@@ -127,15 +127,17 @@
 	</div>
 
 	<div class="row">
+
 		<div class="medium-3 columns">
 			<h3>Absences</h3>
 			<div v-component="chart-stacked-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			     v-with="series : absences"></div>
 		</div>
+
 		<div class="medium-4 columns">
 			<h3>Non-Compliance</h3>
 			<div v-component="chart-stacked-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			     v-with="series : noncompliance"></div>
 		</div>
 	</div>
 
@@ -144,19 +146,19 @@
 		<div class="medium-3 columns">
 			<h3>Non-Compliance Resolutions</h3>
 			<div v-component="chart-stacked-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			     v-with="series : resolutions"></div>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Influencers</h3>
 			<div v-component="chart-stacked-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			     v-with="series : influencers"></div>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Sources of Information</h3>
 			<div v-component="chart-stacked-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			     v-with="series : sources"></div>
 		</div>
 	</div>
 </div>
