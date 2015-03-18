@@ -316,8 +316,6 @@ def calc_datapoint(request):
 
     for i_id in indicator_ids:
 
-        print '===== PROCESSING: %s ===== \n' % i_id
-
         curs = DataPointComputed.objects.raw("SELECT * FROM fn_calc_datapoint(%s);"
             ,[i_id])
 
