@@ -3,7 +3,6 @@ from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
 
 from datapoints.models import *
-from source_data.models import EtlJob
 
 class CacheRefresh(object):
     '''
@@ -26,8 +25,6 @@ class CacheRefresh(object):
 
     def __init__(self,datapoint_id_list=None):
         '''
-        HELLO HELLOs
-
         '''
 
         self.datapoint_id_list = datapoint_id_list
@@ -36,6 +33,9 @@ class CacheRefresh(object):
         task_result = self.main()
 
         cache_job.status = task_result
+        cache_job.date_completed = datetime.now()
+
+        cache_job.save()
 
     def set_up(self):
         '''
@@ -59,11 +59,9 @@ class CacheRefresh(object):
         a particular datapoint was cached.
 
         '''
-        cache_job = EtlJob.objects.create(
-            task_name = 'cache_refresh',
-            status = 'pending',
-            cron_guid = 'test_cron_guid',
-            success_msg = 'test',
+        cache_job = CacheJob.objects.create(
+            is_error = False,
+            response_msg = 'PENDING'
         )
 
         if self.datapoint_id_list is None:
@@ -94,9 +92,8 @@ class CacheRefresh(object):
         '''
         Datapoints are aggregated in two steps with two separate stored
         procedures.
-
-            - init_agg_datapoints : save all of the raw (non aggregated) data
-            - agg_datapoints_by_region_type: given
+          - init_agg_datapoints : save all of the raw (non aggregated) data
+          - agg_datapoints_by_region_type: given
 
         This method first calls the ``fn_init_agg_datapoint`` and then calls ``
         agg_datapoints_by_region_type`` for each region_type starting from the
@@ -147,6 +144,8 @@ class CacheRefresh(object):
         updates in the underliying data, as well as the raw indicators.
         '''
 
+
+        print self.datapoint_id_list
         curs = Indicator.objects.raw('''
         DROP TABLE IF EXISTS _raw_indicators;
         CREATE TEMP TABLE _raw_indicators
@@ -155,17 +154,21 @@ class CacheRefresh(object):
         FROM datapoint
         WHERE id = ANY (%s);
 
-    	SELECT cic.indicator_id
-    	FROM calculated_indicator_component cic
-        	INNER JOIN _raw_indicators ri
-        	ON cic.indicator_component_id = ri.indicator_id
+        SELECT x.indicator_id as id FROM(
 
-        UNION ALL
+        	SELECT cic.indicator_id
+        	FROM calculated_indicator_component cic
+            	INNER JOIN _raw_indicators ri
+            	ON cic.indicator_component_id = ri.indicator_id
 
-        SELECT indicator_id from _raw_indicators;
+            UNION ALL
+
+            SELECT indicator_id from _raw_indicators
+        )x;
+
         ''',[self.datapoint_id_list])
 
-        indicator_ids = [ind.indicator_id for ind in curs]
+        indicator_ids = [ind.id for ind in curs]
 
         return indicator_ids
 
@@ -200,7 +203,7 @@ class CacheRefresh(object):
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
-            WHERE is_cached = 'f'
+            WHERE cache_job_id = -1
             LIMIT %s
         ''',[limit])
 

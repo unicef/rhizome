@@ -26,16 +26,6 @@ class CacheJob(models.Model):
         db_table = 'cache_job'
         ordering = ('-date_attempted',)
 
-    def save(self, *args, **kwargs):
-
-        if not self.guid:
-            self.guid = hashlib.sha1(str(random.random())).hexdigest()
-
-        if not self.date_completed:
-            self.date_completed = datetime.now()
-
-        super(EtlJob, self).save(*args, **kwargs)
-
 
 class Indicator(models.Model):
 
