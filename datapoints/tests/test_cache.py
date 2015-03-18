@@ -1,5 +1,8 @@
+from subprocess import call
+
 from django.test import TestCase
 from django.test import Client
+# from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv
 
 from datapoints.models import DataPoint
@@ -21,6 +24,22 @@ class CacheRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
+        self.build_db() # builds sprocs and views needed to test cache refresh
+
+    def build_db(self):
+        #
+        # # filename = PROJECT_ROOT + '/bin/build_db.sh'
+        # # filename = '/Users/johndingee_seed/code/UF04/polio/bin/build_db.sh'
+        #
+        # # filename = 'bin/build_db.sh'
+        # # print '========'
+        # # print filename
+        # # print '========'
+        #
+        # # call("bash Users/johndingee_seed/code/UF04/polio/bin/build_db.sh")
+        # # call("./" + filename)
+        # call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_db.sh"])
+        call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])
 
     def create_raw_datapoints(self):
 
@@ -53,7 +72,7 @@ class CacheRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
-        cr = CacheRefresh()
+        # cr = CacheRefresh()
 
 
         for row in self.target_df.iterrows():

@@ -1,6 +1,3 @@
-
-
-
 DROP FUNCTION IF EXISTS fn_calc_datapoint(indicator_id int);
 CREATE FUNCTION fn_calc_datapoint(indicator_id int)
 RETURNS TABLE(id int) AS $$
