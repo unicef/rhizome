@@ -2,6 +2,7 @@ from subprocess import call
 from pprint import pprint
 
 from django.test import TestCase
+from tastypie.test import ResourceTestCase
 from django.test import Client
 # from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv, notnull
@@ -10,13 +11,14 @@ from datapoints.models import *
 from datapoints.cache_tasks import CacheRefresh
 
 
-class CacheRefreshTestCase(TestCase):
+class CacheRefreshTestCase(ResourceTestCase):
 
     '''
 from datapoints.cache_tasks import CacheRefresh
 from datapoints.models import DataPoint, Region
 r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
 dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[22,55]).values_list('id',flat=True)
+dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
 mr = CacheRefresh(list(dp_ids))
     '''
 
@@ -33,7 +35,7 @@ mr = CacheRefresh(list(dp_ids))
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        self.build_db() # builds sprocs and views needed to test cache refresh
+        # self.build_db() # builds sprocs and views needed to test cache refresh
         self.create_metadata()
 
 
@@ -107,21 +109,27 @@ mr = CacheRefresh(list(dp_ids))
         self.create_raw_datapoints()
 
         ## refresh the cache
-        cr = CacheRefresh()
+        # cr = CacheRefresh()
 
-        print '-- THE CLASS DATAPOINT IDS --'
-        print cr.datapoint_id_list
+        for ix, row in self.target_df.iterrows():
 
-        x = AggDataPoint.objects.all()
+            ## this is the tastypie api client.. may want to use django's
+            # resp = self.api_client.get('/api/v1/datapoint',
+            #     region_id = row.region_id,
+            #     indicator_id = row.indicator_id,
+            #     campaign_id =row.campaign_id,
+            #     follow=True,
+            #     format='json'
+            # )
 
-        print 'THIS IS THE LENGTH OF AGG DATAPOINT'
-        print len(x)
+            resp = self.api_client.get('/api/v1/indicator',
+                format='json',follow=True
+            )
 
-        for row in self.target_df.iterrows():
+            response_data = self.deserialize(resp)['objects']
 
-            pass
+            print response_data
 
-            # resp = api.call('region_id':row.region_id,'indicator_id':indicator_id)
-            # self.assertEqual(row.value,resp.value)
+            self.assertEqual(row.value,1)
 
         self.assertEqual(1,2)
