@@ -109,20 +109,21 @@
 	<div class="row">
 		<div class="large-7 columns">
 			<h3>Missed Children</h3>
-			<div v-component="chart-region-bar"
-			     v-with="campaign: campaign, region: region"></div>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="series : missed.reasons"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="medium-3 columns">
 			<h3>Absences</h3>
-			<div v-component="chart-region-bar"
+			<div v-component="chart-stacked-bar"
 			     v-with="campaign: campaign, region: region"></div>
 		</div>
 		<div class="medium-4 columns">
 			<h3>Non-Compliance</h3>
-			<div v-component="chart-region-bar"
+			<div v-component="chart-stacked-bar"
 			     v-with="campaign: campaign, region: region"></div>
 		</div>
 	</div>
@@ -131,19 +132,19 @@
 
 		<div class="medium-3 columns">
 			<h3>Non-Compliance Resolutions</h3>
-			<div v-component="chart-region-bar"
+			<div v-component="chart-stacked-bar"
 			     v-with="campaign: campaign, region: region"></div>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Influencers</h3>
-			<div v-component="chart-region-bar"
+			<div v-component="chart-stacked-bar"
 			     v-with="campaign: campaign, region: region"></div>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Sources of Information</h3>
-			<div v-component="chart-region-bar"
+			<div v-component="chart-stacked-bar"
 			     v-with="campaign: campaign, region: region"></div>
 		</div>
 	</div>

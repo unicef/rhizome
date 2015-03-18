@@ -104,11 +104,15 @@ module.exports = {
 			noncompliance : [],
 			resolutions   : [],
 			influencers   : [],
-			sources       : []
+			sources       : [],
 		};
 	},
 
 	created: function () {
+		this._regionIndex = api.regions().then(function (data) {
+			return _.indexBy(data.objects, 'id');
+		}, onError);
+
 		this.fetch();
 	},
 
@@ -200,12 +204,35 @@ module.exports = {
 						getRegion);
 				}, onError);
 
-			var provinceData = api.datapoints(provinces);
 
-			Promise.all([indicatorDefinitions, provinceData])
+			var provinceData  = api.datapoints(provinces);
+			var regionMapping = {
+				'value'       : 'x',
+				'region.name' : 'y'
+			};
+
+			Promise.all([indicatorDefinitions, provinceData, this._regionIndex])
 				.then(function (data) {
-					var indicators = _.indexBy(data[0], 'id');
-					var datapoints = util.unpivot(data[1]);
+					var indicators = _.indexBy(data[0].objects, 'id');
+					var regions    = data[2];
+					var datapoints = _(data[1])
+						.thru(util.unpivot)
+						.forEach(function (d) {
+							d.indicator = indicators[d.indicator];
+							d.region    = regions[d.region];
+						})
+						.groupBy(function (d) {
+							return d.indicator.id;
+						});
+
+					self.missed.reasons = formatData(
+						datapoints,
+						[267,268,251,264,266],
+						regionMapping,
+						getIndicator);
+
+					console.debug('missed by region', self.missed.reasons);
+
 				}, onError);
 		}
 	},
