@@ -1,177 +1,128 @@
 'use strict';
 
-var _        = require('lodash');
-var d3       = require('d3');
+var _     = require('lodash');
+var d3    = require('d3');
 
-var colors     = require('colors/coolgray');
-var stackedBar = require('./renderer/stacked-bar');
+var color = require('util/color');
 
 module.exports = {
 
-	mixins: [
+	mixins : [
 		require('./bar')
 	],
 
-	data: function () {
-		return {
-			marginBottom: 18,
-			marginLeft  : 40
-		};
-	},
+	methods : {
 
-	computed: {
-		colorScale: function () {
-			var scale = d3.scale.ordinal()
-				.range(colors);
+		draw : function () {
+			var svg = d3.select(this.$el);
 
-			if (this.indicators && this.indicators.map) {
-				scale.domain(this.indicators.map(function (d) {
-					return d.id || d;
-				}));
-			}
-
-			return scale;
-		},
-
-		height: function () {
-			var l = _(this.datapoints)
-				.pluck('region')
-				.uniq()
-				.value()
-				.length;
-			var h = 12;
-
-			return l * h;
-		},
-
-		query: function () {
-			return {
-				indicator__in: _.map(this.indicators, function (d) {
-					return d.id || d;
-				}),
-				campaign_start: this.campaign.end,
-				campaign_end  : this.campaign.end,
-				parent_region__in: [this.region],
-				level            : 'province'
-			};
-		},
-
-		renderer: function () {
-			var x         = this.xScale;
-			var y         = this.yScale;
-			var color     = this.colorScale;
-
-			var renderer = stackedBar()
-				.height(y.rangeBand())
-				.width(function (d) {
-					return x(d.y);
-				})
-				.x(function (d) {
-					return x(d.y0);
-				})
-				.y(function (d) {
-					return y(d.region);
-				})
-				.color(function (d) {
-					return color(d.id);
-				})
-				.values(function (d) {
-					return d.values;
-				});
-
-			return renderer;
-		},
-
-		series: function () {
-			if (this.empty) {
-				return [];
-			}
-
-			var series = _(this.datapoints)
-				.groupBy('indicator')
-				.map(function (d, indicator) {
-					return {
-						id    : indicator,
-						name  : indicator,
-						values: d
-					};
-				})
-				.value();
-
+			// d3.layout.stack stacks the y-value, but we want to stack the x value,
+			// so we swap x and y in the layout definition.
 			var stack = d3.layout.stack()
-				.offset('zero')
 				.values(function (d) {
 					return d.values;
 				})
+				.offset('zero')
+				.order('default')
 				.x(function (d) {
-					return d.region;
+					return d.y;
 				})
 				.y(function (d) {
-					return d.value;
+					return d.x;
+				})
+				.out(function (d, y0, y) {
+					d.x0 = y0;
+					d.x  = y;
 				});
 
-			return stack(series);
-		},
+			var data = stack(this.series);
 
-		xScale: function () {
-			function x(d) {
-				return d.y0 + d.y;
-			}
+			var xScale = d3.scale.linear()
+				.range([0, this.contentWidth])
+				.domain([0, d3.max(_(data).pluck('values').flatten().value(), function (d) {
+					return d.x0 + d.x;
+				})]);
 
-			var scale = d3.scale.linear()
-				.range([0, this.contentWidth]);
+			var x = function (d) {
+				return xScale(d.x0);
+			};
 
-			if (!this.empty) {
-				var flat = _.flatten(_.pluck(this.series, 'values'), true);
+			var width = function (d) {
+				return xScale(d.x);
+			};
 
-				scale.domain([
-					Math.min(0, d3.min(flat, x)),
-					d3.max(flat, x)
-				]);
-			}
+			var yScale = d3.scale.ordinal()
+				.domain(this.categories)
+				.rangePoints([this.contentHeight, 0]);
 
-			return scale;
-		},
+			var y = function (d) {
+				return yScale(d.y);
+			};
 
-		yScale: function () {
-			var domain = _(this.datapoints)
-				.pluck('region')
-				.uniq()
-				.value();
+			var series = svg.select('.data')
+				.selectAll('.series')
+				.data(data, function (d) {
+					return d.name;
+				});
 
-			return d3.scale.ordinal()
-				.domain(domain)
-				.rangeRoundBands([this.contentHeight, 0], 0.08);
-		}
-	},
+			var height = this.barHeight;
 
-	methods: {
-		draw: function () {
-			var svg = d3.select(this.$el)
-				.select('svg');
+			series.enter().append('g').attr({
+				'class'     : 'series',
+				'transform' : 'translate(0,' + (-height / 2) + ')'
+			});
 
-			var renderer = this.renderer;
+			var colorScale = color.scale(_.pluck(data, 'name'));
 
-			svg.select('.data')
-				.selectAll(renderer.selector())
-				.data(this.series, function (d) {
-					return d.id;
-				})
-				.call(renderer);
+			series.each(function (datum) {
+				var g = d3.select(this);
+
+				var bar = g.selectAll('.bar')
+					.data(datum.values);
+
+				bar.enter()
+					.append('rect')
+					.attr({
+						'class'  : 'bar',
+						'x'      : x,
+						'y'      : y,
+						'height' : height,
+						'width'  : 0,
+						'fill'   : colorScale(datum.name)
+					});
+
+				bar.transition()
+					.duration(300)
+					.attr({
+						'x'      : x,
+						'y'      : y,
+						'height' : height,
+						'width'  : width
+					});
+
+				bar.exit()
+					.transition()
+					.duration(300)
+					.attr('width', 0)
+					.remove();
+			});
 
 			var xAxis = d3.svg.axis()
-				.scale(this.xScale)
+				.scale(xScale)
 				.orient('bottom');
 
 			svg.select('.x.axis')
 				.call(xAxis);
 
 			var yAxis = d3.svg.axis()
-				.scale(this.yScale)
+				.scale(yScale)
+				.tickSize(0)
 				.orient('left');
 
 			svg.select('.y.axis')
 				.call(yAxis);
 		}
+
 	}
+
 };

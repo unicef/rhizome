@@ -125,7 +125,7 @@ module.exports = {
 			var indicators = [252,253,254,255,256,257,258,259,260,261,262,263,272,274,
 				276,287,288,289,290,291,292,293,294,307,308,309,310,311,312,313,314,315,
 				316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,
-				334,345,346,347,348];
+				334,345,346,347,348,267,268,251,264,266];
 
 			var indicatorDefinitions = api.indicators({
 				id__in : indicators
@@ -225,14 +225,15 @@ module.exports = {
 							return d.indicator.id;
 						});
 
-					self.missed.reasons = formatData(
+					var reasons = formatData(
 						datapoints,
 						[267,268,251,264,266],
 						regionMapping,
 						getIndicator);
 
-					console.debug('missed by region', self.missed.reasons);
+					console.debug('missed by region', reasons);
 
+					self.missed.reasons = reasons;
 				}, onError);
 		}
 	},

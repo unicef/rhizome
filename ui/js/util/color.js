@@ -9,13 +9,13 @@ function scale(categories) {
 		d3.rgb(colors[0]),
 		d3.rgb(colors[colors.length - 1]));
 
-	var scale = d3.scale.linear().domain([0, categories.length - 1]);
+	var s = d3.scale.linear().domain([0, categories.length - 1]);
 
 	// Build up a range of colors for the ordinal scale by interpolating the
 	// two extremes of the colors from the coolgray array
 	var range = [];
 	for (var i = 0, l = categories.length; i < l; i++) {
-		range.push(interpolate(scale(i)));
+		range.push(interpolate(s(i)));
 	}
 
 	return d3.scale.ordinal()
