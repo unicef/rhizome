@@ -79,10 +79,22 @@ module.exports = {
 					domain : [0, 1],
 					series : []
 				},
-				reasonForMissed : [],
-				absence         : [],
-				noncompliance   : [],
-				resolutions     : []
+				reasonForMissed : {
+					domain : [0, 1],
+					series : []
+				},
+				absence         : {
+					domain : [0, 1],
+					series : []
+				},
+				noncompliance   : {
+					domain : [0, 1],
+					series : []
+				},
+				resolutions     : {
+					domain : [0, 1],
+					series : []
+				}
 			},
 			missed : {
 				reasons    : [],
@@ -163,6 +175,29 @@ module.exports = {
 						barChartMapping,
 						getRegion);
 
+					self.overview.reasonForMissed.series = formatData(
+						datapoints,
+						[318,319,320,321,322],
+						barChartMapping,
+						getRegion);
+
+					self.overview.absence.series = formatData(
+						datapoints,
+						[323,324,325,326,327],
+						barChartMapping,
+						getRegion);
+
+					self.overview.noncompliance.series = formatData(
+						datapoints,
+						[328,329,330,331,332,333,334],
+						barChartMapping,
+						getRegion);
+
+					self.overview.resolutions.series = formatData(
+						datapoints,
+						[345,346,347,348],
+						barChartMapping,
+						getRegion);
 				}, onError);
 
 			var provinceData = api.datapoints(provinces);

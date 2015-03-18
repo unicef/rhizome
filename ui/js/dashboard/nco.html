@@ -52,6 +52,7 @@
 					domain : overview.influencer.domain,
 					series : overview.influencer.series"></div>
 		</div>
+
 		<div class="medium-3 columns">
 			<h4>Information Source</h4>
 			<div
@@ -60,6 +61,48 @@
 				v-with="
 					domain : overview.source.domain,
 					series : overview.source.series"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="medium-3 columns">
+			<h4>Reason for Missed</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.reasonForMissed.domain,
+					series : overview.reasonForMissed.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Reason for Absence</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.absence.domain,
+					series : overview.absence.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Reason for Non-Compliance</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.noncompliance.domain,
+					series : overview.noncompliance.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>NC Resolved by</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.resolutions.domain,
+					series : overview.resolutions.series"></div>
 		</div>
 	</div>
 
