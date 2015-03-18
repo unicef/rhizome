@@ -1,11 +1,12 @@
 from subprocess import call
+from pprint import pprint
 
 from django.test import TestCase
 from django.test import Client
 # from django.conf.test_settings import PROJECT_ROOT
-from pandas import read_csv
+from pandas import read_csv, notnull
 
-from datapoints.models import DataPoint
+from datapoints.models import *
 from datapoints.cache_tasks import CacheRefresh
 
 
@@ -25,21 +26,44 @@ class CacheRefreshTestCase(TestCase):
         self.target_df = data_df[data_df['is_raw'] == 0]
 
         self.build_db() # builds sprocs and views needed to test cache refresh
+        self.create_metadata()
+
 
     def build_db(self):
-        #
-        # # filename = PROJECT_ROOT + '/bin/build_db.sh'
-        # # filename = '/Users/johndingee_seed/code/UF04/polio/bin/build_db.sh'
-        #
-        # # filename = 'bin/build_db.sh'
-        # # print '========'
-        # # print filename
-        # # print '========'
-        #
-        # # call("bash Users/johndingee_seed/code/UF04/polio/bin/build_db.sh")
-        # # call("./" + filename)
-        # call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_db.sh"])
+
+        ## remove the build_test_db script and pass a $DB param to build_db.sh
         call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])
+
+    def create_metadata(self):
+        '''
+        Creating the Indicator, Region, Campaign, meta data needed for the
+        system to aggregate / caclulate.
+        '''
+
+        region_df = read_csv('datapoints/tests/_data/regions.csv')
+        indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
+        calc_indicator_df = read_csv\
+            ('datapoints/tests/_data/calculated_indicator_component.csv')
+
+        region_ids = self.model_df_to_data(region_df,Region)
+
+
+    def model_df_to_data(self,model_df,model):
+
+        meta_ids = []
+
+        non_null_df = model_df.where((notnull(model_df)), None)
+
+        list_of_dicts = non_null_df.transpose().to_dict()
+
+        for row_ix, row_dict in list_of_dicts.iteritems():
+
+            row_id = Region.objects.create(**row_dict)
+
+            meta_ids.append(row_id)
+
+        return meta_ids
+
 
     def create_raw_datapoints(self):
 
@@ -72,8 +96,15 @@ class CacheRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
-        # cr = CacheRefresh()
 
+        ## refresh the cache
+        cr = CacheRefresh()
+
+        x = AggDataPoint.objects.filter(region_id = 12907).values_list('id'
+            ,flat=True)
+
+        # print 'THIS IS THE LENGTH OF AGG DATAPOINT'
+        print len(x)
 
         for row in self.target_df.iterrows():
 

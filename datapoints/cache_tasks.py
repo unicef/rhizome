@@ -84,8 +84,6 @@ class CacheRefresh(object):
         self.agg_datapoints()
         # self.calc_datapoints()
 
-        self.mark_datapoints_as_cached()
-
         return task_result
 
     def agg_datapoints(self):
@@ -171,22 +169,6 @@ class CacheRefresh(object):
         indicator_ids = [ind.id for ind in curs]
 
         return indicator_ids
-
-    def mark_datapoints_as_cached(self):
-        '''
-        After successfully caching the changed datapoints, mark them as cached.
-        '''
-        dp = DataPoint.objects.raw('''
-
-            UPDATE datapoint
-            SET is_cached = 't'
-            WHERE id = ANY (%s);
-
-            SELECT id FROM datapoint limit 1;
-
-        ''',[self.datapoint_id_list])
-
-        x = [d.id for d in dp]
 
 
     def get_datapoints_to_cache(self,limit=None):
