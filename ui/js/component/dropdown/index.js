@@ -31,6 +31,7 @@ module.exports = Vue.extend({
 
 	data: function () {
 		return {
+			itemTree   : [],
 			items      : [],
 			loading    : false,
 			menuHeight : 0,
@@ -53,8 +54,16 @@ module.exports = Vue.extend({
 	},
 
 	computed: {
+		isFiltered: function () {
+			return this.pattern.length > 2;
+		},
+
 		filtered: function () {
-			return this.pattern.length > 0;
+			var pattern = new RegExp(this.pattern, 'gi');
+
+			return this.items.filter(function (d) {
+				return pattern.test(d.title);
+			});
 		},
 
 		hasSelection: function () {
@@ -253,8 +262,9 @@ module.exports = Vue.extend({
 							offset: meta.offset + meta.limit
 						}, accumulator);
 					} else {
-						self.items   = treeify(accumulator, 'value');
-						self.loading = false;
+						self.itemTree = treeify(accumulator, 'value');
+						self.items    = accumulator;
+						self.loading  = false;
 
 						self.select(self.$options.defaults);
 						self.$emit('dropdown-value-changed', self.selection);
@@ -286,21 +296,6 @@ module.exports = Vue.extend({
 	},
 
 	filters: {
-
-		flatten: function (arr) {
-			var result = [];
-			var q      = [].concat(arr);
-
-			while (q.length > 0) {
-				var item = q.shift();
-
-				result.push(item);
-				q = q.concat(item.children || []);
-			}
-
-			return result;
-		},
-
 		isSelected: function (value) {
 			return this.selection.hasOwnProperty(value);
 		}
