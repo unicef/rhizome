@@ -119,9 +119,14 @@ module.exports = {
 					.remove();
 			});
 
+			console.log(this.tickCount);
 			var xAxis = d3.svg.axis()
-				.scale(xScale)
-				.orient('bottom');
+				.orient('bottom')
+				.tickSize(-this.contentHeight)
+				.ticks(Number(this.tickCount))
+				.tickFormat(d3.format(this.format))
+				.tickPadding(6)
+				.scale(xScale);
 
 			svg.select('.x.axis')
 				.call(xAxis);

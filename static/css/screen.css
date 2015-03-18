@@ -7168,6 +7168,10 @@ svg .label {
   vertical-align: middle;
   text-align: center;
 }
+.chart.bar .x.axis line {
+  display: inline;
+  stroke: #EEEEEE;
+}
 
 .legend {
   font-size: 0.5625rem;

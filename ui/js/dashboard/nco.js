@@ -30,7 +30,7 @@ function mapProperties(mapping) {
 		});
 
 		return datum;
-	}
+	};
 }
 
 function makeSeries(getSeries) {
@@ -44,7 +44,7 @@ function makeSeries(getSeries) {
 				};
 			})
 			.value();
-		}
+		};
 }
 
 function formatData(datapoints, indicators, properties, series) {

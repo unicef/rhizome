@@ -17,7 +17,8 @@ module.exports = {
 
 	paramAttributes: [
 		'data-format',
-		'data-labels'
+		'data-labels',
+		'data-tick-count'
 	],
 
 	data: function () {
@@ -26,11 +27,13 @@ module.exports = {
 			barHeight    : 14,
 			format       : 's',
 			marginTop    : 9,
-			marginBottom : 9,
+			marginRight  : 18,
+			marginBottom : 18,
 			marginLeft   : 80,
 			padding      : 1,
 			series       : [],
-			labels       : true
+			labels       : true,
+			tickCount    : 3
 		};
 	},
 
@@ -87,7 +90,7 @@ module.exports = {
 
 			var yScale = d3.scale.ordinal()
 				.domain(this.categories)
-				.rangePoints([this.contentHeight, 0]);
+				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
 				return yScale(d.y);
@@ -102,7 +105,7 @@ module.exports = {
 			series.enter().append('g').attr('class', 'series');
 
 			var height = this.barHeight;
-			var groupHeight = height * this.series.length
+			var groupHeight = height * this.series.length;
 
 			series.attr('transform', function (d, i) {
 				return 'translate(0,' + ((i * height) - groupHeight / 2) + ')';
@@ -168,6 +171,8 @@ module.exports = {
 					.duration(300)
 					.attr('width', 0);
 
+				// Wait until after the animation of the bar is finished before removing
+				// the group element
 				d3.timer(function () {
 					bar.exit().remove();
 				}, 0, 300);
@@ -178,6 +183,17 @@ module.exports = {
 				.duration(300)
 				.style('opacity', 0)
 				.remove();
+
+			var xAxis = d3.svg.axis()
+				.orient('bottom')
+				.tickSize(-this.contentHeight)
+				.ticks(Number(this.tickCount))
+				.tickFormat(fmt)
+				.tickPadding(6)
+				.scale(xScale);
+
+			svg.select('.x.axis')
+				.call(xAxis);
 
 			var yAxis = d3.svg.axis()
 				.orient('left')
