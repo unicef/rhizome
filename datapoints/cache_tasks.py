@@ -68,6 +68,8 @@ class CacheRefresh(object):
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
+        self.set_cache_job_id_for_raw_datapoints(cache_job.id)
+
         self.indicator_ids = self.get_indicator_ids()
 
         return cache_job
@@ -82,15 +84,13 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        self.set_cache_job_id_for_raw_datapoints()
-
         agg_dp_ids = self.agg_datapoints()
 
         # self.calc_datapoints()
 
         return task_result
 
-    def set_cache_job_id_for_raw_datapoints(self):
+    def set_cache_job_id_for_raw_datapoints(self,cache_job_id):
         '''
         After we find what datapoint IDs need to be refreshed, we set the
         cache_job_id coorespondonding to the current job so we can find
@@ -98,11 +98,21 @@ class CacheRefresh(object):
         analysts debugging the cache process
         '''
 
-        dp_ids = DataPoint.objects.raw('''
+        print 'CACHE_JOB_ID: %s' % cache_job_id
+        print 'CACHE_JOB_ID: %s' % cache_job_id
+        print 'CACHE_JOB_ID: %s' % cache_job_id
+
+
+        dp_curs = DataPoint.objects.raw('''
             UPDATE datapoint
             SET cache_job_id = %s
-            WHERE id = ANY(%s)
-        ''',[self.cache_job.id,self.datapoint_id_list])
+            WHERE id = ANY(%s);
+
+            SELECT ID from datapoint limit 1
+
+        ''',[cache_job_id,self.datapoint_id_list])
+
+        x = [dp.id for dp in dp_curs]
 
 
     def agg_datapoints(self):

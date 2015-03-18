@@ -18,8 +18,7 @@ RETURNS TABLE(id int) AS $$
 	(region_id,indicator_id,campaign_id,cache_job_id,value)
 
 	SELECT region_id,indicator_id,campaign_id,cache_job_id,value 
-	FROM datapoint
-	
+	FROM datapoint	
 	WHERE cache_job_id = $1;
 	
 	SELECT id FROM agg_datapoint LIMIT 1;
