@@ -109,9 +109,19 @@
 	<div class="row">
 		<div class="large-7 columns">
 			<h3>Missed Children</h3>
+		</div>
+		<div class="medium-5 columns">
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-bottom="18"
 				v-with="series : missed.reasons"></div>
+		</div>
+		<div class="medium-2 columns">
+			<div
+				v-component="chart-bar"
+				data-margin-top="18"
+				data-margin-bottom="18"
+				v-with="series : missed.monitoring"></div>
 		</div>
 	</div>
 

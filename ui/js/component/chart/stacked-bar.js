@@ -11,6 +11,18 @@ module.exports = {
 		require('./bar')
 	],
 
+	computed : {
+
+		height : function () {
+			var l       = this.categories.length;
+			var padding = l * this.padding;
+			var h       = Math.max(0, l * this.barHeight + padding);
+
+			return h + Number(this.marginTop) + Number(this.marginBottom);
+		}
+
+	},
+
 	methods : {
 
 		draw : function () {
