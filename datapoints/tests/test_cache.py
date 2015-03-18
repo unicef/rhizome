@@ -1,5 +1,8 @@
-from pandas import read_csv
 from django.test import TestCase
+from django.test import Client
+from pandas import read_csv
+
+from datapoints.models import DataPoint
 
 
 class CacheRefreshTestCase(TestCase):
@@ -10,18 +13,53 @@ class CacheRefreshTestCase(TestCase):
 
     def set_up(self):
 
-        print 'TESTING\n' * 2
+        data_df = read_csv('datapoints/tests/_data/calc_data.csv')
 
-        test_df = read_csv('datapoints/tests/_data/calc_data.csv')
+        self.changed_by_id = 1
 
-        print test_df
+        self.test_df = data_df[data_df['is_raw'] == 1]
+        self.target_df = data_df[data_df['is_raw'] == 0]
 
-    def create_raw_datapoints(self,raw_df):
+    def create_raw_datapoints(self):
 
-        pass
+        for row_ix,row_data in self.test_df.iterrows():
+
+            dp_id = self.create_datapoint(row_data.region_id, row_data\
+                .campaign_id, row_data.indicator_id, row_data.value)
+
+            
+    def create_datapoint(self, region_id, campaign_id, indicator_id, value):
+        '''
+        Right now this is being performed as a database insert.  I would like to
+        Test this against the data entry resource, but this will do for now
+        in order to test caching.
+        '''
+
+        print 'region_id: %s' % region_id
+        print 'indicator_id: %s' % indicator_id
+        print 'campaign_id: %s' % campaign_id
+
+
+        dp_id = DataPoint.objects.create(
+            region_id = region_id,
+            campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            value = value,
+            changed_by_id = self.changed_by_id,
+            source_datapoint_id = -1
+        ).id
+
+        print 'datapoint_id: %s' % dp_id
+
+
+        return dp_id
+
+
 
     def test_basic(self):
 
         self.set_up()
+        self.create_raw_datapoints()
+
 
         self.assertEqual(1,1)
