@@ -23,19 +23,20 @@ class CacheRefresh(object):
           table.
     '''
 
+
     def __init__(self,datapoint_id_list=None):
         '''
         '''
 
         self.datapoint_id_list = datapoint_id_list
 
-        cache_job = self.set_up()
-        task_result = self.main()
+        # set up and run the cache job
+        self.cache_job = self.set_up()
+        self.cache_job.response_msg = self.main()
 
-        cache_job.status = task_result
-        cache_job.date_completed = datetime.now()
-
-        cache_job.save()
+        # mark job as completed and save
+        self.cache_job.date_completed = datetime.now()
+        self.cache_job.save()
 
     def set_up(self):
         '''
@@ -81,10 +82,28 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        self.agg_datapoints()
+        self.set_cache_job_id_for_raw_datapoints()
+
+        agg_dp_ids = self.agg_datapoints()
+
         # self.calc_datapoints()
 
         return task_result
+
+    def set_cache_job_id_for_raw_datapoints(self):
+        '''
+        After we find what datapoint IDs need to be refreshed, we set the
+        cache_job_id coorespondonding to the current job so we can find
+        these datapoints easily both within this class, and for engineers /
+        analysts debugging the cache process
+        '''
+
+        dp_ids = DataPoint.objects.raw('''
+            UPDATE datapoint
+            SET cache_job_id = %s
+            WHERE id = ANY(%s)
+        ''',[self.cache_job.id,self.datapoint_id_list])
+
 
     def agg_datapoints(self):
         '''
@@ -110,10 +129,12 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        init_curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_init_agg_datapoint()")
+        agg_cursor = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_agg_datapoint(%s)",[self.cache_job.id])
 
-        y = [x for x in init_curs]
+        agg_dp_ids = [x.id for x in agg_cursor]
+
+        return agg_dp_ids
 
 
     def calc_datapoints(self):
@@ -177,11 +198,11 @@ class CacheRefresh(object):
         datapoints that need to be cached.  If the datapoint_id_list parameter
         is provided when the class is instantiated, this method need not be
         called.  If there is no limit provided to this method, the default
-        limit is set to 1000.
+        limit is set to 100.
         '''
 
         if limit is None:
-            limit = 1000
+            limit = 100
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint

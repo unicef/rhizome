@@ -12,6 +12,14 @@ from datapoints.cache_tasks import CacheRefresh
 
 class CacheRefreshTestCase(TestCase):
 
+    '''
+from datapoints.cache_tasks import CacheRefresh
+from datapoints.models import DataPoint, Region
+r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
+dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[22,55]).values_list('id',flat=True)
+mr = CacheRefresh(list(dp_ids))
+    '''
+
     def __init__(self, *args, **kwargs):
 
         super(CacheRefreshTestCase, self).__init__(*args, **kwargs)
@@ -56,13 +64,11 @@ class CacheRefreshTestCase(TestCase):
         meta_ids = []
 
         non_null_df = model_df.where((notnull(model_df)), None)
-
         list_of_dicts = non_null_df.transpose().to_dict()
 
         for row_ix, row_dict in list_of_dicts.iteritems():
 
             row_id = model.objects.create(**row_dict)
-
             meta_ids.append(row_id)
 
         return meta_ids
@@ -103,11 +109,13 @@ class CacheRefreshTestCase(TestCase):
         ## refresh the cache
         cr = CacheRefresh()
 
-        x = AggDataPoint.objects.filter(region_id = 12907).values_list('id'
-            ,flat=True)
+        print '-- THE CLASS DATAPOINT IDS --'
+        print cr.datapoint_id_list
 
-        # print 'THIS IS THE LENGTH OF AGG DATAPOINT'
-        # print len(x)
+        x = AggDataPoint.objects.all()
+
+        print 'THIS IS THE LENGTH OF AGG DATAPOINT'
+        print len(x)
 
         for row in self.target_df.iterrows():
 
