@@ -183,12 +183,12 @@ module.exports = {
 			self._regions.items = treeify(items, 'value');
 
 			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
-			if (self.$data.campaign_office_id !== null && campaign.office !== self.$data.campaign_office_id) {
-				self._regions.selectedItems = [];
+			if (self.$data.campaign_office_id !== null && campaign.office_id !== self.$data.campaign_office_id) {
+				self._regions.selection = {};
 			}
 
 			// set office id to track when the office changes
-			self.$data.campaign_office_id = campaign.office;
+			self.$data.campaign_office_id = campaign.office_id;
 
 		},
 
@@ -224,7 +224,10 @@ module.exports = {
 					options.region__in.push(region.id);
 
 					if (self.includeSubRegions) {
-						var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
+						// this will include all child regions:
+						var children = flattenChildren(region, 'children', null, function(d) { return true; });
+						// this will include only high risk child regions
+						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
 							options.region__in = options.region__in.concat(_.map(children, 'id'));
 						}
@@ -282,7 +285,7 @@ module.exports = {
 
 			// get datapoints from API
 			self.table.loading = true;
-			api.datapointsRaw(options).done(function (data) {
+			var withSuccess = function (data) {
 
 				// finished fetching data
 				self.table.loading = false;
@@ -352,8 +355,13 @@ module.exports = {
 									}
 									// generate validation for values
 									cell.validateValue = function(newVal) {
-										var value = parseFloat(newVal);
-										var passed = !_.isNaN(value);
+										if (_.isNull(newVal)) {
+											var value = null;
+											var passed = true;
+										} else {
+											var value = parseFloat(newVal);
+											var passed = !_.isNaN(value);
+										}
 										return { 'value': value, 'passed': passed };
 									};
 									// generate promise for submitting a new value to the API for saving
@@ -400,7 +408,19 @@ module.exports = {
 				self.table.rows = rows;
 				self.table.columns = columns;
 
-			});
+			};
+
+			// var withError = function(err) {
+			// 	console.log(err);
+
+			// 	// finished fetching data
+			// 	self.table.loading = false;
+
+			// 	alert('There was an error loading the data.');
+
+			// };
+
+			api.datapointsRaw(options).then(withSuccess);
 		},
 
 		showTooltip: function() {

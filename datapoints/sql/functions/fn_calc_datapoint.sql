@@ -1,4 +1,6 @@
-﻿
+
+
+
 DROP FUNCTION IF EXISTS fn_calc_datapoint(indicator_id int);
 CREATE FUNCTION fn_calc_datapoint(indicator_id int)
 RETURNS TABLE(id int) AS $$
@@ -19,7 +21,8 @@ RETURNS TABLE(id int) AS $$
     		,is_agg
     		,CAST(0 as BOOLEAN) as is_calc
     	FROM agg_datapoint
-    	WHERE indicator_id = $1;
+    	WHERE indicator_id = $1
+    	AND calc_refreshed = 'f';
 
 --         ---- SUM OF PARTS ------
         INSERT INTO datapoint_with_computed
@@ -36,6 +39,7 @@ RETURNS TABLE(id int) AS $$
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
         WHERE cic.indicator_id = $1
+    	AND calc_refreshed = 'f'
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id;
 
         ----- PART / WHOLE ------
@@ -81,6 +85,7 @@ RETURNS TABLE(id int) AS $$
           		,ad.indicator_id
           		,ad.campaign_id
           		,ad.value
+			,ad.calc_refreshed
           	FROM agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
@@ -95,6 +100,7 @@ RETURNS TABLE(id int) AS $$
           		,ad.indicator_id
           		,ad.campaign_id
           		,ad.value
+			,ad.calc_refreshed
           	FROM agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
@@ -114,6 +120,7 @@ RETURNS TABLE(id int) AS $$
           		,ad.indicator_id
           		,ad.campaign_id
           		,ad.value
+          		,ad.calc_refreshed
           	FROM agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
@@ -123,7 +130,12 @@ RETURNS TABLE(id int) AS $$
           ON num_whole.region_id = denom.region_id
           AND num_whole.master_indicator_id = denom.master_indicator_id
           AND num_whole.campaign_id = denom.campaign_id
-          AND num_whole.master_indicator_id = $1;
+          AND num_whole.master_indicator_id = $1
+          AND (num_whole.calc_refreshed ='f' OR num_part.calc_refreshed = 'f' or denom.calc_refreshed = 'f');
+
+	UPDATE agg_datapoint
+	SET calc_refreshed = 't'
+	WHERE indicator_id = $1;
 
         SELECT id FROM datapoint_with_computed
 	WHERE indicator_id = $1

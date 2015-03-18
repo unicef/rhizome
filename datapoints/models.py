@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
@@ -12,6 +14,18 @@ class Source(models.Model):
 
     class Meta:
         db_table = 'source'
+
+class CacheJob(models.Model):
+
+    date_attempted = models.DateTimeField(default=datetime.now())
+    date_completed = models.DateTimeField(null=True)
+    is_error = models.BooleanField()
+    response_msg = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'cache_job'
+        ordering = ('-date_attempted',)
+
 
 class Indicator(models.Model):
 
@@ -183,7 +197,7 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
-    is_cached = models.BooleanField()
+    is_cached = models.BooleanField(default=False)
 
     def get_val(self):
         return self.value
@@ -247,6 +261,7 @@ class AggDataPoint(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
+    calc_refreshed = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'agg_datapoint'
