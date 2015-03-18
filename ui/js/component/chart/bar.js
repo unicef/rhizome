@@ -106,44 +106,60 @@ module.exports = {
 			});
 
 			var colorScale = color.scale(_.pluck(this.series, 'name'));
+			var fmt        = d3.format(this.format);
 
 			series.each(function (datum) {
-				var g = d3.select(this);
+				var g   = d3.select(this);
 
-				console.log(datum);
-
-				var bar = g.selectAll('rect')
+				var bar = g.selectAll('.bar')
 					.data(datum.values);
 
-				// Existing bars animate everything
 				bar.transition()
 					.duration(300)
-					.attr({
-						'fill'   : colorScale(datum.name),
-						'height' : height,
-						'y'      : y
+					.attr('transform', function (d) {
+						return 'translate(0,' + y(d) + ')';
 					});
 
-				bar.enter()
-					.append('rect')
+				var barEnter = bar.enter()
+					.append('g')
+					.attr('class', 'bar');
+
+				barEnter.append('rect')
+					.attr('width', 0);
+
+				barEnter.append('text')
 					.attr({
-						'fill'   : colorScale(datum.name),
-						'height' : height,
-						'width'  : 0,
-						'x'      : xScale(0),
-						'y'      : y
+						'x'  : '0.1em',
+						'y'  : height / 2,
+						'dy' : '0.35em'
 					});
 
-				// All bars animate width
-				bar.transition()
-					.duration(300)
-					.attr('width', x);
-
-				bar.exit()
+				bar.select('rect')
 					.transition()
 					.duration(300)
-					.attr('width', 0)
-					.remove();
+					.attr({
+						'fill'   : colorScale(datum.name),
+						'height' : height,
+						'width'  : x,
+					});
+
+				bar.select('text')
+					.text(function (d) {
+						return fmt(d.x);
+					})
+					.transition()
+					.duration(300)
+					.attr('y', height / 2);
+
+				bar.exit()
+					.select('rect')
+					.transition()
+					.duration(300)
+					.attr('width', 0);
+
+				d3.timer(function () {
+					bar.exit().remove();
+				}, 0, 300);
 			});
 
 			series.exit()
