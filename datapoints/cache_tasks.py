@@ -154,7 +154,7 @@ class CacheRefresh(object):
         FROM datapoint
         WHERE id = ANY (%s);
 
-        SELECT x.indicator_id as id FROM(
+        SELECT x.indicator_id as id FROM (
 
         	SELECT cic.indicator_id
         	FROM calculated_indicator_component cic
@@ -164,7 +164,7 @@ class CacheRefresh(object):
             UNION ALL
 
             SELECT indicator_id from _raw_indicators
-        )x;
+        ) x;
 
         ''',[self.datapoint_id_list])
 

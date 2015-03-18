@@ -3,6 +3,7 @@ from django.test import Client
 from pandas import read_csv
 
 from datapoints.models import DataPoint
+from datapoints.cache_tasks import CacheRefresh
 
 
 class CacheRefreshTestCase(TestCase):
@@ -20,7 +21,7 @@ class CacheRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-    
+
     def create_raw_datapoints(self):
 
         for row_ix,row_data in self.test_df.iterrows():
@@ -36,10 +37,6 @@ class CacheRefreshTestCase(TestCase):
         in order to test caching.
         '''
 
-        # print 'region_id: %s' % region_id
-        # print 'indicator_id: %s' % indicator_id
-        # print 'campaign_id: %s' % campaign_id
-
         dp_id = DataPoint.objects.create(
             region_id = region_id,
             campaign_id = campaign_id,
@@ -49,8 +46,6 @@ class CacheRefreshTestCase(TestCase):
             source_datapoint_id = -1
         ).id
 
-        # print 'datapoint_id: %s' % dp_id
-
         return dp_id
 
 
@@ -58,6 +53,8 @@ class CacheRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
+        cr = CacheRefresh()
+
 
         for row in self.target_df.iterrows():
 
