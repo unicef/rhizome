@@ -46,6 +46,9 @@ class CacheRefreshTestCase(TestCase):
             ('datapoints/tests/_data/calculated_indicator_component.csv')
 
         region_ids = self.model_df_to_data(region_df,Region)
+        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
+            CalculatedIndicatorComponent)
 
 
     def model_df_to_data(self,model_df,model):
@@ -58,7 +61,7 @@ class CacheRefreshTestCase(TestCase):
 
         for row_ix, row_dict in list_of_dicts.iteritems():
 
-            row_id = Region.objects.create(**row_dict)
+            row_id = model.objects.create(**row_dict)
 
             meta_ids.append(row_id)
 
@@ -104,7 +107,7 @@ class CacheRefreshTestCase(TestCase):
             ,flat=True)
 
         # print 'THIS IS THE LENGTH OF AGG DATAPOINT'
-        print len(x)
+        # print len(x)
 
         for row in self.target_df.iterrows():
 
