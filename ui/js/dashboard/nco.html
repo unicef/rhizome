@@ -121,7 +121,10 @@
 				v-component="chart-bar"
 				data-margin-top="18"
 				data-margin-bottom="18"
-				v-with="series : missed.monitoring"></div>
+				data-labels="false"
+				v-with="
+					series    : missed.monitoring,
+					barHeight : missed.barHeight"></div>
 		</div>
 	</div>
 

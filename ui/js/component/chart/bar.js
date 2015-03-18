@@ -16,7 +16,8 @@ module.exports = {
 	],
 
 	paramAttributes: [
-		'data-format'
+		'data-format',
+		'data-labels'
 	],
 
 	data: function () {
@@ -28,7 +29,8 @@ module.exports = {
 			marginBottom : 9,
 			marginLeft   : 80,
 			padding      : 1,
-			series       : []
+			series       : [],
+			labels       : true
 		};
 	},
 
@@ -108,6 +110,7 @@ module.exports = {
 
 			var colorScale = color.scale(_.pluck(this.series, 'name'));
 			var fmt        = d3.format(this.format);
+			var showLabels = JSON.parse(this.labels);
 
 			series.each(function (datum) {
 				var g   = d3.select(this);
@@ -128,13 +131,15 @@ module.exports = {
 				barEnter.append('rect')
 					.attr('width', 0);
 
-				barEnter.append('text')
-					.attr({
-						'class' : 'label',
-						'x'     : '0.1em',
-						'y'     : height / 2,
-						'dy'    : '0.35em'
-					});
+				if (showLabels) {
+					barEnter.append('text')
+						.attr({
+							'class' : 'label',
+							'x'     : '0.1em',
+							'y'     : height / 2,
+							'dy'    : '0.35em'
+						});
+				}
 
 				bar.select('rect')
 					.transition()
@@ -145,13 +150,17 @@ module.exports = {
 						'width'  : x,
 					});
 
-				bar.select('text')
-					.text(function (d) {
-						return fmt(d.x);
-					})
-					.transition()
-					.duration(300)
-					.attr('y', height / 2);
+				if (showLabels) {
+					bar.select('text')
+						.text(function (d) {
+							return fmt(d.x);
+						})
+						.transition()
+						.duration(300)
+						.attr('y', height / 2);
+				} else {
+					bar.select('text').remove();
+				}
 
 				bar.exit()
 					.select('rect')
@@ -184,7 +193,8 @@ module.exports = {
 	watch: {
 		'series' : 'draw',
 		'width'  : 'draw',
-		'height' : 'draw'
+		'height' : 'draw',
+		'labels' : 'draw'
 	}
 
 };

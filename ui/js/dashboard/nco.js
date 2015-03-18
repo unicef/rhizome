@@ -99,6 +99,7 @@ module.exports = {
 			missed : {
 				reasons    : [],
 				monitoring : [],
+				barHeight  : 6
 			},
 			absences      : [],
 			noncompliance : [],
