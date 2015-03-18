@@ -68,12 +68,15 @@ module.exports = {
 			overview      : {
 				loading : true,
 				missed : {
-					inside  : [],
-					outside : [],
+					inside       : [],
+					outside      : [],
+					insideLabel  : '',
+					outsideLabel : ''
 				},
-				inside     : [],
-				outside    : [],
-				awareness  : [],
+				inside         : [],
+				outside        : [],
+				awareness      : [],
+				awarenessLabel : '',
 				influencer : {
 					domain : [0, 1],
 					series : []
@@ -180,11 +183,16 @@ module.exports = {
 						.flatten()
 						.value();
 
+					var fmt = d3.format('%');
+					self.overview.missed.insideLabel = fmt(self.overview.missed.inside[0].value);
+
 					self.overview.missed.outside = datapoints
 						.pick(274)
 						.values()
 						.flatten()
 						.value();
+
+					self.overview.missed.outsideLabel = fmt(self.overview.missed.outside[0].value);
 
 					self.overview.awareness = datapoints
 						.pick(276)
