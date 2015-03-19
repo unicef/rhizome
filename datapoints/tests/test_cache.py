@@ -17,7 +17,6 @@ class CacheRefreshTestCase(ResourceTestCase):
 from datapoints.cache_tasks import CacheRefresh
 from datapoints.models import DataPoint, Region
 r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
-dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[22,55]).values_list('id',flat=True)
 dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
 mr = CacheRefresh(list(dp_ids))
     '''
@@ -40,6 +39,9 @@ mr = CacheRefresh(list(dp_ids))
 
 
     def build_db(self):
+        '''
+        please fix me
+        '''
 
         ## remove the build_test_db script and pass a $DB param to build_db.sh
         call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])

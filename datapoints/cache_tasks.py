@@ -85,8 +85,8 @@ class CacheRefresh(object):
         task_result = 'SUCCESS'
 
         agg_dp_ids = self.agg_datapoints()
-
-        # self.calc_datapoints()
+        calc_dp_ids = self.calc_datapoints()
+        abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
 
@@ -160,9 +160,18 @@ class CacheRefresh(object):
         '''
 
         calc_curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_init_calc_datapoint()")
+            .raw("SELECT * FROM fn_calc_datapoint(%s)",[self.cache_job.id])
 
-        y = [x for x in calc_curs]
+        calc_dp_ids = [x.id for x in calc_curs]
+
+        return calc_dp_ids
+
+    def pivot_datapoints(self):
+
+        '''
+        '''
+
+        return []
 
 
     def get_indicator_ids(self):
