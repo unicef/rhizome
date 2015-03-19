@@ -11,6 +11,12 @@ module.exports = {
 		require('./bar')
 	],
 
+	data : function () {
+		return {
+			'offset' : 'zero'
+		};
+	},
+
 	computed : {
 
 		height : function () {
@@ -34,7 +40,7 @@ module.exports = {
 				.values(function (d) {
 					return d.values;
 				})
-				.offset('zero')
+				.offset(this.offset)
 				.order('default')
 				.x(function (d) {
 					return d.y;
@@ -47,7 +53,10 @@ module.exports = {
 					d.x  = y;
 				});
 
-			var data = stack(this.series);
+			// We have to make a deep clone of the data because d3.layout.stack
+			// modifies the data, which prevents us from toggling different
+			// offset modes
+			var data = stack(_.cloneDeep(this.series));
 
 			var xScale = d3.scale.linear()
 				.range([0, this.contentWidth])
@@ -139,6 +148,10 @@ module.exports = {
 				.call(yAxis);
 		}
 
+	},
+
+	watch : {
+		'offset' : 'draw'
 	}
 
 };
