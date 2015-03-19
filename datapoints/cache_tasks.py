@@ -100,8 +100,6 @@ class CacheRefresh(object):
         analysts debugging the cache process
         '''
 
-        print 'CACHE_JOB_ID: %s' % cache_job_id
-
         dp_curs = DataPoint.objects.raw('''
 
             UPDATE datapoint
@@ -175,9 +173,8 @@ class CacheRefresh(object):
         updates in the underliying data, as well as the raw indicators.
         '''
 
-
-        print self.datapoint_id_list
         curs = Indicator.objects.raw('''
+
         DROP TABLE IF EXISTS _raw_indicators;
         CREATE TEMP TABLE _raw_indicators
         AS
@@ -214,7 +211,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 2500000
+            limit = 25000000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint

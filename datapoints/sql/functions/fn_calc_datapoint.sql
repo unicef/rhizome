@@ -6,38 +6,10 @@ RETURNS TABLE(id int) AS $$
 
 	DELETE FROM datapoint_with_computed dwc
 	USING agg_datapoint ad
-	INNER JOIN ( -- a table with all of the idicators needed for a calculation
-
-		SELECT  -- FOR INDICATORS NEEDED FOR CALCULATION --
-			cic.indicator_component_id as input_indicator_id
-			,cic_all.indicator_component_id as output_indicator_id
-		FROM calculated_indicator_component cic
-		INNER JOIN calculated_indicator_component cic_all
-		ON cic.indicator_id = cic_all.indicator_id
-
-		UNION ALL
-		
-		SELECT -- FOR THE CALCULATED INDICATORS --
-			cic.indicator_component_id as input_indicator
-			,cic.indicator_id as output_indicator
-		FROM calculated_indicator_component cic
-
-		UNION ALL -- FOR RAW INDICATORS --
-
-		SELECT 
-			id
-			,id
-		FROM indicator i
-		WHERE EXISTS ( 
-			SELECT 1 FROM datapoint d 
-			WHERE i.id = d.indicator_id
-		)
-	)x
-	ON ad.indicator_id = x.input_indicator_id
 	WHERE dwc.campaign_id = ad.campaign_id
 	AND dwc.region_id = ad.region_id
-	AND ad.cache_job_id = $1
-	AND x.output_indicator_id = dwc.indicator_id;
+	AND ad.cache_job_id = $1;
+	--AND dwc.indicator_id = ad.indicator_id;
 
 	-- insert agg data (no calculation) --
    	INSERT INTO datapoint_with_computed
@@ -68,10 +40,6 @@ RETURNS TABLE(id int) AS $$
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
 	    AND ad.cache_job_id = $1
---     	    AND ad.cache_job_id = 91
---     	    AND cic.indicator_id = 251
---     	    AND region_id = 65327
---     	    AND campaign_id = 111
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id,ad.cache_job_id;
 
         ----- PART / WHOLE ------
@@ -83,7 +51,7 @@ RETURNS TABLE(id int) AS $$
 		,d_part.region_id
 		,d_part.campaign_id
 		,d_part.value / NULLIF(d_whole.value,0) as value
-		,$1
+		,110--$1
         FROM(
           SELECT max(id) as max_dp_id FROM datapoint_with_computed
         ) x
@@ -95,11 +63,13 @@ RETURNS TABLE(id int) AS $$
             AND part.calculation = 'PART'
         INNER JOIN datapoint_with_computed d_part
             ON part.indicator_component_id = d_part.indicator_id
+	    AND d_part.cache_job_id = $1 
         INNER JOIN datapoint_with_computed d_whole
             ON whole.indicator_component_id = d_whole.indicator_id
             AND d_part.campaign_id = d_whole.campaign_id
             AND d_part.region_id = d_whole.region_id
-            WHERE (d_part.cache_job_id = $1 or d_whole.cache_job_id = $1);
+            AND d_whole.cache_job_id = $1;
+            
 
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,cache_job_id)
@@ -109,7 +79,7 @@ RETURNS TABLE(id int) AS $$
 		,denom.region_id
 		,denom.campaign_id
 		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
-               , $1
+               ,$1
           FROM (
           	SELECT
           		cic.indicator_id as master_indicator_id
@@ -122,7 +92,7 @@ RETURNS TABLE(id int) AS $$
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'PART_OF_DIFFERENCE'
-          	AND ad.cache_job_id = $1
+          	AND ad.cache_job_id = 110--$1
           )num_part
 
           INNER JOIN (
@@ -175,3 +145,14 @@ RETURNS TABLE(id int) AS $$
     $$
 
     LANGUAGE SQL;
+
+-- SELECT max(id) FROM cache_job
+-- SELECT * FROM fn_calc_datapoint(110)
+
+-- 
+-- SELECT * FROM datapoint WHERE cache_job_id = 112 LIMIT 10
+-- SELECT * FROM agg_datapoint WHERE cache_job_id = 110
+
+-- UPDATE datapoint
+-- SET cache_job_id = -1
+-- 
