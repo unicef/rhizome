@@ -183,6 +183,15 @@ svg {
 			text-align: center;
 		}
 	}
+
+	&.bar {
+		.x.axis {
+			line {
+				display : inline;
+				stroke  : $smoke;
+			}
+		}
+	}
 }
 
 .legend {

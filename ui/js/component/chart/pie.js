@@ -116,7 +116,7 @@ module.exports = {
 			var svg = d3.select(this.$el);
 
 			var arc = d3.svg.arc()
-				.innerRadius(this.innerRadius)
+				.innerRadius(Number(this.innerRadius))
 				.outerRadius(this.contentWidth / 2);
 
 			var slice = svg.select('.data').selectAll('.slice').data(this.series);
@@ -132,9 +132,7 @@ module.exports = {
 						'fill': color
 					});
 
-			slice.transition()
-				.duration(500)
-					.attr('d', arc);
+			slice.attr('d', arc);
 
 			slice.exit()
 				.transition().duration(500)

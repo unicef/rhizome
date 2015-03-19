@@ -10,12 +10,16 @@
 		<div class="medium-1 pull-3 column end"
 		     v-component="vue-dropdown"
 		     v-ref="campaigns"
-		     v-with="items: campaigns"
+		     v-with="items: campaigns, itemTree: campaigns"
 		     data-sort-by="date"
 		     data-sort-dsc="false"
 				 placeholder="Loading campaigns"></div>
 	</div>
 </form>
 
-<div v-component="{{dashboard}}"
-     v-with="campaign: campaign, region: region, regionName: regionName"></div>
+<div
+	v-component="{{ dashboard }}"
+	v-with="
+		campaign   : campaign,
+		region     : region,
+		regionName : regionName"></div>
