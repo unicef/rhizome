@@ -6,6 +6,6 @@ psql polio -f $SQL_DIR'views/vw_missing_mappings.sql'
 
 ## FUNCTIONS ##
 psql polio -f $SQL_DIR'functions/fn_init_agg_datapoint.sql'
-psql polio -f $SQL_DIR'functions/fn_agg_datapoint_by_region_type.sql'
-# psql polio -f $SQL_DIR'functions/fn_calc_datapoint.sql'
+psql polio -f $SQL_DIR'functions/fn_agg_datapoint.sql'
+psql polio -f $SQL_DIR'functions/fn_calc_datapoint.sql'
 psql polio -f $SQL_DIR'functions/fn_test_data_accuracy.sql'
