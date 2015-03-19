@@ -63,12 +63,12 @@ class CacheRefresh(object):
         a particular datapoint was cached.
 
         '''
-        cache_job = CacheJob.objects.create(
+        self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
         )
 
-        print 'CACHE JOB ID: %s ' % cache_job.id
+        print 'CACHE JOB ID: %s ' % self.cache_job.id
 
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
@@ -76,11 +76,11 @@ class CacheRefresh(object):
             if len(self.datapoint_id_list) == 0:
                 return 'NOTHING_TO_PROCESS', cache_job
 
-        self.set_cache_job_id_for_raw_datapoints(cache_job.id)
+        self.set_cache_job_id_for_raw_datapoints()
 
         self.indicator_ids = self.get_indicator_ids()
 
-        return 'PENDING_AGG',cache_job
+        return 'PENDING_AGG',self.cache_job
 
     def main(self):
         '''
@@ -94,14 +94,14 @@ class CacheRefresh(object):
 
         print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
-        print '.....CALCULATING.....\n' * 5
-        calc_dp_ids = self.calc_datapoints()
-        print '.....PIVOTING.....\n' * 5
-        abstract_dp_ids = self.pivot_datapoints()
+        # print '.....CALCULATING.....\n' * 5
+        # calc_dp_ids = self.calc_datapoints()
+        # print '.....PIVOTING.....\n' * 5
+        # abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
 
-    def set_cache_job_id_for_raw_datapoints(self,cache_job_id):
+    def set_cache_job_id_for_raw_datapoints(self):
         '''
         After we find what datapoint IDs need to be refreshed, we set the
         cache_job_id coorespondonding to the current job so we can find
@@ -117,7 +117,7 @@ class CacheRefresh(object):
 
             SELECT ID from datapoint limit 1
 
-        ''',[cache_job_id,self.datapoint_id_list])
+        ''',[self.cache_job.id,self.datapoint_id_list])
 
         x = [dp.id for dp in dp_curs]
 
@@ -146,12 +146,19 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        agg_cursor = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_agg_datapoint(%s)",[self.cache_job.id])
+        loop_region_ids = self.get_region_ids_to_process()
 
-        agg_dp_ids = [x.id for x in agg_cursor]
+        while len(list(loop_region_ids)) > 0:
 
-        return agg_dp_ids
+            print 'LOOP INITIALIZING!'
+
+            region_cursor = Region.objects\
+                .raw("SELECT * FROM fn_agg_datapoint(%s,%s)",[self.cache_job.id,
+                        loop_region_ids])
+
+            loop_region_ids = [r.id for r in region_cursor]
+
+        return []
 
 
     def calc_datapoints(self):
@@ -220,7 +227,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 25000000
+            limit = 250
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
@@ -231,6 +238,22 @@ class CacheRefresh(object):
         dp_ids = [row.id for row in dps]
 
         return dp_ids
+
+    def get_region_ids_to_process(self):
+
+        region_cursor = Region.objects.raw('''
+            SELECT DISTINCT
+                region_id as id
+            FROM datapoint d
+            WHERE cache_job_id = %s''',[self.cache_job.id])
+
+        region_ids = [r.id for r in region_cursor]
+
+        print '==\n' * 10
+        print region_ids
+
+        return region_ids
+
 
     def get_abstracted_datapoint_ids(self):
         '''

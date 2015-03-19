@@ -62,7 +62,19 @@ RETURNS TABLE(id int) AS $$
 	SELECT DISTINCT parent_region_id as ID
 	FROM region r
 	WHERE id = ANY($2)
+	AND parent_region_id IS NOT NULL
 	
 $$
 
 LANGUAGE SQL;
+-- 
+-- SELECT * FROM datapoint
+-- WHERE cache_job_id = 124
+-- 
+-- TRUNCATE TABLE agg_datapoint
+-- 
+-- SELECT * FROM fn_agg_datapoint(124,{'78383,77994,78811,76385,76371,75846,75252'} )
+-- 
+-- SELECT * FROM agg_datapoint
+
+
