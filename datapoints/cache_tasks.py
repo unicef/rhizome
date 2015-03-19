@@ -86,8 +86,11 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
+        print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
+        print '.....CALCULATING.....\n' * 5
         calc_dp_ids = self.calc_datapoints()
+        print '.....PIVOTING.....\n' * 5
         abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
