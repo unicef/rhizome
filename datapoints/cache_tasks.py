@@ -94,10 +94,10 @@ class CacheRefresh(object):
 
         print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
-        # print '.....CALCULATING.....\n' * 5
-        # calc_dp_ids = self.calc_datapoints()
-        # print '.....PIVOTING.....\n' * 5
-        # abstract_dp_ids = self.pivot_datapoints()
+        print '.....CALCULATING.....\n' * 5
+        calc_dp_ids = self.calc_datapoints()
+        print '.....PIVOTING.....\n' * 5
+        abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
 
@@ -150,13 +150,14 @@ class CacheRefresh(object):
 
         while len(list(loop_region_ids)) > 0:
 
-            print 'LOOP INITIALIZING!'
-
             region_cursor = Region.objects\
                 .raw("SELECT * FROM fn_agg_datapoint(%s,%s)",[self.cache_job.id,
                         loop_region_ids])
 
             loop_region_ids = [r.id for r in region_cursor]
+
+            print 'REGION ID LOOP: '
+            print loop_region_ids
 
         return []
 
@@ -227,7 +228,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 250
+            limit = 25000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
@@ -248,9 +249,6 @@ class CacheRefresh(object):
             WHERE cache_job_id = %s''',[self.cache_job.id])
 
         region_ids = [r.id for r in region_cursor]
-
-        print '==\n' * 10
-        print region_ids
 
         return region_ids
 
@@ -349,6 +347,8 @@ class CacheRefresh(object):
 
 
     def r_c_df_to_db(self,rc_df):
+
+        print rc_df
 
         nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
         indexed_df = nan_to_null_df.reset_index(drop=True)

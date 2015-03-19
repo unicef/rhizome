@@ -151,3 +151,6 @@ RETURNS TABLE(id int) AS $$
 
     LANGUAGE SQL;
 
+SELECT * FROM agg_datapoint
+WHERE campaign_id= 55
+
