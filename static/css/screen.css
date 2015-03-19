@@ -7244,6 +7244,13 @@ h3 {
   color: #DDDDDD;
   text-transform: uppercase;
 }
+h3 label {
+  color: #DDDDDD;
+  display: inline-block;
+  text-transform: none;
+  font-size: 0.75rem;
+  margin-left: 1em;
+}
 
 h4 {
   margin: 0;

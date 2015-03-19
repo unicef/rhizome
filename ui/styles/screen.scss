@@ -35,9 +35,17 @@ header {
 }
 
 h3 {
-	border-bottom: 1px solid $gainsboro;
-	color: $gainsboro;
-	text-transform: uppercase;
+	border-bottom  : 1px solid $gainsboro;
+	color          : $gainsboro;
+	text-transform : uppercase;
+
+	label {
+		color          : $gainsboro;
+		display        : inline-block;
+		text-transform : none;
+		font-size      : rem-calc(12);
+		margin-left    : 1em;
+	}
 }
 
 h4 {

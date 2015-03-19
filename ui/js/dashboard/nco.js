@@ -34,6 +34,22 @@ function mapProperties(mapping) {
 	};
 }
 
+function filterMissing(data) {
+	return _(data)
+		.groupBy('y')
+		.filter(function (v, k) {
+			return _(v).pluck('x').some(util.defined);
+		})
+		.values()
+		.flatten()
+		.forEach(function (d) {
+			if (!util.defined(d.x)) {
+				d.x = 0;
+			}
+		})
+		.value();
+}
+
 function makeSeries(getSeries) {
 	return function (data) {
 		return _(data)
@@ -54,6 +70,7 @@ function formatData(datapoints, indicators, properties, series) {
 		.values()
 		.flatten()
 		.map(mapProperties(properties))
+		.thru(filterMissing)
 		.thru(makeSeries(series))
 		.value();
 }
@@ -68,7 +85,7 @@ module.exports = {
 
 			overview      : {
 				loading : true,
-				missed : {
+				missed  : {
 					inside       : [],
 					outside      : [],
 					insideLabel  : '',
@@ -106,13 +123,29 @@ module.exports = {
 			missed : {
 				reasons    : [],
 				monitoring : [],
-				barHeight  : 6
+				barHeight  : 6,
+				offset     : 'expand'
 			},
-			absences      : [],
-			noncompliance : [],
-			resolutions   : [],
-			influencers   : [],
-			sources       : [],
+			absences      : {
+				reasons : [],
+				offset  : 'expand'
+			},
+			noncompliance : {
+				reasons : [],
+				offset  : 'expand',
+			},
+			resolutions   : {
+				by     : [],
+				offset : 'expand',
+			},
+			influencers   : {
+				by     : [],
+				offset : 'expand',
+			},
+			sources       : {
+				series : [],
+				offset : 'expand'
+			}
 		};
 	},
 
@@ -271,31 +304,31 @@ module.exports = {
 						regionMapping,
 						getIndicator);
 
-					self.absences = formatData(
+					self.absences.reasons = formatData(
 						datapoints,
 						[246,247,248,249,250],
 						regionMapping,
 						getIndicator);
 
-					self.noncompliance = formatData(
+					self.noncompliance.reasons = formatData(
 						datapoints,
 						[252,255,258,261,253,256,259,254,257,260,263,262],
 						regionMapping,
 						getIndicator);
 
-					self.resolutions = formatData(
+					self.resolutions.by = formatData(
 						datapoints,
 						[340,341,342,343],
 						regionMapping,
 						getIndicator);
 
-					self.influencers = formatData(
+					self.influencers.by = formatData(
 						datapoints,
 						[278,279,280,281,282,283,284,285],
 						regionMapping,
 						getIndicator);
 
-					self.sources = formatData(
+					self.sources.series = formatData(
 						datapoints,
 						[295,299,303,296,300,304,297,301,305,298,302],
 						regionMapping,

@@ -11,6 +11,12 @@ module.exports = {
 		require('./bar')
 	],
 
+	data : function () {
+		return {
+			'offset' : 'zero'
+		};
+	},
+
 	computed : {
 
 		height : function () {
@@ -34,7 +40,7 @@ module.exports = {
 				.values(function (d) {
 					return d.values;
 				})
-				.offset('zero')
+				.offset(this.offset)
 				.order('default')
 				.x(function (d) {
 					return d.y;
@@ -47,7 +53,10 @@ module.exports = {
 					d.x  = y;
 				});
 
-			var data = stack(this.series);
+			// We have to make a deep clone of the data because d3.layout.stack
+			// modifies the data, which prevents us from toggling different
+			// offset modes
+			var data = stack(_.cloneDeep(this.series));
 
 			var xScale = d3.scale.linear()
 				.range([0, this.contentWidth])
@@ -65,7 +74,7 @@ module.exports = {
 
 			var yScale = d3.scale.ordinal()
 				.domain(this.categories)
-				.rangePoints([this.contentHeight, 0]);
+				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
 				return yScale(d.y);
@@ -123,8 +132,8 @@ module.exports = {
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
 				.ticks(Number(this.tickCount))
-				.tickFormat(d3.format(this.format))
-				.tickPadding(6)
+				.tickFormat(d3.format((this.offset === 'expand') ? '%' : this.format))
+				.tickPadding(height / 2)
 				.scale(xScale);
 
 			svg.select('.x.axis')
@@ -139,6 +148,10 @@ module.exports = {
 				.call(yAxis);
 		}
 
+	},
+
+	watch : {
+		'offset' : 'draw'
 	}
 
 };
