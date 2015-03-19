@@ -1,3 +1,4 @@
+import json
 from subprocess import call
 from pprint import pprint
 
@@ -11,14 +12,14 @@ from datapoints.models import *
 from datapoints.cache_tasks import CacheRefresh
 
 
-class CacheRefreshTestCase(ResourceTestCase):
+class CacheRefreshTestCase(TestCase):
 
     '''
-from datapoints.cache_tasks import CacheRefresh
-from datapoints.models import DataPoint, Region
-r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
-dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-mr = CacheRefresh(list(dp_ids))
+    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.models import DataPoint, Region
+    r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
+    dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
+    mr = CacheRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
@@ -114,21 +115,23 @@ mr = CacheRefresh(list(dp_ids))
         # cr = CacheRefresh()
 
         for ix, row in self.target_df.iterrows():
+            # row.region_id = 12920
 
-            ## this is the tastypie api client.. may want to use django's
-            # resp = self.api_client.get('/api/v1/datapoint',
-            #     region_id = row.region_id,
-            #     indicator_id = row.indicator_id,
-            #     campaign_id =row.campaign_id,
-            #     follow=True,
-            #     format='json'
-            # )
+            target_url = \
+            '/api/v1/datapoint/?region__in=%s&campaign__in=%s&indicator__in=%s'\
+            % (int(row.region_id),int(row.campaign_id),int(row.indicator_id))
 
-            resp = self.api_client.get('/api/v1/indicator',
-                format='json',follow=True
-            )
+            print target_url
 
-            response_data = self.deserialize(resp)['objects']
+            c = Client()
+            resp = c.get(target_url,format='json',follow=True)
+            # print resp
+
+            print type(resp)
+
+            # rt = ResourceTestCase()
+            response_data = json.loads(resp.content)['objects']
+            print type(response_data)
 
             print response_data
 
