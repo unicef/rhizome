@@ -7595,6 +7595,13 @@ ul.pie div.chart {
   max-width: 20px;
 }
 
+.tooltip {
+  color: white !important;
+}
+.tooltip h3 {
+  border: none;
+}
+
 /*# sourceMappingURL=screen.css.map */
 
 .dropdown {
