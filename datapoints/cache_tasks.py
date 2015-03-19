@@ -166,13 +166,6 @@ class CacheRefresh(object):
 
         return calc_dp_ids
 
-    def pivot_datapoints(self):
-
-        '''
-        '''
-
-        return []
-
 
     def get_indicator_ids(self):
         '''
@@ -256,94 +249,113 @@ class CacheRefresh(object):
 
         return rc_list_of_tuples
 
-def computed_datapoint_to_abstracted_datapoint():
+    def pivot_datapoints(self):
+        '''
+        Once the datapoint_with_computed table is refreshed, all of the raw
+        aggregated and calculated data is transformed into a format friendly
+        for the api.
 
-    indicator_raw = DataPoint.objects.raw("""
-        SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed
-        ORDER BY indicator_id DESC""")
+        region_id | campaign_id | indicator_json
 
-    all_indicator_ids = [x.indicator_id for x in indicator_raw]
-    indicator_df = DataFrame(columns = all_indicator_ids)
+        Think of the data explorer and how the campaign / region are the unique
+        keys to each row, and the requested indicators are the headers.
 
-    distict_region_campaign_list = DataPoint.objects.raw("""
-        SELECT DISTINCT
-        	1 as id
-        	, dwc.region_id
-        	, dwc.campaign_id
-        FROM datapoint_with_computed dwc
-        INNER JOIN region r
-        ON dwc.region_id = r.id
-        INNER JOIN campaign c
-        ON dwc.campaign_id = c.id
-        AND r.office_id = c.office_id
-        WHERE region_id is NOT NULL;
-        """)
-
-    rc_tuple_list = []
-    for rc in distict_region_campaign_list:
-
-        r_c_tuple = (rc.region_id,rc.campaign_id)
-        rc_tuple_list.append(r_c_tuple)
+        Unlike the other two cache methods ( agg_datapoint, and calc_datapoint)
+        this transformation is dealt with in python, primary because, python
+        makes it easy to serialize the JSON and stick it into the abstracted
+        datapoint table.
+        '''
 
 
-    rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
-    rc_df = rc_df.reset_index(level=[0,1])
+        indicator_raw = Indicator.objects.raw("""
+            SELECT DISTINCT dwc.indicator_id as id
+            FROM datapoint_with_computed dwc
+            WHERE cache_job_id = %s
+            """,[self.cache_job.id])
 
-    for i,(i_id) in enumerate(all_indicator_ids):
+        all_indicator_ids = [x.id for x in indicator_raw]
+        indicator_df = DataFrame(columns = all_indicator_ids)
 
-        rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
+        distict_region_campaign_list = DataPoint.objects.raw("""
+            SELECT DISTINCT
+            	1 as id
+            	, dwc.region_id
+            	, dwc.campaign_id
+            FROM datapoint_with_computed dwc
+            INNER JOIN region r
+            ON dwc.region_id = r.id
+            INNER JOIN campaign c
+            ON dwc.campaign_id = c.id
+            AND r.office_id = c.office_id
+            WHERE dwc.cache_job_id = %s;
+            """,[self.cache_job.id])
 
-    r_c_df_to_db(rc_df)
+        rc_tuple_list = []
+        for rc in distict_region_campaign_list:
 
-def add_indicator_data_to_rc_df(rc_df, i_id):
-    '''
-    left join the region / campaign dataframe with the stored data for each
-    campaign.
-    '''
-    column_header = ['region_id','campaign_id']
-    column_header.append(i_id)
-
-    indicator_df = DataFrame(list(DataPointComputed.objects.filter(
-        indicator_id = i_id).values()))
-
-    pivoted_indicator_df = pivot_table(indicator_df, values='value',\
-        columns=['indicator_id'],index = ['region_id','campaign_id'])
-
-
-    cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
-
-    merged_df = rc_df.merge(cleaned_df,how='left')
-    merged_df = merged_df.reset_index(drop=True)
-
-    return merged_df
+            r_c_tuple = (rc.region_id,rc.campaign_id)
+            rc_tuple_list.append(r_c_tuple)
 
 
-def r_c_df_to_db(rc_df):
+        rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
+        rc_df = rc_df.reset_index(level=[0,1])
 
-    nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
-    indexed_df = nan_to_null_df.reset_index(drop=True)
-    rc_dict = indexed_df.transpose().to_dict()
+        for i,(i_id) in enumerate(all_indicator_ids):
 
-    batch = []
+            rc_df = self.add_indicator_data_to_rc_df(rc_df, i_id)
 
-    for r_no, r_data in rc_dict.iteritems():
+        self.r_c_df_to_db(rc_df)
 
-        region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
+    def add_indicator_data_to_rc_df(self,rc_df, i_id):
+        '''
+        left join the region / campaign dataframe with the stored data for each
+        campaign.
+        '''
+        column_header = ['region_id','campaign_id']
+        column_header.append(i_id)
 
-        del r_data["index"]
-        del r_data["region_id"]
-        del r_data["campaign_id"]
+        indicator_df = DataFrame(list(DataPointComputed.objects.filter(
+            indicator_id = i_id).values()))
 
-        dd_abstracted = {
-            "region_id": region_id,
-            "campaign_id":campaign_id,
-            "indicator_json": r_data
-        }
+        pivoted_indicator_df = pivot_table(indicator_df, values='value',\
+            columns=['indicator_id'],index = ['region_id','campaign_id'])
 
-        dda_obj = DataPointAbstracted(**dd_abstracted)
 
-        batch.append(dda_obj)
+        cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
 
-    DataPointAbstracted.objects.all().delete()
+        merged_df = rc_df.merge(cleaned_df,how='left')
+        merged_df = merged_df.reset_index(drop=True)
 
-    DataPointAbstracted.objects.bulk_create(batch)
+        return merged_df
+
+
+    def r_c_df_to_db(self,rc_df):
+
+        nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
+        indexed_df = nan_to_null_df.reset_index(drop=True)
+        rc_dict = indexed_df.transpose().to_dict()
+
+        batch = []
+
+        for r_no, r_data in rc_dict.iteritems():
+
+            region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
+
+            del r_data["index"]
+            del r_data["region_id"]
+            del r_data["campaign_id"]
+
+            dd_abstracted = {
+                "region_id": region_id,
+                "campaign_id":campaign_id,
+                "indicator_json": r_data,
+                "cache_job_id": self.cache_job.id,
+            }
+
+            dda_obj = DataPointAbstracted(**dd_abstracted)
+
+            batch.append(dda_obj)
+
+        DataPointAbstracted.objects.all().delete()
+
+        DataPointAbstracted.objects.bulk_create(batch)
