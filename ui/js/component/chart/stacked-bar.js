@@ -32,7 +32,8 @@ module.exports = {
 	methods : {
 
 		draw : function () {
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			// d3.layout.stack stacks the y-value, but we want to stack the x value,
 			// so we swap x and y in the layout definition.
@@ -110,6 +111,23 @@ module.exports = {
 						'height' : height,
 						'width'  : 0,
 						'fill'   : colorScale(datum.name)
+					})
+					.on('mousemove', function () {
+						var evt = d3.event;
+
+						self.$dispatch('tooltip-show', {
+							el       : this,
+							position : {
+								x : evt.pageX,
+								y : evt.pageY
+							},
+							data : {
+								text : d3.select(this.parentNode).datum().name
+							}
+						});
+					})
+					.on('mouseout', function () {
+						self.$dispatch('tooltip-hide', { el: this });
 					});
 
 				bar.transition()
