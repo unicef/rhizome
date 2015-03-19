@@ -18,4 +18,4 @@ make clean -C docs
 make html -C docs
 
 echo "== RUNNING TESTS =="
-bash bin/test_suite.py
+python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
