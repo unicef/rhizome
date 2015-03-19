@@ -74,7 +74,7 @@ module.exports = {
 
 			var yScale = d3.scale.ordinal()
 				.domain(this.categories)
-				.rangePoints([this.contentHeight, 0]);
+				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
 				return yScale(d.y);
@@ -132,8 +132,8 @@ module.exports = {
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
 				.ticks(Number(this.tickCount))
-				.tickFormat(d3.format(this.format))
-				.tickPadding(6)
+				.tickFormat(d3.format((this.offset === 'expand') ? '%' : this.format))
+				.tickPadding(height / 2)
 				.scale(xScale);
 
 			svg.select('.x.axis')
