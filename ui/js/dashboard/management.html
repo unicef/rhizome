@@ -59,7 +59,7 @@
 					data-margin-right="4"
 					data-margin-left="4"
 					data-margin-bottom="24"
-					data-period="2 years"
+					data-period="1 years"
 					data-indicators="[431,432]"
 					data-format-string="%"
 					v-with="region: region, campaign: campaign"></svg>
@@ -85,7 +85,7 @@
 						data-aspect="1.909344491"
 						data-margin-bottom="12"
 						data-indicators="[166,164,167,165]"
-						data-period="2 years"
+						data-period="1 years"
 						data-format-string=".1%"
 						v-with="region: region, campaign: campaign"></svg>
 				</section>
@@ -100,7 +100,7 @@
 						data-margin-right="4"
 						data-margin-left="4"
 						data-margin-bottom="24"
-					 	data-period="2 years"
+					 	data-period="1 years"
 					 	data-indicators="[187,189]"
 					 	data-format-string="%"
 					 	v-with="campaign: campaign, region: region"></div>
@@ -261,18 +261,19 @@
 		</div>
 
 		<div class="medium-2 columns">
-			<h3>Inaccessible Children</h3>
+			<h3>Access Challenged Districts</h3>
+			<h6>Number of Inaccessible Children</h6>
 			<div v-component="chart-line"
 			     data-aspect="2.665"
 			     data-margin-bottom="24"
-			     data-period="2 years"
+			     data-period="1 years"
 			     data-indicators="[158]"
 					 data-format-string="s"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
-					<h6>Districts Reporting Access Analysis</h6>
+					<h6 style="text-overflow:initial">Districts with Access Plan</h6>
 					<div v-component="chart-pie"
 							 data-indicators="[174]"
 							 data-width="150"

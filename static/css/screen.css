@@ -7204,6 +7204,19 @@ svg .label {
   fill: #2B8CBE;
 }
 
+.labeled-donut {
+  position: relative;
+}
+.labeled-donut .donut-label {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  margin-top: -0.8em;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
 body {
   font-size: 0.625rem;
   padding: 11px 4px 11px 54px;
@@ -7230,6 +7243,13 @@ h3 {
   border-bottom: 1px solid #DDDDDD;
   color: #DDDDDD;
   text-transform: uppercase;
+}
+h3 label {
+  color: #DDDDDD;
+  display: inline-block;
+  text-transform: none;
+  font-size: 0.75rem;
+  margin-left: 1em;
 }
 
 h4 {
@@ -7573,6 +7593,13 @@ ul.pie div.chart {
 .transit-points .chart svg {
   width: auto;
   max-width: 20px;
+}
+
+.tooltip {
+  color: white !important;
+}
+.tooltip h3 {
+  border: none;
 }
 
 /*# sourceMappingURL=screen.css.map */
