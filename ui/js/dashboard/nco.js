@@ -2,6 +2,7 @@
 'use strict';
 
 var _    = require('lodash');
+var d3   = require('d3');
 var path = require('vue/src/parsers/path');
 
 var api  = require('data/api');
