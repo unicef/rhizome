@@ -32,7 +32,8 @@ module.exports = {
 	methods : {
 
 		draw : function () {
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			// d3.layout.stack stacks the y-value, but we want to stack the x value,
 			// so we swap x and y in the layout definition.
@@ -94,6 +95,8 @@ module.exports = {
 			});
 
 			var colorScale = color.scale(_.pluck(data, 'name'));
+			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
+			var fmt        = d3.format(fmtString);
 
 			series.each(function (datum) {
 				var g = d3.select(this);
@@ -110,6 +113,31 @@ module.exports = {
 						'height' : height,
 						'width'  : 0,
 						'fill'   : colorScale(datum.name)
+					})
+					.on('mousemove', function (d) {
+						var evt = d3.event;
+
+						// Shadow the formatter because otherwise the closure keeps a
+						// reference to the formatter that was used when the rect was
+						// created and doesn't pick up on changes to the offset property.
+						var fmt = d3.format((self.offset === 'expand') ? '%' : self.format);
+
+						self.$dispatch('tooltip-show', {
+							el       : this,
+							position : {
+								x : evt.pageX,
+								y : evt.pageY
+							},
+							data : {
+								template : 'tooltip-stacked-bar',
+								series   : d3.select(this.parentNode).datum().name,
+								y        : d.y,
+								x        : fmt(d.x)
+							}
+						});
+					})
+					.on('mouseout', function () {
+						self.$dispatch('tooltip-hide', { el: this });
 					});
 
 				bar.transition()
@@ -132,7 +160,7 @@ module.exports = {
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
 				.ticks(Number(this.tickCount))
-				.tickFormat(d3.format((this.offset === 'expand') ? '%' : this.format))
+				.tickFormat(fmt)
 				.tickPadding(height / 2)
 				.scale(xScale);
 
