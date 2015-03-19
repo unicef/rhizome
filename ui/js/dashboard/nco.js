@@ -37,7 +37,7 @@ function mapProperties(mapping) {
 function filterMissing(data) {
 	return _(data)
 		.groupBy('y')
-		.filter(function (v, k) {
+		.filter(function (v) {
 			return _(v).pluck('x').some(util.defined);
 		})
 		.values()

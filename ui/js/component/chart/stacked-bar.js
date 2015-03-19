@@ -95,6 +95,8 @@ module.exports = {
 			});
 
 			var colorScale = color.scale(_.pluck(data, 'name'));
+			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
+			var fmt        = d3.format(fmtString);
 
 			series.each(function (datum) {
 				var g = d3.select(this);
@@ -112,8 +114,13 @@ module.exports = {
 						'width'  : 0,
 						'fill'   : colorScale(datum.name)
 					})
-					.on('mousemove', function () {
+					.on('mousemove', function (d) {
 						var evt = d3.event;
+
+						// Shadow the formatter because otherwise the closure keeps a
+						// reference to the formatter that was used when the rect was
+						// created and doesn't pick up on changes to the offset property.
+						var fmt = d3.format((self.offset === 'expand') ? '%' : self.format);
 
 						self.$dispatch('tooltip-show', {
 							el       : this,
@@ -122,7 +129,10 @@ module.exports = {
 								y : evt.pageY
 							},
 							data : {
-								text : d3.select(this.parentNode).datum().name
+								template : 'tooltip-stacked-bar',
+								series   : d3.select(this.parentNode).datum().name,
+								y        : d.y,
+								x        : fmt(d.x)
 							}
 						});
 					})
@@ -150,7 +160,7 @@ module.exports = {
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
 				.ticks(Number(this.tickCount))
-				.tickFormat(d3.format((this.offset === 'expand') ? '%' : this.format))
+				.tickFormat(fmt)
 				.tickPadding(height / 2)
 				.scale(xScale);
 
