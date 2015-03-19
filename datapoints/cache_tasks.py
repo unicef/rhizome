@@ -23,19 +23,20 @@ class CacheRefresh(object):
           table.
     '''
 
+
     def __init__(self,datapoint_id_list=None):
         '''
         '''
 
         self.datapoint_id_list = datapoint_id_list
 
-        cache_job = self.set_up()
-        task_result = self.main()
+        # set up and run the cache job
+        self.cache_job = self.set_up()
+        self.cache_job.response_msg = self.main()
 
-        cache_job.status = task_result
-        cache_job.date_completed = datetime.now()
-
-        cache_job.save()
+        # mark job as completed and save
+        self.cache_job.date_completed = datetime.now()
+        self.cache_job.save()
 
     def set_up(self):
         '''
@@ -49,7 +50,7 @@ class CacheRefresh(object):
         as well as any indicators that are stored as the result of the
         calculation on the underlying datapoints.
 
-        Finall this method calls ``CacheRefresh.get_indicator_ids()`` to get
+        Finally this method calls ``CacheRefresh.get_indicator_ids()`` to get
         indicators needed to loop through ( both raw and computed ) that will
         need to be refreshed.
 
@@ -64,8 +65,12 @@ class CacheRefresh(object):
             response_msg = 'PENDING'
         )
 
+        print 'CACHE JOB ID: %s ' % cache_job.id
+
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
+
+        self.set_cache_job_id_for_raw_datapoints(cache_job.id)
 
         self.indicator_ids = self.get_indicator_ids()
 
@@ -81,12 +86,34 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        self.agg_datapoints()
-        # self.calc_datapoints()
-
-        self.mark_datapoints_as_cached()
+        agg_dp_ids = self.agg_datapoints()
+        calc_dp_ids = self.calc_datapoints()
+        abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
+
+    def set_cache_job_id_for_raw_datapoints(self,cache_job_id):
+        '''
+        After we find what datapoint IDs need to be refreshed, we set the
+        cache_job_id coorespondonding to the current job so we can find
+        these datapoints easily both within this class, and for engineers /
+        analysts debugging the cache process
+        '''
+
+        print 'CACHE_JOB_ID: %s' % cache_job_id
+
+        dp_curs = DataPoint.objects.raw('''
+
+            UPDATE datapoint
+            SET cache_job_id = %s
+            WHERE id = ANY(%s);
+
+            SELECT ID from datapoint limit 1
+
+        ''',[cache_job_id,self.datapoint_id_list])
+
+        x = [dp.id for dp in dp_curs]
+
 
     def agg_datapoints(self):
         '''
@@ -112,10 +139,12 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        init_curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_init_agg_datapoint()")
+        agg_cursor = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_agg_datapoint(%s)",[self.cache_job.id])
 
-        y = [x for x in init_curs]
+        agg_dp_ids = [x.id for x in agg_cursor]
+
+        return agg_dp_ids
 
 
     def calc_datapoints(self):
@@ -131,9 +160,11 @@ class CacheRefresh(object):
         '''
 
         calc_curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_init_calc_datapoint()")
+            .raw("SELECT * FROM fn_calc_datapoint(%s)",[self.cache_job.id])
 
-        y = [x for x in calc_curs]
+        calc_dp_ids = [x.id for x in calc_curs]
+
+        return calc_dp_ids
 
 
     def get_indicator_ids(self):
@@ -172,22 +203,6 @@ class CacheRefresh(object):
 
         return indicator_ids
 
-    def mark_datapoints_as_cached(self):
-        '''
-        After successfully caching the changed datapoints, mark them as cached.
-        '''
-        dp = DataPoint.objects.raw('''
-
-            UPDATE datapoint
-            SET is_cached = 't'
-            WHERE id = ANY (%s);
-
-            SELECT id FROM datapoint limit 1;
-
-        ''',[self.datapoint_id_list])
-
-        x = [d.id for d in dp]
-
 
     def get_datapoints_to_cache(self,limit=None):
         '''
@@ -195,11 +210,11 @@ class CacheRefresh(object):
         datapoints that need to be cached.  If the datapoint_id_list parameter
         is provided when the class is instantiated, this method need not be
         called.  If there is no limit provided to this method, the default
-        limit is set to 1000.
+        limit is set to 100.
         '''
 
         if limit is None:
-            limit = 1000
+            limit = 100
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
@@ -234,94 +249,102 @@ class CacheRefresh(object):
 
         return rc_list_of_tuples
 
-def computed_datapoint_to_abstracted_datapoint():
+    def pivot_datapoints(self):
+        '''
+        Once the datapoint_with_computed table is refreshed, all of the raw
+        aggregated and calculated data is transformed into a format friendly
+        for the api.
 
-    indicator_raw = DataPoint.objects.raw("""
-        SELECT DISTINCT 1 as id, indicator_id from datapoint_with_computed
-        ORDER BY indicator_id DESC""")
+        region_id | campaign_id | indicator_json
 
-    all_indicator_ids = [x.indicator_id for x in indicator_raw]
-    indicator_df = DataFrame(columns = all_indicator_ids)
+        Think of the data explorer and how the campaign / region are the unique
+        keys to each row, and the requested indicators are the headers.
 
-    distict_region_campaign_list = DataPoint.objects.raw("""
-        SELECT DISTINCT
-        	1 as id
-        	, dwc.region_id
-        	, dwc.campaign_id
-        FROM datapoint_with_computed dwc
-        INNER JOIN region r
-        ON dwc.region_id = r.id
-        INNER JOIN campaign c
-        ON dwc.campaign_id = c.id
-        AND r.office_id = c.office_id
-        WHERE region_id is NOT NULL;
-        """)
+        Unlike the other two cache methods ( agg_datapoint, and calc_datapoint)
+        this transformation is dealt with in python, primary because, python
+        makes it easy to serialize the JSON and stick it into the abstracted
+        datapoint table.
+        '''
 
-    rc_tuple_list = []
-    for rc in distict_region_campaign_list:
+        indicator_raw = Indicator.objects.raw("""
+            SELECT DISTINCT dwc.indicator_id as id
+            FROM datapoint_with_computed dwc
+            WHERE cache_job_id = %s
+            """,[self.cache_job.id])
 
-        r_c_tuple = (rc.region_id,rc.campaign_id)
-        rc_tuple_list.append(r_c_tuple)
+        all_indicator_ids = [x.id for x in indicator_raw]
+        indicator_df = DataFrame(columns = all_indicator_ids)
+
+        rc_curs = DataPointComputed.objects.raw("""
+            SELECT DISTINCT
+            	MIN(dwc.id) as id
+                , dwc.region_id
+            	, dwc.campaign_id
+            FROM datapoint_with_computed dwc
+            WHERE dwc.cache_job_id = %s
+            GROUP BY dwc.region_id, dwc.campaign_id;
+            """,[self.cache_job.id])
+
+        rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
+
+        rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
+        rc_df = rc_df.reset_index(level=[0,1])
+
+        for i,(i_id) in enumerate(all_indicator_ids):
+
+            rc_df = self.add_indicator_data_to_rc_df(rc_df, i_id)
+
+        self.r_c_df_to_db(rc_df)
+
+    def add_indicator_data_to_rc_df(self,rc_df, i_id):
+        '''
+        left join the region / campaign dataframe with the stored data for each
+        campaign.
+        '''
+        column_header = ['region_id','campaign_id']
+        column_header.append(i_id)
+
+        indicator_df = DataFrame(list(DataPointComputed.objects.filter(
+            indicator_id = i_id).values()))
+
+        pivoted_indicator_df = pivot_table(indicator_df, values='value',\
+            columns=['indicator_id'],index = ['region_id','campaign_id'])
+
+        cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
+
+        merged_df = rc_df.merge(cleaned_df,how='left')
+        merged_df = merged_df.reset_index(drop=True)
+
+        return merged_df
 
 
-    rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
-    rc_df = rc_df.reset_index(level=[0,1])
+    def r_c_df_to_db(self,rc_df):
 
-    for i,(i_id) in enumerate(all_indicator_ids):
+        nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
+        indexed_df = nan_to_null_df.reset_index(drop=True)
+        rc_dict = indexed_df.transpose().to_dict()
 
-        rc_df = add_indicator_data_to_rc_df(rc_df, i_id)
+        batch = []
 
-    r_c_df_to_db(rc_df)
+        for r_no, r_data in rc_dict.iteritems():
 
-def add_indicator_data_to_rc_df(rc_df, i_id):
-    '''
-    left join the region / campaign dataframe with the stored data for each
-    campaign.
-    '''
-    column_header = ['region_id','campaign_id']
-    column_header.append(i_id)
+            region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
 
-    indicator_df = DataFrame(list(DataPointComputed.objects.filter(
-        indicator_id = i_id).values()))
+            del r_data["index"]
+            del r_data["region_id"]
+            del r_data["campaign_id"]
 
-    pivoted_indicator_df = pivot_table(indicator_df, values='value',\
-        columns=['indicator_id'],index = ['region_id','campaign_id'])
+            dd_abstracted = {
+                "region_id": region_id,
+                "campaign_id":campaign_id,
+                "indicator_json": r_data,
+                "cache_job_id": self.cache_job.id,
+            }
 
+            dda_obj = DataPointAbstracted(**dd_abstracted)
 
-    cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
+            batch.append(dda_obj)
 
-    merged_df = rc_df.merge(cleaned_df,how='left')
-    merged_df = merged_df.reset_index(drop=True)
+        DataPointAbstracted.objects.all().delete()
 
-    return merged_df
-
-
-def r_c_df_to_db(rc_df):
-
-    nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
-    indexed_df = nan_to_null_df.reset_index(drop=True)
-    rc_dict = indexed_df.transpose().to_dict()
-
-    batch = []
-
-    for r_no, r_data in rc_dict.iteritems():
-
-        region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
-
-        del r_data["index"]
-        del r_data["region_id"]
-        del r_data["campaign_id"]
-
-        dd_abstracted = {
-            "region_id": region_id,
-            "campaign_id":campaign_id,
-            "indicator_json": r_data
-        }
-
-        dda_obj = DataPointAbstracted(**dd_abstracted)
-
-        batch.append(dda_obj)
-
-    DataPointAbstracted.objects.all().delete()
-
-    DataPointAbstracted.objects.bulk_create(batch)
+        DataPointAbstracted.objects.bulk_create(batch)
