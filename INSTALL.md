@@ -18,7 +18,7 @@ notes on deploy of Polio to AWS
 ===
 # run 'gulp dist' to create two dist files
 # scp them to aws
-# unzip to appropariate directory 
+# unzip to appropariate directory
 # in python directory, run stuff from deploy.sh
 # in static files directory, change everything to www-data
 
@@ -37,10 +37,10 @@ on build server... how we want it to work w/Jenkins
 ## in front-end folder, change everything to www-data
 
 NEXT STEPS
-* set up nightly push to Rackspace (AWS will be manual)
-* create polio user on RS
-* set up SSH stuff
-* work on script
+* set up manual push to Rackspace, AWS
+DONE * create polio user on RS
+DONE * set up SSH stuff
+IN PROGRESS * work on script
 
 Also... (maybe)
 ===
