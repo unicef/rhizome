@@ -14,10 +14,11 @@ from datapoints.cache_tasks import CacheRefresh
 
 class CacheRefreshTestCase(TestCase):
 
-
     '''
         from datapoints.cache_tasks import CacheRefresh
         mr = CacheRefresh()
+
+        ## or ##
 
         from datapoints.cache_tasks import CacheRefresh
         from datapoints.models import DataPoint, Region
@@ -118,9 +119,6 @@ class CacheRefreshTestCase(TestCase):
         cr = CacheRefresh()
 
         for ix, row in self.target_df.iterrows():
-
-            # actual_value = self.get_dwc_value(row)
-            # actual_value = response_data[0]['value']
 
             actual_value = self.get_dwc_value(row)
             self.assertEqual(row.value,actual_value)
