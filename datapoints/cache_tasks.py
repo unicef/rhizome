@@ -156,9 +156,6 @@ class CacheRefresh(object):
 
             loop_region_ids = [r.id for r in region_cursor]
 
-            print 'REGION ID LOOP: '
-            print loop_region_ids
-
         return []
 
 
@@ -347,8 +344,6 @@ class CacheRefresh(object):
 
 
     def r_c_df_to_db(self,rc_df):
-
-        print rc_df
 
         nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
         indexed_df = nan_to_null_df.reset_index(drop=True)
