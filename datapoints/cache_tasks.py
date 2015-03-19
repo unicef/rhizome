@@ -86,8 +86,8 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        agg_dp_ids = self.agg_datapoints()
-        calc_dp_ids = self.calc_datapoints()
+        # agg_dp_ids = self.agg_datapoints()
+        # calc_dp_ids = self.calc_datapoints()
         abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
@@ -267,7 +267,7 @@ class CacheRefresh(object):
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
             WHERE cache_job_id = %s
-            """,[self.cache_job.id])
+            """,[113])#[self.cache_job.id])
 
         all_indicator_ids = [x.id for x in indicator_raw]
         indicator_df = DataFrame(columns = all_indicator_ids)
@@ -280,7 +280,8 @@ class CacheRefresh(object):
             FROM datapoint_with_computed dwc
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;
-            """,[self.cache_job.id])
+            """,[113])#[self.cache_job.id])
+
 
         rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
 

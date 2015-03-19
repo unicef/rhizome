@@ -51,7 +51,7 @@ RETURNS TABLE(id int) AS $$
 		,d_part.region_id
 		,d_part.campaign_id
 		,d_part.value / NULLIF(d_whole.value,0) as value
-		,110--$1
+		,$1
         FROM(
           SELECT max(id) as max_dp_id FROM datapoint_with_computed
         ) x
@@ -138,6 +138,11 @@ RETURNS TABLE(id int) AS $$
 	WHERE cache_job_id = $1
 	AND value is NULL;
 
+	-- FIX ME -- 
+	DELETE FROM datapoint_with_computed
+	WHERE cache_job_id = $1
+	AND region_id is null;
+	
 	SELECT id FROM datapoint_with_computed
 	WHERE indicator_id = $1
 	LIMIT 1;
@@ -146,13 +151,7 @@ RETURNS TABLE(id int) AS $$
 
     LANGUAGE SQL;
 
--- SELECT max(id) FROM cache_job
--- SELECT * FROM fn_calc_datapoint(110)
+-- SELECT * FROM datapoint_abstracted
+-- WHERE cache_job_id = 113
+-- limit 1
 
--- 
--- SELECT * FROM datapoint WHERE cache_job_id = 112 LIMIT 10
--- SELECT * FROM agg_datapoint WHERE cache_job_id = 110
-
--- UPDATE datapoint
--- SET cache_job_id = -1
--- 
