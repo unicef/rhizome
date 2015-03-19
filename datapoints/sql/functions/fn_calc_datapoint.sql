@@ -2,14 +2,27 @@
 CREATE FUNCTION fn_calc_datapoint(cache_job_id int)
 RETURNS TABLE(id int) AS $$
 
+	----------------------------
 	-- delete before reinsert --
+	----------------------------
 
+	-- Raw Data ( no calc )
 	DELETE FROM datapoint_with_computed dwc
-	USING agg_datapoint ad
-	WHERE dwc.campaign_id = ad.campaign_id
-	AND dwc.region_id = ad.region_id
-	AND ad.cache_job_id = $1;
-	--AND dwc.indicator_id = ad.indicator_id;
+		USING agg_datapoint ad
+		WHERE dwc.campaign_id = ad.campaign_id
+		AND dwc.region_id = ad.region_id
+		AND ad.cache_job_id = $1
+		AND dwc.indicator_id = ad.indicator_id;
+
+		-- Calc Data ( no calc )
+	DELETE FROM datapoint_with_computed dwc
+		USING agg_datapoint ad
+		INNER JOIN calculated_indicator_component cic
+		ON ad.indicator_id = cic.indicator_component_id
+		WHERE dwc.campaign_id = ad.campaign_id
+		AND dwc.region_id = ad.region_id
+		AND dwc.indicator_id = cic.indicator_id
+		AND ad.cache_job_id = $1;
 
 	-- insert agg data (no calculation) --
    	INSERT INTO datapoint_with_computed
@@ -151,6 +164,4 @@ RETURNS TABLE(id int) AS $$
 
     LANGUAGE SQL;
 
-SELECT * FROM agg_datapoint
-WHERE campaign_id= 55
 
