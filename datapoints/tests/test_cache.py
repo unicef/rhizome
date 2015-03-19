@@ -15,9 +15,9 @@ from datapoints.cache_tasks import CacheRefresh
 class CacheRefreshTestCase(TestCase):
 
 
-'''
-from datapoints.cache_tasks import CacheRefresh
-mr = CacheRefresh()
+    '''
+        from datapoints.cache_tasks import CacheRefresh
+        mr = CacheRefresh()
 
         from datapoints.cache_tasks import CacheRefresh
         from datapoints.models import DataPoint, Region
