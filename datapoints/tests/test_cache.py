@@ -35,7 +35,7 @@ class CacheRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        # self.build_db() # builds sprocs and views needed to test cache refresh
+        self.build_db() # builds sprocs and views needed to test cache refresh
         self.create_metadata()
 
 
@@ -111,30 +111,48 @@ class CacheRefreshTestCase(TestCase):
         self.set_up()
         self.create_raw_datapoints()
 
-        ## refresh the cache
-        # cr = CacheRefresh()
+        cr = CacheRefresh()
 
         for ix, row in self.target_df.iterrows():
-            # row.region_id = 12920
 
-            target_url = \
-            '/api/v1/datapoint/?region__in=%s&campaign__in=%s&indicator__in=%s'\
-            % (int(row.region_id),int(row.campaign_id),int(row.indicator_id))
+            # actual_value = self.get_dwc_value(row)
+            # actual_value = response_data[0]['value']
 
-            print target_url
+            actual_value = self.get_dwc_value(row)
+            self.assertEqual(row.value,actual_value)
 
-            c = Client()
-            resp = c.get(target_url,format='json',follow=True)
-            # print resp
 
-            print type(resp)
+    def get_dwc_value(self,row):
+        '''
+        This testings the API for a row in the target dataframe and returns
+        the corresponding value
 
-            # rt = ResourceTestCase()
-            response_data = json.loads(resp.content)['objects']
-            print type(response_data)
+        Testing the Value agains the API test_client currenlty is not working.
+        Instead I will query the datapoint_with_computed table and ensure
+        later that the dataopint_abstracted transformation is working properly
+        '''
 
-            print response_data
+        dwc_curs = DataPointComputed.objects.raw('''
+            SELECT id, value FROM datapoint_with_computed
+                WHERE region_id = %s
+                AND campaign_id = %s
+                AND indicator_id = %s;
+        ''' ,[int(row.region_id),int(row.campaign_id),int(row.indicator_id)])
 
-            self.assertEqual(row.value,1)
 
-        self.assertEqual(1,2)
+        dwc_list = [dwc.value for dwc in dwc_curs]
+        actual_value = dwc_list[0]
+
+        # target_url = \
+        # '/api/v1/datapoint/?region__in=%s&campaign__in=%s&indicator__in=%s'\
+        # % (int(row.region_id),int(row.campaign_id),int(row.indicator_id))
+
+        # c = Client()
+        # resp = c.get(target_url,format='json',follow=True)
+        # response_data = json.loads(resp.content)['objects']
+
+        # print response_data
+
+        # actual_value = float(response_data[0]['value'])
+
+        return actual_value

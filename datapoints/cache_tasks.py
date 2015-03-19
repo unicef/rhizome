@@ -99,11 +99,9 @@ class CacheRefresh(object):
         '''
 
         print 'CACHE_JOB_ID: %s' % cache_job_id
-        print 'CACHE_JOB_ID: %s' % cache_job_id
-        print 'CACHE_JOB_ID: %s' % cache_job_id
-
 
         dp_curs = DataPoint.objects.raw('''
+
             UPDATE datapoint
             SET cache_job_id = %s
             WHERE id = ANY(%s);
@@ -266,7 +264,6 @@ class CacheRefresh(object):
         datapoint table.
         '''
 
-
         indicator_raw = Indicator.objects.raw("""
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
@@ -276,26 +273,17 @@ class CacheRefresh(object):
         all_indicator_ids = [x.id for x in indicator_raw]
         indicator_df = DataFrame(columns = all_indicator_ids)
 
-        distict_region_campaign_list = DataPoint.objects.raw("""
+        rc_curs = DataPointComputed.objects.raw("""
             SELECT DISTINCT
-            	1 as id
-            	, dwc.region_id
+            	MIN(dwc.id) as id
+                , dwc.region_id
             	, dwc.campaign_id
             FROM datapoint_with_computed dwc
-            INNER JOIN region r
-            ON dwc.region_id = r.id
-            INNER JOIN campaign c
-            ON dwc.campaign_id = c.id
-            AND r.office_id = c.office_id
-            WHERE dwc.cache_job_id = %s;
+            WHERE dwc.cache_job_id = %s
+            GROUP BY dwc.region_id, dwc.campaign_id;
             """,[self.cache_job.id])
 
-        rc_tuple_list = []
-        for rc in distict_region_campaign_list:
-
-            r_c_tuple = (rc.region_id,rc.campaign_id)
-            rc_tuple_list.append(r_c_tuple)
-
+        rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
 
         rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
         rc_df = rc_df.reset_index(level=[0,1])
@@ -319,7 +307,6 @@ class CacheRefresh(object):
 
         pivoted_indicator_df = pivot_table(indicator_df, values='value',\
             columns=['indicator_id'],index = ['region_id','campaign_id'])
-
 
         cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
 
