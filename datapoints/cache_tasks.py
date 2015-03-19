@@ -50,7 +50,7 @@ class CacheRefresh(object):
         as well as any indicators that are stored as the result of the
         calculation on the underlying datapoints.
 
-        Finall this method calls ``CacheRefresh.get_indicator_ids()`` to get
+        Finally this method calls ``CacheRefresh.get_indicator_ids()`` to get
         indicators needed to loop through ( both raw and computed ) that will
         need to be refreshed.
 
