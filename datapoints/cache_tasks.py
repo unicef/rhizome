@@ -267,7 +267,7 @@ class CacheRefresh(object):
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
             WHERE cache_job_id = %s
-            """,self.cache_job.id])
+            """,[self.cache_job.id])
 
         all_indicator_ids = [x.id for x in indicator_raw]
         indicator_df = DataFrame(columns = all_indicator_ids)
