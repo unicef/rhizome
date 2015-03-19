@@ -197,7 +197,7 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
-    is_cached = models.BooleanField(default=False)
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     def get_val(self):
         return self.value
@@ -239,6 +239,7 @@ class DataPointAbstracted(models.Model):
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
     indicator_json = JSONField()
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_abstracted'
@@ -250,6 +251,7 @@ class DataPointComputed(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_with_computed'
@@ -261,7 +263,7 @@ class AggDataPoint(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
-    calc_refreshed = models.BooleanField(default=False)
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'

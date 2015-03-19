@@ -122,20 +122,20 @@ module.exports = {
 	},
 
 	components: {
-		'management-dashboard': require('dashboard/management'),
-		'nco-dashboard'       : require('dashboard/nco'),
+		'management-dashboard' : require('dashboard/management'),
+		'nco-dashboard'        : require('dashboard/nco'),
 
-		'chart-bar'           : require('component/chart/bar'),
-		'chart-region-bar'    : require('component/chart/stacked-region-bar'),
-		'chart-bullet'        : require('component/chart/bullet'),
-		'chart-choropleth'    : require('component/chart/choropleth'),
-		'chart-pie'           : require('component/chart/pie'),
-		'chart-scatter'       : require('component/chart/scatter'),
-		'chart-stacked-area'  : require('component/chart/stacked-area'),
-		'chart-line'          : require('component/chart/line'),
-		'chart-year-over-year': require('component/chart/year-over-year'),
-		'chart-ytd'           : require('component/chart/ytd'),
-		'vue-dropdown'        : require('component/dropdown')
+		'chart-bar'            : require('component/chart/bar'),
+		'chart-stacked-bar'    : require('component/chart/stacked-bar'),
+		'chart-bullet'         : require('component/chart/bullet'),
+		'chart-choropleth'     : require('component/chart/choropleth'),
+		'chart-pie'            : require('component/chart/pie'),
+		'chart-scatter'        : require('component/chart/scatter'),
+		'chart-stacked-area'   : require('component/chart/stacked-area'),
+		'chart-line'           : require('component/chart/line'),
+		'chart-year-over-year' : require('component/chart/year-over-year'),
+		'chart-ytd'            : require('component/chart/ytd'),
+		'vue-dropdown'         : require('component/dropdown')
 	},
 
 	partials: {

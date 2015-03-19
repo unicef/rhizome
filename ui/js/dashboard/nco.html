@@ -7,98 +7,305 @@
 		<div class="medium-1 column">
 
 			<h4>Missed Children</h4>
-			<div v-component="chart-pie"
-			     data-indicators="[272]"
-			     data-width="150"
-			     data-height="150"
-			     v-with="campaign: campaign, region: region"></div>
 
-			<div v-component="chart-pie"
-			     data-indicators="[274]"
-			     data-width="150"
-			     data-height="150"
-			     v-with="campaign: campaign, region: region"></div>
+			<div class="labeled-donut">
+				<div
+					v-component="chart-pie"
+					data-width="150"
+					data-height="150"
+					data-inner-radius="45"
+					v-with="
+						datapoints : overview.missed.inside,
+						loading    : overview.loading"></div>
+				<p class="donut-label">{{ overview.missed.insideLabel }}</p>
+			</div>
+
+			<div class="labeled-donut">
+				<div
+					v-component="chart-pie"
+					data-width="150"
+					data-height="150"
+					data-inner-radius="45"
+					v-with="
+						datapoints : overview.missed.outside,
+						loading    : overview.loading"></div>
+				<p class="donut-label">{{ overview.missed.outsideLabel }}</p>
+			</div>
 
 			<h4>Caregiver Awareness</h4>
-			<div v-component="chart-pie"
-			     data-indicators="[276]"
-			     data-width="150"
-			     data-height="150"
-			     v-with="campaign: campaign, region: region"></div>
+
+			<div class="labeled-donut">
+				<div
+					v-component="chart-pie"
+					data-width="150"
+					data-height="150"
+					data-inner-radius="45"
+					v-with="
+						datapoints : overview.awareness,
+						loading    : overview.loading"></div>
+				<p class="donut-label">{{ overview.awarenessLabel }}</p>
+			</div>
 		</div>
 
-		<div class="medium-3 large-2 columns">
+		<div class="medium-3 columns">
 			<h4>Inside Monitoring</h4>
 			<div v-component="chart-scatter"
 			     data-aspect="1.7"
-			     data-indicators="[272,276]"
-			     data-x="276"
-			     data-y="272"
-			     v-with="campaign: campaign, region:region"></div>
+			     v-with="loading : overview.loading"></div>
 
 			<h4>Outside Monitoring</h4>
 			<div v-component="chart-scatter"
 			     data-aspect="1.7"
-			     data-indicators="[274,276]"
-			     data-x="276"
-			     data-y="274"
-			     v-with="campaign: campaign, region:region"></div>
+			     v-with="loading : overview.loading"></div>
 		</div>
 
-		<div class="medium-3 large-1 columns"
-		     v-repeat="overview"
-		     v-with="region: region, campaign: campaign">
-			<h4>{{ title }}</h4>
-			<div v-component="{{ chart }}"
-			     v-with="indicators: indicators, region: region, campaign: campaign"></div>
+		<div class="medium-3 columns">
+			<h4>Influencer</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.influencer.domain,
+					series : overview.influencer.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Information Source</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.source.domain,
+					series : overview.source.series"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="medium-3 columns">
+			<h4>Reason for Missed</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.reasonForMissed.domain,
+					series : overview.reasonForMissed.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Reason for Absence</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.absence.domain,
+					series : overview.absence.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>Reason for Non-Compliance</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.noncompliance.domain,
+					series : overview.noncompliance.series"></div>
+		</div>
+
+		<div class="medium-3 columns">
+			<h4>NC Resolved by</h4>
+			<div
+				v-component="chart-bar"
+				data-format="%"
+				v-with="
+					domain : overview.resolutions.domain,
+					series : overview.resolutions.series"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="large-7 columns">
-			<h3>Missed Children</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[318,319,320,321,322]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Missed Children
+				<label>
+					<input
+						type="radio"
+						name="missed-children-offset"
+						value="expand"
+						checked
+						v-model="missed.offset">
+					as % of all missed children
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="missed-children-offset"
+						value="zero"
+						v-model="missed.offset">
+					total
+				</label>
+			</h3>
+		</div>
+		<div class="medium-5 columns">
+			<div
+				v-component="chart-stacked-bar"
+				data-tick-count="5"
+				v-with="
+					series : missed.reasons,
+					offset : missed.offset"></div>
+		</div>
+		<div class="medium-2 columns">
+			<div
+				v-component="chart-bar"
+				data-labels="false"
+				v-with="
+					series    : missed.monitoring,
+					barHeight : missed.barHeight"></div>
 		</div>
 	</div>
 
 	<div class="row">
+
 		<div class="medium-3 columns">
-			<h3>Absences</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[323,324,325,326,327]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Absences
+				<label>
+					<input
+						type="radio"
+						name="absences-children-offset"
+						value="expand"
+						checked
+						v-model="absences.offset">
+					as % of all absences
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="absences-children-offset"
+						value="zero"
+						v-model="absences.offset">
+					total
+				</label>
+			</h3>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="
+					series : absences.reasons,
+					offset : absences.offset"></div>
 		</div>
+
 		<div class="medium-4 columns">
-			<h3>Non-Compliance</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[252,255,258,261,253,256,259,254,257,260,263,262]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Non-Compliance
+				<label>
+					<input
+						type="radio"
+						name="noncompliance-children-offset"
+						value="expand"
+						checked
+						v-model="noncompliance.offset">
+					as % of all non-compliance
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="noncompliance-children-offset"
+						value="zero"
+						v-model="noncompliance.offset">
+					total
+				</label>
+			</h3>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="
+					series : noncompliance.reasons,
+					offset : noncompliance.offset"></div>
 		</div>
 	</div>
 
 	<div class="row">
 
 		<div class="medium-3 columns">
-			<h3>Non-Compliance Resolutions</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[328,329,330,331,332,333,334]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Non-Compliance Resolutions
+				<label>
+					<input
+						type="radio"
+						name="resolutions-children-offset"
+						value="expand"
+						checked
+						v-model="resolutions.offset">
+					as % of all resolutions
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="resolutions-children-offset"
+						value="zero"
+						v-model="resolutions.offset">
+					total
+				</label>
+			</h3>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="
+					series : resolutions.by,
+					offset : resolutions.offset"></div>
 		</div>
 
 		<div class="medium-2 columns">
-			<h3>Influencers</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[287,288,289,290,291,292,293,294]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Influencers
+				<label>
+					<input
+						type="radio"
+						name="influencers-children-offset"
+						value="expand"
+						checked
+						v-model="influencers.offset">
+					as % of all influencers
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="influencers-children-offset"
+						value="zero"
+						v-model="influencers.offset">
+					total
+				</label>
+			</h3>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="
+					series : influencers.by,
+					offset : influencers.offset"></div>
 		</div>
 
 		<div class="medium-2 columns">
-			<h3>Sources of Information</h3>
-			<div v-component="chart-region-bar"
-			     data-indicators="[307,308,309,310,311,312,313,314,315,316,317]"
-			     v-with="campaign: campaign, region: region"></div>
+			<h3>
+				Sources of Information
+				<label>
+					<input
+						type="radio"
+						name="sources-children-offset"
+						value="expand"
+						checked
+						v-model="sources.offset">
+					as % of all sources
+				</label>
+				<label>
+					<input
+						type="radio"
+						name="sources-children-offset"
+						value="zero"
+						v-model="sources.offset">
+					total
+				</label>
+			</h3>
+			<div
+				v-component="chart-stacked-bar"
+				v-with="
+					series : sources.series,
+					offset : sources.offset"></div>
 		</div>
 	</div>
 </div>
