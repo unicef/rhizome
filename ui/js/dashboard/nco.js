@@ -34,6 +34,22 @@ function mapProperties(mapping) {
 	};
 }
 
+function filterMissing(data) {
+	return _(data)
+		.groupBy('y')
+		.filter(function (v, k) {
+			return _(v).pluck('x').some(util.defined);
+		})
+		.values()
+		.flatten()
+		.forEach(function (d) {
+			if (!util.defined(d.x)) {
+				d.x = 0;
+			}
+		})
+		.value();
+}
+
 function makeSeries(getSeries) {
 	return function (data) {
 		return _(data)
@@ -54,6 +70,7 @@ function formatData(datapoints, indicators, properties, series) {
 		.values()
 		.flatten()
 		.map(mapProperties(properties))
+		.thru(filterMissing)
 		.thru(makeSeries(series))
 		.value();
 }
@@ -68,7 +85,7 @@ module.exports = {
 
 			overview      : {
 				loading : true,
-				missed : {
+				missed  : {
 					inside       : [],
 					outside      : [],
 					insideLabel  : '',
