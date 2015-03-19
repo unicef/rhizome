@@ -151,7 +151,3 @@ RETURNS TABLE(id int) AS $$
 
     LANGUAGE SQL;
 
--- SELECT * FROM datapoint_abstracted
--- WHERE cache_job_id = 113
--- limit 1
-

@@ -267,7 +267,7 @@ class CacheRefresh(object):
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
             WHERE cache_job_id = %s
-            """,[113])#[self.cache_job.id])
+            """,self.cache_job.id])
 
         all_indicator_ids = [x.id for x in indicator_raw]
         indicator_df = DataFrame(columns = all_indicator_ids)
@@ -280,7 +280,7 @@ class CacheRefresh(object):
             FROM datapoint_with_computed dwc
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;
-            """,[113])#[self.cache_job.id])
+            """,[self.cache_job.id])
 
 
         rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
