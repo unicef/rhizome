@@ -70,7 +70,7 @@ class CacheRefresh(object):
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
-            if len(datapoint_id_list) == 0:
+            if len(self.datapoint_id_list) == 0:
                 return cache_job
 
         self.set_cache_job_id_for_raw_datapoints(cache_job.id)
