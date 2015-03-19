@@ -11,10 +11,10 @@ RETURNS TABLE(id int)
 	);
 
 	INSERT INTO agg_datapoint
-	(region_id, campaign_id, indicator_id, value, is_agg, calc_refreshed)
+	(region_id, campaign_id, indicator_id, value, is_agg)
 
 	SELECT
-		region_id, campaign_id, indicator_id, value, 'f', 'f'
+		region_id, campaign_id, indicator_id, value, 'f'
 	FROM datapoint d
 	WHERE NOT EXISTS (
 		SELECT 1 FROM agg_datapoint ad
@@ -22,7 +22,7 @@ RETURNS TABLE(id int)
 		AND d.campaign_id = ad.campaign_id
 		AND d.region_id = ad.indicator_id
 	)
-	AND EXISTS ( 
+	AND EXISTS (
 		SELECT 1 FROM region r
 		WHERE r.region_type_id = $1
 		AND d.region_id = r.id
@@ -30,10 +30,10 @@ RETURNS TABLE(id int)
 
 
 	INSERT INTO agg_datapoint
-	(region_id, campaign_id, indicator_id, value, is_agg, calc_refreshed)
+	(region_id, campaign_id, indicator_id, value, is_agg)
 
 	SELECT
-		r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't', 'f'
+		r.parent_region_id, campaign_id, indicator_id, SUM(COALESCE(value,0)), 't'
 	FROM agg_datapoint ag
 	INNER JOIN region r
 		ON ag.region_id = r.id

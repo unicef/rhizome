@@ -15,7 +15,6 @@ import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks import computed_datapoint_to_abstracted_datapoint
 from datapoints.cache_tasks import CacheRefresh
 
 from datapoints.mixins import PermissionRequiredMixin
@@ -307,51 +306,6 @@ def search(request):
         context_instance=RequestContext(request))
 
 
-def calc_datapoint(request):
-    '''
-    '''
-
-    indicator_ids = Indicator.objects.all().values_list('id',flat=True)\
-        .order_by('-id')
-
-    for i_id in indicator_ids:
-
-        curs = DataPointComputed.objects.raw("SELECT * FROM fn_calc_datapoint(%s);"
-            ,[i_id])
-
-        for x in curs:
-            print x
-
-    return HttpResponseRedirect('/datapoints/cache_control/')
-
-
-def agg_datapoint(request):
-    '''
-    '''
-
-    region_type_loop = [
-        2,# settlement',
-        5,# sub-district',
-        4,# district',
-        4,# district',
-        3 # province',
-    ]
-
-    init_curs = AggDataPoint.objects\
-        .raw("SELECT * FROM fn_init_agg_datapoint()")
-
-    y = [x for x in init_curs]
-
-    for rt in region_type_loop:
-
-        rt_curs = AggDataPoint.objects\
-            .raw("select * FROM fn_agg_datapoint_by_region_type(%s)",[rt])
-
-        y = [x for x in rt_curs]
-
-    return HttpResponseRedirect('/datapoints/cache_control/')
-
-
 def populate_dummy_ngo_dash(request):
 
     ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
@@ -385,12 +339,6 @@ def populate_dummy_ngo_dash(request):
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
-
-def pivot_datapoint(request):
-
-    computed_datapoint_to_abstracted_datapoint()
-
-    return HttpResponseRedirect('/datapoints/cache_control/')
 
 def cache_control(request):
 
