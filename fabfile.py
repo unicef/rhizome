@@ -58,13 +58,13 @@ def deploy():
 
     # unzip stuff
     with cd(work_path):
-        run("unzip uf04-frontend.zip -d %s" % frontend_path)
-        run("unzip uf04-backend.zip -d %s" % backend_path)
+        run("unzip uf04-frontend.zip -o -d %s" % frontend_path) # -o overwrite
+        run("unzip uf04-backend.zip -o -d %s" % backend_path)
 
     # in front-end path
-    # with cd(frontend_path):
-    #     run("chown -R www-data:www-data .")
-    #
+    with cd(frontend_path):
+        run("chgrp -R www-data .")
+
     # # in server path -
     # with cd(backend_path):
     #     run("pip install -r requirements.txt")
