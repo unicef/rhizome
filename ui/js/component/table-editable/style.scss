@@ -1,6 +1,8 @@
 $valueColumnWidth: 80px;
 
-table {
+.fixed-table-container table {
+
+	border-collapse: collapse;
 
 	.th-inner {
 		min-width: $valueColumnWidth;
