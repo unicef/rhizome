@@ -10,6 +10,8 @@ Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));
 Vue.component('vue-tooltip', require('./component/tooltip'));
 
+Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
+
 module.exports = {
 	Explorer: function (el) {
 		new Vue({

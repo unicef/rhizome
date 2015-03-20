@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 function defined(value) {
 	return value !== null &&
 		typeof value !== 'undefined' &&
@@ -65,10 +67,33 @@ function rename(obj, mapping) {
 	return o;
 }
 
+function unpivot(data) {
+	return _(data.objects)
+		.map(function (d) {
+			var datapoints = [];
+			var indicators = d.indicators;
+			var props      = _.omit(d, 'indicators');
+
+			for (var i = indicators.length - 1; i >= 0; i--) {
+				var datum = indicators[i];
+
+				datapoints.push(_.assign({
+					indicator : datum.indicator,
+					value     : datum.value
+				}, props));
+			}
+
+			return datapoints;
+		})
+		.flatten()
+		.value();
+}
+
 module.exports = {
-	defined  : defined,
-	max      : max,
-	min      : min,
-	parseBool: parseBool,
-	rename   : rename
+	defined   : defined,
+	max       : max,
+	min       : min,
+	parseBool : parseBool,
+	rename    : rename,
+	unpivot   : unpivot,
 };
