@@ -50,8 +50,8 @@ BEGIN
 	-- This table will be used, instead of the agg_datapoint table for the remainder of the calc process 
 
 	EXECUTE FORMAT ('
-	DROP TABLE IF EXISTS _tmp_agg_datpoint ;
-	CREATE TABLE _tmp_agg_datpoint AS
+	DROP TABLE IF EXISTS _tmp_computed_datpointo ;
+	CREATE TABLE _tmp_computed_datpoint AS
 
 	SELECT DISTINCT
 		ad2.*
@@ -72,12 +72,6 @@ BEGIN
 	-- delete before reinsert --
 	----------------------------
 
-	DELETE FROM datapoint_with_computed dwc
-	USING _tmp_agg_datpoint ad
-	WHERE dwc.campaign_id = ad.campaign_id
-	AND dwc.region_id = ad.region_id
-	AND dwc.indicator_id = ad.indicator_id;
-
 	-- insert agg data (no calculation) --
    	INSERT INTO datapoint_with_computed
     	(indicator_id,region_id,campaign_id,value,is_agg,cache_job_id)
@@ -96,7 +90,7 @@ BEGIN
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,cache_job_id)
 
-        SELECT
+        SELECT DISTINCT 
 		cic.indicator_id
 		,ad.region_id
 		,ad.campaign_id
@@ -112,7 +106,7 @@ BEGIN
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,cache_job_id)
 
-        SELECT
+        SELECT DISTINCT 
 		part.indicator_id as master_indicator_id
 		,d_part.region_id
 		,d_part.campaign_id
@@ -136,7 +130,7 @@ BEGIN
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,cache_job_id)
 
-        SELECT
+        SELECT DISTINCT 
 		denom.master_indicator_id
 		,denom.region_id
 		,denom.campaign_id
@@ -191,6 +185,20 @@ BEGIN
           AND num_whole.master_indicator_id = denom.master_indicator_id
           AND num_whole.campaign_id = denom.campaign_id;
 
+	-- FINALLY, DELETE / INSERT INTO datapoint_with_computed --
+	
+	DELETE FROM datapoint_with_computed dwc
+	USING _tmp_computed_datapoint tmp
+		WHERE dwc.campaign_id = tmp.campaign_id
+		AND dwc.region_id = tmp.region_id
+		AND dwc.indicator_id = tmp.indicator_id;
+
+	INSERT INTO datapoint_with_computed
+	(region_id, indicator_id, campaign_id, value, cache_job_id)
+	SELECT
+		region_id, indicator_id, campaign_id, value, $1
+	FROM _tmp_computed_datapoint;
+	
 	-- FIX ME --
 	UPDATE datapoint_with_computed SET value = 0.00 
 	--WHERE cache_job_id = $1
@@ -198,6 +206,7 @@ BEGIN
 
 	-- FIX ME -- 
 	DELETE FROM datapoint_with_computed dwc
+	--WHERE cache_job_id = $1
 	WHERE region_id is null;
 	
 	RETURN QUERY
@@ -210,5 +219,7 @@ END
 $func$ LANGUAGE PLPGSQL;
 
 
-SELECT * FROM fn_calc_datapoint(-1)
-
+SELECT * FROM datapoint_with_computed
+WHERE region_id= 12929
+and campaign_id =  111
+and indicator_id = 164
