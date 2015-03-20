@@ -1,9 +1,10 @@
 'use strict';
 
-var _     = require('lodash');
-var d3    = require('d3');
+var _      = require('lodash');
+var d3     = require('d3');
 
-var color = require('util/color');
+var color  = require('util/color');
+var legend = require('./renderer/legend');
 
 module.exports = {
 
@@ -202,6 +203,11 @@ module.exports = {
 
 			svg.select('.y.axis')
 				.call(yAxis);
+
+			if (this.series.length > 1) {
+				svg.select('.legend')
+					.call(legend().scale(colorScale));
+			}
 		}
 
 	},
