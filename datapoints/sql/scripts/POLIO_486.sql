@@ -30,4 +30,3 @@ DELETE FROM datapoint WHERE id IN (
 DELETE FROM datapoint WHERE id IN (
 	SELECT datapoint_id from _bad_campaign_datapoints bdc
 );
-
