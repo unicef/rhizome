@@ -148,6 +148,7 @@
 		<div class="medium-8 columns">
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				data-tick-count="5"
 				v-with="
 					series : missed.reasons,
@@ -157,6 +158,7 @@
 			<div
 				v-component="chart-bar"
 				data-labels="false"
+				data-margin-right="120"
 				v-with="
 					series    : missed.monitoring,
 					barHeight : missed.barHeight"></div>
@@ -188,6 +190,7 @@
 			</h3>
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				v-with="
 					series : absences.reasons,
 					offset : absences.offset"></div>
@@ -216,6 +219,7 @@
 			</h3>
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				v-with="
 					series : noncompliance.reasons,
 					offset : noncompliance.offset"></div>
@@ -247,6 +251,7 @@
 			</h3>
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				v-with="
 					series : resolutions.by,
 					offset : resolutions.offset"></div>
@@ -275,6 +280,7 @@
 			</h3>
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				v-with="
 					series : influencers.by,
 					offset : influencers.offset"></div>
@@ -303,6 +309,7 @@
 			</h3>
 			<div
 				v-component="chart-stacked-bar"
+				data-margin-right="120"
 				v-with="
 					series : sources.series,
 					offset : sources.offset"></div>
