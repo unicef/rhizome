@@ -51,9 +51,9 @@ BEGIN
 
 	EXECUTE FORMAT ('
 	DROP TABLE IF EXISTS _tmp_agg_datpoint ;
-	CREATE TEMP TABLE _tmp_agg_datpoint AS
+	CREATE TABLE _tmp_agg_datpoint AS
 
-	SELECT 
+	SELECT DISTINCT
 		ad2.*
 		,til.is_calc
 	FROM agg_datapoint ad
