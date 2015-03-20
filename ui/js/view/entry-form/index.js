@@ -180,7 +180,8 @@ module.exports = {
 							})
 							.value();
 
-			self._regions.items = treeify(items, 'value');
+			self._regions.items = items;
+			self._regions.itemTree = treeify(items, 'value');
 
 			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
 			if (self.$data.campaign_office_id !== null && campaign.office_id !== self.$data.campaign_office_id) {

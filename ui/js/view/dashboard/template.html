@@ -2,12 +2,12 @@
 
 <form class="inline no-print">
 	<div class="row">
-		<div class="medium-3 push-4 columns">
+		<div class="medium-6 push-6 columns">
 			<h1 style="text-align:right">{{ title }}</h1>
 		</div>
-		<div id="regions" class="medium-1 pull-3 column"></div>
+		<div id="regions" class="medium-2 pull-6 column"></div>
 
-		<div class="medium-1 pull-3 column end"
+		<div class="medium-2 pull-6 column end"
 		     v-component="vue-dropdown"
 		     v-ref="campaigns"
 		     v-with="items: campaigns, itemTree: campaigns"

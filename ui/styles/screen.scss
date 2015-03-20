@@ -11,6 +11,7 @@
 
 @import "forms";
 @import "charts";
+@import "dashboards";
 
 body {
 	font-size : rem-calc(10);
@@ -116,24 +117,9 @@ a {
 	}
 }
 
+
+
 table {
-	border          : none;
-	border-collapse : separate;
-	border-spacing  : 0.5em;
-
-	tr {
-		background-color: transparent !important;
-
-		td {
-			font-size      : 0.625rem;
-			line-height    : 1;
-			padding        : 0;
-			vertical-align : middle;
-		}
-	}
-}
-
-.data-table {
 	border-collapse: collapse;
 	margin-top: 10pt;
 	min-width: 100%;
@@ -176,6 +162,22 @@ table {
 		}
 	}
 
+	&.pie-charts {
+		border          : none;
+		border-collapse : separate;
+		border-spacing  : 0.5em;
+
+		tr {
+			background-color: transparent !important;
+
+			td {
+				font-size      : 0.625rem;
+				line-height    : 1;
+				padding        : 0;
+				vertical-align : middle;
+			}
+		}
+	}
 }
 
 *[role="menuitem"] {
