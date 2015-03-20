@@ -1,10 +1,10 @@
 <div id="nco-dashboard">
 	<div class="row">
-		<div class="large-7 columns">
+		<div class="small-12 columns">
 			<h3>Overview</h3>
 		</div>
 
-		<div class="medium-1 column">
+		<div class="medium-3 column">
 
 			<h4>Missed Children</h4>
 
@@ -123,7 +123,7 @@
 	</div>
 
 	<div class="row">
-		<div class="large-7 columns">
+		<div class="small-12 columns">
 			<h3>
 				Missed Children
 				<label>
@@ -145,7 +145,7 @@
 				</label>
 			</h3>
 		</div>
-		<div class="medium-5 columns">
+		<div class="medium-8 columns">
 			<div
 				v-component="chart-stacked-bar"
 				data-tick-count="5"
@@ -153,7 +153,7 @@
 					series : missed.reasons,
 					offset : missed.offset"></div>
 		</div>
-		<div class="medium-2 columns">
+		<div class="medium-4 columns">
 			<div
 				v-component="chart-bar"
 				data-labels="false"
@@ -165,7 +165,7 @@
 
 	<div class="row">
 
-		<div class="medium-3 columns">
+		<div class="medium-6 columns">
 			<h3>
 				Absences
 				<label>
@@ -193,7 +193,7 @@
 					offset : absences.offset"></div>
 		</div>
 
-		<div class="medium-4 columns">
+		<div class="medium-6 columns">
 			<h3>
 				Non-Compliance
 				<label>
@@ -224,7 +224,7 @@
 
 	<div class="row">
 
-		<div class="medium-3 columns">
+		<div class="medium-4 columns">
 			<h3>
 				Non-Compliance Resolutions
 				<label>
@@ -252,7 +252,7 @@
 					offset : resolutions.offset"></div>
 		</div>
 
-		<div class="medium-2 columns">
+		<div class="medium-4 columns">
 			<h3>
 				Influencers
 				<label>
@@ -280,7 +280,7 @@
 					offset : influencers.offset"></div>
 		</div>
 
-		<div class="medium-2 columns">
+		<div class="medium-4 columns">
 			<h3>
 				Sources of Information
 				<label>
