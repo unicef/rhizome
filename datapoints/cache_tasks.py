@@ -31,7 +31,7 @@ class CacheRefresh(object):
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
-        status, self.cache_job = self.set_up()
+        status = self.set_up()
 
         if status != 'NOTHING_TO_PROCESS':
 
@@ -74,13 +74,13 @@ class CacheRefresh(object):
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
             if len(self.datapoint_id_list) == 0:
-                return 'NOTHING_TO_PROCESS', cache_job
+                return 'NOTHING_TO_PROCESS'
 
         self.set_cache_job_id_for_raw_datapoints()
 
         self.indicator_ids = self.get_indicator_ids()
 
-        return 'PENDING_AGG',self.cache_job
+        return 'PENDING_AGG'
 
     def main(self):
         '''
