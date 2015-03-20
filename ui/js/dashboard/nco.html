@@ -4,59 +4,72 @@
 			<h3>Overview</h3>
 		</div>
 
-		<div class="medium-3 column">
+		<div class="medium-6 columns">
+			<div class="row">
+				<div class="medium-6 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h4 style="text-align:center">Missed Children</h4>
+						</div>
 
-			<h4>Missed Children</h4>
+						<div class="labeled-donut medium-6 columns">
+							<div
+								v-component="chart-pie"
+								data-width="150"
+								data-height="150"
+								data-inner-radius="45"
+								v-with="
+									datapoints : overview.missed.inside,
+									loading    : overview.loading"></div>
+							<p class="donut-label">{{ overview.missed.insideLabel }}</p>
+						</div>
 
-			<div class="labeled-donut">
-				<div
-					v-component="chart-pie"
-					data-width="150"
-					data-height="150"
-					data-inner-radius="45"
-					v-with="
-						datapoints : overview.missed.inside,
-						loading    : overview.loading"></div>
-				<p class="donut-label">{{ overview.missed.insideLabel }}</p>
+						<div class="labeled-donut medium-6 columns">
+							<div
+								v-component="chart-pie"
+								data-width="150"
+								data-height="150"
+								data-inner-radius="45"
+								v-with="
+									datapoints : overview.missed.outside,
+									loading    : overview.loading"></div>
+							<p class="donut-label">{{ overview.missed.outsideLabel }}</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="medium-6 columns">
+					<h4 style="text-align:center">Caregiver Awareness</h4>
+
+					<div class="labeled-donut">
+						<div
+							v-component="chart-pie"
+							data-width="150"
+							data-height="150"
+							data-inner-radius="45"
+							v-with="
+								datapoints : overview.awareness,
+								loading    : overview.loading"></div>
+						<p class="donut-label">{{ overview.awarenessLabel }}</p>
+					</div>
+				</div>
 			</div>
 
-			<div class="labeled-donut">
-				<div
-					v-component="chart-pie"
-					data-width="150"
-					data-height="150"
-					data-inner-radius="45"
-					v-with="
-						datapoints : overview.missed.outside,
-						loading    : overview.loading"></div>
-				<p class="donut-label">{{ overview.missed.outsideLabel }}</p>
+			<div class="row">
+				<div class="medium-6 columns">
+					<h4>Inside Monitoring</h4>
+					<div v-component="chart-scatter"
+					     data-aspect="1.7"
+					     v-with="loading : overview.loading"></div>
+				</div>
+
+				<div class="medium-6 columns">
+					<h4>Outside Monitoring</h4>
+					<div v-component="chart-scatter"
+					     data-aspect="1.7"
+					     v-with="loading : overview.loading"></div>
+				</div>
 			</div>
-
-			<h4>Caregiver Awareness</h4>
-
-			<div class="labeled-donut">
-				<div
-					v-component="chart-pie"
-					data-width="150"
-					data-height="150"
-					data-inner-radius="45"
-					v-with="
-						datapoints : overview.awareness,
-						loading    : overview.loading"></div>
-				<p class="donut-label">{{ overview.awarenessLabel }}</p>
-			</div>
-		</div>
-
-		<div class="medium-3 columns">
-			<h4>Inside Monitoring</h4>
-			<div v-component="chart-scatter"
-			     data-aspect="1.7"
-			     v-with="loading : overview.loading"></div>
-
-			<h4>Outside Monitoring</h4>
-			<div v-component="chart-scatter"
-			     data-aspect="1.7"
-			     v-with="loading : overview.loading"></div>
 		</div>
 
 		<div class="medium-3 columns">
