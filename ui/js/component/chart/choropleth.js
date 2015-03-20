@@ -49,7 +49,10 @@ module.exports = {
 				return null;
 			}
 
-			return _(this.geo.features).flatten('properties').pluck('region_id');
+			return _(this.geo.features)
+				.pluck('properties')
+				.pluck('region_id')
+				.value();
 		},
 
 		features: function () {
@@ -70,9 +73,9 @@ module.exports = {
 			}
 
 			var coordinates = _(this.features).map(function (f) {
-				return _.flatten(f.geometry.coordinates, true);
+				return _.flatten(f.geometry.coordinates);
 			})
-				.flatten(true)
+				.flatten()
 				.value();
 
 			var left   = d3.min(coordinates, lng);
