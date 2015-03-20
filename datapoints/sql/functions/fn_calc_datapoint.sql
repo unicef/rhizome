@@ -50,8 +50,8 @@ BEGIN
 	-- This table will be used, instead of the agg_datapoint table for the remainder of the calc process 
 
 	EXECUTE FORMAT ('
-	DROP TABLE IF EXISTS _tmp_computed_datpointo ;
-	CREATE TABLE _tmp_computed_datpoint AS
+	DROP TABLE IF EXISTS _tmp_agg_datapoint ;
+	CREATE TABLE _tmp_agg_datapoint AS
 
 	SELECT DISTINCT
 		ad2.*
@@ -72,6 +72,21 @@ BEGIN
 	-- delete before reinsert --
 	----------------------------
 
+	DELETE FROM datapoint_with_computed dwc
+	USING _tmp_agg_datapoint tad
+	WHERE dwc.region_id = tad.region_id
+	AND dwc.campaign_id = tad.campaign_id
+	AND dwc.indicator_id = tad.indicator_id;
+
+	DELETE FROM datapoint_with_computed dwc
+	USING _tmp_agg_datapoint tad
+	INNER JOIN calculated_indicator_component cic
+		ON tad.indicator_id = cic.indicator_component_id
+	WHERE dwc.region_id = tad.region_id
+	AND dwc.campaign_id = tad.campaign_id
+	AND dwc.indicator_id = cic.indicator_id;
+	
+	
 	-- insert agg data (no calculation) --
    	INSERT INTO datapoint_with_computed
     	(indicator_id,region_id,campaign_id,value,is_agg,cache_job_id)
@@ -83,7 +98,7 @@ BEGIN
     		,value
     		,is_agg
     		,$1
-    	FROM _tmp_agg_datpoint
+    	FROM _tmp_agg_datapoint
     	WHERE is_calc = 'f';
 
          ---- SUM OF PARTS ------
@@ -96,7 +111,7 @@ BEGIN
 		,ad.campaign_id
 		,SUM(ad.value) as value
 		,$1
-        FROM _tmp_agg_datpoint ad
+        FROM _tmp_agg_datapoint ad
         INNER JOIN calculated_indicator_component cic
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
@@ -126,7 +141,6 @@ BEGIN
             AND d_part.region_id = d_whole.region_id
             AND d_whole.cache_job_id = $1;
             
-
         INSERT INTO datapoint_with_computed
         (indicator_id,region_id,campaign_id,value,cache_job_id)
 
@@ -144,7 +158,7 @@ BEGIN
           		,ad.campaign_id
           		,ad.value
 			,ad.cache_job_id
-          	FROM _tmp_agg_datpoint ad
+          	FROM _tmp_agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'PART_OF_DIFFERENCE'
@@ -158,7 +172,7 @@ BEGIN
           		,ad.campaign_id
           		,ad.value
 			,ad.cache_job_id
-          	FROM _tmp_agg_datpoint ad
+          	FROM _tmp_agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE'
@@ -176,7 +190,7 @@ BEGIN
           		,ad.campaign_id
           		,ad.value
           		,ad.cache_job_id
-          	FROM _tmp_agg_datpoint ad
+          	FROM _tmp_agg_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
@@ -185,19 +199,6 @@ BEGIN
           AND num_whole.master_indicator_id = denom.master_indicator_id
           AND num_whole.campaign_id = denom.campaign_id;
 
-	-- FINALLY, DELETE / INSERT INTO datapoint_with_computed --
-	
-	DELETE FROM datapoint_with_computed dwc
-	USING _tmp_computed_datapoint tmp
-		WHERE dwc.campaign_id = tmp.campaign_id
-		AND dwc.region_id = tmp.region_id
-		AND dwc.indicator_id = tmp.indicator_id;
-
-	INSERT INTO datapoint_with_computed
-	(region_id, indicator_id, campaign_id, value, cache_job_id)
-	SELECT
-		region_id, indicator_id, campaign_id, value, $1
-	FROM _tmp_computed_datapoint;
 	
 	-- FIX ME --
 	UPDATE datapoint_with_computed SET value = 0.00 
@@ -206,7 +207,6 @@ BEGIN
 
 	-- FIX ME -- 
 	DELETE FROM datapoint_with_computed dwc
-	--WHERE cache_job_id = $1
 	WHERE region_id is null;
 	
 	RETURN QUERY
@@ -218,8 +218,3 @@ BEGIN
 END
 $func$ LANGUAGE PLPGSQL;
 
-
-SELECT * FROM datapoint_with_computed
-WHERE region_id= 12929
-and campaign_id =  111
-and indicator_id = 164
