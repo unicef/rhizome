@@ -228,7 +228,7 @@ module.exports = {
 				}
 
 				d3.select(this).attr('class', cls);
-			})
+			});
 
 			label.exit()
 				.transition().duration(300)

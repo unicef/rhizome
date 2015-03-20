@@ -5,6 +5,7 @@ var d3     = require('d3');
 var moment = require('moment');
 
 var api    = require('data/api');
+var util   = require('util/data');
 
 /**
  * Utility for generating the tickValues array for a year-to-date chart.
@@ -67,7 +68,18 @@ module.exports = {
 			inaccessibility : [],
 			microplans      : [],
 			cases           : null,
-			newCases        : null
+			newCases        : null,
+			transitPoints   : {
+				showVaccinated : false,
+				showInPlace    : false,
+				showWithSM     : false,
+				vaccinated     : null,
+				planned        : null,
+				inPlace        : null,
+				withSM         : null,
+				pctInplace     : [],
+				pctWithSM      : []
+			}
 		};
 	},
 
@@ -161,6 +173,57 @@ module.exports = {
 						})
 						.reverse()
 						.value();
+				});
+
+			q.indicator__in = [175,176,177,204];
+			q.region__in    = [this.region];
+
+			api.datapoints(q)
+				.then(function (data) {
+					if (data.objects.length > 1) {
+						console.warn('Multiple campaigns or regions returned, expected one');
+					}
+
+					var indicators = data.objects[0].indicators;
+
+					for (var i = indicators.length - 1; i >= 0; i--) {
+						var d = indicators[i];
+
+						switch(d.indicator) {
+							case '175':
+								self.transitPoints.inPlace     = d.value;
+								break;
+
+							case '176':
+								self.transitPoints.withSM     = d.value;
+								break;
+
+							case '177':
+								self.transitPoints.vaccinated     = d.value;
+								self.transitPoints.showVaccinated = util.defined(d.value);
+								break;
+
+							case '204':
+								self.transitPoints.planned = d.value;
+								break;
+
+							default:
+								break;
+						}
+					}
+					var hasPlanned                 = util.defined(self.transitPoints.planned);
+					self.transitPoints.showInPlace = util.defined(self.transitPoints.inPlace) && hasPlanned;
+					self.transitPoints.showWithSM  = util.defined(self.transitPoints.withSM) && hasPlanned;
+
+					self.transitPoints.pctInplace = [{
+						indicator : 'Transit Points in Place',
+						value     : self.transitPoints.inPlace / self.transitPoints.planned
+					}];
+
+					self.transitPoints.pctWithSM  = [{
+						indicator : 'Transit Points with SM',
+						value     : self.transitPoints.withSM / self.transitPoints.inPlace
+					}];
 				});
 		},
 	},

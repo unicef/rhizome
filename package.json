@@ -2,12 +2,13 @@
   "name": "uf04-polios",
   "version": "0.0.1",
   "scripts": {
+    "clean" : "gulp clean",
     "build" : "gulp build",
     "dev"   : "gulp watch"
   },
   "dependencies": {
     "d3": "^3.4.13",
-    "lodash": "^2.4.1",
+    "lodash": "^3.5.0",
     "moment": "^2.8.4",
     "page": "^1.6.0",
     "superagent": "^0.20.0",

@@ -11,6 +11,7 @@
 
 @import "forms";
 @import "charts";
+@import "dashboards";
 
 body {
 	font-size : rem-calc(10);
@@ -35,9 +36,17 @@ header {
 }
 
 h3 {
-	border-bottom: 1px solid $gainsboro;
-	color: $gainsboro;
-	text-transform: uppercase;
+	border-bottom  : 1px solid $gainsboro;
+	color          : $gainsboro;
+	text-transform : uppercase;
+
+	label {
+		color          : $gainsboro;
+		display        : inline-block;
+		text-transform : none;
+		font-size      : rem-calc(12);
+		margin-left    : 1em;
+	}
 }
 
 h4 {
@@ -108,14 +117,14 @@ a {
 	}
 }
 
+
+
 table {
 	border-collapse: collapse;
-	font-family: Hevetica, Arial, sans-serif;
 	margin-top: 10pt;
 	min-width: 100%;
 
 	th {
-		font-family: Hevetica, Arial, sans-serif;
 		padding: 5pt 0;
 		text-align: left;
 	}
@@ -153,6 +162,22 @@ table {
 		}
 	}
 
+	&.pie-charts {
+		border          : none;
+		border-collapse : separate;
+		border-spacing  : 0.5em;
+
+		tr {
+			background-color: transparent !important;
+
+			td {
+				font-size      : 0.625rem;
+				line-height    : 1;
+				padding        : 0;
+				vertical-align : middle;
+			}
+		}
+	}
 }
 
 *[role="menuitem"] {
@@ -371,3 +396,19 @@ ul {
 	}
 }
 
+.transit-points {
+	.chart {
+		svg {
+			width     : auto;
+			max-width : 20px;
+		}
+	}
+}
+
+.tooltip {
+	color: white !important;
+
+	h3 {
+		border: none;
+	}
+}

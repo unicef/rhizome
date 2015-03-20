@@ -75,11 +75,9 @@ module.exports = {
 			var month  = 0;
 			var total  = 0;
 
-			_(this.datapoints)
-				.sortBy(function (d) {
+			_.forEach(_.sortBy(this.datapoints, function (d) {
 					return d.campaign.start_date;
-				})
-				.forEach(function (d) {
+				}), function (d) {
 					var y = d.campaign.start_date.getFullYear();
 
 					if (year === null) {

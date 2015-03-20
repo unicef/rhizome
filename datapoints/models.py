@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
@@ -12,6 +14,18 @@ class Source(models.Model):
 
     class Meta:
         db_table = 'source'
+
+class CacheJob(models.Model):
+
+    date_attempted = models.DateTimeField(default=datetime.now())
+    date_completed = models.DateTimeField(null=True)
+    is_error = models.BooleanField()
+    response_msg = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'cache_job'
+        ordering = ('-date_attempted',)
+
 
 class Indicator(models.Model):
 
@@ -183,6 +197,7 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     def get_val(self):
         return self.value
@@ -224,6 +239,7 @@ class DataPointAbstracted(models.Model):
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
     indicator_json = JSONField()
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_abstracted'
@@ -235,6 +251,7 @@ class DataPointComputed(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_with_computed'
@@ -246,6 +263,7 @@ class AggDataPoint(models.Model):
     campaign_id = models.IntegerField()
     indicator_id = models.IntegerField()
     value = models.FloatField()
+    cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'

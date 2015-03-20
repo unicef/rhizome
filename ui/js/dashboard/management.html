@@ -59,7 +59,7 @@
 					data-margin-right="4"
 					data-margin-left="4"
 					data-margin-bottom="24"
-					data-period="2 years"
+					data-period="1 years"
 					data-indicators="[431,432]"
 					data-format-string="%"
 					v-with="region: region, campaign: campaign"></svg>
@@ -85,7 +85,7 @@
 						data-aspect="1.909344491"
 						data-margin-bottom="12"
 						data-indicators="[166,164,167,165]"
-						data-period="2 years"
+						data-period="1 years"
 						data-format-string=".1%"
 						v-with="region: region, campaign: campaign"></svg>
 				</section>
@@ -100,7 +100,7 @@
 						data-margin-right="4"
 						data-margin-left="4"
 						data-margin-bottom="24"
-					 	data-period="2 years"
+					 	data-period="1 years"
 					 	data-indicators="[187,189]"
 					 	data-format-string="%"
 					 	v-with="campaign: campaign, region: region"></div>
@@ -139,10 +139,43 @@
 				</div>
 			</div>
 
-			<div class="medium-1 column">
+			<div class="transit-points medium-1 column">
 				<h4>Transit Points</h4>
-				<!-- 177 -->
-				<p>No data</p>
+				<p v-if="transitPoints.showVaccinated">
+					{{ transitPoints.vaccinated }} children vaccinated
+				</p>
+
+				<table class="pie-charts">
+					<tbody>
+						<tr v-if="transitPoints.showInPlace">
+							<td>
+								<div
+									v-component="chart-pie"
+									v-with="datapoints: transitPoints.pctInplace, loading: false"
+									data-width="18"
+									data-height="18"></div>
+							</td>
+							<td>
+								{{ transitPoints.inPlace }} / {{ transitPoints.planned }}
+								in place
+							</td>
+						</tr>
+
+						<tr v-if="transitPoints.showWithSM">
+							<td>
+								<div
+									v-component="chart-pie"
+									v-with="datapoints: transitPoints.pctWithSM, loading: false"
+									data-width="18"
+									data-height="18"></div>
+							</td>
+							<td>
+								{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
+								social mobilizer
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
 				<h6>Missed Children Due to Refusal</h6>
 
@@ -228,18 +261,19 @@
 		</div>
 
 		<div class="medium-2 columns">
-			<h3>Inaccessible Children</h3>
+			<h3>Access Challenged Districts</h3>
+			<h6>Number of Inaccessible Children</h6>
 			<div v-component="chart-line"
 			     data-aspect="2.665"
 			     data-margin-bottom="24"
-			     data-period="2 years"
+			     data-period="1 years"
 			     data-indicators="[158]"
 					 data-format-string="s"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
-					<h6>Districts Reporting Access Analysis</h6>
+					<h6 style="text-overflow:initial">Districts with Access Plan</h6>
 					<div v-component="chart-pie"
 							 data-indicators="[174]"
 							 data-width="150"

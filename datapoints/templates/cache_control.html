@@ -4,6 +4,8 @@
 
 {% block content %}
 
+    <button> <a href="{% url 'datapoints:refresh_cache' %}"> Refresh Cache </a></button>
+
     <table>
     <thead>
         <tr>
@@ -11,18 +13,6 @@
             <th>run_task</th>
         </tr>
     </thead>
-        <tr>
-            <th>Agg Datapoint</th>
-            <th><a href="{% url 'datapoints:agg_datapoint' %}"> Agg </a></th>
-        </tr>
-        <tr>
-            <th>Calc Datapoint</th>
-            <th><a href="{% url 'datapoints:calc_datapoint' %}"> Cacl </a></th>
-        </tr>
-        <tr>
-            <th>Pivot Datapoint</th>
-            <th><a href="{% url 'datapoints:pivot_datapoint' %}"> Pivot </a></th>
-        </tr>
         <tr>
             <th>Pop NG Dash Data</th>
             <th><a href="{% url 'datapoints:populate_dummy_ngo_dash' %}"> Test NG Dash </a></th>

@@ -31,3 +31,5 @@ db.sql
 datapoints/sql/polio/public
 static/odk_source
 polio/secrets.py
+*~
+**/#*#

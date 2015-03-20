@@ -4,7 +4,7 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
-from tastypie.resources import ALL
+# from tastypie.resources import ALL
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import HttpResponse
