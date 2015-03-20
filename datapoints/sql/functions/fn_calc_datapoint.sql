@@ -157,11 +157,94 @@ RETURNS TABLE(id int) AS $$
 	AND region_id is null;
 	
 	SELECT id FROM datapoint_with_computed
-	WHERE indicator_id = $1
+	WHERE cache_job_id = $1
 	LIMIT 1;
 
     $$
 
     LANGUAGE SQL;
 
+/*
+
+DROP FUNCTION IF EXISTS qwert(cache_job_id int);
+CREATE FUNCTION qwert(cache_job_id int)
+RETURNS TABLE(id int) AS
+$func$
+BEGIN
+
+	--http://stackoverflow.com/questions/19499461/postgresql-functions-execute-create-table-unexpected-results
+
+	-- IN ORDER TO PERFORM THE CALCULATIONS NEEDED, WE NEED TO FIND -- 
+	-- THE COMPONENT AND CALCULATED INDICATORS RELEVANT FOR THIS JOB --
+
+	-- 1. find relevant calculated indicators create temp table
+	-- 2. find relevand raw indicators needed for a claculation
+	      --> the underlying indicator data hsould not be deleted/reinserted,
+	      --> but we do need to be able to determine where this information 
+	      --> is to effect any downstream calculatiosn for this job.
+	      
+	EXECUTE FORMAT ('
+
+		DROP TABLE IF EXISTS _tmp_indicator_lookup;
+		CREATE TABLE _tmp_indicator_lookup 
+		AS
+		SELECT DISTINCT
+			cic.indicator_component_id as indicator_in
+			, cic.indicator_id as indicator_out
+			, CAST(1 AS BOOLEAN) as is_calc
+		FROM calculated_indicator_component cic
+		WHERE EXISTS ( 
+			SELECT 1 FROM datapoint d 
+			WHERE cic.indicator_component_id = d.indicator_id
+			AND cache_job_id = %1$s
+		);',$1
+	);
+
+	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
+	INSERT INTO _tmp_indicator_lookup
+	(indicator_in, indicator_out, is_calc)
+
+	SELECT 
+		indicator_in
+		, cic.indicator_component_id
+		, CAST(0 AS BOOLEAN) AS is_calc
+	FROM _tmp_indicator_lookup
+	INNER JOIN calculated_indicator_component cic
+	ON indicator_out = cic.indicator_id;
+	
+	-- NOW CREATE A TEMP TABLE FOR ALL OF THE agg_datapoint_ids taht we need to proceed
+	EXECUTE FORMAT ('
+	     DROP TABLE IF EXISTS _tmp_calc_datpoint ;
+	     CREATE TEMP TABLE _tmp_calc_datpoint AS
+
+	     SELECT 
+		id
+		, cache_job_id
+		, region_id
+		, indicator_id 
+	     FROM agg_datapoint ad
+	     WHERE ad.cache_job_id = %1$s
+
+	     UNION ALL
+
+	     SELECT 
+		id
+		, cache_job_id
+		, region_id
+		, indicator_id 
+	     FROM agg_datapoint ad
+	     WHERE ad.cache_job_id = %1$s;'
+	     ,$1
+	    );
+
+	RETURN QUERY
+	
+	SELECT dwc.id FROM _tmp_calc_datpoint dwc
+	WHERE dwc.cache_job_id = $1
+	LIMIT 1;
+
+END
+$func$ LANGUAGE PLPGSQL;
+
+*/
 
