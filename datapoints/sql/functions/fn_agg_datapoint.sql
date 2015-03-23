@@ -30,11 +30,13 @@ RETURNS TABLE(id int) AS $$
 	-- DELETE PARENT DATA --
 	DELETE FROM agg_datapoint ad
 	USING agg_datapoint ad_just_inserted
+	INNER JOIN region r 
+		ON ad_just_inserted.region_id = r.id
+		AND r.parent_region_id = ANY($2)
 	WHERE ad_just_inserted.cache_job_id = $1
 	AND ad.cache_job_id != ad_just_inserted.cache_job_id
 	AND ad.indicator_id = ad_just_inserted.indicator_id
-	AND ad.campaign_id = ad_just_inserted.campaign_id
-	AND ad.region_id = ANY($2);
+	AND ad.campaign_id = ad_just_inserted.campaign_id;
 	
 	-- INSERT PARENT DATA --
 	INSERT INTO agg_datapoint
@@ -44,9 +46,14 @@ RETURNS TABLE(id int) AS $$
 	FROM agg_datapoint ad
 	INNER JOIN region r
 		ON ad.region_id = r.id
+		AND r.id = ANY($2)
 		AND ad.cache_job_id = $1
-		AND r.parent_region_id = ANY($2)
-	WHERE NOT EXISTS ( -- data stored at for the parent_region for this cache_job_id 
+	WHERE EXISTS ( 
+		SELECT 1 FROM agg_datapoint ad_needs_compute
+		WHERE ad_needs_compute.id = ad.id
+		AND ad_needs_compute.cache_job_id = $1
+	)
+	AND NOT EXISTS ( -- data stored at for the parent_region for this cache_job_id 
 		SELECT 1 FROM agg_datapoint ad_exists
 		WHERE r.parent_region_id = ad_exists.region_id
 		AND ad.indicator_id = ad_exists.indicator_id
