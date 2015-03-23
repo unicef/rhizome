@@ -169,12 +169,16 @@ class CacheRefreshTestCase(TransactionTestCase):
 
 
     def test_agg(self):
+        '''
+        When requesting aggregation for one child, ensure that the aggregation
+        looks for all children, not just those with cache_job_id = -1 See
+        (POLIO-491)
+        '''
 
         raw_indicator_id = 22
         campaign_id = 111
         raw_region_id = 12939
         agg_region_id = 12907
-
         new_dp_val = 1.02
 
         self.set_up()
@@ -188,32 +192,17 @@ class CacheRefreshTestCase(TransactionTestCase):
         ## and make sure agg uses all child data below ##
         #################################################
 
-        print 'CACHE_REFRESH #2\n' * 5
+        dp_id_to_refresh = DataPoint.objects.filter(
+            region_id = raw_region_id,
+            campaign_id = campaign_id ,
+            indicator_id = raw_indicator_id
+        ).values_list('id',flat=True)
 
-        with transaction.atomic():
-
-            # update the db so we only process one record #
-            dp_curs = DataPoint.objects.raw('''
-
-                --UPDATE datapoint
-                --SET cache_job_id = -2
-                    --,value = %s
-                --WHERE region_id != %s
-                --AND indicator_id != %s
-                --AND campaign_id != %s;
-
-                SELECT id from datapoint limit 1;
-
-            ''',[new_dp_val,raw_indicator_id,campaign_id,raw_region_id])
-
-            dp_val = [dp.id for dp in dp_curs]
-
-        cr = CacheRefresh()
+        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
 
         actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
             raw_indicator_id)
 
-        ## test that the change effected the parent (POLIO-491)
         self.assertEqual(actual_value,agg_value_target)
 
 
