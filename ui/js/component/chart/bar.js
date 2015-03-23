@@ -40,11 +40,26 @@ module.exports = {
 
 	computed: {
 		categories: function () {
+			// Short circuit (no disassemble number 5!)
+			if (this.empty) {
+				return [];
+			}
+
+			var order = _(this.series[0].values)
+				.sortBy('x')
+				.pluck('y')
+				.value();
+
+			console.log('bar::categories order', order);
+
 			return _(this.series)
 				.pluck('values')
 				.flatten()
 				.pluck('y')
 				.uniq()
+				.sortBy(function (a, b) {
+					return order.indexOf(a) - order.indexOf(b);
+				})
 				.value();
 		},
 
