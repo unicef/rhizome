@@ -13,7 +13,8 @@ module.exports = {
 
 	data : function () {
 		return {
-			'offset' : 'zero'
+			'offset' : 'zero',
+			'sortBy' : null
 		};
 	},
 
@@ -42,7 +43,23 @@ module.exports = {
 					return d.values;
 				})
 				.offset(this.offset)
-				.order('default')
+				.order(function (data) {
+					var order = d3.range(data.length);
+
+					if (self.sortBy) {
+						var idx = _.findIndex(self.series, function (d) {
+							return d.name === self.sortBy;
+						});
+
+						// Move the index of the series on which we're sorting to the front
+						if (idx >= 0) {
+							order.splice(idx, 1);
+							order.unshift(idx);
+						}
+					}
+
+					return order;
+				})
 				.x(function (d) {
 					return d.y;
 				})
@@ -73,8 +90,16 @@ module.exports = {
 				return xScale(d.x);
 			};
 
+			var sortIdx = 0;
+
+			if (self.sortBy) {
+				sortIdx = _.findIndex(data, function (d) {
+					return d.name === self.sortBy;
+				});
+			}
+
 			var yScale = d3.scale.ordinal()
-				.domain(this.categories(data))
+				.domain(this.categories(data, sortIdx))
 				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
@@ -177,14 +202,21 @@ module.exports = {
 
 			if (this.series.length > 1) {
 				svg.select('.legend')
-					.call(legend().scale(colorScale));
+					.call(legend()
+						.scale(colorScale)
+						.clickHandler(this.setSortBy));
 			}
+		},
+
+		setSortBy : function (d) {
+			this.sortBy = d;
 		}
 
 	},
 
 	watch : {
-		'offset' : 'draw'
+		'offset' : 'draw',
+		'sortBy' : 'draw'
 	}
 
 };

@@ -53,7 +53,7 @@ module.exports = {
 	},
 
 	methods: {
-		categories: function (series) {
+		categories: function (series, seriesIdx) {
 			if (arguments.length < 1) {
 				series = this.series;
 			}
@@ -63,22 +63,18 @@ module.exports = {
 				return [];
 			}
 
-			console.debug('bar::categories order by', series[0].name);
-
-			var order = _(series[0].values)
+			var order = _(series[seriesIdx || 0].values)
 				.sortBy('x')
 				.pluck('y')
 				.value();
-
-			console.debug('bar::categories order', order);
 
 			return _(series)
 				.pluck('values')
 				.flatten()
 				.pluck('y')
 				.uniq()
-				.sortBy(function (a, b) {
-					return order.indexOf(a) - order.indexOf(b);
+				.sortBy(function (n) {
+					return order.indexOf(n);
 				})
 				.value();
 		},

@@ -5,9 +5,10 @@ var d3 = require('d3');
 
 
 function legend() {
-	var _padding = 3;
-	var _scale   = d3.scale.category20b();
-	var _size    = 9;
+	var _padding      = 3;
+	var _scale        = d3.scale.category20b();
+	var _size         = 9;
+	var _clickHandler = null;
 
 	function chart (selection) {
 		selection.each(function () {
@@ -35,6 +36,7 @@ function legend() {
 				});
 
 			series
+				.on('click', _clickHandler)
 				.transition()
 				.duration(300)
 				.attr('transform', translate);
@@ -64,6 +66,15 @@ function legend() {
 				.remove();
 		});
 	}
+
+	chart.clickHandler = function (value) {
+		if (!arguments.length) {
+			return _clickHandler;
+		}
+
+		_clickHandler = value;
+		return chart;
+	};
 
 	chart.padding = function (value) {
 		if (!arguments.length) {
