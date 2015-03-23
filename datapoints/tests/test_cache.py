@@ -3,7 +3,7 @@ from subprocess import call
 from pprint import pprint
 
 from django.db import transaction
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, TestCase
 from django.contrib.auth.models import User
 from tastypie.test import ResourceTestCase
 from django.test import Client
@@ -15,8 +15,8 @@ from source_data.models import *
 from datapoints.cache_tasks import CacheRefresh
 
 
-class CacheRefreshTestCase(TransactionTestCase):
-# class CacheRefreshTestCase(TestCase):
+# class CacheRefreshTestCase(TransactionTestCase):
+class CacheRefreshTestCase(TestCase):
 
     '''
         from datapoints.cache_tasks import CacheRefresh
@@ -24,11 +24,11 @@ class CacheRefreshTestCase(TransactionTestCase):
 
         ## or ##
 
-from datapoints.cache_tasks import CacheRefresh
-from datapoints.models import DataPoint, Region
-r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
-dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-mr = CacheRefresh(list(dp_ids))
+        from datapoints.cache_tasks import CacheRefresh
+        from datapoints.models import DataPoint, Region
+        r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
+        dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
+        mr = CacheRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
@@ -52,7 +52,6 @@ mr = CacheRefresh(list(dp_ids))
         '''
         please fix me
         '''
-
         ## remove the build_test_db script and pass a $DB param to build_db.sh
         call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])
 
@@ -166,45 +165,51 @@ mr = CacheRefresh(list(dp_ids))
                 indicator_id)
 
             self.assertEqual(row.value,actual_value)
-    #
-    #
-    # def test_agg(self):
-    #     '''
-    #     When requesting aggregation for one child, ensure that the aggregation
-    #     looks for all children, not just those with cache_job_id = -1 See
-    #     (POLIO-491)
-    #     '''
-    #
-    #     raw_indicator_id = 22
-    #     campaign_id = 111
-    #     raw_region_id = 12939
-    #     agg_region_id = 12907
-    #     new_dp_val = 1.02
-    #
-    #     self.set_up()
-    #     self.create_raw_datapoints()
-    #
-    #     agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
-    #          raw_indicator_id]['value'].sum()
-    #
-    #     #################################################
-    #     ## only refresh the cache for one datapoint_id ##
-    #     ## and make sure agg uses all child data below ##
-    #     #################################################
-    #
-    #     dp_id_to_refresh = DataPoint.objects.filter(
-    #         region_id = raw_region_id,
-    #         campaign_id = campaign_id ,
-    #         indicator_id = raw_indicator_id
-    #     ).values_list('id',flat=True)
-    #
-    #     cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
-    #
-    #     actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
-    #         raw_indicator_id)
-    #
-    #     self.assertEqual(actual_value,agg_value_target)
-    #
+
+    def test_agg(self):
+        '''
+        When requesting aggregation for one child, ensure that the aggregation
+        looks for all children, not just those with cache_job_id = -1 See
+        (POLIO-491)
+        '''
+        raw_indicator_id = 22
+        campaign_id = 111
+        raw_region_id = 12939
+        agg_region_id = 12907
+        new_dp_val = 1.02
+
+        self.set_up()
+        self.create_raw_datapoints()
+
+        agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
+             raw_indicator_id]['value'].sum()
+
+        #################################################
+        ## only refresh the cache for one datapoint_id ##
+        ## and make sure agg uses all child data below ##
+        #################################################
+
+        dp_id_to_refresh = DataPoint.objects.filter(
+            region_id = raw_region_id,
+            campaign_id = campaign_id ,
+            indicator_id = raw_indicator_id
+        ).values_list('id',flat=True)
+
+        cr = CacheRefresh()
+        # now just try for one id #
+        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
+
+
+        actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
+            raw_indicator_id)
+
+        # 9927942,22,12939,111,267,1
+
+        print 'actual value: %s' % actual_value
+        print 'target value: %s' % agg_value_target
+
+        self.assertEqual(actual_value,agg_value_target)
+
 
     def get_dwc_value(self,region_id,campaign_id,indicator_id):
         '''
