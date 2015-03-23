@@ -111,19 +111,7 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
-    # def test_basic(self):
-    #
-    #     self.set_up()
-    #     self.create_raw_datapoints()
-    #
-    #     cr = CacheRefresh()
-    #
-    #     for ix, row in self.target_df.iterrows():
-    #
-    #         actual_value = self.get_dwc_value(row)
-    #         self.assertEqual(row.value,actual_value)
-
-    def test_agg(self):
+    def test_basic(self):
 
         self.set_up()
         self.create_raw_datapoints()
@@ -132,12 +120,55 @@ class CacheRefreshTestCase(TestCase):
 
         for ix, row in self.target_df.iterrows():
 
-            actual_value = self.get_dwc_value(row)
+            region_id, campaign_id, indicator_id = int(row.region_id),\
+               int(row.campaign_id),int(row.indicator_id)
+
+            # print 'indicator_id: %s' % indicator_id
+            # print 'region_id: %s' % region_id
+            # print 'campaign_id: %s' % campaign_id
+
+            actual_value = self.get_dwc_value(region_id, campaign_id,\
+                indicator_id)
+
             self.assertEqual(row.value,actual_value)
-            self.assertEqual(1,2)
 
 
-    def get_dwc_value(self,row):
+    # def test_agg(self):
+
+    #     raw_indicator_id = 22
+    #     campaign_id = 111
+    #     agg_region_id = 12907
+    #
+    #     dp_val_constant = 1.02
+    #
+    #     self.set_up()
+    #     self.create_raw_datapoints()
+    #
+    #     agg_value = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
+    #         raw_indicator_id]['value'].sum()
+    #
+    #     ## cache refresh and make sure the aggregation works properly
+    #     cr = CacheRefresh()
+    #     actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
+    #         raw_indicator_id)
+    #
+    #     print ' --- TESTING --- '
+    #     print actual_value
+    #     print agg_value
+    #
+    #     self.assertEqual(actual_value,agg_value)
+
+        # ## change a value to see if aggregation works ##
+        # dp = DataPoint.objects.all()[0]
+        # dp.value = dp.value + dp_val_constant
+        # dp.save()
+
+
+        # print self.test_df[:5]
+        # ## cache refresh again ##
+
+
+    def get_dwc_value(self,region_id,campaign_id,indicator_id):
         '''
         This testings the API for a row in the target dataframe and returns
         the corresponding value
@@ -152,8 +183,7 @@ class CacheRefreshTestCase(TestCase):
                 WHERE region_id = %s
                 AND campaign_id = %s
                 AND indicator_id = %s;
-        ''' ,[int(row.region_id),int(row.campaign_id),int(row.indicator_id)])
-
+            ''' ,[region_id, indicator_id, campaign_id])
 
         dwc_list = [dwc.value for dwc in dwc_curs]
         actual_value = dwc_list[0]

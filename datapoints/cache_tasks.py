@@ -317,9 +317,6 @@ class CacheRefresh(object):
 
         rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
 
-        print 'rc_tuple_list\n' * 5
-        print rc_tuple_list
-
         rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
         rc_df = rc_df.reset_index(level=[0,1])
 
