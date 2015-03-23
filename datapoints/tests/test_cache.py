@@ -57,13 +57,14 @@ class CacheRefreshTestCase(TestCase):
         Creating the Indicator, Region, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
-
-        region_df = read_csv('datapoints/tests/_data/regions.csv')
+        campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        region_df= read_csv('datapoints/tests/_data/regions.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
 
         region_ids = self.model_df_to_data(region_df,Region)
+        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
@@ -110,8 +111,19 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
+    # def test_basic(self):
+    #
+    #     self.set_up()
+    #     self.create_raw_datapoints()
+    #
+    #     cr = CacheRefresh()
+    #
+    #     for ix, row in self.target_df.iterrows():
+    #
+    #         actual_value = self.get_dwc_value(row)
+    #         self.assertEqual(row.value,actual_value)
 
-    def test_basic(self):
+    def test_agg(self):
 
         self.set_up()
         self.create_raw_datapoints()
@@ -122,6 +134,7 @@ class CacheRefreshTestCase(TestCase):
 
             actual_value = self.get_dwc_value(row)
             self.assertEqual(row.value,actual_value)
+            self.assertEqual(1,2)
 
 
     def get_dwc_value(self,row):
