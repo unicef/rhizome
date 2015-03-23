@@ -74,7 +74,13 @@ class CacheRefresh(object):
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
             if len(self.datapoint_id_list) == 0:
+                print 'NOTHING_TO_PROCESS\n' * 4
                 return 'NOTHING_TO_PROCESS'
+
+        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
+        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
+        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
+        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
 
         self.set_cache_job_id_for_raw_datapoints()
 
