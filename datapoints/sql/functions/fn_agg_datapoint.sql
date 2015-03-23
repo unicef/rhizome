@@ -32,8 +32,8 @@ RETURNS TABLE(id int) AS $$
 	USING agg_datapoint ad_just_inserted
 	INNER JOIN region r 
 		ON ad_just_inserted.region_id = r.id
-		AND r.parent_region_id = ANY($2)
 	WHERE ad_just_inserted.cache_job_id = $1
+	AND ad.region_id = r.parent_region_id
 	AND ad.cache_job_id != ad_just_inserted.cache_job_id
 	AND ad.indicator_id = ad_just_inserted.indicator_id
 	AND ad.campaign_id = ad_just_inserted.campaign_id;
