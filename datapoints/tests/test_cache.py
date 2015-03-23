@@ -150,6 +150,13 @@ class CacheRefreshTestCase(TestCase):
         return dp_id
 
     def test_basic(self):
+        '''
+        Using the calc_data.csv, create a test_df and target_df.  Ensure that
+        the aggregation and calcuation are working properly, but ingesting the
+        stored data, running the cache, and checking that the calculated data
+        for the aggregate region (parent region, in this case Nigeria) is as
+        expected.
+        '''
 
         self.set_up()
         self.create_raw_datapoints()
@@ -168,26 +175,23 @@ class CacheRefreshTestCase(TestCase):
 
     def test_agg(self):
         '''
-        When requesting aggregation for one child, ensure that the aggregation
-        looks for all children, not just those with cache_job_id = -1 See
-        (POLIO-491)
+        First refresh the new datapoints and then only refresh the cache for
+        one datapoint_id and make sure agg uses all child data below even when
+        that data is from a different job
+
+        To Do - After the first cache_refresh, update the value and make sure
+        that the aggregated total works.  Note - will need to use either
+        ``transaction.atomic`` or ``TrasactionTestCase`` in order to persist
+        multiple DB changes within one test
         '''
-        raw_indicator_id = 22
-        campaign_id = 111
-        raw_region_id = 12939
-        agg_region_id = 12907
-        new_dp_val = 1.02
+        raw_indicator_id, campaign_id, raw_region_id, agg_region_id = 22, 111,\
+            12939, 12907
 
         self.set_up()
         self.create_raw_datapoints()
 
         agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
              raw_indicator_id]['value'].sum()
-
-        #################################################
-        ## only refresh the cache for one datapoint_id ##
-        ## and make sure agg uses all child data below ##
-        #################################################
 
         dp_id_to_refresh = DataPoint.objects.filter(
             region_id = raw_region_id,
@@ -196,20 +200,14 @@ class CacheRefreshTestCase(TestCase):
         ).values_list('id',flat=True)
 
         cr = CacheRefresh()
-        # now just try for one id #
-        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
 
+        ## now just try for one id (see POLIO-491 )
+        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
 
         actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
             raw_indicator_id)
 
-        # 9927942,22,12939,111,267,1
-
-        print 'actual value: %s' % actual_value
-        print 'target value: %s' % agg_value_target
-
         self.assertEqual(actual_value,agg_value_target)
-
 
     def get_dwc_value(self,region_id,campaign_id,indicator_id):
         '''
@@ -226,17 +224,5 @@ class CacheRefreshTestCase(TestCase):
             indicator_id = indicator_id,
             campaign_id = campaign_id
         ).value
-
-        # target_url = \
-        # '/api/v1/datapoint/?region__in=%s&campaign__in=%s&indicator__in=%s'\
-        # % (int(row.region_id),int(row.campaign_id),int(row.indicator_id))
-
-        # c = Client()
-        # resp = c.get(target_url,format='json',follow=True)
-        # response_data = json.loads(resp.content)['objects']
-
-        # print response_data
-
-        # actual_value = float(response_data[0]['value'])
 
         return actual_value
