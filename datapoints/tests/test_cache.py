@@ -2,16 +2,20 @@ import json
 from subprocess import call
 from pprint import pprint
 
-from django.test import TestCase
+from django.db import transaction
+from django.test import TransactionTestCase, TestCase
+from django.contrib.auth.models import User
 from tastypie.test import ResourceTestCase
 from django.test import Client
 # from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv, notnull
 
 from datapoints.models import *
+from source_data.models import *
 from datapoints.cache_tasks import CacheRefresh
 
 
+# class CacheRefreshTestCase(TransactionTestCase):
 class CacheRefreshTestCase(TestCase):
 
     '''
@@ -48,7 +52,6 @@ class CacheRefreshTestCase(TestCase):
         '''
         please fix me
         '''
-
         ## remove the build_test_db script and pass a $DB param to build_db.sh
         call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])
 
@@ -57,13 +60,49 @@ class CacheRefreshTestCase(TestCase):
         Creating the Indicator, Region, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
-
-        region_df = read_csv('datapoints/tests/_data/regions.csv')
+        campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        region_df= read_csv('datapoints/tests/_data/regions.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
 
+        user_id = User.objects.create_user('test','john@john.com', 'test').id
+
+        office_id = Office.objects.create(id=1,name='test').id
+
+        source_id1 = Source.objects.create(id=1,source_name='test1',source_description='test1').id
+        source_id2 = Source.objects.create(id=2,source_name='test2',source_description='test2').id
+
+        cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01', is_error = False)
+
+        status_id = ProcessStatus.objects.create(
+                status_text = 'test',
+                status_description = 'test').id
+
+        document_id = Document.objects.create(
+            doc_text = 'test',
+            created_by_id = user_id,
+            source_id = source_id1,
+            guid = 'test').id
+
+        sdp_id = SourceDataPoint.objects.create(
+            id = -1,
+            document_id = document_id,
+            row_number = 0,
+            source_id = source_id1,
+            status_id = status_id).id
+
+
+        region_type1 = RegionType.objects.create(id=1,name="country")
+        region_type2 = RegionType.objects.create(id=2,name="settlement")
+        region_type3 = RegionType.objects.create(id=3,name="province")
+        region_type4 = RegionType.objects.create(id=4,name="district")
+        region_type5 = RegionType.objects.create(id=5,name="sub-district")
+
+        campaign_type = CampaignType.objects.create(id=1,name="test")
+
         region_ids = self.model_df_to_data(region_df,Region)
+        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
@@ -110,7 +149,6 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
-
     def test_basic(self):
 
         self.set_up()
@@ -120,11 +158,60 @@ class CacheRefreshTestCase(TestCase):
 
         for ix, row in self.target_df.iterrows():
 
-            actual_value = self.get_dwc_value(row)
+            region_id, campaign_id, indicator_id = int(row.region_id),\
+               int(row.campaign_id),int(row.indicator_id)
+
+            actual_value = self.get_dwc_value(region_id, campaign_id,\
+                indicator_id)
+
             self.assertEqual(row.value,actual_value)
 
+    def test_agg(self):
+        '''
+        When requesting aggregation for one child, ensure that the aggregation
+        looks for all children, not just those with cache_job_id = -1 See
+        (POLIO-491)
+        '''
+        raw_indicator_id = 22
+        campaign_id = 111
+        raw_region_id = 12939
+        agg_region_id = 12907
+        new_dp_val = 1.02
 
-    def get_dwc_value(self,row):
+        self.set_up()
+        self.create_raw_datapoints()
+
+        agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
+             raw_indicator_id]['value'].sum()
+
+        #################################################
+        ## only refresh the cache for one datapoint_id ##
+        ## and make sure agg uses all child data below ##
+        #################################################
+
+        dp_id_to_refresh = DataPoint.objects.filter(
+            region_id = raw_region_id,
+            campaign_id = campaign_id ,
+            indicator_id = raw_indicator_id
+        ).values_list('id',flat=True)
+
+        cr = CacheRefresh()
+        # now just try for one id #
+        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
+
+
+        actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
+            raw_indicator_id)
+
+        # 9927942,22,12939,111,267,1
+
+        print 'actual value: %s' % actual_value
+        print 'target value: %s' % agg_value_target
+
+        self.assertEqual(actual_value,agg_value_target)
+
+
+    def get_dwc_value(self,region_id,campaign_id,indicator_id):
         '''
         This testings the API for a row in the target dataframe and returns
         the corresponding value
@@ -134,16 +221,11 @@ class CacheRefreshTestCase(TestCase):
         later that the dataopint_abstracted transformation is working properly
         '''
 
-        dwc_curs = DataPointComputed.objects.raw('''
-            SELECT id, value FROM datapoint_with_computed
-                WHERE region_id = %s
-                AND campaign_id = %s
-                AND indicator_id = %s;
-        ''' ,[int(row.region_id),int(row.campaign_id),int(row.indicator_id)])
-
-
-        dwc_list = [dwc.value for dwc in dwc_curs]
-        actual_value = dwc_list[0]
+        actual_value = DataPointComputed.objects.get(
+            region_id = region_id,
+            indicator_id = indicator_id,
+            campaign_id = campaign_id
+        ).value
 
         # target_url = \
         # '/api/v1/datapoint/?region__in=%s&campaign__in=%s&indicator__in=%s'\
