@@ -39,21 +39,12 @@ module.exports = {
 	},
 
 	computed: {
-		categories: function () {
-			return _(this.series)
-				.pluck('values')
-				.flatten()
-				.pluck('y')
-				.uniq()
-				.value();
-		},
-
 		empty: function () {
 			return !this.series || this.series.length < 1;
 		},
 
 		height: function () {
-			var l       = this.categories.length * this.series.length;
+			var l       = this.categories().length * this.series.length;
 			var padding = l * this.padding;
 			var h       = Math.max(0, l * this.barHeight + padding);
 
@@ -62,6 +53,31 @@ module.exports = {
 	},
 
 	methods: {
+		categories: function (series, seriesIdx) {
+			if (arguments.length < 1) {
+				series = this.series;
+			}
+
+			// Short circuit (no disassemble number 5!)
+			if (!series || series.length < 1) {
+				return [];
+			}
+
+			var order = _(series[seriesIdx || 0].values)
+				.sortBy('x')
+				.pluck('y')
+				.value();
+
+			return _(series)
+				.pluck('values')
+				.flatten()
+				.pluck('y')
+				.uniq()
+				.sortBy(function (n) {
+					return order.indexOf(n);
+				})
+				.value();
+		},
 
 		draw: function () {
 			if (this.empty) {
@@ -90,7 +106,7 @@ module.exports = {
 			};
 
 			var yScale = d3.scale.ordinal()
-				.domain(this.categories)
+				.domain(this.categories())
 				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
@@ -112,7 +128,7 @@ module.exports = {
 				return 'translate(0,' + ((i * height) - groupHeight / 2) + ')';
 			});
 
-			var colorScale = color.scale(_.pluck(this.series, 'name'));
+			var colorScale = this._color;
 			var fmt        = d3.format(this.format);
 			var showLabels = JSON.parse(this.labels);
 
@@ -213,7 +229,11 @@ module.exports = {
 	},
 
 	watch: {
-		'series' : 'draw',
+		'series' : function () {
+			this._color = color.scale(_.pluck(this.series, 'name'));
+
+			this.draw();
+		},
 		'width'  : 'draw',
 		'height' : 'draw',
 		'labels' : 'draw'
