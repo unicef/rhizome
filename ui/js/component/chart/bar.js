@@ -132,7 +132,7 @@ module.exports = {
 				return 'translate(0,' + ((i * height) - groupHeight / 2) + ')';
 			});
 
-			var colorScale = color.scale(_.pluck(this.series, 'name'));
+			var colorScale = this._color;
 			var fmt        = d3.format(this.format);
 			var showLabels = JSON.parse(this.labels);
 
@@ -233,7 +233,11 @@ module.exports = {
 	},
 
 	watch: {
-		'series' : 'draw',
+		'series' : function () {
+			this._color = color.scale(_.pluck(this.series, 'name'));
+
+			this.draw();
+		},
 		'width'  : 'draw',
 		'height' : 'draw',
 		'labels' : 'draw'

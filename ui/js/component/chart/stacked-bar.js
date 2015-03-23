@@ -3,7 +3,6 @@
 var _      = require('lodash');
 var d3     = require('d3');
 
-var color  = require('util/color');
 var legend = require('./renderer/legend');
 
 module.exports = {
@@ -95,7 +94,7 @@ module.exports = {
 				'transform' : 'translate(0,' + (-height / 2) + ')'
 			});
 
-			var colorScale = color.scale(_.pluck(data, 'name'));
+			var colorScale = this._color;
 			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
 			var fmt        = d3.format(fmtString);
 
