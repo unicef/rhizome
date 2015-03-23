@@ -39,20 +39,40 @@ module.exports = {
 	},
 
 	computed: {
-		categories: function () {
+		empty: function () {
+			return !this.series || this.series.length < 1;
+		},
+
+		height: function () {
+			var l       = this.categories().length * this.series.length;
+			var padding = l * this.padding;
+			var h       = Math.max(0, l * this.barHeight + padding);
+
+			return h + Number(this.marginTop) + Number(this.marginBottom);
+		}
+	},
+
+	methods: {
+		categories: function (series) {
+			if (arguments.length < 1) {
+				series = this.series;
+			}
+
 			// Short circuit (no disassemble number 5!)
-			if (this.empty) {
+			if (!series || series.length < 1) {
 				return [];
 			}
 
-			var order = _(this.series[0].values)
+			console.debug('bar::categories order by', series[0].name);
+
+			var order = _(series[0].values)
 				.sortBy('x')
 				.pluck('y')
 				.value();
 
-			console.log('bar::categories order', order);
+			console.debug('bar::categories order', order);
 
-			return _(this.series)
+			return _(series)
 				.pluck('values')
 				.flatten()
 				.pluck('y')
@@ -62,21 +82,6 @@ module.exports = {
 				})
 				.value();
 		},
-
-		empty: function () {
-			return !this.series || this.series.length < 1;
-		},
-
-		height: function () {
-			var l       = this.categories.length * this.series.length;
-			var padding = l * this.padding;
-			var h       = Math.max(0, l * this.barHeight + padding);
-
-			return h + Number(this.marginTop) + Number(this.marginBottom);
-		}
-	},
-
-	methods: {
 
 		draw: function () {
 			if (this.empty) {
@@ -105,7 +110,7 @@ module.exports = {
 			};
 
 			var yScale = d3.scale.ordinal()
-				.domain(this.categories)
+				.domain(this.categories())
 				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {

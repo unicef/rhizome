@@ -21,7 +21,7 @@ module.exports = {
 	computed : {
 
 		height : function () {
-			var l       = this.categories.length;
+			var l       = this.categories().length;
 			var padding = l * this.padding;
 			var h       = Math.max(0, l * this.barHeight + padding);
 
@@ -75,7 +75,7 @@ module.exports = {
 			};
 
 			var yScale = d3.scale.ordinal()
-				.domain(this.categories)
+				.domain(this.categories(data))
 				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
