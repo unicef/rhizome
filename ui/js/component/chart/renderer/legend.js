@@ -5,15 +5,35 @@ var d3 = require('d3');
 
 
 function legend() {
+	var _clickHandler = null;
+	var _filled       = {};
+	var _interactive  = false;
 	var _padding      = 3;
 	var _scale        = d3.scale.category20b();
 	var _size         = 9;
-	var _clickHandler = null;
 
-	function chart (selection) {
+	function fill(d) {
+		if (!_interactive || _filled[d]) {
+			return _scale(d);
+		}
+
+		return 'transparent';
+	}
+
+	function stroke(d) {
+		if (_interactive && !_filled[d]) {
+			return _scale(d);
+		}
+
+		return 'transparent';
+	}
+
+	function chart(selection) {
 		selection.each(function () {
 			var g      = d3.select(this);
 			var series = g.selectAll('.series').data(_scale.domain());
+
+			g.classed('interactive', _interactive);
 
 			var seriesEnter = series.enter()
 				.append('g')
@@ -42,7 +62,10 @@ function legend() {
 				.attr('transform', translate);
 
 			series.select('rect')
-				.attr('fill', _scale)
+				.attr({
+					'fill'   : fill,
+					'stroke' : stroke
+				})
 				.transition()
 				.duration(300)
 				.attr({
@@ -73,6 +96,29 @@ function legend() {
 		}
 
 		_clickHandler = value;
+		return chart;
+	};
+
+	chart.filled = function (value) {
+		if (!arguments.length) {
+			return _.values(_filled);
+		}
+
+		_filled = {};
+
+		value.forEach(function (v) {
+			_filled[v] = true;
+		});
+
+		return chart;
+	};
+
+	chart.interactive = function (value) {
+		if (!arguments.length) {
+			return _interactive;
+		}
+
+		_interactive = value;
 		return chart;
 	};
 

@@ -166,12 +166,17 @@ module.exports = {
 					});
 
 				bar.transition()
-					.duration(300)
+					.duration(500)
 					.attr({
 						'x'      : x,
-						'y'      : y,
-						'height' : height,
 						'width'  : width
+					})
+					.transition()
+					.duration(500)
+					.delay(500)
+					.attr({
+						'y'      : y,
+						'height' : height
 					});
 
 				bar.exit()
@@ -203,6 +208,8 @@ module.exports = {
 			if (this.series.length > 1) {
 				svg.select('.legend')
 					.call(legend()
+						.interactive(true)
+						.filled([this.sortBy])
 						.scale(colorScale)
 						.clickHandler(this.setSortBy));
 			}

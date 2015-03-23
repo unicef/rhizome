@@ -207,6 +207,12 @@ svg {
 		margin-right: 0.2em;
 		margin-bottom: -0.2em;
 	}
+
+	&.interactive {
+		.series {
+			cursor : pointer;
+		}
+	}
 }
 
 // Bullet chart coloring
