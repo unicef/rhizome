@@ -125,7 +125,7 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'**/*.{py,sql,html}',
+			'**/*.{py,sql,html,sh}',
 			'requirements.txt',
 			'!sql_backups/**/*',
 			'!db.sql',
