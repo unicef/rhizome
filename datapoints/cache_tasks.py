@@ -74,13 +74,7 @@ class CacheRefresh(object):
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
             if len(self.datapoint_id_list) == 0:
-                print 'NOTHING_TO_PROCESS\n' * 4
                 return 'NOTHING_TO_PROCESS'
-
-        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
-        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
-        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
-        print '=== LEN DP_IDS: %s === ' % len(self.datapoint_id_list)
 
         self.set_cache_job_id_for_raw_datapoints()
 
@@ -153,6 +147,9 @@ class CacheRefresh(object):
         '''
 
         loop_region_ids = self.get_region_ids_to_process()
+
+        print 'REGION IDS'
+        print loop_region_ids
 
         while len(list(loop_region_ids)) > 0:
 

@@ -24,11 +24,11 @@ class CacheRefreshTestCase(TransactionTestCase):
 
         ## or ##
 
-        from datapoints.cache_tasks import CacheRefresh
-        from datapoints.models import DataPoint, Region
-        r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
-        dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-        mr = CacheRefresh(list(dp_ids))
+from datapoints.cache_tasks import CacheRefresh
+from datapoints.models import DataPoint, Region
+r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
+dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
+mr = CacheRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
