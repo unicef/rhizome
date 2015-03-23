@@ -6,22 +6,22 @@ var d3 = require('d3');
 
 function legend() {
 	var _clickHandler = null;
-	var _filled       = {};
+	var _filled       = function () { return true; };
 	var _interactive  = false;
 	var _padding      = 3;
 	var _scale        = d3.scale.category20b();
 	var _size         = 9;
 
-	function fill(d) {
-		if (!_interactive || _filled[d]) {
+	function fill(d, i) {
+		if (!_interactive || _filled(d, i)) {
 			return _scale(d);
 		}
 
 		return 'transparent';
 	}
 
-	function stroke(d) {
-		if (_interactive && !_filled[d]) {
+	function stroke(d, i) {
+		if (_interactive && !_filled(d, i)) {
 			return _scale(d);
 		}
 
@@ -101,14 +101,10 @@ function legend() {
 
 	chart.filled = function (value) {
 		if (!arguments.length) {
-			return _.values(_filled);
+			return _filled;
 		}
 
-		_filled = {};
-
-		value.forEach(function (v) {
-			_filled[v] = true;
-		});
+		_filled = value;
 
 		return chart;
 	};

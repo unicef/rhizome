@@ -209,7 +209,9 @@ module.exports = {
 				svg.select('.legend')
 					.call(legend()
 						.interactive(true)
-						.filled([this.sortBy])
+						.filled(function (d, i) {
+							return self.sortBy ? self.sortBy !== d : i !== 0;
+						})
 						.scale(colorScale)
 						.clickHandler(this.setSortBy));
 			}
