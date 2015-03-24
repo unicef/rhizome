@@ -11,13 +11,19 @@ DUMPALL="/usr/bin/pg_dumpall"
 PGDUMP="/usr/bin/pg_dump"
 PSQL="/usr/bin/psql"
 
-echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.tgz ...
+echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.gz ...
 
-DUMPALL$ --verbose --format=t -f "$BACKUPDIR$DATE.sql.tar" $DB -U $USER
+pg_dump --verbose --format=t -f "$BACKUPDIR$DATE.sql" $DB -U $USER
 
-# delete backup files older than 30 days
-OLD=$(find $BACKUPDIR -type d -mtime +30)
+gzip "$BACKUPDIR$DATE.sql"
+
+# delete backup files older than 10 days
+OLD=$(find $BACKUPDIR -type d -mtime +10)
 if [ -n "$OLD" ] ; then
+
+        ## this wont work on my local because my local machine ##
+        ## because it does not have permissions to rm ##
+
         echo deleting old backup files: $OLD
         echo $OLD | xargs rm -rfv
 fi
