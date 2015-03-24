@@ -264,3 +264,11 @@ svg {
 		text-align  : center;
 	}
 }
+
+.bar {
+	.y.axis {
+		text {
+			fill: $oil;
+		}
+	}
+}
