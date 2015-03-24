@@ -200,6 +200,7 @@ module.exports = {
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
 				.tickSize(0)
+				.tickPadding(5)
 				.orient('left');
 
 			svg.select('.y.axis')
