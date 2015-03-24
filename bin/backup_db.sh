@@ -15,14 +15,13 @@ echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.gz ...
 
 pg_dump --verbose --format=t -f "$BACKUPDIR$DATE.sql" $DB -U $USER
 
+echo back up complete... zipping file
+
 gzip "$BACKUPDIR$DATE.sql"
 
 # delete backup files older than 10 days
 OLD=$(find $BACKUPDIR -type d -mtime +10)
 if [ -n "$OLD" ] ; then
-
-        ## this wont work on my local because my local machine ##
-        ## because it does not have permissions to rm ##
 
         echo deleting old backup files: $OLD
         echo $OLD | xargs rm -rfv
