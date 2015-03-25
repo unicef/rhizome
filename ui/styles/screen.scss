@@ -45,7 +45,11 @@ h3 {
 		display        : inline-block;
 		text-transform : none;
 		font-size      : rem-calc(12);
-		margin-left    : 1em;
+		margin-right   : 1em;
+	}
+
+	input[type="radio"] {
+		margin-bottom: rem-calc(9);
 	}
 }
 
@@ -410,5 +414,33 @@ ul {
 
 	h3 {
 		border: none;
+	}
+}
+
+.inline {
+	display: block;
+}
+
+@media #{$small-up} {
+	.small {
+		&.inline {
+			display: inline-block;
+		}
+	}
+}
+
+@media #{$medium-up} {
+	.medium {
+		&.inline {
+			display: inline-block;
+		}
+	}
+}
+
+@media #{$large-up} {
+	.large {
+		&.inline {
+			display: inline-block;
+		}
 	}
 }
