@@ -568,3 +568,11 @@ def api_region(request):
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
+
+
+def bad_data(request):
+
+    print 'BAD\n' * 20
+
+    return render_to_response('bad_data.html'
+        ,context_instance=RequestContext(request))
