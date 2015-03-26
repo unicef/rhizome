@@ -1,0 +1,16 @@
+<div
+	class="menu-button fa-stack"
+	role="button"
+	v-on="click : open = !open">
+
+	<i class="fa fa-circle stack-2x"></i>
+	<i class="fa stack-1x fa-inverse {{ icon }}"></i>
+</div>
+
+<div class="container">
+	<ul class="menu">
+		<li v-repeat="items">
+			<a href="{{ path }}">{{ title }}</a>
+		</li>
+	</ul>
+</div>
