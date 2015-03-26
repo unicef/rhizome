@@ -18,7 +18,7 @@ BEGIN
 	EXECUTE FORMAT ('
 
 		DROP TABLE IF EXISTS _tmp_indicator_lookup;
-		CREATE TABLE _tmp_indicator_lookup
+		CREATE TEMP TABLE _tmp_indicator_lookup
 		AS
 		SELECT DISTINCT
 			cic.indicator_component_id as indicator_in
