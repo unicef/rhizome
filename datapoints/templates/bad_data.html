@@ -4,20 +4,39 @@
 
 {% block content %}
 
-    <button> <a href="#"> Refresh Cache </a></button>
+    <button> <a href="#"> FInd Bad Data! </a></button>
+        <br>
+        <br>
 
-    <table>
-    <thead>
-        <tr>
-            <th>task_name</th>
-            <th>run_task</th>
-        </tr>
-    </thead>
-        <tr>
-            <th>Pop NG Dash Data</th>
-            <th><a  Test NG Dash </a></th>
-        </tr>
+        <div align="center">
+        </div>
 
-    </table>
+
+        <br>
+
+        {% if dp_data %}
+        <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Error Type</th>
+                <th>Fix!</th>
+            </tr>
+        </thead>
+
+            {% for dp in dp_data %}
+            <tr>
+                <th>{{ dp.id }}</th>
+                <th>{{ dp.error_type }}</th>
+                <th><a href="#"> Fix! </a></th>
+
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+        <p>No Bad Data!.</p>
+    {% endif %}
 
 {% endblock %}

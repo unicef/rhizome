@@ -572,7 +572,15 @@ def api_region(request):
 
 def bad_data(request):
 
-    print 'BAD\n' * 20
+    dp_curs = DataPoint.objects.raw('''
+        SELECT id, 'negative_value' as error_type
+        FROM datapoint d
+        LIMIT 10;
+    ''')
 
-    return render_to_response('bad_data.html'
+    dp_data = [{'id':dp.id, 'error_type':dp.error_type} for dp in dp_curs]
+
+    pprint(dp_data)
+
+    return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))
