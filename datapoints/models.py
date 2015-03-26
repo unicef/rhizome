@@ -303,3 +303,14 @@ class ReconData(models.Model):
     class Meta:
         db_table = 'recon_data'
         unique_together = ('region','campaign','indicator')
+
+
+class BadData(models.Model):
+
+    datapoint = models.ForeignKey(DataPoint)
+    document = models.ForeignKey('source_data.Document')
+    error_type = models.CharField(max_length=55)
+    cache_job = models.ForeignKey(CacheJob)
+
+    class Meta:
+        db_table = 'bad_data'
