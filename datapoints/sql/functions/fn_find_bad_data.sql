@@ -2,9 +2,6 @@
 CREATE FUNCTION fn_find_bad_data(cache_job_id INT)
 RETURNS TABLE(id int, error_type varchar, doc_id int) AS $$
 
-	DELETE FROM bad_data 
-	WHERE cache_job_id = $1;
-
 	INSERT INTO bad_data
 	(datapoint_id,error_type,document_id,cache_job_id)
 	
@@ -30,10 +27,12 @@ RETURNS TABLE(id int, error_type varchar, doc_id int) AS $$
         INNER JOIN source_datapoint sd
             ON x.source_datapoint_id = sd.id;
 
-		
+	SELECT 
+	datapoint_id as id,error_type,document_id
+	FROM bad_data
+	WHERE cache_job_id = $1;
+
 $$
 
 LANGUAGE SQL;
 
-
-SELECT * FROM fn_find_bad_data(-1)

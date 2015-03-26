@@ -92,6 +92,8 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
+        print '.....FINDING BAD DAT...\n' * 5
+        bad_dp_ids = self.bad_datapoints()
         print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
         print '.....CALCULATING.....\n' * 5
@@ -121,6 +123,15 @@ class CacheRefresh(object):
 
         x = [dp.id for dp in dp_curs]
 
+
+    def bad_datapoints(self):
+
+        dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
+            ,[self.cache_job.id])
+
+        dp_ids = [dp.id for dp in dp_cursor]
+
+        return dp_ids
 
     def agg_datapoints(self):
         '''
