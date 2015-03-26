@@ -31,14 +31,15 @@ class CacheRefresh(object):
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
-        status = self.set_up()
+        response_msg = self.set_up()
 
-        if status != 'NOTHING_TO_PROCESS':
+        if response_msg != 'NOTHING_TO_PROCESS':
 
-            self.cache_job.response_msg = self.main()
+            response_msg = self.main()
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
+        self.cache_job.response_msg = response_msg
         self.cache_job.save()
 
     def set_up(self):
@@ -323,7 +324,7 @@ class CacheRefresh(object):
             	ON dwc.region_id = r.id
             INNER JOIN campaign c
             	ON dwc.campaign_id = c.id
-            AND c.office_id = r.office_id
+                AND c.office_id = r.office_id
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;
             """,[self.cache_job.id])
