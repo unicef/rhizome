@@ -124,27 +124,27 @@ module.exports = {
 				reasons    : [],
 				monitoring : [],
 				barHeight  : 6,
-				offset     : 'expand'
+				offset     : 'zero'
 			},
 			absences      : {
 				reasons : [],
-				offset  : 'expand'
+				offset  : 'zero'
 			},
 			noncompliance : {
 				reasons : [],
-				offset  : 'expand',
+				offset  : 'zero',
 			},
 			resolutions   : {
 				by     : [],
-				offset : 'expand',
+				offset : 'zero',
 			},
 			influencers   : {
 				by     : [],
-				offset : 'expand',
+				offset : 'zero',
 			},
 			sources       : {
 				series : [],
-				offset : 'expand'
+				offset : 'zero'
 			}
 		};
 	},
