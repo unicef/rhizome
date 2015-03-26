@@ -50,9 +50,15 @@ BEGIN
 		indicator_in
 		, cic.indicator_component_id
 		, CAST(0 AS BOOLEAN) AS is_calc
-	FROM _tmp_indicator_lookup
+	FROM _tmp_indicator_lookup til
 	INNER JOIN calculated_indicator_component cic
-	ON indicator_out = cic.indicator_id;
+	ON indicator_out = cic.indicator_id
+
+ 		WHERE NOT EXISTS (
+ 		SELECT 1 FROM _tmp_indicator_lookup til_exists
+ 		WHERE til.indicator_in = til_exists.indicator_in
+ 		AND til.indicator_out = til_exists.indicator_out
+);
 
 	-- now using the indicator_map create a temp table created above, find all of the information
 	-- needed to perform all calucaltions for this job
