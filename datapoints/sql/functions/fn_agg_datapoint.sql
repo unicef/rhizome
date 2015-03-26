@@ -46,7 +46,6 @@ RETURNS TABLE(id int) AS $$
 	FROM agg_datapoint ad
 	INNER JOIN region r
 		ON ad.region_id = r.id
---  		AND r.id = ANY($2)
  	WHERE EXISTS ( -- see POLIO-491 --
  		SELECT 1 FROM agg_datapoint ad_needs_compute
  		INNER JOIN region agg_r
@@ -62,7 +61,7 @@ RETURNS TABLE(id int) AS $$
 		WHERE r.parent_region_id = ad_exists.region_id
 		AND ad.indicator_id = ad_exists.indicator_id
 		AND ad.campaign_id = ad_exists.campaign_id
-		AND ad.cache_job_id = ad_exists.cache_job_id
+		AND ad_exists.cache_job_id = $1
 	)
 	GROUP BY r.parent_region_id, ad.indicator_id, ad.campaign_id;
 
