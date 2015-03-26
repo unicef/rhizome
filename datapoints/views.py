@@ -573,12 +573,31 @@ def api_region(request):
 def bad_data(request):
 
     dp_curs = DataPoint.objects.raw('''
-        SELECT id, 'negative_value' as error_type
-        FROM datapoint d
-        LIMIT 10;
+
+        SELECT x.*, sd.document_id as doc_id
+        FROM (
+            SELECT id, 'negative_value' as error_type, source_datapoint_id
+            FROM datapoint d
+            WHERE value < 0.00
+
+            UNION ALL
+
+            SELECT d.id, 'campaign_wrong_country', source_datapoint_id
+            FROM datapoint d
+            INNER JOIN region r
+                ON d.region_id = r.id
+            INNER JOIN campaign c
+                ON d.campaign_id = c.id
+            WHERE r.office_id != c.office_id
+        )x
+
+        INNER JOIN source_datapoint sd
+            ON x.source_datapoint_id = sd.id;
+
     ''')
 
-    dp_data = [{'id':dp.id, 'error_type':dp.error_type} for dp in dp_curs]
+    dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.doc_id} for\
+        dp in dp_curs]
 
     pprint(dp_data)
 
