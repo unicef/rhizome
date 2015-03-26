@@ -30,7 +30,7 @@ BEGIN
 			WHERE cic.indicator_component_id = d.indicator_id
 			AND cache_job_id = %1$s
 		)
-		
+
 		UNION ALL
 
 		SELECT DISTINCT
@@ -39,8 +39,7 @@ BEGIN
 				, CAST(0 AS BOOLEAN) as is_calc
 		FROM datapoint d
 		WHERE cache_job_id = %1$s
-
-		);',$1
+		;',$1
 	);
 
 	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
