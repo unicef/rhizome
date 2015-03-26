@@ -74,4 +74,5 @@ urlpatterns = [
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^load_gdoc_data/$', views.load_gdoc_data, name='load_gdoc_data'),
     url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
+    url(r'^bad_data/$', views.bad_data, name='bad_data'),
 ]
