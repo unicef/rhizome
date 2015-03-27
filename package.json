@@ -4,7 +4,8 @@
   "scripts": {
     "clean" : "gulp clean",
     "build" : "gulp build",
-    "dev"   : "gulp watch"
+    "dev"   : "gulp watch",
+    "dist"  : "gulp dist"
   },
   "dependencies": {
     "d3": "^3.4.13",
