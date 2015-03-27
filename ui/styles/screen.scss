@@ -35,6 +35,17 @@ header {
 	bottom   : 0;
 }
 
+h1,h2,h3,h4,h5,h6 {
+	a {
+		color : inherit;
+
+		&:not([href]) {
+			color  : inherit;
+			cursor : default;
+		}
+	}
+}
+
 h3 {
 	border-bottom  : 1px solid $gainsboro;
 	color          : $gainsboro;
@@ -116,12 +127,12 @@ body.data-entry nav .data-entry {
 }
 
 a {
-	&:hover {
-		color: #ffcc67;
+	transition: color 300ms ease-in-out;
+
+	&[href]:hover {
+		color: $secondary-color;
 	}
 }
-
-
 
 table {
 	border-collapse: collapse;
