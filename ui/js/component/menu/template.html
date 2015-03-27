@@ -1,0 +1,32 @@
+<div class="menu">
+	<a
+		class="menu-button fa-stack"
+		v-on="click : toggleMenu">
+
+		<i class="fa fa-stack-2x fa-circle"></i>
+		<i class="fa fa-stack-1x fa-bars"></i>
+	</a>
+
+	<div
+		class="container"
+		v-el="menu"
+		v-class="orientation"
+		v-style="margin-left : marginLeft + 'px'">
+
+		<div
+			class="background"
+			v-if="open">
+			<div class="arrow"></div>
+			<ul>
+				<li
+					v-repeat="items">
+					<a
+						href="{{ path }}"
+						role="menuitem"
+						v-on="click : onItemClick($event, path)">{{ title }}</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+</div>

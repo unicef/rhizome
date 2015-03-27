@@ -3,7 +3,13 @@
 <form class="inline no-print">
 	<div class="row">
 		<div class="medium-6 push-6 columns">
-			<h1 style="text-align:right">{{ title }}</h1>
+			<h1 style="text-align:right">
+				{{ title }}
+				<div
+					v-component="vue-menu"
+					data-change-event="dashboard-selected"
+					v-with="items : dashboards"></div>
+			</h1>
 		</div>
 		<div id="regions" class="medium-2 pull-6 column"></div>
 

@@ -185,9 +185,13 @@ table {
 }
 
 *[role="menuitem"] {
+	color   : $body-font-color;
+	display : block;
+	padding : 5pt;
+
 	&:hover {
-		background-color: $primary-color;
-		color: white;
+		background-color : $primary-color;
+		color            : white;
 	}
 }
 
@@ -419,6 +423,33 @@ ul {
 
 .inline {
 	display: block;
+}
+
+.menu {
+	.menu-button {
+		color     : white;
+		cursor    : pointer;
+		font-size : 1rem;
+
+		.fa-circle {
+			color       : lighten($primary-color, 30%);
+			text-shadow : 0 2px $primary-color;
+		}
+
+		&:active {
+			.fa-circle {
+				text-shadow : 0 1px $primary-color;
+			}
+		}
+	}
+
+	.background {
+		border-color: $gainsboro;
+
+		.arrow {
+			border-bottom-color: $gainsboro !important;
+		}
+	}
 }
 
 @media #{$small-up} {
