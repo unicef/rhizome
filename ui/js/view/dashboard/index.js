@@ -20,6 +20,13 @@ module.exports = {
 			campaign  : null,
 			campaigns : [],
 			dashboard : 'management-dashboard',
+			dashboards : [{
+				'title' : 'Polio Performance Dashboard',
+				'path'  : '/datapoints/management-dashboard'
+			}, {
+				'title' : 'NGA Country Office',
+				'path'  : '/datapoints/nco-dashboard'
+			}],
 			region    : null,
 			regionName: '',
 			title     : titles['management-dashboard']
