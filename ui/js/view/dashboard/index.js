@@ -125,6 +125,10 @@ module.exports = {
 		'region-changed': function (region) {
 			this.region = region;
 			this._regions.select(region);
+		},
+
+		'dashboard-selected' : function (path) {
+			page(path);
 		}
 	},
 

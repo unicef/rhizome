@@ -10,13 +10,16 @@ module.exports = {
 	replace  : true,
 	template : require('./template.html'),
 
+	paramAttributes : ['data-change-event'],
+
 	data : function () {
 		return {
 			items       : [],
 			open        : false,
 			marginLeft  : 0,
 			maxHeight   : 'none',
-			orientation : 'center'
+			orientation : 'center',
+			changeEvent : 'menu-item-click'
 		}
 	},
 
@@ -41,7 +44,7 @@ module.exports = {
 
 		onItemClick : function (event, path) {
 			event.preventDefault();
-			this.$dispatch('menu-item-click', path);
+			this.$dispatch(this.changeEvent, path);
 			this.open = false;
 		},
 
