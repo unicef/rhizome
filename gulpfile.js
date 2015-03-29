@@ -92,7 +92,10 @@ gulp.task('clean', function (cb) {
 });
 
 gulp.task('build', ['fonts', 'browserify', 'styles']);
-gulp.task('default', ['clean', 'build']);
+
+gulp.task('default', ['clean'], function () {
+	return gulp.start('build');
+});
 
 gulp.task('livereload', function () {
 	var server = $.livereload();
