@@ -3,8 +3,8 @@
 	<div class="row print-only">
 		<div class="small-12 columns">
 			<h1>
-				<span class="campaign">{{ campaignName }}</span>
-				<span class="region">{{ regionName }}</span>
+				<span v-if="campaign" class="campaign">{{ campaign.start_date | date 'MMMM YYYY' }}</span>
+				<span v-if="region" class="region">{{ region.name }}</span>
 			</h1>
 			<h2>
 				Polio<br />

@@ -39,7 +39,6 @@ module.exports = {
 
 	created: function () {
 		function show(ctx) {
-			console.debug('show', ctx);
 			self.dashboard = self._dashboardIndex[ctx.params.dashboard || 'management-dashboard'];
 			self.region    = self._regionIndex[ctx.params.region];
 			self.campaign  = self._campaignIndex[ctx.params.year + ctx.params.month];
@@ -78,15 +77,6 @@ module.exports = {
 					};
 				})
 				.value();
-
-			self.region = regions
-				.filter(function (region) {
-					// FIXME: this only works if the user has permissions to see country-
-					// level regions
-					return region.parent_region_id === null;
-				})
-				.sortBy('name')
-				.first();
 		}, function (data) {
 			window.alert('An error occurred loading regions from the server. Please refresh the page.');
 			self.regions = [];
@@ -117,18 +107,32 @@ module.exports = {
 						'value' : dt.format('YYYYMM')
 					};
 				});
-
-			self.campaign = _(campaigns)
-				.sortBy('start_date')
-				.last();
 		}, function (data) {
 			window.alert('An error occurred loading campaign data from the server. Please refresh the page.');
 			self.campaigns = [];
 		});
 
-		Promise.all([regionPromise, campaignPromise]).then(function () {
-			console.debug('all done');
+		Promise.all([regionPromise, campaignPromise]).then(function (data) {
 			page({ click: false });
+
+			if (!self.region) {
+				self.region = _(data[0].objects)
+					.filter(function (region) {
+						// FIXME: this only works if the user has permissions to see country-
+						// level regions
+						return region.parent_region_id === null;
+					})
+					.sortBy('name')
+					.first();
+			}
+
+			if (!self.campaign) {
+				self.campaign = _(data[1].objects)
+					.sortBy(function (campaign) {
+						return moment(campaign.start_date).format('YYYYMMDD');
+					})
+					.last();
+			}
 		});
 	},
 
@@ -166,7 +170,6 @@ module.exports = {
 
 	filters : {
 		'date' : function (v, format) {
-			console.debug('date filter', arguments);
 			return moment(v).format(Vue.util.stripQuotes(format));
 		}
 	},

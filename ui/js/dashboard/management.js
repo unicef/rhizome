@@ -58,7 +58,6 @@ module.exports = {
 	data: function () {
 		return {
 			region          : null,
-			regionName      : '',
 			campaign        : null,
 			campaigns       : [],
 			capacity        : [178,228,179,184,180,185,230,226,239],
@@ -97,12 +96,12 @@ module.exports = {
 
 			// Fetch polio cases data for this year to display over the polio cases
 			// line chart
-			var start = moment(this.campaign.end, 'YYYY-MM-DD').startOf('year');
+			var start = moment(this.campaign.start_date).startOf('year');
 			var q     = {
 				indicator__in  : 168,
-				region__in     : [this.region],
+				region__in     : [this.region.id],
 				campaign_start : start.format('YYYY-MM-DD'),
-				campaign_end   : this.campaign.end
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			var self = this;
@@ -138,9 +137,9 @@ module.exports = {
 
 			q = {
 				indicator__in  : inaccessibility,
-				region__in     : [this.region],
-				campaign_start : moment(this.campaign.end, 'YYYY-MM-DD').startOf('month').format('YYYY-MM-DD'),
-				campaign_end   : this.campaign.end
+				region__in     : [this.region.id],
+				campaign_start : moment(this.campaign.start_date).startOf('month').format('YYYY-MM-DD'),
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			Promise.all([api.indicators({ id__in: inaccessibility }), api.datapoints(q)])
@@ -176,7 +175,7 @@ module.exports = {
 				});
 
 			q.indicator__in = [175,176,177,204];
-			q.region__in    = [this.region];
+			q.region__in    = [this.region.id];
 
 			api.datapoints(q)
 				.then(function (data) {

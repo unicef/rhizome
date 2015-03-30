@@ -96,7 +96,7 @@ function _loadIndicator () {
 function _loadDatapoints () {
 	/* jshint validthis:true */
 
-	if (!this.indicators || !this.campaign || !this.region) {
+	if (!this.indicators || !this.indicators.length || !this.campaign || !this.region) {
 		return;
 	}
 
@@ -145,7 +145,7 @@ module.exports = {
 				return null;
 			}
 
-			var start = moment(this.campaign.date, 'YYYYMMDD');
+			var start = moment(this.campaign.start_date);
 
 			return start.subtract.apply(
 					start,
@@ -166,8 +166,8 @@ module.exports = {
 		query: function () {
 			var q = {
 				indicator__in: _.pluck(this.indicators, 'id'),
-				campaign_end : this.campaign.end,
-				region__in   : [this.region]
+				campaign_end : moment(this.campaign.end_date).format('YYYY-MM-DD'),
+				region__in   : [this.region.id]
 			};
 
 			var start = this.campaign_start;

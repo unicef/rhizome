@@ -3,7 +3,7 @@
 <form class="inline no-print">
 	<div class="row">
 		<div class="medium-6 push-6 columns">
-			<h1 style="text-align:right">
+			<h1 v-if="dashboard" style="text-align:right">
 				{{ dashboard.name }}
 				<div
 					v-component="vue-menu"
@@ -13,7 +13,7 @@
 		</div>
 
 		<div class="medium-6 pull-6 columns">
-			<h2>
+			<h2 v-if="campaign && region">
 				{{ campaign.start_date | date 'MMMM YYYY' }}
 				<div
 					v-component="vue-menu"
