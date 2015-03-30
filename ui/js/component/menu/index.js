@@ -63,7 +63,7 @@ module.exports = {
 				this.marginLeft  = 0;
 			} else if (el.width >= menu.width) {
 				this.orientation = 'center';
-				this.marginLeft  = menu.width / 2;
+				this.marginLeft  = -menu.width / 2;
 			} else if (leftEdge < 0) {
 				this.orientation = 'left';
 				this.marginLeft  = 0;
@@ -72,7 +72,7 @@ module.exports = {
 				this.marginLeft  = 0;
 			} else {
 				this.orientation = 'center';
-				this.marginLeft  = menu.width / 2;
+				this.marginLeft  = -menu.width / 2;
 			}
 		}
 
