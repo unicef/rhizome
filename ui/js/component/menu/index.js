@@ -20,7 +20,7 @@ module.exports = {
 			maxHeight   : 'none',
 			orientation : 'center',
 			changeEvent : 'menu-item-click'
-		}
+		};
 	},
 
 	ready : function () {

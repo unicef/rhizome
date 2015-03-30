@@ -7,50 +7,6 @@ var moment = require('moment');
 var api    = require('data/api');
 var util   = require('util/data');
 
-/**
- * Utility for generating the tickValues array for a year-to-date chart.
- *
- * Ticks will be Jan, Dec, and the current month. If the current month is either
- * Jan or Dec, then only Jan and Dec are used.
- */
-function ytdTicks(month) {
-	return function (domain) {
-		var lower = domain[0];
-		var upper = domain[domain.length - 1];
-
-		// If the current month is between March and October, the ticks should be
-		// January, current month, December.
-		if (month > lower + 1 && month < upper - 1) {
-			return [lower, month, upper];
-		}
-
-		// If the current month is January, or February, the ticks are just the
-		// current month and December.
-		if (month <= lower + 1) {
-			return [month, upper];
-		}
-
-		// Otherwise the ticks are January and the current month
-		return [1, month];
-	};
-}
-
-function timeTicks(domain) {
-	var lower = moment(domain[0]);
-	var upper = moment(domain[domain.length - 1]);
-	var current = moment(upper).startOf('year');
-	var ticks = [lower.toDate().getTime()];
-
-	while (current.isAfter(lower)) {
-		ticks.push(current.toDate().getTime());
-		current = moment(current).subtract(1, 'year');
-	}
-
-	ticks.push(upper.toDate().getTime());
-
-	return ticks;
-}
-
 module.exports = {
 
 	template: require('./management.html'),
@@ -149,9 +105,7 @@ module.exports = {
 					var objects    = data.objects;
 					var indicators = {};
 
-					for (var i = objects.length - 1; i >= 0; i--) {
-						var o = objects[i];
-
+					objects.forEach(function (o) {
 						o.indicators.forEach(function (d) {
 							indicators[d.indicator] = _.assign({
 								name           : index[d.indicator].short_name,
@@ -163,7 +117,7 @@ module.exports = {
 								}]
 							}, _.pick(o, 'campaign', 'region'));
 						});
-					}
+					});
 
 					self.inaccessibility = _(indicators)
 						.values()

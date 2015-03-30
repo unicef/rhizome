@@ -226,7 +226,7 @@ module.exports = {
 
 					if (self.includeSubRegions) {
 						// this will include all child regions:
-						var children = flattenChildren(region, 'children', null, function(d) { return true; });
+						var children = flattenChildren(region, 'children', null, function() { return true; });
 						// this will include only high risk child regions
 						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
@@ -356,12 +356,14 @@ module.exports = {
 									}
 									// generate validation for values
 									cell.validateValue = function(newVal) {
+										var value, passed;
+
 										if (_.isNull(newVal)) {
-											var value = null;
-											var passed = true;
+											value = null;
+											passed = true;
 										} else {
-											var value = parseFloat(newVal);
-											var passed = !_.isNaN(value);
+											value = parseFloat(newVal);
+											passed = !_.isNaN(value);
 										}
 										return { 'value': value, 'passed': passed };
 									};

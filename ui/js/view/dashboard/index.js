@@ -1,4 +1,4 @@
-/* global Promise */
+/* global window, Promise */
 
 'use strict';
 
@@ -8,7 +8,6 @@ var page     = require('page');
 var Vue      = require('vue');
 
 var api      = require('data/api');
-var Dropdown = require('component/dropdown');
 
 // FIXME: simulating part of the dashboard definition that would be retrieved
 // from the server
@@ -77,7 +76,7 @@ module.exports = {
 					};
 				})
 				.value();
-		}, function (data) {
+		}, function () {
 			window.alert('An error occurred loading regions from the server. Please refresh the page.');
 			self.regions = [];
 		});
@@ -107,7 +106,7 @@ module.exports = {
 						'value' : dt.format('YYYYMM')
 					};
 				});
-		}, function (data) {
+		}, function () {
 			window.alert('An error occurred loading campaign data from the server. Please refresh the page.');
 			self.campaigns = [];
 		});
