@@ -42,12 +42,6 @@ module.exports = {
 			this.open = false;
 		},
 
-		onItemClick : function (event, data) {
-			event.preventDefault();
-			this.$dispatch(this.changeEvent, data);
-			this.open = false;
-		},
-
 		onResize : function () {
 			var el     = dom.dimensions(this.$el);
 			var menu   = dom.dimensions(this.$$.menu, true);
@@ -75,6 +69,9 @@ module.exports = {
 				this.marginLeft  = -menu.width / 2;
 			}
 		}
+	},
 
+	components : {
+		'vue-menuitem' : require('./menuItem.js')
 	}
 };

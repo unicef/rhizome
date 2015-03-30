@@ -19,9 +19,19 @@
 				padding : 0;
 				margin  : 0;
 
+				.fa {
+					visibility: hidden;
+				}
+
 				a {
 					white-space   : nowrap;
 					text-overflow : ellipsis;
+
+					&.folder {
+						& > .fa {
+							visibility: visible;
+						}
+					}
 				}
 			}
 		}
