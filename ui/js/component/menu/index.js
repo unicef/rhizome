@@ -42,9 +42,9 @@ module.exports = {
 			this.open = false;
 		},
 
-		onItemClick : function (event, path) {
+		onItemClick : function (event, data) {
 			event.preventDefault();
-			this.$dispatch(this.changeEvent, path);
+			this.$dispatch(this.changeEvent, data);
 			this.open = false;
 		},
 

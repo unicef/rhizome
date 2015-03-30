@@ -23,9 +23,8 @@
 				<li
 					v-repeat="items">
 					<a
-						href="{{ path }}"
 						role="menuitem"
-						v-on="click : onItemClick($event, path)">{{ title }}</a>
+						v-on="click : onItemClick($event, value)">{{ title }}</a>
 				</li>
 			</ul>
 		</div>
