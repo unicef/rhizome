@@ -467,6 +467,14 @@ ul {
 	}
 }
 
+.menu {
+	*[role="search"] {
+		input {
+			background-color: $vapor;
+		}
+	}
+}
+
 @media #{$small-up} {
 	.small {
 		&.inline {

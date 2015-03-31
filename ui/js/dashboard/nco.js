@@ -1,12 +1,13 @@
 /* global window */
 'use strict';
 
-var _    = require('lodash');
-var d3   = require('d3');
-var path = require('vue/src/parsers/path');
+var _      = require('lodash');
+var d3     = require('d3');
+var moment = require('moment');
+var path   = require('vue/src/parsers/path');
 
-var api  = require('data/api');
-var util = require('util/data');
+var api    = require('data/api');
+var util   = require('util/data');
 
 function onError(err) {
 	window.alert('We\'re sorry, we failed to load some of the data for the dashboard.');
@@ -175,17 +176,17 @@ module.exports = {
 			});
 
 			var overview = {
-				region__in     : [this.region],
+				region__in     : [this.region.id],
 				indicator__in  : indicators,
-				campaign_start : this.campaign.end,
-				campaign_end   : this.campaign.end
+				campaign_start : moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			var provinces = {
-				parent_region__in : [this.region],
+				parent_region__in : [this.region.id],
 				indicator__in     : indicators,
-				campaign_start    : this.campaign.end,
-				campaign_end      : this.campaign.end,
+				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD'),
 				level             : 'province'
 			};
 

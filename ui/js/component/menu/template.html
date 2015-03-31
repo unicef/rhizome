@@ -3,8 +3,10 @@
 		class="menu-button fa-stack"
 		v-on="click : toggleMenu">
 
-		<i class="fa fa-stack-2x fa-circle"></i>
-		<i class="fa fa-stack-1x fa-bars"></i>
+		<content>
+			<i class="fa fa-stack-2x fa-circle"></i>
+			<i class="fa fa-stack-1x fa-bars"></i>
+		</content>
 	</a>
 
 	<div
@@ -17,14 +19,22 @@
 			class="background"
 			v-if="open">
 			<div class="arrow"></div>
+
+			<div v-if="searchable" role="search">
+				<input
+					type="text"
+					tabindex="1"
+					v-model="pattern"
+					v-on="click : $event.stopPropagation()">
+				<a
+					class="clear-btn"
+					v-on="click : clearSearch($event)"
+					v-show="pattern.length > 0">
+					<i class="fa fa-times-circle"></i>
+				</a>
+			</div>
 			<ul>
-				<li
-					v-repeat="items">
-					<a
-						href="{{ path }}"
-						role="menuitem"
-						v-on="click : onItemClick($event, path)">{{ title }}</a>
-				</li>
+				<li v-repeat="filteredItems" v-component="vue-menuitem"></li>
 			</ul>
 		</div>
 

@@ -2,29 +2,74 @@
 
 'use strict';
 
+var _   = require('lodash');
 var Vue = require('vue');
 
 var dom = require('util/dom');
+
+function findMatches(item, re) {
+	var matches = [];
+
+	if (re.test(item.title)) {
+		matches.push(item);
+	}
+
+	if (item.children) {
+		item.children.forEach(function (child) {
+			matches = matches.concat(findMatches(child, re));
+		});
+	}
+
+	return matches;
+}
 
 module.exports = {
 	replace  : true,
 	template : require('./template.html'),
 
-	paramAttributes : ['data-change-event'],
+	paramAttributes : [
+		'data-change-event',
+		'data-searchable'
+	],
 
 	data : function () {
 		return {
 			items       : [],
 			open        : false,
+			pattern     : '',
+			searchable  : false,
+
 			marginLeft  : 0,
 			maxHeight   : 'none',
 			orientation : 'center',
-			changeEvent : 'menu-item-click'
-		}
+
+			changeEvent : 'menu-item-click',
+		};
 	},
 
 	ready : function () {
 		window.addEventListener('resize', this.onResize);
+	},
+
+	computed : {
+		filtered : function () {
+			return this.pattern.length > 2;
+		},
+
+		filteredItems : function () {
+			if (!this.filtered) {
+				return this.items;
+			}
+
+			var items   = [];
+			var pattern = this.pattern;
+
+			_.forEach(this.items, function (item) {
+				items = items.concat(findMatches(item, new RegExp(pattern, 'gi')));
+			});
+
+			return items;
+		}
 	},
 
 	methods : {
@@ -38,14 +83,14 @@ module.exports = {
 			Vue.nextTick(this.onResize);
 		},
 
-		onClick : function () {
-			this.open = false;
+		clearSearch : function (evt) {
+			evt.stopPropagation();
+			this.pattern = '';
 		},
 
-		onItemClick : function (event, path) {
-			event.preventDefault();
-			this.$dispatch(this.changeEvent, path);
-			this.open = false;
+		onClick : function () {
+			this.open    = false;
+			this.pattern = '';
 		},
 
 		onResize : function () {
@@ -63,7 +108,7 @@ module.exports = {
 				this.marginLeft  = 0;
 			} else if (el.width >= menu.width) {
 				this.orientation = 'center';
-				this.marginLeft  = menu.width / 2;
+				this.marginLeft  = -menu.width / 2;
 			} else if (leftEdge < 0) {
 				this.orientation = 'left';
 				this.marginLeft  = 0;
@@ -72,9 +117,12 @@ module.exports = {
 				this.marginLeft  = 0;
 			} else {
 				this.orientation = 'center';
-				this.marginLeft  = menu.width / 2;
+				this.marginLeft  = -menu.width / 2;
 			}
 		}
+	},
 
+	components : {
+		'vue-menuitem' : require('./menuItem.js')
 	}
 };

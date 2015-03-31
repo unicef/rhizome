@@ -9,6 +9,7 @@
 		z-index  : 9999;
 
 		ul {
+			min-width  : 20em;
 			max-width  : 33em;
 			list-style : none;
 			margin     : 0;
@@ -19,10 +20,37 @@
 				padding : 0;
 				margin  : 0;
 
+				.fa {
+					visibility: hidden;
+				}
+
 				a {
 					white-space   : nowrap;
 					text-overflow : ellipsis;
+
+					&.folder {
+						& > .fa {
+							visibility: visible;
+						}
+					}
 				}
+			}
+		}
+
+		*[role="search"] {
+			position : relative;
+
+			input {
+				padding-right : 2rem;
+				margin-bottom : 0;
+			}
+
+			.clear-btn {
+				position    : absolute;
+				line-height : 1;
+				right       : 0.5rem;
+				top         : 50%;
+				margin-top  : -0.5em;
 			}
 		}
 	}

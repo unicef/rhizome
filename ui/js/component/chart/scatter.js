@@ -1,7 +1,8 @@
 'use strict';
 
-var _  = require('lodash');
-var d3 = require('d3');
+var _      = require('lodash');
+var d3     = require('d3');
+var moment = require('moment');
 
 function x(d) {
 	return d.x;
@@ -46,9 +47,9 @@ module.exports = {
 					return d.id || d;
 				}),
 
-				campaign_start: this.campaign.end,
-				campaign_end  : this.campaign.end,
-				parent_region: this.region,
+				campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end  : moment(this.campaign.end_date).format('YYYY-MM-DD'),
+				parent_region: this.region.id,
 				level        : 'province'
 			};
 		},

@@ -7,50 +7,6 @@ var moment = require('moment');
 var api    = require('data/api');
 var util   = require('util/data');
 
-/**
- * Utility for generating the tickValues array for a year-to-date chart.
- *
- * Ticks will be Jan, Dec, and the current month. If the current month is either
- * Jan or Dec, then only Jan and Dec are used.
- */
-function ytdTicks(month) {
-	return function (domain) {
-		var lower = domain[0];
-		var upper = domain[domain.length - 1];
-
-		// If the current month is between March and October, the ticks should be
-		// January, current month, December.
-		if (month > lower + 1 && month < upper - 1) {
-			return [lower, month, upper];
-		}
-
-		// If the current month is January, or February, the ticks are just the
-		// current month and December.
-		if (month <= lower + 1) {
-			return [month, upper];
-		}
-
-		// Otherwise the ticks are January and the current month
-		return [1, month];
-	};
-}
-
-function timeTicks(domain) {
-	var lower = moment(domain[0]);
-	var upper = moment(domain[domain.length - 1]);
-	var current = moment(upper).startOf('year');
-	var ticks = [lower.toDate().getTime()];
-
-	while (current.isAfter(lower)) {
-		ticks.push(current.toDate().getTime());
-		current = moment(current).subtract(1, 'year');
-	}
-
-	ticks.push(upper.toDate().getTime());
-
-	return ticks;
-}
-
 module.exports = {
 
 	template: require('./management.html'),
@@ -58,7 +14,6 @@ module.exports = {
 	data: function () {
 		return {
 			region          : null,
-			regionName      : '',
 			campaign        : null,
 			campaigns       : [],
 			capacity        : [178,228,179,184,180,185,230,226,239],
@@ -97,12 +52,12 @@ module.exports = {
 
 			// Fetch polio cases data for this year to display over the polio cases
 			// line chart
-			var start = moment(this.campaign.end, 'YYYY-MM-DD').startOf('year');
+			var start = moment(this.campaign.start_date).startOf('year');
 			var q     = {
 				indicator__in  : 168,
-				region__in     : [this.region],
+				region__in     : [this.region.id],
 				campaign_start : start.format('YYYY-MM-DD'),
-				campaign_end   : this.campaign.end
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			var self = this;
@@ -138,9 +93,9 @@ module.exports = {
 
 			q = {
 				indicator__in  : inaccessibility,
-				region__in     : [this.region],
-				campaign_start : moment(this.campaign.end, 'YYYY-MM-DD').startOf('month').format('YYYY-MM-DD'),
-				campaign_end   : this.campaign.end
+				region__in     : [this.region.id],
+				campaign_start : moment(this.campaign.start_date).startOf('month').format('YYYY-MM-DD'),
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			Promise.all([api.indicators({ id__in: inaccessibility }), api.datapoints(q)])
@@ -150,9 +105,7 @@ module.exports = {
 					var objects    = data.objects;
 					var indicators = {};
 
-					for (var i = objects.length - 1; i >= 0; i--) {
-						var o = objects[i];
-
+					objects.forEach(function (o) {
 						o.indicators.forEach(function (d) {
 							indicators[d.indicator] = _.assign({
 								name           : index[d.indicator].short_name,
@@ -164,7 +117,7 @@ module.exports = {
 								}]
 							}, _.pick(o, 'campaign', 'region'));
 						});
-					}
+					});
 
 					self.inaccessibility = _(indicators)
 						.values()
@@ -176,7 +129,7 @@ module.exports = {
 				});
 
 			q.indicator__in = [175,176,177,204];
-			q.region__in    = [this.region];
+			q.region__in    = [this.region.id];
 
 			api.datapoints(q)
 				.then(function (data) {

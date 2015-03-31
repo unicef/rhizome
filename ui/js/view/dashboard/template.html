@@ -2,30 +2,47 @@
 
 <form class="inline no-print">
 	<div class="row">
-		<div class="medium-6 push-6 columns">
-			<h1 style="text-align:right">
-				{{ title }}
+		<div class="medium-6 columns">
+			<h1 v-if="campaign && region">
+				{{ campaign.start_date | date 'MMMM YYYY' }}
+				<div
+					v-component="vue-menu"
+					data-change-event="campaign-selected"
+					v-with="items : campaigns">
+
+					<i class="fa fa-stack-2x fa-circle"></i>
+					<i class="fa fa-stack-1x fa-calendar"></i>
+
+				</div>
+				{{ region.name }}
+				<div
+					v-component="vue-menu"
+					data-change-event="region-selected"
+					data-searchable="true"
+					v-with="
+						items : regions">
+
+					<i class="fa fa-stack-2x fa-circle"></i>
+					<i class="fa fa-stack-1x fa-globe"></i>
+
+				</div>
+			</h1>
+		</div>
+
+		<div class="medium-6 columns">
+			<h2 v-if="dashboard" style="text-align:right">
+				{{ dashboard.name }}
 				<div
 					v-component="vue-menu"
 					data-change-event="dashboard-selected"
 					v-with="items : dashboards"></div>
-			</h1>
+			</h2>
 		</div>
-		<div id="regions" class="medium-2 pull-6 column"></div>
-
-		<div class="medium-2 pull-6 column end"
-		     v-component="vue-dropdown"
-		     v-ref="campaigns"
-		     v-with="items: campaigns, itemTree: campaigns"
-		     data-sort-by="date"
-		     data-sort-dsc="false"
-				 placeholder="Loading campaigns"></div>
 	</div>
 </form>
 
 <div
-	v-component="{{ dashboard }}"
+	v-component="{{ dashboard.slug }}"
 	v-with="
-		campaign   : campaign,
-		region     : region,
-		regionName : regionName"></div>
+		campaign : campaign,
+		region   : region"></div>
