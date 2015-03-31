@@ -2,18 +2,8 @@
 
 <form class="inline no-print">
 	<div class="row">
-		<div class="medium-6 push-6 columns">
-			<h1 v-if="dashboard" style="text-align:right">
-				{{ dashboard.name }}
-				<div
-					v-component="vue-menu"
-					data-change-event="dashboard-selected"
-					v-with="items : dashboards"></div>
-			</h1>
-		</div>
-
-		<div class="medium-6 pull-6 columns">
-			<h2 v-if="campaign && region">
+		<div class="medium-6 columns">
+			<h1 v-if="campaign && region">
 				{{ campaign.start_date | date 'MMMM YYYY' }}
 				<div
 					v-component="vue-menu"
@@ -36,6 +26,16 @@
 					<i class="fa fa-stack-1x fa-globe"></i>
 
 				</div>
+			</h1>
+		</div>
+
+		<div class="medium-6 columns">
+			<h2 v-if="dashboard" style="text-align:right">
+				{{ dashboard.name }}
+				<div
+					v-component="vue-menu"
+					data-change-event="dashboard-selected"
+					v-with="items : dashboards"></div>
 			</h2>
 		</div>
 	</div>
