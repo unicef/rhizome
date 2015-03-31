@@ -80,6 +80,8 @@ module.exports = {
 				})
 				.thru(_.curryRight(treeify)('id'))
 				.value();
+
+				return data;
 		}, function () {
 			window.alert('An error occurred loading regions from the server. Please refresh the page.');
 			self.regions = [];
@@ -110,6 +112,8 @@ module.exports = {
 						'value' : dt.format('YYYYMM')
 					};
 				});
+
+			return data;
 		}, function () {
 			window.alert('An error occurred loading campaign data from the server. Please refresh the page.');
 			self.campaigns = [];

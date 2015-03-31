@@ -19,7 +19,7 @@ module.exports = {
 
 	computed : {
 		hasChildren : function () {
-			return _.isArray(this.children) && this.children.length > 0;
+			return !this.filtered && _.isArray(this.children) && this.children.length > 0;
 		},
 
 		showChildren : function () {
@@ -30,6 +30,13 @@ module.exports = {
 			// FIXME: It's unfortunate to hard-code the padding amounts. It would be
 			// way cooler to interrogate the CSS for the object to determine
 			// these values, or use
+
+			if (this.filter) {
+				return {
+					'padding-left' : '5px',
+				};
+			}
+
 			return {
 				'padding-left' : (5 + (17 * this.depth)) + 'px'
 			};
