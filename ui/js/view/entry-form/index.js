@@ -226,7 +226,7 @@ module.exports = {
 
 					if (self.includeSubRegions) {
 						// this will include all child regions:
-						var children = flattenChildren(region, 'children', null, function() { return true; });
+						var children = flattenChildren(region, 'children', null, function() { return true; }, 1);
 						// this will include only high risk child regions
 						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
