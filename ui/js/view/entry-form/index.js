@@ -193,7 +193,7 @@ module.exports = {
 
 		},
 
-		refresh: function (pagination) {
+		refresh: function () {
 			var self = this;
 
 			if (!self.hasSelection) {
@@ -205,15 +205,6 @@ module.exports = {
 				indicator__in: [],
 				region__in: []
 			};
-
-			if (pagination) {
-				// Prepend "the_" to the pagination options (typically limit and offset)
-				// because the datapoint API uses the_limit and the_offset instead of
-				// limit and offset like the other paged APIs. See POLIO-194.
-				_.forOwn(pagination, function (v, k) {
-					options['the_' + k] = v;
-				});
-			}
 
 			// add regions to request
 			if (self.regions.length > 0) {
@@ -287,13 +278,8 @@ module.exports = {
 			// get datapoints from API
 			self.table.loading = true;
 			var withSuccess = function (data) {
-
 				// finished fetching data
 				self.table.loading = false;
-
-				self.pagination.the_limit   = Number(data.meta.the_limit);
-				self.pagination.the_offset  = Number(data.meta.the_offset);
-				self.pagination.total_count = Number(data.meta.total_count);
 
 				// arrange datapoints into an object of indicators > regions
 				var byIndicator = {};
@@ -424,7 +410,10 @@ module.exports = {
 
 			// };
 
-			api.datapointsRaw(options).then(withSuccess);
+			api.datapointsRaw(options).then(withSuccess, function (err) {
+				self.table.loading = false;
+				console.error(err);
+			});
 		},
 
 		showTooltip: function() {
