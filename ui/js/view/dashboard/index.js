@@ -122,8 +122,9 @@ module.exports = {
 		Promise.all([regionPromise, campaignPromise]).then(function (data) {
 			page({ click: false });
 
+			var dashboard, region, dt;
 			if (!self.region) {
-				self.region = _(data[0].objects)
+				region = _(data[0].objects)
 					.filter(function (region) {
 						// FIXME: this only works if the user has permissions to see country-
 						// level regions
@@ -131,14 +132,32 @@ module.exports = {
 					})
 					.sortBy('name')
 					.first();
+			} else {
+				region = self.region;
 			}
 
 			if (!self.campaign) {
-				self.campaign = _(data[1].objects)
+				var campaign = _(data[1].objects)
 					.sortBy(function (campaign) {
 						return moment(campaign.start_date).format('YYYYMMDD');
 					})
 					.last();
+
+				dt = moment(campaign.start_date);
+			} else {
+				dt = moment(self.campaign.start_date);
+			}
+
+			if (!self.dashboard) {
+				dashboard = 'management-dashboard';
+			} else {
+				dashboard = self.dashboard.slug;
+			}
+
+			if (dashboard && region && dt) {
+				page('/datapoints/' + dashboard + '/' + region.name + '/' +
+					dt.format('YYYY') + '/' +
+					dt.format('MM'));
 			}
 		});
 	},
