@@ -89,7 +89,8 @@ module.exports = {
 		},
 
 		onClick : function () {
-			this.open = false;
+			this.open    = false;
+			this.pattern = '';
 		},
 
 		onResize : function () {
