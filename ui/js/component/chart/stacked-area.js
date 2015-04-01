@@ -40,6 +40,7 @@ module.exports = {
 					};
 				})
 				.filter('defined')
+				.reverse()
 				.value();
 
 			return labels;
