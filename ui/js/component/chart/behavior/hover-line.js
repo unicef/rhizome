@@ -10,6 +10,7 @@ function hoverLine() {
 	var diff       = function (a, b) { return a - b; };
 	var height     = 1;
 	var seriesName = null;
+	var _sort      = false;
 	var width      = 1;
 	var x          = function (d) { return d.x; };
 	var xFormat    = String;
@@ -82,6 +83,15 @@ function hoverLine() {
 		}
 
 		seriesName = value;
+		return chart;
+	};
+
+	chart.sort = function (value) {
+		if (!arguments.length) {
+			return _sort;
+		}
+
+		_sort = value;
 		return chart;
 	};
 
@@ -268,8 +278,15 @@ function hoverLine() {
 					text: name + yFormat(_value(d))
 				};
 			})
-			.sortBy('y')
 			.value();
+
+		if (_sort) {
+			labelData.sort(function (a, b) {
+				return a.y - b.y;
+			});
+		} else {
+			labelData.reverse();
+		}
 
 		// Use a g element to position the labels horizontally at the same
 		// position based on the width of the longest label
