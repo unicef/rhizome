@@ -47,13 +47,13 @@ function label() {
 	 * @private
 	 * Reposition labels vertically so they don't overlap
 	 *
-	 * @param {Object} labels a D3 selection (probably of text elements)
+	 * @param {Object} selection a D3 selection (probably of text elements)
 	 *
 	 * @author Manish Nag <nag@seedscientific.com
 	 * @author Evan Sheehan <sheehan@seedscientific.com
 	 */
-	function splay(labels) {
-		var l = labels.size();
+	function splay(selection) {
+		var l = selection.size();
 
 		if (l < 2) {
 			return;
@@ -65,57 +65,40 @@ function label() {
 		// Retrive all of the bounding boxes for each element in the selection.
 		// Because D3 selections can be multi-dimensional, we use the built-in
 		// for-each loop instead of a map call to ensure that we get everything
-		labels.each(function (d, i) {
+		selection.each(function (d, i) {
 			bboxes[i] = this.getBoundingClientRect();
 			d._height = bboxes[i].height;
 			data[i]   = d;
 		});
 
-		// Labels must be sorted in ascending order by y location (y increases down
-		// in SVG)
-		data.sort(function (a, b) {
-			return a.y - b.y;
-		});
-
-		// We'll need these later to re-center the labels as close as possible to
-		// their desired positions
-		var origBounds = findBounds(bboxes);
-
-		for (var i = 1; i < l; i++) {
+		// Begin with the last label and shift any overlapping labels up
+		for (var i = l - 1; i > 0; i--) {
 			var a = data[i - 1];
 			var b = data[i];
 			var h = b._height;
 
+			// Ensure that b is in bounds first
+			b.y = Math.min(b.y, height);
+
+			// Shift a up if it overlaps with b
+			if (a.y > b.y - h) {
+				a.y = b.y - h;
+			}
+		}
+
+		// Now iterate over the labels from top to bottom, shifting labels down
+		// as needed.
+		for (i = 1; i < l; i++) {
+			var a = data[i - 1];
+			var b = data[i];
+			var h = b._height;
+
+			// Ensure that a is in bounds first
+			a.y = Math.max(a.y, 0);
+
 			if (b.y - h < a.y) {
 				b.y = a.y + h;
 			}
-		}
-
-		var top    = data[0].y - data[0]._height;
-		var bottom = data[data.length - 1].y;
-		var center = (bottom - top) / 2;
-		var delta  = center - origBounds.cy;
-
-		// As long as the height of the new label collection fits our canvas, we
-		// should re-center such that we don't push things off the top or bottom
-		// edges of the SVG
-		if (bottom - top <= height) {
-			if (top + delta < 0) {
-				// If the shift would move the top above the edge of the SVG, subtract
-				// the amount of overflow from the shift to avoid doing so
-				delta += top + delta;
-			}
-
-			if (bottom + delta > height) {
-				// If the shift would move the bottom below the edge of the SVG,
-				// subtract the amount of overflow from the shift to avoid doing so
-				delta += height - (bottom + delta);
-			}
-		}
-
-		// Apply the shift to all of the labels' data
-		for (i = 0; i < l; i++) {
-			data[i].y += delta;
 		}
 	}
 
@@ -152,33 +135,33 @@ function label() {
 			})
 			.text(text);
 
-			labels
-				.text(text)
-				.attr('class', cls.join(' '))
-				.transition()
-				.duration(transitionSpeed)
-				.attr({
-					'x': x,
-					'y': y,
-				});
+		labels
+			.text(text)
+			.attr('class', cls.join(' '))
+			.transition()
+			.duration(transitionSpeed)
+			.attr({
+				'x': x,
+				'y': y,
+			});
 
-			// Fix overlaps
-			splay(labels);
+		// Fix overlaps
+		splay(labels);
 
-			// Redraw everything with new positions to fix overlaps
-			var anchor = textAnchor(labels);
-			var dx     = anchor === 'start' ? '4' : '-4';
+		// Redraw everything with new positions to fix overlaps
+		var anchor = textAnchor(labels);
+		var dx     = anchor === 'start' ? '4' : '-4';
 
-			labels
-				.transition()
-				.duration(transitionSpeed)
-				.attr({
-					'x'          : x,
-					'y'          : y,
-					'dx'         : dx,
-					'text-anchor': anchor
-				})
-				.style('opacity', 1);
+		labels
+			.transition()
+			.duration(transitionSpeed)
+			.attr({
+				'x'          : x,
+				'y'          : y,
+				'dx'         : dx,
+				'text-anchor': anchor
+			})
+			.style('opacity', 1);
 
 			labels.exit()
 				.transition()
