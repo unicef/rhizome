@@ -46,15 +46,8 @@ h1,h2,h3,h4,h5,h6 {
 			cursor : default;
 		}
 	}
-}
-
-h3 {
-	border-bottom  : 1px solid $gainsboro;
-	color          : $gainsboro;
-	text-transform : uppercase;
 
 	label {
-		color          : $gainsboro;
 		display        : inline-block;
 		text-transform : none;
 		font-size      : rem-calc(12);
@@ -62,8 +55,14 @@ h3 {
 	}
 
 	input[type="radio"] {
-		margin-bottom: rem-calc(9);
+		margin-bottom: 0;
 	}
+}
+
+h3 {
+	border-bottom  : 1px solid $gainsboro;
+	color          : $gainsboro;
+	text-transform : uppercase;
 }
 
 h4 {
@@ -475,6 +474,12 @@ ul {
 			background-color: $vapor;
 		}
 	}
+}
+
+.inverse {
+	background-color : $gainsboro;
+	color            : $body-font-color;
+	padding          : 0.2em 0.7em;
 }
 
 @media #{$small-up} {

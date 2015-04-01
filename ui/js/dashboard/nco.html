@@ -1,7 +1,7 @@
 <div id="nco-dashboard">
 	<div class="row">
 		<div class="small-12 columns">
-			<h3>Overview</h3>
+			<h3>National Overview</h3>
 		</div>
 
 		<div class="medium-6 columns">
@@ -146,7 +146,11 @@
 
 	<div class="row">
 		<div class="small-12 columns">
-			<h3>
+			<h3>Breakdown by Province</h3>
+		</div>
+
+		<div class="medium-8 columns">
+			<h4 class="inverse">
 				<a name="missed-children">Missed Children</a>&ensp;
 				<div class="medium inline">
 					<label>
@@ -167,9 +171,7 @@
 						as % of all missed children
 					</label>
 				</div>
-			</h3>
-		</div>
-		<div class="medium-8 columns">
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
@@ -179,6 +181,7 @@
 					offset : missed.offset"></div>
 		</div>
 		<div class="medium-4 columns">
+			<h4 class="inverse">Missed Children (Inside vs Outside)</h4>
 			<div
 				v-component="chart-bar"
 				data-labels="false"
@@ -192,7 +195,7 @@
 	<div class="row">
 
 		<div class="medium-6 columns">
-			<h3>
+			<h4 class="inverse">
 				<a name="absences">Absences</a>&ensp;
 				<div class="medium inline">
 					<label>
@@ -213,7 +216,7 @@
 						as % of all absences
 					</label>
 				</div>
-			</h3>
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
@@ -223,7 +226,7 @@
 		</div>
 
 		<div class="medium-6 columns">
-			<h3>
+			<h4 class="inverse">
 				<a name="non-compliance">Non-Compliance</a>&ensp;
 				<div class="medium inline">
 					<label>
@@ -244,7 +247,7 @@
 						as % of all non-compliance
 					</label>
 				</div>
-			</h3>
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
@@ -257,7 +260,7 @@
 	<div class="row">
 
 		<div class="medium-4 columns">
-			<h3>
+			<h4 class="inverse">
 				<a name="resolutions">Non-Compliance Resolutions</a>&ensp;
 				<div class="large inline">
 					<label>
@@ -278,7 +281,7 @@
 						as % of all resolutions
 					</label>
 				</div>
-			</h3>
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
@@ -288,7 +291,7 @@
 		</div>
 
 		<div class="medium-4 columns">
-			<h3>
+			<h4 class="inverse">
 				<a name="influencers">Influencers</a>&ensp;
 				<div class="large inline">
 					<label>
@@ -309,7 +312,7 @@
 						as % of all influencers
 					</label>
 				</div>
-			</h3>
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
@@ -319,7 +322,7 @@
 		</div>
 
 		<div class="medium-4 columns">
-			<h3>
+			<h4 class="inverse">
 				<a name="sources-of-information">Sources of Information</a>&ensp;
 				<div class="large inline">
 					<label>
@@ -340,7 +343,7 @@
 						as % of all sources
 					</label>
 				</div>
-			</h3>
+			</h4>
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
