@@ -80,10 +80,6 @@ module.exports = {
 		},
 
 		draw: function () {
-			if (this.empty) {
-				return;
-			}
-
 			var svg = d3.select(this.$el);
 
 			var data = _(this.series)
