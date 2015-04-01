@@ -31,7 +31,8 @@ function legend() {
 	function chart(selection) {
 		selection.each(function () {
 			var g      = d3.select(this);
-			var series = g.selectAll('.series').data(_scale.domain());
+			var series = g.selectAll('.series')
+				.data(_scale && _scale.domain ? _scale.domain() : []);
 
 			g.classed('interactive', _interactive);
 
