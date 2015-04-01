@@ -217,10 +217,8 @@ module.exports = {
 			svg.select('.y.axis')
 				.call(yAxis);
 
-			if (this.series.length > 1) {
-				svg.select('.legend')
-					.call(legend().scale(colorScale));
-			}
+			svg.select('.legend')
+				.call(legend().scale(colorScale));
 		}
 
 	},

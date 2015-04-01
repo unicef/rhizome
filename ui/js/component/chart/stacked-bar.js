@@ -186,6 +186,12 @@ module.exports = {
 					.remove();
 			});
 
+			series.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
+
 			var xAxis = d3.svg.axis()
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
@@ -206,16 +212,14 @@ module.exports = {
 			svg.select('.y.axis')
 				.call(yAxis);
 
-			if (this.series.length > 1) {
-				svg.select('.legend')
-					.call(legend()
-						.interactive(true)
-						.filled(function (d, i) {
-							return self.sortBy ? self.sortBy !== d : i !== 0;
-						})
-						.scale(colorScale)
-						.clickHandler(this.setSortBy));
-			}
+			svg.select('.legend')
+				.call(legend()
+					.interactive(true)
+					.filled(function (d, i) {
+						return self.sortBy ? self.sortBy !== d : i !== 0;
+					})
+					.scale(colorScale)
+					.clickHandler(this.setSortBy));
 		},
 
 		setSortBy : function (d) {
