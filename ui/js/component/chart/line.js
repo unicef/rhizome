@@ -38,6 +38,12 @@ module.exports = {
 		'loading-overlay': require('./partial/loading-overlay.html')
 	},
 
+	data : function () {
+		return {
+			sortLabels : true
+		};
+	},
+
 	computed: {
 
 		colorScale: function () {
@@ -213,6 +219,7 @@ module.exports = {
 					.yScale(yScale)
 					.diff(this.diffX)
 					.seriesName(this.getSeriesName)
+					.sort(this.sortLabels)
 					.datapoints(_(this.series).pluck('values').flatten().value())
 				);
 
