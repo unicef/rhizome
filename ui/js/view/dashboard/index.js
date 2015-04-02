@@ -78,6 +78,8 @@ module.exports = {
 						'parent' : region.parent_region_id
 					};
 				})
+				.sortBy('title')
+				.reverse() // I do not know why this works, but it does
 				.thru(_.curryRight(treeify)('id'))
 				.value();
 
