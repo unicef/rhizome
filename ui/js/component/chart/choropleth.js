@@ -135,7 +135,7 @@ module.exports = {
 
 			path.enter().append('path')
 				.on('click', function (d) {
-					self.$dispatch('region-changed', d.properties.region_id);
+					self.$dispatch('region-selected', d.properties.name);
 				})
 				.on('mousemove', function (d) {
 					var evt = d3.event;
