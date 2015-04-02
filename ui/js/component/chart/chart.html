@@ -13,6 +13,18 @@
 			<g class="annotation"></g>
 		</g>
 
+		<text
+			class="x axis-label"
+			text-anchor="middle"
+			v-attr="transform : 'translate(' + (width / 2) + ',' + height + ')'"
+			v-text="xAxisLabel">
+		</text>
+		<text
+			class="y axis-label"
+			dy="1em"
+			text-anchor="middle"
+			v-attr="transform : 'rotate(-90) translate(' + (-height / 2) + ',0)'"
+			v-text="yAxisLabel"></text>
 	</svg>
 
 	<div v-partial="loading-overlay"></div>
