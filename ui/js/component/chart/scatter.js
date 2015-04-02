@@ -4,6 +4,9 @@ var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
 
+var RADIUS       = 3;
+var HOVER_RADIUS = 5;
+
 function x(d) {
 	return d.x;
 }
@@ -105,6 +108,12 @@ module.exports = {
 				.on('mouseover', function (d) {
 					var evt = d3.event;
 
+					d3.select(this)
+						.transition()
+						.duration(500)
+						.ease('elastic')
+						.attr('r', HOVER_RADIUS);
+
 					self.$dispatch('tooltip-show', {
 						el       : this,
 						position : {
@@ -115,16 +124,23 @@ module.exports = {
 							// Have to make sure we use the default tooltip, otherwise if a
 							// different template was used, this shows the old template
 							template : 'tooltip-default',
-							text     : d.name
+							text     : d.name,
+							delay    : 0
 						}
 					})
 				})
 				.on('mouseout', function (d) {
+					d3.select(this)
+						.transition()
+						.duration(500)
+						.ease('elastic')
+						.attr('r', RADIUS);
+
 					self.$dispatch('tooltip-hide', { el : this });
 				})
 				.transition()
 				.duration(500)
-				.attr('r', 2);
+				.attr('r', RADIUS);
 
 			// FIXME: Hard-coded transition speed
 			point.exit()
