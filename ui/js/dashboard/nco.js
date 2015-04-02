@@ -300,9 +300,8 @@ module.exports = {
 						});
 
 					// Inside x = 276, y = 272
-					self.overview.missedVsAwareness.inside = _.map(
-						data[1].objects,
-						function (d) {
+					self.overview.missedVsAwareness.inside = _(data[1].objects)
+						.map(function (d) {
 							var index = _.indexBy(d.indicators, 'indicator');
 
 							return {
@@ -311,12 +310,15 @@ module.exports = {
 								x    : index[276].value,
 								y    : index[272].value
 							};
-						});
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
 
 					// Outside x = 276, y = 274
-					self.overview.missedVsAwareness.outside = _.map(
-						data[1].objects,
-						function (d) {
+					self.overview.missedVsAwareness.outside = _(data[1].objects)
+						.map(function (d) {
 							var index = _.indexBy(d.indicators, 'indicator');
 
 							return {
@@ -325,7 +327,11 @@ module.exports = {
 								x    : index[276].value,
 								y    : index[274].value
 							};
-						});
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
 
 					self.missed.reasons = formatData(
 						datapoints,
