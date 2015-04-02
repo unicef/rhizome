@@ -60,7 +60,7 @@ module.exports = {
 
 			for (var i = 0, l = this.datapoints.length; i < l; i++) {
 				var d = this.datapoints[i];
-				if (moment(d.campaign.start_date).format('YYYYMMDD') === this.campaign.date) {
+				if (d.campaign.start_date.getTime() === this.campaign.start_date.getTime()) {
 					return d.value;
 				}
 			}
