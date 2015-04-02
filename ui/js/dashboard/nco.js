@@ -307,7 +307,7 @@ module.exports = {
 
 							return {
 								id   : d.region,
-								name : regions[d.region],
+								name : regions[d.region].name,
 								x    : index[276].value,
 								y    : index[272].value
 							};
@@ -321,7 +321,7 @@ module.exports = {
 
 							return {
 								id   : d.region,
-								name : regions[d.region],
+								name : regions[d.region].name,
 								x    : index[276].value,
 								y    : index[274].value
 							};

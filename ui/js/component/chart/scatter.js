@@ -41,7 +41,7 @@ module.exports = {
 	},
 
 	methods: {
-		draw: function () {
+		draw : function () {
 			function cx(d) {
 				return xScale(d.x);
 			}
@@ -50,7 +50,8 @@ module.exports = {
 				return yScale(d.y);
 			}
 
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			var series = this.series || [];
 
@@ -88,6 +89,26 @@ module.exports = {
 					'r'    : 0
 				})
 				.style('fill', '#d5dfe2')
+				.on('mouseover', function (d) {
+					var evt = d3.event;
+
+					self.$dispatch('tooltip-show', {
+						el       : this,
+						position : {
+							x : evt.pageX,
+							y : evt.pageY
+						},
+						data : {
+							// Have to make sure we use the default tooltip, otherwise if a
+							// different template was used, this shows the old template
+							template : 'tooltip-default',
+							text     : d.name
+						}
+					})
+				})
+				.on('mouseout', function (d) {
+					self.$dispatch('tooltip-hide', { el : this });
+				})
 				.transition()
 				.duration(500)
 				.attr('r', 2);
