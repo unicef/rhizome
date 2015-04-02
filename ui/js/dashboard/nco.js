@@ -223,7 +223,14 @@ module.exports = {
 						.flatten()
 						.value();
 
-					var fmt = d3.format('%');
+					var fmt = function (d) {
+						if (d < 0.01 && d > 0) {
+							return '< 1%';
+						}
+
+						return d3.format('%')(d);
+					};
+
 					self.overview.missed.insideLabel = fmt(self.overview.missed.inside[0].value);
 
 					self.overview.missed.outside = datapoints
