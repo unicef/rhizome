@@ -96,6 +96,11 @@ module.exports = {
 				outside        : [],
 				awareness      : [],
 				awarenessLabel : '',
+				missedVsAwareness : {
+					inside  : [],
+					outside : [],
+					range   : [0, 1]
+				},
 				influencer : {
 					domain : [0, 1],
 					series : []
@@ -235,6 +240,8 @@ module.exports = {
 						.flatten()
 						.value();
 
+					self.overview.awarenessLabel = fmt(self.overview.awareness[0].value);
+
 					self.overview.influencer.series = formatData(
 						datapoints,
 						[287,288,289,290,291,292,293,294],
@@ -292,6 +299,47 @@ module.exports = {
 						.groupBy(function (d) {
 							return d.indicator.id;
 						});
+
+					// Set the same range for both scatter plots
+					self.overview.missedVsAwareness.range = [0, d3.max(data[1].objects, function (d) {
+						var index = _.indexBy(d.indicators, 'indicator');
+
+						return Math.max(index[272].value, index[274].value);
+					})];
+
+					// Inside x = 276, y = 272
+					self.overview.missedVsAwareness.inside = _(data[1].objects)
+						.map(function (d) {
+							var index = _.indexBy(d.indicators, 'indicator');
+
+							return {
+								id   : d.region,
+								name : regions[d.region].name,
+								x    : index[276].value,
+								y    : index[272].value
+							};
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
+
+					// Outside x = 276, y = 274
+					self.overview.missedVsAwareness.outside = _(data[1].objects)
+						.map(function (d) {
+							var index = _.indexBy(d.indicators, 'indicator');
+
+							return {
+								id   : d.region,
+								name : regions[d.region].name,
+								x    : index[276].value,
+								y    : index[274].value
+							};
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
 
 					self.missed.reasons = formatData(
 						datapoints,

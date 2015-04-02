@@ -18,124 +18,68 @@ module.exports = {
 	replace : true,
 
 	paramAttributes: [
-		'data-x',
-		'data-y'
+		'data-format-x',
+		'data-format-y'
 	],
 
 	mixins: [
 		require('component/chart/mixin/margin'),
-		require('component/chart/mixin/resize'),
-		require('component/chart/mixin/with-indicator')
+		require('component/chart/mixin/resize')
 	],
 
 	data: function () {
 		return {
-			campaign    : null,
-			indicators  : [],
-			marginLeft  : 24,
-			marginBottom: 24,
-			region      : null,
-			x           : null,
-			y           : null
+			marginLeft   : 24,
+			marginBottom : 24,
+			series       : [],
+			formatX      : 's',
+			formatY      : 's',
+			chartType    : 'scatter',
+			domain       : null,
+			range        : null
 		};
 	},
 
 	computed: {
-		query: function () {
-			return {
-				indicator__in: _.map(this.indicators, function (d) {
-					return d.id || d;
-				}),
-
-				campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
-				campaign_end  : moment(this.campaign.end_date).format('YYYY-MM-DD'),
-				parent_region: this.region.id,
-				level        : 'province'
-			};
-		},
-
-		series: function () {
-			if (this.empty) {
-				return [];
-			}
-
-			var xProp = this.x;
-			var yProp = this.y;
-
-			return _(this.datapoints)
-				.groupBy('region')
-				.map(function (d, region) {
-					var indicators = _.indexBy(d, 'indicator');
-
-					var isDefined = indicators.hasOwnProperty(xProp) &&
-						indicators.hasOwnProperty(yProp);
-
-					return isDefined ? {
-						id  : region,
-						name: region,
-						x   : indicators[xProp].value,
-						y   : indicators[yProp].value
-					} : null;
-				})
-				.filter(function (d) {
-					return d !== null;
-				})
-				.value();
-		},
-
-		xScale: function () {
-			var domain = this.domain || [];
-
-			if (domain.length < 2) {
-				var datapoints = this.series;
-
-				domain[0] = Math.min(0, d3.min(datapoints, x)) || 0;
-				domain[1] = d3.max(datapoints, x) || domain[0] + 1;
-			}
-
-			var scale = d3.scale.linear()
-				.domain(domain)
-				.range([0, this.contentWidth]);
-
-			return scale;
-		},
-
-		yScale: function () {
-			var domain = this.range || [];
-
-			if (domain.length < 2) {
-				var datapoints = this.series;
-
-				domain[0] = Math.min(0, d3.min(datapoints, y)) || 0;
-				domain[1] = d3.max(datapoints, y) || domain[0] + 1;
-			}
-
-			var scale = d3.scale.linear()
-				.domain(domain)
-				.range([this.contentHeight, 0]);
-
-			return scale;
-		}
 	},
 
 	methods: {
-		draw: function () {
+		draw : function () {
 			function cx(d) {
-				return xScale(x(d));
+				return xScale(d.x);
 			}
 
 			function cy(d) {
-				return yScale(y(d));
+				return yScale(d.y);
 			}
 
-			var svg    = d3.select(this.$el);
-			var xScale = this.xScale;
-			var yScale = this.yScale;
+			var self = this;
+			var svg  = d3.select(this.$el);
+
+			var series = this.series || [];
+
+			var xScale = d3.scale.linear()
+				.range([0, this.contentWidth]);
+
+			if (!this.domain) {
+				xScale.domain([0, d3.max(series, function (d) { return d.x; })]);
+			} else {
+				xScale.domain(this.domain);
+			}
+
+			var yScale = d3.scale.linear()
+				.range([this.contentHeight, 0]);
+
+			if (!this.range) {
+				yScale.domain([0, d3.max(series, function (d) { return d.y; })]);
+			} else {
+				yScale.domain(this.range);
+			}
 
 			var point = svg
 				.select('.data')
 				.selectAll('.point')
-				.data(this.series, function (d, i) {
+				.data(series, function (d, i) {
 					return d.id || i;
 				});
 
@@ -157,9 +101,26 @@ module.exports = {
 					'cy'   : cy,
 					'r'    : 0
 				})
-				.on({
-					'mouseover': this.showTooltip,
-					'mouseout' : this.hideTooltip
+				.style('fill', '#414849')
+				.on('mouseover', function (d) {
+					var evt = d3.event;
+
+					self.$dispatch('tooltip-show', {
+						el       : this,
+						position : {
+							x : evt.pageX,
+							y : evt.pageY
+						},
+						data : {
+							// Have to make sure we use the default tooltip, otherwise if a
+							// different template was used, this shows the old template
+							template : 'tooltip-default',
+							text     : d.name
+						}
+					})
+				})
+				.on('mouseout', function (d) {
+					self.$dispatch('tooltip-hide', { el : this });
 				})
 				.transition()
 				.duration(500)
@@ -174,6 +135,10 @@ module.exports = {
 
 			var xAxis = d3.svg.axis()
 				.scale(xScale)
+				.tickFormat(d3.format(this.formatX))
+				.ticks(3)
+				.tickSize(0)
+				.tickPadding(5)
 				.orient('bottom');
 
 			svg
@@ -182,6 +147,9 @@ module.exports = {
 
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
+				.tickFormat(d3.format(this.formatY))
+				.ticks(4)
+				.tickSize(-this.contentWidth)
 				.orient('left');
 
 			svg
@@ -191,8 +159,8 @@ module.exports = {
 	},
 
 	watch: {
-		'datapoints': 'draw',
-		'width'     : 'draw',
-		'height'    : 'draw'
+		'series' : 'draw',
+		'width'  : 'draw',
+		'height' : 'draw'
 	}
 };

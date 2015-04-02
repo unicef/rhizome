@@ -40,7 +40,8 @@ module.exports = {
 
 	data : function () {
 		return {
-			sortLabels : true
+			sortLabels : true,
+			chartType  : 'line'
 		};
 	},
 
