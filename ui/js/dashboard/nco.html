@@ -60,20 +60,30 @@
 					<h4>Inside Monitoring</h4>
 					<div
 						v-component="chart-scatter"
+						data-margin-left="50"
 						data-margin-top="9"
 						data-margin-right="9"
 						data-aspect="1.7"
-						v-with="loading : overview.loading"></div>
+						data-format-x="%"
+						data-format-y=".1%"
+						v-with="
+							loading : overview.loading,
+							series  : overview.missedVsAwareness.inside"></div>
 				</div>
 
 				<div class="medium-6 columns">
 					<h4>Outside Monitoring</h4>
 					<div
 						v-component="chart-scatter"
+						data-margin-left="50"
 						data-margin-top="9"
 						data-margin-right="9"
 						data-aspect="1.7"
-						v-with="loading : overview.loading"></div>
+						data-format-x="%"
+						data-format-y=".1%"
+						v-with="
+							loading : overview.loading,
+							series  : overview.missedVsAwareness.outside"></div>
 				</div>
 			</div>
 		</div>
