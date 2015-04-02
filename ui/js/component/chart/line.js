@@ -45,7 +45,8 @@ module.exports = {
 			sortLabels : true,
 			chartType  : 'line',
 			xAxisLabel : '',
-			yAxisLabel : ''
+			yAxisLabel : '',
+			formatString : ',.0f',
 		};
 	},
 
@@ -174,7 +175,7 @@ module.exports = {
 		},
 
 		yFmt: function () {
-			return d3.format(this.formatString || 's');
+			return d3.format(this.formatString);
 		},
 
 		yScale: function () {
