@@ -22,7 +22,9 @@ module.exports = {
 
 	paramAttributes: [
 		'data-format-x',
-		'data-format-y'
+		'data-format-y',
+		'data-x-axis-label',
+		'data-y-axis-label'
 	],
 
 	mixins: [
@@ -39,7 +41,9 @@ module.exports = {
 			formatY      : 's',
 			chartType    : 'scatter',
 			domain       : null,
-			range        : null
+			range        : null,
+			xAxisLabel   : '',
+			yAxisLabel   : ''
 		};
 	},
 

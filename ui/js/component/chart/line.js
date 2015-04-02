@@ -25,7 +25,9 @@ module.exports = {
 	paramAttributes: [
 		'data-height',
 		'data-width',
-		'data-format-string'
+		'data-format-string',
+		'data-x-axis-label',
+		'data-y-axis-label'
 	],
 
 	mixins: [
@@ -41,7 +43,9 @@ module.exports = {
 	data : function () {
 		return {
 			sortLabels : true,
-			chartType  : 'line'
+			chartType  : 'line',
+			xAxisLabel : '',
+			yAxisLabel : ''
 		};
 	},
 
