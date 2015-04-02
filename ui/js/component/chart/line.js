@@ -236,7 +236,11 @@ module.exports = {
 			svg.select('.annotation')
 				.selectAll('.series.label')
 				.data(this.labels)
-				.call(label().addClass('series').width(this.contentWidth).height(this.contentHeight));
+				.call(label()
+					.addClass('series')
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.align(false));
 
 			var xFmt = this.xFmt;
 

@@ -13,6 +13,7 @@ function label() {
 	var width           = 1;
 	var x               = function (d) { return d.x; };
 	var y               = function (d) { return d.y; };
+	var align           = true;
 
 	/**
 	 * @private
@@ -124,6 +125,17 @@ function label() {
 		return anchor;
 	}
 
+	function calcAnchor(d, el) {
+		var anchor = 'start';
+		var bbox   = el.getBBox();
+
+		if (d.x + bbox.width > width) {
+			anchor = 'end';
+		}
+
+		return anchor;
+	}
+
 	function chart(labels) {
 		labels.enter()
 			.append('text')
@@ -158,8 +170,20 @@ function label() {
 			.attr({
 				'x'          : x,
 				'y'          : y,
-				'dx'         : dx,
-				'text-anchor': anchor
+				'dx'         : function (d) {
+					if (align) {
+						return dx;
+					}
+
+					return calcAnchor(d, this) === 'start' ? '4' : '-4';
+				},
+				'text-anchor': function (d) {
+					if (align) {
+						return anchor;
+					}
+
+					return calcAnchor(d, this);
+				}
 			})
 			.style('opacity', 1);
 
@@ -175,6 +199,15 @@ function label() {
 			cls.push(value);
 		}
 
+		return chart;
+	};
+
+	chart.align = function (value) {
+		if (!arguments.length) {
+			return align;
+		}
+
+		align = value;
 		return chart;
 	};
 
