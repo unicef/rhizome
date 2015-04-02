@@ -33,7 +33,10 @@ module.exports = {
 			marginBottom : 24,
 			series       : [],
 			formatX      : 's',
-			formatY      : 's'
+			formatY      : 's',
+			chartType    : 'scatter',
+			domain       : null,
+			range        : null
 		};
 	},
 
@@ -56,12 +59,22 @@ module.exports = {
 			var series = this.series || [];
 
 			var xScale = d3.scale.linear()
-				.domain([0, d3.max(series, function (d) { return d.x; })])
 				.range([0, this.contentWidth]);
 
+			if (!this.domain) {
+				xScale.domain([0, d3.max(series, function (d) { return d.x; })]);
+			} else {
+				xScale.domain(this.domain);
+			}
+
 			var yScale = d3.scale.linear()
-				.domain([0, d3.max(series, function (d) { return d.y; })])
 				.range([this.contentHeight, 0]);
+
+			if (!this.range) {
+				yScale.domain([0, d3.max(series, function (d) { return d.y; })]);
+			} else {
+				yScale.domain(this.range);
+			}
 
 			var point = svg
 				.select('.data')
@@ -88,7 +101,7 @@ module.exports = {
 					'cy'   : cy,
 					'r'    : 0
 				})
-				.style('fill', '#d5dfe2')
+				.style('fill', '#414849')
 				.on('mouseover', function (d) {
 					var evt = d3.event;
 
@@ -124,6 +137,8 @@ module.exports = {
 				.scale(xScale)
 				.tickFormat(d3.format(this.formatX))
 				.ticks(3)
+				.tickSize(0)
+				.tickPadding(5)
 				.orient('bottom');
 
 			svg
@@ -133,7 +148,8 @@ module.exports = {
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
 				.tickFormat(d3.format(this.formatY))
-				.ticks(3)
+				.ticks(4)
+				.tickSize(-this.contentWidth)
 				.orient('left');
 
 			svg

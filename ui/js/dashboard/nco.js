@@ -98,7 +98,8 @@ module.exports = {
 				awarenessLabel : '',
 				missedVsAwareness : {
 					inside  : [],
-					outside : []
+					outside : [],
+					range   : [0, 1]
 				},
 				influencer : {
 					domain : [0, 1],
@@ -298,6 +299,13 @@ module.exports = {
 						.groupBy(function (d) {
 							return d.indicator.id;
 						});
+
+					// Set the same range for both scatter plots
+					self.overview.missedVsAwareness.range = [0, d3.max(data[1].objects, function (d) {
+						var index = _.indexBy(d.indicators, 'indicator');
+
+						return Math.max(index[272].value, index[274].value);
+					})];
 
 					// Inside x = 276, y = 272
 					self.overview.missedVsAwareness.inside = _(data[1].objects)
