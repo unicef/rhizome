@@ -73,10 +73,11 @@ function label() {
 		});
 
 		// Begin with the last label and shift any overlapping labels up
+		var a, b, h;
 		for (var i = l - 1; i > 0; i--) {
-			var a = data[i - 1];
-			var b = data[i];
-			var h = b._height;
+			a = data[i - 1];
+			b = data[i];
+			h = b._height;
 
 			// Ensure that b is in bounds first
 			b.y = Math.min(b.y, height);
@@ -90,9 +91,9 @@ function label() {
 		// Now iterate over the labels from top to bottom, shifting labels down
 		// as needed.
 		for (i = 1; i < l; i++) {
-			var a = data[i - 1];
-			var b = data[i];
-			var h = b._height;
+			a = data[i - 1];
+			b = data[i];
+			h = b._height;
 
 			// Ensure that a is in bounds first
 			a.y = Math.max(a.y, 0);
