@@ -160,9 +160,6 @@ class CacheRefresh(object):
 
         loop_region_ids = self.get_region_ids_to_process()
 
-        print 'REGION IDS'
-        print loop_region_ids
-
         while len(list(loop_region_ids)) > 0:
 
             region_cursor = Region.objects\
@@ -240,7 +237,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 10000
+            limit = 100
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
