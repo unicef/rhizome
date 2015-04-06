@@ -1,19 +1,9 @@
 'use strict';
 
-var _      = require('lodash');
 var d3     = require('d3');
-var moment = require('moment');
 
 var RADIUS       = 3;
 var HOVER_RADIUS = 5;
-
-function x(d) {
-	return d.x;
-}
-
-function y(d) {
-	return d.y;
-}
 
 module.exports = {
 
@@ -131,9 +121,9 @@ module.exports = {
 							text     : d.name,
 							delay    : 0
 						}
-					})
+					});
 				})
-				.on('mouseout', function (d) {
+				.on('mouseout', function () {
 					d3.select(this)
 						.transition()
 						.duration(500)
