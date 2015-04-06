@@ -72,6 +72,10 @@ function label() {
 			data[i]   = d;
 		});
 
+		// We'll need these later to re-center the labels as close as possible to
+		// their desired positions
+		var origBounds = findBounds(bboxes);
+
 		// Begin with the last label and shift any overlapping labels up
 		var a, b, h;
 		for (var i = l - 1; i > 0; i--) {
@@ -101,6 +105,17 @@ function label() {
 			if (b.y - h < a.y) {
 				b.y = a.y + h;
 			}
+		}
+
+		// Recenter the labels
+		var top    = data[0].y - data[0]._height;
+		var bottom = data[data.length - 1].y;
+		var center = (bottom - top) / 2;
+		var delta  = center - origBounds.cy;
+
+		// Apply the shift to all of the labels' data
+		for (i = 0; i < l; i++) {
+			data[i].y += delta;
 		}
 	}
 
