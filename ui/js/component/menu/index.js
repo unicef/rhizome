@@ -95,8 +95,10 @@ module.exports = {
 
 		onResize : function () {
 			var el     = dom.dimensions(this.$el);
-			var menu   = dom.dimensions(this.$$.menu, true);
+			var menu   = dom.dimensions(this.$$.menu);
 			var offset = dom.viewportOffset(this.$el);
+
+			console.debug('menu dimensions:', menu.width, menu.height);
 
 			this.maxHeight = window.innerHeight - offset.top;
 
