@@ -217,8 +217,16 @@ module.exports = {
 			svg.select('.y.axis')
 				.call(yAxis);
 
-			svg.select('.legend')
-				.call(legend().scale(colorScale));
+			if (this.series.length > 1) {
+				// Show the legend if we have at least two series
+				svg.select('.legend')
+					.call(legend().scale(colorScale));
+			} else {
+				// Make sure we clear the legend if have fewer than two series
+				svg.select('.legend')
+					.selectAll('g')
+					.remove();
+			}
 		}
 
 	},

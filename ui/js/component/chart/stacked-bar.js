@@ -212,14 +212,22 @@ module.exports = {
 			svg.select('.y.axis')
 				.call(yAxis);
 
-			svg.select('.legend')
-				.call(legend()
-					.interactive(true)
-					.filled(function (d, i) {
-						return self.sortBy ? self.sortBy !== d : i !== 0;
-					})
-					.scale(colorScale)
-					.clickHandler(this.setSortBy));
+			if (this.series.length > 1) {
+				// Show the legend if we have at least two series
+				svg.select('.legend')
+					.call(legend()
+						.interactive(true)
+						.filled(function (d, i) {
+							return self.sortBy ? self.sortBy !== d : i !== 0;
+						})
+						.scale(colorScale)
+						.clickHandler(this.setSortBy));
+			} else {
+				// Clear the legend if we have fewer than two series
+				svg.select('.legend')
+					.selectAll('g')
+					.remove();
+			}
 		},
 
 		setSortBy : function (d) {
