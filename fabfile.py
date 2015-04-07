@@ -46,6 +46,8 @@ def deploy():
 
     # enter virtual environment
     with virtualenv(local_venv_path):
+        # update/install dependencies
+        local ("npm install")
         local ("pip install -r requirements.txt")
 
         # make dist
