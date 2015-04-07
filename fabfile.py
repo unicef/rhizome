@@ -65,20 +65,22 @@ def deploy():
 
     # unzip stuff
     with cd(remote_work_path):
+        run("rm -rf %s/*" % remote_frontend_path)
+        run("rm -rf %s/*" % remote_backend_path)
+
         run("unzip -o uf04-frontend.zip -d %s" % remote_frontend_path) # -o is overwrite
         run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
 
-    # in front-end path
-    with cd(remote_backend_path):
-        run("chgrp -R www-data .")
-
     # in server path -
     with cd(remote_backend_path):
+        run("chgrp -R www-data *")
+        run("chmod -R g+w *")
+
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py syncdb --noinput --settings=polio.prod_settings")
-        run("python manage.py migrate --noinput --settings=polio.prod_settings")
+        run("python manage.py syncdb --noinput")
+        run("python manage.py migrate --noinput")
 
         # echo "== BUILDING DATABASE =="
         run("bash bin/build_db.sh")
