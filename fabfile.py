@@ -5,6 +5,7 @@
 # example invocation
 # $ fab -H jenkins@uf04.seedscientific.com deploy
 # $ fab -H ubuntu@52.0.138.67 deploy
+# $ fab -H ubuntu@uf04.seedscientific.com deploy
 
 from fabric.api import local, run, cd, put
 from fabvenv import virtualenv, make_virtualenv
