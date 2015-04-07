@@ -33,7 +33,9 @@
 					<i class="fa fa-times-circle"></i>
 				</a>
 			</div>
-			<ul>
+			<ul
+				v-el="itemList"
+				v-style="max-height : maxHeight + 'px'">
 				<li v-repeat="filteredItems" v-component="vue-menuitem"></li>
 			</ul>
 		</div>

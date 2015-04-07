@@ -49,6 +49,7 @@ module.exports = {
 
 	ready : function () {
 		window.addEventListener('resize', this.onResize);
+		window.addEventListener('scroll', this.onResize);
 	},
 
 	computed : {
@@ -95,10 +96,11 @@ module.exports = {
 
 		onResize : function () {
 			var el     = dom.dimensions(this.$el);
-			var menu   = dom.dimensions(this.$$.menu, true);
-			var offset = dom.viewportOffset(this.$el);
+			var menu   = dom.dimensions(this.$$.menu);
+			var items = dom.dimensions(this.$$.itemList);
+			var offset = dom.viewportOffset(this.$$.menu);
 
-			this.maxHeight = window.innerHeight - offset.top;
+			this.maxHeight = window.innerHeight - offset.top - (menu.height - items.height);
 
 			var rightEdge = offset.left + (el.width / 2) + (menu.width / 2);
 			var leftEdge  = offset.left + (el.width / 2) - (menu.width / 2);

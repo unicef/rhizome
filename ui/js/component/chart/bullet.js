@@ -2,7 +2,6 @@
 
 var _  = require('lodash');
 var d3 = require('d3');
-var moment = require('moment');
 
 module.exports = {
 	replace : true,
