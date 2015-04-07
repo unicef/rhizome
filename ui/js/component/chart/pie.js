@@ -5,6 +5,7 @@
 
 var _      = require('lodash');
 var d3     = require('d3');
+var moment = require('moment');
 
 var colors = require('colors/coolgray');
 
@@ -59,9 +60,9 @@ module.exports = {
 				indicator__in : _.map(this.indicators, function (d) {
 					return d.id || d;
 				}),
-				region__in    : [this.region],
-				campaign_start: this.campaign.end,
-				campaign_end  : this.campaign.end
+				region__in    : [this.region.id],
+				campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end  : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 		},
 

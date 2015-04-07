@@ -11,6 +11,7 @@
 
 @import "forms";
 @import "charts";
+@import "dashboards";
 
 body {
 	font-size : rem-calc(10);
@@ -32,20 +33,36 @@ header {
 	top      : 0;
 	left     : 0;
 	bottom   : 0;
+
+	z-index  : 9999;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	a {
+		color : inherit;
+
+		&:not([href]) {
+			color  : inherit;
+			cursor : default;
+		}
+	}
+
+	label {
+		display        : inline-block;
+		text-transform : none;
+		font-size      : rem-calc(12);
+		margin-right   : 1em;
+	}
+
+	input[type="radio"] {
+		margin-bottom: 0;
+	}
 }
 
 h3 {
 	border-bottom  : 1px solid $gainsboro;
 	color          : $gainsboro;
 	text-transform : uppercase;
-
-	label {
-		color          : $gainsboro;
-		display        : inline-block;
-		text-transform : none;
-		font-size      : rem-calc(12);
-		margin-left    : 1em;
-	}
 }
 
 h4 {
@@ -111,29 +128,14 @@ body.data-entry nav .data-entry {
 }
 
 a {
-	&:hover {
-		color: #ffcc67;
+	transition: color 300ms ease-in-out;
+
+	&[href]:hover {
+		color: $secondary-color;
 	}
 }
 
 table {
-	border          : none;
-	border-collapse : separate;
-	border-spacing  : 0.5em;
-
-	tr {
-		background-color: transparent !important;
-
-		td {
-			font-size      : 0.625rem;
-			line-height    : 1;
-			padding        : 0;
-			vertical-align : middle;
-		}
-	}
-}
-
-.data-table {
 	border-collapse: collapse;
 	margin-top: 10pt;
 	min-width: 100%;
@@ -176,12 +178,32 @@ table {
 		}
 	}
 
+	&.pie-charts {
+		border          : none;
+		border-collapse : separate;
+		border-spacing  : 0.5em;
+
+		tr {
+			background-color: transparent !important;
+
+			td {
+				font-size      : 0.625rem;
+				line-height    : 1;
+				padding        : 0;
+				vertical-align : middle;
+			}
+		}
+	}
 }
 
 *[role="menuitem"] {
+	color   : $body-font-color;
+	display : block;
+	padding : 5pt;
+
 	&:hover {
-		background-color: $primary-color;
-		color: white;
+		background-color : $primary-color;
+		color            : white;
 	}
 }
 
@@ -408,5 +430,78 @@ ul {
 
 	h3 {
 		border: none;
+	}
+}
+
+.inline {
+	display: block;
+}
+
+.menu {
+	.menu-button {
+		color     : white;
+		cursor    : pointer;
+		font-size : 1rem;
+
+		.fa-circle {
+			color       : $button-border-color;
+			text-shadow : 0 2px #667c89;
+		}
+
+		.fa-circle-thin {
+			color : $button-border-color;
+		}
+
+		&:active {
+			.fa-circle {
+				text-shadow : 0 1px #667c89;
+			}
+		}
+	}
+
+	.background {
+		border-color: $gainsboro;
+
+		.arrow {
+			border-bottom-color: $gainsboro !important;
+		}
+	}
+}
+
+.menu {
+	*[role="search"] {
+		input {
+			background-color: $vapor;
+		}
+	}
+}
+
+.inverse {
+	background-color : $gainsboro;
+	color            : $body-font-color;
+	padding          : 0.2em 0.7em;
+}
+
+@media #{$small-up} {
+	.small {
+		&.inline {
+			display: inline-block;
+		}
+	}
+}
+
+@media #{$medium-up} {
+	.medium {
+		&.inline {
+			display: inline-block;
+		}
+	}
+}
+
+@media #{$large-up} {
+	.large {
+		&.inline {
+			display: inline-block;
+		}
 	}
 }

@@ -381,6 +381,7 @@ class DataPointEntryResource(BaseModelResource):
             bundle.obj.value = bundle.data['value']
 
         bundle.obj.changed_by_id = bundle.data['changed_by_id']
+        bundle.obj.cache_job_id = -1
 
         return bundle
 

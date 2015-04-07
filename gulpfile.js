@@ -92,7 +92,10 @@ gulp.task('clean', function (cb) {
 });
 
 gulp.task('build', ['fonts', 'browserify', 'styles']);
-gulp.task('default', ['clean', 'build']);
+
+gulp.task('default', ['clean'], function () {
+	return gulp.start('build');
+});
 
 gulp.task('livereload', function () {
 	var server = $.livereload();
@@ -125,7 +128,7 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'**/*.{py,sql,html}',
+			'**/*.{py,sql,html,sh}',
 			'requirements.txt',
 			'!sql_backups/**/*',
 			'!db.sql',

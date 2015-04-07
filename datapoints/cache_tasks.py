@@ -31,14 +31,15 @@ class CacheRefresh(object):
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
-        status, self.cache_job = self.set_up()
+        response_msg = self.set_up()
 
-        if status != 'NOTHING_TO_PROCESS':
+        if response_msg != 'NOTHING_TO_PROCESS':
 
-            self.cache_job.response_msg = self.main()
+            response_msg = self.main()
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
+        self.cache_job.response_msg = response_msg
         self.cache_job.save()
 
     def set_up(self):
@@ -74,13 +75,13 @@ class CacheRefresh(object):
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
             if len(self.datapoint_id_list) == 0:
-                return 'NOTHING_TO_PROCESS', cache_job
+                return 'NOTHING_TO_PROCESS'
 
         self.set_cache_job_id_for_raw_datapoints()
 
         self.indicator_ids = self.get_indicator_ids()
 
-        return 'PENDING_AGG',self.cache_job
+        return 'PENDING_AGG'
 
     def main(self):
         '''
@@ -92,6 +93,8 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
+        print '.....FINDING BAD DAT...\n' * 5
+        bad_dp_ids = self.bad_datapoints()
         print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
         print '.....CALCULATING.....\n' * 5
@@ -121,6 +124,15 @@ class CacheRefresh(object):
 
         x = [dp.id for dp in dp_curs]
 
+
+    def bad_datapoints(self):
+
+        dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
+            ,[self.cache_job.id])
+
+        dp_ids = [dp.id for dp in dp_cursor]
+
+        return dp_ids
 
     def agg_datapoints(self):
         '''
@@ -225,7 +237,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 5000
+            limit = 100
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
@@ -305,6 +317,11 @@ class CacheRefresh(object):
                 , dwc.region_id
             	, dwc.campaign_id
             FROM datapoint_with_computed dwc
+            INNER JOIN region r
+            	ON dwc.region_id = r.id
+            INNER JOIN campaign c
+            	ON dwc.campaign_id = c.id
+                AND c.office_id = r.office_id
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;
             """,[self.cache_job.id])

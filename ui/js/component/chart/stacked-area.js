@@ -14,6 +14,12 @@ module.exports = {
 		require('./line')
 	],
 
+	data : function () {
+		return {
+			sortLabels : false
+		};
+	},
+
 	computed: {
 		labels: function () {
 			if (this.empty) {
@@ -40,6 +46,7 @@ module.exports = {
 					};
 				})
 				.filter('defined')
+				.reverse()
 				.value();
 
 			return labels;

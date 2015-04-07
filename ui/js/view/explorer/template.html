@@ -8,18 +8,18 @@
 			<div class="medium-4 columns">
 				<label>
 					<div class="row">
-						<div class="small-7 columns">Time Period</div>
+						<div class="small-12 columns">Time Period</div>
 					</div>
 					<div class="row">
-						<div class="small-3 columns">
+						<div class="small-5 columns">
 							<input name="start_dt"
 									type="text"
 									placeholder="YYYY-MM-DD"
 									aria-label="Start Date"
 									v-model="campaign.start"></input>
 						</div>
-						<div class="small-1 columns inline centered">to</div>
-						<div class="small-3 columns">
+						<div class="small-2 columns inline centered">to</div>
+						<div class="small-5 columns">
 							<input name="end_dt"
 									type="text"
 									placeholder="YYYY-MM-DD"
@@ -30,7 +30,7 @@
 				</label>
 			</div>
 
-			<div class="medium-1 columns">
+			<div class="medium-2 columns">
 				<label for="regions">Regions</label>
 				<div id="regions"
 						 placeholder="0 selected"
@@ -38,7 +38,7 @@
 						 searchable="true"></div>
 			</div>
 
-			<div class="medium-1 columns">
+			<div class="medium-2 columns">
 				<label for="indicators">Indicators</label>
 				<div id="indicators"
 						 placeholder="0 selected"
@@ -47,7 +47,7 @@
 			</div>
 
 			<!-- FIXME: Remove inline style -->
-			<div class="medium-1 columns" style="text-align: right">
+			<div class="medium-2 columns" style="text-align: right">
 				<a class="button success" role="button" v-on="click : refresh({ offset: 0 })"
 				   v-class="disabled: !hasSelection"
 				   style="margin-top:21px">
@@ -58,11 +58,11 @@
 </form>
 
 <div class="row">
-	<div class="small-7 columns">
+	<div class="small-12 columns">
 		<vue-table v-with="table"></vue-table>
 	</div>
 
-	<div class="medium-3 columns"
+	<div class="medium-6 columns"
 	     v-component="vue-pagination"
 	     v-with="offset     : pagination.offset,
 	             limit      : pagination.limit,

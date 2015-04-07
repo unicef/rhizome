@@ -25,7 +25,9 @@ module.exports = {
 	paramAttributes: [
 		'data-height',
 		'data-width',
-		'data-format-string'
+		'data-format-string',
+		'data-x-axis-label',
+		'data-y-axis-label'
 	],
 
 	mixins: [
@@ -36,6 +38,16 @@ module.exports = {
 
 	partials: {
 		'loading-overlay': require('./partial/loading-overlay.html')
+	},
+
+	data : function () {
+		return {
+			sortLabels : true,
+			chartType  : 'line',
+			xAxisLabel : '',
+			yAxisLabel : '',
+			formatString : ',.0f',
+		};
 	},
 
 	computed: {
@@ -163,7 +175,7 @@ module.exports = {
 		},
 
 		yFmt: function () {
-			return d3.format(this.formatString || 's');
+			return d3.format(this.formatString);
 		},
 
 		yScale: function () {
@@ -213,6 +225,7 @@ module.exports = {
 					.yScale(yScale)
 					.diff(this.diffX)
 					.seriesName(this.getSeriesName)
+					.sort(this.sortLabels)
 					.datapoints(_(this.series).pluck('values').flatten().value())
 				);
 
@@ -224,7 +237,11 @@ module.exports = {
 			svg.select('.annotation')
 				.selectAll('.series.label')
 				.data(this.labels)
-				.call(label().addClass('series').width(this.contentWidth).height(this.contentHeight));
+				.call(label()
+					.addClass('series')
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.align(false));
 
 			var xFmt = this.xFmt;
 

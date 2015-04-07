@@ -207,6 +207,18 @@ svg {
 		margin-right: 0.2em;
 		margin-bottom: -0.2em;
 	}
+
+	&.interactive {
+		.series {
+			cursor : pointer;
+		}
+	}
+
+	rect {
+		shape-rendering : crispEdges;
+		stroke-width    : 2;
+		stroke-location : inside;
+	}
 }
 
 // Bullet chart coloring
@@ -250,5 +262,13 @@ svg {
 		font-size   : rem-calc(24);
 
 		text-align  : center;
+	}
+}
+
+.bar {
+	.y.axis {
+		text {
+			fill: $oil;
+		}
 	}
 }

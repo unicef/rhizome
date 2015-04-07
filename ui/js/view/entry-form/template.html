@@ -3,12 +3,12 @@
 	<form class="inline">
 		<div class="row">
 
-				<div class="medium-1 columns">
+				<div class="medium-2 columns">
 					<label for="sets">Indicator Set</label>
 					<select id="sets" v-model="indicator_set_id" options="indicator_sets"></select>
 				</div>
 
-				<div class="medium-1 columns">
+				<div class="medium-2 columns">
 					<label for="campaigns">Campaign</label>
 					<select id="campaigns" v-model="campaign_id" options="campaigns"></select>
  				</div>
@@ -21,7 +21,7 @@
 							 searchable="true"></div>
 				</div>
 
-				<div class="medium-1 columns">
+				<div class="medium-2 columns">
 					&nbsp;<br>
 					<label>
 						<input type="checkbox" v-model="includeSubRegions" />
@@ -29,10 +29,10 @@
 					</label>
 				</div>
 
-				<div class="medium-1 columns">
+				<div class="medium-2 columns">
 					<!-- FIXME: Remove blank line for alignment -->
 					&nbsp;<br>
-					<a class="button primary" role="button" v-on="click : refresh({ offset: 0 })" v-class="disabled: !hasSelection">
+					<a class="button primary" role="button" v-on="click : refresh" v-class="disabled: !hasSelection">
 						<i class="fa fa-fw fa-refresh" v-class="fa-spin : table.loading"></i>&emsp;Load Entry Form
 					</a>
 				</div>
@@ -40,11 +40,11 @@
 	</form>
 
 	<div class="row">
-		<div class="small-7 columns">
+		<div class="small-12 columns">
 			<vue-table-editable v-with="table"></vue-table-editable>
 		</div>
 
-		<div class="medium-5 large-6 columns"
+		<div class="medium-6 columns"
 		     v-component="vue-pagination"
 		     v-with="offset     : pagination.the_offset,
 		             limit      : pagination.the_limit,

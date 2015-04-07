@@ -3,8 +3,8 @@
 	<div class="row print-only">
 		<div class="small-12 columns">
 			<h1>
-				<span class="campaign">{{ campaignName }}</span>
-				<span class="region">{{ regionName }}</span>
+				<span v-if="campaign" class="campaign">{{ campaign.start_date | date 'MMMM YYYY' }}</span>
+				<span v-if="region" class="region">{{ region.name }}</span>
 			</h1>
 			<h2>
 				Polio<br />
@@ -145,7 +145,7 @@
 					{{ transitPoints.vaccinated }} children vaccinated
 				</p>
 
-				<table>
+				<table class="pie-charts">
 					<tbody>
 						<tr v-if="transitPoints.showInPlace">
 							<td>
@@ -265,10 +265,12 @@
 			<h6>Number of Inaccessible Children</h6>
 			<div v-component="chart-line"
 			     data-aspect="2.665"
-			     data-margin-bottom="24"
 			     data-period="1 years"
 			     data-indicators="[158]"
-					 data-format-string="s"
+					 data-margin-top="24"
+					 data-margin-right="4"
+					 data-margin-left="4"
+					 data-margin-bottom="24"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<div class="row">
