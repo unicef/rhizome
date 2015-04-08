@@ -1,6 +1,6 @@
 # fabricfile to deploy build
 #
-# depends on installation of fabric - pip install fabric
+# depends on installation of fabric - pip install fabric virtualenv
 #
 # example invocation
 # $ fab -H jenkins@uf04.seedscientific.com deploy
@@ -8,7 +8,6 @@
 # $ fab -H ubuntu@uf04.seedscientific.com deploy
 
 from fabric.api import local, run, cd, put
-from fabvenv import virtualenv, make_virtualenv
 
 ## global variables
 ##
@@ -42,17 +41,19 @@ def deploy():
     # sudo gem install compass
 
     # make virtual env
-    make_virtualenv(local_venv_path)
+    local('virtualenv %s' % local_venv_path)
 
     # enter virtual environment
-    with virtualenv(local_venv_path):
-        # update/install dependencies
-        local ("npm install")
-        local ("pip install -r requirements.txt")
+    activate_this_file = "%s/bin/activate_this.py" % local_venv_path
+    execfile(activate_this_file, dict(__file__=activate_this_file))
 
-        # make dist
-        local("./node_modules/.bin/bower install")
-        local("./node_modules/.bin/gulp dist")
+    # update/install dependencies
+    local ("npm install")
+    local ("pip install -r requirements.txt")
+
+    # make dist
+    local("./node_modules/.bin/bower install")
+    local("./node_modules/.bin/gulp dist")
 
     ###
     ### on target machine...
