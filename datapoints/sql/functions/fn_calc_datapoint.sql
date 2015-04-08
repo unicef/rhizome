@@ -131,7 +131,12 @@ BEGIN
         INNER JOIN calculated_indicator_component cic
             ON ad.indicator_id = cic.indicator_component_id
             AND cic.calculation = 'PART_TO_BE_SUMMED'
+-- 	WHERE NOT EXISTS (  -- LEAF LEVEL INDICATORS -- 
+-- 		SELECT 1 FROM calculated_indicator_component cic2
+-- 		WHERE cic.indicator_id = cic2.indicator_component_id
+-- 	)
         GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id,ad.cache_job_id;
+
 
         ----- PART / WHOLE ------
         INSERT INTO datapoint_with_computed

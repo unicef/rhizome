@@ -1,36 +1,36 @@
 #!/bin/bash
 
-BACKUPDIR=sql_backups/
-COMPRESSION=4
-DATE=`date +%Y-%m-%dT%H:%M:%S`
+# BACKUPDIR=sql_backups/
+# COMPRESSION=4
+# DATE=`date +%Y-%m-%dT%H:%M:%S`
 DB=polio
-HOST=50.57.77.252
+# HOST=50.57.77.252
 USER=djangoapp
 
 # FIXME: It would be nice to have command-line switches for skipping back-up and
 # skipping the sync
 
-echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.tgz ...
+#echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.tgz ...
 
-if [ ! -d $BACKUPDIR ]; then
-  mkdir $BACKUPDIR
-fi
+#if [ ! -d $BACKUPDIR ]; then
+#  mkdir $BACKUPDIR
+#fi
 
-pg_dump --verbose --format=t -f "$BACKUPDIR$DATE.sql.tar" $DB
+#pg_dump --verbose --format=t -f "$BACKUPDIR$DATE.sql.tar" $DB
 
-echo done.
+#echo done.
 
-# FIXME: It would be better to prompt for the password upfront, not midway
+## FIXME: It would be better to prompt for the password upfront, not midway
 # through syncing
-echo
-echo Downloading data from $HOST:$DB...
-pg_dump --verbose -C -h $HOST -U $USER -f db.sql $DB
-echo done.
+#echo
+#echo Downloading data from $HOST:$DB...
+#pg_dump --verbose -C -h $HOST -U $USER -f db.sql $DB
+#echo done.
 
-echo
-echo Deleting data from $DB database...
+#echo
+#echo Deleting data from $DB database...
 
-# FIXME: Should exit with an error status if we fail to drop the database
+# Kill All Connections to DB #
 psql -c"select pg_terminate_backend(pid)
    from pg_stat_activity
    where datname = '$DB';"
@@ -50,5 +50,5 @@ psql -c "CREATE DATABASE $DB
 
 
 echo Loading production data...
-psql -f db.sql $DB $USER
+psql -f ~/datapoint_table.sql $DB $USER
 echo done.

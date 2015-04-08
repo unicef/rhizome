@@ -118,7 +118,7 @@ class CacheRefresh(object):
             SET cache_job_id = %s
             WHERE id = ANY(%s);
 
-            SELECT ID from datapoint limit 1
+            SELECT ID from datapoint LIMIT 1;
 
         ''',[self.cache_job.id,self.datapoint_id_list])
 
@@ -215,6 +215,7 @@ class CacheRefresh(object):
             	INNER JOIN _raw_indicators ri
             	ON cic.indicator_component_id = ri.indicator_id
 
+
             UNION ALL
 
             SELECT indicator_id from _raw_indicators
@@ -237,7 +238,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 100
+            limit = 3000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
