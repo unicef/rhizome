@@ -5,8 +5,7 @@ $func$
 BEGIN
 
 
-
--- http://stackoverflow.com/questions/19499461/postgresql-functions-execute-create-table-unexpected-results
+  -- http://stackoverflow.com/questions/19499461/postgresql-functions-execute-create-table-unexpected-results
 
 	-- IN ORDER TO PERFORM THE CALCULATIONS NEEDED, WE NEED TO FIND --
 	-- THE COMPONENT AND CALCULATED INDICATORS RELEVANT FOR THIS JOB --
@@ -68,8 +67,8 @@ BEGIN
 	-- This table will be used, instead of the agg_datapoint table for the remainder of the calc process
 
 	EXECUTE FORMAT ('
-	DROP TABLE IF EXISTS _tmp_agg_datapoint ;
-	CREATE TABLE _tmp_agg_datapoint AS
+	DROP TABLE IF EXISTS _tmp_calc_datapoint ;
+	CREATE TABLE _tmp_calc_datapoint AS
 
 	SELECT DISTINCT
 		ad2.*
@@ -83,41 +82,6 @@ BEGIN
 		AND ad2.indicator_id = til.indicator_out
 	WHERE ad.cache_job_id = %1$s;',$1
 	);
-
-	-- DONE CREATING ALL TEMP TABLES --
-
-	----------------------------
-	-- delete before reinsert --
-	----------------------------
-
-	DELETE FROM datapoint_with_computed dwc
-	USING _tmp_agg_datapoint tad
-	WHERE dwc.region_id = tad.region_id
-	AND dwc.campaign_id = tad.campaign_id
-	AND dwc.indicator_id = tad.indicator_id;
-
-	DELETE FROM datapoint_with_computed dwc
-	USING _tmp_agg_datapoint tad
-	INNER JOIN calculated_indicator_component cic
-		ON tad.indicator_id = cic.indicator_component_id
-	WHERE dwc.region_id = tad.region_id
-	AND dwc.campaign_id = tad.campaign_id
-	AND dwc.indicator_id = cic.indicator_id;
-
-
-	-- insert agg data (no calculation) --
- 	INSERT INTO datapoint_with_computed
-  	(indicator_id,region_id,campaign_id,value,is_agg,cache_job_id)
-
-  	SELECT
-  		indicator_id
-  		,region_id
-  		,campaign_id
-  		,value
-  		,is_agg
-  		,$1
-  	FROM _tmp_agg_datapoint
-  	WHERE is_calc = 'f';
 
 
 	RETURN QUERY

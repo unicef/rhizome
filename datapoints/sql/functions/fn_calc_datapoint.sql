@@ -13,6 +13,7 @@ BEGIN
 	--
 	PERFORM * FROM fn_calc_part_of_difference($1);
 
+	PERFORM * FROM fn_calc_upsert_computed($1);
 
 	-- FIX ME --
 	UPDATE datapoint_with_computed SET value = 0.00

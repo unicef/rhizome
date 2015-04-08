@@ -4,28 +4,27 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
-        INSERT INTO datapoint_with_computed
-        (indicator_id,region_id,campaign_id,value,cache_job_id)
+        INSERT INTO _tmp_calc_datapoint
+        (indicator_id,region_id,campaign_id,value)
 
         SELECT DISTINCT
-		denom.master_indicator_id
-		,denom.region_id
-		,denom.campaign_id
-		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
-               ,$1
-          FROM (
-          	SELECT
-          		cic.indicator_id as master_indicator_id
-          		,ad.region_id
-          		,ad.indicator_id
-          		,ad.campaign_id
-          		,ad.value
-			,ad.cache_job_id
-          	FROM _tmp_agg_datapoint ad
-          	INNER JOIN calculated_indicator_component cic
-          	ON cic.indicator_component_id = ad.indicator_id
-          	AND calculation = 'PART_OF_DIFFERENCE'
-          )num_part
+    		denom.master_indicator_id
+    		,denom.region_id
+    		,denom.campaign_id
+    		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
+              FROM (
+              	SELECT
+              		cic.indicator_id as master_indicator_id
+              		,ad.region_id
+              		,ad.indicator_id
+              		,ad.campaign_id
+              		,ad.value
+    			,ad.cache_job_id
+              	FROM _tmp_calc_datapoint ad
+              	INNER JOIN calculated_indicator_component cic
+              	ON cic.indicator_component_id = ad.indicator_id
+              	AND calculation = 'PART_OF_DIFFERENCE'
+              )num_part
 
           INNER JOIN (
           	SELECT
@@ -35,7 +34,7 @@ BEGIN
           		,ad.campaign_id
           		,ad.value
 			,ad.cache_job_id
-          	FROM _tmp_agg_datapoint ad
+          	FROM  _tmp_calc_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE'
@@ -53,7 +52,7 @@ BEGIN
           		,ad.campaign_id
           		,ad.value
           		,ad.cache_job_id
-          	FROM _tmp_agg_datapoint ad
+          	FROM _tmp_calc_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
           	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'

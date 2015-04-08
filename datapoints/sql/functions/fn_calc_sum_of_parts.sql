@@ -7,24 +7,23 @@ $func$
 BEGIN
 
   ---- SUM OF PARTS ------
-  INSERT INTO datapoint_with_computed
-  (indicator_id,region_id,campaign_id,value,cache_job_id)
+  INSERT INTO _tmp_calc_datapoint
+  (indicator_id,region_id,campaign_id,value)
 
   SELECT DISTINCT
     cic.indicator_id
-    ,ad.region_id
-    ,ad.campaign_id
-    ,SUM(ad.value) as value
-    ,$1
-  FROM _tmp_agg_datapoint ad
+    ,tcd.region_id
+    ,tcd.campaign_id
+    ,SUM(tcd.value) as value
+  FROM  _tmp_calc_datapoint tcd
   INNER JOIN calculated_indicator_component cic
-     ON ad.indicator_id = cic.indicator_component_id
+     ON tcd.indicator_id = cic.indicator_component_id
      AND cic.calculation = 'PART_TO_BE_SUMMED'
   -- 	WHERE NOT EXISTS (  -- LEAF LEVEL INDICATORS --
       -- 	SELECT 1 FROM calculated_indicator_component cic2
       -- 	WHERE cic.indicator_id = cic2.indicator_component_id
   -- 	)
-  GROUP BY ad.campaign_id, ad.region_id, cic.indicator_id,ad.cache_job_id;
+  GROUP BY tcd.campaign_id, tcd.region_id, cic.indicator_id;
 
 
 	RETURN QUERY
