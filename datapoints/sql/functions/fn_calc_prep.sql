@@ -105,6 +105,20 @@ BEGIN
 	AND dwc.indicator_id = cic.indicator_id;
 
 
+	-- insert agg data (no calculation) --
+ 	INSERT INTO datapoint_with_computed
+  	(indicator_id,region_id,campaign_id,value,is_agg,cache_job_id)
+
+  	SELECT
+  		indicator_id
+  		,region_id
+  		,campaign_id
+  		,value
+  		,is_agg
+  		,$1
+  	FROM _tmp_agg_datapoint
+  	WHERE is_calc = 'f';
+
 
 	RETURN QUERY
 
