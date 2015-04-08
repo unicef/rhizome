@@ -238,7 +238,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 3000
+            limit = 5000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
