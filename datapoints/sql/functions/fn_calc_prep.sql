@@ -84,9 +84,11 @@ BEGIN
 		ON ad.region_id = ad2.region_id
 		AND ad.campaign_id = ad2.campaign_id
 		AND ad2.indicator_id = til.indicator_out
-	WHERE ad.cache_job_id = %1$s;',$1
+	WHERE ad.cache_job_id = %1$s
+	AND ad.region_id = 12907 -- FIX THIS!;''',$1
 	);
 
+	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
 
 	RETURN QUERY
 
