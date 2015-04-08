@@ -19,7 +19,6 @@ BEGIN
               		,ad.indicator_id
               		,ad.campaign_id
               		,ad.value
-    			,ad.cache_job_id
               	FROM _tmp_calc_datapoint ad
               	INNER JOIN calculated_indicator_component cic
               	ON cic.indicator_component_id = ad.indicator_id
@@ -33,7 +32,6 @@ BEGIN
           		,ad.indicator_id
           		,ad.campaign_id
           		,ad.value
-			,ad.cache_job_id
           	FROM  _tmp_calc_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id
@@ -51,7 +49,6 @@ BEGIN
           		,ad.indicator_id
           		,ad.campaign_id
           		,ad.value
-          		,ad.cache_job_id
           	FROM _tmp_calc_datapoint ad
           	INNER JOIN calculated_indicator_component cic
           	ON cic.indicator_component_id = ad.indicator_id

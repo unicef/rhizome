@@ -10,8 +10,10 @@ BEGIN
 	(region_id, campaign_id, indicator_id, value, cache_job_id)
 
 	SELECT region_id, campaign_id, indicator_id, value, $1
-	FROM _tmp_calc_datapoint;
-	
+	FROM _tmp_calc_datapoint
+	WHERE region_id = 12912;
+
+
 	RETURN QUERY
 
 	SELECT ad.id FROM agg_datapoint ad

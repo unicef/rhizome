@@ -71,7 +71,11 @@ BEGIN
 	CREATE TABLE _tmp_calc_datapoint AS
 
 	SELECT DISTINCT
-		ad2.*
+		ad2.id
+		,ad2.region_id
+		,ad2.campaign_id
+		,ad2.indicator_id
+		,ad2.value
 		,til.is_calc
 	FROM agg_datapoint ad
 	INNER JOIN _tmp_indicator_lookup til
