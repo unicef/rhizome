@@ -102,7 +102,7 @@ module.exports = {
 			var el     = dom.dimensions(this.$el);
 			var menu   = dom.dimensions(this.$$.menu);
 			var items  = dom.dimensions(this.$$.itemList);
-			var offset = dom.viewportOffset(this.$$.menu);
+			var offset = dom.viewportOffset(this.$el);
 
 			this.maxHeight = window.innerHeight - offset.top - (menu.height - items.height);
 
