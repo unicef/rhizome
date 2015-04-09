@@ -146,7 +146,7 @@ module.exports = {
 				.map(function (d) {
 					return {
 						text    : d.name + ' ' + fmt(d.value),
-						x       : xScale(x(d)),
+						x       : xScale(x(d)) + width,
 						y       : yScale(d.y0 + d.y),
 						defined : data.defined(d.value)
 					};
@@ -169,8 +169,14 @@ module.exports = {
 					.orient('bottom')
 					.tickSize(0)
 					.tickPadding(4)
-					.ticks(3)
+					.ticks(4)
 					.scale(xScale));
+
+			svg.selectAll('.x.axis text')
+				.attr({
+					'text-anchor' : 'middle',
+					'dx'          : width / 2
+				});
 
 			t.select('.y.axis')
 				.call(d3.svg.axis()
