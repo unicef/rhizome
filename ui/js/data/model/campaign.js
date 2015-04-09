@@ -35,7 +35,7 @@ campaign.fetch = function (id) {
 
 	api.campaign({
 		id: id
-	}).done(function (data) {
+	}).then(function (data) {
 		update(campaign, data);
 	});
 
