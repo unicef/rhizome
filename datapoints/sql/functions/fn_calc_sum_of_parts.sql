@@ -40,7 +40,6 @@ BEGIN
   INSERT INTO _tmp_calc_datapoint
   (indicator_id,region_id,campaign_id,value)
 
-
   SELECT
   	  ig.indicator_id
   	, tcd.region_id
