@@ -49,8 +49,43 @@ module.exports = {
 	},
 
 	computed : {
+		colWidth : function () {
+			return Math.floor(this.contentWidth / _(this.datapoints).map(this.getX).uniq().size()) - 1;
+		},
+
 		empty : function () {
 			return !this.datapoints || !this.datapoints.length;
+		},
+
+		getX : function () {
+			var x = this.x;
+
+			if (_.isString(x)) {
+				x = data.accessor(x);
+			}
+
+			return x;
+		},
+
+		labels : function () {
+			var self = this;
+			var fmt  = d3.format(this.formatString);
+
+			return _(this.series)
+				.map(function (s) {
+					return _.assign({ name : s.name },
+						_.max(s.values, function (d) { return d.campaign.start_date; }));
+				})
+				.map(function (d) {
+					return {
+						text    : d.name + ' ' + fmt(d.value),
+						x       : self.xScale(self.getX(d)) + self.colWidth,
+						y       : self.yScale(d.y0 + d.y),
+						defined : data.defined(d.value)
+					};
+				})
+				.reverse()
+				.value();
 		},
 
 		series : function () {
@@ -86,6 +121,24 @@ module.exports = {
 			var stacked = stack(series);
 
 			return stacked;
+		},
+
+		xScale : function () {
+			return d3.time.scale()
+				.domain(d3.extent(this.datapoints, this.getX))
+				.range([0, this.contentWidth - this.colWidth]);
+		},
+
+		yScale : function () {
+			return d3.scale.linear()
+				.domain([0, _(this.series)
+					.pluck('values')
+					.flatten()
+					.map(function (d) {
+						return d.y + d.y0;
+					})
+					.max()])
+				.range([this.contentHeight, 0]);
 		}
 	},
 
@@ -96,27 +149,10 @@ module.exports = {
 			var series = svg.select('.data').selectAll('.series')
 				.data(this.series, function (d) { return d.id; });
 
-			var x = this.x;
-
-			if (_.isString(x)) {
-				x = data.accessor(x);
-			}
-
-			var width = Math.floor(this.contentWidth / _(this.datapoints).map(x).uniq().size()) - 1;
-
-			var xScale = d3.time.scale()
-				.domain(d3.extent(this.datapoints, x))
-				.range([0, this.contentWidth - width]);
-
-			var yScale = d3.scale.linear()
-				.domain([0, _(this.series)
-					.pluck('values')
-					.flatten()
-					.map(function (d) {
-						return d.y + d.y0;
-					})
-					.max()])
-				.range([this.contentHeight, 0]);
+			var x      = this.getX;
+			var width  = this.colWidth;
+			var xScale = this.xScale;
+			var yScale = this.yScale;
 
 			var color = d3.scale.ordinal().range(palette);
 
@@ -134,28 +170,16 @@ module.exports = {
 					.y(function (d) { return yScale(d.y0 + d.y); })
 				);
 
+			series.selectAll('rect')
+				.on('mouseover', this.onMouseOver)
+				.on('mouseout', this.onMouseOut);
+
 			series.exit().remove();
 
 			var fmt = d3.format(this.formatString);
 
-			var labels = _(this.series)
-				.map(function (s) {
-					return _.assign({ name : s.name },
-						_.max(s.values, function (d) { return d.campaign.start_date; }));
-				})
-				.map(function (d) {
-					return {
-						text    : d.name + ' ' + fmt(d.value),
-						x       : xScale(x(d)) + width,
-						y       : yScale(d.y0 + d.y),
-						defined : data.defined(d.value)
-					};
-				})
-				.reverse()
-				.value();
-
-			svg.selectAll('.series.label')
-				.data(labels)
+			svg.select('.annotation').selectAll('.series.label')
+				.data(this.labels)
 				.call(label()
 					.addClass('series')
 					.width(this.contentWidth)
@@ -191,6 +215,21 @@ module.exports = {
 					'dx' : -this.contentWidth,
 					'dy' : -4
 				});
+		},
+
+		onMouseOver : function () {
+
+		},
+
+		onMouseOut : function () {
+			d3.select(this.$$.svg).select('.annotation')
+				.selectAll('.series.label')
+				.data(this.labels)
+				.call(label()
+					.addClass('series')
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.align(false));
 		}
 	},
 
