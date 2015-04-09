@@ -303,10 +303,22 @@ class CacheRefresh(object):
         datapoint table.
         '''
 
+        ## We need to get data for indicators that weren't necessarily created
+        ## with thie Cache Job ID.  That is, we need to process all of the
+        ## indicators that exists for the regions and campaigns that we are
+        ## processing.  If we just say "give me all the indicators for this
+        ## cache job id" we will end up not storing valid data stored in a prior
+        ## cache.
+
         indicator_raw = Indicator.objects.raw("""
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
-            WHERE cache_job_id = %s
+            WHERE EXISTS (
+                SELECT 1 FROM datapoint_with_computed dwc_cache_job
+                WHERE dwc_cache_job.cache_job_id = %s
+                AND dwc.region_id = dwc_cache_job.region_id
+                AND dwc.campaign_id = dwc_cache_job.campaign_id
+            )
             """,[self.cache_job.id])
 
         all_indicator_ids = [x.id for x in indicator_raw]
@@ -388,6 +400,19 @@ class CacheRefresh(object):
 
             batch.append(dda_obj)
 
-        DataPointAbstracted.objects.all().delete()
+        da_curs = DataPoint.objects.raw('''
+
+            DELETE FROM datapoint_abstracted da
+            USING datapoint_with_computed dwc
+            WHERE da.region_id = dwc.region_id
+            AND da.campaign_id = dwc.campaign_id
+            AND dwc.cache_job_id = %s;
+
+            SELECT id FROM datapoint limit 1;
+
+        ''',[self.cache_job.id])
+
+        da_id = [x.id for x in da_curs]
+
 
         DataPointAbstracted.objects.bulk_create(batch)
