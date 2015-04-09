@@ -146,6 +146,9 @@ module.exports = {
 		draw : function () {
 			var svg = d3.select(this.$$.svg);
 
+			svg.on('mousemove', this.onMouseMove)
+				.on('mouseout', this.onMouseOut);
+
 			var series = svg.select('.data').selectAll('.series')
 				.data(this.series, function (d) { return d.id; });
 
@@ -169,10 +172,6 @@ module.exports = {
 					.x(function (d) { return xScale(x(d)); })
 					.y(function (d) { return yScale(d.y0 + d.y); })
 				);
-
-			series.selectAll('rect')
-				.on('mouseover', this.onMouseOver)
-				.on('mouseout', this.onMouseOut);
 
 			series.exit().remove();
 
@@ -217,12 +216,84 @@ module.exports = {
 				});
 		},
 
-		onMouseOver : function () {
+		onMouseMove : function () {
+			var cursor = d3.mouse(this.$$.svg)[0];
+			var x      = this.getX;
+			var xScale = this.xScale;
+			var yScale = this.yScale;
+			var fmt    = d3.format(this.formatString);
 
+			var range = _(this.datapoints)
+				.map(function (d) { return x(d).getTime(); })
+				.uniq()
+				.sortBy()
+				.value();
+
+			var val   = xScale.invert(cursor).getTime();
+			var right = d3.bisect(range, val);
+			var left  = right - 1;
+			var target;
+
+			if (cursor >= 0 || cursor <= this.width) {
+				if (left < 0) {
+					target = range[right];
+				} else if (right >= range.length) {
+					target = range[left];
+				} else {
+					target = val < range[right] ? range[left] : range[right];
+				}
+			}
+
+			if (target === this._currentHover) {
+				return;
+			}
+
+			var labels = _(this.series)
+				.map(function (s) {
+					return _.assign({ name : s.name },
+						_(s.values)
+							.filter(function (d) {
+								return d.campaign.start_date.getTime() === target;
+							})
+							.first());
+				})
+				.map(function (d) {
+					return {
+						text : d.name + ' ' + fmt(d.value),
+						x : xScale(x(d)),
+						y : yScale(d.y0 + d.y),
+						defined: data.defined(d.value)
+					};
+				})
+				.reverse()
+				.value();
+
+			var svg = d3.select(this.$$.svg);
+
+			svg.select('.annotation')
+				.selectAll('.series.label')
+				.data(labels)
+				.call(label()
+					.addClass('series')
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.align(true));
+
+			svg.select('.data')
+				.selectAll('rect')
+				.transition()
+				.duration(300)
+				.style('opacity', function (d) {
+					return x(d).getTime() === target ? 1 : 0.3;
+				});
 		},
 
 		onMouseOut : function () {
-			d3.select(this.$$.svg).select('.annotation')
+			var svg = d3.select(this.$$.svg);
+
+			this._currentHover = null;
+
+			svg.select('.annotation')
 				.selectAll('.series.label')
 				.data(this.labels)
 				.call(label()
@@ -230,6 +301,12 @@ module.exports = {
 					.width(this.contentWidth)
 					.height(this.contentHeight)
 					.align(false));
+
+			svg.select('.data')
+				.selectAll('rect')
+				.transition()
+				.duration(300)
+				.style('opacity', 1);
 		}
 	},
 
