@@ -128,12 +128,9 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'**/*.{py,sql,html,sh}',
+			'{bin,polio,datapoints,source_data}/**/*.{py,sql,html,sh}',
+			'manage.py',
 			'requirements.txt',
-			'!sql_backups/**/*',
-			'!db.sql',
-			'!{node_modules,bower_components}/**/*',
-			'!**/prod_settings.py'
 		])
 		.pipe($.zip('uf04-backend.zip'))
 		.pipe($.size({ title: 'Backend'}))
