@@ -1,6 +1,28 @@
 'use strict';
 
-var _ = require('lodash');
+var _    = require('lodash');
+var path = require('vue/src/parsers/path');
+
+/**
+ * Return an accessor name for `prop`.
+ *
+ * Returns an accessor function that takes an object (d) as an argument and
+ * looks up the value at the path specified by `prop`.
+ *
+ * @example
+ * // Returns the value at d.foo
+ * accessor('foo')(d);
+ *
+ * // Returns the value at d.foo.bar[0]
+ * accessor('foo.bar[0]')(d);
+ *
+ * @param {String} prop A path to the property to access on objects
+ */
+function accessor(prop) {
+	return function (d) {
+		return path.get(d, prop);
+	};
+}
 
 function defined(value) {
 	return value !== null &&
@@ -90,6 +112,7 @@ function unpivot(data) {
 }
 
 module.exports = {
+	accessor  : accessor,
 	defined   : defined,
 	max       : max,
 	min       : min,
