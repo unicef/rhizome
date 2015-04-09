@@ -3,8 +3,9 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
-var data    = require('util/data');
 var column  = require('./renderer/column');
+var data    = require('util/data');
+var label   = require('./renderer/label');
 var palette = require('colors/coolgray');
 
 // Color palette from I Want Hue
@@ -76,7 +77,7 @@ module.exports = {
 				.map(function (values, ind) {
 					return {
 						id     : ind,
-						name   : indicators[ind].name,
+						name   : indicators[ind].short_name,
 						values : _.sortBy(values, x)
 					};
 				})
@@ -135,6 +136,32 @@ module.exports = {
 
 			series.exit().remove();
 
+			var fmt = d3.format(this.formatString);
+
+			var labels = _(this.series)
+				.map(function (s) {
+					return _.assign({ name : s.name },
+						_.max(s.values, function (d) { return d.campaign.start_date; }));
+				})
+				.map(function (d) {
+					return {
+						text    : d.name + ' ' + fmt(d.value),
+						x       : xScale(x(d)),
+						y       : yScale(d.y0 + d.y),
+						defined : data.defined(d.value)
+					};
+				})
+				.reverse()
+				.value();
+
+			svg.selectAll('.series.label')
+				.data(labels)
+				.call(label()
+					.addClass('series')
+					.width(this.contentWidth)
+					.height(this.contentHeight)
+					.align(false));
+
 			var t = svg.transition().duration(500);
 
 			t.select('.x.axis')
@@ -148,7 +175,7 @@ module.exports = {
 			t.select('.y.axis')
 				.call(d3.svg.axis()
 					.orient('right')
-					.tickFormat(d3.format(this.formatString))
+					.tickFormat(fmt)
 					.tickSize(this.contentWidth)
 					.ticks(3)
 					.scale(yScale));
