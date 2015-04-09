@@ -8,11 +8,11 @@ BEGIN
 	PERFORM * FROM fn_calc_prep($1);
 	--
 	PERFORM * FROM fn_calc_sum_of_parts($1);
-	--
+	-- --
   PERFORM * FROM fn_calc_part_over_whole($1);
-	--
+	-- --
 	PERFORM * FROM fn_calc_part_of_difference($1);
-
+	--
 	PERFORM * FROM fn_calc_upsert_computed($1);
 
 	-- FIX ME --
