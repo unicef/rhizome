@@ -79,12 +79,12 @@ function datapoint(q) {
 		// Fetch datapoints first, then look up the campaigns. Once campaign data
 		// has been filled in, fulfill the promise.
 
-		fetch(q).done(function (data) {
+		fetch(q).then(function (data) {
 			var campaigns = data.objects.map(function (d) { return d.campaign; });
 
 			endPoint('/campaign/')({
 				id__in: campaigns
-			}).done(function (campaignData) {
+			}).then(function (campaignData) {
 				var campaigns = _.indexBy(campaignData.objects, 'id');
 
 				// Replace the campaign IDs with campaign objects
