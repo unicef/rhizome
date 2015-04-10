@@ -4,7 +4,7 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
----- SUM OF PARTS ------
+  ---- SUM OF PARTS ------
 
   WITH RECURSIVE ind_graph AS
   (
@@ -42,13 +42,22 @@ BEGIN
 
   SELECT
   	  ig.indicator_id
-  	, tcd.region_id
-  	, tcd.campaign_id
-  	, SUM(tcd.value) as agg_value
+  	, dwc.region_id
+  	, dwc.campaign_id
+  	, SUM(dwc.value) as agg_value
   FROM ind_graph ig
-  INNER JOIN _tmp_calc_datapoint tcd
-  ON ig.indicator_component_id = tcd.indicator_id
-  GROUP BY ig.indicator_id, tcd.region_id, tcd.campaign_id;
+  INNER JOIN datapoint_with_computed dwc
+	ON 1 = 1
+  	AND ig.indicator_component_id = dwc.indicator_id
+  WHERE EXISTS ( 
+	SELECT 1 FROM _tmp_calc_datapoint tcd
+	WHERE ig.indicator_component_id = tcd.indicator_id
+	AND tcd.region_id = dwc.region_id
+	AND tcd.campaign_id = dwc.campaign_id
+  )
+  
+  GROUP BY ig.indicator_id, dwc.region_id, dwc.campaign_id
+  ;
 
 
 	RETURN QUERY
