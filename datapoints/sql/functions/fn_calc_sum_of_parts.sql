@@ -6,10 +6,10 @@ BEGIN
 
   ---- SUM OF PARTS ------
 
-  WITH RECURSIVE ind_graph AS
-  (
-      -- non-recursive term ( rows where the components aren't
-      -- master_indicators in another calculation )
+    WITH RECURSIVE ind_graph AS
+    (
+    -- non-recursive term ( rows where the components aren't
+    -- master_indicators in another calculation )
 
   	SELECT
     		 cic.id
@@ -25,7 +25,7 @@ BEGIN
 
   	UNION ALL
 
-  	-- recursive term
+  	-- recursive term --
   	SELECT
   		cic_recurs.id
   		,cic_recurs.indicator_id
@@ -35,30 +35,29 @@ BEGIN
   	INNER JOIN ind_graph AS ig
   	ON (cic_recurs.indicator_component_id = ig.indicator_id)
   	AND calculation = 'PART_TO_BE_SUMMED'
-  )
 
-  INSERT INTO _tmp_calc_datapoint
-  (indicator_id,region_id,campaign_id,value)
+    )
 
-  SELECT
-  	  ig.indicator_id
-  	, dwc.region_id
-  	, dwc.campaign_id
-  	, SUM(dwc.value) as agg_value
-  FROM ind_graph ig
-  INNER JOIN datapoint_with_computed dwc
-	ON 1 = 1
-  	AND ig.indicator_component_id = dwc.indicator_id
-  WHERE EXISTS ( 
-	SELECT 1 FROM _tmp_calc_datapoint tcd
-	WHERE ig.indicator_component_id = tcd.indicator_id
-	AND tcd.region_id = dwc.region_id
-	AND tcd.campaign_id = dwc.campaign_id
-  )
-  
-  GROUP BY ig.indicator_id, dwc.region_id, dwc.campaign_id
-  ;
+    INSERT INTO _tmp_calc_datapoint
+    (indicator_id,region_id,campaign_id,value)
 
+    SELECT
+        ig.indicator_id
+      , dwc.region_id
+      , dwc.campaign_id
+      , SUM(dwc.value) as agg_value
+    FROM ind_graph ig
+    INNER JOIN datapoint_with_computed dwc
+        ON 1 = 1
+        AND ig.indicator_component_id = dwc.indicator_id
+    WHERE EXISTS (
+        SELECT 1 FROM _tmp_calc_datapoint tcd
+        WHERE 1 = 1
+        AND tcd.region_id = dwc.region_id
+        AND tcd.campaign_id = dwc.campaign_id
+    )
+
+    GROUP BY ig.indicator_id, dwc.region_id, dwc.campaign_id;
 
 	RETURN QUERY
 
