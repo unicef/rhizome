@@ -21,7 +21,7 @@ module.exports = {
 				return null;
 			}
 
-			var start = moment(this.campaign.date, 'YYYYMMDD');
+			var start = moment(this.campaign.start_date);
 
 			start = start.subtract.apply(
 					start,

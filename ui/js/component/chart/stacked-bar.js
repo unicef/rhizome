@@ -3,7 +3,6 @@
 var _      = require('lodash');
 var d3     = require('d3');
 
-var color  = require('util/color');
 var legend = require('./renderer/legend');
 
 module.exports = {
@@ -14,14 +13,15 @@ module.exports = {
 
 	data : function () {
 		return {
-			'offset' : 'zero'
+			'offset' : 'zero',
+			'sortBy' : null
 		};
 	},
 
 	computed : {
 
 		height : function () {
-			var l       = this.categories.length;
+			var l       = this.categories().length;
 			var padding = l * this.padding;
 			var h       = Math.max(0, l * this.barHeight + padding);
 
@@ -43,7 +43,23 @@ module.exports = {
 					return d.values;
 				})
 				.offset(this.offset)
-				.order('default')
+				.order(function (data) {
+					var order = d3.range(data.length);
+
+					if (self.sortBy) {
+						var idx = _.findIndex(self.series, function (d) {
+							return d.name === self.sortBy;
+						});
+
+						// Move the index of the series on which we're sorting to the front
+						if (idx >= 0) {
+							order.splice(idx, 1);
+							order.unshift(idx);
+						}
+					}
+
+					return order;
+				})
 				.x(function (d) {
 					return d.y;
 				})
@@ -74,8 +90,16 @@ module.exports = {
 				return xScale(d.x);
 			};
 
+			var sortIdx = 0;
+
+			if (self.sortBy) {
+				sortIdx = _.findIndex(data, function (d) {
+					return d.name === self.sortBy;
+				});
+			}
+
 			var yScale = d3.scale.ordinal()
-				.domain(this.categories)
+				.domain(this.categories(data, sortIdx))
 				.rangePoints([this.contentHeight, 0], this.padding);
 
 			var y = function (d) {
@@ -95,7 +119,7 @@ module.exports = {
 				'transform' : 'translate(0,' + (-height / 2) + ')'
 			});
 
-			var colorScale = color.scale(_.pluck(data, 'name'));
+			var colorScale = this._color;
 			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
 			var fmt        = d3.format(fmtString);
 
@@ -142,12 +166,17 @@ module.exports = {
 					});
 
 				bar.transition()
-					.duration(300)
+					.duration(500)
 					.attr({
 						'x'      : x,
-						'y'      : y,
-						'height' : height,
 						'width'  : width
+					})
+					.transition()
+					.duration(500)
+					.delay(500)
+					.attr({
+						'y'      : y,
+						'height' : height
 					});
 
 				bar.exit()
@@ -157,6 +186,12 @@ module.exports = {
 					.remove();
 			});
 
+			series.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
+
 			var xAxis = d3.svg.axis()
 				.orient('bottom')
 				.tickSize(-this.contentHeight)
@@ -165,27 +200,49 @@ module.exports = {
 				.tickPadding(height / 2)
 				.scale(xScale);
 
-			svg.select('.x.axis')
-				.call(xAxis);
-
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
 				.tickSize(0)
+				.tickPadding(5)
 				.orient('left');
 
-			svg.select('.y.axis')
+			var t0 = svg.transition().duration(500);
+			var t1 = t0.transition().duration(500);
+
+
+			t0.select('.x.axis')
+				.call(xAxis);
+
+			t1.select('.y.axis')
 				.call(yAxis);
 
 			if (this.series.length > 1) {
+				// Show the legend if we have at least two series
 				svg.select('.legend')
-					.call(legend().scale(colorScale));
+					.call(legend()
+						.interactive(true)
+						.filled(function (d, i) {
+							return self.sortBy ? self.sortBy !== d : i !== 0;
+						})
+						.scale(colorScale)
+						.clickHandler(this.setSortBy));
+			} else {
+				// Clear the legend if we have fewer than two series
+				svg.select('.legend')
+					.selectAll('g')
+					.remove();
 			}
+		},
+
+		setSortBy : function (d) {
+			this.sortBy = d;
 		}
 
 	},
 
 	watch : {
-		'offset' : 'draw'
+		'offset' : 'draw',
+		'sortBy' : 'draw'
 	}
 
 };

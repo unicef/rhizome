@@ -8,11 +8,14 @@ from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 
 from source_data.models import *
-from source_data.etl_tasks.transform_odk import VcmSummaryTransform 
-from datapoints.models import Source
+from source_data.etl_tasks.transform_odk import VcmSummaryTransform
 from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
+
+from datapoints.models import Source
+from datapoints.cache_tasks import CacheRefresh
+
 
 class EtlResource(ModelResource):
 
@@ -28,13 +31,18 @@ class EtlResource(ModelResource):
 
 
     def get_object_list(self, request):
-        '''this is the only method from tastypie that is overriden all logic
-        for the etl api is dealt with inside this method'''
+        '''
+        This is the only method from tastypie that is overriden all logic
+        for the etl api is dealt with inside this method
+
+        Fix placeholder guid!
+
+        '''
 
         ## http://localhost:8000/api/v1/etl/?task=odk_refresh_vcm_summary_work_table&cron_guid=john_is_testing
 
         task_string = request.GET['task']
-        cron_guid = request.GET['cron_guid']
+        cron_guid = 'placeholder_guid'#request.GET['cron_guid']
 
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
@@ -81,7 +89,8 @@ class EtlTask(object):
             'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
-            'finish_odk_jar' :self.finish_odk_jar
+            'finish_odk_jar' :self.finish_odk_jar,
+            'refresh_cache': self.refresh_cache,
             }
 
         fn = self.function_mappings[task_string]
@@ -108,6 +117,20 @@ class EtlTask(object):
             data = 'API TEST IS WORKING'
         except Exception as err:
             return err, None
+
+        return None, data
+
+
+    def refresh_cache(self):
+        '''
+        datapoint -> agg_datapoint -> datapoint_with_computed
+        '''
+        try:
+            cr = CacheRefresh()
+        except Exception as err:
+            return err, None
+
+        data = 'complete' #cr.response_msg
 
         return None, data
 

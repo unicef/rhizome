@@ -5,14 +5,36 @@ var d3 = require('d3');
 
 
 function legend() {
-	var _padding = 3;
-	var _scale   = d3.scale.category20b();
-	var _size    = 9;
+	var _clickHandler = null;
+	var _filled       = function () { return true; };
+	var _interactive  = false;
+	var _padding      = 3;
+	var _scale        = d3.scale.category20b();
+	var _size         = 9;
 
-	function chart (selection) {
+	function fill(d, i) {
+		if (!_interactive || _filled(d, i)) {
+			return _scale(d);
+		}
+
+		return 'transparent';
+	}
+
+	function stroke(d, i) {
+		if (_interactive && !_filled(d, i)) {
+			return _scale(d);
+		}
+
+		return 'transparent';
+	}
+
+	function chart(selection) {
 		selection.each(function () {
 			var g      = d3.select(this);
-			var series = g.selectAll('.series').data(_scale.domain());
+			var series = g.selectAll('.series')
+				.data(_scale && _scale.domain ? _scale.domain() : []);
+
+			g.classed('interactive', _interactive);
 
 			var seriesEnter = series.enter()
 				.append('g')
@@ -35,12 +57,16 @@ function legend() {
 				});
 
 			series
+				.on('click', _clickHandler)
 				.transition()
 				.duration(300)
 				.attr('transform', translate);
 
 			series.select('rect')
-				.attr('fill', _scale)
+				.attr({
+					'fill'   : fill,
+					'stroke' : stroke
+				})
 				.transition()
 				.duration(300)
 				.attr({
@@ -64,6 +90,34 @@ function legend() {
 				.remove();
 		});
 	}
+
+	chart.clickHandler = function (value) {
+		if (!arguments.length) {
+			return _clickHandler;
+		}
+
+		_clickHandler = value;
+		return chart;
+	};
+
+	chart.filled = function (value) {
+		if (!arguments.length) {
+			return _filled;
+		}
+
+		_filled = value;
+
+		return chart;
+	};
+
+	chart.interactive = function (value) {
+		if (!arguments.length) {
+			return _interactive;
+		}
+
+		_interactive = value;
+		return chart;
+	};
 
 	chart.padding = function (value) {
 		if (!arguments.length) {

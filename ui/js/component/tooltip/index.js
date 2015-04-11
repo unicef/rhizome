@@ -125,6 +125,9 @@ module.exports = {
 			// Wait for the delay
 			self._timer = setTimeout(function () {
 
+				// FIXME: Merging in the options doesn't account for the fact that if
+				// no template is passed, it keeps the previously used template, instead
+				// of reverting to the default template.
 				// Crude version of Vue's mergeOptions...
 				_.forOwn(options.data, function (v, k) {
 					self.$set(k, v);

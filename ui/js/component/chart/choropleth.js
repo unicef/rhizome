@@ -2,6 +2,7 @@
 
 var _      = require('lodash');
 var d3     = require('d3');
+var moment = require('moment');
 
 var api    = require('data/api');
 
@@ -134,7 +135,7 @@ module.exports = {
 
 			path.enter().append('path')
 				.on('click', function (d) {
-					self.$dispatch('region-changed', d.properties.region_id);
+					self.$dispatch('region-selected', d.properties.name);
 				})
 				.on('mousemove', function (d) {
 					var evt = d3.event;
@@ -188,11 +189,11 @@ module.exports = {
 			var self = this;
 
 			api.datapoints({
-				campaign_end  : this.campaign.end,
-				campaign_start: this.campaign.end,
+				campaign_end  : moment(this.campaign.end_date).format('YYYY-MM-DD'),
+				campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
 				indicator__in : [this.indicator],
 				region__in    : this.mappedRegions
-			}).done(function (data) {
+			}).then(function (data) {
 
 				var index    = _.indexBy(data.objects, 'region');
 				var features = self.features;
@@ -224,9 +225,9 @@ module.exports = {
 			this.loading = true;
 
 			Promise.all([api.geo({
-				parent_region__in: [this.region]
+				parent_region__in: [this.region.id]
 			}), api.geo({
-				region__in: [this.region]
+				region__in: [this.region.id]
 			})]).then(function (data) {
 				self.geo    = data[0].objects;
 				self.border = data[1].objects.features[0];

@@ -1,12 +1,13 @@
 /* global window */
 'use strict';
 
-var _    = require('lodash');
-var d3   = require('d3');
-var path = require('vue/src/parsers/path');
+var _      = require('lodash');
+var d3     = require('d3');
+var moment = require('moment');
+var path   = require('vue/src/parsers/path');
 
-var api  = require('data/api');
-var util = require('util/data');
+var api    = require('data/api');
+var util   = require('util/data');
 
 function onError(err) {
 	window.alert('We\'re sorry, we failed to load some of the data for the dashboard.');
@@ -95,6 +96,11 @@ module.exports = {
 				outside        : [],
 				awareness      : [],
 				awarenessLabel : '',
+				missedVsAwareness : {
+					inside  : [],
+					outside : [],
+					range   : [0, 1]
+				},
 				influencer : {
 					domain : [0, 1],
 					series : []
@@ -124,27 +130,27 @@ module.exports = {
 				reasons    : [],
 				monitoring : [],
 				barHeight  : 6,
-				offset     : 'expand'
+				offset     : 'zero'
 			},
 			absences      : {
 				reasons : [],
-				offset  : 'expand'
+				offset  : 'zero'
 			},
 			noncompliance : {
 				reasons : [],
-				offset  : 'expand',
+				offset  : 'zero',
 			},
 			resolutions   : {
 				by     : [],
-				offset : 'expand',
+				offset : 'zero',
 			},
 			influencers   : {
 				by     : [],
-				offset : 'expand',
+				offset : 'zero',
 			},
 			sources       : {
 				series : [],
-				offset : 'expand'
+				offset : 'zero'
 			}
 		};
 	},
@@ -175,17 +181,17 @@ module.exports = {
 			});
 
 			var overview = {
-				region__in     : [this.region],
+				region__in     : [this.region.id],
 				indicator__in  : indicators,
-				campaign_start : this.campaign.end,
-				campaign_end   : this.campaign.end
+				campaign_start : moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			};
 
 			var provinces = {
-				parent_region__in : [this.region],
+				parent_region__in : [this.region.id],
 				indicator__in     : indicators,
-				campaign_start    : this.campaign.end,
-				campaign_end      : this.campaign.end,
+				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD'),
 				level             : 'province'
 			};
 
@@ -217,7 +223,14 @@ module.exports = {
 						.flatten()
 						.value();
 
-					var fmt = d3.format('%');
+					var fmt = function (d) {
+						if (d < 0.01 && d > 0) {
+							return '< 1%';
+						}
+
+						return d3.format('%')(d);
+					};
+
 					self.overview.missed.insideLabel = fmt(self.overview.missed.inside[0].value);
 
 					self.overview.missed.outside = datapoints
@@ -233,6 +246,8 @@ module.exports = {
 						.values()
 						.flatten()
 						.value();
+
+					self.overview.awarenessLabel = fmt(self.overview.awareness[0].value);
 
 					self.overview.influencer.series = formatData(
 						datapoints,
@@ -291,6 +306,47 @@ module.exports = {
 						.groupBy(function (d) {
 							return d.indicator.id;
 						});
+
+					// Set the same range for both scatter plots
+					self.overview.missedVsAwareness.range = [0, d3.max(data[1].objects, function (d) {
+						var index = _.indexBy(d.indicators, 'indicator');
+
+						return Math.max(index[272].value, index[274].value);
+					})];
+
+					// Inside x = 276, y = 272
+					self.overview.missedVsAwareness.inside = _(data[1].objects)
+						.map(function (d) {
+							var index = _.indexBy(d.indicators, 'indicator');
+
+							return {
+								id   : d.region,
+								name : regions[d.region].name,
+								x    : index[276].value,
+								y    : index[272].value
+							};
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
+
+					// Outside x = 276, y = 274
+					self.overview.missedVsAwareness.outside = _(data[1].objects)
+						.map(function (d) {
+							var index = _.indexBy(d.indicators, 'indicator');
+
+							return {
+								id   : d.region,
+								name : regions[d.region].name,
+								x    : index[276].value,
+								y    : index[274].value
+							};
+						})
+						.filter(function (d) {
+							return util.defined(d.x) && util.defined(d.y);
+						})
+						.value();
 
 					self.missed.reasons = formatData(
 						datapoints,

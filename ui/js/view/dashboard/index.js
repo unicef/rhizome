@@ -1,123 +1,204 @@
+/* global window, Promise */
+
 'use strict';
 
 var _        = require('lodash');
 var moment   = require('moment');
 var page     = require('page');
+var Vue      = require('vue');
 
 var api      = require('data/api');
-var Dropdown = require('component/dropdown');
+var treeify  = require('data/transform/treeify');
 
-var titles = {
-	'management-dashboard': 'Polio Performance Dashboard',
-	'nco-dashboard': 'NGA Country Office'
-};
+// FIXME: simulating part of the dashboard definition that would be retrieved
+// from the server
+var dashboardData = [{
+	'name'   : 'Polio Performance Dashboard',
+	'slug'   : 'management-dashboard',
+	'region' : 12907
+}, {
+	'name'   : 'NGA Country Office',
+	'slug'   : 'nco-dashboard',
+	'region' : 12907
+}];
 
 module.exports = {
 	template: require('./template.html'),
 
 	data: function () {
 		return {
-			campaign  : null,
-			campaigns : [],
-			dashboard : 'management-dashboard',
-			region    : null,
-			regionName: '',
-			title     : titles['management-dashboard']
+			region     : null,
+			campaign   : null,
+			dashboard  : null,
+
+			regions    : [],
+			campaigns  : [],
+			dashboards : [],
 		};
 	},
 
 	created: function () {
-		var show = function (ctx) {
-			this.dashboard = ctx.params.dashboard || 'management-dashboard';
-			this.title = titles[this.dashboard];
-		}.bind(this);
+		function show(ctx) {
+			self.dashboard = self._dashboardIndex[ctx.params.dashboard || 'management-dashboard'];
+			self.region    = self._regionIndex[ctx.params.region];
+			self.campaign  = self._campaignIndex[ctx.params.year + ctx.params.month];
+		}
 
-		page('/datapoints/:dashboard', show);
-		page({ click: false });
-
-		api.campaign().then(this.loadCampaigns);
-	},
-
-	attached: function () {
 		var self = this;
 
-		this._regions = new Dropdown({
-			el      : '#regions',
-			source  : api.regions,
-			defaults: 12907, // FIXME: Hard-coded Nigeria default should be supplied by back-end based on permissions
-			data: {
-				placeholder: 'Loading regions',
-				searchable: true
-			},
-			mapping : {
-				'parent_region_id': 'parent',
-				'name'            : 'title',
-				'id'              : 'value'
-			}
+		this._campaignIndex  = {};
+		this._dashboardIndex = {};
+		this._regionIndex    = {};
+
+		page('/datapoints/:dashboard/:region/:year/:month', show);
+
+		// FIXME: The dashboard data will eventually be stored on the server and
+		// loaded dynamically
+		this.dashboards = _.map(dashboardData, function (dashboard) {
+			return {
+				'title' : dashboard.name,
+				'value' : dashboard.slug
+			};
 		});
 
-		this._regions.$on('dropdown-value-changed', function (items) {
-			var region = null;
-			var name   = '';
+		this._dashboardIndex = _.indexBy(dashboardData, 'slug');
+		this.dashboard       = this._dashboardIndex['management-dashboard'];
 
-			if (items) {
-				var pairs = _.pairs(items);
+		var regionPromise = api.regions().then(function (data) {
+			var regions = _(data.objects);
 
-				if (pairs.length > 0) {
-					region = pairs[0][0];
-					name   = pairs[0][1];
-				}
-			}
+			self._regionIndex = _.indexBy(data.objects, 'name');
 
-			self.region     = region;
-			self.regionName = name.title;
-		});
-
-		this.$.campaigns.$on('dropdown-value-changed', function (items) {
-			var campaign = null;
-			if (items) {
-				var campaigns = _.values(items);
-
-				if (campaigns.length > 0) {
-					campaign = campaigns[0];
-				}
-			}
-
-			self.campaign = campaign;
-		});
-	},
-
-	methods: {
-
-		loadCampaigns: function (data) {
-			this.campaigns = _.uniq(data.objects, function (d) {
-				return d.start_date;
-				})
-				.map(function (o) {
-					var startDate = moment(o.start_date, 'YYYY-MM-DD');
-
+			self.regions = regions
+				.map(function (region) {
 					return {
-						title   : startDate.format('MMM YYYY'),
-						value   : o.start_date,
-						date    : startDate.format('YYYYMMDD'),
-						// FIXME: For now end and start are the same because the end_date
-						// was removed
-						end     : o.start_date,
-						id      : o.id,
-						selected: false
+						'title'  : region.name,
+						'value'  : region.name,
+						'id'     : region.id,
+						'parent' : region.parent_region_id
+					};
+				})
+				.sortBy('title')
+				.reverse() // I do not know why this works, but it does
+				.thru(_.curryRight(treeify)('id'))
+				.value();
+
+				return data;
+		}, function () {
+			window.alert('An error occurred loading regions from the server. Please refresh the page.');
+			self.regions = [];
+		});
+
+		// FIXME: Filter campaigns by region (or maybe office?)
+		var campaignPromise = api.campaign().then(function (data) {
+			var campaigns = _(data.objects)
+				.forEach(function (campaign) {
+					campaign.start_date = moment(campaign.start_date, 'YYYY-MM-DD').toDate();
+					campaign.end_date   = moment(campaign.end_date, 'YYYY-MM-DD').toDate();
+				})
+				.uniq(function (campaign) {
+					return moment(campaign.start_date).format('YYYYMM');
+				})
+				.value();
+
+			self._campaignIndex = _.indexBy(campaigns,
+				function (campaign) {
+					return moment(campaign.start_date).format('YYYYMM');
+				});
+
+			self.campaigns = _.map(campaigns,
+				function (campaign) {
+					var dt = moment(campaign.start_date);
+					return {
+						'title' : dt.format('MMMM YYYY'),
+						'value' : dt.format('YYYYMM')
 					};
 				});
 
-			this.$.campaigns.select(this.campaigns[0].value);
-			this.campaign = this.campaigns[0];
+			return data;
+		}, function () {
+			window.alert('An error occurred loading campaign data from the server. Please refresh the page.');
+			self.campaigns = [];
+		});
+
+		Promise.all([regionPromise, campaignPromise]).then(function (data) {
+			page({ click: false });
+
+			var dashboard, region, dt;
+			if (!self.region) {
+				region = _(data[0].objects)
+					.filter(function (region) {
+						// FIXME: this only works if the user has permissions to see country-
+						// level regions
+						return region.parent_region_id === null;
+					})
+					.sortBy('name')
+					.first();
+			} else {
+				region = self.region;
+			}
+
+			if (!self.campaign) {
+				var campaign = _(data[1].objects)
+					.sortBy(function (campaign) {
+						return moment(campaign.start_date).format('YYYYMMDD');
+					})
+					.last();
+
+				dt = moment(campaign.start_date);
+			} else {
+				dt = moment(self.campaign.start_date);
+			}
+
+			if (!self.dashboard) {
+				dashboard = 'management-dashboard';
+			} else {
+				dashboard = self.dashboard.slug;
+			}
+
+			if (dashboard && region && dt) {
+				page('/datapoints/' + dashboard + '/' + region.name + '/' +
+					dt.format('YYYY') + '/' +
+					dt.format('MM'));
+			}
+		});
+	},
+
+	methods : {
+		navigate : function (dashboard, region, campaign) {
+			page('/datapoints/' +
+				dashboard.slug + '/' +
+				region.name + '/' +
+				moment(campaign.start_date).format('YYYY/MM'));
 		}
 	},
 
-
 	events: {
-		'region-changed': function (region) {
-			this.region = region;
-			this._regions.select(region);
+		'region-selected' : function (region) {
+			this.navigate(
+				this.dashboard,
+				this._regionIndex[region],
+				this.campaign);
+		},
+
+		'campaign-selected' : function (campaign) {
+			this.navigate(
+				this.dashboard,
+				this.region,
+				this._campaignIndex[campaign]);
+		},
+
+		'dashboard-selected' : function (dashboard) {
+			this.navigate(
+				this._dashboardIndex[dashboard],
+				this.region,
+				this.campaign);
+		}
+	},
+
+	filters : {
+		'date' : function (v, format) {
+			return moment(v).format(Vue.util.stripQuotes(format));
 		}
 	},
 
@@ -126,15 +207,17 @@ module.exports = {
 		'nco-dashboard'        : require('dashboard/nco'),
 
 		'chart-bar'            : require('component/chart/bar'),
-		'chart-stacked-bar'    : require('component/chart/stacked-bar'),
 		'chart-bullet'         : require('component/chart/bullet'),
 		'chart-choropleth'     : require('component/chart/choropleth'),
+		'chart-line'           : require('component/chart/line'),
 		'chart-pie'            : require('component/chart/pie'),
 		'chart-scatter'        : require('component/chart/scatter'),
 		'chart-stacked-area'   : require('component/chart/stacked-area'),
-		'chart-line'           : require('component/chart/line'),
+		'chart-stacked-bar'    : require('component/chart/stacked-bar'),
+		'chart-stacked-column' : require('component/chart/stacked-column'),
 		'chart-year-over-year' : require('component/chart/year-over-year'),
 		'chart-ytd'            : require('component/chart/ytd'),
+
 		'vue-dropdown'         : require('component/dropdown')
 	},
 

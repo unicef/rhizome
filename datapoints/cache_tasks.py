@@ -31,14 +31,15 @@ class CacheRefresh(object):
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
-        status, self.cache_job = self.set_up()
+        response_msg = self.set_up()
 
-        if status != 'NOTHING_TO_PROCESS':
+        if response_msg != 'NOTHING_TO_PROCESS':
 
-            self.cache_job.response_msg = self.main()
+            response_msg = self.main()
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
+        self.cache_job.response_msg = response_msg
         self.cache_job.save()
 
     def set_up(self):
@@ -74,13 +75,13 @@ class CacheRefresh(object):
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
             if len(self.datapoint_id_list) == 0:
-                return 'NOTHING_TO_PROCESS', cache_job
+                return 'NOTHING_TO_PROCESS'
 
         self.set_cache_job_id_for_raw_datapoints()
 
         self.indicator_ids = self.get_indicator_ids()
 
-        return 'PENDING_AGG',self.cache_job
+        return 'PENDING_AGG'
 
     def main(self):
         '''
@@ -92,6 +93,8 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
+        print '.....FINDING BAD DAT...\n' * 5
+        bad_dp_ids = self.bad_datapoints()
         print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
         print '.....CALCULATING.....\n' * 5
@@ -115,12 +118,21 @@ class CacheRefresh(object):
             SET cache_job_id = %s
             WHERE id = ANY(%s);
 
-            SELECT ID from datapoint limit 1
+            SELECT ID from datapoint LIMIT 1;
 
         ''',[self.cache_job.id,self.datapoint_id_list])
 
         x = [dp.id for dp in dp_curs]
 
+
+    def bad_datapoints(self):
+
+        dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
+            ,[self.cache_job.id])
+
+        dp_ids = [dp.id for dp in dp_cursor]
+
+        return dp_ids
 
     def agg_datapoints(self):
         '''
@@ -203,6 +215,7 @@ class CacheRefresh(object):
             	INNER JOIN _raw_indicators ri
             	ON cic.indicator_component_id = ri.indicator_id
 
+
             UNION ALL
 
             SELECT indicator_id from _raw_indicators
@@ -225,7 +238,7 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 5000000
+            limit = 5000
 
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint
@@ -290,10 +303,22 @@ class CacheRefresh(object):
         datapoint table.
         '''
 
+        ## We need to get data for indicators that weren't necessarily created
+        ## with thie Cache Job ID.  That is, we need to process all of the
+        ## indicators that exists for the regions and campaigns that we are
+        ## processing.  If we just say "give me all the indicators for this
+        ## cache job id" we will end up not storing valid data stored in a prior
+        ## cache.
+
         indicator_raw = Indicator.objects.raw("""
             SELECT DISTINCT dwc.indicator_id as id
             FROM datapoint_with_computed dwc
-            WHERE cache_job_id = %s
+            WHERE EXISTS (
+                SELECT 1 FROM datapoint_with_computed dwc_cache_job
+                WHERE dwc_cache_job.cache_job_id = %s
+                AND dwc.region_id = dwc_cache_job.region_id
+                AND dwc.campaign_id = dwc_cache_job.campaign_id
+            )
             """,[self.cache_job.id])
 
         all_indicator_ids = [x.id for x in indicator_raw]
@@ -309,7 +334,7 @@ class CacheRefresh(object):
             	ON dwc.region_id = r.id
             INNER JOIN campaign c
             	ON dwc.campaign_id = c.id
-            AND c.office_id = r.office_id
+                AND c.office_id = r.office_id
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;
             """,[self.cache_job.id])
@@ -375,6 +400,19 @@ class CacheRefresh(object):
 
             batch.append(dda_obj)
 
-        DataPointAbstracted.objects.all().delete()
+        da_curs = DataPoint.objects.raw('''
+
+            DELETE FROM datapoint_abstracted da
+            USING datapoint_with_computed dwc
+            WHERE da.region_id = dwc.region_id
+            AND da.campaign_id = dwc.campaign_id
+            AND dwc.cache_job_id = %s;
+
+            SELECT id FROM datapoint limit 1;
+
+        ''',[self.cache_job.id])
+
+        da_id = [x.id for x in da_curs]
+
 
         DataPointAbstracted.objects.bulk_create(batch)

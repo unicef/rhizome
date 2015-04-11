@@ -145,7 +145,7 @@ module.exports = {
 							});
 					})
 
-				]).done(function(allData) {
+				]).then(function(allData) {
 
 					self.$data.regionData = allData[0];
 					self.$data.indicators = allData[1];
@@ -193,7 +193,7 @@ module.exports = {
 
 		},
 
-		refresh: function (pagination) {
+		refresh: function () {
 			var self = this;
 
 			if (!self.hasSelection) {
@@ -206,15 +206,6 @@ module.exports = {
 				region__in: []
 			};
 
-			if (pagination) {
-				// Prepend "the_" to the pagination options (typically limit and offset)
-				// because the datapoint API uses the_limit and the_offset instead of
-				// limit and offset like the other paged APIs. See POLIO-194.
-				_.forOwn(pagination, function (v, k) {
-					options['the_' + k] = v;
-				});
-			}
-
 			// add regions to request
 			if (self.regions.length > 0) {
 
@@ -226,7 +217,7 @@ module.exports = {
 
 					if (self.includeSubRegions) {
 						// this will include all child regions:
-						var children = flattenChildren(region, 'children', null, function(d) { return true; });
+						var children = flattenChildren(region, 'children', null, function() { return true; }, 1);
 						// this will include only high risk child regions
 						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
@@ -287,13 +278,8 @@ module.exports = {
 			// get datapoints from API
 			self.table.loading = true;
 			var withSuccess = function (data) {
-
 				// finished fetching data
 				self.table.loading = false;
-
-				self.pagination.the_limit   = Number(data.meta.the_limit);
-				self.pagination.the_offset  = Number(data.meta.the_offset);
-				self.pagination.total_count = Number(data.meta.total_count);
 
 				// arrange datapoints into an object of indicators > regions
 				var byIndicator = {};
@@ -356,12 +342,14 @@ module.exports = {
 									}
 									// generate validation for values
 									cell.validateValue = function(newVal) {
+										var value, passed;
+
 										if (_.isNull(newVal)) {
-											var value = null;
-											var passed = true;
+											value = null;
+											passed = true;
 										} else {
-											var value = parseFloat(newVal);
-											var passed = !_.isNaN(value);
+											value = parseFloat(newVal);
+											passed = !_.isNaN(value);
 										}
 										return { 'value': value, 'passed': passed };
 									};
@@ -391,6 +379,7 @@ module.exports = {
 								// indicator name
 								case 'label':
 									cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id;
+									cell.classes = 'label';
 									cell.width = 300;
 									break;
 
@@ -421,7 +410,10 @@ module.exports = {
 
 			// };
 
-			api.datapointsRaw(options).then(withSuccess);
+			api.datapointsRaw(options).then(withSuccess, function (err) {
+				self.table.loading = false;
+				console.error(err);
+			});
 		},
 
 		showTooltip: function() {

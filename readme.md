@@ -52,19 +52,20 @@ The password for the djangoapp user can be found in `settings.py`.
 
 ## Building
 
-    $ gulp
+    $ npm run build
 
 This will compile the SASS, pack the JavaScript, and place both in the `static/`
-directory along with all the fonts.
+directory along with all the fonts. If you have `gulp` in your `PATH`, you can
+also run:
+
+    $ gulp build
 
 ## Deploying
 
-    $ gulp dist
+    $ npm run dist
 
 This will build the frontend, collect all of Django's static files, and then
-create zip files for the frontend and backend in the `dist/` directory.
-
-`gulp dist` will create two zip files in the `dist/` directory:
+create zip files for the frontend and backend in the `dist/` directory:
 
 1. uf04-backend.zip
 2. uf04-frontend.zip
@@ -75,10 +76,54 @@ components.
 
 The JavaScript and CSS in the frontend zip file is minimized.
 
+If you have `gulp` in your `PATH`, you can also run:
+
+    $ gulp dist
+
 ### Deploying the backend
 
-For more information on deploying [Django][] applications, see the [Django
-documentation](https://docs.djangoproject.com/en/1.7/howto/deployment/).
+You'll need to configure Apache and WSGI on whatever server you're deploying to,
+and set up a PostgreSQL database for the application first. Make sure that
+Apache is configured to use the
+[prefork MPM](https://httpd.apache.org/docs/2.4/mpm.html); the worker and event
+MPMs result in incorrect responses returned for requests when multiple requests
+are made to the server.
+
+For more information on deploying [Django][] applications, see the
+[Django documentation](https://docs.djangoproject.com/en/1.7/howto/deployment/).
+
+#### Build the application and copy it to the server
+
+    $ npm run dist
+    $ scp dist/*.zip <server>
+
+#### Unzip the application files
+
+    $ ssh <server>
+    $ unzip -o uf04-backend.zip -d <path/to/python/docroot>
+    $ unzip -o uf04-frontend.zip -d <path/to/static/files/docroot>
+    $ chown -R <apache user> <path/to/python/docroot>
+    $ chown -R <apache user> <path/to/static/files/docroot>
+
+#### Update Python dependencies
+
+    $ cd <path/to/python/docroot>
+    $ pip install -r requirements.txt
+
+#### Update the database
+
+    $ python manage.py syncdb --migrate
+
+You may need to use the `--settings` option for `manage.py` if your
+`settings.py` is not in `PYTHONPATH`.
+
+    $ bash bin/build_db.sh
+
+You will need to make sure that whatever user you are executing `build_db.sh` as
+is recognized by the PostgreSQL database and is the owner of the views being
+modified by the script.
+
+Finally, you'll need to restart Apache.
 
 ### Deploying the frontend
 
@@ -97,24 +142,14 @@ you simply execute
 
 from the command line it will build the entire frontend for development.
 
-## browserify
-
-Lint the JavaScript (by running `scripts`), then pack all of the project's code
-into a single `main.js` file in the `static` directory
-
 ## build
 
-Execute `fonts`, `browserify`, and `styles`.
+Compile the SASS, pack the JavaScript, and copy both, along with any fonts into
+`static/`.
 
 ## clean
 
 Delete the `build/`, `dist/`, and `static/` directories.
-
-## collectstatic
-
-Execute `build` and then run `python manage.py collectstatic` to place all the
-project static files into a `build/` directory for building the frontend zip
-file.
 
 ## dist
 
@@ -130,48 +165,11 @@ Python and SQL files.
 Execute `collectstatic` and then zip up all of the files contained in `build/`.
 The zip file is `dist/uf04-frontend.zip`.
 
-## fonts
-
-Collect all font files found in `bower_components`, flatten the directory
-structure, and place them in `static/fonts`.
-
-## livereload
-
-Start a [livereload][] server listening on port 35729. The task watches all
-files in the `static/` for changes to update connected browsers for easier
-development.
-
-[livereload]: http://livereload.com/
-
-## scripts
-
-Lint all of the JavaScript.
-
-## styles
-
-Compile the SASS and place the files in `static/css`.
-
-## test
-
-Execute unit tests on the JavaScript.
-
-There are currently no unit tests
-
 ## watch
 
 Start a livereload server and watch SASS and JavaScript files for changes. Run
 `gulp styles` whenever SASS changes, and `gulp browserify` whenever JavaScript
 changes.
-
-# PERMISSIONS
-user can be in multiple groups
-
-## GROUPS
-- general data entry (add datapoints)
-- advanced data entry (update and delete data points)
-- regional view (view all data points in your regional office)
-- advanced view ( view all data points in all regions )
-- superuser (everything under the sun)
 
 [Django]: https://djangoproject.com/
 [Node]: http://nodejs.org/

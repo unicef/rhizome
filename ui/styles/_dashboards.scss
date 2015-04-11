@@ -22,6 +22,26 @@ $total-columns: 7;
 	#management-dashboard {
 		@include grid-html-classes($size:large);
 		@include block-grid-html-classes($size:large,$include-spacing:false);
+	}
+}
 
+@media print {
+	#management-dashboard {
+		@include grid-html-classes($size:small);
+		@include block-grid-html-classes($size:small,$include-spacing:false);
+	}
+}
+
+@media print and (min-width: 8in) {
+	#management-dashboard {
+		@include grid-html-classes($size:medium);
+		@include block-grid-html-classes($size:medium,$include-spacing:false);
+	}
+}
+
+@media print and (min-width: 10.5in) {
+	#management-dashboard {
+		@include grid-html-classes($size:large);
+		@include block-grid-html-classes($size:large,$include-spacing:false);
 	}
 }

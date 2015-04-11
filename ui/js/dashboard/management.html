@@ -3,8 +3,8 @@
 	<div class="row print-only">
 		<div class="small-12 columns">
 			<h1>
-				<span class="campaign">{{ campaignName }}</span>
-				<span class="region">{{ regionName }}</span>
+				<span v-if="campaign" class="campaign">{{ campaign.start_date | date 'MMMM YYYY' }}</span>
+				<span v-if="region" class="region">{{ region.name }}</span>
 			</h1>
 			<h2>
 				Polio<br />
@@ -52,7 +52,7 @@
 				<h4>Immunity Gap</h4>
 				<svg
 					id="immunity-gap"
-					v-component="chart-stacked-area"
+					v-component="chart-stacked-column"
 					data-margin-bottom="24"
 					data-aspect="1.609"
 					data-margin-top="24"
@@ -62,6 +62,7 @@
 					data-period="1 years"
 					data-indicators="[431,432]"
 					data-format-string="%"
+					data-x="campaign.start_date"
 					v-with="region: region, campaign: campaign"></svg>
 			</section>
 		</div>
@@ -77,7 +78,7 @@
 					<h4>Missed Children</h4>
 					<svg
 						id="missed-children"
-						v-component="chart-stacked-area"
+						v-component="chart-stacked-column"
 						data-margin-top="24"
 						data-margin-right="4"
 						data-margin-left="4"
@@ -87,6 +88,7 @@
 						data-indicators="[166,164,167,165]"
 						data-period="1 years"
 						data-format-string=".1%"
+						data-x="campaign.start_date"
 						v-with="region: region, campaign: campaign"></svg>
 				</section>
 
@@ -265,10 +267,12 @@
 			<h6>Number of Inaccessible Children</h6>
 			<div v-component="chart-line"
 			     data-aspect="2.665"
-			     data-margin-bottom="24"
 			     data-period="1 years"
 			     data-indicators="[158]"
-					 data-format-string="s"
+					 data-margin-top="24"
+					 data-margin-right="4"
+					 data-margin-left="4"
+					 data-margin-bottom="24"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<div class="row">

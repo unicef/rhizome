@@ -9,6 +9,7 @@ Vue.component('vue-table', require('./component/table'));
 Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));
 Vue.component('vue-tooltip', require('./component/tooltip'));
+Vue.component('vue-menu', require('./component/menu'));
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
 
