@@ -200,16 +200,20 @@ module.exports = {
 				.tickPadding(height / 2)
 				.scale(xScale);
 
-			svg.select('.x.axis')
-				.call(xAxis);
-
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
 				.tickSize(0)
 				.tickPadding(5)
 				.orient('left');
 
-			svg.select('.y.axis')
+			var t0 = svg.transition().duration(500);
+			var t1 = t0.transition().duration(500);
+
+
+			t0.select('.x.axis')
+				.call(xAxis);
+
+			t1.select('.y.axis')
 				.call(yAxis);
 
 			if (this.series.length > 1) {
