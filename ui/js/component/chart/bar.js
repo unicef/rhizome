@@ -178,17 +178,10 @@ module.exports = {
 						return 'translate(0,' + y(d) + ')';
 					});
 
-				bar.exit()
-					.select('rect')
-					.transition()
-					.duration(300)
-					.attr('width', 0);
+				var t = bar.exit().transition().duration(300);
 
-				// Wait until after the animation of the bar is finished before removing
-				// the group element
-				d3.timer(function () {
-					bar.exit().remove();
-				}, 0, 300);
+				t.select('rect').attr('width', 0);
+				t.remove();
 			});
 
 			series.exit()
