@@ -64,6 +64,12 @@ RETURNS TABLE(id int) AS $$
 		AND ad.campaign_id = ad_exists.campaign_id
 		AND ad_exists.cache_job_id = $1
 	)
+	AND NOT EXISTS ( -- data stored at the parent level
+		SELECT 1 FROM datapoint dp
+		WHERE r.parent_region_id = dp.region_id
+		AND ad.indicator_id = dp.indicator_id
+		AND ad.campaign_id = dp.campaign_id
+	)
 	AND ad.value is not null
 	GROUP BY r.parent_region_id, ad.indicator_id, ad.campaign_id;
 

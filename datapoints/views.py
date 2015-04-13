@@ -582,3 +582,8 @@ def bad_data(request):
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))
+
+
+# def refresh_all(request):
+#
+#     return HttpResponseRedirect('/datapoints/cache_control/')
