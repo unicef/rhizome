@@ -145,7 +145,7 @@ module.exports = {
 							});
 					})
 
-				]).done(function(allData) {
+				]).then(function(allData) {
 
 					self.$data.regionData = allData[0];
 					self.$data.indicators = allData[1];

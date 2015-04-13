@@ -193,7 +193,7 @@ module.exports = {
 				campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
 				indicator__in : [this.indicator],
 				region__in    : this.mappedRegions
-			}).done(function (data) {
+			}).then(function (data) {
 
 				var index    = _.indexBy(data.objects, 'region');
 				var features = self.features;
