@@ -19,7 +19,8 @@ module.exports = {
 	paramAttributes: [
 		'data-format',
 		'data-labels',
-		'data-tick-count'
+		'data-tick-count',
+		'data-click-event'
 	],
 
 	data: function () {
@@ -34,7 +35,8 @@ module.exports = {
 			padding      : 1,
 			series       : [],
 			labels       : true,
-			tickCount    : 3
+			tickCount    : 3,
+			clickEvent   : 'bar-click'
 		};
 	},
 
@@ -80,7 +82,8 @@ module.exports = {
 		},
 
 		draw: function () {
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			var data = _(this.series)
 				.pluck('values')
@@ -134,12 +137,6 @@ module.exports = {
 				var bar = g.selectAll('.bar')
 					.data(datum.values);
 
-				bar.transition()
-					.duration(300)
-					.attr('transform', function (d) {
-						return 'translate(0,' + y(d) + ')';
-					});
-
 				var barEnter = bar.enter()
 					.append('g')
 					.attr('class', 'bar');
@@ -178,17 +175,20 @@ module.exports = {
 					bar.select('text').remove();
 				}
 
-				bar.exit()
-					.select('rect')
+				bar
+					.on('click', function (d) {
+						self.$dispatch(self.clickEvent, d);
+					})
 					.transition()
 					.duration(300)
-					.attr('width', 0);
+					.attr('transform', function (d) {
+						return 'translate(0,' + y(d) + ')';
+					});
 
-				// Wait until after the animation of the bar is finished before removing
-				// the group element
-				d3.timer(function () {
-					bar.exit().remove();
-				}, 0, 300);
+				var t = bar.exit().transition().duration(300);
+
+				t.select('rect').attr('width', 0);
+				t.remove();
 			});
 
 			series.exit()

@@ -207,6 +207,7 @@
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
 				data-tick-count="5"
+				data-click-event="region-clicked"
 				v-with="
 					series : missed.reasons,
 					offset : missed.offset"></div>
@@ -251,6 +252,7 @@
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
+				data-click-event="region-clicked"
 				v-with="
 					series : absences.reasons,
 					offset : absences.offset"></div>
@@ -282,6 +284,7 @@
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
+				data-click-event="region-clicked"
 				v-with="
 					series : noncompliance.reasons,
 					offset : noncompliance.offset"></div>
@@ -316,6 +319,7 @@
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
+				data-click-event="region-clicked"
 				v-with="
 					series : resolutions.by,
 					offset : resolutions.offset"></div>
@@ -347,6 +351,7 @@
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
+				data-click-event="region-clicked"
 				v-with="
 					series : influencers.by,
 					offset : influencers.offset"></div>
@@ -378,6 +383,7 @@
 			<div
 				v-component="chart-stacked-bar"
 				data-margin-right="120"
+				data-click-event="region-clicked"
 				v-with="
 					series : sources.series,
 					offset : sources.offset"></div>

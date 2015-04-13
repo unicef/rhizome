@@ -14,7 +14,8 @@ module.exports = {
 		'data-format-x',
 		'data-format-y',
 		'data-x-axis-label',
-		'data-y-axis-label'
+		'data-y-axis-label',
+		'data-click-event'
 	],
 
 	mixins: [
@@ -33,7 +34,8 @@ module.exports = {
 			domain       : null,
 			range        : null,
 			xAxisLabel   : '',
-			yAxisLabel   : ''
+			yAxisLabel   : '',
+			clickEvent   : 'point-clicked'
 		};
 	},
 
@@ -131,6 +133,9 @@ module.exports = {
 						.attr('r', RADIUS);
 
 					self.$dispatch('tooltip-hide', { el : this });
+				})
+				.on('click', function (d) {
+					self.$dispatch(self.clickEvent, d);
 				})
 				.transition()
 				.duration(500)
