@@ -29,4 +29,4 @@ fi;
 if [ $deploy_target = "PROD" ]; then
     TARGET="polio.seedscientific.com"
 fi;
-echo TODO: fab -h ubuntu@$TARGET deploy
+fab -H ubuntu@$TARGET deploy
