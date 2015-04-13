@@ -17,6 +17,26 @@ module.exports = [
 
 		{
 
+			'id': 3,
+			'title': 'Management Dashboard: Provincial Indicators',
+			'region_level': 1,
+			'indicators': [
+
+				{ 'type': 'section-header', 'title': 'Immunity Gap' },
+				{ 'id': 431, 'name': 'Non-polio AFP cases with zero doses of OPV' },
+				{ 'id': 432, 'name': 'Non-polio AFP cases with 1-3 doses of OPV' },
+				{ 'id': 433, 'name': 'Non-polio AFP cases with 4+ doses of OPV' },
+
+				{ 'type': 'section-header', 'title': 'Polio+' },
+				{ 'id': 29, 'name': 'Number of caregivers in high risk districts' },
+				{ 'id': 50, 'name': 'Number of caregivers in HRD who know times needed to visit RI site before 1 yo' },
+
+			]
+
+		},
+
+		{
+
 			'id': 2,
 			'title': 'Management Dashboard: District Indicators',
 			'region_level': 4,
@@ -27,36 +47,23 @@ module.exports = [
 				{ 'id': 160, 'name': 'Number of WPV3 cases' },
 				{ 'id': 69, 'name': 'Number of cVDPV2 cases' },
 
-				{ 'type': 'section-header', 'title': 'Immunity Gap' },
-				{ 'id': 431, 'name': 'Non-polio AFP cases with zero doses of OPV' },
-				{ 'id': 432, 'name': 'Non-polio AFP cases with 1-3 doses of OPV' },
-				{ 'id': 433, 'name': 'Non-polio AFP cases with 4+ doses of OPV' },
-
-				{ 'type': 'section-header', 'title': 'Missed Children' },
-				{ 'id': 243, 'name': 'Number of children 12 months and under' },
-				{ 'id': 244, 'name': 'Number of children under 12 months who received DPT3 or Penta3' },
-				{ 'id': 22, 'name': 'Number of children missed due to child not available' },
-				{ 'id': 23, 'name': 'Number of children missed due to no team/team did not visit' },
-				{ 'id': 24, 'name': 'Number of children missed due to other reasons' },
-
 				{ 'type': 'section-header', 'title': 'Supply' },
-				{ 'id': 196, 'name': 'HR district did NOT receive polio vaccine supply at least 3 days before the planned start date of campaign (1 = yes, 0 = no)' },
-				{ 'id': 197, 'name': 'Number of HRDs which reported on balance of SIA vaccine stocks after last SIA round' },
-				{ 'id': 198, 'name': 'Number of functional active cold chain equipment in the district' },
-				{ 'id': 199, 'name': 'Total number of all active cold chain equipment in district' },
-				{ 'id': 200, 'name': 'Number of districts with at least 90% CCE functional' },
 				{ 'id': 5, 'name': 'Number of vaccine doses used in HRD' },
 				{ 'id': 51, 'name': 'Number of children vaccinated in HRD' },
-				{ 'id': 221, 'name': 'Number of HRDs that has polio vaccine wastage rate in SIAs between 5 and 15%' },
+				{ 'id': 196, 'name': 'HR district did NOT receive polio vaccine supply at least 3 days before the planned start date of campaign (1 = yes, 0 = no)' },
+				{ 'id': 197, 'name': 'District reported on balance of SIA vaccine stocks after last SIA round? (1=yes, 0=no)' },
+				{ 'id': 198, 'name': 'Number of functional active cold chain equipment in the district' },
+				{ 'id': 199, 'name': 'Total number of all active cold chain equipment in district' },
+				{ 'id': 472, 'name': 'Is a high risk district where at least 90% of active cold chain equipment are functional (1=yes, 0=no)' },
+				{ 'id': 221, 'name': 'Is an HRD that has polio vaccine wastage rate in SIAs between 5 and 15% (1=yes, 0=no)' },
 
 				{ 'type': 'section-header', 'title': 'Access' },
 				{ 'id': 158, 'name': 'Number of children missed due to all access issues' },
 				{ 'id': 175, 'name': 'Number of established LT vaccination transit points' },
 				{ 'id': 176, 'name': 'Number of established LT vaccination transit points with a dedicated social mobilizer' },
 				{ 'id': 177, 'name': 'Number of children vaccinated at transit points last month' },
-				// { 'id': 201, 'name': 'District has specific access approach identified (1=yes, 0=no)' },
-				{ 'id': 203, 'name': 'Number of access-challenged districts' },
-				{ 'id': 202, 'name': 'Number of access-challenged districts that have a specific access approach identified' },
+				{ 'id': 203, 'name': 'Is an access-challenged district (1=yes, 0=no)' },
+				{ 'id': 202, 'name': 'Is an access-challenged district that has a specific access approach identified (1=yes, 0=no)' },
 				{ 'id': 204, 'name': 'Total number of LT vaccination transit points planned by the programme' },
 				{ 'id': 434, 'name': 'Reason for inaccessible children - Perception of fear' },
 				{ 'id': 435, 'name': 'Reason for inaccessible children - Local community not supportive' },
@@ -87,23 +94,29 @@ module.exports = [
 				{ 'id': 42, 'name': 'Number of vaccinators and SMs operating in HRDs trained on professional IPC package in last 6 months' },
 
 				{ 'type': 'section-header', 'title': 'Performance of FLWs' },			
-				{ 'id': 20, 'name': 'Number of children missed due to refusal' },
 				{ 'id': 213, 'name': 'Number of absences before re-visit' },
 				{ 'id': 214, 'name': 'Number of absences after re-visit' },
 				{ 'id': 222, 'name': 'Number of microplans with minimum social data out of 10 randomly selected microplans from previous campaign in selected HR areas' },
 				{ 'id': 25, 'name': 'Number of refusals before re-visit' },
 				{ 'id': 26, 'name': 'Number of refusals after re-visit' },
-				{ 'id': 211, 'name': 'Number of refusals resolved' },
+
+				{ 'type': 'section-header', 'title': 'Missed Children' },
+				{ 'id': 20, 'name': 'Number of children missed due to refusal' },
+				{ 'id': 22, 'name': 'Number of children missed due to child not available' },
+				{ 'id': 23, 'name': 'Number of children missed due to no team/team did not visit' },
+				{ 'id': 24, 'name': 'Number of children missed due to other reasons' },
 				{ 'id': 55, 'name': 'Number of children targeted in high-risk districts' },
 
 				{ 'type': 'section-header', 'title': 'Polio+' },
-				{ 'id': 195, 'name': 'Number of high risk districts' },
+				{ 'id': 195, 'name': 'Is a high risk district? (1=yes, 0=no)' },
 				{ 'id': 218, 'name': 'Number of high risk districts with locations where OPV is delivered together with any other polio-funded services demanded by community' },
+				{ 'id': 243, 'name': 'Number of children 12 months and under' },
+				{ 'id': 244, 'name': 'Number of children under 12 months who received DPT3 or Penta3' },
 				{ 'id': 217, 'name': 'Number of RI sessions monitored' },
 				{ 'id': 216, 'name': 'Number of RI sessions monitored having stockouts of any vaccine in the last month' },
 				{ 'id': 192, 'name': 'Number of RI defaulters mobilized by SMs last month' },
-				{ 'id': 29, 'name': 'Number of caregivers in high risk districts' },
-				{ 'id': 50, 'name': 'Number of caregivers in HRD who know times needed to visit RI site before 1 yo' },
+				{ 'id': 473, 'name': 'District was sampled for microplan review  (1=yes, 0=no)' },
+				{ 'id': 474, 'name': 'District passed microplan review (1=yes, 0=no)' },
 
 			]
 
