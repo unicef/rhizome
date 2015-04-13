@@ -192,7 +192,6 @@ module.exports = {
 				indicator__in     : indicators,
 				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
 				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD'),
-				level             : 'province'
 			};
 
 			var overviewData = api.datapoints(overview);
@@ -394,7 +393,17 @@ module.exports = {
 		}
 	},
 
-	watch: {
+	events : {
+		'point-clicked' : function (d) {
+			this.$dispatch('region-selected', d.name);
+		},
+
+		'region-clicked' : function (d) {
+			this.$dispatch('region-selected', d.region.name);
+		}
+	},
+
+	watch : {
 		'campaign' : 'fetch',
 		'region'   : 'fetch'
 	}

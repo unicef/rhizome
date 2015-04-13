@@ -7,20 +7,9 @@ var moment   = require('moment');
 var page     = require('page');
 var Vue      = require('vue');
 
-var api      = require('data/api');
-var treeify  = require('data/transform/treeify');
-
-// FIXME: simulating part of the dashboard definition that would be retrieved
-// from the server
-var dashboardData = [{
-	'name'   : 'Polio Performance Dashboard',
-	'slug'   : 'management-dashboard',
-	'region' : 12907
-}, {
-	'name'   : 'NGA Country Office',
-	'slug'   : 'nco-dashboard',
-	'region' : 12907
-}];
+var api            = require('data/api');
+var DashboardStore = require('stores/DashboardStore');
+var treeify        = require('data/transform/treeify');
 
 module.exports = {
 	template: require('./template.html'),
@@ -39,7 +28,7 @@ module.exports = {
 
 	created: function () {
 		function show(ctx) {
-			self.dashboard = self._dashboardIndex[ctx.params.dashboard || 'management-dashboard'];
+			self.dashboard = DashboardStore.get(ctx.params.dashboard || 'campaign-performance');
 			self.region    = self._regionIndex[ctx.params.region];
 			self.campaign  = self._campaignIndex[ctx.params.year + ctx.params.month];
 		}
@@ -47,22 +36,20 @@ module.exports = {
 		var self = this;
 
 		this._campaignIndex  = {};
-		this._dashboardIndex = {};
 		this._regionIndex    = {};
 
 		page('/datapoints/:dashboard/:region/:year/:month', show);
 
 		// FIXME: The dashboard data will eventually be stored on the server and
 		// loaded dynamically
-		this.dashboards = _.map(dashboardData, function (dashboard) {
+		this.dashboards = _.map(DashboardStore.getAll(), function (dashboard) {
 			return {
 				'title' : dashboard.name,
 				'value' : dashboard.slug
 			};
 		});
 
-		this._dashboardIndex = _.indexBy(dashboardData, 'slug');
-		this.dashboard       = this._dashboardIndex['management-dashboard'];
+		this.dashboard = DashboardStore.get('campaign-performance');
 
 		var regionPromise = api.regions().then(function (data) {
 			var regions = _(data.objects);
@@ -151,7 +138,7 @@ module.exports = {
 			}
 
 			if (!self.dashboard) {
-				dashboard = 'management-dashboard';
+				dashboard = 'campaign-performance';
 			} else {
 				dashboard = self.dashboard.slug;
 			}
@@ -189,9 +176,11 @@ module.exports = {
 		},
 
 		'dashboard-selected' : function (dashboard) {
+			var db = DashboardStore.get(dashboard);
+			console.debug(db);
 			this.navigate(
-				this._dashboardIndex[dashboard],
-				this.region,
+				db,
+				this._regionIndex[db.region] || this.region,
 				this.campaign);
 		}
 	},
@@ -203,22 +192,22 @@ module.exports = {
 	},
 
 	components: {
-		'management-dashboard' : require('dashboard/management'),
-		'nco-dashboard'        : require('dashboard/nco'),
+		'campaign-performance'   : require('dashboard/management'),
+		'independent-monitoring' : require('dashboard/nco'),
 
-		'chart-bar'            : require('component/chart/bar'),
-		'chart-bullet'         : require('component/chart/bullet'),
-		'chart-choropleth'     : require('component/chart/choropleth'),
-		'chart-line'           : require('component/chart/line'),
-		'chart-pie'            : require('component/chart/pie'),
-		'chart-scatter'        : require('component/chart/scatter'),
-		'chart-stacked-area'   : require('component/chart/stacked-area'),
-		'chart-stacked-bar'    : require('component/chart/stacked-bar'),
-		'chart-stacked-column' : require('component/chart/stacked-column'),
-		'chart-year-over-year' : require('component/chart/year-over-year'),
-		'chart-ytd'            : require('component/chart/ytd'),
+		'chart-bar'              : require('component/chart/bar'),
+		'chart-bullet'           : require('component/chart/bullet'),
+		'chart-choropleth'       : require('component/chart/choropleth'),
+		'chart-line'             : require('component/chart/line'),
+		'chart-pie'              : require('component/chart/pie'),
+		'chart-scatter'          : require('component/chart/scatter'),
+		'chart-stacked-area'     : require('component/chart/stacked-area'),
+		'chart-stacked-bar'      : require('component/chart/stacked-bar'),
+		'chart-stacked-column'   : require('component/chart/stacked-column'),
+		'chart-year-over-year'   : require('component/chart/year-over-year'),
+		'chart-ytd'              : require('component/chart/ytd'),
 
-		'vue-dropdown'         : require('component/dropdown')
+		'vue-dropdown'           : require('component/dropdown')
 	},
 
 	partials: {

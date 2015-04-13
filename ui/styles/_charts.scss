@@ -272,3 +272,17 @@ svg {
 		}
 	}
 }
+
+#nco-dashboard {
+	.bar.chart {
+		rect {
+			cursor : pointer;
+		}
+	}
+
+	.scatter {
+		.point {
+			cursor : pointer;
+		}
+	}
+}

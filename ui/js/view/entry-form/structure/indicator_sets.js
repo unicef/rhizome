@@ -62,7 +62,6 @@ module.exports = [
 				{ 'id': 175, 'name': 'Number of established LT vaccination transit points' },
 				{ 'id': 176, 'name': 'Number of established LT vaccination transit points with a dedicated social mobilizer' },
 				{ 'id': 177, 'name': 'Number of children vaccinated at transit points last month' },
-				// { 'id': 201, 'name': 'District has specific access approach identified (1=yes, 0=no)' },
 				{ 'id': 203, 'name': 'Is an access-challenged district (1=yes, 0=no)' },
 				{ 'id': 202, 'name': 'Is an access-challenged district that has a specific access approach identified (1=yes, 0=no)' },
 				{ 'id': 204, 'name': 'Total number of LT vaccination transit points planned by the programme' },

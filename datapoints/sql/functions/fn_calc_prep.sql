@@ -87,6 +87,9 @@ BEGIN
 	WHERE ad.cache_job_id = %1$s;',$1
 	);
 
+
+	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (region_id, campaign_id, indicator_id);
+
 	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
 
 	RETURN QUERY

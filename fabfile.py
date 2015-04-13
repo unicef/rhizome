@@ -16,7 +16,7 @@ local_venv_path = '/tmp/venv'
 
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
-remote_backend_path = '/var/www/polio/'
+remote_backend_path = '/var/www/apps/polio/'
 remote_frontend_path = '/var/www/polio/static/'
 
 # test build
@@ -68,11 +68,21 @@ def deploy():
 
     # unzip stuff
     with cd(remote_work_path):
-        run("rm -rf %s/*" % remote_frontend_path)
-        run("rm -rf %s/*" % remote_backend_path)
+        run("rm -rf %s" % remote_frontend_path)
+
+        # Delete all Python, HTML, and SQL files. We don't delete the entire
+        # directory because that will catch the media/ directory which will
+        # probably have files we want to keep in it. This way we ensure that we
+        # clean out old scripts before deploying. Set mindepth to 2 so that we
+        # can keep the server's settings.py file in the application folder
+        run("find %s -mindepth 2 -regextype 'posix-extended' -regex '.*\.(pyc?|sql|html) -delete'" % remote_backend_path)
 
         run("unzip -o uf04-frontend.zip -d %s" % remote_frontend_path) # -o is overwrite
         run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
+
+    with cd(remote_frontend_path):
+        run('chgrp -R www-data *')
+        run('chmod -R g+w *')
 
     # in server path -
     with cd(remote_backend_path):
