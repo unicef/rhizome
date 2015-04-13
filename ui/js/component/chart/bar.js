@@ -134,12 +134,6 @@ module.exports = {
 				var bar = g.selectAll('.bar')
 					.data(datum.values);
 
-				bar.transition()
-					.duration(300)
-					.attr('transform', function (d) {
-						return 'translate(0,' + y(d) + ')';
-					});
-
 				var barEnter = bar.enter()
 					.append('g')
 					.attr('class', 'bar');
@@ -177,6 +171,12 @@ module.exports = {
 				} else {
 					bar.select('text').remove();
 				}
+
+				bar.transition()
+					.duration(300)
+					.attr('transform', function (d) {
+						return 'translate(0,' + y(d) + ')';
+					});
 
 				bar.exit()
 					.select('rect')
