@@ -19,7 +19,8 @@ module.exports = {
 	paramAttributes: [
 		'data-format',
 		'data-labels',
-		'data-tick-count'
+		'data-tick-count',
+		'data-click-event'
 	],
 
 	data: function () {
@@ -34,7 +35,8 @@ module.exports = {
 			padding      : 1,
 			series       : [],
 			labels       : true,
-			tickCount    : 3
+			tickCount    : 3,
+			clickEvent   : 'bar-click'
 		};
 	},
 
@@ -80,7 +82,8 @@ module.exports = {
 		},
 
 		draw: function () {
-			var svg = d3.select(this.$el);
+			var self = this;
+			var svg  = d3.select(this.$el);
 
 			var data = _(this.series)
 				.pluck('values')
@@ -172,7 +175,11 @@ module.exports = {
 					bar.select('text').remove();
 				}
 
-				bar.transition()
+				bar
+					.on('click', function (d) {
+						self.$dispatch(self.clickEvent, d);
+					})
+					.transition()
 					.duration(300)
 					.attr('transform', function (d) {
 						return 'translate(0,' + y(d) + ')';

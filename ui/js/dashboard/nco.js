@@ -393,7 +393,17 @@ module.exports = {
 		}
 	},
 
-	watch: {
+	events : {
+		'point-clicked' : function (d) {
+			this.$dispatch('region-selected', d.name);
+		},
+
+		'region-clicked' : function (d) {
+			this.$dispatch('region-selected', d.region.name);
+		}
+	},
+
+	watch : {
 		'campaign' : 'fetch',
 		'region'   : 'fetch'
 	}

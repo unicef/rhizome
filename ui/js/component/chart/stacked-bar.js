@@ -7,14 +7,19 @@ var legend = require('./renderer/legend');
 
 module.exports = {
 
+	paramAttributes : [
+		'data-click-event'
+	],
+
 	mixins : [
 		require('./bar')
 	],
 
 	data : function () {
 		return {
-			'offset' : 'zero',
-			'sortBy' : null
+			'offset'     : 'zero',
+			'sortBy'     : null,
+			'clickEvent' : 'bar-click',
 		};
 	},
 
@@ -163,6 +168,9 @@ module.exports = {
 					})
 					.on('mouseout', function () {
 						self.$dispatch('tooltip-hide', { el: this });
+					})
+					.on('click', function (d) {
+						self.$dispatch(self.clickEvent, d);
 					});
 
 				bar.transition()
