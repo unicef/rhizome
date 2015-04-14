@@ -16,6 +16,7 @@ module.exports = {
 			region          : null,
 			campaign        : null,
 			campaigns       : [],
+			immunity        : [],
 			capacity        : [178,228,179,184,180,185,230,226,239],
 			polio           : [245,236,192,193,191],
 			supply          : [194,219,173,172],
@@ -128,6 +129,7 @@ module.exports = {
 						.value();
 				});
 
+			// Fetch transit points
 			q.indicator__in = [175,176,177,204];
 			q.region__in    = [this.region.id];
 
@@ -177,6 +179,50 @@ module.exports = {
 						indicator : 'Transit Points with SM',
 						value     : self.transitPoints.withSM / self.transitPoints.inPlace
 					}];
+				});
+
+			// Fetch the immunity gap data
+			q.indicator__in  = [431,432];
+			q.campaign_start = moment(this.campaign.start_date)
+				.startOf('month')
+				.subtract(3, 'years')
+				.format('YYYY-MM-DD');
+
+			api.datapoints(q)
+				.then(function (data) {
+					var immunity = _(data.objects)
+						.reject(function (d) {
+							return _.every(d.indicators, function (ind) {
+								return _.isNull(ind.value) || _.isUndefined(ind.value);
+							});
+						})
+						.map(function (d) {
+							// Separate out the (indicator, value) pairs from each datapoint's
+							// indicators array so that we have an array of datapoints, each
+							// representing only one indicator with one value
+							var base = _.omit(d, 'indicators');
+
+							// Add a property to each datapoint indicating the fiscal quarter
+							base.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
+
+							return _.map(d.indicators, function (indicator) {
+								return _.assign({}, base, indicator);
+							});
+						})
+						.flatten()
+						.groupBy(function (d) {
+							return d.indicator + '-' + d.quarter;
+						})
+						.map(function (datapoints) {
+							var mean = _(datapoints).pluck('value').sum() / datapoints.length;
+
+							return _.assign({}, _.omit(datapoints[0], 'value'), {
+								'value' : mean
+							});
+						})
+						.value();
+
+						self.immunity = immunity;
 				});
 		},
 	},
