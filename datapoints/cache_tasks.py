@@ -127,10 +127,10 @@ class CacheRefresh(object):
 
     def bad_datapoints(self):
 
-        dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
+        adp_cursor = AggDataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
             ,[self.cache_job.id])
 
-        dp_ids = [dp.id for dp in dp_cursor]
+        adp_ids = [dp.id for dp in dp_cursor]
 
         return dp_ids
 
@@ -158,15 +158,10 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        loop_region_ids = self.get_region_ids_to_process()
+        region_cursor = Region.objects\
+            .raw("SELECT * FROM fn_agg_datapoint(%s)",[self.cache_job.id])
 
-        while len(list(loop_region_ids)) > 0:
-
-            region_cursor = Region.objects\
-                .raw("SELECT * FROM fn_agg_datapoint(%s,%s)",[self.cache_job.id,
-                        loop_region_ids])
-
-            loop_region_ids = [r.id for r in region_cursor]
+        r_ids = [r.id for r in region_cursor]
 
         return []
 

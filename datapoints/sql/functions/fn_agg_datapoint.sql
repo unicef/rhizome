@@ -1,26 +1,14 @@
-﻿DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT,region_ids int[]);
-CREATE FUNCTION fn_agg_datapoint(cache_job_id INT,region_ids int[] )
+DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT);
+CREATE FUNCTION fn_agg_datapoint(cache_job_id INT)
 RETURNS TABLE(id int) AS
-	$func$
-	BEGIN
-
-		--
-		PERFORM * FROM fn_agg_prep($1);
-
-		RETURN QUERY
-
-		SELECT ad.id FROM agg_datapoint ad
-		--WHERE dwc.cache_job_id = $1
-		LIMIT 1;
-
-
-		/*
+$func$
+BEGIN
 
 
 		DROP TABLE IF EXISTS _campaign_indicator;
 		CREATE TABLE _campaign_indicator AS
-		SELECT DISTINCT campaign_id, indicator_id FROM datapoint
-		WHERE cache_job_id = 3;
+		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
+		WHERE d.cache_job_id = $1;
 
 		DROP TABLE IF EXISTS _tmp_agg;
 		CREATE TABLE _tmp_agg AS
@@ -76,21 +64,21 @@ RETURNS TABLE(id int) AS
 			,d.value
 			,0 as lvl
 		FROM datapoint d
-		WHERE cache_job_id = 3;
+		WHERE d.cache_job_id = $1;
 
 
 		UPDATE agg_datapoint ad
-			SET cache_job_id = 3
+			SET cache_job_id = $1
 			, value = ta.value
 		FROM _tmp_agg ta
 		WHERE ta.region_id = ad.region_id
 		AND ta.campaign_id = ad.campaign_id
 		AND ta.indicator_id = ad.indicator_id
-		AND ad.value != ta.value
+		AND ad.value != ta.value;
 
 		INSERT INTO agg_datapoint
 		(region_id, campaign_id, indicator_id, value,cache_job_id)
-		SELECT region_id, campaign_id, indicator_id, value, 3
+		SELECT region_id, campaign_id, indicator_id, value, $1
 		FROM _tmp_agg ta
 		WHERE NOT EXISTS (
 			SELECT 1 FROM agg_datapoint ad
@@ -98,10 +86,16 @@ RETURNS TABLE(id int) AS
 			AND ta.campaign_id = ad.campaign_id
 			AND ta.indicator_id = ad.indicator_id
 
-		)
+		);
 
+		RETURN QUERY
 
-		*/
+		SELECT ad.id FROM agg_datapoint ad
+		WHERE ad.cache_job_id = $1
+		LIMIT 1;
+
 
 END
 $func$ LANGUAGE PLPGSQL;
+
+SELECT * FROM fn_agg_datapoint(3)
