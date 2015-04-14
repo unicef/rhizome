@@ -97,5 +97,3 @@ BEGIN
 
 END
 $func$ LANGUAGE PLPGSQL;
-
-SELECT * FROM fn_agg_datapoint(3)
