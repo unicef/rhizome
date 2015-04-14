@@ -2,6 +2,33 @@
 CREATE FUNCTION fn_agg_datapoint(cache_job_id INT,region_ids int[] )
 RETURNS TABLE(id int) AS $$
 
+
+	EXECUTE FORMAT ('
+
+		DROP TABLE IF EXISTS _tmp_agg_data;
+		CREATE TEMP TABLE _tmp_agg_data
+		AS
+		SELECT *
+		FROM datapoint d
+		WHERE cache_job_id = %1$s
+		;',$1
+	);
+
+	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
+	INSERT INTO _tmp_indicator_lookup
+	(indicator_in, indicator_out, is_calc)
+
+	SELECT
+		indicator_in
+		, cic.indicator_component_id
+		, CAST(0 AS BOOLEAN) AS is_calc
+	FROM _tmp_indicator_lookup til
+	INNER JOIN calculated_indicator_component cic
+	ON indicator_out = cic.indicator_id
+
+
+
+	/*
 	-- DELETE RAW INDICATORS FROM OTHER CACHE_JOBS -
 	DELETE FROM agg_datapoint ad
 	USING datapoint d
@@ -28,16 +55,6 @@ RETURNS TABLE(id int) AS $$
 	AND d.value is not null -- THIS SHOULD NOT HAPPEN
 	AND d.region_id = ANY($2);
 
-	-- DELETE PARENT DATA --
-	DELETE FROM agg_datapoint ad
-	USING agg_datapoint ad_just_inserted
-	INNER JOIN region r
-		ON ad_just_inserted.region_id = r.id
-	WHERE ad_just_inserted.cache_job_id = $1
-	AND ad.region_id = r.parent_region_id
-	AND ad.cache_job_id != ad_just_inserted.cache_job_id
-	AND ad.indicator_id = ad_just_inserted.indicator_id
-	AND ad.campaign_id = ad_just_inserted.campaign_id;
 
 	-- INSERT PARENT DATA --
  	INSERT INTO agg_datapoint
@@ -79,6 +96,8 @@ RETURNS TABLE(id int) AS $$
 	FROM region r
 	WHERE id = ANY($2)
 	AND parent_region_id IS NOT NULL
+
+	*/
 
 $$
 
