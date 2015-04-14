@@ -1,4 +1,4 @@
-﻿DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
+DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
 CREATE FUNCTION fn_calc_prep(cache_job_id int)
 RETURNS TABLE(id int) AS
 $func$
@@ -16,8 +16,6 @@ BEGIN
 	      --> but we do need to be able to determine where this information
 	      --> is to effect any downstream calculatiosn for this job.
 
-	EXECUTE FORMAT ('
-
 		DROP TABLE IF EXISTS _tmp_indicator_lookup;
 		CREATE TEMP TABLE _tmp_indicator_lookup
 		AS
@@ -29,7 +27,7 @@ BEGIN
 		WHERE EXISTS (
 			SELECT 1 FROM agg_datapoint d
 			WHERE cic.indicator_component_id = d.indicator_id
-			AND cache_job_id = %1$s
+			AND d.cache_job_id = $1
 		)
 
 		UNION ALL
@@ -39,9 +37,7 @@ BEGIN
 				, d.indicator_id as indicator_out
 				, CAST(0 AS BOOLEAN) as is_calc
 		FROM datapoint d
-		WHERE cache_job_id = %1$s
-		;',$1
-	);
+		WHERE d.cache_job_id = $1;
 
 	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
 	INSERT INTO _tmp_indicator_lookup
@@ -66,7 +62,7 @@ BEGIN
 
 	-- This table will be used, instead of the agg_datapoint table for the remainder of the calc process
 
-	EXECUTE FORMAT ('
+
 	DROP TABLE IF EXISTS _tmp_calc_datapoint ;
 	CREATE TABLE _tmp_calc_datapoint AS
 
@@ -76,17 +72,17 @@ BEGIN
 		,ad2.campaign_id
 		,ad2.indicator_id
 		,ad2.value
-		,til.is_calc
+		,'t' as is_calc
 	FROM agg_datapoint ad
 	INNER JOIN _tmp_indicator_lookup til
 		ON ad.indicator_id = til.indicator_in
+		AND ad.value > 0
+		AND ad.value != 'Nan'
 	INNER JOIN agg_datapoint ad2
 		ON ad.region_id = ad2.region_id
 		AND ad.campaign_id = ad2.campaign_id
 		AND ad2.indicator_id = til.indicator_out
-	WHERE ad.cache_job_id = %1$s;',$1
-	);
-
+	WHERE ad.cache_job_id = $1;
 
 	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (region_id, campaign_id, indicator_id);
 

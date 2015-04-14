@@ -233,11 +233,17 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 5000
+            limit = 15000
 
         dps = DataPoint.objects.raw('''
-            SELECT id from datapoint
+            SELECT id from datapoint d
             WHERE cache_job_id = -1
+            AND campaign_id in (
+                SELECT campaign_id FROM datapoint d2
+                WHERE cache_job_id = -1
+                LIMIT 1
+            )
+            ORDER BY d.indicator_id
             LIMIT %s
         ''',[limit])
 

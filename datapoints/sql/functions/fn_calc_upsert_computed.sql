@@ -4,7 +4,6 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
-
 	UPDATE datapoint_with_computed dwc
 		SET value = tcd.value
 			, cache_job_id = $1
