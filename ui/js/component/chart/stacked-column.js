@@ -1,7 +1,8 @@
 'use strict';
 
-var _  = require('lodash');
-var d3 = require('d3');
+var _      = require('lodash');
+var d3     = require('d3');
+var moment = require('moment');
 
 var column  = require('./renderer/column');
 var data    = require('util/data');
@@ -32,7 +33,8 @@ module.exports = {
 	paramAttributes : [
 		'data-facet',
 		'data-format-string',
-		'data-x'
+		'data-x',
+		'data-x-label'
 	],
 
 	mixins : [
@@ -44,7 +46,8 @@ module.exports = {
 	data : function () {
 		return {
 			facet        : 'indicator.id',
-			formatString : 's'
+			formatString : 's',
+			xLabel       : 'MMM [’]YY'
 		};
 	},
 
@@ -110,11 +113,18 @@ module.exports = {
 			var series = _(this.datapoints)
 				.groupBy(function (d) { return d.indicator; })
 				.map(function (values, ind) {
-					return {
+					var s = {
 						id     : ind,
-						name   : indicators[ind].short_name,
 						values : _.sortBy(values, x)
 					};
+
+					if (indicators.hasOwnProperty(ind)) {
+						s.name = indicators[ind].short_name;
+					} else {
+						s.name = ind;
+					}
+
+					return s;
 				})
 				.value();
 
@@ -187,12 +197,17 @@ module.exports = {
 
 			var t = svg.transition().duration(500);
 
+			var self = this;
+
 			t.select('.x.axis')
 				.call(d3.svg.axis()
 					.orient('bottom')
 					.tickSize(0)
 					.tickPadding(4)
 					.ticks(4)
+					.tickFormat(function (d) {
+						return moment(d).format(self.xLabel);
+					})
 					.scale(xScale));
 
 			svg.selectAll('.x.axis text')
