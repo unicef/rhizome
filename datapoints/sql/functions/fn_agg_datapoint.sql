@@ -48,13 +48,15 @@ DROP TABLE IF EXISTS _campaign_indicator;
 			d.id as datapoint_id, d.region_id, d.campaign_id, d.indicator_id, rt.parent_region_id, d.value, d.cache_job_id
 			--,rt.parent_region_id
 		FROM region_tree rt
-		INNER JOIN region r
-			ON rt.parent_region_id = r.parent_region_id
 		INNER JOIN datapoint d
-			ON r.id = d.region_id
+			ON rt.region_id = d.region_id
 		INNER JOIN _campaign_indicator ci
 			ON d.indicator_id = ci.indicator_id
-			AND d.campaign_id = ci.campaign_id;
+			AND d.campaign_id = ci.campaign_id
+		WHERE EXISTS (
+			SELECT 1 FROM region r
+			WHERE rt.parent_region_id = r.parent_region_id
+		);
 
 		INSERT INTO _tmp_agg
 		(region_id, campaign_id, indicator_id, value)
