@@ -1,3 +1,5 @@
+
+--SELECT * FROM fn_agg_datapoint(57)
 DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT);
 CREATE FUNCTION fn_agg_datapoint(cache_job_id INT)
 RETURNS TABLE(id int) AS
@@ -12,6 +14,7 @@ DROP TABLE IF EXISTS _campaign_indicator;
 
   		DROP TABLE IF EXISTS _tmp_agg;
   		CREATE TABLE _tmp_agg AS
+
 
 		WITH RECURSIVE region_tree AS
 		    (
@@ -42,7 +45,7 @@ DROP TABLE IF EXISTS _campaign_indicator;
 		    )
 
 		SELECT DISTINCT
-			d.id, d.region_id, d.campaign_id, d.indicator_id, rt.parent_region_id, d.value, d.cache_job_id
+			d.id as datapoint_id, d.region_id, d.campaign_id, d.indicator_id, rt.parent_region_id, d.value, d.cache_job_id
 			--,rt.parent_region_id
 		FROM region_tree rt
 		INNER JOIN region r
@@ -59,7 +62,6 @@ DROP TABLE IF EXISTS _campaign_indicator;
 		SELECT parent_region_id, campaign_id, indicator_id, SUM(value)
 		FROM _tmp_agg
 		GROUP BY parent_region_id, campaign_id, indicator_id;
-
 
 		UPDATE agg_datapoint ad
 			SET cache_job_id = $1
@@ -81,11 +83,18 @@ DROP TABLE IF EXISTS _campaign_indicator;
 			AND ta.indicator_id = ad.indicator_id
 		);
 
+		-- SET ALL DATAPOINTS THAT ARE DEPENDENT ON THIS CALCULATION = THE NEW CACHE JOB ID
+
+		UPDATE datapoint d
+			SET cache_job_id = $1
+		FROM _tmp_agg ta
+		WHERE d.id = ta.datapoint_id;
+
+
 		RETURN QUERY
-		
+
 		SELECT ad.region_id FROM agg_datapoint ad
 		WHERE ad.cache_job_id = $1
-		--and ad.region_id = 12907
 		LIMIT 1;
 
 
