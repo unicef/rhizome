@@ -1,85 +1,100 @@
-﻿DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT,region_ids int[]);
-CREATE FUNCTION fn_agg_datapoint(cache_job_id INT,region_ids int[] )
-RETURNS TABLE(id int) AS $$
+DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT);
+CREATE FUNCTION fn_agg_datapoint(cache_job_id INT)
+RETURNS TABLE(id int) AS
+$func$
+BEGIN
 
-	-- DELETE RAW INDICATORS FROM OTHER CACHE_JOBS -
-	DELETE FROM agg_datapoint ad
-	USING datapoint d
-	WHERE ad.indicator_id = d.indicator_id
-	AND ad.campaign_id = d.campaign_id
-	AND d.cache_job_id = $1
-	AND ad.region_id = ANY($2);
 
-	-- INSERT RAW DATAPOINTS --
-	INSERT INTO agg_datapoint
-	(region_id, campaign_id, indicator_id, value, cache_job_id)
+		DROP TABLE IF EXISTS _campaign_indicator;
+		CREATE TABLE _campaign_indicator AS
+		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
+		WHERE d.cache_job_id = $1;
 
-	SELECT
-		region_id, d.campaign_id, d.indicator_id, d.value, d.cache_job_id
-	FROM datapoint d
-	WHERE cache_job_id = $1
-	AND NOT EXISTS (
-		SELECT 1 FROM agg_datapoint ad
-		WHERE ad.region_id = d.region_id
-		AND ad.indicator_id = d.indicator_id
-		AND ad.campaign_id = d.campaign_id
-		AND ad.cache_job_id = d.cache_job_id
-	)
-	AND d.value is not null -- THIS SHOULD NOT HAPPEN
-	AND d.region_id = ANY($2);
+		DROP TABLE IF EXISTS _tmp_agg;
+		CREATE TABLE _tmp_agg AS
 
-	-- DELETE PARENT DATA --
-	DELETE FROM agg_datapoint ad
-	USING agg_datapoint ad_just_inserted
-	INNER JOIN region r
-		ON ad_just_inserted.region_id = r.id
-	WHERE ad_just_inserted.cache_job_id = $1
-	AND ad.region_id = r.parent_region_id
-	AND ad.cache_job_id != ad_just_inserted.cache_job_id
-	AND ad.indicator_id = ad_just_inserted.indicator_id
-	AND ad.campaign_id = ad_just_inserted.campaign_id;
+		WITH RECURSIVE region_tree AS
+		    (
+		    -- non-recursive term ( rows where the components aren't
+		    -- master_indicators in another calculation )
 
-	-- INSERT PARENT DATA --
- 	INSERT INTO agg_datapoint
- 	(region_id, campaign_id, indicator_id, value, cache_job_id)
-	SELECT
-		r.parent_region_id, ad.campaign_id, ad.indicator_id, SUM(value) as value, $1 as cache_job_id
-	FROM agg_datapoint ad
-	INNER JOIN region r
-		ON ad.region_id = r.id
- 	WHERE EXISTS ( -- see POLIO-491 --
- 		SELECT 1 FROM agg_datapoint ad_needs_compute
- 		INNER JOIN region agg_r
-			ON ad_needs_compute.region_id = agg_r.id
- 		WHERE agg_r.parent_region_id = r.parent_region_id
- 		AND ad_needs_compute.cache_job_id = $1
- 		AND ad_needs_compute.indicator_id = ad.indicator_id
- 		AND ad_needs_compute.campaign_id = ad.campaign_id
- 		LIMIT 1
- 	)
-	AND NOT EXISTS ( -- data stored at for the parent_region for this cache_job_id
-		SELECT 1 FROM agg_datapoint ad_exists
-		WHERE r.parent_region_id = ad_exists.region_id
-		AND ad.indicator_id = ad_exists.indicator_id
-		AND ad.campaign_id = ad_exists.campaign_id
-		AND ad_exists.cache_job_id = $1
-	)
-	AND NOT EXISTS ( -- data stored at the parent level
-		SELECT 1 FROM datapoint dp
-		WHERE r.parent_region_id = dp.region_id
-		AND ad.indicator_id = dp.indicator_id
-		AND ad.campaign_id = dp.campaign_id
-	)
-	AND ad.value is not null
-	GROUP BY r.parent_region_id, ad.indicator_id, ad.campaign_id;
+		  	SELECT
+		  		rg.parent_region_id
+		  		,rg.id as region_id
+		  		,0 as lvl
+		  	FROM region rg
+		  	WHERE NOT EXISTS (
+		  		SELECT 1 FROM region rg_leaf
+		  		WHERE rg.id = rg_leaf.parent_region_id
+		  	)
 
-	-- WHEN THE LOOP IS DONE THIS SHOULD RETURN NO ROWS --
+		  	UNION ALL
 
-	SELECT DISTINCT parent_region_id as ID
-	FROM region r
-	WHERE id = ANY($2)
-	AND parent_region_id IS NOT NULL
+		  	-- recursive term --
+		  	SELECT
+		  		 r_recurs.parent_region_id
+		  		,rt.region_id
+		  		,rt.lvl + 1
+		  	FROM region AS r_recurs
+		  	INNER JOIN region_tree AS rt
+		  	ON (r_recurs.id = rt.parent_region_id)
+			AND r_recurs.parent_region_id IS NOT NULL
+		    )
 
-$$
+		SELECT
+			rt.parent_region_id as region_id
+			, d.indicator_id
+			, d.campaign_id
+			,SUM(d.value) as value
+			,rt.lvl + 1 as lvl
+		FROM region_tree rt
+		INNER JOIN datapoint d
+			ON rt.region_id = d.region_id
+		INNER JOIN _campaign_indicator ci
+		 	ON d.campaign_id = ci.campaign_id
+		 	AND d.indicator_id = ci.indicator_id
+		WHERE d.value > 0
+		GROUP BY rt.parent_region_id, d.indicator_id, d.campaign_id, rt.lvl
 
-LANGUAGE SQL;
+		UNION ALL
+
+		SELECT
+			d.region_id
+			, d.indicator_id
+			, d.campaign_id
+			,d.value
+			,0 as lvl
+		FROM datapoint d
+		WHERE d.cache_job_id = $1
+		AND d.value > 0;
+
+
+		UPDATE agg_datapoint ad
+			SET cache_job_id = $1
+			, value = ta.value
+		FROM _tmp_agg ta
+		WHERE ta.region_id = ad.region_id
+		AND ta.campaign_id = ad.campaign_id
+		AND ta.indicator_id = ad.indicator_id;
+		--AND ad.value != ta.value;
+
+		INSERT INTO agg_datapoint
+		(region_id, campaign_id, indicator_id, value,cache_job_id)
+		SELECT region_id, campaign_id, indicator_id, value, $1
+		FROM _tmp_agg ta
+		WHERE NOT EXISTS (
+			SELECT 1 FROM agg_datapoint ad
+			WHERE ta.region_id = ad.region_id
+			AND ta.campaign_id = ad.campaign_id
+			AND ta.indicator_id = ad.indicator_id
+		);
+
+		RETURN QUERY
+
+		SELECT ad.id FROM agg_datapoint ad
+		WHERE ad.cache_job_id = $1
+		LIMIT 1;
+
+
+END
+$func$ LANGUAGE PLPGSQL;

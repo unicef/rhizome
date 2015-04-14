@@ -158,15 +158,10 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        loop_region_ids = self.get_region_ids_to_process()
+        adp_cursor = AggDataPoint.objects\
+            .raw("SELECT * FROM fn_agg_datapoint(%s)",[self.cache_job.id])
 
-        while len(list(loop_region_ids)) > 0:
-
-            region_cursor = Region.objects\
-                .raw("SELECT * FROM fn_agg_datapoint(%s,%s)",[self.cache_job.id,
-                        loop_region_ids])
-
-            loop_region_ids = [r.id for r in region_cursor]
+        adps = [adp.id for adp in adp_cursor]
 
         return []
 
