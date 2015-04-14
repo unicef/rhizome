@@ -5,13 +5,13 @@ $func$
 BEGIN
 
 
-		DROP TABLE IF EXISTS _campaign_indicator;
+DROP TABLE IF EXISTS _campaign_indicator;
 		CREATE TABLE _campaign_indicator AS
 		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
 		WHERE d.cache_job_id = $1;
 
-		DROP TABLE IF EXISTS _tmp_agg;
-		CREATE TABLE _tmp_agg AS
+  		DROP TABLE IF EXISTS _tmp_agg;
+  		CREATE TABLE _tmp_agg AS
 
 		WITH RECURSIVE region_tree AS
 		    (
@@ -41,33 +41,24 @@ BEGIN
 			AND r_recurs.parent_region_id IS NOT NULL
 		    )
 
-		SELECT
-			rt.parent_region_id as region_id
-			, d.indicator_id
-			, d.campaign_id
-			,SUM(d.value) as value
-			,rt.lvl + 1 as lvl
+		SELECT DISTINCT
+			d.id, d.region_id, d.campaign_id, d.indicator_id, rt.parent_region_id, d.value, d.cache_job_id
+			--,rt.parent_region_id
 		FROM region_tree rt
+		INNER JOIN region r
+			ON rt.parent_region_id = r.parent_region_id
 		INNER JOIN datapoint d
-			ON rt.region_id = d.region_id
+			ON r.id = d.region_id
 		INNER JOIN _campaign_indicator ci
-		 	ON d.campaign_id = ci.campaign_id
-		 	AND d.indicator_id = ci.indicator_id
-		WHERE d.value > 0
-		AND value != 'NaN'
-		GROUP BY rt.parent_region_id, d.indicator_id, d.campaign_id, rt.lvl
+			ON d.indicator_id = ci.indicator_id
+			AND d.campaign_id = ci.campaign_id;
 
-		UNION ALL
+		INSERT INTO _tmp_agg
+		(region_id, campaign_id, indicator_id, value)
 
-		SELECT
-			d.region_id
-			, d.indicator_id
-			, d.campaign_id
-			,d.value
-			,0 as lvl
-		FROM datapoint d
-		WHERE d.cache_job_id = $1
-		AND d.value > 0;
+		SELECT parent_region_id, campaign_id, indicator_id, SUM(value)
+		FROM _tmp_agg
+		GROUP BY parent_region_id, campaign_id, indicator_id;
 
 
 		UPDATE agg_datapoint ad
@@ -80,30 +71,23 @@ BEGIN
 		--AND ad.value != ta.value;
 
 		INSERT INTO agg_datapoint
-				(region_id, campaign_id, indicator_id, value,cache_job_id)
-				SELECT region_id, campaign_id, indicator_id, value, $1
-				FROM _tmp_agg ta
-				WHERE NOT EXISTS (
-					SELECT 1 FROM agg_datapoint ad
-					WHERE ta.region_id = ad.region_id
-					AND ta.campaign_id = ad.campaign_id
-					AND ta.indicator_id = ad.indicator_id
-				)
-			AND NOT EXISTS ( -- AN OVERRIDE ex: (region_id, campaign_id, indicator_id)=(12923, 111, 432)
-				SELECT 1 FROM _tmp_agg d
-						WHERE ta.region_id = d.region_id
-						AND ta.campaign_id = d.campaign_id
-						AND ta.indicator_id = d.indicator_id
-						AND d.lvl < ta.lvl
-			)
-			AND value > 0
-			AND value != 'NaN';
+		(region_id, campaign_id, indicator_id, value,cache_job_id)
+		SELECT region_id, campaign_id, indicator_id, value, $1
+		FROM _tmp_agg ta
+		WHERE NOT EXISTS (
+			SELECT 1 FROM agg_datapoint ad
+			WHERE ta.region_id = ad.region_id
+			AND ta.campaign_id = ad.campaign_id
+			AND ta.indicator_id = ad.indicator_id
+		);
 
 		RETURN QUERY
-
-		SELECT ad.id FROM agg_datapoint ad
-		--WHERE ad.cache_job_id = $1
+		
+		SELECT ad.region_id FROM agg_datapoint ad
+		WHERE ad.cache_job_id = $1
+		--and ad.region_id = 12907
 		LIMIT 1;
+
 
 
 END
