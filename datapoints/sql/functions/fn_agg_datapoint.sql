@@ -53,6 +53,7 @@ BEGIN
 		INNER JOIN _campaign_indicator ci
 		 	ON d.campaign_id = ci.campaign_id
 		 	AND d.indicator_id = ci.indicator_id
+		WHERE d.value > 0
 		GROUP BY rt.parent_region_id, d.indicator_id, d.campaign_id, rt.lvl
 
 		UNION ALL
@@ -64,7 +65,8 @@ BEGIN
 			,d.value
 			,0 as lvl
 		FROM datapoint d
-		WHERE d.cache_job_id = $1;
+		WHERE d.cache_job_id = $1
+		AND d.value > 0;
 
 
 		UPDATE agg_datapoint ad
@@ -73,8 +75,8 @@ BEGIN
 		FROM _tmp_agg ta
 		WHERE ta.region_id = ad.region_id
 		AND ta.campaign_id = ad.campaign_id
-		AND ta.indicator_id = ad.indicator_id
-		AND ad.value != ta.value;
+		AND ta.indicator_id = ad.indicator_id;
+		--AND ad.value != ta.value;
 
 		INSERT INTO agg_datapoint
 		(region_id, campaign_id, indicator_id, value,cache_job_id)
@@ -85,7 +87,6 @@ BEGIN
 			WHERE ta.region_id = ad.region_id
 			AND ta.campaign_id = ad.campaign_id
 			AND ta.indicator_id = ad.indicator_id
-
 		);
 
 		RETURN QUERY
