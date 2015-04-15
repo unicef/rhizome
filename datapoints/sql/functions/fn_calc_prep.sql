@@ -76,7 +76,7 @@ BEGIN
 	FROM agg_datapoint ad
 	INNER JOIN _tmp_indicator_lookup til
 		ON ad.indicator_id = til.indicator_in
-		AND ad.value > 0
+		--AND ad.value > 0
 		AND ad.value != 'Nan'
 	INNER JOIN agg_datapoint ad2
 		ON ad.region_id = ad2.region_id
