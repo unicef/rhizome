@@ -59,11 +59,10 @@
 					data-margin-right="4"
 					data-margin-left="4"
 					data-margin-bottom="24"
-					data-period="1 years"
-					data-indicators="[431,432]"
 					data-format-string="%"
 					data-x="campaign.start_date"
-					v-with="region: region, campaign: campaign"></svg>
+					data-x-label="[Q]Q YYYY"
+					v-with="loading : false, series : immunity, region : region, campaign : campaign"></svg>
 			</section>
 		</div>
 
@@ -85,11 +84,9 @@
 						data-margin-bottom="24"
 						data-aspect="1.909344491"
 						data-margin-bottom="12"
-						data-indicators="[166,164,167,165]"
-						data-period="1 years"
 						data-format-string=".1%"
 						data-x="campaign.start_date"
-						v-with="region: region, campaign: campaign"></svg>
+						v-with="loading : false, series : missedChildren, region: region, campaign: campaign"></svg>
 				</section>
 
 				<section>

@@ -1,7 +1,8 @@
 'use strict';
 
-var _  = require('lodash');
-var d3 = require('d3');
+var _      = require('lodash');
+var d3     = require('d3');
+var moment = require('moment');
 
 var column  = require('./renderer/column');
 var data    = require('util/data');
@@ -32,29 +33,33 @@ module.exports = {
 	paramAttributes : [
 		'data-facet',
 		'data-format-string',
-		'data-x'
+		'data-x',
+		'data-x-label'
 	],
 
 	mixins : [
 		require('./mixin/resize'),
-		require('./mixin/margin'),
-		require('./mixin/with-indicator')
+		require('./mixin/margin')
 	],
 
 	data : function () {
 		return {
 			facet        : 'indicator.id',
-			formatString : 's'
+			formatString : 's',
+			series       : [],
+			xLabel       : 'MMM [’]YY'
 		};
 	},
 
 	computed : {
 		colWidth : function () {
-			return Math.floor(this.contentWidth / _(this.datapoints).map(this.getX).uniq().size()) - 1;
+			return Math.floor(this.contentWidth / d3.max(this.series, function (s) {
+				return s.values.length;
+			})) - 1;
 		},
 
 		empty : function () {
-			return !this.datapoints || !this.datapoints.length;
+			return !this.series || !this.series.length;
 		},
 
 		getX : function () {
@@ -88,44 +93,14 @@ module.exports = {
 				.value();
 		},
 
-		series : function () {
-			if (this.empty) {
-				return [];
-			}
-
-			var x = this.x;
-
-			if (_.isString(x)) {
-				x = data.accessor(x);
-			}
-
-			var stack = d3.layout.stack()
-				.offset('zero')
-				.values(function (d) { return d.values; })
-				.x(x)
-				.y(function (d) { return d.value; });
-
-			var indicators = _.indexBy(this.indicators, 'id');
-
-			var series = _(this.datapoints)
-				.groupBy(function (d) { return d.indicator; })
-				.map(function (values, ind) {
-					return {
-						id     : ind,
-						name   : indicators[ind].short_name,
-						values : _.sortBy(values, x)
-					};
-				})
-				.value();
-
-			var stacked = stack(series);
-
-			return stacked;
-		},
-
 		xScale : function () {
+			var domain = d3.extent(
+				_(this.series).pluck('values').flatten().value(),
+				this.getX
+			);
+
 			return d3.time.scale()
-				.domain(d3.extent(this.datapoints, this.getX))
+				.domain(domain)
 				.range([0, this.contentWidth - this.colWidth]);
 		},
 
@@ -149,13 +124,13 @@ module.exports = {
 			svg.on('mousemove', this.onMouseMove)
 				.on('mouseout', this.onMouseOut);
 
-			var series = svg.select('.data').selectAll('.series')
-				.data(this.series, function (d) { return d.id; });
-
 			var x      = this.getX;
-			var width  = this.colWidth;
+			var width  = Math.max(1, this.colWidth);
 			var xScale = this.xScale;
 			var yScale = this.yScale;
+
+			var series = svg.select('.data').selectAll('.series')
+				.data(this.series, function (d) { return d.name; });
 
 			var color = d3.scale.ordinal().range(palette);
 
@@ -187,12 +162,17 @@ module.exports = {
 
 			var t = svg.transition().duration(500);
 
+			var self = this;
+
 			t.select('.x.axis')
 				.call(d3.svg.axis()
 					.orient('bottom')
 					.tickSize(0)
 					.tickPadding(4)
 					.ticks(4)
+					.tickFormat(function (d) {
+						return moment(d).format(self.xLabel);
+					})
 					.scale(xScale));
 
 			svg.selectAll('.x.axis text')
@@ -223,7 +203,9 @@ module.exports = {
 			var yScale = this.yScale;
 			var fmt    = d3.format(this.formatString);
 
-			var range = _(this.datapoints)
+			var range = _(this.series)
+				.pluck('values')
+				.flatten()
 				.map(function (d) { return x(d).getTime(); })
 				.uniq()
 				.sortBy()
@@ -311,8 +293,8 @@ module.exports = {
 	},
 
 	watch : {
-		'datapoints' : 'draw',
-		'height'     : 'draw',
-		'width'      : 'draw',
+		'series' : 'draw',
+		'height' : 'draw',
+		'width'  : 'draw',
 	}
 };
