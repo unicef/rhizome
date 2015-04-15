@@ -1,4 +1,3 @@
-
 DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT);
 CREATE FUNCTION fn_agg_datapoint(cache_job_id INT)
 RETURNS TABLE(id int) AS
@@ -11,8 +10,8 @@ BEGIN
 		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
 		WHERE d.cache_job_id = $1;
 
-   		DROP TABLE IF EXISTS _tmp_agg;
-   		CREATE TABLE _tmp_agg AS
+		DROP TABLE IF EXISTS _to_agg;
+		CREATE TABLE _to_agg AS
 
 		WITH RECURSIVE region_tree AS
 		    (
@@ -24,10 +23,11 @@ BEGIN
 		  		,rg.id as region_id
 		  		,0 as lvl
 		  	FROM region rg
-		  	WHERE NOT EXISTS (
-		  		SELECT 1 FROM region rg_leaf
-		  		WHERE rg.id = rg_leaf.parent_region_id
-		  	)
+ 			WHERE EXISTS (
+				SELECT 1 FROM datapoint d
+				WHERE d.region_id = rg.id
+				AND d.cache_job_id = $1
+			)
 
 		  	UNION ALL
 
@@ -43,18 +43,38 @@ BEGIN
 		    )
 
 		SELECT
-			cast(NULL AS int) as datapoint_id, rt.parent_region_id as region_id, d.campaign_id, d.indicator_id, SUM(d.value) as value
+			d.id as datapoint_id, d.region_id, d.campaign_id, d.indicator_id, d,value, rt.parent_region_id
 		FROM region_tree rt
+		INNER JOIN region r
+		ON r.parent_region_id = rt.parent_region_id
 		INNER JOIN datapoint d
-			ON rt.region_id = d.region_id
+		ON r.id = d.region_id
 		INNER JOIN _campaign_indicator ci
 			ON d.indicator_id = ci.indicator_id
-			AND d.campaign_id = ci.campaign_id
-		WHERE EXISTS (
-			SELECT 1 FROM region r
-			WHERE rt.parent_region_id = r.parent_region_id
-		)
-		GROUP BY rt.parent_region_id, d.campaign_id, d.indicator_id;
+			AND d.campaign_id = ci.campaign_id;
+
+
+		DROP TABLE IF EXISTS _tmp_agg;
+		CREATE TABLE _tmp_agg AS
+
+		SELECT
+			d.datapoint_id
+			,d.region_id
+			,d.campaign_id
+			,d.indicator_id
+			,d.value
+		FROM _to_agg d
+
+ 		UNION ALL
+
+ 		SELECT
+			CAST(NULL AS INT) as id
+			,d.parent_region_id
+			,d.campaign_id
+			,d.indicator_id
+			,SUM(d.value) as value
+		FROM _to_agg d
+ 		GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
 
 		CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
 
@@ -67,16 +87,6 @@ BEGIN
 		AND ta.campaign_id = d.campaign_id
 		AND ta.indicator_id = d.indicator_id;
 
-		-- RAW DATA --
-		INSERT INTO _tmp_agg
-		(region_id, indicator_id, campaign_id, value)
-		SELECT
-			region_id
-			, indicator_id
-			, campaign_id
-			, value
-		FROM datapoint d
-		WHERE d.cache_job_id = $1;
 
 		-- UPDATE EXISTING --
 		UPDATE agg_datapoint ad
