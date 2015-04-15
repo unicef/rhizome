@@ -64,6 +64,10 @@ class CacheRefresh(object):
         a particular datapoint was cached.
 
         '''
+
+        if CacheJob.objects.filter(date_completed=None)
+            return 'CACHE_RUNNING'
+
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
@@ -238,7 +242,7 @@ class CacheRefresh(object):
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint d
             WHERE cache_job_id = -1
-            AND campaign_id in (
+            AND campaign_id in ( -- one campaign at a time
                 SELECT campaign_id FROM datapoint d2
                 WHERE cache_job_id = -1
                 LIMIT 1
