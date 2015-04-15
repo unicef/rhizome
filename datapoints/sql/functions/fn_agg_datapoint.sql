@@ -4,14 +4,15 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
-
 		DROP TABLE IF EXISTS _campaign_indicator;
+		DROP TABLE IF EXISTS _to_agg;
+		DROP TABLE IF EXISTS _tmp_agg;
+
 		CREATE TABLE _campaign_indicator AS
 		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
 		WHERE d.cache_job_id = $1;
 
-		DROP TABLE IF EXISTS _to_agg;
-		CREATE TEMP TABLE _to_agg AS
+		CREATE TABLE _to_agg AS
 
 		WITH RECURSIVE region_tree AS
 				(
@@ -59,7 +60,6 @@ BEGIN
 			AND d.campaign_id = ci.campaign_id;
 
 
-		DROP TABLE IF EXISTS _tmp_agg;
 		CREATE TABLE _tmp_agg AS
 
 		SELECT
