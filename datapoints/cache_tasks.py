@@ -28,6 +28,12 @@ class CacheRefresh(object):
         '''
         '''
 
+        if CacheJob.objects.filter(date_completed=None):
+
+            #self.cache_job = None
+            print 'CACHE_RUNNING'
+            return
+
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
@@ -64,9 +70,6 @@ class CacheRefresh(object):
         a particular datapoint was cached.
 
         '''
-
-        if CacheJob.objects.filter(date_completed=None):
-            return 'CACHE_RUNNING'
 
         self.cache_job = CacheJob.objects.create(
             is_error = False,
