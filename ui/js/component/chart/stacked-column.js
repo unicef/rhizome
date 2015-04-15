@@ -125,7 +125,7 @@ module.exports = {
 				.on('mouseout', this.onMouseOut);
 
 			var x      = this.getX;
-			var width  = this.colWidth;
+			var width  = Math.max(1, this.colWidth);
 			var xScale = this.xScale;
 			var yScale = this.yScale;
 
