@@ -36,7 +36,7 @@ BEGIN
 				d.indicator_id as indicator_in
 				, d.indicator_id as indicator_out
 				, CAST(0 AS BOOLEAN) as is_calc
-		FROM datapoint d
+		FROM agg_datapoint d
 		WHERE d.cache_job_id = $1;
 
 	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
