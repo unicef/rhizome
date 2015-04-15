@@ -7,6 +7,40 @@ var moment = require('moment');
 var api    = require('data/api');
 var util   = require('util/data');
 
+/**
+ * Return true if all indicators are undefined on this datapoint.
+ */
+function empty(datapoint) {
+	return _(datapoint.indicators)
+		.pluck('value')
+		.every(function (v) { return !util.defined(v); });
+}
+
+/**
+ * Return an array with one datapoint per indicator.
+ */
+function melt(dataset) {
+	var o = _(dataset)
+		.map(function (d) {
+			var base = _.omit(d, 'indicators');
+
+			return _.map(d.indicators, function (indicator) {
+				return _.assign({}, base, indicator);
+			});
+		})
+		.flatten()
+		.value();
+
+	return o;
+}
+
+function seriesObject(d, ind, collection, indicators) {
+	return {
+		name   : indicators[ind].short_name,
+		values : d
+	};
+}
+
 module.exports = {
 
 	template: require('./management.html'),
@@ -193,25 +227,12 @@ module.exports = {
 					var indicators = _.indexBy(data[0].objects, 'id');
 
 					var immunity = _(data[1].objects)
-						.reject(function (d) {
-							return _.every(d.indicators, function (ind) {
-								return _.isNull(ind.value) || _.isUndefined(ind.value);
-							});
-						})
-						.map(function (d) {
-							// Separate out the (indicator, value) pairs from each datapoint's
-							// indicators array so that we have an array of datapoints, each
-							// representing only one indicator with one value
-							var base = _.omit(d, 'indicators');
-
+						.reject(empty)
+						.thru(melt)
+						.forEach(function (d) {
 							// Add a property to each datapoint indicating the fiscal quarter
-							base.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
-
-							return _.map(d.indicators, function (indicator) {
-								return _.assign({}, base, indicator);
-							});
+							d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
 						})
-						.flatten()
 						.groupBy(function (d) {
 							return d.indicator + '-' + d.quarter;
 						})
@@ -225,12 +246,7 @@ module.exports = {
 							return o;
 						})
 						.groupBy('indicator')
-						.map(function (d, ind) {
-							return {
-								name   : indicators[ind].short_name,
-								values : d
-							};
-						})
+						.map(_.curryRight(seriesObject)(indicators))
 						.value();
 
 						var stack = d3.layout.stack()
@@ -240,6 +256,17 @@ module.exports = {
 							.y(function (d) { return d.value; });
 
 						self.immunity = stack(immunity);
+				});
+
+			q.indicator__in = [166,164,167,165];
+			q.campaign_start = moment(this.campaign.start_date)
+				.startOf('month')
+				.subtract(1, 'year')
+				.format('YYYY-MM-DD');
+
+			Promise.all([api.indicators({ id__in : [166,164,167,165] }), api.datapoints(q)])
+				.then(function (data) {
+
 				});
 		},
 	},
