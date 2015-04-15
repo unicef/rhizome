@@ -146,11 +146,11 @@ module.exports = {
 
 						switch(d.indicator) {
 							case '175':
-								self.transitPoints.inPlace     = d.value;
+								self.transitPoints.inPlace = d.value;
 								break;
 
 							case '176':
-								self.transitPoints.withSM     = d.value;
+								self.transitPoints.withSM = d.value;
 								break;
 
 							case '177':
