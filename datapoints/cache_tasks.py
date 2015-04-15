@@ -65,7 +65,7 @@ class CacheRefresh(object):
 
         '''
 
-        if CacheJob.objects.filter(date_completed=None)
+        if CacheJob.objects.filter(date_completed=None):
             return 'CACHE_RUNNING'
 
         self.cache_job = CacheJob.objects.create(
