@@ -5,13 +5,13 @@ $func$
 BEGIN
 
 
-		DROP TABLE IF EXISTS _campaign_indicator;
+DROP TABLE IF EXISTS _campaign_indicator;
 		CREATE TABLE _campaign_indicator AS
 		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
 		WHERE d.cache_job_id = $1;
 
 		DROP TABLE IF EXISTS _to_agg;
-		CREATE TABLE _to_agg AS
+		CREATE TEMP TABLE _to_agg AS
 
 		WITH RECURSIVE region_tree AS
 		    (
@@ -26,7 +26,7 @@ BEGIN
  			WHERE EXISTS (
 				SELECT 1 FROM datapoint d
 				WHERE d.region_id = rg.id
-				AND d.cache_job_id = $1
+				AND d.cache_job_id = 7130
 			)
 
 		  	UNION ALL
@@ -42,8 +42,13 @@ BEGIN
 			AND r_recurs.parent_region_id IS NOT NULL
 		    )
 
-		SELECT
-			d.id as datapoint_id, d.region_id, d.campaign_id, d.indicator_id, d,value, rt.parent_region_id
+		SELECT DISTINCT
+			d.id as datapoint_id
+			,d.indicator_id
+			,d.campaign_id
+			,d.region_id
+			,d.value
+			,rt.parent_region_id
 		FROM region_tree rt
 		INNER JOIN region r
 		ON r.parent_region_id = rt.parent_region_id
@@ -52,7 +57,6 @@ BEGIN
 		INNER JOIN _campaign_indicator ci
 			ON d.indicator_id = ci.indicator_id
 			AND d.campaign_id = ci.campaign_id;
-
 
 		DROP TABLE IF EXISTS _tmp_agg;
 		CREATE TABLE _tmp_agg AS
@@ -74,6 +78,12 @@ BEGIN
 			,d.indicator_id
 			,SUM(d.value) as value
 		FROM _to_agg d
+		WHERE NOT EXISTS (
+			SELECT 1 FROM _to_agg ta
+			WHERE d.parent_region_id = ta.region_id
+			AND d.campaign_id = ta.campaign_id
+			AND d.indicator_id = ta.indicator_id
+		)
  		GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
 
 		CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
@@ -87,6 +97,16 @@ BEGIN
 		AND ta.campaign_id = d.campaign_id
 		AND ta.indicator_id = d.indicator_id;
 
+
+		--- UPDATE THE REST OF THE DATAPOINT TABLE --
+
+		UPDATE datapoint d
+		SET cache_job_id = $1
+		WHERE d.id in (
+			SELECT datapoint_id
+			FROM _to_agg ta
+			WHERE ta.datapoint_id IS NOT NULL
+		);
 
 		-- UPDATE EXISTING --
 		UPDATE agg_datapoint ad
