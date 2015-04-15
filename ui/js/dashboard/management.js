@@ -51,6 +51,7 @@ module.exports = {
 			campaign        : null,
 			campaigns       : [],
 			immunity        : [],
+			missedChildren  : [],
 			capacity        : [178,228,179,184,180,185,230,226,239],
 			polio           : [245,236,192,193,191],
 			supply          : [194,219,173,172],
@@ -266,7 +267,22 @@ module.exports = {
 
 			Promise.all([api.indicators({ id__in : [166,164,167,165] }), api.datapoints(q)])
 				.then(function (data) {
+					var indicators = _.indexBy(data[0].objects, 'id');
 
+					var missedChildren = _(data[1].objects)
+						.reject(empty)
+						.thru(melt)
+						.groupBy('indicator')
+						.map(_.curryRight(seriesObject)(indicators))
+						.value();
+
+					var stack = d3.layout.stack()
+						.offset('zero')
+						.values(function (d) { return d.values; })
+						.x(function (d) { return d.campaign.start_date; })
+						.y(function (d) { return d.value; });
+
+					self.missedChildren = stack(missedChildren);
 				});
 		},
 	},
