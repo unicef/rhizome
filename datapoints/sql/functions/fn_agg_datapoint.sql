@@ -1,5 +1,4 @@
 
---SELECT * FROM fn_agg_datapoint(57)
 DROP FUNCTION IF EXISTS fn_agg_datapoint(cache_job_id INT);
 CREATE FUNCTION fn_agg_datapoint(cache_job_id INT)
 RETURNS TABLE(id int) AS
@@ -7,14 +6,13 @@ $func$
 BEGIN
 
 
-DROP TABLE IF EXISTS _campaign_indicator;
+		DROP TABLE IF EXISTS _campaign_indicator;
 		CREATE TABLE _campaign_indicator AS
 		SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
 		WHERE d.cache_job_id = $1;
 
-  		DROP TABLE IF EXISTS _tmp_agg;
-  		CREATE TABLE _tmp_agg AS
-
+   		DROP TABLE IF EXISTS _tmp_agg;
+   		CREATE TABLE _tmp_agg AS
 
 		WITH RECURSIVE region_tree AS
 		    (
@@ -44,9 +42,8 @@ DROP TABLE IF EXISTS _campaign_indicator;
 			AND r_recurs.parent_region_id IS NOT NULL
 		    )
 
-		SELECT DISTINCT
-			d.id as datapoint_id, d.region_id, d.campaign_id, d.indicator_id, rt.parent_region_id, d.value, d.cache_job_id
-			--,rt.parent_region_id
+		SELECT
+			cast(NULL AS int) as datapoint_id, rt.parent_region_id as region_id, d.campaign_id, d.indicator_id, SUM(d.value) as value
 		FROM region_tree rt
 		INNER JOIN datapoint d
 			ON rt.region_id = d.region_id
@@ -56,15 +53,32 @@ DROP TABLE IF EXISTS _campaign_indicator;
 		WHERE EXISTS (
 			SELECT 1 FROM region r
 			WHERE rt.parent_region_id = r.parent_region_id
-		);
+		)
+		GROUP BY rt.parent_region_id, d.campaign_id, d.indicator_id;
 
+		CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
+
+		-- OVERRIDES --
+		UPDATE _tmp_agg ta
+			set value = d.value
+			, datapoint_id = d.id
+		FROM datapoint d
+		WHERE ta.region_id = d.region_id
+		AND ta.campaign_id = d.campaign_id
+		AND ta.indicator_id = d.indicator_id;
+
+		-- RAW DATA --
 		INSERT INTO _tmp_agg
-		(region_id, campaign_id, indicator_id, value)
+		(region_id, indicator_id, campaign_id, value)
+		SELECT
+			region_id
+			, indicator_id
+			, campaign_id
+			, value
+		FROM datapoint d
+		WHERE d.cache_job_id = $1;
 
-		SELECT parent_region_id, campaign_id, indicator_id, SUM(value)
-		FROM _tmp_agg
-		GROUP BY parent_region_id, campaign_id, indicator_id;
-
+		-- UPDATE EXISTING --
 		UPDATE agg_datapoint ad
 			SET cache_job_id = $1
 			, value = ta.value
@@ -74,6 +88,7 @@ DROP TABLE IF EXISTS _campaign_indicator;
 		AND ta.indicator_id = ad.indicator_id;
 		--AND ad.value != ta.value;
 
+		-- INSERT NEW --
 		INSERT INTO agg_datapoint
 		(region_id, campaign_id, indicator_id, value,cache_job_id)
 		SELECT region_id, campaign_id, indicator_id, value, $1
@@ -85,21 +100,11 @@ DROP TABLE IF EXISTS _campaign_indicator;
 			AND ta.indicator_id = ad.indicator_id
 		);
 
-		-- SET ALL DATAPOINTS THAT ARE DEPENDENT ON THIS CALCULATION = THE NEW CACHE JOB ID
-
-		UPDATE datapoint d
-			SET cache_job_id = $1
-		FROM _tmp_agg ta
-		WHERE d.id = ta.datapoint_id;
-
-
 		RETURN QUERY
 
 		SELECT ad.region_id FROM agg_datapoint ad
 		WHERE ad.cache_job_id = $1
 		LIMIT 1;
-
-
 
 END
 $func$ LANGUAGE PLPGSQL;
