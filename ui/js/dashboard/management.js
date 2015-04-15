@@ -270,7 +270,6 @@ module.exports = {
 					var indicators = _.indexBy(data[0].objects, 'id');
 
 					var missedChildren = _(data[1].objects)
-						.reject(empty)
 						.thru(melt)
 						.groupBy('indicator')
 						.map(_.curryRight(seriesObject)(indicators))
