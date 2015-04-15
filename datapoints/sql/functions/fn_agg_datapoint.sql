@@ -24,11 +24,6 @@ BEGIN
 					,rg.id as region_id
 					,0 as lvl
 				FROM region rg
-			WHERE EXISTS (
-				SELECT 1 FROM datapoint d
-				WHERE d.region_id = rg.id
-				AND d.cache_job_id = $1
-			)
 
 				UNION ALL
 
