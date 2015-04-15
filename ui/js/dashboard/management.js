@@ -188,9 +188,11 @@ module.exports = {
 				.subtract(3, 'years')
 				.format('YYYY-MM-DD');
 
-			api.datapoints(q)
+			Promise.all([api.indicators({ id__in : [431,432] }), api.datapoints(q)])
 				.then(function (data) {
-					var immunity = _(data.objects)
+					var indicators = _.indexBy(data[0].objects, 'id');
+
+					var immunity = _(data[1].objects)
 						.reject(function (d) {
 							return _.every(d.indicators, function (ind) {
 								return _.isNull(ind.value) || _.isUndefined(ind.value);
@@ -216,13 +218,28 @@ module.exports = {
 						.map(function (datapoints) {
 							var mean = _(datapoints).pluck('value').sum() / datapoints.length;
 
-							return _.assign({}, _.omit(datapoints[0], 'value'), {
+							var o = _.assign({}, _.omit(datapoints[0], 'value'), {
 								'value' : mean
 							});
+
+							return o;
+						})
+						.groupBy('indicator')
+						.map(function (d, ind) {
+							return {
+								name   : indicators[ind].short_name,
+								values : d
+							};
 						})
 						.value();
 
-						self.immunity = immunity;
+						var stack = d3.layout.stack()
+							.offset('zero')
+							.values(function (d) { return d.values; })
+							.x(function (d) { return d.campaign.start_date; })
+							.y(function (d) { return d.value; });
+
+						self.immunity = stack(immunity);
 				});
 		},
 	},
