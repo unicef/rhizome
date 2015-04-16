@@ -515,8 +515,10 @@ def api_user_mock(request):
 
     with open(USER_METADATA, 'r') as f:
         mockup = f.read()
+        mockup = mockup.replace('\n', '')\
+            .replace('\t', '')\
 
-    return HttpResponse(json.dumps(mockup)\
+    return HttpResponse(mockup\
         , content_type="application/json")
 
 def api_campaign(request):
