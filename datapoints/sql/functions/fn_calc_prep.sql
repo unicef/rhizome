@@ -73,21 +73,23 @@ BEGIN
 
 				)
 
-				SELECT DISTINCT ig2.indicator_id
-				FROM ind_graph ig
-				INNER JOIN _raw_indicators ri
-					ON ig.indicator_component_id = ri.indicator_id
-				INNER JOIN ind_graph ig2
-					ON ig.indicator_id = ig2.indicator_id
+				SELECT DISTINCT indicator_id FROM (
+					SELECT DISTINCT ig2.indicator_id
+					FROM ind_graph ig
+					INNER JOIN _raw_indicators ri
+						ON ig.indicator_component_id = ri.indicator_id
+					INNER JOIN ind_graph ig2
+						ON ig.indicator_id = ig2.indicator_id
 
-				UNION ALL
+					UNION ALL
 
-				SELECT ig2.indicator_component_id
-				FROM ind_graph ig
-				INNER JOIN _raw_indicators ri
-					ON ig.indicator_component_id = ri.indicator_id
-				INNER JOIN ind_graph ig2
-					ON ig.indicator_id = ig2.indicator_id;
+					SELECT ig2.indicator_component_id
+					FROM ind_graph ig
+					INNER JOIN _raw_indicators ri
+						ON ig.indicator_component_id = ri.indicator_id
+					INNER JOIN ind_graph ig2
+						ON ig.indicator_id = ig2.indicator_id
+				)x;
 
 				CREATE UNIQUE INDEX uq_ind_ix ON _indicators_needed_to_calc (indicator_id);
 
