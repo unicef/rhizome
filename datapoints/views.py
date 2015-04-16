@@ -342,7 +342,9 @@ def populate_dummy_ngo_dash(request):
 
 def cache_control(request):
 
-    return render_to_response('cache_control.html',
+    cache_jobs = CacheJob.objects.all().order_by('-id')[:10]
+
+    return render_to_response('cache_control.html',{'cache_jobs':cache_jobs},
     context_instance=RequestContext(request))
 
 

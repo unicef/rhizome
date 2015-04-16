@@ -41,7 +41,12 @@ class CacheRefresh(object):
 
         if response_msg != 'NOTHING_TO_PROCESS':
 
-            response_msg = self.main()
+            try:
+                response_msg = self.main()
+            except Exception as err:
+                self.cache_job.date_completed = datetime.now()
+                self.cache_job.response_msg = err
+                self.cache_job.save()
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
