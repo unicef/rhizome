@@ -509,6 +509,13 @@ def parse_url_args(request,keys):
 
     return request_meta
 
+def api_user_mock(request):
+
+    mockup = ''' {'hello': 'hi'} '''
+
+    return HttpResponse(json.dumps(mockup)\
+        , content_type="application/json")
+
 def api_campaign(request):
 
     meta_keys = ['id','region__in','start_date','limit','offset']
