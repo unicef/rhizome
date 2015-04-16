@@ -28,6 +28,12 @@ class CacheRefresh(object):
         '''
         '''
 
+        if CacheJob.objects.filter(date_completed=None):
+
+            #self.cache_job = None
+            print 'CACHE_RUNNING'
+            return
+
         self.datapoint_id_list = datapoint_id_list
 
         # set up and run the cache job
@@ -64,6 +70,7 @@ class CacheRefresh(object):
         a particular datapoint was cached.
 
         '''
+
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
@@ -158,15 +165,10 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        loop_region_ids = self.get_region_ids_to_process()
+        adp_cursor = DataPoint.objects.raw("""
+            SELECT * FROM fn_agg_datapoint(%s);""",[self.cache_job.id])
 
-        while len(list(loop_region_ids)) > 0:
-
-            region_cursor = Region.objects\
-                .raw("SELECT * FROM fn_agg_datapoint(%s,%s)",[self.cache_job.id,
-                        loop_region_ids])
-
-            loop_region_ids = [r.id for r in region_cursor]
+        adps = [adp.id for adp in adp_cursor]
 
         return []
 
@@ -238,11 +240,17 @@ class CacheRefresh(object):
         '''
 
         if limit is None:
-            limit = 5000
+            limit = 2500
 
         dps = DataPoint.objects.raw('''
-            SELECT id from datapoint
+            SELECT id from datapoint d
             WHERE cache_job_id = -1
+            AND campaign_id in ( -- one campaign at a time
+                SELECT campaign_id FROM datapoint d2
+                WHERE cache_job_id = -1
+                LIMIT 1
+            )
+            ORDER BY d.indicator_id
             LIMIT %s
         ''',[limit])
 

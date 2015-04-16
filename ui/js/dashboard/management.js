@@ -7,6 +7,40 @@ var moment = require('moment');
 var api    = require('data/api');
 var util   = require('util/data');
 
+/**
+ * Return true if all indicators are undefined on this datapoint.
+ */
+function empty(datapoint) {
+	return _(datapoint.indicators)
+		.pluck('value')
+		.every(function (v) { return !util.defined(v); });
+}
+
+/**
+ * Return an array with one datapoint per indicator.
+ */
+function melt(dataset) {
+	var o = _(dataset)
+		.map(function (d) {
+			var base = _.omit(d, 'indicators');
+
+			return _.map(d.indicators, function (indicator) {
+				return _.assign({}, base, indicator);
+			});
+		})
+		.flatten()
+		.value();
+
+	return o;
+}
+
+function seriesObject(d, ind, collection, indicators) {
+	return {
+		name   : indicators[ind].short_name,
+		values : d
+	};
+}
+
 module.exports = {
 
 	template: require('./management.html'),
@@ -16,6 +50,8 @@ module.exports = {
 			region          : null,
 			campaign        : null,
 			campaigns       : [],
+			immunity        : [],
+			missedChildren  : [],
 			capacity        : [178,228,179,184,180,185,230,226,239],
 			polio           : [245,236,192,193,191],
 			supply          : [194,219,173,172],
@@ -128,6 +164,7 @@ module.exports = {
 						.value();
 				});
 
+			// Fetch transit points
 			q.indicator__in = [175,176,177,204];
 			q.region__in    = [this.region.id];
 
@@ -144,11 +181,11 @@ module.exports = {
 
 						switch(d.indicator) {
 							case '175':
-								self.transitPoints.inPlace     = d.value;
+								self.transitPoints.inPlace = d.value;
 								break;
 
 							case '176':
-								self.transitPoints.withSM     = d.value;
+								self.transitPoints.withSM = d.value;
 								break;
 
 							case '177':
@@ -177,6 +214,74 @@ module.exports = {
 						indicator : 'Transit Points with SM',
 						value     : self.transitPoints.withSM / self.transitPoints.inPlace
 					}];
+				});
+
+			// Fetch the immunity gap data
+			q.indicator__in  = [431,432];
+			q.campaign_start = moment(this.campaign.start_date)
+				.startOf('month')
+				.subtract(3, 'years')
+				.format('YYYY-MM-DD');
+
+			Promise.all([api.indicators({ id__in : [431,432] }), api.datapoints(q)])
+				.then(function (data) {
+					var indicators = _.indexBy(data[0].objects, 'id');
+
+					var immunity = _(data[1].objects)
+						.reject(empty)
+						.thru(melt)
+						.forEach(function (d) {
+							// Add a property to each datapoint indicating the fiscal quarter
+							d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
+						})
+						.groupBy(function (d) {
+							return d.indicator + '-' + d.quarter;
+						})
+						.map(function (datapoints) {
+							var mean = _(datapoints).pluck('value').sum() / datapoints.length;
+
+							var o = _.assign({}, _.omit(datapoints[0], 'value'), {
+								'value' : mean
+							});
+
+							return o;
+						})
+						.groupBy('indicator')
+						.map(_.curryRight(seriesObject)(indicators))
+						.value();
+
+						var stack = d3.layout.stack()
+							.offset('zero')
+							.values(function (d) { return d.values; })
+							.x(function (d) { return d.campaign.start_date; })
+							.y(function (d) { return d.value; });
+
+						self.immunity = stack(immunity);
+				});
+
+			q.indicator__in = [166,164,167,165];
+			q.campaign_start = moment(this.campaign.start_date)
+				.startOf('month')
+				.subtract(1, 'year')
+				.format('YYYY-MM-DD');
+
+			Promise.all([api.indicators({ id__in : [166,164,167,165] }), api.datapoints(q)])
+				.then(function (data) {
+					var indicators = _.indexBy(data[0].objects, 'id');
+
+					var missedChildren = _(data[1].objects)
+						.thru(melt)
+						.groupBy('indicator')
+						.map(_.curryRight(seriesObject)(indicators))
+						.value();
+
+					var stack = d3.layout.stack()
+						.offset('zero')
+						.values(function (d) { return d.values; })
+						.x(function (d) { return d.campaign.start_date; })
+						.y(function (d) { return d.value; });
+
+					self.missedChildren = stack(missedChildren);
 				});
 		},
 	},
