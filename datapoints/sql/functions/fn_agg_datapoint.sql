@@ -36,7 +36,7 @@ BEGIN
 				INNER JOIN region_tree AS rt
 				ON (r_recurs.id = rt.parent_region_id)
 			AND r_recurs.parent_region_id IS NOT NULL
-				)
+		)
 
 		SELECT DISTINCT
 			d.id as datapoint_id
@@ -46,18 +46,21 @@ BEGIN
 			,d.value
 			,rt.parent_region_id
 		FROM region_tree rt
-		INNER JOIN region r
-		ON r.parent_region_id = rt.parent_region_id
 		INNER JOIN datapoint d
-		ON r.id = d.region_id
+		ON rt.region_id = d.region_id
 		INNER JOIN _campaign_indicator ci
-			ON d.indicator_id = ci.indicator_id
-			AND d.campaign_id = ci.campaign_id;
-
+		ON d.indicator_id = ci.indicator_id
+		AND d.campaign_id = ci.campaign_id
+		WHERE EXISTS (
+			SELECT 1
+			FROM region r
+			WHERE r.parent_region_id = rt.parent_region_id
+			AND rt.region_id = d.region_id
+		);
 
 		CREATE TABLE _tmp_agg AS
 
-		SELECT
+		SELECT DISTINCT
 			d.datapoint_id
 			,d.region_id
 			,d.campaign_id
@@ -93,6 +96,8 @@ BEGIN
 		AND ta.campaign_id = d.campaign_id
 		AND ta.indicator_id = d.indicator_id;
 
+		/*
+
 		--- UPDATE THE REST OF THE DATAPOINT TABLE --
 		--- DONT NEED TO RE-PROCESS THIS DATA ---
 		UPDATE datapoint d
@@ -102,12 +107,10 @@ BEGIN
 			FROM _to_agg ta
 			WHERE ta.datapoint_id IS NOT NULL
 		);
-
+		*/
 		--------------------
 		--- BEGIN UPSERT ---
 		--------------------
-
-
 		-- UPDATE EXISTING --
 		UPDATE agg_datapoint ad
 			SET cache_job_id = $1
@@ -130,12 +133,12 @@ BEGIN
 			AND ta.indicator_id = ad.indicator_id
 		);
 
-
 		RETURN QUERY
 
 		SELECT ad.region_id FROM agg_datapoint ad
 		WHERE ad.cache_job_id = $1
 		LIMIT 1;
+
 
 END
 $func$ LANGUAGE PLPGSQL;
