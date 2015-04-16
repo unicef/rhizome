@@ -22,8 +22,8 @@ BEGIN
 				DROP TABLE IF EXISTS _tmp_calc_datapoint ;
 
 				CREATE TABLE _raw_indicators AS
-				SELECT 43 as indicator_id -- LEAF LEVEL MISSED CHD
-				--SELECT 265 as indicator_id -- MID LEVEL MISSED CHD
+				SELECT indicator_id FROM agg_datapoint
+				WHERE ad.cache_job_id = $1
 				;
 
 				-----
