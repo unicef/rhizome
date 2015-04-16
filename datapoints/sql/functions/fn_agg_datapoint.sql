@@ -52,11 +52,21 @@ BEGIN
 		ON d.indicator_id = ci.indicator_id
 		AND d.campaign_id = ci.campaign_id
 		WHERE EXISTS (
-			SELECT 1
-			FROM region r
-			WHERE r.parent_region_id = rt.parent_region_id
-			AND rt.region_id = d.region_id
+
+					SELECT 1 -- DATA AT SAME REGIONAL LEVEL AS REQUESTED
+					FROM region r
+					WHERE r.parent_region_id = rt.parent_region_id
+					AND rt.region_id = d.region_id
+
+					UNION ALL
+
+					SELECT 1-- DATA AT SAME REGIONAL LEVEL AS REQUESTED
+					FROM region r
+					WHERE r.id = rt.region_id
+					AND r.parent_region_id IS NULL
+
 		);
+
 
 		CREATE TABLE _tmp_agg AS
 
