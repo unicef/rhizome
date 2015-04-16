@@ -21,8 +21,14 @@ BEGIN
 				DROP TABLE IF EXISTS _indicators_needed_to_calc;
 				DROP TABLE IF EXISTS _tmp_calc_datapoint ;
 
+				CREATE TABLE _region_campaign AS
+				SELECT DISTINCT ad.region_id, ad.campaign_id
+				FROM agg_datapoint ad
+				WHERE ad.cache_job_id = $1;
+
 				CREATE TABLE _raw_indicators AS
-				SELECT indicator_id FROM agg_datapoint
+				SELECT DISTINCT ad.indicator_id
+				FROM agg_datapoint ad
 				WHERE ad.cache_job_id = $1
 				;
 
