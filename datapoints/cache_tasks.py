@@ -43,10 +43,14 @@ class CacheRefresh(object):
 
             try:
                 response_msg = self.main()
+            ## BLINDLY CATCH AND STORE ALL ERRORS ##
             except Exception as err:
+
                 self.cache_job.date_completed = datetime.now()
-                self.cache_job.response_msg = err
+                self.cache_job.response_msg = str(err)[:254]
                 self.cache_job.save()
+
+                return
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
@@ -170,8 +174,10 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
+        #
         adp_cursor = DataPoint.objects.raw("""
-            SELECT * FROM fn_agg_datapoint(%s);""",[self.cache_job.id])
+            SELECT * FROM fn_agg_datapoint(%s);
+            """,[self.cache_job.id])
 
         adps = [adp.id for adp in adp_cursor]
 
