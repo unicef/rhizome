@@ -19,6 +19,8 @@ from datapoints.cache_tasks import CacheRefresh
 
 from datapoints.mixins import PermissionRequiredMixin
 
+USER_METADATA = 'static/users_metadata_mockup.json'
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -511,7 +513,8 @@ def parse_url_args(request,keys):
 
 def api_user_mock(request):
 
-    mockup = ''' {'hello': 'hi'} '''
+    with open(USER_METADATA, 'r') as f:
+        mockup = f.read()
 
     return HttpResponse(json.dumps(mockup)\
         , content_type="application/json")
