@@ -1,0 +1,145 @@
+{
+	"slug": "users",
+	"name": "Users",
+	"defaultSortField": "last_name",
+	"defaultSortDirection": "asc",
+	"primaryKey": "id",
+	"fields": [
+
+		{
+			"name": "id",
+			"title": "Id",
+			"format": "integer",
+			"description": "User's system id",
+			"constraints": {
+				"required": true
+			},
+			"display": {
+				"on_table": false,
+				"sortable": false,
+				"searchable": false,
+				"filterable": false,
+				"weightTable": null,
+				"weightForm": 0
+			},
+			"form": {
+				"editable": false,
+				"inputType": null				
+			}
+		},
+
+		{
+			"name": "username",
+			"title": "Username",
+			"format": "string",
+			"description": "User's nickname",
+			"constraints": {
+				"required": true
+			},
+			"display": {
+				"on_table": false,
+				"sortable": true,
+				"searchable": true,
+				"filterable": false,
+				"weightTable": 1,
+				"weightForm": 1
+			},
+			"form": {
+				"editable": true,
+				"inputType": null
+			}
+		},
+
+		{
+			"name": "first_name",
+			"title": "First Name",
+			"format": "string",
+			"description": "User's first name",
+			"constraints": {
+				"required": true
+			},
+			"display": {
+				"on_table": true,
+				"sortable": true,
+				"searchable": true,
+				"filterable": false,
+				"weightTable": 2,
+				"weightForm": 2
+			},
+			"form": {
+				"editable": true,
+				"inputType": null
+			}
+		},
+
+		{
+			"name": "last_name",
+			"title": "Last Name",
+			"format": "string",
+			"description": "User's last name",
+			"constraints": {
+				"required": true
+			},
+			"display": {
+				"on_table": true,
+				"sortable": true,
+				"searchable": true,
+				"filterable": false,
+				"weightTable": 3,
+				"weightForm": 3
+			},
+			"form": {
+				"editable": true,
+				"inputType": null
+			}
+		},
+
+		{
+			"name": "email",
+			"title": "Email",
+			"format": "string",
+			"description": "User's email address",
+			"constraints": {
+				"required": true
+			},
+			"display": {
+				"on_table": false,
+				"sortable": true,
+				"searchable": true,
+				"filterable": false,
+				"weightTable": 3,
+				"weightForm": 3
+			},
+			"form": {
+				"editable": true,
+				"inputType": null
+			}
+		},
+
+		{
+			"name": "groups",
+			"title": "Groups",
+			"format": "array",
+			"description": "Groups to which the user belongs",
+			"constraints": {
+				"required": false
+			},
+			"display": {
+				"on_table": true,
+				"sortable": false,
+				"searchable": false,
+				"filterable": true,
+				"weightTable": 4,
+				"weightForm": 4
+			},
+			"form": {
+				"editable": true,
+				"inputType": "checkboxes",
+				"allowedValues": [
+					{ "value": 1, "label": "UNICEF HQ" }
+				]
+			}
+		}
+
+	]
+}
