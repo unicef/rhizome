@@ -512,7 +512,7 @@ def parse_url_args(request,keys):
     return request_meta
 
 def api_user_mock(request):
-
+    ''' send mock meta data out '''
     with open(USER_METADATA, 'r') as f:
         mockup = f.read()
         mockup = mockup.replace('\n', '')\
@@ -520,6 +520,33 @@ def api_user_mock(request):
 
     return HttpResponse(mockup\
         , content_type="application/json")
+
+def api_user(request):
+
+    # users = User.objects.all()
+
+    for (k,v) in request.GET.iteritems():
+        verb = k.split('.')[0]
+        # modify users at each step
+        if verb == 'search':
+            # make empty list called found
+            # take each item in all()
+            # dump it to json string
+            # search it
+            # if found put key in found
+            # filter all by pk in found
+            pass
+        elif verb == 'filter':
+            # build the filtering dynamically
+            pass
+        elif verb == 'sort':
+            # check for sort direction
+            pass
+        else:
+            return HttpResponse('malformed parameter'\
+                ,status=400)
+        # return users as json according to spec
+
 
 def api_campaign(request):
 
