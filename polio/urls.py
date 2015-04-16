@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     ## CUSTOM API ##
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
+    #TODO: add permissions decorator
     url(r'^api/v1/entity/users/metadata$', views.api_user_mock, name='user_mock'),
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
