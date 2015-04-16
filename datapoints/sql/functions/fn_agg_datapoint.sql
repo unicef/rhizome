@@ -96,7 +96,6 @@ BEGIN
 		AND ta.campaign_id = d.campaign_id
 		AND ta.indicator_id = d.indicator_id;
 
-		/*
 
 		--- UPDATE THE REST OF THE DATAPOINT TABLE --
 		--- DONT NEED TO RE-PROCESS THIS DATA ---
@@ -107,7 +106,7 @@ BEGIN
 			FROM _to_agg ta
 			WHERE ta.datapoint_id IS NOT NULL
 		);
-		*/
+
 		--------------------
 		--- BEGIN UPSERT ---
 		--------------------
