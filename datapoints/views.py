@@ -342,7 +342,10 @@ def populate_dummy_ngo_dash(request):
 
 def cache_control(request):
 
-    return render_to_response('cache_control.html',
+    cache_jobs = CacheJob.objects.all().\
+        exclude(response_msg='NOTHING_TO_PROCESS').order_by('-id')
+
+    return render_to_response('cache_control.html',{'cache_jobs':cache_jobs},
     context_instance=RequestContext(request))
 
 
@@ -582,3 +585,8 @@ def bad_data(request):
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))
+
+
+# def refresh_all(request):
+#
+#     return HttpResponseRedirect('/datapoints/cache_control/')

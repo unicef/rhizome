@@ -1,4 +1,4 @@
-﻿DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
+DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
 CREATE FUNCTION fn_calc_prep(cache_job_id int)
 RETURNS TABLE(id int) AS
 $func$
@@ -16,83 +16,110 @@ BEGIN
 	      --> but we do need to be able to determine where this information
 	      --> is to effect any downstream calculatiosn for this job.
 
-	EXECUTE FORMAT ('
+				DROP TABLE IF EXISTS _region_campaign;
+				DROP TABLE IF EXISTS _raw_indicators;
+				DROP TABLE IF EXISTS _indicators_needed_to_calc;
 
-		DROP TABLE IF EXISTS _tmp_indicator_lookup;
-		CREATE TEMP TABLE _tmp_indicator_lookup
-		AS
-		SELECT DISTINCT
-			cic.indicator_component_id as indicator_in
-			, cic.indicator_id as indicator_out
-			, CAST(1 AS BOOLEAN) as is_calc
-		FROM calculated_indicator_component cic
-		WHERE EXISTS (
-			SELECT 1 FROM agg_datapoint d
-			WHERE cic.indicator_component_id = d.indicator_id
-			AND cache_job_id = %1$s
-		)
+				CREATE TABLE _region_campaign
+				AS
 
-		UNION ALL
+				SELECT DISTINCT
+					region_id
+					, campaign_id
+				FROM agg_datapoint ad
+				WHERE ad.cache_job_id = $1;
 
-		SELECT DISTINCT
-				d.indicator_id as indicator_in
-				, d.indicator_id as indicator_out
-				, CAST(0 AS BOOLEAN) as is_calc
-		FROM datapoint d
-		WHERE cache_job_id = %1$s
-		;',$1
-	);
+				-----
 
-	-- NOW INSERT THE INDICATORS NEEDED TO MAKE THE CALCULATION --
-	INSERT INTO _tmp_indicator_lookup
-	(indicator_in, indicator_out, is_calc)
+		 		CREATE TABLE _raw_indicators AS
 
-	SELECT
-		indicator_in
-		, cic.indicator_component_id
-		, CAST(0 AS BOOLEAN) AS is_calc
-	FROM _tmp_indicator_lookup til
-	INNER JOIN calculated_indicator_component cic
-	ON indicator_out = cic.indicator_id
+		  		SELECT DISTINCT
+		  			indicator_id
+		  		FROM agg_datapoint ad
+		  		WHERE ad.cache_job_id = $1;
 
- 		WHERE NOT EXISTS (
- 		SELECT 1 FROM _tmp_indicator_lookup til_exists
- 		WHERE til.indicator_in = til_exists.indicator_in
- 		AND til.indicator_out = til_exists.indicator_out
-);
+				-----
 
-	-- now using the indicator_map create a temp table created above, find all of the information
-	-- needed to perform all calucaltions for this job
+				CREATE TABLE _indicators_needed_to_calc AS
 
-	-- This table will be used, instead of the agg_datapoint table for the remainder of the calc process
+				-- NOW FIND DATA THAT MUST BE PROCESSED BASED ON TMP TABLES ABOVE --
+				WITH RECURSIVE ind_graph AS
+				(
+				-- non-recursive term ( rows where the components aren't
+				-- master_indicators in another calculation )
 
-	EXECUTE FORMAT ('
-	DROP TABLE IF EXISTS _tmp_calc_datapoint ;
-	CREATE TABLE _tmp_calc_datapoint AS
+				SELECT
+						 cic.id
+					,cic.indicator_id
+					,cic.indicator_component_id
+					--,0 as lvl
+				FROM calculated_indicator_component cic
+				WHERE NOT EXISTS (
+					SELECT 1 FROM calculated_indicator_component cic_leaf
+					WHERE cic.indicator_component_id = cic_leaf.indicator_id
+				)
 
-	SELECT DISTINCT
-		ad2.id
-		,ad2.region_id
-		,ad2.campaign_id
-		,ad2.indicator_id
-		,ad2.value
-		,til.is_calc
-	FROM agg_datapoint ad
-	INNER JOIN _tmp_indicator_lookup til
-		ON ad.indicator_id = til.indicator_in
-	INNER JOIN agg_datapoint ad2
-		ON ad.region_id = ad2.region_id
-		AND ad.campaign_id = ad2.campaign_id
-		AND ad2.indicator_id = til.indicator_out
-	WHERE ad.cache_job_id = %1$s;',$1
-	);
+				UNION ALL
+
+				-- recursive term --
+				SELECT
+					cic_recurs.id
+					,cic_recurs.indicator_id
+					,ig.indicator_component_id
+					--,ig.lvl + 1
+				FROM calculated_indicator_component AS cic_recurs
+				INNER JOIN ind_graph AS ig
+				ON (cic_recurs.indicator_component_id = ig.indicator_id)
+
+				)
+
+				SELECT DISTINCT indicator_id FROM (
+					SELECT DISTINCT ig2.indicator_id
+					FROM ind_graph ig
+					INNER JOIN _raw_indicators ri
+						ON ig.indicator_component_id = ri.indicator_id
+					INNER JOIN ind_graph ig2
+						ON ig.indicator_id = ig2.indicator_id
+
+					UNION ALL
+
+					SELECT ig2.indicator_component_id
+					FROM ind_graph ig
+					INNER JOIN _raw_indicators ri
+						ON ig.indicator_component_id = ri.indicator_id
+					INNER JOIN ind_graph ig2
+						ON ig.indicator_id = ig2.indicator_id
+				)x;
+
+				CREATE UNIQUE INDEX uq_ind_ix ON _indicators_needed_to_calc (indicator_id);
+
+
+				DROP TABLE IF EXISTS _tmp_calc_datapoint ;
+				CREATE TABLE _tmp_calc_datapoint AS
+
+				SELECT DISTINCT
+					ad.id
+					,ad.region_id
+					,ad.campaign_id
+					,ad.indicator_id
+					,ad.value
+					,'t' as is_calc
+				FROM agg_datapoint ad
+				INNER JOIN _indicators_needed_to_calc intc
+					ON ad.indicator_id = intc.indicator_id
+					AND ad.value != 'Nan'
+				INNER JOIN _region_campaign rc
+					ON ad.region_id = rc.region_id
+					AND ad.campaign_id = rc.campaign_id;
+
+	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (region_id, campaign_id, indicator_id);
 
 	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
 
 	RETURN QUERY
 
 	SELECT ad.id FROM agg_datapoint ad
-	--WHERE dwc.cache_job_id = $1
+	WHERE ad.cache_job_id = $1
 	LIMIT 1;
 
 END

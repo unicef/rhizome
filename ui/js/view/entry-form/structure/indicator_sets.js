@@ -42,6 +42,10 @@ module.exports = [
 			'region_level': 4,
 			'indicators': [
 
+				{ 'type': 'section-header', 'title': 'District Info' },
+				{ 'id': 195, 'name': 'Is a high risk district? (1=yes, 0=no)' },
+				{ 'id': 55, 'name': 'Number of children targeted in high-risk districts' },
+
 				{ 'type': 'section-header', 'title': 'Polio Cases' },
 				{ 'id': 70, 'name': 'Number of WPV1 cases' },
 				{ 'id': 160, 'name': 'Number of WPV3 cases' },
@@ -105,10 +109,8 @@ module.exports = [
 				{ 'id': 22, 'name': 'Number of children missed due to child not available' },
 				{ 'id': 23, 'name': 'Number of children missed due to no team/team did not visit' },
 				{ 'id': 24, 'name': 'Number of children missed due to other reasons' },
-				{ 'id': 55, 'name': 'Number of children targeted in high-risk districts' },
 
 				{ 'type': 'section-header', 'title': 'Polio+' },
-				{ 'id': 195, 'name': 'Is a high risk district? (1=yes, 0=no)' },
 				{ 'id': 218, 'name': 'Number of high risk districts with locations where OPV is delivered together with any other polio-funded services demanded by community' },
 				{ 'id': 243, 'name': 'Number of children 12 months and under' },
 				{ 'id': 244, 'name': 'Number of children under 12 months who received DPT3 or Penta3' },
