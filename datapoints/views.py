@@ -14,6 +14,7 @@ from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
 import gspread
+import re
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
@@ -551,6 +552,23 @@ def api_user_mock(request):
     return HttpResponse(mockup\
         , content_type="application/json")
 
+def _user_search(users, keywords):
+
+    found = []
+    for obj in users:
+        data = MyUser(pk=obj.pk).serialize().lower()
+        print 'searching for: ',v,' in ',data
+        if data.find(v) > -1:
+            found.append(obj.pk)
+    return users.filter(pk__in=found)
+
+def _user_filter(users):
+    pass
+
+def _user_sort(users, sort_on, sort_direction='asc'):
+    if sort_direction.lower() == 'desc':
+        sort_on = '-'.append(sort_on)
+    return users.objects.order_by(sort_on)
 
 def api_user(request):
 
@@ -559,39 +577,23 @@ def api_user(request):
     for (k,v) in request.GET.iteritems():
         verb = k.split('.')[0]
         v = v.lower()
-        # modify users at each step
         if verb == 'search':
-            found = []
-            for obj in users:
-                data = MyUser(pk=obj.pk).serialize().lower()
-
-                print 'searching for: ',v,' in ',data
-                if data.find(v) > -1:
-                    found.append(obj.pk)
-            #res = users.filter(pk__in=found)
-            res = [ MyUser(pk=f).get_dict() for f in found ]
-            if len(res) > 0:
-                return HttpResponse(json.dumps(res),
-                    content_type='application/json')
-            else:
-                return HttpResponse('No Results')
-        # put res into objects (see api docs)
+            keywords = re.split('(?<!\\\)\+', v)
+            #split on (non-escaped) back slash
+            users = _user_search(users, keywords)
         elif verb == 'filter':
-            # build the filtering dynamically
             pass
         elif verb == 'sort':
-            sort_on = v
-            if 'sort_direction' in k:
-                sd = request.GET[k]
-                if sd.lower() == 'desc':
-                    sort_on = '-'.append(sort_on)
-            res = users.objects.order_by(sort_on)
-            return HttpRespone(serializers.serialize('json'), res,
-                content_type='application/json')
+            if 'sort_direction' in request.GET:
+                sd = request.GET['sort_direction']
+            else:
+                sd = None
+            users = _user_sort(users, v, sd)
         else:
             return HttpResponse('malformed parameter'\
                 ,status=400)
-        # return users as json according to spec
+        return HttpRespone(serializers.serialize('json'), res,
+                content_type='application/json')
 
 
 def api_campaign(request):
