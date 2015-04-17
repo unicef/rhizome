@@ -1,3 +1,6 @@
+
+
+
 DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
 CREATE FUNCTION fn_calc_prep(cache_job_id int)
 RETURNS TABLE(id int) AS
@@ -91,6 +94,13 @@ BEGIN
 					WHERE cic.indicator_component_id = tc.indicator_id
 				);
 
+				-- RAW INDICATORS WITH NO COMPONENTS --
+				INSERT INTO _indicators_needed_to_calc
+				SELECT indicator_id FROM _raw_indicators ri
+				WHERE NOT EXISTS (
+					SELECt 1 FROM _indicators_needed_to_calc intc
+					WHERE ri.indicator_id = intc.indicator_id
+				);
 
 				CREATE TABLE _tmp_calc_datapoint AS
 
