@@ -15,6 +15,8 @@ from pandas import read_csv
 from pandas import DataFrame
 import gspread
 import re
+import itertools
+from functools import partial
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
@@ -565,9 +567,52 @@ def _user_search(users, keywords):
         users = users.filter(pk__in=found)
     return users
 
-def _user_filter(users):
-    keyword_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'contains'}
+def find_group(g, user):
+    ''' return True if MyUser user is in group g (soft)'''
+    for groups in user.groups:
+        if group['label'].find(g) > -1:
+            return True
+    return False
 
+def is_group(g, user):
+    ''' return True if MyUser is in group g (hard)'''
+    for group in user.groups:
+        if group['label'] == g:
+            return True
+    return False
+    
+
+def _user_filter(users, terms, val):
+    relation_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'in'}
+    var = terms[1]
+    print 'var', var
+    rel = relation_map[terms[2]]
+    if rel = 'in':
+        val = [ item for item in val.split(',')
+    print 'rel', rel
+    if var in ['first_name', 'last_name']:
+        print 'here'
+        kwargs = {
+            "{0}__{1}".format(var, rel) : val
+        }
+        print 'kwargs: ', kwargs
+        return users.filter(**kwargs)
+    if var == 'group':
+        my_users = [ MyUser(pk=u.pk) for u in users ]
+        if rel == 'contains':
+            print 'c'
+            my_users = itertools.ifilter(partial(find_group, g=val), my_users)
+        if rel == 'exact':
+            print 'e'
+            my_users = itertools.ifilter(partial(is_group, g=val), my_users)
+        elif rel == 'in':
+            print 'i'
+            found = []
+            for g in val.split(','):
+                my_users = itertools.ifilter(partial(is_group, g=val), my_users)
+                for mu in my_users:
+                    if mu.id not in [ u.id for u in my_users ]:
+                        found.append(mu)
 
 def _user_sort(users, sort_on, sort_direction='asc'):
     if sort_direction.lower() == 'desc':
@@ -582,10 +627,10 @@ def api_user(request):
         v = v.lower()
         if verb == 'search':
             keywords = re.split('(?<!\\\)\ ', v)
-            print v
             users = _user_search(users, keywords)
         elif verb == 'filter':
-            pass
+            terms = k.split('.')
+            users = _user_filter(users, terms, v)
         elif verb == 'sort':
             if 'sort_direction' in request.GET:
                 sd = request.GET['sort_direction']
@@ -606,6 +651,7 @@ def api_user(request):
     resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
     return HttpResponse(json.dumps(resp),
             content_type='application/json')
+
 
 
 def api_campaign(request):
