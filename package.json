@@ -1,6 +1,6 @@
 {
   "name": "uf04-polios",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "scripts": {
     "clean" : "gulp clean",
     "build" : "gulp build",
