@@ -6,7 +6,9 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
 from django.views import generic
+from django.contrib.auth.models import User,Group
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
@@ -511,6 +513,34 @@ def parse_url_args(request,keys):
 
     return request_meta
 
+class MyUser:
+    def __init__(self, pk):
+        __auth_user = User.objects.get(pk=pk)
+        self.pk = pk
+        self.first_name = __auth_user.first_name
+        self.last_name = __auth_user.last_name
+        __groups_raw = Group.objects.raw('''
+            SELECT ag.id, ag.name
+                FROM auth_user au 
+                    JOIN auth_user_groups aug
+                        ON au.id = aug.user_id 
+                    JOIN auth_group ag 
+                        ON ag.id = aug.group_id
+                WHERE au.id = %s;
+            ''', (pk,))
+        self.groups = [ Group.objects.get(pk=g.id) for g in __groups_raw ]
+
+    def get_dict(self):
+        s = {}
+        s['groups'] = [ {'value': g.pk, 'label': g.name } for g in self.groups ]
+        s['id'] = self.pk
+        s['first_name'] = self.first_name
+        s['last_name'] = self.last_name
+        return s
+
+    def serialize(self):
+        return json.dumps(self.get_dict())
+
 def api_user_mock(request):
     ''' send mock meta data out '''
     with open(USER_METADATA, 'r') as f:
@@ -521,27 +551,43 @@ def api_user_mock(request):
     return HttpResponse(mockup\
         , content_type="application/json")
 
+
 def api_user(request):
 
-    # users = User.objects.all()
+    users = User.objects.all()
 
     for (k,v) in request.GET.iteritems():
         verb = k.split('.')[0]
+        v = v.lower()
         # modify users at each step
         if verb == 'search':
-            # make empty list called found
-            # take each item in all()
-            # dump it to json string
-            # search it
-            # if found put key in found
-            # filter all by pk in found
-            pass
+            found = []
+            for obj in users:
+                data = MyUser(pk=obj.pk).serialize().lower()
+
+                print 'searching for: ',v,' in ',data
+                if data.find(v) > -1:
+                    found.append(obj.pk)
+            #res = users.filter(pk__in=found)
+            res = [ MyUser(pk=f).get_dict() for f in found ]
+            if len(res) > 0:
+                return HttpResponse(json.dumps(res),
+                    content_type='application/json')
+            else:
+                return HttpResponse('No Results')
+        # put res into objects (see api docs)
         elif verb == 'filter':
             # build the filtering dynamically
             pass
         elif verb == 'sort':
-            # check for sort direction
-            pass
+            sort_on = v
+            if 'sort_direction' in k:
+                sd = request.GET[k]
+                if sd.lower() == 'desc':
+                    sort_on = '-'.append(sort_on)
+            res = users.objects.order_by(sort_on)
+            return HttpRespone(serializers.serialize('json'), res,
+                content_type='application/json')
         else:
             return HttpResponse('malformed parameter'\
                 ,status=400)
