@@ -593,8 +593,7 @@ def api_user(request):
             else:
                 users = _user_sort(users, v)
         else:
-            return HttpResponse('Malformed Parameter'\
-                ,status=400)
+            return HttpResponse(json.dumps({'error': 'Bad Params' }))
     my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
     resp = {}
     resp['error'] = None
