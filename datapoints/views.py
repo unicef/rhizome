@@ -23,6 +23,7 @@ from datapoints.cache_tasks import CacheRefresh
 from datapoints.mixins import PermissionRequiredMixin
 
 USER_METADATA = 'static/users_metadata_mockup.json'
+DEFAULT_ITEM_LIM = 20
 
 
 class IndexView(generic.ListView):
@@ -565,7 +566,8 @@ def _user_search(users, keywords):
     return users
 
 def _user_filter(users):
-    pass
+    keyword_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'contains'}
+
 
 def _user_sort(users, sort_on, sort_direction='asc'):
     if sort_direction.lower() == 'desc':
@@ -575,7 +577,6 @@ def _user_sort(users, sort_on, sort_direction='asc'):
 def api_user(request):
 
     users = User.objects.all()
-
     for (k,v) in request.GET.iteritems():
         verb = k.split('.')[0]
         v = v.lower()
@@ -591,13 +592,21 @@ def api_user(request):
                 users = _user_sort(users, v, sd)
             else:
                 users = _user_sort(users, v)
-
         else:
-            return HttpResponse('malformed parameter'\
+            return HttpResponse('Malformed Parameter'\
                 ,status=400)
-        my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
-        return HttpResponse(json.dumps(my_users),
-                content_type='application/json')
+    my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
+    resp = {}
+    resp['error'] = None
+    resp['meta'] = {
+        'limit': DEFAULT_ITEM_LIM,
+        'offset': 0,
+        'total_count': len(my_users)
+    }
+    resp['objects'] = my_users
+    resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
+    return HttpResponse(json.dumps(resp),
+            content_type='application/json')
 
 
 def api_campaign(request):
