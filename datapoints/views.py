@@ -553,14 +553,16 @@ def api_user_mock(request):
         , content_type="application/json")
 
 def _user_search(users, keywords):
-
-    found = []
-    for obj in users:
-        data = MyUser(pk=obj.pk).serialize().lower()
-        print 'searching for: ',v,' in ',data
-        if data.find(v) > -1:
-            found.append(obj.pk)
-    return users.filter(pk__in=found)
+    ''' search is AND-wise but can easily be changed to OR-wise '''
+    for k in keywords:
+        found = []
+        for obj in users:
+            data = MyUser(pk=obj.pk).serialize().lower()
+            print 'searching for: ',k,' in ',data
+            if data.find(k) > -1:
+                found.append(obj.pk)
+        users = users.filter(pk__in=found)
+    return users
 
 def _user_filter(users):
     pass
@@ -578,8 +580,8 @@ def api_user(request):
         verb = k.split('.')[0]
         v = v.lower()
         if verb == 'search':
-            keywords = re.split('(?<!\\\)\+', v)
-            #split on (non-escaped) back slash
+            keywords = re.split('(?<!\\\)\ ', v)
+            print v
             users = _user_search(users, keywords)
         elif verb == 'filter':
             pass
@@ -592,7 +594,8 @@ def api_user(request):
         else:
             return HttpResponse('malformed parameter'\
                 ,status=400)
-        return HttpRespone(serializers.serialize('json'), res,
+        my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
+        return HttpResponse(json.dumps(my_users),
                 content_type='application/json')
 
 
