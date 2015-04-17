@@ -570,7 +570,7 @@ def _user_filter(users):
 def _user_sort(users, sort_on, sort_direction='asc'):
     if sort_direction.lower() == 'desc':
         sort_on = '-'.append(sort_on)
-    return users.objects.order_by(sort_on)
+    return users.order_by(sort_on)
 
 def api_user(request):
 
@@ -588,9 +588,10 @@ def api_user(request):
         elif verb == 'sort':
             if 'sort_direction' in request.GET:
                 sd = request.GET['sort_direction']
+                users = _user_sort(users, v, sd)
             else:
-                sd = None
-            users = _user_sort(users, v, sd)
+                users = _user_sort(users, v)
+
         else:
             return HttpResponse('malformed parameter'\
                 ,status=400)
