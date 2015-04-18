@@ -24,7 +24,7 @@ remote_frontend_path = '/var/www/polio/static/'
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
 def deploy():
     # on local machine...
-    _build_dependencies()
+    #_build_dependencies()
 
     # on target machine
     _push_to_remote()
@@ -88,11 +88,18 @@ def _push_to_remote():
         run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
 
     with cd(remote_frontend_path):
+        # remove compiled files
+        run('sudo rm -rf `find . -name "*.pyc"`')
+
+        # chgroup, chmod so apache can edit
         run('chgrp -R www-data *')
         run('chmod -R g+w *')
 
     # in server path -
     with cd(remote_backend_path):
+        # remove compiled files
+        run('sudo rm -rf `find . -name "*.pyc"`')
+
         run("chgrp -R www-data *")
         run("chmod -R g+w *")
 
