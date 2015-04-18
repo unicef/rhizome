@@ -29,13 +29,6 @@ def deploy():
     # on target machine
     _push_to_remote()
 
-# test build
-#
-# test-machine dependencies - python, pip, postgres
-#
-def test():
-    local("echo TODO: do tests here")
-
 # build dependencies
 #
 #
