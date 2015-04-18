@@ -19,6 +19,16 @@ remote_work_path = '~/deploy/polio-work'
 remote_backend_path = '/var/www/apps/polio/'
 remote_frontend_path = '/var/www/polio/static/'
 
+# deploy build
+#
+# build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
+def deploy():
+    # on local machine...
+    _build_dependencies()
+
+    # on target machine
+    _push_to_remote()
+
 # test build
 #
 # test-machine dependencies - python, pip, postgres
@@ -26,10 +36,10 @@ remote_frontend_path = '/var/www/polio/static/'
 def test():
     local("echo TODO: do tests here")
 
-# deploy build
+# build dependencies
 #
-# build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
-def deploy():
+#
+def _build_dependencies():
     ###
     ### on build machine...
     ###
@@ -55,6 +65,10 @@ def deploy():
     local("./node_modules/.bin/bower install")
     local("./node_modules/.bin/gulp dist")
 
+# push build to remote
+#
+#
+def _push_to_remote():
     ###
     ### on target machine...
     ###
@@ -107,13 +121,3 @@ def deploy():
     #
     # echo "== RUNNING TESTS =="
     # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
-
-# def prepare_deploy():
-    # local("pip install -r requirements.txt")
-
-    # from shell script
-    # git pull origin development
-    # pip install -r requirements.txt
-    # python manage.py syncdb --settings=polio.prod_settings
-    # python manage.py migrate --settings=polio.prod_settings
-    # bash bin/build_db.sh
