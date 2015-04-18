@@ -23,11 +23,22 @@ remote_frontend_path = '/var/www/polio/static/'
 #
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
 def deploy():
+
     # on local machine...
-    #_build_dependencies()
+    _build_dependencies()
 
     # on target machine
+    stop_apache()
     _push_to_remote()
+    start_apache()
+
+# apache controls
+def stop_apache():
+    run("sudo /etc/init.d/apache2 stop")
+
+def start_apache():
+    run("sudo /etc/init.d/apache2 start")
+
 
 # build dependencies
 #
