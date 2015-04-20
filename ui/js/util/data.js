@@ -20,7 +20,13 @@ var path = require('vue/src/parsers/path');
  */
 function accessor(prop) {
 	return function (d) {
-		return path.get(d, prop);
+		var v = path.get(d, prop);
+
+		if (_.isDate(v)) {
+			return v.getTime();
+		}
+
+		return v;
 	};
 }
 

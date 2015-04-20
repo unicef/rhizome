@@ -95,14 +95,17 @@ module.exports = {
 		},
 
 		xScale : function () {
-			var domain = d3.extent(
-				_(this.series).pluck('values').flatten().value(),
-				this.getX
-			);
+			var domain = _(this.series)
+				.pluck('values')
+				.flatten()
+				.map(this.getX)
+				.uniq()
+				.sortBy()
+				.value();
 
-			return d3.time.scale()
+			return d3.scale.ordinal()
 				.domain(domain)
-				.range([0, this.contentWidth - this.colWidth]);
+				.rangeBands([0, this.contentWidth], 0.1, 0);
 		},
 
 		yScale : function () {
@@ -126,9 +129,9 @@ module.exports = {
 				.on('mouseout', this.onMouseOut);
 
 			var x      = this.getX;
-			var width  = Math.max(1, this.colWidth);
 			var xScale = this.xScale;
 			var yScale = this.yScale;
+			var width  = xScale.rangeBand();
 
 			var series = svg.select('.data').selectAll('.series')
 				.data(this.series, function (d) { return d.name; });
@@ -207,12 +210,12 @@ module.exports = {
 			var range = _(this.series)
 				.pluck('values')
 				.flatten()
-				.map(function (d) { return x(d).getTime(); })
+				.map(x)
 				.uniq()
 				.sortBy()
 				.value();
 
-			var val   = xScale.invert(cursor).getTime();
+			var val   = xScale.invert(cursor);
 			var right = d3.bisect(range, val);
 			var left  = right - 1;
 			var target;
@@ -267,7 +270,7 @@ module.exports = {
 				.transition()
 				.duration(300)
 				.style('opacity', function (d) {
-					return x(d).getTime() === target ? 1 : 0.3;
+					return x(d) === target ? 1 : 0.3;
 				});
 		},
 
