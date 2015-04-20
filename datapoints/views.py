@@ -573,6 +573,82 @@ def api_region(request):
         , content_type="application/json")
 
 
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    i_raw = Indicator.objects.raw("""
+
+        SELECT
+            i.*
+            ,ib.mn_val
+            ,ib.mx_val
+            ,bound_name
+            ,direction
+        FROM indicator i
+        LEFT JOIN indicator_bound ib
+        ON i.id = ib.indicator_id
+        WHERE i.id in (431,168)
+        ORDER BY i.id
+    """)
+
+    objects = []
+
+    raw_data = [{
+                  'id': i.id \
+                , 'name':i.name \
+                #, 'created_at':i.created_at \
+                , 'description':i.description \
+                , 'direction': i.direction
+                , 'bound_name':i.bound_name
+                , 'mx_val':i.mx_val
+                , 'mn_val': i.mn_val
+            } for i in i_raw]
+
+    df = DataFrame(raw_data)
+    cleaned_df = df.fillna('NULL')
+
+    print cleaned_df
+
+    distinct_indicator_ids = df['id'].unique()
+
+    for ind_id in distinct_indicator_ids:
+
+        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
+        ind_dict = ind_df.to_dict()
+
+        # print ind_dict
+        indicator_dictionary = {'id':ind_id,'indicator_bounds':ind_dict }
+
+        objects.append(indicator_dictionary)
+
+    # for ix, data in indexed_df.iterrows():
+
+        # print ix
+        # print '======================================================'
+        # print data
+
+        # indicator_dict = {'id':ind_id,'hello':'world'}
+        # print ind_df
+        # objects.append(indicator_dict)
+
+
+    # objects = [{'id': r.id,'name': r.name, 'office_id':r.office_id, 'parent_region_id':\
+    #     r.parent_region_id, 'region_type_id': r.region_type_id} for r in r_raw]
+
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+
 def bad_data(request):
 
     dp_curs = BadData.objects.raw('''
