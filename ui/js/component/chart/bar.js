@@ -27,6 +27,7 @@ module.exports = {
 		return {
 			aspect       : false, // Disable auto-setting height
 			barHeight    : 14,
+			chartType    : 'bar',
 			format       : 's',
 			marginTop    : 9,
 			marginRight  : 18,
