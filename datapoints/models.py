@@ -62,6 +62,24 @@ class CalculatedIndicatorComponent(models.Model):
     class Meta:
         db_table = 'calculated_indicator_component'
 
+class IndicatorBound(models.Model):
+    '''
+    If a Low / High reporesents an error, or a particular grouping of values
+    i.e. (good, ok, bad) we have how ever many rows for an indicator as their
+    are groupings for that indicator's values.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    mn_val = models.FloatField()
+    mx_val = models.FloatField()
+    bound_name = models.CharField(max_length=255)
+
+
+    def __unicode__(self):
+        return unicode(self.bound_name.name)
+
+    class Meta:
+        db_table = 'indicator_bound'
 
 
 class Office(models.Model):
