@@ -11,8 +11,9 @@ from fabric.api import local, run, cd, put
 
 ## global variables
 ##
+
+# this can be overwritten by passing venv_path arg to deploy() target
 local_venv_path = '/tmp/venv'
-# remote_venv_path = '/tmp/venv'
 
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
@@ -22,7 +23,9 @@ remote_frontend_path = '/var/www/polio/static/'
 # deploy build
 #
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
-def deploy():
+def deploy(venv_path=None):
+    global local_venv_path
+    local_venv_path = venv_path;
 
     # on local machine...
     _build_dependencies()
@@ -54,12 +57,14 @@ def _build_dependencies():
     # sudo gem install sass
     # sudo gem install compass
 
-    # make virtual env
-    local('virtualenv %s' % local_venv_path)
+    # only build with a virtualenv if one is passed in.
+    if (local_venv_path):
+        # make virtual env
+        local('virtualenv %s' % local_venv_path)
 
-    # enter virtual environment
-    activate_this_file = "%s/bin/activate_this.py" % local_venv_path
-    execfile(activate_this_file, dict(__file__=activate_this_file))
+        # enter virtual environment
+        activate_this_file = "%s/bin/activate_this.py" % local_venv_path
+        execfile(activate_this_file, dict(__file__=activate_this_file))
 
     # update/install dependencies
     local ("npm install")
