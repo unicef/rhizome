@@ -70,9 +70,10 @@ class IndicatorBound(models.Model):
     '''
 
     indicator = models.ForeignKey(Indicator)
-    mn_val = models.FloatField()
-    mx_val = models.FloatField()
+    mn_val = models.FloatField(null=True)
+    mx_val = models.FloatField(null=True)
     bound_name = models.CharField(max_length=255)
+    direction = models.IntegerField(default=1)
 
 
     def __unicode__(self):
