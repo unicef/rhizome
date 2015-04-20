@@ -584,10 +584,9 @@ def is_group(g, user):
 def _user_filter(users, terms, val):
     relation_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'in'}
     var = terms[1]
-    print 'var', var
+    res = []
     rel = relation_map[terms[2]]
     if rel == 'in':
-        print 'splitting'
         val = val.split(',')
     print 'rel', rel
     if var in ['first_name', 'last_name', 'id']:
@@ -596,18 +595,17 @@ def _user_filter(users, terms, val):
             "{0}__{1}".format(var, rel) : val
         }
         print 'kwargs: ', kwargs
-        return users.filter(**kwargs)
+        res = users.filter(**kwargs)
     if var == 'group':
         my_users = [ MyUser(pk=u.pk) for u in users ]
         if rel == 'contains':
-            print 'c'
             my_users = itertools.ifilter(lambda mu: find_group(val, mu), my_users)
+            res = users.filter(pk__in=[ mu.pk for mu in my_users ])
         if rel == 'exact':
             print 'e'
             my_users = itertools.ifilter(lambda mu: is_group(val, mu), my_users)
-            return users.filter(pk__in=[ mu.pk for mu in my_users ])
+            res = users.filter(pk__in=[ mu.pk for mu in my_users ])
         elif rel == 'in':
-            print 'i'
             found = []
             print 'splitting'
             for g in val.split(','):
@@ -615,7 +613,8 @@ def _user_filter(users, terms, val):
                 for mu in my_users:
                     if mu.id not in [ u.id for u in my_users ]:
                         found.append(mu)
-            return users.filter(pk__in=found)
+            res = users.filter(pk__in=found)
+    return res
 
 def _user_sort(users, sort_on, sort_direction='asc'):
     if sort_direction.lower() == 'desc':
