@@ -643,6 +643,9 @@ def api_user(request):
                 users = _user_sort(users, v)
         else:
             return HttpResponse(json.dumps({'error': 'Bad Params' }))
+    # default sort
+    if 'sort' not in request.GET:
+        users = _user_sort(users, 'last_name', 'asc')
     my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
     resp = {}
     resp['error'] = None
