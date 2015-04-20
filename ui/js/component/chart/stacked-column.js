@@ -173,17 +173,17 @@ module.exports = {
 					.orient('bottom')
 					.tickSize(0)
 					.tickPadding(4)
-					.ticks(4)
+					.tickValues(_.filter(xScale.domain(), function (d, i, domain) {
+						// Include every fourth tick value unless that tick is within three
+						// ticks of the last value. Always include the last tick. We have to
+						// do this manually because D3 ignores the ticks() value for
+						// ordinal scales
+						return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length;
+					}))
 					.tickFormat(function (d) {
 						return moment(d).format(self.xLabel);
 					})
 					.scale(xScale));
-
-			svg.selectAll('.x.axis text')
-				.attr({
-					'text-anchor' : 'middle',
-					'dx'          : width / 2
-				});
 
 			t.select('.y.axis')
 				.call(d3.svg.axis()
