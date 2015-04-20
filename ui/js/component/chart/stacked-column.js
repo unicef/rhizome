@@ -44,7 +44,7 @@ module.exports = {
 
 	data : function () {
 		return {
-			chartType    : 'column',
+			chartType    : 'stacked-column',
 			facet        : 'indicator.id',
 			formatString : 's',
 			series       : [],
@@ -202,6 +202,11 @@ module.exports = {
 		},
 
 		onMouseOver : function (d) {
+			if (this._timer) {
+				window.clearTimeout(this._timer);
+				this._timer = null;
+			}
+
 			var x      = this.getX;
 			var xScale = this.xScale;
 			var yScale = this.yScale;
@@ -254,24 +259,30 @@ module.exports = {
 		},
 
 		onMouseOut : function () {
-			var svg = d3.select(this.$$.svg);
+			if (!this._timer) {
+				var self = this;
 
-			this._currentHover = null;
+				this._timer = window.setTimeout(function () {
+					var svg = d3.select(self.$$.svg);
 
-			svg.select('.annotation')
-				.selectAll('.series.label')
-				.data(this.labels)
-				.call(label()
-					.addClass('series')
-					.width(this.contentWidth)
-					.height(this.contentHeight)
-					.align(false));
+					self._currentHover = null;
 
-			svg.select('.data')
-				.selectAll('rect')
-				.transition()
-				.duration(300)
-				.style('opacity', 1);
+					svg.select('.annotation')
+						.selectAll('.series.label')
+						.data(self.labels)
+						.call(label()
+							.addClass('series')
+							.width(self.contentWidth)
+							.height(self.contentHeight)
+							.align(false));
+
+					svg.select('.data')
+						.selectAll('rect')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
+				}, 300);
+			}
 		}
 	},
 
