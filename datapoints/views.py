@@ -587,7 +587,7 @@ def _user_filter(users, terms, val):
     res = []
     rel = relation_map[terms[2]]
     if rel == 'in':
-        val = val.split(',')
+        vals = val.split(',')
     print 'rel', rel
     if var in ['first_name', 'last_name', 'id']:
         print 'here'
@@ -607,12 +607,14 @@ def _user_filter(users, terms, val):
             res = users.filter(pk__in=[ mu.pk for mu in my_users ])
         elif rel == 'in':
             found = []
-            print 'splitting'
-            for g in val.split(','):
-                my_users = itertools.ifilter(lambda mu: is_group(val, mu), my_users)
-                for mu in my_users:
-                    if mu.id not in [ u.id for u in my_users ]:
-                        found.append(mu)
+            for v in vals:
+                print 'found so far: ',found
+                print 'v: ',v
+                filt = itertools.ifilter(lambda mu: is_group(v, mu), my_users)
+                for mu in filt:
+                    if mu.pk not in found:
+                        found.append(mu.pk)
+            print 'found: ', found
             res = users.filter(pk__in=found)
     return res
 
