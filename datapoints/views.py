@@ -619,8 +619,11 @@ def _user_filter(users, terms, val):
     return res
 
 def _user_sort(users, sort_on, sort_direction='asc'):
+    sortables = ['first_name', 'last_name']
     if sort_direction.lower() == 'desc':
         sort_on = '-'.append(sort_on)
+    if sort_on not in sortables:
+        raise Exception("Cannot sort on unordered field")
     return users.order_by(sort_on)
 
 def api_user(request):
@@ -638,7 +641,10 @@ def api_user(request):
         elif verb == 'sort':
             if 'sort_direction' in request.GET:
                 sd = request.GET['sort_direction']
-                users = _user_sort(users, v, sd)
+                try:
+                    users = _user_sort(users, v, sd)
+                except:
+                    return HttpResponse({'error': 'Cannot Sort on Field'})
             else:
                 users = _user_sort(users, v)
         else:
