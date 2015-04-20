@@ -601,7 +601,6 @@ def api_indicator(request):
                 , 'short_name' :i.short_name
                 , 'slug' :i.slug
                 , 'description':i.description \
-                , 'direction': i.direction
                 , 'bound_name':i.bound_name
                 , 'mx_val':i.mx_val
                 , 'mn_val': i.mn_val
@@ -617,15 +616,20 @@ def api_indicator(request):
     for ind_id in distinct_indicator_ids:
 
         ind_df = cleaned_df[cleaned_df['id'] == ind_id]
-        bounds_df = ind_df[['mn_val','mx_val','bound_name','direction']]
+        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
         bounds_df.reset_index(level=0,inplace=True)
 
-        name = ind_df.name.unique()[0]
-        short_name = ind_df.short_name.unique()[0]
-        description = ind_df.description.unique()[0]
-        slug = ind_df.slug.unique()[0]
+        del bounds_df['index']
+
+        name,short_name,description,slug = ind_df.name.unique()[0],\
+            ind_df.short_name.unique()[0],ind_df.description.unique()[0],\
+            ind_df.slug.unique()[0]
+
+        print bounds_df
 
         indicator_bounds = bounds_df.transpose().to_dict()
+
+
 
         if indicator_bounds[0]['bound_name'] == "NULL":
             bound_array = []
@@ -656,7 +660,6 @@ def bad_data(request):
 
     dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
         dp in dp_curs]
-
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))
