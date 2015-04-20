@@ -577,7 +577,7 @@ def find_group(g, user):
 def is_group(g, user):
     ''' return True if MyUser is in group g (hard)'''
     for group in user.groups:
-        if group['label'] == g:
+        if group.name == g:
             return True
     return False
     
@@ -587,8 +587,9 @@ def _user_filter(users, terms, val):
     var = terms[1]
     print 'var', var
     rel = relation_map[terms[2]]
-    if rel = 'in':
-        val = [ item for item in val.split(',')
+    if rel == 'in':
+        print 'splitting'
+        val = val.split(',')
     print 'rel', rel
     if var in ['first_name', 'last_name']:
         print 'here'
@@ -604,15 +605,18 @@ def _user_filter(users, terms, val):
             my_users = itertools.ifilter(partial(find_group, g=val), my_users)
         if rel == 'exact':
             print 'e'
-            my_users = itertools.ifilter(partial(is_group, g=val), my_users)
+            my_users = itertools.ifilter(lambda mu: is_group(val, mu), my_users)
+            return users.filter(pk__in=[ mu.pk for mu in my_users ])
         elif rel == 'in':
             print 'i'
             found = []
+            print 'splitting'
             for g in val.split(','):
                 my_users = itertools.ifilter(partial(is_group, g=val), my_users)
                 for mu in my_users:
                     if mu.id not in [ u.id for u in my_users ]:
                         found.append(mu)
+            return users.filter(pk__in=found)
 
 def _user_sort(users, sort_on, sort_direction='asc'):
     if sort_direction.lower() == 'desc':
