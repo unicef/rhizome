@@ -269,6 +269,22 @@ svg {
 	.y.axis {
 		text {
 			fill: $oil;
+			text-shadow: 0 1px 1px $white;
+		}
+	}
+}
+
+.column {
+	.y.axis {
+		.tick {
+			text {
+				fill: $oil;
+				text-shadow: 0 1px 1px $white;
+			}
+
+			line {
+				stroke: $jumbo;
+			}
 		}
 	}
 }

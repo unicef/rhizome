@@ -44,6 +44,7 @@ module.exports = {
 
 	data : function () {
 		return {
+			chartType    : 'column',
 			facet        : 'indicator.id',
 			formatString : 's',
 			series       : [],
