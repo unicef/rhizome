@@ -12,8 +12,8 @@ from fabric.api import local, run, cd, put
 ## global variables
 ##
 
-# this can be overwritten by passing venv_path arg to deploy() target
-local_venv_path = '/tmp/venv'
+# this can be set by passing venv_path arg to deploy() target
+local_venv_path = None
 
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
