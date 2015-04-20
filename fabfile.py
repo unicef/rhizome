@@ -11,25 +11,42 @@ from fabric.api import local, run, cd, put
 
 ## global variables
 ##
-local_venv_path = '/tmp/venv'
-# remote_venv_path = '/tmp/venv'
+
+# this can be set by passing venv_path arg to deploy() target
+local_venv_path = None
 
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
 remote_backend_path = '/var/www/apps/polio/'
 remote_frontend_path = '/var/www/polio/static/'
 
-# test build
-#
-# test-machine dependencies - python, pip, postgres
-#
-def test():
-    local("echo TODO: do tests here")
-
 # deploy build
 #
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
-def deploy():
+def deploy(venv_path=None):
+    global local_venv_path
+    local_venv_path = venv_path;
+
+    # on local machine...
+    _build_dependencies()
+
+    # on target machine
+    stop_apache()
+    _push_to_remote()
+    start_apache()
+
+# apache controls
+def stop_apache():
+    run("sudo /etc/init.d/apache2 stop")
+
+def start_apache():
+    run("sudo /etc/init.d/apache2 start")
+
+
+# build dependencies
+#
+#
+def _build_dependencies():
     ###
     ### on build machine...
     ###
@@ -40,12 +57,14 @@ def deploy():
     # sudo gem install sass
     # sudo gem install compass
 
-    # make virtual env
-    local('virtualenv %s' % local_venv_path)
+    # only build with a virtualenv if one is passed in.
+    if (local_venv_path):
+        # make virtual env
+        local('virtualenv %s' % local_venv_path)
 
-    # enter virtual environment
-    activate_this_file = "%s/bin/activate_this.py" % local_venv_path
-    execfile(activate_this_file, dict(__file__=activate_this_file))
+        # enter virtual environment
+        activate_this_file = "%s/bin/activate_this.py" % local_venv_path
+        execfile(activate_this_file, dict(__file__=activate_this_file))
 
     # update/install dependencies
     local ("npm install")
@@ -55,6 +74,10 @@ def deploy():
     local("./node_modules/.bin/bower install")
     local("./node_modules/.bin/gulp dist")
 
+# push build to remote
+#
+#
+def _push_to_remote():
     ###
     ### on target machine...
     ###
@@ -77,15 +100,24 @@ def deploy():
         # can keep the server's settings.py file in the application folder
         run("find %s -mindepth 2 -regextype 'posix-extended' -regex '.*\.(pyc?|sql|html) -delete'" % remote_backend_path)
 
+        # [these unzips were trying to overwrite .pyc files owned by www-root
+        #  so the 'find' command above may not be deleting enough compiled pycs]
         run("unzip -o uf04-frontend.zip -d %s" % remote_frontend_path) # -o is overwrite
         run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
 
     with cd(remote_frontend_path):
+        # remove compiled files
+        run('sudo rm -rf `find . -name "*.pyc"`')
+
+        # chgroup, chmod so apache can edit
         run('chgrp -R www-data *')
         run('chmod -R g+w *')
 
     # in server path -
     with cd(remote_backend_path):
+        # remove compiled files
+        run('sudo rm -rf `find . -name "*.pyc"`')
+
         run("chgrp -R www-data *")
         run("chmod -R g+w *")
 
@@ -107,13 +139,3 @@ def deploy():
     #
     # echo "== RUNNING TESTS =="
     # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
-
-# def prepare_deploy():
-    # local("pip install -r requirements.txt")
-
-    # from shell script
-    # git pull origin development
-    # pip install -r requirements.txt
-    # python manage.py syncdb --settings=polio.prod_settings
-    # python manage.py migrate --settings=polio.prod_settings
-    # bash bin/build_db.sh
