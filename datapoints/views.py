@@ -590,11 +590,9 @@ def _user_filter(users, terms, val):
         vals = val.split(',')
     print 'rel', rel
     if var in ['first_name', 'last_name', 'id']:
-        print 'here'
         kwargs = {
             "{0}__{1}".format(var, rel) : val
         }
-        print 'kwargs: ', kwargs
         res = users.filter(**kwargs)
     if var == 'group':
         my_users = [ MyUser(pk=u.pk) for u in users ]
@@ -602,19 +600,15 @@ def _user_filter(users, terms, val):
             my_users = itertools.ifilter(lambda mu: find_group(val, mu), my_users)
             res = users.filter(pk__in=[ mu.pk for mu in my_users ])
         if rel == 'exact':
-            print 'e'
             my_users = itertools.ifilter(lambda mu: is_group(val, mu), my_users)
             res = users.filter(pk__in=[ mu.pk for mu in my_users ])
         elif rel == 'in':
             found = []
             for v in vals:
-                print 'found so far: ',found
-                print 'v: ',v
                 filt = itertools.ifilter(lambda mu: is_group(v, mu), my_users)
                 for mu in filt:
                     if mu.pk not in found:
                         found.append(mu.pk)
-            print 'found: ', found
             res = users.filter(pk__in=found)
     return res
 
