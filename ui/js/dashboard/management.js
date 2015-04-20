@@ -104,7 +104,11 @@ module.exports = {
 							var datapoint  = _.pick(obj, 'campaign', 'region');
 							var indicators = _.indexBy(obj.indicators, 'indicator');
 
-							datapoint.value = indicators['168'].value;
+							if (indicators.hasOwnProperty('168')) {
+								datapoint.value = indicators['168'].value;
+							} else {
+								datapoint.value = 0;
+							}
 
 							return datapoint;
 						});
