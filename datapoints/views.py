@@ -604,8 +604,6 @@ def api_indicator(request):
                 , 'bound_name':i.bound_name
                 , 'mx_val':i.mx_val
                 , 'mn_val': i.mn_val
-                #, 'created_at':i.created_at \
-
             } for i in i_raw]
 
     df = DataFrame(raw_data)
@@ -625,11 +623,7 @@ def api_indicator(request):
             ind_df.short_name.unique()[0],ind_df.description.unique()[0],\
             ind_df.slug.unique()[0]
 
-        print bounds_df
-
         indicator_bounds = bounds_df.transpose().to_dict()
-
-
 
         if indicator_bounds[0]['bound_name'] == "NULL":
             bound_array = []
