@@ -12,7 +12,9 @@
 			"type": "integer",
 			"description": "User's system id",
 			"constraints": {
-				"required": true
+				"required": true,
+				"unique": true,
+				"pattern": "[0-9]*"
 			},
 			"sortable": false,
 			"searchable": false,
@@ -32,7 +34,9 @@
 			"type": "string",
 			"description": "User's nickname",
 			"constraints": {
-				"required": true
+				"required": true,
+				"unique": false,
+				"pattern": "*{0,30}"
 			},
 			"sortable": true,
 			"searchable": true,
@@ -52,7 +56,9 @@
 			"type": "string",
 			"description": "User's first name",
 			"constraints": {
-				"required": true
+				"required": true,
+				"unique": false,
+				"pattern": "[a-zA-Z _-]{0,30}"
 			},
 			"sortable": true,
 			"searchable": true,
@@ -72,7 +78,9 @@
 			"type": "string",
 			"description": "User's last name",
 			"constraints": {
-				"required": true
+				"required": true,
+				"unique": false,
+				"pattern": "[a-zA-Z _-]{0,30}"
 			},
 			"sortable": true,
 			"searchable": true,
@@ -92,7 +100,9 @@
 			"type": "string",
 			"description": "User's email address",
 			"constraints": {
-				"required": true
+				"required": true,
+                "unique": true,
+                "pattern": "*{0,75}"
 			},
 			"sortable": true,
 			"searchable": true,
@@ -113,6 +123,8 @@
 			"description": "Groups to which the user belongs",
 			"constraints": {
 				"required": false,
+                "unique": false,
+                "pattern": null
 				"items": {
 					"oneOf": [
 						{ "value": 1, "label": "UNICEF HQ" }
