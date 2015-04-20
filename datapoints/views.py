@@ -25,7 +25,8 @@ from datapoints.cache_tasks import CacheRefresh
 from datapoints.mixins import PermissionRequiredMixin
 
 USER_METADATA = 'static/users_metadata_mockup.json'
-DEFAULT_ITEM_LIM = 20
+DEFAULT_LIMIT = 50
+MAX_LIMIT = 500
 
 
 class IndexView(generic.ListView):
@@ -641,18 +642,23 @@ def api_user(request):
                     return HttpResponse({'error': 'Cannot Sort on Field'})
             else:
                 users = _user_sort(users, v)
-        else:
-            return HttpResponse(json.dumps({'error': 'Bad Params' }))
-    # default sort
     if 'sort' not in request.GET:
         users = _user_sort(users, 'last_name', 'asc')
+    offset = 0
+    if 'offset' in request.GET:
+        offset = int(request.GET['offset'])
+    limit = DEFAULT_LIMIT
+    if 'limit' in request.GET:
+        limit = int(request.GET['limit'])
     my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
+    my_users = my_users[offset:offset+limit]
+    total_count = len(my_users)
     resp = {}
     resp['error'] = None
     resp['meta'] = {
-        'limit': DEFAULT_ITEM_LIM,
-        'offset': 0,
-        'total_count': len(my_users)
+        'limit': limit,
+        'offset': offset,
+        'total_count': total_count
     }
     resp['objects'] = my_users
     resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
