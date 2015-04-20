@@ -100,6 +100,8 @@ def _push_to_remote():
         # can keep the server's settings.py file in the application folder
         run("find %s -mindepth 2 -regextype 'posix-extended' -regex '.*\.(pyc?|sql|html) -delete'" % remote_backend_path)
 
+        # [these unzips were trying to overwrite .pyc files owned by www-root
+        #  so the 'find' command above may not be deleting enough compiled pycs]
         run("unzip -o uf04-frontend.zip -d %s" % remote_frontend_path) # -o is overwrite
         run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
 
