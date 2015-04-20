@@ -125,9 +125,6 @@ module.exports = {
 		draw : function () {
 			var svg = d3.select(this.$$.svg);
 
-			svg.on('mousemove', this.onMouseMove)
-				.on('mouseout', this.onMouseOut);
-
 			var x      = this.getX;
 			var xScale = this.xScale;
 			var yScale = this.yScale;
@@ -153,6 +150,10 @@ module.exports = {
 				);
 
 			series.exit().remove();
+
+			series.selectAll('rect')
+				.on('mouseover', this.onMouseOver)
+				.on('mouseout', this.onMouseOut);
 
 			var fmt = d3.format(this.formatString);
 
@@ -200,35 +201,13 @@ module.exports = {
 				});
 		},
 
-		onMouseMove : function () {
-			var cursor = d3.mouse(this.$$.svg)[0];
+		onMouseOver : function (d) {
 			var x      = this.getX;
 			var xScale = this.xScale;
 			var yScale = this.yScale;
 			var fmt    = d3.format(this.formatString);
 
-			var range = _(this.series)
-				.pluck('values')
-				.flatten()
-				.map(x)
-				.uniq()
-				.sortBy()
-				.value();
-
-			var val   = xScale.invert(cursor);
-			var right = d3.bisect(range, val);
-			var left  = right - 1;
-			var target;
-
-			if (cursor >= 0 || cursor <= this.width) {
-				if (left < 0) {
-					target = range[right];
-				} else if (right >= range.length) {
-					target = range[left];
-				} else {
-					target = val < range[right] ? range[left] : range[right];
-				}
-			}
+			var target = x(d);
 
 			if (target === this._currentHover) {
 				return;
@@ -245,10 +224,10 @@ module.exports = {
 				})
 				.map(function (d) {
 					return {
-						text : d.name + ' ' + fmt(d.value),
-						x : xScale(x(d)),
-						y : yScale(d.y0 + d.y),
-						defined: data.defined(d.value)
+						text    : d.name + ' ' + fmt(d.value),
+						x       : xScale(x(d)),
+						y       : yScale(d.y0 + d.y),
+						defined : data.defined(d.value)
 					};
 				})
 				.reverse()
