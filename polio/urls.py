@@ -34,8 +34,6 @@ urlpatterns = patterns('',
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
 
-    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
-
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 

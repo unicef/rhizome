@@ -590,7 +590,6 @@ def api_indicator(request):
         FROM indicator i
         LEFT JOIN indicator_bound ib
         ON i.id = ib.indicator_id
-        WHERE i.id in (431,168)
         ORDER BY i.id
     """)
 
@@ -627,9 +626,12 @@ def api_indicator(request):
         slug = ind_df.slug.unique()[0]
 
         indicator_bounds = bounds_df.transpose().to_dict()
-        bound_array = [v for k,v in indicator_bounds.iteritems()]
 
-        # print ind_dict
+        if indicator_bounds[0]['bound_name'] == "NULL":
+            bound_array = []
+        else:
+            bound_array = [v for k,v in indicator_bounds.iteritems()]
+
         indicator_dictionary = {'id':ind_id,'indicator_bounds':bound_array\
             ,'name':name,'short_name':short_name,'slug':slug,\
             'description':description}
