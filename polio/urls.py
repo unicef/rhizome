@@ -33,9 +33,7 @@ urlpatterns = patterns('',
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
-    #TODO: add permissions decorator
-    url(r'^api/v1/entity/users/metadata/', views.api_user_mock, name='user_mock'),
-    url(r'^api/v1/entity/users/', views.api_user, name='user'),
+
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
