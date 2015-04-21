@@ -584,6 +584,7 @@ def is_group(g, user):
 
 def _user_filter(users, terms, val):
     relation_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'in'}
+    print 'terms: ',terms
     var = terms[1]
     res = []
     rel = relation_map[terms[2]]
@@ -594,7 +595,9 @@ def _user_filter(users, terms, val):
         kwargs = {
             "{0}__{1}".format(var, rel) : val
         }
+        print 'kwargs: ',kwargs
         res = users.filter(**kwargs)
+        print res
     if var == 'group':
         my_users = [ MyUser(pk=u.pk) for u in users ]
         if rel == 'contains':
@@ -626,9 +629,8 @@ def api_user(request):
     users = User.objects.all()
     for (k,v) in request.GET.iteritems():
         verb = k.split('.')[0]
-        v = v.lower()
         if verb == 'search':
-            keywords = re.split('(?<!\\\)\ ', v)
+            keywords = re.split('(?<!\\\)\ ', v.lower())
             users = _user_search(users, keywords)
         elif verb == 'filter':
             terms = k.split('.')
