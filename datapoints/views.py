@@ -573,12 +573,9 @@ def api_region(request):
         , content_type="application/json")
 
 
-
 def transform_indicators(request):
 
     IndicatorAbstracted.objects.all().delete()
-
-
 
     i_raw = Indicator.objects.raw("""
 
@@ -607,7 +604,6 @@ def transform_indicators(request):
         , 'mn_val': i.mn_val
     } for i in i_raw]
 
-    ##  ##
     df = DataFrame(raw_data)
 
     cleaned_df = df.fillna('NULL')
@@ -626,20 +622,10 @@ def transform_indicators(request):
         else:
             bound_array = [v for k,v in indicator_bounds.iteritems()]
 
-        print ind_id
-
-        # bound_json = json.dumps(bound_array)
-
         IndicatorAbstracted.objects.create(
             indicator_id = ind_id,
             bound_json = bound_array
         )
-
-        # print bound_json
-        # print '===\n' * 5
-        # print type(bound_json)
-
-        # objects.append(bound_array)
 
     response_data = {'objects':objects, 'meta':[]}
 
@@ -652,7 +638,21 @@ def api_indicator(request):
     meta_keys = ['limit','offset']
     request_meta = parse_url_args(request,meta_keys)
 
-    objects = []
+    i_raw = Indicator.objects.raw("""
+
+        SELECT
+            i.*
+            ,ia.bound_json
+        FROM indicator i
+        INNER JOIN indicator_abstracted ia
+        ON i.id = ia.indicator_id
+        ORDER BY i.id
+    """)
+
+    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                'description':i.description,'slug':i.slug,\
+                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
+
 
     meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
         'total_count': len(objects)}
