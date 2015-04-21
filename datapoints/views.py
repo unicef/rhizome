@@ -15,7 +15,7 @@ import gspread
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -573,6 +573,13 @@ def api_region(request):
         , content_type="application/json")
 
 
+def transform_indicators(request):
+
+    response_data = cache_indicator_abstracted()
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
 
 def api_indicator(request):
 
@@ -580,61 +587,18 @@ def api_indicator(request):
     request_meta = parse_url_args(request,meta_keys)
 
     i_raw = Indicator.objects.raw("""
-
         SELECT
             i.*
-            ,ib.mn_val
-            ,ib.mx_val
-            ,bound_name
-            ,direction
+            ,ia.bound_json
         FROM indicator i
-        LEFT JOIN indicator_bound ib
-        ON i.id = ib.indicator_id
+        INNER JOIN indicator_abstracted ia
+        ON i.id = ia.indicator_id
         ORDER BY i.id
     """)
 
-    objects = []
-
-    raw_data = [{
-                  'id': i.id \
-                , 'name':i.name \
-                , 'short_name' :i.short_name
-                , 'slug' :i.slug
-                , 'description':i.description \
-                , 'bound_name':i.bound_name
-                , 'mx_val':i.mx_val
-                , 'mn_val': i.mn_val
-            } for i in i_raw]
-
-    df = DataFrame(raw_data)
-    cleaned_df = df.fillna('NULL')
-
-    distinct_indicator_ids = df['id'].unique()
-
-    for ind_id in distinct_indicator_ids:
-
-        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
-        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
-        bounds_df.reset_index(level=0,inplace=True)
-
-        del bounds_df['index']
-
-        name,short_name,description,slug = ind_df.name.unique()[0],\
-            ind_df.short_name.unique()[0],ind_df.description.unique()[0],\
-            ind_df.slug.unique()[0]
-
-        indicator_bounds = bounds_df.transpose().to_dict()
-
-        if indicator_bounds[0]['bound_name'] == "NULL":
-            bound_array = []
-        else:
-            bound_array = [v for k,v in indicator_bounds.iteritems()]
-
-        indicator_dictionary = {'id':ind_id,'indicator_bounds':bound_array\
-            ,'name':name,'short_name':short_name,'slug':slug,\
-            'description':description}
-
-        objects.append(indicator_dictionary)
+    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                'description':i.description,'slug':i.slug,\
+                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
 
     meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
         'total_count': len(objects)}
@@ -643,7 +607,6 @@ def api_indicator(request):
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
-
 
 
 def bad_data(request):

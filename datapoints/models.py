@@ -44,6 +44,20 @@ class Indicator(models.Model):
         db_table = 'indicator'
         ordering = ('name',)
 
+
+class IndicatorAbstracted(models.Model):
+
+    indicator = models.ForeignKey(Indicator)
+    bound_json = JSONField()
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'indicator_abstracted'
+
+
+
 class CalculatedIndicatorComponent(models.Model):
     '''
     the indicator is for example "pct missed due to refusal," the component
@@ -81,6 +95,7 @@ class IndicatorBound(models.Model):
 
     class Meta:
         db_table = 'indicator_bound'
+
 
 
 class Office(models.Model):
