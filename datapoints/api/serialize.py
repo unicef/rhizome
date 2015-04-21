@@ -1,11 +1,23 @@
+from pprint import pprint
 import StringIO
 
-from tastypie.serializers import Serializer
+from django.core.serializers import json as djangojson
 from pandas import DataFrame
-from pprint import pprint
-
+from tastypie.serializers import Serializer
 
 from datapoints.models import Campaign, Indicator, Region
+
+class CustomJSONSerializer(Serializer):
+    def to_json(self, data, options=None):
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        return djangojson.json.dumps(
+            data, 
+            allow_nan=False,
+            cls=djangojson.DjangoJSONEncoder, 
+            sort_keys=True, 
+            ensure_ascii=False)
 
 class CustomSerializer(Serializer):
     formats = ['json', 'csv']
