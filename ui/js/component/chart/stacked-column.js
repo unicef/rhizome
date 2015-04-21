@@ -7,24 +7,7 @@ var moment = require('moment');
 var column  = require('./renderer/column');
 var data    = require('util/data');
 var label   = require('./renderer/label');
-var palette = require('colors/coolgray');
-
-// Color palette from I Want Hue
-// var palette = [
-// "#6094BA",
-// "#699CA7",
-
-// "#B6DAE5",
-// "#589EE4",
-// "#3CA6A9",
-// "#909A92",
-
-// "#D5D5C6",
-// "#90D7D0",
-// "#5CB3DE",
-// "#A2B6C8",
-// "#D2F2EA",
-// "#8ED0E9"];
+var palette = require('colors');
 
 module.exports = {
 	replace  : true,

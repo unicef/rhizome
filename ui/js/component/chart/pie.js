@@ -7,7 +7,7 @@ var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
 
-var colors = require('colors/coolgray');
+var colors = require('colors');
 
 module.exports = {
 	replace : true,
