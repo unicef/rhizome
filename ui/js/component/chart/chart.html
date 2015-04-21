@@ -3,7 +3,15 @@
 		v-class="chartType"
 		v-attr="viewBox: '0 0 ' + width + ' ' + height">
 
+		<rect class="bg"
+			v-attr="
+				x      : marginLeft,
+				width  : contentWidth,
+				height : height - marginBottom">
+		</rect>
+
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
+
 			<g
 				class="x axis"
 			 	v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>

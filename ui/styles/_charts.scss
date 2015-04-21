@@ -2,41 +2,46 @@ svg {
 	overflow: hidden;
 
 	.bg {
-		fill: $vapor;
+		fill: #f2f2f2;
 	}
 
 	.axis {
-		.domain {
-			display: none;
-		}
-
 		line {
 			fill: none;
-			stroke: $iron;
+			stroke: $white;
 			stroke-width: 1px;
-			shape-rendering: cripsEdges;
-		}
-
-		.minor {
-			line {
-				stroke: $silver;
-			}
+			shape-rendering: crispEdges;
 		}
 
 		text {
 			font-family: $font-family-sans-serif;
 			font-size: $axis-font-size;
-			fill: $iron;
+			fill: $oil;
 			stroke: none;
 
 			&.annotation {
-				fill: $oil;
+				fill: $smoke;
 			}
 		}
 
+		.domain {
+			fill : none;
+		}
+
 		&.x {
+			.domain {
+				stroke-width : 2px;
+				stroke       : $iron;
+			}
+
 			line {
 				display: none;
+			}
+		}
+
+		&.y {
+			.domain {
+				display : none;
 			}
 		}
 	}
@@ -266,24 +271,22 @@ svg {
 }
 
 .bar {
-	.y.axis {
-		text {
-			fill: $oil;
-			text-shadow: 0 1px 1px $white;
-		}
-	}
-}
-
-.stacked-column {
-	.y.axis {
-		.tick {
-			text {
-				fill: $oil;
-				text-shadow: 0 1px 1px $white;
+	.axis {
+		&.x {
+			.domain {
+				display : none;
 			}
 
-			line {
-				stroke: $jumbo;
+			.tick {
+				line {
+					stroke : $white;
+				}
+			}
+		}
+
+		&.y {
+			text {
+				text-shadow: 0 1px 1px $white;
 			}
 		}
 	}
