@@ -573,6 +573,79 @@ def api_region(request):
         , content_type="application/json")
 
 
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    i_raw = Indicator.objects.raw("""
+
+        SELECT
+            i.*
+            ,ib.mn_val
+            ,ib.mx_val
+            ,bound_name
+            ,direction
+        FROM indicator i
+        LEFT JOIN indicator_bound ib
+        ON i.id = ib.indicator_id
+        ORDER BY i.id
+    """)
+
+    objects = []
+
+    raw_data = [{
+                  'id': i.id \
+                , 'name':i.name \
+                , 'short_name' :i.short_name
+                , 'slug' :i.slug
+                , 'description':i.description \
+                , 'bound_name':i.bound_name
+                , 'mx_val':i.mx_val
+                , 'mn_val': i.mn_val
+            } for i in i_raw]
+
+    df = DataFrame(raw_data)
+    cleaned_df = df.fillna('NULL')
+
+    distinct_indicator_ids = df['id'].unique()
+
+    for ind_id in distinct_indicator_ids:
+
+        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
+        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
+        bounds_df.reset_index(level=0,inplace=True)
+
+        del bounds_df['index']
+
+        name,short_name,description,slug = ind_df.name.unique()[0],\
+            ind_df.short_name.unique()[0],ind_df.description.unique()[0],\
+            ind_df.slug.unique()[0]
+
+        indicator_bounds = bounds_df.transpose().to_dict()
+
+        if indicator_bounds[0]['bound_name'] == "NULL":
+            bound_array = []
+        else:
+            bound_array = [v for k,v in indicator_bounds.iteritems()]
+
+        indicator_dictionary = {'id':ind_id,'indicator_bounds':bound_array\
+            ,'name':name,'short_name':short_name,'slug':slug,\
+            'description':description}
+
+        objects.append(indicator_dictionary)
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+
 def bad_data(request):
 
     dp_curs = BadData.objects.raw('''
@@ -581,7 +654,6 @@ def bad_data(request):
 
     dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
         dp in dp_curs]
-
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))

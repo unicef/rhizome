@@ -56,6 +56,12 @@ BEGIN
         AND tcd.region_id = dwc.region_id
         AND tcd.campaign_id = dwc.campaign_id
     )
+    AND NOT EXISTS (
+      SELECT 1 FROM _tmp_calc_datapoint tcd
+      WHERE dwc.region_id = tcd.region_id
+      AND dwc.campaign_id = tcd.campaign_id
+      AND ig.indicator_id = tcd.indicator_id
+    )
 
     GROUP BY ig.indicator_id, dwc.region_id, dwc.campaign_id;
 
