@@ -562,7 +562,6 @@ def _user_search(users, keywords):
         found = []
         for obj in users:
             data = MyUser(pk=obj.pk).serialize().lower()
-            print 'searching for: ',k,' in ',data
             if data.find(k) > -1:
                 found.append(obj.pk)
         users = users.filter(pk__in=found)
@@ -584,20 +583,16 @@ def is_group(g, user):
 
 def _user_filter(users, terms, val):
     relation_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'in'}
-    print 'terms: ',terms
     var = terms[1]
     res = []
     rel = relation_map[terms[2]]
     if rel == 'in':
         vals = val.split(',')
-    print 'rel', rel
     if var in ['first_name', 'last_name', 'id']:
         kwargs = {
             "{0}__{1}".format(var, rel) : val
         }
-        print 'kwargs: ',kwargs
         res = users.filter(**kwargs)
-        print res
     if var == 'group':
         my_users = [ MyUser(pk=u.pk) for u in users ]
         if rel == 'contains':
@@ -618,11 +613,13 @@ def _user_filter(users, terms, val):
 
 def _user_sort(users, sort_on, sort_direction='asc'):
     sortables = ['first_name', 'last_name']
-    if sort_direction.lower() == 'desc':
-        sort_on = '-'.append(sort_on)
     if sort_on not in sortables:
         raise Exception("Cannot sort on unordered field")
-    return users.order_by(sort_on)
+    if sort_direction.lower() == 'desc':
+        sort_on = '-'+sort_on
+    res = users.order_by(sort_on)
+    return res
+
 
 def api_user(request):
 
