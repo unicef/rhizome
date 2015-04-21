@@ -63,6 +63,7 @@ urlpatterns = [
         ## CACHING ##
         #############
 
+    url(r'^transform_indicators/$', views.transform_indicators, name='transform_indicators'),
     url(r'^cache_control/$', views.cache_control, name='cache_control'),
     url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
 

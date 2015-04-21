@@ -574,10 +574,11 @@ def api_region(request):
 
 
 
-def api_indicator(request):
+def transform_indicators(request):
 
-    meta_keys = ['limit','offset']
-    request_meta = parse_url_args(request,meta_keys)
+    IndicatorAbstracted.objects.all().delete()
+
+
 
     i_raw = Indicator.objects.raw("""
 
@@ -594,21 +595,22 @@ def api_indicator(request):
     """)
 
     objects = []
-
+    ##
     raw_data = [{
-                  'id': i.id \
-                , 'name':i.name \
-                , 'short_name' :i.short_name
-                , 'slug' :i.slug
-                , 'description':i.description \
-                , 'bound_name':i.bound_name
-                , 'mx_val':i.mx_val
-                , 'mn_val': i.mn_val
-            } for i in i_raw]
+          'id': i.id \
+        , 'name':i.name \
+        , 'short_name' :i.short_name
+        , 'slug' :i.slug
+        , 'description':i.description \
+        , 'bound_name':i.bound_name
+        , 'mx_val':i.mx_val
+        , 'mn_val': i.mn_val
+    } for i in i_raw]
 
+    ##  ##
     df = DataFrame(raw_data)
-    cleaned_df = df.fillna('NULL')
 
+    cleaned_df = df.fillna('NULL')
     distinct_indicator_ids = df['id'].unique()
 
     for ind_id in distinct_indicator_ids:
@@ -617,12 +619,6 @@ def api_indicator(request):
         bounds_df = ind_df[['mn_val','mx_val','bound_name']]
         bounds_df.reset_index(level=0,inplace=True)
 
-        del bounds_df['index']
-
-        name,short_name,description,slug = ind_df.name.unique()[0],\
-            ind_df.short_name.unique()[0],ind_df.description.unique()[0],\
-            ind_df.slug.unique()[0]
-
         indicator_bounds = bounds_df.transpose().to_dict()
 
         if indicator_bounds[0]['bound_name'] == "NULL":
@@ -630,11 +626,33 @@ def api_indicator(request):
         else:
             bound_array = [v for k,v in indicator_bounds.iteritems()]
 
-        indicator_dictionary = {'id':ind_id,'indicator_bounds':bound_array\
-            ,'name':name,'short_name':short_name,'slug':slug,\
-            'description':description}
+        print ind_id
 
-        objects.append(indicator_dictionary)
+        # bound_json = json.dumps(bound_array)
+
+        IndicatorAbstracted.objects.create(
+            indicator_id = ind_id,
+            bound_json = bound_array
+        )
+
+        # print bound_json
+        # print '===\n' * 5
+        # print type(bound_json)
+
+        # objects.append(bound_array)
+
+    response_data = {'objects':objects, 'meta':[]}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    objects = []
 
     meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
         'total_count': len(objects)}
