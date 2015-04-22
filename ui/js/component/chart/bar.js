@@ -171,7 +171,15 @@ module.exports = {
 						})
 						.transition()
 						.duration(300)
-						.attr('y', height / 2);
+						.attr('y', height / 2)
+						.each(function (d) {
+							var bbox = this.getBBox();
+							var invertFill = bbox.width <= x(d);
+
+							d3.select(this)
+								.attr('fill', invertFill ? '#fff' : null)
+								.style('text-shadow', invertFill ? 'none' : null);
+						});
 				} else {
 					bar.select('text').remove();
 				}

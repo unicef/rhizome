@@ -124,7 +124,7 @@ svg {
 	}
 
 	.label {
-		text-shadow: 0 1px 0 $white;
+		text-shadow: $legibility-shadow;
 	}
 }
 
@@ -271,6 +271,10 @@ svg {
 }
 
 .bar {
+	.data {
+		fill : #414849;
+	}
+
 	.axis {
 		&.x {
 			.domain {
@@ -286,7 +290,7 @@ svg {
 
 		&.y {
 			text {
-				text-shadow: 0 1px 1px $white;
+				text-shadow: $legibility-shadow;
 			}
 		}
 	}
