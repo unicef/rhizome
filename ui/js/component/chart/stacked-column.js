@@ -11,7 +11,7 @@ var palette = require('colors');
 
 module.exports = {
 	replace  : true,
-	template : require('./bar.html'),
+	template : require('./column.html'),
 
 	paramAttributes : [
 		'data-facet',

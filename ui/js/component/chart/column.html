@@ -1,17 +1,16 @@
-
 <div class="chart">
 	<svg
 		v-el="svg"
 		v-class="chartType"
 		v-attr="viewBox: '0 0 ' + width + ' ' + height">
 
-		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
+		<rect class="bg"
+			v-attr="
+				width  : contentWidth,
+				height : contentHeight">
+		</rect>
 
-			<rect class="bg"
-				v-attr="
-					width  : contentWidth,
-					height : contentHeight">
-			</rect>
+		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
 
 			<g class="data"></g>
 			<g class="x axis"
