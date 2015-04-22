@@ -22,9 +22,11 @@
 									v-with="
 										datapoints : overview.missed.inside,
 										loading    : overview.loading"></div>
-								<p class="donut-label">{{ overview.missed.insideLabel }}</p>
+								<p class="donut-label" style="line-height:1">
+									{{ overview.missed.insideLabel }}<br />
+									<label>Inside</label>
+								</p>
 							</div>
-							<p style="text-align:center">Inside</p>
 						</div>
 
 						<div class="medium-6 columns">
@@ -37,9 +39,11 @@
 									v-with="
 										datapoints : overview.missed.outside,
 										loading    : overview.loading"></div>
-								<p class="donut-label">{{ overview.missed.outsideLabel }}</p>
+								<p class="donut-label" style="line-height:1">
+									{{ overview.missed.outsideLabel }}<br />
+									<label>Outside<label>
+								</p>
 							</div>
-							<p style="text-align:center">Outside</p>
 						</div>
 					</div>
 				</div>

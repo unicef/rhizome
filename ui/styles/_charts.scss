@@ -267,6 +267,10 @@ svg {
 		font-size   : rem-calc(24);
 
 		text-align  : center;
+
+		label {
+			font-size: 0.25em;
+		}
 	}
 }
 
