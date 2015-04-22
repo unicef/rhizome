@@ -90,7 +90,7 @@
 			"display": {
 				"on_table": true,
 				"weightTable": 3,
-				"weightForm": 3				
+				"weightForm": 3
 			}
 		},
 
@@ -108,7 +108,7 @@
 			"searchable": true,
 			"filterable": false,
 			"editable": true,
-			"inputType": null,			
+			"inputType": null,
 			"display": {
 				"on_table": false,
 				"weightTable": 3,
@@ -124,7 +124,7 @@
 			"constraints": {
 				"required": false,
                 "unique": false,
-                "pattern": null
+                "pattern": null,
 				"items": {
 					"oneOf": [
 						{ "value": 1, "label": "UNICEF HQ" }
