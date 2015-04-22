@@ -17,9 +17,10 @@ module.exports = {
 
 	data : function () {
 		return {
-			'offset'     : 'zero',
-			'sortBy'     : null,
-			'clickEvent' : 'bar-click',
+			chartType  : 'stacked-bar',
+			clickEvent : 'bar-click',
+			offset     : 'zero',
+			sortBy     : null,
 		};
 	},
 

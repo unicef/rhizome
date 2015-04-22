@@ -270,7 +270,8 @@ svg {
 	}
 }
 
-.bar {
+.grouped-bar,
+.stacked-bar {
 	.data {
 		fill : #414849;
 	}
@@ -283,7 +284,8 @@ svg {
 
 			.tick {
 				line {
-					stroke : $white;
+					display : inline;
+					stroke  : $white;
 				}
 			}
 		}
