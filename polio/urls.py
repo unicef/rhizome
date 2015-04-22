@@ -10,8 +10,7 @@ from decorator_include import decorator_include
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import debug
-from datapoints import views as dp_views
-from entity import views as entity_views
+from datapoints import views
 
 from source_data.api import EtlResource
 from tastypie.api import Api
@@ -31,12 +30,11 @@ v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
     ## CUSTOM API ##
-    url(r'^api/v1/campaign/$', dp_views.api_campaign, name='campaign'),
-    url(r'^api/v1/region/$', dp_views.api_region, name='region'),
-    url(r'^api/v1/indicator/$', dp_views.api_indicator, name='indicator'),
+    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
+    url(r'^api/v1/region/$', views.api_region, name='region'),
+    url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
 
-    url(r'^api/v1/entity/users/metadata/', entity_views.api_user_mock, name='user_mock'),
-    url(r'^api/v1/entity/users/', entity_views.api_user, name='user'),
+    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
