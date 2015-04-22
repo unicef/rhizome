@@ -644,7 +644,7 @@ def api_indicator(request):
     try:
         id__in = [int(ind_id) for ind_id in request.GET['id__in'].split(',')]
     except KeyError:
-        id__in = None
+        id__in = [i for i in Indicator.objects.all().values_list('id',flat=True)]
 
 
     i_raw = Indicator.objects.raw("""
