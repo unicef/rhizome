@@ -31,14 +31,14 @@ v1_api.register(RegionPolygonResource())
 urlpatterns = patterns('',
     ## CUSTOM API ##
 
-    url(r'^api/v1/campaign/$', dp_views.api_campaign, name='campaign'),
-    url(r'^api/v1/region/$', dp_views.api_region, name='region'),
-    url(r'^api/v1/indicator/$', dp_views.api_indicator, name='indicator'),
+    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
+    url(r'^api/v1/region/$', views.api_region, name='region'),
+    url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
 
 
     url(r'^api/v1/entity/users/metadata/', entity_views.api_user_mock, name='user_mock'),
     url(r'^api/v1/entity/users/', entity_views.api_user, name='user'),
-    
+
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
