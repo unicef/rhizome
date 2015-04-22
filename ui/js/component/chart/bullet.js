@@ -132,11 +132,29 @@ module.exports = {
 				.domain([0, 1])
 				.range([0, width]);
 
-			var ranges = (this.indicator && this.indicators.ranges) || [];
+			var ranges = [];
 
-			var color = d3.scale.quantize()
-				.domain(ranges.map(function (r) { return r.name; }))
-				.range(['#B3B3B3', '#E6E6E6']);
+			if (this.indicator && this.indicator.indicator_bounds) {
+				ranges = _(this.indicator.indicator_bounds)
+					.reject(function (bound) {
+						return bound.bound_name === 'invalid';
+					})
+					.map(function (bound) {
+						var d = {
+							name : bound.bound_name
+						};
+
+						d.start = !_.isNumber(bound.mn_val) ? x.domain()[0] : bound.mn_val;
+						d.end   = !_.isNumber(bound.mx_val) ? x.domain()[1] : bound.mx_val;
+
+						return d;
+					})
+					.value();
+			}
+
+			var color = d3.scale.ordinal()
+				.domain(['bad', 'okay', 'good'])
+				.range(['#B3B3B3', '#CCCCCC', '#E6E6E6']);
 
 			var bg = svg.select('.ranges').selectAll('.range')
 				.data(ranges);
