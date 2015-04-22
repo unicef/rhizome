@@ -217,6 +217,7 @@ module.exports = {
 				.call(hoverLine()
 					.width(this.contentWidth)
 					.height(this.contentHeight)
+					.top(-this.marginTop)
 					.xFormat(this.xFmt)
 					.yFormat(this.yFmt)
 					.x(this.getX)
