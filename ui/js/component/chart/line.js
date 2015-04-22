@@ -4,7 +4,7 @@ var _         = require('lodash');
 var d3        = require('d3');
 var moment    = require('moment');
 
-var colors    = require('colors/coolgray');
+var colors    = require('colors');
 var data      = require('util/data');
 var hoverLine = require('./behavior/hover-line');
 var label     = require('./renderer/label');
@@ -217,6 +217,7 @@ module.exports = {
 				.call(hoverLine()
 					.width(this.contentWidth)
 					.height(this.contentHeight)
+					.top(-this.marginTop)
 					.xFormat(this.xFmt)
 					.yFormat(this.yFmt)
 					.x(this.getX)
@@ -259,6 +260,7 @@ module.exports = {
 						return xFmt(d);
 					})
 					.tickValues(this.xTicks)
+					.outerTickSize(0)
 					.scale(xScale)
 					.orient('bottom'));
 
