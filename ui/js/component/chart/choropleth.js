@@ -109,10 +109,10 @@ module.exports = {
 
 			var svg  = d3.select(this.$el).select('.geography');
 
-			var bounds     = this.boundingBox;
+			var bounds = this.boundingBox;
 
-			var width    = this.width || 0;
-			var height   = this.height || 0;
+			var width  = this.width || 0;
+			var height = this.height || 0;
 
 			var projection = d3.geo.conicEqualArea()
 				.parallels([bounds[1][1], bounds[0][1]])
@@ -168,11 +168,11 @@ module.exports = {
 			path.attr({
 				'd': geopath,
 				'class': function (d) {
-					if (!d.properties[indicator]) {
+					if (!(d.properties.hasOwnProperty('indicators') && d.properties.indicators[indicator])) {
 						return 'region';
 					}
 
-					return 'region clickable q-' + quantize(d.properties[indicator]);
+					return 'region clickable q-' + quantize(d.properties.indicators[indicator]);
 				}
 			});
 
@@ -203,9 +203,11 @@ module.exports = {
 					var d          = index[f.region_id];
 					var indicators = (d && d.indicators) || [];
 
+					f.indicators = {};
+
 					for (var j = indicators.length - 1; j >= 0; j--) {
 						var indicator = indicators[j];
-						f[indicator.indicator] = indicator.value;
+						f.indicators[indicator.indicator] = indicator.value;
 					}
 				}
 
