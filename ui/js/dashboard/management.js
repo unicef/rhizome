@@ -150,7 +150,7 @@ module.exports = {
 							indicators[d.indicator] = _.assign({
 								name           : index[d.indicator].short_name,
 								value          : d3.format('.1f')(d.value * 100),
-								hiddenForPrint : d.value === 0,
+								hiddenForPrint : !d.value,
 								datapoints     : [{
 									indicator : d.indicator,
 									value     : d.value
@@ -161,6 +161,9 @@ module.exports = {
 
 					self.inaccessibility = _(indicators)
 						.values()
+						.filter(function (d) {
+							return !!d.datapoints[0].value;
+						})
 						.sortBy(function (d) {
 							return d.datapoints[0].value;
 						})
