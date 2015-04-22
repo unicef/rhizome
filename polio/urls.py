@@ -36,8 +36,7 @@ urlpatterns = patterns('',
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
 
 
-    url(r'^api/v1/entity/users/metadata/', entity_views.api_user_mock, name='user_mock'),
-    url(r'^api/v1/entity/users/', entity_views.api_user, name='user'),
+    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
 
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
