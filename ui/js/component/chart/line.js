@@ -259,6 +259,7 @@ module.exports = {
 						return xFmt(d);
 					})
 					.tickValues(this.xTicks)
+					.outerTickSize(0)
 					.scale(xScale)
 					.orient('bottom'));
 
