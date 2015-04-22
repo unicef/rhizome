@@ -97,6 +97,12 @@ BEGIN
 			AND d.campaign_id = ta.campaign_id
 			AND d.indicator_id = ta.indicator_id
 		)
+		AND NOT EXISTS (
+			SELECT 1 FROM _to_agg ta
+			WHERE d.parent_region_id = ta.region_id
+			AND d.campaign_id = ta.campaign_id
+			AND d.indicator_id = ta.indicator_id
+		)
 		GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
 
 		CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
