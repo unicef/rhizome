@@ -76,6 +76,14 @@ function formatData(datapoints, indicators, properties, series) {
 		.value();
 }
 
+function value(datapoint) {
+	if (datapoint && datapoint.hasOwnProperty('value')) {
+		return datapoint.value;
+	}
+
+	return null;
+}
+
 module.exports = {
 	template: require('./nco.html'),
 
@@ -230,7 +238,7 @@ module.exports = {
 						return d3.format('%')(d);
 					};
 
-					self.overview.missed.insideLabel = fmt(self.overview.missed.inside[0].value);
+					self.overview.missed.insideLabel = fmt(value(self.overview.missed.inside[0]));
 
 					self.overview.missed.outside = datapoints
 						.pick(274)
@@ -238,7 +246,7 @@ module.exports = {
 						.flatten()
 						.value();
 
-					self.overview.missed.outsideLabel = fmt(self.overview.missed.outside[0].value);
+					self.overview.missed.outsideLabel = fmt(value(self.overview.missed.outside[0]));
 
 					self.overview.awareness = datapoints
 						.pick(276)
@@ -246,7 +254,7 @@ module.exports = {
 						.flatten()
 						.value();
 
-					self.overview.awarenessLabel = fmt(self.overview.awareness[0].value);
+					self.overview.awarenessLabel = fmt(value(self.overview.awareness[0]));
 
 					self.overview.influencer.series = formatData(
 						datapoints,
@@ -310,7 +318,7 @@ module.exports = {
 					self.overview.missedVsAwareness.range = [0, d3.max(data[1].objects, function (d) {
 						var index = _.indexBy(d.indicators, 'indicator');
 
-						return Math.max(index[272].value, index[274].value);
+						return Math.max(value(index[272]), value(index[274]));
 					})];
 
 					// Inside x = 276, y = 272
@@ -321,8 +329,8 @@ module.exports = {
 							return {
 								id   : d.region,
 								name : regions[d.region].name,
-								x    : index[276].value,
-								y    : index[272].value
+								x    : value(index[276]),
+								y    : value(index[272])
 							};
 						})
 						.filter(function (d) {
@@ -338,8 +346,8 @@ module.exports = {
 							return {
 								id   : d.region,
 								name : regions[d.region].name,
-								x    : index[276].value,
-								y    : index[274].value
+								x    : value(index[276]),
+								y    : value(index[274])
 							};
 						})
 						.filter(function (d) {

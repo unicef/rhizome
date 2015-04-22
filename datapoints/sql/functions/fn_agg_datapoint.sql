@@ -21,6 +21,7 @@ BEGIN
 
 				SELECT
 					rg.parent_region_id
+					,rg.parent_region_id as immediate_parent_id
 					,rg.id as region_id
 					,0 as lvl
 				FROM region rg
@@ -30,6 +31,7 @@ BEGIN
 				-- recursive term --
 				SELECT
 					r_recurs.parent_region_id
+					,rt.parent_region_id as immediate_parent_id
 					,rt.region_id
 					,rt.lvl + 1
 				FROM region AS r_recurs
@@ -45,6 +47,7 @@ BEGIN
 			,d.region_id
 			,d.value
 			,rt.parent_region_id
+			,rt.immediate_parent_id
 		FROM region_tree rt
 		INNER JOIN datapoint d
 		ON rt.region_id = d.region_id
@@ -52,11 +55,21 @@ BEGIN
 		ON d.indicator_id = ci.indicator_id
 		AND d.campaign_id = ci.campaign_id
 		WHERE EXISTS (
-			SELECT 1
-			FROM region r
-			WHERE r.parent_region_id = rt.parent_region_id
-			AND rt.region_id = d.region_id
+
+					SELECT 1 -- DATA AT SAME REGIONAL LEVEL AS REQUESTED
+					FROM region r
+					WHERE r.parent_region_id = rt.parent_region_id
+					AND rt.region_id = d.region_id
+
+					UNION ALL
+
+					SELECT 1-- DATA AT SAME REGIONAL LEVEL AS REQUESTED
+					FROM region r
+					WHERE r.id = rt.region_id
+					AND r.parent_region_id IS NULL
+
 		);
+
 
 		CREATE TABLE _tmp_agg AS
 
@@ -77,7 +90,14 @@ BEGIN
 			,d.indicator_id
 			,SUM(d.value) as value
 		FROM _to_agg d
+
 		WHERE NOT EXISTS (
+			SELECT 1 FROM _to_agg ta
+			WHERE d.immediate_parent_id = ta.region_id
+			AND d.campaign_id = ta.campaign_id
+			AND d.indicator_id = ta.indicator_id
+		)
+		AND NOT EXISTS (
 			SELECT 1 FROM _to_agg ta
 			WHERE d.parent_region_id = ta.region_id
 			AND d.campaign_id = ta.campaign_id

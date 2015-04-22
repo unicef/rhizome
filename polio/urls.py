@@ -21,7 +21,7 @@ v1_api = Api(api_name='v1')
 # v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
-v1_api.register(IndicatorResource())
+# v1_api.register(IndicatorResource())
 v1_api.register(UserResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
@@ -30,10 +30,15 @@ v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
     ## CUSTOM API ##
-    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
-    url(r'^api/v1/region/$', views.api_region, name='region'),
-    #url(r'^api/v1/entity/users/metadata/', entity_views.api_user_mock, name='user_mock'),
-    #url(r'^api/v1/entity/users/', entity_views.api_user, name='user'),
+
+    url(r'^api/v1/campaign/$', dp_views.api_campaign, name='campaign'),
+    url(r'^api/v1/region/$', dp_views.api_region, name='region'),
+    url(r'^api/v1/indicator/$', dp_views.api_indicator, name='indicator'),
+
+
+    url(r'^api/v1/entity/users/metadata/', entity_views.api_user_mock, name='user_mock'),
+    url(r'^api/v1/entity/users/', entity_views.api_user, name='user'),
+    
     # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##

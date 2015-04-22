@@ -7,7 +7,7 @@ var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
 
-var colors = require('colors/coolgray');
+var colors = require('colors');
 
 module.exports = {
 	replace : true,
@@ -26,7 +26,8 @@ module.exports = {
 
 	data: function () {
 		return {
-			innerRadius: 0
+			innerRadius : 0,
+			domain      : [0, 1]
 		};
 	},
 
@@ -50,7 +51,7 @@ module.exports = {
 
 			return d3.scale.ordinal()
 				.domain(_.map(this.series, function (d) {
-					return d.data.indicator;
+					return d.indicator;
 				}))
 				.range(range);
 		},
@@ -71,37 +72,28 @@ module.exports = {
 				return [];
 			}
 
-			var layout = d3.layout.pie()
-				.value(function (d) {
+			var scale = d3.scale.linear()
+				.domain(this.domain)
+				.range([0, 2 * Math.PI]);
+
+			// Use d3's stack layout instead of the pie layout so that we can control
+			// the domain
+			var layout = d3.layout.stack()
+				.values(function (d) {
+					return [d];
+				})
+				.x(function (d, i) {
+					return i;
+				})
+				.y(function (d) {
 					return d.value;
 				})
-				.sort(function (a, b) {
-					if (a.indicator === 'other') {
-						return 1;
-					}
-
-					if (b.indicator === 'other') {
-						return -1;
-					}
-
-					return d3.descending(a.value, b.value);
+				.out(function (d, y0, y) {
+					d.startAngle = scale(y0);
+					d.endAngle   = scale(y);
 				});
 
-			var total = _.reduce(this.datapoints, function (result, d) {
-				return result + d.value;
-			}, 0);
-
-			// Assume that if the total value of the pie chart is <= 1, it's meant to
-			// show a percentage out of 100 and fill in the missing piece. We want to
-			// include an "other" category even if the existing categories sum to 1
-			// (meaning other = 0) for the case when we have only one category and it
-			// is 100%. This ensures that there are at least two categories and
-			// "other" always gets the lightest color.
-			var data = (total <= 1) ?
-				[{ value: 1 - total, indicator: 'other' }].concat(this.datapoints) :
-				this.datapoints;
-
-			return layout(data);
+			return layout(this.datapoints);
 		}
 
 	},
@@ -111,7 +103,7 @@ module.exports = {
 		draw: function () {
 			var colorScale = this.colorScale;
 			var color      = function (d) {
-				return colorScale(d.data.indicator);
+				return colorScale(d.indicator);
 			};
 
 			var svg = d3.select(this.$el);
@@ -119,6 +111,13 @@ module.exports = {
 			var arc = d3.svg.arc()
 				.innerRadius(Number(this.innerRadius))
 				.outerRadius(this.contentWidth / 2);
+
+			svg.select('.bg')
+				.datum({
+					startAngle : 0,
+					endAngle   : 2 * Math.PI
+				})
+				.attr('d', arc);
 
 			var slice = svg.select('.data').selectAll('.slice').data(this.series);
 

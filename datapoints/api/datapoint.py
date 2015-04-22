@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 
 from datapoints.models import *
 from datapoints.api.meta_data import *
-from datapoints.api.serialize import CustomSerializer
+from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 
 class ResultObject(object):
@@ -267,6 +267,7 @@ class DataPointEntryResource(BaseModelResource):
             'campaign': ALL,
             'region': ALL,
         }
+        serializer = CustomJSONSerializer()
 
     def obj_create(self, bundle, **kwargs):
         """

@@ -41,7 +41,16 @@ class CacheRefresh(object):
 
         if response_msg != 'NOTHING_TO_PROCESS':
 
-            response_msg = self.main()
+            try:
+                response_msg = self.main()
+            ## BLINDLY CATCH AND STORE ALL ERRORS ##
+            except Exception as err:
+
+                self.cache_job.date_completed = datetime.now()
+                self.cache_job.response_msg = str(err)[:254]
+                self.cache_job.save()
+
+                return
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
@@ -165,8 +174,10 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
+        #
         adp_cursor = DataPoint.objects.raw("""
-            SELECT * FROM fn_agg_datapoint(%s);""",[self.cache_job.id])
+            SELECT * FROM fn_agg_datapoint(%s);
+            """,[self.cache_job.id])
 
         adps = [adp.id for adp in adp_cursor]
 
@@ -422,5 +433,61 @@ class CacheRefresh(object):
 
         da_id = [x.id for x in da_curs]
 
-
         DataPointAbstracted.objects.bulk_create(batch)
+
+
+def cache_indicator_abstracted():
+
+    IndicatorAbstracted.objects.all().delete()
+
+    i_raw = Indicator.objects.raw("""
+
+        SELECT
+            i.*
+            ,ib.mn_val
+            ,ib.mx_val
+            ,bound_name
+            ,direction
+        FROM indicator i
+        LEFT JOIN indicator_bound ib
+        ON i.id = ib.indicator_id
+        ORDER BY i.id
+    """)
+
+    objects = []
+    ##
+    raw_data = [{
+          'id': i.id \
+        , 'name':i.name \
+        , 'short_name' :i.short_name
+        , 'slug' :i.slug
+        , 'description':i.description \
+        , 'bound_name':i.bound_name
+        , 'mx_val':i.mx_val
+        , 'mn_val': i.mn_val
+    } for i in i_raw]
+
+    df = DataFrame(raw_data)
+
+    cleaned_df = df.fillna('NULL')
+    distinct_indicator_ids = df['id'].unique()
+
+    for ind_id in distinct_indicator_ids:
+
+        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
+        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
+        bounds_df.reset_index(level=0,inplace=True)
+
+        indicator_bounds = bounds_df.transpose().to_dict()
+
+        if indicator_bounds[0]['bound_name'] == "NULL":
+            bound_array = []
+        else:
+            bound_array = [v for k,v in indicator_bounds.iteritems()]
+
+        IndicatorAbstracted.objects.create(
+            indicator_id = ind_id,
+            bound_json = bound_array
+        )
+
+    return {'objects':objects}

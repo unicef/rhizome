@@ -20,7 +20,7 @@ from functools import partial
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 
 from datapoints.mixins import PermissionRequiredMixin
 
@@ -351,7 +351,10 @@ def populate_dummy_ngo_dash(request):
 
 def cache_control(request):
 
-    return render_to_response('cache_control.html',
+    cache_jobs = CacheJob.objects.all().\
+        exclude(response_msg='NOTHING_TO_PROCESS').order_by('-id')
+
+    return render_to_response('cache_control.html',{'cache_jobs':cache_jobs},
     context_instance=RequestContext(request))
 
 
@@ -518,108 +521,6 @@ def parse_url_args(request,keys):
 
     return request_meta
 
-class MyUser:
-    def __init__(self, pk):
-        __auth_user = User.objects.get(pk=pk)
-        self.pk = pk
-        self.first_name = __auth_user.first_name
-        self.last_name = __auth_user.last_name
-        __groups_raw = Group.objects.raw('''
-            SELECT ag.id, ag.name
-                FROM auth_user au 
-                    JOIN auth_user_groups aug
-                        ON au.id = aug.user_id 
-                    JOIN auth_group ag 
-                        ON ag.id = aug.group_id
-                WHERE au.id = %s;
-            ''', (pk,))
-        self.groups = [ Group.objects.get(pk=g.id) for g in __groups_raw ]
-
-    def get_dict(self):
-        s = {}
-        s['groups'] = [ {'value': g.pk, 'label': g.name } for g in self.groups ]
-        s['id'] = self.pk
-        s['first_name'] = self.first_name
-        s['last_name'] = self.last_name
-        return s
-
-    def serialize(self):
-        return json.dumps(self.get_dict())
-
-def api_user_mock(request):
-    ''' send mock meta data out '''
-    with open(USER_METADATA, 'r') as f:
-        mockup = f.read()
-        mockup = mockup.replace('\n', '')\
-            .replace('\t', '')\
-
-    return HttpResponse(mockup\
-        , content_type="application/json")
-
-def _user_search(users, keywords):
-    ''' search is AND-wise but can easily be changed to OR-wise '''
-    for k in keywords:
-        found = []
-        for obj in users:
-            data = MyUser(pk=obj.pk).serialize().lower()
-            if data.find(k) > -1:
-                found.append(obj.pk)
-        users = users.filter(pk__in=found)
-    return users
-
-def find_group(g, user):
-    ''' return True if MyUser user is in group g (soft)'''
-    for groups in user.groups:
-        if group['label'].find(g) > -1:
-            return True
-    return False
-
-def is_group(g, user):
-    ''' return True if MyUser is in group g (hard)'''
-    for group in user.groups:
-        if group.name == g:
-            return True
-    return False
-
-def _user_filter(users, terms, val):
-    relation_map = {'eq': 'exact', 'lt': 'lt', 'lte': 'lte', 'gt': 'gt', 'gte': 'gte', 'in': 'in'}
-    var = terms[1]
-    res = []
-    rel = relation_map[terms[2]]
-    if rel == 'in':
-        vals = val.split(',')
-    if var in ['first_name', 'last_name', 'id']:
-        kwargs = {
-            "{0}__{1}".format(var, rel) : val
-        }
-        res = users.filter(**kwargs)
-    if var == 'group':
-        my_users = [ MyUser(pk=u.pk) for u in users ]
-        if rel == 'contains':
-            my_users = itertools.ifilter(lambda mu: find_group(val, mu), my_users)
-            res = users.filter(pk__in=[ mu.pk for mu in my_users ])
-        if rel == 'exact':
-            my_users = itertools.ifilter(lambda mu: is_group(val, mu), my_users)
-            res = users.filter(pk__in=[ mu.pk for mu in my_users ])
-        elif rel == 'in':
-            found = []
-            for v in vals:
-                filt = itertools.ifilter(lambda mu: is_group(v, mu), my_users)
-                for mu in filt:
-                    if mu.pk not in found:
-                        found.append(mu.pk)
-            res = users.filter(pk__in=found)
-    return res
-
-def _user_sort(users, sort_on, sort_direction='asc'):
-    sortables = ['first_name', 'last_name']
-    if sort_on not in sortables:
-        raise Exception("Cannot sort on unordered field")
-    if sort_direction.lower() == 'desc':
-        sort_on = '-'+sort_on
-    res = users.order_by(sort_on)
-    return res
-
 
 def api_user(request):
 
@@ -727,6 +628,49 @@ def api_region(request):
         , content_type="application/json")
 
 
+def transform_indicators(request):
+
+    response_data = cache_indicator_abstracted()
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    try:
+        id__in = [int(ind_id) for ind_id in request.GET['id__in'].split(',')]
+    except KeyError:
+        id__in = [i for i in Indicator.objects.all().values_list('id',flat=True)]
+
+
+    i_raw = Indicator.objects.raw("""
+        SELECT
+            i.*
+            ,ia.bound_json
+        FROM indicator i
+        INNER JOIN indicator_abstracted ia
+        ON i.id = ia.indicator_id
+        WHERE i.id = ANY(%s)
+        ORDER BY i.id
+    """,[id__in])
+
+    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                'description':i.description,'slug':i.slug,\
+                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
 def bad_data(request):
 
     dp_curs = BadData.objects.raw('''
@@ -735,7 +679,6 @@ def bad_data(request):
 
     dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
         dp in dp_curs]
-
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))

@@ -9,14 +9,22 @@
     <table>
     <thead>
         <tr>
-            <th>task_name</th>
-            <th>run_task</th>
+            <th>task name</th>
+            <th>run task</th>
+            <th>date completed</th>
         </tr>
     </thead>
+
+        <tbody>
+        {% for cache_job in cache_jobs %}
         <tr>
-            <th>Pop NG Dash Data</th>
-            <th><a href="{% url 'datapoints:populate_dummy_ngo_dash' %}"> Test NG Dash </a></th>
+            <th>{{ cache_job.id }}</th>
+            <th>{{ cache_job.response_msg }}</th>
+            <th>{{ cache_job.date_completed }}</th>
         </tr>
+        {% endfor %}
+
+       </tbody>
 
     </table>
 
