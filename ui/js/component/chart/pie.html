@@ -8,8 +8,10 @@
 			height: height">
 
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
-			<g class="data"
-			   v-attr="transform: 'translate(' + contentWidth/2 + ',' + contentHeight/2 + ')'"></g>
+			<g v-attr="transform: 'translate(' + contentWidth/2 + ',' + contentHeight/2 + ')'">
+				<path class="bg"></path>
+				<g class="data"></g>
+			</g>
 			<g class="annotation"></g>
 		</g>
 

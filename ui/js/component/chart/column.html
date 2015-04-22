@@ -1,22 +1,22 @@
-
 <div class="chart">
 	<svg
 		v-el="svg"
 		v-class="chartType"
 		v-attr="viewBox: '0 0 ' + width + ' ' + height">
 
+		<rect class="bg"
+			v-attr="
+				x      : marginLeft,
+				width  : contentWidth,
+				height : height - marginBottom">
+		</rect>
+
 		<g v-attr="transform: 'translate(' + marginLeft + ',' + marginTop + ')'">
 
-			<rect class="bg"
-				v-attr="
-					width  : contentWidth,
-					height : contentHeight">
-			</rect>
-
 			<g class="data"></g>
+			<g class="y axis"></g>
 			<g class="x axis"
 			   v-attr="transform: 'translate(0,' + contentHeight + ')'"></g>
-			<g class="y axis"></g>
 			<g class="annotation"></g>
 			<g
 				class="legend"
