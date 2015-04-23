@@ -130,7 +130,8 @@ module.exports = {
 
 			var x = d3.scale.linear()
 				.domain([0, 1])
-				.range([0, width]);
+				.range([0, width])
+				.clamp(true);
 
 			var ranges = [];
 

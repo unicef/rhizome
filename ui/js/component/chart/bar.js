@@ -91,7 +91,8 @@ module.exports = {
 				.flatten();
 
 			var xScale = d3.scale.linear()
-				.range([0, this.contentWidth]);
+				.range([0, this.contentWidth])
+				.clamp(true);
 
 			if (this.domain) {
 				xScale.domain(this.domain);

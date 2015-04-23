@@ -100,7 +100,8 @@ module.exports = {
 						return d.y + d.y0;
 					})
 					.max()])
-				.range([this.contentHeight, 0]);
+				.range([this.contentHeight, 0])
+				.clamp(true);
 		}
 	},
 
