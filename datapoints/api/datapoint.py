@@ -16,6 +16,8 @@ from datapoints.models import *
 from datapoints.api.meta_data import *
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
+from numpy import nan
+
 
 class ResultObject(object):
     '''
@@ -292,9 +294,9 @@ class DataPointEntryResource(BaseModelResource):
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
                 if self.is_delete_request(bundle):
-                    # there is no delete method.  Instead we set value = 0 #
+                    # there is no delete method.  Instead we set value = NaN #
 
-                    bundle.data['value'] = 0
+                    bundle.data['value'] = nan
 
                 # update
                 update_kwargs = {
