@@ -264,10 +264,11 @@ module.exports = {
 			xLabel.enter()
 				.append('text')
 				.attr({
-					'class' : 'axis label',
-					'dy'    : '1.2em',
-					'y'     : this.contentHeight,
-					'x'     : function (d) { return xScale(d); }
+					'text-anchor' : 'middle',
+					'class'       : 'axis label',
+					'dy'          : '1.2em',
+					'y'           : this.contentHeight,
+					'x'           : function (d) { return xScale(d) + (xScale.rangeBand() / 2); }
 				});
 
 			var labelFmt = this.xLabel;
@@ -278,7 +279,7 @@ module.exports = {
 				.transition()
 				.duration(300)
 				.attr('x', function (d) {
-					return xScale(d);
+					return xScale(d) + (xScale.rangeBand() / 2);
 				});
 
 			svg.select('.data')
