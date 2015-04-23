@@ -264,13 +264,21 @@ module.exports = {
 					.scale(xScale)
 					.orient('bottom'));
 
+			var svgBox = this.$$.canvas.getBoundingClientRect();
 			gx.selectAll('text')
-				.style('text-anchor', function (d) {
-					return d === domain[0] ?
-						'start' :
-						d === domain[1] ?
-							'end' :
-							'middle';
+				.attr('dx', function (d) {
+					var bbox = this.getBoundingClientRect();
+					var dx = null;
+
+					if (bbox.right > svgBox.right) {
+						dx = svgBox.right - bbox.right;
+					}
+
+					if (bbox.left < svgBox.left) {
+						dx = svgBox.left - bbox.left;
+					}
+
+					return dx;
 				});
 
 			var gy = svg.select('.y.axis')
