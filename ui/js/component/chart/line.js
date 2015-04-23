@@ -209,7 +209,6 @@ module.exports = {
 			var renderer   = this.renderer;
 			var xScale     = this.xScale;
 			var yScale     = this.yScale;
-			var domain     = xScale.domain();
 			var range      = yScale.domain();
 
 			// Set up the hover interaction
@@ -264,13 +263,21 @@ module.exports = {
 					.scale(xScale)
 					.orient('bottom'));
 
+			var svgBox = this.$$.canvas.getBoundingClientRect();
 			gx.selectAll('text')
-				.style('text-anchor', function (d) {
-					return d === domain[0] ?
-						'start' :
-						d === domain[1] ?
-							'end' :
-							'middle';
+				.attr('dx', function () {
+					var bbox = this.getBoundingClientRect();
+					var dx = null;
+
+					if (bbox.right > svgBox.right) {
+						dx = svgBox.right - bbox.right;
+					}
+
+					if (bbox.left < svgBox.left) {
+						dx = svgBox.left - bbox.left;
+					}
+
+					return dx;
 				});
 
 			var gy = svg.select('.y.axis')

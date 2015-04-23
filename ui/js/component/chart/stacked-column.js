@@ -1,3 +1,4 @@
+/* global window */
 'use strict';
 
 var _      = require('lodash');
@@ -100,7 +101,8 @@ module.exports = {
 						return d.y + d.y0;
 					})
 					.max()])
-				.range([this.contentHeight, 0]);
+				.range([this.contentHeight, 0])
+				.clamp(true);
 		}
 	},
 
@@ -169,6 +171,25 @@ module.exports = {
 					})
 					.scale(xScale));
 
+			if (this.$$.svg) {
+				var svgBox = this.$$.svg.getBoundingClientRect();
+				svg.selectAll('.x.axis text')
+					.attr('dx', function () {
+						var bbox = this.getBoundingClientRect();
+						var dx   = null;
+
+						if (bbox.right > svgBox.right) {
+							dx = svgBox.right - bbox.right;
+						}
+
+						if (bbox.left < svgBox.left) {
+							dx = svgBox.left - bbox.left;
+						}
+
+						return dx;
+					});
+			}
+
 			t.select('.y.axis')
 				.call(d3.svg.axis()
 					.orient('right')
@@ -222,15 +243,44 @@ module.exports = {
 				.value();
 
 			var svg = d3.select(this.$$.svg);
+			var annotation = svg.select('.annotation');
 
-			svg.select('.annotation')
-				.selectAll('.series.label')
+			annotation.selectAll('.series.label')
 				.data(labels)
 				.call(label()
 					.addClass('series')
 					.width(this.contentWidth)
 					.height(this.contentHeight)
 					.align(true));
+
+			svg.selectAll('.x.axis text')
+				.transition()
+				.duration(300)
+				.style('opacity', 0);
+
+			var xLabel = annotation.selectAll('.axis.label')
+				.data([target]);
+
+			xLabel.enter()
+				.append('text')
+				.attr({
+					'text-anchor' : 'middle',
+					'class'       : 'axis label',
+					'dy'          : '1.2em',
+					'y'           : this.contentHeight,
+					'x'           : function (d) { return xScale(d) + (xScale.rangeBand() / 2); }
+				});
+
+			var labelFmt = this.xLabel;
+			xLabel
+				.text(function (d) {
+					return moment(d).format(labelFmt);
+				})
+				.transition()
+				.duration(300)
+				.attr('x', function (d) {
+					return xScale(d) + (xScale.rangeBand() / 2);
+				});
 
 			svg.select('.data')
 				.selectAll('rect')
@@ -250,14 +300,26 @@ module.exports = {
 
 					self._currentHover = null;
 
-					svg.select('.annotation')
-						.selectAll('.series.label')
+					var annotation = svg.select('.annotation');
+
+					annotation.selectAll('.series.label')
 						.data(self.labels)
 						.call(label()
 							.addClass('series')
 							.width(self.contentWidth)
 							.height(self.contentHeight)
 							.align(false));
+
+					annotation.selectAll('.axis.label')
+						.transition()
+						.duration(300)
+						.style('opacity', 0)
+						.remove();
+
+					svg.selectAll('.x.axis text')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
 
 					svg.select('.data')
 						.selectAll('rect')
