@@ -274,8 +274,8 @@ class DataPointEntryResource(BaseModelResource):
         Make sure the data is valid, then save it.
         All POST requests come through here, whether they're truly
         'obj_create' or actually 'obj_update'.
-        Also, if a request comes in with value=NULL, that means
-        DELETE that object.
+        Also, if a request comes in with value=NULL, that means set the value
+        of that obect = 0.
         """
         try:
             self.validate_object(bundle.data)
@@ -292,18 +292,19 @@ class DataPointEntryResource(BaseModelResource):
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
                 if self.is_delete_request(bundle):
-                    # delete
-                    bundle.obj = existing_datapoint
-                    self.obj_delete(bundle, **kwargs)
-                else:
-                    # update
-                    update_kwargs = {
-                        'region_id': existing_datapoint.region_id,
-                        'campaign_id': existing_datapoint.campaign_id,
-                        'indicator_id': existing_datapoint.indicator_id
-                    }
-                    bundle.response = self.success_response()
-                    return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+                    # there is no delete method.  Instead we set value = 0 #
+
+                    bundle.data['value'] = 0
+
+                # update
+                update_kwargs = {
+                    'region_id': existing_datapoint.region_id,
+                    'campaign_id': existing_datapoint.campaign_id,
+                    'indicator_id': existing_datapoint.indicator_id
+                }
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+
             else:
                 # create
                 bundle.response = self.success_response()
@@ -337,13 +338,9 @@ class DataPointEntryResource(BaseModelResource):
             return False
 
     def obj_delete(self, bundle, **kwargs):
-        super(DataPointEntryResource, self).obj_delete(bundle, **kwargs)
-        response = self.create_response(
-            bundle.request,
-            self.success_response(),
-            response_class=http.HttpResponse
-        )
-        raise ImmediateHttpResponse(response=response)
+        """This is here to prevent an objects from ever being deleted."""
+        pass
+
 
     def obj_delete_list(self, bundle, **kwargs):
         """This is here to prevent a list of objects from
