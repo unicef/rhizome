@@ -293,12 +293,7 @@ class DataPointEntryResource(BaseModelResource):
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
-                if self.is_delete_request(bundle):
-                    # there is no delete method.  Instead we set value = NaN #
 
-                    bundle.data['value'] = nan
-
-                # update
                 update_kwargs = {
                     'region_id': existing_datapoint.region_id,
                     'campaign_id': existing_datapoint.campaign_id,
