@@ -6,18 +6,27 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
 from django.views import generic
+from django.contrib.auth.models import User,Group
 from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
 import gspread
+import re
+import itertools
+from functools import partial
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 
 from datapoints.mixins import PermissionRequiredMixin
+
+USER_METADATA = 'static/users_metadata_mockup.json'
+DEFAULT_LIMIT = 50
+MAX_LIMIT = 500
 
 
 class IndexView(generic.ListView):
@@ -512,6 +521,52 @@ def parse_url_args(request,keys):
 
     return request_meta
 
+
+def api_user(request):
+
+    users = User.objects.all()
+    for (k,v) in request.GET.iteritems():
+        verb = k.split('.')[0]
+        if verb == 'search':
+            keywords = re.split('(?<!\\\)\ ', v.lower())
+            users = _user_search(users, keywords)
+        elif verb == 'filter':
+            terms = k.split('.')
+            users = _user_filter(users, terms, v)
+        elif verb == 'sort':
+            if 'sort_direction' in request.GET:
+                sd = request.GET['sort_direction']
+                try:
+                    users = _user_sort(users, v, sd)
+                except:
+                    return HttpResponse({'error': 'Cannot Sort on Field'})
+            else:
+                users = _user_sort(users, v)
+    if 'sort' not in request.GET:
+        users = _user_sort(users, 'last_name', 'asc')
+    offset = 0
+    if 'offset' in request.GET:
+        offset = int(request.GET['offset'])
+    limit = DEFAULT_LIMIT
+    if 'limit' in request.GET:
+        limit = int(request.GET['limit'])
+    my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
+    my_users = my_users[offset:offset+limit]
+    total_count = len(my_users)
+    resp = {}
+    resp['error'] = None
+    resp['meta'] = {
+        'limit': limit,
+        'offset': offset,
+        'total_count': total_count
+    }
+    resp['objects'] = my_users
+    resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
+    return HttpResponse(json.dumps(resp),
+            content_type='application/json')
+
+
+
 def api_campaign(request):
 
     meta_keys = ['id','region__in','start_date','limit','offset']
@@ -573,6 +628,49 @@ def api_region(request):
         , content_type="application/json")
 
 
+def transform_indicators(request):
+
+    response_data = cache_indicator_abstracted()
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    try:
+        id__in = [int(ind_id) for ind_id in request.GET['id__in'].split(',')]
+    except KeyError:
+        id__in = [i for i in Indicator.objects.all().values_list('id',flat=True)]
+
+
+    i_raw = Indicator.objects.raw("""
+        SELECT
+            i.*
+            ,ia.bound_json
+        FROM indicator i
+        INNER JOIN indicator_abstracted ia
+        ON i.id = ia.indicator_id
+        WHERE i.id = ANY(%s)
+        ORDER BY i.id
+    """,[id__in])
+
+    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                'description':i.description,'slug':i.slug,\
+                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
 def bad_data(request):
 
     dp_curs = BadData.objects.raw('''
@@ -581,7 +679,6 @@ def bad_data(request):
 
     dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
         dp in dp_curs]
-
 
     return render_to_response('bad_data.html',{'dp_data':dp_data}
         ,context_instance=RequestContext(request))

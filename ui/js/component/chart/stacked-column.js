@@ -1,3 +1,4 @@
+/* global window */
 'use strict';
 
 var _      = require('lodash');
@@ -7,28 +8,11 @@ var moment = require('moment');
 var column  = require('./renderer/column');
 var data    = require('util/data');
 var label   = require('./renderer/label');
-var palette = require('colors/coolgray');
-
-// Color palette from I Want Hue
-// var palette = [
-// "#6094BA",
-// "#699CA7",
-
-// "#B6DAE5",
-// "#589EE4",
-// "#3CA6A9",
-// "#909A92",
-
-// "#D5D5C6",
-// "#90D7D0",
-// "#5CB3DE",
-// "#A2B6C8",
-// "#D2F2EA",
-// "#8ED0E9"];
+var palette = require('colors');
 
 module.exports = {
 	replace  : true,
-	template : require('./bar.html'),
+	template : require('./column.html'),
 
 	paramAttributes : [
 		'data-facet',
@@ -44,6 +28,7 @@ module.exports = {
 
 	data : function () {
 		return {
+			chartType    : 'stacked-column',
 			facet        : 'indicator.id',
 			formatString : 's',
 			series       : [],
@@ -94,14 +79,17 @@ module.exports = {
 		},
 
 		xScale : function () {
-			var domain = d3.extent(
-				_(this.series).pluck('values').flatten().value(),
-				this.getX
-			);
+			var domain = _(this.series)
+				.pluck('values')
+				.flatten()
+				.map(this.getX)
+				.uniq()
+				.sortBy()
+				.value();
 
-			return d3.time.scale()
+			return d3.scale.ordinal()
 				.domain(domain)
-				.range([0, this.contentWidth - this.colWidth]);
+				.rangeBands([0, this.contentWidth], 0.1, 0);
 		},
 
 		yScale : function () {
@@ -113,7 +101,8 @@ module.exports = {
 						return d.y + d.y0;
 					})
 					.max()])
-				.range([this.contentHeight, 0]);
+				.range([this.contentHeight, 0])
+				.clamp(true);
 		}
 	},
 
@@ -121,13 +110,10 @@ module.exports = {
 		draw : function () {
 			var svg = d3.select(this.$$.svg);
 
-			svg.on('mousemove', this.onMouseMove)
-				.on('mouseout', this.onMouseOut);
-
 			var x      = this.getX;
-			var width  = Math.max(1, this.colWidth);
 			var xScale = this.xScale;
 			var yScale = this.yScale;
+			var width  = xScale.rangeBand();
 
 			var series = svg.select('.data').selectAll('.series')
 				.data(this.series, function (d) { return d.name; });
@@ -150,6 +136,10 @@ module.exports = {
 
 			series.exit().remove();
 
+			series.selectAll('rect')
+				.on('mouseover', this.onMouseOver)
+				.on('mouseout', this.onMouseOut);
+
 			var fmt = d3.format(this.formatString);
 
 			svg.select('.annotation').selectAll('.series.label')
@@ -169,17 +159,36 @@ module.exports = {
 					.orient('bottom')
 					.tickSize(0)
 					.tickPadding(4)
-					.ticks(4)
+					.tickValues(_.filter(xScale.domain(), function (d, i, domain) {
+						// Include every fourth tick value unless that tick is within three
+						// ticks of the last value. Always include the last tick. We have to
+						// do this manually because D3 ignores the ticks() value for
+						// ordinal scales
+						return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length;
+					}))
 					.tickFormat(function (d) {
 						return moment(d).format(self.xLabel);
 					})
 					.scale(xScale));
 
-			svg.selectAll('.x.axis text')
-				.attr({
-					'text-anchor' : 'middle',
-					'dx'          : width / 2
-				});
+			if (this.$$.svg) {
+				var svgBox = this.$$.svg.getBoundingClientRect();
+				svg.selectAll('.x.axis text')
+					.attr('dx', function () {
+						var bbox = this.getBoundingClientRect();
+						var dx   = null;
+
+						if (bbox.right > svgBox.right) {
+							dx = svgBox.right - bbox.right;
+						}
+
+						if (bbox.left < svgBox.left) {
+							dx = svgBox.left - bbox.left;
+						}
+
+						return dx;
+					});
+			}
 
 			t.select('.y.axis')
 				.call(d3.svg.axis()
@@ -196,35 +205,18 @@ module.exports = {
 				});
 		},
 
-		onMouseMove : function () {
-			var cursor = d3.mouse(this.$$.svg)[0];
+		onMouseOver : function (d) {
+			if (this._timer) {
+				window.clearTimeout(this._timer);
+				this._timer = null;
+			}
+
 			var x      = this.getX;
 			var xScale = this.xScale;
 			var yScale = this.yScale;
 			var fmt    = d3.format(this.formatString);
 
-			var range = _(this.series)
-				.pluck('values')
-				.flatten()
-				.map(function (d) { return x(d).getTime(); })
-				.uniq()
-				.sortBy()
-				.value();
-
-			var val   = xScale.invert(cursor).getTime();
-			var right = d3.bisect(range, val);
-			var left  = right - 1;
-			var target;
-
-			if (cursor >= 0 || cursor <= this.width) {
-				if (left < 0) {
-					target = range[right];
-				} else if (right >= range.length) {
-					target = range[left];
-				} else {
-					target = val < range[right] ? range[left] : range[right];
-				}
-			}
+			var target = x(d);
 
 			if (target === this._currentHover) {
 				return;
@@ -241,19 +233,19 @@ module.exports = {
 				})
 				.map(function (d) {
 					return {
-						text : d.name + ' ' + fmt(d.value),
-						x : xScale(x(d)),
-						y : yScale(d.y0 + d.y),
-						defined: data.defined(d.value)
+						text    : d.name + ' ' + fmt(d.value),
+						x       : xScale(x(d)),
+						y       : yScale(d.y0 + d.y),
+						defined : data.defined(d.value)
 					};
 				})
 				.reverse()
 				.value();
 
 			var svg = d3.select(this.$$.svg);
+			var annotation = svg.select('.annotation');
 
-			svg.select('.annotation')
-				.selectAll('.series.label')
+			annotation.selectAll('.series.label')
 				.data(labels)
 				.call(label()
 					.addClass('series')
@@ -261,34 +253,81 @@ module.exports = {
 					.height(this.contentHeight)
 					.align(true));
 
+			svg.selectAll('.x.axis text')
+				.transition()
+				.duration(300)
+				.style('opacity', 0);
+
+			var xLabel = annotation.selectAll('.axis.label')
+				.data([target]);
+
+			xLabel.enter()
+				.append('text')
+				.attr({
+					'text-anchor' : 'middle',
+					'class'       : 'axis label',
+					'dy'          : '1.2em',
+					'y'           : this.contentHeight,
+					'x'           : function (d) { return xScale(d) + (xScale.rangeBand() / 2); }
+				});
+
+			var labelFmt = this.xLabel;
+			xLabel
+				.text(function (d) {
+					return moment(d).format(labelFmt);
+				})
+				.transition()
+				.duration(300)
+				.attr('x', function (d) {
+					return xScale(d) + (xScale.rangeBand() / 2);
+				});
+
 			svg.select('.data')
 				.selectAll('rect')
 				.transition()
 				.duration(300)
 				.style('opacity', function (d) {
-					return x(d).getTime() === target ? 1 : 0.3;
+					return x(d) === target ? 1 : 0.3;
 				});
 		},
 
 		onMouseOut : function () {
-			var svg = d3.select(this.$$.svg);
+			if (!this._timer) {
+				var self = this;
 
-			this._currentHover = null;
+				this._timer = window.setTimeout(function () {
+					var svg = d3.select(self.$$.svg);
 
-			svg.select('.annotation')
-				.selectAll('.series.label')
-				.data(this.labels)
-				.call(label()
-					.addClass('series')
-					.width(this.contentWidth)
-					.height(this.contentHeight)
-					.align(false));
+					self._currentHover = null;
 
-			svg.select('.data')
-				.selectAll('rect')
-				.transition()
-				.duration(300)
-				.style('opacity', 1);
+					var annotation = svg.select('.annotation');
+
+					annotation.selectAll('.series.label')
+						.data(self.labels)
+						.call(label()
+							.addClass('series')
+							.width(self.contentWidth)
+							.height(self.contentHeight)
+							.align(false));
+
+					annotation.selectAll('.axis.label')
+						.transition()
+						.duration(300)
+						.style('opacity', 0)
+						.remove();
+
+					svg.selectAll('.x.axis text')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
+
+					svg.select('.data')
+						.selectAll('rect')
+						.transition()
+						.duration(300)
+						.style('opacity', 1);
+				}, 300);
+			}
 		}
 	},
 
