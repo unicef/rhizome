@@ -154,8 +154,8 @@ module.exports = {
 			}
 
 			var color = d3.scale.ordinal()
-				.domain(['bad', 'okay', 'good'])
-				.range(['#B3B3B3', '#CCCCCC', '#E6E6E6']);
+				.domain(['bad', 'okay', 'ok', 'good'])
+				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC','#E6E6E6']);
 
 			var bg = svg.select('.ranges').selectAll('.range')
 				.data(ranges);
