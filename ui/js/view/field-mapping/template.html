@@ -1,0 +1,23 @@
+<form class="inline" style="width: 700px; margin: 30px auto;">
+<h1>FIELD MAPPING</h1>
+<template v-repeat="type:mappingData">
+  <h2> {{$key | capitalize}} </h2> 
+  <div v-repeat="field:type" class="row">
+    <div class="small-5 columns">
+      <a role="button" class="button">
+        {{field.source_string}}
+      </a>
+    </div>
+    <div class="small-1 columns">
+      <i class="fa fa-arrow-right fa-3x"></i>
+    </div>
+    <div class="small-6 columns">
+      <div id="{{$key}}{{field.source_id}}"
+      			 placeholder="Search {{$key | capitalize}}"
+      			 searchable="true"></div>
+      </div>
+    </div> 
+</template>
+</form>
+
+
