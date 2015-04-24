@@ -366,9 +366,6 @@ class DataPointEntryResource(BaseModelResource):
             and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
             # we get here if there's an existing datapoint being modified
 
-            bundle.obj.changed_by_id = bundle.data['changed_by_id']
-            bundle.obj.cache_job_id = -1
-
             pass
         else:
             # we get here if we're inserting a brand new datapoint
@@ -376,11 +373,11 @@ class DataPointEntryResource(BaseModelResource):
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
-            bundle.obj.source_datapoint_id = -1
             bundle.obj.value = bundle.data['value']
 
-            bundle.obj.changed_by_id = bundle.data['changed_by_id']
-            bundle.obj.cache_job_id = -1
+        bundle.obj.source_datapoint_id = -1
+        bundle.obj.cache_job_id = -1
+        bundle.obj.changed_by_id = bundle.data['changed_by_id']
 
         return bundle
 
