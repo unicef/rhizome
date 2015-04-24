@@ -237,7 +237,7 @@ function hoverLine() {
 			.style('opacity', 0)
 			.remove();
 
-		svg.select('.x.axis')
+		svg.selectAll('.x.axis text')
 			.transition()
 			.duration(300)
 			.style('opacity', data.length ? 0 : 1);
@@ -336,7 +336,7 @@ function hoverLine() {
 			.style('opacity', 0)
 			.remove();
 
-			svg.select('.x.axis')
+			svg.selectAll('.x.axis text')
 				.transition()
 				.duration(300)
 				.style('opacity', 1);
