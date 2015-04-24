@@ -31,5 +31,11 @@ module.exports = {
 			el: el,
 			components: { 'uf-entry-form': require('./view/entry-form') }
 		});
+	},
+	FieldMapping: function (el) {
+		new Vue({
+			el: el,
+			components: { 'uf-field-mapping': require('./view/field-mapping') }
+		});
 	}
 };

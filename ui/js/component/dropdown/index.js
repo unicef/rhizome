@@ -118,7 +118,7 @@ module.exports = Vue.extend({
 
 				selection[item.value] = item;
 				this.selection = selection;
-
+                console.log(selection);
 				this.open = false;
 			} else {
 				if (this.selection.hasOwnProperty(item.value)) {
