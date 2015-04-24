@@ -60,6 +60,7 @@ module.exports = {
 					};
 				})
 				.filter('defined')
+				.sortBy('y')
 				.value();
 
 			return labels;
