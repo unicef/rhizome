@@ -153,13 +153,13 @@ def populate_document_metadata(document_id):
 
     for row in raw_qs:
         row_dict = {
-            'document_id' : row.id
-            # 'db_model':row.db_model,
-            # 'source_object_id':row.source_object_id,
-            # 'source_string':row.source_string,
-            # 'master_object_id':row.master_object_id,
-            # 'source_object_count':row.source_object_cnt,
-            # 'master_object_count':row.master_object_cnt,
+            'document_id' : row.id,
+            'db_model':row.db_model,
+            'source_object_id':row.source_object_id,
+            'source_string':row.source_string,
+            'master_object_id':row.master_object_id,
+            'source_object_count':row.source_object_cnt,
+            'master_object_count':row.master_object_cnt,
         }
 
         meta_breakdown.append(row_dict)
