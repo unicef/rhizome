@@ -74,9 +74,6 @@ class MasterRefresh(object):
                         'changed_by_id': self.user_id
                     })
 
-                print 'created ?  %s' % created
-                print 'dp_val ?  %s' % dp.value
-
                 ## if this datapoint exists and was not added by a human ##
                 if created == False and dp.id > 0:
 

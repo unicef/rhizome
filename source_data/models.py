@@ -88,7 +88,7 @@ class SourceDataPoint(models.Model):
     region_code = models.CharField(max_length=255)
     campaign_string = models.CharField(max_length=255)
     indicator_string = models.CharField(max_length=255)
-    cell_value = models.CharField(max_length=255)
+    cell_value = models.CharField(max_length=255,null=True)
     row_number= models.IntegerField()
     source = models.ForeignKey(Source)
     document = models.ForeignKey(Document)
