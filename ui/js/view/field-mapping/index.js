@@ -20,7 +20,12 @@ module.exports = {
 			      regions:[]
 			    },
 			    //holds arrays of master data for populating the master id dropdowns
-			    masterData:{}
+			    masterData:{},
+			    remainingVerifications:{
+			      indicators:0,
+			      campaigns:0,
+			      regions:0
+			    }
 			   };
 			},
 			
@@ -32,6 +37,7 @@ module.exports = {
 			   	   self.$data.dropdowns[name][key] = new Dropdown({
 			   	   		el : '#'+name+field.source_id
 			   	   	}); 
+			   	   	self.$data.dropdowns[name][key].loading = field.mapped;
 			   	});
 			});
 		},
@@ -82,55 +88,69 @@ module.exports = {
 	        });
 	},
 	methods: { 
+	  calculateRemainingVerifications:function(){
+	    var self = this;
+	    _.each(this.$data.dropdowns,function(dropdownSet,name){ 
+	      self.$data.remainingVerifications[name]=0;
+	      _.each(dropdownSet,function(dropdown){
+	            if(!dropdown.hasSelection)
+	            {
+	               self.$data.remainingVerifications[name]++;
+	            }
+	       });
+	     }); 
+	  },
 	  populateDropdowns: function(){
 	       var self = this;
-	        //console.log(self.$data.masterData);
+	        //set up master mapping data from api to be fed into the drop down selects
 	        _.each(self.$data.masterData,function(data,name){
-	             //console.log(data);
-	             if(name==='regions')
-	             {
-        			var items = _.chain(data)
+        		var	items = _.chain(data)
         							.map(function(d) {
-        								return {
+        								if(name==='regions')
+        								{
+        								  return {
         									'parent': d.parent_region_id,
         									'title': d.name,
         									'value': d.id
-        								};
+        									};
+        								} else {
+        							      return {
+        							      		'parent': null,
+        							      		'title': d.slug,
+        							      		'value': d.id
+        							      	};	
+        								}
         							})
         							.value();
-	             }
-	             else {
-	             	var items = _.chain(data)
-	             					.map(function(d) {
-	             						return {
-	             							'parent': null,
-	             							'title': d.slug,
-	             							'value': d.id
-	             						};
-	             					})
-	             					.value();
-	             }
-
 	             
-	             // var itemTree = treeify(items, 'value');
+	              var itemTree = treeify(items, 'value');
+	               //loop through dropdowns and populate them with the corresponding master id data sets
 	           _.each(self.$data.dropdowns[name],function(dropdown,key){
 	                    var mapDataItem = self.$data.mappingData[name][key];
 	             	    self.$data.dropdowns[name][key].items = items; 
 	             	    self.$data.dropdowns[name][key].itemTree = itemTree; 	
-
-	             	    
-	             	    
-	             	    if (mapDataItem.mapped)
+                        //if mapping data pulls back a mapped:true value from the api set the value of the dropdown to the master_id value
+                        if (mapDataItem.mapped)
 	             	    {
 	             	       self.$data.dropdowns[name][key].select(mapDataItem.master_id);
-	             	    }             	   
-	             	    
-	             	    
-	             	    
+	             	       self.$data.dropdowns[name][key].loading = false;
+	             	    }  
+	             	    self.$data.dropdowns[name][key].$on('dropdown-value-changed', function () {
+	             	    	self.calculateRemainingVerifications();
+	             	    });           	   
 	             	});
-	          
-	             
-	        });
+	         });
+	        self.calculateRemainingVerifications();
 		} 
+	},
+	filters: {
+	  fixVerificationPluralization: function(field,digit){
+		  if(this[digit][field]===1){
+		    return field.substring(0, field.length - 1) + ' needs';
+		  }
+		  else {
+		  	return field + ' need';
+		  }
+	  }
 	}
 };
