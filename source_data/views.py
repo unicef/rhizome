@@ -2,6 +2,7 @@ import hashlib
 from django.utils import simplejson
 from itertools import chain
 from pprint import pprint
+import json
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -307,6 +308,18 @@ def refresh_master(request):
     t = EtlTask('refresh_master',job_guid)
 
     task_data = t.data
+
+    return render_to_response('map/master_refresh.html'
+        ,{'task_data': task_data})
+
+def api_document_review(request, document_id):
+
+    response_data = {'objects':[{'hello':'world'}], 'meta':[]}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
 
     return render_to_response('map/master_refresh.html'
         ,{'task_data': task_data})
