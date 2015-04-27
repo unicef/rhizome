@@ -68,8 +68,8 @@ BEGIN
 					WHERE r.id = rt.region_id
 					AND r.parent_region_id IS NULL
 
-		);
-
+		)
+		AND d.value IS NOT NULL;
 
 		CREATE TABLE _tmp_agg AS
 

@@ -226,12 +226,13 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.FloatField(null=True)
+    value = models.DecimalField(null=True, max_digits=15, decimal_places=5)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
     cache_job = models.ForeignKey(CacheJob,default=-1)
+
 
     def get_val(self):
         return self.value
