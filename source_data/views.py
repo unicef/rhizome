@@ -14,7 +14,6 @@ from pandas import DataFrame
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
-from source_data.raw_sql import base_meta_q
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
@@ -118,6 +117,8 @@ def document_review(request,document_id):
     mb_df = DataFrame(meta_breakdown)
     no_ix_df = mb_df.reset_index(drop=True)
 
+    print mb_df
+
     ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
         .transpose().to_dict()
     ind_breakdown =  [v for k,v in ind_dict.iteritems()]
@@ -144,16 +145,21 @@ def populate_document_metadata(document_id):
 
     meta_breakdown = []
 
-    raw_qs = Document.objects.raw(base_meta_q,[document_id])
+    raw_qs = Document.objects.raw('''
+
+        SELECT * FROM fn_populate_doc_meta(%s)
+
+        ''',[document_id])
 
     for row in raw_qs:
         row_dict = {
-            'db_model':row.db_model,
-            'source_object_id':row.source_object_id,
-            'source_string':row.source_string,
-            'master_object_id':row.master_object_id,
-            'source_object_count':row.source_object_cnt,
-            'master_object_count':row.master_object_cnt,
+            'document_id' : row.id
+            # 'db_model':row.db_model,
+            # 'source_object_id':row.source_object_id,
+            # 'source_string':row.source_string,
+            # 'master_object_id':row.master_object_id,
+            # 'source_object_count':row.source_object_cnt,
+            # 'master_object_count':row.master_object_cnt,
         }
 
         meta_breakdown.append(row_dict)

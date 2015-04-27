@@ -1,7 +1,16 @@
 
 DROP FUNCTION IF EXISTS fn_populate_doc_meta(input_document_id INT);
 CREATE FUNCTION fn_populate_doc_meta(input_document_id INT)
-RETURNS TABLE(id int) AS
+RETURNS TABLE
+(
+	 id INT
+	,db_model VARCHAR(255)
+	,source_string VARCHAR(255)
+	,source_object_id BIGINT
+	,master_object_id BIGINT
+	,master_object_cnt BIGINT
+	,source_object_cnt BIGINT
+) AS
 $func$
 BEGIN
 
@@ -15,7 +24,7 @@ BEGIN
         	,campaign_string
         	,region_code
         FROM source_datapoint sd
-        WHERE document_id = $1;
+        WHERE sd.document_id = $1;
 
         DROP TABLE IF EXISTS _doc_meta_cnt;
         CREATE TABLE _doc_meta_cnt AS
@@ -51,8 +60,8 @@ BEGIN
         	GROUP BY region_code
         )x
         INNER JOIN (
-        	SELECT document_id
-        	FROM _doc_data LIMIT 1
+        	SELECT dd.document_id
+        	FROM _doc_data dd LIMIT 1
         )y
         ON 1=1;
 
@@ -68,7 +77,7 @@ BEGIN
 
         SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id
         FROM _doc_meta_cnt dmc
-        WHERE db_model = 'source_indicator'
+        WHERE dmc.db_model = 'source_indicator'
         AND NOT EXISTS (
         	SELECT 1 FROM source_indicator si
         	WHERE dmc.db_model = 'source_indicator'
@@ -82,7 +91,7 @@ BEGIN
         WHERE dmc.db_model = 'source_indicator'
         AND dmc.source_string = si.indicator_string;
 
-        -- MASTER REGION ID --
+        -- MASTER INDICATOR ID --
         UPDATE _doc_meta_cnt dmc
         SET
         	master_object_id = im.master_indicator_id
@@ -100,7 +109,7 @@ BEGIN
 
         SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id, 'f'
         FROM _doc_meta_cnt dmc
-        WHERE db_model = 'source_region'
+        WHERE dmc.db_model = 'source_region'
         AND NOT EXISTS (
         	SELECT 1 FROM source_region sr
         	WHERE dmc.db_model = 'source_region'
@@ -132,7 +141,7 @@ BEGIN
 
         SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id
         FROM _doc_meta_cnt dmc
-        WHERE db_model = 'source_campaign'
+        WHERE dmc.db_model = 'source_campaign'
         AND NOT EXISTS (
         	SELECT 1 FROM source_campaign sc
         	WHERE dmc.db_model = 'source_campaign'
@@ -189,18 +198,17 @@ BEGIN
         AND dmc.source_string = x.source_string;
 
 
-
 		RETURN QUERY
 
-        --- RETURN TO RAW QUERYSET -----
+		--- RETURN TO RAW QUERYSET -----
         SELECT
-        	document_id as id
---         	,db_model
---         	,source_string
---         	,source_object_id
---         	,master_object_id
---         	,master_object_cnt
---         	,source_object_cnt
+        	dmc.document_id as id
+        	,CAST(dmc.db_model AS VARCHAR)
+        	,CAST(dmc.source_string AS VARCHAR)
+        	,CAST(dmc.source_object_id AS BIGINT)
+        	,CAST(dmc.master_object_id AS BIGINT)
+        	,CAST(dmc.master_object_cnt AS BIGINT)
+        	,CAST(dmc.source_object_cnt AS BIGINT)
         FROM _doc_meta_cnt dmc;
 
 
