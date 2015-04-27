@@ -11,7 +11,7 @@ from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect,HttpResponse
 from django.db.utils import IntegrityError
-from pandas import DataFrame
+from pandas import DataFrame, notnull
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
@@ -314,12 +314,46 @@ def refresh_master(request):
 
 def api_document_review(request, document_id):
 
-    response_data = {'objects':[{'hello':'world'}], 'meta':[]}
+    meta_breakdown = []
+
+    raw_qs = Document.objects.raw('''\
+        SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
+
+    for row in raw_qs:
+        row_dict = {
+            'db_model':row.db_model,
+            'source_object_id':row.source_object_id,
+            'source_string':row.source_string,
+            'master_object_id':row.master_object_id,
+        }
+
+        meta_breakdown.append(row_dict)
+
+    mb_df = DataFrame(meta_breakdown)
+    df_no_nan = mb_df.where((notnull(mb_df)), None)
+    no_ix_df = df_no_nan.reset_index(drop=True)
+
+    ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
+        .transpose().to_dict()
+    indicator_breakdown =  [v for k,v in ind_dict.iteritems()]
+
+    ##
+    camp_dict = no_ix_df[no_ix_df['db_model'] == 'source_campaign']\
+        .transpose().to_dict()
+    camp_breakdown =  [v for k,v in camp_dict.iteritems()]
+
+    ##
+    region_dict = no_ix_df[no_ix_df['db_model'] == 'source_region']\
+        .transpose().to_dict()
+    region_breakdown =  [v for k,v in region_dict.iteritems()]
+
+    response_objects = { \
+        'regions': region_breakdown,
+        'campaigns': camp_breakdown,
+        'indicators': indicator_breakdown,
+        }
+
+    response_data = {'objects':response_objects, 'meta':[{'hello':'world'}]}
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
-
-
-
-    return render_to_response('map/master_refresh.html'
-        ,{'task_data': task_data})
