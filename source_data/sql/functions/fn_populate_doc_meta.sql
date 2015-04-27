@@ -1,4 +1,9 @@
 
+
+
+--SELECT * FROM fn_populate_doc_meta(1013)
+
+
 DROP FUNCTION IF EXISTS fn_populate_doc_meta(input_document_id INT);
 CREATE FUNCTION fn_populate_doc_meta(input_document_id INT)
 RETURNS TABLE
