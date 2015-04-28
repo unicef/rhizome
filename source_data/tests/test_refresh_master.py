@@ -211,9 +211,9 @@ class RefreshMasterTestCase(TestCase):
 
         cm_1 = CampaignMap.objects.create(
             mapped_by_id = self.user.id,
-            source_campaign_id = SourceCampaign.objects.get(campaign_string=\
+            source_id = SourceCampaign.objects.get(campaign_string=\
                 self.campaign_string).id,
-            master_campaign_id = self.campaign.id)
+            master_id = self.campaign.id)
 
         im_1 = IndicatorMap.objects.create(
             mapped_by_id = self.user.id,

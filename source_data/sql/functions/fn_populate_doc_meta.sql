@@ -164,10 +164,10 @@ BEGIN
         -- MASTER CAMPAIGN ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = cm.master_campaign_id
+        	master_object_id = cm.master_id
         FROM campaign_map cm
         WHERE dmc.db_model = 'source_campaign'
-        AND dmc.source_object_id = cm.source_campaign_id;
+        AND dmc.source_object_id = cm.source_id;
 
         DROP TABLE IF EXISTS _synced_datapoints;
         CREATE TEMP TABLE _synced_datapoints  as

@@ -10,7 +10,7 @@ SELECT
  	,d.region_id
 	,sr.id as source_id
  	,d.campaign_id
- 	,sc.id as source_campaign_id
+ 	,sc.id as source_id
  	,d.indicator_id
  	,si.id as source_id
  	,sd.document_id
@@ -68,8 +68,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM campaign_map cm
-		WHERE fj.campaign_id = cm.master_campaign_id
-		AND fj.source_campaign_id = cm.source_campaign_id
+		WHERE fj.campaign_id = cm.master_id
+		AND fj.source_id = cm.source_id
 
 	)
 

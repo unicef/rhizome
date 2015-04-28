@@ -53,7 +53,7 @@ DELETE
 FROM source_campaign sc
 WHERE NOT EXISTS (
 	SELECT 1 FROM campaign_map cm
-	WHERE sc.id = cm.source_campaign_id
+	WHERE sc.id = cm.source_id
 );
 
 

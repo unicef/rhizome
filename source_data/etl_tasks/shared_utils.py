@@ -109,8 +109,8 @@ def map_campaigns(campaign_strings,document_id):
             defaults = {'document_id':document_id,'office':office_obj})
 
         try:
-            campaign_id = CampaignMap.objects.get(source_campaign_id = \
-                source_campaign.id).master_campaign_id
+            campaign_id = CampaignMap.objects.get(source_id = \
+                source_campaign.id).master_id
 
             campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:

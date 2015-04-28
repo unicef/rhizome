@@ -239,7 +239,7 @@ def un_map(request,source_object_id,db_model,document_id):
 
     elif db_model == 'campaign':
 
-        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
+        CampaignMap.objects.get(source_id=source_object_id).delete()
 
 
     return HttpResponseRedirect(reverse('source_data:document_review'\
