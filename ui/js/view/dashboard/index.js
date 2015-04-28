@@ -194,6 +194,7 @@ module.exports = {
 	components: {
 		'management-dashboard'    : require('dashboard/management'),
 		'nga-campaign-monitoring' : require('dashboard/nco'),
+		'district'                : require('dashboard/district'),
 
 		'chart-bar'               : require('component/chart/bar'),
 		'chart-bullet'            : require('component/chart/bullet'),

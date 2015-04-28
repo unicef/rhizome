@@ -1,0 +1,56 @@
+<nav>
+	<ul>
+		<li v-repeat="sections" v-class="selected : slug == currentSection">
+			<a href="#{{ slug }}">{{ title }}</a>
+		</li>
+	</ul>
+	<form>
+		<input type="text">
+	</form>
+</nav>
+
+<section id="impact">
+	<div class="row">
+		<div class="small-12 columns">
+			<h4>Percent of Non-Polio AFP cases with 0 Doses of OPV</h4>
+		</div>
+		<div class="medium-8 large-9 columns">
+			<div v-component="chart-line"
+				data-aspect="2"></div>
+		</div>
+		<div class="medium-4 large-3 columns">
+			<div v-component="chart-choropleth"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="small-12 columns">
+			<h4>Percent of Non-Polio AFP cases with 1–3 Doses of OPV</h4>
+		</div>
+		<div class="medium-8 large-9 columns">
+			<div v-component="chart-line" data-aspect="2"></div>
+		</div>
+		<div class="medium-4 large-3 columns">
+			<div v-component="chart-choropleth"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="small-12 columns">
+			<h2>Percent of Non-Polio AFP Cases with 4+ Doses of OPV</h2>
+		</div>
+		<div class="medium-8 large-9 columns">
+			<div v-component="chart-line" data-aspect="2"></div>
+		</div>
+		<div class="medium-4 large-3 columns">
+			<div v-component="chart-choropleth"></div>
+		</div>
+	</div>
+</section>
+
+<section id="access"></section>
+<section id="misses"></section>
+<section id="absences"></section>
+<section id="hr"></section>
+<section id="training"></section>
+<section id="supply"></section>
