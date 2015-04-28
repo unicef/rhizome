@@ -227,25 +227,6 @@ class EtlJobIndex(generic.ListView):
     paginate_by = 25
 
 
-def un_map(request,source_object_id,db_model,document_id):
-
-    if db_model == 'region':
-
-        RegionMap.objects.get(source_id=source_object_id).delete()
-
-    elif db_model == 'indicator':
-
-        IndicatorMap.objects.get(source_id=source_object_id).delete()
-
-    elif db_model == 'campaign':
-
-        CampaignMap.objects.get(source_id=source_object_id).delete()
-
-
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        ,kwargs={'document_id':document_id}))
-
-
 def refresh_master(request):
 
     job_guid = hashlib.sha1(str(random.random())).hexdigest()
@@ -309,11 +290,7 @@ def api_map_meta(request):
     objects, error, meta = None, None, {}
     required_params = {'object_type':None,'source_id':None,'master_id':None}
     map_model_lookup  = {
-        'indicator':{
-            'map_table': IndicatorMap,
-            'source_col': 'source_id',
-            'master_col' : 'master_id'
-        },
+        'indicator':IndicatorMap,
         'region':RegionMap,
         'campaign':CampaignMap
         }
@@ -331,29 +308,37 @@ def api_map_meta(request):
             return HttpResponse(json.dumps(response_data)\
                 , content_type="application/json")
 
+    meta['user_id'] = request.user.id
+
     ## LOOK UP THE OBJECT AND CREATE OR UPDATE THE MAPPING TABLE $$
+    map_object = map_model_lookup[meta['object_type']]
 
-    map_object = map_model_lookup[meta['object_type']]['map_table']
+    error, map_row_id = upsert_mapping(meta,map_object)
 
-    db_obj = map_object.objects.get(**{'source_id': 6134,})
+    objects = {'object_id': map_row_id}
 
-
-    if db_obj:
-        db_obj.master_id = 165
-        db_obj.mapped_by_id = request.user.id
-        db_obj.save()
-
-
-    else:
-        db_obj = map_object.objects.create(**{
-            'source_id': 6134,
-            'master_id':168,
-            'mapped_by_id':request.user.id\
-            })
-
-    objects = {'object_id': db_obj.id}
-
-    response_data = {'objects':objects,'error':error, 'meta':meta}
+    response_data = {'error':error,'objects':objects, 'meta':meta }
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
+
+
+def upsert_mapping(meta,map_object):
+
+    try:
+        db_obj,created = IndicatorMap.objects.get_or_create(
+            source_id= int(meta['source_id']),
+            defaults = {
+                'master_id':int(meta['master_id']),
+                'mapped_by_id':meta['user_id']
+            })
+
+        if not created:
+            db_obj.master_id = int(meta['master_id']),
+            db_obj.mapped_by_id = meta['user_id']
+            db_obj.save()
+
+    except Exception as err:
+        return str(err), None
+
+    return None, db_obj.id

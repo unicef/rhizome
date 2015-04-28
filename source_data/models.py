@@ -184,8 +184,8 @@ class SourceCampaign(models.Model):
 
 class RegionMap(models.Model):
 
-    master_id = models.ForeignKey(Region)
-    source_id = models.ForeignKey(SourceRegion,unique=True)
+    master = models.ForeignKey(Region)
+    source = models.ForeignKey(SourceRegion,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
@@ -194,8 +194,8 @@ class RegionMap(models.Model):
 
 class IndicatorMap(models.Model):
 
-    master_id = models.ForeignKey(Indicator)
-    source_id = models.ForeignKey(SourceIndicator,unique=True)
+    master = models.ForeignKey(Indicator)
+    source = models.ForeignKey(SourceIndicator,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
@@ -204,8 +204,8 @@ class IndicatorMap(models.Model):
 
 class CampaignMap(models.Model):
 
-    master_id = models.ForeignKey(Campaign)
-    source_id = models.ForeignKey(SourceCampaign,unique=True)
+    master = models.ForeignKey(Campaign)
+    source = models.ForeignKey(SourceCampaign,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
