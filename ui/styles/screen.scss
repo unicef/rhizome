@@ -233,6 +233,15 @@ button,
 	opacity: $button-disabled-opacity;
 }
 
+.button.read-only {
+   border-bottom-width: 1px;
+   cursor:initial;
+   &:not(.disabled):not(.success):hover {
+   	border-color: $button-border-color;
+   }
+   
+}
+
 /* fixed-header tables */
 .fixed-table-container {
 

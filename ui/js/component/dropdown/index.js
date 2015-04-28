@@ -113,12 +113,18 @@ module.exports = Vue.extend({
 		},
 
 		toggleItem: function (item) {
+			var self = this;
 			if (!this.multi) {
-				var selection = {};
-
-				selection[item.value] = item;
-				this.selection = selection;
+				if(this.selection)
+				{
+					var keys = _.keys(self.selection);
+					_.each(keys,function(key){
+					  delete self.selection[key];
+					});
+				}
+				this.selection[item.value] = item;
 				this.open = false;
+				this.selection.__ob__.notify();
 			} else {
 				if (this.selection.hasOwnProperty(item.value)) {
 					delete this.selection[item.value];

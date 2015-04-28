@@ -7,9 +7,20 @@ module.exports = {
         },
         {
             'mapped': true,
-            'source_string': 'Sumofabsenceconverted',
+            'source_string': '-missed-children-due-to-childnotavailable',
             'source_id': 6377,
             'master_id': 214
+        },
+        {
+            'mapped': false,
+            'source_string': 'HRD-With90%',
+            'source_id': 63801
+        },
+        {
+            'mapped': true,
+            'source_string': 'end_process_percent',
+            'source_id': 6380,
+            'master_id': 472
         }
     ],
     'campaigns': [

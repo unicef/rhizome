@@ -5,13 +5,13 @@
     <div class="small-6 columns">
       <h2> {{$key | capitalize}} </h2> 
     </div>
-    <div class="small-6 columns indicator-verification">
-     <h4 style="float: right;">{{remainingVerifications[$key]}}/{{mappingData[$key].length}} {{$key}} need verification </h4>
+    <div class="small-6 columns">
+     <h4 class="indicator-verification">{{remainingVerifications[$key]}}/{{mappingData[$key].length}} {{$key}} need verification </h4>
     </div>
   </div>  
   <div v-repeat="field:type" class="row">
     <div class="small-5 columns">
-      <a role="button" class="button">
+      <a role="button" class="button read-only">
         {{field.source_string}}
       </a>
     </div>
@@ -26,5 +26,10 @@
     </div> 
 </template>
 </form>
+
+
+
+
+
 
 

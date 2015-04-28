@@ -1,9 +1,14 @@
 
 {% extends "datapoints/base.html" %}
   {% block content %}
+  
+  
    <uf-field-mapping></uf-field-mapping>
     {% endblock %}
 
 {% block scripts %}
-<script>Polio.FieldMapping('#main');</script>
+<script>
+window.document_id = {{ document_id }};
+Polio.FieldMapping('#main');
+</script>
 {% endblock %}

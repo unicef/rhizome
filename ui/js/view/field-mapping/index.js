@@ -13,14 +13,7 @@ module.exports = {
 			return {
 			    //mapping data from the file import 
 			    mappingData: require('./temp_data.js'),
-			    //holds the vue master id dropdown components
-			    dropdowns:{
-			      indicators:[],
-			      campaigns:[],
-			      regions:[]
-			    },
 			    //holds arrays of master data for populating the master id dropdowns
-			    masterData:{},
 			    remainingVerifications:{
 			      indicators:0,
 			      campaigns:0,
@@ -31,19 +24,28 @@ module.exports = {
 			
 	attached: function () {
 			var self = this;
+			//holds the vue master id dropdown components
+			this.dropdowns = {
+			  indicators:[],
+			  campaigns:[],
+			  regions:[]
+			};
+			
+			
 			//initialize dropdowns
 			_.each(self.$data.mappingData,function(fieldArray,name){
 			   	_.each(fieldArray,function(field,key){
-			   	   self.$data.dropdowns[name][key] = new Dropdown({
+			   	   self.dropdowns[name][key] = new Dropdown({
 			   	   		el : '#'+name+field.source_id
 			   	   	}); 
-			   	   	self.$data.dropdowns[name][key].loading = field.mapped;
+			   	   	self.dropdowns[name][key].loading = field.mapped;
 			   	});
 			});
 		},
 	ready: function() {
+	   console.log(window.document_id);
 	   var self = this;
-	   
+	   this.masterData = {};
 	   var makeMap = function(data) {
 	   	if (data.objects) {
 	   		return _.indexBy(data.objects, 'id');
@@ -80,9 +82,9 @@ module.exports = {
 	        .then(makeMap)])
 	        .then(function(allData) {
 	        
-	          self.$data.masterData.regions = allData[0];
-	          self.$data.masterData.indicators = allData[1];
-	          self.$data.masterData.campaigns = allData[2];
+	          self.masterData.regions = allData[0];
+	          self.masterData.indicators = allData[1];
+	          self.masterData.campaigns = allData[2];
 	          self.populateDropdowns();
 	        
 	        });
@@ -90,7 +92,7 @@ module.exports = {
 	methods: { 
 	  calculateRemainingVerifications:function(){
 	    var self = this;
-	    _.each(this.$data.dropdowns,function(dropdownSet,name){ 
+	    _.each(this.dropdowns,function(dropdownSet,name){ 
 	      self.$data.remainingVerifications[name]=0;
 	      _.each(dropdownSet,function(dropdown){
 	            if(!dropdown.hasSelection)
@@ -103,7 +105,7 @@ module.exports = {
 	  populateDropdowns: function(){
 	       var self = this;
 	        //set up master mapping data from api to be fed into the drop down selects
-	        _.each(self.$data.masterData,function(data,name){
+	        _.each(self.masterData,function(data,name){
         		var	items = _.chain(data)
         							.map(function(d) {
         								if(name==='regions')
@@ -125,17 +127,18 @@ module.exports = {
 	             
 	              var itemTree = treeify(items, 'value');
 	               //loop through dropdowns and populate them with the corresponding master id data sets
-	           _.each(self.$data.dropdowns[name],function(dropdown,key){
+	           _.each(self.dropdowns[name],function(dropdown,key){
 	                    var mapDataItem = self.$data.mappingData[name][key];
-	             	    self.$data.dropdowns[name][key].items = items; 
-	             	    self.$data.dropdowns[name][key].itemTree = itemTree; 	
+	             	    self.dropdowns[name][key].items = items; 
+	             	    self.dropdowns[name][key].itemTree = itemTree; 	
                         //if mapping data pulls back a mapped:true value from the api set the value of the dropdown to the master_id value
                         if (mapDataItem.mapped)
 	             	    {
-	             	       self.$data.dropdowns[name][key].select(mapDataItem.master_id);
-	             	       self.$data.dropdowns[name][key].loading = false;
+	             	       self.dropdowns[name][key].select(mapDataItem.master_id);
+	             	       self.dropdowns[name][key].loading = false;
 	             	    }  
-	             	    self.$data.dropdowns[name][key].$on('dropdown-value-changed', function () {
+	             	    self.dropdowns[name][key].$on('dropdown-value-changed', function (value) {
+	             	        console.log(value);
 	             	    	self.calculateRemainingVerifications();
 	             	    });           	   
 	             	});
