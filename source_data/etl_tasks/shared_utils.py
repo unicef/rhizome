@@ -67,8 +67,8 @@ def map_indicators(indicator_strings,document_id):
 
 
         try:
-            indicator_id = IndicatorMap.objects.get(source_indicator_id = \
-                source_indicator.id).master_indicator_id
+            indicator_id = IndicatorMap.objects.get(source_id = \
+                source_indicator.id).master_id
 
             indicator_mapping[indicator_string] = indicator_id
 

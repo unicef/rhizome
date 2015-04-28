@@ -21,7 +21,7 @@ class MasterRefresh(object):
         self.indicator_id = indicator_id
 
         self.source_ids, self.source_campaign_id\
-            , self.source_indicator_ids = [],[],[]
+            , self.source_ids = [],[],[]
 
         self.sdp_df = DataFrame(list(SourceDataPoint.objects\
             .filter(document_id = self.document_id).values()))
@@ -44,7 +44,7 @@ class MasterRefresh(object):
                     , sd.cell_value
                     , rm.master_id
                     , cm.master_campaign_id
-                    , im.master_indicator_id
+                    , im.master_id
                 FROM source_datapoint sd
                 INNER JOIN source_region sr
                 	ON sd.region_code = sr.region_code
@@ -53,8 +53,8 @@ class MasterRefresh(object):
                 INNER JOIN source_indicator si
                 	ON sd.indicator_string = si.indicator_string
                 INNER JOIN indicator_map im
-                	ON si.id = im.source_indicator_id
-                    AND im.master_indicator_id = %s
+                	ON si.id = im.source_id
+                    AND im.master_id = %s
                 INNER JOIN source_campaign sc
                 	ON sd.campaign_string = sc.campaign_string
                 INNER JOIN campaign_map cm
@@ -66,7 +66,7 @@ class MasterRefresh(object):
 
                 dp,created = DataPoint.objects.get_or_create(
                     campaign_id = row.master_campaign_id,
-                    indicator_id = row.master_indicator_id,
+                    indicator_id = row.master_id,
                     region_id = row.master_id,
                     defaults = {
                         'value':row.cell_value,

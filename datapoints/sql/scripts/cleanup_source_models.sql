@@ -62,7 +62,7 @@ DELETE
 FROM source_indicator si
 WHERE NOT EXISTS (
 	SELECT 1 FROM indicator_map im
-	WHERE si.id = im.source_indicator_id
+	WHERE si.id = im.source_id
 );
 
 --SELECT COUNT(*)

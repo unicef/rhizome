@@ -217,9 +217,9 @@ class RefreshMasterTestCase(TestCase):
 
         im_1 = IndicatorMap.objects.create(
             mapped_by_id = self.user.id,
-            source_indicator_id = SourceIndicator.objects.get(indicator_string=\
+            source_id = SourceIndicator.objects.get(indicator_string=\
                 self.indicator_string).id,
-            master_indicator_id = self.indicator.id)
+            master_id = self.indicator.id)
 
         mr.source_dps_to_dps()
 

@@ -99,10 +99,10 @@ BEGIN
         -- MASTER INDICATOR ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = im.master_indicator_id
+        	master_object_id = im.master_id
         FROM indicator_map im
         WHERE dmc.db_model = 'source_indicator'
-        AND dmc.source_object_id = im.source_indicator_id;
+        AND dmc.source_object_id = im.source_id;
 
 
         -------------

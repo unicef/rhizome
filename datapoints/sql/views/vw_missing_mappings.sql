@@ -12,7 +12,7 @@ SELECT
  	,d.campaign_id
  	,sc.id as source_campaign_id
  	,d.indicator_id
- 	,si.id as source_indicator_id
+ 	,si.id as source_id
  	,sd.document_id
 FROM datapoint d
 INNER JOIN source_datapoint sd
@@ -39,8 +39,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM indicator_map im
-		WHERE fj.indicator_id = im.master_indicator_id
-		AND fj.source_indicator_id = im.source_indicator_id
+		WHERE fj.indicator_id = im.master_id
+		AND fj.source_id = im.source_id
 	)
 
 

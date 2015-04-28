@@ -167,9 +167,9 @@ def populate_document_metadata(document_id):
 
     return meta_breakdown
 
-def sync_source_datapoints(request,document_id,master_indicator_id):
+def sync_source_datapoints(request,document_id,master_id):
 
-    mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
+    mr = MasterRefresh(request.user.id,document_id,master_id)
 
     mr.source_dps_to_dps()
     mr.sync_regions()
@@ -235,7 +235,7 @@ def un_map(request,source_object_id,db_model,document_id):
 
     elif db_model == 'indicator':
 
-        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
+        IndicatorMap.objects.get(source_id=source_object_id).delete()
 
     elif db_model == 'campaign':
 
@@ -311,8 +311,8 @@ def api_map_meta(request):
     map_model_lookup  = {
         'indicator':{
             'map_table': IndicatorMap,
-            'source_col': 'source_indicator_id',
-            'master_col' : 'master_indicator_id'
+            'source_col': 'source_id',
+            'master_col' : 'master_id'
         },
         'region':RegionMap,
         'campaign':CampaignMap
@@ -335,19 +335,19 @@ def api_map_meta(request):
 
     map_object = map_model_lookup[meta['object_type']]['map_table']
 
-    db_obj = map_object.objects.get(**{'source_indicator_id': 6134,})
+    db_obj = map_object.objects.get(**{'source_id': 6134,})
 
 
     if db_obj:
-        db_obj.master_indicator_id = 165
+        db_obj.master_id = 165
         db_obj.mapped_by_id = request.user.id
         db_obj.save()
 
 
     else:
         db_obj = map_object.objects.create(**{
-            'source_indicator_id': 6134,
-            'master_indicator_id':168,
+            'source_id': 6134,
+            'master_id':168,
             'mapped_by_id':request.user.id\
             })
 
