@@ -361,11 +361,7 @@ def api_document_review(request, document_id):
 
 def api_map_meta(request):
 
-    post_data = request.POST
-    print post_data
-
     objects, error, meta = None, None, {}
-
     required_params = {'object_type':None,'source_id':None,'master_id':None}
     map_model_lookup  = {
         'indicator':{'map_table':IndicatorMap,'source_table':SourceIndicator,\
@@ -377,8 +373,12 @@ def api_map_meta(request):
     for param in required_params:
 
         try:
-            param_value = post_data[param].replace('[u','').replace(']','')
-            meta[param]= param_value
+            param_value = request.POST[param].replace('[u','').replace(']','')
+            cleaned_value = param_value if param == 'object_type' else\
+                int(param_value)
+
+            meta[param]= cleaned_value
+
 
         except KeyError:  ## IF PARAM IS MISSING ##
             error = '%s is a required parameter' % param
@@ -386,9 +386,6 @@ def api_map_meta(request):
 
             return HttpResponse(json.dumps(response_data)\
                 , content_type="application/json")
-
-
-    print meta
 
 
     response_data = {'objects':objects,'error':error, 'meta':meta}
