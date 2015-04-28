@@ -11,6 +11,7 @@ function hoverLine() {
 	var height     = 1;
 	var seriesName = null;
 	var _sort      = false;
+	var top        = 0;
 	var width      = 1;
 	var x          = function (d) { return d.x; };
 	var xFormat    = String;
@@ -92,6 +93,15 @@ function hoverLine() {
 		}
 
 		_sort = value;
+		return chart;
+	};
+
+	chart.top = function (value) {
+		if (!arguments.length) {
+			return top;
+		}
+
+		top = value;
 		return chart;
 	};
 
@@ -205,12 +215,12 @@ function hoverLine() {
 			.append('line')
 			.style({
 				'opacity': 0,
-				'stroke': '#ffcc67'
+				'stroke': '#495356'
 			});
 
 		line
 			.attr({
-				'y1': 0,
+				'y1': top,
 				'y2': height
 			})
 			.transition()
@@ -227,7 +237,7 @@ function hoverLine() {
 			.style('opacity', 0)
 			.remove();
 
-		svg.select('.x.axis')
+		svg.selectAll('.x.axis text')
 			.transition()
 			.duration(300)
 			.style('opacity', data.length ? 0 : 1);
@@ -326,7 +336,7 @@ function hoverLine() {
 			.style('opacity', 0)
 			.remove();
 
-			svg.select('.x.axis')
+			svg.selectAll('.x.axis text')
 				.transition()
 				.duration(300)
 				.style('opacity', 1);

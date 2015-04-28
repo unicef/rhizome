@@ -44,6 +44,20 @@ class Indicator(models.Model):
         db_table = 'indicator'
         ordering = ('name',)
 
+
+class IndicatorAbstracted(models.Model):
+
+    indicator = models.ForeignKey(Indicator)
+    bound_json = JSONField()
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'indicator_abstracted'
+
+
+
 class CalculatedIndicatorComponent(models.Model):
     '''
     the indicator is for example "pct missed due to refusal," the component
@@ -61,6 +75,26 @@ class CalculatedIndicatorComponent(models.Model):
 
     class Meta:
         db_table = 'calculated_indicator_component'
+
+class IndicatorBound(models.Model):
+    '''
+    If a Low / High reporesents an error, or a particular grouping of values
+    i.e. (good, ok, bad) we have how ever many rows for an indicator as their
+    are groupings for that indicator's values.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    mn_val = models.FloatField(null=True)
+    mx_val = models.FloatField(null=True)
+    bound_name = models.CharField(max_length=255)
+    direction = models.IntegerField(default=1)
+
+
+    def __unicode__(self):
+        return unicode(self.bound_name.name)
+
+    class Meta:
+        db_table = 'indicator_bound'
 
 
 
@@ -192,12 +226,13 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.FloatField()
+    value = models.DecimalField(null=True, max_digits=15, decimal_places=5)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
     cache_job = models.ForeignKey(CacheJob,default=-1)
+
 
     def get_val(self):
         return self.value

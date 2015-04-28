@@ -27,6 +27,7 @@ module.exports = {
 		return {
 			aspect       : false, // Disable auto-setting height
 			barHeight    : 14,
+			chartType    : 'grouped-bar',
 			format       : 's',
 			marginTop    : 9,
 			marginRight  : 18,
@@ -90,7 +91,8 @@ module.exports = {
 				.flatten();
 
 			var xScale = d3.scale.linear()
-				.range([0, this.contentWidth]);
+				.range([0, this.contentWidth])
+				.clamp(true);
 
 			if (this.domain) {
 				xScale.domain(this.domain);
@@ -170,7 +172,15 @@ module.exports = {
 						})
 						.transition()
 						.duration(300)
-						.attr('y', height / 2);
+						.attr('y', height / 2)
+						.each(function (d) {
+							var bbox = this.getBBox();
+							var invertFill = bbox.width <= x(d);
+
+							d3.select(this)
+								.attr('fill', invertFill ? '#fff' : null)
+								.style('text-shadow', invertFill ? 'none' : null);
+						});
 				} else {
 					bar.select('text').remove();
 				}

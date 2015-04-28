@@ -8,15 +8,6 @@ var api    = require('data/api');
 var util   = require('util/data');
 
 /**
- * Return true if all indicators are undefined on this datapoint.
- */
-function empty(datapoint) {
-	return _(datapoint.indicators)
-		.pluck('value')
-		.every(function (v) { return !util.defined(v); });
-}
-
-/**
  * Return an array with one datapoint per indicator.
  */
 function melt(dataset) {
@@ -32,6 +23,19 @@ function melt(dataset) {
 		.value();
 
 	return o;
+}
+
+/**
+ * Convert the value of each datapoint to a percentage of the total value
+ */
+function percentage(dataset) {
+	var total = _(dataset).pluck('value').sum();
+
+	_.forEach(dataset, function (d) {
+		d.value /= total;
+	});
+
+	return dataset;
 }
 
 function seriesObject(d, ind, collection, indicators) {
@@ -104,7 +108,11 @@ module.exports = {
 							var datapoint  = _.pick(obj, 'campaign', 'region');
 							var indicators = _.indexBy(obj.indicators, 'indicator');
 
-							datapoint.value = indicators['168'].value;
+							if (indicators.hasOwnProperty('168')) {
+								datapoint.value = indicators['168'].value;
+							} else {
+								datapoint.value = 0;
+							}
 
 							return datapoint;
 						});
@@ -146,7 +154,7 @@ module.exports = {
 							indicators[d.indicator] = _.assign({
 								name           : index[d.indicator].short_name,
 								value          : d3.format('.1f')(d.value * 100),
-								hiddenForPrint : d.value === 0,
+								hiddenForPrint : !d.value,
 								datapoints     : [{
 									indicator : d.indicator,
 									value     : d.value
@@ -157,6 +165,9 @@ module.exports = {
 
 					self.inaccessibility = _(indicators)
 						.values()
+						.filter(function (d) {
+							return !!d.datapoints[0].value;
+						})
 						.sortBy(function (d) {
 							return d.datapoints[0].value;
 						})
@@ -217,18 +228,17 @@ module.exports = {
 				});
 
 			// Fetch the immunity gap data
-			q.indicator__in  = [431,432];
+			q.indicator__in  = [431,432,433];
 			q.campaign_start = moment(this.campaign.start_date)
 				.startOf('month')
 				.subtract(3, 'years')
 				.format('YYYY-MM-DD');
 
-			Promise.all([api.indicators({ id__in : [431,432] }), api.datapoints(q)])
+			Promise.all([api.indicators({ id__in : q.indicator__in }), api.datapoints(q)])
 				.then(function (data) {
 					var indicators = _.indexBy(data[0].objects, 'id');
 
 					var immunity = _(data[1].objects)
-						.reject(empty)
 						.thru(melt)
 						.forEach(function (d) {
 							// Add a property to each datapoint indicating the fiscal quarter
@@ -238,13 +248,15 @@ module.exports = {
 							return d.indicator + '-' + d.quarter;
 						})
 						.map(function (datapoints) {
-							var mean = _(datapoints).pluck('value').sum() / datapoints.length;
-
-							var o = _.assign({}, _.omit(datapoints[0], 'value'), {
-								'value' : mean
+							return _.assign({}, _.omit(datapoints[0], 'value'), {
+								'value' : _(datapoints).pluck('value').sum()
 							});
-
-							return o;
+						})
+						.groupBy('quarter')
+						.map(percentage)
+						.flatten()
+						.reject(function (d) {
+							return d.indicator == '433';
 						})
 						.groupBy('indicator')
 						.map(_.curryRight(seriesObject)(indicators))

@@ -39,8 +39,6 @@
 						v-component="chart-ytd"
 						data-aspect="1.757"
 						data-margin-top="24"
-						data-margin-right="4"
-						data-margin-left="4"
 						data-margin-bottom="24"
 						data-indicators="[168]"
 						data-period="2 years"
@@ -56,8 +54,6 @@
 					data-margin-bottom="24"
 					data-aspect="1.609"
 					data-margin-top="24"
-					data-margin-right="4"
-					data-margin-left="4"
 					data-margin-bottom="24"
 					data-format-string="%"
 					data-x="campaign.start_date"
@@ -79,8 +75,6 @@
 						id="missed-children"
 						v-component="chart-stacked-column"
 						data-margin-top="24"
-						data-margin-right="4"
-						data-margin-left="4"
 						data-margin-bottom="24"
 						data-aspect="1.909344491"
 						data-margin-bottom="12"
@@ -96,8 +90,6 @@
 						v-component="chart-line"
 					 	data-aspect="2.260237781"
 						data-margin-top="24"
-						data-margin-right="4"
-						data-margin-left="4"
 						data-margin-bottom="24"
 					 	data-period="1 years"
 					 	data-indicators="[187,189]"
@@ -176,7 +168,7 @@
 					</tbody>
 				</table>
 
-				<h6>Missed Children Due to Refusal</h6>
+				<h6>Missed Children</h6>
 
 				<svg class="legend reds" viewBox="0 0 177 84">
 					<g>
@@ -267,14 +259,12 @@
 			     data-period="1 years"
 			     data-indicators="[158]"
 					 data-margin-top="24"
-					 data-margin-right="4"
-					 data-margin-left="4"
 					 data-margin-bottom="24"
 			     v-with="campaign: campaign, region: region"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
-					<h6 style="text-overflow:initial">Districts with Access Plan</h6>
+					<h6 style="text-overflow:initial;white-space:normal">Districts with Access Plan</h6>
 					<div v-component="chart-pie"
 							 data-indicators="[174]"
 							 data-width="150"

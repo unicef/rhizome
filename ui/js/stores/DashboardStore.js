@@ -4,11 +4,11 @@ var _     = require('lodash');
 var Store = require('./Store');
 
 var _dashboards = [{
-		'name' : 'Campaign Performance',
-		'slug' : 'campaign-performance',
+		'name' : 'Management Dashboard',
+		'slug' : 'management-dashboard',
 	}, {
-		'name'   : 'Independent Monitoring',
-		'slug'   : 'independent-monitoring',
+		'name'   : 'NGA Campaign Monitoring',
+		'slug'   : 'nga-campaign-monitoring',
 		'region' : 'Nigeria'
 	}];
 
