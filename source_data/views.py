@@ -219,61 +219,6 @@ class DocumentIndex(generic.ListView):
     model = Document
 
 
-######### META MAPPING ##########
-
-
-class CreateMap(PermissionRequiredMixin, generic.CreateView):
-
-    template_name='map/map.html'
-    success_url=reverse_lazy('source_data:document_index')
-    # permission_required = 'datapoints.add_datapoint'
-
-    def form_valid(self, form):
-    # this inserts into the changed_by field with  the user who made the insert
-        obj = form.save(commit=False)
-        obj.mapped_by = self.request.user
-        # obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-
-class IndicatorMapCreateView(CreateMap):
-
-    model=IndicatorMap
-    form_class = IndicatorMapForm
-    context_object_name = 'indicator_to_map'
-    template_name = 'map/map.html'
-
-    def get_initial(self):
-        return { 'source_indicator': self.kwargs['pk'] }
-
-
-class RegionMapCreateView(CreateMap):
-
-    model=RegionMap
-    form_class = RegionMapForm
-
-
-    def get_initial(self):
-        return { 'source_region': self.kwargs['pk'] }
-
-
-class CampaignMapCreateView(CreateMap):
-
-    model=CampaignMap
-    form_class = CampaignMapForm
-
-    def get_initial(self):
-        return { 'source_campaign': self.kwargs['pk'] }
-
-
-class ShowSourceIndicator(generic.DetailView):
-
-    context_object_name = "source_indicator"
-    template_name = 'map/source_indicator.html'
-    model = SourceIndicator
-
-
 class EtlJobIndex(generic.ListView):
 
     context_object_name = "etl_jobs"
