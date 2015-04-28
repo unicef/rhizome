@@ -390,22 +390,23 @@ def api_map_meta(request):
 
     map_object = map_model_lookup[meta['object_type']]['map_table']
 
-    x = getattr(IndicatorMap,'source_indicator')
-    db_obj = map_object.objects.create(**{
-            'source_indicator_id': 6134,\
-            'master_indicator_id':168,\
+    db_obj = map_object.objects.get(**{'source_indicator_id': 6134,})
+
+
+    if db_obj:
+        db_obj.master_indicator_id = 165
+        db_obj.mapped_by_id = request.user.id
+        db_obj.save()
+
+
+    else:
+        db_obj = map_object.objects.create(**{
+            'source_indicator_id': 6134,
+            'master_indicator_id':168,
             'mapped_by_id':request.user.id\
             })
 
-    # if not created:
-    #     db_obj.master_indicator_id = 29
-    #     db_obj.mapped_by_id = request.user.id
-    #     db_obj.save()
-
-
-
-
-
+    objects = {'object_id': db_obj.id}
 
     response_data = {'objects':objects,'error':error, 'meta':meta}
 
