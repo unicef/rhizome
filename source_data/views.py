@@ -313,10 +313,11 @@ def api_map_meta(request):
     ## LOOK UP THE OBJECT AND CREATE OR UPDATE THE MAPPING TABLE $$
     map_object = map_model_lookup[meta['object_type']]
 
+    ## CREATE OR UPDATE THE MAP ##
     error, map_row_id = upsert_mapping(meta,map_object)
 
+    ## RETURN DATA TO API ##
     objects = {'object_id': map_row_id}
-
     response_data = {'error':error,'objects':objects, 'meta':meta }
 
     return HttpResponse(json.dumps(response_data)\
@@ -325,20 +326,25 @@ def api_map_meta(request):
 
 def upsert_mapping(meta,map_object):
 
+    request_source_id, request_master_id, request_user_id = \
+        int(meta['source_id']),int(meta['master_id']), int(meta['user_id'])
+
     try:
-        db_obj,created = IndicatorMap.objects.get_or_create(
-            source_id= int(meta['source_id']),
+        db_obj, created = map_object.objects.get_or_create(
+            source_id= request_source_id,
             defaults = {
-                'master_id':int(meta['master_id']),
-                'mapped_by_id':meta['user_id']
+                'master_id':request_master_id,
+                'mapped_by_id':request_user_id
             })
 
         if not created:
-            db_obj.master_id = int(meta['master_id']),
-            db_obj.mapped_by_id = meta['user_id']
+            db_obj.master_id = request_master_id
+            db_obj.mapped_by_id = request_user_id
             db_obj.save()
+
 
     except Exception as err:
         return str(err), None
+
 
     return None, db_obj.id
