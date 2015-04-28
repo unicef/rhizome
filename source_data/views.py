@@ -364,28 +364,47 @@ def api_map_meta(request):
     objects, error, meta = None, None, {}
     required_params = {'object_type':None,'source_id':None,'master_id':None}
     map_model_lookup  = {
-        'indicator':{'map_table':IndicatorMap,'source_table':SourceIndicator,\
-            'master_table':Indicator},
+        'indicator':{
+            'map_table': IndicatorMap,
+            'source_col': 'source_indicator_id',
+            'master_col' : 'master_indicator_id'
+        },
         'region':RegionMap,
-        'campaign':CampaignMap,
-    }
+        'campaign':CampaignMap
+        }
 
+    ## POPULATE THE META_DICT WITH THE REQUIRED PARAMS AND THEIR VALUES ##
     for param in required_params:
 
         try:
-            param_value = request.POST[param].replace('[u','').replace(']','')
-            cleaned_value = param_value if param == 'object_type' else\
-                int(param_value)
-
-            meta[param]= cleaned_value
-
-
+            # FIND THE PARAMETER FROM THE REQUEST
+            meta[param] = request.POST[param].replace('[u','').replace(']','')
         except KeyError:  ## IF PARAM IS MISSING ##
             error = '%s is a required parameter' % param
             response_data = {'objects':objects,'error':error, 'meta':meta}
 
             return HttpResponse(json.dumps(response_data)\
                 , content_type="application/json")
+
+    ## LOOK UP THE OBJECT AND CREATE OR UPDATE THE MAPPING TABLE $$
+
+    map_object = map_model_lookup[meta['object_type']]['map_table']
+
+    x = getattr(IndicatorMap,'source_indicator')
+    db_obj = map_object.objects.create(**{
+            'source_indicator_id': 6134,\
+            'master_indicator_id':168,\
+            'mapped_by_id':request.user.id\
+            })
+
+    # if not created:
+    #     db_obj.master_indicator_id = 29
+    #     db_obj.mapped_by_id = request.user.id
+    #     db_obj.save()
+
+
+
+
 
 
     response_data = {'objects':objects,'error':error, 'meta':meta}
