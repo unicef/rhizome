@@ -143,8 +143,8 @@ def map_regions(region_strings,document_id):
 
 
         try:
-            region_id = RegionMap.objects.get(source_region_id = \
-                source_region.id).master_region_id
+            region_id = RegionMap.objects.get(source_id = \
+                source_region.id).master_id
 
             region_mapping[region_string] = region_id
         except ObjectDoesNotExist:

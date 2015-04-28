@@ -132,10 +132,10 @@ BEGIN
         -- MASTER REGION ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = rm.master_region_id
+        	master_object_id = rm.master_id
         FROM region_map rm
         WHERE dmc.db_model = 'source_region'
-        AND dmc.source_object_id = rm.source_region_id;
+        AND dmc.source_object_id = rm.source_id;
 
         -------------
         -- CAMPAIGNS --

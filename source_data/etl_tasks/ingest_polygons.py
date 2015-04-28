@@ -67,7 +67,7 @@ def main():
                     )
 
                     shape_defaults = {
-                        'source_region_id' : source_region.id,
+                        'source_id' : source_region.id,
                         'shape_len' : properties[u'SHAPE_Leng'],
                         'shape_area' : properties['SHAPE_Area'],
                         'polygon': polygon

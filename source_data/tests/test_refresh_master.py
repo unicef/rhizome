@@ -205,9 +205,9 @@ class RefreshMasterTestCase(TestCase):
         ## create mappings ( this is mimicking how bo would map metadata ) ##
         rm_1 = RegionMap.objects.create(
             mapped_by_id = self.user.id,
-            source_region_id = SourceRegion.objects.get(region_code=self\
+            source_id = SourceRegion.objects.get(region_code=self\
                 .region_1_code).id,
-            master_region_id = self.region_1.id)
+            master_id = self.region_1.id)
 
         cm_1 = CampaignMap.objects.create(
             mapped_by_id = self.user.id,

@@ -8,7 +8,7 @@ SELECT
  	d.id as datapoint_id
  	,d.source_datapoint_id
  	,d.region_id
-	,sr.id as source_region_id
+	,sr.id as source_id
  	,d.campaign_id
  	,sc.id as source_campaign_id
  	,d.indicator_id
@@ -54,8 +54,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM region_map rm
-		WHERE fj.region_id = rm.master_region_id
-		AND fj.source_region_id = rm.source_region_id
+		WHERE fj.region_id = rm.master_id
+		AND fj.source_id = rm.source_id
 	)
 
 	UNION ALL

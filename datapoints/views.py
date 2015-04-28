@@ -261,7 +261,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
         obj = form.save(commit=False)
         obj.changed_by = self.request.user
         obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.source_region_id = -1
+        obj.source_id = -1
 
         obj.save()
         return HttpResponseRedirect(self.success_url)

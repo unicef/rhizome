@@ -231,7 +231,7 @@ def un_map(request,source_object_id,db_model,document_id):
 
     if db_model == 'region':
 
-        RegionMap.objects.get(source_region_id=source_object_id).delete()
+        RegionMap.objects.get(source_id=source_object_id).delete()
 
     elif db_model == 'indicator':
 
