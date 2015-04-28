@@ -361,8 +361,37 @@ def api_document_review(request, document_id):
 
 def api_map_meta(request):
 
+    post_data = request.POST
+    print post_data
 
-    response_data = {'objects':[1,2,3], 'meta':[{'hello':'world'}]}
+    objects, error, meta = None, None, {}
+
+    required_params = {'object_type':None,'source_id':None,'master_id':None}
+    map_model_lookup  = {
+        'indicator':{'map_table':IndicatorMap,'source_table':SourceIndicator,\
+            'master_table':Indicator},
+        'region':RegionMap,
+        'campaign':CampaignMap,
+    }
+
+    for param in required_params:
+
+        try:
+            param_value = post_data[param].replace('[u','').replace(']','')
+            meta[param]= param_value
+
+        except KeyError:  ## IF PARAM IS MISSING ##
+            error = '%s is a required parameter' % param
+            response_data = {'objects':objects,'error':error, 'meta':meta}
+
+            return HttpResponse(json.dumps(response_data)\
+                , content_type="application/json")
+
+
+    print meta
+
+
+    response_data = {'objects':objects,'error':error, 'meta':meta}
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
