@@ -288,7 +288,9 @@ def api_document_review(request, document_id):
 def api_map_meta(request):
 
     objects, error, meta = None, None, {}
-    required_params = {'object_type':None,'source_id':None,'master_id':None}
+    required_params = {'object_type':None,'source_object_id':None,\
+        'master_object_id':None}
+
     map_model_lookup  = {
         'indicator':IndicatorMap,
         'region':RegionMap,
@@ -327,7 +329,8 @@ def api_map_meta(request):
 def upsert_mapping(meta,map_object):
 
     request_source_id, request_master_id, request_user_id = \
-        int(meta['source_id']),int(meta['master_id']), int(meta['user_id'])
+        int(meta['source_object_id']),int(meta['master_object_id']),\
+        int(meta['user_id'])
 
     try:
         db_obj, created = map_object.objects.get_or_create(
