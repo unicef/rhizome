@@ -13,7 +13,7 @@ from datapoints.api.base import debug
 from datapoints import views
 
 from source_data.api import EtlResource
-from source_data.views import api_document_review
+from source_data.views import api_document_review, api_map_meta
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -35,8 +35,12 @@ urlpatterns = patterns('',
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
-    url(r'^api/source_data/document_review/(?P<document_id>[0-9]+)/$', \
+    url(r'^api/v1/document_review/(?P<document_id>[0-9]+)/$', \
         api_document_review, name='api_document_review'),
+    url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
+
+
+
 
 
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),

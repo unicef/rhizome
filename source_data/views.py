@@ -357,3 +357,12 @@ def api_document_review(request, document_id):
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
+
+
+def api_map_meta(request):
+
+
+    response_data = {'objects':[1,2,3], 'meta':[{'hello':'world'}]}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
