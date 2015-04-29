@@ -177,7 +177,6 @@ module.exports = {
 
 		'dashboard-selected' : function (dashboard) {
 			var db = DashboardStore.get(dashboard);
-			console.debug(db);
 			this.navigate(
 				db,
 				this._regionIndex[db.region] || this.region,
