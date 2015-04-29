@@ -6,7 +6,7 @@ function timeAxis(value) {
 	var m = moment(value);
 
 	if (m.month() === 0) {
-		return m.format('MMM YYYY');
+		return m.format('YYYY');
 	}
 
 	return m.format('MMM');

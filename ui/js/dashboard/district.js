@@ -5,6 +5,7 @@ var _      = require('lodash');
 var moment = require('moment');
 
 var api             = require('data/api');
+var format          = require('util/format');
 var indexIndicators = require('data/transform/indexIndicators');
 var variables       = require('data/transform/variables');
 var util            = require('util/data');
@@ -20,6 +21,9 @@ module.exports = {
 			highlights     : [],
 			region         : null,
 			sections       : [],
+
+			dateFormat : format.timeAxis,
+			pctFormat  : d3.format('.1%'),
 
 			loading           : true,
 			immunityGap       : new Array(3),

@@ -18,11 +18,15 @@
 			<div
 				v-component="chart-spaghetti"
 				data-aspect="2"
+				data-margin-top="24"
+				data-margin-bottom="24"
 				v-with="
 					loading : loading,
 					domain  : immunityGapDomain,
 					range   : immunityGapRange,
-					series  : immunityGap[0]"></div>
+					series  : immunityGap[0],
+					xFormat : dateFormat,
+					yFormat : pctFormat"></div>
 		</div>
 		<div class="medium-4 large-3 columns">
 			<div v-component="chart-choropleth"></div>
@@ -36,11 +40,15 @@
 		<div class="medium-8 large-9 columns">
 			<div v-component="chart-spaghetti"
 				data-aspect="2"
+				data-margin-top="24"
+				data-margin-bottom="24"
 				v-with="
 					loading : loading,
 					domain  : immunityGapDomain,
 					range   : immunityGapRange,
-					series  : immunityGap[1]"></div>
+					series  : immunityGap[1],
+					xFormat : dateFormat,
+					yFormat : pctFormat"></div>
 		</div>
 		<div class="medium-4 large-3 columns">
 			<div v-component="chart-choropleth"></div>
@@ -54,11 +62,15 @@
 		<div class="medium-8 large-9 columns">
 			<div v-component="chart-spaghetti"
 				data-aspect="2"
+				data-margin-top="24"
+				data-margin-bottom="24"
 				v-with="
 					loading : loading,
 					domain  : immunityGapDomain,
 					range   : immunityGapRange,
-					series  : immunityGap[0]"></div>
+					series  : immunityGap[2],
+					xFormat : dateFormat,
+					yFormat : pctFormat"></div>
 		</div>
 		<div class="medium-4 large-3 columns">
 			<div v-component="chart-choropleth"></div>
