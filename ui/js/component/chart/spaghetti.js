@@ -51,8 +51,7 @@ module.exports = {
 				.range([this.contentHeight, 0]);
 
 			svg.select('.data')
-				.selectAll('.series')
-				.data(this.series)
+				.datum(this.series)
 				.call(line()
 					.x(function (d) { return xScale(x(d)); })
 					.y(function (d) { return yScale(y(d)); })

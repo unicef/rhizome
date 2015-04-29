@@ -46,16 +46,25 @@ svg {
 		}
 	}
 
-	.line {
+	&.line {
 		path {
-			fill: none;
-			stroke: $charcoal;
-			stroke-width: 2px;
+			fill         : none;
+			stroke       : inherit;
+			stroke-width : 2px;
 		}
 
 		circle {
-			fill: $white;
-			stroke-width: 1px;
+			fill         : $white;
+			stroke-width : 1px;
+		}
+	}
+
+	&.spaghetti {
+		path {
+			fill            : none;
+			shape-rendering : crispEdges'
+			stroke          : inherit;
+			stroke-width    : 2px;
 		}
 	}
 
