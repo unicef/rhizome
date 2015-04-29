@@ -201,6 +201,7 @@ module.exports = {
 		'chart-line'              : require('component/chart/line'),
 		'chart-pie'               : require('component/chart/pie'),
 		'chart-scatter'           : require('component/chart/scatter'),
+		'chart-spaghetti'         : require('component/chart/spaghetti'),
 		'chart-stacked-area'      : require('component/chart/stacked-area'),
 		'chart-stacked-bar'       : require('component/chart/stacked-bar'),
 		'chart-stacked-column'    : require('component/chart/stacked-column'),

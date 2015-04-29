@@ -21,7 +21,10 @@ module.exports = {
 			region         : null,
 			sections       : [],
 
-			immunityGap    : new Array(3)
+			loading           : true,
+			immunityGap       : new Array(3),
+			immunityGapDomain : null,
+			immunityGapRange  : [0, 1]
 		};
 	},
 
@@ -42,6 +45,8 @@ module.exports = {
 					.value();
 			}
 
+			this.loading = false;
+
 			var startDate       = util.accessor('campaign.start_date');
 			var sort            = _.curryRight(_.sortBy)('x');
 			var defined         = _.curryRight(util.defined)(util.accessor('y'), _, _);
@@ -54,20 +59,20 @@ module.exports = {
 				.map(sort)
 				.value();
 
-			this.immunityGap[0] = _(series)
+			this.immunityGap.$set(0, _(series)
 				.map(seriesTransform(431, _, _))
 				.reject(_.isEmpty)
-				.value();
+				.value());
 
-			this.immunityGap[1] = _(series)
+			this.immunityGap.$set(1, _(series)
 				.map(seriesTransform(432, _, _))
 				.reject(_.isEmpty)
-				.value();
+				.value());
 
-			this.immunityGap[2] = _(series)
+			this.immunityGap.$set(2, _(series)
 				.map(seriesTransform(433, _, _))
 				.reject(_.isEmpty)
-				.value()
+				.value());
 		},
 
 		error : function () {
@@ -75,6 +80,8 @@ module.exports = {
 		},
 
 		load : function () {
+			this.loading = true;
+
 			if (!(this.campaign && this.region)) {
 				return;
 			}
@@ -85,15 +92,19 @@ module.exports = {
 			};
 
 			var start = moment(this.campaign.start_date)
-				.subtract(1, 'year')
-				.format('YYYY-MM-DD');
+				.subtract(1, 'year');
 
-			var end = moment(this.campaign.start_date).format('YYYY-MM-DD');
+			var end = moment(this.campaign.start_date);
+
+			this.immunityGapDomain = [
+				start.toDate().getTime(),
+				end.toDate().getTime()
+			];
 
 			api.datapoints(_.assign({
 					indicator__in  : [431,432,433],
-					campaign_start : start,
-					campaign_end   : end
+					campaign_start : start.format('YYYY-MM-DD'),
+					campaign_end   : end.format('YYYY-MM-DD')
 				}, q))
 				.then(this.dataReceived, this.error);
 		}
