@@ -59,6 +59,13 @@ module.exports = {
 				.map(sort)
 				.value();
 
+			this.immunityGapRange = [0, _(series)
+				.flatten()
+				.pluck('indicators')
+				.map(_.values)
+				.flatten()
+				.max()];
+
 			this.immunityGap.$set(0, _(series)
 				.map(seriesTransform(431, _, _))
 				.reject(_.isEmpty)
