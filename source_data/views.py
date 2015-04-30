@@ -238,7 +238,14 @@ def refresh_master(request):
     return render_to_response('map/master_refresh.html'
         ,{'task_data': task_data})
 
-def api_document_review(request, document_id):
+def api_document_review(request):
+
+    try:
+        document_id = request.GET['document_id']
+    except KeyError:
+        return HttpResponse(json.dumps({'error':'document_id is a required parameter'})\
+            , content_type="application/json")
+
 
     meta_breakdown = []
 
@@ -279,7 +286,7 @@ def api_document_review(request, document_id):
         'indicators': indicator_breakdown,
         }
 
-    response_data = {'objects':response_objects, 'meta':[{'hello':'world'}]}
+    response_data = {'objects':response_objects }
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")

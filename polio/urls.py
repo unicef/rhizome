@@ -35,11 +35,9 @@ urlpatterns = patterns('',
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
-    url(r'^api/v1/document_review/(?P<document_id>[0-9]+)/$', \
+    url(r'^api/v1/source_data/document_review/$', \
         api_document_review, name='api_document_review'),
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
-
-
 
 
 
