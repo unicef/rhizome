@@ -1,0 +1,106 @@
+.dropdown {
+	cursor: pointer;
+	position: relative;
+
+	&.open {
+		.container {
+			ul {
+				.selected {
+					.fa-check {
+						visibility: visible;
+					}
+				}
+
+				.folder {
+					& .fa-caret-right,
+					& .fa-caret-down {
+						visibility: visible;
+					}
+				}
+			}
+		}
+	}
+
+	.menu-button {
+		padding-right: 2rem;
+		position: relative;
+
+		label {
+			font-size: inherit;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.icon {
+			margin-top: -0.4rem;
+			position: absolute;
+			right: 0.5rem;
+			top: 50%;
+		}
+	}
+
+	.container {
+		background-color: white;
+		border-radius: 3px;
+		box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);
+		margin: 5px 5px 10px 0;
+		min-width: 300px;
+    overflow: hidden;
+		position: absolute;
+		top: 100%;
+    z-index: 9999;
+
+		*[role="search"] {
+			border-bottom: 1px solid #888;
+			margin: 0 5px 5px 5px;
+			padding: 5px 0;
+			position: relative;
+
+			input {
+				box-sizing: border-box;
+				display: block;
+				padding-right: 2rem;
+				width: 100%;
+			}
+
+			.clear-btn {
+				position: absolute;
+				right: 0.5rem;
+				top: 1rem;
+			}
+		}
+
+		ul {
+      list-style: none;
+			margin: 0;
+			padding: 0;
+			overflow-y: auto;
+			max-width: 33em;
+
+			*[role="menuitem"] {
+				margin: 0;
+				padding: 5pt;
+        overflow: hidden;
+        white-space: nowrap;
+
+				.fa {
+					visibility: hidden;
+				}
+
+				.fa-check {
+					float: right;
+				}
+			}
+		}
+
+    .selection-controls {
+      margin: 5px;
+      text-align: center;
+      white-space: nowrap;
+    }
+	}
+
+  .hidden {
+    visibility: hidden;
+  }
+}

@@ -12,6 +12,7 @@ class Migration(SchemaMigration):
 
         TRUNCATE TABLE indicator_bound;
 
+        /*
         INSERT INTO indicator_bound
         (indicator_id,mn_val,mx_val,bound_name,direction)
 
@@ -145,6 +146,8 @@ class Migration(SchemaMigration):
         SELECT 193,0.6,0.79,'okay', 1 UNION ALL
         SELECT 193,0.0,0.6,'bad', 1 UNION ALL
         SELECT 193,NULL,0.0,'invalid', 1;
+
+        */
 
         ''')
 
