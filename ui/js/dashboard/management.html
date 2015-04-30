@@ -22,8 +22,9 @@
 			<section>
 				<h4>
 					<span v-if="cases != null">
-						<span class="highlight">{{ cases }}</span>
-						Polio cases this year
+						Polio cases in {{ campaign.start_date | date 'YYYY' }}
+						(as of {{ campaign.start_date | date 'MMM' }}):
+						<span style="float:right;font-weight:bold">{{ cases }}</span>
 					</span>
 					<span v-if="cases == null">
 						Polio Cases
