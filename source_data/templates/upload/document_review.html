@@ -32,10 +32,10 @@
                 <th> {{ si.master_object_id }}
 
                 {% if si.master_object_id == -1 %}
-                <th> <a href="{% url 'source_data:map_indicator' si.source_object_id %}"</a>Map!</th>
+                <th> <a href="#"</a>Map!</th>
                 {% else %}
                   <th> <a href="{% url 'source_data:sync_source_datapoints' document_id si.master_object_id %}"</a> Sync Data</th>
-                  <th><a href="{% url 'source_data:un_map' si.source_object_id 'indicator' document_id %}"</a> UnMap!</th>
+                  <th><a href="#"</a> UnMap!</th>
 
                 {% endif %}
 
@@ -73,10 +73,10 @@
 
 
               {% if sc.master_object_id == -1 %}
-              <th><a href="{% url 'source_data:map_campaign' sc.source_object_id %}"</a> Map!</th>
+              <th><a href="#"</a> Map!</th>
               {% else %}
               <th>{{ sc.master_object_id }}</th>
-              <th><a href="{% url 'source_data:un_map' sc.source_object_id 'campaign' document_id %}"</a> UnMap!</th>
+              <th><a href="#"</a> UnMap!</th>
 
 
               {% endif %}
@@ -112,10 +112,10 @@
                     <th> {{ sr.master_object_count }} </th>
 
                     {% if sr.master_object_id == -1 %}
-                    <th><a href="{% url 'source_data:map_region' sr.source_object_id %}"</a> Map!</th>
+                    <th><a href="#"</a> Map!</th>
                     {% else %}
                     <th>{{ sr.master_object_id }}</th>
-                    <th><a href="{% url 'source_data:un_map' sr.source_object_id 'region' document_id %}"</a> UnMap!</th>
+                    <th><a href="#"</a> UnMap!</th>
 
                     {% endif %}
                 </tr>
