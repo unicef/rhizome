@@ -3,6 +3,8 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
+var util = require('util/data');
+
 module.exports = {
 	replace : true,
 	template: require('./bullet.html'),
@@ -68,26 +70,22 @@ module.exports = {
 		},
 
 		marker: function () {
-			var length = this.length;
-
-			if (length < 2) {
+			if (!this.campaign) {
 				return null;
 			}
 
-			var datapoints = this.datapoints;
-			var avg        = 0;
-			var l          = 0;
+			var current = this.campaign.start_date.getTime();
 
-			for (var i = length - 1; i >= 0; i--) {
-				if (!_.isNull(datapoints[i].value) && !_.isUndefined(datapoints[i].value)) {
-					avg += datapoints[i].value;
-					l++;
-				}
+			// Exclude null values, and the value for the current campaign.
+			var data = _.filter(this.datapoints, function (d) {
+					return util.defined(d.value) && d.campaign.start_date.getTime() !== current;
+				});
+
+			if (data.length < 1) {
+				return null;
 			}
 
-			avg /= l;
-
-			return avg;
+			return _(data).pluck('value').sum() / data.length;
 		},
 
 		max: function () {
