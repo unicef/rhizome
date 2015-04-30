@@ -40,10 +40,8 @@ urlpatterns = patterns('',
     #     api_document_review, name='api_document_review'),
     # url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
-
-    url(r'^api/v2/(?P<content_type>\w+)/$', views.meta_api, name='meta_api'),
-
-
+    url(r'^api/v2/get/(?P<content_type>\w+)/$', views.meta_api_GET, name='meta_api_GET'),
+    url(r'^api/v2/post/(?P<content_type>\w+)/$', views.meta_api_POST, name='meta_api_POST'),
 
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
 

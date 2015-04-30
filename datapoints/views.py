@@ -640,24 +640,14 @@ def bad_data(request):
         ,context_instance=RequestContext(request))
 
 
-def meta_api(request,content_type):
-
-    object_lookup = {
-        'region': Region,
-        'campaign': Campaign,
-        'indicator': Indicator
-
-    }
+def meta_api_GET(request,content_type):
 
     kwargs = clean_kwargs(request.GET)
 
-    print kwargs
-
-    db_obj = object_lookup[content_type]
+    db_obj = object_lookup(content_type)
     qs = db_obj.objects.all().values_list('id',flat=True).filter(**kwargs)
 
     data = list(qs)
-
 
     return HttpResponse(json.dumps(data),content_type="application/json")
 
@@ -671,6 +661,38 @@ def clean_kwargs(query_dict):
         if "," in v:
             cleaned_kwargs[k] = v.split(',')
         else:
-            cleaned_kwargs[k] = v #v[0]
+            cleaned_kwargs[k] = v
 
     return cleaned_kwargs
+
+
+def meta_api_POST(request,content_type):
+
+    # http://localhost:8000/api/v2/post/campaign/?start_date=2016-01-01&end_date=2016-01-01&office_id=1&campaign_type_id=1
+    # http://localhost:8000/api/v2/get/indicator/?name__contains=polio
+    # http://localhost:8000/api/v2/get/indicator/?name__startswith=Polio
+
+    ## MULTIPLE MODELS ##
+    # http://localhost:8000/api/v2/post/indicator/?name=test2&source_id=1&mx_val=1&bound_name=juvenile #
+
+    db_obj = object_lookup(content_type)
+    kwargs = clean_kwargs(request.GET)  ## CHANGE TO POST ##
+
+    new_obj = db_obj.objects.create(**kwargs)
+
+    return HttpResponse(json.dumps({'new_id':new_obj.id }),
+        content_type="application/json")
+
+def object_lookup(content_type_string):
+
+    object_lookup = {
+        'region': Region,
+        'campaign': Campaign,
+        'indicator': Indicator,
+        'user': User,
+        'region_type': RegionType
+    }
+
+    db_model = object_lookup[content_type_string]
+
+    return db_model
