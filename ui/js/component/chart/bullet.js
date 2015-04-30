@@ -127,11 +127,18 @@ module.exports = {
 			var width  = this.width || 1;
 
 			var x = d3.scale.linear()
-				.domain([0, 1])
-				.range([0, width])
-				.clamp(true);
+				.domain([0, d3.max([this.marker, this.value, 1])])
+				.range([0, width]);
 
-			var ranges = [];
+			// Default range from 0 to 1 because we set the background to white if we
+			// have data, but we might not have ranges for this indicator. This will
+			// help to call attention to values that are > 100%.
+			var ranges = [{
+				name  : '',
+				start : 0,
+				end   : 1
+			}];
+
 			var missing = this.missing;
 
 			if (!missing && this.indicator && this.indicator.indicator_bounds) {
@@ -152,9 +159,11 @@ module.exports = {
 					.value();
 			}
 
+			svg.select('.bg').style('fill', missing ? null : '#fff');
+
 			var color = d3.scale.ordinal()
-				.domain(['bad', 'okay', 'ok', 'good'])
-				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC','#E6E6E6']);
+				.domain(['bad', 'okay', 'ok', 'good', ''])
+				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC', '#E6E6E6', '#f2f2f2']);
 
 			var bg = svg.select('.ranges').selectAll('.range')
 				.data(ranges);
