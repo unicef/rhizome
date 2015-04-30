@@ -132,7 +132,7 @@ BEGIN
         	master_object_id = rm.master_object_id
         FROM region_map rm
         WHERE dmc.db_model = 'source_region'
-        AND dmc.source_object_id = rm.source_id;
+        AND dmc.source_object_id = rm.source_object_id;
 
         -------------
         -- CAMPAIGNS --
@@ -164,7 +164,7 @@ BEGIN
         	master_object_id = cm.master_object_id
         FROM campaign_map cm
         WHERE dmc.db_model = 'source_campaign'
-        AND dmc.source_object_id = cm.source_id;
+        AND dmc.source_object_id = cm.source_object_id;
 
         DROP TABLE IF EXISTS _synced_datapoints;
         CREATE TEMP TABLE _synced_datapoints  as
