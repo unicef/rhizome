@@ -27,9 +27,9 @@ module.exports = {
 			},
 			
 	created: function() {
-	  /* api.document_review({ document_id: Polio.document_id }).then(function(values){
+	   api.document_review({ document_id: Polio.document_id }).then(function(values){
 	    console.log(values)
-	   }); */
+	   }); 
 	   
 	   var self = this;
 
