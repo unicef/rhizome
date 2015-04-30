@@ -10,6 +10,20 @@ var indexIndicators = require('data/transform/indexIndicators');
 var variables       = require('data/transform/variables');
 var util            = require('util/data');
 
+function normalize(d) {
+	var total = _(d.indicators).values().sum();
+
+	if (total === 0) {
+		return d;
+	}
+
+	_.each(d.indicators, function (v, k) {
+		d.indicators[k] /= total;
+	});
+
+	return d;
+}
+
 module.exports = {
 	template : require('./district.html'),
 
@@ -52,13 +66,14 @@ module.exports = {
 			this.loading = false;
 
 			var startDate       = util.accessor('campaign.start_date');
-			var sort            = _.curryRight(_.sortBy)('x');
-			var defined         = _.curryRight(util.defined)(util.accessor('y'), _, _);
+			var sort            = _.partialRight(_.sortBy, 'x');
+			var defined         = _.partialRight(util.defined, util.accessor('y'), _, _);
 			var datumTransform  = _.curryRight(createDataPoint);
 			var seriesTransform = _.curryRight(createDataSeries);
 
-			var series = _(data.objects)
+			var series = _(data)
 				.map(indexIndicators)
+				.map(normalize)
 				.groupBy('region')
 				.map(sort)
 				.value();
@@ -112,11 +127,31 @@ module.exports = {
 				end.toDate().getTime()
 			];
 
-			api.datapoints(_.assign({
-					indicator__in  : [431,432,433],
-					campaign_start : start.format('YYYY-MM-DD'),
-					campaign_end   : end.format('YYYY-MM-DD')
-				}, q))
+			// Create a function that plucks the 'objects' property off of the API
+			// response objects and concatenates them
+			var concatenateData = function (data) {
+				return _(data).pluck('objects').flatten().value();
+			};
+
+			var districts = api.datapoints({
+				parent_region__in : this.region.id,
+				level             : 'district',
+				indicator__in     : [431,432,433],
+				campaign_start    : start.format('YYYY-MM-DD'),
+				campaign_end      : end.format('YYYY-MM-DD')
+			});
+
+			var national = api.datapoints({
+				region__in     : this.region.id,
+				indicator__in  : [431,432,433],
+				campaign_start : start.format('YYYY-MM-DD'),
+				campaign_end   : end.format('YYYY-MM-DD')
+			});
+
+			Promise.all([districts, national])
+				.then(function (data) {
+					return concatenateData(data);
+				}, this.error)
 				.then(this.dataReceived, this.error);
 		}
 	},
