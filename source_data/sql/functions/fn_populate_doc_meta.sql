@@ -96,10 +96,10 @@ BEGIN
         -- MASTER INDICATOR ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = im.master_id
+        	master_object_id = im.master_object_id
         FROM indicator_map im
         WHERE dmc.db_model = 'source_indicator'
-        AND dmc.source_object_id = im.source_id;
+        AND dmc.source_object_id = im.source_object_id;
 
 
         -------------
@@ -129,7 +129,7 @@ BEGIN
         -- MASTER REGION ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = rm.master_id
+        	master_object_id = rm.master_object_id
         FROM region_map rm
         WHERE dmc.db_model = 'source_region'
         AND dmc.source_object_id = rm.source_id;
@@ -161,7 +161,7 @@ BEGIN
         -- MASTER CAMPAIGN ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = cm.master_id
+        	master_object_id = cm.master_object_id
         FROM campaign_map cm
         WHERE dmc.db_model = 'source_campaign'
         AND dmc.source_object_id = cm.source_id;
