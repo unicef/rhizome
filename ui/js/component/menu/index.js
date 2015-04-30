@@ -29,7 +29,8 @@ module.exports = {
 
 	paramAttributes : [
 		'data-change-event',
-		'data-searchable'
+		'data-searchable',
+		'full-size-menu' //used to remove the fa-stack class on the menu-button element, so the menu can be expanded into a full size button
 	],
 
 	data : function () {

@@ -2,13 +2,10 @@
 
 var _ = require('lodash');
 var api = require('../../data/api');
-var Dropdown = require('../../component/dropdown');
 var treeify = require('../../data/transform/treeify');
 
 module.exports = {
-
 	template: require('./template.html'),
-
 	data: function () { 
 			return {
 			    //mapping data from the file import 
@@ -18,84 +15,96 @@ module.exports = {
 			      indicators:0,
 			      campaigns:0,
 			      regions:0
-			    }
+			    },
+			    items:{
+			      indicators:[],
+			      campaigns:[],
+			      regions:[]
+			    },
+			    maps:{}, //holds hashes for indicators, campaigns, and regions
+			    dataLoaded:false
 			   };
 			},
 			
-	attached: function () {
-			var self = this;
-			//holds the vue master id dropdown components
-			this.dropdowns = {
-			  indicators:[],
-			  campaigns:[],
-			  regions:[]
-			};
-			
-			
-			//initialize dropdowns
-			_.each(self.$data.mappingData,function(fieldArray,name){
-			   	_.each(fieldArray,function(field,key){
-			   	   self.dropdowns[name][key] = new Dropdown({
-			   	   		el : '#'+name+field.source_id
-			   	   	}); 
-			   	   	self.dropdowns[name][key].loading = field.mapped;
-			   	});
-			});
-		},
-	ready: function() {
-	   console.log(window.document_id);
+	created: function() {
+	  /* api.document_review({ document_id: Polio.document_id }).then(function(values){
+	    console.log(values)
+	   }); */
+	   
 	   var self = this;
-	   this.masterData = {};
-	   var makeMap = function(data) {
-	   	if (data.objects) {
-	   		return _.indexBy(data.objects, 'id');
-	   	} else {
-	   		return null;
-	   	}
-	   };
+
 	   
-	   var connectChildren = function(map, parent_id_key, children_key) {
-	   	_.forIn(map, function(d) {
-	   		// obj has parent_id?
-	   		if (d[parent_id_key] !== undefined && d[parent_id_key] !== null) {
-	   			// parent found?
-	   			if (map[d[parent_id_key]]) {
-	   				var parent = map[d[parent_id_key]];
-	   				if (!parent[children_key]) { parent[children_key] = []; }
-	   				parent[children_key].push(d);
-	   			}
-	   		}
-	   	});
-	   	return map;
-	   };
-	   
-	   //API calls for lists of all regions, indicators, and campaigns
-	   Promise.all([
-	   	api.regions()
-	   		.then(makeMap).then(function(map) {
-	   			// create array of children in each parent
-	   			return connectChildren(map, 'parent_region_id', 'children');
-	   		}),
-	    api.indicators()
-	        .then(makeMap),
-	    api.campaign()
-	        .then(makeMap)])
-	        .then(function(allData) {
-	        
-	          self.masterData.regions = allData[0];
-	          self.masterData.indicators = allData[1];
-	          self.masterData.campaigns = allData[2];
-	          self.populateDropdowns();
-	        
-	        });
+	   var regionsPromise = api.regions().then(function(items){
+	     self.maps.regions = _.indexBy(items.objects, 'id');
+	     var regions = _(items.objects)
+	     	.map(function (region) {
+	     		return {
+	     			'title'  : region.name,
+	     			'value'  : region.id,
+	     			'id'     : region.id,
+	     			'parent' : region.parent_region_id
+	     		};
+	     	})
+	     	.sortBy('title')
+	     	.reverse() // I do not know why this works, but it does
+	     	.thru(_.curryRight(treeify)('id'))
+	     	.value();
+	    
+	     self.$set('items.regions',regions); 
+	     
+	   });
+	   var indicatorsPromise = api.indicators()
+	       .then(function(items){
+	           self.maps.indicators = _.indexBy(items.objects, 'id');
+	          var indicators = _(items.objects)
+	           	.map(function (indicator) {
+	           		return {
+	           			'title'  : indicator.slug,
+	           			'value'  : indicator.id,
+	           			'id'     : indicator.id,
+	           			'parent' : null
+	           		};
+	           	})
+	           	.sortBy('title')
+	           	.reverse() 
+	           	.value();
+	          
+	           self.$set('items.indicators',indicators);
+	          
+	          
+	       });
+	   var campaignsPromise = api.campaign().then(function(items){
+	          self.maps.campaigns = _.indexBy(items.objects, 'id');
+	          var campaigns = _(items.objects)
+	           	.map(function (campaign) {
+	           		return {
+	           			'title'  : campaign.slug + '_' + campaign.id,
+	           			'value'  : campaign.id,
+	           			'id'     : campaign.id,
+	           			'parent' : null
+	           		};
+	           	})
+	           	.sortBy('title')
+	           	.reverse() 
+	           	.value();
+	          
+	           self.$set('items.campaigns',campaigns);
+	           
+	       });
+           
+	    Promise.all([regionsPromise, indicatorsPromise,campaignsPromise]).then(function () { 
+	      self.$set('dataLoaded',true);
+	      self.calculateRemainingVerifications();
+	    });    
 	},
 	methods: { 
 	  calculateRemainingVerifications:function(){
 	    var self = this;
-	    _.each(this.dropdowns,function(dropdownSet,name){ 
+	    _.each(this.mappingData,function(mappingSet,name){ 
 	      self.$data.remainingVerifications[name]=0;
-	      _.each(dropdownSet,function(dropdown){
-	            if(!dropdown.hasSelection)
+	      _.each(mappingSet,function(field){
+	            //console.log(field.master_object_id==-1);
+	            if(field.master_object_id==-1)
 	            {
 	               self.$data.remainingVerifications[name]++;
 	            }
@@ -105,46 +114,10 @@ module.exports = {
 	  populateDropdowns: function(){
 	       var self = this;
 	        //set up master mapping data from api to be fed into the drop down selects
-	        _.each(self.masterData,function(data,name){
-        		var	items = _.chain(data)
-        							.map(function(d) {
-        								if(name==='regions')
-        								{
-        								  return {
-        									'parent': d.parent_region_id,
-        									'title': d.name,
-        									'value': d.id
-        									};
-        								} else {
-        							      return {
-        							      		'parent': null,
-        							      		'title': d.slug,
-        							      		'value': d.id
-        							      	};	
-        								}
-        							})
-        							.value();
-	             
-	              var itemTree = treeify(items, 'value');
-	               //loop through dropdowns and populate them with the corresponding master id data sets
-	           _.each(self.dropdowns[name],function(dropdown,key){
-	                    var mapDataItem = self.$data.mappingData[name][key];
-	             	    self.dropdowns[name][key].items = items; 
-	             	    self.dropdowns[name][key].itemTree = itemTree; 	
-                        //if mapping data pulls back a mapped:true value from the api set the value of the dropdown to the master_id value
-                        if (mapDataItem.mapped)
-	             	    {
-	             	       self.dropdowns[name][key].select(mapDataItem.master_id);
-	             	       self.dropdowns[name][key].loading = false;
-	             	    }  
-	             	    self.dropdowns[name][key].$on('dropdown-value-changed', function (value) {
-	             	        console.log(value);
-	             	    	self.calculateRemainingVerifications();
-	             	    });           	   
-	             	});
-	         });
+
 	        self.calculateRemainingVerifications();
-		} 
+		 
+		}
 	},
 	filters: {
 	  fixVerificationPluralization: function(field,digit){
@@ -154,6 +127,29 @@ module.exports = {
 		  else {
 		  	return field + ' need';
 		  }
+	  },
+	  buttonDisplay: function(masterIdString){
+	    var masterIdArray = masterIdString.split('_');
+	     if(masterIdArray[0]==-1)
+	     {
+	       return 'click to map';
+	     }
+	     else {
+	     	var val =this.maps[masterIdArray[1]][masterIdArray[0]];
+	     	if(masterIdArray[1]==='regions' && val)
+	     	{
+	     	  return val.name;
+	     	}
+	     	else if(val)
+	     	{
+	     	  return val.slug;
+	     	}
+	     	else {
+	     	    console.log(masterIdArray[0]);
+	     		return 'master id not set';
+	     	}
+	     }
+
 	  }
 	}
 };
