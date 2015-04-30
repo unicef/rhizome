@@ -1,11 +1,68 @@
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
-
+from tastypie.resources import Resource
 from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
+
+
+class BaseV2Resource(object):
+
+    pk = fields.IntegerField(attribute='id')
+
+    def __init__(self):
+        print 'THIS IS HAPPENING\n' * 10
+
+
+# class IndicatorResource(BaseV2Resource):
+#     '''Indicator Resource'''
+
+
+def api_indicator(request):
+
+    meta_keys = ['limit','offset']
+    request_meta = parse_url_args(request,meta_keys)
+
+    try:
+        id__in = [int(ind_id) for ind_id in request.GET['id__in'].split(',')]
+    except KeyError:
+        id__in = [i for i in Indicator.objects.all().values_list('id',flat=True)]
+
+
+    i_raw = Indicator.objects.raw("""
+        SELECT
+            i.*
+            ,ia.bound_json
+        FROM indicator i
+        INNER JOIN indicator_abstracted ia
+        ON i.id = ia.indicator_id
+        WHERE i.id = ANY(%s)
+        ORDER BY i.id
+    """,[id__in])
+
+    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                'description':i.description,'slug':i.slug,\
+                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
+
+    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
+        'total_count': len(objects)}
+
+    response_data = {'objects':objects, 'meta':meta}
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+    # pk = fields.IntegerField(attribute='id')
+
+    # class Meta(BaseModelResource.Meta):
+    #     queryset = Indicator.objects.all()
+    #     resource_name = 'indicator'
+    #     filtering = {
+    #         "slug": ('exact'),
+    #         "id": ALL,
+    #     }
 
 class GeoJsonResult(object):
     region_id = int()
@@ -38,7 +95,7 @@ class RegionPolygonResource(BaseNonModelResource):
 
         self.err = None
         err, regions_to_return = self.get_regions_to_return_from_url(request)
-        ## since this is not a model resource i will filter explicitly
+        ## since this is not a model resource i will filter explicitly #
 
         if err:
             self.err = err
@@ -97,18 +154,6 @@ class RegionPolygonResource(BaseNonModelResource):
         data.pop("meta",None)
 
         return data
-
-
-class IndicatorResource(BaseModelResource):
-    '''Indicator Resource'''
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all()
-        resource_name = 'indicator'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-        }
 
 
 class UserResource(BaseModelResource):

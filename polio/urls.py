@@ -30,16 +30,19 @@ v1_api.register(RegionPolygonResource())
 
 
 urlpatterns = patterns('',
+
     ## CUSTOM API ##
 
-    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
-    url(r'^api/v1/region/$', views.api_region, name='region'),
-    url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
-    url(r'^api/v1/source_data/document_review/$', \
-        api_document_review, name='api_document_review'),
-    url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
+    # url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
+    # url(r'^api/v1/region/$', views.api_region, name='region'),
+    # url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
+    # url(r'^api/v1/source_data/document_review/$', \
+    #     api_document_review, name='api_document_review'),
+    # url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
 
+    url(r'^accounts/login/$', login, name='login'),
+    url(r'^api/v2/', views.meta_api, name='meta_api'),
 
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
 
