@@ -4,7 +4,7 @@
 UPDATE source_region
 SET region_code = 'shape-' || region_code
 WHERE id in  (
-	SELECT source_region_id from source_region_polygon
+	SELECT source_id from source_region_polygon
 );
 
 
@@ -19,7 +19,7 @@ SELECT
 	, CAST(NULL AS INT) AS has_map_conflict
 FROM source_region sr
 INNER JOIN region_map rm
-ON sr.id = rm.source_region_id
+ON sr.id = rm.source_id
 GROUP BY region_code HAVING COUNT(1) > 1;
 
 --
@@ -28,14 +28,14 @@ USING source_region sr
 INNER JOIN dupe_sr dsr
 ON sr.region_code = dsr.region_code
 AND id != dsr.max_region_map_id
-WHERE source_region_id = sr.id;
+WHERE source_id = sr.id;
 
 
 DELETE
 FROM source_region_polygon srp
 WHERE NOT EXISTS (
 	SELECT 1 FROM region_map rm
-	WHERE srp.source_region_id = rm.source_region_id
+	WHERE srp.source_id = rm.source_id
 );
 
 
@@ -43,7 +43,7 @@ DELETE
 FROM source_region sr
 WHERE NOT EXISTS (
 	SELECT 1 FROM region_map rm
-	WHERE sr.id = rm.source_region_id
+	WHERE sr.id = rm.source_id
 );
 
 
@@ -53,7 +53,7 @@ DELETE
 FROM source_campaign sc
 WHERE NOT EXISTS (
 	SELECT 1 FROM campaign_map cm
-	WHERE sc.id = cm.source_campaign_id
+	WHERE sc.id = cm.source_id
 );
 
 
@@ -62,7 +62,7 @@ DELETE
 FROM source_indicator si
 WHERE NOT EXISTS (
 	SELECT 1 FROM indicator_map im
-	WHERE si.id = im.source_indicator_id
+	WHERE si.id = im.source_id
 );
 
 --SELECT COUNT(*)
@@ -89,7 +89,7 @@ WHERE sr.region_code = x.region_code
 AND sr.id != x.max_region_id;
 
 DELETE FROM region_map
-WHERE source_region_id in (
+WHERE source_id in (
 	SELECT id from source_region
 	WHERE region_code is null
 );

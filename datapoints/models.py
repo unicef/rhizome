@@ -304,16 +304,6 @@ class AggDataPoint(models.Model):
         db_table = 'agg_datapoint'
         unique_together = ('region_id','campaign_id','indicator_id')
 
-class MissingMapping(models.Model):
-
-    datapoint = models.ForeignKey(DataPoint)
-    document = models.ForeignKey('source_data.SourceDataPoint')
-    what_is_missing = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'vw_missing_mappings'
-        managed = False
-
 
 class ExpectedData(models.Model):
 

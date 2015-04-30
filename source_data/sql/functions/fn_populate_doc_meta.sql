@@ -1,6 +1,3 @@
-
-
-
 --SELECT * FROM fn_populate_doc_meta(1013)
 
 
@@ -99,10 +96,10 @@ BEGIN
         -- MASTER INDICATOR ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = im.master_indicator_id
+        	master_object_id = im.master_object_id
         FROM indicator_map im
         WHERE dmc.db_model = 'source_indicator'
-        AND dmc.source_object_id = im.source_indicator_id;
+        AND dmc.source_object_id = im.source_object_id;
 
 
         -------------
@@ -132,10 +129,10 @@ BEGIN
         -- MASTER REGION ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = rm.master_region_id
+        	master_object_id = rm.master_object_id
         FROM region_map rm
         WHERE dmc.db_model = 'source_region'
-        AND dmc.source_object_id = rm.source_region_id;
+        AND dmc.source_object_id = rm.source_id;
 
         -------------
         -- CAMPAIGNS --
@@ -164,10 +161,10 @@ BEGIN
         -- MASTER CAMPAIGN ID --
         UPDATE _doc_meta_cnt dmc
         SET
-        	master_object_id = cm.master_campaign_id
+        	master_object_id = cm.master_object_id
         FROM campaign_map cm
         WHERE dmc.db_model = 'source_campaign'
-        AND dmc.source_object_id = cm.source_campaign_id;
+        AND dmc.source_object_id = cm.source_id;
 
         DROP TABLE IF EXISTS _synced_datapoints;
         CREATE TEMP TABLE _synced_datapoints  as

@@ -167,9 +167,9 @@ def populate_document_metadata(document_id):
 
     return meta_breakdown
 
-def sync_source_datapoints(request,document_id,master_indicator_id):
+def sync_source_datapoints(request,document_id,master_id):
 
-    mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
+    mr = MasterRefresh(request.user.id,document_id,master_id)
 
     mr.source_dps_to_dps()
     mr.sync_regions()
@@ -219,86 +219,12 @@ class DocumentIndex(generic.ListView):
     model = Document
 
 
-######### META MAPPING ##########
-
-
-class CreateMap(PermissionRequiredMixin, generic.CreateView):
-
-    template_name='map/map.html'
-    success_url=reverse_lazy('source_data:document_index')
-    # permission_required = 'datapoints.add_datapoint'
-
-    def form_valid(self, form):
-    # this inserts into the changed_by field with  the user who made the insert
-        obj = form.save(commit=False)
-        obj.mapped_by = self.request.user
-        # obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-
-class IndicatorMapCreateView(CreateMap):
-
-    model=IndicatorMap
-    form_class = IndicatorMapForm
-    context_object_name = 'indicator_to_map'
-    template_name = 'map/map.html'
-
-    def get_initial(self):
-        return { 'source_indicator': self.kwargs['pk'] }
-
-
-class RegionMapCreateView(CreateMap):
-
-    model=RegionMap
-    form_class = RegionMapForm
-
-
-    def get_initial(self):
-        return { 'source_region': self.kwargs['pk'] }
-
-
-class CampaignMapCreateView(CreateMap):
-
-    model=CampaignMap
-    form_class = CampaignMapForm
-
-    def get_initial(self):
-        return { 'source_campaign': self.kwargs['pk'] }
-
-
-class ShowSourceIndicator(generic.DetailView):
-
-    context_object_name = "source_indicator"
-    template_name = 'map/source_indicator.html'
-    model = SourceIndicator
-
-
 class EtlJobIndex(generic.ListView):
 
     context_object_name = "etl_jobs"
     template_name = 'etl_jobs.html'
     model = EtlJob
     paginate_by = 25
-
-
-def un_map(request,source_object_id,db_model,document_id):
-
-    if db_model == 'region':
-
-        RegionMap.objects.get(source_region_id=source_object_id).delete()
-
-    elif db_model == 'indicator':
-
-        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
-
-    elif db_model == 'campaign':
-
-        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
-
-
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        ,kwargs={'document_id':document_id}))
 
 
 def refresh_master(request):
@@ -312,7 +238,14 @@ def refresh_master(request):
     return render_to_response('map/master_refresh.html'
         ,{'task_data': task_data})
 
-def api_document_review(request, document_id):
+def api_document_review(request):
+
+    try:
+        document_id = request.GET['document_id']
+    except KeyError:
+        return HttpResponse(json.dumps({'error':'document_id is a required parameter'})\
+            , content_type="application/json")
+
 
     meta_breakdown = []
 
@@ -353,7 +286,75 @@ def api_document_review(request, document_id):
         'indicators': indicator_breakdown,
         }
 
-    response_data = {'objects':response_objects, 'meta':[{'hello':'world'}]}
+    response_data = {'objects':response_objects }
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
+
+
+def api_map_meta(request):
+
+    objects, error, meta = None, None, {}
+    required_params = {'object_type':None,'source_object_id':None,\
+        'master_object_id':None}
+
+    map_model_lookup  = {
+        'indicator':IndicatorMap,
+        'region':RegionMap,
+        'campaign':CampaignMap
+        }
+
+    ## POPULATE THE META_DICT WITH THE REQUIRED PARAMS AND THEIR VALUES ##
+    for param in required_params:
+
+        try:
+            # FIND THE PARAMETER FROM THE REQUEST
+            meta[param] = request.POST[param].replace('[u','').replace(']','')
+        except KeyError:  ## IF PARAM IS MISSING ##
+            error = '%s is a required parameter' % param
+            response_data = {'objects':objects,'error':error, 'meta':meta}
+
+            return HttpResponse(json.dumps(response_data)\
+                , content_type="application/json")
+
+    meta['user_id'] = request.user.id
+
+    ## LOOK UP THE OBJECT AND CREATE OR UPDATE THE MAPPING TABLE $$
+    map_object = map_model_lookup[meta['object_type']]
+
+    ## CREATE OR UPDATE THE MAP ##
+    error, map_row_id = upsert_mapping(meta,map_object)
+
+    ## RETURN DATA TO API ##
+    objects = {'object_id': map_row_id}
+    response_data = {'error':error,'objects':objects, 'meta':meta }
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def upsert_mapping(meta,map_object):
+
+    request_source_id, request_master_id, request_user_id = \
+        int(meta['source_object_id']),int(meta['master_object_id']),\
+        int(meta['user_id'])
+
+    try:
+        db_obj, created = map_object.objects.get_or_create(
+            source_object_id = request_source_id,
+            defaults = {
+                'master_id':request_master_id,
+                'mapped_by_id':request_user_id
+            })
+
+        if not created:
+            db_obj.master_id = request_master_id
+            db_obj.mapped_by_id = request_user_id
+            db_obj.save()
+
+
+    except Exception as err:
+        return str(err), None
+
+
+    return None, db_obj.id
