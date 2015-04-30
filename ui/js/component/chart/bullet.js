@@ -132,8 +132,9 @@ module.exports = {
 				.clamp(true);
 
 			var ranges = [];
+			var missing = this.missing;
 
-			if (this.indicator && this.indicator.indicator_bounds) {
+			if (!missing && this.indicator && this.indicator.indicator_bounds) {
 				ranges = _(this.indicator.indicator_bounds)
 					.reject(function (bound) {
 						return bound.bound_name === 'invalid';
@@ -190,7 +191,6 @@ module.exports = {
 
 			labels.exit().remove();
 
-			var missing = this.missing;
 			var value = svg.selectAll('.value')
 				.data(missing ? [] : [this.value]);
 
