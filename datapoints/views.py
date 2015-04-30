@@ -649,13 +649,28 @@ def meta_api(request,content_type):
 
     }
 
-    kwargs = request.GET
+    kwargs = clean_kwargs(request.GET)
+
+    print kwargs
 
     db_obj = object_lookup[content_type]
     qs = db_obj.objects.all().values_list('id',flat=True).filter(**kwargs)
-
 
     data = list(qs)
 
 
     return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+def clean_kwargs(query_dict):
+
+    cleaned_kwargs = {}
+
+    for k,v in query_dict.iteritems():
+
+        if "," in v:
+            cleaned_kwargs[k] = v.split(',')
+        else:
+            cleaned_kwargs[k] = v #v[0]
+
+    return cleaned_kwargs
