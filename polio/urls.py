@@ -41,8 +41,9 @@ urlpatterns = patterns('',
     # url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
 
-    url(r'^accounts/login/$', login, name='login'),
-    url(r'^api/v2/', views.meta_api, name='meta_api'),
+    url(r'^api/v2/(?P<content_type>\w+)/$', views.meta_api, name='meta_api'),
+
+
 
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
 

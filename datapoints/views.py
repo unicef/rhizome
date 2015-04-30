@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
@@ -522,51 +523,6 @@ def parse_url_args(request,keys):
     return request_meta
 
 
-def api_user(request):
-
-    users = User.objects.all()
-    for (k,v) in request.GET.iteritems():
-        verb = k.split('.')[0]
-        if verb == 'search':
-            keywords = re.split('(?<!\\\)\ ', v.lower())
-            users = _user_search(users, keywords)
-        elif verb == 'filter':
-            terms = k.split('.')
-            users = _user_filter(users, terms, v)
-        elif verb == 'sort':
-            if 'sort_direction' in request.GET:
-                sd = request.GET['sort_direction']
-                try:
-                    users = _user_sort(users, v, sd)
-                except:
-                    return HttpResponse({'error': 'Cannot Sort on Field'})
-            else:
-                users = _user_sort(users, v)
-    if 'sort' not in request.GET:
-        users = _user_sort(users, 'last_name', 'asc')
-    offset = 0
-    if 'offset' in request.GET:
-        offset = int(request.GET['offset'])
-    limit = DEFAULT_LIMIT
-    if 'limit' in request.GET:
-        limit = int(request.GET['limit'])
-    my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
-    my_users = my_users[offset:offset+limit]
-    total_count = len(my_users)
-    resp = {}
-    resp['error'] = None
-    resp['meta'] = {
-        'limit': limit,
-        'offset': offset,
-        'total_count': total_count
-    }
-    resp['objects'] = my_users
-    resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
-    return HttpResponse(json.dumps(resp),
-            content_type='application/json')
-
-
-
 def api_campaign(request):
 
     meta_keys = ['id','region__in','start_date','limit','offset']
@@ -684,9 +640,22 @@ def bad_data(request):
         ,context_instance=RequestContext(request))
 
 
-def meta_api(request):
+def meta_api(request,content_type):
 
-    print 'HELLO\n' * 10
+    object_lookup = {
+        'region': Region,
+        'campaign': Campaign,
+        'indicator': Indicator
 
-    return HttpResponse(json.dumps({'HELLO':'world'})\
-        , content_type="application/json")
+    }
+
+    kwargs = request.GET
+
+    db_obj = object_lookup[content_type]
+    qs = db_obj.objects.all().values_list('id',flat=True).filter(**kwargs)
+
+
+    data = list(qs)
+
+
+    return HttpResponse(json.dumps(data),content_type="application/json")
