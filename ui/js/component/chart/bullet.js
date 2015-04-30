@@ -35,21 +35,23 @@ module.exports = {
 		},
 
 		status: function () {
-			var delta = this.delta;
+			var status = '';
+			var indicator = this.indicator;
+			var value = this.value;
 
-			if (this.missing || _.isNaN(delta)) {
-				return '';
+			if (value && indicator && indicator.indicator_bounds) {
+				_.each(indicator.indicator_bounds, function (bound) {
+					var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+					var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+					if (value >= lower && value <= upper) {
+						status = bound.bound_name;
+					}
+				});
 			}
 
-			if (delta >= 0.25) {
-				return 'up';
-			}
 
-			if (delta < 0 || (this.value <= 0.5 && this.value !== null)) {
-				return 'down';
-			}
-
-			return '';
+			return status;
 		},
 
 		value: function () {
