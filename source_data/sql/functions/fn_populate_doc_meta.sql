@@ -1,6 +1,3 @@
-
-
-
 --SELECT * FROM fn_populate_doc_meta(1013)
 
 

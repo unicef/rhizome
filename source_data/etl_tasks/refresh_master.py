@@ -42,32 +42,32 @@ class MasterRefresh(object):
                 SELECT
                       sd.id
                     , sd.cell_value
-                    , rm.master_id
-                    , cm.master_id
-                    , im.master_id
+                    , rm.master_object_id
+                    , cm.master_object_id
+                    , im.master_object_id
                 FROM source_datapoint sd
                 INNER JOIN source_region sr
                 	ON sd.region_code = sr.region_code
                 INNER JOIN region_map rm
-                	ON sr.id = rm.source_id
+                	ON sr.id = rm.source_object_id
                 INNER JOIN source_indicator si
                 	ON sd.indicator_string = si.indicator_string
                 INNER JOIN indicator_map im
-                	ON si.id = im.source_id
-                    AND im.master_id = %s
+                	ON si.id = im.source_object_id
+                    AND im.master_object_id = %s
                 INNER JOIN source_campaign sc
                 	ON sd.campaign_string = sc.campaign_string
                 INNER JOIN campaign_map cm
-                	ON sc.id = cm.source_id
+                	ON sc.id = cm.source_object_id
                 WHERE sd.document_id = %s''', [ind_id,self.document_id])
 
 
             for row in sdps_to_sync:
 
                 dp,created = DataPoint.objects.get_or_create(
-                    campaign_id = row.master_id,
-                    indicator_id = row.master_id,
-                    region_id = row.master_id,
+                    campaign_id = row.master_object_id,
+                    indicator_id = row.master_object_id,
+                    region_id = row.master_object_id,
                     defaults = {
                         'value':row.cell_value,
                         'source_datapoint_id': row.id,

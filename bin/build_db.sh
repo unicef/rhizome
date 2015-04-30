@@ -2,7 +2,7 @@
 SQL_DIR=$(pwd)'/datapoints/sql/'
 
 ## VIEWS ##
-psql polio -f $SQL_DIR'views/vw_missing_mappings.sql'
+# psql polio -f $SQL_DIR'views/vw_missing_mappings.sql'
 
 ## FUNCTIONS ##
 

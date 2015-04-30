@@ -334,7 +334,7 @@ def upsert_mapping(meta,map_object):
 
     try:
         db_obj, created = map_object.objects.get_or_create(
-            source_id= request_source_id,
+            source_object_id = request_source_id,
             defaults = {
                 'master_id':request_master_id,
                 'mapped_by_id':request_user_id
