@@ -276,19 +276,21 @@
 				</div>
 				<div class="medium-4 columns">
 					<h6>Inaccessibility Breakdown</h6>
-					<ul class="pie">
-						<li
-							v-repeat="inaccessibility"
-							v-class="hide-for-print: hiddenForPrint">
-							<span
-								v-component="chart-pie"
-								data-width="12"
-								data-height="12"
-								v-with="datapoints : datapoints,
-								        loading    : false"></span>
-								{{ value }} {{ name }}
-						</li>
-					</ul>
+					<table class="accessibility pie-charts">
+						<tr v-repeat="inaccessibility"
+							v-class="hide-for-print : hiddenForPrint">
+							<td>
+								<div v-component="chart-pie"
+									data-width="12"
+									data-height="12"
+									v-with="
+										datapoints : datapoints,
+										loading    : false"></div>
+							</td>
+							<td style="text-align:right">{{ value }}</td>
+							<td>{{ name }}</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>

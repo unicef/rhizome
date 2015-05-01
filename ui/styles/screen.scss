@@ -431,6 +431,15 @@ ul {
 	}
 }
 
+.accessibility {
+	.chart {
+		svg {
+			height : 12pt;
+			width  : 12pt;
+		}
+	}
+}
+
 .tooltip {
 	color: white !important;
 
