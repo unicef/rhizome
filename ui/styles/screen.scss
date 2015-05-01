@@ -425,7 +425,17 @@ ul {
 .transit-points {
 	.chart {
 		svg {
-			width : 14pt;
+			height : 14pt;
+			width  : 14pt;
+		}
+	}
+}
+
+.accessibility {
+	.chart {
+		svg {
+			height : 12pt;
+			width  : 12pt;
 		}
 	}
 }
