@@ -198,6 +198,7 @@ module.exports = {
 		'chart-bar'               : require('component/chart/bar'),
 		'chart-bullet'            : require('component/chart/bullet'),
 		'chart-choropleth'        : require('component/chart/choropleth'),
+		'chart-heatmap'           : require('component/chart/heatmap'),
 		'chart-line'              : require('component/chart/line'),
 		'chart-pie'               : require('component/chart/pie'),
 		'chart-scatter'           : require('component/chart/scatter'),

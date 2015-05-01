@@ -29,78 +29,14 @@ module.exports = {
 
 	data : function () {
 		return {
-			annotation     : null,
-			campaign       : null,
-			currentSection : null,
-			highlights     : [],
-			region         : null,
-			sections       : [],
-
-			dateFormat : format.timeAxis,
-			pctFormat  : d3.format('.1%'),
-
-			loading           : true,
-			immunityGap       : new Array(3),
-			immunityGapDomain : null,
-			immunityGapRange  : [0, 1]
+			campaign : null,
+			columns  : [],
+			region   : null,
+			series   : []
 		};
 	},
 
 	methods : {
-		dataReceived : function (data) {
-			function createDataPoint(d, indicator) {
-				return _.assign(_.pick(d, 'campaign', 'region'), {
-					indicator : indicator,
-					x         : startDate(d),
-					y         : d.indicators[indicator]
-				});
-			}
-
-			function createDataSeries(arr, indicator) {
-				return _(arr)
-					.map(datumTransform(indicator, _, _))
-					.filter(defined)
-					.value();
-			}
-
-			this.loading = false;
-
-			var startDate       = util.accessor('campaign.start_date');
-			var sort            = _.partialRight(_.sortBy, 'x');
-			var defined         = _.partialRight(util.defined, util.accessor('y'), _, _);
-			var datumTransform  = _.curryRight(createDataPoint);
-			var seriesTransform = _.curryRight(createDataSeries);
-
-			var series = _(data)
-				.map(indexIndicators)
-				.map(normalize)
-				.groupBy('region')
-				.map(sort)
-				.value();
-
-			this.immunityGapRange = [0, _(series)
-				.flatten()
-				.pluck('indicators')
-				.map(_.values)
-				.flatten()
-				.max()];
-
-			this.immunityGap.$set(0, _(series)
-				.map(seriesTransform(431, _, _))
-				.reject(_.isEmpty)
-				.value());
-
-			this.immunityGap.$set(1, _(series)
-				.map(seriesTransform(432, _, _))
-				.reject(_.isEmpty)
-				.value());
-
-			this.immunityGap.$set(2, _(series)
-				.map(seriesTransform(433, _, _))
-				.reject(_.isEmpty)
-				.value());
-		},
-
 		error : function () {
 			window.alert('Dammit!');
 		},
@@ -112,47 +48,57 @@ module.exports = {
 				return;
 			}
 
-			var q = {
-				parent_region__in : this.region.id,
-				level             : 'district'
-			};
-
-			var start = moment(this.campaign.start_date)
-				.subtract(1, 'year');
-
-			var end = moment(this.campaign.start_date);
-
-			this.immunityGapDomain = [
-				start.toDate().getTime(),
-				end.toDate().getTime()
+			var indicators = [
+				431,432,433,  // Immunity gap
+				475,166,164,167,165, // Missed Children
+				222, // Microplans
+				187,189, // Conversions
+				// FIXME: Transit points in place and with SM
+				178,228,179,184,180,185,230,226,239, // Capacity to Perform
+				194,219,173,172, // Supply
+				245,236,192,193,191, // Polio+
+				169,233, // Resources
+				174, // Access plan
+				442,443,444,445,446,447,448,449,450 // Inaccessibility
 			];
 
-			// Create a function that plucks the 'objects' property off of the API
-			// response objects and concatenates them
-			var concatenateData = function (data) {
-				return _(data).pluck('objects').flatten().value();
-			};
-
-			var districts = api.datapoints({
+			var datapoints = api.datapoints({
 				parent_region__in : this.region.id,
 				level             : 'district',
-				indicator__in     : [431,432,433],
-				campaign_start    : start.format('YYYY-MM-DD'),
-				campaign_end      : end.format('YYYY-MM-DD')
+				indicator__in     : indicators,
+				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
+				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			});
 
-			var national = api.datapoints({
-				region__in     : this.region.id,
-				indicator__in  : [431,432,433],
-				campaign_start : start.format('YYYY-MM-DD'),
-				campaign_end   : end.format('YYYY-MM-DD')
-			});
+			var self = this;
 
-			Promise.all([districts, national])
+			Promise.all([api.indicators({ id__in : indicators }), datapoints])
 				.then(function (data) {
-					return concatenateData(data);
-				}, this.error)
-				.then(this.dataReceived, this.error);
+					var indicatorIdx = _.indexBy(data[0].objects, 'id');
+					var columns = _.map(indicators, function (id) {
+						return indicatorIdx[id].short_name;
+					});
+
+					var data = _.map(data[1].objects, function (d) {
+						var dataIdx = _.indexBy(d.indicators, 'indicator');
+
+						return {
+							name : d.region,
+							values : _.map(indicators, function (id) {
+								var v = null;
+
+								if (dataIdx[id]) {
+									v = dataIdx[id].value
+								}
+
+								return v;
+							})
+						};
+					});
+
+					self.indicators = columns;
+					self.series     = data;
+				}, this.error);
 		}
 	},
 

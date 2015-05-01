@@ -62,7 +62,7 @@ svg {
 	&.spaghetti {
 		path {
 			fill            : none;
-			shape-rendering : crispEdges'
+			shape-rendering : crispEdges;
 			stroke          : inherit;
 			stroke-width    : 2px;
 		}
@@ -308,6 +308,18 @@ svg {
 				text-shadow: $legibility-shadow;
 			}
 		}
+	}
+}
+
+.heatmap {
+	border-collapse : separate;
+
+	.cell {
+		height : 12pt;
+		width  : 12pt;
+
+		padding : 0;
+		margin  : 0;
 	}
 }
 

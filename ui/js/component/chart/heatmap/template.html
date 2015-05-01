@@ -1,0 +1,16 @@
+<table class="heatmap chart">
+	<thead>
+		<tr>
+			<td v-repeat="columnLabels">{{ $value }}</td>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr v-repeat="series">
+			<td>{{ name }}</td>
+			<td class="cell"
+				v-repeat="values"
+				v-style="background-color : $value | color"></td>
+		</tr>
+	</tbody>
+</table>
