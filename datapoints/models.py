@@ -226,7 +226,7 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.DecimalField(null=True, max_digits=15, decimal_places=5)
+    value = models.FloatField()
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -339,3 +339,13 @@ class BadData(models.Model):
 
     class Meta:
         db_table = 'bad_data'
+
+
+class RegionPermission(models.Model):
+
+    user = models.ForeignKey('auth.User')
+    region = models.ForeignKey(Region)
+    read_write = models.CharField(max_length=1)
+
+    class Meta:
+        db_table = 'region_permission'

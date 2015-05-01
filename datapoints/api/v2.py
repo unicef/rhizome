@@ -94,6 +94,7 @@ class v2GetRequest(v2Request):
 
     def apply_permissions(self, data):
 
+
         return data
 
     def serialize(self, data):
