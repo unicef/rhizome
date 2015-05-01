@@ -226,12 +226,13 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.FloatField()
+    value = models.DecimalField(null=True, max_digits=15, decimal_places=5)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
     cache_job = models.ForeignKey(CacheJob,default=-1)
+
 
     def get_val(self):
         return self.value
@@ -302,16 +303,6 @@ class AggDataPoint(models.Model):
     class Meta:
         db_table = 'agg_datapoint'
         unique_together = ('region_id','campaign_id','indicator_id')
-
-class MissingMapping(models.Model):
-
-    datapoint = models.ForeignKey(DataPoint)
-    document = models.ForeignKey('source_data.SourceDataPoint')
-    what_is_missing = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'vw_missing_mappings'
-        managed = False
 
 
 class ExpectedData(models.Model):

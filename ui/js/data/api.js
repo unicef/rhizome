@@ -20,8 +20,6 @@ function endPoint(path, mode) {
 
 	var defaults = {
 		offset     : 0,
-		username   : 'evan',
-		api_key    : '67bd6ab9a494e744a213de2641def88163652dad',
 		format     : 'json',
 		uri_display: 'id'
 	};

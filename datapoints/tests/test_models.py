@@ -56,7 +56,7 @@ class RegionTest(MasterModelTestCase):
 
         self.set_up()
 
-        # source_region_id = self.create_source_region()
+        # source_id = self.create_source_region()
 
         region = Region.objects.create(name = name\
             ,office_id = office_id

@@ -8,11 +8,11 @@ SELECT
  	d.id as datapoint_id
  	,d.source_datapoint_id
  	,d.region_id
-	,sr.id as source_region_id
+	,sr.id as source_id
  	,d.campaign_id
- 	,sc.id as source_campaign_id
+ 	,sc.id as source_id
  	,d.indicator_id
- 	,si.id as source_indicator_id
+ 	,si.id as source_id
  	,sd.document_id
 FROM datapoint d
 INNER JOIN source_datapoint sd
@@ -39,8 +39,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM indicator_map im
-		WHERE fj.indicator_id = im.master_indicator_id
-		AND fj.source_indicator_id = im.source_indicator_id
+		WHERE fj.indicator_id = im.master_id
+		AND fj.source_id = im.source_id
 	)
 
 
@@ -54,8 +54,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM region_map rm
-		WHERE fj.region_id = rm.master_region_id
-		AND fj.source_region_id = rm.source_region_id
+		WHERE fj.region_id = rm.master_id
+		AND fj.source_id = rm.source_id
 	)
 
 	UNION ALL
@@ -68,8 +68,8 @@ FROM
 	WHERE NOT EXISTS
 	(
 		SELECT 1 FROM campaign_map cm
-		WHERE fj.campaign_id = cm.master_campaign_id
-		AND fj.source_campaign_id = cm.source_campaign_id
+		WHERE fj.campaign_id = cm.master_id
+		AND fj.source_id = cm.source_id
 
 	)
 

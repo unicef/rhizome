@@ -20,8 +20,6 @@ urlpatterns = [
 
     url(r'^refresh_master/$', refresh_master,name='refresh_master'),
 
-    url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
-
     url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$'\
         , mark_doc_as_processed, name='mark_doc_as_processed'),
 
@@ -36,7 +34,7 @@ urlpatterns = [
         name='document_review'),
 
     url(r'^sync_source_datapoints/(?P<document_id>[0-9]+)/\
-        (?P<master_indicator_id>[0-9]+)/$',sync_source_datapoints,\
+        (?P<master_id>[0-9]+)/$',sync_source_datapoints,\
         name='sync_source_datapoints'),
 
     url(r'^refresh_master_no_indicator/(?P<document_id>[0-9]+)/',refresh_master_no_indicator,\

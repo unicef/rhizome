@@ -8,152 +8,28 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.execute('''
 
-        TRUNCATE TABLE indicator_bound;
+        # Changing field 'HistoricalDataPointEntry.value'
+        db.alter_column(u'datapoints_historicaldatapointentry', 'value', self.gf('django.db.models.fields.FloatField')(null=True))
 
-        /*
-        INSERT INTO indicator_bound
-        (indicator_id,mn_val,mx_val,bound_name,direction)
-
-
-        SELECT 168,NULL,-1,'invalid', 1 UNION ALL
-        SELECT 168,-1,0,'good', 1 UNION ALL
-        SELECT 168,0,NULL,'bad', 1 UNION ALL
-        SELECT 431,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 431,0.0,0.05,'good', 1 UNION ALL
-        SELECT 431,0.05,0.09,'okay', 1 UNION ALL
-        SELECT 431,0.09,1,'bad', 1 UNION ALL
-        SELECT 431,1,NULL,'invalid', 1 UNION ALL
-        SELECT 432,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 432,0.0,0.05,'good', 1 UNION ALL
-        SELECT 432,0.05,0.09,'okay', 1 UNION ALL
-        SELECT 432,0.09,1,'bad', 1 UNION ALL
-        SELECT 432,1,NULL,'invalid', 1 UNION ALL
-        SELECT 169,1,NULL,'invalid', 1 UNION ALL
-        SELECT 169,0.9,1,'good', 1 UNION ALL
-        SELECT 169,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 169,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 169,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 233,1,NULL,'invalid', 1 UNION ALL
-        SELECT 233,0.9,1,'good', 1 UNION ALL
-        SELECT 233,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 233,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 233,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 172,1,NULL,'invalid', 1 UNION ALL
-        SELECT 172,0.79,1,'good', 1 UNION ALL
-        SELECT 172,0.49,0.79,'okay', 1 UNION ALL
-        SELECT 172,0.0,0.49,'bad', 1 UNION ALL
-        SELECT 172,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 219,1,NULL,'invalid', 1 UNION ALL
-        SELECT 219,0.1,0.15,'okay', 1 UNION ALL
-        SELECT 219,0.05,0.1,'good', 1 UNION ALL
-        SELECT 219,0,0.05,'okay', 1 UNION ALL
-        SELECT 219,-1,0,'bad', 1 UNION ALL
-        SELECT 219,NULL,-1,'invalid', 1 UNION ALL
-        SELECT 174,1,NULL,'invalid', 1 UNION ALL
-        SELECT 174,0.95,1,'good', 1 UNION ALL
-        SELECT 174,0.85,0.95,'okay', 1 UNION ALL
-        SELECT 174,0.0,0.85,'bad', 1 UNION ALL
-        SELECT 174,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 178,1,NULL,'invalid', 1 UNION ALL
-        SELECT 178,0.75,1,'good', 1 UNION ALL
-        SELECT 178,0.5,0.75,'okay', 1 UNION ALL
-        SELECT 178,0.0,0.5,'bad', 1 UNION ALL
-        SELECT 178,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 179,1,NULL,'invalid', 1 UNION ALL
-        SELECT 179,0.9,1,'good', 1 UNION ALL
-        SELECT 179,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 179,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 179,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 180,1,NULL,'invalid', 1 UNION ALL
-        SELECT 180,0.9,1,'good', 1 UNION ALL
-        SELECT 180,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 180,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 180,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 230,1,NULL,'invalid', 1 UNION ALL
-        SELECT 230,0.9,1,'good', 1 UNION ALL
-        SELECT 230,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 230,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 230,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 239,1,NULL,'invalid', 1 UNION ALL
-        SELECT 239,0.75,1,'good', 1 UNION ALL
-        SELECT 239,0.5,0.75,'okay', 1 UNION ALL
-        SELECT 239,0.0,0.5,'bad', 1 UNION ALL
-        SELECT 239,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 228,1,NULL,'invalid', 1 UNION ALL
-        SELECT 228,0.9,1,'good', 1 UNION ALL
-        SELECT 228,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 228,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 228,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 184,1,NULL,'invalid', 1 UNION ALL
-        SELECT 184,0.9,1,'good', 1 UNION ALL
-        SELECT 184,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 184,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 184,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 185,1,NULL,'invalid', 1 UNION ALL
-        SELECT 185,0.9,1,'good', 1 UNION ALL
-        SELECT 185,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 185,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 185,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 226,1,NULL,'invalid', 1 UNION ALL
-        SELECT 226,0.9,1,'good', 1 UNION ALL
-        SELECT 226,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 226,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 226,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 222,1,NULL,'invalid', 1 UNION ALL
-        SELECT 222,0.9,1,'good', 1 UNION ALL
-        SELECT 222,0.75,0.9,'okay', 1 UNION ALL
-        SELECT 222,0.0,0.75,'bad', 1 UNION ALL
-        SELECT 222,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 166,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 166,0.0,0.0049,'good', 1 UNION ALL
-        SELECT 166,0.0049,0.01,'okay', 1 UNION ALL
-        SELECT 166,0.01,1,'bad', 1 UNION ALL
-        SELECT 166,1,NULL,'invalid', 1 UNION ALL
-        SELECT 187,1,NULL,'invalid', 1 UNION ALL
-        SELECT 187,0.9,1,'good', 1 UNION ALL
-        SELECT 187,0.74,0.9,'okay', 1 UNION ALL
-        SELECT 187,0.0,0.74,'bad', 1 UNION ALL
-        SELECT 187,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 164,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 164,0.0,0.009,'good', 1 UNION ALL
-        SELECT 164,0.009,0.02,'okay', 1 UNION ALL
-        SELECT 164,0.02,1,'bad', 1 UNION ALL
-        SELECT 164,1,NULL,'invalid', 1 UNION ALL
-        SELECT 189,1,NULL,'invalid', 1 UNION ALL
-        SELECT 189,0.8,1,'good', 1 UNION ALL
-        SELECT 189,0.59,0.8,'okay', 1 UNION ALL
-        SELECT 189,0.0,0.59,'bad', 1 UNION ALL
-        SELECT 189,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 245,1,NULL,'invalid', 1 UNION ALL
-        SELECT 245,0.79,1,'good', 1 UNION ALL
-        SELECT 245,0.6,0.79,'okay', 1 UNION ALL
-        SELECT 245,0.0,0.6,'bad', 1 UNION ALL
-        SELECT 245,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 236,1,NULL,'invalid', 1 UNION ALL
-        SELECT 236,0.79,1,'good', 1 UNION ALL
-        SELECT 236,0.6,0.79,'okay', 1 UNION ALL
-        SELECT 236,0.0,0.6,'bad', 1 UNION ALL
-        SELECT 236,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 191,NULL,0.0,'invalid', 1 UNION ALL
-        SELECT 191,0.0,0.75,'good', 1 UNION ALL
-        SELECT 191,0.75,0.89,'okay', 1 UNION ALL
-        SELECT 191,0.89,1,'bad', 1 UNION ALL
-        SELECT 191,1,NULL,'invalid', 1 UNION ALL
-        SELECT 193,1,NULL,'invalid', 1 UNION ALL
-        SELECT 193,0.79,1,'good', 1 UNION ALL
-        SELECT 193,0.6,0.79,'okay', 1 UNION ALL
-        SELECT 193,0.0,0.6,'bad', 1 UNION ALL
-        SELECT 193,NULL,0.0,'invalid', 1;
-
-        */
-
-        ''')
-
+        # Changing field 'DataPoint.value'
+        db.alter_column('datapoint', 'value', self.gf('django.db.models.fields.FloatField')(null=True))
 
     def backwards(self, orm):
-        pass
+
+        # User chose to not deal with backwards NULL issues for 'HistoricalDataPointEntry.value'
+        raise RuntimeError("Cannot reverse this migration. 'HistoricalDataPointEntry.value' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration
+        # Changing field 'HistoricalDataPointEntry.value'
+        db.alter_column(u'datapoints_historicaldatapointentry', 'value', self.gf('django.db.models.fields.FloatField')())
+
+        # User chose to not deal with backwards NULL issues for 'DataPoint.value'
+        raise RuntimeError("Cannot reverse this migration. 'DataPoint.value' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration
+        # Changing field 'DataPoint.value'
+        db.alter_column('datapoint', 'value', self.gf('django.db.models.fields.FloatField')())
 
     models = {
         u'auth.group': {
@@ -211,7 +87,7 @@ class Migration(SchemaMigration):
         },
         u'datapoints.cachejob': {
             'Meta': {'ordering': "('-date_attempted',)", 'object_name': 'CacheJob', 'db_table': "'cache_job'"},
-            'date_attempted': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 4, 20, 0, 0)'}),
+            'date_attempted': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 4, 23, 0, 0)'}),
             'date_completed': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_error': ('django.db.models.fields.BooleanField', [], {}),
@@ -251,7 +127,7 @@ class Migration(SchemaMigration):
             'note': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Region']"}),
             'source_datapoint': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['source_data.SourceDataPoint']"}),
-            'value': ('django.db.models.fields.FloatField', [], {})
+            'value': ('django.db.models.fields.FloatField', [], {'null': 'True'})
         },
         u'datapoints.datapointabstracted': {
             'Meta': {'unique_together': "(('region', 'campaign'),)", 'object_name': 'DataPointAbstracted', 'db_table': "'datapoint_abstracted'"},
@@ -292,7 +168,7 @@ class Migration(SchemaMigration):
             'note': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'region_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'source_datapoint_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
-            'value': ('django.db.models.fields.FloatField', [], {})
+            'value': ('django.db.models.fields.FloatField', [], {'null': 'True'})
         },
         u'datapoints.indicator': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Indicator', 'db_table': "'indicator'"},
@@ -304,6 +180,12 @@ class Migration(SchemaMigration):
             'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '255', 'populate_from': "'name'", 'unique_with': '()'}),
             'source': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Source']"})
+        },
+        u'datapoints.indicatorabstracted': {
+            'Meta': {'object_name': 'IndicatorAbstracted', 'db_table': "'indicator_abstracted'"},
+            'bound_json': ('jsonfield.fields.JSONField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'indicator': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Indicator']"})
         },
         u'datapoints.indicatorbound': {
             'Meta': {'object_name': 'IndicatorBound', 'db_table': "'indicator_bound'"},
@@ -408,7 +290,7 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('source', 'source_guid', 'indicator_string'),)", 'object_name': 'SourceDataPoint', 'db_table': "'source_datapoint'"},
             'campaign_string': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'cell_value': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 4, 20, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 4, 23, 0, 0)'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['source_data.Document']"}),
             'guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

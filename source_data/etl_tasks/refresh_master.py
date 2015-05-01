@@ -20,8 +20,8 @@ class MasterRefresh(object):
         self.user_id = user_id
         self.indicator_id = indicator_id
 
-        self.source_region_ids, self.source_campaign_id\
-            , self.source_indicator_ids = [],[],[]
+        self.source_ids, self.source_id\
+            , self.source_ids = [],[],[]
 
         self.sdp_df = DataFrame(list(SourceDataPoint.objects\
             .filter(document_id = self.document_id).values()))
@@ -42,40 +42,37 @@ class MasterRefresh(object):
                 SELECT
                       sd.id
                     , sd.cell_value
-                    , rm.master_region_id
-                    , cm.master_campaign_id
-                    , im.master_indicator_id
+                    , rm.master_object_id
+                    , cm.master_object_id
+                    , im.master_object_id
                 FROM source_datapoint sd
                 INNER JOIN source_region sr
                 	ON sd.region_code = sr.region_code
                 INNER JOIN region_map rm
-                	ON sr.id = rm.source_region_id
+                	ON sr.id = rm.source_object_id
                 INNER JOIN source_indicator si
                 	ON sd.indicator_string = si.indicator_string
                 INNER JOIN indicator_map im
-                	ON si.id = im.source_indicator_id
-                    AND im.master_indicator_id = %s
+                	ON si.id = im.source_object_id
+                    AND im.master_object_id = %s
                 INNER JOIN source_campaign sc
                 	ON sd.campaign_string = sc.campaign_string
                 INNER JOIN campaign_map cm
-                	ON sc.id = cm.source_campaign_id
+                	ON sc.id = cm.source_object_id
                 WHERE sd.document_id = %s''', [ind_id,self.document_id])
 
 
             for row in sdps_to_sync:
 
                 dp,created = DataPoint.objects.get_or_create(
-                    campaign_id = row.master_campaign_id,
-                    indicator_id = row.master_indicator_id,
-                    region_id = row.master_region_id,
+                    campaign_id = row.master_object_id,
+                    indicator_id = row.master_object_id,
+                    region_id = row.master_object_id,
                     defaults = {
                         'value':row.cell_value,
                         'source_datapoint_id': row.id,
                         'changed_by_id': self.user_id
                     })
-
-                print 'created ?  %s' % created
-                print 'dp_val ?  %s' % dp.value
 
                 ## if this datapoint exists and was not added by a human ##
                 if created == False and dp.id > 0:

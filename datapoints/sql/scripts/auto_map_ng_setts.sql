@@ -55,15 +55,15 @@ AND NOT EXISTS (
 
 
 INSERT INTO region_map
-(master_region_id,source_region_id,mapped_by_id)
+(master_id,source_id,mapped_by_id)
 SELECT
-	r.id as master_region_id
-	,ngs.id as source_region_id
+	r.id as master_id
+	,ngs.id as source_id
 	,1
 FROM _ng_setts ngs
 INNER JOIN region r
 ON ngs.region_code = r.region_code
 WHERE NOT EXISTS (
 	SELECT 1 from region_map rm
-	WHERE ngs.id = rm.source_region_id
+	WHERE ngs.id = rm.source_id
 );

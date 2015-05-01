@@ -16,6 +16,8 @@ from datapoints.models import *
 from datapoints.api.meta_data import *
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
+from numpy import nan
+
 
 class ResultObject(object):
     '''
@@ -274,8 +276,8 @@ class DataPointEntryResource(BaseModelResource):
         Make sure the data is valid, then save it.
         All POST requests come through here, whether they're truly
         'obj_create' or actually 'obj_update'.
-        Also, if a request comes in with value=NULL, that means
-        DELETE that object.
+        Also, if a request comes in with value=NULL, that means set the value
+        of that obect = 0.
         """
         try:
             self.validate_object(bundle.data)
@@ -291,19 +293,15 @@ class DataPointEntryResource(BaseModelResource):
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
-                if self.is_delete_request(bundle):
-                    # delete
-                    bundle.obj = existing_datapoint
-                    self.obj_delete(bundle, **kwargs)
-                else:
-                    # update
-                    update_kwargs = {
-                        'region_id': existing_datapoint.region_id,
-                        'campaign_id': existing_datapoint.campaign_id,
-                        'indicator_id': existing_datapoint.indicator_id
-                    }
-                    bundle.response = self.success_response()
-                    return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+
+                update_kwargs = {
+                    'region_id': existing_datapoint.region_id,
+                    'campaign_id': existing_datapoint.campaign_id,
+                    'indicator_id': existing_datapoint.indicator_id
+                }
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+
             else:
                 # create
                 bundle.response = self.success_response()
@@ -337,13 +335,9 @@ class DataPointEntryResource(BaseModelResource):
             return False
 
     def obj_delete(self, bundle, **kwargs):
-        super(DataPointEntryResource, self).obj_delete(bundle, **kwargs)
-        response = self.create_response(
-            bundle.request,
-            self.success_response(),
-            response_class=http.HttpResponse
-        )
-        raise ImmediateHttpResponse(response=response)
+        """This is here to prevent an objects from ever being deleted."""
+        pass
+
 
     def obj_delete_list(self, bundle, **kwargs):
         """This is here to prevent a list of objects from
@@ -372,9 +366,6 @@ class DataPointEntryResource(BaseModelResource):
             and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
             # we get here if there's an existing datapoint being modified
 
-            bundle.obj.changed_by_id = bundle.data['changed_by_id']
-            bundle.obj.cache_job_id = -1
-
             pass
         else:
             # we get here if we're inserting a brand new datapoint
@@ -382,11 +373,11 @@ class DataPointEntryResource(BaseModelResource):
             bundle.obj.region_id = int(bundle.data['region_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
-            bundle.obj.source_datapoint_id = -1
             bundle.obj.value = bundle.data['value']
 
-            bundle.obj.changed_by_id = bundle.data['changed_by_id']
-            bundle.obj.cache_job_id = -1
+        bundle.obj.source_datapoint_id = -1
+        bundle.obj.cache_job_id = -1
+        bundle.obj.changed_by_id = bundle.data['changed_by_id']
 
         return bundle
 
