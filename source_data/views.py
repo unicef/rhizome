@@ -224,6 +224,24 @@ class EtlJobIndex(generic.ListView):
     model = EtlJob
     paginate_by = 25
 
+def un_map(request,source_object_id,db_model,document_id):
+
+    if db_model == 'region':
+
+        RegionMap.objects.get(source_region_id=source_object_id).delete()
+
+    elif db_model == 'indicator':
+
+        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
+
+    elif db_model == 'campaign':
+
+        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
+
+
+    return HttpResponseRedirect(reverse('source_data:document_review'\
+        ,kwargs={'document_id':document_id}))
+
 
 def refresh_master(request):
 
@@ -358,6 +376,10 @@ def upsert_mapping(meta,map_object):
     return None, db_obj.id
 
 
+
+######### META MAPPING ##########
+
+
 class CreateMap(PermissionRequiredMixin, generic.CreateView):
 
     template_name='map/map.html'
@@ -371,3 +393,33 @@ class CreateMap(PermissionRequiredMixin, generic.CreateView):
         # obj.source_id = Source.objects.get(source_name='data entry').id
         obj.save()
         return HttpResponseRedirect(self.success_url)
+
+
+class IndicatorMapCreateView(CreateMap):
+
+    model=IndicatorMap
+    form_class = IndicatorMapForm
+    context_object_name = 'indicator_to_map'
+    template_name = 'map/map.html'
+
+    def get_initial(self):
+        return { 'source_indicator': self.kwargs['pk'] }
+
+
+class RegionMapCreateView(CreateMap):
+
+    model=RegionMap
+    form_class = RegionMapForm
+
+
+    def get_initial(self):
+        return { 'source_region': self.kwargs['pk'] }
+
+
+class CampaignMapCreateView(CreateMap):
+
+    model=CampaignMap
+    form_class = CampaignMapForm
+
+    def get_initial(self):
+        return { 'source_campaign': self.kwargs['pk'] }
