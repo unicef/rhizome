@@ -1,6 +1,9 @@
 import json
 from pprint import pprint
 
+import gspread
+import re
+import itertools
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
@@ -14,16 +17,14 @@ from django.template import RequestContext
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
-import gspread
-import re
-import itertools
 from functools import partial
 
 from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
 from datapoints.forms import *
 from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
-
 from datapoints.mixins import PermissionRequiredMixin
+from datapoints.api.v2 import v2PostRequest, v2GetRequest
+
 
 USER_METADATA = 'static/users_metadata_mockup.json'
 DEFAULT_LIMIT = 50
@@ -629,9 +630,7 @@ def api_indicator(request):
 
 def bad_data(request):
 
-    dp_curs = BadData.objects.raw('''
-        SELECT * FROM bad_data
-    ''')
+    dp_curs = BadData.objects.raw('''SELECT * FROM bad_data''')
 
     dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
         dp in dp_curs]
@@ -642,57 +641,16 @@ def bad_data(request):
 
 def meta_api_GET(request,content_type):
 
-    kwargs = clean_kwargs(request.GET)
-
-    db_obj = object_lookup(content_type)
-    qs = db_obj.objects.all().values_list('id',flat=True).filter(**kwargs)
-
-    data = list(qs)
+    request_object = v2GetRequest(request, content_type)
+    data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
 
 
-def clean_kwargs(query_dict):
-
-    cleaned_kwargs = {}
-
-    for k,v in query_dict.iteritems():
-
-        if "," in v:
-            cleaned_kwargs[k] = v.split(',')
-        else:
-            cleaned_kwargs[k] = v
-
-    return cleaned_kwargs
-
-
 def meta_api_POST(request,content_type):
 
-    # http://localhost:8000/api/v2/post/campaign/?start_date=2016-01-01&end_date=2016-01-01&office_id=1&campaign_type_id=1
-    # http://localhost:8000/api/v2/get/indicator/?name__contains=polio
-    # http://localhost:8000/api/v2/get/indicator/?name__startswith=Polio
+    request_object = v2PostRequest(request, content_type)
+    data = request_object.main()
 
-    ## MULTIPLE MODELS ##
-    # http://localhost:8000/api/v2/post/indicator/?name=test2&source_id=1&mx_val=1&bound_name=juvenile #
-
-    db_obj = object_lookup(content_type)
-    kwargs = clean_kwargs(request.GET)  ## CHANGE TO POST ##
-
-    new_obj = db_obj.objects.create(**kwargs)
-
-    return HttpResponse(json.dumps({'new_id':new_obj.id }),
+    return HttpResponse(json.dumps(data),
         content_type="application/json")
-
-def object_lookup(content_type_string):
-
-    object_lookup = {
-        'region': Region,
-        'campaign': Campaign,
-        'indicator': Indicator,
-        'user': User,
-        'region_type': RegionType
-    }
-
-    db_model = object_lookup[content_type_string]
-
-    return db_model
