@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 
-from datapoints.models import Region, Campaign, Indicator
+from datapoints.models import Region, Campaign, Indicator, DataPointAbstracted
 
 
 class v2Request(object):
@@ -12,6 +12,10 @@ class v2Request(object):
 
         self.request = request
         self.content_type = content_type
+        self.user_id = request.user.id
+
+        self.db_obj = self.object_lookup(content_type)
+        self.kwargs = self.clean_kwargs(request.GET)  ## CHANGE TO POST ##
 
     def clean_kwargs(self,query_dict):
 
@@ -30,6 +34,7 @@ class v2Request(object):
     def object_lookup(self,content_type_string):
 
         orm_mapping = {
+            'datapoint': DataPointAbstracted,
             'region': Region,
             'campaign': Campaign,
             'indicator': Indicator,
@@ -43,17 +48,28 @@ class v2Request(object):
 
 class v2PostRequest(v2Request):
 
-    def __int__(self):
 
-        return super()
+    def main(self):
+        '''
+        Create an object in accordance to the URL kwargs and return the new ID
+        '''
+
+        new_obj = self.db_obj.objects.create(**self.kwargs)
+
+        data = {'new_id':new_obj.id }
+
+        return data
+
+
+class v2PostRequest(v2Request):
 
 
     def main(self):
+        '''
+        Create an object in accordance to the URL kwargs and return the new ID
+        '''
 
-        db_obj = self.object_lookup(self.content_type)
-        kwargs = clean_kwargs(self.request.GET)  ## CHANGE TO POST ##
-
-        new_obj = db_obj.objects.create(**kwargs)
+        new_obj = self.db_obj.objects.create(**self.kwargs)
 
         data = {'new_id':new_obj.id }
 
@@ -61,15 +77,26 @@ class v2PostRequest(v2Request):
 
 class v2GetRequest(v2Request):
 
-
     def main(self):
+        '''
+        Get the list of database objects ( ids ) by applying the URL kwargs to
+        the filter method of the djanog ORM.
+        '''
 
-        db_obj = self.object_lookup(self.content_type)
-        kwargs = self.clean_kwargs(self.request.GET)
+        list_of_ids = list(self.db_obj.objects.all().values_list('id',flat=True).\
+            filter(**self.kwargs))
 
-        qs = db_obj.objects.all().values_list('id',flat=True).filter(**kwargs)
+        filtered_data = self.apply_permissions(list_of_ids)
 
-        data = list(qs)
+        data = self.serialize(filtered_data)
+
+        return data
+
+    def apply_permissions(self, data):
+
+        return data
+
+    def serialize(self, data):
 
         return data
 
