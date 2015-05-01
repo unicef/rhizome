@@ -133,8 +133,10 @@
 
 			<div class="transit-points medium-1 column">
 				<h4>Transit Points</h4>
+
 				<p v-if="transitPoints.showVaccinated">
-					{{ transitPoints.vaccinated }} children vaccinated
+					<strong>{{ transitPoints.vaccinated | num }}</strong>
+					children vaccinated at transit points
 				</p>
 
 				<table class="pie-charts">
