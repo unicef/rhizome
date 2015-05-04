@@ -42,9 +42,9 @@ class MasterRefresh(object):
                 SELECT
                       sd.id
                     , sd.cell_value
-                    , rm.master_object_id
-                    , cm.master_object_id
-                    , im.master_object_id
+                    , rm.master_object_id as region_id
+                    , cm.master_object_id as campaign_id
+                    , im.master_object_id as indicator_id
                 FROM source_datapoint sd
                 INNER JOIN source_region sr
                 	ON sd.region_code = sr.region_code
@@ -65,9 +65,9 @@ class MasterRefresh(object):
             for row in sdps_to_sync:
 
                 dp,created = DataPoint.objects.get_or_create(
-                    campaign_id = row.master_object_id,
-                    indicator_id = row.master_object_id,
-                    region_id = row.master_object_id,
+                    campaign_id = row.campaign_id,
+                    indicator_id = row.indicator_id,
+                    region_id = row.region_id,
                     defaults = {
                         'value':row.cell_value,
                         'source_datapoint_id': row.id,
@@ -95,7 +95,7 @@ class MasterRefresh(object):
 
     def sync_regions(self):
 
-        mapped_source_regions = RegionMap.objects.filter(source_region__document_id=self.document_id)
+        mapped_source_regions = RegionMap.objects.filter(source_object__document_id=self.document_id)
 
 
         for sr in mapped_source_regions:
