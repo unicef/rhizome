@@ -12,6 +12,7 @@ Vue.component('vue-tooltip', require('./component/tooltip'));
 Vue.component('vue-menu', require('./component/menu'));
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
+Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
 
 module.exports = {
 	Explorer: function (el) {

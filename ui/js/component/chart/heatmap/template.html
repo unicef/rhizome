@@ -11,7 +11,10 @@
 			<th>{{ name }}</th>
 			<td class="cell"
 				v-repeat="values"
-				v-style="background-color : $value | color"></td>
+				v-style="background-color : $value | color"
+				v-on="
+					mouseover : onMouseover($value, $index, this),
+					mouseout  : onMouseout(this)"></td>
 		</tr>
 	</tbody>
 </table>
