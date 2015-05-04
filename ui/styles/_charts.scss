@@ -330,10 +330,12 @@ svg {
 	tr {
 		background-color: #fff !important;
 
-		td {
-			height  : 1rem;
-			padding : 0;
-			margin  : 0;
+		td, th {
+			font-weight : normal;
+			height      : 1rem;
+			padding     : 0;
+			margin      : 0;
+			white-space : nowrap;
 
 			&.cell {
 				max-width : 1rem;

@@ -20,6 +20,7 @@ module.exports = {
 			campaign   : null,
 			dashboard  : null,
 
+			regionIdx  : {},
 			regions    : [],
 			campaigns  : [],
 			dashboards : [],
@@ -55,6 +56,7 @@ module.exports = {
 			var regions = _(data.objects);
 
 			self._regionIndex = _.indexBy(data.objects, 'name');
+			self.regionIdx    = _.indexBy(data.objects, 'id');
 
 			self.regions = regions
 				.map(function (region) {

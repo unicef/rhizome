@@ -32,6 +32,7 @@ module.exports = {
 			campaign : null,
 			columns  : [],
 			region   : null,
+			regions  : {},
 			series   : []
 		};
 	},
@@ -75,15 +76,25 @@ module.exports = {
 			Promise.all([api.indicators({ id__in : indicators }), datapoints])
 				.then(function (data) {
 					var indicatorIdx = _.indexBy(data[0].objects, 'id');
+
 					var columns = _.map(indicators, function (id) {
 						return indicatorIdx[id].short_name;
 					});
 
 					var data = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
+						var name    = d.region;
+
+						if (self.regions[name]) {
+							name = self.regions[name];
+						}
+
+						if (name.name) {
+							name = name.name;
+						}
 
 						return {
-							name : d.region,
+							name   : name,
 							values : _.map(indicators, function (id) {
 								var v = null;
 
