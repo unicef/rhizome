@@ -30,11 +30,17 @@ function accessor(prop) {
 	};
 }
 
-function defined(value) {
-	return value !== null &&
-		typeof value !== 'undefined' &&
-		Math.abs(value) !== Infinity &&
-		!isNaN(value);
+function defined(value, accessor) {
+	if (arguments.length < 2) {
+		accessor = _.identity;
+	}
+
+	var v = accessor(value);
+
+	return v !== null &&
+		typeof v !== 'undefined' &&
+		Math.abs(v) !== Infinity &&
+		!isNaN(v);
 }
 
 function max(data, accessor) {

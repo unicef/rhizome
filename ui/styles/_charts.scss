@@ -46,16 +46,25 @@ svg {
 		}
 	}
 
-	.line {
+	&.line {
 		path {
-			fill: none;
-			stroke: $charcoal;
-			stroke-width: 2px;
+			fill         : none;
+			stroke       : inherit;
+			stroke-width : 2px;
 		}
 
 		circle {
-			fill: $white;
-			stroke-width: 1px;
+			fill         : $white;
+			stroke-width : 1px;
+		}
+	}
+
+	&.spaghetti {
+		path {
+			fill            : none;
+			shape-rendering : crispEdges;
+			stroke          : inherit;
+			stroke-width    : 2px;
 		}
 	}
 
@@ -299,6 +308,40 @@ svg {
 				text-shadow: $legibility-shadow;
 			}
 		}
+	}
+}
+
+.heatmap {
+	border          : none;
+	border-collapse : separate;
+	margin-top      : 16em;
+
+	thead {
+		th {
+			font-size        : rem-calc(10);
+			font-weight      : normal;
+			max-width        : 1rem;
+			transform-origin : left bottom;
+			transform        : translateX(1rem) rotate(-45deg);
+			white-space      : nowrap;
+		}
+	}
+
+	tr {
+		background-color: #fff !important;
+
+		td, th {
+			font-weight : normal;
+			height      : 1rem;
+			padding     : 0;
+			margin      : 0;
+			white-space : nowrap;
+
+			&.cell {
+				max-width : 1rem;
+			}
+		}
+
 	}
 }
 
