@@ -96,10 +96,30 @@ module.exports = {
 						return {
 							name   : name,
 							values : _.map(indicators, function (id) {
-								var v = null;
+								var v = {};
 
 								if (dataIdx[id]) {
-									v = dataIdx[id].value
+									v.value = dataIdx[id].value
+
+									if (util.defined(v.value)) {
+										_(indicatorIdx[id].indicator_bounds)
+											.map(function (bound) {
+												var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+												var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+												return _.assign({}, bound, {
+													mn_val : lower,
+													mx_val : upper
+												});
+											})
+											.sortBy('mn_val')
+											.each(function (bound) {
+												if (_.inRange(v.value, bound.mn_val, bound.mx_val)) {
+													v.range = bound.bound_name;
+												}
+											})
+											.value();
+									}
 								}
 
 								return v;

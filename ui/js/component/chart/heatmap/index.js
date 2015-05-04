@@ -24,7 +24,6 @@ module.exports = {
 					value     : v,
 				}
 			});
-			console.log(v, this.columnLabels[i], vm.$parent.name);
 		},
 
 		onMouseout : function (vm) {
@@ -34,12 +33,11 @@ module.exports = {
 
 	filters : {
 		color : function (value) {
-			var p = palette.RdYlBu[11];
-			var scale = d3.scale.quantile()
-				.range(d3.range(p.length))
-				.domain([1, 0]);
+			var scale = d3.scale.ordinal()
+				.domain(['bad', 'okay', 'ok', 'good'])
+				.range(['#AF373E', 'rgb(112,118,119)', 'rgb(112,118,119)','#2B8CBE'])
 
-			return util.defined(value) ? p[scale(value)] : 'transparent';
+			return !!value ? scale(value) : 'transparent';
 		}
 	}
 };
