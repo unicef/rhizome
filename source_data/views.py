@@ -395,16 +395,14 @@ class CreateMap(PermissionRequiredMixin, generic.CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
+    def get_initial(self):
+        return { 'source_object': self.kwargs['pk'] }
+
+
 class IndicatorMapCreateView(CreateMap):
 
     model=IndicatorMap
     form_class = IndicatorMapForm
-    context_object_name = 'indicator_to_map'
-    template_name = 'map/map.html'
-
-    def get_initial(self):
-        return { 'source_indicator': self.kwargs['pk'] }
-
 
 class RegionMapCreateView(CreateMap):
 
@@ -412,14 +410,7 @@ class RegionMapCreateView(CreateMap):
     form_class = RegionMapForm
 
 
-    def get_initial(self):
-        return { 'source_region': self.kwargs['pk'] }
-
-
 class CampaignMapCreateView(CreateMap):
 
     model=CampaignMap
     form_class = CampaignMapForm
-
-    def get_initial(self):
-        return { 'source_campaign': self.kwargs['pk'] }
