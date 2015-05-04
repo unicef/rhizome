@@ -113,6 +113,23 @@ module.exports = {
 		}
 	},
 
+	filters : {
+		jump : function (value) {
+			var parent = this.$parent;
+
+			while (parent && !parent.campaign) {
+				parent = parent.$parent;
+			}
+
+			if (!(parent.campaign && parent.campaign.start_date)) {
+				return null;
+			}
+
+			return '/datapoints/management-dashboard/' + value + '/' +
+				moment(parent.campaign.start_date).format('YYYY/MM');
+		}
+	},
+
 	watch : {
 		campaign : 'load',
 		region   : 'load'
