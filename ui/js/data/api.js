@@ -113,5 +113,6 @@ module.exports = {
 	indicators     : endPoint('/indicator/'),
 	office         : endPoint('/office/'),
 	regions        : endPoint('/region/'),
-	document_review: endPoint('/source_data/document_review/')
+	document_review: endPoint('/source_data/document_review/'),
+	map_field      : endPoint('/api_map_meta/','post')
 };

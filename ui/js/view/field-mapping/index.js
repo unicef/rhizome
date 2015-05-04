@@ -124,10 +124,17 @@ module.exports = {
 	     var MenuComponent = Vue.extend(MenuVue);
 	     var self = this;
 	     
-	     var setMasterId = function(region, sourceId, masterId)
+	     var setMasterId = function(type, sourceId, masterId)
 	     {  
-	        var key = _.findIndex(self.$data.mappingData[region],{'source_object_id':sourceId});
-	        self.mappingData[region][key]['master_object_id']  = masterId;
+	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
+	        self.mappingData[type][key]['master_object_id']  = masterId;
+	        api.map_field({ source_object_id: sourceId,
+	        				master_object_id: masterId,
+	        				object_type_id  : type }).then(function(values){
+	        				    
+	        				    console.log(values);
+	        				    
+	        				});
 	     
 	     };
 	     var setMasterIdCurry = _.curry(setMasterId);
