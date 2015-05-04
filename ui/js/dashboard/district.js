@@ -96,8 +96,8 @@ module.exports = {
 						};
 					});
 
-					self.indicators = columns;
-					self.series     = data;
+					self.columns = columns;
+					self.series  = data;
 				}, this.error);
 		}
 	},

@@ -8,7 +8,8 @@ module.exports = {
 
 	data : function () {
 		return {
-			series  : []
+			columnLabels : [],
+			series       : []
 		};
 	},
 
