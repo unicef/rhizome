@@ -20,8 +20,6 @@ urlpatterns = [
 
     url(r'^refresh_master/$', refresh_master,name='refresh_master'),
 
-    url(r'^source_indicator/(?P<pk>[0-9]+)/$', ShowSourceIndicator.as_view()),
-
     url(r'^mark_doc_as_processed/(?P<document_id>[0-9]+)/$'\
         , mark_doc_as_processed, name='mark_doc_as_processed'),
 

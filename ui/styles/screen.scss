@@ -107,6 +107,10 @@ nav {
 	}
 }
 
+p {
+	margin-bottom: 0;
+}
+
 body.dashboard nav .dashboard,
 body.data nav .data,
 body.data-entry nav .data-entry {
@@ -182,6 +186,8 @@ table {
 		border          : none;
 		border-collapse : separate;
 		border-spacing  : 0.5em;
+
+		margin          : 0.25em 0 1.25rem 0;
 
 		tr {
 			background-color: transparent !important;
@@ -419,8 +425,17 @@ ul {
 .transit-points {
 	.chart {
 		svg {
-			width     : auto;
-			max-width : 20px;
+			height : 14pt;
+			width  : 14pt;
+		}
+	}
+}
+
+.accessibility {
+	.chart {
+		svg {
+			height : 12pt;
+			width  : 12pt;
 		}
 	}
 }

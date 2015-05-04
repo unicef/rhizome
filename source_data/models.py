@@ -204,8 +204,8 @@ class IndicatorMap(models.Model):
 
 class CampaignMap(models.Model):
 
-    master = models.ForeignKey(Campaign)
-    source = models.ForeignKey(SourceCampaign,unique=True)
+    master_object = models.ForeignKey(Campaign)
+    source_object = models.ForeignKey(SourceCampaign,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:

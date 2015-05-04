@@ -3,6 +3,8 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
+var util = require('util/data');
+
 module.exports = {
 	replace : true,
 	template: require('./bullet.html'),
@@ -33,21 +35,23 @@ module.exports = {
 		},
 
 		status: function () {
-			var delta = this.delta;
+			var status = '';
+			var indicator = this.indicator;
+			var value = this.value;
 
-			if (this.missing || _.isNaN(delta)) {
-				return '';
+			if (value && indicator && indicator.indicator_bounds) {
+				_.each(indicator.indicator_bounds, function (bound) {
+					var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+					var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+					if (value >= lower && value <= upper) {
+						status = bound.bound_name;
+					}
+				});
 			}
 
-			if (delta >= 0.25) {
-				return 'up';
-			}
 
-			if (delta < 0 || (this.value <= 0.5 && this.value !== null)) {
-				return 'down';
-			}
-
-			return '';
+			return status;
 		},
 
 		value: function () {
@@ -68,26 +72,22 @@ module.exports = {
 		},
 
 		marker: function () {
-			var length = this.length;
-
-			if (length < 2) {
+			if (!this.campaign) {
 				return null;
 			}
 
-			var datapoints = this.datapoints;
-			var avg        = 0;
-			var l          = 0;
+			var current = this.campaign.start_date.getTime();
 
-			for (var i = length - 1; i >= 0; i--) {
-				if (!_.isNull(datapoints[i].value) && !_.isUndefined(datapoints[i].value)) {
-					avg += datapoints[i].value;
-					l++;
-				}
+			// Exclude null values, and the value for the current campaign.
+			var data = _.filter(this.datapoints, function (d) {
+					return util.defined(d.value) && d.campaign.start_date.getTime() !== current;
+				});
+
+			if (data.length < 1) {
+				return null;
 			}
 
-			avg /= l;
-
-			return avg;
+			return _(data).pluck('value').sum() / data.length;
 		},
 
 		max: function () {
@@ -129,13 +129,21 @@ module.exports = {
 			var width  = this.width || 1;
 
 			var x = d3.scale.linear()
-				.domain([0, 1])
-				.range([0, width])
-				.clamp(true);
+				.domain([0, d3.max([this.marker, this.value, 1])])
+				.range([0, width]);
 
-			var ranges = [];
+			// Default range from 0 to 1 because we set the background to white if we
+			// have data, but we might not have ranges for this indicator. This will
+			// help to call attention to values that are > 100%.
+			var ranges = [{
+				name  : '',
+				start : 0,
+				end   : 1
+			}];
 
-			if (this.indicator && this.indicator.indicator_bounds) {
+			var missing = this.missing;
+
+			if (!missing && this.indicator && this.indicator.indicator_bounds) {
 				ranges = _(this.indicator.indicator_bounds)
 					.reject(function (bound) {
 						return bound.bound_name === 'invalid';
@@ -153,9 +161,11 @@ module.exports = {
 					.value();
 			}
 
+			svg.select('.bg').style('fill', missing ? null : '#fff');
+
 			var color = d3.scale.ordinal()
-				.domain(['bad', 'okay', 'ok', 'good'])
-				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC','#E6E6E6']);
+				.domain(['bad', 'okay', 'ok', 'good', ''])
+				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC', '#E6E6E6', '#f2f2f2']);
 
 			var bg = svg.select('.ranges').selectAll('.range')
 				.data(ranges);
@@ -192,7 +202,6 @@ module.exports = {
 
 			labels.exit().remove();
 
-			var missing = this.missing;
 			var value = svg.selectAll('.value')
 				.data(missing ? [] : [this.value]);
 
