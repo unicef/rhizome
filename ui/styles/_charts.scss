@@ -314,12 +314,19 @@ svg {
 .heatmap {
 	border-collapse : separate;
 
-	.cell {
-		height : 12pt;
-		width  : 12pt;
+	tr {
+		background-color: #fff !important;
 
-		padding : 0;
-		margin  : 0;
+		td {
+			height  : 12pt;
+			padding : 0;
+			margin  : 0;
+
+			&.cell {
+				width : 12pt;
+			}
+		}
+
 	}
 }
 
