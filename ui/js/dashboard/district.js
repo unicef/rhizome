@@ -110,10 +110,27 @@ module.exports = {
 													mx_val : upper
 												});
 											})
-											.sortBy('mn_val')
+											.reject(function (bound) {
+												return bound.bound_name === 'invalid';
+											})
+											.sortBy(function (bound) {
+												switch (bound.name) {
+													case 'bad':
+														return 1;
+													case 'ok':
+													case 'okay':
+														return 2;
+													case 'good':
+														return 3;
+													default:
+														return 4;
+												}
+											})
 											.each(function (bound) {
-												if (_.inRange(v.value, bound.mn_val, bound.mx_val)) {
+												if (v.value >= bound.mn_val && v.value <= bound.mx_val) {
 													v.range = bound.bound_name;
+													console.log(v.value, 'is bad (' + bound.mn_val +
+														', ' + bound.mx_val + ')');
 												}
 											})
 											.value();
