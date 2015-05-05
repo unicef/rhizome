@@ -4,7 +4,6 @@ from pprint import pprint
 import gspread
 import re
 import itertools
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
@@ -19,7 +18,7 @@ from pandas import read_csv
 from pandas import DataFrame
 from functools import partial
 
-from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
+from datapoints.models import *
 from datapoints.forms import *
 from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 from datapoints.mixins import PermissionRequiredMixin
@@ -374,9 +373,7 @@ def transform_indicators(request):
 
     response_data = cache_indicator_abstracted()
 
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
-
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 def api_indicator(request):
 
