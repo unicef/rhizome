@@ -115,28 +115,6 @@ class DashBoardView(IndexView):
         return DataPoint.objects.all()[:1]
 
 
-class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
-
-    model=DataPoint
-    success_url = reverse_lazy('datapoints:datapoint_index')
-    template_name = 'datapoints/update.html'
-    form_class = DataPointForm
-    permission_required = 'datapoints.change_datapoint'
-
-    def form_valid(self, form):
-    # this sets the changed_by field to the user who made the update
-        obj = form.save(commit=False)
-        obj.changed_by = self.request.user
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
-
-    model = DataPoint
-    success_url = reverse_lazy('datapoints:datapoint_index');
-    template_name ='datapoints/confirm_delete.html'
-    permission_required = 'datapoints.delete_datapoint'
-
     #################
     ### CAMPAIGNS ###
     #################
@@ -348,39 +326,6 @@ def refresh_cache(request):
     cr = CacheRefresh()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
-
-def load_gdoc_data(request):
-
-    err_msg = 'none!'
-
-    # gc = gspread.login(gdoc_u,gdoc_p)
-    gc = gspread.login('fix','me')
-    worksheet = gc.open("Master Dashboard QA").sheet1
-    list_of_lists = worksheet.get_all_values()
-    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
-    gd_df = gd_df[gd_df['region_id'] != '0']
-    gd_dict = gd_df.transpose().to_dict()
-
-    batch = []
-
-    for k,v in gd_dict.iteritems():
-
-        if v['region_id'] == '#N/A':
-            pass
-
-        v['success_flag'] = 0
-        recon_d = ReconData(**v)
-        batch.append(recon_d)
-
-    ReconData.objects.all().delete()
-
-    try:
-        ReconData.objects.bulk_create(batch)
-    except Exception as err:
-        err_msg = err
-
-    return render_to_response('qa_data.html',
-        {'err_msg': err_msg},context_instance=RequestContext(request))
 
 def test_data_coverage(request):
 
