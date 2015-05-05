@@ -15,6 +15,7 @@ Vue.filter('num', require('./filter/num'));
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
+Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
 
 module.exports = {
 	Explorer: function (el) {
