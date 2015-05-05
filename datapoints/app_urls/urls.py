@@ -21,7 +21,7 @@ urlpatterns = [
 
     ## PERMISSIONS NEEDED ##
     url(r'^permissions_needed/$', TemplateView.as_view(
-        template_name='datapoints/permissions_needed.html'),
+        template_name='permissions_needed.html'),
         name='permissions_needed'),
 
         ###############
