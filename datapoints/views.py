@@ -119,13 +119,9 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     template_name = 'indicators/update.html'
     permission_required = 'datapoints.change_indicator'
 
-
-    ###############
     ###############
     ### REGIONS ###
     ###############
-    ###############
-
 
 class RegionIndexView(IndexView):
 
@@ -160,6 +156,19 @@ class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
     success_url = reverse_lazy('regions:region_index')
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
+
+
+    ##########################
+    ## PERMISSION CREATION ###
+    ##########################
+
+def view_user_permissions(request):
+
+    indicator_permissions = {'hello':'world'}
+
+    return render_to_response('xtra/user_permissions.html',\
+        {'indicator_permissions':indicator_permissions},\
+        context_instance=RequestContext(request))
 
 
     ##############################

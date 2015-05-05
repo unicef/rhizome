@@ -73,19 +73,18 @@ urlpatterns = [
     url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
 
-        #############
-        ## CACHING ##
-        #############
+        ######################################
+        ## CACHING VALIDATN AND PERMISSIONS ##
+        ######################################
 
     url(r'^transform_indicators/$', views.transform_indicators, name='transform_indicators'),
     url(r'^cache_control/$', views.cache_control, name='cache_control'),
     url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
 
-        #####################
-        ## DATA VALIDATION ##
-        #####################
-
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
     url(r'^bad_data/$', views.bad_data, name='bad_data'),
+
+    url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
+
 ]
