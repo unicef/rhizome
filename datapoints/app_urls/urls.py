@@ -47,7 +47,7 @@ urlpatterns = [
         ###############
 
     ## INDEX ##
-    url(r'^campaigns$', views.CampaignIndexView.as_view(),
+    url(r'^campaigns/$', views.CampaignIndexView.as_view(),
         name='campaign_index'),
 
     ## CREATE ##
