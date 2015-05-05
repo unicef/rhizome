@@ -1,5 +1,7 @@
 'use strict';
 
+var d3 = require('d3');
+
 var palette = require('util/colorbrewer');
 var util    = require('util/data');
 
@@ -14,6 +16,20 @@ module.exports = {
 	},
 
 	methods : {
+		onRowHover : function (row) {
+			d3.select(this.$el).selectAll('tbody tr')
+				.transition().duration(300)
+				.style('opacity', function (d, i) {
+					return i === row ? 1 : 0.4;
+				});
+		},
+
+		onRowOut : function () {
+			d3.select(this.$el).selectAll('tbody tr')
+				.transition().duration(300)
+				.style('opacity', 1);
+		},
+
 		onMouseover : function (v, i, vm) {
 			this.$dispatch('tooltip-show', {
 				el : vm.$el,
