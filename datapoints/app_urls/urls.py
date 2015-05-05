@@ -18,9 +18,6 @@ urlpatterns = [
     ## Data Entry Form ##
     url(r'^entry/$', views.DataEntryView.as_view(),name='datapoint_entry'),
 
-    ## SEARCH ##
-    url(r'^search/$', views.search,name='search_datapoint'),
-
     ## META DATA ##
     url(r'^metadata/$', TemplateView.as_view(
         template_name = 'datapoints/metadata.html'),
@@ -60,7 +57,6 @@ urlpatterns = [
         ## DATA VALIDATION ##
         #####################
 
-    url(r'^populate_dummy_ngo_dash/$', views.populate_dummy_ngo_dash, name='populate_dummy_ngo_dash'),
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
     url(r'^bad_data/$', views.bad_data, name='bad_data'),

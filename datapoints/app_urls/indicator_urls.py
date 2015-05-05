@@ -20,14 +20,5 @@ urlpatterns = [
     url(r'^update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
 
-    ### CALCULATED ###
-
-    ## INDEX ##
-    url(r'^calculated_indicators/$', views.CalculatedIndicatorIndexView.as_view(),
-        name='calculated_indicator_index'),
-
-    ## CREATE ##
-    url(r'^create_calculated_indicator/$', views.CalculatedIndicatorCreateView.as_view(),
-        name='create_calculated_indicator'),
 
 ]

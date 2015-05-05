@@ -49,61 +49,10 @@ class DataPointIndexView(IndexView):
     template_name = 'datapoints/index.html'
     context_object_name = 'top_datapoints'
 
-    def get_queryset(self):
-
-        ## if this user has permissions to view entire office
-        ## then find the regions that fall under that
-        offices = get_objects_for_user(self.request.user,
-            'datapoints.view_office')
-        if offices:
-            regions = Region.objects.filter(office=offices)
-
-        ## now check to see if they have region level permissions
-        else:
-            regions = get_objects_for_user(self.request.user
-                , 'datapoints.view_region')
-
-        ## TO DO : find all of the sub regions of the regions
-        ##         the user is permitted to see
-
-        regions_leaf_level = regions #some recursive query
-
-        ## now get all the relevant data points
-        dps = DataPoint.objects.filter(region=regions_leaf_level)
-
-        return dps
-
 class DataEntryView(IndexView):
 
-    model=DataPoint
     template_name = 'data-entry/index.html'
-    context_object_name = 'top_datapoints'
 
-    def get_queryset(self):
-
-        ## TO DO: add indicator set page and permissions
-
-        ## if this user has permissions to view entire office
-        ## then find the regions that fall under that
-        offices = get_objects_for_user(self.request.user,
-            'datapoints.view_office')
-        if offices:
-            regions = Region.objects.filter(office=offices)
-
-        ## now check to see if they have region level permissions
-        else:
-            regions = get_objects_for_user(self.request.user
-                , 'datapoints.view_region')
-
-        ## TO DO : find all of the sub regions of the regions
-        ##         the user is permitted to see
-
-        regions_leaf_level = regions #some recursive query
-
-        ## now get all the relevant data points
-        dps = DataPoint.objects.filter(region=regions_leaf_level)
-
-        return dps
 
 class DashBoardView(IndexView):
     paginate_by = 50
@@ -176,26 +125,6 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     permission_required = 'datapoints.change_indicator'
 
 
-
-    ####################################
-    ###### CALCULATED INDICATORS #######
-    ####################################
-
-class CalculatedIndicatorIndexView(IndexView):
-
-    model = CalculatedIndicatorComponent
-    template_name = 'indicators/calculated_index.html'
-    context_object_name = 'top_calculated_indicators'
-
-
-class CalculatedIndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = CalculatedIndicatorComponent
-    success_url= reverse_lazy('indicators:calculated_indicator_index')
-    template_name = 'indicators/create_calculated.html'
-    # permission_required = 'datapoints.add_indicator'
-
-
     ###############
     ###############
     ### REGIONS ###
@@ -237,80 +166,12 @@ class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
 
-class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
-
-    model=Region
-    success_url = reverse_lazy('regions:region_index')
-    template_name = 'regions/confirm_delete.html'
-    permission_required = 'datapoints.delete_region'
-
 
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####
     ##############################
     ##############################
-
-
-def search(request):
-
-    if request.method =='POST':
-      ## THIS IS UGLY ##
-      kwargs = {}
-      if request.POST['indicator'] != u'':
-          kwargs.update({'indicator': request.POST['indicator']})
-      if request.POST['region'] != u'':
-          kwargs.update({'region': request.POST['region']})
-      if request.POST['changed_by'] != u'':
-          kwargs.update({'changed_by': request.POST['changed_by']})
-      if request.POST['campaign'] != u'':
-          kwargs.update({'campaign': request.POST['campaign']})
-
-      results = DataPoint.objects.filter(**kwargs)
-
-      return render_to_response('datapoints/index.html',
-        {'top_datapoints':results},
-        context_instance=RequestContext(request))
-
-    else:
-      return render_to_response('datapoints/search.html',
-        {'form':DataPointSearchForm},
-        context_instance=RequestContext(request))
-
-
-def populate_dummy_ngo_dash(request):
-
-    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
-    campaign_id = 201
-
-    region_ids = []
-    batch = []
-
-    dist_r = ng_dash_df['region_id'].unique()
-
-    for r in dist_r:
-
-        df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
-
-        valid_cols_df = df_filtered_by_region[['indicator_id','value']]
-        ix_df = valid_cols_df.set_index('indicator_id')
-
-        x = ix_df.to_dict()
-        cleaned_json = json.dumps(x['value'], ensure_ascii=False)
-
-        dda_dict = {
-            'region_id': r,
-            'campaign_id':campaign_id,
-            'indicator_json':x['value']
-        }
-
-        DataPointAbstracted.objects.filter(campaign_id = campaign_id\
-            , region_id = r).delete()
-
-        DataPointAbstracted.objects.create(**dda_dict)
-
-    return HttpResponseRedirect('/datapoints/cache_control/')
-
 
 def cache_control(request):
 

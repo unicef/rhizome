@@ -20,9 +20,4 @@ urlpatterns = [
     url(r'^update/(?P<pk>[0-9]+)/$', views.RegionUpdateView.as_view(),
         name='update_region'),
 
-    ## DELETE ##
-    url(r'^delete/(?P<pk>[0-9]+)/$', views.RegionDeleteView.as_view(),
-        name='delete_region'),
-
-
 ]
