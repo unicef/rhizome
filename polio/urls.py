@@ -40,10 +40,10 @@ urlpatterns = patterns('',
         api_document_review, name='api_document_review'),
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
+    ##
     url(r'^api/v2/get/(?P<content_type>\w+)/$', views.meta_api_GET, name='meta_api_GET'),
     url(r'^api/v2/post/(?P<content_type>\w+)/$', views.meta_api_POST, name='meta_api_POST'),
 
-    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
@@ -52,8 +52,6 @@ urlpatterns = patterns('',
     ##
     url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/indicators/', decorator_include(login_required,'datapoints.app_urls.indicator_urls', namespace="indicators")),
-    url(r'^datapoints/regions/', decorator_include(login_required,'datapoints.app_urls.region_urls', namespace="regions")),
     ##
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),

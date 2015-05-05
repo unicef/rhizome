@@ -37,13 +37,48 @@ urlpatterns = [
         name='campaign_index'),
 
     ## CREATE ##
-    url(r'^campaign/create/$',
+    url(r'^campaigns/create/$',
         views.CampaignCreateView.as_view(),
         name='create_campaign'),
 
     ## UPDATE ##
-    url(r'^campaign/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
+    url(r'^campaigns/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
         name='update_campaign'),
+
+
+        #############
+        ## REGIONS ##
+        #############
+
+    ## INDEX ##
+    url(r'^regions/$', views.RegionIndexView.as_view(),
+        name='region_index'),
+
+    ## CREATE ##
+    url(r'^regions/create/$', views.RegionCreateView.as_view(),
+        name='create_region'),
+
+    ## UPDATE ##
+    url(r'^regions/update/(?P<pk>[0-9]+)/$', views.RegionUpdateView.as_view(),
+        name='update_region'),
+
+
+        ################
+        ## INDICATORS ##
+        ################
+
+    ## INDEX ##
+    url(r'^indicators/$', views.IndicatorIndexView.as_view(),
+        name='indicator_index'),
+
+    ## CREATE ##
+    url(r'^indicators/create/$', views.IndicatorCreateView.as_view(),
+        name='create_indicator'),
+
+    ## UPDATE ##
+    url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
+        name='update_indicator'),
+
 
         #############
         ## CACHING ##

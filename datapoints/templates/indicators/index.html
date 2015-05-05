@@ -23,7 +23,7 @@
             <th>{{ indicator.name }}</th>
             <th>{{ indicator.description }}</th>
             <th>{{ indicator.slug }}</th>
-            <th><a href="{% url 'indicators:update_indicator' indicator.id %}"> edit </a></th>
+            <th><a href="{% url 'datapoints:update_indicator' indicator.id %}"> edit </a></th>
         </tr>
         {% endfor %}
 
@@ -32,7 +32,7 @@
     <p>No indicators are available.</p>
 {% endif %}
     <div align="right">
-    <a href="{% url 'indicators:create_indicator' %}"<button type="submit" class="btn btn-primary"> Create New Indicator </button></a>
+    <a href="{% url 'datapoints:create_indicator' %}"<button type="submit" class="btn btn-primary"> Create New Indicator </button></a>
     </div>
 
 {% endblock %}

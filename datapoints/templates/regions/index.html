@@ -28,7 +28,7 @@
             <th>{{ region.longitude }}</th>
             <th>{{ region.latitude }}</th>
 
-            <th><a href="{% url 'regions:update_region' region.id %}"> Edit </a></th>
+            <th><a href="{% url 'datapoints:update_region' region.id %}"> Edit </a></th>
         </tr>
         {% endfor %}
 
@@ -53,7 +53,7 @@
     <p>No regions are available.</p>
 {% endif %}
     <div align="right">
-    <a href="{% url 'regions:create_region' %}"<button type="submit" class="btn btn-primary"> Create New Region </button></a>
+    <a href="{% url 'datapoints:create_region' %}"<button type="submit" class="btn btn-primary"> Create New Region </button></a>
     </div>
 
 
