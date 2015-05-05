@@ -13,6 +13,16 @@ module.exports = {
 	],
 
 	computed: {
+		colorScale : function() {
+			return d3.scale.ordinal()
+				.range(['#ffcc67', '#525b5e', '#70777c', '#82888e', '#98a0a8', '#b6c0cc'])
+				.domain(_(this.series)
+					.pluck('name')
+					.sortBy()
+					.reverse()
+					.value());
+		},
+
 		renderer: function () {
 			var x     = this.xScale;
 			var y     = this.yScale;
