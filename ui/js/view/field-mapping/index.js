@@ -15,7 +15,8 @@ module.exports = {
 			    remainingVerifications:{
 			      indicators:0,
 			      campaigns:0,
-			      regions:0
+			      regions:0,
+			      total:0
 			    },
 			    items:{
 			      indicators:[],
@@ -99,6 +100,7 @@ module.exports = {
 	methods: { 
 	  calculateRemainingVerifications:function(){
 	    var self = this;
+	    self.$data.remainingVerifications.total=0;
 	    _.each(this.mappingData,function(mappingSet,name){ 
 	      self.$data.remainingVerifications[name]=0;
 	      _.each(mappingSet,function(field){
@@ -106,6 +108,7 @@ module.exports = {
 	            if(field.master_object_id===-1)
 	            {
 	               self.$data.remainingVerifications[name]++;
+	               self.$data.remainingVerifications.total++;
 	            }
 	       });
 	     }); 
@@ -127,14 +130,15 @@ module.exports = {
 	     var setMasterId = function(type, sourceId, masterId)
 	     {  
 	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
-	        self.mappingData[type][key]['master_object_id']  = masterId;
-	        api.map_field({ source_object_id: sourceId,
-	        				master_object_id: masterId,
-	        				object_type_id  : type }).then(function(values){
+	        self.mappingData[type][key].master_object_id = masterId;
+	        api.map_field({ 'source_object_id': sourceId,
+	        				'master_object_id': masterId,
+	        				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
 	        				    
 	        				    console.log(values);
 	        				    
 	        				});
+	        self.calculateRemainingVerifications();
 	     
 	     };
 	     var setMasterIdCurry = _.curry(setMasterId);
@@ -156,6 +160,15 @@ module.exports = {
 	  }   
 	},
 	filters: {
+	  check: function(masterId){
+	    if(masterId !== -1)
+	    {
+	      return 'fa fa-check fa-3x';
+	    }
+	    else {
+	      return '';
+	    }
+	  },
 	  fixVerificationPluralization: function(field,digit){
 		  if(this[digit][field]===1){
 		    return field.substring(0, field.length - 1) + ' needs';
@@ -166,7 +179,7 @@ module.exports = {
 	  },
 	  buttonDisplay: function(masterIdString){
 	    var masterIdArray = masterIdString.split('_');
-	     if(masterIdArray[0]===-1)
+	     if(masterIdArray[0]==='-1')
 	     {
 	       return 'click to map';
 	     }

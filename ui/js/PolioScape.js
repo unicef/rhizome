@@ -4,7 +4,6 @@ var Vue = require('vue');
 Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
-Vue.component('vue-menu-button', require('./component/menu-button'));
 Vue.component('vue-table', require('./component/table'));
 Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));

@@ -9,6 +9,28 @@
 	  	line-height: 35px;
 	  	float: right
 	  }
+	  .check-column {
+	      text-align: left;
+	      padding-left: 0;
+	      padding-top: 3px;
+	  }
+	}
+	.footer-row {
+		padding-top: 20px;
+		.columns { 
+		     .warning-div {
+		     	font-size: 14px;
+		     	.warning-sub {
+		     	  font-size: 20px;
+		     	  line-height: 40px;
+		     	}
+		     }
+		}
+		.cancel-column {
+			font-size: 14px;
+			padding-left: 0px;
+			  padding-top: 9px;
+		}
 	}
 }
 

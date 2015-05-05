@@ -139,6 +139,18 @@ def document_review(request,document_id):
         'source_campaign_breakdown': camp_breakdown,
         'document_id': document_id }
         ,RequestContext(request))
+        
+def field_mapping(request,document_id):
+
+    meta_breakdown = populate_document_metadata(document_id)
+    mb_df = DataFrame(meta_breakdown)
+    no_ix_df = mb_df.reset_index(drop=True)
+
+    return render_to_response(
+        'upload/field_mapping.html',
+        {'document_id': document_id }
+        ,RequestContext(request))        
+
 
 def populate_document_metadata(document_id):
 
@@ -359,12 +371,12 @@ def upsert_mapping(meta,map_object):
         db_obj, created = map_object.objects.get_or_create(
             source_object_id = request_source_id,
             defaults = {
-                'master_id':request_master_id,
+                'master_object_id':request_master_id,
                 'mapped_by_id':request_user_id
             })
 
         if not created:
-            db_obj.master_id = request_master_id
+            db_obj.master_object_id = request_master_id
             db_obj.mapped_by_id = request_user_id
             db_obj.save()
 
