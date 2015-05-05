@@ -1,7 +1,6 @@
 'use strict';
 
-var Vue = require('vue');
-
+var Vue = require('vue'); 
 Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
@@ -34,6 +33,20 @@ module.exports = {
 		new Vue({
 			el: el,
 			components: { 'uf-entry-form': require('./view/entry-form') }
+		});
+	},
+	FieldMapping: function (el,document_id) {
+		new Vue({
+			el: el,
+			components: { 'uf-field-mapping': require('./view/field-mapping') },
+			data:{'document_id':document_id}/*,
+			attached: function () {
+			  Vue.component('field-mapping', require('./view/field-mapping'));
+			  var FieldMapping = require('../../component/dropdown');
+			  var fieldMapping = new FieldMapping({
+			     		el : '#field-mapping-container'
+			     	});
+			}*/
 		});
 	}
 };

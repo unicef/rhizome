@@ -1,6 +1,7 @@
 <div class="menu">
 	<a
-		class="menu-button fa-stack"
+		class="menu-button"
+		v-class="fa-stack : !fullSizeMenu, ,  full-size-menu: fullSizeMenu"
 		v-on="click : toggleMenu">
 
 		<content>
