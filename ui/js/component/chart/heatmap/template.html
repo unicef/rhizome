@@ -6,8 +6,9 @@
 		</tr>
 	</thead>
 
-	<tbody>
-		<tr v-repeat="series">
+	<tbody v-on="mouseout : onRowOut">
+		<tr v-repeat="series"
+			v-on="mouseover : onRowHover($index)">
 			<th><a href="{{ name | jump }}">{{ name }}</a></th>
 			<td class="cell"
 				v-repeat="values"

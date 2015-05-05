@@ -73,11 +73,14 @@ module.exports = {
 
 			Promise.all([api.indicators({ id__in : indicators }), datapoints])
 				.then(function (data) {
-					var indicatorIdx = _.indexBy(data[0].objects, 'id');
-
-					var columns = _.map(indicators, function (id) {
-						return indicatorIdx[id].short_name;
-					});
+					var columns = _(data[0].objects)
+						.reject(function (indicator) {
+							return _.isEmpty(indicator.indicator_bounds);
+						})
+						.sortBy(function (indicator) {
+							return indicators.indexOf(indicator.id);
+						})
+						.value();
 
 					var data = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
@@ -93,14 +96,15 @@ module.exports = {
 
 						return {
 							name   : name,
-							values : _.map(indicators, function (id) {
+							values : _.map(columns, function (indicator) {
 								var v = {};
+								var id = indicator.id;
 
 								if (dataIdx[id]) {
 									v.value = dataIdx[id].value
 
 									if (util.defined(v.value)) {
-										_(indicatorIdx[id].indicator_bounds)
+										_(indicator.indicator_bounds)
 											.map(function (bound) {
 												var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
 												var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
@@ -142,7 +146,7 @@ module.exports = {
 						};
 					});
 
-					self.columns = columns;
+					self.columns = _.pluck(columns, 'short_name');
 					self.series  = data;
 				}, this.error);
 		}
