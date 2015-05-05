@@ -107,7 +107,7 @@ class IndicatorIndexView(IndexView):
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
-    success_url= reverse_lazy('indicators:indicator_index')
+    success_url= reverse_lazy('datapoints:indicator_index')
     template_name = 'indicators/create.html'
     permission_required = 'datapoints.add_indicator'
 
@@ -115,7 +115,7 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
-    success_url = reverse_lazy('indicators:indicator_index')
+    success_url = reverse_lazy('datapoints:indicator_index')
     template_name = 'indicators/update.html'
     permission_required = 'datapoints.change_indicator'
 
@@ -135,7 +135,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
-    success_url=reverse_lazy('regions:region_index')
+    success_url=reverse_lazy('datapoints:region_index')
 
 
     def form_valid(self, form):
@@ -153,7 +153,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Region
-    success_url = reverse_lazy('regions:region_index')
+    success_url = reverse_lazy('datapoints:region_index')
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
 
@@ -172,6 +172,14 @@ def view_user_permissions(request):
     return render_to_response('xtra/user_permissions.html',\
         {'region_permissions':region_permissions},\
         context_instance=RequestContext(request))
+
+
+class RegionPermissionCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model=RegionPermission
+    template_name='xtra/create_region_permissions.html'
+    form_class = RegionPermissionForm
+    success_url=reverse_lazy('datapoints:view_user_permissions')
 
 
     ##############################

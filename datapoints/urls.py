@@ -86,5 +86,8 @@ urlpatterns = [
     url(r'^bad_data/$', views.bad_data, name='bad_data'),
 
     url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
+    url(r'^create_region_permission/$', views.RegionPermissionCreateView.as_view(), name='create_region_permission'),
+
+
 
 ]

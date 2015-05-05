@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from datapoints.models import Region, Indicator, Campaign
+from datapoints.models import Region, Indicator, Campaign, RegionPermission
 
 class RegionForm(ModelForm):
 
@@ -16,3 +16,8 @@ class CampaignForm(ModelForm):
 
     class Meta:
         model = Campaign
+
+class RegionPermissionForm(ModelForm):
+
+    class Meta:
+        model = RegionPermission
