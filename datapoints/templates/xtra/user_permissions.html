@@ -3,4 +3,25 @@
 
 {% block content %}
 
+    <div align="center"> <h1> All User Permissions </h1> </div>
+    <table>
+    <thead>
+        <tr>
+            <th>region_id</th>
+            <th>user_id</th>
+            <th>read_write</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for perm in region_permissions %}
+    <tr>
+            <th>{{ perm.region_id }}</th>
+            <th>{{ perm.user_id }}</th>
+            <th>{{ perm.read_write }}</th>
+    </tr>
+    </tbody>
+    {% endfor %}
+    </table>
+
 {% endblock %}

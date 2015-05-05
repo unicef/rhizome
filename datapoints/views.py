@@ -164,13 +164,10 @@ class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
 def view_user_permissions(request):
 
-    indicator_permissions = {'hello':'world'}
+    # user_id = request.user.id
 
-    user_id = request.user.id
-
-    region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
-
-    print region_permissions
+    # region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
+    region_permissions = RegionPermission.objects.all()
 
     return render_to_response('xtra/user_permissions.html',\
         {'region_permissions':region_permissions},\
