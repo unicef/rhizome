@@ -27,10 +27,10 @@ INSTALLED_APPS = (
     'datapoints',
     'simple_history',
     'coverage',
+    # 'stronghold',
     'csvimport',
     'guardian',
     'tastypie',
-    # 'stronghold',
 )
 
 MIDDLEWARE_CLASSES = (
