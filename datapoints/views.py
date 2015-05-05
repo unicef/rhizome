@@ -166,8 +166,14 @@ def view_user_permissions(request):
 
     indicator_permissions = {'hello':'world'}
 
+    user_id = request.user.id
+
+    region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
+
+    print region_permissions
+
     return render_to_response('xtra/user_permissions.html',\
-        {'indicator_permissions':indicator_permissions},\
+        {'region_permissions':region_permissions},\
         context_instance=RequestContext(request))
 
 
