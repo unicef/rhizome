@@ -44,10 +44,11 @@ class DataPointIndexView(IndexView):
     template_name = 'datapoints/index.html'
     context_object_name = 'top_datapoints'
 
-class DataEntryView(IndexView):
 
-    template_name = 'data-entry/index.html'
+def data_entry(request):
 
+    return render_to_response('data-entry/index.html',
+        context_instance=RequestContext(request))
 
 class DashBoardView(IndexView):
     paginate_by = 50

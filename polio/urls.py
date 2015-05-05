@@ -53,11 +53,11 @@ urlpatterns = patterns('',
     url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
     ##
+    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
+    ##
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    ##
-    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
     ##
     (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
