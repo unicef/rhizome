@@ -43,6 +43,9 @@ urlpatterns = patterns('',
     url(r'^api/v2/get/(?P<content_type>\w+)/$', views.meta_api_GET, name='meta_api_GET'),
     url(r'^api/v2/post/(?P<content_type>\w+)/$', views.meta_api_POST, name='meta_api_POST'),
 
+    ## Entity Api ##
+    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
+
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 
