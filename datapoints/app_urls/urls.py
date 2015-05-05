@@ -18,7 +18,6 @@ urlpatterns = [
     ## Data Entry Form ##
     url(r'^entry/$', views.DataEntryView.as_view(),name='datapoint_entry'),
 
-
     ## PERMISSIONS NEEDED ##
     url(r'^permissions_needed/$', TemplateView.as_view(
         template_name='permissions_needed.html'),
@@ -40,7 +39,6 @@ urlpatterns = [
     ## UPDATE ##
     url(r'^campaigns/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
         name='update_campaign'),
-
 
         #############
         ## REGIONS ##
@@ -74,7 +72,6 @@ urlpatterns = [
     ## UPDATE ##
     url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
-
 
         #############
         ## CACHING ##
