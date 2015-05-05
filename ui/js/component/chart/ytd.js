@@ -14,13 +14,17 @@ module.exports = {
 
 	computed: {
 		colorScale : function() {
-			return d3.scale.ordinal()
-				.range(['#ffcc67', '#525b5e', '#70777c', '#82888e', '#98a0a8', '#b6c0cc'])
+			var scale = d3.scale.ordinal()
+				.range(['#2b8cbe', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
 				.domain(_(this.series)
 					.pluck('name')
 					.sortBy()
 					.reverse()
 					.value());
+
+			console.log(scale.domain());
+
+			return scale;
 		},
 
 		renderer: function () {
@@ -38,8 +42,8 @@ module.exports = {
 				.values(function (d) {
 					return d.values;
 				})
-				.color(function (d, i) {
-					return color(i);
+				.color(function (d) {
+					return color(d.name);
 				});
 
 			return renderer;

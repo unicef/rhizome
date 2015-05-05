@@ -1,8 +1,10 @@
+$bg-color: #f2f2f2;
+
 svg {
 	overflow: visible;
 
 	.bg {
-		fill: #f2f2f2;
+		fill: $bg-color;
 	}
 
 	.axis {
@@ -54,7 +56,8 @@ svg {
 		}
 
 		circle {
-			fill         : $white;
+			fill         : inherit;
+			stroke       : $white;
 			stroke-width : 1px;
 		}
 	}
