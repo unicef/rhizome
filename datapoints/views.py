@@ -114,23 +114,6 @@ class DashBoardView(IndexView):
     def get_queryset(self):
         return DataPoint.objects.all()[:1]
 
-class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
-
-    model=DataPoint
-    success_url=reverse_lazy('datapoints:datapoint_index')
-    template_name='datapoints/create.html'
-    form_class = DataPointForm
-    permission_required = 'datapoints.add_datapoint'
-
-    def form_valid(self, form):
-    # this inserts into the changed_by field with  the user who made the insert
-        obj = form.save(commit=False)
-        obj.changed_by = self.request.user
-        obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.source_datapoint_id = -1
-
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
 
 class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
 

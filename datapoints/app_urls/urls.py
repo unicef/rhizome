@@ -18,8 +18,8 @@ urlpatterns = [
     ## Data Entry Form ##
     url(r'^entry/$', views.DataEntryView.as_view(),name='datapoint_entry'),
 
-    ## CREATE ##
-    url(r'^create/$', views.DataPointCreateView.as_view(),name='create_datapoint'),
+    # ## CREATE ##
+    # url(r'^create/$', views.DataPointCreateView.as_view(),name='create_datapoint'),
 
     ## UPDATE ##
     url(r'^update/(?P<pk>[0-9]+)/$', views.DataPointUpdateView.as_view(),
