@@ -342,6 +342,17 @@ class BadData(models.Model):
 
 
 class RegionPermission(models.Model):
+    '''
+    Individual Users must be assigned regional permissions.  If i am assigned
+    a region, I will be able to view all of its children recursively.  The
+    default for a user
+
+    Regional permissions must also specify the read/write flag.  So for instance
+    as a Cluster Supervisor in Sokoto, I should be able to see all of Nigeria's
+    data, but i only should be able to insert / edit data for Sokoto. Thus i
+    would have two records, one that says "i can read all of NG", and one that
+    says, "i can write data in Sokoto."
+    '''
 
     user = models.ForeignKey('auth.User')
     region = models.ForeignKey(Region)
@@ -349,3 +360,19 @@ class RegionPermission(models.Model):
 
     class Meta:
         db_table = 'region_permission'
+        unique_together = ('user','region')
+
+
+class IndicatorPermission(models.Model):
+    '''
+    All users can read all indicators, but permission to update/insert/delete
+    are assigned to a group.  For instance, the security_analyst role, will be
+    permitted to edit data on the security indicators, but not for instance
+    OPV supply indicators.
+    '''
+
+    group = models.ForeignKey('auth.Group')
+    indicator = models.ForeignKey(Indicator)
+
+    class Meta:
+        db_table = 'indicator_permission'
