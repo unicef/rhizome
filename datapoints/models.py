@@ -360,7 +360,7 @@ class RegionPermission(models.Model):
 
     class Meta:
         db_table = 'region_permission'
-        unique_together = ('user','region')
+        unique_together = ('user','region','read_write')
 
 
 class IndicatorPermission(models.Model):
@@ -376,3 +376,4 @@ class IndicatorPermission(models.Model):
 
     class Meta:
         db_table = 'indicator_permission'
+        unique_together = ('group','indicator')
