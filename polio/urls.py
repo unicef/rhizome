@@ -31,8 +31,7 @@ v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
 
-    ## CUSTOM API ##
-
+    ## CUSTOM V1 API ##
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
@@ -40,25 +39,31 @@ urlpatterns = patterns('',
         api_document_review, name='api_document_review'),
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
-    ##
+    ## V2 API
     url(r'^api/v2/get/(?P<content_type>\w+)/$', views.meta_api_GET, name='meta_api_GET'),
     url(r'^api/v2/post/(?P<content_type>\w+)/$', views.meta_api_POST, name='meta_api_POST'),
 
-
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
-    ##
+
+    ## HOME PAGE
     url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
-    ##
-    url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    ##
+
+    ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
+    url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## DASHBOARD WITH URL PARAMS ##
+    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## CORE SOURCE DATA FUNCTINOALITY
     url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
-    ##
+
+    ## ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    ##
+
+    ## NOT SURE WHAT THIS IS ##
     (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 
