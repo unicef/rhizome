@@ -26,11 +26,6 @@ from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest
 
 
-USER_METADATA = 'static/users_metadata_mockup.json'
-DEFAULT_LIMIT = 50
-MAX_LIMIT = 500
-
-
 class IndexView(generic.ListView):
     paginate_by = 20
 

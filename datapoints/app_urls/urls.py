@@ -18,10 +18,6 @@ urlpatterns = [
     ## Data Entry Form ##
     url(r'^entry/$', views.DataEntryView.as_view(),name='datapoint_entry'),
 
-    ## META DATA ##
-    url(r'^metadata/$', TemplateView.as_view(
-        template_name = 'datapoints/metadata.html'),
-        name='metadata_index'),
 
     ## PERMISSIONS NEEDED ##
     url(r'^permissions_needed/$', TemplateView.as_view(
