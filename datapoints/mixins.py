@@ -15,7 +15,7 @@ class UserCheckMixin(object):
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
 class PermissionRequiredMixin(UserCheckMixin):
-    user_check_failure_path = '/permissions_needed'
+    user_check_failure_path = '/datapoints/permissions_needed'
     permission_required = None
 
     def check_user(self, user):
