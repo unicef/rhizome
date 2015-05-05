@@ -134,12 +134,15 @@ module.exports = {
 					month++;
 				});
 
-			return _.map(series, function (d, year) {
-				return {
-					name  : year,
-					values: d
-				};
-			});
+			return _(series)
+				.map(function (d, year) {
+					return {
+						name  : year,
+						values: d
+					};
+				})
+				.sortBy('year')
+				.value();
 		},
 
 		yScale: function () {
