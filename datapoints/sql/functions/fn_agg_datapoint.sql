@@ -68,8 +68,7 @@ BEGIN
 					WHERE r.id = rt.region_id
 					AND r.parent_region_id IS NULL
 
-		)
-		AND d.value IS NOT NULL;
+		);
 
 		CREATE TABLE _tmp_agg AS
 
@@ -88,7 +87,7 @@ BEGIN
 			,d.parent_region_id
 			,d.campaign_id
 			,d.indicator_id
-			,SUM(d.value) as value
+			,SUM(COALESCE(d.value,0.00)) as value
 		FROM _to_agg d
 
 		WHERE NOT EXISTS (
@@ -103,13 +102,14 @@ BEGIN
 			AND d.campaign_id = ta.campaign_id
 			AND d.indicator_id = ta.indicator_id
 		)
+		AND d.parent_region_id is not null
 		GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
 
 		CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
 
 		-- OVERRIDES --
 		UPDATE _tmp_agg ta
-			set value = d.value
+		SET   value = d.value
 			, datapoint_id = d.id
 		FROM datapoint d
 		WHERE ta.region_id = d.region_id
@@ -138,7 +138,6 @@ BEGIN
 		WHERE ta.region_id = ad.region_id
 		AND ta.campaign_id = ad.campaign_id
 		AND ta.indicator_id = ad.indicator_id;
-		--AND ad.value != ta.value;
 
 		-- INSERT NEW --
 		INSERT INTO agg_datapoint
@@ -151,6 +150,7 @@ BEGIN
 			AND ta.campaign_id = ad.campaign_id
 			AND ta.indicator_id = ad.indicator_id
 		);
+
 
 		RETURN QUERY
 
