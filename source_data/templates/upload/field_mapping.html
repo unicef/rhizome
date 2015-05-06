@@ -1,0 +1,12 @@
+{% extends "datapoints/base.html" %}
+  {% block content %}
+  
+ <div v-component="uf-field-mapping" v-with="document_id:document_id"></div>
+   <!-- <div id="uf-field-mapping-container" ></div> -->
+    {% endblock %}
+
+{% block scripts %}
+<script>
+Polio.FieldMapping('#main',{{document_id}});
+</script>
+{% endblock %}
