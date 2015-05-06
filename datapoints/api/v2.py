@@ -75,16 +75,14 @@ class v2GetRequest(v2Request):
 
         return None, data
 
-    def apply_permissions(self, data):
+    def apply_permissions(self, list_of_object_ids):
         '''
         Right now this is only for regions and Datapoints.
         '''
 
-        top_level_permitted_regions = RegionPermission.objects\
-            .filter(user_id=self.request.user.id).values_list('id',flat=True)
-
         region_data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s)",[self.request.user.id])
+            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
+                list_of_object_ids])
 
         filtered = [x.id for x in region_data]
 
