@@ -136,7 +136,9 @@ svg {
 	}
 
 	.label {
-		text-shadow: $legibility-shadow;
+		margin      : 0;
+		padding     : 1pt 0;
+		text-shadow : $legibility-shadow;
 	}
 }
 
@@ -281,7 +283,7 @@ svg {
 		text-align  : center;
 
 		label {
-			font-size: 0.25em;
+			font-size : 0.25em;
 		}
 	}
 }

@@ -1,11 +1,12 @@
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
-
+from tastypie.resources import Resource
 from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
+
 
 class GeoJsonResult(object):
     region_id = int()
@@ -38,7 +39,7 @@ class RegionPolygonResource(BaseNonModelResource):
 
         self.err = None
         err, regions_to_return = self.get_regions_to_return_from_url(request)
-        ## since this is not a model resource i will filter explicitly
+        ## since this is not a model resource i will filter explicitly #
 
         if err:
             self.err = err
@@ -97,18 +98,6 @@ class RegionPolygonResource(BaseNonModelResource):
         data.pop("meta",None)
 
         return data
-
-
-class IndicatorResource(BaseModelResource):
-    '''Indicator Resource'''
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all()
-        resource_name = 'indicator'
-        filtering = {
-            "slug": ('exact'),
-            "id": ALL,
-        }
 
 
 class UserResource(BaseModelResource):

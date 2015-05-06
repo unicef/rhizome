@@ -1,4 +1,4 @@
-{% extends "datapoints/base.html" %}
+{% extends "base.html" %}
 
 
 {% block content %}
@@ -28,7 +28,7 @@
             <th>{{ region.longitude }}</th>
             <th>{{ region.latitude }}</th>
 
-            <th><a href="{% url 'regions:update_region' region.id %}"> Edit </a></th>
+            <th><a href="{% url 'datapoints:update_region' region.id %}"> Edit </a></th>
         </tr>
         {% endfor %}
 
@@ -53,24 +53,9 @@
     <p>No regions are available.</p>
 {% endif %}
     <div align="right">
-    <a href="{% url 'regions:create_region' %}"<button type="submit" class="btn btn-primary"> Create New Region </button></a>
+    <a href="{% url 'datapoints:create_region' %}"<button type="submit" class="btn btn-primary"> Create New Region </button></a>
     </div>
 
 
+
 {% endblock %}
-
-
-
-
-
-{% for datapoint in top_datapoints %}
-        <tr>
-            <th>{{ datapoint.id }}</th>
-            <th>{{ datapoint.indicator }}</th>
-            <th>{{ datapoint.region }}</th>
-            <th>{{ datapoint.campaign }}</th>
-            <th>{{ datapoint.value }}</th>
-            <th><a href="{% url 'datapoints:update_datapoint' datapoint.id %}"> Edit </a></th>
-        </tr>
-        {% endfor %}
-    </table>
