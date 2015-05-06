@@ -83,11 +83,12 @@ class v2GetRequest(v2Request):
         top_level_permitted_regions = RegionPermission.objects\
             .filter(user_id=self.request.user.id).values_list('id',flat=True)
 
-        # region_ids = Region.objects.raw("SELECT * FROM fn_get_child_regions(%s)")
-        # filtered_qs = self.db_obj.objects.filter("SELECT * FROM fn_bad_data(1014)")
+        region_data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s)",[self.request.user.id])
 
-        # filtered = [x.id for x in filtered_qs]
-        filtered = list(top_level_permitted_regions)
+        filtered = [x.id for x in region_data]
+
+        # filtered = list(top_level_permitted_regions)
 
         return filtered
 
