@@ -103,7 +103,6 @@ class IndicatorIndexView(IndexView):
     paginate_by = 10000
 
 
-
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
@@ -369,7 +368,6 @@ def api_campaign(request):
         , content_type="application/json")
 
 
-
 def api_region(request):
 
     meta_keys = ['limit','offset']
@@ -428,17 +426,6 @@ def api_indicator(request):
 
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
-
-
-def bad_data(request):
-
-    dp_curs = BadData.objects.raw('''SELECT * FROM bad_data''')
-
-    dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
-        dp in dp_curs]
-
-    return render_to_response('bad_data.html',{'dp_data':dp_data}
-        ,context_instance=RequestContext(request))
 
 
 def meta_api_GET(request,content_type):

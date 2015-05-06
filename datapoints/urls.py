@@ -83,7 +83,6 @@ urlpatterns = [
 
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
-    url(r'^bad_data/$', views.bad_data, name='bad_data'),
 
     url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
     url(r'^create_region_permission/$', views.RegionPermissionCreateView.as_view(), name='create_region_permission'),
