@@ -32,6 +32,9 @@ urlpatterns = [
 
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\
         name='document_review'),
+    
+    url(r'^field_mapping/(?P<document_id>[0-9]+)/$', field_mapping,\
+        name='field_mapping'),
 
     url(r'^sync_source_datapoints/(?P<document_id>[0-9]+)/\
         (?P<master_id>[0-9]+)/$',sync_source_datapoints,\

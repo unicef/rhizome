@@ -287,6 +287,21 @@ module.exports = {
 				.transition().duration(300)
 					.attr('width', 0)
 				.remove();
+		},
+
+		showHelp : function () {
+			this.$dispatch('tooltip-show', {
+				el       : this.$$.title,
+				data     : _.assign({},
+					this.indicator,
+					{ template : 'tooltip-indicator' })
+			});
+		},
+
+		hideHelp : function () {
+			this.$dispatch('tooltip-hide', {
+				el : this.$$.title
+			});
 		}
 
 	},

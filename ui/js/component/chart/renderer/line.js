@@ -25,15 +25,14 @@ module.exports = function lineChart() {
 			// in this series
 			var g = d3.select(this);
 
+			g.style({
+				'stroke' : color(d, i),
+				'fill'   : color(d, i)
+			});
+
 			var path = g.selectAll('path').data([values(d)]);
 
-			path
-				.transition().duration(transitionSpeed)
-					.style('stroke', color(d, i));
-
-			path.enter()
-				.append('path')
-					.style('stroke', color(d, i));
+			path.enter().append('path');
 
 			path
 				.transition().duration(transitionSpeed)
@@ -65,8 +64,6 @@ module.exports = function lineChart() {
 				.transition()
 				.duration(transitionSpeed)
 				.attr('r', 3);
-
-			point.attr('stroke', color(d, i));
 
 			point.exit()
 				.transition()

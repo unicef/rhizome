@@ -1,35 +1,35 @@
 'use strict';
 
+var _ = require('lodash');
+
 /**
  * Map properties on an object to new properties.
  *
+ * @param {Object} - d The object whose properties will be mapped to a new object
  * @param {Object} - mapping of property names to functions that calculate the
  *   value for the newly mapped property.
  *
- * Example:
- *     variables({ x: function (d) { return d.campaign.start_date; }})(data)
- *
- * Will create a property `x` on each objects in `data` whose value is
- * `campaign.start_date`.
+ * @return {Object} A new object with properties carried over from `d` and
+ *	renamed according to `mapping` or transferred directly
  */
-module.exports = function (mapping) {
+module.exports = function (d, mapping) {
+	var o = {};
 
-	function transform(data) {
-		for (var i = data.length - 1; i >= 0; i--) {
-			var d = data[i];
-			var keys = Object.keys(mapping);
-
-			for (var j = keys.length - 1; j >= 0; j--) {
-				var k = keys[j];
-
-				// FIXME: There is a danger that a mapping could overwrite existing
-				// properties.
-				d[k] = mapping[k](d);
-			}
+	// Map properties from old names to new
+	_.each(mapping, function (v, k) {
+		if (d.hasOwnProperty(k)) {
+			o[v] = d[k];
 		}
+	});
 
-		return data;
+	// Carry over any other properties directly
+	for (var i = arguments.length - 1; i > 2; --i) {
+		var k = arguments[i];
+
+		if (d.hasOwnProperty(k)) {
+			o[k] = d[k];
+		}
 	}
 
-	return transform;
+	return o;
 };
