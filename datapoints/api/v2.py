@@ -1,5 +1,9 @@
+import json
+
+from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from datapoints.models import *
+
 
 class v2Request(object):
 
@@ -23,6 +27,11 @@ class v2Request(object):
                 cleaned_kwargs[k] = v.split(',')
             else:
                 cleaned_kwargs[k] = v
+
+        ## YOU NEED TO FIND THE COLUMNS OF THE OBJECT AND INTERSECT THAT ##
+        del cleaned_kwargs['format']
+        del cleaned_kwargs['offset']
+        del cleaned_kwargs['uri_display']
 
         return cleaned_kwargs
 
@@ -78,17 +87,22 @@ class v2GetRequest(v2Request):
     def apply_permissions(self, list_of_object_ids):
         '''
         Right now this is only for regions and Datapoints.
+
+        Returns a Raw QUeryset
         '''
 
-        region_data = Region.objects.raw("SELECT * FROM\
+        data = Region.objects.raw("SELECT * FROM\
             fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
                 list_of_object_ids])
 
-        filtered = [x.id for x in region_data]
+        list_of_dicts = [{\
+            'id' : row.id,
+            'name' : row.name,
+            'parent_region_id' : row.name,
+            'region_type_id' : row.region_type_id,
+            } for row in data]
 
-        # filtered = list(top_level_permitted_regions)
-
-        return filtered
+        return list_of_dicts
 
     def serialize(self, data):
 
