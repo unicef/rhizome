@@ -7,7 +7,6 @@ from datapoints.models import Region, Campaign, Indicator, DataPointAbstracted
 
 class v2Request(object):
 
-
     def __init__(self,request, content_type):
 
         self.request = request
@@ -16,6 +15,7 @@ class v2Request(object):
 
         self.db_obj = self.object_lookup(content_type)
         self.kwargs = self.clean_kwargs(request.GET)  ## CHANGE TO POST ##
+
 
     def clean_kwargs(self,query_dict):
 
@@ -58,22 +58,9 @@ class v2PostRequest(v2Request):
 
         data = {'new_id':new_obj.id }
 
-        return data
+        return None, data
 
 
-class v2PostRequest(v2Request):
-
-
-    def main(self):
-        '''
-        Create an object in accordance to the URL kwargs and return the new ID
-        '''
-
-        new_obj = self.db_obj.objects.create(**self.kwargs)
-
-        data = {'new_id':new_obj.id }
-
-        return data
 
 class v2GetRequest(v2Request):
 
@@ -90,10 +77,9 @@ class v2GetRequest(v2Request):
 
         data = self.serialize(filtered_data)
 
-        return data
+        return None, data
 
     def apply_permissions(self, data):
-
 
         return data
 
