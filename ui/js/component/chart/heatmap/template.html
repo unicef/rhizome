@@ -6,7 +6,9 @@
 		<g v-attr="transform : 'translate(' + marginLeft + ',' + marginTop + ')'">
 			<g class="y axis" transform="translate(0,-4)"></g>
 			<g class="x axis" transform="translate(-4,0)"></g>
-			<g class="data"></g>
+			<g class="data"
+				v-on="mouseout : onRowOut"
+			></g>
 		</g>
 	</svg>
 </div>

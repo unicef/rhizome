@@ -72,6 +72,8 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
+			row.on('mouseover', this.onRowHover);
+
 			var cell = row.selectAll('.cell').data(this.values);
 
 			cell.enter().append('rect')
@@ -176,8 +178,8 @@ module.exports = {
 				.style('opacity', 1);
 		},
 
-		onRowHover : function (row) {
-			d3.select(this.$el).selectAll('tbody tr')
+		onRowHover : function (d, row) {
+			d3.select(this.$$.canvas).selectAll('.row')
 				.transition().duration(300)
 				.style('opacity', function (d, i) {
 					return i === row ? 1 : 0.4;
@@ -185,7 +187,7 @@ module.exports = {
 		},
 
 		onRowOut : function () {
-			d3.select(this.$el).selectAll('tbody tr')
+			d3.select(this.$$.canvas).selectAll('.row')
 				.transition().duration(300)
 				.style('opacity', 1);
 		},
