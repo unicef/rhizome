@@ -71,6 +71,7 @@ class v2PostRequest(v2Request):
 
 class v2GetRequest(v2Request):
 
+
     def main(self):
         '''
         Get the list of database objects ( ids ) by applying the URL kwargs to
@@ -108,7 +109,30 @@ class v2GetRequest(v2Request):
                 'region_type_id' : row.region_type_id,
                 } for row in data]
 
-            return list_of_dicts #list_of_dicts
+            return list_of_dicts
+
+
+        elif self.content_type == 'campaign':
+
+            list_of_object_ids = [x['id'] for x in queryset]
+
+            data = Campaign.objects.raw("""
+                SELECT c.* FROM campaign c
+                INNER JOIN datapoint_abstracted da
+                    ON c.id = da.campaign_id
+                INNER JOIN region_permission rm
+                    ON da.region_id = rm.region_id
+                    AND rm.user_id = %s
+                WHERE c.id = ANY(%s)""",[self.user_id, list_of_object_ids])
+
+            list_of_dicts = [{\
+                'id' : row.id,
+                'start_date' : row.start_date,
+                } for row in data]
+
+
+            print len(list_of_dicts)
+            return list_of_dicts
 
         else:
              return queryset
