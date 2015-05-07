@@ -110,14 +110,9 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
-
-        print 'HELP\n' * 10
-        print self.kwargs
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
         if not self.kwargs and self.content_type in ['campaign','region']:
-            print 'WHY AM I HERE'
-
             qset = None
         else:
             qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
@@ -140,9 +135,6 @@ class v2GetRequest(v2Request):
             list_of_object_ids = [x['id'] for x in queryset]
 
         if self.content_type == 'region':
-
-            print 'TRYING FOR REGIONS NOW'
-            print list_of_object_ids
 
             data = Region.objects.raw("SELECT * FROM\
                 fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
