@@ -321,6 +321,14 @@ svg {
 	border-collapse : separate;
 	cursor          : initial;
 	margin-top      : 16em;
+
+	&.sortable {
+		.y.axis {
+			.tick {
+				cursor : pointer;
+			}
+		}
+	}
 }
 
 #nco-dashboard {

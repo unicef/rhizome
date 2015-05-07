@@ -28,6 +28,37 @@ function _y(d, i) {
 	return (size + pad) * i;
 }
 
+function _sortRows(a, b) {
+	var sortIdx = this.sortCol;
+
+	if (_.isNull(sortIdx)) {
+		return -1;
+	}
+
+	var left = this.values(a)[sortIdx].value;
+	var right = this.values(b)[sortIdx].value;
+
+	if (_.isNull(left)) {
+		left = Infinity;
+	}
+
+	if (_.isNull(right)) {
+		right = Infinity;
+	}
+
+	if (left < right) {
+		console.log(left, 'less than', right);
+		return -1;
+	}
+
+	if (left > right) {
+		console.log(left, 'greater than', right);
+		return 1;
+	}
+
+	console.log(left, 'equals', right);
+	return 0;
+}
 function _translate(d, i) {
 	return 'translate(0,' + this.y(d, i) + ')';
 }
@@ -48,6 +79,8 @@ module.exports = {
 			fill         : _fill.bind(this),
 			scale        : d3.scale.quantile().domain([0, 1]).range(palette.YlOrRd[9]),
 			series       : [],
+			sortable     : true,
+			sortCol      : null,
 			values       : function (d) { return d.values; },
 			x            : _x.bind(this),
 			y            : _y.bind(this)
@@ -56,7 +89,10 @@ module.exports = {
 
 	methods : {
 		draw : function () {
-			var self = this;
+			var self    = this;
+			var sortIdx = this.sortCol;
+
+			var comparator = _sortRows.bind(this);
 
 			var svg = d3.select(this.$$.canvas);
 
@@ -74,7 +110,8 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
-			row.on('mouseover', this.onRowHover);
+			row.sort(comparator)
+				.on('mouseover', this.onRowHover);
 
 			var cell = row.selectAll('.cell').data(this.values);
 
@@ -134,6 +171,8 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
+			tick.sort(comparator);
+
 			var label = tick.selectAll('text').data(function (d) { return [d.name]; });
 
 			label.enter()
@@ -168,6 +207,12 @@ module.exports = {
 					}
 				})
 				.style('opacity', 0);
+
+			tick
+				.on('click', this.sortable ? this.setSort : null)
+				.style('font-weight', function (d, i) {
+					return i === sortIdx ? 'bold' : 'normal';
+				});
 
 			tick.exit()
 				.transition().duration(300)
@@ -217,6 +262,11 @@ module.exports = {
 
 		onMouseout : function (el) {
 			this.$dispatch('tooltip-hide', { el : el });
+		},
+
+		setSort : function (d, i) {
+			console.log('sort by', i);
+			this.sortCol = (i === this.sortCol) ? null : i;
 		}
 	},
 
@@ -231,8 +281,9 @@ module.exports = {
 	},
 
 	watch : {
-		'series' : 'draw',
-		'width'  : 'draw',
-		'height' : 'draw'
+		'sortCol' : 'draw',
+		'series'  : 'draw',
+		'width'   : 'draw',
+		'height'  : 'draw'
 	}
 };

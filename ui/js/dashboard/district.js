@@ -126,8 +126,6 @@ module.exports = {
 						})
 						.value();
 
-					console.log('bounds:', bounds);
-
 					var data = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
 						var name    = d.region;

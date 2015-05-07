@@ -1,6 +1,7 @@
 <div class="chart">
 	<svg class="heatmap"
 		v-el="canvas"
+		v-class="sortable : sortable"
 		v-attr="viewBox : '0 0 ' + width + ' ' + height">
 
 		<g v-attr="transform : 'translate(' + marginLeft + ',' + marginTop + ')'">
