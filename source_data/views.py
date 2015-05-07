@@ -206,7 +206,7 @@ def pre_process_file(request,document_id):
 
     populate_document_metadata(document_id)
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
+    return HttpResponseRedirect(reverse('source_data:field_mapping'\
         , kwargs={'document_id': document_id}))
 
 
