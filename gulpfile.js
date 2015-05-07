@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var gulp       = require('gulp');
 var del        = require('del');
 var exec       = require('child_process').exec;
+var babelify   = require('babelify');
 
 // load plugins
 var $ = require('gulp-load-plugins')();
@@ -30,7 +31,9 @@ function err(e) {
 }
 
 function build(src, dst, opts) {
-	var bundleStream = browserify(src, opts).bundle()
+	var bundleStream = browserify(src, opts)
+		.transform(babelify)
+		.bundle()
 		.on('error', err);
 
 	return bundleStream

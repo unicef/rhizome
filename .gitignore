@@ -24,6 +24,7 @@ node_modules
 *.swp
 .sass-cache
 *.sublime-*
+.idea/
 .htaccess
 sql_backups
 db.sql

@@ -282,6 +282,20 @@ class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
     permission_required = 'datapoints.delete_region'
 
 
+    ###############
+    ###############
+    ### UF ADMIN ###
+    ###############
+    ###############
+
+class UFAdminView(IndexView):
+
+    model = Region
+    template_name = 'ufadmin/index.html'
+    context_object_name = 'uf_admin'
+
+
+
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####

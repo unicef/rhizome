@@ -1,6 +1,9 @@
 'use strict';
 
+require('babel/polyfill');
 var Vue = require('vue');
+var React = require('react/addons');
+window.React = React;
 
 Vue.config.debug = true;
 
@@ -12,6 +15,10 @@ Vue.component('vue-tooltip', require('./component/tooltip'));
 Vue.component('vue-menu', require('./component/menu'));
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
+
+var Component = { // React components
+	UsersAdmin: require('./ufadmin/users.js')
+};
 
 module.exports = {
 	Explorer: function (el) {
@@ -31,5 +38,8 @@ module.exports = {
 			el: el,
 			components: { 'uf-entry-form': require('./view/entry-form') }
 		});
+	},
+	UsersAdmin: function(el) {
+		React.render(<Component.UsersAdmin />, document.getElementById('main'))
 	}
 };

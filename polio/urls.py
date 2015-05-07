@@ -60,6 +60,10 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/$', logout, name='logout'),
     ##
     url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
+
+    ## admin pages hitting entity API
+    url(r'^ufadmin/users/', views.UFAdminView.as_view(), name='ufadmin'),
+
     ##
     (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
