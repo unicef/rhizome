@@ -24,6 +24,10 @@ function normalize(d) {
 	return d;
 }
 
+function _fill(d) {
+	return !_.isNull(d) && d.range ? this.scale(d.range) : 'transparent';
+}
+
 module.exports = {
 	template : require('./district.html'),
 
@@ -31,12 +35,13 @@ module.exports = {
 		return {
 			campaign : null,
 			columns  : [],
+			fill     : _fill.bind(this),
 			region   : null,
 			regions  : {},
 			series   : [],
 			scale    : d3.scale.ordinal()
 				.domain(['bad', 'okay', 'ok', 'good'])
-				.range(['#AF373E', '#DDDDDD', '#DDDDDD','#2B8CBE'])
+				.range(['#AF373E', '#959595', '#959595','#2B8CBE'])
 		};
 	},
 
@@ -149,8 +154,6 @@ module.exports = {
 										_.each(bounds[id], function (bound) {
 											if (v.value >= bound.mn_val && v.value <= bound.mx_val) {
 												v.range = bound.bound_name;
-												console.log(v.value, 'is bad (' + bound.mn_val +
-													', ' + bound.mx_val + ')');
 											}
 										});
 									}

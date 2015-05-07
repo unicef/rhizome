@@ -7,7 +7,7 @@ var palette = require('util/colorbrewer');
 var util    = require('util/data');
 
 function _fill(d) {
-	return _.isNull(d) ? 'transparent' : this.scale(d.value);
+	return _.isNull(d) ? 'transparent' : this.scale(d);
 }
 
 function _id(d, i) {
@@ -56,6 +56,8 @@ module.exports = {
 
 	methods : {
 		draw : function () {
+			var self = this;
+
 			var svg = d3.select(this.$$.canvas);
 
 			var row = svg.select('.data').selectAll('.row').data(this.series, _id);
@@ -92,6 +94,13 @@ module.exports = {
 				.transition().duration(300)
 				.style('opacity', 0)
 				.remove();
+
+			cell.on('mouseover', function (d, i) {
+					self.onMouseover(this, d, i);
+				})
+				.on('mouseout', function () {
+					self.onMouseout(this)
+				});
 
 			var t = svg.transition().duration(500);
 
@@ -192,20 +201,22 @@ module.exports = {
 				.style('opacity', 1);
 		},
 
-		onMouseover : function (v, i, vm) {
+		onMouseover : function (el, d, i) {
+			var p = d3.select(el.parentNode).datum();
+
 			this.$dispatch('tooltip-show', {
-				el : vm.$el,
+				el   : el,
 				data : {
 					indicator : this.columnLabels[i],
-					region    : vm.$parent.name,
+					region    : p.name,
 					template  : 'tooltip-heatmap',
-					value     : v,
+					value     : d.value,
 				}
 			});
 		},
 
-		onMouseout : function (vm) {
-			this.$dispatch('tooltip-hide', { el : vm.$el });
+		onMouseout : function (el) {
+			this.$dispatch('tooltip-hide', { el : el });
 		}
 	},
 
