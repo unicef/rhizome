@@ -142,17 +142,10 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-
     class Meta:
 
         db_table = 'region'
         unique_together = ('name','region_type','office')
-        ordering = ('name',)
-
-        permissions = (
-            ('view_region', 'View region'),
-        )
-
 
 
 class RegionPolygon(models.Model):

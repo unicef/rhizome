@@ -50,8 +50,8 @@ class v2Request(object):
                 operator_lookup[param] = param
 
         ## ONLY WANT TO CLEAN KWARGS FOR COLUMNS THAT EXISTS FOR THIS MODEL ##
-        db_model_keys = list(set(self.db_columns).intersection(k for k in\
-            operator_lookup.keys()))
+        db_model_keys = list(set(self.db_columns).intersection(set(k for k in\
+            operator_lookup.keys())))
 
         ## FINALLY CREATE ONE DICT (cleaned_kwargs) WITH THE ORIGINAL K,V ##
         ## IN THE URL, BUT FILTERED ON COLUMNS AVAILABLE TO THE MODEL ##
@@ -64,7 +64,6 @@ class v2Request(object):
                 cleaned_kwargs[query_key] = query_value.split(',')
             else:
                 cleaned_kwargs[query_key] = query_value
-
 
         return cleaned_kwargs
 
@@ -111,9 +110,14 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
+
+        print 'HELP\n' * 10
+        print self.kwargs
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
         if not self.kwargs and self.content_type in ['campaign','region']:
+            print 'WHY AM I HERE'
+
             qset = None
         else:
             qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
@@ -136,6 +140,9 @@ class v2GetRequest(v2Request):
             list_of_object_ids = [x['id'] for x in queryset]
 
         if self.content_type == 'region':
+
+            print 'TRYING FOR REGIONS NOW'
+            print list_of_object_ids
 
             data = Region.objects.raw("SELECT * FROM\
                 fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\

@@ -58,7 +58,7 @@ BEGIN
 		AND rt.parent_region_id = rm.region_id
 		AND rm.read_write = 'r'
 	)
-	AND r.id = ANY($2);
+  AND r.id = ANY(COALESCE($2,ARRAY[r.id]));
 
 
 END
