@@ -113,14 +113,13 @@ class v2MetaRequest(v2Request):
 
         self.meta_data = {}
         self.all_field_meta = []
-
         self.add_model_meta_data()
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
             field_dict = self.build_field_meta_dict(field,ix)
 
-        self.meta_data['miss_elliott'] = self.all_field_meta
+        self.meta_data['fields'] = self.all_field_meta
 
         return None, self.meta_data
 
@@ -136,11 +135,17 @@ class v2MetaRequest(v2Request):
         print dir(field_object)
 
 
+        ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
+        field_type_mapper = {'AutoField':'number','FloatField':'number',
+            'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
+            'DateTimeField':'datetime','DateField':'datetime','BooleanField':
+            'boolean','SlugField':'string'}
+
+        ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
-            # 'primary_key': field_object.primary_key,
             'name': field_object.name,
             'title': field_object.name,
-            'type': field_object.get_internal_type(),
+            'type': field_type_mapper[field_object.get_internal_type()],
             'description': str(field_object.help_text),
             'max_length': field_object.max_length,
             'editable' : field_object.editable,
