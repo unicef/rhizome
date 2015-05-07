@@ -33,7 +33,10 @@ module.exports = {
 			columns  : [],
 			region   : null,
 			regions  : {},
-			series   : []
+			series   : [],
+			scale    : d3.scale.ordinal()
+				.domain(['bad', 'okay', 'ok', 'good'])
+				.range(['#AF373E', '#DDDDDD', '#DDDDDD','#2B8CBE'])
 		};
 	},
 
@@ -82,6 +85,44 @@ module.exports = {
 						})
 						.value();
 
+					var bounds = _(data[0].objects)
+						.indexBy('id')
+						.transform(function (result, v, k) {
+							result[k] = _(v.indicator_bounds)
+								.map(function (bound) {
+									var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+									var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+									return _.assign({}, bound, {
+										mn_val : lower,
+										mx_val : upper
+									});
+								})
+								.reject(function (bound) {
+									return bound.bound_name === 'invalid';
+								})
+								.sortBy(function (bound) {
+									switch (bound.name) {
+										case 'bad':
+											return 1;
+										case 'ok':
+										case 'okay':
+											return 2;
+										case 'good':
+											return 3;
+										default:
+											return 4;
+									}
+								})
+								.value();
+						})
+						.omit(function (bound, id) {
+							return _.isEmpty(bound);
+						})
+						.value();
+
+					console.log('bounds:', bounds);
+
 					var data = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
 						var name    = d.region;
@@ -95,49 +136,23 @@ module.exports = {
 						}
 
 						return {
+							id     : name,
 							name   : name,
 							values : _.map(columns, function (indicator) {
-								var v = {};
+								var v = { id : name + '-' + indicator.id };
 								var id = indicator.id;
 
 								if (dataIdx[id]) {
 									v.value = dataIdx[id].value
 
 									if (util.defined(v.value)) {
-										_(indicator.indicator_bounds)
-											.map(function (bound) {
-												var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
-												var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
-
-												return _.assign({}, bound, {
-													mn_val : lower,
-													mx_val : upper
-												});
-											})
-											.reject(function (bound) {
-												return bound.bound_name === 'invalid';
-											})
-											.sortBy(function (bound) {
-												switch (bound.name) {
-													case 'bad':
-														return 1;
-													case 'ok':
-													case 'okay':
-														return 2;
-													case 'good':
-														return 3;
-													default:
-														return 4;
-												}
-											})
-											.each(function (bound) {
-												if (v.value >= bound.mn_val && v.value <= bound.mx_val) {
-													v.range = bound.bound_name;
-													console.log(v.value, 'is bad (' + bound.mn_val +
-														', ' + bound.mx_val + ')');
-												}
-											})
-											.value();
+										_.each(bounds[id], function (bound) {
+											if (v.value >= bound.mn_val && v.value <= bound.mx_val) {
+												v.range = bound.bound_name;
+												console.log(v.value, 'is bad (' + bound.mn_val +
+													', ' + bound.mx_val + ')');
+											}
+										});
 									}
 								}
 

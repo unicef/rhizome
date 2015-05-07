@@ -1,21 +1,12 @@
-<table class="heatmap chart">
-	<thead>
-		<tr>
-			<th />
-			<th v-repeat="columnLabels">{{ $value }}</th>
-		</tr>
-	</thead>
+<div class="chart">
+	<svg class="heatmap"
+		v-el="canvas"
+		v-attr="viewBox : '0 0 ' + width + ' ' + height">
 
-	<tbody v-on="mouseout : onRowOut">
-		<tr v-repeat="series"
-			v-on="mouseover : onRowHover($index)">
-			<th><a href="{{ name | jump }}">{{ name }}</a></th>
-			<td class="cell"
-				v-repeat="values"
-				v-style="background-color : range | color"
-				v-on="
-					mouseover : onMouseover(value, $index, this),
-					mouseout  : onMouseout(this)"></td>
-		</tr>
-	</tbody>
-</table>
+		<g v-attr="transform : 'translate(' + marginLeft + ',' + marginTop + ')'">
+			<g class="y axis"></g>
+			<g class="x axis"></g>
+			<g class="data"></g>
+		</g>
+	</svg>
+</div>
