@@ -50,10 +50,10 @@ module.exports = {
 				return null;
 			}
 
-			return _(this.geo.features)
+			return [this.region.id].concat(_(this.geo.features)
 				.pluck('properties')
 				.pluck('region_id')
-				.value();
+				.value());
 		},
 
 		features: function () {
