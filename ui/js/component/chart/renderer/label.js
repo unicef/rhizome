@@ -89,7 +89,6 @@ function label() {
 			// Shift a up if it overlaps with b
 			if (a.y > b.y - h) {
 				a.y = b.y - h;
-				console.log(text(a), 'overlaps', text(b) + ',', 'shift up to', a.y);
 			}
 		}
 
@@ -105,7 +104,6 @@ function label() {
 
 			if (b.y - h < a.y) {
 				b.y = a.y + h;
-				console.log(text(b), 'overlaps', text(a) + ',', 'shift down to', a.y);
 			}
 		}
 
