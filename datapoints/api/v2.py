@@ -5,10 +5,16 @@ from django.core.serializers import json as djangojson
 from django.db.models import Model
 from django.db.models.query import RawQuerySet
 from django.db.models.sql.constants import QUERY_TERMS
+from django.db.models.options import Options
+from django.db.models.fields import AutoField, FieldDoesNotExist
+from django.db import connection
+
 from django.forms.models import model_to_dict
 from django.utils.encoding import smart_str
 from django.contrib.auth.models import User, Group
 from django.core import serializers
+
+
 
 from datapoints.models import *
 
@@ -105,24 +111,63 @@ class v2MetaRequest(v2Request):
 
     def main(self):
 
-        meta_data = {}
+        self.meta_data = {}
+        self.all_field_meta = []
 
-        meta_data['slug'] = self.content_type
-        meta_data['name'] = self.content_type
-        meta_data['primary_key'] = 'id'
-        meta_data['search_field'] = 'slug'
-        meta_data['defaultSortField'] = 'id'
-        meta_data['defaultSortDirection'] = 'asc'
+        self.add_model_meta_data()
 
-        meta_data['fields'] = [self.build_field_meta_dict(field) for field in \
-            self.db_obj._meta.get_all_field_names()]
+        ## BUILD METADATA FOR EACH FIELD ##
+        for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
+            field_dict = self.build_field_meta_dict(field,ix)
 
-        return None, meta_data
+        self.meta_data['miss_elliott'] = self.all_field_meta
 
-    def build_field_meta_dict(self, field):
+        return None, self.meta_data
 
-        return {'name': field, 'title':field }
+    def build_field_meta_dict(self, field, ix):
 
+        try:
+            field_object = self.db_obj._meta.get_field(field)
+
+        except FieldDoesNotExist:
+            return None
+
+        print '==== %s ====' % field_object.name
+        print dir(field_object)
+
+
+        field_object_dict = {
+            # 'primary_key': field_object.primary_key,
+            'name': field_object.name,
+            'title': field_object.name,
+            'type': field_object.get_internal_type(),
+            'description': str(field_object.help_text),
+            'max_length': field_object.max_length,
+            'editable' : field_object.editable,
+            'default_value' : str(field_object.get_default()),
+                'constraints' : {
+                    'unique':field_object.unique,
+                    # 'required':field_object.required,
+                },
+                'display' : {
+                    'on_table':True,
+                    'weightTable':ix,
+                    'weightForm':ix,
+                }
+            }
+
+        self.all_field_meta.append(field_object_dict)
+
+        return field_object_dict
+
+    def add_model_meta_data(self):
+
+        self.meta_data['slug'] = self.content_type
+        self.meta_data['name'] = self.content_type
+        self.meta_data['primary_key'] = 'id'
+        self.meta_data['search_field'] = 'slug'
+        self.meta_data['defaultSortField'] = 'id'
+        self.meta_data['defaultSortDirection'] = 'asc'
 
 
 class v2GetRequest(v2Request):
