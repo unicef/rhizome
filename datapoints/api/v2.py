@@ -75,14 +75,14 @@ class v2Request(object):
         ## PERMISSIONS AS OPPOSED TO RUNNIGN IT VIA IF/ELIF/ELSE ##
 
         orm_mapping = {
-            'indicator': Indicator,
-            'campaign': Campaign,
-            'region': Region,
-            'group': Group,
-            'user': User,
+            'indicator': {'orm_obj': Indicator},
+            'campaign': {'orm_obj': Campaign},
+            'region': {'orm_obj': Region},
+            'group': {'orm_obj': Group},
+            'user': {'orm_obj': User},
         }
 
-        db_model = orm_mapping[content_type_string]
+        db_model = orm_mapping[content_type_string]['orm_obj']
 
         return db_model
 
@@ -111,11 +111,12 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
-        ## TO_NOTE: IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO QUERY
-        ## THE DATABASE HERE.  SINCE THIS IS THE MAIN USE CASE --> FIX ME!
-        # qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
-
-        qset = []
+        ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
+        ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
+        if not self.kwargs and self.content_type in ['campaign','region']:
+            qset = None
+        else:
+            qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
 
         filtered_data = self.apply_permissions(qset)
         data = self.serialize(filtered_data)
@@ -128,11 +129,11 @@ class v2GetRequest(v2Request):
 
         Returns a Raw Queryset
         '''
-        # list_of_object_ids = [x['id'] for x in queryset]
 
-        list_of_object_ids = None#[x['id'] for x in queryset]
-
-        print list_of_object_ids
+        if not queryset:
+            list_of_object_ids = None
+        else:
+            list_of_object_ids = [x['id'] for x in queryset]
 
         if self.content_type == 'region':
 

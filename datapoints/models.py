@@ -142,19 +142,6 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_all_children(self):
-
-        r = []
-
-        for c in Region.objects.filter(parent_region=self):
-            # r.append(c.get_all_children())
-            r.append(c)
-
-        second_leaf = Region.objects.filter(parent_region__in=r)
-
-        r.extend(second_leaf)
-
-        return r
 
     class Meta:
 
