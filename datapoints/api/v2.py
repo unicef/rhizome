@@ -38,7 +38,12 @@ class v2Request(object):
         operator_lookup = {}
 
         for param in query_dict.keys():
-            operator_lookup[param[0:param.index('__')]] = param
+
+            try:
+                operator_lookup[param[0:param.index('__')]] = param
+            except ValueError:
+                operator_lookup[param] = param
+
 
         keys = list(set(self.db_columns).intersection(k for k in operator_lookup.keys()))
 
