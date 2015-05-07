@@ -105,6 +105,75 @@ module.exports = {
 						'opacity' : 1,
 						'fill'    : this.fill
 					});
+
+			var tick = svg.select('.x.axis')
+				.selectAll('.tick').data(this.series, _id);
+
+			tick.enter()
+				.append('g')
+				.attr({
+					'class'     : 'tick',
+					'transform' : transform,
+				})
+				.style('opacity', 0);
+
+			tick.exit()
+				.transition()
+				.duration(300)
+				.style('opacity', 0)
+				.remove();
+
+			var label = tick.selectAll('text').data(function (d) { return [d.name]; });
+
+			label.enter()
+				.append('text')
+				.attr({
+					'text-anchor' : 'end',
+					'dy' : '1em'
+				});
+
+			label.text(String);
+
+			t.select('.x.axis').selectAll('.tick')
+				.attr('transform', transform)
+				.style('opacity', 1);
+
+			this.marginLeft = 4 + _(label)
+				.flatten()
+				.map(function (el) { return el.getBoundingClientRect(); })
+				.pluck('width')
+				.max();
+
+			tick = svg.select('.y.axis').selectAll('.tick').data(this.columnLabels, _.identity);
+
+			var x = this.x;
+
+			tick.enter()
+				.append('g')
+				.attr({
+					'class' : 'tick',
+					'transform' : function (d, i) {
+						return 'translate(' + x(d, i) + ',0)';
+					}
+				})
+				.style('opacity', 0);
+
+			tick.exit()
+				.transition().duration(300)
+				.style('opacity', 0)
+				.remove();
+
+			var label = tick.selectAll('text').data(function (d) { return [d]; }, _id);
+
+			label.enter().append('text')
+				.attr({
+					'transform' : 'translate(4,0) rotate(-45)',
+				});
+
+			label.text(String);
+
+			t.select('.y.axis').selectAll('.tick')
+				.style('opacity', 1);
 		},
 
 		onRowHover : function (row) {
