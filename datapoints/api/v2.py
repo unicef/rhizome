@@ -37,7 +37,7 @@ class v2Request(object):
         keys = set(self.db_columns).intersection(query_dict)
         filters = {k:query_dict[k] for k in keys}
 
-        for k,v in avail_filters.iteritems():
+        for k,v in filters.iteritems():
 
             if "," in v:
                 cleaned_kwargs[k] = v.split(',')
