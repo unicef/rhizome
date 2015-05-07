@@ -216,8 +216,7 @@ def refresh_master_no_indicator(request,document_id):
 
     mr.source_dps_to_dps()
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        , kwargs={'document_id': document_id}))
+    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 
 ######### DOCUMENT RELATED VIEWS ##########

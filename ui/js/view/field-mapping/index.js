@@ -98,6 +98,21 @@ module.exports = {
 	    });    
 	},
 	methods: { 
+	  displayUnmap: function(element){
+	    //console.log(element.$parent.$key,element.$data.field);
+	    var type = element.$parent.$key;
+	    var field = element.$data.field;
+	    var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':field.source_object_id});
+	    this.mappingData[type][key].master_object_id = '-1';
+	    api.map_field({ 'source_object_id': element.$data.field.source_object_id,
+	    				'master_object_id': null,
+	    				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
+	    				    
+	    				    console.log(values);
+	    				    
+	    				});
+	    this.calculateRemainingVerifications();
+	  },
 	  calculateRemainingVerifications:function(){
 	    var self = this;
 	    self.$data.remainingVerifications.total=0;
