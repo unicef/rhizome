@@ -25,18 +25,23 @@ class v2Request(object):
         self.db_obj = self.object_lookup(content_type)
         self.db_columns = self.db_obj._meta.get_all_field_names()
 
-        self.kwargs = self.clean_kwargs(request.GET)  ## CHANGE TO POST ##
+        self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
 
 
     def clean_kwargs(self,query_dict):
         '''
         When passing filters make sure that what is in the URL string is
         actually a field of the model.
+
+        This includes parsing the query terms out of the parameter key.  i.e.
+        when the API receives id__gte=50, we need to check to see if "id"
+        is a field ,not id__gte=50.
         '''
 
         cleaned_kwargs = {}
         operator_lookup = {}
 
+        ## MAP THE QUERY PARAMETER WITH ITS OPERATOR, TO THE DB MODEL ##
         for param in query_dict.keys():
 
             try:
@@ -44,10 +49,13 @@ class v2Request(object):
             except ValueError:
                 operator_lookup[param] = param
 
+        ## ONLY WANT TO CLEAN KWARGS FOR COLUMNS THAT EXISTS FOR THIS MODEL ##
+        db_model_keys = list(set(self.db_columns).intersection(k for k in\
+            operator_lookup.keys()))
 
-        keys = list(set(self.db_columns).intersection(k for k in operator_lookup.keys()))
-
-        for k in keys:
+        ## FINALLY CREATE ONE DICT (cleaned_kwargs) WITH THE ORIGINAL K,V ##
+        ## IN THE URL, BUT FILTERED ON COLUMNS AVAILABLE TO THE MODEL ##
+        for k in db_model_keys:
 
             query_key = operator_lookup[k]
             query_value = query_dict[operator_lookup[k]]#[]
@@ -57,17 +65,16 @@ class v2Request(object):
             else:
                 cleaned_kwargs[query_key] = query_value
 
-        print 'CLEANED KWARGS'#cleaned_kwargs
-        print cleaned_kwargs
 
         return cleaned_kwargs
 
 
     def object_lookup(self,content_type_string):
 
-        ## I CAN CHANGE THIS TO ADD THE FUNCTION IT NEEDS FOR PERMISSIONS ##
+        ## I CAN CHANGE THIS TO ADD THE FUNCTION IT NEEDS FOR ##
+        ## PERMISSIONS AS OPPOSED TO RUNNIGN IT VIA IF/ELIF/ELSE ##
+
         orm_mapping = {
-            # 'datapoint': DataPointAbstracted,
             'indicator': Indicator,
             'campaign': Campaign,
             'region': Region,
@@ -105,15 +112,10 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
-        # if not self.kwargs and self.content_type == 'Region':
-        #     ## WHEN ASKING FOR ALL REGIONS, DONT HIT REGION TABLE TWICE ##
-        #     qset = None
-        #
-        # else:
-        #     print 'I AM HERE'
-        #     qset = list(self.db_obj.objects.all().filter(**self.kwargs)\
-
+        ## TO_NOTE: IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO QUERY
+        ## THE DATABASE HERE.  SINCE THIS IS THE MAIN USE CASE --> FIX ME!
         qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+
         filtered_data = self.apply_permissions(qset)
         data = self.serialize(filtered_data)
 
