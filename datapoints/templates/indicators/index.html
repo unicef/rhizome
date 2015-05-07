@@ -1,4 +1,4 @@
-{% extends "datapoints/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -8,6 +8,7 @@
     <thead>
         <tr>
             <th>id</th>
+            <th>short name</th>
             <th>name</th>
             <th>description</th>
             <th>slug</th>
@@ -18,10 +19,11 @@
         {% for indicator in top_indicators %}
         <tr>
             <th>{{ indicator.id }}</th>
+            <th>{{ indicator.short_name }}</th>
             <th>{{ indicator.name }}</th>
             <th>{{ indicator.description }}</th>
             <th>{{ indicator.slug }}</th>
-            <th><a href="{% url 'indicators:update_indicator' indicator.id %}"> edit </a></th>
+            <th><a href="{% url 'datapoints:update_indicator' indicator.id %}"> edit </a></th>
         </tr>
         {% endfor %}
 
@@ -30,7 +32,7 @@
     <p>No indicators are available.</p>
 {% endif %}
     <div align="right">
-    <a href="{% url 'indicators:create_indicator' %}"<button type="submit" class="btn btn-primary"> Create New Indicator </button></a>
+    <a href="{% url 'datapoints:create_indicator' %}"<button type="submit" class="btn btn-primary"> Create New Indicator </button></a>
     </div>
 
 {% endblock %}

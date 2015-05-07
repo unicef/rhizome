@@ -19,19 +19,19 @@ function label() {
 	 * @private
 	 * Find the center of a collection of bounding boxes.
 	 */
-	function findBounds(boxes) {
+	function findBounds(data) {
 		var top    = Infinity;
 		var right  = -Infinity;
 		var bottom = -Infinity;
 		var left   = Infinity;
 
-		for (var i = boxes.length - 1; i >= 0; i--) {
-			var b  = boxes[i];
+		for (var i = data.length - 1; i >= 0; i--) {
+			var b  = data[i];
 
-			top    = Math.min(b.top, top);
-			right  = Math.max(b.right, right);
-			bottom = Math.max(b.bottom, bottom);
-			left   = Math.min(b.left, left);
+			top    = Math.min(b.y - b._height, top);
+			right  = Math.max(b.x + b._width, right);
+			bottom = Math.max(b.y, bottom);
+			left   = Math.min(b.x, left);
 		}
 
 		return {
@@ -39,8 +39,8 @@ function label() {
 			right : right,
 			bottom: bottom,
 			left  : left,
-			cx    : (right - left) / 2,
-			cy    : (bottom - top) / 2,
+			cx    : left + (right - left) / 2,
+			cy    : top + (bottom - top) / 2,
 		};
 	}
 
@@ -60,21 +60,21 @@ function label() {
 			return;
 		}
 
-		var bboxes = new Array(l);
 		var data   = new Array(l);
 
 		// Retrive all of the bounding boxes for each element in the selection.
 		// Because D3 selections can be multi-dimensional, we use the built-in
 		// for-each loop instead of a map call to ensure that we get everything
 		selection.each(function (d, i) {
-			bboxes[i] = this.getBoundingClientRect();
-			d._height = bboxes[i].height;
+			var bbox  = this.getBoundingClientRect();
+			d._height = bbox.height;
+			d._width  = bbox.width;
 			data[i]   = d;
 		});
 
 		// We'll need these later to re-center the labels as close as possible to
 		// their desired positions
-		var origBounds = findBounds(bboxes);
+		var origBounds = findBounds(data);
 
 		// Begin with the last label and shift any overlapping labels up
 		var a, b, h;
@@ -108,10 +108,12 @@ function label() {
 		}
 
 		// Recenter the labels
-		var top    = data[0].y - data[0]._height;
-		var bottom = data[data.length - 1].y;
-		var center = (bottom - top) / 2;
-		var delta  = center - origBounds.cy;
+		var newBounds = findBounds(data);
+		var delta  = newBounds.cy - origBounds.cy;
+
+		if (top + delta < 0) {
+			delta = -newBounds.top;
+		}
 
 		// Apply the shift to all of the labels' data
 		for (i = 0; i < l; i++) {

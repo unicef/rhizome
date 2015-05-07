@@ -223,10 +223,10 @@ class CacheRefresh(object):
 
         SELECT x.indicator_id as id FROM (
 
-        	SELECT cic.indicator_id
-        	FROM calculated_indicator_component cic
-            	INNER JOIN _raw_indicators ri
-            	ON cic.indicator_component_id = ri.indicator_id
+            SELECT cic.indicator_id
+            FROM calculated_indicator_component cic
+                INNER JOIN _raw_indicators ri
+                ON cic.indicator_component_id = ri.indicator_id
 
 
             UNION ALL
@@ -345,14 +345,14 @@ class CacheRefresh(object):
 
         rc_curs = DataPointComputed.objects.raw("""
             SELECT DISTINCT
-            	MIN(dwc.id) as id
+                MIN(dwc.id) as id
                 , dwc.region_id
-            	, dwc.campaign_id
+                , dwc.campaign_id
             FROM datapoint_with_computed dwc
             INNER JOIN region r
-            	ON dwc.region_id = r.id
+                ON dwc.region_id = r.id
             INNER JOIN campaign c
-            	ON dwc.campaign_id = c.id
+                ON dwc.campaign_id = c.id
                 AND c.office_id = r.office_id
             WHERE dwc.cache_job_id = %s
             GROUP BY dwc.region_id, dwc.campaign_id;

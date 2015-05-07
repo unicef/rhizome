@@ -10,6 +10,9 @@ var _dashboards = [{
 		'name'   : 'NGA Campaign Monitoring',
 		'slug'   : 'nga-campaign-monitoring',
 		'region' : 'Nigeria'
+	}, {
+		'name' : 'District Dashboard',
+		'slug' : 'district'
 	}];
 
 var _index = _.indexBy(_dashboards, 'slug');
