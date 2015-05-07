@@ -6,12 +6,13 @@ from django.utils.encoding import force_text
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.core import serializers
-from tastypie.resources import Resource
+
+from tastypie.utils import format_datetime, make_naive
 
 from datapoints.models import *
 
 
-class v2Request(Resource):
+class v2Request(object):
 
     def __init__(self,request, content_type):
 
@@ -84,7 +85,7 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
-        qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+        qset = list(self.db_obj.objects.all()[:2].filter(**self.kwargs).values())
 
         filtered_data = self.apply_permissions(qset)
 
@@ -124,73 +125,52 @@ class v2GetRequest(v2Request):
 
     def serialize(self, data):
 
+        json_data = self.v2_serializer(data)
 
-        print type(data)
-        json_data = self.to_json(data)
-
-        return data
+        return json_data
 
 
-    def to_json(self, data, options=None):
-        """
-        Given some Python data, produces JSON output.
-
-        This is taken from tastypie source
-        """
-        options = options or {}
-        data = self.to_simple(data, options)
-
-        return djangojson.json.dumps(data, cls=djangojson.DjangoJSONEncoder, sort_keys=True, ensure_ascii=False)
-
-    def to_simple(self, data, options):
+    def v2_serializer(self, data):
         """
         For a piece of data, attempts to recognize it and provide a simplified
         form of something complex.
         This brings complex Python data structures down to native types of the
         serialization format(s).
         """
-        if isinstance(data, (list, tuple)):
-            return [self.to_simple(item, options) for item in data]
-        if isinstance(data, dict):
-            return dict((key, self.to_simple(val, options)) for (key, val) in data.items())
-        # elif isinstance(data, Bundle):
-        #     return dict((key, self.to_simple(val, options)) for (key, val) in data.data.items())
-        elif hasattr(data, 'dehydrated_type'):
-            if getattr(data, 'dehydrated_type', None) == 'related' and data.is_m2m == False:
-                if data.full:
-                    return self.to_simple(data.fk_resource, options)
-                else:
-                    return self.to_simple(data.value, options)
-            elif getattr(data, 'dehydrated_type', None) == 'related' and data.is_m2m == True:
-                # if data.full:
-                #     return [self.to_simple(bundle, options) for bundle in data.m2m_bundles]
-                # else:
-                return [self.to_simple(val, options) for val in data.value]
-            else:
-                return self.to_simple(data.value, options)
-        elif isinstance(data, datetime):
-            return self.format_datetime(data)
-        # elif isinstance(data, datetime.date):
-        #     return self.format_date(data)
-        # elif isinstance(data, datetime.time):
-        #     return self.format_time(data)
-        elif isinstance(data, bool):
-            return data
-        # elif isinstance(data, (six.integer_types, float)):
-        #     return data
-        elif data is None:
-            return None
-        else:
-            return force_text(data)
 
+        serialized = []
+        for row in data:
+            cleaned_dict = {}
+            for k,v in row.iteritems():
+                if isinstance(v, datetime):
+
+                    cleaned_dict[k] = 1#self.format_datetime(v)
+                else:
+                    cleaned_dict[k] = (v)
+            serialized.append(cleaned_dict)
+
+        return serialized
+
+
+    def format_datetime(self, data):
+        """
+        A hook to control how datetimes are formatted.
+        Can be overridden at the ``Serializer`` level (``datetime_formatting``)
+        or globally (via ``settings.TASTYPIE_DATETIME_FORMATTING``).
+        Default is ``iso-8601``, which looks like "2010-12-16T03:02:14".
+        """
+
+        print '???'
+
+        return data.isoformat()()
 
 
 ## SAMPLE GET ##
-# http://localhost:8000/api/v2/get/indicator/?name__contains=polio
-# http://localhost:8000/api/v2/get/indicator/?name__startswith=Polio
+# http://localhost:8000/api/v2/indicator/?name__contains=polio
+# http://localhost:8000/api/v2/indicator/?name__startswith=Polio
 
 ## SAMPLE POST ##
-# http://localhost:8000/api/v2/post/campaign/?start_date=2016-01-01&end_date=2016-01-01&office_id=1&campaign_type_id=1
+# http://localhost:8000/api/v2/campaign/?start_date=2016-01-01&end_date=2016-01-01&office_id=1&campaign_type_id=1
 
 ## MULTIPLE MODELS ##
 # http://localhost:8000/api/v2/post/indicator/?name=test2&source_id=1&mx_val=1&bound_name=juvenile #
