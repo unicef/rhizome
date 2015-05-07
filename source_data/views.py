@@ -1,5 +1,4 @@
 import hashlib
-from django.utils import simplejson
 from itertools import chain
 from pprint import pprint
 import json

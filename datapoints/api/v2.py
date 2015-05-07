@@ -2,7 +2,7 @@ import json
 import datetime
 
 from django.core.serializers import json as djangojson
-from django.db.models import Model
+from django.db.models import Model, ManyToManyField
 from django.db.models.query import RawQuerySet
 from django.db.models.sql.constants import QUERY_TERMS
 from django.db.models.options import Options
@@ -117,7 +117,7 @@ class v2MetaRequest(v2Request):
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
-            field_dict = self.build_field_meta_dict(field,ix)
+            self.build_field_meta_dict(field,ix)
 
         self.meta_data['fields'] = self.all_field_meta
 
@@ -131,39 +131,55 @@ class v2MetaRequest(v2Request):
         except FieldDoesNotExist:
             return None
 
-        print '==== %s ====' % field_object.name
-        print dir(field_object)
-
-
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
             'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string'}
 
+
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
             'title': field_object.name,
             'type': field_type_mapper[field_object.get_internal_type()],
-            'description': str(field_object.help_text),
             'max_length': field_object.max_length,
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
-                'constraints' : {
-                    'unique':field_object.unique,
-                    # 'required':field_object.required,
-                },
                 'display' : {
                     'on_table':True,
                     'weightTable':ix,
                     'weightForm':ix,
-                }
+                },
+            'constraints': self.build_field_constraints(field_object)
+            # 'description': str(field_object.help_text),
             }
 
         self.all_field_meta.append(field_object_dict)
 
-        return field_object_dict
+
+    def build_field_constraints(self,field_object):
+
+        field_constraints = {
+            'unique':field_object.unique
+            }
+
+        try:
+            field_constraints['required'] = field_object.required
+        except AttributeError:
+            field_constraints['required'] = False
+
+        if field_object.name == 'groups':
+        # if isinstance(field_object,ManyToManyField) and field_object.name == 'groups':
+
+            ## HACK FOR USERS ##
+            dict_list = [{'value':1,'label':'UNICEF HQ'}]
+            field_constraints['items'] = {'oneOf':dict_list}
+
+
+        return field_constraints
+
+
 
     def add_model_meta_data(self):
 
