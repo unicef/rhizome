@@ -428,18 +428,14 @@ def api_indicator(request):
         , content_type="application/json")
 
 
-def meta_api_GET(request,content_type):
+def v2_api(request,content_type):
 
-    request_object = v2GetRequest(request, content_type)
-    data = request_object.main()
+    if request.POST:
+        request_object = v2PostRequest(request, content_type)
+        data = request_object.main()
+
+    else:
+        request_object = v2GetRequest(request, content_type)
+        err, data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
-
-
-def meta_api_POST(request,content_type):
-
-    request_object = v2PostRequest(request, content_type)
-    data = request_object.main()
-
-    return HttpResponse(json.dumps(data),
-        content_type="application/json")
