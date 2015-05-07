@@ -7,7 +7,7 @@ import itertools
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
@@ -22,7 +22,7 @@ from datapoints.models import *
 from datapoints.forms import *
 from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 from datapoints.mixins import PermissionRequiredMixin
-from datapoints.api.v2 import v2PostRequest, v2GetRequest
+from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
 
 
 class IndexView(generic.ListView):
@@ -428,9 +428,19 @@ def api_indicator(request):
         , content_type="application/json")
 
 
-def v2_api(request,content_type):
+def v2_meta_api(request,content_type):
 
-    if request.POST:
+    print 'HITTING HERE\n'
+
+    return v2_api(request,content_type,True)
+
+def v2_api(request,content_type,is_meta=False):
+
+    if is_meta:
+        request_object = v2MetaRequest(request, content_type)
+        data = request_object.main()
+
+    elif request.POST:
         request_object = v2PostRequest(request, content_type)
         data = request_object.main()
 

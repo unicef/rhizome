@@ -101,6 +101,12 @@ class v2PostRequest(v2Request):
         return None, data
 
 
+class v2MetaRequest(v2Request):
+
+    def main(self):
+
+        return None, []
+
 
 class v2GetRequest(v2Request):
 
