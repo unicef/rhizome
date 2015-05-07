@@ -209,12 +209,10 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
-
+        return unicode(self.slug)
 
     def get_full_name(self):
-        full_name = self.__unicode__()
-        return full_name
+        return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
         db_table = 'campaign'

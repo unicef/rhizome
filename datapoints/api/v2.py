@@ -111,10 +111,11 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
-
         ## TO_NOTE: IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO QUERY
         ## THE DATABASE HERE.  SINCE THIS IS THE MAIN USE CASE --> FIX ME!
-        qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+        # qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+
+        qset = []
 
         filtered_data = self.apply_permissions(qset)
         data = self.serialize(filtered_data)
@@ -127,10 +128,13 @@ class v2GetRequest(v2Request):
 
         Returns a Raw Queryset
         '''
+        # list_of_object_ids = [x['id'] for x in queryset]
+
+        list_of_object_ids = None#[x['id'] for x in queryset]
+
+        print list_of_object_ids
 
         if self.content_type == 'region':
-
-            list_of_object_ids = [x['id'] for x in queryset]
 
             data = Region.objects.raw("SELECT * FROM\
                 fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
@@ -140,8 +144,6 @@ class v2GetRequest(v2Request):
 
         elif self.content_type == 'campaign':
 
-            list_of_object_ids = [x['id'] for x in queryset]
-
             data = Campaign.objects.raw("""
                 SELECT c.* FROM campaign c
                 INNER JOIN datapoint_abstracted da
@@ -149,7 +151,9 @@ class v2GetRequest(v2Request):
                 INNER JOIN region_permission rm
                     ON da.region_id = rm.region_id
                     AND rm.user_id = %s
-                WHERE c.id = ANY(%s)""",[self.user_id, list_of_object_ids])
+                WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+            """,[self.user_id,list_of_object_ids])
+
 
             return data
 
