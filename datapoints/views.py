@@ -430,15 +430,13 @@ def api_indicator(request):
 
 def v2_meta_api(request,content_type):
 
-    print 'HITTING HERE\n'
-
     return v2_api(request,content_type,True)
 
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
         request_object = v2MetaRequest(request, content_type)
-        data = request_object.main()
+        err, data = request_object.main()
 
     elif request.POST:
         request_object = v2PostRequest(request, content_type)

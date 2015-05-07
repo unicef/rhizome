@@ -105,7 +105,24 @@ class v2MetaRequest(v2Request):
 
     def main(self):
 
-        return None, []
+        meta_data = {}
+
+        meta_data['slug'] = self.content_type
+        meta_data['name'] = self.content_type
+        meta_data['primary_key'] = 'id'
+        meta_data['search_field'] = 'slug'
+        meta_data['defaultSortField'] = 'id'
+        meta_data['defaultSortDirection'] = 'asc'
+
+        meta_data['fields'] = [self.build_field_meta_dict(field) for field in \
+            self.db_obj._meta.get_all_field_names()]
+
+        return None, meta_data
+
+    def build_field_meta_dict(self, field):
+
+        return {'name': field, 'title':field }
+
 
 
 class v2GetRequest(v2Request):
