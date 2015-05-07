@@ -57,7 +57,15 @@ module.exports = {
 		},
 
 		features: function () {
-			return (this.geo && this.geo.features) || [];
+			var features = [];
+
+			if (this.geo && !_.isEmpty(this.geo.features)) {
+				features = this.geo.features;
+			} else if (this.border) {
+				features = [this.border];
+			}
+
+			return features;
 		},
 
 		boundingBox: function () {
