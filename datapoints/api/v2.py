@@ -2,8 +2,10 @@ import json
 import datetime
 
 from django.core.serializers import json as djangojson
-from django.utils.encoding import smart_str
+from django.db.models import Model
+from django.db.models.query import RawQuerySet
 from django.forms.models import model_to_dict
+from django.utils.encoding import smart_str
 from django.contrib.auth.models import User
 from django.core import serializers
 
@@ -125,14 +127,7 @@ class v2GetRequest(v2Request):
                     AND rm.user_id = %s
                 WHERE c.id = ANY(%s)""",[self.user_id, list_of_object_ids])
 
-            list_of_dicts = [{\
-                'id' : row.id,
-                'start_date' : row.start_date,
-                } for row in data]
-
-
-            print len(list_of_dicts)
-            return list_of_dicts
+            return data
 
         else:
              return queryset
@@ -147,26 +142,24 @@ class v2GetRequest(v2Request):
 
     def clean_row_result(self, row_data):
         '''
-        WHen Serializing, everything but Int is converted to string.
+        When Serializing, everything but Int is converted to string.
+
+        If it is a raw queryset, first convert the row to a dict using the
+        built in __dict__ method.
+
+        This just returns a list of dict.  The JsonResponse in the view
+        does the actual json conversion.
         '''
 
         cleaned_row_data = {}
-        for k,v in row_data.iteritems():
 
+        if isinstance(row_data,Model): # if raw queryset, convert to dict
+            row_data = dict(row_data.__dict__)
+
+        for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
-
             else:
                 cleaned_row_data[k] = smart_str(v)
 
         return cleaned_row_data
-
-## SAMPLE GET ##
-# http://localhost:8000/api/v2/indicator/?name__contains=polio
-# http://localhost:8000/api/v2/indicator/?name__startswith=Polio
-
-## SAMPLE POST ##
-# http://localhost:8000/api/v2/campaign/?start_date=2016-01-01&end_date=2016-01-01&office_id=1&campaign_type_id=1
-
-## MULTIPLE MODELS ##
-# http://localhost:8000/api/v2/post/indicator/?name=test2&source_id=1&mx_val=1&bound_name=juvenile #
