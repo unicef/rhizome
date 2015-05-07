@@ -4,12 +4,14 @@ import datetime
 from django.core.serializers import json as djangojson
 from django.db.models import Model
 from django.db.models.query import RawQuerySet
+from django.db.models.sql.constants import QUERY_TERMS
 from django.forms.models import model_to_dict
 from django.utils.encoding import smart_str
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core import serializers
 
 from datapoints.models import *
+
 
 
 class v2Request(object):
@@ -33,30 +35,39 @@ class v2Request(object):
         '''
 
         cleaned_kwargs = {}
+        operator_lookup = {}
 
-        keys = set(self.db_columns).intersection(query_dict)
-        filters = {k:query_dict[k] for k in keys}
+        for param in query_dict.keys():
+            operator_lookup[param[0:param.index('__')]] = param
 
-        for k,v in filters.iteritems():
+        keys = list(set(self.db_columns).intersection(k for k in operator_lookup.keys()))
 
-            if "," in v:
-                cleaned_kwargs[k] = v.split(',')
+        for k in keys:
+
+            query_key = operator_lookup[k]
+            query_value = query_dict[operator_lookup[k]]#[]
+
+            if "," in query_value:
+                cleaned_kwargs[query_key] = query_value.split(',')
             else:
-                cleaned_kwargs[k] = v
+                cleaned_kwargs[query_key] = query_value
+
+        print 'CLEANED KWARGS'#cleaned_kwargs
+        print cleaned_kwargs
 
         return cleaned_kwargs
 
 
     def object_lookup(self,content_type_string):
 
+        ## I CAN CHANGE THIS TO ADD THE FUNCTION IT NEEDS FOR PERMISSIONS ##
         orm_mapping = {
-            'datapoint': DataPointAbstracted,
-            'region': Region,
-            'campaign': Campaign,
+            # 'datapoint': DataPointAbstracted,
             'indicator': Indicator,
+            'campaign': Campaign,
+            'region': Region,
+            'group': Group,
             'user': User,
-            'office': Office,
-            'campaign_type': CampaignType,
         }
 
         db_model = orm_mapping[content_type_string]
@@ -89,10 +100,16 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
+        # if not self.kwargs and self.content_type == 'Region':
+        #     ## WHEN ASKING FOR ALL REGIONS, DONT HIT REGION TABLE TWICE ##
+        #     qset = None
+        #
+        # else:
+        #     print 'I AM HERE'
+        #     qset = list(self.db_obj.objects.all().filter(**self.kwargs)\
+
         qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
-
         filtered_data = self.apply_permissions(qset)
-
         data = self.serialize(filtered_data)
 
         return None, data
