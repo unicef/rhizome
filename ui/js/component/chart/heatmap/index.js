@@ -47,16 +47,13 @@ function _sortRows(a, b) {
 	}
 
 	if (left < right) {
-		console.log(left, 'less than', right);
 		return -1;
 	}
 
 	if (left > right) {
-		console.log(left, 'greater than', right);
 		return 1;
 	}
 
-	console.log(left, 'equals', right);
 	return 0;
 }
 function _translate(d, i) {
@@ -265,7 +262,6 @@ module.exports = {
 		},
 
 		setSort : function (d, i) {
-			console.log('sort by', i);
 			this.sortCol = (i === this.sortCol) ? null : i;
 		}
 	},
