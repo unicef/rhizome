@@ -21,14 +21,23 @@ class v2Request(object):
         self.user_id = request.user.id
 
         self.db_obj = self.object_lookup(content_type)
+        self.db_columns = self.db_obj._meta.get_all_field_names()
+
         self.kwargs = self.clean_kwargs(request.GET)  ## CHANGE TO POST ##
 
 
     def clean_kwargs(self,query_dict):
+        '''
+        When passing filters make sure that what is in the URL string is
+        actually a field of the model.
+        '''
 
         cleaned_kwargs = {}
 
-        for k,v in query_dict.iteritems():
+        keys = set(self.db_columns).intersection(query_dict)
+        filters = {k:query_dict[k] for k in keys}
+
+        for k,v in avail_filters.iteritems():
 
             if "," in v:
                 cleaned_kwargs[k] = v.split(',')
@@ -103,16 +112,7 @@ class v2GetRequest(v2Request):
                 fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
                 list_of_object_ids])
 
-            ## THIS SHOULD BE ABSTRACTED ##
-            list_of_dicts = [{\
-                'id' : row.id,
-                'name' : row.name,
-                'parent_region_id' : row.name,
-                'region_type_id' : row.region_type_id,
-                } for row in data]
-
-            return list_of_dicts
-
+            return data
 
         elif self.content_type == 'campaign':
 
