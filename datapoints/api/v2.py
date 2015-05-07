@@ -2,12 +2,10 @@ import json
 import datetime
 
 from django.core.serializers import json as djangojson
-from django.utils.encoding import force_text
+from django.utils.encoding import smart_str
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.core import serializers
-
-from tastypie.utils import format_datetime, make_naive
 
 from datapoints.models import *
 
@@ -34,12 +32,6 @@ class v2Request(object):
                 cleaned_kwargs[k] = v.split(',')
             else:
                 cleaned_kwargs[k] = v
-
-
-        ## YOU NEED TO FIND THE COLUMNS OF THE OBJECT AND INTERSECT THAT ##
-        # del cleaned_kwargs['format']
-        # del cleaned_kwargs['offset']
-        # del cleaned_kwargs['uri_display']
 
         return cleaned_kwargs
 
@@ -85,7 +77,7 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
-        qset = list(self.db_obj.objects.all()[:2].filter(**self.kwargs).values())
+        qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
 
         filtered_data = self.apply_permissions(qset)
 
@@ -125,45 +117,25 @@ class v2GetRequest(v2Request):
 
     def serialize(self, data):
 
-        json_data = self.v2_serializer(data)
-
-        return json_data
-
-
-    def v2_serializer(self, data):
-        """
-        For a piece of data, attempts to recognize it and provide a simplified
-        form of something complex.
-        This brings complex Python data structures down to native types of the
-        serialization format(s).
-        """
-
-        serialized = []
-        for row in data:
-            cleaned_dict = {}
-            for k,v in row.iteritems():
-                if isinstance(v, datetime):
-
-                    cleaned_dict[k] = 1#self.format_datetime(v)
-                else:
-                    cleaned_dict[k] = (v)
-            serialized.append(cleaned_dict)
+        serialized = [self.clean_row_result(row) for row in data]
 
         return serialized
 
+    def clean_row_result(self, row_data):
+        '''
+        WHen Serializing, everything but Int is converted to string.
+        '''
 
-    def format_datetime(self, data):
-        """
-        A hook to control how datetimes are formatted.
-        Can be overridden at the ``Serializer`` level (``datetime_formatting``)
-        or globally (via ``settings.TASTYPIE_DATETIME_FORMATTING``).
-        Default is ``iso-8601``, which looks like "2010-12-16T03:02:14".
-        """
+        cleaned_row_data = {}
+        for k,v in row_data.iteritems():
 
-        print '???'
+            if isinstance(v, int):
+                cleaned_row_data[k] = v
 
-        return data.isoformat()()
+            else:
+                cleaned_row_data[k] = smart_str(v)
 
+        return cleaned_row_data
 
 ## SAMPLE GET ##
 # http://localhost:8000/api/v2/indicator/?name__contains=polio
