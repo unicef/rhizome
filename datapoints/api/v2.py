@@ -1,11 +1,17 @@
 import json
+import datetime
 
+from django.core.serializers import json as djangojson
+from django.utils.encoding import force_text
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
+from django.core import serializers
+from tastypie.resources import Resource
+
 from datapoints.models import *
 
 
-class v2Request(object):
+class v2Request(Resource):
 
     def __init__(self,request, content_type):
 
@@ -28,10 +34,11 @@ class v2Request(object):
             else:
                 cleaned_kwargs[k] = v
 
+
         ## YOU NEED TO FIND THE COLUMNS OF THE OBJECT AND INTERSECT THAT ##
-        del cleaned_kwargs['format']
-        del cleaned_kwargs['offset']
-        del cleaned_kwargs['uri_display']
+        # del cleaned_kwargs['format']
+        # del cleaned_kwargs['offset']
+        # del cleaned_kwargs['uri_display']
 
         return cleaned_kwargs
 
@@ -44,6 +51,8 @@ class v2Request(object):
             'campaign': Campaign,
             'indicator': Indicator,
             'user': User,
+            'office': Office,
+            'campaign_type': CampaignType,
         }
 
         db_model = orm_mapping[content_type_string]
@@ -75,38 +84,104 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
-        list_of_ids = list(self.db_obj.objects.all().values_list('id',flat=True).\
-            filter(**self.kwargs))
+        qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
 
-        filtered_data = self.apply_permissions(list_of_ids)
+        filtered_data = self.apply_permissions(qset)
 
         data = self.serialize(filtered_data)
 
         return None, data
 
-    def apply_permissions(self, list_of_object_ids):
+    def apply_permissions(self, queryset):
         '''
         Right now this is only for regions and Datapoints.
 
-        Returns a Raw QUeryset
+        Returns a Raw Queryset
         '''
 
-        data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
+        if self.content_type == 'region':
+
+            list_of_object_ids = [x['id'] for x in queryset]
+
+            data = Region.objects.raw("SELECT * FROM\
+                fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
                 list_of_object_ids])
 
-        list_of_dicts = [{\
-            'id' : row.id,
-            'name' : row.name,
-            'parent_region_id' : row.name,
-            'region_type_id' : row.region_type_id,
-            } for row in data]
+            ## THIS SHOULD BE ABSTRACTED ##
+            list_of_dicts = [{\
+                'id' : row.id,
+                'name' : row.name,
+                'parent_region_id' : row.name,
+                'region_type_id' : row.region_type_id,
+                } for row in data]
 
-        return list_of_dicts
+            return list_of_dicts #list_of_dicts
+
+        else:
+             return queryset
+
+
 
     def serialize(self, data):
 
+
+        print type(data)
+        json_data = self.to_json(data)
+
         return data
+
+
+    def to_json(self, data, options=None):
+        """
+        Given some Python data, produces JSON output.
+
+        This is taken from tastypie source
+        """
+        options = options or {}
+        data = self.to_simple(data, options)
+
+        return djangojson.json.dumps(data, cls=djangojson.DjangoJSONEncoder, sort_keys=True, ensure_ascii=False)
+
+    def to_simple(self, data, options):
+        """
+        For a piece of data, attempts to recognize it and provide a simplified
+        form of something complex.
+        This brings complex Python data structures down to native types of the
+        serialization format(s).
+        """
+        if isinstance(data, (list, tuple)):
+            return [self.to_simple(item, options) for item in data]
+        if isinstance(data, dict):
+            return dict((key, self.to_simple(val, options)) for (key, val) in data.items())
+        # elif isinstance(data, Bundle):
+        #     return dict((key, self.to_simple(val, options)) for (key, val) in data.data.items())
+        elif hasattr(data, 'dehydrated_type'):
+            if getattr(data, 'dehydrated_type', None) == 'related' and data.is_m2m == False:
+                if data.full:
+                    return self.to_simple(data.fk_resource, options)
+                else:
+                    return self.to_simple(data.value, options)
+            elif getattr(data, 'dehydrated_type', None) == 'related' and data.is_m2m == True:
+                # if data.full:
+                #     return [self.to_simple(bundle, options) for bundle in data.m2m_bundles]
+                # else:
+                return [self.to_simple(val, options) for val in data.value]
+            else:
+                return self.to_simple(data.value, options)
+        elif isinstance(data, datetime):
+            return self.format_datetime(data)
+        # elif isinstance(data, datetime.date):
+        #     return self.format_date(data)
+        # elif isinstance(data, datetime.time):
+        #     return self.format_time(data)
+        elif isinstance(data, bool):
+            return data
+        # elif isinstance(data, (six.integer_types, float)):
+        #     return data
+        elif data is None:
+            return None
+        else:
+            return force_text(data)
 
 
 
