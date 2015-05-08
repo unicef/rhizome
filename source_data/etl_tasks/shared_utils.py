@@ -65,10 +65,9 @@ def map_indicators(indicator_strings,document_id):
             indicator_string = indicator_string,
             defaults = {'document_id': document_id})
 
-
         try:
-            indicator_id = IndicatorMap.objects.get(source_indicator_id = \
-                source_indicator.id).master_indicator_id
+            indicator_id = IndicatorMap.objects.get(source_object_id = \
+                source_indicator.id).master_object_id
 
             indicator_mapping[indicator_string] = indicator_id
 
@@ -109,8 +108,8 @@ def map_campaigns(campaign_strings,document_id):
             defaults = {'document_id':document_id,'office':office_obj})
 
         try:
-            campaign_id = CampaignMap.objects.get(source_campaign_id = \
-                source_campaign.id).master_campaign_id
+            campaign_id = CampaignMap.objects.get(source_object_id = \
+                source_campaign.id).master_object_id
 
             campaign_mapping[str(campaign)] = campaign_id
         except ObjectDoesNotExist:
@@ -143,8 +142,8 @@ def map_regions(region_strings,document_id):
 
 
         try:
-            region_id = RegionMap.objects.get(source_region_id = \
-                source_region.id).master_region_id
+            region_id = RegionMap.objects.get(source_object_id = \
+                source_region.id).master_object_id
 
             region_mapping[region_string] = region_id
         except ObjectDoesNotExist:

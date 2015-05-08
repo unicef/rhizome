@@ -10,7 +10,7 @@ BEGIN
   (indicator_id,region_id,campaign_id,value)
 
   SELECT DISTINCT
-  part.indicator_id as master_indicator_id
+  part.indicator_id as master_id
   ,d_part.region_id
   ,d_part.campaign_id
   ,d_part.value / NULLIF(d_whole.value,0) as value

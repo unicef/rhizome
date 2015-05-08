@@ -205,21 +205,21 @@ class RefreshMasterTestCase(TestCase):
         ## create mappings ( this is mimicking how bo would map metadata ) ##
         rm_1 = RegionMap.objects.create(
             mapped_by_id = self.user.id,
-            source_region_id = SourceRegion.objects.get(region_code=self\
+            source_id = SourceRegion.objects.get(region_code=self\
                 .region_1_code).id,
-            master_region_id = self.region_1.id)
+            master_id = self.region_1.id)
 
         cm_1 = CampaignMap.objects.create(
             mapped_by_id = self.user.id,
-            source_campaign_id = SourceCampaign.objects.get(campaign_string=\
+            source_id = SourceCampaign.objects.get(campaign_string=\
                 self.campaign_string).id,
-            master_campaign_id = self.campaign.id)
+            master_id = self.campaign.id)
 
         im_1 = IndicatorMap.objects.create(
             mapped_by_id = self.user.id,
-            source_indicator_id = SourceIndicator.objects.get(indicator_string=\
+            source_id = SourceIndicator.objects.get(indicator_string=\
                 self.indicator_string).id,
-            master_indicator_id = self.indicator.id)
+            master_id = self.indicator.id)
 
         mr.source_dps_to_dps()
 

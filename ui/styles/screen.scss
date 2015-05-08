@@ -60,15 +60,15 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 h3 {
-	border-bottom  : 1px solid $base;
-	color          : $base;
+	border-bottom  : 1px solid $iron;
+	color          : $steel;
 	text-transform : uppercase;
 }
 
 h4 {
-	margin: 0;
-	white-space: nowrap;
-	overflow: hidden;
+	margin      : 0;
+	overflow    : hidden;
+	white-space : nowrap;
 }
 
 select {
@@ -105,6 +105,10 @@ nav {
 		color: #fff;
 		opacity: 1;
 	}
+}
+
+p {
+	margin-bottom: 0;
 }
 
 body.dashboard nav .dashboard,
@@ -183,6 +187,8 @@ table {
 		border-collapse : separate;
 		border-spacing  : 0.5em;
 
+		margin          : 0.25em 0 1.25rem 0;
+
 		tr {
 			background-color: transparent !important;
 
@@ -231,6 +237,15 @@ button,
 .disabled {
 	cursor: $button-disabled-cursor;
 	opacity: $button-disabled-opacity;
+}
+
+.button.read-only {
+   border-bottom-width: 1px;
+   cursor:initial;
+   &:not(.disabled):not(.success):hover {
+   	border-color: $button-border-color;
+   }
+   
 }
 
 /* fixed-header tables */
@@ -419,17 +434,31 @@ ul {
 .transit-points {
 	.chart {
 		svg {
-			width     : auto;
-			max-width : 20px;
+			height : 14pt;
+			width  : 14pt;
+		}
+	}
+}
+
+.accessibility {
+	.chart {
+		svg {
+			height : 12pt;
+			width  : 12pt;
 		}
 	}
 }
 
 .tooltip {
-	color: white !important;
+	color: white;
 
-	h3 {
+	h1,h2,h3,h4,h5,h6 {
 		border: none;
+		color : inherit;
+	}
+
+	p {
+		color : inherit;
 	}
 }
 

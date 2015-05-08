@@ -16,11 +16,6 @@ BEGIN
 	PERFORM * FROM fn_calc_upsert_computed($1);
 
 	-- FIX ME --
-	UPDATE datapoint_with_computed SET value = 0.00
-	--WHERE cache_job_id = $1
-	WHERE value is NULL;
-
-	-- FIX ME --
 	DELETE FROM datapoint_with_computed dwc
 	WHERE region_id is null;
 

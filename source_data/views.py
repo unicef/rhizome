@@ -1,7 +1,7 @@
 import hashlib
-from django.utils import simplejson
 from itertools import chain
 from pprint import pprint
+import json
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -10,18 +10,16 @@ from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect,HttpResponse
 from django.db.utils import IntegrityError
-from pandas import DataFrame
+from pandas import DataFrame, notnull
 
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.models import DataPoint, Responsibility
-from source_data.raw_sql import base_meta_q
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-
 
 def mark_doc_as_processed(request,document_id):
 
@@ -140,14 +138,31 @@ def document_review(request,document_id):
         'document_id': document_id }
         ,RequestContext(request))
 
+def field_mapping(request,document_id):
+
+    meta_breakdown = populate_document_metadata(document_id)
+    mb_df = DataFrame(meta_breakdown)
+    no_ix_df = mb_df.reset_index(drop=True)
+
+    return render_to_response(
+        'upload/field_mapping.html',
+        {'document_id': document_id }
+        ,RequestContext(request))
+
+
 def populate_document_metadata(document_id):
 
     meta_breakdown = []
 
-    raw_qs = Document.objects.raw(base_meta_q,[document_id])
+    raw_qs = Document.objects.raw('''
+
+        SELECT * FROM fn_populate_doc_meta(%s)
+
+        ''',[document_id])
 
     for row in raw_qs:
         row_dict = {
+            'document_id' : row.id,
             'db_model':row.db_model,
             'source_object_id':row.source_object_id,
             'source_string':row.source_string,
@@ -160,9 +175,9 @@ def populate_document_metadata(document_id):
 
     return meta_breakdown
 
-def sync_source_datapoints(request,document_id,master_indicator_id):
+def sync_source_datapoints(request,document_id,master_id):
 
-    mr = MasterRefresh(request.user.id,document_id,master_indicator_id)
+    mr = MasterRefresh(request.user.id,document_id,master_id)
 
     mr.source_dps_to_dps()
     mr.sync_regions()
@@ -189,7 +204,7 @@ def pre_process_file(request,document_id):
 
     populate_document_metadata(document_id)
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
+    return HttpResponseRedirect(reverse('source_data:field_mapping'\
         , kwargs={'document_id': document_id}))
 
 
@@ -199,8 +214,7 @@ def refresh_master_no_indicator(request,document_id):
 
     mr.source_dps_to_dps()
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        , kwargs={'document_id': document_id}))
+    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 
 ######### DOCUMENT RELATED VIEWS ##########
@@ -212,68 +226,12 @@ class DocumentIndex(generic.ListView):
     model = Document
 
 
-######### META MAPPING ##########
-
-
-class CreateMap(PermissionRequiredMixin, generic.CreateView):
-
-    template_name='map/map.html'
-    success_url=reverse_lazy('source_data:document_index')
-    # permission_required = 'datapoints.add_datapoint'
-
-    def form_valid(self, form):
-    # this inserts into the changed_by field with  the user who made the insert
-        obj = form.save(commit=False)
-        obj.mapped_by = self.request.user
-        # obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-
-class IndicatorMapCreateView(CreateMap):
-
-    model=IndicatorMap
-    form_class = IndicatorMapForm
-    context_object_name = 'indicator_to_map'
-    template_name = 'map/map.html'
-
-    def get_initial(self):
-        return { 'source_indicator': self.kwargs['pk'] }
-
-
-class RegionMapCreateView(CreateMap):
-
-    model=RegionMap
-    form_class = RegionMapForm
-
-
-    def get_initial(self):
-        return { 'source_region': self.kwargs['pk'] }
-
-
-class CampaignMapCreateView(CreateMap):
-
-    model=CampaignMap
-    form_class = CampaignMapForm
-
-    def get_initial(self):
-        return { 'source_campaign': self.kwargs['pk'] }
-
-
-class ShowSourceIndicator(generic.DetailView):
-
-    context_object_name = "source_indicator"
-    template_name = 'map/source_indicator.html'
-    model = SourceIndicator
-
-
 class EtlJobIndex(generic.ListView):
 
     context_object_name = "etl_jobs"
     template_name = 'etl_jobs.html'
     model = EtlJob
     paginate_by = 25
-
 
 def un_map(request,source_object_id,db_model,document_id):
 
@@ -304,3 +262,164 @@ def refresh_master(request):
 
     return render_to_response('map/master_refresh.html'
         ,{'task_data': task_data})
+
+def api_document_review(request):
+
+    try:
+        document_id = request.GET['document_id']
+    except KeyError:
+        return HttpResponse(json.dumps({'error':'document_id is a required parameter'})\
+            , content_type="application/json")
+
+
+    meta_breakdown = []
+
+    raw_qs = Document.objects.raw('''\
+        SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
+
+    for row in raw_qs:
+        row_dict = {
+            'db_model':row.db_model,
+            'source_object_id':row.source_object_id,
+            'source_string':row.source_string,
+            'master_object_id':row.master_object_id,
+        }
+
+        meta_breakdown.append(row_dict)
+
+    mb_df = DataFrame(meta_breakdown)
+    df_no_nan = mb_df.where((notnull(mb_df)), None)
+    no_ix_df = df_no_nan.reset_index(drop=True)
+
+    ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
+        .transpose().to_dict()
+    indicator_breakdown =  [v for k,v in ind_dict.iteritems()]
+
+    ##
+    camp_dict = no_ix_df[no_ix_df['db_model'] == 'source_campaign']\
+        .transpose().to_dict()
+    camp_breakdown =  [v for k,v in camp_dict.iteritems()]
+
+    ##
+    region_dict = no_ix_df[no_ix_df['db_model'] == 'source_region']\
+        .transpose().to_dict()
+    region_breakdown =  [v for k,v in region_dict.iteritems()]
+
+    response_objects = { \
+        'regions': region_breakdown,
+        'campaigns': camp_breakdown,
+        'indicators': indicator_breakdown,
+        }
+
+    response_data = {'objects':response_objects }
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def api_map_meta(request):
+
+    objects, error, meta = None, None, {}
+    required_params = {'object_type':None,'source_object_id':None,\
+        'master_object_id':None}
+
+    map_model_lookup  = {
+        'indicator':IndicatorMap,
+        'region':RegionMap,
+        'campaign':CampaignMap
+        }
+
+    ## POPULATE THE META_DICT WITH THE REQUIRED PARAMS AND THEIR VALUES ##
+    for param in required_params:
+
+        try:
+            # FIND THE PARAMETER FROM THE REQUEST
+            meta[param] = request.POST[param].replace('[u','').replace(']','')
+        except KeyError:  ## IF PARAM IS MISSING ##
+            error = '%s is a required parameter' % param
+            response_data = {'objects':objects,'error':error, 'meta':meta}
+
+            return HttpResponse(json.dumps(response_data)\
+                , content_type="application/json")
+
+    meta['user_id'] = request.user.id
+
+    ## LOOK UP THE OBJECT AND CREATE OR UPDATE THE MAPPING TABLE $$
+    map_object = map_model_lookup[meta['object_type']]
+
+    ## CREATE OR UPDATE THE MAP ##
+    error, map_row_id = upsert_mapping(meta,map_object)
+
+    ## RETURN DATA TO API ##
+    objects = {'object_id': map_row_id}
+    response_data = {'error':error,'objects':objects, 'meta':meta }
+
+    return HttpResponse(json.dumps(response_data)\
+        , content_type="application/json")
+
+
+def upsert_mapping(meta,map_object):
+
+    request_source_id, request_master_id, request_user_id = \
+        int(meta['source_object_id']),int(meta['master_object_id']),\
+        int(meta['user_id'])
+
+    try:
+        db_obj, created = map_object.objects.get_or_create(
+            source_object_id = request_source_id,
+            defaults = {
+                'master_object_id':request_master_id,
+                'mapped_by_id':request_user_id
+            })
+
+        if not created:
+            db_obj.master_object_id = request_master_id
+            db_obj.mapped_by_id = request_user_id
+            db_obj.save()
+
+
+    except Exception as err:
+        return str(err), None
+
+
+    return None, db_obj.id
+
+
+
+######### META MAPPING ##########
+
+
+class CreateMap(PermissionRequiredMixin, generic.CreateView):
+
+    template_name='map/map.html'
+    success_url=reverse_lazy('source_data:document_index')
+    # permission_required = 'datapoints.add_datapoint'
+
+    def form_valid(self, form):
+    # this inserts into the changed_by field with  the user who made the insert
+        obj = form.save(commit=False)
+        obj.mapped_by = self.request.user
+        # obj.source_id = Source.objects.get(source_name='data entry').id
+        obj.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+    def get_initial(self):
+        return { 'source_object': self.kwargs['pk'] }
+
+
+class IndicatorMapCreateView(CreateMap):
+
+    model=IndicatorMap
+    form_class = IndicatorMapForm
+
+class RegionMapCreateView(CreateMap):
+
+    model=RegionMap
+    form_class = RegionMapForm
+
+
+class CampaignMapCreateView(CreateMap):
+
+    model=CampaignMap
+    form_class = CampaignMapForm

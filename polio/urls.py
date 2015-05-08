@@ -13,58 +13,67 @@ from datapoints.api.base import debug
 from datapoints import views
 
 from source_data.api import EtlResource
+from source_data.views import api_document_review, api_map_meta
 from tastypie.api import Api
 
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
-# v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
-# v1_api.register(IndicatorResource())
 v1_api.register(UserResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 # v1_api.register(CampaignResource())
+# v1_api.register(IndicatorResource())
+# v1_api.register(RegionResource())
 
 
 urlpatterns = patterns('',
-    ## CUSTOM API ##
 
+    ## CUSTOM V1 API ##
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
+    url(r'^api/v1/source_data/document_review/$', \
+        api_document_review, name='api_document_review'),
+    url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
+    ## V2 API
 
+    ### CHANGE THIS TO ONE METHOD THAT ROUTES TO GET OR POST ##
+
+    url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),
+    url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
+        name='v2_meta_api'),
+
+    ## Entity Api ##
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
-
-    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 
-
-    ## Entity API ##
-    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
-
-    ##
+    ## HOME PAGE
     url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
-    ##
-    url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/indicators/', decorator_include(login_required,'datapoints.app_urls.indicator_urls', namespace="indicators")),
-    url(r'^datapoints/regions/', decorator_include(login_required,'datapoints.app_urls.region_urls', namespace="regions")),
-    ##
+
+    ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
+    url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## DASHBOARD WITH URL PARAMS ##
+    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## CORE SOURCE DATA FUNCTINOALITY
+    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
+
+    ## ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    ##
-    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
 
-    ## admin pages hitting entity API
+    ## ADMIN PAGES HITTING ENTITY API
     url(r'^ufadmin/users/', views.UFAdminView.as_view(), name='ufadmin'),
 
-    ##
+    ## NOT SURE WHAT THIS IS ##
     (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 

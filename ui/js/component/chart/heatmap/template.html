@@ -1,0 +1,15 @@
+<div class="chart">
+	<svg class="heatmap"
+		v-el="canvas"
+		v-class="sortable : sortable"
+		v-attr="viewBox : '0 0 ' + width + ' ' + height">
+
+		<g v-attr="transform : 'translate(' + marginLeft + ',' + marginTop + ')'">
+			<g class="y axis" transform="translate(0,-4)"></g>
+			<g class="x axis" transform="translate(-4,0)"></g>
+			<g class="data"
+				v-on="mouseout : onRowOut"
+			></g>
+		</g>
+	</svg>
+</div>

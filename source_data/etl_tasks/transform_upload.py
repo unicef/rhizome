@@ -33,7 +33,11 @@ class DocTransform(object):
 
             df = read_excel(self.file_path,sheet.name)
 
-        return df
+
+        df_no_nan = df.where((pd.notnull(df)), None)
+        print 'THIS IS THE DATAFRAME FOR THE UPLOAD BELOW \n' * 5
+        print df_no_nan
+        return df_no_nan
 
 
     def dp_df_to_source_datapoints(self):

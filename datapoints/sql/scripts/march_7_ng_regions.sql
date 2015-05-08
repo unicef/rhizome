@@ -25,8 +25,8 @@ CREATE TEMP TABLE _sub_distr AS
 SELECT
 	x.*
 	,sdd.id as document_id
-	,CAST(NULL AS INT) as source_region_id
-	,CAST(NULL AS INT) as master_region_id
+	,CAST(NULL AS INT) as source_id
+	,CAST(NULL AS INT) as master_id
 FROM source_data_document sdd
 INNER JOIN (
 SELECT
@@ -178,14 +178,14 @@ ON sdd.guid = 'JD_INSERT_POLIO_412';
 
 
 UPDATE _sub_distr sd
-SET source_region_id = sr.id
+SET source_id = sr.id
 FROM source_region sr
 WHERE sd.region_code = sr.region_code;
 
 UPDATE _sub_distr sd
-SET master_region_id = rm.master_region_id
+SET master_id = rm.master_id
 FROM region_map rm
-WHERE rm.source_region_id = sd.source_region_id
+WHERE rm.source_id = sd.source_id
 
 */
 
@@ -195,8 +195,8 @@ CREATE TEMP TABLE _sett AS
  SELECT
 	x.*
 	,sdd.id as document_id
-	,CAST(NULL AS INT) as source_region_id
-	,CAST(NULL AS INT) as master_region_id
+	,CAST(NULL AS INT) as source_id
+	,CAST(NULL AS INT) as master_id
 FROM source_data_document sdd
 INNER JOIN (
 SELECT
@@ -595,7 +595,7 @@ WHERE NOT EXISTS (
 );
 
 UPDATE _sett s
-SET source_region_id = sr.id
+SET source_id = sr.id
 FROM source_region sr
 WHERE s.region_code = sr.region_code;
 
@@ -621,7 +621,7 @@ INNER JOIN region_type rt
 	ON LOWER(st.region_type) = LOWER(rt.name)
 INNER JOIN region rp
 	ON st.parent_code = rp.region_code
-WHERE st.source_region_id IS NOT NULL
+WHERE st.source_id IS NOT NULL
 AND NOT EXISTS (
 	SELECT 1 FROM region r
 	WHERE st.region_code = r.region_code
@@ -632,10 +632,10 @@ AND NOT EXISTS (
 );
 
 INSERT INTO region_map
-(source_region_id, master_region_id,mapped_by_id)
+(source_id, master_id,mapped_by_id)
 
 SELECT
-	s.source_region_id
+	s.source_id
 	,r.id
 	,1
 FROM _sett s
@@ -643,10 +643,10 @@ INNER JOIN region r
 ON s.region_code = r.region_code
 WHERE NOT EXISTS (
 	SELECT 1 FROM region_map rm
-	WHERE s.source_region_id = rm.source_region_id
+	WHERE s.source_id = rm.source_id
 );
 
 UPDATE _sett
-	SET master_region_id = rm.master_region_id
+	SET master_id = rm.master_id
 FROM region_map rm
-WHERE _sett.source_region_id = rm.source_region_id
+WHERE _sett.source_id = rm.source_id

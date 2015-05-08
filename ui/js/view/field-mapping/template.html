@@ -1,0 +1,58 @@
+<form class="inline field-mapping-container">
+	<h1>FIELD MAPPING</h1>
+	<template v-repeat="type:mappingData">
+	  <div class="row">
+	    <div class="small-6 columns">
+	      <h2> {{$key | capitalize}} </h2> 
+	    </div>
+	    <div class="small-6 columns">
+	     <h4 class="indicator-verification">{{remainingVerifications[$key]}}/{{mappingData[$key].length}} {{$key}} need verification </h4>
+	    </div>
+	  </div>  
+	  
+	  <div v-repeat="field:type" class="row" v-ref="$key">
+	    <div class="small-5 columns">
+	      <a role="button" class="button read-only">
+	        {{field.source_string}}
+	      </a>
+	    </div>
+	    <div class="small-1 columns arrow-container">
+	      <i class="fa fa-arrow-right fa-3x"></i>
+	    </div>
+	    <div class="small-5 columns">
+	     <div
+	      	id="{{$key + field.source_object_id + 'menu'}}"
+	      	data-change-event="field-selected"
+	      	data-searchable="true"
+	      	full-size-menu="true"
+	      	style="width: 100%;"
+	      	>
+		       <a role="button" class="button">
+		       <span v-text="field.master_object_id +'_'+ $key | buttonDisplay" v-if="dataLoaded"> </span>
+		       <i class="fa fa-fw fa-lg fa-spinner fa-spin" v-if="!dataLoaded"></i>
+	           </a>
+	       </div>
+	
+	    </div>
+	    <div class="small-1 columns check-column"  v-on="click: displayUnmap(this,e)">
+	      <i class="{{field.master_object_id | check}}"></i>
+	    </div>
+	  </div> 
+	</template>
+	<div class="row footer-row">
+	   <div class="small-6 columns">
+			<div class="warning-div" v-if="remainingVerifications.total != 0">
+			  <div><b>WARNING:</b></div>
+			  <div class="warning-sub">{{remainingVerifications.total}} fields still need mapping</div>
+			  Unmapped fields will not be save but you can return to map them later.
+			</div>
+			&nbsp;
+	    </div>
+	    <div class="small-3 columns">
+	         <a role="submit" href="/source_data/refresh_master_no_indicator/{{document_id}}" class="button">Submit Data</a>
+	    </div>
+	    <div class="small-3 columns cancel-column">
+	          or <a href="/source_data/document_index">Return to index</a>
+	    </div>
+	</div>
+</form>

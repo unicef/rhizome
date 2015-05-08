@@ -1,5 +1,11 @@
 <div v-class="status">
-	<h6>{{ title }}</h6>
+	<h6
+		v-el="title"
+		v-on="
+			mouseover : showHelp,
+			mouseout  : hideHelp">
+		{{ title }}
+	</h6>
 	<div class="chart">
 		<svg
 			class="bullet"
