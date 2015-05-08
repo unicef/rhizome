@@ -242,11 +242,11 @@ module.exports = {
 			label.text(String);
 		},
 
-		onRowHover : function (d, row) {
+		onRowHover : function (row) {
 			d3.select(this.$$.canvas).selectAll('.row')
 				.transition().duration(300)
-				.style('opacity', function (d, i) {
-					return i === row ? 1 : 0.4;
+				.style('opacity', function (d) {
+					return d.id === row.id ? 1 : 0.4;
 				});
 		},
 
