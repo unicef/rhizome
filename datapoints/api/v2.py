@@ -19,7 +19,7 @@ from datapoints.models import *
 
 class v2Request(object):
 
-    def __init__(self, requestpep8, content_type):
+    def __init__(self, request, content_type):
 
         self.request = request
         self.content_type = content_type
@@ -103,10 +103,22 @@ class v2PostRequest(v2Request):
 class v2MetaRequest(v2Request):
 
     def main(self):
+        '''
+        Use information about the django model in order to send meta data
+        about the resource to the API.  This is used by the front end to
+        dynamically generate table views and forms to interact with these
+        models.
+        '''
 
-        self.meta_data = {}
         self.all_field_meta = []
-        self.add_model_meta_data()
+        self.meta_data = {
+                'slug':self.content_type,
+                'name':self.content_type,
+                'primary_key':'id',
+                'search_field':'slug',
+                'defaultSortField':'id',
+                'defaultSortDirection':'asc',
+        }
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
@@ -168,16 +180,6 @@ class v2MetaRequest(v2Request):
 
 
         return field_constraints
-
-
-    def add_model_meta_data(self):
-
-        self.meta_data['slug'] = self.content_type
-        self.meta_data['name'] = self.content_type
-        self.meta_data['primary_key'] = 'id'
-        self.meta_data['search_field'] = 'slug'
-        self.meta_data['defaultSortField'] = 'id'
-        self.meta_data['defaultSortDirection'] = 'asc'
 
 
 class v2GetRequest(v2Request):
