@@ -5,8 +5,8 @@ var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
 
-var api             = require('data/api');
-var util            = require('util/data');
+var api  = require('data/api');
+var util = require('util/data');
 
 function _fill(d) {
 	// jshint validthis: true
@@ -56,6 +56,10 @@ function _openBounds(bound) {
 		mn_val : lower,
 		mx_val : upper
 	});
+}
+
+function _getBoundOrder(bound) {
+	return _.get(RANGE_ORDER, bound.bound_name, Infinity);
 }
 
 var RANGE_ORDER = {
@@ -123,17 +127,18 @@ module.exports = {
 				.then(function (data) {
 					var columns = data[0];
 
+					// Create a function for extracting and formatting target value ranges
+					// from the indicator definitions.
+					var getTargetRanges = _.flow(
+						_.property('indicator_bounds'), // Extract bounds definition
+						_.partial(_.reject, _, { bound_name: 'invalid' }), // Filter out the 'invalid' target ranges
+						_.partial(_.map, _, _openBounds), // Replace 'NULL' with +/- Infinity
+						_.partial(_.sortBy, _, _getBoundOrder) // Sort the bounds: bad, ok/okay, good
+					);
+
 					var bounds = _(columns)
 						.indexBy('id')
-						.transform(function (result, v, k) {
-							result[k] = _(v.indicator_bounds)
-								.reject({ bound_name: 'invalid' })
-								.map(_openBounds)
-								.sortBy(_.flow(
-									_.property('bound_name'),
-									_.propertyOf(RANGE_ORDER)))
-								.value();
-						})
+						.mapValues(getTargetRanges)
 						.omit(_.isEmpty)
 						.value();
 
