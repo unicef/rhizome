@@ -439,7 +439,7 @@ def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
         request_object = v2MetaRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
     elif request.POST:
         request_object = v2PostRequest(request, content_type)
@@ -447,6 +447,6 @@ def v2_api(request,content_type,is_meta=False):
 
     else:
         request_object = v2GetRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")

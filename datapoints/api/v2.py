@@ -45,6 +45,20 @@ class v2Request(object):
 
         self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
 
+        self.meta = None
+        self.err = None
+
+    def main(self):
+
+        response_data = {
+            'objects':self.data,
+            'meta':self.meta,
+            'error':self.err,
+        }
+
+        return response_data
+
+
     def clean_kwargs(self,query_dict):
         '''
         When passing filters make sure that what is in the URL string is
@@ -85,6 +99,46 @@ class v2Request(object):
         return cleaned_kwargs
 
 
+    def apply_region_permissions(self, list_of_object_ids):
+        '''
+        This returns a raw queryset, that is the query itself isn't actually
+        executed until the data is unpacked in the serialize method.
+
+        For more information on how region permissions work, take a look
+        at the definition of the stored proc called below.
+        '''
+
+        data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
+            list_of_object_ids])
+
+        return None, data
+
+    def apply_campaign_permissions(self, list_of_object_ids):
+        '''
+        As in above, this returns a raw queryset, and will be executed in the
+        serialize method.
+
+        The below query reads: "show me all campaigns that have data for
+        regions that I am permitted to see."
+
+        No need to do recursion here, because the data is already aggregated
+         regionally when ingested into the datapoint_abstracted table.
+        '''
+
+        data = Campaign.objects.raw("""
+            SELECT c.* FROM campaign c
+            INNER JOIN datapoint_abstracted da
+                ON c.id = da.campaign_id
+            INNER JOIN region_permission rm
+                ON da.region_id = rm.region_id
+                AND rm.user_id = %s
+            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+        """, [self.user_id, list_of_object_ids])
+
+        return None, data
+
+
 
 class v2PostRequest(v2Request):
 
@@ -96,9 +150,9 @@ class v2PostRequest(v2Request):
 
         new_obj = self.db_obj.objects.create(**self.kwargs)
 
-        data = {'new_id':new_obj.id }
+        self.data = {'new_id':new_obj.id }
 
-        return None, data
+        return super(v2PostRequest, self).main()
 
 
 class v2MetaRequest(v2Request):
@@ -110,6 +164,8 @@ class v2MetaRequest(v2Request):
         dynamically generate table views and forms to interact with these
         models.
         '''
+
+        self.data = {}
 
         self.all_field_meta = []
         self.meta_data = {
@@ -125,9 +181,9 @@ class v2MetaRequest(v2Request):
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
             self.build_field_meta_dict(field,ix)
 
-        self.meta_data['fields'] = self.all_field_meta
+        self.data['fields'] = self.all_field_meta
 
-        return None, self.meta_data
+        return super(v2MetaRequest, self).main()
 
     def build_field_meta_dict(self, field, ix):
 
@@ -140,7 +196,7 @@ class v2MetaRequest(v2Request):
         field_type_mapper = {'AutoField':'number','FloatField':'number',
             'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
-            'boolean','SlugField':'string'}
+            'boolean','SlugField':'string','TextField':'string'}
 
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
@@ -201,7 +257,11 @@ class v2GetRequest(v2Request):
         err, filtered_data = self.apply_permissions(qset)
         err, data = self.serialize(filtered_data)
 
-        return None, data
+        self.data = data
+        self.err = err
+        self.meta = None
+
+        return super(v2GetRequest, self).main()
 
     def apply_permissions(self, queryset):
         '''
@@ -258,43 +318,3 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = smart_str(v)
 
         return cleaned_row_data
-
-
-    def apply_region_permissions(self, list_of_object_ids):
-        '''
-        This returns a raw queryset, that is the query itself isn't actually
-        executed until the data is unpacked in the serialize method.
-
-        For more information on how region permissions work, take a look
-        at the definition of the stored proc called below.
-        '''
-
-        data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
-            list_of_object_ids])
-
-        return None, data
-
-    def apply_campaign_permissions(self, list_of_object_ids):
-        '''
-        As in above, this returns a raw queryset, and will be executed in the
-        serialize method.
-
-        The below query reads: "show me all campaigns that have data for
-        regions that I am permitted to see."
-
-        No need to do recursion here, because the data is already aggregated
-         regionally when ingested into the datapoint_abstracted table.
-        '''
-
-        data = Campaign.objects.raw("""
-            SELECT c.* FROM campaign c
-            INNER JOIN datapoint_abstracted da
-                ON c.id = da.campaign_id
-            INNER JOIN region_permission rm
-                ON da.region_id = rm.region_id
-                AND rm.user_id = %s
-            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-        """, [self.user_id, list_of_object_ids])
-
-        return None, data
