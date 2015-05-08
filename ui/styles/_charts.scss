@@ -320,7 +320,7 @@ svg {
 	border          : none;
 	border-collapse : separate;
 	cursor          : initial;
-	margin-top      : 16em;
+	overflow        : hidden;
 
 	&.sortable {
 		.y.axis {

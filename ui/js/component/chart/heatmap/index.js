@@ -79,6 +79,7 @@ module.exports = {
 			cellSize     : 14,
 			columnLabels : [],
 			fill         : _fill.bind(this),
+			marginTop    : 120,
 			scale        : d3.scale.quantile().domain([0, 1]).range(palette.YlOrRd[9]),
 			series       : [],
 			sortable     : true,
