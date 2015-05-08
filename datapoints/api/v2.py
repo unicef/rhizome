@@ -295,20 +295,3 @@ class v2GetRequest(v2Request):
         """, [self.user_id, list_of_object_ids])
 
         return None, data
-
-    def apply_indicator_permisions(self, list_of_object_ids):
-
-        i_raw = Indicator.objects.raw("""
-            SELECT
-                i.*
-                ,ia.bound_json
-            FROM indicator i
-            INNER JOIN indicator_abstracted ia
-            ON i.id = ia.indicator_id
-            WHERE i.id = ANY(%s)
-            ORDER BY i.id
-        """,[id__in])
-
-        objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
-                    'description':i.description,'slug':i.slug,\
-                    'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
