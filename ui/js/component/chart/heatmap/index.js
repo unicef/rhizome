@@ -98,10 +98,10 @@ module.exports = {
 
 			var svg = d3.select(this.$$.canvas);
 
-			var row = svg.select('.data').selectAll('.row').data(this.series, _id);
+			var row       = svg.select('.data').selectAll('.row').data(this.series, _id);
 			var transform = _translate.bind(this);
 
-			// Create rows
+
 			row.enter().append('g')
 				.attr({
 					'class'     : 'row',
@@ -113,11 +113,23 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
-			row.sort(comparator)
-				.on('mouseover', this.onRowHover);
+			// Create rows
+			row.on('mouseover', this.onRowHover)
+				.sort(comparator)
+				.transition().duration(750)
+				.attr('transform', transform);
 
 			// Add cells to each row
 			var cell = row.selectAll('.cell').data(this.values);
+
+			cell.transition()
+				.duration(500)
+				.attr({
+					'fill'   : this.fill,
+					'height' : this.cellSize,
+					'width'  : this.cellSize,
+					'x'      : this.x
+				});
 
 			cell.enter().append('rect')
 				.attr({
@@ -129,7 +141,9 @@ module.exports = {
 				.style({
 					'opacity' : 0,
 					'fill'    : this.fill
-				});
+				})
+				.transition().duration(500)
+				.style('opacity', 1);
 
 			cell.exit()
 				.transition().duration(300)
@@ -153,7 +167,10 @@ module.exports = {
 					'class'     : 'tick',
 					'transform' : transform,
 				})
-				.style('opacity', 0);
+				.style('opacity', 0)
+				.transition()
+				.duration(300)
+				.style('opacity', 1);
 
 			tick.exit()
 				.transition()
@@ -161,7 +178,10 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
-			tick.sort(comparator);
+			tick.sort(comparator)
+				.transition().duration(750)
+				.attr('transform', transform)
+				.style('opacity', 1);
 
 			// Y-axis labels
 			var label = tick.selectAll('text').data(function (d) { return [d.name]; });
@@ -182,26 +202,6 @@ module.exports = {
 				.pluck('width')
 				.max();
 
-			// Animate sorting of rows
-			var t = svg.transition().duration(500);
-
-			t.selectAll('.row')
-					.attr('transform', transform)
-				.selectAll('.cell')
-					.attr({
-						'x'      : this.x,
-						'width'  : this.cellSize,
-						'height' : this.cellSize
-					})
-					.style({
-						'opacity' : 1,
-						'fill'    : this.fill
-					});
-
-			t.select('.x.axis').selectAll('.tick')
-				.attr('transform', transform)
-				.style('opacity', 1);
-
 			// X-axis column ticks
 			tick = svg.select('.y.axis').selectAll('.tick').data(this.columnLabels, _.identity);
 
@@ -215,10 +215,13 @@ module.exports = {
 						return 'translate(' + x(d, i) + ',0)';
 					}
 				})
-				.style('opacity', 0);
+				.style('opacity', 0)
+				.transition()
+				.duration(300)
+				.style('opacity', 1);
 
 			tick
-				.on('click', this.sortable ? this.setSort : null)
+				.on('click', this.setSort)
 				.style('font-weight', function (d, i) {
 					return i === sortIdx ? 'bold' : 'normal';
 				});
@@ -236,9 +239,6 @@ module.exports = {
 				});
 
 			label.text(String);
-
-			t.select('.y.axis').selectAll('.tick')
-				.style('opacity', 1);
 		},
 
 		onRowHover : function (d, row) {
@@ -279,9 +279,10 @@ module.exports = {
 	},
 
 	watch : {
-		'sortCol' : 'draw',
-		'series'  : 'draw',
-		'width'   : 'draw',
-		'height'  : 'draw'
+		'sortCol'  : 'draw',
+		'series'   : 'draw',
+		'width'    : 'draw',
+		'height'   : 'draw',
+		'sortable' : 'draw'
 	}
 };
