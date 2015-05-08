@@ -142,30 +142,10 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_all_children(self):
-
-        r = []
-
-        for c in Region.objects.filter(parent_region=self):
-            # r.append(c.get_all_children())
-            r.append(c)
-
-        second_leaf = Region.objects.filter(parent_region__in=r)
-
-        r.extend(second_leaf)
-
-        return r
-
     class Meta:
 
         db_table = 'region'
         unique_together = ('name','region_type','office')
-        ordering = ('name',)
-
-        permissions = (
-            ('view_region', 'View region'),
-        )
-
 
 
 class RegionPolygon(models.Model):
@@ -209,12 +189,10 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
-
+        return unicode(self.slug)
 
     def get_full_name(self):
-        full_name = self.__unicode__()
-        return full_name
+        return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
         db_table = 'campaign'
@@ -226,7 +204,7 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.DecimalField(null=True, max_digits=15, decimal_places=5)
+    value = models.FloatField()
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -339,3 +317,41 @@ class BadData(models.Model):
 
     class Meta:
         db_table = 'bad_data'
+
+
+class RegionPermission(models.Model):
+    '''
+    Individual Users must be assigned regional permissions.  If i am assigned
+    a region, I will be able to view all of its children recursively.  The
+    default for a user
+
+    Regional permissions must also specify the read/write flag.  So for instance
+    as a Cluster Supervisor in Sokoto, I should be able to see all of Nigeria's
+    data, but i only should be able to insert / edit data for Sokoto. Thus i
+    would have two records, one that says "i can read all of NG", and one that
+    says, "i can write data in Sokoto."
+    '''
+
+    user = models.ForeignKey('auth.User')
+    region = models.ForeignKey(Region)
+    read_write = models.CharField(max_length=1)
+
+    class Meta:
+        db_table = 'region_permission'
+        unique_together = ('user','region','read_write')
+
+
+class IndicatorPermission(models.Model):
+    '''
+    All users can read all indicators, but permission to update/insert/delete
+    are assigned to a group.  For instance, the security_analyst role, will be
+    permitted to edit data on the security indicators, but not for instance
+    OPV supply indicators.
+    '''
+
+    group = models.ForeignKey('auth.Group')
+    indicator = models.ForeignKey(Indicator)
+
+    class Meta:
+        db_table = 'indicator_permission'
+        unique_together = ('group','indicator')

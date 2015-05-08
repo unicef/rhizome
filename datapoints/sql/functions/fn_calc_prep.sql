@@ -114,7 +114,6 @@ BEGIN
 				FROM agg_datapoint ad
 				INNER JOIN _indicators_needed_to_calc intc
 					ON ad.indicator_id = intc.indicator_id
-					AND ad.value != 'Nan'
 				INNER JOIN _region_campaign rc
 					ON ad.region_id = rc.region_id
 					AND ad.campaign_id = rc.campaign_id;

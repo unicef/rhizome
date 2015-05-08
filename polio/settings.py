@@ -26,8 +26,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-MEDIA_ROOT = '/Users/johndingee_seed/code/UF04/polio/media/'
-MEDIA_URL = '/Users/johndingee_seed/code/UF04/polio/media/'
+MEDIA_ROOT = '/media/'
+MEDIA_URL = '/media/'
 
 # Application definition
 

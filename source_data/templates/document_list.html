@@ -1,9 +1,11 @@
-{% extends "datapoints/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
     <br>
-    <br><br>
 
+     <div style="float: right;"> <a class="button" href="/upload/file_upload/">New CSV Upload</a></div>
+    <br><br>
+    
 
     {% if documents %}
 
@@ -23,15 +25,13 @@
 
         {% for document in documents %}
             <tr>
-                <th>{{ document.id }}</th>
-                <th>{{ document.docfile }}</th>
-                <th>{{ document.created_by }}</th>
-                <th>{{ document.doc_text }}</th>
-                <th> <a href="{% url 'source_data:document_review' document.id %}"<button type=\
-                  "submit" class="btn btn-primary btn-sm"> Review and Sync
-                <th> <a href="{% url 'source_data:mark_doc_as_processed' document.id %}"<button type=\
-                  "submit" class="btn btn-primary btn-sm"> Marks as Complete!
-                <th>{{ document.is_processed }}</th>
+                <td>{{ document.id }}</td>
+                <td>{{ document.docfile }}</td>
+                <td>{{ document.created_by }}</td>
+                <td>{{ document.doc_text }}</td>
+                <td> <a href="{% url 'source_data:field_mapping' document.id %}"> Review and Sync </a></td>
+                <td> <a href="{% url 'source_data:mark_doc_as_processed' document.id %}"> Marks as Complete!</a></td>
+                <td>{{ document.is_processed }}</td>
             </tr>
 
 

@@ -20,6 +20,7 @@ module.exports = {
 			campaign   : null,
 			dashboard  : null,
 
+			regionIdx  : {},
 			regions    : [],
 			campaigns  : [],
 			dashboards : [],
@@ -55,6 +56,7 @@ module.exports = {
 			var regions = _(data.objects);
 
 			self._regionIndex = _.indexBy(data.objects, 'name');
+			self.regionIdx    = _.indexBy(data.objects, 'id');
 
 			self.regions = regions
 				.map(function (region) {
@@ -193,13 +195,16 @@ module.exports = {
 	components: {
 		'management-dashboard'    : require('dashboard/management'),
 		'nga-campaign-monitoring' : require('dashboard/nco'),
+		'district'                : require('dashboard/district'),
 
 		'chart-bar'               : require('component/chart/bar'),
 		'chart-bullet'            : require('component/chart/bullet'),
 		'chart-choropleth'        : require('component/chart/choropleth'),
+		'chart-heatmap'           : require('component/chart/heatmap'),
 		'chart-line'              : require('component/chart/line'),
 		'chart-pie'               : require('component/chart/pie'),
 		'chart-scatter'           : require('component/chart/scatter'),
+		'chart-spaghetti'         : require('component/chart/spaghetti'),
 		'chart-stacked-area'      : require('component/chart/stacked-area'),
 		'chart-stacked-bar'       : require('component/chart/stacked-bar'),
 		'chart-stacked-column'    : require('component/chart/stacked-column'),

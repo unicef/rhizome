@@ -1,3 +1,4 @@
+/* jshint browser: true */
 /* global Promise */
 'use strict';
 
@@ -15,11 +16,29 @@ function urlencode(query) {
 	}).join('&');
 }
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];//jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function endPoint(path, mode) {
 	mode = (mode) ? mode.toUpperCase() : 'GET';
 
 	var defaults = {
 		offset     : 0,
+		username   : 'evan',
+		api_key    : '67bd6ab9a494e744a213de2641def88163652dad',
 		format     : 'json',
 		uri_display: 'id'
 	};
@@ -36,8 +55,11 @@ function endPoint(path, mode) {
 		}
 		// form POST request
 		else if (mode === 'POST') {
+		    var csrftoken = getCookie('csrftoken');
 			req.query(defaults)
-				.send(query);
+			    .set('X-CSRFToken',csrftoken)
+			    .set('Content-Type','application/x-www-form-urlencoded')
+			    .send(query);
 		}
 
 		return new Promise(function (fulfill, reject) {
@@ -110,5 +132,7 @@ module.exports = {
 	geo            : endPoint('/geo/'),
 	indicators     : endPoint('/indicator/'),
 	office         : endPoint('/office/'),
-	regions        : endPoint('/region/')
+	regions        : endPoint('/region/'),
+	document_review: endPoint('/source_data/document_review/'),
+	map_field      : endPoint('/api_map_meta/','post')
 };

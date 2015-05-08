@@ -1,5 +1,4 @@
 import hashlib
-from django.utils import simplejson
 from itertools import chain
 from pprint import pprint
 import json
@@ -21,7 +20,6 @@ from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-
 
 def mark_doc_as_processed(request,document_id):
 
@@ -140,6 +138,18 @@ def document_review(request,document_id):
         'document_id': document_id }
         ,RequestContext(request))
 
+def field_mapping(request,document_id):
+
+    meta_breakdown = populate_document_metadata(document_id)
+    mb_df = DataFrame(meta_breakdown)
+    no_ix_df = mb_df.reset_index(drop=True)
+
+    return render_to_response(
+        'upload/field_mapping.html',
+        {'document_id': document_id }
+        ,RequestContext(request))
+
+
 def populate_document_metadata(document_id):
 
     meta_breakdown = []
@@ -194,7 +204,7 @@ def pre_process_file(request,document_id):
 
     populate_document_metadata(document_id)
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
+    return HttpResponseRedirect(reverse('source_data:field_mapping'\
         , kwargs={'document_id': document_id}))
 
 
@@ -204,8 +214,7 @@ def refresh_master_no_indicator(request,document_id):
 
     mr.source_dps_to_dps()
 
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        , kwargs={'document_id': document_id}))
+    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 
 ######### DOCUMENT RELATED VIEWS ##########
@@ -359,12 +368,12 @@ def upsert_mapping(meta,map_object):
         db_obj, created = map_object.objects.get_or_create(
             source_object_id = request_source_id,
             defaults = {
-                'master_id':request_master_id,
+                'master_object_id':request_master_id,
                 'mapped_by_id':request_user_id
             })
 
         if not created:
-            db_obj.master_id = request_master_id
+            db_obj.master_object_id = request_master_id
             db_obj.mapped_by_id = request_user_id
             db_obj.save()
 
