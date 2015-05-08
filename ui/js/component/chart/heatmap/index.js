@@ -102,7 +102,6 @@ module.exports = {
 			var row       = svg.select('.data').selectAll('.row').data(this.series, _id);
 			var transform = _translate.bind(this);
 
-
 			row.enter().append('g')
 				.attr({
 					'class'     : 'row',
@@ -125,8 +124,8 @@ module.exports = {
 
 			cell.transition()
 				.duration(500)
+				.style('fill', this.fill)
 				.attr({
-					'fill'   : this.fill,
 					'height' : this.cellSize,
 					'width'  : this.cellSize,
 					'x'      : this.x
