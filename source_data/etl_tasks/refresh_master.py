@@ -30,39 +30,31 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
-        if self.indicator_id:
-            indicators = [self.indicator_id]
+        ## get source data for which all metadata is mapped
+        ## and the user is permitted to write ##
+        sdps_to_sync = SourceDataPoint.objects.raw('''
+            SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
+            ''', [self.user_id,self.document_id,self.indicator_id])
 
-        else:
-            indicators = Indicator.objects.all().values_list('id',flat=True)
+        for row in sdps_to_sync:
 
-        for ind_id in indicators:
+            dp,created = DataPoint.objects.get_or_create(
+                campaign_id = row.campaign_id,
+                indicator_id = row.indicator_id,
+                region_id = row.region_id,
+                defaults = {
+                    'value':row.cell_value,
+                    'source_datapoint_id': row.id,
+                    'changed_by_id': self.user_id
+                })
 
-            sdps_to_sync = SourceDataPoint.objects.raw('''
-                SELECT * FROM source_datapoint LIMIT 1
-                -- %s, %s
-                ''', [ind_id,self.document_id])
+            ## if this datapoint exists and was not added by a human ##
+            if created == False and dp.id > 0:
 
-
-            for row in sdps_to_sync:
-
-                dp,created = DataPoint.objects.get_or_create(
-                    campaign_id = row.campaign_id,
-                    indicator_id = row.indicator_id,
-                    region_id = row.region_id,
-                    defaults = {
-                        'value':row.cell_value,
-                        'source_datapoint_id': row.id,
-                        'changed_by_id': self.user_id
-                    })
-
-                ## if this datapoint exists and was not added by a human ##
-                if created == False and dp.id > 0:
-
-                    dp.source_datapoint_id = row.id
-                    dp.value = row.cell_value
-                    dp.changed_by_id = self.user_id
-                    dp.save()
+                dp.source_datapoint_id = row.id
+                dp.value = row.cell_value
+                dp.changed_by_id = self.user_id
+                dp.save()
 
 
     def delete_un_mapped(self):
