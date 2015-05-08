@@ -2,31 +2,68 @@
 'use strict';
 
 var _      = require('lodash');
+var d3     = require('d3');
 var moment = require('moment');
 
 var api             = require('data/api');
-var format          = require('util/format');
-var indexIndicators = require('data/transform/indexIndicators');
-var variables       = require('data/transform/variables');
 var util            = require('util/data');
 
-function normalize(d) {
-	var total = _(d.indicators).values().sum();
-
-	if (total === 0) {
-		return d;
-	}
-
-	_.each(d.indicators, function (v, k) {
-		d.indicators[k] /= total;
-	});
-
-	return d;
-}
-
 function _fill(d) {
-	return !_.isNull(d) && d.range ? this.scale(d.range) : 'transparent';
+	// jshint validthis: true
+	return (!_.isNull(d) && !!d.range) ? this.scale(d.range) : 'transparent';
 }
+
+/**
+ * @private
+ * Return true if indicator is an object with an array of indicator_bounds.
+ */
+function _hasBounds(indicator) {
+	return _.isObject(indicator) && !_.isEmpty(indicator.indicator_bounds);
+}
+
+/**
+ * @private
+ * Return an array of indicator objects sorted by order.
+ *
+ * @param {Object} indicators Response object from indicators API
+ * @param {Array} order An array of indicator IDs that defines the order of
+ *   the returned array
+ */
+function _heatmapColumns(indicators, order) {
+	return _(indicators.objects)
+		.filter(_hasBounds)
+		.sortBy(function (indicator) {
+			return order.indexOf(indicator.id);
+		})
+		.value();
+}
+
+/**
+ * @private
+ * Convert "NULL" strings on a bound definition to +/- Infinity
+ *
+ * Create a new object with non-number properties replaced by +/- Infinity.
+ * mn_val is replaced by -Infinity, and mx_val is replaced by Infinity, if
+ * either has a non-numeric property.
+ *
+ * @param {Object} bound A target range definition for an indicator
+ */
+function _openBounds(bound) {
+	var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+	var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+	return _.assign({}, bound, {
+		mn_val : lower,
+		mx_val : upper
+	});
+}
+
+var RANGE_ORDER = {
+	'bad'  : 0,
+	'ok'   : 1,
+	'okay' : 1,
+	'good' : 2
+};
 
 module.exports = {
 	template : require('./district.html'),
@@ -77,56 +114,30 @@ module.exports = {
 				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			});
 
+			var columns = api.indicators({ id__in : indicators })
+				.then(_.partialRight(_heatmapColumns, indicators));
+
 			var self = this;
 
-			Promise.all([api.indicators({ id__in : indicators }), datapoints])
+			Promise.all([columns, datapoints])
 				.then(function (data) {
-					var columns = _(data[0].objects)
-						.reject(function (indicator) {
-							return _.isEmpty(indicator.indicator_bounds);
-						})
-						.sortBy(function (indicator) {
-							return indicators.indexOf(indicator.id);
-						})
-						.value();
+					var columns = data[0];
 
-					var bounds = _(data[0].objects)
+					var bounds = _(columns)
 						.indexBy('id')
 						.transform(function (result, v, k) {
 							result[k] = _(v.indicator_bounds)
-								.map(function (bound) {
-									var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
-									var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
-
-									return _.assign({}, bound, {
-										mn_val : lower,
-										mx_val : upper
-									});
-								})
-								.reject(function (bound) {
-									return bound.bound_name === 'invalid';
-								})
-								.sortBy(function (bound) {
-									switch (bound.name) {
-										case 'bad':
-											return 1;
-										case 'ok':
-										case 'okay':
-											return 2;
-										case 'good':
-											return 3;
-										default:
-											return 4;
-									}
-								})
+								.reject({ bound_name: 'invalid' })
+								.map(_openBounds)
+								.sortBy(_.flow(
+									_.property('bound_name'),
+									_.propertyOf(RANGE_ORDER)))
 								.value();
 						})
-						.omit(function (bound, id) {
-							return _.isEmpty(bound);
-						})
+						.omit(_.isEmpty)
 						.value();
 
-					var data = _.map(data[1].objects, function (d) {
+					var series = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
 						var name    = d.region;
 
@@ -146,7 +157,7 @@ module.exports = {
 								var id = indicator.id;
 
 								if (dataIdx[id]) {
-									v.value = dataIdx[id].value
+									v.value = dataIdx[id].value;
 
 									if (util.defined(v.value)) {
 										_.each(bounds[id], function (bound) {
@@ -163,7 +174,7 @@ module.exports = {
 					});
 
 					self.columns = _.pluck(columns, 'short_name');
-					self.series  = data;
+					self.series  = series;
 				}, this.error);
 		}
 	},
