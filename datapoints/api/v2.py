@@ -233,7 +233,8 @@ class v2GetRequest(v2Request):
 
     def clean_row_result(self, row_data):
         '''
-        When Serializing, everything but Int is converted to string.
+        When Serializing, everything but Int and List are converted to string.
+        In this case the List (in the case of indicators), is a json array.
 
         If it is a raw queryset, first convert the row to a dict using the
         built in __dict__ method.
@@ -251,6 +252,8 @@ class v2GetRequest(v2Request):
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
+            if 'json' in k: # if k == 'bound_json':
+                cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
 
