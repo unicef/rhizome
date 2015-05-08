@@ -26,13 +26,16 @@ class v2Request(object):
         self.user_id = request.user.id
 
         self.orm_mapping = {
-            'indicator': {'orm_obj':Indicator, 'permission_function':None},
-            'campaign': {'orm_obj':Campaign , \
+            'campaign': {'orm_obj':Campaign,
                 'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region, \
+            'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
-            'group': {'orm_obj':Group, 'permission_function':None},
-            'user': {'orm_obj':User, 'permission_function':None},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
@@ -41,8 +44,6 @@ class v2Request(object):
             ['permission_function']
 
         self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
-
-
 
     def clean_kwargs(self,query_dict):
         '''
@@ -294,3 +295,20 @@ class v2GetRequest(v2Request):
         """, [self.user_id, list_of_object_ids])
 
         return None, data
+
+    def apply_indicator_permisions(self, list_of_object_ids):
+
+        i_raw = Indicator.objects.raw("""
+            SELECT
+                i.*
+                ,ia.bound_json
+            FROM indicator i
+            INNER JOIN indicator_abstracted ia
+            ON i.id = ia.indicator_id
+            WHERE i.id = ANY(%s)
+            ORDER BY i.id
+        """,[id__in])
+
+        objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
+                    'description':i.description,'slug':i.slug,\
+                    'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
