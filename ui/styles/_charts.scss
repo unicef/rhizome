@@ -319,34 +319,15 @@ svg {
 .heatmap {
 	border          : none;
 	border-collapse : separate;
-	margin-top      : 16em;
+	cursor          : initial;
+	overflow        : hidden;
 
-	thead {
-		th {
-			font-size        : rem-calc(10);
-			font-weight      : normal;
-			max-width        : 1rem;
-			transform-origin : left bottom;
-			transform        : translateX(1rem) rotate(-45deg);
-			white-space      : nowrap;
-		}
-	}
-
-	tr {
-		background-color: #fff !important;
-
-		td, th {
-			font-weight : normal;
-			height      : 1rem;
-			padding     : 0;
-			margin      : 0;
-			white-space : nowrap;
-
-			&.cell {
-				max-width : 1rem;
+	&.sortable {
+		.y.axis {
+			.tick {
+				cursor : pointer;
 			}
 		}
-
 	}
 }
 
