@@ -28,10 +28,24 @@ class v2Request(object):
         self.content_type = content_type
         self.user_id = request.user.id
 
-        self.db_obj = self.object_lookup(content_type)
+
+        self.orm_mapping = {
+            'indicator': {'orm_obj':Indicator, 'permission_function':None},
+            'campaign': {'orm_obj':Campaign , \
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region, \
+                'permission_function':self.apply_region_permissions},
+            'group': {'orm_obj':Group , 'permission_function':None},
+            'user': {'orm_obj':User, 'permission_function':None},
+        }
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
         self.db_columns = self.db_obj._meta.get_all_field_names()
+        self.permission_function = self.orm_mapping[content_type]\
+            ['permission_function']
 
         self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
+
 
 
     def clean_kwargs(self,query_dict):
@@ -73,23 +87,6 @@ class v2Request(object):
 
         return cleaned_kwargs
 
-
-    def object_lookup(self,content_type_string):
-
-        ## I CAN CHANGE THIS TO ADD THE FUNCTION IT NEEDS FOR ##
-        ## PERMISSIONS AS OPPOSED TO RUNNIGN IT VIA IF/ELIF/ELSE ##
-
-        orm_mapping = {
-            'indicator': {'orm_obj': Indicator},
-            'campaign': {'orm_obj': Campaign},
-            'region': {'orm_obj': Region},
-            'group': {'orm_obj': Group},
-            'user': {'orm_obj': User},
-        }
-
-        db_model = orm_mapping[content_type_string]['orm_obj']
-
-        return db_model
 
 
 class v2PostRequest(v2Request):
@@ -180,7 +177,6 @@ class v2MetaRequest(v2Request):
         return field_constraints
 
 
-
     def add_model_meta_data(self):
 
         self.meta_data['slug'] = self.content_type
@@ -206,8 +202,9 @@ class v2GetRequest(v2Request):
         else:
             qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
 
-        filtered_data = self.apply_permissions(qset)
-        data = self.serialize(filtered_data)
+        err, filtered_data = self.apply_permissions(qset)
+        # filtered_data = qset
+        err, data = self.serialize(filtered_data)
 
         return None, data
 
@@ -218,44 +215,28 @@ class v2GetRequest(v2Request):
         Returns a Raw Queryset
         '''
 
+        print 'I AM HERE'
+
+        if not self.permission_function:
+            return None, queryset
+
+        ## if filters then create that list of IDs, otherwise pass ##
+        ## None, and the permissions function wont filter on an ID list ##
         if not queryset:
             list_of_object_ids = None
         else:
             list_of_object_ids = [x['id'] for x in queryset]
 
-        if self.content_type == 'region':
+        err, data = self.permission_function(list_of_object_ids)
 
-            data = Region.objects.raw("SELECT * FROM\
-                fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
-                list_of_object_ids])
-
-            return data
-
-        elif self.content_type == 'campaign':
-
-            data = Campaign.objects.raw("""
-                SELECT c.* FROM campaign c
-                INNER JOIN datapoint_abstracted da
-                    ON c.id = da.campaign_id
-                INNER JOIN region_permission rm
-                    ON da.region_id = rm.region_id
-                    AND rm.user_id = %s
-                WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-            """,[self.user_id,list_of_object_ids])
-
-
-            return data
-
-        else:
-             return queryset
-
+        return err, data
 
 
     def serialize(self, data):
 
         serialized = [self.clean_row_result(row) for row in data]
 
-        return serialized
+        return None, serialized
 
     def clean_row_result(self, row_data):
         '''
@@ -280,3 +261,43 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = smart_str(v)
 
         return cleaned_row_data
+
+
+    def apply_region_permissions(self,list_of_object_ids):
+        '''
+        This returns a raw queryset, that is the query itself isn't actually
+        executed until the data is unpacked in the serialize method.
+
+        For more information on how region permissions work, take a look
+        at the definition of the stored proc called below.
+        '''
+
+        data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
+            list_of_object_ids])
+
+        return None, data
+
+    def apply_campaign_permissions(self,list_of_object_ids):
+        '''
+        As in above, this returns a raw queryset, and will be executed in the
+        serialize method.
+
+        The below query reads: "show me all campaigns that have data for
+        regions that I am permitted to see."
+
+        There is no need to do recursion here, because the data is already
+        aggregated regionally when ingested into the datapoint_abstracted table.
+        '''
+
+        data = Campaign.objects.raw("""
+            SELECT c.* FROM campaign c
+            INNER JOIN datapoint_abstracted da
+                ON c.id = da.campaign_id
+            INNER JOIN region_permission rm
+                ON da.region_id = rm.region_id
+                AND rm.user_id = %s
+            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+        """,[self.user_id,list_of_object_ids])
+
+        return None, data
