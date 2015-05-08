@@ -14,20 +14,16 @@ from django.utils.encoding import smart_str
 from django.contrib.auth.models import User, Group
 from django.core import serializers
 
-
-
 from datapoints.models import *
-
 
 
 class v2Request(object):
 
-    def __init__(self,request, content_type):
+    def __init__(self, requestpep8, content_type):
 
         self.request = request
         self.content_type = content_type
         self.user_id = request.user.id
-
 
         self.orm_mapping = {
             'indicator': {'orm_obj':Indicator, 'permission_function':None},
@@ -35,7 +31,7 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region, \
                 'permission_function':self.apply_region_permissions},
-            'group': {'orm_obj':Group , 'permission_function':None},
+            'group': {'orm_obj':Group, 'permission_function':None},
             'user': {'orm_obj':User, 'permission_function':None},
         }
 
@@ -124,7 +120,6 @@ class v2MetaRequest(v2Request):
 
         try:
             field_object = self.db_obj._meta.get_field(field)
-
         except FieldDoesNotExist:
             return None
 
@@ -133,7 +128,6 @@ class v2MetaRequest(v2Request):
             'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string'}
-
 
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
@@ -149,7 +143,6 @@ class v2MetaRequest(v2Request):
                     'weightForm':ix,
                 },
             'constraints': self.build_field_constraints(field_object)
-            # 'description': str(field_object.help_text),
             }
 
         self.all_field_meta.append(field_object_dict)
@@ -203,7 +196,6 @@ class v2GetRequest(v2Request):
             qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
 
         err, filtered_data = self.apply_permissions(qset)
-        # filtered_data = qset
         err, data = self.serialize(filtered_data)
 
         return None, data
@@ -214,8 +206,6 @@ class v2GetRequest(v2Request):
 
         Returns a Raw Queryset
         '''
-
-        print 'I AM HERE'
 
         if not self.permission_function:
             return None, queryset
@@ -251,7 +241,8 @@ class v2GetRequest(v2Request):
 
         cleaned_row_data = {}
 
-        if isinstance(row_data,Model): # if raw queryset, convert to dict
+        # if raw queryset, convert to dict
+        if isinstance(row_data,Model):
             row_data = dict(row_data.__dict__)
 
         for k,v in row_data.iteritems():
@@ -263,7 +254,7 @@ class v2GetRequest(v2Request):
         return cleaned_row_data
 
 
-    def apply_region_permissions(self,list_of_object_ids):
+    def apply_region_permissions(self, list_of_object_ids):
         '''
         This returns a raw queryset, that is the query itself isn't actually
         executed until the data is unpacked in the serialize method.
@@ -273,12 +264,12 @@ class v2GetRequest(v2Request):
         '''
 
         data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
+            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
             list_of_object_ids])
 
         return None, data
 
-    def apply_campaign_permissions(self,list_of_object_ids):
+    def apply_campaign_permissions(self, list_of_object_ids):
         '''
         As in above, this returns a raw queryset, and will be executed in the
         serialize method.
@@ -286,8 +277,8 @@ class v2GetRequest(v2Request):
         The below query reads: "show me all campaigns that have data for
         regions that I am permitted to see."
 
-        There is no need to do recursion here, because the data is already
-        aggregated regionally when ingested into the datapoint_abstracted table.
+        No need to do recursion here, because the data is already aggregated
+         regionally when ingested into the datapoint_abstracted table.
         '''
 
         data = Campaign.objects.raw("""
@@ -298,6 +289,6 @@ class v2GetRequest(v2Request):
                 ON da.region_id = rm.region_id
                 AND rm.user_id = %s
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-        """,[self.user_id,list_of_object_ids])
+        """, [self.user_id, list_of_object_ids])
 
         return None, data
