@@ -10,13 +10,6 @@
 	</div>
 
 	<div class="row">
-		<div class="small-12 columns">
-			<div v-component="chart-heatmap"
-				v-with="
-					columnLabels : headers,
-					fill         : fill,
-					series       : rows,
-					scale        : scale"></div>
-		</div>
+		<div v-el="heatmap" class="small-12 columns"></div>
 	</div>
 </div>

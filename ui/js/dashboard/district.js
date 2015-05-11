@@ -4,9 +4,12 @@
 var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
+var React  = require('react');
 
 var api  = require('data/api');
 var util = require('util/data');
+
+var HeatMap = require('component/chart/heatmap.jsx');
 
 var RANGE_ORDER = {
 	'bad'  : 0,
@@ -14,11 +17,6 @@ var RANGE_ORDER = {
 	'okay' : 1,
 	'good' : 2
 };
-
-function _fill(d) {
-	// jshint validthis: true
-	return (!_.isNull(d) && !!d.range) ? this.scale(d.range) : 'transparent';
-}
 
 /**
  * @private
@@ -77,66 +75,18 @@ module.exports = {
 		return {
 			campaign : null,
 			columns  : [],
-			fill     : _fill.bind(this),
 			region   : null,
 			regions  : {},
 			series   : [],
 			showEmpty: false,
-			scale    : d3.scale.ordinal()
-				.domain(['bad', 'okay', 'ok', 'good'])
-				.range(['#AF373E', '#959595', '#959595','#2B8CBE'])
 		};
 	},
 
 	computed : {
-		/**
-		 * Return an object for looking up visibility by indicator ID
-		 *
-		 * If this.visibleIndicators[123] is true, indicator 123 should be shown,
-		 * otherwise it should be hidden.
-		 */
-		visibleIndicators : function () {
-			var valueDefined = _.partial(util.defined, _, function (d) { return d.value; });
-			var notEmpty     = _.partial(_.some, _, valueDefined);
-
-			var visible = _(this.series)
-				.pluck('values')
-				.flatten()
-				.groupBy('indicator')
-				.mapValues(this.showEmpty ? _.constant(true) : notEmpty)
-				.value();
-
-			return visible;
-		},
-
-		headers : function () {
-			var cols = this.visibleIndicators;
-
-			console.log('visibile indicators:', cols);
-			console.log('columns:', this.columns);
-
-			var headers = _(this.columns)
-				.filter(_.flow(_.property('id'), _.propertyOf(cols)))
-				.pluck('short_name')
-				.value();
-
-			console.log('headers:', headers);
-
-			return headers;
-		},
-
 		rows : function () {
 			var cols = this.visibleIndicators;
 
-			// Returns new series objects where the values property contains only
-			// objects for indicators that are visible
-			var filterInvisibleIndicators = function (s) {
-				return _.assign({}, s, {
-					values : _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(cols)))
-				});
-			};
 
-			return _.map(this.series, filterInvisibleIndicators);
 		}
 	},
 
@@ -240,6 +190,42 @@ module.exports = {
 					self.columns = columns;
 					self.series  = series;
 				}, this.error);
+		},
+
+		render : function () {
+			var valueDefined = _.partial(util.defined, _, function (d) { return d.value; });
+			var notEmpty     = _.partial(_.some, _, valueDefined);
+
+			var visible = _(this.series)
+				.pluck('values')
+				.flatten()
+				.groupBy('indicator')
+				.mapValues(this.showEmpty ? _.constant(true) : notEmpty)
+				.value();
+
+			var props = {};
+
+			props.headers = _(this.columns)
+				.filter(_.flow(_.property('id'), _.propertyOf(visible)))
+				.pluck('short_name')
+				.value();
+
+			// Returns new series objects where the values property contains only
+			// objects for indicators that are visible
+			var filterInvisibleIndicators = function (s) {
+				return _.assign({}, s, {
+					values : _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(visible)))
+				});
+			};
+
+			props.series = _.map(this.series, filterInvisibleIndicators);
+
+			props.scale = d3.scale.ordinal()
+					.domain(['bad', 'okay', 'ok', 'good'])
+					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
+
+			var heatmap = React.createElement(HeatMap, props, null);
+			React.render(heatmap, this.$$.heatmap, null);
 		}
 	},
 
@@ -261,7 +247,10 @@ module.exports = {
 	},
 
 	watch : {
-		campaign : 'load',
-		region   : 'load'
+		'campaign'  : 'load',
+		'columns'   : 'render',
+		'region'    : 'load',
+		'series'    : 'render',
+		'showEmpty' : 'render'
 	}
 };
