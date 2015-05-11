@@ -18,8 +18,7 @@ psql polio -f $SQL_DIR'functions/fn_calc_upsert_computed.sql'
 psql polio -f $SQL_DIR'functions/fn_calc_datapoint.sql'
 psql polio -f $SQL_DIR'functions/fn_get_authorized_regions_by_user.sql'
 
-
-
 SRC_SQL_DIR=$(pwd)'/source_data/sql/'
 
 psql polio -f $SRC_SQL_DIR'functions/fn_populate_doc_meta.sql'
+psql polio -f $SRC_SQL_DIR'functions/fn_get_source_dbs_to_sync.sql'

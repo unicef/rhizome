@@ -394,6 +394,9 @@ def transform_indicators(request):
     return HttpResponseRedirect('/datapoints/cache_control/')
 
 def api_indicator(request):
+    '''
+    TO BE REMOVED - Once transfer from v1/api to v2/api
+    '''
 
     meta_keys = ['limit','offset']
     request_meta = parse_url_args(request,meta_keys)
@@ -410,7 +413,7 @@ def api_indicator(request):
             ,ia.bound_json
         FROM indicator i
         INNER JOIN indicator_abstracted ia
-        ON i.id = ia.indicator_id
+        ON i.id = ia.id
         WHERE i.id = ANY(%s)
         ORDER BY i.id
     """,[id__in])
@@ -436,7 +439,7 @@ def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
         request_object = v2MetaRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
     elif request.POST:
         request_object = v2PostRequest(request, content_type)
@@ -444,6 +447,6 @@ def v2_api(request,content_type,is_meta=False):
 
     else:
         request_object = v2GetRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")

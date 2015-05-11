@@ -14,24 +14,49 @@ from django.utils.encoding import smart_str
 from django.contrib.auth.models import User, Group
 from django.core import serializers
 
-
-
 from datapoints.models import *
-
 
 
 class v2Request(object):
 
-    def __init__(self,request, content_type):
+    def __init__(self, request, content_type):
 
         self.request = request
         self.content_type = content_type
         self.user_id = request.user.id
 
-        self.db_obj = self.object_lookup(content_type)
-        self.db_columns = self.db_obj._meta.get_all_field_names()
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+        }
 
-        self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+        self.db_columns = self.db_obj._meta.get_all_field_names()
+        self.permission_function = self.orm_mapping[content_type]\
+            ['permission_function']
+
+        self.kwargs = self.clean_kwargs(request.GET)
+
+        self.meta = None
+        self.err = None
+
+    def main(self):
+
+        response_data = {
+            'objects':self.data,
+            'meta':self.meta,
+            'error':self.err,
+        }
+
+        return response_data
 
 
     def clean_kwargs(self,query_dict):
@@ -71,25 +96,59 @@ class v2Request(object):
             else:
                 cleaned_kwargs[query_key] = query_value
 
+        ## FIND THE LIMIT AND OFFSET AND STORE AS CLASS ATTRIBUETS ##
+        try:
+            self.limit = int(query_dict['limit'])
+        except KeyError:
+            self.limit = 1000000000
+
+        try:
+            self.offset = int(query_dict['offset'])
+        except KeyError:
+            self.offset = 0
+
         return cleaned_kwargs
 
 
-    def object_lookup(self,content_type_string):
+    def apply_region_permissions(self, list_of_object_ids):
+        '''
+        This returns a raw queryset, that is the query itself isn't actually
+        executed until the data is unpacked in the serialize method.
 
-        ## I CAN CHANGE THIS TO ADD THE FUNCTION IT NEEDS FOR ##
-        ## PERMISSIONS AS OPPOSED TO RUNNIGN IT VIA IF/ELIF/ELSE ##
+        For more information on how region permissions work, take a look
+        at the definition of the stored proc called below.
+        '''
 
-        orm_mapping = {
-            'indicator': {'orm_obj': Indicator},
-            'campaign': {'orm_obj': Campaign},
-            'region': {'orm_obj': Region},
-            'group': {'orm_obj': Group},
-            'user': {'orm_obj': User},
-        }
+        data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
+            list_of_object_ids])
 
-        db_model = orm_mapping[content_type_string]['orm_obj']
+        return None, data
 
-        return db_model
+    def apply_campaign_permissions(self, list_of_object_ids):
+        '''
+        As in above, this returns a raw queryset, and will be executed in the
+        serialize method.
+
+        The below query reads: "show me all campaigns that have data for
+        regions that I am permitted to see."
+
+        No need to do recursion here, because the data is already aggregated
+         regionally when ingested into the datapoint_abstracted table.
+        '''
+
+        data = Campaign.objects.raw("""
+            SELECT c.* FROM campaign c
+            INNER JOIN datapoint_abstracted da
+                ON c.id = da.campaign_id
+            INNER JOIN region_permission rm
+                ON da.region_id = rm.region_id
+                AND rm.user_id = %s
+            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+        """, [self.user_id, list_of_object_ids])
+
+        return None, data
+
 
 
 class v2PostRequest(v2Request):
@@ -102,32 +161,45 @@ class v2PostRequest(v2Request):
 
         new_obj = self.db_obj.objects.create(**self.kwargs)
 
-        data = {'new_id':new_obj.id }
+        self.data = {'new_id':new_obj.id }
 
-        return None, data
+        return super(v2PostRequest, self).main()
 
 
 class v2MetaRequest(v2Request):
 
     def main(self):
+        '''
+        Use information about the django model in order to send meta data
+        about the resource to the API.  This is used by the front end to
+        dynamically generate table views and forms to interact with these
+        models.
+        '''
 
-        self.meta_data = {}
+        self.data = {}
+
         self.all_field_meta = []
-        self.add_model_meta_data()
+        self.meta_data = {
+                'slug':self.content_type,
+                'name':self.content_type,
+                'primary_key':'id',
+                'search_field':'slug',
+                'defaultSortField':'id',
+                'defaultSortDirection':'asc',
+        }
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
             self.build_field_meta_dict(field,ix)
 
-        self.meta_data['fields'] = self.all_field_meta
+        self.data['fields'] = self.all_field_meta
 
-        return None, self.meta_data
+        return super(v2MetaRequest, self).main()
 
     def build_field_meta_dict(self, field, ix):
 
         try:
             field_object = self.db_obj._meta.get_field(field)
-
         except FieldDoesNotExist:
             return None
 
@@ -135,8 +207,7 @@ class v2MetaRequest(v2Request):
         field_type_mapper = {'AutoField':'number','FloatField':'number',
             'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
-            'boolean','SlugField':'string'}
-
+            'boolean','SlugField':'string','TextField':'string'}
 
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
@@ -152,7 +223,6 @@ class v2MetaRequest(v2Request):
                     'weightForm':ix,
                 },
             'constraints': self.build_field_constraints(field_object)
-            # 'description': str(field_object.help_text),
             }
 
         self.all_field_meta.append(field_object_dict)
@@ -180,17 +250,6 @@ class v2MetaRequest(v2Request):
         return field_constraints
 
 
-
-    def add_model_meta_data(self):
-
-        self.meta_data['slug'] = self.content_type
-        self.meta_data['name'] = self.content_type
-        self.meta_data['primary_key'] = 'id'
-        self.meta_data['search_field'] = 'slug'
-        self.meta_data['defaultSortField'] = 'id'
-        self.meta_data['defaultSortDirection'] = 'asc'
-
-
 class v2GetRequest(v2Request):
 
 
@@ -204,12 +263,32 @@ class v2GetRequest(v2Request):
         if not self.kwargs and self.content_type in ['campaign','region']:
             qset = None
         else:
-            qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+            qset = list(self.db_obj.objects.filter(**self.kwargs).values())
 
-        filtered_data = self.apply_permissions(qset)
-        data = self.serialize(filtered_data)
+        err, filtered_data = self.apply_permissions(qset)
+        err, data = self.serialize(filtered_data)
 
-        return None, data
+        ## apply limit and offset.  Not ideal that this does happen at the
+        ## data base level, but applying limit/offset at here and querying for
+        ## all the data is fine for now as these endpoints are fast.
+        self.data = data[self.offset:self.limit + self.offset]
+        self.err = err
+        self.meta = self.build_meta()
+
+        return super(v2GetRequest, self).main()
+
+    def build_meta(self):
+        '''
+        '''
+
+        meta_dict = {
+            'limit': self.limit,
+            'offset': self.offset,
+            'total_count': len(self.data),
+        }
+
+        return meta_dict
+
 
     def apply_permissions(self, queryset):
         '''
@@ -218,48 +297,31 @@ class v2GetRequest(v2Request):
         Returns a Raw Queryset
         '''
 
+        if not self.permission_function:
+            return None, queryset
+
+        ## if filters then create that list of IDs, otherwise pass ##
+        ## None, and the permissions function wont filter on an ID list ##
         if not queryset:
             list_of_object_ids = None
         else:
             list_of_object_ids = [x['id'] for x in queryset]
 
-        if self.content_type == 'region':
+        err, data = self.permission_function(list_of_object_ids)
 
-            data = Region.objects.raw("SELECT * FROM\
-                fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,\
-                list_of_object_ids])
-
-            return data
-
-        elif self.content_type == 'campaign':
-
-            data = Campaign.objects.raw("""
-                SELECT c.* FROM campaign c
-                INNER JOIN datapoint_abstracted da
-                    ON c.id = da.campaign_id
-                INNER JOIN region_permission rm
-                    ON da.region_id = rm.region_id
-                    AND rm.user_id = %s
-                WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-            """,[self.user_id,list_of_object_ids])
-
-
-            return data
-
-        else:
-             return queryset
-
+        return err, data
 
 
     def serialize(self, data):
 
         serialized = [self.clean_row_result(row) for row in data]
 
-        return serialized
+        return None, serialized
 
     def clean_row_result(self, row_data):
         '''
-        When Serializing, everything but Int is converted to string.
+        When Serializing, everything but Int and List are converted to string.
+        In this case the List (in the case of indicators), is a json array.
 
         If it is a raw queryset, first convert the row to a dict using the
         built in __dict__ method.
@@ -270,12 +332,15 @@ class v2GetRequest(v2Request):
 
         cleaned_row_data = {}
 
-        if isinstance(row_data,Model): # if raw queryset, convert to dict
+        # if raw queryset, convert to dict
+        if isinstance(row_data,Model):
             row_data = dict(row_data.__dict__)
 
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
+            if 'json' in k: # if k == 'bound_json':
+                cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
 

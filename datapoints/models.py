@@ -47,11 +47,14 @@ class Indicator(models.Model):
 
 class IndicatorAbstracted(models.Model):
 
-    indicator = models.ForeignKey(Indicator)
+    description = models.CharField(max_length=255)
+    short_name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     bound_json = JSONField()
 
     def __unicode__(self):
-        return unicode(self.indicator.name)
+        return unicode(self.slug)
 
     class Meta:
         db_table = 'indicator_abstracted'
