@@ -43,7 +43,7 @@ class v2Request(object):
         self.permission_function = self.orm_mapping[content_type]\
             ['permission_function']
 
-        self.kwargs = self.clean_kwargs(request.GET)  ## What about POST? ##
+        self.kwargs = self.clean_kwargs(request.GET)
 
         self.meta = None
         self.err = None
@@ -95,6 +95,17 @@ class v2Request(object):
                 cleaned_kwargs[query_key] = query_value.split(',')
             else:
                 cleaned_kwargs[query_key] = query_value
+
+        ## FIND THE LIMIT AND OFFSET AND STORE AS CLASS ATTRIBUETS ##
+        try:
+            self.limit = int(query_dict['limit'])
+        except KeyError:
+            self.limit = 1000000000
+
+        try:
+            self.offset = int(query_dict['offset'])
+        except KeyError:
+            self.offset = 0
 
         return cleaned_kwargs
 
@@ -252,16 +263,32 @@ class v2GetRequest(v2Request):
         if not self.kwargs and self.content_type in ['campaign','region']:
             qset = None
         else:
-            qset = list(self.db_obj.objects.all().filter(**self.kwargs).values())
+            qset = list(self.db_obj.objects.filter(**self.kwargs).values())
 
         err, filtered_data = self.apply_permissions(qset)
         err, data = self.serialize(filtered_data)
 
-        self.data = data
+        ## apply limit and offset.  Not ideal that this does happen at the
+        ## data base level, but applying limit/offset at here and querying for
+        ## all the data is fine for now as these endpoints are fast.
+        self.data = data[self.offset:self.limit + self.offset]
         self.err = err
-        self.meta = None
+        self.meta = self.build_meta()
 
         return super(v2GetRequest, self).main()
+
+    def build_meta(self):
+        '''
+        '''
+
+        meta_dict = {
+            'limit': self.limit,
+            'offset': self.offset,
+            'total_count': len(self.data),
+        }
+
+        return meta_dict
+
 
     def apply_permissions(self, queryset):
         '''
