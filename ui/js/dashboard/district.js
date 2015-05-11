@@ -8,6 +8,13 @@ var moment = require('moment');
 var api  = require('data/api');
 var util = require('util/data');
 
+var RANGE_ORDER = {
+	'bad'  : 0,
+	'ok'   : 1,
+	'okay' : 1,
+	'good' : 2
+};
+
 function _fill(d) {
 	// jshint validthis: true
 	return (!_.isNull(d) && !!d.range) ? this.scale(d.range) : 'transparent';
@@ -62,12 +69,6 @@ function _getBoundOrder(bound) {
 	return _.get(RANGE_ORDER, bound.bound_name, Infinity);
 }
 
-var RANGE_ORDER = {
-	'bad'  : 0,
-	'ok'   : 1,
-	'okay' : 1,
-	'good' : 2
-};
 
 module.exports = {
 	template : require('./district.html'),
@@ -80,14 +81,68 @@ module.exports = {
 			region   : null,
 			regions  : {},
 			series   : [],
+			showEmpty: false,
 			scale    : d3.scale.ordinal()
 				.domain(['bad', 'okay', 'ok', 'good'])
 				.range(['#AF373E', '#959595', '#959595','#2B8CBE'])
 		};
 	},
 
+	computed : {
+		/**
+		 * Return an object for looking up visibility by indicator ID
+		 *
+		 * If this.visibleIndicators[123] is true, indicator 123 should be shown,
+		 * otherwise it should be hidden.
+		 */
+		visibleIndicators : function () {
+			var valueDefined = _.partial(util.defined, _, function (d) { return d.value; });
+			var notEmpty     = _.partial(_.some, _, valueDefined);
+
+			var visible = _(this.series)
+				.pluck('values')
+				.flatten()
+				.groupBy('indicator')
+				.mapValues(this.showEmpty ? _.constant(true) : notEmpty)
+				.value();
+
+			return visible;
+		},
+
+		headers : function () {
+			var cols = this.visibleIndicators;
+
+			console.log('visibile indicators:', cols);
+			console.log('columns:', this.columns);
+
+			var headers = _(this.columns)
+				.filter(_.flow(_.property('id'), _.propertyOf(cols)))
+				.pluck('short_name')
+				.value();
+
+			console.log('headers:', headers);
+
+			return headers;
+		},
+
+		rows : function () {
+			var cols = this.visibleIndicators;
+
+			// Returns new series objects where the values property contains only
+			// objects for indicators that are visible
+			var filterInvisibleIndicators = function (s) {
+				return _.assign({}, s, {
+					values : _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(cols)))
+				});
+			};
+
+			return _.map(this.series, filterInvisibleIndicators);
+		}
+	},
+
 	methods : {
 		error : function () {
+			// FIXME
 			window.alert('Dammit!');
 		},
 
@@ -158,7 +213,11 @@ module.exports = {
 							id     : name,
 							name   : name,
 							values : _.map(columns, function (indicator) {
-								var v = { id : name + '-' + indicator.id };
+								var v = {
+									id        : name + '-' + indicator.id,
+									indicator : indicator.id
+								};
+
 								var id = indicator.id;
 
 								if (dataIdx[id]) {
@@ -178,7 +237,7 @@ module.exports = {
 						};
 					});
 
-					self.columns = _.pluck(columns, 'short_name');
+					self.columns = columns;
 					self.series  = series;
 				}, this.error);
 		}

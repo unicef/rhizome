@@ -203,7 +203,8 @@ module.exports = {
 				.max();
 
 			// X-axis column ticks
-			tick = svg.select('.y.axis').selectAll('.tick').data(this.columnLabels, _.identity);
+			console.log('heatmap cols:', this.columnLabels);
+			tick = svg.select('.y.axis').selectAll('.tick').data(this.columnLabels);
 
 			var x = this.x;
 
@@ -231,7 +232,7 @@ module.exports = {
 				.style('opacity', 0)
 				.remove();
 
-			label = tick.selectAll('text').data(function (d) { return [d]; }, _id);
+			label = tick.selectAll('text').data(function (d) { return [d]; });
 
 			label.enter().append('text')
 				.attr({
@@ -279,10 +280,14 @@ module.exports = {
 	},
 
 	watch : {
-		'sortCol'  : 'draw',
-		'series'   : 'draw',
-		'width'    : 'draw',
-		'height'   : 'draw',
-		'sortable' : 'draw'
+		'columnLabels' : function () {
+			console.log('column labels changed');
+			this.draw();
+		},
+		'sortCol'      : 'draw',
+		'series'       : 'draw',
+		'width'        : 'draw',
+		'height'       : 'draw',
+		'sortable'     : 'draw'
 	}
 };
