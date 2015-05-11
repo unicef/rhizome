@@ -39,7 +39,7 @@ function filterMissing(data) {
 	return _(data)
 		.groupBy('y')
 		.filter(function (v) {
-			return _(v).pluck('x').some(util.defined);
+			return _(v).pluck('x').some(_.partial(util.defined, _, _.identity));
 		})
 		.values()
 		.flatten()
