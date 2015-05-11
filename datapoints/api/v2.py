@@ -272,6 +272,7 @@ class v2GetRequest(v2Request):
         ## data base level, but applying limit/offset at here and querying for
         ## all the data is fine for now as these endpoints are fast.
         self.data = data[self.offset:self.limit + self.offset]
+        self.full_data_length = len(data)
         self.err = err
         self.meta = self.build_meta()
 
@@ -284,7 +285,7 @@ class v2GetRequest(v2Request):
         meta_dict = {
             'limit': self.limit,
             'offset': self.offset,
-            'total_count': len(self.data),
+            'total_count': self.full_data_length,
         }
 
         return meta_dict
