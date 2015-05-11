@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 import StringIO
+import urlparse
 
 from django.core.serializers import json as djangojson
 from pandas import DataFrame
@@ -9,24 +10,39 @@ from tastypie.serializers import Serializer
 from datapoints.models import Campaign, Indicator, Region
 
 class CustomJSONSerializer(Serializer):
-    """Does not allow out of range float values 
+    """Does not allow out of range float values
     (in strict compliance with the JSON specification).
     Instead replaces these values with NULL."""
-    
+
+    formats = ['json', 'urlencode']
+    content_types = {
+        'json': 'application/json',
+        'urlencode': 'application/x-www-form-urlencoded',
+        }
+
+    def from_urlencode(self, data,options=None):
+        """ handles basic formencoded url posts """
+        qs = dict((k, v if len(v)>1 else v[0] )
+            for k, v in urlparse.parse_qs(data).iteritems())
+        return qs
+
+    def to_urlencode(self,content):
+        pass
+
     def to_json(self, data, options=None):
         options = options or {}
         data = self.to_simple(data, options)
 
         return djangojson.json.dumps(
-            data, 
+            data,
             allow_nan=True,
             cls=NanEncoder,
-            sort_keys=True, 
+            sort_keys=True,
             ensure_ascii=False)
 
 class NanEncoder(djangojson.DjangoJSONEncoder):
 
-    nan_str = 'null'        
+    nan_str = 'null'
 
     def iterencode(self, o, _one_shot=False):
         """Encode the given object and yield each string
@@ -53,7 +69,7 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
                 return _orig_encoder(o)
 
         def floatstr(o, allow_nan=self.allow_nan,
-                _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY, 
+                _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY,
                 _neginf=-json.encoder.INFINITY):
             # Check for specials.  Note that this type of test is processor
             # and/or platform-specific, so do tests which don't depend on the
