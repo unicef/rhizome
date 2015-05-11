@@ -205,7 +205,7 @@ class v2MetaRequest(v2Request):
 
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
-            'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
+            'ForeignKey':'array','CharField':'string','ManyToManyField':'array',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string','TextField':'string'}
 
