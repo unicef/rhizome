@@ -405,7 +405,6 @@ class DataPointEntryResource(BaseModelResource):
         '''
 
         indicator_id = bundle_data['indicator_id']
-        # indicator_id = 23
 
         user_qs = User.objects.raw('''
             SELECT u.id
@@ -421,9 +420,7 @@ class DataPointEntryResource(BaseModelResource):
         user_id_list = [u.id for u in user_qs]
 
         if len(user_id_list) == 0:
-            raise InputError(4, 'User does not have permissinons for indicator_id: {0}'.format(20))
-
-
+            raise InputError(4, 'User does not have permissinons for indicator_id: {0}'.format(indicator_id))
 
 
     def validate_object(self, obj):
