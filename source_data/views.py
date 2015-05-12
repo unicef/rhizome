@@ -1,5 +1,4 @@
 import hashlib
-from django.utils import simplejson
 from itertools import chain
 from pprint import pprint
 import json
@@ -21,7 +20,6 @@ from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-
 
 def mark_doc_as_processed(request,document_id):
 
@@ -139,7 +137,7 @@ def document_review(request,document_id):
         'source_campaign_breakdown': camp_breakdown,
         'document_id': document_id }
         ,RequestContext(request))
-        
+
 def field_mapping(request,document_id):
 
     meta_breakdown = populate_document_metadata(document_id)
@@ -149,7 +147,7 @@ def field_mapping(request,document_id):
     return render_to_response(
         'upload/field_mapping.html',
         {'document_id': document_id }
-        ,RequestContext(request))        
+        ,RequestContext(request))
 
 
 def populate_document_metadata(document_id):

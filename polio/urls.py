@@ -40,8 +40,12 @@ urlpatterns = patterns('',
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
     ## V2 API
-    url(r'^api/v2/get/(?P<content_type>\w+)/$', views.meta_api_GET, name='meta_api_GET'),
-    url(r'^api/v2/post/(?P<content_type>\w+)/$', views.meta_api_POST, name='meta_api_POST'),
+
+    ### CHANGE THIS TO ONE METHOD THAT ROUTES TO GET OR POST ##
+
+    url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),
+    url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
+        name='v2_meta_api'),
 
     ## Entity Api ##
     url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),

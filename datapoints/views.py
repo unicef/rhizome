@@ -7,7 +7,7 @@ import itertools
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
@@ -22,7 +22,7 @@ from datapoints.models import *
 from datapoints.forms import *
 from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
 from datapoints.mixins import PermissionRequiredMixin
-from datapoints.api.v2 import v2PostRequest, v2GetRequest
+from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
 
 
 class IndexView(generic.ListView):
@@ -394,6 +394,9 @@ def transform_indicators(request):
     return HttpResponseRedirect('/datapoints/cache_control/')
 
 def api_indicator(request):
+    '''
+    TO BE REMOVED - Once transfer from v1/api to v2/api
+    '''
 
     meta_keys = ['limit','offset']
     request_meta = parse_url_args(request,meta_keys)
@@ -410,7 +413,7 @@ def api_indicator(request):
             ,ia.bound_json
         FROM indicator i
         INNER JOIN indicator_abstracted ia
-        ON i.id = ia.indicator_id
+        ON i.id = ia.id
         WHERE i.id = ANY(%s)
         ORDER BY i.id
     """,[id__in])
@@ -428,18 +431,22 @@ def api_indicator(request):
         , content_type="application/json")
 
 
-def meta_api_GET(request,content_type):
+def v2_meta_api(request,content_type):
 
-    request_object = v2GetRequest(request, content_type)
-    data = request_object.main()
+    return v2_api(request,content_type,True)
+
+def v2_api(request,content_type,is_meta=False):
+
+    if is_meta:
+        request_object = v2MetaRequest(request, content_type)
+        data = request_object.main()
+
+    elif request.POST:
+        request_object = v2PostRequest(request, content_type)
+        data = request_object.main()
+
+    else:
+        request_object = v2GetRequest(request, content_type)
+        data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
-
-
-def meta_api_POST(request,content_type):
-
-    request_object = v2PostRequest(request, content_type)
-    data = request_object.main()
-
-    return HttpResponse(json.dumps(data),
-        content_type="application/json")

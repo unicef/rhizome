@@ -47,11 +47,14 @@ class Indicator(models.Model):
 
 class IndicatorAbstracted(models.Model):
 
-    indicator = models.ForeignKey(Indicator)
+    description = models.CharField(max_length=255)
+    short_name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     bound_json = JSONField()
 
     def __unicode__(self):
-        return unicode(self.indicator.name)
+        return unicode(self.slug)
 
     class Meta:
         db_table = 'indicator_abstracted'
@@ -142,30 +145,10 @@ class Region(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_all_children(self):
-
-        r = []
-
-        for c in Region.objects.filter(parent_region=self):
-            # r.append(c.get_all_children())
-            r.append(c)
-
-        second_leaf = Region.objects.filter(parent_region__in=r)
-
-        r.extend(second_leaf)
-
-        return r
-
     class Meta:
 
         db_table = 'region'
         unique_together = ('name','region_type','office')
-        ordering = ('name',)
-
-        permissions = (
-            ('view_region', 'View region'),
-        )
-
 
 
 class RegionPolygon(models.Model):
@@ -209,12 +192,10 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
-
+        return unicode(self.slug)
 
     def get_full_name(self):
-        full_name = self.__unicode__()
-        return full_name
+        return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
         db_table = 'campaign'
