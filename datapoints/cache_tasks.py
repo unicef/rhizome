@@ -443,125 +443,32 @@ def cache_indicator_abstracted():
     Delete indicator abstracted, then re-insert by joiniding indicator boudns
     and creatign json for the indicator_bound field
     '''
-    IndicatorAbstracted.objects.all().delete()
 
     i_raw = Indicator.objects.raw("""
 
         SELECT
-            i.*
-            ,ib.mn_val
-            ,ib.mx_val
-            ,bound_name
-            ,direction
-        FROM indicator i
-        LEFT JOIN indicator_bound ib
-        ON i.id = ib.indicator_id
-        ORDER BY i.id
+             i.id
+            ,i.short_name
+            ,i.name
+            ,i.slug
+            ,i.name
+            ,x.bound_json
+        FROM (
+            SELECT
+            	i.id
+            	,json_agg(row_to_json(ib.*)) as bound_json
+            FROM indicator i
+            LEFT JOIN indicator_bound ib
+            ON i.id = ib.indicator_id
+            GROUP BY i.id
+        )x
+        INNER JOIN indicator i
+        ON x.id = i.id
+
     """)
 
-    objects = []
-    ##
-    raw_data = [{
-          'id': i.id \
-        , 'name':i.name \
-        , 'short_name' :i.short_name
-        , 'slug' :i.slug
-        , 'description':i.description \
-        , 'bound_name':i.bound_name
-        , 'mx_val':i.mx_val
-        , 'mn_val': i.mn_val
-    } for i in i_raw]
+    upsert_meta_data(i_raw, IndicatorAbstracted)
 
-    df = DataFrame(raw_data)
-
-    cleaned_df = df.fillna('NULL')
-    distinct_indicator_ids = df['id'].unique()
-
-    for ind_id in distinct_indicator_ids:
-
-        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
-        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
-        bounds_df.reset_index(level=0,inplace=True)
-
-        indicator_bounds = bounds_df.transpose().to_dict()
-
-        if indicator_bounds[0]['bound_name'] == "NULL":
-            bound_array = []
-        else:
-            bound_array = [v for k,v in indicator_bounds.iteritems()]
-
-        IndicatorAbstracted.objects.create(
-            id = ind_id,
-            name = ind_df['name'].unique()[0],
-            short_name = ind_df['short_name'].unique()[0],
-            description = ind_df['description'].unique()[0],
-            slug = ind_df['slug'].unique()[0],
-            bound_json = bound_array
-        )
-
-    return {'objects':objects}
-
-def cache_user_abstracted():
-    '''
-    '''
-
-    UserAbstracted.objects.all().delete()
-
-    i_raw = Indicator.objects.raw("""
-
-        SELECT
-            i.*
-            ,ib.mn_val
-            ,ib.mx_val
-            ,bound_name
-            ,direction
-        FROM indicator i
-        LEFT JOIN indicator_bound ib
-        ON i.id = ib.indicator_id
-        ORDER BY i.id
-    """)
-
-    objects = []
-    ##
-    raw_data = [{
-          'id': i.id \
-        , 'name':i.name \
-        , 'short_name' :i.short_name
-        , 'slug' :i.slug
-        , 'description':i.description \
-        , 'bound_name':i.bound_name
-        , 'mx_val':i.mx_val
-        , 'mn_val': i.mn_val
-    } for i in i_raw]
-
-    df = DataFrame(raw_data)
-
-    cleaned_df = df.fillna('NULL')
-    distinct_indicator_ids = df['id'].unique()
-
-    for ind_id in distinct_indicator_ids:
-
-        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
-        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
-        bounds_df.reset_index(level=0,inplace=True)
-
-        indicator_bounds = bounds_df.transpose().to_dict()
-
-        if indicator_bounds[0]['bound_name'] == "NULL":
-            bound_array = []
-        else:
-            bound_array = [v for k,v in indicator_bounds.iteritems()]
-
-        IndicatorAbstracted.objects.create(
-            id = ind_id,
-            name = ind_df['name'].unique()[0],
-            short_name = ind_df['short_name'].unique()[0],
-            description = ind_df['description'].unique()[0],
-            slug = ind_df['slug'].unique()[0],
-            bound_json = bound_array
-        )
-
-    return {'objects':objects}
 
 def cache_user_abstracted():
 
@@ -596,15 +503,19 @@ def cache_user_abstracted():
     '''
     )
 
+    upsert_meta_data(u_raw, UserAbstracted)
+
+def upsert_meta_data(qset, abstract_model):
+
     batch = []
 
-    for row in u_raw:
+    for row in qset:
 
         row_data = dict(row.__dict__)
         del row_data['_state']
 
-        user_instance = UserAbstracted(**row_data)
+        user_instance = abstract_model(**row_data)
         batch.append(user_instance)
 
-    UserAbstracted.objects.all().delete()
-    UserAbstracted.objects.bulk_create(batch)
+    abstract_model.objects.all().delete()
+    abstract_model.objects.bulk_create(batch)
