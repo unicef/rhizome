@@ -1,5 +1,3 @@
--- DROP FUNCTION IF EXISTS fn_get_authorized_regions_by_user(user_id int);
--- CREATE FUNCTION fn_get_authorized_regions_by_user(user_id int)
 DROP FUNCTION IF EXISTS fn_get_authorized_regions_by_user(user_id int, list_of_region_ids integer[]);
 CREATE FUNCTION fn_get_authorized_regions_by_user(user_id int, list_of_region_ids integer[])
 
@@ -58,8 +56,21 @@ BEGIN
 		AND rt.parent_region_id = rm.region_id
 		AND rm.read_write = 'r'
 	)
-  AND r.id = ANY(COALESCE($2,ARRAY[r.id]));
+  AND r.id = ANY(COALESCE($2,ARRAY[r.id]))
 
+  UNION ALL
+
+  SELECT
+    r.id
+    ,r.parent_region_id
+    ,r.office_id
+    ,r.region_type_id
+    ,r.name
+  FROM region r
+  INNER JOIN region_permission rp
+    ON r.id = rp.region_id
+    AND rp.read_write = 'r'
+    AND r.id = ANY(COALESCE($2,ARRAY[r.id]));
 
 END
 $func$ LANGUAGE PLPGSQL;
