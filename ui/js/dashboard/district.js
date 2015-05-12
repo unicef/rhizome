@@ -225,17 +225,23 @@ module.exports = {
 
 		showTooltip : function (d) {
 			var evt        = d3.event;
-			var id         = d.id.split('-');
 			var val        = d.value;
 			var indicators = _.indexBy(this.columns, 'id');
 			var histogram  = d3.layout.histogram();
 			var width      = 120 * 1.618;
 			var height     = 120;
 
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
+			}
+
 			var data = _(this.series)
 				.pluck('values')
 				.flatten()
-				.filter(function (d) { return d.indicator === Number(id[1]); })
+				.filter(function (d) { return d.indicator === Number(match[2]); })
 				.pluck('value')
 				.reject(_.isNull)
 				.thru(histogram)
@@ -284,8 +290,8 @@ module.exports = {
 					y : evt.pageY
 				},
 				data     : {
-					region    : id[0],
-					indicator : indicators[id[1]].short_name,
+					region    : match[1],
+					indicator : indicators[match[2]].short_name,
 					value     : fmt(val),
 					template  : 'tooltip-heatmap',
 					width     : width,
