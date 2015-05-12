@@ -23,6 +23,7 @@ module.exports = React.createClass({
 				right  : 0,
 				bottom : 0
 			},
+			onClick       : null,
 			onMouseOut    : null,
 			onMouseOver   : null,
 			scale         : d3.scale.quantile().domain([0, 1]).range(palette.YlOrRd[9]),
@@ -83,7 +84,7 @@ module.exports = React.createClass({
 		var fill = function (d) {
 			var v = props.getValue(d);
 
-			return util.defined(v) ? props.scale(v) : 'transparent';
+			return v != null ? props.scale(v) : 'transparent';
 		};
 
 		var xScale = d3.scale.ordinal()
@@ -168,8 +169,11 @@ module.exports = React.createClass({
 			.style('opacity', 0)
 			.remove();
 
-		cell.on('mouseover', props.onMouseOver)
-			.on('mouseout', props.onMouseOut);
+		cell
+			.style('cursor', _.isFunction(props.onClick) ? 'pointer' : 'initial')
+			.on('mouseover', props.onMouseOver)
+			.on('mouseout', props.onMouseOut)
+			.on('click', props.onClick);
 
 		svg.select('.x.axis')
 			.transition().duration(300)

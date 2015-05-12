@@ -350,3 +350,37 @@ svg {
 		}
 	}
 }
+
+.tooltip {
+	svg {
+		margin: 1rem 0;
+		max-width: initial;
+		width: initial;
+	}
+
+	.histogram {
+		rect, .label {
+			fill: $white;
+			opacity: 0.6;
+		}
+
+		.current {
+			rect, .label {
+				opacity: 1;
+			}
+		}
+
+		.axis {
+			opacity: 0.3;
+
+			.domain {
+				stroke: $white;
+				stroke-width: 1px;
+				shape-rendering: crispEdges;
+			}
+			text {
+				fill: $white;
+			}
+		}
+	}
+}

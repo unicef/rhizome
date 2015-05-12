@@ -4,6 +4,7 @@
 var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
+var page   = require('page');
 var React  = require('react');
 
 var api  = require('data/api');
@@ -80,14 +81,6 @@ module.exports = {
 			series   : [],
 			showEmpty: false,
 		};
-	},
-
-	computed : {
-		rows : function () {
-			var cols = this.visibleIndicators;
-
-
-		}
 	},
 
 	methods : {
@@ -224,25 +217,126 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
+			props.onMouseOver = this.showTooltip;
+			props.onMouseOut  = this.hideTooltip;
+			props.onClick     = this.navigate;
+			props.getValue    = _.property('range');
+
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
-		}
-	},
+		},
 
-	filters : {
-		jump : function (value) {
-			var parent = this.$parent;
+		showTooltip : function (d) {
+			var evt        = d3.event;
+			var val        = d.value;
+			var indicators = _.indexBy(this.columns, 'id');
+			var histogram  = d3.layout.histogram();
+			var width      = 120 * 1.618;
+			var height     = 120;
 
-			while (parent && !parent.campaign) {
-				parent = parent.$parent;
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
 			}
 
-			if (!(parent.campaign && parent.campaign.start_date)) {
-				return null;
+			var data = _(this.series)
+				.pluck('values')
+				.flatten()
+				.filter(function (d) { return d.indicator === Number(match[2]); })
+				.pluck('value');
+
+			var total_regions = data.size();
+
+			data = data.reject(_.isNull)
+				.thru(histogram)
+				.value();
+
+			var xScale = d3.scale.linear()
+				.domain([
+					d3.min(data, _.property('x')),
+					d3.max(data, function (d) {
+						return d.x + d.dx;
+					})
+				])
+				.range([0, width]);
+
+			var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, _.property('y'))])
+				.range([height, 0]);
+
+			var scale = function (d) {
+				var current = (val >= d.x) && (val <= (d.x + d.dx));
+
+				return {
+					width   : xScale(d.x + d.dx) - xScale(d.x) - 1,
+					height  : height - yScale(d.y),
+					x       : xScale(d.x),
+					y       : yScale(d.y),
+					bin     : d.x,
+					value   : d.y,
+					current : current
+				};
+			};
+
+			var fmt = d3.format('%');
+
+			var tick = function (t) {
+				return {
+					x     : xScale(t),
+					value : fmt(t)
+				};
+			};
+
+			this.$dispatch('tooltip-show', {
+				el       : this.$el,
+				position : {
+					x : evt.pageX,
+					y : evt.pageY
+				},
+				data     : {
+					region            : match[1],
+					indicator         : indicators[match[2]].short_name,
+					total_regions     : total_regions,
+					reporting_regions : data.length,
+					value             : fmt(val),
+					template          : 'tooltip-heatmap',
+					width             : width,
+					height            : height,
+					histogram         : _(data)
+						.filter(function (d) { return d.y > 0; })
+						.map(scale)
+						.value(),
+					ticks             : _(data)
+						.pluck('x')
+						.map(tick)
+						.push({ x : width, value : fmt(xScale.domain()[1]) })
+						.value()
+				}
+			});
+		},
+
+		hideTooltip : function () {
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
+		},
+
+		navigate : function (d) {
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
 			}
 
-			return '/datapoints/management-dashboard/' + value + '/' +
-				moment(parent.campaign.start_date).format('YYYY/MM');
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
+
+			page('/datapoints/management-dashboard/' + match[1] + '/' +
+				moment(this.campaign.start_date).format('YYYY/MM'));
 		}
 	},
 
