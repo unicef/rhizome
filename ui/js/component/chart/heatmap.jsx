@@ -45,9 +45,7 @@ module.exports = React.createClass({
 		this._draw(nextProps, this.state);
 	},
 
-	shouldComponentUpdate : function () {
-		return false;
-	},
+	shouldComponentUpdate : _.constant(false),
 
 	render : function () {
 		var className = 'heatmap';
@@ -77,7 +75,7 @@ module.exports = React.createClass({
 		// Calculate the dimensions for the heatmap based on the width of its
 		// containing element
 		// var contentArea = dom.contentArea(React.findDOMNode(this).parentElement);
-		var width = state.width - props.margin.left - props.margin.right;
+		var width  = state.width - props.margin.left - props.margin.right;
 		var height = state.height - props.margin.top - props.margin.bottom;
 
 		var fill = function (d) {
@@ -195,7 +193,7 @@ module.exports = React.createClass({
 	},
 
 	_onRowHover : function (d, row) {
-		d3.select(this.$$.canvas).selectAll('.row')
+		d3.select(React.findDOMNode(this.refs.svg)).selectAll('.row')
 			.transition().duration(300)
 			.style('opacity', function (d, i) {
 				return i === row ? 1 : 0.4;
@@ -203,7 +201,7 @@ module.exports = React.createClass({
 	},
 
 	_onRowOut : function () {
-		d3.select(this.$$.canvas).selectAll('.row')
+		d3.select(React.findDOMNode(this.refs.svg)).selectAll('.row')
 			.transition().duration(300)
 			.style('opacity', 1);
 	},
