@@ -329,26 +329,9 @@ module.exports = {
 			this.$dispatch('tooltip-hide', {
 				el : this.$el
 			});
-			
+
 			page('/datapoints/management-dashboard/' + match[1] + '/' +
 				moment(this.campaign.start_date).format('YYYY/MM'));
-		}
-	},
-
-	filters : {
-		jump : function (value) {
-			var parent = this.$parent;
-
-			while (parent && !parent.campaign) {
-				parent = parent.$parent;
-			}
-
-			if (!(parent.campaign && parent.campaign.start_date)) {
-				return null;
-			}
-
-			return '/datapoints/management-dashboard/' + value + '/' +
-				moment(parent.campaign.start_date).format('YYYY/MM');
 		}
 	},
 
