@@ -11,7 +11,7 @@
 				fa-caret-right : !open,
 				fa-caret-down  : open"
 			v-on="click : toggleChildren($event)"></i>
-		{{ title }}
+		<span v-if="filtered">{{ancestryString}}</span>{{ title }}
 	</a>
 
 	<ul v-if="showChildren">
