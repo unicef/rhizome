@@ -32,6 +32,8 @@ class v2Request(object):
                 'permission_function':self.apply_region_permissions},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
+            'datapoint': {'orm_obj':DataPointAbstracted,
+                'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':UserAbstracted,
