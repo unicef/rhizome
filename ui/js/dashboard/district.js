@@ -82,14 +82,6 @@ module.exports = {
 		};
 	},
 
-	computed : {
-		rows : function () {
-			var cols = this.visibleIndicators;
-
-
-		}
-	},
-
 	methods : {
 		error : function () {
 			// FIXME
