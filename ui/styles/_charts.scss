@@ -329,6 +329,12 @@ svg {
 			}
 		}
 	}
+
+	.x.axis {
+		.domain {
+			display : none;
+		}
+	}
 }
 
 #nco-dashboard {
