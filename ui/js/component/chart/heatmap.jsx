@@ -23,6 +23,8 @@ module.exports = React.createClass({
 				right  : 0,
 				bottom : 0
 			},
+			onMouseOut    : null,
+			onMouseOver   : null,
 			scale         : d3.scale.quantile().domain([0, 1]).range(palette.YlOrRd[9]),
 			series        : [],
 			sortable      : true
@@ -166,12 +168,8 @@ module.exports = React.createClass({
 			.style('opacity', 0)
 			.remove();
 
-		cell.on('mouseover', function (d, i) {
-				self._onMouseover(this, d, i);
-			})
-			.on('mouseout', function () {
-				self._onMouseout(this);
-			});
+		cell.on('mouseover', props.onMouseOver)
+			.on('mouseout', props.onMouseOut);
 
 		svg.select('.x.axis')
 			.transition().duration(300)
@@ -204,24 +202,6 @@ module.exports = React.createClass({
 		d3.select(React.findDOMNode(this.refs.svg)).selectAll('.row')
 			.transition().duration(300)
 			.style('opacity', 1);
-	},
-
-	_onMouseover : function (el, d, i) {
-		var p = d3.select(el.parentNode).datum();
-
-		this.$dispatch('tooltip-show', {
-			el   : el,
-			data : {
-				indicator : this.columnLabels[i],
-				region    : p.name,
-				template  : 'tooltip-heatmap',
-				value     : d.value,
-			}
-		});
-	},
-
-	_onMouseout : function (el) {
-		this.$dispatch('tooltip-hide', { el : el });
 	},
 
 	_setSort : function (d, i) {
