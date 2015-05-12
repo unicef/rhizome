@@ -378,3 +378,14 @@ class IndicatorPermission(models.Model):
     class Meta:
         db_table = 'indicator_permission'
         unique_together = ('group','indicator')
+
+
+class ColumnAttribuets(models.Model):
+
+    table_name = models.CharField(max_length=255)
+    column_name = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255)
+    display_on_table_flag = models.BooleanField()
+
+    class Meta:
+        db_table = 'column_attributes'
