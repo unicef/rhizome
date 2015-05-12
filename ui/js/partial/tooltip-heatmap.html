@@ -1,2 +1,25 @@
 <h3>{{ region }}</h3>
 <p>{{ indicator }}: {{ value }}</p>
+<svg class="histogram" v-attr="width : width, height : height">
+	<g class="x axis" transform="translate(0,120)">
+		<line class="domain" v-attr="x2 : width"></line>
+		<g v-repeat="ticks"
+			v-attr="transform : 'translate(' + x + ',0)'"
+			class="tick">
+			<text v-text="value" text-anchor="middle" dy="1.2em" fill="#fff"></text>
+		</g>
+	</g>
+	<g v-repeat="histogram"
+		v-attr="transform : 'translate(' + x + ',' + y + ')'"
+		v-class="current : current">
+
+		<rect v-attr="width : width, height : height"></rect>
+
+		<text v-text="value"
+			v-attr="transform : 'translate(' + (width/2) + ',0)'"
+			text-anchor="middle"
+			class="label"
+			dy="-.2em"
+			></text>
+	</g>
+</svg>

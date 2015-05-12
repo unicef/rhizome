@@ -216,8 +216,97 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
+			props.onMouseOver = this.showTooltip;
+			props.onMouseOut  = this.hideTooltip;
+
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
+		},
+
+		showTooltip : function (d) {
+			var evt        = d3.event;
+			var id         = d.id.split('-');
+			var val        = d.value;
+			var indicators = _.indexBy(this.columns, 'id');
+			var histogram  = d3.layout.histogram();
+			var width      = 120 * 1.618;
+			var height     = 120;
+
+			var data = _(this.series)
+				.pluck('values')
+				.flatten()
+				.filter(function (d) { return d.indicator === Number(id[1]); })
+				.pluck('value')
+				.reject(_.isNull)
+				.thru(histogram)
+				.value();
+
+			var xScale = d3.scale.linear()
+				.domain([
+					d3.min(data, _.property('x')),
+					d3.max(data, function (d) {
+						return d.x + d.dx;
+					})
+				])
+				.range([0, width]);
+
+			var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, _.property('y'))])
+				.range([height, 0]);
+
+			var scale = function (d) {
+				var current = (val >= d.x) && (val <= (d.x + d.dx));
+
+				return {
+					width   : xScale(d.x + d.dx) - xScale(d.x) - 1,
+					height  : height - yScale(d.y),
+					x       : xScale(d.x),
+					y       : yScale(d.y),
+					bin     : d.x,
+					value   : d.y,
+					current : current
+				};
+			};
+
+			var fmt = d3.format('%');
+
+			var tick = function (t) {
+				return {
+					x     : xScale(t),
+					value : fmt(t)
+				};
+			};
+
+			this.$dispatch('tooltip-show', {
+				el       : this.$el,
+				position : {
+					x : evt.pageX,
+					y : evt.pageY
+				},
+				data     : {
+					region    : id[0],
+					indicator : indicators[id[1]].short_name,
+					value     : fmt(val),
+					template  : 'tooltip-heatmap',
+					width     : width,
+					height    : height,
+					histogram : _(data)
+						.filter(function (d) { return d.y > 0; })
+						.map(scale)
+						.value(),
+					ticks     : _(data)
+						.pluck('x')
+						.map(tick)
+						.push({ x : width, value : fmt(xScale.domain()[1]) })
+						.value()
+				}
+			});
+		},
+
+		hideTooltip : function () {
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
 		}
 	},
 
