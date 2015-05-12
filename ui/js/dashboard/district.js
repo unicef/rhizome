@@ -253,6 +253,11 @@ module.exports = {
 				.thru(histogram)
 				.value();
 
+			// Don't show a tooltip for completely empty columns
+			if (_.isEmpty(data) || _.all(data, function (d) { return d.y <= 0; })) {
+				return;
+			}
+
 			var xScale = d3.scale.linear()
 				.domain([
 					d3.min(data, _.property('x')),
