@@ -84,7 +84,7 @@ module.exports = React.createClass({
 		var fill = function (d) {
 			var v = props.getValue(d);
 
-			return util.defined(v) ? props.scale(v) : 'transparent';
+			return v != null ? props.scale(v) : 'transparent';
 		};
 
 		var xScale = d3.scale.ordinal()

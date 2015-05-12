@@ -220,6 +220,7 @@ module.exports = {
 			props.onMouseOver = this.showTooltip;
 			props.onMouseOut  = this.hideTooltip;
 			props.onClick     = this.navigate;
+			props.getValue = _.property('range');
 
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
