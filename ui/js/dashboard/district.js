@@ -220,7 +220,7 @@ module.exports = {
 			props.onMouseOver = this.showTooltip;
 			props.onMouseOut  = this.hideTooltip;
 			props.onClick     = this.navigate;
-			props.getValue = _.property('range');
+			props.getValue    = _.property('range');
 
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
@@ -245,8 +245,11 @@ module.exports = {
 				.pluck('values')
 				.flatten()
 				.filter(function (d) { return d.indicator === Number(match[2]); })
-				.pluck('value')
-				.reject(_.isNull)
+				.pluck('value');
+
+			var total_regions = data.size();
+
+			data = data.reject(_.isNull)
 				.thru(histogram)
 				.value();
 
@@ -293,17 +296,19 @@ module.exports = {
 					y : evt.pageY
 				},
 				data     : {
-					region    : match[1],
-					indicator : indicators[match[2]].short_name,
-					value     : fmt(val),
-					template  : 'tooltip-heatmap',
-					width     : width,
-					height    : height,
-					histogram : _(data)
+					region            : match[1],
+					indicator         : indicators[match[2]].short_name,
+					total_regions     : total_regions,
+					reporting_regions : data.length,
+					value             : fmt(val),
+					template          : 'tooltip-heatmap',
+					width             : width,
+					height            : height,
+					histogram         : _(data)
 						.filter(function (d) { return d.y > 0; })
 						.map(scale)
 						.value(),
-					ticks     : _(data)
+					ticks             : _(data)
 						.pluck('x')
 						.map(tick)
 						.push({ x : width, value : fmt(xScale.domain()[1]) })

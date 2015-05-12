@@ -354,6 +354,8 @@ svg {
 .tooltip {
 	svg {
 		margin: 1rem 0;
+		max-width: initial;
+		width: initial;
 	}
 
 	.histogram {
