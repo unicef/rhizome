@@ -34,7 +34,7 @@ class v2Request(object):
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
-            'user': {'orm_obj':User,
+            'user': {'orm_obj':UserAbstracted,
                 'permission_function':None},
         }
 
@@ -264,6 +264,7 @@ class v2GetRequest(v2Request):
             qset = None
         else:
             qset = list(self.db_obj.objects.filter(**self.kwargs).values())
+
 
         err, filtered_data = self.apply_permissions(qset)
         err, data = self.serialize(filtered_data)

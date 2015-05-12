@@ -77,7 +77,8 @@ urlpatterns = [
         ## CACHING VALIDATN AND PERMISSIONS ##
         ######################################
 
-    url(r'^transform_indicators/$', views.transform_indicators, name='transform_indicators'),
+    # url(r'^transform_indicators/$', views.transform_indicators, name='transform_indicators'),
+    url(r'^refresh_metadata/$', views.refresh_metadata, name='refresh_metadata'),
     url(r'^cache_control/$', views.cache_control, name='cache_control'),
     url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
 

@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db import models
+from django.conf import settings
+
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
@@ -58,6 +60,24 @@ class IndicatorAbstracted(models.Model):
 
     class Meta:
         db_table = 'indicator_abstracted'
+
+class UserAbstracted(models.Model):
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    last_login = models.DateTimeField()
+    is_superuser = models.BooleanField()
+    username = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.BooleanField()
+    email = models.CharField(max_length=255)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    date_joined = models.DateTimeField()
+    group_json = JSONField()
+    region_permission_json = JSONField()
+
+    class Meta:
+        db_table = 'user_abstracted'
 
 
 

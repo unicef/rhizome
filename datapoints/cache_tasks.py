@@ -2,6 +2,8 @@ import pandas as pd
 from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
 
+
+from django.contrib.auth.models import User
 from datapoints.models import *
 
 class CacheRefresh(object):
@@ -498,3 +500,111 @@ def cache_indicator_abstracted():
         )
 
     return {'objects':objects}
+
+def cache_user_abstracted():
+    '''
+    '''
+
+    UserAbstracted.objects.all().delete()
+
+    i_raw = Indicator.objects.raw("""
+
+        SELECT
+            i.*
+            ,ib.mn_val
+            ,ib.mx_val
+            ,bound_name
+            ,direction
+        FROM indicator i
+        LEFT JOIN indicator_bound ib
+        ON i.id = ib.indicator_id
+        ORDER BY i.id
+    """)
+
+    objects = []
+    ##
+    raw_data = [{
+          'id': i.id \
+        , 'name':i.name \
+        , 'short_name' :i.short_name
+        , 'slug' :i.slug
+        , 'description':i.description \
+        , 'bound_name':i.bound_name
+        , 'mx_val':i.mx_val
+        , 'mn_val': i.mn_val
+    } for i in i_raw]
+
+    df = DataFrame(raw_data)
+
+    cleaned_df = df.fillna('NULL')
+    distinct_indicator_ids = df['id'].unique()
+
+    for ind_id in distinct_indicator_ids:
+
+        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
+        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
+        bounds_df.reset_index(level=0,inplace=True)
+
+        indicator_bounds = bounds_df.transpose().to_dict()
+
+        if indicator_bounds[0]['bound_name'] == "NULL":
+            bound_array = []
+        else:
+            bound_array = [v for k,v in indicator_bounds.iteritems()]
+
+        IndicatorAbstracted.objects.create(
+            id = ind_id,
+            name = ind_df['name'].unique()[0],
+            short_name = ind_df['short_name'].unique()[0],
+            description = ind_df['description'].unique()[0],
+            slug = ind_df['slug'].unique()[0],
+            bound_json = bound_array
+        )
+
+    return {'objects':objects}
+
+def cache_user_abstracted():
+
+    u_raw = User.objects.raw(
+    '''
+        SELECT
+        	x.*
+        	,au.last_login
+        	,au.is_superuser
+        	,au.username
+        	,au.first_name
+        	,au.last_name
+        	,au.email
+        	,au.is_staff
+        	,au.is_active
+        	,au.date_joined
+        FROM (
+        	SELECT
+        		au.id as id
+        		,au.id as user_id
+        		,json_agg(row_to_json(aug.*)) as group_json
+        		,json_agg(row_to_json(rp.*)) as region_permission_json
+        	FROM auth_user au
+        	LEFT JOIN auth_user_groups aug
+        		ON au.id = aug.user_id
+        	LEFT JOIN region_permission rp
+        		ON au.id = rp.user_id
+        	GROUP BY au.id
+        )x
+        INNER JOIN auth_user au
+        ON x.id = au.id;
+    '''
+    )
+
+    batch = []
+
+    for row in u_raw:
+
+        row_data = dict(row.__dict__)
+        del row_data['_state']
+
+        user_instance = UserAbstracted(**row_data)
+        batch.append(user_instance)
+
+    UserAbstracted.objects.all().delete()
+    UserAbstracted.objects.bulk_create(batch)
