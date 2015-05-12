@@ -4,6 +4,7 @@
 var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
+var page   = require('page');
 var React  = require('react');
 
 var api  = require('data/api');
@@ -218,6 +219,7 @@ module.exports = {
 
 			props.onMouseOver = this.showTooltip;
 			props.onMouseOut  = this.hideTooltip;
+			props.onClick     = this.navigate;
 
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
@@ -313,6 +315,22 @@ module.exports = {
 			this.$dispatch('tooltip-hide', {
 				el : this.$el
 			});
+		},
+
+		navigate : function (d) {
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
+			}
+
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
+			
+			page('/datapoints/management-dashboard/' + match[1] + '/' +
+				moment(this.campaign.start_date).format('YYYY/MM'));
 		}
 	},
 
