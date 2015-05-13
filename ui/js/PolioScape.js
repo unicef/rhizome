@@ -39,14 +39,14 @@ module.exports = {
 		new Vue({
 			el: el,
 			components: { 'uf-field-mapping': require('./view/field-mapping') },
-			data:{'document_id':document_id}/*,
-			attached: function () {
-			  Vue.component('field-mapping', require('./view/field-mapping'));
-			  var FieldMapping = require('../../component/dropdown');
-			  var fieldMapping = new FieldMapping({
-			     		el : '#field-mapping-container'
-			     	});
-			}*/
+			data:{'document_id':document_id}
+		});
+	},
+	UserAccount: function (el,user_id) {
+		new Vue({
+			el: el,
+			components: { 'uf-user-account': require('./view/user-account') },
+			data:{'user_id':user_id}
 		});
 	}
 };

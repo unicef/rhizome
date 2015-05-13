@@ -1,10 +1,15 @@
 {% extends "base.html" %}
-
-
-
 {% block content %}
 
-  EDIT USERS HERE
+   <div v-component="uf-user-account" v-with="user_id:user_id"></div>
 
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+Polio.UserAccount('#main',25);
+</script>
+{% endblock %}
+
+
