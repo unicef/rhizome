@@ -1,5 +1,6 @@
 import json
 import datetime
+import traceback
 
 from django.core.serializers import json as djangojson
 from django.db.models import Model, ManyToManyField
@@ -36,6 +37,8 @@ class v2Request(object):
                 'permission_function':None},
             'user': {'orm_obj':User,
                 'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
@@ -45,6 +48,7 @@ class v2Request(object):
 
         self.kwargs = self.clean_kwargs(request.GET)
 
+        self.data = None
         self.meta = None
         self.err = None
 
@@ -154,19 +158,36 @@ class v2Request(object):
 class v2PostRequest(v2Request):
 
 
+    def __init__(self, request, content_type):
+
+        return super(v2PostRequest, self).__init__(request, content_type)
+
     def main(self):
         '''
         Create an object in accordance to the URL kwargs and return the new ID
         '''
 
-        new_obj = self.db_obj.objects.create(**self.kwargs)
 
-        self.data = {'new_id':new_obj.id }
+        try:
+            new_obj = self.db_obj.objects.create(**self.kwargs)
+            self.data = {'new_id':new_obj.id }
+
+        except Exception, e:
+            self.err = traceback.format_exc()
+
+
+        # self.data = data[self.offset:self.limit + self.offset]
+        # self.err = err
+        # self.meta = self.build_meta()
 
         return super(v2PostRequest, self).main()
 
-
 class v2MetaRequest(v2Request):
+
+    def __init__(self):
+
+        return super(v2MetaRequest, self).__init__()
+
 
     def main(self):
         '''
