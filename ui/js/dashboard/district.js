@@ -323,7 +323,7 @@ module.exports = {
 					region            : match[1],
 					indicator         : indicators[match[2]].short_name,
 					total_regions     : total_regions,
-					reporting_regions : data.length,
+					reporting_regions : _.sum(data, 'y'),
 					value             : fmt(val),
 					template          : 'tooltip-heatmap',
 					width             : width,
