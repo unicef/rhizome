@@ -90,8 +90,6 @@ class v2PostRequest(v2Request):
     def __init__(self, request, content_type):
 
         self.kwargs = self.clean_kwargs(request.POST)
-        return super(v2PostRequest, self).__init__(request, content_type)
-
         self.orm_mapping = {
             'campaign': {'orm_obj':Campaign,
                 'permission_function':self.apply_campaign_permissions},
@@ -108,6 +106,11 @@ class v2PostRequest(v2Request):
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
         }
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+
+        return super(v2PostRequest, self).__init__(request, content_type)
+
 
 
     def clean_kwargs(self,query_dict):
@@ -250,7 +253,7 @@ class v2GetRequest(v2Request):
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
         }
-        
+
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
         self.permission_function = self.orm_mapping[content_type]\
             ['permission_function']
