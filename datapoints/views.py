@@ -459,7 +459,7 @@ def user_create(request):
     return render_to_response('user_create.html' ,context_instance=RequestContext(request))
 
 
-def user_update(request):
+def user_edit(request,pk):
 
 
 

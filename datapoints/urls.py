@@ -85,8 +85,8 @@ urlpatterns = [
         name='create_userr'),
 
     ## UPDATE ##
-    url(r'^user/update/(?P<pk>[0-9]+)/$', views.user_update,
-        name='user_update'),
+    url(r'^user/edit/(?P<pk>[0-9]+)/$', views.user_edit,
+        name='user_edit'),
 
     ######################################
     ## CACHING VALIDATION AND PERMISSIONS ##
