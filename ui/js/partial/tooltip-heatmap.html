@@ -1,5 +1,5 @@
 <h3>{{ region }}</h3>
-<h4>{{ indicator }}: {{ value }}</h4>
+<h4>{{ indicator }}:&emsp;{{ value }}</h4>
 <svg class="histogram" v-attr="width : width, height : height">
 	<g class="x axis" transform="translate(0,120)">
 		<line class="domain" v-attr="x2 : width"></line>
@@ -23,6 +23,19 @@
 			></text>
 	</g>
 </svg>
+
+<div class="clearfix"></div>
+
+<table class="indicator-ranges" style="float:left;margin:0 1em 0 0">
+	<tbody>
+		<tr v-repeat="targets">
+			<th v-text="bound_name"></th>
+			<td class="numeric" v-text="mn_val"></td>
+			<td>&ndash;</td>
+			<td v-text="mx_val"></td>
+		</tr>
+	</tbody>
+</table>
 
 <p>
 	{{ reporting_regions }} / {{ total_regions }} regions reported values

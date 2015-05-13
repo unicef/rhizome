@@ -301,6 +301,18 @@ module.exports = {
 				};
 			};
 
+			var targets = _(indicators[match[2]].indicator_bounds)
+				.reject(function (r) { return r.bound_name == 'invalid'; })
+				.sortBy(function (r) { return RANGE_ORDER[r.bound_name]; })
+				.map(function (r) {
+					return {
+						bound_name : r.bound_name,
+						mn_val     : fmt(r.mn_val),
+						mx_val     : fmt(r.mx_val)
+					};
+				})
+				.value();
+
 			this.$dispatch('tooltip-show', {
 				el       : this.$el,
 				position : {
@@ -324,15 +336,16 @@ module.exports = {
 						.pluck('x')
 						.map(tick)
 						.push({ x : width, value : fmt(xScale.domain()[1]) })
-						.value()
+						.value(),
+					targets            : targets
 				}
 			});
 		},
 
 		hideTooltip : function () {
-			this.$dispatch('tooltip-hide', {
-				el : this.$el
-			});
+			// this.$dispatch('tooltip-hide', {
+			// 	el : this.$el
+			// });
 		},
 
 		navigate : function (d) {
