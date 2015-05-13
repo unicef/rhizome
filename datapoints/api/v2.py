@@ -1,5 +1,6 @@
 import json
 import datetime
+from pprint import pprint
 
 from django.core.serializers import json as djangojson
 from django.db.models import Model, ManyToManyField
@@ -15,6 +16,7 @@ from django.contrib.auth.models import User, Group
 from django.core import serializers
 
 from datapoints.models import *
+
 
 
 class v2Request(object):
@@ -205,6 +207,17 @@ class v2MetaRequest(v2Request):
         except FieldDoesNotExist:
             return None
 
+        ca_dct = ColumnAttributes.objects.filter(table_name = self.content_type)\
+            .values('column_name','display_name','display_on_table_flag')
+
+        column_lookup = {}
+        for row in ca_dct:
+            column_name = row['column_name']
+            del row['column_name']
+            column_lookup[column_name] = row
+
+        # pprint(column_lookup)
+
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
             'ForeignKey':'array','CharField':'string','ManyToManyField':'array',
@@ -220,7 +233,7 @@ class v2MetaRequest(v2Request):
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
                 'display' : {
-                    'on_table':True,
+                    'on_table':column_lookup['display_on_table_flag'],
                     'weightTable':ix,
                     'weightForm':ix,
                 },

@@ -380,7 +380,7 @@ class IndicatorPermission(models.Model):
         unique_together = ('group','indicator')
 
 
-class ColumnAttribuets(models.Model):
+class ColumnAttributes(models.Model):
 
     table_name = models.CharField(max_length=255)
     column_name = models.CharField(max_length=255)
