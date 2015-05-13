@@ -26,27 +26,7 @@ class v2Request(object):
         self.content_type = content_type
         self.user_id = request.user.id
 
-        self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':User,
-                'permission_function':None},
-            'region_permission': {'orm_obj':RegionPermission,
-                'permission_function':None},
-            'user_group': {'orm_obj':UserGroup,
-                'permission_function':None},
-        }
-
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
-        self.db_columns = self.db_obj._meta.get_all_field_names()
-        self.permission_function = self.orm_mapping[content_type]\
-            ['permission_function']
+        # self.db_columns = self.db_obj._meta.get_all_field_names()
 
         self.data = None
         self.meta = None
@@ -112,6 +92,24 @@ class v2PostRequest(v2Request):
         self.kwargs = self.clean_kwargs(request.POST)
         return super(v2PostRequest, self).__init__(request, content_type)
 
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+        }
+
+
     def clean_kwargs(self,query_dict):
 
         cleaned_kwargs = {}
@@ -144,7 +142,7 @@ class v2PostRequest(v2Request):
 
 class v2MetaRequest(v2Request):
 
-    def __init__(self):
+    def __init__(self, request, content_type):
 
         return super(v2MetaRequest, self).__init__()
 
@@ -234,6 +232,32 @@ class v2MetaRequest(v2Request):
 class v2GetRequest(v2Request):
 
 
+    def __init__(self, request, content_type):
+
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+        }
+        
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+        self.permission_function = self.orm_mapping[content_type]\
+            ['permission_function']
+
+        self.kwargs = self.clean_kwargs(request.GET)
+        return super(v2GetRequest, self).__init__(request, content_type)
+
     def main(self):
         '''
         Get the list of database objects ( ids ) by applying the URL kwargs to
@@ -281,8 +305,8 @@ class v2GetRequest(v2Request):
                 operator_lookup[param] = param
 
         ## ONLY WANT TO CLEAN KWARGS FOR COLUMNS THAT EXISTS FOR THIS MODEL ##
-        db_model_keys = list(set(self.db_columns).intersection(set(k for k in\
-            operator_lookup.keys())))
+        db_model_keys = list(set(self.db_obj._meta.get_all_field_names()).\
+            intersection(set(k for k in operator_lookup.keys())))
 
         ## FINALLY CREATE ONE DICT (cleaned_kwargs) WITH THE ORIGINAL K,V ##
         ## IN THE URL, BUT FILTERED ON COLUMNS AVAILABLE TO THE MODEL ##
