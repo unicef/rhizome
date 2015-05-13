@@ -11,9 +11,17 @@ var util    = require('util/data');
 module.exports = React.createClass({
 	getDefaultProps : function () {
 		return {
+      cellSize      : 16,
 			getId         : function (d, i) { return d.id || i;},
 			getHeaderText : _.identity,
 			getSeriesName : function (s) { return s.name; },
+      getSortValue  : function (s, sortCol) {
+        var val = sortCol == null ?
+          props.getSeriesName(s) :
+          props.getValue(props.getValues(s)[sortCol]);
+
+        return val;
+      },
 			getValue      : function (d) { return d.value; },
 			getValues     : function (s) { return s.values; },
 			headers       : [],
@@ -40,15 +48,34 @@ module.exports = React.createClass({
 		};
 	},
 
-	componentDidMount : function () {
-		this._draw(this.props, this.state);
-	},
-
 	componentWillReceiveProps : function (nextProps) {
-		this._draw(nextProps, this.state);
+		var size = nextProps.cellSize;
+
+		var h = nextProps.series.length * size +
+			nextProps.margin.top +
+			nextProps.margin.bottom;
+
+		var w = _(nextProps.series).map(nextProps.getValues).max(_.size).length * size +
+			nextProps.margin.left +
+			nextProps.margin.right;
+
+		this.setState({
+			height : h,
+			width  : w
+		});
 	},
 
-	shouldComponentUpdate : _.constant(false),
+	shouldComponentUpdate : function (nextProps, nextState) {
+		var update = !_.isEqual(nextProps.margin, this.props.margin) ||
+			this.state.width != nextState.width ||
+			this.state.height != nextState.height;
+
+		if (!update) {
+			this._draw(nextProps, nextState);
+		}
+
+		return update;
+	},
 
 	render : function () {
 		var className = 'heatmap';
@@ -60,17 +87,22 @@ module.exports = React.createClass({
 		return (
 			<div className="chart">
 				<svg className={className} ref="svg"
-					viewBox={'0 0 ' + this.state.width + ' ' + this.state.height}>
+					width={this.state.width}
+					height={this.state.height}>
 
 					<g transform={'translate(' + this.props.margin.left + ',' + this.props.margin.top + ')'}>
-						<g className="y axis" transform="translate(0,-4)"></g>
-						<g className="x axis" transform="translate(-4,0)"></g>
+						<g className="y axis"></g>
+						<g className="x axis"></g>
 						<g className="data" onMouseOut={this._onRowOut}></g>
 					</g>
 				</svg>
 			</div>
 		);
 	},
+
+  componentDidUpdate : function () {
+    this._draw(this.props, this.state);
+  },
 
 	_draw : function (props, state) {
 		var self    = this;
@@ -96,21 +128,11 @@ module.exports = React.createClass({
 			return xpos;
 		};
 
-		var getSortValue = function (s) {
-			var val = state.sortCol == null ?
-				props.getSeriesName(s) :
-				props.getValues(s)[state.sortCol];
-
-			if (_.isNull(val)) {
-				val = Infinity;
-			}
-
-			return val;
-		};
+    var sortValue = _.partial(props.getSortValue, _, state.sortCol);
 
 		var yScale = d3.scale.ordinal()
-			.domain(_(props.series).sortBy(getSortValue).map(props.getSeriesName).value())
-			.rangeBands([height, 0], .1);
+			.domain(_(props.series).sortBy(sortValue).map(props.getSeriesName).value())
+			.rangeBands([0, height], .1);
 
 		var y = _.flow(props.getSeriesName, yScale);
 
@@ -183,8 +205,16 @@ module.exports = React.createClass({
 				.outerTickSize(0));
 
 		svg.selectAll('.x.axis text')
-				.style('text-anchor', 'start')
-				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)');
+				.style({
+          'text-anchor' : 'start',
+          'font-weight' : function (d, i) {
+            return (i === state.sortCol) ?
+              'bold' :
+              'normal';
+            }
+        })
+				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)')
+        .on('click', props.sortable ? this._setSort : null);
 
 		svg.select('.y.axis')
 			.transition().duration(300)
@@ -209,7 +239,7 @@ module.exports = React.createClass({
 	},
 
 	_setSort : function (d, i) {
-		this.setState({sortCol : (i === this.sortCol) ? null : i});
+		this.setState({sortCol : (i === this.state.sortCol) ? null : i});
 	}
 
 });

@@ -217,10 +217,15 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
-			props.onMouseOver = this.showTooltip;
-			props.onMouseOut  = this.hideTooltip;
-			props.onClick     = this.navigate;
-			props.getValue    = _.property('range');
+			props.onMouseOver  = this.showTooltip;
+			props.onMouseOut   = this.hideTooltip;
+			props.onClick      = this.navigate;
+			props.getValue     = _.property('range');
+			props.getSortValue = function (series, col) {
+				return (col == null) ?
+					series.name :
+					RANGE_ORDER[series.values[col].range];
+			};
 
 			var heatmap = React.createElement(HeatMap, props, null);
 			React.render(heatmap, this.$$.heatmap, null);
@@ -252,6 +257,11 @@ module.exports = {
 			data = data.reject(_.isNull)
 				.thru(histogram)
 				.value();
+
+			// Don't show a tooltip for completely empty columns
+			if (_.isEmpty(data) || _.all(data, function (d) { return d.y <= 0; })) {
+				return;
+			}
 
 			var xScale = d3.scale.linear()
 				.domain([
