@@ -81,7 +81,7 @@ urlpatterns = [
     #     name='user_index'),
 
     ## CREATE ##
-    url(r'^user/create/$', views.user_create,
+    url(r'^user/create/$', views.UserCreateView.as_view(),
         name='create_userr'),
 
     ## UPDATE ##

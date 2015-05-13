@@ -454,16 +454,26 @@ def v2_api(request,content_type,is_meta=False):
     return HttpResponse(json.dumps(data),content_type="application/json")
 
 
+class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
-def user_create(request):
+    model = User
+    # success_url = reverse_lazy('datapoints:user_edit',kwargs={'pk': 1})
+    template_name = 'user_create.html'
+    form_class = UserCreateForm
+    # permission_required = 'datapoints.add_campaign'
 
-    form = UserCreateForm()
+    def form_valid(self, form):
+        # self.instance.total_leave = (self.instance.to_date - self.instance.from_date).days +1
+        new_user = form.save()
+        # self.instance.save()
 
-    return render_to_response(
-        'user_create.html',
-        {'form': form},
-        context_instance=RequestContext(request)
-    )
+        print 'VALID'
+        print new_user.id
+
+        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+            kwargs={'pk':new_user.id}))
+        # return super(UserCreateView, self).form_valid(form)
+
 
 
 def user_edit(request,pk):

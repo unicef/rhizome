@@ -33,12 +33,17 @@ class UserCreateForm(UserCreationForm):
         model = User
         fields = ("username", "email", "password1", "password2")
 
-    def save(self, commit=True):
-
-        print 'TRYING TO SAVE'
-
-        user = super(UserCreateForm, self).save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        return user
+    # def save(self, commit=True):
+    #
+    #     print 'TRYING TO SAVE'
+    #
+    #     user = super(UserCreateForm, self).save(commit=False)
+    #     user.email = self.cleaned_data["email"]
+    #     if commit:
+    #         user.save()
+    #     return user
+    #
+    # def form_valid(self, form):
+    #     form.instance.user = self.request.user
+    #     form.save()
+    #     return super(UserCreateForm, self).form_valid(form)
