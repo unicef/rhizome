@@ -11,6 +11,7 @@ var util    = require('util/data');
 module.exports = React.createClass({
 	getDefaultProps : function () {
 		return {
+      cellSize      : 16,
 			getId         : function (d, i) { return d.id || i;},
 			getHeaderText : _.identity,
 			getSeriesName : function (s) { return s.name; },
@@ -48,7 +49,7 @@ module.exports = React.createClass({
 	},
 
 	componentWillReceiveProps : function (nextProps) {
-		var size = 16;
+		var size = nextProps.cellSize;
 
 		var h = nextProps.series.length * size +
 			nextProps.margin.top +
@@ -90,8 +91,8 @@ module.exports = React.createClass({
 					height={this.state.height}>
 
 					<g transform={'translate(' + this.props.margin.left + ',' + this.props.margin.top + ')'}>
-						<g className="y axis" transform="translate(0,-4)"></g>
-						<g className="x axis" transform="translate(-4,0)"></g>
+						<g className="y axis"></g>
+						<g className="x axis"></g>
 						<g className="data" onMouseOut={this._onRowOut}></g>
 					</g>
 				</svg>
