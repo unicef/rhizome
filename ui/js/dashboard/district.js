@@ -198,10 +198,10 @@ module.exports = {
 
 			var props = {};
 
-			props.headers = _(this.columns)
-				.filter(_.flow(_.property('id'), _.propertyOf(visible)))
-				.pluck('short_name')
-				.value();
+			props.headers = _.filter(
+				this.columns,
+				_.flow(_.property('id'), _.propertyOf(visible))
+			);
 
 			// Returns new series objects where the values property contains only
 			// objects for indicators that are visible
@@ -217,11 +217,13 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
-			props.onMouseOver  = this.showTooltip;
-			props.onMouseOut   = this.hideTooltip;
-			props.onClick      = this.navigate;
-			props.getValue     = _.property('range');
-			props.getSortValue = function (series, col) {
+			props.onMouseOver   = this.showTooltip;
+			props.onMouseOut    = this.hideTooltip;
+			props.onClick       = this.navigate;
+			props.onColHover    = this.indicatorHover;
+			props.getValue      = _.property('range');
+			props.getHeaderText = _.property('short_name');
+			props.getSortValue  = function (series, col) {
 				return (col == null) ?
 					series.name :
 					RANGE_ORDER[series.values[col].range];
@@ -347,6 +349,24 @@ module.exports = {
 
 			page('/datapoints/management-dashboard/' + match[1] + '/' +
 				moment(this.campaign.start_date).format('YYYY/MM'));
+		},
+
+		indicatorHover : function (d, i, mouseover) {
+			var evt = mouseover ? 'tooltip-show' : 'tooltip-hide';
+			var indicators = _.indexBy(this.columns, 'short_name');
+
+			this.$dispatch(evt, {
+				el : this.$el,
+				position : {
+					x : d3.event.pageX,
+					y : d3.event.pageY
+				},
+				data : {
+					template    : 'tooltip-indicator',
+					name        : d,
+					description : indicators[d].description
+				}
+			});
 		}
 	},
 

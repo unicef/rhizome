@@ -32,6 +32,7 @@ module.exports = React.createClass({
 				bottom : 0
 			},
 			onClick       : null,
+      onColHover    : _.noop,
 			onMouseOut    : null,
 			onMouseOver   : null,
 			scale         : d3.scale.quantile().domain([0, 1]).range(palette.YlOrRd[9]),
@@ -214,7 +215,9 @@ module.exports = React.createClass({
             }
         })
 				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)')
-        .on('click', props.sortable ? this._setSort : null);
+        .on('click', props.sortable ? this._setSort : null)
+        .on('mouseover', this._onHeaderMouseOver)
+        .on('mouseout', this._onHeaderMouseOut);
 
 		svg.select('.y.axis')
 			.transition().duration(300)
@@ -223,6 +226,14 @@ module.exports = React.createClass({
 				.orient('left')
 				.outerTickSize(0));
 	},
+
+  _onHeaderMouseOver : function (d, i) {
+    this.props.onColHover(d, i, true);
+  },
+
+  _onHeaderMouseOut : function (d, i) {
+    this.props.onColHover(d, i, false);
+  },
 
 	_onRowHover : function (d, row) {
 		d3.select(React.findDOMNode(this.refs.svg)).selectAll('.row')
