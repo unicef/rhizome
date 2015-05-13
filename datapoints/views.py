@@ -12,7 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
 from django.contrib.auth.models import User,Group
+
 from django.template import RequestContext
+
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
@@ -455,12 +457,16 @@ def v2_api(request,content_type,is_meta=False):
 
 def user_create(request):
 
+    form = UserCreateForm()
 
-    return render_to_response('user_create.html' ,context_instance=RequestContext(request))
+    return render_to_response(
+        'user_create.html',
+        {'form': form},
+        context_instance=RequestContext(request)
+    )
 
 
 def user_edit(request,pk):
-
 
 
     return render_to_response('user_update.html' ,context_instance=RequestContext(request))
