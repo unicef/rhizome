@@ -343,9 +343,9 @@ module.exports = {
 		},
 
 		hideTooltip : function () {
-			// this.$dispatch('tooltip-hide', {
-			// 	el : this.$el
-			// });
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
 		},
 
 		navigate : function (d) {
