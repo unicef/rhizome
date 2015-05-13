@@ -14,6 +14,13 @@ module.exports = React.createClass({
 			getId         : function (d, i) { return d.id || i;},
 			getHeaderText : _.identity,
 			getSeriesName : function (s) { return s.name; },
+      getSortValue  : function (s, sortCol) {
+        var val = sortCol == null ?
+          props.getSeriesName(s) :
+          props.getValue(props.getValues(s)[sortCol]);
+
+        return val;
+      },
 			getValue      : function (d) { return d.value; },
 			getValues     : function (s) { return s.values; },
 			headers       : [],
@@ -120,21 +127,11 @@ module.exports = React.createClass({
 			return xpos;
 		};
 
-		var getSortValue = function (s) {
-			var val = state.sortCol == null ?
-				props.getSeriesName(s) :
-				props.getValues(s)[state.sortCol];
-
-			if (_.isNull(val)) {
-				val = Infinity;
-			}
-
-			return val;
-		};
+    var sortValue = _.partial(props.getSortValue, _, state.sortCol);
 
 		var yScale = d3.scale.ordinal()
-			.domain(_(props.series).sortBy(getSortValue).map(props.getSeriesName).value())
-			.rangeBands([height, 0], .1);
+			.domain(_(props.series).sortBy(sortValue).map(props.getSeriesName).value())
+			.rangeBands([0, height], .1);
 
 		var y = _.flow(props.getSeriesName, yScale);
 
@@ -207,8 +204,16 @@ module.exports = React.createClass({
 				.outerTickSize(0));
 
 		svg.selectAll('.x.axis text')
-				.style('text-anchor', 'start')
-				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)');
+				.style({
+          'text-anchor' : 'start',
+          'font-weight' : function (d, i) {
+            return (i === state.sortCol) ?
+              'bold' :
+              'normal';
+            }
+        })
+				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)')
+        .on('click', props.sortable ? this._setSort : null);
 
 		svg.select('.y.axis')
 			.transition().duration(300)
@@ -233,7 +238,7 @@ module.exports = React.createClass({
 	},
 
 	_setSort : function (d, i) {
-		this.setState({sortCol : (i === this.sortCol) ? null : i});
+		this.setState({sortCol : (i === this.state.sortCol) ? null : i});
 	}
 
 });
