@@ -3,6 +3,7 @@ var Vue  = require('vue');
 var _ = require('lodash');
 var api = require('../../data/api');
 var treeify = require('../../data/transform/treeify');
+var ancestoryString = require('../../data/transform/ancestryString');
 var MenuVue = require('../../component/menu');
 
 module.exports = {
@@ -48,8 +49,9 @@ module.exports = {
 	     	.sortBy('title')
 	     	.reverse() // I do not know why this works, but it does
 	     	.thru(_.curryRight(treeify)('id'))
+	     	.thru(ancestoryString)
 	     	.value();
-	    
+	     //console.log(regions);
 	     self.$set('items.regions',regions); 
 	     
 	   });
@@ -99,7 +101,6 @@ module.exports = {
 	},
 	methods: { 
 	  displayUnmap: function(element){
-	    //console.log(element.$parent.$key,element.$data.field);
 	    var type = element.$parent.$key;
 	    var field = element.$data.field;
 	    var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':field.source_object_id});
@@ -108,7 +109,7 @@ module.exports = {
 	    				'master_object_id': null,
 	    				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
 	    				    
-	    				    console.log(values);
+	    				   // console.log(values);
 	    				    
 	    				});
 	    this.calculateRemainingVerifications();

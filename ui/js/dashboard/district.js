@@ -2,31 +2,72 @@
 'use strict';
 
 var _      = require('lodash');
+var d3     = require('d3');
 var moment = require('moment');
+var page   = require('page');
+var React  = require('react');
 
-var api             = require('data/api');
-var format          = require('util/format');
-var indexIndicators = require('data/transform/indexIndicators');
-var variables       = require('data/transform/variables');
-var util            = require('util/data');
+var api  = require('data/api');
+var util = require('util/data');
 
-function normalize(d) {
-	var total = _(d.indicators).values().sum();
+var HeatMap = require('component/chart/heatmap.jsx');
 
-	if (total === 0) {
-		return d;
-	}
+var RANGE_ORDER = {
+	'bad'  : 0,
+	'ok'   : 1,
+	'okay' : 1,
+	'good' : 2
+};
 
-	_.each(d.indicators, function (v, k) {
-		d.indicators[k] /= total;
+/**
+ * @private
+ * Return true if indicator is an object with an array of indicator_bounds.
+ */
+function _hasBounds(indicator) {
+	return _.isObject(indicator) && !_.isEmpty(indicator.indicator_bounds);
+}
+
+/**
+ * @private
+ * Return an array of indicator objects sorted by order.
+ *
+ * @param {Object} indicators Response object from indicators API
+ * @param {Array} order An array of indicator IDs that defines the order of
+ *   the returned array
+ */
+function _heatmapColumns(indicators, order) {
+	return _(indicators.objects)
+		.filter(_hasBounds)
+		.sortBy(function (indicator) {
+			return order.indexOf(indicator.id);
+		})
+		.value();
+}
+
+/**
+ * @private
+ * Convert "NULL" strings on a bound definition to +/- Infinity
+ *
+ * Create a new object with non-number properties replaced by +/- Infinity.
+ * mn_val is replaced by -Infinity, and mx_val is replaced by Infinity, if
+ * either has a non-numeric property.
+ *
+ * @param {Object} bound A target range definition for an indicator
+ */
+function _openBounds(bound) {
+	var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
+	var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
+
+	return _.assign({}, bound, {
+		mn_val : lower,
+		mx_val : upper
 	});
-
-	return d;
 }
 
-function _fill(d) {
-	return !_.isNull(d) && d.range ? this.scale(d.range) : 'transparent';
+function _getBoundOrder(bound) {
+	return _.get(RANGE_ORDER, bound.bound_name, Infinity);
 }
+
 
 module.exports = {
 	template : require('./district.html'),
@@ -35,18 +76,16 @@ module.exports = {
 		return {
 			campaign : null,
 			columns  : [],
-			fill     : _fill.bind(this),
 			region   : null,
 			regions  : {},
 			series   : [],
-			scale    : d3.scale.ordinal()
-				.domain(['bad', 'okay', 'ok', 'good'])
-				.range(['#AF373E', '#959595', '#959595','#2B8CBE'])
+			showEmpty: false,
 		};
 	},
 
 	methods : {
 		error : function () {
+			// FIXME
 			window.alert('Dammit!');
 		},
 
@@ -77,56 +116,31 @@ module.exports = {
 				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			});
 
+			var columns = api.indicators({ id__in : indicators })
+				.then(_.partialRight(_heatmapColumns, indicators));
+
 			var self = this;
 
-			Promise.all([api.indicators({ id__in : indicators }), datapoints])
+			Promise.all([columns, datapoints])
 				.then(function (data) {
-					var columns = _(data[0].objects)
-						.reject(function (indicator) {
-							return _.isEmpty(indicator.indicator_bounds);
-						})
-						.sortBy(function (indicator) {
-							return indicators.indexOf(indicator.id);
-						})
-						.value();
+					var columns = data[0];
 
-					var bounds = _(data[0].objects)
+					// Create a function for extracting and formatting target value ranges
+					// from the indicator definitions.
+					var getTargetRanges = _.flow(
+						_.property('indicator_bounds'), // Extract bounds definition
+						_.partial(_.reject, _, { bound_name: 'invalid' }), // Filter out the 'invalid' target ranges
+						_.partial(_.map, _, _openBounds), // Replace 'NULL' with +/- Infinity
+						_.partial(_.sortBy, _, _getBoundOrder) // Sort the bounds: bad, ok/okay, good
+					);
+
+					var bounds = _(columns)
 						.indexBy('id')
-						.transform(function (result, v, k) {
-							result[k] = _(v.indicator_bounds)
-								.map(function (bound) {
-									var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
-									var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
-
-									return _.assign({}, bound, {
-										mn_val : lower,
-										mx_val : upper
-									});
-								})
-								.reject(function (bound) {
-									return bound.bound_name === 'invalid';
-								})
-								.sortBy(function (bound) {
-									switch (bound.name) {
-										case 'bad':
-											return 1;
-										case 'ok':
-										case 'okay':
-											return 2;
-										case 'good':
-											return 3;
-										default:
-											return 4;
-									}
-								})
-								.value();
-						})
-						.omit(function (bound, id) {
-							return _.isEmpty(bound);
-						})
+						.mapValues(getTargetRanges)
+						.omit(_.isEmpty)
 						.value();
 
-					var data = _.map(data[1].objects, function (d) {
+					var series = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
 						var name    = d.region;
 
@@ -142,11 +156,15 @@ module.exports = {
 							id     : name,
 							name   : name,
 							values : _.map(columns, function (indicator) {
-								var v = { id : name + '-' + indicator.id };
+								var v = {
+									id        : name + '-' + indicator.id,
+									indicator : indicator.id
+								};
+
 								var id = indicator.id;
 
 								if (dataIdx[id]) {
-									v.value = dataIdx[id].value
+									v.value = dataIdx[id].value;
 
 									if (util.defined(v.value)) {
 										_.each(bounds[id], function (bound) {
@@ -162,31 +180,201 @@ module.exports = {
 						};
 					});
 
-					self.columns = _.pluck(columns, 'short_name');
-					self.series  = data;
+					self.columns = columns;
+					self.series  = series;
 				}, this.error);
-		}
-	},
+		},
 
-	filters : {
-		jump : function (value) {
-			var parent = this.$parent;
+		render : function () {
+			var valueDefined = _.partial(util.defined, _, function (d) { return d.value; });
+			var notEmpty     = _.partial(_.some, _, valueDefined);
 
-			while (parent && !parent.campaign) {
-				parent = parent.$parent;
+			var visible = _(this.series)
+				.pluck('values')
+				.flatten()
+				.groupBy('indicator')
+				.mapValues(this.showEmpty ? _.constant(true) : notEmpty)
+				.value();
+
+			var props = {};
+
+			props.headers = _.filter(
+				this.columns,
+				_.flow(_.property('id'), _.propertyOf(visible))
+			);
+
+			// Returns new series objects where the values property contains only
+			// objects for indicators that are visible
+			var filterInvisibleIndicators = function (s) {
+				return _.assign({}, s, {
+					values : _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(visible)))
+				});
+			};
+
+			props.series = _.map(this.series, filterInvisibleIndicators);
+
+			props.scale = d3.scale.ordinal()
+					.domain(['bad', 'okay', 'ok', 'good'])
+					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
+
+			props.onMouseOver   = this.showTooltip;
+			props.onMouseOut    = this.hideTooltip;
+			props.onClick       = this.navigate;
+			props.onColHover    = this.indicatorHover;
+			props.getValue      = _.property('range');
+			props.getHeaderText = _.property('short_name');
+			props.getSortValue  = function (series, col) {
+				return (col == null) ?
+					series.name :
+					RANGE_ORDER[series.values[col].range];
+			};
+
+			var heatmap = React.createElement(HeatMap, props, null);
+			React.render(heatmap, this.$$.heatmap, null);
+		},
+
+		showTooltip : function (d) {
+			var evt        = d3.event;
+			var val        = d.value;
+			var indicators = _.indexBy(this.columns, 'id');
+			var histogram  = d3.layout.histogram();
+			var width      = 120 * 1.618;
+			var height     = 120;
+
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
 			}
 
-			if (!(parent.campaign && parent.campaign.start_date)) {
-				return null;
+			var data = _(this.series)
+				.pluck('values')
+				.flatten()
+				.filter(function (d) { return d.indicator === Number(match[2]); })
+				.pluck('value');
+
+			var total_regions = data.size();
+
+			data = data.reject(_.isNull)
+				.thru(histogram)
+				.value();
+
+			// Don't show a tooltip for completely empty columns
+			if (_.isEmpty(data) || _.all(data, function (d) { return d.y <= 0; })) {
+				return;
 			}
 
-			return '/datapoints/management-dashboard/' + value + '/' +
-				moment(parent.campaign.start_date).format('YYYY/MM');
+			var xScale = d3.scale.linear()
+				.domain([
+					d3.min(data, _.property('x')),
+					d3.max(data, function (d) {
+						return d.x + d.dx;
+					})
+				])
+				.range([0, width]);
+
+			var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, _.property('y'))])
+				.range([height, 0]);
+
+			var scale = function (d) {
+				var current = (val >= d.x) && (val <= (d.x + d.dx));
+
+				return {
+					width   : xScale(d.x + d.dx) - xScale(d.x) - 1,
+					height  : height - yScale(d.y),
+					x       : xScale(d.x),
+					y       : yScale(d.y),
+					bin     : d.x,
+					value   : d.y,
+					current : current
+				};
+			};
+
+			var fmt = d3.format('%');
+
+			var tick = function (t) {
+				return {
+					x     : xScale(t),
+					value : fmt(t)
+				};
+			};
+
+			this.$dispatch('tooltip-show', {
+				el       : this.$el,
+				position : {
+					x : evt.pageX,
+					y : evt.pageY
+				},
+				data     : {
+					region            : match[1],
+					indicator         : indicators[match[2]].short_name,
+					total_regions     : total_regions,
+					reporting_regions : data.length,
+					value             : fmt(val),
+					template          : 'tooltip-heatmap',
+					width             : width,
+					height            : height,
+					histogram         : _(data)
+						.filter(function (d) { return d.y > 0; })
+						.map(scale)
+						.value(),
+					ticks             : _(data)
+						.pluck('x')
+						.map(tick)
+						.push({ x : width, value : fmt(xScale.domain()[1]) })
+						.value()
+				}
+			});
+		},
+
+		hideTooltip : function () {
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
+		},
+
+		navigate : function (d) {
+			var re = /(.+)-(\d+)/;
+			var match = re.exec(d.id);
+
+			if (!match) {
+				return;
+			}
+
+			this.$dispatch('tooltip-hide', {
+				el : this.$el
+			});
+
+			page('/datapoints/management-dashboard/' + match[1] + '/' +
+				moment(this.campaign.start_date).format('YYYY/MM'));
+		},
+
+		indicatorHover : function (d, i, mouseover) {
+			var evt = mouseover ? 'tooltip-show' : 'tooltip-hide';
+			var indicators = _.indexBy(this.columns, 'short_name');
+
+			this.$dispatch(evt, {
+				el : this.$el,
+				position : {
+					x : d3.event.pageX,
+					y : d3.event.pageY
+				},
+				data : {
+					template    : 'tooltip-indicator',
+					name        : d,
+					description : indicators[d].description
+				}
+			});
 		}
 	},
 
 	watch : {
-		campaign : 'load',
-		region   : 'load'
+		'campaign'  : 'load',
+		'columns'   : 'render',
+		'region'    : 'load',
+		'series'    : 'render',
+		'showEmpty' : 'render'
 	}
 };
