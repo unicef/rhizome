@@ -71,6 +71,7 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/$', logout, name='logout'),
 
     ## ADMIN PAGES HITTING ENTITY API
+    url(r'^ufadmin/', views.UFAdminView.as_view(), name='ufadmin'),
     url(r'^ufadmin/users/', views.UFAdminView.as_view(), name='ufadmin'),
 
     ## NOT SURE WHAT THIS IS ##

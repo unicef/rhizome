@@ -16,6 +16,7 @@
     "page": "^1.6.0",
     "react": "^0.13.2",
     "react-datascope": "git+ssh://git@10.0.1.5:7999/utils/react-datascope.git",
+    "react-router": "^0.13.3",
     "superagent": "^0.20.0",
     "superagent-prefix": "0.0.2",
     "vue": "^0.11"

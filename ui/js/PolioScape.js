@@ -23,6 +23,7 @@ Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
 var Component = { // React components
 	UsersAdmin: require('./ufadmin/users.js')
 };
+var UFAdmin = require('./ufadmin');
 
 module.exports = {
 	Explorer: function (el) {
@@ -58,6 +59,6 @@ module.exports = {
 		})
 	},
 	UsersAdmin: function(el) {
-		React.render(<Component.UsersAdmin />, document.getElementById('main'));
+		UFAdmin.render(document.getElementById('main'));
 	}
 };
