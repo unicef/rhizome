@@ -39,6 +39,8 @@ class v2Request(object):
                 'permission_function':None},
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
