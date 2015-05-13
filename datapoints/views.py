@@ -472,7 +472,7 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 def user_edit(request,pk):
 
 
-    return render_to_response('user_update.html' ,context_instance=RequestContext(request))
+    return render_to_response('user_edit.html' ,context_instance=RequestContext(request))
 
 
     pass
