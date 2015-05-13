@@ -450,3 +450,20 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+
+def user_create(request):
+
+
+    return render_to_response('user_create.html' ,context_instance=RequestContext(request))
+
+
+def user_update(request):
+
+
+
+    return render_to_response('user_update.html' ,context_instance=RequestContext(request))
+
+
+    pass
