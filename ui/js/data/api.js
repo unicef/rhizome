@@ -32,11 +32,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function endPoint(path, mode, version, useDefaults) {
+function endPoint(path, mode, defaultVersion, useDefaults) {
 	mode = (mode) ? mode.toUpperCase() : 'GET';
-	version = version || 1;
+	defaultVersion = defaultVersion || 1;
 	useDefaults = _.isUndefined(useDefaults) ? true : useDefaults;
-	var versionedPath = '/v' + version + path;
 
 	var defaults = {
 		offset     : 0,
@@ -47,8 +46,10 @@ function endPoint(path, mode, version, useDefaults) {
 	};
 
 
-	function fetch(query) {
+	function fetch(query, version) {
+		version = version || defaultVersion;
 
+		var versionedPath = '/v' + version + path;
 		var req = prefix(request(mode, versionedPath));
 
 		// form GET request
@@ -74,12 +75,10 @@ function endPoint(path, mode, version, useDefaults) {
 						});
 					} else {
 						fulfill({
-							meta: res.body.meta || {},
-							// FIXME: Checking for res.body.data because the campaign API
-							// changed its response format so it no longer includes an
-							// 'objects' property. This should only be a temporary workaround
-							objects: res.body.objects || res.body.data ||
-								_.isArray(res.body) ? res.body : _.omit(res.body, 'meta')
+							meta    : res.body.meta || {},
+							objects : _.isArray(res.body) ?
+								res.body :
+								res.body.objects || _.omit(res.body, 'meta')
 						});
 					}
 				});
