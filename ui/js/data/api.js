@@ -83,7 +83,10 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
 		});
 	}
 
-	fetch.toString = function (query) {
+	fetch.toString = function (query, version) {
+		version = version || defaultVersion;
+		var versionedPath = '/v' + version + path;
+
 		return BASE_URL + versionedPath + urlencode(_.defaults({}, query, defaults));
 	};
 
@@ -121,8 +124,8 @@ function datapoint(q) {
 	});
 }
 
-datapoint.toString = function (query) {
-	return endPoint('/datapoint/').toString(query);
+datapoint.toString = function (query, version) {
+	return endPoint('/datapoint/').toString(query, version);
 };
 
 module.exports = {
