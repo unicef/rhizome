@@ -40,15 +40,34 @@ module.exports = React.createClass({
 		};
 	},
 
-	componentDidMount : function () {
-		this._draw(this.props, this.state);
-	},
-
 	componentWillReceiveProps : function (nextProps) {
-		this._draw(nextProps, this.state);
+		var size = 16;
+
+		var h = nextProps.series.length * size +
+			nextProps.margin.top +
+			nextProps.margin.bottom;
+
+		var w = _(nextProps.series).map(nextProps.getValues).max(_.size).length * size +
+			nextProps.margin.left +
+			nextProps.margin.right;
+
+		this.setState({
+			height : h,
+			width  : w
+		});
 	},
 
-	shouldComponentUpdate : _.constant(false),
+	shouldComponentUpdate : function (nextProps, nextState) {
+		var update = !_.isEqual(nextProps.margin, this.props.margin) ||
+			this.state.width != nextState.width ||
+			this.state.height != nextState.height;
+
+		if (!update) {
+			this._draw(nextProps, nextState);
+		}
+
+		return update;
+	},
 
 	render : function () {
 		var className = 'heatmap';
@@ -60,7 +79,8 @@ module.exports = React.createClass({
 		return (
 			<div className="chart">
 				<svg className={className} ref="svg"
-					viewBox={'0 0 ' + this.state.width + ' ' + this.state.height}>
+					width={this.state.width}
+					height={this.state.height}>
 
 					<g transform={'translate(' + this.props.margin.left + ',' + this.props.margin.top + ')'}>
 						<g className="y axis" transform="translate(0,-4)"></g>
@@ -71,6 +91,10 @@ module.exports = React.createClass({
 			</div>
 		);
 	},
+
+  componentDidUpdate : function () {
+    this._draw(this.props, this.state);
+  },
 
 	_draw : function (props, state) {
 		var self    = this;
