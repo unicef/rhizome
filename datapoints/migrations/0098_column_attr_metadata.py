@@ -27,7 +27,7 @@ class Migration(SchemaMigration):
             UNION ALL
 
             SELECT
-            	table_name
+            	  replace(table_name, 'auth_', '') as table_name
             	, column_name
             	, replace(column_name, '_', ' ') as display_name
             	, CAST(0 AS BOOLEAN)
