@@ -358,3 +358,16 @@ class IndicatorPermission(models.Model):
     class Meta:
         db_table = 'indicator_permission'
         unique_together = ('group','indicator')
+
+
+class UserGroup(models.Model):
+    '''
+    '''
+
+    user = models.ForeignKey('auth.User')
+    group = models.ForeignKey('auth.Group')
+
+
+    class Meta:
+        db_table = 'auth_user_groups'
+        managed = False

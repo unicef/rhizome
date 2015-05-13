@@ -1,5 +1,6 @@
 import json
 import datetime
+import traceback
 
 from django.core.serializers import json as djangojson
 from django.db.models import Model, ManyToManyField
@@ -25,26 +26,9 @@ class v2Request(object):
         self.content_type = content_type
         self.user_id = request.user.id
 
-        self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':User,
-                'permission_function':None},
-        }
+        # self.db_columns = self.db_obj._meta.get_all_field_names()
 
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
-        self.db_columns = self.db_obj._meta.get_all_field_names()
-        self.permission_function = self.orm_mapping[content_type]\
-            ['permission_function']
-
-        self.kwargs = self.clean_kwargs(request.GET)
-
+        self.data = None
         self.meta = None
         self.err = None
 
@@ -57,57 +41,6 @@ class v2Request(object):
         }
 
         return response_data
-
-
-    def clean_kwargs(self,query_dict):
-        '''
-        When passing filters make sure that what is in the URL string is
-        actually a field of the model.
-
-        This includes parsing the query terms out of the parameter key.  i.e.
-        when the API receives id__gte=50, we need to check to see if "id"
-        is a field ,not id__gte=50.
-        '''
-
-        cleaned_kwargs = {}
-        operator_lookup = {}
-
-        ## MAP THE QUERY PARAMETER WITH ITS OPERATOR, TO THE DB MODEL ##
-        for param in query_dict.keys():
-
-            try:
-                operator_lookup[param[0:param.index('__')]] = param
-            except ValueError:
-                operator_lookup[param] = param
-
-        ## ONLY WANT TO CLEAN KWARGS FOR COLUMNS THAT EXISTS FOR THIS MODEL ##
-        db_model_keys = list(set(self.db_columns).intersection(set(k for k in\
-            operator_lookup.keys())))
-
-        ## FINALLY CREATE ONE DICT (cleaned_kwargs) WITH THE ORIGINAL K,V ##
-        ## IN THE URL, BUT FILTERED ON COLUMNS AVAILABLE TO THE MODEL ##
-        for k in db_model_keys:
-
-            query_key = operator_lookup[k]
-            query_value = query_dict[operator_lookup[k]]#[]
-
-            if "," in query_value:
-                cleaned_kwargs[query_key] = query_value.split(',')
-            else:
-                cleaned_kwargs[query_key] = query_value
-
-        ## FIND THE LIMIT AND OFFSET AND STORE AS CLASS ATTRIBUETS ##
-        try:
-            self.limit = int(query_dict['limit'])
-        except KeyError:
-            self.limit = 1000000000
-
-        try:
-            self.offset = int(query_dict['offset'])
-        except KeyError:
-            self.offset = 0
-
-        return cleaned_kwargs
 
 
     def apply_region_permissions(self, list_of_object_ids):
@@ -154,19 +87,68 @@ class v2Request(object):
 class v2PostRequest(v2Request):
 
 
+    def __init__(self, request, content_type):
+
+        self.kwargs = self.clean_kwargs(request.POST)
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+        }
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+
+        return super(v2PostRequest, self).__init__(request, content_type)
+
+
+
+    def clean_kwargs(self,query_dict):
+
+        cleaned_kwargs = {}
+
+        for k,v in query_dict.iteritems():
+            cleaned_kwargs[k] = v
+
+        return cleaned_kwargs
+
+
     def main(self):
         '''
         Create an object in accordance to the URL kwargs and return the new ID
         '''
 
-        new_obj = self.db_obj.objects.create(**self.kwargs)
+        print self.kwargs
 
-        self.data = {'new_id':new_obj.id }
+        try:
+            new_obj = self.db_obj.objects.create(**self.kwargs)
+            self.data = {'new_id':new_obj.id }
+
+        except Exception, e:
+            self.err = traceback.format_exc()
+
+        # self.data = data[self.offset:self.limit + self.offset]
+        # self.err = err
+        # self.meta = self.build_meta()
 
         return super(v2PostRequest, self).main()
 
-
 class v2MetaRequest(v2Request):
+
+    def __init__(self, request, content_type):
+
+        return super(v2MetaRequest, self).__init__()
+
 
     def main(self):
         '''
@@ -253,6 +235,32 @@ class v2MetaRequest(v2Request):
 class v2GetRequest(v2Request):
 
 
+    def __init__(self, request, content_type):
+
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+        }
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+        self.permission_function = self.orm_mapping[content_type]\
+            ['permission_function']
+
+        self.kwargs = self.clean_kwargs(request.GET)
+        return super(v2GetRequest, self).__init__(request, content_type)
+
     def main(self):
         '''
         Get the list of database objects ( ids ) by applying the URL kwargs to
@@ -276,6 +284,58 @@ class v2GetRequest(v2Request):
         self.meta = self.build_meta()
 
         return super(v2GetRequest, self).main()
+
+
+    def clean_kwargs(self,query_dict):
+        '''
+        When passing filters make sure that what is in the URL string is
+        actually a field of the model.
+
+        This includes parsing the query terms out of the parameter key.  i.e.
+        when the API receives id__gte=50, we need to check to see if "id"
+        is a field ,not id__gte=50.
+        '''
+
+        cleaned_kwargs = {}
+        operator_lookup = {}
+
+        ## MAP THE QUERY PARAMETER WITH ITS OPERATOR, TO THE DB MODEL ##
+        for param in query_dict.keys():
+
+            try:
+                operator_lookup[param[0:param.index('__')]] = param
+            except ValueError:
+                operator_lookup[param] = param
+
+        ## ONLY WANT TO CLEAN KWARGS FOR COLUMNS THAT EXISTS FOR THIS MODEL ##
+        db_model_keys = list(set(self.db_obj._meta.get_all_field_names()).\
+            intersection(set(k for k in operator_lookup.keys())))
+
+        ## FINALLY CREATE ONE DICT (cleaned_kwargs) WITH THE ORIGINAL K,V ##
+        ## IN THE URL, BUT FILTERED ON COLUMNS AVAILABLE TO THE MODEL ##
+        for k in db_model_keys:
+
+            query_key = operator_lookup[k]
+            query_value = query_dict[operator_lookup[k]]#[]
+
+            if "," in query_value:
+                cleaned_kwargs[query_key] = query_value.split(',')
+            else:
+                cleaned_kwargs[query_key] = query_value
+
+        ## FIND THE LIMIT AND OFFSET AND STORE AS CLASS ATTRIBUETS ##
+        try:
+            self.limit = int(query_dict['limit'])
+        except KeyError:
+            self.limit = 1000000000
+
+        try:
+            self.offset = int(query_dict['offset'])
+        except KeyError:
+            self.offset = 0
+
+        return cleaned_kwargs
+
 
     def build_meta(self):
         '''
