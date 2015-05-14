@@ -128,8 +128,6 @@ class CustomSerializer(Serializer):
 
         meta_lookup = self.build_meta_lookup(data_objects)
 
-        print meta_lookup['indicator']
-
         expanded_objects = []
 
         for obj in data_objects:
@@ -179,13 +177,10 @@ class CustomSerializer(Serializer):
         ## every object has all indicators, so find the first one, and the IDs
         ## for each indicator in that object
         indicator_list = [obj['indicators'] for obj in object_list]
-        # print
-
 
         indicator_ids = []
         for il in indicator_list:
             ind_id = [ind_dict['indicator'] for ind_dict in il]
-            print '='
             try:
                 indicator_ids.append(int(ind_id[0]))
             except IndexError:
