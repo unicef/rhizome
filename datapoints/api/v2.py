@@ -28,31 +28,6 @@ class v2Request(object):
         self.content_type = content_type
         self.user_id = request.user.id
 
-
-        self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
-            'datapoint': {'orm_obj':DataPointAbstracted,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':UserAbstracted,
-                'permission_function':None},
-            'office': {'orm_obj':Office,
-                'permission_function':None},
-        }
-
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
-        self.db_columns = self.db_obj._meta.get_all_field_names()
-        self.permission_function = self.orm_mapping[content_type]\
-            ['permission_function']
-
-        self.kwargs = self.clean_kwargs(request.GET)
-
         self.data = None
         self.meta = None
         self.err = None
