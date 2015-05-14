@@ -40,6 +40,8 @@ class v2Request(object):
                 'permission_function':None},
             'user': {'orm_obj':UserAbstracted,
                 'permission_function':None},
+            'office': {'orm_obj':Office,
+                'permission_function':None},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
