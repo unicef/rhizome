@@ -12,20 +12,20 @@ function _loadCampaigns(campaigns, offices) {
       campaign.office = offices[campaign.office_id];
     })
     .sortBy('start_date')
-    .takeRight(3)
+    .takeRight(6)
     .value();
 
   // jshint validthis: true
   this.setState({ campaigns : recent });
 }
 
-function _campaignRow(campaign) {
+function _campaignRow(campaign, i) {
   var m        = moment(campaign.start_date, 'YYYY-MM-DD');
   var date     = m.format('MMMM YYYY');
   var datePath = m.format('YYYY/MM');
 
   return (
-    <tr key={campaign.id}>
+    <tr className={i % 2 === 0 ? 'even' : 'odd'} key={campaign.id}>
       <td>{campaign.office.name}: {date}</td>
       <td>
         <a href={'/datapoints/management-dashboard/' + campaign.office + '/' + datePath}>
@@ -85,7 +85,7 @@ module.exports = React.createClass({
               </p>
 
               <h2>Recent Campaigns</h2>
-              {campaigns}
+              <table>{campaigns}</table>
               <a href="">see all campaigns</a>
             </div>
           </div>
@@ -102,7 +102,7 @@ module.exports = React.createClass({
             </div>
             <div className="medium-8 columns">
               <h2>Recent CSV Uploads</h2>
-              {uploads}
+              <table>{uploads}</table>
               <a href="">see all uploads</a>
             </div>
           </div>
