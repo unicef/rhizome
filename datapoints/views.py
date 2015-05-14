@@ -433,27 +433,6 @@ def api_indicator(request):
         , content_type="application/json")
 
 
-def v2_meta_api(request,content_type):
-
-    return v2_api(request,content_type,True)
-
-def v2_api(request,content_type,is_meta=False):
-
-    if is_meta:
-        request_object = v2MetaRequest(request, content_type)
-        data = request_object.main()
-
-    elif request.POST:
-        request_object = v2PostRequest(request, content_type)
-        data = request_object.main()
-
-    else:
-        request_object = v2GetRequest(request, content_type)
-        data = request_object.main()
-
-    return HttpResponse(json.dumps(data),content_type="application/json")
-
-
 class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = User
@@ -473,3 +452,25 @@ def user_edit(request,pk):
 
     return render_to_response('user_edit.html', {'user_id':pk } ,
     context_instance=RequestContext(request))
+
+
+def v2_meta_api(request,content_type):
+
+    return v2_api(request,content_type,True)
+
+def v2_api(request,content_type,is_meta=False):
+
+    if is_meta:
+        request_object = v2MetaRequest(request, content_type)
+        data = request_object.main()
+
+    ## Handles Delete and Update.
+    elif request.POST:
+        request_object = v2PostRequest(request, content_type)
+        data = request_object.main()
+
+    else:
+        request_object = v2GetRequest(request, content_type)
+        data = request_object.main()
+
+    return HttpResponse(json.dumps(data),content_type="application/json")

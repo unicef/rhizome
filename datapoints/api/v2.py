@@ -91,26 +91,18 @@ class v2PostRequest(v2Request):
 
         self.kwargs = self.clean_kwargs(request.POST)
         self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':User,
-                'permission_function':None},
-            'region_permission': {'orm_obj':RegionPermission,
-                'permission_function':None},
-            'user_group': {'orm_obj':UserGroup,
-                'permission_function':None},
+            'campaign': {'orm_obj':Campaign},
+            'region': {'orm_obj':Region},
+            'indicator': {'orm_obj':Indicator},
+            'group': {'orm_obj':Group},
+            'user': {'orm_obj':User},
+            'region_permission': {'orm_obj':RegionPermission},
+            'user_group': {'orm_obj':UserGroup},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
         return super(v2PostRequest, self).__init__(request, content_type)
-
 
 
     def clean_kwargs(self,query_dict):
@@ -125,23 +117,62 @@ class v2PostRequest(v2Request):
 
     def main(self):
         '''
+        if method is create:
         Create an object in accordance to the URL kwargs and return the new ID
+
+        if detlete:
+            query for objects taht match
         '''
 
-        print self.kwargs
+        ## Create, Update or Delete ##
+        request_type = self.determined_request_type()
 
         try:
-            new_obj = self.db_obj.objects.create(**self.kwargs)
-            self.data = {'new_id':new_obj.id }
+
+            if request_type == 'CREATE':
+
+                new_obj = self.db_obj.objects.create(**self.kwargs)
+                self.data = {'new_id':new_obj.id }
+
+            elif request_type == 'DELETE':
+
+                old_objs = self.db_obj.objects.get(**self.kwargs)
+                self.data = {'deleted_ids': [obj.id for obj in old_objs] }
+
+                old_objs.delete()
+
+            elif request_type == 'UPDATE':
+
+                obj_to_update = self.db_obj(id=self.id_param, **self.kwargs)
+                obj_to_update.save()
+
+                self.data = data = {'updated_id': obj_to_update.id, 'updated_values'
+                    : self.kwargs }
 
         except Exception, e:
             self.err = traceback.format_exc()
 
-        # self.data = data[self.offset:self.limit + self.offset]
-        # self.err = err
-        # self.meta = self.build_meta()
-
         return super(v2PostRequest, self).main()
+
+    def determined_request_type(self):
+        '''
+        POST can be create, update, or delete.
+        '''
+
+        try:
+            self.id_param = self.kwargs['id']
+            del self.kwargs['id']
+
+            if self.id_param == '':
+                return 'DELETE'
+            else:
+                return 'UPDATE'
+
+        except KeyError:
+            self.id_param = None
+            return 'CREATE'
+
+
 
 class v2MetaRequest(v2Request):
 
