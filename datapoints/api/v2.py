@@ -146,8 +146,8 @@ class v2PostRequest(v2Request):
                 obj_to_update = self.db_obj(id=self.id_param, **self.kwargs)
                 obj_to_update.save()
 
-                self.data = data = {'updated_id': obj_to_update.id, 'updated_values'
-                    : self.kwargs }
+                self.data = data = {'updated_id': obj_to_update.id
+                , 'updated_values': self.kwargs }
 
         except Exception, e:
             self.err = traceback.format_exc()
