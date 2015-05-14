@@ -54,7 +54,7 @@
 	               {{permission.name}}
 	              </td>
 	              <td>
-	                <input type="checkbox" />
+	                <input type="checkbox" data-internal-id="{{permission.id}}" data-region-id="{{permission.region_id}}" v-on="change:updateRegionalAccessCanRead" v-model="permission.canEnter" />
 	              </td>
 	              <td>
 	                <span v-on="click:deleteRegionalAccess(permission.region_id)" class="fa fa-times"></span>

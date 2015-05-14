@@ -5,9 +5,31 @@
 <form action = "" method = "post" class="form inline user-account-container">
 	<h2>Edit User</h2>
   {% csrf_token %}
-  <p>username : {{ form.username }}</p>
-  <p>first name : {{ form.first_name }}</p>
-  <p>last name : {{ form.last_name }}</p>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> username</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.username }}
+     </div>
+  </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> first name</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.first_name }}
+     </div>
+  </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> last name</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.last_name }}
+     </div>
+  </div>
+  
 
   <div v-component="uf-user-account" v-with="user_id:user_id"></div>
   
@@ -32,7 +54,7 @@
 
 {% block scripts %}
 <script>
-Polio.UserAccount('#main',{{user_id}});
+Polio.UserAccount('#main',25{{user_id}});
 </script>
 {% endblock %}
 
