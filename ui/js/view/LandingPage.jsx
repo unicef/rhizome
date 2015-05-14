@@ -29,12 +29,12 @@ function _campaignRow(campaign, i) {
     <tr className={i % 2 === 0 ? 'even' : 'odd'} key={campaign.id}>
       <td>{campaign.office.name}: {date}</td>
       <td>
-        <a href={'/datapoints/management-dashboard/' + campaign.office + '/' + datePath}>
+        <a href={'/datapoints/management-dashboard/' + campaign.office.name + '/' + datePath}>
           Country
         </a>
       </td>
       <td>
-        <a href={'/datapoints/district/' + campaign.office + '/' + datePath}>
+        <a href={'/datapoints/district/' + campaign.office.name + '/' + datePath}>
           District
         </a>
       </td>
