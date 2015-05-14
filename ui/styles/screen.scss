@@ -245,7 +245,7 @@ button,
    &:not(.disabled):not(.success):hover {
    	border-color: $button-border-color;
    }
-   
+
 }
 
 /* fixed-header tables */
@@ -458,7 +458,38 @@ ul {
 	}
 
 	p {
-		color : inherit;
+		color     : inherit;
+		font-size : .625rem;
+
+		table {
+			display : inline-block;
+			float   : left;
+			margin  : 0 1em 0 0;
+		}
+	}
+
+	table {
+		background-color : transparent;
+		border-top       : 1px solid $steel;
+		border-left      : none;
+		border-right     : none;
+		border-bottom    : none;
+		min-width        : 0;
+		table-layout     : auto;
+		width            : initial;
+
+		tr {
+			background-color : transparent;
+			padding          : 0 0.5em;
+		}
+
+		td, th {
+			background-color : transparent;
+			border-bottom    : 1px solid $steel;
+			color            : inherit;
+			font-size        : .625rem;
+			padding          : 0.1em;
+		}
 	}
 }
 
@@ -509,6 +540,14 @@ ul {
 	background-color : $gainsboro;
 	color            : $body-font-color;
 	padding          : 0.2em 0.7em;
+}
+
+.indicator-ranges {
+	tbody {
+		th {
+			padding-right : 1em;
+		}
+	}
 }
 
 @media #{$small-up} {

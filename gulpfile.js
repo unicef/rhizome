@@ -13,8 +13,8 @@ var $ = require('gulp-load-plugins')();
 
 var path = {
 	main      : './ui/js/PolioScape.js',
-	components: './ui/js/**/*.{js,html,css,sass,scss}',
-	js        : './ui/js/**/*.js',
+	components: './ui/js/**/*.{js,jsx,html,css,sass,scss}',
+	js        : './ui/js/**/*.{js,jsx}',
 	sass      : ['./ui/styles/**/{screen,print,ie,non-ie-print}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',

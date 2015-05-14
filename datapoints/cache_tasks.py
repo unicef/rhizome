@@ -437,7 +437,10 @@ class CacheRefresh(object):
 
 
 def cache_indicator_abstracted():
-
+    '''
+    Delete indicator abstracted, then re-insert by joiniding indicator boudns
+    and creatign json for the indicator_bound field
+    '''
     IndicatorAbstracted.objects.all().delete()
 
     i_raw = Indicator.objects.raw("""
@@ -486,7 +489,11 @@ def cache_indicator_abstracted():
             bound_array = [v for k,v in indicator_bounds.iteritems()]
 
         IndicatorAbstracted.objects.create(
-            indicator_id = ind_id,
+            id = ind_id,
+            name = ind_df['name'].unique()[0],
+            short_name = ind_df['short_name'].unique()[0],
+            description = ind_df['description'].unique()[0],
+            slug = ind_df['slug'].unique()[0],
             bound_json = bound_array
         )
 

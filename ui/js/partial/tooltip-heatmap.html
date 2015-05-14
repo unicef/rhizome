@@ -1,2 +1,45 @@
 <h3>{{ region }}</h3>
-<p>{{ indicator }}: {{ value }}</p>
+<h4>{{ indicator }}:&emsp;{{ value }}</h4>
+<h6>Regional Distribution</h6>
+<svg class="histogram" v-attr="width : width, height : height">
+	<g class="x axis" transform="translate(0,120)">
+		<line class="domain" v-attr="x2 : width"></line>
+		<g v-repeat="ticks"
+			v-attr="transform : 'translate(' + x + ',0)'"
+			class="tick">
+			<text v-text="value" text-anchor="middle" dy="1.2em" fill="#fff"></text>
+		</g>
+	</g>
+	<g v-repeat="histogram"
+		v-attr="transform : 'translate(' + x + ',' + y + ')'"
+		v-class="current : current">
+
+		<rect v-attr="width : width, height : height"></rect>
+
+		<text v-text="value"
+			v-attr="transform : 'translate(' + (width/2) + ',0)'"
+			text-anchor="middle"
+			class="label"
+			dy="-.2em"
+			></text>
+	</g>
+</svg>
+
+<div class="clearfix"></div>
+
+<h6>Targets</h6>
+<table class="indicator-ranges" style="float:left;margin:0 1em 0 0">
+	<tbody>
+		<tr v-repeat="targets">
+			<th v-text="bound_name"></th>
+			<td class="numeric" v-text="mn_val"></td>
+			<td>&ndash;</td>
+			<td v-text="mx_val"></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>
+	{{ reporting_regions }} / {{ total_regions }} regions reported values
+	for {{ indicator }}.
+</p>
