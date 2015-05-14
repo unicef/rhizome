@@ -47,9 +47,6 @@ urlpatterns = patterns('',
     url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
         name='v2_meta_api'),
 
-    ## Entity Api ##
-    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
-
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 
