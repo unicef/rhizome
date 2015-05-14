@@ -87,7 +87,7 @@ module.exports = React.createClass({
 
               <h2>Recent Campaigns</h2>
               <table>{campaigns}</table>
-              <a href="">see all campaigns</a>
+              <a href="/datapoints/campaigns/">see all campaigns</a>
             </div>
           </div>
 
@@ -103,7 +103,7 @@ module.exports = React.createClass({
             <div className="medium-8 columns">
               <h2>Recent CSV Uploads</h2>
               <table>{uploads}</table>
-              <a href="">see all uploads</a>
+              <a href="/source_data/document_index/">see all uploads</a>
             </div>
           </div>
 
