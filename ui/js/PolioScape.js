@@ -1,6 +1,10 @@
 'use strict';
 
-var Vue = require('vue'); 
+var React = require('react');
+
+var LandingPage = require('view/LandingPage.jsx');
+
+var Vue = require('vue');
 Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
@@ -48,5 +52,8 @@ module.exports = {
 			     	});
 			}*/
 		});
+	},
+	LandingPage: function (el) {
+		React.render(React.createElement(LandingPage), el);
 	}
 };

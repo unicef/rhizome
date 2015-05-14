@@ -135,7 +135,7 @@ module.exports = {
 	datapointUpsert: endPoint('/datapointentry/', 'post'),
 	geo            : endPoint('/geo/'),
 	indicators     : endPoint('/indicator/'),
-	office         : endPoint('/office/'),
+	office         : endPoint('/office/', 'get', 2),
 	regions        : endPoint('/region/'),
 	document_review: endPoint('/source_data/document_review/'),
 	map_field      : endPoint('/api_map_meta/','post'),
