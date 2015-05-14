@@ -2,7 +2,7 @@
 /* global Promise */
 'use strict';
 
-var BASE_URL = '/api/v1';
+var BASE_URL = '/api';
 
 var _        = require('lodash');
 var request  = require('superagent');
@@ -32,8 +32,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function endPoint(path, mode) {
+function endPoint(path, mode, defaultVersion, useDefaults) {
 	mode = (mode) ? mode.toUpperCase() : 'GET';
+	defaultVersion = defaultVersion || 1;
+	useDefaults = _.isUndefined(useDefaults) ? true : useDefaults;
 
 	var defaults = {
 		offset     : 0,
@@ -42,13 +44,15 @@ function endPoint(path, mode) {
 	};
 
 
-	function fetch(query) {
+	function fetch(query, version) {
+		version = version || defaultVersion;
 
-		var req = prefix(request(mode, path));
+		var versionedPath = '/v' + version + path;
+		var req = prefix(request(mode, versionedPath));
 
 		// form GET request
 		if (mode === 'GET') {
-			var q = _.defaults({}, query, defaults);
+			var q = useDefaults ? _.defaults({}, query, defaults) : query;
 			req.query(q);
 		}
 		// form POST request
@@ -69,11 +73,10 @@ function endPoint(path, mode) {
 						});
 					} else {
 						fulfill({
-							meta: res.body.meta || {},
-							// FIXME: Checking for res.body.data because the campaign API
-							// changed its response format so it no longer includes an
-							// 'objects' property. This should only be a temporary workaround
-							objects: res.body.objects || res.body.data || _.omit(res.body, 'meta')
+							meta    : res.body.meta || {},
+							objects : _.isArray(res.body) ?
+								res.body :
+								res.body.objects || _.omit(res.body, 'meta')
 						});
 					}
 				});
@@ -81,7 +84,7 @@ function endPoint(path, mode) {
 	}
 
 	fetch.toString = function (query) {
-		return BASE_URL + path + urlencode(_.defaults({}, query, defaults));
+		return BASE_URL + versionedPath + urlencode(_.defaults({}, query, defaults));
 	};
 
 	return fetch;
@@ -123,14 +126,23 @@ datapoint.toString = function (query) {
 };
 
 module.exports = {
-	campaign       : endPoint('/campaign/'),
-	datapoints     : datapoint,
-	datapointsRaw  : endPoint('/datapointentry/'),
-	datapointUpsert: endPoint('/datapointentry/', 'post'),
-	geo            : endPoint('/geo/'),
-	indicators     : endPoint('/indicator/'),
-	office         : endPoint('/office/'),
-	regions        : endPoint('/region/'),
-	document_review: endPoint('/source_data/document_review/'),
-	map_field      : endPoint('/api_map_meta/','post')
+	campaign       		  : endPoint('/campaign/'),
+	datapoints     		  : datapoint,
+	datapointsRaw  		  : endPoint('/datapointentry/'),
+	datapointUpsert		  : endPoint('/datapointentry/', 'post'),
+	geo            		  : endPoint('/geo/'),
+	indicators     		  : endPoint('/indicator/'),
+	office         		  : endPoint('/office/'),
+	regions        		  : endPoint('/region/'),
+	document_review       : endPoint('/source_data/document_review/'),
+	map_field             : endPoint('/api_map_meta/','post'),
+    groups                : endPoint('/group/','get',2),  
+    user_groups           : endPoint('/user_group/','get',2),
+    map_user_group        : endPoint('/user_group/','post',2),
+    region_permission     : endPoint('/region_permission/','get',2),
+    set_region_permission : endPoint('/region_permission/','post',2),
+	admin: {
+		usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
+		users: endPoint('/user/', 'get', 2, false)
+	}
 };

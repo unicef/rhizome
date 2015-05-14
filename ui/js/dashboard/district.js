@@ -301,6 +301,18 @@ module.exports = {
 				};
 			};
 
+			var targets = _(indicators[match[2]].indicator_bounds)
+				.reject(function (r) { return r.bound_name == 'invalid'; })
+				.sortBy(function (r) { return RANGE_ORDER[r.bound_name]; })
+				.map(function (r) {
+					return {
+						bound_name : r.bound_name,
+						mn_val     : fmt(r.mn_val),
+						mx_val     : fmt(r.mx_val)
+					};
+				})
+				.value();
+
 			this.$dispatch('tooltip-show', {
 				el       : this.$el,
 				position : {
@@ -311,7 +323,7 @@ module.exports = {
 					region            : match[1],
 					indicator         : indicators[match[2]].short_name,
 					total_regions     : total_regions,
-					reporting_regions : data.length,
+					reporting_regions : _.sum(data, 'y'),
 					value             : fmt(val),
 					template          : 'tooltip-heatmap',
 					width             : width,
@@ -324,7 +336,8 @@ module.exports = {
 						.pluck('x')
 						.map(tick)
 						.push({ x : width, value : fmt(xScale.domain()[1]) })
-						.value()
+						.value(),
+					targets            : targets
 				}
 			});
 		},
