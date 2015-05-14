@@ -450,12 +450,16 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
             kwargs={'pk':new_user.id}))
 
 
-def user_edit(request,pk):
+class UserEditView(PermissionRequiredMixin,generic.UpdateView):
 
-    form = UserEditForm(instance=User.objects.get(id=pk))
+    model = User
+    template_name = 'user_edit.html'
+    form_class = UserEditForm
+    # permission_required = 'data
 
-    return render_to_response('user_edit.html', {'user_id':pk,'form':form} ,
-    context_instance=RequestContext(request))
+
+    # def get_initial(self):
+    #     return { 'username':'dat_dude'}
 
 
 def v2_meta_api(request,content_type):
