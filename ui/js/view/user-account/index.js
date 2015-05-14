@@ -10,7 +10,6 @@ module.exports = {
 	template: require('./template.html'),
 	data: function(){
 	  return {
-		roles:[{id:1,title:'Security'},{id:1,title:'Supply'},{id:1,title:'Finance'}],
 		regions:[],
 		groups:[]    
 	  };
@@ -62,8 +61,12 @@ module.exports = {
 	  }); 
 	},
 	methods: {
-	  addUserGroup: function(groupId){
-	     api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId})
+	  addUserGroup: function(e){
+	     console.log(e,e.target.attributes.data-group-id);
+	    // api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId})
+	  },
+	  deleteUserGroup: function(groupId){
+	     api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
 	  },
 	  addRegionalAccess: function(data){
 	    var self = this;
@@ -72,11 +75,17 @@ module.exports = {
 	      self.loadRegionalAccess();
 	    });
 	  },
+	  deleteRegionalAccess: function(data){
+	    var self = this;
+	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r',id:'' }).then(function(){
+	      self.loadRegionalAccess();
+	    });
+	  },
 	  loadRegionalAccess: function(){
 	    var self = this;
 	    
 	    
-	    api.region_permission( {user_id:this.$parent.$data.user_id}).then(function(data){
+	    api.region_permission( {user:this.$parent.$data.user_id}).then(function(data){
 	      var regions = data.objects;
 	       _.forEach(regions,function(region){
 	           region.name = self.region_map[region.region_id].name;
