@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-   <div v-component="uf-user-account" v-with="user_id:user_id"></div>
 
+<form action = "" method = "post" class="form">
+	<h2>New User</h2>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary"> Submit </button>
+</form>
+
+ <div v-component="uf-user-account" v-with="user_id:user_id"></div>
 
 {% endblock %}
 
@@ -13,4 +20,3 @@ Polio.UserAccount('#main',21);
 {% endblock %}
 
   <h1>{{user_id}}</h1>
-
