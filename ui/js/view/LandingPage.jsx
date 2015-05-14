@@ -6,6 +6,8 @@ var React  = require('react');
 
 var api = require('data/api');
 
+var DashboardStore = require('stores/DashboardStore');
+
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
     .each(function (campaign) {
@@ -26,10 +28,39 @@ function _loadDocuments(documents) {
   this.setState({ uploads : recent });
 }
 
+function _includeDashboard(dashboard, office) {
+  var slug    = dashboard.slug;
+  var offices = dashboard.offices;
+
+  return (slug !== 'management-dashboard' &&
+    slug !== 'district' &&
+    (_.isEmpty(offices) || offices.indexOf(office) > -1)
+  );
+}
+
+function _dashboardSelect(dashboards, campaign) {
+  if (_.isEmpty(dashboards)) {
+    return null;
+  }
+
+  var date = moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+
+  // FIXME: This should render a dropdown with all other available dashboards
+  return (
+    <a href={'/datapoints/' + dashboards[0].slug + '/' + campaign.office.name + '/' + date}>
+      {dashboards[0].name}
+    </a>
+  );
+}
+
 function _campaignRow(campaign, i) {
-  var m        = moment(campaign.start_date, 'YYYY-MM-DD');
-  var date     = m.format('MMMM YYYY');
-  var datePath = m.format('YYYY/MM');
+  var m          = moment(campaign.start_date, 'YYYY-MM-DD');
+  var date       = m.format('MMMM YYYY');
+  var datePath   = m.format('YYYY/MM');
+  var dashboards = _(DashboardStore.getAll())
+    .filter(_.partial(_includeDashboard, _, campaign.office_id))
+    .thru(_.partial(_dashboardSelect, _, campaign))
+    .value();
 
   return (
     <tr className={i % 2 === 0 ? 'even' : 'odd'} key={campaign.id}>
@@ -44,7 +75,7 @@ function _campaignRow(campaign, i) {
           District
         </a>
       </td>
-      <td></td>
+      <td>{dashboards}</td>
     </tr>
   );
 }
