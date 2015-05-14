@@ -20,6 +20,12 @@ function _loadCampaigns(campaigns, offices) {
   this.setState({ campaigns : recent });
 }
 
+function _loadDocuments(documents) {
+  var recent = _.take(documents, 5);
+
+  this.setState({ uploads : recent });
+}
+
 function _campaignRow(campaign, i) {
   var m        = moment(campaign.start_date, 'YYYY-MM-DD');
   var date     = m.format('MMMM YYYY');
@@ -43,12 +49,14 @@ function _campaignRow(campaign, i) {
   );
 }
 
-function _uploadRow(upload) {
+function _uploadRow(upload, i) {
+  var status = upload.is_processed === 'False' ? 'INCOMPLETE' : 'COMPLETE';
   return (
-    <tr key={upload.id}>
-      <th>{upload.user}</th>
-      <td>{upload.file}</td>
-      <td>{upload.status}</td>
+    <tr className={i % 2 === 0 ? 'odd' : 'even'} key={upload.id}>
+      <td>
+        <a href={'/source_data/field_mapping/' + upload.id}>{upload.docfile}</a>
+      </td>
+      <td>{status}</td>
     </tr>
   );
 }
@@ -62,13 +70,18 @@ module.exports = React.createClass({
   },
 
   componentWillMount : function () {
+    var getObjects   = _.property('objects');
+    var indexObjects = _.partial(_.indexBy, _, 'id');
+
     Promise.all([
-        api.campaign().then(_.property('objects')),
-        api.office().then(function (d) {
-          return _.indexBy(d.objects, 'id');
-        })
+        api.campaign().then(getObjects),
+        api.office().then(getObjects).then(indexObjects)
       ])
       .then(_.spread(_loadCampaigns.bind(this)));
+
+    api.document()
+      .then(getObjects)
+      .then(_loadDocuments.bind(this));
   },
 
   render : function () {

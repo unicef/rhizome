@@ -133,6 +133,7 @@ module.exports = {
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),
+	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/'),
 	office                : endPoint('/office/', 'get', 2),
