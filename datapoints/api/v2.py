@@ -28,7 +28,6 @@ class v2Request(object):
         self.request = request
         self.content_type = content_type
         self.user_id = request.user.id
-
         self.data = None
         self.meta = None
         self.err = None

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import RedirectView
+from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
@@ -48,7 +49,7 @@ urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
 
     ## HOME PAGE
-    url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
+    url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
 
     ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
