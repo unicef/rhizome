@@ -55,7 +55,7 @@ urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
 
     ## HOME PAGE
-    url(r'^$', TemplateView.as_view(template_name="index.html"), name='index'),
+    url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
 
     ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
