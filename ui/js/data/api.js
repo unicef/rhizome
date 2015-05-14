@@ -2,7 +2,7 @@
 /* global Promise */
 'use strict';
 
-var BASE_URL = '/api/v1';
+var BASE_URL = '/api';
 
 var _        = require('lodash');
 var request  = require('superagent');
@@ -32,25 +32,27 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function endPoint(path, mode) {
+function endPoint(path, mode, defaultVersion, useDefaults) {
 	mode = (mode) ? mode.toUpperCase() : 'GET';
+	defaultVersion = defaultVersion || 1;
+	useDefaults = _.isUndefined(useDefaults) ? true : useDefaults;
 
 	var defaults = {
 		offset     : 0,
-		username   : 'evan',
-		api_key    : '67bd6ab9a494e744a213de2641def88163652dad',
 		format     : 'json',
 		uri_display: 'id'
 	};
 
 
-	function fetch(query) {
+	function fetch(query, version) {
+		version = version || defaultVersion;
 
-		var req = prefix(request(mode, path));
+		var versionedPath = '/v' + version + path;
+		var req = prefix(request(mode, versionedPath));
 
 		// form GET request
 		if (mode === 'GET') {
-			var q = _.defaults({}, query, defaults);
+			var q = useDefaults ? _.defaults({}, query, defaults) : query;
 			req.query(q);
 		}
 		// form POST request
@@ -71,19 +73,21 @@ function endPoint(path, mode) {
 						});
 					} else {
 						fulfill({
-							meta: res.body.meta || {},
-							// FIXME: Checking for res.body.data because the campaign API
-							// changed its response format so it no longer includes an
-							// 'objects' property. This should only be a temporary workaround
-							objects: res.body.objects || res.body.data || _.omit(res.body, 'meta')
+							meta    : res.body.meta || {},
+							objects : _.isArray(res.body) ?
+								res.body :
+								res.body.objects || _.omit(res.body, 'meta')
 						});
 					}
 				});
 		});
 	}
 
-	fetch.toString = function (query) {
-		return BASE_URL + path + urlencode(_.defaults({}, query, defaults));
+	fetch.toString = function (query, version) {
+		version = version || defaultVersion;
+		var versionedPath = '/v' + version + path;
+
+		return BASE_URL + versionedPath + urlencode(_.defaults({}, query, defaults));
 	};
 
 	return fetch;
@@ -120,8 +124,8 @@ function datapoint(q) {
 	});
 }
 
-datapoint.toString = function (query) {
-	return endPoint('/datapoint/').toString(query);
+datapoint.toString = function (query, version) {
+	return endPoint('/datapoint/').toString(query, version);
 };
 
 module.exports = {
@@ -134,5 +138,10 @@ module.exports = {
 	office         : endPoint('/office/'),
 	regions        : endPoint('/region/'),
 	document_review: endPoint('/source_data/document_review/'),
-	map_field      : endPoint('/api_map_meta/','post')
+	map_field      : endPoint('/api_map_meta/','post'),
+
+	admin: {
+		usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
+		users: endPoint('/user/', 'get', 2, false)
+	}
 };
