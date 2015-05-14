@@ -85,7 +85,7 @@ urlpatterns = [
         name='create_userr'),
 
     ## UPDATE ##
-    url(r'^user/edit/(?P<pk>[0-9]+)/$', views.user_edit,
+    url(r'^user/edit/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
         name='user_edit'),
 
     ######################################

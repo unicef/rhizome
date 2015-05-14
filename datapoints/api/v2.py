@@ -308,6 +308,8 @@ class v2GetRequest(v2Request):
                 'permission_function':None},
             'document': {'orm_obj':Document,
                 'permission_function':None},
+            'office': {'orm_obj':Office,
+                'permission_function':None},
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
