@@ -179,14 +179,24 @@ class CustomSerializer(Serializer):
         ## every object has all indicators, so find the first one, and the IDs
         ## for each indicator in that object
         indicator_list = [obj['indicators'] for obj in object_list]
-        indicator_ids = [ind_dict['indicator'] for ind_dict in indicator_list[0]]
+        # print
 
+
+        indicator_ids = []
+        for il in indicator_list:
+            ind_id = [ind_dict['indicator'] for ind_dict in il]
+            print '='
+            try:
+                indicator_ids.append(int(ind_id[0]))
+            except IndexError:
+                pass
 
         for r in Region.objects.filter(id__in=region_ids):
             meta_lookup['region'][r.id] = r.__unicode__()
 
         for c in Campaign.objects.filter(id__in=campaign_ids):
             meta_lookup['campaign'][c.id] = c.__unicode__()
+
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):
             meta_lookup['indicator'][ind.id] = ind.__unicode__()
