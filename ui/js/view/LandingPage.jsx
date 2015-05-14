@@ -93,10 +93,9 @@ module.exports = React.createClass({
           <div className="row">
             <div className="medium-4 columns">
               <h2>Enter Data</h2>
-              <a href="/datapoints/entry">
+              <a className="small button" href="/datapoints/entry">
                 <i className="fa fa-table"></i>&emsp;Data Entry Form
-              </a>
-              <a href="/source_data/file_upload">
+              </a>&emsp;<a className="small button" href="/source_data/file_upload">
                 <i className="fa fa-upload"></i>&emsp;Upload data
               </a>
             </div>

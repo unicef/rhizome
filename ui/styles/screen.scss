@@ -223,6 +223,12 @@ button,
 	&:focus {
 		outline: none;
 	}
+
+	&.small {
+		border-bottom-width : 2px;
+		font-size           : rem-calc(9);
+		padding             : 0.5em 1.5em;
+	}
 }
 
 [class*="block-grid-"] > li {
