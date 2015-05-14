@@ -452,7 +452,7 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
 def user_edit(request,pk):
 
-    form = UserEditForm
+    form = UserEditForm(instance=User.objects.get(id=pk))
 
     return render_to_response('user_edit.html', {'user_id':pk,'form':form} ,
     context_instance=RequestContext(request))
