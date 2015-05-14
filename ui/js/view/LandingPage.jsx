@@ -13,6 +13,7 @@ function _loadCampaigns(campaigns, offices) {
     })
     .sortBy('start_date')
     .takeRight(6)
+    .reverse()
     .value();
 
   // jshint validthis: true
