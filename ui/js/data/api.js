@@ -126,17 +126,21 @@ datapoint.toString = function (query) {
 };
 
 module.exports = {
-	campaign       : endPoint('/campaign/'),
-	datapoints     : datapoint,
-	datapointsRaw  : endPoint('/datapointentry/'),
-	datapointUpsert: endPoint('/datapointentry/', 'post'),
-	geo            : endPoint('/geo/'),
-	indicators     : endPoint('/indicator/'),
-	office         : endPoint('/office/'),
-	regions        : endPoint('/region/'),
-	document_review: endPoint('/source_data/document_review/'),
-	map_field      : endPoint('/api_map_meta/','post'),
-
+	campaign       		  : endPoint('/campaign/'),
+	datapoints     		  : datapoint,
+	datapointsRaw  		  : endPoint('/datapointentry/'),
+	datapointUpsert		  : endPoint('/datapointentry/', 'post'),
+	geo            		  : endPoint('/geo/'),
+	indicators     		  : endPoint('/indicator/'),
+	office         		  : endPoint('/office/'),
+	regions        		  : endPoint('/region/'),
+	document_review       : endPoint('/source_data/document_review/'),
+	map_field             : endPoint('/api_map_meta/','post'),
+    groups                : endPoint('/group/','get',2),  
+    user_groups           : endPoint('/user_group/','get',2),
+    map_user_group        : endPoint('/user_group/','post',2),
+    region_permission     : endPoint('/region_permission/','get',2),
+    set_region_permission : endPoint('/region_permission/','post',2),
 	admin: {
 		usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
 		users: endPoint('/user/', 'get', 2, false)
