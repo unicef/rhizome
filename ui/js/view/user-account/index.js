@@ -61,13 +61,16 @@ module.exports = {
 	  }); 
 	},
 	methods: {
-	  addUserGroup: function(e){
-	     console.log(e,e.target.attributes.data-group-id);
-	    // api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId})
-	  },
-	  deleteUserGroup: function(groupId){
-	     api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
-	  },
+	  addRemoveUserGroup: function(e){
+	     var groupId = e.target.getAttribute('data-group-id');
+	     if(e.target.checked)
+	     {
+	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId});
+	     }
+	     else {
+	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
+         }	
+  	  },
 	  addRegionalAccess: function(data){
 	    var self = this;
 	    self.$set('regionalAccessLoading',true);

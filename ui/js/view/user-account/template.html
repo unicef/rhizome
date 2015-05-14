@@ -8,7 +8,7 @@
      </div>
      <div class="columns small-8 right-box">
        <ul class="user-roles">
-         <li v-repeat="group:groups"><input type="checkbox" v-model="group.active" data-group-id="{{group.id}}" v-on="change:addUserGroup" /> <span class="roll-title">{{group.name}}</span> </li>
+         <li v-repeat="group:groups"><input type="checkbox" v-model="group.active" data-group-id="{{group.id}}" v-on="change:addRemoveUserGroup" /> <span class="roll-title">{{group.name}}</span> </li>
        </ul>
      </div>
   </div>
@@ -67,16 +67,6 @@
        
        </div>
     </div>
-  <div class="row">
-     <div class="columns small-4 left-box">
-     &nbsp;
-     </div>
-     <div class="columns small-4 right-box">
-     <a class="button">Save User</a>
-     </div>
-     <div class="columns small-4">
-     &nbsp;
-     </div>
-  </div>
+
   </div>
 
