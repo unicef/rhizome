@@ -17,6 +17,7 @@ from django.contrib.auth.models import User, Group
 from django.core import serializers
 
 from datapoints.models import *
+from source_data.models import *
 
 
 
@@ -304,6 +305,8 @@ class v2GetRequest(v2Request):
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
             'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+            'document': {'orm_obj':Document,
                 'permission_function':None},
         }
 

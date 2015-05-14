@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-   <div v-component="uf-user-account" v-with="user_id:user_id"></div>
 
+<form action = "" method = "post" class="form inline user-account-container">
+	<h2>Edit User</h2>
+  {% csrf_token %}
+  <p>username : {{ form.username }}</p>
+  <p>first name : {{ form.first_name }}</p>
+  <p>last name : {{ form.last_name }}</p>
+
+  <div v-component="uf-user-account" v-with="user_id:user_id"></div>
+  <button type="submit" class="btn btn-primary"> Submit </button>
+</form>
+
+ 
 
 {% endblock %}
 
@@ -11,6 +22,4 @@
 Polio.UserAccount('#main',{{user_id}});
 </script>
 {% endblock %}
-
-
 
