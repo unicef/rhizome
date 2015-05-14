@@ -192,9 +192,27 @@ class v2MetaRequest(v2Request):
                 'defaultSortDirection':'asc',
         }
 
+
+        db_table = self.db_obj._meta.db_table
+        ca_dct = ColumnAttributes.objects.filter(table_name = \
+            db_table).values('column_name','display_name',\
+            'display_on_table_flag')
+
+        self.column_lookup = {}
+        for row in ca_dct:
+            column_name = row['column_name']
+            del row['column_name']
+            self.column_lookup[column_name] = row
+
+
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
-            self.build_field_meta_dict(field,ix)
+
+            try:
+                self.build_field_meta_dict(field,ix)
+            except KeyError:
+                pass
+
 
         self.data['fields'] = self.all_field_meta
 
@@ -211,19 +229,6 @@ class v2MetaRequest(v2Request):
         except FieldDoesNotExist:
             return None
 
-        db_table = self.db_obj._meta.db_table
-        ca_dct = ColumnAttributes.objects.filter(table_name = \
-            db_table).values('column_name','display_name',\
-            'display_on_table_flag')
-
-        column_lookup = {}
-        for row in ca_dct:
-            column_name = row['column_name']
-            del row['column_name']
-            column_lookup[column_name] = row
-
-        # pprint(column_lookup)
-
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
             'ForeignKey':'array','CharField':'string','ManyToManyField':'array',
@@ -233,13 +238,13 @@ class v2MetaRequest(v2Request):
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
-            'title': column_lookup[field_object.name]['display_name'],
+            'title': self.column_lookup[field_object.name]['display_name'],
             'type': field_type_mapper[field_object.get_internal_type()],
             'max_length': field_object.max_length,
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
                 'display' : {
-                    'on_table':column_lookup[field_object.name]['display_on_table_flag'],
+                    'on_table':self.column_lookup[field_object.name]['display_on_table_flag'],
                     'weightTable':ix,
                     'weightForm':ix,
                 },

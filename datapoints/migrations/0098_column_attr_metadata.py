@@ -19,29 +19,7 @@ class Migration(SchemaMigration):
             	, column_name
             	, replace(column_name, '_', ' ') as display_name
             	, CAST(0 AS BOOLEAN)
-            FROM information_schema.columns isc
-            INNER JOIN django_content_type dct
-            	ON replace(table_name, '_', '') = dct.model
-            WHERE table_schema = 'public'
-
-            UNION ALL
-
-            SELECT
-            	  replace(table_name, 'auth_', '') as table_name
-            	, column_name
-            	, replace(column_name, '_', ' ') as display_name
-            	, CAST(0 AS BOOLEAN)
-            FROM information_schema.columns isc
-            WHERE table_name
-            in ('auth_user_groups'
-                ,'pg_auth_members'
-                ,'administrable_role_authorizations'
-                ,'auth_user'
-                ,'auth_user_user_permissions'
-                ,'auth_group_permissions'
-                ,'auth_permission'
-                ,'pg_authid'
-                ,'auth_group');
+            FROM information_schema.columns isc;
         ''')
 
     def backwards(self, orm):
