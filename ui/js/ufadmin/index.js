@@ -17,6 +17,10 @@ var AdminApp = React.createClass({
 				<li><Link to="regions">Regions</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
+				<li><a href="users">rel link to route</a></li>
+				<li><a href="/ufadmin/users">absolute link to route</a></li>
+				<li><a href="something">rel link to non-route</a></li>
+				<li><a href="/ufadmin/something">absolute link to non-route</a></li>
 			</ul>
 			<RouteHandler />
 		</div>;
@@ -43,7 +47,7 @@ var Page = {
 
 
 var routes = (
-	<Route name="app" path="/" handler={AdminApp}>
+	<Route name="app" path="/ufadmin/" handler={AdminApp}>
 		<Route name="users" handler={Page.UserAdmin} />
 		<Route name="groups" handler={Page.GroupAdmin} />
 		<Route name="regions" handler={Page.RegionAdmin} />
@@ -54,7 +58,7 @@ var routes = (
 
 module.exports = {
 	render: function(container) {
-		Router.run(routes, Handler => {
+		Router.run(routes, Router.HistoryLocation, Handler => {
 			React.render(<Handler />, container)
 		})
 	}
