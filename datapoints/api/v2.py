@@ -1,6 +1,7 @@
 import json
 import datetime
 import traceback
+from pprint import pprint
 
 from django.core.serializers import json as djangojson
 from django.db.models import Model, ManyToManyField
@@ -18,6 +19,7 @@ from django.core import serializers
 from datapoints.models import *
 
 
+
 class v2Request(object):
 
     def __init__(self, request, content_type):
@@ -26,7 +28,30 @@ class v2Request(object):
         self.content_type = content_type
         self.user_id = request.user.id
 
-        # self.db_columns = self.db_obj._meta.get_all_field_names()
+
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'datapoint': {'orm_obj':DataPointAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':UserAbstracted,
+                'permission_function':None},
+            'office': {'orm_obj':Office,
+                'permission_function':None},
+        }
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+        self.db_columns = self.db_obj._meta.get_all_field_names()
+        self.permission_function = self.orm_mapping[content_type]\
+            ['permission_function']
+
+        self.kwargs = self.clean_kwargs(request.GET)
 
         self.data = None
         self.meta = None
@@ -201,16 +226,38 @@ class v2MetaRequest(v2Request):
                 'defaultSortDirection':'asc',
         }
 
+
+        db_table = self.db_obj._meta.db_table
+        ca_dct = ColumnAttributes.objects.filter(table_name = \
+            db_table).values('column_name','display_name',\
+            'display_on_table_flag')
+
+        self.column_lookup = {}
+        for row in ca_dct:
+            column_name = row['column_name']
+            del row['column_name']
+            self.column_lookup[column_name] = row
+
+
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
-            self.build_field_meta_dict(field,ix)
+
+            try:
+                self.build_field_meta_dict(field,ix)
+            except KeyError:
+                pass
+
 
         self.data['fields'] = self.all_field_meta
 
         return super(v2MetaRequest, self).main()
 
     def build_field_meta_dict(self, field, ix):
-
+        '''
+        Examine model instance to find meta data
+        Query the Column Attributes table to find metadata on what django model
+        does not store.
+        '''
         try:
             field_object = self.db_obj._meta.get_field(field)
         except FieldDoesNotExist:
@@ -218,20 +265,20 @@ class v2MetaRequest(v2Request):
 
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
-            'ForeignKey':'list','CharField':'string','ManyToManyField':'list',
+            'ForeignKey':'array','CharField':'string','ManyToManyField':'array',
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string','TextField':'string'}
 
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
-            'title': field_object.name,
+            'title': self.column_lookup[field_object.name]['display_name'],
             'type': field_type_mapper[field_object.get_internal_type()],
             'max_length': field_object.max_length,
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
                 'display' : {
-                    'on_table':True,
+                    'on_table':self.column_lookup[field_object.name]['display_on_table_flag'],
                     'weightTable':ix,
                     'weightForm':ix,
                 },
@@ -304,6 +351,7 @@ class v2GetRequest(v2Request):
         else:
             qset = list(self.db_obj.objects.filter(**self.kwargs).values())
 
+
         err, filtered_data = self.apply_permissions(qset)
         err, data = self.serialize(filtered_data)
 
@@ -311,6 +359,7 @@ class v2GetRequest(v2Request):
         ## data base level, but applying limit/offset at here and querying for
         ## all the data is fine for now as these endpoints are fast.
         self.data = data[self.offset:self.limit + self.offset]
+        self.full_data_length = len(data)
         self.err = err
         self.meta = self.build_meta()
 
@@ -375,7 +424,7 @@ class v2GetRequest(v2Request):
         meta_dict = {
             'limit': self.limit,
             'offset': self.offset,
-            'total_count': len(self.data),
+            'total_count': self.full_data_length,
         }
 
         return meta_dict
