@@ -5,7 +5,7 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 
-from datapoints.models import RegionType,Region,RegionHeirarchy
+from datapoints.models import RegionType,Region,RegionHeirarchy,RegionPermission
 
 class BaseModelResource(ModelResource):
     '''
@@ -40,7 +40,6 @@ class BaseNonModelResource(Resource):
         always_return_data = True
 
     def parse_url_strings(self,query_dict):
-
 
         self.region__in, self.region_type_id, self.parent_region__in = \
             None, None, None
@@ -122,12 +121,29 @@ class BaseNonModelResource(Resource):
                 self.parent_region__in)
 
         else:
-            region_ids = Region.objects.all().values_list('id',flat=True)[:5]
+            region_ids = Region.objects.all().values_list('id',flat=True)
+
+        permitted_region_ids = set(RegionPermission.objects.filter(user_id=\
+            self.user_id).values_list('region_id',flat=True))
 
 
-        return None, region_ids
+        final_region_ids = list(set(region_ids).intersection(set(permitted_region_ids)))
+        print final_region_ids
+
+        return None, final_region_ids
 
 
+
+    def get_list(self, request, **kwargs):
+        '''
+        Overriding this just so i can access the user_id attribute within the
+        resource.
+        '''
+
+        self.user_id = request.user.id
+        args = []
+
+        return super(BaseNonModelResource, self).get_list(request, **kwargs)
 
 def html_decorator(func):
     """

@@ -12,7 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
 from django.contrib.auth.models import User,Group
+
 from django.template import RequestContext
+
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
@@ -20,7 +22,7 @@ from functools import partial
 
 from datapoints.models import *
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
+from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
 
@@ -198,7 +200,7 @@ def cache_control(request):
 
 def refresh_cache(request):
 
-    cr = CacheRefresh()
+    cr = cache_tasks.CacheRefresh()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
@@ -387,11 +389,13 @@ def api_region(request):
         , content_type="application/json")
 
 
-def transform_indicators(request):
+def refresh_metadata(request):
 
-    response_data = cache_indicator_abstracted()
+    indicator_cache_data = cache_tasks.cache_indicator_abstracted()
+    user_cache_data = cache_tasks.cache_user_abstracted()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
+
 
 def api_indicator(request):
     '''
@@ -431,6 +435,29 @@ def api_indicator(request):
         , content_type="application/json")
 
 
+class UserCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = User
+    template_name = 'user_create.html'
+    form_class = UserCreateForm
+    # permission_required = 'datapoints.add_campaign'
+
+    def form_valid(self, form):
+
+        new_user = form.save()
+
+        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+            kwargs={'pk':new_user.id}))
+
+
+def user_edit(request,pk):
+
+    form = UserEditForm(instance=User.objects.get(id=pk))
+
+    return render_to_response('user_edit.html', {'user_id':pk,'form':form} ,
+    context_instance=RequestContext(request))
+
+
 def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
@@ -441,6 +468,7 @@ def v2_api(request,content_type,is_meta=False):
         request_object = v2MetaRequest(request, content_type)
         data = request_object.main()
 
+    ## Handles Delete and Update.
     elif request.POST:
         request_object = v2PostRequest(request, content_type)
         data = request_object.main()

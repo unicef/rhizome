@@ -50,7 +50,6 @@ INSTALLED_APPS = (
     'guardian',
     'tastypie',
     'debug_toolbar',
-    'entity',
 )
 
 MIDDLEWARE_CLASSES = (
