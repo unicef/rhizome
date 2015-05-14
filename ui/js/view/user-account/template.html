@@ -1,4 +1,4 @@
-<form class="inline user-account-container">
+
   <div class="row" style="margin-bottom: 15px;">
      <div class="columns small-4 left-box">
        <h4>Roles</h4>
@@ -8,7 +8,7 @@
      </div>
      <div class="columns small-8 right-box">
        <ul class="user-roles">
-         <li v-repeat="group:groups"><input type="checkbox" v-model="group.active" v-on="change:addUserGroup(group.id)" /> <span class="roll-title">{{group.name}}</span> </li>
+         <li v-repeat="group:groups"><input type="checkbox" v-model="group.active" data-group-id="{{group.id}}" v-on="change:addUserGroup" /> <span class="roll-title">{{group.name}}</span> </li>
        </ul>
      </div>
   </div>
@@ -57,15 +57,26 @@
 	                <input type="checkbox" />
 	              </td>
 	              <td>
-	                <span class="fa fa-times"></span>
+	                <span v-on="click:deleteRegionalAccess(permission.region_id)" class="fa fa-times"></span>
 	              </td>
 	            </tr>
 	            <tr v-if="regionalAccessLoading"><td colspan="3"><span class="fa fa-fw fa-lg fa-spinner fa-spin"></span></td></tr>
+	            <tr v-if="region_permissions && region_permissions.length==0"><td colspan="3">No regions added</td></tr>
             </tbody>
          </table>
        
        </div>
     </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+     &nbsp;
+     </div>
+     <div class="columns small-4 right-box">
+     <a class="button">Save User</a>
+     </div>
+     <div class="columns small-4">
+     &nbsp;
+     </div>
+  </div>
   </div>
 
-</form>

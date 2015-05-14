@@ -137,10 +137,10 @@ class v2PostRequest(v2Request):
 
             elif request_type == 'DELETE':
 
-                old_objs = self.db_obj.objects.get(**self.kwargs)
-                self.data = {'deleted_ids': [obj.id for obj in old_objs] }
+                old_obj = self.db_obj.objects.get(**self.kwargs)
+                self.data = {'deleted_id': old_obj.id }
 
-                old_objs.delete()
+                old_obj.delete()
 
             elif request_type == 'UPDATE':
 
