@@ -452,7 +452,7 @@ def cache_indicator_abstracted():
             ,i.name
             ,i.slug
             ,i.name
-            ,x.bound_json
+            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END
         FROM (
             SELECT
             	i.id
