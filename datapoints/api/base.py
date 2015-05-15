@@ -118,19 +118,21 @@ class BaseNonModelResource(Resource):
         elif self.parent_region__in is not None and self.region_type_id is None:
 
             region_ids = Region.objects.filter(parent_region__in = \
-                self.parent_region__in)
+                self.parent_region__in).values_list('id',flat=True)
 
         else:
             region_ids = Region.objects.all().values_list('id',flat=True)
 
-        permitted_region_ids =  Region.objects.raw("SELECT * FROM\
+        permitted_region_qs =  Region.objects.raw("SELECT * FROM\
             fn_get_authorized_regions_by_user(%s,NULL)",[self.user_id])
 
-        final_region_ids = list(set(region_ids).intersection(set([r.id for r \
-            in permitted_region_ids])))
+        permitted_region_ids = [r.id for r in permitted_region_qs]
+
+        final_region_ids = list(set(region_ids).intersection(set\
+            (permitted_region_ids)))
+
 
         return None, final_region_ids
-
 
 
     def get_list(self, request, **kwargs):
