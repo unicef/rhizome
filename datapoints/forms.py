@@ -3,7 +3,7 @@ from datapoints.models import Region, Indicator, Campaign, RegionPermission
 
 
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 
 class RegionForm(forms.ModelForm):
 
@@ -33,9 +33,8 @@ class UserCreateForm(UserCreationForm):
         model = User
         fields = ("username", "email", "password1", "password2")
 
-class UserEditForm(UserChangeForm):
-    # email = forms.EmailField(required=True)
+class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        # fields = ("username", "email", "first_name", "last_name")
+        fields = ('username','first_name','last_name')

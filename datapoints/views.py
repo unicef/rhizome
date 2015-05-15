@@ -1,5 +1,7 @@
 import json
 from pprint import pprint
+import datetime
+from datetime import date
 
 import gspread
 import re
@@ -455,12 +457,21 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
     model = User
     template_name = 'user_edit.html'
     form_class = UserEditForm
-    # permission_required = 'data
 
+    def get_success_url(self):
 
-    # def get_initial(self):
-    #     return { 'username':'dat_dude'}
+        requested_user_id = self.get_object().id
 
+        return reverse_lazy('datapoints:user_edit',kwargs={'pk':
+            requested_user_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(UserEditView, self).get_context_data(**kwargs)
+        user_obj = self.get_object()
+        context['user_id'] = user_obj.id
+
+        return context
 
 def v2_meta_api(request,content_type):
 
