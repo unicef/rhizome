@@ -130,8 +130,16 @@ module.exports = React.createClass({
               </p>
 
               <h2>Recent Campaigns</h2>
-              <table>{campaigns}</table>
-              <a href="/datapoints/campaigns/">see all campaigns</a>
+              <table>
+                <tbody>{campaigns}</tbody>
+                <tfoot>
+                  <tr>
+                    <td className="more" colSpan="4">
+                      <a href="/datapoints/campaigns/">see all campaigns</a>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
 
@@ -146,8 +154,16 @@ module.exports = React.createClass({
             </div>
             <div className="medium-8 columns">
               <h2>Recent CSV Uploads</h2>
-              <table>{uploads}</table>
-              <a href="/source_data/document_index/">see all uploads</a>
+              <table>
+                <tbody>{uploads}</tbody>
+                <tfoot>
+                  <tr>
+                    <td className="more" colSpan="2">
+                      <a href="/source_data/document_index/">see all uploads</a>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
 
