@@ -455,11 +455,14 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
     model = User
     template_name = 'user_edit.html'
     form_class = UserEditForm
-    # permission_required = 'data
 
+    def get_context_data(self, **kwargs):
 
-    # def get_initial(self):
-    #     return { 'username':'dat_dude'}
+        context = super(UserEditView, self).get_context_data(**kwargs)
+        user_obj = self.get_object()
+        context['user_id'] = user_obj.id
+
+        return context
 
 
 def v2_meta_api(request,content_type):
