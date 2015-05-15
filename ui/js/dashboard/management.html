@@ -99,22 +99,26 @@
 				</section>
 
 				<section>
-					<p v-if="microplans.length === 2"
-					   style="margin-bottom: 0">
+					<table class="pie-charts" v-if="microplans.available">
+						<tbody>
+							<tr>
+								<td>
+									<div v-component="chart-pie"
+										data-width="18"
+										data-height="18"
+									   v-with="
+									   	datapoints : microplans.data,
+									   	domain     : microplans.domain,
+									   	loading    : false
+									   "></div>
+								</td>
 
-						<svg width="26" height="26" style="float:left;margin-right:10px">
-							<g v-component="chart-pie"
-							   data-outer-radius="13"
-							   data-slices="{{ microplans }}"
-							   data-indicators="[222]"
-							   transform="translate(13,13)"></g>
-						</svg>
-
-						{{ microplans[0].value }} / {{ microplans[0].value + microplans[1].value }}
-						microplans incorporate social data
-
-					</p>
-					<p v-if="microplans.length !== 2">No microplan data available.</p>
+								<td>{{ microplans.data[0].value }} / {{ microplans.domain[1] }}
+									microplans incorporate social data</td>
+							</tr>
+						</tbody>
+					</table>
+					<p v-if="!microplans.available">No microplan data available.</p>
 				</section>
 
 			</div>
