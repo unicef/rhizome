@@ -61,7 +61,11 @@ module.exports = {
 			supply          : [194,219,173,172],
 			resources       : [169,233],
 			inaccessibility : [],
-			microplans      : [],
+			microplans      : {
+				data      : null,
+				total     : null,
+				available : false
+			},
 			cases           : null,
 			newCases        : null,
 			transitPoints   : {
@@ -173,6 +177,27 @@ module.exports = {
 						})
 						.reverse()
 						.value();
+				});
+
+			// Fetch microplans
+			q.indicator__in = [27,28];
+
+			api.datapoints(q)
+				.then(_.property('objects'))
+				.then(function (data) {
+					if (_.isEmpty(data)) {
+						self.microplans.social_data = null;
+						self.microplans.total       = null;
+						self.microplans.available   = false;
+						return;
+					}
+
+					var indicators = _.indexBy(data[0].indicators, 'indicator');
+
+					self.microplans.data      = [indicators[28]];
+					self.microplans.domain    = [0, indicators[27].value];
+					self.microplans.available = _.isFinite(self.microplans.data[0].value) &&
+						_.isFinite(self.microplans.domain[1]);
 				});
 
 			// Fetch transit points
