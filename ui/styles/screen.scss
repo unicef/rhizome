@@ -137,9 +137,10 @@ a {
 }
 
 table {
-	border-collapse: collapse;
-	margin-top: 10pt;
-	min-width: 100%;
+	border: 1px solid #DDDDDD;
+	border-collapse : collapse;
+	margin-top      : 10pt;
+	min-width       : 100%;
 
 	th {
 		padding: 5pt 0;
@@ -151,7 +152,44 @@ table {
 		cursor: default;
 		font-size: 9pt;
 		padding: 3pt 0;
+	}
 
+	tbody {
+		tr:not(.empty):hover {
+			td {
+				background-color: $ghost;
+			}
+		}
+	}
+
+	tfoot {
+		td {
+			background-color : #DDDDDD;
+			padding: 0;
+
+			&.more {
+				font-size   : rem-calc(10);
+				text-align  : center;
+
+				&:hover {
+					background-color : #DDDDDD;
+				}
+
+				a {
+					color       : $body-font-color;
+					display     : block;
+					font-weight : bold;
+					opacity     : 0.6;
+
+					transition  : opacity 300ms ease-in-out;
+
+					&:hover {
+						color   : inherit;
+						opacity : 1;
+					}
+				}
+			}
+		}
 	}
 
 	.numeric {
@@ -173,11 +211,7 @@ table {
 		}
 	}
 
-	tr:not(.empty):hover {
-		td {
-			background-color: $ghost;
-		}
-	}
+
 
 	&.pie-charts {
 		border          : none;
