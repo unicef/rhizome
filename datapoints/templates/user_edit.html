@@ -12,12 +12,46 @@
 	</p>
 	{% endif %}
 
-  <p>username : {{ form.username }}</p>
-  <p>first name : {{ form.first_name }}</p>
-  <p>last name : {{ form.last_name }}</p>
-	<button type="submit" class="btn btn-primary"> Submit </button>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> username</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.username }}
+     </div>
+  </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> first name</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.first_name }}
+     </div>
+  </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+    <h4> last name</h4>
+     </div>
+     <div class="columns small-8 right-box">
+      {{ form.last_name }}
+     </div>
+  </div>
 
   <div v-component="uf-user-account" v-with="user_id:user_id"></div>
+
+  <div class="row">
+     <div class="columns small-4 left-box">
+     &nbsp;
+     </div>
+     <div class="columns small-4 right-box">
+      <button type="submit" class="btn btn-primary"> Submit </button>
+     </div>
+     <div class="columns small-4">
+     &nbsp;
+     </div>
+  </div>
+
+
 </form>
 
 

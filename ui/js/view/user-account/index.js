@@ -61,13 +61,16 @@ module.exports = {
 	  }); 
 	},
 	methods: {
-	  addUserGroup: function(e){
-	     console.log(e,e.target.attributes.data-group-id);
-	    // api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId})
-	  },
-	  deleteUserGroup: function(groupId){
-	     api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
-	  },
+	  addRemoveUserGroup: function(e){
+	     var groupId = e.target.getAttribute('data-group-id');
+	     if(e.target.checked)
+	     {
+	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId});
+	     }
+	     else {
+	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
+         }	
+  	  },
 	  addRegionalAccess: function(data){
 	    var self = this;
 	    self.$set('regionalAccessLoading',true);
@@ -81,6 +84,14 @@ module.exports = {
 	      self.loadRegionalAccess();
 	    });
 	  },
+	  updateRegionalAccessCanRead: function(e){
+	    var self = this;
+	    var regionId = e.target.getAttribute('data-region-id');
+	    var internalId = e.target.getAttribute('data-internal-id');
+	    var readWrite = (e.target.checked?'w':'r');
+	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:regionId, read_write:readWrite,id:internalId });
+	  },
+	  
 	  loadRegionalAccess: function(){
 	    var self = this;
 	    
@@ -89,6 +100,7 @@ module.exports = {
 	      var regions = data.objects;
 	       _.forEach(regions,function(region){
 	           region.name = self.region_map[region.region_id].name;
+	           region.canEnter = region.read_write=='w';
 	       });
 	      self.$set('region_permissions',regions); 
 	      self.$set('regionalAccessLoading',false);
