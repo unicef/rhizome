@@ -1,5 +1,6 @@
 import json
 from pprint import pprint
+import datetime
 
 import gspread
 import re
@@ -463,6 +464,26 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
         context['user_id'] = user_obj.id
 
         return context
+
+    def form_valid(self, form):
+        # this inserts into the changed_by field with  the user who made the insert
+
+        obj = form.save(commit=False)
+
+        # obj.changed_by = self.request.user
+        # obj.source_id = Source.objects.get(source_name='data entry').id
+        # obj.source_id = -1
+
+        obj.date_joined = datetime.date.today()
+        obj.last_login = datetime.datetime.now()
+
+        obj.save()
+
+
+        print 'HELLO'
+        return HttpResponseRedirect(self.success_url)
+
+
 
 
 def v2_meta_api(request,content_type):
