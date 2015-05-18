@@ -476,6 +476,7 @@ def cache_user_abstracted():
     '''
         SELECT
 		  	 au.id
+   		  	,au.id as user_id
             ,au.last_login
         	,au.is_superuser
         	,au.username
@@ -517,8 +518,6 @@ def upsert_meta_data(qset, abstract_model):
 
         row_data = dict(row.__dict__)
         del row_data['_state']
-
-        row_data['user_id'] = row_data['id']
 
         user_instance = abstract_model(**row_data)
         batch.append(user_instance)
