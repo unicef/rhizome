@@ -52,9 +52,13 @@ class v2Request(object):
         at the definition of the stored proc called below.
         '''
 
+        print '==\n' * 5
+        print self.request.user.id
+        print '==\n' * 5
+
         data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
-            list_of_object_ids])
+            fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,
+            list_of_object_ids,self.read_write])
 
         return None, data
 
@@ -392,6 +396,15 @@ class v2GetRequest(v2Request):
             self.offset = int(query_dict['offset'])
         except KeyError:
             self.offset = 0
+
+        ## Find the Read/Write param for regions ( see POLIO-779 ) ##
+
+        try:
+            self.read_write = query_dict['read_write']
+        except KeyError:
+            self.read_write = 'r'
+
+        print self.read_write
 
         return cleaned_kwargs
 
