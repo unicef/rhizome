@@ -21,7 +21,6 @@ module.exports = {
 
 	mixins: [
 		require('./mixin/margin'),
-		require('./mixin/with-indicator')
 	],
 
 	data: function () {

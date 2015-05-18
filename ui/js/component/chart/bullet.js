@@ -15,7 +15,6 @@ module.exports = {
 
 	mixins: [
 		require('./mixin/resize'),
-		require('./mixin/with-indicator')
 	],
 
 	partials: {
