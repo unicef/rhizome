@@ -70,8 +70,9 @@ BEGIN
   FROM region r
   INNER JOIN region_permission rp
     ON r.id = rp.region_id
-    AND rp.read_write = $3
-    AND r.id = ANY(COALESCE($2,ARRAY[r.id]));
+    AND rp.user_id = $1
+    AND r.id = ANY(COALESCE($2,ARRAY[r.id]))
+    AND rp.read_write = $3;
 
 END
 $func$ LANGUAGE PLPGSQL;
