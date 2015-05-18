@@ -475,8 +475,8 @@ def cache_user_abstracted():
     u_raw = User.objects.raw(
     '''
         SELECT
-        	x.*
-        	,au.last_login
+		  	 au.id
+            ,au.last_login
         	,au.is_superuser
         	,au.username
         	,au.first_name
@@ -485,21 +485,25 @@ def cache_user_abstracted():
         	,au.is_staff
         	,au.is_active
         	,au.date_joined
-        FROM (
+			,gr.group_json
+            ,rp.region_permission_json
+        FROM auth_user au
+        LEFT JOIN (
         	SELECT
-        		au.id as id
-        		,au.id as user_id
-        		,json_agg(row_to_json(aug.*)) as group_json
+        		 aug.user_id
+        		,json_agg(row_to_json(aug.*)) AS group_json
+        	FROM auth_user_groups aug
+        	GROUP BY aug.user_id
+        ) gr
+        ON au.id = gr.user_id
+        LEFT JOIN (
+        	SELECT
+        		 rp.user_id
         		,json_agg(row_to_json(rp.*)) as region_permission_json
-        	FROM auth_user au
-        	LEFT JOIN auth_user_groups aug
-        		ON au.id = aug.user_id
-        	LEFT JOIN region_permission rp
-        		ON au.id = rp.user_id
-        	GROUP BY au.id
-        )x
-        INNER JOIN auth_user au
-        ON x.id = au.id;
+        	FROM region_permission rp
+        	GROUP BY rp.user_id
+        ) rp
+        ON au.id = rp.user_id
     '''
     )
 
@@ -513,6 +517,8 @@ def upsert_meta_data(qset, abstract_model):
 
         row_data = dict(row.__dict__)
         del row_data['_state']
+
+        row_data['user_id'] = row_data['id']
 
         user_instance = abstract_model(**row_data)
         batch.append(user_instance)

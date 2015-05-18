@@ -299,7 +299,7 @@ class v2GetRequest(v2Request):
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
-            'user': {'orm_obj':User,
+            'user': {'orm_obj':UserAbstracted,
                 'permission_function':None},
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
