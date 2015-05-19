@@ -61,9 +61,7 @@ var UsersAdmin = React.createClass({
 							/>
 
 							<SimpleDataTable>
-								<SimpleDataTableColumn name="first_name"/>
-								<SimpleDataTableColumn name="last_name"/>
-								<SimpleDataTableColumn name="email"/>
+
 							</SimpleDataTable>
 
 						</Datascope>
