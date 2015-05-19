@@ -179,6 +179,8 @@ def sync_source_datapoints(request,document_id,master_id):
 
     mr = MasterRefresh(request.user.id,document_id,master_id)
 
+    print 'HELLO\n' * 10
+
     mr.source_dps_to_dps()
     mr.sync_regions()
 
