@@ -7,15 +7,6 @@ urlpatterns = [
     url(r'^map_header/(?P<document_id>[0-9]+)/',map_header\
         , name='map_header'),
 
-    url(r'^map_indicator/(?P<pk>[0-9]+)/$', IndicatorMapCreateView.as_view()\
-        ,name='map_indicator'),
-
-    url(r'^map_region/(?P<pk>[0-9]+)/$', RegionMapCreateView.as_view()\
-        ,name='map_region'),
-
-    url(r'^map_campaign/(?P<pk>[0-9]+)/$', CampaignMapCreateView.as_view(),\
-        name='map_campaign'),
-
     url(r'^un_map/(?P<source_object_id>[0-9]+)/(?P<db_model>\w+)/(?P<document_id>[0-9]+)/$',un_map,name='un_map'),
 
     url(r'^refresh_master/$', refresh_master,name='refresh_master'),
@@ -32,7 +23,7 @@ urlpatterns = [
 
     url(r'^document_review/(?P<document_id>[0-9]+)/$', document_review,\
         name='document_review'),
-    
+
     url(r'^field_mapping/(?P<document_id>[0-9]+)/$', field_mapping,\
         name='field_mapping'),
 
