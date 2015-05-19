@@ -440,9 +440,7 @@ class DataPointEntryResource(BaseModelResource):
 
         if len(permitted_region_ids) == 0:
             raise InputError(4, 'User does not have permissinons for \
-                region_id: {0}'.format(indicator_id))
-
-
+                region_id: {0}'.format(bundle_data['region_id']))
 
 
     def validate_object(self, obj):
