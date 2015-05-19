@@ -214,8 +214,9 @@ class CampaignMap(models.Model):
 class DocumentDetail(models.Model):
 
     document = models.ForeignKey(Document)
+    db_model = models.CharField(max_length=255)
     source_object_id = models.IntegerField()
-    source_object_id = models.IntegerField()
+    master_object_id = models.IntegerField()
     source_string = models.CharField(max_length=255)
     source_dp_count = models.IntegerField()
     master_dp_count = models.IntegerField()

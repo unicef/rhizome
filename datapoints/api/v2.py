@@ -143,7 +143,6 @@ class v2PostRequest(v2Request):
             return 'CREATE'
 
 
-
 class v2MetaRequest(v2Request):
 
     def __init__(self, request, content_type):

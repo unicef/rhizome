@@ -127,43 +127,36 @@ def populate_document_metadata(document_id):
 
     meta_breakdown = []
 
-    raw_qs = Document.objects.raw('''
+    raw_qs = DocumentDetail.objects.raw('''
+        SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
 
-        SELECT * FROM fn_populate_doc_meta(%s)
-
-        ''',[document_id])
+    doc_batch = []
 
     for row in raw_qs:
-        row_dict = {
-            'document_id' : row.id,
-            'db_model':row.db_model,
-            'source_object_id':row.source_object_id,
-            'source_string':row.source_string,
-            'master_object_id':row.master_object_id,
-            'source_object_count':row.source_object_cnt,
-            'master_object_count':row.master_object_cnt,
-        }
+        row_dict = dict(row.__dict__)
+        dd = DocumentDetail(**row_dict)
+        doc_batch.append(dd)
 
-        meta_breakdown.append(row_dict)
+    DocumentDetail.objects.bulk_create(doc_batch)
 
     return meta_breakdown
 
 
 def pre_process_file(request,document_id):
 
-    column_mappings = {}
-    column_mappings['campaign_col'] = request.GET['campaign_col']
-    column_mappings['value_col'] = request.GET['value_col']
-    column_mappings['region_code_col'] = request.GET['region_code_col']
-    column_mappings['indicator_col'] = request.GET['indicator_col']
-
-    dt = DocTransform(document_id,column_mappings)
-
-    try:
-        sdps = dt.dp_df_to_source_datapoints()
-    except IntegrityError:
-        sdps = SourceDataPoint.objects.filter(
-            document_id = document_id)
+    # column_mappings = {}
+    # column_mappings['campaign_col'] = request.GET['campaign_col']
+    # column_mappings['value_col'] = request.GET['value_col']
+    # column_mappings['region_code_col'] = request.GET['region_code_col']
+    # column_mappings['indicator_col'] = request.GET['indicator_col']
+    #
+    # dt = DocTransform(document_id,column_mappings)
+    #
+    # try:
+    #     sdps = dt.dp_df_to_source_datapoints()
+    # except IntegrityError:
+    #     sdps = SourceDataPoint.objects.filter(
+    #         document_id = document_id)
 
     populate_document_metadata(document_id)
 

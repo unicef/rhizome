@@ -1,94 +1,99 @@
---SELECT * FROM fn_populate_doc_meta(1013)
-DROP FUNCTION IF EXISTS fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_indicator_id INT);
-CREATE FUNCTION fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_indicator_id INT)
+
+DROP FUNCTION IF EXISTS fn_populate_doc_meta(document_id INT);
+CREATE FUNCTION fn_populate_doc_meta(document_id INT)
 RETURNS TABLE
 (
 	 id INT
-	,vell_value VARCHAR(255)
-	,region_id INT
-	,campaign_id INT
-	,indicator_id INT
 ) AS
 $func$
 BEGIN
 
-	DROP TABLE IF EXISTS _tmp_indicator_permissions;
-	CREATE TEMP TABLE _tmp_indicator_permissions AS
 
-	SELECT DISTINCT ip.indicator_id
-	FROM auth_user_groups aug
-	INNER JOIN indicator_permission ip
-		ON aug.user_id = $1
-		AND aug.group_id = ip.group_id
-		AND ip.indicator_id = COALESCE(CAST($3 AS INT),ip.indicator_id);
+-- GET ALL THE SOURCE DATAPOINT DATA IN TEMP TABLE --
+DROP TABLE IF EXISTS _tmp_sdps;
+CREATE TEMP TABLE _tmp_sdps
+AS
 
-	DROP TABLE IF EXISTS _tmp_region_permissions;
-	CREATE TEMP TABLE _tmp_region_permissions AS
-
-	WITH RECURSIVE region_tree AS
-	(
-	-- non-recursive term ( rows where the components aren't
-	-- master_indicators in another calculation )
-
-	SELECT
-		COALESCE(rg.parent_region_id, rg.id) as parent_region_id
-		,rg.parent_region_id as immediate_parent_id
-		,rg.id as region_id
-		,0 as lvl
-	FROM region rg
-
-	UNION ALL
-
-	-- recursive term --
-	SELECT
-		r_recurs.parent_region_id
-		,rt.parent_region_id as immediate_parent_id
-		,rt.region_id
-		,rt.lvl + 1
-	FROM region AS r_recurs
-	INNER JOIN region_tree AS rt
-	ON (r_recurs.id = rt.parent_region_id)
-	AND r_recurs.parent_region_id IS NOT NULL
-	)
-
-	SELECT rt.region_id FROM region_tree rt
-	INNER JOIN region_permission rm
-	ON rt.parent_region_id = rm.region_id
-	AND rm.user_id = 1
-	AND rm.read_write = 'w';
+SELECT region_code, indicator_string, campaign_string, document_id
+FROM source_datapoint
+WHERE document_id = 1055;
 
 
-  	RETURN QUERY
+--INSERT SOURCE META WHERE NOT EXISTS--
 
-    SELECT
-          sd.id
-        , sd.cell_value
-        , rm.master_object_id as region_id
-        , cm.master_object_id as campaign_id
-        , im.master_object_id as indicator_id
-    FROM source_datapoint sd
-    INNER JOIN source_region sr
-	ON sd.region_code = sr.region_code
-	AND sd.document_id =  $2
-    INNER JOIN region_map rm
-      ON sr.id = rm.source_object_id
-    INNER JOIN source_indicator si
-      ON sd.indicator_string = si.indicator_string
-    INNER JOIN indicator_map im
-      ON si.id = im.source_object_id
-      AND im.master_object_id = COALESCE($3,im.master_object_id)
-    INNER JOIN source_campaign sc
-      ON sd.campaign_string = sc.campaign_string
-    INNER JOIN campaign_map cm
-      ON sc.id = cm.source_object_id
-    WHERE EXISTS (
-	SELECT 1 FROM _tmp_indicator_permissions tip
-	WHERE im.master_object_id = tip.indicator_id
-    )
-     AND EXISTS (
- 	SELECT 1 FROM _tmp_region_permissions trp
- 	WHERE rm.master_object_id = trp.region_id
-     );
+-- region --
+INSERT INTO source_region
+(region_code)
+SELECT region_code from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_region ser
+	WHERE tsdp.region_code = ser.region_code
+);
+
+-- campaign --
+INSERT INTO source_campaign
+(campaign_string)
+SELECT campaign_string from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_campaign sc
+	WHERE tsdp.campaign_string = sc.campaign_string
+);
+
+-- indicator --
+INSERT INTO source_indicator
+(indicator_string)
+SELECT indicator_string from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_indicator si
+	WHERE tsdp.indicator_string = si.indicator_string
+);
+
+
+INSERT INTO document_detail
+(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id)
+
+SELECT
+	 MIN(tsdp.document_id)
+	 ,MIN(si.id) as source_object_id
+	,tsdp.indicator_string
+	,COUNT(1) AS source_dp_count
+	,'indicator' as db_model
+	,0 as master_db_count
+	,1 as master_object_id
+FROM _tmp_sdps tsdp
+INNER JOIN source_indicator si
+ON tsdp.indicator_string = si.indicator_string
+GROUP BY tsdp.indicator_string
+
+UNION ALL
+
+SELECT
+	 MIN(tsdp.document_id)
+	,MIN(sc.id) as source_object_id
+	,tsdp.campaign_string
+	,COUNT(1) AS source_dp_count
+	,'campaign' as db_model
+	,0 as master_db_count
+	,1 as master_object_id
+FROM _tmp_sdps tsdp
+INNER JOIN source_campaign sc
+ON tsdp.campaign_string = sc.campaign_string
+GROUP BY tsdp.campaign_string
+
+UNION ALL
+
+SELECT
+	 MIN(tsdp.document_id)
+	,MIN(sr.id) as source_object_id
+	,tsdp.region_code
+	,COUNT(1) AS source_dp_count
+	,'region' as db_model
+	,0 as master_db_count
+	,1 as master_object_id
+FROM _tmp_sdps tsdp
+INNER JOIN source_region sr
+ON tsdp.region_code = sr.region_code
+GROUP BY tsdp.region_code;
 
 END
 $func$ LANGUAGE PLPGSQL;
