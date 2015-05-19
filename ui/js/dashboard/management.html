@@ -33,17 +33,17 @@
 				<div style="position:relative">
 					<div
 						v-if="newCases != null">
-						<p id="new-polio-cases">{{ newCases }} new {{ newCases | pluralize case }}</p>
+						<p id="new-polio-cases">
+							{{ cases.newCases }} new {{ cases.newCases | pluralize case }}
+						</p>
 					</div>
 					<div
 						id="polio-cases-ytd"
-						v-component="chart-ytd"
+						v-component="chart-line"
 						data-aspect="1.757"
 						data-margin-top="24"
 						data-margin-bottom="24"
-						data-indicators="[168]"
-						data-period="2 years"
-						v-with="campaign: campaign, region: region"></div>
+						data-series="{{ cases.series }}"></div>
 				</div>
 			</section>
 
@@ -59,7 +59,8 @@
 					data-format-string="%"
 					data-x="campaign.start_date"
 					data-x-label="[Q]Q YYYY"
-					v-with="loading : false, series : immunity, region : region, campaign : campaign"></svg>
+					data-series="{{ immunityGap }}"
+					v-with="loading : false, region : region, campaign : campaign"></svg>
 			</section>
 		</div>
 
@@ -81,7 +82,8 @@
 						data-margin-bottom="12"
 						data-format-string=".1%"
 						data-x="campaign.start_date"
-						v-with="loading : false, series : missedChildren, region: region, campaign: campaign"></svg>
+						data-series="{{ missedChildren }}"
+						v-with="loading : false, region: region, campaign: campaign"></svg>
 				</section>
 
 				<section>
@@ -92,10 +94,8 @@
 					 	data-aspect="2.260237781"
 						data-margin-top="24"
 						data-margin-bottom="24"
-					 	data-period="1 years"
-					 	data-indicators="[187,189]"
 					 	data-format-string="%"
-					 	v-with="campaign: campaign, region: region"></div>
+						data-series="{{ conversions }}"></div>
 				</section>
 
 				<section>
@@ -146,31 +146,31 @@
 
 				<table class="pie-charts">
 					<tbody>
-						<tr v-if="transitPoints.showInPlace">
+						<tr v-if="transitPoints.inPlace.show">
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.pctInplace, loading: false"
+									v-with="datapoints: transitPoints.inPlace.value, loading: false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
 							<td>
-								{{ transitPoints.inPlace }} / {{ transitPoints.planned }}
-								in place
+								{{ transitPoints.inPlace.value[0].value }} /
+								{{ transitPoints.inPlace.domain[1] }} in place
 							</td>
 						</tr>
 
-						<tr v-if="transitPoints.showWithSM">
+						<tr v-if="transitPoints.withSM.show">
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.pctWithSM, loading: false"
+									v-with="datapoints: transitPoints.pctWithSM.value, loading: false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
 							<td>
-								{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
-								social mobilizer
+								{{ transitPoints.withSM.value[0].value }} /
+								{{ transitPoints.withSM.domain[1] }} have a social mobilizer
 							</td>
 						</tr>
 					</tbody>
@@ -215,7 +215,7 @@
 				<li v-repeat="indicator: capacity"
 				    v-with="campaign: campaign, region: region">
 					<div v-component="chart-bullet"
-				       v-with="indicators: indicator, campaign: campaign, region: region"
+				       v-with="campaign: campaign, region: region"
 				       data-aspect="3"
 				       data-period="5 months"></div>
 				</li>
@@ -264,11 +264,9 @@
 			<h6>Number of Inaccessible Children</h6>
 			<div v-component="chart-line"
 			     data-aspect="2.665"
-			     data-period="1 years"
-			     data-indicators="[158]"
 					 data-margin-top="24"
 					 data-margin-bottom="24"
-			     v-with="campaign: campaign, region: region"></div>
+			     data-series="{{ inaccessible }}"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
