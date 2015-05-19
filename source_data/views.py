@@ -128,14 +128,10 @@ def populate_document_metadata(document_id):
     raw_qs = DocumentDetail.objects.raw('''
         SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
 
-    doc_batch = []
+    inserted_ids = [x.id for x in raw_qs]
 
-    for row in raw_qs:
-        row_dict = dict(row.__dict__)
-        dd = DocumentDetail(**row_dict)
-        doc_batch.append(dd)
+    print inserted_ids
 
-    DocumentDetail.objects.bulk_create(doc_batch)
 
     return meta_breakdown
 
@@ -233,6 +229,8 @@ def api_document_review(request):
         SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
 
     for row in raw_qs:
+        print row
+        print '==='
         row_dict = {
             'db_model':row.db_model,
             'source_object_id':row.source_object_id,
@@ -243,20 +241,23 @@ def api_document_review(request):
         meta_breakdown.append(row_dict)
 
     mb_df = DataFrame(meta_breakdown)
+
+    print mb_df
+
     df_no_nan = mb_df.where((notnull(mb_df)), None)
     no_ix_df = df_no_nan.reset_index(drop=True)
 
-    ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
+    ind_dict = no_ix_df[no_ix_df['db_model'] == 'indicator']\
         .transpose().to_dict()
     indicator_breakdown =  [v for k,v in ind_dict.iteritems()]
 
     ##
-    camp_dict = no_ix_df[no_ix_df['db_model'] == 'source_campaign']\
+    camp_dict = no_ix_df[no_ix_df['db_model'] == 'campaign']\
         .transpose().to_dict()
     camp_breakdown =  [v for k,v in camp_dict.iteritems()]
 
     ##
-    region_dict = no_ix_df[no_ix_df['db_model'] == 'source_region']\
+    region_dict = no_ix_df[no_ix_df['db_model'] == 'region']\
         .transpose().to_dict()
     region_breakdown =  [v for k,v in region_dict.iteritems()]
 

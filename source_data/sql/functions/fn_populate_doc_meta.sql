@@ -2,7 +2,14 @@ DROP FUNCTION IF EXISTS fn_populate_doc_meta(document_id INT);
 CREATE FUNCTION fn_populate_doc_meta(document_id INT)
 RETURNS TABLE
 (
-	 id INT
+	ID INT,
+	doc_id INT,
+	source_object_id INT,
+	source_string VARCHAR,
+	source_dp_count INT,
+	master_dp_count INT,
+	db_model VARCHAR,
+	master_object_id INT
 ) AS
 $func$
 BEGIN
@@ -158,6 +165,11 @@ LEFT JOIN (
 	GROUP BY region_code
 )y
 ON x.source_string = y.region_code;
+
+RETURN QUERY
+
+SELECT * FROM document_detail dd
+WHERE dd.document_id = $1;
 
 END
 $func$ LANGUAGE PLPGSQL;
