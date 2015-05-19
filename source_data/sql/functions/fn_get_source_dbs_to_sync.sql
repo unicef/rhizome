@@ -11,10 +11,25 @@ RETURNS TABLE
 $func$
 BEGIN
 
-	DROP TABLE IF EXISTS _tmp_permissions;
-	CREATE TEMP TABLE _tmp_permissions AS
-	SELECT * FROM region_permission  rm
-	WHERE rm.user_id = $1;
+		DROP TABLE IF EXISTS _tmp_permissions;
+		CREATE TEMP TABLE _tmp_permissions AS
+		SELECT
+			  x.region_id
+			, y.indicator_id
+		FROM (
+			SELECT
+				spr.id as region_id
+			FROM fn_get_authorized_regions_by_user(1 , NULL, 'w') spr
+		)x
+		INNER JOIN (
+			SELECT ip.indicator_id
+			FROM indicator_permission ip
+			INNER JOIN auth_user_groups aug
+			ON ip.group_id = aug.group_id
+			AND aug.user_id = $1
+		) y
+		ON 1=1;
+
 
   	RETURN QUERY
 
@@ -26,8 +41,8 @@ BEGIN
         , im.master_object_id as indicator_id
     FROM source_datapoint sd
     INNER JOIN source_region sr
-	ON sd.region_code = sr.region_code
-	AND sd.document_id =  $2
+			ON sd.region_code = sr.region_code
+			AND sd.document_id =  $2
     INNER JOIN region_map rm
       ON sr.id = rm.source_object_id
     INNER JOIN source_indicator si
@@ -38,7 +53,12 @@ BEGIN
     INNER JOIN source_campaign sc
       ON sd.campaign_string = sc.campaign_string
     INNER JOIN campaign_map cm
-      ON sc.id = cm.source_object_id;
+      ON sc.id = cm.source_object_id
+		WHERE EXISTS (
+			SELECT 1 FROM _tmp_permissions tp
+			WHERE tp.region_id = rm.master_object_id
+			AND tp.indicator_id = im.master_object_id
+		);
 
 END
 $func$ LANGUAGE PLPGSQL;
