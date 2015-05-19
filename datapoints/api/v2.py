@@ -79,11 +79,7 @@ class v2PostRequest(v2Request):
         if self.content_type in ['region_map','indicator_map','campaign_map']:
             cleaned_kwargs['mapped_by_id'] = self.user_id
 
-
-
         return cleaned_kwargs
-
-
 
     def main(self):
         '''
@@ -372,8 +368,6 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.read_write = 'r'
 
-        print self.read_write
-
         return cleaned_kwargs
 
 
@@ -456,10 +450,6 @@ class v2GetRequest(v2Request):
         For more information on how region permissions work, take a look
         at the definition of the stored proc called below.
         '''
-
-        print '==\n' * 5
-        print self.request.user.id
-        print '==\n' * 5
 
         data = Region.objects.raw("SELECT * FROM\
             fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,

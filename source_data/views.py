@@ -114,8 +114,6 @@ def map_header(request,document_id):
 def field_mapping(request,document_id):
 
     meta_breakdown = populate_document_metadata(document_id)
-    mb_df = DataFrame(meta_breakdown)
-    no_ix_df = mb_df.reset_index(drop=True)
 
     return render_to_response(
         'upload/field_mapping.html',
@@ -144,19 +142,19 @@ def populate_document_metadata(document_id):
 
 def pre_process_file(request,document_id):
 
-    # column_mappings = {}
-    # column_mappings['campaign_col'] = request.GET['campaign_col']
-    # column_mappings['value_col'] = request.GET['value_col']
-    # column_mappings['region_code_col'] = request.GET['region_code_col']
-    # column_mappings['indicator_col'] = request.GET['indicator_col']
-    #
-    # dt = DocTransform(document_id,column_mappings)
-    #
-    # try:
-    #     sdps = dt.dp_df_to_source_datapoints()
-    # except IntegrityError:
-    #     sdps = SourceDataPoint.objects.filter(
-    #         document_id = document_id)
+    column_mappings = {}
+    column_mappings['campaign_col'] = request.GET['campaign_col']
+    column_mappings['value_col'] = request.GET['value_col']
+    column_mappings['region_code_col'] = request.GET['region_code_col']
+    column_mappings['indicator_col'] = request.GET['indicator_col']
+
+    dt = DocTransform(document_id,column_mappings)
+
+    try:
+        sdps = dt.dp_df_to_source_datapoints()
+    except IntegrityError:
+        sdps = SourceDataPoint.objects.filter(
+            document_id = document_id)
 
     populate_document_metadata(document_id)
 
@@ -170,7 +168,8 @@ def refresh_master_no_indicator(request,document_id):
 
     mr.source_dps_to_dps()
 
-    return HttpResponseRedirect(reverse('source_data:document_index'))
+    return HttpResponseRedirect(reverse('source_data:field_mapping'\
+        , kwargs={'document_id': document_id}))
 
 
 ######### DOCUMENT RELATED VIEWS ##########
