@@ -279,6 +279,9 @@ class v2GetRequest(v2Request):
                 'permission_function':None},
             'office': {'orm_obj':Office,
                 'permission_function':None},
+            'document_review' : {'orm_obj':DocumentDetail,
+                'permission_function':None },
+
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']

@@ -110,33 +110,6 @@ def map_header(request,document_id):
         RequestContext(request))
 
 
-def document_review(request,document_id):
-
-    meta_breakdown = populate_document_metadata(document_id)
-    mb_df = DataFrame(meta_breakdown)
-    no_ix_df = mb_df.reset_index(drop=True)
-
-    ind_dict = no_ix_df[no_ix_df['db_model'] == 'source_indicator']\
-        .transpose().to_dict()
-    ind_breakdown =  [v for k,v in ind_dict.iteritems()]
-
-    ##
-    camp_dict = no_ix_df[no_ix_df['db_model'] == 'source_campaign']\
-        .transpose().to_dict()
-    camp_breakdown =  [v for k,v in camp_dict.iteritems()]
-
-    ##
-    region_dict = no_ix_df[no_ix_df['db_model'] == 'source_region']\
-        .transpose().to_dict()
-    region_breakdown =  [v for k,v in region_dict.iteritems()]
-
-    return render_to_response(
-        'upload/document_review.html',
-        {'source_indicator_breakdown': ind_breakdown,
-        'source_region_breakdown': region_breakdown,
-        'source_campaign_breakdown': camp_breakdown,
-        'document_id': document_id }
-        ,RequestContext(request))
 
 def field_mapping(request,document_id):
 
@@ -174,16 +147,6 @@ def populate_document_metadata(document_id):
         meta_breakdown.append(row_dict)
 
     return meta_breakdown
-
-def sync_source_datapoints(request,document_id,master_id):
-
-    mr = MasterRefresh(request.user.id,document_id,master_id)
-
-    mr.source_dps_to_dps()
-    mr.sync_regions()
-
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        , kwargs={'document_id': document_id}))
 
 
 def pre_process_file(request,document_id):
