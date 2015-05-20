@@ -93,7 +93,8 @@ module.exports = React.createClass({
         <div style={{ position : 'relative' }}>
           {newCases}
           <YtDChart data={this.props.data}
-            getColor={_.flow(_.property('name'), color)} />
+            getColor={_.flow(_.property('name'), color)}
+            aspect={1.757} />
         </div>
       </div>
     )

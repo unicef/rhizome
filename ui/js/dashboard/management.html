@@ -231,11 +231,7 @@
 		<div class="medium-2 columns">
 			<h3>Access Challenged Districts</h3>
 			<h6>Number of Inaccessible Children</h6>
-			<div v-component="chart-line"
-			     data-aspect="2.665"
-					 data-margin-top="24"
-					 data-margin-bottom="24"
-			     data-series="{{ inaccessible }}"></div>
+			<div v-el="inaccessible"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">

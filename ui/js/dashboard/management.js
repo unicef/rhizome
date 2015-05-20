@@ -341,7 +341,7 @@ module.exports = {
 					self.immunityGap = _immunityGap(data, indicators);
 				}));
 
-			q.indicator__in  = _(INDICATORS).pick('missed', 'conversions').values().flatten().value();
+			q.indicator__in  = _(INDICATORS).pick('missed', 'conversions', 'inaccessible').values().flatten().value();
 			q.campaign_start = start.clone()
 				.startOf('month')
 				.subtract(1, 'year')
@@ -357,7 +357,19 @@ module.exports = {
 							return _.includes(INDICATORS.conversions, Number(d.indicator));
 						});
 
+					var inaccessible = _.filter(data, function (d) {
+						return _.includes(INDICATORS.inaccessible, Number(d.indicator));
+					});
+
 					self.missedChildren = _missedChildren(missed, indicators);
+
+					var getColor = function (d, i) {
+						var scale = d3.scale.ordinal()
+							.domain(d3.range(INDICATORS.conversions.length))
+							.range(colors);
+
+						return scale(i)
+					};
 
 					React.render(
 						React.createElement(LineChart, {
@@ -373,16 +385,32 @@ module.exports = {
 								get    : _.property('value'),
 								format : d3.format('%'),
 							},
-							getColor : function (d, i) {
-								var scale = d3.scale.ordinal()
-									.domain(d3.range(INDICATORS.conversions.length))
-									.range(colors);
-
-								return scale(i)
-							}
+							getColor : getColor,
+							aspect   : 2.260237781
 						}),
 						self.$$.conversions
 					);
+
+					React.render(
+						React.createElement(LineChart, {
+							series : _conversions(inaccessible, indicators),
+							x : {
+								scale  : d3.time.scale()
+									.domain(d3.extent(inaccessible, _.property('campaign.start_date'))),
+								get    : _.property('campaign.start_date'),
+								format : format.timeAxis
+							},
+							y : {
+								scale  : d3.scale.linear().domain([0, d3.max(inaccessible, _.property('value'))]),
+								get    : _.property('value'),
+								format : d3.format(',.0f')
+							},
+							getColor : getColor,
+							aspect   : 2.655
+						}),
+						self.$$.inaccessible
+					);
+
 				}));
 
 			// Bullet charts
