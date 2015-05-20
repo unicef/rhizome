@@ -115,6 +115,8 @@ module.exports = {
 //	    this.calculateRemainingVerifications();
 //	  },
 	  unmapField: function(source_id, master_id,type){
+	      var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':source_id});
+	      this.mappingData[type][key].master_object_id = '-1';
 	      api['map_'+type]({ 'source_object_id': source_id,
 	      				'master_object_id': master_id,
 	      				'id':''
