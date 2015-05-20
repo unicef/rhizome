@@ -23,22 +23,27 @@ function _draw(el, props, state) {
   var range  = props.y.scale.domain();
 
   // Set up the hover interaction
-  // svg.select('svg')
-  //  .call(hoverLine()
-  //    .width(state.contentWidth)
-  //    .height(state.contentHeight)
-  //    .top(-props.margin.top)
-  //    .xFormat(x.tickFormat)
-  //    .yFormat(y.tickFormat)
-  //    .x(props.x.get)
-  //    .y(props.y.get)
-  //    .xScale(xScale)
-  //    .yScale(yScale)
-  //    .diff(props.diffX)
-  //    .seriesName(props.getSeriesName)
-  //    .sort(true)
-  //    .datapoints(_(series).map(props.getValues).flatten().value())
-  //  );
+  svg.call(hoverLine()
+     .width(width)
+     .height(height)
+     .top(-props.margin.top)
+     .xFormat(_.get(props, 'x.format', String))
+     .yFormat(_.get(props, 'y.format', String))
+     .x(props.x.get)
+     .y(props.y.get)
+     .xScale(props.x.scale)
+     .yScale(props.y.scale)
+     .value(props.y.get)
+     .seriesName(_.property('seriesName'))
+     .sort(true)
+     .datapoints(_(series).map(function (s) {
+          // Set the series name on each datapoint for easy retrieval
+          return _.map(props.getValues(s), _.partial(_.set, _, 'seriesName', props.getSeriesName(s)));
+        })
+        .flatten()
+        .value()
+      )
+   );
 
   var g = svg.select('.data')
     .selectAll('.series')
