@@ -13,6 +13,34 @@ var {
 
 var API = require('../data/api');
 
+function parseSchema(response) {
+	//return response.objects;
+	var schema = {
+		$schema: "http://json-schema.org/draft-04/schema#",
+		title: "Users",
+		type: "array",
+		items: {
+			title: "User",
+			type: "object",
+			properties: _(response.objects.fields).map(field => {
+				return [field.name, _.transform(field, (result, val, key) => {
+					if(key === 'type' && val === 'datetime') {
+						result.type = 'string';
+						result.format = 'date-time';
+					} else if(key === 'constraints') {
+						if(val && val.items && val.items.oneOf && val.items.oneOf.length) {
+							result.items = {type: typeof val, enum: val.items.oneOf};
+						}
+					} else if(_.includes(['type', 'title'], key)) {
+						result[key] = val;
+					}
+				})]
+			}).object().value()
+		}
+	};
+	return schema;
+}
+
 var UsersAdmin = React.createClass({
 	getInitialState: function() {
 		return {
@@ -21,6 +49,8 @@ var UsersAdmin = React.createClass({
 	},
 	componentDidMount: function() {
 		API.admin.usersMetadata().done(response => {
+			var schema = parseSchema(response);
+			console.log('schema', schema);
 			// todo handle error
 			//console.log(response.body);
 			//this.setState({metadata: response.body});
@@ -43,6 +73,13 @@ var UsersAdmin = React.createClass({
 		var searchableFieldNames = this.state.metadata ?
 			_(this.state.metadata.fields).filter(f => f.searchable).pluck('name').value() : [];
 		console.log(this.state);
+
+		//<SearchBar
+		//	id="search-all"
+		//	fields={searchableFieldNames}
+		//	placeholder="Search users"
+		//	/>
+
 		return (
 			<div>
 				<h1>Users Admin Page</h1>
@@ -53,17 +90,8 @@ var UsersAdmin = React.createClass({
 						schema={{fields: this.state.metadata.fields}}
 						>
 						<Datascope>
-
-							<SearchBar
-								id="search-all"
-								fields={searchableFieldNames}
-								placeholder="Search users"
-							/>
-
 							<SimpleDataTable>
-
 							</SimpleDataTable>
-
 						</Datascope>
 					</LocalDatascope>
 				: "loading..."}

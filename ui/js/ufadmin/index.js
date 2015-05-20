@@ -17,6 +17,7 @@ var AdminApp = React.createClass({
 				<li><Link to="regions">Regions</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
+
 			</ul>
 			<RouteHandler />
 		</div>;
