@@ -20,8 +20,6 @@ from django.core import serializers
 from datapoints.models import *
 from source_data.models import *
 
-
-
 class v2Request(object):
 
     def __init__(self, request, content_type):
@@ -33,6 +31,40 @@ class v2Request(object):
         self.meta = None
         self.err = None
 
+        # Tells the API which models are avail for GET / POST / META requests #
+        self.orm_mapping = {
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':self.apply_campaign_permissions},
+            'region': {'orm_obj':Region,
+                'permission_function':self.apply_region_permissions},
+            'document_review' : {'orm_obj':DocumentDetail,
+                'permission_function': self.group_document_metadata},
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':UserAbstracted,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+            'document': {'orm_obj':Document,
+                'permission_function':None},
+            'office': {'orm_obj':Office,
+                'permission_function':None},
+            'indicator_map': {'orm_obj':IndicatorMap,
+                'permission_function':None},
+            'region_map': {'orm_obj':RegionMap,
+                'permission_function':None},
+            'campaign_map': {'orm_obj':CampaignMap,
+                'permission_function':None}
+        }
+
+
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+
+
     def main(self):
 
         response_data = {
@@ -43,6 +75,76 @@ class v2Request(object):
 
         return response_data
 
+    ## permissions functions ##
+
+    def apply_region_permissions(self, list_of_object_ids):
+        '''
+        This returns a raw queryset, that is the query itself isn't actually
+        executed until the data is unpacked in the serialize method.
+
+        For more information on how region permissions work, take a look
+        at the definition of the stored proc called below.
+        '''
+
+        data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,
+            list_of_object_ids,self.read_write])
+
+        return None, data
+
+    def apply_campaign_permissions(self, list_of_object_ids):
+        '''
+        As in above, this returns a raw queryset, and will be executed in the
+        serialize method.
+
+        The below query reads: "show me all campaigns that have data for
+        regions that I am permitted to see."
+
+        No need to do recursion here, because the data is already aggregated
+         regionally when ingested into the datapoint_abstracted table.
+        '''
+
+        data = Campaign.objects.raw("""
+            SELECT c.* FROM campaign c
+            INNER JOIN datapoint_abstracted da
+                ON c.id = da.campaign_id
+            INNER JOIN region_permission rm
+                ON da.region_id = rm.region_id
+                AND rm.user_id = %s
+            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+        """, [self.user_id, list_of_object_ids])
+
+        return None, data
+
+    def group_document_metadata(self,list_of_object_ids):
+        '''
+        This function is not actually about permissions, but rather data
+        manipulation needed for the front end.  Here i create three nodes
+        (region, campaign, indicator) and add all metadata here.
+        '''
+
+        raw_data = DocumentDetail.objects.raw("""
+            SELECT * FROM
+            document_detail dd
+            WHERE dd.id = ANY(COALESCE(%s,ARRAY[dd.id]))
+        """,[list_of_object_ids]
+        )
+
+        cleaned_data = {
+            'region':[],
+            'campaign':[],
+            'indicator':[],
+        }
+
+        for row in raw_data:
+
+            row_dict = dict(row.__dict__)
+            del row_dict['_state']
+
+            cleaned_data[row.db_model].append(row_dict)
+
+        return None, cleaned_data
+
 
 class v2PostRequest(v2Request):
 
@@ -52,21 +154,6 @@ class v2PostRequest(v2Request):
         super(v2PostRequest, self).__init__(request, content_type)
 
         self.kwargs = self.clean_kwargs(request.POST)
-        self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign},
-            'region': {'orm_obj':Region},
-            'indicator': {'orm_obj':Indicator},
-            'group': {'orm_obj':Group},
-            'user': {'orm_obj':User},
-            'region_permission': {'orm_obj':RegionPermission},
-            'user_group': {'orm_obj':UserGroup},
-            'indicator_map': {'orm_obj':IndicatorMap},
-            'region_map': {'orm_obj':RegionMap},
-            'campaign_map': {'orm_obj':CampaignMap},
-
-        }
-
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
 
     def clean_kwargs(self,query_dict):
@@ -144,7 +231,7 @@ class v2MetaRequest(v2Request):
 
     def __init__(self, request, content_type):
 
-        return super(v2MetaRequest, self).__init__()
+        return super(v2MetaRequest, self).__init__(request, content_type)
 
 
     def main(self):
@@ -256,36 +343,13 @@ class v2GetRequest(v2Request):
 
     def __init__(self, request, content_type):
 
-        self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':self.apply_campaign_permissions},
-            'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':UserAbstracted,
-                'permission_function':None},
-            'region_permission': {'orm_obj':RegionPermission,
-                'permission_function':None},
-            'user_group': {'orm_obj':UserGroup,
-                'permission_function':None},
-            'document': {'orm_obj':Document,
-                'permission_function':None},
-            'office': {'orm_obj':Office,
-                'permission_function':None},
-            'document_review' : {'orm_obj':DocumentDetail,
-                'permission_function': self.group_document_metadata },
-
-        }
+        super(v2GetRequest, self).__init__(request, content_type)
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
         self.permission_function = self.orm_mapping[content_type]\
             ['permission_function']
 
         self.kwargs = self.clean_kwargs(request.GET)
-        return super(v2GetRequest, self).__init__(request, content_type)
 
     def main(self):
         '''
@@ -451,73 +515,3 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = smart_str(v)
 
         return cleaned_row_data
-
-    ## permissions functions ##
-
-    def apply_region_permissions(self, list_of_object_ids):
-        '''
-        This returns a raw queryset, that is the query itself isn't actually
-        executed until the data is unpacked in the serialize method.
-
-        For more information on how region permissions work, take a look
-        at the definition of the stored proc called below.
-        '''
-
-        data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,
-            list_of_object_ids,self.read_write])
-
-        return None, data
-
-    def apply_campaign_permissions(self, list_of_object_ids):
-        '''
-        As in above, this returns a raw queryset, and will be executed in the
-        serialize method.
-
-        The below query reads: "show me all campaigns that have data for
-        regions that I am permitted to see."
-
-        No need to do recursion here, because the data is already aggregated
-         regionally when ingested into the datapoint_abstracted table.
-        '''
-
-        data = Campaign.objects.raw("""
-            SELECT c.* FROM campaign c
-            INNER JOIN datapoint_abstracted da
-                ON c.id = da.campaign_id
-            INNER JOIN region_permission rm
-                ON da.region_id = rm.region_id
-                AND rm.user_id = %s
-            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-        """, [self.user_id, list_of_object_ids])
-
-        return None, data
-
-    def group_document_metadata(self,list_of_object_ids):
-        '''
-        This function is not actually about permissions, but rather data
-        manipulation needed for the front end.  Here i create three nodes
-        (region, campaign, indicator) and add all metadata here.
-        '''
-
-        raw_data = DocumentDetail.objects.raw("""
-            SELECT * FROM
-            document_detail dd
-            WHERE dd.id = ANY(COALESCE(%s,ARRAY[dd.id]))
-        """,[list_of_object_ids]
-        )
-
-        cleaned_data = {
-            'region':[],
-            'campaign':[],
-            'indicator':[],
-        }
-
-        for row in raw_data:
-
-            row_dict = dict(row.__dict__)
-            del row_dict['_state']
-
-            cleaned_data[row.db_model].append(row_dict)
-
-        return None, cleaned_data
