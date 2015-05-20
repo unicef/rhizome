@@ -9,7 +9,9 @@ RETURNS TABLE
 	source_dp_count INT,
 	master_dp_count INT,
 	db_model VARCHAR,
-	master_object_id INT
+	master_object_id INT,
+	map_id INT
+
 ) AS
 $func$
 BEGIN
@@ -75,7 +77,7 @@ DELETE FROM document_detail dd
 WHERE dd.document_id = $1;
 
 INSERT INTO document_detail
-(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id)
+(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id,map_id)
 
 SELECT
 	 x.document_id
@@ -84,7 +86,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.indicator_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -115,7 +118,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.campaign_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -145,7 +149,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.region_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -170,6 +175,7 @@ ON x.source_string = y.region_code;
 
 UPDATE document_detail dd
 SET master_object_id = rm.master_object_id
+	,map_id = rm.id
 FROM region_map rm
 WHERE dd.source_object_id = rm.source_object_id
 AND dd.document_id = $1
@@ -177,6 +183,7 @@ AND dd.db_model = 'region';
 
 UPDATE document_detail dd
 SET master_object_id = im.master_object_id
+	,map_id = im.id
 FROM indicator_map im
 WHERE dd.source_object_id = im.source_object_id
 AND dd.document_id = $1
@@ -184,6 +191,7 @@ AND dd.db_model = 'indicator';
 
 UPDATE document_detail dd
 SET master_object_id = cm.master_object_id
+	,map_id = cm.id
 FROM campaign_map cm
 WHERE dd.source_object_id = cm.source_object_id
 AND dd.document_id = $1
