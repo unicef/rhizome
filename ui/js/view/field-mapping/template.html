@@ -34,8 +34,8 @@
 	       </div>
 	
 	    </div>
-	    <div class="small-1 columns check-column"  v-on="click: displayUnmap(this,e)">
-	      <i class="{{field.master_object_id | check}}"></i>
+	    <div class="small-1 columns check-column" >
+	      <a v-if="field.master_object_id != -1" class="button" v-on="click:unmapField(field.source_object_id,field.master_object_id,$key)">unmap</a>
 	    </div>
 	  </div> 
 	</template>
