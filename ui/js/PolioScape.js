@@ -3,6 +3,9 @@
 var React = require('react');
 
 var LandingPage = require('view/LandingPage.jsx');
+var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
+var VisualizationBuilder = require('view/dashboard-builder/VisualizationBuilder.jsx');
+
 
 var Vue = require('vue');
 Vue.config.debug = true;
@@ -55,5 +58,11 @@ module.exports = {
 	},
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
+	},
+	DashboardBuilder: function (el) {
+		React.render(React.createElement(DashboardBuilder), el);
+	},
+	VisualizationBuilder: function (el) {
+		React.render(React.createElement(VisualizationBuilder), el);
 	}
 };

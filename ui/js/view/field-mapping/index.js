@@ -14,15 +14,15 @@ module.exports = {
 			    mappingData: {},//require('./temp_data.js'),
 			    //holds arrays of master data for populating the master id dropdowns
 			    remainingVerifications:{
-			      indicators:0,
-			      campaigns:0,
-			      regions:0,
+			      indicator:0,
+			      campaign:0,
+			      region:0,
 			      total:0
 			    },
 			    items:{
-			      indicators:[],
-			      campaigns:[],
-			      regions:[]
+			      indicator:[],
+			      campaign:[],
+			      region:[]
 			    },
 			    maps:{}, //holds hashes for indicators, campaigns, and regions
 			    dataLoaded:false
@@ -32,11 +32,11 @@ module.exports = {
 	created: function() {
 	  var self = this;
 	  var regionsPromise, indicatorsPromise, campaignsPromise, documentPromise;
-	   documentPromise = api.document_review({ document_id: this.$parent.$data.document_id }).then(function(values){
+	   documentPromise = api.document_review({ document: this.$parent.$data.document_id }).then(function(values){
 	      self.$set('mappingData',values.objects);
 	    });
 	   regionsPromise = api.regions().then(function(items){
-	     self.maps.regions = _.indexBy(items.objects, 'id');
+	     self.maps.region = _.indexBy(items.objects, 'id');
 	     var regions = _(items.objects)
 	     	.map(function (region) {
 	     		return {
@@ -52,11 +52,11 @@ module.exports = {
 	     	.thru(ancestoryString)
 	     	.value();
 	     //console.log(regions);
-	     self.$set('items.regions',regions); 
+	     self.$set('items.region',regions); 
 	     
 	   });
 	   indicatorsPromise = api.indicators().then(function(items){
-	           self.maps.indicators = _.indexBy(items.objects, 'id');
+	           self.maps.indicator = _.indexBy(items.objects, 'id');
 	          var indicators = _(items.objects)
 	           	.map(function (indicator) {
 	           		return {
@@ -70,12 +70,12 @@ module.exports = {
 	           	.reverse() 
 	           	.value();
 	          
-	           self.$set('items.indicators',indicators);
+	           self.$set('items.indicator',indicators);
 	          
 	          
 	       });
 	   campaignsPromise = api.campaign().then(function(items){
-	          self.maps.campaigns = _.indexBy(items.objects, 'id');
+	          self.maps.campaign = _.indexBy(items.objects, 'id');
 	          var campaigns = _(items.objects)
 	           	.map(function (campaign) {
 	           		return {
@@ -89,7 +89,7 @@ module.exports = {
 	           	.reverse() 
 	           	.value();
 	          
-	           self.$set('items.campaigns',campaigns);
+	           self.$set('items.campaign',campaigns);
 	           
 	       });
            
@@ -100,19 +100,29 @@ module.exports = {
 	    });    
 	},
 	methods: { 
-	  displayUnmap: function(element){
-	    var type = element.$parent.$key;
-	    var field = element.$data.field;
-	    var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':field.source_object_id});
-	    this.mappingData[type][key].master_object_id = '-1';
-	    api.map_field({ 'source_object_id': element.$data.field.source_object_id,
-	    				'master_object_id': null,
-	    				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
-	    				    
-	    				   // console.log(values);
-	    				    
-	    				});
-	    this.calculateRemainingVerifications();
+//	  displayUnmap: function(element){
+//	    var type = element.$parent.$key;
+//	    var field = element.$data.field;
+//	    var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':field.source_object_id});
+//	    this.mappingData[type][key].master_object_id = '-1';
+//	    api.map_field({ 'source_object_id': element.$data.field.source_object_id,
+//	    				'master_object_id': null,
+//	    				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
+//	    				    
+//	    				   // console.log(values);
+//	    				    
+//	    				});
+//	    this.calculateRemainingVerifications();
+//	  },
+	  unmapField: function(source_id, master_id,type){
+	      api['map_'+type]({ 'source_object_id': source_id,
+	      				'master_object_id': master_id,
+	      				'id':''
+	      				}).then(function(values){
+	      				    
+	      				    console.log(values);
+	      				    
+	      				});
 	  },
 	  calculateRemainingVerifications:function(){
 	    var self = this;
@@ -147,9 +157,9 @@ module.exports = {
 	     {  
 	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
 	        self.mappingData[type][key].master_object_id = masterId;
-	        api.map_field({ 'source_object_id': sourceId,
-	        				'master_object_id': masterId,
-	        				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
+	        api['map_'+type]({ 'source_object_id': sourceId,
+	        				'master_object_id': masterId
+	        				}).then(function(values){
 	        				    
 	        				    console.log(values);
 	        				    
@@ -160,9 +170,9 @@ module.exports = {
 	     var setMasterIdCurry = _.curry(setMasterId);
 	     
 	     self._menus = {
-	       regions:{},
-	       campaigns:{},
-	       indicators:{}
+	       region:{},
+	       campaign:{},
+	       indicator:{}
 	     };
 	     _.each(self.$data.mappingData, function(data,type){
 	       _.each(data,function(field){
@@ -201,7 +211,7 @@ module.exports = {
 	     }
 	     else {
 	     	var val =this.maps[masterIdArray[1]][masterIdArray[0]];
-	     	if(masterIdArray[1]==='regions' && val)
+	     	if(masterIdArray[1]==='region' && val)
 	     	{
 	     	  return val.name;
 	     	}
