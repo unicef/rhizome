@@ -418,11 +418,11 @@ module.exports = {
 			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
 				.then(_.spread(function (data, indicators) {
 					var missed = _.filter(data, function (d) {
-						return _.includes(INDICATORS.missed, d.indicator);
+						return _.includes(INDICATORS.missed, Number(d.indicator));
 					});
 
 					var conversions = _.filter(data, function (d) {
-						return _.includes(INDICATORS.conversions, d.indicator);
+						return _.includes(INDICATORS.conversions, Number(d.indicator));
 					});
 
 					self.missedChildren = _missedChildren(missed, indicators);
