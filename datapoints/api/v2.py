@@ -2,6 +2,7 @@ import json
 import datetime
 import traceback
 from pprint import pprint
+from collections import defaultdict
 
 from django.core.serializers import json as djangojson
 from django.db.models import Model, ManyToManyField
@@ -275,7 +276,7 @@ class v2GetRequest(v2Request):
             'office': {'orm_obj':Office,
                 'permission_function':None},
             'document_review' : {'orm_obj':DocumentDetail,
-                'permission_function':None },
+                'permission_function': self.group_document_metadata },
 
         }
 
@@ -305,7 +306,12 @@ class v2GetRequest(v2Request):
         ## apply limit and offset.  Not ideal that this does happen at the
         ## data base level, but applying limit/offset at here and querying for
         ## all the data is fine for now as these endpoints are fast.
-        self.data = data[self.offset:self.limit + self.offset]
+
+        try:
+            self.data = data[self.offset:self.limit + self.offset]
+        except TypeError:
+            self.data = data
+
         self.full_data_length = len(data)
         self.err = err
         self.meta = self.build_meta()
@@ -408,9 +414,15 @@ class v2GetRequest(v2Request):
 
     def serialize(self, data):
 
-        serialized = [self.clean_row_result(row) for row in data]
+        if self.content_type != 'document_review':
+            serialized = [self.clean_row_result(row) for row in data]
 
-        return None, serialized
+            return None, serialized
+
+        else:
+            return None, data
+
+
 
     def clean_row_result(self, row_data):
         '''
@@ -480,3 +492,32 @@ class v2GetRequest(v2Request):
         """, [self.user_id, list_of_object_ids])
 
         return None, data
+
+    def group_document_metadata(self,list_of_object_ids):
+        '''
+        This function is not actually about permissions, but rather data
+        manipulation needed for the front end.  Here i create three nodes
+        (region, campaign, indicator) and add all metadata here.
+        '''
+
+        raw_data = DocumentDetail.objects.raw("""
+            SELECT * FROM
+            document_detail dd
+            WHERE dd.id = ANY(COALESCE(%s,ARRAY[dd.id]))
+        """,[list_of_object_ids]
+        )
+
+        cleaned_data = {
+            'region':[],
+            'campaign':[],
+            'indicator':[],
+        }
+
+        for row in raw_data:
+
+            row_dict = dict(row.__dict__)
+            del row_dict['_state']
+
+            cleaned_data[row.db_model].append(row_dict)
+
+        return None, cleaned_data
