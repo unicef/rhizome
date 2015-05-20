@@ -225,9 +225,9 @@ module.exports = React.createClass({
 
         <g transform={'translate(' + left + ',' + top + ')'}>
           <g className='y axis'></g>
-          <g className='data'></g>
           <g className='x axis'
             transform={'translate(0,' + contentHeight + ')'}></g>
+          <g className='data'></g>
           <g className='annotation'></g>
         </g>
       </svg>
