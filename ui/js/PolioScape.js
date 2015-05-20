@@ -1,10 +1,16 @@
 'use strict';
 
-var Vue = require('vue'); 
+var React = require('react');
+
+var LandingPage = require('view/LandingPage.jsx');
+var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
+var VisualizationBuilder = require('view/dashboard-builder/VisualizationBuilder.jsx');
+
+
+var Vue = require('vue');
 Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
-Vue.component('vue-dropdown-2', require('./component/dropdown-2'));
 Vue.component('vue-table', require('./component/table'));
 Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));
@@ -14,6 +20,8 @@ Vue.component('vue-menu', require('./component/menu'));
 Vue.filter('num', require('./filter/num'));
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
+Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
+Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
 
 module.exports = {
 	Explorer: function (el) {
@@ -38,14 +46,23 @@ module.exports = {
 		new Vue({
 			el: el,
 			components: { 'uf-field-mapping': require('./view/field-mapping') },
-			data:{'document_id':document_id}/*,
-			attached: function () {
-			  Vue.component('field-mapping', require('./view/field-mapping'));
-			  var FieldMapping = require('../../component/dropdown');
-			  var fieldMapping = new FieldMapping({
-			     		el : '#field-mapping-container'
-			     	});
-			}*/
+			data:{'document_id':document_id}
 		});
+	},
+	UserAccount: function (el,user_id) {
+		new Vue({
+			el: el,
+			components: { 'uf-user-account': require('./view/user-account') },
+			data:{'user_id':user_id}
+		});
+	},
+	LandingPage: function (el) {
+		React.render(React.createElement(LandingPage), el);
+	},
+	DashboardBuilder: function (el) {
+		React.render(React.createElement(DashboardBuilder), el);
+	},
+	VisualizationBuilder: function (el) {
+		React.render(React.createElement(VisualizationBuilder), el);
 	}
 };

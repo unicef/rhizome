@@ -30,58 +30,51 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
-        if self.indicator_id:
-            indicators = [self.indicator_id]
-
-        else:
-            indicators = Indicator.objects.all().values_list('id',flat=True)
-
-        for ind_id in indicators:
-
-            sdps_to_sync = SourceDataPoint.objects.raw('''
-                SELECT
-                      sd.id
-                    , sd.cell_value
-                    , rm.master_object_id
-                    , cm.master_object_id
-                    , im.master_object_id
-                FROM source_datapoint sd
-                INNER JOIN source_region sr
-                	ON sd.region_code = sr.region_code
-                INNER JOIN region_map rm
-                	ON sr.id = rm.source_object_id
-                INNER JOIN source_indicator si
-                	ON sd.indicator_string = si.indicator_string
-                INNER JOIN indicator_map im
-                	ON si.id = im.source_object_id
-                    AND im.master_object_id = %s
-                INNER JOIN source_campaign sc
-                	ON sd.campaign_string = sc.campaign_string
-                INNER JOIN campaign_map cm
-                	ON sc.id = cm.source_object_id
-                WHERE sd.document_id = %s''', [ind_id,self.document_id])
+        ## get source data for which all metadata is mapped
+        ## and the user is permitted to write ##
+        sdps_to_sync = SourceDataPoint.objects.raw('''
+            SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
+            ''', [self.user_id,self.document_id,self.indicator_id])
 
 
-            for row in sdps_to_sync:
+        for row in sdps_to_sync:
 
-                dp,created = DataPoint.objects.get_or_create(
-                    campaign_id = row.master_object_id,
-                    indicator_id = row.master_object_id,
-                    region_id = row.master_object_id,
-                    defaults = {
-                        'value':row.cell_value,
-                        'source_datapoint_id': row.id,
-                        'changed_by_id': self.user_id
-                    })
+            cleaned_value = self.clean_cell_value(row.cell_value)
 
-                ## if this datapoint exists and was not added by a human ##
-                if created == False and dp.id > 0:
+            dp,created = DataPoint.objects.get_or_create(
+                campaign_id = row.campaign_id,
+                indicator_id = row.indicator_id,
+                region_id = row.region_id,
+                defaults = {
+                    'value': cleaned_value,
+                    'source_datapoint_id': row.id,
+                    'changed_by_id': self.user_id
+                })
 
-                    dp.source_datapoint_id = row.id
-                    dp.value = row.cell_value
-                    dp.changed_by_id = self.user_id
-                    dp.save()
+            ## if this datapoint exists and was not added by a human ##
+            if created == False and dp.id > 0:
 
+                dp.source_datapoint_id = row.id
+                dp.value = cleaned_value
+                dp.changed_by_id = self.user_id
+                dp.save()
+
+
+    def clean_cell_value(self,cell_value):
+
+        if cell_value == None:
+            return None
+        # elif cell_value == '':
+        #     return None
+
+        try:
+            cleaned = float(cell_value.replace(',',''))
+        except ValueError:
+            return None
+
+
+        print cleaned
+        return
 
     def delete_un_mapped(self):
 
@@ -95,7 +88,7 @@ class MasterRefresh(object):
 
     def sync_regions(self):
 
-        mapped_source_regions = RegionMap.objects.filter(source_region__document_id=self.document_id)
+        mapped_source_regions = RegionMap.objects.filter(source_object__document_id=self.document_id)
 
 
         for sr in mapped_source_regions:

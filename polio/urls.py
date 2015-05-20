@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import RedirectView
+from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
@@ -19,19 +20,19 @@ from tastypie.api import Api
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
-# v1_api.register(RegionResource())
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
-# v1_api.register(IndicatorResource())
 v1_api.register(UserResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 # v1_api.register(CampaignResource())
+# v1_api.register(IndicatorResource())
+# v1_api.register(RegionResource())
 
 
 urlpatterns = patterns('',
-    ## CUSTOM API ##
 
+    ## CUSTOM V1 API ##
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
     url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
@@ -39,33 +40,32 @@ urlpatterns = patterns('',
         api_document_review, name='api_document_review'),
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
-
-
-    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
-
-    # http://localhost:8000/api/v1/campaign_from_vw/?region__in=12907
+    ## V2 API
+    url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),
+    url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
+        name='v2_meta_api'),
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 
+    ## HOME PAGE
+    url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
 
-    ## Entity API ##
-    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
+    ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
+    url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
 
-    ##
-    url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
-    ##
-    url(r'^datapoints/', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.app_urls.urls', namespace="datapoints")),
-    url(r'^datapoints/indicators/', decorator_include(login_required,'datapoints.app_urls.indicator_urls', namespace="indicators")),
-    url(r'^datapoints/regions/', decorator_include(login_required,'datapoints.app_urls.region_urls', namespace="regions")),
-    ##
+    ## DASHBOARD WITH URL PARAMS ##
+    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## CORE SOURCE DATA FUNCTINOALITY
+    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
+
+    ## ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    ##
-    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
-    ##
+
+    ## NOT SURE WHAT THIS IS ##
     (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 

@@ -1,8 +1,10 @@
+$bg-color: #f2f2f2;
+
 svg {
 	overflow: visible;
 
 	.bg {
-		fill: #f2f2f2;
+		fill: $bg-color;
 	}
 
 	.axis {
@@ -46,16 +48,26 @@ svg {
 		}
 	}
 
-	.line {
+	&.line {
 		path {
-			fill: none;
-			stroke: $charcoal;
-			stroke-width: 2px;
+			fill         : none;
+			stroke       : inherit;
+			stroke-width : 2px;
 		}
 
 		circle {
-			fill: $white;
-			stroke-width: 1px;
+			fill         : inherit;
+			stroke       : $white;
+			stroke-width : 1px;
+		}
+	}
+
+	&.spaghetti {
+		path {
+			fill            : none;
+			shape-rendering : crispEdges;
+			stroke          : inherit;
+			stroke-width    : 2px;
 		}
 	}
 
@@ -124,7 +136,9 @@ svg {
 	}
 
 	.label {
-		text-shadow: $legibility-shadow;
+		margin      : 0;
+		padding     : 1pt 0;
+		text-shadow : $legibility-shadow;
 	}
 }
 
@@ -269,7 +283,7 @@ svg {
 		text-align  : center;
 
 		label {
-			font-size: 0.25em;
+			font-size : 0.25em;
 		}
 	}
 }
@@ -302,6 +316,27 @@ svg {
 	}
 }
 
+.heatmap {
+	border          : none;
+	border-collapse : separate;
+	cursor          : initial;
+	overflow        : hidden;
+
+	&.sortable {
+		.y.axis {
+			.tick {
+				cursor : pointer;
+			}
+		}
+	}
+
+	.x.axis {
+		.domain {
+			display : none;
+		}
+	}
+}
+
 #nco-dashboard {
 	.bar.chart {
 		rect {
@@ -312,6 +347,40 @@ svg {
 	.scatter {
 		.point {
 			cursor : pointer;
+		}
+	}
+}
+
+.tooltip {
+	svg {
+		margin: 1rem 0;
+		max-width: initial;
+		width: initial;
+	}
+
+	.histogram {
+		rect, .label {
+			fill: $white;
+			opacity: 0.6;
+		}
+
+		.current {
+			rect, .label {
+				opacity: 1;
+			}
+		}
+
+		.axis {
+			opacity: 0.3;
+
+			.domain {
+				stroke: $white;
+				stroke-width: 1px;
+				shape-rendering: crispEdges;
+			}
+			text {
+				fill: $white;
+			}
 		}
 	}
 }

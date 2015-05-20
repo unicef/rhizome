@@ -1,32 +1,32 @@
 import json
 from pprint import pprint
+import datetime
+from datetime import date
 
+import gspread
+import re
+import itertools
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
 from django.contrib.auth.models import User,Group
+
 from django.template import RequestContext
+
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
-import gspread
-import re
-import itertools
 from functools import partial
 
-from datapoints.models import DataPoint,Region,Indicator,Source,ReconData
+from datapoints.models import *
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
-
+from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
-
-USER_METADATA = 'static/users_metadata_mockup.json'
-DEFAULT_LIMIT = 50
-MAX_LIMIT = 500
+from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
 
 
 class IndexView(generic.ListView):
@@ -47,61 +47,22 @@ class DataPointIndexView(IndexView):
     template_name = 'datapoints/index.html'
     context_object_name = 'top_datapoints'
 
-    def get_queryset(self):
 
-        ## if this user has permissions to view entire office
-        ## then find the regions that fall under that
-        offices = get_objects_for_user(self.request.user,
-            'datapoints.view_office')
-        if offices:
-            regions = Region.objects.filter(office=offices)
+def data_entry(request):
 
-        ## now check to see if they have region level permissions
-        else:
-            regions = get_objects_for_user(self.request.user
-                , 'datapoints.view_region')
+    return render_to_response('data-entry/index.html',
+        context_instance=RequestContext(request))
+        
+def dashboard_builder(request):
 
-        ## TO DO : find all of the sub regions of the regions
-        ##         the user is permitted to see
+    return render_to_response('dashboard-builder/index.html',
+        context_instance=RequestContext(request))
+        
+def visualization_builder(request):
 
-        regions_leaf_level = regions #some recursive query
-
-        ## now get all the relevant data points
-        dps = DataPoint.objects.filter(region=regions_leaf_level)
-
-        return dps
-
-class DataEntryView(IndexView):
-
-    model=DataPoint
-    template_name = 'data-entry/index.html'
-    context_object_name = 'top_datapoints'
-
-    def get_queryset(self):
-
-        ## TO DO: add indicator set page and permissions
-
-        ## if this user has permissions to view entire office
-        ## then find the regions that fall under that
-        offices = get_objects_for_user(self.request.user,
-            'datapoints.view_office')
-        if offices:
-            regions = Region.objects.filter(office=offices)
-
-        ## now check to see if they have region level permissions
-        else:
-            regions = get_objects_for_user(self.request.user
-                , 'datapoints.view_region')
-
-        ## TO DO : find all of the sub regions of the regions
-        ##         the user is permitted to see
-
-        regions_leaf_level = regions #some recursive query
-
-        ## now get all the relevant data points
-        dps = DataPoint.objects.filter(region=regions_leaf_level)
-
-        return dps
+    return render_to_response('dashboard-builder/visualization_builder.html',
+        context_instance=RequestContext(request))
+        
 
 class DashBoardView(IndexView):
     paginate_by = 50
@@ -112,45 +73,6 @@ class DashBoardView(IndexView):
     def get_queryset(self):
         return DataPoint.objects.all()[:1]
 
-class DataPointCreateView(PermissionRequiredMixin, generic.CreateView):
-
-    model=DataPoint
-    success_url=reverse_lazy('datapoints:datapoint_index')
-    template_name='datapoints/create.html'
-    form_class = DataPointForm
-    permission_required = 'datapoints.add_datapoint'
-
-    def form_valid(self, form):
-    # this inserts into the changed_by field with  the user who made the insert
-        obj = form.save(commit=False)
-        obj.changed_by = self.request.user
-        obj.source_id = Source.objects.get(source_name='data entry').id
-        obj.source_datapoint_id = -1
-
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-class DataPointUpdateView(PermissionRequiredMixin,generic.UpdateView):
-
-    model=DataPoint
-    success_url = reverse_lazy('datapoints:datapoint_index')
-    template_name = 'datapoints/update.html'
-    form_class = DataPointForm
-    permission_required = 'datapoints.change_datapoint'
-
-    def form_valid(self, form):
-    # this sets the changed_by field to the user who made the update
-        obj = form.save(commit=False)
-        obj.changed_by = self.request.user
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-class DataPointDeleteView(PermissionRequiredMixin,generic.DeleteView):
-
-    model = DataPoint
-    success_url = reverse_lazy('datapoints:datapoint_index');
-    template_name ='datapoints/confirm_delete.html'
-    permission_required = 'datapoints.delete_datapoint'
 
     #################
     ### CAMPAIGNS ###
@@ -196,11 +118,10 @@ class IndicatorIndexView(IndexView):
     paginate_by = 10000
 
 
-
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
-    success_url= reverse_lazy('indicators:indicator_index')
+    success_url= reverse_lazy('datapoints:indicator_index')
     template_name = 'indicators/create.html'
     permission_required = 'datapoints.add_indicator'
 
@@ -208,37 +129,13 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
-    success_url = reverse_lazy('indicators:indicator_index')
+    success_url = reverse_lazy('datapoints:indicator_index')
     template_name = 'indicators/update.html'
     permission_required = 'datapoints.change_indicator'
 
-
-
-    ####################################
-    ###### CALCULATED INDICATORS #######
-    ####################################
-
-class CalculatedIndicatorIndexView(IndexView):
-
-    model = CalculatedIndicatorComponent
-    template_name = 'indicators/calculated_index.html'
-    context_object_name = 'top_calculated_indicators'
-
-
-class CalculatedIndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = CalculatedIndicatorComponent
-    success_url= reverse_lazy('indicators:calculated_indicator_index')
-    template_name = 'indicators/create_calculated.html'
-    # permission_required = 'datapoints.add_indicator'
-
-
-    ###############
     ###############
     ### REGIONS ###
     ###############
-    ###############
-
 
 class RegionIndexView(IndexView):
 
@@ -252,7 +149,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
-    success_url=reverse_lazy('regions:region_index')
+    success_url=reverse_lazy('datapoints:region_index')
 
 
     def form_valid(self, form):
@@ -270,16 +167,33 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Region
-    success_url = reverse_lazy('regions:region_index')
+    success_url = reverse_lazy('datapoints:region_index')
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
 
-class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
 
-    model=Region
-    success_url = reverse_lazy('regions:region_index')
-    template_name = 'regions/confirm_delete.html'
-    permission_required = 'datapoints.delete_region'
+    ##########################
+    ## PERMISSION CREATION ###
+    ##########################
+
+def view_user_permissions(request):
+
+    # user_id = request.user.id
+
+    # region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
+    region_permissions = RegionPermission.objects.all()
+
+    return render_to_response('xtra/user_permissions.html',\
+        {'region_permissions':region_permissions},\
+        context_instance=RequestContext(request))
+
+
+class RegionPermissionCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model=RegionPermission
+    template_name='xtra/create_region_permissions.html'
+    form_class = RegionPermissionForm
+    success_url=reverse_lazy('datapoints:view_user_permissions')
 
 
     ##############################
@@ -287,67 +201,6 @@ class RegionDeleteView(PermissionRequiredMixin,generic.DeleteView):
     #### FUNCTION BASED VIEWS ####
     ##############################
     ##############################
-
-
-def search(request):
-
-    if request.method =='POST':
-      ## THIS IS UGLY ##
-      kwargs = {}
-      if request.POST['indicator'] != u'':
-          kwargs.update({'indicator': request.POST['indicator']})
-      if request.POST['region'] != u'':
-          kwargs.update({'region': request.POST['region']})
-      if request.POST['changed_by'] != u'':
-          kwargs.update({'changed_by': request.POST['changed_by']})
-      if request.POST['campaign'] != u'':
-          kwargs.update({'campaign': request.POST['campaign']})
-
-      results = DataPoint.objects.filter(**kwargs)
-
-      return render_to_response('datapoints/index.html',
-        {'top_datapoints':results},
-        context_instance=RequestContext(request))
-
-    else:
-      return render_to_response('datapoints/search.html',
-        {'form':DataPointSearchForm},
-        context_instance=RequestContext(request))
-
-
-def populate_dummy_ngo_dash(request):
-
-    ng_dash_df = read_csv('datapoints/tests/_data/ngo_dash.csv')
-    campaign_id = 201
-
-    region_ids = []
-    batch = []
-
-    dist_r = ng_dash_df['region_id'].unique()
-
-    for r in dist_r:
-
-        df_filtered_by_region = ng_dash_df[ng_dash_df['region_id'] == r]
-
-        valid_cols_df = df_filtered_by_region[['indicator_id','value']]
-        ix_df = valid_cols_df.set_index('indicator_id')
-
-        x = ix_df.to_dict()
-        cleaned_json = json.dumps(x['value'], ensure_ascii=False)
-
-        dda_dict = {
-            'region_id': r,
-            'campaign_id':campaign_id,
-            'indicator_json':x['value']
-        }
-
-        DataPointAbstracted.objects.filter(campaign_id = campaign_id\
-            , region_id = r).delete()
-
-        DataPointAbstracted.objects.create(**dda_dict)
-
-    return HttpResponseRedirect('/datapoints/cache_control/')
-
 
 def cache_control(request):
 
@@ -360,42 +213,9 @@ def cache_control(request):
 
 def refresh_cache(request):
 
-    cr = CacheRefresh()
+    cr = cache_tasks.CacheRefresh()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
-
-def load_gdoc_data(request):
-
-    err_msg = 'none!'
-
-    # gc = gspread.login(gdoc_u,gdoc_p)
-    gc = gspread.login('fix','me')
-    worksheet = gc.open("Master Dashboard QA").sheet1
-    list_of_lists = worksheet.get_all_values()
-    gd_df = DataFrame(list_of_lists[1:],columns = list_of_lists[0])
-    gd_df = gd_df[gd_df['region_id'] != '0']
-    gd_dict = gd_df.transpose().to_dict()
-
-    batch = []
-
-    for k,v in gd_dict.iteritems():
-
-        if v['region_id'] == '#N/A':
-            pass
-
-        v['success_flag'] = 0
-        recon_d = ReconData(**v)
-        batch.append(recon_d)
-
-    ReconData.objects.all().delete()
-
-    try:
-        ReconData.objects.bulk_create(batch)
-    except Exception as err:
-        err_msg = err
-
-    return render_to_response('qa_data.html',
-        {'err_msg': err_msg},context_instance=RequestContext(request))
 
 def test_data_coverage(request):
 
@@ -522,51 +342,6 @@ def parse_url_args(request,keys):
     return request_meta
 
 
-def api_user(request):
-
-    users = User.objects.all()
-    for (k,v) in request.GET.iteritems():
-        verb = k.split('.')[0]
-        if verb == 'search':
-            keywords = re.split('(?<!\\\)\ ', v.lower())
-            users = _user_search(users, keywords)
-        elif verb == 'filter':
-            terms = k.split('.')
-            users = _user_filter(users, terms, v)
-        elif verb == 'sort':
-            if 'sort_direction' in request.GET:
-                sd = request.GET['sort_direction']
-                try:
-                    users = _user_sort(users, v, sd)
-                except:
-                    return HttpResponse({'error': 'Cannot Sort on Field'})
-            else:
-                users = _user_sort(users, v)
-    if 'sort' not in request.GET:
-        users = _user_sort(users, 'last_name', 'asc')
-    offset = 0
-    if 'offset' in request.GET:
-        offset = int(request.GET['offset'])
-    limit = DEFAULT_LIMIT
-    if 'limit' in request.GET:
-        limit = int(request.GET['limit'])
-    my_users = [ MyUser(pk=u.id).get_dict() for u in users ]
-    my_users = my_users[offset:offset+limit]
-    total_count = len(my_users)
-    resp = {}
-    resp['error'] = None
-    resp['meta'] = {
-        'limit': limit,
-        'offset': offset,
-        'total_count': total_count
-    }
-    resp['objects'] = my_users
-    resp['requested_params'] = [ {k: v} for (k,v) in request.GET.iteritems()]
-    return HttpResponse(json.dumps(resp),
-            content_type='application/json')
-
-
-
 def api_campaign(request):
 
     meta_keys = ['id','region__in','start_date','limit','offset']
@@ -608,7 +383,6 @@ def api_campaign(request):
         , content_type="application/json")
 
 
-
 def api_region(request):
 
     meta_keys = ['limit','offset']
@@ -628,15 +402,18 @@ def api_region(request):
         , content_type="application/json")
 
 
-def transform_indicators(request):
+def refresh_metadata(request):
 
-    response_data = cache_indicator_abstracted()
+    indicator_cache_data = cache_tasks.cache_indicator_abstracted()
+    user_cache_data = cache_tasks.cache_user_abstracted()
 
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
+    return HttpResponseRedirect('/datapoints/cache_control/')
 
 
 def api_indicator(request):
+    '''
+    TO BE REMOVED - Once transfer from v1/api to v2/api
+    '''
 
     meta_keys = ['limit','offset']
     request_meta = parse_url_args(request,meta_keys)
@@ -653,7 +430,7 @@ def api_indicator(request):
             ,ia.bound_json
         FROM indicator i
         INNER JOIN indicator_abstracted ia
-        ON i.id = ia.indicator_id
+        ON i.id = ia.id
         WHERE i.id = ANY(%s)
         ORDER BY i.id
     """,[id__in])
@@ -671,14 +448,59 @@ def api_indicator(request):
         , content_type="application/json")
 
 
-def bad_data(request):
+class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    dp_curs = BadData.objects.raw('''
-        SELECT * FROM bad_data
-    ''')
+    model = User
+    template_name = 'user_create.html'
+    form_class = UserCreateForm
+    # permission_required = 'datapoints.add_campaign'
 
-    dp_data = [{'id':dp.id, 'error_type':dp.error_type, 'doc_id':dp.document_id} for\
-        dp in dp_curs]
+    def form_valid(self, form):
 
-    return render_to_response('bad_data.html',{'dp_data':dp_data}
-        ,context_instance=RequestContext(request))
+        new_user = form.save()
+
+        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+            kwargs={'pk':new_user.id}))
+
+
+class UserEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = User
+    template_name = 'user_edit.html'
+    form_class = UserEditForm
+
+    def get_success_url(self):
+
+        requested_user_id = self.get_object().id
+
+        return reverse_lazy('datapoints:user_edit',kwargs={'pk':
+            requested_user_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(UserEditView, self).get_context_data(**kwargs)
+        user_obj = self.get_object()
+        context['user_id'] = user_obj.id
+
+        return context
+
+def v2_meta_api(request,content_type):
+
+    return v2_api(request,content_type,True)
+
+def v2_api(request,content_type,is_meta=False):
+
+    if is_meta:
+        request_object = v2MetaRequest(request, content_type)
+        data = request_object.main()
+
+    ## Handles Delete and Update.
+    elif request.POST:
+        request_object = v2PostRequest(request, content_type)
+        data = request_object.main()
+
+    else:
+        request_object = v2GetRequest(request, content_type)
+        data = request_object.main()
+
+    return HttpResponse(json.dumps(data),content_type="application/json")

@@ -143,8 +143,9 @@ module.exports = {
 	},
 
 	watch: {
-		'datapoints' : 'draw',
-		'innerRadius': 'draw',
-		'outerRadius': 'draw'
+		'datapoints'  : 'draw',
+		'innerRadius' : 'draw',
+		'outerRadius' : 'draw',
+		'domain'      : 'draw'
 	}
 };

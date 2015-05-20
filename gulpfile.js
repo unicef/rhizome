@@ -12,8 +12,8 @@ var $ = require('gulp-load-plugins')();
 
 var path = {
 	main      : './ui/js/PolioScape.js',
-	components: './ui/js/**/*.{js,html,css,sass,scss}',
-	js        : './ui/js/**/*.js',
+	components: './ui/js/**/*.{js,jsx,html,css,sass,scss}',
+	js        : './ui/js/**/*.{js,jsx}',
 	sass      : ['./ui/styles/**/{screen,print,ie,non-ie-print}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
@@ -128,7 +128,7 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'{bin,polio,datapoints,source_data,entity}/**/*.{py,sql,html,sh}',
+			'{bin,polio,datapoints,source_data,entity,templates}/**/*.{py,sql,html,sh}',
 			'manage.py',
 			'requirements.txt',
 		])

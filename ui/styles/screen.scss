@@ -15,7 +15,6 @@
 
 body {
 	font-size : rem-calc(10);
-	padding   : 11px 4px 11px 54px;
 }
 
 h6 {
@@ -27,14 +26,9 @@ h6 {
 }
 
 header {
-	@include background(linear-gradient(right, #333, #3a3a3a));
+	@include background(linear-gradient(bottom, #333, #3a3a3a));
 
-	position : fixed;
-	top      : 0;
-	left     : 0;
-	bottom   : 0;
-
-	z-index  : 9999;
+	margin-bottom: 1rem;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -60,15 +54,15 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 h3 {
-	border-bottom  : 1px solid $base;
-	color          : $base;
+	border-bottom  : 1px solid $iron;
+	color          : $steel;
 	text-transform : uppercase;
 }
 
 h4 {
-	margin: 0;
-	white-space: nowrap;
-	overflow: hidden;
+	margin      : 0;
+	overflow    : hidden;
+	white-space : nowrap;
 }
 
 select {
@@ -79,17 +73,20 @@ nav {
 	@include clearfix;
 
 	ul {
-		font-size: 10pt;
-		list-style: none;
-		margin: 0;
+		display    : inline-block;
+		font-size  : 9pt;
+		list-style : none;
+		margin     : 0;
 
 		&.right:last-child {
 			margin-right: -12pt;
 		}
 
 		li {
-			padding: 10pt 11pt 10pt 10pt;
-			border-left: 4px solid #3a3a3a;
+			border-top    : 2px solid transparent;
+			display       : inline-block;
+			margin-bottom : 3px;
+			padding       : 4pt 12pt 3pt 12pt;
 		}
 
 	}
@@ -114,7 +111,7 @@ p {
 body.dashboard nav .dashboard,
 body.data nav .data,
 body.data-entry nav .data-entry {
-	border-left: 4px solid #ffcc67;
+	border-top: 2px solid #ffcc67;
 
 	a {
 		opacity: 1;
@@ -140,9 +137,10 @@ a {
 }
 
 table {
-	border-collapse: collapse;
-	margin-top: 10pt;
-	min-width: 100%;
+	border: 1px solid #DDDDDD;
+	border-collapse : collapse;
+	margin-top      : 10pt;
+	min-width       : 100%;
 
 	th {
 		padding: 5pt 0;
@@ -154,7 +152,44 @@ table {
 		cursor: default;
 		font-size: 9pt;
 		padding: 3pt 0;
+	}
 
+	tbody {
+		tr:not(.empty):hover {
+			td {
+				background-color: $ghost;
+			}
+		}
+	}
+
+	tfoot {
+		td {
+			background-color : #DDDDDD;
+			padding: 0;
+
+			&.more {
+				font-size   : rem-calc(10);
+				text-align  : center;
+
+				&:hover {
+					background-color : #DDDDDD;
+				}
+
+				a {
+					color       : $body-font-color;
+					display     : block;
+					font-weight : bold;
+					opacity     : 0.6;
+
+					transition  : opacity 300ms ease-in-out;
+
+					&:hover {
+						color   : inherit;
+						opacity : 1;
+					}
+				}
+			}
+		}
 	}
 
 	.numeric {
@@ -176,11 +211,7 @@ table {
 		}
 	}
 
-	tr:not(.empty):hover {
-		td {
-			background-color: $ghost;
-		}
-	}
+
 
 	&.pie-charts {
 		border          : none;
@@ -228,6 +259,12 @@ button,
 	&:focus {
 		outline: none;
 	}
+
+	&.small {
+		border-bottom-width : 2px;
+		font-size           : rem-calc(9);
+		padding             : 0.5em 1.5em;
+	}
 }
 
 [class*="block-grid-"] > li {
@@ -245,7 +282,7 @@ button,
    &:not(.disabled):not(.success):hover {
    	border-color: $button-border-color;
    }
-   
+
 }
 
 /* fixed-header tables */
@@ -450,10 +487,46 @@ ul {
 }
 
 .tooltip {
-	color: white !important;
+	color: white;
 
-	h3 {
+	h1,h2,h3,h4,h5,h6 {
 		border: none;
+		color : inherit;
+	}
+
+	p {
+		color     : inherit;
+		font-size : .625rem;
+
+		table {
+			display : inline-block;
+			float   : left;
+			margin  : 0 1em 0 0;
+		}
+	}
+
+	table {
+		background-color : transparent;
+		border-top       : 1px solid $steel;
+		border-left      : none;
+		border-right     : none;
+		border-bottom    : none;
+		min-width        : 0;
+		table-layout     : auto;
+		width            : initial;
+
+		tr {
+			background-color : transparent;
+			padding          : 0 0.5em;
+		}
+
+		td, th {
+			background-color : transparent;
+			border-bottom    : 1px solid $steel;
+			color            : inherit;
+			font-size        : .625rem;
+			padding          : 0.1em;
+		}
 	}
 }
 
@@ -504,6 +577,14 @@ ul {
 	background-color : $gainsboro;
 	color            : $body-font-color;
 	padding          : 0.2em 0.7em;
+}
+
+.indicator-ranges {
+	tbody {
+		th {
+			padding-right : 1em;
+		}
+	}
 }
 
 @media #{$small-up} {

@@ -26,8 +26,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-MEDIA_ROOT = '/Users/johndingee_seed/code/UF04/polio/media/'
-MEDIA_URL = '/Users/johndingee_seed/code/UF04/polio/media/'
+MEDIA_ROOT = '/media/'
+MEDIA_URL = '/media/'
 
 # Application definition
 
@@ -50,7 +50,6 @@ INSTALLED_APPS = (
     'guardian',
     'tastypie',
     'debug_toolbar',
-    'entity',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,6 +109,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Template configuration
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

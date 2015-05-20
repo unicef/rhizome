@@ -519,3 +519,20 @@ Region Resource
 
   .. autoclass:: datapoints.api.meta_data.RegionResource
      :members:
+
+
+
+PERMISSIONS
+------------
+
+
+
+API REQUIREMENTS
+------------
+
+Golbal
+  - Limit
+  - Offset
+  - always_return_data = True
+
+https://seedscientific.atlassian.net/wiki/display/CE/User+Permissions+System

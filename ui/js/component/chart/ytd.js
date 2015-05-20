@@ -13,6 +13,16 @@ module.exports = {
 	],
 
 	computed: {
+		colorScale : function() {
+			return d3.scale.ordinal()
+				.range(['#2b8cbe', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
+				.domain(_(this.series)
+					.pluck('name')
+					.sortBy()
+					.reverse()
+					.value());
+		},
+
 		renderer: function () {
 			var x     = this.xScale;
 			var y     = this.yScale;
@@ -28,8 +38,8 @@ module.exports = {
 				.values(function (d) {
 					return d.values;
 				})
-				.color(function (d, i) {
-					return color(i);
+				.color(function (d) {
+					return color(d.name);
 				});
 
 			return renderer;
@@ -124,12 +134,15 @@ module.exports = {
 					month++;
 				});
 
-			return _.map(series, function (d, year) {
-				return {
-					name  : year,
-					values: d
-				};
-			});
+			return _(series)
+				.map(function (d, year) {
+					return {
+						name  : year,
+						values: d
+					};
+				})
+				.sortBy('year')
+				.value();
 		},
 
 		yScale: function () {

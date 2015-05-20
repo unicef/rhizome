@@ -1,218 +1,175 @@
---SELECT * FROM fn_populate_doc_meta(1013)
-
-
-DROP FUNCTION IF EXISTS fn_populate_doc_meta(input_document_id INT);
-CREATE FUNCTION fn_populate_doc_meta(input_document_id INT)
+DROP FUNCTION IF EXISTS fn_populate_doc_meta(document_id INT);
+CREATE FUNCTION fn_populate_doc_meta(document_id INT)
 RETURNS TABLE
 (
-	 id INT
-	,db_model VARCHAR(255)
-	,source_string VARCHAR(255)
-	,source_object_id BIGINT
-	,master_object_id BIGINT
-	,master_object_cnt BIGINT
-	,source_object_cnt BIGINT
+	ID INT,
+	doc_id INT,
+	source_object_id INT,
+	source_string VARCHAR,
+	source_dp_count INT,
+	master_dp_count INT,
+	db_model VARCHAR,
+	master_object_id INT
 ) AS
 $func$
 BEGIN
 
-        DROP TABLE IF EXISTS _doc_data;
-        CREATE TABLE _doc_data AS
 
-        SELECT
-        	 sd.id as source_datapoint_id
-        	,sd.document_id
-        	,indicator_string
-        	,campaign_string
-        	,region_code
-        FROM source_datapoint sd
-        WHERE sd.document_id = $1;
+-- GET ALL THE SOURCE DATAPOINT DATA IN TEMP TABLE --
+DROP TABLE IF EXISTS _tmp_sdps;
+CREATE TEMP TABLE _tmp_sdps
+AS
 
-        DROP TABLE IF EXISTS _doc_meta_cnt;
-        CREATE TABLE _doc_meta_cnt AS
-        SELECT
-        	*
-        	,CAST(NULL AS INT) AS source_object_id
-        	,CAST(-1 AS INT) as master_object_id
-        	,CAST(0 AS INT) as master_object_cnt
-        FROM (
-        	SELECT
-        		'source_indicator' as db_model
-        		,indicator_string as source_string
-        		,COUNT(1) AS source_object_cnt
-        	FROM _doc_data
-        	GROUP BY indicator_string
-
-        	UNION ALL
-
-        	SELECT
-        		'source_campaign' as db_model
-        		,campaign_string
-        		,COUNT(1) AS c
-        	FROM _doc_data
-        	GROUP BY campaign_string
-
-        	UNION ALL
-
-        	SELECT
-        		'source_region' as db_model
-        		,region_code
-        		,COUNT(1) AS c
-        	FROM _doc_data
-        	GROUP BY region_code
-        )x
-        INNER JOIN (
-        	SELECT dd.document_id
-        	FROM _doc_data dd LIMIT 1
-        )y
-        ON 1=1;
-
-        -----------------------------
-        -- insert source meta data --
-        -----------------------------
-
-        ----------------
-        -- indicators --
-        ----------------
-        INSERT INTO source_indicator
-        (indicator_string, document_id,source_guid)
-
-        SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id
-        FROM _doc_meta_cnt dmc
-        WHERE dmc.db_model = 'source_indicator'
-        AND NOT EXISTS (
-        	SELECT 1 FROM source_indicator si
-        	WHERE dmc.db_model = 'source_indicator'
-        	AND dmc.source_string = si.indicator_string
-        );
-
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	source_object_id = si.id
-        FROM source_indicator si
-        WHERE dmc.db_model = 'source_indicator'
-        AND dmc.source_string = si.indicator_string;
-
-        -- MASTER INDICATOR ID --
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	master_object_id = im.master_object_id
-        FROM indicator_map im
-        WHERE dmc.db_model = 'source_indicator'
-        AND dmc.source_object_id = im.source_object_id;
+SELECT sd.id ,region_code, indicator_string, campaign_string, sd.document_id
+FROM source_datapoint sd
+WHERE sd.document_id = $1;
 
 
-        -------------
-        -- REGIONS --
-        -------------
+--INSERT SOURCE META WHERE NOT EXISTS--
 
-        INSERT INTO source_region
-        (region_code,document_id,source_guid,is_high_risk)
+-- region --
+INSERT INTO source_region
+(region_code)
+SELECT region_code from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_region ser
+	WHERE tsdp.region_code = ser.region_code
+);
 
-        SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id, 'f'
-        FROM _doc_meta_cnt dmc
-        WHERE dmc.db_model = 'source_region'
-        AND NOT EXISTS (
-        	SELECT 1 FROM source_region sr
-        	WHERE dmc.db_model = 'source_region'
-        	AND dmc.source_string = sr.region_code
-        );
+-- campaign --
+INSERT INTO source_campaign
+(campaign_string)
+SELECT campaign_string from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_campaign sc
+	WHERE tsdp.campaign_string = sc.campaign_string
+);
 
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	source_object_id = sr.id
-        FROM source_region sr
-        WHERE dmc.db_model = 'source_region'
-        AND dmc.source_string = sr.region_code;
-
-
-        -- MASTER REGION ID --
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	master_object_id = rm.master_object_id
-        FROM region_map rm
-        WHERE dmc.db_model = 'source_region'
-        AND dmc.source_object_id = rm.source_object_id;
-
-        -------------
-        -- CAMPAIGNS --
-        -------------
-
-        INSERT INTO source_campaign
-        (campaign_string,document_id,source_guid)
-
-        SELECT dmc.source_string, dmc.document_id, dmc.source_string || '-' || dmc.document_id
-        FROM _doc_meta_cnt dmc
-        WHERE dmc.db_model = 'source_campaign'
-        AND NOT EXISTS (
-        	SELECT 1 FROM source_campaign sc
-        	WHERE dmc.db_model = 'source_campaign'
-        	AND dmc.source_string = sc.campaign_string
-        );
-
-        -- SOURCE CAMPAIGN ID --
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	source_object_id = sc.id
-        FROM source_campaign sc
-        WHERE dmc.db_model = 'source_campaign'
-        AND dmc.source_string = sc.campaign_string;
-
-        -- MASTER CAMPAIGN ID --
-        UPDATE _doc_meta_cnt dmc
-        SET
-        	master_object_id = cm.master_object_id
-        FROM campaign_map cm
-        WHERE dmc.db_model = 'source_campaign'
-        AND dmc.source_object_id = cm.source_object_id;
-
-        DROP TABLE IF EXISTS _synced_datapoints;
-        CREATE TEMP TABLE _synced_datapoints  as
-        SELECT
-        	dd.region_code
-        	,dd.indicator_string
-        	,dd.campaign_string
-        FROM _doc_data dd
-        INNER JOIN datapoint d
-        ON dd.source_datapoint_id = d.source_datapoint_id;
+-- indicator --
+INSERT INTO source_indicator
+(indicator_string)
+SELECT indicator_string from _tmp_sdps tsdp
+WHERE NOT EXISTS (
+	SELECT 1 from source_indicator si
+	WHERE tsdp.indicator_string = si.indicator_string
+);
 
 
-        UPDATE _doc_meta_cnt dmc
-        SET master_object_cnt = x.cnt
-        FROM (
-        	SELECT 'source_indicator' as db_model,indicator_string as source_string ,COUNT(1) as cnt
-        	FROM _synced_datapoints
-        	GROUP BY indicator_string
+-- FIND ID AND COUNT FOR MASTER METADATA IDS --
+DROP TABLE IF EXISTS _synced_dbs;
+CREATE TABLE _synced_dbs AS
 
-        	UNION ALL
-
-        	SELECT 'source_region' as db_model,region_code, COUNT(1) as cnt
-        	FROM _synced_datapoints
-        	GROUP BY region_code
-
-        	UNION ALL
-
-        	SELECT 'source_campaign' as db_model, campaign_string, COUNT(1) as cnt
-        	FROM _synced_datapoints
-        	GROUP BY campaign_string
-        )x
-        WHERE dmc.db_model = x.db_model
-        AND dmc.source_string = x.source_string;
+SELECT
+	 d.region_id
+	,tsdp.region_code
+	,d.campaign_id
+	,tsdp.campaign_string
+	,d.indicator_id
+	,tsdp.indicator_string
+FROM _tmp_sdps tsdp
+INNER JOIN datapoint d
+ON tsdp.id = d.source_datapoint_id;
 
 
-		RETURN QUERY
+DELETE FROM document_detail dd
+WHERE dd.document_id = $1;
 
-		--- RETURN TO RAW QUERYSET -----
-        SELECT
-        	dmc.document_id as id
-        	,CAST(dmc.db_model AS VARCHAR)
-        	,CAST(dmc.source_string AS VARCHAR)
-        	,CAST(dmc.source_object_id AS BIGINT)
-        	,CAST(dmc.master_object_id AS BIGINT)
-        	,CAST(dmc.master_object_cnt AS BIGINT)
-        	,CAST(dmc.source_object_cnt AS BIGINT)
-        FROM _doc_meta_cnt dmc;
+INSERT INTO document_detail
+(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id)
 
+SELECT
+	 x.document_id
+	,x.source_object_id
+	,CAST(x.source_string as VARCHAR)
+	,x.source_dp_count
+	,CAST(x.db_model AS VARCHAR)
+	,COALESCE(y.dp_cnt,0) as master_db_count
+	,COALESCE(y.indicator_id,-1) as master_object_id
+FROM (
+	SELECT
+ 		 MIN(tsdp.document_id) as document_id
+		 ,MIN(si.id) as source_object_id
+		,tsdp.indicator_string as source_string
+		,COUNT(1) AS source_dp_count
+		,'indicator' as db_model
+	FROM _tmp_sdps tsdp
+	INNER JOIN source_indicator si
+	ON tsdp.indicator_string = si.indicator_string
+	GROUP BY tsdp.indicator_string
+)x
+
+LEFT JOIN (
+	SELECT indicator_string, max(indicator_id) as indicator_id ,count(1) as dp_cnt
+	FROM _synced_dbs
+	GROUP BY indicator_string
+)y
+ON x.source_string = y.indicator_string
+
+
+UNION ALL
+
+SELECT
+	 x.document_id
+	,x.source_object_id
+	,CAST(x.source_string as VARCHAR)
+	,x.source_dp_count
+	,CAST(x.db_model AS VARCHAR)
+	,COALESCE(y.dp_cnt,0) as master_db_count
+	,COALESCE(y.campaign_id,-1) as master_object_id
+FROM (
+	SELECT
+ 		 MIN(tsdp.document_id) as document_id
+		 ,MIN(sc.id) as source_object_id
+		,tsdp.campaign_string as source_string
+		,COUNT(1) AS source_dp_count
+		,'campaign' as db_model
+	FROM _tmp_sdps tsdp
+	INNER JOIN source_campaign sc
+	ON tsdp.campaign_string = sc.campaign_string
+	GROUP BY tsdp.campaign_string
+)x
+
+LEFT JOIN (
+	SELECT campaign_string, max(campaign_id) as campaign_id ,count(1) as dp_cnt
+	FROM _synced_dbs
+	GROUP BY campaign_string
+)y
+ON x.source_string = y.campaign_string
+
+UNION ALL
+
+SELECT
+	 x.document_id
+	,x.source_object_id
+	,CAST(x.source_string as VARCHAR)
+	,x.source_dp_count
+	,CAST(x.db_model AS VARCHAR)
+	,COALESCE(y.dp_cnt,0) as master_db_count
+	,COALESCE(y.region_id,-1) as master_object_id
+FROM (
+	SELECT
+ 		 MIN(tsdp.document_id) as document_id
+		,MIN(sr.id) as source_object_id
+		,tsdp.region_code as source_string
+		,COUNT(1) AS source_dp_count
+		,'region' as db_model
+	FROM _tmp_sdps tsdp
+	INNER JOIN source_region sr
+	ON tsdp.region_code = sr.region_code
+	GROUP BY tsdp.region_code
+)x
+
+LEFT JOIN (
+	SELECT region_code, max(region_id) as region_id ,count(1) as dp_cnt
+	FROM _synced_dbs
+	GROUP BY region_code
+)y
+ON x.source_string = y.region_code;
+
+RETURN QUERY
+
+SELECT * FROM document_detail dd
+WHERE dd.document_id = $1;
 
 END
 $func$ LANGUAGE PLPGSQL;

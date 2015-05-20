@@ -1,32 +1,40 @@
-from django.forms import ModelForm, forms, ModelChoiceField
-from datapoints.models import *
-from django.contrib.auth.models import User
+from django import forms
+from datapoints.models import Region, Indicator, Campaign, RegionPermission
 
-class RegionForm(ModelForm):
+
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+class RegionForm(forms.ModelForm):
 
     class Meta:
         model = Region
-        # fields = ['name', 'source', 'source_region']
         exclude = ['source','source_region']
 
-class IndicatorForm(ModelForm):
+class IndicatorForm(forms.ModelForm):
 
     class Meta:
         model = Indicator
 
-class DataPointForm(ModelForm):
-
-    class Meta:
-        model = DataPoint
-        fields = ['indicator','region', 'campaign', 'value']
-
-class CampaignForm(ModelForm):
+class CampaignForm(forms.ModelForm):
 
     class Meta:
         model = Campaign
 
-class DataPointSearchForm(forms.Form):
-    region = ModelChoiceField(queryset=Region.objects.all())
-    indicator = ModelChoiceField(queryset=Indicator.objects.all())
-    campaign = ModelChoiceField(queryset=Campaign.objects.all())
-    changed_by = ModelChoiceField(queryset=User.objects.all())
+class RegionPermissionForm(forms.ModelForm):
+
+    class Meta:
+        model = RegionPermission
+
+class UserCreateForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+
+class UserEditForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('username','first_name','last_name')

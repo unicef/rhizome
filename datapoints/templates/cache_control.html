@@ -1,11 +1,11 @@
-{% extends "datapoints/base.html" %}
+{% extends "base.html" %}
 
 
 
 {% block content %}
 
     <button> <a href="{% url 'datapoints:refresh_cache' %}"> Refresh Cache </a></button>
-
+    <button align="right"> <a href="{% url 'datapoints:refresh_metadata' %}"> Refresh MetaData </a></button>
     <table>
     <thead>
         <tr>
