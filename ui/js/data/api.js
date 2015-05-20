@@ -138,7 +138,7 @@ module.exports = {
 	indicators            : endPoint('/indicator/'),
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/'),
-	document_review       : endPoint('/source_data/document_review/'),
+	document_review       : endPoint('/document_review/','get',2),
 	map_field             : endPoint('/api_map_meta/','post'),
 	groups                : endPoint('/group/','get',2),
 	user_groups           : endPoint('/user_group/','get',2),
