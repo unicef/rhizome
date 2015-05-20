@@ -73,11 +73,26 @@ urlpatterns = [
     url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
 
-        ######################################
-        ## CACHING VALIDATN AND PERMISSIONS ##
-        ######################################
+        ###################
+        #### USER EDIT ####
 
-    url(r'^transform_indicators/$', views.transform_indicators, name='transform_indicators'),
+    ## INDEX ##
+    # url(r'^users/$', views.UserIndexView.as_view(),
+    #     name='user_index'),
+
+    ## CREATE ##
+    url(r'^user/create/$', views.UserCreateView.as_view(),
+        name='create_userr'),
+
+    ## UPDATE ##
+    url(r'^user/edit/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
+        name='user_edit'),
+
+    ######################################
+    ## CACHING VALIDATION AND PERMISSIONS ##
+    ######################################
+
+    url(r'^refresh_metadata/$', views.refresh_metadata, name='refresh_metadata'),
     url(r'^cache_control/$', views.cache_control, name='cache_control'),
     url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
 

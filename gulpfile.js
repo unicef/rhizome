@@ -131,7 +131,7 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'{bin,polio,datapoints,source_data,entity}/**/*.{py,sql,html,sh}',
+			'{bin,polio,datapoints,source_data,entity,templates}/**/*.{py,sql,html,sh}',
 			'manage.py',
 			'requirements.txt',
 		])

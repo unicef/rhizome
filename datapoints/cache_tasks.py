@@ -2,6 +2,8 @@ import pandas as pd
 from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
 
+
+from django.contrib.auth.models import User
 from datapoints.models import *
 
 class CacheRefresh(object):
@@ -441,60 +443,84 @@ def cache_indicator_abstracted():
     Delete indicator abstracted, then re-insert by joiniding indicator boudns
     and creatign json for the indicator_bound field
     '''
-    IndicatorAbstracted.objects.all().delete()
 
     i_raw = Indicator.objects.raw("""
 
         SELECT
-            i.*
-            ,ib.mn_val
-            ,ib.mx_val
-            ,bound_name
-            ,direction
-        FROM indicator i
-        LEFT JOIN indicator_bound ib
-        ON i.id = ib.indicator_id
-        ORDER BY i.id
+             i.id
+            ,i.short_name
+            ,i.name
+            ,i.slug
+            ,i.name
+            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END
+        FROM (
+            SELECT
+            	i.id
+            	,json_agg(row_to_json(ib.*)) as bound_json
+            FROM indicator i
+            LEFT JOIN indicator_bound ib
+            ON i.id = ib.indicator_id
+            GROUP BY i.id
+        )x
+        INNER JOIN indicator i
+        ON x.id = i.id
+
     """)
 
-    objects = []
-    ##
-    raw_data = [{
-          'id': i.id \
-        , 'name':i.name \
-        , 'short_name' :i.short_name
-        , 'slug' :i.slug
-        , 'description':i.description \
-        , 'bound_name':i.bound_name
-        , 'mx_val':i.mx_val
-        , 'mn_val': i.mn_val
-    } for i in i_raw]
+    upsert_meta_data(i_raw, IndicatorAbstracted)
 
-    df = DataFrame(raw_data)
 
-    cleaned_df = df.fillna('NULL')
-    distinct_indicator_ids = df['id'].unique()
+def cache_user_abstracted():
 
-    for ind_id in distinct_indicator_ids:
+    u_raw = User.objects.raw(
+    '''
+        SELECT
+		  	 au.id
+   		  	,au.id as user_id
+            ,au.last_login
+        	,au.is_superuser
+        	,au.username
+        	,au.first_name
+        	,au.last_name
+        	,au.email
+        	,au.is_staff
+        	,au.is_active
+        	,au.date_joined
+			,gr.group_json
+            ,rp.region_permission_json
+        FROM auth_user au
+        LEFT JOIN (
+        	SELECT
+        		 aug.user_id
+        		,json_agg(row_to_json(aug.*)) AS group_json
+        	FROM auth_user_groups aug
+        	GROUP BY aug.user_id
+        ) gr
+        ON au.id = gr.user_id
+        LEFT JOIN (
+        	SELECT
+        		 rp.user_id
+        		,json_agg(row_to_json(rp.*)) as region_permission_json
+        	FROM region_permission rp
+        	GROUP BY rp.user_id
+        ) rp
+        ON au.id = rp.user_id
+    '''
+    )
 
-        ind_df = cleaned_df[cleaned_df['id'] == ind_id]
-        bounds_df = ind_df[['mn_val','mx_val','bound_name']]
-        bounds_df.reset_index(level=0,inplace=True)
+    upsert_meta_data(u_raw, UserAbstracted)
 
-        indicator_bounds = bounds_df.transpose().to_dict()
+def upsert_meta_data(qset, abstract_model):
 
-        if indicator_bounds[0]['bound_name'] == "NULL":
-            bound_array = []
-        else:
-            bound_array = [v for k,v in indicator_bounds.iteritems()]
+    batch = []
 
-        IndicatorAbstracted.objects.create(
-            id = ind_id,
-            name = ind_df['name'].unique()[0],
-            short_name = ind_df['short_name'].unique()[0],
-            description = ind_df['description'].unique()[0],
-            slug = ind_df['slug'].unique()[0],
-            bound_json = bound_array
-        )
+    for row in qset:
 
-    return {'objects':objects}
+        row_data = dict(row.__dict__)
+        del row_data['_state']
+
+        user_instance = abstract_model(**row_data)
+        batch.append(user_instance)
+
+    abstract_model.objects.all().delete()
+    abstract_model.objects.bulk_create(batch)

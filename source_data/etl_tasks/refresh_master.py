@@ -36,14 +36,17 @@ class MasterRefresh(object):
             SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
+
         for row in sdps_to_sync:
+
+            cleaned_value = self.clean_cell_value(row.cell_value)
 
             dp,created = DataPoint.objects.get_or_create(
                 campaign_id = row.campaign_id,
                 indicator_id = row.indicator_id,
                 region_id = row.region_id,
                 defaults = {
-                    'value':row.cell_value,
+                    'value': cleaned_value,
                     'source_datapoint_id': row.id,
                     'changed_by_id': self.user_id
                 })
@@ -52,10 +55,26 @@ class MasterRefresh(object):
             if created == False and dp.id > 0:
 
                 dp.source_datapoint_id = row.id
-                dp.value = row.cell_value
+                dp.value = cleaned_value
                 dp.changed_by_id = self.user_id
                 dp.save()
 
+
+    def clean_cell_value(self,cell_value):
+
+        if cell_value == None:
+            return None
+        # elif cell_value == '':
+        #     return None
+
+        try:
+            cleaned = float(cell_value.replace(',',''))
+        except ValueError:
+            return None
+
+
+        print cleaned
+        return
 
     def delete_un_mapped(self):
 

@@ -15,7 +15,6 @@
 
 body {
 	font-size : rem-calc(10);
-	padding   : 11px 4px 11px 54px;
 }
 
 h6 {
@@ -27,14 +26,9 @@ h6 {
 }
 
 header {
-	@include background(linear-gradient(right, #333, #3a3a3a));
+	@include background(linear-gradient(bottom, #333, #3a3a3a));
 
-	position : fixed;
-	top      : 0;
-	left     : 0;
-	bottom   : 0;
-
-	z-index  : 9999;
+	margin-bottom: 1rem;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -79,17 +73,20 @@ nav {
 	@include clearfix;
 
 	ul {
-		font-size: 10pt;
-		list-style: none;
-		margin: 0;
+		display    : inline-block;
+		font-size  : 9pt;
+		list-style : none;
+		margin     : 0;
 
 		&.right:last-child {
 			margin-right: -12pt;
 		}
 
 		li {
-			padding: 10pt 11pt 10pt 10pt;
-			border-left: 4px solid #3a3a3a;
+			border-top    : 2px solid transparent;
+			display       : inline-block;
+			margin-bottom : 3px;
+			padding       : 4pt 12pt 3pt 12pt;
 		}
 
 	}
@@ -114,7 +111,7 @@ p {
 body.dashboard nav .dashboard,
 body.data nav .data,
 body.data-entry nav .data-entry {
-	border-left: 4px solid #ffcc67;
+	border-top: 2px solid #ffcc67;
 
 	a {
 		opacity: 1;
@@ -140,9 +137,10 @@ a {
 }
 
 table {
-	border-collapse: collapse;
-	margin-top: 10pt;
-	min-width: 100%;
+	border: 1px solid #DDDDDD;
+	border-collapse : collapse;
+	margin-top      : 10pt;
+	min-width       : 100%;
 
 	th {
 		padding: 5pt 0;
@@ -154,7 +152,44 @@ table {
 		cursor: default;
 		font-size: 9pt;
 		padding: 3pt 0;
+	}
 
+	tbody {
+		tr:not(.empty):hover {
+			td {
+				background-color: $ghost;
+			}
+		}
+	}
+
+	tfoot {
+		td {
+			background-color : #DDDDDD;
+			padding: 0;
+
+			&.more {
+				font-size   : rem-calc(10);
+				text-align  : center;
+
+				&:hover {
+					background-color : #DDDDDD;
+				}
+
+				a {
+					color       : $body-font-color;
+					display     : block;
+					font-weight : bold;
+					opacity     : 0.6;
+
+					transition  : opacity 300ms ease-in-out;
+
+					&:hover {
+						color   : inherit;
+						opacity : 1;
+					}
+				}
+			}
+		}
 	}
 
 	.numeric {
@@ -176,11 +211,7 @@ table {
 		}
 	}
 
-	tr:not(.empty):hover {
-		td {
-			background-color: $ghost;
-		}
-	}
+
 
 	&.pie-charts {
 		border          : none;
@@ -227,6 +258,12 @@ button,
 
 	&:focus {
 		outline: none;
+	}
+
+	&.small {
+		border-bottom-width : 2px;
+		font-size           : rem-calc(9);
+		padding             : 0.5em 1.5em;
 	}
 }
 

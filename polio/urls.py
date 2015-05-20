@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import RedirectView
+from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
@@ -40,21 +41,15 @@ urlpatterns = patterns('',
     url(r'^api/v1/api_map_meta/$', api_map_meta, name='api_map_meta'),
 
     ## V2 API
-
-    ### CHANGE THIS TO ONE METHOD THAT ROUTES TO GET OR POST ##
-
     url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),
     url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
         name='v2_meta_api'),
-
-    ## Entity Api ##
-    url(r'api/v1/entity/', decorator_include(login_required, 'entity.app_urls.urls', namespace='entity')),
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),
 
     ## HOME PAGE
-    url(r'^$', RedirectView.as_view(url='/datapoints', permanent=False), name='index'),
+    url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
 
     ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
