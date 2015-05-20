@@ -108,8 +108,8 @@
 			<div class="transit-points medium-1 column">
 				<h4>Transit Points</h4>
 
-				<p v-if="transitPoints.showVaccinated">
-					<strong>{{ transitPoints.vaccinated | num }}</strong>
+				<p v-if="transitPoints.vaccinated.show">
+					<strong>{{ transitPoints.vaccinated.value | num }}</strong>
 					children vaccinated at transit points
 				</p>
 
@@ -119,7 +119,10 @@
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.inPlace.value, loading: false"
+									v-with="
+										datapoints : transitPoints.inPlace.value,
+										domain     : transitPoints.inPlace.domain,
+										loading    : false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
@@ -133,7 +136,10 @@
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.pctWithSM.value, loading: false"
+									v-with="
+										datapoints : transitPoints.withSM.value,
+										domain     : transitPoints.withSM.domain,
+										loading    : false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
@@ -238,11 +244,10 @@
 					<h6 style="text-overflow:initial;white-space:normal">Districts with Access Plan</h6>
 					<div class="labeled-donut">
 						<div v-component="chart-pie"
-								 data-indicators="[174]"
 								 data-width="150"
 								 data-height="150"
 								 data-inner-radius="45"
-								 v-with="campaign: campaign, region: region"></div>
+								 v-with="datapoints: accessPlans, campaign: campaign, region: region"></div>
 
 						<p class="donut-label"></p>
 					</div>

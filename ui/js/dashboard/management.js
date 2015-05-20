@@ -111,9 +111,9 @@ function _transitPoints(data) {
 	var index = _.indexBy(data, 'indicator');
 
 	var vaccinated = _.get(index, '[177].value');
-	var inPlace    = _.get(index, '[175].value');
-	var withSM     = _.get(index, '[176].value');
-	var planned    = _.get(index, '[204].value');
+	var inPlace    = index[175];
+	var withSM     = index[176];
+	var planned    = index[204];
 
 	return {
 		vaccinated : {
@@ -122,13 +122,13 @@ function _transitPoints(data) {
 		},
 		inPlace : {
 			value  : [inPlace],
-			domain : [0, planned],
-			show   : _.all([inPlace, planned], _.isFinite)
+			domain : [0, planned.value],
+			show   : _.all([inPlace, planned], _.flow(_.property('value'), _.isFinite))
 		},
 		withSM : {
 			value  : [withSM],
-			domain : [0, inPlace],
-			show   : _.all([withSM, inPlace], _.isFinite)
+			domain : [0, inPlace.value],
+			show   : _.all([withSM, inPlace], _.flow(_.property('value'), _.isFinite))
 		}
 	};
 }
@@ -217,6 +217,7 @@ module.exports = {
 			supply          : [],
 			resources       : [],
 
+			accessPlans     : [],
 			inaccessibility : [],
 
 			microplans      : {
@@ -315,15 +316,14 @@ module.exports = {
 
 					self.microplans = _microplans(microplans);
 
-					self.inaccessibility = _inaccessibilityBreakdown(
-						inaccessibility,
-						self._indicators);
+					// self.inaccessibility = _inaccessibilityBreakdown(
+					// 	inaccessibility,
+					// 	self._indicators);
 
-					self.accessPlans = _(data).filter(function (d) {
-							return _.includes(INDICATORS.accessPlans, d.indicator);
+					self.accessPlans = [_(data).filter(function (d) {
+							return _.includes(INDICATORS.accessPlans, Number(d.indicator));
 						})
-						.pluck('value')
-						.first();
+						.first()];
 
 					self.transitPoints = _transitPoints(transitPoints);
 				});
