@@ -87,7 +87,6 @@ function _microplans(data) {
 
 function _inaccessibilityBreakdown(data, indicators) {
 	return _(data)
-		.thru(melt)
 		.map(function (d) {
 			// Build a new object that can be used as the VM for the table of pie
 			// charts that displays the inaccessibility breakdown
@@ -101,9 +100,10 @@ function _inaccessibilityBreakdown(data, indicators) {
 			}, _.pick(d, 'campaign', 'region'));
 		})
 		.filter(function (d) {
-			return _.isFinite(d.datapoints[0].value);
+			return _.isFinite(d.datapoints[0].value) && d.datapoints[0].value > 0;
 		})
 		.sortBy(_.property('datapoints[0].value'))
+		.reverse()
 		.value();
 }
 
@@ -299,9 +299,8 @@ module.exports = {
 			q.indicator__in = _(INDICATORS).pick('inaccessibility', 'accessPlans', 'transitPoints', 'microplans').values().flatten().value(),
 			q.campaign_start = start.format('YYYY-MM-DD');
 
-			api.datapoints(q)
-				.then(meltObjects)
-				.then(function (data) {
+			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
+				.then(_.spread(function (data, indicators) {
 					var microplans = _.filter(data, function (d) {
 						return _.includes(INDICATORS.microplans, Number(d.indicator));
 					});
@@ -316,9 +315,8 @@ module.exports = {
 
 					self.microplans = _microplans(microplans);
 
-					// self.inaccessibility = _inaccessibilityBreakdown(
-					// 	inaccessibility,
-					// 	self._indicators);
+					self.inaccessibility = _inaccessibilityBreakdown(
+						inaccessibility, indicators);
 
 					self.accessPlans = [_(data).filter(function (d) {
 							return _.includes(INDICATORS.accessPlans, Number(d.indicator));
@@ -326,7 +324,7 @@ module.exports = {
 						.first()];
 
 					self.transitPoints = _transitPoints(transitPoints);
-				});
+				}));
 
 			// Fetch the immunity gap data
 			q.indicator__in  = INDICATORS.immunityGap;

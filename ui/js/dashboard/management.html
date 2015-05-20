@@ -255,8 +255,7 @@
 				<div class="medium-4 columns">
 					<h6>Inaccessibility Breakdown</h6>
 					<table class="accessibility pie-charts">
-						<tr v-repeat="inaccessibility"
-							v-class="hide-for-print : hiddenForPrint">
+						<tr v-repeat="inaccessibility">
 							<td>
 								<div v-component="chart-pie"
 									data-width="12"
