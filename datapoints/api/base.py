@@ -124,7 +124,7 @@ class BaseNonModelResource(Resource):
             region_ids = Region.objects.all().values_list('id',flat=True)
 
         permitted_region_qs =  Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,NULL)",[self.user_id])
+            fn_get_authorized_regions_by_user(%s,NULL,'r')",[self.user_id])
 
         permitted_region_ids = [r.id for r in permitted_region_qs]
 

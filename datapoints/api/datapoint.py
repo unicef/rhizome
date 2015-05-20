@@ -402,8 +402,12 @@ class DataPointEntryResource(BaseModelResource):
         '''
         Ensure that the user has write permissions for the indicator in the
         request, and if they do not, throw an exception.
+
+        Users need to be validated against the "region_permission" table
+        as well as the indicator_permissions (via user_to_group table)
         '''
 
+        ## CHECK INDICATOR PERMISSIONS ##
         indicator_id = bundle_data['indicator_id']
 
         user_qs = User.objects.raw('''
@@ -420,7 +424,23 @@ class DataPointEntryResource(BaseModelResource):
         user_id_list = [u.id for u in user_qs]
 
         if len(user_id_list) == 0:
-            raise InputError(4, 'User does not have permissinons for indicator_id: {0}'.format(indicator_id))
+            raise InputError(4, 'User does not have permissinons for \
+                indicator_id: {0}'.format(indicator_id))
+
+        ## CHECK REGION PERMISSION ##
+
+        region_id_list = []
+        region_id_list.append(int(bundle_data['region_id']))
+
+        permitted_region_qs =  Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s,'w')",[user_id,
+            region_id_list])
+
+        permitted_region_ids = [x.id for x in permitted_region_qs]
+
+        if len(permitted_region_ids) == 0:
+            raise InputError(4, 'User does not have permissinons for \
+                region_id: {0}'.format(bundle_data['region_id']))
 
 
     def validate_object(self, obj):

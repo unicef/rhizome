@@ -43,51 +43,12 @@ class v2Request(object):
         return response_data
 
 
-    def apply_region_permissions(self, list_of_object_ids):
-        '''
-        This returns a raw queryset, that is the query itself isn't actually
-        executed until the data is unpacked in the serialize method.
-
-        For more information on how region permissions work, take a look
-        at the definition of the stored proc called below.
-        '''
-
-        data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s)",[self.request.user.id,
-            list_of_object_ids])
-
-        return None, data
-
-    def apply_campaign_permissions(self, list_of_object_ids):
-        '''
-        As in above, this returns a raw queryset, and will be executed in the
-        serialize method.
-
-        The below query reads: "show me all campaigns that have data for
-        regions that I am permitted to see."
-
-        No need to do recursion here, because the data is already aggregated
-         regionally when ingested into the datapoint_abstracted table.
-        '''
-
-        data = Campaign.objects.raw("""
-            SELECT c.* FROM campaign c
-            INNER JOIN datapoint_abstracted da
-                ON c.id = da.campaign_id
-            INNER JOIN region_permission rm
-                ON da.region_id = rm.region_id
-                AND rm.user_id = %s
-            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-        """, [self.user_id, list_of_object_ids])
-
-        return None, data
-
-
-
 class v2PostRequest(v2Request):
 
 
     def __init__(self, request, content_type):
+
+        super(v2PostRequest, self).__init__(request, content_type)
 
         self.kwargs = self.clean_kwargs(request.POST)
         self.orm_mapping = {
@@ -98,11 +59,13 @@ class v2PostRequest(v2Request):
             'user': {'orm_obj':User},
             'region_permission': {'orm_obj':RegionPermission},
             'user_group': {'orm_obj':UserGroup},
+            'indicator_map': {'orm_obj':IndicatorMap},
+            'region_map': {'orm_obj':RegionMap},
+            'campaign_map': {'orm_obj':CampaignMap},
+
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
-
-        return super(v2PostRequest, self).__init__(request, content_type)
 
 
     def clean_kwargs(self,query_dict):
@@ -112,8 +75,11 @@ class v2PostRequest(v2Request):
         for k,v in query_dict.iteritems():
             cleaned_kwargs[k] = v
 
-        return cleaned_kwargs
+        ## add mapped_by id for mapping endpoints ##
+        if self.content_type in ['region_map','indicator_map','campaign_map']:
+            cleaned_kwargs['mapped_by_id'] = self.user_id
 
+        return cleaned_kwargs
 
     def main(self):
         '''
@@ -171,7 +137,6 @@ class v2PostRequest(v2Request):
         except KeyError:
             self.id_param = None
             return 'CREATE'
-
 
 
 class v2MetaRequest(v2Request):
@@ -299,7 +264,7 @@ class v2GetRequest(v2Request):
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
-            'user': {'orm_obj':User,
+            'user': {'orm_obj':UserAbstracted,
                 'permission_function':None},
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
@@ -309,6 +274,9 @@ class v2GetRequest(v2Request):
                 'permission_function':None},
             'office': {'orm_obj':Office,
                 'permission_function':None},
+            'document_review' : {'orm_obj':DocumentDetail,
+                'permission_function':None },
+
         }
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
@@ -393,6 +361,13 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.offset = 0
 
+        ## Find the Read/Write param for regions ( see POLIO-779 ) ##
+
+        try:
+            self.read_write = query_dict['read_write']
+        except KeyError:
+            self.read_write = 'r'
+
         return cleaned_kwargs
 
 
@@ -464,3 +439,44 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = smart_str(v)
 
         return cleaned_row_data
+
+    ## permissions functions ##
+
+    def apply_region_permissions(self, list_of_object_ids):
+        '''
+        This returns a raw queryset, that is the query itself isn't actually
+        executed until the data is unpacked in the serialize method.
+
+        For more information on how region permissions work, take a look
+        at the definition of the stored proc called below.
+        '''
+
+        data = Region.objects.raw("SELECT * FROM\
+            fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,
+            list_of_object_ids,self.read_write])
+
+        return None, data
+
+    def apply_campaign_permissions(self, list_of_object_ids):
+        '''
+        As in above, this returns a raw queryset, and will be executed in the
+        serialize method.
+
+        The below query reads: "show me all campaigns that have data for
+        regions that I am permitted to see."
+
+        No need to do recursion here, because the data is already aggregated
+         regionally when ingested into the datapoint_abstracted table.
+        '''
+
+        data = Campaign.objects.raw("""
+            SELECT c.* FROM campaign c
+            INNER JOIN datapoint_abstracted da
+                ON c.id = da.campaign_id
+            INNER JOIN region_permission rm
+                ON da.region_id = rm.region_id
+                AND rm.user_id = %s
+            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+        """, [self.user_id, list_of_object_ids])
+
+        return None, data
