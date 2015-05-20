@@ -130,9 +130,6 @@ def populate_document_metadata(document_id):
 
     inserted_ids = [x.id for x in raw_qs]
 
-    print inserted_ids
-
-
     return meta_breakdown
 
 
@@ -229,8 +226,7 @@ def api_document_review(request):
         SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
 
     for row in raw_qs:
-        print row
-        print '==='
+
         row_dict = {
             'db_model':row.db_model,
             'source_object_id':row.source_object_id,
@@ -241,8 +237,6 @@ def api_document_review(request):
         meta_breakdown.append(row_dict)
 
     mb_df = DataFrame(meta_breakdown)
-
-    print mb_df
 
     df_no_nan = mb_df.where((notnull(mb_df)), None)
     no_ix_df = df_no_nan.reset_index(drop=True)

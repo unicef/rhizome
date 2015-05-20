@@ -220,6 +220,7 @@ class DocumentDetail(models.Model):
     source_string = models.CharField(max_length=255)
     source_dp_count = models.IntegerField()
     master_dp_count = models.IntegerField()
+    map_id = models.IntegerField()
 
     class Meta:
         db_table = 'document_detail'
