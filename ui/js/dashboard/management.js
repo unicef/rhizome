@@ -75,7 +75,7 @@ function _microplans(data) {
 	};
 
 	if (!_.isEmpty(data)) {
-		var indicators = _.indexBy(data.indicators, 'indicator');
+		var indicators = _.indexBy(data, 'indicator');
 
 		microplans.value  = [indicators[28]];
 		microplans.domain = [0, indicators[27].value];
@@ -295,23 +295,22 @@ module.exports = {
 				});
 
 			// Fetch data for current campaign for pie charts
-			api.datapoints({
-					indicator__in  : _(INDICATORS).pick('inaccessibility', 'accessPlans', 'transitPoints').values().flatten().value(),
-					region__in     : this.region.id,
-					campaign__in   : this.campaign.id
-				})
+			q.indicator__in = _(INDICATORS).pick('inaccessibility', 'accessPlans', 'transitPoints', 'microplans').values().flatten().value(),
+			q.campaign_start = start.format('YYYY-MM-DD');
+
+			api.datapoints(q)
 				.then(meltObjects)
 				.then(function (data) {
 					var microplans = _.filter(data, function (d) {
-						return _.includes(INDICATORS.microplans, d.indicator);
+						return _.includes(INDICATORS.microplans, Number(d.indicator));
 					});
 
 					var inaccessibility = _.filter(data, function (d) {
-						return _.includes(INDICATORS.inaccessibility, d.indicator);
+						return _.includes(INDICATORS.inaccessibility, Number(d.indicator));
 					});
 
 					var transitPoints = _.filter(data, function (d) {
-						return _.includes(INDICATORS.transitPoints, d.indicator);
+						return _.includes(INDICATORS.transitPoints, Number(d.indicator));
 					});
 
 					self.microplans = _microplans(microplans);

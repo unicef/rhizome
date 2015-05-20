@@ -68,7 +68,7 @@
 				</section>
 
 				<section>
-					<table class="pie-charts" v-if="microplans.available">
+					<table class="pie-charts" v-if="microplans.show">
 						<tbody>
 							<tr>
 								<td>
@@ -77,13 +77,13 @@
 										data-width="18"
 										data-height="18"
 									   v-with="
-									   	datapoints : microplans.data,
-									   	domain     : microplans.domain,
-									   	loading    : false
+									   	datapoints  : microplans.value,
+									   	domain      : microplans.domain,
+									   	loading     : false
 									   "></div>
 								</td>
 
-								<td>{{ microplans.data[0].value }} / {{ microplans.domain[1] }}
+								<td>{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
 									microplans incorporate social data</td>
 							</tr>
 						</tbody>

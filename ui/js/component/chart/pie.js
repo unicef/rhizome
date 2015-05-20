@@ -67,7 +67,7 @@ module.exports = {
 		},
 
 		series: function () {
-			if (this.empty) {
+			if (_.isEmpty(this.datapoints)) {
 				return [];
 			}
 
