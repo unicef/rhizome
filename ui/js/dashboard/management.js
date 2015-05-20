@@ -3,8 +3,14 @@
 var _      = require('lodash');
 var d3     = require('d3');
 var moment = require('moment');
+var React  = require('react');
+
+var LineChart     = require('component/chart/LineChart.jsx');
+var PolioCasesYtD = require('./PolioCasesYtD.jsx');
 
 var api    = require('data/api');
+var colors = require('colors');
+var format = require('util/format');
 var util   = require('util/data');
 
 var INDICATORS = {
@@ -58,78 +64,6 @@ function seriesObject(d, ind, collection, indicators) {
 	return {
 		name   : indicators[ind].short_name,
 		values : d
-	};
-}
-
-function _polioCases(data, campaign) {
-	var cases = _(data)
-		.groupBy(_.method('campaign.start_date.getFullYear'))
-		.map(function (cases, year) {
-			// Aggregate polio cases by year
-			return {
-				name   : year,
-				values : _(cases)
-					.groupBy(_.method('campaign.start_date.getMonth'))
-					.map(function (d, month) {
-						// Aggregate polio cases by month within each year
-						return {
-							month : month,
-							value : _(d).pluck('value').sum()
-						};
-					})
-					.sortBy('month')
-					.map(function (d, i, arr) {
-						// Set the 'date' property on all objects to whatever month is
-						// correct but for the current year. This is a hack so that the line
-						// chart will render the lines by month, instead of sequentially
-						return {
-							month      : d.month,
-							year       : year,
-							date       : moment({ M: d.month }).toDate(),
-							newCases   : d.value,
-							totalCases : _(arr).take(i + 1).pluck('value').sum()
-						};
-					})
-					.value()
-			};
-		})
-		.sortBy('name')
-		.value();
-
-	var thisYear  = campaign.start_date.getFullYear();
-	var thisMonth = campaign.start_date.getMonth();
-	var latest    = _.find(cases, function (d) { return d.name == campaign.start_date.getFullYear(); });
-
-	// Fill in missing value for current campaign
-	if (_.isUndefined(latest)) {
-		latest = {
-			name : thisYear,
-			values : [{
-				month      : 0,
-				year       : thisYear,
-				newCases   : 0,
-				totalCases : 0
-			}]
-		};
-
-		cases.push(latest);
-	}
-
-	var currentCampaign = _.find(latest.values, function (d) { return d.month === thisMonth; });
-
-	if (_.isUndefined(currentCampaign)) {
-		currentCampaign = _.assign({}, _.last(latest.values), {
-			month    : thisMonth,
-			newCases : 0
-		});
-
-		latest.values.push(currentCampaign);
-	}
-
-	return {
-		cases      : cases,
-		totalCases : currentCampaign.totalCases,
-		newCases   : currentCampaign.newCases
 	};
 }
 
@@ -275,22 +209,14 @@ module.exports = {
 			campaign        : null,
 			campaigns       : [],
 
-			cases : {
-				series     : [],
-				totalCases : null,
-				newCases   : null
-			},
-
 			immunityGap     : [],
 			missedChildren  : [],
-			conversions     : [],
 
 			capacity        : [],
 			polio           : [],
 			supply          : [],
 			resources       : [],
 
-			inaccessible    : [],
 			inaccessibility : [],
 
 			microplans      : {
@@ -359,7 +285,13 @@ module.exports = {
 			api.datapoints(q)
 				.then(meltObjects)
 				.then(function (data) {
-					self.cases = _polioCases(data, self.campaign);
+					var ytd = React.createElement(PolioCasesYtD, {
+						campaign : self.campaign,
+						data     : data,
+						region   : self.region
+					});
+
+					React.render(ytd, self.$$.polioCases);
 				});
 
 			// Fetch data for current campaign for pie charts
@@ -422,11 +354,35 @@ module.exports = {
 					});
 
 					var conversions = _.filter(data, function (d) {
-						return _.includes(INDICATORS.conversions, Number(d.indicator));
-					});
+							return _.includes(INDICATORS.conversions, Number(d.indicator));
+						});
 
 					self.missedChildren = _missedChildren(missed, indicators);
-					self.conversions    = _conversions(conversions, indicators);
+
+					React.render(
+						React.createElement(LineChart, {
+							series : _conversions(conversions, indicators),
+							x : {
+								scale  : d3.time.scale()
+									.domain(d3.extent(conversions, _.property('campaign.start_date'))),
+								get    : _.property('campaign.start_date'),
+								format : format.timeAxis,
+							},
+							y : {
+								scale  : d3.scale.linear(),
+								get    : _.property('value'),
+								format : d3.format('%'),
+							},
+							getColor : function (d, i) {
+								var scale = d3.scale.ordinal()
+									.domain(d3.range(INDICATORS.conversions.length))
+									.range(colors);
+
+								return scale(i)
+							}
+						}),
+						self.$$.conversions
+					);
 				}));
 
 			// Bullet charts
@@ -445,10 +401,10 @@ module.exports = {
 				.then(_.spread(function (data, indicators) {
 					var series = _.partialRight(seriesObject, indicators);
 
-					self.capacity  = data.pick(INDICATORS.capacity).map(series).value();
-					self.polio     = data.pick(INDICATORS.polio).map(series).value();
-					self.supply    = data.pick(INDICATORS.supply).map(series).value();
-					self.resources = data.pick(INDICATORS.resources).map(series).value();
+					// self.capacity  = data.pick(INDICATORS.capacity).map(series).value();
+					// self.polio     = data.pick(INDICATORS.polio).map(series).value();
+					// self.supply    = data.pick(INDICATORS.supply).map(series).value();
+					// self.resources = data.pick(INDICATORS.resources).map(series).value();
 				}));
 		},
 	},

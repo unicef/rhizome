@@ -19,32 +19,8 @@
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
 
-			<section>
-				<h4>
-					<span v-if="cases != null">
-						Polio cases in {{ campaign.start_date | date 'YYYY' }}
-						(as of {{ campaign.start_date | date 'MMM' }}):
-						<span style="color:#2b8cbe;float:right;font-weight:bold">{{ cases }}</span>
-					</span>
-					<span v-if="cases == null">
-						Polio Cases
-					</span>
-				</h4>
-				<div style="position:relative">
-					<div
-						v-if="newCases != null">
-						<p id="new-polio-cases">
-							{{ cases.newCases }} new {{ cases.newCases | pluralize case }}
-						</p>
-					</div>
-					<div
-						id="polio-cases-ytd"
-						v-component="chart-line"
-						data-aspect="1.757"
-						data-margin-top="24"
-						data-margin-bottom="24"
-						data-series="{{ cases.series }}"></div>
-				</div>
+			<section v-el="polioCases">
+				<h4>Polio Cases</h4>
 			</section>
 
 			<section>
@@ -88,14 +64,7 @@
 
 				<section>
 					<h4>Conversions</h4>
-					<div
-						id="conversions"
-						v-component="chart-line"
-					 	data-aspect="2.260237781"
-						data-margin-top="24"
-						data-margin-bottom="24"
-					 	data-format-string="%"
-						data-series="{{ conversions }}"></div>
+					<div id="conversions" v-el="conversions"></div>
 				</section>
 
 				<section>
