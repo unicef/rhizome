@@ -157,11 +157,20 @@ module.exports = {
 	     
 	     var setMasterId = function(type, sourceId, masterId)
 	     {  
+	        
 	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
-	        self.mappingData[type][key].master_object_id = masterId;
-	        api['map_'+type]({ 'source_object_id': sourceId,
+	        console.log(self.mappingData[type][key]);
+	        var postData = { 'source_object_id': sourceId,
 	        				'master_object_id': masterId
-	        				}).then(function(values){
+	        				};
+	        if(self.mappingData[type][key].master_object_id!==-1)
+	        {
+	          postData.id = self.mappingData[type][key].id;
+	        }
+	        self.mappingData[type][key].master_object_id = masterId;
+	        
+	        
+	        api['map_'+type](postData).then(function(values){
 	        				    
 	        				    console.log(values);
 	        				    
