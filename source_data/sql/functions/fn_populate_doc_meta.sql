@@ -166,6 +166,29 @@ LEFT JOIN (
 )y
 ON x.source_string = y.region_code;
 
+-- UPDATE MASTER OBJECT IDS --
+
+UPDATE document_detail dd
+SET master_object_id = rm.master_object_id
+FROM region_map rm
+WHERE dd.source_object_id = rm.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'region';
+
+UPDATE document_detail dd
+SET master_object_id = im.master_object_id
+FROM indicator_map im
+WHERE dd.source_object_id = im.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'indicator';
+
+UPDATE document_detail dd
+SET master_object_id = cm.master_object_id
+FROM campaign_map cm
+WHERE dd.source_object_id = cm.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'campaign';
+
 RETURN QUERY
 
 SELECT * FROM document_detail dd
