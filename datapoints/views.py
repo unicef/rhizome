@@ -52,6 +52,17 @@ def data_entry(request):
 
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
+        
+def dashboard_builder(request):
+
+    return render_to_response('dashboard-builder/index.html',
+        context_instance=RequestContext(request))
+        
+def visualization_builder(request):
+
+    return render_to_response('dashboard-builder/visualization_builder.html',
+        context_instance=RequestContext(request))
+        
 
 class DashBoardView(IndexView):
     paginate_by = 50
