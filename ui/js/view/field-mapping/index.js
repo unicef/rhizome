@@ -165,7 +165,7 @@ module.exports = {
 	        				};
 	        if(self.mappingData[type][key].master_object_id!==-1)
 	        {
-	          postData.id = self.mappingData[type][key].id;
+	          postData.id = self.mappingData[type][key].map_id;
 	        }
 	        self.mappingData[type][key].master_object_id = masterId;
 	        
