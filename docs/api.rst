@@ -1,9 +1,6 @@
 API
 ===
 
-*the following responds to the v2 api
- -- /api/v2/content_type/?<query_params>* --
-
 Response Format
 ---------------
 
@@ -37,37 +34,151 @@ POST
 
 Note: Insert, Update and Delete are all implemented currently as POST requests, but it is a to do to replace this functionality with DELETE / PUT when time allows.
 
-insert
+Insert
 ------
 
 pass a dictionary according to the "column":"value" for each field that you would like to insert
 
-update
+Update
 ------
 
 pass a json dictionary with the id and cooresponding values that need to be updated.
 
-delete
+Delete
 ------
+
+pass a json dictionary in accordance to the ids you want to delete as well as:
 
 id = ''
 
-permissions
+
+Region POST
 -----------
 
-endpoints
----------
-``POST api/v2/region``
-'region': {'orm_obj':Region,
+``api/v2/region``
 
-``POST api/v2/indicator``
-'indicator': {'orm_obj':IndicatorAbstracted,
+- ``django model: Region``
 
-``POST api/v2/campaign``
-'campaign': {'orm_obj':Campaign,
 
-``POST api/v2/region_map``
-  'region_map': {'orm_obj':RegionMap,
+POST DATA
+
+.. code-block:: json
+
+  {
+     "name": "fake_place",
+     "office_id": "2",
+     "parent_region_id": "12908",
+     "region_code": "fake_code",
+     "region_type_id": "1",
+     "source_id": "1"
+  }
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 87472},
+    "meta": null,
+    "error": null
+  }
+
+
+Indicator POST
+-----------
+
+``api/v2/indicator``
+
+- ``django model: Indicator``
+
+
+POST DATA
+
+.. code-block:: json
+
+  {
+   "description": "fake description",
+   "is_reported": "0",
+   "name": "fake indicator name",
+   "short_name": "fake short name",
+   "slug": "fake_indicator",
+   "source_id": "1"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 477},
+    "meta": null,
+    "error": null
+  }
+
+Campaign POST
+-------------
+
+``api/v2/campaign``
+
+- ``django model: Campaign``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+   "campaign_type_id": "1",
+   "end_date": "2017-01-01",
+   "office_id": "1",
+   "slug": "fake_campaign",
+   "start_date": "2017-01-01"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 217},
+    "meta": null,
+    "error": null
+  }
+
+Office POST
+-------------
+
+``api/v2/office``
+
+- ``django model: Office``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "name": "somalia"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 4},
+    "meta": null,
+    "error": null
+  }
+
+
+MapTable POST
+------------------
+
+``POST api/v2/<region;indicator;campaign>_map;``
+  - ``django model: CampaignMap; IndicatorMap, RegionMmap``
+
 
 sample post
 
@@ -83,18 +194,51 @@ response
   {"objects": {"new_id": 73658}, "meta": null, "error": null}
 
 
-'document_review' : {'orm_obj':DocumentDetail,
-'group': {'orm_obj':Group,
-'user': {'orm_obj':UserAbstracted,
-'region_permission': {'orm_obj':RegionPermission,
-'user_group': {'orm_obj':UserGroup,
-'document': {'orm_obj':Document,
-'office': {'orm_obj':Office,
+Group POST
+-------------
 
-'indicator_map': {'orm_obj':IndicatorMap,
+``api/v2/group``
+
+- ``django model: Group``
 
 
-'campaign_map': {'orm_obj':CampaignMap,
+User POST
+-------------
+
+``api/v2/user``
+
+- NOT Implemented!!!! 
+- Please use django admin form found at /datapoints/users/create and datapoitns/users/edit/<id>
+
+
+User to Group POST
+-------------
+
+``api/v2/document_review``
+
+- ``django model: UserGroup``
+
+Region Permission POST
+-------------
+
+``api/v2/region_permission``
+
+- ``django model: RegionPermission``
+
+Document POST
+-------------
+
+``api/v2/document``
+
+- ``django model: Document``
+
+
+DataPoint POST
+-----------
+
+used by the /datapoints/entry page
+
+``api/v1/dataentry``
 
 
 GET
@@ -117,20 +261,6 @@ Global Parameters and Query Filters
   default: ``json``
 
   One of either ``json`` or ``csv`` that determines the format of the response
-
-
-Endpoints
----------
-``api/v2/region``
-  default: 20
-
-  The maximum number of objects to be returned
-
-``api/v2/indicator``
-  default: 0
-
-``api/v2/campaign``
-  default: 0
 
 
 ``/api/v1/datapoint/``
@@ -435,6 +565,21 @@ Please Pass the date format as 'YYYY-MM-DD'
 
     http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
 
+permissions
+-----------
+
+permissions are handled on a per object basis, specifically via a strict mapping in the V2 api that associates a permission function to each content type.
+
+for instance:
+
+.. code-block:: python
+
+  {
+  "region": {"orm_obj":Region,
+    "permission_function":self.apply_region_permissions},
+  }
+
+permissions are largely based around the *fn_get_authorized_regions_by_user* stored procedure which uses a recursive CTE and the *region_permission* table to find the regions a particular user is allowed to read or write to.
 
 
 Custom Serialization
@@ -444,18 +589,3 @@ This takes the response given to the api ( list of objects where the region / ca
 
   .. autoclass:: datapoints.api.serialize.CustomSerializer
      :members:
-
-
-PERMISSIONS
-------------
-
-
-API REQUIREMENTS
-------------
-
-Golbal
-  - Limit
-  - Offset
-  - always_return_data = True
-
-https://seedscientific.atlassian.net/wiki/display/CE/User+Permissions+System
