@@ -31,8 +31,9 @@ WHERE sd.document_id = $1;
 
 -- region --
 INSERT INTO source_region
-(region_code)
-SELECT region_code from _tmp_sdps tsdp
+(region_code,source_guid,document_id,is_high_risk)
+SELECT DISTINCT region_code ,replace(region_code,' ','_'),$1,CAST(1 AS BOOLEAN)
+from _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_region ser
 	WHERE tsdp.region_code = ser.region_code
@@ -50,8 +51,9 @@ WHERE NOT EXISTS (
 
 -- indicator --
 INSERT INTO source_indicator
-(indicator_string)
-SELECT indicator_string from _tmp_sdps tsdp
+(indicator_string, source_guid, document_id)
+SELECT DISTINCT indicator_string , REPLACE(indicator_string,' ','_'), $1
+from _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_indicator si
 	WHERE tsdp.indicator_string = si.indicator_string
