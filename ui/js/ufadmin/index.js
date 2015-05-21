@@ -31,16 +31,18 @@ var Page = {
 	UserAdmin: require('./users'),
 	IndicatorAdmin: require('./indicator'),
 	GroupAdmin: require('./group'),
+	RegionAdmin: require('./region'),
+	CampaignAdmin: require('./campaign'),
     //
 	//GroupAdmin: React.createClass({
 	//	render: function() { return <div>GroupAdmin</div>; }
 	//}),
-	RegionAdmin: React.createClass({
-		render: function() { return <div>RegionAdmin</div>; }
-	}),
-	CampaignAdmin: React.createClass({
-		render: function() { return <div>CampaignAdmin</div>; }
-	}),
+	//RegionAdmin: React.createClass({
+	//	render: function() { return <div>RegionAdmin</div>; }
+	//}),
+	//CampaignAdmin: React.createClass({
+	//	render: function() { return <div>CampaignAdmin</div>; }
+	//}),
 
 	//IndicatorAdmin: React.createClass({
 	//	render: function() { return <div>IndicatorAdmin</div>; }

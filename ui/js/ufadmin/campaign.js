@@ -13,20 +13,20 @@ var mockData = require('./utils/mockdata');
 var parseSchema = require('./utils/parseSchema');
 
 
-var GroupAdmin = React.createClass({
+var CampaignAdmin = React.createClass({
 	getInitialState: function() {
 		return {
 			query: {}
 		};
 	},
 	componentDidMount: function() {
-		API.admin.groupsMetadata().done(response => {
+		API.admin.campaignsMetadata().done(response => {
 			var schema = parseSchema(response);
 			console.log('schema', schema);
 			this.setState({schema: schema});
 		});
-		API.admin.groups().done(response => {
-			this.setState({groups: response.objects});
+		API.admin.campaigns().done(response => {
+			this.setState({campaigns: response.objects});
 		});
 	},
 	onChangeQuery: function(query) {
@@ -34,9 +34,8 @@ var GroupAdmin = React.createClass({
 	},
 
 	render: function() {
-		var isLoaded = _.isArray(this.state.groups) && this.state.schema && this.state.schema.items;
+		var isLoaded = _.isArray(this.state.campaigns) && this.state.schema && this.state.schema.items;
 		if(!isLoaded) return this.renderLoading();
-
 
 		//var propSchemas = this.state.schema.items.properties,
 		//	searchableFieldNames = propSchemas ?
@@ -45,9 +44,9 @@ var GroupAdmin = React.createClass({
 
 		return (
 			<div>
-				<h1>Groups Admin Page</h1>
+				<h1>Campaigns Admin Page</h1>
 				<LocalDatascope
-					data={this.state.groups}
+					data={this.state.campaigns}
 					schema={this.state.schema}
 					onChangeQuery={this.onChangeQuery}
 					>
@@ -64,4 +63,4 @@ var GroupAdmin = React.createClass({
 	}
 });
 
-module.exports = GroupAdmin;
+module.exports = CampaignAdmin;
