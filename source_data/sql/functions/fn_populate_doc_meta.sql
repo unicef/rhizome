@@ -9,7 +9,9 @@ RETURNS TABLE
 	source_dp_count INT,
 	master_dp_count INT,
 	db_model VARCHAR,
-	master_object_id INT
+	master_object_id INT,
+	map_id INT
+
 ) AS
 $func$
 BEGIN
@@ -29,8 +31,9 @@ WHERE sd.document_id = $1;
 
 -- region --
 INSERT INTO source_region
-(region_code)
-SELECT region_code from _tmp_sdps tsdp
+(region_code,source_guid,document_id,is_high_risk)
+SELECT DISTINCT region_code ,replace(region_code,' ','_'),$1,CAST(1 AS BOOLEAN)
+from _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_region ser
 	WHERE tsdp.region_code = ser.region_code
@@ -38,8 +41,9 @@ WHERE NOT EXISTS (
 
 -- campaign --
 INSERT INTO source_campaign
-(campaign_string)
-SELECT campaign_string from _tmp_sdps tsdp
+(campaign_string,source_guid,document_id)
+SELECT DISTINCT campaign_string , replace(campaign_string,' ','_'),$1
+FROM _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_campaign sc
 	WHERE tsdp.campaign_string = sc.campaign_string
@@ -47,8 +51,9 @@ WHERE NOT EXISTS (
 
 -- indicator --
 INSERT INTO source_indicator
-(indicator_string)
-SELECT indicator_string from _tmp_sdps tsdp
+(indicator_string, source_guid, document_id)
+SELECT DISTINCT indicator_string , REPLACE(indicator_string,' ','_'), $1
+from _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_indicator si
 	WHERE tsdp.indicator_string = si.indicator_string
@@ -75,7 +80,7 @@ DELETE FROM document_detail dd
 WHERE dd.document_id = $1;
 
 INSERT INTO document_detail
-(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id)
+(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id,map_id)
 
 SELECT
 	 x.document_id
@@ -84,7 +89,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.indicator_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -115,7 +121,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.campaign_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -145,7 +152,8 @@ SELECT
 	,x.source_dp_count
 	,CAST(x.db_model AS VARCHAR)
 	,COALESCE(y.dp_cnt,0) as master_db_count
-	,COALESCE(y.region_id,-1) as master_object_id
+	,-1 as master_object_id
+	,-1 as map_id
 FROM (
 	SELECT
  		 MIN(tsdp.document_id) as document_id
@@ -165,6 +173,32 @@ LEFT JOIN (
 	GROUP BY region_code
 )y
 ON x.source_string = y.region_code;
+
+-- UPDATE MASTER OBJECT IDS --
+
+UPDATE document_detail dd
+SET master_object_id = rm.master_object_id
+	,map_id = rm.id
+FROM region_map rm
+WHERE dd.source_object_id = rm.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'region';
+
+UPDATE document_detail dd
+SET master_object_id = im.master_object_id
+	,map_id = im.id
+FROM indicator_map im
+WHERE dd.source_object_id = im.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'indicator';
+
+UPDATE document_detail dd
+SET master_object_id = cm.master_object_id
+	,map_id = cm.id
+FROM campaign_map cm
+WHERE dd.source_object_id = cm.source_object_id
+AND dd.document_id = $1
+AND dd.db_model = 'campaign';
 
 RETURN QUERY
 

@@ -115,6 +115,8 @@ module.exports = {
 //	    this.calculateRemainingVerifications();
 //	  },
 	  unmapField: function(source_id, master_id,type){
+	      var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':source_id});
+	      this.mappingData[type][key].master_object_id = '-1';
 	      api['map_'+type]({ 'source_object_id': source_id,
 	      				'master_object_id': master_id,
 	      				'id':''
@@ -155,11 +157,20 @@ module.exports = {
 	     
 	     var setMasterId = function(type, sourceId, masterId)
 	     {  
+	        
 	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
-	        self.mappingData[type][key].master_object_id = masterId;
-	        api['map_'+type]({ 'source_object_id': sourceId,
+	        console.log(self.mappingData[type][key]);
+	        var postData = { 'source_object_id': sourceId,
 	        				'master_object_id': masterId
-	        				}).then(function(values){
+	        				};
+	        if(self.mappingData[type][key].master_object_id!==-1)
+	        {
+	          postData.id = self.mappingData[type][key].map_id;
+	        }
+	        self.mappingData[type][key].master_object_id = masterId;
+	        
+	        
+	        api['map_'+type](postData).then(function(values){
 	        				    
 	        				    console.log(values);
 	        				    

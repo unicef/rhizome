@@ -111,13 +111,9 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        print '.....FINDING BAD DAT...\n' * 5
         bad_dp_ids = self.bad_datapoints()
-        print '.....AGGREGATING.....\n' * 5
         agg_dp_ids = self.agg_datapoints()
-        print '.....CALCULATING.....\n' * 5
         calc_dp_ids = self.calc_datapoints()
-        print '.....PIVOTING.....\n' * 5
         abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
