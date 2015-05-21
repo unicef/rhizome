@@ -48,11 +48,7 @@ function _marker(data, campaign) {
   return _.sum(hx) / hx.length;
 }
 
-function _fill(data, campaign) {
-  var color = d3.scale.ordinal()
-    .domain(['bad', 'ok', 'okay', 'good', ''])
-    .range(['#AF373E', 'auto', 'auto', '#2B8CBE']);
-
+function _targetRanges(data) {
   var targets = _(data)
     .pluck('indicator.indicator_bounds')
     .flatten()
@@ -64,19 +60,26 @@ function _fill(data, campaign) {
     .sortBy('mn_val')
     .value();
 
+  var boundaries = _(targets)
+    .map(function (bound) {
+      return [bound.mn_val, bound.mx_val]
+    })
+    .flatten()
+    .uniq()
+    .slice(1, -1)
+    .value()
+
+  return [_.pluck(targets, 'bound_name'), boundaries];
+}
+
+function _fill(data, campaign, targets) {
+  var color = d3.scale.ordinal()
+    .domain(['bad', 'ok', 'okay', 'good', ''])
+    .range(['#AF373E', 'auto', 'auto', '#2B8CBE']);
+
   var scale = d3.scale.threshold()
-    .domain(_(targets)
-      .map(function (bound) {
-        return [bound.mn_val, bound.mx_val]
-      })
-      .flatten()
-      .uniq()
-      .rest()
-      .reverse()
-      .rest()
-      .reverse()
-      .value())
-    .range(_.pluck(targets, 'bound_name'));
+    .domain(targets[1])
+    .range(targets[0]);
 
   return color(scale(_value(data, campaign)));
 }
@@ -93,15 +96,20 @@ module.exports = React.createClass({
     var charts = _(this.props.data)
       .groupBy('indicator.id')
       .map(function (data, indicator) {
+        var targets = _targetRanges(data);
+
         var options = {
-          domain : _domain,
-          value  : _.partial(_value, _, campaign),
-          marker : _.partial(_marker, _, campaign),
-          y      : _.property('region'),
-          width  : 154,
-          height : 51.3,
-          fill   : _.partial(_fill, _, campaign),
-          format : d3.format('%')
+          domain     : _domain,
+          value      : _.partial(_value, _, campaign),
+          marker     : _.partial(_marker, _, campaign),
+          y          : _.property('region'),
+          width      : 154,
+          height     : 51.3,
+          fill       : _.partial(_fill, _, campaign, targets),
+          format     : d3.format('%'),
+          thresholds : targets[1],
+          targets    : targets[0],
+          fontSize   : 12
         };
 
         var title = _.get(data, '[0].indicator.short_name', '');

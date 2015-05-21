@@ -11,7 +11,8 @@ var defaults = {
 	lineHeight : 1.2,
 	padding    : 0.1,
 	scale      : d3.scale.linear,
-	ticks      : [],
+	thresholds : [],
+	targets    : [],
 	format     : String,
 
 	margin : {
@@ -76,13 +77,31 @@ _.extend(BulletChart.prototype, {
 		var x     = _.flow(options.marker, xScale);
 		var width = _.flow(options.value, xScale);
 
+		var isEmpty = !_(data).map(options.value).all(_.isFinite);
+
 		// Draw qualitative ranges
-		// svg.select('.x.axis')
-		// 	.call(qualitativeAxis()
-		// 		.height(this._height)
-		// 		.width(function (d) { return options.scale(d.upper) - options.scale(d.lower); })
-		// 		.x(function (d) { return options.scale(d.lower); })
-		// 		.ticks(!_.isEmpty(data) ? options.ticks : []));
+		if (!(isEmpty || _.isEmpty(options.thresholds) || _.isEmpty(options.targets))) {
+			svg.select('.x.axis')
+				.call(qualitativeAxis()
+					.height(h + margin.top + margin.bottom)
+					.scale(xScale)
+					.threshold(d3.scale.threshold()
+						.domain(options.thresholds)
+						.range(options.targets)
+					)
+				);
+		} else {
+			svg.select('.x.axis')
+				.call(qualitativeAxis()
+					.height(h + margin.top + margin.bottom)
+					.scale(xScale)
+					.threshold(d3.scale.threshold()
+						.domain([])
+						.range([''])
+					)
+					.colors(['#F2F2F2', '#F2F2F2'])
+				);
+		}
 
 		svg.attr('viewBox', '0 0 ' + w + ' ' + (h + margin.top + margin.bottom));
 
@@ -126,7 +145,7 @@ _.extend(BulletChart.prototype, {
 			.append('text')
 			.attr({
 				'class' : 'label',
-				'dy'    : '1em',
+				'dy'    : '1.1em',
 				'dx'    : '4'
 			});
 
