@@ -191,39 +191,17 @@
 
 		<div class="medium-1 column">
 			<h3>Supply</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: supply">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="supply"></div>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Polio+</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: polio">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="polio"></div>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Resources</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: resources"
-				    v-with="campaign: campaign, region: region">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="resources"></div>
 		</div>
 
 		<div class="medium-2 columns">

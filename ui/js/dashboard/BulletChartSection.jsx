@@ -22,7 +22,7 @@ function _domain(data) {
     .filter(_.isFinite)
     .max();
 
-  return [Math.min(lower, 0), Math.max(upper, _(data).pluck('value').max(), 1)];
+  return [Math.min(lower, 0), Math.max(upper, _(data).flatten().pluck('value').max(), 1)];
 }
 
 function _matchCampaign(datapoint, campaign) {
@@ -54,7 +54,17 @@ function _targetRanges(data) {
     .flatten()
     .indexBy('bound_name')
     .values()
+    .map(function (bound) {
+      var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity;
+      var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
+
+      return _.assign({}, bound, {
+        mn_val : lower,
+        mx_val : upper
+      });
+    })
     .filter(function (bound) {
+      // FIXME: Temporary fix to filter out the "invalid" ranges
       return _.isFinite(bound.mn_val) && _.isFinite(bound.mx_val);
     })
     .sortBy('mn_val')
@@ -87,6 +97,7 @@ function _fill(data, campaign, targets) {
 module.exports = React.createClass({
   propTypes : {
     campaign : React.PropTypes.object.isRequired,
+    cols     : React.PropTypes.number.isRequired,
     data     : React.PropTypes.array.isRequired,
   },
 
@@ -125,6 +136,6 @@ module.exports = React.createClass({
       })
       .value();
 
-    return (<ul className='small-block-grid-2'>{charts}</ul>);
+    return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
   }
 });

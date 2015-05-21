@@ -436,22 +436,39 @@ module.exports = {
 						});
 					};
 
-					var capacity = _(INDICATORS.capacity).map(fillBulletChart).flatten().value()
-
-					React.render(
-						React.createElement(
-							BulletChartSection,
-							{
-								campaign : self.campaign,
-								data     : capacity,
-							}
-						),
-						self.$$.capacity
+					var attachBulletChart = function (el, data, cols) {
+						React.render(
+							React.createElement(
+								BulletChartSection,
+								{
+									campaign : self.campaign,
+									cols     : _.isFinite(cols) ? cols : 1,
+									data     : data,
+								}
+							),
+							el
+						);
+					}
+					attachBulletChart(
+						self.$$.capacity,
+						_(INDICATORS.capacity).map(fillBulletChart).flatten().value(),
+						2
 					);
 
-					// self.polio     = data.pick(INDICATORS.polio).map(series).value();
-					// self.supply    = data.pick(INDICATORS.supply).map(series).value();
-					// self.resources = data.pick(INDICATORS.resources).map(series).value();
+					attachBulletChart(
+						self.$$.supply,
+						_(INDICATORS.supply).map(fillBulletChart).flatten().value()
+					);
+
+					attachBulletChart(
+						self.$$.polio,
+						_(INDICATORS.polio).map(fillBulletChart).flatten().value()
+					);
+
+					attachBulletChart(
+						self.$$.resources,
+						_(INDICATORS.resources).map(fillBulletChart).flatten().value()
+					);
 				}));
 		},
 	},
