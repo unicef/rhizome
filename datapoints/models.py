@@ -121,7 +121,7 @@ class IndicatorBound(models.Model):
 
 
 
-NAMEice(models.Model):
+class Office(models.Model):
 
     name = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now=True)
