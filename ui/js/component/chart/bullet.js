@@ -40,7 +40,11 @@ _.extend(BulletChart.prototype, {
 		this._width  = el.clientWidth;
 
 		var svg = this._svg = d3.select(el).append('svg')
-			.attr('viewBox', '0 0 ' + this._width + ' ' + height);
+			.attr({
+				'viewBox' : '0 0 ' + this._width + ' ' + height,
+				'width'   : this._width,
+				'height'  : height
+			});
 
 		// Append the x-axis container and a blank background
 		svg.append('g').attr('class', 'x axis');
@@ -103,7 +107,11 @@ _.extend(BulletChart.prototype, {
 				);
 		}
 
-		svg.attr('viewBox', '0 0 ' + w + ' ' + (h + margin.top + margin.bottom));
+		svg.attr({
+			'viewBox' : '0 0 ' + w + ' ' + (h + margin.top + margin.bottom),
+			'width'   : w,
+			'height'  : h + margin.top + margin.bottom
+		});
 
 		var g = svg.select('.data')
 				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
