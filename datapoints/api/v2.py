@@ -62,9 +62,6 @@ class v2Request(object):
         }
 
 
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
-
-
     def main(self):
 
         response_data = {
@@ -153,8 +150,15 @@ class v2PostRequest(v2Request):
 
         super(v2PostRequest, self).__init__(request, content_type)
 
-        self.kwargs = self.clean_kwargs(request.POST)
+        ## DB obj can be different between GET and POST requests ##
+        self.orm_mapping['indicator']['orm_obj'] = Indicator
 
+        ## find the DB obj we want to POST to
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+
+        ## klean URL parameters
+        self.kwargs = self.clean_kwargs(request.POST)
+        pprint(self.kwargs)
 
     def clean_kwargs(self,query_dict):
 
@@ -171,12 +175,19 @@ class v2PostRequest(v2Request):
 
     def main(self):
         '''
+        Return error if not implemented
+
         if method is create:
         Create an object in accordance to the URL kwargs and return the new ID
 
-        if detlete:
+        if delete:
             query for objects taht match
         '''
+
+        if self.content_type == 'user':
+
+            self.err = 'User POST not implemented in v2 api.'
+            return super(v2PostRequest, self).main()
 
         ## Create, Update or Delete ##
         request_type = self.determined_request_type()
@@ -297,6 +308,9 @@ class v2MetaRequest(v2Request):
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string','TextField':'string'}
 
+        print '===='
+        print field_object.name
+        print field_object.get_internal_type()
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
