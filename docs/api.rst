@@ -185,21 +185,19 @@ sample post
 .. code-block:: json
 
   {
-  'source_object_id': 184381,
-  'master_object_id':12908
+  "source_object_id": 184381,
+  "master_object_id":12908
   }
 
 response
+
 .. code-block:: json
-  {"objects": {"new_id": 73658}, "meta": null, "error": null}
 
-
-Group POST
--------------
-
-``api/v2/group``
-
-- ``django model: Group``
+  {
+    "objects": {"new_id": 73658},
+    "meta": null,
+    "error": null
+  }
 
 
 User POST
@@ -207,16 +205,67 @@ User POST
 
 ``api/v2/user``
 
-- NOT Implemented!!!! 
+- NOT Implemented!!!!
 - Please use django admin form found at /datapoints/users/create and datapoitns/users/edit/<id>
+
+
+Group POST
+-------------
+
+``api/v2/group/``
+
+- ``django model: Group``
+
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "name": "fake_group"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 7},
+    "meta": null,
+    "error": null
+  }
 
 
 User to Group POST
 -------------
 
-``api/v2/document_review``
+``api/v2/user_group``
 
 - ``django model: UserGroup``
+- Used in /datapoints/users/edit/<user_id> page
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "user_id": 1,
+    "group_id":7
+
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 41},
+    "meta": null,
+    "error": null
+  }
+
 
 Region Permission POST
 -------------
@@ -225,12 +274,26 @@ Region Permission POST
 
 - ``django model: RegionPermission``
 
-Document POST
--------------
+POST DATA
 
-``api/v2/document``
+.. code-block:: json
 
-- ``django model: Document``
+  {
+    "user_id": 1,
+    "region_id":12910
+
+  }
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 344},
+    "meta": null,
+    "error": null
+  }
+
 
 
 DataPoint POST
