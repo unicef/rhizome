@@ -150,6 +150,14 @@ module.exports = {
 	set_region_permission : endPoint('/region_permission/','post',2),
 	admin: {
 		usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
-		users: endPoint('/user/', 'get', 2, false)
+		users: endPoint('/user/', 'get', 2, false),
+		groupsMetadata: endPoint('/group/metadata/', 'get', 2, false),
+		groups: endPoint('/group/', 'get', 2, false),
+		regionsMetadata: endPoint('/region/metadata/', 'get', 2, false),
+		regions: endPoint('/region/', 'get', 2, false),
+		campaignsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
+		campaigns: endPoint('/campaign/', 'get', 2, false),
+		indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
+		indicators: endPoint('/indicator/', 'get', 2, false),
 	}
 };

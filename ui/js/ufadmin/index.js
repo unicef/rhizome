@@ -7,9 +7,12 @@ var {Route, DefaultRoute, RouteHandler, Link} = Router;
 //	Users: require('./users')
 //};
 
+
+window.UFAPI = require('../data/api'); // for debugging only
+
 var AdminApp = React.createClass({
 	render: function() {
-		return <div>
+		return <div className="admin-container">
 			<h1>Admin Entity Lists</h1>
 			<ul>
 				<li><Link to="users">Users</Link></li>
@@ -17,7 +20,6 @@ var AdminApp = React.createClass({
 				<li><Link to="regions">Regions</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
-
 			</ul>
 			<RouteHandler />
 		</div>;
@@ -27,18 +29,22 @@ var AdminApp = React.createClass({
 
 var Page = {
 	UserAdmin: require('./users'),
-	GroupAdmin: React.createClass({
-		render: function() { return <div>GroupAdmin</div>; }
-	}),
+	IndicatorAdmin: require('./indicator'),
+	GroupAdmin: require('./group'),
+    //
+	//GroupAdmin: React.createClass({
+	//	render: function() { return <div>GroupAdmin</div>; }
+	//}),
 	RegionAdmin: React.createClass({
 		render: function() { return <div>RegionAdmin</div>; }
 	}),
 	CampaignAdmin: React.createClass({
 		render: function() { return <div>CampaignAdmin</div>; }
 	}),
-	IndicatorAdmin: React.createClass({
-		render: function() { return <div>IndicatorAdmin</div>; }
-	})
+
+	//IndicatorAdmin: React.createClass({
+	//	render: function() { return <div>IndicatorAdmin</div>; }
+	//})
 };
 
 
