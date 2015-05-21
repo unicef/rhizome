@@ -5,8 +5,9 @@ var d3     = require('d3');
 var moment = require('moment');
 var React  = require('react');
 
-var LineChart     = require('component/chart/LineChart.jsx');
-var PolioCasesYtD = require('./PolioCasesYtD.jsx');
+var LineChart          = require('component/chart/LineChart.jsx');
+var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
+var BulletChartSection = require('./BulletChartSection.jsx');
 
 var api    = require('data/api');
 var colors = require('colors');
@@ -418,15 +419,36 @@ module.exports = {
 
 			var bullets = api.datapoints(q)
 				.then(meltObjects)
-				.then(function (data) {
-					return _(data).groupBy('indicator');
-				});
+				.then(_.partial(_.groupBy, _, 'indicator'));
 
 			Promise.all([bullets, this._indicators])
 				.then(_.spread(function (data, indicators) {
-					var series = _.partialRight(seriesObject, indicators);
 
-					// self.capacity  = data.pick(INDICATORS.capacity).map(series).value();
+					var fillBulletChart = function (id) {
+						var dataset = _.get(data, id, [{
+							campaign : self.campaign,
+							value    : null,
+							region   : null
+						}]);
+
+						return _.map(dataset, function (d) {
+							return _.assign({}, d, { indicator : _.get(indicators, id) });
+						});
+					};
+
+					var capacity = _(INDICATORS.capacity).map(fillBulletChart).flatten().value()
+
+					React.render(
+						React.createElement(
+							BulletChartSection,
+							{
+								campaign : self.campaign,
+								data     : capacity,
+							}
+						),
+						self.$$.capacity
+					);
+
 					// self.polio     = data.pick(INDICATORS.polio).map(series).value();
 					// self.supply    = data.pick(INDICATORS.supply).map(series).value();
 					// self.resources = data.pick(INDICATORS.resources).map(series).value();

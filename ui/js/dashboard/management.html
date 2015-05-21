@@ -186,15 +186,7 @@
 	<div class="row">
 		<section class="medium-2 columns">
 			<h3>FLWs' Capacity to Perform</h3>
-			<ul class="small-block-grid-2">
-				<li v-repeat="indicator: capacity"
-				    v-with="campaign: campaign, region: region">
-					<div v-component="chart-bullet"
-				       v-with="campaign: campaign, region: region"
-				       data-aspect="3"
-				       data-period="5 months"></div>
-				</li>
-			</ul>
+			<div v-el="capacity"></div>
 		</section>
 
 		<div class="medium-1 column">
