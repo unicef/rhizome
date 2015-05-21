@@ -491,6 +491,13 @@ class v2GetRequest(v2Request):
 
 
     def serialize(self, data):
+        '''
+        document_review has a custom serialization in which 'region', 'campaign'
+        and 'indicator' are keys and the value is a list of the cooresponding
+        mappings.  This needs to be cleaned up, but for now that content
+        type skips through the serialization method.
+
+        '''
 
         if self.content_type != 'document_review':
             serialized = [self.clean_row_result(row) for row in data]
@@ -512,18 +519,23 @@ class v2GetRequest(v2Request):
 
         This just returns a list of dict.  The JsonResponse in the view
         does the actual json conversion.
+
+        Also get rid of the _state attribute ( see POLIO-801)
+
         '''
+
 
         cleaned_row_data = {}
 
         # if raw queryset, convert to dict
         if isinstance(row_data,Model):
             row_data = dict(row_data.__dict__)
+            del row_data['_state']
 
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
-            if 'json' in k: # if k == 'bound_json':
+            elif 'json' in k: # if k == 'bound_json':
                 cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
