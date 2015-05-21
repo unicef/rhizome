@@ -43,7 +43,7 @@ class v2Request(object):
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
-            'user': {'orm_obj':UserAbstracted,
+            'user': {'orm_obj':User,
                 'permission_function':None},
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
@@ -158,7 +158,6 @@ class v2PostRequest(v2Request):
 
         ## klean URL parameters
         self.kwargs = self.clean_kwargs(request.POST)
-        pprint(self.kwargs)
 
     def clean_kwargs(self,query_dict):
 
@@ -242,7 +241,8 @@ class v2MetaRequest(v2Request):
 
     def __init__(self, request, content_type):
 
-        return super(v2MetaRequest, self).__init__(request, content_type)
+        super(v2MetaRequest, self).__init__(request, content_type)
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
 
     def main(self):
@@ -308,9 +308,6 @@ class v2MetaRequest(v2Request):
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string','TextField':'string'}
 
-        print '===='
-        print field_object.name
-        print field_object.get_internal_type()
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
