@@ -40,8 +40,9 @@ WHERE NOT EXISTS (
 
 -- campaign --
 INSERT INTO source_campaign
-(campaign_string)
-SELECT campaign_string from _tmp_sdps tsdp
+(campaign_string,source_guid,document_id)
+SELECT DISTINCT campaign_string , replace(campaign_string,' ','_'),$1
+FROM _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_campaign sc
 	WHERE tsdp.campaign_string = sc.campaign_string
