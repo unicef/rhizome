@@ -297,6 +297,9 @@ class v2MetaRequest(v2Request):
             'DateTimeField':'datetime','DateField':'datetime','BooleanField':
             'boolean','SlugField':'string','TextField':'string'}
 
+        print '===='
+        print field_object.name
+        print field_object.get_internal_type()
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
