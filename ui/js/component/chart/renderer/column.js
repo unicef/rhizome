@@ -8,7 +8,7 @@ var path = require('vue/src/parsers/path');
  * Renderer of stacked columns
  */
 module.exports = function () {
-	var _className = 'column';
+	var _className = 'bar';
 	var _color     = 'inherit';
 	var _height    = function (d) { return d.height; };
 	var _id        = function (d, i) { return i; };
