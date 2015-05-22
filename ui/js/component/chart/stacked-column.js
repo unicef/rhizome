@@ -18,7 +18,8 @@ module.exports = {
 		'data-facet',
 		'data-format-string',
 		'data-x',
-		'data-x-label'
+		'data-x-label',
+		'data-series'
 	],
 
 	mixins : [

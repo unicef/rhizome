@@ -123,7 +123,7 @@ class v2Request(object):
         raw_data = DocumentDetail.objects.raw("""
             SELECT * FROM
             document_detail dd
-            WHERE dd.id = ANY(COALESCE(%s,ARRAY[dd.id]))
+            WHERE dd.id = ANY(COALESCE(%s,ARRAY[-1]))
         """,[list_of_object_ids]
         )
 
@@ -362,6 +362,7 @@ class v2GetRequest(v2Request):
 
         self.kwargs = self.clean_kwargs(request.GET)
 
+
     def main(self):
         '''
         Get the list of database objects ( ids ) by applying the URL kwargs to
@@ -373,7 +374,6 @@ class v2GetRequest(v2Request):
             qset = None
         else:
             qset = list(self.db_obj.objects.filter(**self.kwargs).values())
-
 
         err, filtered_data = self.apply_permissions(qset)
         err, data = self.serialize(filtered_data)
