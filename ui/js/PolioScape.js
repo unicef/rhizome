@@ -66,7 +66,7 @@ module.exports = {
 	VisualizationBuilder: function (el) {
 		React.render(React.createElement(VisualizationBuilder), el);
 	},
-	UsersAdmin: function(el) {
+	UFAdmin: function(el) {
 		AdminApp.render(document.getElementById('main'));
 	}
 };
