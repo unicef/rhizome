@@ -24,11 +24,11 @@ var UsersAdmin = React.createClass({
 						<SimpleDataTableColumn name="first_name" />
 						<SimpleDataTableColumn name="last_name" />
 						<SimpleDataTableColumn name="email" />
-						<SimpleDataTableColumn name="date_joined" />
-						<SimpleDataTableColumn name="last_login" />
 						<SimpleDataTableColumn name="is_active" />
 						<SimpleDataTableColumn name="is_staff" />
 						<SimpleDataTableColumn name="is_superuser" />
+						<SimpleDataTableColumn name="date_joined" />
+						<SimpleDataTableColumn name="last_login" />
 					</SimpleDataTable>
 				</Datascope>
 			</LocalDatascope>

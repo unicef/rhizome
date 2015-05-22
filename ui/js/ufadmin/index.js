@@ -6,7 +6,7 @@ var AdminApp = React.createClass({
 	render: function() {
 		return <div className="admin-container">
 			<h1>Admin Entity Lists</h1>
-			<ul>
+			<ul className="admin-nav">
 				<li><Link to="users">Users</Link></li>
 				<li><Link to="groups">Groups</Link></li>
 				<li><Link to="regions">Regions</Link></li>

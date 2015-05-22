@@ -19,6 +19,14 @@ var RegionsAdmin = React.createClass({
 			<LocalDatascope>
 				<Datascope>
 					<SimpleDataTable>
+						<SimpleDataTableColumn name="id" />
+						<SimpleDataTableColumn name="region_code" />
+						<SimpleDataTableColumn name="name" />
+						<SimpleDataTableColumn name="slug" />
+						<SimpleDataTableColumn name="is_high_risk" />
+						<SimpleDataTableColumn name="latitude" />
+						<SimpleDataTableColumn name="longitude" />
+						<SimpleDataTableColumn name="created_at" />
 					</SimpleDataTable>
 				</Datascope>
 			</LocalDatascope>
