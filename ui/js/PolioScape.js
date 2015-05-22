@@ -7,7 +7,7 @@ var Vue = require('vue');
 var LandingPage = require('view/LandingPage.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
 var VisualizationBuilder = require('view/dashboard-builder/VisualizationBuilder.jsx');
-
+var AdminApp = require('./ufadmin');
 
 Vue.config.debug = true;
 
@@ -23,11 +23,6 @@ Vue.filter('num', require('./filter/num'));
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
-
-var Component = { // React components
-	UsersAdmin: require('./ufadmin/users.js')
-};
-var UFAdmin = require('./ufadmin');
 
 module.exports = {
 	Explorer: function (el) {
@@ -72,6 +67,6 @@ module.exports = {
 		React.render(React.createElement(VisualizationBuilder), el);
 	},
 	UsersAdmin: function(el) {
-		UFAdmin.render(document.getElementById('main'));
+		AdminApp.render(document.getElementById('main'));
 	}
 };

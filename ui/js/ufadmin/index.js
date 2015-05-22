@@ -1,14 +1,6 @@
 var React = require('react/addons');
-var _ = require('lodash');
 var Router = require('react-router');
 var {Route, DefaultRoute, RouteHandler, Link} = Router;
-
-//var Page = {
-//	Users: require('./users')
-//};
-
-
-window.UFAPI = require('../data/api'); // for debugging only
 
 var AdminApp = React.createClass({
 	render: function() {
@@ -26,37 +18,13 @@ var AdminApp = React.createClass({
 	}
 });
 
-
-var Page = {
-	UserAdmin: require('./users'),
-	IndicatorAdmin: require('./indicator'),
-	GroupAdmin: require('./group'),
-	RegionAdmin: require('./region'),
-	CampaignAdmin: require('./campaign'),
-    //
-	//GroupAdmin: React.createClass({
-	//	render: function() { return <div>GroupAdmin</div>; }
-	//}),
-	//RegionAdmin: React.createClass({
-	//	render: function() { return <div>RegionAdmin</div>; }
-	//}),
-	//CampaignAdmin: React.createClass({
-	//	render: function() { return <div>CampaignAdmin</div>; }
-	//}),
-
-	//IndicatorAdmin: React.createClass({
-	//	render: function() { return <div>IndicatorAdmin</div>; }
-	//})
-};
-
-
 var routes = (
 	<Route name="app" path="/ufadmin/" handler={AdminApp}>
-		<Route name="users" handler={Page.UserAdmin} />
-		<Route name="groups" handler={Page.GroupAdmin} />
-		<Route name="regions" handler={Page.RegionAdmin} />
-		<Route name="campaigns" handler={Page.CampaignAdmin} />
-		<Route name="indicators" handler={Page.IndicatorAdmin} />
+		<Route name="users" handler={require('./UsersAdmin')} />
+		<Route name="groups" handler={require('./GroupsAdmin')} />
+		<Route name="regions" handler={require('./RegionsAdmin')} />
+		<Route name="campaigns" handler={require('./CampaignsAdmin')} />
+		<Route name="indicators" handler={require('./IndicatorsAdmin')} />
 	</Route>
 );
 
