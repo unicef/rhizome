@@ -222,7 +222,9 @@ module.exports = React.createClass({
     var contentWidth  = Math.max(width - left - this.props.margin.right, 0);
 
     return (
-      <svg className='line' viewBox={'0 0 ' + width + ' ' + height}>
+      <svg className='line' viewBox={'0 0 ' + width + ' ' + height}
+        width={width}
+        height={height}>
         <rect className='bg'
           x={left}
           width={contentWidth}
