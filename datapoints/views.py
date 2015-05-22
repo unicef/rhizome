@@ -14,6 +14,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
 from django.contrib.auth.models import User,Group
+from django.contrib.auth.decorators import login_required
+
 
 from django.template import RequestContext
 
@@ -27,7 +29,6 @@ from datapoints.forms import *
 from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
-
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -52,17 +53,17 @@ def data_entry(request):
 
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
-        
+
 def dashboard_builder(request):
 
     return render_to_response('dashboard-builder/index.html',
         context_instance=RequestContext(request))
-        
+
 def visualization_builder(request):
 
     return render_to_response('dashboard-builder/visualization_builder.html',
         context_instance=RequestContext(request))
-        
+
 
 class DashBoardView(IndexView):
     paginate_by = 50
@@ -488,6 +489,7 @@ def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
 
+@login_required
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:

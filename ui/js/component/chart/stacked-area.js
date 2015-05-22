@@ -10,10 +10,6 @@ module.exports = {
 	replace : true,
 	template: require('./chart.html'),
 
-	mixins: [
-		require('./line')
-	],
-
 	data : function () {
 		return {
 			sortLabels : false

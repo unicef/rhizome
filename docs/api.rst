@@ -7,6 +7,8 @@ Response Format
 The default format for responses is JSON. Each response is a JSON object
 containing three parameters: ``meta``, ``objects``, and ``errors``:
 
+The following response format applies for GET and POST requests.
+
 .. code-block:: json
 
    {
@@ -26,23 +28,290 @@ containing three parameters: ``meta``, ``objects``, and ``errors``:
 ``errors``
   An object mapping an error type to an error message
 
-Global Parameters
------------------
 
-``username``
-  *required*
+POST
+====
 
-  The username for authentication of the request
+Note: Insert, Update and Delete are all implemented currently as POST requests, but it is a to do to replace this functionality with DELETE / PUT when time allows.
 
-``api_key``
-  *required*
+Insert
+------
 
-  The API key for authentication
+pass a dictionary according to the "column":"value" for each field that you would like to insert
+
+Update
+------
+
+pass a json dictionary with the id and cooresponding values that need to be updated.
+
+Delete
+------
+
+pass a json dictionary in accordance to the ids you want to delete as well as:
+
+id = ''
+
+
+Region POST
+-----------
+
+``api/v2/region``
+
+- ``django model: Region``
+
+
+POST DATA
+
+.. code-block:: json
+
+  {
+     "name": "fake_place",
+     "office_id": "2",
+     "parent_region_id": "12908",
+     "region_code": "fake_code",
+     "region_type_id": "1",
+     "source_id": "1"
+  }
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 87472},
+    "meta": null,
+    "error": null
+  }
+
+
+Indicator POST
+-----------
+
+``api/v2/indicator``
+
+- ``django model: Indicator``
+
+
+POST DATA
+
+.. code-block:: json
+
+  {
+   "description": "fake description",
+   "is_reported": "0",
+   "name": "fake indicator name",
+   "short_name": "fake short name",
+   "slug": "fake_indicator",
+   "source_id": "1"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 477},
+    "meta": null,
+    "error": null
+  }
+
+Campaign POST
+-------------
+
+``api/v2/campaign``
+
+- ``django model: Campaign``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+   "campaign_type_id": "1",
+   "end_date": "2017-01-01",
+   "office_id": "1",
+   "slug": "fake_campaign",
+   "start_date": "2017-01-01"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 217},
+    "meta": null,
+    "error": null
+  }
+
+Office POST
+-------------
+
+``api/v2/office``
+
+- ``django model: Office``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "name": "somalia"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 4},
+    "meta": null,
+    "error": null
+  }
+
+
+MapTable POST
+------------------
+
+``POST api/v2/<region;indicator;campaign>_map;``
+  - ``django model: CampaignMap; IndicatorMap, RegionMmap``
+
+
+sample post
+
+.. code-block:: json
+
+  {
+  "source_object_id": 184381,
+  "master_object_id":12908
+  }
+
+response
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 73658},
+    "meta": null,
+    "error": null
+  }
+
+
+User POST
+-------------
+
+``api/v2/user``
+
+- NOT Implemented!!!!
+- Please use django admin form found at /datapoints/users/create and datapoitns/users/edit/<id>
+
+
+Group POST
+-------------
+
+``api/v2/group/``
+
+- ``django model: Group``
+
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "name": "fake_group"
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 7},
+    "meta": null,
+    "error": null
+  }
+
+
+User to Group POST
+-------------
+
+``api/v2/user_group``
+
+- ``django model: UserGroup``
+- Used in /datapoints/users/edit/<user_id> page
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "user_id": 1,
+    "group_id":7
+
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 41},
+    "meta": null,
+    "error": null
+  }
+
+
+Region Permission POST
+-------------
+
+``api/v2/region_permission``
+
+- ``django model: RegionPermission``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "user_id": 1,
+    "region_id":12910
+
+  }
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 344},
+    "meta": null,
+    "error": null
+  }
+
+
+
+DataPoint POST
+-----------
+
+used by the /datapoints/entry page
+
+``api/v1/dataentry``
+
+
+GET
+===
+
+Global Parameters and Query Filters
+-----------------------------------
 
 ``limit``
   default: 20
-
-  The maximum number of objects to be returned
 
 ``offset``
   default: 0
@@ -56,8 +325,6 @@ Global Parameters
 
   One of either ``json`` or ``csv`` that determines the format of the response
 
-Endpoints
----------
 
 ``/api/v1/datapoint/``
 ++++++++++++++++++++++
@@ -277,120 +544,7 @@ Response Format
     errors: {...}
   }
 
-Computed vs Stored Indicators
------------------------------
 
-Computed indicators are not stored in the database, they are calculated from
-other indicators in the database. For example, the "Percentage of Missed
-Children" indicator is computed by dividing the "Number of Missed Children"
-indicator by the "Number of Targetd Children" indicator.
-
-Computed indicators are fetched using the same ``/api/v1/datapoint/`` endpoint
-as stored indicators.
-
-The response from the ``/api/v1/indicator/`` endpoint for a computed indicator
-will include an additional property not included in a stored indicator:
-``computed_from``.
-
-.. code-block:: json
-
-  {
-    meta: {...},
-    objects:[{
-      ...
-      computed_from: [...]
-    }],
-    errors: {...}
-  }
-
-The ``computed_from`` property is an array of references to the indicators used
-to compute this one. The format of the references depends on the ``uri_format``
-parameter.
-
-Aggregation by Region
----------------------
-
-If you request a region for which there is no data, the system will traverse the
-hierarchy of regions down and aggregate the data it finds at those levels by
-adding them together. For example, if you request the "Number of Missed
-Children" for Nigeria, but that indicator is not stored in the database for
-Nigeria, the system will iterate over the states that comprise Nigeria and add
-the values it finds for that indicator together. For each state that does not
-have a value, it will check its constituent regions, and so on until it finds a
-region with a value for that indicator or it runs out of sub-regions to check.
-
-.. image:: img/geo_agg.png
-
-If the value of an indicator was generated by aggregating data from sub-regions,
-the indicator object will have an ``is_agg`` property:
-
-.. code-block:: json
-
-  ...
-  region: 23,
-  indicators: [{
-    indicator: 1,
-    value: ...
-  }, {
-    indicator: 2,
-    value: ...,
-    is_agg: true
-  }]
-  ...
-
-In the above example, a value for indicator 1 was found for region 23. No value
-for indicator 2 was found for region 23, so the system calculated that value by
-aggregating the values of it sub-regions.
-
-Conflicts with Sub-regions
-++++++++++++++++++++++++++
-
-If a value is stored for a given region, that is the value returned regardless
-of whether or not the region's sub-regions also have values. Because there is
-nothing preventing a value being stored for a region and its sub-regions, it is
-possible that the stored values at differing levels may conflict.
-
-.. image:: img/geo_agg_conflict.png
-
-In the above example one of the regions has a stored value of 7, and its three
-sub-regions have values of 1, 1, and 3. This could be indicative of an error in
-the data and should be flagged. Regardless of whether this is an error or
-intentional, the value returned for that region (and the value used in
-aggregation for any of its parent regions) is the value stored for the region;
-the values in the sub-regions are ignored except when they are explicitly
-requested.
-
-Partial Missing Values
-++++++++++++++++++++++
-
-When aggregating data geographically, it is possible to calculate the value for
-a region even if not all of its sub-regions have data.
-
-.. image:: img/geo_agg_partial.png
-
-These situations should be flagged so that users are aware of them when they
-occur. It's important to know that the value for the country you are seeing is
-actually only representative of some portion of its sub-regions and not the
-entire country.
-
-Controlling Aggregation Behavior
-++++++++++++++++++++++++++++++++
-
-You can control the behavior of the aggregation using the ```` parameter.
-
-``mixed``
-  default
-
-  If the requested region has stored data, use that, otherwise travers the sub-
-  regions to aggregate the indicators found there
-
-``agg-only``
-  Only return data aggregated from sub-regions. If the region you requested
-  actually has data stored on it, it will be ignored
-
-``no-agg``
-  Do not travers the sub-regions to aggregate data if the requested region does
-  not have a value stored
 
 Filtering
 ---------
@@ -474,65 +628,27 @@ Please Pass the date format as 'YYYY-MM-DD'
 
     http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
 
+permissions
+-----------
+
+permissions are handled on a per object basis, specifically via a strict mapping in the V2 api that associates a permission function to each content type.
+
+for instance:
+
+.. code-block:: python
+
+  {
+  "region": {"orm_obj":Region,
+    "permission_function":self.apply_region_permissions},
+  }
+
+permissions are largely based around the *fn_get_authorized_regions_by_user* stored procedure which uses a recursive CTE and the *region_permission* table to find the regions a particular user is allowed to read or write to.
 
 
-
-***
-API
-***
-
-Datapoint Resource
-------------------
-
-This is the main method used by the API to retrieve data about datapoints.
-
-
-  .. autoclass:: datapoints.api.datapoint.DataPointResource
-      :members:
-
-
-CSV Serializer
---------------
+Custom Serialization
+--------------------
 
 This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
 
   .. autoclass:: datapoints.api.serialize.CustomSerializer
      :members:
-
-
-Campaign Resource
------------------
-
-  .. autoclass:: datapoints.api.meta_data.RegionResource
-     :members:
-
-
-Indicator Resource
-------------------
-
-  .. autoclass:: datapoints.api.meta_data.RegionResource
-     :members:
-
-
-Region Resource
----------------
-
-  .. autoclass:: datapoints.api.meta_data.RegionResource
-     :members:
-
-
-
-PERMISSIONS
-------------
-
-
-
-API REQUIREMENTS
-------------
-
-Golbal
-  - Limit
-  - Offset
-  - always_return_data = True
-
-https://seedscientific.atlassian.net/wiki/display/CE/User+Permissions+System

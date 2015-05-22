@@ -43,7 +43,7 @@ class v2Request(object):
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
-            'user': {'orm_obj':UserAbstracted,
+            'user': {'orm_obj':User,
                 'permission_function':None},
             'region_permission': {'orm_obj':RegionPermission,
                 'permission_function':None},
@@ -60,9 +60,6 @@ class v2Request(object):
             'campaign_map': {'orm_obj':CampaignMap,
                 'permission_function':None}
         }
-
-
-        self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
 
     def main(self):
@@ -153,8 +150,14 @@ class v2PostRequest(v2Request):
 
         super(v2PostRequest, self).__init__(request, content_type)
 
-        self.kwargs = self.clean_kwargs(request.POST)
+        ## DB obj can be different between GET and POST requests ##
+        self.orm_mapping['indicator']['orm_obj'] = Indicator
 
+        ## find the DB obj we want to POST to
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
+
+        ## klean URL parameters
+        self.kwargs = self.clean_kwargs(request.POST)
 
     def clean_kwargs(self,query_dict):
 
@@ -171,12 +174,19 @@ class v2PostRequest(v2Request):
 
     def main(self):
         '''
+        Return error if not implemented
+
         if method is create:
         Create an object in accordance to the URL kwargs and return the new ID
 
-        if detlete:
+        if delete:
             query for objects taht match
         '''
+
+        if self.content_type == 'user':
+
+            self.err = 'User POST not implemented in v2 api.'
+            return super(v2PostRequest, self).main()
 
         ## Create, Update or Delete ##
         request_type = self.determined_request_type()
@@ -231,7 +241,8 @@ class v2MetaRequest(v2Request):
 
     def __init__(self, request, content_type):
 
-        return super(v2MetaRequest, self).__init__(request, content_type)
+        super(v2MetaRequest, self).__init__(request, content_type)
+        self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
 
     def main(self):
@@ -477,6 +488,13 @@ class v2GetRequest(v2Request):
 
 
     def serialize(self, data):
+        '''
+        document_review has a custom serialization in which 'region', 'campaign'
+        and 'indicator' are keys and the value is a list of the cooresponding
+        mappings.  This needs to be cleaned up, but for now that content
+        type skips through the serialization method.
+
+        '''
 
         if self.content_type != 'document_review':
             serialized = [self.clean_row_result(row) for row in data]
@@ -498,18 +516,23 @@ class v2GetRequest(v2Request):
 
         This just returns a list of dict.  The JsonResponse in the view
         does the actual json conversion.
+
+        Also get rid of the _state attribute ( see POLIO-801)
+
         '''
+
 
         cleaned_row_data = {}
 
         # if raw queryset, convert to dict
         if isinstance(row_data,Model):
             row_data = dict(row_data.__dict__)
+            del row_data['_state']
 
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
-            if 'json' in k: # if k == 'bound_json':
+            elif 'json' in k: # if k == 'bound_json':
                 cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)

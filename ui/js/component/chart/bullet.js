@@ -3,312 +3,188 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
-var util = require('util/data');
-
-module.exports = {
-	replace : true,
-	template: require('./bullet.html'),
-
-	paramAttributes: [
-		'data-marker-width',
-	],
-
-	mixins: [
-		require('./mixin/resize'),
-		require('./mixin/with-indicator')
-	],
-
-	partials: {
-		'loading-overlay': require('./partial/loading-overlay.html')
-	},
-
-	data: function () {
-		return {
-			markerWidth : 3,
-			formatString: '%'
-		};
-	},
-
-	computed: {
-		delta: function () {
-			return (this.value - this.marker);
-		},
-
-		status: function () {
-			var status = '';
-			var indicator = this.indicator;
-			var value = this.value;
-
-			if (value && indicator && indicator.indicator_bounds) {
-				_.each(indicator.indicator_bounds, function (bound) {
-					var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity;
-					var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity;
-
-					if (value >= lower && value <= upper) {
-						status = bound.bound_name;
-					}
-				});
-			}
-
-
-			return status;
-		},
-
-		value: function () {
-			var length = this.length;
-
-			if (length < 1) {
-				return null;
-			}
-
-			for (var i = 0, l = this.datapoints.length; i < l; i++) {
-				var d = this.datapoints[i];
-				if (d.campaign.start_date.getTime() === this.campaign.start_date.getTime()) {
-					return d.value;
-				}
-			}
-
-			return null;
-		},
-
-		marker: function () {
-			if (!this.campaign) {
-				return null;
-			}
-
-			var current = this.campaign.start_date.getTime();
-
-			// Exclude null values, and the value for the current campaign.
-			var data = _.filter(this.datapoints, function (d) {
-					return util.defined(d.value) && d.campaign.start_date.getTime() !== current;
-				});
-
-			if (data.length < 1) {
-				return null;
-			}
-
-			return _(data).pluck('value').sum() / data.length;
-		},
-
-		max: function () {
-			if (this.length < 1 || !this.indicator) {
-				return 0;
-			}
-
-			var ranges = this.indicator.ranges || [{ end: 0 }];
-
-			return Math.max(d3.max(ranges, function (d) { return d.end; }),
-				d3.max(this.datapoints, function (d) { return d.value; }));
-		},
-
-		missing: function () {
-			return _.isNull(this.value) || _.isUndefined(this.value);
-		},
-
-		indicator: function () {
-			var indicators = this.indicators;
-
-			return (indicators && indicators.length > 0) ? indicators[0] : null;
-		},
-
-		title: function () {
-			if (!this.indicator) {
-				return '';
-			}
-
-			return this.indicator.short_name || '';
-		}
-
-	},
-
-	methods: {
-
-		draw: function () {
-			var svg    = d3.select(this.$el).select('.bullet');
-			var height = this.height || 1;
-			var width  = this.width || 1;
-
-			var x = d3.scale.linear()
-				.domain([0, d3.max([this.marker, this.value, 1])])
-				.range([0, width]);
-
-			// Default range from 0 to 1 because we set the background to white if we
-			// have data, but we might not have ranges for this indicator. This will
-			// help to call attention to values that are > 100%.
-			var ranges = [{
-				name  : '',
-				start : 0,
-				end   : 1
-			}];
-
-			var missing = this.missing;
-
-			if (!missing && this.indicator && this.indicator.indicator_bounds) {
-				ranges = _(this.indicator.indicator_bounds)
-					.reject(function (bound) {
-						return bound.bound_name === 'invalid';
-					})
-					.map(function (bound) {
-						var d = {
-							name : bound.bound_name
-						};
-
-						d.start = !_.isNumber(bound.mn_val) ? x.domain()[0] : bound.mn_val;
-						d.end   = !_.isNumber(bound.mx_val) ? x.domain()[1] : bound.mx_val;
-
-						return d;
-					})
-					.value();
-			}
-
-			svg.select('.bg').style('fill', missing ? null : '#fff');
-
-			var color = d3.scale.ordinal()
-				.domain(['bad', 'okay', 'ok', 'good', ''])
-				.range(['#B3B3B3', '#CCCCCC', '#CCCCCC', '#E6E6E6', '#f2f2f2']);
-
-			var bg = svg.select('.ranges').selectAll('.range')
-				.data(ranges);
-
-			bg.enter().append('rect').attr('class', 'range');
-
-			bg.attr('height', height)
-				.transition().duration(300)
-					.attr({
-						'width': function (d) { return x(d.end - d.start); },
-						'x'    : function (d) { return x(d.start); }
-					}).style('fill', function (d) {
-						return color(d.name);
-					});
-
-			bg.exit().remove();
-
-			var labels = svg.select('.ranges').selectAll('.range-label')
-				.data(ranges);
-
-			labels.enter().append('text')
-				.attr({
-					'class': 'range-label',
-					'dy'   : -3,
-					'dx'   : 2
-				});
-
-			labels.attr({
-				'x': function (d) { return x(d.start); },
-				'y': height
-			})
-				.style('font-size', height / 6)
-				.text(function (d) { return d.name; });
-
-			labels.exit().remove();
-
-			var value = svg.selectAll('.value')
-				.data(missing ? [] : [this.value]);
-
-			value.enter().append('rect')
-				.attr({
-					'class': 'value',
-					'width': 0
-				});
-
-			value.attr({
-					'height': height / 2,
-					'y'     : height / 4
-				})
-				.transition().duration(300)
-					.attr('width', x);
-
-			value.exit()
-				.transition().duration(300)
-					.style('opacity', 0)
-				.remove();
-
-			var format = this.formatString ?
-				d3.format(this.formatString) :
-				this.indicator.format || String;
-
-			var label = svg.selectAll('.label')
-				.data(missing ? [] : [this.value]);
-
-			label.enter().append('text')
-				.attr({
-					'dx'   : 2
-				}).text(0);
-
-			label.attr({
-					'y' : height / 2,
-					'dy': height / 8,
-				})
-				.style({
-					'font-size': height / 4,
-				})
-				.text(function (d) {
-					return format(d);
-				});
-
-			label.each(function (d) {
-				var bbox = this.getBBox();
-				var cls = 'label';
-
-				if (bbox.width * 0.75 > x(d)) {
-					cls = 'label dark';
-				}
-
-				d3.select(this).attr('class', cls);
-			});
-
-			label.exit()
-				.transition().duration(300)
-					.style('opacity', 0)
-				.remove();
-
-			var marker = svg.selectAll('.marker')
-				.data(!missing && this.marker ? [this.marker] : []);
-
-			marker.transition().duration(300);
-
-			marker.enter().insert('rect', '.label')
-				.attr({
-					'class': 'marker',
-					'x'    : 0
-				});
-
-			marker.attr({
-				'height': height * 3 / 4,
-				'width' : this.markerWidth,
-				'y'     : height / 8
-			})
-				.transition().duration(300)
-					.attr('x', d3.scale.linear()
-						.domain(x.domain())
-						.range([0, (width - this.markerWidth)]));
-
-			marker.exit()
-				.transition().duration(300)
-					.attr('width', 0)
-				.remove();
-		},
-
-		showHelp : function () {
-			this.$dispatch('tooltip-show', {
-				el       : this.$$.title,
-				data     : _.assign({},
-					this.indicator,
-					{ template : 'tooltip-indicator' })
-			});
-		},
-
-		hideHelp : function () {
-			this.$dispatch('tooltip-hide', {
-				el : this.$$.title
-			});
-		}
-
-	},
-
-	watch: {
-		'datapoints': 'draw',
-		'height'    : 'draw',
-		'width'     : 'draw',
+var qualitativeAxis = require('./QualitativeAxis');
+
+var defaults = {
+	domain     : _.constant([0, 1]),
+	fontSize   : 10,
+	lineHeight : 1.2,
+	padding    : 0.1,
+	scale      : d3.scale.linear,
+	thresholds : [],
+	targets    : [],
+	format     : String,
+
+	margin : {
+		top    : 9,
+		right  : 0,
+		bottom : 9,
+		left   : 0
 	}
 };
+
+function BulletChart() {}
+
+_.extend(BulletChart.prototype, {
+	defaults : defaults,
+
+	initialize : function (el, data, options) {
+		options = this._options = _.defaults({}, options, defaults);
+
+		var n = Math.max(data.length, 1);
+		var height = options.fontSize * n * options.lineHeight +
+			options.fontSize * options.padding * (n - 1) +
+			options.margin.top +
+			options.margin.bottom;
+
+		this._width  = el.clientWidth;
+
+		var svg = this._svg = d3.select(el).append('svg')
+			.attr({
+				'viewBox' : '0 0 ' + this._width + ' ' + height,
+				'width'   : this._width,
+				'height'  : height
+			});
+
+		// Append the x-axis container and a blank background
+		svg.append('g').attr('class', 'x axis');
+
+		// Append a data layer
+		svg.append('g')
+			.attr({
+				'class'     : 'data',
+				'transform' : 'translate(' + options.margin.left + ',' + options.margin.top + ')'
+			});
+
+		this.update(data);
+	},
+
+	update : function (data, options) {
+		var options = _.assign(this._options, options);
+		var margin  = options.margin;
+		var svg     = this._svg;
+
+		var n = Math.max(data.length, 1);
+		var h = options.fontSize * n * options.lineHeight + options.fontSize * options.padding * (n - 1);
+		var w = this._width - margin.left - margin.right;
+
+		var yScale = d3.scale.ordinal()
+			.domain(_(data).flatten().map(options.y).uniq().value())
+			.rangeRoundBands([h, 0]);
+
+		var y = _.flow(options.y, yScale);
+
+		var xScale = options.scale()
+			.domain(options.domain(data))
+			.range([0, w]);
+
+		var x     = _.flow(options.marker, xScale);
+		var width = _.flow(options.value, xScale);
+
+		var isEmpty = !_(data).map(options.value).all(_.isFinite);
+
+		// Draw qualitative ranges
+		if (!(isEmpty || _.isEmpty(options.thresholds) || _.isEmpty(options.targets))) {
+			svg.select('.x.axis')
+				.call(qualitativeAxis()
+					.height(h + margin.top + margin.bottom)
+					.scale(xScale)
+					.threshold(d3.scale.threshold()
+						.domain(options.thresholds)
+						.range(options.targets)
+					)
+				);
+		} else {
+			svg.select('.x.axis')
+				.call(qualitativeAxis()
+					.height(h + margin.top + margin.bottom)
+					.scale(xScale)
+					.threshold(d3.scale.threshold()
+						.domain([])
+						.range([''])
+					)
+					.colors(['#F2F2F2', '#F2F2F2'])
+				);
+		}
+
+		svg.attr({
+			'viewBox' : '0 0 ' + w + ' ' + (h + margin.top + margin.bottom),
+			'width'   : w,
+			'height'  : h + margin.top + margin.bottom
+		});
+
+		var g = svg.select('.data')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+		// Draw value
+		var bar = g.selectAll('.bar').data(data);
+
+		bar.enter().append('g');
+		bar
+			.attr({
+				'class'  : 'bar',
+				'y'      : y,
+			})
+			.style('fill', options.fill);
+		bar.exit().remove();
+
+		var value = bar.selectAll('.value').data(function (d) { return [d]; });
+
+		var valueAttr = {
+			'class'  : 'value',
+			'height' : yScale.rangeBand()
+		};
+
+		value.enter()
+			.append('rect')
+			.attr(valueAttr)
+			.style('fill', 'inherit');
+
+		value.attr(valueAttr).attr('width', width);
+		value.exit().remove();
+
+		var label = bar.selectAll('text')
+			.data(function (d) {
+				var v = options.value(d);
+				return _.isFinite(v) ? [v] : [];
+			});
+
+		label.enter()
+			.append('text')
+			.attr({
+				'class' : 'label',
+				'dy'    : '1.1em',
+				'dx'    : '4'
+			});
+
+		label.text(options.format);
+		label.exit().remove();
+
+		// Draw comparitive measure
+		var measure = bar.selectAll('.comparative-measure')
+			.data(function (d) {
+				var v = options.value(d);
+				var m = options.marker(d);
+				return _.isFinite(v) && _.isFinite(m) ? [d] : [];
+			});
+
+		var measureHeight = yScale.rangeBand() * 0.4;
+
+		var initAttr = {
+			'class'  : 'comparative-measure',
+			'width'  : 3,
+			'height' : yScale.rangeBand() + measureHeight,
+			'y'      : -measureHeight / 2,
+		};
+
+		measure.enter().append('rect').attr(initAttr).style('fill', 'inherit');
+		measure.attr(initAttr).attr('x', x);
+		measure.exit().remove();
+	},
+
+	resize : function (el) {
+
+	}
+});
+
+module.exports = BulletChart;

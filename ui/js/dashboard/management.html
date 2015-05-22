@@ -19,32 +19,8 @@
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
 
-			<section>
-				<h4>
-					<span v-if="cases != null">
-						Polio cases in {{ campaign.start_date | date 'YYYY' }}
-						(as of {{ campaign.start_date | date 'MMM' }}):
-						<span style="color:#2b8cbe;float:right;font-weight:bold">{{ cases }}</span>
-					</span>
-					<span v-if="cases == null">
-						Polio Cases
-					</span>
-				</h4>
-				<div style="position:relative">
-					<div
-						v-if="newCases != null">
-						<p id="new-polio-cases">{{ newCases }} new {{ newCases | pluralize case }}</p>
-					</div>
-					<div
-						id="polio-cases-ytd"
-						v-component="chart-ytd"
-						data-aspect="1.757"
-						data-margin-top="24"
-						data-margin-bottom="24"
-						data-indicators="[168]"
-						data-period="2 years"
-						v-with="campaign: campaign, region: region"></div>
-				</div>
+			<section v-el="polioCases">
+				<h4>Polio Cases</h4>
 			</section>
 
 			<section>
@@ -59,7 +35,8 @@
 					data-format-string="%"
 					data-x="campaign.start_date"
 					data-x-label="[Q]Q YYYY"
-					v-with="loading : false, series : immunity, region : region, campaign : campaign"></svg>
+					data-series="{{ immunityGap }}"
+					v-with="loading : false, region : region, campaign : campaign"></svg>
 			</section>
 		</div>
 
@@ -81,25 +58,17 @@
 						data-margin-bottom="12"
 						data-format-string=".1%"
 						data-x="campaign.start_date"
-						v-with="loading : false, series : missedChildren, region: region, campaign: campaign"></svg>
+						data-series="{{ missedChildren }}"
+						v-with="loading : false, region: region, campaign: campaign"></svg>
 				</section>
 
 				<section>
 					<h4>Conversions</h4>
-					<div
-						id="conversions"
-						v-component="chart-line"
-					 	data-aspect="2.260237781"
-						data-margin-top="24"
-						data-margin-bottom="24"
-					 	data-period="1 years"
-					 	data-indicators="[187,189]"
-					 	data-format-string="%"
-					 	v-with="campaign: campaign, region: region"></div>
+					<div id="conversions" v-el="conversions"></div>
 				</section>
 
 				<section>
-					<table class="pie-charts" v-if="microplans.available">
+					<table class="pie-charts" v-if="microplans.show">
 						<tbody>
 							<tr>
 								<td>
@@ -108,13 +77,13 @@
 										data-width="18"
 										data-height="18"
 									   v-with="
-									   	datapoints : microplans.data,
-									   	domain     : microplans.domain,
-									   	loading    : false
+									   	datapoints  : microplans.value,
+									   	domain      : microplans.domain,
+									   	loading     : false
 									   "></div>
 								</td>
 
-								<td>{{ microplans.data[0].value }} / {{ microplans.domain[1] }}
+								<td>{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
 									microplans incorporate social data</td>
 							</tr>
 						</tbody>
@@ -139,38 +108,44 @@
 			<div class="transit-points medium-1 column">
 				<h4>Transit Points</h4>
 
-				<p v-if="transitPoints.showVaccinated">
-					<strong>{{ transitPoints.vaccinated | num }}</strong>
+				<p v-if="transitPoints.vaccinated.show">
+					<strong>{{ transitPoints.vaccinated.value | num }}</strong>
 					children vaccinated at transit points
 				</p>
 
 				<table class="pie-charts">
 					<tbody>
-						<tr v-if="transitPoints.showInPlace">
+						<tr v-if="transitPoints.inPlace.show">
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.pctInplace, loading: false"
+									v-with="
+										datapoints : transitPoints.inPlace.value,
+										domain     : transitPoints.inPlace.domain,
+										loading    : false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
 							<td>
-								{{ transitPoints.inPlace }} / {{ transitPoints.planned }}
-								in place
+								{{ transitPoints.inPlace.value[0].value }} /
+								{{ transitPoints.inPlace.domain[1] }} in place
 							</td>
 						</tr>
 
-						<tr v-if="transitPoints.showWithSM">
+						<tr v-if="transitPoints.withSM.show">
 							<td>
 								<div
 									v-component="chart-pie"
-									v-with="datapoints: transitPoints.pctWithSM, loading: false"
+									v-with="
+										datapoints : transitPoints.withSM.value,
+										domain     : transitPoints.withSM.domain,
+										loading    : false"
 									data-width="18"
 									data-height="18"></div>
 							</td>
 							<td>
-								{{ transitPoints.withSM }} / {{ transitPoints.inPlace }} have a
-								social mobilizer
+								{{ transitPoints.withSM.value[0].value }} /
+								{{ transitPoints.withSM.domain[1] }} have a social mobilizer
 							</td>
 						</tr>
 					</tbody>
@@ -211,75 +186,38 @@
 	<div class="row">
 		<section class="medium-2 columns">
 			<h3>FLWs' Capacity to Perform</h3>
-			<ul class="small-block-grid-2">
-				<li v-repeat="indicator: capacity"
-				    v-with="campaign: campaign, region: region">
-					<div v-component="chart-bullet"
-				       v-with="indicators: indicator, campaign: campaign, region: region"
-				       data-aspect="3"
-				       data-period="5 months"></div>
-				</li>
-			</ul>
+			<div v-el="capacity"></div>
 		</section>
 
 		<div class="medium-1 column">
 			<h3>Supply</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: supply">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="supply"></div>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Polio+</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: polio">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="polio"></div>
 		</div>
 
 		<div class="medium-1 column">
 			<h3>Resources</h3>
-			<ul class="small-block-grid-2 medium-block-grid-1">
-				<li v-repeat="indicator: resources"
-				    v-with="campaign: campaign, region: region">
-					<div v-component="chart-bullet"
-					     data-aspect="3.177"
-					     data-period="5 months"
-					     v-with="indicators: indicator, campaign: campaign, region: region"></div>
-				</li>
-			</ul>
+			<div v-el="resources"></div>
 		</div>
 
 		<div class="medium-2 columns">
 			<h3>Access Challenged Districts</h3>
 			<h6>Number of Inaccessible Children</h6>
-			<div v-component="chart-line"
-			     data-aspect="2.665"
-			     data-period="1 years"
-			     data-indicators="[158]"
-					 data-margin-top="24"
-					 data-margin-bottom="24"
-			     v-with="campaign: campaign, region: region"></div>
+			<div v-el="inaccessible"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
 					<h6 style="text-overflow:initial;white-space:normal">Districts with Access Plan</h6>
 					<div class="labeled-donut">
 						<div v-component="chart-pie"
-								 data-indicators="[174]"
 								 data-width="150"
 								 data-height="150"
 								 data-inner-radius="45"
-								 v-with="campaign: campaign, region: region"></div>
+								 v-with="datapoints: accessPlans, campaign: campaign, region: region"></div>
 
 						<p class="donut-label"></p>
 					</div>
@@ -287,8 +225,7 @@
 				<div class="medium-4 columns">
 					<h6>Inaccessibility Breakdown</h6>
 					<table class="accessibility pie-charts">
-						<tr v-repeat="inaccessibility"
-							v-class="hide-for-print : hiddenForPrint">
+						<tr v-repeat="inaccessibility">
 							<td>
 								<div v-component="chart-pie"
 									data-width="12"
