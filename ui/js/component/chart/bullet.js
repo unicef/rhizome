@@ -143,23 +143,6 @@ _.extend(BulletChart.prototype, {
 		value.attr(valueAttr).attr('width', width);
 		value.exit().remove();
 
-		var label = bar.selectAll('text')
-			.data(function (d) {
-				var v = options.value(d);
-				return _.isFinite(v) ? [v] : [];
-			});
-
-		label.enter()
-			.append('text')
-			.attr({
-				'class' : 'label',
-				'dy'    : '1.1em',
-				'dx'    : '4'
-			});
-
-		label.text(options.format);
-		label.exit().remove();
-
 		// Draw comparitive measure
 		var measure = bar.selectAll('.comparative-measure')
 			.data(function (d) {
@@ -180,6 +163,23 @@ _.extend(BulletChart.prototype, {
 		measure.enter().append('rect').attr(initAttr).style('fill', 'inherit');
 		measure.attr(initAttr).attr('x', x);
 		measure.exit().remove();
+
+		var label = bar.selectAll('text')
+			.data(function (d) {
+				var v = options.value(d);
+				return _.isFinite(v) ? [v] : [];
+			});
+
+		label.enter()
+			.append('text')
+			.attr({
+				'class' : 'label',
+				'dy'    : '1.1em',
+				'dx'    : '4'
+			});
+
+		label.text(options.format);
+		label.exit().remove();
 	},
 
 	resize : function (el) {
