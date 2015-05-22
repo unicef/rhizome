@@ -40,7 +40,6 @@ module.exports = React.createClass({
 	    });
 	},
 	render: function(){
-
 	   return (<div className="visualization-builder-container"> 
 	               <form className="inline">
 		               <div>
@@ -48,7 +47,7 @@ module.exports = React.createClass({
 		               </div>
 		               <Menu items={this.state.regions}
 		                     searchable={true}>
-		               		<a className="button">menu</a>
+		               		<span style={{width:"200px",display:"inline-block"}}>menu</span>
 		               </Menu>
 	               </form>
 	           </div>
