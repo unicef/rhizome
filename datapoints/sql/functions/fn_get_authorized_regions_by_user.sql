@@ -4,10 +4,17 @@ CREATE FUNCTION fn_get_authorized_regions_by_user(user_id int, list_of_region_id
 RETURNS TABLE(
 
   id INT
-  ,parent_region_id INT
   ,office_id INT
-  ,region_type_id INT
+  ,latitude FLOAT
+  ,longitude FLOAT
+  ,slug VARCHAR
+  ,created_at TIMESTAMP WITH TIME ZONE
+  ,source_id INT
+  ,region_code VARCHAR
+  ,is_high_risk BOOLEAN
   ,name VARCHAR
+  ,parent_region_id INT
+  ,region_type_id INT
 ) AS
 $func$
 BEGIN
@@ -41,12 +48,8 @@ BEGIN
 	)
 
 	SELECT
-		r.id
-		,r.parent_region_id
-		,r.office_id
-		,r.region_type_id
-		,r.name
-	FROM region_tree rt
+		r.*
+  FROM region_tree rt
 	INNER JOIN region r
 	ON rt.region_id = r.id
 	WHERE EXISTS (
@@ -61,11 +64,7 @@ BEGIN
   UNION ALL
 
   SELECT
-    r.id
-    ,r.parent_region_id
-    ,r.office_id
-    ,r.region_type_id
-    ,r.name
+    r.*
   FROM region r
   INNER JOIN region_permission rp
     ON r.id = rp.region_id
