@@ -445,6 +445,8 @@ module.exports = {
 									campaign : self.campaign,
 									cols     : _.isFinite(cols) ? cols : 1,
 									data     : data,
+									showHelp : self.showBulletTooltip,
+									hideHelp : self.hideTooltip
 								}
 							),
 							el
@@ -472,6 +474,21 @@ module.exports = {
 					);
 				}));
 		},
+
+		showBulletTooltip : function (indicator, evt) {
+			this.$dispatch('tooltip-show', {
+				el   : evt.target,
+				data : _.assign({},
+					indicator,
+					{ template : 'tooltip-indicator' })
+			});
+		},
+
+		hideTooltip : function (evt) {
+			this.$dispatch('tooltip-hide', {
+				el : evt.target,
+			});
+		}
 	},
 
 	watch: {

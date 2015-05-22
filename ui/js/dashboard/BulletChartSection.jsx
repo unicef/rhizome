@@ -101,8 +101,17 @@ module.exports = React.createClass({
     data     : React.PropTypes.array.isRequired,
   },
 
+  getDefaultProps : function () {
+    return {
+      hideHelp : _.noop,
+      showHelp : _.noop,
+    };
+  },
+
   render : function () {
     var campaign = this.props.campaign;
+    var showHelp = this.props.showHelp;
+    var hideHelp = this.props.hideHelp;
 
     var charts = _(this.props.data)
       .groupBy('indicator.id')
@@ -126,7 +135,7 @@ module.exports = React.createClass({
 
         return (
           <li key={'bullet-chart-' + indicator}>
-            <h6>{title}</h6>
+            <h6 onMouseEnter={_.partial(showHelp, _.get(data, '[0].indicator'))} onMouseLeave={hideHelp}>{title}</h6>
             <Chart type='BulletChart'
               data={_(data).groupBy(options.y).values().value()}
               options={options} />
@@ -136,5 +145,5 @@ module.exports = React.createClass({
       .value();
 
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
-  }
+  },
 });
