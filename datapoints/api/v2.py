@@ -362,6 +362,10 @@ class v2GetRequest(v2Request):
 
         self.kwargs = self.clean_kwargs(request.GET)
 
+
+        print self.db_obj
+
+
     def main(self):
         '''
         Get the list of database objects ( ids ) by applying the URL kwargs to
