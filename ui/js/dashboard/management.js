@@ -123,12 +123,12 @@ function _transitPoints(data) {
 		},
 		inPlace : {
 			value  : [inPlace],
-			domain : [0, planned.value],
+			domain : [0, _.get(planned, 'value', 1)],
 			show   : _.all([inPlace, planned], _.flow(_.property('value'), _.isFinite))
 		},
 		withSM : {
 			value  : [withSM],
-			domain : [0, inPlace.value],
+			domain : [0, _.get(inPlace, 'value', 1)],
 			show   : _.all([withSM, inPlace], _.flow(_.property('value'), _.isFinite))
 		}
 	};
@@ -319,10 +319,9 @@ module.exports = {
 					self.inaccessibility = _inaccessibilityBreakdown(
 						inaccessibility, indicators);
 
-					self.accessPlans = [_(data).filter(function (d) {
+					self.accessPlans = _(data).filter(function (d) {
 							return _.includes(INDICATORS.accessPlans, Number(d.indicator));
-						})
-						.first()];
+						});
 
 					self.transitPoints = _transitPoints(transitPoints);
 				}));
