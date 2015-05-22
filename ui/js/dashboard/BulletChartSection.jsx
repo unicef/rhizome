@@ -119,8 +119,7 @@ module.exports = React.createClass({
           fill       : _.partial(_fill, _, campaign, targets),
           format     : d3.format('%'),
           thresholds : targets[1],
-          targets    : targets[0],
-          fontSize   : 12
+          targets    : targets[0]
         };
 
         var title = _.get(data, '[0].indicator.short_name', '');

@@ -7,8 +7,8 @@ var qualitativeAxis = require('./QualitativeAxis');
 
 var defaults = {
 	domain     : _.constant([0, 1]),
-	fontSize   : 10,
-	lineHeight : 1.2,
+	fontSize   : 12,
+	lineHeight : 2,
 	padding    : 0.1,
 	scale      : d3.scale.linear,
 	thresholds : [],
@@ -16,9 +16,9 @@ var defaults = {
 	format     : String,
 
 	margin : {
-		top    : 9,
+		top    : 12,
 		right  : 0,
-		bottom : 9,
+		bottom : 12,
 		left   : 0
 	}
 };
@@ -173,12 +173,17 @@ _.extend(BulletChart.prototype, {
 		label.enter()
 			.append('text')
 			.attr({
-				'class' : 'label',
-				'dy'    : '1.1em',
-				'dx'    : '4'
+				'class'     : 'label',
+				'dx'        : '4'
 			});
 
-		label.text(options.format);
+		label
+			.attr({
+				'dy'        : (options.lineHeight / 4) + 'em',
+				'transform' : 'translate(0,' + (h / 2) + ')'
+			})
+			.style('font-size', options.fontSize)
+			.text(options.format);
 		label.exit().remove();
 	},
 
