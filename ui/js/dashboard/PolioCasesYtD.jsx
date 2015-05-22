@@ -66,7 +66,7 @@ module.exports = React.createClass({
 
     var newCaseLabel = '';
 
-    if (_.isFinite(newCases)) {
+    if (_.isFinite(newCases) && newCases > 0) {
       var plural = newCases !== 1 ? 's' : '';
       newCaseLabel = (
         <div id='new-polio-cases'
