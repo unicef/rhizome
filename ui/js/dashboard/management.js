@@ -371,6 +371,7 @@ module.exports = {
 
 					React.render(
 						React.createElement(LineChart, {
+							id     : 'conversions',
 							series : _conversions(conversions, indicators),
 							x : {
 								scale  : d3.time.scale()
@@ -391,6 +392,7 @@ module.exports = {
 
 					React.render(
 						React.createElement(LineChart, {
+							id     : 'inaccessible-children',
 							series : _conversions(inaccessible, indicators),
 							x : {
 								scale  : d3.time.scale()

@@ -167,6 +167,7 @@ function _draw(el, props, state) {
 module.exports = React.createClass({
 	getDefaultProps : function () {
 		return {
+      id     : null,
 			series : [],
       x : {
         scale  : d3.time.scale(),
@@ -222,7 +223,9 @@ module.exports = React.createClass({
     var contentWidth  = Math.max(width - left - this.props.margin.right, 0);
 
     return (
-      <svg className='line' viewBox={'0 0 ' + width + ' ' + height}
+      <svg id={this.props.id}
+        className='line'
+        viewBox={'0 0 ' + width + ' ' + height}
         width={width}
         height={height}>
         <rect className='bg'
