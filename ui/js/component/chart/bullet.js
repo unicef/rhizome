@@ -60,7 +60,8 @@ _.extend(BulletChart.prototype, {
 	},
 
 	update : function (data, options) {
-		var options = _.assign(this._options, options);
+		options = _.assign(this._options, options);
+
 		var margin  = options.margin;
 		var svg     = this._svg;
 
@@ -128,7 +129,7 @@ _.extend(BulletChart.prototype, {
 			.style('fill', options.fill);
 		bar.exit().remove();
 
-		var value = bar.selectAll('.value').data(function (d) { return [d]; });
+		var value = bar.selectAll('.value').data(function (d) { return isEmpty ? [] : [d]; });
 
 		var valueAttr = {
 			'class'  : 'value',
