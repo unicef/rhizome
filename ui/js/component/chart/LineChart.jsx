@@ -5,6 +5,7 @@ var d3        = require('d3');
 var moment    = require('moment');
 var React     = require('react');
 
+var browser   = require('util/browser');
 var colors    = require('colors');
 var data      = require('util/data');
 var hoverLine = require('./behavior/hover-line');
@@ -222,12 +223,21 @@ module.exports = React.createClass({
     var contentHeight = Math.max(height - top - this.props.margin.bottom, 0);
     var contentWidth  = Math.max(width - left - this.props.margin.right, 0);
 
+    var dims = {};
+
+    if (browser.isIE()) {
+      dims = {
+        width: width,
+        height: height
+      };
+    }
+
     return (
-      <svg id={this.props.id}
+      <svg
+        {...dims}
+        id={this.props.id}
         className='line'
-        viewBox={'0 0 ' + width + ' ' + height}
-        width={width}
-        height={height}>
+        viewBox={'0 0 ' + width + ' ' + height}>
         <rect className='bg'
           x={left}
           width={contentWidth}

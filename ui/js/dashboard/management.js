@@ -405,7 +405,7 @@ module.exports = {
 								format : d3.format(',.0f')
 							},
 							getColor : getColor,
-							aspect   : 2.655
+							aspect   : 2.664831804
 						}),
 						self.$$.inaccessible
 					);
