@@ -33,3 +33,6 @@ static/odk_source
 polio/secrets.py
 *~
 **/#*#
+static/Polio.map.json
+static/lib.js
+static/lib.map.json
