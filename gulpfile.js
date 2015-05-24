@@ -35,16 +35,6 @@ function err(e) {
 	this.emit('end');
 }
 
-function build(src, dst, opts) {
-	var bundleStream = browserify(src, opts).bundle()
-		.on('error', err);
-
-	return bundleStream
-		.pipe(source(src))
-		.pipe($.rename('main.js'))
-		.pipe(gulp.dest(dst));
-};
-
 gulp.task('styles', function () {
 	var filter = $.filter(['**/*', '!non-ie-print.css', '!ie.css', '!print.css', '!font-awesome.min.css']);
 
