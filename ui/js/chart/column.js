@@ -2,7 +2,8 @@
 
 var _    = require('lodash');
 var d3   = require('d3');
-var path = require('vue/src/parsers/path');
+
+var label = require('component/chart/renderer/label');
 
 var defaults = {
 	margin    : {
@@ -11,6 +12,7 @@ var defaults = {
 		bottom : 12,
 		left   : 0
 	},
+	name      : _.partial(_.get, _, 'name', ''),
 	padding   : 0.1,
 	values    : _.identity,
 	x         : _.property('x'),
@@ -148,6 +150,33 @@ _.extend(ColumnChart.prototype, {
 				'dx' : -w,
 				'dy' : -4
 			});
+
+		var fmt = _.flow(options.y, options.yFormat);
+		var labels = _(data)
+			.map(function (s) {
+				return _.assign({},
+					_.max(options.values(s), options.x),
+					{ name : options.name(s) }
+				);
+			})
+			.map(function (d) {
+				return {
+					text    : d.name + ' ' + fmt(d),
+					x       : x(d),
+					y       : y(d),
+					defined : _.isFinite(d.value)
+				};
+			})
+			.reverse()
+			.value();
+
+		svg.select('.annotation').selectAll('.series.label')
+			.data(labels)
+			.call(label()
+				.addClass('series')
+				.width(w)
+				.height(h)
+				.align(false));
 	}
 
 });
