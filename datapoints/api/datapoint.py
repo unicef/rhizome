@@ -424,7 +424,7 @@ class DataPointEntryResource(BaseModelResource):
         user_id_list = [u.id for u in user_qs]
 
         if len(user_id_list) == 0:
-            raise InputError(4, 'User does not have permissinons for \
+            raise InputError(4, 'User does not have permissions for \
                 indicator_id: {0}'.format(indicator_id))
 
         ## CHECK REGION PERMISSION ##
@@ -439,7 +439,7 @@ class DataPointEntryResource(BaseModelResource):
         permitted_region_ids = [x.id for x in permitted_region_qs]
 
         if len(permitted_region_ids) == 0:
-            raise InputError(4, 'User does not have permissinons for \
+            raise InputError(4, 'User does not have permissions for \
                 region_id: {0}'.format(bundle_data['region_id']))
 
 
