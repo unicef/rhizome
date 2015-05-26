@@ -29,6 +29,8 @@ from datapoints.forms import *
 from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
+from datapoints.calc_target import CalcTarget
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -506,3 +508,10 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+def refresh_target_calculations(self):
+
+    x,y,z = CalcTarget()
+
+    return HttpResponse(json.dumps(x),content_type="application/json")
