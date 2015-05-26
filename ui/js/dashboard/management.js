@@ -5,14 +5,17 @@ var d3     = require('d3');
 var moment = require('moment');
 var React  = require('react');
 
+var Chart              = require('component/Chart.jsx');
 var LineChart          = require('component/chart/LineChart.jsx');
 var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
-var api    = require('data/api');
-var colors = require('colors');
-var format = require('util/format');
-var util   = require('util/data');
+var api       = require('data/api');
+var colors    = require('colors');
+var colorUtil = require('util/color');
+var format    = require('util/format');
+var palette   = require('colors');
+var util      = require('util/data');
 
 var INDICATORS = {
 	cases           : [168],
@@ -211,7 +214,6 @@ module.exports = {
 			campaigns       : [],
 
 			immunityGap     : [],
-			missedChildren  : [],
 
 			capacity        : [],
 			polio           : [],
@@ -358,7 +360,37 @@ module.exports = {
 						return _.includes(INDICATORS.inaccessible, Number(d.indicator));
 					});
 
-					self.missedChildren = _missedChildren(missed, indicators);
+					var lower = start.clone().startOf('month').subtract(1, 'year');
+					var upper = start.clone().endOf('month');
+
+					var missedScale = _.map(d3.time.scale()
+							.domain([lower.valueOf(), upper.valueOf()])
+							.ticks(d3.time.month, 1),
+						_.method('getTime')
+					);
+
+					var missedChildren = _missedChildren(missed, indicators);
+
+					React.render(
+						React.createElement(Chart, {
+							data    : missedChildren,
+							type    : 'ColumnChart',
+							options : {
+								aspect    : 1.909344491,
+								color     : _.flow(
+									_.property('name'),
+									d3.scale.ordinal().domain(_.pluck('name', missedChildren)).range(palette)
+								),
+								domain    : _.constant(missedScale),
+								values    : _.property('values'),
+								x         : function (d) { return moment(d.campaign.start_date).startOf('month').toDate().getTime(); },
+								xFormat   : function (d) { return moment(d).format('MMM YYYY'); },
+								y0        : _.property('y0'),
+								yFormat   : d3.format('%'),
+							}
+						}),
+						self.$$.missedChildren
+					);
 
 					var getColor = function (d, i) {
 						var scale = d3.scale.ordinal()

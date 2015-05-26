@@ -49,17 +49,7 @@
 
 				<section>
 					<h4>Missed Children</h4>
-					<svg
-						id="missed-children"
-						v-component="chart-stacked-column"
-						data-margin-top="24"
-						data-margin-bottom="24"
-						data-aspect="1.909344491"
-						data-margin-bottom="12"
-						data-format-string=".1%"
-						data-x="campaign.start_date"
-						data-series="{{ missedChildren }}"
-						v-with="loading : false, region: region, campaign: campaign"></svg>
+					<div v-el="missedChildren"></div>
 				</section>
 
 				<section>
