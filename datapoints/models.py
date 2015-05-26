@@ -119,6 +119,29 @@ class IndicatorBound(models.Model):
     class Meta:
         db_table = 'indicator_bound'
 
+class IndicatorTag(models.Model):
+    '''
+    '''
+    
+    tag_name = models.CharField(max_length=255)
+    parent_tag = models.ForeignKey("self",null=True)
+
+    class Meta:
+        db_table = 'indicator_tag'
+
+class IndicatorToTag(models.Model):
+    '''
+    Tagging an indicator.   One indicator can have many tags.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    indicator_tag = models.ForeignKey(IndicatorTag)
+
+    class Meta:
+        db_table = 'indicator_to_tag'
+
+
+
 
 
 class Office(models.Model):

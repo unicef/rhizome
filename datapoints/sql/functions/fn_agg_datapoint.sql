@@ -70,7 +70,8 @@
 						AND r.parent_region_id IS NULL
 
 			)
-			and d.value IS NOT NULL;
+			and d.value IS NOT NULL
+			and d.value != 'NaN';
 
 			CREATE TABLE _tmp_agg AS
 
@@ -117,7 +118,8 @@
 			WHERE ta.region_id = d.region_id
 			AND ta.campaign_id = d.campaign_id
 			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NOT NULL;
+			AND d.value IS NOT NULL
+			AND d.value != 'NaN';
 
 			-- DELETES in data entry (value is null) --
 			DELETE FROM _tmp_agg ta
@@ -125,7 +127,8 @@
 			WHERE ta.region_id = d.region_id
 			AND ta.campaign_id = d.campaign_id
 			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NULL;
+			AND d.value IS NULL
+			AND d.value != 'NaN';
 
 
 			--- UPDATE THE REST OF THE DATAPOINT TABLE SO WE--
