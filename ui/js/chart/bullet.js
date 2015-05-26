@@ -3,7 +3,7 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
-var qualitativeAxis = require('./QualitativeAxis');
+var qualitativeAxis = require('./qualitative-axis');
 
 var defaults = {
 	domain     : _.constant([0, 1]),
