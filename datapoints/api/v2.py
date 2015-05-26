@@ -102,7 +102,7 @@ class v2Request(object):
         '''
 
         data = Campaign.objects.raw("""
-            SELECT c.* FROM campaign c
+            SELECT DISTINCT c.* FROM campaign c
             INNER JOIN datapoint_abstracted da
                 ON c.id = da.campaign_id
             INNER JOIN region_permission rm

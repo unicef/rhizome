@@ -122,7 +122,7 @@ class IndicatorBound(models.Model):
 class IndicatorTag(models.Model):
     '''
     '''
-    
+
     tag_name = models.CharField(max_length=255)
     parent_tag = models.ForeignKey("self",null=True)
 
@@ -139,9 +139,6 @@ class IndicatorToTag(models.Model):
 
     class Meta:
         db_table = 'indicator_to_tag'
-
-
-
 
 
 class Office(models.Model):
