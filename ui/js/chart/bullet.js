@@ -141,7 +141,10 @@ _.extend(BulletChart.prototype, {
 			.attr(valueAttr)
 			.style('fill', 'inherit');
 
-		value.attr(valueAttr).attr('width', width);
+		value.attr(valueAttr)
+			.transition()
+			.duration(500)
+			.attr('width', width);
 		value.exit().remove();
 
 		// Draw comparitive measure
