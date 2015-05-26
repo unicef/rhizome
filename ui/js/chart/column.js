@@ -56,9 +56,11 @@ _.extend(ColumnChart.prototype, {
 			range = d3.extent(_(data).map(options.values).flatten().value(), function (d) {
 				return options.y0(d) + options.y(d);
 			});
+
 			// Make sure we always have at least a 0 baseline
 			range[0] = Math.min(0, range[0]);
 		}
+
 		var yScale = options.yScale()
 			.domain(range)
 			.range([h, 0]);
@@ -79,16 +81,31 @@ _.extend(ColumnChart.prototype, {
 		series.enter().append('g')
 			.attr('class', 'bar');
 
-		series
-			.transition()
-			.duration(500)
-			.style('fill', options.color);
+		series.style('fill', options.color);
 
 		series.exit()
 			.transition()
 			.duration(500)
 			.style('opacity', 0)
 			.remove();
+
+		var hover = d3.dispatch('over', 'out');
+
+		hover.on('out', function () {
+			g.selectAll('rect')
+				.transition()
+				.duration(500)
+				.style('opacity', 1);
+		});
+
+		hover.on('over', function (d) {
+			g.selectAll('rect')
+				.transition()
+				.duration(500)
+				.style('opacity', function (e) {
+					return options.x(d) === options.x(e) ? 1 : 0.5;
+				});
+		});
 
 		var column = series.selectAll('rect').data(options.values);
 
@@ -97,11 +114,13 @@ _.extend(ColumnChart.prototype, {
 			.style('fill', 'inherit');
 
 		column.attr({
-			'height' : height,
-			'width'  : xScale.rangeBand(),
-			'x'      : x,
-			'y'      : y,
-		});
+				'height' : height,
+				'width'  : xScale.rangeBand(),
+				'x'      : x,
+				'y'      : y,
+			})
+			.on('mouseover', hover.over)
+			.on('mouseout', hover.out);
 
 		column.exit().remove();
 
