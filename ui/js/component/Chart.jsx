@@ -28,6 +28,6 @@ module.exports = React.createClass({
   },
 
   componentDidUpdate : function () {
-    this._chart.update(this.props.data);
+    this._chart.update(this.props.data, this.props.options);
   }
 });

@@ -7,8 +7,8 @@ var qualitativeAxis = require('./QualitativeAxis');
 
 var defaults = {
 	domain     : _.constant([0, 1]),
-	fontSize   : 10,
-	lineHeight : 1.2,
+	fontSize   : 12,
+	lineHeight : 2,
 	padding    : 0.1,
 	scale      : d3.scale.linear,
 	thresholds : [],
@@ -16,9 +16,9 @@ var defaults = {
 	format     : String,
 
 	margin : {
-		top    : 9,
+		top    : 12,
 		right  : 0,
-		bottom : 9,
+		bottom : 12,
 		left   : 0
 	}
 };
@@ -60,7 +60,8 @@ _.extend(BulletChart.prototype, {
 	},
 
 	update : function (data, options) {
-		var options = _.assign(this._options, options);
+		options = _.assign(this._options, options);
+
 		var margin  = options.margin;
 		var svg     = this._svg;
 
@@ -128,7 +129,7 @@ _.extend(BulletChart.prototype, {
 			.style('fill', options.fill);
 		bar.exit().remove();
 
-		var value = bar.selectAll('.value').data(function (d) { return [d]; });
+		var value = bar.selectAll('.value').data(function (d) { return isEmpty ? [] : [d]; });
 
 		var valueAttr = {
 			'class'  : 'value',
@@ -142,23 +143,6 @@ _.extend(BulletChart.prototype, {
 
 		value.attr(valueAttr).attr('width', width);
 		value.exit().remove();
-
-		var label = bar.selectAll('text')
-			.data(function (d) {
-				var v = options.value(d);
-				return _.isFinite(v) ? [v] : [];
-			});
-
-		label.enter()
-			.append('text')
-			.attr({
-				'class' : 'label',
-				'dy'    : '1.1em',
-				'dx'    : '4'
-			});
-
-		label.text(options.format);
-		label.exit().remove();
 
 		// Draw comparitive measure
 		var measure = bar.selectAll('.comparative-measure')
@@ -180,6 +164,28 @@ _.extend(BulletChart.prototype, {
 		measure.enter().append('rect').attr(initAttr).style('fill', 'inherit');
 		measure.attr(initAttr).attr('x', x);
 		measure.exit().remove();
+
+		var label = bar.selectAll('text')
+			.data(function (d) {
+				var v = options.value(d);
+				return _.isFinite(v) ? [v] : [];
+			});
+
+		label.enter()
+			.append('text')
+			.attr({
+				'class'     : 'label',
+				'dx'        : '4'
+			});
+
+		label
+			.attr({
+				'dy'        : (options.lineHeight / 4) + 'em',
+				'transform' : 'translate(0,' + (h / 2) + ')'
+			})
+			.style('font-size', options.fontSize)
+			.text(options.format);
+		label.exit().remove();
 	},
 
 	resize : function (el) {

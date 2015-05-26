@@ -123,12 +123,12 @@ function _transitPoints(data) {
 		},
 		inPlace : {
 			value  : [inPlace],
-			domain : [0, planned.value],
+			domain : [0, _.get(planned, 'value', 1)],
 			show   : _.all([inPlace, planned], _.flow(_.property('value'), _.isFinite))
 		},
 		withSM : {
 			value  : [withSM],
-			domain : [0, inPlace.value],
+			domain : [0, _.get(inPlace, 'value', 1)],
 			show   : _.all([withSM, inPlace], _.flow(_.property('value'), _.isFinite))
 		}
 	};
@@ -319,10 +319,9 @@ module.exports = {
 					self.inaccessibility = _inaccessibilityBreakdown(
 						inaccessibility, indicators);
 
-					self.accessPlans = [_(data).filter(function (d) {
+					self.accessPlans = _(data).filter(function (d) {
 							return _.includes(INDICATORS.accessPlans, Number(d.indicator));
-						})
-						.first()];
+						});
 
 					self.transitPoints = _transitPoints(transitPoints);
 				}));
@@ -371,6 +370,7 @@ module.exports = {
 
 					React.render(
 						React.createElement(LineChart, {
+							id     : 'conversions',
 							series : _conversions(conversions, indicators),
 							x : {
 								scale  : d3.time.scale()
@@ -391,6 +391,7 @@ module.exports = {
 
 					React.render(
 						React.createElement(LineChart, {
+							id     : 'inaccessible-children',
 							series : _conversions(inaccessible, indicators),
 							x : {
 								scale  : d3.time.scale()
@@ -404,7 +405,7 @@ module.exports = {
 								format : d3.format(',.0f')
 							},
 							getColor : getColor,
-							aspect   : 2.655
+							aspect   : 2.664831804
 						}),
 						self.$$.inaccessible
 					);
@@ -444,6 +445,8 @@ module.exports = {
 									campaign : self.campaign,
 									cols     : _.isFinite(cols) ? cols : 1,
 									data     : data,
+									showHelp : self.showBulletTooltip,
+									hideHelp : self.hideTooltip
 								}
 							),
 							el
@@ -471,6 +474,21 @@ module.exports = {
 					);
 				}));
 		},
+
+		showBulletTooltip : function (indicator, evt) {
+			this.$dispatch('tooltip-show', {
+				el   : evt.target,
+				data : _.assign({},
+					indicator,
+					{ template : 'tooltip-indicator' })
+			});
+		},
+
+		hideTooltip : function (evt) {
+			this.$dispatch('tooltip-hide', {
+				el : evt.target,
+			});
+		}
 	},
 
 	watch: {
