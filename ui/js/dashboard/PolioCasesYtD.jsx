@@ -22,29 +22,6 @@ module.exports = React.createClass({
     };
   },
 
-  componentWillReceiveProps : function (nextProps) {
-    var campaign = nextProps.campaign;
-    var state    = { totalCases : null, newCases : null };
-
-    if (campaign) {
-      // Sum all of the reported Polio cases for the year
-      var year = campaign.start_date.getFullYear();
-      state.totalCases = _(nextProps.data)
-        .filter(function (d) { return d.campaign.start_date.getFullYear() === year; })
-        .pluck('value')
-        .sum();
-
-      // Find the number of reported cases for this campaign
-      state.newCases = _.get(
-        _.find(
-          nextProps.data,
-          function (d) { return d.campaign.id == campaign.id;}),
-        'value');
-    }
-
-    this.setState(state);
-  },
-
   shouldComponentUpdate : function (nextProps) {
     // Update if we have a campaign and region, and the campaign or region is
     // different. If this condition is false, it shouldn't be the case that the
@@ -55,8 +32,26 @@ module.exports = React.createClass({
   },
 
   render : function () {
-    var year  = this.props.campaign.start_date.getFullYear();
-    var month = moment(this.props.campaign.start_date).format('MMM');
+    var campaign   = this.props.campaign;
+    var year       = campaign.start_date.getFullYear();
+    var month      = moment(campaign.start_date).format('MMM');
+    var totalCases = null;
+    var newCases   = null;
+
+    if (campaign) {
+      // Sum all of the reported Polio cases for the year
+      totalCases = _(this.props.data)
+        .filter(function (d) { return d.campaign.start_date.getFullYear() === year; })
+        .pluck('value')
+        .sum();
+
+      // Find the number of reported cases for this campaign
+      newCases = _.get(
+        _.find(
+          this.props.data,
+          function (d) { return d.campaign.start_date.getTime() === campaign.start_date.getTime();}),
+        'value');
+    }
 
     // Set the title based on whether there is data
     var title = _.isEmpty(this.props.data) ?
@@ -66,15 +61,18 @@ module.exports = React.createClass({
         style={{
           'color'       : '#2b8cbe',
           'fontWeight' : 'bold'
-        }}>{this.state.totalCases}</span>
+        }}>{totalCases}</span>
       </h4>);
 
-    var newCases = '';
+    var newCaseLabel = '';
 
-    if (_.isFinite(this.state.newCases)) {
-      var plural = this.state.newCases !== 1 ? 's' : '';
-      newCases = (
-        <div id='new-polio-cases'>{this.state.newCases} new case{plural}</div>
+    if (_.isFinite(newCases) && newCases > 0) {
+      var plural = newCases !== 1 ? 's' : '';
+      newCaseLabel = (
+        <div id='new-polio-cases'
+          style={{
+            position :'absolute'
+          }}>{newCases} new case{plural}</div>
       );
     }
 
@@ -91,8 +89,9 @@ module.exports = React.createClass({
       <div>
         {title}
         <div style={{ position : 'relative' }}>
-          {newCases}
-          <YtDChart data={this.props.data}
+          {newCaseLabel}
+          <YtDChart id='polio-cases-ytd'
+            data={this.props.data}
             getColor={_.flow(_.property('name'), color)}
             aspect={1.757} />
         </div>

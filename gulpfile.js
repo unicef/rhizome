@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var gulp       = require('gulp');
 var del        = require('del');
 var exec       = require('child_process').exec;
+var pkg         = require('./package.json');
 
 // load plugins
 var $ = require('gulp-load-plugins')();
@@ -14,6 +15,7 @@ var path = {
 	main      : './ui/js/PolioScape.js',
 	components: './ui/js/**/*.{js,jsx,html,css,sass,scss}',
 	js        : './ui/js/**/*.{js,jsx}',
+	libs      : Object.keys(pkg.dependencies),
 	sass      : ['./ui/styles/**/{screen,print,ie,non-ie-print}.scss', './ui/js/**/*.{sass,scss}', './bower_components/**/*.min.css'],
 	images    : './ui/img/**/*',
 	test      : './ui/test/**/*.js',
@@ -23,21 +25,15 @@ var path = {
 	zipfile   : 'uf04-frontend.zip'
 };
 
-function err(e) {
-	$.util.log(e.message);
-	exec('say -v Fred "Build failed"');
-	this.emit('end');
+function say(msg) {
+	exec('say -v Fred "' + msg + '"');
 }
 
-function build(src, dst, opts) {
-	var bundleStream = browserify(src, opts).bundle()
-		.on('error', err);
-
-	return bundleStream
-		.pipe(source(src))
-		.pipe($.rename('main.js'))
-		.pipe(gulp.dest(dst));
-};
+function err(e) {
+	$.util.log(e.message);
+	say('Build failed');
+	this.emit('end');
+}
 
 gulp.task('styles', function () {
 	var filter = $.filter(['**/*', '!non-ie-print.css', '!ie.css', '!print.css', '!font-awesome.min.css']);
@@ -66,16 +62,49 @@ gulp.task('scripts', function () {
 		.pipe($.jshint.reporter(require('jshint-stylish')));
 });
 
-gulp.task('browserify', ['scripts'], function () {
-	return build(path.main, path.output, {
-		debug: true,
-		standalone: 'Polio',
-		paths: ['./ui/js']
-	})
-	.on('end', function () {
-		exec('say -v Fred "App compiled"');
-	});
+gulp.task('lib', function () {
+	var bundle = browserify({
+			debug     : true,
+			fullPaths : true,
+		})
+		.require(path.libs)
+		.plugin('minifyify', {
+			map    : 'lib.map.json',
+			output : path.output + '/lib.map.json'
+		})
+		.bundle()
+		.on('error', err);
+
+	return bundle
+		.pipe(source('lib.js'))
+		.pipe(gulp.dest(path.output))
+		.on('end', function () {
+			say('Library built');
+		});
 });
+
+gulp.task('browserify', function () {
+	var bundleStream = browserify(path.main, {
+			debug: true,
+			standalone: 'Polio',
+			paths: ['./ui/js']
+		})
+		.external(path.libs)
+		.plugin('minifyify', {
+			map    : 'Polio.map.json',
+			output : path.output + '/Polio.map.json'
+		})
+		.bundle()
+		.on('error', err)
+		.on('end', function () {
+			exec('say -v Fred "App compiled"');
+		});;
+
+	return bundleStream
+		.pipe(source(path.main))
+		.pipe($.rename('main.js'))
+		.pipe(gulp.dest(path.output));
+ß});
 
 gulp.task('fonts', function () {
 	var fonts = $.filter('**/*.{eot,svg,ttf,woff}');
@@ -91,7 +120,7 @@ gulp.task('clean', function (cb) {
 	del(path.clean, cb);
 });
 
-gulp.task('build', ['fonts', 'browserify', 'styles']);
+gulp.task('build', ['fonts', 'lib', 'browserify', 'styles']);
 
 gulp.task('default', ['clean'], function () {
 	return gulp.start('build');
@@ -110,6 +139,7 @@ gulp.task('livereload', function () {
 gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
 	gulp.watch('**/*.{scss,sass}', ['styles']);
 	gulp.watch(path.components, ['browserify']);
+	gulp.watch('./package.json', ['lib']);
 });
 
 gulp.task('test', ['scripts'], function () {
@@ -143,7 +173,6 @@ gulp.task('dist-ui', ['collectstatic'], function () {
 
 	return gulp.src('build/**/*')
 		.pipe(jsFilter)
-		.pipe($.uglify())
 		.pipe($.size({ title: 'JavaScript' }))
 		.pipe(jsFilter.restore())
 		.pipe(cssFilter)

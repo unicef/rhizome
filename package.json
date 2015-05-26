@@ -1,6 +1,6 @@
 {
   "name": "uf04-polios",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "scripts": {
     "clean": "gulp clean",
     "build": "gulp build",
@@ -41,12 +41,12 @@
     "gulp-ruby-sass": "^0.4.3",
     "gulp-size": "^0.3.1",
     "gulp-streamify": "0.0.5",
-    "gulp-uglify": "^0.2.1",
     "gulp-useref": "^0.4.5",
     "gulp-util": "^3.0.2",
     "gulp-zip": "^2.0.2",
     "insert-css": "^0.2.0",
     "jshint-stylish": "^0.2.0",
+    "minifyify": "^7.0.0",
     "mocha": "^2.0.1",
     "partialify": "^3.1.1",
     "proxy-middleware": "^0.6.0",
