@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 import StringIO
+import urlparse
 
 from django.core.serializers import json as djangojson
 from pandas import DataFrame
@@ -9,24 +10,39 @@ from tastypie.serializers import Serializer
 from datapoints.models import Campaign, Indicator, Region
 
 class CustomJSONSerializer(Serializer):
-    """Does not allow out of range float values 
+    """Does not allow out of range float values
     (in strict compliance with the JSON specification).
     Instead replaces these values with NULL."""
-    
+
+    formats = ['json', 'urlencode']
+    content_types = {
+        'json': 'application/json',
+        'urlencode': 'application/x-www-form-urlencoded',
+        }
+
+    def from_urlencode(self, data,options=None):
+        """ handles basic formencoded url posts """
+        qs = dict((k, v if len(v)>1 else v[0] )
+            for k, v in urlparse.parse_qs(data).iteritems())
+        return qs
+
+    def to_urlencode(self,content):
+        pass
+
     def to_json(self, data, options=None):
         options = options or {}
         data = self.to_simple(data, options)
 
         return djangojson.json.dumps(
-            data, 
+            data,
             allow_nan=True,
             cls=NanEncoder,
-            sort_keys=True, 
+            sort_keys=True,
             ensure_ascii=False)
 
 class NanEncoder(djangojson.DjangoJSONEncoder):
 
-    nan_str = 'null'        
+    nan_str = 'null'
 
     def iterencode(self, o, _one_shot=False):
         """Encode the given object and yield each string
@@ -53,7 +69,7 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
                 return _orig_encoder(o)
 
         def floatstr(o, allow_nan=self.allow_nan,
-                _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY, 
+                _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY,
                 _neginf=-json.encoder.INFINITY):
             # Check for specials.  Note that this type of test is processor
             # and/or platform-specific, so do tests which don't depend on the
@@ -112,8 +128,6 @@ class CustomSerializer(Serializer):
 
         meta_lookup = self.build_meta_lookup(data_objects)
 
-        print meta_lookup['indicator']
-
         expanded_objects = []
 
         for obj in data_objects:
@@ -163,14 +177,21 @@ class CustomSerializer(Serializer):
         ## every object has all indicators, so find the first one, and the IDs
         ## for each indicator in that object
         indicator_list = [obj['indicators'] for obj in object_list]
-        indicator_ids = [ind_dict['indicator'] for ind_dict in indicator_list[0]]
 
+        indicator_ids = []
+        for il in indicator_list:
+            ind_id = [ind_dict['indicator'] for ind_dict in il]
+            try:
+                indicator_ids.append(int(ind_id[0]))
+            except IndexError:
+                pass
 
         for r in Region.objects.filter(id__in=region_ids):
             meta_lookup['region'][r.id] = r.__unicode__()
 
         for c in Campaign.objects.filter(id__in=campaign_ids):
             meta_lookup['campaign'][c.id] = c.__unicode__()
+
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):
             meta_lookup['indicator'][ind.id] = ind.__unicode__()

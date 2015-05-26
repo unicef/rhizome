@@ -1,17 +1,19 @@
 {
   "name": "uf04-polios",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "scripts": {
-    "clean" : "gulp clean",
-    "build" : "gulp build",
-    "dev"   : "gulp watch",
-    "dist"  : "gulp dist"
+    "clean": "gulp clean",
+    "build": "gulp build",
+    "dev": "gulp watch",
+    "dist": "gulp dist"
   },
   "dependencies": {
     "d3": "^3.4.13",
     "lodash": "^3.5.0",
     "moment": "^2.8.4",
     "page": "^1.6.0",
+    "react": "^0.13.3",
+    "react-dnd": "^0.9.8",
     "superagent": "^0.20.0",
     "superagent-prefix": "0.0.2",
     "vue": "^0.11"
@@ -48,6 +50,7 @@
     "mocha": "^2.0.1",
     "partialify": "^3.1.1",
     "proxy-middleware": "^0.6.0",
+    "reactify": "^1.1.0",
     "send": "^0.10.1",
     "serve-static": "^1.7.1",
     "should": "^4.1.0",
@@ -58,7 +61,8 @@
   },
   "browserify": {
     "transform": [
-      "partialify"
+      "partialify",
+      "reactify"
     ]
   }
 }

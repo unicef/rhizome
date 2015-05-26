@@ -73,7 +73,7 @@ h6 {
 }
 
 .ie #management-dashboard {
-	#polio-cases-ytd svg {
+	#polio-cases-ytd {
 		width : 6.843cm;
 		height: 3.894cm;
 	}
@@ -83,9 +83,9 @@ h6 {
 		height: 4.253cm;
 	}
 
-	#inaccessible-children svg {
-		width : 8.714cm;
-		height: 3.27cm;
+	#inaccessible-children {
+		width : 6.843cm;
+		height: 2.66cm;
 	}
 
 	#missed-children svg {
@@ -93,7 +93,7 @@ h6 {
 		height: 3.585cm;
 	}
 
-	#conversions svg {
+	#conversions {
 		width : 6.845cm;
 		height: 3.028cm;
 	}
@@ -103,7 +103,7 @@ h6 {
 		height: 6.81672137cm;
 	}
 
-	svg.bullet {
+	.bullet-chart svg {
 		width : 3.247cm;
 		height: 1.022cm;
 	}

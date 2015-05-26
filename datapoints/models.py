@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db import models
+from django.conf import settings
+
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
@@ -47,14 +49,35 @@ class Indicator(models.Model):
 
 class IndicatorAbstracted(models.Model):
 
-    indicator = models.ForeignKey(Indicator)
+    description = models.CharField(max_length=255)
+    short_name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     bound_json = JSONField()
 
     def __unicode__(self):
-        return unicode(self.indicator.name)
+        return unicode(self.slug)
 
     class Meta:
         db_table = 'indicator_abstracted'
+
+class UserAbstracted(models.Model):
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    last_login = models.DateTimeField()
+    is_superuser = models.BooleanField()
+    username = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.BooleanField()
+    email = models.CharField(max_length=255)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    date_joined = models.DateTimeField()
+    group_json = JSONField()
+    region_permission_json = JSONField()
+
+    class Meta:
+        db_table = 'user_abstracted'
 
 
 
@@ -355,3 +378,25 @@ class IndicatorPermission(models.Model):
     class Meta:
         db_table = 'indicator_permission'
         unique_together = ('group','indicator')
+
+
+class UserGroup(models.Model):
+    '''
+    '''
+
+    user = models.ForeignKey('auth.User')
+    group = models.ForeignKey('auth.Group')
+
+    class Meta:
+        db_table = 'auth_user_groups'
+        managed = False
+
+class ColumnAttributes(models.Model):
+
+    table_name = models.CharField(max_length=255)
+    column_name = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255)
+    display_on_table_flag = models.BooleanField()
+
+    class Meta:
+        db_table = 'column_attributes'

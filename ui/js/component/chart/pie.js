@@ -21,7 +21,6 @@ module.exports = {
 
 	mixins: [
 		require('./mixin/margin'),
-		require('./mixin/with-indicator')
 	],
 
 	data: function () {
@@ -68,7 +67,7 @@ module.exports = {
 		},
 
 		series: function () {
-			if (this.empty) {
+			if (_.isEmpty(this.datapoints)) {
 				return [];
 			}
 
@@ -143,8 +142,9 @@ module.exports = {
 	},
 
 	watch: {
-		'datapoints' : 'draw',
-		'innerRadius': 'draw',
-		'outerRadius': 'draw'
+		'datapoints'  : 'draw',
+		'innerRadius' : 'draw',
+		'outerRadius' : 'draw',
+		'domain'      : 'draw'
 	}
 };

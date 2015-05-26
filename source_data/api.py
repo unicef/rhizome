@@ -14,8 +14,7 @@ from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
 
 from datapoints.models import Source
-from datapoints.cache_tasks import CacheRefresh
-
+from datapoints import cache_tasks
 
 class EtlResource(ModelResource):
 
@@ -38,8 +37,6 @@ class EtlResource(ModelResource):
         Fix placeholder guid!
 
         '''
-
-        ## http://localhost:8000/api/v1/etl/?task=odk_refresh_vcm_summary_work_table&cron_guid=john_is_testing
 
         task_string = request.GET['task']
         cron_guid = 'placeholder_guid'#request.GET['cron_guid']
@@ -91,6 +88,7 @@ class EtlTask(object):
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
             'refresh_cache': self.refresh_cache,
+            'refresh_metadata': self.refresh_metadata,
             }
 
         fn = self.function_mappings[task_string]
@@ -126,13 +124,30 @@ class EtlTask(object):
         datapoint -> agg_datapoint -> datapoint_with_computed
         '''
         try:
-            cr = CacheRefresh()
+            cr = cache_tasks.CacheRefresh()
         except Exception as err:
             return err, None
 
         data = 'complete' #cr.response_msg
 
         return None, data
+
+    def refresh_metadata(self):
+        '''
+        user -> user_abstracted
+        indicator -> indicator_abstracted
+        '''
+
+        try:
+            indicator_cache_data = cache_tasks.cache_indicator_abstracted()
+            user_cache_data = cache_tasks.cache_user_abstracted()
+        except Exception as err:
+            return err, None
+
+        data = 'complete' #cr.response_msg
+
+        return None, data
+
 
 
     def start_odk_jar(self):

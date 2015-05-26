@@ -160,7 +160,8 @@ module.exports = {
 							y: evt.pageY,
 						},
 						data: {
-							text: d.properties.name
+							text     : d.properties.name,
+							template : 'tooltip-default'
 						}
 					});
 				})

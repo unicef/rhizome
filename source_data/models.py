@@ -211,6 +211,20 @@ class CampaignMap(models.Model):
     class Meta:
         db_table = 'campaign_map'
 
+class DocumentDetail(models.Model):
+
+    document = models.ForeignKey(Document)
+    db_model = models.CharField(max_length=255)
+    source_object_id = models.IntegerField()
+    master_object_id = models.IntegerField()
+    source_string = models.CharField(max_length=255)
+    source_dp_count = models.IntegerField()
+    master_dp_count = models.IntegerField()
+    map_id = models.IntegerField()
+
+    class Meta:
+        db_table = 'document_detail'
+
 
     ###################
     ####### ODK #######
@@ -349,9 +363,6 @@ class VCMSummaryNew(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('Hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -470,9 +481,6 @@ class VCMSummary(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -514,9 +522,6 @@ class ClusterSupervisor(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -535,9 +540,6 @@ class PhoneInventory(models.Model):
     process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
-
-    def __unicode__(self):
-        return unicode('hello')
 
     class Meta:
         app_label = 'source_data'
@@ -605,9 +607,6 @@ class ActivityReport(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -628,9 +627,6 @@ class VWSRegister(models.Model):
     process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
-
-    def __unicode__(self):
-        return unicode('hello')
 
     class Meta:
         app_label = 'source_data'
@@ -677,9 +673,6 @@ class HealthCamp(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -704,9 +697,6 @@ class PracticeVCMSettCoordinates(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -724,9 +714,6 @@ class PaxListReportTraining(models.Model):
     process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
-
-    def __unicode__(self):
-        return unicode('hello')
 
     class Meta:
         app_label = 'source_data'
@@ -818,9 +805,6 @@ class PracticeVCMSummary(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -845,9 +829,6 @@ class PracticeVCMBirthRecord(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
-
     class Meta:
         app_label = 'source_data'
 
@@ -867,8 +848,6 @@ class KnowThePeople(models.Model):
     request_guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.now())
 
-    def __unicode__(self):
-        return unicode('hello')
 
     class Meta:
         app_label = 'source_data'

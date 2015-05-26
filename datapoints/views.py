@@ -1,5 +1,7 @@
 import json
 from pprint import pprint
+import datetime
+from datetime import date
 
 import gspread
 import re
@@ -12,7 +14,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
 from django.contrib.auth.models import User,Group
+from django.contrib.auth.decorators import login_required
+
+
 from django.template import RequestContext
+
 from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
@@ -20,10 +26,9 @@ from functools import partial
 
 from datapoints.models import *
 from datapoints.forms import *
-from datapoints.cache_tasks import CacheRefresh,cache_indicator_abstracted
+from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
-
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -48,6 +53,17 @@ def data_entry(request):
 
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
+
+def dashboard_builder(request):
+
+    return render_to_response('dashboard-builder/index.html',
+        context_instance=RequestContext(request))
+
+def visualization_builder(request):
+
+    return render_to_response('dashboard-builder/visualization_builder.html',
+        context_instance=RequestContext(request))
+
 
 class DashBoardView(IndexView):
     paginate_by = 50
@@ -198,7 +214,7 @@ def cache_control(request):
 
 def refresh_cache(request):
 
-    cr = CacheRefresh()
+    cr = cache_tasks.CacheRefresh()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
@@ -387,13 +403,18 @@ def api_region(request):
         , content_type="application/json")
 
 
-def transform_indicators(request):
+def refresh_metadata(request):
 
-    response_data = cache_indicator_abstracted()
+    indicator_cache_data = cache_tasks.cache_indicator_abstracted()
+    user_cache_data = cache_tasks.cache_user_abstracted()
 
     return HttpResponseRedirect('/datapoints/cache_control/')
 
+
 def api_indicator(request):
+    '''
+    TO BE REMOVED - Once transfer from v1/api to v2/api
+    '''
 
     meta_keys = ['limit','offset']
     request_meta = parse_url_args(request,meta_keys)
@@ -410,7 +431,7 @@ def api_indicator(request):
             ,ia.bound_json
         FROM indicator i
         INNER JOIN indicator_abstracted ia
-        ON i.id = ia.indicator_id
+        ON i.id = ia.id
         WHERE i.id = ANY(%s)
         ORDER BY i.id
     """,[id__in])
@@ -428,22 +449,60 @@ def api_indicator(request):
         , content_type="application/json")
 
 
+class UserCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = User
+    template_name = 'user_create.html'
+    form_class = UserCreateForm
+    # permission_required = 'datapoints.add_campaign'
+
+    def form_valid(self, form):
+
+        new_user = form.save()
+
+        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+            kwargs={'pk':new_user.id}))
+
+
+class UserEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = User
+    template_name = 'user_edit.html'
+    form_class = UserEditForm
+
+    def get_success_url(self):
+
+        requested_user_id = self.get_object().id
+
+        return reverse_lazy('datapoints:user_edit',kwargs={'pk':
+            requested_user_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(UserEditView, self).get_context_data(**kwargs)
+        user_obj = self.get_object()
+        context['user_id'] = user_obj.id
+
+        return context
+
 def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
 
+@login_required
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
         request_object = v2MetaRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
+    ## Handles Delete and Update.
     elif request.POST:
         request_object = v2PostRequest(request, content_type)
         data = request_object.main()
 
     else:
         request_object = v2GetRequest(request, content_type)
-        err, data = request_object.main()
+        data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")

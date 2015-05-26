@@ -19,9 +19,7 @@ function hoverLine() {
 	var y          = function (d) { return d.y; };
 	var yFormat    = String;
 	var yScale     = d3.scale.linear();
-	var _value     = function (d) {
-		return d.value;
-	};
+	var _value     = _.property('value');
 
 	// Use this to keep track of what value we're currently hovering over so we
 	// can bail out of onMouseMove if the movement wouldn't change our display
@@ -39,15 +37,6 @@ function hoverLine() {
 		}
 
 		datapoints = value;
-		return chart;
-	};
-
-	chart.diff = function (value) {
-		if (!arguments.length) {
-			return diff;
-		}
-
-		diff = value;
 		return chart;
 	};
 
@@ -165,10 +154,8 @@ function hoverLine() {
 		var min = box.width / 2;
 		var max = width - min;
 
-		var x   = xScale(d);
-
 		return 'translate(' +
-			Math.max(min, Math.min(max, x)) + ',' +
+			Math.max(min, Math.min(max, d)) + ',' +
 			height + ')';
 	}
 
@@ -177,13 +164,12 @@ function hoverLine() {
 		var cursor = d3.mouse(this)[0];
 
 		var range = _(datapoints)
-			.map(x)
+			.map(_.flow(x, xScale))
 			.uniq()
 			.sortBy()
 			.value();
 
-		var val   = xScale.invert(cursor);
-		var right = d3.bisect(range, val);
+		var right = d3.bisect(range, cursor);
 		var left  = right - 1;
 		var data  = [];
 
@@ -195,7 +181,7 @@ function hoverLine() {
 			} else {
 				var r            = range[right];
 				var l            = range[left];
-				var closeToRight = (diff(val, l) / diff(r, l) > 0.5);
+				var closeToRight = (diff(cursor, l) / diff(r, l) > 0.5);
 
 				data[0] = closeToRight ? range[right] : range[left];
 			}
@@ -226,8 +212,8 @@ function hoverLine() {
 			.transition()
 			.duration(300)
 			.attr({
-				'x1': xScale,
-				'x2': xScale,
+				'x1': Number,
+				'x2': Number,
 			})
 			.style('opacity', 1);
 
@@ -262,7 +248,7 @@ function hoverLine() {
 
 		xLabel
 			.text(function (d) {
-				return xFormat(d);
+				return xFormat(xScale.invert(d));
 			})
 			.transition()
 			.duration(300)
@@ -277,7 +263,7 @@ function hoverLine() {
 
 		var labelData = _(datapoints)
 			.filter(function (d) {
-				return x(d) === data[0];
+				return xScale(x(d)) === data[0];
 			})
 			.map(function (d) {
 				var name = seriesName ? seriesName(d) + ' ' : '';

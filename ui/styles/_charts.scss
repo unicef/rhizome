@@ -83,33 +83,6 @@ svg {
 		}
 	}
 
-	&.bullet {
-		rect {
-			shape-rendering: crispEdges;
-			stroke: none;
-		}
-
-		.value,
-		.marker {
-			fill: $coolgray5;
-		}
-
-		.ranges {
-			.range-label {
-				fill: #666666;
-			}
-		}
-
-		.label {
-			text-shadow: none;
-			fill       : $white;
-
-			&.dark {
-				fill: $oil;
-			}
-		}
-	}
-
 	.point {
 		fill: $white;
 		stroke-width: 1px;
@@ -247,9 +220,9 @@ svg {
 		font-weight: bold;
 	}
 
-	.bullet {
+	svg.bullet-chart {
 		.value,
-		.marker {
+		.comparative-measure {
 			fill: $down-color;
 		}
 	}
@@ -260,9 +233,9 @@ svg {
 		color: $up-color;
 	}
 
-	svg.bullet {
+	svg.bullet-chart {
 		.value,
-		.marker {
+		.comparative-measure {
 			fill: $up-color;
 		}
 	}
@@ -329,6 +302,12 @@ svg {
 			}
 		}
 	}
+
+	.x.axis {
+		.domain {
+			display : none;
+		}
+	}
 }
 
 #nco-dashboard {
@@ -344,3 +323,64 @@ svg {
 		}
 	}
 }
+
+.tooltip {
+	svg {
+		margin: 1rem 0;
+		max-width: initial;
+		width: initial;
+	}
+
+	.histogram {
+		rect, .label {
+			fill: $white;
+			opacity: 0.6;
+		}
+
+		.current {
+			rect, .label {
+				opacity: 1;
+			}
+		}
+
+		.axis {
+			opacity: 0.3;
+
+			.domain {
+				stroke: $white;
+				stroke-width: 1px;
+				shape-rendering: crispEdges;
+			}
+			text {
+				fill: $white;
+			}
+		}
+	}
+}
+
+.bullet-chart {
+		rect {
+			shape-rendering: crispEdges;
+			stroke: none;
+		}
+
+		.bar,
+		.comparative-measure {
+			fill: $coolgray5;
+		}
+
+		.ranges {
+			.range-label {
+				fill: #666666;
+			}
+		}
+
+		.label {
+			text-shadow: none;
+			fill       : $white;
+
+			&.dark {
+				fill: $oil;
+			}
+		}
+	}

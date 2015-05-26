@@ -200,16 +200,11 @@ module.exports = {
 		'chart-bar'               : require('component/chart/bar'),
 		'chart-bullet'            : require('component/chart/bullet'),
 		'chart-choropleth'        : require('component/chart/choropleth'),
-		'chart-heatmap'           : require('component/chart/heatmap'),
-		'chart-line'              : require('component/chart/line'),
 		'chart-pie'               : require('component/chart/pie'),
 		'chart-scatter'           : require('component/chart/scatter'),
-		'chart-spaghetti'         : require('component/chart/spaghetti'),
 		'chart-stacked-area'      : require('component/chart/stacked-area'),
 		'chart-stacked-bar'       : require('component/chart/stacked-bar'),
 		'chart-stacked-column'    : require('component/chart/stacked-column'),
-		'chart-year-over-year'    : require('component/chart/year-over-year'),
-		'chart-ytd'               : require('component/chart/ytd'),
 
 		'vue-dropdown'            : require('component/dropdown')
 	},
