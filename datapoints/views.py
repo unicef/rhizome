@@ -16,7 +16,6 @@ from django.views import generic
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 
-
 from django.template import RequestContext
 
 from guardian.shortcuts import get_objects_for_user
