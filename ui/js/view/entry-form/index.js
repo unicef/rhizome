@@ -366,12 +366,12 @@ module.exports = {
 									};
 									// callback to specifically handle response
 									cell.withResponse = function(response) {
-										console.log('done!', response);
+										// console.log('done!', response);
 									};
 									// callback to handle error
 									cell.withError = function(error) {
 										console.log(error);
-										// if (error.msg && error.msg.message) { alert(error.msg.message); }
+										if (error.msg && error.msg.message) { alert('Error: ' + error.msg.message); }
 										cell.hasError = true;
 									};
 									break;
