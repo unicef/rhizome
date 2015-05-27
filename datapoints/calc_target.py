@@ -14,6 +14,8 @@ class CalcTarget(object):
 
         x,y,z = self.run_engine(158,0)
 
+        print 'ENGINE COMPLETE!!!'
+
 
     def run_engine(self,campaign_id, test_mode):
         """Run the calc and agg engine for a campaign"""
@@ -271,18 +273,16 @@ class CalcTarget(object):
             # [indicator, value, calculation]
 
             calc_types = {a.calculation for a in calc_components}
-            calc_components = self.populate_component_values(output_dict, calc_components,
-                                                        region)
+            calc_components = self.populate_component_values(output_dict,calc_components,region)
+            calc_list = [{a.calculation: a.indicator_component_id} for a in calc_components]# if 'value' in a and 'calculation' in a]
 
-            calc_list = [{a.calculation: a.value}\
             # calc_list = [{a[2]: a[1]} \
-                        for a in calc_components if 'value' in a and 'calculation' in a]
             if 'PART' in calc_types and 'WHOLE' in calc_types:
-                return_val = get_part_whole(calc_list)
+                return_val = self.get_part_whole(calc_list)
             elif 'PART_TO_BE_SUMMED' in calc_types:
-                return_val = get_summation(calc_list)
+                return_val = self.get_summation(calc_list)
             elif 'WHOLE_OF_DIFFERENCE' in calc_types:
-                return_val = get_part_whole_of_difference(calc_list)
+                return_val = self.get_part_whole_of_difference(calc_list)
         return return_val
 
 
@@ -291,7 +291,39 @@ class CalcTarget(object):
         for i, component in enumerate(calc_components):
 
             indicator = component.indicator_component_id
-            indicator_component_value = find_output_dict_value(output_dict, indicator, region)
+            indicator_component_value = self.find_output_dict_value(output_dict, indicator, region)
             if indicator_component_value != None:
-                calc_components[i]['value'] = indicator_component_value
+                calc_components[i].value = indicator_component_value
         return calc_components
+
+    def get_summation(self, calc_list):
+        """Run summation calculation"""
+        retval = None
+        values = [a[b] for a in calc_list for b in a if b == "PART_TO_BE_SUMMED"]
+        if len(values) > 0:
+            retval = sum([float(a) for a in values])
+        return retval
+
+    def get_part_whole_of_difference(self, calc_list):
+        """Run part whole of difference calculation"""
+        retval = None
+        simple_dict = {b:a[b] for a in calc_list for b in a}
+        if 'PART_OF_DIFFERENCE' in simple_dict and simple_dict['PART_OF_DIFFERENCE'] != None:
+            if 'WHOLE_OF_DIFFERENCE' in simple_dict and simple_dict['WHOLE_OF_DIFFERENCE'] != None:
+                if 'WHOLE_OF_DIFFERENCE_DENOMINATOR' in simple_dict and \
+                    simple_dict['WHOLE_OF_DIFFERENCE_DENOMINATOR'] != 0:
+                    retval = float(simple_dict['WHOLE_OF_DIFFERENCE'] - \
+                                simple_dict['PART_OF_DIFFERENCE'])
+                    retval = float(retval) / float(simple_dict['WHOLE_OF_DIFFERENCE_DENOMINATOR'])
+        return retval
+
+    def get_part_whole(self, calc_list):
+        """Run part whole calculation"""
+        retval = None
+        simple_dict = {b:a[b] for a in calc_list for b in a}
+        #print "gpw sd", simple_dict
+        if 'PART' in simple_dict and simple_dict['PART'] != None:
+            if 'WHOLE' in simple_dict and simple_dict['WHOLE'] != None:
+                if simple_dict['WHOLE'] != 0:
+                    retval = float(simple_dict['PART']) / float(simple_dict['WHOLE'])
+        return retval

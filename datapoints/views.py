@@ -513,4 +513,6 @@ def refresh_target_calculations(self):
 
     x,y,z = CalcTarget()
 
+    print 'RETURN!'
+
     return HttpResponse(json.dumps(x),content_type="application/json")
