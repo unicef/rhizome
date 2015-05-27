@@ -28,7 +28,6 @@ from datapoints.forms import *
 from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
-from datapoints.calc_target import CalcTarget
 
 
 class IndexView(generic.ListView):
