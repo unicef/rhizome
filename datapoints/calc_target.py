@@ -9,12 +9,11 @@ class CalcTarget(object):
 
     def __init__(self):
 
-        self.cursor = connection.cursor()
+        # self.cursor = connection.cursor()
         self.global_cache = dict()
 
-        x,y,z = self.run_engine(158,0)
-
-        print 'ENGINE COMPLETE!!!'
+        # return self.run_engine(158,0)
+        print 'ENGINE IS ABOUT TO RUN!!!'
 
 
     def run_engine(self,campaign_id, test_mode):
@@ -66,16 +65,18 @@ class CalcTarget(object):
 
     def get_regions(self):
         """Select regions from db"""
-        self.cursor.execute("SELECT id, office_id, name, parent_region_id FROM region")
-        indicators = self.cursor.fetchall()
-        return indicators
+        regions = Region.objects.raw("SELECT id, office_id, name, parent_region_id FROM region")
+        return regions
 
     def get_campaign_datapoints(self,campaign_id):
         """Select campaign datapoints from db"""
-        self.cursor.execute("""SELECT region_id, indicator_id, value, campaign_id FROM datapoint
-                          where campaign_id = %d AND value != FLOAT8 'NaN'""" % (campaign_id))
-        indicators = self.cursor.fetchall()
-        return indicators
+
+        datapoints = DataPoint.objects.raw("""
+            SELECT region_id, indicator_id, value, campaign_id FROM datapoint
+            WHERE campaign_id = %d AND value != FLOAT8 'NaN'""",[campaign_id])
+
+
+        return datapoints
 
     def make_agg_calc_derived_metadata(self, computed_indicators, regions):
         """Derive metadata for running agg and calc for a campaign"""
@@ -146,15 +147,16 @@ class CalcTarget(object):
                 visited = self.dfs(graph, child, visited, depth+1)
         return visited
 
-    def make_region_graph(self, indicators):
+    def make_region_graph(self, regions):
         """Make graph of region dependencies."""
         graph = dict()
-        for row in indicators:
-            reg_id = row[1] # :-/
+
+        for row in regions:
+            reg_id = row.id
             if reg_id not in graph:
                 if reg_id != None:
                     graph[reg_id] = dict()
-            parent_id = (row[3])
+            parent_id = (row.parent_region_id)
             if parent_id != None:
                 if parent_id not in graph:
                     graph[parent_id] = dict()
@@ -166,8 +168,8 @@ class CalcTarget(object):
         region_id and level 2 is indicator_id"""
         output = dict()
         for row in indicators:
-            region_id = row[0] # :-/
-            indicator_id = row[1] # :-/
+            region_id = row.region_id
+            indicator_id = row.indicator_id
             if region_id not in output:
                 output[region_id] = dict()
             if indicator_id not in output[region_id]:
@@ -243,6 +245,8 @@ class CalcTarget(object):
         """Kicks off the calculations process for a campaign"""
         calcs = [b for a in calc_order for b in a]
         for region in output_dict:
+            print region
+            print '======'
             for indicator in calcs:
                 indicator_value_exists = False
                 #Always use the existing datapoint value if it exists

@@ -511,8 +511,8 @@ def v2_api(request,content_type,is_meta=False):
 
 def refresh_target_calculations(self):
 
-    x,y,z = CalcTarget()
-
-    print 'RETURN!'
+    cr = CalcTarget()
+    print 'initialized calctarget'
+    x,y,z = cr.run_engine(158,0)
 
     return HttpResponse(json.dumps(x),content_type="application/json")
