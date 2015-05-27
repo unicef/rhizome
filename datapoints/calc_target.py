@@ -245,25 +245,25 @@ class CalcTarget(object):
     def run_calculations(self, output_dict, calc_order, calc_row_dict, campaign_id):
         """Kicks off the calculations process for a campaign"""
         calcs = [b for a in calc_order for b in a]
-        for region in output_dict:
-            print region
-            print '======'
-            for indicator in calcs:
-                indicator_value_exists = False
-                #Always use the existing datapoint value if it exists
-                if indicator in output_dict[region]:
-                    if 'value' in output_dict[region][indicator]:
-                        indicator_value_exists = True
-                #Otherwise, run the calculation function
-                if not indicator_value_exists:
-                    calc_value = self.get_indicator_calc_value(output_dict, calc_row_dict, \
-                                                        indicator, region)
-                    if calc_value != None:
-                        if indicator not in output_dict:
-                            output_dict[region][indicator] = {'region_id': region, \
-                                                             'indicator_id': indicator, \
-                                                             'campaign_id': campaign_id}
-                        output_dict[region][indicator]['value'] = calc_value
+        for i,(region) in enumerate(output_dict):
+            if i > -1 :
+
+                for indicator in calcs:
+                    indicator_value_exists = False
+                    #Always use the existing datapoint value if it exists
+                    if indicator in output_dict[region]:
+                        if 'value' in output_dict[region][indicator]:
+                            indicator_value_exists = True
+                    #Otherwise, run the calculation function
+                    if not indicator_value_exists:
+                        calc_value = self.get_indicator_calc_value(output_dict, calc_row_dict, \
+                                                            indicator, region)
+                        if calc_value != None:
+                            if indicator not in output_dict:
+                                output_dict[region][indicator] = {'region_id': region, \
+                                                                 'indicator_id': indicator, \
+                                                                 'campaign_id': campaign_id}
+                            output_dict[region][indicator]['value'] = calc_value
         return output_dict
 
 
