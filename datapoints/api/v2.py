@@ -569,7 +569,7 @@ class v2GetRequest(v2Request):
             if isinstance(v, int):
                 cleaned_row_data[k] = v
             elif 'json' in k: # if k == 'bound_json':
-                # cleaned_row_data[k] = json.loads(v)
+                cleaned_row_data[k] =v  # json.loads(v)
                 pass
             else:
                 cleaned_row_data[k] = smart_str(v)
