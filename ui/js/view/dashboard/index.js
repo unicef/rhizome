@@ -198,7 +198,6 @@ module.exports = {
 		'district'                : require('dashboard/district'),
 
 		'chart-bar'               : require('component/chart/bar'),
-		'chart-bullet'            : require('component/chart/bullet'),
 		'chart-choropleth'        : require('component/chart/choropleth'),
 		'chart-pie'               : require('component/chart/pie'),
 		'chart-scatter'           : require('component/chart/scatter'),

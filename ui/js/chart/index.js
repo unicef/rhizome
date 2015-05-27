@@ -4,7 +4,8 @@ var _  = require('lodash');
 var d3 = require('d3');
 
 var CHARTS = {
-	BulletChart : require('./bullet')
+	BulletChart : require('./bullet'),
+	ColumnChart : require('./column')
 };
 
 var DEFAULTS = {
@@ -32,8 +33,9 @@ function ChartFactory(type, el, data, options) {
 ChartFactory.prototype.initialize = function (el, data, options) {
 	options = this._options = _.defaults({}, options, this.defaults, DEFAULTS);
 
-	this._height = _.get(options, 'height', el.clientHeight);
+	var aspect   = _.get(options, 'aspect', 1);
 	this._width  = _.get(options, 'width', el.clientWidth);
+	this._height = _.get(options, 'height', this._width / aspect);
 
 	var svg = this._svg = d3.select(el).append('svg')
 		.attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
@@ -51,6 +53,8 @@ ChartFactory.prototype.initialize = function (el, data, options) {
 	});
 	g.append('g').attr('class', 'data');
 	g.append('g').attr('class', 'annotation');
+
+	this.update(data, options);
 };
 
 module.exports = ChartFactory;
