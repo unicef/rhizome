@@ -5,14 +5,17 @@ var d3     = require('d3');
 var moment = require('moment');
 var React  = require('react');
 
+var Chart              = require('component/Chart.jsx');
 var LineChart          = require('component/chart/LineChart.jsx');
 var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
-var api    = require('data/api');
-var colors = require('colors');
-var format = require('util/format');
-var util   = require('util/data');
+var api       = require('data/api');
+var colors    = require('colors');
+var colorUtil = require('util/color');
+var format    = require('util/format');
+var palette   = require('colors');
+var util      = require('util/data');
 
 var INDICATORS = {
 	cases           : [168],
@@ -211,7 +214,6 @@ module.exports = {
 			campaigns       : [],
 
 			immunityGap     : [],
-			missedChildren  : [],
 
 			capacity        : [],
 			polio           : [],
@@ -329,13 +331,50 @@ module.exports = {
 			// Fetch the immunity gap data
 			q.indicator__in  = INDICATORS.immunityGap;
 			q.campaign_start = start.clone()
-				.startOf('month')
+				.startOf('quarter')
 				.subtract(3, 'years')
 				.format('YYYY-MM-DD');
 
 			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
 				.then(_.spread(function (data, indicators) {
-					self.immunityGap = _immunityGap(data, indicators);
+					var immunityGap = _immunityGap(data, indicators);
+
+					var lower = start.clone()
+						.startOf('quarter')
+						.subtract(3, 'years');
+					var upper = start.clone().endOf('quarter');
+
+					console.debug(immunityGap);
+
+					var immunityScale = _.map(d3.time.scale()
+							.domain([lower.valueOf(), upper.valueOf()])
+							.ticks(d3.time.month, 3),
+						_.method('getTime')
+					);
+
+					React.render(
+						React.createElement(
+							Chart,
+							{
+								data    : immunityGap,
+								type    : 'ColumnChart',
+								options : {
+									aspect  : 1.609,
+									color   : _.flow(
+										_.property('name'),
+										d3.scale.ordinal().domain(_.pluck('name', immunityGap)).range(palette)
+									),
+									domain  : _.constant(immunityScale),
+									values  : _.property('values'),
+									x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf(); },
+									xFormat : function (d) { return moment(d).format('[Q]Q [’]YY'); },
+									y0      : _.property('y0'),
+									yFormat : d3.format('%')
+								}
+							}
+						),
+						self.$$.immunityGap
+					);
 				}));
 
 			q.indicator__in  = _(INDICATORS).pick('missed', 'conversions', 'inaccessible').values().flatten().value();
@@ -358,7 +397,37 @@ module.exports = {
 						return _.includes(INDICATORS.inaccessible, Number(d.indicator));
 					});
 
-					self.missedChildren = _missedChildren(missed, indicators);
+					var lower = start.clone().startOf('month').subtract(1, 'year');
+					var upper = start.clone().endOf('month');
+
+					var missedScale = _.map(d3.time.scale()
+							.domain([lower.valueOf(), upper.valueOf()])
+							.ticks(d3.time.month, 1),
+						_.method('getTime')
+					);
+
+					var missedChildren = _missedChildren(missed, indicators);
+
+					React.render(
+						React.createElement(Chart, {
+							data    : missedChildren,
+							type    : 'ColumnChart',
+							options : {
+								aspect  : 1.909344491,
+								color   : _.flow(
+									_.property('name'),
+									d3.scale.ordinal().domain(_.pluck('name', missedChildren)).range(palette)
+								),
+								domain  : _.constant(missedScale),
+								values  : _.property('values'),
+								x       : function (d) { return moment(d.campaign.start_date).startOf('month').toDate().getTime(); },
+								xFormat : function (d) { return moment(d).format('MMM YYYY'); },
+								y0      : _.property('y0'),
+								yFormat : d3.format('%'),
+							}
+						}),
+						self.$$.missedChildren
+					);
 
 					var getColor = function (d, i) {
 						var scale = d3.scale.ordinal()

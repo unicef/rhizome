@@ -3,7 +3,7 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
-var qualitativeAxis = require('./QualitativeAxis');
+var qualitativeAxis = require('./qualitative-axis');
 
 var defaults = {
 	domain     : _.constant([0, 1]),
@@ -141,7 +141,10 @@ _.extend(BulletChart.prototype, {
 			.attr(valueAttr)
 			.style('fill', 'inherit');
 
-		value.attr(valueAttr).attr('width', width);
+		value.attr(valueAttr)
+			.transition()
+			.duration(500)
+			.attr('width', width);
 		value.exit().remove();
 
 		// Draw comparitive measure

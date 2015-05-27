@@ -45,7 +45,7 @@ BEGIN
         ig.indicator_id
       , dwc.region_id
       , dwc.campaign_id
-      , SUM(dwc.value) as agg_value
+      , SUM(COALESCE(dwc.value,0.00)) as agg_value
     FROM ind_graph ig
     INNER JOIN _tmp_calc_datapoint dwc
         ON 1 = 1

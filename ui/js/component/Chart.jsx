@@ -3,7 +3,7 @@
 var _     = require('lodash');
 var React = require('react');
 
-var ChartFactory = require('component/chart');
+var ChartFactory = require('chart');
 
 module.exports = React.createClass({
   propTypes : {
