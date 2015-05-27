@@ -11,10 +11,16 @@ module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
 		indicatorList:[],
+		campaignList:[],
 		indicatorsSelected:[],
+		regionSelected:null,
+		campaignSelected:null,
 		title: "new chart",
 		description: "a nice description",
+		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
 		regionRadioValue: "selected",
+		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"regions",title:"Regions"}],
+		groupByRadioValue: "indicator",
 		chartTypes:[{name:"line"},{name:"bar"},{name:"graph"},{name:"pie"}],
 		selectedChart:"line"
 	},
@@ -66,16 +72,20 @@ module.exports = Reflux.createStore({
 	  _.remove(this.data.indicatorsSelected,{id:id});
 	  this.trigger(this.data);
 	},
-	updateTitle:function(value){
+	onUpdateTitle:function(value){
 	   this.data.title = value;
 	   this.trigger(this.data);
 	},
-	updateDescription:function(value){
+	onUpdateDescription:function(value){
 	   this.data.description = value;
 	   this.trigger(this.data);
 	},
-	selectShowRegionRadio:function(value){
+	onSelectShowRegionRadio:function(value){
 	   this.data.regionRadioValue = value;
+	   this.trigger(this.data);
+	},
+	onSelectGroupByRadio:function(value){
+	   this.data.groupByRadioValue = value;
 	   this.trigger(this.data);
 	},
 	onSelectChart: function(value){

@@ -11,11 +11,6 @@ var ChartBuilderActions = require('actions/ChartBuilderActions');
 
 module.exports = React.createClass({
     mixins: [Reflux.connect(ChartBuilderStore,"store")],
-	getDefaultProps:function(){
-	  return {
-	    showRegionRadio:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}]
-	  }
-	},
     _updateTitle: function(e){
       ChartBuilderActions.updateTitle(e.target.value);
     },
@@ -38,10 +33,21 @@ module.exports = React.createClass({
 		               </Menu>
 		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
 		               <div className="titleDiv">Show</div>
-                       <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.props.showRegionRadio} onChange={ChartBuilderActions.selectShowRegionRadio} />
+                       <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
 	              </div> 
 	              <div className="right-page">
 	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
+	              	<div className="chart-container">
+	              	<div className="titleDiv">Group By</div>
+	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+	              	
+	              	<Menu items={this.state.store.regionList}
+	              		      sendValue={ChartBuilderActions.addIndicatorSelection}
+	              		      searchable={true}>
+	              				<span> Region </span>
+	              		</Menu>
+	              	
+	              	</div>
 	              </div>
 	            </div>
 	            </form>

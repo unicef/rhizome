@@ -17,6 +17,6 @@ module.exports = React.createClass({
       						checked={self.props.value == radio.value ? "checked" : false} 
       						onChange={self._handleChange}/> {radio.title}</div>
       });
-      return (<div>{radios}</div>);
+      return (<div className="radioGroupContainer">{radios}</div>);
   }
 });

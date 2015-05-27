@@ -12,7 +12,7 @@ module.exports = React.createClass({
   render: function(){
       var self = this;
       var chartBoxes = this.props.charts.map(function(chart){
-      	return (<div className={"chart-box-wrapper " +(chart.name==self.props.value?"active":null)}>
+      	return (<div key={chart.name} className={"chart-box-wrapper " +(chart.name==self.props.value?"active":null)}>
       	          <div className="chart-box" onClick={self.props.onChange.bind(null,chart.name)}>{chart.name}
       	          </div>
       	       </div>);
