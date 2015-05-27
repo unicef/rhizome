@@ -85,7 +85,6 @@ _.extend(LineChart.prototype, {
 	  	.call(hoverLine()
 				.width(width)
 				.height(height)
-				.top(-margin.top)
 				.xFormat(options.xFormat)
 				.yFormat(options.yFormat)
 				.x(options.x)
@@ -159,7 +158,7 @@ _.extend(LineChart.prototype, {
 	      var v    = options.y(last);
 
 	      return {
-	        text    : options.seriesName(d) + ' ' + v,
+	        text    : options.seriesName(d) + ' ' + options.yFormat(v),
 	        x       : x(last),
 	        y       : y(last),
 	        defined : _.isFinite(v)
