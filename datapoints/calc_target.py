@@ -3,7 +3,7 @@ import json
 from pprint import pprint
 
 from django.db import connection
-
+from datapoints.models import *
 
 class CalcTarget(object):
 
@@ -48,9 +48,18 @@ class CalcTarget(object):
 
     def get_computed_indicators(self):
         """Select indicator components for calculations from db"""
-        self.cursor.execute("""SELECT indicator_id, indicator_component_id, calculation FROM
-                          calculated_indicator_component""")
-        indicators = self.cursor.fetchall()
+
+        # indicators = self.cursor.fetchall()
+
+        indicators = CalculatedIndicatorComponent.objects.raw("""
+            SELECT
+              id
+            , indicator_id
+            , indicator_component_id
+            , calculation
+            FROM calculated_indicator_component""")
+
+
         return indicators
 
     def get_regions(self):
@@ -86,11 +95,11 @@ class CalcTarget(object):
 
         for row in indicators:
             # SELECT indicator_id, indicator_component_id, calculation FROM
-            ind_id = row[0]
+            ind_id = row.indicator_id
             if ind_id not in graph:
                 graph[ind_id] = dict()
-            ind_comp_id = row[1]
-            calc = row[2]
+            ind_comp_id = row.indicator_component_id
+            calc = row.calculation
             #graph dict's values are the set of each indicator's  dependencies
             graph[ind_id][ind_comp_id] = {'calc':calc}
         return graph
@@ -100,7 +109,7 @@ class CalcTarget(object):
         graph = dict()
         for row in indicators:
 
-            ind_id = row[0]
+            ind_id = row.indicator_id
             if ind_id not in graph:
                 graph[ind_id] = list()
             graph[ind_id].append(row)
@@ -155,7 +164,6 @@ class CalcTarget(object):
         region_id and level 2 is indicator_id"""
         output = dict()
         for row in indicators:
-            print row
             region_id = row[0] # :-/
             indicator_id = row[1] # :-/
             if region_id not in output:
@@ -192,7 +200,6 @@ class CalcTarget(object):
                                                         'indicator_id': indicator, \
                                                         'campaign_id': campaign_id}
                     output_dict[region][indicator]['value'] = indval
-                    #print region, indicator, indval
         return output_dict
 
 
@@ -258,15 +265,17 @@ class CalcTarget(object):
         return_val = None
         if indicator in calc_row_dict:
 
-            print '=====\n' * 3
-            pprint(calc_row_dict)
+            calc_components = calc_row_dict[indicator]
+            # calc_components = json.loads(calc_components_str)
+            # [264, 252, u'PART_TO_BE_SUMMED']
+            # [indicator, value, calculation]
 
-            calc_components_str = json.dumps(calc_row_dict[indicator])
-            calc_components = json.loads(calc_components_str)
-            calc_types = {a['calculation'] for a in calc_components}
-            calc_components = populate_component_values(output_dict, calc_components,
+            calc_types = {a.calculation for a in calc_components}
+            calc_components = self.populate_component_values(output_dict, calc_components,
                                                         region)
-            calc_list = [{a['calculation']: a['value']} \
+
+            calc_list = [{a.calculation: a.value}\
+            # calc_list = [{a[2]: a[1]} \
                         for a in calc_components if 'value' in a and 'calculation' in a]
             if 'PART' in calc_types and 'WHOLE' in calc_types:
                 return_val = get_part_whole(calc_list)
@@ -275,3 +284,14 @@ class CalcTarget(object):
             elif 'WHOLE_OF_DIFFERENCE' in calc_types:
                 return_val = get_part_whole_of_difference(calc_list)
         return return_val
+
+
+    def populate_component_values(self, output_dict, calc_components, region):
+        """Populate component values for each calculation"""
+        for i, component in enumerate(calc_components):
+
+            indicator = component.indicator_component_id
+            indicator_component_value = find_output_dict_value(output_dict, indicator, region)
+            if indicator_component_value != None:
+                calc_components[i]['value'] = indicator_component_value
+        return calc_components
