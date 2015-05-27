@@ -7,7 +7,7 @@ var AdminPage = React.createClass({
 	propTypes: {
 		title: React.PropTypes.string.isRequired,
 		getMetadata: React.PropTypes.func.isRequired,
-		getData: React.PropTypes.func.isRequired,
+		getData: React.PropTypes.func.isRequired
 	},
 	getInitialState: function() {
 		return {
@@ -26,14 +26,7 @@ var AdminPage = React.createClass({
 		var isLoaded = _.isArray(this.state.data) && this.state.schema;
 		if(!isLoaded) return this.renderLoading();
 
-		//var propSchemas = this.state.schema.items.properties,
-		//	searchableFieldNames = propSchemas ?
-		//		_(propSchemas).keys().filter(k => propSchemas[k].searchable).value() : [];
-		//console.log('state', this.state);
-
-
 		var {data, schema} = this.state;
-		data = data.slice(0, 500); // todo real pagination
 		return <div>
 			<h2>{this.props.title} Admin Page</h2>
 

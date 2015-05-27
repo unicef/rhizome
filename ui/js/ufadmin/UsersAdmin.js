@@ -3,7 +3,8 @@ var _ = require('lodash');
 
 var {
 	Datascope, LocalDatascope,
-	SimpleDataTable, SimpleDataTableColumn
+	SimpleDataTable, SimpleDataTableColumn,
+	Paginator
 } = require('react-datascope');
 var AdminPage = require('./AdminPage');
 
@@ -18,6 +19,7 @@ var UsersAdmin = React.createClass({
 			>
 			<LocalDatascope>
 				<Datascope>
+					<Paginator />
 					<SimpleDataTable>
 						<SimpleDataTableColumn name="id" />
 						<SimpleDataTableColumn name="username" />

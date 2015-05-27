@@ -13,3 +13,13 @@ ul.admin-nav {
 		background: #f0f0f0;
 	}
 }
+
+.datascope-paginator {
+	span.pagination-truncate {
+		display: inline-block;
+		padding: 2px 10px;
+	}
+	button {
+		padding: 8px 16px;
+	}
+}
