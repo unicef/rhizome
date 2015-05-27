@@ -343,8 +343,6 @@ module.exports = {
 						.subtract(3, 'years');
 					var upper = start.clone().endOf('quarter');
 
-					console.debug(immunityGap);
-
 					var immunityScale = _.map(d3.time.scale()
 							.domain([lower.valueOf(), upper.valueOf()])
 							.ticks(d3.time.month, 3),
