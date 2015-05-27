@@ -40,7 +40,7 @@ class v2Request(object):
             'document_review' : {'orm_obj':DocumentDetail,
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
+                'permission_function':self.apply_indicator_permissions},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
@@ -112,6 +112,42 @@ class v2Request(object):
         """, [self.user_id, list_of_object_ids])
 
         return None, data
+
+    def apply_indicator_permissions(self, list_of_object_ids):
+        '''
+        '''
+
+        if self.read_write == 'r':
+            print 'readddd'
+
+            data = IndicatorAbstracted.objects.raw("""
+                SELECT ia.*
+                FROM indicator_abstracted ia
+                WHERE 1=1
+                AND ia.id = ANY(COALESCE(%s,ARRAY[ia.id]))
+            """,[list_of_object_ids])
+
+        else:
+            data = IndicatorAbstracted.objects.raw("""
+                SELECT ia.*
+                FROM indicator_abstracted ia
+                WHERE 1=1
+                AND ia.id = ANY(COALESCE(%s,ARRAY[ia.id]))
+                AND EXISTS (
+                	SELECT * FROM auth_user_groups aug
+                	INNER JOIN indicator_permission gp
+                	ON aug.group_id = gp.group_id
+                	AND ia.id = gp.indicator_id
+                	AND aug.user_id = %s
+                )
+            """,[list_of_object_ids,self.user_id])
+
+        return None, data
+
+            # data = IndicatorAbstracted.objects.raw("SELECT * FROM\
+            #     fn_get_authorized_regions_by_user(%s,%s,%s)",
+            #     [self.request.user.id,list_of_object_ids,self.read_write])
+
 
     def group_document_metadata(self,list_of_object_ids):
         '''
@@ -533,7 +569,8 @@ class v2GetRequest(v2Request):
             if isinstance(v, int):
                 cleaned_row_data[k] = v
             elif 'json' in k: # if k == 'bound_json':
-                cleaned_row_data[k] = json.loads(v)
+                # cleaned_row_data[k] = json.loads(v)
+                pass
             else:
                 cleaned_row_data[k] = smart_str(v)
 
