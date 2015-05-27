@@ -59,9 +59,9 @@ def dashboard_builder(request):
     return render_to_response('dashboard-builder/index.html',
         context_instance=RequestContext(request))
 
-def visualization_builder(request):
+def chart_builder(request):
 
-    return render_to_response('dashboard-builder/visualization_builder.html',
+    return render_to_response('dashboard-builder/chart_builder.html',
         context_instance=RequestContext(request))
 
 

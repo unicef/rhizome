@@ -15,7 +15,7 @@ var MenuItem = React.createClass({
 	    return { open: false };
 	},
 	_toggleChildren: function(e) {
-	  e.preventDefault();  
+	  e.stopPropagation();
 	  this.setState({open:!this.state.open});
 	},
     _handleClick: function(e){

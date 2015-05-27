@@ -1,0 +1,15 @@
+ul.list {
+   margin-left: 0px;
+   li {
+   	list-style: none;
+   	border: 1px solid #BBC6D1;
+   	color: #333;
+   	padding: 8px;
+   	border-radius: 5px;
+   	background-color: #fafafa;
+   	margin-bottom: 4px;
+   	.clear-btn { 
+   		float: right;
+   	}
+   }
+}

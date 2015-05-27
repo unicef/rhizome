@@ -14,6 +14,7 @@
     "page": "^1.6.0",
     "react": "^0.13.3",
     "react-dnd": "^0.9.8",
+    "reflux": "^0.2.7",
     "superagent": "^0.20.0",
     "superagent-prefix": "0.0.2",
     "vue": "^0.11"
