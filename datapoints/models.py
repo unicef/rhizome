@@ -342,9 +342,7 @@ class ReconData(models.Model):
     campaign = models.ForeignKey(Campaign)
     indicator = models.ForeignKey(Indicator)
     target_value = models.FloatField()
-    is_raw = models.BooleanField()
-    success_flag = models.BooleanField()
-
+    
     class Meta:
         db_table = 'recon_data'
         unique_together = ('region','campaign','indicator')

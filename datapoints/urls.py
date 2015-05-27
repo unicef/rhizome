@@ -11,10 +11,10 @@ urlpatterns = [
 
     ## DASHBOARD ##
     url(r'^$', views.DashBoardView.as_view(),name='dashboard'),
-    
+
     ## DASHBOARD BUILDER ##
     url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder'),
-    
+
     ## DASHBOARD VISUALIZATION BUILDER ##
     url(r'^visualization_builder/$', views.visualization_builder,name='visualization_builder'),
 
@@ -107,7 +107,4 @@ urlpatterns = [
 
     url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
     url(r'^create_region_permission/$', views.RegionPermissionCreateView.as_view(), name='create_region_permission'),
-
-
-
 ]

@@ -16,7 +16,6 @@ from django.views import generic
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 
-
 from django.template import RequestContext
 
 from guardian.shortcuts import get_objects_for_user
@@ -29,6 +28,8 @@ from datapoints.forms import *
 from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
 from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
+from datapoints.calc_target import CalcTarget
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
