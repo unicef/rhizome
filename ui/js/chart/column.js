@@ -240,6 +240,8 @@ _.extend(ColumnChart.prototype, {
 				svg.select('.annotation').selectAll('.series.label')
 					.data(labels)
 					.call(seriesLabel.align(false));
+
+				svg.selectAll('.annotation .axis.label').remove();
 			}, 200);
 		});
 
@@ -281,6 +283,22 @@ _.extend(ColumnChart.prototype, {
 			svg.select('.annotation').selectAll('.series.label')
 				.data(annotations)
 				.call(seriesLabel.align(true));
+
+			var axisLabel = svg.select('.annotation')
+				.selectAll('.axis.label')
+				.data([options.x(d)]);
+
+			axisLabel.enter()
+				.append('text')
+				.attr('class', 'axis label')
+				.style('text-anchor', 'middle');
+
+			axisLabel
+				.attr({
+					'transform' : 'translate(' + x(d) + ',' + (h + margin.bottom) + ')',
+					'dx'        : xScale.rangeBand() / 2
+				})
+				.text(options.xFormat);
 		});
 	}
 
