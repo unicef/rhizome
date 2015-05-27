@@ -10,12 +10,13 @@ module.exports = React.createClass({
     data    : React.PropTypes.array.isRequired,
     type    : React.PropTypes.string.isRequired,
 
+    id      : React.PropTypes.string,
     options : React.PropTypes.object
   },
 
   render : function () {
     return (
-      <div className={'chart ' + _.kebabCase(this.props.type)}></div>
+      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}></div>
     );
   },
 
