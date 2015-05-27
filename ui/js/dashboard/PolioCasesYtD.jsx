@@ -92,8 +92,10 @@ module.exports = React.createClass({
           {newCaseLabel}
           <YtDChart id='polio-cases-ytd'
             data={this.props.data}
-            getColor={_.flow(_.property('name'), color)}
-            aspect={1.757} />
+            options={{
+              color  : _.flow(_.property('name'), color),
+              aspect : 1.757
+            }} />
         </div>
       </div>
     )

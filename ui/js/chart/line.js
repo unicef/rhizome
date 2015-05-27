@@ -21,6 +21,7 @@ var DEFAULTS = {
 	},
 	scale      : d3.scale.linear,
 	seriesName : _.property('name'),
+	values     : _.property('values'),
 	x          : _.property('x'),
 	xFormat    : format.timeAxis,
 	y          : _.property('y'),
@@ -41,7 +42,7 @@ _.extend(LineChart.prototype, {
 	  var width  = this._width - margin.left - margin.right;
 	  var height = this._height - margin.top - margin.bottom;
 
-	  var color = options.colors;
+	  var color = options.color;
 
 	  if (!_.isFunction(color)) {
 	  	var colorScale = d3.scale.ordinal()

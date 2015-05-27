@@ -4,9 +4,15 @@ var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
 
-var LineChart = require('component/chart/LineChart.jsx');
+var Chart = require('component/Chart.jsx');
 
 module.exports = React.createClass({
+  propTypes : {
+    data    : React.PropTypes.array.isRequired,
+    id      : React.PropTypes.string,
+    options : React.PropTypes.object
+  },
+
   getDefaultProps : function () {
     return {
       data : []
@@ -50,23 +56,19 @@ module.exports = React.createClass({
     // Convert a 2-digit month number to a 3-character month name
     var fmtMonth = function (d) { return moment(d, 'MM').format('MMM'); };
 
-    var props = _.omit(this.props, 'data');
+    var props = _.merge({},
+      _.omit(this.props, 'id', 'data'), {
+        data    : series,
+        options : {
+          domain  : _.constant([moment({ M : 0}).toDate(), moment({ M : 11 }).toDate()]),
+          range   : _.constant([0, _(series).pluck('values').flatten().pluck('total').max()]),
+          xFormat : d3.time.format('%b'),
+          y       : _.property('total')
+        }
+      });
 
     return (
-      <LineChart
-        {...props}
-        series={series}
-        x={{
-          scale  : d3.time.scale()
-            .domain([moment({ M : 0}).toDate(), moment({ M : 11 }).toDate()]),
-          get    : _.property('x'),
-          format : d3.time.format('%b')
-        }}
-        y={{
-          scale : d3.scale.linear()
-            .domain([0, _(series).pluck('values').flatten().pluck('total').max()]),
-          get   : _.property('total'),
-        }} />
+      <Chart type="LineChart" {...props} />
     );
   }
 })
