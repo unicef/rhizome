@@ -20,7 +20,6 @@ flake8==2.3.0
 gspread==0.2.2
 httplib2==0.9
 Jinja2==2.7.3
-joblib==0.8.4
 jsonfield==1.0.0
 MarkupSafe==0.23
 mccabe==0.3
