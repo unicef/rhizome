@@ -5,7 +5,8 @@ var d3 = require('d3');
 
 var CHARTS = {
 	BulletChart : require('./bullet'),
-	ColumnChart : require('./column')
+	ColumnChart : require('./column'),
+	LineChart   : require('./line')
 };
 
 var DEFAULTS = {
@@ -41,6 +42,15 @@ ChartFactory.prototype.initialize = function (el, data, options) {
 		.attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
 
 	var h = this._height - options.margin.top - options.margin.bottom;
+
+	svg.append('rect')
+		.attr({
+			'class'  : 'bg',
+			'x'      : options.margin.left,
+			'y'      : options.margin.top,
+			'width'  : this._width - options.margin.left - options.margin.right,
+			'height' : h
+		});
 
 	var g = svg.append('g')
 		.attr('transform', 'translate(' + options.margin.left + ',' +

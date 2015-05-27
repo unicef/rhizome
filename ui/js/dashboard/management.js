@@ -6,7 +6,6 @@ var moment = require('moment');
 var React  = require('react');
 
 var Chart              = require('component/Chart.jsx');
-var LineChart          = require('component/chart/LineChart.jsx');
 var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
@@ -429,52 +428,36 @@ module.exports = {
 						self.$$.missedChildren
 					);
 
-					var getColor = function (d, i) {
-						var scale = d3.scale.ordinal()
-							.domain(d3.range(INDICATORS.conversions.length))
-							.range(colors);
-
-						return scale(i)
-					};
-
 					React.render(
-						React.createElement(LineChart, {
-							id     : 'conversions',
-							series : _conversions(conversions, indicators),
-							x : {
-								scale  : d3.time.scale()
-									.domain(d3.extent(conversions, _.property('campaign.start_date'))),
-								get    : _.property('campaign.start_date'),
-								format : format.timeAxis,
-							},
-							y : {
-								scale  : d3.scale.linear(),
-								get    : _.property('value'),
-								format : d3.format('%'),
-							},
-							getColor : getColor,
-							aspect   : 2.260237781
+						React.createElement(Chart, {
+							type    : 'LineChart',
+							data    : _conversions(conversions, indicators),
+							id      : 'conversions',
+							options : {
+								domain  : _.constant([lower.toDate(), upper.toDate()]),
+								values  : _.property('values'),
+								x       : _.property('campaign.start_date'),
+								y       : _.property('value'),
+								yFormat : d3.format('%'),
+								aspect  : 2.260237781
+							}
 						}),
 						self.$$.conversions
 					);
 
 					React.render(
-						React.createElement(LineChart, {
-							id     : 'inaccessible-children',
-							series : _conversions(inaccessible, indicators),
-							x : {
-								scale  : d3.time.scale()
-									.domain(d3.extent(inaccessible, _.property('campaign.start_date'))),
-								get    : _.property('campaign.start_date'),
-								format : format.timeAxis
-							},
-							y : {
-								scale  : d3.scale.linear().domain([0, d3.max(inaccessible, _.property('value'))]),
-								get    : _.property('value'),
-								format : d3.format(',.0f')
-							},
-							getColor : getColor,
-							aspect   : 2.664831804
+						React.createElement(Chart, {
+							type    : 'LineChart',
+							data    : _conversions(inaccessible, indicators),
+							id      : 'inaccessible-children',
+							options : {
+								aspect  : 2.664831804,
+								domain  : _.constant([lower.toDate(), upper.toDate()]),
+								values  : _.property('values'),
+								x       : _.property('campaign.start_date'),
+								y       : _.property('value'),
+								yFormat : d3.format(',.0f')
+							}
 						}),
 						self.$$.inaccessible
 					);
