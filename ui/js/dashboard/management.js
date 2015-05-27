@@ -6,7 +6,6 @@ var moment = require('moment');
 var React  = require('react');
 
 var Chart              = require('component/Chart.jsx');
-var LineChart          = require('component/chart/LineChart.jsx');
 var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
