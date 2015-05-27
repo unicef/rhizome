@@ -167,14 +167,15 @@ class CalcTarget(object):
         """Make a two-level index of row dictionaries for datapoints where level1 key is \
         region_id and level 2 is indicator_id"""
         output = dict()
-        for row in indicators:
-            region_id = row.region_id
-            indicator_id = row.indicator_id
-            if region_id not in output:
-                output[region_id] = dict()
-            if indicator_id not in output[region_id]:
-                output[region_id][indicator_id] = dict()
-            output[region_id][indicator_id] = row
+        # for row in indicators:
+        #     print row
+            # region_id = row.region_id
+            # indicator_id = row.indicator_id
+            # if region_id not in output:
+            #     output[region_id] = dict()
+            # if indicator_id not in output[region_id]:
+            #     output[region_id][indicator_id] = dict()
+            # output[region_id][indicator_id] = row
         return output
 
     def aggregate_campaign(self, output_dict, region_graph, region_order, campaign_id):
