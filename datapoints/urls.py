@@ -107,7 +107,4 @@ urlpatterns = [
 
     url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
     url(r'^create_region_permission/$', views.RegionPermissionCreateView.as_view(), name='create_region_permission'),
-    url(r'^refresh_target_calculations/$', views.refresh_target_calculations, name='refresh_target_calculations'),
-
-
 ]

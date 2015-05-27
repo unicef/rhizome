@@ -507,23 +507,3 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
-
-
-def refresh_target_calculations(self):
-
-    cr = CalcTarget()
-    output_dict, region_graph, region_order = cr.run_engine(158,0)
-
-    batch = []
-    for region_id, target_data in output_dict.iteritems():
-
-        for indicator, data_dict in target_data.iteritems():
-
-            data_dict['target_value'] = data_dict['value']
-            del data_dict['value']
-            rd = ReconData(**data_dict)
-
-            batch.append(rd)
-
-    ReconData.objects.bulk_create(batch)
-    return HttpResponse(json.dumps(output_dict),content_type="application/json")
