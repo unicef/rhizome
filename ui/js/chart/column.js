@@ -133,22 +133,6 @@ _.extend(ColumnChart.prototype, {
 
 		var hover = d3.dispatch('over', 'out');
 
-		hover.on('out', function () {
-			g.selectAll('rect')
-				.transition()
-				.duration(500)
-				.style('opacity', 1);
-		});
-
-		hover.on('over', function (d) {
-			g.selectAll('rect')
-				.transition()
-				.duration(500)
-				.style('opacity', function (e) {
-					return options.x(d) === options.x(e) ? 1 : 0.5;
-				});
-		});
-
 		var column = series.selectAll('rect').data(options.values);
 
 		column.enter()
@@ -231,13 +215,73 @@ _.extend(ColumnChart.prototype, {
 			.reverse()
 			.value();
 
+		var seriesLabel = label()
+			.addClass('series')
+			.width(w)
+			.height(h)
+			.align(false);
+
 		svg.select('.annotation').selectAll('.series.label')
 			.data(labels)
-			.call(label()
-				.addClass('series')
-				.width(w)
-				.height(h)
-				.align(false));
+			.call(seriesLabel);
+
+		var timeout = null;
+
+		hover.on('out', function () {
+			timeout = window.setTimeout(function () {
+				timeout = null;
+
+				g.selectAll('rect')
+					.transition()
+					.duration(300)
+					.style('opacity', 1);
+
+				svg.selectAll('.x.axis text').style('opacity', 1);
+				svg.select('.annotation').selectAll('.series.label')
+					.data(labels)
+					.call(seriesLabel.align(false));
+			}, 200);
+		});
+
+		hover.on('over', function (d) {
+			if (_.isNumber(timeout)) {
+				window.clearTimeout(timeout);
+				timeout = null;
+			}
+
+			g.selectAll('rect')
+				.transition()
+				.duration(500)
+				.style('opacity', function (e) {
+					return options.x(d) === options.x(e) ? 1 : 0.5;
+				});
+
+			svg.selectAll('.x.axis text').style('opacity', 0);
+
+			var annotations = _(data)
+				.map(function (s) {
+					return _.assign({},
+						_.find(options.values(s), function (e) {
+							return options.x(d) === options.x(e);
+						}),
+						{ name : options.name(s) }
+					);
+				})
+				.map(function (d) {
+					return {
+						text    : d.name + ' ' + fmt(d),
+						x       : x(d),
+						y       : y(d),
+						defined : _.isFinite(d.value)
+					};
+				})
+				.reverse()
+				.value();
+
+			svg.select('.annotation').selectAll('.series.label')
+				.data(annotations)
+				.call(seriesLabel.align(true));
+		});
 	}
 
 });
