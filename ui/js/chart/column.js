@@ -28,6 +28,41 @@ function ColumnChart() {}
 _.extend(ColumnChart.prototype, {
 	defaults : defaults,
 
+	initialize : function (el, data, options) {
+		options = this._options = _.defaults({}, options, defaults);
+
+		var aspect   = _.get(options, 'aspect', 1);
+		this._width  = _.get(options, 'width', el.clientWidth);
+		this._height = _.get(options, 'height', this._width / aspect);
+
+		var svg = this._svg = d3.select(el).append('svg')
+			.attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
+
+		var h = this._height - options.margin.top - options.margin.bottom;
+
+		svg.append('rect').attr({
+			'class'  : 'bg',
+			'height' : h + options.margin.top,
+			'width'  : this._width - options.margin.left - options.margin.right,
+			'x'      : options.margin.left,
+		});
+
+		var g = svg.append('g')
+			.attr('transform', 'translate(' + options.margin.left + ',' +
+				options.margin.top + ')');
+
+		g.append('g').attr('class', 'data');
+
+		g.append('g').attr('class', 'y axis');
+		g.append('g').attr({
+			'class'     : 'x axis',
+			'transform' : 'translate(0,' + h + ')'
+		});
+		g.append('g').attr('class', 'annotation');
+
+		this.update(data, options);
+	},
+
 	update : function (data, options) {
 		var options = _.assign(this._options, options);
 		var margin  = options.margin;
@@ -77,6 +112,13 @@ _.extend(ColumnChart.prototype, {
 		var svg    = this._svg;
 		var g      = svg.select('.data');
 		var series = g.selectAll('.bar').data(data);
+
+		svg.select('.bg')
+			.attr({
+				'height': h + margin.top,
+				'width' : w,
+				'x'     : margin.left
+			});
 
 		series.enter().append('g')
 			.attr('class', 'bar');
