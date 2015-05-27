@@ -438,22 +438,17 @@ module.exports = {
 					};
 
 					React.render(
-						React.createElement(LineChart, {
-							id     : 'conversions',
-							series : _conversions(conversions, indicators),
-							x : {
-								scale  : d3.time.scale()
-									.domain(d3.extent(conversions, _.property('campaign.start_date'))),
-								get    : _.property('campaign.start_date'),
-								format : format.timeAxis,
-							},
-							y : {
-								scale  : d3.scale.linear(),
-								get    : _.property('value'),
-								format : d3.format('%'),
-							},
-							getColor : getColor,
-							aspect   : 2.260237781
+						React.createElement(Chart, {
+							type    : 'LineChart',
+							data    : _conversions(conversions, indicators),
+							options : {
+								id      : 'conversions',
+								values  : _.property('values'),
+								x       : _.property('campaign.start_date'),
+								y       : _.property('value'),
+								yFormat : d3.format('%'),
+								aspect  : 2.260237781
+							}
 						}),
 						self.$$.conversions
 					);
