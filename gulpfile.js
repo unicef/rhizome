@@ -90,10 +90,6 @@ gulp.task('browserify', function () {
 			paths: ['./ui/js']
 		})
 		.external(path.libs)
-		.plugin('minifyify', {
-			map    : 'Polio.map.json',
-			output : path.output + '/Polio.map.json'
-		})
 		.bundle()
 		.on('error', err)
 		.on('end', function () {
