@@ -210,7 +210,6 @@ module.exports = {
 	data: function () {
 		return {
 			region          : null,
-			regions         : [],
 			campaign        : null,
 			campaigns       : [],
 
@@ -513,7 +512,7 @@ module.exports = {
 							onClick : function (d) {
 								if (self.regions.hasOwnProperty(d.properties.region_id)) {
 									self.$dispatch('region-selected',
-										self.regions[d.properties.region_id]);
+										self.regions[d.properties.region_id].name);
 								}
 							}
 						}
