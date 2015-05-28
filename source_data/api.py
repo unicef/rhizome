@@ -7,6 +7,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
 from pandas import read_csv
 
 from source_data.models import *
@@ -238,15 +239,30 @@ class EtlTask(object):
             'SettlementGPS-Longitude': 'lon',
             'SettlementName': 'source_guid'
         }
-        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
-        region_df.rename(columns=new_df_columns,inplace=True)
 
+        # drop columns we dont need and rename to friendly column names #
+        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
         for col in cols_to_drop:
             region_df = region_df.drop(col, 1)
 
-        region_df['region_type'] = 'settlement'
-        region_df['parent_region_code'] = region_df['region_code'].astype(str).str[:6]
+        region_df.rename(columns=new_df_columns,inplace=True)
 
-        print region_df[:20]
+        # add additional data needed to create source_regions
+        region_df['region_type'] = 'settlement'
+        region_df['parent_code'] = region_df['region_code'].astype(str).str[:6]
+        region_df['document_id'] = 1000
+
+        list_of_dicts = region_df.transpose().to_dict()
+
+        for ix, d in list_of_dicts.iteritems():
+            try:
+                SourceRegion.objects.create(**d)
+            except IntegrityError:
+                pass
+            print '=='
+
+
+
+
 
         return None, 'SOMETHING'
