@@ -109,6 +109,7 @@ class v2Request(object):
                 ON da.region_id = rm.region_id
                 AND rm.user_id = %s
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+            ORDER BY c.start_date DESC
         """, [self.user_id, list_of_object_ids])
 
         return None, data
