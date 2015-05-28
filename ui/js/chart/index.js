@@ -4,9 +4,10 @@ var _  = require('lodash');
 var d3 = require('d3');
 
 var CHARTS = {
-	BulletChart : require('./bullet'),
-	ColumnChart : require('./column'),
-	LineChart   : require('./line')
+	BulletChart   : require('./bullet'),
+	ChoroplethMap : require('./choropleth'),
+	ColumnChart   : require('./column'),
+	LineChart     : require('./line')
 };
 
 var DEFAULTS = {
