@@ -5,7 +5,8 @@ var API = require('../data/api');
 
 var {
 	Datascope, LocalDatascope,
-	SimpleDataTable, SimpleDataTableColumn
+	SimpleDataTable, SimpleDataTableColumn,
+	Paginator
 } = require('react-datascope');
 var AdminPage = require('./AdminPage');
 
@@ -18,6 +19,7 @@ var GroupsAdmin = React.createClass({
 			>
 			<LocalDatascope>
 				<Datascope>
+					<Paginator />
 					<SimpleDataTable>
 					</SimpleDataTable>
 				</Datascope>

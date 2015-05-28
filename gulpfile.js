@@ -71,7 +71,7 @@ gulp.task('scripts', function () {
 
 gulp.task('browserify', ['scripts'], function () {
 	return build(path.main, path.output, {
-		debug: true,
+		//debug: true,
 		standalone: 'Polio',
 		paths: ['./ui/js']
 	})

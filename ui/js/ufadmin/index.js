@@ -5,7 +5,7 @@ var {Route, DefaultRoute, RouteHandler, Link} = Router;
 var AdminApp = React.createClass({
 	render: function() {
 		return <div className="admin-container">
-			<h1>Admin Entity Lists</h1>
+			<h1 className="admin-header">Admin Lists: </h1>
 			<ul className="admin-nav">
 				<li><Link to="users">Users</Link></li>
 				<li><Link to="groups">Groups</Link></li>

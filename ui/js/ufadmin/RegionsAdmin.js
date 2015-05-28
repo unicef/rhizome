@@ -4,9 +4,10 @@ var _ = require('lodash');
 var API = require('../data/api');
 
 var {
-	Paginator,
 	Datascope, LocalDatascope,
-	SimpleDataTable, SimpleDataTableColumn
+	SimpleDataTable, SimpleDataTableColumn,
+	Paginator,
+	SearchBar
 } = require('react-datascope');
 var AdminPage = require('./AdminPage');
 
@@ -17,9 +18,10 @@ var RegionsAdmin = React.createClass({
 			getMetadata={API.admin.regionsMetadata}
 			getData={API.admin.regions}
 			>
-			<LocalDatascope pageSize={200}>
+			<LocalDatascope pageSize={100}>
 				<Datascope>
-					<Paginator></Paginator>
+					<SearchBar placeholder="search regions"/>
+					<Paginator />
 					<SimpleDataTable>
 						<SimpleDataTableColumn name="id" />
 						<SimpleDataTableColumn name="region_code" />
@@ -36,7 +38,4 @@ var RegionsAdmin = React.createClass({
 	}
 });
 
-
 module.exports = RegionsAdmin;
-
-
