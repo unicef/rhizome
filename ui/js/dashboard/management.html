@@ -74,14 +74,7 @@
 
 			<div class="medium-2 columns">
 				<h4>Missed Children</h4>
-				<div
-					id="missed-children-map"
-					v-component="chart-choropleth"
-				  v-with="region: region, campaign: campaign"
-				  data-indicator="475"
-				  data-aspect="1"
-				  data-range="[0, 0.1]">
-				</div>
+				<div v-el="missedChildrenMap"></div>
 			</div>
 
 			<div class="transit-points medium-1 column">

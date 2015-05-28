@@ -6,7 +6,8 @@ var browserify = require('browserify');
 var gulp       = require('gulp');
 var del        = require('del');
 var exec       = require('child_process').exec;
-var pkg         = require('./package.json');
+var pkg        = require('./package.json');
+var babelify   = require('babelify');
 
 // load plugins
 var $ = require('gulp-load-plugins')();
@@ -62,34 +63,13 @@ gulp.task('scripts', function () {
 		.pipe($.jshint.reporter(require('jshint-stylish')));
 });
 
-gulp.task('lib', function () {
-	var bundle = browserify({
-			debug     : true,
-			fullPaths : true,
-		})
-		.require(path.libs)
-		.plugin('minifyify', {
-			map    : 'lib.map.json',
-			output : path.output + '/lib.map.json'
-		})
-		.bundle()
-		.on('error', err);
-
-	return bundle
-		.pipe(source('lib.js'))
-		.pipe(gulp.dest(path.output))
-		.on('end', function () {
-			say('Library built');
-		});
-});
-
 gulp.task('browserify', function () {
 	var bundleStream = browserify(path.main, {
 			debug: true,
 			standalone: 'Polio',
 			paths: ['./ui/js']
 		})
-		.external(path.libs)
+		.transform(babelify)
 		.bundle()
 		.on('error', err)
 		.on('end', function () {
@@ -100,7 +80,7 @@ gulp.task('browserify', function () {
 		.pipe(source(path.main))
 		.pipe($.rename('main.js'))
 		.pipe(gulp.dest(path.output));
-ß});
+});
 
 gulp.task('fonts', function () {
 	var fonts = $.filter('**/*.{eot,svg,ttf,woff}');
@@ -116,7 +96,7 @@ gulp.task('clean', function (cb) {
 	del(path.clean, cb);
 });
 
-gulp.task('build', ['fonts', 'lib', 'browserify', 'styles']);
+gulp.task('build', ['fonts', 'browserify', 'styles']);
 
 gulp.task('default', ['clean'], function () {
 	return gulp.start('build');

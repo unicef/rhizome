@@ -1,13 +1,14 @@
 'use strict';
 
-var React = require('react');
+require('babel/polyfill');
+var React = require('react/addons');
+var Vue = require('vue');
 
 var LandingPage = require('view/LandingPage.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
 var VisualizationBuilder = require('view/dashboard-builder/VisualizationBuilder.jsx');
+var AdminApp = require('./ufadmin');
 
-
-var Vue = require('vue');
 Vue.config.debug = true;
 
 Vue.component('vue-dropdown', require('./component/dropdown'));
@@ -64,5 +65,8 @@ module.exports = {
 	},
 	VisualizationBuilder: function (el) {
 		React.render(React.createElement(VisualizationBuilder), el);
+	},
+	UFAdmin: function(el) {
+		AdminApp.render(document.getElementById('main'));
 	}
 };
