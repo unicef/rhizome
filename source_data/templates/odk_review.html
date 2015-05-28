@@ -9,8 +9,6 @@
   <table class="table table-hover table-bordered">
     <thead>
       <tr>
-        <th>cron guid</th>
-        <th>job guid</th>
         <th>date attempted</th>
         <th>date completed</th>
         <th>task name</th>
@@ -22,12 +20,11 @@
 
     {% for job in odk_job_data %}
     <tr>
-      <th>{{ job.cron_guid }}</th>
-      <th>{{ job.guid }}</th>
       <th>{{ job.date_attempted }}</th>
       <th>{{ job.date_completed }}</th>
       <th>{{ job.task_name }}</th>
       <th>{{ job.status }}</th>
+      <th>{{ job.error_msg }}</th>
     </tr>
 
 
