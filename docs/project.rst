@@ -2,28 +2,40 @@
 Project
 *******
 
-Functionality
-=============
+ODK
+===
 
-    - GET and POST api methods that allow for retrieval, and insert of
-      datapoints
-    - Basic CRUD (create, read , update, delete) front end interface
-    - Basic Search functionality which allows users to find datapoints with
-      a region, indicator, campaign and / or created by attributes
-    - Permissioning for Create, Update, Delete
-    - Audit Functionality using django-simple-history
-      (https://github.com/treyhunner/django-simple-history)
+The ODK process is kicked off by a cron job that runs once an hour.
 
-Dependencies
-============
-for more see requirements.txt in the root directory
+The cron job kicks off a file: <refresh_odk.sh>
 
-    - coverage (3.7.1)
-    - Django (1.6.5)
-    - django-guardian (1.2.4)
-    - django-simple-history (1.4.0)
-    - django-stronghold (0.2.6)
-    - django-tastypie (0.11.1)
-    - psycopg2 (2.5.3)
-    - South (1.0)
-    - Sphinx (1.2.2)
+Which does the following:
+  - Makes an API request to the app saying "starting_odk_jar"
+  - Runs the ODK Jar file for the relevant forms.
+  - Makes an API request to the app saying "done_with_odk_jar"
+  - Makes an API request that says "ingest_odk_regions"
+      -> Takes any new regions from the vcm_settlement form and merges them into the source_region table
+      -> A new source_region must have a parent_region_code.
+      -> Adds Lon/Lat when able
+  - Makes an API request that says "convert_odk_ingest_to_document"
+      -> For how ever many forms there are, create one document for each form
+         that has incremental data.
+      -> would be nice to link cache_job_id and document_id here
+  - Makes an API call that says "odk_docs_to_source_dps?cache_job_id=<x>"
+      -> For each document in this cache job, create a bunch of source_datapoints
+  - Makes an API call that says "odk_source_dps_to_master?cache_job_id=<x>"
+      -> For each document id, refresh master
+  - /odk_review shows what has been ingested and when!
+
+
+ODK Info Page
+~~~~~~~~~~~~~
+
+
+
+
+Master Refresh
+==============
+
+Cache Refresh
+==============
