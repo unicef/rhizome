@@ -1,3 +1,4 @@
+from pprint import pprint
 from traceback import format_exc
 from time import strftime
 
@@ -231,6 +232,32 @@ class EtlTask(object):
         csv_root = '/Users/johndingee_seed/ODK/odk_source/csv_exports/'
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
-        print region_df
+        new_df_columns = {
+            'SettlementCode': 'region_code',
+            'SettlementGPS-Latitude': 'lat',
+            'SettlementGPS-Longitude': 'lon',
+            'SettlementName': 'source_guid'
+        }
+        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
+        region_df.rename(columns=new_df_columns,inplace=True)
+
+        for col in cols_to_drop:
+            region_df = region_df.drop(col, 1)
+
+        print region_df[:2]
+
+        # print region_df[:10]
+
+        #
+        # regoin_type = 'settlement'
+        # parent_region_code = region_code[:6]
+        #
+        # list_of_dicts = region_df.transpose().to_dict()
+        #
+        # for row in list_of_dicts:
+        #     print '==='
+        #     pprint(row)
+        #
+        # print region_df
 
         return None, 'SOMETHING'
