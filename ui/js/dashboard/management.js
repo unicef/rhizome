@@ -476,19 +476,24 @@ module.exports = {
 				}));
 
 			// Build the map
-			q.indicator__in  = INDICATORS.totalMissed;
-			q.campaign_start = start.format('YYYY-MM-DD');
 			Promise.all([
 					api.datapoints({
 						indicator__in     : INDICATORS.totalMissed,
-						parent_region__in : [this.region.id],
+						parent_region__in : this.region.id,
 						campaign_start    : start.format('YYYY-MM-DD'),
 						campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
 					}).then(meltObjects),
 					api.geo({ parent_region__in : [this.region.id] }),
+					api.datapoints({
+						indicator__in  : INDICATORS.totalMissed,
+						region__in     : this.region.id,
+						campaign_start : start.format('YYYY-MM-DD'),
+						campaign_end   : moment(this.campaign.end_date).format('YYYY-MM-DD')
+					}).then(meltObjects),
+
 					api.geo({ region__in : [this.region.id] })
 				])
-				.then(_.spread(function (data, regions, border) {
+				.then(_.spread(function (data, regions, natl, border) {
 					var index = _(data)
 						.filter(function (d) {
 							return _.isEqual(d.campaign.start_date, self.campaign.start_date);
@@ -503,6 +508,8 @@ module.exports = {
 									properties : { value : _.get(region, 'value') }
 								});
 						});
+
+					border.objects.features[0].properties.value = natl[0].value;
 
 					var props = {
 						type    : 'ChoroplethMap',
