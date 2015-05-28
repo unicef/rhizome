@@ -25,7 +25,7 @@ class EtlResource(ModelResource):
         filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
-        # authentication = ApiKeyAuthentication()
+        authentication = ApiKeyAuthentication()
 
 
     def get_object_list(self, request):
@@ -53,7 +53,10 @@ class EtlResource(ModelResource):
         ## MAKE THIS A CALL BACK FUNCTION ##
         et = EtlTask(task_string,created.guid)
 
+        print et.err
+
         self.err, self.data = et.err, et.data
+
 
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
@@ -61,12 +64,13 @@ class EtlResource(ModelResource):
         if self.err:
             created.status = 'ERROR'
             created.error_msg = self.err
+            created.save()
 
         elif self.data:
             created.status = 'COMPLETE'
             created.success_msg = self.data
+            created.save()
 
-        created.save()
 
         return EtlJob.objects.filter(guid=created.guid)
 
@@ -81,8 +85,8 @@ class EtlTask(object):
 
         self.function_mappings = {
             'test_api' : self.test_api,
-            'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-            'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
+            # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
+            # 'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
@@ -93,6 +97,7 @@ class EtlTask(object):
         fn = self.function_mappings[task_string]
 
         self.err, self.data = fn()
+
 
     ###############################################################
     ########## METHODS BELOW USED BY API CALLS ABOVE ##############
@@ -146,7 +151,6 @@ class EtlTask(object):
         data = 'complete' #cr.response_msg
 
         return None, data
-
 
 
     def start_odk_jar(self):

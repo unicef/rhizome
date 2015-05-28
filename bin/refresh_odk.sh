@@ -8,10 +8,10 @@ source /Users/johndingee_seed/code/UF04/polio/source_data/dev_odk_settings.py
 UUID=$(uuidgen)
 
 
-# API_ROOT='http://localhost:8000'
+API_ROOT='http://localhost:8000'
 
 # ## STARTING JAR FILE PROCESS ##
-# wget -O/dev/null $API_ROOT/api/v1/etl/?task=start_odk_jar\&username=$POLIO_USERNAME\&password=$POLIO_KEY\&cron_guid=$UUID
+wget -O/dev/null $API_ROOT/api/v1/etl/?task=start_odk_jar\&username=$POLIO_USERNAME\&password=$POLIO_KEY\&cron_guid=$UUID
 wget -O/dev/null $API_ROOT/api/v1/etl/?task=start_odk_jar\&cron_guid=$UUID
 
 
