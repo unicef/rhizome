@@ -138,9 +138,7 @@ class SourceRegion(models.Model):
     def __unicode__(self):
 
         if self.region_type:
-
             return self.region_code + ' (' + self.region_type + ')'
-
         else:
             return self.region_code + '( UNKNOWN REGION TYPE )'
 

@@ -6,6 +6,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
+from pandas import read_csv
 
 from source_data.models import *
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform
@@ -90,6 +91,7 @@ class EtlTask(object):
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
+            'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata,
             }
@@ -219,3 +221,16 @@ class EtlTask(object):
             return err, None
 
         return None, success_msg
+
+
+    def ingest_odk_regions(self):
+        '''
+        From the VCM settlements CSV ingest new reigions
+        '''
+
+        csv_root = '/Users/johndingee_seed/ODK/odk_source/csv_exports/'
+        region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+
+        print region_df
+
+        return None, 'SOMETHING'
