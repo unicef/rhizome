@@ -58,6 +58,8 @@ class v2Request(object):
             'region_map': {'orm_obj':RegionMap,
                 'permission_function':None},
             'campaign_map': {'orm_obj':CampaignMap,
+                'permission_function':None},
+            'indicator_tag': {'orm_obj':IndicatorTag,
                 'permission_function':None}
         }
 
