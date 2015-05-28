@@ -181,6 +181,7 @@ function _missedChildren(data, indicators) {
 		.value();
 
 	var stack = d3.layout.stack()
+		.order('default')
 		.offset('zero')
 		.values(function (d) { return d.values; })
 		.x(function (d) { return d.campaign.start_date; })
@@ -341,7 +342,7 @@ module.exports = {
 				.subtract(3, 'years')
 				.format('YYYY-MM-DD');
 
-			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
+		Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
 				.then(_.spread(function (data, indicators) {
 					var immunityGap = _immunityGap(data, indicators);
 
@@ -366,7 +367,7 @@ module.exports = {
 									aspect  : 1.609,
 									color   : _.flow(
 										_.property('name'),
-										d3.scale.ordinal().domain(_.pluck('name', immunityGap)).range(palette)
+										d3.scale.ordinal().domain(_(immunityGap).pluck('name').sortBy().value()).range(['rgb(175, 55, 62)', '#98a0a8'])
 									),
 									domain  : _.constant(immunityScale),
 									values  : _.property('values'),
@@ -426,7 +427,7 @@ module.exports = {
 								aspect  : 1.909344491,
 								color   : _.flow(
 									_.property('name'),
-									d3.scale.ordinal().domain(_.pluck('name', missedChildren)).range(palette)
+									d3.scale.ordinal().domain(_.pluck(missedChildren, 'name')).range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
 								),
 								domain  : _.constant(missedScale),
 								values  : _.property('values'),
