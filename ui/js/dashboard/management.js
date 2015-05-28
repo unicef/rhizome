@@ -515,6 +515,26 @@ module.exports = {
 									self.$dispatch('region-selected',
 										self.regions[d.properties.region_id].name);
 								}
+							},
+							onMouseOver : function (d, el) {
+								if (self.regions.hasOwnProperty(d.properties.region_id)) {
+									var evt = d3.event;
+									self.$dispatch('tooltip-show', {
+										el       : el,
+										position : {
+											x : evt.pageX,
+											y : evt.pageY
+										},
+										data : {
+											text     : self.regions[d.properties.region_id].name,
+											template : 'tooltip-default'
+										}
+									});
+								}
+							},
+							onMouseOut : function (d, el) {
+
+								self.$dispatch('tooltip-hide', { el : el });
 							}
 						}
 					};
