@@ -509,6 +509,7 @@ module.exports = {
 						data    : missed,
 						options : {
 							domain  : _.constant([0, 0.1]),
+							border  : border.objects.features,
 							onClick : function (d) {
 								if (self.regions.hasOwnProperty(d.properties.region_id)) {
 									self.$dispatch('region-selected',

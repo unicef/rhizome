@@ -91,7 +91,9 @@ _.extend(ChoroplethMap.prototype, {
 		var svg = this._svg;
 		var g   = svg.select('.data');
 
-		var bounds = _calculateBounds(data);
+		var features = _.isEmpty(data) ? options.border : data;
+
+		var bounds = _calculateBounds(features);
 		var center = _calculateCenter(bounds);
 
 		var projection = d3.geo.conicEqualArea()
@@ -108,10 +110,10 @@ _.extend(ChoroplethMap.prototype, {
 
 		var path = d3.geo.path().projection(projection);
 
-		var domain = options.domain(data);
+		var domain = options.domain(features);
 
 		if (!_.isArray(domain)) {
-			domain    = d3.extent(data, options.value);
+			domain    = d3.extent(features, options.value);
 			domain[0] = d3.min(domain[0], 0);
 		}
 
@@ -120,7 +122,7 @@ _.extend(ChoroplethMap.prototype, {
 			.range(d3.range(1, 7));
 
 		var region = g.selectAll('.region')
-			.data(data, function (d, i) { return _.get(d, 'properties.region_id', i); });
+			.data(features, function (d, i) { return _.get(d, 'properties.region_id', i); });
 
 		region.enter().append('path');
 
