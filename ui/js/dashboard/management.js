@@ -367,7 +367,7 @@ module.exports = {
 									aspect  : 1.609,
 									color   : _.flow(
 										_.property('name'),
-										d3.scale.ordinal().domain(_(immunityGap).pluck('name').sortBy().value()).range(['rgb(175, 55, 62)', '#98a0a8'])
+										d3.scale.category10()
 									),
 									domain  : _.constant(immunityScale),
 									values  : _.property('values'),
@@ -427,7 +427,7 @@ module.exports = {
 								aspect  : 1.909344491,
 								color   : _.flow(
 									_.property('name'),
-									d3.scale.ordinal().domain(_.pluck(missedChildren, 'name')).range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
+									d3.scale.category10()
 								),
 								domain  : _.constant(missedScale),
 								values  : _.property('values'),
