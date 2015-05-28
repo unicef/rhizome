@@ -5,7 +5,7 @@
 
      <div style="float: right;"> <a class="button" href="/upload/file_upload/">New CSV Upload</a></div>
     <br><br>
-    
+
 
     {% if documents %}
 
@@ -18,8 +18,6 @@
             <th>created_by</th>
             <th>doc_text</th>
             <th>review source dps</th>
-            <th>refresh master</th>
-            <th>is_processed</th>
         </tr>
     </thead>
 
@@ -30,8 +28,6 @@
                 <td>{{ document.created_by }}</td>
                 <td>{{ document.doc_text }}</td>
                 <td> <a href="{% url 'source_data:field_mapping' document.id %}"> Review and Sync </a></td>
-                <td> <a href="{% url 'source_data:mark_doc_as_processed' document.id %}"> Marks as Complete!</a></td>
-                <td>{{ document.is_processed }}</td>
             </tr>
 
 

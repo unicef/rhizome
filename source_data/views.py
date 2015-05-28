@@ -21,13 +21,6 @@ from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
 
-def mark_doc_as_processed(request,document_id):
-
-    doc = Document.objects.get(id=document_id)
-    doc.is_processed = True
-    doc.save()
-
-    return HttpResponseRedirect(reverse('source_data:document_index'))
 
 ### File Upload Below ###
 
@@ -110,7 +103,6 @@ def map_header(request,document_id):
         RequestContext(request))
 
 
-
 def field_mapping(request,document_id):
 
     meta_breakdown = populate_document_metadata(document_id)
@@ -157,7 +149,8 @@ def pre_process_file(request,document_id):
 
 def refresh_master_no_indicator(request,document_id):
 
-    mr = MasterRefresh(document_id = document_id, indicator_id = None, user_id = request.user.id)
+    mr = MasterRefresh(document_id = document_id, indicator_id = None,\
+        user_id = request.user.id)
 
     mr.source_dps_to_dps()
 
@@ -174,32 +167,6 @@ class DocumentIndex(generic.ListView):
     model = Document
 
 
-class EtlJobIndex(generic.ListView):
-
-    context_object_name = "etl_jobs"
-    template_name = 'etl_jobs.html'
-    model = EtlJob
-    paginate_by = 25
-
-def un_map(request,source_object_id,db_model,document_id):
-
-    if db_model == 'region':
-
-        RegionMap.objects.get(source_region_id=source_object_id).delete()
-
-    elif db_model == 'indicator':
-
-        IndicatorMap.objects.get(source_indicator_id=source_object_id).delete()
-
-    elif db_model == 'campaign':
-
-        CampaignMap.objects.get(source_campaign_id=source_object_id).delete()
-
-
-    return HttpResponseRedirect(reverse('source_data:document_review'\
-        ,kwargs={'document_id':document_id}))
-
-
 def refresh_master(request):
 
     job_guid = hashlib.sha1(str(random.random())).hexdigest()
@@ -210,3 +177,13 @@ def refresh_master(request):
 
     return render_to_response('map/master_refresh.html'
         ,{'task_data': task_data})
+
+
+def odk_review(request):
+
+    task_data = {'hello':'goodbye'}
+
+    odk_job_data = EtlJob.objects.filter(task_name__contains='odk')[:50]
+
+    return render_to_response('odk_review.html'
+        ,{'odk_job_data': odk_job_data})

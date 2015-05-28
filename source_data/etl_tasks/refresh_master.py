@@ -7,7 +7,6 @@ from django.db import transaction
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from pandas import DataFrame
 
-from source_data.etl_tasks.shared_utils import map_indicators,map_campaigns,map_regions
 from source_data.models import *
 from datapoints.models import *
 
