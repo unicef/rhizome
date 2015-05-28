@@ -447,9 +447,9 @@ def cache_indicator_abstracted():
             ,i.short_name
             ,i.name
             ,i.slug
-            ,i.name
             ,i.description
-            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END
+            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END as bound_json
+            ,CASE WHEN CAST(y.tag_json as varchar) = '[null]' then '[]' ELSE y.tag_json END as tags
         FROM (
             SELECT
             	i.id
@@ -459,6 +459,17 @@ def cache_indicator_abstracted():
             ON i.id = ib.indicator_id
             GROUP BY i.id
         )x
+		INNER JOIN (
+            SELECT
+            	i.id
+            	,json_agg(itt.indicator_tag_id) as tag_json
+            FROM indicator i
+            LEFT JOIN indicator_to_tag itt
+            ON i.id = itt.indicator_id
+
+            GROUP BY i.id
+		) y
+		ON y.id = x.id
         INNER JOIN indicator i
         ON x.id = i.id
 

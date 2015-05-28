@@ -121,7 +121,6 @@ class v2Request(object):
         '''
 
         if self.read_write == 'r':
-            print 'readddd'
 
             data = IndicatorAbstracted.objects.raw("""
                 SELECT ia.*
