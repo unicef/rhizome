@@ -244,20 +244,9 @@ class EtlTask(object):
         for col in cols_to_drop:
             region_df = region_df.drop(col, 1)
 
-        print region_df[:2]
+        region_df['region_type'] = 'settlement'
+        region_df['parent_region_code'] = region_df['region_code'].astype(str).str[:6]
 
-        # print region_df[:10]
-
-        #
-        # regoin_type = 'settlement'
-        # parent_region_code = region_code[:6]
-        #
-        # list_of_dicts = region_df.transpose().to_dict()
-        #
-        # for row in list_of_dicts:
-        #     print '==='
-        #     pprint(row)
-        #
-        # print region_df
+        print region_df[:20]
 
         return None, 'SOMETHING'
