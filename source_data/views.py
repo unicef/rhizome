@@ -216,5 +216,7 @@ def odk_review(request):
 
     task_data = {'hello':'goodbye'}
 
+    odk_job_data = EtlJob.objects.all()[:10]
+
     return render_to_response('odk_review.html'
-        ,{'task_data': task_data})
+        ,{'odk_job_data': odk_job_data})

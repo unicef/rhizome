@@ -9,17 +9,18 @@
   <table class="table table-hover table-bordered">
     <thead>
       <tr>
-        <th>job.cron_guid</th>
-        <th>job_guid</th>
-        <th>date_attempted</th>
-        <th>date_completed</th>
-        <th>task_name</th>
+        <th>cron guid</th>
+        <th>job guid</th>
+        <th>date attempted</th>
+        <th>date completed</th>
+        <th>task name</th>
         <th>status</th>
+        <th>error msg</th>
       </tr>
     </thead>
 
 
-    {% for job in etl_jobs %}
+    {% for job in odk_job_data %}
     <tr>
       <th>{{ job.cron_guid }}</th>
       <th>{{ job.guid }}</th>
