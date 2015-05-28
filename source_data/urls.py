@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^refresh_master_no_indicator/(?P<document_id>[0-9]+)/',refresh_master_no_indicator,\
         name='refresh_master_no_indicator'),
 
+    url(r'^odk_review/',odk_review, name='odk_review'),
+
 
 
 ]
