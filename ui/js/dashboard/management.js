@@ -20,6 +20,7 @@ var INDICATORS = {
 	cases           : [168],
 	immunityGap     : [431,432,433],
 	missed          : [166,164,167,165],
+	totalMissed     : [475],
 	conversions     : [187,189],
 	microplans      : [27,28],
 	transitPoints   : [175,176,177,204],
@@ -209,6 +210,7 @@ module.exports = {
 	data: function () {
 		return {
 			region          : null,
+			regions         : [],
 			campaign        : null,
 			campaigns       : [],
 
@@ -278,6 +280,7 @@ module.exports = {
 
 			var meltObjects  = _.flow(_.property('objects'), melt);
 
+			// Polio cases
 			var q = {
 				indicator__in  : INDICATORS.cases,
 				region__in     : this.region.id,
@@ -298,7 +301,12 @@ module.exports = {
 				});
 
 			// Fetch data for current campaign for pie charts
-			q.indicator__in = _(INDICATORS).pick('inaccessibility', 'accessPlans', 'transitPoints', 'microplans').values().flatten().value(),
+			q.indicator__in = _(INDICATORS)
+				.pick('inaccessibility', 'accessPlans', 'transitPoints', 'microplans')
+				.values()
+				.flatten()
+				.value();
+
 			q.campaign_start = start.format('YYYY-MM-DD');
 
 			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
@@ -374,12 +382,18 @@ module.exports = {
 					);
 				}));
 
-			q.indicator__in  = _(INDICATORS).pick('missed', 'conversions', 'inaccessible').values().flatten().value();
+			q.indicator__in  = _(INDICATORS)
+				.pick('missed', 'conversions', 'inaccessible')
+				.values()
+				.flatten()
+				.value();
+
 			q.campaign_start = start.clone()
 				.startOf('month')
 				.subtract(1, 'year')
 				.format('YYYY-MM-DD');
 
+			// Build the line charts
 			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
 				.then(_.spread(function (data, indicators) {
 					var missed = _.filter(data, function (d) {
@@ -462,8 +476,62 @@ module.exports = {
 
 				}));
 
+			// Build the map
+			q.indicator__in  = INDICATORS.totalMissed;
+			q.campaign_start = start.format('YYYY-MM-DD');
+			Promise.all([
+					api.datapoints({
+						indicator__in     : INDICATORS.totalMissed,
+						parent_region__in : [this.region.id],
+						campaign_start    : start.format('YYYY-MM-DD'),
+						campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
+					}).then(meltObjects),
+					api.geo({ parent_region__in : [this.region.id] }),
+					api.geo({ region__in : [this.region.id] })
+				])
+				.then(_.spread(function (data, regions, border) {
+					var index = _(data)
+						.filter(function (d) {
+							return _.isEqual(d.campaign.start_date, self.campaign.start_date);
+						})
+						.indexBy('region')
+						.value();
+
+					var missed = _.map(regions.objects.features, function (feature) {
+							var region = _.get(index, feature.properties.region_id);
+
+							return _.merge({}, feature, {
+									properties : { value : _.get(region, 'value') }
+								});
+						});
+
+					var props = {
+						type    : 'ChoroplethMap',
+						data    : missed,
+						options : {
+							domain  : _.constant([0, 0.1]),
+							onClick : function (d) {
+								if (self.regions.hasOwnProperty(d.properties.region_id)) {
+									self.$dispatch('region-selected',
+										self.regions[d.properties.region_id]);
+								}
+							}
+						}
+					};
+
+					React.render(
+						React.createElement(Chart, props),
+						self.$$.missedChildrenMap
+					);
+				}));
+
 			// Bullet charts
-			q.indicator__in = _(INDICATORS).pick('capacity', 'polio', 'supply', 'resources').values().flatten().value();
+			q.indicator__in = _(INDICATORS)
+				.pick('capacity', 'polio', 'supply', 'resources')
+				.values()
+				.flatten()
+				.value();
+
 			q.campaign_start = start.clone()
 				.subtract(4, 'months')
 				.format('YYYY-MM-DD');
