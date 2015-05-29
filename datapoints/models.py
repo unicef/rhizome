@@ -247,7 +247,7 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
-    value = models.FloatField()
+    value = models.FloatField(null=True)
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
