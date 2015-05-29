@@ -8,7 +8,7 @@ $chart-wrapper-margin: 2px;
    		display: inline-block;
    }
    .right-page {
-   		width: 1000px;
+   		width: 900px;
    		display: inline-block;
    		vertical-align: top;
    		margin-left: 10px;
@@ -16,6 +16,10 @@ $chart-wrapper-margin: 2px;
    			background-color: $chart-container-color;
    			margin-left: $chart-wrapper-margin;
    			padding: 10px;
+   		}
+   		.menu-span {
+   			display: inline-block;
+   			width: 200px;
    		}
    }
 }

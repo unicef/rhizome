@@ -444,7 +444,7 @@ module.exports = {
 						}),
 						self.$$.conversions
 					);
-
+                    console.log(inaccessible,indicators);
 					React.render(
 						React.createElement(Chart, {
 							type    : 'LineChart',

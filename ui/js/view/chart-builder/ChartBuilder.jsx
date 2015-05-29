@@ -40,14 +40,17 @@ module.exports = React.createClass({
 	              	<div className="chart-container">
 	              	<div className="titleDiv">Group By</div>
 	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-	              	
-	              	<Menu items={this.state.store.regionList}
-	              		      sendValue={ChartBuilderActions.addIndicatorSelection}
+	              	<Menu items={this.state.store.campaignList}
+	              		      sendValue={ChartBuilderActions.addCampaignSelection}
 	              		      searchable={true}>
-	              				<span> Region </span>
+	              				<span className="menu-span"> {this.state.store.campaignSelected.slug?this.state.store.campaignSelected.slug:"select campaign"} </span>
 	              		</Menu>
-	              	
-	              	</div>
+	              	<Menu items={this.state.store.regionList}
+	              		      sendValue={ChartBuilderActions.addRegionSelection}
+	              		      searchable={true}>
+	              				<span className="menu-span"> {this.state.store.regionSelected.title ? this.state.store.regionSelected.title:"select region"} </span>
+	              		</Menu>
+				    </div>
 	              </div>
 	            </div>
 	            </form>

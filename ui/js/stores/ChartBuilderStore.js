@@ -6,15 +6,17 @@ var _      = require('lodash');
 var treeify = require('data/transform/treeify');
 var ancestoryString = require('data/transform/ancestryString');
 var api = require('data/api');
+var d3     = require('d3');
+var moment = require('moment');
 
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
 		indicatorList:[],
 		campaignList:[],
-		indicatorsSelected:[],
-		regionSelected:null,
-		campaignSelected:null,
+		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
+		campaignSelected:{office_id: 3, start_date: "2013-09-01", id: 179, end_date: "2013-09-01", slug: "pakistan-september-2013"},
+		regionSelected:{id: 12908, title: "Afghanistan"},//{id:null,title:null},
 		title: "new chart",
 		description: "a nice description",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
@@ -52,8 +54,23 @@ module.exports = Reflux.createStore({
 		        self.data.indicatorList = _(items.objects)
 		         	.map(function (indicator) {
 		         		return {
-		         			'title'  : indicator.slug,
+		         			'title'  : indicator.name,
 		         			'value'  : indicator.id,
+		         			'parent' : null
+		         		};
+		         	})
+		         	.sortBy('title')
+		         	.reverse() 
+		         	.value();
+		         self.trigger(self.data);
+		     });
+		 api.campaign().then(function(items){
+		        self._campaignIndex = _.indexBy(items.objects, 'id');
+		        self.data.campaignList = _(items.objects)
+		         	.map(function (campaign) {
+		         		return {
+		         			'title'  : campaign.slug,
+		         			'value'  : campaign.id,
 		         			'parent' : null
 		         		};
 		         	})
@@ -64,8 +81,8 @@ module.exports = Reflux.createStore({
 		     });
 	},
 	onAddIndicatorSelection: function(value){
-		this.data.indicatorsSelected.push({id:value,
-							  title:this._indicatorIndex[value].slug});
+		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
+	    this.getChartData();
 		this.trigger(this.data);
 	},
 	onRemoveIndicatorSelection: function(id){
@@ -91,6 +108,26 @@ module.exports = Reflux.createStore({
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.trigger(this.data);
+	},
+	onAddCampaignSelection: function(value){
+	    //console.log();
+		this.data.campaignSelected = this._campaignIndex[value];
+		this.trigger(this.data);
+	},
+	onAddRegionSelection: function(value){
+		this.data.regionSelected = {id:value, title:this._regionIndex[value].name};
+		this.trigger(this.data);
+	},
+	getChartData: function(){
+		var indicators = this.data.indicatorsSelected;
+		
+	    var q = {
+				indicator__in  : [166],
+				region__in     : this.data.regionSelected.id,
+				campaign_start : moment(this.data.campaignSelected.start_date).clone().startOf('year').subtract(2, 'years').format('YYYY-MM-DD'),
+				campaign_end   : moment(this.data.campaignSelected.end_date).format('YYYY-MM-DD')
+	    			};
+	    api.datapoints(q).then(function(data){console.log(data);});
 	}
 });
 

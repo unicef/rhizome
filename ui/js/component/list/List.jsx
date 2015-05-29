@@ -8,7 +8,7 @@ module.exports = React.createClass({
 	render: function(){
 	    var self = this;
 		var listItems = this.props.items.map(function(item){
-			 return (<li key={item.id}>{item.title}
+			 return (<li key={item.id}>{item.name}
 				 		<a
 			       		className="clear-btn"
 			       		onClick={self.props.removeItem.bind(this,item.id)}>
