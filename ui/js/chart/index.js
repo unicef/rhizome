@@ -7,7 +7,8 @@ var CHARTS = {
 	BulletChart   : require('./bullet'),
 	ChoroplethMap : require('./choropleth'),
 	ColumnChart   : require('./column'),
-	LineChart     : require('./line')
+	LineChart     : require('./line'),
+	PieChart      : require('./pie')
 };
 
 var DEFAULTS = {

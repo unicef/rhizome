@@ -279,6 +279,7 @@ class DataPointEntryResource(BaseModelResource):
         Also, if a request comes in with value=NULL, that means set the value
         of that obect = 0.
         """
+        print '===HERE===\n' * 10
 
         try:
             self.validate_object(bundle.data)
