@@ -2,16 +2,19 @@
 	<h1>FIELD MAPPING</h1>
 	<template v-repeat="type:mappingData">
 	  <div class="row">
-	    <div class="small-6 columns">
+	    <div class="small-5 columns">
 	      <h2> {{$key | capitalize}} </h2> 
 	    </div>
-	    <div class="small-6 columns">
+	    <div class="small-5 columns">
 	     <h4 class="indicator-verification">{{remainingVerifications[$key]}}/{{mappingData[$key].length}} {{$key}} need verification </h4>
+	    </div>
+	    <div class="small-2 columns" style="padding-right: 0;">
+	     <h4 class="datapoints-imported">datapoints imported</h4>
 	    </div>
 	  </div>  
 	  
 	  <div v-repeat="field:type" class="row" v-ref="$key">
-	    <div class="small-5 columns">
+	    <div class="small-4 columns">
 	      <a role="button" class="button read-only">
 	        {{field.source_string}}
 	      </a>
@@ -19,7 +22,7 @@
 	    <div class="small-1 columns arrow-container">
 	      <i class="fa fa-arrow-right fa-3x"></i>
 	    </div>
-	    <div class="small-5 columns">
+	    <div class="small-4 columns">
 	     <div
 	      	id="{{$key + field.source_object_id + 'menu'}}"
 	      	data-change-event="field-selected"
@@ -37,6 +40,9 @@
 	    </div>
 	    <div class="small-1 columns check-column" >
 	      <a v-if="field.master_object_id != -1" class="button" v-on="click:unmapField(field.source_object_id,field.master_object_id,$key)">unmap</a>
+	    </div>
+	    <div class="small-2 columns" >
+	      <div class="datapoint-count">{{field.master_dp_count}}/{{field.source_dp_count}}</div>
 	    </div>
 	  </div> 
 	</template>

@@ -15,7 +15,7 @@ module.exports = Reflux.createStore({
 		indicatorList:[],
 		campaignList:[],
 		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
-		campaignSelected:{office_id: 3, start_date: "2013-09-01", id: 179, end_date: "2013-09-01", slug: "pakistan-september-2013"},
+		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
 		regionSelected:{id: 12908, title: "Afghanistan"},//{id:null,title:null},
 		title: "new chart",
 		description: "a nice description",
@@ -110,7 +110,7 @@ module.exports = Reflux.createStore({
 	   this.trigger(this.data);
 	},
 	onAddCampaignSelection: function(value){
-	    //console.log();
+	    console.log(this._campaignIndex[value]);
 		this.data.campaignSelected = this._campaignIndex[value];
 		this.trigger(this.data);
 	},
