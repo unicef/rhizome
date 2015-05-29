@@ -10,7 +10,25 @@ var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
 var api       = require('data/api');
-var colors    = require('colors');
+var colors    = ["#EC27E5",
+"#2EC057",
+"#8499C5",
+"#D0336C",
+"#DD9D0E",
+"#31B9B0",
+"#8F3FA4",
+"#82A618",
+"#EB7FBF",
+"#9267F5",
+"#3A58B7",
+"#6A4076",
+"#EE1EB1",
+"#337A7A",
+"#186189",
+"#FC6E7B",
+"#1BA57D",
+"#FB79A3",
+"#FF22DC"];
 var colorUtil = require('util/color');
 var format    = require('util/format');
 var palette   = require('colors');
@@ -369,7 +387,7 @@ module.exports = {
 										_.property('name'),
 										d3.scale.ordinal()
 											.domain(_(immunityGap).pluck('name').sortBy().value())
-											.range(['rgb(175, 55, 62)', '#98a0a8'])
+											.range(['#AF373E', '#FABAA2'])
 									),
 									domain  : _.constant(immunityScale),
 									values  : _.property('values'),
@@ -429,7 +447,7 @@ module.exports = {
 								aspect  : 1.909344491,
 								color   : _.flow(
 									_.property('name'),
-									d3.scale.category20b()
+									d3.scale.ordinal().range(colors)
 								),
 								domain  : _.constant(missedScale),
 								values  : _.property('values'),

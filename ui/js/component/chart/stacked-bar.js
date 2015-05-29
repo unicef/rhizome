@@ -125,7 +125,26 @@ module.exports = {
 				'transform' : 'translate(0,' + (-height / 2) + ')'
 			});
 
-			var colorScale = d3.scale.category20c();
+			var colorScale = d3.scale.ordinal().domain(_.pluck(data, 'name')).range(["#E797C6",
+"#AFF876",
+"#EEA24F",
+"#3CC4E7",
+"#46CB98",
+"#D9E19E",
+"#B7F8E0",
+"#FDE971",
+"#89F7A0",
+"#86BBAF",
+"#7CB6EB",
+"#E4BCF2",
+"#BBCF58",
+"#F3D18D",
+"#C5F692",
+"#48F9B4",
+"#F6B843",
+"#CEC152",
+"#AAC489",
+"#FE99D8"]);
 			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
 			var fmt        = d3.format(fmtString);
 
