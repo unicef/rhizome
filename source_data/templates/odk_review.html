@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+
+<br><br>
+
+<div style="width:80%; margin-left:auto;margin-right:auto">
+  <table class="table table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>date attempted</th>
+        <th>date completed</th>
+        <th>task name</th>
+        <th>status</th>
+        <th>error msg</th>
+      </tr>
+    </thead>
+
+
+    {% for job in odk_job_data %}
+    <tr>
+      <th>{{ job.date_attempted }}</th>
+      <th>{{ job.date_completed }}</th>
+      <th>{{ job.task_name }}</th>
+      <th>{{ job.status }}</th>
+      <th>{{ job.error_msg }}</th>
+    </tr>
+
+
+    {% endfor %}
+  </table>
+</div>
+
+
+{% endblock %}

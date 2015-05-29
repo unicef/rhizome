@@ -58,6 +58,8 @@ class v2Request(object):
             'region_map': {'orm_obj':RegionMap,
                 'permission_function':None},
             'campaign_map': {'orm_obj':CampaignMap,
+                'permission_function':None},
+            'indicator_tag': {'orm_obj':IndicatorTag,
                 'permission_function':None}
         }
 
@@ -109,6 +111,7 @@ class v2Request(object):
                 ON da.region_id = rm.region_id
                 AND rm.user_id = %s
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
+            ORDER BY c.start_date DESC
         """, [self.user_id, list_of_object_ids])
 
         return None, data
@@ -118,7 +121,6 @@ class v2Request(object):
         '''
 
         if self.read_write == 'r':
-            print 'readddd'
 
             data = IndicatorAbstracted.objects.raw("""
                 SELECT ia.*

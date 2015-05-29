@@ -1,3 +1,4 @@
+from pprint import pprint
 from traceback import format_exc
 from time import strftime
 
@@ -6,10 +7,11 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
+from pandas import read_csv
 
 from source_data.models import *
 from source_data.etl_tasks.transform_odk import VcmSummaryTransform
-from source_data.etl_tasks.refresh_odk_work_tables import WorkTableTask
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
 
@@ -26,7 +28,7 @@ class EtlResource(ModelResource):
         filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
-        # authentication = ApiKeyAuthentication()
+        authentication = ApiKeyAuthentication()
 
 
     def get_object_list(self, request):
@@ -54,7 +56,10 @@ class EtlResource(ModelResource):
         ## MAKE THIS A CALL BACK FUNCTION ##
         et = EtlTask(task_string,created.guid)
 
+        print et.err
+
         self.err, self.data = et.err, et.data
+
 
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
@@ -62,12 +67,13 @@ class EtlResource(ModelResource):
         if self.err:
             created.status = 'ERROR'
             created.error_msg = self.err
+            created.save()
 
         elif self.data:
             created.status = 'COMPLETE'
             created.success_msg = self.data
+            created.save()
 
-        created.save()
 
         return EtlJob.objects.filter(guid=created.guid)
 
@@ -82,11 +88,12 @@ class EtlTask(object):
 
         self.function_mappings = {
             'test_api' : self.test_api,
-            'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-            'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
+            # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
+            # 'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
+            'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata,
             }
@@ -94,6 +101,7 @@ class EtlTask(object):
         fn = self.function_mappings[task_string]
 
         self.err, self.data = fn()
+
 
     ###############################################################
     ########## METHODS BELOW USED BY API CALLS ABOVE ##############
@@ -147,7 +155,6 @@ class EtlTask(object):
         data = 'complete' #cr.response_msg
 
         return None, data
-
 
 
     def start_odk_jar(self):
@@ -216,3 +223,46 @@ class EtlTask(object):
             return err, None
 
         return None, success_msg
+
+
+    def ingest_odk_regions(self):
+        '''
+        From the VCM settlements CSV ingest new reigions
+        '''
+
+        csv_root = '/Users/johndingee_seed/ODK/odk_source/csv_exports/'
+        region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+
+        new_df_columns = {
+            'SettlementCode': 'region_code',
+            'SettlementGPS-Latitude': 'lat',
+            'SettlementGPS-Longitude': 'lon',
+            'SettlementName': 'source_guid'
+        }
+
+        # drop columns we dont need and rename to friendly column names #
+        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
+        for col in cols_to_drop:
+            region_df = region_df.drop(col, 1)
+
+        region_df.rename(columns=new_df_columns,inplace=True)
+
+        # add additional data needed to create source_regions
+        region_df['region_type'] = 'settlement'
+        region_df['parent_code'] = region_df['region_code'].astype(str).str[:6]
+        region_df['document_id'] = 1000
+
+        list_of_dicts = region_df.transpose().to_dict()
+
+        for ix, d in list_of_dicts.iteritems():
+            try:
+                SourceRegion.objects.create(**d)
+            except IntegrityError:
+                pass
+            print '=='
+
+
+
+
+
+        return None, 'SOMETHING'

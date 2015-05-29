@@ -54,6 +54,7 @@ class IndicatorAbstracted(models.Model):
     slug = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     bound_json = JSONField()
+    tag_json = JSONField()
 
     def __unicode__(self):
         return unicode(self.slug)
@@ -342,7 +343,7 @@ class ReconData(models.Model):
     campaign = models.ForeignKey(Campaign)
     indicator = models.ForeignKey(Indicator)
     target_value = models.FloatField()
-    
+
     class Meta:
         db_table = 'recon_data'
         unique_together = ('region','campaign','indicator')
