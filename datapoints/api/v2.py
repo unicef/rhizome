@@ -86,8 +86,8 @@ class v2Request(object):
         '''
 
         data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,%s)",[self.request.user.id,
-            list_of_object_ids,self.read_write])
+            fn_get_authorized_regions_by_user(%s,%s,%s,%s)",[self.request.user.id,
+            list_of_object_ids,self.read_write,self.depth_level])
 
         return None, data
 
@@ -487,8 +487,15 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.read_write = 'r'
 
-        return cleaned_kwargs
 
+        ## Find the Depth Level param ( see POLIO-839 ) ##
+
+        try:
+            self.depth_level = query_dict['depth_level']
+        except KeyError:
+            self.depth_level = 10
+
+        return cleaned_kwargs
 
     def build_meta(self):
         '''
