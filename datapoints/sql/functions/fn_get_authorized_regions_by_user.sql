@@ -3,7 +3,8 @@ CREATE FUNCTION fn_get_authorized_regions_by_user(user_id int, list_of_region_id
 
 RETURNS TABLE(
 
-  id INT
+   lvl INT
+  ,id INT
   ,office_id INT
   ,latitude FLOAT
   ,longitude FLOAT
@@ -19,12 +20,11 @@ RETURNS TABLE(
 $func$
 BEGIN
 
-	RETURN QUERY
 
   DROP TABLE IF EXISTS _permitted_regions;
 
-  CREATE TABLE _permitted_regions AS
-  WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
+	CREATE TABLE _permitted_regions AS
+	WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
   	(
   	-- non-recursive term ( rows where the components aren't
   	-- master_indicators in another calculation )
@@ -77,11 +77,13 @@ BEGIN
   	)x
   	WHERE x.id = ANY(COALESCE($2,ARRAY[x.id]));
 
+	RETURN QUERY
+
   	SELECT
   		*
-  	FROM _permitted_regions
-  	WHERE lvl <= $4
-  	ORDER BY lvl;
+  	FROM _permitted_regions prm
+  	WHERE prm.lvl <= $4
+  	ORDER BY prm.lvl;
 
 END
 $func$ LANGUAGE PLPGSQL;
