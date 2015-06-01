@@ -10,25 +10,28 @@ var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
 var api       = require('data/api');
-var colors    = ["#EC27E5",
-"#2EC057",
-"#8499C5",
-"#D0336C",
-"#DD9D0E",
-"#31B9B0",
-"#8F3FA4",
-"#82A618",
-"#EB7FBF",
-"#9267F5",
-"#3A58B7",
-"#6A4076",
-"#EE1EB1",
-"#337A7A",
-"#186189",
-"#FC6E7B",
-"#1BA57D",
-"#FB79A3",
-"#FF22DC"];
+var colors    = [
+	'#ff7f0e',
+	'#2ca02c',
+	'#9467bd',
+	'#e377c2',
+	'#7f7f7f',
+	'#bcbd22',
+	'#17becf',
+	'#8c564b',
+	'#1f77b4',
+	'#d62728',
+	'#ffbb78',
+	'#98df8a',
+	'#c5b0d5',
+	'#f7b6d2',
+	'#c7c7c7',
+	'#dbdb8d',
+	'#9edae5',
+	'#c49c94',
+	'#aec7e8',
+	'#ff9896'
+];
 var colorUtil = require('util/color');
 var format    = require('util/format');
 var palette   = require('colors');

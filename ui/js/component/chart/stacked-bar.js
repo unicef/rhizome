@@ -3,6 +3,28 @@
 var _      = require('lodash');
 var d3     = require('d3');
 
+var palette = [
+	'#ff7f0e',
+	'#2ca02c',
+	'#9467bd',
+	'#e377c2',
+	'#7f7f7f',
+	'#bcbd22',
+	'#17becf',
+	'#8c564b',
+	'#1f77b4',
+	'#d62728',
+	'#ffbb78',
+	'#98df8a',
+	'#c5b0d5',
+	'#f7b6d2',
+	'#c7c7c7',
+	'#dbdb8d',
+	'#9edae5',
+	'#c49c94',
+	'#aec7e8',
+	'#ff9896'
+];
 var legend = require('./renderer/legend');
 
 module.exports = {
@@ -125,26 +147,7 @@ module.exports = {
 				'transform' : 'translate(0,' + (-height / 2) + ')'
 			});
 
-			var colorScale = d3.scale.ordinal().domain(_.pluck(data, 'name')).range(["#E797C6",
-"#AFF876",
-"#EEA24F",
-"#3CC4E7",
-"#46CB98",
-"#D9E19E",
-"#B7F8E0",
-"#FDE971",
-"#89F7A0",
-"#86BBAF",
-"#7CB6EB",
-"#E4BCF2",
-"#BBCF58",
-"#F3D18D",
-"#C5F692",
-"#48F9B4",
-"#F6B843",
-"#CEC152",
-"#AAC489",
-"#FE99D8"]);
+			var colorScale = d3.scale.ordinal().domain(_.pluck(data, 'name')).range(palette);
 			var fmtString  = (this.offset === 'expand') ? '%' : this.format;
 			var fmt        = d3.format(fmtString);
 
