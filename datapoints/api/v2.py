@@ -324,8 +324,8 @@ class v2MetaRequest(v2Request):
 
         ## url_patterns ##
         self.url_patterns = {
-            'create': self.content_type + "/create",
-            'update': self.content_type + "/update/?<id>/"
+            'create': "datapoints/" + self.content_type + "s/create",
+            'update': "datapoints/" + self.content_type + "s/update/?<id>/"
 
         }
         self.data['fields'] = self.all_field_meta
