@@ -296,19 +296,22 @@ svg {
 	overflow        : hidden;
 
 	&.sortable {
-		.y.axis {
+		.x.axis {
 			.tick {
 				cursor : pointer;
 			}
 		}
+
 	}
 
 	.x.axis {
 		.domain {
 			display : none;
 		}
+	}
 
-		text {
+	.y.axis {
+		.tick {
 			cursor : pointer;
 		}
 	}

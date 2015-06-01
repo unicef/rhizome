@@ -218,6 +218,7 @@ module.exports = {
 			props.onMouseOver      = this.showTooltip;
 			props.onMouseOut       = this.hideTooltip;
 			props.onClick          = this.navigate;
+			props.onRowClick       = this.navigate;
 			props.onColumnHeadOver = this.indicatorOver;
 			props.onColumnHeadOut  = this.indicatorOut;
 			props.value            = _.property('range');
@@ -354,18 +355,24 @@ module.exports = {
 		},
 
 		navigate : function (d) {
-			var re = /(.+)-(\d+)/;
-			var match = re.exec(d.id);
+			var region = d;
 
-			if (!match) {
-				return;
+			if (!_.isString(d)) {
+				var re = /(.+)-(\d+)/;
+				var match = re.exec(d.id);
+
+				if (!match) {
+					return;
+				}
+
+				region = match[1]
 			}
 
 			this.$dispatch('tooltip-hide', {
 				el : this.$el
 			});
 
-			page('/datapoints/management-dashboard/' + match[1] + '/' +
+			page('/datapoints/management-dashboard/' + region + '/' +
 				moment(this.campaign.start_date).format('YYYY/MM'));
 		},
 

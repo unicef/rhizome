@@ -29,6 +29,7 @@ var DEFAULTS = {
 	onColumnHeadOut  : null,
 	onMouseOver      : null,
 	onMouseOut       : null,
+	onRowClick       : null,
 	seriesName       : _.property('name'),
 	sortValue        : _sortValue,
 	values           : _.property('values'),
@@ -202,6 +203,11 @@ _.extend(Heatmap.prototype, {
 				.scale(yScale)
 				.orient('left')
 				.outerTickSize(0));
+
+		svg.selectAll('.y.axis text')
+			.on('click', function (d, i) {
+				options.onRowClick(d, i, this);
+			});
 	},
 
 	_onRowOver : function (d) {
