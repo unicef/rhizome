@@ -215,13 +215,15 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
-			props.onMouseOver = this.showTooltip;
-			props.onMouseOut  = this.hideTooltip;
-			props.onClick     = this.navigate;
-			props.onColHover  = this.indicatorHover;
-			props.value       = _.property('range');
-			props.headerText  = _.property('short_name');
-			props.sortValue   = function (series, col) {
+			props.onMouseOver      = this.showTooltip;
+			props.onMouseOut       = this.hideTooltip;
+			props.onClick          = this.navigate;
+			props.onColumnHeadOver = this.indicatorOver;
+			props.onColumnHeadOut  = this.indicatorOut;
+			props.value            = _.property('range');
+			props.headerText       = _.property('short_name');
+
+			props.sortValue = function (series, col) {
 				return (col == null) ?
 					series.name :
 					RANGE_ORDER[series.values[col].range];
@@ -367,11 +369,10 @@ module.exports = {
 				moment(this.campaign.start_date).format('YYYY/MM'));
 		},
 
-		indicatorHover : function (d, i, mouseover) {
-			var evt = mouseover ? 'tooltip-show' : 'tooltip-hide';
+		indicatorOver : function (d, i, mouseover) {
 			var indicators = _.indexBy(this.columns, 'short_name');
 
-			this.$dispatch(evt, {
+			this.$dispatch('tooltip-show', {
 				el : this.$el,
 				position : {
 					x : d3.event.pageX,
@@ -383,6 +384,10 @@ module.exports = {
 					description : indicators[d].description
 				}
 			});
+		},
+
+		indicatorOut : function () {
+			this.$dispatch('tooltip-hide', { el : this.$el });
 		}
 	},
 
