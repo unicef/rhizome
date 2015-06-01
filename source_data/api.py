@@ -18,6 +18,12 @@ from source_data.etl_tasks import ingest_polygons
 from datapoints.models import Source
 from datapoints import cache_tasks
 
+try:
+    import source_data.prod_odk_settings as odk_settings
+except ImportError:
+    import source_data.dev_odk_settings as odk_settings
+
+
 class EtlResource(ModelResource):
 
     class Meta():
@@ -230,39 +236,32 @@ class EtlTask(object):
         From the VCM settlements CSV ingest new reigions
         '''
 
-        csv_root = '/Users/johndingee_seed/ODK/odk_source/csv_exports/'
+        csv_root = odk_settings.EXPORT_DIRECTORY
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
-        new_df_columns = {
-            'SettlementCode': 'region_code',
-            'SettlementGPS-Latitude': 'lat',
-            'SettlementGPS-Longitude': 'lon',
-            'SettlementName': 'source_guid'
-        }
-
-        # drop columns we dont need and rename to friendly column names #
-        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
-        for col in cols_to_drop:
-            region_df = region_df.drop(col, 1)
-
-        region_df.rename(columns=new_df_columns,inplace=True)
-
-        # add additional data needed to create source_regions
-        region_df['region_type'] = 'settlement'
-        region_df['parent_code'] = region_df['region_code'].astype(str).str[:6]
-        region_df['document_id'] = 1000
-
+        ## Convert to Work Table ##
         list_of_dicts = region_df.transpose().to_dict()
 
         for ix, d in list_of_dicts.iteritems():
+            lower_dict = {}
+            cnt_created = 0
+
+            for k,v in d.iteritems():
+                lower_dict[k.lower().replace('-','_')] = v
+                lower_dict['process_status_id'] = 1
+                cnt_create =+ 1
             try:
-                SourceRegion.objects.create(**d)
-            except IntegrityError:
+                VCMSettlement.objects.create(**lower_dict)
+            except IntegrityError as err:
+                print err
                 pass
-            print '=='
+
+        ## Create Source Regions ##
+
+        ## Try to Auto Map ##
 
 
 
 
 
-        return None, 'SOMETHING'
+        return None, 'created: %s new regions' % cnt_create
