@@ -215,6 +215,7 @@ module.exports = {
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
+			props.cellSize         = 36;
 			props.onMouseOver      = this.showTooltip;
 			props.onMouseOut       = this.hideTooltip;
 			props.onClick          = this.navigate;

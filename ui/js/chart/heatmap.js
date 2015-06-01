@@ -3,8 +3,6 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
-var browser = require('util/browser');
-
 function _sortValue(s, sortCol) {
 	// jshint validthis: true
 	var val = (sortCol == null) ?
@@ -16,6 +14,7 @@ function _sortValue(s, sortCol) {
 
 var DEFAULTS = {
 	cellSize   : 16,
+	fontSize   : 12,
 	headerText : _.identity,
 	headers    : [],
 	margin : {
@@ -71,16 +70,11 @@ _.extend(Heatmap.prototype, {
 		var h = Math.max(data.length * options.cellSize, 0);
 
 		var svg = this._svg
-			.attr('viewBox', '0 0 ' +
-				(w + margin.left + margin.right) + ' ' +
-				(h + margin.top + margin.bottom));
-
-		if (browser.isIE()) {
-			svg.attr({
-				'width'  : (w + margin.left + margin.right),
-				'height' : (h + margin.top + margin.bottom)
+			.attr({
+				'viewBox' : '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
+				'width'   : (w + margin.left + margin.right),
+				'height'  : (h + margin.top + margin.bottom)
 			});
-		}
 
 		var xScale = d3.scale.ordinal()
 			.domain(_.map(options.headers, options.headerText))
@@ -182,6 +176,7 @@ _.extend(Heatmap.prototype, {
 		svg.selectAll('.x.axis text')
 				.style({
           'text-anchor' : 'start',
+          'font-size'   : options.fontSize,
           'font-weight' : function (d, i) {
             return (i === sortCol) ?
               'bold' :
@@ -205,6 +200,7 @@ _.extend(Heatmap.prototype, {
 				.outerTickSize(0));
 
 		svg.selectAll('.y.axis text')
+			.style('font-size', options.fontSize)
 			.on('click', function (d, i) {
 				options.onRowClick(d, i, this);
 			});
