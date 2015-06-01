@@ -239,8 +239,7 @@ class EtlTask(object):
         csv_root = odk_settings.EXPORT_DIRECTORY
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
-        VCMSettlement
-
+        ## Convert to Work Table ##
         list_of_dicts = region_df.transpose().to_dict()
 
         for ix, d in list_of_dicts.iteritems():
@@ -256,6 +255,12 @@ class EtlTask(object):
             except IntegrityError as err:
                 print err
                 pass
+
+        ## Create Source Regions ##
+
+        ## Try to Auto Map ##
+
+
 
 
 
