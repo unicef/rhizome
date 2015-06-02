@@ -8,6 +8,7 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from django.conf import settings
 from pandas import read_csv
 
 from source_data.models import *
@@ -236,7 +237,7 @@ class EtlTask(object):
         From the VCM settlements CSV ingest new reigions
         '''
 
-        csv_root = odk_settings.EXPORT_DIRECTORY
+        csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
         ## Convert to Work Table ##
