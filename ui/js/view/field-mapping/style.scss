@@ -1,5 +1,5 @@
 .field-mapping-container {
-	width: 700px; 
+	width: 900px; 
 	margin: 30px auto;
 	.row {
 	  .arrow-container {
@@ -7,11 +7,17 @@
 	  }
 	  .columns .indicator-verification {
 	  	line-height: 35px;
-	  	float: right
+	  }
+	  .columns .datapoints-imported {
+	  	line-height: 35px;
 	  }
 	  .check-column {
 	      text-align: left;
 	      padding-left: 0;
+	  }
+	  .datapoint-count {
+	  	    font-size: 16px;
+	  	    padding-top: 11px;
 	  }
 	}
 	.footer-row {

@@ -1,27 +1,37 @@
 <h3>{{ region }}</h3>
 <h4>{{ indicator }}:&emsp;{{ value }}</h4>
-<h6>Regional Distribution</h6>
+<h6>Distribution of Districts by Performance</h6>
 <svg class="histogram" v-attr="width : width, height : height">
-	<g class="x axis" transform="translate(0,120)">
-		<line class="domain" v-attr="x2 : width"></line>
-		<g v-repeat="ticks"
-			v-attr="transform : 'translate(' + x + ',0)'"
-			class="tick">
-			<text v-text="value" text-anchor="middle" dy="1.2em" fill="#fff"></text>
+	<g transform="translate(16,0)">
+		<g class="y axis">
+			<text style="text-anchor:middle"
+				v-attr="transform: 'translate(0,' + (height/2) + ') rotate(-90)'"
+				dy="-6">
+				Number of Districts
+			</text>
 		</g>
-	</g>
-	<g v-repeat="histogram"
-		v-attr="transform : 'translate(' + x + ',' + y + ')'"
-		v-class="current : current">
+		<g class="x axis" transform="translate(0,120)">
+			<line class="domain" v-attr="x2 : width"></line>
+			<g v-repeat="ticks"
+				v-attr="transform : 'translate(' + x + ',0)'"
+				class="tick">
+				<text v-text="value" text-anchor="middle" dy="1.2em" fill="#fff"></text>
+			</g>
+		</g>
 
-		<rect v-attr="width : width, height : height"></rect>
+		<g v-repeat="histogram"
+			v-attr="transform : 'translate(' + x + ',' + y + ')'"
+			v-class="current : current">
 
-		<text v-text="value"
-			v-attr="transform : 'translate(' + (width/2) + ',0)'"
-			text-anchor="middle"
-			class="label"
-			dy="-.2em"
-			></text>
+			<rect v-attr="width : width, height : height"></rect>
+
+			<text v-text="value"
+				v-attr="transform : 'translate(' + (width/2) + ',0)'"
+				text-anchor="middle"
+				class="label"
+				dy="-.2em"
+				></text>
+		</g>
 	</g>
 </svg>
 

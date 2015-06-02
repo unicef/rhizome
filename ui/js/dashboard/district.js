@@ -10,7 +10,7 @@ var React  = require('react');
 var api  = require('data/api');
 var util = require('util/data');
 
-var HeatMap = require('component/chart/heatmap.jsx');
+var Chart = require('component/Chart.jsx');
 
 var RANGE_ORDER = {
 	'bad'  : 0,
@@ -21,10 +21,10 @@ var RANGE_ORDER = {
 
 /**
  * @private
- * Return true if indicator is an object with an array of indicator_bounds.
+ * Return true if indicator is an object with an array of bound_json.
  */
 function _hasBounds(indicator) {
-	return _.isObject(indicator) && !_.isEmpty(indicator.indicator_bounds);
+	return _.isObject(indicator) && !_.isEmpty(indicator.bound_json);
 }
 
 /**
@@ -128,7 +128,7 @@ module.exports = {
 					// Create a function for extracting and formatting target value ranges
 					// from the indicator definitions.
 					var getTargetRanges = _.flow(
-						_.property('indicator_bounds'), // Extract bounds definition
+						_.property('bound_json'), // Extract bounds definition
 						_.partial(_.reject, _, { bound_name: 'invalid' }), // Filter out the 'invalid' target ranges
 						_.partial(_.map, _, _openBounds), // Replace 'NULL' with +/- Infinity
 						_.partial(_.sortBy, _, _getBoundOrder) // Sort the bounds: bad, ok/okay, good
@@ -211,26 +211,34 @@ module.exports = {
 				});
 			};
 
-			props.series = _.map(this.series, filterInvisibleIndicators);
-
 			props.scale = d3.scale.ordinal()
 					.domain(['bad', 'okay', 'ok', 'good'])
 					.range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
-			props.onMouseOver   = this.showTooltip;
-			props.onMouseOut    = this.hideTooltip;
-			props.onClick       = this.navigate;
-			props.onColHover    = this.indicatorHover;
-			props.getValue      = _.property('range');
-			props.getHeaderText = _.property('short_name');
-			props.getSortValue  = function (series, col) {
+			props.cellSize         = 36;
+			props.fontSize         = 14;
+			props.onMouseOver      = this.showTooltip;
+			props.onMouseOut       = this.hideTooltip;
+			props.onClick          = this.navigate;
+			props.onRowClick       = this.navigate;
+			props.onColumnHeadOver = this.indicatorOver;
+			props.onColumnHeadOut  = this.indicatorOut;
+			props.value            = _.property('range');
+			props.headerText       = _.property('short_name');
+
+			props.sortValue = function (series, col) {
 				return (col == null) ?
 					series.name :
 					RANGE_ORDER[series.values[col].range];
 			};
 
-			var heatmap = React.createElement(HeatMap, props, null);
-			React.render(heatmap, this.$$.heatmap, null);
+			var heatmap = React.createElement(Chart, {
+				type    : 'HeatMap',
+				data    : _.map(this.series, filterInvisibleIndicators),
+				options : props
+			});
+
+			React.render(heatmap, this.$$.heatmap);
 		},
 
 		showTooltip : function (d) {
@@ -301,7 +309,7 @@ module.exports = {
 				};
 			};
 
-			var targets = _(indicators[match[2]].indicator_bounds)
+			var targets = _(indicators[match[2]].bound_json)
 				.reject(function (r) { return r.bound_name == 'invalid'; })
 				.sortBy(function (r) { return RANGE_ORDER[r.bound_name]; })
 				.map(function (r) {
@@ -320,6 +328,7 @@ module.exports = {
 					y : evt.pageY
 				},
 				data     : {
+					orientation       : 'top',
 					region            : match[1],
 					indicator         : indicators[match[2]].short_name,
 					total_regions     : total_regions,
@@ -349,27 +358,32 @@ module.exports = {
 		},
 
 		navigate : function (d) {
-			var re = /(.+)-(\d+)/;
-			var match = re.exec(d.id);
+			var region = d;
 
-			if (!match) {
-				return;
+			if (!_.isString(d)) {
+				var re = /(.+)-(\d+)/;
+				var match = re.exec(d.id);
+
+				if (!match) {
+					return;
+				}
+
+				region = match[1]
 			}
 
 			this.$dispatch('tooltip-hide', {
 				el : this.$el
 			});
 
-			page('/datapoints/management-dashboard/' + match[1] + '/' +
+			page('/datapoints/management-dashboard/' + region + '/' +
 				moment(this.campaign.start_date).format('YYYY/MM'));
 		},
 
-		indicatorHover : function (d, i, mouseover) {
-			var evt = mouseover ? 'tooltip-show' : 'tooltip-hide';
+		indicatorOver : function (d, i, mouseover) {
 			var indicators = _.indexBy(this.columns, 'short_name');
 
-			this.$dispatch(evt, {
-				el : this.$el,
+			this.$dispatch('tooltip-show', {
+				el          : this.$el,
 				position : {
 					x : d3.event.pageX,
 					y : d3.event.pageY
@@ -377,9 +391,14 @@ module.exports = {
 				data : {
 					template    : 'tooltip-indicator',
 					name        : d,
+					orientation : 'top',
 					description : indicators[d].description
 				}
 			});
+		},
+
+		indicatorOut : function () {
+			this.$dispatch('tooltip-hide', { el : this.$el });
 		}
 	},
 

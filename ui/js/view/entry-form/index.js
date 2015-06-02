@@ -118,7 +118,7 @@ module.exports = {
 			Promise.all([
 
 					// regions data
-					api.regions()
+					api.regions({ depth_level: 2, read_write: 'w' })
 						.then(makeMap)
 						.then(function(map) {
 							// create array of children in each parent

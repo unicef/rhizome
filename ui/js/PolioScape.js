@@ -6,7 +6,7 @@ var Vue = require('vue');
 
 var LandingPage = require('view/LandingPage.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
-var VisualizationBuilder = require('view/dashboard-builder/VisualizationBuilder.jsx');
+var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 var AdminApp = require('./ufadmin');
 
 Vue.config.debug = true;
@@ -63,8 +63,8 @@ module.exports = {
 	DashboardBuilder: function (el) {
 		React.render(React.createElement(DashboardBuilder), el);
 	},
-	VisualizationBuilder: function (el) {
-		React.render(React.createElement(VisualizationBuilder), el);
+	ChartBuilder: function (el) {
+		React.render(React.createElement(ChartBuilder), el);
 	},
 	UFAdmin: function(el) {
 		AdminApp.render(document.getElementById('main'));

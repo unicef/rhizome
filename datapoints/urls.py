@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder'),
 
     ## DASHBOARD VISUALIZATION BUILDER ##
-    url(r'^visualization_builder/$', views.visualization_builder,name='visualization_builder'),
+    url(r'^chart_builder/$', views.chart_builder,name='chart_builder'),
 
     ## Data Table ##
     url(r'^table/$', views.DataPointIndexView.as_view(),name='datapoint_index'),
