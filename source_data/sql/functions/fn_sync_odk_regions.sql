@@ -135,4 +135,21 @@ AND NOT EXISTS (
 );
 
 
--- CREATE NEW MAPS -- 
+-- CREATE NEW MAPS --
+
+INSERT INTO region_map
+(master_object_id, source_object_id,mapped_by_id)
+
+SELECT
+	r.id
+	,sr.id
+	,1 --JOHN
+FROM _odk_settlements odk
+INNER JOIN source_region sr
+ON odk.settlementcode = sr.region_code
+INNER JOIN region r
+ON sr.region_code = r.region_code
+WHERE NOT EXISTS (
+	SELECT 1 FROM region_map rm
+	where rm.source_object_id = sr.id
+);
