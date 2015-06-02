@@ -237,7 +237,7 @@ class EtlTask(object):
         From the VCM settlements CSV ingest new reigions
         '''
 
-        region_document_id, created = Document.objects.get_or_create(
+        region_document, created = Document.objects.get_or_create(
             docfile = '',
             doc_text = 'VCM_Sett_Coordinates_1_2.csv',
             defaults = {
@@ -246,6 +246,8 @@ class EtlTask(object):
             }
         )
 
+        region_document_id = region_document.id
+
         csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
@@ -253,22 +255,22 @@ class EtlTask(object):
         list_of_dicts = region_df.transpose().to_dict()
 
         for ix, d in list_of_dicts.iteritems():
-            lower_dict = {}
+             lower_dict = {}
 
-            for k,v in d.iteritems():
-                lower_dict[k.lower().replace('-','_')] = v
-                lower_dict['process_status_id'] = 1
-            try:
-                VCMSettlement.objects.create(**lower_dict)
-            except IntegrityError as err:
-                print err
-                pass
+             for k,v in d.iteritems():
+                 lower_dict[k.lower().replace('-','_')] = v
+                 lower_dict['process_status_id'] = 1
+             try:
+                 VCMSettlement.objects.create(**lower_dict)
+             except IntegrityError as err:
+                 print err
+                 pass
 
-        ## Create Source Regions ##
+        ## Merge Work Table Data into source_region / region / region_map ##
 
+        sr = SourceRegion.objects.raw('''SELECT * FROM fn_sync_odk_regions(%s)
+            ''',[region_document_id])
 
-        ## Try to Auto Map ##
+        data = [s.id for s in sr]
 
-
-
-        return None, 'created: %s new regions' % cnt_create
+        return None, data

@@ -3,7 +3,7 @@ DROP FUNCTION IF EXISTS fn_sync_odk_regions(document_id INT);
 CREATE FUNCTION fn_sync_odk_regions(document_id INT)
 RETURNS TABLE
 (
-	source_region_id INT
+	id INT
 
 ) AS
 $func$
@@ -167,7 +167,7 @@ WHERE NOT EXISTS (
 
 RETURN QUERY
 
-SELECT id as source_region_id
+SELECT id
 FROM source_region sr
 LIMIT 1;
 
