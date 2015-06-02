@@ -1,4 +1,14 @@
 
+DROP FUNCTION IF EXISTS fn_sync_odk_regions(document_id INT);
+CREATE FUNCTION fn_sync_odk_regions(document_id INT)
+RETURNS TABLE
+(
+	source_region_id INT
+
+) AS
+$func$
+BEGIN
+
 DROP TABLE IF EXISTS _odk_settlements;
 CREATE TABLE _odk_settlements AS
 SELECT ovs.*
@@ -71,7 +81,7 @@ WHERE REPLACE(settlementname,' ' ,'-') in
 INSERT INTO source_region
 (source_guid, lat,lon, document_id, region_code, parent_name, parent_code, region_type, country, is_high_risk)
 
-SELECT settlementname, settlementgps_latitude, settlementgps_longitude,1000,settlementcode,left(settlementcode,4),left(settlementcode,4),'settlement','Nigeria', 't'
+SELECT settlementname, settlementgps_latitude, settlementgps_longitude,$1,settlementcode,left(settlementcode,4),left(settlementcode,4),'settlement','Nigeria', 't'
 FROM _odk_settlements ovs
 WHERE NOT EXISTS (
 	SELECT 1 FROM source_region sr
@@ -153,3 +163,13 @@ WHERE NOT EXISTS (
 	SELECT 1 FROM region_map rm
 	where rm.source_object_id = sr.id
 );
+
+
+RETURN QUERY
+
+SELECT id as source_region_id
+FROM source_region sr
+LIMIT 1;
+
+END
+$func$ LANGUAGE PLPGSQL;
