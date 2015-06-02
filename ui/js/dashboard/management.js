@@ -378,7 +378,7 @@ module.exports = {
 								data    : immunityGap,
 								type    : 'ColumnChart',
 								options : {
-									aspect  : 1.609,
+									aspect  : 1.757,
 									color   : _.flow(
 										_.property('name'),
 										d3.scale.ordinal()
@@ -440,7 +440,7 @@ module.exports = {
 							data    : missedChildren,
 							type    : 'ColumnChart',
 							options : {
-								aspect  : 1.909344491,
+								aspect  : 2.26,
 								color   : _.flow(
 									_.property('name'),
 									d3.scale.ordinal().range(colors)
@@ -467,7 +467,7 @@ module.exports = {
 								x       : _.property('campaign.start_date'),
 								y       : _.property('value'),
 								yFormat : d3.format('%'),
-								aspect  : 2.260237781
+								aspect  : 2.26
 							}
 						}),
 						self.$$.conversions
@@ -478,7 +478,7 @@ module.exports = {
 							data    : _conversions(inaccessible, indicators),
 							id      : 'inaccessible-children',
 							options : {
-								aspect  : 2.664831804,
+								aspect  : 2.572,
 								domain  : _.constant([lower.toDate(), upper.toDate()]),
 								values  : _.property('values'),
 								x       : _.property('campaign.start_date'),
