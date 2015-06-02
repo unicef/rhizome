@@ -47,14 +47,14 @@
 				</section>
 
 				<section>
-					<table class="pie-charts" v-if="microplans.show">
+					<table class="pie-charts" v-if="microplans.show" style="margin-top:1em">
 						<tbody>
 							<tr>
 								<td>
-									<div v-el="microplans" style="width:20pt"></div>
+									<div v-el="microplans" style="width:24pt"></div>
 								</td>
 
-								<td style="font-size:9pt">{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
+								<td style="font-size:9pt;padding-left:2pt">{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
 									microplans incorporate social data</td>
 							</tr>
 						</tbody>
