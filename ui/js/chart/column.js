@@ -3,7 +3,8 @@
 var _    = require('lodash');
 var d3   = require('d3');
 
-var label = require('component/chart/renderer/label');
+var browser = require('util/browser');
+var label   = require('component/chart/renderer/label');
 
 var defaults = {
 	margin    : {
@@ -37,6 +38,13 @@ _.extend(ColumnChart.prototype, {
 
 		var svg = this._svg = d3.select(el).append('svg')
 			.attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
+
+		if (browser.isIE()) {
+			svg.attr({
+				'width'  : this._width,
+				'height' : this._height
+			});
+		}
 
 		var h = this._height - options.margin.top - options.margin.bottom;
 
