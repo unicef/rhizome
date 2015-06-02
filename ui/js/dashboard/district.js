@@ -327,6 +327,7 @@ module.exports = {
 					y : evt.pageY
 				},
 				data     : {
+					orientation       : 'top',
 					region            : match[1],
 					indicator         : indicators[match[2]].short_name,
 					total_regions     : total_regions,
@@ -381,7 +382,7 @@ module.exports = {
 			var indicators = _.indexBy(this.columns, 'short_name');
 
 			this.$dispatch('tooltip-show', {
-				el : this.$el,
+				el          : this.$el,
 				position : {
 					x : d3.event.pageX,
 					y : d3.event.pageY
@@ -389,6 +390,7 @@ module.exports = {
 				data : {
 					template    : 'tooltip-indicator',
 					name        : d,
+					orientation : 'top',
 					description : indicators[d].description
 				}
 			});
