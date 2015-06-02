@@ -8,6 +8,7 @@ var RadioGroup = require('component/radio-group/RadioGroup.jsx');
 var ChartSelect = require('./ChartSelect.jsx');
 var ChartBuilderStore = require("stores/ChartBuilderStore");
 var ChartBuilderActions = require('actions/ChartBuilderActions');
+var Chart = require('component/Chart.jsx');
 
 module.exports = React.createClass({
     mixins: [Reflux.connect(ChartBuilderStore,"store")],
@@ -18,6 +19,8 @@ module.exports = React.createClass({
       ChartBuilderActions.updateDescription(e.target.value);
     },
 	render: function(){
+	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
+	   
 	   return (<form className="inline">  
 	           <div className="visualization-builder-container"> 
 	              <div className="left-page">
@@ -50,6 +53,7 @@ module.exports = React.createClass({
 	              		      searchable={true}>
 	              				<span className="menu-span"> {this.state.store.regionSelected.title ? this.state.store.regionSelected.title:"select region"} </span>
 	              		</Menu>
+	              	{this.state.store.chartData.length?chart:null}
 				    </div>
 	              </div>
 	            </div>

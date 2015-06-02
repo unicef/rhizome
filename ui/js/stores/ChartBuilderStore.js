@@ -9,6 +9,49 @@ var api = require('data/api');
 var d3     = require('d3');
 var moment = require('moment');
 
+function melt(dataset) {
+	var o = _(dataset)
+		.map(function (d) {
+			var base = _.omit(d, 'indicators');
+
+			return _.map(d.indicators, function (indicator) {
+				return _.assign({}, base, indicator);
+			});
+		})
+		.flatten()
+		.value();
+
+	return o;
+}
+function _conversions(data, indicators) {
+	return _(data)
+		.groupBy('indicator')
+		.map(function (d, ind) {
+			return seriesObject(
+				_.sortBy(d, _.method('campaign.start_date.getTime')),
+				ind,
+				null,
+				indicators
+			);
+		})
+		.value();
+}
+function seriesObject(d, ind, collection, indicators) {
+	return {
+		name   : indicators[ind].short_name,
+		values : d
+	};
+}
+var canDisplayChart = function(){
+	if(this.indicatorsSelected.length > 0)
+	{
+	  return true;
+	}
+	else {
+		return false;
+	}
+};
+
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
@@ -24,7 +67,17 @@ module.exports = Reflux.createStore({
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"regions",title:"Regions"}],
 		groupByRadioValue: "indicator",
 		chartTypes:[{name:"line"},{name:"bar"},{name:"graph"},{name:"pie"}],
-		selectedChart:"line"
+		selectedChart:"line",
+		chartData:[],
+	    chartOptions : {
+				aspect  : 2.664831804,
+				domain  : null,
+				values  : _.property('values'),
+				x       : _.property('campaign.start_date'),
+				y       : _.property('value'),
+				yFormat : d3.format(',.0f')
+			},
+		canDisplayChart:canDisplayChart
 	},
 	listenables: [ChartBuilderActions],
 	getInitialState: function(){
@@ -119,16 +172,24 @@ module.exports = Reflux.createStore({
 		this.trigger(this.data);
 	},
 	getChartData: function(){
-		var indicators = this.data.indicatorsSelected;
+		var self = this;
+		var indicators = _.indexBy(this.data.indicatorsSelected, 'id');//;
+		var start = moment(this.data.campaignSelected.end_date);
+		var meltObjects  = _.flow(_.property('objects'), melt);
+		var lower = start.clone().startOf('month').subtract(1, 'year');
+		var upper = start.clone().endOf('month');
+		this.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
 		
 	    var q = {
-				indicator__in  : [166],
-				region__in     : this.data.regionSelected.id,
-				campaign_start : moment(this.data.campaignSelected.start_date).clone().startOf('year').subtract(2, 'years').format('YYYY-MM-DD'),
-				campaign_end   : moment(this.data.campaignSelected.end_date).format('YYYY-MM-DD')
+		indicator__in  : _.map(this.data.indicatorsSelected,function(indicator){return indicator.id}),
+		region__in     : this.data.regionSelected.id,
+		campaign_start : lower.format('YYYY-MM-DD'),
+		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-	    api.datapoints(q).then(function(data){console.log(data);});
+	    api.datapoints(q).then(meltObjects).then(function(data){
+	    	self.data.chartData =  _conversions(data, indicators);
+	    	console.log(self.data.chartData);
+	    	self.trigger(self.data);
+	    });
 	}
 });
-
-//
