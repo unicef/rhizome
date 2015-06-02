@@ -21,10 +21,10 @@ var RANGE_ORDER = {
 
 /**
  * @private
- * Return true if indicator is an object with an array of indicator_bounds.
+ * Return true if indicator is an object with an array of bound_json.
  */
 function _hasBounds(indicator) {
-	return _.isObject(indicator) && !_.isEmpty(indicator.indicator_bounds);
+	return _.isObject(indicator) && !_.isEmpty(indicator.bound_json);
 }
 
 /**
@@ -128,7 +128,7 @@ module.exports = {
 					// Create a function for extracting and formatting target value ranges
 					// from the indicator definitions.
 					var getTargetRanges = _.flow(
-						_.property('indicator_bounds'), // Extract bounds definition
+						_.property('bound_json'), // Extract bounds definition
 						_.partial(_.reject, _, { bound_name: 'invalid' }), // Filter out the 'invalid' target ranges
 						_.partial(_.map, _, _openBounds), // Replace 'NULL' with +/- Infinity
 						_.partial(_.sortBy, _, _getBoundOrder) // Sort the bounds: bad, ok/okay, good
@@ -309,7 +309,7 @@ module.exports = {
 				};
 			};
 
-			var targets = _(indicators[match[2]].indicator_bounds)
+			var targets = _(indicators[match[2]].bound_json)
 				.reject(function (r) { return r.bound_name == 'invalid'; })
 				.sortBy(function (r) { return RANGE_ORDER[r.bound_name]; })
 				.map(function (r) {
