@@ -324,6 +324,20 @@ module.exports = {
 
 					self.microplans = _microplans(microplans);
 
+					React.render(
+						React.createElement(
+							Chart,
+							{
+								type    : 'PieChart',
+								data    : self.microplans.value,
+								options : {
+									domain : _.constant(self.microplans.domain)
+								}
+							}
+						),
+						self.$$.microplans
+					);
+
 					self.inaccessibility = _inaccessibilityBreakdown(
 						inaccessibility, indicators);
 

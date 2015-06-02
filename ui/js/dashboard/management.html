@@ -51,23 +51,15 @@
 						<tbody>
 							<tr>
 								<td>
-									<div v-component="chart-pie"
-										style="width:18px;height:18px"
-										data-width="18"
-										data-height="18"
-									   v-with="
-									   	datapoints  : microplans.value,
-									   	domain      : microplans.domain,
-									   	loading     : false
-									   "></div>
+									<div v-el="microplans" style="width:20pt"></div>
 								</td>
 
-								<td>{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
+								<td style="font-size:9pt">{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
 									microplans incorporate social data</td>
 							</tr>
 						</tbody>
 					</table>
-					<p v-if="!microplans.show">No microplan data available.</p>
+					<p v-if="!microplans.show" style="font-size:9pt">No microplan data available.</p>
 				</section>
 
 			</div>

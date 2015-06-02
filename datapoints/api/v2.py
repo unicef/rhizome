@@ -146,10 +146,6 @@ class v2Request(object):
 
         return None, data
 
-            # data = IndicatorAbstracted.objects.raw("SELECT * FROM\
-            #     fn_get_authorized_regions_by_user(%s,%s,%s)",
-            #     [self.request.user.id,list_of_object_ids,self.read_write])
-
 
     def group_document_metadata(self,list_of_object_ids):
         '''
@@ -324,8 +320,16 @@ class v2MetaRequest(v2Request):
             except KeyError:
                 pass
 
-
         self.data['fields'] = self.all_field_meta
+
+        ## url_patterns ##
+        self.url_patterns = {
+            'create': "datapoints/" + self.content_type + "s/create",
+            'update': "datapoints/" + self.content_type + "s/update/?<id>/"
+
+        }
+        self.data['fields'] = self.all_field_meta
+        self.data['url_patterns'] = self.url_patterns
 
         return super(v2MetaRequest, self).main()
 
