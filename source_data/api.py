@@ -248,8 +248,12 @@ class EtlTask(object):
 
         region_document_id = region_document.id
 
-        csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-        region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+        try:
+            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+        except IOError:
+            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
         ## Convert to Work Table ##
         list_of_dicts = region_df.transpose().to_dict()
