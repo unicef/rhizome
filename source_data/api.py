@@ -241,12 +241,10 @@ class EtlTask(object):
             docfile = '',
             doc_text = 'VCM_Sett_Coordinates_1_2.csv',
             defaults = {
-                'created_by_id':1,
+                'created_by_id':1, # john
                 'source_id':Source.objects.get(source_name = 'odk').id
             }
         )
-
-        print region_document_id
 
         csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
