@@ -1,9 +1,6 @@
 #!/bin/sh
 
-# dir="$(dirname "$0")"
-# source "$dir/odk_settings.sh"
-source "/Users/johndingee_seed/Desktop/odk_settings.sh"
-source "/home/ubuntu/ODK/odk_settings.sh"
+source "/Users/johndingee_seed/Desktop/odk_settings.sh" || source "/home/ubuntu/ODK/odk_settings.sh"
 
 # declare -a FORMS=("vcm_register" "VCM_Sett_Coordinates_1" "New_VCM_Summary")
 declare -a FORMS=("VCM_Sett_Coordinates_1.2")
