@@ -19,13 +19,13 @@
 		<div class="medium-2 columns">
 			<h3>Impact</h3>
 
-			<section v-el="polioCases">
+			<section id="polio-cases-ytd" v-el="polioCases">
 				<h4>Polio Cases</h4>
 			</section>
 
 			<section>
 				<h4>Under-Immunized Children</h4>
-				<div v-el="immunityGap"></div>
+				<div id="immunity-gap" v-el="immunityGap"></div>
 			</section>
 		</div>
 
@@ -38,7 +38,7 @@
 
 				<section>
 					<h4>Missed Children</h4>
-					<div v-el="missedChildren"></div>
+					<div id="missed-children" v-el="missedChildren"></div>
 				</section>
 
 				<section>
@@ -66,7 +66,7 @@
 
 			<div class="medium-2 columns">
 				<h4>Missed Children</h4>
-				<div v-el="missedChildrenMap"></div>
+				<div id="missed-children-map" v-el="missedChildrenMap"></div>
 			</div>
 
 			<div class="transit-points medium-1 column">
@@ -117,7 +117,7 @@
 
 				<h6>Missed Children</h6>
 
-				<svg class="legend reds" viewBox="0 0 177 84">
+				<svg id="missed-children-legend" class="legend reds" viewBox="0 0 177 84">
 					<g>
 						<rect width="11" height="11" class="q-6"></rect>
 						<text dx="14" dy="9">10+%</text>
@@ -171,7 +171,7 @@
 		<div class="medium-2 columns">
 			<h3>Access Challenged Districts</h3>
 			<h6>Number of Inaccessible Children</h6>
-			<div v-el="inaccessible"></div>
+			<div id="inaccessible-children" v-el="inaccessible"></div>
 
 			<div class="row">
 				<div class="medium-3 columns">
