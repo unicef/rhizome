@@ -7,19 +7,26 @@ source "$dir/odk_settings.sh"
 declare -a FORMS=("VCM_Sett_Coordinates_1.2")
 UUID=$(uuidgen)
 
+echo $POLIO_USERNAME
+echo 'TESSST'
+echo 'TESSST'
+echo 'TESSST'
+echo 'TESSST'
+
+
 wget -O/dev/null "${API_ROOT}?task=start_odk_jar&username=${POLIO_USERNAME}&api_key=${POLIO_KEY}&cron_guid=${UUID}"
 
 for FORM in "${FORMS[@]}";
  do
    echo $FORM
-    java -jar odk_briefcase.jar \
+    java -jar $JAR_FILE \
      --form_id $FORM \
      --export_filename $FORM \
-     --aggregate_url https://vcm-ng.appspot.com/ \
-     --storage_directory ~/ODK/odk_source \
-     --export_directory ~/ODK/odk_source/csv_exports \
-     --odk_username admin \
-     --odk_password P@ssword \
+     --aggregate_url $AGGREGATE_URL \
+     --storage_directory $STORAGE_DIRECTORY~/ODK/odk_source \
+     --export_directory $EXPORT_DIRECTORY \
+     --odk_username $ODK_USER admin \
+     --odk_password $ODK_PASS P@ssword \
      --exclude_media_export;
 done
 
