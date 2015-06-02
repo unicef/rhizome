@@ -10,7 +10,7 @@ var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
 var api       = require('data/api');
-var colors    = ['#525b5e', '#82888e', '#98a0a8', '#b6c0cc'];
+var colors    = require('colors');
 var colorUtil = require('util/color');
 var format    = require('util/format');
 var palette   = require('colors');
