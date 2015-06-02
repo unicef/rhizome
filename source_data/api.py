@@ -237,6 +237,17 @@ class EtlTask(object):
         From the VCM settlements CSV ingest new reigions
         '''
 
+        region_document_id, created = Document.objects.get_or_create(
+            docfile = '',
+            doc_text = 'VCM_Sett_Coordinates_1_2.csv',
+            defaults = {
+                'created_by_id':1,
+                'source_id':Source.objects.get(source_name = 'odk').id
+            }
+        )
+
+        print region_document_id
+
         csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
         region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
@@ -245,12 +256,10 @@ class EtlTask(object):
 
         for ix, d in list_of_dicts.iteritems():
             lower_dict = {}
-            cnt_created = 0
 
             for k,v in d.iteritems():
                 lower_dict[k.lower().replace('-','_')] = v
                 lower_dict['process_status_id'] = 1
-                cnt_create =+ 1
             try:
                 VCMSettlement.objects.create(**lower_dict)
             except IntegrityError as err:
@@ -259,9 +268,8 @@ class EtlTask(object):
 
         ## Create Source Regions ##
 
+
         ## Try to Auto Map ##
-
-
 
 
 
