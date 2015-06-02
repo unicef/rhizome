@@ -1,4 +1,5 @@
-declare -a FORMS=("vcm_register" "VCM_Sett_Coordinates_1" "New_VCM_Summary")
+# declare -a FORMS=("vcm_register" "VCM_Sett_Coordinates_1" "New_VCM_Summary")
+declare -a FORMS=("VCM_Sett_Coordinates_1.2")
 POLIO_USERNAME=evan
 POLIO_KEY=67bd6ab9a494e744a213de2641def88163652dad
 UUID=$(uuidgen)
