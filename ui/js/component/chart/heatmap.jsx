@@ -13,7 +13,7 @@ module.exports = React.createClass({
 		return {
       cellSize      : 16,
 			getId         : function (d, i) { return d.id || i;},
-			getHeaderText : _.identity,
+			headerText : _.identity,
 			getSeriesName : function (s) { return s.name; },
       getSortValue  : function (s, sortCol) {
         var val = sortCol == null ?
@@ -121,11 +121,11 @@ module.exports = React.createClass({
 		};
 
 		var xScale = d3.scale.ordinal()
-			.domain(_.map(props.headers, props.getHeaderText))
+			.domain(_.map(props.headers, props.headerText))
 			.rangeBands([0, width], .1);
 
 		var x = function (d, i) {
-			var xpos = xScale(props.getHeaderText(props.headers[i]));
+			var xpos = xScale(props.headerText(props.headers[i]));
 			return xpos;
 		};
 
