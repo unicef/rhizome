@@ -47,7 +47,7 @@ _.extend(LineChart.prototype, {
 	  if (!_.isFunction(color)) {
 	  	var colorScale = d3.scale.ordinal()
 	  		.domain(_.map(series, options.seriesName))
-	  		.range(colors);
+	  		.range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc']);
 
 	  	color = _.flow(options.seriesName, colorScale);
 	  }
