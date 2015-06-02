@@ -10,28 +10,7 @@ var PolioCasesYtD      = require('./PolioCasesYtD.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
 var api       = require('data/api');
-var colors    = [
-	'#ff7f0e',
-	'#2ca02c',
-	'#9467bd',
-	'#e377c2',
-	'#7f7f7f',
-	'#bcbd22',
-	'#17becf',
-	'#8c564b',
-	'#1f77b4',
-	'#d62728',
-	'#ffbb78',
-	'#98df8a',
-	'#c5b0d5',
-	'#f7b6d2',
-	'#c7c7c7',
-	'#dbdb8d',
-	'#9edae5',
-	'#c49c94',
-	'#aec7e8',
-	'#ff9896'
-];
+var colors    = ['#525b5e', '#82888e', '#98a0a8', '#b6c0cc'];
 var colorUtil = require('util/color');
 var format    = require('util/format');
 var palette   = require('colors');
