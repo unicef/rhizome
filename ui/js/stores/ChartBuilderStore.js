@@ -43,7 +43,7 @@ function seriesObject(d, ind, collection, indicators) {
 	};
 }
 var canDisplayChart = function(){
-	if(this.indicatorsSelected.length > 0)
+	if(this.indicatorsSelected.length > 0 && this.campaignSelected.id)
 	{
 	  return true;
 	}
@@ -66,8 +66,10 @@ module.exports = Reflux.createStore({
 		regionRadioValue: "selected",
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"regions",title:"Regions"}],
 		groupByRadioValue: "indicator",
-		chartTypes:[{name:"line"},{name:"bar"},{name:"graph"},{name:"pie"}],
-		selectedChart:"line",
+		timeRadios:[{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}],
+		timeRadioValue:"allTime",
+		chartTypes:[{name:"LineChart"},{name:"bar"},{name:"graph"},{name:"pie"}],
+		selectedChart:"LineChart",
 		chartData:[],
 	    chartOptions : {
 				aspect  : 2.664831804,
@@ -132,6 +134,10 @@ module.exports = Reflux.createStore({
 		         	.value();
 		         self.trigger(self.data);
 		     });
+		 if(this.data.canDisplayChart())
+		 {
+		 	this.getChartData();
+		 }
 	},
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
@@ -166,13 +172,15 @@ module.exports = Reflux.createStore({
 	    console.log(this._campaignIndex[value]);
 		this.data.campaignSelected = this._campaignIndex[value];
 		this.trigger(this.data);
+		this.getChartData();
 	},
 	onAddRegionSelection: function(value){
 		this.data.regionSelected = {id:value, title:this._regionIndex[value].name};
 		this.trigger(this.data);
+		this.getChartData();
 	},
 	getChartData: function(){
-		var self = this;
+	    var self = this;
 		var indicators = _.indexBy(this.data.indicatorsSelected, 'id');//;
 		var start = moment(this.data.campaignSelected.end_date);
 		var meltObjects  = _.flow(_.property('objects'), melt);

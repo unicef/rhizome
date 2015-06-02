@@ -19,7 +19,7 @@ module.exports = React.createClass({
       ChartBuilderActions.updateDescription(e.target.value);
     },
 	render: function(){
-	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
+	   var chart = <Chart type={this.state.store.selectedChart} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 	   
 	   return (<form className="inline">  
 	           <div className="visualization-builder-container"> 
@@ -43,6 +43,9 @@ module.exports = React.createClass({
 	              	<div className="chart-container">
 	              	<div className="titleDiv">Group By</div>
 	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+	              	<div className="right">
+	              	<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+	              	</div>
 	              	<Menu items={this.state.store.campaignList}
 	              		      sendValue={ChartBuilderActions.addCampaignSelection}
 	              		      searchable={true}>
@@ -53,7 +56,7 @@ module.exports = React.createClass({
 	              		      searchable={true}>
 	              				<span className="menu-span"> {this.state.store.regionSelected.title ? this.state.store.regionSelected.title:"select region"} </span>
 	              		</Menu>
-	              	{this.state.store.chartData.length?chart:null}
+	              	{this.state.store.canDisplayChart()?chart:null}
 				    </div>
 	              </div>
 	            </div>
