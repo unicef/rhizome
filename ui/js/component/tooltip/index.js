@@ -2,6 +2,7 @@
 'use strict';
 
 var _   = require('lodash');
+var Vue = require('vue');
 
 var dom = require('../../util/dom');
 
@@ -83,6 +84,23 @@ module.exports = {
 				this.bottom = (doc.clientHeight - offset.top) + 'px';
 				this.left   = offset.left + 'px';
 				break;
+			}
+
+			Vue.nextTick(this.reorient);
+		},
+
+		reorient : function () {
+			var el         = this.$el;
+			var offset     = dom.viewportOffset(el);
+			var reposition = false;
+
+			if (this.orientation !== 'bottom' && offset.top < 0) {
+			  this.orientation = 'bottom';
+			  reposition = true;
+			}
+
+			if (reposition) {
+				this.reposition();
 			}
 		},
 

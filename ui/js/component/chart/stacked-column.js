@@ -8,8 +8,28 @@ var moment = require('moment');
 var column  = require('./renderer/column');
 var data    = require('util/data');
 var label   = require('./renderer/label');
-var palette = require('colors');
-
+var palette = [
+	'#ff7f0e',
+	'#2ca02c',
+	'#9467bd',
+	'#e377c2',
+	'#7f7f7f',
+	'#bcbd22',
+	'#17becf',
+	'#8c564b',
+	'#1f77b4',
+	'#d62728',
+	'#ffbb78',
+	'#98df8a',
+	'#c5b0d5',
+	'#f7b6d2',
+	'#c7c7c7',
+	'#dbdb8d',
+	'#9edae5',
+	'#c49c94',
+	'#aec7e8',
+	'#ff9896'
+];
 module.exports = {
 	replace  : true,
 	template : require('./column.html'),
