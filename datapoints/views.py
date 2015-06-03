@@ -455,13 +455,23 @@ def api_indicator(request):
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
 
+class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = Group
+    template_name = 'group_create.html'
+    # form_class = GroupCreateForm
+
+class GrouEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = Group
+    template_name = 'group_create.html'
+
 
 class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = User
     template_name = 'user_create.html'
     form_class = UserCreateForm
-    # permission_required = 'datapoints.add_campaign'
 
     def form_valid(self, form):
 
