@@ -467,7 +467,7 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
         new_user = form.save()
 
-        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+        return HttpResponseRedirect(reverse('datapoints:user_update', \
             kwargs={'pk':new_user.id}))
 
 
@@ -481,7 +481,7 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
 
         requested_user_id = self.get_object().id
 
-        return reverse_lazy('datapoints:user_edit',kwargs={'pk':
+        return reverse_lazy('datapoints:user_update',kwargs={'pk':
             requested_user_id})
 
     def get_context_data(self, **kwargs):

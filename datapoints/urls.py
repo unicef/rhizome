@@ -88,11 +88,11 @@ urlpatterns = [
 
     ## CREATE ##
     url(r'^user/create/$', views.UserCreateView.as_view(),
-        name='create_userr'),
+        name='create_user'),
 
     ## UPDATE ##
-    url(r'^user/edit/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
-        name='user_edit'),
+    url(r'^user/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
+        name='user_update'),
 
     ######################################
     ## CACHING VALIDATION AND PERMISSIONS ##
