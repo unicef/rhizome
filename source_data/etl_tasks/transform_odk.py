@@ -1,10 +1,10 @@
-import pandas as pd
 import json
 import traceback
 from pprint import pprint
 
 from django.db import IntegrityError
 from django.contrib.auth.models import User
+from pandas import DataFrame
 
 from datapoints.models import Region, Office, Source
 from source_data.models import *
@@ -41,21 +41,22 @@ class ODKDataPointTransform(object):
         return doc.id
 
     def get_new_data_from_input_df(self,input_df):
+        '''
+        Return a dataframe that only has the rows that we need to ingest.  That
+        is rows that have not been processed before.  We can tell which
+        rows these are because each ODK submission has a 'KEY' send every time
+        data is sent from the phone.
+        '''
 
-        # indicator_df = DataFrame(list(DataPointComputed.objects.filter(
-        #     indicator_id = i_id).values()))
+        key_list = list(SourceDataPoint.objects.filter(document_id = \
+            self.document_id).values_list('source_guid',flat=True))
 
-        keys_df = pd.DataFrame(list(SourceDataPoint.objects.filter(document_id = \
-            self.document_id).values('source_guid')))
-            # .values_list('source_guid',flat=True)),\
-
-        print keys_df[:20]
-
-        filtered_df = input_df[:15]
+        to_process_df = ~input_df.isin(key_list)
+        filtered_df = to_process_df[:10]
 
         return filtered_df
 
-    def vcm_summary_to_source_datapoints(self):
+    def odk_form_data_to_source_datapoints(self):
 
         self.to_process_df.columns = map(str.lower, self.to_process_df)
         column_list = self.to_process_df.columns.tolist()
