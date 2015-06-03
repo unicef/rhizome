@@ -31,6 +31,7 @@ class VcmSummaryTransform(object):
 
     def vcm_summary_to_source_datapoints(self):
 
+        self.to_process_df = self.to_process_df[:100]
         self.to_process_df.columns = map(str.lower, self.to_process_df)
         column_list = self.to_process_df.columns.tolist()
 
@@ -40,7 +41,7 @@ class VcmSummaryTransform(object):
 
             self.process_row(row_dict,row_number)
 
-        return None, 'processed : ' + str(len(to_process)) + ' records'
+        return None, 'processed : ' + str(len(self.to_process_df)) + ' records'
 
 
     def process_row(self,row_dict,row_number):
