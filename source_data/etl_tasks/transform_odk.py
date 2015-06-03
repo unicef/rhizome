@@ -51,11 +51,18 @@ class ODKDataPointTransform(object):
         key_list = list(SourceDataPoint.objects.filter(document_id = \
             self.document_id).values_list('source_guid',flat=True))
 
-        # to_process_df = ~input_df.isin(key_list)
-        to_process_df = input_df
-        filtered_df = to_process_df[:10]
+        distinct_key_list = [str(k) for k in set(key_list)]
 
-        return filtered_df
+        input_df = input_df[:4]
+        to_process_ix_df = input_df.isin(distinct_key_list)
+
+        merged_df = input_df.merge(to_process_ix_df)
+
+        print merged_df
+        # to_process_df = input_df
+        # filtered_df = to_process_df[:10]
+
+        return input_df[:1]
 
     def odk_form_data_to_source_datapoints(self):
 
@@ -103,7 +110,7 @@ class ODKDataPointTransform(object):
                 })
                 sdps.append(sdp)
             except IntegrityError as err:
-                print err
+                pass
 
         return sdps
 
