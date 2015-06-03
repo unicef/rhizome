@@ -23,7 +23,7 @@ class ODKDataPointTransform(object):
         self.form_name = form_name
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
-        self.user_id = Source.objects.get(source_name ='odk').id
+        self.user_id = User.objects.get(username ='odk').id
         self.source_datapoints = []
         self.document_id = self.get_document_id()
         self.to_process_df = self.get_new_data_from_input_df(input_df)
@@ -78,6 +78,7 @@ class ODKDataPointTransform(object):
             all_sdps.extend(sdps)
 
         #### Source DP --> Master DP ####
+
         mr = MasterRefresh(self.user_id,self.document_id)
         dps = mr.source_dps_to_dps()
 

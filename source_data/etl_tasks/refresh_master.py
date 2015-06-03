@@ -31,8 +31,11 @@ class MasterRefresh(object):
 
         ## get source data for which all metadata is mapped
         ## and the user is permitted to write ##
+
+        print self.user_id
+        print self.document_id
         sdps_to_sync = SourceDataPoint.objects.raw('''
-            SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
+            SELECT * FROM fn_get_source_dbs_to_sync(6, 1060, null);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
         dps = []
@@ -59,6 +62,7 @@ class MasterRefresh(object):
                 dp.save()
                 dps.append(dps)
 
+
         return dps
 
 
@@ -75,8 +79,6 @@ class MasterRefresh(object):
         except ValueError:
             return None
 
-
-        print cleaned
         return
 
     def delete_un_mapped(self):
