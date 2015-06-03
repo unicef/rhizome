@@ -2,13 +2,15 @@
 
 var React  = require('react');
 var Reflux = require('reflux/src');
-var Menu = require('component/menu/menu.jsx');
-var List = require('component/list/List.jsx');
-var RadioGroup = require('component/radio-group/RadioGroup.jsx');
-var ChartSelect = require('./ChartSelect.jsx');
-var ChartBuilderStore = require("stores/ChartBuilderStore");
+
+var ButtonMenu          = require('component/ButtonMenu.jsx');
+var Chart               = require('component/Chart.jsx');
 var ChartBuilderActions = require('actions/ChartBuilderActions');
-var Chart = require('component/Chart.jsx');
+var ChartBuilderStore   = require("stores/ChartBuilderStore");
+var ChartSelect         = require('./ChartSelect.jsx');
+var List                = require('component/list/List.jsx');
+var MenuItem            = require('component/MenuItem.jsx');
+var RadioGroup          = require('component/radio-group/RadioGroup.jsx');
 
 module.exports = React.createClass({
     mixins: [Reflux.connect(ChartBuilderStore,"store")],
@@ -20,39 +22,57 @@ module.exports = React.createClass({
     },
 	render: function(){
 	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
-	   
-	   return (<form className="inline">  
-	           <div className="visualization-builder-container"> 
+
+	   var campaignSelection = 'Select Campaign';
+     var campaigns = MenuItem.fromArray(this.state.store.campaignList,
+      ChartBuilderActions.addCampaignSelection);
+
+     var indicators = MenuItem.fromArray(this.state.store.indicatorList,
+      ChartBuilderActions.addIndicatorSelection);
+
+     var regionSelection = 'Select Region';
+     var regions = MenuItem.fromArray(this.state.store.regionList,
+      ChartBuilderActions.addRegionSelection);
+
+	   return (<form className="inline">
+	           <div className="visualization-builder-container">
 	              <div className="left-page">
 	                   <div className="titleDiv">Title</div>
 	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
 	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
 	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
 	                   <div className="titleDiv">Indicators</div>
-	                   <Menu items={this.state.store.indicatorList}
-		                     sendValue={ChartBuilderActions.addIndicatorSelection}
-		                     searchable={true}>
-		               		<span className="ChartBuilderInidcatorButton">Select Indicators</span>
-		               </Menu>
+
+                    <ButtonMenu text='Select Indicators'
+                      searchable={true}>
+                      {indicators}
+                    </ButtonMenu>
+
 		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
 		               <div className="titleDiv">Show</div>
                        <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
-	              </div> 
+	              </div>
+
 	              <div className="right-page">
 	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
 	              	<div className="chart-container">
 	              	<div className="titleDiv">Group By</div>
 	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-	              	<Menu items={this.state.store.campaignList}
-	              		      sendValue={ChartBuilderActions.addCampaignSelection}
-	              		      searchable={true}>
-	              				<span className="menu-span"> {this.state.store.campaignSelected.slug?this.state.store.campaignSelected.slug:"select campaign"} </span>
-	              		</Menu>
-	              	<Menu items={this.state.store.regionList}
-	              		      sendValue={ChartBuilderActions.addRegionSelection}
-	              		      searchable={true}>
-	              				<span className="menu-span"> {this.state.store.regionSelected.title ? this.state.store.regionSelected.title:"select region"} </span>
-	              		</Menu>
+
+	              	<ButtonMenu
+                    text={campaignSelection}
+                    icon='fa-calendar'
+          		      searchable={true}>
+	              	  {campaigns}
+              		</ButtonMenu>
+
+	              	<ButtonMenu
+                    icon='fa-globe'
+                    text={regionSelection}
+          		      searchable={true}>
+                    {regions}
+              		</ButtonMenu>
+
 	              	{this.state.store.chartData.length?chart:null}
 				    </div>
 	              </div>
