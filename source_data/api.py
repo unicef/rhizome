@@ -198,26 +198,6 @@ class EtlTask(object):
         return None, data
 
 
-    def odk_refresh_vcm_summary_work_table(self):
-        '''
-        '''
-
-        form_id = 'New_VCM_Summary'
-
-        t = WorkTableTask(self.task_guid,form_id)
-        err, data = t.main()
-
-        return err, data
-
-    def odk_vcm_summary_to_source_datapoints(self):
-        '''
-        '''
-
-        v = VcmSummaryTransform(self.task_guid)
-        err, data = v.vcm_summary_to_source_datapoints()
-
-        return err, data
-
     def odk_refresh_master(self):
         '''
         '''
@@ -263,7 +243,6 @@ class EtlTask(object):
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
             region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
-        ## Convert to Work Table ##
         list_of_dicts = region_df.transpose().to_dict()
 
         for ix, d in list_of_dicts.iteritems():
@@ -301,5 +280,4 @@ class EtlTask(object):
 
         results = transform_object.vcm_summary_to_source_datapoints()
 
-        print results
         return None, results

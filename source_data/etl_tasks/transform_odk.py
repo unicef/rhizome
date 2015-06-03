@@ -17,6 +17,7 @@ except ImportError:
 
 
 class ODKDataPointTransform(object):
+
     def __init__(self,request_guid,to_process_df,form_name):
 
         self.form_name = form_name
@@ -41,25 +42,25 @@ class ODKDataPointTransform(object):
 
     def vcm_summary_to_source_datapoints(self):
 
-        self.to_process_df = self.to_process_df[:100]
+        self.to_process_df = self.to_process_df[:10]
         self.to_process_df.columns = map(str.lower, self.to_process_df)
         column_list = self.to_process_df.columns.tolist()
 
+        all_sdps = []
         for row_number, row in enumerate(self.to_process_df.values):
 
             row_dict = dict(zip(column_list,row))
+            sdps = self.process_row(row_dict,row_number)
 
-            self.process_row(row_dict,row_number)
+        response_string = 'created %s new soure_datapoints by processing: %s \
+            nows for document_id: %s' % (len(sdps),len(self.to_process_df),\
+            self.document_id)
 
-        return None, 'processed : ' + str(len(self.to_process_df)) + ' records'
-
+        return response_string
 
     def process_row(self,row_dict,row_number):
 
         row_batch = []
-
-        print '======\n' * 2
-        pprint(row_dict)
 
         region_code = row_dict['settlementcode']
         campaign_string = row_dict['date_implement']
@@ -67,36 +68,35 @@ class ODKDataPointTransform(object):
 
         for cell_no, (indicator_string, cell_value) in enumerate(row_dict.iteritems()):
 
-            if cell_value != "" and cell_value != "nan":
-                pass
-
-            else:
-
-                cell_guid =  'doc_id: ' + str(self.document_id) + ' row_no: ' + \
-                    str(row_number) + ' cell_no: ' + str(cell_no) \
-                    + ' indicator_string: ' + str(indicator_string)
+            cell_guid =  'doc_id: ' + str(self.document_id) + ' row_no: ' + \
+                str(row_number) + ' cell_no: ' + str(cell_no) \
+                + ' indicator_string: ' + str(indicator_string)
 
 
-                cleaned_cell_value = self.clean_cell_value(cell_value)
+            cleaned_cell_value = self.clean_cell_value(cell_value)
 
-                sdp = SourceDataPoint(**{
-                    'region_code' : region_code,
-                    'campaign_string' : campaign_string,
-                    'indicator_string' : indicator_string,
-                    'cell_value' : cleaned_cell_value,
-                    'row_number' : row_number,
-                    'source_id': self.source_id,
-                    'document_id' : self.document_id,
-                    'source_guid' : source_guid,
-                    'status_id' : self.process_status_id,
-                    'guid': cell_guid
-                })
-                row_batch.append(sdp)
+            sdp = SourceDataPoint(**{
+                'region_code' : region_code,
+                'campaign_string' : campaign_string,
+                'indicator_string' : indicator_string,
+                'cell_value' : cleaned_cell_value,
+                'row_number' : row_number,
+                'source_id': self.source_id,
+                'document_id' : self.document_id,
+                'source_guid' : source_guid,
+                'status_id' : self.process_status_id,
+                'guid': cell_guid
+            })
+            row_batch.append(sdp)
 
-            try:
-                SourceDataPoint.objects.bulk_create(row_batch)
-            except IntegrityError:
-                pass
+        print len(row_batch)
+        try:
+            sdps = SourceDataPoint.objects.bulk_create(row_batch)
+        except IntegrityError:
+            sdps = []
+
+        return sdps
+
 
 
     def clean_cell_value(self,cell_value):
