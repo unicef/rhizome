@@ -32,13 +32,12 @@ class MasterRefresh(object):
         ## get source data for which all metadata is mapped
         ## and the user is permitted to write ##
 
-        print self.user_id
-        print self.document_id
+        synced_dps = []
+
         sdps_to_sync = SourceDataPoint.objects.raw('''
-            SELECT * FROM fn_get_source_dbs_to_sync(6, 1060, null);
+            SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
-        dps = []
         for row in sdps_to_sync:
 
             cleaned_value = self.clean_cell_value(row.cell_value)
@@ -60,11 +59,13 @@ class MasterRefresh(object):
                 dp.value = cleaned_value
                 dp.changed_by_id = self.user_id
                 dp.save()
-                dps.append(dps)
+
+            elif created == True:
+
+                synced_dps.append(dp)
 
 
-        return dps
-
+        return synced_dps
 
 
     def clean_cell_value(self,cell_value):

@@ -3,7 +3,7 @@ CREATE FUNCTION fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_in
 RETURNS TABLE
 (
 	 id INT
-	,vell_value VARCHAR(255)
+	,cell_value VARCHAR(255)
 	,region_id INT
 	,campaign_id INT
 	,indicator_id INT
