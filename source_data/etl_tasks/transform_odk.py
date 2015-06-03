@@ -8,7 +8,7 @@ from pandas import DataFrame
 
 from datapoints.models import Region, Office, Source
 from source_data.models import *
-from source_data.etl_tasks.shared_utils import map_regions
+from source_data.etl_tasks.refresh_master import MasterRefresh
 
 try:
     import source_data.prod_odk_settings as odk_settings
@@ -23,6 +23,7 @@ class ODKDataPointTransform(object):
         self.form_name = form_name
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
+        self.user_id = Source.objects.get(source_name ='odk').id
         self.source_datapoints = []
         self.document_id = self.get_document_id()
         self.to_process_df = self.get_new_data_from_input_df(input_df)
@@ -58,11 +59,17 @@ class ODKDataPointTransform(object):
 
         return batch_df
 
-    def odk_form_data_to_source_datapoints(self):
+    def odk_form_data_to_datapoints(self):
+        '''
+        First transalate the csv into source datapoitns ( very similair to the
+        csv upload process), and once the sdps are created, call
+        "refresh_master" and pass the list of sdps.
+        '''
 
         self.to_process_df.columns = map(str.lower, self.to_process_df)
         column_list = self.to_process_df.columns.tolist()
 
+        #### DataFrame --> Source DP ####
         all_sdps = []
         for row_number, row in enumerate(self.to_process_df.values):
 
@@ -70,9 +77,13 @@ class ODKDataPointTransform(object):
             sdps = self.process_row(row_dict,row_number)
             all_sdps.extend(sdps)
 
+        #### Source DP --> Master DP ####
+        mr = MasterRefresh(self.user_id,self.document_id)
+        dps = mr.source_dps_to_dps()
+
         response_string = 'created %s new soure_datapoints by processing: %s \
-            nows for document_id: %s' % (len(all_sdps),len(self.to_process_df),\
-            self.document_id)
+            nows for document_id: %s, yielding in: %s master datapoints' % \
+            (len(all_sdps),len(self.to_process_df),self.document_id,len(dps))
 
         return response_string
 
@@ -81,7 +92,7 @@ class ODKDataPointTransform(object):
         row_batch = []
 
         region_code = row_dict['settlementcode']
-        campaign_string = row_dict['date_implement']
+        campaign_string ='Nigeria ' + str(row_dict['date_implement'])
         source_guid = row_dict['key']
         sdps = []
 

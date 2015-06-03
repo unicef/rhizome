@@ -35,7 +35,7 @@ class MasterRefresh(object):
             SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
-
+        dps = []
         for row in sdps_to_sync:
 
             cleaned_value = self.clean_cell_value(row.cell_value)
@@ -57,6 +57,10 @@ class MasterRefresh(object):
                 dp.value = cleaned_value
                 dp.changed_by_id = self.user_id
                 dp.save()
+                dps.append(dps)
+
+        return dps
+
 
 
     def clean_cell_value(self,cell_value):

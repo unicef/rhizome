@@ -278,6 +278,6 @@ class EtlTask(object):
         transform_object = ODKDataPointTransform('someguid',odk_data_df,\
             self.form_name)
 
-        results = transform_object.odk_form_data_to_source_datapoints()
+        results = transform_object.odk_form_data_to_datapoints()
 
         return None, results
