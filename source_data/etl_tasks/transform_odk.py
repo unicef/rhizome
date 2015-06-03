@@ -55,7 +55,7 @@ class ODKDataPointTransform(object):
         distinct_key_list = [str(k) for k in set(key_list)]
         filtered_df = input_df[~input_df.KEY.isin(distinct_key_list)]
 
-        batch_df = filtered_df[:3]
+        batch_df = filtered_df[:25]
 
         return batch_df
 
