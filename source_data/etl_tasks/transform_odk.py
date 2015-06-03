@@ -51,7 +51,8 @@ class ODKDataPointTransform(object):
         key_list = list(SourceDataPoint.objects.filter(document_id = \
             self.document_id).values_list('source_guid',flat=True))
 
-        to_process_df = ~input_df.isin(key_list)
+        # to_process_df = ~input_df.isin(key_list)
+        to_process_df = input_df
         filtered_df = to_process_df[:10]
 
         return filtered_df
@@ -80,37 +81,31 @@ class ODKDataPointTransform(object):
         region_code = row_dict['settlementcode']
         campaign_string = row_dict['date_implement']
         source_guid = row_dict['key']
+        sdps = []
 
-        for cell_no, (indicator_string, cell_value) in enumerate(row_dict.iteritems()):
+        for column_name, cell_value in row_dict.iteritems():
 
-            cell_guid =  'doc_id: ' + str(self.document_id) + ' row_no: ' + \
-                str(row_number) + ' cell_no: ' + str(cell_no) \
-                + ' indicator_string: ' + str(indicator_string)
-
+            cell_guid = source_guid + '-' + column_name
             cleaned_cell_value = self.clean_cell_value(cell_value)
 
-            sdp = SourceDataPoint(**{
-                'region_code' : region_code,
-                'campaign_string' : campaign_string,
-                'indicator_string' : indicator_string,
-                'cell_value' : cleaned_cell_value,
-                'row_number' : row_number,
-                'source_id': self.source_id,
-                'document_id' : self.document_id,
-                'source_guid' : source_guid,
-                'status_id' : self.process_status_id,
-                'guid': cell_guid
-            })
-            row_batch.append(sdp)
-
-        try:
-            sdps = SourceDataPoint.objects.bulk_create(row_batch)
-        except IntegrityError:
-            sdps = []
+            try:
+                sdp = SourceDataPoint.objects.create(**{
+                    'region_code' : region_code,
+                    'campaign_string' : campaign_string,
+                    'indicator_string' : column_name,
+                    'cell_value' : cleaned_cell_value,
+                    'row_number' : row_number,
+                    'source_id': self.source_id,
+                    'document_id' : self.document_id,
+                    'source_guid' : source_guid,
+                    'status_id' : self.process_status_id,
+                    'guid': cell_guid
+                })
+                sdps.append(sdp)
+            except IntegrityError as err:
+                print err
 
         return sdps
-
-
 
     def clean_cell_value(self,cell_value):
 
@@ -122,34 +117,3 @@ class ODKDataPointTransform(object):
             cleaned = cell_value
 
         return cleaned
-
-
-    ###########################
-    ##### VCM SETTLEMENT ######
-    ###########################
-
-    def map_vcm_settlement_regions(self):
-
-        to_process = VCMSettlement.objects.filter(process_status__status_text='TO_PROCESS')
-        for row in to_process:
-
-            try:
-                created = Region.objects.create(
-                  full_name = row.settlementname ,\
-                  settlement_code = row.settlementcode ,\
-                  office = Office.objects.get(name='Nigeria') ,\
-                  latitude = row.settlementgps_latitude ,\
-                  longitude = row.settlementgps_longitude ,\
-                  source = Source.objects.get(source_name='odk') ,\
-                  source_guid = row.key
-                )
-                row.process_status=ProcessStatus.objects.get(status_text='SUCCESS_INSERT')
-                row.save()
-
-            except IntegrityError:
-                # THIS SHOULD BE AN UPDATE SO THAT NEWER REGIONS ARE INSERTED #
-                # AND THE OLD ONES ARE BROUGTH UP FOR REVIEW #
-
-                # THIS SHOULD ALSO BE ABSTRACTED TO WORK FOR ALL' MASTER' OBJECTS
-                row.process_status=ProcessStatus.objects.get(status_text='ALREADY_EXISTS')
-                row.save()
