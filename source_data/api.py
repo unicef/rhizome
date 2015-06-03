@@ -12,7 +12,7 @@ from django.conf import settings
 from pandas import read_csv
 
 from source_data.models import *
-from source_data.etl_tasks.transform_odk import VcmSummaryTransform
+from source_data.etl_tasks.transform_odk import ODKDataPointTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
 
@@ -296,7 +296,9 @@ class EtlTask(object):
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
             odk_data_df = read_csv(csv_root + self.form_name + '.csv')
 
-        transform_object = VcmSummaryTransform('someguid',1004, odk_data_df)
+        transform_object = ODKDataPointTransform('someguid',odk_data_df,\
+            self.form_name)
+
         results = transform_object.vcm_summary_to_source_datapoints()
 
         print results

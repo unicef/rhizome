@@ -16,18 +16,28 @@ except ImportError:
     import source_data.dev_odk_settings as odk_settings
 
 
-class VcmSummaryTransform(object):
-    def __init__(self,request_guid,document_id, to_process_df):
+class ODKDataPointTransform(object):
+    def __init__(self,request_guid,to_process_df,form_name):
 
+        self.form_name = form_name
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
         self.source_datapoints = []
-        self.document_id = document_id
+        self.document_id = self.get_document_id()
         self.to_process_df = to_process_df
 
         self.process_status_id = ProcessStatus.objects\
             .get(status_text='SUCCESS_INSERT').id
 
+    def get_document_id(self):
+
+        doc, created = Document.objects.get_or_create(
+            docfile = odk_settings.EXPORT_DIRECTORY + self.form_name,
+            created_by_id = User.objects.get(username='odk').id,
+            source_id = Source.objects.get(source_name='odk').id,
+        )
+
+        return doc.id
 
     def vcm_summary_to_source_datapoints(self):
 
