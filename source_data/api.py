@@ -47,12 +47,19 @@ class EtlResource(ModelResource):
 
         '''
 
+        # required #
         task_string = request.GET['task']
         cron_guid = 'placeholder_guid'#request.GET['cron_guid']
 
+        # optional #
+        try:
+            form_name = request.GET['form_name']
+        except KeyError:
+            form_name = None
+
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
-        ## stage the job ##
+        # stage the job #
         created = EtlJob.objects.create(
             date_attempted = tic,
             task_name = task_string,
@@ -60,8 +67,8 @@ class EtlResource(ModelResource):
             status = 'PENDING'
         )
 
-        ## MAKE THIS A CALL BACK FUNCTION ##
-        et = EtlTask(task_string,created.guid)
+        # MAKE THIS A CALL BACK FUNCTION #
+        et = EtlTask(task_string,created.guid,form_name)
 
         print et.err
 
@@ -89,9 +96,10 @@ class EtlTask(object):
     '''
     '''
 
-    def __init__(self,task_string,task_guid):
+    def __init__(self,task_string,task_guid,form_name=None):
 
         self.task_guid = task_guid
+        self.form_name = form_name
         self.user_id = User.objects.get(username='odk').id
 
         self.function_mappings = {
@@ -281,14 +289,14 @@ class EtlTask(object):
 
     def odk_transform(self):
 
-        form_name = 'vcm_register'
+        # form_name = 'vcm_register'
 
         try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + form_name + '.csv')
+            region_df = read_csv(csv_root + self.form_name + '.csv')
         except IOError:
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + form_name + '.csv')
+            region_df = read_csv(csv_root + self.form_name + '.csv')
 
         data = ['a','b','c']
 
