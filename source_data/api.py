@@ -248,7 +248,7 @@ class EtlTask(object):
 
         region_document_id = region_document.id
 
-        try:
+        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
             region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
         except IOError:
