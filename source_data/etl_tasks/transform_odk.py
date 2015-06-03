@@ -18,14 +18,14 @@ except ImportError:
 
 class ODKDataPointTransform(object):
 
-    def __init__(self,request_guid,to_process_df,form_name):
+    def __init__(self,request_guid,input_df,form_name):
 
         self.form_name = form_name
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
         self.source_datapoints = []
         self.document_id = self.get_document_id()
-        self.to_process_df = to_process_df
+        self.to_process_df = self.get_new_data_from_input_df(input_df)
 
         self.process_status_id = ProcessStatus.objects\
             .get(status_text='SUCCESS_INSERT').id
@@ -40,9 +40,23 @@ class ODKDataPointTransform(object):
 
         return doc.id
 
+    def get_new_data_from_input_df(self,input_df):
+
+        # indicator_df = DataFrame(list(DataPointComputed.objects.filter(
+        #     indicator_id = i_id).values()))
+
+        keys_df = pd.DataFrame(list(SourceDataPoint.objects.filter(document_id = \
+            self.document_id).values('source_guid')))
+            # .values_list('source_guid',flat=True)),\
+
+        print keys_df[:20]
+
+        filtered_df = input_df[:15]
+
+        return filtered_df
+
     def vcm_summary_to_source_datapoints(self):
 
-        self.to_process_df = self.to_process_df[:10]
         self.to_process_df.columns = map(str.lower, self.to_process_df)
         column_list = self.to_process_df.columns.tolist()
 
@@ -72,7 +86,6 @@ class ODKDataPointTransform(object):
                 str(row_number) + ' cell_no: ' + str(cell_no) \
                 + ' indicator_string: ' + str(indicator_string)
 
-
             cleaned_cell_value = self.clean_cell_value(cell_value)
 
             sdp = SourceDataPoint(**{
@@ -89,7 +102,6 @@ class ODKDataPointTransform(object):
             })
             row_batch.append(sdp)
 
-        print len(row_batch)
         try:
             sdps = SourceDataPoint.objects.bulk_create(row_batch)
         except IntegrityError:
