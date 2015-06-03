@@ -181,9 +181,7 @@ def refresh_master(request):
 
 def odk_review(request):
 
-    task_data = {'hello':'goodbye'}
-
-    odk_job_data = EtlJob.objects.filter(task_name__contains='odk')[:50]
+    odk_job_data = ODKForm.objects.all()
 
     return render_to_response('odk_review.html'
         ,{'odk_job_data': odk_job_data})
