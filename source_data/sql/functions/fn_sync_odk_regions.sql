@@ -9,6 +9,7 @@ RETURNS TABLE
 $func$
 BEGIN
 
+
 DROP TABLE IF EXISTS _odk_settlements;
 CREATE TABLE _odk_settlements AS
 SELECT ovs.*
@@ -56,24 +57,28 @@ WHERE z.settlementcode = ods.settlementcode;
 -- DELETE ACTUAL DUPES.. IE NOT REGIONS WITH SAME NAME WITH DIFF PARENT--
 DELETE
 FROM _odk_settlements
-WHERE settlementname in
+WHERE settlementcode in
 (
 	SELECT
-		settlementname
+		settlementcode
 		--,count(*) AS C
 	FROM _odk_settlements
-	GROUP BY settlementname having count(*) > 1
+	GROUP BY settlementcode HAVING count(*) > 1
 );
+
+-- SELECT region_code,count(1) FROM _odk_settlements
+-- GROUP BY region_code HAVING COUNT(1) > 1
+
 
 DELETE
 FROM _odk_settlements
-WHERE REPLACE(settlementname,' ' ,'-') in
+WHERE REPLACE(settlementname,' ' ,'-') IN
 (
 	SELECT
 		REPLACE(settlementname,' ' ,'-')
 		--,count(*) AS C
 	FROM _odk_settlements
-	GROUP BY REPLACE(settlementname,' ' ,'-') having count(*) > 1
+	GROUP BY REPLACE(settlementname,' ' ,'-') HAVING count(*) > 1
 );
 
 
@@ -119,7 +124,7 @@ SELECT
  	,CAST(ovs.settlementgps_longitude AS FLOAT)
  	,2 as region_type_id --settlement
  	,1 as office_id -- nigeria
- 	,REPLACE(settlementname,' ' ,'-') as region_slug
+ 	,REPLACE(settlementname,' ' ,'-') AS region_slug
  	,now()
  	,s.id
  	,CAST(0 as BOOLEAN)
@@ -167,7 +172,7 @@ WHERE NOT EXISTS (
 
 RETURN QUERY
 
-SELECT id
+SELECT sr.id
 FROM source_region sr
 LIMIT 1;
 
