@@ -86,7 +86,8 @@ class EtlResource(ModelResource):
 
 
 class EtlTask(object):
-    '''one of three tasks in the data integration pipeline'''
+    '''
+    '''
 
     def __init__(self,task_string,task_guid):
 
@@ -95,14 +96,13 @@ class EtlTask(object):
 
         self.function_mappings = {
             'test_api' : self.test_api,
-            # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-            # 'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
             'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata,
+            'odk_transform': self.odk_transform,
             }
 
         fn = self.function_mappings[task_string]
@@ -276,5 +276,20 @@ class EtlTask(object):
             ''',[region_document_id])
 
         data = [s.id for s in sr]
+
+        return None, data
+
+    def odk_transform(self):
+
+        form_name = 'vcm_register'
+
+        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
+            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + form_name + '.csv')
+        except IOError:
+            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + form_name + '.csv')
+
+        data = ['a','b','c']
 
         return None, data
