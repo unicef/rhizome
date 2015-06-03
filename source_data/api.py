@@ -289,15 +289,15 @@ class EtlTask(object):
 
     def odk_transform(self):
 
-        # form_name = 'vcm_register'
-
         try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + self.form_name + '.csv')
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
         except IOError:
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + self.form_name + '.csv')
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
 
-        data = ['a','b','c']
+        transform_object = VcmSummaryTransform('someguid',1004, odk_data_df)
+        results = transform_object.vcm_summary_to_source_datapoints()
 
-        return None, data
+        print results
+        return None, results

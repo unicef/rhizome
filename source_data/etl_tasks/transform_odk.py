@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import traceback
+from pprint import pprint
 
 from django.db import IntegrityError
 from django.contrib.auth.models import User
@@ -14,88 +15,30 @@ try:
 except ImportError:
     import source_data.dev_odk_settings as odk_settings
 
-class VcmSettlementTransform(object):
-
-    def __init__(self,request_guid):
-
-        self.requist_guid = request_guid
-        self.source_id = Source.objects.get(source_name ='odk').id
-
-    def refresh_source_regions(self):
-
-        try:
-            region_codes = []
-
-            to_process_df = pd.DataFrame(list(VCMSettlement.objects.filter\
-                (process_status__status_text='TO_PROCESS').values()))
-
-            cols = [col.lower() for col in to_process_df]
-
-            for row in to_process_df.values:
-                row_dict = {}
-
-                row_dict['region_code'] = row[cols.index('settlementname')]
-                row_dict['settlement_code'] = row[cols.index('settlementcode')]
-                row_dict['lat'] = row[cols.index('settlementgps_latitude')]
-                row_dict['lon'] = row[cols.index('settlementgps_longitude')]
-
-                row_data = json.dumps(row_dict)
-
-                region_codes.append(row_data)
-
-            mappings = map_regions(region_codes,self.source_id)
-        except Exception:
-            err = traceback.format_exc()
-            return err, None
-
-        return None, 'ODK SOURCE REGIONS REFRESHED'
-
-
 
 class VcmSummaryTransform(object):
-    def __init__(self,request_guid):
+    def __init__(self,request_guid,document_id, to_process_df):
 
         self.request_guid = request_guid
         self.source_id = Source.objects.get(source_name ='odk').id
         self.source_datapoints = []
-        self.document_id = self.get_document_id()
+        self.document_id = document_id
+        self.to_process_df = to_process_df
 
         self.process_status_id = ProcessStatus.objects\
             .get(status_text='SUCCESS_INSERT').id
 
-    def get_document_id(self):
-
-        doc, created = Document.objects.get_or_create(
-            docfile = odk_settings.EXPORT_DIRECTORY + 'New_VCM_Summary.csv',
-            created_by_id = User.objects.get(username='odk').id,
-            source_id = Source.objects.get(source_name='odk').id,
-        )
-
-        return doc.id
-
 
     def vcm_summary_to_source_datapoints(self):
 
+        self.to_process_df.columns = map(str.lower, self.to_process_df)
+        column_list = self.to_process_df.columns.tolist()
 
-        try:
-            to_process = pd.DataFrame(list(VCMSummaryNew.objects.filter(\
-                process_status__status_text='TO_PROCESS').values()))
+        for row_number, row in enumerate(self.to_process_df.values):
 
-            column_list = to_process.columns.tolist()
+            row_dict = dict(zip(column_list,row))
 
-            for row_number, row in enumerate(to_process.values):
-
-                row_dict = {}
-                for row_i,cell in enumerate(row):
-                    row_dict[column_list[row_i]] = cell
-
-                print 'processing row number: ' + str(row_number)
-
-                self.process_row(row_dict,row_number)
-
-        except Exception:
-            err = traceback.format_exc()
-            return err, None
+            self.process_row(row_dict,row_number)
 
         return None, 'processed : ' + str(len(to_process)) + ' records'
 
@@ -103,6 +46,9 @@ class VcmSummaryTransform(object):
     def process_row(self,row_dict,row_number):
 
         row_batch = []
+
+        print '======\n' * 2
+        pprint(row_dict)
 
         region_code = row_dict['settlementcode']
         campaign_string = row_dict['date_implement']
@@ -112,7 +58,6 @@ class VcmSummaryTransform(object):
 
             if cell_value != "" and cell_value != "nan":
                 pass
-
 
             else:
 
