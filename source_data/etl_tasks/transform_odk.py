@@ -52,15 +52,9 @@ class ODKDataPointTransform(object):
             self.document_id).values_list('source_guid',flat=True))
 
         distinct_key_list = [str(k) for k in set(key_list)]
-
         filtered_df = input_df[~input_df.KEY.isin(distinct_key_list)]
 
-        print '==='
-        print len(filtered_df)
-        print '==='
-
         batch_df = filtered_df[:10]
-
 
         return batch_df
 
@@ -74,9 +68,10 @@ class ODKDataPointTransform(object):
 
             row_dict = dict(zip(column_list,row))
             sdps = self.process_row(row_dict,row_number)
+            all_sdps.extend(sdps)
 
         response_string = 'created %s new soure_datapoints by processing: %s \
-            nows for document_id: %s' % (len(sdps),len(self.to_process_df),\
+            nows for document_id: %s' % (len(all_sdps),len(self.to_process_df),\
             self.document_id)
 
         return response_string
