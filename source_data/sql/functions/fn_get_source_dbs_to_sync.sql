@@ -19,7 +19,7 @@ BEGIN
 		FROM (
 			SELECT
 				spr.id as region_id
-			FROM fn_get_authorized_regions_by_user(1 , NULL, 'w') spr
+			FROM fn_get_authorized_regions_by_user($1 , NULL, 'w') spr
 		)x
 		INNER JOIN (
 			SELECT ip.indicator_id
