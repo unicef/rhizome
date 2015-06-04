@@ -1,26 +1,57 @@
+@import "_react-widgets.scss";
+@import "_react-widgets-core.scss";
+
 .admin-container {
 	margin: 20px;
-}
-.admin-header {
-	display: inline-block;
-}
-ul.admin-nav {
-	display: inline-block;
-	margin-left: 0;
 
-	li {
-		list-style-type: none;
-		font-size: 13pt;
+	.admin-header {
 		display: inline-block;
-		margin: 10px 4px 10px 0;
 	}
-	a {
-		padding: 8px;
-		background: #f0f0f0;
-		&.active {
-			background: #0099ff;
-			color: #f0f0f0;
+	ul.admin-nav {
+		display: inline-block;
+		margin-left: 14px;
+
+		li {
+			list-style-type: none;
+			font-size: 13pt;
+			display: inline-block;
+			margin: 10px 4px 10px 0;
 		}
+		a {
+			padding: 8px;
+			background: #f0f0f0;
+			&.active {
+				background: #0099ff;
+				color: #f0f0f0;
+			}
+		}
+	}
+
+	.ufadmin-create-button {
+		float: right;
+	}
+	.ufadmin-page-heading {
+		float: left;
+		line-height: 64px;
+	}
+	.local-datascope {
+		clear: both;
+	}
+}
+
+.ufadmin-filters-container {
+	background-color: #f0f0f0;
+	padding: 10px;
+	margin-bottom: 20px;
+
+	.ufadmin-show-filters {
+		font-size: 11pt;
+		cursor: pointer;
+		font-weight: bold;
+		line-height: 200%;
+	}
+	.ufadmin-filters-content {
+		margin-top: 20px;
 	}
 }
 
@@ -43,5 +74,36 @@ ul.admin-nav {
 	}
 	.pagination-count {
 		margin-top: 4px;
+	}
+}
+
+.ds-date-range-filter {
+	.ds-date-range-title {
+		font-size: 12pt;
+		line-height: 190%;
+	}
+	.ds-date-range-pre-min, .ds-date-range-post-min,
+	.ds-date-range-pre-max, .ds-date-range-post-max {
+		display: inline-block;
+		margin: 0 10px;
+		font-size: 10pt;
+	}
+	.ds-date-range-pre-min {
+		margin-left: 0;
+	}
+	.ds-date-range-min, .ds-date-range-max {
+		display: inline-block;
+	}
+
+	.rw-datetimepicker {
+		display: inline-block;
+		width: 300px;
+		font-size: 12pt;
+		input {
+			margin: 0;
+		}
+		.rw-select {
+			top: 0;
+		}
 	}
 }
