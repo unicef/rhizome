@@ -32,7 +32,7 @@ var AdminPage = React.createClass({
 		}));
 		this.props.getData().then(response => this.setState({data: response.objects}));
 	},
-	
+
 	onToggleFilterContainer() {
 		this.setState((prevState) => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},

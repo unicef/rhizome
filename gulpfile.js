@@ -74,7 +74,7 @@ gulp.task('browserify', function () {
 		.on('error', err)
 		.on('end', function () {
 			exec('say -v Fred "App compiled"');
-		});;
+		});
 
 	return bundleStream
 		.pipe(source(path.main))
