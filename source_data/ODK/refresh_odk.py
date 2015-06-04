@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 
 import sys
 import json
@@ -86,6 +86,9 @@ def process_odk_form(base_url_string,form):
 
     form_string = form.replace("u'","").replace("'","")
 
+        ## DOWNLOAD DATA FROM ODK ##
+
+    ## HIT API TO INGEST DATA INTO SOURCE_DATAPOITNS -> MASTER DATAPOINTS ##
     odk_form_url_string = base_url_string + '&task=odk_transform&form_name=' + \
         form_string
     odk_form_response = urllib2.urlopen(odk_form_url_string, data=None)
