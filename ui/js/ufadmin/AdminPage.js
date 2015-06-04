@@ -26,13 +26,13 @@ var AdminPage = React.createClass({
 	},
 
 	componentWillMount: function() {
-		this.props.getMetadata().done(response => this.setState({
+		this.props.getMetadata().then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));
-		this.props.getData().done(response => this.setState({data: response.objects}));
+		this.props.getData().then(response => this.setState({data: response.objects}));
 	},
-
+	
 	onToggleFilterContainer() {
 		this.setState((prevState) => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},
