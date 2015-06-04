@@ -1,6 +1,7 @@
 #!/bin/python
 
 import sys
+import urllib2
 
 def main():
 
@@ -11,16 +12,20 @@ def main():
         sys.path.append("/home/ubuntu/ODK/")
         import odk_settings
 
-    print 'HELLO'
-
-    print odk_settings.EXPORT_DIRECTORY
-
-    # source "/Users/johndingee_seed/Desktop/odk_settings.sh" || source "/home/ubuntu/ODK/odk_settings.sh"
-    #
-    # # declare -a FORMS=("vcm_register" "VCM_Sett_Coordinates_1" "New_VCM_Summary")
-    # declare -a FORMS=("VCM_Sett_Coordinates_1.2")
+    REGION_FORM="VCM_Sett_Coordinates_1.2"
     # UUID=$(uuidgen)
-    #
+
+    base_url_string = '%s?username=%s&api_key=%s' % (odk_settings.API_ROOT, \
+        odk_settings.POLIO_USERNAME, odk_settings.POLIO_KEY)
+
+    start_odk_jar_url_string = base_url_string + '&task=start_odk_jar'
+
+    response = urllib2.urlopen(start_odk_jar_url_string, data=None)
+    print response.read()#data
+
+    # "${API_ROOT}?task=start_odk_jar&username=${POLIO_USERNAME}&api_key=${POLIO_KEY}&cron_guid=${UUID}"
+
+
     # wget -O/dev/null "${API_ROOT}?task=start_odk_jar&username=${POLIO_USERNAME}&api_key=${POLIO_KEY}&cron_guid=${UUID}"
     #
     # for FORM in "${FORMS[@]}";
