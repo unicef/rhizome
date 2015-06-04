@@ -25,6 +25,8 @@ const fields = {
 	}
 };
 
+const fieldNamesOnTable = ['name', 'edit_link'];
+
 var GroupsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
@@ -41,9 +43,9 @@ var GroupsAdmin = React.createClass({
 			>
 				<Paginator />
 				<SimpleDataTable>
-					<SimpleDataTableColumn name="id" />
-					<SimpleDataTableColumn name="name" />
-					<SimpleDataTableColumn name="edit_link" />
+					{fieldNamesOnTable.map(fieldName => {
+						return <SimpleDataTableColumn name={fieldName} />
+					})}
 				</SimpleDataTable>
 		</AdminPage>
 	}

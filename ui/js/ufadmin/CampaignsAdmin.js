@@ -24,6 +24,8 @@ const fields = {
 	created_at: { format: 'MMM D YYYY, h:mm a' }
 };
 
+const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'edit_link'];
+
 var CampaignsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
@@ -45,12 +47,9 @@ var CampaignsAdmin = React.createClass({
 			>
 				<Paginator />
 				<SimpleDataTable>
-					<SimpleDataTableColumn name="id" />
-					<SimpleDataTableColumn name="slug" />
-					<SimpleDataTableColumn name="start_date" />
-					<SimpleDataTableColumn name="end_date" />
-					<SimpleDataTableColumn name="created_at" />
-					<SimpleDataTableColumn name="edit_link" />
+					{fieldNamesOnTable.map(fieldName => {
+						return <SimpleDataTableColumn name={fieldName} />
+					})}
 				</SimpleDataTable>
 		</AdminPage>
 	}

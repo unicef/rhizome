@@ -25,15 +25,13 @@ const fields = {
 	is_high_risk: { renderer: checkmarkRenderer }
 };
 
+const fieldNamesOnTable = ['id', 'region_code', 'name', 'slug', 'latitude', 'longitude', 'edit_link'];
+
 var RegionsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
 				<SearchBar placeholder="search regions"/>
-				<FilterPanel>
-					<FilterInputRadio name="is_high_risk" />
-					<FilterDateRange name="created_at" />
-				</FilterPanel>
 			</div>;
 
 		return <AdminPage
@@ -45,15 +43,9 @@ var RegionsAdmin = React.createClass({
 			>
 				<Paginator />
 				<SimpleDataTable>
-					<SimpleDataTableColumn name="id" />
-					<SimpleDataTableColumn name="region_code" />
-					<SimpleDataTableColumn name="name" />
-					<SimpleDataTableColumn name="slug" />
-					<SimpleDataTableColumn name="is_high_risk" />
-					<SimpleDataTableColumn name="latitude" />
-					<SimpleDataTableColumn name="longitude" />
-					<SimpleDataTableColumn name="created_at" />
-					<SimpleDataTableColumn name="edit_link" />
+					{fieldNamesOnTable.map(fieldName => {
+						return <SimpleDataTableColumn name={fieldName} />
+					})}
 				</SimpleDataTable>
 		</AdminPage>
 	}

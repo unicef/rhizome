@@ -52,6 +52,7 @@
 	}
 	.ufadmin-filters-content {
 		margin-top: 20px;
+		margin-bottom: 20px;
 	}
 }
 
@@ -79,7 +80,7 @@
 
 .ds-date-range-filter {
 	.ds-date-range-title {
-		font-size: 12pt;
+		font-size: 11pt;
 		line-height: 190%;
 	}
 	.ds-date-range-pre-min, .ds-date-range-post-min,
@@ -94,6 +95,9 @@
 	.ds-date-range-min, .ds-date-range-max {
 		display: inline-block;
 	}
+	.ds-date-range-min {
+		margin-left: 40px;
+	}
 
 	.rw-datetimepicker {
 		display: inline-block;
@@ -105,5 +109,15 @@
 		.rw-select {
 			top: 0;
 		}
+	}
+}
+
+.ds-data-table-sortable {
+	thead.td {
+		cursor: pointer;
+		user-select: none;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
 	}
 }

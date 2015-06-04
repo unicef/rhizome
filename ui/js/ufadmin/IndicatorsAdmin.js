@@ -20,6 +20,8 @@ const fields = {
 	}
 };
 
+const fieldNamesOnTable = ['id', 'slug', 'short_name', 'name', 'description', 'edit_link'];
+
 var IndicatorsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
@@ -36,16 +38,12 @@ var IndicatorsAdmin = React.createClass({
 			>
 				<Paginator />
 				<SimpleDataTable>
-					<SimpleDataTableColumn name="id" />
-					<SimpleDataTableColumn name="slug" />
-					<SimpleDataTableColumn name="short_name" />
-					<SimpleDataTableColumn name="name" />
-					<SimpleDataTableColumn name="description" />
-					<SimpleDataTableColumn name="edit_link" />
+					{fieldNamesOnTable.map(fieldName => {
+						return <SimpleDataTableColumn name={fieldName} />
+					})}
 				</SimpleDataTable>
 		</AdminPage>
 	}
 });
 
 module.exports = IndicatorsAdmin;
-

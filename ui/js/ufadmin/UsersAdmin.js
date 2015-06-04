@@ -28,7 +28,7 @@ const fields = {
 	last_login: { format: 'MMM D YYYY, h:mm a' }
 };
 
-const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login'];
+const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link'];
 
 const UsersAdmin = React.createClass({
 	getInitialState() {
@@ -48,9 +48,6 @@ const UsersAdmin = React.createClass({
 				<FilterPanel>
 					<FilterDateRange name="date_joined"/>
 					<FilterDateRange name="last_login"/>
-					<FilterInputRadio name="is_superuser"/>
-					<FilterInputRadio name="is_staff"/>
-					<FilterInputRadio name="is_active"/>
 				</FilterPanel>
 			</div>;
 
@@ -66,7 +63,6 @@ const UsersAdmin = React.createClass({
 					{fieldNamesOnTable.map(fieldName => {
 						return <SimpleDataTableColumn name={fieldName} />
 					})}
-
 				</SimpleDataTable>
 		</AdminPage>
 	}
