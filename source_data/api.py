@@ -111,6 +111,7 @@ class EtlTask(object):
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata,
             'odk_transform': self.odk_transform,
+            'get_odk_forms_to_process': self.get_odk_forms_to_process,
             }
 
         fn = self.function_mappings[task_string]
@@ -266,14 +267,20 @@ class EtlTask(object):
 
         return None, data
 
+    def get_odk_forms_to_process(self):
+
+        odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
+
+        return None, odk_form_list
+
     def odk_transform(self):
 
         try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
+            odk_data_df = read_csv(csv_root + self.form_name)
         except IOError:
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
+            odk_data_df = read_csv(csv_root + self.form_name)
 
         transform_object = ODKDataPointTransform('someguid',odk_data_df,\
             self.form_name)
