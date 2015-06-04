@@ -275,7 +275,7 @@ module.exports = Reflux.createStore({
 	    	  self.data.chartData = _.filter(data,function(n){ return n.value});
 	    	  
 	    	}
-	    	//self.data.loading = false;
+	    	self.data.loading = false;
 	    	self.trigger(self.data);
 	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
 	    });
@@ -294,7 +294,7 @@ module.exports = Reflux.createStore({
                 									properties : { value : _.get(region, 'value') }
                 								});
                 						});
-                //self.data.loading = false;
+                self.data.loading = false;
                 self.trigger(self.data);
            }));
 	    }
