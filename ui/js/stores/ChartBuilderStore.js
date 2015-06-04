@@ -113,7 +113,7 @@ module.exports = Reflux.createStore({
 		         		};
 		         	})
 		         	.sortBy('title')
-		         	.reverse() 
+		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
@@ -128,7 +128,7 @@ module.exports = Reflux.createStore({
 		         		};
 		         	})
 		         	.sortBy('title')
-		         	.reverse() 
+		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
@@ -163,7 +163,6 @@ module.exports = Reflux.createStore({
 	   this.trigger(this.data);
 	},
 	onAddCampaignSelection: function(value){
-	    console.log(this._campaignIndex[value]);
 		this.data.campaignSelected = this._campaignIndex[value];
 		this.trigger(this.data);
 	},
@@ -179,7 +178,7 @@ module.exports = Reflux.createStore({
 		var lower = start.clone().startOf('month').subtract(1, 'year');
 		var upper = start.clone().endOf('month');
 		this.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
-		
+
 	    var q = {
 		indicator__in  : _.map(this.data.indicatorsSelected,function(indicator){return indicator.id}),
 		region__in     : this.data.regionSelected.id,
