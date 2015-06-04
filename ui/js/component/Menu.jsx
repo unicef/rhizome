@@ -5,22 +5,6 @@ var Search = require('component/Search.jsx');
 
 var dom = require('util/dom');
 
-function findMatches(item, re) {
-	var matches = [];
-
-	if (re.test(item.title)) {
-		matches.push(item);
-	}
-
-	if (item.children) {
-		item.children.forEach(function (child) {
-			matches = matches.concat(findMatches(child, re));
-		});
-	}
-
-	return matches;
-}
-
 module.exports = React.createClass({
 	propTypes: {
 		sendValue: React.PropTypes.func
