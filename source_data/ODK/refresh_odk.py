@@ -86,10 +86,17 @@ def get_forms_to_process(base_url_string):
 
 
 def process_odk_form(base_url_string,form):
+    '''
+    First Download the data from ODK, then ingest into source_dps and finally
+    Merge what is mapped into datapoints.
+    '''
+
 
     form_string = form.replace("u'","").replace("'","")
 
-        ## DOWNLOAD DATA FROM ODK ##
+    ## DOWNLOAD DATA FROM ODK ##
+
+    pull_odk_form_data(form_string)
 
     ## HIT API TO INGEST DATA INTO SOURCE_DATAPOITNS -> MASTER DATAPOINTS ##
     odk_form_url_string = base_url_string + '&task=odk_transform&form_name=' + \
