@@ -112,7 +112,8 @@ p {
 body.home nav .home,
 body.dashboard nav .dashboard,
 body.data nav .data,
-body.data-entry nav .data-entry {
+body.data-entry nav .data-entry,
+body.admin nav .admin {
 	border-top: 2px solid #ffcc67;
 
 	a {
