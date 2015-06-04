@@ -222,3 +222,45 @@ class DocumentDetail(models.Model):
 
     class Meta:
         db_table = 'document_detail'
+
+## ODK ##
+
+class ODKForm(models.Model):
+
+    document = models.ForeignKey(Document,null=True)
+    last_processed = models.DateTimeField(null=True)
+    response_msg = models.CharField(null=True,max_length=255)
+    source_datapoint_count = models.IntegerField(default=0)
+    master_datapoint_count = models.IntegerField(default=0)
+    form_name = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'odk_form'
+
+class VCMSettlement(models.Model):
+
+    submissiondate = models.CharField(max_length=255)
+    deviceid = models.CharField(max_length=255)
+    simserial = models.CharField(max_length=255)
+    phonenumber = models.CharField(max_length=255)
+    daterecorded = models.CharField(max_length=255)
+    settlementcode = models.CharField(max_length=255)
+    settlementname = models.CharField(max_length=255)
+    vcmname = models.CharField(max_length=255)
+    vcmphone = models.CharField(max_length=255)
+    settlementgps_latitude = models.CharField(max_length=255)
+    settlementgps_longitude = models.CharField(max_length=255)
+    settlementgps_altitude = models.CharField(max_length=255)
+    settlementgps_accuracy = models.CharField(max_length=255)
+    meta_instanceid = models.CharField(max_length=255)
+    key = models.CharField(max_length=255, unique=True)
+    process_status = models.ForeignKey(ProcessStatus)
+    request_guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return unicode(self.settlementname)
+
+    class Meta:
+        app_label = 'source_data'
+        db_table = 'odk_vcm_settlement'

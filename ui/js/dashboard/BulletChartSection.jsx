@@ -7,7 +7,7 @@ var Chart = require('component/Chart.jsx');
 
 function _domain(data) {
   var lower = _(data)
-    .pluck('indicator.indicator_bounds')
+    .pluck('indicator.bound_json')
     .flatten()
     .pluck('mn_val')
     .uniq()
@@ -15,7 +15,7 @@ function _domain(data) {
     .min();
 
   var upper = _(data)
-    .pluck('indicator.indicator_bounds')
+    .pluck('indicator.bound_json')
     .flatten()
     .pluck('mx_val')
     .uniq()
@@ -50,7 +50,7 @@ function _marker(data, campaign) {
 
 function _targetRanges(data) {
   var targets = _(data)
-    .pluck('indicator.indicator_bounds')
+    .pluck('indicator.bound_json')
     .flatten()
     .indexBy('bound_name')
     .values()

@@ -8,15 +8,22 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from django.conf import settings
 from pandas import read_csv
 
 from source_data.models import *
-from source_data.etl_tasks.transform_odk import VcmSummaryTransform
+from source_data.etl_tasks.transform_odk import ODKDataPointTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
 
 from datapoints.models import Source
 from datapoints import cache_tasks
+
+try:
+    import source_data.prod_odk_settings as odk_settings
+except ImportError:
+    import source_data.dev_odk_settings as odk_settings
+
 
 class EtlResource(ModelResource):
 
@@ -28,7 +35,7 @@ class EtlResource(ModelResource):
         filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
-        authentication = ApiKeyAuthentication()
+        # authentication = ApiKeyAuthentication()
 
 
     def get_object_list(self, request):
@@ -40,12 +47,19 @@ class EtlResource(ModelResource):
 
         '''
 
+        # required #
         task_string = request.GET['task']
         cron_guid = 'placeholder_guid'#request.GET['cron_guid']
 
+        # optional #
+        try:
+            form_name = request.GET['form_name']
+        except KeyError:
+            form_name = None
+
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
-        ## stage the job ##
+        # stage the job #
         created = EtlJob.objects.create(
             date_attempted = tic,
             task_name = task_string,
@@ -53,8 +67,8 @@ class EtlResource(ModelResource):
             status = 'PENDING'
         )
 
-        ## MAKE THIS A CALL BACK FUNCTION ##
-        et = EtlTask(task_string,created.guid)
+        # MAKE THIS A CALL BACK FUNCTION #
+        et = EtlTask(task_string,created.guid,form_name)
 
         print et.err
 
@@ -79,23 +93,25 @@ class EtlResource(ModelResource):
 
 
 class EtlTask(object):
-    '''one of three tasks in the data integration pipeline'''
+    '''
+    '''
 
-    def __init__(self,task_string,task_guid):
+    def __init__(self,task_string,task_guid,form_name=None):
 
         self.task_guid = task_guid
+        self.form_name = form_name
         self.user_id = User.objects.get(username='odk').id
 
         self.function_mappings = {
             'test_api' : self.test_api,
-            # 'odk_refresh_vcm_summary_work_table' : self.odk_refresh_vcm_summary_work_table,
-            # 'odk_vcm_summary_to_source_datapoints': self.odk_vcm_summary_to_source_datapoints,
             'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
             'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata,
+            'odk_transform': self.odk_transform,
+            'get_odk_forms_to_process': self.get_odk_forms_to_process,
             }
 
         fn = self.function_mappings[task_string]
@@ -183,26 +199,6 @@ class EtlTask(object):
         return None, data
 
 
-    def odk_refresh_vcm_summary_work_table(self):
-        '''
-        '''
-
-        form_id = 'New_VCM_Summary'
-
-        t = WorkTableTask(self.task_guid,form_id)
-        err, data = t.main()
-
-        return err, data
-
-    def odk_vcm_summary_to_source_datapoints(self):
-        '''
-        '''
-
-        v = VcmSummaryTransform(self.task_guid)
-        err, data = v.vcm_summary_to_source_datapoints()
-
-        return err, data
-
     def odk_refresh_master(self):
         '''
         '''
@@ -230,39 +226,65 @@ class EtlTask(object):
         From the VCM settlements CSV ingest new reigions
         '''
 
-        csv_root = '/Users/johndingee_seed/ODK/odk_source/csv_exports/'
-        region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+        region_document, created = Document.objects.get_or_create(
+            docfile = '',
+            doc_text = 'VCM_Sett_Coordinates_1_2.csv',
+            defaults = {
+                'created_by_id':1, # john
+                'source_id':Source.objects.get(source_name = 'odk').id
+            }
+        )
 
-        new_df_columns = {
-            'SettlementCode': 'region_code',
-            'SettlementGPS-Latitude': 'lat',
-            'SettlementGPS-Longitude': 'lon',
-            'SettlementName': 'source_guid'
-        }
+        region_document_id = region_document.id
 
-        # drop columns we dont need and rename to friendly column names #
-        cols_to_drop = [col for col in region_df.columns if col not in new_df_columns]
-        for col in cols_to_drop:
-            region_df = region_df.drop(col, 1)
-
-        region_df.rename(columns=new_df_columns,inplace=True)
-
-        # add additional data needed to create source_regions
-        region_df['region_type'] = 'settlement'
-        region_df['parent_code'] = region_df['region_code'].astype(str).str[:6]
-        region_df['document_id'] = 1000
+        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
+            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
+        except IOError:
+            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
+            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
 
         list_of_dicts = region_df.transpose().to_dict()
 
         for ix, d in list_of_dicts.iteritems():
-            try:
-                SourceRegion.objects.create(**d)
-            except IntegrityError:
-                pass
-            print '=='
+             lower_dict = {}
 
+             for k,v in d.iteritems():
+                 lower_dict[k.lower().replace('-','_')] = v
+                 lower_dict['process_status_id'] = 1
+             try:
+                 VCMSettlement.objects.create(**lower_dict)
+             except IntegrityError as err:
+                 print err
+                 pass
 
+        ## Merge Work Table Data into source_region / region / region_map ##
 
+        sr = SourceRegion.objects.raw('''SELECT * FROM fn_sync_odk_regions(%s)
+            ''',[region_document_id])
 
+        data = [s.id for s in sr]
 
-        return None, 'SOMETHING'
+        return None, data
+
+    def get_odk_forms_to_process(self):
+
+        odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
+
+        return None, odk_form_list
+
+    def odk_transform(self):
+
+        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
+            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
+        except IOError:
+            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
+
+        transform_object = ODKDataPointTransform('someguid',odk_data_df,\
+            self.form_name)
+
+        results = transform_object.odk_form_data_to_datapoints()
+
+        return None, results

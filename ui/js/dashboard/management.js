@@ -181,6 +181,7 @@ function _missedChildren(data, indicators) {
 		.value();
 
 	var stack = d3.layout.stack()
+		.order('default')
 		.offset('zero')
 		.values(function (d) { return d.values; })
 		.x(function (d) { return d.campaign.start_date; })
@@ -355,7 +356,7 @@ module.exports = {
 				.subtract(3, 'years')
 				.format('YYYY-MM-DD');
 
-			Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
+		Promise.all([api.datapoints(q).then(meltObjects), this._indicators])
 				.then(_.spread(function (data, indicators) {
 					var immunityGap = _immunityGap(data, indicators);
 
@@ -377,10 +378,12 @@ module.exports = {
 								data    : immunityGap,
 								type    : 'ColumnChart',
 								options : {
-									aspect  : 1.609,
+									aspect  : 1.757,
 									color   : _.flow(
 										_.property('name'),
-										d3.scale.ordinal().domain(_.pluck('name', immunityGap)).range(palette)
+										d3.scale.ordinal()
+											.domain(_(immunityGap).pluck('name').sortBy().value())
+											.range(['#AF373E', '#FABAA2'])
 									),
 									domain  : _.constant(immunityScale),
 									values  : _.property('values'),
@@ -437,10 +440,10 @@ module.exports = {
 							data    : missedChildren,
 							type    : 'ColumnChart',
 							options : {
-								aspect  : 1.909344491,
+								aspect  : 2.26,
 								color   : _.flow(
 									_.property('name'),
-									d3.scale.ordinal().domain(_.pluck('name', missedChildren)).range(palette)
+									d3.scale.ordinal().range(colors)
 								),
 								domain  : _.constant(missedScale),
 								values  : _.property('values'),
@@ -464,19 +467,18 @@ module.exports = {
 								x       : _.property('campaign.start_date'),
 								y       : _.property('value'),
 								yFormat : d3.format('%'),
-								aspect  : 2.260237781
+								aspect  : 2.26
 							}
 						}),
 						self.$$.conversions
 					);
-
 					React.render(
 						React.createElement(Chart, {
 							type    : 'LineChart',
 							data    : _conversions(inaccessible, indicators),
 							id      : 'inaccessible-children',
 							options : {
-								aspect  : 2.664831804,
+								aspect  : 2.572,
 								domain  : _.constant([lower.toDate(), upper.toDate()]),
 								values  : _.property('values'),
 								x       : _.property('campaign.start_date'),

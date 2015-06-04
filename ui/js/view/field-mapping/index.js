@@ -33,6 +33,7 @@ module.exports = {
 	  var self = this;
 	  var regionsPromise, indicatorsPromise, campaignsPromise, documentPromise;
 	   documentPromise = api.document_review({ document: this.$parent.$data.document_id }).then(function(values){
+	      console.log(values.objects.region);
 	      self.$set('mappingData',values.objects);
 	    });
 	   regionsPromise = api.regions().then(function(items){
@@ -100,20 +101,6 @@ module.exports = {
 	    });    
 	},
 	methods: { 
-//	  displayUnmap: function(element){
-//	    var type = element.$parent.$key;
-//	    var field = element.$data.field;
-//	    var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':field.source_object_id});
-//	    this.mappingData[type][key].master_object_id = '-1';
-//	    api.map_field({ 'source_object_id': element.$data.field.source_object_id,
-//	    				'master_object_id': null,
-//	    				'object_type'  : type.substr(0, type.length-1) }).then(function(values){
-//	    				    
-//	    				   // console.log(values);
-//	    				    
-//	    				});
-//	    this.calculateRemainingVerifications();
-//	  },
 	  unmapField: function(source_id, master_id,type){
 	      var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':source_id});
 	      this.mappingData[type][key].master_object_id = '-1';

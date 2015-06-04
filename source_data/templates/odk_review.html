@@ -9,22 +9,29 @@
   <table class="table table-hover table-bordered">
     <thead>
       <tr>
-        <th>date attempted</th>
-        <th>date completed</th>
-        <th>task name</th>
-        <th>status</th>
-        <th>error msg</th>
+        <th>form name</th>
+        <th>document id</th>
+        <th>last processed</th>
+        <th>response_msg</th>
+        <th>source_datapoint_count</th>
+        <th>master_datapoint_count</th>
+        <th>map and sync</th>
+
       </tr>
     </thead>
 
 
+
     {% for job in odk_job_data %}
     <tr>
-      <th>{{ job.date_attempted }}</th>
-      <th>{{ job.date_completed }}</th>
-      <th>{{ job.task_name }}</th>
-      <th>{{ job.status }}</th>
-      <th>{{ job.error_msg }}</th>
+      <th>{{ job.form_name }}</th>
+      <th>{{ job.document_id }}</th>
+      <th>{{ job.last_processed }}</th>
+      <th>{{ job.response_msg }}</th>
+      <th>{{ job.source_datapoint_count }}</th>
+      <th>{{ job.master_datapoint_count }}</th>
+      <th>Some Map Url</th>
+
     </tr>
 
 

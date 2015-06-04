@@ -129,15 +129,15 @@ datapoint.toString = function (query, version) {
 };
 
 module.exports = {
-	campaign              : endPoint('/campaign/'),
+	campaign              : endPoint('/campaign/', 'get', 2),
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),
 	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
-	indicators            : endPoint('/indicator/'),
+	indicators            : endPoint('/indicator/', 'get', 2),
 	office                : endPoint('/office/', 'get', 2),
-	regions               : endPoint('/region/'),
+	regions               : endPoint('/region/', 'get', 2),
 	document_review       : endPoint('/document_review/','get',2),
 	//map_field             : endPoint('/api_map_meta/','post',2),
 	map_indicator         : endPoint('/indicator_map/','post',2),

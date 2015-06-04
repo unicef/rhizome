@@ -14,8 +14,7 @@ include
 /docs/_build
 /docs/_static
 /docs/_templates
-/source_data/prod_odk_settings.py
-/source_data/dev_odk_settings.py
+/source_data/ODK/odk_settings.sh
 /viz
 /bower_components
 /build
@@ -39,3 +38,4 @@ static/lib.js
 static/lib.map.json
 *target_natreg.csv
 concat_csv.py
+source_data/ODK/odk_source

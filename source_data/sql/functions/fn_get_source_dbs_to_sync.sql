@@ -3,7 +3,7 @@ CREATE FUNCTION fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_in
 RETURNS TABLE
 (
 	 id INT
-	,vell_value VARCHAR(255)
+	,cell_value VARCHAR(255)
 	,region_id INT
 	,campaign_id INT
 	,indicator_id INT
@@ -19,7 +19,7 @@ BEGIN
 		FROM (
 			SELECT
 				spr.id as region_id
-			FROM fn_get_authorized_regions_by_user(1 , NULL, 'w') spr
+			FROM fn_get_authorized_regions_by_user($1 , NULL, 'w') spr
 		)x
 		INNER JOIN (
 			SELECT ip.indicator_id

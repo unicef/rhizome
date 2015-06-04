@@ -59,9 +59,9 @@ def dashboard_builder(request):
     return render_to_response('dashboard-builder/index.html',
         context_instance=RequestContext(request))
 
-def visualization_builder(request):
+def chart_builder(request):
 
-    return render_to_response('dashboard-builder/visualization_builder.html',
+    return render_to_response('dashboard-builder/chart_builder.html',
         context_instance=RequestContext(request))
 
 
@@ -455,19 +455,29 @@ def api_indicator(request):
     return HttpResponse(json.dumps(response_data)\
         , content_type="application/json")
 
+class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = Group
+    template_name = 'group_create.html'
+    # form_class = GroupCreateForm
+
+class GrouEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = Group
+    template_name = 'group_create.html'
+
 
 class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = User
     template_name = 'user_create.html'
     form_class = UserCreateForm
-    # permission_required = 'datapoints.add_campaign'
 
     def form_valid(self, form):
 
         new_user = form.save()
 
-        return HttpResponseRedirect(reverse('datapoints:user_edit', \
+        return HttpResponseRedirect(reverse('datapoints:user_update', \
             kwargs={'pk':new_user.id}))
 
 
@@ -481,7 +491,7 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
 
         requested_user_id = self.get_object().id
 
-        return reverse_lazy('datapoints:user_edit',kwargs={'pk':
+        return reverse_lazy('datapoints:user_update',kwargs={'pk':
             requested_user_id})
 
     def get_context_data(self, **kwargs):
