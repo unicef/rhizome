@@ -46,7 +46,6 @@ def pull_regions(base_url_string):
         '&task=finish_odk_jar&form_name=' + REGION_FORM
     finish_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
 
-
 def pull_odk_form_data(base_url_string,form):
 
     subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
