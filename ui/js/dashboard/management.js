@@ -74,7 +74,7 @@ function seriesObject(d, ind, collection, indicators) {
 function _microplans(data) {
 	var microplans = {
 		value  : null,
-		domain : null,
+		domain : [0, 1],
 		show   : false
 	};
 
