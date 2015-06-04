@@ -96,7 +96,7 @@ def process_odk_form(base_url_string,form):
 
     ## DOWNLOAD DATA FROM ODK ##
 
-    pull_odk_form_data(form_string)
+    pull_odk_form_data(base_url_string,form_string)
 
     ## HIT API TO INGEST DATA INTO SOURCE_DATAPOITNS -> MASTER DATAPOINTS ##
     odk_form_url_string = base_url_string + '&task=odk_transform&form_name=' + \
