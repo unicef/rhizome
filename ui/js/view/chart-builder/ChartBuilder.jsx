@@ -12,6 +12,35 @@ var List                = require('component/list/List.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 var RadioGroup          = require('component/radio-group/RadioGroup.jsx');
 
+function noop() {}
+
+function findMatches(item, re) {
+  var matches = [];
+
+  if (re.test(item.title)) {
+    matches.push(item);
+  }
+
+  if (item.children) {
+    item.children.forEach(function (child) {
+      matches = matches.concat(findMatches(child, re));
+    });
+  }
+
+  return matches;
+}
+
+function filterMenu(items, pattern) {
+  var filtered = [];
+  var re = new RegEx(pattern, 'gi');
+
+  _.each(items, function (item) {
+    filtered = filtered.concat(findMatches(item, re));
+  });
+
+  return filtered;
+}
+
 module.exports = React.createClass({
     mixins: [Reflux.connect(ChartBuilderStore,"store")],
     _updateTitle: function(e){
@@ -44,7 +73,8 @@ module.exports = React.createClass({
 	                   <div className="titleDiv">Indicators</div>
 
                     <ButtonMenu text='Select Indicators'
-                      searchable={true}>
+                      searchable={true}
+                      onSearch={noop}>
                       {indicators}
                     </ButtonMenu>
 
@@ -62,14 +92,16 @@ module.exports = React.createClass({
 	              	<ButtonMenu
                     text={campaignSelection}
                     icon='fa-calendar'
-          		      searchable={true}>
+          		      searchable={true}
+                    onSearch={noop}>
 	              	  {campaigns}
               		</ButtonMenu>
 
 	              	<ButtonMenu
                     icon='fa-globe'
                     text={regionSelection}
-          		      searchable={true}>
+          		      searchable={true}
+                    onSearch={noop}>
                     {regions}
               		</ButtonMenu>
 
