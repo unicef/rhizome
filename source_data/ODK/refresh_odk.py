@@ -13,15 +13,21 @@ def main():
         sys.path.append("/home/ubuntu/ODK/")
         import odk_settings
 
-    REGION_FORM="VCM_Sett_Coordinates_1.2"
-    # UUID=$(uuidgen)
-
     base_url_string = '%s?username=%s&api_key=%s' % (odk_settings.API_ROOT, \
         odk_settings.POLIO_USERNAME, odk_settings.POLIO_KEY)
 
-    start_odk_jar_url_string = base_url_string + '&task=start_odk_jar&form_name=' + REGION_FORM
+    # pull_regions(base_url_string)
+    refresh_regions(base_url_string)
 
-    response = urllib2.urlopen(start_odk_jar_url_string, data=None)
+
+def pull_regions(base_url_string):
+
+    REGION_FORM="VCM_Sett_Coordinates_1.2"
+
+    # START ODK JAR FILE #
+    start_odk_jar_url_string = base_url_string +\
+        '&task=start_odk_jar&form_name=' + REGION_FORM
+    start_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
 
     subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
         '--form_id', REGION_FORM, \
@@ -35,16 +41,24 @@ def main():
         '--exclude_media_export' \
       ])
 
+    # DONE WITH ODK JAR FILE #
     sleep(5)
-    start_odk_jar_url_string = base_url_string + '&task=finish_odk_jar&form_name=' + REGION_FORM
+    finish_odk_jar_url_string = base_url_string + \
+        '&task=finish_odk_jar&form_name=' + REGION_FORM
+    finish_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
 
-    # # DONE WITH ODK JAR FILE #
-    # wget -O/dev/null "${API_ROOT}?task=finish_odk_jar&username=${POLIO_USERNAME}&api_key=${POLIO_KEY}&cron_guid=${UUID}"
-    #
-    # sleep 2
-    #
-    # # DONE WITH ODK JAR FILE #
-    # wget -O/dev/null "${API_ROOT}?task=ingest_odk_regions&username=${POLIO_USERNAME}&api_key=${POLIO_KEY}&cron_guid=${UUID}"
+def refresh_regions(base_url_string):
+
+    # START ODK JAR FILE #
+    ingest_odk_url_string = base_url_string + '&task=ingest_odk_regions'
+    ingest_odk_response = urllib2.urlopen(ingest_odk_url_string, data=None)
+
+def process_odk_datapoints(base_url_string):
+
+
+
+
+
 
 
 if __name__ == "__main__":
