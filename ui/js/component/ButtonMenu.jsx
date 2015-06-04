@@ -37,10 +37,6 @@ var ButtonMenu = React.createClass({
     }
   },
 
-  shouldComponentUpdate : function (nextProps, nextState) {
-    return nextState.opening || !_.isEqual(this.props, nextProps);
-  },
-
   render : function () {
     var icon = this.props.icon ?
       (<i className={['fa', this.props.icon, this.props.size].join(' ')} />) :
@@ -92,12 +88,7 @@ var ButtonMenu = React.createClass({
   },
 
   _toggleMenu : function () {
-    var open = !this.state.open;
-    var opening = open;
-    this.setState({
-      open    : open,
-      opening : opening
-    });
+    this.setState({open : !this.state.open });
   },
 
   handleEvent : function (evt) {
