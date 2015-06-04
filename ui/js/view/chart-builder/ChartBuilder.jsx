@@ -52,14 +52,20 @@ module.exports = React.createClass({
 	render: function(){
 	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 
-	   var campaignSelection = 'Select Campaign';
+	   var campaignSelection = !!this.state.store.campaignSelected ?
+      this.state.store.campaignSelected.slug :
+      'Select Campaign';
+
      var campaigns = MenuItem.fromArray(this.state.store.campaignList,
       ChartBuilderActions.addCampaignSelection);
 
      var indicators = MenuItem.fromArray(this.state.store.indicatorList,
       ChartBuilderActions.addIndicatorSelection);
 
-     var regionSelection = 'Select Region';
+     var regionSelection = !!this.state.store.regionSelected ?
+      this.state.store.regionSelected.title :
+      'Select Region';
+
      var regions = MenuItem.fromArray(this.state.store.regionList,
       ChartBuilderActions.addRegionSelection);
 
