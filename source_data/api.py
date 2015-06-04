@@ -277,10 +277,10 @@ class EtlTask(object):
 
         try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name)
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
         except IOError:
             csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name)
+            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
 
         transform_object = ODKDataPointTransform('someguid',odk_data_df,\
             self.form_name)
