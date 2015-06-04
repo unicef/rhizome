@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/cat /hom bin/python
 
 import sys
 import json
 import urllib2
 import subprocess
+from time import sleep
 
 try:
     sys.path.append("/Users/johndingee_seed/Desktop/")
@@ -37,11 +38,13 @@ def pull_regions(base_url_string):
         '&task=start_odk_jar&form_name=' + REGION_FORM
     start_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
 
+
     # PULL ODK DATA #
+    sleep(2)
     pull_odk_form_data(base_url_string,REGION_FORM)
+    sleep(2)
 
     # DONE WITH ODK JAR FILE #
-    sleep(5)
     finish_odk_jar_url_string = base_url_string + \
         '&task=finish_odk_jar&form_name=' + REGION_FORM
     finish_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
