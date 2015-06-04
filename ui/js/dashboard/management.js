@@ -525,7 +525,7 @@ module.exports = {
 								});
 						});
 
-					border.objects.features[0].properties.value = natl[0].value;
+					border.objects.features[0].properties.value = _.get(natl, '[0].value');
 
 					var props = {
 						type    : 'ChoroplethMap',
