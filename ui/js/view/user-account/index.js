@@ -80,7 +80,8 @@ module.exports = {
 	  },
 	  deleteRegionalAccess: function(data){
 	    var self = this;
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r',id:'' }).then(function(){
+	    var readWrite = _.find(self.$get('region_permissions'),{region_id:data}).read_write;
+	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:readWrite,id:'' }).then(function(){
 	      self.loadRegionalAccess();
 	    });
 	  },
