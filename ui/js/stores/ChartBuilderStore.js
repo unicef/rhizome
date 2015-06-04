@@ -23,27 +23,27 @@ function melt(dataset) {
 
 	return o;
 }
-function _conversions(data, indicators) {
+function _groupBySeries(data, groups,groupBy) {
 	return _(data)
-		.groupBy('indicator')
+		.groupBy(groupBy)
 		.map(function (d, ind) {
 			return seriesObject(
 				_.sortBy(d, _.method('campaign.start_date.getTime')),
 				ind,
 				null,
-				indicators
+				groups
 			);
 		})
 		.value();
 }
 function seriesObject(d, ind, collection, indicators) {
 	return {
-		name   : indicators[ind].short_name,
+		name   : indicators[ind].name,
 		values : d
 	};
 }
 var canDisplayChart = function(){
-	if(this.indicatorsSelected.length > 0)
+	if(this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
 	{
 	  return true;
 	}
@@ -51,7 +51,6 @@ var canDisplayChart = function(){
 		return false;
 	}
 };
-
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
@@ -59,25 +58,28 @@ module.exports = Reflux.createStore({
 		campaignList:[],
 		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-		regionSelected:{id: 12908, title: "Afghanistan"},//{id:null,title:null},
+		regionSelected:{parent_region_id: null, office_id: 2, region_type_id: 1, id: 12908, name: "Afghanistan"},//{id:null,title:null},
+		aggregatedRegions:[],
 		title: "new chart",
 		description: "a nice description",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
 		regionRadioValue: "selected",
-		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"regions",title:"Regions"}],
-		groupByRadioValue: "indicator",
-		chartTypes:[{name:"line"},{name:"bar"},{name:"graph"},{name:"pie"}],
-		selectedChart:"line",
+		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
+		groupByRadioValue: "region",
+		timeRadios:[{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}],
+		timeRadioValue:"current",
+		chartTypes:[{name:"LineChart"},{name:"PieChart"},{name:"ChoroplethMap"}],
+		selectedChart:"ChoroplethMap",
 		chartData:[],
 	    chartOptions : {
-				aspect  : 2.664831804,
 				domain  : null,
 				values  : _.property('values'),
 				x       : _.property('campaign.start_date'),
 				y       : _.property('value'),
-				yFormat : d3.format(',.0f')
+				yFormat : d3.format('%')
 			},
-		canDisplayChart:canDisplayChart
+		canDisplayChart:canDisplayChart,
+		loading:false
 	},
 	listenables: [ChartBuilderActions],
 	getInitialState: function(){
@@ -101,6 +103,7 @@ module.exports = Reflux.createStore({
 		  	.thru(ancestoryString)
 		  	.value();
 		  	self.trigger(self.data);
+		  	self.aggregateRegions();
 		 });
 		 api.indicators().then(function(items){
 		        self._indicatorIndex = _.indexBy(items.objects, 'id');
@@ -135,12 +138,13 @@ module.exports = Reflux.createStore({
 	},
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
-	    this.getChartData();
-		this.trigger(this.data);
+	    this.trigger(this.data);
+		this.getChartData();
 	},
 	onRemoveIndicatorSelection: function(id){
 	  _.remove(this.data.indicatorsSelected,{id:id});
 	  this.trigger(this.data);
+	  this.getChartData();
 	},
 	onUpdateTitle:function(value){
 	   this.data.title = value;
@@ -153,43 +157,146 @@ module.exports = Reflux.createStore({
 	onSelectShowRegionRadio:function(value){
 	   this.data.regionRadioValue = value;
 	   this.trigger(this.data);
+	   this.aggregateRegions();
 	},
 	onSelectGroupByRadio:function(value){
 	   this.data.groupByRadioValue = value;
 	   this.trigger(this.data);
+	   this.getChartData();
 	},
+	onSelectTimeRadio:function(value){
+	   this.data.timeRadioValue = value;
+	   this.trigger(this.data);
+	   this.getChartData();
+	},	
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
+	   this.data.chartData = [];
 	   this.trigger(this.data);
+	   this.getChartData();
 	},
 	onAddCampaignSelection: function(value){
-	    console.log(this._campaignIndex[value]);
 		this.data.campaignSelected = this._campaignIndex[value];
 		this.trigger(this.data);
+		this.getChartData();
 	},
 	onAddRegionSelection: function(value){
-		this.data.regionSelected = {id:value, title:this._regionIndex[value].name};
+		this.data.regionSelected = this._regionIndex[value];
 		this.trigger(this.data);
+		this.aggregateRegions();
+	},
+	aggregateRegions: function(){
+	    var regions;
+	    var regionSelected = this.data.regionSelected;
+	    if(this.data.regionRadioValue==="selected")
+	    {
+    	   regions = [regionSelected];
+	    }
+		else if(this.data.regionRadioValue==="type")
+		{ 
+		   
+		   if(regionSelected.parent_region_id)
+		   {
+		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
+		   }
+		   else {
+		   	 regions = _.filter(this._regionIndex, {region_type_id:this.data.regionSelected.region_type_id});
+		   }
+		}
+		else if(this.data.regionRadioValue==="subregions")
+		{
+		   regions = _.filter(this._regionIndex, {parent_region_id:regionSelected.id});
+		}
+		this.data.aggregatedRegions = regions;
+		if(this.canFetchChartData())
+		{
+			this.getChartData();
+		}
+	},
+	canFetchChartData : function(){
+		if(this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
+		{
+		  return true;
+		}
+		else {
+			return false;
+		}
+	},
+	//Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
+	getLower:  function(start){
+	    var range = this.data.timeRadioValue;
+	    if(range=="current"){
+	    	return start.clone().startOf('month');
+	    } else if (range=="3Months"){
+	    	return start.clone().startOf('month').subtract(3,'month');
+	    } else if (range=="pastYear"){
+	    	return start.clone().startOf('month').subtract(1,'year');
+	    } else if (range=="allTime"){
+	    	return null;
+	    }
 	},
 	getChartData: function(){
-		var self = this;
-		var indicators = _.indexBy(this.data.indicatorsSelected, 'id');//;
-		var start = moment(this.data.campaignSelected.end_date);
+	    this.data.loading = true;
+	    this.trigger(this.data); //send the loading parameter to the view
+	    var self = this;
+		var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id');//;
+		var regionsIndex = _.indexBy(this.data.aggregatedRegions, 'id');
+		var groups = (this.data.groupByRadioValue == 'indicator'?indicatorsIndex:regionsIndex);
+		var start = moment(this.data.campaignSelected.start_date);
 		var meltObjects  = _.flow(_.property('objects'), melt);
-		var lower = start.clone().startOf('month').subtract(1, 'year');
-		var upper = start.clone().endOf('month');
-		this.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
-		
+		var lower = this.getLower(start);//.subtract(1, 'year');
+		var upper = start.clone().startOf('month');
+
 	    var q = {
 		indicator__in  : _.map(this.data.indicatorsSelected,function(indicator){return indicator.id}),
-		region__in     : this.data.regionSelected.id,
-		campaign_start : lower.format('YYYY-MM-DD'),
+		region__in     : _.map(this.data.aggregatedRegions,function(region){return region.id}),
+		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-	    api.datapoints(q).then(meltObjects).then(function(data){
-	    	self.data.chartData =  _conversions(data, indicators);
-	    	console.log(self.data.chartData);
+	    
+	    var dataPointPromise = api.datapoints(q).then(meltObjects).then(function(data){
+	        if(!lower) //set the lower bound from the lowest datapoint value
+	        {
+	          var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
+	          lower = moment(_.first(sortedDates).campaign.start_date);
+	          //var end = moment(_.last(sortedDates).campaign.end_date);
+	        }
+	        if(self.data.selectedChart ==="LineChart")
+	        {
+	          self.data.chartOptions.aspect = 2.664831804;
+	          self.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
+	    	  self.data.chartData =  _groupBySeries(data, groups,self.data.groupByRadioValue);
+	    	}
+	    	else if (self.data.selectedChart ==="PieChart"){
+	    	  
+	    	  
+	    	  var total = _.reduce(data,function(total,n){ return total + n.value},0);
+	    	  self.data.chartOptions.domain = _.constant([0, total]);
+	    	  self.data.chartData = _.filter(data,function(n){ return n.value});
+	    	  
+	    	}
+	    	self.data.loading = false;
 	    	self.trigger(self.data);
+	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
 	    });
+	    
+	    if(self.data.selectedChart ==="ChoroplethMap")
+	    {
+		    Promise.all([dataPointPromise,api.geo({ region__in :_.map(this.data.aggregatedRegions,function(region){return region.id}) })])
+		    .then(_.spread(function(data, border){
+		        var index = _.indexBy(data,'region');
+		        self.data.chartOptions.aspect = 1;
+		        self.data.chartOptions.domain = _.constant([0, 0.1]);
+				self.data.chartOptions.border = border.objects.features;		        
+                self.data.chartData = _.map(border.objects.features, function (feature) {
+                							var region = _.get(index, feature.properties.region_id);
+                							return _.merge({}, feature, {
+                									properties : { value : _.get(region, 'value') }
+                								});
+                						});
+                self.data.loading = false;
+                self.trigger(self.data);
+           }));
+	    }
 	}
 });

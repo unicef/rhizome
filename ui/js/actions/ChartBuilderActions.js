@@ -11,6 +11,7 @@ module.exports = Reflux.createActions([
         "updateDescription",
         "selectShowRegionRadio",
         "selectGroupByRadio",
+        "selectTimeRadio",
         "selectChart",
         "addCampaignSelection",
         "addRegionSelection"

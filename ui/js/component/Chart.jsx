@@ -27,7 +27,17 @@ module.exports = React.createClass({
       this.props.data,
       this.props.options);
   },
-
+  componentWillReceiveProps: function(nextProps) {
+  	if(nextProps.type != this.props.type)
+  	{
+  	    React.findDOMNode(this).innerHTML = '';
+  		this._chart = ChartFactory(
+  		    nextProps.type,
+  		    React.findDOMNode(this),
+  		    this.props.data,
+  		    this.props.options);
+  	}
+  },
   componentDidUpdate : function () {
     this._chart.update(this.props.data, this.props.options);
   }

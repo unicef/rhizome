@@ -19,8 +19,8 @@ module.exports = React.createClass({
       ChartBuilderActions.updateDescription(e.target.value);
     },
 	render: function(){
-	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
-	   
+	   var chart = <Chart type={this.state.store.selectedChart} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
+	   var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
 	   return (<form className="inline">  
 	           <div className="visualization-builder-container"> 
 	              <div className="left-page">
@@ -43,6 +43,9 @@ module.exports = React.createClass({
 	              	<div className="chart-container">
 	              	<div className="titleDiv">Group By</div>
 	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+	              	<div className="right">
+	              	<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios} onChange={ChartBuilderActions.selectTimeRadio} />
+	              	</div>
 	              	<Menu items={this.state.store.campaignList}
 	              		      sendValue={ChartBuilderActions.addCampaignSelection}
 	              		      searchable={true}>
@@ -51,9 +54,10 @@ module.exports = React.createClass({
 	              	<Menu items={this.state.store.regionList}
 	              		      sendValue={ChartBuilderActions.addRegionSelection}
 	              		      searchable={true}>
-	              				<span className="menu-span"> {this.state.store.regionSelected.title ? this.state.store.regionSelected.title:"select region"} </span>
+	              				<span className="menu-span"> {this.state.store.regionSelected.name ? this.state.store.regionSelected.name:"select region"} </span>
 	              		</Menu>
-	              	{this.state.store.chartData.length?chart:null}
+	                {this.state.store.loading?loadingDiv:null}
+	              	{this.state.store.canDisplayChart()?chart:null}
 				    </div>
 	              </div>
 	            </div>
