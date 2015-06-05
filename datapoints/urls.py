@@ -86,21 +86,21 @@ urlpatterns = [
     #     name='user_index'),
 
     ## CREATE ##
-    url(r'^user/create/$', views.UserCreateView.as_view(),
+    url(r'^users/create/$', views.UserCreateView.as_view(),
         name='create_user'),
 
     ## UPDATE ##
-    url(r'^user/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
+    url(r'^users/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
         name='user_update'),
 
     #### GROUP  ####
 
     ## CREATE ##
-    url(r'^group/create/$', views.GroupCreateView.as_view(),
+    url(r'^groups/create/$', views.GroupCreateView.as_view(),
         name='create_user'),
 
     # ## UPDATE ##
-    url(r'^group/update/(?P<pk>[0-9]+)/$', views.GrouEditView.as_view(),
+    url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GrouEditView.as_view(),
         name='group_update'),
 
 

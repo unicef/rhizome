@@ -74,7 +74,7 @@ function seriesObject(d, ind, collection, indicators) {
 function _microplans(data) {
 	var microplans = {
 		value  : null,
-		domain : null,
+		domain : [0, 1],
 		show   : false
 	};
 
@@ -525,7 +525,7 @@ module.exports = {
 								});
 						});
 
-					border.objects.features[0].properties.value = natl[0].value;
+					border.objects.features[0].properties.value = _.get(natl, '[0].value');
 
 					var props = {
 						type    : 'ChoroplethMap',

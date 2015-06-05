@@ -2,7 +2,7 @@
 
 var d3     = require('d3');
 
-var colors = require('colors');
+var colors = ['#2b8cbe', '#e8cda0'];
 
 function scale(categories) {
 	var interpolate = d3.interpolate(
