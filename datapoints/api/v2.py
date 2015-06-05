@@ -60,6 +60,8 @@ class v2Request(object):
             'campaign_map': {'orm_obj':CampaignMap,
                 'permission_function':None},
             'indicator_tag': {'orm_obj':IndicatorTag,
+                'permission_function':None},
+            'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None}
         }
 
