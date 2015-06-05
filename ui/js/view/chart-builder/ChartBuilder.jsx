@@ -19,9 +19,11 @@ module.exports = React.createClass({
       ChartBuilderActions.updateDescription(e.target.value);
     },
 	render: function(){
-	   var chart = <Chart type={this.state.store.selectedChart} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
+	   var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 	   var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
-	   return (<form className="inline">  
+	   return (
+	   <form className="inline">  
+	           <span>{this.state.store.canDisplayChart()}</span>
 	           <div className="visualization-builder-container"> 
 	              <div className="left-page">
 	                   <div className="titleDiv">Title</div>
@@ -35,30 +37,40 @@ module.exports = React.createClass({
 		               		<span className="ChartBuilderInidcatorButton">Select Indicators</span>
 		               </Menu>
 		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-		               <div className="titleDiv">Show</div>
-                       <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
+		               
+
 	              </div> 
 	              <div className="right-page">
 	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
-	              	<div className="chart-container">
-	              	<div className="titleDiv">Group By</div>
-	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-	              	<div className="right">
-	              	<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios} onChange={ChartBuilderActions.selectTimeRadio} />
+	              	<div className="chart-options-container">
+	              	<div className="grouping">
+		              	<div className="titleDiv">Group By</div>
+		              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+		              	</div>
+	              	<div className="grouping">
+	                   <div className="titleDiv">Show</div>
+	                   <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
+                   </div>
+                   <div className="grouping">
+                   		<div className="titleDiv">Time Span</div>
+               			<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio} />
+               		</div>
+					</div>
+					<div className="chart-container">
+		              	<Menu items={this.state.store.campaignList}
+		              		      sendValue={ChartBuilderActions.addCampaignSelection}
+		              		      searchable={true}>
+		              				<span className="menu-span"> {this.state.store.campaignSelected.slug?this.state.store.campaignSelected.slug:"select campaign"} </span>
+		              		</Menu>
+		              	<Menu items={this.state.store.regionList}
+		              		      sendValue={ChartBuilderActions.addRegionSelection}
+		              		      searchable={true}>
+		              				<span className="menu-span"> {this.state.store.regionSelected.name ? this.state.store.regionSelected.name:"select region"} </span>
+		              		</Menu>
+		                {this.state.store.loading?loadingDiv:null}
+		              	{this.state.store.canDisplayChart()?chart:null}
 	              	</div>
-	              	<Menu items={this.state.store.campaignList}
-	              		      sendValue={ChartBuilderActions.addCampaignSelection}
-	              		      searchable={true}>
-	              				<span className="menu-span"> {this.state.store.campaignSelected.slug?this.state.store.campaignSelected.slug:"select campaign"} </span>
-	              		</Menu>
-	              	<Menu items={this.state.store.regionList}
-	              		      sendValue={ChartBuilderActions.addRegionSelection}
-	              		      searchable={true}>
-	              				<span className="menu-span"> {this.state.store.regionSelected.name ? this.state.store.regionSelected.name:"select region"} </span>
-	              		</Menu>
-	                {this.state.store.loading?loadingDiv:null}
-	              	{this.state.store.canDisplayChart()?chart:null}
-				    </div>
+				   
 	              </div>
 	            </div>
 	            </form>

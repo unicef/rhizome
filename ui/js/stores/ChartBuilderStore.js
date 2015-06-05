@@ -63,13 +63,25 @@ module.exports = Reflux.createStore({
 		title: "new chart",
 		description: "a nice description",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
-		regionRadioValue: "selected",
+		regionRadioValue: 0,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
-		groupByRadioValue: "region",
-		timeRadios:[{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}],
-		timeRadioValue:"current",
-		chartTypes:[{name:"LineChart"},{name:"PieChart"},{name:"ChoroplethMap"}],
-		selectedChart:"ChoroplethMap",
+		groupByRadioValue: 0,
+		timeRadios:function(){
+		            var self = this;
+		            var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}];
+		            var timeRadios = _.filter(radios,function(radio){ return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1; });
+		            if(timeRadios.length -1 < this.timeRadioValue)
+		            {
+		              this.timeRadioValue = 0;
+		            }
+		            return timeRadios;
+					},
+		timeRadioValue:0,
+		chartTypes:[{name:"LineChart",timeRadios:["allTime","pastYear","3Months"]},
+					{name:"PieChart",timeRadios:["current"]},
+					{name:"ChoroplethMap",timeRadios:["allTime","pastYear","3Months","current"]},
+					{name:"ColumnChart",timeRadios:["allTime","pastYear","3Months"]}],
+		selectedChart:0,
 		chartData:[],
 	    chartOptions : {
 				domain  : null,
@@ -188,11 +200,12 @@ module.exports = Reflux.createStore({
 	aggregateRegions: function(){
 	    var regions;
 	    var regionSelected = this.data.regionSelected;
-	    if(this.data.regionRadioValue==="selected")
+	    var regionRadioValue = this.data.regionRadios[this.data.regionRadioValue].value;
+	    if(regionRadioValue==="selected")
 	    {
     	   regions = [regionSelected];
 	    }
-		else if(this.data.regionRadioValue==="type")
+		else if(regionRadioValue==="type")
 		{ 
 		   
 		   if(regionSelected.parent_region_id)
@@ -203,7 +216,7 @@ module.exports = Reflux.createStore({
 		   	 regions = _.filter(this._regionIndex, {region_type_id:this.data.regionSelected.region_type_id});
 		   }
 		}
-		else if(this.data.regionRadioValue==="subregions")
+		else if(regionRadioValue==="subregions")
 		{
 		   regions = _.filter(this._regionIndex, {parent_region_id:regionSelected.id});
 		}
@@ -224,7 +237,7 @@ module.exports = Reflux.createStore({
 	},
 	//Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
 	getLower:  function(start){
-	    var range = this.data.timeRadioValue;
+	    var range = this.data.timeRadios()[this.data.timeRadioValue].value;
 	    if(range=="current"){
 	    	return start.clone().startOf('month');
 	    } else if (range=="3Months"){
@@ -238,10 +251,12 @@ module.exports = Reflux.createStore({
 	getChartData: function(){
 	    this.data.loading = true;
 	    this.trigger(this.data); //send the loading parameter to the view
+	    var selectedChart = this.data.chartTypes[this.data.selectedChart].name;
+	    var groupBy = this.data.groupByRadios[this.data.groupByRadioValue].value;
 	    var self = this;
 		var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id');//;
 		var regionsIndex = _.indexBy(this.data.aggregatedRegions, 'id');
-		var groups = (this.data.groupByRadioValue == 'indicator'?indicatorsIndex:regionsIndex);
+		var groups = (groupBy == 'indicator'?indicatorsIndex:regionsIndex);
 		var start = moment(this.data.campaignSelected.start_date);
 		var meltObjects  = _.flow(_.property('objects'), melt);
 		var lower = this.getLower(start);//.subtract(1, 'year');
@@ -261,13 +276,13 @@ module.exports = Reflux.createStore({
 	          lower = moment(_.first(sortedDates).campaign.start_date);
 	          //var end = moment(_.last(sortedDates).campaign.end_date);
 	        }
-	        if(self.data.selectedChart ==="LineChart")
+	        if(selectedChart ==="LineChart")
 	        {
 	          self.data.chartOptions.aspect = 2.664831804;
 	          self.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
-	    	  self.data.chartData =  _groupBySeries(data, groups,self.data.groupByRadioValue);
+	    	  self.data.chartData =  _groupBySeries(data, groups,groupBy);
 	    	}
-	    	else if (self.data.selectedChart ==="PieChart"){
+	    	else if (selectedChart ==="PieChart"){
 	    	  
 	    	  
 	    	  var total = _.reduce(data,function(total,n){ return total + n.value},0);
@@ -280,7 +295,7 @@ module.exports = Reflux.createStore({
 	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
 	    });
 	    
-	    if(self.data.selectedChart ==="ChoroplethMap")
+	    if(selectedChart ==="ChoroplethMap")
 	    {
 		    Promise.all([dataPointPromise,api.geo({ region__in :_.map(this.data.aggregatedRegions,function(region){return region.id}) })])
 		    .then(_.spread(function(data, border){

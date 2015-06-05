@@ -14,20 +14,29 @@ $right-page-width: 900px;
    		display: inline-block;
    		vertical-align: top;
    		margin-left: 10px;
-   		.chart-container {
+   		.grouping {
+   			display: inline-block;
+   			vertical-align: top;
+   			margin: 1px 8px;
+   		}
+   		.chart-options-container {
    			background-color: $chart-container-color;
    			margin-left: $chart-wrapper-margin;
    			padding: 10px;
+   		}
+   		.chart-container {
+   			width: 500px;
+   			position: relative;
    		}
    		.menu-span {
    			display: inline-block;
    			width: 200px;
    		}
 		.loading-div {
-		  text-align: center;
-		  padding: 100px 0;
 		  position: absolute;
-		  width: $right-page-width;
+		  top: 100px;
+		  left: 45%;
+		  z-index: 999;
 		}
    }
 }
