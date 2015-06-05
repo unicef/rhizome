@@ -31,18 +31,12 @@ var Search = React.createClass({
   },
 
   _setPattern : function (e) {
-    if (e.target.value.length > 2) {
-      this.props.onChange(e.target.value);
-    }
-
+    this.props.onChange(e.target.value);
     this.setState({ pattern : e.target.value });
   },
 
   _clear : function () {
-    if (this.state.pattern.length > 2) {
-      this.props.onChange('');
-    }
-
+    this.props.onChange('');
     this.setState({ pattern : '' });
   }
 });

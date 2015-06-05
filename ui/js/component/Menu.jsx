@@ -1,19 +1,15 @@
 var _      = require('lodash');
-var React  = require('react');
+var React  = require('react/addons');
 
 var Search = require('component/Search.jsx');
 
 var dom = require('util/dom');
 
 module.exports = React.createClass({
-	propTypes: {
-		sendValue: React.PropTypes.func
-	},
-
   getDefaultProps : function () {
     return {
+      onSearch   : _.noop,
       searchable : false,
-      onSearch   : null,
       x          : 0,
       y          : 0
     };
@@ -23,7 +19,8 @@ module.exports = React.createClass({
 	   return {
 	     maxHeight   : 'none',
 	     marginLeft  : 0,
-       orientation : 'center'
+       orientation : 'center',
+       pattern     : ''
 	   };
 	},
 
@@ -98,5 +95,5 @@ module.exports = React.createClass({
         </div>
       </div>
     );
-	}
+	},
 });

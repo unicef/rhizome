@@ -1,5 +1,6 @@
 'use strict';
 
+var _      = require('lodash');
 var React  = require('react');
 var Reflux = require('reflux/src');
 
@@ -12,27 +13,27 @@ var List                = require('component/list/List.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 var RadioGroup          = require('component/radio-group/RadioGroup.jsx');
 
-function noop() {}
-
 function findMatches(item, re) {
   var matches = [];
 
-  if (re.test(item.title)) {
+  if (re.test(_.get(item, 'title'))) {
     matches.push(item);
   }
 
-  if (item.children) {
-    item.children.forEach(function (child) {
-      matches = matches.concat(findMatches(child, re));
-    });
+  if (!_.isEmpty(_.get(item, 'children'))) {
+    matches = matches.concat(findMatches(item.children, re));
   }
 
   return matches;
-}
+};
 
 function filterMenu(items, pattern) {
+  if (_.size(pattern) < 3) {
+    return items;
+  }
+
   var filtered = [];
-  var re = new RegEx(pattern, 'gi');
+  var re = new RegExp(pattern, 'gi');
 
   _.each(items, function (item) {
     filtered = filtered.concat(findMatches(item, re));
@@ -42,13 +43,31 @@ function filterMenu(items, pattern) {
 }
 
 module.exports = React.createClass({
-    mixins: [Reflux.connect(ChartBuilderStore,"store")],
-    _updateTitle: function(e){
-      ChartBuilderActions.updateTitle(e.target.value);
-    },
-    _updateDescription: function(e){
-      ChartBuilderActions.updateDescription(e.target.value);
-    },
+  mixins: [Reflux.connect(ChartBuilderStore,"store")],
+
+  _updateTitle: function(e){
+    ChartBuilderActions.updateTitle(e.target.value);
+  },
+
+  _updateDescription: function(e){
+    ChartBuilderActions.updateDescription(e.target.value);
+  },
+
+  _updateFilter : function (filterFor, pattern) {
+    var state = {};
+
+    state[filterFor + 'Filter'] = pattern;
+
+    this.setState(state);
+  },
+
+  setFilter : function (filterFor, pattern) {
+    var state = {};
+    state[filterFor + 'Filter'] = pattern;
+
+    this.setState(state);
+  },
+
 	render: function(){
 	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 
@@ -56,17 +75,20 @@ module.exports = React.createClass({
       this.state.store.campaignSelected.slug :
       'Select Campaign';
 
-     var campaigns = MenuItem.fromArray(this.state.store.campaignList,
+     var campaigns = MenuItem.fromArray(
+      filterMenu(this.state.store.campaignList, this.state.campaignFilter),
       ChartBuilderActions.addCampaignSelection);
 
-     var indicators = MenuItem.fromArray(this.state.store.indicatorList,
+     var indicators = MenuItem.fromArray(
+      filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
       ChartBuilderActions.addIndicatorSelection);
 
      var regionSelection = !!this.state.store.regionSelected ?
       this.state.store.regionSelected.title :
       'Select Region';
 
-     var regions = MenuItem.fromArray(this.state.store.regionList,
+     var regions = MenuItem.fromArray(
+      filterMenu(this.state.store.regionList, this.state.regionFilter),
       ChartBuilderActions.addRegionSelection);
 
 	   return (<form className="inline">
@@ -80,7 +102,7 @@ module.exports = React.createClass({
 
                     <ButtonMenu text='Select Indicators'
                       searchable={true}
-                      onSearch={noop}>
+                      onSearch={_.partial(this.setFilter, 'indicator')}>
                       {indicators}
                     </ButtonMenu>
 
@@ -99,7 +121,7 @@ module.exports = React.createClass({
                     text={campaignSelection}
                     icon='fa-calendar'
           		      searchable={true}
-                    onSearch={noop}>
+                    onSearch={_.partial(this.setFilter, 'campaign')}>
 	              	  {campaigns}
               		</ButtonMenu>
 
@@ -107,7 +129,7 @@ module.exports = React.createClass({
                     icon='fa-globe'
                     text={regionSelection}
           		      searchable={true}
-                    onSearch={noop}>
+                    onSearch={_.partial(this.setFilter, 'region')}>
                     {regions}
               		</ButtonMenu>
 

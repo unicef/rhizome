@@ -65,24 +65,29 @@ var ButtonMenu = React.createClass({
 
       var x = (offset.right + offset.left) / 2
 
+      this.menu = (
+        <Menu x={x} y={offset.bottom} {...props}>
+          {items}
+        </Menu>
+      );
+
       if (!this.layer) {
-        var menu = this.menu = (
-          <Menu x={x} y={offset.bottom} {...props}>
-            {items}
-          </Menu>
-        );
-
+        var self = this;
         this.layer = new Layer(document.body, function () {
-          return menu;
+          return self.menu;
         });
-
-        this.layer.render();
         window.addEventListener('keyup', this);
       }
+
+      this.layer.render();
     } else if (this.layer) {
       this.layer.destroy();
       this.layer = null;
       this.menu = null;
+
+      // Clear out the search patterns that the parent component is necessarily
+      // using to provide filtered menu items.
+      this.props.onSearch('');
       window.removeEventListener('keyup', this);
     }
   },
