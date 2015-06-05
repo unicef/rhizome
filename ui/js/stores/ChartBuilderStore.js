@@ -117,22 +117,29 @@ module.exports = Reflux.createStore({
 		         	.value();
 		         self.trigger(self.data);
 		     });
-		 api.campaign().then(function(items){
-		        self._campaignIndex = _.indexBy(items.objects, 'id');
-		        self.data.campaignList = _(items.objects)
-		         	.map(function (campaign) {
-		         		return {
-		         			'title'  : campaign.slug,
-		         			'value'  : campaign.id,
-		         			'parent' : null
-		         		};
-		         	})
-		         	.sortBy('title')
-		         	.reverse()
-		         	.value();
-		         self.trigger(self.data);
-		     });
+
+		Promise.all([api.campaign(), api.office()])
+			.then(_.spread(function(campaigns, offices) {
+				var officeIdx = _.indexBy(offices.objects, 'id');
+
+				self.data.campaignList = _(campaigns.objects)
+					.map(function (campaign) {
+						return _.assign({}, campaign, {
+							'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+							'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+							'office'     : officeIdx[campaign.office_id]
+						});
+					})
+					.sortBy(_.method('start_date.getTime'))
+					.reverse()
+					.value();
+
+				self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
+
+				self.trigger(self.data);
+			}));
 	},
+
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.getChartData();

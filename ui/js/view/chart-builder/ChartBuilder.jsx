@@ -3,15 +3,17 @@
 var _      = require('lodash');
 var React  = require('react');
 var Reflux = require('reflux/src');
+var moment = require('moment');
 
-var ButtonMenu          = require('component/ButtonMenu.jsx');
-var Chart               = require('component/Chart.jsx');
-var ChartBuilderActions = require('actions/ChartBuilderActions');
-var ChartBuilderStore   = require("stores/ChartBuilderStore");
-var ChartSelect         = require('./ChartSelect.jsx');
-var List                = require('component/list/List.jsx');
-var MenuItem            = require('component/MenuItem.jsx');
-var RadioGroup          = require('component/radio-group/RadioGroup.jsx');
+var DropdownMenu         = require('component/DropdownMenu.jsx');
+var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var Chart                = require('component/Chart.jsx');
+var ChartBuilderActions  = require('actions/ChartBuilderActions');
+var ChartBuilderStore    = require("stores/ChartBuilderStore");
+var ChartSelect          = require('./ChartSelect.jsx');
+var List                 = require('component/list/List.jsx');
+var MenuItem             = require('component/MenuItem.jsx');
+var RadioGroup           = require('component/radio-group/RadioGroup.jsx');
 
 function findMatches(item, re) {
   var matches = [];
@@ -37,6 +39,10 @@ function filterMenu(items, pattern) {
   var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
 
   return _(items).map(match).flatten().value();
+}
+
+function campaignDisplayFormat(campaign) {
+  return moment(campaign.start_date).format('MMMM YYYY');
 }
 
 module.exports = React.createClass({
@@ -69,12 +75,8 @@ module.exports = React.createClass({
 	   var chart = <Chart type="LineChart" data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 
 	   var campaignSelection = !!this.state.store.campaignSelected ?
-      this.state.store.campaignSelected.slug :
+      campaignDisplayFormat(this.state.store.campaignSelected) :
       'Select Campaign';
-
-     var campaigns = MenuItem.fromArray(
-      filterMenu(this.state.store.campaignList, this.state.campaignFilter),
-      ChartBuilderActions.addCampaignSelection);
 
      var indicators = MenuItem.fromArray(
       filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
@@ -97,11 +99,11 @@ module.exports = React.createClass({
 	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
 	                   <div className="titleDiv">Indicators</div>
 
-                    <ButtonMenu text='Select Indicators'
+                    <DropdownMenu text='Select Indicators'
                       searchable={true}
                       onSearch={_.partial(this.setFilter, 'indicator')}>
                       {indicators}
-                    </ButtonMenu>
+                    </DropdownMenu>
 
 		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
 		               <div className="titleDiv">Show</div>
@@ -114,21 +116,19 @@ module.exports = React.createClass({
 	              	<div className="titleDiv">Group By</div>
 	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
 
-	              	<ButtonMenu
+	              	<CampaignDropdownMenu
                     text={campaignSelection}
-                    icon='fa-calendar'
-          		      searchable={true}
-                    onSearch={_.partial(this.setFilter, 'campaign')}>
-	              	  {campaigns}
-              		</ButtonMenu>
+                    campaigns={this.state.store.campaignList}
+                    sendValue={ChartBuilderActions.addCampaignSelection}>
+              		</CampaignDropdownMenu>
 
-	              	<ButtonMenu
+	              	<DropdownMenu
                     icon='fa-globe'
                     text={regionSelection}
           		      searchable={true}
                     onSearch={_.partial(this.setFilter, 'region')}>
                     {regions}
-              		</ButtonMenu>
+              		</DropdownMenu>
 
 	              	{this.state.store.chartData.length?chart:null}
 				    </div>
