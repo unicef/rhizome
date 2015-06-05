@@ -179,7 +179,6 @@ class Region(models.Model):
     slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    is_high_risk = models.BooleanField(default=False)
     parent_region = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
