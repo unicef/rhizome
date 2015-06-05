@@ -584,7 +584,6 @@ class v2GetRequest(v2Request):
             if isinstance(v, int):
                 cleaned_row_data[k] = v
             elif k in ['longitude','latitude'] and v:
-                print v
                 cleaned_row_data[k] = float(v)
             elif 'json' in k: # if k == 'bound_json':
                 cleaned_row_data[k] =v  # json.loads(v)

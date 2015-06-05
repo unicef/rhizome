@@ -47,19 +47,19 @@
 				</section>
 
 				<section>
-					<table class="pie-charts" v-if="microplans.show" style="margin-top:1em">
+					<table class="pie-charts" v-show="microplans.show" style="margin-top:1em">
 						<tbody>
 							<tr>
 								<td>
 									<div v-el="microplans" style="width:24pt"></div>
 								</td>
 
-								<td style="font-size:9pt;padding-left:2pt">{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
+								<td v-if="microplans.show" style="font-size:9pt;padding-left:2pt">{{ microplans.value[0].value }} / {{ microplans.domain[1] }}
 									microplans incorporate social data</td>
 							</tr>
 						</tbody>
 					</table>
-					<p v-if="!microplans.show" style="font-size:9pt">No microplan data available.</p>
+					<p v-show="!microplans.show" style="font-size:9pt">No microplan data available.</p>
 				</section>
 
 			</div>
