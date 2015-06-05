@@ -30,8 +30,16 @@ module.exports = React.createClass({
 	  this._onResize();
 	},
 
+  componentDidUpdate : function () {
+    this._onResize();
+  },
+
   componentWillUnmount : function () {
     window.removeEventListener('resize', this._onResize);
+  },
+
+  shouldComponentUpdate : function (nextProps, nextState) {
+    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
   },
 
 	_onResize : function () {
