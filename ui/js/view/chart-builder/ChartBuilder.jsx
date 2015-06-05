@@ -21,7 +21,9 @@ function findMatches(item, re) {
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
-    matches = matches.concat(findMatches(item.children, re));
+    _.each(item.children, function (child) {
+      matches = matches.concat(findMatches(child, re));
+    })
   }
 
   return matches;
@@ -32,14 +34,9 @@ function filterMenu(items, pattern) {
     return items;
   }
 
-  var filtered = [];
-  var re = new RegExp(pattern, 'gi');
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
 
-  _.each(items, function (item) {
-    filtered = filtered.concat(findMatches(item, re));
-  });
-
-  return filtered;
+  return _(items).map(match).flatten().value();
 }
 
 module.exports = React.createClass({
