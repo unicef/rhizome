@@ -100,11 +100,12 @@ module.exports = Reflux.createStore({
 		  	.sortBy('title')
 		  	.reverse() // I do not know why this works, but it does
 		  	.thru(_.curryRight(treeify)('value'))
-		  	.thru(ancestoryString)
+		  	.map(ancestoryString)
 		  	.value();
 		  	self.trigger(self.data);
 		  	self.aggregateRegions();
 		 });
+
 		 api.indicators().then(function(items){
 		        self._indicatorIndex = _.indexBy(items.objects, 'id');
 		        self.data.indicatorList = _(items.objects)
@@ -116,26 +117,33 @@ module.exports = Reflux.createStore({
 		         		};
 		         	})
 		         	.sortBy('title')
-		         	.reverse() 
+		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
-		 api.campaign().then(function(items){
-		        self._campaignIndex = _.indexBy(items.objects, 'id');
-		        self.data.campaignList = _(items.objects)
-		         	.map(function (campaign) {
-		         		return {
-		         			'title'  : campaign.slug,
-		         			'value'  : campaign.id,
-		         			'parent' : null
-		         		};
-		         	})
-		         	.sortBy('title')
-		         	.reverse() 
-		         	.value();
-		         self.trigger(self.data);
-		     });
+
+		Promise.all([api.campaign(), api.office()])
+			.then(_.spread(function(campaigns, offices) {
+				var officeIdx = _.indexBy(offices.objects, 'id');
+
+				self.data.campaignList = _(campaigns.objects)
+					.map(function (campaign) {
+						return _.assign({}, campaign, {
+							'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+							'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+							'office'     : officeIdx[campaign.office_id]
+						});
+					})
+					.sortBy(_.method('start_date.getTime'))
+					.reverse()
+					.value();
+
+				self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
+
+				self.trigger(self.data);
+			}));
 	},
+
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
@@ -168,7 +176,7 @@ module.exports = Reflux.createStore({
 	   this.data.timeRadioValue = value;
 	   this.trigger(this.data);
 	   this.getChartData();
-	},	
+	},
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
@@ -193,8 +201,8 @@ module.exports = Reflux.createStore({
     	   regions = [regionSelected];
 	    }
 		else if(this.data.regionRadioValue==="type")
-		{ 
-		   
+		{
+
 		   if(regionSelected.parent_region_id)
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
@@ -253,7 +261,7 @@ module.exports = Reflux.createStore({
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-	    
+
 	    var dataPointPromise = api.datapoints(q).then(meltObjects).then(function(data){
 	        if(!lower) //set the lower bound from the lowest datapoint value
 	        {
@@ -268,18 +276,18 @@ module.exports = Reflux.createStore({
 	    	  self.data.chartData =  _groupBySeries(data, groups,self.data.groupByRadioValue);
 	    	}
 	    	else if (self.data.selectedChart ==="PieChart"){
-	    	  
-	    	  
+
+
 	    	  var total = _.reduce(data,function(total,n){ return total + n.value},0);
 	    	  self.data.chartOptions.domain = _.constant([0, total]);
 	    	  self.data.chartData = _.filter(data,function(n){ return n.value});
-	    	  
+
 	    	}
 	    	self.data.loading = false;
 	    	self.trigger(self.data);
 	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
 	    });
-	    
+
 	    if(self.data.selectedChart ==="ChoroplethMap")
 	    {
 		    Promise.all([dataPointPromise,api.geo({ region__in :_.map(this.data.aggregatedRegions,function(region){return region.id}) })])
@@ -287,7 +295,7 @@ module.exports = Reflux.createStore({
 		        var index = _.indexBy(data,'region');
 		        self.data.chartOptions.aspect = 1;
 		        self.data.chartOptions.domain = _.constant([0, 0.1]);
-				self.data.chartOptions.border = border.objects.features;		        
+				self.data.chartOptions.border = border.objects.features;
                 self.data.chartData = _.map(border.objects.features, function (feature) {
                 							var region = _.get(index, feature.properties.region_id);
                 							return _.merge({}, feature, {

@@ -100,7 +100,7 @@ nav {
 	}
 
 	a:hover {
-		color: #fff;
+		color: #fff !important;
 		opacity: 1;
 	}
 }
@@ -564,6 +564,13 @@ ul {
 
 		.arrow {
 			border-bottom-color: $gainsboro !important;
+		}
+	}
+
+	li.campaign {
+		.office {
+			color       : $jumbo;
+			font-weight : bold;
 		}
 	}
 }
