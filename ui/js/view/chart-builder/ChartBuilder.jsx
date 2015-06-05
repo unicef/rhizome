@@ -19,7 +19,7 @@ function findMatches(item, re) {
   var matches = [];
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(item);
+    matches.push(_.assign({}, item, { filtered : true }));
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {

@@ -98,10 +98,11 @@ module.exports = Reflux.createStore({
 		  	.sortBy('title')
 		  	.reverse() // I do not know why this works, but it does
 		  	.thru(_.curryRight(treeify)('value'))
-		  	.thru(ancestoryString)
+		  	.map(ancestoryString)
 		  	.value();
 		  	self.trigger(self.data);
 		 });
+
 		 api.indicators().then(function(items){
 		        self._indicatorIndex = _.indexBy(items.objects, 'id');
 		        self.data.indicatorList = _(items.objects)
