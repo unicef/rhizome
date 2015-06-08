@@ -134,12 +134,15 @@ module.exports = {
 		// FIXME: temporary mock data
 		return Promise.resolve({
 			objects : [{
+					'id'   : 1,
 					'name' : 'Management: Country',
 					'url'  : '/datapoints/management-dashboard'
 				}, {
+					'id'   : 2,
 					'name' : 'Management: Districts',
 					'url'  : '/datapoints/district'
 				}, {
+					'id'             : 3,
 					'name'           : 'NGA Campaign Monitoring',
 					'url'            : '/datapoints/nga-campaign-monitoring',
 					'default_office' : 1,

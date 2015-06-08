@@ -12,7 +12,7 @@ var NavMenuItem = React.createClass({
     fromArray : function (arr) {
       return _.map(arr, function (item) {
         return (
-          <NavMenuItem href={item.url}>{item.name}</NavMenuItem>
+          <NavMenuItem key={item.key} href={item.url}>{item.name}</NavMenuItem>
         );
       })
     }

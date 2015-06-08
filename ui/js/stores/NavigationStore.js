@@ -76,12 +76,7 @@ var NavigationStore = Reflux.createStore({
 					path = '/' + path;
 				}
 
-				var result = {
-					name : d.name,
-					url  : d.url + path
-				};
-
-				return result;
+				return _.assign({}, d, { url : d.url + path });
 			})
 			.reject(_.isNull)
 			.value();

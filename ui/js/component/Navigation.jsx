@@ -1,5 +1,6 @@
 'use strict';
 
+var _      = require('lodash');
 var React  = require('react');
 var Reflux = require('reflux/src');
 
@@ -13,7 +14,9 @@ var Navigation = React.createClass({
   ],
 
   render : function () {
-    var dashboards = NavMenuItem.fromArray(this.state.dashboards);
+    var dashboards = NavMenuItem.fromArray(_.map(this.state.dashboards, function (d) {
+      return _.assign({ key : 'dashboard-nav-' + d.id }, d);
+    }));
 
     return (
       <nav>
