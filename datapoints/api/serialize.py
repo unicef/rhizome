@@ -173,11 +173,16 @@ class CustomSerializer(Serializer):
         region_ids = [obj['region'] for obj in object_list]
         campaign_ids = [obj['campaign'] for obj in object_list]
 
+
         ## every object has all indicators, so find the first one, and the IDs
         ## for each indicator in that object
-        indicator_list = [obj['indicators'] for obj in object_list][0]
 
-        indicator_ids = [ind_dict['indicator'] for ind_dict in indicator_list]
+        indicator_nodes = [obj['indicators'] for obj in object_list]
+
+        indicator_ids = []
+        for ind in indicator_nodes:
+
+            indicator_ids.extend([i['indicator'] for i in ind])
 
         for r in Region.objects.filter(id__in=region_ids):
             meta_lookup['region'][r.id] = r.__unicode__()
