@@ -26,16 +26,6 @@ var NavMenu = React.createClass({
     );
   },
 
-  componentDidUpdate : function () {
-    if (this.state.open) {
-      React.findDOMNode(this).focus();
-    }
-  },
-
-  _onBlur : function () {
-    this.setState({ open : false });
-  }
-
 });
 
 module.exports = NavMenu;
