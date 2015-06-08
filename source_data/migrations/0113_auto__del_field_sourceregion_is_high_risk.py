@@ -14,8 +14,6 @@ class Migration(SchemaMigration):
         DROP COLUMN is_high_risk;
         ''')
 
-        delete_column('source_region', 'is_high_risk')
-
 
     def backwards(self, orm):
         # Adding field 'SourceRegion.is_high_risk'
