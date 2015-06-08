@@ -45,7 +45,7 @@ var Navigation = React.createClass({
               <NavMenuItem href='/datapoints/entry'>
                 Edit Data
               </NavMenuItem>
-              <NavMenuItem href='/upload'>
+              <NavMenuItem href='/upload/file_upload'>
                 Upload Data
               </NavMenuItem>
             </NavMenu>
