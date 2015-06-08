@@ -8,6 +8,12 @@ var Menu = require('component/Menu.jsx');
 var dom  = require('util/dom');
 
 var MenuControl = {
+	getDefaultProps : function () {
+		return {
+			onSearch : _.noop
+		};
+	},
+
 	getInitialState : function () {
 		return {
 			open : false
