@@ -4,11 +4,11 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
-# from tastypie.resources import ALL
+from tastypie.utils.mime import determine_format, build_content_type
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 
@@ -52,7 +52,7 @@ class DataPointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
-
+    
     def get_object_list(self,request):
         '''
         '''
@@ -70,10 +70,6 @@ class DataPointResource(BaseNonModelResource):
         if err:
             self.error = err
             return []
-
-        print '===='
-        print region_ids
-        print '===='
 
         db_data = DataPointAbstracted.objects.filter(
             region_id__in = region_ids,
