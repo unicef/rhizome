@@ -283,7 +283,6 @@ class DataPointEntryResource(BaseModelResource):
         Also, if a request comes in with value=NULL, that means set the value
         of that obect = 0.
         """
-        print '===HERE===\n' * 10
 
         try:
             self.validate_object(bundle.data)
@@ -438,10 +437,13 @@ class DataPointEntryResource(BaseModelResource):
         region_id_list.append(int(bundle_data['region_id']))
 
         permitted_region_qs =  Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,'w')",[user_id,
+            fn_get_authorized_regions_by_user(%s,%s,'w',NULL)",[user_id,
             region_id_list])
 
         permitted_region_ids = [x.id for x in permitted_region_qs]
+
+        print '===='
+        print permitted_region_ids
 
         if len(permitted_region_ids) == 0:
             raise InputError(4, 'User does not have permissions for \
