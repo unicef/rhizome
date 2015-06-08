@@ -9,15 +9,17 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'SourceRegion.is_high_risk'
-        db.delete_column('source_region', 'is_high_risk')
+        db.execute('''
+        ALTER TABLE source_region
+        DROP COLUMN is_high_risk;
+        ''')
+
+        delete_column('source_region', 'is_high_risk')
 
 
     def backwards(self, orm):
         # Adding field 'SourceRegion.is_high_risk'
-        db.add_column('source_region', 'is_high_risk',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-
+        pass
 
     models = {
         u'auth.group': {
