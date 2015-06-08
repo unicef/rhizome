@@ -412,6 +412,10 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
+
+        # for a get request.. dont show an ids < 0 ( see POLIO-856 ) #
+        self.kwargs['id__gt'] = 0
+
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
         if not self.kwargs and self.content_type in ['campaign','region']:
