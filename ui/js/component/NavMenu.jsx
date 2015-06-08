@@ -20,12 +20,20 @@ var NavMenu = React.createClass({
       (<span>{this.props.text}</span>);
 
     return (
-      <span>
-        <a onClick={this._toggleMenu}>
-          {display}&emsp;<i className='fa fa-chevron-down'></i>
-        </a>
-      </span>
+      <a onClick={this._toggleMenu} onBlur={this._onBlur} tabIndex='-1'>
+        {display}&emsp;<i className='fa fa-chevron-down'></i>
+      </a>
     );
+  },
+
+  componentDidUpdate : function () {
+    if (this.state.open) {
+      React.findDOMNode(this).focus();
+    }
+  },
+
+  _onBlur : function () {
+    this.setState({ open : false });
   }
 
 });
