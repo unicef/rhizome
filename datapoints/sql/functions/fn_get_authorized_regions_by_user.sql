@@ -76,12 +76,12 @@ BEGIN
   	)x
   	WHERE x.id = ANY(COALESCE($2,ARRAY[x.id]));
 
-	RETURN QUERY
+	  RETURN QUERY
 
   	SELECT
   		*
   	FROM _permitted_regions prm
-  	WHERE prm.lvl <= $4
+    WHERE prm.lvl <= COALESCE($4,prm.lvl)
   	ORDER BY prm.lvl;
 
 END

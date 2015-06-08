@@ -71,6 +71,10 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
+        print '===='
+        print region_ids
+        print '===='
+
         db_data = DataPointAbstracted.objects.filter(
             region_id__in = region_ids,
             campaign_id__in = self.parsed_params['campaign__in'])\

@@ -123,14 +123,18 @@ class BaseNonModelResource(Resource):
         else:
             region_ids = Region.objects.all().values_list('id',flat=True)
 
+        ####################################
+        ## now apply regional permissions ##
+        ####################################
+
         permitted_region_qs =  Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,NULL,'r')",[self.user_id])
+            fn_get_authorized_regions_by_user(%s,%s,'r',NULL)",\
+            [self.user_id,list(region_ids)])
 
         permitted_region_ids = [r.id for r in permitted_region_qs]
 
         final_region_ids = list(set(region_ids).intersection(set\
             (permitted_region_ids)))
-
 
         return None, final_region_ids
 
