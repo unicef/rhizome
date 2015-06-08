@@ -1,20 +1,20 @@
 ﻿
 DROP TABLE IF EXISTS _odk_setts;
 CREATE TEMP TABLE _odk_setts AS
-SELECT 
+SELECT
 	CAST(region_code as VARCHAR) as region_code
 	,CAST(region_name as VARCHAR) as region_name
 	,lat
 	,lon
 FROM (
 
-	SELECT 
+	SELECT
 		19040401 as region_code
 		,'anguwar niger' as region_name
 		,10.79329985 as lat
 		,7.77798094 as lon
 
-	UNION ALL	
+	UNION ALL
 
 	SELECT 19040402,'fako',10.79182418,7.7791337 UNION ALL
 	SELECT 19090301,'barrack road',10.57563328,7.4404142 UNION ALL
@@ -2398,7 +2398,7 @@ FROM (
 INSERT INTO source_data_document
 (id, doc_text,guid,is_processed,source_id,created_by_id)
 
-SELECT 
+SELECT
   new_doc_id
 ,'jd_odk_regions_3_10_2015'
 ,'jd_odk_regions_3_10_2015'
@@ -2412,13 +2412,13 @@ INNER JOIN (
 ON 1=1
 AND source_name = 'John_SQL'
 WHERE NOT EXISTS(
-	SELECT 1 FROM source_data_document 
+	SELECT 1 FROM source_data_document
 	WHERE guid = 'jd_odk_regions_3_10_2015'
 );
 
 
-INSERT INTO source_region 
-(source_guid,lat,lon,document_id,region_code,parent_code,region_type,country,is_high_risk)
+INSERT INTO source_region
+(source_guid,lat,lon,document_id,region_code,parent_code,region_type,country)
 
 SELECT * FROM (
 	SELECT
@@ -2430,20 +2430,18 @@ SELECT * FROM (
 		,MAX(LEFT(region_code,4)) as parent_code
 		,MAX(rt.id) as region_type_id
 		,'nigeria' as country
-		,CAST('t' AS BOOLEAN) as is_high_risk
 	FROM _odk_setts odks
 	INNER JOIN source_data_document sdd
 		ON sdd.guid = 'jd_odk_regions_3_10_2015'
 	INNER JOIN region_type rt
 		ON rt.name = 'settlement'
-	INNER JOIN office o 
+	INNER JOIN office o
 		ON o.name = 'Nigeria'
 	GROUP BY odks.region_code
 )x
-	WHERE NOT EXISTS ( 
+	WHERE NOT EXISTS (
 		SELECT 1 from source_region sr
 		WHERE sr.source_guid = x.region_name
 		AND sr.region_code = CAST(x.region_code AS VARCHAR)
 	)
 ;
-

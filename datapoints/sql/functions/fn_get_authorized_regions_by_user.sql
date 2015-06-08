@@ -12,7 +12,6 @@ RETURNS TABLE(
   ,created_at TIMESTAMP WITH TIME ZONE
   ,source_id INT
   ,region_code VARCHAR
-  ,is_high_risk BOOLEAN
   ,name VARCHAR
   ,parent_region_id INT
   ,region_type_id INT
