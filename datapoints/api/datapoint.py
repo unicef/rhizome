@@ -52,7 +52,30 @@ class DataPointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
-    
+    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+        """
+        THis is overridden from tastypie.  The point here is to be able to
+        Set the content-disposition header for csv downloads.  That is the only
+        instance in which this override should change the response is if the
+        desired format is csv.
+
+        The content-disposition header allows the user to save the .csv
+        to a directory of their chosing.
+
+        """
+        desired_format = self.determine_format(request)
+        serialized = self.serialize(request, data, desired_format)
+
+        response = response_class(content=serialized,\
+            content_type=build_content_type(desired_format), **response_kwargs)
+
+        # if desired_format == 'text/csv':
+        #     return []
+
+        return response
+
+
+
     def get_object_list(self,request):
         '''
         '''
