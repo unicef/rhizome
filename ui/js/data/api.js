@@ -130,6 +130,23 @@ datapoint.toString = function (query, version) {
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
+	dashboards            : function () {
+		// FIXME: temporary mock data
+		return Promise.resolve({
+			objects : [{
+					'name' : 'Management: Country',
+					'url'  : '/datapoints/management-dashboard'
+				}, {
+					'name' : 'Management: Districts',
+					'url'  : '/datapoints/district'
+				}, {
+					'name'           : 'NGA Campaign Monitoring',
+					'url'            : '/datapoints/nga-campaign-monitoring',
+					'default_office' : 1,
+					'offices'        : [1]
+				}]
+		});
+	},
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),
