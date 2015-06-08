@@ -53,6 +53,7 @@ class IndicatorAbstracted(models.Model):
     short_name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    source_name = models.CharField(max_length=255)
     bound_json = JSONField()
     tag_json = JSONField()
 
