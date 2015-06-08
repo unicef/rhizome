@@ -97,11 +97,13 @@ nav {
 		opacity: 0.5;
 		text-decoration: none;
 		transition: opacity 300ms ease;
-	}
 
-	a:hover {
-		color: #fff !important;
-		opacity: 1;
+		&:focus,
+		&:hover {
+			color: #fff !important;
+			opacity: 1;
+			outline: none;
+		}
 	}
 }
 
