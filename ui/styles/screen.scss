@@ -540,6 +540,10 @@ ul {
 }
 
 .menu {
+	&:focus {
+		outline : none;
+	}
+
 	.menu-button {
 		color     : white;
 		cursor    : pointer;

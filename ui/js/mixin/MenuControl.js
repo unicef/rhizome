@@ -28,25 +28,36 @@ var MenuControl = {
 
 			var x = (offset.right + offset.left) / 2
 
-			this.menu = (
-				<Menu x={x} y={offset.bottom} {...props}>
+			var onBlur = this.onBlur || _.noop;
+
+			var menu = (
+				<Menu x={x} y={offset.bottom}
+					onBlur={this.close}
+					onSearch={this.onSearch}
+					{...props}>
 					{items}
 				</Menu>
 			);
 
 			if (!this.layer) {
 				var self = this;
+
 				this.layer = new Layer(document.body, function () {
-					return self.menu;
+					return menu;
 				});
+
 				window.addEventListener('keyup', this);
+			} else {
+				// Here's a gross way to re-render the menu when its items have changed
+				// (due, for example, to them being filtered) without destroying and
+				// recreating the layer every time.
+				this.layer._render = function () { return menu; };
 			}
 
 			this.layer.render();
 		} else if (this.layer) {
 			this.layer.destroy();
 			this.layer = null;
-			this.menu = null;
 
 			// Clear out the search patterns that the parent component is necessarily
 			// using to provide filtered menu items.
@@ -59,17 +70,20 @@ var MenuControl = {
 		this.setState({open : !this.state.open });
 	},
 
-	// FIXME: Should this be a separate mixin?
 	handleEvent : function (evt) {
-		var handler = 'on' + _.capitalize(evt.type);
-		_.get(this, handler, _.noop)(evt);
+		switch (evt.type) {
+			case 'keyup':
+				if (evt.keyCode === 27) {
+					this.close();
+				}
+				break;
+			default:
+				break;
+		}
 	},
 
-	onKeyup : function (evt) {
-		if (evt.keyCode === 27) {
-			// On escape pressed, close the menu
-			this.setState({ open : false });
-		}
+	close : function () {
+		this.setState({ open : false });
 	}
 };
 

@@ -6,9 +6,18 @@ var Search = require('component/Search.jsx');
 var dom = require('util/dom');
 
 module.exports = React.createClass({
+  propTypes : {
+    onSearch   : React.PropTypes.func,
+    onBlur     : React.PropTypes.func,
+    searchable : React.PropTypes.bool,
+    x          : React.PropTypes.number,
+    y          : React.PropTypes.number,
+  },
+
   getDefaultProps : function () {
     return {
       onSearch   : _.noop,
+      onBlur     : _.noop,
       searchable : false,
       x          : 0,
       y          : 0
@@ -28,6 +37,11 @@ module.exports = React.createClass({
 	  window.addEventListener('resize', this._onResize);
 
 	  this._onResize();
+    if (this.props.search) {
+      React.findDOMNode(this.refs.search).focus();
+    } else {
+      React.findDOMNode(this).focus();
+    }
 	},
 
   componentDidUpdate : function () {
@@ -83,11 +97,11 @@ module.exports = React.createClass({
     };
 
     var search = this.props.searchable ?
-      (<Search onChange={this.props.onSearch} />) :
+      (<Search onChange={this.props.onSearch} onBlur={this.onBlur} />) :
       null;
 
     return (
-      <div className="menu" style={position}>
+      <div className="menu" style={position} tabIndex='-1' onBlur={this.onBlur}>
         <div className={this.state.orientation + " container"}
           style={containerStyle}
           ref="menu">
@@ -104,4 +118,16 @@ module.exports = React.createClass({
       </div>
     );
 	},
+
+  onBlur : function () {
+    var self = this;
+
+    window.setTimeout(function () {
+      var menu = React.findDOMNode(self);
+
+      if (!dom.parentOf(menu, document.activeElement)) {
+        self.props.onBlur();
+      }
+    });
+  }
 });
