@@ -97,11 +97,11 @@ module.exports = React.createClass({
     };
 
     var search = this.props.searchable ?
-      (<Search ref='search' onChange={this.props.onSearch} tabIndex='1'/>) :
+      (<Search onChange={this.props.onSearch} onBlur={this.onBlur} />) :
       null;
 
     return (
-      <div className="menu" style={position} tabIndex='-1' onBlur={this.props.onBlur}>
+      <div className="menu" style={position} tabIndex='-1' onBlur={this.onBlur}>
         <div className={this.state.orientation + " container"}
           style={containerStyle}
           ref="menu">
@@ -118,4 +118,16 @@ module.exports = React.createClass({
       </div>
     );
 	},
+
+  onBlur : function () {
+    var self = this;
+
+    window.setTimeout(function () {
+      var menu = React.findDOMNode(self);
+
+      if (!dom.parentOf(menu, document.activeElement)) {
+        self.props.onBlur();
+      }
+    });
+  }
 });

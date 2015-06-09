@@ -28,17 +28,21 @@ var MenuControl = {
 
 			var x = (offset.right + offset.left) / 2
 
-			this.menu = (
-				<Menu x={x} y={offset.bottom} {...props} onBlur={this.onBlur}>
-					{items}
-				</Menu>
-			);
+			var onBlur = this.onBlur || _.noop;
 
 			if (!this.layer) {
 				var self = this;
+
 				this.layer = new Layer(document.body, function () {
-					return self.menu;
+					return (
+						<Menu x={x} y={offset.bottom}
+							onBlur={self.close}
+							{...props}>
+							{items}
+						</Menu>
+					);
 				});
+
 				window.addEventListener('keyup', this);
 			}
 
@@ -46,7 +50,6 @@ var MenuControl = {
 		} else if (this.layer) {
 			this.layer.destroy();
 			this.layer = null;
-			this.menu = null;
 
 			// Clear out the search patterns that the parent component is necessarily
 			// using to provide filtered menu items.
@@ -69,10 +72,6 @@ var MenuControl = {
 			default:
 				break;
 		}
-	},
-
-	onBlur : function () {
-		window.setTimeout(this.close, 150);
 	},
 
 	close : function () {
