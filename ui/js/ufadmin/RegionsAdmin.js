@@ -21,8 +21,7 @@ const fields = {
 			return <a href={`/datapoints/regions/update/${id}`}>Edit Region</a>;
 		}
 	},
-	created_at: { format: 'MMM D YYYY, h:mm a' },
-	is_high_risk: { renderer: checkmarkRenderer }
+	created_at: { format: 'MMM D YYYY, h:mm a' }
 };
 
 const fieldNamesOnTable = ['id', 'region_code', 'name', 'slug', 'latitude', 'longitude', 'edit_link'];

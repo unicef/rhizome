@@ -32,9 +32,9 @@ var CampaignsAdmin = React.createClass({
 			<div>
 				<SearchBar placeholder="search campaigns"/>
 				<FilterPanel>
-					<FilterDateRange name="start_date" />
-					<FilterDateRange name="end_date" />
-					<FilterDateRange name="created_at" />
+					<FilterDateRange name="start_date" time={false} />
+					<FilterDateRange name="end_date" time={false} />
+					<FilterDateRange name="created_at" time={false} />
 				</FilterPanel>
 			</div>;
 
