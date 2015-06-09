@@ -12,7 +12,6 @@ var API = require('../data/api');
 
 var AdminPage = require('./AdminPage');
 
-const checkmarkRenderer = (val) => val ? "✓" : "";
 const fields = {
 	edit_link: {
 		title: 'Edit',
@@ -30,7 +29,10 @@ var RegionsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search regions"/>
+				<SearchBar
+					fieldNames={['id', 'region_code', 'name', 'slug', 'latitude', 'longitude']}
+					placeholder="search regions"
+					/>
 			</div>;
 
 		return <AdminPage
@@ -49,6 +51,5 @@ var RegionsAdmin = React.createClass({
 		</AdminPage>
 	}
 });
-
 
 module.exports = RegionsAdmin;
