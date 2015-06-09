@@ -130,7 +130,6 @@ class SourceRegion(models.Model):
     country = models.CharField(max_length=255, null=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
-    is_high_risk = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'source_region'

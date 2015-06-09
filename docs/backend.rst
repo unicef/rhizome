@@ -114,7 +114,6 @@ Needs Documentation
 
 Future Topics Regarding Regions
 -------------------------------
-  - is_high_risk changes over time
   - when boundaries change over time
   - outbreak countries and new office_ids
   - Storing Health Camp Data

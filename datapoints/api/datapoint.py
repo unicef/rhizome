@@ -4,11 +4,11 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
-# from tastypie.resources import ALL
+from tastypie.utils.mime import determine_format, build_content_type
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 
@@ -51,6 +51,29 @@ class DataPointResource(BaseNonModelResource):
         super(DataPointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
+
+    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+        """
+        THis is overridden from tastypie.  The point here is to be able to
+        Set the content-disposition header for csv downloads.  That is the only
+        instance in which this override should change the response is if the
+        desired format is csv.
+
+        The content-disposition header allows the user to save the .csv
+        to a directory of their chosing.
+
+        """
+        desired_format = self.determine_format(request)
+        serialized = self.serialize(request, data, desired_format)
+
+        response = response_class(content=serialized,\
+            content_type=build_content_type(desired_format), **response_kwargs)
+
+        # if desired_format == 'text/csv':
+        #     return []
+
+        return response
+
 
 
     def get_object_list(self,request):
@@ -279,7 +302,6 @@ class DataPointEntryResource(BaseModelResource):
         Also, if a request comes in with value=NULL, that means set the value
         of that obect = 0.
         """
-        print '===HERE===\n' * 10
 
         try:
             self.validate_object(bundle.data)
@@ -434,10 +456,13 @@ class DataPointEntryResource(BaseModelResource):
         region_id_list.append(int(bundle_data['region_id']))
 
         permitted_region_qs =  Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,'w')",[user_id,
+            fn_get_authorized_regions_by_user(%s,%s,'w',NULL)",[user_id,
             region_id_list])
 
         permitted_region_ids = [x.id for x in permitted_region_qs]
+
+        print '===='
+        print permitted_region_ids
 
         if len(permitted_region_ids) == 0:
             raise InputError(4, 'User does not have permissions for \

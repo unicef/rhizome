@@ -12,7 +12,6 @@ var API = require('../data/api');
 
 var AdminPage = require('./AdminPage');
 
-const checkmarkRenderer = (val) => val ? "✓" : "";
 const fields = {
 	edit_link: {
 		title: 'Edit',
@@ -21,8 +20,7 @@ const fields = {
 			return <a href={`/datapoints/regions/update/${id}`}>Edit Region</a>;
 		}
 	},
-	created_at: { format: 'MMM D YYYY, h:mm a' },
-	is_high_risk: { renderer: checkmarkRenderer }
+	created_at: { format: 'MMM D YYYY, h:mm a' }
 };
 
 const fieldNamesOnTable = ['id', 'region_code', 'name', 'slug', 'latitude', 'longitude', 'edit_link'];
@@ -31,7 +29,10 @@ var RegionsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search regions"/>
+				<SearchBar
+					fieldNames={['id', 'region_code', 'name', 'slug', 'latitude', 'longitude']}
+					placeholder="search regions"
+					/>
 			</div>;
 
 		return <AdminPage
@@ -50,6 +51,5 @@ var RegionsAdmin = React.createClass({
 		</AdminPage>
 	}
 });
-
 
 module.exports = RegionsAdmin;

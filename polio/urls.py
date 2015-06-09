@@ -32,7 +32,6 @@ urlpatterns = patterns('',
     ## CUSTOM V1 API -- to be removed when FE switches to v2 ##
     url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
     url(r'^api/v1/region/$', views.api_region, name='region'),
-    url(r'^api/v1/indicator/$', views.api_indicator, name='indicator'),
 
     ## V2 API
     url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),

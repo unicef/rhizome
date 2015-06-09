@@ -53,6 +53,7 @@ class IndicatorAbstracted(models.Model):
     short_name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    source_name = models.CharField(max_length=255)
     bound_json = JSONField()
     tag_json = JSONField()
 
@@ -179,7 +180,6 @@ class Region(models.Model):
     slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
     source = models.ForeignKey(Source)
-    is_high_risk = models.BooleanField(default=False)
     parent_region = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
@@ -418,3 +418,15 @@ class ColumnAttributes(models.Model):
 
     class Meta:
         db_table = 'column_attributes'
+
+
+class CustomDashboard(models.Model):
+
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=1000)
+    owner = models.ForeignKey('auth.User')
+    default_region = models.ForeignKey(Region)
+    json_data = JSONField()
+
+    class Meta:
+        db_table = 'custom_dashboard'

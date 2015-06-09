@@ -84,7 +84,7 @@ WHERE REPLACE(settlementname,' ' ,'-') IN
 
 -- CREATE NEW SOURCE REGOINS --
 INSERT INTO source_region
-(source_guid, lat,lon, document_id, region_code, parent_name, parent_code, region_type, country, is_high_risk)
+(source_guid, lat,lon, document_id, region_code, parent_name, parent_code, region_type, country)
 
 SELECT settlementname, settlementgps_latitude, settlementgps_longitude,$1,settlementcode,left(settlementcode,4),left(settlementcode,4),'settlement','Nigeria', 't'
 FROM _odk_settlements ovs
@@ -114,7 +114,7 @@ WHERE region_code = ovs.settlementcode;
 -- CREATE NEW MASTER REGIONS --
 
 INSERT INTO region
-(parent_region_id, name, region_code, latitude, longitude, region_type_id, office_id, slug,created_at,source_id,is_high_risk)
+(parent_region_id, name, region_code, latitude, longitude, region_type_id, office_id, slug,created_at,source_id)
 
 SELECT
  	 pr.id as parent_region_id

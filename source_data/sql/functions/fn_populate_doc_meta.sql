@@ -31,7 +31,7 @@ WHERE sd.document_id = $1;
 
 -- region --
 INSERT INTO source_region
-(region_code,source_guid,document_id,is_high_risk)
+(region_code,source_guid,document_id)
 SELECT DISTINCT region_code ,replace(region_code,' ','_'),$1,CAST(1 AS BOOLEAN)
 from _tmp_sdps tsdp
 WHERE NOT EXISTS (

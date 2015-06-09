@@ -75,7 +75,8 @@ var MenuItem = React.createClass({
    	    		role="menuitem"
    	    		onClick={this._handleClick}
    	    		style={itemStyle}
-   	    		className={(hasChildren?"folder":null)}>
+   	    		className={(hasChildren?"folder":null)}
+            tabIndex='-1'>
 
    	    		<i
    	    			className={"fa fa-lg fa-fw " + (this.state.open?"fa-caret-down":"fa-caret-right")}

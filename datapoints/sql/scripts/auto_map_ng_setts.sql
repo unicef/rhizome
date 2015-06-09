@@ -13,7 +13,6 @@ sr.id
 ,r.id as parent_region_id
 ,sr.parent_name
 ,country
-,sr.is_high_risk
 ,sr.parent_code
 FROM source_region sr
 LEFT JOIN region r
@@ -25,14 +24,13 @@ WHERE parent_region_id is null
 
 
 INSERT INTO region
-(office_id,slug,source_id,region_code,is_high_risk,name,parent_region_id,region_type_id,created_at)
+(office_id,slug,source_id,region_code,name,parent_region_id,region_type_id,created_at)
 -- -- --
 SELECT
 	o.id
 	,region_slug
 	,s.id
 	,ngs.region_code
-	,is_high_risk
 	,region_string
 	,parent_region_id
 	,rt.id

@@ -3,6 +3,7 @@ var React = require('react/addons');
 const {
 	Datascope, LocalDatascope,
 	SimpleDataTable, SimpleDataTableColumn,
+	ClearQueryLink,
 	Paginator,
 	SearchBar,
 	FilterPanel, FilterDateRange, FilterInputRadio
@@ -34,7 +35,7 @@ var AdminPage = React.createClass({
 	},
 
 	onToggleFilterContainer() {
-		this.setState((prevState) => ({areFiltersVisible: !prevState.areFiltersVisible}));
+		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},
 
 	render() {
@@ -75,13 +76,29 @@ var AdminPage = React.createClass({
 	},
 	renderFilters() {
 		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
+		var { areFiltersVisible } = this.state;
 
 		return <div className="ufadmin-filters-container">
 			<div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
-				Filter results {filterExpander}
+
+				{areFiltersVisible ?
+					<span>
+						<ClearQueryLink>
+							Filter results {filterExpander}
+						</ClearQueryLink>
+						<span onClick={e => {e.stopPropagation()}}>
+							<ClearQueryLink>
+								<a className='admin-clear-filters'>Clear filters</a>
+							</ClearQueryLink>
+						</span>
+					</span>
+				:
+					<span>Filter results {filterExpander}</span>
+				}
 			</div>
 
-			{this.state.areFiltersVisible ?
+
+			{areFiltersVisible ?
 				<div className="ufadmin-filters-content">
 					{this.props.datascopeFilters}
 				</div>

@@ -12,7 +12,6 @@ RETURNS TABLE(
   ,created_at TIMESTAMP WITH TIME ZONE
   ,source_id INT
   ,region_code VARCHAR
-  ,is_high_risk BOOLEAN
   ,name VARCHAR
   ,parent_region_id INT
   ,region_type_id INT
@@ -77,12 +76,12 @@ BEGIN
   	)x
   	WHERE x.id = ANY(COALESCE($2,ARRAY[x.id]));
 
-	RETURN QUERY
+	  RETURN QUERY
 
   	SELECT
   		*
   	FROM _permitted_regions prm
-  	WHERE prm.lvl <= $4
+    WHERE prm.lvl <= COALESCE($4,prm.lvl)
   	ORDER BY prm.lvl;
 
 END
