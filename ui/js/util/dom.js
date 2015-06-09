@@ -85,12 +85,29 @@ function contentArea(el) {
 	};
 }
 
+function parentOf(parent, child) {
+	var p = child.parentElement;
+	var result = parent === child;
+
+	while (!!p && !result) {
+		result = (p === parent);
+		try {
+			p = p.parentElement;
+		} catch (e) {
+			p = null
+		}
+	}
+
+	return result;
+}
+
 
 module.exports = {
-	offset        : offset,
-	documentOffset: documentOffset,
-	viewportOffset: viewportOffset,
-	contains      : contains,
-	dimensions    : dimensions,
-	contentArea   : contentArea
+	contains       : contains,
+	contentArea    : contentArea,
+	dimensions     : dimensions,
+	documentOffset : documentOffset,
+	offset         : offset,
+	parentOf       : parentOf,
+	viewportOffset : viewportOffset
 };
