@@ -62,6 +62,8 @@ class v2Request(object):
             'indicator_tag': {'orm_obj':IndicatorTag,
                 'permission_function':None},
             'campaign_type': {'orm_obj':CampaignType,
+                'permission_function':None},
+            'custom_dashboard': {'orm_obj':CustomDashboard,
                 'permission_function':None}
         }
 
@@ -584,6 +586,7 @@ class v2GetRequest(v2Request):
             row_data = dict(row_data.__dict__)
             del row_data['_state']
 
+        # serialize various data type as requirements change and expand #
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
@@ -592,8 +595,14 @@ class v2GetRequest(v2Request):
             elif k in ['longitude','latitude']:
                 cleaned_row_data[k] = float(v)
             elif 'json' in k: # if k == 'bound_json':
-                cleaned_row_data[k] =v  # json.loads(v)
-                pass
+                # try:
+                #     cleaned_row_data[k] = json.loads(v)
+                # except ValueError:
+                #     cleaned_row_data[k] = v
+                # except TypeError:
+                #     cleaned_row_data[k] = 'json_error'
+                #     # pass
+                cleaned_row_data[k] = v
             else:
                 cleaned_row_data[k] = smart_str(v)
 
