@@ -92,7 +92,6 @@ var AdminPage = React.createClass({
 							</ClearQueryLink>
 						</span>
 					</span>
-
 				:
 					<span>Filter results {filterExpander}</span>
 				}

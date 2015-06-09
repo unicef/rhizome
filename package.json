@@ -15,7 +15,7 @@
     "moment": "^2.8.4",
     "page": "^1.6.0",
     "react": "^0.13.3",
-    "react-datascope": "git://github.com/SeedScientific/react-datascope.git#188e4ca30e",
+    "react-datascope": "git://github.com/SeedScientific/react-datascope.git#c8f7cc2",
     "react-router": "^0.13.3",
     "react-dnd": "^0.9.8",
     "react-layer": "^1.0.1",

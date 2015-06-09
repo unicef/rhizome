@@ -128,6 +128,14 @@
 	}
 }
 
+.ds-data-table-empty {
+	background: #f0f0f0;
+	padding: 20px;
+	font-size: 11pt;
+	font-weight: bold;
+	text-align: center;
+}
+
 .ds-clear-query-link {
 	display: inline-block;
 	a {
