@@ -1,88 +1,130 @@
-DROP FUNCTION IF EXISTS fn_get_authorized_regions_by_user(user_id int, list_of_region_ids integer[], read_write varchar(1),depth_level INT);
-CREATE FUNCTION fn_get_authorized_regions_by_user(user_id int, list_of_region_ids integer[], read_write varchar(1),depth_level INT)
+DROP FUNCTION IF EXISTS fn_calc_prep(cache_job_id int);
+CREATE FUNCTION fn_calc_prep(cache_job_id int)
+RETURNS TABLE(id int) AS
 
-RETURNS TABLE(
-
-   lvl INT
-  ,id INT
-  ,office_id INT
-  ,latitude FLOAT
-  ,longitude FLOAT
-  ,slug VARCHAR
-  ,created_at TIMESTAMP WITH TIME ZONE
-  ,source_id INT
-  ,region_code VARCHAR
-  ,name VARCHAR
-  ,parent_region_id INT
-  ,region_type_id INT
-) AS
 $func$
 BEGIN
 
+  -- http://stackoverflow.com/questions/19499461/postgresql-functions-execute-create-table-unexpected-results
 
-  DROP TABLE IF EXISTS _permitted_regions;
+	-- IN ORDER TO PERFORM THE CALCULATIONS NEEDED, WE NEED TO FIND --
+	-- THE COMPONENT AND CALCULATED INDICATORS RELEVANT FOR THIS JOB --
 
-	CREATE TABLE _permitted_regions AS
-	WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
-  	(
-  	-- non-recursive term ( rows where the components aren't
-  	-- master_indicators in another calculation )
+	-- 1. find relevant calculated indicators create temp table
+	-- 2. find relevand raw indicators needed for a claculation
+	      --> the underlying indicator data hsould not be deleted/reinserted,
+	      --> but we do need to be able to determine where this information
+	      --> is to effect any downstream calculatiosn for this job.
 
-  	SELECT
-  		rg.parent_region_id
-  		,rg.parent_region_id as immediate_parent_id
-  		,rg.id as region_id
-  		,1 as lvl
-  	FROM region rg
+				DROP TABLE IF EXISTS _region_campaign;
+				DROP TABLE IF EXISTS _raw_indicators;
+				DROP TABLE IF EXISTS _indicators_needed_to_calc;
+				DROP TABLE IF EXISTS _tmp_calc_datapoint ;
 
-  	UNION ALL
+				CREATE TABLE _region_campaign AS
+				SELECT DISTINCT ad.region_id, ad.campaign_id
+				FROM agg_datapoint ad
+				WHERE ad.cache_job_id = $1;
 
-  	-- recursive term --
-  	SELECT
-  		r_recurs.parent_region_id
-  		,rt.parent_region_id as immediate_parent_id
-  		,rt.region_id
-  		,rt.lvl + 1
-  	FROM region AS r_recurs
-  	INNER JOIN region_tree AS rt
-  	ON (r_recurs.id = rt.parent_region_id)
-  	AND r_recurs.parent_region_id IS NOT NULL
-  	)
+				CREATE TABLE _raw_indicators AS
+				SELECT DISTINCT ad.indicator_id
+				FROM agg_datapoint ad
+				WHERE ad.cache_job_id = $1
+				;
 
-  	SELECT * FROM (
+				-----
 
-  		SELECT rt.lvl,r.*
-  		FROM region_tree rt
-  		INNER JOIN region r
-  		ON rt.region_id = r.id
-  		WHERE EXISTS (
-  			SELECT 1
-  			FROM region_permission rm
-  			WHERE rm.user_id = $1
-  			AND rm.read_write = $3
-  			AND rt.parent_region_id = rm.region_id
-  		)
+				CREATE TABLE _indicators_needed_to_calc AS
 
-  		UNION ALL
-  		SELECT
-  			0 as lvl
-  			,r.*
-  		FROM region r
-  		INNER JOIN region_permission rp
-  		ON r.id = rp.region_id
-  		AND rp.user_id = $1
-  		AND rp.read_write = $3
+				-- NOW FIND DATA THAT MUST BE PROCESSED BASED ON TMP TABLES ABOVE --
+				WITH RECURSIVE ind_graph AS
+				(
+				-- non-recursive term ( rows where the components aren't
+				-- master_indicators in another calculation )
 
-  	)x
-  	WHERE x.id = ANY(COALESCE($2,ARRAY[x.id]));
+					SELECT
+							cic.id
+						,cic.indicator_id
+						,cic.indicator_component_id
+						--,0 as lvl
+					FROM calculated_indicator_component cic
+					WHERE NOT EXISTS (
+						SELECT 1 FROM calculated_indicator_component cic_leaf
+						WHERE cic.indicator_component_id = cic_leaf.indicator_id
+					)
+					--AND calculation = 'PART_TO_BE_SUMMED'
 
-	RETURN QUERY
+					UNION ALL
 
-  	SELECT
-  		*
-  	FROM _permitted_regions pr
-  	WHERE pr.lvl <= $4
-  	ORDER BY pr.lvl;
+					-- recursive term --
+					SELECT
+						cic_recurs.id
+						,cic_recurs.indicator_id
+						,ig.indicator_component_id
+						--,ig.lvl + 1
+					FROM calculated_indicator_component AS cic_recurs
+					INNER JOIN ind_graph AS ig
+					ON (cic_recurs.indicator_component_id = ig.indicator_id)
+					--AND calculation = 'PART_TO_BE_SUMMED'
+				)
+
+				-- ALL MASTER INDICATORS ( AT ALL LEVELS ) --
+				SELECT DISTINCT ig.indicator_id
+				FROM ind_graph ig
+				INNER JOIN _raw_indicators ri
+				ON ri.indicator_id = indicator_component_id;
+
+				CREATE UNIQUE INDEX uq_ind_ix ON _indicators_needed_to_calc (indicator_id);
+
+				-- ALL COMPONENT INDICATORS NEEDED TO MAKE THE CALC --
+
+				INSERT INTO _indicators_needed_to_calc
+				(indicator_id)
+
+				SELECT DISTINCT
+					cic.indicator_component_id
+				FROM calculated_indicator_component cic
+				INNER JOIN _indicators_needed_to_calc intc
+					ON cic.indicator_id = intc.indicator_id
+				WHERE NOT EXISTS (
+					SELECT 1 FROM _indicators_needed_to_calc tc
+					WHERE cic.indicator_component_id = tc.indicator_id
+				);
+
+				-- RAW INDICATORS WITH NO COMPONENTS --
+				INSERT INTO _indicators_needed_to_calc
+				SELECT indicator_id FROM _raw_indicators ri
+				WHERE NOT EXISTS (
+					SELECt 1 FROM _indicators_needed_to_calc intc
+					WHERE ri.indicator_id = intc.indicator_id
+				);
+
+				CREATE TABLE _tmp_calc_datapoint AS
+
+				SELECT DISTINCT
+					ad.id
+					,ad.region_id
+					,ad.campaign_id
+					,ad.indicator_id
+					,ad.value
+					,'t' as is_calc
+				FROM agg_datapoint ad
+				INNER JOIN _indicators_needed_to_calc intc
+					ON ad.indicator_id = intc.indicator_id
+				INNER JOIN _region_campaign rc
+					ON ad.region_id = rc.region_id
+					AND ad.campaign_id = rc.campaign_id;
+
+	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (region_id, campaign_id, indicator_id);
+
+	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
+
+  RETURN QUERY
+
+	SELECT ad.id FROM agg_datapoint ad
+	WHERE ad.cache_job_id = $1
+	LIMIT 1;
+
 
 END
 $func$ LANGUAGE PLPGSQL;

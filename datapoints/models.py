@@ -418,3 +418,15 @@ class ColumnAttributes(models.Model):
 
     class Meta:
         db_table = 'column_attributes'
+
+
+class CustomDashboard(models.Model):
+
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=1000)
+    owner = models.ForeignKey('auth.User')
+    default_region = models.ForeignKey(Region)
+    json_data = JSONField()
+
+    class Meta:
+        db_table = 'custom_dashboard'

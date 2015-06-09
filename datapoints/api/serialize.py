@@ -143,7 +143,6 @@ class CustomSerializer(Serializer):
                     int(ind_dict['indicator'])]
 
                 indicator_value = ind_dict['value']
-
                 expanded_obj[indicator_string] = indicator_value
 
             expanded_objects.append(expanded_obj)
@@ -156,8 +155,8 @@ class CustomSerializer(Serializer):
         cols = cols[-2:] + cols[:-2]
         csv_df = csv_df[cols]
 
-
         csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
+
         return csv
 
     def build_meta_lookup(self,object_list):
@@ -174,24 +173,22 @@ class CustomSerializer(Serializer):
         region_ids = [obj['region'] for obj in object_list]
         campaign_ids = [obj['campaign'] for obj in object_list]
 
+
         ## every object has all indicators, so find the first one, and the IDs
         ## for each indicator in that object
-        indicator_list = [obj['indicators'] for obj in object_list]
+
+        indicator_nodes = [obj['indicators'] for obj in object_list]
 
         indicator_ids = []
-        for il in indicator_list:
-            ind_id = [ind_dict['indicator'] for ind_dict in il]
-            try:
-                indicator_ids.append(int(ind_id[0]))
-            except IndexError:
-                pass
+        for ind in indicator_nodes:
+
+            indicator_ids.extend([i['indicator'] for i in ind])
 
         for r in Region.objects.filter(id__in=region_ids):
             meta_lookup['region'][r.id] = r.__unicode__()
 
         for c in Campaign.objects.filter(id__in=campaign_ids):
             meta_lookup['campaign'][c.id] = c.__unicode__()
-
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):
             meta_lookup['indicator'][ind.id] = ind.__unicode__()

@@ -223,7 +223,8 @@ def refresh_cache(request):
 
     cr = cache_tasks.CacheRefresh()
 
-    return HttpResponseRedirect('/datapoints/cache_control/')
+    return HttpResponseRedirect(reverse('datapoints:cache_control'))
+
 
 def test_data_coverage(request):
 
@@ -415,45 +416,8 @@ def refresh_metadata(request):
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
     user_cache_data = cache_tasks.cache_user_abstracted()
 
-    return HttpResponseRedirect('/datapoints/cache_control/')
+    return HttpResponseRedirect(reverse('datapoints:cache_control'))
 
-
-def api_indicator(request):
-    '''
-    TO BE REMOVED - Once transfer from v1/api to v2/api
-    '''
-
-    meta_keys = ['limit','offset']
-    request_meta = parse_url_args(request,meta_keys)
-
-    try:
-        id__in = [int(ind_id) for ind_id in request.GET['id__in'].split(',')]
-    except KeyError:
-        id__in = [i for i in Indicator.objects.all().values_list('id',flat=True)]
-
-
-    i_raw = Indicator.objects.raw("""
-        SELECT
-            i.*
-            ,ia.bound_json
-        FROM indicator i
-        INNER JOIN indicator_abstracted ia
-        ON i.id = ia.id
-        WHERE i.id = ANY(%s)
-        ORDER BY i.id
-    """,[id__in])
-
-    objects = [{'id':i.id, 'short_name':i.short_name,'name':i.name,\
-                'description':i.description,'slug':i.slug,\
-                'indicator_bounds':json.loads(i.bound_json)} for i in i_raw]
-
-    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(objects)}
-
-    response_data = {'objects':objects, 'meta':meta}
-
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
 
 class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
 
