@@ -46,7 +46,6 @@ const UsersAdmin = React.createClass({
 					placeholder="search users"
 					/>
 				<FilterPanel>
-					<FilterDateRange name="date_joined" time={false} />
 					<FilterDateRange name="last_login" time={false} />
 				</FilterPanel>
 			</div>;
