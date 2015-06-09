@@ -53,16 +53,11 @@ input.rw-input::-moz-focus-inner {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-@font-face {
-  font-family: 'RwWidgets';
-  src: url('../fonts/rw-widgets.eot?v=4.1.0');
-  src: url('../fonts/rw-widgets.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('../fonts/rw-widgets.woff?v=4.1.0') format('woff'), url('../fonts/rw-widgets.ttf?v=4.1.0') format('truetype'), url('../fonts/rw-widgets.svg?v=4.1.0#fontawesomeregular') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
+
 .rw-i {
   display: inline-block;
-  font-family: RwWidgets;
+  //font-family: RwWidgets;
+  font-family: FontAwesome; // replace normal icon font
   font-style: normal;
   font-weight: normal;
   line-height: 1em;
@@ -72,25 +67,25 @@ input.rw-input::-moz-focus-inner {
   -moz-osx-font-smoothing: grayscale;
 }
 .rw-i-caret-down:before {
-  content: '\e803';
+  content: '\f0d7';
 }
 .rw-i-caret-up:before {
-  content: '\e800';
+  content: '\f0d8';
 }
 .rw-i-caret-left:before {
-  content: '\e801';
+  content: '\f0d9';
 }
 .rw-i-caret-right:before {
-  content: '\e802';
+  content: '\f0da';
 }
 .rw-i-clock-o:before {
-  content: '\e805';
+	content: '\f017';
 }
 .rw-i-calendar:before {
-  content: '\e804';
+	content: '\f073';
 }
 .rw-i-search:before {
-  content: '\e806';
+  content: '\f002';
 }
 /* for debugging */
 .rw-widget {
