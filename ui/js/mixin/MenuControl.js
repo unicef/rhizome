@@ -30,20 +30,28 @@ var MenuControl = {
 
 			var onBlur = this.onBlur || _.noop;
 
+			var menu = (
+				<Menu x={x} y={offset.bottom}
+					onBlur={this.close}
+					onSearch={this.onSearch}
+					{...props}>
+					{items}
+				</Menu>
+			);
+
 			if (!this.layer) {
 				var self = this;
 
 				this.layer = new Layer(document.body, function () {
-					return (
-						<Menu x={x} y={offset.bottom}
-							onBlur={self.close}
-							{...props}>
-							{items}
-						</Menu>
-					);
+					return menu;
 				});
 
 				window.addEventListener('keyup', this);
+			} else {
+				// Here's a gross way to re-render the menu when its items have changed
+				// (due, for example, to them being filtered) without destroying and
+				// recreating the layer every time.
+				this.layer._render = function () { return menu; };
 			}
 
 			this.layer.render();
