@@ -21,7 +21,7 @@ var NavMenuItem = React.createClass({
   render : function () {
     return (
       <li>
-        <a role='menuitem' href={this.props.href}>
+        <a role='menuitem' href={this.props.href} tabIndex='-1'>
           {this.props.children}
         </a>
       </li>

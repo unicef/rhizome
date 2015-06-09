@@ -29,7 +29,7 @@ var MenuControl = {
 			var x = (offset.right + offset.left) / 2
 
 			this.menu = (
-				<Menu x={x} y={offset.bottom} {...props}>
+				<Menu x={x} y={offset.bottom} {...props} onBlur={this.onBlur}>
 					{items}
 				</Menu>
 			);
@@ -59,17 +59,24 @@ var MenuControl = {
 		this.setState({open : !this.state.open });
 	},
 
-	// FIXME: Should this be a separate mixin?
 	handleEvent : function (evt) {
-		var handler = 'on' + _.capitalize(evt.type);
-		_.get(this, handler, _.noop)(evt);
+		switch (evt.type) {
+			case 'keyup':
+				if (evt.keyCode === 27) {
+					this.close();
+				}
+				break;
+			default:
+				break;
+		}
 	},
 
-	onKeyup : function (evt) {
-		if (evt.keyCode === 27) {
-			// On escape pressed, close the menu
-			this.setState({ open : false });
-		}
+	onBlur : function () {
+		window.setTimeout(this.close, 150);
+	},
+
+	close : function () {
+		this.setState({ open : false });
 	}
 };
 
