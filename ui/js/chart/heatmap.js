@@ -5,9 +5,11 @@ var d3 = require('d3');
 
 function _sortValue(s, sortCol) {
 	// jshint validthis: true
+	var options = this._options;
+
 	var val = (sortCol == null) ?
-		this._options.seriesName(s) :
-		this._options.value(options.values(s)[sortCol]);
+		options.seriesName(s) :
+		options.value(options.values(s)[sortCol]);
 
 	return val;
 }
@@ -85,7 +87,7 @@ _.extend(Heatmap.prototype, {
 		};
 
 		var sortCol = this.sortCol;
-    var sortValue = _.partial(_sortValue, _, sortCol);
+    var sortValue = _.partial(options.sortValue.bind(this), _, sortCol);
 
 		var yScale = d3.scale.ordinal()
 			.domain(_(data).sortBy(sortValue, this).map(options.seriesName).value())
@@ -167,7 +169,7 @@ _.extend(Heatmap.prototype, {
 			.on('click', options.onClick);
 
 		svg.select('.x.axis')
-			.transition().duration(300)
+			.transition().duration(500)
 			.call(d3.svg.axis()
 				.scale(xScale)
 				.orient('top')
@@ -184,7 +186,7 @@ _.extend(Heatmap.prototype, {
             }
         })
 				.attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)')
-        .on('click', options.sortable ? this._setSort : null)
+        .on('click', function (d, i) { self._setSort(d, i); })
         .on('mouseover', function (d, i) {
         	options.onColumnHeadOver(d, i, this);
         })
@@ -193,7 +195,7 @@ _.extend(Heatmap.prototype, {
         });
 
 		svg.select('.y.axis')
-			.transition().duration(300)
+			.transition().duration(500)
 			.call(d3.svg.axis()
 				.scale(yScale)
 				.orient('left')
@@ -225,6 +227,7 @@ _.extend(Heatmap.prototype, {
 
 	_setSort : function (d, i) {
 		this.sortCol = (i === this.sortCol) ? null : i;
+		this.update(this._svg.selectAll('.row').data());
 	}
 });
 

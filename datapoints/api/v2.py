@@ -60,6 +60,8 @@ class v2Request(object):
             'campaign_map': {'orm_obj':CampaignMap,
                 'permission_function':None},
             'indicator_tag': {'orm_obj':IndicatorTag,
+                'permission_function':None},
+            'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None}
         }
 
@@ -582,7 +584,6 @@ class v2GetRequest(v2Request):
             if isinstance(v, int):
                 cleaned_row_data[k] = v
             elif k in ['longitude','latitude'] and v:
-                print v
                 cleaned_row_data[k] = float(v)
             elif 'json' in k: # if k == 'bound_json':
                 cleaned_row_data[k] =v  # json.loads(v)

@@ -8,19 +8,24 @@ var ancestoryString = require('data/transform/ancestryString');
 var api = require('data/api');
 var d3     = require('d3');
 var moment = require('moment');
+var colors    = require('colors');
+var Vue = require('vue'); //for tooltip display
 
-function melt(dataset) {
+function melt(data,indicatorArray) {
+	var dataset = data.objects;
+	var baseIndicators = _.map(indicatorArray,function(indicator){
+		return {indicator:indicator+'',value:0};
+	});
 	var o = _(dataset)
 		.map(function (d) {
 			var base = _.omit(d, 'indicators');
-
-			return _.map(d.indicators, function (indicator) {
+			var indicatorFullList = _.assign(_.cloneDeep(baseIndicators),d.indicators);
+			return _.map(indicatorFullList, function (indicator) {
 				return _.assign({}, base, indicator);
 			});
 		})
 		.flatten()
 		.value();
-
 	return o;
 }
 function _groupBySeries(data, groups,groupBy) {
@@ -35,6 +40,38 @@ function _groupBySeries(data, groups,groupBy) {
 			);
 		})
 		.value();
+}
+function _columnData(data, groups, groupBy) {
+
+	var columnData = _(data)
+		.groupBy(groupBy)
+		.map(_.partialRight(seriesObject, groups))
+		.value();
+	var largestGroup = [];
+	_.each(columnData,function(series){
+	   if(series.values.length > largestGroup.length)
+	   {
+	     largestGroup = series.values;
+	   }
+	});
+	var baseGroup = _.map(largestGroup,function(group){
+		return {campaign:group.campaign,
+				value:0,y:0,y0:0};
+	});
+	_.each(columnData,function(series){
+	   
+	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
+	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
+	});
+
+	var stack = d3.layout.stack()
+		.order('default')
+		.offset('zero')
+		.values(function (d) { return d.values; })
+		.x(function (d) { return d.campaign.start_date; })
+		.y(function (d) { return d.value; });
+
+	return stack(columnData);
 }
 function seriesObject(d, ind, collection, indicators) {
 	return {
@@ -51,6 +88,24 @@ var canDisplayChart = function(){
 		return false;
 	}
 };
+
+var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
+document.body.appendChild(tooltipDiv);
+var tooltipVue = new Vue({
+	el: tooltipDiv,
+	components: {'vue-tooltip': require('component/tooltip') },
+	ready:function(){
+
+	},
+	template: "<vue-tooltip></vue-tooltip>"
+});	
+var chartOptions = {
+		domain  : null,
+		values  : _.property('values'),
+		x       : _.property('campaign.start_date'),
+		y       : _.property('value'),
+		yFormat : d3.format('%')
+	};
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
@@ -58,14 +113,14 @@ module.exports = Reflux.createStore({
 		campaignList:[],
 		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-		regionSelected:{parent_region_id: null, office_id: 2, region_type_id: 1, id: 12908, name: "Afghanistan"},//{id:null,title:null},
+		regionSelected:{parent_region_id: null, office_id: 1, region_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
 		aggregatedRegions:[],
 		title: "new chart",
 		description: "a nice description",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
-		regionRadioValue: 0,
+		regionRadioValue: 2,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
-		groupByRadioValue: 0,
+		groupByRadioValue: 1,
 		timeRadios:function(){
 		            var self = this;
 		            var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}];
@@ -76,20 +131,14 @@ module.exports = Reflux.createStore({
 		            }
 		            return timeRadios;
 					},
-		timeRadioValue:0,
+		timeRadioValue:2,
 		chartTypes:[{name:"LineChart",timeRadios:["allTime","pastYear","3Months"]},
 					{name:"PieChart",timeRadios:["current"]},
 					{name:"ChoroplethMap",timeRadios:["allTime","pastYear","3Months","current"]},
-					{name:"ColumnChart",timeRadios:["allTime","pastYear","3Months"]}],
+					{name:"ColumnChart",timeRadios:["allTime","pastYear","3Months","current"]}],
 		selectedChart:0,
 		chartData:[],
-	    chartOptions : {
-				domain  : null,
-				values  : _.property('values'),
-				x       : _.property('campaign.start_date'),
-				y       : _.property('value'),
-				yFormat : d3.format('%')
-			},
+	    chartOptions : chartOptions,
 		canDisplayChart:canDisplayChart,
 		loading:false
 	},
@@ -112,11 +161,12 @@ module.exports = Reflux.createStore({
 		  	.sortBy('title')
 		  	.reverse() // I do not know why this works, but it does
 		  	.thru(_.curryRight(treeify)('value'))
-		  	.thru(ancestoryString)
+		  	.map(ancestoryString)
 		  	.value();
 		  	self.trigger(self.data);
 		  	self.aggregateRegions();
 		 });
+
 		 api.indicators().then(function(items){
 		        self._indicatorIndex = _.indexBy(items.objects, 'id');
 		        self.data.indicatorList = _(items.objects)
@@ -128,26 +178,33 @@ module.exports = Reflux.createStore({
 		         		};
 		         	})
 		         	.sortBy('title')
-		         	.reverse() 
+		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
-		 api.campaign().then(function(items){
-		        self._campaignIndex = _.indexBy(items.objects, 'id');
-		        self.data.campaignList = _(items.objects)
-		         	.map(function (campaign) {
-		         		return {
-		         			'title'  : campaign.slug,
-		         			'value'  : campaign.id,
-		         			'parent' : null
-		         		};
-		         	})
-		         	.sortBy('title')
-		         	.reverse() 
-		         	.value();
-		         self.trigger(self.data);
-		     });
+
+		Promise.all([api.campaign(), api.office()])
+			.then(_.spread(function(campaigns, offices) {
+				var officeIdx = _.indexBy(offices.objects, 'id');
+
+				self.data.campaignList = _(campaigns.objects)
+					.map(function (campaign) {
+						return _.assign({}, campaign, {
+							'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+							'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+							'office'     : officeIdx[campaign.office_id]
+						});
+					})
+					.sortBy(_.method('start_date.getTime'))
+					.reverse()
+					.value();
+
+				self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
+
+				self.trigger(self.data);
+			}));
 	},
+
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
@@ -180,10 +237,11 @@ module.exports = Reflux.createStore({
 	   this.data.timeRadioValue = value;
 	   this.trigger(this.data);
 	   this.getChartData();
-	},	
+	},
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
+	   this.data.chartOptions = chartOptions;
 	   this.trigger(this.data);
 	   this.getChartData();
 	},
@@ -206,8 +264,7 @@ module.exports = Reflux.createStore({
     	   regions = [regionSelected];
 	    }
 		else if(regionRadioValue==="type")
-		{ 
-		   
+		{  
 		   if(regionSelected.parent_region_id)
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
@@ -261,15 +318,17 @@ module.exports = Reflux.createStore({
 		var meltObjects  = _.flow(_.property('objects'), melt);
 		var lower = this.getLower(start);//.subtract(1, 'year');
 		var upper = start.clone().startOf('month');
-
+        var indicatorArray = _.map(this.data.indicatorsSelected,_.property('id'))
 	    var q = {
-		indicator__in  : _.map(this.data.indicatorsSelected,function(indicator){return indicator.id}),
-		region__in     : _.map(this.data.aggregatedRegions,function(region){return region.id}),
+		indicator__in  : indicatorArray,
+		region__in     : _.map(this.data.aggregatedRegions,_.property('id')),
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-	    
-	    var dataPointPromise = api.datapoints(q).then(meltObjects).then(function(data){
+
+	    var dataPointPromise = api.datapoints(q).then(function(data){
+	    							return melt(data,indicatorArray);}
+	    							).then(function(data){
 	        if(!lower) //set the lower bound from the lowest datapoint value
 	        {
 	          var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
@@ -283,12 +342,27 @@ module.exports = Reflux.createStore({
 	    	  self.data.chartData =  _groupBySeries(data, groups,groupBy);
 	    	}
 	    	else if (selectedChart ==="PieChart"){
-	    	  
-	    	  
-	    	  var total = _.reduce(data,function(total,n){ return total + n.value},0);
+	    	  var total = _(data).map(function(n){ return n.value;}).sum();
 	    	  self.data.chartOptions.domain = _.constant([0, total]);
-	    	  self.data.chartData = _.filter(data,function(n){ return n.value});
-	    	  
+	    	  self.data.chartData = data;
+	    	}
+	    	else if (selectedChart ==="ColumnChart"){
+		  			
+		  	  var columnScale = _.map(d3.time.scale()
+		  	  		.domain([lower.valueOf(), upper.valueOf()])
+		  	  		.ticks(d3.time.month, 1),
+		  	  	_.method('getTime')
+		  	  );
+		  	  var chartData = _columnData(data,groups,groupBy);	
+		  	  		
+		  	  self.data.chartOptions.aspect = 2.664831804;
+	    	  self.data.chartOptions.domain = _.constant(columnScale);
+	    	  self.data.chartOptions.color = _.flow(
+	    	  	_.property('name'),
+	    	  	d3.scale.ordinal().range(colors));
+	    	  self.data.chartOptions.x = function (d) { return moment(d.campaign.start_date).startOf('month').toDate().getTime(); };
+	    	  self.data.chartOptions.xFormat = function (d) { return moment(d).format('MMM YYYY')};
+	    	  self.data.chartData = chartData;
 	    	}
 	    	self.data.loading = false;
 	    	self.trigger(self.data);
@@ -302,7 +376,27 @@ module.exports = Reflux.createStore({
 		        var index = _.indexBy(data,'region');
 		        self.data.chartOptions.aspect = 1;
 		        self.data.chartOptions.domain = _.constant([0, 0.1]);
-				self.data.chartOptions.border = border.objects.features;		        
+				self.data.chartOptions.border = border.objects.features;
+				self.data.chartOptions.onMouseOver = function (d, el) {
+				    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
+						var evt = d3.event;
+						tooltipVue.$emit('tooltip-show', {
+							el       : el,
+							position : {
+								x : evt.pageX,
+								y : evt.pageY
+							},
+							data : {
+								text     : regionsIndex[d.properties.region_id].name,
+								template : 'tooltip-default'
+							}
+						});
+					}
+				};
+				self.data.chartOptions.onMouseOut = function (d, el) {
+					tooltipVue.$emit('tooltip-hide', { el : el });
+				}
+				
                 self.data.chartData = _.map(border.objects.features, function (feature) {
                 							var region = _.get(index, feature.properties.region_id);
                 							return _.merge({}, feature, {

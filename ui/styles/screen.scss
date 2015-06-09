@@ -100,7 +100,7 @@ nav {
 	}
 
 	a:hover {
-		color: #fff;
+		color: #fff !important;
 		opacity: 1;
 	}
 }
@@ -112,7 +112,8 @@ p {
 body.home nav .home,
 body.dashboard nav .dashboard,
 body.data nav .data,
-body.data-entry nav .data-entry {
+body.data-entry nav .data-entry,
+body.admin nav .admin {
 	border-top: 2px solid #ffcc67;
 
 	a {
@@ -563,6 +564,13 @@ ul {
 
 		.arrow {
 			border-bottom-color: $gainsboro !important;
+		}
+	}
+
+	li.campaign {
+		.office {
+			color       : $jumbo;
+			font-weight : bold;
 		}
 	}
 }

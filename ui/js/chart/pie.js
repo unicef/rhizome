@@ -48,6 +48,8 @@ _.extend(PieChart.prototype, {
 		options = _.assign(this._options, options);
 		var margin = options.margin;
 
+		data = data || [];
+
 		var w = this._width - margin.left - margin.right;
 		var h = this._height - margin.top - margin.bottom;
 		var s = Math.min(w, h);

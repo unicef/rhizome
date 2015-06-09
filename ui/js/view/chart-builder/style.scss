@@ -27,6 +27,10 @@ $right-page-width: 900px;
    		.chart-container {
    			width: 500px;
    			position: relative;
+   			.dropdown-wrapper {
+   				width: 50%;
+   				display: inline-block;
+   			}
    		}
    		.menu-span {
    			display: inline-block;
