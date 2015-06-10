@@ -35,7 +35,7 @@ class MasterRefresh(object):
         synced_dps = []
 
         sdps_to_sync = SourceDataPoint.objects.raw('''
-            SELECT * FROM fn_get_source_dbs_to_sync(%s, %s, %s);
+            SELECT * FROM fn_get_source_dps_to_sync(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
         for row in sdps_to_sync:
@@ -78,10 +78,9 @@ class MasterRefresh(object):
         try:
             cleaned = float(cell_value.replace(',',''))
         except ValueError:
-            return None
+            cleaned = None
 
-        return
-
+        return cleaned
     def delete_un_mapped(self):
 
         datapoint_ids = MissingMapping.objects.filter(document_id=\
