@@ -33,8 +33,8 @@ module.exports = {
 			self.region    = self._regionIndex[ctx.params.region];
 			self.campaign  = self._campaignIndex[ctx.params.year + ctx.params.month];
 
-			document.title = self.region.name + ' ' + ctx.params.month + '/' +
-				ctx.params.year + ' - ' + self.dashboard.name + ' - RhizomeDB';
+			document.title = self.dashboard.name  + ' - ' + self.region.name + ' ' +
+				ctx.params.month + '/' + ctx.params.year +  ' - RhizomeDB';
 		}
 
 		var self = this;
