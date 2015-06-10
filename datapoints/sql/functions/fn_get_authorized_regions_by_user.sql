@@ -6,15 +6,10 @@ RETURNS TABLE(
    lvl INT
   ,id INT
   ,office_id INT
-  ,latitude FLOAT
-  ,longitude FLOAT
-  ,slug VARCHAR
-  ,created_at TIMESTAMP WITH TIME ZONE
-  ,source_id INT
-  ,region_code VARCHAR
   ,name VARCHAR
   ,parent_region_id INT
   ,region_type_id INT
+  ,has_children BOOLEAN
 ) AS
 $func$
 BEGIN
@@ -76,12 +71,34 @@ BEGIN
   	)x
   	WHERE x.id = ANY(COALESCE($2,ARRAY[x.id]));
 
+    DROP TABLE IF EXISTS _has_parent;
+    CREATE TABLE _has_parent AS
+
+    SELECT
+        prm.id
+        ,CASE WHEN x.parent_region_id IS NULL THEN 0 ELSE 1 END as has_children
+    FROM _permitted_regions prm
+    LEFT JOIN (
+      SELECT DISTINCT r.parent_region_id FROM region r
+    )x
+    ON prm.id = x.parent_region_id;
+
+
 	  RETURN QUERY
 
   	SELECT
-  		*
+      prm.lvl
+     ,prm.id
+     ,prm.office_id
+     ,prm.name
+     ,prm.parent_region_id
+     ,prm.region_type_id
+     ,CAST(hp.has_children AS BOOLEAN)
   	FROM _permitted_regions prm
+    INNER JOIN _has_parent hp
+    ON prm.id = hp.id
     WHERE prm.lvl <= COALESCE($4,prm.lvl)
+
   	ORDER BY prm.lvl;
 
 END
