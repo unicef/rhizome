@@ -107,10 +107,10 @@ class v2Request(object):
 
         data = Campaign.objects.raw("""
             SELECT DISTINCT c.* FROM campaign c
-            INNER JOIN datapoint_abstracted da
-                ON c.id = da.campaign_id
+            INNER JOIN region r
+                ON c.office_id = r.office_id
             INNER JOIN region_permission rm
-                ON da.region_id = rm.region_id
+                ON r.id = rm.region_id
                 AND rm.user_id = %s
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
             ORDER BY c.start_date DESC
