@@ -77,9 +77,27 @@ _.extend(ScatterPlot.prototype, {
 			.attr(attrs);
 
 		point
-			.on('click', options.onClick)
-			.on('mouseover', options.onMouseOver)
-			.on('mouseout', options.onMouseOut);
+			.on('click', function (d, i) {
+				options.onClick(d, i, this);
+			})
+			.on('mouseover', function (d, i) {
+				d3.select(this)
+					.transition()
+					.duration(500)
+					.ease('elastic')
+					.attr('r', options.hoverRadius);
+
+				options.onMouseOver(d, i, this);
+			})
+			.on('mouseout', function (d, i) {
+				d3.select(this)
+					.transition()
+					.duration(500)
+					.ease('elastic')
+					.attr('r', options.radius);
+
+				options.onMouseOut(d, i, this);
+			});
 
 		point.transition()
 			.duration(300)
