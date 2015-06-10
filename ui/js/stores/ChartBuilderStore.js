@@ -10,6 +10,8 @@ var d3     = require('d3');
 var moment = require('moment');
 var colors    = require('colors');
 var Vue = require('vue'); //for tooltip display
+var processChartData = require('./chartBuilder/processChartData');
+
 
 function melt(data,indicatorArray) {
 	var dataset = data.objects;
@@ -88,6 +90,24 @@ var canDisplayChart = function(){
 		return false;
 	}
 };
+var canDisplayChartReason = function(){
+	var reason;
+	if(this.indicatorsSelected.length == 0)
+	{
+	  reason = "Please select at least one indicator";
+	}
+	else if(!this.campaignSelected.id){
+	  reason = "Please select a campaign";
+	}
+	else if(this.chartData.length == 0)
+	{
+	  reason = "No data to display";
+	}
+	else {
+		reason = '';
+	}
+	return reason;
+};
 
 var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv);
@@ -132,14 +152,12 @@ module.exports = Reflux.createStore({
 		            return timeRadios;
 					},
 		timeRadioValue:2,
-		chartTypes:[{name:"LineChart",timeRadios:["allTime","pastYear","3Months"]},
-					{name:"PieChart",timeRadios:["current"]},
-					{name:"ChoroplethMap",timeRadios:["allTime","pastYear","3Months","current"]},
-					{name:"ColumnChart",timeRadios:["allTime","pastYear","3Months","current"]}],
+		chartTypes:require('./chartBuilder/chartDefinitions'),
 		selectedChart:0,
 		chartData:[],
 	    chartOptions : chartOptions,
 		canDisplayChart:canDisplayChart,
+		canDisplayChartReason:canDisplayChartReason,
 		loading:false
 	},
 	listenables: [ChartBuilderActions],
@@ -241,7 +259,7 @@ module.exports = Reflux.createStore({
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
-	   this.data.chartOptions = chartOptions;
+	   //this.data.chartOptions = chartOptions;
 	   this.trigger(this.data);
 	   this.getChartData();
 	},
@@ -265,7 +283,7 @@ module.exports = Reflux.createStore({
 	    }
 		else if(regionRadioValue==="type")
 		{  
-		   if(regionSelected.parent_region_id)
+		   if(regionSelected.parent_region_id && regionSelect.parent_region_id != "None")
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
 		   }
@@ -325,8 +343,17 @@ module.exports = Reflux.createStore({
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-
-	    var dataPointPromise = api.datapoints(q).then(function(data){
+        var timeSpan = {lower:lower,upper:upper};
+        processChartData
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
+        .then(function(chart){
+          self.data.loading = false;
+          self.data.chartOptions = chart.options;
+          self.data.chartData = chart.data;
+          self.trigger(self.data);
+        });
+             
+	   /* var dataPointPromise = api.datapoints(q).then(function(data){
 	    							return melt(data,indicatorArray);}
 	    							).then(function(data){
 	        if(!lower) //set the lower bound from the lowest datapoint value
@@ -344,6 +371,9 @@ module.exports = Reflux.createStore({
 	    	else if (selectedChart ==="PieChart"){
 	    	  var total = _(data).map(function(n){ return n.value;}).sum();
 	    	  self.data.chartOptions.domain = _.constant([0, total]);
+	    	  self.data.chartOptions.color = _.flow(
+	    	  	_.property('name'),
+	    	  	d3.scale.ordinal().range(colors));
 	    	  self.data.chartData = data;
 	    	}
 	    	else if (selectedChart ==="ColumnChart"){
@@ -406,6 +436,6 @@ module.exports = Reflux.createStore({
                 self.data.loading = false;
                 self.trigger(self.data);
            }));
-	    }
+	    }*/
 	}
 });
