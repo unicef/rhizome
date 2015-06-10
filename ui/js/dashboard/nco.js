@@ -7,7 +7,8 @@ var React  = require('react');
 var moment = require('moment');
 var path   = require('vue/src/parsers/path');
 
-var Chart = require('component/Chart.jsx');
+var Chart                = require('component/Chart.jsx');
+var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx');
 
 var api    = require('data/api');
 var util   = require('util/data');
@@ -87,15 +88,15 @@ function value(datapoint) {
 	return null;
 }
 
-function barChart (el, datapoints, indicators, properties, series) {
+function barChart (el, title, datapoints, indicators, properties, series) {
 	var data = formatData(datapoints, indicators, properties, series);
 
 	var props = {
-		type : 'BarChart',
-		data : data
+		data  : data,
+		title : title
 	};
 
-	var chart = React.createElement(Chart, props);
+	var chart = React.createElement(ToggleableStackedBar, props);
 
 	React.render(chart, el);
 }
@@ -373,6 +374,7 @@ module.exports = {
 
 					barChart(
 						self.$$.missedReasons,
+						'Missed Children',
 						datapoints,
 						[267,268,251,264,266],
 						regionMapping,
