@@ -391,6 +391,7 @@ module.exports = {
 					var options = {
 						aspect      : 1.7,
 						domain      : _.constant(domain),
+						onClick     : function (d) { self.$dispatch('region-selected', d.name); },
 						onMouseOut  : hideTooltip,
 						onMouseOver : showTooltip,
 						range       : _.constant(range),
