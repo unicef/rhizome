@@ -3,8 +3,11 @@
 
 var _      = require('lodash');
 var d3     = require('d3');
+var React  = require('react');
 var moment = require('moment');
 var path   = require('vue/src/parsers/path');
+
+var Chart = require('component/Chart.jsx');
 
 var api    = require('data/api');
 var util   = require('util/data');
@@ -82,6 +85,53 @@ function value(datapoint) {
 	}
 
 	return null;
+}
+
+function barChart (el, datapoints, indicators, properties, series) {
+	var data = formatData(datapoints, indicators, properties, series);
+	// d3.layout.stack stacks the y-value, but we want to stack the x value,
+	// so we swap x and y in the layout definition.
+	var stack = d3.layout.stack()
+		.values(function (d) {
+			return d.values;
+		})
+		.offset('zero')
+		.order(function (data) {
+			var order = d3.range(data.length);
+
+			if (self.sortBy) {
+				var idx = _.findIndex(self.series, function (d) {
+					return d.name === self.sortBy;
+				});
+
+				// Move the index of the series on which we're sorting to the front
+				if (idx >= 0) {
+					order.splice(idx, 1);
+					order.unshift(idx);
+				}
+			}
+
+			return order;
+		})
+		.x(function (d) {
+			return d.y;
+		})
+		.y(function (d) {
+			return d.x;
+		})
+		.out(function (d, y0, y) {
+			d.x0 = y0;
+			d.x  = y;
+		});
+
+	var props = {
+		type : 'BarChart',
+		data : stack(data)
+	};
+
+	var chart = React.createElement(Chart, props);
+
+	React.render(chart, el);
 }
 
 module.exports = {
@@ -355,7 +405,8 @@ module.exports = {
 						})
 						.value();
 
-					self.missed.reasons = formatData(
+					barChart(
+						self.$$.missedReasons,
 						datapoints,
 						[267,268,251,264,266],
 						regionMapping,

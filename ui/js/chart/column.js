@@ -30,7 +30,7 @@ _.extend(ColumnChart.prototype, {
 	defaults : defaults,
 
 	initialize : function (el, data, options) {
-		options = this._options = _.defaults({}, options, defaults);
+		options = this._options = _.defaults({}, options, this.defaults);
 
 		var aspect   = _.get(options, 'aspect', 1);
 		this._width  = _.get(options, 'width', el.clientWidth);

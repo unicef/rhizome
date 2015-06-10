@@ -207,14 +207,7 @@
 					</label>
 				</div>
 			</h4>
-			<div
-				v-component="chart-stacked-bar"
-				data-margin-right="120"
-				data-tick-count="5"
-				data-click-event="region-clicked"
-				v-with="
-					series : missed.reasons,
-					offset : missed.offset"></div>
+			<div v-el="missedReasons"></div>
 		</div>
 		<div class="medium-4 columns">
 			<h4>Missed Children (Inside vs Outside)</h4>
