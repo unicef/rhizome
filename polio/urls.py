@@ -18,22 +18,16 @@ from tastypie.api import Api
 
 admin.autodiscover()
 
-## tastypie endpoints ##
-## to be replaced with when FE switches to v2 ##
+## tastypie endpoints - ##
 v1_api = Api(api_name='v1')
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
-v1_api.register(UserResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
 
-    ## CUSTOM V1 API -- to be removed when FE switches to v2 ##
-    url(r'^api/v1/campaign/$', views.api_campaign, name='campaign'),
-    url(r'^api/v1/region/$', views.api_region, name='region'),
-
-    ## V2 API
+    ## V2 API ##
     url(r'^api/v2/(?P<content_type>\w+)/$', views.v2_api, name='v2_api'),
     url(r'^api/v2/(?P<content_type>\w+)/metadata/$', views.v2_meta_api,
         name='v2_meta_api'),

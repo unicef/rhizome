@@ -98,13 +98,3 @@ class RegionPolygonResource(BaseNonModelResource):
         data.pop("meta",None)
 
         return data
-
-
-class UserResource(BaseModelResource):
-    '''User Resource'''
-
-    class Meta(BaseModelResource.Meta):
-        queryset = User.objects.all()
-        resource_name = 'user'
-        excludes = ['password', 'username']
-        allowed_methods = ['get']
