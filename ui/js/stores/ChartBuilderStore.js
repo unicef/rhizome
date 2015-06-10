@@ -109,16 +109,7 @@ var canDisplayChartReason = function(){
 	return reason;
 };
 
-var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
-document.body.appendChild(tooltipDiv);
-var tooltipVue = new Vue({
-	el: tooltipDiv,
-	components: {'vue-tooltip': require('component/tooltip') },
-	ready:function(){
-
-	},
-	template: "<vue-tooltip></vue-tooltip>"
-});	
+	
 var chartOptions = {
 		domain  : null,
 		values  : _.property('values'),
