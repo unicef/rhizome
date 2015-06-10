@@ -35,10 +35,6 @@ svg {
 				stroke-width : 2px;
 				stroke       : $iron;
 			}
-
-			line {
-				display: none;
-			}
 		}
 
 		&.y {
@@ -391,3 +387,12 @@ svg {
 			}
 		}
 	}
+
+
+.scatter-chart {
+	.axis {
+		.domain {
+			display : none;
+		}
+	}
+}

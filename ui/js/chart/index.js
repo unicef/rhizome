@@ -12,7 +12,8 @@ var CHARTS = {
 	ColumnChart   : require('./column'),
 	HeatMap       : require('./heatmap'),
 	LineChart     : require('./line'),
-	PieChart      : require('./pie')
+	PieChart      : require('./pie'),
+	ScatterChart  : require('./scatter')
 };
 
 var DEFAULTS = {

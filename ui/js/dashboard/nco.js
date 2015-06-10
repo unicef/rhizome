@@ -332,14 +332,24 @@ module.exports = {
 						});
 
 					// Set the same range for both scatter plots
-					self.overview.missedVsAwareness.range = [0, d3.max(data[1].objects, function (d) {
-						var index = _.indexBy(d.indicators, 'indicator');
+					var domain = d3.extent(_(data[1].objects)
+						.pluck('indicators')
+						.flatten()
+						.filter(function (d) { return d.indicator == 276; })
+						.pluck('value')
+						.value()
+					);
 
-						return Math.max(value(index[272]), value(index[274]));
-					})];
+					var range = d3.extent(_(data[1].objects)
+						.pluck('indicators')
+						.flatten()
+						.filter(function (d) { return d.indicator == 272 || d.indicator == 274; })
+						.pluck('value')
+						.value()
+					);
 
 					// Inside x = 276, y = 272
-					self.overview.missedVsAwareness.inside = _(data[1].objects)
+					var inside = _(data[1].objects)
 						.map(function (d) {
 							var index = _.indexBy(d.indicators, 'indicator');
 
@@ -351,12 +361,31 @@ module.exports = {
 							};
 						})
 						.filter(function (d) {
-							return util.defined(d.x) && util.defined(d.y);
+							return _.isFinite(d.x) && _.isFinite(d.y);
 						})
 						.value();
 
+					var options = {
+						aspect  : 1.7,
+						domain  : _.constant(domain),
+						range   : _.constant(range),
+						xFormat : d3.format('%'),
+						xLabel  : 'Caregiver Awareness',
+						yFormat : d3.format('%'),
+						yLabel  : 'Missed Children'
+					};
+
+					React.render(
+						React.createElement(Chart, {
+							type    : 'ScatterChart',
+							data    : inside,
+							options : options
+						}),
+						self.$$.insideMissedScatter
+					);
+
 					// Outside x = 276, y = 274
-					self.overview.missedVsAwareness.outside = _(data[1].objects)
+					var outside = _(data[1].objects)
 						.map(function (d) {
 							var index = _.indexBy(d.indicators, 'indicator');
 
@@ -371,6 +400,15 @@ module.exports = {
 							return util.defined(d.x) && util.defined(d.y);
 						})
 						.value();
+
+					React.render(
+						React.createElement(Chart, {
+							type    : 'ScatterChart',
+							data    : outside,
+							options : options
+						}),
+						self.$$.outsideMissedScatter
+					);
 
 					barChart(
 						self.$$.missedReasons,
