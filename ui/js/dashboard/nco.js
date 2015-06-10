@@ -365,14 +365,39 @@ module.exports = {
 						})
 						.value();
 
+					var showTooltip = function (d, i, el) {
+						var evt = d3.event;
+
+						self.$dispatch('tooltip-show', {
+							el       : el,
+							position : {
+								x : evt.pageX,
+								y : evt.pageY
+							},
+							data : {
+								// Have to make sure we use the default tooltip, otherwise if a
+								// different template was used, this shows the old template
+								template : 'tooltip-default',
+								text     : d.name,
+								delay    : 0
+							}
+						});
+					};
+
+					var hideTooltip = function (d, i, el) {
+						self.$dispatch('tooltip-hide', { el : el });
+					};
+
 					var options = {
-						aspect  : 1.7,
-						domain  : _.constant(domain),
-						range   : _.constant(range),
-						xFormat : d3.format('%'),
-						xLabel  : 'Caregiver Awareness',
-						yFormat : d3.format('%'),
-						yLabel  : 'Missed Children'
+						aspect      : 1.7,
+						domain      : _.constant(domain),
+						onMouseOut  : hideTooltip,
+						onMouseOver : showTooltip,
+						range       : _.constant(range),
+						xFormat     : d3.format('%'),
+						xLabel      : 'Caregiver Awareness',
+						yFormat     : d3.format('%'),
+						yLabel      : 'Missed Children'
 					};
 
 					React.render(
