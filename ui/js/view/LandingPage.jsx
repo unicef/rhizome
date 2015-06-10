@@ -3,6 +3,7 @@
 var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
+var d3  = require('d3');
 
 var api = require('data/api');
 
@@ -10,11 +11,12 @@ var DashboardStore = require('stores/DashboardStore');
 
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
-    .each(function (campaign) {
+    .each(function (campaign, i) {
       campaign.office = offices[campaign.office_id];
+      campaign.hide = (i > 5) ? true : false;
     })
     .sortBy('start_date')
-    .takeRight(6)
+    // .takeRight(6)
     .reverse()
     .value();
 
@@ -62,8 +64,11 @@ function _campaignRow(campaign, i) {
     .thru(_.partial(_dashboardSelect, _, campaign))
     .value();
 
+  var cls = i % 2 === 0 ? 'even' : 'odd';
+  if (campaign.hide) cls += ' hide';
+
   return (
-    <tr className={i % 2 === 0 ? 'even' : 'odd'} key={campaign.id}>
+    <tr className={cls} key={campaign.id}>
       <td>{campaign.office.name}: {date}</td>
       <td>
         <a href={'/datapoints/management-dashboard/' + campaign.office.name + '/' + datePath}>
@@ -115,6 +120,15 @@ module.exports = React.createClass({
       .then(_loadDocuments.bind(this));
   },
 
+  showAllCampaigns: function(e) {
+    _.each(this.state.campaigns, function(campaign) {
+      campaign.hide = false;
+    });
+    // this is a hacky way to show rows:
+    d3.selectAll('tr.hide').classed('hide', false);
+    e.preventDefault();
+  },
+
   render : function () {
     var campaigns = this.state.campaigns.map(_campaignRow);
     var uploads   = this.state.uploads.map(_uploadRow);
@@ -135,7 +149,7 @@ module.exports = React.createClass({
                 <tfoot>
                   <tr>
                     <td className="more" colSpan="4">
-                      <a href="/datapoints/campaigns/">see all campaigns</a>
+                      <a href="#" onClick={this.showAllCampaigns}>see all campaigns</a>
                     </td>
                   </tr>
                 </tfoot>
