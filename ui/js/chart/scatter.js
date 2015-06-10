@@ -7,7 +7,6 @@ var palette = require('colors');
 
 var defaults = {
 	hoverRadius : 5,
-	onClick     : _.noop,
 	onMouseOver : _.noop,
 	onMouseOut  : _.noop,
 	radius      : 3,
@@ -77,8 +76,9 @@ _.extend(ScatterPlot.prototype, {
 			.attr(attrs);
 
 		point
+			.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'default')
 			.on('click', function (d, i) {
-				options.onClick(d, i, this);
+				_.get(options, 'onClick', _.noop)(d, i, this);
 			})
 			.on('mouseover', function (d, i) {
 				d3.select(this)
