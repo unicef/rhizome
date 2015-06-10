@@ -12,6 +12,7 @@ var legend  = require('component/chart/renderer/legend');
 var defaults = {
 	barHeight   : 14,
 	name        : _.partial(_.get, _, 'name', ''),
+	offset      : 'zero',
 	onMouseOut  : _.noop,
 	onMouseOver : _.noop,
 	padding     : 0.1,
@@ -45,11 +46,44 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		var h = l * options.barHeight + (l - 1) * options.barHeight * options.padding;
 		var w = this._width - margin.left - margin.right;
 
+		var sortIdx = 0;
+		var sortBy  = this.sortBy;
+
+		if (sortBy) {
+			sortIdx = _.findIndex(data, function (d) {
+				return d.name === sortBy;
+			});
+		}
+
+		// d3.layout.stack stacks the y-value, but we want to stack the x value,
+		// so we swap x and y in the layout definition.
+		var stack = d3.layout.stack()
+			.values(options.values)
+			.offset(options.offset)
+			.order(function (values) {
+				var order = d3.range(values.length);
+
+				if (sortIdx > 0) {
+					order.splice(sortIdx, 1);
+					order.unshift(sortIdx);
+				}
+
+				return order;
+			})
+			.x(options.y)
+			.y(options.x)
+			.out(function (d, y0, y) {
+				d.x0 = y0;
+				d.x  = y;
+			});
+
+		var stacked = stack(_.cloneDeep(data));
+
 		var range;
 		if (_.isFunction(options.range)) {
-			range = options.range(data);
+			range = options.range(stacked);
 		} else {
-			range = d3.extent(_(data).map(options.values).flatten().value(), function (d) {
+			range = d3.extent(_(stacked).map(options.values).flatten().value(), function (d) {
 				return options.x0(d) + options.x(d);
 			});
 
@@ -70,12 +104,19 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			return xScale(x0 + x) - xScale(x0);
 		};
 
-		var domain;
-		if (_.isFunction(options.domain)) {
-			domain = options.domain(data);
-		} else {
-			domain = _(data).map(options.values).flatten().map(options.y).value();
-		}
+		var order = _(options.values(stacked[sortIdx]))
+			.sortBy(options.x)
+			.map(options.y)
+			.value();
+
+		var domain = _(stacked)
+			.map(options.values)
+			.flatten()
+			.map(options.y)
+			.sortBy(function (n) {
+				return order.indexOf(n);
+			})
+			.value();
 
 		var yScale = d3.scale.ordinal()
 			.domain(domain)
@@ -83,12 +124,11 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
 		var y = _.flow(options.y, yScale);
 
-		var colorScale = color.scale(_.map(data, options.name));
+		var colorScale = color.scale(_.map(stacked, options.name));
 		var fill = _.flow(options.name, colorScale);
 
 		var svg    = this._svg;
-		var g      = svg.select('.data');
-		var series = g.selectAll('.bar').data(data);
+
 
 		var canvasH = h + margin.top + margin.bottom;
 		var canvasW = w + margin.left + margin.right;
@@ -110,6 +150,9 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 				'y'     : margin.top
 			});
 
+		var g      = svg.select('.data').datum(data);
+		var series = g.selectAll('.bar').data(stacked);
+
 		series.enter().append('g')
 			.attr('class', 'bar');
 
@@ -129,18 +172,23 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.append('rect')
 			.style('fill', 'inherit');
 
-		bar.attr({
+		bar
+			.on('mouseover', hover.over)
+			.on('mouseout', hover.out)
+			.transition().duration(500)
+			.attr({
 				'height' : yScale.rangeBand(),
 				'width'  : width,
 				'x'      : x,
-				'y'      : y,
 			})
-			.on('mouseover', hover.over)
-			.on('mouseout', hover.out);
+			.transition().duration(500)
+			.attr('y', y);
 
 		bar.exit().remove();
 
-		svg.select('.x.axis')
+		var t0 = svg.transition().duration(500);
+
+		t0.select('.x.axis')
 			.attr('transform', 'translate(0,' + h + ')')
 			.call(d3.svg.axis()
 				.orient('bottom')
@@ -150,20 +198,25 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 				.tickFormat(options.xFormat)
 				.scale(xScale));
 
-		svg.select('.y.axis')
-			.call(d3.svg.axis()
-				.orient('left')
-				.tickFormat(options.yFormat)
-				.ticks(3)
-				.scale(yScale));
+		t0.transition().duration(500)
+			.select('.y.axis')
+				.call(d3.svg.axis()
+					.orient('left')
+					.tickFormat(options.yFormat)
+					.ticks(3)
+					.scale(yScale));
 
 		if (data.length > 1) {
 			// Show the legend if we have at least two series
 			svg.select('.legend')
 				.attr('transform', 'translate(' + (w + 4) + ',0)')
 				.call(legend()
-					.scale(colorScale));
-					// .clickHandler(this.setSortBy));
+					.interactive(true)
+					.scale(colorScale)
+					.filled(function (d, i) {
+						return sortBy ? sortBy === d : i === 0;
+					})
+					.clickHandler(this.setSort.bind(this)));
 		} else {
 			// Clear the legend if we have fewer than two series
 			svg.select('.legend')
@@ -178,6 +231,11 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		hover.on('over', function (d, i) {
 			options.onMouseOver(d, i, this);
 		});
+	},
+
+	setSort : function (d) {
+		this.sortBy = d;
+		this.update(this._svg.select('.data').datum())
 	}
 });
 
