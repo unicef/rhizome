@@ -35,8 +35,7 @@ class DocTransform(object):
 
 
         df_no_nan = df.where((pd.notnull(df)), None)
-        print 'THIS IS THE DATAFRAME FOR THE UPLOAD BELOW \n' * 5
-        print df_no_nan
+        
         return df_no_nan
 
 
