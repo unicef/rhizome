@@ -231,7 +231,7 @@ module.exports = {
 					.call(legend()
 						.interactive(true)
 						.filled(function (d, i) {
-							return self.sortBy ? self.sortBy !== d : i !== 0;
+							return self.sortBy ? self.sortBy === d : i === 0;
 						})
 						.scale(colorScale)
 						.clickHandler(this.setSortBy));

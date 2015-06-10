@@ -6,6 +6,7 @@ var d3 = require('d3');
 var browser = require('util/browser');
 
 var CHARTS = {
+	BarChart      : require('./bar'),
 	BulletChart   : require('./bullet'),
 	ChoroplethMap : require('./choropleth'),
 	ColumnChart   : require('./column'),

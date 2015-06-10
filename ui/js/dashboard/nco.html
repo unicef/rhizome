@@ -184,38 +184,8 @@
 			<h3>Breakdown by Province</h3>
 		</div>
 
-		<div class="medium-8 columns">
-			<h4>
-				<a name="missed-children">Missed Children</a>&ensp;
-				<div class="medium inline">
-					<label>
-						<input
-							type="radio"
-							name="missed-children-offset"
-							value="zero"
-							checked
-							v-model="missed.offset">
-						total
-					</label>
-					<label>
-						<input
-							type="radio"
-							name="missed-children-offset"
-							value="expand"
-							v-model="missed.offset">
-						as % of all missed children
-					</label>
-				</div>
-			</h4>
-			<div
-				v-component="chart-stacked-bar"
-				data-margin-right="120"
-				data-tick-count="5"
-				data-click-event="region-clicked"
-				v-with="
-					series : missed.reasons,
-					offset : missed.offset"></div>
-		</div>
+		<div v-el="missedReasons" class="medium-8 columns"></div>
+
 		<div class="medium-4 columns">
 			<h4>Missed Children (Inside vs Outside)</h4>
 			<div
