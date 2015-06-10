@@ -32,7 +32,7 @@ WHERE sd.document_id = $1;
 -- region --
 INSERT INTO source_region
 (region_code,source_guid,document_id)
-SELECT DISTINCT region_code ,replace(region_code,' ','_'),$1,CAST(1 AS BOOLEAN)
+SELECT DISTINCT region_code ,replace(region_code,' ','_'),$1
 from _tmp_sdps tsdp
 WHERE NOT EXISTS (
 	SELECT 1 from source_region ser
