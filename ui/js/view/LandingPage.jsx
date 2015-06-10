@@ -3,7 +3,6 @@
 var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
-var d3  = require('d3');
 
 var api = require('data/api');
 
@@ -13,10 +12,8 @@ function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
     .each(function (campaign, i) {
       campaign.office = offices[campaign.office_id];
-      campaign.hide = (i > 5) ? true : false;
     })
     .sortBy('start_date')
-    // .takeRight(6)
     .reverse()
     .value();
 
@@ -65,7 +62,6 @@ function _campaignRow(campaign, i) {
     .value();
 
   var cls = i % 2 === 0 ? 'even' : 'odd';
-  if (campaign.hide) cls += ' hide';
 
   return (
     <tr className={cls} key={campaign.id}>
@@ -101,7 +97,8 @@ module.exports = React.createClass({
   getInitialState : function () {
     return {
       campaigns : [],
-      uploads   : []
+      uploads   : [],
+      visibleCampaigns: 6
     };
   },
 
@@ -121,16 +118,20 @@ module.exports = React.createClass({
   },
 
   showAllCampaigns: function(e) {
-    _.each(this.state.campaigns, function(campaign) {
-      campaign.hide = false;
-    });
-    // this is a hacky way to show rows:
-    d3.selectAll('tr.hide').classed('hide', false);
+    this.setState({ visibleCampaigns: Infinity });
     e.preventDefault();
   },
 
   render : function () {
-    var campaigns = this.state.campaigns.map(_campaignRow);
+    var campaigns;
+    if (_.isFinite(this.state.visibleCampaigns)) {
+       campaigns = _(this.state.campaigns).
+                      take(this.state.visibleCampaigns)
+                      .map(_campaignRow)
+                      .value();
+    } else {
+       campaigns = this.state.campaigns.map(_campaignRow);
+    }
     var uploads   = this.state.uploads.map(_uploadRow);
 
     return (
