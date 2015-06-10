@@ -27,7 +27,8 @@ var defaults = {
 function ColumnChart() {}
 
 _.extend(ColumnChart.prototype, {
-	defaults : defaults,
+	classNames : 'chart column stacked',
+	defaults   : defaults,
 
 	initialize : function (el, data, options) {
 		options = this._options = _.defaults({}, options, this.defaults);
@@ -37,7 +38,10 @@ _.extend(ColumnChart.prototype, {
 		this._height = _.get(options, 'height', this._width / aspect);
 
 		var svg = this._svg = d3.select(el).append('svg')
-			.attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
+			.attr({
+				'viewBox' : '0 0 ' + this._width + ' ' + this._height,
+				'class'   :  this.classNames
+			});
 
 		if (browser.isIE()) {
 			svg.attr({
@@ -66,6 +70,7 @@ _.extend(ColumnChart.prototype, {
 			'class'     : 'x axis',
 			'transform' : 'translate(0,' + h + ')'
 		});
+		g.append('g').attr('class', 'legend');
 		g.append('g').attr('class', 'annotation');
 
 		this.update(data, options);

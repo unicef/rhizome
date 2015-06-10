@@ -10,20 +10,22 @@ var color   = require('util/color');
 var legend  = require('component/chart/renderer/legend');
 
 var defaults = {
-	barHeight : 14,
-	name      : _.partial(_.get, _, 'name', ''),
-	padding   : 0.1,
-	values    : _.property('values'),
-	x         : _.property('x'),
-	x0        : _.partial(_.get, _, 'x0', 0),
-	xFormat   : String,
-	xScale    : d3.scale.linear,
-	y         : _.property('y'),
-	yFormat   : String,
+	barHeight   : 14,
+	name        : _.partial(_.get, _, 'name', ''),
+	onMouseOut  : _.noop,
+	onMouseOver : _.noop,
+	padding     : 0.1,
+	values      : _.property('values'),
+	x           : _.property('x'),
+	x0          : _.partial(_.get, _, 'x0', 0),
+	xFormat     : String,
+	xScale      : d3.scale.linear,
+	y           : _.property('y'),
+	yFormat     : String,
 
 	margin : {
 		top    : 9,
-		right  : 18,
+		right  : 80,
 		bottom : 18,
 		left   : 80
 	}
@@ -32,7 +34,8 @@ var defaults = {
 function BarChart () {}
 
 _.extend(BarChart.prototype, ColumnChart.prototype, {
-	defaults : defaults,
+	classNames : 'chart bar stacked',
+	defaults   : defaults,
 
 	update : function (data, options) {
 		var options = _.assign(this._options, options);
@@ -80,10 +83,8 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
 		var y = _.flow(options.y, yScale);
 
-		var colorScale = _.flow(
-			options.name,
-			color.scale(_.map(data, options.name))
-		);
+		var colorScale = color.scale(_.map(data, options.name));
+		var fill = _.flow(options.name, colorScale);
 
 		var svg    = this._svg;
 		var g      = svg.select('.data');
@@ -112,7 +113,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		series.enter().append('g')
 			.attr('class', 'bar');
 
-		series.style('fill', colorScale);
+		series.style('fill', fill);
 
 		series.exit()
 			.transition()
@@ -140,17 +141,12 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		bar.exit().remove();
 
 		svg.select('.x.axis')
+			.attr('transform', 'translate(0,' + h + ')')
 			.call(d3.svg.axis()
 				.orient('bottom')
-				.tickSize(h)
+				.outerTickSize(0)
+				.tickSize(-h)
 				.tickPadding(4)
-				.tickValues(_.filter(xScale.domain(), function (d, i, domain) {
-					// Include every fourth tick value unless that tick is within three
-					// ticks of the last value. Always include the last tick. We have to
-					// do this manually because D3 ignores the ticks() value for
-					// ordinal scales
-					return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length;
-				}))
 				.tickFormat(options.xFormat)
 				.scale(xScale));
 
@@ -160,6 +156,20 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 				.tickFormat(options.yFormat)
 				.ticks(3)
 				.scale(yScale));
+
+		if (data.length > 1) {
+			// Show the legend if we have at least two series
+			svg.select('.legend')
+				.attr('transform', 'translate(' + (w + 4) + ',0)')
+				.call(legend()
+					.scale(colorScale));
+					// .clickHandler(this.setSortBy));
+		} else {
+			// Clear the legend if we have fewer than two series
+			svg.select('.legend')
+				.selectAll('g')
+				.remove();
+		}
 
 		hover.on('out', function (d, i) {
 			options.onMouseOut(d, i, this);
