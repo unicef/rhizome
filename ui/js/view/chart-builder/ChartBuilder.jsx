@@ -72,8 +72,9 @@ module.exports = React.createClass({
   },
 
 	render: function(){
-	   var chart = <Chart type={this.state.store.selectedChart} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
+	   var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 	   var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
+
 
 	   var campaignSelection = !!this.state.store.campaignSelected ?
       campaignDisplayFormat(this.state.store.campaignSelected) :
@@ -91,53 +92,65 @@ module.exports = React.createClass({
       filterMenu(this.state.store.regionList, this.state.regionFilter),
       ChartBuilderActions.addRegionSelection);
 
+     var leftPage = (<div className="left-page">
+     	                   <div className="titleDiv">Title</div>
+     	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
+     	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
+     	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
+     	                   <div className="titleDiv">Indicators</div>
+     
+                         <DropdownMenu text='Select Indicators'
+                           searchable={true}
+                           onSearch={_.partial(this.setFilter, 'indicator')}>
+                           {indicators}
+                         </DropdownMenu>
+     
+     		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
+     
+     	              </div>);
+     var rightPage = (<div className="right-page">
+     	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
+     	              	<div className="chart-options-container">
+     	              	<div className="grouping">
+     		              	<div className="titleDiv">Group By</div>
+     		              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+     		              	</div>
+     	              	<div className="grouping">
+     	                   <div className="titleDiv">Show</div>
+     	                   <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
+                        </div>
+                        <div className="grouping">
+                        		<div className="titleDiv">Time Span</div>
+                    			<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio} />
+                    		</div>
+     					</div>
+     					<div className="chart-container">
+     					<div className="dropdown-wrapper">
+                       <CampaignDropdownMenu
+                         text={campaignSelection}
+                         campaigns={this.state.store.campaignList}
+                         sendValue={ChartBuilderActions.addCampaignSelection}>
+                       </CampaignDropdownMenu>
+                        </div>
+      					<div className="dropdown-wrapper">
+     	              	<DropdownMenu
+                         icon='fa-globe'
+                         text={regionSelection}
+               		      searchable={true}
+                         onSearch={_.partial(this.setFilter, 'region')}>
+                         {regions}
+                   		</DropdownMenu>
+						</div>
+                       {this.state.store.loading?loadingDiv:null}
+                       {this.state.store.canDisplayChart()?chart:null}
+     				    </div>
+     				    </div>
+     	              );
+
 	   return (<form className="inline">
 	           <div className="visualization-builder-container">
-	              <div className="left-page">
-	                   <div className="titleDiv">Title</div>
-	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
-	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
-	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
-	                   <div className="titleDiv">Indicators</div>
-
-                    <DropdownMenu text='Select Indicators'
-                      searchable={true}
-                      onSearch={_.partial(this.setFilter, 'indicator')}>
-                      {indicators}
-                    </DropdownMenu>
-
-		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-		               <div className="titleDiv">Show</div>
-                       <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
-	              </div>
-
-	              <div className="right-page">
-	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
-	              	<div className="chart-container">
-	              	<div className="titleDiv">Group By</div>
-	              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-	              	<div className="right">
-	              	<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios} onChange={ChartBuilderActions.selectTimeRadio} />
-	              	</div>
-
-                  <CampaignDropdownMenu
-                    text={campaignSelection}
-                    campaigns={this.state.store.campaignList}
-                    sendValue={ChartBuilderActions.addCampaignSelection}>
-                  </CampaignDropdownMenu>
-
-	              	<DropdownMenu
-                    icon='fa-globe'
-                    text={regionSelection}
-          		      searchable={true}
-                    onSearch={_.partial(this.setFilter, 'region')}>
-                    {regions}
-              		</DropdownMenu>
-                  {this.state.store.loading?loadingDiv:null}
-                  {this.state.store.canDisplayChart()?chart:null}
-				    </div>
-	              </div>
-	            </div>
+				{leftPage}{rightPage}
+				 </div>
 	            </form>
 	           );
 	}

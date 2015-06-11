@@ -97,11 +97,13 @@ nav {
 		opacity: 0.5;
 		text-decoration: none;
 		transition: opacity 300ms ease;
-	}
 
-	a:hover {
-		color: #fff !important;
-		opacity: 1;
+		&:focus,
+		&:hover {
+			color: #fff !important;
+			opacity: 1;
+			outline: none;
+		}
 	}
 }
 
@@ -538,6 +540,10 @@ ul {
 }
 
 .menu {
+	&:focus {
+		outline : none;
+	}
+
 	.menu-button {
 		color     : white;
 		cursor    : pointer;
@@ -572,6 +578,10 @@ ul {
 			color       : $jumbo;
 			font-weight : bold;
 		}
+	}
+
+	hr {
+		margin : 0
 	}
 }
 

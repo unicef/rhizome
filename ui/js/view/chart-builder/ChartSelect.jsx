@@ -3,7 +3,7 @@ var React  = require('react');
 module.exports = React.createClass({
   propTypes: {
   	charts: React.PropTypes.array.isRequired,
-  	value: React.PropTypes.string.isRequired,
+  	value: React.PropTypes.number.isRequired,
   	onChange: React.PropTypes.func.isRequired,
   },
   _handleChange: function(event){
@@ -11,9 +11,9 @@ module.exports = React.createClass({
   },
   render: function(){
       var self = this;
-      var chartBoxes = this.props.charts.map(function(chart){
-      	return (<div key={chart.name} className={"chart-box-wrapper " +(chart.name==self.props.value?"active":null)}>
-      	          <div className="chart-box" onClick={self.props.onChange.bind(null,chart.name)}>{chart.name}
+      var chartBoxes = this.props.charts.map(function(chart,index){
+      	return (<div key={chart.name} className={"chart-box-wrapper " +(index==self.props.value?"active":null)}>
+      	          <div className="chart-box" onClick={self.props.onChange.bind(null,index)}>{chart.name}
       	          </div>
       	       </div>);
       });
