@@ -2,7 +2,7 @@ from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import Authorization
-from tastypie.authentication import BasicAuthentication
+from tastypie.authentication import SessionAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 
 from datapoints.models import RegionType,Region,RegionHeirarchy,RegionPermission
