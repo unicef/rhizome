@@ -116,7 +116,16 @@ module.exports = {
 					display: indicator.title,
 					classes: 'numeric',
 					format : function (v) {
-						return (isNaN(v) || _.isNull(v)) ? '' : d3.format('n')(v);
+						if (_.isFinite(v)) {
+							var fmt = d3.format('n');
+							if (Math.abs(v) < 1 && v !== 0) {
+								fmt = d3.format('.4f');
+							}
+
+							return fmt(v);
+						}
+
+						return '';
 					}
 				});
 			});

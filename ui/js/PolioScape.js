@@ -6,7 +6,6 @@ var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
-var ChartBuilder     = require('view/chart-builder/ChartBuilder.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
 
@@ -70,6 +69,7 @@ module.exports = {
 		React.render(React.createElement(DashboardBuilder), el);
 	},
 	ChartBuilder: function (el) {
+		var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 		React.render(React.createElement(ChartBuilder), el);
 	},
 	UFAdmin: function(el) {

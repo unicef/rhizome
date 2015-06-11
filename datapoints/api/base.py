@@ -1,11 +1,30 @@
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from tastypie.authorization import Authorization
-from tastypie.authentication import ApiKeyAuthentication
+from tastypie.authorization import DjangoAuthorization
+from tastypie.authentication import Authentication
 from tastypie.resources import ModelResource, Resource, ALL
 
 from datapoints.models import RegionType,Region,RegionHeirarchy,RegionPermission
+
+class CustomAuthentication(Authentication):
+    '''
+    Super Simple permissions check to ensure user is logged in.  Futher
+    permissions are appled for GET and POST for the datapoitn resource
+    based on the regional and indicator level permission of the user found
+    in the request.
+    '''
+
+    def is_authenticated(self, request, **kwargs):
+        '''
+        If the user is logged in, return True else return False...
+        '''
+
+        if request.user.id:
+            return True
+
+        return False
+
 
 class BaseModelResource(ModelResource):
     '''
@@ -17,8 +36,8 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
-        authorization = Authorization()
+        authentication = CustomAuthentication()
+        authorization = DjangoAuthorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
         filtering = {
@@ -35,8 +54,8 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
-        authorization = Authorization()
+        authentication = CustomAuthentication()
+        authorization = DjangoAuthorization()
         always_return_data = True
 
     def parse_url_strings(self,query_dict):

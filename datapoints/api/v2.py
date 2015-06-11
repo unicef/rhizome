@@ -50,7 +50,7 @@ class v2Request(object):
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
             'document': {'orm_obj':Document,
-                'permission_function':None},
+                'permission_function':self.apply_document_permissions },
             'office': {'orm_obj':Office,
                 'permission_function':None},
             'indicator_map': {'orm_obj':IndicatorMap,
@@ -150,6 +150,16 @@ class v2Request(object):
 
         return None, data
 
+    def apply_document_permissions(self, list_of_object_ids):
+
+        data = []
+
+        if self.show_all:
+            data = Document.objects.all()
+        else:
+            data = Document.objects.filter(created_by_id=self.user_id)
+
+        return None, data
 
     def group_document_metadata(self,list_of_object_ids):
         '''
@@ -221,13 +231,29 @@ class v2PostRequest(v2Request):
             query for objects taht match
         '''
 
+        ## Create, Update or Delete ##
+        request_type = self.determined_request_type()
+
         if self.content_type == 'user':
 
             self.err = 'User POST not implemented in v2 api.'
             return super(v2PostRequest, self).main()
 
-        ## Create, Update or Delete ##
-        request_type = self.determined_request_type()
+        ## for custom dashboard api - validate the json posted is valid ##
+
+        if self.content_type == 'custom_dashboard':
+
+            self.kwargs['owner_id'] = self.user_id
+
+            try:
+                cleaned_json = json.loads(self.kwargs['dashboard_json'])
+                self.kwargs['dashboard_json'] = cleaned_json
+            except ValueError:
+                self.err = 'Invalid JSON!'
+                return super(v2PostRequest, self).main()
+
+
+        ## Insert / Update / Delete Data ##
 
         try:
 
@@ -499,13 +525,16 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.read_write = 'r'
 
-
         ## Find the Depth Level param ( see POLIO-839 ) ##
-
         try:
             self.depth_level = query_dict['depth_level']
         except KeyError:
             self.depth_level = 10
+
+        try:
+            self.show_all = query_dict['show_all']
+        except KeyError:
+            self.show_all = None
 
         return cleaned_kwargs
 
@@ -590,19 +619,12 @@ class v2GetRequest(v2Request):
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
-            elif not v:
-                cleaned_row_data[k] = None
-            elif k in ['longitude','latitude']:
+            elif k in ['longitude','latitude'] and v:
                 cleaned_row_data[k] = float(v)
-            elif 'json' in k: # if k == 'bound_json':
-                # try:
-                #     cleaned_row_data[k] = json.loads(v)
-                # except ValueError:
-                #     cleaned_row_data[k] = v
-                # except TypeError:
-                #     cleaned_row_data[k] = 'json_error'
-                #     # pass
+            elif k == 'bound_json':
                 cleaned_row_data[k] = v
+            elif k == 'dashboard_json':
+                cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
 
