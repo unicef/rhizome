@@ -5,6 +5,8 @@ import json
 import urllib2
 import subprocess
 from time import sleep
+from urllib import urlencode
+
 
 try:
     sys.path.append("/Users/johndingee_seed/Desktop/")
@@ -16,39 +18,29 @@ except ImportError:
 
 class ODKRefreshTask(object):
 
-    def __init__():
+    def __init__(self):
 
-        self.base_url_string = '%s?username=%s&api_key=%s' % \
-            (odk_settings.API_ROOT, odk_settings.POLIO_USERNAME,\
-            odk_settings.POLIO_KEY)
-
-
+        self.base_url_string = odk_settings.API_ROOT
 
     def main(self):
 
-
-        pull_regions(base_url_string)
+        # pull_regions(base_url_string)
         # refresh_regions(base_url_string)
 
-        forms_to_process = get_forms_to_process(base_url_string)
+        forms_to_process = self.get_forms_to_process()
 
         for form in forms_to_process:
             print 'processing_forms: %s' % form
-            form_results = process_odk_form(base_url_string, form)
+            # form_results = self.process_odk_form(form)
 
 
     def api_wrapper(self,kwargs=None):
 
-        kwargs = {'task':'test_api'}
+        url_string = self.base_url_string + '?' + urlencode(dict(**kwargs))
+        response = urllib2.urlopen(url_string)#
+        etl_api_response = json.loads(response.read())['objects'][0]
 
-        url + urlencode()
-        dict(
-            campaign__in=campaign,
-            region__in=region,
-            indicator__in=indicator))
-
-
-        return response_data
+        return etl_api_response
 
     def pull_regions(self):
 
@@ -91,45 +83,43 @@ class ODKRefreshTask(object):
         ingest_odk_url_string = base_url_string + '&task=ingest_odk_regions'
         ingest_odk_response = urllib2.urlopen(ingest_odk_url_string, data=None)
 
-    def get_forms_to_process(base_url_string):
+    def get_forms_to_process(self):
 
-        get_odk_form_url_string = base_url_string + '&task=get_odk_forms_to_process'
-        get_odk_form_response = urllib2.urlopen(get_odk_form_url_string, data=None)
+        url_params = {'task':'get_odk_forms_to_process'}
+        etl_api_response = self.api_wrapper(url_params)
+        form_list_response = etl_api_response['success_msg']
 
-        response_data =  json.loads(get_odk_form_response.read())
+        cleaned_response_string = form_list_response.replace("['","")
+        cleaned_response_string = cleaned_response_string.replace("', '",",")
+        cleaned_response_string = cleaned_response_string.replace("']","")
 
-        form_list_response = response_data['objects'][0]['success_msg']
+        list_of_forms = [str(y) for y in cleaned_response_string.split(',')]
 
-        cleaned_response = form_list_response.replace('[','').replace(']','')
-        form_list = cleaned_response.split(',')
-
-        return form_list
+        return list_of_forms
 
 
-    def process_odk_form(base_url_string,form):
+    def process_odk_form(self,form):
         '''
         First Download the data from ODK, then ingest into source_dps and finally
         Merge what is mapped into datapoints.
         '''
 
-
         form_string = form.replace("u'","").replace("'","")
 
         ## DOWNLOAD DATA FROM ODK ##
 
-        pull_odk_form_data(form_string)
+        self.pull_odk_form_data(form_string)
 
-        ## HIT API TO INGEST DATA INTO SOURCE_DATAPOITNS -> MASTER DATAPOINTS ##
-        odk_form_url_string = base_url_string + '&task=odk_transform&form_name=' + \
-            form_string
-        odk_form_response = urllib2.urlopen(odk_form_url_string, data=None)
+        form_transform_kwargs = {'task':'odk_transform','form_name':form_string}
+        form_ingest_response = self.api_wrapper(form_transform_kwargs)
+        form_ingest_result = form_ingest_response['success_msg']
 
-        response_data =  json.loads(odk_form_response.read())
 
-        form_ingest_result = response_data['objects'][0]['success_msg']
 
         return form_ingest_result
 
 
 if __name__ == "__main__":
-  main()
+  # main()
+  ort = ODKRefreshTask()
+  ort.main()
