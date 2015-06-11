@@ -422,7 +422,7 @@ class ColumnAttributes(models.Model):
 
 class CustomDashboard(models.Model):
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
     default_region = models.ForeignKey(Region)
