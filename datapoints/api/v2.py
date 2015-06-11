@@ -236,6 +236,21 @@ class v2PostRequest(v2Request):
             self.err = 'User POST not implemented in v2 api.'
             return super(v2PostRequest, self).main()
 
+        ## for custom dashboard api - validate the json posted is valid ##
+
+        if self.content_type == 'custom_dashboard':
+
+            try:
+                dashboard_json = json.loads(self.kwargs['json_data'])
+            except ValueError:
+                self.err = 'Invalid JSON!'
+                return super(v2PostRequest, self).main()
+
+
+            print '===='
+            print dashboard_json
+            print '===='
+
         ## Create, Update or Delete ##
         request_type = self.determined_request_type()
 
