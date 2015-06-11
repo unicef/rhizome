@@ -58,7 +58,7 @@ class ODKRefreshTask(object):
         self.api_wrapper({'task':'finish_odk_jar','form_name':REGION_FORM})
 
 
-    def pull_odk_form_data(form):
+    def pull_odk_form_data(self, form):
 
         subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
             '--form_id', form, \
@@ -102,18 +102,21 @@ class ODKRefreshTask(object):
         ######################################################
 
         ## BEGIN DATA DOWNLOAD FROM ODK ##
-        form_ingest_response = self.api_wrapper({'task':'start_odk_jar','form':form})
+        form_ingest_response = self.api_wrapper\
+            ({'task':'start_odk_jar','form':form})
 
-        self.pull_odk_form_data(form_string)
+        self.pull_odk_form_data(form)
 
         ## END DATA DOWNLOAD FROM ODK ##
-        form_ingest_response = self.api_wrapper({'task':'finish_odk_jar','form':form})
+        form_ingest_response = self.api_wrapper\
+            ({'task':'finish_odk_jar','form':form})
 
         #####################################################
         ## NOW TRANSFORM THE ODK DATA TO OUR NATIVE SCHEMA ##
         #####################################################
 
-        form_ingest_response = self.api_wrapper({'task':'odk_transform','form_name':form})
+        form_ingest_response = self.api_wrapper\
+            ({'task':'odk_transform','form_name':form})
         form_ingest_result = form_ingest_response['success_msg']
 
         return form_ingest_result
