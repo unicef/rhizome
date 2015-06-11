@@ -53,7 +53,59 @@ var tooltipVue = new Vue({
 	},
 	template: "<vue-tooltip></vue-tooltip>"
 });
+function nullValuesToZero(values){
+  _.each(values,function(value){
+  	if(_.isNull(value.value))
+  	{
+  	  value.value = 0;
+  	}
+  });
+	
+}
+function _columnData(data, groups, groupBy) {
 
+	var columnData = _(data)
+		.groupBy(groupBy)
+		.map(_.partialRight(seriesObject, groups))
+		.value();
+	var largestGroup = [];
+	_.each(columnData,function(series){  //The column data is an array of series. Each series has an array of values. Each of the value arrays must be the same length for the stacked column chart to render properly. So first we must loop through all series and find the longest values array, and then pad the remaining arrays with those campaigns to cause the chart to display correctly
+	   if(series.values.length > largestGroup.length)
+	   {
+	     largestGroup = series.values;
+	   }
+	   _.each(series.values,function(val){
+	   	if(_.isNull(val.value))
+	   	{
+	   	  val.value = 0;
+	   	}
+	   });
+	}); 
+	var baseCampaigns = _.map(largestGroup,function(group){
+		return group.campaign;
+	});
+	//console.log(_.map(baseGroup,_.property('campaign.start_date')));
+	_.each(columnData,function(series){
+	   _.each(baseCampaigns,function(baseCampaign){
+	   	   if(!_.find(series.values,function(value){return value.campaign.id == baseCampaign.id}))
+	   	   {
+	   	     series.values.push({campaign:baseCampaign,region:series.values[0].region,indicator:series.values[0].indicator,value:0});
+	   	   }
+	   });
+//	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
+//	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
+	  // console.log(_.map(series.values,_.property('campaign.start_date')));
+	});
+    
+	var stack = d3.layout.stack()
+		.order('default')
+		.offset('zero')
+		.values(function (d) { return d.values; })
+		.x(function (d) { return d.campaign.start_date; })
+		.y(function (d) { return d.value; });
+
+	return stack(columnData);
+}
 
 module.exports = {
 	init:function(dataPromise,chartType,indicators,regions,lower,upper,groups,groupBy){
@@ -64,11 +116,11 @@ module.exports = {
 		if(chartType=="LineChart"){
 		 return	this.processLineChart(meltPromise,lower,upper,groups,groupBy);
 		} else if (chartType=="PieChart") {
-		 return	this.processPieChart(meltPromise,lower,upper,groups,groupBy);	
+		 return	this.processPieChart(meltPromise);	
 		} else if (chartType=="ChoroplethMap") {
 		 return	this.processChoroplethMap(meltPromise,regions);	
 		} else if (chartType=="ColumnChart") {
-		 return	this.processColumnChart(meltPromise,lower,upper);	
+		 return	this.processColumnChart(meltPromise,lower,upper,groups,groupBy);	
 		}
 	},
 	processLineChart:function(dataPromise,lower,upper,groups,groupBy){
@@ -138,16 +190,46 @@ module.exports = {
 			return {options:chartOptions,data:chartData}; 
 		}));
 	},
-	processColumnChart: function(dataPromise,lower,upper){
+	processColumnChart: function(dataPromise,lower,upper,groups,groupBy){
 		return dataPromise.then(function(data){
+		    if(!lower) //set the lower bound from the lowest datapoint value
+		    {
+		      var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
+		      lower = moment(_.first(sortedDates).campaign.start_date);
+		    }
 			var columnScale = _.map(d3.time.scale()
 			  		.domain([lower.valueOf(), upper.valueOf()])
 			  		.ticks(d3.time.month, 1),
 			  	_.method('getTime')
 			  );
-			  
+			  var chartData = _columnData(data,groups,groupBy);	
 			
-			//return {options:{},data:[]};
+			var chartOptions = {
+				aspect : 2.664831804,
+				values  : _.property('values'),
+				yFormat : d3.format('%'),
+				domain : _.constant(columnScale),
+				color  : _.flow(
+					_.property('name'),
+					d3.scale.ordinal().range(colors)),
+				x      : function (d) { 
+//				              if(!d.campaign)
+//				              {
+//				                return lower.toDate().getTime();
+//				              }
+				              var start = d.campaign.start_date
+				              return moment(start).startOf('month').toDate().getTime(); 
+				              },
+				xFormat: function (d) { return moment(d).format('MMM YYYY')}
+			};  		
+			return {options:chartOptions,data:chartData}; 
+			
+		});
+	},
+	processScatterChart: function(dataPromise){
+		return dataPromise.then(function(data){
+					
+			return {options:{},data:[]}; 
 		});
 	}
 };

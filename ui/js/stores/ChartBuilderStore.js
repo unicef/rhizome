@@ -43,38 +43,7 @@ function _groupBySeries(data, groups,groupBy) {
 		})
 		.value();
 }
-function _columnData(data, groups, groupBy) {
 
-	var columnData = _(data)
-		.groupBy(groupBy)
-		.map(_.partialRight(seriesObject, groups))
-		.value();
-	var largestGroup = [];
-	_.each(columnData,function(series){
-	   if(series.values.length > largestGroup.length)
-	   {
-	     largestGroup = series.values;
-	   }
-	});
-	var baseGroup = _.map(largestGroup,function(group){
-		return {campaign:group.campaign,
-				value:0,y:0,y0:0};
-	});
-	_.each(columnData,function(series){
-	   
-	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
-	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
-	});
-
-	var stack = d3.layout.stack()
-		.order('default')
-		.offset('zero')
-		.values(function (d) { return d.values; })
-		.x(function (d) { return d.campaign.start_date; })
-		.y(function (d) { return d.value; });
-
-	return stack(columnData);
-}
 function seriesObject(d, ind, collection, indicators) {
 	return {
 		name   : indicators[ind].name,
@@ -108,6 +77,40 @@ var canDisplayChartReason = function(){
 	}
 	return reason;
 };
+
+function _columnData(data, groups, groupBy) {
+
+	var columnData = _(data)
+		.groupBy(groupBy)
+		.map(_.partialRight(seriesObject, groups))
+		.value();
+	var largestGroup = [];
+	_.each(columnData,function(series){
+	   if(series.values.length > largestGroup.length)
+	   {
+	     largestGroup = series.values;
+	   }
+	});
+	var baseGroup = _.map(largestGroup,function(group){
+		return {campaign:group.campaign,
+				value:0,y:0,y0:0};
+	});
+	_.each(columnData,function(series){
+	   
+	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
+	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
+	});
+
+	var stack = d3.layout.stack()
+		.order('default')
+		.offset('zero')
+		.values(function (d) { return d.values; })
+		.x(function (d) { return d.campaign.start_date; })
+		.y(function (d) { return d.value; });
+
+	return stack(columnData);
+}
+
 
 	
 var chartOptions = {
@@ -274,7 +277,7 @@ module.exports = Reflux.createStore({
 	    }
 		else if(regionRadioValue==="type")
 		{  
-		   if(regionSelected.parent_region_id && regionSelect.parent_region_id != "None")
+		   if(regionSelected.parent_region_id && regionSelected.parent_region_id != "None")
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
 		   }
@@ -334,7 +337,8 @@ module.exports = Reflux.createStore({
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-        var timeSpan = {lower:lower,upper:upper};
+       
+       
         processChartData
         .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
         .then(function(chart){
@@ -343,8 +347,8 @@ module.exports = Reflux.createStore({
           self.data.chartData = chart.data;
           self.trigger(self.data);
         });
-             
-	   /* var dataPointPromise = api.datapoints(q).then(function(data){
+       /*  
+	    var dataPointPromise = api.datapoints(q).then(function(data){
 	    							return melt(data,indicatorArray);}
 	    							).then(function(data){
 	        if(!lower) //set the lower bound from the lowest datapoint value
@@ -381,7 +385,8 @@ module.exports = Reflux.createStore({
 	    	  self.data.chartOptions.color = _.flow(
 	    	  	_.property('name'),
 	    	  	d3.scale.ordinal().range(colors));
-	    	  self.data.chartOptions.x = function (d) { return moment(d.campaign.start_date).startOf('month').toDate().getTime(); };
+	    	  self.data.chartOptions.x = function (d) { 
+	    	  return moment(d.campaign.start_date).startOf('month').toDate().getTime(); };
 	    	  self.data.chartOptions.xFormat = function (d) { return moment(d).format('MMM YYYY')};
 	    	  self.data.chartData = chartData;
 	    	}
@@ -427,6 +432,7 @@ module.exports = Reflux.createStore({
                 self.data.loading = false;
                 self.trigger(self.data);
            }));
-	    }*/
+	    }
+	    */
 	}
 });
