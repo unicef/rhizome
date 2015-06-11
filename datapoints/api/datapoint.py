@@ -1,7 +1,6 @@
 import traceback
 
 from tastypie import fields
-from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.utils.mime import determine_format, build_content_type
@@ -40,7 +39,7 @@ class DataPointResource(BaseNonModelResource):
     indicators = fields.ListField(attribute = 'indicators')
 
     class Meta(BaseNonModelResource.Meta):
-
+        # note - auth inherited from parent class #
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
@@ -73,7 +72,6 @@ class DataPointResource(BaseNonModelResource):
         #     return []
 
         return response
-
 
 
     def get_object_list(self,request):
@@ -280,9 +278,8 @@ class DataPointEntryResource(BaseModelResource):
 
 
     class Meta():
+        # note - auth inherited from parent class #
         queryset = DataPointEntry.objects.all()
-        # authentication = ApiKeyAuthentication() # sup w this
-        authorization = Authorization()
         allowed_methods = ['get', 'post']
         resource_name = 'datapointentry'
         always_return_data = True

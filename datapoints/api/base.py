@@ -2,7 +2,7 @@ from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import Authorization
-from tastypie.authentication import ApiKeyAuthentication
+from tastypie.authentication import BasicAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 
 from datapoints.models import RegionType,Region,RegionHeirarchy,RegionPermission
@@ -17,7 +17,7 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
+        authentication = BasicAuthentication()
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
@@ -35,7 +35,7 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        # authentication = ApiKeyAuthentication()
+        authentication = BasicAuthentication()
         authorization = Authorization()
         always_return_data = True
 
