@@ -70,8 +70,6 @@ class EtlResource(ModelResource):
         # MAKE THIS A CALL BACK FUNCTION #
         et = EtlTask(task_string,created.guid,form_name)
 
-        print et.err
-
         self.err, self.data = et.err, et.data
 
 
@@ -255,7 +253,6 @@ class EtlTask(object):
              try:
                  VCMSettlement.objects.create(**lower_dict)
              except IntegrityError as err:
-                 print err
                  pass
 
         ## Merge Work Table Data into source_region / region / region_map ##
@@ -270,8 +267,9 @@ class EtlTask(object):
     def get_odk_forms_to_process(self):
 
         odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
+        cleaned_forms = [str(x) for x in odk_form_list]
 
-        return None, odk_form_list
+        return None, cleaned_forms
 
     def odk_transform(self):
 
