@@ -231,6 +231,9 @@ class v2PostRequest(v2Request):
             query for objects taht match
         '''
 
+        ## Create, Update or Delete ##
+        request_type = self.determined_request_type()
+
         if self.content_type == 'user':
 
             self.err = 'User POST not implemented in v2 api.'
@@ -240,6 +243,8 @@ class v2PostRequest(v2Request):
 
         if self.content_type == 'custom_dashboard':
 
+            self.kwargs['owner_id'] = self.user_id
+
             try:
                 dashboard_json = json.loads(self.kwargs['json_data'])
             except ValueError:
@@ -247,12 +252,7 @@ class v2PostRequest(v2Request):
                 return super(v2PostRequest, self).main()
 
 
-            print '===='
-            print dashboard_json
-            print '===='
-
-        ## Create, Update or Delete ##
-        request_type = self.determined_request_type()
+        ## Insert / Update / Delete Data ##
 
         try:
 
