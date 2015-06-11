@@ -32,6 +32,9 @@ module.exports = {
 			self.dashboard = DashboardStore.get(ctx.params.dashboard || 'campaign-performance');
 			self.region    = self._regionIndex[ctx.params.region];
 			self.campaign  = self._campaignIndex[ctx.params.year + ctx.params.month];
+
+			document.title = self.dashboard.name  + ' - ' + self.region.name + ' ' +
+				ctx.params.month + '/' + ctx.params.year +  ' - RhizomeDB';
 		}
 
 		var self = this;
