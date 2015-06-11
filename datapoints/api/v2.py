@@ -246,7 +246,8 @@ class v2PostRequest(v2Request):
             self.kwargs['owner_id'] = self.user_id
 
             try:
-                dashboard_json = json.loads(self.kwargs['json_data'])
+                cleaned_json = json.loads(self.kwargs['dashboard_json'])
+                self.kwargs['dashboard_json'] = cleaned_json
             except ValueError:
                 self.err = 'Invalid JSON!'
                 return super(v2PostRequest, self).main()
@@ -620,8 +621,10 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = v
             elif k in ['longitude','latitude'] and v:
                 cleaned_row_data[k] = float(v)
-            elif 'json' in k:
-                cleaned_row_data[k] =v  # json.loads(v)
+            elif k == 'bound_json':
+                cleaned_row_data[k] = v
+            elif k == 'dashboard_json':
+                cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
 
