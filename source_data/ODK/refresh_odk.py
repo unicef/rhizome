@@ -31,7 +31,7 @@ class ODKRefreshTask(object):
 
         for form in forms_to_process:
             print 'processing_forms: %s' % form
-            # form_results = self.process_odk_form(form)
+            form_results = self.process_odk_form(form)
 
 
     def api_wrapper(self,kwargs=None):
@@ -47,22 +47,18 @@ class ODKRefreshTask(object):
         REGION_FORM="VCM_Sett_Coordinates_1.2"
 
         # START ODK JAR FILE #
-        start_odk_jar_url_string = self.base_url_string +\
-            '&task=start_odk_jar&form_name=' + REGION_FORM
-        start_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
-
+        self.api_wrapper({'task':'start_odk_jar','form_name':REGION_FORM})
 
         # PULL ODK DATA #
         sleep(2)
-        pull_odk_form_data(base_url_string,REGION_FORM)
+        self.pull_odk_form_data(REGION_FORM)
         sleep(2)
 
         # DONE WITH ODK JAR FILE #
-        finish_odk_jar_url_string = base_url_string + \
-            '&task=finish_odk_jar&form_name=' + REGION_FORM
-        finish_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
+        self.api_wrapper({'task':'finish_odk_jar','form_name':REGION_FORM})
 
-    def pull_odk_form_data(base_url_string,form):
+
+    def pull_odk_form_data(form):
 
         subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
             '--form_id', form, \
@@ -79,14 +75,11 @@ class ODKRefreshTask(object):
 
     def refresh_regions(base_url_string):
 
-        # START ODK JAR FILE #
-        ingest_odk_url_string = base_url_string + '&task=ingest_odk_regions'
-        ingest_odk_response = urllib2.urlopen(ingest_odk_url_string, data=None)
+        etl_api_response = self.api_wrapper({'task':'ingest_odk_regions'})
 
     def get_forms_to_process(self):
 
-        url_params = {'task':'get_odk_forms_to_process'}
-        etl_api_response = self.api_wrapper(url_params)
+        etl_api_response = self.api_wrapper({'task':'get_odk_forms_to_process'})
         form_list_response = etl_api_response['success_msg']
 
         cleaned_response_string = form_list_response.replace("['","")
@@ -104,17 +97,24 @@ class ODKRefreshTask(object):
         Merge what is mapped into datapoints.
         '''
 
-        form_string = form.replace("u'","").replace("'","")
+        ######################################################
+        ## FIRST PULL THE ODK DATA FROM THE AGGREGAT SERVER ##
+        ######################################################
 
-        ## DOWNLOAD DATA FROM ODK ##
+        ## BEGIN DATA DOWNLOAD FROM ODK ##
+        form_ingest_response = self.api_wrapper({'task':'start_odk_jar','form':form})
 
         self.pull_odk_form_data(form_string)
 
-        form_transform_kwargs = {'task':'odk_transform','form_name':form_string}
-        form_ingest_response = self.api_wrapper(form_transform_kwargs)
+        ## END DATA DOWNLOAD FROM ODK ##
+        form_ingest_response = self.api_wrapper({'task':'finish_odk_jar','form':form})
+
+        #####################################################
+        ## NOW TRANSFORM THE ODK DATA TO OUR NATIVE SCHEMA ##
+        #####################################################
+
+        form_ingest_response = self.api_wrapper({'task':'odk_transform','form_name':form})
         form_ingest_result = form_ingest_response['success_msg']
-
-
 
         return form_ingest_result
 
