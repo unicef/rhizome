@@ -470,7 +470,6 @@ def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
 
-@login_required
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
