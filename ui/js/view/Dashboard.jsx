@@ -15,7 +15,9 @@ var DropdownMenu         = require('component/DropdownMenu.jsx');
 var MenuItem             = require('component/MenuItem.jsx');
 
 var DashboardStore       = require('stores/DashboardStore');
+var IndicatorStore       = require('stores/IndicatorStore');
 
+var AppActions           = require('actions/AppActions');
 var DashboardActions     = require('actions/DashboardActions');
 var DataActions          = require('actions/DataActions');
 
@@ -39,6 +41,7 @@ var Dashboard = React.createClass({
   componentWillMount : function () {
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page({ click : false });
+    AppActions.init();
   },
 
   render : function () {
@@ -55,6 +58,24 @@ var Dashboard = React.createClass({
     var regionSelection = _.get(region, 'name', '');
     var dashboardName   = _.get(dashboardDef, 'title', '');
     var dashboard       = '';
+
+    var indicators = _.indexBy(
+      IndicatorStore.getById.apply(IndicatorStore,
+        _(data).pluck('indicator').uniq().value()),
+      'id');
+
+    // Fill in indicators on all the data objects. If we haven't loaded
+    // indicators yet, continue displaying charts as if we have no data
+    if (!_.isEmpty(indicators)) {
+      _.each(data, function (d) {
+        var ind = indicators[d.indicator];
+        if (ind) {
+          d.indicator = ind;
+        }
+      });
+    } else {
+      data = [];
+    }
 
     switch (dashboardName) {
       case 'Management Dashboard':
@@ -136,7 +157,16 @@ var Dashboard = React.createClass({
   componentDidMount : function () {
     this.dashboardUnsubscribe = this.listenTo(
       DashboardStore,
-      this._onDashboardChange)
+      this._onDashboardChange);
+
+    this.indicatorUnsubscribe = this.listenTo(
+      IndicatorStore,
+      this._onIndicatorsChange);
+  },
+
+  componentWillUnmount : function () {
+    this.dashboardUnsubscribe();
+    this.indicatorUnsubscribe();
   },
 
   _onDashboardChange : function (state) {
@@ -149,6 +179,10 @@ var Dashboard = React.createClass({
     } else {
       DataActions.fetch(state.campaign, state.region, q);
     }
+  },
+
+  _onIndicatorsChange : function () {
+    this.forceUpdate();
   },
 
   _setCampaign : function (id) {
