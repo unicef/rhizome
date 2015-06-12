@@ -8,9 +8,9 @@ function legend() {
 	var _clickHandler = null;
 	var _filled       = function () { return true; };
 	var _interactive  = false;
-	var _padding      = 3;
+	var _padding      = 5;
 	var _scale        = d3.scale.category20b();
-	var _size         = 9;
+	var _size         = 7;
 
 	function fill(d, i) {
 		if (!_interactive || _filled(d, i)) {
@@ -21,11 +21,7 @@ function legend() {
 	}
 
 	function stroke(d, i) {
-		if (_interactive && !_filled(d, i)) {
-			return _scale(d);
-		}
-
-		return 'transparent';
+		return _scale(d);
 	}
 
 	function chart(selection) {

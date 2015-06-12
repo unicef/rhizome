@@ -5,6 +5,9 @@ import json
 import urllib2
 import subprocess
 from time import sleep
+from urllib import urlencode
+from uuid import uuid4
+
 
 try:
     sys.path.append("/Users/johndingee_seed/Desktop/")
@@ -14,101 +17,119 @@ except ImportError:
     import odk_settings
 
 
-def main():
+class ODKRefreshTask(object):
 
-    base_url_string = '%s?username=%s&api_key=%s' % (odk_settings.API_ROOT, \
-        odk_settings.POLIO_USERNAME, odk_settings.POLIO_KEY)
+    def __init__(self):
 
-    pull_regions(base_url_string)
-    # refresh_regions(base_url_string)
-
-    forms_to_process = get_forms_to_process(base_url_string)
-
-    for form in forms_to_process:
-        print 'processing_forms: %s' % form
-        form_results = process_odk_form(base_url_string, form)
+        self.base_url_string = odk_settings.API_ROOT
+        self.cron_guid = uuid4()
 
 
-def pull_regions(base_url_string):
+    def main(self):
 
-    REGION_FORM="VCM_Sett_Coordinates_1.2"
+        ## NOT INTEGRATING REGIONS FOR A WHILE - NEED VALIDATION ON CURRENT
+          ## STRUCTURE AS WELL AS WAY TO MOVE FORWARD WITH MAPPING ##
 
-    # START ODK JAR FILE #
-    start_odk_jar_url_string = base_url_string +\
-        '&task=start_odk_jar&form_name=' + REGION_FORM
-    start_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
+        # pull_regions(base_url_string)
+        # refresh_regions(base_url_string)
 
+        forms_to_process = self.get_forms_to_process()
 
-    # PULL ODK DATA #
-    sleep(2)
-    pull_odk_form_data(base_url_string,REGION_FORM)
-    sleep(2)
-
-    # DONE WITH ODK JAR FILE #
-    finish_odk_jar_url_string = base_url_string + \
-        '&task=finish_odk_jar&form_name=' + REGION_FORM
-    finish_odk_response = urllib2.urlopen(start_odk_jar_url_string, data=None)
-
-def pull_odk_form_data(base_url_string,form):
-
-    subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
-        '--form_id', form, \
-        '--export_filename',form +'.csv', \
-        '--aggregate_url',odk_settings.AGGREGATE_URL, \
-        '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
-        '--export_directory',odk_settings.EXPORT_DIRECTORY, \
-        '--odk_username',odk_settings.ODK_USER, \
-        '--odk_password',odk_settings.ODK_PASS, \
-        '--overwrite_csv_export' ,\
-        '--exclude_media_export' \
-      ])
+        for form in forms_to_process:
+            print 'processing_forms: %s' % form
+            form_results = self.process_odk_form(form)
 
 
-def refresh_regions(base_url_string):
+    def api_wrapper(self,kwargs=None):
 
-    # START ODK JAR FILE #
-    ingest_odk_url_string = base_url_string + '&task=ingest_odk_regions'
-    ingest_odk_response = urllib2.urlopen(ingest_odk_url_string, data=None)
+        kwargs['job_id'] = self.cron_guid
+        url_string = self.base_url_string + '?' + urlencode(dict(**kwargs))
+        response = urllib2.urlopen(url_string)#
+        etl_api_response = json.loads(response.read())['objects'][0]
 
-def get_forms_to_process(base_url_string):
+        return etl_api_response
 
-    get_odk_form_url_string = base_url_string + '&task=get_odk_forms_to_process'
-    get_odk_form_response = urllib2.urlopen(get_odk_form_url_string, data=None)
+    def pull_regions(self):
 
-    response_data =  json.loads(get_odk_form_response.read())
+        REGION_FORM="VCM_Sett_Coordinates_1.2"
 
-    form_list_response = response_data['objects'][0]['success_msg']
+        # START ODK JAR FILE #
+        self.api_wrapper({'task':'start_odk_jar','form_name':REGION_FORM})
 
-    cleaned_response = form_list_response.replace('[','').replace(']','')
-    form_list = cleaned_response.split(',')
+        # PULL ODK DATA #
+        sleep(2)
+        self.pull_odk_form_data(REGION_FORM)
+        sleep(2)
 
-    return form_list
-
-
-def process_odk_form(base_url_string,form):
-    '''
-    First Download the data from ODK, then ingest into source_dps and finally
-    Merge what is mapped into datapoints.
-    '''
+        # DONE WITH ODK JAR FILE #
+        self.api_wrapper({'task':'finish_odk_jar','form_name':REGION_FORM})
 
 
-    form_string = form.replace("u'","").replace("'","")
+    def pull_odk_form_data(self, form):
 
-    ## DOWNLOAD DATA FROM ODK ##
+        subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+            '--form_id', form, \
+            '--export_filename',form +'.csv', \
+            '--aggregate_url',odk_settings.AGGREGATE_URL, \
+            '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
+            '--export_directory',odk_settings.EXPORT_DIRECTORY, \
+            '--odk_username',odk_settings.ODK_USER, \
+            '--odk_password',odk_settings.ODK_PASS, \
+            '--overwrite_csv_export' ,\
+            '--exclude_media_export' \
+          ])
 
-    pull_odk_form_data(base_url_string,form_string)
 
-    ## HIT API TO INGEST DATA INTO SOURCE_DATAPOITNS -> MASTER DATAPOINTS ##
-    odk_form_url_string = base_url_string + '&task=odk_transform&form_name=' + \
-        form_string
-    odk_form_response = urllib2.urlopen(odk_form_url_string, data=None)
+    def refresh_regions(base_url_string):
 
-    response_data =  json.loads(odk_form_response.read())
+        etl_api_response = self.api_wrapper({'task':'ingest_odk_regions'})
 
-    form_ingest_result = response_data['objects'][0]['success_msg']
+    def get_forms_to_process(self):
 
-    return form_ingest_result
+        etl_api_response = self.api_wrapper({'task':'get_odk_forms_to_process'})
+        form_list_response = etl_api_response['success_msg']
+
+        ## having trouble deserializing json here.. hack alert ##
+        cleaned_response_string = form_list_response.replace("['","")
+        cleaned_response_string = cleaned_response_string.replace("', '",",")
+        cleaned_response_string = cleaned_response_string.replace("']","")
+
+        list_of_forms = [str(y) for y in cleaned_response_string.split(',')]
+
+        return list_of_forms
+
+
+    def process_odk_form(self,form):
+        '''
+        First Download the data from ODK, then ingest into source_dps and finally
+        Merge what is mapped into datapoints.
+        '''
+
+        ######################################################
+        ## FIRST PULL THE ODK DATA FROM THE AGGREGAT SERVER ##
+        ######################################################
+
+        ## BEGIN DATA DOWNLOAD FROM ODK ##
+        form_ingest_response = self.api_wrapper\
+            ({'task':'start_odk_jar','form':form})
+
+        self.pull_odk_form_data(form)
+
+        ## END DATA DOWNLOAD FROM ODK ##
+        form_ingest_response = self.api_wrapper\
+            ({'task':'finish_odk_jar','form':form})
+
+        #####################################################
+        ## NOW TRANSFORM THE ODK DATA TO OUR NATIVE SCHEMA ##
+        #####################################################
+
+        form_ingest_response = self.api_wrapper\
+            ({'task':'odk_transform','form_name':form})
+        form_ingest_result = form_ingest_response['success_msg']
+
+        return form_ingest_result
 
 
 if __name__ == "__main__":
-  main()
+  ort = ODKRefreshTask()
+  ort.main()

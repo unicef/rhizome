@@ -578,7 +578,7 @@ FROM (
 WHERE x.region_name = s.region_name;
 
 INSERT INTO source_region
-(region_code,parent_name,parent_code,region_type,document_id,source_guid,is_high_risk)
+(region_code,parent_name,parent_code,region_type,document_id,source_guid)
 
 SELECT
 	region_code
@@ -600,7 +600,7 @@ FROM source_region sr
 WHERE s.region_code = sr.region_code;
 
 INSERT INTO region
-(office_id, slug, source_id, region_code, is_high_risk, name, parent_region_id, region_type_id,created_at)
+(office_id, slug, source_id, region_code, name, parent_region_id, region_type_id,created_at)
 
 SELECT
 	o.id

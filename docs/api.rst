@@ -498,7 +498,6 @@ Response Format
       id: <Number>,
       name: <String>,
       slug: <String>
-      is_high_risk: <Boolean>,
       latitude: <Number>,
       longitude: <Number>,
       region_code: <String>,

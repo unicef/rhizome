@@ -50,7 +50,7 @@ class v2Request(object):
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
             'document': {'orm_obj':Document,
-                'permission_function':None},
+                'permission_function':self.apply_document_permissions },
             'office': {'orm_obj':Office,
                 'permission_function':None},
             'indicator_map': {'orm_obj':IndicatorMap,
@@ -60,6 +60,10 @@ class v2Request(object):
             'campaign_map': {'orm_obj':CampaignMap,
                 'permission_function':None},
             'indicator_tag': {'orm_obj':IndicatorTag,
+                'permission_function':None},
+            'campaign_type': {'orm_obj':CampaignType,
+                'permission_function':None},
+            'custom_dashboard': {'orm_obj':CustomDashboard,
                 'permission_function':None}
         }
 
@@ -105,10 +109,10 @@ class v2Request(object):
 
         data = Campaign.objects.raw("""
             SELECT DISTINCT c.* FROM campaign c
-            INNER JOIN datapoint_abstracted da
-                ON c.id = da.campaign_id
+            INNER JOIN region r
+                ON c.office_id = r.office_id
             INNER JOIN region_permission rm
-                ON da.region_id = rm.region_id
+                ON r.id = rm.region_id
                 AND rm.user_id = %s
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
             ORDER BY c.start_date DESC
@@ -146,6 +150,16 @@ class v2Request(object):
 
         return None, data
 
+    def apply_document_permissions(self, list_of_object_ids):
+
+        data = []
+
+        if self.show_all:
+            data = Document.objects.all()
+        else:
+            data = Document.objects.filter(created_by_id=self.user_id)
+
+        return None, data
 
     def group_document_metadata(self,list_of_object_ids):
         '''
@@ -217,13 +231,29 @@ class v2PostRequest(v2Request):
             query for objects taht match
         '''
 
+        ## Create, Update or Delete ##
+        request_type = self.determined_request_type()
+
         if self.content_type == 'user':
 
             self.err = 'User POST not implemented in v2 api.'
             return super(v2PostRequest, self).main()
 
-        ## Create, Update or Delete ##
-        request_type = self.determined_request_type()
+        ## for custom dashboard api - validate the json posted is valid ##
+
+        if self.content_type == 'custom_dashboard':
+
+            self.kwargs['owner_id'] = self.user_id
+
+            try:
+                cleaned_json = json.loads(self.kwargs['dashboard_json'])
+                self.kwargs['dashboard_json'] = cleaned_json
+            except ValueError:
+                self.err = 'Invalid JSON!'
+                return super(v2PostRequest, self).main()
+
+
+        ## Insert / Update / Delete Data ##
 
         try:
 
@@ -410,6 +440,10 @@ class v2GetRequest(v2Request):
         Get the list of database objects ( ids ) by applying the URL kwargs to
         the filter method of the djanog ORM.
         '''
+
+        # for a get request.. dont show an ids < 0 ( see POLIO-856 ) #
+        self.kwargs['id__gt'] = 0
+
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
         if not self.kwargs and self.content_type in ['campaign','region']:
@@ -491,13 +525,16 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.read_write = 'r'
 
-
         ## Find the Depth Level param ( see POLIO-839 ) ##
-
         try:
             self.depth_level = query_dict['depth_level']
         except KeyError:
             self.depth_level = 10
+
+        try:
+            self.show_all = query_dict['show_all']
+        except KeyError:
+            self.show_all = None
 
         return cleaned_kwargs
 
@@ -578,14 +615,16 @@ class v2GetRequest(v2Request):
             row_data = dict(row_data.__dict__)
             del row_data['_state']
 
+        # serialize various data type as requirements change and expand #
         for k,v in row_data.iteritems():
             if isinstance(v, int):
                 cleaned_row_data[k] = v
             elif k in ['longitude','latitude'] and v:
                 cleaned_row_data[k] = float(v)
-            elif 'json' in k: # if k == 'bound_json':
-                cleaned_row_data[k] =v  # json.loads(v)
-                pass
+            elif k == 'bound_json':
+                cleaned_row_data[k] = v
+            elif k == 'dashboard_json':
+                cleaned_row_data[k] = json.loads(v)
             else:
                 cleaned_row_data[k] = smart_str(v)
 

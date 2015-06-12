@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Polio Data Management App</title>
+	<title>{% block title %}{% endblock %}RhizomeDB</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
@@ -15,36 +15,7 @@
 
 <body class="{% block section %}{% endblock %}">
 	<header class="no-print">
-		<nav>
-			<ul>
-				<li class="home"><a href="/">
-					<i class="fa fa-home fa-lg"></i>&emsp;Home
-				</a></li>
-
-				<li class="dashboard"><a href="/datapoints/management-dashboard/Nigeria/2015/03/">
-					<i class="fa fa-bar-chart fa-lg"></i>&emsp;Explore Data
-				</a></li>
-
-				<li class="data"><a href="{% url 'datapoints:datapoint_index' %}">
-					<i class="fa fa-table fa-lg"></i>&emsp;View Data
-				</a></li>
-
-				<li class="data-entry"><a href="{% url 'datapoints:datapoint_entry' %}">
-					<i class="fa fa-pencil-square-o fa-lg"></i>&emsp;Enter Data
-				</a></li>
-
-				<li class="admin"><a href="/ufadmin/users">
-					<i class="fa fa-cogs"></i>&emsp;Manage System
-				</a></li>
-			</ul>
-			<ul class="right">
-				<li>
-					<a href="{% url 'logout' %}?next=/" title="logout">
-						log out&emsp;<i class="fa fa-lg fa-sign-out"></i>
-					</a>
-				</li>
-			</ul>
-		</nav>
+		<nav id="main-nav"></nav>
 	</header>
 
 	<div id="main" role="main">

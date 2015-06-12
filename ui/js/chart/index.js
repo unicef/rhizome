@@ -6,12 +6,14 @@ var d3 = require('d3');
 var browser = require('util/browser');
 
 var CHARTS = {
+	BarChart      : require('./bar'),
 	BulletChart   : require('./bullet'),
 	ChoroplethMap : require('./choropleth'),
 	ColumnChart   : require('./column'),
 	HeatMap       : require('./heatmap'),
 	LineChart     : require('./line'),
-	PieChart      : require('./pie')
+	PieChart      : require('./pie'),
+	ScatterChart  : require('./scatter')
 };
 
 var DEFAULTS = {

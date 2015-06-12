@@ -35,8 +35,7 @@ class DocTransform(object):
 
 
         df_no_nan = df.where((pd.notnull(df)), None)
-        print 'THIS IS THE DATAFRAME FOR THE UPLOAD BELOW \n' * 5
-        print df_no_nan
+        
         return df_no_nan
 
 
@@ -129,7 +128,6 @@ class RegionTransform(DocTransform):
                 lat = row_data.lat,\
                 lon = row_data.lon,\
                 document_id = self.document.id,\
-                is_high_risk = row_data.high_risk_2014,\
                 parent_code = row_data.parent_code,
                 source_guid = str(self.document.id) + '-' + str(row_data.code))
 

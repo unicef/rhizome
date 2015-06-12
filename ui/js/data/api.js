@@ -106,7 +106,7 @@ function datapoint(q) {
 		fetch(q).then(function (data) {
 			var campaigns = data.objects.map(function (d) { return d.campaign; });
 
-			endPoint('/campaign/')({
+			endPoint('/campaign/', 'get', 2)({
 				id__in: campaigns
 			}).then(function (campaignData) {
 				var campaigns = _.indexBy(campaignData.objects, 'id');
@@ -130,6 +130,26 @@ datapoint.toString = function (query, version) {
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
+	dashboards            : function () {
+		// FIXME: temporary mock data
+		return Promise.resolve({
+			objects : [{
+					'id'   : 1,
+					'name' : 'Management: Country',
+					'url'  : '/datapoints/management-dashboard'
+				}, {
+					'id'   : 2,
+					'name' : 'Management: Districts',
+					'url'  : '/datapoints/district'
+				}, {
+					'id'             : 3,
+					'name'           : 'NGA Campaign Monitoring',
+					'url'            : '/datapoints/nga-campaign-monitoring',
+					'default_office' : 1,
+					'offices'        : [1]
+				}]
+		});
+	},
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),

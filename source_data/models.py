@@ -64,6 +64,7 @@ class Document(models.Model):
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
     source = models.ForeignKey(Source)
+    created_at = models.DateTimeField(default=datetime.now())
 
     class Meta:
         unique_together = ('docfile','doc_text')
@@ -130,7 +131,6 @@ class SourceRegion(models.Model):
     country = models.CharField(max_length=255, null=True)
     source_guid = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
-    is_high_risk = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'source_region'

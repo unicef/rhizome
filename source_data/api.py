@@ -49,13 +49,17 @@ class EtlResource(ModelResource):
 
         # required #
         task_string = request.GET['task']
-        cron_guid = 'placeholder_guid'#request.GET['cron_guid']
 
         # optional #
         try:
             form_name = request.GET['form_name']
         except KeyError:
             form_name = None
+
+        try:
+            cron_guid = request.GET['job_id']
+        except KeyError:
+            cron_guid = 'no_job_id_provided'
 
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
@@ -69,8 +73,6 @@ class EtlResource(ModelResource):
 
         # MAKE THIS A CALL BACK FUNCTION #
         et = EtlTask(task_string,created.guid,form_name)
-
-        print et.err
 
         self.err, self.data = et.err, et.data
 
@@ -255,7 +257,6 @@ class EtlTask(object):
              try:
                  VCMSettlement.objects.create(**lower_dict)
              except IntegrityError as err:
-                 print err
                  pass
 
         ## Merge Work Table Data into source_region / region / region_map ##
@@ -270,8 +271,9 @@ class EtlTask(object):
     def get_odk_forms_to_process(self):
 
         odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
+        cleaned_forms = [str(x) for x in odk_form_list]
 
-        return None, odk_form_list
+        return None, cleaned_forms
 
     def odk_transform(self):
 

@@ -1,5 +1,6 @@
 DROP FUNCTION IF EXISTS fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_indicator_id INT);
-CREATE FUNCTION fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_indicator_id INT)
+DROP FUNCTION IF EXISTS fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT);
+CREATE FUNCTION fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT)
 RETURNS TABLE
 (
 	 id INT
@@ -19,7 +20,7 @@ BEGIN
 		FROM (
 			SELECT
 				spr.id as region_id
-			FROM fn_get_authorized_regions_by_user($1 , NULL, 'w') spr
+			FROM fn_get_authorized_regions_by_user($1 , NULL, 'w',NULL) spr
 		)x
 		INNER JOIN (
 			SELECT ip.indicator_id
@@ -35,7 +36,7 @@ BEGIN
 
     SELECT
           sd.id
-        , sd.cell_value
+        , CAST(sd.cell_value AS VARCHAR)
         , rm.master_object_id as region_id
         , cm.master_object_id as campaign_id
         , im.master_object_id as indicator_id

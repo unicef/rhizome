@@ -1,6 +1,14 @@
 @import "_react-widgets.scss";
 @import "_react-widgets-core.scss";
 
+@mixin user-select($select) {
+	-webkit-user-select: $select;
+	-moz-user-select: $select;
+	-ms-user-select: $select;
+	user-select: $select;
+}
+
+
 .admin-container {
 	margin: 20px;
 
@@ -49,6 +57,7 @@
 		cursor: pointer;
 		font-weight: bold;
 		line-height: 200%;
+		@include user-select(none);
 	}
 	.ufadmin-filters-content {
 		margin-top: 20px;
@@ -113,11 +122,26 @@
 }
 
 .ds-data-table-sortable {
-	thead.td {
+	thead th {
 		cursor: pointer;
-		user-select: none;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
+		@include user-select(none);
+	}
+}
+
+.ds-data-table-empty {
+	background: #f0f0f0;
+	padding: 20px;
+	font-size: 11pt;
+	font-weight: bold;
+	text-align: center;
+}
+
+.ds-clear-query-link {
+	display: inline-block;
+	a {
+		display: inline-block;
+		margin-left: 20px;
+		font-size: 11pt;
+		font-weight: normal;
 	}
 }

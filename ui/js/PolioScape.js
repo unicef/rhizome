@@ -4,10 +4,10 @@ require('babel/polyfill');
 var React = require('react/addons');
 var Vue = require('vue');
 
-var LandingPage = require('view/LandingPage.jsx');
+var LandingPage      = require('view/LandingPage.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
-var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
-var AdminApp = require('./ufadmin');
+var Navigation       = require('component/Navigation.jsx');
+var AdminApp         = require('./ufadmin');
 
 Vue.config.debug = true;
 
@@ -23,6 +23,11 @@ Vue.filter('num', require('./filter/num'));
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'));
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
+
+React.render(
+	React.createElement(Navigation),
+	document.getElementById('main-nav')
+);
 
 module.exports = {
 	Explorer: function (el) {
@@ -64,6 +69,7 @@ module.exports = {
 		React.render(React.createElement(DashboardBuilder), el);
 	},
 	ChartBuilder: function (el) {
+		var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 		React.render(React.createElement(ChartBuilder), el);
 	},
 	UFAdmin: function(el) {

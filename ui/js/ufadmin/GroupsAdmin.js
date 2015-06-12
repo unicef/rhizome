@@ -31,7 +31,10 @@ var GroupsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search groups"/>
+				<SearchBar
+					fieldNames={['name']}
+					placeholder="search groups"
+					/>
 			</div>;
 
 		return <AdminPage
