@@ -42,23 +42,25 @@ var Dashboard = React.createClass({
   },
 
   render : function () {
-    var region   = this.state.region;
-    var campaign = this.state.campaign;
-    var loading  = this.state.loading;
-    var data     = this.state.data;
+    var campaign     = this.state.campaign;
+    var dashboardDef = this.state.dashboard;
+    var data         = this.state.data;
+    var loading      = this.state.loading;
+    var region       = this.state.region;
 
     var campaignSelection = campaign ?
       moment(campaign.start_date, 'YYYY-MM-DD').format('MMM YYYY') :
       '';
 
     var regionSelection = _.get(region, 'name', '');
-    var dashboardName   = _.get(this.state, 'dashboard.title', '');
+    var dashboardName   = _.get(dashboardDef, 'title', '');
     var dashboard       = '';
 
     switch (dashboardName) {
       case 'Management Dashboard':
         dashboard = (
           <ManagementDashboard
+            dashboard={dashboardDef}
             campaign={campaign}
             region={region}
             loading={loading}

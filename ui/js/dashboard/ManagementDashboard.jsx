@@ -11,32 +11,59 @@ var BulletChartSection = require('./BulletChartSection.jsx');
 
 var ManagementDashboard = React.createClass({
   propTypes : {
-    campaign : React.PropTypes.object,
-    region   : React.PropTypes.object,
+    dashboard : React.PropTypes.object.isRequired,
+
+    campaign  : React.PropTypes.object,
+    data      : React.PropTypes.array,
+    loading   : React.PropTypes.bool,
+    region    : React.PropTypes.object,
   },
 
-  getInitialState : function () {
+  getDefaultProps : function () {
     return {
       data    : [],
       loading : true
     };
   },
 
-  componentWillReceiveProps : function (nextProps) {
-    // if (nextProps.campaign.start_date !== this.props.campaign.start_date ||
-    //   nextProps.region.id !== this.region.id) {
-
-    //   this._fetch(nextProps.campaign, nextProps.region);
-    // }
-  },
-
   render : function () {
+    var loading  = this.props.loading;
     var region   = _.get(this.props, 'region.name', '');
     var campaign = '';
 
     if (this.props.campaign) {
       campaign = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMM YYYY');
     }
+
+    // Data index by section
+    var data = {};
+
+    // Indicator index: maps indicator IDs to one or more sections containing
+    var sections = _(_.get(this.props, 'dashboard.charts', []))
+      .groupBy('section')
+      .transform(function (result, defs, section) {
+        data[section] = [];
+
+        _(defs)
+          .pluck('indicators')
+          .flatten()
+          .each(function (id) {
+            var sections = _.get(result, id, []);
+
+            sections.push(section);
+            result[id] = sections;
+          })
+          .value();
+      })
+      .value();
+
+    // Parcel out the datapoints into the correct sections based on their
+    // indicator IDs
+    _.each(this.props.data, function (d) {
+      _.each(sections[d.indicator], function (s) {
+        data[s].push(d);
+      });
+    });
 
     return (
       <div id='management-dashboard'>
@@ -56,32 +83,32 @@ var ManagementDashboard = React.createClass({
         </div>
 
         <div className='row'>
-          <Impact data={this.state.data} loading={this.state.loading} {...this.props} />
-          <Performance data={this.state.data} loading={this.state.loading} {...this.props} />
+          <Impact data={data.impact} loading={loading} />
+          <Performance data={data.performance} loading={loading} />
         </div>
 
         <div className='row'>
           <section className='medium-2 columns'>
             <h3>FLWs' Capacity to Perform</h3>
-            <BulletChartSection data={this.state.data} loading={this.state.loading} cols={2} {...this.props} />
+            <BulletChartSection data={data.capacity} loading={loading} cols={2} />
           </section>
 
           <div className='medium-1 column'>
             <h3>Supply</h3>
-            <BulletChartSection data={this.state.data} loading={this.state.loading} cols={1} {...this.props} />
+            <BulletChartSection data={data.supply} loading={loading} cols={1} />
           </div>
 
           <div className='medium-1 column'>
             <h3>Polio+</h3>
-            <BulletChartSection data={this.state.data} loading={this.state.loading} cols={1} {...this.props} />
+            <BulletChartSection data={data.polio} loading={loading} cols={1} />
           </div>
 
           <div className='medium-1 column'>
             <h3>Resources</h3>
-            <BulletChartSection data={this.state.data} loading={this.state.loading} cols={1} {...this.props} />
+            <BulletChartSection data={data.resources} loading={loading} cols={1} />
           </div>
 
-          <Access data={this.state.data} loading={this.state.loading} {...this.props} />
+          <Access data={data.access} loading={loading} />
         </div>
 
       </div>
