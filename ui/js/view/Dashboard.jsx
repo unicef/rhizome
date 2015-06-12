@@ -31,14 +31,6 @@ var Dashboard = React.createClass({
   componentWillMount : function () {
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page({ click : false });
-
-    api.regions().then(function (response) {
-      this.setState({ regions : _.indexBy(response.objects, 'id') });
-    }.bind(this));
-
-    api.campaign().then(function (response) {
-      this.setState({ campaigns : _.indexBy(response.objects, 'id') });
-    }.bind(this));
   },
 
   render : function () {
@@ -54,7 +46,6 @@ var Dashboard = React.createClass({
 
     var dashboardName = _.get(this.state, 'dashboard.title', '');
 
-    // FIXME: Needs to be dynamic
     var dashboard = '';
 
     switch (dashboardName) {
