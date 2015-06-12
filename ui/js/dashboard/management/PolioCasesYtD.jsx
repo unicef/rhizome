@@ -4,7 +4,7 @@ var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
 
-var YtDChart = require('./YtDChart.jsx');
+var YtDChart = require('component/YtDChart.jsx');
 
 module.exports = React.createClass({
   getDefaultProps : function () {
@@ -12,13 +12,6 @@ module.exports = React.createClass({
       data     : [],
       campaign : null,
       region   : null
-    };
-  },
-
-  getInitialState : function () {
-    return {
-      totalCases : null,
-      newCases   : null
     };
   },
 
@@ -33,12 +26,15 @@ module.exports = React.createClass({
 
   render : function () {
     var campaign   = this.props.campaign;
-    var year       = campaign.start_date.getFullYear();
-    var month      = moment(campaign.start_date).format('MMM');
+    var year       = '';
+    var month      = '';
     var totalCases = null;
     var newCases   = null;
 
     if (campaign) {
+      year  = campaign.start_date.getFullYear();
+      month = moment(campaign.start_date).format('MMM');
+
       // Sum all of the reported Polio cases for the year
       totalCases = _(this.props.data)
         .filter(function (d) { return d.campaign.start_date.getFullYear() === year; })
@@ -86,7 +82,7 @@ module.exports = React.createClass({
         .value());
 
     return (
-      <div>
+      <section id='polio-cases-ytd'>
         {title}
         <div style={{ position : 'relative' }}>
           {newCaseLabel}
@@ -97,7 +93,7 @@ module.exports = React.createClass({
               aspect : 1.757
             }} />
         </div>
-      </div>
+      </section>
     )
   },
 

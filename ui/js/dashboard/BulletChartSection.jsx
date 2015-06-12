@@ -96,9 +96,9 @@ function _fill(data, campaign, targets) {
 
 module.exports = React.createClass({
   propTypes : {
-    campaign : React.PropTypes.object.isRequired,
-    cols     : React.PropTypes.number.isRequired,
-    data     : React.PropTypes.array.isRequired,
+    campaign : React.PropTypes.object,
+    cols     : React.PropTypes.number,
+    data     : React.PropTypes.array,
   },
 
   getDefaultProps : function () {
