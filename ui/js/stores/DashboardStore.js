@@ -65,6 +65,7 @@ var DashboardStore = Reflux.createStore({
 
 		var dashboard = this.dashboards[this.dashboard];
 
+		this.indicators = {};
 		_.each(dashboard.charts, this.addChartDefinition);
 
 		var regions   = this.regions;
