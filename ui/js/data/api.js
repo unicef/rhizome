@@ -137,84 +137,84 @@ module.exports = {
 					'id'   : 1,
 					'title' : 'Management Dashboard',
 					'charts' : [{
-							'title' : 'Polio Cases YTD',
+							'title'      : 'Polio Cases YTD',
 							'indicators' : [168],
-							'timeRange': {
+							'startOf'    : 'year',
+							'timeRange'  : {
 								years : 2
 							},
 						}, {
-							'title' : 'Under-Immunized Children',
+							'title'      : 'Under-Immunized Children',
 							'indicators' : [431,432,433],
-							'timeRange': {
+							'startOf'    : 'quarter',
+							'timeRange'  : {
 								years : 3
 							}
 						}, {
-							'title' : 'Missed Children',
+							'title'      : 'Missed Children',
 							'indicators' : [166,164,167,165],
-							'timeRange': {
+							'timeRange'  : {
 								months : 12
 							}
 						}, {
-							'title' : 'Missed Children',
+							'title'      : 'Missed Children',
 							'indicators' : [475],
 						}, {
-							'title' : 'Conversions',
+							'title'      : 'Conversions',
 							'indicators' : [187,189],
-							'timeRange': {
+							'timeRange'  : {
 								months : 12
 							}
 						}, {
-							'title' : 'Microplans',
+							'title'      : 'Microplans',
 							'indicators' : [27,28],
 						}, {
-							'title' : 'Transit Points',
+							'title'      : 'Transit Points',
 							'indicators' : [175,176,177,204],
 						}, {
-							'title' : 'FLW\'s Capacity to Perform',
+							'title'      : 'FLW\'s Capacity to Perform',
 							'indicators' : [178,228,179,184,180,185,230,226,239],
-							'timeRange': {
+							'timeRange'  : {
 								months : 4
 							}
 						}, {
-							'title': 'Polio+',
+							'title'      : 'Polio+',
 							'indicators' : [245,236,192,193,191],
-							'timeRange': {
+							'timeRange'  : {
 								months : 4
 							}
 						}, {
-							'title' : 'Supply',
+							'title'      : 'Supply',
 							'indicators' : [194,219,173,172],
-							'timeRange': {
+							'timeRange'  : {
 								months : 4
 							}
 						}, {
-
-							'title' : 'Resources',
+							'title'      : 'Resources',
 							'indicators' : [169,233],
-							'timeRange': {
+							'timeRange'  : {
 								months : 4
 							}
 						}, {
 							'title'      : 'Number of Inaccessible Children',
 							'indicators' : [158],
-							'timeRange' : {
+							'timeRange'  : {
 								months : 12
 							}
 						}, {
-
-							'title' : 'Districts with Access Plans',
+							'title'      : 'Districts with Access Plans',
 							'indicators' : [174],
 						}, {
-							'title' : 'Inaccessibility Breakdown',
+							'title'      : 'Inaccessibility Breakdown',
 							'indicators' : [442,443,444,445,446,447,448,449,450]
 						}
 					]
 				}, {
-					'id'   : 2,
+					'id'    : 2,
 					'title' : 'District Dashboard',
 				}, {
 					'id'                : 3,
-					'title'              : 'NGA Campaign Monitoring',
+					'title'             : 'NGA Campaign Monitoring',
 					'default_office_id' : 1,
 				}]
 		});

@@ -34,23 +34,21 @@ var DashboardStore = Reflux.createStore({
 
 	getQueries : function () {
 		var indicators = this.indicators;
-		var qs = {};
 
-		_.each(indicators, function (indicator, duration) {
-			var s = String(duration);
-
-			if (!qs.hasOwnProperty(s)) {
-				qs[s] = [];
-			}
-
-			qs[s].push(indicator);
+		var qs = _.groupBy(indicators, function (definition, key) {
+			return [
+					definition.duration,
+					definition.startOf,
+					definition.region
+				].join('-');
 		});
 
-		return _.map(qs, function (duration, indicators) {
-			return {
-				indicators : indicators,
-				duration   : moment.duration(duration)
-			}
+		return _.map(qs, function (arr) {
+			return _.merge.apply(null, arr.concat(function (a, b) {
+				if (_.isArray(a)) {
+					return a.concat(b);
+				}
+			}));
 		});
 	},
 
@@ -67,6 +65,8 @@ var DashboardStore = Reflux.createStore({
 
 		this.indicators = {};
 		_.each(dashboard.charts, this.addChartDefinition);
+
+		console.log(this.getQueries());
 
 		var regions   = this.regions;
 		var campaigns = this.campaigns;
@@ -113,11 +113,17 @@ var DashboardStore = Reflux.createStore({
 	},
 
 	addChartDefinition : function (chart) {
+		var base = _.omit(chart, 'indicators', 'title');
+
 		_.each(chart.indicators, function (id) {
 			var duration = moment.duration(chart.timeRange);
+			var hash     = [id, chart.startOf, chart.region].join('-');
 
-			if (!this.indicators.hasOwnProperty(id) || duration > this.indicators[id]) {
-				this.indicators[id] = duration;
+			if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
+				this.indicators[hash] = _.assign({
+						duration   : duration,
+						indicators : [id]
+					}, base);
 			}
 		}.bind(this));
 	}

@@ -9,23 +9,6 @@ var Performance        = require('dashboard/management/Performance.jsx');
 var Access             = require('dashboard/management/Access.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 
-var INDICATORS = {
-  cases           : [168],
-  immunityGap     : [431,432,433],
-  missed          : [166,164,167,165],
-  totalMissed     : [475],
-  conversions     : [187,189],
-  microplans      : [27,28],
-  transitPoints   : [175,176,177,204],
-  capacity        : [178,228,179,184,180,185,230,226,239],
-  polio           : [245,236,192,193,191],
-  supply          : [194,219,173,172],
-  resources       : [169,233],
-  inaccessible    : [158],
-  accessPlans     : [174],
-  inaccessibility : [442,443,444,445,446,447,448,449,450]
-};
-
 var ManagementDashboard = React.createClass({
   propTypes : {
     campaign : React.PropTypes.object,

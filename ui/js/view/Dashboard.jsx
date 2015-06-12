@@ -1,21 +1,29 @@
 'use strict';
 
-var _     = require('lodash');
-var React = require('react');
+var _      = require('lodash');
+var React  = require('react');
 var Reflux = require('reflux/src');
-var page  = require('page');
+var page   = require('page');
 var moment = require('moment');
 
 var api = require('data/api');
 
-var ManagementDashboard = require('dashboard/ManagementDashboard.jsx');
+var ManagementDashboard  = require('dashboard/ManagementDashboard.jsx');
+
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var DropdownMenu = require('component/DropdownMenu.jsx');
-var MenuItem = require('component/MenuItem.jsx');
-var DashboardActions = require('actions/DashboardActions');
+var DropdownMenu         = require('component/DropdownMenu.jsx');
+var MenuItem             = require('component/MenuItem.jsx');
+
+var DashboardStore       = require('stores/DashboardStore');
+
+var DashboardActions     = require('actions/DashboardActions');
+var DataActions          = require('actions/DataActions');
 
 var Dashboard = React.createClass({
-  mixins : [Reflux.connect(require('stores/DashboardStore'))],
+  mixins : [
+    Reflux.ListenerMixin,
+    Reflux.connect(require('stores/DataStore'))
+  ],
 
   getInitialState : function () {
     return {
@@ -24,7 +32,7 @@ var Dashboard = React.createClass({
       region       : null,
       campaign     : null,
       regionFilter : null,
-      dashboard    : null
+      dashboard    : null,
     };
   },
 
@@ -34,25 +42,34 @@ var Dashboard = React.createClass({
   },
 
   render : function () {
-    var region = this.state.region;
-
+    var region   = this.state.region;
     var campaign = this.state.campaign;
+    var loading  = this.state.loading;
+    var data     = this.state.data;
 
     var campaignSelection = campaign ?
       moment(campaign.start_date, 'YYYY-MM-DD').format('MMM YYYY') :
       '';
 
     var regionSelection = _.get(region, 'name', '');
-
-    var dashboardName = _.get(this.state, 'dashboard.title', '');
-
-    var dashboard = '';
+    var dashboardName   = _.get(this.state, 'dashboard.title', '');
+    var dashboard       = '';
 
     switch (dashboardName) {
       case 'Management Dashboard':
         dashboard = (
-          <ManagementDashboard campaign={campaign} region={region} />
+          <ManagementDashboard
+            campaign={campaign}
+            region={region}
+            loading={loading}
+            data={data} />
         );
+        break;
+
+      case 'District Dashboard':
+        break;
+
+      case 'NGA Campaign Monitoring':
         break;
 
       default:
@@ -115,7 +132,21 @@ var Dashboard = React.createClass({
   },
 
   componentDidMount : function () {
+    this.dashboardUnsubscribe = this.listenTo(
+      DashboardStore,
+      this._onDashboardChange)
+  },
 
+  _onDashboardChange : function (state) {
+    this.setState(state);
+
+    var q = DashboardStore.getQueries();
+
+    if (_.isEmpty(q)) {
+      DataActions.clear();
+    } else {
+      DataActions.fetch(state.campaign, state.region, q);
+    }
   },
 
   _setCampaign : function (id) {
