@@ -27,7 +27,7 @@ var defaults = {
 function ColumnChart() {}
 
 _.extend(ColumnChart.prototype, {
-	classNames : 'chart column stacked',
+	classNames : 'chart stacked-column',
 	defaults   : defaults,
 
 	initialize : function (el, data, options) {
