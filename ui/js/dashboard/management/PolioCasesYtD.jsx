@@ -32,8 +32,9 @@ module.exports = React.createClass({
     var newCases   = null;
 
     if (campaign) {
-      year  = campaign.start_date.getFullYear();
-      month = moment(campaign.start_date).format('MMM');
+      var m = moment(campaign.start_date, 'YYYY-MM-DD');
+      year  = m.format('YYYY');
+      month = m.format('MMM');
 
       // Sum all of the reported Polio cases for the year
       totalCases = _(this.props.data)
