@@ -61,7 +61,7 @@ var Dashboard = React.createClass({
 
     var indicators = _.indexBy(
       IndicatorStore.getById.apply(IndicatorStore,
-        _(data).pluck('indicator').uniq().value()),
+        _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
     // Fill in indicators on all the data objects. If we haven't loaded
@@ -83,6 +83,7 @@ var Dashboard = React.createClass({
           <ManagementDashboard
             dashboard={dashboardDef}
             campaign={campaign}
+            indicators={indicators}
             region={region}
             loading={loading}
             data={data} />
