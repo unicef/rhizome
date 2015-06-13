@@ -34,7 +34,9 @@ function _campaignRow(campaign, i) {
         district = d;
         break;
       default:
-        others.push(d);
+        if (!d.hasOwnProperty('default_office_id') || d.default_office_id === campaign.office_id) {
+          others.push(d);
+        }
         break;
     }
   });
@@ -80,7 +82,6 @@ module.exports = React.createClass({
   },
 
   render : function () {
-    debugger;
     var campaigns = _(this.state.campaigns)
       .sortBy('start_date')
       .takeRight(this.state.visibleCampaigns)

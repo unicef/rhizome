@@ -103,19 +103,15 @@ var NavigationStore = Reflux.createStore({
 				var title      = officeName + ': ' + m.format('MMMM YYYY');
 
 				var links = _.map(dashboards.objects, function (d) {
-					return {
-						title : d.title,
-						path  : _.kebabCase(d.title) + '/' + officeName + '/' + dt
-					};
+					return _.defaults({
+							path  : _.kebabCase(d.title) + '/' + officeName + '/' + dt
+						}, d);
 				});
 
-				return {
-					id         : c.id,
-					start_date : c.start_date,
-					title      : title,
-
-					dashboards : links
-				}
+				return _.defaults({
+						title      : title,
+						dashboards : links
+					}, c);
 			})
 
 		this.trigger({
