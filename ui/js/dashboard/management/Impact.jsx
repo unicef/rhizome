@@ -17,12 +17,13 @@ var Impact = React.createClass({
       return [431,432,433].indexOf(d.indicator.id) > -1;
     });
 
-    var props = _.omit(this.props, 'data');
+    var campaign = this.props.campaign;
 
     return (
       <div className='medium-2 columns'>
         <h3>Impact</h3>
-        <PolioCasesYTD data={cases} {...props} />
+        <PolioCasesYTD data={cases} campaign={campaign} />
+        <ImmunityGap data={immunity} campaign={campaign} />
       </div>
     );
   },

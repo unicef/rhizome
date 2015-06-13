@@ -1,7 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
-var React = require('react');
+var _      = require('lodash');
+var React  = require('react');
+var moment = require('moment');
+
+var Chart = require('component/Chart.jsx');
 
 /**
  * Convert the value of each datapoint to a percentage of the total value
@@ -18,18 +21,18 @@ function percentage(dataset) {
 
 var ImmunityGap = React.createClass({
   propTypes : {
-    campaign : React.PropTypes.object,
-    data     : React.PropTypes.array
+    campaign : React.PropTypes.object.isRequired,
+    data : React.PropTypes.array.isRequired,
   },
 
   render : function () {
-    var data = _(data)
+    var data = _(this.props.data)
       .each(function (d) {
         // Add a property to each datapoint indicating the fiscal quarter
         d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
       })
       .groupBy(function (d) {
-        return d.indicator + '-' + d.quarter;
+        return d.indicator.id + '-' + d.quarter;
       })
       .map(function (datapoints) {
         // Calculate the total number of children with X doses of OPV for
@@ -43,11 +46,16 @@ var ImmunityGap = React.createClass({
       .flatten()
       .reject(function (d) {
         // Exclude 4+ doses, because that is implied as 1 - <0 doses> - <1–3 doses>
-        // jshint eqeqeq: false
-        return d.indicator == '433';
+        return d.indicator.id === 433;
       })
-      .groupBy('indicator')
-      .map(_.partialRight(seriesObject, indicators))
+      .groupBy('indicator.short_name')
+      .map(function (values, name) {
+        return {
+          name   : name,
+          values : values
+        };
+      })
+      .sortBy('name')
       .value();
 
     var stack = d3.layout.stack()
@@ -59,13 +67,12 @@ var ImmunityGap = React.createClass({
     var color = _.flow(
       _.property('name'),
       d3.scale.ordinal()
-        .domain(_(immunityGap).pluck('name').sortBy().value())
+        .domain(_(data).pluck('name').sortBy().value())
         .range(['#AF373E', '#FABAA2'])
     );
 
-    var lower = start.clone()
-      .startOf('quarter')
-      .subtract(3, 'years');
+    var start = moment(this.props.campaign.start_date);
+    var lower = start.clone().startOf('quarter').subtract(3, 'years');
     var upper = start.clone().endOf('quarter');
 
     var immunityScale = _.map(d3.time.scale()
