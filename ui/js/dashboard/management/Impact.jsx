@@ -10,11 +10,11 @@ var Impact = React.createClass({
 
   render : function () {
     var cases = _.filter(this.props.data, function (d) {
-      return d.id === 168;
+      return d.indicator.id === 168;
     });
 
     var immunity = _.filter(this.props.data, function (d) {
-      return [431,432,433].indexOf(d.id) > -1;
+      return [431,432,433].indexOf(d.indicator.id) > -1;
     });
 
     var props = _.omit(this.props, 'data');

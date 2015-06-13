@@ -7,21 +7,15 @@ var React  = require('react');
 var YtDChart = require('component/YtDChart.jsx');
 
 module.exports = React.createClass({
+  propTypes : {
+    campaign : React.PropTypes.object,
+    data     : React.PropTypes.array,
+  },
+
   getDefaultProps : function () {
     return {
       data     : [],
-      campaign : null,
-      region   : null
     };
-  },
-
-  shouldComponentUpdate : function (nextProps) {
-    // Update if we have a campaign and region, and the campaign or region is
-    // different. If this condition is false, it shouldn't be the case that the
-    // new cases or total cases has changed, so we don't need to check that.
-    return !(_.isNull(nextProps.campaign) || _.isNull(nextProps.region)) &&
-      (nextProps.campaign.id !== _.get(this.props, 'campaign.id') ||
-      nextProps.region.id !== _.get(this.props, 'region.id'));
   },
 
   render : function () {
@@ -38,7 +32,7 @@ module.exports = React.createClass({
 
       // Sum all of the reported Polio cases for the year
       totalCases = _(this.props.data)
-        .filter(function (d) { return d.campaign.start_date.getFullYear() === year; })
+        .filter(function (d) { return d.campaign.start_date.getFullYear() == year; })
         .pluck('value')
         .sum();
 
@@ -46,7 +40,7 @@ module.exports = React.createClass({
       newCases = _.get(
         _.find(
           this.props.data,
-          function (d) { return d.campaign.start_date.getTime() === campaign.start_date.getTime();}),
+          function (d) { return d.campaign.start_date.getTime() === m.valueOf();}),
         'value');
     }
 

@@ -60,7 +60,7 @@ var ManagementDashboard = React.createClass({
     // Parcel out the datapoints into the correct sections based on their
     // indicator IDs
     _.each(this.props.data, function (d) {
-      _.each(sections[d.indicator], function (s) {
+      _.each(sections[d.indicator.id], function (s) {
         data[s].push(d);
       });
     });
@@ -83,7 +83,7 @@ var ManagementDashboard = React.createClass({
         </div>
 
         <div className='row'>
-          <Impact data={data.impact} loading={loading} />
+          <Impact data={data.impact} campaign={this.props.campaign} loading={loading} />
           <Performance data={data.performance} loading={loading} />
         </div>
 
