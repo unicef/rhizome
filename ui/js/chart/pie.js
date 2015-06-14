@@ -32,14 +32,15 @@ _.extend(PieChart.prototype, {
 		var options = this._options = _.defaults({}, options, DEFAULTS);
 		var margin  = options.margin;
 
-		this._height = this._width = el.clientWidth;
+		this._height = this._width = _.get(options, 'size', el.clientWidth);
 
 		var svg = this._svg = d3.select(el).append('svg').attr('class', 'pie');
 
 		var g = svg.append('g').attr('class', 'margin');
 
-		g.append('path').attr('class', 'bg');
-		g.append('g').attr('class', 'data');
+		g
+			.append('g').attr('class', 'data')
+			.append('path').attr('class', 'bg');
 
 		this.update(data);
 	},
@@ -74,7 +75,7 @@ _.extend(PieChart.prototype, {
 			.innerRadius(s / 2 * options.innerRadius)
 			.outerRadius(s / 2);
 
-		g.select('.bg')
+		svg.select('.bg')
 			.datum({
 				startAngle : 0,
 				endAngle   : 2 * Math.PI
