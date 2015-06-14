@@ -165,6 +165,7 @@ module.exports = {
 							'indicators' : [475],
 						}, {
 							'title'      : 'Conversions',
+							'section'    : 'performance',
 							'indicators' : [187,189],
 							'timeRange'  : {
 								months : 12

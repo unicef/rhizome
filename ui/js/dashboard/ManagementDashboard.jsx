@@ -82,7 +82,7 @@ var ManagementDashboard = React.createClass({
 
         <div className='row'>
           <Impact data={data.impact} campaign={this.props.campaign} loading={loading} />
-          <Performance data={data.performance} loading={loading} />
+          <Performance data={data.performance} campaign={this.props.campaign} loading={loading} />
         </div>
 
         <div className='row'>

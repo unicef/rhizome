@@ -22,9 +22,9 @@ var DEFAULTS = {
 	scale      : d3.scale.linear,
 	seriesName : _.property('name'),
 	values     : _.property('values'),
-	x          : _.property('x'),
+	x          : _.property('campaign.start_date'),
 	xFormat    : format.timeAxis,
-	y          : _.property('y'),
+	y          : _.property('value'),
 	yFormat    : d3.format(',d')
 };
 
