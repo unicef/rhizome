@@ -31,9 +31,11 @@ var Access = React.createClass({
       .filter(d => {
         return d.campaign.id === campaign.id &&
           _.includes([442,443,444,445,446,447,448,449,450], d.indicator.id) &&
-          _.isFinite(d.value);
+          _.isFinite(d.value) &&
+          d.value >= 0.01;
       })
       .sortBy(_.property('value'))
+      .reverse()
       .map(d => [d])
       .value();
 

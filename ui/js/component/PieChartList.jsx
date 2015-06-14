@@ -20,14 +20,13 @@ var PieChartList = React.createClass({
   },
 
   render : function () {
-    var pies = _.each(this.props.data, (d, i) => {
-      return (
+    var pies = _.map(this.props.data, (d, i) => (
         <tr key={this.props.keyPrefix + '-' + i}>
           <td><Chart type='PieChart' data={d} options={this.props.options} /></td>
           <td>{this.props.name(d)}</td>
         </tr>
-      );
-    });
+      )
+    );
 
     if (_.isEmpty(pies)) {
       pies = (<tr><td>No data</td></tr>);
