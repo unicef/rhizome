@@ -106,7 +106,7 @@ var ManagementDashboard = React.createClass({
             <BulletChartSection data={data.resources} campaign={campaign} indicators={sections.resources} loading={loading} cols={1} />
           </div>
 
-          <Access data={data.access} loading={loading} />
+          <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
         </div>
 
       </div>
