@@ -33,8 +33,6 @@ var Navigation = React.createClass({
           </li>
         );
 
-      console.log('here');
-
     }
 
     var manage = '';
