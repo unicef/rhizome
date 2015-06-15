@@ -150,7 +150,7 @@ var Performance = React.createClass({
               emptyText='No microplan data available'
               options={{
                 domain : _.constant([0, _.get(microplans, 'value', 1)]),
-                size   : 32
+                size   : 24
               }} />
           </section>
         </div>
