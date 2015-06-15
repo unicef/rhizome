@@ -8,17 +8,18 @@ var moment = require('moment');
 
 var api = require('data/api');
 
-var ManagementDashboard  = require('dashboard/ManagementDashboard.jsx');
+var ManagementDashboard = require('dashboard/ManagementDashboard.jsx');
+var NCODashboard        = require('dashboard/NCODashboard.jsx');
 
-var RegionTitleMenu      = require('component/RegionTitleMenu.jsx');
-var CampaignTitleMenu    = require('component/CampaignTitleMenu.jsx');
+var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 
-var DashboardStore       = require('stores/DashboardStore');
-var IndicatorStore       = require('stores/IndicatorStore');
+var DashboardStore      = require('stores/DashboardStore');
+var IndicatorStore      = require('stores/IndicatorStore');
 
-var AppActions           = require('actions/AppActions');
-var DashboardActions     = require('actions/DashboardActions');
-var DataActions          = require('actions/DataActions');
+var AppActions          = require('actions/AppActions');
+var DashboardActions    = require('actions/DashboardActions');
+var DataActions         = require('actions/DataActions');
 
 var Dashboard = React.createClass({
   mixins : [
@@ -58,9 +59,10 @@ var Dashboard = React.createClass({
 
     var campaign     = this.state.campaign;
     var dashboardDef = this.state.dashboard;
-    var data         = this.state.data;
     var loading      = this.state.loading;
     var region       = this.state.region;
+
+    var data         = {};
 
     var dashboardName   = _.get(dashboardDef, 'title', '');
     var dashboard       = '';
@@ -70,18 +72,50 @@ var Dashboard = React.createClass({
         _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
-    // Fill in indicators on all the data objects. If we haven't loaded
-    // indicators yet, continue displaying charts as if we have no data
+
     if (!_.isEmpty(indicators)) {
-      _.each(data, function (d) {
+      // Indicator index: maps indicator IDs to one or more sections containing
+      var sections = _(dashboardDef.charts)
+        .groupBy('section')
+        .transform(function (result, charts, section) {
+          result[section] = _(charts)
+            .pluck('indicators')
+            .flatten()
+            .map(_.propertyOf(indicators))
+            .value();
+        })
+        .value();
+
+      // Parcel out the datapoints into the correct sections based on their
+      // indicator IDs
+      _.each(this.state.data, function (d) {
+        // Fill in indicators on all the data objects. If we haven't loaded
+        // indicators yet, continue displaying charts as if we have no data
         var ind = indicators[d.indicator];
         if (ind) {
           d.indicator = ind;
         }
+
+        _(sections)
+          .pick(sec => _(sec).pluck('id').includes(d.indicator.id))
+          .keys()
+          .each(function (s) {
+            var arr = _.get(data, s, []);
+
+            arr.push(d);
+            data[s] = arr;
+          })
+          .value();
       });
+
+      if (_.size(data) < 2) {
+        data = _(data).values().flatten().value();
+      }
     } else {
       data = [];
     }
+
+    console.log('Dashboard::data', data);
 
     switch (dashboardName) {
       case 'Management Dashboard':
@@ -100,6 +134,12 @@ var Dashboard = React.createClass({
         break;
 
       case 'NGA Campaign Monitoring':
+        dashboard = (
+          <NCODashboard
+            dashboard={dashboardDef}
+            loading={loading}
+            data={data} />
+        );
         break;
 
       default:

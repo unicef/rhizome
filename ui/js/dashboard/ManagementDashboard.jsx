@@ -15,7 +15,10 @@ var ManagementDashboard = React.createClass({
     indicators : React.PropTypes.object.isRequired,
 
     campaign   : React.PropTypes.object,
-    data       : React.PropTypes.array,
+    data       : React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.object
+    ]),
     loading    : React.PropTypes.bool,
     region     : React.PropTypes.object,
   },
@@ -28,15 +31,14 @@ var ManagementDashboard = React.createClass({
   },
 
   render : function () {
+    var campaign   = this.props.campaign;
+    var data       = this.props.data;
+    var indicators = this.props.indicators;
     var loading    = this.props.loading;
     var region     = _.get(this.props, 'region.name', '');
-    var campaign   = this.props.campaign;
-    var indicators = this.props.indicators;
 
-    // Data index by section
-    var data = {};
+    console.log('ManagementDashboard::data', data);
 
-    // Indicator index: maps indicator IDs to one or more sections containing
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
       .transform(function (result, charts, section) {
@@ -47,21 +49,6 @@ var ManagementDashboard = React.createClass({
           .value();
       })
       .value();
-
-    // Parcel out the datapoints into the correct sections based on their
-    // indicator IDs
-    _.each(this.props.data, function (d) {
-      _(sections)
-        .pick(sec => _(sec).pluck('id').includes(d.indicator.id))
-        .keys()
-        .each(function (s) {
-          var arr = _.get(data, s, []);
-
-          arr.push(d);
-          data[s] = arr;
-        })
-        .value();
-    });
 
     return (
       <div id='management-dashboard'>
