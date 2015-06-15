@@ -88,9 +88,12 @@ var Dashboard = React.createClass({
         var sectionName = _.get(chart, 'section', '__none__');
         var chartName   = _.camelCase(_.get(chart, 'title', i));
         var section     = _.get(data, sectionName, {});
+        var regionProp  = chart.region === 'subregions' ? 'parent_region_id' : 'region';
 
         section[chartName] = _.filter(this.state.data,
-          d => _.includes(chart.indicators, d.indicator.id));
+          d => _.includes(chart.indicators, d.indicator.id) &&
+            _.get(d, regionProp) === region.id
+        );
 
         data[sectionName] = section;
       });
@@ -124,6 +127,7 @@ var Dashboard = React.createClass({
           <NCODashboard
             dashboard={dashboardDef}
             loading={loading}
+            region={region}
             data={data} />
         );
         break;
