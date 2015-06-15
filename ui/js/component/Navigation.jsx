@@ -18,6 +18,25 @@ var Navigation = React.createClass({
       return _.assign({ key : 'dashboard-nav-' + d.id }, d);
     }));
 
+    var enterData = '';
+    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
+
+      var formLink = NavigationStore.userHasPermission('data_entry_form') ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>) : '';
+      var uploadLink = NavigationStore.userHasPermission('upload_csv') ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>) : '';
+
+      var enterData = (
+          <li className='data'>
+            <NavMenu text={'Enter Data'} icon={'fa-table'}>              
+              {formLink}
+              {uploadLink}
+            </NavMenu>
+          </li>
+        );
+
+      console.log('here');
+
+    }
+
     var manage = '';
     if (NavigationStore.userHasPermission('manage_system')) {
       manage = (
@@ -51,16 +70,7 @@ var Navigation = React.createClass({
             </NavMenu>
           </li>
 
-          <li className='data'>
-            <NavMenu text={'Enter Data'} icon={'fa-table'}>
-              <NavMenuItem href='/datapoints/entry'>
-                Enter Data via Form
-              </NavMenuItem>
-              <NavMenuItem href='/upload/file_upload'>
-                Upload Data via CSV File
-              </NavMenuItem>
-            </NavMenu>
-          </li>
+          {enterData}
 
           {manage}
 

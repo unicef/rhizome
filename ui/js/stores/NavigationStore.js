@@ -24,6 +24,7 @@ var NavigationStore = Reflux.createStore({
 		});
 		var dashboards = api.dashboards();
 
+		// temp: static perms until API ready
 		this.permissions = ['manage_system', 'upload_csv', 'data_entry_form'];
 
 		Promise.all([campaigns, regions, dashboards])

@@ -7,6 +7,7 @@ var React  = require('react');
 var api = require('data/api');
 
 var DashboardStore = require('stores/DashboardStore');
+var NavigationStore = require('stores/NavigationStore');
 
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
@@ -94,6 +95,7 @@ function _uploadRow(upload, i) {
 }
 
 module.exports = React.createClass({
+
   getInitialState : function () {
     return {
       campaigns : [],
@@ -133,9 +135,57 @@ module.exports = React.createClass({
        campaigns = this.state.campaigns.map(_campaignRow);
     }
 
-    var uploads = <tr><td>No uploads yet.</td></tr>;
-    if (this.state.uploads.length > 0) {
-      uploads = this.state.uploads.map(_uploadRow);
+
+    // data entry section, according to permissions
+    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
+
+      var csv_upload_button = '';
+      if (NavigationStore.userHasPermission('upload_csv')) {
+        csv_upload_button = (
+                <a className="small button" href="/source_data/file_upload">
+                  <i className="fa fa-upload"></i>&emsp;Upload data
+                </a>
+              );
+      }
+
+      var data_entry_button = '';
+      if (NavigationStore.userHasPermission('data_entry_form')) {
+        data_entry_button = (
+                <a className="small button" href="/datapoints/entry">
+                  <i className="fa fa-table"></i>&emsp;Data Entry Form
+                </a>
+              );
+      }
+
+      var uploads = <tr><td>No uploads yet.</td></tr>;
+      if (this.state.uploads.length > 0) {
+        uploads = this.state.uploads.map(_uploadRow);
+      }
+
+      var dataEntry = (
+          <div className="row">
+            <div className="medium-4 columns">
+              <h2>Enter Data</h2>
+              {data_entry_button}
+              &emsp;
+              {csv_upload_button}
+            </div>
+            <div className="medium-8 columns">
+              <h2>Your Recent CSV Uploads</h2>
+              <table>
+                <tbody>{uploads}</tbody>
+                <tfoot>
+                  <tr>
+                    <td className="more" colSpan="2">
+                      <a href="/source_data/document_index/">see all uploads</a>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        );
+
     }
 
     return (
@@ -162,29 +212,7 @@ module.exports = React.createClass({
             </div>
           </div>
 
-          <div className="row">
-            <div className="medium-4 columns">
-              <h2>Enter Data</h2>
-              <a className="small button" href="/datapoints/entry">
-                <i className="fa fa-table"></i>&emsp;Data Entry Form
-              </a>&emsp;<a className="small button" href="/source_data/file_upload">
-                <i className="fa fa-upload"></i>&emsp;Upload data
-              </a>
-            </div>
-            <div className="medium-8 columns">
-              <h2>Your Recent CSV Uploads</h2>
-              <table>
-                <tbody>{uploads}</tbody>
-                <tfoot>
-                  <tr>
-                    <td className="more" colSpan="2">
-                      <a href="/source_data/document_index/">see all uploads</a>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
+          {dataEntry}
 
         </div>
 
