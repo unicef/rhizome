@@ -41,6 +41,8 @@ class v2Request(object):
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':self.apply_indicator_permissions},
+            'user_permission': {'orm_obj':UserAuthFunction,
+                'permission_function':self.filter_permissions_to_current_user},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
@@ -65,10 +67,6 @@ class v2Request(object):
                 'permission_function':None},
             'custom_dashboard': {'orm_obj':CustomDashboard,
                 'permission_function':None},
-            'user_permission': {'orm_obj':UserAuthFunction,
-                'permission_function':None}
-
-
         }
 
 
@@ -83,6 +81,12 @@ class v2Request(object):
         return response_data
 
     ## permissions functions ##
+
+    def filter_permissions_to_current_user(self, list_of_object_ids):
+
+        data = UserAuthFunction.objects.filter(user_id = self.user_id)
+
+        return None, data
 
     def apply_region_permissions(self, list_of_object_ids):
         '''
