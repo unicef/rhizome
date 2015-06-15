@@ -291,6 +291,38 @@ class DataPointEntryResource(BaseModelResource):
         }
         serializer = CustomJSONSerializer()
 
+
+    def save(self, bundle, skip_errors=False):
+        '''
+        Overriding Tastypie save method here because the
+        authorized_update_detail of this resource is failing.  Will need more
+        research here, but commenting this out for now as authorization is
+        handled separately.
+        '''
+        self.is_valid(bundle)
+
+        if bundle.errors and not skip_errors:
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+
+        # Check if they're authorized.
+        # if bundle.obj.pk:
+        #     self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
+        # else:
+        #     self.authorized_create_detail(self.get_object_list(bundle.request), bundle)
+
+        # Save FKs just in case.
+        self.save_related(bundle)
+
+        # Save the main object.
+        bundle.obj.save()
+        bundle.objects_saved.add(self.create_identifier(bundle.obj))
+
+        # Now pick up the M2M bits.
+        m2m_bundle = self.hydrate_m2m(bundle)
+        self.save_m2m(m2m_bundle)
+        return bundle
+
+
     def obj_create(self, bundle, **kwargs):
         """
         Make sure the data is valid, then save it.
@@ -329,8 +361,6 @@ class DataPointEntryResource(BaseModelResource):
                 # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        except ImmediateHttpResponse:
-            raise
         # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0

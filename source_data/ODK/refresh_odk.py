@@ -6,6 +6,7 @@ import urllib2
 import subprocess
 from time import sleep
 from urllib import urlencode
+from uuid import uuid4
 
 
 try:
@@ -21,8 +22,13 @@ class ODKRefreshTask(object):
     def __init__(self):
 
         self.base_url_string = odk_settings.API_ROOT
+        self.cron_guid = uuid4()
+
 
     def main(self):
+
+        ## NOT INTEGRATING REGIONS FOR A WHILE - NEED VALIDATION ON CURRENT
+          ## STRUCTURE AS WELL AS WAY TO MOVE FORWARD WITH MAPPING ##
 
         # pull_regions(base_url_string)
         # refresh_regions(base_url_string)
@@ -36,6 +42,7 @@ class ODKRefreshTask(object):
 
     def api_wrapper(self,kwargs=None):
 
+        kwargs['job_id'] = self.cron_guid
         url_string = self.base_url_string + '?' + urlencode(dict(**kwargs))
         response = urllib2.urlopen(url_string)#
         etl_api_response = json.loads(response.read())['objects'][0]
@@ -82,6 +89,7 @@ class ODKRefreshTask(object):
         etl_api_response = self.api_wrapper({'task':'get_odk_forms_to_process'})
         form_list_response = etl_api_response['success_msg']
 
+        ## having trouble deserializing json here.. hack alert ##
         cleaned_response_string = form_list_response.replace("['","")
         cleaned_response_string = cleaned_response_string.replace("', '",",")
         cleaned_response_string = cleaned_response_string.replace("']","")
@@ -123,6 +131,5 @@ class ODKRefreshTask(object):
 
 
 if __name__ == "__main__":
-  # main()
   ort = ODKRefreshTask()
   ort.main()

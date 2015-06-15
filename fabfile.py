@@ -125,7 +125,7 @@ def _push_to_remote():
 
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py syncdb --noinput")
-        run("python manage.py migrate --noinput")
+        run("python manage.py migrate --noinput --merge")
 
         # echo "== BUILDING DATABASE =="
         run("bash bin/build_db.sh")

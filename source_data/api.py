@@ -49,13 +49,17 @@ class EtlResource(ModelResource):
 
         # required #
         task_string = request.GET['task']
-        cron_guid = 'placeholder_guid'#request.GET['cron_guid']
 
         # optional #
         try:
             form_name = request.GET['form_name']
         except KeyError:
             form_name = None
+
+        try:
+            cron_guid = request.GET['job_id']
+        except KeyError:
+            cron_guid = 'no_job_id_provided'
 
         tic = strftime("%Y-%m-%d %H:%M:%S")
 

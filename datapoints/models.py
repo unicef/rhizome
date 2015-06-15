@@ -425,8 +425,17 @@ class CustomDashboard(models.Model):
     title = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
-    default_region = models.ForeignKey(Region)
+    default_office = models.ForeignKey(Office)
     dashboard_json = JSONField()
 
     class Meta:
         db_table = 'custom_dashboard'
+
+
+class UserAuthFunction(models.Model):
+
+    user = models.ForeignKey('auth.User')
+    auth_code = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'user_auth_function'

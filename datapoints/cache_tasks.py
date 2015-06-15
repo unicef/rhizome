@@ -522,6 +522,38 @@ def cache_user_abstracted():
 
     upsert_meta_data(u_raw, UserAbstracted)
 
+def cache_user_permissions():
+
+    u_raw = UserAuthFunction.objects.raw(
+    '''
+    TRUNCATE TABLE user_auth_function;
+
+    INSERT INTO user_auth_function
+    (user_id,auth_code)
+
+    SELECT user_id, ap.codename as auth_code FROM (
+
+    	SELECT user_id, permission_id FROM auth_user_user_permissions auup
+
+    	UNION ALL
+
+    	SELECT DISTINCT aug.user_id, agp.permission_id
+    	FROM auth_user_groups aug
+    	INNER JOIN auth_group_permissions agp
+    		ON aug.group_id = agp.group_id
+
+    )x
+
+    INNER JOIN auth_permission ap
+    ON x.permission_id = ap.id;
+
+    SELECT * FROM user_auth_function;
+
+    ''')
+
+    upsert_meta_data(u_raw, UserAuthFunction)
+
+
 def upsert_meta_data(qset, abstract_model):
 
     batch = []
