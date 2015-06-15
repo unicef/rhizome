@@ -8,7 +8,7 @@ var devConfig = _.merge(config, {
 		contentBase: "./static",
 		hot: true,
 		proxy: {
-			'*': 'http://localhost:8000'
+			'*': 'http://172.16.252.128'
 		}
 	}
 });
