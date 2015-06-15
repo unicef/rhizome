@@ -18,6 +18,17 @@ var Navigation = React.createClass({
       return _.assign({ key : 'dashboard-nav-' + d.id }, d);
     }));
 
+    var manage = '';
+    if (NavigationStore.userHasPermission('manage_system')) {
+      manage = (
+        <li>
+          <a href='/ufadmin/users'>
+            <i className='fa fa-cogs'></i>&ensp;Manage System
+          </a>
+        </li>
+      );
+    }
+
     return (
       <nav>
         <ul>
@@ -51,9 +62,8 @@ var Navigation = React.createClass({
             </NavMenu>
           </li>
 
-          <li><a href='/ufadmin/users'>
-            <i className='fa fa-cogs'></i>&ensp;Manage System
-          </a></li>
+          {manage}
+
         </ul>
 
         <ul className='right'>

@@ -24,14 +24,22 @@ var NavigationStore = Reflux.createStore({
 		});
 		var dashboards = api.dashboards();
 
+		this.permissions = ['manage_system', 'upload_csv', 'data_entry_form'];
+
 		Promise.all([campaigns, regions, dashboards])
 			.then(_.spread(this.loadDashboards));
+
 	},
 
 	getInitialState : function () {
 		return {
-			dashboards : this.dashboards
+			dashboards : this.dashboards,
+			permissions: this.permissions
 		};
+	},
+
+	userHasPermission: function(permissionString) {
+		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
 	loadDashboards : function (campaigns, regions, dashboards) {
