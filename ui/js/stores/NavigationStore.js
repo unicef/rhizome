@@ -64,8 +64,8 @@ var NavigationStore = Reflux.createStore({
 				// If no regions for the default office are available, or no default
 				// office is provided and this dashboard is limited by office, filter the
 				// list of regions to those offices
-				if (!_.isFinite(d.default_office) || availableRegions.size() < 1) {
-					availableRegions = availableRegions.filter(function (r) { return _.includes(d.offices, r.office_id); });
+				if (availableRegions.size() < 1) {
+					availableRegions = regions;
 				}
 
 				// If after all of that, there are no regions left that this user is
@@ -84,13 +84,9 @@ var NavigationStore = Reflux.createStore({
 					.max(_.method('start_date.valueOf'));
 
 				// Build the path for the dashboard
-				var path = region.name + '/' + campaign.start_date.format('YYYY/MM');
+				var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
 
-				if (!_.endsWith(d.url, '/')) {
-					path = '/' + path;
-				}
-
-				return _.assign({}, d, { url : d.url + path });
+				return _.assign({}, d, { href : '/datapoints/' + _.kebabCase(d.title) + path });
 			})
 			.reject(_.isNull)
 			.value();
