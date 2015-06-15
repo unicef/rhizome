@@ -86,8 +86,9 @@ var NavigationStore = Reflux.createStore({
 
 		this.customDashboards = _(customDashboards.objects)
 			.map(function(d) {
-				return {};
-			});
+				return d;
+			})
+			.value();
 
 		this.trigger({ dashboards : this.dashboards });
 	}
