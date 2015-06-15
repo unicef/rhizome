@@ -18,7 +18,7 @@ var TitleMenu = React.createClass({
 
   getDefaultProps : function () {
     return {
-      icon       : 'fa-bars',
+      icon : 'fa-bars',
     };
   },
 

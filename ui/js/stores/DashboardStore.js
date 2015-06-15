@@ -102,6 +102,7 @@ var DashboardStore = Reflux.createStore({
 			dashboard : dashboard,
 			region    : region,
 			campaign  : campaign,
+			loaded    : true,
 
 			regions   : regions,
 			campaigns : _.filter(campaigns, function (c) {

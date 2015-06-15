@@ -10,9 +10,8 @@ var api = require('data/api');
 
 var ManagementDashboard  = require('dashboard/ManagementDashboard.jsx');
 
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var TitleMenu            = require('component/TitleMenu.jsx');
-var MenuItem             = require('component/MenuItem.jsx');
+var RegionTitleMenu      = require('component/RegionTitleMenu.jsx');
+var CampaignTitleMenu    = require('component/CampaignTitleMenu.jsx');
 
 var DashboardStore       = require('stores/DashboardStore');
 var IndicatorStore       = require('stores/IndicatorStore');
@@ -33,7 +32,6 @@ var Dashboard = React.createClass({
       campaigns    : [],
       region       : null,
       campaign     : null,
-      regionFilter : null,
       dashboard    : null,
     };
   },
@@ -45,17 +43,25 @@ var Dashboard = React.createClass({
   },
 
   render : function () {
+    if (!this.state.loaded) {
+      return (
+        <div className='overlay'>
+          <div>
+            <div>
+              <i className='fa fa-spinner fa-spin'></i>
+              &ensp;loading
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     var campaign     = this.state.campaign;
     var dashboardDef = this.state.dashboard;
     var data         = this.state.data;
     var loading      = this.state.loading;
     var region       = this.state.region;
 
-    var campaignSelection = campaign ?
-      moment(campaign.start_date, 'YYYY-MM-DD').format('MMM YYYY') :
-      '';
-
-    var regionSelection = _.get(region, 'name', '');
     var dashboardName   = _.get(dashboardDef, 'title', '');
     var dashboard       = '';
 
@@ -100,38 +106,15 @@ var Dashboard = React.createClass({
         break;
     }
 
-    var campaigns = MenuItem.fromArray(_(this.state.campaigns)
+    var campaigns = _(this.state.campaigns)
       .filter(c => c.office_id === region.office_id)
       .sortBy('start_date')
       .reverse()
-      .map(function (c) {
-        return {
-          title : moment(c.start_date, 'YYYY-MM-DD').format('MMMM YYYY'),
-          value : c.id
-        }
-      })
-      .value()
-    );
+      .value();
 
-    var re = !_.isEmpty(this.state.regionFilter) ?
-      new RegExp(this.state.regionFilter, 'gi') :
-      null;
-
-    var regionList = re ?
-      _.filter(this.state.regions, function (r) {
-        return re.test(r.name);
-      }) :
-      this.state.regions;
-
-    var regions = MenuItem.fromArray(
-      _.map(regionList, function (r) {
-        return {
-          title : r.name,
-          value : r.id
-        };
-      }),
-      this._setRegion
-    );
+    if (campaign.office_id !== region.office_id) {
+      campaign = campaigns[0];
+    }
 
     return (
       <div>
@@ -141,20 +124,15 @@ var Dashboard = React.createClass({
           <div className='row'>
             <div className='medium-6 columns'>
               <h1>
-                <TitleMenu
-                  icon='fa-calendar'
-                  text={campaignSelection}
-                  sendValue={this._setCampaign}>
-                  {campaigns}
-                </TitleMenu>
+                <CampaignTitleMenu
+                  campaigns={campaigns}
+                  selected={campaign}
+                  sendValue={this._setCampaign} />
                 &emsp;
-                <TitleMenu
-                  icon='fa-globe'
-                  text={regionSelection}
-                  searchable={true}
-                  onSearch={this._setRegionFilter}>
-                  {regions}
-                </TitleMenu>
+                <RegionTitleMenu
+                  regions={this.state.regions}
+                  selected={region}
+                  sendValue={this._setRegion} />
               </h1>
             </div>
 
