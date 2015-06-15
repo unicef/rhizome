@@ -24,10 +24,10 @@ var NavigationStore = Reflux.createStore({
 		});
 		var dashboards = api.dashboards();
 
-		// temp: static perms until API ready
-		this.permissions = ['manage_system', 'upload_csv', 'data_entry_form'];
+		this.permissions = [];
+		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, dashboards])
+		Promise.all([campaigns, regions, dashboards, permissions])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -43,9 +43,12 @@ var NavigationStore = Reflux.createStore({
 		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
-	loadDashboards : function (campaigns, regions, dashboards) {
+	loadDashboards : function (campaigns, regions, dashboards, permissions) {
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
+
+		// parse permissions
+		this.permissions = permissions.objects.map(function(p) { return p.auth_code; });
 
 		this.dashboards = _(dashboards.objects)
 			.map(function (d) {

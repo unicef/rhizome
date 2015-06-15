@@ -3,6 +3,7 @@
 var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
+var Reflux = require('reflux/src');
 
 var api = require('data/api');
 
@@ -96,6 +97,10 @@ function _uploadRow(upload, i) {
 
 module.exports = React.createClass({
 
+  mixins : [
+    Reflux.connect(NavigationStore)
+  ],
+
   getInitialState : function () {
     return {
       campaigns : [],
@@ -134,7 +139,6 @@ module.exports = React.createClass({
     } else {
        campaigns = this.state.campaigns.map(_campaignRow);
     }
-
 
     // data entry section, according to permissions
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
