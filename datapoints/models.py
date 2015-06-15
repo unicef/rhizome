@@ -430,3 +430,12 @@ class CustomDashboard(models.Model):
 
     class Meta:
         db_table = 'custom_dashboard'
+
+
+class UserAuthFunction(models.Model):
+
+    user = models.ForeignKey('auth.User')
+    auth_code = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'user_auth_function'
