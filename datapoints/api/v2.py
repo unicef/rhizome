@@ -64,7 +64,11 @@ class v2Request(object):
             'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None},
             'custom_dashboard': {'orm_obj':CustomDashboard,
+                'permission_function':None},
+            'user_permission': {'orm_obj':UserAuthFunction,
                 'permission_function':None}
+
+
         }
 
 

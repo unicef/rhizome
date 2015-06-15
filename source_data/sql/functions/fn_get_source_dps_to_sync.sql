@@ -1,4 +1,3 @@
-DROP FUNCTION IF EXISTS fn_get_source_dbs_to_sync(user_id INT, document_id INT, input_indicator_id INT);
 DROP FUNCTION IF EXISTS fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT);
 CREATE FUNCTION fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT)
 RETURNS TABLE
