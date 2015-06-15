@@ -114,6 +114,7 @@ var Performance = React.createClass({
               keyPrefix='microplans'
               data={social}
               name={microplansText}
+              emptyText='No microplan data available'
               options={{
                 domain : _.constant([0, _.get(microplans, 'value', 1)]),
                 size   : 32
@@ -130,7 +131,10 @@ var Performance = React.createClass({
 
           {vaccinated}
 
-          <PieChartList keyPrefix='transit-points' data={transitPoints} />
+          <PieChartList
+            keyPrefix='transit-points'
+            data={transitPoints}
+            emptyText='No transit point data available' />
         </section>
       </div>
     );
