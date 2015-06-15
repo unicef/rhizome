@@ -9,17 +9,9 @@ var NavigationStore = require('stores/NavigationStore');
 
 module.exports = React.createClass({
 
-  getInitialState: function() {
-    return {
-      customDashboards: []
-    };
-  },
-
-  componentWillMount : function () {
-    this.customDashboards = NavigationStore.loadCustomDashboards();
-  },
-
   render : function () {
+    console.log(NavigationStore.dashboards);
+    console.log(NavigationStore.customDashboards);
     return (
       <h2>Test</h2>
     );

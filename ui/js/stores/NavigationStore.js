@@ -9,7 +9,7 @@ var api = require('data/api');
 var NavigationStore = Reflux.createStore({
 	init : function () {
 		this.dashboards = [];
-		this.customDashboards = null;
+		this.customDashboards = [];
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -25,7 +25,9 @@ var NavigationStore = Reflux.createStore({
 		});
 		var dashboards = api.dashboards();
 
-		Promise.all([campaigns, regions, dashboards])
+		var customDashboards = api.dashboardsCustom();
+
+		Promise.all([campaigns, regions, dashboards, customDashboards])
 			.then(_.spread(this.loadDashboards));
 	},
 
@@ -35,7 +37,7 @@ var NavigationStore = Reflux.createStore({
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, dashboards) {
+	loadDashboards : function (campaigns, regions, dashboards, customDashboards) {
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
@@ -82,17 +84,12 @@ var NavigationStore = Reflux.createStore({
 			.reject(_.isNull)
 			.value();
 
-		this.trigger({ dashboards : this.dashboards });
-	},
-
-	loadCustomDashboards: function() {
-		var self = this;
-		if (self.customDashboards) return self.customDashboards;
-		api.dashboardsCustom()
-			.then(function(data) {
-				self.customDashboards = data.objects;
-				return self.customDashboards;
+		this.customDashboards = _(customDashboards.objects)
+			.map(function(d) {
+				return {};
 			});
+
+		this.trigger({ dashboards : this.dashboards });
 	}
 
 });
