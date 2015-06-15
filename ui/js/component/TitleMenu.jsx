@@ -22,6 +22,12 @@ var TitleMenu = React.createClass({
     };
   },
 
+  componentWillReceiveProps : function (nextProps) {
+    if (nextProps.text !== this.props.text) {
+      this.setState({ open : false });
+    }
+  },
+
   render : function () {
     return (
       <span>

@@ -179,15 +179,28 @@ var Dashboard = React.createClass({
   },
 
   _setCampaign : function (id) {
-    this.setState({ campaign : this.state.campaigns[id] });
+    var campaign  = _.find(this.state.campaigns, c => c.id === id);
+
+    if (!campaign) {
+      return;
+    }
+
+    var dashboard = _.kebabCase(this.state.dashboard.title);
+    var region    = this.state.region.name;
+
+    page('/datapoints/' + [dashboard, region, moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')].join('/'));
   },
 
   _setRegion : function (id) {
-    this.setState({ region : this.state.regions[id] });
-  },
+    var campaign  = moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+    var dashboard = _.kebabCase(this.state.dashboard.title);
+    var region    = _.find(this.state.regions, r => r.id === id)
 
-  _setRegionFilter : function (pattern) {
-    this.setState({ regionFilter : pattern });
+    if (!region) {
+      return;
+    }
+
+    page('/datapoints/' + [dashboard, region.name, campaign].join('/'));
   },
 
   _show : function (ctx) {
