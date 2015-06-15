@@ -29,7 +29,7 @@ module.exports = React.createClass({
         <div className='overlay'>
           <div>
             <div>
-              <i class="fa fa-spinner" v-class="fa-spin: loading"></i>
+              <i className='fa fa-spinner fa-spin'></i>
               &ensp;Loading
             </div>
           </div>
