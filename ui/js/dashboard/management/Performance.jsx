@@ -16,6 +16,11 @@ function series(values, name) {
     values : _.sortBy(values, _.result('campaign.start_date.getTime'))
   };
 }
+
+function indicatorForCampaign(campaign, indicator) {
+  return d => d.campaign.id === campaign && d.indicator.id === indicator;
+}
+
 var Performance = React.createClass({
 
   propTypes : {
@@ -61,8 +66,8 @@ var Performance = React.createClass({
       .map(series)
       .value();
 
-    var social = data.find(d => d.campaign.id === campaign.id && d.indicator.id === 28);
-    var microplans = data.find(d => d.campaign.id === campaign.id && d.indicator.id === 27);
+    var social = data.find(indicatorForCampaign(campaign.id, 28));
+    var microplans = data.find(indicatorForCampaign(campaign.id, 27));
 
     var microplansText = function () {
       var num = _.get(social, '[0][0].value');
@@ -75,8 +80,36 @@ var Performance = React.createClass({
 
     social = !_.isEmpty(social) ? [[social]] : [];
 
-    var vaccinated = '';
+    var vaccinated = _.get(data.find(indicatorForCampaign(campaign.id, 177)), 'value');
+
+    if (!_.isUndefined(vaccinated)) {
+      var num = d3.format('n');
+
+      vaccinated = (
+        <p><strong>{num(vaccinated)}</strong> children vaccinated at transit points.</p>
+      );
+    } else {
+      vaccinated = (<p>No vaccination data.</p>);
+    }
+
+    var planned    = _.get(data.find(indicatorForCampaign(campaign.id, 204)), 'value');
+    var inPlace    = _.get(data.find(indicatorForCampaign(campaign.id, 175)), 'value');
+    var withSM     = _.get(data.find(indicatorForCampaign(campaign.id, 176)), 'value');
+
     var transitPoints = [];
+    if (!_.any([inPlace, planned], _.isUndefined)) {
+      transitPoints.push([{
+        title : inPlace + ' / ' + planned + ' in place',
+        value : inPlace / planned
+      }]);
+    }
+
+    if (!_.any([withSM, inPlace], _.isUndefined)) {
+      transitPoints.push([{
+        title : withSM + ' / ' + inPlace + ' have a social mobilizer',
+        value : withSM / inPlace
+      }]);
+    }
 
     var pct = d3.format('%');
 
@@ -133,7 +166,12 @@ var Performance = React.createClass({
 
           <PieChartList
             keyPrefix='transit-points'
+            name={_.property('[0].title')}
             data={transitPoints}
+            options={{
+              domain : _.constant([0, 1]),
+              size   : 24
+            }}
             emptyText='No transit point data available' />
         </section>
       </div>
