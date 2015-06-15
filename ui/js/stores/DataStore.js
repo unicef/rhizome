@@ -50,12 +50,22 @@ var DataStore = Reflux.createStore({
 		var end   = campaign.end_date;
 
 		var promises = _.map(indicators, function (def) {
-			return api.datapoints({
+			var q = {
 				indicator__in  : def.indicators,
-				region__in     : region.id,
 				campaign_start : m.clone().startOf(def.startOf).subtract(def.duration).format('YYYY-MM-DD'),
 				campaign_end   : end
-			});
+			};
+
+			switch (def.region) {
+				case 'subregions':
+					q.parent_region__in = region.id;
+					break;
+				default:
+					q.region__in = region.id;
+					break;
+			}
+
+			return api.datapoints(q);
 		});
 
 		Promise.all(promises).then(function (responses) {

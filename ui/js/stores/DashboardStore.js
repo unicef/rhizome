@@ -4,7 +4,8 @@ var _      = require('lodash');
 var Reflux = require('reflux/src');
 var moment = require('moment');
 
-var api           = require('data/api');
+var api      = require('data/api');
+var builtins = require('dashboard/builtin');
 
 var DashboardStore = Reflux.createStore({
 
@@ -16,7 +17,7 @@ var DashboardStore = Reflux.createStore({
 
 		Promise.all([api.dashboards(), api.regions(), api.campaign()])
 			.then(function (responses) {
-				var dashboards = responses[0].objects;
+				var dashboards = builtins.concat(responses[0].objects);
 
 				this.regions    = responses[1].objects;
 				this.campaigns  = responses[2].objects;

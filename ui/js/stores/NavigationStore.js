@@ -6,6 +6,8 @@ var Reflux = require('reflux/src');
 
 var api = require('data/api');
 
+var builtins = require('dashboard/builtin');
+
 var NavigationStore = Reflux.createStore({
 	init : function () {
 		console.log('NavigationStore::init');
@@ -52,7 +54,7 @@ var NavigationStore = Reflux.createStore({
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
-		this.dashboards = _(dashboards.objects)
+		this.dashboards = _(builtins.concat(dashboards.objects))
 			.map(function (d) {
 				var availableRegions = regions;
 
