@@ -9,7 +9,7 @@ var api = require('data/api');
 var NavigationStore = Reflux.createStore({
 	init : function () {
 		this.dashboards = [];
-		this.customDashboards = [];
+		this.customDashboards = null;
 
 		var campaigns = api.campaign()
 			.then(function (data) {

@@ -26,7 +26,15 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-    var rows = NavigationStore.customDashboards.map(_tableRow);
+    var rows; 
+    if (_.isNull(NavigationStore.customDashboards)) {
+      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading...</td></tr>;
+    } else if (NavigationStore.customDashboards.length > 0) {
+      rows = NavigationStore.customDashboards.map(_tableRow);
+    } else {
+      rows = <tr><td>No custom dashboards created yet.</td></tr>;
+    }
+
     return (
       <div className="row">
         <div className="medium-12 columns">

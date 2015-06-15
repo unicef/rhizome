@@ -9,11 +9,13 @@ var NavMenuItem     = require('component/NavMenuItem.jsx');
 var NavigationStore = require('stores/NavigationStore');
 
 var Navigation = React.createClass({
+
   mixins : [
     Reflux.connect(NavigationStore)
   ],
 
   render : function () {
+
     var dashboards = NavMenuItem.fromArray(_.map(this.state.dashboards, function (d) {
       return _.assign({ key : 'dashboard-nav-' + d.id }, d);
     }));
