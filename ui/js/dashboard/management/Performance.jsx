@@ -64,6 +64,15 @@ var Performance = React.createClass({
     var social = data.find(d => d.campaign.id === campaign.id && d.indicator.id === 28);
     var microplans = data.find(d => d.campaign.id === campaign.id && d.indicator.id === 27);
 
+    var microplansText = function () {
+      var num = _.get(social, '[0][0].value');
+      var den = _.get(microplans, 'value');
+
+      return _.isFinite(num) && _.isFinite(den) ?
+        num + ' / ' + den + ' microplans incorporate social data' :
+        '';
+    }
+
     social = !_.isEmpty(social) ? [[social]] : [];
 
     var vaccinated = '';
@@ -104,8 +113,10 @@ var Performance = React.createClass({
             <PieChartList
               keyPrefix='microplans'
               data={social}
+              name={microplansText}
               options={{
-                domain : _.constant([0, microplans])
+                domain : _.constant([0, _.get(microplans, 'value', 1)]),
+                size   : 32
               }} />
           </section>
         </div>

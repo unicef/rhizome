@@ -88,7 +88,7 @@ var Access = React.createClass({
             }} />
           </div>
 
-          <div className='medium-4 columns'>
+          <div className='accessibility medium-4 columns'>
             <h6>Inaccessibiity Breakdown</h6>
             <PieChartList keyPrefix='inaccessibility-breakdown'
               data={reasons}

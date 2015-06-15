@@ -33,7 +33,7 @@ var PieChartList = React.createClass({
     }
 
     return (
-      <table className='accessibility pie-charts'>{pies}</table>
+      <table className='pie-charts'>{pies}</table>
     );
   },
 
