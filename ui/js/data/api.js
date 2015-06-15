@@ -160,7 +160,7 @@ module.exports = {
 								months : 12
 							}
 						}, {
-							'title'      : 'Missed Children',
+							'title'      : 'Missed Children by Province',
 							'section'    : 'performance',
 							'indicators' : [475],
 						}, {
@@ -180,28 +180,24 @@ module.exports = {
 							'indicators' : [175,176,177,204],
 						}, {
 							'title'      : 'FLW\'s Capacity to Perform',
-							'section'    : 'capacity',
 							'indicators' : [178,228,179,184,180,185,230,226,239],
 							'timeRange'  : {
 								months : 4
 							}
 						}, {
 							'title'      : 'Polio+',
-							'section'    : 'polio',
 							'indicators' : [245,236,192,193,191],
 							'timeRange'  : {
 								months : 4
 							}
 						}, {
 							'title'      : 'Supply',
-							'section'    : 'supply',
 							'indicators' : [194,219,173,172],
 							'timeRange'  : {
 								months : 4
 							}
 						}, {
 							'title'      : 'Resources',
-							'section'    : 'resources',
 							'indicators' : [169,233],
 							'timeRange'  : {
 								months : 4

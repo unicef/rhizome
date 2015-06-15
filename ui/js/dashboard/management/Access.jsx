@@ -12,14 +12,14 @@ var Access = React.createClass({
   propTypes : {
     campaign   : React.PropTypes.object.isRequired,
     indicators : React.PropTypes.object.isRequired,
-    data       : React.PropTypes.array,
+    data       : React.PropTypes.object,
   },
 
   render : function () {
-    var data         = _(this.props.data);
-    var campaign     = this.props.campaign;
+    var data     = this.props.data;
+    var campaign = this.props.campaign;
 
-    var inaccessible = data.filter(d => d.indicator.id === 158)
+    var inaccessible = _(data.numberOfInaccessibleChildren)
       .sortBy(_.method('campaign.start_date.getTime'))
       .groupBy('indicator.short_name')
       .map(function (values, name) {
@@ -27,10 +27,9 @@ var Access = React.createClass({
       })
       .value();
 
-    var reasons = data
+    var reasons = _(data.inaccessibilityBreakdown)
       .filter(d => {
         return d.campaign.id === campaign.id &&
-          _.includes([442,443,444,445,446,447,448,449,450], d.indicator.id) &&
           _.isFinite(d.value) &&
           d.value >= 0.01;
       })
@@ -44,13 +43,8 @@ var Access = React.createClass({
         _.trimLeft(d[0].indicator.short_name, '% ');
     };
 
-    var plans = data
-      .filter(d => {
-        return d.campaign.id === campaign.id &&
-          d.indicator.id === 174 &&
-          _.isFinite(d.value);
-      })
-      .value();
+    var plans = _.filter(data.districtsWithAccessPlans,
+      d => d.campaign.id === campaign.id && _.isFinite(d.value));
 
     var planLabel = function (d) {
       var fmt = d3.format('%');

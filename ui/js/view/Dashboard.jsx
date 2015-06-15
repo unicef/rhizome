@@ -74,20 +74,6 @@ var Dashboard = React.createClass({
 
 
     if (!_.isEmpty(indicators)) {
-      // Indicator index: maps indicator IDs to one or more sections containing
-      var sections = _(dashboardDef.charts)
-        .groupBy('section')
-        .transform(function (result, charts, section) {
-          result[section] = _(charts)
-            .pluck('indicators')
-            .flatten()
-            .map(_.propertyOf(indicators))
-            .value();
-        })
-        .value();
-
-      // Parcel out the datapoints into the correct sections based on their
-      // indicator IDs
       _.each(this.state.data, function (d) {
         // Fill in indicators on all the data objects. If we haven't loaded
         // indicators yet, continue displaying charts as if we have no data
@@ -95,27 +81,27 @@ var Dashboard = React.createClass({
         if (ind) {
           d.indicator = ind;
         }
+      });
 
-        _(sections)
-          .pick(sec => _(sec).pluck('id').includes(d.indicator.id))
-          .keys()
-          .each(function (s) {
-            var arr = _.get(data, s, []);
+      // Indicator index: maps indicator IDs to one or more sections containing
+      _.each(dashboardDef.charts, (chart, i) => {
+        var sectionName = _.get(chart, 'section', '__none__');
+        var chartName   = _.camelCase(_.get(chart, 'title', i));
+        var section     = _.get(data, sectionName, {});
 
-            arr.push(d);
-            data[s] = arr;
-          })
-          .value();
+        section[chartName] = _.filter(this.state.data,
+          d => _.includes(chart.indicators, d.indicator.id));
+
+        data[sectionName] = section;
       });
 
       if (_.size(data) < 2) {
+        // Use a simple array if there is only one section
         data = _(data).values().flatten().value();
       }
     } else {
       data = [];
     }
-
-    console.log('Dashboard::data', data);
 
     switch (dashboardName) {
       case 'Management Dashboard':

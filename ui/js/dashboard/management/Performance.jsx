@@ -25,7 +25,7 @@ var Performance = React.createClass({
 
   propTypes : {
     campaign : React.PropTypes.object.isRequired,
-    data     : React.PropTypes.array
+    data     : React.PropTypes.object
   },
 
   getDefaultProps : function () {
@@ -35,7 +35,7 @@ var Performance = React.createClass({
   },
 
   render : function () {
-    var data     = _(this.props.data);
+    var data     = this.props.data;
     var campaign = this.props.campaign;
     var upper    = moment(campaign.start_date, 'YYYY-MM-DD');
     var lower    = upper.clone().startOf('month').subtract(1, 'year');
@@ -47,8 +47,7 @@ var Performance = React.createClass({
       .x(_.property('campaign.start_date'))
       .y(_.property('value'));
 
-    var missed = data
-      .filter(d => _.includes([166,164,167,165], d.indicator.id))
+    var missed = _(data.missedChildren)
       .groupBy('indicator.short_name')
       .map(series)
       .thru(stack)
@@ -60,14 +59,13 @@ var Performance = React.createClass({
       _.method('getTime')
     );
 
-    var conversions = data
-      .filter(d => _.includes([187,189], d.indicator.id))
+    var conversions = _(data.conversions)
       .groupBy('indicator.short_name')
       .map(series)
       .value();
 
-    var social = data.find(indicatorForCampaign(campaign.id, 28));
-    var microplans = data.find(indicatorForCampaign(campaign.id, 27));
+    var social = _.find(data.microplans, indicatorForCampaign(campaign.id, 28));
+    var microplans = _.find(data.microplans, indicatorForCampaign(campaign.id, 27));
 
     var microplansText = function () {
       var num = _.get(social, '[0][0].value');
@@ -80,7 +78,7 @@ var Performance = React.createClass({
 
     social = !_.isEmpty(social) ? [[social]] : [];
 
-    var vaccinated = _.get(data.find(indicatorForCampaign(campaign.id, 177)), 'value');
+    var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value');
 
     if (!_.isUndefined(vaccinated)) {
       var num = d3.format('n');
@@ -92,9 +90,9 @@ var Performance = React.createClass({
       vaccinated = (<p>No vaccination data.</p>);
     }
 
-    var planned    = _.get(data.find(indicatorForCampaign(campaign.id, 204)), 'value');
-    var inPlace    = _.get(data.find(indicatorForCampaign(campaign.id, 175)), 'value');
-    var withSM     = _.get(data.find(indicatorForCampaign(campaign.id, 176)), 'value');
+    var planned    = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
+    var inPlace    = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value');
+    var withSM     = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
 
     var transitPoints = [];
     if (!_.any([inPlace, planned], _.isUndefined)) {
