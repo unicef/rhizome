@@ -11,7 +11,7 @@ var api = require('data/api');
 var ManagementDashboard  = require('dashboard/ManagementDashboard.jsx');
 
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var DropdownMenu         = require('component/DropdownMenu.jsx');
+var TitleMenu            = require('component/TitleMenu.jsx');
 var MenuItem             = require('component/MenuItem.jsx');
 
 var DashboardStore       = require('stores/DashboardStore');
@@ -100,7 +100,18 @@ var Dashboard = React.createClass({
         break;
     }
 
-    var campaigns = this.state.campaigns;
+    var campaigns = MenuItem.fromArray(_(this.state.campaigns)
+      .filter(c => c.office_id === region.office_id)
+      .sortBy('start_date')
+      .reverse()
+      .map(function (c) {
+        return {
+          title : moment(c.start_date, 'YYYY-MM-DD').format('MMMM YYYY'),
+          value : c.id
+        }
+      })
+      .value()
+    );
 
     var re = !_.isEmpty(this.state.regionFilter) ?
       new RegExp(this.state.regionFilter, 'gi') :
@@ -130,21 +141,24 @@ var Dashboard = React.createClass({
           <div className='row'>
             <div className='medium-6 columns'>
               <h1>
-                {/*<CampaignDropdownMenu
+                <TitleMenu
+                  icon='fa-calendar'
                   text={campaignSelection}
-                  campaigns={campaigns}
-                  sendValue={this._setCampaign} />*/}
-                <DropdownMenu
+                  sendValue={this._setCampaign}>
+                  {campaigns}
+                </TitleMenu>
+                &emsp;
+                <TitleMenu
                   icon='fa-globe'
                   text={regionSelection}
                   searchable={true}
                   onSearch={this._setRegionFilter}>
                   {regions}
-                </DropdownMenu>
+                </TitleMenu>
               </h1>
             </div>
 
-            <div className='medium-6 columns'>
+            <div className='medium-3 columns'>
               <h2>{dashboardName}</h2>
             </div>
           </div>
