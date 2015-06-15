@@ -12,7 +12,8 @@ urlpatterns = [
     ## DASHBOARD ##
     url(r'^$', views.DashBoardView.as_view(),name='dashboard'),
 
-    ## DASHBOARD BUILDER ##
+    ## DASHBOARD LIST and BUILDER ##
+    url(r'^dashboards/$', views.dashboard_list,name='dashboard_list'),
     url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder'),
 
     ## DASHBOARD VISUALIZATION BUILDER ##
