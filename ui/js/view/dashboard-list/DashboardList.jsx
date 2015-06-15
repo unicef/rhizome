@@ -7,7 +7,6 @@ var Reflux = require('reflux/src');
 var api = require('data/api');
 
 var _tableRow = function(row) {
-  console.log(row);
   var path = '/dashboard/'+row.id+'/';
   return (
       <tr>

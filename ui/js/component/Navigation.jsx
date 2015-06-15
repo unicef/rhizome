@@ -31,7 +31,7 @@ var Navigation = React.createClass({
               <li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
               <li className='separator'><hr /></li>
-              <NavMenuItem href='/datapoints/dashboard/'>
+              <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
               <NavMenuItem href='/datapoints/dashboard/create'>
