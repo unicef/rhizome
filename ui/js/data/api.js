@@ -150,6 +150,7 @@ module.exports = {
 				}]
 		});
 	},
+	dashboardsCustom      : endPoint('/custom_dashboard/', 'get', 2),
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),

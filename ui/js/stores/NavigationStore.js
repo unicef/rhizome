@@ -9,6 +9,7 @@ var api = require('data/api');
 var NavigationStore = Reflux.createStore({
 	init : function () {
 		this.dashboards = [];
+		this.customDashboards = null;
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -82,7 +83,18 @@ var NavigationStore = Reflux.createStore({
 			.value();
 
 		this.trigger({ dashboards : this.dashboards });
+	},
+
+	loadCustomDashboards: function() {
+		var self = this;
+		if (self.customDashboards) return self.customDashboards;
+		api.dashboardsCustom()
+			.then(function(data) {
+				self.customDashboards = data.objects;
+				return self.customDashboards;
+			});
 	}
+
 });
 
 module.exports = NavigationStore;

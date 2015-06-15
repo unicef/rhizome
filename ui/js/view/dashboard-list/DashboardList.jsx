@@ -5,9 +5,19 @@ var React  = require('react');
 
 var api = require('data/api');
 
-var DashboardStore = require('stores/DashboardStore');
+var NavigationStore = require('stores/NavigationStore');
 
 module.exports = React.createClass({
+
+  getInitialState: function() {
+    return {
+      customDashboards: []
+    };
+  },
+
+  componentWillMount : function () {
+    this.customDashboards = NavigationStore.loadCustomDashboards();
+  },
 
   render : function () {
     return (
