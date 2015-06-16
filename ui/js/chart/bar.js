@@ -25,8 +25,8 @@ var defaults = {
 	yFormat     : String,
 
 	margin : {
-		top    : 9,
-		right  : 80,
+		top    : 0,
+		right  : 0,
 		bottom : 18,
 		left   : 80
 	}
@@ -35,7 +35,7 @@ var defaults = {
 function BarChart () {}
 
 _.extend(BarChart.prototype, ColumnChart.prototype, {
-	classNames : 'chart bar stacked',
+	classNames : 'chart stacked-bar',
 	defaults   : defaults,
 
 	update : function (data, options) {
@@ -43,7 +43,8 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		var margin  = options.margin;
 
 		var l = _(data).map(options.values).map('length').max();
-		var h = l * options.barHeight + (l - 1) * options.barHeight * options.padding;
+		var h = Math.max(options.barHeight,
+			l * options.barHeight + (l - 1) * options.barHeight * options.padding);
 		var w = this._width - margin.left - margin.right;
 
 		var sortIdx = 0;
@@ -192,6 +193,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.attr('transform', 'translate(0,' + h + ')')
 			.call(d3.svg.axis()
 				.orient('bottom')
+				.ticks(4)
 				.outerTickSize(0)
 				.tickSize(-h)
 				.tickPadding(4)
