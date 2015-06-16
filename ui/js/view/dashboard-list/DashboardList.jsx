@@ -8,9 +8,11 @@ var api = require('data/api');
 
 var _tableRow = function(row) {
   var path = '/datapoints/dashboard/'+row.id+'/';
+  var editPath = path+'edit';
+  var editLink = (row.owned_by_current_user) ? (<span>(<a href={editPath}>edit</a>)</span>) : '';
   return (
       <tr>
-        <td><a href={path}>{row.title}</a></td>
+        <td><a href={path}>{row.title}</a> {editLink}</td>
         <td>{row.description}</td>
         <td>{row.owner_username}</td>
       </tr>
