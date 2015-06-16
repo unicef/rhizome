@@ -3,6 +3,7 @@
 var _     = require('lodash');
 var React = require('react');
 
+var Chart                = require('component/Chart.jsx');
 var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx');
 
 function prep (data) {
@@ -42,6 +43,11 @@ var Breakdown = React.createClass({
       }
     }
 
+    var groupedOptions = _.assign({
+      barHeight : 7,
+      padding   : 0.2
+    }, options);
+
     return (
       <div>
         <div className='row'>
@@ -51,6 +57,14 @@ var Breakdown = React.createClass({
               loading={loading}
               options={options}
               data={prep(data.missedChildren)} />
+          </div>
+
+          <div className='medium-4 columns'>
+            <h4>Missed Children (Inside vs Outside)</h4>
+            <Chart type='GroupedBarChart'
+              loading={loading}
+              options={groupedOptions}
+              data={prep(data.missedChildrenInsideVsOutside)} />
           </div>
         </div>
 
