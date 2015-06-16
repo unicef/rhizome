@@ -105,7 +105,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		};
 
 		var order = _(options.values(stacked[sortIdx]))
-			.sortBy(options.x)
+			.sortBy(_.property('x'))
 			.map(options.y)
 			.value();
 
