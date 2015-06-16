@@ -41,7 +41,7 @@ var NavigationStore = Reflux.createStore({
 		this.permissions = [];
 		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, offices, dashboards, permissions])
+		Promise.all([campaigns, regions, offices, permissions, dashboards])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -66,7 +66,8 @@ var NavigationStore = Reflux.createStore({
 		campaigns = _(campaigns.objects);
 
 		// parse permissions
-		this.permissions = permissions.objects.map(function(p) { return p.auth_code; });
+		console.log(permissions.objects);
+		this.permissions = _.map(permissions.objects, function(p) { return p.auth_code; });
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {

@@ -90,7 +90,7 @@ module.exports = React.createClass({
                       .map(_campaignRow)
                       .value();
     } else {
-       campaigns = this.state.campaigns.map(_campaignRow);
+       campaigns = _(this.state.campaigns).map(_campaignRow).value();
     }
 
     // data entry section, according to permissions
@@ -115,7 +115,7 @@ module.exports = React.createClass({
       }
 
       var uploads = <tr><td>No uploads yet.</td></tr>;
-      if (this.state.uploads.length > 0) {
+      if (this.state.uploads && this.state.uploads.length > 0) {
         uploads = this.state.uploads.map(_uploadRow);
       }
 
