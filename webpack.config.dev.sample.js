@@ -8,9 +8,7 @@ var devConfig = _.merge(config, {
 		contentBase: "./static",
 		hot: true,
 		proxy: {
-			// Copy this file as webpack.config.dev.js
-			// Then change this to the location of your local backend/VM
-			'*': 'http://localhost:8000'
+			'*': 'http://172.16.252.128'
 		}
 	}
 });

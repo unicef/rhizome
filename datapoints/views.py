@@ -3,6 +3,7 @@ from pprint import pprint
 import datetime
 from datetime import date
 
+
 import gspread
 import re
 import itertools
@@ -13,6 +14,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
+from django.views.decorators.cache import cache_control as django_cache_control
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 
@@ -356,66 +358,6 @@ def parse_url_args(request,keys):
     return request_meta
 
 
-def api_campaign(request):
-
-    meta_keys = ['id','region__in','start_date','limit','offset']
-
-    request_meta = parse_url_args(request,meta_keys)
-
-    if request_meta['region__in']:
-
-        c_raw = Campaign.objects.raw("""
-            SELECT * FROM campaign WHERE id in (
-                SELECT DISTINCT campaign_id FROM datapoint_with_computed
-                WHERE region_id IN (%s)
-            )
-            """,[request_meta['region__in']])
-
-    elif request_meta['id']:
-
-        c_raw  = Campaign.objects.raw("""
-            SELECT * FROM campaign c
-            WHERE id = %s
-            ;""",[request_meta['id'],request_meta['limit']\
-            ,request_meta['offset']])
-
-    else:
-
-        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c ORDER BY \
-            c.start_date desc;""")
-
-    objects = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
-        'start_date': str(c.start_date), 'end_date': str(c.end_date )} \
-            for c in c_raw]
-
-    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(objects)}
-
-    response_data = {'objects':objects, 'meta':meta}
-
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
-
-
-def api_region(request):
-
-    meta_keys = ['limit','offset']
-    request_meta = parse_url_args(request,meta_keys)
-
-    r_raw = Campaign.objects.raw("SELECT * FROM region")
-
-    objects = [{'id': r.id,'name': r.name, 'office_id':r.office_id, 'parent_region_id':\
-        r.parent_region_id, 'region_type_id': r.region_type_id} for r in r_raw]
-
-    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(objects)}
-
-    response_data = {'objects':objects, 'meta':meta}
-
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
-
-
 def refresh_metadata(request):
 
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
@@ -476,6 +418,8 @@ def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
 
+
+@django_cache_control(must_revalidate=True, max_age=3600)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:

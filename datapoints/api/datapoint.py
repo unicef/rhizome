@@ -355,7 +355,8 @@ class DataPointEntryResource(BaseModelResource):
                     'indicator_id': existing_datapoint.indicator_id
                 }
                 bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+
+                return self.obj_update(bundle, **update_kwargs)
 
             else:
                 # create
@@ -371,6 +372,22 @@ class DataPointEntryResource(BaseModelResource):
                 response_class=http.HttpApplicationError
                 )
             raise ImmediateHttpResponse(response=response)
+
+    def obj_update(self, bundle, **kwargs):
+        '''
+        Overriding this tastypie method so we can explicitly set the value to
+        NULL when the value comes in as NaN.  This method is how the system
+        handles "deletes" that is we do not remove the row all together, just
+        set the value to null so the history can be maintained, and we are
+        more easily able to queue up changes for caching.
+        '''
+
+        value_to_update = bundle.data['value']
+
+        if value_to_update == 'NaN':
+            bundle.data['value'] = None
+
+        return super(DataPointEntryResource, self).obj_update(bundle, **kwargs)
 
     def get_user_id(self, bundle):
         request = bundle.request

@@ -539,30 +539,30 @@ ul {
 	display: block;
 }
 
+.menu-button {
+	color     : white !important;
+	cursor    : pointer !important;
+	font-size : 1rem;
+
+	.fa-circle {
+		color       : $button-border-color;
+		text-shadow : 0 2px #667c89;
+	}
+
+	.fa-circle-thin {
+		color : $button-border-color;
+	}
+
+	&:active {
+		.fa-circle {
+			text-shadow : 0 1px #667c89;
+		}
+	}
+}
+
 .menu {
 	&:focus {
 		outline : none;
-	}
-
-	.menu-button {
-		color     : white;
-		cursor    : pointer;
-		font-size : 1rem;
-
-		.fa-circle {
-			color       : $button-border-color;
-			text-shadow : 0 2px #667c89;
-		}
-
-		.fa-circle-thin {
-			color : $button-border-color;
-		}
-
-		&:active {
-			.fa-circle {
-				text-shadow : 0 1px #667c89;
-			}
-		}
 	}
 
 	.background {
@@ -630,3 +630,36 @@ ul {
 		}
 	}
 }
+
+.overlay {
+	background-color : transparentize($ghost, 0.3);
+	color            : $aluminum;
+	opacity          : 1;
+	text-align       : center;
+
+	position         : absolute;
+	top              : 0;
+	left             : 0;
+	bottom           : 0;
+	right            : 0;
+	z-index          : 9999;
+
+	& > div {
+		display: table;
+		width: 100%;
+		height: 100%;
+
+		& > div {
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+
+	.empty {
+		color            : rgb(175, 55, 62);
+		padding          : 0;
+		background-color : transparent;
+	}
+}
+
+

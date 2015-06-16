@@ -9,8 +9,8 @@ var browser   = require('util/browser');
 var colors    = require('colors');
 var data      = require('util/data');
 var format    = require('util/format');
-var hoverLine = require('component/chart/behavior/hover-line');
-var label     = require('component/chart/renderer/label');
+var hoverLine = require('chart/behavior/hover-line');
+var label     = require('chart/renderer/label');
 
 var DEFAULTS = {
 	margin  : {
@@ -22,9 +22,9 @@ var DEFAULTS = {
 	scale      : d3.scale.linear,
 	seriesName : _.property('name'),
 	values     : _.property('values'),
-	x          : _.property('x'),
+	x          : _.property('campaign.start_date'),
 	xFormat    : format.timeAxis,
-	y          : _.property('y'),
+	y          : _.property('value'),
 	yFormat    : d3.format(',d')
 };
 

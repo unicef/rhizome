@@ -105,9 +105,9 @@ module.exports = [
 				{ 'id': 26, 'name': 'Number of refusals after re-visit' },
 
 				{ 'type': 'section-header', 'title': 'Missed Children' },
-				{ 'id': 20, 'name': 'Number of children missed due to refusal' },
-				{ 'id': 22, 'name': 'Number of children missed due to child not available' },
-				{ 'id': 23, 'name': 'Number of children missed due to no team/team did not visit' },
+				{ 'id': 264, 'name': 'Number of children missed due to refusal' },
+				{ 'id': 251, 'name': 'Number of children missed due to child not available' },
+				{ 'id': 268, 'name': 'Number of children missed due to no team/team did not visit' },
 				{ 'id': 24, 'name': 'Number of children missed due to other reasons' },
 
 				{ 'type': 'section-header', 'title': 'Polio+' },

@@ -4,7 +4,7 @@ var _    = require('lodash');
 var d3   = require('d3');
 
 var browser = require('util/browser');
-var label   = require('component/chart/renderer/label');
+var label   = require('chart/renderer/label');
 
 var defaults = {
 	margin    : {
@@ -15,7 +15,7 @@ var defaults = {
 	},
 	name      : _.partial(_.get, _, 'name', ''),
 	padding   : 0.1,
-	values    : _.identity,
+	values    : _.property('values'),
 	x         : _.property('x'),
 	xFormat   : String,
 	y         : _.property('y'),
@@ -27,7 +27,7 @@ var defaults = {
 function ColumnChart() {}
 
 _.extend(ColumnChart.prototype, {
-	classNames : 'chart column stacked',
+	classNames : 'chart stacked-column',
 	defaults   : defaults,
 
 	initialize : function (el, data, options) {

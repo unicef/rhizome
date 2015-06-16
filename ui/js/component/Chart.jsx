@@ -11,12 +11,44 @@ module.exports = React.createClass({
     type    : React.PropTypes.string.isRequired,
 
     id      : React.PropTypes.string,
-    options : React.PropTypes.object
+    options : React.PropTypes.object,
+    loading : React.PropTypes.bool
+  },
+
+  getDefaultProps : function () {
+    return {
+      loading : true
+    };
   },
 
   render : function () {
+    var overlay;
+
+    if (this.props.loading || _.isEmpty(this.props.data)) {
+      var position = _.get(this.props, 'options.margin', {
+        top    : 0,
+        right  : 0,
+        bottom : 0,
+        left   : 0
+      });
+
+      var message = (this.props.loading) ?
+        (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>) :
+        (<span className='empty'>No data</span>);
+
+      overlay = (
+        <div style={position} className='overlay'>
+          <div>
+            <div>{message}</div>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}></div>
+      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
+        {overlay}
+      </div>
     );
   },
 
@@ -27,6 +59,7 @@ module.exports = React.createClass({
       this.props.data,
       this.props.options);
   },
+
   componentWillReceiveProps: function(nextProps) {
   	if(nextProps.type != this.props.type)
   	{
@@ -38,6 +71,7 @@ module.exports = React.createClass({
   		    this.props.options);
   	}
   },
+
   componentDidUpdate : function () {
     this._chart.update(this.props.data, this.props.options);
   }

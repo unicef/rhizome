@@ -41,14 +41,9 @@
 
 	<div class="row">
 		<div class="small-12 columns">
-			<vue-table-editable v-with="table"></vue-table-editable>
+			<h2 v-if="noEditableSets">You do not have permission to enter data for any indicators in sets.</h2>
+			<vue-table-editable v-if="!noEditableSets" v-with="table"></vue-table-editable>
 		</div>
-
-		<div class="medium-6 columns"
-		     v-component="vue-pagination"
-		     v-with="offset     : pagination.the_offset,
-		             limit      : pagination.the_limit,
-		             total_count: pagination.total_count"></div>
 	</div>
 
 </div>
