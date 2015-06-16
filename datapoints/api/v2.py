@@ -646,6 +646,8 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = float(v)
             elif k == 'bound_json':
                 cleaned_row_data[k] = v
+            elif k == 'tag_json':
+                cleaned_row_data[k] = v
             elif k == 'dashboard_json' and v is None:
                 cleaned_row_data[k] = None
             elif k == 'dashboard_json' and v == '':
