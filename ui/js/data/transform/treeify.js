@@ -8,6 +8,8 @@ module.exports = function treeify(data, idKey) {
 	for (var i = data.length - 1; i >= 0; i--) {
 		var d = data[i];
 
+		if (idKey == 'id') console.log(d);
+
 		if (d.parent && index[d.parent]) {
 			var p = index[d.parent];
 
@@ -18,6 +20,7 @@ module.exports = function treeify(data, idKey) {
 			p.children.push(d);
 		} else {
 			roots.push(d);
+			console.log('root', d);
 		}
 	}
 

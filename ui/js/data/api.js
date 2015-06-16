@@ -8,6 +8,7 @@ var _        = require('lodash');
 var request  = require('superagent');
 var prefix   = require('superagent-prefix')(BASE_URL);
 
+var treeify = require('../data/transform/treeify');
 var campaign = require('../data/model/campaign');
 
 function urlencode(query) {
@@ -130,18 +131,31 @@ datapoint.toString = function (query, version) {
 function indicatorsTree(q) {
 	var fetch1 = endPoint('/indicator/', 'get', 2);
 	var fetch2 = endPoint('/indicator_tag', 'get', 2);
+	var makeTagId = function(tId) { return 'tag-'+tId; };
 	return new Promise(function (fulfill, reject) {
 
 		fetch1(q).then(function (indicators) {
 			fetch2().then(function(tags) {
-				tags = tags.objects.map(function(t) {
-								t.id = 'tag-'+t.id;
-								t.type = 'tag';
-								return t;
+				var tags_map = {};
+				_.each(tags.objects, function(t) {
+							tags_map[t.id] = t;
+							t.id = makeTagId(t.id);
+							t.type = 'tag';
+							t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null;
+							t.children = [];
+							t.name = t.tag_name;
+							delete t.tag_name;
+						});
+				_.each(indicators.objects, function(i) {
+						if (_.isArray(i.tag_json)) {
+							_.each(i.tag_json, function(tId) {
+								tags_map[tId].children.push(i);
 							});
-				console.log(tags);
-				fulfill(indicators);
-			})
+						}
+					});
+				tags.objects = treeify(tags.objects, 'id');
+				fulfill(tags);
+			});
 		}, reject);
 	});
 }	
