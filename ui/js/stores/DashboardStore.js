@@ -100,15 +100,16 @@ var DashboardStore = Reflux.createStore({
 				.last();
 
 		this.trigger({
-			dashboard : dashboard,
-			region    : region,
-			campaign  : campaign,
-			loaded    : true,
+			dashboard  : dashboard,
+			region     : region,
+			campaign   : campaign,
+			loaded     : true,
 
-			regions   : regions,
-			campaigns : _.filter(campaigns, function (c) {
+			regions    : regions,
+			campaigns  : _.filter(campaigns, function (c) {
 				return c.office_id === region.office_id;
-			})
+			}),
+			dashboards : this.dashboards
 		});
 	},
 

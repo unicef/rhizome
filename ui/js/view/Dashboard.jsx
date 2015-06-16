@@ -11,8 +11,10 @@ var api = require('data/api');
 var ManagementDashboard = require('dashboard/ManagementDashboard.jsx');
 var NCODashboard        = require('dashboard/NCODashboard.jsx');
 
+var TitleMenu           = require('component/TitleMenu.jsx');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
+var MenuItem            = require('component/MenuItem.jsx');
 
 var DashboardStore      = require('stores/DashboardStore');
 var IndicatorStore      = require('stores/IndicatorStore');
@@ -128,9 +130,6 @@ var Dashboard = React.createClass({
         );
         break;
 
-      case 'District Dashboard':
-        break;
-
       case 'NGA Campaign Monitoring':
         dashboard = (
           <NCODashboard
@@ -155,6 +154,15 @@ var Dashboard = React.createClass({
       campaign = campaigns[0];
     }
 
+    var dashboardItems = MenuItem.fromArray(
+      _.map(this.state.dashboards, d => {
+        return {
+          title : d.title,
+          value : _.kebabCase(d.title)
+        };
+      }),
+      this._setDashboard);
+
     return (
       <div>
         <div classNameName='clearfix'></div>
@@ -176,7 +184,11 @@ var Dashboard = React.createClass({
             </div>
 
             <div className='medium-3 columns'>
-              <h2>{dashboardName}</h2>
+              <h2>
+                <TitleMenu text={dashboardName}>
+                  {dashboardItems}
+                </TitleMenu>
+              </h2>
             </div>
           </div>
         </form>
@@ -240,6 +252,13 @@ var Dashboard = React.createClass({
     }
 
     page('/datapoints/' + [dashboard, region.name, campaign].join('/'));
+  },
+
+  _setDashboard : function (slug) {
+    var campaign = moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+    var region   = this.state.region.name;
+
+    page('/datapoints/' + [slug, region, campaign].join('/'));
   },
 
   _show : function (ctx) {
