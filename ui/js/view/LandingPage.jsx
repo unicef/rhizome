@@ -7,6 +7,7 @@ var React  = require('react');
 var api = require('data/api');
 
 var DashboardStore = require('stores/DashboardStore');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
@@ -198,6 +199,7 @@ module.exports = React.createClass({
             </a>
           </p>
         </div>
+        
       </div>
     );
   }

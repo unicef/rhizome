@@ -7,6 +7,7 @@ var moment = require('moment');
 
 var DropdownMenu         = require('component/DropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var Chart                = require('component/Chart.jsx');
 var ChartBuilderActions  = require('actions/ChartBuilderActions');
 var ChartBuilderStore    = require("stores/ChartBuilderStore");
@@ -81,6 +82,8 @@ module.exports = React.createClass({
       campaignDisplayFormat(this.state.store.campaignSelected) :
       'Select Campaign';
 
+      console.log(this.state.store.indicatorList);
+
      var indicators = MenuItem.fromArray(
       filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
       ChartBuilderActions.addIndicatorSelection);
@@ -100,11 +103,11 @@ module.exports = React.createClass({
      	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
      	                   <div className="titleDiv">Indicators</div>
      
-                         <DropdownMenu text='Select Indicators'
+                         <IndicatorDropdownMenu text='Select Indicators'
                            searchable={true}
                            onSearch={_.partial(this.setFilter, 'indicator')}>
                            {indicators}
-                         </DropdownMenu>
+                         </IndicatorDropdownMenu>
      
      		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
      
