@@ -51,10 +51,12 @@ var NavigationStore = Reflux.createStore({
 	},
 
 	loadDashboards : function (campaigns, regions, offices, dashboards) {
+		var allDashboards = builtins.concat(dashboards.objects);
+
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
-		this.dashboards = _(builtins.concat(dashboards.objects))
+		this.dashboards = _(allDashboards)
 			.map(function (d) {
 				var availableRegions = regions;
 
@@ -100,7 +102,7 @@ var NavigationStore = Reflux.createStore({
 				var officeName = offices[c.office_id].name;
 				var title      = officeName + ': ' + m.format('MMMM YYYY');
 
-				var links = _.map(dashboards.objects, function (d) {
+				var links = _.map(allDashboards, function (d) {
 					return _.defaults({
 							path  : _.kebabCase(d.title) + '/' + officeName + '/' + dt
 						}, d);

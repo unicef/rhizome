@@ -28,10 +28,10 @@ function _campaignRow(campaign, i) {
   _.each(campaign.dashboards, function (d) {
     switch (d.title) {
       case 'Management Dashboard':
-        country = d;
+        country = (<a href={'/datapoints/' + d.path}>Country</a>);
         break;
       case 'District Dashboard':
-        district = d;
+        district = (<a href={'/datapoints/' + d.path}>District</a>);
         break;
       default:
         if (!d.hasOwnProperty('default_office_id') || d.default_office_id === campaign.office_id) {
@@ -44,16 +44,8 @@ function _campaignRow(campaign, i) {
   return (
     <tr className={i % 2 === 0 ? 'even' : 'odd'} key={campaign.id}>
       <td>{campaign.title}</td>
-      <td>
-        <a href={'/datapoints/' + country.path}>
-          Country
-        </a>
-      </td>
-      <td>
-        <a href={'/datapoints/' + district.path}>
-          District
-        </a>
-      </td>
+      <td>{country}</td>
+      <td>{district}</td>
       <td>{_dashboardSelect(others)}</td>
     </tr>
   );
