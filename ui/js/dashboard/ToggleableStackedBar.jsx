@@ -7,8 +7,11 @@ var Chart = require('component/Chart.jsx');
 
 var ToggleableStackedBar = React.createClass({
   propTypes : {
-    data  : React.PropTypes.array.isRequired,
-    title : React.PropTypes.string.isRequired
+    data    : React.PropTypes.array.isRequired,
+    title   : React.PropTypes.string.isRequired,
+
+    options : React.PropTypes.object,
+    loading : React.PropTypes.bool
   },
 
   getInitialState : function () {
@@ -19,11 +22,11 @@ var ToggleableStackedBar = React.createClass({
 
   render : function () {
     var name    = _.kebabCase(this.props.title)
-    var props   = _.omit(this.props, 'title');
-    var options = {
+    var props   = _.omit(this.props, 'title', 'options');
+    var options = _.assign({}, this.props.options, {
       offset  : this.state.offset,
       xFormat : d3.format(this.state.offset === 'expand' ? '%' : 'n')
-    };
+    });
 
     return (
       <div>

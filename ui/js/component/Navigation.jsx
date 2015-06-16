@@ -30,13 +30,13 @@ var Navigation = React.createClass({
               {dashboards}
               <li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
-              <li className='separator'><hr /></li>
+              {/*<li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/dashboard/'>
                 See all custom dashboards
               </NavMenuItem>
               <NavMenuItem href='/datapoints/dashboard/create'>
                 Create New dashboard
-              </NavMenuItem>
+              </NavMenuItem>*/}
             </NavMenu>
           </li>
 

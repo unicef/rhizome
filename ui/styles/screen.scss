@@ -539,30 +539,30 @@ ul {
 	display: block;
 }
 
+.menu-button {
+	color     : white !important;
+	cursor    : pointer !important;
+	font-size : 1rem;
+
+	.fa-circle {
+		color       : $button-border-color;
+		text-shadow : 0 2px #667c89;
+	}
+
+	.fa-circle-thin {
+		color : $button-border-color;
+	}
+
+	&:active {
+		.fa-circle {
+			text-shadow : 0 1px #667c89;
+		}
+	}
+}
+
 .menu {
 	&:focus {
 		outline : none;
-	}
-
-	.menu-button {
-		color     : white;
-		cursor    : pointer;
-		font-size : 1rem;
-
-		.fa-circle {
-			color       : $button-border-color;
-			text-shadow : 0 2px #667c89;
-		}
-
-		.fa-circle-thin {
-			color : $button-border-color;
-		}
-
-		&:active {
-			.fa-circle {
-				text-shadow : 0 1px #667c89;
-			}
-		}
 	}
 
 	.background {

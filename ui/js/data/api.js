@@ -135,9 +135,10 @@ function indicatorsTree(q) {
 		fetch1(q).then(function (indicators) {
 			fetch2().then(function(tags) {
 				tags = tags.objects.map(function(t) {
-					t.id = 'tag-'+t.id;
-					t.type = 'tag';
-				})
+								t.id = 'tag-'+t.id;
+								t.type = 'tag';
+								return t;
+							});
 				console.log(tags);
 				fulfill(indicators);
 			})
@@ -149,23 +150,7 @@ module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
 	dashboards            : function () {
 		// FIXME: temporary mock data
-		return Promise.resolve({
-			objects : [{
-					'id'   : 1,
-					'name' : 'Management: Country',
-					'url'  : '/datapoints/management-dashboard'
-				}, {
-					'id'   : 2,
-					'name' : 'Management: Districts',
-					'url'  : '/datapoints/district'
-				}, {
-					'id'             : 3,
-					'name'           : 'NGA Campaign Monitoring',
-					'url'            : '/datapoints/nga-campaign-monitoring',
-					'default_office' : 1,
-					'offices'        : [1]
-				}]
-		});
+		return Promise.resolve({ objects : [] });
 	},
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
