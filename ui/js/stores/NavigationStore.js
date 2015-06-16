@@ -6,9 +6,15 @@ var Reflux = require('reflux/src');
 
 var api = require('data/api');
 
+var builtins = require('dashboard/builtin');
+
 var NavigationStore = Reflux.createStore({
 	init : function () {
+		console.log('NavigationStore::init');
+
+		this.campaigns  = [];
 		this.dashboards = [];
+		this.uploads    = [];
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -18,27 +24,39 @@ var NavigationStore = Reflux.createStore({
 
 				return data;
 			});
+
 		var regions = api.regions({
 			read_write  : 'r',
 			depth_level : 0
 		});
+
 		var dashboards = api.dashboards();
 
-		Promise.all([campaigns, regions, dashboards])
+		var documents = api.document().then(this.loadDocuments);
+
+		var offices = api.office().then(function (response) {
+			return _.indexBy(response.objects, 'id');
+		});
+
+		Promise.all([campaigns, regions, offices, dashboards])
 			.then(_.spread(this.loadDashboards));
 	},
 
 	getInitialState : function () {
 		return {
-			dashboards : this.dashboards
+			campaigns  : this.campaigns,
+			dashboards : this.dashboards,
+			uploads    : this.documents
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, dashboards) {
+	loadDashboards : function (campaigns, regions, offices, dashboards) {
+		var allDashboards = builtins.concat(dashboards.objects);
+
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
-		this.dashboards = _(dashboards.objects)
+		this.dashboards = _(allDashboards)
 			.map(function (d) {
 				var availableRegions = regions;
 
@@ -50,8 +68,8 @@ var NavigationStore = Reflux.createStore({
 				// If no regions for the default office are available, or no default
 				// office is provided and this dashboard is limited by office, filter the
 				// list of regions to those offices
-				if ((!_.isFinite(d.default_office) || availableRegions.size() < 1) && !_.isEmpty(d.offices)) {
-					availableRegions = availableRegions.filter(function (r) { return _.includes(d.offices, r.office_id); });
+				if (availableRegions.size() < 1) {
+					availableRegions = regions;
 				}
 
 				// If after all of that, there are no regions left that this user is
@@ -70,18 +88,52 @@ var NavigationStore = Reflux.createStore({
 					.max(_.method('start_date.valueOf'));
 
 				// Build the path for the dashboard
-				var path = region.name + '/' + campaign.start_date.format('YYYY/MM');
+				var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
 
-				if (!_.endsWith(d.url, '/')) {
-					path = '/' + path;
-				}
-
-				return _.assign({}, d, { url : d.url + path });
+				return _.assign({}, d, { href : '/datapoints/' + _.kebabCase(d.title) + path });
 			})
 			.reject(_.isNull)
 			.value();
 
-		this.trigger({ dashboards : this.dashboards });
+		this.campaigns = campaigns
+			.map(function (c) {
+				var m          = moment(c.start_date, 'YYYY-MM-DD');
+				var dt         = m.format('YYYY/MM');
+				var officeName = offices[c.office_id].name;
+				var title      = officeName + ': ' + m.format('MMMM YYYY');
+
+				var links = _.map(allDashboards, function (d) {
+					return _.defaults({
+							path  : _.kebabCase(d.title) + '/' + officeName + '/' + dt
+						}, d);
+				});
+
+				return _.defaults({
+						title      : title,
+						dashboards : links
+					}, c);
+			})
+
+		this.trigger({
+			dashboards : this.dashboards,
+			campaigns  : this.campaigns,
+		});
+	},
+
+	loadDocuments : function (response) {
+		var uploads = _.map(response.objects, function (d) {
+			var status = (d.is_processed === 'False') ? 'INCOMPLETE' : 'COMPLETE';
+
+			return {
+				id     : d.id,
+				title  : d.docfile,
+				status : status
+			};
+		});
+
+		this.trigger({
+			uploads : uploads
+		});
 	}
 });
 

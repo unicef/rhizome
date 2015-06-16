@@ -36,10 +36,7 @@ module.exports = {
 		});
 	},
 	Dashboard: function (el) {
-		new Vue({
-			el: el,
-			components: { 'uf-dashboard': require('./view/dashboard') }
-		});
+		React.render(React.createElement(require('view/Dashboard.jsx')), el);
 	},
 	DataEntry: function (el) {
 		new Vue({

@@ -15,7 +15,7 @@ var defaults = {
 	},
 	name      : _.partial(_.get, _, 'name', ''),
 	padding   : 0.1,
-	values    : _.identity,
+	values    : _.property('values'),
 	x         : _.property('x'),
 	xFormat   : String,
 	y         : _.property('y'),

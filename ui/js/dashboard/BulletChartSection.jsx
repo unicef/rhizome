@@ -2,6 +2,7 @@
 
 var _     = require('lodash');
 var React = require('react');
+var moment = require('moment');
 
 var Chart = require('component/Chart.jsx');
 
@@ -27,7 +28,7 @@ function _domain(data) {
 
 function _matchCampaign(datapoint, campaign) {
   return _.result(datapoint, 'campaign.start_date.getTime') ===
-    _.result(campaign, 'start_date.getTime');
+    moment(campaign.start_date, 'YYYY-MM-DD').valueOf();
 }
 
 function _value(data, campaign) {
@@ -48,12 +49,8 @@ function _marker(data, campaign) {
   return _.sum(hx) / hx.length;
 }
 
-function _targetRanges(data) {
-  var targets = _(data)
-    .pluck('indicator.bound_json')
-    .flatten()
-    .indexBy('bound_name')
-    .values()
+function _targetRanges(indicator) {
+  var targets = _(indicator.bound_json)
     .map(function (bound) {
       var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity;
       var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
@@ -96,13 +93,18 @@ function _fill(data, campaign, targets) {
 
 module.exports = React.createClass({
   propTypes : {
-    campaign : React.PropTypes.object.isRequired,
-    cols     : React.PropTypes.number.isRequired,
-    data     : React.PropTypes.array.isRequired,
+    campaign   : React.PropTypes.object.isRequired,
+    indicators : React.PropTypes.array.isRequired,
+
+    cols       : React.PropTypes.number,
+    data       : React.PropTypes.array,
+    hideHelp   : React.PropTypes.func,
+    showHelp   : React.PropTypes.func
   },
 
   getDefaultProps : function () {
     return {
+      cols     : 1,
       hideHelp : _.noop,
       showHelp : _.noop,
     };
@@ -112,11 +114,11 @@ module.exports = React.createClass({
     var campaign = this.props.campaign;
     var showHelp = this.props.showHelp;
     var hideHelp = this.props.hideHelp;
+    var data     = this.props.data;
 
-    var charts = _(this.props.data)
-      .groupBy('indicator.id')
-      .map(function (data, indicator) {
-        var targets = _targetRanges(data);
+    var charts = _(this.props.indicators)
+      .map(function (indicator) {
+        var targets = _targetRanges(indicator);
 
         var options = {
           domain     : _domain,
@@ -131,14 +133,18 @@ module.exports = React.createClass({
           targets    : targets[0]
         };
 
-        var title = _.get(data, '[0].indicator.short_name', '');
+        var title = indicator.short_name
+
+        var chartData = _(data)
+          .filter(d => d.indicator.id === indicator.id)
+          .groupBy(options.y) // There could coneivably be multiple bars in the chart
+          .values()
+          .value();
 
         return (
-          <li key={'bullet-chart-' + indicator}>
-            <h6 onMouseEnter={_.partial(showHelp, _.get(data, '[0].indicator'))} onMouseLeave={hideHelp}>{title}</h6>
-            <Chart type='BulletChart'
-              data={_(data).groupBy(options.y).values().value()}
-              options={options} />
+          <li key={'bullet-chart-' + indicator.id}>
+            <h6 onMouseEnter={_.partial(showHelp, indicator)} onMouseLeave={hideHelp}>{title}</h6>
+            <Chart type='BulletChart' data={chartData} options={options} />
           </li>
         );
       })

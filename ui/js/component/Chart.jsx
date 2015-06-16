@@ -11,12 +11,36 @@ module.exports = React.createClass({
     type    : React.PropTypes.string.isRequired,
 
     id      : React.PropTypes.string,
-    options : React.PropTypes.object
+    options : React.PropTypes.object,
+    loading : React.PropTypes.bool
+  },
+
+  getDefaultProps : function () {
+    return {
+      loading : false
+    };
   },
 
   render : function () {
+    var loading;
+
+    if (this.props.loading) {
+      loading = (
+        <div className='overlay'>
+          <div>
+            <div>
+              <i className='fa fa-spinner fa-spin'></i>
+              &ensp;Loading
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}></div>
+      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
+        {loading}
+      </div>
     );
   },
 
@@ -27,6 +51,7 @@ module.exports = React.createClass({
       this.props.data,
       this.props.options);
   },
+
   componentWillReceiveProps: function(nextProps) {
   	if(nextProps.type != this.props.type)
   	{
@@ -38,6 +63,7 @@ module.exports = React.createClass({
   		    this.props.options);
   	}
   },
+
   componentDidUpdate : function () {
     this._chart.update(this.props.data, this.props.options);
   }
