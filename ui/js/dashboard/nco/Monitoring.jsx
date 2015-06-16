@@ -27,6 +27,47 @@ var Monitoring = React.createClass({
       domain      : _.constant([0, 1])
     };
 
+    var inside = _(data.insideMonitoring)
+      .groupBy('region')
+      .map(values => _.transform(values, (result, d) => {
+        _.defaults(result, _.omit(d, 'indicator', 'value'));
+        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
+      }, {}))
+      .omit('indicator', 'value')
+      .filter(d => _.isFinite(d.x) && _.isFinite(d.y))
+      .value();
+
+    var outside = _(data.outsideMonitoring)
+      .groupBy('region')
+      .map(values => _.transform(values, (result, d) => {
+        _.defaults(result, _.omit(d, 'indicator', 'value'));
+        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
+      }, {}))
+      .omit('indicator', 'value')
+      .filter(d => _.isFinite(d.x) && _.isFinite(d.y))
+      .value();
+
+    var union = _(data.insideMonitoring.concat(data.outsideMonitoring));
+    var domain = d3.extent(union
+      .filter(d => d.indicator.id === 276)
+      .pluck('value')
+      .value());
+
+    var range = d3.extent(union
+      .filter(d => _.includes([274,272], d.indicator.id))
+      .pluck('value')
+      .value());
+
+    var scatter = {
+      aspect  : 1.7,
+      domain  : _.constant(domain),
+      range   : _.constant(range),
+      xFormat : d3.format('%'),
+      xLabel  : 'Caregiver Awareness',
+      yFormat : d3.format('%'),
+      yLabel  : 'Missed Children'
+    };
+
     return (
       <div className='row'>
 
@@ -58,6 +99,19 @@ var Monitoring = React.createClass({
 
           </div>
         </div>
+
+        <div className='row'>
+          <div className='medium-6 columns'>
+            <h4>Inside Monitoring</h4>
+            <Chart type='ScatterChart' data={inside} loading={loading} options={scatter} />
+          </div>
+
+          <div className='medium-6 columns'>
+            <h4>Outside Monitoring</h4>
+            <Chart type='ScatterChart' data={outside} loading={loading} options={scatter} />
+          </div>
+        </div>
+
       </div>
     );
   }
