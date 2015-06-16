@@ -16,13 +16,12 @@ module.exports = {
 		return {
 			indicator_set_id: 2,
 			indicator_sets: require('./structure/indicator_sets'),
+			noEditableSets: false,
 			loaded: false,
 			includeSubRegions: false,
 			regions: [],
 			indicators: [],
 			pagination: {
-				// the_limit: 20,
-				// the_offset: 0,
 				total_count: 0
 			},
 			table: {
@@ -62,13 +61,7 @@ module.exports = {
 
 		// setup regions dropdown
 		self._regions = new Dropdown({
-			el     : '#regions',
-			// source	: api.regions,
-			// mapping: {
-			// 	'parent_region_id': 'parent',
-			// 	'name'         : 'title',
-			// 	'id'           : 'value'
-			// }
+			el     : '#regions'
 		});
 		self._regions.$on('dropdown-value-changed', function (items) {
 			self.regions = _.values(items);
@@ -126,7 +119,7 @@ module.exports = {
 						}),
 
 					// indicators data
-					api.indicators().then(makeMap),
+					api.indicators({ read_write: 'w' }).then(makeMap),
 
 					// campaigns data
 					api.campaign().then(function(data) {
@@ -153,9 +146,9 @@ module.exports = {
 
 					// set campaign id to first option
 					self.$data.campaign_id = self.$data.campaigns[0].value;
-
 					self.$data.loaded = true;
 
+					self.filterIndicatorSets();
 					self.refreshRegionsDropdown();
 
 				});
@@ -191,6 +184,50 @@ module.exports = {
 			// set office id to track when the office changes
 			self.$data.campaign_office_id = campaign.office_id;
 
+		},
+
+		// filter list of indicator sets to exclude sets the user cannot edit at all
+		filterIndicatorSets: function() {
+			var self = this;
+			self.$data.indicator_sets = _.filter(self.$data.indicator_sets, function(s) {
+												return _.find(s.indicators, function(i) {
+													return i.id && self.$data.indicators[i.id] !== undefined;
+												});
+											});
+			self.$data.noEditableSets = (self.$data.indicator_sets.length === 0) ? true : false;
+			console.log(self.$data.noEditableSets);
+		},
+
+		getFilteredIndicatorSet: function(indicatorSetId) {
+			var self = this;
+			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(indicatorSetId); });
+			if (!indicatorSet) return null;
+
+			var filtered = _.clone(indicatorSet);
+			filtered.indicators = [];
+			_.each(indicatorSet.indicators, function(row) {
+				// header
+				if (row.type === 'section-header') {
+					// remove previous section header if no indicators are inlcuded under it
+					if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length-1].type === 'section-header') {
+						filtered.indicators.splice(filtered.indicators.length-1, 1);
+					}
+					filtered.indicators.push(row);
+				} 
+				// indicator
+				else {
+					// filter out indicators the user cannot edit
+					if (row.id && self.$data.indicators[row.id] !== undefined) {
+						filtered.indicators.push(row);
+					}
+				}
+			});
+			// remove last row if empty section header
+			if (filtered.indicators[filtered.indicators.length-1].type === 'section-header') {
+				filtered.indicators.pop();
+			}
+
+			return filtered;
 		},
 
 		refresh: function () {
@@ -242,13 +279,12 @@ module.exports = {
 			}
 
 			// add indicators to request
-			var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(self.indicator_set_id); });
-			indicatorSet.indicators.forEach(function (ind) {
-				// TODO: remove the second condition below when on production:
-				if (ind.id && self.$data.indicators[ind.id] !== undefined) {
-					options.indicator__in.push(ind.id);
-				}
-			});
+			var indicatorSet = self.getFilteredIndicatorSet(self.indicator_set_id);
+
+			options.indicator__in = _(indicatorSet)
+										.filter(function(d) { return d.id; })
+										.map(function(d) { return d.id; })
+										.value();
 
 			// define columns
 			var columns = [
@@ -290,7 +326,7 @@ module.exports = {
 
 				// assemble data points into rows for table
 				var rows = [];
-				indicatorSet.indicators.forEach(function(rowInfo) {
+				_.each(indicatorSet.indicators, function(rowInfo) {
 
 					var row = [];
 
