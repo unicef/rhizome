@@ -7,14 +7,16 @@ var Chart = require('component/Chart.jsx');
 
 var DonutChart = React.createClass({
   propTypes : {
-    data    : React.PropTypes.array.isRequired,
-    options : React.PropTypes.object,
-    label   : React.PropTypes.func
+    data       : React.PropTypes.array.isRequired,
+    options    : React.PropTypes.object,
+    label      : React.PropTypes.func,
+    labelStyle : React.PropTypes.object
   },
 
   getDefaultProps : function () {
     return {
-      label : _.noop
+      label      : _.noop,
+      labelStyle : {}
     };
   },
 
@@ -23,7 +25,7 @@ var DonutChart = React.createClass({
     var label;
 
     if (!_.isEmpty(labelText)) {
-      label = (<p className='donut-label'>{labelText}</p>);
+      label = (<p className='donut-label' style={this.props.labelStyle}>{labelText}</p>);
     }
 
     return (

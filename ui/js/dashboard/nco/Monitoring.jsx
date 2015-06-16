@@ -1,11 +1,28 @@
 'use strict';
 
-var _ = require('lodash');
+var _     = require('lodash');
 var React = require('react');
+var d3    = require('d3');
 
 var DonutChart = require('component/DonutChart.jsx');
-var Chart = require('component/Chart.jsx')
+var Chart      = require('component/Chart.jsx')
 
+function donutLabel(data, labelText) {
+  var value = _.get(data, '[0].value');
+
+  if (!_.isFinite(value)) {
+    return;
+  }
+
+  var fmt   = d3.format('%');
+  var label;
+
+  if (labelText) {
+    label = (<span><br /><label>{labelText}</label></span>);
+  }
+
+  return (<span>{fmt(value)}{label}</span>)
+}
 var Monitoring = React.createClass({
   propTypes : {
     data    : React.PropTypes.object.isRequired,
@@ -24,7 +41,10 @@ var Monitoring = React.createClass({
 
     var options = {
       innerRadius : 0.6,
-      domain      : _.constant([0, 1])
+      domain      : _.constant([0, 1]),
+      labelStyle  : {
+        lineHeight : 1
+      }
     };
 
     var inside = _(data.insideMonitoring)
@@ -78,11 +98,21 @@ var Monitoring = React.createClass({
             </div>
 
             <div className='medium-6 columns'>
-              <DonutChart data={data.inside} loading={loading} options={options} />
+              <DonutChart
+                loading={loading}
+                data={data.inside}
+                label={_.partial(donutLabel, _, 'Inside')}
+                labelStyle={{ lineHeight : 1 }}
+                options={options} />
             </div>
 
             <div className='medium-6 columns'>
-              <DonutChart data={data.outside} loading={loading} options={options} />
+              <DonutChart
+                loading={loading}
+                data={data.outside}
+                label={_.partial(donutLabel, _, 'Outside')}
+                labelStyle={{ lineHeight : 1 }}
+                options={options} />
             </div>
           </div>
         </div>
@@ -94,7 +124,11 @@ var Monitoring = React.createClass({
             </div>
 
             <div className='medium-6 push-3 end columns'>
-              <DonutChart data={data.caregiverAwareness} loading={loading} options={options} />
+              <DonutChart
+                loading={loading}
+                data={data.caregiverAwareness}
+                label={donutLabel}
+                options={options} />
             </div>
 
           </div>
