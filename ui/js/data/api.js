@@ -140,13 +140,15 @@ function indicatorsTree(q) {
 				_.each(tags.objects, function(t) {
 							tags_map[t.id] = t;
 							t.id = makeTagId(t.id);
-							t.type = 'tag';
+							t.noValue = true;
 							t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null;
 							t.children = [];
-							t.name = t.tag_name;
-							delete t.tag_name;
+							t.title = t.tag_name;
+							t.value = t.id;
 						});
 				_.each(indicators.objects, function(i) {
+						i.title = i.name;
+						i.value = i.id;
 						if (_.isArray(i.tag_json)) {
 							_.each(i.tag_json, function(tId) {
 								tags_map[tId].children.push(i);
@@ -154,6 +156,7 @@ function indicatorsTree(q) {
 						}
 					});
 				tags.objects = treeify(tags.objects, 'id');
+				tags.flat = indicators.objects;
 				fulfill(tags);
 			});
 		}, reject);

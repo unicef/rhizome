@@ -112,11 +112,11 @@ module.exports = React.createClass({
      	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
      	                   <div className="titleDiv">Indicators</div>
      
-                         <IndicatorDropdownMenu text='Select Indicators'
+                         <DropdownMenu text='Select Indicators'
                            searchable={true}
                            onSearch={_.partial(this.setFilter, 'indicator')}>
                            {indicators}
-                         </IndicatorDropdownMenu>
+                         </DropdownMenu>
      
      		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
      

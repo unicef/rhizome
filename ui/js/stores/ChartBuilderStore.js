@@ -113,6 +113,13 @@ function _columnData(data, groups, groupBy) {
 
 
 	
+var chartOptions = {
+		domain  : null,
+		values  : _.property('values'),
+		x       : _.property('campaign.start_date'),
+		y       : _.property('value'),
+		yFormat : d3.format('%')
+	};
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
@@ -140,13 +147,11 @@ module.exports = Reflux.createStore({
 					},
 		timeRadioValue:2,
 		chartTypes:require('./chartBuilder/chartDefinitions'),
-		selectedChart:4,
+		selectedChart:0,
 		chartData:[],
-	    chartOptions : {},
+	    chartOptions : chartOptions,
 		canDisplayChart:canDisplayChart,
 		canDisplayChartReason:canDisplayChartReason,
-		xAxis:0,
-		yAxis:0,
 		loading:false
 	},
 	listenables: [ChartBuilderActions],
@@ -174,18 +179,10 @@ module.exports = Reflux.createStore({
 		  	self.aggregateRegions();
 		 });
 
-		 api.indicators().then(function(items){
-		        self._indicatorIndex = _.indexBy(items.objects, 'id');
+		 api.indicatorsTree().then(function(items){
+		        self._indicatorIndex = _.indexBy(items.flat, 'id');
 		        self.data.indicatorList = _(items.objects)
-		         	.map(function (indicator) {
-		         		return {
-		         			'title'  : indicator.name,
-		         			'value'  : indicator.id,
-		         			'parent' : null
-		         		};
-		         	})
 		         	.sortBy('title')
-		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
@@ -262,14 +259,6 @@ module.exports = Reflux.createStore({
 		this.trigger(this.data);
 		this.aggregateRegions();
 	},
-	onSelectXAxis: function(value){
-	    this.data.xAxis = value;
-	    this.getChartData();
-	},
-	onSelectYAxis: function(value){
-	    this.data.yAxis = value;
-	    this.getChartData();
-	},
 	aggregateRegions: function(){
 	    var regions;
 	    var regionSelected = this.data.regionSelected;
@@ -343,12 +332,99 @@ module.exports = Reflux.createStore({
        
        
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;
           self.data.chartData = chart.data;
           self.trigger(self.data);
         });
-     }
+       /*  
+	    var dataPointPromise = api.datapoints(q).then(function(data){
+	    							return melt(data,indicatorArray);}
+	    							).then(function(data){
+	        if(!lower) //set the lower bound from the lowest datapoint value
+	        {
+	          var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
+	          lower = moment(_.first(sortedDates).campaign.start_date);
+	          //var end = moment(_.last(sortedDates).campaign.end_date);
+	        }
+	        if(selectedChart ==="LineChart")
+	        {
+	          self.data.chartOptions.aspect = 2.664831804;
+	          self.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
+	    	  self.data.chartData =  _groupBySeries(data, groups,groupBy);
+	    	}
+	    	else if (selectedChart ==="PieChart"){
+	    	  var total = _(data).map(function(n){ return n.value;}).sum();
+	    	  self.data.chartOptions.domain = _.constant([0, total]);
+	    	  self.data.chartOptions.color = _.flow(
+	    	  	_.property('name'),
+	    	  	d3.scale.ordinal().range(colors));
+	    	  self.data.chartData = data;
+	    	}
+	    	else if (selectedChart ==="ColumnChart"){
+		  			
+		  	  var columnScale = _.map(d3.time.scale()
+		  	  		.domain([lower.valueOf(), upper.valueOf()])
+		  	  		.ticks(d3.time.month, 1),
+		  	  	_.method('getTime')
+		  	  );
+		  	  var chartData = _columnData(data,groups,groupBy);	
+		  	  		
+		  	  self.data.chartOptions.aspect = 2.664831804;
+	    	  self.data.chartOptions.domain = _.constant(columnScale);
+	    	  self.data.chartOptions.color = _.flow(
+	    	  	_.property('name'),
+	    	  	d3.scale.ordinal().range(colors));
+	    	  self.data.chartOptions.x = function (d) { 
+	    	  return moment(d.campaign.start_date).startOf('month').toDate().getTime(); };
+	    	  self.data.chartOptions.xFormat = function (d) { return moment(d).format('MMM YYYY')};
+	    	  self.data.chartData = chartData;
+	    	}
+	    	self.data.loading = false;
+	    	self.trigger(self.data);
+	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
+	    });
+	    
+	    if(selectedChart ==="ChoroplethMap")
+	    {
+		    Promise.all([dataPointPromise,api.geo({ region__in :_.map(this.data.aggregatedRegions,function(region){return region.id}) })])
+		    .then(_.spread(function(data, border){
+		        var index = _.indexBy(data,'region');
+		        self.data.chartOptions.aspect = 1;
+		        self.data.chartOptions.domain = _.constant([0, 0.1]);
+				self.data.chartOptions.border = border.objects.features;
+				self.data.chartOptions.onMouseOver = function (d, el) {
+				    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
+						var evt = d3.event;
+						tooltipVue.$emit('tooltip-show', {
+							el       : el,
+							position : {
+								x : evt.pageX,
+								y : evt.pageY
+							},
+							data : {
+								text     : regionsIndex[d.properties.region_id].name,
+								template : 'tooltip-default'
+							}
+						});
+					}
+				};
+				self.data.chartOptions.onMouseOut = function (d, el) {
+					tooltipVue.$emit('tooltip-hide', { el : el });
+				}
+				
+                self.data.chartData = _.map(border.objects.features, function (feature) {
+                							var region = _.get(index, feature.properties.region_id);
+                							return _.merge({}, feature, {
+                									properties : { value : _.get(region, 'value') }
+                								});
+                						});
+                self.data.loading = false;
+                self.trigger(self.data);
+           }));
+	    }
+	    */
+	}
 });
