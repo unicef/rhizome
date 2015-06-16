@@ -54,7 +54,7 @@ var Dashboard = React.createClass({
       return (
         <div style={style} className='overlay'>
           <div>
-            <div><i className='fa fa-spinner fa-spin'></i>&ensp;loading</div>
+            <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
           </div>
         </div>
       );
