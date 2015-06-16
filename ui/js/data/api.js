@@ -147,6 +147,7 @@ module.exports = {
 	map_indicator         : endPoint('/indicator_map/','post',2),
 	map_region            : endPoint('/region_map/','post',2),
 	map_campaign          : endPoint('/campaign_map/','post',2),
+	user_permissions      : endPoint('/user_permission/', 'get', 2),
 	groups                : endPoint('/group/','get',2),
 	user_groups           : endPoint('/user_group/','get',2),
 	map_user_group        : endPoint('/user_group/','post',2),

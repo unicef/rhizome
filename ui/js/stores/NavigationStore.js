@@ -38,23 +38,35 @@ var NavigationStore = Reflux.createStore({
 			return _.indexBy(response.objects, 'id');
 		});
 
-		Promise.all([campaigns, regions, offices, dashboards])
+		this.permissions = [];
+		var permissions = api.user_permissions();
+
+		Promise.all([campaigns, regions, offices, dashboards, permissions])
 			.then(_.spread(this.loadDashboards));
+
 	},
 
 	getInitialState : function () {
 		return {
 			campaigns  : this.campaigns,
 			dashboards : this.dashboards,
+			permissions: this.permissions,
 			uploads    : this.documents
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, offices, dashboards) {
+	userHasPermission: function(permissionString) {
+		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
+	},
+
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
+
+		// parse permissions
+		this.permissions = permissions.objects.map(function(p) { return p.auth_code; });
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
