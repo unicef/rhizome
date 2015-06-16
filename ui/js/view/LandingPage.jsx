@@ -90,7 +90,7 @@ module.exports = React.createClass({
                       .map(_campaignRow)
                       .value();
     } else {
-       campaigns = this.state.campaigns.map(_campaignRow);
+       campaigns = _(this.state.campaigns).map(_campaignRow).value();
     }
 
     // data entry section, according to permissions
