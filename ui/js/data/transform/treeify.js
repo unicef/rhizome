@@ -20,7 +20,6 @@ module.exports = function treeify(data, idKey) {
 			p.children.push(d);
 		} else {
 			roots.push(d);
-			console.log('root', d);
 		}
 	}
 
