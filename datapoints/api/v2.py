@@ -84,14 +84,14 @@ class v2Request(object):
     def apply_cust_dashboard_permissions(self,list_of_object_ids):
 
         data = CustomDashboard.objects.raw("""
-            SELECT
-            	cd.*
-            	, au.username as owner_username
-            	, CAST(CASE WHEN %s = au.id THEN 1 ELSE 0 END AS BOOLEAN) as owned_by_current_user
-            FROM custom_dashboard cd
-            INNER join auth_user au
-            ON cd.owner_id = au.id
-            AND cd.id = ANY(COALESCE(NULL,ARRAY[%s]));
+        	SELECT
+        		cd.*
+                , au.username as owner_username
+        		, CAST(CASE WHEN %s = au.id THEN 1 ELSE 0 END AS BOOLEAN) as owned_by_current_user
+        	FROM custom_dashboard cd
+        	INNER join auth_user au
+        	ON cd.owner_id = au.id
+        	WHERE cd.id = ANY(COALESCE(%s,ARRAY[cd.id]));
         """,[self.user_id,list_of_object_ids])
 
         return None, data
