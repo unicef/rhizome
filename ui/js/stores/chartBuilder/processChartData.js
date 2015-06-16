@@ -43,6 +43,13 @@ function seriesObject(d, ind, collection, groups) {
 	};
 }
 
+function value(datapoint) {
+	if (datapoint && datapoint.hasOwnProperty('value')) {
+		return datapoint.value;
+	}
+	return null;
+}
+
 var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv);
 var tooltipVue = new Vue({
@@ -68,35 +75,31 @@ function _columnData(data, groups, groupBy) {
 		.groupBy(groupBy)
 		.map(_.partialRight(seriesObject, groups))
 		.value();
-	var largestGroup = [];
-	_.each(columnData,function(series){  //The column data is an array of series. Each series has an array of values. Each of the value arrays must be the same length for the stacked column chart to render properly. So first we must loop through all series and find the longest values array, and then pad the remaining arrays with those campaigns to cause the chart to display correctly
-	   if(series.values.length > largestGroup.length)
-	   {
-	     largestGroup = series.values;
-	   }
-	   _.each(series.values,function(val){
+	var baseCampaigns = [];
+	_.each(columnData,function(series){ 
+	   _.each(series.values,function(value){ //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
+	   	 if(!_.find(baseCampaigns,function(campaign){return campaign.id==value.campaign.id}));
+	   	 {
+	   	   baseCampaigns.push(value.campaign)
+	   	 }
+	   });
+	   _.each(series.values,function(val){ //replace all null values with 0, caused d3 rect rendering errors in the chart
 	   	if(_.isNull(val.value))
 	   	{
 	   	  val.value = 0;
 	   	}
 	   });
 	}); 
-	var baseCampaigns = _.map(largestGroup,function(group){
-		return group.campaign;
-	});
-	//console.log(_.map(baseGroup,_.property('campaign.start_date')));
+	var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'));
 	_.each(columnData,function(series){
-	   _.each(baseCampaigns,function(baseCampaign){
+	   _.each(baseCampaigns,function(baseCampaign,index){
 	   	   if(!_.find(series.values,function(value){return value.campaign.id == baseCampaign.id}))
 	   	   {
-	   	     series.values.push({campaign:baseCampaign,region:series.values[0].region,indicator:series.values[0].indicator,value:0});
+	   	     series.values.splice(index,0,{campaign:baseCampaign,region:series.values[0].region,indicator:series.values[0].indicator,value:0});
 	   	   }
 	   });
-//	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
-//	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
-	  // console.log(_.map(series.values,_.property('campaign.start_date')));
-	});
-    
+	   series.values =  _.sortBy(series.values,_.method('campaign.start_date.getTime'));
+	});    
 	var stack = d3.layout.stack()
 		.order('default')
 		.offset('zero')
@@ -108,7 +111,7 @@ function _columnData(data, groups, groupBy) {
 }
 
 module.exports = {
-	init:function(dataPromise,chartType,indicators,regions,lower,upper,groups,groupBy){
+	init:function(dataPromise,chartType,indicators,regions,lower,upper,groups,groupBy,xAxis,yAxis){
 		var indicatorArray = _.map(indicators,_.property('id'));
 		var meltPromise = dataPromise.then(function(data){
 		 							return melt(data,indicatorArray);
@@ -121,6 +124,8 @@ module.exports = {
 		 return	this.processChoroplethMap(meltPromise,regions);	
 		} else if (chartType=="ColumnChart") {
 		 return	this.processColumnChart(meltPromise,lower,upper,groups,groupBy);	
+		} else if (chartType=="ScatterChart") {
+		 return	this.processScatterChart(dataPromise,regions,indicators,xAxis,yAxis);	
 		}
 	},
 	processLineChart:function(dataPromise,lower,upper,groups,groupBy){
@@ -213,10 +218,6 @@ module.exports = {
 					_.property('name'),
 					d3.scale.ordinal().range(colors)),
 				x      : function (d) { 
-//				              if(!d.campaign)
-//				              {
-//				                return lower.toDate().getTime();
-//				              }
 				              var start = d.campaign.start_date
 				              return moment(start).startOf('month').toDate().getTime(); 
 				              },
@@ -226,10 +227,75 @@ module.exports = {
 			
 		});
 	},
-	processScatterChart: function(dataPromise){
+	processScatterChart: function(dataPromise,regions,indicators,xAxis,yAxis){
+		var indicatorsIndex = _.indexBy(indicators, 'id');//;
+		var regionsIndex = _.indexBy(regions, 'id');
+		
 		return dataPromise.then(function(data){
-					
-			return {options:{},data:[]}; 
+			var domain = d3.extent(_(data.objects)
+				.pluck('indicators')
+				.flatten()
+				.filter(function (d) { return d.indicator == indicators[xAxis].id; })
+				.pluck('value')
+				.value()
+			);
+			var range = d3.extent(_(data.objects)
+				.pluck('indicators')
+				.flatten()
+				.filter(function (d) { return d.indicator == indicators[yAxis].id;})
+				.pluck('value')
+				.value()
+			);	
+			
+			var chartData = _(data.objects)
+				.map(function (d) {
+					var index = _.indexBy(d.indicators, 'indicator');
+
+					return {
+						id   : d.region,
+						name : regionsIndex[d.region].name,
+						x    : value(index[indicators[xAxis].id]),
+						y    : value(index[indicators[yAxis].id])
+					};
+				})
+				.filter(function (d) {
+					return _.isFinite(d.x) && _.isFinite(d.y);
+				})
+				.value();
+				var showTooltip = function (d, i, el) {
+					var evt = d3.event;
+
+					tooltipVue.$emit('tooltip-show', {
+						el       : el,
+						position : {
+							x : evt.pageX,
+							y : evt.pageY
+						},
+						data : {
+							// Have to make sure we use the default tooltip, otherwise if a
+							// different template was used, this shows the old template
+							template : 'tooltip-default',
+							text     : d.name,
+							delay    : 0
+						}
+					});
+				};
+
+				var hideTooltip = function (d, i, el) {
+					tooltipVue.$emit('tooltip-hide', { el : el });
+				};
+			var chartOptions = {
+				aspect      : 1.7,
+				domain      : _.constant(domain),
+				onMouseOut  : hideTooltip,
+				onMouseOver : showTooltip,
+				range       : _.constant(range),
+				xFormat     : d3.format('%'),
+				xLabel      : 'Caregiver Awareness',
+				yFormat     : d3.format('%'),
+				yLabel      : 'Missed Children'
+			};		
+			return {options:chartOptions,data:chartData}; 
 		});
 	}
 };
