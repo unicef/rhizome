@@ -114,6 +114,7 @@ var NavigationStore = Reflux.createStore({
 			.map(function(d) {
 				return d;
 			})
+			.sortBy('title')
 			.value();
 
 		this.campaigns = campaigns
