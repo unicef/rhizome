@@ -54,13 +54,12 @@ function _campaignRow(campaign, i) {
 }
 
 function _uploadRow(upload, i) {
-  var status = upload.is_processed === 'False' ? 'INCOMPLETE' : 'COMPLETE';
   return (
     <tr className={i % 2 === 0 ? 'odd' : 'even'} key={upload.id}>
       <td>
-        <a href={'/source_data/field_mapping/' + upload.id}>{upload.docfile}</a>
+        <a href={'/source_data/field_mapping/' + upload.id}>{upload.title}</a>
       </td>
-      <td>{status}</td>
+      <td>{upload.status}</td>
     </tr>
   );
 }
@@ -85,8 +84,8 @@ module.exports = React.createClass({
   render : function () {
     var campaigns;
     if (_.isFinite(this.state.visibleCampaigns)) {
-       campaigns = _(this.state.campaigns).
-                      take(this.state.visibleCampaigns)
+       campaigns = _(this.state.campaigns)
+                      .take(this.state.visibleCampaigns)
                       .map(_campaignRow)
                       .value();
     } else {
@@ -116,7 +115,10 @@ module.exports = React.createClass({
 
       var uploads = <tr><td>No uploads yet.</td></tr>;
       if (this.state.uploads && this.state.uploads.length > 0) {
-        uploads = this.state.uploads.map(_uploadRow);
+        uploads = _(this.state.uploads)
+                      .take(this.state.visibleUploads)
+                      .map(_uploadRow)
+                      .value();
       }
 
       var dataEntry = (
