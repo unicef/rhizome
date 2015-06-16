@@ -4,44 +4,35 @@ var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
 
-var YtDChart = require('./YtDChart.jsx');
+var YtDChart = require('component/YtDChart.jsx');
 
 module.exports = React.createClass({
+  propTypes : {
+    campaign : React.PropTypes.object,
+    data     : React.PropTypes.array,
+  },
+
   getDefaultProps : function () {
     return {
       data     : [],
-      campaign : null,
-      region   : null
     };
-  },
-
-  getInitialState : function () {
-    return {
-      totalCases : null,
-      newCases   : null
-    };
-  },
-
-  shouldComponentUpdate : function (nextProps) {
-    // Update if we have a campaign and region, and the campaign or region is
-    // different. If this condition is false, it shouldn't be the case that the
-    // new cases or total cases has changed, so we don't need to check that.
-    return !(_.isNull(nextProps.campaign) || _.isNull(nextProps.region)) &&
-      (nextProps.campaign.id !== _.get(this.props, 'campaign.id') ||
-      nextProps.region.id !== _.get(this.props, 'region.id'));
   },
 
   render : function () {
     var campaign   = this.props.campaign;
-    var year       = campaign.start_date.getFullYear();
-    var month      = moment(campaign.start_date).format('MMM');
+    var year       = '';
+    var month      = '';
     var totalCases = null;
     var newCases   = null;
 
     if (campaign) {
+      var m = moment(campaign.start_date, 'YYYY-MM-DD');
+      year  = m.format('YYYY');
+      month = m.format('MMM');
+
       // Sum all of the reported Polio cases for the year
       totalCases = _(this.props.data)
-        .filter(function (d) { return d.campaign.start_date.getFullYear() === year; })
+        .filter(function (d) { return d.campaign.start_date.getFullYear() == year; })
         .pluck('value')
         .sum();
 
@@ -49,7 +40,7 @@ module.exports = React.createClass({
       newCases = _.get(
         _.find(
           this.props.data,
-          function (d) { return d.campaign.start_date.getTime() === campaign.start_date.getTime();}),
+          function (d) { return d.campaign.start_date.getTime() === m.valueOf();}),
         'value');
     }
 
@@ -86,7 +77,7 @@ module.exports = React.createClass({
         .value());
 
     return (
-      <div>
+      <section id='polio-cases-ytd'>
         {title}
         <div style={{ position : 'relative' }}>
           {newCaseLabel}
@@ -97,7 +88,7 @@ module.exports = React.createClass({
               aspect : 1.757
             }} />
         </div>
-      </div>
+      </section>
     )
   },
 

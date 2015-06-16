@@ -10,7 +10,8 @@ var dom  = require('util/dom');
 var MenuControl = {
 	getDefaultProps : function () {
 		return {
-			onSearch : _.noop
+			searchable : false,
+			onSearch   : _.noop
 		};
 	},
 

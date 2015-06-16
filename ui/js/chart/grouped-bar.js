@@ -12,7 +12,6 @@ var legend  = require('component/chart/renderer/legend');
 var defaults = {
 	barHeight   : 14,
 	name        : _.partial(_.get, _, 'name', ''),
-	offset      : 'zero',
 	onMouseOut  : _.noop,
 	onMouseOver : _.noop,
 	padding     : 0.1,
@@ -41,7 +40,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		var options = _.assign(this._options, options);
 		var margin  = options.margin;
 
-		var l = _(data).map(options.values).map('length').max();
+		var l = _(data).map(options.values).map('length').max() * data.length;
 		var h = Math.max(options.barHeight,
 			l * options.barHeight + (l - 1) * options.barHeight * options.padding);
 		var w = this._width - margin.left - margin.right;
@@ -55,37 +54,14 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			});
 		}
 
-		// d3.layout.stack stacks the y-value, but we want to stack the x value,
-		// so we swap x and y in the layout definition.
-		var stack = d3.layout.stack()
-			.values(options.values)
-			.offset(options.offset)
-			.order(function (values) {
-				var order = d3.range(values.length);
-
-				if (sortIdx > 0) {
-					order.splice(sortIdx, 1);
-					order.unshift(sortIdx);
-				}
-
-				return order;
-			})
-			.x(options.y)
-			.y(options.x)
-			.out(function (d, y0, y) {
-				d.x0 = y0;
-				d.x  = y;
-			});
-
-		var stacked = stack(_.cloneDeep(data));
-
 		var range;
 		if (_.isFunction(options.range)) {
-			range = options.range(stacked);
+			range = options.range(data);
 		} else {
-			range = d3.extent(_(stacked).map(options.values).flatten().value(), function (d) {
-				return d.x0 + d.x;
-			});
+			range = d3.extent(
+				_(data).map(options.values).flatten().value(),
+				options.x
+			);
 
 			// Make sure we always have at least a 0 baseline
 			range[0] = Math.min(0, range[0]);
@@ -95,21 +71,14 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.domain(range)
 			.range([0, w]);
 
-		var x = _.flow(_.property('x0'), xScale);
+		var width = _.flow(options.x, xScale);
 
-		var width = function (d) {
-			var x0 = d.x0;
-			var x  = d.x;
-
-			return xScale(x0 + x) - xScale(x0);
-		};
-
-		var order = _(options.values(stacked[sortIdx]))
-			.sortBy(_.property('x'))
+		var order = _(options.values(data[sortIdx]))
+			.sortBy(options.x)
 			.map(options.y)
 			.value();
 
-		var domain = _(stacked)
+		var domain = _(data)
 			.map(options.values)
 			.flatten()
 			.map(options.y)
@@ -124,10 +93,10 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
 		var y = _.flow(options.y, yScale);
 
-		var colorScale = color.scale(_.map(stacked, options.name));
+		var colorScale = color.scale(_.map(data, options.name));
 		var fill = _.flow(options.name, colorScale);
 
-		var svg    = this._svg;
+		var svg = this._svg;
 
 
 		var canvasH = h + margin.top + margin.bottom;
@@ -151,12 +120,15 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			});
 
 		var g      = svg.select('.data').datum(data);
-		var series = g.selectAll('.bar').data(stacked);
+		var series = g.selectAll('.bar').data(data);
 
 		series.enter().append('g')
 			.attr('class', 'bar');
 
-		series.style('fill', fill);
+		series.style('fill', fill)
+			.attr('transform', function (d, i) {
+				return 'translate(0,' + (i * options.barHeight) + ')';
+			});
 
 		series.exit()
 			.transition()
@@ -177,9 +149,8 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.on('mouseout', hover.out)
 			.transition().duration(500)
 			.attr({
-				'height' : yScale.rangeBand(),
+				'height' : options.barHeight,
 				'width'  : width,
-				'x'      : x,
 			})
 			.transition().duration(500)
 			.attr('y', y);

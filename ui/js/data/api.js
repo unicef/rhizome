@@ -132,23 +132,7 @@ module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
 	dashboards            : function () {
 		// FIXME: temporary mock data
-		return Promise.resolve({
-			objects : [{
-					'id'   : 1,
-					'name' : 'Management: Country',
-					'url'  : '/datapoints/management-dashboard'
-				}, {
-					'id'   : 2,
-					'name' : 'Management: Districts',
-					'url'  : '/datapoints/district'
-				}, {
-					'id'             : 3,
-					'name'           : 'NGA Campaign Monitoring',
-					'url'            : '/datapoints/nga-campaign-monitoring',
-					'default_office' : 1,
-					'offices'        : [1]
-				}]
-		});
+		return Promise.resolve({ objects : [] });
 	},
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
@@ -163,6 +147,7 @@ module.exports = {
 	map_indicator         : endPoint('/indicator_map/','post',2),
 	map_region            : endPoint('/region_map/','post',2),
 	map_campaign          : endPoint('/campaign_map/','post',2),
+	user_permissions      : endPoint('/user_permission/', 'get', 2),
 	groups                : endPoint('/group/','get',2),
 	user_groups           : endPoint('/user_group/','get',2),
 	map_user_group        : endPoint('/user_group/','post',2),

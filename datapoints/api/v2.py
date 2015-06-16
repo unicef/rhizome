@@ -41,6 +41,12 @@ class v2Request(object):
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':self.apply_indicator_permissions},
+            'user_permission': {'orm_obj':UserAuthFunction,
+                'permission_function':self.filter_permissions_to_current_user},
+            'document': {'orm_obj':Document,
+                'permission_function':self.apply_document_permissions },
+            'custom_dashboard': {'orm_obj':CustomDashboard,
+                'permission_function':self.apply_cust_dashboard_permissions},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
@@ -49,8 +55,6 @@ class v2Request(object):
                 'permission_function':None},
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
-            'document': {'orm_obj':Document,
-                'permission_function':self.apply_document_permissions },
             'office': {'orm_obj':Office,
                 'permission_function':None},
             'indicator_map': {'orm_obj':IndicatorMap,
@@ -63,12 +67,6 @@ class v2Request(object):
                 'permission_function':None},
             'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None},
-            'custom_dashboard': {'orm_obj':CustomDashboard,
-                'permission_function':None},
-            'user_permission': {'orm_obj':UserAuthFunction,
-                'permission_function':None}
-
-
         }
 
 
@@ -83,6 +81,28 @@ class v2Request(object):
         return response_data
 
     ## permissions functions ##
+    def apply_cust_dashboard_permissions(self,list_of_object_ids):
+
+        data = CustomDashboard.objects.raw("""
+        	SELECT
+        		cd.*
+                , au.username as owner_username
+        		, CAST(CASE WHEN %s = au.id THEN 1 ELSE 0 END AS BOOLEAN) as owned_by_current_user
+        	FROM custom_dashboard cd
+        	INNER join auth_user au
+        	ON cd.owner_id = au.id
+        	WHERE cd.id = ANY(COALESCE(%s,ARRAY[cd.id]));
+        """,[self.user_id,list_of_object_ids])
+
+        return None, data
+
+
+
+    def filter_permissions_to_current_user(self, list_of_object_ids):
+
+        data = UserAuthFunction.objects.filter(user_id = self.user_id)
+
+        return None, data
 
     def apply_region_permissions(self, list_of_object_ids):
         '''
@@ -611,7 +631,6 @@ class v2GetRequest(v2Request):
 
         '''
 
-
         cleaned_row_data = {}
 
         # if raw queryset, convert to dict
@@ -627,8 +646,14 @@ class v2GetRequest(v2Request):
                 cleaned_row_data[k] = float(v)
             elif k == 'bound_json':
                 cleaned_row_data[k] = v
+            elif k == 'tag_json':
+                cleaned_row_data[k] = v
+            elif k == 'dashboard_json' and v is None:
+                cleaned_row_data[k] = None
+            elif k == 'dashboard_json' and v == '':
+                cleaned_row_data[k] = None
             elif k == 'dashboard_json':
-                cleaned_row_data[k] = json.loads(v)
+                cleaned_row_data[k] = v
             else:
                 cleaned_row_data[k] = smart_str(v)
 
