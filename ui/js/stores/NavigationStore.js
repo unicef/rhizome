@@ -14,6 +14,7 @@ var NavigationStore = Reflux.createStore({
 
 		this.campaigns  = [];
 		this.dashboards = [];
+		this.customDashboards = null;
 		this.uploads    = [];
 
 		var campaigns = api.campaign()
@@ -32,6 +33,8 @@ var NavigationStore = Reflux.createStore({
 
 		var dashboards = api.dashboards();
 
+		var customDashboards = api.dashboardsCustom();
+
 		var documents = api.document().then(this.loadDocuments);
 
 		var offices = api.office().then(function (response) {
@@ -41,7 +44,7 @@ var NavigationStore = Reflux.createStore({
 		this.permissions = [];
 		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, offices, permissions, dashboards])
+		Promise.all([campaigns, regions, offices, permissions, dashboards, customDashboards])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -59,7 +62,7 @@ var NavigationStore = Reflux.createStore({
 		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
-	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, customDashboards) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
@@ -107,6 +110,13 @@ var NavigationStore = Reflux.createStore({
 			.reject(_.isNull)
 			.value();
 
+		this.customDashboards = _(customDashboards.objects)
+			.map(function(d) {
+				return d;
+			})
+			.sortBy('title')
+			.value();
+
 		this.campaigns = campaigns
 			.map(function (c) {
 				var m          = moment(c.start_date, 'YYYY-MM-DD');
@@ -147,6 +157,7 @@ var NavigationStore = Reflux.createStore({
 			uploads : uploads
 		});
 	}
+
 });
 
 module.exports = NavigationStore;

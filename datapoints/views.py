@@ -56,6 +56,11 @@ def data_entry(request):
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
 
+def dashboard_list(request):
+
+    return render_to_response('dashboard-builder/list.html',
+        context_instance=RequestContext(request))
+
 def dashboard_builder(request):
 
     return render_to_response('dashboard-builder/index.html',

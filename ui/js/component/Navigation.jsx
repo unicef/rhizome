@@ -9,14 +9,24 @@ var NavMenuItem     = require('component/NavMenuItem.jsx');
 var NavigationStore = require('stores/NavigationStore');
 
 var Navigation = React.createClass({
+
   mixins : [
     Reflux.connect(NavigationStore)
   ],
 
   render : function () {
+
     var dashboards = NavMenuItem.fromArray(_.map(this.state.dashboards, function (d) {
       return _.assign({ key : 'dashboard-nav-' + d.id }, d);
     }));
+
+    var dashboardsCustom = _(NavigationStore.customDashboards)
+                              .filter(function(d) { return d.owned_by_current_user; })
+                              .map(function (d) {
+                                var path = '/datapoints/dashboard/'+d.id;
+                                return (<NavMenuItem href={path}>{d.title}</NavMenuItem>);
+                              })
+                              .value();
 
     var enterData = '';
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
@@ -56,15 +66,16 @@ var Navigation = React.createClass({
           <li className='dashboard'>
             <NavMenu text={'Explore Data'} icon={'fa-bar-chart'}>
               {dashboards}
+              {dashboardsCustom}
               <li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
-              {/*<li className='separator'><hr /></li>
-              <NavMenuItem href='/datapoints/dashboard/'>
+              <li className='separator'><hr /></li>
+              <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
               <NavMenuItem href='/datapoints/dashboard/create'>
                 Create New dashboard
-              </NavMenuItem>*/}
+              </NavMenuItem>
             </NavMenu>
           </li>
 
