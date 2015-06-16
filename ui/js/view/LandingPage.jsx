@@ -132,7 +132,11 @@ module.exports = React.createClass({
     } else {
        campaigns = this.state.campaigns.map(_campaignRow);
     }
-    var uploads   = this.state.uploads.map(_uploadRow);
+
+    var uploads = <tr><td>No uploads yet.</td></tr>;
+    if (this.state.uploads.length > 0) {
+      uploads = this.state.uploads.map(_uploadRow);
+    }
 
     return (
       <div className="row">
@@ -168,7 +172,7 @@ module.exports = React.createClass({
               </a>
             </div>
             <div className="medium-8 columns">
-              <h2>Recent CSV Uploads</h2>
+              <h2>Your Recent CSV Uploads</h2>
               <table>
                 <tbody>{uploads}</tbody>
                 <tfoot>

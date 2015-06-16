@@ -22,7 +22,7 @@ var Navigation = React.createClass({
       <nav>
         <ul>
           <li className='home'><a href='/'>
-            <i className='fa fa-home fa-lg'></i>&ensp;Home
+            <i className='fa fa-home fa-lg'></i>&ensp;RhizomeDB
           </a></li>
 
           <li className='dashboard'>
@@ -43,10 +43,10 @@ var Navigation = React.createClass({
           <li className='data'>
             <NavMenu text={'Enter Data'} icon={'fa-table'}>
               <NavMenuItem href='/datapoints/entry'>
-                Edit Data
+                Enter Data via Form
               </NavMenuItem>
               <NavMenuItem href='/upload/file_upload'>
-                Upload Data
+                Upload Data via CSV File
               </NavMenuItem>
             </NavMenu>
           </li>
