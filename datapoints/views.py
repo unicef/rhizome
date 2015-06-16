@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
+from django.views.decorators.cache import cache_control as django_cache_control
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 
@@ -413,6 +414,7 @@ def v2_meta_api(request,content_type):
     return v2_api(request,content_type,True)
 
 
+@django_cache_control(must_revalidate=True, max_age=3600)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
