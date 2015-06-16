@@ -48,7 +48,7 @@ var Monitoring = React.createClass({
     };
 
     var inside = _(data.insideMonitoring)
-      .groupBy('region')
+      .groupBy('region.name')
       .map(values => _.transform(values, (result, d) => {
         _.defaults(result, _.omit(d, 'indicator', 'value'));
         result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
@@ -58,7 +58,7 @@ var Monitoring = React.createClass({
       .value();
 
     var outside = _(data.outsideMonitoring)
-      .groupBy('region')
+      .groupBy('region.name')
       .map(values => _.transform(values, (result, d) => {
         _.defaults(result, _.omit(d, 'indicator', 'value'));
         result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
@@ -86,6 +86,11 @@ var Monitoring = React.createClass({
       xLabel  : 'Caregiver Awareness',
       yFormat : d3.format('%'),
       yLabel  : 'Missed Children'
+    };
+
+    // Match the scatter plot's left margin for nicer header alignment
+    var headerStyle = {
+      marginLeft: '24px'
     };
 
     return (
@@ -136,12 +141,12 @@ var Monitoring = React.createClass({
 
         <div className='row'>
           <div className='medium-6 columns'>
-            <h4>Inside Monitoring</h4>
+            <h4 style={headerStyle}>Inside Monitoring</h4>
             <Chart type='ScatterChart' data={inside} loading={loading} options={scatter} />
           </div>
 
           <div className='medium-6 columns'>
-            <h4>Outside Monitoring</h4>
+            <h4 style={headerStyle}>Outside Monitoring</h4>
             <Chart type='ScatterChart' data={outside} loading={loading} options={scatter} />
           </div>
         </div>

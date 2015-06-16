@@ -74,12 +74,19 @@ var Dashboard = React.createClass({
 
 
     if (!_.isEmpty(indicators)) {
+      var regionsById = _.indexBy(this.state.regions, 'id')
+
+      // Fill in indicators and regions on all the data objects. If we haven't
+      // loaded indicators yet, continue displaying charts as if we have no data
       _.each(this.state.data, function (d) {
-        // Fill in indicators on all the data objects. If we haven't loaded
-        // indicators yet, continue displaying charts as if we have no data
         var ind = indicators[d.indicator];
         if (ind) {
           d.indicator = ind;
+        }
+
+        var reg = regionsById[d.region];
+        if (reg) {
+          d.region = reg;
         }
       });
 
@@ -88,7 +95,9 @@ var Dashboard = React.createClass({
         var sectionName = _.get(chart, 'section', '__none__');
         var chartName   = _.camelCase(_.get(chart, 'title', i));
         var section     = _.get(data, sectionName, {});
-        var regionProp  = chart.region === 'subregions' ? 'parent_region_id' : 'region';
+        var regionProp  = chart.region === 'subregions' ?
+          'region.parent_region_id' :
+          'region.id';
 
         section[chartName] = _.filter(this.state.data,
           d => _.includes(chart.indicators, d.indicator.id) &&
