@@ -82,8 +82,6 @@ module.exports = React.createClass({
       campaignDisplayFormat(this.state.store.campaignSelected) :
       'Select Campaign';
 
-      console.log(this.state.store.indicatorList);
-
      var indicators = MenuItem.fromArray(
       filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
       ChartBuilderActions.addIndicatorSelection);

@@ -123,10 +123,27 @@ function datapoint(q) {
 
 	});
 }
-
 datapoint.toString = function (query, version) {
 	return endPoint('/datapoint/').toString(query, version);
 };
+
+function indicatorsTree(q) {
+	var fetch1 = endPoint('/indicator/', 'get', 2);
+	var fetch2 = endPoint('/indicator_tag', 'get', 2);
+	return new Promise(function (fulfill, reject) {
+
+		fetch1(q).then(function (indicators) {
+			fetch2().then(function(tags) {
+				tags = tags.objects.map(function(t) {
+					t.id = 'tag-'+t.id;
+					t.type = 'tag';
+				})
+				console.log(tags);
+				fulfill(indicators);
+			})
+		}, reject);
+	});
+}	
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -156,6 +173,7 @@ module.exports = {
 	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
+	indicatorsTree		  : indicatorsTree,
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
 	document_review       : endPoint('/document_review/','get',2),

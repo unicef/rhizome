@@ -179,7 +179,7 @@ module.exports = Reflux.createStore({
 		  	self.aggregateRegions();
 		 });
 
-		 api.indicators().then(function(items){
+		 api.indicatorsTree().then(function(items){
 		        self._indicatorIndex = _.indexBy(items.objects, 'id');
 		        self.data.indicatorList = _(items.objects)
 		         	.map(function (indicator) {
