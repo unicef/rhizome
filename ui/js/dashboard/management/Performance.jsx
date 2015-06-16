@@ -25,12 +25,14 @@ var Performance = React.createClass({
 
   propTypes : {
     campaign : React.PropTypes.object.isRequired,
-    data     : React.PropTypes.object
+    data     : React.PropTypes.object,
+    loading  : React.PropTypes.bool
   },
 
   getDefaultProps : function () {
     return {
-      data : []
+      data    : [],
+      loading : false
     };
   },
 
@@ -39,6 +41,7 @@ var Performance = React.createClass({
     var campaign = this.props.campaign;
     var upper    = moment(campaign.start_date, 'YYYY-MM-DD');
     var lower    = upper.clone().startOf('month').subtract(1, 'year');
+    var loading  = this.props.loading;
 
     var stack = d3.layout.stack()
       .order('default')
@@ -121,6 +124,7 @@ var Performance = React.createClass({
           <section>
             <h4>Missed Children</h4>
             <Chart type='ColumnChart' data={missed}
+              loading={loading}
               options={{
                 aspect  : 2.26,
                 color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
@@ -133,15 +137,18 @@ var Performance = React.createClass({
 
           <section>
             <h4>Conversions</h4>
-            <Chart type='LineChart' data={conversions} options={{
-              aspect  : 2.26,
-              domain  : _.constant([lower.toDate(), upper.toDate()]),
-              yFormat : pct
-            }} />
+            <Chart type='LineChart' data={conversions}
+              loading={loading}
+              options={{
+                aspect  : 2.26,
+                domain  : _.constant([lower.toDate(), upper.toDate()]),
+                yFormat : pct
+              }} />
           </section>
 
           <section>
             <PieChartList
+              loading={loading}
               keyPrefix='microplans'
               data={social}
               name={microplansText}
@@ -163,6 +170,7 @@ var Performance = React.createClass({
           {vaccinated}
 
           <PieChartList
+            loading={loading}
             keyPrefix='transit-points'
             name={_.property('[0].title')}
             data={transitPoints}

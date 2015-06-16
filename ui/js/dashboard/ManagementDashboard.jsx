@@ -34,6 +34,8 @@ var ManagementDashboard = React.createClass({
     var loading    = this.props.loading;
     var region     = _.get(this.props, 'region.name', '');
 
+    console.log('ManagementDashboard::loading', loading);
+
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
       .transform(function (result, charts, sectionName) {
