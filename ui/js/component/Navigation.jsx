@@ -20,6 +20,14 @@ var Navigation = React.createClass({
       return _.assign({ key : 'dashboard-nav-' + d.id }, d);
     }));
 
+    var dashboardsCustom = _(NavigationStore.customDashboards)
+                              .filter(function(d) { return d.owned_by_current_user; })
+                              .map(function (d) {
+                                var path = '/datapoints/dashboard/'+d.id;
+                                return (<NavMenuItem href={path}>{d.title}</NavMenuItem>);
+                              })
+                              .value();
+
     var enterData = '';
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
 
@@ -58,6 +66,7 @@ var Navigation = React.createClass({
           <li className='dashboard'>
             <NavMenu text={'Explore Data'} icon={'fa-bar-chart'}>
               {dashboards}
+              {dashboardsCustom}
               <li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
               <li className='separator'><hr /></li>

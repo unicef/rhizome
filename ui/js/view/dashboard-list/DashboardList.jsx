@@ -7,12 +7,12 @@ var Reflux = require('reflux/src');
 var api = require('data/api');
 
 var _tableRow = function(row) {
-  var path = '/dashboard/'+row.id+'/';
+  var path = '/datapoints/dashboard/'+row.id+'/';
   return (
       <tr>
         <td><a href={path}>{row.title}</a></td>
         <td>{row.description}</td>
-        <td>{row.owner_id}</td>
+        <td>{row.owner_username}</td>
       </tr>
     );
 };
@@ -26,7 +26,7 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-    var rows; 
+    var rows;
     if (_.isNull(NavigationStore.customDashboards)) {
       rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading...</td></tr>;
     } else if (NavigationStore.customDashboards.length > 0) {
