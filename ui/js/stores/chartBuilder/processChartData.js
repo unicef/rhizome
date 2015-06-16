@@ -4,6 +4,8 @@ var colors    = require('colors');
 var moment = require('moment');
 var api = require('data/api');
 var Vue = require('vue'); //for tooltip display
+var path   = require('vue/src/parsers/path');
+var util   = require('util/data');
 
 function melt(data,indicatorArray) {
 	var dataset = data.objects;
@@ -109,6 +111,58 @@ function _columnData(data, groups, groupBy) {
 
 	return stack(columnData);
 }
+function _barData(datapoints, indicators, properties, series) {
+	return _(datapoints)
+		.pick(indicators)
+		.values()
+		.flatten()
+		.map(_mapProperties(properties))
+		.thru(_filterMissing)
+		.thru(_makeSeries(series))
+		.value();
+}
+function _mapProperties(mapping) {
+	return function (d) {
+		var datum = _.clone(d);
+
+		_.forEach(mapping, function (to, from) {
+			path.set(datum, to, path.get(datum, from));
+		});
+
+		return datum;
+	};
+}
+function _filterMissing(data) {
+	return _(data)
+		.groupBy('y')
+		.filter(function (v) {
+			return _(v).pluck('x').some(_.partial(util.defined, _, _.identity));
+		})
+		.values()
+		.flatten()
+		.forEach(function (d) {
+			if (!util.defined(d.x)) {
+				d.x = 0;
+			}
+		})
+		.value();
+}
+function _makeSeries(getSeries) {
+	return function (data) {
+		return _(data)
+			.groupBy(getSeries)
+			.map(function (v, k) {
+				return {
+					name   : k,
+					values : v
+				};
+			})
+			.value();
+		};
+}
+function _getIndicator(d) {
+	return d.indicator.short_name;
+}
 
 module.exports = {
 	init:function(dataPromise,chartType,indicators,regions,lower,upper,groups,groupBy,xAxis,yAxis){
@@ -126,6 +180,8 @@ module.exports = {
 		 return	this.processColumnChart(meltPromise,lower,upper,groups,groupBy);	
 		} else if (chartType=="ScatterChart") {
 		 return	this.processScatterChart(dataPromise,regions,indicators,xAxis,yAxis);	
+		} else if (chartType=="BarChart") {
+		 return	this.processBarChart(dataPromise,regions,indicators,xAxis,yAxis);	
 		}
 	},
 	processLineChart:function(dataPromise,lower,upper,groups,groupBy){
@@ -297,6 +353,34 @@ module.exports = {
 			};		
 			return {options:chartOptions,data:chartData}; 
 		});
+	},
+	processBarChart: function(dataPromise,regions,indicators,xAxis,yAxis){
+	    return dataPromise.then(function(data){
+	       var indicatorsIndex = _.indexBy(indicators, 'id');//;
+	       var regionsIndex = _.indexBy(regions, 'id');
+	       var datapoints = _(data)
+	       	.thru(util.unpivot)
+	       	.forEach(function (d) {
+	       		d.indicator = indicatorsIndex[d.indicator];
+	       		var temp = d.region;
+	       		d.region    = regionsIndex[d.region];
+	       	})
+	       	.groupBy(function (d) {
+	       		return d.indicator.id;
+	       	}).value();
+
+	        var regionMapping = {
+	        	'value'       : 'x',
+	        	'region.name' : 'y'
+	        };
+	        
+	        var chartOptions = {
+	          offset  : 'zero',
+	          xFormat : d3.format('%')
+	        };
+	        var chartData = _barData(datapoints, _.pluck(indicators,'id'), regionMapping, _getIndicator);
+	   		return {options:chartOptions,data:chartData}; 
+	    });
 	}
 };
 

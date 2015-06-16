@@ -3,4 +3,4 @@ module.exports = [{name:"LineChart",groupBy:true,chooseAxis:false,timeRadios:["a
 			{name:"ChoroplethMap",groupBy:false,chooseAxis:false,timeRadios:["allTime","pastYear","3Months","current"]},
 			{name:"ColumnChart",groupBy:true,chooseAxis:false,timeRadios:["allTime","pastYear","3Months","current"]},
 			{name:"ScatterChart",groupBy:false,chooseAxis:true,timeRadios:["allTime","pastYear","3Months","current"]},
-			{name:"BarChart",groupBy:true,chooseAxis:true,timeRadios:["allTime","pastYear","3Months","current"]}];
+			{name:"BarChart",groupBy:true,chooseAxis:false,timeRadios:["allTime","pastYear","3Months","current"]}];

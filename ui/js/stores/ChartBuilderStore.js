@@ -270,6 +270,15 @@ module.exports = Reflux.createStore({
 	    this.data.yAxis = value;
 	    this.getChartData();
 	},
+	onCreateChart:function(){
+		console.log('created!');
+		var data =  {
+			title:this.data.title,
+			description:this.data.description,
+			
+		};
+		api.create_dashboard(data);
+	},
 	aggregateRegions: function(){
 	    var regions;
 	    var regionSelected = this.data.regionSelected;

@@ -16,5 +16,6 @@ module.exports = Reflux.createActions([
         "addCampaignSelection",
         "addRegionSelection",
         "selectXAxis",
-        "selectYAxis"
+        "selectYAxis",
+        "createChart"
     ]);
