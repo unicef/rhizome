@@ -17,21 +17,29 @@ module.exports = React.createClass({
 
   getDefaultProps : function () {
     return {
-      loading : false
+      loading : true
     };
   },
 
   render : function () {
-    var loading;
+    var overlay;
 
-    if (this.props.loading) {
-      loading = (
-        <div className='overlay'>
+    if (this.props.loading || _.isEmpty(this.props.data)) {
+      var position = _.get(this.props, 'options.margin', {
+        top    : 0,
+        right  : 0,
+        bottom : 0,
+        left   : 0
+      });
+
+      var message = (this.props.loading) ?
+        (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>) :
+        (<span className='empty'>No data</span>);
+
+      overlay = (
+        <div style={position} className='overlay'>
           <div>
-            <div>
-              <i className='fa fa-spinner fa-spin'></i>
-              &ensp;Loading
-            </div>
+            <div>{message}</div>
           </div>
         </div>
       );
@@ -39,7 +47,7 @@ module.exports = React.createClass({
 
     return (
       <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
-        {loading}
+        {overlay}
       </div>
     );
   },

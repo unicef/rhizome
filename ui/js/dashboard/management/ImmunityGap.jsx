@@ -26,6 +26,8 @@ var ImmunityGap = React.createClass({
   },
 
   render : function () {
+    var loading = this.props.loading;
+
     var data = _(this.props.data)
       .each(function (d) {
         // Add a property to each datapoint indicating the fiscal quarter
@@ -86,6 +88,7 @@ var ImmunityGap = React.createClass({
         <h4>Under-Immunized Children</h4>
         <Chart type='ColumnChart'
           data={stack(data)}
+          loading={loading}
           options={{
             aspect  : 1.757,
             color   : color,

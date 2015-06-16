@@ -47,13 +47,14 @@ var Dashboard = React.createClass({
 
   render : function () {
     if (!this.state.loaded) {
+      var style = {
+        fontSize      : '2rem',
+      };
+
       return (
-        <div className='overlay'>
+        <div style={style} className='overlay'>
           <div>
-            <div>
-              <i className='fa fa-spinner fa-spin'></i>
-              &ensp;loading
-            </div>
+            <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
           </div>
         </div>
       );

@@ -4,7 +4,7 @@ var _    = require('lodash');
 var d3   = require('d3');
 
 var browser = require('util/browser');
-var label   = require('component/chart/renderer/label');
+var label   = require('chart/renderer/label');
 
 var defaults = {
 	margin    : {

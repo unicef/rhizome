@@ -16,11 +16,13 @@ var DonutChart = React.createClass({
   getDefaultProps : function () {
     return {
       label      : _.noop,
-      labelStyle : {}
+      labelStyle : {},
+      loading    : false
     };
   },
 
   render : function () {
+    var props = _.omit(this.props, 'label', 'labelStyle');
     var labelText = this.props.label(this.props.data);
     var label;
 
@@ -30,7 +32,7 @@ var DonutChart = React.createClass({
 
     return (
       <div className='labeled-donut'>
-        <Chart type='PieChart' data={this.props.data} options={this.props.options} />
+        <Chart type='PieChart' {...props} />
         {label}
       </div>
     );

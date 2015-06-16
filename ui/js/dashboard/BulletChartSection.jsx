@@ -115,6 +115,7 @@ module.exports = React.createClass({
     var showHelp = this.props.showHelp;
     var hideHelp = this.props.hideHelp;
     var data     = this.props.data;
+    var loading  = this.props.loading;
 
     var charts = _(this.props.indicators)
       .map(function (indicator) {
@@ -144,7 +145,7 @@ module.exports = React.createClass({
         return (
           <li key={'bullet-chart-' + indicator.id}>
             <h6 onMouseEnter={_.partial(showHelp, indicator)} onMouseLeave={hideHelp}>{title}</h6>
-            <Chart type='BulletChart' data={chartData} options={options} />
+            <Chart type='BulletChart' loading={loading} data={chartData} options={options} />
           </li>
         );
       })

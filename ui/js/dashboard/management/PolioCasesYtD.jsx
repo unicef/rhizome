@@ -15,6 +15,7 @@ module.exports = React.createClass({
   getDefaultProps : function () {
     return {
       data     : [],
+      loading  : false,
     };
   },
 
@@ -24,6 +25,7 @@ module.exports = React.createClass({
     var month      = '';
     var totalCases = null;
     var newCases   = null;
+    var loading    = this.props.loading;
 
     if (campaign) {
       var m = moment(campaign.start_date, 'YYYY-MM-DD');
@@ -83,6 +85,7 @@ module.exports = React.createClass({
           {newCaseLabel}
           <YtDChart id='polio-cases-ytd'
             data={this.props.data}
+            loading={loading}
             options={{
               color  : _.flow(_.property('name'), color),
               aspect : 1.757
