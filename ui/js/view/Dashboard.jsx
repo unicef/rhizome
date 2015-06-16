@@ -75,7 +75,6 @@ var Dashboard = React.createClass({
         _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
-
     if (!_.isEmpty(indicators)) {
       var regionsById = _.indexBy(this.state.regions, 'id')
 
@@ -92,30 +91,28 @@ var Dashboard = React.createClass({
           d.region = reg;
         }
       });
+    }
 
-      // Indicator index: maps indicator IDs to one or more sections containing
-      _.each(dashboardDef.charts, (chart, i) => {
-        var sectionName = _.get(chart, 'section', '__none__');
-        var chartName   = _.camelCase(_.get(chart, 'title', i));
-        var section     = _.get(data, sectionName, {});
-        var regionProp  = chart.region === 'subregions' ?
-          'region.parent_region_id' :
-          'region.id';
+    // Indicator index: maps indicator IDs to one or more sections containing
+    _.each(dashboardDef.charts, (chart, i) => {
+      var sectionName = _.get(chart, 'section', '__none__');
+      var chartName   = _.camelCase(_.get(chart, 'title', i));
+      var section     = _.get(data, sectionName, {});
+      var regionProp  = chart.region === 'subregions' ?
+        'region.parent_region_id' :
+        'region.id';
 
-        section[chartName] = _.filter(this.state.data,
-          d => _.includes(chart.indicators, d.indicator.id) &&
-            _.get(d, regionProp) === region.id
-        );
+      section[chartName] = _.filter(this.state.data,
+        d => _.includes(chart.indicators, d.indicator.id) &&
+          _.get(d, regionProp) === region.id
+      );
 
-        data[sectionName] = section;
-      });
+      data[sectionName] = section;
+    });
 
-      if (_.size(data) < 2) {
-        // Use a simple array if there is only one section
-        data = _(data).values().flatten().value();
-      }
-    } else {
-      data = [];
+    if (_.size(data) < 2) {
+      // Use a simple array if there is only one section
+      data = _(data).values().flatten().value();
     }
 
     switch (dashboardName) {
