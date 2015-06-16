@@ -18,7 +18,6 @@ var defaults = {
 	padding     : 0.1,
 	values      : _.property('values'),
 	x           : _.property('x'),
-	x0          : _.partial(_.get, _, 'x0', 0),
 	xFormat     : String,
 	xScale      : d3.scale.linear,
 	y           : _.property('y'),
@@ -85,7 +84,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			range = options.range(stacked);
 		} else {
 			range = d3.extent(_(stacked).map(options.values).flatten().value(), function (d) {
-				return options.x0(d) + options.x(d);
+				return d.x0 + d.x;
 			});
 
 			// Make sure we always have at least a 0 baseline
@@ -96,11 +95,11 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.domain(range)
 			.range([0, w]);
 
-		var x = _.flow(options.x0, xScale);
+		var x = _.flow(_.property('x0'), xScale);
 
 		var width = function (d) {
-			var x0 = options.x0(d);
-			var x  = options.x(d);
+			var x0 = d.x0;
+			var x  = d.x;
 
 			return xScale(x0 + x) - xScale(x0);
 		};
