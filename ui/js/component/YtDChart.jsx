@@ -62,6 +62,7 @@ module.exports = React.createClass({
         options : {
           domain  : _.constant([moment({ M : 0}).toDate(), moment({ M : 11 }).toDate()]),
           range   : _.constant([0, _(series).pluck('values').flatten().pluck('total').max()]),
+          x       : _.property('x'),
           xFormat : d3.time.format('%b'),
           y       : _.property('total')
         }

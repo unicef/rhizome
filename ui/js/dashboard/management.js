@@ -460,7 +460,6 @@ module.exports = {
 						React.createElement(Chart, {
 							type    : 'LineChart',
 							data    : _conversions(conversions, indicators),
-							id      : 'conversions',
 							options : {
 								domain  : _.constant([lower.toDate(), upper.toDate()]),
 								values  : _.property('values'),

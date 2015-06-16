@@ -33,9 +33,9 @@ static/odk_source
 polio/secrets.py
 *~
 **/#*#
-static/Polio.map.json
-static/lib.js
-static/lib.map.json
+static/*.js
+static/*.map
 *target_natreg.csv
 concat_csv.py
 source_data/ODK/odk_source
+webpack.config.dev.js
