@@ -7,7 +7,7 @@ var ColumnChart = require('./column');
 
 var browser = require('util/browser');
 var color   = require('util/color');
-var legend  = require('component/chart/renderer/legend');
+var legend  = require('chart/renderer/legend');
 
 var defaults = {
 	barHeight   : 14,

@@ -9,8 +9,8 @@ var browser   = require('util/browser');
 var colors    = require('colors');
 var data      = require('util/data');
 var format    = require('util/format');
-var hoverLine = require('component/chart/behavior/hover-line');
-var label     = require('component/chart/renderer/label');
+var hoverLine = require('chart/behavior/hover-line');
+var label     = require('chart/renderer/label');
 
 var DEFAULTS = {
 	margin  : {
