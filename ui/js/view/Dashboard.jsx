@@ -183,8 +183,8 @@ var Dashboard = React.createClass({
               </h1>
             </div>
 
-            <div className='medium-3 columns'>
-              <h2>
+            <div className='medium-4 columns'>
+              <h2 style={{ textAlign: 'right' }}>
                 <TitleMenu text={dashboardName}>
                   {dashboardItems}
                 </TitleMenu>

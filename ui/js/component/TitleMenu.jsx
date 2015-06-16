@@ -31,7 +31,7 @@ var TitleMenu = React.createClass({
   render : function () {
     return (
       <span>
-        {this.props.text}&ensp;
+        {this.props.text}&nbsp;
         <a className='menu-button fa-stack' onClick={this._toggleMenu}>
           <i className='fa fa-stack-2x fa-circle'></i>
           <i className={'fa fa-stack-1x ' + this.props.icon}></i>
