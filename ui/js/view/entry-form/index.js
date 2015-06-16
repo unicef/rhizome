@@ -195,7 +195,6 @@ module.exports = {
 												});
 											});
 			self.$data.noEditableSets = (self.$data.indicator_sets.length === 0) ? true : false;
-			console.log(self.$data.noEditableSets);
 		},
 
 		getFilteredIndicatorSet: function(indicatorSetId) {
