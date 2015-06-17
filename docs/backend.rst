@@ -241,35 +241,6 @@ application.
 - etl_job
 - audit_table
 
-Computed vs Stored Indicators
------------------------------
-
-Computed indicators are not stored in the database, they are calculated from
-other indicators in the database. For example, the "Percentage of Missed
-Children" indicator is computed by dividing the "Number of Missed Children"
-indicator by the "Number of Targetd Children" indicator.
-
-Computed indicators are fetched using the same ``/api/v1/datapoint/`` endpoint
-as stored indicators.
-
-The response from the ``/api/v1/indicator/`` endpoint for a computed indicator
-will include an additional property not included in a stored indicator:
-``computed_from``.
-
-.. code-block:: json
-
-  {
-    meta: {...},
-    objects:[{
-      ...
-      computed_from: [...]
-    }],
-    errors: {...}
-  }
-
-The ``computed_from`` property is an array of references to the indicators used
-to compute this one. The format of the references depends on the ``uri_format``
-parameter.
 
 Aggregation by Region
 ---------------------
