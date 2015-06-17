@@ -25,7 +25,7 @@ module.exports = {
 	}, {
 		'title': 'Reason for Missed',
 		'section': 'overview',
-		'indicators': [318,319,320,321,322]
+		'indicators': [318,319,320,321]
 	}, {
 		'title': 'Reason for Absence',
 		'section': 'overview',
@@ -33,7 +33,7 @@ module.exports = {
 	}, {
 		'title': 'Reason for Non-Compliance',
 		'section': 'overview',
-		'indicators': [328,329,330,331,332,333,334]
+		'indicators': [328,329,330,331,332,333,334,322]
 	}, {
 		'title': 'NC Resolved by',
 		'section': 'overview',
@@ -52,7 +52,7 @@ module.exports = {
 		'title': 'Missed Children',
 		'section': 'breakdown',
 		'region': 'subregions',
-		'indicators': [267,268,251,264,266]
+		'indicators': [267,268,251,264]
 	}, {
 		'title': 'Missed Children (Inside vs Outside)',
 		'section': 'breakdown',
@@ -67,7 +67,7 @@ module.exports = {
 		'title': 'Non-Compliance',
 		'section': 'breakdown',
 		'region': 'subregions',
-		'indicators': [252,255,258,261,253,256,259,254,257,260,263,262]
+		'indicators': [252,255,258,261,253,256,259,254,257,260,263,262,266]
 	}, {
 		'title': 'Non-Compliance Resolutions',
 		'section': 'breakdown',

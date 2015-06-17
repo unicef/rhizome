@@ -17,14 +17,17 @@ var PieChartList = React.createClass({
   getDefaultProps : function () {
     return {
       name      : _.property('indicator.short_name'),
-      emptyText : 'No data'
+      emptyText : 'No data',
+      loading   : false,
     };
   },
 
   render : function () {
+    var loading = this.props.loading;
+
     var pies = _.map(this.props.data, (d, i) => (
         <tr key={this.props.keyPrefix + '-' + i}>
-          <td><Chart type='PieChart' data={d} options={this.props.options} /></td>
+          <td><Chart type='PieChart' data={d} options={this.props.options} loading={loading} /></td>
           <td>{this.props.name(d)}</td>
         </tr>
       )

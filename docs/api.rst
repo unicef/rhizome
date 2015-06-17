@@ -147,7 +147,7 @@ POST RESPONSE
   }
 
 Office POST
--------------
+-----------
 
 ``api/v2/office``
 
@@ -174,7 +174,7 @@ POST RESPONSE
 
 
 MapTable POST
-------------------
+-------------
 
 ``POST api/v2/<region;indicator;campaign>_map;``
   - ``django model: CampaignMap; IndicatorMap, RegionMmap``
@@ -201,7 +201,7 @@ response
 
 
 User POST
--------------
+---------
 
 ``api/v2/user``
 
@@ -210,7 +210,7 @@ User POST
 
 
 Group POST
--------------
+----------
 
 ``api/v2/group/``
 
@@ -238,7 +238,7 @@ POST RESPONSE
 
 
 User to Group POST
--------------
+------------------
 
 ``api/v2/user_group``
 
@@ -268,7 +268,7 @@ POST RESPONSE
 
 
 Region Permission POST
--------------
+----------------------
 
 ``api/v2/region_permission``
 
@@ -297,7 +297,7 @@ POST RESPONSE
 
 
 DataPoint POST
------------
+--------------
 
 used by the /datapoints/entry page
 
@@ -320,10 +320,90 @@ Global Parameters and Query Filters
   passed to an endpoint, the first 10 records that match the query will not be
   returned, the response will begin with the 11th object
 
+  *note - For the /v2 api, the limit / offset is applied after the queryset is
+  returned.  Since most of the object lists are small this isnt a huge issue
+  , however it is to be of note when querying the region endpoint which returns
+  20k+ results*
+
 ``format``
   default: ``json``
 
   One of either ``json`` or ``csv`` that determines the format of the response
+
+``simple_evaluation``
+
+.. code-block:: json
+
+  /api/v2/indicator/?id=21
+  /api/v2/indicator/?slug=number-of-all-missed-children
+
+
+``__in``
+
+pass a list of values and retrieve one result for each match
+
+.. code-block:: json
+
+    /api/v2/indicator/?id__in=21,164
+
+
+``__gt; __lt; __gte; __lte``
+
+.. code-block:: json
+
+    /api/v2/campaign/?start_date__lte=2015-01-01
+    /api/v2/campaign/?start_date__gte=2015-01-01
+    /api/v2/office/?id__gt=2
+    /api/v2/office/?id__lt=2
+
+``__contains; __starts_with``
+
+filter resources with simple string functions.
+
+.. code-block:: json
+
+  /api/v2/indicator/?name__startswith=Number
+  /api/v2/indicator/?name__contains=polio
+
+
+* Note - These query parameters are taken directly from the Django ORM.  For
+  more on how these work see here:*
+    https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
+
+v1 / v2
++++++++
+
+The v1 API is only to be used by the datapoint, datapointentry, and geo
+endpoints.  The functionality of these endpoints is very much customized to
+the needs of our application, while the v2 endpoints are much more abstract and
+easy to extend as new models needed to be added to the system and the API.
+
+The metadata endpoints (/v1/campaign, v2/indicator etc) for v1 are retired and
+v2 shoudl be used to access all data with the exception of the three endpoints
+mentioned above.
+
+The main difference between the v2 and the v1 API is that the v2 api applies
+permissions to the result set.  The api itself is closely related to the django
+ORM and because of which, all of the filters that are available to django are
+available in the url.
+
+Each resource has attached to it a model ( Region, Indicator, Campaign ) etc,
+and an optional permission function.  The permission function takes the Model
+type and the list of IDs that were the result of the initial filter.
+
+The flow of the /v2 api is as follows:
+
+  1. Parse the query parameters and query the database using this dictionary as the filter kwargs for that model.
+      - i.e. if the url is /region/?id=12907, the Api translates that into:
+        results = Region.objects.filter(**{'id':12907})
+  2. Using the primary keys of the above result, apply the permission_function
+     for that resource.
+      - If there is no permission function applied, then return all the data from step 1.
+      - In some instances the "permission_function" is not just used to filter the result set based on the user permission, it is used to modify the queryset in some way.
+      - If the permissions function is called for, the list of IDs is passed as well to make sure that the result is the intersection of the query parameters, and the data that user is authorized to see.
+  3. Serialize the data.
+      - Depending on the data type, the model and the requests from the FE, the
+        system cleans and returns data to the api for consuption.
 
 
 ``/api/v1/datapoint/``
@@ -358,22 +438,10 @@ Parameters
   A comma-separated list of campaign IDs. Only datapoints attached to one of the
   listed campaigns will be returned
 
-``no_pivot``
-  default: ``false``
-
   Return only one datapoint per object. Instead of collecting all requested
   indicators into a single object, return one object per region, campaign,
   indicator set.
 
-``uri_format``
-  default: ``id``
-
-  Configure how references to other objects are provided. Valid values are:
-
-  - ``id``
-  - ``slug``
-  - ``name``
-  - ``uri``
 
 Response Format
 ~~~~~~~~~~~~~~~
@@ -404,25 +472,51 @@ Response Format
   }
 
 ``region``
-  The region for this set of data. Region will be the ID, slug, name, or URI for
-  the region depending on the value of the ``uri_format`` parameter
+  The region for this set of data. Region will be the ID of the resource.
 
 ``campaign``
-  The campaign for this set of data. Campaign will be the ID, slug, name, or URI
-  for the campaign depending on the value of the ``uri_format`` parameter
+  The campaign for this set of data. Campaign will be the ID of the resource.
 
 ``indicators``
   An array of the values for the requested indicators. This will always be an
   array, even if the ``no_pivot`` parameter is passed
 
-  ``indicator``
-    The ID, slug, name, or URI (depending on the value of ``uri_format``) of the
-    indicator represented by the object
+``indicator``
+  The ID of the indicator represented by the object
 
-  ``value``
-    The value of the indicator
+``value``
+  The value of the indicator
 
-``/api/v1/campaign/``
+``Filter By Date of Campaign``
+
+  The API will let you filter a campaign, or a specific campaign to query on, but
+  you also have the option to pass in the start and end date.
+
+  If you pass only start date, you will receive datapoints after (and including)
+  the date passed in.
+
+  If you pass only end date, you will receive datapoints befre (and including) the
+  date passed in.
+
+  If you pass in both start and end, you will get the data relevant to the
+  campaigns in between the two dates.
+
+  Please Pass the date format as 'YYYY-MM-DD'
+
+.. code-block:: python
+   :linenos:
+
+    http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
+
+Custom Serialization
+--------------------
+
+This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
+
+  .. autoclass:: datapoints.api.serialize.CustomSerializer
+     :members:
+
+``/api/v2/campaign/``
 +++++++++++++++++++++
 
 Return a list of campaign definitions.
@@ -454,7 +548,7 @@ Response Format
   an ID (``Number``), name (``String``), slug (``String``), or URI (``String``)
   for the office depending on the value of the ``uri_format`` parameter
 
-``/api/v1/indicator/``
+``/api/v2/indicator/``
 ++++++++++++++++++++++
 
 Return a list of indicator definitions.
@@ -481,7 +575,7 @@ Response Format
     errors: {...}
   }
 
-``/api/v1/region/``
+``/api/v2/region/``
 +++++++++++++++++++
 
 Return a list of region definitions.
@@ -516,7 +610,7 @@ Properties with type ``<reference>`` can contain an ID (``Number``), name, slug,
 or URI (all of type ``String``) depending on the value of the ``uri_format``
 parameter.
 
-``/api/v1/office/``
+``/api/v2/office/``
 +++++++++++++++++++
 
 Return a list of office definitions. Offices are administrative concepts that
@@ -544,89 +638,6 @@ Response Format
   }
 
 
-
-Filtering
----------
-
-For the Datapoint Resource, the following filtering methods are available
-
-These numeric filters are  available on the ID, value, and created_at columns.
-
-Greater Than
-++++++++++++
-
-.. code-block:: python
-   :linenos:
-
-    http://polio.seedscientific.com/api/v1/datapoint/format=json&id__gt=9
-
-Less Than
-+++++++++
-
-.. code-block:: python
-   :linenos:
-
-    http://polio.seedscientific.com/api/v1/datapoint/format=json&id__lt=9
-
-Greater Than or Equal to
-++++++++++++++++++++++++
-
-.. code-block:: python
-   :linenos:
-
-    http://polio.seedscientific.com/api/v1/datapoint/format=json&id__gte=9
-
-Less Than or Equal to
-+++++++++++++++++++++
-
-.. code-block:: python
-   :linenos:
-
-    http://polio.seedscientific.com/api/v1/datapoint/format=json&id__lte=9
-
-Range
-+++++
-
-.. code-block:: python
-   :linenos:
-
-    http://polio.seedscientific.com/api/v1/indicator/format=json&id__id__range=9,12
-
-
-Multiple Objects
-++++++++++++++++
-
-Lets say that i want to see data 5 regions (14589,15863,17562,17940)
-Simply use the "in" operator on any of the columns avaliable for this resource (indicator,campaign, etc)
-
-.. code-block:: python
-   :linenos:
-
-    localhost:8000/api/v1/datapoint/?region__in=14589,15863,17562,17940
-
-
-Filter By Date of Campaign
-++++++++++++++++++++++++++
-
-The API will let you filter a campaign, or a specific campaign to query on, but
-you also have the option to pass in the start and end date.
-
-If you pass only start date, you will receive datapoints after (and including)
-the date passed in.
-
-If you pass only end date, you will receive datapoints befre (and including) the
-date passed in.
-
-If you pass in both start and end, you will get the data relevant to the
-campaigns in between the two dates.
-
-Please Pass the date format as 'YYYY-MM-DD'
-
-.. code-block:: python
-   :linenos:
-
-    http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
-
 permissions
 -----------
 
@@ -642,12 +653,3 @@ for instance:
   }
 
 permissions are largely based around the *fn_get_authorized_regions_by_user* stored procedure which uses a recursive CTE and the *region_permission* table to find the regions a particular user is allowed to read or write to.
-
-
-Custom Serialization
---------------------
-
-This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
-
-  .. autoclass:: datapoints.api.serialize.CustomSerializer
-     :members:

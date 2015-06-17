@@ -50,7 +50,7 @@ function _marker(data, campaign) {
 }
 
 function _targetRanges(indicator) {
-  var targets = _(indicator.bound_json)
+  var targets = _(_.get(indicator, 'bound_json'))
     .map(function (bound) {
       var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity;
       var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
@@ -115,9 +115,10 @@ module.exports = React.createClass({
     var showHelp = this.props.showHelp;
     var hideHelp = this.props.hideHelp;
     var data     = this.props.data;
+    var loading  = this.props.loading;
 
     var charts = _(this.props.indicators)
-      .map(function (indicator) {
+      .map(function (indicator, i) {
         var targets = _targetRanges(indicator);
 
         var options = {
@@ -133,7 +134,7 @@ module.exports = React.createClass({
           targets    : targets[0]
         };
 
-        var title = indicator.short_name
+        var title = _.get(indicator, 'short_name');
 
         var chartData = _(data)
           .filter(d => d.indicator.id === indicator.id)
@@ -142,9 +143,9 @@ module.exports = React.createClass({
           .value();
 
         return (
-          <li key={'bullet-chart-' + indicator.id}>
+          <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
             <h6 onMouseEnter={_.partial(showHelp, indicator)} onMouseLeave={hideHelp}>{title}</h6>
-            <Chart type='BulletChart' data={chartData} options={options} />
+            <Chart type='BulletChart' loading={loading} data={chartData} options={options} />
           </li>
         );
       })

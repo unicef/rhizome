@@ -14,6 +14,7 @@ var NavigationStore = Reflux.createStore({
 
 		this.campaigns  = [];
 		this.dashboards = [];
+		this.customDashboards = null;
 		this.uploads    = [];
 
 		var campaigns = api.campaign()
@@ -32,6 +33,8 @@ var NavigationStore = Reflux.createStore({
 
 		var dashboards = api.dashboards();
 
+		var customDashboards = api.dashboardsCustom();
+
 		var documents = api.document().then(this.loadDocuments);
 
 		var offices = api.office().then(function (response) {
@@ -41,7 +44,7 @@ var NavigationStore = Reflux.createStore({
 		this.permissions = [];
 		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, offices, dashboards, permissions])
+		Promise.all([campaigns, regions, offices, permissions, dashboards, customDashboards])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -59,14 +62,14 @@ var NavigationStore = Reflux.createStore({
 		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
-	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, customDashboards) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
 		// parse permissions
-		this.permissions = permissions.objects.map(function(p) { return p.auth_code; });
+		this.permissions = _.map(permissions.objects, function(p) { return p.auth_code; });
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
@@ -105,6 +108,13 @@ var NavigationStore = Reflux.createStore({
 				return _.assign({}, d, { href : '/datapoints/' + _.kebabCase(d.title) + path });
 			})
 			.reject(_.isNull)
+			.value();
+
+		this.customDashboards = _(customDashboards.objects)
+			.map(function(d) {
+				return d;
+			})
+			.sortBy('title')
 			.value();
 
 		this.campaigns = campaigns
@@ -147,6 +157,7 @@ var NavigationStore = Reflux.createStore({
 			uploads : uploads
 		});
 	}
+
 });
 
 module.exports = NavigationStore;

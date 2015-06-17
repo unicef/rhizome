@@ -4,6 +4,7 @@ var React = require('react/addons');
 var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
+var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
 
@@ -59,6 +60,9 @@ module.exports = {
 	},
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
+	},
+	DashboardList: function (el) {
+		React.render(React.createElement(DashboardList), el);
 	},
 	DashboardBuilder: function (el,dashboard_id) {
 	    var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');

@@ -1,6 +1,7 @@
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
+# from tastypie.cache import SimpleCache
 from tastypie.resources import Resource
 from django.contrib.auth.models import User
 
@@ -28,8 +29,6 @@ class RegionPolygonResource(BaseNonModelResource):
         filtering = {
             "region_id": ALL,
         }
-
-
 
     def get_object_list(self,request):
         '''

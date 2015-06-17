@@ -18,6 +18,7 @@ var Access = React.createClass({
   render : function () {
     var data     = this.props.data;
     var campaign = this.props.campaign;
+    var loading  = this.props.loading;
 
     var inaccessible = _(data.numberOfInaccessibleChildren)
       .sortBy(_.method('campaign.start_date.getTime'))
@@ -71,24 +72,30 @@ var Access = React.createClass({
         <h3>Access Challenged Districts</h3>
         <h6>Number of Inaccessible Children</h6>
 
-        <Chart type='LineChart' data={inaccessible} options={lineChartOptions} />
+        <Chart type='LineChart' data={inaccessible}
+          loading={loading}
+          options={lineChartOptions} />
 
         <div className='row'>
           <div className='medium-3 columns'>
             <h6>Districts with Access Plan</h6>
-            <DonutChart data={plans} label={planLabel} options={{
-              innerRadius : 0.6,
-              domain      : _.constant([0, 1])
-            }} />
+            <DonutChart data={plans} label={planLabel}
+              loading={loading}
+              options={{
+                innerRadius : 0.6,
+                domain      : _.constant([0, 1])
+              }} />
           </div>
 
           <div className='accessibility medium-4 columns'>
             <h6>Inaccessibiity Breakdown</h6>
             <PieChartList keyPrefix='inaccessibility-breakdown'
+              loading={loading}
               data={reasons}
               name={pieChartName}
               options={{
-                domain : _.constant([0, 1])
+                domain : _.constant([0, 1]),
+                size   : 16
               }} />
           </div>
         </div>

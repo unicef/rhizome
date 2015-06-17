@@ -15,11 +15,14 @@ module.exports = React.createClass({
 
   getDefaultProps : function () {
     return {
-      data : []
+      data    : [],
+      loading : false
     };
   },
 
   render : function () {
+    var loading = this.props.loading;
+
     var series = _(this.props.data)
       .groupBy(_.method('campaign.start_date.getFullYear'))
       .map(function (values, year) {

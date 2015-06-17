@@ -2,8 +2,14 @@
 
 var _  = require('lodash');
 var d3 = require('d3');
+var React = require('react');
+var Layer = require('react-layer');
+
+var Tooltip = require('component/Tooltip.jsx');
 
 var browser = require('util/browser');
+
+var legend = require('chart/renderer/legend');
 
 var DEFAULTS = {
 	aspect : 1,
@@ -14,10 +20,9 @@ var DEFAULTS = {
 		bottom : 0,
 		left   : 0
 	},
-	onClick     : _.noop,
-	onMouseOver : _.noop,
-	onMouseOut  : _.noop,
-	value       : _.property('properties.value')
+  onClick : _.noop,
+  value   : _.property('properties.value'),
+  format  : d3.format('n')
 };
 
 function _calculateBounds(features) {
@@ -77,6 +82,7 @@ _.extend(ChoroplethMap.prototype, {
 			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 		g.append('g').attr('class', 'data');
+    g.append('g').attr('class', 'legend');
 
 		this.update(data);
 	},
@@ -91,15 +97,15 @@ _.extend(ChoroplethMap.prototype, {
 		var svg = this._svg;
 		var g   = svg.select('.data');
 
-		var features = _.isEmpty(data) ? options.border : data;
+		var features = _.reject(data, 'properties.isBorder');
 
 		var bounds = _calculateBounds(features);
 		var center = _calculateCenter(bounds);
 
 		var projection = d3.geo.conicEqualArea()
 			.parallels([bounds[1][1], bounds[0][1]])
-			.rotate([-center[0], 0])        // Rotate the globe so that the country is centered horizontally
-			.center([0, center[1]])        // Set the center of the projection so that the polygon is moved vertically into the center of the viewport
+			.rotate([-center[0], 0])   // Rotate the globe so that the country is centered horizontally
+			.center([0, center[1]])    // Set the center of the projection so that the polygon is moved vertically into the center of the viewport
 			.translate([w / 2, h / 2]) // Translate to the center of the viewport
 			.scale(1);
 
@@ -114,12 +120,19 @@ _.extend(ChoroplethMap.prototype, {
 
 		if (!_.isArray(domain)) {
 			domain    = d3.extent(features, options.value);
-			domain[0] = d3.min(domain[0], 0);
+			domain[0] = Math.min(domain[0], 0);
 		}
 
-		var quantize = d3.scale.quantize()
+		var colorScale = d3.scale.quantize()
 			.domain(domain)
-			.range(d3.range(1, 7));
+			.range([
+        '#FEE7DC',
+        '#FABAA2',
+        '#F58667',
+        '#D95449',
+        '#AF373E',
+        '#2D2525'
+      ]);
 
 		var region = g.selectAll('.region')
 			.data(features, function (d, i) { return _.get(d, 'properties.region_id', i); });
@@ -134,24 +147,68 @@ _.extend(ChoroplethMap.prototype, {
 
 					if (_.isFinite(v)) {
 						classNames.push('clickable');
-						classNames.push('q-' + quantize(v));
 					}
 
 					return classNames.join(' ');
 				}
 			})
+      .style('fill', function (d) {
+        var v = options.value(d);
+        return _.isFinite(v) ? colorScale(v) : '#fff';
+      })
 			.on('click', function (d) {
-				options.onClick(d, this);
+				options.onClick(_.get(d, 'properties.region_id'));
 			})
-			.on('mouseover', function (d) {
-				options.onMouseOver(d, this);
-			})
-			.on('mouseout', function (d) {
-				options.onMouseOut(d, this);
-			});
+			.on('mousemove', this._onMouseMove)
+			.on('mouseout', this._onMouseOut);
 
 		region.exit().remove();
-	}
+
+    // Generate ticks for the legend by inverting output range of the quantize
+    // scale, mapping the format function to the values, and joining them
+    var ticks = _.map(
+      colorScale.range(),
+      c => _.map(colorScale.invertExtent(c), options.format).join('—')
+    );
+
+    svg.select('.legend')
+      .call(legend()
+        .scale(d3.scale.ordinal()
+          .domain(ticks)
+          .range(colorScale.range()))
+      )
+      .attr('transform', function () {
+        var bbox = this.getBoundingClientRect();
+        return 'translate(' + (w - bbox.width) + ',' + (h - bbox.height) + ')';
+      });
+	},
+
+  _onMouseMove : function (d) {
+    var evt = d3.event;
+
+    var render = function () {
+      return React.createElement(
+        Tooltip,
+        { left : evt.pageX + 2, top : evt.pageY + 2 },
+        d.properties.name
+      );
+    };
+
+    if (this.layer) {
+      this.layer._render = render;
+    } else {
+      this.layer = new Layer(document.body, render);
+    }
+
+    this.layer.render();
+  },
+
+  _onMouseOut : function () {
+    if (this.layer) {
+      this.layer.destroy();
+      this.layer = null;
+    }
+  }
 });
 
 module.exports = ChoroplethMap;

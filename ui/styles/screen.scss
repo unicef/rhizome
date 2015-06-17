@@ -111,6 +111,11 @@ p {
 	margin-bottom: 0;
 }
 
+.pageWelcome {
+	color: #999;
+	margin: 10px 0 20px 0;
+}
+
 body.home nav .home,
 body.dashboard nav .dashboard,
 body.data nav .data,
@@ -399,8 +404,10 @@ button,
 	background-color: $oil;
 
 	form {
-    max-width: 300px;
-    margin: 100pt auto;
+		background: url('/static/img/RhizomeLogoWhOnBk-md.png') no-repeat;
+		padding-top: 170px;
+	    max-width: 300px;
+	    margin: 70pt auto;
 
 		label {
 			color: $white;
@@ -630,3 +637,36 @@ ul {
 		}
 	}
 }
+
+.overlay {
+	background-color : transparentize($ghost, 0.3);
+	color            : $aluminum;
+	opacity          : 1;
+	text-align       : center;
+
+	position         : absolute;
+	top              : 0;
+	left             : 0;
+	bottom           : 0;
+	right            : 0;
+	z-index          : 9999;
+
+	& > div {
+		display: table;
+		width: 100%;
+		height: 100%;
+
+		& > div {
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+
+	.empty {
+		color            : rgb(175, 55, 62);
+		padding          : 0;
+		background-color : transparent;
+	}
+}
+
+

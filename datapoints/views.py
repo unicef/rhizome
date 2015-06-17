@@ -3,7 +3,6 @@ from pprint import pprint
 import datetime
 from datetime import date
 
-import gspread
 import re
 import itertools
 from django.shortcuts import render_to_response
@@ -13,6 +12,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
+from django.views.decorators.cache import cache_control as django_cache_control
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 
@@ -54,6 +54,11 @@ def data_entry(request):
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
 
+def dashboard_list(request):
+
+    return render_to_response('dashboard-builder/list.html',
+        context_instance=RequestContext(request))
+
 def dashboard_builder(request,dashboard_id):
 
     return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id },
@@ -78,12 +83,6 @@ class DashBoardView(IndexView):
     #################
     ### CAMPAIGNS ###
     #################
-
-class CampaignIndexView(IndexView):
-
-    model = Campaign
-    template_name = 'campaigns/index.html'
-    context_object_name = 'top_campaigns'
 
 
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
@@ -110,15 +109,6 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ##################
 
 
-class IndicatorIndexView(IndexView):
-
-    model = Indicator
-    template_name = 'indicators/index.html'
-    context_object_name = 'top_indicators'
-
-    paginate_by = 10000
-
-
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
@@ -138,11 +128,6 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ### REGIONS ###
     ###############
 
-class RegionIndexView(IndexView):
-
-    model = Region
-    template_name = 'regions/index.html'
-    context_object_name = 'top_regions'
 
 class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
@@ -151,7 +136,6 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
     success_url=reverse_lazy('datapoints:region_index')
-
 
     def form_valid(self, form):
         # this inserts into the changed_by field with  the user who made the insert
@@ -179,29 +163,6 @@ class UFAdminView(IndexView):
     template_name = 'ufadmin/index.html'
     context_object_name = 'uf_admin'
 
-
-    ##########################
-    ## PERMISSION CREATION ###
-    ##########################
-
-def view_user_permissions(request):
-
-    # user_id = request.user.id
-
-    # region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
-    region_permissions = RegionPermission.objects.all()
-
-    return render_to_response('xtra/user_permissions.html',\
-        {'region_permissions':region_permissions},\
-        context_instance=RequestContext(request))
-
-
-class RegionPermissionCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model=RegionPermission
-    template_name='xtra/create_region_permissions.html'
-    form_class = RegionPermissionForm
-    success_url=reverse_lazy('datapoints:view_user_permissions')
 
 
     ##############################
@@ -351,66 +312,6 @@ def parse_url_args(request,keys):
     return request_meta
 
 
-def api_campaign(request):
-
-    meta_keys = ['id','region__in','start_date','limit','offset']
-
-    request_meta = parse_url_args(request,meta_keys)
-
-    if request_meta['region__in']:
-
-        c_raw = Campaign.objects.raw("""
-            SELECT * FROM campaign WHERE id in (
-                SELECT DISTINCT campaign_id FROM datapoint_with_computed
-                WHERE region_id IN (%s)
-            )
-            """,[request_meta['region__in']])
-
-    elif request_meta['id']:
-
-        c_raw  = Campaign.objects.raw("""
-            SELECT * FROM campaign c
-            WHERE id = %s
-            ;""",[request_meta['id'],request_meta['limit']\
-            ,request_meta['offset']])
-
-    else:
-
-        c_raw  = Campaign.objects.raw("""SELECT * FROM campaign c ORDER BY \
-            c.start_date desc;""")
-
-    objects = [{'id': c.id, 'slug':c.slug, 'office_id':c.office_id, \
-        'start_date': str(c.start_date), 'end_date': str(c.end_date )} \
-            for c in c_raw]
-
-    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(objects)}
-
-    response_data = {'objects':objects, 'meta':meta}
-
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
-
-
-def api_region(request):
-
-    meta_keys = ['limit','offset']
-    request_meta = parse_url_args(request,meta_keys)
-
-    r_raw = Campaign.objects.raw("SELECT * FROM region")
-
-    objects = [{'id': r.id,'name': r.name, 'office_id':r.office_id, 'parent_region_id':\
-        r.parent_region_id, 'region_type_id': r.region_type_id} for r in r_raw]
-
-    meta = { 'limit': request_meta['limit'],'offset': request_meta['offset'],\
-        'total_count': len(objects)}
-
-    response_data = {'objects':objects, 'meta':meta}
-
-    return HttpResponse(json.dumps(response_data)\
-        , content_type="application/json")
-
-
 def refresh_metadata(request):
 
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
@@ -471,6 +372,8 @@ def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
 
+
+@django_cache_control(must_revalidate=True, max_age=3600)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:

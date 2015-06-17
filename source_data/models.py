@@ -210,6 +210,9 @@ class CampaignMap(models.Model):
         db_table = 'campaign_map'
 
 class DocumentDetail(models.Model):
+    '''
+    The /
+    '''
 
     document = models.ForeignKey(Document)
     db_model = models.CharField(max_length=255)
@@ -226,6 +229,17 @@ class DocumentDetail(models.Model):
 ## ODK ##
 
 class ODKForm(models.Model):
+    '''
+    This table holds all of the ODK forms that the system processes.  If you
+    want a new form to be brought in via the ODK ingest, simply insert a new row
+    here with the exact name of a form that you would like ingested.  The
+    get_odk_forms_to_process api call queries this table and returns to the ODK
+    ingest a list of strings taken from the form_name column.
+
+    As all odk forms are also documents, i.e. each document has a cooresponding
+    URL that allows users to map and sync any new data associated with these
+    documents.
+    '''
 
     document = models.ForeignKey(Document,null=True)
     last_processed = models.DateTimeField(null=True)
@@ -238,6 +252,16 @@ class ODKForm(models.Model):
         db_table = 'odk_form'
 
 class VCMSettlement(models.Model):
+    '''
+    This is the only ODK form that gets its own model.  The reason is here
+    we are able to store lat/lon/VCM information that we can use to enrich
+    the data from the traditional ODK forms ( vcm_register, vcm_summary etc ).
+
+    Step one of the ODK ingestion process is to pull any new region codes from
+    the vcmsettlement form, dump them into this table, then create new source
+    regions when applicable.
+    '''
+
 
     submissiondate = models.CharField(max_length=255)
     deviceid = models.CharField(max_length=255)

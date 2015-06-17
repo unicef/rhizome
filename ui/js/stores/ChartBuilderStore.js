@@ -131,6 +131,13 @@ function formatTimeRange (val){
 	}
 }
 	
+var chartOptions = {
+		domain  : null,
+		values  : _.property('values'),
+		x       : _.property('campaign.start_date'),
+		y       : _.property('value'),
+		yFormat : d3.format('%')
+	};
 module.exports = Reflux.createStore({
 	data: {
 		regionList:[],
@@ -160,7 +167,7 @@ module.exports = Reflux.createStore({
 		chartTypes:require('./chartBuilder/chartDefinitions'),
 		selectedChart:0,
 		chartData:[],
-	    chartOptions : {},
+	    chartOptions : chartOptions,
 		canDisplayChart:canDisplayChart,
 		canDisplayChartReason:canDisplayChartReason,
 		xAxis:0,
@@ -415,12 +422,13 @@ module.exports = Reflux.createStore({
        
        
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;
           self.data.chartData = chart.data;
           self.trigger(self.data);
         });
-     }
+       
+	}
 });

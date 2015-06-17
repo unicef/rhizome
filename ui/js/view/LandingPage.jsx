@@ -7,7 +7,38 @@ var Reflux = require('reflux/src');
 
 var NavigationStore = require('stores/NavigationStore');
 
-function _dashboardSelect(dashboards) {
+var DashboardStore = require('stores/DashboardStore');
+
+function _loadCampaigns(campaigns, offices) {
+  var recent = _(campaigns)
+    .each(function (campaign, i) {
+      campaign.office = offices[campaign.office_id];
+    })
+    .sortBy('start_date')
+    .reverse()
+    .value();
+
+  // jshint validthis: true
+  this.setState({ campaigns : recent });
+}
+
+function _loadDocuments(documents) {
+  var recent = _.take(documents, 5);
+
+  this.setState({ uploads : recent });
+}
+
+function _includeDashboard(dashboard, office) {
+  var slug    = dashboard.slug;
+  var offices = dashboard.offices;
+
+  return (slug !== 'management-dashboard' &&
+    slug !== 'district' &&
+    (_.isEmpty(offices) || offices.indexOf(office) > -1)
+  );
+}
+
+function _dashboardSelect(dashboards, campaign) {
   if (_.isEmpty(dashboards)) {
     return null;
   }
@@ -54,13 +85,12 @@ function _campaignRow(campaign, i) {
 }
 
 function _uploadRow(upload, i) {
-  var status = upload.is_processed === 'False' ? 'INCOMPLETE' : 'COMPLETE';
   return (
     <tr className={i % 2 === 0 ? 'odd' : 'even'} key={upload.id}>
       <td>
-        <a href={'/source_data/field_mapping/' + upload.id}>{upload.docfile}</a>
+        <a href={'/source_data/field_mapping/' + upload.id}>{upload.title}</a>
       </td>
-      <td>{status}</td>
+      <td>{upload.status}</td>
     </tr>
   );
 }
@@ -85,12 +115,12 @@ module.exports = React.createClass({
   render : function () {
     var campaigns;
     if (_.isFinite(this.state.visibleCampaigns)) {
-       campaigns = _(this.state.campaigns).
-                      take(this.state.visibleCampaigns)
+       campaigns = _(this.state.campaigns)
+                      .take(this.state.visibleCampaigns)
                       .map(_campaignRow)
                       .value();
     } else {
-       campaigns = this.state.campaigns.map(_campaignRow);
+       campaigns = _(this.state.campaigns).map(_campaignRow).value();
     }
 
     // data entry section, according to permissions
@@ -115,8 +145,11 @@ module.exports = React.createClass({
       }
 
       var uploads = <tr><td>No uploads yet.</td></tr>;
-      if (this.state.uploads.length > 0) {
-        uploads = this.state.uploads.map(_uploadRow);
+      if (this.state.uploads && this.state.uploads.length > 0) {
+        uploads = _(this.state.uploads)
+                      .take(this.state.visibleUploads)
+                      .map(_uploadRow)
+                      .value();
       }
 
       var dataEntry = (
@@ -151,7 +184,8 @@ module.exports = React.createClass({
 
           <div className="row">
             <div className="small-12 columns">
-              <p>
+              
+              <p className="pageWelcome">
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
               </p>
 
@@ -174,7 +208,8 @@ module.exports = React.createClass({
         </div>
 
         <div className="medium-3 columns">
-          <h2>About</h2>
+          <img src="/static/img/RhizomeLogoBkOnWh.png" alt="Rhizome Logo" width="100%" />
+          <h2>About RhizomeDB</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat mi
             nec odio egestas bibendum. Praesent tincidunt et neque in vestibulum.
@@ -183,6 +218,7 @@ module.exports = React.createClass({
             </a>
           </p>
         </div>
+        
       </div>
     );
   }

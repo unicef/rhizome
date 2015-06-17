@@ -8,6 +8,7 @@ var _        = require('lodash');
 var request  = require('superagent');
 var prefix   = require('superagent-prefix')(BASE_URL);
 
+var treeify = require('../data/transform/treeify');
 var campaign = require('../data/model/campaign');
 
 function urlencode(query) {
@@ -123,10 +124,68 @@ function datapoint(q) {
 
 	});
 }
-
 datapoint.toString = function (query, version) {
 	return endPoint('/datapoint/').toString(query, version);
 };
+
+function indicatorsTree(q) {
+	var fetch1 = endPoint('/indicator/', 'get', 2);
+	var fetch2 = endPoint('/indicator_tag', 'get', 2);
+	var makeTagId = function(tId) { return 'tag-'+tId; };
+	return new Promise(function (fulfill, reject) {
+
+		fetch1(q).then(function (indicators) {
+			fetch2().then(function(tags) {
+				var tags_map = {};
+				_.each(tags.objects, function(t) {
+							tags_map[t.id] = t;
+							t.id = makeTagId(t.id);
+							t.noValue = true;
+							t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null;
+							t.children = [];
+							t.title = t.tag_name;
+							t.value = t.id;
+						});
+
+				// add 'Other Indicators' tag to collect any indicators without tags
+				var otherTag = {
+					'id': 0,
+					'value': makeTagId(0),
+					'noValue': true,
+					'title': 'Other Indicators',
+					'children': []
+				};
+				
+				_.each(indicators.objects, function(i) {
+						i.title = i.name;
+						i.value = i.id;
+						if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
+							otherTag.children.push(i);
+						}
+						else if (_.isArray(i.tag_json)) {
+							_.each(i.tag_json, function(tId) {
+								tags_map[tId].children.push(i);
+							});
+						}
+					});
+
+				// add other tag?
+				if (otherTag.children.length > 0) {
+					tags.objects.push(otherTag);
+				}
+
+				// sort indicators with each tag
+				_.each(tags.objects, function(t) {
+					t.children = _.sortBy(t.children, 'title');
+				});
+
+				tags.objects = treeify(tags.objects, 'id');
+				tags.flat = indicators.objects;
+				fulfill(tags);
+			});
+		}, reject);
+	});
+}	
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -134,12 +193,14 @@ module.exports = {
 		// FIXME: temporary mock data
 		return Promise.resolve({ objects : [] });
 	},
+	dashboardsCustom      : endPoint('/custom_dashboard/', 'get', 2),
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),
 	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
+	indicatorsTree		  : indicatorsTree,
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
 	document_review       : endPoint('/document_review/','get',2),

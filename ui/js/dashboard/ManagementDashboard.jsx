@@ -30,7 +30,7 @@ var ManagementDashboard = React.createClass({
   render : function () {
     var campaign   = this.props.campaign;
     var data       = this.props.data;
-    var indicators = this.props.indicators;
+    var indicators = _.indexBy(this.props.indicators, 'id');
     var loading    = this.props.loading;
     var region     = _.get(this.props, 'region.name', '');
 
