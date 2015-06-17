@@ -9,6 +9,8 @@ var Tooltip = require('component/Tooltip.jsx');
 
 var browser = require('util/browser');
 
+var legend = require('chart/renderer/legend');
+
 var DEFAULTS = {
 	aspect : 1,
 	domain : _.noop,
@@ -18,8 +20,9 @@ var DEFAULTS = {
 		bottom : 0,
 		left   : 0
 	},
-	onClick     : _.noop,
-	value       : _.property('properties.value')
+  onClick : _.noop,
+  value   : _.property('properties.value'),
+  format  : d3.format('n')
 };
 
 function _calculateBounds(features) {
@@ -79,6 +82,7 @@ _.extend(ChoroplethMap.prototype, {
 			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 		g.append('g').attr('class', 'data');
+    g.append('g').attr('class', 'legend');
 
 		this.update(data);
 	},
@@ -119,9 +123,16 @@ _.extend(ChoroplethMap.prototype, {
 			domain[0] = d3.min(domain[0], 0);
 		}
 
-		var quantize = d3.scale.quantize()
+		var colorScale = d3.scale.quantize()
 			.domain(domain)
-			.range(d3.range(1, 7));
+			.range([
+        '#FEE7DC',
+        '#FABAA2',
+        '#F58667',
+        '#D95449',
+        '#AF373E',
+        '#2D2525'
+      ]);
 
 		var region = g.selectAll('.region')
 			.data(features, function (d, i) { return _.get(d, 'properties.region_id', i); });
@@ -136,12 +147,15 @@ _.extend(ChoroplethMap.prototype, {
 
 					if (_.isFinite(v)) {
 						classNames.push('clickable');
-						classNames.push('q-' + quantize(v));
 					}
 
 					return classNames.join(' ');
 				}
 			})
+      .style('fill', function (d) {
+        var v = options.value(d);
+        return _.isFinite(v) ? colorScale(v) : '#fff';
+      })
 			.on('click', function (d) {
 				options.onClick(_.get(d, 'properties.region_id'));
 			})
@@ -149,6 +163,24 @@ _.extend(ChoroplethMap.prototype, {
 			.on('mouseout', this._onMouseOut);
 
 		region.exit().remove();
+
+    // Generate ticks for the legend by inverting output range of the quantize
+    // scale, mapping the format function to the values, and joining them
+    var ticks = _.map(
+      colorScale.range(),
+      c => _.map(colorScale.invertExtent(c), options.format).join('—')
+    );
+
+    svg.select('.legend')
+      .call(legend()
+        .scale(d3.scale.ordinal()
+          .domain(ticks)
+          .range(colorScale.range()))
+      )
+      .attr('transform', function () {
+        var bbox = this.getBoundingClientRect();
+        return 'translate(' + (w - bbox.width) + ',' + (h - bbox.height) + ')';
+      });
 	},
 
   _onMouseMove : function (d) {

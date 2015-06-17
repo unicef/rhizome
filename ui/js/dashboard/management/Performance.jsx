@@ -172,6 +172,7 @@ var Performance = React.createClass({
             options={{
               domain : _.constant([0, 0.1]),
               value  : _.property('properties[475]'),
+              format : d3.format('%'),
               onClick : DashboardActions.setRegion
             }} />
         </section>
