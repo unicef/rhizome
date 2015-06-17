@@ -147,7 +147,7 @@ POST RESPONSE
   }
 
 Office POST
--------------
+-----------
 
 ``api/v2/office``
 
@@ -174,7 +174,7 @@ POST RESPONSE
 
 
 MapTable POST
-------------------
+-------------
 
 ``POST api/v2/<region;indicator;campaign>_map;``
   - ``django model: CampaignMap; IndicatorMap, RegionMmap``
@@ -201,7 +201,7 @@ response
 
 
 User POST
--------------
+---------
 
 ``api/v2/user``
 
@@ -210,7 +210,7 @@ User POST
 
 
 Group POST
--------------
+----------
 
 ``api/v2/group/``
 
@@ -238,7 +238,7 @@ POST RESPONSE
 
 
 User to Group POST
--------------
+------------------
 
 ``api/v2/user_group``
 
@@ -297,7 +297,7 @@ POST RESPONSE
 
 
 DataPoint POST
------------
+--------------
 
 used by the /datapoints/entry page
 
@@ -350,6 +350,7 @@ Global Parameters and Query Filters
 .. code-block:: json
 
     /api/v2/campaign/?start_date__lte=2015-01-01
+    /api/v2/campaign/?start_date__gte=2015-01-01
 
 
 ``/api/v1/datapoint/``
