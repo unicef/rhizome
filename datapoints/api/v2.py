@@ -469,8 +469,6 @@ class v2GetRequest(v2Request):
 
         # for a get request.. dont show any ids < 0 ( see POLIO-856 ) #
 
-
-
         try:
             id_gt = self.kwargs['id__gt']
         except KeyError:

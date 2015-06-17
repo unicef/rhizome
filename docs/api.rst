@@ -340,17 +340,35 @@ Global Parameters and Query Filters
 
 ``__in``
 
+pass a list of values and retrieve one result for each match
+
 .. code-block:: json
 
     /api/v2/indicator/?id__in=21,164
 
 
-``__gt __lt __gte __lte``
+``__gt; __lt; __gte; __lte``
 
 .. code-block:: json
 
     /api/v2/campaign/?start_date__lte=2015-01-01
     /api/v2/campaign/?start_date__gte=2015-01-01
+    /api/v2/office/?id__gt=2
+    /api/v2/office/?id__lt=2
+
+``__contains; __starts_with``
+
+filter resources with simple string functions.
+
+.. code-block:: json
+
+  /api/v2/indicator/?name__startswith=Number
+  /api/v2/indicator/?name__contains=polio
+
+
+* Note - These query parameters are taken directly from the Django ORM.  For
+  more on how these work see here:*
+    https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
 
 
 ``/api/v1/datapoint/``
