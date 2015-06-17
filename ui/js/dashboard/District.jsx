@@ -13,9 +13,19 @@ var District = React.createClass({
   },
 
   render : function () {
-    var indicators = _.reject(this.props.indicators, ind => _.isEmpty(ind.bound_json));
+    // Hash of indicators that have bounds defined for easy filtering
+    var indicators = _(this.props.indicators)
+      .indexBy('id')
+      .mapValues(ind => !_.isEmpty(ind.bound_json))
+      .value();
 
-    var targets = _(indicators)
+    // List of indicator definitions based on the hash of indicator IDs who
+    // have bounds defined
+    var indicatorList = _.filter(this.props.indicators, ind => indicators[ind.id]);
+
+    // Map indicator IDs to a d3 threshold scale for determining into what
+    // target range a value falls for a given indicator
+    var targets = _(indicatorList)
       .indexBy('id')
       .mapValues(ind => {
         var bounds = _(ind.bound_json)
@@ -31,14 +41,24 @@ var District = React.createClass({
       })
       .value();
 
+    // Scale for coloring based on pre-defined values
     var scale = d3.scale.ordinal()
       .domain(['bad', 'okay', 'ok', 'good', 'invalid'])
       .range(['#AF373E', '#959595', '#959595','#2B8CBE', '#2D2525']);
 
-    var data = _.map(this.props.data['district-heat-map'], s => (
-      { name : s.name, values : _.filter(s.values, d => _.isFinite(d.value)) }
-    ));
+    // Clean the data by first removing any data whose values are not finite -
+    // i.e. undefined - or whose indicators have no target bounds defined, then
+    // remove any series (rows) that have no data
+    var data = _(this.props.data['district-heat-map'])
+      .map(s => ({
+        name : s.name,
+        values : _.filter(s.values, d => indicators[d.indicator.id] && _.isFinite(d.value))
+      }))
+      .reject(s => _.isEmpty(s.values))
+      .value();
 
+    // Hash indicator IDs to a boolean indicating whether that column is
+    // non-empty (true) or empty (false)
     var visible = _(data)
       .pluck('values')
       .flatten()
@@ -46,15 +66,16 @@ var District = React.createClass({
       .mapValues(v => _(v).pluck('value').some(_.isFinite))
       .value();
 
+    // Determine what headers are shown based on whether or not the "Show empty
+    // columns" checkbox is on
     var headers = this.state.showEmpty ?
-      indicators :
-      _.filter(indicators, i => visible[i.id]);
+      indicatorList :
+      _.filter(indicatorList, i => visible[i.id]);
 
     var options = {
       cellSize   : 36,
       fontSize   : 14,
       headers    : headers,
-      headerText : _.property('short_name'),
       scale      : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
       value      : _.property('range'),
     };
