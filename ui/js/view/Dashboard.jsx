@@ -111,7 +111,12 @@ var Dashboard = React.createClass({
         );
 
         if (_.endsWith(chart.type, 'Map')) {
-          var dataIdx = _.indexBy(chartData, 'region.id');
+          // Make sure we only get data for the current campaign; maps can't
+          // display historical data. Index by region for quick lookup.
+          var dataIdx = _(chartData)
+            .filter(d => d.campaign.id === campaign.id)
+            .indexBy('region.id')
+            .value();
 
           _.each(features, f => {
             var d = dataIdx[f.properties.region_id];
