@@ -320,10 +320,36 @@ Global Parameters and Query Filters
   passed to an endpoint, the first 10 records that match the query will not be
   returned, the response will begin with the 11th object
 
+  *note - For the /v2 api, the limit / offset is applied after the queryset is
+  returned.  Since most of the object lists are small this isnt a huge issue
+  , however it is to be of note when querying the region endpoint which returns
+  20k+ results*
+
 ``format``
   default: ``json``
 
   One of either ``json`` or ``csv`` that determines the format of the response
+
+``simple_evaluation``
+
+.. code-block:: json
+
+  /api/v2/indicator/?id=21
+  /api/v2/indicator/?slug=number-of-all-missed-children
+
+
+``__in``
+
+.. code-block:: json
+
+    /api/v2/indicator/?id__in=21,164
+
+
+``__gt __lt __gte __lte``
+
+.. code-block:: json
+
+    /api/v2/campaign/?start_date__lte=2015-01-01
 
 
 ``/api/v1/datapoint/``
