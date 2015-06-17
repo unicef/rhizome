@@ -20,20 +20,28 @@ module.exports = React.createClass({
 	  return {
 	    visualizations:[{id:1},{id:2},{id:3},{id:4},{id:5},{id:6}],
 	    chartBuilderActive:false,
-	    chartBuilderId:null
+	    chartBuilderindex:null
 	  }
 	},
 	editChart:function(index){
-	 console.log(index);
-	  this.setState({chartBuilderId : index,chartBuilderActive:true});
+	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
+	},
+	newChart:function(){
+	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
+	},
+	saveChart:function(chartDef){
+	    if(!_.isNull(this.state.chartBuilderindex)) //if editing, replace the chart at the index in JSON,
+	    {
+	      DashboardBuilderActions.updateChart(chartDef,this.state.chartBuilderindex);
+	    }
+	    else {//add chart
+	      DashboardBuilderActions.addChart(chartDef);
+	    }
+		this.setState({chartBuilderindex : null,chartBuilderActive:false});
 	},
 	render: function(){
       var self = this;
-      
-      
-      
-       var charts = this.state.store.charts.map(function(chart,index){
-          console.log(chart);
+      var charts = this.state.store.charts.map(function(chart,index){
           return (
             <div className="vis-box" key={index}>{chart.title}
             <a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a>
@@ -42,11 +50,12 @@ module.exports = React.createClass({
        }); 
 	   var dashboardBuilderContainer = (<form className="inline  dashboard-builder-container">
 	   			{charts}
-	   			<a href={"/datapoints/chart_builder/"+this.props.dashboard_id} className="button">add chart</a>
+	   			<a href="#" onClick={this.newChart} className="button">add chart</a>
 	   		   </form>);
 	   if(this.state.chartBuilderActive)
 	   {
-	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartId={this.props.chartBuilderId} />);
+	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.charts[this.state.chartBuilderindex]);
+	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart}/>);
 	   }
 	   else {
 	   	return dashboardBuilderContainer;

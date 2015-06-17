@@ -49,7 +49,7 @@ function campaignDisplayFormat(campaign) {
 module.exports = React.createClass({
   mixins: [Reflux.connect(ChartBuilderStore,"store")],
   componentDidMount:function(){
-     ChartBuilderActions.initialize(this.props.dashboardId,this.props.chartId);
+     ChartBuilderActions.initialize(this.props.chartDef);
   },
   _updateTitle: function(e){
     ChartBuilderActions.updateTitle(e.target.value);
@@ -77,6 +77,9 @@ module.exports = React.createClass({
     state[filterFor + 'Filter'] = pattern;
 
     this.setState(state);
+  },
+  createChart:function(){
+    this.props.callback(this.state.store.chartDefinition());
   },
 
 	render: function(){
@@ -120,7 +123,7 @@ module.exports = React.createClass({
                          </DropdownMenu>
      
      		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-                         <a href="#" className="button" onClick={ChartBuilderActions.createChart}>Create Chart</a>
+    <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
      	              </div>);
      var groupBy = 	(<div className="grouping">
         	<div className="titleDiv">Group By</div>

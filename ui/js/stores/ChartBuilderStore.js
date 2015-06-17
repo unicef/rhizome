@@ -111,7 +111,25 @@ function _columnData(data, groups, groupBy) {
 	return stack(columnData);
 }
 
-
+function formatTimeRange (val){
+	switch (val) {
+		case "pastYear":
+			return {"years":1};
+			break;
+	    case "3Months":
+	    	return {"months":3};
+	    	break;
+	    case "current":
+	    	return {"months":0};
+	    	break;
+	    case "allTime":
+	    	return null;
+	    	break;
+	    default:
+	    	return {"months":0};
+	    	break;
+	}
+}
 	
 module.exports = Reflux.createStore({
 	data: {
@@ -122,8 +140,8 @@ module.exports = Reflux.createStore({
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
 		regionSelected:{parent_region_id: null, office_id: 1, region_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
 		aggregatedRegions:[],
-		title: "new chart",
-		description: "a nice description",
+		title: "",
+		description: "",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
 		regionRadioValue: 2,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
@@ -148,24 +166,28 @@ module.exports = Reflux.createStore({
 		xAxis:0,
 		yAxis:0,
 		loading:false,
-		chartDefinition:this.createChartDefinition()
+		chartDefinition:function(){
+			return {
+			    title: this.title,
+				type: this.chartTypes[this.selectedChart].name,
+				indicators:_.map(this.indicatorsSelected,_.property('id')),
+				regions:this.regionRadios[this.regionRadioValue].value,
+				groupBy:this.groupByRadios[this.groupByRadioValue].value,
+				x:this.xAxis,
+				y:this.yAxis,
+				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value)
+			};
+		}
 	},
 	listenables: [ChartBuilderActions],
 	getInitialState: function(){
 	   return this.data;
 	},
-	onInitialize: function(dashboardId,chartId){
-	this.data.dashboardId = dashboardId;
+	onInitialize: function(chartDef){
+    this.resetChartDef();
+	
 	var self = this;
-	        api.get_dashboard({id:id}).then(function(response){
-	           self.data.dashboardDef = response.objects[0];
-	           if(chartId)
-	           {
-	             self.data.chartId = chartId;
-	             self.loadChartData();
-	           }
-	        }); 
-			api.regions().then(function(items){
+			var regionPromise = api.regions().then(function(items){
 			  self._regionIndex = _.indexBy(items.objects, 'id');
 			  self.data.regionList = _(items.objects)
 			  	.map(function (region) {
@@ -184,7 +206,7 @@ module.exports = Reflux.createStore({
 			  	self.aggregateRegions();
 			 });
 	
-			 api.indicators().then(function(items){
+			var indicatorPromise = api.indicators().then(function(items){
 			        self._indicatorIndex = _.indexBy(items.objects, 'id');
 			        self.data.indicatorList = _(items.objects)
 			         	.map(function (indicator) {
@@ -198,8 +220,13 @@ module.exports = Reflux.createStore({
 			         	.reverse()
 			         	.value();
 			         self.trigger(self.data);
+			     if(chartDef)
+			     {
+			       self.applyChartDef(chartDef);
+			     }
+			     
 			     });
-	
+	        
 			Promise.all([api.campaign(), api.office()])
 				.then(_.spread(function(campaigns, offices) {
 					var officeIdx = _.indexBy(offices.objects, 'id');
@@ -279,61 +306,37 @@ module.exports = Reflux.createStore({
 	    this.data.yAxis = value;
 	    this.getChartData();
 	},
-	onCreateChart:function(){
-		var self = this;
-		var chartJSON = {
-			type: this.data.chartTypes[this.data.selectedChart].name,
-			indicators:_.map(this.data.indicatorsSelected,_.property('id')),
-			regions:this.data.regionRadios[this.data.regionRadioValue].value,
-			groupBy:this.data.groupByRadios[this.data.groupByRadioValue].value,
-			x:this.data.xAxis,
-			y:this.data.yAxis,
-			timeRange:this.formatTimeRange()
-		};
-		this.data.dashboardDef.dashboard_json.push(chartJSON);
-		var dashboardJSON = JSON.stringify(this.data.dashboardDef.dashboard_json);
-	
-		var data = {
-		    id:this.data.dashboardId,
-			title:this.data.dashboardDef.title,
-			description:this.data.dashboardDef.description,
-			default_office_id:this.data.dashboardDef.default_office_id,
-			dashboard_json:dashboardJSON
-		};
-		api.create_dashboard(data).then(function(response){
-		   window.location = "/datapoints/dashboard_builder/" + self.data.dashboardId; 
-		}); 
-		
+	applyChartDef:function(chartDef){
+       var self = this;
+       this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
+       this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
+       	  return self._indicatorIndex[id];
+       });
+       this.data.title = chartDef.title;
+       this.data.regionRadioValue = _.findIndex(this.data.regionRadios,{value:chartDef.regions});
+       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
+       var timeString = JSON.stringify(chartDef.timeRange);
+       var timeValue;
+       if(timeString=='{"months":3}'){
+       timeValue = "3Months";
+       } else if(timeString=='{"years":1}'){
+       timeValue = "pastYear";
+       } else if(timeString=='{"months":0}'){
+       timeValue = "current";
+       } else {
+        timeValue = "allTime";
+       }
+       this.data.timeRadioValue = _.findIndex(this.data.timeRadios(),{value:timeValue});
+       this.trigger(this.data);
 	},
-	createChartDefinition:function(){
-		return {
-			type: this.data.chartTypes[this.data.selectedChart].name,
-			indicators:_.map(this.data.indicatorsSelected,_.property('id')),
-			regions:this.data.regionRadios[this.data.regionRadioValue].value,
-			groupBy:this.data.groupByRadios[this.data.groupByRadioValue].value,
-			x:this.data.xAxis,
-			y:this.data.yAxis,
-			timeRange:this.formatTimeRange()
-		};
-	},
-	formatTimeRange: function(){
-		switch (this.data.timeRadios()[this.data.timeRadioValue].value) {
-			case "pastYear":
-				return {"years":1};
-				break;
-		    case "3Months":
-		    	return {"months":3};
-		    	break;
-		    case "current":
-		    	return {"months":0};
-		    	break;
-		    case "allTime":
-		    	return null;
-		    	break;
-		    default:
-		    	return {"months":0};
-		    	break;
-		}
+	resetChartDef:function(){
+	   this.data.selectedChart = 0;
+	   this.data.indicatorsSelected = [];
+	   this.data.title = '';
+	   this.data.regionRadioValue = 0;
+	   this.data.groupByRadioValue = 0;
+	   this.data.timeRadioValue = 0;
+	   this.trigger(this.data);
 	},
 	aggregateRegions: function(){
 	    var regions;
