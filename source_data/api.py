@@ -26,6 +26,19 @@ except ImportError:
 
 
 class EtlResource(ModelResource):
+    '''
+    The ETL Resource is a Tastypie model resource, and as such, one record is
+    inserted into the source_data_etljob table every time this class is
+    instantiated.
+
+    Furthermore, the 'get_object_list' function is overridden and the
+    EtlTask is instantiated.  The EtlTask code takes the "task" parameter
+    and prefroms the necessary data transformations.
+
+    The cache_refresh, meta_datarefresh, and ODK refreshes are handled here,
+    and because of which all of these specific tasks can be traced via the
+    source_data_etljob table.
+    '''
 
     class Meta():
         queryset = EtlJob.objects.all()
@@ -35,15 +48,15 @@ class EtlResource(ModelResource):
         filtering = {"cron_guid": ALL }
 
         authorization = Authorization()
-        # authentication = ApiKeyAuthentication()
-
 
     def get_object_list(self, request):
         '''
         This is the only method from tastypie that is overriden all logic
-        for the etl api is dealt with inside this method
+        for the etl api is dealt with inside this method.
 
-        Fix placeholder guid!
+        The crucial peice here to undestdand is how the etl_job is traced
+        and how the data form the url is passed to the ETL engine.  For more
+        on how this all works, take a look at the EtlTask() class.
 
         '''
 
@@ -76,7 +89,6 @@ class EtlResource(ModelResource):
 
         self.err, self.data = et.err, et.data
 
-
         toc = strftime("%Y-%m-%d %H:%M:%S")
         created.date_completed = toc
 
@@ -96,6 +108,8 @@ class EtlResource(ModelResource):
 
 class EtlTask(object):
     '''
+    When instantiated, find the function appropriate for the task requested and
+    execute that funciton, returning both 'Error', and 'Data' from each etl task
     '''
 
     def __init__(self,task_string,task_guid,form_name=None):
@@ -129,12 +143,12 @@ class EtlTask(object):
     def parse_geo_json(self):
 
         err, data = ingest_polygons.main()
-
         return err, data
-
 
     def test_api(self):
         '''
+        Basic endpoint to test the functionlaity of the ETL apo
+            - /api/v1/etl/?task=test_api
         '''
 
         try:
@@ -147,21 +161,37 @@ class EtlTask(object):
 
     def refresh_cache(self):
         '''
-        datapoint -> agg_datapoint -> datapoint_with_computed
+        When dealing with the cache_refresh task in the etl api, instantiate the
+        CacheRefresh class.  This is precisely the same function as clicking the
+        "refresh_cache" button on the cache_control page, but having it in the
+        ETL api allows this functionality to be engaged by a cron job or rest
+        API.
         '''
         try:
             cr = cache_tasks.CacheRefresh()
         except Exception as err:
             return err, None
 
-        data = 'complete' #cr.response_msg
+        data = 'complete'
 
         return None, data
 
     def refresh_metadata(self):
         '''
-        user -> user_abstracted
-        indicator -> indicator_abstracted
+        Certain metadata resources have additional iformation that is not
+        stored directly at that model.  For instance, indicators have bounds
+        and tags associated to them.. both many to many, and in order to have
+        direct access to that information when the api request comes in, we
+        store this infomration in the indicator_abstracted table, which hodls
+        as json all of the data needed by the API.
+
+        In order to have this information immediately avaiable to the API, we
+        run the "refresh_metadata" task that will transform and cache metadata
+        in the format the api needs.
+
+        Currently the two resource are abstracted in this manner:
+            - user -> user_abstracted
+            - indicator -> indicator_abstracted
         '''
 
         try:
@@ -170,13 +200,15 @@ class EtlTask(object):
         except Exception as err:
             return err, None
 
-        data = 'complete' #cr.response_msg
-
+        data = 'complete'
+        
         return None, data
 
 
     def start_odk_jar(self):
         '''
+        This tells the system that the Jar file process has been initated.
+        When this is complete, the system calls "finish_odk_jar."
         '''
 
         try:
@@ -189,6 +221,10 @@ class EtlTask(object):
 
     def finish_odk_jar(self):
         '''
+        An indication to the system that the odk jar file process is complete.
+        Haivng these two endpoitns tracked at either side of the jar file
+        execution allows us to see how long each form takes to pull down from
+        the ODK aggregate server.
         '''
 
         try:
@@ -196,13 +232,15 @@ class EtlTask(object):
         except Exception as err:
             return err, None
 
-
-
         return None, data
-
 
     def odk_refresh_master(self):
         '''
+        A refresh master method that deals specifically with source_datpaoints
+        from odk.  First we find the source_datapoint_ids that we need from the
+        source ( odk ) and then we pass those IDs as well as the user to
+        the MasterRefresh cache.  The system knows to only then refresh
+        datapoints that have been newly created from ODK.
         '''
 
         try:
@@ -225,7 +263,9 @@ class EtlTask(object):
 
     def ingest_odk_regions(self):
         '''
-        From the VCM settlements CSV ingest new reigions
+        From the VCM settlements CSV ingest to new reigions.
+        If the document does not exists, create it, and then ingest the source
+        regions with the cooresponding lon/lat and region code.
         '''
 
         region_document, created = Document.objects.get_or_create(
@@ -269,6 +309,13 @@ class EtlTask(object):
         return None, data
 
     def get_odk_forms_to_process(self):
+        '''
+        Look up ( via the etl API ), the forms that the system requires us to
+        look up data for.  The forms that need to be processed are in the
+        odk_form table.  Having a row in here causes the system to go out and
+        get data for the forms specified and transform it to source datapoints
+        and finally datapoints.
+        '''
 
         odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
         cleaned_forms = [str(x) for x in odk_form_list]
@@ -276,6 +323,11 @@ class EtlTask(object):
         return None, cleaned_forms
 
     def odk_transform(self):
+        '''
+        Taking an ODK form in which the columns are indicators, and there is a
+        fixd column for campaign ( or at least campaign date ) and region,
+        we pivot and ingest this data using the ODKDataPointTransform() class.
+        '''
 
         try: ## somethign is funky here wiht the BASE_DIR setting on prod.
             csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
