@@ -201,7 +201,7 @@ class EtlTask(object):
             return err, None
 
         data = 'complete'
-        
+
         return None, data
 
 
@@ -252,7 +252,8 @@ class EtlTask(object):
             m.main()
 
             dp_count = len(m.new_datapoints)
-            success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) + ' NEW DATPOINTS'
+            success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) +\
+                ' NEW DATPOINTS'
 
         except Exception:
             err = format_exc()
