@@ -393,20 +393,14 @@ type and the list of IDs that were the result of the initial filter.
 
 The flow of the /v2 api is as follows:
 
-  1. Parse the query parameters and query the database using this dictionary
-     as the filter kwargs for that model.
+  1. Parse the query parameters and query the database using this dictionary as the filter kwargs for that model.
       - i.e. if the url is /region/?id=12907, the Api translates that into:
         results = Region.objects.filter(**{'id':12907})
   2. Using the primary keys of the above result, apply the permission_function
      for that resource.
-      - If there is no permission function applied, then return all the data
-      from step 1.
-      - In some instances the "permission_function" is not just used to
-        filter the result set based on the user permission, it is used to
-        modify the queryset in some way.
-      - If the permissions function is called for, the list of IDs is
-        passed as well to make sure that the result is the intersection of
-        the query parameters, and the data that user is authorized to see.
+      - If there is no permission function applied, then return all the data from step 1.
+      - In some instances the "permission_function" is not just used to filter the result set based on the user permission, it is used to modify the queryset in some way.
+      - If the permissions function is called for, the list of IDs is passed as well to make sure that the result is the intersection of the query parameters, and the data that user is authorized to see.
   3. Serialize the data.
       - Depending on the data type, the model and the requests from the FE, the
         system cleans and returns data to the api for consuption.
@@ -448,15 +442,6 @@ Parameters
   indicators into a single object, return one object per region, campaign,
   indicator set.
 
-``uri_format``
-  default: ``id``
-
-  Configure how references to other objects are provided. Valid values are:
-
-  - ``id``
-  - ``slug``
-  - ``name``
-  - ``uri``
 
 Response Format
 ~~~~~~~~~~~~~~~
@@ -487,20 +472,17 @@ Response Format
   }
 
 ``region``
-  The region for this set of data. Region will be the ID, slug, name, or URI for
-  the region depending on the value of the ``uri_format`` parameter
+  The region for this set of data. Region will be the ID of the resource.
 
 ``campaign``
-  The campaign for this set of data. Campaign will be the ID, slug, name, or URI
-  for the campaign depending on the value of the ``uri_format`` parameter
+  The campaign for this set of data. Campaign will be the ID of the resource.
 
 ``indicators``
   An array of the values for the requested indicators. This will always be an
   array, even if the ``no_pivot`` parameter is passed
 
   ``indicator``
-    The ID, slug, name, or URI (depending on the value of ``uri_format``) of the
-    indicator represented by the object
+    The ID of the indicator represented by the object
 
   ``value``
     The value of the indicator
