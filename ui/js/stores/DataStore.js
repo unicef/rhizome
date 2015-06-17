@@ -65,6 +65,10 @@ var DataStore = Reflux.createStore({
           break;
       }
 
+      if (def.level) {
+        q.level = def.level;
+      }
+
       return api.datapoints(q);
     });
 
