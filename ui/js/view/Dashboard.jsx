@@ -17,11 +17,13 @@ var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 
 var DashboardStore      = require('stores/DashboardStore');
+var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 
 var AppActions          = require('actions/AppActions');
 var DashboardActions    = require('actions/DashboardActions');
 var DataActions         = require('actions/DataActions');
+var GeoActions          = require('actions/GeoActions');
 
 var Dashboard = React.createClass({
   mixins : [
@@ -65,16 +67,17 @@ var Dashboard = React.createClass({
     var loading      = this.state.loading;
     var region       = this.state.region;
 
-    var data         = {};
+    var data = {};
 
-    var dashboardName   = _.get(dashboardDef, 'title', '');
-    var dashboard       = '';
+    var dashboardName = _.get(dashboardDef, 'title', '');
+    var dashboard     = '';
 
     var indicators = _.indexBy(
       IndicatorStore.getById.apply(IndicatorStore,
         _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
+    var features = GeoStore.features;
 
     if (!_.isEmpty(indicators)) {
       var regionsById = _.indexBy(this.state.regions, 'id')
@@ -102,10 +105,25 @@ var Dashboard = React.createClass({
           'region.parent_region_id' :
           'region.id';
 
-        section[chartName] = _.filter(this.state.data,
+        var chartData = _.filter(this.state.data,
           d => _.includes(chart.indicators, d.indicator.id) &&
             _.get(d, regionProp) === region.id
         );
+
+        if (_.endsWith(chart.type, 'Map')) {
+          var dataIdx = _.indexBy(chartData, 'region.id');
+
+          _.each(features, f => {
+            var d = dataIdx[f.properties.region_id];
+            if (d) {
+              f.properties[d.indicator.id] = d.value;
+            }
+          });
+
+          section[chartName] = features;
+        } else {
+          section[chartName] = chartData
+        }
 
         data[sectionName] = section;
       });
@@ -207,6 +225,10 @@ var Dashboard = React.createClass({
     this.indicatorUnsubscribe = this.listenTo(
       IndicatorStore,
       this._onIndicatorsChange);
+
+    this.geoUnsubscribe = this.listenTo(
+      GeoStore,
+      this._onGeographyLoaded);
   },
 
   componentWillUnmount : function () {
@@ -224,9 +246,17 @@ var Dashboard = React.createClass({
     } else {
       DataActions.fetch(state.campaign, state.region, q);
     }
+
+    if (state.hasMap) {
+      GeoActions.fetch(state.region);
+    }
   },
 
   _onIndicatorsChange : function () {
+    this.forceUpdate();
+  },
+
+  _onGeographyLoaded : function () {
     this.forceUpdate();
   },
 

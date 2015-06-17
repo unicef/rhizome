@@ -91,15 +91,15 @@ _.extend(ChoroplethMap.prototype, {
 		var svg = this._svg;
 		var g   = svg.select('.data');
 
-		var features = _.isEmpty(data) ? options.border : data;
+		var features = _.reject(data, 'properties.isBorder');
 
 		var bounds = _calculateBounds(features);
 		var center = _calculateCenter(bounds);
 
 		var projection = d3.geo.conicEqualArea()
 			.parallels([bounds[1][1], bounds[0][1]])
-			.rotate([-center[0], 0])        // Rotate the globe so that the country is centered horizontally
-			.center([0, center[1]])        // Set the center of the projection so that the polygon is moved vertically into the center of the viewport
+			.rotate([-center[0], 0])   // Rotate the globe so that the country is centered horizontally
+			.center([0, center[1]])    // Set the center of the projection so that the polygon is moved vertically into the center of the viewport
 			.translate([w / 2, h / 2]) // Translate to the center of the viewport
 			.scale(1);
 

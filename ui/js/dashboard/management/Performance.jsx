@@ -114,6 +114,8 @@ var Performance = React.createClass({
 
     var pct = d3.format('%');
 
+    var missedChildrenMap = data.missedChildrenByProvince;
+
     return (
       <div>
         <div className='medium-5 columns'>
@@ -162,6 +164,13 @@ var Performance = React.createClass({
 
         <section className='medium-2 columns'>
           <h4>Missed Children</h4>
+          <Chart type='ChoroplethMap'
+            data={missedChildrenMap}
+            loading={loading}
+            options={{
+              domain : _.constant([0, 0.1]),
+              value  : _.property('properties[475]'),
+            }} />
         </section>
 
         <section className='transit-points medium-1 column'>
