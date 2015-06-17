@@ -8,6 +8,7 @@ var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
+var GroupForm = require('view/group-form/GroupForm.jsx');
 
 Vue.config.debug = true;
 
@@ -74,5 +75,8 @@ module.exports = {
 	},
 	UFAdmin: function(el) {
 		AdminApp.render(document.getElementById('main'));
+	},
+	GroupForm: function(el) {
+		React.render(React.createElement(GroupForm), el);
 	}
 };
