@@ -6,10 +6,8 @@ var Reflux = require('reflux/src');
 var page   = require('page');
 var moment = require('moment');
 
-var api = require('data/api');
-
-var ManagementDashboard = require('dashboard/ManagementDashboard.jsx');
-var NCODashboard        = require('dashboard/NCODashboard.jsx');
+var api           = require('data/api');
+var dashboardInit = require('data/dashboardInit');
 
 var TitleMenu           = require('component/TitleMenu.jsx');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
@@ -17,11 +15,18 @@ var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 
 var DashboardStore      = require('stores/DashboardStore');
+var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 
 var AppActions          = require('actions/AppActions');
 var DashboardActions    = require('actions/DashboardActions');
 var DataActions         = require('actions/DataActions');
+var GeoActions          = require('actions/GeoActions');
+
+var LAYOUT = {
+  'Management Dashboard'    : require('dashboard/ManagementDashboard.jsx'),
+  'NGA Campaign Monitoring' : require('dashboard/NCODashboard.jsx'),
+};
 
 var Dashboard = React.createClass({
   mixins : [
@@ -60,87 +65,41 @@ var Dashboard = React.createClass({
       );
     }
 
-    var campaign     = this.state.campaign;
-    var dashboardDef = this.state.dashboard;
-    var loading      = this.state.loading;
-    var region       = this.state.region;
+    var campaign      = this.state.campaign;
+    var dashboardDef  = this.state.dashboard;
+    var loading       = this.state.loading;
+    var region        = this.state.region;
+    var dashboardName = _.get(dashboardDef, 'title', '');
 
-    var data         = {};
+    var indicators = IndicatorStore.getById.apply(
+      IndicatorStore,
+      _(_.get(dashboardDef, 'charts', []))
+        .pluck('indicators')
+        .flatten()
+        .uniq()
+        .value()
+    );
 
-    var dashboardName   = _.get(dashboardDef, 'title', '');
-    var dashboard       = '';
+    var data = dashboardInit(
+      dashboardDef,
+      this.state.data,
+      region,
+      campaign,
+      this.state.regions,
+      indicators,
+      GeoStore.features
+    );
 
-    var indicators = _.indexBy(
-      IndicatorStore.getById.apply(IndicatorStore,
-        _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
-      'id');
+    var dashboardProps = {
+      campaign   : campaign,
+      dashboard  : dashboardDef,
+      data       : data,
+      indicators : indicators,
+      loading    : loading,
+      region     : region
+    };
 
-    if (!_.isEmpty(indicators)) {
-      var regionsById = _.indexBy(this.state.regions, 'id')
-
-      // Fill in indicators and regions on all the data objects. If we haven't
-      // loaded indicators yet, continue displaying charts as if we have no data
-      _.each(this.state.data, function (d) {
-        var ind = indicators[d.indicator];
-        if (ind) {
-          d.indicator = ind;
-        }
-
-        var reg = regionsById[d.region];
-        if (reg) {
-          d.region = reg;
-        }
-      });
-    }
-
-    // Indicator index: maps indicator IDs to one or more sections containing
-    _.each(dashboardDef.charts, (chart, i) => {
-      var sectionName = _.get(chart, 'section', '__none__');
-      var chartName   = _.camelCase(_.get(chart, 'title', i));
-      var section     = _.get(data, sectionName, {});
-      var regionProp  = chart.region === 'subregions' ?
-        'region.parent_region_id' :
-        'region.id';
-
-      section[chartName] = _.filter(this.state.data,
-        d => _.includes(chart.indicators, d.indicator.id) &&
-          _.get(d, regionProp) === region.id
-      );
-
-      data[sectionName] = section;
-    });
-
-    if (_.size(data) < 2) {
-      // Use a simple array if there is only one section
-      data = _(data).values().flatten().value();
-    }
-
-    switch (dashboardName) {
-      case 'Management Dashboard':
-        dashboard = (
-          <ManagementDashboard
-            dashboard={dashboardDef}
-            campaign={campaign}
-            indicators={indicators}
-            region={region}
-            loading={loading}
-            data={data} />
-        );
-        break;
-
-      case 'NGA Campaign Monitoring':
-        dashboard = (
-          <NCODashboard
-            dashboard={dashboardDef}
-            loading={loading}
-            region={region}
-            data={data} />
-        );
-        break;
-
-      default:
-        break;
-    }
+    var dashboard = React.createElement(LAYOUT[dashboardName], dashboardProps);
 
     var campaigns = _(this.state.campaigns)
       .filter(c => c.office_id === region.office_id)
@@ -204,6 +163,10 @@ var Dashboard = React.createClass({
     this.indicatorUnsubscribe = this.listenTo(
       IndicatorStore,
       this._onIndicatorsChange);
+
+    this.geoUnsubscribe = this.listenTo(
+      GeoStore,
+      this._onGeographyLoaded);
   },
 
   componentWillUnmount : function () {
@@ -219,11 +182,19 @@ var Dashboard = React.createClass({
     if (_.isEmpty(q)) {
       DataActions.clear();
     } else {
-      DataActions.fetch(state.campaign, state.region, q);
+      DataActions.fetch(this.state.campaign, this.state.region, q);
+    }
+
+    if (this.state.hasMap) {
+      GeoActions.fetch(this.state.region);
     }
   },
 
   _onIndicatorsChange : function () {
+    this.forceUpdate();
+  },
+
+  _onGeographyLoaded : function () {
     this.forceUpdate();
   },
 

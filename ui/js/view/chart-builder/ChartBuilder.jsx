@@ -7,6 +7,7 @@ var moment = require('moment');
 
 var DropdownMenu         = require('component/DropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var Chart                = require('component/Chart.jsx');
 var ChartBuilderActions  = require('actions/ChartBuilderActions');
 var ChartBuilderStore    = require("stores/ChartBuilderStore");
@@ -14,6 +15,7 @@ var ChartSelect          = require('./ChartSelect.jsx');
 var List                 = require('component/list/List.jsx');
 var MenuItem             = require('component/MenuItem.jsx');
 var RadioGroup           = require('component/radio-group/RadioGroup.jsx');
+
 
 function findMatches(item, re) {
   var matches = [];
@@ -63,7 +65,12 @@ module.exports = React.createClass({
 
     this.setState(state);
   },
-
+  _updateXAxis : function(e){
+     ChartBuilderActions.selectXAxis(parseInt(e.target.value));
+  },
+  _updateYAxis : function(e){
+     ChartBuilderActions.selectYAxis(parseInt(e.target.value));
+  },
   setFilter : function (filterFor, pattern) {
     var state = {};
     state[filterFor + 'Filter'] = pattern;
@@ -92,6 +99,10 @@ module.exports = React.createClass({
      var regions = MenuItem.fromArray(
       filterMenu(this.state.store.regionList, this.state.regionFilter),
       ChartBuilderActions.addRegionSelection);
+      
+     var axisOptions = this.state.store.indicatorsSelected.map(function(indicator,index){
+       return <option key={indicator.id} value={index}>{indicator.name}</option>;
+     });
 
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
@@ -99,31 +110,38 @@ module.exports = React.createClass({
      	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
      	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
      	                   <div className="titleDiv">Indicators</div>
-     
-                         <DropdownMenu text='Select Indicators'
-                           searchable={true}
-                           onSearch={_.partial(this.setFilter, 'indicator')}>
-                           {indicators}
-                         </DropdownMenu>
+
+                         <IndicatorDropdownMenu
+                           text='Add Indicators'
+                           icon='fa-plus'
+                           indicators={this.state.store.indicatorList}
+                           sendValue={ChartBuilderActions.addIndicatorSelection}>
+                         </IndicatorDropdownMenu>
      
      		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
      
      	              </div>);
+     var groupBy = 	(<div className="grouping">
+        	<div className="titleDiv">Group By</div>
+        	<RadioGroup name="groupby" horizontal={true}  value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
+        	</div>);  
+     var chooseAxis = (<div className="grouping">
+		     	<div>x axis: <select onChange={this._updateXAxis}>{axisOptions}</select></div>
+		     	<div>y axis: <select onChange={this._updateYAxis}>{axisOptions}</select></div>
+		     </div>);           
      var rightPage = (<div className="right-page">
      	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
      	              	<div className="chart-options-container">
-     	              	<div className="grouping">
-     		              	<div className="titleDiv">Group By</div>
-     		              	<RadioGroup name="groupby" value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-     		              	</div>
+     	              	{this.state.store.chartTypes[this.state.store.selectedChart].groupBy?groupBy:null}
      	              	<div className="grouping">
      	                   <div className="titleDiv">Show</div>
-     	                   <RadioGroup name="show" value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
+     	                   <RadioGroup name="show" horizontal={true}  value={this.state.store.regionRadioValue} values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio} />
                         </div>
                         <div className="grouping">
                         		<div className="titleDiv">Time Span</div>
                     			<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio} />
-                    		</div>
+                    	</div>
+                    	{this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
      					</div>
      					<div className="chart-container">
      					<div className="dropdown-wrapper">

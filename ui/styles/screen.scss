@@ -111,6 +111,11 @@ p {
 	margin-bottom: 0;
 }
 
+.pageWelcome {
+	color: #999;
+	margin: 10px 0 20px 0;
+}
+
 body.home nav .home,
 body.dashboard nav .dashboard,
 body.data nav .data,
@@ -399,8 +404,10 @@ button,
 	background-color: $oil;
 
 	form {
-    max-width: 300px;
-    margin: 100pt auto;
+		background: url('/static/img/RhizomeLogoWhOnBk-md.png') no-repeat;
+		padding-top: 170px;
+	    max-width: 300px;
+	    margin: 70pt auto;
 
 		label {
 			color: $white;

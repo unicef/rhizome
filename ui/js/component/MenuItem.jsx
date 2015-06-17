@@ -49,7 +49,11 @@ var MenuItem = React.createClass({
   },
 
   _handleClick: function(e){
-    this.props.sendValue(this.props.value);
+    if (!this.props.noValue) {
+      this.props.sendValue(this.props.value);
+    } else {
+      this._toggleChildren(e);
+    }
   },
 
 	render: function(){

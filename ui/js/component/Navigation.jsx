@@ -60,7 +60,7 @@ var Navigation = React.createClass({
       <nav>
         <ul>
           <li className='home'><a href='/'>
-            <i className='fa fa-home fa-lg'></i>&ensp;RhizomeDB
+            RhizomeDB
           </a></li>
 
           <li className='dashboard'>
