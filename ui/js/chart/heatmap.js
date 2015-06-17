@@ -99,11 +99,7 @@ _.extend(Heatmap.prototype, {
 			return 'translate(0,' + y(d) + ')';
 		};
 
-		var fill = function (d) {
-			var v = options.value(d);
-
-			return v != null ? options.scale(v) : 'transparent';
-		};
+		var fill = options.scale;
 
 		svg.select('.margin')
 			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');

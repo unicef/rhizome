@@ -28,6 +28,7 @@ var GeoActions          = require('actions/GeoActions');
 var LAYOUT = {
   'Management Dashboard'    : require('dashboard/ManagementDashboard.jsx'),
   'NGA Campaign Monitoring' : require('dashboard/NCODashboard.jsx'),
+  'District Dashboard'      : require('dashboard/District.jsx')
 };
 
 var Dashboard = React.createClass({
