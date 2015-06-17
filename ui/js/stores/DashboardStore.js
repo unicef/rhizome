@@ -120,6 +120,18 @@ var DashboardStore = Reflux.createStore({
 		});
 	},
 
+  onSetRegion : function (id) {
+    var region = _.find(this.regions, function (r) {
+        return r.id === id;
+      }.bind(this));
+
+    if (region) {
+      this.trigger({
+        region : region
+      });
+    }
+  },
+
 	addChartDefinition : function (chart) {
 		var base = _.omit(chart, 'indicators', 'title');
 

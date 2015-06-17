@@ -141,7 +141,7 @@ _.extend(ChoroplethMap.prototype, {
 				}
 			})
 			.on('click', function (d) {
-				options.onClick(d, this);
+				options.onClick(_.get(d, 'properties.region_id'));
 			})
 			.on('mouseover', function (d) {
 				options.onMouseOver(d, this);

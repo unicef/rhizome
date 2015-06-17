@@ -5,10 +5,12 @@ var d3     = require('d3');
 var moment = require('moment');
 var React  = require('react');
 
-var colors       = require('colors');
+var colors           = require('colors');
 
-var Chart        = require('component/Chart.jsx');
-var PieChartList = require('component/PieChartList.jsx');
+var Chart            = require('component/Chart.jsx');
+var PieChartList     = require('component/PieChartList.jsx');
+
+var DashboardActions = require('actions/DashboardActions');
 
 function series(values, name) {
   return {
@@ -170,6 +172,7 @@ var Performance = React.createClass({
             options={{
               domain : _.constant([0, 0.1]),
               value  : _.property('properties[475]'),
+              onClick : DashboardActions.setRegion
             }} />
         </section>
 

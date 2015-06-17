@@ -249,11 +249,11 @@ var Dashboard = React.createClass({
     if (_.isEmpty(q)) {
       DataActions.clear();
     } else {
-      DataActions.fetch(state.campaign, state.region, q);
+      DataActions.fetch(this.state.campaign, this.state.region, q);
     }
 
-    if (state.hasMap) {
-      GeoActions.fetch(state.region);
+    if (this.state.hasMap) {
+      GeoActions.fetch(this.state.region);
     }
   },
 
