@@ -99,6 +99,12 @@ var DashboardStore = Reflux.createStore({
 				.sortBy('start_date')
 				.last();
 
+    var hasMap = _(dashboard.charts)
+      .pluck('type')
+      .any(t => _.endsWith(t, 'Map'));
+
+    console.log('DashboardActions::hasMap', hasMap);
+
 		this.trigger({
 			dashboard  : dashboard,
 			region     : region,
@@ -109,9 +115,22 @@ var DashboardStore = Reflux.createStore({
 			campaigns  : _.filter(campaigns, function (c) {
 				return c.office_id === region.office_id;
 			}),
-			dashboards : this.dashboards
+      dashboards : this.dashboards,
+      hasMap     : hasMap
 		});
 	},
+
+  onSetRegion : function (id) {
+    var region = _.find(this.regions, function (r) {
+        return r.id === id;
+      }.bind(this));
+
+    if (region) {
+      this.trigger({
+        region : region
+      });
+    }
+  },
 
 	addChartDefinition : function (chart) {
 		var base = _.omit(chart, 'indicators', 'title');

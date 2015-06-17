@@ -5,10 +5,12 @@ var d3     = require('d3');
 var moment = require('moment');
 var React  = require('react');
 
-var colors       = require('colors');
+var colors           = require('colors');
 
-var Chart        = require('component/Chart.jsx');
-var PieChartList = require('component/PieChartList.jsx');
+var Chart            = require('component/Chart.jsx');
+var PieChartList     = require('component/PieChartList.jsx');
+
+var DashboardActions = require('actions/DashboardActions');
 
 function series(values, name) {
   return {
@@ -114,6 +116,8 @@ var Performance = React.createClass({
 
     var pct = d3.format('%');
 
+    var missedChildrenMap = data.missedChildrenByProvince;
+
     return (
       <div>
         <div className='medium-5 columns'>
@@ -162,6 +166,15 @@ var Performance = React.createClass({
 
         <section className='medium-2 columns'>
           <h4>Missed Children</h4>
+          <Chart type='ChoroplethMap'
+            data={missedChildrenMap}
+            loading={loading}
+            options={{
+              domain : _.constant([0, 0.1]),
+              value  : _.property('properties[475]'),
+              format : d3.format('%'),
+              onClick : DashboardActions.setRegion
+            }} />
         </section>
 
         <section className='transit-points medium-1 column'>
