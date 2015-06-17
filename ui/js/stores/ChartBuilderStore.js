@@ -118,7 +118,7 @@ module.exports = Reflux.createStore({
 		regionList:[],
 		indicatorList:[],
 		campaignList:[],
-		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
+		indicatorsSelected:[],//[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
 		regionSelected:{parent_region_id: null, office_id: 1, region_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
 		aggregatedRegions:[],
@@ -140,78 +140,87 @@ module.exports = Reflux.createStore({
 					},
 		timeRadioValue:2,
 		chartTypes:require('./chartBuilder/chartDefinitions'),
-		selectedChart:4,
+		selectedChart:0,
 		chartData:[],
 	    chartOptions : {},
 		canDisplayChart:canDisplayChart,
 		canDisplayChartReason:canDisplayChartReason,
 		xAxis:0,
 		yAxis:0,
-		loading:false
+		loading:false,
+		chartDefinition:this.createChartDefinition()
 	},
 	listenables: [ChartBuilderActions],
 	getInitialState: function(){
 	   return this.data;
 	},
-	init: function(){
-		var self = this;
-		api.regions().then(function(items){
-		  self._regionIndex = _.indexBy(items.objects, 'id');
-		  self.data.regionList = _(items.objects)
-		  	.map(function (region) {
-		  		return {
-		  			'title'  : region.name,
-		  			'value'  : region.id,
-		  			'parent' : region.parent_region_id
-		  		};
-		  	})
-		  	.sortBy('title')
-		  	.reverse() // I do not know why this works, but it does
-		  	.thru(_.curryRight(treeify)('value'))
-		  	.map(ancestoryString)
-		  	.value();
-		  	self.trigger(self.data);
-		  	self.aggregateRegions();
-		 });
-
-		 api.indicators().then(function(items){
-		        self._indicatorIndex = _.indexBy(items.objects, 'id');
-		        self.data.indicatorList = _(items.objects)
-		         	.map(function (indicator) {
-		         		return {
-		         			'title'  : indicator.name,
-		         			'value'  : indicator.id,
-		         			'parent' : null
-		         		};
-		         	})
-		         	.sortBy('title')
-		         	.reverse()
-		         	.value();
-		         self.trigger(self.data);
-		     });
-
-		Promise.all([api.campaign(), api.office()])
-			.then(_.spread(function(campaigns, offices) {
-				var officeIdx = _.indexBy(offices.objects, 'id');
-
-				self.data.campaignList = _(campaigns.objects)
-					.map(function (campaign) {
-						return _.assign({}, campaign, {
-							'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-							'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-							'office'     : officeIdx[campaign.office_id]
-						});
-					})
-					.sortBy(_.method('start_date.getTime'))
-					.reverse()
-					.value();
-
-				self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
-
-				self.trigger(self.data);
-			}));
+	onInitialize: function(dashboardId,chartId){
+	this.data.dashboardId = dashboardId;
+	var self = this;
+	        api.get_dashboard({id:id}).then(function(response){
+	           self.data.dashboardDef = response.objects[0];
+	           if(chartId)
+	           {
+	             self.data.chartId = chartId;
+	             self.loadChartData();
+	           }
+	        }); 
+			api.regions().then(function(items){
+			  self._regionIndex = _.indexBy(items.objects, 'id');
+			  self.data.regionList = _(items.objects)
+			  	.map(function (region) {
+			  		return {
+			  			'title'  : region.name,
+			  			'value'  : region.id,
+			  			'parent' : region.parent_region_id
+			  		};
+			  	})
+			  	.sortBy('title')
+			  	.reverse() // I do not know why this works, but it does
+			  	.thru(_.curryRight(treeify)('value'))
+			  	.map(ancestoryString)
+			  	.value();
+			  	self.trigger(self.data);
+			  	self.aggregateRegions();
+			 });
+	
+			 api.indicators().then(function(items){
+			        self._indicatorIndex = _.indexBy(items.objects, 'id');
+			        self.data.indicatorList = _(items.objects)
+			         	.map(function (indicator) {
+			         		return {
+			         			'title'  : indicator.name,
+			         			'value'  : indicator.id,
+			         			'parent' : null
+			         		};
+			         	})
+			         	.sortBy('title')
+			         	.reverse()
+			         	.value();
+			         self.trigger(self.data);
+			     });
+	
+			Promise.all([api.campaign(), api.office()])
+				.then(_.spread(function(campaigns, offices) {
+					var officeIdx = _.indexBy(offices.objects, 'id');
+	
+					self.data.campaignList = _(campaigns.objects)
+						.map(function (campaign) {
+							return _.assign({}, campaign, {
+								'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+								'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+								'office'     : officeIdx[campaign.office_id]
+							});
+						})
+						.sortBy(_.method('start_date.getTime'))
+						.reverse()
+						.value();
+	
+					self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
+	
+					self.trigger(self.data);
+				}));
 	},
-
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
@@ -271,13 +280,60 @@ module.exports = Reflux.createStore({
 	    this.getChartData();
 	},
 	onCreateChart:function(){
-		console.log('created!');
-		var data =  {
-			title:this.data.title,
-			description:this.data.description,
-			
+		var self = this;
+		var chartJSON = {
+			type: this.data.chartTypes[this.data.selectedChart].name,
+			indicators:_.map(this.data.indicatorsSelected,_.property('id')),
+			regions:this.data.regionRadios[this.data.regionRadioValue].value,
+			groupBy:this.data.groupByRadios[this.data.groupByRadioValue].value,
+			x:this.data.xAxis,
+			y:this.data.yAxis,
+			timeRange:this.formatTimeRange()
 		};
-		api.create_dashboard(data);
+		this.data.dashboardDef.dashboard_json.push(chartJSON);
+		var dashboardJSON = JSON.stringify(this.data.dashboardDef.dashboard_json);
+	
+		var data = {
+		    id:this.data.dashboardId,
+			title:this.data.dashboardDef.title,
+			description:this.data.dashboardDef.description,
+			default_office_id:this.data.dashboardDef.default_office_id,
+			dashboard_json:dashboardJSON
+		};
+		api.create_dashboard(data).then(function(response){
+		   window.location = "/datapoints/dashboard_builder/" + self.data.dashboardId; 
+		}); 
+		
+	},
+	createChartDefinition:function(){
+		return {
+			type: this.data.chartTypes[this.data.selectedChart].name,
+			indicators:_.map(this.data.indicatorsSelected,_.property('id')),
+			regions:this.data.regionRadios[this.data.regionRadioValue].value,
+			groupBy:this.data.groupByRadios[this.data.groupByRadioValue].value,
+			x:this.data.xAxis,
+			y:this.data.yAxis,
+			timeRange:this.formatTimeRange()
+		};
+	},
+	formatTimeRange: function(){
+		switch (this.data.timeRadios()[this.data.timeRadioValue].value) {
+			case "pastYear":
+				return {"years":1};
+				break;
+		    case "3Months":
+		    	return {"months":3};
+		    	break;
+		    case "current":
+		    	return {"months":0};
+		    	break;
+		    case "allTime":
+		    	return null;
+		    	break;
+		    default:
+		    	return {"months":0};
+		    	break;
+		}
 	},
 	aggregateRegions: function(){
 	    var regions;
@@ -330,6 +386,10 @@ module.exports = Reflux.createStore({
 	    }
 	},
 	getChartData: function(){
+	    if(!this.data.indicatorsSelected.length)
+	    {
+	     return;
+	    }
 	    this.data.loading = true;
 	    this.trigger(this.data); //send the loading parameter to the view
 	    var selectedChart = this.data.chartTypes[this.data.selectedChart].name;

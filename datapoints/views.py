@@ -54,14 +54,14 @@ def data_entry(request):
     return render_to_response('data-entry/index.html',
         context_instance=RequestContext(request))
 
-def dashboard_builder(request):
+def dashboard_builder(request,dashboard_id):
 
-    return render_to_response('dashboard-builder/index.html',
+    return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id },
         context_instance=RequestContext(request))
 
-def chart_builder(request):
+def chart_builder(request,dashboard_id):
 
-    return render_to_response('dashboard-builder/chart_builder.html',
+    return render_to_response('dashboard-builder/chart_builder.html', {'dashboard_id': dashboard_id },
         context_instance=RequestContext(request))
 
 

@@ -48,7 +48,9 @@ function campaignDisplayFormat(campaign) {
 
 module.exports = React.createClass({
   mixins: [Reflux.connect(ChartBuilderStore,"store")],
-
+  componentDidMount:function(){
+     ChartBuilderActions.initialize(this.props.dashboardId,this.props.chartId);
+  },
   _updateTitle: function(e){
     ChartBuilderActions.updateTitle(e.target.value);
   },

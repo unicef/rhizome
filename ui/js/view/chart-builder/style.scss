@@ -6,6 +6,8 @@ $right-page-width: 900px;
 .visualization-builder-container {
    padding: 10px;
    position: relative;
+   width: 1230px;
+   margin: 0px auto;
    .left-page { 
    		width: $left-column-width;
    		display: inline-block;
