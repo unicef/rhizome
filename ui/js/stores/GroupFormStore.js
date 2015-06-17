@@ -7,9 +7,11 @@ var GroupFormActions = require('actions/GroupFormActions');
 
 module.exports = Reflux.createStore({
 	data: {
+		groupId: 5,
+		groupName: null,
 		indicatorList: [],
 		indicatorsSelected: [],
-		loading: false
+		loading: true
 	},
 	listenables: [ GroupFormActions ],
 	getInitialState: function(){
@@ -18,9 +20,17 @@ module.exports = Reflux.createStore({
 	init: function(){
 		var self = this;
 
-		// api.groups.then(function(groups) {
-			
-		// });
+		Promise.all([api.groups()])
+			.then(_.spread(function(groups) {
+
+				// find current group
+				var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
+				self.data.groupName = g.name;
+				console.log(self.data);
+
+				self.data.loading = false;
+				self.trigger(self.data);			
+			}));
 
 		api.indicatorsTree().then(function(items) {
 			self._indicatorIndex = _.indexBy(items.flat, 'id');

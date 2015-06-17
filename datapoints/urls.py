@@ -101,7 +101,7 @@ urlpatterns = [
         name='create_user'),
 
     # ## UPDATE ##
-    url(r'^groups/update/(?P<group_id>[0-9]+)/$', views.GrouEditView.as_view(),
+    url(r'^groups/update/(?P<group_id>[0-9]+)/$', views.GroupEditView.as_view(),
         name='group_update'),
 
 

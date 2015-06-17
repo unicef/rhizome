@@ -373,7 +373,10 @@ class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name = 'group_create.html'
     # form_class = GroupCreateForm
 
-class GrouEditView(PermissionRequiredMixin,generic.UpdateView):
+# def GroupEditView(request, group_id):
+#     return render_to_response('group_create.html', {'group_id': group_id }, context_instance=RequestContext(request))
+
+class GroupEditView(PermissionRequiredMixin, generic.UpdateView):
 
     model = Group
     template_name = 'group_create.html'

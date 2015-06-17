@@ -3,5 +3,8 @@
 
 {% endblock %}
 {% block scripts %}
-<script>Polio.GroupForm(document.getElementById('main'), {{group_id}});</script>
+<script>
+	Polio.GroupForm(document.getElementById('main'));
+	// Polio.GroupForm(document.getElementById('main'), {{group_id}});
+</script>
 {% endblock %}

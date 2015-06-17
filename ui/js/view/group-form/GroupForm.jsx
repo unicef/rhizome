@@ -13,12 +13,6 @@ module.exports = React.createClass({
 
 	mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
-	getInitialState: function() {
-		return {
-			'name': 'Test group'
-		};
-	},
-
 	render: function() {
 
 		var indicators = (<p>This role cannot enter data for any indicators.</p>);
@@ -28,6 +22,10 @@ module.exports = React.createClass({
 							  	items={this.state.store.indicatorsSelected} 
 							  	removeItem={GroupFormActions.removeIndicatorSelection} />
 						  </div>);
+		}
+
+		if (this.state.store.loading) {
+			return (<div><i className="fa fa-spinner fa-spin"></i> Loading...</div>)
 		}
 
 		return (
@@ -40,7 +38,7 @@ module.exports = React.createClass({
 						<h4>Role Name</h4>
 					</div>
 					<div className="columns small-8 right-box">
-						<input id="role_name" type="text" value={this.state.name} />
+						<input id="role_name" type="text" value={this.state.store.groupName} />
 					</div>
 				</div>
 
