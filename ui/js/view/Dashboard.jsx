@@ -77,10 +77,15 @@ var Dashboard = React.createClass({
         _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
+    var regionsById = _.indexBy(this.state.regions, 'id')
     var features = GeoStore.features;
 
+    _.each(features, function (f) {
+      var id = f.properties.region_id;
+      _.assign(f.properties, regionsById[id]);
+    });
+
     if (!_.isEmpty(indicators)) {
-      var regionsById = _.indexBy(this.state.regions, 'id')
 
       // Fill in indicators and regions on all the data objects. If we haven't
       // loaded indicators yet, continue displaying charts as if we have no data

@@ -2,6 +2,10 @@
 
 var _  = require('lodash');
 var d3 = require('d3');
+var React = require('react');
+var Layer = require('react-layer');
+
+var Tooltip = require('component/Tooltip.jsx');
 
 var browser = require('util/browser');
 
@@ -15,8 +19,6 @@ var DEFAULTS = {
 		left   : 0
 	},
 	onClick     : _.noop,
-	onMouseOver : _.noop,
-	onMouseOut  : _.noop,
 	value       : _.property('properties.value')
 };
 
@@ -143,15 +145,38 @@ _.extend(ChoroplethMap.prototype, {
 			.on('click', function (d) {
 				options.onClick(_.get(d, 'properties.region_id'));
 			})
-			.on('mouseover', function (d) {
-				options.onMouseOver(d, this);
-			})
-			.on('mouseout', function (d) {
-				options.onMouseOut(d, this);
-			});
+			.on('mousemove', this._onMouseMove)
+			.on('mouseout', this._onMouseOut);
 
 		region.exit().remove();
-	}
+	},
+
+  _onMouseMove : function (d) {
+    var evt = d3.event;
+
+    var render = function () {
+      return React.createElement(
+        Tooltip,
+        { left : evt.pageX + 2, top : evt.pageY + 2 },
+        d.properties.name
+      );
+    };
+
+    if (this.layer) {
+      this.layer._render = render;
+    } else {
+      this.layer = new Layer(document.body, render);
+    }
+
+    this.layer.render();
+  },
+
+  _onMouseOut : function () {
+    if (this.layer) {
+      this.layer.destroy();
+      this.layer = null;
+    }
+  }
 });
 
 module.exports = ChoroplethMap;
