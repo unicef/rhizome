@@ -15,26 +15,27 @@ function _sortValue(s, sortCol) {
 }
 
 var DEFAULTS = {
-	cellSize   : 16,
-	fontSize   : 12,
-	headerText : _.identity,
-	headers    : [],
-	margin : {
-		top    : 120,
-		right  : 120,
-		bottom : 0,
-		left   : 120
-	},
-	onClick          : null,
-	onColumnHeadOver : null,
-	onColumnHeadOut  : null,
-	onMouseOver      : null,
-	onMouseOut       : null,
-	onRowClick       : null,
-	seriesName       : _.property('name'),
-	sortValue        : _sortValue,
-	values           : _.property('values'),
-	value            : _.property('value')
+  cellSize   : 16,
+  column     : _.property('indicator.short_name'),
+  fontSize   : 12,
+  headerText : _.property('short_name'),
+  headers    : [],
+  margin : {
+    top    : 120,
+    right  : 120,
+    bottom : 0,
+    left   : 120
+  },
+  onClick          : null,
+  onColumnHeadOver : null,
+  onColumnHeadOut  : null,
+  onMouseOver      : null,
+  onMouseOut       : null,
+  onRowClick       : null,
+  seriesName       : _.property('name'),
+  sortValue        : _sortValue,
+  values           : _.property('values'),
+  value            : _.property('value'),
 };
 
 function Heatmap() {}
@@ -82,9 +83,8 @@ _.extend(Heatmap.prototype, {
 			.domain(_.map(options.headers, options.headerText))
 			.rangeBands([0, w], .1);
 
-		var x = function (d, i) {
-			return xScale(options.headerText(options.headers[i]));
-		};
+
+		var x = _.flow(options.column, xScale);
 
 		var sortCol = this.sortCol;
     var sortValue = _.partial(options.sortValue.bind(this), _, sortCol);
@@ -159,6 +159,7 @@ _.extend(Heatmap.prototype, {
 			.remove();
 
 		cell
+      .attr('id', d => [d.region.name, d.indicator.short_name].join('-'))
 			.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
 			.on('mouseover', options.onMouseOver)
 			.on('mouseout', options.onMouseOut)
