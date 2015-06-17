@@ -1,22 +1,12 @@
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
-from tastypie.cache import SimpleCache
+# from tastypie.cache import SimpleCache
 from tastypie.resources import Resource
 from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
-
-
-
-class CustomCache(SimpleCache):
-
-    def cache_control(self):
-        control = super(CustomCache, self).cache_control()
-        control.update({"must_revalidate":True, "max_age":3600})
-        # control.update({"no_transform": True})
-        return control
 
 
 class GeoJsonResult(object):
@@ -39,9 +29,6 @@ class RegionPolygonResource(BaseNonModelResource):
         filtering = {
             "region_id": ALL,
         }
-        cache = CustomCache()
-
-
 
     def get_object_list(self,request):
         '''
