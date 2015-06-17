@@ -64,6 +64,13 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
 
       section[chartName] = features;
     } else {
+      if (chart.series) {
+        chartData = _(chartData)
+          .groupBy(chart.series)
+          .map((values, name) => ({ name, values }))
+          .value();
+      }
+
       section[chartName] = chartData
     }
 
