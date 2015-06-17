@@ -184,7 +184,8 @@ module.exports = React.createClass({
 
           <div className="row">
             <div className="small-12 columns">
-              <p>
+              
+              <p className="pageWelcome">
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
               </p>
 
