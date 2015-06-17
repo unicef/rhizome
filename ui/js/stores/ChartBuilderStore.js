@@ -179,12 +179,13 @@ module.exports = Reflux.createStore({
 		  	self.aggregateRegions();
 		 });
 
-		 api.indicatorsTree().then(function(items){
+		 api.indicatorsTree().then(function(items) {
 		        self._indicatorIndex = _.indexBy(items.flat, 'id');
 		        self.data.indicatorList = _(items.objects)
 		         	.sortBy('title')
 		         	.value();
 		         self.trigger(self.data);
+		         console.log(items);
 		     });
 
 		Promise.all([api.campaign(), api.office()])

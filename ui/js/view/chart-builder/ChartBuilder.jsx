@@ -7,7 +7,6 @@ var moment = require('moment');
 
 var DropdownMenu         = require('component/DropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var Chart                = require('component/Chart.jsx');
 var ChartBuilderActions  = require('actions/ChartBuilderActions');
 var ChartBuilderStore    = require("stores/ChartBuilderStore");

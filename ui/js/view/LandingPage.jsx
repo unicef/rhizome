@@ -8,7 +8,6 @@ var Reflux = require('reflux/src');
 var NavigationStore = require('stores/NavigationStore');
 
 var DashboardStore = require('stores/DashboardStore');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
