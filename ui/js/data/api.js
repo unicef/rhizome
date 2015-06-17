@@ -146,15 +146,39 @@ function indicatorsTree(q) {
 							t.title = t.tag_name;
 							t.value = t.id;
 						});
+
+				// add 'Other Indicators' tag to collect any indicators without tags
+				var otherTag = {
+					'id': 0,
+					'value': makeTagId(0),
+					'noValue': true,
+					'title': 'Other Indicators',
+					'children': []
+				};
+				
 				_.each(indicators.objects, function(i) {
 						i.title = i.name;
 						i.value = i.id;
-						if (_.isArray(i.tag_json)) {
+						if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
+							otherTag.children.push(i);
+						}
+						else if (_.isArray(i.tag_json)) {
 							_.each(i.tag_json, function(tId) {
 								tags_map[tId].children.push(i);
 							});
 						}
 					});
+
+				// add other tag?
+				if (otherTag.children.length > 0) {
+					tags.objects.push(otherTag);
+				}
+
+				// sort indicators with each tag
+				_.each(tags.objects, function(t) {
+					t.children = _.sortBy(t.children, 'title');
+				});
+
 				tags.objects = treeify(tags.objects, 'id');
 				tags.flat = indicators.objects;
 				fulfill(tags);
