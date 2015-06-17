@@ -47,6 +47,8 @@ class v2Request(object):
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
                 'permission_function':self.apply_cust_dashboard_permissions},
+            'group_permission': {'orm_obj':IndicatorPermission,
+                'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
