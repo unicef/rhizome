@@ -47,6 +47,8 @@ class v2Request(object):
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
                 'permission_function':self.apply_cust_dashboard_permissions},
+            'group_permission': {'orm_obj':IndicatorPermission,
+                'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
@@ -71,6 +73,11 @@ class v2Request(object):
 
 
     def main(self):
+        '''
+        Put together a response with the data, meta, and error objects, returing
+        this all to the view.
+        '''
+
 
         response_data = {
             'objects':self.data,
@@ -82,6 +89,12 @@ class v2Request(object):
 
     ## permissions functions ##
     def apply_cust_dashboard_permissions(self,list_of_object_ids):
+
+        '''
+        This a fairly simple resource except for the fast that we need to
+        determine if the resource is owned_by_current_user as well as the
+        username of the user who owns this dashboard.
+        '''
 
         data = CustomDashboard.objects.raw("""
         	SELECT
@@ -96,11 +109,24 @@ class v2Request(object):
 
         return None, data
 
-
-
     def filter_permissions_to_current_user(self, list_of_object_ids):
+        '''
+        By default the api should retrieve only the user permissions for
+        the current user, that is why the filter kwargs has the current
+        user_id set up when this method is run.
 
-        data = UserAuthFunction.objects.filter(user_id = self.user_id)
+        Setting the id__in filter kwargs allows for the django orm filters
+        to be applied to the final queryset, so for instance you can see only
+        permissions that a user has that starts with 'a' or that has an id
+        greater than 100.
+        '''
+
+        filter_kwargs = {'user_id': self.user_id}
+
+        if list_of_object_ids:
+            filter_kwargs['id__in'] = list_of_object_ids
+
+        data = UserAuthFunction.objects.filter(**filter_kwargs)
 
         return None, data
 
@@ -124,11 +150,10 @@ class v2Request(object):
         As in above, this returns a raw queryset, and will be executed in the
         serialize method.
 
-        The below query reads: "show me all campaigns that have data for
-        regions that I am permitted to see."
-
-        No need to do recursion here, because the data is already aggregated
-         regionally when ingested into the datapoint_abstracted table.
+        The below query reads: "show me all campaigns for regions that I am
+        permitted to see."  As indicated below, this deduction is made by
+        joining my permitted regions to the campaigns table on the office_id
+        column.
         '''
 
         data = Campaign.objects.raw("""
@@ -146,6 +171,14 @@ class v2Request(object):
 
     def apply_indicator_permissions(self, list_of_object_ids):
         '''
+        The API allows the application to pass a read_write parameter.  While
+        all users can read all indicators and all data, they can not write to
+        all indicators.
+
+        This functionlaity is largely based on the use case that a user who
+        only has avalibility to write to 2 indicators should only see these
+        two as an option for him to insert / update when navigating to the
+        data entry page.
         '''
 
         if self.read_write == 'r':
@@ -175,13 +208,24 @@ class v2Request(object):
         return None, data
 
     def apply_document_permissions(self, list_of_object_ids):
+        '''
+        The default behavior of the Document api is to send all of the documents
+        uploaded by the current user.  If however, the show_all flag is set then
+        all documents are returned.  We also make sure here that the basic
+        API filters are applied here by filtering the document table by the list
+        of IDs we retreived in the prior step
 
-        data = []
+        '''
 
-        if self.show_all:
-            data = Document.objects.all()
-        else:
-            data = Document.objects.filter(created_by_id=self.user_id)
+        filter_kwargs = {}
+
+        if list_of_object_ids:
+            filter_kwargs['id__in'] = list_of_object_ids
+
+        if not self.show_all:
+            filter_kwargs['created_by_id'] = self.user_id
+
+        data = Document.objects.filter(**filter_kwargs)
 
         return None, data
 
