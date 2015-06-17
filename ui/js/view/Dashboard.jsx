@@ -17,11 +17,13 @@ var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 
 var DashboardStore      = require('stores/DashboardStore');
+var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 
 var AppActions          = require('actions/AppActions');
 var DashboardActions    = require('actions/DashboardActions');
 var DataActions         = require('actions/DataActions');
+var GeoActions          = require('actions/GeoActions');
 
 var Dashboard = React.createClass({
   mixins : [
@@ -65,18 +67,25 @@ var Dashboard = React.createClass({
     var loading      = this.state.loading;
     var region       = this.state.region;
 
-    var data         = {};
+    var data = {};
 
-    var dashboardName   = _.get(dashboardDef, 'title', '');
-    var dashboard       = '';
+    var dashboardName = _.get(dashboardDef, 'title', '');
+    var dashboard     = '';
 
     var indicators = _.indexBy(
       IndicatorStore.getById.apply(IndicatorStore,
         _(_.get(dashboardDef, 'charts', [])).pluck('indicators').flatten().uniq().value()),
       'id');
 
+    var regionsById = _.indexBy(this.state.regions, 'id')
+    var features = GeoStore.features;
+
+    _.each(features, function (f) {
+      var id = f.properties.region_id;
+      _.assign(f.properties, regionsById[id]);
+    });
+
     if (!_.isEmpty(indicators)) {
-      var regionsById = _.indexBy(this.state.regions, 'id')
 
       // Fill in indicators and regions on all the data objects. If we haven't
       // loaded indicators yet, continue displaying charts as if we have no data
@@ -102,10 +111,30 @@ var Dashboard = React.createClass({
         'region.parent_region_id' :
         'region.id';
 
-      section[chartName] = _.filter(this.state.data,
+      var chartData = _.filter(this.state.data,
         d => _.includes(chart.indicators, d.indicator.id) &&
           _.get(d, regionProp) === region.id
       );
+
+      if (_.endsWith(chart.type, 'Map')) {
+        // Make sure we only get data for the current campaign; maps can't
+        // display historical data. Index by region for quick lookup.
+        var dataIdx = _(chartData)
+          .filter(d => d.campaign.id === campaign.id)
+          .indexBy('region.id')
+          .value();
+
+        _.each(features, f => {
+          var d = dataIdx[f.properties.region_id];
+          if (d) {
+            f.properties[d.indicator.id] = d.value;
+          }
+        });
+
+        section[chartName] = features;
+      } else {
+        section[chartName] = chartData
+      }
 
       data[sectionName] = section;
     });
@@ -204,6 +233,10 @@ var Dashboard = React.createClass({
     this.indicatorUnsubscribe = this.listenTo(
       IndicatorStore,
       this._onIndicatorsChange);
+
+    this.geoUnsubscribe = this.listenTo(
+      GeoStore,
+      this._onGeographyLoaded);
   },
 
   componentWillUnmount : function () {
@@ -219,11 +252,19 @@ var Dashboard = React.createClass({
     if (_.isEmpty(q)) {
       DataActions.clear();
     } else {
-      DataActions.fetch(state.campaign, state.region, q);
+      DataActions.fetch(this.state.campaign, this.state.region, q);
+    }
+
+    if (this.state.hasMap) {
+      GeoActions.fetch(this.state.region);
     }
   },
 
   _onIndicatorsChange : function () {
+    this.forceUpdate();
+  },
+
+  _onGeographyLoaded : function () {
     this.forceUpdate();
   },
 
