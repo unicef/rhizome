@@ -86,12 +86,6 @@ class DashBoardView(IndexView):
     ### CAMPAIGNS ###
     #################
 
-class CampaignIndexView(IndexView):
-
-    model = Campaign
-    template_name = 'campaigns/index.html'
-    context_object_name = 'top_campaigns'
-
 
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 
@@ -117,15 +111,6 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ##################
 
 
-class IndicatorIndexView(IndexView):
-
-    model = Indicator
-    template_name = 'indicators/index.html'
-    context_object_name = 'top_indicators'
-
-    paginate_by = 10000
-
-
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
@@ -145,11 +130,6 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ### REGIONS ###
     ###############
 
-class RegionIndexView(IndexView):
-
-    model = Region
-    template_name = 'regions/index.html'
-    context_object_name = 'top_regions'
 
 class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
@@ -158,7 +138,6 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
     success_url=reverse_lazy('datapoints:region_index')
-
 
     def form_valid(self, form):
         # this inserts into the changed_by field with  the user who made the insert
@@ -186,29 +165,6 @@ class UFAdminView(IndexView):
     template_name = 'ufadmin/index.html'
     context_object_name = 'uf_admin'
 
-
-    ##########################
-    ## PERMISSION CREATION ###
-    ##########################
-
-def view_user_permissions(request):
-
-    # user_id = request.user.id
-
-    # region_permissions = RegionPermission.objects.filter(user_id = user_id).values()
-    region_permissions = RegionPermission.objects.all()
-
-    return render_to_response('xtra/user_permissions.html',\
-        {'region_permissions':region_permissions},\
-        context_instance=RequestContext(request))
-
-
-class RegionPermissionCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model=RegionPermission
-    template_name='xtra/create_region_permissions.html'
-    form_class = RegionPermissionForm
-    success_url=reverse_lazy('datapoints:view_user_permissions')
 
 
     ##############################
