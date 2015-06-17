@@ -34,7 +34,7 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
   // that can be used by that chart
   _.each(dashboard.charts, (chart, i) => {
     var sectionName = _.get(chart, 'section', '__none__');
-    var chartName   = _.camelCase(_.get(chart, 'title', i));
+    var chartName   = _.get(chart, 'id', _.camelCase(chart.title));
     var section     = _.get(results, sectionName, {});
     var regionProp  = chart.region === 'subregions' ?
       'region.parent_region_id' :
@@ -72,7 +72,7 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
 
   if (_.size(results) < 2) {
     // Use a simple array if there is only one section
-    results = _(results).values().flatten().value();
+    results = _(results).values().flatten().first();
   }
 
   return results;
