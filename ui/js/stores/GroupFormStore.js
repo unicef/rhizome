@@ -20,25 +20,33 @@ module.exports = Reflux.createStore({
 	init: function(){
 		var self = this;
 
-		Promise.all([api.groups()])
-			.then(_.spread(function(groups) {
+		Promise.all([ 
+				api.indicatorsTree(), 
+				api.groups(), 
+				api.group_permissions({ group: self.data.groupId }) 
+			])
+			.then(_.spread(function(indicators, groups, groupPermissions) {
 
 				// find current group
 				var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
 				self.data.groupName = g.name;
-				console.log(self.data);
+
+				// process indicators
+				self._indicatorIndex = _.indexBy(indicators.flat, 'id');
+				self.data.indicatorList = _(indicators.objects)
+					.sortBy('title')
+					.value();
+
+				// select current permissions
+				_.each(groupPermissions.objects, function(d) {
+					if (d.indicator_id) {
+						self.data.indicatorsSelected.push(self._indicatorIndex[d.indicator_id]);
+					}
+				});
 
 				self.data.loading = false;
 				self.trigger(self.data);			
 			}));
-
-		api.indicatorsTree().then(function(items) {
-			self._indicatorIndex = _.indexBy(items.flat, 'id');
-			self.data.indicatorList = _(items.objects)
-				.sortBy('title')
-				.value();
-			self.trigger(self.data);
-		});
 
 	},
 	onAddIndicatorSelection: function(value) {

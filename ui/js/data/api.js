@@ -211,6 +211,7 @@ module.exports = {
 	user_permissions      : endPoint('/user_permission/', 'get', 2),
 	groups                : endPoint('/group/','get',2),
 	user_groups           : endPoint('/user_group/','get',2),
+	group_permissions     : endPoint('/group_permission/','get',2),
 	map_user_group        : endPoint('/user_group/','post',2),
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
