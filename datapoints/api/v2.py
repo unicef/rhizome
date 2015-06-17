@@ -255,6 +255,8 @@ class v2PostRequest(v2Request):
             query for objects taht match
         '''
 
+        print self.kwargs
+
         ## Create, Update or Delete ##
         request_type = self.determined_request_type()
 
@@ -465,8 +467,13 @@ class v2GetRequest(v2Request):
         the filter method of the djanog ORM.
         '''
 
-        # for a get request.. dont show an ids < 0 ( see POLIO-856 ) #
-        self.kwargs['id__gt'] = 0
+        # for a get request.. dont show any ids < 0 ( see POLIO-856 ) #
+
+        try:
+            id_gt = self.kwargs['id__gt']
+        except KeyError:
+            self.kwargs['id__gt'] = 0
+
 
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
@@ -530,6 +537,7 @@ class v2GetRequest(v2Request):
                 cleaned_kwargs[query_key] = query_value.split(',')
             else:
                 cleaned_kwargs[query_key] = query_value
+
 
         ## FIND THE LIMIT AND OFFSET AND STORE AS CLASS ATTRIBUETS ##
         try:

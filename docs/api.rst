@@ -147,7 +147,7 @@ POST RESPONSE
   }
 
 Office POST
--------------
+-----------
 
 ``api/v2/office``
 
@@ -174,7 +174,7 @@ POST RESPONSE
 
 
 MapTable POST
-------------------
+-------------
 
 ``POST api/v2/<region;indicator;campaign>_map;``
   - ``django model: CampaignMap; IndicatorMap, RegionMmap``
@@ -201,7 +201,7 @@ response
 
 
 User POST
--------------
+---------
 
 ``api/v2/user``
 
@@ -210,7 +210,7 @@ User POST
 
 
 Group POST
--------------
+----------
 
 ``api/v2/group/``
 
@@ -238,7 +238,7 @@ POST RESPONSE
 
 
 User to Group POST
--------------
+------------------
 
 ``api/v2/user_group``
 
@@ -297,7 +297,7 @@ POST RESPONSE
 
 
 DataPoint POST
------------
+--------------
 
 used by the /datapoints/entry page
 
@@ -320,10 +320,55 @@ Global Parameters and Query Filters
   passed to an endpoint, the first 10 records that match the query will not be
   returned, the response will begin with the 11th object
 
+  *note - For the /v2 api, the limit / offset is applied after the queryset is
+  returned.  Since most of the object lists are small this isnt a huge issue
+  , however it is to be of note when querying the region endpoint which returns
+  20k+ results*
+
 ``format``
   default: ``json``
 
   One of either ``json`` or ``csv`` that determines the format of the response
+
+``simple_evaluation``
+
+.. code-block:: json
+
+  /api/v2/indicator/?id=21
+  /api/v2/indicator/?slug=number-of-all-missed-children
+
+
+``__in``
+
+pass a list of values and retrieve one result for each match
+
+.. code-block:: json
+
+    /api/v2/indicator/?id__in=21,164
+
+
+``__gt; __lt; __gte; __lte``
+
+.. code-block:: json
+
+    /api/v2/campaign/?start_date__lte=2015-01-01
+    /api/v2/campaign/?start_date__gte=2015-01-01
+    /api/v2/office/?id__gt=2
+    /api/v2/office/?id__lt=2
+
+``__contains; __starts_with``
+
+filter resources with simple string functions.
+
+.. code-block:: json
+
+  /api/v2/indicator/?name__startswith=Number
+  /api/v2/indicator/?name__contains=polio
+
+
+* Note - These query parameters are taken directly from the Django ORM.  For
+  more on how these work see here:*
+    https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
 
 
 ``/api/v1/datapoint/``
