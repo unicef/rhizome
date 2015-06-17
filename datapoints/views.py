@@ -3,8 +3,6 @@ from pprint import pprint
 import datetime
 from datetime import date
 
-
-import gspread
 import re
 import itertools
 from django.shortcuts import render_to_response
