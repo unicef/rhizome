@@ -268,7 +268,7 @@ POST RESPONSE
 
 
 Region Permission POST
--------------
+----------------------
 
 ``api/v2/region_permission``
 
@@ -508,6 +508,13 @@ Response Format
 
     http://localhost:8000/api/v1/datapoint/?campaign_start=2014-06-01&campaign_end=2014-09-01
 
+Custom Serialization
+--------------------
+
+This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
+
+  .. autoclass:: datapoints.api.serialize.CustomSerializer
+     :members:
 
 ``/api/v2/campaign/``
 +++++++++++++++++++++
@@ -646,12 +653,3 @@ for instance:
   }
 
 permissions are largely based around the *fn_get_authorized_regions_by_user* stored procedure which uses a recursive CTE and the *region_permission* table to find the regions a particular user is allowed to read or write to.
-
-
-Custom Serialization
---------------------
-
-This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
-
-  .. autoclass:: datapoints.api.serialize.CustomSerializer
-     :members:
