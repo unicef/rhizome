@@ -185,7 +185,6 @@ module.exports = Reflux.createStore({
 		         	.sortBy('title')
 		         	.value();
 		         self.trigger(self.data);
-		         console.log(items);
 		     });
 
 		Promise.all([api.campaign(), api.office()])

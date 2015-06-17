@@ -7,6 +7,7 @@ var moment = require('moment');
 
 var DropdownMenu         = require('component/DropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var Chart                = require('component/Chart.jsx');
 var ChartBuilderActions  = require('actions/ChartBuilderActions');
 var ChartBuilderStore    = require("stores/ChartBuilderStore");
@@ -103,19 +104,19 @@ module.exports = React.createClass({
        return <option key={indicator.id} value={index}>{indicator.name}</option>;
      });
 
- 
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
      	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
      	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
      	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
      	                   <div className="titleDiv">Indicators</div>
-     
-                         <DropdownMenu text='Select Indicators'
-                           searchable={true}
-                           onSearch={_.partial(this.setFilter, 'indicator')}>
-                           {indicators}
-                         </DropdownMenu>
+
+                         <IndicatorDropdownMenu
+                           text='Add Indicators'
+                           icon='fa-plus'
+                           indicators={this.state.store.indicatorList}
+                           sendValue={ChartBuilderActions.addIndicatorSelection}>
+                         </IndicatorDropdownMenu>
      
      		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
      
