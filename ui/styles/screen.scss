@@ -399,8 +399,10 @@ button,
 	background-color: $oil;
 
 	form {
-    max-width: 300px;
-    margin: 100pt auto;
+		background: url('/static/img/RhizomeLogoWhOnBk-md.png') no-repeat;
+		padding-top: 170px;
+	    max-width: 300px;
+	    margin: 70pt auto;
 
 		label {
 			color: $white;
