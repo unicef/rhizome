@@ -548,7 +548,7 @@ Response Format
   an ID (``Number``), name (``String``), slug (``String``), or URI (``String``)
   for the office depending on the value of the ``uri_format`` parameter
 
-``/api/v1/indicator/``
+``/api/v2/indicator/``
 ++++++++++++++++++++++
 
 Return a list of indicator definitions.
@@ -575,7 +575,7 @@ Response Format
     errors: {...}
   }
 
-``/api/v1/region/``
+``/api/v2/region/``
 +++++++++++++++++++
 
 Return a list of region definitions.
@@ -610,7 +610,7 @@ Properties with type ``<reference>`` can contain an ID (``Number``), name, slug,
 or URI (all of type ``String``) depending on the value of the ``uri_format``
 parameter.
 
-``/api/v1/office/``
+``/api/v2/office/``
 +++++++++++++++++++
 
 Return a list of office definitions. Offices are administrative concepts that
