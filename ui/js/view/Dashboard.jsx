@@ -14,6 +14,8 @@ var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 
+var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
+
 var DashboardStore      = require('stores/DashboardStore');
 var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
@@ -99,7 +101,9 @@ var Dashboard = React.createClass({
       region     : region
     };
 
-    var dashboard = React.createElement(LAYOUT[dashboardName], dashboardProps);
+    var dashboard = React.createElement(
+      _.get(LAYOUT, dashboardName, CustomDashboard),
+      dashboardProps);
 
     var campaigns = _(this.state.campaigns)
       .filter(c => c.office_id === region.office_id)

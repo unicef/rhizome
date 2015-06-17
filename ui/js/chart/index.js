@@ -11,7 +11,7 @@ var CHARTS = {
 	ChoroplethMap   : require('./choropleth'),
 	ColumnChart     : require('./column'),
 	GroupedBarChart : require('./grouped-bar'),
-	HeatMap         : require('./heatmap'),
+	HeatMapChart    : require('./heatmap'),
 	LineChart       : require('./line'),
 	PieChart        : require('./pie'),
 	ScatterChart    : require('./scatter')
