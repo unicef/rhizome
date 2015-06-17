@@ -14,5 +14,7 @@ module.exports = Reflux.createActions([
         "selectTimeRadio",
         "selectChart",
         "addCampaignSelection",
-        "addRegionSelection"
+        "addRegionSelection",
+        "selectXAxis",
+        "selectYAxis"
     ]);

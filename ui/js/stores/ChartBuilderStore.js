@@ -179,18 +179,10 @@ module.exports = Reflux.createStore({
 		  	self.aggregateRegions();
 		 });
 
-		 api.indicators().then(function(items){
-		        self._indicatorIndex = _.indexBy(items.objects, 'id');
+		 api.indicatorsTree().then(function(items) {
+		        self._indicatorIndex = _.indexBy(items.flat, 'id');
 		        self.data.indicatorList = _(items.objects)
-		         	.map(function (indicator) {
-		         		return {
-		         			'title'  : indicator.name,
-		         			'value'  : indicator.id,
-		         			'parent' : null
-		         		};
-		         	})
 		         	.sortBy('title')
-		         	.reverse()
 		         	.value();
 		         self.trigger(self.data);
 		     });
