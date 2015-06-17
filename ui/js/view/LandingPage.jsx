@@ -207,7 +207,8 @@ module.exports = React.createClass({
         </div>
 
         <div className="medium-3 columns">
-          <h2>About</h2>
+          <img src="/static/img/RhizomeLogoBkOnWh.png" alt="Rhizome Logo" width="100%" />
+          <h2>About RhizomeDB</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat mi
             nec odio egestas bibendum. Praesent tincidunt et neque in vestibulum.
