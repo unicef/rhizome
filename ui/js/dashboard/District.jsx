@@ -1,9 +1,12 @@
 'use strict';
 
-var _ = require('lodash');
+var _     = require('lodash');
 var React = require('react');
+var Layer = require('react-layer');
 
-var Chart = require('component/Chart.jsx');
+var Chart          = require('component/Chart.jsx');
+var HeatMapTooltip = require('component/HeatMapTooltip.jsx');
+var Tooltip        = require('component/Tooltip.jsx');
 
 var District = React.createClass({
   getInitialState : function () {
@@ -73,11 +76,13 @@ var District = React.createClass({
       _.filter(indicatorList, i => visible[i.id]);
 
     var options = {
-      cellSize   : 36,
-      fontSize   : 14,
-      headers    : headers,
-      scale      : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
-      value      : _.property('range'),
+      cellSize    : 36,
+      fontSize    : 14,
+      headers     : headers,
+      scale       : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
+      value       : _.property('range'),
+      onMouseMove : this._onMouseMove,
+      onMouseOut  : this._onMouseOut
     };
 
     return (
@@ -87,7 +92,7 @@ var District = React.createClass({
             <label>
               <input type='checkbox'
                 checked={this.state.showEmpty}
-                onChange={this._setShowEmpty} />
+                onChange={this._setShowEmpty} />&ensp;
               Show empty columns
             </label>
           </form>
@@ -107,6 +112,58 @@ var District = React.createClass({
 
   _setShowEmpty : function (evt) {
     this.setState({ showEmpty : evt.target.checked });
+  },
+
+  _onMouseMove : function (d) {
+    var column = d.indicator.short_name;
+    var data = _(this.props.data['district-heat-map'])
+      .pluck('values')
+      .flatten()
+      .filter(datum => datum.indicator.short_name === column)
+      .value();
+
+    var format = d3.format(_.includes(d.indicator.description, '%') ? '%' : 'n');
+
+    var evt   = d3.event;
+    var total = _(this.props.data['district-heat-map'])
+      .map(s => ({
+        name : s.name,
+        values : _.filter(s.values, d => _.isFinite(d.value))
+      }))
+      .reject(s => _.isEmpty(s.values))
+      .size();
+
+    var render = function () {
+      var tip = React.createElement(HeatMapTooltip, {
+        column,
+        data,
+        format,
+        total,
+        indicator : d.indicator,
+        row       : d.region.name,
+        value     : d.value
+      });
+
+      return React.createElement(Tooltip, {
+          left : evt.pageX,
+          top  : evt.pageY
+        }, tip);
+    };
+
+    if (!this.tip) {
+      this.tip = new Layer(document.body, render);
+    } else {
+      this.tip._render = render;
+    }
+
+    this.tip.render();
+  },
+
+  _onMouseOut : function (d) {
+    if (this.tip) {
+      this.tip.destroy();
+      this.tip = null;
+    }
   }
 });
 

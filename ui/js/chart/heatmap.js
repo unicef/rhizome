@@ -18,6 +18,7 @@ var DEFAULTS = {
   cellSize   : 16,
   column     : _.property('indicator.short_name'),
   fontSize   : 12,
+  format     : d3.format('.4n'),
   headerText : _.property('short_name'),
   headers    : [],
   margin : {
@@ -29,7 +30,7 @@ var DEFAULTS = {
   onClick          : null,
   onColumnHeadOver : null,
   onColumnHeadOut  : null,
-  onMouseOver      : null,
+  onMouseMove      : null,
   onMouseOut       : null,
   onRowClick       : null,
   seriesName       : _.property('name'),
@@ -77,7 +78,8 @@ _.extend(Heatmap.prototype, {
 				'viewBox' : '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
 				'width'   : (w + margin.left + margin.right),
 				'height'  : (h + margin.top + margin.bottom)
-			});
+			})
+      .datum(data);
 
 		var xScale = d3.scale.ordinal()
 			.domain(_.map(options.headers, options.headerText))
@@ -161,7 +163,7 @@ _.extend(Heatmap.prototype, {
 		cell
       .attr('id', d => [d.region.name, d.indicator.short_name].join('-'))
 			.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
-			.on('mouseover', options.onMouseOver)
+			.on('mousemove', options.onMouseMove)
 			.on('mouseout', options.onMouseOut)
 			.on('click', options.onClick);
 
