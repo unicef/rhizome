@@ -13,6 +13,11 @@ module.exports = React.createClass({
 
 	mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
+	submitForm: function(e) {
+		GroupFormActions.saveGroupForm();
+		e.preventDefault();
+	},
+
 	render: function() {
 
 		var indicators = (<p>This role cannot enter data for any indicators.</p>);
@@ -63,7 +68,7 @@ module.exports = React.createClass({
 					<div className="columns small-4 left-box">
 					</div>
 					<div className="columns small-8 right-box">
-						<button type="submit" className="btn btn-primary">Save Role</button>
+						<button type="submit" className="btn btn-primary" onClick={this.submitForm}>Save Role</button>
 					</div>
 				</div>
 

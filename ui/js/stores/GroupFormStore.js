@@ -56,5 +56,13 @@ module.exports = Reflux.createStore({
 	onRemoveIndicatorSelection: function(id) {
 		_.remove(this.data.indicatorsSelected, {id:id});
 		this.trigger(this.data);
+	},
+	onSaveGroupForm: function() {
+		var self = this;
+		var post = {
+			id: self.data.groupId,
+			name: self.data.groupName
+		}
+		console.log(post);
 	}
 });
