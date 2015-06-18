@@ -60,7 +60,7 @@ var Navigation = React.createClass({
       <nav>
         <ul>
           <li className='home'><a href='/'>
-            RhizomeDB
+            Rhizome DB
           </a></li>
 
           <li className='dashboard'>
