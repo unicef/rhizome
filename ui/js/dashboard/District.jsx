@@ -8,6 +8,8 @@ var Chart          = require('component/Chart.jsx');
 var HeatMapTooltip = require('component/HeatMapTooltip.jsx');
 var Tooltip        = require('component/Tooltip.jsx');
 
+var DashboardActions = require('actions/DashboardActions');
+
 var District = React.createClass({
   getInitialState : function () {
     return {
@@ -83,7 +85,9 @@ var District = React.createClass({
       onMouseMove      : this._onMouseMove,
       onMouseOut       : this._onMouseOut,
       onColumnHeadOver : this._onHeaderOver,
-      onColumnHeadOut  : this._onHeaderOut
+      onColumnHeadOut  : this._onHeaderOut,
+      onClick          : this._onRegionClick,
+      onRowClick       : this._onRegionClick
     };
 
     return (
@@ -109,6 +113,16 @@ var District = React.createClass({
         </div>
       </div>
     );
+  },
+
+  componentWillUnmount : function () {
+    if (this.tip) {
+      this.tip.destroy();
+    }
+
+    if (this.timer) {
+      window.clearTimeout(this.time);
+    }
   },
 
   _setShowEmpty : function (evt) {
@@ -217,6 +231,15 @@ var District = React.createClass({
       window.clearTimeout(this.timer);
       this.timer = null;
     }
+  },
+
+  _onRegionClick : function (d) {
+    var params = {
+      dashboard : 'management-dashboard',
+      region    : _.isString(d) ? d : d.region.name
+    };
+
+    DashboardActions.navigate(params);
   }
 });
 

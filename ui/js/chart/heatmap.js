@@ -11,8 +11,6 @@ function _sortValue(s, sortCol) {
     options.seriesName(s) :
     options.value(_.find(options.values(s), d => options.column(d) === sortCol));
 
-  console.log('sortCol', sortCol, val);
-
 	return val;
 }
 

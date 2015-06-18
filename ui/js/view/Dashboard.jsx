@@ -172,11 +172,17 @@ var Dashboard = React.createClass({
     this.geoUnsubscribe = this.listenTo(
       GeoStore,
       this._onGeographyLoaded);
+
+    this.navigateUnsubscribe = this.listenTo(
+      DashboardActions.navigate,
+      this._navigate);
   },
 
   componentWillUnmount : function () {
     this.dashboardUnsubscribe();
     this.indicatorUnsubscribe();
+    this.geoUnsubscribe();
+    this.navigateUnsubscribe();
   },
 
   _onDashboardChange : function (state) {
@@ -210,27 +216,31 @@ var Dashboard = React.createClass({
       return;
     }
 
-    var dashboard = _.kebabCase(this.state.dashboard.title);
-    var region    = this.state.region.name;
-
-    page('/datapoints/' + [dashboard, region, moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')].join('/'));
+    this._navigate({ campaign : moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') });
   },
 
   _setRegion : function (id) {
-    var campaign  = moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
-    var dashboard = _.kebabCase(this.state.dashboard.title);
     var region    = _.find(this.state.regions, r => r.id === id)
 
     if (!region) {
       return;
     }
 
-    page('/datapoints/' + [dashboard, region.name, campaign].join('/'));
+    this._navigate({ region : region.name });
   },
 
   _setDashboard : function (slug) {
-    var campaign = moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
-    var region   = this.state.region.name;
+    this._navigate({ dashboard : slug });
+  },
+
+  _navigate : function (params) {
+    var slug     = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
+    var region   = _.get(params, 'region', this.state.region.name);
+    var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+
+    if (_.isNumber(region)) {
+      region = _.find(this.state.regions, r => r.id === region).name;
+    }
 
     page('/datapoints/' + [slug, region, campaign].join('/'));
   },
