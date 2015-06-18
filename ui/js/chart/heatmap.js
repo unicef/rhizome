@@ -4,12 +4,14 @@ var _  = require('lodash');
 var d3 = require('d3');
 
 function _sortValue(s, sortCol) {
-	// jshint validthis: true
-	var options = this._options;
+  // jshint validthis: true
+  var options = this._options;
 
-	var val = (sortCol == null) ?
-		options.seriesName(s) :
-		options.value(options.values(s)[sortCol]);
+  var val = (sortCol == null) ?
+    options.seriesName(s) :
+    options.value(_.find(options.values(s), d => options.column(d) === sortCol));
+
+  console.log('sortCol', sortCol, val);
 
 	return val;
 }
@@ -178,8 +180,8 @@ _.extend(Heatmap.prototype, {
 				.style({
           'text-anchor' : 'start',
           'font-size'   : options.fontSize,
-          'font-weight' : function (d, i) {
-            return (i === sortCol) ?
+          'font-weight' : function (d) {
+            return (d === sortCol) ?
               'bold' :
               'normal';
             }
@@ -224,8 +226,8 @@ _.extend(Heatmap.prototype, {
 			.style('opacity', 1);
 	},
 
-	_setSort : function (d, i) {
-		this.sortCol = (i === this.sortCol) ? null : i;
+	_setSort : function (d) {
+		this.sortCol = (d === this.sortCol) ? null : d;
 		this.update(this._svg.selectAll('.row').data());
 	}
 });

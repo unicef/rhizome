@@ -80,7 +80,6 @@ var District = React.createClass({
       fontSize         : 14,
       headers          : headers,
       scale            : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
-      value            : _.property('range'),
       onMouseMove      : this._onMouseMove,
       onMouseOut       : this._onMouseOut,
       onColumnHeadOver : this._onHeaderOver,
