@@ -13,6 +13,13 @@
 1. [Virtualenv][]
 2. [Virtualenvwrapper][]
 
+## Building technical documentation
+
+1. cd docs
+2. make clean
+3. make html
+4. Docs files now available here: docs/_build/html
+
 ## Setting up the development environment
 
 ### Virtual Environment (optional)
