@@ -112,7 +112,7 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
-    success_url= reverse_lazy('datapoints:indicator_index')
+    success_url= '/ufadmin/indicators'
     template_name = 'indicators/create.html'
     permission_required = 'datapoints.add_indicator'
 
@@ -120,7 +120,7 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
-    success_url = reverse_lazy('datapoints:indicator_index')
+    success_url = '/ufadmin/indicators'
     template_name = 'indicators/update.html'
     permission_required = 'datapoints.change_indicator'
 
@@ -135,7 +135,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
-    success_url=reverse_lazy('datapoints:region_index')
+    success_url= '/ufadmin/regions'
 
     def form_valid(self, form):
         # this inserts into the changed_by field with  the user who made the insert
@@ -152,7 +152,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Region
-    success_url = reverse_lazy('datapoints:region_index')
+    success_url = '/ufadmin/regions'
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
 
