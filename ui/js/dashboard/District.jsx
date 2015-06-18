@@ -76,13 +76,15 @@ var District = React.createClass({
       _.filter(indicatorList, i => visible[i.id]);
 
     var options = {
-      cellSize    : 36,
-      fontSize    : 14,
-      headers     : headers,
-      scale       : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
-      value       : _.property('range'),
-      onMouseMove : this._onMouseMove,
-      onMouseOut  : this._onMouseOut
+      cellSize         : 36,
+      fontSize         : 14,
+      headers          : headers,
+      scale            : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
+      value            : _.property('range'),
+      onMouseMove      : this._onMouseMove,
+      onMouseOut       : this._onMouseOut,
+      onColumnHeadOver : this._onHeaderOver,
+      onColumnHeadOut  : this._onHeaderOut
     };
 
     return (
@@ -165,7 +167,7 @@ var District = React.createClass({
   },
 
   _onMouseOut : function (d) {
-    if (false && this.tip && !this.timer) {
+    if (this.tip && !this.timer) {
       var self = this;
 
       this.timer = window.setTimeout(function () {
@@ -173,6 +175,48 @@ var District = React.createClass({
         self.tip   = null;
         self.timer = null;
       }, 200);
+    }
+  },
+
+  _onHeaderOver : function (d) {
+    var indicator = _.find(this.props.indicators, ind => ind.short_name === d);
+
+    if (this.timer) {
+      window.clearTimeout(this.timer);
+      this.timer = null;
+    }
+
+    var evt = d3.event;
+
+    var render = function () {
+      return (
+        <Tooltip left={evt.pageX} top={evt.pageY}>
+          <div>
+            <h3>{indicator.name}</h3>
+            <p>{indicator.description}</p>
+          </div>
+        </Tooltip>
+      );
+    };
+
+    if (!this.tip) {
+      this.tip = new Layer(document.body, render);
+    } else {
+      this.tip._render = render;
+    }
+
+    this.tip.render();
+  },
+
+  _onHeaderOut : function () {
+    if (this.tip) {
+      this.tip.destroy();
+      this.tip = null;
+    }
+
+    if (this.timer) {
+      window.clearTimeout(this.timer);
+      this.timer = null;
     }
   }
 });
