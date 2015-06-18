@@ -17,7 +17,7 @@ module.exports = React.createClass({
 
   getDefaultProps : function () {
     return {
-      loading : true
+      loading : false
     };
   },
 

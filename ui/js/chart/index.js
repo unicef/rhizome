@@ -12,6 +12,7 @@ var CHARTS = {
 	ColumnChart     : require('./column'),
 	GroupedBarChart : require('./grouped-bar'),
 	HeatMapChart    : require('./heatmap'),
+  Histogram       : require('./histogram'),
 	LineChart       : require('./line'),
 	PieChart        : require('./pie'),
 	ScatterChart    : require('./scatter')

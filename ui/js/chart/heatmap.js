@@ -4,37 +4,39 @@ var _  = require('lodash');
 var d3 = require('d3');
 
 function _sortValue(s, sortCol) {
-	// jshint validthis: true
-	var options = this._options;
+  // jshint validthis: true
+  var options = this._options;
 
-	var val = (sortCol == null) ?
-		options.seriesName(s) :
-		options.value(options.values(s)[sortCol]);
+  var val = (sortCol == null) ?
+    options.seriesName(s) :
+    options.value(_.find(options.values(s), d => options.column(d) === sortCol));
 
 	return val;
 }
 
 var DEFAULTS = {
-	cellSize   : 16,
-	fontSize   : 12,
-	headerText : _.identity,
-	headers    : [],
-	margin : {
-		top    : 120,
-		right  : 120,
-		bottom : 0,
-		left   : 120
-	},
-	onClick          : null,
-	onColumnHeadOver : null,
-	onColumnHeadOut  : null,
-	onMouseOver      : null,
-	onMouseOut       : null,
-	onRowClick       : null,
-	seriesName       : _.property('name'),
-	sortValue        : _sortValue,
-	values           : _.property('values'),
-	value            : _.property('value')
+  cellSize   : 16,
+  column     : _.property('indicator.short_name'),
+  fontSize   : 12,
+  format     : d3.format('.4n'),
+  headerText : _.property('short_name'),
+  headers    : [],
+  margin : {
+    top    : 120,
+    right  : 120,
+    bottom : 0,
+    left   : 120
+  },
+  onClick          : null,
+  onColumnHeadOver : null,
+  onColumnHeadOut  : null,
+  onMouseMove      : null,
+  onMouseOut       : null,
+  onRowClick       : null,
+  seriesName       : _.property('name'),
+  sortValue        : _sortValue,
+  values           : _.property('values'),
+  value            : _.property('value'),
 };
 
 function Heatmap() {}
@@ -76,15 +78,15 @@ _.extend(Heatmap.prototype, {
 				'viewBox' : '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
 				'width'   : (w + margin.left + margin.right),
 				'height'  : (h + margin.top + margin.bottom)
-			});
+			})
+      .datum(data);
 
 		var xScale = d3.scale.ordinal()
 			.domain(_.map(options.headers, options.headerText))
 			.rangeBands([0, w], .1);
 
-		var x = function (d, i) {
-			return xScale(options.headerText(options.headers[i]));
-		};
+
+		var x = _.flow(options.column, xScale);
 
 		var sortCol = this.sortCol;
     var sortValue = _.partial(options.sortValue.bind(this), _, sortCol);
@@ -99,11 +101,7 @@ _.extend(Heatmap.prototype, {
 			return 'translate(0,' + y(d) + ')';
 		};
 
-		var fill = function (d) {
-			var v = options.value(d);
-
-			return v != null ? options.scale(v) : 'transparent';
-		};
+		var fill = options.scale;
 
 		svg.select('.margin')
 			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -163,8 +161,9 @@ _.extend(Heatmap.prototype, {
 			.remove();
 
 		cell
+      .attr('id', d => [d.region.name, d.indicator.short_name].join('-'))
 			.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
-			.on('mouseover', options.onMouseOver)
+			.on('mousemove', options.onMouseMove)
 			.on('mouseout', options.onMouseOut)
 			.on('click', options.onClick);
 
@@ -179,8 +178,8 @@ _.extend(Heatmap.prototype, {
 				.style({
           'text-anchor' : 'start',
           'font-size'   : options.fontSize,
-          'font-weight' : function (d, i) {
-            return (i === sortCol) ?
+          'font-weight' : function (d) {
+            return (d === sortCol) ?
               'bold' :
               'normal';
             }
@@ -225,8 +224,8 @@ _.extend(Heatmap.prototype, {
 			.style('opacity', 1);
 	},
 
-	_setSort : function (d, i) {
-		this.sortCol = (i === this.sortCol) ? null : i;
+	_setSort : function (d) {
+		this.sortCol = (d === this.sortCol) ? null : d;
 		this.update(this._svg.selectAll('.row').data());
 	}
 });
