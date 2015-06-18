@@ -115,14 +115,19 @@ var District = React.createClass({
   },
 
   _onMouseMove : function (d) {
+    if (this.timer) {
+      window.clearTimeout(this.timer);
+      this.timer = null;
+    }
+
     var column = d.indicator.short_name;
     var data = _(this.props.data['district-heat-map'])
       .pluck('values')
       .flatten()
       .filter(datum => datum.indicator.short_name === column)
-      .value();
+      .clone();
 
-    var format = d3.format(_.includes(d.indicator.description, '%') ? '%' : 'n');
+    var format = d3.format('n');
 
     var evt   = d3.event;
     var total = _(this.props.data['district-heat-map'])
@@ -160,9 +165,14 @@ var District = React.createClass({
   },
 
   _onMouseOut : function (d) {
-    if (this.tip) {
-      this.tip.destroy();
-      this.tip = null;
+    if (false && this.tip && !this.timer) {
+      var self = this;
+
+      this.timer = window.setTimeout(function () {
+        self.tip.destroy();
+        self.tip   = null;
+        self.timer = null;
+      }, 200);
     }
   }
 });

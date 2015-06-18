@@ -541,6 +541,12 @@ ul {
 			padding          : 0.1em;
 		}
 	}
+
+  svg {
+    .bg {
+      fill : transparent;
+    }
+  }
 }
 
 .inline {

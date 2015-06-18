@@ -1,9 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
+var _     = require('lodash');
+var d3    = require('d3');
 var React = require('react');
 
-var d3 = require('d3');
+var Chart = require('component/Chart.jsx');
 
 var HeatMapTooltip = React.createClass({
   propTypes : {
@@ -23,9 +24,11 @@ var HeatMapTooltip = React.createClass({
     };
   },
 
+
   render : function () {
     var fmt    = this.props.format;
     var bounds = this.props.indicator.bound_json;
+    var value  = this.props.value;
     var targets;
 
     if (!_.isEmpty(bounds)) {
@@ -48,7 +51,7 @@ var HeatMapTooltip = React.createClass({
               float  : 'left',
               margin : '0 1em 0 0'
             }}>
-            {targets}
+            {rows}
           </table>
         </span>
       );
@@ -60,12 +63,23 @@ var HeatMapTooltip = React.createClass({
       .filter(_.isFinite)
       .size();
 
+    var chartOptions = {
+      className  : d => _.inRange(value, d.x, d.x + d.dx) ? 'current' : null,
+      yAxisTitle : 'Number of Districts',
+      width      : 120 * 1.618,
+      height     : 120,
+      format     : fmt
+    };
+
     return (
       <div>
         <h3>{this.props.row}</h3>
-        <h4>{this.props.column}:&emsp;{fmt(this.props.value)}</h4>
+        <h4>{this.props.column}:&emsp;{fmt(value)}</h4>
 
         <h6>Distribution of Districts by Performance</h6>
+        <Chart type='Histogram'
+          data={data}
+          options={chartOptions} />
 
         <div className='clearfix'></div>
         {targets}
