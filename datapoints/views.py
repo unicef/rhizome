@@ -330,7 +330,7 @@ class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
 class GroupEditView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Group
-    template_name = 'group_create.html'
+    template_name = 'group_update.html'
 
     def get_success_url(self):
 

@@ -14,10 +14,8 @@ module.exports = React.createClass({
 	mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
 	componentWillMount: function() {
-		console.log(this.props);
-		if (this.props.group_id) {
-			// this.state.store.
-		}
+		// init store, passing group id if present
+		GroupFormActions.initialize(this.props.group_id);
 	},
 
 	updateName: function(e) {

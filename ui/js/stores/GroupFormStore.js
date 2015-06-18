@@ -18,8 +18,10 @@ module.exports = Reflux.createStore({
 	getInitialState: function(){
 		return this.data;
 	},
-	init: function(){
+	onInitialize: function(group_id) {
 		var self = this;
+
+		self.data.groupId = group_id;
 
 		// always get the indicator tree
 		api.indicatorsTree().then(function(indicators) {
