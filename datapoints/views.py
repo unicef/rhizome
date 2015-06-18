@@ -88,7 +88,7 @@ class DashBoardView(IndexView):
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Campaign
-    success_url = reverse_lazy('datapoints:campaign_index')
+    success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
     permission_required = 'datapoints.add_campaign'
 
@@ -96,7 +96,7 @@ class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model=Campaign
-    success_url = reverse_lazy('datapoints:campaign_index')
+    success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
     form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
