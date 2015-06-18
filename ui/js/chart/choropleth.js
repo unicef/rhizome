@@ -120,7 +120,7 @@ _.extend(ChoroplethMap.prototype, {
 
 		if (!_.isArray(domain)) {
 			domain    = d3.extent(features, options.value);
-			domain[0] = d3.min(domain[0], 0);
+			domain[0] = Math.min(domain[0], 0);
 		}
 
 		var colorScale = d3.scale.quantize()
