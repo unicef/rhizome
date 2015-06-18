@@ -7,11 +7,12 @@ var GroupFormActions = require('actions/GroupFormActions');
 
 module.exports = Reflux.createStore({
 	data: {
-		groupId: 5,
+		groupId: null,
 		groupName: null,
 		indicatorList: [],
 		indicatorsSelected: [],
-		loading: true
+		loading: true,
+		saving: false
 	},
 	listenables: [ GroupFormActions ],
 	getInitialState: function(){
@@ -20,49 +21,84 @@ module.exports = Reflux.createStore({
 	init: function(){
 		var self = this;
 
-		Promise.all([ 
-				api.indicatorsTree(), 
-				api.groups(), 
-				api.group_permissions({ group: self.data.groupId }) 
-			])
-			.then(_.spread(function(indicators, groups, groupPermissions) {
+		// always get the indicator tree
+		api.indicatorsTree().then(function(indicators) {
 
-				// find current group
-				var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
-				self.data.groupName = g.name;
+			// process indicators
+			self._indicatorIndex = _.indexBy(indicators.flat, 'id');
+			self.data.indicatorList = _(indicators.objects)
+				.sortBy('title')
+				.value();
 
-				// process indicators
-				self._indicatorIndex = _.indexBy(indicators.flat, 'id');
-				self.data.indicatorList = _(indicators.objects)
-					.sortBy('title')
-					.value();
+			// updating existing group? need to get more data
+			if (self.data.groupId) {
+				Promise.all([ 
+						api.groups(), 
+						api.group_permissions({ group: self.data.groupId }) 
+					])
+					.then(_.spread(function(groups, groupPermissions) {
 
-				// select current permissions
-				_.each(groupPermissions.objects, function(d) {
-					if (d.indicator_id) {
-						self.data.indicatorsSelected.push(self._indicatorIndex[d.indicator_id]);
-					}
-				});
+						// find current group
+						var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
+						self.data.groupName = g.name;
 
+						// select current permissions
+						_.each(groupPermissions.objects, function(d) {
+							if (d.indicator_id) {
+								self.data.indicatorsSelected.push(self._indicatorIndex[d.indicator_id]);
+							}
+						});
+
+						self.data.loading = false;
+						self.trigger(self.data);
+					}));
+
+			} 
+			// creating new group
+			else {
 				self.data.loading = false;
-				self.trigger(self.data);			
-			}));
+				self.trigger(self.data);
+			}
+
+		});
 
 	},
 	onAddIndicatorSelection: function(value) {
-		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
-	    this.trigger(this.data);
+		var self = this;
+		api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value })
+			.then(function(response) {
+				self.data.indicatorsSelected.push(self._indicatorIndex[value]);
+			    self.trigger(self.data);				
+			});
 	},
-	onRemoveIndicatorSelection: function(id) {
-		_.remove(this.data.indicatorsSelected, {id:id});
+	onRemoveIndicatorSelection: function(value) {
+		var self = this;
+		api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value, id: '' })
+			.then(function(response) {
+				_.remove(self.data.indicatorsSelected, {id: value});
+			    self.trigger(self.data);				
+			});
+	},
+	onUpdateName: function(name) {
+		this.data.groupName = name;
 		this.trigger(this.data);
 	},
 	onSaveGroupForm: function() {
 		var self = this;
+		self.data.saving = true;
 		var post = {
-			id: self.data.groupId,
 			name: self.data.groupName
 		}
-		console.log(post);
+		if (self.data.groupId) post.id = self.data.groupId;
+		api.groupUpsert(post).then(function(response) {
+			if (response.objects.new_id) {
+				self.data.groupId = response.objects.new_id;
+			}
+			setTimeout(function() {
+				self.data.saving = false;
+				self.trigger(self.data);
+			}, 500);
+			self.trigger(self.data);
+		});
 	}
 });

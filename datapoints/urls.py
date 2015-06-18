@@ -79,6 +79,7 @@ urlpatterns = [
     ## UPDATE ##
     url(r'^users/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
         name='user_update'),
+
         ###############
         #### GROUP  ####
         ###############
@@ -88,7 +89,7 @@ urlpatterns = [
         name='create_user'),
 
     # ## UPDATE ##
-    url(r'^groups/update/(?P<group_id>[0-9]+)/$', views.GroupEditView.as_view(),
+    url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GroupEditView.as_view(),
         name='group_update'),
 
 

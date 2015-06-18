@@ -321,20 +321,31 @@ def refresh_metadata(request):
     return HttpResponseRedirect(reverse('datapoints:cache_control'))
 
 
-class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = Group
-    template_name = 'group_create.html'
-    # form_class = GroupCreateForm
-
-# def GroupEditView(request, group_id):
-#     return render_to_response('group_create.html', {'group_id': group_id }, context_instance=RequestContext(request))
-
-class GroupEditView(PermissionRequiredMixin, generic.UpdateView):
+class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
 
     model = Group
     template_name = 'group_create.html'
 
+
+class GroupEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = Group
+    template_name = 'group_create.html'
+
+    def get_success_url(self):
+
+        requested_group_id = self.get_object().id
+
+        return reverse_lazy('datapoints:group_update',kwargs={'pk':
+            requested_group_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(GroupEditView, self).get_context_data(**kwargs)
+        group_obj = self.get_object()
+        context['group_id'] = group_obj.id
+
+        return context
 
 class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 

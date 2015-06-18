@@ -77,7 +77,7 @@ module.exports = {
 		AdminApp.render(document.getElementById('main'));
 	},
 	GroupForm: function(el) {
-		React.render(React.createElement(GroupForm), el);
-		// React.render(React.createElement(GroupForm, {group_id: group_id}), el);
+		// React.render(React.createElement(GroupForm), el);
+		React.render(React.createElement(GroupForm, {group_id: group_id}), el);
 	}
 };
