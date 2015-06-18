@@ -76,7 +76,7 @@ module.exports = {
 	UFAdmin: function(el) {
 		AdminApp.render(document.getElementById('main'));
 	},
-	GroupForm: function(el) {
+	GroupForm: function(el, group_id) {
 		// React.render(React.createElement(GroupForm), el);
 		React.render(React.createElement(GroupForm, {group_id: group_id}), el);
 	}
