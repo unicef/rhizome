@@ -15,18 +15,13 @@ var DashboardStore = Reflux.createStore({
 		this.loaded = false;
 		this.indicators = {};
 
-		Promise.all([api.dashboards(), api.regions(), api.region_type(), api.campaign()])
+		Promise.all([api.regions(), api.region_type(), api.campaign()])
 			.then(function (responses) {
-				var dashboards = builtins.concat(responses[0].objects);
+        var types     = _.indexBy(responses[1].objects, 'id');
+        var regionIdx = _.indexBy(responses[0].objects, 'id');
 
-        var types = _.indexBy(responses[2].objects, 'id');
-        var regionIdx = _.indexBy(responses[1].objects, 'id');
-
-				this.regions    = responses[1].objects;
-				this.campaigns  = responses[3].objects;
-				this.dashboards = _.indexBy(dashboards, function (d) {
-					return _.kebabCase(d.title);
-				});
+				this.regions    = responses[0].objects;
+				this.campaigns  = responses[2].objects;
 
         _.each(this.regions, function (r) {
           r.region_type = _.get(types[r.region_type_id], 'name');
@@ -35,9 +30,11 @@ var DashboardStore = Reflux.createStore({
 
 				this.loaded = true;
 
-				this.onSetDashboard({
-					dashboard : this.dashboard || _.kebabCase(dashboards[0].title)
-				});
+        this.trigger({
+          loaded    : this.loaded,
+          regions   : this.regions,
+          campaigns : this.campaign
+        });
 			}.bind(this));
 	},
 
@@ -60,14 +57,13 @@ var DashboardStore = Reflux.createStore({
 	},
 
 	onSetDashboard : function (definition) {
-		this.dashboard = definition.dashboard;
+		var dashboard  = this.dashboard = definition.dashboard;
 		this.region    = definition.region || this.region;
 		this.date      = definition.date || this.date;
 
 		if (!this.loaded) {
 			return;
 		}
-		var dashboard = this.dashboards[this.dashboard];
 
 		this.indicators = {};
 		_.each(dashboard.charts, this.addChartDefinition);
@@ -108,10 +104,8 @@ var DashboardStore = Reflux.createStore({
       .pluck('type')
       .any(t => _.endsWith(t, 'Map'));
 
-    console.log('DashboardActions::hasMap', hasMap);
-
 		this.trigger({
-			dashboard  : dashboard,
+			dashboard  : this.dashboard,
 			region     : region,
 			campaign   : campaign,
 			loaded     : true,
@@ -120,7 +114,6 @@ var DashboardStore = Reflux.createStore({
 			campaigns  : _.filter(campaigns, function (c) {
 				return c.office_id === region.office_id;
 			}),
-      dashboards : this.dashboards,
       hasMap     : hasMap
 		});
 	},
@@ -138,7 +131,6 @@ var DashboardStore = Reflux.createStore({
   },
 
 	addChartDefinition : function (chart) {
-	
 		var base = _.omit(chart, 'indicators', 'title');
 		_.each(chart.indicators, function (id) {
 			var duration = chart.hasOwnProperty('timeRange') ? moment.duration(chart.timeRange) : Infinity;

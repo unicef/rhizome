@@ -19,6 +19,7 @@ var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 var DashboardStore      = require('stores/DashboardStore');
 var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
+var NavigationStore     = require('stores/NavigationStore');
 
 var AppActions          = require('actions/AppActions');
 var DashboardActions    = require('actions/DashboardActions');
@@ -49,12 +50,11 @@ var Dashboard = React.createClass({
 
   componentWillMount : function () {
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
-    page({ click : false });
     AppActions.init();
   },
 
   render : function () {
-    if (!this.state.loaded) {
+    if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize      : '2rem',
       };
@@ -117,7 +117,7 @@ var Dashboard = React.createClass({
     }
 
     var dashboardItems = MenuItem.fromArray(
-      _.map(this.state.dashboards, d => {
+      _.map(NavigationStore.dashboards, d => {
         return {
           title : d.title,
           value : _.kebabCase(d.title)
@@ -176,6 +176,10 @@ var Dashboard = React.createClass({
     this.navigateUnsubscribe = this.listenTo(
       DashboardActions.navigate,
       this._navigate);
+
+    this.navigationStoreUnsubscribe = this.listenTo(
+      NavigationStore,
+      this._onNavigationChange);
   },
 
   componentWillUnmount : function () {
@@ -183,21 +187,28 @@ var Dashboard = React.createClass({
     this.indicatorUnsubscribe();
     this.geoUnsubscribe();
     this.navigateUnsubscribe();
+    this.navigationStoreUnsubscribe();
   },
 
   _onDashboardChange : function (state) {
+    var fetchData = this.state.loaded;
+
     this.setState(state);
 
-    var q = DashboardStore.getQueries();
-    console.log(q);
-    if (_.isEmpty(q)) {
-      DataActions.clear();
-    } else {
-      DataActions.fetch(this.state.campaign, this.state.region, q);
-    }
+    if (fetchData) {
+      var q = DashboardStore.getQueries();
 
-    if (this.state.hasMap) {
-      GeoActions.fetch(this.state.region);
+      if (_.isEmpty(q)) {
+        DataActions.clear();
+      } else {
+        DataActions.fetch(this.state.campaign, this.state.region, q);
+      }
+
+      if (this.state.hasMap) {
+        GeoActions.fetch(this.state.region);
+      }
+    } else if (NavigationStore.loaded) {
+      page({ click : false });
     }
   },
 
@@ -233,6 +244,12 @@ var Dashboard = React.createClass({
     this._navigate({ dashboard : slug });
   },
 
+  _onNavigationChange : function (nav) {
+    if (NavigationStore.loaded && DashboardStore.loaded) {
+      page({ click : false });
+    }
+  },
+
   _navigate : function (params) {
     var slug     = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
     var region   = _.get(params, 'region', this.state.region.name);
@@ -246,11 +263,12 @@ var Dashboard = React.createClass({
   },
 
   _show : function (ctx) {
-    console.log(ctx.params);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+
     DashboardActions.setDashboard({
-      dashboard : ctx.params.dashboard,
-      region    : ctx.params.region,
-      date      : [ctx.params.year, ctx.params.month].join('-')
+      dashboard,
+      region : ctx.params.region,
+      date   : [ctx.params.year, ctx.params.month].join('-')
     });
   }
 });
