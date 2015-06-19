@@ -51,6 +51,9 @@ module.exports = React.createClass({
   _setRegion : function (id) {
  
   },
+  _updateTitle : function(e){
+    DashboardBuilderActions.updateTitle(e.currentTarget.value);
+  },
 	render: function(){
       var self = this;
       var charts = this.state.store.charts.map(function(chart,index){
@@ -91,12 +94,19 @@ module.exports = React.createClass({
 	           </form>
 	   
 	           {charts}
-	           <a href="#" onClick={this.newChart} className="button">add chart</a>
+	           <a  onClick={this.newChart} className="button">add chart</a>
 	         </div>
 	   );
 	   if(this.state.store.loading)
 	   {
 	   	 return (<div>loading</div>);
+	   } else if(this.state.store.newDashboard) {
+	      return (<form className='inline no-print dashboard-builder-container'>
+	   				<h1>Create a New Custom Dashboard</h1>
+	   				<div className="titleDiv">Dashboard Title</div>
+	   				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />   
+	   	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard} >Next</a>:null}		
+	              </form>);
 	   }
 	   else if(this.state.chartBuilderActive)
 	   {

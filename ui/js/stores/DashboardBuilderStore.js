@@ -17,22 +17,34 @@ var DashboardBuilderStore = Reflux.createStore({
 	      regions:[],
 	      campaigns:[],
 	      indicators:{},
-	      loading:true},
+	      loading:true,
+	      newDashboard:false,
+	      dashboardTitle:''},
 	onInitialize : function(id){
 	var self = this;
 	 this.data.dashboardId = id;
+	 if(_.isNull(id))
+	 {
+	 	this.data.newDashboard = true;
+	 	this.data.loading = false;
+	 	this.trigger(this.data);
+	 	
+	 }
+	 else {
+	 	Promise.all([api.regions(), api.campaign(),api.get_dashboard({id:id})])
+	 		.then(function (responses) {
+	 			self.data.regions    = responses[0].objects;
+	 			self.data.campaigns  = responses[1].objects;
+	 			self.data.charts = responses[2].objects[0].dashboard_json;
+	 			_.each(self.data.charts,function(chart){
+	 				self.addChartDefinition(chart);
+	 			});
+	 			self.data.dashboard = responses[2].objects[0];
+	 			self.setDashboard();
+	 		}); 
+	 }
 
-		Promise.all([api.regions(), api.campaign(),api.get_dashboard({id:id})])
-			.then(function (responses) {
-				self.data.regions    = responses[0].objects;
-				self.data.campaigns  = responses[1].objects;
-				self.data.charts = responses[2].objects[0].dashboard_json;
-				_.each(self.data.charts,function(chart){
-					self.addChartDefinition(chart);
-				});
-				self.data.dashboard = responses[2].objects[0];
-				self.setDashboard();
-			}); 
+
 	},
 	setDashboard:function(){
 		var date = '2013-03';
@@ -77,6 +89,22 @@ var DashboardBuilderStore = Reflux.createStore({
 	  this.saveDashboard();
 	  this.trigger(this.data);
 	},
+	onAddDashboard:function(){
+	   var data = {
+	     title: this.data.dashboardTitle,
+	     //default_office_id: 1
+	     dashboard_json:'[]'
+	   };
+	   api.save_dashboard(data).then(function(response){
+	      if(response.objects.new_id)
+	      {
+	      	window.location = "/datapoints/dashboard_builder/"+response.objects.new_id;
+	      }
+	      else {
+	      	alert("There was an error saving your chart");
+	      }
+	   }); 
+	},
 	saveDashboard:function(){
 	    var data = {
 	      id: this.data.dashboard.id,
@@ -95,7 +123,11 @@ var DashboardBuilderStore = Reflux.createStore({
 	  this.data.charts[index] = chartDef;
 	  this.saveDashboard();
 	  this.trigger(this.data);
-	}
+	},
+	onUpdateTitle:function(title){
+	   this.data.dashboardTitle = title;
+	   this.trigger(this.data);
+	},
 });
 	
 module.exports = DashboardBuilderStore;

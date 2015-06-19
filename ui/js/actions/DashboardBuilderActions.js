@@ -7,5 +7,7 @@ var Reflux = require('reflux/src');
 module.exports = Reflux.createActions([
         "initialize",
         "updateChart",
-        "addChart"
+        "addChart",
+        "addDashboard",
+        "updateTitle"
     ]);
