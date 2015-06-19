@@ -3,9 +3,12 @@
 var _        = require('lodash');
 var d3       = require('d3');
 var moment   = require('moment');
+var React  = require('react');
 
 var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
+var List                  = require('component/list/List.jsx');
 
 module.exports = {
 	template: require('./template.html'),
@@ -14,6 +17,7 @@ module.exports = {
 		return {
 			regions: [],
 			indicators: [],
+			indicatorsForList: [],
 			pagination: {
 				limit: 20,
 				offset: 0,
@@ -64,6 +68,18 @@ module.exports = {
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
 		});
+
+ 		// render indicator dropdown
+		api.indicatorsTree()
+			.then(function(response) {
+				var ddProps = {
+					indicators: response.objects,
+					text: 'Choose Indicators',
+					sendValue: self.updateIndicatorSelection
+				};
+				self.indicatorMap = _.indexBy(response.flat, 'id');
+				self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
+			});
 	},
 
 	computed: {
@@ -75,6 +91,24 @@ module.exports = {
 	},
 
 	methods: {
+
+		renderIndicatorList: function() {
+			var listProps = {
+				items: this.indicators,
+				removeItem: this.removeIndicatorFromSelection
+			};
+			React.render(React.createElement(List, listProps), document.getElementById("indicatorList"));
+		},
+
+		updateIndicatorSelection: function(id) {
+			this.indicators.push(this.indicatorMap[id]);
+			this.renderIndicatorList();
+		},
+
+		removeIndicatorFromSelection: function(id) {
+			_.remove(this.indicators, function(d) { return d.id === id; });
+			this.renderIndicatorList();
+		},
 
 		refresh: function (pagination) {
 			if (!this.hasSelection) {
