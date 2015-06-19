@@ -50,6 +50,7 @@ var Dashboard = React.createClass({
 
   componentWillMount : function () {
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
+    page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
   },
 
@@ -260,6 +261,12 @@ var Dashboard = React.createClass({
     }
 
     page('/datapoints/' + [slug, region, campaign].join('/'));
+  },
+
+  _showDefault : function (ctx) {
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+
+    DashboardActions.setDashboard({ dashboard });
   },
 
   _show : function (ctx) {
