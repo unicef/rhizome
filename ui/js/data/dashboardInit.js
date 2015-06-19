@@ -72,6 +72,17 @@ function series(chart, data) {
     .value();
 }
 
+function column(chart, data) {
+  var s = series(chart, data);
+  var stack = d3.layout.stack()
+    .offset('zero')
+    .values(d => d.values)
+    .x(d => d.campaign.start_date)
+    .y(d => d.value);
+
+  return stack(s);
+}
+
 function scatter(chart, data, campaign) {
   return _(data)
     .filter(d => d.campaign.id === campaign.id)
@@ -92,7 +103,7 @@ function scatter(chart, data, campaign) {
 var process = {
   'BarChart'        : series,
   'ChoroplethMap'   : choropleth,
-  'ColumnChart'     : series,
+  'ColumnChart'     : column,
   'LineChart'       : series,
   'PieChart'        : series,
   'ScatterChart'    : scatter,

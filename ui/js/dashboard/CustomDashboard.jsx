@@ -1,11 +1,13 @@
 'use strict';
 
 var _ = require('lodash');
+var d3 = require('d3');
 var React = require('react');
+var moment = require('moment');
 
 var Chart = require('component/Chart.jsx');
 
-function getOptions(chart) {
+function getOptions(chart, campaign, data) {
   var opts = {};
 
   switch (chart.type) {
@@ -16,6 +18,20 @@ function getOptions(chart) {
 
     case 'ChoroplethMap':
       opts.value = _.property('.properties[' + chart.indicators[0] + ']');
+      break;
+
+    case 'ColumnChart':
+      var upper = moment(campaign.start_date);
+      var lower = upper.clone().subtract(chart.timeRange);
+
+      opts.domain = _.constant(_.map(d3.time.scale()
+            .domain([lower.valueOf(), upper.valueOf()])
+            .ticks(d3.time.month, 1),
+          _.method('getTime')
+        ));
+
+      opts.x = d => moment(d.campaign.start_date).valueOf();
+      opts.xFormat = d => moment(d).format('MMM YY');
       break;
 
     default:
@@ -39,8 +55,9 @@ var CustomDashboard = React.createClass({
   render : function () {
     var numCharts = this.props.dashboard.charts.length;
 
-    var data    = this.props.data;
-    var loading = this.props.loading;
+    var data     = this.props.data;
+    var loading  = this.props.loading;
+    var campaign = this.props.campaign;
 
     var charts = _.map(this.props.dashboard.charts, function (chart) {
       var title  = chart.title;
@@ -59,9 +76,7 @@ var CustomDashboard = React.createClass({
           break;
       }
 
-      if (chart.type === 'Bar')
-
-      var options = getOptions(chart);
+      var options = getOptions(chart, campaign, data);
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
