@@ -45,8 +45,9 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
 	};
 
 
-	function fetch(query, version) {
+	function fetch(query, version, headers) {
 		version = version || defaultVersion;
+		headers = headers || {};
 
 		var versionedPath = '/v' + version + path;
 		var req = prefix(request(mode, versionedPath));
@@ -54,7 +55,9 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
 		// form GET request
 		if (mode === 'GET') {
 			var q = useDefaults ? _.defaults({}, query, defaults) : query;
-			req.query(q);
+			req.query(q)
+				.set(headers)
+				.send();
 		}
 		// form POST request
 		else if (mode === 'POST') {
