@@ -30,9 +30,7 @@ var NavigationStore = Reflux.createStore({
 			depth_level : 0
 		});
 
-		var dashboards = api.dashboards();
-
-		var customDashboards = api.dashboardsCustom();
+		var dashboards = api.dashboardsCustom();
 
 		var documents = api.document().then(this.loadDocuments);
 
@@ -43,7 +41,7 @@ var NavigationStore = Reflux.createStore({
 		this.permissions = [];
 		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, offices, permissions, dashboards, customDashboards])
+		Promise.all([campaigns, regions, offices, permissions, dashboards])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -62,7 +60,7 @@ var NavigationStore = Reflux.createStore({
 		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
-	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, customDashboards) {
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
@@ -110,7 +108,7 @@ var NavigationStore = Reflux.createStore({
 			.reject(_.isNull)
 			.value();
 
-		this.customDashboards = _(customDashboards.objects)
+		this.customDashboards = _(dashboards.objects)
 			.map(function(d) {
 				return d;
 			})

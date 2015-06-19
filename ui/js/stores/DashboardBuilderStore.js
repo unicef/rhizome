@@ -31,7 +31,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	 	this.data.newDashboard = true;
 	 	this.data.loaded = true;
 	 	this.trigger(this.data);
-	 	
+
 	 }
 	 else {
 	 	api.get_dashboard({id:id})
@@ -39,10 +39,10 @@ var DashboardBuilderStore = Reflux.createStore({
 	 		    console.log(response.objects[0]);
 	 			self.data.dashboard = response.objects[0];
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
-	 			self.data.dashboardTitle = 	response.objects[0].title; 			
+	 			self.data.dashboardTitle = 	response.objects[0].title;
 	 			self.data.loaded = true;
 	 			self.trigger(self.data);
-	 		}); 
+	 		});
 	 }
 
 
@@ -63,13 +63,13 @@ var DashboardBuilderStore = Reflux.createStore({
 				}.bind(this))
 				.sortBy('start_date')
 				.last();
-		
+
 		this.data.loading = false;
 		this.trigger(this.data);
-		
-		
-		
-		
+
+
+
+
 	},
 	onAddChart:function(chartDef){
 	  this.data.dashboard.charts.push(chartDef);
@@ -86,12 +86,12 @@ var DashboardBuilderStore = Reflux.createStore({
 	   api.save_dashboard(data).then(function(response){
 	      if(response.objects.new_id)
 	      {
-	      	window.location = "/datapoints/dashboard_builder/"+response.objects.new_id;
+	      	window.location = "/datapoints/dashboards/edit/"+response.objects.new_id;
 	      }
 	      else {
 	      	alert("There was an error saving your chart");
 	      }
-	   }); 
+	   });
 	},
 	saveDashboard:function(){
 	    var data = {
@@ -105,7 +105,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	       console.log(response);
 	       //self.data.charts = response.objects[0].dashboard_json;
 	       //self.trigger(self.data);
-	    }); 
+	    });
 	},
 	onUpdateChart:function(chartDef,index){
 	  this.data.dashboard.charts[index] = chartDef;
@@ -118,5 +118,5 @@ var DashboardBuilderStore = Reflux.createStore({
 	   this.trigger(this.data);
 	},
 });
-	
+
 module.exports = DashboardBuilderStore;

@@ -192,10 +192,6 @@ function indicatorsTree(q) {
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
-	dashboards            : function () {
-		// FIXME: temporary mock data
-		return Promise.resolve({ objects : [] });
-	},
 	dashboardsCustom      : endPoint('/custom_dashboard/', 'get', 2),
 	datapoints            : datapoint,
 	datapointsRaw         : endPoint('/datapointentry/'),

@@ -36,7 +36,7 @@ var Navigation = React.createClass({
 
       var enterData = (
           <li className='data'>
-            <NavMenu text={'Enter Data'} icon={'fa-table'}>              
+            <NavMenu text={'Enter Data'} icon={'fa-table'}>
               {formLink}
               {uploadLink}
             </NavMenu>
@@ -73,7 +73,7 @@ var Navigation = React.createClass({
               <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
-              <NavMenuItem href='/datapoints/dashboard/create'>
+              <NavMenuItem href='/datapoints/dashboards/edit'>
                 Create New dashboard
               </NavMenuItem>
             </NavMenu>
