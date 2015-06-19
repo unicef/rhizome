@@ -49,7 +49,9 @@ function campaignDisplayFormat(campaign) {
 
 module.exports = React.createClass({
   mixins: [Reflux.connect(ChartBuilderStore,"store")],
-
+  componentDidMount:function(){
+     ChartBuilderActions.initialize(this.props.chartDef);
+  },
   _updateTitle: function(e){
     ChartBuilderActions.updateTitle(e.target.value);
   },
@@ -77,6 +79,9 @@ module.exports = React.createClass({
 
     this.setState(state);
   },
+  createChart:function(){
+    this.props.callback(this.state.store.chartDefinition());
+  },
 
 	render: function(){
 	   var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
@@ -103,12 +108,14 @@ module.exports = React.createClass({
      var axisOptions = this.state.store.indicatorsSelected.map(function(indicator,index){
        return <option key={indicator.id} value={index}>{indicator.name}</option>;
      });
-
+     
+     /*  <div className="titleDiv" onChange={this._updateDescription}>Description</div>
+      <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
+     
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
      	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
-     	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
-     	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
+
      	                   <div className="titleDiv">Indicators</div>
 
                          <IndicatorDropdownMenu
@@ -118,8 +125,8 @@ module.exports = React.createClass({
                            sendValue={ChartBuilderActions.addIndicatorSelection}>
                          </IndicatorDropdownMenu>
      
-     		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-     
+     		             <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
+    <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
      	              </div>);
      var groupBy = 	(<div className="grouping">
         	<div className="titleDiv">Group By</div>

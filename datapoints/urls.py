@@ -14,10 +14,10 @@ urlpatterns = [
 
     ## DASHBOARD LIST and BUILDER ##
     url(r'^dashboards/$', views.dashboard_list,name='dashboard_list'),
-    url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder'),
-
+    url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder_no_params'),
+     url(r'^dashboard_builder/(?P<dashboard_id>[0-9]+)/$', views.dashboard_builder,name='dashboard_builder'),
     ## DASHBOARD VISUALIZATION BUILDER ##
-    url(r'^chart_builder/$', views.chart_builder,name='chart_builder'),
+    url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder,name='chart_builder'),
 
     ## Data Table ##
     url(r'^table/$', views.DataPointIndexView.as_view(),name='datapoint_index'),

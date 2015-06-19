@@ -221,6 +221,8 @@ module.exports = {
 	map_user_group        : endPoint('/user_group/','post',2),
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
+	save_dashboard     : endPoint('/custom_dashboard/','post',2),
+	get_dashboard     : endPoint('/custom_dashboard/','get',2),
 	admin: {
 		usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
 		users: endPoint('/user/', 'get', 2, false),
