@@ -66,8 +66,9 @@ function choropleth(chart, data, campaign, features) {
 
 function series(chart, data) {
   return _(data)
-    .groupBy(chart.series)
+    .groupBy(_.get(chart, series, 'indicator.short_name'))
     .map((values, name) => ({ name, values }))
+    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
     .value();
 }
 
@@ -135,10 +136,11 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
       'region.parent_region_id' :
       'region.id';
 
-    var datumInChart   = _.partial(inChart, chart, campaign, region);
-    section[chartName] = process[chart.type](
+    var datumInChart = _.partial(inChart, chart, campaign, region);
+    var chartData    = _.filter(data, datumInChart);
+    section[chartName] = _.get(process, chart.type, _.constant(chartData))(
       chart,
-      _.filter(data, datumInChart),
+      chartData,
       campaign,
       features
     );
