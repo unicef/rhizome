@@ -1,5 +1,5 @@
 module.exports = {
-	'id'   : 1,
+	'id'   : -1,
 	'title' : 'Management Dashboard',
 	'charts' : [{
 			'title'      : 'Polio Cases YTD',

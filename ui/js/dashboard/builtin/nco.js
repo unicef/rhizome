@@ -1,5 +1,5 @@
 module.exports = {
-	'id'                : 3,
+	'id'                : -2,
 	'title'             : 'NGA Campaign Monitoring',
 	'default_office_id' : 1,
 	'charts' : [{
