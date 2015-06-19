@@ -284,7 +284,6 @@ module.exports = {
 										.filter(function(d) { return d.id; })
 										.map(function(d) { return d.id; })
 										.value();
-			console.log(options);
 
 			// define columns
 			var columns = [
