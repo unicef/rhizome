@@ -213,26 +213,13 @@ module.exports = Reflux.createStore({
 			  	self.aggregateRegions();
 			 });
 	
-			var indicatorPromise = api.indicators().then(function(items){
-			        self._indicatorIndex = _.indexBy(items.objects, 'id');
-			        self.data.indicatorList = _(items.objects)
-			         	.map(function (indicator) {
-			         		return {
-			         			'title'  : indicator.name,
-			         			'value'  : indicator.id,
-			         			'parent' : null
-			         		};
-			         	})
-			         	.sortBy('title')
-			         	.reverse()
-			         	.value();
-			         self.trigger(self.data);
-			     if(chartDef)
-			     {
-			       self.applyChartDef(chartDef);
-			     }
-			     
-			     });
+			api.indicatorsTree().then(function(items) {
+		        self._indicatorIndex = _.indexBy(items.flat, 'id');
+		        self.data.indicatorList = _(items.objects)
+		         	.sortBy('title')
+		         	.value();
+		         self.trigger(self.data);
+		     });
 	        
 			Promise.all([api.campaign(), api.office()])
 				.then(_.spread(function(campaigns, offices) {
