@@ -54,14 +54,11 @@ function value(datapoint) {
 
 var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv);
-var tooltipVue = new Vue({
+/*var tooltipVue = new Vue({
 	el: tooltipDiv,
 	components: {'vue-tooltip': require('component/tooltip') },
-	ready:function(){
-
-	},
 	template: "<vue-tooltip></vue-tooltip>"
-});
+});*/
 function nullValuesToZero(values){
   _.each(values,function(value){
   	if(_.isNull(value.value))
@@ -221,7 +218,7 @@ module.exports = {
 			var chartOptions = {
 							aspect: 1,
 							domain: _.constant([0, 0.1]),
-							border: border.objects.features,
+							border: border.objects.features/*,
 							onMouseOver: function (d, el) {
 							    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
 									var evt = d3.event;
@@ -240,7 +237,7 @@ module.exports = {
 							},
 							onMouseOut: function (d, el) {
 								tooltipVue.$emit('tooltip-hide', { el : el });
-							}
+							}*/
 							};
 		    var chartData = _.map(border.objects.features, function (feature) {
 										var region = _.get(index, feature.properties.region_id);
@@ -321,7 +318,7 @@ module.exports = {
 				var showTooltip = function (d, i, el) {
 					var evt = d3.event;
 
-					tooltipVue.$emit('tooltip-show', {
+					/*tooltipVue.$emit('tooltip-show', {
 						el       : el,
 						position : {
 							x : evt.pageX,
@@ -334,11 +331,11 @@ module.exports = {
 							text     : d.name,
 							delay    : 0
 						}
-					});
+					});*/
 				};
 
 				var hideTooltip = function (d, i, el) {
-					tooltipVue.$emit('tooltip-hide', { el : el });
+					//tooltipVue.$emit('tooltip-hide', { el : el });
 				};
 			var chartOptions = {
 				aspect      : 1.7,

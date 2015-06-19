@@ -59,7 +59,7 @@ def dashboard_list(request):
     return render_to_response('dashboard-builder/list.html',
         context_instance=RequestContext(request))
 
-def dashboard_builder(request,dashboard_id):
+def dashboard_builder(request,dashboard_id=None):
 
     return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id },
         context_instance=RequestContext(request))

@@ -35,7 +35,6 @@ var DashboardStore = Reflux.createStore({
 
 	getQueries : function () {
 		var indicators = this.indicators;
-
 		var qs = _.groupBy(indicators, function (definition, key) {
 			return [
 					definition.duration,
@@ -43,7 +42,6 @@ var DashboardStore = Reflux.createStore({
 					definition.region
 				].join('-');
 		});
-
 		return _.map(qs, function (arr) {
 			return _.merge.apply(null, arr.concat(function (a, b) {
 				if (_.isArray(a)) {
@@ -61,7 +59,6 @@ var DashboardStore = Reflux.createStore({
 		if (!this.loaded) {
 			return;
 		}
-
 		var dashboard = this.dashboards[this.dashboard];
 
 		this.indicators = {};
@@ -133,12 +130,11 @@ var DashboardStore = Reflux.createStore({
   },
 
 	addChartDefinition : function (chart) {
+	
 		var base = _.omit(chart, 'indicators', 'title');
-
 		_.each(chart.indicators, function (id) {
 			var duration = moment.duration(chart.timeRange);
 			var hash     = [id, chart.startOf, chart.region].join('-');
-
 			if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
 				this.indicators[hash] = _.assign({
 						duration   : duration,

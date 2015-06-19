@@ -4,21 +4,27 @@ var _      = require('lodash');
 //var moment = require('moment');
 var React  = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
-var DashboardBuilderActions  = require('actions/DashboardBuilderActions');
-var DashboardBuilderStore    = require("stores/DashboardBuilderStore");
 var Reflux = require('reflux/src');
 var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 
-//var DashboardStore = require('stores/DashboardStore');
+var DataActions = require('actions/DataActions');
+var DataStore = require('stores/DataStore');
+
+var DashboardBuilderActions  = require('actions/DashboardBuilderActions');
+var DashboardBuilderStore    = require("stores/DashboardBuilderStore");
+
+var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 
 module.exports = React.createClass({
-	mixins: [Reflux.connect(DashboardBuilderStore,"store")],
+	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore")],
+	
 	componentDidMount:function(){
+	   console.log(this.props.dashboard_id);
 	   DashboardBuilderActions.initialize(this.props.dashboard_id);
 	},
 	getInitialState:function(){
 	  return {
-	    visualizations:[{id:1},{id:2},{id:3},{id:4},{id:5},{id:6}],
 	    chartBuilderActive:false,
 	    chartBuilderindex:null
 	  }
@@ -39,6 +45,30 @@ module.exports = React.createClass({
 	    }
 		this.setState({chartBuilderindex : null,chartBuilderActive:false});
 	},
+   _setCampaign : function (id) {
+    var campaign  = _.find(this.state.campaigns, c => c.id === id);
+
+    if (!campaign) {
+      return;
+    }
+
+    var dashboard = _.kebabCase(this.state.dashboard.title);
+    var region    = this.state.region.name;
+
+    page('/datapoints/' + [dashboard, region, moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')].join('/'));
+  },
+
+   _setRegion : function (id) {
+    var campaign  = moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+    var dashboard = _.kebabCase(this.state.dashboard.title);
+    var region    = _.find(this.state.regions, r => r.id === id)
+
+    if (!region) {
+      return;
+    }
+
+    page('/datapoints/' + [dashboard, region.name, campaign].join('/'));
+  },
 	render: function(){
       var self = this;
       var charts = this.state.store.charts.map(function(chart,index){
@@ -48,11 +78,45 @@ module.exports = React.createClass({
             </div>
           );
        }); 
-	   var dashboardBuilderContainer = (<form className="inline  dashboard-builder-container">
-	   			{charts}
-	   			<a href="#" onClick={this.newChart} className="button">add chart</a>
-	   		   </form>);
-	   if(this.state.chartBuilderActive)
+       var campaigns = _(this.state.store.campaigns)
+         //.filter(c => c.office_id === region.office_id)
+         .sortBy('start_date')
+         .reverse()
+         .value();
+       
+       //console.log(this.state.store.campaign,this.state.dashboardStore.region);
+       
+	   var dashboardBuilderContainer = (
+	         <div>
+	           <div classNameName='clearfix'></div>
+	   
+	           <form className='inline no-print'>
+	             <div className='row'>
+	               <div className='medium-6 columns'>
+	                 <h1>
+	                   <CampaignTitleMenu
+	                     campaigns={campaigns}
+	                     selected={this.state.store.campaign}
+	                     sendValue={this._setCampaign} />
+	                   &emsp;
+	                   <RegionTitleMenu
+	                     regions={this.state.store.regions}
+	                     selected={this.state.store.region}
+	                     sendValue={this._setRegion} />
+	                 </h1>
+	               </div>
+	             </div>
+	           </form>
+	   
+	           {charts}
+	           <a href="#" onClick={this.newChart} className="button">add chart</a>
+	         </div>
+	   );
+	   if(this.state.store.loading)
+	   {
+	   	 return (<div>loading</div>);
+	   }
+	   else if(this.state.chartBuilderActive)
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.charts[this.state.chartBuilderindex]);
 	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart}/>);

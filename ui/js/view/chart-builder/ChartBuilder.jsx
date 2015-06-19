@@ -108,12 +108,14 @@ module.exports = React.createClass({
      var axisOptions = this.state.store.indicatorsSelected.map(function(indicator,index){
        return <option key={indicator.id} value={index}>{indicator.name}</option>;
      });
-
+     
+     /*  <div className="titleDiv" onChange={this._updateDescription}>Description</div>
+      <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
+     
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
      	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
-     	                   <div className="titleDiv" onChange={this._updateDescription}>Description</div>
-     	                   <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea>
+
      	                   <div className="titleDiv">Indicators</div>
 
                          <IndicatorDropdownMenu
@@ -123,7 +125,7 @@ module.exports = React.createClass({
                            sendValue={ChartBuilderActions.addIndicatorSelection}>
                          </IndicatorDropdownMenu>
      
-     		               <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
+     		             <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
     <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
      	              </div>);
      var groupBy = 	(<div className="grouping">

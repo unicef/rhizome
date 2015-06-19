@@ -182,7 +182,7 @@ var Dashboard = React.createClass({
     this.setState(state);
 
     var q = DashboardStore.getQueries();
-
+    console.log(q);
     if (_.isEmpty(q)) {
       DataActions.clear();
     } else {
@@ -235,6 +235,7 @@ var Dashboard = React.createClass({
   },
 
   _show : function (ctx) {
+    console.log(ctx.params);
     DashboardActions.setDashboard({
       dashboard : ctx.params.dashboard,
       region    : ctx.params.region,
