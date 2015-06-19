@@ -68,9 +68,7 @@ _.extend(Heatmap.prototype, {
 
 		var self = this;
 
-		var w = Math.max(
-			_(data).map(options.values).map(_.property('length')).max() * options.cellSize,
-			0);
+		var w = Math.max(options.headers.length * options.cellSize, 0);
 		var h = Math.max(data.length * options.cellSize, 0);
 
 		var svg = this._svg
