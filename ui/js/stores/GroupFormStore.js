@@ -36,7 +36,7 @@ module.exports = Reflux.createStore({
 			if (self.data.groupId) {
 				Promise.all([ 
 						api.groups(), 
-						api.group_permissions({ group: self.data.groupId }) 
+						api.group_permissions({ group: self.data.groupId }, null, { 'cache-control': 'no-cache' })
 					])
 					.then(_.spread(function(groups, groupPermissions) {
 
