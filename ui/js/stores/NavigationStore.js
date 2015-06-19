@@ -10,12 +10,11 @@ var builtins = require('dashboard/builtin');
 
 var NavigationStore = Reflux.createStore({
 	init : function () {
-		console.log('NavigationStore::init');
-
-		this.campaigns  = [];
-		this.dashboards = [];
-		this.customDashboards = null;
-		this.uploads    = [];
+    this.campaigns        = [];
+    this.dashboards       = [];
+    this.customDashboards = null;
+    this.uploads          = [];
+    this.loaded           = false;
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -54,7 +53,8 @@ var NavigationStore = Reflux.createStore({
 			campaigns  : this.campaigns,
 			dashboards : this.dashboards,
 			permissions: this.permissions,
-			uploads    : this.documents
+			uploads    : this.documents,
+      loaded     : this.loaded
 		};
 	},
 
@@ -134,11 +134,14 @@ var NavigationStore = Reflux.createStore({
 						title      : title,
 						dashboards : links
 					}, c);
-			})
+			});
+
+    this.loaded = true;
 
 		this.trigger({
 			dashboards : this.dashboards,
 			campaigns  : this.campaigns,
+      loaded     : this.loaded
 		});
 	},
 
@@ -156,7 +159,11 @@ var NavigationStore = Reflux.createStore({
 		this.trigger({
 			uploads : uploads
 		});
-	}
+	},
+
+  getDashboard : function (slug) {
+    return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+  }
 
 });
 
