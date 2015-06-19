@@ -52,7 +52,11 @@ var CustomDashboard = React.createClass({
     });
 
     return (
-      <ul className={blockGrid}>{charts}</ul>
+      <div className='row'>
+        <div className='small-12 columns'>
+          <ul className={blockGrid}>{charts}</ul>
+        </div>
+      </div>
     );
   },
 });
