@@ -8,6 +8,8 @@ var treeify = require('data/transform/treeify');
 var ancestoryString = require('data/transform/ancestryString');
 var moment = require('moment');
 
+var DashboardActions  = require('actions/DashboardActions');
+
 var DashboardBuilderStore = Reflux.createStore({
 	listenables : [require('actions/DashboardBuilderActions')],
 	getInitialState: function(){
@@ -17,30 +19,29 @@ var DashboardBuilderStore = Reflux.createStore({
 	      regions:[],
 	      campaigns:[],
 	      indicators:{},
-	      loading:true,
+	      loaded:false,
 	      newDashboard:false,
-	      dashboardTitle:''},
+	      dashboardTitle:'',
+	      },
 	onInitialize : function(id){
 	var self = this;
 	 this.data.dashboardId = id;
 	 if(_.isNull(id))
 	 {
 	 	this.data.newDashboard = true;
-	 	this.data.loading = false;
+	 	this.data.loaded = true;
 	 	this.trigger(this.data);
 	 	
 	 }
 	 else {
-	 	Promise.all([api.regions(), api.campaign(),api.get_dashboard({id:id})])
-	 		.then(function (responses) {
-	 			self.data.regions    = responses[0].objects;
-	 			self.data.campaigns  = responses[1].objects;
-	 			self.data.charts = responses[2].objects[0].dashboard_json;
-	 			_.each(self.data.charts,function(chart){
-	 				self.addChartDefinition(chart);
-	 			});
-	 			self.data.dashboard = responses[2].objects[0];
-	 			self.setDashboard();
+	 	api.get_dashboard({id:id})
+	 		.then(function (response) {
+	 		    console.log(response.objects[0]);
+	 			self.data.dashboard = response.objects[0];
+	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
+	 			self.data.dashboardTitle = 	response.objects[0].title; 			
+	 			self.data.loaded = true;
+	 			self.trigger(self.data);
 	 		}); 
 	 }
 
@@ -70,29 +71,16 @@ var DashboardBuilderStore = Reflux.createStore({
 		
 		
 	},
-	addChartDefinition : function (chart) {
-		var base = _.omit(chart, 'indicators', 'title');
-		_.each(chart.indicators, function (id) {
-			var duration = moment.duration(chart.timeRange);
-			var hash     = [id, chart.startOf, chart.region].join('-');
-
-			if (!this.data.indicators.hasOwnProperty(hash) || duration > this.data.indicators[hash].duration) {
-				this.data.indicators[hash] = _.assign({
-						duration   : duration,
-						indicators : [id]
-					}, base);
-			}
-		}.bind(this));
-	},
 	onAddChart:function(chartDef){
-	  this.data.charts.push(chartDef);
+	  this.data.dashboard.charts.push(chartDef);
+	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
 	  this.saveDashboard();
 	  this.trigger(this.data);
 	},
 	onAddDashboard:function(){
 	   var data = {
 	     title: this.data.dashboardTitle,
-	     //default_office_id: 1
+	     default_office_id: 1,
 	     dashboard_json:'[]'
 	   };
 	   api.save_dashboard(data).then(function(response){
@@ -109,9 +97,9 @@ var DashboardBuilderStore = Reflux.createStore({
 	    var data = {
 	      id: this.data.dashboard.id,
 	      description: this.data.dashboard.description,
-	      title: this.data.dashboard.title,
+	      title: this.data.dashboardTitle,
 	      default_office_id: this.data.dashboard.default_office_id,
-	      dashboard_json:JSON.stringify(this.data.charts)
+	      dashboard_json:JSON.stringify(this.data.dashboard.charts)
 	    };
 	    api.save_dashboard(data).then(function(response){
 	       console.log(response);
@@ -120,7 +108,8 @@ var DashboardBuilderStore = Reflux.createStore({
 	    }); 
 	},
 	onUpdateChart:function(chartDef,index){
-	  this.data.charts[index] = chartDef;
+	  this.data.dashboard.charts[index] = chartDef;
+	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
 	  this.saveDashboard();
 	  this.trigger(this.data);
 	},
