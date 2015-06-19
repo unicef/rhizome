@@ -46,6 +46,69 @@ function inChart(chart, campaign, region, datum) {
   return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inRegion;
 }
 
+function choropleth(chart, data, campaign, features) {
+  // Make sure we only get data for the current campaign; maps can't
+  // display historical data. Index by region for quick lookup.
+  var dataIdx = _(data)
+    .filter(d => d.campaign.id === campaign.id)
+    .indexBy('region.id')
+    .value();
+
+  _.each(features, f => {
+    var d = dataIdx[f.properties.region_id];
+    if (d) {
+      f.properties[d.indicator.id] = d.value;
+    }
+  });
+
+  return features;
+}
+
+function series(chart, data) {
+  return _(data)
+    .groupBy(_.get(chart, series, 'indicator.short_name'))
+    .map((values, name) => ({ name, values }))
+    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
+    .value();
+}
+
+function column(chart, data) {
+  var s = series(chart, data);
+  var stack = d3.layout.stack()
+    .offset('zero')
+    .values(d => d.values)
+    .x(d => d.campaign.start_date)
+    .y(d => d.value);
+
+  return stack(s);
+}
+
+function scatter(chart, data, campaign) {
+  return _(data)
+    .filter(d => d.campaign.id === campaign.id)
+    .groupBy('region.id')
+    .map(values => {
+      return _.reduce(values, (result, d) => {
+        _.defaults(result, d);
+
+        result[d.indicator.id] = d.value;
+
+        return _.omit(result, 'indicator', 'value');
+      }, {});
+    })
+    .filter(d => _(d).omit('region', 'campaign').values().all(_.isFinite))
+    .value();
+}
+
+var process = {
+  'BarChart'        : series,
+  'ChoroplethMap'   : choropleth,
+  'ColumnChart'     : column,
+  'LineChart'       : series,
+  'PieChart'        : series,
+  'ScatterChart'    : scatter,
+};
+
 function dashboardInit(dashboard, data, region, campaign, regionList, indicators, features) {
   var results = {};
 
@@ -86,33 +149,12 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
 
     var datumInChart = _.partial(inChart, chart, campaign, region);
     var chartData    = _.filter(data, datumInChart);
-
-    if (_.endsWith(chart.type, 'Map')) {
-      // Make sure we only get data for the current campaign; maps can't
-      // display historical data. Index by region for quick lookup.
-      var dataIdx = _(chartData)
-        .filter(d => d.campaign.id === campaign.id)
-        .indexBy('region.id')
-        .value();
-
-      _.each(features, f => {
-        var d = dataIdx[f.properties.region_id];
-        if (d) {
-          f.properties[d.indicator.id] = d.value;
-        }
-      });
-
-      section[chartName] = features;
-    } else {
-      if (chart.series) {
-        chartData = _(chartData)
-          .groupBy(chart.series)
-          .map((values, name) => ({ name, values }))
-          .value();
-      }
-
-      section[chartName] = chartData
-    }
+    section[chartName] = _.get(process, chart.type, _.constant(chartData))(
+      chart,
+      chartData,
+      campaign,
+      features
+    );
 
     results[sectionName] = section;
   });

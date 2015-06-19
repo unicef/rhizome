@@ -18,10 +18,10 @@ var defaults = {
 	offset      : 'zero',
 	padding     : 0.1,
 	values      : _.property('values'),
-	x           : _.property('x'),
+	x           : _.property('value'),
 	xFormat     : String,
 	xScale      : d3.scale.linear,
-	y           : _.property('y'),
+	y           : _.property('region.name'),
 	yFormat     : String,
 
 	margin : {

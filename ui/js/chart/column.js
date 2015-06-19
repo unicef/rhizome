@@ -5,6 +5,7 @@ var d3   = require('d3');
 
 var browser = require('util/browser');
 var label   = require('chart/renderer/label');
+var color   = require('util/color');
 
 var defaults = {
 	margin    : {
@@ -136,7 +137,11 @@ _.extend(ColumnChart.prototype, {
 		series.enter().append('g')
 			.attr('class', 'bar');
 
-		series.style('fill', options.color);
+    var fill = options.hasOwnProperty('color') ?
+      options.color :
+      _.flow(options.name, color.scale(_.map(data, options.name)));
+
+		series.style('fill', fill);
 
 		series.exit()
 			.transition()

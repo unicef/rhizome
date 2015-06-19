@@ -22,7 +22,7 @@ var DEFAULTS = {
 	},
   onClick : _.noop,
   value   : _.property('properties.value'),
-  format  : d3.format('n')
+  format  : d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d)
 };
 
 function _calculateBounds(features) {
