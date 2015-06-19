@@ -20,7 +20,7 @@ const fields = {
 		title: 'Edit',
 		key: 'id',
 		renderer: (id) => {
-			return <a href={`/datapoints/groups/update/${id}`}>Edit Group</a>;
+			return <a href={`/datapoints/groups/update/${id}`}>Edit Role</a>;
 		}
 	}
 };
@@ -33,12 +33,12 @@ var GroupsAdmin = React.createClass({
 			<div>
 				<SearchBar
 					fieldNames={['name']}
-					placeholder="search groups"
+					placeholder="search roles"
 					/>
 			</div>;
 
 		return <AdminPage
-			title="Groups"
+			title="Roles"
 			getMetadata={API.admin.groupsMetadata}
 			getData={API.admin.groups}
 			datascopeFilters={datascopeFilters}

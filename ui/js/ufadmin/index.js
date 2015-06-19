@@ -8,7 +8,7 @@ var AdminApp = React.createClass({
 			<h1 className="admin-header">Admin Lists: </h1>
 			<ul className="admin-nav">
 				<li><Link to="users">Users</Link></li>
-				<li><Link to="groups">Groups</Link></li>
+				<li><Link to="roles">Roles</Link></li>
 				<li><Link to="regions">Regions</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
@@ -21,7 +21,7 @@ var AdminApp = React.createClass({
 var routes = (
 	<Route name="app" path="/ufadmin/" handler={AdminApp}>
 		<Route name="users" handler={require('./UsersAdmin')} />
-		<Route name="groups" handler={require('./GroupsAdmin')} />
+		<Route name="roles" handler={require('./GroupsAdmin')} />
 		<Route name="regions" handler={require('./RegionsAdmin')} />
 		<Route name="campaigns" handler={require('./CampaignsAdmin')} />
 		<Route name="indicators" handler={require('./IndicatorsAdmin')} />
