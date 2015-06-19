@@ -2,8 +2,11 @@
 
 var _  = require('lodash');
 var d3 = require('d3');
+var React = require('react');
+var Layer = require('react-layer');
 
 var ColumnChart = require('./column');
+var Tooltip = require('component/Tooltip.jsx');
 
 var browser = require('util/browser');
 var color   = require('util/color');
@@ -13,8 +16,6 @@ var defaults = {
 	barHeight   : 14,
 	name        : _.partial(_.get, _, 'name', ''),
 	offset      : 'zero',
-	onMouseOut  : _.noop,
-	onMouseOver : _.noop,
 	padding     : 0.1,
 	values      : _.property('values'),
 	x           : _.property('x'),
@@ -173,7 +174,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.style('fill', 'inherit');
 
 		bar
-			.on('mouseover', hover.over)
+			.on('mousemove', hover.over)
 			.on('mouseout', hover.out)
 			.transition().duration(500)
 			.attr({
@@ -243,11 +244,38 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		}
 
 		hover.on('out', function (d, i) {
-			options.onMouseOut(d, i, this);
+			if (this.layer) {
+        this.layer.destroy();
+        this.layer = null;
+      }
 		});
 
 		hover.on('over', function (d, i) {
-			options.onMouseOver(d, i, this);
+      if (data.length < 2) {
+        return;
+      }
+
+			var evt = d3.event;
+      var series = d3.select(this.parentNode).datum();
+
+      var render = function () {
+        return (
+          <Tooltip left={evt.pageX} top={evt.pageY}>
+            <div>
+              <h3>{options.name(series)}</h3>
+              {options.y(d)}:&ensp;{options.x(d)}
+            </div>
+          </Tooltip>
+        );
+      };
+
+      if (this.layer) {
+        this.layer._render = render;
+      } else {
+        this.layer = new Layer(document.body, render);
+      }
+
+      this.layer.render();
 		});
 	},
 
