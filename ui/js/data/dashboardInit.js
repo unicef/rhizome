@@ -1,12 +1,56 @@
 'use strict';
 
-var _ = require('lodash');
+var _      = require('lodash');
+var moment = require('moment');
+
+/**
+ * Recursively determine if child is a child of parent region.
+ */
+function childOf(parent, child) {
+  if (!child) {
+    return false;
+  }
+
+  if (parent.id === child.id) {
+    return true;
+  }
+
+  return childOf(parent, child.parent);
+}
+
+function inChart(chart, campaign, region, datum) {
+  var dt       = moment(datum.campaign.start_date).valueOf()
+  var end      = moment(campaign.start_date, 'YYYY-MM-DD');
+  var start    = chart.hasOwnProperty('timeRange') ?
+    end.clone().subtract(chart.timeRange).valueOf() :
+    -Infinity;
+
+  var inPeriod = dt >= start && dt <= end.valueOf();
+
+  var inRegion = false;
+
+  switch (chart.region) {
+    case 'subregions':
+      inRegion = childOf(region, datum.region);
+
+      if (!_.isEmpty(chart.level)) {
+        inRegion = inRegion && chart.level === datum.region.region_type;
+      }
+      break;
+
+    default:
+      inRegion = region.id === datum.region.id;
+      break;
+  }
+
+  return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inRegion;
+}
 
 function dashboardInit(dashboard, data, region, campaign, regionList, indicators, features) {
   var results = {};
 
   var indicatorsById = _.indexBy(indicators, 'id');
-  var regionsById    = _.indexBy(regionList, 'id')
+  var regionsById    = _.indexBy(regionList, 'id');
 
   // Merge region metadata into the properties object of each geographic feature
   _.each(features, function (f) {
@@ -40,12 +84,8 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
       'region.parent_region_id' :
       'region.id';
 
-    var chartData = _.filter(data,
-      // FIXME: should also filter by date since two charts could have the same
-      // indicators but for different time periods
-      d => _.includes(chart.indicators, d.indicator.id) &&
-        _.get(d, regionProp) === region.id
-    );
+    var datumInChart = _.partial(inChart, chart, campaign, region);
+    var chartData    = _.filter(data, datumInChart);
 
     if (_.endsWith(chart.type, 'Map')) {
       // Make sure we only get data for the current campaign; maps can't
@@ -64,6 +104,13 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
 
       section[chartName] = features;
     } else {
+      if (chart.series) {
+        chartData = _(chartData)
+          .groupBy(chart.series)
+          .map((values, name) => ({ name, values }))
+          .value();
+      }
+
       section[chartName] = chartData
     }
 

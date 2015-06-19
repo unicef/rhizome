@@ -69,6 +69,8 @@ class v2Request(object):
                 'permission_function':None},
             'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None},
+            'region_type': {'orm_obj':RegionType,
+                'permission_function':None},
         }
 
 

@@ -155,7 +155,7 @@ function indicatorsTree(q) {
 					'title': 'Other Indicators',
 					'children': []
 				};
-				
+
 				_.each(indicators.objects, function(i) {
 						i.title = i.name;
 						i.value = i.id;
@@ -185,7 +185,7 @@ function indicatorsTree(q) {
 			});
 		}, reject);
 	});
-}	
+}
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -203,6 +203,7 @@ module.exports = {
 	indicatorsTree		  : indicatorsTree,
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
+  region_type           : endPoint('/region_type/', 'get', 2),
 	document_review       : endPoint('/document_review/','get',2),
 	//map_field             : endPoint('/api_map_meta/','post',2),
 	map_indicator         : endPoint('/indicator_map/','post',2),
@@ -210,7 +211,10 @@ module.exports = {
 	map_campaign          : endPoint('/campaign_map/','post',2),
 	user_permissions      : endPoint('/user_permission/', 'get', 2),
 	groups                : endPoint('/group/','get',2),
+	groupUpsert           : endPoint('/group/', 'post', 2),
 	user_groups           : endPoint('/user_group/','get',2),
+	group_permissions     : endPoint('/group_permission/','get',2),
+	group_permissionUpsert: endPoint('/group_permission/', 'post', 2),
 	map_user_group        : endPoint('/user_group/','post',2),
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),

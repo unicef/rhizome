@@ -280,7 +280,7 @@ module.exports = {
 			// add indicators to request
 			var indicatorSet = self.getFilteredIndicatorSet(self.indicator_set_id);
 
-			options.indicator__in = _(indicatorSet)
+			options.indicator__in = _(indicatorSet.indicators)
 										.filter(function(d) { return d.id; })
 										.map(function(d) { return d.id; })
 										.value();

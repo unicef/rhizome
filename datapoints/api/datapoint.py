@@ -68,8 +68,8 @@ class DataPointResource(BaseNonModelResource):
         response = response_class(content=serialized,\
             content_type=build_content_type(desired_format), **response_kwargs)
 
-        # if desired_format == 'text/csv':
-        #     return []
+        if desired_format == 'text/csv':
+            response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
 
         return response
 

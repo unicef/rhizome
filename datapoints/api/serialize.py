@@ -122,6 +122,8 @@ class CustomSerializer(Serializer):
         converted to a csv.
         '''
 
+        # response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
         options = options or {}
         data = self.to_simple(data, options)
         data_objects = data['objects']

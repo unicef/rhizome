@@ -88,7 +88,7 @@ class DashBoardView(IndexView):
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Campaign
-    success_url = reverse_lazy('datapoints:campaign_index')
+    success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
     permission_required = 'datapoints.add_campaign'
 
@@ -96,7 +96,7 @@ class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model=Campaign
-    success_url = reverse_lazy('datapoints:campaign_index')
+    success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
     form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
@@ -112,7 +112,7 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Indicator
-    success_url= reverse_lazy('datapoints:indicator_index')
+    success_url= '/ufadmin/indicators'
     template_name = 'indicators/create.html'
     permission_required = 'datapoints.add_indicator'
 
@@ -120,7 +120,7 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
 class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
-    success_url = reverse_lazy('datapoints:indicator_index')
+    success_url = '/ufadmin/indicators'
     template_name = 'indicators/update.html'
     permission_required = 'datapoints.change_indicator'
 
@@ -135,7 +135,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
     form_class = RegionForm
-    success_url=reverse_lazy('datapoints:region_index')
+    success_url= '/ufadmin/regions'
 
     def form_valid(self, form):
         # this inserts into the changed_by field with  the user who made the insert
@@ -152,7 +152,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Region
-    success_url = reverse_lazy('datapoints:region_index')
+    success_url = '/ufadmin/regions'
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'
 
@@ -321,17 +321,31 @@ def refresh_metadata(request):
     return HttpResponseRedirect(reverse('datapoints:cache_control'))
 
 
-class GroupCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = Group
-    template_name = 'group_create.html'
-    # form_class = GroupCreateForm
-
-class GrouEditView(PermissionRequiredMixin,generic.UpdateView):
+class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
 
     model = Group
     template_name = 'group_create.html'
 
+
+class GroupEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = Group
+    template_name = 'group_update.html'
+
+    def get_success_url(self):
+
+        requested_group_id = self.get_object().id
+
+        return reverse_lazy('datapoints:group_update',kwargs={'pk':
+            requested_group_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(GroupEditView, self).get_context_data(**kwargs)
+        group_obj = self.get_object()
+        context['group_id'] = group_obj.id
+
+        return context
 
 class UserCreateView(PermissionRequiredMixin,generic.CreateView):
 
@@ -373,7 +387,7 @@ def v2_meta_api(request,content_type):
     return v2_api(request,content_type,True)
 
 
-@django_cache_control(must_revalidate=True, max_age=3600)
+@django_cache_control(must_revalidate=True, max_age=3600,private=True)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
