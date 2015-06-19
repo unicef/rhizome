@@ -212,10 +212,6 @@ module.exports = React.createClass({
           <h2>About</h2>
           <p>
             Rhizome DB supports the polio programme’s critical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.
-            &ensp;
-            <a href="/about" style={{whiteSpace: "nowrap"}}>
-              <i className="fa fa-info-circle"></i> Learn more
-            </a>
           </p>
         </div>
         
