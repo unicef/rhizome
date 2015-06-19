@@ -80,7 +80,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	onAddDashboard:function(){
 	   var data = {
 	     title: this.data.dashboardTitle,
-	     default_office_id: 1,
+	     default_office_id: null,
 	     dashboard_json:'[]'
 	   };
 	   api.save_dashboard(data).then(function(response){
@@ -98,7 +98,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	      id: this.data.dashboard.id,
 	      description: this.data.dashboard.description,
 	      title: this.data.dashboardTitle,
-	      default_office_id: this.data.dashboard.default_office_id,
+	      default_office_id: null,
 	      dashboard_json:JSON.stringify(this.data.dashboard.charts)
 	    };
 	    api.save_dashboard(data).then(function(response){
