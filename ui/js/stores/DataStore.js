@@ -52,9 +52,17 @@ var DataStore = Reflux.createStore({
     var promises = _.map(charts, function (def) {
       var q = {
         indicator__in  : def.indicators,
-        campaign_start : m.clone().startOf(def.startOf).subtract(def.duration).format('YYYY-MM-DD'),
         campaign_end   : end
       };
+
+      // If no timeRange or startOf property is provided, the chart should fetch
+      // data for all time.
+      if (def.hasOwnProperty('timeRange') || def.hasOwnProperty('startOf')) {
+        q.campaign_start = m.clone()
+          .startOf(def.startOf)
+          .subtract(def.duration)
+          .format('YYYY-MM-DD');
+      }
 
       switch (def.region) {
         case 'subregions':

@@ -155,7 +155,7 @@ function indicatorsTree(q) {
 					'title': 'Other Indicators',
 					'children': []
 				};
-				
+
 				_.each(indicators.objects, function(i) {
 						i.title = i.name;
 						i.value = i.id;
@@ -185,7 +185,7 @@ function indicatorsTree(q) {
 			});
 		}, reject);
 	});
-}	
+}
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -203,6 +203,7 @@ module.exports = {
 	indicatorsTree		  : indicatorsTree,
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
+  region_type           : endPoint('/region_type/', 'get', 2),
 	document_review       : endPoint('/document_review/','get',2),
 	//map_field             : endPoint('/api_map_meta/','post',2),
 	map_indicator         : endPoint('/indicator_map/','post',2),

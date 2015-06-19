@@ -29,6 +29,7 @@ module.exports = {
 			'section'    : 'performance',
       'type'       : 'ChoroplethMap',
       'region'     : 'subregions',
+      'timeRange'  : 0,
 			'indicators' : [475],
 		}, {
 			'title'      : 'Conversions',
@@ -40,10 +41,12 @@ module.exports = {
 		}, {
 			'title'      : 'Microplans',
 			'section'    : 'performance',
+      'timeRange'  : 0,
 			'indicators' : [27,28],
 		}, {
 			'title'      : 'Transit Points',
 			'section'    : 'performance',
+      'timeRange'  : 0,
 			'indicators' : [175,176,177,204],
 		}, {
 			'title'      : 'FLW\'s Capacity to Perform',
@@ -80,10 +83,12 @@ module.exports = {
 			'title'      : 'Districts with Access Plans',
 			'section'    : 'access',
 			'indicators' : [174],
+      'timeRange'  : 0
 		}, {
 			'title'      : 'Inaccessibility Breakdown',
 			'section'    : 'access',
-			'indicators' : [442,443,444,445,446,447,448,449,450]
+			'indicators' : [442,443,444,445,446,447,448,449,450],
+      'timeRange'  : 0
 		}
 	]
 };

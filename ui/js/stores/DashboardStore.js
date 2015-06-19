@@ -15,15 +15,23 @@ var DashboardStore = Reflux.createStore({
 		this.loaded = false;
 		this.indicators = {};
 
-		Promise.all([api.dashboards(), api.regions(), api.campaign()])
+		Promise.all([api.dashboards(), api.regions(), api.region_type(), api.campaign()])
 			.then(function (responses) {
 				var dashboards = builtins.concat(responses[0].objects);
 
+        var types = _.indexBy(responses[2].objects, 'id');
+        var regionIdx = _.indexBy(responses[1].objects, 'id');
+
 				this.regions    = responses[1].objects;
-				this.campaigns  = responses[2].objects;
+				this.campaigns  = responses[3].objects;
 				this.dashboards = _.indexBy(dashboards, function (d) {
 					return _.kebabCase(d.title);
 				});
+
+        _.each(this.regions, function (r) {
+          r.region_type = _.get(types[r.region_type_id], 'name');
+          r.parent = regionIdx[r.parent_region_id];
+        });
 
 				this.loaded = true;
 
@@ -136,7 +144,7 @@ var DashboardStore = Reflux.createStore({
 		var base = _.omit(chart, 'indicators', 'title');
 
 		_.each(chart.indicators, function (id) {
-			var duration = moment.duration(chart.timeRange);
+			var duration = chart.hasOwnProperty('timeRange') ? moment.duration(chart.timeRange) : Infinity;
 			var hash     = [id, chart.startOf, chart.region].join('-');
 
 			if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
