@@ -521,9 +521,6 @@ This takes the response given to the api ( list of objects where the region / ca
 
 Return a list of campaign definitions.
 
-Response Format
-~~~~~~~~~~~~~~~
-
 .. code-block:: json
 
   {
@@ -551,10 +548,33 @@ Response Format
 ``/api/v2/indicator/``
 ++++++++++++++++++++++
 
-Return a list of indicator definitions.
+Return a list of indicator definitions, as well as their Bounds, and Tags.
+The indicator_bound json tells the application what the low and high bounds are
+of a particular indicator's value.  For instance, if we want to say that
+> 20% missed childredn is 'Bad', between 10-20% is 'Ok' and less than t0% is
+'Good' we would incode that in the database as such and return that json data
+in the indicator bound object.
 
-Response Format
-~~~~~~~~~~~~~~~
+The indicator Tag json, simply contains a list of IDs, the display name for
+each can be found via the ``indicator_tag`` endpoint.
+
+The Indicator endpoint is one of the meta data models that relies on a
+transformation of the data from its original state ( the indicator table) into
+a more abstracted and prepared data structure which is found in the
+indicator_abstracted table.
+
+Custom Parameters
+~~~~~~~~~~~~~~~~~
+
+`read_write``
+  - default = r
+  - This controls whether or not the application needs to see data a user can
+    READ or WRITE to.
+  - This comes in handy for the data entry page, in that we only want to pull
+    indicators a user can write to.  This way we save the use case of the user
+    getting indicators in the drop down that they can read from but not write
+    to, only to get an error message when they try to enter data for that
+    indicator
 
 .. code-block:: json
 
@@ -562,14 +582,14 @@ Response Format
     meta: {...},
 
     objects: [{
+      source_name: <Text>,
+      name: <Text>,
+      short_name: <Text>,
+      bound_json: <Json>,
       id: <Number>,
-      name: <String>
-      short_name: <String>,
-      slug: <String>,
-      description: <String>,
-      is_reported: <Boolean>,
-      resource_uri: <String>,
-      created_at: "YYYY-MM-DDTHH:MM:SS.sss"
+      tag_json: <Json>
+      slug: <Text>,
+      description: <Text>,
     }],
 
     errors: {...}
@@ -578,10 +598,32 @@ Response Format
 ``/api/v2/region/``
 +++++++++++++++++++
 
-Return a list of region definitions.
+Return a list of region definitions in accordance to the schema melow.
 
-Response Format
-~~~~~~~~~~~~~~~
+This endpoint will only return regions that the user has permissions for.  In
+this case, and in all other instances of GET requests dealing with regions,
+and region_ids, we use the ``fn_get_authorized_regions_by_user`` stored
+procedure which gets recursively the list of region_ids that a user can
+access.
+
+
+Custom Parameters
+~~~~~~~~~~~~~~~~~
+
+``depth_level``
+  - default = 0
+  - the depth parameter controls how far down the region tree the API should
+    traverse when returning region data.
+  - a parameter of 0 returns ALL data, while a parameter of 1 retreives
+    regions at most one level underneath the regions avaliable to that user.
+      -> that is if a user has permission to see Nigeria only, and they pass
+         a depth=1 parameter, they will see data Nigeria, as well as for the
+         provinces but not for districts, sub-districts and settlemnts.
+
+``read_write``
+  - default = r
+  - This controls whether or not the application needs to see data a user can
+    READ or WRITE to.
 
 .. code-block:: json
 
@@ -619,9 +661,6 @@ there might be an office for Nigeria that represents the Nigerian Country
 Office. The region Nigeria that represents the country, as well as all of its
 sub-regions, would be associated with the Nigeria office.
 
-Response Format
-~~~~~~~~~~~~~~~
-
 .. code-block:: json
 
   {
@@ -636,6 +675,399 @@ Response Format
 
     errors: {...}
   }
+
+``/api/v2/campaign_type/``
++++++++++++++++++++
+
+A key to the 'campaign' resource, while all campaigns in the system are
+"National Immunication Days" UNICEF/WHO do implement different types of
+campaigns ( for instance a mop-up in the area surrounding a new case ).
+
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name:<String>,
+    }],
+
+    errors: {...}
+  }
+
+``/api/v2/region_type/``
++++++++++++++++++++
+
+List of region types ( each region must have a region type ).  For now we are
+dealing with Country, Province, District, Sub-District and Settlement.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name:<String>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/indicator_tag/``
+++++++++++++++++++++++++++
+
+The list of tags that each indicator can be attributed to.  Notice the
+parent_tag_id field, this is used to build the indicator heirarchy dropdown
+implemented in the group edit page.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      tag_name:<String>,
+      parent_tag_id:<Number>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/campaign_map/``
++++++++++++++++++++++++++
+
+One row for each source_campaign string to master campaign id.  This is the
+way for instance that we woudl be able to take two strings taht came in from
+two separate ( or the same ) csv uploads
+
+ - Nigeria June 2015
+ - NG 2015
+
+ and map them to one ID for the June Nigeria campaign.  This construct allows
+ us to take data from both sources and merge it into the master ``datapoint``
+ table.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      master_object_id: <Number>,
+      source_object_id: <Number>,
+      mapped_by_id: <Number>,
+    }]
+
+    errors: {...}
+  }
+
+
+``/api/v2/indicator_map/``
++++++++++++++++++++
+
+See section on campaign_map
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      master_object_id: <Number>,
+      source_object_id: <Number>,
+      mapped_by_id: <Number>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/region_map/``
++++++++++++++++++++
+
+See section on campaign_map.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      master_object_id: <Number>,
+      source_object_id: <Number>,
+      mapped_by_id: <Number>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/document/``
++++++++++++++++++++
+
+This is simply the list of Documents in the system.  Documents are
+traditionally CSV uploads but there is also one document_id associated for each
+ODK form that we process in our ingestion engine.
+
+Custom Parameters
+~~~~~~~~~~~~~~~~~
+
+``show_all``
+  - default = 0
+  - by default the document api only shows documents that the user has updated,
+    however this parameter allows the application to see all documents
+    regardless of who uploaded them.
+
+
+the apply_document_permissions function
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      source_datapoint_count: <Number>,
+      is_processed: <Boolean>,
+      created_at: <Datetime>,
+      docfile: <Text>,
+      doc_text: <Text>,
+      master_datapoint_count: <Number>,,
+      source_id: <Number>,,
+      created_by_id: <Number>,,
+      guid: <Text>,
+
+    }],
+    errors: {...}
+  }
+
+
+``/api/v2/document_review/``
++++++++++++++++++++++++++++++
+
+The document_review API is used by the document review page which gives the user
+an overview of the metadata in each document ( source_regions, source_campaigns
+and source_indicators ) as well as the ability to map them to master IDs.
+This call will be called with a document_id and used to populate the mapping
+interface.  The interface shows the user how many source_datapoints are
+associated with each peice of metadata as well as how many master datapoints
+have made it in for each of the source datapoints.
+
+This table is populated whenever a document is proessed by calling the
+fn_populate_doc_meta stored procedure.  The objetive of this stored procedure
+is to create any new source_metadata rows that need to be mapped, and finally
+updating the document_review table with mappings as they come in.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      master_dp_count: <Number>,
+      map_id: <Number>1,
+      master_object_id: <Number>,
+      source_string: <Text>,
+      source_object_id: <Number>,
+      db_model: <Text>,
+      source_dp_count: <Number>,
+      document_id: <Number>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/user_permission/``
+++++++++++++++++++++++++++++
+
+This endpoint reports on the FUNCTIONAL permissions of a user.  For instance
+this table says that user-x can upload csvs, but user-y can not.
+
+In this endpoint The ``filter_permissions_to_current_user``
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      user_id: <Number>,
+      auth_code: <Text>
+
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/custom_dashboard/``
++++++++++++++++++++++++++++++
+
+A list of custom dashboards, along with the JSON that allows the application
+to build the dashboard as well as owner information.
+
+*Permissions*
+
+the ``apply_cust_dashboard_permissions`` function is less of a permission filter
+than it is an opportunity for the API to add the data needed for the front end.
+Specifically that refers to the owned_by_current_user and owner_username fields.
+This function adds this information in addition to the data that comes
+directly from the model ( which in this case is CustomDashboard ).
+
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      default_office_id: <Number>,
+      description: <Text>,
+      title: <Text>,
+      dashboard_json: <json>
+      owned_by_current_user: <Boolean>,
+      owner_username: <Text>,
+      owner_id: <Number>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/group_permission/``
++++++++++++++++++++++++++++++
+
+The list of indicators each group has permissions to and vice versa.
+For instance to see what groups have permission to view indicator_id 21, simply
+pass:
+
+'/api/v2/group_permission/?indicator=21'
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      indicator_id <Number>,
+      group_id <Number>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/group/``
+++++++++++++++++++
+
+The list of groups in the application.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name: <Text>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/user/``
++++++++++++++++++
+
+The list of users in the application.  All filters outlined above are avaliable
+here to all of the fields included in the response.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      username: <Text>,
+      first_name: <Text>,
+      last_name: <Text>,
+      is_active: <Boolean>,
+      is_superuser: <Boolean>,
+      is_staff: <Boolean>,
+      last_login: <Datetime>,
+      email: <Text>,
+      date_joined:<Datetime>,
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/region_permission/``
+++++++++++++++++++++++++++++++
+
+This endpoint tells which regions a user has access to read or write to.
+If you want only the regions that a user can WRITE to pass the read_write=w
+parameter.  By default, this endpoint retreives the regions that a user can
+read.
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      read_write: <Text>,
+      user_id: <Number>,
+      region_id: <Number>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v2/user_group/``
++++++++++++++++++++++++++
+
+This endpoint tells which groups a user is in and vice versa.
+
+For instance to see all the groups user_id 1 is in .. simply pass the following
+url to the application:
+
+'/api/v2/user_group/?user=1'
+
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      group_id: <Number>,
+      user_id: <Number>,
+    }],
+
+    errors: {...}
+  }
+
 
 
 permissions
