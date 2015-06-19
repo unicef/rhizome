@@ -218,11 +218,28 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 						return sortBy ? sortBy === d : i === 0;
 					})
 					.clickHandler(this.setSort.bind(this)));
+
+      g.selectAll('.label').remove();
 		} else {
 			// Clear the legend if we have fewer than two series
 			svg.select('.legend')
 				.selectAll('g')
 				.remove();
+
+      var label = series.selectAll('.label').data(options.values);
+
+      label.enter()
+        .append('text')
+        .attr({
+          'class' : 'label',
+          'dx'    : '2',
+          'dy'    : '.3em'
+        });
+
+      label.attr('transform', d => 'translate(0,' + (y(d) + yScale.rangeBand() / 2) + ')')
+        .text(d => options.xFormat(options.x(d)));
+
+      label.exit().remove();
 		}
 
 		hover.on('out', function (d, i) {
