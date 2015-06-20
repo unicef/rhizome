@@ -7,12 +7,12 @@ var ChartFactory = require('chart');
 
 module.exports = React.createClass({
   propTypes : {
-    data    : React.PropTypes.array.isRequired,
-    type    : React.PropTypes.string.isRequired,
+    data     : React.PropTypes.array.isRequired,
+    type     : React.PropTypes.string.isRequired,
 
-    id      : React.PropTypes.string,
-    options : React.PropTypes.object,
-    loading : React.PropTypes.bool
+    id       : React.PropTypes.string,
+    loading  : React.PropTypes.bool,
+    options  : React.PropTypes.object,
   },
 
   getDefaultProps : function () {

@@ -277,6 +277,21 @@ button,
 	}
 }
 
+.button-bar {
+  button, .button, *[role="button"] {
+    background-color: transparent;
+    border: none;
+    color: $jumbo;
+    margin: 0;
+    padding: 0;
+    transition: color 300ms ease;
+
+    &:hover {
+      color : $secondary-color;
+    }
+  }
+}
+
 [class*="block-grid-"] > li {
 	padding-bottom: 0;
 }
