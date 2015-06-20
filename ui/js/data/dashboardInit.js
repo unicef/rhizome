@@ -7,11 +7,11 @@ var moment = require('moment');
  * Recursively determine if child is a child of parent region.
  */
 function childOf(parent, child) {
-  if (!child) {
+  if (!child || !child.parent) {
     return false;
   }
 
-  if (parent.id === child.id) {
+  if (parent.id === child.parent.id) {
     return true;
   }
 
@@ -29,7 +29,7 @@ function inChart(chart, campaign, region, datum) {
 
   var inRegion = false;
 
-  switch (chart.region) {
+  switch (chart.regions) {
     case 'subregions':
       inRegion = childOf(region, datum.region);
 

@@ -28,7 +28,7 @@ module.exports = {
 			'title'      : 'Missed Children by Province',
 			'section'    : 'performance',
       'type'       : 'ChoroplethMap',
-      'region'     : 'subregions',
+      'regions'     : 'subregions',
       'timeRange'  : 0,
 			'indicators' : [475],
 		}, {
