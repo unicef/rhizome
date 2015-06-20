@@ -105,7 +105,6 @@ var process = {
   'ChoroplethMap'   : choropleth,
   'ColumnChart'     : column,
   'LineChart'       : series,
-  'PieChart'        : series,
   'ScatterChart'    : scatter,
 };
 
