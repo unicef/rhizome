@@ -4,6 +4,27 @@ var _      = require('lodash');
 var moment = require('moment');
 
 /**
+ * Return the facet value for a datum given a path.
+ */
+function getFacet(datum, path) {
+  var facet = _.get(datum, path);
+
+  // Cleverly handle pieces of the application that replace IDs with their
+  // corresponding objects, and those that don't. For example, if the facet path
+  // is 'indicator', but the datum has the indicator ID replaced by the
+  // definition we try a number of properties. If the indicator hasn't been
+  // replaced, we just use the ID.
+  if (_.isPlainObject(facet)) {
+    facet = _(['short_name', 'name', 'title', 'id'])
+      .map(_.propertyOf(facet))
+      .reject(f => _.isUndefined(f))
+      .first()
+  }
+
+  return facet
+}
+
+/**
  * Recursively determine if child is a child of parent region.
  */
 function childOf(parent, child) {
@@ -66,7 +87,7 @@ function choropleth(chart, data, campaign, features) {
 
 function series(chart, data) {
   return _(data)
-    .groupBy(_.get(chart, series, 'indicator.short_name'))
+    .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
     .map((values, name) => ({ name, values }))
     .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
     .value();
