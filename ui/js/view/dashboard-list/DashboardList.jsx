@@ -30,7 +30,7 @@ module.exports = React.createClass({
   render : function () {
     var rows;
     if (_.isNull(NavigationStore.customDashboards)) {
-      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading...</td></tr>;
+      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading&hellip;</td></tr>;
     } else if (NavigationStore.customDashboards.length > 0) {
       rows = NavigationStore.customDashboards.map(_tableRow);
     } else {
