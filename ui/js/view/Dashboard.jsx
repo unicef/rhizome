@@ -126,6 +126,20 @@ var Dashboard = React.createClass({
       }),
       this._setDashboard);
 
+    var edit;
+    if (dashboardDef.owned_by_current_user) {
+      edit = (
+        <span>
+          <a className='menu-button fa-stack'
+            href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
+            <i className='fa fa-stack-2x fa-circle'></i>
+            <i className='fa fa-stack-1x fa-pencil'></i>
+          </a>
+          &emsp;
+        </span>
+      );
+    }
+
     return (
       <div>
         <div classNameName='clearfix'></div>
@@ -148,6 +162,7 @@ var Dashboard = React.createClass({
 
             <div className='medium-4 columns'>
               <h2 style={{ textAlign: 'right' }}>
+                {edit}
                 <TitleMenu text={dashboardName}>
                   {dashboardItems}
                 </TitleMenu>
