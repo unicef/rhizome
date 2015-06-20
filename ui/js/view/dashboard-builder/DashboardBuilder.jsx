@@ -51,6 +51,25 @@ module.exports = React.createClass({
 	editChart:function(index){
 	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
 	},
+  deleteChart: function(index) {
+    var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '');
+
+    if (_.isEmpty(chart)) {
+      chart = 'this chart';
+    } else {
+      chart = '"' + chart + '"';
+    }
+
+    var dashboard = _.get(this.state, 'store.dashboard.title', '');
+    if (_.isEmpty(dashboard)) {
+      dashboard = 'the dashboard';
+    }
+
+    if (window.confirm('Delete ' + chart + ' from ' + dashboard + '?')) {
+      // FIXME
+      console.log('Delete chart:', index);
+    }
+  },
 	newChart:function(){
 	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
 	},
@@ -169,7 +188,8 @@ module.exports = React.createClass({
         region      : region,
         editable    : true,
         onAddChart  : this.newChart,
-        onEditChart : this.editChart
+        onEditChart : this.editChart,
+        onDeleteChart : this.deleteChart
       };
 
       var dashboard = React.createElement(
