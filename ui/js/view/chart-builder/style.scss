@@ -28,12 +28,26 @@ $right-page-width: 900px;
    			padding: 10px;
    		}
    		.chart-container {
-   			width: 500px;
+            background-color: #ddd;
+            margin-left: $chart-wrapper-margin;
    			position: relative;
-   			.dropdown-wrapper {
-   				width: 50%;
-   				display: inline-block;
-   			}
+            padding: 10px;
+
+            .grouping {
+               margin-top: 0;
+            }
+
+            .preview-section {
+               display: inline-block;
+               width: 600px;
+               background-color: #fff;
+               padding: 10px;
+               .dropdown-wrapper {
+                  width: 50%;
+                  display: inline-block;
+               }
+            }
+
    		}
    		.menu-span {
    			display: inline-block;
