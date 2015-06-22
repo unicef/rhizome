@@ -192,7 +192,10 @@ module.exports = Reflux.createStore({
 	},
 	onInitialize: function(chartDef){
     this.resetChartDef();
-	
+	if(chartDef)
+	{
+	  this.applyChartDef(chartDef);
+	}
 	var self = this;
 			var regionPromise = api.regions().then(function(items){
 			  self._regionIndex = _.indexBy(items.objects, 'id');

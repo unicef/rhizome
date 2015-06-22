@@ -77,6 +77,43 @@ var DashboardBuilderStore = Reflux.createStore({
 	  this.saveDashboard();
 	  this.trigger(this.data);
 	},
+	onRemoveChart:function(index){
+	  this.data.dashboard.charts.splice(index, 1);
+	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
+	  this.saveDashboard();
+	  this.trigger(this.data);
+	},
+	onMoveForward:function(index){
+	  console.log('forward');
+	  var newIndex;
+	  if(index==this.data.dashboard.charts.length -1)
+	  {
+	    newIndex = 0;
+	  }
+	  else {
+	  	newIndex = index + 1;
+	  }
+	  var temp = this.data.dashboard.charts[index];
+	  this.data.dashboard.charts[index] = this.data.dashboard.charts[newIndex];
+	  this.data.dashboard.charts[newIndex] = temp;
+	  
+	  this.trigger(this.data);
+	},  
+    onMoveBackward:function(index){
+      var newIndex;
+      if(index==0)
+      {
+        newIndex = this.data.dashboard.charts.length -1;
+      }
+      else {
+      	newIndex = index - 1;
+      }
+      var temp = this.data.dashboard.charts[index];
+      this.data.dashboard.charts[index] = this.data.dashboard.charts[newIndex];
+      this.data.dashboard.charts[newIndex] = temp;
+      
+      this.trigger(this.data);
+    },  
 	onAddDashboard:function(){
 	   var data = {
 	     title: this.data.dashboardTitle,

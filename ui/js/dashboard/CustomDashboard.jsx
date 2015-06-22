@@ -57,6 +57,8 @@ var CustomDashboard = React.createClass({
     onAddChart    : React.PropTypes.func,
     onDeleteChart : React.PropTypes.func,
     onEditChart   : React.PropTypes.func,
+    onMoveForward : React.PropTypes.func,
+    onMoveBackward: React.PropTypes.func
   },
 
   getDefaultProps : function () {
@@ -65,6 +67,8 @@ var CustomDashboard = React.createClass({
       onAddChart    : _.noop,
       onDeleteChart : _.noop,
       onEditChart   : _.noop,
+      onMoveForward : _.noop,
+      onMoveBackward: _.noop
     };
   },
 
@@ -91,6 +95,12 @@ var CustomDashboard = React.createClass({
       if (editable) {
         controls = (
           <div className='button-bar' style={{float : 'right'}}>
+            <a role='button' onClick={this.props.onMoveBackward.bind(null, i)}>
+              <i className='fa fa-icon fa-arrow-left fa-fw'></i>
+            </a>
+            <a role='button' onClick={this.props.onMoveForward.bind(null, i)}>
+              <i className='fa fa-icon fa-arrow-right fa-fw'></i>
+            </a>
             <a role='button' onClick={this.props.onDeleteChart.bind(null, i)}>
               <i className='fa fa-icon fa-trash fa-fw'></i>
             </a>

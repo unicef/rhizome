@@ -9,5 +9,8 @@ module.exports = Reflux.createActions([
         "updateChart",
         "addChart",
         "addDashboard",
-        "updateTitle"
+        "updateTitle",
+        "removeChart",
+        "moveForward",
+        "moveBackward"
     ]);

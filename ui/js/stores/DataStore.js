@@ -68,6 +68,15 @@ var DataStore = Reflux.createStore({
         case 'subregions':
           q.parent_region__in = region.id;
           break;
+
+        case 'type':
+          var parent = _.get(region, 'parent.id');
+          if (!_.isUndefined(parent)) {
+            q.parent_region__in = parent;
+          }
+
+          q.region_type = region.region_type;
+          break;
         default:
           q.region__in = region.id;
           break;

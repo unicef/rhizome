@@ -49,7 +49,15 @@ module.exports = React.createClass({
 	  }
 	},
 	editChart:function(index){
+	  console.log(index);
 	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
+	},
+	moveForward:function(index){
+	 console.log('f');
+	 DashboardBuilderActions.moveForward(index);
+	},
+	moveBackward:function(index){
+	  DashboardBuilderActions.moveBackward(index);
 	},
   deleteChart: function(index) {
     var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '');
@@ -67,7 +75,7 @@ module.exports = React.createClass({
 
     if (window.confirm('Delete ' + chart + ' from ' + dashboard + '?')) {
       // FIXME
-      console.log('Delete chart:', index);
+      DashboardBuilderActions.removeChart(index);
     }
   },
 	newChart:function(){
@@ -189,7 +197,9 @@ module.exports = React.createClass({
         editable    : true,
         onAddChart  : this.newChart,
         onEditChart : this.editChart,
-        onDeleteChart : this.deleteChart
+        onDeleteChart : this.deleteChart,
+        onMoveForward : this.moveForward,
+        onMoveBackward: this.moveBackward
       };
 
       var dashboard = React.createElement(
@@ -205,6 +215,15 @@ module.exports = React.createClass({
        if (campaign.office_id !== region.office_id) {
          campaign = campaigns[0];
        }
+
+      var charts = this.state.store.dashboard.charts.map(function(chart,index){
+          return (
+            <tr key={index}>
+            <td>{chart.title}</td>
+            <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
+            </tr>
+          );
+       }); 
 
 	   var dashboardBuilderContainer = (
 	         <div>
@@ -231,7 +250,10 @@ module.exports = React.createClass({
 	           <div className="titleDiv">Dashboard Title</div>
 	           	<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
 	           </div>
+	           
+	           
 	           {dashboard}
+
 	         </div>
 	   );
 	   if(!this.state.store.loaded)
@@ -241,6 +263,7 @@ module.exports = React.createClass({
 	   else if(this.state.chartBuilderActive)
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
+	   	console.log(chartDef,this.state.store.dashboard.charts);
 	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} campaign={campaign} region={region} />);
 	   }
 	   else {
