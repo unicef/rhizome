@@ -5,7 +5,7 @@ var d3     = require('d3');
 var moment = require('moment');
 
 var browser = require('util/browser');
-var colors  = require('colors');
+var colors  = require('util/color');
 var legend  = require('chart/renderer/legend');
 
 function _domain(data, options) {
@@ -106,9 +106,7 @@ _.extend(PieChart.prototype, {
 			});
 
     var color      = options.color;
-    var colorScale = d3.scale.ordinal()
-      .domain(_.map(data, options.name))
-      .range(colors);
+    var colorScale = colors.scale(_.map(data, options.name));
 		if (!_.isFunction(color)) {
 			color = _.flow(options.name, colorScale);
 		}
