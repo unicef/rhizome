@@ -29,6 +29,7 @@ var ManagementDashboard = React.createClass({
 
   render : function () {
     var campaign   = this.props.campaign;
+    var printDate  = moment(campaign.start_date).format('MMM YYYY');
     var data       = this.props.data;
     var indicators = _.indexBy(this.props.indicators, 'id');
     var loading    = this.props.loading;
@@ -51,7 +52,7 @@ var ManagementDashboard = React.createClass({
         <div className='row print-only'>
           <div className='small-12 columns'>
             <h1>
-              <span className='campaign'>{ campaign }</span>
+              <span className='campaign'>{ printDate }</span>
               <span className='region'>{ region }</span>
             </h1>
             <h2>
