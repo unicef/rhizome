@@ -1,10 +1,12 @@
 'use strict';
 
-var _     = require('lodash');
-var React = require('react');
+var _      = require('lodash');
+var Layer  = require('react-layer');
+var React  = require('react');
 var moment = require('moment');
 
-var Chart = require('component/Chart.jsx');
+var Chart   = require('component/Chart.jsx');
+var Tooltip = require('component/Tooltip.jsx');
 
 function _domain(data) {
   var lower = _(data)
@@ -98,15 +100,11 @@ module.exports = React.createClass({
 
     cols       : React.PropTypes.number,
     data       : React.PropTypes.array,
-    hideHelp   : React.PropTypes.func,
-    showHelp   : React.PropTypes.func
   },
 
   getDefaultProps : function () {
     return {
       cols     : 1,
-      hideHelp : _.noop,
-      showHelp : _.noop,
     };
   },
 
@@ -118,7 +116,7 @@ module.exports = React.createClass({
     var loading  = this.props.loading;
 
     var charts = _(this.props.indicators)
-      .map(function (indicator, i) {
+      .map((indicator, i) => {
         var targets = _targetRanges(indicator);
 
         var options = {
@@ -144,7 +142,7 @@ module.exports = React.createClass({
 
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
-            <h6 onMouseEnter={_.partial(showHelp, indicator)} onMouseLeave={hideHelp}>{title}</h6>
+            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
             <Chart type='BulletChart' loading={loading} data={chartData} options={options} />
           </li>
         );
@@ -153,4 +151,30 @@ module.exports = React.createClass({
 
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
   },
+
+  _showHelp : function (indicator, evt) {
+    var render = function () {
+      return (
+        <Tooltip left={evt.pageX} top={evt.pageY}>
+          <h3>{indicator.name}</h3>
+          <p>{indicator.description}</p>
+        </Tooltip>
+      );
+    }
+
+    if (this.layer) {
+      this.layer._render = render;
+    } else {
+      this.layer = new Layer(document.body, render);
+    }
+
+    this.layer.render();
+  },
+
+  _hideHelp : function () {
+    if (this.layer) {
+      this.layer.destroy();
+      this.layer = null;
+    }
+  }
 });
