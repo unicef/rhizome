@@ -17,14 +17,25 @@ class GeoJsonResult(object):
 
 
 class CustomCache(SimpleCache):
+    '''
+    Set up to override the simple cache method in order to customize the
+    behavior of the cache control headers.
+    '''
 
     def cache_control(self):
+        '''
+        Instatiate the cache_control instance, and add the headers needed.
+        '''
         control = super(CustomCache, self).cache_control()
         control.update({'must_revalidate':True, 'max_age': 3600})
         return control
 
 
 class RegionPolygonResource(BaseNonModelResource):
+    '''
+    A non model resource that allows us to query for shapefiles based on a
+    colletion of parameters. 
+    '''
 
     region_id = fields.IntegerField(attribute = 'region_id')
     type = fields.CharField(attribute = 'type')

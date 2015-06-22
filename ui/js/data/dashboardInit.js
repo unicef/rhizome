@@ -59,6 +59,10 @@ function inChart(chart, campaign, region, datum) {
       }
       break;
 
+    case 'type':
+      inRegion = datum.region.region_type === region.region_type;
+      break;
+
     default:
       inRegion = region.id === datum.region.id;
       break;
