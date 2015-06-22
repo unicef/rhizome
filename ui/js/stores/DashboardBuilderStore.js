@@ -124,8 +124,8 @@ var DashboardBuilderStore = Reflux.createStore({
        var dj = JSON.stringify(this.data.dashboard.dashboard_json);
        this.data.dashboard.id = '';
        
-       api.save_dashboard({id:'',title:this.data.dashboard.title,dashboard_json:dj}).then(function(response){
-          console.log(response);
+       api.save_dashboard({id:'',title:this.data.dashboard.title}).then(function(response){
+          window.location = '/';
        });
     },
 	onAddDashboard:function(){
