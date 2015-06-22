@@ -30,6 +30,17 @@ class ResultObject(object):
 
 class DataPointResource(BaseNonModelResource):
     '''
+    This is the class that coincides with the /api/v1/datapoint endpoint.
+
+    At it's core this resource is a simple wrapper on top of the
+    datapoint_abstracted table.  The schema of that table is region_id,
+    campaign_id, indicator_json and because of which there is very little
+    data transformation on request here.
+
+    There is some custom functionality here which is the reason i was not so
+    quick to convert this endpoint ( the most important endpoint in the
+    application ) from v1 to v2.
+
     '''
 
     error = None
@@ -39,13 +50,30 @@ class DataPointResource(BaseNonModelResource):
     indicators = fields.ListField(attribute = 'indicators')
 
     class Meta(BaseNonModelResource.Meta):
-        # note - auth inherited from parent class #
+        '''
+        As this is a NON model resource, we must specify the object_class
+        that will represent the data returned to the applicaton.  In this case
+        as specified by the ResultObject the fields in our response will be
+        region_id, campaign_id, indcator_json.
+
+        The resource name is datapoint, which means this resource is accessed by
+        /api/v1/datapoint/.
+
+        The data is serialized by the CustomSerializer which uses the default
+        handler for JSON responses and transforms the data to csv when the
+        user clicks the "download data" button on the data explorer.
+
+        note - authentication inherited from parent class
+        '''
+
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
     def __init__(self, *args, **kwargs):
+        '''
+        '''
 
         super(DataPointResource, self).__init__(*args, **kwargs)
         self.error = None
@@ -76,6 +104,16 @@ class DataPointResource(BaseNonModelResource):
 
     def get_object_list(self,request):
         '''
+        This is where the action happens in this resource.  AFter passing the
+        url paremeters, get the list of regions based on the parameters passed
+        in the url as well as the permissions granted to the user responsible
+        for the request.
+
+        Using the region_ids from the get_regions_to_return_from_url method
+        we query the datapoint abstracted table, then iterate through these
+        values cleaning the indicator_json based in the indicator_ids passed
+        in the url parameters, and creating a ResultObject for each row in the
+        response.
         '''
         self.error = None
 
@@ -103,17 +141,22 @@ class DataPointResource(BaseNonModelResource):
             r.campaign = row.campaign_id
 
             indicator_json = row.indicator_json
-
             cleaned = self.clean_indicator_json(indicator_json)
-
             r.indicators = cleaned
-
             results.append(r)
 
 
         return results
 
     def clean_indicator_json(self,indicator_json):
+        '''
+        When we query the datapoint_abstracted table, the full list of
+        indicators is sent along with the region / campaign for which it is
+        associated.
+
+        This method only returns indicator data for the region / campaign tuple
+        that is requested by the API.
+        '''
 
         cleaned = []
 

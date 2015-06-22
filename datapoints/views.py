@@ -164,7 +164,6 @@ class UFAdminView(IndexView):
     context_object_name = 'uf_admin'
 
 
-
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####
