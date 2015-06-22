@@ -223,7 +223,7 @@ module.exports = React.createClass({
             <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
             </tr>
           );
-       }); 
+       });
 
 	   var dashboardBuilderContainer = (
 	         <div>
@@ -232,7 +232,7 @@ module.exports = React.createClass({
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
 					<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
-	           </div>	          
+	           </div>
 
 	           <form className='inline no-print'>
 	             <div className='row'>
@@ -258,7 +258,7 @@ module.exports = React.createClass({
 
 	              <div className="right">
 	              	<a role='button' className='button deleteButton' href='#'>
-		              	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
+		              	<i className='fa fa-icon fa-fw fa-trash'></i>&ensp;Delete dashboard
 	              	</a>
 	              </div>
 
@@ -275,7 +275,7 @@ module.exports = React.createClass({
 
 		          <span>
 	              	&ensp;Changes are saved when you make them.
-				  </span>		          
+				  </span>
 
 	           </div>
 
