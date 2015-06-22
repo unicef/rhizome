@@ -52,6 +52,13 @@ module.exports = React.createClass({
 	  console.log(index);
 	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
 	},
+	moveForward:function(index){
+	 console.log('f');
+	 DashboardBuilderActions.moveForward(index);
+	},
+	moveBackward:function(index){
+	  DashboardBuilderActions.moveBackward(index);
+	},
   deleteChart: function(index) {
     var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '');
 
@@ -68,7 +75,7 @@ module.exports = React.createClass({
 
     if (window.confirm('Delete ' + chart + ' from ' + dashboard + '?')) {
       // FIXME
-      console.log('Delete chart:', index);
+      DashboardBuilderActions.removeChart(index);
     }
   },
 	newChart:function(){
@@ -190,7 +197,9 @@ module.exports = React.createClass({
         editable    : true,
         onAddChart  : this.newChart,
         onEditChart : this.editChart,
-        onDeleteChart : this.deleteChart
+        onDeleteChart : this.deleteChart,
+        onMoveForward : this.moveForward,
+        onMoveBackward: this.moveBackward
       };
 
       var dashboard = React.createElement(
