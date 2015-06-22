@@ -23,6 +23,16 @@ from source_data.models import *
 class v2Request(object):
 
     def __init__(self, request, content_type):
+        '''
+        The v2 request when instatiated setts up class variables for the request
+        the content type and the user_id sending the request.
+
+        Most importantly howver, the v2 api uses the dictionary below in order
+        to translate the content type in the api ( api/v1/<content_type> ) into
+        a database model (Region, Campaign, Indicator) as well as an optional
+        function to perform filtering based on the user's permissions or any
+        other transformation to the data before return to the application.
+        '''
 
         self.request = request
         self.content_type = content_type
@@ -77,9 +87,8 @@ class v2Request(object):
     def main(self):
         '''
         Put together a response with the data, meta, and error objects, returing
-        this all to the view.
+        this all to the django view.
         '''
-
 
         response_data = {
             'objects':self.data,
@@ -262,7 +271,24 @@ class v2Request(object):
 
 
 class v2PostRequest(v2Request):
+    '''
+    Inherited from the V2 request, so the api_mapper, request, user_id are
+    avaliable by this class.
 
+    As demostrated in datapoints/cache_tasks.py, some of the metadata models
+    that we return to the api are transformed outside of the API, for instance
+    the indicator table is transformed into the indicator_abstraced table
+    by finding key-ed information, serializing it as json and dumping the
+    results into the indicator_anstracted table.
+
+    Here we override the indicator namespace so that when a POST request comes
+    in the application knows to write to the Indicator model as opposed to the
+    IndicatorAbstracted model, whci is used in GET requests.
+
+    As the parameters are handled differently here than in the GET request,
+    this class has its own clean_kwargs method which processes the POST data
+    that the endpoint uses throught the cycle.
+    '''
 
     def __init__(self, request, content_type):
 
@@ -278,6 +304,11 @@ class v2PostRequest(v2Request):
         self.kwargs = self.clean_kwargs(request.POST)
 
     def clean_kwargs(self,query_dict):
+        '''
+        Create a dictionary from the parsed parameters, and also add the
+        mapped_by_id parameter when necessary ( used in the meta_mapping
+        endpoints )
+        '''
 
         cleaned_kwargs = {}
 
@@ -292,16 +323,22 @@ class v2PostRequest(v2Request):
 
     def main(self):
         '''
-        Return error if not implemented
+        - Return error if not implemented
+        - For custom dashboards, set the owner_id to the user making the request
+          as well as ensuring the JSON is valid.
+        - Determine ( based on the convention of this API ) if the request is an
+          insert, update or delete.
 
-        if method is create:
-        Create an object in accordance to the URL kwargs and return the new ID
+        If method is create:
+         Create an object in accordance to the URL kwargs and return the new ID
 
-        if delete:
-            query for objects taht match
+        If delete:
+            query for objects taht match what was passed in the post params and
+            delete all objects that fulfill those conditions
+        If update
+            set the object with the ID that has been passed via the URL to the
+            json parameters associated with the request params.
         '''
-
-        print self.kwargs
 
         ## Create, Update or Delete ##
         request_type = self.determined_request_type()
@@ -357,6 +394,14 @@ class v2PostRequest(v2Request):
     def determined_request_type(self):
         '''
         POST can be create, update, or delete.
+
+        DELETE - pass {'id':''}
+        UPDATE - pass {'id':<id_of_object>,
+                       'field_to_update_1':'val_1',
+                       'field_to_update_2':'val_2'
+                      }
+        INSERT - pass a json dictionary with all of the required columns to
+        create the object associated with the url's content_type.
         '''
 
         try:
@@ -374,12 +419,19 @@ class v2PostRequest(v2Request):
 
 
 class v2MetaRequest(v2Request):
+    '''
+    A set of endpoints that tells the application what fields and data types
+    are associated with each model / api resource.
+    '''
 
     def __init__(self, request, content_type):
+        '''
+        Instatiate the parent v2 request then determin the database object by
+        Performing a lookup on the orm_mapping dictionary.
+        '''
 
         super(v2MetaRequest, self).__init__(request, content_type)
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
-
 
     def main(self):
         '''
@@ -461,7 +513,8 @@ class v2MetaRequest(v2Request):
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
                 'display' : {
-                    'on_table':self.column_lookup[field_object.name]['display_on_table_flag'],
+                    'on_table':self.column_lookup[field_object.name]\
+                        ['display_on_table_flag'],
                     'weightTable':ix,
                     'weightForm':ix,
                 },
@@ -472,6 +525,10 @@ class v2MetaRequest(v2Request):
 
 
     def build_field_constraints(self,field_object):
+        '''
+        This method should be removed.  The functionality that this peice of
+        code was supposed to provide is no longer in scope.
+        '''
 
         field_constraints = {
             'unique':field_object.unique
@@ -483,21 +540,26 @@ class v2MetaRequest(v2Request):
             field_constraints['required'] = False
 
         if field_object.name == 'groups':
-        # if isinstance(field_object,ManyToManyField) and field_object.name == 'groups':
 
-            ## HACK FOR USERS ##
+            ## SAMPEL DATA FOR DAN TO IMPLEMENT UFADMIN FOR USERS ##
             dict_list = [{'value':1,'label':'UNICEF HQ'}]
             field_constraints['items'] = {'oneOf':dict_list}
-
 
         return field_constraints
 
 
 class v2GetRequest(v2Request):
-
+    '''
+    Inheritng form the v2Request above, this class handles all GET requests in
+    the v2 api.
+    '''
 
     def __init__(self, request, content_type):
-
+        '''
+        Instantiate the v2Request then find the permission function, database
+        object associated with the content_type, finally cleaning the api params
+        and creating the class attribute self.kwargs.
+        '''
         super(v2GetRequest, self).__init__(request, content_type)
 
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
@@ -618,6 +680,8 @@ class v2GetRequest(v2Request):
 
     def build_meta(self):
         '''
+        Create a dictionary with the meta data of the request to allow for
+        pagination on the front end.
         '''
 
         meta_dict = {
@@ -631,9 +695,15 @@ class v2GetRequest(v2Request):
 
     def apply_permissions(self, queryset):
         '''
-        Right now this is only for regions and Datapoints.
+        Only some of the content types have an associated permission_function
+        in the orm_mapper.  When there is no permission function this method
+        simply returns the eqisting data, but when there is, the permission
+        function is executed with the list_of_object_ids that came from the
+        initial ORM filter.
 
-        Returns a Raw Queryset
+        So for example the region permission function knows to not only filter
+        data based on my permissions, but to additionally filter data based on
+        the parameters passed in the url.
         '''
 
         if not self.permission_function:
