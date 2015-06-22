@@ -1,6 +1,7 @@
 module.exports = {
 	'id'   : -1,
 	'title' : 'Management Dashboard',
+  'builtin': true,
 	'charts' : [{
 			'title'      : 'Polio Cases YTD',
 			'section'    : 'impact',
