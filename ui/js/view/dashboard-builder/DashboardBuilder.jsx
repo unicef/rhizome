@@ -264,8 +264,11 @@ module.exports = React.createClass({
 	           {dashboard}
 
 	           <div className="dashboard-footer">
-
-
+	              <div className="right">
+	                	<a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
+	                    	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
+	                	</a>
+	                </div> 
 
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
@@ -303,8 +306,4 @@ module.exports = React.createClass({
 });
 
 
-/*  <div className="right">
-  	<a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
-      	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
-  	</a>
-  </div> */
+/*  */

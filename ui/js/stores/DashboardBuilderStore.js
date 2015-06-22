@@ -121,10 +121,10 @@ var DashboardBuilderStore = Reflux.createStore({
        };
        console.log(this.data.dashboard);
        delete this.data.dashboard.charts;
-       delete this.data.dashboard.id;
-       this.data.dashboard.dashboard_json = JSON.stringify(this.data.dashboard.dashboard_json);
+       var dj = JSON.stringify(this.data.dashboard.dashboard_json);
+       this.data.dashboard.id = '';
        
-       api.save_dashboard(this.data.dashboard).then(function(response){
+       api.save_dashboard({id:'',title:this.data.dashboard.title,dashboard_json:dj}).then(function(response){
           console.log(response);
        });
     },
