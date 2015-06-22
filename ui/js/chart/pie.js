@@ -5,7 +5,12 @@ var d3     = require('d3');
 var moment = require('moment');
 
 var browser = require('util/browser');
-var colors  = require('colors');
+var colors  = require('util/color');
+var legend  = require('chart/renderer/legend');
+
+var React   = require('react');
+var Layer   = require('react-layer');
+var Tooltip = require('component/Tooltip.jsx');
 
 function _domain(data, options) {
 	return [0, _(data).map(options.value).sum()];
@@ -20,7 +25,11 @@ var DEFAULTS = {
 		bottom : 0,
 		left   : 0
 	},
-	value : _.property('value')
+	value : _.property('value'),
+  name  : _.property('indicator.short_name'),
+  format : function (d) {
+    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
+  }
 };
 
 function PieChart() {}
@@ -42,6 +51,8 @@ _.extend(PieChart.prototype, {
 			.append('g').attr('class', 'data')
 			.append('path').attr('class', 'bg');
 
+    g.append('g').attr('class', 'legend');
+
 		this.update(data);
 	},
 
@@ -49,7 +60,14 @@ _.extend(PieChart.prototype, {
 		options = _.assign(this._options, options);
 		var margin = options.margin;
 
-		data = data || [];
+		data = _(data)
+      .filter(d => {
+        var v = options.value(d);
+        return _.isFinite(v) && v > 0;
+      })
+      .sortBy(options.value)
+      .reverse()
+      .value();
 
 		var w = this._width - margin.left - margin.right;
 		var h = this._height - margin.top - margin.bottom;
@@ -81,25 +99,21 @@ _.extend(PieChart.prototype, {
 			})
 			.attr('d', arc);
 
-		var getIndex = function (d, i) { return i; };
-
 		var scale = d3.scale.linear()
 			.domain(options.domain(data, options))
 			.range([0, 2 * Math.PI]);
 
 		var pie = d3.layout.stack()
 			.values (function (d) { return [d]; })
-			.x(getIndex)
+			.x(options.name)
 			.y(options.value)
 			.out(function (d, y0, y) {
 				d.startAngle = scale(y0);
-				d.endAngle   = scale(y);
+				d.endAngle   = scale(y0 + y);
 			});
 
-		var color = options.color;
-		if (!_.isFunction(color)) {
-			color = _.flow(getIndex, d3.scale.ordinal().range(colors));
-		}
+    var colorScale = colors.scale(_.map(data, options.name), options.palette);
+    var fill = _.flow(options.name, colorScale);
 
 		var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)));
 
@@ -109,10 +123,44 @@ _.extend(PieChart.prototype, {
 
 		slice.attr({
 			'd'    : arc,
-			'fill' : color
-		});
+			'fill' : fill
+		}).on('mousemove', d => {
+      var evt = d3.event;
+
+      var render = function () {
+        return (
+          <Tooltip left={evt.pageX} top={evt.pageY}>
+            <div>
+              <p>{options.name(d)}:&ensp;{options.format(options.value(d))}</p>
+            </div>
+          </Tooltip>
+        );
+      }
+
+      if (this.layer) {
+        this.layer._render = render;
+      } else {
+        this.layer = new Layer(document.body, render);
+      }
+
+      this.layer.render();
+    })
+    .on('mouseout', d => {
+      if (this.layer) {
+        this.layer.destroy();
+        this.layer = null;
+      }
+    });
 
 		slice.exit().remove();
+
+    if (data.length > 1) {
+      svg.select('.legend')
+        .attr('transform', 'translate(' + (w + 4) +',0)')
+        .call(legend().scale(colorScale));
+    } else {
+      svg.select('.legend').selectAll('g').remove();
+    }
 	}
 });
 

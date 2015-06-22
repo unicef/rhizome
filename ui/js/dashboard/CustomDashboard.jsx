@@ -34,6 +34,16 @@ function getOptions(chart, campaign, data) {
       opts.xFormat = d => moment(d).format('MMM YY');
       break;
 
+    case 'PieChart':
+      opts.margin = {
+        top    : 0,
+        right  : 80,
+        bottom : 0,
+        left   : 0
+      };
+
+      break;
+
     default:
       break;
   }
