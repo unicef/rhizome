@@ -12,6 +12,8 @@ var PieChartList     = require('component/PieChartList.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
+
+
 function series(values, name) {
   return {
     name   : name,
@@ -158,8 +160,9 @@ var Performance = React.createClass({
               name={microplansText}
               emptyText='No microplan data available'
               options={{
-                domain : _.constant([0, _.get(microplans, 'value', 1)]),
-                size   : 24
+                domain  : _.constant([0, _.get(microplans, 'value', 1)]),
+                size    : 24,
+                palette : colors
               }} />
           </section>
         </div>
@@ -188,8 +191,9 @@ var Performance = React.createClass({
             name={_.property('[0].title')}
             data={transitPoints}
             options={{
-              domain : _.constant([0, 1]),
-              size   : 24
+              domain  : _.constant([0, 1]),
+              size    : 24,
+              palette : colors
             }}
             emptyText='No transit point data available' />
         </section>

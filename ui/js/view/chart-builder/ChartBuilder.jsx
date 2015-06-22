@@ -152,27 +152,32 @@ module.exports = React.createClass({
                     	{this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
      					</div>
      					<div className="chart-container">
-     					<div className="dropdown-wrapper">
-                       <CampaignDropdownMenu
-                         text={campaignSelection}
-                         campaigns={this.state.store.campaignList}
-                         sendValue={ChartBuilderActions.addCampaignSelection}>
-                       </CampaignDropdownMenu>
-                        </div>
-      					<div className="dropdown-wrapper">
-     	              	<DropdownMenu
-                         icon='fa-globe'
-                         text={regionSelection}
-               		      searchable={true}
-                         onSearch={_.partial(this.setFilter, 'region')}>
-                         {regions}
-                   		</DropdownMenu>
-						</div>
+                <div className="grouping">
+                  <div className="titleDiv">Preview</div>
+                  <div className="preview-section">
+           					<div className="dropdown-wrapper">
+                             <CampaignDropdownMenu
+                               text={campaignSelection}
+                               campaigns={this.state.store.campaignList}
+                               sendValue={ChartBuilderActions.addCampaignSelection}>
+                             </CampaignDropdownMenu>
+                              </div>
+            					<div className="dropdown-wrapper">
+           	              	<DropdownMenu
+                               icon='fa-globe'
+                               text={regionSelection}
+                     		      searchable={true}
+                               onSearch={_.partial(this.setFilter, 'region')}>
+                               {regions}
+                         		</DropdownMenu>
+                      </div>
                        {this.state.store.loading?loadingDiv:null}
                        {this.state.store.canDisplayChart()?chart:canDisplayChartReason}
+         				    </div>
+                  </div>
      				    </div>
-     				    </div>
-     	              );
+              </div>
+              );
 
 	   return (<form className="inline">
 	           <div className="visualization-builder-container">

@@ -8,7 +8,7 @@ module.exports = {
     'regions'    : 'subregions',
     'level'      : 'district',
     'timeRange'  : 0,
-    'series'     : 'region.name',
+    'groupBy'    : 'region.name',
     'indicators' : [
       475,166,164,167,165, // Missed Children
       222, // Microplans

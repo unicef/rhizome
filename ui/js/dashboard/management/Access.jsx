@@ -8,6 +8,9 @@ var Chart        = require('component/Chart.jsx');
 var DonutChart   = require('component/DonutChart.jsx');
 var PieChartList = require('component/PieChartList.jsx');
 
+var palette = require('colors');
+
+
 var Access = React.createClass({
   propTypes : {
     campaign   : React.PropTypes.object.isRequired,
@@ -83,7 +86,8 @@ var Access = React.createClass({
               loading={loading}
               options={{
                 innerRadius : 0.6,
-                domain      : _.constant([0, 1])
+                domain      : _.constant([0, 1]),
+                palette     : palette
               }} />
           </div>
 
@@ -94,8 +98,9 @@ var Access = React.createClass({
               data={reasons}
               name={pieChartName}
               options={{
-                domain : _.constant([0, 1]),
-                size   : 16
+                domain  : _.constant([0, 1]),
+                size    : 16,
+                palette : palette
               }} />
           </div>
         </div>
