@@ -53,7 +53,14 @@ _.extend(PieChart.prototype, {
 		options = _.assign(this._options, options);
 		var margin = options.margin;
 
-		data = data || [];
+		data = _(data)
+      .filter(d => {
+        var v = options.value(d);
+        return _.isFinite(v) && v > 0;
+      })
+      .sortBy(options.value)
+      .reverse()
+      .value();
 
 		var w = this._width - margin.left - margin.right;
 		var h = this._height - margin.top - margin.bottom;
@@ -85,19 +92,17 @@ _.extend(PieChart.prototype, {
 			})
 			.attr('d', arc);
 
-		var getIndex = function (d, i) { return i; };
-
 		var scale = d3.scale.linear()
 			.domain(options.domain(data, options))
 			.range([0, 2 * Math.PI]);
 
 		var pie = d3.layout.stack()
 			.values (function (d) { return [d]; })
-			.x(getIndex)
+			.x(options.name)
 			.y(options.value)
 			.out(function (d, y0, y) {
 				d.startAngle = scale(y0);
-				d.endAngle   = scale(y);
+				d.endAngle   = scale(y0 + y);
 			});
 
     var color      = options.color;
