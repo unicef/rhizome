@@ -348,19 +348,6 @@ class v2PostRequest(v2Request):
             self.err = 'User POST not implemented in v2 api.'
             return super(v2PostRequest, self).main()
 
-        ## for custom dashboard api - validate the json posted is valid ##
-
-        if self.content_type == 'custom_dashboard':
-
-            self.kwargs['owner_id'] = self.user_id
-
-            try:
-                cleaned_json = json.loads(self.kwargs['dashboard_json'])
-                self.kwargs['dashboard_json'] = cleaned_json
-            except ValueError:
-                self.err = 'Invalid JSON!'
-                return super(v2PostRequest, self).main()
-
 
         ## Insert / Update / Delete Data ##
 
@@ -370,6 +357,20 @@ class v2PostRequest(v2Request):
 
                 new_obj = self.db_obj.objects.create(**self.kwargs)
                 self.data = {'new_id':new_obj.id }
+
+                ## for custom dashboard api - validate the json posted is valid
+                ## this should be re-organized.. moving this for a last minute
+                ## fix pre our first UNICEF production release. Hack alert below
+                if self.content_type == 'custom_dashboard':
+                    self.kwargs['owner_id'] = self.user_id
+
+                    try:
+                        cleaned_json = json.loads(self.kwargs['dashboard_json'])
+                        self.kwargs['dashboard_json'] = cleaned_json
+                    except ValueError:
+                        self.err = 'Invalid JSON!'
+                        return super(v2PostRequest, self).main()
+
 
             elif request_type == 'DELETE':
 
