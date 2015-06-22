@@ -112,11 +112,8 @@ _.extend(PieChart.prototype, {
 				d.endAngle   = scale(y0 + y);
 			});
 
-    var color      = options.color;
-    var colorScale = colors.scale(_.map(data, options.name));
-		if (!_.isFunction(color)) {
-			color = _.flow(options.name, colorScale);
-		}
+    var colorScale = colors.scale(_.map(data, options.name), options.palette);
+    var fill = _.flow(options.name, colorScale);
 
 		var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)));
 
@@ -126,7 +123,7 @@ _.extend(PieChart.prototype, {
 
 		slice.attr({
 			'd'    : arc,
-			'fill' : color
+			'fill' : fill
 		}).on('mousemove', d => {
       var evt = d3.event;
 

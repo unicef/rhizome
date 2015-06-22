@@ -4,10 +4,11 @@ var d3     = require('d3');
 
 var colors = ['#2b8cbe', '#e8cda0'];
 
-function scale(categories) {
+function scale(categories, palette) {
+  palette = palette || colors
 	var interpolate = d3.interpolate(
-		d3.rgb(colors[0]),
-		d3.rgb(colors[colors.length - 1]));
+		d3.rgb(palette[0]),
+		d3.rgb(palette[palette.length - 1]));
 
 	var s = d3.scale.linear().domain([0, categories.length - 1]);
 
