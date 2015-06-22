@@ -125,6 +125,7 @@ var process = {
   'BarChart'        : series,
   'ChoroplethMap'   : choropleth,
   'ColumnChart'     : column,
+  'HeatMapChart'    : series,
   'LineChart'       : series,
   'ScatterChart'    : scatter,
 };
