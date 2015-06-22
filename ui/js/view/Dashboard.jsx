@@ -54,6 +54,23 @@ var Dashboard = React.createClass({
     AppActions.init();
   },
 
+  componentWillUpdate : function (nextProps, nextState) {
+    if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
+      return;
+    }
+
+    var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
+    var title = [
+      nextState.dashboard.title,
+      [nextState.region.name, campaign].join(' '),
+      'RhizomeDB'
+    ].join(' - ');
+
+    if (document.title !== title) {
+      document.title = title;
+    }
+  },
+
   render : function () {
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
