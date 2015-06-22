@@ -266,6 +266,32 @@ POST RESPONSE
     "error": null
   }
 
+Group Permission Post
+---------------------
+
+- ``django model: IndicatorPermission``
+
+POST DATA
+
+.. code-block:: json
+
+  {
+    "indicator_id": 21,
+    "group_id":7
+
+  }
+
+
+POST RESPONSE
+
+.. code-block:: json
+
+  {
+    "objects": {"new_id": 41},
+    "meta": null,
+    "error": null
+  }
+
 
 Region Permission POST
 ----------------------
