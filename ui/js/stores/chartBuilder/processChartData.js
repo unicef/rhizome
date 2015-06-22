@@ -66,7 +66,7 @@ function nullValuesToZero(values){
   	  value.value = 0;
   	}
   });
-	
+
 }
 function _columnData(data, groups, groupBy) {
 
@@ -75,7 +75,7 @@ function _columnData(data, groups, groupBy) {
 		.map(_.partialRight(seriesObject, groups))
 		.value();
 	var baseCampaigns = [];
-	_.each(columnData,function(series){ 
+	_.each(columnData,function(series){
 	   _.each(series.values,function(value){ //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
 	   	 if(!_.find(baseCampaigns,function(campaign){return campaign.id==value.campaign.id}));
 	   	 {
@@ -88,7 +88,7 @@ function _columnData(data, groups, groupBy) {
 	   	  val.value = 0;
 	   	}
 	   });
-	}); 
+	});
 	var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'));
 	_.each(columnData,function(series){
 	   _.each(baseCampaigns,function(baseCampaign,index){
@@ -98,7 +98,7 @@ function _columnData(data, groups, groupBy) {
 	   	   }
 	   });
 	   series.values =  _.sortBy(series.values,_.method('campaign.start_date.getTime'));
-	});    
+	});
 	var stack = d3.layout.stack()
 		.order('default')
 		.offset('zero')
@@ -170,15 +170,15 @@ module.exports = {
 		if(chartType=="LineChart"){
 		 return	this.processLineChart(meltPromise,lower,upper,groups,groupBy);
 		} else if (chartType=="PieChart") {
-		 return	this.processPieChart(meltPromise);	
+		 return	this.processPieChart(meltPromise, indicators);
 		} else if (chartType=="ChoroplethMap") {
-		 return	this.processChoroplethMap(meltPromise,regions);	
+		 return	this.processChoroplethMap(meltPromise,regions);
 		} else if (chartType=="ColumnChart") {
-		 return	this.processColumnChart(meltPromise,lower,upper,groups,groupBy);	
+		 return	this.processColumnChart(meltPromise,lower,upper,groups,groupBy);
 		} else if (chartType=="ScatterChart") {
-		 return	this.processScatterChart(dataPromise,regions,indicators,xAxis,yAxis);	
+		 return	this.processScatterChart(dataPromise,regions,indicators,xAxis,yAxis);
 		} else if (chartType=="BarChart") {
-		 return	this.processBarChart(dataPromise,regions,indicators,xAxis,yAxis);	
+		 return	this.processBarChart(dataPromise,regions,indicators,xAxis,yAxis);
 		}
 	},
 	processLineChart:function(dataPromise,lower,upper,groups,groupBy){
@@ -198,26 +198,36 @@ module.exports = {
 				}
 			var chartData =  _groupBySeries(data, groups,groupBy);
 		    return {options:chartOptions,data:chartData};
-		}); 	
+		});
 	},
-	processPieChart:function(dataPromise){
+	processPieChart:function(dataPromise, indicators){
+    var idx = _.indexBy(indicators, 'id');
+
 		return dataPromise.then(function(data){
 			var total = _(data).map(function(n){ return n.value;}).sum();
 			var chartOptions = {
-					domain  : _.constant([0, total])
+					domain  : _.constant([0, total]),
+          name    : d => _.get(idx, '[' + d.indicator + '].name', ''),
+          margin  : {
+            top    : 0,
+            right  : 200,
+            bottom : 0,
+            left   : 0
+          }
 				};
-			return {options:chartOptions,data:data}; 
+			return {options:chartOptions,data:data};
 		});
 	},
 	processChoroplethMap:function(dataPromise,regions){
 		var regionsIndex = _.indexBy(regions, 'id');
-		
+
 		return Promise.all([dataPromise,api.geo({ region__in :_.map(regions,function(region){return region.id}) })])
-		.then(_.spread(function(data, border){	
+		.then(_.spread(function(data, border){
 			var index = _.indexBy(data,'region');
 			var chartOptions = {
 							aspect: 1,
 							domain: _.constant([0, 0.1]),
+              name  : d => _.get(regionsIndex, '[' + d.properties.region_id + '].name', ''),
 							border: border.objects.features/*,
 							onMouseOver: function (d, el) {
 							    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
@@ -245,7 +255,7 @@ module.exports = {
 												properties : { value : _.get(region, 'value') }
 											});
 									});
-			return {options:chartOptions,data:chartData}; 
+			return {options:chartOptions,data:chartData};
 		}));
 	},
 	processColumnChart: function(dataPromise,lower,upper,groups,groupBy){
@@ -260,8 +270,8 @@ module.exports = {
 			  		.ticks(d3.time.month, 1),
 			  	_.method('getTime')
 			  );
-			  var chartData = _columnData(data,groups,groupBy);	
-			
+			  var chartData = _columnData(data,groups,groupBy);
+
 			var chartOptions = {
 				aspect : 2.664831804,
 				values  : _.property('values'),
@@ -270,20 +280,20 @@ module.exports = {
 				color  : _.flow(
 					_.property('name'),
 					d3.scale.ordinal().range(colors)),
-				x      : function (d) { 
+				x      : function (d) {
 				              var start = d.campaign.start_date
-				              return moment(start).startOf('month').toDate().getTime(); 
+				              return moment(start).startOf('month').toDate().getTime();
 				              },
 				xFormat: function (d) { return moment(d).format('MMM YYYY')}
-			};  		
-			return {options:chartOptions,data:chartData}; 
-			
+			};
+			return {options:chartOptions,data:chartData};
+
 		});
 	},
 	processScatterChart: function(dataPromise,regions,indicators,xAxis,yAxis){
 		var indicatorsIndex = _.indexBy(indicators, 'id');//;
 		var regionsIndex = _.indexBy(regions, 'id');
-		
+
 		return dataPromise.then(function(data){
 			var domain = d3.extent(_(data.objects)
 				.pluck('indicators')
@@ -298,8 +308,8 @@ module.exports = {
 				.filter(function (d) { return d.indicator == indicators[yAxis].id;})
 				.pluck('value')
 				.value()
-			);	
-			
+			);
+
 			var chartData = _(data.objects)
 				.map(function (d) {
 					var index = _.indexBy(d.indicators, 'indicator');
@@ -347,8 +357,8 @@ module.exports = {
 				xLabel      : 'Caregiver Awareness',
 				yFormat     : d3.format('%'),
 				yLabel      : 'Missed Children'
-			};		
-			return {options:chartOptions,data:chartData}; 
+			};
+			return {options:chartOptions,data:chartData};
 		});
 	},
 	processBarChart: function(dataPromise,regions,indicators,xAxis,yAxis){
@@ -370,13 +380,13 @@ module.exports = {
 	        	'value'       : 'x',
 	        	'region.name' : 'y'
 	        };
-	        
+
 	        var chartOptions = {
 	          offset  : 'zero',
 	          xFormat : d3.format('%')
 	        };
 	        var chartData = _barData(datapoints, _.pluck(indicators,'id'), regionMapping, _getIndicator);
-	   		return {options:chartOptions,data:chartData}; 
+	   		return {options:chartOptions,data:chartData};
 	    });
 	}
 };
@@ -391,5 +401,5 @@ module.exports = {
 
 
 
-   
-  
+
+

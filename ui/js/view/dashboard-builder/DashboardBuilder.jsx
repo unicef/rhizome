@@ -232,7 +232,7 @@ module.exports = React.createClass({
             <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
             </tr>
           );
-       }); 
+       });
 
 	   var dashboardBuilderContainer = (
 	         <div>
@@ -241,7 +241,7 @@ module.exports = React.createClass({
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
 					<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
-	           </div>	          
+	           </div>
 
 	           <form className='inline no-print'>
 	             <div className='row'>
@@ -265,7 +265,7 @@ module.exports = React.createClass({
 
 	           <div className="dashboard-footer">
 
-	           
+
 
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
@@ -280,7 +280,7 @@ module.exports = React.createClass({
 
 		          <span>
 	              	&ensp;Changes are saved when you make them.
-				  </span>		          
+				  </span>
 
 	           </div>
 
