@@ -78,6 +78,12 @@ module.exports = React.createClass({
       DashboardBuilderActions.removeChart(index);
     }
   },
+    _deleteDashboard:function(){
+       if (window.confirm('Delete dashboard "' + this.state.store.dashboardTitle + '"?')) {
+         // FIXME
+         DashboardBuilderActions.deleteDashboard();
+       }
+    },
 	newChart:function(){
 	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
 	},
@@ -137,7 +143,10 @@ module.exports = React.createClass({
     },
     _updateTitle : function(e){
     DashboardBuilderActions.updateTitle(e.currentTarget.value);
-  },
+    },
+    _updateDescription: function(e){
+      DashboardBuilderActions.updateDescription(e.currentTarget.value);
+    },
 	render: function(){
 	  if(this.state.store.newDashboard) {
 	     return (<form className='inline no-print dashboard-builder-container'>
@@ -256,11 +265,7 @@ module.exports = React.createClass({
 
 	           <div className="dashboard-footer">
 
-	              <div className="right">
-	              	<a role='button' className='button deleteButton' href='#'>
-		              	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
-	              	</a>
-	              </div>
+	           
 
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
@@ -296,3 +301,10 @@ module.exports = React.createClass({
 	   }
 	}
 });
+
+
+/*  <div className="right">
+  	<a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
+      	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
+  	</a>
+  </div> */
