@@ -6,6 +6,7 @@ var moment = require('moment');
 
 var browser = require('util/browser');
 var colors  = require('colors');
+var legend  = require('chart/renderer/legend');
 
 function _domain(data, options) {
 	return [0, _(data).map(options.value).sum()];
@@ -20,7 +21,8 @@ var DEFAULTS = {
 		bottom : 0,
 		left   : 0
 	},
-	value : _.property('value')
+	value : _.property('value'),
+  name  : _.property('indicator.short_name')
 };
 
 function PieChart() {}
@@ -41,6 +43,8 @@ _.extend(PieChart.prototype, {
 		g
 			.append('g').attr('class', 'data')
 			.append('path').attr('class', 'bg');
+
+    g.append('g').attr('class', 'legend');
 
 		this.update(data);
 	},
@@ -96,9 +100,12 @@ _.extend(PieChart.prototype, {
 				d.endAngle   = scale(y);
 			});
 
-		var color = options.color;
+    var color      = options.color;
+    var colorScale = d3.scale.ordinal()
+      .domain(_.map(data, options.name))
+      .range(colors);
 		if (!_.isFunction(color)) {
-			color = _.flow(getIndex, d3.scale.ordinal().range(colors));
+			color = _.flow(options.name, colorScale);
 		}
 
 		var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)));
@@ -113,6 +120,14 @@ _.extend(PieChart.prototype, {
 		});
 
 		slice.exit().remove();
+
+    if (data.length > 1) {
+      svg.select('.legend')
+        .attr('transform', 'translate(' + (w + 4) +',0)')
+        .call(legend().scale(colorScale));
+    } else {
+      svg.select('.legend').selectAll('g').remove();
+    }
 	}
 });
 
