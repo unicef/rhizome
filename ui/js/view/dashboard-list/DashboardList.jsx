@@ -7,8 +7,8 @@ var Reflux = require('reflux/src');
 var api = require('data/api');
 
 var _tableRow = function(row) {
-  var path = '/datapoints/dashboard/'+row.id+'/';
-  var editPath = path+'edit';
+  var path = '/datapoints/' + _.kebabCase(row.title) + '/';
+  var editPath = '/datapoints/dashboards/edit/'+row.id+'/';
   var editLink = (row.owned_by_current_user) ? (<span>(<a href={editPath}>edit</a>)</span>) : '';
   return (
       <tr>
@@ -30,7 +30,7 @@ module.exports = React.createClass({
   render : function () {
     var rows;
     if (_.isNull(NavigationStore.customDashboards)) {
-      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading...</td></tr>;
+      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading&hellip;</td></tr>;
     } else if (NavigationStore.customDashboards.length > 0) {
       rows = NavigationStore.customDashboards.map(_tableRow);
     } else {

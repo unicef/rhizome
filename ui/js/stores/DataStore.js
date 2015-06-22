@@ -64,7 +64,7 @@ var DataStore = Reflux.createStore({
           .format('YYYY-MM-DD');
       }
 
-      switch (def.region) {
+      switch (def.regions) {
         case 'subregions':
           q.parent_region__in = region.id;
           break;

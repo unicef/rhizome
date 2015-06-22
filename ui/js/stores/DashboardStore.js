@@ -44,7 +44,7 @@ var DashboardStore = Reflux.createStore({
 			return [
 					definition.duration,
 					definition.startOf,
-					definition.region
+					definition.regions
 				].join('-');
 		});
 		return _.map(qs, function (arr) {
@@ -135,7 +135,7 @@ var DashboardStore = Reflux.createStore({
 
 		_.each(chart.indicators, function (id) {
 			var duration = chart.hasOwnProperty('timeRange') ? moment.duration(chart.timeRange) : Infinity;
-			var hash     = [id, chart.startOf, chart.region].join('-');
+			var hash     = [id, chart.startOf, chart.regions].join('-');
 
 			if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
 				this.indicators[hash] = _.assign({

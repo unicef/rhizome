@@ -40,7 +40,7 @@ module.exports = React.createClass({
 	   this.listenTo(DashboardBuilderStore,this._onDataLoaded);
 	   this.listenTo(DashboardStore,this._onDashboardChange);
 	   this.indicatorUnsubscribe = this.listenTo(IndicatorStore,this._onIndicatorsChange);
-	   
+
 	},
 	getInitialState:function(){
 	  return {
@@ -49,8 +49,28 @@ module.exports = React.createClass({
 	  }
 	},
 	editChart:function(index){
+	  console.log(index);
 	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
 	},
+  deleteChart: function(index) {
+    var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '');
+
+    if (_.isEmpty(chart)) {
+      chart = 'this chart';
+    } else {
+      chart = '"' + chart + '"';
+    }
+
+    var dashboard = _.get(this.state, 'store.dashboard.title', '');
+    if (_.isEmpty(dashboard)) {
+      dashboard = 'the dashboard';
+    }
+
+    if (window.confirm('Delete ' + chart + ' from ' + dashboard + '?')) {
+      // FIXME
+      console.log('Delete chart:', index);
+    }
+  },
 	newChart:function(){
 	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
 	},
@@ -69,37 +89,37 @@ module.exports = React.createClass({
 	},
 	_onDashboardChange : function (state) {
 	    var dashboardSet = this.state.dashboardStore.dashboard;
-	
+
 	    if (dashboardSet) {
 	      var q = DashboardStore.getQueries();
-	
+
 	      if (_.isEmpty(q)) {
 	        DataActions.clear();
 	      } else {
 	        DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.region, q);
 	      }
-	
+
 	      if (this.state.dashboardStore.hasMap) {
 	        GeoActions.fetch(this.state.dashboardStore.region);
 	      }
-	    } 
+	    }
 	},
 	_setCampaign : function (id) {
 	    var campaign  = _.find(this.state.dashboardStore.campaigns, c => c.id === id);
-	
+
 	    if (!campaign) {
 	      return;
 	    }
-	    
+
 	    DashboardActions.setDashboard({dashboard:this.state.store.dashboard,date:moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')});
 	},
 	_setRegion : function (id) {
 	    var region    = _.find(this.state.dashboardStore.regions, r => r.id === id)
-	     
+
 	    if (!region) {
 	      return;
 	    }
-	
+
 	   DashboardActions.setDashboard({dashboard:this.state.store.dashboard,region:region.name});
 	},
     _onDataLoaded : function(){
@@ -112,19 +132,19 @@ module.exports = React.createClass({
     DashboardBuilderActions.updateTitle(e.currentTarget.value);
   },
 	render: function(){
-	  if(this.state.store.newDashboard) {	     
+	  if(this.state.store.newDashboard) {
 	     return (<form className='inline no-print dashboard-builder-container'>
 	  				<h1>Create a New Custom Dashboard</h1>
 	  				<div className="titleDiv">Dashboard Title</div>
-	  				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />   
-	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard} >Next</a>:null}		
+	  				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard} >Next</a>:null}
 	             </form>);
 	  }
       else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
         var style = {
           fontSize      : '2rem',
         };
-  
+
         return (
           <div style={style} className='overlay'>
             <div>
@@ -133,14 +153,14 @@ module.exports = React.createClass({
           </div>
         );
       }
-	
+
       var self = this;
       var campaign      = this.state.dashboardStore.campaign;
       var dashboardDef  = this.state.store.dashboard;
       var loading       = this.state.dashboardStore.loading;
       var region        = this.state.dashboardStore.region;
       var dashboardName = _.get(dashboardDef, 'title', '');
-      
+
       var indicators = IndicatorStore.getById.apply(
         IndicatorStore,
         _(_.get(dashboardDef, 'charts', []))
@@ -149,7 +169,7 @@ module.exports = React.createClass({
           .uniq()
           .value()
       );
-      
+
       var data = dashboardInit(
         dashboardDef,
         this.state.dataStore.data,
@@ -159,32 +179,34 @@ module.exports = React.createClass({
         indicators,
         GeoStore.features
       );
-      
+
       var dashboardProps = {
-        campaign   : campaign,
-        dashboard  : dashboardDef,
-        data       : data,
-        indicators : indicators,
-        loading    : loading,
-        region     : region
+        campaign    : campaign,
+        dashboard   : dashboardDef,
+        data        : data,
+        indicators  : indicators,
+        loading     : loading,
+        region      : region,
+        editable    : true,
+        onAddChart  : this.newChart,
+        onEditChart : this.editChart,
+        onDeleteChart : this.deleteChart
       };
-      
+
       var dashboard = React.createElement(
         CustomDashboard,
         dashboardProps);
-      
+
       var campaigns = _(this.state.dashboardStore.campaigns)
         .filter(c => c.office_id === region.office_id)
         .sortBy('start_date')
         .reverse()
         .value();
-      
+
        if (campaign.office_id !== region.office_id) {
          campaign = campaigns[0];
        }
-       
-      
-      
+
       var charts = this.state.store.dashboard.charts.map(function(chart,index){
           return (
             <tr key={index}>
@@ -193,11 +215,11 @@ module.exports = React.createClass({
             </tr>
           );
        }); 
-       
+
 	   var dashboardBuilderContainer = (
 	         <div>
 	           <div classNameName='clearfix'></div>
-	   
+
 	           <form className='inline no-print'>
 	             <div className='row'>
 	               <div className='medium-6 columns'>
@@ -217,22 +239,12 @@ module.exports = React.createClass({
 	           </form>
 	           <div className="custom-dashboard-title-container">
 	           <div className="titleDiv">Dashboard Title</div>
-	           	<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />   
+	           	<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
 	           </div>
 	           
 	           
 	           {dashboard}
-	            <form className='inline dashboard-builder-controls'>
-	            <table>
-	            <tbody>
-	           
-	           {charts}
-	            <td colSpan="20"> <a  onClick={this.newChart} className="button">add chart</a></td>
-	            </tbody>
-	            </table>
-	           
-	           </form>
-	          
+
 	         </div>
 	   );
 	   if(!this.state.store.loaded)
@@ -242,6 +254,7 @@ module.exports = React.createClass({
 	   else if(this.state.chartBuilderActive)
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
+	   	console.log(chartDef,this.state.store.dashboard.charts);
 	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} campaign={campaign} region={region} />);
 	   }
 	   else {

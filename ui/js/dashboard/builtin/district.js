@@ -1,11 +1,11 @@
 module.exports = {
-	'id'     : 2,
+	'id'     : -3,
 	'title'  : 'District Dashboard',
   'charts' : [{
     'title'      : '',
     'id'         : 'district-heat-map',
     'type'       : 'HeatMapChart',
-    'region'     : 'subregions',
+    'regions'    : 'subregions',
     'level'      : 'district',
     'timeRange'  : 0,
     'series'     : 'region.name',

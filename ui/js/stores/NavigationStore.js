@@ -103,6 +103,9 @@ var NavigationStore = Reflux.createStore({
 				// Build the path for the dashboard
 				var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
 
+        // Patch the non-comformant API response
+        d.charts = d.charts || d.dashboard_json;
+
 				return _.assign({}, d, { href : '/datapoints/' + _.kebabCase(d.title) + path });
 			})
 			.reject(_.isNull)

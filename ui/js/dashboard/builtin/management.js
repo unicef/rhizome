@@ -1,5 +1,5 @@
 module.exports = {
-	'id'   : 1,
+	'id'   : -1,
 	'title' : 'Management Dashboard',
 	'charts' : [{
 			'title'      : 'Polio Cases YTD',
@@ -28,7 +28,7 @@ module.exports = {
 			'title'      : 'Missed Children by Province',
 			'section'    : 'performance',
       'type'       : 'ChoroplethMap',
-      'region'     : 'subregions',
+      'regions'     : 'subregions',
       'timeRange'  : 0,
 			'indicators' : [475],
 		}, {

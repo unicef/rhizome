@@ -43,12 +43,18 @@ function getOptions(chart, campaign, data) {
 
 var CustomDashboard = React.createClass({
   propTypes : {
-    editable : React.PropTypes.bool
+    editable      : React.PropTypes.bool,
+    onAddChart    : React.PropTypes.func,
+    onDeleteChart : React.PropTypes.func,
+    onEditChart   : React.PropTypes.func,
   },
 
   getDefaultProps : function () {
     return {
-      editable : false
+      editable      : false,
+      onAddChart    : _.noop,
+      onDeleteChart : _.noop,
+      onEditChart   : _.noop,
     };
   },
 
@@ -58,36 +64,56 @@ var CustomDashboard = React.createClass({
     var data     = this.props.data;
     var loading  = this.props.loading;
     var campaign = this.props.campaign;
+    var editable = this.props.editable;
 
-    var charts = _.map(this.props.dashboard.charts, function (chart) {
+    var charts = _.map(this.props.dashboard.charts, (chart, i) => {
       var title  = chart.title;
       var key    = _.get(chart, 'id', _.kebabCase(title));
       var id     = _.get(chart, 'id', _.camelCase(title));
       var series = data[id];
-      var cols;
-
-      switch (chart.type) {
-        case 'BarChart':
-          cols = 'small-10 end columns';
-          break;
-
-        default:
-          cols = numCharts < 2 ? 'small-12 columns' : 'medium-4 large-3 columns end';
-          break;
-      }
+      var cols   = chart.type === 'BarChart' ?
+        'small-10 end columns' :
+        'medium-4 large-3 columns end';
 
       var options = getOptions(chart, campaign, data);
 
+      var controls;
+      if (editable) {
+        controls = (
+          <div className='button-bar' style={{float : 'right'}}>
+            <a role='button' onClick={this.props.onDeleteChart.bind(null, i)}>
+              <i className='fa fa-icon fa-trash fa-fw'></i>
+            </a>
+            <a role='button' onClick={this.props.onEditChart.bind(null, i)}>
+              <i className='fa fa-icon fa-pencil fa-fw'></i>
+            </a>
+          </div>
+        );
+      }
+
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
-          <h4>{title}</h4>
-          <Chart type={chart.type} data={series} options={options} loading={loading} />
+          <h4>{title}{controls}</h4>
+          <Chart type={chart.type} data={series} options={options}
+            loading={loading} />
         </div>
       );
     });
 
+    var addChart;
+    if (editable) {
+      addChart = (
+        <div className='medium-4 large-3 columns end'>
+          <a role='button' onClick={this.props.onAddChart}
+            style={{whiteSpace:'nowrap', width:'100%', height:'100%'}}>
+            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
+          </a>
+        </div>
+      );
+    }
+
     return (
-      <div className='row'>{charts}</div>
+      <div className='row'>{charts}{addChart}</div>
     );
   },
 });
