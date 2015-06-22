@@ -8,6 +8,10 @@ var browser = require('util/browser');
 var colors  = require('util/color');
 var legend  = require('chart/renderer/legend');
 
+var React   = require('react');
+var Layer   = require('react-layer');
+var Tooltip = require('component/Tooltip.jsx');
+
 function _domain(data, options) {
 	return [0, _(data).map(options.value).sum()];
 }
@@ -22,7 +26,10 @@ var DEFAULTS = {
 		left   : 0
 	},
 	value : _.property('value'),
-  name  : _.property('indicator.short_name')
+  name  : _.property('indicator.short_name'),
+  format : function (d) {
+    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
+  }
 };
 
 function PieChart() {}
@@ -120,7 +127,33 @@ _.extend(PieChart.prototype, {
 		slice.attr({
 			'd'    : arc,
 			'fill' : color
-		});
+		}).on('mousemove', d => {
+      var evt = d3.event;
+
+      var render = function () {
+        return (
+          <Tooltip left={evt.pageX} top={evt.pageY}>
+            <div>
+              <p>{options.name(d)}:&ensp;{options.format(options.value(d))}</p>
+            </div>
+          </Tooltip>
+        );
+      }
+
+      if (this.layer) {
+        this.layer._render = render;
+      } else {
+        this.layer = new Layer(document.body, render);
+      }
+
+      this.layer.render();
+    })
+    .on('mouseout', d => {
+      if (this.layer) {
+        this.layer.destroy();
+        this.layer = null;
+      }
+    });
 
 		slice.exit().remove();
 
