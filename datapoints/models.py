@@ -286,6 +286,12 @@ class RegionPolygon(models.Model):
         db_table = 'region_polygon'
 
 class RegionHeirarchy(models.Model):
+    '''
+    Legaay model storing the region full region herirachy.  This model is
+    only used by the get_regions_to_return_from_url() method int he /geo
+    endpoint and should be converted to use the fn_get_authorized_regions_by_user
+    sproc.
+    '''
 
     region_id = models.IntegerField()
     contained_by_region_id = models.IntegerField()
@@ -312,6 +318,9 @@ class CampaignType(models.Model):
         db_table = 'campaign_type'
 
 class Campaign(models.Model):
+    '''
+    A period in time in wich a campaign was initaited by the country office.
+    '''
 
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
@@ -333,6 +342,21 @@ class Campaign(models.Model):
         unique_together = ('office','start_date')
 
 class DataPoint(models.Model):
+    '''
+    The core table of the application.  This is where the raw data is stored
+    and brought together from data entry, ODK and csv upload.
+
+    Note that this table does not store the aggregated or calculated data, only
+    the raw data that we get from the source.
+
+    The source_datapoint_id shows the original source of the data in the
+    source_datapoint_table.  The source_datapoint_id is -1 in the case of data
+    entry.
+
+    The cache_job_id column allows us to find out when and why a particular
+    datapoint was refreshed.  New datapoints have a cache_job_id = -1 which
+    tells the system that it needs to be refreshed.
+    '''
 
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
@@ -490,6 +514,12 @@ class IndicatorPermission(models.Model):
 
 class UserGroup(models.Model):
     '''
+    auth_user_groups is how django handels user group membership by default.
+    This class simply allows me to interface with that table without going
+    through the djanog admin api.
+
+    Notice the managed=False... this means that django will not try to create
+    a migration if this class is created or altered.
     '''
 
     user = models.ForeignKey('auth.User')
@@ -500,6 +530,12 @@ class UserGroup(models.Model):
         managed = False
 
 class ColumnAttributes(models.Model):
+    '''
+    Used my the metadata api in order to put attributes on columns. For instance
+    the password field in the user table should not be shown on the user index
+    table.  That fact is stored here ( table_name = 'user',
+    display_on_table_flag = Flase )
+    '''
 
     table_name = models.CharField(max_length=255)
     column_name = models.CharField(max_length=255)
@@ -511,6 +547,13 @@ class ColumnAttributes(models.Model):
 
 
 class CustomDashboard(models.Model):
+    '''
+    A table containing all of the custom dashboards in the system.  The data
+    in teh dashboard_json field is how the FE is able to draw and render the
+    specific vizulaizations.  If inserted via POST the application will
+    validate the json, but if you insert directly in the table it will not
+    so be careful when testing!
+    '''
 
     title = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=1000)
@@ -523,6 +566,11 @@ class CustomDashboard(models.Model):
 
 
 class UserAuthFunction(models.Model):
+    '''
+    Storing the functional permissions of each user ( not just the
+    permissions assigned to them directly but the permissions they have by
+    virtue of their group memberships.)
+    '''
 
     user = models.ForeignKey('auth.User')
     auth_code = models.CharField(max_length=255)

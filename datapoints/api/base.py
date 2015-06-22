@@ -142,6 +142,7 @@ class BaseNonModelResource(Resource):
 
         ## CASE 2 ##
         elif self.parent_region__in is not None and self.region_type_id is not None:
+            ## FIX ME - use fn_get_authorized_regions_by_user() instead
 
             region_ids = RegionHeirarchy.objects.filter(
                 contained_by_region_id__in = self.parent_region__in, \
