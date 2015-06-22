@@ -187,9 +187,10 @@ module.exports = React.createClass({
       
       var charts = this.state.store.dashboard.charts.map(function(chart,index){
           return (
-            <div className="vis-box" key={index}>{chart.title}
-            <a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a>
-            </div>
+            <tr key={index}>
+            <td>{chart.title}</td>
+            <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
+            </tr>
           );
        }); 
        
@@ -218,9 +219,20 @@ module.exports = React.createClass({
 	           <div className="titleDiv">Dashboard Title</div>
 	           	<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />   
 	           </div>
+	           
+	           
 	           {dashboard}
+	            <form className='inline dashboard-builder-controls'>
+	            <table>
+	            <tbody>
+	           
 	           {charts}
-	           <a  onClick={this.newChart} className="button">add chart</a>
+	            <td colSpan="20"> <a  onClick={this.newChart} className="button">add chart</a></td>
+	            </tbody>
+	            </table>
+	           
+	           </form>
+	          
 	         </div>
 	   );
 	   if(!this.state.store.loaded)
