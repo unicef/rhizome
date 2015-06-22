@@ -22,6 +22,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	      loaded:false,
 	      newDashboard:false,
 	      dashboardTitle:'',
+	      dashboardDescription:''
 	      },
 	onInitialize : function(id){
 	var self = this;
@@ -40,6 +41,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	 			self.data.dashboard = response.objects[0];
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
 	 			self.data.dashboardTitle = 	response.objects[0].title;
+	 			self.data.dashboardDescription = response.objects[0].description;
 	 			self.data.loaded = true;
 	 			self.trigger(self.data);
 	 		});
@@ -66,11 +68,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
 		this.data.loading = false;
 		this.trigger(this.data);
-
-
-
-
-	},
+    },
 	onAddChart:function(chartDef){
 	  this.data.dashboard.charts.push(chartDef);
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
@@ -114,6 +112,22 @@ var DashboardBuilderStore = Reflux.createStore({
       
       this.trigger(this.data);
     },  
+    onDeleteDashboard:function(){
+       var data = {
+         description: this.data.dashboardDescription,
+         title: this.data.dashboardTitle,
+         default_office_id: null,
+         dashboard_json:JSON.stringify(this.data.dashboard.charts)
+       };
+       console.log(this.data.dashboard);
+       delete this.data.dashboard.charts;
+       delete this.data.dashboard.id;
+       this.data.dashboard.dashboard_json = JSON.stringify(this.data.dashboard.dashboard_json);
+       
+       api.save_dashboard(this.data.dashboard).then(function(response){
+          console.log(response);
+       });
+    },
 	onAddDashboard:function(){
 	   var data = {
 	     title: this.data.dashboardTitle,
@@ -133,7 +147,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	saveDashboard:function(){
 	    var data = {
 	      id: this.data.dashboard.id,
-	      description: this.data.dashboard.description,
+	      description: this.data.dashboardDescription,
 	      title: this.data.dashboardTitle,
 	      default_office_id: null,
 	      dashboard_json:JSON.stringify(this.data.dashboard.charts)
@@ -153,6 +167,15 @@ var DashboardBuilderStore = Reflux.createStore({
 	onUpdateTitle:function(title){
 	   this.data.dashboardTitle = title;
 	   this.trigger(this.data);
+	   clearTimeout(this.timer);
+	   this.timer = setTimeout(function(){this.saveDashboard()}.bind(this), 1000);
+	},
+	onUpdateDescription:function(description){
+	   this.data.dashboardDescription = description;
+	   this.trigger(this.data);
+	   
+	   clearTimeout(this.timer);
+	   this.timer = setTimeout(function(){this.saveDashboard()}.bind(this), 1000);
 	},
 });
 
