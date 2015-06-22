@@ -22,7 +22,8 @@ var DEFAULTS = {
 	},
   onClick : _.noop,
   value   : _.property('properties.value'),
-  format  : d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d)
+  format  : d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
+  name    : _.property('properties.name')
 };
 
 function _calculateBounds(features) {
@@ -159,7 +160,7 @@ _.extend(ChoroplethMap.prototype, {
 			.on('click', function (d) {
 				options.onClick(_.get(d, 'properties.region_id'));
 			})
-			.on('mousemove', this._onMouseMove)
+			.on('mousemove', _.partial(this._onMouseMove, _, options))
 			.on('mouseout', this._onMouseOut);
 
 		region.exit().remove();
@@ -183,14 +184,14 @@ _.extend(ChoroplethMap.prototype, {
       });
 	},
 
-  _onMouseMove : function (d) {
+  _onMouseMove : function (d, options) {
     var evt = d3.event;
 
     var render = function () {
       return React.createElement(
         Tooltip,
         { left : evt.pageX + 2, top : evt.pageY + 2 },
-        d.properties.name
+        options.name(d)
       );
     };
 
