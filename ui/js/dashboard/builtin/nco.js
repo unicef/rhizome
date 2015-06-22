@@ -1,6 +1,7 @@
 module.exports = {
 	'id'                : -2,
 	'title'             : 'NGA Campaign Monitoring',
+  'builtin': true,
 	'default_office_id' : 1,
 	'charts' : [{
 		'title': 'Inside',

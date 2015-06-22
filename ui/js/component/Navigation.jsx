@@ -16,9 +16,13 @@ var Navigation = React.createClass({
 
   render : function () {
 
-    var dashboards = NavMenuItem.fromArray(_.map(this.state.dashboards, function (d) {
-      return _.assign({ key : 'dashboard-nav-' + d.id }, d);
-    }));
+    var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
+      .filter(d => d.builtin || d.owned_by_current_user)
+      .map(function (d) {
+        return _.assign({ key : 'dashboard-nav-' + d.id }, d);
+      })
+      .value()
+    );
 
     var enterData = '';
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {

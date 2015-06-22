@@ -1,6 +1,7 @@
 module.exports = {
 	'id'     : -3,
 	'title'  : 'District Dashboard',
+  'builtin': true,
   'charts' : [{
     'title'      : '',
     'id'         : 'district-heat-map',
