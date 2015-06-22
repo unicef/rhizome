@@ -229,6 +229,11 @@ module.exports = React.createClass({
 	         <div>
 	           <div classNameName='clearfix'></div>
 
+	           <div className="custom-dashboard-title-container right">
+					Dashboard Title
+					<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+	           </div>	          
+
 	           <form className='inline no-print'>
 	             <div className='row'>
 	               <div className='medium-6 columns'>
@@ -246,13 +251,33 @@ module.exports = React.createClass({
 	               </div>
 	             </div>
 	           </form>
-	           <div className="custom-dashboard-title-container">
-	           <div className="titleDiv">Dashboard Title</div>
-	           	<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
-	           </div>
-	           
-	           
+
 	           {dashboard}
+
+	           <div className="dashboard-footer">
+
+	              <div className="right">
+	              	<a role='button' className='button deleteButton' href='#'>
+		              	<i className='fa fa-icon fa-fw fa-minus'></i>&ensp;Delete this dashboard
+	              	</a>
+	              </div>
+
+		          <a role='button' className='button' onClick={this.newChart}>
+		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
+		          </a>
+
+
+		          <span>
+		          	&ensp;
+			          Description
+			          <input type="text" className="descriptionField" value={this.state.store.dashboardDescription} onChange={this._updateDescription} />
+		          </span>
+
+		          <span>
+	              	&ensp;Changes are saved when you make them.
+				  </span>		          
+
+	           </div>
 
 	         </div>
 	   );
