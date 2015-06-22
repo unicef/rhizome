@@ -66,11 +66,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
 		this.data.loading = false;
 		this.trigger(this.data);
-
-
-
-
-	},
+    },
 	onAddChart:function(chartDef){
 	  this.data.dashboard.charts.push(chartDef);
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
