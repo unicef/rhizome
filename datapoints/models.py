@@ -8,6 +8,11 @@ from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
 class Source(models.Model):
+    '''
+    What is the source of the data?  WHO Indemendent Monitoring, ODK, Data Entry
+    etc.
+    '''
+
     source_name = models.CharField(max_length=55,unique=True)
     source_description = models.CharField(max_length=255,unique=True)
 
@@ -18,6 +23,11 @@ class Source(models.Model):
         db_table = 'source'
 
 class CacheJob(models.Model):
+    '''
+    A table that shows the start/end time of each cache job, as well as the
+    response message of the job itself.  This allows a DBA to track what is
+    happening with our cache jobs and how long they are taking.
+    '''
 
     date_attempted = models.DateTimeField(default=datetime.now())
     date_completed = models.DateTimeField(null=True)
@@ -30,6 +40,17 @@ class CacheJob(models.Model):
 
 
 class Indicator(models.Model):
+    '''
+    The type of data that we are tracing, for instance
+     - Number of children missed due to religious regions
+     - Number of vaccinators paid on time
+     - Number of iVDPV cases
+     - Percentage of children missed due to religious regions.
+
+    Note that both calculated and raw indicators are stored in this table.  For
+    more information on how indicicators are used to calculated data for more
+    indicators take a look at the CalculatedIndicatorComponent model.
+    '''
 
     short_name = models.CharField(max_length=255,unique=True)
     name = models.CharField(max_length=255,unique=True)
@@ -48,6 +69,14 @@ class Indicator(models.Model):
 
 
 class IndicatorAbstracted(models.Model):
+    '''
+    An extended version of the Indicator table which uses the bounds and tags
+    associated to each indicator ID in order to manage one table with all of the
+    information the API needs for each indicator.
+
+    The transformation between Indicator and IndicatorAbstracted is handled in
+    datapoints/cache_tasks.py -> cache_indicator_abstracted()
+    '''
 
     description = models.CharField(max_length=255)
     short_name = models.CharField(max_length=255)
@@ -64,6 +93,15 @@ class IndicatorAbstracted(models.Model):
         db_table = 'indicator_abstracted'
 
 class UserAbstracted(models.Model):
+    '''
+    Similar to the IndicatorAbstcated model, this allows us to store and return
+    data associated with each user that is not stored directly in the user
+    table, but in tables keyed off user_id ( user_to_group, region_permission).
+
+    The transformation between Indicator and IndicatorAbstracted is handled in
+    datapoints/cache_tasks.py -> cache_user_abstracted()
+
+    '''
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     last_login = models.DateTimeField()
@@ -85,8 +123,18 @@ class UserAbstracted(models.Model):
 
 class CalculatedIndicatorComponent(models.Model):
     '''
-    the indicator is for example "pct missed due to refusal," the component
+    The indicator is for example "pct missed due to refusal," the component
     "total missed" and calculation is "denominator"
+
+    A dba can create new calculations by inserting rows here.  The cache_refresh
+    job that happens every minute will take these new indicator definitions and
+    use these values to calucate data for the new calculated indicators.
+
+    Notice however that calculations are multi layered, for instance certain
+    percentage calculations, use an indicator that is calculated from the sum
+    of a set of other indicators as it's denominator.  This means, that the
+    order in which we calculated datapoitns matters.  For more on how this works
+    check out the fn_calc_datapoint() stored procedure.
     '''
 
     indicator = models.ForeignKey(Indicator, related_name='indicator_master')
@@ -123,6 +171,14 @@ class IndicatorBound(models.Model):
 
 class IndicatorTag(models.Model):
     '''
+    The list of tags that can be associated to an indicator.  For instance:
+        - ODK indicators
+        - WHO independent monitoring
+        - Management Dashbaord Indicators
+
+    These are stored in a heirarchy so we can build a tree on the indicator drop
+    down which gives the user a nicer, more organized breakdown of the
+    indicators available to the system.
     '''
 
     tag_name = models.CharField(max_length=255)
@@ -133,7 +189,7 @@ class IndicatorTag(models.Model):
 
 class IndicatorToTag(models.Model):
     '''
-    Tagging an indicator.   One indicator can have many tags.
+    Tagging an indicator. One indicator can have many tags.
     '''
 
     indicator = models.ForeignKey(Indicator)
@@ -144,6 +200,16 @@ class IndicatorToTag(models.Model):
 
 
 class Office(models.Model):
+    '''
+    Unless there are any other outbreaks of Polio, this list will remain
+    Nigeria, Pakistan, and Nigeria.
+
+    Both regions and campaigns are associated with offices.  This is helpful
+    because often, bad mappings, or bad data in general lead us having
+    datapoints with a campaign/region combination that do not have the same
+    office.  Having this ID in both of these tables makes bad data much easier
+    to find.
+    '''
 
     name = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now=True)
@@ -159,17 +225,32 @@ class Office(models.Model):
         )
 
 class RegionType(models.Model):
+    '''
+    Country, Province, District, Sub-District, Settlement.
+
+    While each country has it's own nomenclature for the different levels of
+    the regional heirarchy ( i.e. Nigeria calls Districts LGAs ) the region
+    type table allows us to assocaite a region_type key to each region.
+
+    For our purpose the 5 region types are the definitive types of regions that
+    the system supports.
+    '''
 
     name = models.CharField(max_length=55, unique=True)
 
     def __unicode__(self):
         return unicode(self.name)
 
-
     class Meta:
         db_table = 'region_type'
 
 class Region(models.Model):
+    '''
+    A point in space with a name, region_code, office_id, lat/lon, and parent
+    region id.  The parent region id is used to create the tree used to create
+    aggregate statistics based on the information stored at the leaf leve.
+    '''
+
 
     name = models.CharField(max_length=255,unique=True)
     region_code = models.CharField(max_length=255, unique=True)
@@ -192,6 +273,9 @@ class Region(models.Model):
 
 
 class RegionPolygon(models.Model):
+    '''
+    A shape file when avaiable for a region.
+    '''
 
     region = models.ForeignKey(Region,unique=True)
     shape_len  = models.FloatField()
@@ -202,6 +286,12 @@ class RegionPolygon(models.Model):
         db_table = 'region_polygon'
 
 class RegionHeirarchy(models.Model):
+    '''
+    Legaay model storing the region full region herirachy.  This model is
+    only used by the get_regions_to_return_from_url() method int he /geo
+    endpoint and should be converted to use the fn_get_authorized_regions_by_user
+    sproc.
+    '''
 
     region_id = models.IntegerField()
     contained_by_region_id = models.IntegerField()
@@ -212,6 +302,12 @@ class RegionHeirarchy(models.Model):
         managed = False
 
 class CampaignType(models.Model):
+    '''
+    Each campaign must have a campaign_type_id.
+
+    Not really in scope as have only been working with data that come from the
+    National Immunization Days.
+    '''
 
     name = models.CharField(max_length=55)
 
@@ -222,6 +318,9 @@ class CampaignType(models.Model):
         db_table = 'campaign_type'
 
 class Campaign(models.Model):
+    '''
+    A period in time in wich a campaign was initaited by the country office.
+    '''
 
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
@@ -243,6 +342,21 @@ class Campaign(models.Model):
         unique_together = ('office','start_date')
 
 class DataPoint(models.Model):
+    '''
+    The core table of the application.  This is where the raw data is stored
+    and brought together from data entry, ODK and csv upload.
+
+    Note that this table does not store the aggregated or calculated data, only
+    the raw data that we get from the source.
+
+    The source_datapoint_id shows the original source of the data in the
+    source_datapoint_table.  The source_datapoint_id is -1 in the case of data
+    entry.
+
+    The cache_job_id column allows us to find out when and why a particular
+    datapoint was refreshed.  New datapoints have a cache_job_id = -1 which
+    tells the system that it needs to be refreshed.
+    '''
 
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
@@ -400,6 +514,12 @@ class IndicatorPermission(models.Model):
 
 class UserGroup(models.Model):
     '''
+    auth_user_groups is how django handels user group membership by default.
+    This class simply allows me to interface with that table without going
+    through the djanog admin api.
+
+    Notice the managed=False... this means that django will not try to create
+    a migration if this class is created or altered.
     '''
 
     user = models.ForeignKey('auth.User')
@@ -410,6 +530,12 @@ class UserGroup(models.Model):
         managed = False
 
 class ColumnAttributes(models.Model):
+    '''
+    Used my the metadata api in order to put attributes on columns. For instance
+    the password field in the user table should not be shown on the user index
+    table.  That fact is stored here ( table_name = 'user',
+    display_on_table_flag = Flase )
+    '''
 
     table_name = models.CharField(max_length=255)
     column_name = models.CharField(max_length=255)
@@ -421,12 +547,33 @@ class ColumnAttributes(models.Model):
 
 
 class CustomDashboard(models.Model):
+    '''
+    A table containing all of the custom dashboards in the system.  The data
+    in teh dashboard_json field is how the FE is able to draw and render the
+    specific vizulaizations.  If inserted via POST the application will
+    validate the json, but if you insert directly in the table it will not
+    so be careful when testing!
+    '''
 
     title = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
-    default_office = models.ForeignKey(Office)
-    dashboard_json = JSONField()
+    default_office = models.ForeignKey(Office,null=True)
+    dashboard_json = JSONField(null=True)
 
     class Meta:
         db_table = 'custom_dashboard'
+
+
+class UserAuthFunction(models.Model):
+    '''
+    Storing the functional permissions of each user ( not just the
+    permissions assigned to them directly but the permissions they have by
+    virtue of their group memberships.)
+    '''
+
+    user = models.ForeignKey('auth.User')
+    auth_code = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'user_auth_function'

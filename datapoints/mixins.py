@@ -1,6 +1,11 @@
 from django.http import HttpResponseRedirect
 
 class UserCheckMixin(object):
+    '''
+    Used to check if the user has functional permissions to perform what they
+    are requesting to perform by virtue of the view associated with the URL.
+    '''
+
     user_check_failure_path = ''  # can be path, url name or reverse_lazy
 
     def check_user(self, user):
@@ -15,6 +20,10 @@ class UserCheckMixin(object):
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
 class PermissionRequiredMixin(UserCheckMixin):
+    '''
+    Check if the user has permissions, and if they do not, bring them to the
+    permissions_need page.
+    '''
     user_check_failure_path = '/datapoints/permissions_needed'
     permission_required = None
 

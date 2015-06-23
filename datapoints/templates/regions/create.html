@@ -3,12 +3,15 @@
 
 {% block content %}
 
-<form action = "" method = "post" class="form">
-  {% csrf_token %}
-
-  {{ form.as_p }} <br><br>
-
-  <button type="submit">Submit</button>
-</form>
+<div class="row">
+	<div class="small-centered large-centered large-6 small-6 columns">
+		<form action = "" method = "post" class="form">
+			<h2>New Region</h2>
+			{% csrf_token %}
+			{{ form.as_p }} <br><br>
+		  <button type="submit">Save Region</button>
+		</form>
+	</div>
+</div>
 
 {% endblock %}

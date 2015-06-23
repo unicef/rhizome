@@ -13,7 +13,9 @@ module.exports = React.createClass({
       var self = this;
       var chartBoxes = this.props.charts.map(function(chart,index){
       	return (<div key={chart.name} className={"chart-box-wrapper " +(index==self.props.value?"active":null)}>
-      	          <div className="chart-box" onClick={self.props.onChange.bind(null,index)}>{chart.name}
+      	          <div className="chart-box" onClick={self.props.onChange.bind(null,index)}>
+                    <img className="chart-icon" src={"/static/img/chart-icons/"+chart.name+".png"} />
+                    {chart.name}
       	          </div>
       	       </div>);
       });

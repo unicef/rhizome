@@ -6,9 +6,15 @@ var Reflux = require('reflux/src');
 
 var api = require('data/api');
 
+var builtins = require('dashboard/builtin');
+
 var NavigationStore = Reflux.createStore({
 	init : function () {
-		this.dashboards = [];
+    this.campaigns        = [];
+    this.dashboards       = [];
+    this.customDashboards = null;
+    this.uploads          = [];
+    this.loaded           = false;
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -18,27 +24,52 @@ var NavigationStore = Reflux.createStore({
 
 				return data;
 			});
+
 		var regions = api.regions({
 			read_write  : 'r',
 			depth_level : 0
 		});
-		var dashboards = api.dashboards();
 
-		Promise.all([campaigns, regions, dashboards])
+		var dashboards = api.dashboardsCustom();
+
+		var documents = api.document().then(this.loadDocuments);
+
+		var offices = api.office().then(function (response) {
+			return _.indexBy(response.objects, 'id');
+		});
+
+		this.permissions = [];
+		var permissions = api.user_permissions();
+
+		Promise.all([campaigns, regions, offices, permissions, dashboards])
 			.then(_.spread(this.loadDashboards));
+
 	},
 
 	getInitialState : function () {
 		return {
-			dashboards : this.dashboards
+			campaigns  : this.campaigns,
+			dashboards : this.dashboards,
+			permissions: this.permissions,
+			uploads    : this.documents,
+      loaded     : this.loaded
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, dashboards) {
+	userHasPermission: function(permissionString) {
+		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
+	},
+
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
+		var allDashboards = builtins.concat(dashboards.objects);
+
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
-		this.dashboards = _(dashboards.objects)
+		// parse permissions
+		this.permissions = _.map(permissions.objects, function(p) { return p.auth_code; });
+
+		this.dashboards = _(allDashboards)
 			.map(function (d) {
 				var availableRegions = regions;
 
@@ -50,8 +81,8 @@ var NavigationStore = Reflux.createStore({
 				// If no regions for the default office are available, or no default
 				// office is provided and this dashboard is limited by office, filter the
 				// list of regions to those offices
-				if ((!_.isFinite(d.default_office) || availableRegions.size() < 1) && !_.isEmpty(d.offices)) {
-					availableRegions = availableRegions.filter(function (r) { return _.includes(d.offices, r.office_id); });
+				if (availableRegions.size() < 1) {
+					availableRegions = regions;
 				}
 
 				// If after all of that, there are no regions left that this user is
@@ -70,19 +101,71 @@ var NavigationStore = Reflux.createStore({
 					.max(_.method('start_date.valueOf'));
 
 				// Build the path for the dashboard
-				var path = region.name + '/' + campaign.start_date.format('YYYY/MM');
+				var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
 
-				if (!_.endsWith(d.url, '/')) {
-					path = '/' + path;
-				}
+        // Patch the non-comformant API response
+        d.charts = d.charts || d.dashboard_json;
 
-				return _.assign({}, d, { url : d.url + path });
+				return _.assign({}, d, { href : '/datapoints/' + _.kebabCase(d.title) + path });
 			})
 			.reject(_.isNull)
 			.value();
 
-		this.trigger({ dashboards : this.dashboards });
-	}
+		this.customDashboards = _(dashboards.objects)
+			.map(function(d) {
+				return d;
+			})
+			.sortBy('title')
+			.value();
+
+		this.campaigns = campaigns
+			.map(function (c) {
+				var m          = moment(c.start_date, 'YYYY-MM-DD');
+				var dt         = m.format('YYYY/MM');
+				var officeName = offices[c.office_id].name;
+				var title      = officeName + ': ' + m.format('MMMM YYYY');
+
+				var links = _.map(allDashboards, function (d) {
+					return _.defaults({
+							path  : _.kebabCase(d.title) + '/' + officeName + '/' + dt
+						}, d);
+				});
+
+				return _.defaults({
+						title      : title,
+						dashboards : links
+					}, c);
+			});
+
+    this.loaded = true;
+
+		this.trigger({
+			dashboards : this.dashboards,
+			campaigns  : this.campaigns,
+      loaded     : this.loaded
+		});
+	},
+
+	loadDocuments : function (response) {
+		var uploads = _.map(response.objects, function (d) {
+			var status = (d.is_processed === 'False') ? 'INCOMPLETE' : 'COMPLETE';
+
+			return {
+				id     : d.id,
+				title  : d.docfile,
+				status : status
+			};
+		});
+
+		this.trigger({
+			uploads : uploads
+		});
+	},
+
+  getDashboard : function (slug) {
+    return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+  }
+
 });
 
 module.exports = NavigationStore;

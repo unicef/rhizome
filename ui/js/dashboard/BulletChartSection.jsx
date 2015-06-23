@@ -1,9 +1,12 @@
 'use strict';
 
-var _     = require('lodash');
-var React = require('react');
+var _      = require('lodash');
+var Layer  = require('react-layer');
+var React  = require('react');
+var moment = require('moment');
 
-var Chart = require('component/Chart.jsx');
+var Chart   = require('component/Chart.jsx');
+var Tooltip = require('component/Tooltip.jsx');
 
 function _domain(data) {
   var lower = _(data)
@@ -27,7 +30,7 @@ function _domain(data) {
 
 function _matchCampaign(datapoint, campaign) {
   return _.result(datapoint, 'campaign.start_date.getTime') ===
-    _.result(campaign, 'start_date.getTime');
+    moment(campaign.start_date, 'YYYY-MM-DD').valueOf();
 }
 
 function _value(data, campaign) {
@@ -48,12 +51,8 @@ function _marker(data, campaign) {
   return _.sum(hx) / hx.length;
 }
 
-function _targetRanges(data) {
-  var targets = _(data)
-    .pluck('indicator.bound_json')
-    .flatten()
-    .indexBy('bound_name')
-    .values()
+function _targetRanges(indicator) {
+  var targets = _(_.get(indicator, 'bound_json'))
     .map(function (bound) {
       var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity;
       var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
@@ -96,15 +95,16 @@ function _fill(data, campaign, targets) {
 
 module.exports = React.createClass({
   propTypes : {
-    campaign : React.PropTypes.object.isRequired,
-    cols     : React.PropTypes.number.isRequired,
-    data     : React.PropTypes.array.isRequired,
+    campaign   : React.PropTypes.object.isRequired,
+    indicators : React.PropTypes.array.isRequired,
+
+    cols       : React.PropTypes.number,
+    data       : React.PropTypes.array,
   },
 
   getDefaultProps : function () {
     return {
-      hideHelp : _.noop,
-      showHelp : _.noop,
+      cols     : 1,
     };
   },
 
@@ -112,11 +112,12 @@ module.exports = React.createClass({
     var campaign = this.props.campaign;
     var showHelp = this.props.showHelp;
     var hideHelp = this.props.hideHelp;
+    var data     = this.props.data;
+    var loading  = this.props.loading;
 
-    var charts = _(this.props.data)
-      .groupBy('indicator.id')
-      .map(function (data, indicator) {
-        var targets = _targetRanges(data);
+    var charts = _(this.props.indicators)
+      .map((indicator, i) => {
+        var targets = _targetRanges(indicator);
 
         var options = {
           domain     : _domain,
@@ -131,14 +132,18 @@ module.exports = React.createClass({
           targets    : targets[0]
         };
 
-        var title = _.get(data, '[0].indicator.short_name', '');
+        var title = _.get(indicator, 'short_name');
+
+        var chartData = _(data)
+          .filter(d => d.indicator.id === indicator.id)
+          .groupBy(options.y) // There could coneivably be multiple bars in the chart
+          .values()
+          .value();
 
         return (
-          <li key={'bullet-chart-' + indicator}>
-            <h6 onMouseEnter={_.partial(showHelp, _.get(data, '[0].indicator'))} onMouseLeave={hideHelp}>{title}</h6>
-            <Chart type='BulletChart'
-              data={_(data).groupBy(options.y).values().value()}
-              options={options} />
+          <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
+            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
+            <Chart type='BulletChart' loading={loading} data={chartData} options={options} />
           </li>
         );
       })
@@ -146,4 +151,30 @@ module.exports = React.createClass({
 
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
   },
+
+  _showHelp : function (indicator, evt) {
+    var render = function () {
+      return (
+        <Tooltip left={evt.pageX} top={evt.pageY}>
+          <h3>{indicator.name}</h3>
+          <p>{indicator.description}</p>
+        </Tooltip>
+      );
+    }
+
+    if (this.layer) {
+      this.layer._render = render;
+    } else {
+      this.layer = new Layer(document.body, render);
+    }
+
+    this.layer.render();
+  },
+
+  _hideHelp : function () {
+    if (this.layer) {
+      this.layer.destroy();
+      this.layer = null;
+    }
+  }
 });

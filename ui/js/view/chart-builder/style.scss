@@ -5,6 +5,9 @@ $right-page-width: 900px;
 
 .visualization-builder-container {
    padding: 10px;
+   position: relative;
+   width: 1230px;
+   margin: 0px auto;
    .left-page { 
    		width: $left-column-width;
    		display: inline-block;
@@ -15,7 +18,7 @@ $right-page-width: 900px;
    		vertical-align: top;
    		margin-left: 10px;
    		.grouping {
-   			display: inline-block;
+   			display: block;
    			vertical-align: top;
    			margin: 1px 8px;
    		}
@@ -25,12 +28,26 @@ $right-page-width: 900px;
    			padding: 10px;
    		}
    		.chart-container {
-   			width: 500px;
+            background-color: #ddd;
+            margin-left: $chart-wrapper-margin;
    			position: relative;
-   			.dropdown-wrapper {
-   				width: 50%;
-   				display: inline-block;
-   			}
+            padding: 10px;
+
+            .grouping {
+               margin-top: 0;
+            }
+
+            .preview-section {
+               display: inline-block;
+               width: 600px;
+               background-color: #fff;
+               padding: 10px;
+               .dropdown-wrapper {
+                  width: 50%;
+                  display: inline-block;
+               }
+            }
+
    		}
    		.menu-span {
    			display: inline-block;
@@ -47,6 +64,8 @@ $right-page-width: 900px;
 .titleDiv {
 	font-size: 13px;
 	margin-bottom: 4px;
+   width: 110px;
+   float: left;
 }
 
 
@@ -65,18 +84,29 @@ $right-page-width: 900px;
 	        border-top-right-radius: 10px;
 	        margin: 0 $chart-wrapper-margin;
 		.chart-box {
-			border: 1px solid #BBC6D0;
 			border-radius: 5px;
 			text-align: center;
-			padding: 23px;
-			background-color: #fafafa;
+			padding: 5px 8px;
 			cursor: pointer;
+         opacity: 0.6;
 		}
+      .chart-icon {
+         width: 80px;
+         display: block;
+         text-align: center;
+      }
 	}
 	.chart-box-wrapper.active {
 	    background-color: $chart-container-color;
+       .chart-box {
+         background-color: #fff;
+         opacity: 1.0;
+       }
 	}
 	.chart-box-wrapper:hover:not(.active) {
 		background-color: #f3f3f3;
+      .chart-box {
+         opacity: 1.0;
+      }
 	}
 }

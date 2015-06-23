@@ -28,6 +28,10 @@ class CustomAuthentication(Authentication):
 
 class BaseModelResource(ModelResource):
     '''
+    NOTE: This applies to only the V1 API.  This method inherits from Tastypie's
+    model resource.  Each specific model resource in the V1 Api inherits this
+    class.
+
     This is the top level class all other Resource Classes inherit from this.
     The API Key authentication is defined here and thus is required by all
     other resources.  This class enherits fro the Tastyppie "ModelResource"
@@ -46,6 +50,9 @@ class BaseModelResource(ModelResource):
 
 class BaseNonModelResource(Resource):
     '''
+    NOTE: This applies to only the V1 API.  This is only used for the
+    /api/v1/datapoint endpoint.
+
     This is the top level class all other Resource Classes inherit from this.
     The API Key authentication is defined here and thus is required by all
     other resources.  This class enherits fro the Tastyppie "ModelResource"
@@ -59,6 +66,13 @@ class BaseNonModelResource(Resource):
         always_return_data = True
 
     def parse_url_strings(self,query_dict):
+        '''
+        As the geo endpoint is based off of the region/parent_region paremeter
+        we go through a pretty hacky try / except frenzy in order to find the
+        parameters necessary to get region/shape data for the front end.  The
+        parameters here for region_in,level, and parent_region in were
+        constructed in accordance to the request from the front end team.
+        '''
 
         self.region__in, self.region_type_id, self.parent_region__in = \
             None, None, None
@@ -96,12 +110,20 @@ class BaseNonModelResource(Resource):
 
     def get_regions_to_return_from_url(self,request):
         '''
+        This method is used in both the /geo and /datapoint endpoints.  Based
+        on the values parsed from the URL parameters find the regions needed
+        to fulfill the request based on the four rules below.
+
         1  region__in returns geo data for the regions requested
         2. parent_region__in + level should return the shapes for all the child
            regions at the specified level that are within the region specified
         3. passing only parent_region__in  should return the shapes for all the
            immediate children in that region if no level parameter is supplied
-        4. no params - return top 10 regions
+        4. no params - return top 10 regions.
+
+        After the four steps are worked through in this method, we apply the
+        permissions function in order to determine the final list of regions
+        to return based on the user making the request.
         '''
 
         ## attach these to self and return only error #
@@ -120,6 +142,7 @@ class BaseNonModelResource(Resource):
 
         ## CASE 2 ##
         elif self.parent_region__in is not None and self.region_type_id is not None:
+            ## FIX ME - use fn_get_authorized_regions_by_user() instead
 
             region_ids = RegionHeirarchy.objects.filter(
                 contained_by_region_id__in = self.parent_region__in, \
@@ -171,7 +194,7 @@ class BaseNonModelResource(Resource):
 
 def html_decorator(func):
     """
-    This decorator wraps the output in html.
+    This decorator wraps the output of the django debug tooldbar in html.
     (From http://stackoverflow.com/a/14647943)
     """
 

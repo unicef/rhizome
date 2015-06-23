@@ -12,11 +12,12 @@ urlpatterns = [
     ## DASHBOARD ##
     url(r'^$', views.DashBoardView.as_view(),name='dashboard'),
 
-    ## DASHBOARD BUILDER ##
-    url(r'^dashboard_builder/$', views.dashboard_builder,name='dashboard_builder'),
-
+    ## DASHBOARD LIST and BUILDER ##
+    url(r'^dashboards/$', views.dashboard_list,name='dashboard_list'),
+    url(r'^dashboards/edit$', views.dashboard_builder,name='dashboard_builder_no_params'),
+     url(r'^dashboards/edit/(?P<dashboard_id>[0-9]+)/$', views.dashboard_builder,name='dashboard_builder'),
     ## DASHBOARD VISUALIZATION BUILDER ##
-    url(r'^chart_builder/$', views.chart_builder,name='chart_builder'),
+    url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder,name='chart_builder'),
 
     ## Data Table ##
     url(r'^table/$', views.DataPointIndexView.as_view(),name='datapoint_index'),
@@ -33,10 +34,6 @@ urlpatterns = [
         ## CAMPAIGNS ##
         ###############
 
-    ## INDEX ##
-    url(r'^campaigns/$', views.CampaignIndexView.as_view(),
-        name='campaign_index'),
-
     ## CREATE ##
     url(r'^campaigns/create/$',
         views.CampaignCreateView.as_view(),
@@ -49,10 +46,6 @@ urlpatterns = [
         #############
         ## REGIONS ##
         #############
-
-    ## INDEX ##
-    url(r'^regions/$', views.RegionIndexView.as_view(),
-        name='region_index'),
 
     ## CREATE ##
     url(r'^regions/create/$', views.RegionCreateView.as_view(),
@@ -67,10 +60,6 @@ urlpatterns = [
         ## INDICATORS ##
         ################
 
-    ## INDEX ##
-    url(r'^indicators/$', views.IndicatorIndexView.as_view(),
-        name='indicator_index'),
-
     ## CREATE ##
     url(r'^indicators/create/$', views.IndicatorCreateView.as_view(),
         name='create_indicator'),
@@ -79,11 +68,9 @@ urlpatterns = [
     url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.IndicatorUpdateView.as_view(),
         name='update_indicator'),
 
-    #### USER  ####
-
-    ## INDEX ##
-    # url(r'^users/$', views.UserIndexView.as_view(),
-    #     name='user_index'),
+        ###############
+        #### USER  ####
+        ###############
 
     ## CREATE ##
     url(r'^users/create/$', views.UserCreateView.as_view(),
@@ -93,20 +80,22 @@ urlpatterns = [
     url(r'^users/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(),
         name='user_update'),
 
-    #### GROUP  ####
+        ###############
+        #### GROUP  ####
+        ###############
 
     ## CREATE ##
     url(r'^groups/create/$', views.GroupCreateView.as_view(),
         name='create_user'),
 
     # ## UPDATE ##
-    url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GrouEditView.as_view(),
+    url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GroupEditView.as_view(),
         name='group_update'),
 
 
-    ######################################
+    ########################################
     ## CACHING VALIDATION AND PERMISSIONS ##
-    ######################################
+    ########################################
 
     url(r'^refresh_metadata/$', views.refresh_metadata, name='refresh_metadata'),
     url(r'^cache_control/$', views.cache_control, name='cache_control'),
@@ -115,6 +104,4 @@ urlpatterns = [
     url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
     url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
 
-    url(r'^view_user_permissions/$', views.view_user_permissions, name='view_user_permissions'),
-    url(r'^create_region_permission/$', views.RegionPermissionCreateView.as_view(), name='create_region_permission'),
 ]

@@ -13,6 +13,21 @@ var CampaignMenuItem = React.createClass({
     start_date : React.PropTypes.instanceOf(Date).isRequired,
   },
 
+  statics : {
+    fromArray : function (arr, sendValue) {
+      return arr.map(function (campaign) {
+        var date = moment(campaign.start_date, 'YYYY-MM-DD').toDate();
+
+        return (
+          <CampaignMenuItem key={'campaign-' + campaign.id}
+            sendValue={sendValue}
+            id={campaign.id}
+            start_date={date} />
+        );
+      });
+    }
+  },
+
   render : function () {
     var m                    = moment(this.props.start_date);
     var start_date           = m.format('YYYY-MM-DD');

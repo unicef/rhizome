@@ -28,11 +28,20 @@ class CacheRefresh(object):
 
     def __init__(self,datapoint_id_list=None):
         '''
+        If there is a job running, return to with a status code of
+        "cache_running".
+
+        If passed an explicit list of datapoints ids, then we process those
+        other wise the datapoint IDs to process are handled in the set_up()
+        method.
+
+        By initializing this class we run the set_up() method followed my the
+        main method. We capture and store any errors returned in the etljob
+        table as well as the start / end time.
         '''
 
         if CacheJob.objects.filter(date_completed=None):
 
-            #self.cache_job = None
             print 'CACHE_RUNNING'
             return
 
@@ -140,6 +149,18 @@ class CacheRefresh(object):
 
 
     def bad_datapoints(self):
+        '''
+        Although this is not currently used in the application, the cache
+        process also uses the cache_job_id and the datapoints associated
+        to run a report on any "bad" data.  For instance, datapoints with a
+        region that took place in a campaign for a different office are
+        considered bad data.
+
+        For more information on how this works, see the fn_find_bad_data sproc.
+        This stored procedure is essentially a number of union-ed select
+        statements that dumps the datapoint IDs associated with each bad data
+        check into the "bad_data" table.
+        '''
 
         dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
             ,[self.cache_job.id])
@@ -391,6 +412,22 @@ class CacheRefresh(object):
 
 
     def r_c_df_to_db(self,rc_df):
+        '''
+        For each row in the transformed data frame:
+            - convert all NaN to NULL
+            - drop the index of the dataframe
+            - transorm the above dataframe and convert to a dictionary in which
+              the index ( or row number ) is the key, and the data is the
+              region_id, campaign_id, and indicator_json needed to create
+              each row in datapoint_abstracted.
+
+        NOTE: This is the final stage of the cache as it stands right now.
+        Currently due to simplicity and the size of the data, this step uses
+        Postgres as the backend for our cache.  The style however of the schema
+        is very much influenced by redis/memcache and is set up so that the
+        transition from postgres to a more modern data store is as simple as
+        possible.
+        '''
 
         nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
         indexed_df = nan_to_null_df.reset_index(drop=True)
@@ -437,7 +474,11 @@ class CacheRefresh(object):
 def cache_indicator_abstracted():
     '''
     Delete indicator abstracted, then re-insert by joiniding indicator boudns
-    and creatign json for the indicator_bound field
+    and creatign json for the indicator_bound field.  Also create the
+    necessary JSON for the indicator_tag_json.
+
+    This is the transformation that enables the API to return all indicator
+    data without any transformation on request.
     '''
 
     i_raw = Indicator.objects.raw("""
@@ -483,6 +524,13 @@ def cache_indicator_abstracted():
 
 
 def cache_user_abstracted():
+    '''
+    Just like indicator_abstracted, the user_abstraced table holds information
+    that is keyed to the user, for instance, their groups and region permission.
+
+    This data is cached in the cache_metadata process so the API is able to
+    return data without transformation.
+    '''
 
     u_raw = User.objects.raw(
     '''
@@ -522,7 +570,50 @@ def cache_user_abstracted():
 
     upsert_meta_data(u_raw, UserAbstracted)
 
+def cache_user_permissions():
+    '''
+    Since many permissions are based on not just users but their groups, this
+    method pivots and stores the information needed to easily return the
+    FUNCTIONAL ( not region or indicator based ) permissions for the logged in
+    user.
+    '''
+
+    u_raw = UserAuthFunction.objects.raw(
+    '''
+    TRUNCATE TABLE user_auth_function;
+
+    INSERT INTO user_auth_function
+    (user_id,auth_code)
+
+    SELECT user_id, ap.codename as auth_code FROM (
+
+    	SELECT user_id, permission_id FROM auth_user_user_permissions auup
+
+    	UNION ALL
+
+    	SELECT DISTINCT aug.user_id, agp.permission_id
+    	FROM auth_user_groups aug
+    	INNER JOIN auth_group_permissions agp
+    		ON aug.group_id = agp.group_id
+
+    )x
+
+    INNER JOIN auth_permission ap
+    ON x.permission_id = ap.id;
+
+    SELECT * FROM user_auth_function;
+
+    ''')
+
+    upsert_meta_data(u_raw, UserAuthFunction)
+
+
 def upsert_meta_data(qset, abstract_model):
+    '''
+    Given a raw queryset, and the model of the table to be upserted into,
+    iterate through each resutl, clean the dictionary and batch delete and
+    insert the data.
+    '''
 
     batch = []
 

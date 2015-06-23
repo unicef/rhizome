@@ -96,7 +96,7 @@ function _columnData(data, groups, groupBy) {
 				value:0,y:0,y0:0};
 	});
 	_.each(columnData,function(series){
-	   
+
 	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
 	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
 	});
@@ -111,8 +111,26 @@ function _columnData(data, groups, groupBy) {
 	return stack(columnData);
 }
 
+function formatTimeRange (val){
+	switch (val) {
+		case "pastYear":
+			return {"years":1};
+			break;
+	    case "3Months":
+	    	return {"months":2};
+	    	break;
+	    case "current":
+	    	return {"months":0};
+	    	break;
+	    case "allTime":
+	    	return null;
+	    	break;
+	    default:
+	    	return {"months":0};
+	    	break;
+	}
+}
 
-	
 var chartOptions = {
 		domain  : null,
 		values  : _.property('values'),
@@ -125,12 +143,12 @@ module.exports = Reflux.createStore({
 		regionList:[],
 		indicatorList:[],
 		campaignList:[],
-		indicatorsSelected:[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
+		indicatorsSelected:[],//[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
 		regionSelected:{parent_region_id: null, office_id: 1, region_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
 		aggregatedRegions:[],
-		title: "new chart",
-		description: "a nice description",
+		title: "",
+		description: "",
 		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
 		regionRadioValue: 2,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
@@ -152,71 +170,83 @@ module.exports = Reflux.createStore({
 	    chartOptions : chartOptions,
 		canDisplayChart:canDisplayChart,
 		canDisplayChartReason:canDisplayChartReason,
-		loading:false
+		xAxis:0,
+		yAxis:0,
+		loading:false,
+		chartDefinition:function(){
+			return {
+			    title: this.title,
+				type: this.chartTypes[this.selectedChart].name,
+				indicators:_.map(this.indicatorsSelected,_.property('id')),
+				regions:this.regionRadios[this.regionRadioValue].value,
+				groupBy:this.groupByRadios[this.groupByRadioValue].value,
+				x:this.xAxis,
+				y:this.yAxis,
+				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
+				id:this.id
+			};
+		}
 	},
 	listenables: [ChartBuilderActions],
 	getInitialState: function(){
 	   return this.data;
 	},
-	init: function(){
-		var self = this;
-		api.regions().then(function(items){
-		  self._regionIndex = _.indexBy(items.objects, 'id');
-		  self.data.regionList = _(items.objects)
-		  	.map(function (region) {
-		  		return {
-		  			'title'  : region.name,
-		  			'value'  : region.id,
-		  			'parent' : region.parent_region_id
-		  		};
-		  	})
-		  	.sortBy('title')
-		  	.reverse() // I do not know why this works, but it does
-		  	.thru(_.curryRight(treeify)('value'))
-		  	.map(ancestoryString)
-		  	.value();
-		  	self.trigger(self.data);
-		  	self.aggregateRegions();
-		 });
+	onInitialize: function(chartDef){
+    this.resetChartDef();
 
-		 api.indicators().then(function(items){
-		        self._indicatorIndex = _.indexBy(items.objects, 'id');
+	var self = this;
+			var regionPromise = api.regions().then(function(items){
+			  self._regionIndex = _.indexBy(items.objects, 'id');
+			  self.data.regionList = _(items.objects)
+			  	.map(function (region) {
+			  		return {
+			  			'title'  : region.name,
+			  			'value'  : region.id,
+			  			'parent' : region.parent_region_id
+			  		};
+			  	})
+			  	.sortBy('title')
+			  	.reverse() // I do not know why this works, but it does
+			  	.thru(_.curryRight(treeify)('value'))
+			  	.map(ancestoryString)
+			  	.value();
+			  	self.trigger(self.data);
+			  	self.aggregateRegions();
+			 });
+
+			api.indicatorsTree().then(function(items) {
+		        self._indicatorIndex = _.indexBy(items.flat, 'id');
 		        self.data.indicatorList = _(items.objects)
-		         	.map(function (indicator) {
-		         		return {
-		         			'title'  : indicator.name,
-		         			'value'  : indicator.id,
-		         			'parent' : null
-		         		};
-		         	})
 		         	.sortBy('title')
-		         	.reverse()
 		         	.value();
+		         if(chartDef)
+		         {
+		           self.applyChartDef(chartDef);
+		         }
 		         self.trigger(self.data);
 		     });
 
-		Promise.all([api.campaign(), api.office()])
-			.then(_.spread(function(campaigns, offices) {
-				var officeIdx = _.indexBy(offices.objects, 'id');
+			Promise.all([api.campaign(), api.office()])
+				.then(_.spread(function(campaigns, offices) {
+					var officeIdx = _.indexBy(offices.objects, 'id');
 
-				self.data.campaignList = _(campaigns.objects)
-					.map(function (campaign) {
-						return _.assign({}, campaign, {
-							'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-							'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-							'office'     : officeIdx[campaign.office_id]
-						});
-					})
-					.sortBy(_.method('start_date.getTime'))
-					.reverse()
-					.value();
+					self.data.campaignList = _(campaigns.objects)
+						.map(function (campaign) {
+							return _.assign({}, campaign, {
+								'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+								'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+								'office'     : officeIdx[campaign.office_id]
+							});
+						})
+						.sortBy(_.method('start_date.getTime'))
+						.reverse()
+						.value();
 
-				self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
+					self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
 
-				self.trigger(self.data);
-			}));
+					self.trigger(self.data);
+				}));
 	},
-
 	onAddIndicatorSelection: function(value){
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
@@ -267,6 +297,50 @@ module.exports = Reflux.createStore({
 		this.trigger(this.data);
 		this.aggregateRegions();
 	},
+	onSelectXAxis: function(value){
+	    this.data.xAxis = value;
+	    this.getChartData();
+	},
+	onSelectYAxis: function(value){
+	    this.data.yAxis = value;
+	    this.getChartData();
+	},
+	applyChartDef:function(chartDef){
+       var self = this;
+       this.data.xAxis = chartDef.x;
+       this.data.yAxis = chartDef.y;
+       this.data.id = chartDef.id;
+       
+       this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
+       this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
+       	  return self._indicatorIndex[id];
+       });
+       this.data.title = chartDef.title;
+       this.data.regionRadioValue = _.findIndex(this.data.regionRadios,{value:chartDef.regions});
+       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
+       var timeString = JSON.stringify(chartDef.timeRange);
+       var timeValue;
+       if(timeString=='{"months":2}'){
+       timeValue = "3Months";
+       } else if(timeString=='{"years":1}'){
+       timeValue = "pastYear";
+       } else if(timeString=='{"months":0}'){
+       timeValue = "current";
+       } else {
+        timeValue = "allTime";
+       }
+       this.data.timeRadioValue = _.findIndex(this.data.timeRadios(),{value:timeValue});
+       this.trigger(this.data);
+	},
+	resetChartDef:function(){
+	   this.data.selectedChart = 0;
+	   this.data.indicatorsSelected = [];
+	   this.data.title = '';
+	   this.data.regionRadioValue = 0;
+	   this.data.groupByRadioValue = 0;
+	   this.data.timeRadioValue = 0;
+	   this.trigger(this.data);
+	},
 	aggregateRegions: function(){
 	    var regions;
 	    var regionSelected = this.data.regionSelected;
@@ -276,7 +350,7 @@ module.exports = Reflux.createStore({
     	   regions = [regionSelected];
 	    }
 		else if(regionRadioValue==="type")
-		{  
+		{
 		   if(regionSelected.parent_region_id && regionSelected.parent_region_id != "None")
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
@@ -318,6 +392,10 @@ module.exports = Reflux.createStore({
 	    }
 	},
 	getChartData: function(){
+	    if(!this.data.indicatorsSelected.length)
+	    {
+	     return;
+	    }
 	    this.data.loading = true;
 	    this.trigger(this.data); //send the loading parameter to the view
 	    var selectedChart = this.data.chartTypes[this.data.selectedChart].name;
@@ -337,102 +415,16 @@ module.exports = Reflux.createStore({
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-       
-       
+
+
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;
           self.data.chartData = chart.data;
           self.trigger(self.data);
         });
-       /*  
-	    var dataPointPromise = api.datapoints(q).then(function(data){
-	    							return melt(data,indicatorArray);}
-	    							).then(function(data){
-	        if(!lower) //set the lower bound from the lowest datapoint value
-	        {
-	          var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
-	          lower = moment(_.first(sortedDates).campaign.start_date);
-	          //var end = moment(_.last(sortedDates).campaign.end_date);
-	        }
-	        if(selectedChart ==="LineChart")
-	        {
-	          self.data.chartOptions.aspect = 2.664831804;
-	          self.data.chartOptions.domain = _.constant([lower.toDate(), upper.toDate()]);
-	    	  self.data.chartData =  _groupBySeries(data, groups,groupBy);
-	    	}
-	    	else if (selectedChart ==="PieChart"){
-	    	  var total = _(data).map(function(n){ return n.value;}).sum();
-	    	  self.data.chartOptions.domain = _.constant([0, total]);
-	    	  self.data.chartOptions.color = _.flow(
-	    	  	_.property('name'),
-	    	  	d3.scale.ordinal().range(colors));
-	    	  self.data.chartData = data;
-	    	}
-	    	else if (selectedChart ==="ColumnChart"){
-		  			
-		  	  var columnScale = _.map(d3.time.scale()
-		  	  		.domain([lower.valueOf(), upper.valueOf()])
-		  	  		.ticks(d3.time.month, 1),
-		  	  	_.method('getTime')
-		  	  );
-		  	  var chartData = _columnData(data,groups,groupBy);	
-		  	  		
-		  	  self.data.chartOptions.aspect = 2.664831804;
-	    	  self.data.chartOptions.domain = _.constant(columnScale);
-	    	  self.data.chartOptions.color = _.flow(
-	    	  	_.property('name'),
-	    	  	d3.scale.ordinal().range(colors));
-	    	  self.data.chartOptions.x = function (d) { 
-	    	  return moment(d.campaign.start_date).startOf('month').toDate().getTime(); };
-	    	  self.data.chartOptions.xFormat = function (d) { return moment(d).format('MMM YYYY')};
-	    	  self.data.chartData = chartData;
-	    	}
-	    	self.data.loading = false;
-	    	self.trigger(self.data);
-	    	return data; //return data for dataPointPromise for cooridnating with charts that need multiple datasets
-	    });
-	    
-	    if(selectedChart ==="ChoroplethMap")
-	    {
-		    Promise.all([dataPointPromise,api.geo({ region__in :_.map(this.data.aggregatedRegions,function(region){return region.id}) })])
-		    .then(_.spread(function(data, border){
-		        var index = _.indexBy(data,'region');
-		        self.data.chartOptions.aspect = 1;
-		        self.data.chartOptions.domain = _.constant([0, 0.1]);
-				self.data.chartOptions.border = border.objects.features;
-				self.data.chartOptions.onMouseOver = function (d, el) {
-				    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
-						var evt = d3.event;
-						tooltipVue.$emit('tooltip-show', {
-							el       : el,
-							position : {
-								x : evt.pageX,
-								y : evt.pageY
-							},
-							data : {
-								text     : regionsIndex[d.properties.region_id].name,
-								template : 'tooltip-default'
-							}
-						});
-					}
-				};
-				self.data.chartOptions.onMouseOut = function (d, el) {
-					tooltipVue.$emit('tooltip-hide', { el : el });
-				}
-				
-                self.data.chartData = _.map(border.objects.features, function (feature) {
-                							var region = _.get(index, feature.properties.region_id);
-                							return _.merge({}, feature, {
-                									properties : { value : _.get(region, 'value') }
-                								});
-                						});
-                self.data.loading = false;
-                self.trigger(self.data);
-           }));
-	    }
-	    */
+
 	}
 });

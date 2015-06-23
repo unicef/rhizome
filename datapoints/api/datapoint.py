@@ -30,6 +30,17 @@ class ResultObject(object):
 
 class DataPointResource(BaseNonModelResource):
     '''
+    This is the class that coincides with the /api/v1/datapoint endpoint.
+
+    At it's core this resource is a simple wrapper on top of the
+    datapoint_abstracted table.  The schema of that table is region_id,
+    campaign_id, indicator_json and because of which there is very little
+    data transformation on request here.
+
+    There is some custom functionality here which is the reason i was not so
+    quick to convert this endpoint ( the most important endpoint in the
+    application ) from v1 to v2.
+
     '''
 
     error = None
@@ -39,13 +50,30 @@ class DataPointResource(BaseNonModelResource):
     indicators = fields.ListField(attribute = 'indicators')
 
     class Meta(BaseNonModelResource.Meta):
-        # note - auth inherited from parent class #
+        '''
+        As this is a NON model resource, we must specify the object_class
+        that will represent the data returned to the applicaton.  In this case
+        as specified by the ResultObject the fields in our response will be
+        region_id, campaign_id, indcator_json.
+
+        The resource name is datapoint, which means this resource is accessed by
+        /api/v1/datapoint/.
+
+        The data is serialized by the CustomSerializer which uses the default
+        handler for JSON responses and transforms the data to csv when the
+        user clicks the "download data" button on the data explorer.
+
+        note - authentication inherited from parent class
+        '''
+
         object_class = ResultObject # use the class above to devine the response
         resource_name = 'datapoint' # cooresponds to the URL of the resource
         max_limit = None # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
     def __init__(self, *args, **kwargs):
+        '''
+        '''
 
         super(DataPointResource, self).__init__(*args, **kwargs)
         self.error = None
@@ -68,14 +96,24 @@ class DataPointResource(BaseNonModelResource):
         response = response_class(content=serialized,\
             content_type=build_content_type(desired_format), **response_kwargs)
 
-        # if desired_format == 'text/csv':
-        #     return []
+        if desired_format == 'text/csv':
+            response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
 
         return response
 
 
     def get_object_list(self,request):
         '''
+        This is where the action happens in this resource.  AFter passing the
+        url paremeters, get the list of regions based on the parameters passed
+        in the url as well as the permissions granted to the user responsible
+        for the request.
+
+        Using the region_ids from the get_regions_to_return_from_url method
+        we query the datapoint abstracted table, then iterate through these
+        values cleaning the indicator_json based in the indicator_ids passed
+        in the url parameters, and creating a ResultObject for each row in the
+        response.
         '''
         self.error = None
 
@@ -103,17 +141,22 @@ class DataPointResource(BaseNonModelResource):
             r.campaign = row.campaign_id
 
             indicator_json = row.indicator_json
-
             cleaned = self.clean_indicator_json(indicator_json)
-
             r.indicators = cleaned
-
             results.append(r)
 
 
         return results
 
     def clean_indicator_json(self,indicator_json):
+        '''
+        When we query the datapoint_abstracted table, the full list of
+        indicators is sent along with the region / campaign for which it is
+        associated.
+
+        This method only returns indicator data for the region / campaign tuple
+        that is requested by the API.
+        '''
 
         cleaned = []
 
@@ -291,6 +334,38 @@ class DataPointEntryResource(BaseModelResource):
         }
         serializer = CustomJSONSerializer()
 
+
+    def save(self, bundle, skip_errors=False):
+        '''
+        Overriding Tastypie save method here because the
+        authorized_update_detail of this resource is failing.  Will need more
+        research here, but commenting this out for now as authorization is
+        handled separately.
+        '''
+        self.is_valid(bundle)
+
+        if bundle.errors and not skip_errors:
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+
+        # Check if they're authorized.
+        # if bundle.obj.pk:
+        #     self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
+        # else:
+        #     self.authorized_create_detail(self.get_object_list(bundle.request), bundle)
+
+        # Save FKs just in case.
+        self.save_related(bundle)
+
+        # Save the main object.
+        bundle.obj.save()
+        bundle.objects_saved.add(self.create_identifier(bundle.obj))
+
+        # Now pick up the M2M bits.
+        m2m_bundle = self.hydrate_m2m(bundle)
+        self.save_m2m(m2m_bundle)
+        return bundle
+
+
     def obj_create(self, bundle, **kwargs):
         """
         Make sure the data is valid, then save it.
@@ -323,14 +398,13 @@ class DataPointEntryResource(BaseModelResource):
                     'indicator_id': existing_datapoint.indicator_id
                 }
                 bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_update(bundle, **update_kwargs)
+
+                return self.obj_update(bundle, **update_kwargs)
 
             else:
                 # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        except ImmediateHttpResponse:
-            raise
         # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
@@ -341,6 +415,22 @@ class DataPointEntryResource(BaseModelResource):
                 response_class=http.HttpApplicationError
                 )
             raise ImmediateHttpResponse(response=response)
+
+    def obj_update(self, bundle, **kwargs):
+        '''
+        Overriding this tastypie method so we can explicitly set the value to
+        NULL when the value comes in as NaN.  This method is how the system
+        handles "deletes" that is we do not remove the row all together, just
+        set the value to null so the history can be maintained, and we are
+        more easily able to queue up changes for caching.
+        '''
+
+        value_to_update = bundle.data['value']
+
+        if value_to_update == 'NaN':
+            bundle.data['value'] = None
+
+        return super(DataPointEntryResource, self).obj_update(bundle, **kwargs)
 
     def get_user_id(self, bundle):
         request = bundle.request

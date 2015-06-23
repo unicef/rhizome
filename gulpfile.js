@@ -1,16 +1,23 @@
 'use strict';
 // generated on 2014-10-10 using generator-gulp-webapp 0.1.0
 
+var _          = require('lodash');
 var source     = require('vinyl-source-stream');
-var browserify = require('browserify');
 var gulp       = require('gulp');
 var del        = require('del');
 var exec       = require('child_process').exec;
 var pkg        = require('./package.json');
 var babelify   = require('babelify');
+var webpack    = require('webpack');
+var shell = require('gulp-shell');
 
 // load plugins
 var $ = require('gulp-load-plugins')();
+
+// config file for webpack build step
+var webpackConfig = require('./webpack.config.base.js');
+var webpackDevConfig = require('./webpack.config.dev.js');
+var webpackDistConfig = require('./webpack.config.dist.js');
 
 var path = {
 	main      : './ui/js/PolioScape.js',
@@ -63,23 +70,26 @@ gulp.task('scripts', function () {
 		.pipe($.jshint.reporter(require('jshint-stylish')));
 });
 
-gulp.task('browserify', function () {
-	var bundleStream = browserify(path.main, {
-			debug: true,
-			standalone: 'Polio',
-			paths: ['./ui/js']
-		})
-		.transform(babelify)
-		.bundle()
-		.on('error', err)
-		.on('end', function () {
-			exec('say -v Fred "App compiled"');
-		});
+gulp.task('webpack', function (cb) {
+	webpack(webpackDistConfig, function(e, stats) {
+		if (e) throw new $.util.PluginError("webpack", e); // fatal error
+		$.util.log("[webpack]", stats.toString({
+			colors: true,
+			chunkModules: false,
+			modules: false,
+			cached: false
+		}));
+		if(stats.hasErrors()) err.call(this, {message: "webpack build failed"});
+		cb();
+	}.bind(this));
+});
 
-	return bundleStream
-		.pipe(source(path.main))
-		.pipe($.rename('main.js'))
-		.pipe(gulp.dest(path.output));
+gulp.task('webpack-dev', shell.task(['webpack-dev-server --config webpack.config.dev.js']));
+
+gulp.task('watch', ['webpack-dev', 'styles', 'watch-styles']);
+
+gulp.task('watch-styles', function () {
+	gulp.watch('**/*.{scss,sass}', ['styles']);
 });
 
 gulp.task('fonts', function () {
@@ -96,7 +106,7 @@ gulp.task('clean', function (cb) {
 	del(path.clean, cb);
 });
 
-gulp.task('build', ['fonts', 'browserify', 'styles']);
+gulp.task('build', ['fonts', 'webpack', 'styles']);
 
 gulp.task('default', ['clean'], function () {
 	return gulp.start('build');
@@ -106,16 +116,9 @@ gulp.task('livereload', function () {
 	var server = $.livereload();
 
 	// watch for changes
-
 	gulp.watch(path.output + '/**/*').on('change', function (file) {
 		server.changed(file.path);
 	});
-});
-
-gulp.task('watch', ['browserify', 'styles', 'livereload'], function () {
-	gulp.watch('**/*.{scss,sass}', ['styles']);
-	gulp.watch(path.components, ['browserify']);
-	gulp.watch('./package.json', ['lib']);
 });
 
 gulp.task('test', ['scripts'], function () {
@@ -136,7 +139,7 @@ gulp.task('dist-py', function () {
 	return gulp.src([
 			'{bin,polio,datapoints,source_data,entity,templates}/**/*.{py,sql,html,sh}',
 			'manage.py',
-			'requirements.txt',
+			'requirements.txt'
 		])
 		.pipe($.zip('uf04-backend.zip'))
 		.pipe($.size({ title: 'Backend'}))

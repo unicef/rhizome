@@ -75,7 +75,9 @@ svg {
 
 	.bar {
 		text{
+      fill : $oil;
 			font-size: rem-calc(9);
+      font-weight : bold;
 		}
 	}
 
@@ -148,29 +150,6 @@ svg {
 
 .chart {
 	position: relative;
-
-	.overlay {
-		background-color: transparentize($ghost, 0.3);
-		color: $aluminum;
-		opacity: 1;
-		transition: opacity 300ms ease;
-
-		display: table;
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		&.fade-enter,
-		&.fade-leave {
-			opacity: 0;
-		}
-
-		&>div {
-			display: table-cell;
-			vertical-align: middle;
-			text-align: center;
-		}
-	}
 
 	&.bar {
 		.x.axis {

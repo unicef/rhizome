@@ -9,20 +9,54 @@ var NavMenuItem     = require('component/NavMenuItem.jsx');
 var NavigationStore = require('stores/NavigationStore');
 
 var Navigation = React.createClass({
+
   mixins : [
     Reflux.connect(NavigationStore)
   ],
 
   render : function () {
-    var dashboards = NavMenuItem.fromArray(_.map(this.state.dashboards, function (d) {
-      return _.assign({ key : 'dashboard-nav-' + d.id }, d);
-    }));
+
+    var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
+      .filter(d => d.builtin || d.owned_by_current_user)
+      .map(function (d) {
+        return _.assign({ key : 'dashboard-nav-' + d.id }, d);
+      })
+      .value()
+    );
+
+    var enterData = '';
+    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
+
+      var formLink = NavigationStore.userHasPermission('data_entry_form') ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>) : '';
+      var uploadLink = NavigationStore.userHasPermission('upload_csv') ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>) : '';
+
+      var enterData = (
+          <li className='data'>
+            <NavMenu text={'Enter Data'} icon={'fa-table'}>
+              {formLink}
+              {uploadLink}
+            </NavMenu>
+          </li>
+        );
+
+    }
+
+    var manage = '';
+    if (NavigationStore.userHasPermission('manage_system')) {
+      manage = (
+        <li>
+          <a href='/ufadmin/users'>
+            <i className='fa fa-cogs'></i>&ensp;Manage System
+          </a>
+        </li>
+      );
+    }
 
     return (
       <nav>
         <ul>
           <li className='home'><a href='/'>
-            <i className='fa fa-home fa-lg'></i>&ensp;Home
+            Rhizome DB
           </a></li>
 
           <li className='dashboard'>
@@ -30,30 +64,20 @@ var Navigation = React.createClass({
               {dashboards}
               <li className='separator'><hr /></li>
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
-              {/*<li className='separator'><hr /></li>
-              <NavMenuItem href='/datapoints/dashboard/'>
+              <li className='separator'><hr /></li>
+              <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
-              <NavMenuItem href='/datapoints/dashboard/create'>
+              <NavMenuItem href='/datapoints/dashboards/edit'>
                 Create New dashboard
-              </NavMenuItem>*/}
-            </NavMenu>
-          </li>
-
-          <li className='data'>
-            <NavMenu text={'Enter Data'} icon={'fa-table'}>
-              <NavMenuItem href='/datapoints/entry'>
-                Edit Data
-              </NavMenuItem>
-              <NavMenuItem href='/upload/file_upload'>
-                Upload Data
               </NavMenuItem>
             </NavMenu>
           </li>
 
-          <li><a href='/ufadmin/users'>
-            <i className='fa fa-cogs'></i>&ensp;Manage System
-          </a></li>
+          {enterData}
+
+          {manage}
+
         </ul>
 
         <ul className='right'>

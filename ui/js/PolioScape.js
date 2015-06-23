@@ -1,13 +1,13 @@
 'use strict';
 
-require('babel/polyfill');
 var React = require('react/addons');
 var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
-var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
+var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
+var GroupForm = require('view/group-form/GroupForm.jsx');
 
 Vue.config.debug = true;
 
@@ -15,8 +15,8 @@ Vue.component('vue-dropdown', require('./component/dropdown'));
 Vue.component('vue-table', require('./component/table'));
 Vue.component('vue-table-editable', require('./component/table-editable'));
 Vue.component('vue-pagination', require('./component/pagination'));
-Vue.component('vue-tooltip', require('./component/tooltip'));
-Vue.component('vue-menu', require('./component/menu'));
+Vue.component('vue-tooltip', require('./component/vue-tooltip'));
+Vue.component('vue-menu', require('./component/vue-menu'));
 
 Vue.filter('num', require('./filter/num'));
 
@@ -37,10 +37,7 @@ module.exports = {
 		});
 	},
 	Dashboard: function (el) {
-		new Vue({
-			el: el,
-			components: { 'uf-dashboard': require('./view/dashboard') }
-		});
+		React.render(React.createElement(require('view/Dashboard.jsx')), el);
 	},
 	DataEntry: function (el) {
 		new Vue({
@@ -65,14 +62,22 @@ module.exports = {
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
 	},
-	DashboardBuilder: function (el) {
-		React.render(React.createElement(DashboardBuilder), el);
+	DashboardList: function (el) {
+		React.render(React.createElement(DashboardList), el);
 	},
-	ChartBuilder: function (el) {
+	DashboardBuilder: function (el,dashboard_id) {
+	    var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
+		React.render(React.createElement(DashboardBuilder,{dashboard_id:dashboard_id}), el);
+	},
+	ChartBuilder: function (el,dashboard_id) {
 		var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
-		React.render(React.createElement(ChartBuilder), el);
+		React.render(React.createElement(ChartBuilder,{dashboard_id:dashboard_id}), el);
 	},
 	UFAdmin: function(el) {
 		AdminApp.render(document.getElementById('main'));
+	},
+	GroupForm: function(el, group_id) {
+		// React.render(React.createElement(GroupForm), el);
+		React.render(React.createElement(GroupForm, {group_id: group_id}), el);
 	}
 };
