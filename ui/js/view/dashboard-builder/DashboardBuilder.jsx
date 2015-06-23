@@ -148,13 +148,17 @@ module.exports = React.createClass({
     _updateDescription: function(e){
       DashboardBuilderActions.updateDescription(e.currentTarget.value);
     },
+    _handleSubmit: function(e){
+      e.preventDefault();
+      DashboardBuilderActions.addDashboard();
+    },
 	render: function(){
 	  if(this.state.store.newDashboard) {
-	     return (<form className='inline no-print dashboard-builder-container'>
+	     return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
 	  				<h1>Create a New Custom Dashboard</h1>
 	  				<div className="titleDiv">Dashboard Title</div>
 	  				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
-	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard} >Next</a>:null}
+	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard}  >Next</a>:null}
 	             </form>);
 	  }
       else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
