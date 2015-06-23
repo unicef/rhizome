@@ -182,7 +182,8 @@ module.exports = Reflux.createStore({
 				groupBy:this.groupByRadios[this.groupByRadioValue].value,
 				x:this.xAxis,
 				y:this.yAxis,
-				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value)
+				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
+				id:this.id
 			};
 		}
 	},
@@ -308,6 +309,7 @@ module.exports = Reflux.createStore({
        var self = this;
        this.data.xAxis = chartDef.x;
        this.data.yAxis = chartDef.y;
+       this.data.id = chartDef.id;
        
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
