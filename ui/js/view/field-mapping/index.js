@@ -32,7 +32,7 @@ module.exports = {
 	created: function() {
 	  var self = this;
 	  var regionsPromise, indicatorsPromise, campaignsPromise, documentPromise;
-	   documentPromise = api.document_review({ document: this.$parent.$data.document_id }).then(function(values){
+	   documentPromise = api.document_review({ document: this.$parent.$data.document_id },null,{"cache-control":"no-cache"}).then(function(values){
 	      console.log(values.objects.region);
 	      self.$set('mappingData',values.objects);
 	    });
