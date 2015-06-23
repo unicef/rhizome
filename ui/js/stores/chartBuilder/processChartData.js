@@ -269,15 +269,19 @@ module.exports = {
 	processScatterChart: function(dataPromise,regions,indicators,xAxis,yAxis){
 		var indicatorsIndex = _.indexBy(indicators, 'id');//;
 		var regionsIndex = _.indexBy(regions, 'id');
-
+       
 		return dataPromise.then(function(data){
+		     console.log(_(data.objects).pluck('indicators').flatten().value());
 			var domain = d3.extent(_(data.objects)
 				.pluck('indicators')
 				.flatten()
-				.filter(function (d) { return d.indicator == indicators[xAxis].id; })
+				.filter(function (d) { 
+				   return d.indicator == indicators[xAxis].id; 
+				 })
 				.pluck('value')
 				.value()
 			);
+			console.log(domain);
 			var range = d3.extent(_(data.objects)
 				.pluck('indicators')
 				.flatten()

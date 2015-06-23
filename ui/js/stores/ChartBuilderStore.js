@@ -306,6 +306,9 @@ module.exports = Reflux.createStore({
 	},
 	applyChartDef:function(chartDef){
        var self = this;
+       this.data.xAxis = chartDef.x;
+       this.data.yAxis = chartDef.y;
+       
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
        	  return self._indicatorIndex[id];
@@ -413,7 +416,7 @@ module.exports = Reflux.createStore({
 
 
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;
