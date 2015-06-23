@@ -338,6 +338,10 @@ class v2PostRequest(v2Request):
         If update
             set the object with the ID that has been passed via the URL to the
             json parameters associated with the request params.
+
+        note: hacking the custom dashboard api right now but will clean up using
+        the same "permission_function" structure that allows me to handle per
+        resource fixes as we do in GET.
         '''
 
         ## Create, Update or Delete ##
@@ -353,22 +357,22 @@ class v2PostRequest(v2Request):
 
         try:
 
+            ## for custom dashboard api - validate the json posted is valid
+            ## this should be re-organized.. moving this for a last minute
+            ## fix pre our first UNICEF production release. Hack alert below
+            if self.content_type == 'custom_dashboard':
+                self.kwargs['owner_id'] = self.user_id
+
+                try:
+                    cleaned_json = json.loads(self.kwargs['dashboard_json'])
+                    self.kwargs['dashboard_json'] = cleaned_json
+                except KeyError: # if dashboard json null
+                    pass
+                except ValueError:
+                    self.err = 'Invalid JSON!'
+                    return super(v2PostRequest, self).main()
+
             if request_type == 'CREATE':
-
-                ## for custom dashboard api - validate the json posted is valid
-                ## this should be re-organized.. moving this for a last minute
-                ## fix pre our first UNICEF production release. Hack alert below
-                if self.content_type == 'custom_dashboard':
-                    self.kwargs['owner_id'] = self.user_id
-
-                    try:
-                        cleaned_json = json.loads(self.kwargs['dashboard_json'])
-                        self.kwargs['dashboard_json'] = cleaned_json
-                    except KeyError: # if dashboard json null
-                        pass
-                    except ValueError:
-                        self.err = 'Invalid JSON!'
-                        return super(v2PostRequest, self).main()
 
                 ## done with the custom_dashboard case, now i create the object
                 ## fot all content types
