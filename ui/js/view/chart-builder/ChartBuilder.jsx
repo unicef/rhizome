@@ -128,7 +128,7 @@ module.exports = React.createClass({
      
      		             <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
     
-                      <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
+                      <a href="#" className="button success" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
                       <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
 
      	              </div>);
