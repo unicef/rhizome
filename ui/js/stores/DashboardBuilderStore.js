@@ -168,7 +168,10 @@ var DashboardBuilderStore = Reflux.createStore({
 	   this.data.dashboardTitle = title;
 	   this.trigger(this.data);
 	   clearTimeout(this.timer);
-	   this.timer = setTimeout(function(){this.saveDashboard()}.bind(this), 1000);
+	   if(this.data.dashboard)
+	   {
+	     this.timer = setTimeout(function(){this.saveDashboard()}.bind(this), 1000);
+	   }
 	},
 	onUpdateDescription:function(description){
 	   this.data.dashboardDescription = description;
