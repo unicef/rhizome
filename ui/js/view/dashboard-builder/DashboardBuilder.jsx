@@ -49,11 +49,12 @@ module.exports = React.createClass({
 	  }
 	},
 	editChart:function(index){
-	  console.log(index);
-	  this.setState({chartBuilderindex : index,chartBuilderActive:true});
+	  this.setState({ chartBuilderindex : index, chartBuilderActive:true });
+	},
+	cancelEditChart: function() {
+	  this.setState({ chartBuilderindex : null, chartBuilderActive: false });
 	},
 	moveForward:function(index){
-	 console.log('f');
 	 DashboardBuilderActions.moveForward(index);
 	},
 	moveBackward:function(index){
@@ -225,14 +226,14 @@ module.exports = React.createClass({
          campaign = campaigns[0];
        }
 
-      var charts = this.state.store.dashboard.charts.map(function(chart,index){
-          return (
-            <tr key={index}>
-            <td>{chart.title}</td>
-            <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
-            </tr>
-          );
-       });
+      // var charts = this.state.store.dashboard.charts.map(function(chart,index){
+      //     return (
+      //       <tr key={index}>
+      //       <td>{chart.title}</td>
+      //       <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
+      //       </tr>
+      //     );
+      //  });
 
 	   var dashboardBuilderContainer = (
 	         <div>
@@ -297,7 +298,7 @@ module.exports = React.createClass({
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
 	   	console.log(chartDef,this.state.store.dashboard.charts);
-	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} campaign={campaign} region={region} />);
+	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} region={region} />);
 	   }
 	   else {
 	   	return dashboardBuilderContainer;
