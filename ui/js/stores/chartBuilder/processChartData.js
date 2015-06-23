@@ -54,11 +54,6 @@ function value(datapoint) {
 
 var tooltipDiv = document.createElement('div'); //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv);
-/*var tooltipVue = new Vue({
-	el: tooltipDiv,
-	components: {'vue-tooltip': require('component/tooltip') },
-	template: "<vue-tooltip></vue-tooltip>"
-});*/
 function nullValuesToZero(values){
   _.each(values,function(value){
   	if(_.isNull(value.value))
@@ -228,26 +223,7 @@ module.exports = {
 							aspect: 1,
 							domain: _.constant([0, 0.1]),
               name  : d => _.get(regionsIndex, '[' + d.properties.region_id + '].name', ''),
-							border: border.objects.features/*,
-							onMouseOver: function (d, el) {
-							    if (regionsIndex.hasOwnProperty(d.properties.region_id)) {
-									var evt = d3.event;
-									tooltipVue.$emit('tooltip-show', {
-										el       : el,
-										position : {
-											x : evt.pageX,
-											y : evt.pageY
-										},
-										data : {
-											text     : regionsIndex[d.properties.region_id].name,
-											template : 'tooltip-default'
-										}
-									});
-								}
-							},
-							onMouseOut: function (d, el) {
-								tooltipVue.$emit('tooltip-hide', { el : el });
-							}*/
+							border: border.objects.features
 							};
 		    var chartData = _.map(border.objects.features, function (feature) {
 										var region = _.get(index, feature.properties.region_id);

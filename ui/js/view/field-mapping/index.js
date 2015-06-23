@@ -4,7 +4,7 @@ var _ = require('lodash');
 var api = require('../../data/api');
 var treeify = require('../../data/transform/treeify');
 var ancestoryString = require('../../data/transform/ancestryString');
-var MenuVue = require('../../component/menu');
+var MenuVue = require('../../component/vue-menu');
 
 module.exports = {
 	template: require('./template.html'),
