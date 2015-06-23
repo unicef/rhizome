@@ -57,10 +57,10 @@ var DataStore = Reflux.createStore({
 
       // If no timeRange or startOf property is provided, the chart should fetch
       // data for all time.
-      if (_.isFinite(_.get(def, 'duration')) || def.hasOwnProperty('startOf')) {
+      if (!_.isNull(_.get(def, 'timeRange', null)) || def.hasOwnProperty('startOf')) {
         q.campaign_start = m.clone()
           .startOf(def.startOf)
-          .subtract(def.duration)
+          .subtract(def.timeRange)
           .format('YYYY-MM-DD');
       }
 

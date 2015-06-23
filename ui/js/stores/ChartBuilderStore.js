@@ -96,7 +96,7 @@ function _columnData(data, groups, groupBy) {
 				value:0,y:0,y0:0};
 	});
 	_.each(columnData,function(series){
-	   
+
 	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
 	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
 	});
@@ -117,7 +117,7 @@ function formatTimeRange (val){
 			return {"years":1};
 			break;
 	    case "3Months":
-	    	return {"months":3};
+	    	return {"months":2};
 	    	break;
 	    case "current":
 	    	return {"months":0};
@@ -130,7 +130,7 @@ function formatTimeRange (val){
 	    	break;
 	}
 }
-	
+
 var chartOptions = {
 		domain  : null,
 		values  : _.property('values'),
@@ -192,7 +192,7 @@ module.exports = Reflux.createStore({
 	},
 	onInitialize: function(chartDef){
     this.resetChartDef();
-	
+
 	var self = this;
 			var regionPromise = api.regions().then(function(items){
 			  self._regionIndex = _.indexBy(items.objects, 'id');
@@ -212,7 +212,7 @@ module.exports = Reflux.createStore({
 			  	self.trigger(self.data);
 			  	self.aggregateRegions();
 			 });
-	
+
 			api.indicatorsTree().then(function(items) {
 		        self._indicatorIndex = _.indexBy(items.flat, 'id');
 		        self.data.indicatorList = _(items.objects)
@@ -224,11 +224,11 @@ module.exports = Reflux.createStore({
 		         }
 		         self.trigger(self.data);
 		     });
-	        
+
 			Promise.all([api.campaign(), api.office()])
 				.then(_.spread(function(campaigns, offices) {
 					var officeIdx = _.indexBy(offices.objects, 'id');
-	
+
 					self.data.campaignList = _(campaigns.objects)
 						.map(function (campaign) {
 							return _.assign({}, campaign, {
@@ -240,9 +240,9 @@ module.exports = Reflux.createStore({
 						.sortBy(_.method('start_date.getTime'))
 						.reverse()
 						.value();
-	
+
 					self._campaignIndex = _.indexBy(self.data.campaignList, 'id');
-	
+
 					self.trigger(self.data);
 				}));
 	},
@@ -345,7 +345,7 @@ module.exports = Reflux.createStore({
     	   regions = [regionSelected];
 	    }
 		else if(regionRadioValue==="type")
-		{  
+		{
 		   if(regionSelected.parent_region_id && regionSelected.parent_region_id != "None")
 		   {
 		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
@@ -410,8 +410,8 @@ module.exports = Reflux.createStore({
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
-       
-       
+
+
         processChartData
         .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy)
         .then(function(chart){
@@ -420,6 +420,6 @@ module.exports = Reflux.createStore({
           self.data.chartData = chart.data;
           self.trigger(self.data);
         });
-       
+
 	}
 });
