@@ -134,11 +134,11 @@ var DashboardStore = Reflux.createStore({
 		var base = _.omit(chart, 'indicators', 'title');
 
 		_.each(chart.indicators, function (id) {
-			var duration = chart.hasOwnProperty('timeRange') ? moment.duration(chart.timeRange) : Infinity;
+			var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity;
 			var hash     = [id, chart.startOf, chart.regions].join('-');
 
 			if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
-				this.indicators[hash] = _.assign({
+				this.indicators[hash] = _.defaults({
 						duration   : duration,
 						indicators : [id]
 					}, base);
