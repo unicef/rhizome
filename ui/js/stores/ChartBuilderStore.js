@@ -315,7 +315,7 @@ module.exports = Reflux.createStore({
        this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
        var timeString = JSON.stringify(chartDef.timeRange);
        var timeValue;
-       if(timeString=='{"months":3}'){
+       if(timeString=='{"months":2}'){
        timeValue = "3Months";
        } else if(timeString=='{"years":1}'){
        timeValue = "pastYear";
