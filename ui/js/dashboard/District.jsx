@@ -34,6 +34,7 @@ var District = React.createClass({
       .indexBy('id')
       .mapValues(ind => {
         var bounds = _(ind.bound_json)
+          .reject(b => b.bound_name === 'inavlid')
           .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
           .sortBy('1');
 
@@ -48,8 +49,8 @@ var District = React.createClass({
 
     // Scale for coloring based on pre-defined values
     var scale = d3.scale.ordinal()
-      .domain(['bad', 'okay', 'ok', 'good', 'invalid'])
-      .range(['#AF373E', '#959595', '#959595','#2B8CBE', '#2D2525']);
+      .domain(['bad', 'okay', 'ok', 'good'])
+      .range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
     // Clean the data by first removing any data whose values are not finite -
     // i.e. undefined - or whose indicators have no target bounds defined, then
@@ -142,7 +143,9 @@ var District = React.createClass({
       .filter(datum => datum.indicator.short_name === column)
       .clone();
 
-    var format = d3.format('n');
+    var format = function (d) {
+      return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
+    };
 
     var evt   = d3.event;
     var total = _(this.props.data['district-heat-map'])

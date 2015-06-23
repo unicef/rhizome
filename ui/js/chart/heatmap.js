@@ -18,7 +18,9 @@ var DEFAULTS = {
   cellSize   : 16,
   column     : _.property('indicator.short_name'),
   fontSize   : 12,
-  format     : d3.format('.4n'),
+  format     : function (d) {
+    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
+  },
   headerText : _.property('short_name'),
   headers    : [],
   margin : {
