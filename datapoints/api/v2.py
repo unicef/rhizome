@@ -355,9 +355,6 @@ class v2PostRequest(v2Request):
 
             if request_type == 'CREATE':
 
-                new_obj = self.db_obj.objects.create(**self.kwargs)
-                self.data = {'new_id':new_obj.id }
-
                 ## for custom dashboard api - validate the json posted is valid
                 ## this should be re-organized.. moving this for a last minute
                 ## fix pre our first UNICEF production release. Hack alert below
@@ -367,10 +364,16 @@ class v2PostRequest(v2Request):
                     try:
                         cleaned_json = json.loads(self.kwargs['dashboard_json'])
                         self.kwargs['dashboard_json'] = cleaned_json
+                    except KeyError: # if dashboard json null
+                        pass
                     except ValueError:
                         self.err = 'Invalid JSON!'
                         return super(v2PostRequest, self).main()
 
+                ## done with the custom_dashboard case, now i create the object
+                ## fot all content types
+                new_obj = self.db_obj.objects.create(**self.kwargs)
+                self.data = {'new_id':new_obj.id}
 
             elif request_type == 'DELETE':
 
