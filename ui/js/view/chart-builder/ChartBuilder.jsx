@@ -137,8 +137,8 @@ module.exports = React.createClass({
         	<RadioGroup name="groupby" horizontal={true}  value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
         	</div>);  
      var chooseAxis = (<div className="grouping">
-		     	<div>x axis: <select onChange={this._updateXAxis}>{axisOptions}</select></div>
-		     	<div>y axis: <select onChange={this._updateYAxis}>{axisOptions}</select></div>
+		     	<div><div className="titleDiv">X Axis</div> <select className="medium-6" onChange={this._updateXAxis}>{axisOptions}</select></div>
+		     	<div><div className="titleDiv">Y Axis</div> <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
 		     </div>);           
      var rightPage = (<div className="right-page">
      	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
