@@ -196,7 +196,7 @@ module.exports = React.createClass({
         indicators,
         GeoStore.features
       );
-
+      console.log(data);
       var dashboardProps = {
         campaign    : campaign,
         dashboard   : dashboardDef,
