@@ -111,7 +111,7 @@ function datapoint(q) {
 			var campaigns = data.objects.map(function (d) { return d.campaign; });
 
 			endPoint('/campaign/', 'get', 2)({
-				id__in: campaigns
+				id__in: _.uniq(campaigns)
 			}).then(function (campaignData) {
 				var campaigns = _.indexBy(campaignData.objects, 'id');
 
