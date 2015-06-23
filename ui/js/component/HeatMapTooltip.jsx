@@ -34,6 +34,7 @@ var HeatMapTooltip = React.createClass({
     if (!_.isEmpty(bounds)) {
       var rows = _(bounds)
         .reject(b => b.bound_name === 'invalid')
+        .sortBy('mn_val')
         .map((b, i) => (
           <tr key={'bound-' + i}>
             <th>{b.bound_name}</th>
