@@ -127,7 +127,10 @@ module.exports = React.createClass({
                          </IndicatorDropdownMenu>
      
      		             <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-    <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
+    
+                      <a href="#" className="button" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
+                      <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
+
      	              </div>);
      var groupBy = 	(<div className="grouping">
         	<div className="titleDiv">Group By</div>
