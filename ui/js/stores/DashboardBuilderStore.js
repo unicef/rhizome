@@ -94,7 +94,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	  var temp = this.data.dashboard.charts[index];
 	  this.data.dashboard.charts[index] = this.data.dashboard.charts[newIndex];
 	  this.data.dashboard.charts[newIndex] = temp;
-	  
+	  this.saveDashboard()
 	  this.trigger(this.data);
 	},  
     onMoveBackward:function(index){
@@ -109,7 +109,7 @@ var DashboardBuilderStore = Reflux.createStore({
       var temp = this.data.dashboard.charts[index];
       this.data.dashboard.charts[index] = this.data.dashboard.charts[newIndex];
       this.data.dashboard.charts[newIndex] = temp;
-      
+      this.saveDashboard()
       this.trigger(this.data);
     },  
     onDeleteDashboard:function(){
