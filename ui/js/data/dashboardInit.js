@@ -42,7 +42,7 @@ function childOf(parent, child) {
 function inChart(chart, campaign, region, datum) {
   var dt       = moment(datum.campaign.start_date).valueOf()
   var end      = moment(campaign.start_date, 'YYYY-MM-DD');
-  var start    = chart.hasOwnProperty('timeRange') ?
+  var start    = _.isFinite(_.get(chart, 'timeRange')) ?
     end.clone().subtract(chart.timeRange).valueOf() :
     -Infinity;
 
