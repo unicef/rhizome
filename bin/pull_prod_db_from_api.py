@@ -1,12 +1,14 @@
 #!/usr/cat /hom bin/python
 
+import os
 import sys
 import json
 import urllib2
-import subprocess
-from time import sleep
 from urllib import urlencode
-from uuid import uuid4
+
+from datapoints.models import *
+
+
 
 class DBRefreshTask(object):
 
@@ -14,23 +16,22 @@ class DBRefreshTask(object):
 
         print '...initializing...'
 
+        self.base_url_string = 'http://polio.seedscientific.com/api/v2/'
+        self.orm_mapper = {'campaign':Campaign}
+
     def main(self):
 
-        print 'MAIN FUNCTION!'
+        for content_type, db_model in self.orm_mapper.iteritems():
+            print 'processing_content_type: %s' % content_type
+            api_data = self.api_wrapper(content_type)
 
-        forms_to_process = [1,2,3]
+    # def api_wrapper(self,kwargs=None,args=None):
+    def api_wrapper(self,content_type):
 
-        for form in forms_to_process:
-            print 'processing_forms: %s' % form
+        url_string = self.base_url_string + content_type
+        response = urllib2.urlopen(url_string)
+        x = response.read()
 
-    def api_wrapper(self,kwargs=None):
-
-        kwargs['job_id'] = self.cron_guid
-        url_string = self.base_url_string + '?' + urlencode(dict(**kwargs))
-        response = urllib2.urlopen(url_string)#
-        etl_api_response = json.loads(response.read())['objects'][0]
-
-        return etl_api_response
 
 if __name__ == "__main__":
   db_r = DBRefreshTask()
