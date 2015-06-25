@@ -1,5 +1,3 @@
-#!/usr/cat /hom bin/python
-
 import os
 import sys
 import json
