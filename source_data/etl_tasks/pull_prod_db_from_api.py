@@ -6,8 +6,6 @@ from urllib import urlencode
 
 from datapoints.models import *
 
-
-
 class DBRefreshTask(object):
 
     def __init__(self):

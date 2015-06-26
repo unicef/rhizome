@@ -20,7 +20,7 @@ from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-
+from source_data.etl_tasks.pull_prod_db_from_api import DBRefreshTask
 
 ### File Upload Below ###
 
@@ -185,3 +185,9 @@ def odk_review(request):
 
     return render_to_response('odk_review.html'
         ,{'odk_job_data': odk_job_data})
+
+#### SEEDING DATABASE #####
+
+def pull_prod_db_from_api(request):
+
+    dbr = DBRefreshTask()
