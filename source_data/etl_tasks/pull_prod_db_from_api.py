@@ -1,7 +1,10 @@
 import os
 import sys
 import json
+import base64
+import urllib
 import urllib2
+
 from urllib import urlencode
 
 from datapoints.models import *
@@ -18,15 +21,13 @@ class DBRefreshTask(object):
     def main(self):
 
         for content_type, db_model in self.orm_mapper.iteritems():
-            print 'processing_content_type: %s' % content_type
+
             api_data = self.api_wrapper(content_type)
 
     # def api_wrapper(self,kwargs=None,args=None):
     def api_wrapper(self,content_type):
 
-        url_string = self.base_url_string + content_type
-        response = urllib2.urlopen(url_string)
-        x = response.read()
+        pass
 
 
 if __name__ == "__main__":

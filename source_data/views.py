@@ -185,9 +185,3 @@ def odk_review(request):
 
     return render_to_response('odk_review.html'
         ,{'odk_job_data': odk_job_data})
-
-#### SEEDING DATABASE #####
-
-def pull_prod_db_from_api(request):
-
-    dbr = DBRefreshTask()
