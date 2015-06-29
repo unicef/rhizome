@@ -3,7 +3,7 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
-from pandas import read_excel
+from pandas import read_excel,notnull
 from xlrd.biffh import XLRDError
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
@@ -58,9 +58,9 @@ class Migration(SchemaMigration):
             except AttributeError:
                 return
 
-            if m.objects.all():
+            if m.objects.all()[:1]:
 
-                print '====THIS OBJECT HAS R0WS===='
+                print '====THIS OBJECT HAS DATA===='
                 return
 
             print '====PROCESSING: %s =====\n' % db_table
@@ -70,8 +70,8 @@ class Migration(SchemaMigration):
             except XLRDError:
                 return
 
-            cleaned_df = table_df.fillna(None,axis=0)
-            no_ix_df = cleaned_df.reset_index(level=0,drop=True)
+            no_nan_df = table_df.where((notnull(table_df)), None)
+            no_ix_df = no_nan_df.reset_index(level=0,drop=True)
             data_dict = no_ix_df.transpose().to_dict()
 
             for k,v in data_dict.iteritems():
