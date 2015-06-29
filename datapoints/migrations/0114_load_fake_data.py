@@ -5,6 +5,7 @@ from south.v2 import SchemaMigration
 from django.db import models
 from pandas import read_excel
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from datapoints.models import CampaignType
 
@@ -15,37 +16,40 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        self.infile = '/Users/john/code/polio/bin/polio_test_data.xls'
-
+        self.infile = settings.BASE_DIR + '/bin/polio_test_data.xls'
         fk_error_batch = []
 
         for ct in ContentType.objects.filter(app_label='datapoints'):
 
-            self.process_model(ct)
 
+            # if not ct.model_class().objects.all():
+            self.process_model(ct)
 
         xsf
 
     def process_model(self, ct):
 
-            m = ct.model_class()
-            # print "%s.%s\t%d" % (m.__module__, m.__name__, m._default_manager.count())
-            # print m._meta.db_table
+            print '=====\n' * 3
+            print ct
+
+            try:
+                m = ct.model_class()
+                db_table = m._meta.db_table
+            except AttributeError:
+                return
+
+            print '====PROCESSING: %s =====\n' % db_table
 
             try:
                 table_df = read_excel(self.infile,sheetname = m._meta.db_table)
             except XLRDError:
                 return
 
-            print table_df[:20]
-            # print '=====PROCESSING: %s ======\n' % t
-            # no_ix_df = table_df.reset_index(level=0,drop=True)
-            #
-            # data_dict = no_ix_df.transpose().to_dict()
-            #
-            # for k,v in data_dict.iteritems():
-            #     CampaignType.objects.create(**v)
+            no_ix_df = table_df.reset_index(level=0,drop=True)
+            data_dict = no_ix_df.transpose().to_dict()
 
+            for k,v in data_dict.iteritems():
+                m.objects.create(**v)
 
     def backwards(self, orm):
         pass
@@ -282,13 +286,6 @@ class Migration(SchemaMigration):
             'region_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.RegionType']"}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '255', 'populate_from': "'name'", 'unique_with': '()'}),
             'source': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Source']"})
-        },
-        u'datapoints.regionheirarchy': {
-            'Meta': {'object_name': 'RegionHeirarchy', 'db_table': "'region_heirarchy_cache'", 'managed': 'False'},
-            'contained_by_region_id': ('django.db.models.fields.IntegerField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'region_id': ('django.db.models.fields.IntegerField', [], {}),
-            'region_type_id': ('django.db.models.fields.IntegerField', [], {})
         },
         u'datapoints.regionpermission': {
             'Meta': {'unique_together': "(('user', 'region', 'read_write'),)", 'object_name': 'RegionPermission', 'db_table': "'region_permission'"},

@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'polio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'polio',
+        'NAME': 'ebola',
         'USER': 'djangoapp',
-        'PASSWORD': 'w3b@p01i0', 
+        'PASSWORD': 'w3b@p01i0',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
