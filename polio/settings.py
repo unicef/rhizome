@@ -47,7 +47,6 @@ INSTALLED_APPS = (
     'simple_history',
     # 'stronghold',
     'csvimport',
-    'guardian',
     'tastypie',
     'debug_toolbar',
 )

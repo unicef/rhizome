@@ -18,7 +18,6 @@ from django.contrib.auth.decorators import login_required
 
 from django.template import RequestContext
 
-from guardian.shortcuts import get_objects_for_user
 from pandas import read_csv
 from pandas import DataFrame
 from functools import partial

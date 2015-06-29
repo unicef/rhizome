@@ -4,38 +4,63 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 from pandas import read_excel
+from xlrd.biffh import XLRDError
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
-from datapoints.models import CampaignType
+from datapoints.models import *
+from source_data.models import *
 
-from xlrd.biffh import XLRDError
 
 
 class Migration(SchemaMigration):
+# DELETE from south_migrationhistory where migration = '0114_load_fake_data';
+
+    def create_fk_dependencies(self):
+        user_id = User.objects.create_user('test','john@john.com', 'test').id
+        source_id = Source.objects.create(**{'id':1,'source_name': 'test'
+            ,'source_description': 'test1'}).id
+
+        cache_job_id = -1 # CREATE IN EARLIER MIGRATION #
+        status_id = ProcessStatus.objects.create(**{
+                'status_text':'test',
+                'status_description':'test'}).id
+
+        document_id = Document.objects.create(**{
+            'doc_text':'test',
+            'created_by_id': user_id,
+            'source_id': source_id,
+            'guid': 'test'}).id
+
+        sdp_id = SourceDataPoint.objects.create(**{
+            'id': -1,
+            'document_id': document_id,
+            'row_number': 0,
+            'source_id': source_id,
+            'status_id': status_id}).id
 
     def forwards(self, orm):
 
+        ## create some basic data we need in order to load datapoitns #
+
+        self.create_fk_dependencies()
         self.infile = settings.BASE_DIR + '/bin/polio_test_data.xls'
         fk_error_batch = []
 
         for ct in ContentType.objects.filter(app_label='datapoints'):
-
-
-            # if not ct.model_class().objects.all():
             self.process_model(ct)
 
-        xsf
-
     def process_model(self, ct):
-
-            print '=====\n' * 3
-            print ct
 
             try:
                 m = ct.model_class()
                 db_table = m._meta.db_table
             except AttributeError:
+                return
+
+            if m.objects.all():
+
+                print '====THIS OBJECT HAS R0WS===='
                 return
 
             print '====PROCESSING: %s =====\n' % db_table
@@ -45,10 +70,13 @@ class Migration(SchemaMigration):
             except XLRDError:
                 return
 
-            no_ix_df = table_df.reset_index(level=0,drop=True)
+            cleaned_df = table_df.fillna(None,axis=0)
+            no_ix_df = cleaned_df.reset_index(level=0,drop=True)
             data_dict = no_ix_df.transpose().to_dict()
 
             for k,v in data_dict.iteritems():
+                print 'processing ID: %s' % v['id']
+
                 m.objects.create(**v)
 
     def backwards(self, orm):
