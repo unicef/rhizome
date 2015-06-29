@@ -4,35 +4,47 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 from pandas import read_excel
+from django.contrib.contenttypes.models import ContentType
 
 from datapoints.models import CampaignType
+
+from xlrd.biffh import XLRDError
+
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        INFILE = '/Users/john/code/polio/bin/polio_test_data.xls'
+        self.infile = '/Users/john/code/polio/bin/polio_test_data.xls'
 
-        tables_to_sync = ['campaign_type','region_type','office','campaign',
-            'region','indicator','datapoint','calculated_indicator_component']
+        fk_error_batch = []
 
-        for t in tables_to_sync:
+        for ct in ContentType.objects.filter(app_label='datapoints'):
 
-            if t == 'campaign_type':
-
-                table_df = read_excel(INFILE,sheetname=t)
+            self.process_model(ct)
 
 
-                print '=====PROCESSING: %s ======\n' % t
-                no_ix_df = table_df.reset_index(level=0,drop=True)
+        xsf
 
-                data_dict = no_ix_df.transpose().to_dict()
+    def process_model(self, ct):
 
-                for k,v in data_dict.iteritems():
-                    CampaignType.objects.create(**v)
+            m = ct.model_class()
+            # print "%s.%s\t%d" % (m.__module__, m.__name__, m._default_manager.count())
+            # print m._meta.db_table
 
+            try:
+                table_df = read_excel(self.infile,sheetname = m._meta.db_table)
+            except XLRDError:
+                return
 
-            # results_dict[t] = table_df.to_dict()
+            print table_df[:20]
+            # print '=====PROCESSING: %s ======\n' % t
+            # no_ix_df = table_df.reset_index(level=0,drop=True)
+            #
+            # data_dict = no_ix_df.transpose().to_dict()
+            #
+            # for k,v in data_dict.iteritems():
+            #     CampaignType.objects.create(**v)
 
 
     def backwards(self, orm):
