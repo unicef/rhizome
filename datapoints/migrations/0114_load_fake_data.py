@@ -11,6 +11,7 @@ from django.db.utils import IntegrityError
 
 from datapoints.models import *
 from source_data.models import *
+from django.db import transaction
 
 
 
@@ -18,33 +19,42 @@ class Migration(SchemaMigration):
 # DELETE from south_migrationhistory where migration = '0114_load_fake_data';
 
     def create_fk_dependencies(self):
-        user_id = User.objects.create_user('test','john@john.com', 'test').id
-        source_id = Source.objects.create(**{'id':1,'source_name': 'test'
-            ,'source_description': 'test1'}).id
 
-        cache_job_id = -1 # CREATE IN EARLIER MIGRATION #
-        status_id = ProcessStatus.objects.create(**{
-                'status_text':'test',
-                'status_description':'test'}).id
+        with transaction.atomic():
+            user_id = User.objects.create_user('test','john@john.com', 'test').id
+            source_id = Source.objects.create(**{'id':1,'source_name': 'test'
+                ,'source_description': 'test1'}).id
 
-        document_id = Document.objects.create(**{
-            'doc_text':'test',
-            'created_by_id': user_id,
-            'source_id': source_id,
-            'guid': 'test'}).id
+            cache_job_id = -1 # CREATE IN EARLIER MIGRATION #
+            status_id = ProcessStatus.objects.create(**{
+                    'status_text':'test',
+                    'status_description':'test'}).id
 
-        sdp_id = SourceDataPoint.objects.create(**{
-            'id': -1,
-            'document_id': document_id,
-            'row_number': 0,
-            'source_id': source_id,
-            'status_id': status_id}).id
+            document_id = Document.objects.create(**{
+                'doc_text':'test',
+                'created_by_id': user_id,
+                'source_id': source_id,
+                'guid': 'test'}).id
+
+            sdp_id = SourceDataPoint.objects.create(**{
+                'id': -1,
+                'document_id': document_id,
+                'row_number': 0,
+                'source_id': source_id,
+                'status_id': status_id}).id
 
     def forwards(self, orm):
 
         ## create some basic data we need in order to load datapoitns #
 
-        self.create_fk_dependencies()
+
+        try:
+            self.create_fk_dependencies()
+        except IntegrityError:
+            pass
+
+
+
         self.infile = settings.BASE_DIR + '/bin/polio_test_data.xlsx'
         self.fk_error_batch = []
 
@@ -65,10 +75,7 @@ class Migration(SchemaMigration):
 
         if m.objects.all()[:1]:
 
-            print '====THIS OBJECT HAS DATA===='
             return
-
-        print '====PROCESSING: %s =====\n' % db_table
 
         try:
             table_df = read_excel(self.infile,sheetname = m._meta.db_table)
@@ -81,7 +88,6 @@ class Migration(SchemaMigration):
 
         try:
             for k,v in data_dict.iteritems():
-                print 'processing ID: %s' % v['id']
                 m.objects.create(**v)
         except IntegrityError:
             self.fk_error_batch.append(ct)
