@@ -7,6 +7,7 @@ from pandas import read_excel,notnull
 from xlrd.biffh import XLRDError
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 from datapoints.models import *
 from source_data.models import *
@@ -44,40 +45,47 @@ class Migration(SchemaMigration):
         ## create some basic data we need in order to load datapoitns #
 
         self.create_fk_dependencies()
-        self.infile = settings.BASE_DIR + '/bin/polio_test_data.xls'
-        fk_error_batch = []
+        self.infile = settings.BASE_DIR + '/bin/polio_test_data.xlsx'
+        self.fk_error_batch = []
 
-        for ct in ContentType.objects.filter(app_label='datapoints'):
+        ct_qset = ContentType.objects.filter(app_label='datapoints')
+
+        for ct in ct_qset:
             self.process_model(ct)
 
     def process_model(self, ct):
 
-            try:
-                m = ct.model_class()
-                db_table = m._meta.db_table
-            except AttributeError:
-                return
+        object_batch = []
 
-            if m.objects.all()[:1]:
+        try:
+            m = ct.model_class()
+            db_table = m._meta.db_table
+        except AttributeError:
+            return
 
-                print '====THIS OBJECT HAS DATA===='
-                return
+        if m.objects.all()[:1]:
 
-            print '====PROCESSING: %s =====\n' % db_table
+            print '====THIS OBJECT HAS DATA===='
+            return
 
-            try:
-                table_df = read_excel(self.infile,sheetname = m._meta.db_table)
-            except XLRDError:
-                return
+        print '====PROCESSING: %s =====\n' % db_table
 
-            no_nan_df = table_df.where((notnull(table_df)), None)
-            no_ix_df = no_nan_df.reset_index(level=0,drop=True)
-            data_dict = no_ix_df.transpose().to_dict()
+        try:
+            table_df = read_excel(self.infile,sheetname = m._meta.db_table)
+        except XLRDError:
+            return
 
+        no_nan_df = table_df.where((notnull(table_df)), None)
+        no_ix_df = no_nan_df.reset_index(level=0,drop=True)
+        data_dict = no_ix_df.transpose().to_dict()
+
+        try:
             for k,v in data_dict.iteritems():
                 print 'processing ID: %s' % v['id']
-
                 m.objects.create(**v)
+        except IntegrityError:
+            self.fk_error_batch.append(ct)
+            return
 
     def backwards(self, orm):
         pass
