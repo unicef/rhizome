@@ -189,7 +189,6 @@ module.exports = {
 					values  : _.property('values'),
 					x       : _.property('campaign.start_date'),
 					y       : _.property('value'),
-					yFormat : d3.format('%')
 				}
 			var chartData =  _groupBySeries(data, groups,groupBy);
 		    return {options:chartOptions,data:chartData};
@@ -251,7 +250,6 @@ module.exports = {
 			var chartOptions = {
 				aspect : 2.664831804,
 				values  : _.property('values'),
-				yFormat : d3.format('%'),
 				domain : _.constant(columnScale),
 				color  : _.flow(
 					_.property('name'),
@@ -269,14 +267,14 @@ module.exports = {
 	processScatterChart: function(dataPromise,regions,indicators,xAxis,yAxis){
 		var indicatorsIndex = _.indexBy(indicators, 'id');//;
 		var regionsIndex = _.indexBy(regions, 'id');
-       
+
 		return dataPromise.then(function(data){
 		     console.log(_(data.objects).pluck('indicators').flatten().value());
 			var domain = d3.extent(_(data.objects)
 				.pluck('indicators')
 				.flatten()
-				.filter(function (d) { 
-				   return d.indicator == indicators[xAxis].id; 
+				.filter(function (d) {
+				   return d.indicator == indicators[xAxis].id;
 				 })
 				.pluck('value')
 				.value()
@@ -335,7 +333,6 @@ module.exports = {
 				range       : _.constant(range),
 				xFormat     : d3.format('%'),
 				xLabel      : 'Caregiver Awareness',
-				yFormat     : d3.format('%'),
 				yLabel      : 'Missed Children'
 			};
 			return {options:chartOptions,data:chartData};

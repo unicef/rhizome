@@ -136,7 +136,7 @@ var chartOptions = {
 		values  : _.property('values'),
 		x       : _.property('campaign.start_date'),
 		y       : _.property('value'),
-		yFormat : d3.format('%')
+		yFormat : d3.format(',.0f')
 	};
 module.exports = Reflux.createStore({
 	data: {
@@ -163,6 +163,20 @@ module.exports = Reflux.createStore({
 		            }
 		            return timeRadios;
 					},
+
+    formatRadios : function () {
+      return [{
+        value : ',.0f',
+        title : 'Integer'
+      },{
+        value : ',.4f',
+        title : 'Real Number'
+      },{
+        value : '%',
+        title : 'Percentage'
+      }]
+    },
+    formatRadioValue : 0,
 		timeRadioValue:2,
 		chartTypes:require('./chartBuilder/chartDefinitions'),
 		selectedChart:0,
@@ -280,6 +294,12 @@ module.exports = Reflux.createStore({
 	   this.trigger(this.data);
 	   this.getChartData();
 	},
+  onSelectFormatRadio : function (value) {
+    this.data.formatRadioValue = value;
+    this.data.chartOptions.yFormat = d3.format(this.data.formatRadios()[value].value);
+    this.trigger(this.data);
+    this.getChartData();
+  },
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
@@ -310,7 +330,7 @@ module.exports = Reflux.createStore({
        this.data.xAxis = chartDef.x;
        this.data.yAxis = chartDef.y;
        this.data.id = chartDef.id;
-       
+
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
        	  return self._indicatorIndex[id];
