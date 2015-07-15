@@ -350,6 +350,7 @@ module.exports = Reflux.createStore({
 
        var timeString = JSON.stringify(chartDef.timeRange);
        var timeValue;
+
        if(timeString=='{"months":2}'){
        timeValue = "3Months";
        } else if(timeString=='{"years":1}'){
@@ -359,7 +360,10 @@ module.exports = Reflux.createStore({
        } else {
         timeValue = "allTime";
        }
-       this.data.timeRadioValue = _.findIndex(this.data.timeRadios(),{value:timeValue});
+
+       // Ensure non-negative value for timeRadioValue because findIndex might
+       // return -1 if it can't find the timeValue in the array of options
+       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{value:timeValue}), 0);
        this.trigger(this.data);
 	},
 	resetChartDef:function(){
@@ -410,9 +414,7 @@ module.exports = Reflux.createStore({
 	},
 	//Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
 	getLower:  function(start){
-      // Insure that we don't use a negative index - somehow some charts are
-      // ending up with a timeRadioValue of -1
-	    var range = this.data.timeRadios()[Math.max(this.data.timeRadioValue, 0)].value;
+	    var range = this.data.timeRadios()[this.data.timeRadioValue].value;
 	    if(range=="current"){
 	    	return start.clone().startOf('month');
 	    } else if (range=="3Months"){
