@@ -410,7 +410,9 @@ module.exports = Reflux.createStore({
 	},
 	//Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
 	getLower:  function(start){
-	    var range = this.data.timeRadios()[this.data.timeRadioValue].value;
+      // Insure that we don't use a negative index - somehow some charts are
+      // ending up with a timeRadioValue of -1
+	    var range = this.data.timeRadios()[Math.max(this.data.timeRadioValue, 0)].value;
 	    if(range=="current"){
 	    	return start.clone().startOf('month');
 	    } else if (range=="3Months"){
