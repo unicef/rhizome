@@ -140,6 +140,7 @@ gulp.task('dist-py', function () {
 			'{bin,polio,datapoints,source_data,entity,templates}/**/*.{py,sql,html,sh}',
 			'manage.py',
 			'requirements.txt'
+			'source_data/polio_test_data.xlsx'
 		])
 		.pipe($.zip('uf04-backend.zip'))
 		.pipe($.size({ title: 'Backend'}))

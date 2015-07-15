@@ -110,7 +110,7 @@ def _push_to_remote():
         run('sudo rm -rf `find . -name "*.pyc"`')
 
         # chgroup, chmod so apache can edit
-        run('chgrp -R www-data *')
+        # run('chgrp -R www-data *')
         run('chmod -R g+w *')
 
     # in server path -
@@ -118,8 +118,8 @@ def _push_to_remote():
         # remove compiled files
         run('sudo rm -rf `find . -name "*.pyc"`')
 
-        run("chgrp -R www-data *")
-        run("chmod -R g+w *")
+        # run("chgrp -R www-data *")
+        # run("chmod -R g+w *")
 
         run("pip install -r requirements.txt")
 

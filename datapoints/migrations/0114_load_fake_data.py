@@ -55,7 +55,7 @@ class Migration(SchemaMigration):
 
 
 
-        self.infile = settings.BASE_DIR + '/bin/polio_test_data.xlsx'
+        self.infile = settings.BASE_DIR + 'source_data/polio_test_data.xlsx'
         self.fk_error_batch = []
 
         ct_qset = ContentType.objects.filter(app_label='datapoints')
