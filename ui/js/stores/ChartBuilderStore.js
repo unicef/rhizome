@@ -177,6 +177,7 @@ module.exports = Reflux.createStore({
       }]
     },
     formatRadioValue : 0,
+    xFormatRadioValue : 0,
 		timeRadioValue:2,
 		chartTypes:require('./chartBuilder/chartDefinitions'),
 		selectedChart:0,
@@ -188,6 +189,10 @@ module.exports = Reflux.createStore({
 		yAxis:0,
 		loading:false,
 		chartDefinition:function(){
+      var formatOpts = this.formatRadios();
+      var xFormat = formatOpts[this.xFormatRadioValue].value;
+      var yFormat = formatOpts[this.formatRadioValue].value;
+
 			return {
 			    title: this.title,
 				type: this.chartTypes[this.selectedChart].name,
@@ -196,6 +201,8 @@ module.exports = Reflux.createStore({
 				groupBy:this.groupByRadios[this.groupByRadioValue].value,
 				x:this.xAxis,
 				y:this.yAxis,
+        xFormat: xFormat,
+        yFormat: yFormat,
 				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
 				id:this.id
 			};
