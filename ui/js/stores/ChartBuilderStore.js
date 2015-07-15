@@ -345,6 +345,9 @@ module.exports = Reflux.createStore({
        this.data.title = chartDef.title;
        this.data.regionRadioValue = _.findIndex(this.data.regionRadios,{value:chartDef.regions});
        this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
+       this.data.formatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'yFormat', ',.0f') });
+       this.data.xFormatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'xFormat', ',.0f') });
+
        var timeString = JSON.stringify(chartDef.timeRange);
        var timeValue;
        if(timeString=='{"months":2}'){
