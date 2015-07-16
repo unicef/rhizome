@@ -5,7 +5,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import Authentication
 from tastypie.resources import ModelResource, Resource, ALL
 
-from datapoints.models import RegionType,Region,RegionHeirarchy,RegionPermission
+from datapoints.models import RegionType,Region,RegionPermission
 
 class CustomAuthentication(Authentication):
     '''
@@ -141,20 +141,20 @@ class BaseNonModelResource(Resource):
 
 
         ## CASE 2 ##
-        elif self.parent_region__in is not None and self.region_type_id is not None:
-            ## FIX ME - use fn_get_authorized_regions_by_user() instead
-
-            region_ids = RegionHeirarchy.objects.filter(
-                contained_by_region_id__in = self.parent_region__in, \
-                region_type_id = self.region_type_id)\
-                .values_list('region_id',flat=True)
-
-            if len(region_ids) == 0:
-
-                err = 'no regions of region_type_id: %s exists under region_id\
-                    %s ' % (self.region_type_id, self.parent_region__in)
-
-                return err, region_ids
+        # elif self.parent_region__in is not None and self.region_type_id is not None:
+        #     ## FIX ME - use fn_get_authorized_regions_by_user() instead
+        #
+        #     region_ids = RegionHeirarchy.objects.filter(
+        #         contained_by_region_id__in = self.parent_region__in, \
+        #         region_type_id = self.region_type_id)\
+        #         .values_list('region_id',flat=True)
+        #
+        #     if len(region_ids) == 0:
+        #
+        #         err = 'no regions of region_type_id: %s exists under region_id\
+        #             %s ' % (self.region_type_id, self.parent_region__in)
+        #
+        #         return err, region_ids
 
         ## CASE 3 #
         elif self.parent_region__in is not None and self.region_type_id is None:
