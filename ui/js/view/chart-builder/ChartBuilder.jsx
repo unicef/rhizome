@@ -87,7 +87,7 @@ module.exports = React.createClass({
 	   var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name} data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions} />;
 	   var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>);
 	   var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
-       
+
 
 	   var campaignSelection = !!this.state.store.campaignSelected ?
       campaignDisplayFormat(this.state.store.campaignSelected) :
@@ -104,14 +104,14 @@ module.exports = React.createClass({
      var regions = MenuItem.fromArray(
       filterMenu(this.state.store.regionList, this.state.regionFilter),
       ChartBuilderActions.addRegionSelection);
-      
+
      var axisOptions = this.state.store.indicatorsSelected.map(function(indicator,index){
        return <option key={indicator.id} value={index}>{indicator.name}</option>;
      });
-     
+
      /*  <div className="titleDiv" onChange={this._updateDescription}>Description</div>
       <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
-     
+
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
      	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
@@ -124,9 +124,9 @@ module.exports = React.createClass({
                            indicators={this.state.store.indicatorList}
                            sendValue={ChartBuilderActions.addIndicatorSelection}>
                          </IndicatorDropdownMenu>
-     
+
      		             <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection} />
-    
+
                       <a href="#" className="button success" onClick={this.createChart}>{this.props.chartDef?"Update Chart":"Create Chart"}</a>
                       <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
 
@@ -134,11 +134,17 @@ module.exports = React.createClass({
      var groupBy = 	(<div className="grouping">
         	<div className="titleDiv">Group By</div>
         	<RadioGroup name="groupby" horizontal={true}  value={this.state.store.groupByRadioValue} values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio} />
-        	</div>);  
+        	</div>);
      var chooseAxis = (<div className="grouping">
 		     	<div><div className="titleDiv">X Axis</div> <select className="medium-6" onChange={this._updateXAxis}>{axisOptions}</select></div>
 		     	<div><div className="titleDiv">Y Axis</div> <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
-		     </div>);           
+		     </div>);
+     var formatXAxis = (
+      <div className="grouping">
+        <div className="titleDiv">X Format</div>
+        <RadioGroup name="xFormat" horizontal={true} value={this.state.store.xFormatRadioValue} values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio} />
+      </div>
+     );
      var rightPage = (<div className="right-page">
      	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
      	              	<div className="chart-options-container">
@@ -151,7 +157,14 @@ module.exports = React.createClass({
                         		<div className="titleDiv">Time Span</div>
                     			<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio} />
                     	</div>
-                    	{this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
+                      {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?formatXAxis:null}
+                      <div className="grouping">
+                        <div className="titleDiv">
+                          {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?'Y ':null}Format
+                        </div>
+                        <RadioGroup name="format" horizontal={true} value={this.state.store.formatRadioValue} values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectFormatRadio} />
+                      </div>
+                      {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
      					</div>
      					<div className="chart-container">
                 <div className="grouping">
