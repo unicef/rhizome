@@ -139,6 +139,12 @@ module.exports = React.createClass({
 		     	<div><div className="titleDiv">X Axis</div> <select className="medium-6" onChange={this._updateXAxis}>{axisOptions}</select></div>
 		     	<div><div className="titleDiv">Y Axis</div> <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
 		     </div>);
+     var formatXAxis = (
+      <div className="grouping">
+        <div className="titleDiv">X Format</div>
+        <RadioGroup name="xFormat" horizontal={true} value={this.state.store.xFormatRadioValue} values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio} />
+      </div>
+     );
      var rightPage = (<div className="right-page">
      	              	<ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart} onChange={ChartBuilderActions.selectChart} />
      	              	<div className="chart-options-container">
@@ -151,11 +157,14 @@ module.exports = React.createClass({
                         		<div className="titleDiv">Time Span</div>
                     			<RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue} values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio} />
                     	</div>
+                      {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?formatXAxis:null}
                       <div className="grouping">
-                        <div className="titleDiv">Format</div>
+                        <div className="titleDiv">
+                          {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?'Y ':null}Format
+                        </div>
                         <RadioGroup name="format" horizontal={true} value={this.state.store.formatRadioValue} values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectFormatRadio} />
                       </div>
-                    	{this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
+                      {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis?chooseAxis:null}
      					</div>
      					<div className="chart-container">
                 <div className="grouping">

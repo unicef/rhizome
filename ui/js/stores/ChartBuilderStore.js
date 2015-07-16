@@ -307,6 +307,12 @@ module.exports = Reflux.createStore({
     this.trigger(this.data);
     this.getChartData();
   },
+  onSelectXFormatRadio : function (value) {
+    this.data.xFormatRadioValue = value;
+    this.data.chartOptions.xFormat = d3.format(this.data.formatRadios()[value].value);
+    this.trigger(this.data);
+    this.getChartData();
+  },
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
