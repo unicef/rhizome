@@ -3,6 +3,8 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
+var formatUtil = require('util/format');
+
 function _sortValue(s, sortCol) {
   // jshint validthis: true
   var options = this._options;
@@ -18,9 +20,7 @@ var DEFAULTS = {
   cellSize   : 16,
   column     : _.property('indicator.short_name'),
   fontSize   : 12,
-  format     : function (d) {
-    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
-  },
+  format     : formatUtil.general,
   headerText : _.property('short_name'),
   headers    : [],
   margin : {

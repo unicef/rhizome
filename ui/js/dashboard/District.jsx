@@ -10,7 +10,8 @@ var Tooltip        = require('component/Tooltip.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
-var legend = require('chart/renderer/legend');
+var formatUtil = require('util/format');
+var legend     = require('chart/renderer/legend');
 
 var District = React.createClass({
   getInitialState : function () {
@@ -153,10 +154,6 @@ var District = React.createClass({
       .filter(datum => datum.indicator.short_name === column)
       .clone();
 
-    var format = function (d) {
-      return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
-    };
-
     var evt   = d3.event;
     var total = _(this.props.data['district-heat-map'])
       .map(s => ({
@@ -170,8 +167,8 @@ var District = React.createClass({
       var tip = React.createElement(HeatMapTooltip, {
         column,
         data,
-        format,
         total,
+        format    : formatUtil.general,
         indicator : d.indicator,
         row       : d.region.name,
         value     : d.value
