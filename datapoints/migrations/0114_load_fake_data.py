@@ -47,11 +47,10 @@ class Migration(SchemaMigration):
                 'name':'can_see_all_indicators'}).id
 
 
+
     def forwards(self, orm):
 
         ## create some basic data we need in order to load datapoitns #
-
-
         try:
             self.create_fk_dependencies()
         except IntegrityError:

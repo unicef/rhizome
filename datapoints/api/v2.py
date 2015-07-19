@@ -59,6 +59,8 @@ class v2Request(object):
                 'permission_function':self.apply_cust_dashboard_permissions},
             'group_permission': {'orm_obj':IndicatorPermission,
                 'permission_function':None},
+            'geo': {'orm_obj':RegionPolygon,
+                'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
