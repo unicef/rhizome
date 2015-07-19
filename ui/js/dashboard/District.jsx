@@ -10,6 +10,8 @@ var Tooltip        = require('component/Tooltip.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
+var legend = require('chart/renderer/legend');
+
 var District = React.createClass({
   getInitialState : function () {
     return {
@@ -52,6 +54,13 @@ var District = React.createClass({
       .domain(['bad', 'okay', 'ok', 'good'])
       .range(['#AF373E', '#959595', '#959595','#2B8CBE']);
 
+    var lgnd = legend()
+      .size(14)
+      .scale(d3.scale.ordinal()
+        .domain(['bad', 'ok', 'good'])
+        .range(['#AF373E', '#959595', '#2B8CBE'])
+      );
+
     // Clean the data by first removing any data whose values are not finite -
     // i.e. undefined - or whose indicators have no target bounds defined, then
     // remove any series (rows) that have no data
@@ -83,6 +92,7 @@ var District = React.createClass({
       fontSize         : 14,
       headers          : headers,
       scale            : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
+      legend           : lgnd,
       onMouseMove      : this._onMouseMove,
       onMouseOut       : this._onMouseOut,
       onColumnHeadOver : this._onHeaderOver,
