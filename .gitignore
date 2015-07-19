@@ -39,3 +39,4 @@ static/*.map
 concat_csv.py
 source_data/ODK/odk_source
 webpack.config.dev.js
+source_data/~$polio_test_data.xlsx

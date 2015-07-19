@@ -12,7 +12,7 @@ from django.db.utils import IntegrityError
 from datapoints.models import *
 from source_data.models import *
 from django.db import transaction
-
+from django.contrib.auth.models import Group
 
 
 class Migration(SchemaMigration):
@@ -43,6 +43,10 @@ class Migration(SchemaMigration):
                 'source_id': source_id,
                 'status_id': status_id}).id
 
+            group_id = Group.objects.create(**{
+                'name':'can_see_all_indicators'}).id
+
+
     def forwards(self, orm):
 
         ## create some basic data we need in order to load datapoitns #
@@ -54,8 +58,7 @@ class Migration(SchemaMigration):
             pass
 
 
-
-        self.infile = settings.BASE_DIR + 'source_data/polio_test_data.xlsx'
+        self.infile = settings.BASE_DIR + '/source_data/polio_test_data.xlsx'
         self.fk_error_batch = []
 
         ct_qset = ContentType.objects.filter(app_label='datapoints')
@@ -63,7 +66,10 @@ class Migration(SchemaMigration):
         for ct in ct_qset:
             self.process_model(ct)
 
+
     def process_model(self, ct):
+
+        print 'PROCESSSING: ' + ct.name
 
         object_batch = []
 
@@ -74,7 +80,6 @@ class Migration(SchemaMigration):
             return
 
         if m.objects.all()[:1]:
-
             return
 
         try:
@@ -86,12 +91,10 @@ class Migration(SchemaMigration):
         no_ix_df = no_nan_df.reset_index(level=0,drop=True)
         data_dict = no_ix_df.transpose().to_dict()
 
-        try:
+        with transaction.atomic():
+
             for k,v in data_dict.iteritems():
                 m.objects.create(**v)
-        except IntegrityError:
-            self.fk_error_batch.append(ct)
-            return
 
     def backwards(self, orm):
         pass
