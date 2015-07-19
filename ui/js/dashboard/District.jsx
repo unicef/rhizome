@@ -36,7 +36,7 @@ var District = React.createClass({
       .indexBy('id')
       .mapValues(ind => {
         var bounds = _(ind.bound_json)
-          .reject(b => b.bound_name === 'inavlid')
+          .reject(b => b.bound_name === 'invalid')
           .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
           .sortBy('1');
 
