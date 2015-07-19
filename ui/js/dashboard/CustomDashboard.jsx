@@ -10,6 +10,10 @@ var Chart = require('component/Chart.jsx');
 function getOptions(chart, campaign, data) {
   var opts = {};
 
+  if (chart.hasOwnProperty('yFormat')) {
+    opts.yFormat = _.isString(chart.yFormat) ? d3.format(chart.yFormat) : chart.xFormat;
+  }
+
   switch (chart.type) {
     case 'ScatterChart':
       opts.x = _.property('[' + chart.indicators[0] + ']');
@@ -25,6 +29,16 @@ function getOptions(chart, campaign, data) {
 
     case 'ChoroplethMap':
       opts.value = _.property('.properties[' + chart.indicators[0] + ']');
+      break;
+
+    case 'BarChart':
+      opts.y = _.property((chart.groupBy === 'indicator') ?
+        'region.name' :
+        'indicator.short_name'
+      );
+
+      opts.xFormat = opts.yFormat;
+      opts.yFormat = String;
       break;
 
     case 'ColumnChart':
@@ -53,10 +67,6 @@ function getOptions(chart, campaign, data) {
 
     default:
       break;
-  }
-
-  if (chart.hasOwnProperty('yFormat')) {
-    opts.yFormat = _.isString(chart.yFormat) ? d3.format(chart.yFormat) : chart.xFormat;
   }
 
   return opts;
