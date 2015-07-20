@@ -77,7 +77,8 @@ function legend() {
 				.attr({
 					'x' : _size + _padding,
 					'y' : _size / 2
-				});
+				})
+        .style('font-size', Math.max(_size * 7 / 9, 9));
 
 			series.exit()
 				.transition()
