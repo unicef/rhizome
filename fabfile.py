@@ -124,8 +124,8 @@ def _push_to_remote():
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py syncdb --noinput --settings=settings")
-        run("python manage.py migrate --noinput --merge --settings=settings")
+        run("python manage.py syncdb --settings=settings")
+        run("python manage.py migrate --merge --settings=settings")
 
         # echo "== BUILDING DATABASE =="
         run("bash bin/build_db.sh")

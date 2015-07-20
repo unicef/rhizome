@@ -11,10 +11,6 @@ class Migration(SchemaMigration):
 
         db.execute('''
 
-            INSERT INTO auth_user
-            (id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined)
-            SELECT 1,'john',NOW(),CAST(1 AS BOOLEAN),'john','john','kofi','dingej@gmail.com',CAST(1 AS BOOLEAN),CAST(1 AS BOOLEAN),now();
-
             INSERT INTO source
             (id, source_name, source_description)
             SELECT 1, 'initialize_db','initialize_db';
