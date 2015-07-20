@@ -3,30 +3,49 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from pandas import read_excel,notnull
+from xlrd.biffh import XLRDError
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
+from django.db.utils import IntegrityError
+
+from datapoints.models import *
+from source_data.models import *
+from django.db import transaction
+from django.contrib.auth.models import Group
 
 
 class Migration(SchemaMigration):
+# DELETE from south_migrationhistory where migration = '0114_load_fake_data';
+
 
     def forwards(self, orm):
 
-        db.execute('''
+        with transaction.atomic():
+            user_id = User.objects.create_user('john','dingeejgmail.com', 'john').id
+            source_id = Source.objects.create(**{'id':1,'source_name': 'test'
+                ,'source_description': 'test1'}).id
 
-            INSERT INTO auth_user_groups
-            (user_id, group_id)
-            SELECT 1,1
-            WHERE NOT EXISTS (
-                SELECT 1 FROM auth_user_groups
-                WHERE user_id = 1
-                AND group_id = 1
-            );
+            cache_job_id = -1 # CREATE IN EARLIER MIGRATION #
+            status_id = ProcessStatus.objects.create(**{
+                    'status_text':'test',
+                    'status_description':'test'}).id
 
-            INSERT INTO indicator_permission
-            (group_id, indicator_id)
-            SELECT 1, id FROM indicator;
+            document_id = Document.objects.create(**{
+                'doc_text':'test',
+                'created_by_id': user_id,
+                'source_id': source_id,
+                'guid': 'test'}).id
 
-        ''')
+            sdp_id = SourceDataPoint.objects.create(**{
+                'id': -1,
+                'document_id': document_id,
+                'row_number': 0,
+                'source_id': source_id,
+                'status_id': status_id}).id
 
-
+            group_id = Group.objects.create(**{
+                'name':'can_see_all_indicators'}).id
 
     def backwards(self, orm):
         pass
@@ -87,7 +106,7 @@ class Migration(SchemaMigration):
         },
         u'datapoints.cachejob': {
             'Meta': {'ordering': "('-date_attempted',)", 'object_name': 'CacheJob', 'db_table': "'cache_job'"},
-            'date_attempted': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 7, 20, 0, 0)'}),
+            'date_attempted': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 6, 28, 0, 0)'}),
             'date_completed': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_error': ('django.db.models.fields.BooleanField', [], {}),
@@ -273,9 +292,11 @@ class Migration(SchemaMigration):
         },
         u'datapoints.regionpolygon': {
             'Meta': {'object_name': 'RegionPolygon', 'db_table': "'region_polygon'"},
-            'geo_json': ('jsonfield.fields.JSONField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Region']", 'unique': 'True'})
+            'polygon': ('jsonfield.fields.JSONField', [], {}),
+            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Region']", 'unique': 'True'}),
+            'shape_area': ('django.db.models.fields.FloatField', [], {}),
+            'shape_len': ('django.db.models.fields.FloatField', [], {})
         },
         u'datapoints.regiontype': {
             'Meta': {'object_name': 'RegionType', 'db_table': "'region_type'"},
@@ -325,7 +346,7 @@ class Migration(SchemaMigration):
         },
         u'source_data.document': {
             'Meta': {'ordering': "('-id',)", 'unique_together': "(('docfile', 'doc_text'),)", 'object_name': 'Document'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 7, 20, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 6, 28, 0, 0)'}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'doc_text': ('django.db.models.fields.TextField', [], {'null': 'True'}),
             'docfile': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True'}),
@@ -346,7 +367,7 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('source', 'source_guid', 'indicator_string'),)", 'object_name': 'SourceDataPoint', 'db_table': "'source_datapoint'"},
             'campaign_string': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'cell_value': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 7, 20, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 6, 28, 0, 0)'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['source_data.Document']"}),
             'guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
