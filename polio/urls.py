@@ -27,13 +27,13 @@ v1_api.register(RegionPolygonResource())
 
 urlpatterns = patterns('',
 
+    ## TASTYPIE API ##
+    (r'^api/', include(v1_api.urls)),
+
     ## V2 API ##
     url(r'^api/v2/(?P<content_type>\w+)/$', login_required(views.v2_api), name='v2_api'),
     url(r'^api/v2/(?P<content_type>\w+)/metadata/$', login_required(views.v2_meta_api),
         name='v2_meta_api'),
-
-    ## TASTYPIE API ##
-    (r'^api/', include(v1_api.urls)),
 
     ## HOME PAGE
     url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),

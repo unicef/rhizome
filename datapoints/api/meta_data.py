@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
-
+import json
 
 class GeoJsonResult(object):
     region_id = int()
@@ -34,7 +34,7 @@ class CustomCache(SimpleCache):
 class RegionPolygonResource(BaseNonModelResource):
     '''
     A non model resource that allows us to query for shapefiles based on a
-    colletion of parameters. 
+    colletion of parameters.
     '''
 
     region_id = fields.IntegerField(attribute = 'region_id')
@@ -69,22 +69,23 @@ class RegionPolygonResource(BaseNonModelResource):
 
         features = []
 
+        print '==='
+        print len(polygon_values_list)
+        print '==='
+
         for p in polygon_values_list:
 
-            ## this should be cleaned up in the ingestion ##
-            ## so i don't need to process data on request ##
-            cleaned_shape_list = []
-            shape = p["polygon"].replace('\"[[','').replace(']]\"','')
-            shape_list = [pt for pt in shape.split('], [')]
+            geo_dict = json.loads(p['geo_json'])
 
-            for i,(pt) in enumerate(shape_list):
-                lon_lat_list = [float(x.replace('[','').replace(']','')) for x in pt.split(', ')]
-                cleaned_shape_list.append(lon_lat_list)
+            print type(geo_dict)
+            print geo_dict
 
             geo_obj = GeoJsonResult()
-            geo_obj.type = "Feature"
-            geo_obj.properties = { "region_id": p['region_id'] }
-            geo_obj.geometry = { "type": "Polygon", "coordinates": [cleaned_shape_list] }
+            geo_obj.region_id = p['region_id']
+            geo_obj.geometry = geo_dict['geometry']
+            geo_obj.type = geo_dict['type']
+            geo_obj.properties = geo_dict['properties']
+                       #
             features.append(geo_obj)
 
         return features
