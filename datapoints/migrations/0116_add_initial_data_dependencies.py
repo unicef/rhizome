@@ -29,12 +29,11 @@ class Migration(SchemaMigration):
 
             INSERT INTO source_datapoint
             (id, document_id, row_number, source_id, status_id, campaign_string, indicator_string, region_code, source_guid, guid, created_at)
-            SELECT 1,1,1,1,1,'','','','initialize_db','initialize_db',NOW();
+            SELECT -1,1,1,1,1,'','','','initialize_db','initialize_db',NOW();
 
             INSERT INTO auth_group
             (id, name)
             SELECT 1, 'can_see_all_indicators';
-
 
         ''')
 

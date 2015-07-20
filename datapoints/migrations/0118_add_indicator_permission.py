@@ -13,10 +13,10 @@ class Migration(SchemaMigration):
 
             INSERT INTO auth_user_groups
             (user_id, group_id)
-            SELECT -1,1
+            SELECT 1,1
             WHERE NOT EXISTS (
                 SELECT 1 FROM auth_user_groups
-                WHERE user_id = -1
+                WHERE user_id = 1
                 AND group_id = 1
             );
 
