@@ -139,6 +139,7 @@ function indicatorsTree(q) {
 
 		fetch1(q).then(function (indicators) {
 			fetch2().then(function(tags) {
+				tags.objects = _.sortBy(tags.objects,'tag_name').reverse();
 				var tags_map = {};
 				_.each(tags.objects, function(t) {
 							tags_map[t.id] = t;
@@ -176,13 +177,14 @@ function indicatorsTree(q) {
 				if (otherTag.children.length > 0) {
 					tags.objects.push(otherTag);
 				}
-
+                //tags.objects.reverse();
 				// sort indicators with each tag
 				_.each(tags.objects, function(t) {
 					t.children = _.sortBy(t.children, 'title');
 				});
 
 				tags.objects = treeify(tags.objects, 'id');
+				tags.objects.reverse();
 				tags.flat = indicators.objects;
 				fulfill(tags);
 			});

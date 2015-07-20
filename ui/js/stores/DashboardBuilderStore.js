@@ -37,7 +37,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	 else {
 	 	api.get_dashboard({id:id})
 	 		.then(function (response) {
-	 		    console.log(response.objects[0]);
+	 		    
 	 			self.data.dashboard = response.objects[0];
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
 	 			self.data.dashboardTitle = 	response.objects[0].title;
@@ -83,7 +83,6 @@ var DashboardBuilderStore = Reflux.createStore({
 	  this.trigger(this.data);
 	},
 	onMoveForward:function(index){
-	  console.log('forward');
 	  var newIndex;
 	  if(index==this.data.dashboard.charts.length -1)
 	  {
@@ -120,7 +119,6 @@ var DashboardBuilderStore = Reflux.createStore({
          default_office_id: null,
          dashboard_json:JSON.stringify(this.data.dashboard.charts)
        };
-       console.log(this.data.dashboard);
        delete this.data.dashboard.charts;
        var dj = JSON.stringify(this.data.dashboard.dashboard_json);
        this.data.dashboard.id = '';

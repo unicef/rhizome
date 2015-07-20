@@ -29,6 +29,8 @@ var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
 
+window.perf = React.addons.Perf;
+
 module.exports = React.createClass({
 	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore"),Reflux.connect(DashboardStore,"dashboardStore"),Reflux.ListenerMixin],
 	componentWillMount:function(){
@@ -45,7 +47,9 @@ module.exports = React.createClass({
 	getInitialState:function(){
 	  return {
 	    chartBuilderActive:false,
-	    chartBuilderindex:null
+	    chartBuilderindex:null,
+	    title:'',
+	    description:''
 	  }
 	},
 	editChart:function(index){
@@ -140,12 +144,20 @@ module.exports = React.createClass({
      if(this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard)
      {
      	DashboardActions.setDashboard({dashboard:this.state.store.dashboard});
+     	this.setState({title:this.state.store.dashboardTitle,description:this.state.store.dashboardDescription})
      }
+
     },
     _updateTitle : function(e){
-    DashboardBuilderActions.updateTitle(e.currentTarget.value);
+    	 this.setState({title:e.currentTarget.value});
+
+    	 //clearTimeout(this.timer);
+	     //this.timer = setTimeout(function(){
+	     	DashboardBuilderActions.updateTitle(e.currentTarget.value);
+	    // }.bind(this), 1000);
     },
     _updateDescription: function(e){
+    	this.setState({description:e.currentTarget.value});
       DashboardBuilderActions.updateDescription(e.currentTarget.value);
     },
     _handleSubmit: function(e){
@@ -190,7 +202,6 @@ module.exports = React.createClass({
           .uniq()
           .value()
       );
-
       var data = dashboardInit(
         dashboardDef,
         this.state.dataStore.data,
@@ -200,7 +211,6 @@ module.exports = React.createClass({
         indicators,
         GeoStore.features
       );
-      console.log(data);
       var dashboardProps = {
         campaign    : campaign,
         dashboard   : dashboardDef,
@@ -238,14 +248,16 @@ module.exports = React.createClass({
       //       </tr>
       //     );
       //  });
-
+       var addDashboardLinkContainer = (<div className="empty-dashboard-add-container"><a role='button' className='button' onClick={this.newChart}>
+		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
+		          </a></div>);
 	   var dashboardBuilderContainer = (
 	         <div>
 	           <div classNameName='clearfix'></div>
 
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
-					<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+					<input type="text" value={this.state.title} onChange={this._updateTitle} />
 	           </div>
 
 	           <form className='inline no-print'>
@@ -265,7 +277,7 @@ module.exports = React.createClass({
 	               </div>
 	             </div>
 	           </form>
-
+	           {this.state.store.dashboard.charts.length?null:addDashboardLinkContainer}
 	           {dashboard}
 
 	           <div className="dashboard-footer">
@@ -283,7 +295,7 @@ module.exports = React.createClass({
 		          <span>
 		          	&ensp;
 			          Description
-			          <input type="text" className="descriptionField" value={this.state.store.dashboardDescription} onChange={this._updateDescription} />
+			          <input type="text" className="descriptionField" value={this.state.description} onChange={this._updateDescription} />
 		          </span>
 
 		          <span>
