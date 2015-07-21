@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 import os
 import sys
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'prod_settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
