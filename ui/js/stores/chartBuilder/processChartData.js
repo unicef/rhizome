@@ -220,7 +220,6 @@ module.exports = {
       var index = _.indexBy(data,'region');
       var chartOptions = {
               aspect: 1,
-              domain: _.constant([0, 0.1]),
               name  : d => _.get(regionsIndex, '[' + d.properties.region_id + '].name', ''),
               border: border.objects.features
               };
