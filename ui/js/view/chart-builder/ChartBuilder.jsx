@@ -15,7 +15,7 @@ var ChartSelect          = require('./ChartSelect.jsx');
 var List                 = require('component/list/List.jsx');
 var MenuItem             = require('component/MenuItem.jsx');
 var RadioGroup           = require('component/radio-group/RadioGroup.jsx');
-
+var TitleInput = require('component/TitleInput.jsx');
 
 function findMatches(item, re) {
   var matches = [];
@@ -49,12 +49,23 @@ function campaignDisplayFormat(campaign) {
 
 module.exports = React.createClass({
   mixins: [Reflux.connect(ChartBuilderStore,"store")],
+    getInitialState:function(){
+    return {
+      title:''
+    }
+  },
   componentDidMount:function(){
      ChartBuilderActions.initialize(this.props.chartDef,this.props.region,this.props.campaign);
+     this.setState({title:this.props.chartDef.title});
   },
-  _updateTitle: function(e){
-    ChartBuilderActions.updateTitle(e.target.value);
-  },
+  _updateTitle : function(newText){
+       //this.setState({title:e.currentTarget.value});
+
+       //clearTimeout(this.timer);
+       //this.timer = setTimeout(function(){
+       ChartBuilderActions.updateTitle(newText);
+      // }.bind(this), 1000);
+    },
 
   _updateDescription: function(e){
     ChartBuilderActions.updateDescription(e.target.value);
@@ -114,8 +125,7 @@ module.exports = React.createClass({
 
      var leftPage = (<div className="left-page">
      	                   <div className="titleDiv">Title</div>
-     	                   <input type="text" value={this.state.store.title} onChange={this._updateTitle}/>
-
+                        <TitleInput class="descriptionField" initialText={this.state.title} save={this._updateTitle} />
      	                   <div className="titleDiv">Indicators</div>
 
                          <IndicatorDropdownMenu

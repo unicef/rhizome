@@ -282,7 +282,7 @@ module.exports = Reflux.createStore({
 	},
 	onUpdateTitle:function(value){
 	   this.data.title = value;
-	   this.trigger(this.data);
+	   //this.trigger(this.data);
 	},
 	onUpdateDescription:function(value){
 	   this.data.description = value;

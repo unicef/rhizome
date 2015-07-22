@@ -24,6 +24,7 @@ var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
+var TitleInput = require('component/TitleInput.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
@@ -148,17 +149,25 @@ module.exports = React.createClass({
      }
 
     },
-    _updateTitle : function(e){
+    _updateTitle : function(newText){
+    	 //this.setState({title:e.currentTarget.value});
+
+    	 //clearTimeout(this.timer);
+	     //this.timer = setTimeout(function(){
+	     	DashboardBuilderActions.updateTitle(newText);
+	    // }.bind(this), 1000);
+    },
+    _updateNewTitle : function(e){
     	 this.setState({title:e.currentTarget.value});
 
     	 //clearTimeout(this.timer);
 	     //this.timer = setTimeout(function(){
-	     	DashboardBuilderActions.updateTitle(e.currentTarget.value);
+	     DashboardBuilderActions.updateTitle(e.currentTarget.value);
 	    // }.bind(this), 1000);
     },
-    _updateDescription: function(e){
-    	this.setState({description:e.currentTarget.value});
-      DashboardBuilderActions.updateDescription(e.currentTarget.value);
+    _updateDescription: function(newText){
+    	//this.setState({description:e.currentTarget.value});
+      DashboardBuilderActions.updateDescription(newText);
     },
     _handleSubmit: function(e){
       e.preventDefault();
@@ -169,7 +178,7 @@ module.exports = React.createClass({
 	     return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
 	  				<h1>Create a New Custom Dashboard</h1>
 	  				<div className="titleDiv">Dashboard Title</div>
-	  				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+	  				<input type="text" value={this.state.title} onChange={this._updateNewTitle} />
 	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard}  >Next</a>:null}
 	             </form>);
 	  }
@@ -257,7 +266,8 @@ module.exports = React.createClass({
 
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
-					<input type="text" value={this.state.title} onChange={this._updateTitle} />
+					<TitleInput initialText={this.state.title} save={this._updateTitle} />
+					
 	           </div>
 
 	           <form className='inline no-print'>
@@ -295,7 +305,8 @@ module.exports = React.createClass({
 		          <span>
 		          	&ensp;
 			          Description
-			          <input type="text" className="descriptionField" value={this.state.description} onChange={this._updateDescription} />
+			      
+		              <TitleInput class="descriptionField" initialText={this.state.description} save={this._updateDescription} />
 		          </span>
 
 		          <span>
