@@ -422,11 +422,23 @@ button,
 .login {
 	background-color: $oil;
 
-	form {
-		background: url('/static/img/RhizomeLogoWhOnBk-md.png') no-repeat;
-		padding-top: 170px;
-	    max-width: 300px;
-	    margin: 70pt auto;
+  .wrapper {
+		background: url('/static/img/RhizomeLogoWhOnBk-md.png') no-repeat top center;
+		padding-top: 150px;
+    margin: 70pt auto;
+
+    p {
+      color: white;
+      max-width: 45em;
+      text-align: center;
+      font-size: 1.1em;
+      margin: 0 auto 30px auto;
+    }
+  }
+
+  form {
+    max-width: 300px;
+    margin: 0 auto;
 
 		label {
 			color: $white;
