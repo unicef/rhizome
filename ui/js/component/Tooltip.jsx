@@ -53,6 +53,10 @@ var Tooltip = React.createClass({
   },
 
   _reposition : function () {
+    if (!this.isMounted()) {
+      return;
+    }
+
     var el    = dom.dimensions(React.findDOMNode(this));
     var state = { align : 'left', orient : 'top' };
 

@@ -96,7 +96,9 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 			.domain(range)
 			.range([0, w]);
 
-		var x = _.flow(_.property('x0'), xScale);
+		var x = function (d) {
+      return xScale(d.x0);
+    }
 
 		var width = function (d) {
 			var x0 = d.x0;
@@ -128,7 +130,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 		var colorScale = color.scale(_.map(stacked, options.name));
 		var fill = _.flow(options.name, colorScale);
 
-		var svg    = this._svg;
+    var svg = this._svg;
 
 
 		var canvasH = h + margin.top + margin.bottom;

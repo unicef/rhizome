@@ -18,6 +18,10 @@ var RegionTitleMenu = React.createClass({
       filter : ''
     };
   },
+  shouldComponentUpdate: function(nextProps, nextState) {
+    
+      return (nextProps.regions.length !== this.props.regions.length || nextProps.selected.id !==this.props.selected.id);
+  },
 
   render : function () {
     var region = this.props.selected.name;

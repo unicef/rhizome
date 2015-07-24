@@ -24,10 +24,13 @@ var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
+var TitleInput = require('component/TitleInput.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
+
+window.perf = React.addons.Perf;
 
 module.exports = React.createClass({
 	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore"),Reflux.connect(DashboardStore,"dashboardStore"),Reflux.ListenerMixin],
@@ -45,7 +48,9 @@ module.exports = React.createClass({
 	getInitialState:function(){
 	  return {
 	    chartBuilderActive:false,
-	    chartBuilderindex:null
+	    chartBuilderindex:null,
+	    title:'',
+	    description:''
 	  }
 	},
 	editChart:function(index){
@@ -140,13 +145,29 @@ module.exports = React.createClass({
      if(this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard)
      {
      	DashboardActions.setDashboard({dashboard:this.state.store.dashboard});
+     	this.setState({title:this.state.store.dashboardTitle,description:this.state.store.dashboardDescription})
      }
+
     },
-    _updateTitle : function(e){
-    DashboardBuilderActions.updateTitle(e.currentTarget.value);
+    _updateTitle : function(newText){
+    	 //this.setState({title:e.currentTarget.value});
+
+    	 //clearTimeout(this.timer);
+	     //this.timer = setTimeout(function(){
+	     	DashboardBuilderActions.updateTitle(newText);
+	    // }.bind(this), 1000);
     },
-    _updateDescription: function(e){
-      DashboardBuilderActions.updateDescription(e.currentTarget.value);
+    _updateNewTitle : function(e){
+    	 this.setState({title:e.currentTarget.value});
+
+    	 //clearTimeout(this.timer);
+	     //this.timer = setTimeout(function(){
+	     DashboardBuilderActions.updateTitle(e.currentTarget.value);
+	    // }.bind(this), 1000);
+    },
+    _updateDescription: function(newText){
+    	//this.setState({description:e.currentTarget.value});
+      DashboardBuilderActions.updateDescription(newText);
     },
     _handleSubmit: function(e){
       e.preventDefault();
@@ -157,7 +178,7 @@ module.exports = React.createClass({
 	     return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
 	  				<h1>Create a New Custom Dashboard</h1>
 	  				<div className="titleDiv">Dashboard Title</div>
-	  				<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+	  				<input type="text" value={this.state.title} onChange={this._updateNewTitle} />
 	  	{this.state.store.dashboardTitle.length?<a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard}  >Next</a>:null}
 	             </form>);
 	  }
@@ -190,7 +211,6 @@ module.exports = React.createClass({
           .uniq()
           .value()
       );
-
       var data = dashboardInit(
         dashboardDef,
         this.state.dataStore.data,
@@ -200,7 +220,6 @@ module.exports = React.createClass({
         indicators,
         GeoStore.features
       );
-      console.log(data);
       var dashboardProps = {
         campaign    : campaign,
         dashboard   : dashboardDef,
@@ -238,14 +257,17 @@ module.exports = React.createClass({
       //       </tr>
       //     );
       //  });
-
+       var addDashboardLinkContainer = (<div className="empty-dashboard-add-container"><a role='button' className='button' onClick={this.newChart}>
+		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
+		          </a></div>);
 	   var dashboardBuilderContainer = (
 	         <div>
 	           <div classNameName='clearfix'></div>
 
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
-					<input type="text" value={this.state.store.dashboardTitle} onChange={this._updateTitle} />
+					<TitleInput initialText={this.state.title} save={this._updateTitle} />
+					
 	           </div>
 
 	           <form className='inline no-print'>
@@ -265,7 +287,7 @@ module.exports = React.createClass({
 	               </div>
 	             </div>
 	           </form>
-
+	           {this.state.store.dashboard.charts.length?null:addDashboardLinkContainer}
 	           {dashboard}
 
 	           <div className="dashboard-footer">
@@ -283,7 +305,8 @@ module.exports = React.createClass({
 		          <span>
 		          	&ensp;
 			          Description
-			          <input type="text" className="descriptionField" value={this.state.store.dashboardDescription} onChange={this._updateDescription} />
+			      
+		              <TitleInput class="descriptionField" initialText={this.state.description} save={this._updateDescription} />
 		          </span>
 
 		          <span>

@@ -285,21 +285,6 @@ class RegionPolygon(models.Model):
     class Meta:
         db_table = 'region_polygon'
 
-class RegionHeirarchy(models.Model):
-    '''
-    Legaay model storing the region full region herirachy.  This model is
-    only used by the get_regions_to_return_from_url() method int he /geo
-    endpoint and should be converted to use the fn_get_authorized_regions_by_user
-    sproc.
-    '''
-
-    region_id = models.IntegerField()
-    contained_by_region_id = models.IntegerField()
-    region_type_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'region_heirarchy_cache'
-        managed = False
 
 class CampaignType(models.Model):
     '''

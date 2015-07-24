@@ -20,7 +20,7 @@ from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-
+from source_data.etl_tasks.pull_prod_db_from_api import DBRefreshTask
 
 ### File Upload Below ###
 

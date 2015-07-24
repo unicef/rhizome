@@ -45,6 +45,9 @@ var CampaignDropdownMenu = React.createClass({
       pattern : ''
     };
   },
+  shouldComponentUpdate: function(nextProps, nextState) {
+      return (nextProps.campaigns.length !== this.props.campaigns.length || nextProps.text !==this.props.text);
+  },
 
   render : function () {
     var self = this;

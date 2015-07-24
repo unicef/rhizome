@@ -99,8 +99,41 @@ function series(chart, data) {
     .value();
 }
 
-function column(chart, data) {
+function stackedData(chart, data) {
   var s = series(chart, data);
+  var x;
+
+  switch (chart.type) {
+    case 'BarChart':
+      x = chart.groupBy === 'indicator' ? 'region.name' : 'indicator.short_name';
+      break;
+
+    default:
+      x = 'campaign.start_date';
+      break;
+  }
+
+  var domain = _(data)
+    .filter(d => _.isFinite(d.value))
+    .pluck(x)
+    .uniq()
+    .value();
+
+  _.each(s, function (dataSeries) {
+    var missing = _.difference(domain, _.pluck(dataSeries.values, x));
+
+    _.each(missing, function (xval) {
+      var o = { value : 0 };
+      _.set(o, x, xval);
+      dataSeries.values.push(o);
+    })
+  });
+
+  return s;
+}
+
+function column(chart, data) {
+  var s = stackedData(chart, data);
   var stack = d3.layout.stack()
     .offset('zero')
     .values(d => d.values)
@@ -128,7 +161,7 @@ function scatter(chart, data, campaign) {
 }
 
 var process = {
-  'BarChart'        : series,
+  'BarChart'        : stackedData,
   'ChoroplethMap'   : choropleth,
   'ColumnChart'     : column,
   'HeatMapChart'    : series,

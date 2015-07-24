@@ -10,6 +10,9 @@ var Tooltip        = require('component/Tooltip.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
+var formatUtil = require('util/format');
+var legend     = require('chart/renderer/legend');
+
 var District = React.createClass({
   getInitialState : function () {
     return {
@@ -34,7 +37,7 @@ var District = React.createClass({
       .indexBy('id')
       .mapValues(ind => {
         var bounds = _(ind.bound_json)
-          .reject(b => b.bound_name === 'inavlid')
+          .reject(b => b.bound_name === 'invalid')
           .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
           .sortBy('1');
 
@@ -51,6 +54,13 @@ var District = React.createClass({
     var scale = d3.scale.ordinal()
       .domain(['bad', 'okay', 'ok', 'good'])
       .range(['#AF373E', '#959595', '#959595','#2B8CBE']);
+
+    var lgnd = legend()
+      .size(14)
+      .scale(d3.scale.ordinal()
+        .domain(['bad', 'ok', 'good'])
+        .range(['#AF373E', '#959595', '#2B8CBE'])
+      );
 
     // Clean the data by first removing any data whose values are not finite -
     // i.e. undefined - or whose indicators have no target bounds defined, then
@@ -83,6 +93,7 @@ var District = React.createClass({
       fontSize         : 14,
       headers          : headers,
       scale            : d => scale(_.get(targets, d.indicator.id, _.noop)(d.value)),
+      legend           : lgnd,
       onMouseMove      : this._onMouseMove,
       onMouseOut       : this._onMouseOut,
       onColumnHeadOver : this._onHeaderOver,
@@ -143,10 +154,6 @@ var District = React.createClass({
       .filter(datum => datum.indicator.short_name === column)
       .clone();
 
-    var format = function (d) {
-      return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
-    };
-
     var evt   = d3.event;
     var total = _(this.props.data['district-heat-map'])
       .map(s => ({
@@ -160,8 +167,8 @@ var District = React.createClass({
       var tip = React.createElement(HeatMapTooltip, {
         column,
         data,
-        format,
         total,
+        format    : formatUtil.general,
         indicator : d.indicator,
         row       : d.region.name,
         value     : d.value

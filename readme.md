@@ -49,9 +49,17 @@ you can run them from the copies installed in `node_modules` by running
 
 ## Setting up the database
 
+Our backend is built off of postgres.  In order to quickly install postgres and
+get started on building the application, either install postgres with homebrew
+or with http://postgresapp.com/.
+
+The current settings file ( which you should edit especially if deploying to
+a a remote server ;-) ) has the password for the django login to: w3b@p01i0
+so feel free to set the djangoapp password to that when getting started!
+
     $ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
-    Password: 
-    $ createdb --owner djangoapp polio
+    Password:
+    $ createdb polio --owner djangoapp
     $ python manage.py syncdb
     $ python manage.py migrate
 

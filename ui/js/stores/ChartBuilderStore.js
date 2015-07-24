@@ -136,7 +136,7 @@ var chartOptions = {
 		values  : _.property('values'),
 		x       : _.property('campaign.start_date'),
 		y       : _.property('value'),
-		yFormat : d3.format('%')
+		yFormat : d3.format(',.0f')
 	};
 module.exports = Reflux.createStore({
 	data: {
@@ -163,6 +163,21 @@ module.exports = Reflux.createStore({
 		            }
 		            return timeRadios;
 					},
+
+    formatRadios : function () {
+      return [{
+        value : ',.0f',
+        title : 'Integer'
+      },{
+        value : ',.4f',
+        title : 'Real Number'
+      },{
+        value : '%',
+        title : 'Percentage'
+      }]
+    },
+    formatRadioValue : 0,
+    xFormatRadioValue : 0,
 		timeRadioValue:2,
 		chartTypes:require('./chartBuilder/chartDefinitions'),
 		selectedChart:0,
@@ -174,6 +189,10 @@ module.exports = Reflux.createStore({
 		yAxis:0,
 		loading:false,
 		chartDefinition:function(){
+      var formatOpts = this.formatRadios();
+      var xFormat = formatOpts[this.xFormatRadioValue].value;
+      var yFormat = formatOpts[this.formatRadioValue].value;
+
 			return {
 			    title: this.title,
 				type: this.chartTypes[this.selectedChart].name,
@@ -182,6 +201,8 @@ module.exports = Reflux.createStore({
 				groupBy:this.groupByRadios[this.groupByRadioValue].value,
 				x:this.xAxis,
 				y:this.yAxis,
+        xFormat: xFormat,
+        yFormat: yFormat,
 				timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
 				id:this.id
 			};
@@ -191,7 +212,9 @@ module.exports = Reflux.createStore({
 	getInitialState: function(){
 	   return this.data;
 	},
-	onInitialize: function(chartDef){
+	onInitialize: function(chartDef,region,campaign){
+	this.data.regionSelected = region;
+	this.data.campaignSelected = campaign;
     this.resetChartDef();
 
 	var self = this;
@@ -259,7 +282,7 @@ module.exports = Reflux.createStore({
 	},
 	onUpdateTitle:function(value){
 	   this.data.title = value;
-	   this.trigger(this.data);
+	   //this.trigger(this.data);
 	},
 	onUpdateDescription:function(value){
 	   this.data.description = value;
@@ -280,6 +303,18 @@ module.exports = Reflux.createStore({
 	   this.trigger(this.data);
 	   this.getChartData();
 	},
+  onSelectFormatRadio : function (value) {
+    this.data.formatRadioValue = value;
+    this.data.chartOptions.yFormat = d3.format(this.data.formatRadios()[value].value);
+    this.trigger(this.data);
+    this.getChartData();
+  },
+  onSelectXFormatRadio : function (value) {
+    this.data.xFormatRadioValue = value;
+    this.data.chartOptions.xFormat = d3.format(this.data.formatRadios()[value].value);
+    this.trigger(this.data);
+    this.getChartData();
+  },
 	onSelectChart: function(value){
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
@@ -310,7 +345,7 @@ module.exports = Reflux.createStore({
        this.data.xAxis = chartDef.x;
        this.data.yAxis = chartDef.y;
        this.data.id = chartDef.id;
-       
+
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
        	  return self._indicatorIndex[id];
@@ -318,8 +353,12 @@ module.exports = Reflux.createStore({
        this.data.title = chartDef.title;
        this.data.regionRadioValue = _.findIndex(this.data.regionRadios,{value:chartDef.regions});
        this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
+       this.data.formatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'yFormat', ',.0f') });
+       this.data.xFormatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'xFormat', ',.0f') });
+
        var timeString = JSON.stringify(chartDef.timeRange);
        var timeValue;
+
        if(timeString=='{"months":2}'){
        timeValue = "3Months";
        } else if(timeString=='{"years":1}'){
@@ -329,7 +368,10 @@ module.exports = Reflux.createStore({
        } else {
         timeValue = "allTime";
        }
-       this.data.timeRadioValue = _.findIndex(this.data.timeRadios(),{value:timeValue});
+
+       // Ensure non-negative value for timeRadioValue because findIndex might
+       // return -1 if it can't find the timeValue in the array of options
+       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{value:timeValue}), 0);
        this.trigger(this.data);
 	},
 	resetChartDef:function(){
