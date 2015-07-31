@@ -120,7 +120,7 @@ class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Indicator
     success_url = '/ufadmin/indicators'
-    template_name = 'indicators/update.html'
+    template_name = 'indicators/upsert.html'
     permission_required = 'datapoints.change_indicator'
 
     ###############

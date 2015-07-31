@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2> THIS IS THE UPSERT HTML </h2>
+
+
+<div class="row">
+	<div class="small-centered large-centered large-6 small-6 columns">
+		<form action="" method="post">
+			<h2>Edit Indicator</h2>
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button type="submit">Save Indicator</button>
+		</form>
+		<!--  -->
+		<div v-component="uf-field-mapping" v-with="document_id:document_id"></div>
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+Polio.FieldMapping('#main',1064);
+</script>
+{% endblock %}
