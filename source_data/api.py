@@ -125,7 +125,7 @@ class EtlTask(object):
             'finish_odk_jar' :self.finish_odk_jar,
             'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
-            'refresh_metadata': self.refresh_metadata,
+            'refresh_metadata': self.refresh_metadata_wrapper,
             'odk_transform': self.odk_transform,
             'get_odk_forms_to_process': self.get_odk_forms_to_process,
             }
@@ -176,7 +176,7 @@ class EtlTask(object):
 
         return None, data
 
-    def refresh_metadata(self):
+    def refresh_metadata_wrapper(self):
         '''
         Certain metadata resources have additional iformation that is not
         stored directly at that model.  For instance, indicators have bounds
@@ -195,8 +195,7 @@ class EtlTask(object):
         '''
 
         try:
-            indicator_cache_data = cache_tasks.cache_indicator_abstracted()
-            user_cache_data = cache_tasks.cache_user_abstracted()
+            meta_results = refresh_metadata
         except Exception as err:
             return err, None
 

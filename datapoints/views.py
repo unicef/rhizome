@@ -311,6 +311,9 @@ def parse_url_args(request,keys):
 
 
 def refresh_metadata(request):
+    '''
+    This is what happens when you click the "refresh_metadata" button
+    '''
 
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
     user_cache_data = cache_tasks.cache_user_abstracted()

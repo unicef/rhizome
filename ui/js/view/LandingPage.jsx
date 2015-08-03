@@ -76,9 +76,7 @@ function _campaignRow(campaign, i) {
 
   return (
     <tr className={cls} key={campaign.id}>
-      <td>{campaign.title}</td>
-      <td>{country}</td>
-      <td>{district}</td>
+      <td>100%</td>
       <td>{_dashboardSelect(others)}</td>
     </tr>
   );
@@ -107,7 +105,7 @@ module.exports = React.createClass({
     };
   },
 
-  showAllCampaigns: function(e) {
+    showAllCampaigns: function(e) {
     this.setState({ visibleCampaigns: Infinity });
     e.preventDefault();
   },
@@ -184,7 +182,7 @@ module.exports = React.createClass({
 
           <div className="row">
             <div className="small-12 columns">
-              
+
               <p className="pageWelcome">
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
               </p>
@@ -214,7 +212,7 @@ module.exports = React.createClass({
             Rhizome DB supports the polio programme’s critical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.
           </p>
         </div>
-        
+
       </div>
     );
   }
