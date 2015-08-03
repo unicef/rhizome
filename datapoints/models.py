@@ -278,7 +278,7 @@ class RegionPolygon(models.Model):
     '''
 
     region = models.ForeignKey(Region,unique=True)
-    geo_json = JSONField()
+    polygon = JSONField()
 
     class Meta:
         db_table = 'region_polygon'

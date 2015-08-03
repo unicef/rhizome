@@ -286,7 +286,7 @@ class Migration(SchemaMigration):
         },
         u'datapoints.regionpolygon': {
             'Meta': {'object_name': 'RegionPolygon', 'db_table': "'region_polygon'"},
-            'geo_json': ('jsonfield.fields.JSONField', [], {}),
+            'polygon': ('jsonfield.fields.JSONField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['datapoints.Region']", 'unique': 'True'})
         },
