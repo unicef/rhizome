@@ -77,7 +77,7 @@ function _campaignRow(campaign, i) {
   return (
     <tr className={cls} key={campaign.id}>
       <td>{campaign.title}</td>
-      <td>{(parseFloat(campaign.pct_complete).toFixed(4))*100 + "% complete" }</td>
+      <td>{(parseFloat(campaign.pct_complete *100 ).toFixed(1)) + "% complete" }</td>
       <td>{country}</td>
       <td>{district}</td>
       <td>{_dashboardSelect(others)}</td>
@@ -195,7 +195,7 @@ module.exports = React.createClass({
                 <tbody>{campaigns}</tbody>
                 <tfoot>
                   <tr>
-                    <td className="more" colSpan="5">
+                    <td className="more" colSpan="6">
                       <a href="#" onClick={this.showAllCampaigns}>see all campaigns</a>
                     </td>
                   </tr>

@@ -131,7 +131,7 @@ def _push_to_remote():
         run("bash bin/build_db.sh")
 
         ## building documentation ##
-        run("cd docs/ && make clean && make html")
+        # run("cd docs/ && make clean && make html")
 
 
         # echo "== RUNNING TESTS =="
