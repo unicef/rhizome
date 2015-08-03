@@ -324,6 +324,30 @@ class Campaign(models.Model):
         ordering = ('-start_date',)
         unique_together = ('office','start_date')
 
+class CampaignAbstracted(models.Model):
+    '''
+    EVErything in campaign plus the "pct_complete" attribute
+    '''
+
+    office = models.ForeignKey(Office)
+    campaign_type = models.ForeignKey(CampaignType)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    slug = AutoSlugField(populate_from='get_full_name',unique=True)
+    pct_complete = models.FloatField()
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.slug)
+
+    def get_full_name(self):
+        return unicode(self.office.name + '-' + unicode(self.start_date))
+
+    class Meta:
+        db_table = 'campaign_abstracted'
+        ordering = ('-start_date',)
+        unique_together = ('office','start_date')
+
 class DataPoint(models.Model):
     '''
     The core table of the application.  This is where the raw data is stored

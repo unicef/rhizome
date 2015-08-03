@@ -76,7 +76,10 @@ function _campaignRow(campaign, i) {
 
   return (
     <tr className={cls} key={campaign.id}>
-      <td>100%</td>
+      <td>{campaign.title}</td>
+      <td>{campaign.pct_complete}</td>
+      <td>{country}</td>
+      <td>{district}</td>
       <td>{_dashboardSelect(others)}</td>
     </tr>
   );

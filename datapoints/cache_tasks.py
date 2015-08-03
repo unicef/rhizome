@@ -608,6 +608,42 @@ def cache_user_permissions():
     upsert_meta_data(u_raw, UserAuthFunction)
 
 
+
+def cache_campaign_abstracted():
+        '''
+        '''
+
+        c_raw = Campaign.objects.raw(
+        '''
+        DROP TABLE IF EXISTS campaign_cnt;
+        CREATE TEMP TABLE campaign_cnt
+        AS
+
+        SELECT campaign_id, COUNT(1) as dp_cnt
+        FROM datapoint
+        GROUP BY campaign_id;
+
+        SELECT DISTINCT
+            c.*
+            ,CAST(ccnt.dp_cnt AS FLOAT) / CAST(x.max_dp_cnt AS FLOAT) as pct_complete
+        FROM campaign c
+        INNER JOIN campaign_cnt ccnt
+            ON c.id = ccnt.campaign_id
+        INNER JOIN (
+            SELECT c.office_id, max(dp_cnt) as max_dp_cnt
+            FROM campaign_cnt cc
+            INNER JOIN campaign c
+            ON cc.campaign_id = c.id
+            GROUP BY c.office_id
+        )x
+            ON c.office_id = x.office_id;
+        ''')
+
+        upsert_meta_data(c_raw, CampaignAbstracted)
+
+
+
+
 def upsert_meta_data(qset, abstract_model):
     '''
     Given a raw queryset, and the model of the table to be upserted into,

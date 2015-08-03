@@ -43,7 +43,7 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
-            'campaign': {'orm_obj':Campaign,
+            'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
@@ -170,7 +170,7 @@ class v2Request(object):
         '''
 
         data = Campaign.objects.raw("""
-            SELECT DISTINCT c.* FROM campaign c
+            SELECT DISTINCT c.* FROM campaign_abstracted c
             INNER JOIN region r
                 ON c.office_id = r.office_id
             INNER JOIN region_permission rm
