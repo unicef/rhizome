@@ -195,7 +195,7 @@ module.exports = React.createClass({
                 <tbody>{campaigns}</tbody>
                 <tfoot>
                   <tr>
-                    <td className="more" colSpan="5">
+                    <td className="more">
                       <a href="#" onClick={this.showAllCampaigns}>see all campaigns</a>
                     </td>
                   </tr>
