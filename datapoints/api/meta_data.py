@@ -69,16 +69,9 @@ class RegionPolygonResource(BaseNonModelResource):
 
         features = []
 
-        print '==='
-        print len(polygon_values_list)
-        print '==='
-
         for p in polygon_values_list:
 
             geo_dict = json.loads(p['geo_json'])
-
-            print type(geo_dict)
-            print geo_dict
 
             geo_obj = GeoJsonResult()
             geo_obj.region_id = p['region_id']
