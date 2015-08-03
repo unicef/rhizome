@@ -33,7 +33,7 @@ var CampaignMenuItem = React.createClass({
     var m                    = moment(this.props.start_date);
     var start_date           = m.format('YYYY-MM-DD');
     var formatted_start_date = m.format('MMMM YYYY');
-    var pct_complete_string  = '-' + Math.round(this.props.pct_complete * 100) + '% complete'
+    var pct_complete_string  = ' (' + Math.round(this.props.pct_complete * 100) + '% complete)'
 
     return (
       <li key={'campaign-' + this.props.id} className='campaign'>
