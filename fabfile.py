@@ -127,15 +127,12 @@ def _push_to_remote():
         run("python manage.py syncdb --settings=settings")
         run("python manage.py migrate --merge --settings=settings")
 
-        # echo "== BUILDING DATABASE =="
+        # echo "== BUILDING STORED PROCEDURES =="
         run("bash bin/build_db.sh")
 
-    # bounce apache??
-    # customize any other configuration?
-    #
-    # echo "== BUILDING DOCUMENTATION ==" # maybe...
-    # make clean -C docs
-    # make html -C docs
-    #
-    # echo "== RUNNING TESTS =="
-    # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
+        ## building documentation ##
+        run("cd docs/ && make clean && make html")
+
+
+        # echo "== RUNNING TESTS =="
+        # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
