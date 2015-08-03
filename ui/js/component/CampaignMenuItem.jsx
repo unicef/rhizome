@@ -22,7 +22,8 @@ var CampaignMenuItem = React.createClass({
           <CampaignMenuItem key={'campaign-' + campaign.id}
             sendValue={sendValue}
             id={campaign.id}
-            start_date={date} />
+            start_date={date}
+            pct_complete={campaign.pct_complete}/>
         );
       });
     }
@@ -32,10 +33,12 @@ var CampaignMenuItem = React.createClass({
     var m                    = moment(this.props.start_date);
     var start_date           = m.format('YYYY-MM-DD');
     var formatted_start_date = m.format('MMMM YYYY');
+    var pct_complete_string  = '-' + Math.round(this.props.pct_complete * 100) + '% complete'
+
     return (
       <li key={'campaign-' + this.props.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-          <time dateTime={start_date}>{formatted_start_date}</time>&emsp;
+        {formatted_start_date} {pct_complete_string}
         </a>
       </li>
     );
