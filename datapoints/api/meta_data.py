@@ -75,7 +75,7 @@ class RegionPolygonResource(BaseNonModelResource):
 
             geo_obj = GeoJsonResult()
             geo_obj.region_id = p['region_id']
-            geo_obj.geometry = geo_dict['geometry']
+            # geo_obj.geometry = geo_dict['geometry']
             geo_obj.type = geo_dict['type']
             geo_obj.properties = {'region_id': p['region_id']}
 
