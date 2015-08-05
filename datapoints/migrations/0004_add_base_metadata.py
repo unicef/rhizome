@@ -4,6 +4,11 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 from django.contrib.auth.models import User
 
+def forwards_func(apps, schema_editor):
+    User.objects.create_user\
+        ('john', email='dingeej@gmail.com', password='endpolionow')
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -12,27 +17,38 @@ class Migration(migrations.Migration):
 
     operations = [
 
+        migrations.RunPython(
+            forwards_func,
+        ),
+
         migrations.RunSQL("""
 
             -- INSERT INTO OFFICE --
-            INSERT INTO office (name)
-            SELECT 'Nigeria' UNION ALL
-            SELECT 'Afghanistan' UNION ALL
-            SELECT 'Pakistan';
+            INSERT INTO office (name,created_at)
+            SELECT 'Nigeria',NOW() UNION ALL
+            SELECT 'Afghanistan',NOW() UNION ALL
+            SELECT 'Pakistan',NOW();
 
             -- REGION TYPE --
             INSERT INTO region_type (name)
             SELECT 'Country' UNION ALL
             SELECT 'Province' UNION ALL
             SELECT 'District' UNION ALL
-            SELECT 'Sub-District' UNpytcION ALL
+            SELECT 'Sub-District' UNION ALL
             SELECT 'Settlement';
 
             -- REGION --
             INSERT INTO region
-            (name,region_code,slug,office_id,region_type_id)
+            (name,region_code,slug,office_id,region_type_id,created_at)
 
-            SELECT x.region_name, lower(x.region_name),o.id,rt.id FROM (
+            SELECT
+                x.region_name as region_name
+                ,x.region_code as region_code
+                ,lower(x.region_name) as slug
+                ,o.id as office_id
+                ,rt.id as region_type_id
+                ,NOW()
+            FROM (
                 SELECT 'Nigeria' as region_name, 'NG' as region_code UNION ALL
                 SELECT 'Afghanistan', 'AF' UNION ALL
                 SELECT 'Pakistan', 'PK'
@@ -61,14 +77,14 @@ class Migration(migrations.Migration):
 
             -- DOCUMENT TABLE --
             INSERT INTO source_data_document
-            (created_by_id,guid,doc_text,is_processed)
+            (created_by_id,guid,doc_text,is_processed,created_at)
 
-            SELECT id, 'init_db','init_db', CAST(1 AS BOOLEAN)
+            SELECT id, 'init_db','init_db', CAST(1 AS BOOLEAN),NOW()
             FROM auth_user LIMIT 1;
 
             -- SOURCE_DATAPOINT --
             INSERT INTO source_datapoint
-            (id,campaign_string,indicator_string,region_code,cell_value,row_number,document_id,source_guid,status_id,guid)
+            (id,campaign_string,indicator_string,region_code,cell_value,row_number,document_id,source_guid,status_id,guid,created_at)
 
             SELECT
                 -1 as id
@@ -77,10 +93,11 @@ class Migration(migrations.Migration):
                 ,'' as region_code
                 ,'0' as cell_value
                 ,'0' as row_number
-                ,d.id as document_id
+                ,sdd.id as document_id
                 ,'data_entry'
                 ,ps.id as status_id
                 ,'data_entry'
+                ,NOW()
             FROM source_data_document sdd
             INNER JOIN source_data_processstatus ps
             ON 1=1
