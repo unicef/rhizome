@@ -32,9 +32,6 @@ MEDIA_URL = '/media/'
 # Application definition
 
 INSTALLED_APPS = (
-    'south',
-    'django_admin_bootstrapped.bootstrap3',
-    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,10 +42,9 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
-    # 'stronghold',
-    'csvimport',
     'tastypie',
-    'debug_toolbar',
+    # 'stronghold',
+    # 'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,7 +82,7 @@ WSGI_APPLICATION = 'polio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'polio',
+        'NAME': 'rhizome',
         'USER': 'djangoapp',
         'PASSWORD': 'w3b@p01i0',
         'HOST': '127.0.0.1',

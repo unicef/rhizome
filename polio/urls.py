@@ -6,7 +6,6 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import RedirectView
 from django.views.generic import TemplateView
-from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
@@ -39,17 +38,17 @@ urlpatterns = patterns('',
     url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
 
     ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
-    url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+    url(r'^datapoints/', login_required('datapoints.urls', namespace="datapoints")),
 
     ## DASHBOARD WITH URL PARAMS ##
-    url(r'^datapoints/[-a-zA-Z]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+    url(r'^datapoints/[-a-zA-Z]+/$', login_required('datapoints.urls', namespace="datapoints")),
+    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', login_required('datapoints.urls', namespace="datapoints")),
 
     ## CORE SOURCE DATA FUNCTINOALITY
-    url(r'^source_data/', decorator_include(login_required,'source_data.urls', namespace="source_data")),
+    url(r'^source_data/', login_required('source_data.urls', namespace="source_data")),
 
     ## ADMIN, LOG IN AND LOGOUT
-    url(r'^admin/', decorator_include(login_required,admin.site.urls)),
+    url(r'^admin/', login_required,admin.site.urls),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
 
@@ -58,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^ufadmin/', login_required(views.UFAdminView.as_view()), name='ufadmin'),
 
     ## NOT SURE WHAT THIS IS ##
-    (r'^upload/', decorator_include(login_required,'source_data.urls', namespace="upload")),
+    (r'^upload/', login_required('source_data.urls', namespace="upload")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 
 )

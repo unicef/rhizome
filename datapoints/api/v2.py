@@ -51,8 +51,6 @@ class v2Request(object):
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':self.apply_indicator_permissions},
-            'user_permission': {'orm_obj':UserAuthFunction,
-                'permission_function':self.filter_permissions_to_current_user},
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,

@@ -5,7 +5,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
-from datapoints.models import Source, Indicator, Region, Campaign
+from datapoints.models import Indicator, Region, Campaign
 
 
     ###################
@@ -38,7 +38,6 @@ class EtlJob(models.Model):
         super(EtlJob, self).save(*args, **kwargs)
 
 
-
 class ProcessStatus(models.Model):
 
     status_text = models.CharField(max_length=25)
@@ -63,7 +62,6 @@ class Document(models.Model):
     source_datapoint_count = models.IntegerField(null=True)
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
-    source = models.ForeignKey(Source)
     created_at = models.DateTimeField(default=datetime.now())
 
     class Meta:
@@ -91,7 +89,6 @@ class SourceDataPoint(models.Model):
     indicator_string = models.CharField(max_length=255)
     cell_value = models.CharField(max_length=255,null=True)
     row_number= models.IntegerField()
-    source = models.ForeignKey(Source)
     document = models.ForeignKey(Document)
     source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
@@ -112,7 +109,7 @@ class SourceDataPoint(models.Model):
 
     class Meta:
         app_label = 'source_data'
-        unique_together = ('source','source_guid','indicator_string')
+        unique_together = ('source_guid','indicator_string')
         db_table = 'source_datapoint'
 
     ###################
@@ -141,16 +138,6 @@ class SourceRegion(models.Model):
             return self.region_code + ' (' + self.region_type + ')'
         else:
             return self.region_code + '( UNKNOWN REGION TYPE )'
-
-class SourceRegionPolygon(models.Model):
-
-    source_region = models.ForeignKey(SourceRegion, unique=True)
-    shape_len  = models.FloatField()
-    shape_area = models.FloatField()
-    polygon = models.TextField()
-
-    class Meta:
-        db_table = 'source_region_polygon'
 
 
 class SourceIndicator(models.Model):
@@ -183,7 +170,7 @@ class SourceCampaign(models.Model):
 class RegionMap(models.Model):
 
     master_object = models.ForeignKey(Region)
-    source_object = models.ForeignKey(SourceRegion,unique=True)
+    source_object = models.OneToOneField(SourceRegion,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
@@ -193,7 +180,7 @@ class RegionMap(models.Model):
 class IndicatorMap(models.Model):
 
     master_object = models.ForeignKey(Indicator)
-    source_object = models.ForeignKey(SourceIndicator,unique=True)
+    source_object = models.OneToOneField(SourceIndicator,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
@@ -203,7 +190,7 @@ class IndicatorMap(models.Model):
 class CampaignMap(models.Model):
 
     master_object = models.ForeignKey(Campaign)
-    source_object = models.ForeignKey(SourceCampaign,unique=True)
+    source_object = models.OneToOneField(SourceCampaign,unique=True)
     mapped_by = models.ForeignKey(User)
 
     class Meta:
@@ -211,7 +198,6 @@ class CampaignMap(models.Model):
 
 class DocumentDetail(models.Model):
     '''
-    The /
     '''
 
     document = models.ForeignKey(Document)
