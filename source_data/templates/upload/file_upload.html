@@ -19,7 +19,7 @@
 	in the workbook
 </p>
 
-<form action="{% url 'upload:file_upload' %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'source_data:file_upload' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <p>{{ form.non_field_errors }}</p>
   <br><br>
