@@ -202,7 +202,17 @@ AND dd.db_model = 'campaign';
 
 RETURN QUERY
 
-SELECT * FROM document_detail dd
+SELECT
+	dd.id
+	,dd.document_id
+	,dd.source_object_id
+	,dd.source_string
+	,dd.source_dp_count
+	,dd.master_dp_count
+	,dd.db_model
+	,dd.master_object_id
+	,dd.map_id
+FROM document_detail dd
 WHERE dd.document_id = $1;
 
 END
