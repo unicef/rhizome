@@ -260,7 +260,6 @@ class RegionPolygon(models.Model):
     '''
 
     region = models.ForeignKey(Region,unique=True)
-    region = models.ForeignKey(Region,null=True)
     geo_json = JSONField()
 
     class Meta:

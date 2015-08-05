@@ -97,8 +97,11 @@ def _push_to_remote():
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        # run("python manage.py syncdb --settings=settings")
+        ## need to do this in a specific order becuase upon inception ##
+        ## the datapoints app is dependent on the auth app ##
         run("python manage.py migrate auth --settings=settings")
+        run("python manage.py migrate datapoints --settings=settings")
+        run("python manage.py migrate source_data --settings=settings")
         run("python manage.py migrate --settings=settings")
 
 
