@@ -70,7 +70,6 @@ POST DATA
      "parent_region_id": "12908",
      "region_code": "fake_code",
      "region_type_id": "1",
-     "source_id": "1"
   }
 
 POST RESPONSE
@@ -868,9 +867,8 @@ the apply_document_permissions function
       created_at: <Datetime>,
       docfile: <Text>,
       doc_text: <Text>,
-      master_datapoint_count: <Number>,,
-      source_id: <Number>,,
-      created_by_id: <Number>,,
+      master_datapoint_count: <Number>,
+      created_by_id: <Number>,
       guid: <Text>,
 
     }],

@@ -8,9 +8,7 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
     header = [col for col in df]
     source_datapoints = []
-
-    source_id = Source.objects.get(source_name='data entry').id
-
+    
     for row_number,(row) in enumerate(df.values):
 
         batch = []
@@ -34,7 +32,6 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
                 'campaign_string':campaign_string,
                 'cell_value':row[cell_no],
                 'row_number':row_number,
-                'source_id':source_id,
                 'document_id':document_id,
                 'status_id':to_process_status
             }
@@ -48,4 +45,3 @@ def pivot_and_insert_src_datapoints(df,document_id,column_mappings):
 
     sdps = SourceDataPoint.objects.filter(document_id=document_id)
     return sdps
-    # return source_datapoints

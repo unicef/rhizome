@@ -19,9 +19,6 @@ class MasterRefresh(object):
         self.user_id = user_id
         self.indicator_id = indicator_id
 
-        self.source_ids, self.source_id\
-            , self.source_ids = [],[],[]
-
         self.sdp_df = DataFrame(list(SourceDataPoint.objects\
             .filter(document_id = self.document_id).values()))
 

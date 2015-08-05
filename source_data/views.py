@@ -20,13 +20,10 @@ from source_data.etl_tasks.transform_upload import DocTransform,RegionTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh\
     ,create_source_meta_data
 from source_data.api import EtlTask
-from source_data.etl_tasks.pull_prod_db_from_api import DBRefreshTask
 
 ### File Upload Below ###
 
 def file_upload(request):
-
-    source_id = Source.objects.get(source_name='datapoint_upload').id
 
     accepted_file_formats = ['.csv','.xls','.xlsx']
 
@@ -66,7 +63,7 @@ def file_upload(request):
 
         created_by = request.user
         newdoc = Document.objects.create(docfile=to_upload,\
-            created_by=created_by,source_id=source_id)
+            created_by=created_by)
         file_columns = get_doc_file_cols(to_upload)
 
         return render_to_response(

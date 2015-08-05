@@ -243,8 +243,7 @@ class EtlTask(object):
 
         try:
             source_datapoints = SourceDataPoint.objects.filter(
-                status_id = ProcessStatus.objects.get(status_text='TO_PROCESS'),
-                source_id = Source.objects.get(source_name='odk'))
+                status_id = ProcessStatus.objects.get(status_text='TO_PROCESS'))
 
             m = MasterRefresh(source_datapoints,self.user_id)
             m.main()
@@ -271,8 +270,7 @@ class EtlTask(object):
             docfile = '',
             doc_text = 'VCM_Sett_Coordinates_1_2.csv',
             defaults = {
-                'created_by_id':1, # john
-                'source_id':Source.objects.get(source_name = 'odk').id
+                'created_by_id':1,
             }
         )
 

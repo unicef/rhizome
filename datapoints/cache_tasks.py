@@ -492,7 +492,6 @@ def cache_indicator_abstracted():
             ,i.description
             ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END AS bound_json
             ,CASE WHEN CAST(y.tag_json as varchar) = '[null]' then '[]' ELSE y.tag_json END AS tag_json
-            ,src.source_name
         FROM (
             SELECT
             	i.id
@@ -515,8 +514,6 @@ def cache_indicator_abstracted():
 		ON y.id = x.id
         INNER JOIN indicator i
         ON x.id = i.id
-        INNER JOIN source src
-        ON i.source_id = src.id
 
     """)
 

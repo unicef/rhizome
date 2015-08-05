@@ -35,7 +35,6 @@ class ODKDataPointTransform(object):
         doc, created = Document.objects.get_or_create(
             docfile = odk_settings.EXPORT_DIRECTORY + self.form_name,
             created_by_id = User.objects.get(username='odk').id,
-            source_id = Source.objects.get(source_name='odk').id,
         )
 
         return doc.id
