@@ -14,7 +14,7 @@ from datapoints.models import Indicator, Region, Campaign
 
 class EtlJob(models.Model):
 
-    date_attempted = models.DateTimeField(default=datetime.now())
+    date_attempted = models.DateTimeField(auto_now=True)
     date_completed = models.DateTimeField(null=True)
     task_name = models.CharField(max_length=55)
     status = models.CharField(max_length=10)
@@ -62,7 +62,7 @@ class Document(models.Model):
     source_datapoint_count = models.IntegerField(null=True)
     master_datapoint_count = models.IntegerField(null=True)
     is_processed = models.BooleanField(default=False)
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('docfile','doc_text')
@@ -93,7 +93,7 @@ class SourceDataPoint(models.Model):
     source_guid = models.CharField(max_length=255)
     status = models.ForeignKey(ProcessStatus)
     guid = models.CharField(unique=True, max_length=255)
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(auto_now=True)
 
 
     def save(self, *args, **kwargs):
@@ -266,7 +266,7 @@ class VCMSettlement(models.Model):
     key = models.CharField(max_length=255, unique=True)
     process_status = models.ForeignKey(ProcessStatus)
     request_guid = models.CharField(max_length=255)
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return unicode(self.settlementname)

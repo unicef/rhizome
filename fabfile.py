@@ -98,6 +98,7 @@ def _push_to_remote():
 
         # echo "== SYNCDB / MIGRATE =="
         # run("python manage.py syncdb --settings=settings")
+        run("python manage.py migrate auth --settings=settings")
         run("python manage.py migrate --settings=settings")
 
 
