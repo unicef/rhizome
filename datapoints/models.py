@@ -14,7 +14,7 @@ class CacheJob(models.Model):
     happening with our cache jobs and how long they are taking.
     '''
 
-    date_attempted = models.DateTimeField(default=datetime.now())
+    date_attempted = models.DateTimeField(auto_now=True)
     date_completed = models.DateTimeField(null=True)
     is_error = models.BooleanField()
     response_msg = models.CharField(max_length=255)
