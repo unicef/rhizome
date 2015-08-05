@@ -14,7 +14,6 @@ from pandas import read_csv
 from source_data.models import *
 from source_data.etl_tasks.transform_odk import ODKDataPointTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.etl_tasks import ingest_polygons
 
 from datapoints import cache_tasks
 
@@ -138,11 +137,6 @@ class EtlTask(object):
     ########## METHODS BELOW USED BY API CALLS ABOVE ##############
     ###############################################################
 
-
-    def parse_geo_json(self):
-
-        err, data = ingest_polygons.main()
-        return err, data
 
     def test_api(self):
         '''
