@@ -16,7 +16,6 @@ from source_data.etl_tasks.transform_odk import ODKDataPointTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks import ingest_polygons
 
-from datapoints.models import Source
 from datapoints import cache_tasks
 
 try:

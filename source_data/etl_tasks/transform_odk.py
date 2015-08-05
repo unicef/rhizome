@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.contrib.auth.models import User
 from pandas import DataFrame
 
-from datapoints.models import Region, Office, Source
+from datapoints.models import Region, Office
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 
@@ -22,7 +22,6 @@ class ODKDataPointTransform(object):
 
         self.form_name = form_name
         self.request_guid = request_guid
-        self.source_id = Source.objects.get(source_name ='odk').id
         self.user_id = User.objects.get(username ='odk').id
         self.source_datapoints = []
         self.document_id = self.get_document_id()
@@ -109,7 +108,6 @@ class ODKDataPointTransform(object):
                     'indicator_string' : column_name,
                     'cell_value' : cleaned_cell_value,
                     'row_number' : row_number,
-                    'source_id': self.source_id,
                     'document_id' : self.document_id,
                     'source_guid' : source_guid,
                     'status_id' : self.process_status_id,

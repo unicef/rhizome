@@ -7,21 +7,6 @@ from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
-class Source(models.Model):
-    '''
-    What is the source of the data?  WHO Indemendent Monitoring, ODK, Data Entry
-    etc.
-    '''
-
-    source_name = models.CharField(max_length=55,unique=True)
-    source_description = models.CharField(max_length=255,unique=True)
-
-    def __unicode__(self):
-        return unicode(self.source_name)
-
-    class Meta:
-        db_table = 'source'
-
 class CacheJob(models.Model):
     '''
     A table that shows the start/end time of each cache job, as well as the
@@ -58,7 +43,6 @@ class Indicator(models.Model):
     is_reported = models.BooleanField(default=True)
     slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
     created_at = models.DateTimeField(auto_now=True)
-    source = models.ForeignKey(Source)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -82,7 +66,6 @@ class IndicatorAbstracted(models.Model):
     short_name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    source_name = models.CharField(max_length=255)
     bound_json = JSONField()
     tag_json = JSONField()
 
@@ -260,7 +243,6 @@ class Region(models.Model):
     longitude = models.FloatField(null=True,blank=True)
     slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
-    source = models.ForeignKey(Source)
     parent_region = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
@@ -278,7 +260,8 @@ class RegionPolygon(models.Model):
     '''
 
     region = models.ForeignKey(Region,unique=True)
-    polygon = JSONField()
+    region = models.ForeignKey(Region,null=True)
+    geo_json = JSONField()
 
     class Meta:
         db_table = 'region_polygon'
@@ -570,17 +553,3 @@ class CustomDashboard(models.Model):
 
     class Meta:
         db_table = 'custom_dashboard'
-
-
-class UserAuthFunction(models.Model):
-    '''
-    Storing the functional permissions of each user ( not just the
-    permissions assigned to them directly but the permissions they have by
-    virtue of their group memberships.)
-    '''
-
-    user = models.ForeignKey('auth.User')
-    auth_code = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'user_auth_function'

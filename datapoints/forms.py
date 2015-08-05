@@ -15,16 +15,19 @@ class IndicatorForm(forms.ModelForm):
 
     class Meta:
         model = Indicator
+        exclude = ['created_at']
 
 class CampaignForm(forms.ModelForm):
 
     class Meta:
         model = Campaign
+        exclude = ['created_at']
 
 class RegionPermissionForm(forms.ModelForm):
 
     class Meta:
         model = RegionPermission
+        exclude = ['created_at']
 
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(required=True)

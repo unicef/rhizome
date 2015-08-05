@@ -1,5 +1,5 @@
-import xlrd
-import pandas as pd
+from pandas import read_csv
+from pandas import notnull
 from pprint import pprint
 
 from django.conf import settings
@@ -8,7 +8,7 @@ from pandas.io.excel import read_excel
 
 from source_data.models import *
 from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
-from datapoints.models import Source, DataPoint
+from datapoints.models import DataPoint
 
 
 class DocTransform(object):
@@ -27,15 +27,12 @@ class DocTransform(object):
 
         if self.file_path.endswith('.csv'):
             df = pd.read_csv(self.file_path)
-        else:
-            wb = xlrd.open_workbook(self.file_path)
-            sheet = wb.sheets()[0]
-
+        else: ## FIXME this sould be elif and throw an error if neither xls or csv
             df = read_excel(self.file_path,sheet.name)
 
 
-        df_no_nan = df.where((pd.notnull(df)), None)
-        
+        df_no_nan = df.where((notnull(df)), None)
+
         return df_no_nan
 
 
