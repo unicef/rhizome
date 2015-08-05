@@ -259,7 +259,7 @@ class RegionPolygon(models.Model):
     A shape file when avaiable for a region.
     '''
 
-    region = models.ForeignKey(Region,unique=True)
+    region = models.OneToOneField(Region)
     geo_json = JSONField()
 
     class Meta:
