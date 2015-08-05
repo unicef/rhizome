@@ -18,7 +18,6 @@ class DocTransform(object):
         self.source_datapoints = []
         self.document = Document.objects.get(id=document_id)
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
-        self.source_id = Source.objects.get(source_name='data entry').id
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
         self.column_mappings = column_mappings
         self.df = self.create_df()
@@ -26,7 +25,7 @@ class DocTransform(object):
     def create_df(self):
 
         if self.file_path.endswith('.csv'):
-            df = pd.read_csv(self.file_path)
+            df = read_csv(self.file_path)
         else: ## FIXME this sould be elif and throw an error if neither xls or csv
             df = read_excel(self.file_path,sheet.name)
 
@@ -69,7 +68,6 @@ class DocTransform(object):
                     'campaign_string': row_data.campaign_string,
                     'cell_value': row_data.cell_value,
                     'row_number': row_ix,
-                    'source_id': self.source_id,
                     'document_id': self.document.id,
                     'status_id': self.to_process_status
                 }
