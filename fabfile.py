@@ -1,16 +1,7 @@
-# fabricfile to deploy build
-#
-# depends on installation of fabric - pip install fabric virtualenv
-#
 # example invocation
-# $ fab -H jenkins@uf04.seedscientific.com deploy
-# $ fab -H ubuntu@52.0.138.67 deploy
-# $ fab -H ubuntu@uf04.seedscientific.com deploy
+# $ fab -H ubuntu@xx.x.xxx.xx deploy -i ~/.ssh/some.key
 
 from fabric.api import local, run, cd, put
-
-## global variables
-##
 
 # this can be set by passing venv_path arg to deploy() target
 local_venv_path = None
@@ -21,7 +12,6 @@ remote_backend_path = '/var/www/apps/polio/'
 remote_frontend_path = '/var/www/polio/static/'
 
 # deploy build
-#
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
 def deploy(venv_path=None):
     global local_venv_path
@@ -44,18 +34,8 @@ def start_apache():
 
 
 # build dependencies
-#
-#
 def _build_dependencies():
-    ###
-    ### on build machine...
-    ###
-
-    # set up dependencies
-    print ("TODO: confirm build machine has dependencies. i.e. node, gulp.")
-    # e.g.
-    # sudo gem install sass
-    # sudo gem install compass
+    ### on build machine ###
 
     # only build with a virtualenv if one is passed in.
     if (local_venv_path):
@@ -75,21 +55,17 @@ def _build_dependencies():
     local("./node_modules/.bin/gulp dist")
 
 # push build to remote
-#
-#
 def _push_to_remote():
-    ###
-    ### on target machine...
-    ###
+    ### on target machine ###
 
-    # make folder if it doesn't exist
+    # make folder if it doesn't exist #
     run ("mkdir -p %s" % remote_work_path)
 
-    # push to remote server
+    # push to remote server #
     put ('dist/uf04-frontend.zip', remote_work_path)
     put ('dist/uf04-backend.zip', remote_work_path)
 
-    # unzip stuff
+    # unzip stuff #
     with cd(remote_work_path):
         run("rm -rf %s" % remote_frontend_path)
 
@@ -108,9 +84,6 @@ def _push_to_remote():
     with cd(remote_frontend_path):
         # remove compiled files
         run('sudo rm -rf `find . -name "*.pyc"`')
-
-        # chgroup, chmod so apache can edit
-        # run('chgrp -R www-data *')
         run('chmod -R g+w *')
 
     # in server path -
@@ -124,8 +97,9 @@ def _push_to_remote():
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py syncdb --settings=settings")
-        run("python manage.py migrate --merge --settings=settings")
+        # run("python manage.py syncdb --settings=settings")
+        run("python manage.py migrate --settings=settings")
+
 
         # echo "== BUILDING STORED PROCEDURES =="
         run("bash bin/build_db.sh")
