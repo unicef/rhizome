@@ -2,7 +2,8 @@
 from datapoints.models import Region, RegionPolygon
 from pandas import read_csv
 
-df = read_csv('/Users/john/Desktop/regions_prod_2_13.csv')
+# df = read_csv('/Users/john/Desktop/regions_prod_2_13.csv')
+df = read_csv('/home/ubuntu/region_polygons.csv')
 
 for row in df.values:
 
@@ -12,5 +13,4 @@ for row in df.values:
 
         print region_id
     except Exception as err:
-
         pass
