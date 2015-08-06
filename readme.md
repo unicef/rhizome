@@ -41,6 +41,10 @@ privileges, so you'll need to `sudo` the above command.
     $ bower install
     $ sudo gem install sass compass
 
+You will also need to copy the sample webpack config to make the FE build work"
+
+    $ cp webpack.config.dev.sample.js webpack.config.dev.js
+
 If you don't want to install `gulp` or `bower` globally (with the `-g` flag),
 you can run them from the copies installed in `node_modules` by running
 
