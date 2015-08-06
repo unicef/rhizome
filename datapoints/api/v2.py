@@ -46,7 +46,6 @@ class v2Request(object):
             'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
-                'permission_function':None},
                 'permission_function':self.apply_region_permissions},
             'document_review' : {'orm_obj':DocumentDetail,
                 'permission_function': self.group_document_metadata},

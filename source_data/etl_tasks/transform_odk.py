@@ -22,7 +22,7 @@ class ODKDataPointTransform(object):
 
         self.form_name = form_name
         self.request_guid = request_guid
-        self.user_id = User.objects.get(username ='odk').id
+        self.user_id = User.objects.get(username ='john').id
         self.source_datapoints = []
         self.document_id = self.get_document_id()
         self.to_process_df = self.get_new_data_from_input_df(input_df)
@@ -34,7 +34,7 @@ class ODKDataPointTransform(object):
 
         doc, created = Document.objects.get_or_create(
             docfile = odk_settings.EXPORT_DIRECTORY + self.form_name,
-            created_by_id = User.objects.get(username='odk').id,
+            created_by_id = User.objects.get(username='john').id,
         )
 
         return doc.id

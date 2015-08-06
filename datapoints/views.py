@@ -90,6 +90,8 @@ class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
     success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
     permission_required = 'datapoints.add_campaign'
+    fields = ['office','campaign_type','start_date','end_date']
+    
 
 
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
