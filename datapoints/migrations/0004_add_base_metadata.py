@@ -39,19 +39,20 @@ class Migration(migrations.Migration):
 
             -- REGION --
             INSERT INTO region
-            (name,region_code,slug,office_id,region_type_id,created_at)
+            (id,name,region_code,slug,office_id,region_type_id,created_at)
 
             SELECT
-                x.region_name as region_name
+                x.id
+                ,x.region_name as region_name
                 ,x.region_code as region_code
                 ,lower(x.region_name) as slug
                 ,o.id as office_id
                 ,rt.id as region_type_id
                 ,NOW()
             FROM (
-                SELECT 'Nigeria' as region_name, 'NG' as region_code UNION ALL
-                SELECT 'Afghanistan', 'AF' UNION ALL
-                SELECT 'Pakistan', 'PK'
+                SELECT 12907 as id, 'Nigeria' as region_name, 'NGA' as region_code UNION ALL
+                SELECT 12908 as id, 'Afghanistan', 'AFG' UNION ALL
+                SELECT 12909 as id, 'Pakistan', 'PAK'
             )x
             INNER JOIN office o
             ON o.name = x.region_name
