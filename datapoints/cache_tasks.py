@@ -578,13 +578,18 @@ def cache_campaign_abstracted():
         CREATE TEMP TABLE campaign_cnt
         AS
 
-        SELECT campaign_id, COUNT(1) as dp_cnt
-        FROM datapoint
-        GROUP BY campaign_id;
+    	SELECT c.id as campaign_id, coalesce(dp_cnt, 0) as dp_cnt FROM campaign c
+    	LEFT JOIN (
+    		SELECT campaign_id, COUNT(1) as dp_cnt
+    		FROM datapoint
+    		GROUP BY campaign_id
+    	)x
+    	ON c.id = x.campaign_id;
+
 
         SELECT DISTINCT
             c.*
-            ,CAST(ccnt.dp_cnt AS FLOAT) / CAST(x.max_dp_cnt AS FLOAT) as pct_complete
+            ,COALESCE(CAST(ccnt.dp_cnt AS FLOAT) / CAST(NULLIF(x.max_dp_cnt,0) AS FLOAT),0) as pct_complete
         FROM campaign c
         INNER JOIN campaign_cnt ccnt
             ON c.id = ccnt.campaign_id

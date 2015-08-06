@@ -65,7 +65,8 @@ class Migration(migrations.Migration):
             -- PROCESS STATUS --
             INSERT INTO source_data_processstatus
             (status_text, status_description)
-            SELECT 'processed_sucessfully','processed_sucessfully';
+            SELECT 'processed_sucessfully','processed_sucessfully' UNION ALL
+            SELECT 'TO_PROCESS','TO_PROCESS';
 
             -- CAMPAIGN_TYPE --
             INSERT INTO campaign_type

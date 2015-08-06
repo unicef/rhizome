@@ -44,15 +44,14 @@ class v2Request(object):
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
             'campaign': {'orm_obj':CampaignAbstracted,
-                # 'permission_function':self.apply_campaign_permissions},
-                'permission_function':None},
+                'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
+                'permission_function':None},
                 'permission_function':self.apply_region_permissions},
             'document_review' : {'orm_obj':DocumentDetail,
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
-                # 'permission_function':self.apply_indicator_permissions},
-                'permission_function':None},
+                'permission_function':self.apply_indicator_permissions},
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
