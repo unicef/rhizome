@@ -10,7 +10,8 @@ BEGIN
 	FROM _tmp_calc_datapoint tcd
 	WHERE dwc.region_id = tcd.region_id
 	AND dwc.indicator_id = tcd.indicator_id
-	AND dwc.campaign_id = tcd.campaign_id;
+	AND dwc.campaign_id = tcd.campaign_id
+	AND tcd.value IS NOT NULL ; -- FIXME
 
 	INSERT INTO datapoint_with_computed
 	(region_id, campaign_id, indicator_id, value, cache_job_id)
@@ -22,7 +23,8 @@ BEGIN
 		WHERE tcd.region_id = dwc.region_id
 		AND tcd.campaign_id = dwc.campaign_id
 	 	AND tcd.indicator_id = dwc.indicator_id
-	);
+	)
+	AND tcd.value IS NOT NULL ; -- FIXME
 
 	RETURN QUERY
 
