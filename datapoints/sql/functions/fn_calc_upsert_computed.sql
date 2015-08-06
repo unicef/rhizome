@@ -12,7 +12,6 @@ BEGIN
 	AND dwc.indicator_id = tcd.indicator_id
 	AND dwc.campaign_id = tcd.campaign_id;
 
-
 	INSERT INTO datapoint_with_computed
 	(region_id, campaign_id, indicator_id, value, cache_job_id)
 
@@ -24,7 +23,6 @@ BEGIN
 		AND tcd.campaign_id = dwc.campaign_id
 	 	AND tcd.indicator_id = dwc.indicator_id
 	);
-
 
 	RETURN QUERY
 
