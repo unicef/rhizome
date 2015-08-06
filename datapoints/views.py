@@ -315,7 +315,7 @@ def refresh_metadata(request):
 
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
     user_cache_data = cache_tasks.cache_user_abstracted()
-    user_permission_data = cache_tasks.cache_user_permissions()
+    # user_permission_data = cache_tasks.cache_user_permissions()
     campaign_cache_data = cache_tasks.cache_campaign_abstracted()
 
     return HttpResponseRedirect(reverse('datapoints:cache_control'))
