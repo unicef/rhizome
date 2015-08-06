@@ -401,7 +401,36 @@ class Migration(migrations.Migration):
         SELECT 326, 'Endprocess_Pct of children absent due to child at farm','Endprocess_Pct of children absent due to child at farm','pct-chdrn-absent-due-to-child-at-farm','Farm' UNION ALL
         SELECT 255, 'Endprocess_NOimmReas11 - Polio is rare','Endprocess_NOimmReas11 - Polio is rare','endprocess_noimmreas11-polio-is-rare','Polio is Rare ' UNION ALL
         SELECT 233, 'UNICEF Staffing','Proportion of UNICEF Polio Positions in place at National + State / Province level','pct-of-unicef-polio-positions-in-place-at-national-state-province-level','Human Resouces'
+        )x;
+
+
+        --
+
+        INSERT INTO campaign
+        (start_date,end_date,slug,campaign_type_id, office_id, created_at)
+
+        SELECT CAST(the_date AS DATE), CAST(the_date AS DATE),the_slug,ct.id,o.id, now() FROM (
+        SELECT '2014-08-01' as the_date,'nigeria-august-2014' as the_slug UNION ALL
+        SELECT '2014-03-01','nigeria-march-2014' UNION ALL
+        SELECT '2014-06-01','nigeria-june-2014' UNION ALL
+        SELECT '2014-04-01','nigeria-april-2014' UNION ALL
+        SELECT '2014-10-01','nigeria-october-2014' UNION ALL
+        SELECT '2014-07-01','nigeria-july-2014' UNION ALL
+        SELECT '2014-05-01','nigeria-may-2014' UNION ALL
+        SELECT '2014-09-01','nigeria-september-2014' UNION ALL
+        SELECT '2014-02-01','nigeria-february-2014' UNION ALL
+        SELECT '2014-11-01','nigeria-november-2014' UNION ALL
+        SELECT '2014-12-01','nigeria-2014-12-01' UNION ALL
+        SELECT '2015-01-01','nigeria-2015-01-01' UNION ALL
+        SELECT '2015-02-01','nigeria-2015-02-01' UNION ALL
+        SELECT '2015-03-01','nigeria-2015-03-01' UNION ALL
+        SELECT '2015-06-01','nigeria-2015-06-01'
         )x
+        INNER JOIN office o
+        ON o.name = 'Nigeria'
+        INNER JOIN campaign_type ct
+        ON ct.name = 'National Immunization Days (NID)'
+
 
 
         """)
