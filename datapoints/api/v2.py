@@ -597,7 +597,7 @@ class v2GetRequest(v2Request):
 
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
-        if not self.kwargs and self.content_type in ['campaign','region']:
+        if not self.kwargs and self.content_type in ['region']:
             qset = None
         else:
             qset = list(self.db_obj.objects.filter(**self.kwargs).values())
@@ -688,7 +688,13 @@ class v2GetRequest(v2Request):
         except KeyError:
             self.show_all = None
 
+        try:
+            cleaned_kwargs['id__in'] = [int(x) for x in cleaned_kwargs['id__in'].split(',')]
+        except KeyError:
+            pass
+
         return cleaned_kwargs
+
 
     def build_meta(self):
         '''
