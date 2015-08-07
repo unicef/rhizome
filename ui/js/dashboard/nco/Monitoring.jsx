@@ -92,8 +92,7 @@ var Monitoring = React.createClass({
     var headerStyle = {
       marginLeft: '24px'
     };
-    console.log('johns logger')
-    console.log(data.caregiverAwareness)
+
     return (
       <div className='row'>
 
