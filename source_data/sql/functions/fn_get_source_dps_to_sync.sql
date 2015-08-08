@@ -1,5 +1,6 @@
 DROP FUNCTION IF EXISTS fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT);
-CREATE FUNCTION fn_get_source_dps_to_sync(user_id INT, document_id INT, input_indicator_id INT)
+DROP FUNCTION IF EXISTS fn_upsert_source_dps(user_id INT, document_id INT, input_indicator_id INT);
+CREATE FUNCTION fn_upsert_source_dps(user_id INT, document_id INT, input_indicator_id INT)
 RETURNS TABLE
 (
 	 id INT
@@ -31,8 +32,6 @@ BEGIN
 		ON 1=1;
 
 
-  	RETURN QUERY
-
     SELECT
           sd.id
         , CAST(sd.cell_value AS VARCHAR)
@@ -59,6 +58,9 @@ BEGIN
 			WHERE tp.region_id = rm.master_object_id
 			AND tp.indicator_id = im.master_object_id
 		);
+
+		RETURN QUERY
+
 
 END
 $func$ LANGUAGE PLPGSQL;
