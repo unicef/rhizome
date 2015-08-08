@@ -29,38 +29,16 @@ class MasterRefresh(object):
         ## get source data for which all metadata is mapped
         ## and the user is permitted to write ##
 
-        synced_dps = []
+        print 'TRYING TO MAKE THIS FASTER BUT NOT SURE IF ITS WORKING'
+        syncd_dp_ids = []
 
         sdps_to_sync = SourceDataPoint.objects.raw('''
-            SELECT * FROM fn_get_source_dps_to_sync(%s, %s, %s);
+            SELECT * FROM fn_upsert_source_dps(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
         for row in sdps_to_sync:
-
-            cleaned_value = self.clean_cell_value(row.cell_value)
-
-            dp,created = DataPoint.objects.get_or_create(
-                campaign_id = row.campaign_id,
-                indicator_id = row.indicator_id,
-                region_id = row.region_id,
-                defaults = {
-                    'value': cleaned_value,
-                    'source_datapoint_id': row.id,
-                    'changed_by_id': self.user_id
-                })
-
-            ## if this datapoint exists and was not added by a human ##
-            if created == False and dp.id > 0:
-
-                dp.source_datapoint_id = row.id
-                dp.value = cleaned_value
-                dp.changed_by_id = self.user_id
-                dp.save()
-
-            elif created == True:
-
-                synced_dps.append(dp)
-
+            print 'THIS IS A THING'
+            synced_dp_ids.append(row.datapoint_id)
 
         return synced_dps
 

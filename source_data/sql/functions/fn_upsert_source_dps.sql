@@ -12,31 +12,12 @@ RETURNS TABLE
 $func$
 BEGIN
 
-		DROP TABLE IF EXISTS _tmp_permissions;
-		CREATE TEMP TABLE _tmp_permissions AS
-		SELECT
-			  x.region_id
-			, y.indicator_id
-		FROM (
-			SELECT
-				spr.id as region_id
-			FROM fn_get_authorized_regions_by_user($1 , NULL, 'w',NULL) spr
-		)x
-		INNER JOIN (
-			SELECT ip.indicator_id
-			FROM indicator_permission ip
-			INNER JOIN auth_user_groups aug
-			ON ip.group_id = aug.group_id
-			AND aug.user_id = $1
-		) y
-		ON 1=1;
-
-
-		RETURN QUERY
+		DROP TABLE IF EXISTS _to_sync;
+		CREATE TEMP TABLE _to_sync AS
 
     SELECT
-          sd.id
-        , CAST(sd.cell_value AS VARCHAR)
+          sd.id as source_datapoint_id
+        , CAST(sd.cell_value AS FLOAT) as value
         , rm.master_object_id as region_id
         , cm.master_object_id as campaign_id
         , im.master_object_id as indicator_id
@@ -54,12 +35,61 @@ BEGIN
     INNER JOIN source_campaign sc
       ON sd.campaign_string = sc.campaign_string
     INNER JOIN campaign_map cm
-      ON sc.id = cm.source_object_id
-		WHERE EXISTS (
-			SELECT 1 FROM _tmp_permissions tp
-			WHERE tp.region_id = rm.master_object_id
-			AND tp.indicator_id = im.master_object_id
+      ON sc.id = cm.source_object_id;
+
+	 --IF THERE ARE DUPES DO NOT INSERT THEM --
+	 -- FIXME: this requires a screen and workflow for reviewing conflicting data
+
+	 DELETE FROM _to_sync
+	 USING (
+	    SELECT
+		 	    region_id, campaign_id, indicator_id
+		  FROM _to_sync ts
+			GROUP BY region_id, campaign_id, indicator_id HAVING COUNT(1) > 1
+	 ) x
+	 WHERE ts.region_id = x.region_id
+	 AND ts.indicator_id = x.indicator_id
+	 AND ts.indicator_id = x.indicator_id;
+
+
+		INSERT INTO datapoint
+		(campaign_id, changed_by_id, indicator_id, region_id, source_datapoint_id, value, created_at, cache_job_id)
+
+		SELECT
+			  ts.campaign_id
+			, $1 as changed_by_id
+			, ts.indicator_id
+			, ts.region_id
+			, ts.source_datapoint_id
+			, ts.value
+			, now() as created_at
+			, -1 as cache_job_id
+
+		FROM _to_sync ts
+		WHERE NOT EXISTS (
+			SELECT 1 FROM datapoint d
+			where ts.region_id = d.region_id
+			AND ts.indicator_id = d.indicator_id
+			AND ts.campaign_id = d.campaign_id
 		);
+
+		UPDATE datapoint
+			SET d.value = ts.value
+				, d.changed_by_id = $1
+				, d.created_at = NOW()
+				, d.source_datapoint_id = ts.source_datapoint_id
+		FROM _to_sync ts
+		WHERE d.region_id = ts.region_id
+		AND d.campaign_id = ts.campaign_id
+		AND d.indicator_id = ts.indicator_id;
+
+		RETURN QUERY
+
+		SELECT d.id as datapoint_id
+		FROM source_datapoint sd
+		INNER JOIN datapoint d
+		ON sd.id = d.source_datapoint_id
+		AND sd.document_id = $2;
 
 
 END
