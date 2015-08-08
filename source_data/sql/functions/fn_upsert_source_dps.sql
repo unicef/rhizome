@@ -4,10 +4,6 @@ CREATE FUNCTION fn_upsert_source_dps(user_id INT, document_id INT, input_indicat
 RETURNS TABLE
 (
 	 id INT
-	,cell_value VARCHAR(255)
-	,region_id INT
-	,campaign_id INT
-	,indicator_id INT
 ) AS
 $func$
 BEGIN
@@ -40,16 +36,16 @@ BEGIN
 	 --IF THERE ARE DUPES DO NOT INSERT THEM --
 	 -- FIXME: this requires a screen and workflow for reviewing conflicting data
 
-	 DELETE FROM _to_sync
+	 DELETE FROM _to_sync ts_out
 	 USING (
 	    SELECT
-		 	    region_id, campaign_id, indicator_id
+		 	    ts.region_id, ts.campaign_id, ts.indicator_id
 		  FROM _to_sync ts
-			GROUP BY region_id, campaign_id, indicator_id HAVING COUNT(1) > 1
+			GROUP BY ts.region_id, ts.campaign_id, ts.indicator_id HAVING COUNT(1) > 1
 	 ) x
-	 WHERE ts.region_id = x.region_id
-	 AND ts.indicator_id = x.indicator_id
-	 AND ts.indicator_id = x.indicator_id;
+	 WHERE ts_out.region_id = x.region_id
+	 AND ts_out.indicator_id = x.indicator_id
+	 AND ts_out.indicator_id = x.indicator_id;
 
 
 		INSERT INTO datapoint
@@ -74,18 +70,18 @@ BEGIN
 		);
 
 		UPDATE datapoint
-			SET d.value = ts.value
-				, d.changed_by_id = $1
-				, d.created_at = NOW()
-				, d.source_datapoint_id = ts.source_datapoint_id
+			SET value = ts.value
+				, changed_by_id = $1
+				, created_at = NOW()
+				, source_datapoint_id = ts.source_datapoint_id
 		FROM _to_sync ts
-		WHERE d.region_id = ts.region_id
-		AND d.campaign_id = ts.campaign_id
-		AND d.indicator_id = ts.indicator_id;
+		WHERE datapoint.region_id = ts.region_id
+		AND datapoint.campaign_id = ts.campaign_id
+		AND datapoint.indicator_id = ts.indicator_id;
 
 		RETURN QUERY
 
-		SELECT d.id as datapoint_id
+		SELECT d.id
 		FROM source_datapoint sd
 		INNER JOIN datapoint d
 		ON sd.id = d.source_datapoint_id

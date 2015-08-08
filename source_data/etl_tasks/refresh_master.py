@@ -32,15 +32,15 @@ class MasterRefresh(object):
         print 'TRYING TO MAKE THIS FASTER BUT NOT SURE IF ITS WORKING'
         syncd_dp_ids = []
 
-        sdps_to_sync = SourceDataPoint.objects.raw('''
+        sdps_to_sync = DataPoint.objects.raw('''
             SELECT * FROM fn_upsert_source_dps(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
         for row in sdps_to_sync:
             print 'THIS IS A THING'
-            synced_dp_ids.append(row.datapoint_id)
+            synced_dp_ids.append(row.id)
 
-        return synced_dps
+        return syncd_dp_ids
 
 
     def clean_cell_value(self,cell_value):
