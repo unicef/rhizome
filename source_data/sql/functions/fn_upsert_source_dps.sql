@@ -32,6 +32,8 @@ BEGIN
 		ON 1=1;
 
 
+		RETURN QUERY
+
     SELECT
           sd.id
         , CAST(sd.cell_value AS VARCHAR)
@@ -58,8 +60,6 @@ BEGIN
 			WHERE tp.region_id = rm.master_object_id
 			AND tp.indicator_id = im.master_object_id
 		);
-
-		RETURN QUERY
 
 
 END
