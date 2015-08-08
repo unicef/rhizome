@@ -3,6 +3,8 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
+var formatUtil = require('util/format');
+
 function _sortValue(s, sortCol) {
   // jshint validthis: true
   var options = this._options;
@@ -18,9 +20,7 @@ var DEFAULTS = {
   cellSize   : 16,
   column     : _.property('indicator.short_name'),
   fontSize   : 12,
-  format     : function (d) {
-    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d);
-  },
+  format     : formatUtil.general,
   headerText : _.property('short_name'),
   headers    : [],
   margin : {
@@ -60,6 +60,7 @@ _.extend(Heatmap.prototype, {
 		g.append('g').attr('class', 'y axis');
 		g.append('g').attr('class', 'x axis');
 		g.append('g').attr('class', 'data');
+    g.append('g').attr('class', 'legend');
 
 		this.update(data);
 	},
@@ -205,6 +206,20 @@ _.extend(Heatmap.prototype, {
 			.on('click', function (d, i) {
 				options.onRowClick(d, i, this);
 			});
+
+    if (options.legend) {
+      svg.select('.legend')
+        .call(options.legend)
+        .attr('transform', function () {
+          var bbox = this.getBoundingClientRect();
+          var dx   = w + margin.right - bbox.width;
+          var dy   = 0;
+
+          return 'translate(' + dx + ',' + dy + ')';
+        });
+    } else {
+      svg.select('.legend').selectAll('*').remove();
+    }
 	},
 
 	_onRowOver : function (d) {

@@ -162,7 +162,7 @@ var Performance = React.createClass({
               options={{
                 domain  : _.constant([0, _.get(microplans, 'value', 1)]),
                 size    : 24,
-                palette : colors
+                palette : colors,
               }} />
           </section>
         </div>
@@ -173,9 +173,9 @@ var Performance = React.createClass({
             data={missedChildrenMap}
             loading={loading}
             options={{
-              domain : _.constant([0, 0.1]),
-              value  : _.property('properties[475]'),
-              format : d3.format('%'),
+              domain  : _.constant([0, 0.1]),
+              value   : _.property('properties[475]'),
+              yFormat : d3.format('%'),
               onClick : d => { DashboardActions.navigate({ region : d }) }
             }} />
         </section>

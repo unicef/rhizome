@@ -2,6 +2,13 @@
 
 var moment = require('moment');
 
+function general(value) {
+  var mantissa = Math.abs(value) - Math.floor(Math.abs(value));
+  var fmt = d3.format(mantissa > 0 ? '.4f' : 'n');
+
+  return fmt(value);
+}
+
 function timeAxis(value) {
 	var m = moment(value);
 
@@ -13,5 +20,6 @@ function timeAxis(value) {
 }
 
 module.exports = {
-	timeAxis: timeAxis
+  general  : general,
+  timeAxis : timeAxis,
 };

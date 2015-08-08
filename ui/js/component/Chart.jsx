@@ -5,6 +5,22 @@ var React = require('react');
 
 var ChartFactory = require('chart');
 
+function isEmpty(type, data, options) {
+  // Bullet charts get special treatment because they're considered empty if
+  // they have no current value, regardless of whether they have historical data
+  // for the comparative measure
+  if (type !== 'BulletChart') {
+    return _.isEmpty(data);
+  }
+
+  var getValue = _.get(options, 'value', _.identity);
+
+  // Map the value accessor across the data because data is always passed as
+  // multiple series (an array of arrays), even if there is only one series (as
+  // will typically be the case for bullet charts).
+  return _(data).map(getValue).all(_.negate(_.isFinite));
+}
+
 module.exports = React.createClass({
   propTypes : {
     data     : React.PropTypes.array.isRequired,
@@ -24,7 +40,7 @@ module.exports = React.createClass({
   render : function () {
     var overlay;
 
-    if (this.props.loading || _.isEmpty(this.props.data)) {
+    if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
       var position = _.get(this.props, 'options.margin', {
         top    : 0,
         right  : 0,

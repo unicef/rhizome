@@ -3,12 +3,14 @@
 var _  = require('lodash');
 var d3 = require('d3');
 
+var React   = require('react');
+var Layer   = require('react-layer');
+var Tooltip = require('component/Tooltip.jsx');
+
 var palette = require('colors');
 
 var defaults = {
 	hoverRadius : 5,
-	onMouseOver : _.noop,
-	onMouseOut  : _.noop,
 	radius      : 3,
 	x           : _.property('x'),
 	xFormat     : d3.format('n'),
@@ -31,6 +33,8 @@ _.extend(ScatterPlot.prototype, {
 	defaults : defaults,
 
 	update : function (data, options) {
+    var self = this;
+
 		options    = _.assign(this._options, options);
 		var margin = options.margin;
 
@@ -87,7 +91,7 @@ _.extend(ScatterPlot.prototype, {
 					.ease('elastic')
 					.attr('r', options.hoverRadius);
 
-				options.onMouseOver(d, i, this);
+				self._onMouseMove(d, i);
 			})
 			.on('mouseout', function (d, i) {
 				d3.select(this)
@@ -96,7 +100,7 @@ _.extend(ScatterPlot.prototype, {
 					.ease('elastic')
 					.attr('r', options.radius);
 
-				options.onMouseOut(d, i, this);
+				self._onMouseOut(d, i, this);
 			});
 
 		point.transition()
@@ -134,7 +138,39 @@ _.extend(ScatterPlot.prototype, {
 			.transition()
 			.duration(300)
 			.call(yAxis);
-	}
+	},
+
+  _onMouseMove : function (d) {
+    var evt = d3.event;
+    var name = _.get(d, 'name', _.get(d, 'region.name'));
+
+    if (_.isUndefined(name)) {
+      return;
+    }
+
+    var render = function () {
+      return React.createElement(
+        Tooltip,
+        { left : evt.pageX + 2, top : evt.pageY + 2 },
+        name
+      );
+    };
+
+    if (this.layer) {
+      this.layer._render = render;
+    } else {
+      this.layer = new Layer(document.body, render);
+    }
+
+    this.layer.render();
+  },
+
+  _onMouseOut : function () {
+    if (this.layer) {
+      this.layer.destroy();
+      this.layer = null;
+    }
+  }
 });
 
 module.exports = ScatterPlot;
