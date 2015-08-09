@@ -35,7 +35,7 @@ class MasterRefresh(object):
         for row in sdps_to_sync:
             synced_dp_ids.append(row.id)
 
-        return syncd_dp_ids
+        return synced_dp_ids
 
 
     def clean_cell_value(self,cell_value):
