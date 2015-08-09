@@ -61,7 +61,7 @@ class DocTransform(object):
 
                 source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
 
-                sdp_dict = {
+                sdp_obj = SourceDataPoint**{
                     'source_guid': source_guid,
                     'indicator_string': row_data.indicator_string,
                     'region_code': row_data.region_code,
@@ -72,10 +72,11 @@ class DocTransform(object):
                     'status_id': self.to_process_status
                 }
 
-                sdp = SourceDataPoint.objects.create(**sdp_dict)
                 source_datapoints.append(sdp)
 
-            return source_datapoints
+            batch_sdps = SourceDataPoint.objects.BulkCreate(**source_datapoints)
+
+            return batch_sdps
 
 
 class RegionTransform(DocTransform):

@@ -26,18 +26,13 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
 
-        ## get source data for which all metadata is mapped
-        ## and the user is permitted to write ##
-
-        print 'TRYING TO MAKE THIS FASTER BUT NOT SURE IF ITS WORKING'
-        syncd_dp_ids = []
+        synced_dp_ids = []
 
         sdps_to_sync = DataPoint.objects.raw('''
             SELECT * FROM fn_upsert_source_dps(%s, %s, %s);
             ''', [self.user_id,self.document_id,self.indicator_id])
 
         for row in sdps_to_sync:
-            print 'THIS IS A THING'
             synced_dp_ids.append(row.id)
 
         return syncd_dp_ids
@@ -47,8 +42,6 @@ class MasterRefresh(object):
 
         if cell_value == None:
             return None
-        # elif cell_value == '':
-        #     return None
 
         try:
             cleaned = float(cell_value.replace(',',''))
