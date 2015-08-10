@@ -125,20 +125,20 @@ gulp.task('test', ['scripts'], function () {
 	return gulp.src(path.test).pipe($.mocha());
 });
 
-gulp.task('collectstatic', ['build'], function (cb) {
-	exec('python manage.py collectstatic --noinput -v 0', function (err) {
-		if (err) {
-			return cb(err);
-		}
-
-		cb();
-	});
-});
+// gulp.task('collectstatic', ['build'], function (cb) {
+// 	exec('python manage.py collectstatic --noinput -v 0', function (err) {
+// 		if (err) {
+// 			return cb(err);
+// 		}
+// 		cb();
+// 	});
+// });
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'{bin,polio,datapoints,source_data,templates,docs}/**/*.{py,sql,html,sh,xlsx}',
+			'{bin,polio,datapoints,source_data,templates,docs,assets}/**/*.{py,sql,html,sh,js}',
 			'manage.py',
+			'webpack-stats.json',
 			'requirements.txt',
 		])
 		.pipe($.zip('uf04-backend.zip'))
@@ -146,7 +146,7 @@ gulp.task('dist-py', function () {
 		.pipe(gulp.dest(path.dist))
 });
 
-gulp.task('dist-ui', ['collectstatic'], function () {
+gulp.task('dist-ui', function () {
 	var jsFilter  = $.filter('**/main.js');
 	var cssFilter = $.filter('**/{print,screen,ie}.css');
 
