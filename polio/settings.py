@@ -10,7 +10,21 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets/bundles/'),
+)
+
+WEBPACK_LOADER = {
+    'BUNDLE_DIR_NAME': 'bundles/',
+    'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    'POLL_DELAY': 0.2,
+    'IGNORE': ['.+\.hot-update.js', '.+\.map']
+}
+
+STATIC_URL = '/assets/bundles/' 
 LOGIN_REDIRECT_URL = '/datapoints'
 
 # Quick-start development settings - unsuitable for production
@@ -43,6 +57,7 @@ INSTALLED_APPS = (
     'coverage',
     'simple_history',
     'tastypie',
+    'webpack_loader',
     # 'stronghold',
     # 'debug_toolbar',
 )
@@ -106,15 +121,6 @@ USE_TZ = True
 # Template configuration
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
-)
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-
-STATIC_ROOT = './build'
-STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
 )
 
 ## API SETTINGS ##

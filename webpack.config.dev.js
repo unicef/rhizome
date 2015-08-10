@@ -1,17 +1,20 @@
+var BundleTracker = require('webpack-bundle-tracker');
 var webpack = require('webpack');
-var _ = require('lodash');
 var config = require('./webpack.config.base');
 var path = require("path");
+var _ = require('lodash');
 
-// var devConfig = _.merge(config, {
-
-// });
 
 var devConfig = _.merge(config, {
 	output: {
 			 path: path.resolve('./assets/bundles/'),
-			 filename: "[name]-[hash].js",
+			 filename: "main-[hash].js",
+	     publicPath: 'assets/bundles/',
 	 },
+	 plugins: [
+		 new BundleTracker({filename: './webpack-stats.json'}),
+		],
+
  // 	devServer: {
  // 		port: 8080,
  // 		contentBase: "./static",
@@ -20,6 +23,6 @@ var devConfig = _.merge(config, {
  // 			'*': 'http://172.16.252.128'
  // 		}
  // 	}
-})
+});
 
 module.exports = devConfig;
