@@ -105,15 +105,14 @@ you simply execute
 
 from the command line it will build the entire frontend for development.
 
-## watch
+## webpack-dev
 
-Start a livereload server and watch SASS and JavaScript files for changes. Run
-`gulp styles` whenever SASS changes, and `gulp browserify` whenever JavaScript
-changes.
+Start a livereload server and that dynmically rebuilds your javascript
+and styles  
 
 * In development you will need to run two operations *
    $ python manage.py runserver
-   $ gulp watch
+   $ gulp webpack-dev
 
 ## build
 
