@@ -15,7 +15,8 @@ class IndicatorForm(forms.ModelForm):
 
     class Meta:
         model = Indicator
-        exclude = ['created_at']
+        fields = ['name','short_name']
+
 
 class CampaignForm(forms.ModelForm):
 

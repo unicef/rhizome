@@ -91,7 +91,7 @@ class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
     template_name = 'campaigns/create.html'
     permission_required = 'datapoints.add_campaign'
     fields = ['office','campaign_type','start_date','end_date']
-    
+
 
 
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
@@ -102,28 +102,6 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
     form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
 
-
-    ##################
-    ##################
-    ### INDICATORS ###
-    ##################
-    ##################
-
-
-class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
-
-    model = Indicator
-    success_url= '/ufadmin/indicators'
-    template_name = 'indicators/create.html'
-    permission_required = 'datapoints.add_indicator'
-
-
-class IndicatorUpdateView(PermissionRequiredMixin,generic.UpdateView):
-
-    model = Indicator
-    success_url = '/ufadmin/indicators'
-    template_name = 'indicators/upsert.html'
-    permission_required = 'datapoints.change_indicator'
 
     ###############
     ### REGIONS ###
@@ -406,3 +384,10 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+def upsert_indicator(request):
+
+    return render_to_response('indicators/upsert.html',
+        {'form':IndicatorForm},
+        context_instance=RequestContext(request))
