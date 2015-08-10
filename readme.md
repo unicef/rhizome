@@ -41,10 +41,6 @@ privileges, so you'll need to `sudo` the above command.
     $ bower install
     $ sudo gem install sass compass
 
-You will also need to copy the sample webpack config to make the FE build work"
-
-    $ cp webpack.config.dev.sample.js webpack.config.dev.js
-
 
 ## Setting up the database
 
@@ -67,6 +63,28 @@ The password for the djangoapp user can be found in `settings.py`.
 ## Building the Front End
 
     $ gulp build
+
+## Your Development Environment
+
+In development you will need to run two operations *
+     $ python manage.py runserver
+     $ webpack --config webpack.config.dev.js --watch
+
+After running these two commands in two separate terminals visit:
+
+    http://localhost:8000
+
+To see the application.
+
+Note - Currently webpack only re-compiles javascript.. not css. If you make a
+change to a css file you will nee to run 'gulp build' in order to see those
+changes in your development envi.
+
+We are moving towards a de-coupled application in which node will serve
+all static pages, scripts and assets, but for now, this set up along with the
+configurations provided by the [Django Webpack Loader
+Package](https://github.com/owais/django-webpack-loader/) allows us to create
+edits to our javascript and have the front end automatically rebuild them.
 
 ## Deploying ##
 
@@ -109,10 +127,6 @@ from the command line it will build the entire frontend for development.
 
 Start a livereload server and that dynmically rebuilds your javascript
 and styles  
-
-* In development you will need to run two operations *
-   $ python manage.py runserver
-   $ gulp webpack-dev
 
 ## build
 
