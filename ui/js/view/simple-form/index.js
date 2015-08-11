@@ -22,18 +22,16 @@ module.exports = {
 	  self.$set('tagLoading',true);
 
 		// load indicators in the table
-
 		self.loadIndicatorTag();
 
 		// render tag tree dropdown
-		api.tagTree()
+		api.tagTree() //
 			.then(function(response) {
 				var ddProps = {
-					indicators: response.objects,
+					tag_tree: response.objects,
 					text: 'Add Tag',
 					sendValue: self.addTagToIndicator
 				};
-				self.tagMap = _.indexBy(response.flat, 'id');
 				self.indicatorDropdown = React.render(React.createElement(IndicatorTagDropdownMenu, ddProps), document.getElementById("tagSelector"));
 			});
 
