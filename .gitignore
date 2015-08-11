@@ -40,4 +40,5 @@ concat_csv.py
 source_data/ODK/odk_source
 /assets
 webpack-stats.json
-
+/static/css
+/static/fonts

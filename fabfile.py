@@ -50,9 +50,12 @@ def _build_dependencies():
     local ("npm install")
     local ("pip install -r requirements.txt")
 
-    # make dist
+    # gulp styles is totall broken.. need to do this in webpack #
     local("./node_modules/.bin/bower install")
+    local("./node_modules/.bin/gulp fonts")
+    local("./node_modules/.bin/webpack --config webpack.config.dev.js")
     local("./node_modules/.bin/gulp dist")
+    local("python manage.py collectstatic --noinput")
 
 # push build to remote
 def _push_to_remote():

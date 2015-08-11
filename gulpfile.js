@@ -137,11 +137,10 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'{datapoints,static}/**/*.{py,sql}',
-			// '{bin,polio,datapoints,source_data,entity,templates,static}/**/*.{py,sql,html,sh,css,js}',
-			// 'manage.py',
-			// 'requirements.txt',
-			// 'webpack-stats.json',
+			'{bin,polio,datapoints,source_data,entity,templates,static}/**/*.{py,sql,html,sh,css,js}',
+			'manage.py',
+			'requirements.txt',
+			'webpack-stats.json',
 		])
 		.pipe($.zip('rhizome.zip'))
 		.pipe($.size({ title: 'Backend'}))
@@ -149,4 +148,4 @@ gulp.task('dist-py', function () {
 });
 
 // gulp.task('dist', ['dist-py']);
-gulp.task('dist', ['bulid','dist-py']);
+gulp.task('dist', ['dist-py']);
