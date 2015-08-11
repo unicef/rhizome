@@ -212,7 +212,7 @@ module.exports = React.createClass({
           <img src="/static/img/RhizomeLogoBkOnWh.png" alt="Rhizome Logo" width="100%" />
           <h2>About</h2>
           <p>
-            Rhizome DB supports EVERYTHING!!!
+            Rhizome DB supports the polio programme’s critical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.
           </p>
         </div>
 
