@@ -254,16 +254,16 @@ class Region(models.Model):
         unique_together = ('name','region_type','office')
 
 
-# class RegionPolygon(models.Model):
-#     '''
-#     A shape file when avaiable for a region.
-#     '''
-#
-#     region = models.OneToOneField(Region)
-#     geo_json = JSONField()
-#
-#     class Meta:
-#         db_table = 'region_polygon'
+class RegionPolygon(models.Model):
+    '''
+    A shape file when avaiable for a region.
+    '''
+
+    region = models.OneToOneField(Region)
+    geo_json = JSONField()
+
+    class Meta:
+        db_table = 'region_polygon'
 
 
 class CampaignType(models.Model):
