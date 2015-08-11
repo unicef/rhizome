@@ -33,10 +33,10 @@ function filterMenu(items, pattern) {
   return _(items).map(match).flatten().value();
 }
 
-var IndicatorDropdownMenu = React.createClass({
+var IndicatorTagDropdownMenu = React.createClass({
 
   propTypes : {
-    indicators : React.PropTypes.array.isRequired,
+    indicator_tags : React.PropTypes.array.isRequired,
     sendValue : React.PropTypes.func.isRequired
   },
 
@@ -50,19 +50,19 @@ var IndicatorDropdownMenu = React.createClass({
     var self = this;
 
     if (this.props.indicators.length === 0) {
-      return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Indicators...</button>);
+      return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>);
     }
 
-    var indicators = MenuItem.fromArray(filterMenu(this.props.indicators, this.state.pattern), self.props.sendValue);
+    var tags = MenuItem.fromArray(filterMenu(this.props.indicators, this.state.pattern), self.props.sendValue);
 
-    var props = _.omit(this.props, 'indicators', 'sendValue');
+    var props = _.omit(this.props, 'tags', 'sendValue');
 
     return (
       <DropdownMenu
         searchable={true}
         onSearch={this._setPattern}
         {...props}>
-        {indicators}
+        {tags}
       </DropdownMenu>
     );
   },
@@ -72,4 +72,4 @@ var IndicatorDropdownMenu = React.createClass({
   }
 });
 
-module.exports = IndicatorDropdownMenu;
+module.exports = IndicatorTagDropdownMenu;

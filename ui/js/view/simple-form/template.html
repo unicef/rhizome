@@ -6,30 +6,22 @@
    full-size-menu="true"
    style="width: 150px;"
    >
-      <a class="button"> add a tag </a>
+<!-- <a class="button"> add a tag </a> -->
 </div>
 
-	<div id="indicatorSelector"></div>
-
   <div class="row">
-
-     <div class="columns small-4 left-box">
-       <div class="columns small-8 right-box">
+     <div class="columns small-8 left-box">
          <table class="region-table">
              <thead>
                  <tr>
-                     <th>id </th>
                      <th  style="width: 126px;">Tag Name</th>
                      <th style="width: 70px;">Remove</th>
                  </tr>
              </thead>
             <tbody>
 	            <tr v-repeat="tag:indicator_tags">
-	              <td>
-	               {{tag.id}}
-	              </td>
                 <td>
-	               {{tag.indicator_id}}
+	               {{tag.tag_name}}
 	              </td>
                 <td>
 	               {{tag.indicator_tag_id}}
@@ -37,8 +29,9 @@
 	            </tr>
             </tbody>
          </table>
-
        </div>
+    <div class="columns small-4 right-box">
+  	<div id="tagSelector"></div>
     </div>
 
   </div>

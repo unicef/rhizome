@@ -6,7 +6,7 @@ var treeify = require('../../data/transform/treeify');
 var ancestoryString = require('../../data/transform/ancestryString');
 var MenuVue = require('../../component/vue-menu');
 var React  = require('react');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
+var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
 
 module.exports = {
 	template: require('./template.html'),
@@ -35,15 +35,15 @@ module.exports = {
 	  });
 
 		// render indicator dropdown
-		api.indicatorsTree()
+		api.indicatorsTree({'indicator_id':-1})
 			.then(function(response) {
 				var ddProps = {
 					indicators: response.objects,
-					text: 'Choose Indicators',
-					sendValue: self.updateIndicatorSelection
+					text: 'Add Tag',
+					// sendValue: self.updateIndicatorSelection
 				};
 				self.indicatorMap = _.indexBy(response.flat, 'id');
-				self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
+				self.indicatorDropdown = React.render(React.createElement(IndicatorTagDropdownMenu, ddProps), document.getElementById("tagSelector"));
 			});
 
 	  api.indicator_to_tag({'indicator_id':self.$parent.$data.indicator_id}).then(function(items){
