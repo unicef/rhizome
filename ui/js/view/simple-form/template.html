@@ -1,0 +1,71 @@
+
+  <div class="row" style="margin-bottom: 15px;">
+     <div class="columns small-4 left-box">
+       <h4>Roles</h4>
+	     <div class="label-box">
+	     fake fake fake fake fake fake
+      </div>
+     </div>
+     <div class="columns small-8 right-box">
+       <ul class="user-roles">
+         <li v-repeat="group:groups"><input type="checkbox" v-model="group.active" data-group-id="{{group.id}}" v-on="change:addRemoveUserGroup" /> <span class="roll-title">{{group.name}}</span> </li>
+       </ul>
+     </div>
+  </div>
+
+  <div class="row">
+     <div class="columns small-4 left-box">
+       <h4>Regional Access</h4>
+     </div>
+     <div class="columns small-8 right-box">
+       <div
+        	id="regions"
+        	data-change-event="field-selected"
+        	data-searchable="true"
+        	full-size-menu="true"
+        	style="width: 150px;"
+        	>
+             <a class="button">
+             Add a tag to the indicator...
+             </a>
+       </div>
+     </div>
+  </div>
+  <div class="row">
+     <div class="columns small-4 left-box">
+       <div class="label-box">
+         Tfakeeeldren.<br /><br />
+         <b>Can Enter Data:</b>
+        BLAA
+         </div>
+       </div>
+       <div class="columns small-8 right-box">
+         <table class="region-table">
+             <thead>
+                 <tr>
+                     <th></th>
+                     <th  style="width: 126px;">Can Enter Data</th>
+                     <th style="width: 70px;">Remove</th>
+                 </tr>
+             </thead>
+            <tbody>
+	            <tr v-repeat="permission:region_permissions">
+	              <td>
+	               {{permission.name}}
+	              </td>
+	              <td>
+	                <input type="checkbox" data-internal-id="{{permission.id}}" data-region-id="{{permission.region_id}}" v-on="change:updateRegionalAccessCanRead" v-model="permission.canEnter" />
+	              </td>
+	              <td>
+	                <span v-on="click:deleteRegionalAccess(permission.region_id)" class="fa fa-times"></span>
+	              </td>
+	            </tr>
+	            <tr v-if="regionalAccessLoading"><td colspan="3"><span class="fa fa-fw fa-lg fa-spinner fa-spin"></span></td></tr>
+	            <tr v-if="region_permissions && region_permissions.length==0"><td colspan="3">No regions added</td></tr>
+            </tbody>
+         </table>
+
+       </div>
+    </div>
+
+  </div>
