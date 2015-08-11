@@ -191,22 +191,19 @@ function indicatorsTree(q) {
 }
 function tagTree(q) {
 	var fetch = endPoint('/indicator_tag', 'get', 2);
-	var makeTagId = function(tId) { return 'tag-'+tId; };
 	return new Promise(function (fulfill, reject) {
 
 			fetch().then(function(tags) {
 				var tags_map = {};
 				_.each(tags.objects, function(t) {
 							tags_map[t.id] = t;
-							t.id = makeTagId(t.id);
-							t.noValue = true;
-							t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null;
+							t.parent = t.parent_tag_id
 							t.children = [];
 							t.title = t.tag_name;
 							t.value = t.id;
 						});
 				tags.objects = treeify(tags.objects, 'id');
-				// tags.flat = indicators.objects;
+				tags.flat = tags.objects;
 				fulfill(tags);
 		}, reject);
 	});

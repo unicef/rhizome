@@ -57,6 +57,9 @@ var IndicatorTagDropdownMenu = React.createClass({
 
     var props = _.omit(this.props, 'tag_tree', 'sendValue');
 
+    console.log('logging tag tree')
+    console.log(this.props.tag_tree)
+
     return (
       <DropdownMenu
         searchable={true}
