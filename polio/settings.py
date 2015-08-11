@@ -24,7 +24,7 @@ WEBPACK_LOADER = {
     'IGNORE': ['.+\.hot-update.js', '.+\.map']
 }
 
-STATIC_URL = '/assets/bundles/' 
+STATIC_URL = '/static/' 
 LOGIN_REDIRECT_URL = '/datapoints'
 
 # Quick-start development settings - unsuitable for production
