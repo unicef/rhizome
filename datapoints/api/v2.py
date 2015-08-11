@@ -50,7 +50,7 @@ class v2Request(object):
             'document_review' : {'orm_obj':DocumentDetail,
                 'permission_function': self.group_document_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':self.apply_indicator_permissions},
+                'permission_function':None},
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
@@ -183,44 +183,6 @@ class v2Request(object):
             WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
             ORDER BY c.start_date DESC
         """, [self.user_id, list_of_object_ids])
-
-        return None, data
-
-    def apply_indicator_permissions(self, list_of_object_ids):
-        '''
-        The API allows the application to pass a read_write parameter.  While
-        all users can read all indicators and all data, they can not write to
-        all indicators.
-
-        This functionlaity is largely based on the use case that a user who
-        only has avalibility to write to 2 indicators should only see these
-        two as an option for him to insert / update when navigating to the
-        data entry page.
-        '''
-
-        if self.read_write == 'r':
-
-            data = IndicatorAbstracted.objects.raw("""
-                SELECT ia.*
-                FROM indicator_abstracted ia
-                WHERE 1=1
-                AND ia.id = ANY(COALESCE(%s,ARRAY[ia.id]))
-            """,[list_of_object_ids])
-
-        else:
-            data = IndicatorAbstracted.objects.raw("""
-                SELECT ia.*
-                FROM indicator_abstracted ia
-                WHERE 1=1
-                AND ia.id = ANY(COALESCE(%s,ARRAY[ia.id]))
-                AND EXISTS (
-                	SELECT * FROM auth_user_groups aug
-                	INNER JOIN indicator_permission gp
-                	ON aug.group_id = gp.group_id
-                	AND ia.id = gp.indicator_id
-                	AND aug.user_id = %s
-                )
-            """,[list_of_object_ids,self.user_id])
 
         return None, data
 
