@@ -11,7 +11,7 @@ module.exports = {
 	data: function(){
 	  return {
 		regions:[],
-		groups:[]    
+		groups:[]
 	  };
 	},
 	created: function() {
@@ -19,30 +19,28 @@ module.exports = {
 	 // console.log(self);
 	  self.$set('regionalAccessLoading',true);
 	  var MenuComponent = Vue.extend(MenuVue);
-	  
+
 	  api.groups().then(function(response){
 	     var groups = response.objects;//
 	     api.user_groups({'user':self.$parent.$data.user_id}).then(function(data){
 	         _.forEach(groups,function(group){
-	            
+
 	           group.active = _.some(data.objects,{'group_id':group.id});
-	            
+
 	         });
-	         self.$set('groups',response.objects); 
+	         self.$set('groups',response.objects);
 	     });
 	  });
 
-	  
-	  api.regions().then(function(items){
-	     self.loadRegionalAccess(); 
-	     self.region_map = _.indexBy(items.objects, 'id');
-	     var regions = _(items.objects)
-	     	.map(function (region) {
+
+	  api.indicators().then(function(items){
+	    //  self.region_map = _.indexBy(items.objects, 'id');
+	     var indicators = _(items.objects)
+	     	.map(function (indicator) {
 	     		return {
-	     			'title'  : region.name,
-	     			'value'  : region.id,
-	     			'id'     : region.id,
-	     			'parent' : region.parent_region_id
+	     			'title'  : indicator.short_name,
+	     			'value'  : indicator.id,
+	     			'id'     : indicator.id,
 	     		};
 	     	})
 	     	.sortBy('title')
@@ -50,15 +48,15 @@ module.exports = {
 	     	.thru(_.curryRight(treeify)('id'))
 	     	.thru(ancestoryString)
 	     	.value();
-	     self.$set('regions',regions);
-	     
-	  }).then(function () { 
+	     self.$set('indicators',indicators);
+
+	  }).then(function () {
 	    self.regionMenu = new MenuComponent({
-	    	   el     : '#regions'
+	    	   el     : '#indicators'
 	    });
 	    self.regionMenu.items = self.$data.regions;
 	    self.regionMenu.$on('field-selected',self.addRegionalAccess);
-	  }); 
+	  });
 	},
 	methods: {
 	  addRemoveUserGroup: function(e){
@@ -69,7 +67,7 @@ module.exports = {
 	     }
 	     else {
 	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
-         }	
+         }
   	  },
 	  addRegionalAccess: function(data){
 	    var self = this;
@@ -92,18 +90,18 @@ module.exports = {
 	    var readWrite = (e.target.checked?'w':'r');
 	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:regionId, read_write:readWrite,id:internalId });
 	  },
-	  
+
 	  loadRegionalAccess: function(){
 	    var self = this;
-	    
-	    
+
+
 	    api.region_permission( {user:this.$parent.$data.user_id}).then(function(data){
 	      var regions = data.objects;
 	       _.forEach(regions,function(region){
 	           region.name = self.region_map[region.region_id].name;
 	           region.canEnter = region.read_write=='w';
 	       });
-	      self.$set('region_permissions',regions); 
+	      self.$set('region_permissions',regions);
 	      self.$set('regionalAccessLoading',false);
 	    });
 	  }
