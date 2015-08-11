@@ -189,6 +189,28 @@ function indicatorsTree(q) {
 		}, reject);
 	});
 }
+function tagTree(q) {
+	var fetch = endPoint('/indicator_tag', 'get', 2);
+	var makeTagId = function(tId) { return 'tag-'+tId; };
+	return new Promise(function (fulfill, reject) {
+
+			fetch().then(function(tags) {
+				var tags_map = {};
+				_.each(tags.objects, function(t) {
+							tags_map[t.id] = t;
+							t.id = makeTagId(t.id);
+							t.noValue = true;
+							t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null;
+							t.children = [];
+							t.title = t.tag_name;
+							t.value = t.id;
+						});
+				tags.objects = treeify(tags.objects, 'id');
+				// tags.flat = indicators.objects;
+				fulfill(tags);
+		}, reject);
+	});
+}
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -199,7 +221,8 @@ module.exports = {
 	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
-	indicatorsTree		  : indicatorsTree,
+	indicatorsTree		    : indicatorsTree,
+	tagTree								: tagTree,
 	indicator_to_tag      : endPoint('/indicator_to_tag/', 'get', 2),
 
 	office                : endPoint('/office/', 'get', 2),
