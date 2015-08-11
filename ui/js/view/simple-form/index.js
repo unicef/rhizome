@@ -18,7 +18,7 @@ module.exports = {
 	},
 	created: function() {
 	  var self = this;
-	 // console.log(self);
+
 	  self.$set('tagLoading',true);
 
 		// load indicators in the table
@@ -48,7 +48,9 @@ module.exports = {
 	  deleteTagFromIndicator: function(data){
 	    var self = this;
 	    var readWrite = _.find(self.$get('region_permissions'),{region_id:data}).read_write;
-	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:dat,id:'' }).then(function(){
+	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:dat
+
+				,id:'' }).then(function(){
 	      // self.loadIndicatorTag();
 	    });
 	  },
@@ -56,14 +58,14 @@ module.exports = {
 			// first load the tags, then map the values of the given indicator //
 	    var self = this;
 
+
 			api.indicator_tag().then(function(data){
-				// var tag_data = data.objects
-				var tag_map = _(data.objects).map(function (tag) {
- 	     		return {
-						 			'tag_id'    : tag.tag_id,
-						 			'tag_name'  : tag.name
- 	     		};
- 	     	});
+				var tag_map = [];
+				var indicator_tags = data.objects;
+				_.forEach(indicator_tags,function(tag){
+					tag_map[tag.id] = tag.tag_name;
+					// console.log(tag.tag_name)
+				});
 
 				self.$set('tag_map',tag_map);
 			});
