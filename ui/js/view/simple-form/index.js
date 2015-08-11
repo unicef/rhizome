@@ -40,15 +40,16 @@ module.exports = {
 		addTagToIndicator: function(data){
 	    var self = this;
 	    self.$set('tagLoading',true);
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r' }).then(function(){
-	      self.loadIndicatorTag();
+			console.log('ADDING indicaotr tag')
+	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
+	      // self.loadIndicatorTag();
 	    });
 	  },
 	  deleteTagFromIndicator: function(data){
 	    var self = this;
 	    var readWrite = _.find(self.$get('region_permissions'),{region_id:data}).read_write;
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:readWrite,id:'' }).then(function(){
-	      self.loadIndicatorTag();
+	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:dat,id:'' }).then(function(){
+	      // self.loadIndicatorTag();
 	    });
 	  },
 	  loadIndicatorTag: function(){
@@ -60,7 +61,7 @@ module.exports = {
 				var tag_map = _(data.objects).map(function (tag) {
  	     		return {
 						 			'tag_id'    : tag.tag_id,
-						 			'tag_name'  : tag.name,
+						 			'tag_name'  : tag.name
  	     		};
  	     	});
 
