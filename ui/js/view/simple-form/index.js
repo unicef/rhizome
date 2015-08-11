@@ -21,6 +21,10 @@ module.exports = {
 	 // console.log(self);
 	  self.$set('tagLoading',true);
 
+		// load indicators in the table
+
+		self.loadIndicatorTag();
+
 		// render tag tree dropdown
 		api.tagTree()
 			.then(function(response) {
@@ -33,10 +37,6 @@ module.exports = {
 				self.indicatorDropdown = React.render(React.createElement(IndicatorTagDropdownMenu, ddProps), document.getElementById("tagSelector"));
 			});
 
-	  api.indicator_to_tag({'indicator_id':self.$parent.$data.indicator_id}).then(function(items){
-			self.loadIndicatorTag();
-
-	  })
 	},
 	methods: {
 		addTagToIndicator: function(data){
