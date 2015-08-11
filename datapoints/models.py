@@ -180,6 +180,7 @@ class IndicatorToTag(models.Model):
 
     class Meta:
         db_table = 'indicator_to_tag'
+        unique_together = ('indicator','indicator_tag')
 
 
 class Office(models.Model):
