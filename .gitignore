@@ -42,3 +42,4 @@ source_data/ODK/odk_source
 webpack-stats.json
 /static/css
 /static/fonts
+/static/admin/
