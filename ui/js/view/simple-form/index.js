@@ -5,6 +5,8 @@ var api = require('../../data/api');
 var treeify = require('../../data/transform/treeify');
 var ancestoryString = require('../../data/transform/ancestryString');
 var MenuVue = require('../../component/vue-menu');
+var React  = require('react');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 module.exports = {
 	template: require('./template.html'),
@@ -32,9 +34,19 @@ module.exports = {
 	     });
 	  });
 
+		// render indicator dropdown
+		api.indicatorsTree()
+			.then(function(response) {
+				var ddProps = {
+					indicators: response.objects,
+					text: 'Choose Indicators',
+					sendValue: self.updateIndicatorSelection
+				};
+				self.indicatorMap = _.indexBy(response.flat, 'id');
+				self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
+			});
 
 	  api.indicator_to_tag({'indicator_id':self.$parent.$data.indicator_id}).then(function(items){
-			console.log(self.$parent.$data.indicator_id)
 	    //  self.region_map = _.indexBy(items.objects, 'id');
 	     var ind_tags = _(items.objects)
 	     	.map(function (ind_tag) {
@@ -53,11 +65,11 @@ module.exports = {
 	     self.$set('indicator_tags',ind_tags);
 
 	  }).then(function () {
-	    self.regionMenu = new MenuComponent({
+	    self.tagMenu = new MenuComponent({
 	    	   el     : '#indicator_tags'
 	    });
-	    // self.regionMenu.items = self.$data.regions;
-	    // self.regionMenu.$on('field-selected',self.addRegionalAccess);
+	    self.tagMenu.items = self.$data.regions;
+	    self.tagMenu.$on('field-selected',self.addRegionalAccess);
 	  });
 	},
 	methods: {
