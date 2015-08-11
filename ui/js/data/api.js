@@ -224,6 +224,7 @@ module.exports = {
 	indicatorsTree		    : indicatorsTree,
 	tagTree								: tagTree,
 	indicator_to_tag      : endPoint('/indicator_to_tag/', 'get', 2),
+	indicator_tag         : endPoint('/indicator_tag/', 'get', 2),
 
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
