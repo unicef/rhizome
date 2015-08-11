@@ -34,35 +34,14 @@ module.exports = {
 			});
 
 	  api.indicator_to_tag({'indicator_id':self.$parent.$data.indicator_id}).then(function(items){
-				self.loadIndicatorTag();
-			 	self.tag_map = _.indexBy(items.objects, 'id');
-			 	var tags = _(items.objects)
-				.map(function (tag) {
-					return {
-						'title'  : tag.tag_name,
-						'value'  : region.id,
-						'id'     : region.id,
-					};
-				})
-	     	.sortBy('title')
-	     	.reverse() // I do not know why this works, but it does
-	     	.thru(_.curryRight(treeify)('id'))
-	     	.thru(ancestoryString)
-	     	.value();
-	     self.$set('indicator_tags',ind_tags);
+			self.loadIndicatorTag();
 
-	  }).then(function () {
-	    self.tagMenu = new MenuComponent({
-	    	   el     : '#indicator_tags'
-	    });
-	    self.tagMenu.items = self.$data.regions;
-	    self.tagMenu.$on('field-selected',self.addRegionalAccess);
-	  });
+	  })
 	},
 	methods: {
 		addTagToIndicator: function(data){
 	    var self = this;
-	    self.$set('regionalAccessLoading',true);
+	    self.$set('tagLoading',true);
 	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r' }).then(function(){
 	      self.loadRegionalAccess();
 	    });
@@ -75,15 +54,22 @@ module.exports = {
 	    });
 	  },
 	  loadIndicatorTag: function(){
+			// first load the tags, then map the values of the given indicator //
 	    var self = this;
-			  api.indicator_tag().then(function(data){
-	      // var tags = data.objects;
-	      //  _.forEach(tags,function(tag){
-	      //      tag.tag_name = self.tag_map[tag.indicator_id].tag_name;
-	      //  });
-	      self.$set('indicator_tags',data.objects);
-	      self.$set('tagLoading',false);
-	    });
-	  }
+
+			api.indicator_tag().then(function(data){
+				var tag_map = data.objects
+				self.$set('tag_map',tag_map);
+			});
+
+			api.indicator_to_tag({indicator_id:this.$parent.$data.indicator_id}).then(function(data){
+				var indicator_tags = data.objects;
+				_.forEach(indicator_tags,function(indicator_tag){
+				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id].tag_name;
+				 });
+				self.$set('indicator_tags',indicator_tags);
+				self.$set('tagLoading',false);
+			});
+		},
 	}
 };
