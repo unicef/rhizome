@@ -41,14 +41,14 @@ module.exports = {
 	    var self = this;
 	    self.$set('tagLoading',true);
 	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r' }).then(function(){
-	      self.loadRegionalAccess();
+	      self.loadIndicatorTag();
 	    });
 	  },
 	  deleteTagFromIndicator: function(data){
 	    var self = this;
 	    var readWrite = _.find(self.$get('region_permissions'),{region_id:data}).read_write;
 	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:readWrite,id:'' }).then(function(){
-	      self.loadRegionalAccess();
+	      self.loadIndicatorTag();
 	    });
 	  },
 	  loadIndicatorTag: function(){
@@ -56,17 +56,24 @@ module.exports = {
 	    var self = this;
 
 			api.indicator_tag().then(function(data){
-				var tag_map = data.objects
+				// var tag_data = data.objects
+				var tag_map = _(data.objects).map(function (tag) {
+ 	     		return {
+						 			'tag_id'    : tag.tag_id,
+						 			'tag_name'  : tag.name,
+ 	     		};
+ 	     	});
+
 				self.$set('tag_map',tag_map);
 			});
 
 			api.indicator_to_tag({indicator_id:this.$parent.$data.indicator_id}).then(function(data){
 				var indicator_tags = data.objects;
 				_.forEach(indicator_tags,function(indicator_tag){
-				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id].tag_name;
+				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id];
 				 });
 				self.$set('indicator_tags',indicator_tags);
-				self.$set('tagLoading',false);
+				self.$set('loadIndicatorTag',false);
 			});
 		},
 	}
