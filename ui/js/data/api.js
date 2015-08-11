@@ -240,6 +240,8 @@ module.exports = {
 	map_user_group        : endPoint('/user_group/','post',2),
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
+	set_indicator_to_tag  : endPoint('/indicator_to_tag/','post',2),
+
 	save_dashboard     : endPoint('/custom_dashboard/','post',2),
 	get_dashboard     : endPoint('/custom_dashboard/','get',2),
 	admin: {

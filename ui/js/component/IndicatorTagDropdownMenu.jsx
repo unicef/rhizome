@@ -54,11 +54,7 @@ var IndicatorTagDropdownMenu = React.createClass({
     }
 
     var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue);
-
     var props = _.omit(this.props, 'tag_tree', 'sendValue');
-
-    console.log('logging tag tree')
-    console.log(this.props.tag_tree)
 
     return (
       <DropdownMenu
