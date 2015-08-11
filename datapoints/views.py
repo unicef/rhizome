@@ -367,7 +367,7 @@ def v2_meta_api(request,content_type):
     return v2_api(request,content_type,True)
 
 
-@django_cache_control(must_revalidate=True, max_age=3600,private=True)
+# @django_cache_control(must_revalidate=True, max_age=3600,private=True)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
