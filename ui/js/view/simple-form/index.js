@@ -95,9 +95,7 @@ module.exports = {
 
 	  loadRegionalAccess: function(){
 	    var self = this;
-
-
-	    api.region_permission( {user:this.$parent.$data.user_id}).then(function(data){
+api.region_permission( {user:this.$parent.$data.user_id}).then(function(data){
 	      var regions = data.objects;
 	       _.forEach(regions,function(region){
 	           region.name = self.region_map[region.region_id].name;
