@@ -386,8 +386,8 @@ def v2_api(request,content_type,is_meta=False):
     return HttpResponse(json.dumps(data),content_type="application/json")
 
 
-def upsert_indicator(request):
+def upsert_indicator(request,pk=None):
 
     return render_to_response('indicators/upsert.html',
-        {'form':IndicatorForm},
+        {'form':IndicatorForm,'pk':pk},
         context_instance=RequestContext(request))

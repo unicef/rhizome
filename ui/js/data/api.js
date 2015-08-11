@@ -200,6 +200,8 @@ module.exports = {
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
 	indicatorsTree		  : indicatorsTree,
+	indicator_to_tag      : endPoint('/indicator_to_tag/', 'get', 2),
+
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
   region_type           : endPoint('/region_type/', 'get', 2),

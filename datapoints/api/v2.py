@@ -81,6 +81,8 @@ class v2Request(object):
                 'permission_function':None},
             'indicator_tag': {'orm_obj':IndicatorTag,
                 'permission_function':None},
+            'indicator_to_tag': {'orm_obj':IndicatorToTag,
+                'permission_function':None},
             'campaign_type': {'orm_obj':CampaignType,
                 'permission_function':None},
             'region_type': {'orm_obj':RegionType,

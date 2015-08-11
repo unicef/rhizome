@@ -1,41 +1,36 @@
 
 <div
-   id="indicators"
+   id="indicator_tags"
    data-change-event="field-selected"
    data-searchable="true"
    full-size-menu="true"
    style="width: 150px;"
    >
-      <a class="button">
-        add an indicator
-      </a>
+      <a class="button"> add a tag </a>
 </div>
 
   <div class="row">
 
      <div class="columns small-4 left-box">
-       <div class="label-box">
-        BLAA
-       </div>
        <div class="columns small-8 right-box">
          <table class="region-table">
              <thead>
                  <tr>
                      <th>id </th>
-                     <th  style="width: 126px;">Name</th>
-                     <th style="width: 70px;">Short Name</th>
+                     <th  style="width: 126px;">Tag Name</th>
+                     <th style="width: 70px;">Remove</th>
                  </tr>
              </thead>
             <tbody>
-	            <tr v-repeat="indicator:indicators">
+	            <tr v-repeat="tag:indicator_tags">
 	              <td>
-	               {{indicator.id}}
+	               {{tag.id}}
 	              </td>
                 <td>
-	               {{indicator.name}}
+	               {{tag.indicator_id}}
 	              </td>
                 <td>
-	               {{indicator.short_name}}
+	               {{tag.indicator_tag_id}}
 	              </td>
 	            </tr>
 	            <tr v-if="regionalAccessLoading"><td colspan="3"><span class="fa fa-fw fa-lg fa-spinner fa-spin"></span></td></tr>

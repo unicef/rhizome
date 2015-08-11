@@ -33,14 +33,16 @@ module.exports = {
 	  });
 
 
-	  api.indicators().then(function(items){
+	  api.indicator_to_tag({'indicator_id':self.$parent.$data.indicator_id}).then(function(items){
+			console.log(self.$parent.$data.indicator_id)
 	    //  self.region_map = _.indexBy(items.objects, 'id');
-	     var indicators = _(items.objects)
-	     	.map(function (indicator) {
+	     var ind_tags = _(items.objects)
+	     	.map(function (ind_tag) {
 	     		return {
-	     			'title'  : indicator.short_name,
-	     			'value'  : indicator.id,
-	     			'id'     : indicator.id,
+	     			'title'  : ind_tag.indicator_id,
+	     			'value'  : ind_tag.id,
+	     			'id'     : ind_tag.id,
+						'indicator_tag_id' :ind_tag.indicator_tag_id,
 	     		};
 	     	})
 	     	.sortBy('title')
@@ -48,14 +50,14 @@ module.exports = {
 	     	.thru(_.curryRight(treeify)('id'))
 	     	.thru(ancestoryString)
 	     	.value();
-	     self.$set('indicators',indicators);
+	     self.$set('indicator_tags',ind_tags);
 
 	  }).then(function () {
 	    self.regionMenu = new MenuComponent({
-	    	   el     : '#indicators'
+	    	   el     : '#indicator_tags'
 	    });
-	    self.regionMenu.items = self.$data.regions;
-	    self.regionMenu.$on('field-selected',self.addRegionalAccess);
+	    // self.regionMenu.items = self.$data.regions;
+	    // self.regionMenu.$on('field-selected',self.addRegionalAccess);
 	  });
 	},
 	methods: {
