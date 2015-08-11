@@ -9,7 +9,7 @@ local_venv_path = None
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
 remote_backend_path = '/var/www/apps/polio/'
-remote_frontend_path = '/var/www/polio/static/'
+remote_frontend_path = '/var/www/apps/polio/static/'
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
@@ -50,9 +50,12 @@ def _build_dependencies():
     local ("npm install")
     local ("pip install -r requirements.txt")
 
-    # make dist
+    # gulp styles is totall broken.. need to do this in webpack #
     local("./node_modules/.bin/bower install")
+    local("./node_modules/.bin/gulp fonts")
+    local("./node_modules/.bin/webpack --config webpack.config.dev.js")
     local("./node_modules/.bin/gulp dist")
+    local("python manage.py collectstatic --noinput")
 
 # push build to remote
 def _push_to_remote():
@@ -62,8 +65,7 @@ def _push_to_remote():
     run ("mkdir -p %s" % remote_work_path)
 
     # push to remote server #
-    put ('dist/uf04-frontend.zip', remote_work_path)
-    put ('dist/uf04-backend.zip', remote_work_path)
+    put ('dist/rhizome.zip', remote_work_path)
 
     # unzip stuff #
     with cd(remote_work_path):
@@ -78,13 +80,7 @@ def _push_to_remote():
 
         # [these unzips were trying to overwrite .pyc files owned by www-root
         #  so the 'find' command above may not be deleting enough compiled pycs]
-        run("unzip -o uf04-frontend.zip -d %s" % remote_frontend_path) # -o is overwrite
-        run("unzip -o uf04-backend.zip -d %s" % remote_backend_path)
-
-    with cd(remote_frontend_path):
-        # remove compiled files
-        run('sudo rm -rf `find . -name "*.pyc"`')
-        run('chmod -R g+w *')
+        run("unzip -o rhizome.zip -d %s" % remote_backend_path)
 
     # in server path -
     with cd(remote_backend_path):

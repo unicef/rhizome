@@ -1,3 +1,4 @@
+{% load render_bundle from webpack_loader %}
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,10 +8,14 @@
 	<title>{% block title %}{% endblock %}RhizomeDB</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
-	<link rel="stylesheet" href="{% static "css/screen.css" %}">
-	<link rel="stylesheet" href="{% static "css/print.css" %}" media="print">
+	<!--  -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700">
+
+	<!-- FIXME - until gulp styles is working im using seeds static css  -->
+	<link rel="stylesheet" href="http://polio.seedscientific.com/static/css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://polio.seedscientific.com/static/css/screen.css">
+	<link rel="stylesheet" href="http://polio.seedscientific.com/static/css/print.css" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
@@ -35,9 +40,10 @@
 	<!-- Polyfill for Promises (not yet implemented in IE) and
 	     Promise.prototype.done (not standardized yet).
 	     -->
-	<script src="https://www.promisejs.org/polyfills/promise-6.0.0.min.js"></script>
-	<script src="{% static 'vendor.js' %}"></script>
-	<script src="{% static 'main.js' %}"></script>
+	<script src='https://www.promisejs.org/polyfills/promise-6.0.0.min.js'></script>
+	{% render_bundle "vendor" %}
+	{% render_bundle "app" %}
+
 	{% block scripts %}{% endblock %}
 
 </body>

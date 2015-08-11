@@ -137,31 +137,15 @@ gulp.task('collectstatic', ['build'], function (cb) {
 
 gulp.task('dist-py', function () {
 	return gulp.src([
-			'{bin,polio,datapoints,source_data,templates,docs}/**/*.{py,sql,html,sh,xlsx}',
+			'{bin,polio,datapoints,source_data,entity,templates,static}/**/*.{py,sql,html,sh,css,js}',
 			'manage.py',
 			'requirements.txt',
+			'webpack-stats.json',
 		])
-		.pipe($.zip('uf04-backend.zip'))
+		.pipe($.zip('rhizome.zip'))
 		.pipe($.size({ title: 'Backend'}))
 		.pipe(gulp.dest(path.dist))
 });
 
-gulp.task('dist-ui', ['collectstatic'], function () {
-	var jsFilter  = $.filter('**/main.js');
-	var cssFilter = $.filter('**/{print,screen,ie}.css');
-
-	return gulp.src('build/**/*')
-		.pipe(jsFilter)
-		.pipe($.size({ title: 'JavaScript' }))
-		.pipe(jsFilter.restore())
-		.pipe(cssFilter)
-		.pipe($.csso())
-		.pipe($.size({ title: 'CSS' }))
-		.pipe(cssFilter.restore())
-		.pipe($.zip(path.zipfile))
-		.pipe($.filter('*.zip'))
-		.pipe($.size({ title: 'Zip' }))
-		.pipe(gulp.dest(path.dist));
-});
-
-gulp.task('dist', ['dist-py', 'dist-ui']);
+// gulp.task('dist', ['dist-py']);
+gulp.task('dist', ['dist-py']);

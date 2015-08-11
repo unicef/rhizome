@@ -41,15 +41,6 @@ privileges, so you'll need to `sudo` the above command.
     $ bower install
     $ sudo gem install sass compass
 
-You will also need to copy the sample webpack config to make the FE build work"
-
-    $ cp webpack.config.dev.sample.js webpack.config.dev.js
-
-If you don't want to install `gulp` or `bower` globally (with the `-g` flag),
-you can run them from the copies installed in `node_modules` by running
-
-    $ ./node_modules/.bin/gulp
-    $ ./node_modules/.bin/bower
 
 ## Setting up the database
 
@@ -69,37 +60,38 @@ so feel free to set the djangoapp password to that when getting started!
 
 The password for the djangoapp user can be found in `settings.py`.
 
-## Building
-
-    $ npm run build
-
-This will compile the SASS, pack the JavaScript, and place both in the `static/`
-directory along with all the fonts. If you have `gulp` in your `PATH`, you can
-also run:
+## Building the Front End
 
     $ gulp build
 
-## Deploying
+## Your Development Environment
 
-    $ npm run dist
+In development you will need to run two operations *
+     $ python manage.py runserver
+     $ webpack --config webpack.config.dev.js --watch
 
-This will build the frontend, collect all of Django's static files, and then
-create zip files for the frontend and backend in the `dist/` directory:
+After running these two commands in two separate terminals visit:
 
-1. uf04-backend.zip
-2. uf04-frontend.zip
+    http://localhost:8000
 
-Each contains the source necessary to deploy the backend and frontend,
-respectively. These can be copied to whatever server is hosting each of those
-components.
+To see the application.
 
-The JavaScript and CSS in the frontend zip file is minimized.
+Note - Currently webpack only re-compiles javascript.. not css. If you make a
+change to a css file you will nee to run 'gulp build' in order to see those
+changes in your development envi.
 
-If you have `gulp` in your `PATH`, you can also run:
+We are moving towards a de-coupled application in which node will serve
+all static pages, scripts and assets, but for now, this set up along with the
+configurations provided by the [Django Webpack Loader
+Package](https://github.com/owais/django-webpack-loader/) allows us to create
+edits to our javascript and have the front end automatically rebuild them.
 
-    $ gulp dist
+## Deploying ##
 
-### Deploying the backend
+see fabfile.py for more info
+
+
+# Serving the Django Application with Apache.
 
 You'll need to configure Apache and WSGI on whatever server you're deploying to,
 and set up a PostgreSQL database for the application first. Make sure that
@@ -109,42 +101,12 @@ MPMs result in incorrect responses returned for requests when multiple requests
 are made to the server.
 
 For more information on deploying [Django][] applications, see the
-[Django documentation](https://docs.djangoproject.com/en/1.7/howto/deployment/).
+[Django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/).
 
-#### Build the application and copy it to the server
+You will also want to set up apache to server the files in the /static and
+/media directories.
 
-    $ npm run dist
-    $ scp dist/*.zip <server>
-
-#### Unzip the application files
-
-    $ ssh <server>
-    $ unzip -o uf04-backend.zip -d <path/to/python/docroot>
-    $ unzip -o uf04-frontend.zip -d <path/to/static/files/docroot>
-    $ chown -R <apache user> <path/to/python/docroot>
-    $ chown -R <apache user> <path/to/static/files/docroot>
-
-#### Update Python dependencies
-
-    $ cd <path/to/python/docroot>
-    $ pip install -r requirements.txt
-
-#### Update the database
-
-    $ python manage.py syncdb --migrate
-
-You may need to use the `--settings` option for `manage.py` if your
-`settings.py` is not in `PYTHONPATH`.
-
-    $ bash bin/build_db.sh
-
-You will need to make sure that whatever user you are executing `build_db.sh` as
-is recognized by the PostgreSQL database and is the owner of the views being
-modified by the script.
-
-Finally, you'll need to restart Apache.
-
-### Deploying the frontend
+### Serving Static files
 
 The frontend files can be served statically by any webserver. Make sure that
 the `STATIC_URL` setting in the backend's `settings.py` is set to wherever you
@@ -160,6 +122,11 @@ you simply execute
     $ gulp
 
 from the command line it will build the entire frontend for development.
+
+## webpack-dev
+
+Start a livereload server and that dynmically rebuilds your javascript
+and styles  
 
 ## build
 
@@ -184,11 +151,6 @@ Python and SQL files.
 Execute `collectstatic` and then zip up all of the files contained in `build/`.
 The zip file is `dist/uf04-frontend.zip`.
 
-## watch
-
-Start a livereload server and watch SASS and JavaScript files for changes. Run
-`gulp styles` whenever SASS changes, and `gulp browserify` whenever JavaScript
-changes.
 
 [Django]: https://djangoproject.com/
 [Node]: http://nodejs.org/

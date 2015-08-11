@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
 
             -- REGION --
             INSERT INTO region
-            (id,name,region_code,slug,office_id,region_type_id,created_at)
+            (name,region_code,slug,office_id,region_type_id,created_at)
 
             SELECT
                  x.region_name as region_name
