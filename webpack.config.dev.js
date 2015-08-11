@@ -9,7 +9,7 @@ var devConfig = _.merge(config, {
 	output: {
 			 path: path.resolve('./assets/bundles/'),
 			 filename: "main-[hash].js",
-	     publicPath: 'static/',
+	     publicPath: '/static/',
 	 },
 	 plugins: [
 		 new BundleTracker({filename: './webpack-stats.json'}),
