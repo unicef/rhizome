@@ -40,9 +40,8 @@ module.exports = {
 		addTagToIndicator: function(data){
 	    var self = this;
 	    self.$set('tagLoading',true);
-			console.log('ADDING indicaotr tag')
 	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
-	      // self.loadIndicatorTag();
+	      self.loadIndicatorTag();
 	    });
 	  },
 	  deleteTagFromIndicator: function(data){
@@ -76,7 +75,7 @@ module.exports = {
 				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id];
 				 });
 				self.$set('indicator_tags',indicator_tags);
-				self.$set('loadIndicatorTag',false);
+				self.$set('tagLoading',false);
 			});
 		},
 	}
