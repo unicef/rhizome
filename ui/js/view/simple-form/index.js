@@ -55,6 +55,7 @@ module.exports = {
 			// first load the tags, then map the values of the given indicator //
 	    var self = this;
 	    self.$set('tagLoading',true);
+
 			api.indicator_tag().then(function(data){
 				var tag_map = [];
 				var indicator_tags = data.objects;
@@ -64,7 +65,7 @@ module.exports = {
 				self.$set('tag_map',tag_map);
 			});
 
-			api.indicator_to_tag({indicator_id:this.$parent.$data.indicator_id}).then(function(data){
+			api.indicator_to_tag({indicator_id:this.$parent.$data.indicator_id},null,{'cache-control':'no-cache'}).then(function(data){
 				var indicator_tags = data.objects;
 				_.forEach(indicator_tags,function(indicator_tag){
 				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id];

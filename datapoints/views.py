@@ -367,7 +367,7 @@ def v2_meta_api(request,content_type):
     return v2_api(request,content_type,True)
 
 
-# @django_cache_control(must_revalidate=True, max_age=3600,private=True)
+@django_cache_control(must_revalidate=True, max_age=3600,private=True)
 def v2_api(request,content_type,is_meta=False):
 
     if is_meta:
@@ -388,6 +388,10 @@ def v2_api(request,content_type,is_meta=False):
 
 def upsert_indicator(request,pk=None):
 
+    indicator_obj = Indicator.objects.filter(id=pk).values()[0]
+    print indicator_obj
+    form_instance = IndicatorForm(indicator_obj)
+
     return render_to_response('indicators/upsert.html',
-        {'form':IndicatorForm,'pk':pk},
+        {'form':form_instance,'pk':pk},
         context_instance=RequestContext(request))
