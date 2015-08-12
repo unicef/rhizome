@@ -9,8 +9,7 @@
 		<form action="" method="post">
 			<h2>Edit Indicator</h2>
 			{% csrf_token %}
-			{{ form.name }}
-			{{ form.short_name }}
+			{{ form.as_p }}
 			<button type="submit">Save Indicator</button>
 		</form>
 		<div v-component="uf-simple-form" v-with="user_id:user_id"></div>
