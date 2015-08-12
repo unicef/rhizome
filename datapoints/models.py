@@ -181,7 +181,7 @@ class IndicatorToTag(models.Model):
     class Meta:
         db_table = 'indicator_to_tag'
         unique_together = ('indicator','indicator_tag')
-
+        # ordering = [('-id')]
 
 class Office(models.Model):
     '''

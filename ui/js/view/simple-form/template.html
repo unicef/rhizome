@@ -24,8 +24,9 @@
 	               {{tag.tag_name}}
 	              </td>
                 <td>
-	               {{tag.indicator_tag_id}}
+	                <span v-on="click:deleteTagFromIndicator(tag.indicator_tag_id)" class="fa fa-times"></span>
 	              </td>
+
 	            </tr>
             </tbody>
          </table>
