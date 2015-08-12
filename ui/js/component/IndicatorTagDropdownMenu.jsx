@@ -33,10 +33,10 @@ function filterMenu(items, pattern) {
   return _(items).map(match).flatten().value();
 }
 
-var IndicatorDropdownMenu = React.createClass({
+var IndicatorTagDropdownMenu = React.createClass({
 
   propTypes : {
-    indicators : React.PropTypes.array.isRequired,
+    tag_tree : React.PropTypes.array.isRequired,
     sendValue : React.PropTypes.func.isRequired
   },
 
@@ -45,26 +45,23 @@ var IndicatorDropdownMenu = React.createClass({
       pattern : ''
     };
   },
-/*  shouldComponentUpdate: function(nextProps, nextState) {
-      return (nextProps.indicators.length !== this.props.indicators.length || nextProps.text !==this.props.text);
-  }, */
+
   render : function () {
     var self = this;
-    //console.log(this.props.indicators);
-    if (this.props.indicators.length === 0) {
-      return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Indicators...</button>);
+
+    if (this.props.tag_tree.length === 0) {
+      return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>);
     }
 
-    var indicators = MenuItem.fromArray(filterMenu(this.props.indicators, this.state.pattern), self.props.sendValue);
-
-    var props = _.omit(this.props, 'indicators', 'sendValue');
+    var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue);
+    var props = _.omit(this.props, 'tag_tree', 'sendValue');
 
     return (
       <DropdownMenu
         searchable={true}
         onSearch={this._setPattern}
         {...props}>
-        {indicators}
+        {tag_tree}
       </DropdownMenu>
     );
   },
@@ -74,4 +71,4 @@ var IndicatorDropdownMenu = React.createClass({
   }
 });
 
-module.exports = IndicatorDropdownMenu;
+module.exports = IndicatorTagDropdownMenu;

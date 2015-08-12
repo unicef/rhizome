@@ -191,6 +191,25 @@ function indicatorsTree(q) {
 		}, reject);
 	});
 }
+function tagTree(q) {
+	var fetch = endPoint('/indicator_tag', 'get', 2);
+	return new Promise(function (fulfill, reject) {
+
+			fetch().then(function(tags) {
+				var tags_map = {};
+				_.each(tags.objects, function(t) {
+							tags_map[t.id] = t;
+							t.parent = t.parent_tag_id
+							t.children = [];
+							t.title = t.tag_name;
+							t.value = t.id;
+						});
+				tags.objects = treeify(tags.objects, 'id');
+				tags.flat = tags.objects;
+				fulfill(tags);
+		}, reject);
+	});
+}
 
 module.exports = {
 	campaign              : endPoint('/campaign/', 'get', 2),
@@ -201,7 +220,11 @@ module.exports = {
 	document              : endPoint('/document/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
-	indicatorsTree		  : indicatorsTree,
+	indicatorsTree		    : indicatorsTree,
+	tagTree								: tagTree,
+	indicator_to_tag      : endPoint('/indicator_to_tag/', 'get', 2),
+	indicator_tag         : endPoint('/indicator_tag/', 'get', 2),
+
 	office                : endPoint('/office/', 'get', 2),
 	regions               : endPoint('/region/', 'get', 2),
   region_type           : endPoint('/region_type/', 'get', 2),
@@ -219,6 +242,8 @@ module.exports = {
 	map_user_group        : endPoint('/user_group/','post',2),
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
+	set_indicator_to_tag  : endPoint('/indicator_to_tag/','post',2),
+
 	save_dashboard     : endPoint('/custom_dashboard/','post',2),
 	get_dashboard     : endPoint('/custom_dashboard/','get',2),
 	admin: {

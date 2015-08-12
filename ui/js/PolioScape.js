@@ -59,6 +59,13 @@ module.exports = {
 			data:{'user_id':user_id}
 		});
 	},
+	SimpleForm: function (el,indicator_id) {
+		new Vue({
+			el: el,
+			components: { 'uf-simple-form': require('./view/simple-form') },
+			data:{'indicator_id':indicator_id}
+		});
+	},
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
 	},
