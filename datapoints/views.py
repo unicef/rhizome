@@ -373,7 +373,7 @@ class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
         new_indicator = form.save()
 
         return HttpResponseRedirect(reverse('datapoints:update_indicator', \
-            kwargs={'indicator_id':new_indicator.id}))
+            kwargs={'pk':new_indicator.id}))
 
 
 class IndicatorEditView(PermissionRequiredMixin,generic.UpdateView):
@@ -384,16 +384,16 @@ class IndicatorEditView(PermissionRequiredMixin,generic.UpdateView):
 
     def get_success_url(self):
 
-        requested_indicator_id = self.get_object().id
+        new_indicator_id = self.get_object().id
 
-        return reverse_lazy('datapoints:create_indicator',kwargs={'pk':
-            requested_user_id})
+        return reverse_lazy('datapoints:update_indicator',kwargs={'pk':
+            new_indicator_id})
 
     def get_context_data(self, **kwargs):
 
         context = super(IndicatorEditView, self).get_context_data(**kwargs)
         indicator_obj = self.get_object()
-        context['indicator_id'] = indicator_obj.id
+        context['pk'] = indicator_obj.id
 
         return context
 
