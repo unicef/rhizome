@@ -25,13 +25,14 @@ const fieldNamesOnTable = ['id', 'slug', 'short_name', 'name', 'description', 'e
 
 var DocMapping = React.createClass({
 	render() {
+		console.log('.....rendering........')
 		var datascopeFilters =
 			<div>
 				<SearchBar placeholder="search indicators"/>
 			</div>;
 
 		return <ReviewPage
-			title="Indicators"
+			title="doc_mapping_page"
 			getMetadata={API.admin.indicatorsMetadata}
 			getData={API.admin.indicators}
 			datascopeFilters={datascopeFilters}
