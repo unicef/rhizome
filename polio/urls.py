@@ -53,9 +53,15 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
 
-    ## ADMIN PAGES HITTING ENTITY API
+    ## UFADMIN ##
     url(r'^ufadmin/$', login_required(views.UFAdminView.as_view()), name='ufadmin'),
     url(r'^ufadmin/', login_required(views.UFAdminView.as_view()), name='ufadmin'),
+
+    ## DOCUMENT_REVIEW ##
+    # url(r'^$', TemplateView.as_view(template_name="your_static.html"), name='whatever'),
+    url(r'^doc_review/', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
+
+
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

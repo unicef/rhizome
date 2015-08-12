@@ -7,6 +7,7 @@ var LandingPage      = require('view/LandingPage.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
+var DocReviewApp		 = require('./doc-review')
 var GroupForm = require('view/group-form/GroupForm.jsx');
 
 Vue.config.debug = true;
@@ -59,6 +60,8 @@ module.exports = {
 			data:{'user_id':user_id}
 		});
 	},
+	/// start johns new components //
+
 	SimpleForm: function (el,indicator_id) {
 		new Vue({
 			el: el,
@@ -66,6 +69,13 @@ module.exports = {
 			data:{'indicator_id':indicator_id}
 		});
 	},
+
+	DocReview: function(el) {
+		DocReviewApp.render(document.getElementById('main'));
+	},
+
+	/// done with johns new components //
+
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
 	},
@@ -73,7 +83,7 @@ module.exports = {
 		React.render(React.createElement(DashboardList), el);
 	},
 	DashboardBuilder: function (el,dashboard_id) {
-	    var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
+	  var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');
 		React.render(React.createElement(DashboardBuilder,{dashboard_id:dashboard_id}), el);
 	},
 	ChartBuilder: function (el,dashboard_id) {

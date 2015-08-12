@@ -1,12 +1,13 @@
 {% extends "base.html" %}
   {% block content %}
-  
+
  <div v-component="uf-field-mapping" v-with="document_id:document_id"></div>
    <!-- <div id="uf-field-mapping-container" ></div> -->
     {% endblock %}
 
 {% block scripts %}
 <script>
-Polio.FieldMapping('#main',{{document_id}});
+// Polio.FieldMapping('#main',{{document_id}});
+Polio.UFAdmin('#main')
 </script>
 {% endblock %}
