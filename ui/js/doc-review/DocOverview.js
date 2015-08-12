@@ -23,7 +23,7 @@ const fields = {
 
 const fieldNamesOnTable = ['id', 'slug', 'short_name', 'name', 'description', 'edit_link'];
 
-var DocDetail = React.createClass({
+var DocOverview = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
@@ -47,4 +47,4 @@ var DocDetail = React.createClass({
 	}
 });
 
-module.exports = DocDetail;
+module.exports = DocOverview;
