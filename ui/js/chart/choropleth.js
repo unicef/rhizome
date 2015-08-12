@@ -22,7 +22,7 @@ var DEFAULTS = {
 	},
   onClick : _.noop,
   value   : _.property('properties.value'),
-  format  : d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
+  yFormat : d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name    : _.property('properties.name')
 };
 
@@ -169,19 +169,23 @@ _.extend(ChoroplethMap.prototype, {
     // scale, mapping the format function to the values, and joining them
     var ticks = _.map(
       colorScale.range(),
-      c => _.map(colorScale.invertExtent(c), options.format).join('—')
+      c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
     );
 
-    svg.select('.legend')
-      .call(legend()
-        .scale(d3.scale.ordinal()
-          .domain(ticks)
-          .range(colorScale.range()))
-      )
-      .attr('transform', function () {
-        var bbox = this.getBoundingClientRect();
-        return 'translate(' + (w - bbox.width) + ',' + (h - bbox.height) + ')';
-      });
+    if (_.every(colorScale.domain(), _.isNaN)) {
+      svg.select('.legend').selectAll('*').remove();
+    } else {
+      svg.select('.legend')
+        .call(legend()
+          .scale(d3.scale.ordinal()
+            .domain(ticks)
+            .range(colorScale.range()))
+        )
+        .attr('transform', function () {
+          var bbox = this.getBoundingClientRect();
+          return 'translate(' + (w - bbox.width) + ',' + (h - bbox.height) + ')';
+        });
+    }
 	},
 
   _onMouseMove : function (d, options) {

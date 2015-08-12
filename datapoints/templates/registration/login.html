@@ -7,32 +7,37 @@
 	<title>Polio Data Management App</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="{% static "css/screen.css" %}">
+	<link rel="stylesheet" href="http://polio.seedscientific.com/static/css/screen.css">
+
 </head>
 
 <body class="login">
-	<form method="post" action="{% url 'login' %}">
-		{% csrf_token %}
+  <div class="wrapper">
+    <p>Rhizome DB supports the polio programme’s critical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.</p>
 
-		<div class="form-group">
-			{{ form.username.label_tag }}
-			{{ form.username }}
-		</div>
+  	<form method="post" action="{% url 'login' %}">
+  		{% csrf_token %}
 
-		<div class="form-group">
-			{{ form.password.label_tag }}
-			{{ form.password }}
-		</div>
-		<button type="submit" class="success expand">Login</button>
+  		<div class="form-group">
+  			{{ form.username.label_tag }}
+  			{{ form.username }}
+  		</div>
 
-		<input type="hidden" name="next" value="{{ next }}" />
+  		<div class="form-group">
+  			{{ form.password.label_tag }}
+  			{{ form.password }}
+  		</div>
+  		<button type="submit" class="success expand">Login</button>
 
-		{% if form.errors %}
-		<p class="error">
-			Your username and password didn't match. Please try again.
-		</p>
-		{% endif %}
-	</form>
+  		<input type="hidden" name="next" value="{{ next }}" />
+
+  		{% if form.errors %}
+  		<p class="error">
+  			Your username and password didn't match. Please try again.
+  		</p>
+  		{% endif %}
+  	</form>
+  </div>
 </body>
 
 </html>

@@ -10,14 +10,35 @@ var Chart = require('component/Chart.jsx');
 function getOptions(chart, campaign, data) {
   var opts = {};
 
+  if (chart.hasOwnProperty('yFormat')) {
+    opts.yFormat = _.isString(chart.yFormat) ? d3.format(chart.yFormat) : chart.xFormat;
+  }
+
   switch (chart.type) {
     case 'ScatterChart':
       opts.x = _.property('[' + chart.indicators[0] + ']');
       opts.y = _.property('[' + chart.indicators[1] + ']');
+
+      // Only scatter charts should be providing custom formatting for
+      // the x-axis
+      if (chart.hasOwnProperty('xFormat')) {
+        opts.xFormat = _.isString(chart.xFormat) ? d3.format(chart.xFormat) : chart.xFormat;
+      }
+
       break;
 
     case 'ChoroplethMap':
       opts.value = _.property('.properties[' + chart.indicators[0] + ']');
+      break;
+
+    case 'BarChart':
+      opts.y = _.property((chart.groupBy === 'indicator') ?
+        'region.name' :
+        'indicator.short_name'
+      );
+
+      opts.xFormat = opts.yFormat;
+      opts.yFormat = String;
       break;
 
     case 'ColumnChart':
