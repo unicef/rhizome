@@ -47,15 +47,6 @@ class Indicator(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-
-            print 'TRYING TO SAVE'
-            #This code only happens if the objects is
-            #not in the database yet. Otherwise it would
-            #have pk
-        super(MyModel, self).save(*args, **kwargs)
-
     class Meta:
         db_table = 'indicator'
         ordering = ('name',)
