@@ -9,7 +9,8 @@
 		<form action="" method="post">
 			<h2>Edit Indicator</h2>
 			{% csrf_token %}
-			{{ form.as_p }}
+			{{ form.name }}
+			{{ form.short_name }}
 			<button type="submit">Save Indicator</button>
 		</form>
 		<div v-component="uf-simple-form" v-with="user_id:user_id"></div>
@@ -21,6 +22,6 @@
 
 {% block scripts %}
 <script>
-Polio.SimpleForm('#main',{{pk}});
+Polio.SimpleForm('#main',{{indicator_id}});
 </script>
 {% endblock %}

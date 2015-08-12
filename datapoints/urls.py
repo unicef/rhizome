@@ -60,12 +60,13 @@ urlpatterns = [
         ## INDICATORS ##
         ################
 
-    ## CREATE ##
-    url(r'^indicators/create/$', views.upsert_indicator,name='create_indicator'),
-
+    # ## CREATE ##
+    url(r'^indicators/create/$', views.IndicatorCreateView.as_view(),\
+        name='create_indicator'),
+    #
     ## UPDATE ##
-    url(r'^indicators/update/(?P<pk>[0-9]+)/$', views.upsert_indicator,
-        name='update_indicator'),
+    url(r'^indicators/update/(?P<pk>[0-9]+)/$',\
+        views.IndicatorEditView.as_view(),name='update_indicator'),
 
         ###############
         #### USER  ####

@@ -362,10 +362,44 @@ class UserEditView(PermissionRequiredMixin,generic.UpdateView):
 
         return context
 
+class IndicatorCreateView(PermissionRequiredMixin,generic.CreateView):
+
+    model = User
+    template_name = 'user_create.html'
+    form_class = IndicatorForm
+
+    def form_valid(self, form):
+
+        new_indicator = form.save()
+
+        return HttpResponseRedirect(reverse('datapoints:update_indicator', \
+            kwargs={'indicator_id':new_indicator.id}))
+
+
+class IndicatorEditView(PermissionRequiredMixin,generic.UpdateView):
+
+    model = Indicator
+    template_name = 'indicators/upsert.html'
+    form_class = IndicatorForm
+
+    def get_success_url(self):
+
+        requested_indicator_id = self.get_object().id
+
+        return reverse_lazy('datapoints:create_indicator',kwargs={'pk':
+            requested_user_id})
+
+    def get_context_data(self, **kwargs):
+
+        context = super(IndicatorEditView, self).get_context_data(**kwargs)
+        indicator_obj = self.get_object()
+        context['indicator_id'] = indicator_obj.id
+
+        return context
+
 def v2_meta_api(request,content_type):
 
     return v2_api(request,content_type,True)
-
 
 @django_cache_control(must_revalidate=True, max_age=3600,private=True)
 def v2_api(request,content_type,is_meta=False):
@@ -384,14 +418,3 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
-
-
-def upsert_indicator(request,pk=None):
-
-    indicator_obj = Indicator.objects.filter(id=pk).values()[0]
-    print indicator_obj
-    form_instance = IndicatorForm(indicator_obj)
-
-    return render_to_response('indicators/upsert.html',
-        {'form':form_instance,'pk':pk},
-        context_instance=RequestContext(request))
