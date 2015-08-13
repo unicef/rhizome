@@ -12,9 +12,6 @@
 		componentDidMount: function() {
     API.document({id:6}).then(function(result) {
 	      var api_data = result.objects[0];
-
-				console.log(api_data)
-
 	      if (this.isMounted()) {
 	        this.setState({ doc_overview: api_data});
 	      }
