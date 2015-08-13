@@ -48,12 +48,17 @@ def _build_dependencies():
 
     # update/install dependencies
     local ("npm install")
+    local("./node_modules/.bin/bower install")
     local ("pip install -r requirements.txt")
 
-    # gulp styles is totall broken.. need to do this in webpack #
-    local("./node_modules/.bin/bower install")
-    local("./node_modules/.bin/gulp fonts")
+    # gulp styles is broken.. TODO build styles in webpack #
+
+    local("rm assets/bundles/*")
+    local("rm static/main*")
+
+
     local("./node_modules/.bin/webpack --config webpack.config.dev.js")
+    local("./node_modules/.bin/gulp fonts")
     local("./node_modules/.bin/gulp dist")
     local("python manage.py collectstatic --noinput")
 
@@ -81,6 +86,9 @@ def _push_to_remote():
         # [these unzips were trying to overwrite .pyc files owned by www-root
         #  so the 'find' command above may not be deleting enough compiled pycs]
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
+
+    ## scp static javascript
+    put ('static/main*', remote_frontend_path)
 
     # in server path -
     with cd(remote_backend_path):

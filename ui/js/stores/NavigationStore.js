@@ -101,7 +101,13 @@ var NavigationStore = Reflux.createStore({
 					.max(_.method('start_date.valueOf'));
 
 				// Build the path for the dashboard
-				var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
+				try {
+					var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
+				}
+				catch(err) {
+				    // Block of code to handle errors
+						console.log('error')
+				}
 
         // Patch the non-comformant API response
         d.charts = d.charts || d.dashboard_json;
