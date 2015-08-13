@@ -470,33 +470,11 @@ class v2MetaRequest(v2Request):
         does not store.
         '''
 
-        field_object = self.db_obj._meta.get_field(field)
-
-        ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
-        field_type_mapper = {'AutoField':'number','FloatField':'number',
-            'ForeignKey':'array','CharField':'string','ManyToManyField':'array',
-            'DateTimeField':'datetime','DateField':'datetime','BooleanField':
-            'boolean','SlugField':'string','TextField':'string'}
-
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
-            'name': field_object.name,
-            'title': field_object.name,
-            # 'title': self.column_lookup[field_object.name]['display_name'],
-            'type': field_type_mapper[field_object.get_internal_type()],
-            'max_length': field_object.max_length,
-            'editable' : field_object.editable,
-            'default_value' : str(field_object.get_default()),
-                'display' : {
-                    # 'on_table': True\
-                    # 'on_table':self.column_lookup[field_object.name]\
-                        # ['display_on_table_flag'],
-                    'weightTable':ix,
-                    'weightForm':ix,
-                },
-            # 'constraints': self.build_field_constraints(field_object)
+            'name': field,
+            'title': field,
             }
-
 
         self.all_field_meta.append(field_object_dict)
 
