@@ -519,22 +519,6 @@ class UserGroup(models.Model):
         db_table = 'auth_user_groups'
         managed = False
 
-class ColumnAttributes(models.Model):
-    '''
-    Used my the metadata api in order to put attributes on columns. For instance
-    the password field in the user table should not be shown on the user index
-    table.  That fact is stored here ( table_name = 'user',
-    display_on_table_flag = Flase )
-    '''
-
-    table_name = models.CharField(max_length=255)
-    column_name = models.CharField(max_length=255)
-    display_name = models.CharField(max_length=255)
-    display_on_table_flag = models.BooleanField()
-
-    class Meta:
-        db_table = 'column_attributes'
-
 
 class CustomDashboard(models.Model):
     '''

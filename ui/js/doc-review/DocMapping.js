@@ -20,11 +20,11 @@ const fields = {
 			return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
 		}
 	},
-	start_date: { format: 'MMM D YYYY' },
-	end_date: { format: 'MMM D YYYY' },
+	// start_date: { format: 'MMM D YYYY' },
+	// end_date: { format: 'MMM D YYYY' },
 };
 
-const fieldNamesOnTable = ['slug', 'start_date', 'end_date', 'edit_link'];
+const fieldNamesOnTable = ['db_model','source_string'];
 
 var DocMapping = React.createClass({
 	render() {

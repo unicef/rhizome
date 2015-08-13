@@ -260,7 +260,7 @@ module.exports = {
 
 		// DOCUMENT VALIDATION //
 
-		docsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
+		docsMetadata: endPoint('/doc_review/metadata/', 'get', 2, false),
 		docs: endPoint('/doc_review/?document_id=4', 'get', 2, false),
 
 	}

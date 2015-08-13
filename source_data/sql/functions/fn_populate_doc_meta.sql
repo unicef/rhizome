@@ -10,7 +10,8 @@ RETURNS TABLE
 	master_dp_count INT,
 	db_model VARCHAR,
 	master_object_id INT,
-	map_id INT
+	map_id INT,
+	master_display_name VARCHAR
 
 ) AS
 $func$
@@ -200,6 +201,27 @@ WHERE dd.source_object_id = cm.source_object_id
 AND dd.document_id = $1
 AND dd.db_model = 'campaign';
 
+UPDATE document_detail dd
+SET master_display_name = c.slug
+FROM campaign c
+WHERE dd.master_object_id = c.id
+AND dd.document_id = $1
+AND dd.db_model = 'campaign';
+
+UPDATE document_detail dd
+SET master_display_name = r.name
+FROM region r
+WHERE dd.master_object_id = r.id
+AND dd.document_id = $1
+AND dd.db_model = 'region';
+
+UPDATE document_detail dd
+SET master_display_name = ind.name
+FROM indicator ind
+WHERE dd.master_object_id = ind.id
+AND dd.document_id = $1
+AND dd.db_model = 'indicator';
+
 RETURN QUERY
 
 SELECT
@@ -212,6 +234,7 @@ SELECT
 	,dd.db_model
 	,dd.master_object_id
 	,dd.map_id
+	,dd.master_display_name
 FROM document_detail dd
 WHERE dd.document_id = $1;
 
