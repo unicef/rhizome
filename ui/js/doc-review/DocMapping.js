@@ -22,10 +22,9 @@ const fields = {
 	},
 	start_date: { format: 'MMM D YYYY' },
 	end_date: { format: 'MMM D YYYY' },
-	created_at: { format: 'MMM D YYYY, h:mm a' }
 };
 
-const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'edit_link'];
+const fieldNamesOnTable = ['slug', 'start_date', 'end_date', 'edit_link'];
 
 var DocMapping = React.createClass({
 	render() {
@@ -35,14 +34,13 @@ var DocMapping = React.createClass({
 				<FilterPanel>
 					<FilterDateRange name="start_date" time={false} />
 					<FilterDateRange name="end_date" time={false} />
-					<FilterDateRange name="created_at" time={false} />
-				</FilterPanel>
+					</FilterPanel>
 			</div>;
 
 		return <ReviewPage
-			title="Campaigns"
-			getMetadata={API.admin.campaignsMetadata}
-			getData={API.admin.campaigns}
+			title="ToMap"
+			getMetadata={API.admin.docsMetadata}
+			getData={API.admin.docs}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>

@@ -43,6 +43,9 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
+            'doc_review': {'orm_obj':DocumentDetail,
+                'permission_function':None},
+
             'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,

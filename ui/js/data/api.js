@@ -257,5 +257,11 @@ module.exports = {
 		campaigns: endPoint('/campaign/', 'get', 2, false),
 		indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
 		indicators: endPoint('/indicator/', 'get', 2, false),
+
+		// DOCUMENT VALIDATION //
+
+		docsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
+		docs: endPoint('/doc_review/?document_id=4', 'get', 2, false),
+
 	}
 };
