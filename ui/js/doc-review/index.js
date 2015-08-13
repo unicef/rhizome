@@ -18,10 +18,10 @@ var DocReviewApp = React.createClass({
 			<h1 className="admin-header">Document Review</h1>
 			<ul className="admin-nav">
       <li><Link to="overview" params={q_params} >Overview</Link></li>
-			<li><Link to="mapping">Mapping</Link></li>
-      <li><Link to="conflict">Dupes & Conflicts</Link></li>
-      <li><Link to="validate">Validate</Link></li>
-      <li><Link to="view_agg">View Aggregated</Link></li>
+			<li><Link to="mapping" params={q_params}>Mapping</Link></li>
+      <li><Link to="conflict" params={q_params}>Dupes & Conflicts</Link></li>
+      <li><Link to="validate" params={q_params}>Validate</Link></li>
+      <li><Link to="view_agg" params={q_params}>View Aggregated</Link></li>
 			</ul>
 			<RouteHandler />
     </div>;
@@ -32,10 +32,10 @@ var DocReviewApp = React.createClass({
 var routes = (
       <Route name="app" path="/doc_review/" handler={DocReviewApp}>
           <Route name="overview" path = "/doc_review/overview/:docId" handler={require('./DocOverview')} />
-					<Route name="mapping" handler={require('./DocMapping')} />
-          <Route name="conflict" handler={require('./DocMapping')} />
-          <Route name="validate" handler={require('./DocMapping')} />
-          <Route name="view_agg" handler={require('./DocMapping')} />
+          <Route name="mapping" path = "/doc_review/mapping/:docId" handler={require('./DocMapping')} />
+					<Route name="conflict" path = "/doc_review/conflict/:docId" handler={require('./DocMapping')} />
+					<Route name="validate" path = "/doc_review/validate/:docId" handler={require('./DocMapping')} />
+					<Route name="view_agg" path = "/doc_review/view_agg/:docId" handler={require('./DocMapping')} />
       </Route>
 );
 
