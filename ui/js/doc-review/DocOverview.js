@@ -4,72 +4,21 @@
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 
 	var DocOverview = React.createClass({
-		propTypes: {
-			overview: React.PropTypes.string.isRequired,
-		},
-
-		// getOverview: function() {
-		// 		var self = this;
-		// 		API.document({id:7}).then(function(data){
-		// 			this.props.overview = data.objects[0]
-		// 			console.log(this.props.overview)
-		// 			console.log('something')
-		// 			return data.objects[0]
-		// 	});
+		// propTypes: {
+		// 	overview: React.PropTypes.string//.isRequired,
 		// },
+		getInitialState: function() {
+				// https://facebook.github.io/react/tips/initial-ajax.html
+		    console.log('THIS IS HAPPENING')
+				return {
+		      doc_overview: {'docfile':'someTest'}
+		    };
+		},
 
 	  render() {
 			var self = this;
-			var doc_overview = API.document({id:7}).done(function(data){
-
-				console.log(' DATAAA ')
-				console.log(data.objects)
-				return data
-				// console.log(data.response)
-
-			})
-
-
-			// console.log(this.props)
-
-			// then(function(data){
-			//
-			//
-			// 		return data.toString()// objects
-			//
-			// });
-			// var doc_overview = {
-			// 								'doc_name':'sample document name',
-			// 								'created_by':'john',
-			// 								'source_datapoint_count':101010,
-			// 								'source_datapoint_zero_count':244,
-			// 								'source_datapoint_null_count':8980,
-			// 								'master_datapoint_count':101,
-			// 								'campaign_col':'start_date',
-			// 								'region_code_col':'wardcode',
-			// 								'source_datapoint_time_elapsed': 72,
-			// 								'latest_refresh_master_time_elapsed': 7
-			// 								}
-
 			return <div>
-			<h2> Document Name: {doc_overview.doc_file} </h2>
-			<h2> Uploaded By: {doc_overview.created_by} </h2>
-			<h2> Master Datapoint Count: {doc_overview.master_datapoint_count} </h2>
-			<h2> Source Datapoint Count: {doc_overview.source_datapoint_count} </h2>
-			<h2> Document to Source Datapoint: {doc_overview.source_datapoint_time_elapsed} </h2>
-			<h2> Latest Master Refresh: {doc_overview.latest_refresh_master_time_elapsed} </h2>
-			<DropdownMenu
-				text='Campaign Column'
-				searchable={true}
-				onSearch={this._setPattern}
-			>
-			</DropdownMenu>
-			<DropdownMenu
-				text='Region Column'
-				searchable={true}
-				onSearch={this._setPattern}
-			>
-			</DropdownMenu>
+			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
 		 </div>
 		}
 	});
