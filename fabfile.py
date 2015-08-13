@@ -51,15 +51,14 @@ def _build_dependencies():
     local("./node_modules/.bin/bower install")
     local ("pip install -r requirements.txt")
 
-    # gulp styles is broken.. TODO build styles in webpack #
-
+    # clean out old webpack builds
     local("rm assets/bundles/*")
-    local("rm static/main*")
-
 
     local("./node_modules/.bin/webpack --config webpack.config.dev.js")
     local("./node_modules/.bin/gulp fonts")
     local("./node_modules/.bin/gulp dist")
+
+    # collect all of the static files to /static
     local("python manage.py collectstatic --noinput")
 
 # push build to remote
