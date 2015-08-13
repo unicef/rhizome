@@ -432,11 +432,11 @@ class v2MetaRequest(v2Request):
 
         db_table = self.db_obj._meta.db_table
         ca_dct = ColumnAttributes.objects.filter(table_name = \
-            db_table).values('column_name','display_name',\
-            'display_on_table_flag')
+            db_table).values('column_name','display_name')
 
         self.column_lookup = {}
         for row in ca_dct:
+
             column_name = row['column_name']
             del row['column_name']
             self.column_lookup[column_name] = row
@@ -469,10 +469,8 @@ class v2MetaRequest(v2Request):
         Query the Column Attributes table to find metadata on what django model
         does not store.
         '''
-        try:
-            field_object = self.db_obj._meta.get_field(field)
-        except FieldDoesNotExist:
-            return None
+
+        field_object = self.db_obj._meta.get_field(field)
 
         ## DICT TO MAP DJANNGO FIELD DEFINITION TO THE TYPES THE FE EXPECTS ##
         field_type_mapper = {'AutoField':'number','FloatField':'number',
@@ -483,19 +481,22 @@ class v2MetaRequest(v2Request):
         ## BUILD A DICTIONARY FOR EACH FIELD ##
         field_object_dict = {
             'name': field_object.name,
-            'title': self.column_lookup[field_object.name]['display_name'],
+            'title': field_object.name,
+            # 'title': self.column_lookup[field_object.name]['display_name'],
             'type': field_type_mapper[field_object.get_internal_type()],
             'max_length': field_object.max_length,
             'editable' : field_object.editable,
             'default_value' : str(field_object.get_default()),
                 'display' : {
-                    'on_table':self.column_lookup[field_object.name]\
-                        ['display_on_table_flag'],
+                    # 'on_table': True\
+                    # 'on_table':self.column_lookup[field_object.name]\
+                        # ['display_on_table_flag'],
                     'weightTable':ix,
                     'weightForm':ix,
                 },
-            'constraints': self.build_field_constraints(field_object)
+            # 'constraints': self.build_field_constraints(field_object)
             }
+
 
         self.all_field_meta.append(field_object_dict)
 

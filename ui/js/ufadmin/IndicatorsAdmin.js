@@ -22,6 +22,8 @@ const fields = {
 
 const fieldNamesOnTable = ['id', 'slug', 'short_name', 'name', 'description', 'edit_link'];
 
+// console.log(this.props);
+
 var IndicatorsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =

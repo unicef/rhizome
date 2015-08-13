@@ -105,8 +105,8 @@ var NavigationStore = Reflux.createStore({
 					var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
 				}
 				catch(err) {
-				    // Block of code to handle errors
-						console.log('error')
+					  console.log('FIXME')
+						var path = '/'
 				}
 
         // Patch the non-comformant API response
