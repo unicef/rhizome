@@ -24,7 +24,7 @@ const fields = {
 	// end_date: { format: 'MMM D YYYY' },
 };
 
-const fieldNamesOnTable = ['db_model','source_string'];
+const fieldNamesOnTable = ['db_model','source_string','master_display_name','edit_link'];
 
 var DocMapping = React.createClass({
 	render() {
