@@ -10,8 +10,6 @@ var DocReviewApp = React.createClass({
 	render: function() {
 
 	var q_params = this.context.router.getCurrentParams()
-	console.log(q_params)
-
 		// <Route name="doc_review" path="/doc_review/:docId" handler={DocReviewApp}/>
 
 		return <div className="admin-container">
