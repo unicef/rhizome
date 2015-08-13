@@ -9,11 +9,21 @@
 		// },
 		getInitialState: function() {
 				// https://facebook.github.io/react/tips/initial-ajax.html
-		    console.log('THIS IS HAPPENING')
 				return {
 		      doc_overview: {'docfile':'someTest'}
 		    };
 		},
+
+		componentDidMount: function() {
+    API.document({id:7}).then(function(result) {
+	      var api_data = result.objects[0];
+	      if (this.isMounted()) {
+	        this.setState({
+	          doc_overview: api_data,
+	        });
+	      }
+	    }.bind(this));
+	  },
 
 	  render() {
 			var self = this;
