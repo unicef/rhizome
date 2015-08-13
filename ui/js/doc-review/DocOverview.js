@@ -8,28 +8,48 @@
 			overview: React.PropTypes.string.isRequired,
 		},
 
-		getOverview: function() {
-				var self = this;
-				API.document({id:7}).then(function(data){
-					this.props.overview = data.objects[0]
-					return data.objects[0]
-			});
-		},
+		// getOverview: function() {
+		// 		var self = this;
+		// 		API.document({id:7}).then(function(data){
+		// 			this.props.overview = data.objects[0]
+		// 			console.log(this.props.overview)
+		// 			console.log('something')
+		// 			return data.objects[0]
+		// 	});
+		// },
 
 	  render() {
-			var doc_overview = {
-											'doc_name':'sample document name',
-											'created_by':'john',
-											'source_datapoint_count':101010,
-											'source_datapoint_zero_count':244,
-											'source_datapoint_null_count':8980,
-											'master_datapoint_count':101,
-											'campaign_col':'start_date',
-											'region_code_col':'wardcode',
-											'source_datapoint_time_elapsed': 72,
-											'latest_refresh_master_time_elapsed': 7
-											}
+			var self = this;
+			var doc_overview = API.document({id:7}).done(function(data){
 
+				console.log(' DATAAA ')
+				console.log(data.objects)
+				return data
+				// console.log(data.response)
+
+			})
+
+
+			// console.log(this.props)
+
+			// then(function(data){
+			//
+			//
+			// 		return data.toString()// objects
+			//
+			// });
+			// var doc_overview = {
+			// 								'doc_name':'sample document name',
+			// 								'created_by':'john',
+			// 								'source_datapoint_count':101010,
+			// 								'source_datapoint_zero_count':244,
+			// 								'source_datapoint_null_count':8980,
+			// 								'master_datapoint_count':101,
+			// 								'campaign_col':'start_date',
+			// 								'region_code_col':'wardcode',
+			// 								'source_datapoint_time_elapsed': 72,
+			// 								'latest_refresh_master_time_elapsed': 7
+			// 								}
 
 			return <div>
 			<h2> Document Name: {doc_overview.doc_file} </h2>
