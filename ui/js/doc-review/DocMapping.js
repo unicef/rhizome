@@ -37,10 +37,14 @@ var DocMapping = React.createClass({
 					</FilterPanel>
 			</div>;
 
+		var data_fn = function(){
+			return API.docs({document_id:6})
+		};
+
 		return <ReviewPage
 			title="ToMap"
 			getMetadata={API.admin.docsMetadata}
-			getData={API.admin.docs}
+			getData={data_fn}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
