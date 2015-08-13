@@ -433,25 +433,11 @@ class v2MetaRequest(v2Request):
         }
 
 
-        db_table = self.db_obj._meta.db_table
-        ca_dct = ColumnAttributes.objects.filter(table_name = \
-            db_table).values('column_name','display_name')
-
         self.column_lookup = {}
-        for row in ca_dct:
-
-            column_name = row['column_name']
-            del row['column_name']
-            self.column_lookup[column_name] = row
-
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
-
-            try:
-                self.build_field_meta_dict(field,ix)
-            except KeyError:
-                pass
+            self.all_field_meta.append({'name': field,'title': field,})
 
         self.data['fields'] = self.all_field_meta
 
@@ -465,21 +451,6 @@ class v2MetaRequest(v2Request):
         self.data['url_patterns'] = self.url_patterns
 
         return super(v2MetaRequest, self).main()
-
-    def build_field_meta_dict(self, field, ix):
-        '''
-        Examine model instance to find meta data
-        Query the Column Attributes table to find metadata on what django model
-        does not store.
-        '''
-
-        ## BUILD A DICTIONARY FOR EACH FIELD ##
-        field_object_dict = {
-            'name': field,
-            'title': field,
-            }
-
-        self.all_field_meta.append(field_object_dict)
 
 
     def build_field_constraints(self,field_object):
