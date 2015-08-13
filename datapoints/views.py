@@ -134,13 +134,6 @@ class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
     permission_required = 'datapoints.change_region'
 
 
-class UFAdminView(IndexView):
-
-    model = Region
-    template_name = 'ufadmin/index.html'
-    context_object_name = 'uf_admin'
-
-
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####

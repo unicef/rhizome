@@ -212,6 +212,7 @@ class DocumentDetail(models.Model):
 
     class Meta:
         db_table = 'document_detail'
+        ordering = [('-master_dp_count')]
 
 ## ODK ##
 
