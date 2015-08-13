@@ -28,6 +28,9 @@ const fieldNamesOnTable = ['db_model','source_string','master_display_name','edi
 
 var DocMapping = React.createClass({
 	render() {
+
+		var doc_id = this.props.params.docId
+
 		var datascopeFilters =
 			<div>
 				<SearchBar placeholder="search campaigns"/>
@@ -38,7 +41,7 @@ var DocMapping = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.docs({document_id:6})
+			return API.docs({document_id:doc_id},null,{'cache-control':'no-cache'})
 		};
 
 		return <ReviewPage

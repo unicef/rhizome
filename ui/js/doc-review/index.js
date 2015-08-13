@@ -23,7 +23,6 @@ var DocReviewApp = React.createClass({
 			</ul>
 			<RouteHandler />
     </div>;
-
 	}
 });
 
