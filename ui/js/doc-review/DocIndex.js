@@ -22,7 +22,7 @@ const fields = {
 	},
 };
 
-const fieldNamesOnTable = ['id'];
+const fieldNamesOnTable = ['id', 'created_by_id','docfile'];
 
 var DocMapping = React.createClass({
 	render() {
@@ -42,7 +42,7 @@ var DocMapping = React.createClass({
 
 
 		return <ReviewPage
-			title="ToMap"
+			title="New Document "
 			getMetadata={meta_fn}
 			getData={data_fn}
 			datascopeFilters={datascopeFilters}

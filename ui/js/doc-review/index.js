@@ -13,9 +13,16 @@ var DocReviewApp = React.createClass({
 
 	if (!("docId" in q_params)){
 		q_params['docId'] = 0
-	};
 
-	console.log(q_params)
+		return <div className="admin-container">
+			<h1 className="admin-header">Document Review</h1>
+			<ul className="admin-nav">
+			<li><Link to="doc_index" params={q_params} >Document Index</Link></li>
+			</ul>
+			<RouteHandler />
+		</div>;
+
+	};
 
 		return <div className="admin-container">
 			<h1 className="admin-header">Document Review</h1>
