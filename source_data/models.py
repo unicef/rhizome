@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from datapoints.models import Indicator, Region, Campaign
-
+from jsonfield import JSONField
 
     ###################
     ####### ETL #######
@@ -200,19 +200,13 @@ class DocumentDetail(models.Model):
     '''
     '''
 
-    document = models.ForeignKey(Document)
-    db_model = models.CharField(max_length=255)
-    source_object_id = models.IntegerField()
-    master_object_id = models.IntegerField()
-    master_display_name = models.CharField(max_length=255,null=True)
-    source_string = models.CharField(max_length=255)
-    source_dp_count = models.IntegerField()
-    master_dp_count = models.IntegerField()
-    map_id = models.IntegerField()
+    document =  models.ForeignKey(Document)
+    doc_detail_type = models.CharField(max_length=25)
+    doc_detail_json = JSONField()
 
     class Meta:
         db_table = 'document_detail'
-        ordering = [('-master_dp_count')]
+        unique_together = (('document','doc_detail_type'))
 
 ## ODK ##
 

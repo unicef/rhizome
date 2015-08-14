@@ -1,17 +1,11 @@
-DROP FUNCTION IF EXISTS fn_populate_doc_meta(document_id INT);
-CREATE FUNCTION fn_populate_doc_meta(document_id INT)
+DROP FUNCTION IF EXISTS fn_populate_doc_meta(input_doc_id INT);
+CREATE FUNCTION fn_populate_doc_meta(input_doc_id INT)
 RETURNS TABLE
 (
-	ID INT,
-	doc_id INT,
-	source_object_id INT,
-	source_string VARCHAR,
-	source_dp_count INT,
-	master_dp_count INT,
-	db_model VARCHAR,
-	master_object_id INT,
-	map_id INT,
-	master_display_name VARCHAR
+ 	 id INT
+ 	,document_id INT
+ 	,doc_detail_type VARCHAR(25)
+ 	,doc_detail_json TEXT
 
 ) AS
 $func$
@@ -77,11 +71,14 @@ INNER JOIN datapoint d
 ON tsdp.id = d.source_datapoint_id;
 
 
-DELETE FROM document_detail dd
-WHERE dd.document_id = $1;
+--DELETE FROM document_detail dd
+--WHERE dd.document_id = $1;
 
-INSERT INTO document_detail
-(document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id,map_id)
+-- INSERT INTO document_detail
+-- (document_id, source_object_id, source_string, source_dp_count, db_model,master_dp_count,master_object_id,map_id)
+
+DROP TABLE IF EXISTS _doc_mappings;
+CREATE TEMP TABLE _doc_mappings AS
 
 SELECT
 	 x.document_id
@@ -177,7 +174,7 @@ ON x.source_string = y.region_code;
 
 -- UPDATE MASTER OBJECT IDS --
 
-UPDATE document_detail dd
+UPDATE _doc_mappings dd
 SET master_object_id = rm.master_object_id
 	,map_id = rm.id
 FROM region_map rm
@@ -185,7 +182,7 @@ WHERE dd.source_object_id = rm.source_object_id
 AND dd.document_id = $1
 AND dd.db_model = 'region';
 
-UPDATE document_detail dd
+UPDATE _doc_mappings dd
 SET master_object_id = im.master_object_id
 	,map_id = im.id
 FROM indicator_map im
@@ -193,7 +190,7 @@ WHERE dd.source_object_id = im.source_object_id
 AND dd.document_id = $1
 AND dd.db_model = 'indicator';
 
-UPDATE document_detail dd
+UPDATE _doc_mappings dd
 SET master_object_id = cm.master_object_id
 	,map_id = cm.id
 FROM campaign_map cm
@@ -201,42 +198,49 @@ WHERE dd.source_object_id = cm.source_object_id
 AND dd.document_id = $1
 AND dd.db_model = 'campaign';
 
-UPDATE document_detail dd
+ALTER TABLE _doc_mappings
+ADD master_display_name VARCHAR;
+
+UPDATE _doc_mappings dd
 SET master_display_name = c.slug
 FROM campaign c
 WHERE dd.master_object_id = c.id
 AND dd.document_id = $1
 AND dd.db_model = 'campaign';
 
-UPDATE document_detail dd
+UPDATE _doc_mappings dd
 SET master_display_name = r.name
 FROM region r
 WHERE dd.master_object_id = r.id
 AND dd.document_id = $1
 AND dd.db_model = 'region';
 
-UPDATE document_detail dd
+UPDATE _doc_mappings dd
 SET master_display_name = ind.name
 FROM indicator ind
 WHERE dd.master_object_id = ind.id
 AND dd.document_id = $1
 AND dd.db_model = 'indicator';
 
+INSERT INTO document_detail
+(document_id ,doc_detail_type, doc_detail_json)
+
+select t.document_id as document_id, 'MAPPINGS',array_to_json(array_agg(row_to_json(t)))
+    from (
+      select * FROM _doc_mappings
+    ) t
+    GROUP BY t.document_id;
+
 RETURN QUERY
 
 SELECT
-	dd.id
-	,dd.document_id
-	,dd.source_object_id
-	,dd.source_string
-	,dd.source_dp_count
-	,dd.master_dp_count
-	,dd.db_model
-	,dd.master_object_id
-	,dd.map_id
-	,dd.master_display_name
+ 	dd.id
+ 	,dd.document_id
+ 	,dd.doc_detail_type
+ 	,dd.doc_detail_json
 FROM document_detail dd
-WHERE dd.document_id = $1;
+WHERE dd.document_id = $1
+AND dd.doc_detail_type = 'MAPPINGS';
 
 END
 $func$ LANGUAGE PLPGSQL;

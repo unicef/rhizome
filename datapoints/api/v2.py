@@ -45,13 +45,12 @@ class v2Request(object):
         self.orm_mapping = {
             'doc_review': {'orm_obj':DocumentDetail,
                 'permission_function':None},
-
             'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
             'document_review' : {'orm_obj':DocumentDetail,
-                'permission_function': self.group_document_metadata},
+                'permission_function': self.refresh_document_meta},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
             'document': {'orm_obj':Document,
@@ -211,7 +210,7 @@ class v2Request(object):
 
         return None, data
 
-    def group_document_metadata(self,list_of_object_ids):
+    def refresh_document_meta(self,list_of_object_ids):
         '''
         This function is not actually about permissions, but rather data
         manipulation needed for the front end.  Here i create three nodes
@@ -219,10 +218,11 @@ class v2Request(object):
         '''
 
         raw_data = DocumentDetail.objects.raw("""
-            SELECT * FROM
-            document_detail dd
-            WHERE dd.id = ANY(COALESCE(%s,ARRAY[-1]))
-        """,[list_of_object_ids]
+            SELECT * FROM (
+                SELECT * 'region' as db_obj FROM region_map rm UNION ALL
+                SELECT * 'indicator' as db_obj FROM indicator_map UNION ALL
+                SELECT *, 'campaign' as db_obj FROM campaign_map
+            )x """,[list_of_object_ids]
         )
 
         cleaned_data = {
@@ -431,7 +431,6 @@ class v2MetaRequest(v2Request):
                 'defaultSortField':'id',
                 'defaultSortDirection':'asc',
         }
-
 
         self.column_lookup = {}
 
