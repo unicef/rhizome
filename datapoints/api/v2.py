@@ -225,7 +225,7 @@ class v2Request(object):
         to_return = []
         for row in raw_data:
             row_dict = dict(row.__dict__)
-            to_return.append(row_dict['doc_detail_json'])
+            to_return = row_dict['doc_detail_json']
 
         return None, to_return
 
@@ -434,12 +434,17 @@ class v2MetaRequest(v2Request):
 
         ## hack for models that store json data
         if self.content_type == 'document_review':
-            print '==='
-
-            self.all_field_meta = [{"name": "master_dp_count", "title": "master_dp_count"},
-                                  { "name": "map_id", "title": "map_id" },
-                                  { "name": "id", "title": "id" },
-                                  { "name": "master_object_id", "title": "master_object_id"}]
+            self.all_field_meta = [ {"name": "master_dp_count", "title": "master_dp_count"},
+                                    { "name": "map_id", "title": "map_id" },
+                                    { "name": "master_object_id", "title": "master_object_id"},
+                                    { "name": "source_dp_count", "title": "source_dp_count" },
+                                    { "name": "master_display_name", "title": "master_display_name" },
+                                    { "name": "source_string", "title": "source_string" },
+                                    { "name": "source_object_id", "title": "source_object_id" },
+                                    { "name": "document", "title": "document" },
+                                    { "name": "db_model", "title": "db_model" },
+                                    { "name": "id", "title": "id" },
+                                    { "name": "document_id", "title": "document_id" }]
 
             self.data['feilds'] = self.all_field_meta
             return super(v2MetaRequest, self).main()

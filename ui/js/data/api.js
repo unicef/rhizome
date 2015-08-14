@@ -244,8 +244,6 @@ module.exports = {
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
 	set_indicator_to_tag  : endPoint('/indicator_to_tag/','post',2),
-	doc_review: endPoint('/document_review/', 'get', 2, false),
-	doc_review_meta: endPoint('/document_review/metadata/', 'get', 2, false),
 
 	save_dashboard     : endPoint('/custom_dashboard/','post',2),
 	get_dashboard     : endPoint('/custom_dashboard/','get',2),
@@ -262,8 +260,8 @@ module.exports = {
 		indicators: endPoint('/indicator/', 'get', 2, false),
 
 		// DOCUMENT VALIDATION //
-
-		docsMetadata: endPoint('/doc_review/metadata/', 'get', 2, false),
+		docReview: endPoint('/document_review/', 'get', 2, false),
+		docReviewMeta: endPoint('/document_review/metadata/', 'get', 2, false),
 
 	}
 };

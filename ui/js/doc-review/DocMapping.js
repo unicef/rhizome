@@ -13,17 +13,17 @@ var {
 var ReviewPage = require('./ReviewPage');
 
 const fields = {
-	// edit_link: {
-	// 	title: 'Edit',
-	// 	key: 'id',
-	// 	renderer: (id) => {
-	// 		return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
-	// 	}
-	// },
+	edit_link: {
+		title: 'Edit',
+		key: 'id',
+		renderer: (id) => {
+			return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
+		}
+	},
 };
 
 
-const fieldNamesOnTable = ['id','master_object_id','master_dp_count','map_id'];
+const fieldNamesOnTable = ['id','master_object_id','map_id','edit_link'];
 
 // const fieldNamesOnTable = ['id'];
 
@@ -42,14 +42,17 @@ var DocMapping = React.createClass({
 					</FilterPanel>
 			</div>;
 
-		var data_fn = function(){
-			return API.doc_review_meta({document_id:doc_id},null,{'cache-control':'no-cache'})
-		};
+		// var meta_fn = function(){
+		// 	return
+		// };
 
+		var data_fn = function(){
+			return API.admin.docReview({document_id:doc_id},null,{'cache-control':'no-cache'})
+		};
 
 		return <ReviewPage
 			title="ToMap"
-			getMetadata={API.doc_review_meta}
+			getMetadata={API.admin.docReviewMeta}
 			getData={data_fn}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
