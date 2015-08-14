@@ -23,7 +23,7 @@ const fields = {
 };
 
 
-const fieldNamesOnTable = ['id','db_model','source_string','master_display_name']//,'source_dp_count','master_dp_count'];
+const fieldNamesOnTable = ['id','db_model','source_string','master_display_name','document_id']//,'source_dp_count','master_dp_count'];
 
 // const fieldNamesOnTable = ['id'];
 
@@ -44,17 +44,9 @@ var DocMapping = React.createClass({
 					</FilterPanel>
 			</div>;
 
-		// var meta_fn = function(){
-		// 	return
-		// };
-
 		var data_fn = function(){
-			return API.admin.docReview({document_id:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docReview({id:doc_id},null,{'cache-control':'no-cache'})
 		};
-
-		// var meta_fn = function(){
-		//
-		// };
 
 		return <ReviewPage
 			title="ToMap"

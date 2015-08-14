@@ -47,7 +47,7 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
-            'document_review' : {'orm_obj':DocumentDetail,
+            'document_review' : {'orm_obj':Document,
                 'permission_function': self.refresh_document_meta},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
@@ -217,10 +217,7 @@ class v2Request(object):
 
         raw_data = DocumentDetail.objects.raw("""
             SELECT * FROM fn_populate_doc_meta(%s)
-        """\
-        # ,[list_of_object_ids]
-        ,[6]
-        )
+        """,[list_of_object_ids[0]])
 
         to_return = []
         for row in raw_data:
