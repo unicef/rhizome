@@ -218,6 +218,7 @@ module.exports = {
 	datapointsRaw         : endPoint('/datapointentry/'),
 	datapointUpsert       : endPoint('/datapointentry/', 'post'),
 	document              : endPoint('/document/', 'get', 2),
+	document_meta         : endPoint('/document/metadata/', 'get', 2),
 	geo                   : endPoint('/geo/'),
 	indicators            : endPoint('/indicator/', 'get', 2),
 	indicatorsTree		    : indicatorsTree,

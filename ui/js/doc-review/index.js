@@ -19,6 +19,7 @@ var DocReviewApp = React.createClass({
       <li><Link to="conflict" params={q_params}>Dupes & Conflicts</Link></li>
       <li><Link to="validate" params={q_params}>Validate</Link></li>
       <li><Link to="view_agg" params={q_params}>View Aggregated</Link></li>
+      <li><Link to="doc_index" >Document Index</Link></li>
 			</ul>
 			<RouteHandler />
     </div>;
@@ -32,8 +33,7 @@ var routes = (
 					<Route name="conflict" path = "conflict/:docId" handler={require('./DocMapping')} />
 					<Route name="validate" path = "validate/:docId" handler={require('./DocMapping')} />
 					<Route name="view_agg" path = "view_agg/:docId" handler={require('./DocMapping')} />
-			<NotFoundRoute handler={NotFound}/>
-			<Redirect from="/" to="/" />
+					<Route name="doc_index" path = "doc_index/" handler={require('./DocIndex')} />
 			</Route>
 );
 
