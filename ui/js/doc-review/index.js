@@ -1,6 +1,6 @@
 var React = require('react/addons');
 var Router = require('react-router');
-var {Route, DefaultRoute, RouteHandler, Link} = Router;
+var {Route, DefaultRoute, RouteHandler,NotFoundRoute, NotFound, Redirect, Link} = Router;
 
 var DocReviewApp = React.createClass({
 	contextTypes: {
@@ -10,7 +10,6 @@ var DocReviewApp = React.createClass({
 	render: function() {
 
 	var q_params = this.context.router.getCurrentParams()
-		// <Route name="doc_review" path="/doc_review/:docId" handler={DocReviewApp}/>
 
 		return <div className="admin-container">
 			<h1 className="admin-header">Document Review</h1>
@@ -28,12 +27,14 @@ var DocReviewApp = React.createClass({
 
 var routes = (
       <Route name="app" path="/doc_review/" handler={DocReviewApp}>
-          <Route name="overview" path = "/doc_review/overview/:docId" handler={require('./DocOverview')} />
-          <Route name="mapping" path = "/doc_review/mapping/:docId" handler={require('./DocMapping')} />
-					<Route name="conflict" path = "/doc_review/conflict/:docId" handler={require('./DocMapping')} />
-					<Route name="validate" path = "/doc_review/validate/:docId" handler={require('./DocMapping')} />
-					<Route name="view_agg" path = "/doc_review/view_agg/:docId" handler={require('./DocMapping')} />
-      </Route>
+          <Route name="overview" path = "overview/:docId" handler={require('./DocOverview')} />
+          <Route name="mapping" path = "mapping/:docId" handler={require('./DocMapping')} />
+					<Route name="conflict" path = "conflict/:docId" handler={require('./DocMapping')} />
+					<Route name="validate" path = "validate/:docId" handler={require('./DocMapping')} />
+					<Route name="view_agg" path = "view_agg/:docId" handler={require('./DocMapping')} />
+			<NotFoundRoute handler={NotFound}/>
+			<Redirect from="/" to="/" />
+			</Route>
 );
 
 module.exports = {
