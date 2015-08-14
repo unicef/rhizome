@@ -56,8 +56,8 @@ WHERE NOT EXISTS (
 
 
 -- FIND ID AND COUNT FOR MASTER METADATA IDS --
-DROP TABLE IF EXISTS _synced_dbs;
-CREATE TABLE _synced_dbs AS
+DROP TABLE IF EXISTS _synced_dps;
+CREATE TEMP TABLE _synced_dps AS
 
 SELECT
 	 d.region_id
@@ -104,7 +104,7 @@ FROM (
 
 LEFT JOIN (
 	SELECT indicator_string, max(indicator_id) as indicator_id ,count(1) as dp_cnt
-	FROM _synced_dbs
+	FROM _synced_dps
 	GROUP BY indicator_string
 )y
 ON x.source_string = y.indicator_string
@@ -136,7 +136,7 @@ FROM (
 
 LEFT JOIN (
 	SELECT campaign_string, max(campaign_id) as campaign_id ,count(1) as dp_cnt
-	FROM _synced_dbs
+	FROM _synced_dps
 	GROUP BY campaign_string
 )y
 ON x.source_string = y.campaign_string
@@ -167,7 +167,7 @@ FROM (
 
 LEFT JOIN (
 	SELECT region_code, max(region_id) as region_id ,count(1) as dp_cnt
-	FROM _synced_dbs
+	FROM _synced_dps
 	GROUP BY region_code
 )y
 ON x.source_string = y.region_code;
@@ -221,6 +221,9 @@ FROM indicator ind
 WHERE dd.master_object_id = ind.id
 AND dd.document_id = $1
 AND dd.db_model = 'indicator';
+
+DELETE FROM document_detail dd
+WHERE dd.document_id = $1;
 
 INSERT INTO document_detail
 (document_id ,doc_detail_type, doc_detail_json)

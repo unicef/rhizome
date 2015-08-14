@@ -43,8 +43,6 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
-            'doc_review': {'orm_obj':DocumentDetail,
-                'permission_function':None},
             'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
@@ -218,27 +216,18 @@ class v2Request(object):
         '''
 
         raw_data = DocumentDetail.objects.raw("""
-            SELECT * FROM (
-                SELECT * 'region' as db_obj FROM region_map rm UNION ALL
-                SELECT * 'indicator' as db_obj FROM indicator_map UNION ALL
-                SELECT *, 'campaign' as db_obj FROM campaign_map
-            )x """,[list_of_object_ids]
+            SELECT * FROM fn_populate_doc_meta(%s)
+        """\
+        # ,[list_of_object_ids]
+        ,[6]
         )
 
-        cleaned_data = {
-            'region':[],
-            'campaign':[],
-            'indicator':[],
-        }
-
+        to_return = []
         for row in raw_data:
-
             row_dict = dict(row.__dict__)
-            del row_dict['_state']
+            to_return.append(row_dict['doc_detail_json'])
 
-            cleaned_data[row.db_model].append(row_dict)
-
-        return None, cleaned_data
+        return None, to_return
 
 
 class v2PostRequest(v2Request):

@@ -244,7 +244,7 @@ module.exports = {
 	region_permission     : endPoint('/region_permission/','get',2),
 	set_region_permission : endPoint('/region_permission/','post',2),
 	set_indicator_to_tag  : endPoint('/indicator_to_tag/','post',2),
-	docs: endPoint('/doc_review/', 'get', 2, false),
+	docs: endPoint('/document_review/', 'get', 2, false),
 
 	save_dashboard     : endPoint('/custom_dashboard/','post',2),
 	get_dashboard     : endPoint('/custom_dashboard/','get',2),

@@ -13,18 +13,19 @@ var {
 var ReviewPage = require('./ReviewPage');
 
 const fields = {
-	edit_link: {
-		title: 'Edit',
-		key: 'id',
-		renderer: (id) => {
-			return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
-		}
-	},
-	// start_date: { format: 'MMM D YYYY' },
-	// end_date: { format: 'MMM D YYYY' },
+	// edit_link: {
+	// 	title: 'Edit',
+	// 	key: 'id',
+	// 	renderer: (id) => {
+	// 		return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
+	// 	}
+	// },
 };
 
-const fieldNamesOnTable = ['db_model','source_string','master_display_name','edit_link'];
+
+// const fieldNamesOnTable = ['id','source_string','master_display_name','edit_link'];
+const fieldNamesOnTable = ['source_string'];
+
 
 var DocMapping = React.createClass({
 	render() {
