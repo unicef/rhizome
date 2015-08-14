@@ -23,8 +23,9 @@ const fields = {
 };
 
 
-// const fieldNamesOnTable = ['id','source_string','master_display_name','edit_link'];
-const fieldNamesOnTable = ['source_string'];
+const fieldNamesOnTable = ['id','master_object_id','master_dp_count','map_id'];
+
+// const fieldNamesOnTable = ['id'];
 
 
 var DocMapping = React.createClass({
@@ -42,12 +43,13 @@ var DocMapping = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.docs({document_id:doc_id},null,{'cache-control':'no-cache'})
+			return API.doc_review_meta({document_id:doc_id},null,{'cache-control':'no-cache'})
 		};
+
 
 		return <ReviewPage
 			title="ToMap"
-			getMetadata={API.admin.docsMetadata}
+			getMetadata={API.doc_review_meta}
 			getData={data_fn}
 			datascopeFilters={datascopeFilters}
 			fields={fields}

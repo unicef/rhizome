@@ -398,6 +398,8 @@ class v2MetaRequest(v2Request):
         Performing a lookup on the orm_mapping dictionary.
         '''
 
+        self.content_type = content_type
+
         super(v2MetaRequest, self).__init__(request, content_type)
         self.db_obj = self.orm_mapping[content_type]['orm_obj']
 
@@ -421,22 +423,33 @@ class v2MetaRequest(v2Request):
                 'defaultSortDirection':'asc',
         }
 
-        self.column_lookup = {}
-
-        ## BUILD METADATA FOR EACH FIELD ##
-        for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
-            self.all_field_meta.append({'name': field,'title': field,})
-
-        self.data['fields'] = self.all_field_meta
-
         ## url_patterns ##
         self.url_patterns = {
             'create': "datapoints/" + self.content_type + "s/create",
             'update': "datapoints/" + self.content_type + "s/update/?<id>/"
 
         }
-        self.data['fields'] = self.all_field_meta
         self.data['url_patterns'] = self.url_patterns
+
+
+        ## hack for models that store json data
+        if self.content_type == 'document_review':
+            print '==='
+
+            self.all_field_meta = [{"name": "master_dp_count", "title": "master_dp_count"},
+                                  { "name": "map_id", "title": "map_id" },
+                                  { "name": "id", "title": "id" },
+                                  { "name": "master_object_id", "title": "master_object_id"}]
+
+            self.data['feilds'] = self.all_field_meta
+            return super(v2MetaRequest, self).main()
+
+
+        ## BUILD METADATA FOR EACH FIELD ##
+        for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):
+            self.all_field_meta.append({'name': field,'title': field,})
+
+        self.data['fields'] = self.all_field_meta
 
         return super(v2MetaRequest, self).main()
 
