@@ -446,7 +446,7 @@ class v2MetaRequest(v2Request):
                                     { "name": "id", "title": "id" },
                                     { "name": "document_id", "title": "document_id" }]
 
-            self.data['feilds'] = self.all_field_meta
+            self.data['fields'] = self.all_field_meta
             return super(v2MetaRequest, self).main()
 
 

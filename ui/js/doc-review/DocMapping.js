@@ -13,7 +13,7 @@ var {
 var ReviewPage = require('./ReviewPage');
 
 const fields = {
-	edit_link: {
+	map_link: {
 		title: 'Edit',
 		key: 'id',
 		renderer: (id) => {
@@ -23,9 +23,11 @@ const fields = {
 };
 
 
-const fieldNamesOnTable = ['id','master_object_id','map_id','edit_link'];
+const fieldNamesOnTable = ['id','db_model','source_string','master_display_name']//,'source_dp_count','master_dp_count'];
 
 // const fieldNamesOnTable = ['id'];
+
+
 
 
 var DocMapping = React.createClass({
@@ -49,6 +51,10 @@ var DocMapping = React.createClass({
 		var data_fn = function(){
 			return API.admin.docReview({document_id:doc_id},null,{'cache-control':'no-cache'})
 		};
+
+		// var meta_fn = function(){
+		//
+		// };
 
 		return <ReviewPage
 			title="ToMap"

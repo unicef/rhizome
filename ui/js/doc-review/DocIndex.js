@@ -21,7 +21,6 @@ const fields = {
 		}
 	},
 };
-
 const fieldNamesOnTable = ['id','created_by_id','docfile','edit_link'];
 
 var DocMapping = React.createClass({

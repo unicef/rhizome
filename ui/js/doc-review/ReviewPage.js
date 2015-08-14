@@ -9,7 +9,7 @@ const {
 	FilterPanel, FilterDateRange, FilterInputRadio
 	} = require('react-datascope');
 
-var parseSchema = require('./utils/parseSchema');
+var parseSchema = require('../ufadmin/utils/parseSchema');
 
 var ReviewPage = React.createClass({
 	propTypes: {
@@ -65,7 +65,7 @@ var ReviewPage = React.createClass({
 
 					{this.props.datascopeFilters ? this.renderFilters(): null}
 
-					{this.props.children}	
+					{this.props.children}
 
 				</Datascope>
 			</LocalDatascope>
