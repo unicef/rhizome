@@ -17,12 +17,12 @@ const fields = {
 		title: 'Edit',
 		key: 'id',
 		renderer: (id) => {
-			return <a href={`/doc_review/overview/${id}`}>View Document</a>;
+			return <a href={`/doc_review/overview/${id}`}>Edit Document</a>;
 		}
 	},
 };
 
-const fieldNamesOnTable = ['id', 'created_by_id','docfile'];
+const fieldNamesOnTable = ['id','created_by_id','docfile','edit_link'];
 
 var DocMapping = React.createClass({
 	render() {

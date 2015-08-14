@@ -65,7 +65,7 @@ var ReviewPage = React.createClass({
 
 					{this.props.datascopeFilters ? this.renderFilters(): null}
 
-					{this.props.children}
+					{this.props.children}	
 
 				</Datascope>
 			</LocalDatascope>
