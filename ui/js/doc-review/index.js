@@ -11,6 +11,12 @@ var DocReviewApp = React.createClass({
 
 	var q_params = this.context.router.getCurrentParams()
 
+	if (!("docId" in q_params)){
+		q_params['docId'] = 0
+	};
+
+	console.log(q_params)
+
 		return <div className="admin-container">
 			<h1 className="admin-header">Document Review</h1>
 			<ul className="admin-nav">
