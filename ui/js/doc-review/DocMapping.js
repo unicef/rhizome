@@ -12,23 +12,23 @@ var {
 
 var ReviewPage = require('./ReviewPage');
 
+var MapButtonFunction = function(data){
+	console.log(data)
+	return <a href={`/datapoints/campaigns/update/${data}`}> THIS IS JOHN </a>;
+}
+
 const fields = {
 	map_link: {
-		title: 'Edit',
+		title: 'Master Object Name',
 		key: 'id',
 		renderer: (id) => {
-			return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
-		}
+				return MapButtonFunction(id)
+			}
 	},
 };
 
 
-const fieldNamesOnTable = ['id','db_model','source_string','master_display_name','document_id']//,'source_dp_count','master_dp_count'];
-
-// const fieldNamesOnTable = ['id'];
-
-
-
+const fieldNamesOnTable = ['id','db_model','source_string','document_id','map_link']//,'source_dp_count','master_dp_count'];
 
 var DocMapping = React.createClass({
 	render() {
