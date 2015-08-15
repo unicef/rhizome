@@ -196,6 +196,18 @@ class CampaignMap(models.Model):
     class Meta:
         db_table = 'campaign_map'
 
+class SourceObjectMap(models.Model):
+
+    master_object_id = models.IntegerField() ## need to think about to FK this.
+    source_object_code = models.CharField(max_length=255)
+    content_type = models.CharField(max_length=10)
+    mapped_by = models.ForeignKey(User)
+
+    class Meta:
+        db_table = 'source_object_map'
+        unique_together = (('content_type','source_object_code'))
+
+
 class DocumentDetail(models.Model):
     '''
     '''
