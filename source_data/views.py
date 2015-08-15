@@ -36,69 +36,17 @@ def file_upload(request):
             context_instance=RequestContext(request)
         )
 
-
     elif request.method == 'POST':
 
-        try:
-            to_upload = request.FILES['docfile']
-
-        except KeyError:
-            msg = 'Please add a file to upload'
-            messages.add_message(request, messages.INFO,msg)
-
-            return render_to_response(
-                'upload/file_upload.html',
-                context_instance=RequestContext(request)
-            )
-
-        # If the document is of an invalid format
-        if not any(str(to_upload.name).endswith(ext) for ext in accepted_file_formats):
-            msg = 'Please upload either .CSV, .XLS or .XLSX file format'
-            messages.add_message(request, messages.INFO,msg)
-
-            return render_to_response(
-                'upload/file_upload.html',
-                context_instance=RequestContext(request)
-            )
-
         created_by = request.user
-        newdoc = Document.objects.create(docfile=to_upload,\
-            created_by=created_by)
-        file_columns = get_doc_file_cols(to_upload)
+        to_upload = request.FILES['docfile']
+        newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        return render_to_response(
-            'upload/map_header.html',
-            {'file_columns': file_columns,'document_id':newdoc.id},
-            context_instance=RequestContext(request)
-        )
+        dt = DocTransform(newdoc.id)
+        sdps = dt.dp_df_to_source_datapoints()
 
-def get_doc_file_cols(to_upload):
-
-    for i,(line) in enumerate(to_upload):
-
-        if i == 0:
-            header_data = line.split('\r')[0]
-            header = header_data.split(',')
-
-    return header
-
-def map_header(request,document_id):
-
-    column_mappings = {}
-    column_mappings['campaign_col'] = request.GET['campaign_col']
-    column_mappings['value_col'] = request.GET['value_col']
-    column_mappings['region_code_col'] = request.GET['region_code_col']
-    column_mappings['indicator_col'] = request.GET['indicator_col']
-
-    dt = DocTransform(document_id,column_mappings)
-    file_columns = [col for col in dt.df]
-
-    return render_to_response(
-        'upload/map_header.html',
-        { 'file_columns':file_columns,
-          'document_id':document_id },
-        RequestContext(request))
-
+        return HttpResponseRedirect(reverse('doc_review'\
+            , kwargs={'document_id': document_id}))
 
 def field_mapping(request,document_id):
 
@@ -124,25 +72,13 @@ def populate_document_metadata(document_id):
 
 def pre_process_file(request,document_id):
 
-    column_mappings = {}
-    column_mappings['campaign_col'] = request.GET['campaign_col']
-    column_mappings['value_col'] = request.GET['value_col']
-    column_mappings['region_code_col'] = request.GET['region_code_col']
-    column_mappings['indicator_col'] = request.GET['indicator_col']
-
-    dt = DocTransform(document_id,column_mappings)
-
-    try:
-        sdps = dt.dp_df_to_source_datapoints()
-    except IntegrityError:
-        sdps = SourceDataPoint.objects.filter(
-            document_id = document_id)
+    dt = DocTransform(document_id)
+    sdps = dt.dp_df_to_source_datapoints()
 
     populate_document_metadata(document_id)
 
-    return HttpResponseRedirect(reverse('source_data:field_mapping'\
+    return HttpResponseRedirect(reverse('doc_review'\
         , kwargs={'document_id': document_id}))
-
 
 def refresh_master_no_indicator(request,document_id):
 

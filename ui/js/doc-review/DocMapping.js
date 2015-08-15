@@ -13,7 +13,6 @@ var {
 var ReviewPage = require('./ReviewPage');
 
 var MapButtonFunction = function(data){
-	console.log(data)
 	return <a href={`/datapoints/campaigns/update/${data}`}> THIS IS JOHN </a>;
 }
 

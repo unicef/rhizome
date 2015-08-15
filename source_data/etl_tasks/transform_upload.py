@@ -16,7 +16,7 @@ class DocTransform(object):
     def __init__(self,document_id,column_mappings):
 
         self.source_datapoints = []
-        self.document = Document.objects.get(id=document_id)
+        self.document_id = document_id
         self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
         self.column_mappings = column_mappings
@@ -29,54 +29,26 @@ class DocTransform(object):
         else: ## FIXME this sould be elif and throw an error if neither xls or csv
             df = read_excel(self.file_path,sheet.name)
 
-
         df_no_nan = df.where((notnull(df)), None)
 
         return df_no_nan
 
 
-    def dp_df_to_source_datapoints(self):
-
-        df_cols = [col for col in self.df]
-
-        indicator_col = self.column_mappings['indicator_col']
-        if indicator_col == 'cols_are_indicators':
-
-            source_datapoints = pivot_and_insert_src_datapoints(self.df,\
-                self.document.id,self.column_mappings)
-
-        else:
-
-            self.df.rename(columns=
-                {
-                  self.column_mappings['indicator_col']: 'indicator_string',
-                  self.column_mappings['region_code_col']: 'region_code',
-                  self.column_mappings['campaign_col']: 'campaign_string',
-                  self.column_mappings['value_col']: 'cell_value',
-                }
-            , inplace=True)
-
-            source_datapoints = []
-            for row_ix, row_data in self.df.iterrows():
-
-                source_guid = 'doc_id:%s-row_no:%s' % (self.document.id,row_ix)
-
-                sdp_obj = SourceDataPoint**{
-                    'source_guid': source_guid,
-                    'indicator_string': row_data.indicator_string,
-                    'region_code': row_data.region_code,
-                    'campaign_string': row_data.campaign_string,
-                    'cell_value': row_data.cell_value,
-                    'row_number': row_ix,
-                    'document_id': self.document.id,
-                    'status_id': self.to_process_status
-                }
-
-                source_datapoints.append(sdp)
-
-            batch_sdps = SourceDataPoint.objects.BulkCreate(**source_datapoints)
-
-            return batch_sdps
+    # def dp_df_to_source_datapoints(self):
+    #
+    #     batch = [] # a list of SourceSubmission objects
+    #     print self.df
+    #
+    #     for i,(submission) in enumerate(self.df.to_dict()):
+    #         submission_dict = {
+    #             'submission_json': submission,
+    #             'document_id': self.document_id,
+    #             'instance_guid': i,
+    #             'instance_guid': i,
+    #         }
+    #         batch.append(SourceSubmission(**submission_dict)
+    #
+    #     SourceSubmission.objects.bulk_create(batch)
 
 
 class RegionTransform(DocTransform):
