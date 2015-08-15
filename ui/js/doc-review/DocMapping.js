@@ -27,7 +27,7 @@ const fields = {
 };
 
 
-const fieldNamesOnTable = ['id','db_model','source_string','document_id','map_link']//,'source_dp_count','master_dp_count'];
+const fieldNamesOnTable = ['id']//,'source_dp_count','master_dp_count'];
 
 var DocMapping = React.createClass({
 	render() {
@@ -38,13 +38,13 @@ var DocMapping = React.createClass({
 			<div>
 				<SearchBar placeholder="search campaigns"/>
 				<FilterPanel>
-					<FilterDateRange name="start_date" time={false} />
-					<FilterDateRange name="end_date" time={false} />
+					// <FilterDateRange name="start_date" time={false} />
+					// <FilterDateRange name="end_date" time={false} />
 					</FilterPanel>
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docReview({id:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docReview({document_id:doc_id},null,{'cache-control':'no-cache'})
 		};
 
 		return <ReviewPage

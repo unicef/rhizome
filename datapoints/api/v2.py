@@ -47,8 +47,8 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
-            'document_review' : {'orm_obj':Document,
-                'permission_function': self.refresh_document_meta},
+            'document_review' : {'orm_obj':SourceObjectMap,
+                'permission_function': None},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
             'document': {'orm_obj':Document,
@@ -427,25 +427,6 @@ class v2MetaRequest(v2Request):
 
         }
         self.data['url_patterns'] = self.url_patterns
-
-
-        ## hack for models that store json data
-        if self.content_type == 'document_review':
-            self.all_field_meta = [ {"name": "master_dp_count", "title": "master_dp_count"},
-                                    { "name": "map_id", "title": "map_id" },
-                                    { "name": "master_object_id", "title": "master_object_id"},
-                                    { "name": "source_dp_count", "title": "source_dp_count" },
-                                    { "name": "master_display_name", "title": "master_display_name" },
-                                    { "name": "source_string", "title": "source_string" },
-                                    { "name": "source_object_id", "title": "source_object_id" },
-                                    { "name": "document", "title": "document" },
-                                    { "name": "db_model", "title": "db_model" },
-                                    { "name": "id", "title": "id" },
-                                    { "name": "document_id", "title": "document_id" }]
-
-            self.data['fields'] = self.all_field_meta
-            return super(v2MetaRequest, self).main()
-
 
         ## BUILD METADATA FOR EACH FIELD ##
         for ix,(field) in enumerate(self.db_obj._meta.get_all_field_names()):

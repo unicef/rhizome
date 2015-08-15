@@ -31,8 +31,8 @@ class Migration(migrations.Migration):
             unique_together=set([('content_type', 'source_object_code')]),
         ),
         migrations.RunSQL('''
-        -- INSERT INTO source_object_map
-        -- (content_type, source_object_code, mapped_by_id, master_object_id)
+        INSERT INTO source_object_map
+        (content_type, source_object_code, mapped_by_id, master_object_id)
 
         SELECT
         	'region'
@@ -66,10 +66,6 @@ class Migration(migrations.Migration):
         FROM source_indicator si
         INNER JOIN indicator_map im
         ON si.id = im.source_object_id;
-
-
-
-
         ''')
 
     ]
