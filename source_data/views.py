@@ -46,7 +46,7 @@ def file_upload(request):
         sdps = dt.dp_df_to_source_datapoints()
 
         return HttpResponseRedirect(reverse('doc_review'\
-            , kwargs={'document_id': document_id}))
+            , kwargs={'document_id': newdoc.id}))
 
 def field_mapping(request,document_id):
 

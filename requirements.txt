@@ -5,6 +5,7 @@ django-autoslug==1.8.0
 django-decorator-include==0.1
 django-simple-history==1.6.3
 django-tastypie==0.12.2
+django-webpack-loader==0.1.2.1
 ecdsa==0.13
 jsonfield==1.0.3
 numpy==1.9.2
@@ -17,3 +18,4 @@ python-mimeparse==0.1.4
 pytz==2015.4
 six==1.9.0
 wsgiref==0.1.2
+xlrd==0.9.4

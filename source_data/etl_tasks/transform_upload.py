@@ -13,42 +13,44 @@ from datapoints.models import DataPoint
 
 class DocTransform(object):
 
-    def __init__(self,document_id,column_mappings):
+    def __init__(self,document_id):
 
         self.source_datapoints = []
         self.document_id = document_id
-        self.file_path = settings.MEDIA_ROOT + str(self.document.docfile)
+
+        self.file_path = str(Document.objects.get(id=self.document_id).docfile)
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-        self.column_mappings = column_mappings
         self.df = self.create_df()
 
     def create_df(self):
 
-        if self.file_path.endswith('.csv'):
-            df = read_csv(self.file_path)
+        full_file_path = settings.MEDIA_ROOT + self.file_path
+
+        if full_file_path.endswith('.csv'):
+            df = read_csv(full_file_path)
         else: ## FIXME this sould be elif and throw an error if neither xls or csv
-            df = read_excel(self.file_path,sheet.name)
+                df = read_excel(full_file_path)
 
         df_no_nan = df.where((notnull(df)), None)
 
         return df_no_nan
 
 
-    # def dp_df_to_source_datapoints(self):
-    #
-    #     batch = [] # a list of SourceSubmission objects
-    #     print self.df
-    #
-    #     for i,(submission) in enumerate(self.df.to_dict()):
-    #         submission_dict = {
-    #             'submission_json': submission,
-    #             'document_id': self.document_id,
-    #             'instance_guid': i,
-    #             'instance_guid': i,
-    #         }
-    #         batch.append(SourceSubmission(**submission_dict)
-    #
-    #     SourceSubmission.objects.bulk_create(batch)
+    def dp_df_to_source_datapoints(self):
+
+        batch = [] # a list of SourceSubmission objects
+        # print self.df
+        #
+        # for i,(submission) in enumerate(self.df.to_dict()):
+        #     submission_dict = {
+        #         'submission_json': submission,
+        #         'document_id': self.document_id,
+        #         'instance_guid': i,
+        #         'instance_guid': i,
+        #     }
+        #     batch.append(SourceSubmission(**submission_dict)
+
+        SourceSubmission.objects.bulk_create(batch)
 
 
 class RegionTransform(DocTransform):
@@ -95,8 +97,8 @@ class RegionTransform(DocTransform):
                 parent_name = row_data.parent_name,\
                 lat = row_data.lat,\
                 lon = row_data.lon,\
-                document_id = self.document.id,\
+                document_id = self.document_id,\
                 parent_code = row_data.parent_code,
-                source_guid = str(self.document.id) + '-' + str(row_data.code))
+                source_guid = str(self.document_id) + '-' + str(row_data.code))
 
             just_created.append(sr)

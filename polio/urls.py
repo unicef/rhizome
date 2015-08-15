@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^ufadmin/', login_required(TemplateView.as_view(template_name='ufadmin.html')), name='ufadmin'),
 
     ## DOCUMENT_REVIEW ##
-    url(r'^doc_review/', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
+    url(r'^doc_review/overview/(?P<document_id>\w+)/$', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
 
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
