@@ -45,8 +45,7 @@ def file_upload(request):
         dt = DocTransform(newdoc.id)
         sdps = dt.dp_df_to_source_datapoints()
 
-        return HttpResponseRedirect(reverse('doc_review'\
-            , kwargs={'document_id': newdoc.id}))
+        return HttpResponseRedirect('/doc_review/overview/%s' % newdoc.id)
 
 def field_mapping(request,document_id):
 
