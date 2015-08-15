@@ -47,7 +47,7 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
-            'document_review' : {'orm_obj':SourceObjectMap,
+            'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': None},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},

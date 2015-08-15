@@ -44,7 +44,7 @@ var DocMapping = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docReview({document_id:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docReview({document:doc_id},null,{'cache-control':'no-cache'})
 		};
 
 		return <ReviewPage

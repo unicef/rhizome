@@ -202,6 +202,7 @@ class SourceObjectMap(models.Model):
     source_object_code = models.CharField(max_length=255)
     content_type = models.CharField(max_length=10)
     mapped_by = models.ForeignKey(User)
+    document = models.ForeignKey(Document)
 
     class Meta:
         db_table = 'source_object_map'
