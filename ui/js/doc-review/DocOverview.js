@@ -28,18 +28,10 @@
 
 			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
 
-			<DropdownMenu
-				text='Campaign Column'
-				searchable={true}
-				// onSearch={this._setPattern}
-			>
-			</DropdownMenu>
-			<DropdownMenu
-				text='Region Column'
-				searchable={true}
-				// onSearch={this._setPattern}
-			>
-			</DropdownMenu>
+			<button>
+					 <a role="submit" href="/source_data/refresh_master_no_indicator/66" class="button">Submit Data</a>
+ 		  </button>
+
 		 </div>
 		}
 	});
