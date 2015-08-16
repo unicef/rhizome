@@ -17,6 +17,7 @@ class DocTransform(object):
 
         self.source_datapoints = []
         self.document_id = document_id
+        self.file_delimiter = ','
 
         self.file_path = str(Document.objects.get(id=self.document_id).docfile)
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
@@ -25,7 +26,7 @@ class DocTransform(object):
     def prep_file(self,full_file_path):
 
         f_header = open(full_file_path,'r')
-        self.file_header = f_header.readlines()[0]
+        self.file_header = f_header.readlines()[0].split(self.file_delimiter)
         f_header.close()
 
         f = open(full_file_path,'r')
@@ -42,7 +43,7 @@ class DocTransform(object):
         batch = []
         for i,(submission) in enumerate(file_stream):
             submission_dict = {
-                'submission_json': dict(zip(self.file_header, submission)),
+                'submission_json': dict(zip(self.file_header, submission.split(self.file_delimiter))),
                 'document_id': self.document_id,
                 'row_number': i,
                 'instance_guid': i,
