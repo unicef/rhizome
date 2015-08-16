@@ -1,6 +1,7 @@
 import traceback
 
 from decimal import InvalidOperation
+from pprint import pprint
 
 from django.db import IntegrityError
 from django.db import transaction
@@ -10,17 +11,21 @@ from pandas import DataFrame
 from source_data.models import *
 from datapoints.models import *
 
-
 class MasterRefresh(object):
+    '''
+    Take source datapoints from a document_id and upsert into datapoitns table
+    based on mapping and audits from the doc_review app.
 
-    def __init__(self,user_id,document_id,indicator_id=None):
+from source_data.etl_tasks.refresh_master import MasterRefresh
+mr = MasterRefresh(1,32)
+mr.source_dps_to_dps()
+
+    '''
+
+    def __init__(self,user_id,document_id):
 
         self.document_id = document_id
         self.user_id = user_id
-        self.indicator_id = indicator_id
-
-        self.sdp_df = DataFrame(list(SourceDataPoint.objects\
-            .filter(document_id = self.document_id).values()))
 
         self.new_datapoints = []
 
@@ -28,14 +33,18 @@ class MasterRefresh(object):
 
         synced_dp_ids = []
 
-        sdps_to_sync = DataPoint.objects.raw('''
-            SELECT * FROM fn_upsert_source_dps(%s, %s, %s);
-            ''', [self.user_id,self.document_id,self.indicator_id])
+        source_dp_json = SourceSubmission.objects.filter(
+            document_id = self.document_id).values()
 
-        for row in sdps_to_sync:
-            synced_dp_ids.append(row.id)
+        for i,(row) in enumerate(source_dp_json):
+            print '==%s==' % i
+            selfself.process_source_submission(row)
 
         return synced_dp_ids
+
+    def process_source_submission(self,ss_row):
+
+        print ss_row
 
 
     def clean_cell_value(self,cell_value):

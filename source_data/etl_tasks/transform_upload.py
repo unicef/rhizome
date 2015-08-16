@@ -29,7 +29,7 @@ class DocTransform(object):
         if full_file_path.endswith('.csv'):
             df = read_csv(full_file_path)
         else: ## FIXME this sould be elif and throw an error if neither xls or csv
-                df = read_excel(full_file_path)
+            df = read_excel(full_file_path)
 
         df_no_nan = df.where((notnull(df)), None)
 
@@ -39,16 +39,15 @@ class DocTransform(object):
     def dp_df_to_source_datapoints(self):
 
         batch = [] # a list of SourceSubmission objects
-        # print self.df
-        #
-        # for i,(submission) in enumerate(self.df.to_dict()):
-        #     submission_dict = {
-        #         'submission_json': submission,
-        #         'document_id': self.document_id,
-        #         'instance_guid': i,
-        #         'instance_guid': i,
-        #     }
-        #     batch.append(SourceSubmission(**submission_dict)
+
+        for i,(submission) in enumerate(self.df.to_dict()):
+            submission_dict = {
+                'submission_json': submission,
+                'document_id': self.document_id,
+                'row_number': i,
+                'instance_guid': i,
+            }
+            batch.append(SourceSubmission(**submission_dict))
 
         SourceSubmission.objects.bulk_create(batch)
 
