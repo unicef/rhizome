@@ -27,7 +27,7 @@ const fields = {
 };
 
 
-const fieldNamesOnTable = ['id']//,'source_dp_count','master_dp_count'];
+const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
 
 var DocMapping = React.createClass({
 	render() {

@@ -261,7 +261,7 @@ module.exports = {
 
 		// DOCUMENT VALIDATION //
 		docReview: endPoint('/doc_mapping/', 'get', 2, false),
-		docReviewMeta: endPoint('/document_review/metadata/', 'get', 2, false),
+		docReviewMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
 
 	}
 };
