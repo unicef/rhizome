@@ -36,7 +36,9 @@ class MasterRefresh(object):
         self.source_map_dict =  DataFrame(list(SourceObjectMap.objects.all()\
             .values_list(*['master_object_id']))\
             ,columns = ['master_object_id']\
-            ,index= SourceObjectMap.objects.all().values_list(*['source_object_code','content_type']))).to_dict()
+            ,index= SourceObjectMap.objects.all()\
+            .values_list(*['content_type','source_object_code']))\
+            .to_dict()['master_object_id']
 
 
     def source_dps_to_dps(self):
@@ -53,6 +55,24 @@ class MasterRefresh(object):
 
     def process_source_submission(self,ss_row):
 
+        submission_data = json.loads(ss_row['submission_json'])
+
+        region_code = submission_data[self.document_metadata['region_column']]
+
+
+        try:
+            region_id = self.source_map_dict[('region',region_code)]
+            print region_id
+        except KeyError:
+            print 'error'
+            pass
+
+
+
+        # for k,v in submission_data.iteritems():
+        #     print k
+        #     print v
+
         # submission_df = DataFrame.from_dict(json.\
         #     loads(ss_row['submission_json']),orient='index')
         #
@@ -62,9 +82,7 @@ class MasterRefresh(object):
         # submission_df['region_code'] = json.loads(ss_row\
         #     ['submission_json'])[self.document_metadata['region_column']]
 
-        region_id_df = submission_df.merge(self.source_map_df,left_on='region_code',right_on='source_object_code')
-
-        print region_id_df
+        # region_id_df = submission_df.merge(self.source_map_df,left_on='region_code',right_on='source_object_code')
 
 
         # print self.source_map_df[:5]
