@@ -20,36 +20,47 @@ class DocTransform(object):
 
         self.file_path = str(Document.objects.get(id=self.document_id).docfile)
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
-        self.df = self.create_df()
 
-    def create_df(self):
 
-        full_file_path = settings.MEDIA_ROOT + self.file_path
+    def prep_file(self,full_file_path):
 
-        if full_file_path.endswith('.csv'):
-            df = read_csv(full_file_path)
-        else: ## FIXME this sould be elif and throw an error if neither xls or csv
-            df = read_excel(full_file_path)
+        f_header = open(full_file_path,'r')
+        self.file_header = f_header.readlines()[0]
+        f_header.close()
 
-        df_no_nan = df.where((notnull(df)), None)
+        f = open(full_file_path,'r')
+        self.num_lines = len(f.readlines()[1:])
 
-        return df_no_nan
-
+        return f
 
     def dp_df_to_source_datapoints(self):
 
-        batch = [] # a list of SourceSubmission objects
+        full_file_path = settings.MEDIA_ROOT + self.file_path
+        f = self.prep_file(full_file_path)
 
-        for i,(submission) in enumerate(self.df.to_dict()):
-            submission_dict = {
-                'submission_json': submission,
-                'document_id': self.document_id,
-                'row_number': i,
-                'instance_guid': i,
-            }
-            batch.append(SourceSubmission(**submission_dict))
+        print '===='
 
-        SourceSubmission.objects.bulk_create(batch)
+        print self.num_lines
+        print self.file_header
+
+        print '===='
+
+
+        # with open(full_file_path, 'r') as f:
+        #     for line in f:
+        #         # print line
+        #         print line.encode('hex')
+
+        # for i,(submission) in enumerate(self.df.to_dict()):
+        #     submission_dict = {
+        #         'submission_json': submission,
+        #         'document_id': self.document_id,
+        #         'row_number': i,
+        #         'instance_guid': i,
+        #     }
+        #     batch.append(SourceSubmission(**submission_dict))
+        #
+        # SourceSubmission.objects.bulk_create(batch)
 
 
 class RegionTransform(DocTransform):
