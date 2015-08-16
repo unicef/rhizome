@@ -29,38 +29,27 @@ class DocTransform(object):
         f_header.close()
 
         f = open(full_file_path,'r')
-        self.num_lines = len(f.readlines()[1:])
+        file_stream = f.readlines()[1:]
 
-        return f
+        return file_stream
 
     def dp_df_to_source_datapoints(self):
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
-        f = self.prep_file(full_file_path)
+        file_stream = self.prep_file(full_file_path)
+        file_row_count = len(file_stream)
 
-        print '===='
+        batch = []
+        for i,(submission) in enumerate(file_stream):
+            submission_dict = {
+                'submission_json': dict(zip(self.file_header, submission)),
+                'document_id': self.document_id,
+                'row_number': i,
+                'instance_guid': i,
+            }
+            batch.append(SourceSubmission(**submission_dict))
 
-        print self.num_lines
-        print self.file_header
-
-        print '===='
-
-
-        # with open(full_file_path, 'r') as f:
-        #     for line in f:
-        #         # print line
-        #         print line.encode('hex')
-
-        # for i,(submission) in enumerate(self.df.to_dict()):
-        #     submission_dict = {
-        #         'submission_json': submission,
-        #         'document_id': self.document_id,
-        #         'row_number': i,
-        #         'instance_guid': i,
-        #     }
-        #     batch.append(SourceSubmission(**submission_dict))
-        #
-        # SourceSubmission.objects.bulk_create(batch)
+        SourceSubmission.objects.bulk_create(batch)
 
 
 class RegionTransform(DocTransform):
