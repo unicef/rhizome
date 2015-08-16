@@ -355,7 +355,7 @@ class DataPoint(models.Model):
     note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
-    source_datapoint = models.ForeignKey('source_data.SourceDataPoint')
+    source_submission = models.ForeignKey('source_data.SourceSubmission')
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
 

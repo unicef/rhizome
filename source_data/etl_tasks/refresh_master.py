@@ -56,37 +56,48 @@ class MasterRefresh(object):
     def process_source_submission(self,ss_row):
 
         submission_data = json.loads(ss_row['submission_json'])
-
         region_code = submission_data[self.document_metadata['region_column']]
+        campaign_code = submission_data[self.document_metadata['campaign_column']]
 
+        dp_batch = []
 
         try:
             region_id = self.source_map_dict[('region',region_code)]
-            print region_id
         except KeyError:
-            print 'error'
-            pass
+            return
+
+        try:
+            campaign_id = self.source_map_dict[('campaign',campaign_code)]
+        except KeyError:
+            return
+
+        for k,v in submission_data.iteritems():
+
+            dp_obj = self.process_submission_instance(region_id,campaign_id,k,v,ss_row['id'])
+
+            if dp_obj:
+                dp_batch.append(dp_obj)
+
+        DataPoint.objects.bulk_create(dp_batch)
 
 
+    def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
 
-        # for k,v in submission_data.iteritems():
-        #     print k
-        #     print v
+        try:
+            indicator_id = self.source_map_dict[('indicator',ind_code)]
+        except KeyError:
+            return None
 
-        # submission_df = DataFrame.from_dict(json.\
-        #     loads(ss_row['submission_json']),orient='index')
-        #
-        # submission_df['campaign_string'] = json.loads(ss_row\
-        #     ['submission_json'])[self.document_metadata['campaign_column']]
-        #
-        # submission_df['region_code'] = json.loads(ss_row\
-        #     ['submission_json'])[self.document_metadata['region_column']]
+        dp_obj = DataPoint(**{
+            'region_id':region_id,
+            'campaign_id':campaign_id,
+            'indicator_id':indicator_id,
+            'value':val,
+            'changed_by_id':self.user_id,
+            'source_submission_id':ss_id
+        })
 
-        # region_id_df = submission_df.merge(self.source_map_df,left_on='region_code',right_on='source_object_code')
-
-
-        # print self.source_map_df[:5]
-
+        return dp_obj
 
 
     def clean_cell_value(self,cell_value):
