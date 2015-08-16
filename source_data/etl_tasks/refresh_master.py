@@ -49,9 +49,19 @@ class MasterRefresh(object):
         for i,(row) in enumerate(source_dp_json):
             self.process_source_submission(row)
 
-    def source_dps_to_dps(self):
+    def doc_dps_to_datapoint(self):
 
-        self.source_submissions_to_doc_datapoint()
+        pass
+
+    def source_dps_to_dps(self):
+        '''
+        TO DO - what if there are new mappings?
+        '''
+        x = DocDataPoint.objects.filter(document_id = self.document_id)[0]
+        if not x:
+            self.source_submissions_to_doc_datapoint()
+
+        self.doc_dps_to_datapoint()
 
         return []
 
@@ -80,7 +90,6 @@ class MasterRefresh(object):
             if dp_obj:
                 dp_batch.append(dp_obj)
 
-        DocDataPoint.objects.filter(document_id = self.document_id).delete()
         DocDataPoint.objects.bulk_create(dp_batch)
 
 
@@ -153,8 +162,6 @@ class MasterRefresh(object):
                     'polygon': source_polygon.polygon
                 })
 
-#####
-#####
 
 def create_source_meta_data(document_id):
     '''
