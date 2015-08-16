@@ -10,10 +10,6 @@
 		},
 
 		componentDidMount: function() {
-		API.admin.users({id:this.state.doc_overview.created_by_id}).then(function(result) {
-			this.setState(uploaded_by_username: result.objects[0].username)
-			}
-
 
     API.document({id:this.props.params.docId},null,{'cache-control':'no-cache'}).then(function(result) {
 	      var api_data = result.objects[0];
@@ -25,16 +21,12 @@
 
 	  render() {
 			var self = this;
-			var uploaded_by_username =
-				return result.objects[0].username
-			}
-
 
 			return <div>
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
 
-			<h2> Uploaded By: {this.state.uploaded_by_username} </h2>
+			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
 
 			<DropdownMenu
 				text='Campaign Column'
