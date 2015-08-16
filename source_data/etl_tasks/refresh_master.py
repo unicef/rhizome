@@ -31,6 +31,10 @@ class MasterRefresh(object):
             'campaign_column':'Campaign',
         }
 
+        map_df_cols = ['master_object_id','source_object_code','content_type']
+        self.source_map_df = DataFrame(list(SourceObjectMap.objects.all().\
+            values_list(*map_df_cols)),columns = map_df_cols)
+
 
     def source_dps_to_dps(self):
 
@@ -47,13 +51,16 @@ class MasterRefresh(object):
 
     def process_source_submission(self,ss_row):
 
-        submission_df = DataFrame.from_dict(json.\
-            loads(ss_row['submission_json']),orient='index')
+        # submission_df = DataFrame.from_dict(json.\
+        #     loads(ss_row['submission_json']),orient='index')
+        #
+        # submission_df['campaign_string'] = json.loads(ss_row\
+        #     ['submission_json'])[self.document_metadata['campaign_column']]
+        #
+        # submission_df['region_code'] = json.loads(ss_row\
+        #     ['submission_json'])[self.document_metadata['region_column']]
 
-        submission_df['campaign_string'] = json.loads(ss_row['submission_json'])[self.document_metadata['campaign_column']]
-        submission_df['region_code'] = json.loads(ss_row['submission_json'])[self.document_metadata['region_column']]
-
-        print submission_df[:4]
+        print self.source_map_df[:5]
 
 
         # [0][self.document_metadata['campaign_column']]
