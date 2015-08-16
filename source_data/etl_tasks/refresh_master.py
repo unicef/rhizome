@@ -41,9 +41,7 @@ class MasterRefresh(object):
             .to_dict()['master_object_id']
 
 
-    def source_dps_to_dps(self):
-
-        synced_dp_ids = []
+    def source_submissions_to_doc_datapoint(self):
 
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document_id).values()
@@ -51,7 +49,11 @@ class MasterRefresh(object):
         for i,(row) in enumerate(source_dp_json):
             self.process_source_submission(row)
 
-        return synced_dp_ids
+    def source_dps_to_dps(self):
+
+        self.source_submissions_to_doc_datapoint()
+
+        return []
 
     def process_source_submission(self,ss_row):
 
@@ -78,7 +80,8 @@ class MasterRefresh(object):
             if dp_obj:
                 dp_batch.append(dp_obj)
 
-        DataPoint.objects.bulk_create(dp_batch)
+        DocDataPoint.objects.filter(document_id = self.document_id).delete()
+        DocDataPoint.objects.bulk_create(dp_batch)
 
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
@@ -88,16 +91,23 @@ class MasterRefresh(object):
         except KeyError:
             return None
 
-        dp_obj = DataPoint(**{
+        try:
+            cleaned_val = float(val)
+        except ValueError:
+            return
+
+        doc_dp_obj = DocDataPoint(**{
+            'document_id':self.document_id,
             'region_id':region_id,
             'campaign_id':campaign_id,
             'indicator_id':indicator_id,
             'value':val,
             'changed_by_id':self.user_id,
-            'source_submission_id':ss_id
+            'source_submission_id':ss_id,
+            'is_valid':False
         })
 
-        return dp_obj
+        return doc_dp_obj
 
 
     def clean_cell_value(self,cell_value):
@@ -111,6 +121,7 @@ class MasterRefresh(object):
             cleaned = None
 
         return cleaned
+
     def delete_un_mapped(self):
 
         datapoint_ids = MissingMapping.objects.filter(document_id=\

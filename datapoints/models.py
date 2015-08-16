@@ -370,6 +370,25 @@ class DataPoint(models.Model):
             ('view_datapoint', 'View datapoint'),
         )
 
+class DocDataPoint(models.Model):
+    '''
+    For Validation of upload datapoints.
+    '''
+
+    document = models.ForeignKey('source_data.Document')
+    indicator = models.ForeignKey(Indicator)
+    region = models.ForeignKey(Region)
+    campaign = models.ForeignKey(Campaign)
+    value = models.FloatField(null=True)
+    changed_by = models.ForeignKey('auth.User')
+    source_submission = models.ForeignKey('source_data.SourceSubmission')
+    is_valid = models.BooleanField()
+
+
+    class Meta:
+        db_table = 'doc_datapoint'
+        unique_together = (('source_submission','indicator'))
+
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
     methods used by the manual data entry form. This model
