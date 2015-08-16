@@ -32,8 +32,11 @@ class MasterRefresh(object):
         }
 
         map_df_cols = ['master_object_id','source_object_code','content_type']
-        self.source_map_df = DataFrame(list(SourceObjectMap.objects.all().\
-            values_list(*map_df_cols)),columns = map_df_cols)
+
+        self.source_map_dict =  DataFrame(list(SourceObjectMap.objects.all()\
+            .values_list(*['master_object_id']))\
+            ,columns = ['master_object_id']\
+            ,index= SourceObjectMap.objects.all().values_list(*['source_object_code','content_type']))).to_dict()
 
 
     def source_dps_to_dps(self):
@@ -44,7 +47,6 @@ class MasterRefresh(object):
             document_id = self.document_id).values()
 
         for i,(row) in enumerate(source_dp_json):
-            print '==%s==' % i
             self.process_source_submission(row)
 
         return synced_dp_ids
@@ -60,10 +62,13 @@ class MasterRefresh(object):
         # submission_df['region_code'] = json.loads(ss_row\
         #     ['submission_json'])[self.document_metadata['region_column']]
 
-        print self.source_map_df[:5]
+        region_id_df = submission_df.merge(self.source_map_df,left_on='region_code',right_on='source_object_code')
+
+        print region_id_df
 
 
-        # [0][self.document_metadata['campaign_column']]
+        # print self.source_map_df[:5]
+
 
 
     def clean_cell_value(self,cell_value):

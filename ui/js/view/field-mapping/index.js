@@ -8,9 +8,9 @@ var MenuVue = require('../../component/vue-menu');
 
 module.exports = {
 	template: require('./template.html'),
-	data: function () { 
+	data: function () {
 			return {
-			    //mapping data from the file import 
+			    //mapping data from the file import
 			    mappingData: {},//require('./temp_data.js'),
 			    //holds arrays of master data for populating the master id dropdowns
 			    remainingVerifications:{
@@ -28,7 +28,7 @@ module.exports = {
 			    dataLoaded:false
 			   };
 			},
-			
+
 	created: function() {
 	  var self = this;
 	  var regionsPromise, indicatorsPromise, campaignsPromise, documentPromise;
@@ -53,8 +53,8 @@ module.exports = {
 	     	.thru(ancestoryString)
 	     	.value();
 	     //console.log(regions);
-	     self.$set('items.region',regions); 
-	     
+	     self.$set('items.region',regions);
+
 	   });
 	   indicatorsPromise = api.indicators().then(function(items){
 	           self.maps.indicator = _.indexBy(items.objects, 'id');
@@ -68,12 +68,12 @@ module.exports = {
 	           		};
 	           	})
 	           	.sortBy('title')
-	           	.reverse() 
+	           	.reverse()
 	           	.value();
-	          
+
 	           self.$set('items.indicator',indicators);
-	          
-	          
+
+
 	       });
 	   campaignsPromise = api.campaign().then(function(items){
 	          self.maps.campaign = _.indexBy(items.objects, 'id');
@@ -87,20 +87,20 @@ module.exports = {
 	           		};
 	           	})
 	           	.sortBy('title')
-	           	.reverse() 
+	           	.reverse()
 	           	.value();
-	          
+
 	           self.$set('items.campaign',campaigns);
-	           
+
 	       });
-           
-	    Promise.all([regionsPromise, indicatorsPromise,campaignsPromise,documentPromise]).then(function () { 
+
+	    Promise.all([regionsPromise, indicatorsPromise,campaignsPromise,documentPromise]).then(function () {
 	      self.$set('dataLoaded',true);
 	      self.calculateRemainingVerifications();
 	      self.initializaMenus();
-	    });    
+	    });
 	},
-	methods: { 
+	methods: {
 	  unmapField: function(source_id, master_id,type){
 	      var key = _.findIndex(this.$data.mappingData[type],{'source_object_id':source_id});
 	      this.mappingData[type][key].master_object_id = '-1';
@@ -108,15 +108,15 @@ module.exports = {
 	      				'master_object_id': master_id,
 	      				'id':''
 	      				}).then(function(values){
-	      				    
+
 	      				    console.log(values);
-	      				    
+
 	      				});
 	  },
 	  calculateRemainingVerifications:function(){
 	    var self = this;
 	    self.$data.remainingVerifications.total=0;
-	    _.each(this.mappingData,function(mappingSet,name){ 
+	    _.each(this.mappingData,function(mappingSet,name){
 	      self.$data.remainingVerifications[name]=0;
 	      _.each(mappingSet,function(field){
 	            //console.log(field.master_object_id==-1);
@@ -126,14 +126,14 @@ module.exports = {
 	               self.$data.remainingVerifications.total++;
 	            }
 	       });
-	     }); 
+	     });
 	  },
 	  populateDropdowns: function(){
 	       var self = this;
 	        //set up master mapping data from api to be fed into the drop down selects
 
 	        self.calculateRemainingVerifications();
-		 
+
 	  },
 	  processMenuClick: function(value){
 	    console.log(this,value);
@@ -141,10 +141,10 @@ module.exports = {
 	  initializaMenus: function(){
 	     var MenuComponent = Vue.extend(MenuVue);
 	     var self = this;
-	     
+
 	     var setMasterId = function(type, sourceId, masterId)
-	     {  
-	        
+	     {
+
 	        var key = _.findIndex(self.$data.mappingData[type],{'source_object_id':sourceId});
 	        console.log(self.mappingData[type][key]);
 	        var postData = { 'source_object_id': sourceId,
@@ -155,18 +155,18 @@ module.exports = {
 	          postData.id = self.mappingData[type][key].map_id;
 	        }
 	        self.mappingData[type][key].master_object_id = masterId;
-	        
-	        
+
+
 	        api['map_'+type](postData).then(function(values){
-	        				    
+
 	        				    console.log(values);
-	        				    
+
 	        				});
 	        self.calculateRemainingVerifications();
-	     
+
 	     };
 	     var setMasterIdCurry = _.curry(setMasterId);
-	     
+
 	     self._menus = {
 	       region:{},
 	       campaign:{},
@@ -181,7 +181,7 @@ module.exports = {
 	           self._menus[type][field.source_object_id].$on('field-selected',setMasterIdCurry(type,field.source_object_id));
 	       });
 	     });
-	  }   
+	  }
 	},
 	filters: {
 	  check: function(masterId){
