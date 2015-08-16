@@ -16,11 +16,6 @@ class MasterRefresh(object):
     '''
     Take source datapoints from a document_id and upsert into datapoitns table
     based on mapping and audits from the doc_review app.
-
-from source_data.etl_tasks.refresh_master import MasterRefresh
-mr = MasterRefresh(1,66)
-mr.source_dps_to_dps()
-
     '''
 
     def __init__(self,user_id,document_id):
@@ -32,7 +27,7 @@ mr.source_dps_to_dps()
         self.document_metadata = {
             'instance_guid':'uq_id',
             'file_type':'columns_are_indicators',
-            'region_column':'wardcode',
+            'region_column':'Wardcode',
             'campaign_column':'Campaign',
         }
 
@@ -52,8 +47,15 @@ mr.source_dps_to_dps()
 
     def process_source_submission(self,ss_row):
 
-        print '====='
-        pprint(json.loads(ss_row['submission_json'])['Campaign'])
+        submission_df = DataFrame.from_dict(json.\
+            loads(ss_row['submission_json']),orient='index')
+
+        submission_df['campaign_string'] = json.loads(ss_row['submission_json'])[self.document_metadata['campaign_column']]
+        submission_df['region_code'] = json.loads(ss_row['submission_json'])[self.document_metadata['region_column']]
+
+        print submission_df[:4]
+
+
         # [0][self.document_metadata['campaign_column']]
 
 
