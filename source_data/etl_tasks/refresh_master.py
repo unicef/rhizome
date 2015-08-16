@@ -2,6 +2,7 @@ import traceback
 
 from decimal import InvalidOperation
 from pprint import pprint
+import json
 
 from django.db import IntegrityError
 from django.db import transaction
@@ -17,7 +18,7 @@ class MasterRefresh(object):
     based on mapping and audits from the doc_review app.
 
 from source_data.etl_tasks.refresh_master import MasterRefresh
-mr = MasterRefresh(1,32)
+mr = MasterRefresh(1,66)
 mr.source_dps_to_dps()
 
     '''
@@ -28,6 +29,13 @@ mr.source_dps_to_dps()
         self.user_id = user_id
 
         self.new_datapoints = []
+        self.document_metadata = {
+            'instance_guid':'uq_id',
+            'file_type':'columns_are_indicators',
+            'region_column':'wardcode',
+            'campaign_column':'Campaign',
+        }
+
 
     def source_dps_to_dps(self):
 
@@ -38,13 +46,15 @@ mr.source_dps_to_dps()
 
         for i,(row) in enumerate(source_dp_json):
             print '==%s==' % i
-            selfself.process_source_submission(row)
+            self.process_source_submission(row)
 
         return synced_dp_ids
 
     def process_source_submission(self,ss_row):
 
-        print ss_row
+        print '====='
+        pprint(json.loads(ss_row['submission_json'])['Campaign'])
+        # [0][self.document_metadata['campaign_column']]
 
 
     def clean_cell_value(self,cell_value):
