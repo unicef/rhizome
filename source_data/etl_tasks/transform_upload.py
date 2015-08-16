@@ -17,7 +17,10 @@ class DocTransform(object):
 
         self.source_datapoints = []
         self.document_id = document_id
+
+        ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
         self.file_delimiter = ','
+        self.unique_id_column = 'uq_id'
 
         self.file_path = str(Document.objects.get(id=self.document_id).docfile)
         self.to_process_status = ProcessStatus.objects.get(status_text='TO_PROCESS').id
@@ -42,13 +45,18 @@ class DocTransform(object):
 
         batch = []
         for i,(submission) in enumerate(file_stream):
-            submission_dict = {
-                'submission_json': dict(zip(self.file_header, submission.split(self.file_delimiter))),
-                'document_id': self.document_id,
-                'row_number': i,
-                'instance_guid': i,
-            }
-            batch.append(SourceSubmission(**submission_dict))
+            submission_data = dict(zip(self.file_header, submission.split(self.file_delimiter)))
+            instance_guid = submission_data['uq_id']
+
+            if instance_guid != '': ## so as to not process empty rows
+
+                submission_dict = {
+                    'submission_json': submission_data,
+                    'document_id': self.document_id,
+                    'row_number': i,
+                    'instance_guid': submission_data[self.unique_id_column],
+                }
+                batch.append(SourceSubmission(**submission_dict))
 
         SourceSubmission.objects.bulk_create(batch)
 

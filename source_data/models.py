@@ -232,6 +232,7 @@ class SourceSubmission(models.Model):
 
     class Meta:
         db_table = 'source_submission'
+        unique_together = (('document','instance_guid'))
 
 ## ODK ##
 
