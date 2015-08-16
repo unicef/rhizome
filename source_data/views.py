@@ -79,16 +79,6 @@ def pre_process_file(request,document_id):
     return HttpResponseRedirect(reverse('doc_review'\
         , kwargs={'document_id': document_id}))
 
-def refresh_master_no_indicator(request,document_id):
-
-    mr = MasterRefresh(document_id = document_id, indicator_id = None,\
-        user_id = request.user.id)
-
-    mr.source_dps_to_dps()
-
-    return HttpResponseRedirect(reverse('source_data:field_mapping'\
-        , kwargs={'document_id': document_id}))
-
 
 ######### DOCUMENT RELATED VIEWS ##########
 
@@ -99,16 +89,13 @@ class DocumentIndex(generic.ListView):
     model = Document
 
 
-def refresh_master(request):
+def refresh_master(request,document_id):
 
-    job_guid = hashlib.sha1(str(random.random())).hexdigest()
 
-    t = EtlTask('refresh_master',job_guid)
+    mr = MasterRefresh(request.user.id, document_id)
+    mr.source_dps_to_dps()
 
-    task_data = t.data
-
-    return render_to_response('map/master_refresh.html'
-        ,{'task_data': task_data})
+    return HttpResponseRedirect('/doc_review/overview/%s' % document_id)
 
 
 def odk_review(request):

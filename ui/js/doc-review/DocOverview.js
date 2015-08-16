@@ -29,7 +29,7 @@
 			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
 
 			<button>
-					 <a role="submit" href="/source_data/refresh_master_no_indicator/66" class="button">Submit Data</a>
+					 <a role="submit" href="/source_data/refresh_master/66" class="button">Sync Data</a>
  		  </button>
 
 		 </div>
