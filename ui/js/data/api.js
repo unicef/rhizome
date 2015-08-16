@@ -260,8 +260,8 @@ module.exports = {
 		indicators: endPoint('/indicator/', 'get', 2, false),
 
 		// DOCUMENT VALIDATION //
-		docReview: endPoint('/doc_mapping/', 'get', 2, false),
-		docReviewMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
+		docMap: endPoint('/doc_mapping/', 'get', 2, false),
+		docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
 
 	}
 };

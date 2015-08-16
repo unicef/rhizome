@@ -44,12 +44,12 @@ var DocMapping = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docReview({document:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
 		};
 
 		return <ReviewPage
 			title="ToMap"
-			getMetadata={API.admin.docReviewMeta}
+			getMetadata={API.admin.docMapMeta}
 			getData={data_fn}
 			datascopeFilters={datascopeFilters}
 			fields={fields}

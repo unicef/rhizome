@@ -10,6 +10,11 @@
 		},
 
 		componentDidMount: function() {
+		API.admin.users({id:this.state.doc_overview.created_by_id}).then(function(result) {
+			this.setState(uploaded_by_username: result.objects[0].username)
+			}
+
+
     API.document({id:this.props.params.docId},null,{'cache-control':'no-cache'}).then(function(result) {
 	      var api_data = result.objects[0];
 	      if (this.isMounted()) {
@@ -20,15 +25,16 @@
 
 	  render() {
 			var self = this;
+			var uploaded_by_username =
+				return result.objects[0].username
+			}
+
 
 			return <div>
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
-			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
-			<h2> Master Datapoint Count: {this.state.doc_overview.master_datapoint_count} </h2>
-			<h2> Source Datapoint Count: {this.state.doc_overview.source_datapoint_count} </h2>
-			<h2> Document to Source Datapoint: {this.state.doc_overview.source_datapoint_time_elapsed} </h2>
-			<h2> Latest Master Refresh: {this.state.doc_overview.latest_refresh_master_time_elapsed} </h2>
+
+			<h2> Uploaded By: {this.state.uploaded_by_username} </h2>
 
 			<DropdownMenu
 				text='Campaign Column'
