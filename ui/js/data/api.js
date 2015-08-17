@@ -259,13 +259,17 @@ module.exports = {
 		indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
 		indicators: endPoint('/indicator/', 'get', 2, false),
 
-		// DOCUMENT VALIDATION //
+		// DOCUMENT VALIDATION APP //
+
+	  // mapping tab // 
 		docMap: endPoint('/doc_mapping/', 'get', 2, false),
 		docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
+		// validation tab //
 		docValidate: endPoint('/doc_datapoint/', 'get', 2, false),
 		docValidateMeta: endPoint('/doc_datapoint/metadata/', 'get', 2, false),
-		docResults: endPoint('/sync_doc_datapoint/', 'get', 2, false),
-		DataPointMetaData: endPoint('/datapoint/metadata/', 'get', 2, false),
+		// aggregated and computed results //
+		docResults: endPoint('/synced_datapoint/', 'get', 2, false),
+		DataPointMetaData: endPoint('/synced_datapoint/metadata/', 'get', 2, false),
 
 	}
 };
