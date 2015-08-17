@@ -14,7 +14,7 @@
     API.document({id:this.props.params.docId},null,{'cache-control':'no-cache'}).then(function(result) {
 	      var api_data = result.objects[0];
 	      if (this.isMounted()) {
-	        this.setState({ doc_overview: api_data});
+	        this.setState({doc_overview:api_data});
 	      }
 	    }.bind(this));
 	  },

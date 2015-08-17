@@ -41,6 +41,51 @@ class MasterRefresh(object):
             .to_dict()['master_object_id']
 
 
+    def upsert_source_object_map(self):
+
+        source_dp_json = SourceSubmission.objects.filter(
+            document_id = self.document_id).values_list('submission_json')
+
+        indicator_codes = [k for k,v in json.loads(source_dp_json[0][0]).iteritems()]
+        cp_codes = []
+        rg_codes = []
+
+        for row in source_dp_json:
+
+            row_dict = json.loads(row[0])
+            rg_codes.append(row_dict[self.document_metadata['region_column']])
+            cp_codes.append(row_dict[self.document_metadata['campaign_column']])
+            # cp_codes.append((row_dict[self.document_metadata['campaign_column']])
+
+        uq_regions = list(set(rg_codes))
+        print uq_regions
+
+    def source_submission_upsert_meta(self, ss_row):
+
+        submission_data = json.loads(ss_row['submission_json'])
+
+        # source_objects_to_upsert.append(('region',submission_data[self.document_metadata['region_column']))
+        # source_objects_to_upsert.append(('campaign',submission_data[self.document_metadata['campaign_column']))
+
+
+        for content_type, source_string in self.source_objects_to_upsert:
+
+            obj, created = SourceObjectMap.objects.get_or_create(\
+                content_type = content_type\
+               ,source_object_code = source_string\
+               ,defaults = {'document_id': self.document_id,
+                'master_object_id':-1,
+                'mapped_by_id':self.user_id})
+
+        # self.list_of_source_map_ids.append(obj.id)
+
+        # submission_data[self.document_metadata['region_column']]
+        # campaign_code = submission_data[self.document_metadata['campaign_column']]
+        #
+        # list_of_indicator_codes = [k for k,v in submission_data.iteritems()]
+
+
+
     def source_submissions_to_doc_datapoint(self):
 
         source_dp_json = SourceSubmission.objects.filter(
@@ -55,7 +100,6 @@ class MasterRefresh(object):
 
     def source_dps_to_dps(self):
         '''
-        TO DO - what if there are new mappings?
         '''
         x = DocDataPoint.objects.filter(document_id = self.document_id)[0]
         if not x:

@@ -19,6 +19,7 @@ from django.core import serializers
 
 from datapoints.models import *
 from source_data.models import *
+from source_data.etl_tasks.refresh_master import MasterRefresh
 
 class v2Request(object):
 
@@ -48,7 +49,7 @@ class v2Request(object):
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
-                'permission_function': None},
+                'permission_function': self.refresh_doc_metadata},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
             'document': {'orm_obj':Document,
@@ -103,6 +104,18 @@ class v2Request(object):
         }
 
         return response_data
+
+    def refresh_doc_metadata(self,list_of_object_ids):
+
+        mr = MasterRefresh(self.user_id,self.kwargs['document'])
+        mr.upsert_source_object_map()
+
+        if list_of_object_ids == None:
+            return None, []
+
+        data = SourceObjectMap.objects.filter(id__in=list_of_object_ids)
+
+        return None, data
 
     ## permissions functions ##
     def apply_cust_dashboard_permissions(self,list_of_object_ids):
