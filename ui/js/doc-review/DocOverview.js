@@ -22,15 +22,19 @@
 	  render() {
 			var self = this;
 
+			var createUrl = '/source_data/refresh_master/' + this.props.params.docId
+			var createButton = createUrl ?
+				<div className="ufadmin-create-button">
+					<a className="button" href={createUrl}>Refresh Master</a>
+				</div> : null;
+
 			return <div>
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
 
 			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
+			{createButton}
 
-			<button>
-					 <a role="submit" href="/source_data/refresh_master/66" class="button">Sync Data</a>
- 		  </button>
 
 		 </div>
 		}
