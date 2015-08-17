@@ -21,8 +21,8 @@ BEGIN
 
 	RETURN QUERY
 
-	SELECT ad.id FROM agg_datapoint ad
-	--WHERE dwc.cache_job_id = $1
+	SELECT ad.id FROM datapoint_with_computed ad
+	WHERE dwc.cache_job_id = $1
 	LIMIT 1;
 
 END

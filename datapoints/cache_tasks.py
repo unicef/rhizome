@@ -118,9 +118,9 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        agg_dp_ids = self.agg_datapoints()
-        calc_dp_ids = self.calc_datapoints()
-        abstract_dp_ids = self.pivot_datapoints()
+        self.agg_dp_ids = self.agg_datapoints()
+        self.calc_dp_ids = self.calc_datapoints()
+        self.abstract_dp_ids = self.pivot_datapoints()
 
         return task_result
 

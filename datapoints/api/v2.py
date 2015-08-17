@@ -138,9 +138,10 @@ class v2Request(object):
         data = mr.sync_doc_datapoint()
 
         dp_ids = [row.id for row in data]
-        cr = CacheRefresh(dp_ids)
+        # cr = CacheRefresh(dp_ids)
 
-        calced_data = DataPointComputed.objects.all()
+        # calced_data = DataPointComputed.objects.filter(id__in =cr.calc_dp_ids)
+        calced_data = DataPoint.objects.filter(id__in=dp_ids)
 
         return None, calced_data
 
