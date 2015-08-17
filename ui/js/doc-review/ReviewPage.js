@@ -45,20 +45,11 @@ var ReviewPage = React.createClass({
 
 		var {data, schema, metadata} = this.state;
 
-		// make the "Create X" button if we have a creation URL
-		var createUrl = _.get(metadata, 'objects.url_patterns.create', null);
-		if(createUrl) createUrl = '/' + createUrl;
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
-		var createButton = createUrl ?
-			<div className="ufadmin-create-button">
-				<a className="button" href={createUrl}>Create {titleSingular}</a>
-			</div> : null;
 
 		return <div>
 			<h2 className="ufadmin-page-heading">{this.props.title} Admin Page</h2>
-
-			{createButton}
 
 			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
 				<Datascope>

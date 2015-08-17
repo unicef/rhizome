@@ -13,12 +13,12 @@ var {
 var ReviewPage = require('./ReviewPage');
 
 var MapButtonFunction = function(data){
-	return <a href={`/datapoints/campaigns/update/${data}`}> THIS IS JOHN </a>;
+	return <input type="checkbox" value="Hello!" />;
 }
 
 const fields = {
 	map_link: {
-		title: 'Master Object Name',
+		title: 'Validate',
 		key: 'id',
 		renderer: (id) => {
 				return MapButtonFunction(id)
@@ -27,7 +27,7 @@ const fields = {
 };
 
 
-const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value'];
+const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value','map_link'];
 
 var DocValidate = React.createClass({
 	render() {
