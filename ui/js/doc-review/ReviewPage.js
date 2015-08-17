@@ -25,6 +25,7 @@ var ReviewPage = React.createClass({
 		return {
 			data: null,
 			schema: null,
+			indicators: null,
 			query: {},
 			areFiltersVisible: false
 		}
@@ -36,6 +37,7 @@ var ReviewPage = React.createClass({
 			schema: parseSchema(response)
 		}));
 		this.props.getData().then(response => this.setState({data: response.objects}));
+		API.indicatorsTree().then(response => this.setState({indicators: response.objects}));
 	},
 
 	onToggleFilterContainer() {
@@ -45,10 +47,14 @@ var ReviewPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators;
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata} = this.state;
+		var {data, schema, metadata, indicators} = this.state;
+
+		console.log('===')
+		console.log(indicators)
+		console.log('===')
 
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
@@ -57,7 +63,7 @@ var ReviewPage = React.createClass({
 					console.log('updating indicator selection')
 		};
 
-		var indicators = API.indicatorsTree()
+		// var x = [];
 
 		var indicatorsSection = (<div>
 								<IndicatorDropdownMenu

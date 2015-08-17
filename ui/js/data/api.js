@@ -39,9 +39,7 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
 	useDefaults = _.isUndefined(useDefaults) ? true : useDefaults;
 
 	var defaults = {
-		offset     : 0,
 		format     : 'json',
-		uri_display: 'id'
 	};
 
 
@@ -261,7 +259,7 @@ module.exports = {
 
 		// DOCUMENT VALIDATION APP //
 
-	  // mapping tab // 
+	  // mapping tab //
 		docMap: endPoint('/doc_mapping/', 'get', 2, false),
 		docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
 		// validation tab //
