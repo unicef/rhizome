@@ -109,11 +109,7 @@ class MasterRefresh(object):
             SELECT * FROM fn_upsert_source_dps(%s,%s)
         ''',[self.user_id, self.document_id])
 
-        print self.user_id
-        print self.document_id
         new_dp_ids = [dp.id for dp in new_dps]
-
-        print new_dp_ids
 
         return DataPoint.objects.filter(id__in=new_dp_ids)
 

@@ -42,7 +42,7 @@ var routes = (
           <Route name="overview" path = "overview/:docId" handler={require('./DocOverview')} />
           <Route name="mapping" path = "mapping/:docId" handler={require('./DocMapping')} />
 					<Route name="conflict" path = "conflict/:docId" handler={require('./DocMapping')} />
-					<Route name="validate" path = "validate/:docId" handler={require('./DocMapping')} />
+					<Route name="validate" path = "validate/:docId" handler={require('./DocValidate')} />
 					<Route name="view_results" path = "view_results/:docId" handler={require('./DocResults')} />
 					<Route name="doc_index" path = "doc_index/" handler={require('./DocIndex')} />
 			</Route>
