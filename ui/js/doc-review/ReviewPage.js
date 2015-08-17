@@ -42,6 +42,7 @@ var ReviewPage = React.createClass({
 		this.props.getData().then(response => this.setState({data: response.objects}));
 		API.indicatorsTree().then(response => this.setState({indicators: response.objects}));
 		API.admin.campaigns().then(response => this.setState({campaigns: response.objects}));
+		API.admin.regions().then(response => this.setState({regions: response.objects}));
 
 		},
 
@@ -55,27 +56,30 @@ var ReviewPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators && this.state.campaigns ;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators && this.state.campaigns  && this.state.regions ;
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata, indicators, campaigns} = this.state;
+		var {data, schema, metadata, indicators, campaigns, regions} = this.state;
 
-		// strip the "s" from the end of plural title
-		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
+		var selected_region = regions[0]
 
 		var dropDownFilters = (<div>
 								<IndicatorDropdownMenu
 									text='Filter Indicators'
 									indicators={indicators}
-									sendValue={this.updateIndicatorSelection}
-									>
+									sendValue={this.updateIndicatorSelection}>
 								</IndicatorDropdownMenu>
 								<CampaignDropdownMenu
 									text={'campaign'}
 									campaigns={campaigns}
 									sendValue={self.updateIndicatorSelection}>
 								</CampaignDropdownMenu>
-							</div>);
+								<RegionTitleMenu
+                  regions={regions}
+                  selected={selected_region}
+                  sendValue={self.updateIndicatorSelection}>
+								</RegionTitleMenu>
+								</div>);
 
 
 
