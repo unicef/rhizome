@@ -90,7 +90,7 @@ class MasterRefresh(object):
             obj.save()
 
 
-    def source_submissions_to_doc_datapoint(self):
+    def refresh_doc_datapoint(self):
 
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document_id).values()
@@ -104,7 +104,7 @@ class MasterRefresh(object):
 
     def sync_doc_datapoint(self):
         ## merge into datapoitns from doc datapoints #
-        
+
         new_dps = DataPoint.objects.raw('''
             SELECT * FROM fn_upsert_source_dps(%s,%s)
         ''',[self.user_id, self.document_id])
@@ -112,7 +112,6 @@ class MasterRefresh(object):
         new_dp_ids = [dp.id for dp in new_dps]
 
         return DataPoint.objects.filter(id__in=new_dp_ids)
-
 
     def process_source_submission(self,ss_row):
 
@@ -124,11 +123,15 @@ class MasterRefresh(object):
 
         try:
             region_id = self.source_map_dict[('region',region_code)]
+            if region_id == -1:
+                return None
         except KeyError:
             return
 
         try:
             campaign_id = self.source_map_dict[('campaign',campaign_code)]
+            if campaign_id == -1:
+                return None
         except KeyError:
             return
 
@@ -140,8 +143,6 @@ class MasterRefresh(object):
                 dp_batch.append(dp_obj)
 
         batch_result = DocDataPoint.objects.bulk_create(dp_batch)
-
-        print batch_result
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
 

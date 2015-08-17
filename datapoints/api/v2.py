@@ -52,9 +52,8 @@ class v2Request(object):
 
             'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': self.refresh_doc_metadata},
-            'doc_datapoint' : {'orm_obj':DocDataPoint,
+            'refresh_doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.refresh_doc_datapoint},
-
             'sync_doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.sync_doc_datapoint},
 
@@ -128,7 +127,7 @@ class v2Request(object):
     def refresh_doc_datapoint(self, list_of_object_ids):
         # returning DocDataPoint data !!
         mr = MasterRefresh(self.user_id,self.kwargs['document'])
-        data = mr.source_submissions_to_doc_datapoint()
+        data = mr.refresh_doc_datapoint()
 
         return None, data
 
@@ -139,8 +138,6 @@ class v2Request(object):
         data = mr.sync_doc_datapoint()
 
         dp_ids = [row.id for row in data]
-
-        print dp_ids
         cr = CacheRefresh(dp_ids)
 
         calced_data = DataPointComputed.objects.all()

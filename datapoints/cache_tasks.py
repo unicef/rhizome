@@ -118,10 +118,7 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        print '----AIRAPAIR------'
-
         agg_dp_ids = self.agg_datapoints()
-        print '----RARESH------'
         calc_dp_ids = self.calc_datapoints()
         abstract_dp_ids = self.pivot_datapoints()
 
