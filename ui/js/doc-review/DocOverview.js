@@ -3,7 +3,6 @@
 	var API = require('../data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 	var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
-	var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 	var DocOverview = React.createClass({
 		// propTypes : {
@@ -49,25 +48,7 @@
 					<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 				</div> : null;
 
-			var updateIndicatorSelection = function() {
-						console.log('updating indicator selection')
-			};
-
-			var indicators = API.indicatorsTree()
-
-			var indicatorsSection = (<div>
-									<IndicatorDropdownMenu
-										text='Filter Indicators'
-										indicators={indicators}
-										sendValue={updateIndicatorSelection}>
-									</IndicatorDropdownMenu>
-									{indicators}
-								</div>);
-
 			return <div>
-
-			{indicatorsSection}
-
 
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>

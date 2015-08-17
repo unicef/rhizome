@@ -1,5 +1,9 @@
 var _ = require('lodash');
 var React = require('react/addons');
+var API = require('../data/api');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
+
+
 const {
 	Datascope, LocalDatascope,
 	SimpleDataTable, SimpleDataTableColumn,
@@ -38,6 +42,7 @@ var ReviewPage = React.createClass({
 		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},
 
+
 	render() {
 		// render loading indicator until data has loaded
 		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
@@ -48,13 +53,27 @@ var ReviewPage = React.createClass({
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
 
+		var updateIndicatorSelection = function() {
+					console.log('updating indicator selection')
+		};
+
+		var indicators = API.indicatorsTree()
+
+		var indicatorsSection = (<div>
+								<IndicatorDropdownMenu
+									text='Filter Indicators'
+									indicators={indicators}
+									sendValue={updateIndicatorSelection}>
+								</IndicatorDropdownMenu>
+								{indicators}
+							</div>);
+
 		return <div>
-			<h2 className="ufadmin-page-heading">{this.props.title} Admin Page</h2>
 
 			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
 				<Datascope>
 
-					{this.props.datascopeFilters ? this.renderFilters(): null}
+					{indicatorsSection}
 
 					{this.props.children}
 
