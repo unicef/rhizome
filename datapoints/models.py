@@ -383,8 +383,8 @@ class DocDataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     is_valid = models.BooleanField()
-
-
+    agg_on_region = models.BooleanField()
+    
     class Meta:
         db_table = 'doc_datapoint'
         unique_together = (('source_submission','indicator'))

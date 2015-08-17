@@ -29,7 +29,6 @@ var DocReviewApp = React.createClass({
 			<ul className="admin-nav">
       <li><Link to="overview" params={q_params} >Overview</Link></li>
 			<li><Link to="mapping" params={q_params}>Mapping</Link></li>
-      <li><Link to="conflict" params={q_params}>Dupes & Conflicts</Link></li>
       <li><Link to="validate" params={q_params}>Validate</Link></li>
       <li><Link to="view_agg" params={q_params}>View Aggregated</Link></li>
 			</ul>

@@ -29,6 +29,7 @@ class MasterRefresh(object):
             'file_type':'columns_are_indicators',
             'region_column':'Wardcode',
             'campaign_column':'Campaign',
+            'agg_regions':True
         }
 
         map_df_cols = ['master_object_id','source_object_code','content_type']
@@ -43,6 +44,9 @@ class MasterRefresh(object):
 
     def upsert_source_object_map(self):
         '''
+        TODO: save the source_strings so i dont have to iterate through
+        the source_submission json.
+
         endpoint: api/v2/doc_mapping/?document=66
         '''
 
