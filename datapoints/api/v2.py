@@ -56,8 +56,6 @@ class v2Request(object):
 
             'sync_doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.sync_doc_datapoint},
-            'doc_datapoint_calc' : {'orm_obj':DataPointComputed,
-                'permission_function': self.calc_doc_datapoint},
 
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
@@ -134,20 +132,15 @@ class v2Request(object):
         return None, data
 
     def sync_doc_datapoint(self, list_of_object_ids):
-        # returning DataPoint data !!
+        # returning DataPointComputed data !!
 
         mr = MasterRefresh(self.user_id,self.kwargs['document'])
         data = mr.sync_doc_datapoint()
 
-        return None, data
+        dp_ids = [row.id for row in data]
 
-    def calc_doc_datapoint(self, list_of_object_ids):
-        # returning DataPointComputed data
-        # mr = MasterRefresh(self.user_id,self.kwargs['document'])
-        data = mr.doc_dps_to_datapoint()
-
-        data = DataPointComputed.objects.all()[:4]
-
+        print dp_ids
+        
         return None, data
 
     ## permissions functions ##
