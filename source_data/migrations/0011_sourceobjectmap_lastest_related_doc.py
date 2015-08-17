@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sourceobjectmap',
             name='lastest_related_doc',
-            field=models.ForeignKey(default=6, to='source_data.Document'),
+            field=models.ForeignKey(default=1, to='source_data.Document'),
             preserve_default=False,
         ),
     ]
