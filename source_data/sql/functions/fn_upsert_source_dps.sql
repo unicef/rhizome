@@ -11,20 +11,20 @@ BEGIN
 	CREATE TEMP TABLE _dp_to_upsert
 	AS
 	SELECT
-		indicator_id
-		, campaign_id
-		, region_id
-		, document_id
-		,SUM(value) as value
-		,max(source_submission_id) as source_submission_id
+		d.indicator_id
+		, d.campaign_id
+		, d.region_id
+		, d.document_id
+		,SUM(d.value) as value
+		,max(d.source_submission_id) as source_submission_id
 	FROM doc_datapoint d
-	WHERE document_id = 74
+	WHERE d.document_id = $2
 	AND is_valid = 't'
 	AND agg_on_region = 't'
-	GROUP BY indicator_id, campaign_id, region_id, document_id;
+	GROUP BY d.indicator_id, d.campaign_id, d.region_id, d.document_id;
 
-	DELETE FROM datapoint
-	WHERE id in (
+	DELETE FROM datapoint to_delete
+	WHERE to_delete.id in (
 	SELECT d.id
 	FROM datapoint d
 	INNER JOIN _dp_to_upsert tu
@@ -38,10 +38,12 @@ BEGIN
 	SELECT indicator_id, campaign_id, region_id, value, source_submission_id, -1, $1,now()
 	FROM _dp_to_upsert;
 
-	SELECT id FROM datapoint d
-	INNER JOIN source_datapoint sd
-	ON d.source_submission_id = sd.source_submission_id
-	AND sd.document_id = $2;
+	RETURN QUERY
+	SELECT d.id FROM datapoint d
+	INNER JOIN doc_datapoint dd
+	ON d.source_submission_id = dd.source_submission_id
+	AND dd.document_id = $2;
+
 
 END
 $func$ LANGUAGE PLPGSQL;
