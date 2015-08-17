@@ -17,8 +17,7 @@ from datapoints.models import DataPoint, Responsibility
 from source_data.forms import *
 from source_data.models import *
 from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh\
-    ,create_source_meta_data
+from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.api import EtlTask
 
 ### File Upload Below ###
@@ -91,9 +90,8 @@ class DocumentIndex(generic.ListView):
 
 def refresh_master(request,document_id):
 
-
     mr = MasterRefresh(request.user.id, document_id)
-    mr.source_dps_to_dps()
+    mr.main()
 
     return HttpResponseRedirect('/doc_review/overview/%s' % document_id)
 

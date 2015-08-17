@@ -116,12 +116,10 @@ class v2Request(object):
 
     def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
-        print list_of_object_ids
-
         source_object_ids = DocumentSourceObjectctMap.objects.filter(document_id = \
             self.document_id).values_list('source_object_map_id',flat=True)
 
-        ## take intersection of these #
+        ## TODO  take intersection of these #
 
         data = SourceObjectMap.objects.filter(id__in=source_object_ids)
 

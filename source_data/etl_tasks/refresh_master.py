@@ -41,6 +41,9 @@ class MasterRefresh(object):
             .values_list(*['content_type','source_object_code']))\
             .to_dict()['master_object_id']
 
+    def main(self):
+
+        print 'HELLO'
 
     def upsert_source_object_map(self):
         '''
@@ -215,65 +218,3 @@ class MasterRefresh(object):
                     'shape_area':source_polygon.shape_area,
                     'polygon': source_polygon.polygon
                 })
-
-
-def create_source_meta_data(document_id):
-    '''
-    based on the source datapoints, create the source_regions /
-    source_campaigns / source indicators/
-    '''
-
-    sdp_df = DataFrame(list(SourceDataPoint.objects.filter(
-        document_id = document_id).values()))
-
-    sr_df = DataFrame(list(SourceRegion.objects.filter(
-        document_id = document_id).values()))
-
-    if len(sr_df) > 0 and len(sdp_df) == 0:
-
-        pass
-
-    else:
-
-        ## campaigns ##
-
-        campaign_strings = sdp_df['campaign_string'].unique()
-
-        for cntr,(c) in enumerate(campaign_strings):
-
-            try:
-                created, s_c_obj = SourceCampaign.objects.create(
-                    campaign_string = c,
-                    document_id = document_id,
-                    source_guid = ('%s - %s',( document_id, c )))
-            except IntegrityError:
-                pass
-            except TypeError: # fix for POL-332
-                pass
-
-        ## indicators ##
-        indicator_strings = sdp_df['indicator_string'].unique()
-
-        for i in indicator_strings:
-
-            try:
-                s_i_obj = SourceIndicator.objects.create(
-                    indicator_string = i,
-                    document_id = document_id,
-                    source_guid =  ('%s - %s',( document_id, i )))
-            except IntegrityError:
-                pass
-
-        # regions #
-        region_codes = sdp_df['region_code'].unique()
-
-        for r in region_codes:
-
-            try:
-                s_r_obj = SourceRegion.objects.create(
-                    region_code = r,
-                    document_id = document_id,
-                    region_string = r,
-                    source_guid = ('%s - %s',( document_id, r )))
-            except IntegrityError:
-                pass

@@ -78,7 +78,7 @@ class ODKDataPointTransform(object):
         #### Source DP --> Master DP ####
 
         mr = MasterRefresh(self.user_id,self.document_id)
-        dps = mr.source_dps_to_dps()
+        dps = mr.main()
 
         response_string = 'created %s new soure_datapoints by processing: %s \
             nows for document_id: %s, yielding in: %s master datapoints' % \
