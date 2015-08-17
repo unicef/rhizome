@@ -44,6 +44,9 @@ var ReviewPage = React.createClass({
 		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},
 
+	updateIndicatorSelection: function() {
+				console.log('updating indicator selection')
+	},
 
 	render() {
 		// render loading indicator until data has loaded
@@ -52,26 +55,16 @@ var ReviewPage = React.createClass({
 
 		var {data, schema, metadata, indicators} = this.state;
 
-		console.log('===')
-		console.log(indicators)
-		console.log('===')
-
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
-
-		var updateIndicatorSelection = function() {
-					console.log('updating indicator selection')
-		};
-
-		// var x = [];
 
 		var indicatorsSection = (<div>
 								<IndicatorDropdownMenu
 									text='Filter Indicators'
 									indicators={indicators}
-									sendValue={updateIndicatorSelection}>
+									sendValue={this.updateIndicatorSelection}
+									>
 								</IndicatorDropdownMenu>
-								{indicators}
 							</div>);
 
 		return <div>

@@ -3,6 +3,7 @@
 	var API = require('../data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 	var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+	var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 	var DocOverview = React.createClass({
 		// propTypes : {
@@ -33,11 +34,6 @@
 	    }.bind(this));
 		},
 
-		updateIndicatorSelection: function() {
-				console.log('updating indicator selection')
-		},
-
-
 
 	  render() {
 			var self = this;
@@ -49,7 +45,6 @@
 				</div> : null;
 
 			return <div>
-
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
 
