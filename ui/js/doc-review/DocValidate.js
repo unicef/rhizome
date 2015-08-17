@@ -57,8 +57,7 @@ var DocValidate = React.createClass({
 			return API.admin.docValidate({document:doc_id})
 		};
 
-
-
+		
 		return <ReviewPage
 			title="Validation Page"
 			getMetadata={API.admin.docValidateMeta}

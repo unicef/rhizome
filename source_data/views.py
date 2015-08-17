@@ -46,47 +46,6 @@ def file_upload(request):
 
         return HttpResponseRedirect('/doc_review/overview/%s' % newdoc.id)
 
-def field_mapping(request,document_id):
-
-    meta_breakdown = populate_document_metadata(document_id)
-
-    return render_to_response(
-        'upload/field_mapping.html',
-        {'document_id': document_id }
-        ,RequestContext(request))
-
-
-def populate_document_metadata(document_id):
-
-    meta_breakdown = []
-
-    raw_qs = DocumentDetail.objects.raw('''
-        SELECT * FROM fn_populate_doc_meta(%s)''',[document_id])
-
-    inserted_ids = [x.id for x in raw_qs]
-
-    return meta_breakdown
-
-
-def pre_process_file(request,document_id):
-
-    dt = DocTransform(document_id)
-    sdps = dt.dp_df_to_source_datapoints()
-
-    populate_document_metadata(document_id)
-
-    return HttpResponseRedirect(reverse('doc_review'\
-        , kwargs={'document_id': document_id}))
-
-
-######### DOCUMENT RELATED VIEWS ##########
-
-class DocumentIndex(generic.ListView):
-
-    context_object_name = "documents"
-    template_name = 'document_list.html'
-    model = Document
-
 
 def refresh_master(request,document_id):
 
