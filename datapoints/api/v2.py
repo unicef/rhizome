@@ -129,7 +129,11 @@ class v2Request(object):
     def filter_calced_dp_by_doc_id(self, list_of_object_ids):
         ## TODO - Return data that is reflective of this document_id
 
-        calced_data = DataPointComputed.objects.filter(region_id = 12907)
+        top_lvl_region_ids = Region.objects.filter\
+            (parent_region_id__isnull=True).values_list('id',flat=True)
+
+        calced_data = DataPointComputed.objects.filter\
+            (region_id__in = top_lvl_region_ids)
 
         return None, calced_data
 
