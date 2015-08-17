@@ -32,8 +32,8 @@ module.exports = React.createClass({
 		var indicators = (<strong>This role cannot enter data for any indicators.</strong>);
 		if (this.state.store.indicatorsSelected.length > 0) {
 			indicators = (<div><strong>This role can enter data for the following indicators:</strong>
-							  <List 
-							  	items={this.state.store.indicatorsSelected} 
+							  <List
+							  	items={this.state.store.indicatorsSelected}
 							  	removeItem={GroupFormActions.removeIndicatorSelection} />
 						  </div>);
 		}
@@ -46,7 +46,7 @@ module.exports = React.createClass({
 		// no id yet -- creating new
 		if (!this.state.store.groupId) {
 			indicatorsSection = (<div className="alert-box secondary">You must save this role (above) before adding indicator permissions.</div>);
-		} 
+		}
 		// found id -- editing
 		else {
 			indicatorsSection = (<div>
@@ -71,7 +71,7 @@ module.exports = React.createClass({
 			<form className="form inline user-account-container">
 
 				<h2>Edit Role</h2>
-				
+
 				<div className="row">
 					<div className="columns small-4 left-box">
 						<h4>Role Name</h4>
