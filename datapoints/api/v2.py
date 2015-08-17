@@ -139,6 +139,8 @@ class v2Request(object):
         data = mr.sync_doc_datapoint()
 
         dp_ids = [row.id for row in data]
+
+        print dp_ids
         cr = CacheRefresh(dp_ids)
 
         calced_data = DataPointComputed.objects.all()

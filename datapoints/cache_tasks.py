@@ -41,7 +41,6 @@ class CacheRefresh(object):
         '''
 
         if CacheJob.objects.filter(date_completed=None):
-
             print 'CACHE_RUNNING'
             return
 
@@ -51,7 +50,6 @@ class CacheRefresh(object):
         response_msg = self.set_up()
 
         if response_msg != 'NOTHING_TO_PROCESS':
-
             try:
                 response_msg = self.main()
             ## BLINDLY CATCH AND STORE ALL ERRORS ##
@@ -120,8 +118,10 @@ class CacheRefresh(object):
 
         task_result = 'SUCCESS'
 
-        bad_dp_ids = self.bad_datapoints()
+        print '----AIRAPAIR------'
+
         agg_dp_ids = self.agg_datapoints()
+        print '----RARESH------'
         calc_dp_ids = self.calc_datapoints()
         abstract_dp_ids = self.pivot_datapoints()
 
