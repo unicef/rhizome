@@ -54,7 +54,7 @@ class v2Request(object):
             'datapoint': {'orm_obj':DataPoint,
                 'permission_function':None},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
-                'permission_function': self.refresh_doc_metadata},
+                'permission_function': self.filter_source_objects_by_doc_id},
             'refresh_doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.refresh_doc_datapoint},
             'sync_doc_datapoint' : {'orm_obj':DocDataPoint,
@@ -114,15 +114,16 @@ class v2Request(object):
 
         return response_data
 
-    def refresh_doc_metadata(self,list_of_object_ids):
+    def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
-        if list_of_object_ids == None: # FIXME -> DRY
-            return None, []
+        print list_of_object_ids
 
-        mr = MasterRefresh(self.user_id,self.kwargs['document'])
-        mr.upsert_source_object_map()
+        source_object_ids = DocumentSourceObjectctMap.objects.filter(document_id = \
+            self.document_id).values_list('source_object_map_id',flat=True)
 
-        data = SourceObjectMap.objects.filter(id__in=list_of_object_ids)
+        ## take intersection of these #
+
+        data = SourceObjectMap.objects.filter(id__in=source_object_ids)
 
         return None, data
 
@@ -577,6 +578,11 @@ class v2GetRequest(v2Request):
 
         cleaned_kwargs = {}
         operator_lookup = {}
+
+        try:
+            self.document_id = query_dict['document']
+        except KeyError:
+            self.document_id = -1
 
         ## MAP THE QUERY PARAMETER WITH ITS OPERATOR, TO THE DB MODEL ##
         for param in query_dict.keys():
