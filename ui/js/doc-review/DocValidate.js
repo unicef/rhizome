@@ -54,7 +54,7 @@ var DocValidate = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docValidate({document:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docValidate(document:doc_id}})
 		};
 
 		return <ReviewPage

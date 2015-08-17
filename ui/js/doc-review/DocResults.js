@@ -44,7 +44,7 @@ var DocResults = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docResults({document:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docResults({document:doc_id})
 		};
 
 		return <ReviewPage
