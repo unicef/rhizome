@@ -53,25 +53,22 @@
 						console.log('updating indicator selection')
 			};
 
-			var indicators = []
+			var indicators = API.indicatorsTree()
 
 			var indicatorsSection = (<div>
 									<IndicatorDropdownMenu
-										text='Add Indicators'
-										icon='fa-plus'
+										text='Filter Indicators'
 										indicators={indicators}
 										sendValue={updateIndicatorSelection}>
 									</IndicatorDropdownMenu>
 									{indicators}
 								</div>);
 
-			console.log(indicatorsSection)
-
 			return <div>
 
-			<div> WHAT IS HAPPENING
 			{indicatorsSection}
-			</div>
+
+
 			<h2> Document ID : {this.state.doc_overview.id} </h2>
 			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
 
