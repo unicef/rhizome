@@ -2,8 +2,6 @@
 	var _ = require('lodash');
 	var API = require('../data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
-	var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
-	var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 	var DocOverview = React.createClass({
 		// propTypes : {

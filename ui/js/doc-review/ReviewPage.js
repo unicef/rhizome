@@ -1,7 +1,9 @@
 var _ = require('lodash');
 var React = require('react/addons');
 var API = require('../data/api');
+var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
+var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 
 
 const {
@@ -26,6 +28,7 @@ var ReviewPage = React.createClass({
 			data: null,
 			schema: null,
 			indicators: null,
+			campaigns: null,
 			query: {},
 			areFiltersVisible: false
 		}
@@ -38,7 +41,9 @@ var ReviewPage = React.createClass({
 		}));
 		this.props.getData().then(response => this.setState({data: response.objects}));
 		API.indicatorsTree().then(response => this.setState({indicators: response.objects}));
-	},
+		API.admin.campaigns().then(response => this.setState({campaigns: response.objects}));
+
+		},
 
 	onToggleFilterContainer() {
 		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
@@ -50,29 +55,38 @@ var ReviewPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators && this.state.campaigns ;
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata, indicators} = this.state;
+		var {data, schema, metadata, indicators, campaigns} = this.state;
 
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
 
-		var indicatorsSection = (<div>
+		var dropDownFilters = (<div>
 								<IndicatorDropdownMenu
 									text='Filter Indicators'
 									indicators={indicators}
 									sendValue={this.updateIndicatorSelection}
 									>
 								</IndicatorDropdownMenu>
+								<CampaignDropdownMenu
+									text={'campaign'}
+									campaigns={campaigns}
+									sendValue={self.updateIndicatorSelection}>
+								</CampaignDropdownMenu>
 							</div>);
+
+
 
 		return <div>
 
 			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
 				<Datascope>
 
-					{indicatorsSection}
+					<div className='row'>
+					{dropDownFilters}
+					</div>
 
 					{this.props.children}
 
