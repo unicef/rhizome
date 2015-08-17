@@ -102,15 +102,16 @@ class MasterRefresh(object):
 
         return DocDataPoint.objects.filter(document_id = self.document_id)
 
-    def doc_dps_to_datapoint(self):
+    def sync_doc_datapoint(self):
         ## merge into datapoitns from doc datapoints #
 
-        new_dps = DataPoint.objects.get('''
-            SELECT * FROM fn_upsert_source_dps(%,%)
-        ''',[self.user_id, self.document_id])
+        # new_dps = DataPoint.objects.get('''
+        #     SELECT * FROM fn_upsert_source_dps(%,%)
+        # ''',[self.user_id, self.document_id])
+        #
+        new_dp_ids = [1,2,3] ## [dp.id for dp in new_dps]
 
-        for dp in new_dps:
-            print dp.id
+        return DataPoint.objects.filter(id__in=new_dp_ids)
 
 
     def process_source_submission(self,ss_row):

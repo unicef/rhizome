@@ -309,7 +309,7 @@ class Campaign(models.Model):
 
 class CampaignAbstracted(models.Model):
     '''
-    EVErything in campaign plus the "pct_complete" attribute
+    Everything in campaign plus the "pct_complete" attribute
     '''
 
     office = models.ForeignKey(Office)
@@ -384,7 +384,7 @@ class DocDataPoint(models.Model):
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     is_valid = models.BooleanField()
     agg_on_region = models.BooleanField()
-    
+
     class Meta:
         db_table = 'doc_datapoint'
         unique_together = (('source_submission','indicator'))
