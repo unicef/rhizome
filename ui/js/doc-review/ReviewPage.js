@@ -5,7 +5,6 @@ var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 
-
 const {
 	Datascope, LocalDatascope,
 	SimpleDataTable, SimpleDataTableColumn,
@@ -59,9 +58,13 @@ var ReviewPage = React.createClass({
 		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators && this.state.campaigns  && this.state.regions ;
 		if(!isLoaded) return this.renderLoading();
 
+		console.log(self.state)
+
 		var {data, schema, metadata, indicators, campaigns, regions} = this.state;
 
 		var selected_region = regions[0]
+		var selected_campaign = campaigns[0]
+
 
 		var dropDownFilters = (<div>
 								<IndicatorDropdownMenu
@@ -70,8 +73,8 @@ var ReviewPage = React.createClass({
 									sendValue={this.updateIndicatorSelection}>
 								</IndicatorDropdownMenu>
 								<CampaignDropdownMenu
-									text={'campaign'}
 									campaigns={campaigns}
+									campaign={selected_campaign}
 									sendValue={self.updateIndicatorSelection}>
 								</CampaignDropdownMenu>
 								<RegionTitleMenu
@@ -80,8 +83,6 @@ var ReviewPage = React.createClass({
                   sendValue={self.updateIndicatorSelection}>
 								</RegionTitleMenu>
 								</div>);
-
-
 
 		return <div>
 
