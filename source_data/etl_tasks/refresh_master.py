@@ -51,7 +51,12 @@ class MasterRefresh(object):
         source_object_map_ids = self.upsert_source_object_map\
             (new_source_submission_ids)
 
-        doc_datapoint_ids = [] # self.process_doc_datapoint
+        doc_datapoint_ids = self.process_doc_datapoints\
+            (new_source_submission_ids)
+
+        SourceSubmission.objects.filter(id__in=new_source_submission_ids)\
+            .update(process_status = 'processed')
+            
         datapoint_ids = []
         computed_datapoint_ids = []
 
@@ -86,10 +91,10 @@ class MasterRefresh(object):
             all_codes.append(('campaign',c))
 
         for content_type, source_object_code in all_codes:
-            self.source_submission_upsert(content_type, source_object_code)
+            self.source_submission_meta_upsert(content_type, source_object_code)
 
 
-    def source_submission_upsert(self, content_type, source_object_code):
+    def source_submission_meta_upsert(self, content_type, source_object_code):
         '''
         Create new metadata if not exists
         Add a record tying this document to the newly inserted metadata
@@ -113,12 +118,10 @@ class MasterRefresh(object):
         return sm_obj.id
 
 
-    def refresh_doc_datapoint(self):
+    def process_doc_datapoints(self,source_submission_id_list):
 
         source_dp_json = SourceSubmission.objects.filter(
-            document_id = self.document_id).values()
-
-        DocDataPoint.objects.filter(document_id = self.document_id).delete()
+            id__in = source_submission_id_list).values()
 
         for i,(row) in enumerate(source_dp_json):
             self.process_source_submission(row)

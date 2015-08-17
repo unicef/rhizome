@@ -55,10 +55,10 @@ class v2Request(object):
                 'permission_function':None},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': self.filter_source_objects_by_doc_id},
-            'refresh_doc_datapoint' : {'orm_obj':DocDataPoint,
-                'permission_function': self.refresh_doc_datapoint},
-            'sync_doc_datapoint' : {'orm_obj':DocDataPoint,
-                'permission_function': self.sync_doc_datapoint},
+            'doc_datapoint' : {'orm_obj':DocDataPoint,
+                'permission_function': None},
+            'synced_datapoint' : {'orm_obj':DataPointComputed,
+                'permission_function': self.filter_calced_dp_by_doc_id},
 
 
             'document': {'orm_obj':Document,
@@ -125,24 +125,11 @@ class v2Request(object):
 
         return None, data
 
-    def refresh_doc_datapoint(self, list_of_object_ids):
-        # returning DocDataPoint data !!
-        mr = MasterRefresh(self.user_id,self.kwargs['document'])
-        data = mr.refresh_doc_datapoint()
 
-        return None, data
+    def filter_calced_dp_by_doc_id(self, list_of_object_ids):
+        ## TODO - Return data that is reflective of this document_id
 
-    def sync_doc_datapoint(self, list_of_object_ids):
-        # returning DataPointComputed data !!
-
-        mr = MasterRefresh(self.user_id,self.kwargs['document'])
-        data = mr.sync_doc_datapoint()
-
-        dp_ids = [row.id for row in data]
-        # cr = CacheRefresh(dp_ids)
-
-        # calced_data = DataPointComputed.objects.filter(id__in =cr.calc_dp_ids)
-        calced_data = DataPoint.objects.filter(id__in=dp_ids)
+        calced_data = DataPointComputed.objects.filter(region_id = 12907)
 
         return None, calced_data
 
