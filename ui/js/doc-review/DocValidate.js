@@ -12,14 +12,18 @@ var {
 
 var ReviewPage = require('./ReviewPage');
 
+var handleChange = function(event) {
+	console.log('ACTION!!!')
+	// this.setState({value: event.target.value});
+}
+
 var ValidateForm = function(is_checked){
 	if (is_checked){
-		return <input type="checkbox" checked />;
+		return <input type="checkbox" checked onChange={handleChange} />;
 	}
 	else{
-		return <input type="checkbox" />;
+		return <input type="checkbox" onChange={handleChange} />;
 	}
-
 }
 
 const fields = {
