@@ -263,6 +263,7 @@ module.exports = {
 		docMap: endPoint('/doc_mapping/', 'get', 2, false),
 		docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
 		docValidate: endPoint('/refresh_doc_datapoint/', 'get', 2, false),
+		docValidateMeta: endPoint('/refresh_doc_datapoint/metadata/', 'get', 2, false),
 		docResults: endPoint('/sync_doc_datapoint/', 'get', 2, false),
 		DataPointMetaData: endPoint('/datapoint/metadata/', 'get', 2, false),
 

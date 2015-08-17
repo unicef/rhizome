@@ -12,22 +12,28 @@ var {
 
 var ReviewPage = require('./ReviewPage');
 
-var MapButtonFunction = function(data){
-	return <input type="checkbox" value="Hello!" />;
+var ValidateForm = function(is_checked){
+	if (is_checked){
+		return <input type="checkbox" checked />;
+	}
+	else{
+		return <input type="checkbox" />;
+	}
+
 }
 
 const fields = {
-	map_link: {
+	validate_check_box_form: {
 		title: 'Validate',
-		key: 'id',
-		renderer: (id) => {
-				return MapButtonFunction(id)
+		key: 'is_valid',
+		renderer: (is_valid) => {
+				return ValidateForm(is_valid)
 			}
 	},
 };
 
 
-const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value','map_link'];
+const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value','validate_check_box_form'];
 
 var DocValidate = React.createClass({
 	render() {
@@ -49,7 +55,7 @@ var DocValidate = React.createClass({
 
 		return <ReviewPage
 			title="Validation Page"
-			getMetadata={API.admin.DataPointMetaData}
+			getMetadata={API.admin.docValidateMeta}
 			getData={data_fn}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
