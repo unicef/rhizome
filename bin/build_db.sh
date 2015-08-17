@@ -6,7 +6,6 @@ DB=rhizome
 
 psql $DB -f $SQL_DIR'functions/fn_agg_datapoint.sql'
 psql $DB -f $SQL_DIR'functions/fn_test_data_accuracy.sql'
-psql $DB -f $SQL_DIR'functions/fn_find_bad_data.sql'
 
 psql $DB -f $SQL_DIR'functions/fn_calc_prep.sql'
 psql $DB -f $SQL_DIR'functions/fn_calc_sum_of_parts.sql'
