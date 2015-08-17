@@ -49,7 +49,10 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
-
+            'indicator': {'orm_obj':IndicatorAbstracted,
+                'permission_function':None},
+            'datapoint': {'orm_obj':DataPoint,
+                'permission_function':None},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': self.refresh_doc_metadata},
             'refresh_doc_datapoint' : {'orm_obj':DocDataPoint,
@@ -57,8 +60,7 @@ class v2Request(object):
             'sync_doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.sync_doc_datapoint},
 
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
+
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
