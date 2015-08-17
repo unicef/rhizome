@@ -48,8 +48,13 @@ class v2Request(object):
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
+
             'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': self.refresh_doc_metadata},
+            'doc_datapoint' : {'orm_obj':DocDataPoint,
+                'permission_function': self.refresh_doc_datapoint},
+
+
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
             'document': {'orm_obj':Document,
@@ -107,13 +112,20 @@ class v2Request(object):
 
     def refresh_doc_metadata(self,list_of_object_ids):
 
+        if list_of_object_ids == None: # FIXME -> DRY
+            return None, []
+
         mr = MasterRefresh(self.user_id,self.kwargs['document'])
         mr.upsert_source_object_map()
 
-        if list_of_object_ids == None:
-            return None, []
-
         data = SourceObjectMap.objects.filter(id__in=list_of_object_ids)
+
+        return None, data
+
+    def refresh_doc_datapoint(self, list_of_object_ids):
+
+        mr = MasterRefresh(self.user_id,self.kwargs['document'])
+        data = mr.source_submissions_to_doc_datapoint()
 
         return None, data
 

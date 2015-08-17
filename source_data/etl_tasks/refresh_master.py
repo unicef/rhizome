@@ -95,23 +95,23 @@ class MasterRefresh(object):
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document_id).values()
 
+        DocDataPoint.objects.filter(document_id = self.document_id).delete()
+
         for i,(row) in enumerate(source_dp_json):
             self.process_source_submission(row)
 
+        return DocDataPoint.objects.filter(document_id = self.document_id)
+
     def doc_dps_to_datapoint(self):
+        ## merge into datapoitns from doc datapoints #
 
-        pass
+        new_dps = DataPoint.objects.get('''
+            SELECT * FROM fn_upsert_source_dps(%,%)
+        ''',[self.user_id, self.document_id])
 
-    def source_dps_to_dps(self):
-        '''
-        '''
-        x = DocDataPoint.objects.filter(document_id = self.document_id)[0]
-        if not x:
-            self.source_submissions_to_doc_datapoint()
+        for dp in new_dps:
+            print dp.id
 
-        self.doc_dps_to_datapoint()
-
-        return []
 
     def process_source_submission(self,ss_row):
 
@@ -138,13 +138,16 @@ class MasterRefresh(object):
             if dp_obj:
                 dp_batch.append(dp_obj)
 
-        DocDataPoint.objects.bulk_create(dp_batch)
+        batch_result = DocDataPoint.objects.bulk_create(dp_batch)
 
+        print batch_result
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
 
         try:
             indicator_id = self.source_map_dict[('indicator',ind_code)]
+            if indicator_id == -1:
+                return None
         except KeyError:
             return None
 
@@ -161,7 +164,8 @@ class MasterRefresh(object):
             'value':val,
             'changed_by_id':self.user_id,
             'source_submission_id':ss_id,
-            'is_valid':False
+            'is_valid':False,
+            'agg_on_region':True
         })
 
         return doc_dp_obj
