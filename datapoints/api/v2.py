@@ -18,6 +18,7 @@ from django.contrib.auth.models import User, Group
 from django.core import serializers
 
 from datapoints.models import *
+from datapoints.cache_tasks import CacheRefresh
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 
@@ -138,10 +139,11 @@ class v2Request(object):
         data = mr.sync_doc_datapoint()
 
         dp_ids = [row.id for row in data]
+        cr = CacheRefresh(dp_ids)
 
-        print dp_ids
-        
-        return None, data
+        calced_data = DataPointComputed.objects.all()
+
+        return None, calced_data
 
     ## permissions functions ##
     def apply_cust_dashboard_permissions(self,list_of_object_ids):
