@@ -28,10 +28,30 @@ var ReviewPage = React.createClass({
 			schema: null,
 			indicators: null,
 			campaigns: null,
+			regions: null,
 			query: {},
 			areFiltersVisible: false
 		}
 	},
+
+	componentDidMount: function() {
+
+	API.indicatorsTree().then(function(result) {
+			var indicator_api_data = result.objects;
+			this.setState({indicators:indicator_api_data});
+		}.bind(this));
+
+	API.admin.regions().then(function(result) {
+			var region_api_data = result.objects;
+			this.setState({regions:region_api_data});
+		}.bind(this));
+
+	API.admin.campaigns().then(function(result) {
+			var campaign_api_data = result.objects;
+			this.setState({campaigns:campaign_api_data});
+		}.bind(this));
+	},
+
 
 	componentWillMount: function() {
 		this.props.getMetadata().then(response => this.setState({
@@ -39,10 +59,6 @@ var ReviewPage = React.createClass({
 			schema: parseSchema(response)
 		}));
 		this.props.getData().then(response => this.setState({data: response.objects}));
-		API.indicatorsTree().then(response => this.setState({indicators: response.objects}));
-		API.admin.campaigns().then(response => this.setState({campaigns: response.objects}));
-		API.admin.regions().then(response => this.setState({regions: response.objects}));
-
 		},
 
 	onToggleFilterContainer() {
@@ -55,34 +71,33 @@ var ReviewPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.indicators && this.state.campaigns  && this.state.regions ;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.campaigns && this.state.regions && this.state.indicators;
 		if(!isLoaded) return this.renderLoading();
 
-		console.log(self.state)
+		var {data, schema, metadata, campaigns, regions, indicators} = this.state;
 
-		var {data, schema, metadata, indicators, campaigns, regions} = this.state;
-
-		var selected_region = regions[0]
-		var selected_campaign = campaigns[0]
-
+		console.log(campaigns)
 
 		var dropDownFilters = (<div>
-								<IndicatorDropdownMenu
-									text='Filter Indicators'
-									indicators={indicators}
-									sendValue={this.updateIndicatorSelection}>
-								</IndicatorDropdownMenu>
-								<CampaignDropdownMenu
-									campaigns={campaigns}
-									campaign={selected_campaign}
-									sendValue={self.updateIndicatorSelection}>
-								</CampaignDropdownMenu>
-								<RegionTitleMenu
-                  regions={regions}
-                  selected={selected_region}
-                  sendValue={self.updateIndicatorSelection}>
-								</RegionTitleMenu>
-								</div>);
+			<IndicatorDropdownMenu
+			text='Filter Indicators'
+			indicators={indicators}
+			sendValue={this.updateIndicatorSelection}>
+			</IndicatorDropdownMenu>
+
+			<CampaignDropdownMenu
+			title='filter campaigns'
+			campaigns={campaigns}
+			campaign={campaigns[0]}
+			sendValue={this.updateIndicatorSelection}>
+			</CampaignDropdownMenu>
+
+			<RegionTitleMenu
+			regions={regions}
+			selected={regions[0]}
+			sendValue={this.updateIndicatorSelection}>
+			</RegionTitleMenu>
+		</div>);
 
 		return <div>
 
