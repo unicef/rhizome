@@ -238,6 +238,7 @@ class SourceSubmission(models.Model):
     row_number = models.IntegerField()
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)
+    process_status = models.CharField(max_length=25)
 
     class Meta:
         db_table = 'source_submission'

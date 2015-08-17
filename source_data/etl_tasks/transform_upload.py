@@ -60,6 +60,7 @@ class DocTransform(object):
                     'document_id': self.document_id,
                     'row_number': i,
                     'instance_guid': submission_data[self.unique_id_column],
+                    'process_status': 'TO_PROCESS',
                 }
                 batch.append(SourceSubmission(**submission_dict))
 

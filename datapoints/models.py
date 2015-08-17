@@ -472,17 +472,6 @@ class ReconData(models.Model):
         unique_together = ('region','campaign','indicator')
 
 
-class BadData(models.Model):
-
-    datapoint = models.ForeignKey(DataPoint)
-    document = models.ForeignKey('source_data.Document')
-    error_type = models.CharField(max_length=55)
-    cache_job = models.ForeignKey(CacheJob)
-
-    class Meta:
-        db_table = 'bad_data'
-
-
 class RegionPermission(models.Model):
     '''
     Individual Users must be assigned regional permissions.  If i am assigned

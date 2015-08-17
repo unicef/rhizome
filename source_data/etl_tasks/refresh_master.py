@@ -43,9 +43,21 @@ class MasterRefresh(object):
 
     def main(self):
 
+        new_source_submission_ids = SourceSubmission.objects.filter(
+            document_id = self.document_id
+            ,process_status = 'to_process'
+        ).values_list('id',flat=True)
+
+        source_object_map_ids = self.upsert_source_object_map\
+            (new_source_submission_ids)
+
+        doc_datapoint_ids = [] # self.process_doc_datapoint
+        datapoint_ids = []
+        computed_datapoint_ids = []
+
         print 'HELLO'
 
-    def upsert_source_object_map(self):
+    def upsert_source_object_map(self,source_submission_id_list):
         '''
         TODO: save the source_strings so i dont have to iterate through
         the source_submission json.
@@ -54,7 +66,7 @@ class MasterRefresh(object):
         '''
 
         source_dp_json = SourceSubmission.objects.filter(
-            document_id = self.document_id).values_list('submission_json')
+            id__in = source_submission_id_list).values_list('submission_json')
 
         if len(source_dp_json) == 0:
             return
@@ -76,21 +88,29 @@ class MasterRefresh(object):
         for content_type, source_object_code in all_codes:
             self.source_submission_upsert(content_type, source_object_code)
 
-        # SourceObjectMap.objects.filter(source_object_code)
-
 
     def source_submission_upsert(self, content_type, source_object_code):
+        '''
+        Create new metadata if not exists
+        Add a record tying this document to the newly inserted metadata
+        '''
 
-        obj, created = SourceObjectMap.objects.get_or_create(\
+        sm_obj, created = SourceObjectMap.objects.get_or_create(\
             content_type = content_type\
            ,source_object_code = source_object_code\
-           ,defaults = {'document_id': self.document_id,
+           ,defaults = {
             'master_object_id':-1,
-            'mapped_by_id':self.user_id})
+            'mapped_by_id':self.user_id
+            })
 
-        if not created:
-            obj.document_id = self.document_id
-            obj.save()
+        sm_obj, created = DocumentSourceObjectctMap.objects.get_or_create\
+            (document_id = self.document_id,source_object_map_id = sm_obj.id)
+
+        # DocumentSourceObjectctMap.objects.objects.get_or_create(\
+        #     document_id = self.document_id,
+        #    ,source_object_map_id = sm_obj.id)
+
+        return sm_obj.id
 
 
     def refresh_doc_datapoint(self):

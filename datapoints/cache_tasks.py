@@ -145,27 +145,6 @@ class CacheRefresh(object):
         x = [dp.id for dp in dp_curs]
 
 
-    def bad_datapoints(self):
-        '''
-        Although this is not currently used in the application, the cache
-        process also uses the cache_job_id and the datapoints associated
-        to run a report on any "bad" data.  For instance, datapoints with a
-        region that took place in a campaign for a different office are
-        considered bad data.
-
-        For more information on how this works, see the fn_find_bad_data sproc.
-        This stored procedure is essentially a number of union-ed select
-        statements that dumps the datapoint IDs associated with each bad data
-        check into the "bad_data" table.
-        '''
-
-        dp_cursor = DataPoint.objects.raw("SELECT * FROM fn_find_bad_data(%s)"\
-            ,[self.cache_job.id])
-
-        dp_ids = [dp.id for dp in dp_cursor]
-
-        return dp_ids
-
     def agg_datapoints(self):
         '''
         Datapoints are aggregated in two steps with two separate stored

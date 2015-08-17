@@ -42,7 +42,7 @@ def file_upload(request):
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
         dt = DocTransform(newdoc.id)
-        sdps = dt.dp_df_to_source_datapoints()
+        source_submissions = dt.insert_source_submission()
 
         return HttpResponseRedirect('/doc_review/overview/%s' % newdoc.id)
 
