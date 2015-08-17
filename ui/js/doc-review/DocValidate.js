@@ -54,8 +54,9 @@ var DocValidate = React.createClass({
 			</div>;
 
 		var data_fn = function(){
-			return API.admin.docValidate(document:doc_id}})
-		};
+			return console.log('helo')
+		}
+			// return API.admin.docValidate(document:doc_id}})
 
 		return <ReviewPage
 			title="Validation Page"

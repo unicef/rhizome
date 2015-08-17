@@ -208,6 +208,16 @@ class SourceObjectMap(models.Model):
         db_table = 'source_object_map'
         unique_together = (('content_type','source_object_code'))
 
+class DocumentSourceObjectctMap(models.Model):
+
+    document = models.ForeignKey(Document)
+    source_object_map = models.ForeignKey(SourceObjectMap)
+
+    class Meta:
+
+        unique_together = (('document','source_object_map'))
+        db_table = 'document_to_source_object_map'
+
 
 class DocumentDetail(models.Model):
     '''

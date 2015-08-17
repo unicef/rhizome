@@ -166,7 +166,7 @@ class MasterRefresh(object):
             'value':val,
             'changed_by_id':self.user_id,
             'source_submission_id':ss_id,
-            'is_valid':False,
+            'is_valid':True, ## TODO # make this based off user input
             'agg_on_region':True
         })
 
