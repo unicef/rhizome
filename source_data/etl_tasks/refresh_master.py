@@ -42,23 +42,33 @@ class MasterRefresh(object):
 
 
     def upsert_source_object_map(self):
+        '''
+
+        endpoint: api/v2/doc_mapping/?document=66
+        '''
 
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document_id).values_list('submission_json')
 
-        indicator_codes = [k for k,v in json.loads(source_dp_json[0][0]).iteritems()]
-        cp_codes = []
-        rg_codes = []
+        all_codes = [('indicator',k) for k,v in json.loads(source_dp_json[0][0]).iteritems()]
+        rg_codes, cp_codes = [],[]
 
+        print all_codes
         for row in source_dp_json:
-
             row_dict = json.loads(row[0])
             rg_codes.append(row_dict[self.document_metadata['region_column']])
             cp_codes.append(row_dict[self.document_metadata['campaign_column']])
-            # cp_codes.append((row_dict[self.document_metadata['campaign_column']])
 
-        uq_regions = list(set(rg_codes))
-        print uq_regions
+        for r in list(set(rg_codes)):
+            all_codes.append(('region',r))
+
+        for c in list(set(cp_codes)):
+            all_codes.append(('campaign',c))
+
+
+        print all_codes
+        # SourceObjectMap.objects.filter(source_object_code)
+
 
     def source_submission_upsert_meta(self, ss_row):
 
