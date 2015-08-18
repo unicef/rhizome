@@ -6,6 +6,7 @@ var api = require('../data/api.js')
 var moment = require('moment');
 var page = require('page');
 
+var AppActions          = require('actions/AppActions');
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
 var ReviewPage = require('../doc-review/ReviewPage');
@@ -29,27 +30,59 @@ var SourceDataDashboard = React.createClass({
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
+    doc_id    : React.PropTypes.number.isRequired,
 
     loading   : React.PropTypes.bool
   },
 
+	componentWillUpdate : function (nextProps, nextState) {
+    console.log('hi this is john logging')
+		console.log(nextProps)
+		console.log(nextState)
+		if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
+      return;
+    }
 
+    var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
+    var title = [
+      nextState.dashboard.title,
+      [nextState.region.name, campaign].join(' '),
+      'RhizomeDB'
+    ].join(' - ');
+
+    if (document.title !== title) {
+      document.title = title;
+    }
+  },
+	// console.log(this.parent)
   _navigate : function (params) {
     var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
     var region   = _.get(params, 'region', this.props.region.name);
     var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 
 		var doc_id = params.doc_id
-		// var doc_id   = _.get(params, 'doc_id', this.state.doc_id.id);
-
-		console.log(params)
+		console.log('this dot state')
+		console.log(this.state)
 
     page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
   },
 
+	getInitialState : function () {
+    return {
+      regions      : [],
+      campaigns    : [],
+      region       : null,
+      campaign     : null,
+      dashboard    : null,
+			doc_id			 : null,
+    };
+  },
+
+
 	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
 		this._navigate({ doc_id : doc_id });
+    // this.setState({ doc_id : doc_id })
 		return {}
 	},
 
@@ -66,6 +99,8 @@ var SourceDataDashboard = React.createClass({
   render : function () {
     var loading = this.props.loading;
 
+		console.log(this.props)
+
     const fields = {
     	map_link: {
     		title: 'Master Object Name',
@@ -76,7 +111,13 @@ var SourceDataDashboard = React.createClass({
     	},
     };
 
-    var doc_id = 72;
+		try {
+			var doc_id = this.props.doc_id
+		}
+		catch(err) {
+			var doc_id = 5
+		}
+
 		const fieldNamesOnTable = ['id','slug'];
 
     var data_fn = function(){
@@ -118,7 +159,6 @@ var SourceDataDashboard = React.createClass({
 				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 			</div> : null;
 
-		console.log(this.props)
 		return (<div>
     		{review_header}
 				<h2> Document ID :  </h2>
