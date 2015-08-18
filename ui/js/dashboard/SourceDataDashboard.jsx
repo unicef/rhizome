@@ -4,9 +4,11 @@ var _     = require('lodash');
 var React = require('react');
 var api = require('../data/api.js')
 
-var Overview  = require('dashboard/nco/Overview.jsx');
-var Breakdown = require('dashboard/nco/Breakdown.jsx');
+var Overview   = require('dashboard/nco/Overview.jsx');
+var Breakdown  = require('dashboard/nco/Breakdown.jsx');
 var ReviewPage = require('../doc-review/ReviewPage');
+// var TitleMenu  = require('component/TitleMenu.jsx');
+var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 
 var {
 	Datascope, LocalDatascope,
@@ -54,19 +56,37 @@ var SourceDataDashboard = React.createClass({
       return api.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
     };
 
-    var review_header =  <div className="admin-container">
-      <h1 className="admin-header">Document Review</h1>
+		// console.log(this.props)
+
+		var campaign = this.props.region
+		var campaigns = this.props.indicators
+
+		var review_header =
+		<div className="admin-container">
+      <h1 className="admin-header"></h1>
       <ul className="admin-nav">
-      <li><a className="" href="/doc_review/doc_index">Home</a></li>
-      <li><a className="" href="/doc_review/overview/8">Mapping</a></li>
-      <li><a className="" href="/doc_review/mapping/8">Mapping</a></li>
-      <li><a className="" href="/doc_review/validate/8">Validate</a></li>
-      <li><a className="" href="/doc_review/view_results/8">View Results</a></li>
-      </ul>
+      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Home</a></li>
+      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Mapping</a></li>
+      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Mapping</a></li>
+      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Validate</a></li>
+      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">View Results</a></li>
+			</ul>
     </div>;
-    return (<div>
-        {review_header}
-        <ReviewPage
+
+		var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
+		var refreshMasterButton = refreshMasterUrl ?
+			<div className="ufadmin-create-button">
+				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
+			</div> : null;
+
+
+		return (<div>
+    		{review_header}
+				<h2> Document ID :  </h2>
+				<h2> Document Name: </h2>
+				<h2> Uploaded By:  </h2>
+				{refreshMasterButton}
+		    <ReviewPage
   			title="ToMap"
   			getMetadata={api.admin.docMapMeta}
   			getData={data_fn}
@@ -79,8 +99,12 @@ var SourceDataDashboard = React.createClass({
   					})}
   				</SimpleDataTable>
   		</ReviewPage>
-    </div>);
+    </div>);;
   }
 });
+
+
+
+
 
 module.exports = SourceDataDashboard;

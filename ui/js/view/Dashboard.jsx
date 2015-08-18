@@ -188,7 +188,6 @@ var Dashboard = React.createClass({
             </div>
           </div>
         </form>
-
         {dashboard}
       </div>
     );
@@ -289,8 +288,10 @@ var Dashboard = React.createClass({
     var region   = _.get(params, 'region', this.state.region.name);
     var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 
-    console.log('HELOO')
-    console.log(campaign)
+    console.log('params')
+    console.log(params)
+
+    // console.log
 
     if (_.isNumber(region)) {
       region = _.find(this.state.regions, r => r.id === region).name;

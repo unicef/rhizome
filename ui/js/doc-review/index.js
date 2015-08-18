@@ -25,27 +25,14 @@ var DocReviewApp = React.createClass({
 	};
 
 		return <div className="admin-container">
-			<h1 className="admin-header">Document Review</h1>
-			<ul className="admin-nav">
-      <li><Link to="overview" params={q_params} >Overview</Link></li>
-			<li><Link to="mapping" params={q_params}>Mapping</Link></li>
-      <li><Link to="validate" params={q_params}>Validate</Link></li>
-      <li><Link to="view_results" params={q_params}>View Results</Link></li>
-			</ul>
-			<RouteHandler />
-    </div>;
+			</div>;
 	}
 });
 
 var routes = (
       <Route name="app" path="/doc_review/" handler={DocReviewApp}>
-          <Route name="overview" path = "overview/:docId" handler={require('./DocOverview')} />
-          <Route name="mapping" path = "mapping/:docId" handler={require('./DocMapping')} />
-					<Route name="conflict" path = "conflict/:docId" handler={require('./DocMapping')} />
-					<Route name="validate" path = "validate/:docId" handler={require('./DocValidate')} />
-					<Route name="view_results" path = "view_results/:docId" handler={require('./DocResults')} />
 					<Route name="doc_index" path = "doc_index/" handler={require('./DocIndex')} />
-			</Route>
+		</Route>
 );
 
 module.exports = {
