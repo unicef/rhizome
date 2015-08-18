@@ -9,6 +9,8 @@ var Breakdown  = require('dashboard/nco/Breakdown.jsx');
 var ReviewPage = require('../doc-review/ReviewPage');
 var TitleMenu  = require('component/TitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
+var MenuItem            = require('component/MenuItem.jsx');
+var NavigationStore     = require('stores/NavigationStore');
 
 var {
 	Datascope, LocalDatascope,
@@ -29,19 +31,11 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
-	// logSomething : function () {
-	//
-	// 	console.log('====')
-	// 	// console.log(review_tasks)
-	// 	console.log('LOAAAADING')
-	// 	return {}
-	// },
-
 	_setDocTask : function (doc_task) {
 		var doc_task  = doc_task;
-		console.log(doc_task)
+		// console.log(doc_task)
 		return {
-	      loading : false
+			      loading : false
 		}
 	},
 
@@ -75,7 +69,23 @@ var SourceDataDashboard = React.createClass({
 				return api.admin.campaignsMetadata()
 		};
 
-		var docItems = [1,2,3,4]
+		// var uploads = _.map(api.document().objects, function (d) {
+		// 	console.log(d.id)
+		// 	return {
+		// 		id     : d.id,
+		// 		title  : d.docfile,
+		// 	};
+		// });
+
+		var docItems = MenuItem.fromArray(
+			_.map(NavigationStore.dashboards, d => {
+				return {
+					title : d.title,
+					value : d.title
+				};
+			}),
+			this._setDashboard);
+
 		var docName = 'sample doc'
 
 		var campaign = this.props.region
