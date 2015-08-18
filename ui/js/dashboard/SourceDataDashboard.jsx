@@ -29,9 +29,20 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
-	logSomething : function () {
-		console.log('LOAAAADING')
-		return {}
+	// logSomething : function () {
+	//
+	// 	console.log('====')
+	// 	// console.log(review_tasks)
+	// 	console.log('LOAAAADING')
+	// 	return {}
+	// },
+
+	_setDocTask : function (doc_task) {
+		var doc_task  = doc_task;
+		console.log(doc_task)
+		return {
+	      loading : false
+		}
 	},
 
   getDefaultProps : function () {
@@ -42,9 +53,6 @@ var SourceDataDashboard = React.createClass({
 
   render : function () {
     var loading = this.props.loading;
-
-		console.log('THIS DOT PROPS ')
-		console.log(this.props)
 
     const fields = {
     	map_link: {
@@ -80,10 +88,10 @@ var SourceDataDashboard = React.createClass({
 				{docItems}
 			</TitleMenu>
 			<ul className="admin-nav">
-			<li><a href="#Overview" onClick={this.logSomething}>Overview</a></li>
-			<li><a href="#mapping" onClick={this.logSomething}>Mapping</a></li>
-			<li><a href="#validate" onClick={this.logSomething}>Validate</a></li>
-			<li><a href="#results" onClick={this.logSomething}>Results</a></li>
+			<li><a href="#overview" onClick={this._setDocTask('overview')}>Overview</a></li>
+			<li><a href="#mapping" onClick={this._setDocTask('mapping')}>Mapping</a></li>
+			<li><a href="#validate" onClick={this._setDocTask('validate')}>Validate</a></li>
+			<li><a href="#results" onClick={this._setDocTask('results')}>Results</a></li>
 			</ul>
     </div>;
 
