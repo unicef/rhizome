@@ -7,7 +7,7 @@ var api = require('../data/api.js')
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
 var ReviewPage = require('../doc-review/ReviewPage');
-// var TitleMenu  = require('component/TitleMenu.jsx');
+var TitleMenu  = require('component/TitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 
 var {
@@ -34,8 +34,6 @@ var SourceDataDashboard = React.createClass({
 		return {}
 	},
 
-
-
   getDefaultProps : function () {
     return {
       loading : false
@@ -43,8 +41,10 @@ var SourceDataDashboard = React.createClass({
   },
 
   render : function () {
-    var data    = this.props.data; // i should populate this with the data call from doc review
     var loading = this.props.loading;
+
+		console.log('THIS DOT PROPS ')
+		console.log(this.props)
 
     const fields = {
     	map_link: {
@@ -56,14 +56,19 @@ var SourceDataDashboard = React.createClass({
     	},
     };
 
-    var doc_id = 8;
-    const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
+    var doc_id = 72;
+		const fieldNamesOnTable = ['id','slug'];
 
     var data_fn = function(){
-      return api.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
+				return api.admin.campaigns()
     };
 
-		// console.log(this.props)
+		var meta_fn = function(){
+				return api.admin.campaignsMetadata()
+		};
+
+		var docItems = [1,2,3,4]
+		var docName = 'sample doc'
 
 		var campaign = this.props.region
 		var campaigns = this.props.indicators
@@ -71,8 +76,14 @@ var SourceDataDashboard = React.createClass({
 		var review_header =
 		<div className="admin-container">
       <h1 className="admin-header"></h1>
-      <ul className="admin-nav">
-			<li><a href="#" onClick={this.logSomething}>Mapping</a></li>
+			<TitleMenu text={docName}>
+				{docItems}
+			</TitleMenu>
+			<ul className="admin-nav">
+			<li><a href="#Overview" onClick={this.logSomething}>Overview</a></li>
+			<li><a href="#mapping" onClick={this.logSomething}>Mapping</a></li>
+			<li><a href="#validate" onClick={this.logSomething}>Validate</a></li>
+			<li><a href="#results" onClick={this.logSomething}>Results</a></li>
 			</ul>
     </div>;
 
@@ -89,7 +100,7 @@ var SourceDataDashboard = React.createClass({
 				{refreshMasterButton}
 		    <ReviewPage
   			title="ToMap"
-  			getMetadata={api.admin.docMapMeta}
+  			getMetadata={meta_fn}
   			getData={data_fn}
   			fields={fields}
   			>

@@ -56,11 +56,9 @@ class MasterRefresh(object):
 
         SourceSubmission.objects.filter(id__in=new_source_submission_ids)\
             .update(process_status = 'processed')
-            
+
         datapoint_ids = []
         computed_datapoint_ids = []
-
-        print 'HELLO'
 
     def upsert_source_object_map(self,source_submission_id_list):
         '''
@@ -168,6 +166,7 @@ class MasterRefresh(object):
             if dp_obj:
                 dp_batch.append(dp_obj)
 
+        DocDataPoint.objects.filter(document_id = self.document_id).delete()
         batch_result = DocDataPoint.objects.bulk_create(dp_batch)
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):

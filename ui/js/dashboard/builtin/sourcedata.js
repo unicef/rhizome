@@ -4,11 +4,11 @@ module.exports = {
   'builtin': true,
 	'default_office_id' : 1,
 	'charts' : [
-	// 	{
-	// 	'title': 'Inside',
-	// 	'section': 'overview',
-	// 	'indicators': [272],
-  //   'timeRange': 0
-	// }
+		{
+		'title': 'Inside',
+		'section': 'overview',
+		'indicators': [272],
+    'timeRange': 0
+	}
 ]
 };
