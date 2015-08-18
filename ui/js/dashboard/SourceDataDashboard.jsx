@@ -83,8 +83,6 @@ var SourceDataDashboard = React.createClass({
 		return (<div>
     		{review_header}
 				<h2> Document ID :  </h2>
-				<h2> Document Name: </h2>
-				<h2> Uploaded By:  </h2>
 				{refreshMasterButton}
 		    <ReviewPage
   			title="ToMap"
