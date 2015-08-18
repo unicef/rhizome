@@ -15,6 +15,8 @@ var {
 	FilterPanel, FilterDateRange
 	} = require('react-datascope');
 
+// var Router = require('react-router');
+// var {Route, DefaultRoute, RouteHandler,NotFoundRoute, NotFound, Redirect, Link} = Router;
 
 var SourceDataDashboard = React.createClass({
   propTypes : {
@@ -32,11 +34,8 @@ var SourceDataDashboard = React.createClass({
   },
 
   render : function () {
-    var data    = this.props.data;
+    var data    = this.props.data; // i should populate this with the data call from doc review
     var loading = this.props.loading;
-
-    console.log(data)
-    console.log(this.props)
 
     const fields = {
     	map_link: {
@@ -55,7 +54,19 @@ var SourceDataDashboard = React.createClass({
       return api.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
     };
 
-    return (<ReviewPage
+    var review_header =  <div className="admin-container">
+      <h1 className="admin-header">Document Review</h1>
+      <ul className="admin-nav">
+      <li><a className="" href="/doc_review/doc_index">Home</a></li>
+      <li><a className="" href="/doc_review/overview/8">Mapping</a></li>
+      <li><a className="" href="/doc_review/mapping/8">Mapping</a></li>
+      <li><a className="" href="/doc_review/validate/8">Validate</a></li>
+      <li><a className="" href="/doc_review/view_results/8">View Results</a></li>
+      </ul>
+    </div>;
+    return (<div>
+        {review_header}
+        <ReviewPage
   			title="ToMap"
   			getMetadata={api.admin.docMapMeta}
   			getData={data_fn}
@@ -68,8 +79,7 @@ var SourceDataDashboard = React.createClass({
   					})}
   				</SimpleDataTable>
   		</ReviewPage>
-
-    );
+    </div>);
   }
 });
 

@@ -9,7 +9,7 @@ var moment = require('moment');
 function getFacet(datum, path) {
   var facet = _.get(datum, path);
 
-  // Cleverly handle pieces of the application that replace IDs with their
+  // Handle pieces of the application that replace IDs with their
   // corresponding objects, and those that don't. For example, if the facet path
   // is 'indicator', but the datum has the indicator ID replaced by the
   // definition we try a number of properties. If the indicator hasn't been

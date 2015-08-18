@@ -26,30 +26,9 @@ var ReviewPage = React.createClass({
 		return {
 			data: null,
 			schema: null,
-			indicators: null,
-			campaigns: null,
-			regions: null,
 			query: {},
 			areFiltersVisible: false
 		}
-	},
-
-	componentDidMount: function() {
-
-	API.indicatorsTree().then(function(result) {
-			var indicator_api_data = result.objects;
-			this.setState({indicators:indicator_api_data});
-		}.bind(this));
-
-	API.admin.regions().then(function(result) {
-			var region_api_data = result.objects;
-			this.setState({regions:region_api_data});
-		}.bind(this));
-
-	API.admin.campaigns().then(function(result) {
-			var campaign_api_data = result.objects;
-			this.setState({campaigns:campaign_api_data});
-		}.bind(this));
 	},
 
 
@@ -65,51 +44,18 @@ var ReviewPage = React.createClass({
 		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
 	},
 
-	updateIndicatorSelection: function() {
-				console.log('updating indicator selection')
-	},
-
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && this.state.campaigns && this.state.regions && this.state.indicators;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata, campaigns, regions, indicators} = this.state;
-
-		console.log(campaigns)
-
-		var dropDownFilters = (<div>
-			<IndicatorDropdownMenu
-			text='Filter Indicators'
-			indicators={indicators}
-			sendValue={this.updateIndicatorSelection}>
-			</IndicatorDropdownMenu>
-
-			<CampaignDropdownMenu
-			title='filter campaigns'
-			campaigns={campaigns}
-			campaign={campaigns[0]}
-			sendValue={this.updateIndicatorSelection}>
-			</CampaignDropdownMenu>
-
-			<RegionTitleMenu
-			regions={regions}
-			selected={regions[0]}
-			sendValue={this.updateIndicatorSelection}>
-			</RegionTitleMenu>
-		</div>);
+		var {data, schema, metadata} = this.state;
 
 		return <div>
 
 			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
 				<Datascope>
-
-					<div className='row'>
-					{dropDownFilters}
-					</div>
-
 					{this.props.children}
-
 				</Datascope>
 			</LocalDatascope>
 		</div>

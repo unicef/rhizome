@@ -169,6 +169,9 @@ var NavigationStore = Reflux.createStore({
 	},
 
   getDashboard : function (slug) {
+		console.log(slug)
+		console.log('get dashboard method')
+
     return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
   }
 
