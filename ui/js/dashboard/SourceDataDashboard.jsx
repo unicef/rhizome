@@ -31,6 +31,15 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
+	_setDocSlug : function (slug) {
+
+		console.log('loading_new_document_id')
+
+		return {}
+
+		// this._navigate({ doc_slug : slug });
+	},
+
 	_setDocTask : function (doc_task) {
 		var doc_task  = doc_task;
 		// console.log(doc_task)
@@ -84,7 +93,7 @@ var SourceDataDashboard = React.createClass({
 					value : d.title
 				};
 			}),
-			this._setDashboard);
+			this._setDocSlug);
 
 		var docName = 'sample doc'
 
