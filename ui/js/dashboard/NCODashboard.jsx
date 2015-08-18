@@ -25,7 +25,28 @@ var NCODashboard = React.createClass({
     var data    = this.props.data;
     var loading = this.props.loading;
 
-    return (<h1> hi this is john </h1>
+    return (
+      <div id='nco-dashboard'>
+        <section>
+          <div className='row'>
+            <div className='small-12 columns'>
+              <h3>Overview for {this.props.region.name}</h3>
+            </div>
+          </div>
+
+          <Overview data={data.overview} loading={loading} />
+        </section>
+
+        <section>
+          <div className='row'>
+            <div className='small-12 columns'>
+              <h3>Breakdown by Sub-Regions</h3>
+            </div>
+          </div>
+
+          <Breakdown data={data.breakdown} loading={loading} />
+        </section>
+      </div>
     );
   }
 });
