@@ -13,7 +13,7 @@ var NavigationStore = Reflux.createStore({
     this.campaigns        = [];
     this.dashboards       = [];
     this.customDashboards = null;
-    this.uploads          = [];
+    this.documents          = [];
     this.loaded           = false;
 
 		var campaigns = api.campaign()
@@ -51,7 +51,7 @@ var NavigationStore = Reflux.createStore({
 			campaigns  : this.campaigns,
 			dashboards : this.dashboards,
 			permissions: this.permissions,
-			uploads    : this.documents,
+			documents    : this.documents,
       loaded     : this.loaded
 		};
 	},
@@ -153,7 +153,7 @@ var NavigationStore = Reflux.createStore({
 	},
 
 	loadDocuments : function (response) {
-		var uploads = _.map(response.objects, function (d) {
+		var documents = _.map(response.objects, function (d) {
 			var status = (d.is_processed === 'False') ? 'INCOMPLETE' : 'COMPLETE';
 
 			return {
@@ -164,7 +164,7 @@ var NavigationStore = Reflux.createStore({
 		});
 
 		this.trigger({
-			uploads : uploads
+			documents : documents
 		});
 	},
 

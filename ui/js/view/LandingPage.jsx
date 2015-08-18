@@ -146,8 +146,8 @@ module.exports = React.createClass({
       }
 
       var uploads = <tr><td>No uploads yet.</td></tr>;
-      if (this.state.uploads && this.state.uploads.length > 0) {
-        uploads = _(this.state.uploads)
+      if (this.state.documents && this.state.documents.length > 0) {
+        documents = _(this.state.documents)
                       .take(this.state.visibleUploads)
                       .map(_uploadRow)
                       .value();

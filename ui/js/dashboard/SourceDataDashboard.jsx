@@ -78,13 +78,7 @@ var SourceDataDashboard = React.createClass({
 				return api.admin.campaignsMetadata()
 		};
 
-		// var uploads = _.map(api.document().objects, function (d) {
-		// 	console.log(d.id)
-		// 	return {
-		// 		id     : d.id,
-		// 		title  : d.docfile,
-		// 	};
-		// });
+		console.log(NavigationStore)
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.dashboards, d => {
