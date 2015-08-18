@@ -3,6 +3,8 @@
 var _     = require('lodash');
 var React = require('react');
 var api = require('../data/api.js')
+var moment = require('moment');
+var page = require('page');
 
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
@@ -31,21 +33,28 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
-	_setDocSlug : function (slug) {
 
+  _navigate : function (params) {
+    var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+    var region   = _.get(params, 'region', this.props.region.name);
+    var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+
+		var doc_id = params.doc_id
+		// var doc_id   = _.get(params, 'doc_id', this.state.doc_id.id);
+
+		console.log(params)
+
+    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
+  },
+
+	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
-
+		this._navigate({ doc_id : doc_id });
 		return {}
-
-		// this._navigate({ doc_slug : slug });
 	},
 
 	_setDocTask : function (doc_task) {
-		var doc_task  = doc_task;
-		// console.log(doc_task)
-		return {
-			      loading : false
-		}
+		this._navigate({ doc_slug : doc_task });
 	},
 
   getDefaultProps : function () {
@@ -78,21 +87,16 @@ var SourceDataDashboard = React.createClass({
 				return api.admin.campaignsMetadata()
 		};
 
-		console.log(NavigationStore)
-
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
 				return {
-					title : d.id,
+					title : d.docfile,
 					value : d.id
 				};
 			}),
-			this._setDocSlug);
+			this._setDocId);
 
 		var docName = 'sample doc'
-
-		var campaign = this.props.region
-		var campaigns = this.props.indicators
 
 		var review_header =
 		<div className="admin-container">
@@ -114,7 +118,7 @@ var SourceDataDashboard = React.createClass({
 				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 			</div> : null;
 
-
+		console.log(this.props)
 		return (<div>
     		{review_header}
 				<h2> Document ID :  </h2>

@@ -284,14 +284,9 @@ var Dashboard = React.createClass({
   },
 
   _navigate : function (params) {
-    var slug     = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
-    var region   = _.get(params, 'region', this.state.region.name);
-    var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-
-    console.log('params')
-    console.log(params)
-
-    // console.log
+    var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+    var region   = _.get(params, 'region', this.props.region.name);
+    var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 
     if (_.isNumber(region)) {
       region = _.find(this.state.regions, r => r.id === region).name;
