@@ -29,6 +29,13 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
+	logSomething : function () {
+		console.log('LOAAAADING')
+		return {}
+	},
+
+
+
   getDefaultProps : function () {
     return {
       loading : false
@@ -49,7 +56,7 @@ var SourceDataDashboard = React.createClass({
     	},
     };
 
-    var doc_id = 72;
+    var doc_id = 8;
     const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
 
     var data_fn = function(){
@@ -65,11 +72,7 @@ var SourceDataDashboard = React.createClass({
 		<div className="admin-container">
       <h1 className="admin-header"></h1>
       <ul className="admin-nav">
-      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Home</a></li>
-      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Mapping</a></li>
-      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Mapping</a></li>
-      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">Validate</a></li>
-      <li><a className="" href="/datapoints/source-data/Alkaleri/2015/03/">View Results</a></li>
+			<li><a href="#" onClick={this.logSomething}>Mapping</a></li>
 			</ul>
     </div>;
 
