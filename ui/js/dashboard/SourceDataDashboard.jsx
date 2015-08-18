@@ -25,8 +25,7 @@ var SourceDataDashboard = React.createClass({
     var data    = this.props.data;
     var loading = this.props.loading;
 
-    return (<div>
-      </div>
+    return (<h1> hi this is the document dashboard </h1>
     );
   }
 });

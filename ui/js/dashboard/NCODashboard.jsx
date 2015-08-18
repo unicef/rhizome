@@ -25,7 +25,7 @@ var NCODashboard = React.createClass({
     var data    = this.props.data;
     var loading = this.props.loading;
 
-    return (<h1> hi </h1>
+    return (<h1> hi this is john </h1>
     );
   }
 });
