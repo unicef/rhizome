@@ -32,7 +32,7 @@ var NavigationStore = Reflux.createStore({
 
 		var dashboards = api.dashboardsCustom();
 
-		var documents = api.document().then(this.loadDocuments);
+		var documents = api.document();
 
 		var offices = api.office().then(function (response) {
 			return _.indexBy(response.objects, 'id');
@@ -41,7 +41,7 @@ var NavigationStore = Reflux.createStore({
 		this.permissions = [];
 		var permissions = api.user_permissions();
 
-		Promise.all([campaigns, regions, offices, permissions, dashboards])
+		Promise.all([campaigns, regions, offices, permissions, dashboards, documents])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -60,7 +60,7 @@ var NavigationStore = Reflux.createStore({
 		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
-	loadDashboards : function (campaigns, regions, offices, permissions, dashboards) {
+	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, documents) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
@@ -142,6 +142,13 @@ var NavigationStore = Reflux.createStore({
 						dashboards : links
 					}, c);
 			});
+
+		this.documents = _(documents.objects)
+			.map(function(d) {
+				return d;
+			})
+			.sortBy('docfile')
+			.value();
 
     this.loaded = true;
 

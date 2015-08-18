@@ -81,10 +81,10 @@ var SourceDataDashboard = React.createClass({
 		console.log(NavigationStore)
 
 		var docItems = MenuItem.fromArray(
-			_.map(NavigationStore.dashboards, d => {
+			_.map(NavigationStore.documents, d => {
 				return {
-					title : d.title,
-					value : d.title
+					title : d.id,
+					value : d.id
 				};
 			}),
 			this._setDocSlug);
