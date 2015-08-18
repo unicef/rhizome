@@ -101,10 +101,10 @@ var SourceDataDashboard = React.createClass({
 				{docItems}
 			</TitleMenu>
 			<ul className="admin-nav">
-			<li><a href="#overview" onClick={this._setDocTask('overview')}>Overview</a></li>
-			<li><a href="#mapping" onClick={this._setDocTask('mapping')}>Mapping</a></li>
-			<li><a href="#validate" onClick={this._setDocTask('validate')}>Validate</a></li>
-			<li><a href="#results" onClick={this._setDocTask('results')}>Results</a></li>
+			<li><a href="#overview">Overview</a></li>
+			<li><a href="#mapping">Mapping</a></li>
+			<li><a href="#validate">Validate</a></li>
+			<li><a href="#results">Results</a></li>
 			</ul>
     </div>;
 
