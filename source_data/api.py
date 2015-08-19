@@ -12,7 +12,6 @@ from django.conf import settings
 from pandas import read_csv
 
 from source_data.models import *
-from source_data.etl_tasks.transform_odk import ODKDataPointTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 
 from datapoints import cache_tasks

@@ -7,7 +7,6 @@ from django.db import transaction
 from pandas.io.excel import read_excel
 
 from source_data.models import *
-from source_data.etl_tasks.shared_utils import pivot_and_insert_src_datapoints
 from datapoints.models import DataPoint
 
 

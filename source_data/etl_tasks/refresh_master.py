@@ -109,10 +109,6 @@ class MasterRefresh(object):
         sm_obj, created = DocumentSourceObjectctMap.objects.get_or_create\
             (document_id = self.document_id,source_object_map_id = sm_obj.id)
 
-        # DocumentSourceObjectctMap.objects.objects.get_or_create(\
-        #     document_id = self.document_id,
-        #    ,source_object_map_id = sm_obj.id)
-
         return sm_obj.id
 
 
@@ -218,25 +214,3 @@ class MasterRefresh(object):
         MissingMapping.objects.filter(document_id=self.document_id).delete()
 
         DataPoint.objects.filter(id__in=datapoint_ids).delete()
-
-
-    def sync_regions(self):
-
-        mapped_source_regions = RegionMap.objects.filter(source_object__document_id=self.document_id)
-
-
-        for sr in mapped_source_regions:
-
-            try:
-                source_polygon = SourceRegionPolygon.objects.get(source_region=\
-                    sr.source_region)
-
-            except ObjectDoesNotExist:
-                return
-
-            master_polygon = RegionPolygon.objects.get_or_create(
-                region = sr.master_region,
-                defaults = { 'shape_len': source_polygon.shape_len,
-                    'shape_area':source_polygon.shape_area,
-                    'polygon': source_polygon.polygon
-                })

@@ -59,8 +59,6 @@ class v2Request(object):
                 'permission_function': None},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
                 'permission_function': self.filter_calced_dp_by_doc_id},
-
-
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
@@ -82,12 +80,6 @@ class v2Request(object):
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
             'office': {'orm_obj':Office,
-                'permission_function':None},
-            'indicator_map': {'orm_obj':IndicatorMap,
-                'permission_function':None},
-            'region_map': {'orm_obj':RegionMap,
-                'permission_function':None},
-            'campaign_map': {'orm_obj':CampaignMap,
                 'permission_function':None},
             'indicator_tag': {'orm_obj':IndicatorTag,
                 'permission_function':None},
