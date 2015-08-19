@@ -60,9 +60,12 @@ var SourceDataDashboard = React.createClass({
     var region   = _.get(params, 'region', this.props.region.name);
     var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
-		var review_page = _.get(params, 'review_page', this.state.review_page);
+		var doc_tool = _.get(params, 'doc_tool', this.state.doc_tool);
 
-    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
+		console.log(this.state.doc_id)
+		console.log(this.state.doc_tool)
+
+    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id + '/' + doc_tool);
   },
 	_showDefault : function (ctx) {
 	},
@@ -79,6 +82,7 @@ var SourceDataDashboard = React.createClass({
       campaign     : null,
       dashboard    : null,
 			doc_id			 : null,
+			doc_tool 		 : 'overview'
     };
   },
 
@@ -90,9 +94,9 @@ var SourceDataDashboard = React.createClass({
 		return {}
 	},
 
-	_setDocTask : function (doc_task) {
-		this._navigate({ doc_slug : doc_task });
-		this.state.review_tab = review_tab
+	_setDocTool : function (doc_tool) {
+		this._navigate({ doc_tool : doc_tool });
+		this.state.doc_tool = doc_tool
 	},
 
   getDefaultProps : function () {
@@ -139,16 +143,16 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
-		var doc_pages = MenuItem.fromArray(
-			_.map([10,22,13,34,5,9], d => {
+		var doc_tools = MenuItem.fromArray(
+			_.map(['overview','mapping','validate','results','dashboard'], d => {
 				return {
 					title : d,
 					value : d
 				};
 			}),
-			this._setDocId);
+			this._setDocTool);
 
-		var doc_page = 'validddatee'
+		var doc_tool = this.state.doc_tool
 
 		var docName = doc_id
 
@@ -161,8 +165,8 @@ var SourceDataDashboard = React.createClass({
 				</TitleMenu>
 			</div>
 			<div className="row">
-			Validator: <TitleMenu text={doc_page}>
-				{doc_pages}
+			<TitleMenu text={doc_tool}>
+				{doc_tools}
 			</TitleMenu>
 			</div>
 	  </div>;
