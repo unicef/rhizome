@@ -114,18 +114,6 @@ var Dashboard = React.createClass({
       GeoStore.features
     );
 
-    // FIXME -> THIS IS A HACK BY JD IN ORDER TO REDIRECT DATA REQUESTS
-    // FOR THE SOURCE-DATA DASHBOARD.. I SHOULD CREATE MY OWN dashboardInit
-    // FUNCTION TO LOAD UP SOURCE DATA.
-    if (dashboardName == 'Source Data'){
-      var parseData = require('../ufadmin/utils/parseData');
-
-      var data = parseData(api.admin.docValidate({document:66}))
-      console.log('confussweedd')
-      console.log(data)
-    };
-
-
     var dashboardProps = {
       campaign   : campaign,
       dashboard  : dashboardDef,

@@ -82,7 +82,8 @@ var SourceDataDashboard = React.createClass({
 
   render : function () {
     var loading = this.props.loading;
-		var data    = this.props.data;
+		var data    = this.props.indicators;
+
 
     const fields = {
     	map_link: {

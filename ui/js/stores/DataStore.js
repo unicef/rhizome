@@ -24,6 +24,7 @@ var DataStore = Reflux.createStore({
   listenables : [DataActions],
 
   init : function () {
+    console.log('initializing data store')
     this.loading = false;
     this.data    = [];
   },
