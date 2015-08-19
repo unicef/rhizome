@@ -2,19 +2,12 @@ var _ = require('lodash');
 
 module.exports = function parseSchema(data) {
 
-	console.log('response')
-	console.log(data)
-
-
 	if (data.fields){
 		var fields = data.fields
 	}
 	else {
 		var fields = data.objects.fields
 	}
-
-	console.log('logging prepped')
-	console.log(fields)
 
 	var schema = {
 		$schema: "http://json-schema.org/draft-04/schema#",
@@ -39,7 +32,5 @@ module.exports = function parseSchema(data) {
 			}).object().value()
 		}
 	};
-	console.log('this is the schema')
-	console.log(schema)
 	return schema;
 };

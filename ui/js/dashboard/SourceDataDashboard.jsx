@@ -82,6 +82,8 @@ var SourceDataDashboard = React.createClass({
 
   render : function () {
     var loading = this.props.loading;
+		var data    = this.props.data;
+
     const fields = {
     	map_link: {
     		title: 'Master Object Name',
@@ -146,9 +148,6 @@ var SourceDataDashboard = React.createClass({
 
 		var isLoaded = this.props.loading && schema;
 		if(!isLoaded) return this.renderLoading();
-
-		// var data = this.props.data;
-		var data = this.props.indicators;
 
 		// data table //
 		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>

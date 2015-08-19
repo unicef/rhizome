@@ -16,7 +16,8 @@ var MenuItem            = require('component/MenuItem.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
-var DashboardStore      = require('stores/DashboardStore');
+var SourceDataStore      = require('stores/DashboardStore');
+var DashboardStore      = require('stores/SourceDataStore');
 var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 var NavigationStore     = require('stores/NavigationStore');
@@ -111,6 +112,15 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
+
+
+    console.log(dashboardName)
+    if (dashboardName == 'Source Data'){
+      console.log('trying to intercept dashboard props')
+      console.log(data)
+      var data = indicators.slice(0, 3);
+    }
+
 
     var dashboardProps = {
       campaign   : campaign,
