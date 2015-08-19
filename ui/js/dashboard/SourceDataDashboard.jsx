@@ -101,7 +101,6 @@ var SourceDataDashboard = React.createClass({
 
   render : function () {
     var loading = this.props.loading;
-
     const fields = {
     	map_link: {
     		title: 'Master Object Name',
@@ -140,7 +139,6 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_pages = [{'a':'a','b':'b'}]
 		var doc_page = 'validddatee'
-
 
 		var docName = doc_id
 
