@@ -58,7 +58,7 @@ class v2Request(object):
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': None},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
-                'permission_function': self.filter_calced_dp_by_doc_id},
+                'permission_function': None},
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,

@@ -21,7 +21,7 @@ BEGIN
 
 	RETURN QUERY
 
-	SELECT ad.id FROM datapoint_with_computed ad
+	SELECT dwc.id FROM datapoint_with_computed dwc
 	WHERE dwc.cache_job_id = $1
 	LIMIT 1;
 

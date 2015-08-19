@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from pandas import DataFrame
 
 from source_data.models import *
+from datapoints.cache_tasks import CacheRefresh
 from datapoints.models import *
 
 class MasterRefresh(object):
@@ -51,20 +52,15 @@ class MasterRefresh(object):
         source_object_map_ids = self.upsert_source_object_map\
             (new_source_submission_ids)
 
-        print 'THESE ARE MAPPIGNS'
-        print  source_object_map_ids
 
         doc_datapoint_ids = self.process_doc_datapoints\
             (new_source_submission_ids)
 
-        print 'THESE ARE DOC_DATAPOTINDS'
-        print doc_datapoint_ids
+        datapoint_ids = self.sync_doc_datapoint()
+        cr = CacheRefresh([d.id for d in datapoint_ids])
+        computed_datapoint_ids = cr.main()
 
-        # SourceSubmission.objects.filter(id__in=new_source_submission_ids)\
-        #     .update(process_status = 'PROCESSED')
 
-        datapoint_ids = []
-        computed_datapoint_ids = []
 
     def upsert_source_object_map(self,source_submission_id_list):
         '''
@@ -147,9 +143,6 @@ class MasterRefresh(object):
 
         dp_batch = []
 
-        print region_code
-        print campaign_code
-
         try:
             region_id = self.source_map_dict[('region',region_code)]
             if region_id == -1:
@@ -165,11 +158,6 @@ class MasterRefresh(object):
             return
 
         for k,v in submission_data.iteritems():
-
-            print '-====-'
-            print k
-            print v
-            print '-====-'
 
             dp_obj = self.process_submission_instance(region_id,campaign_id,k,v,ss_row['id'])
 

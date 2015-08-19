@@ -94,8 +94,6 @@ class CacheRefresh(object):
             response_msg = 'PENDING'
         )
 
-        print 'CACHE JOB ID: %s ' % self.cache_job.id
-
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
 
