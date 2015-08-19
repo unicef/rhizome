@@ -140,7 +140,7 @@ var SourceDataDashboard = React.createClass({
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 
-	  var some_schema = {"fields": [{"name": "name", "title": "name"}, {"name": "short_name", "title": "short_name"}, {"name": "id", "title": "id"}]}		
+	  var some_schema = {"fields": [{"name": "name", "title": "name"}, {"name": "short_name", "title": "short_name"}, {"name": "id", "title": "id"}]}
 
 		var schema = parseSchema(some_schema)
 
@@ -151,7 +151,7 @@ var SourceDataDashboard = React.createClass({
 		var data = this.props.indicators;
 
 		// data table //
-		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={50}>
+		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
 				<Datascope>
 				<Paginator />
 				<SimpleDataTable>
