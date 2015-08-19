@@ -125,15 +125,15 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        err, region_ids = self.get_regions_to_return_from_url(request)
-        if err:
-            self.error = err
-            return []
+        # err, region_ids = self.get_regions_to_return_from_url(request)
+        # if err:
+        #     self.error = err
+        #     return []
 
-        db_data = DataPointAbstracted.objects.filter(
-            region_id__in = region_ids,
-            campaign_id__in = self.parsed_params['campaign__in'])\
-            .order_by('-campaign__start_date')
+        db_data = DataPointAbstracted.objects.all()
+            # region_id__in = region_ids,
+            # campaign_id__in = self.parsed_params['campaign__in'])\
+            # .order_by('-campaign__start_date')
 
         for row in db_data:
             r = ResultObject()
@@ -547,9 +547,6 @@ class DataPointEntryResource(BaseModelResource):
             region_id_list])
 
         permitted_region_ids = [x.id for x in permitted_region_qs]
-
-        print '===='
-        print permitted_region_ids
 
         if len(permitted_region_ids) == 0:
             raise InputError(4, 'User does not have permissions for \

@@ -123,7 +123,6 @@ var SourceDataDashboard = React.createClass({
 		var doc_tool = 'some tool'
 		var review_header =
 		<div className="admin-container">
-		//
       <h1 className="admin-header"></h1>
 			<div className="row">
 				document_id: <TitleMenu text={docName}>
@@ -152,26 +151,23 @@ var SourceDataDashboard = React.createClass({
 		  );
 		}
 
-		// console.log(this.props.data)
-
-	 var data = _(['1','v','sss']).map(this._regionRow).value();
-
-	 console.log(data)
 
 		return (<div className="row">
 					<div className="medium-9 columns">
-					<table>
-						<tbody>
-						{data}
-						</tbody>
-						<tfoot>
-							<tr>
-								<td className="more" colSpan="6">
-								</td>
-							</tr>
-						</tfoot>
-					</table>
-    	</div>
+					return <ReviewPage
+						title="New Document "
+						getMetadata={this.meta_fn}
+						getData={this.data_fn}
+						fields={fields}
+						>
+							<Paginator />
+							<SimpleDataTable>
+								{fieldNamesOnTable.map(fieldName => {
+									return <SimpleDataTableColumn name={fieldName} />
+								})}
+							</SimpleDataTable>
+					</ReviewPage>
+		    	</div>
 			<div className="medium-3 columns">
 			{review_header}
 			<h2> Document ID : {doc_id} </h2>
