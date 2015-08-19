@@ -9,7 +9,7 @@ var page = require('page');
 var AppActions          = require('actions/AppActions');
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
-var ReviewPage = require('../doc-review/ReviewPage');
+var AdminPage = require('ufadmin/AdminPage');
 var TitleMenu  = require('component/TitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
@@ -76,7 +76,7 @@ var SourceDataDashboard = React.createClass({
     };
   },
 	renderLoading() {
-		return <div className='admin-loading'>Loading...</div>
+		return <div className='admin-loading'>......Admin Loading.......</div>
 	},
 
   render : function () {
@@ -85,6 +85,11 @@ var SourceDataDashboard = React.createClass({
 
 		console.log('logging inside data')
 		console.log(this.props.data.inside)
+
+		console.log('STATE loading')
+		console.log(this.state)
+		// var isLoaded = this.props.loading;
+		// if(!isLoaded) return this.renderLoading();
 		// var data    = this.props.data.inside;
 
     const fields = {
@@ -100,7 +105,7 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_id = 66
 
-		const fieldNamesOnTable = ['id','campaign','map_link'];
+		const fieldNamesOnTable = ['id','map_link'];
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -148,26 +153,33 @@ var SourceDataDashboard = React.createClass({
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
 		var schema = parseSchema(some_schema)
 
-		// console.log(this.props)
-		// var isLoaded = this.props.loading;
-		// if(!isLoaded) return this.renderLoading();
+		var data_fn = function(){
+			return this.props.indicators
+		};
+
+		var meta_fn = function(){
+			return api.admin.indicatorsMetadata
+		};
 
 		// data table //
-		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
-				<Datascope>
+		var review_table = <AdminPage
+					title="Users"
+					getMetadata={api.admin.indicatorsMetadata}
+					getData={api.admin.indicators}
+					fields={fields}
+					>
 				<Paginator />
 				<SimpleDataTable>
 					{fieldNamesOnTable.map(fieldName => {
 						return <SimpleDataTableColumn name={fieldName} />
 					})}
 				</SimpleDataTable>
-				</Datascope>
-			</LocalDatascope>
+				</AdminPage>
 
 		return (<div className="row">
 					<div className="medium-9 columns">
 					{review_table}
-		    	</div>
+					</div>
 			<div className="medium-3 columns">
 			{review_header}
 			<h2> Document ID : {doc_id} </h2>

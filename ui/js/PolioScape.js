@@ -7,7 +7,6 @@ var LandingPage      = require('view/LandingPage.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
-var DocReviewApp		 = require('./doc-review')
 var GroupForm = require('view/group-form/GroupForm.jsx');
 
 Vue.config.debug = true;
@@ -68,10 +67,6 @@ module.exports = {
 			components: { 'uf-simple-form': require('./view/simple-form') },
 			data:{'indicator_id':indicator_id}
 		});
-	},
-
-	DocReview: function(el) {
-		DocReviewApp.render(document.getElementById('main'));
 	},
 
 	/// done with johns new components //
