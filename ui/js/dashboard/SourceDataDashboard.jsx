@@ -177,24 +177,30 @@ var SourceDataDashboard = React.createClass({
 				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 			</div> : null;
 
-		return (<div>
-    		{review_header}
-				<h2> Document ID : {doc_id} </h2>
-				{refreshMasterButton}
-		    <ReviewPage
-  			title="ToMap"
-  			getMetadata={meta_fn}
-  			getData={data_fn}
-  			fields={fields}
-  			>
-  				<Paginator />
-  				<SimpleDataTable>
-  					{fieldNamesOnTable.map(fieldName => {
-  						return <SimpleDataTableColumn name={fieldName} />
-  					})}
-  				</SimpleDataTable>
-  		</ReviewPage>
-    </div>);;
+		return (<div className="row">
+					<div className="medium-9 columns">
+			    <ReviewPage
+	  			title="ToMap"
+	  			getMetadata={meta_fn}
+	  			getData={data_fn}
+	  			fields={fields}
+	  			>
+	  				<Paginator />
+	  				<table>
+						<SimpleDataTable>
+	  					{fieldNamesOnTable.map(fieldName => {
+	  						return <SimpleDataTableColumn name={fieldName} />
+	  					})}
+	  				</SimpleDataTable>
+						</table>
+	  		</ReviewPage>
+    	</div>
+			<div className="medium-3 columns">
+			{review_header}
+			<h2> Document ID : {doc_id} </h2>
+			{refreshMasterButton}
+			</div>
+		</div>);;
   }
 });
 
