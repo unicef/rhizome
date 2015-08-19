@@ -32,7 +32,6 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
-
 	getInitialState : function () {
     return {
       regions      : [],
@@ -60,14 +59,14 @@ var SourceDataDashboard = React.createClass({
 
 	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
-		this._navigate({ doc_id : doc_id });
 		this.state.doc_id = doc_id
+		this._navigate({ doc_id : doc_id });
 		// this.props.data = this.data_fn()
 	},
 
 	_setDocTool : function (doc_tool) {
-		this._navigate({ doc_tool : doc_tool });
 		this.state.doc_tool = doc_tool
+		this._navigate({ doc_tool : doc_tool });
 		// return {loading : true}
 	},
 
@@ -79,10 +78,6 @@ var SourceDataDashboard = React.createClass({
 
 	data_fn : function(){
 		return api.admin.docValidate({document:66})
-	},
-
-	meta_fn : function(){
-			return api.admin.docValidateMeta()
 	},
 
   render : function () {
@@ -99,7 +94,7 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_id = 66
 
-		const fieldNamesOnTable = ['id','document_id'];
+		const fieldNamesOnTable = ['id'];
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -136,37 +131,36 @@ var SourceDataDashboard = React.createClass({
 			</div>
 	  </div>;
 
+		// refresh master button //
 		var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
 		var refreshMasterButton = refreshMasterUrl ?
 			<div className="ufadmin-create-button">
 				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 			</div> : null;
 
-		function _regionRow(region, i) {
+		var parseSchema = require('../ufadmin/utils/parseSchema');
+		var schema = parseSchema(api.admin.docValidateMeta())
 
-		  return (
-		    <tr className={cls} key={region}>
-		      <td>{region.slug}</td>
-		    </tr>
-		  );
-		}
+		var isLoaded = this.props.loading && schema;
+		if(!isLoaded) return this.renderLoading();
 
+		var data = this.props.data;
+
+		// data table //
+		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={50}>
+				<Datascope>
+				<Paginator />
+				<SimpleDataTable>
+					{fieldNamesOnTable.map(fieldName => {
+						return <SimpleDataTableColumn name={fieldName} />
+					})}
+				</SimpleDataTable>
+				</Datascope>
+			</LocalDatascope>
 
 		return (<div className="row">
 					<div className="medium-9 columns">
-					return <ReviewPage
-						title="New Document "
-						getMetadata={this.meta_fn}
-						getData={this.data_fn}
-						fields={fields}
-						>
-							<Paginator />
-							<SimpleDataTable>
-								{fieldNamesOnTable.map(fieldName => {
-									return <SimpleDataTableColumn name={fieldName} />
-								})}
-							</SimpleDataTable>
-					</ReviewPage>
+					{review_table}
 		    	</div>
 			<div className="medium-3 columns">
 			{review_header}
@@ -174,7 +168,11 @@ var SourceDataDashboard = React.createClass({
 			{refreshMasterButton}
 			</div>
 		</div>);;
-  }
+  },
+	renderLoading() {
+		console.log(' ... LOADING ... ')
+		return <div className='admin-loading'>Loading...</div>
+	},
 });
 
 module.exports = SourceDataDashboard;

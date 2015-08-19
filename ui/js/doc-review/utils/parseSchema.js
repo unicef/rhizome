@@ -4,6 +4,7 @@ module.exports = function parseSchema(response) {
 	// parse our old json-table-esque schema into a legit JSON schema
 	// http://json-schema.org/
 
+	console.log('LOGGING PARSE CSCHEMA')
 	console.log(response)
 	//return response.objects;
 	var schema = {
