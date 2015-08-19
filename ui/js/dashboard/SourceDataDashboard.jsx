@@ -76,14 +76,13 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-	data_fn : function(){
-		return api.admin.docValidate({document:66})
-	},
-
   render : function () {
     var loading = this.props.loading;
-		var data    = this.props.indicators;
+		var data = this.props.indicators
 
+		console.log('logging inside data')
+		console.log(this.props.data.inside)
+		// var data    = this.props.data.inside;
 
     const fields = {
     	map_link: {
@@ -97,7 +96,7 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_id = 66
 
-		const fieldNamesOnTable = ['id'];
+		const fieldNamesOnTable = ['id','campaign'];
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -142,13 +141,12 @@ var SourceDataDashboard = React.createClass({
 			</div> : null;
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
-
-	  var some_schema = {"fields": [{"name": "name", "title": "name"}, {"name": "short_name", "title": "short_name"}, {"name": "id", "title": "id"}]}
-
+	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
 		var schema = parseSchema(some_schema)
 
-		var isLoaded = this.props.loading && schema;
-		if(!isLoaded) return this.renderLoading();
+		// console.log(this.props)
+		// var isLoaded = this.props.loading;
+		// if(!isLoaded) return this.renderLoading();
 
 		// data table //
 		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
@@ -173,9 +171,9 @@ var SourceDataDashboard = React.createClass({
 			</div>
 		</div>);;
   },
-	renderLoading() {
-		return <div className='admin-loading'>Loading...</div>
-	},
+	// renderLoading() {
+	// 	return <div className='admin-loading'>Loading...</div>
+	// },
 });
 
 module.exports = SourceDataDashboard;
