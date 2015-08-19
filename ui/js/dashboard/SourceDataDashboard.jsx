@@ -139,7 +139,10 @@ var SourceDataDashboard = React.createClass({
 			</div> : null;
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
-		var schema = parseSchema(api.admin.indicatorsMetadata())
+
+	  var some_schema = {"fields": [{"name": "name", "title": "name"}, {"name": "short_name", "title": "short_name"}, {"name": "id", "title": "id"}]}		
+
+		var schema = parseSchema(some_schema)
 
 		var isLoaded = this.props.loading && schema;
 		if(!isLoaded) return this.renderLoading();

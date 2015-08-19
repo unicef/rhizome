@@ -6,14 +6,15 @@ module.exports = function parseSchema(data) {
 	console.log(data)
 
 
-	if (data.page_definition){
-		var prepped_data = page_definition
+	if (data.fields){
+		var fields = data.fields
 	}
 	else {
-		var prepped_data = data.objects
+		var fields = data.objects.fields
 	}
 
-	console.log(prepped_data)
+	console.log('logging prepped')
+	console.log(fields)
 
 	var schema = {
 		$schema: "http://json-schema.org/draft-04/schema#",
@@ -22,7 +23,7 @@ module.exports = function parseSchema(data) {
 		items: {
 			title: "table_row",
 			type: "object",
-			properties: _(prepped_data.fields).map(field => {
+			properties: _(fields).map(field => {
 				return [field.name, _.transform(field, (result, val, key) => {
 					// if(key === 'type' && val === 'datetime') {
 					// 	result.type = 'string';
@@ -38,5 +39,7 @@ module.exports = function parseSchema(data) {
 			}).object().value()
 		}
 	};
+	console.log('this is the schema')
+	console.log(schema)
 	return schema;
 };
