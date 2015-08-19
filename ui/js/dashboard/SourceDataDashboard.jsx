@@ -40,28 +40,12 @@ var SourceDataDashboard = React.createClass({
 
 	componentWillUpdate : function (nextProps, nextState) {
 
-		console.log('trying to log')
-
-		console.log(nextState)
-
-		var doc_id = nextState.doc_id
-		var doc_tool = nextState.doc_tool
-
-		if (!(nextState.campaign && nextState.region && nextState.dashboard && nextState.doc_id && nextState.doc_tool)) {
-
-			console.log('helllllo')
-		  return;
-    }
-
-    var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
+    var campaign = moment(nextProps.campaign.start_date).format('MM/YYYY')
     var title = [
-      nextState.dashboard.title,
-      [nextState.region.name, campaign].join(' '),
+      nextProps.dashboard.title,
+      [nextProps.region.name, campaign].join(' '),
       'RhizomeDB'
-    ].join(' - ');
-
-		console.log(title)
-
+    ].join(' - ') + nextState.doc_id;
     if (document.title !== title) {
       document.title = title;
     }
@@ -90,7 +74,7 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-			doc_id			 : null,
+			doc_id			 : 66,
 			doc_tool 		 : 'overview'
     };
   },
@@ -100,7 +84,9 @@ var SourceDataDashboard = React.createClass({
 		console.log('loading_new_document_id')
 		this._navigate({ doc_id : doc_id });
 		this.state.doc_id = doc_id
-		return {loading : true}
+		this.props.data = this.data_fn()
+		return {}
+
 	},
 
 	_setDocTool : function (doc_tool) {
@@ -115,6 +101,14 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
+	data_fn : function(){
+		return api.admin.docValidate({document:this.state.doc_id})
+	},
+
+	meta_fn : function(){
+			return api.admin.docValidateMeta()
+	},
+
   render : function () {
     var loading = this.props.loading;
     const fields = {
@@ -127,30 +121,10 @@ var SourceDataDashboard = React.createClass({
     	},
     };
 
-		try {
-			var doc_id = this.state.doc_id
-		}
-		catch(err) {
-			var doc_id = -1
-		}
+		var doc_id = this.state.doc_id
 
-		const fieldNamesOnTable = ['id'];
+		const fieldNamesOnTable = ['id','document_id'];
 		var doc_tool = this.state.doc_tool;
-
-    var data_fn = function(){
-
-			console.log('i am the data function ')
-			console.log(doc_tool)
-
-			if (doc_tool == 'validate'){
-				return api.admin.docValidate({document:doc_id})
-			}
-			return api.admin.docValidate({document:doc_id})
-    };
-
-		var meta_fn = function(){
-				return api.admin.docValidateMeta()
-		};
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -197,8 +171,8 @@ var SourceDataDashboard = React.createClass({
 					<div className="medium-9 columns">
 			    <ReviewPage
 	  			title="ToMap"
-	  			getMetadata={meta_fn}
-	  			getData={data_fn}
+	  			getMetadata={this.meta_fn}
+	  			getData={this.data_fn}
 	  			fields={fields}
 	  			>
 	  				<Paginator />
