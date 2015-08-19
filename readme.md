@@ -55,6 +55,7 @@ so feel free to set the djangoapp password to that when getting started!
     $ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
     Password:
     $ createdb polio --owner djangoapp
+    $ python manage.py migrate auth
     $ python manage.py syncdb
     $ python manage.py migrate
 
