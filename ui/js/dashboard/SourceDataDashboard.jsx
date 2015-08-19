@@ -75,6 +75,9 @@ var SourceDataDashboard = React.createClass({
       loading : false
     };
   },
+	renderLoading() {
+		return <div className='admin-loading'>Loading...</div>
+	},
 
   render : function () {
     var loading = this.props.loading;
@@ -86,9 +89,10 @@ var SourceDataDashboard = React.createClass({
 
     const fields = {
     	map_link: {
-    		title: 'Master Object Name',
+    		title: 'map_link',
     		key: 'id',
     		renderer: (id) => {
+						// console.log(campaign)
     				return id
     			}
     	},
@@ -96,7 +100,7 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_id = 66
 
-		const fieldNamesOnTable = ['id','campaign'];
+		const fieldNamesOnTable = ['id','campaign','map_link'];
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
