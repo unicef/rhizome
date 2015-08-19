@@ -45,17 +45,23 @@ class MasterRefresh(object):
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id
-            ,process_status = 'to_process'
+            ,process_status = 'TO_PROCESS'
         ).values_list('id',flat=True)
 
         source_object_map_ids = self.upsert_source_object_map\
             (new_source_submission_ids)
 
+        print 'THESE ARE MAPPIGNS'
+        print  source_object_map_ids
+
         doc_datapoint_ids = self.process_doc_datapoints\
             (new_source_submission_ids)
 
-        SourceSubmission.objects.filter(id__in=new_source_submission_ids)\
-            .update(process_status = 'processed')
+        print 'THESE ARE DOC_DATAPOTINDS'
+        print doc_datapoint_ids
+
+        # SourceSubmission.objects.filter(id__in=new_source_submission_ids)\
+        #     .update(process_status = 'PROCESSED')
 
         datapoint_ids = []
         computed_datapoint_ids = []
@@ -141,6 +147,9 @@ class MasterRefresh(object):
 
         dp_batch = []
 
+        print region_code
+        print campaign_code
+
         try:
             region_id = self.source_map_dict[('region',region_code)]
             if region_id == -1:
@@ -156,6 +165,11 @@ class MasterRefresh(object):
             return
 
         for k,v in submission_data.iteritems():
+
+            print '-====-'
+            print k
+            print v
+            print '-====-'
 
             dp_obj = self.process_submission_instance(region_id,campaign_id,k,v,ss_row['id'])
 

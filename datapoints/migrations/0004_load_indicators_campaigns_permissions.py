@@ -713,7 +713,16 @@ class Migration(migrations.Migration):
         INNER JOIN campaign_type ct
         ON ct.name = 'National Immunization Days (NID)';
 
-	DROP TABLE IF EXISTS _tmp_indicator_map;
+        INSERT INTO source_object_map
+        (source_object_code, master_object_id, mapped_by_id, content_type)
+
+        SELECT c.slug, c.id, u.id, 'campaign'
+        FROM campaign c
+        INNER JOIN auth_user u
+        ON u.username = 'demo_user';
+
+
+    DROP TABLE IF EXISTS _tmp_indicator_map;
 	CREATE TABLE _tmp_indicator_map AS
 	SELECT 'Number of Unicef polio positions in their posts in PBR-approved structures' as indicator_name,32 as indicator_id UNION ALL
 	SELECT 'Target number of Unicef polio positions in PBR-approved structures',31 UNION ALL
@@ -1139,12 +1148,13 @@ class Migration(migrations.Migration):
 	SELECT 'Number of target children',55 ;
 
 
-	INSERT INTO source_object_map
-	(source_object_code, master_object_id,content_type, mapped_by_id)
-	SELECT indicator_name,tim.indicator_id,'indicator',u.id
-	FROM _tmp_indicator_map tim
-	INNER JOIN auth_user u
-	ON u.username = 'demo_user';
+    INSERT INTO source_object_map
+    (content_type, master_object_id, source_object_code, mapped_by_id)
+
+    SELECT 'indicator',indicator_id,indicator_name, 1
+    FROM _tmp_indicator_map im
+    INNER JOIN auth_user au
+    ON au.username = 'demo_user';
 
     INSERT INTO indicator_tag
         (id, tag_name)
