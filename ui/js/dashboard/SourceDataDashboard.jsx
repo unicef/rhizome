@@ -36,21 +36,16 @@ var SourceDataDashboard = React.createClass({
   },
 
 	componentWillMount : function () {
-		console.log('mounting')
 		page('/datapoints/:dashboard/:region/:year/:month', this._show);
 		page('/datapoints/:dashboard', this._showDefault);
 		AppActions.init();
 	},
 
 	componentWillUpdate : function (nextProps, nextState) {
-    console.log('hi this is john logging')
-		console.log(nextProps)
-		console.log(nextState)
 		if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
       return;
     }
 
-		nextState.doc_id = 70
     var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
     var title = [
       nextState.dashboard.title,
@@ -67,25 +62,14 @@ var SourceDataDashboard = React.createClass({
     var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
     var region   = _.get(params, 'region', this.props.region.name);
     var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-
-		var doc_id = params.doc_id
+		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
 
     page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
   },
 	_showDefault : function (ctx) {
-		var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-		DashboardActions.setDashboard({ dashboard });
 	},
 
 	_show : function (ctx) {
-		var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-		DashboardActions.setDashboard({
-			dashboard,
-			region : ctx.params.region,
-			date   : [ctx.params.year, ctx.params.month].join('-')
-		});
 	},
 
 
@@ -105,7 +89,6 @@ var SourceDataDashboard = React.createClass({
 		console.log('loading_new_document_id')
 		this._navigate({ doc_id : doc_id });
 		this.state.doc_id = doc_id
-    // this.setState({ doc_id : doc_id })
 		return {}
 	},
 
@@ -122,7 +105,9 @@ var SourceDataDashboard = React.createClass({
   render : function () {
     var loading = this.props.loading;
 
-		console.log(this.props)
+		console.log('--- doc id ---')
+		console.log(this.state.doc_id)
+		console.log(this.props.doc_id)
 
     const fields = {
     	map_link: {
@@ -135,10 +120,10 @@ var SourceDataDashboard = React.createClass({
     };
 
 		try {
-			var doc_id = this.props.doc_id
+			var doc_id = this.state.doc_id
 		}
 		catch(err) {
-			var doc_id = 5
+			var doc_id = -1
 		}
 
 		const fieldNamesOnTable = ['id','slug'];
@@ -160,7 +145,8 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
-		var docName = this.state.doc_id
+
+		var docName = doc_id
 
 		var review_header =
 		<div className="admin-container">
