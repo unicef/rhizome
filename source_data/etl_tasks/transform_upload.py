@@ -38,7 +38,7 @@ class DocTransform(object):
 
         return file_stream
 
-    def dp_df_to_source_datapoints(self):
+    def process_file(self):
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.prep_file(full_file_path)
