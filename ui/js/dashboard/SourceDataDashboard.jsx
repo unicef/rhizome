@@ -60,6 +60,7 @@ var SourceDataDashboard = React.createClass({
     var region   = _.get(params, 'region', this.props.region.name);
     var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+		var review_page = _.get(params, 'review_page', this.state.review_page);
 
     page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
   },
@@ -91,6 +92,7 @@ var SourceDataDashboard = React.createClass({
 
 	_setDocTask : function (doc_task) {
 		this._navigate({ doc_slug : doc_task });
+		this.state.review_tab = review_tab
 	},
 
   getDefaultProps : function () {
@@ -137,7 +139,15 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
-		var doc_pages = [{'a':'a','b':'b'}]
+		var doc_pages = MenuItem.fromArray(
+			_.map([10,22,13,34,5,9], d => {
+				return {
+					title : d,
+					value : d
+				};
+			}),
+			this._setDocId);
+
 		var doc_page = 'validddatee'
 
 		var docName = doc_id
