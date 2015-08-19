@@ -124,14 +124,15 @@ var SourceDataDashboard = React.createClass({
 			var doc_id = -1
 		}
 
-		const fieldNamesOnTable = ['id','slug'];
+		const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value'];
 
     var data_fn = function(){
-				return api.admin.campaigns()
+
+			return api.admin.docResults({document:doc_id})
     };
 
 		var meta_fn = function(){
-				return api.admin.campaignsMetadata()
+				return api.admin.DataPointMetaData()
 		};
 
 		var docItems = MenuItem.fromArray(
@@ -186,13 +187,11 @@ var SourceDataDashboard = React.createClass({
 	  			fields={fields}
 	  			>
 	  				<Paginator />
-	  				<table>
 						<SimpleDataTable>
 	  					{fieldNamesOnTable.map(fieldName => {
 	  						return <SimpleDataTableColumn name={fieldName} />
 	  					})}
 	  				</SimpleDataTable>
-						</table>
 	  		</ReviewPage>
     	</div>
 			<div className="medium-3 columns">
