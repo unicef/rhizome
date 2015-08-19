@@ -240,16 +240,14 @@ class v2Request(object):
         (region, campaign, indicator) and add all metadata here.
         '''
 
-        raw_data = DocumentDetail.objects.raw("""
-            SELECT * FROM fn_populate_doc_meta(%s)
-        """,[list_of_object_ids[0]])
+        raw_data = DocumentDetail.objects.filter(id__in= list_of_object_ids)
 
-        to_return = []
-        for row in raw_data:
-            row_dict = dict(row.__dict__)
-            to_return = row_dict['doc_detail_json']
+        # to_return = []
+        # for row in raw_data:
+        #     row_dict = dict(row.__dict__)
+        #     to_return = row_dict['doc_detail_json']
 
-        return None, to_return
+        return None, raw_data
 
 
 class v2PostRequest(v2Request):
