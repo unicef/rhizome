@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
     migrations.RunSQL("""
 
-INSERT INTO source_data_document
+    INSERT INTO source_data_document
             (created_by_id,guid,doc_text,is_processed,created_at)
             SELECT id, 'init_ng_regions','init_ng_regions', CAST(1 AS BOOLEAN),NOW()
             FROM auth_user
