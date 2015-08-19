@@ -15,6 +15,7 @@ var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 var NavigationStore     = require('stores/NavigationStore');
 
+
 var {
 	Datascope, LocalDatascope,
 	SimpleDataTable, SimpleDataTableColumn,
@@ -27,44 +28,9 @@ var SourceDataDashboard = React.createClass({
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
-    doc_id    : React.PropTypes.number.isRequired,
 
     loading   : React.PropTypes.bool
   },
-
-	componentWillMount : function () {
-		page('/datapoints/:dashboard/:region/:year/:month', this._show);
-		page('/datapoints/:dashboard', this._showDefault);
-		AppActions.init();
-	},
-
-	componentWillUpdate : function (nextProps, nextState) {
-
-    var campaign = moment(nextProps.campaign.start_date).format('MM/YYYY')
-    var title = [
-      nextProps.dashboard.title,
-      [nextProps.region.name, campaign].join(' '),
-      'RhizomeDB'
-    ].join(' - ') + nextState.doc_id;
-    if (document.title !== title) {
-      document.title = title;
-    }
-  },
-	// console.log(this.parent)
-  _navigate : function (params) {
-    var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-    var region   = _.get(params, 'region', this.props.region.name);
-    var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
-		var doc_tool = _.get(params, 'doc_tool', this.state.doc_tool);
-
-    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id + '/' + doc_tool);
-  },
-	_showDefault : function (ctx) {
-	},
-
-	_show : function (ctx) {
-	},
 
 
 	getInitialState : function () {
@@ -74,25 +40,35 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-			doc_id			 : 66,
-			doc_tool 		 : 'overview'
     };
   },
 
+	_navigate : function (params) {
+	    var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+	    var region   = _.get(params, 'region', this.props.region.name);
+	    var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+			var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+			var doc_tool = _.get(params, 'doc_tool', this.state.doc_tool);
+
+	    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id + '/' + doc_tool);
+	  },
+		_showDefault : function (ctx) {
+		},
+
+		_show : function (ctx) {
+		},
 
 	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
 		this._navigate({ doc_id : doc_id });
 		this.state.doc_id = doc_id
-		this.props.data = this.data_fn()
-		return {}
-
+		// this.props.data = this.data_fn()
 	},
 
 	_setDocTool : function (doc_tool) {
 		this._navigate({ doc_tool : doc_tool });
 		this.state.doc_tool = doc_tool
-		return {loading : true}
+		// return {loading : true}
 	},
 
   getDefaultProps : function () {
@@ -102,7 +78,7 @@ var SourceDataDashboard = React.createClass({
   },
 
 	data_fn : function(){
-		return api.admin.docValidate({document:this.state.doc_id})
+		return api.admin.docValidate({document:66})
 	},
 
 	meta_fn : function(){
@@ -116,15 +92,14 @@ var SourceDataDashboard = React.createClass({
     		title: 'Master Object Name',
     		key: 'id',
     		renderer: (id) => {
-    				return MapButtonFunction(id)
+    				return id
     			}
     	},
     };
 
-		var doc_id = this.state.doc_id
+		var doc_id = 66
 
 		const fieldNamesOnTable = ['id','document_id'];
-		var doc_tool = this.state.doc_tool;
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -145,9 +120,10 @@ var SourceDataDashboard = React.createClass({
 			this._setDocTool);
 
 		var docName = doc_id
-
+		var doc_tool = 'some tool'
 		var review_header =
 		<div className="admin-container">
+		//
       <h1 className="admin-header"></h1>
 			<div className="row">
 				document_id: <TitleMenu text={docName}>
@@ -167,21 +143,34 @@ var SourceDataDashboard = React.createClass({
 				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 			</div> : null;
 
+		function _regionRow(region, i) {
+
+		  return (
+		    <tr className={cls} key={region}>
+		      <td>{region.slug}</td>
+		    </tr>
+		  );
+		}
+
+		// console.log(this.props.data)
+
+	 var data = _(['1','v','sss']).map(this._regionRow).value();
+
+	 console.log(data)
+
 		return (<div className="row">
 					<div className="medium-9 columns">
-			    <ReviewPage
-	  			title="ToMap"
-	  			getMetadata={this.meta_fn}
-	  			getData={this.data_fn}
-	  			fields={fields}
-	  			>
-	  				<Paginator />
-						<SimpleDataTable>
-	  					{fieldNamesOnTable.map(fieldName => {
-	  						return <SimpleDataTableColumn name={fieldName} />
-	  					})}
-	  				</SimpleDataTable>
-	  		</ReviewPage>
+					<table>
+						<tbody>
+						{data}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td className="more" colSpan="6">
+								</td>
+							</tr>
+						</tfoot>
+					</table>
     	</div>
 			<div className="medium-3 columns">
 			{review_header}
@@ -191,9 +180,5 @@ var SourceDataDashboard = React.createClass({
 		</div>);;
   }
 });
-
-
-
-
 
 module.exports = SourceDataDashboard;

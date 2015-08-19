@@ -46,12 +46,11 @@ var Dashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-      doc_id       : null,
     };
   },
 
   componentWillMount : function () {
-    page('/datapoints/:dashboard/:region/:year/:month/', this._show);
+    page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
   },
@@ -92,7 +91,6 @@ var Dashboard = React.createClass({
     var dashboardDef  = this.state.dashboard;
     var loading       = this.state.loading;
     var region        = this.state.region;
-    var doc_id        = this.state.doc_id;
     var dashboardName = _.get(dashboardDef, 'title', '');
 
     var indicators = IndicatorStore.getById.apply(
@@ -120,8 +118,7 @@ var Dashboard = React.createClass({
       data       : data,
       indicators : indicators,
       loading    : loading,
-      region     : region,
-      doc_id     : doc_id
+      region     : region
     };
 
     var dashboard = React.createElement(
@@ -191,6 +188,7 @@ var Dashboard = React.createClass({
             </div>
           </div>
         </form>
+
         {dashboard}
       </div>
     );
@@ -305,18 +303,12 @@ var Dashboard = React.createClass({
   },
 
   _show : function (ctx) {
-
-    var ctx_hash = ctx.hash
-    var ctx_hash_list = ctx_hash.split('/')
-    var doc_id = ctx_hash_list[0]
-
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
       dashboard,
       region : ctx.params.region,
-      date   : [ctx.params.year, ctx.params.month].join('-'),
-      doc_id : doc_id
+      date   : [ctx.params.year, ctx.params.month].join('-')
     });
   }
 });
