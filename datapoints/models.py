@@ -449,17 +449,6 @@ class AggDataPoint(models.Model):
         unique_together = ('region_id','campaign_id','indicator_id')
 
 
-class ExpectedData(models.Model):
-
-    region = models.ForeignKey(Region,related_name='ex_child_region')
-    campaign = models.ForeignKey(Campaign)
-    parent_region = models.ForeignKey(Region,related_name='ex_parent_region')
-
-    class Meta:
-        db_table = 'expected_data'
-        unique_together = ('region','campaign')
-
-
 class ReconData(models.Model):
 
     region = models.ForeignKey(Region)

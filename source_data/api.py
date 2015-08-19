@@ -118,13 +118,10 @@ class EtlTask(object):
 
         self.function_mappings = {
             'test_api' : self.test_api,
-            'odk_refresh_master' : self.odk_refresh_master,
             'start_odk_jar' :self.start_odk_jar,
             'finish_odk_jar' :self.finish_odk_jar,
-            'ingest_odk_regions' :self.ingest_odk_regions,
             'refresh_cache': self.refresh_cache,
             'refresh_metadata': self.refresh_metadata_wrapper,
-            'odk_transform': self.odk_transform,
             'get_odk_forms_to_process': self.get_odk_forms_to_process,
             }
 
@@ -226,78 +223,6 @@ class EtlTask(object):
 
         return None, data
 
-    def odk_refresh_master(self):
-        '''
-        A refresh master method that deals specifically with source_datpaoints
-        from odk.  First we find the source_datapoint_ids that we need from the
-        source ( odk ) and then we pass those IDs as well as the user to
-        the MasterRefresh cache.  The system knows to only then refresh
-        datapoints that have been newly created from ODK.
-        '''
-
-        try:
-            source_datapoints = SourceDataPoint.objects.filter(
-                status_id = ProcessStatus.objects.get(status_text='TO_PROCESS'))
-
-            m = MasterRefresh(source_datapoints,self.user_id)
-            m.main()
-
-            dp_count = len(m.new_datapoints)
-            success_msg = 'SUCSSFULLY CREATED: ' + str(dp_count) +\
-                ' NEW DATPOINTS'
-
-        except Exception:
-            err = format_exc()
-            return err, None
-
-        return None, success_msg
-
-
-    def ingest_odk_regions(self):
-        '''
-        From the VCM settlements CSV ingest to new reigions.
-        If the document does not exists, create it, and then ingest the source
-        regions with the cooresponding lon/lat and region code.
-        '''
-
-        region_document, created = Document.objects.get_or_create(
-            docfile = '',
-            doc_text = 'VCM_Sett_Coordinates_1_2.csv',
-            defaults = {
-                'created_by_id':1,
-            }
-        )
-
-        region_document_id = region_document.id
-
-        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
-            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
-        except IOError:
-            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            region_df = read_csv(csv_root + 'VCM_Sett_Coordinates_1_2.csv')
-
-        list_of_dicts = region_df.transpose().to_dict()
-
-        for ix, d in list_of_dicts.iteritems():
-             lower_dict = {}
-
-             for k,v in d.iteritems():
-                 lower_dict[k.lower().replace('-','_')] = v
-                 lower_dict['process_status_id'] = 1
-             try:
-                 VCMSettlement.objects.create(**lower_dict)
-             except IntegrityError as err:
-                 pass
-
-        ## Merge Work Table Data into source_region / region / region_map ##
-
-        sr = SourceRegion.objects.raw('''SELECT * FROM fn_sync_odk_regions(%s)
-            ''',[region_document_id])
-
-        data = [s.id for s in sr]
-
-        return None, data
 
     def get_odk_forms_to_process(self):
         '''
@@ -306,30 +231,11 @@ class EtlTask(object):
         odk_form table.  Having a row in here causes the system to go out and
         get data for the forms specified and transform it to source datapoints
         and finally datapoints.
+
+        TO DO - pull this from document metadata.
         '''
 
         odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
         cleaned_forms = [str(x) for x in odk_form_list]
 
         return None, cleaned_forms
-
-    def odk_transform(self):
-        '''
-        Taking an ODK form in which the columns are indicators, and there is a
-        fixd column for campaign ( or at least campaign date ) and region,
-        we pivot and ingest this data using the ODKDataPointTransform() class.
-        '''
-
-        try: ## somethign is funky here wiht the BASE_DIR setting on prod.
-            csv_root = settings.BASE_DIR + '/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
-        except IOError:
-            csv_root = settings.BASE_DIR + '/polio/source_data/ODK/odk_source/csv_exports/'
-            odk_data_df = read_csv(csv_root + self.form_name + '.csv')
-
-        transform_object = ODKDataPointTransform('someguid',odk_data_df,\
-            self.form_name)
-
-        results = transform_object.odk_form_data_to_datapoints()
-
-        return None, results
