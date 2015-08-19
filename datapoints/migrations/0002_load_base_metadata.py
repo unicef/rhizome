@@ -2,6 +2,11 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+from django.contrib.auth.models import User
+
+def forwards_func(apps, schema_editor):
+    User.objects.create_superuser\
+        ('demo_user', email='demo@user.com', password='demo_password')
 
 
 class Migration(migrations.Migration):
@@ -11,13 +16,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+
+     migrations.RunPython(
+            forwards_func,
+        ),
+
     migrations.RunSQL("""
-
-
-        INSERT INTO auth_user
-        (first_name, last_name, username,password, is_superuser,is_staff,is_active,date_joined,last_login,email)
-
-        SELECT 'demo','user','demo_user','demo_password','t','t','t',now(),now(),'demo@user.com';
 
         -- INSERT INTO OFFICE --
         INSERT INTO office (name,created_at)
