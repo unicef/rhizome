@@ -3164,6 +3164,8 @@ class Migration(migrations.Migration):
 	INSERT INTO source_object_map
 	(source_object_code,master_object_id,content_type,mapped_by_id)
 
-	SELECT region_code, id, 'region' ,1 FROM region;
+	SELECT region_code, r.id, 'region' ,x.id FROM region r 
+    INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) x
+    ON 1=1;
     """)
     ]

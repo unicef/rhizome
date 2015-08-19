@@ -14,6 +14,11 @@ class Migration(migrations.Migration):
     migrations.RunSQL("""
 
 
+        INSERT INTO auth_user
+        (first_name, last_name, username,password, is_superuser,is_staff,is_active,date_joined,last_login,email)
+
+        SELECT 'demo','user','demo_user','demo_password','t','t','t',now(),now(),'demo@user.com';
+
         -- INSERT INTO OFFICE --
         INSERT INTO office (name,created_at)
         SELECT 'Nigeria',NOW() UNION ALL
