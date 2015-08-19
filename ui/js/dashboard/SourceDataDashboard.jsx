@@ -22,9 +22,6 @@ var {
 	FilterPanel, FilterDateRange
 	} = require('react-datascope');
 
-// var Router = require('react-router');
-// var {Route, DefaultRoute, RouteHandler,NotFoundRoute, NotFound, Redirect, Link} = Router;
-
 var SourceDataDashboard = React.createClass({
   propTypes : {
     dashboard : React.PropTypes.object.isRequired,
@@ -105,10 +102,6 @@ var SourceDataDashboard = React.createClass({
   render : function () {
     var loading = this.props.loading;
 
-		console.log('--- doc id ---')
-		console.log(this.state.doc_id)
-		console.log(this.props.doc_id)
-
     const fields = {
     	map_link: {
     		title: 'Master Object Name',
@@ -145,22 +138,26 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
+		var doc_pages = [{'a':'a','b':'b'}]
+		var doc_page = 'validddatee'
+
 
 		var docName = doc_id
 
 		var review_header =
 		<div className="admin-container">
       <h1 className="admin-header"></h1>
-			<TitleMenu text={docName}>
-				{docItems}
+			<div className="row">
+				document_id: <TitleMenu text={docName}>
+					{docItems}
+				</TitleMenu>
+			</div>
+			<div className="row">
+			Validator: <TitleMenu text={doc_page}>
+				{doc_pages}
 			</TitleMenu>
-			<ul className="admin-nav">
-			<li><a href="#overview">Overview</a></li>
-			<li><a href="#mapping">Mapping</a></li>
-			<li><a href="#validate">Validate</a></li>
-			<li><a href="#results">Results</a></li>
-			</ul>
-    </div>;
+			</div>
+	  </div>;
 
 		var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
 		var refreshMasterButton = refreshMasterUrl ?
@@ -170,7 +167,7 @@ var SourceDataDashboard = React.createClass({
 
 		return (<div>
     		{review_header}
-				<h2> Document ID :  </h2>
+				<h2> Document ID : {doc_id} </h2>
 				{refreshMasterButton}
 		    <ReviewPage
   			title="ToMap"
