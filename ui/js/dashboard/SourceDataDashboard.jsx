@@ -39,8 +39,18 @@ var SourceDataDashboard = React.createClass({
 	},
 
 	componentWillUpdate : function (nextProps, nextState) {
-		if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
-      return;
+
+		console.log('trying to log')
+
+		console.log(nextState)
+
+		var doc_id = nextState.doc_id
+		var doc_tool = nextState.doc_tool
+
+		if (!(nextState.campaign && nextState.region && nextState.dashboard && nextState.doc_id && nextState.doc_tool)) {
+
+			console.log('helllllo')
+		  return;
     }
 
     var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
@@ -49,6 +59,8 @@ var SourceDataDashboard = React.createClass({
       [nextState.region.name, campaign].join(' '),
       'RhizomeDB'
     ].join(' - ');
+
+		console.log(title)
 
     if (document.title !== title) {
       document.title = title;
@@ -61,9 +73,6 @@ var SourceDataDashboard = React.createClass({
     var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
 		var doc_tool = _.get(params, 'doc_tool', this.state.doc_tool);
-
-		console.log(this.state.doc_id)
-		console.log(this.state.doc_tool)
 
     page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id + '/' + doc_tool);
   },
@@ -91,12 +100,13 @@ var SourceDataDashboard = React.createClass({
 		console.log('loading_new_document_id')
 		this._navigate({ doc_id : doc_id });
 		this.state.doc_id = doc_id
-		return {}
+		return {loading : true}
 	},
 
 	_setDocTool : function (doc_tool) {
 		this._navigate({ doc_tool : doc_tool });
 		this.state.doc_tool = doc_tool
+		return {loading : true}
 	},
 
   getDefaultProps : function () {
@@ -124,15 +134,22 @@ var SourceDataDashboard = React.createClass({
 			var doc_id = -1
 		}
 
-		const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value'];
+		const fieldNamesOnTable = ['id'];
+		var doc_tool = this.state.doc_tool;
 
     var data_fn = function(){
 
-			return api.admin.docResults({document:doc_id})
+			console.log('i am the data function ')
+			console.log(doc_tool)
+
+			if (doc_tool == 'validate'){
+				return api.admin.docValidate({document:doc_id})
+			}
+			return api.admin.docValidate({document:doc_id})
     };
 
 		var meta_fn = function(){
-				return api.admin.DataPointMetaData()
+				return api.admin.docValidateMeta()
 		};
 
 		var docItems = MenuItem.fromArray(
@@ -152,8 +169,6 @@ var SourceDataDashboard = React.createClass({
 				};
 			}),
 			this._setDocTool);
-
-		var doc_tool = this.state.doc_tool
 
 		var docName = doc_id
 
