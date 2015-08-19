@@ -139,12 +139,13 @@ var SourceDataDashboard = React.createClass({
 			</div> : null;
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
-		var schema = parseSchema(api.admin.docValidateMeta())
+		var schema = parseSchema(api.admin.indicatorsMetadata())
 
 		var isLoaded = this.props.loading && schema;
 		if(!isLoaded) return this.renderLoading();
 
-		var data = this.props.data;
+		// var data = this.props.data;
+		var data = this.props.indicators;
 
 		// data table //
 		var review_table = <LocalDatascope data={data} schema={schema} fields={fields} pageSize={50}>
@@ -170,7 +171,6 @@ var SourceDataDashboard = React.createClass({
 		</div>);;
   },
 	renderLoading() {
-		console.log(' ... LOADING ... ')
 		return <div className='admin-loading'>Loading...</div>
 	},
 });

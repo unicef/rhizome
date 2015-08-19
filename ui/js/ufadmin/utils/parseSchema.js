@@ -1,13 +1,20 @@
 var _ = require('lodash');
 
-module.exports = function parseSchema(response) {
-	// parse our old json-table-esque schema into a legit JSON schema
-	// http://json-schema.org/
+module.exports = function parseSchema(data) {
 
-	console.log('LOGGING PARSE CSCHEMA')
-	console.log(response.objects)
-	//return response.objects;
-	var fields = ['id']
+	console.log('response')
+	console.log(data)
+
+
+	if (data.page_definition){
+		var prepped_data = page_definition
+	}
+	else {
+		var prepped_data = data.objects
+	}
+
+	console.log(prepped_data)
+
 	var schema = {
 		$schema: "http://json-schema.org/draft-04/schema#",
 		title: "table_schema",
@@ -15,7 +22,7 @@ module.exports = function parseSchema(response) {
 		items: {
 			title: "table_row",
 			type: "object",
-			properties: _(fields).map(field => {
+			properties: _(prepped_data.fields).map(field => {
 				return [field.name, _.transform(field, (result, val, key) => {
 					// if(key === 'type' && val === 'datetime') {
 					// 	result.type = 'string';
@@ -31,7 +38,5 @@ module.exports = function parseSchema(response) {
 			}).object().value()
 		}
 	};
-	console.log(schema.items)
-	console.log('schema DATA above')
 	return schema;
 };
