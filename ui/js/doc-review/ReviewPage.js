@@ -51,8 +51,6 @@ var ReviewPage = React.createClass({
 
 		var {data, schema, metadata} = this.state;
 
-		console.log(schema)
-
 		return <div>
 
 			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>

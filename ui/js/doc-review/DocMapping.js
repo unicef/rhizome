@@ -26,33 +26,40 @@ const fields = {
 	},
 };
 
-
 const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
 
 var DocMapping = React.createClass({
+	propTypes : {
+		region 	: React.PropTypes.object.isRequired,
+		doc_id 	: React.PropTypes.number.isRequired,
+		loading : React.PropTypes.bool
+	},
+
+	getDefaultProps : function () {
+		return {
+			loading : false
+		};
+	},
+
 	render() {
-
-		var doc_id = this.props.params.docId
-
-		var datascopeFilters =
-			<div>
-				<SearchBar placeholder="search campaigns"/>
-				<FilterPanel>
-					// <FilterDateRange name="start_date" time={false} />
-					// <FilterDateRange name="end_date" time={false} />
-					</FilterPanel>
-			</div>;
+		var loading = this.props.loading
+		var doc_id = this.props.doc_id
+		var region = this.props.region
 
 		var data_fn = function(){
-			return API.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docMap({},null,{'cache-control':'no-cache'})
+		};
+
+		var meta_fn = function(){
+			return API.admin.docMapMeta()
 		};
 
 		return <ReviewPage
 			title="ToMap"
-			getMetadata={API.admin.docMapMeta}
+			getMetadata={meta_fn}
 			getData={data_fn}
-			datascopeFilters={datascopeFilters}
 			fields={fields}
+			loading={loading}
 			>
 				<Paginator />
 				<SimpleDataTable>

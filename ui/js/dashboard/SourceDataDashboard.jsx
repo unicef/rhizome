@@ -15,6 +15,7 @@ var MenuItem            = require('component/MenuItem.jsx');
 var NavigationStore     = require('stores/NavigationStore');
 
 var ResultsTable = require('doc-review/DocResults.js');
+var MappingTable = require('doc-review/DocMapping.js');
 
 
 var {
@@ -43,19 +44,6 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-	// _setDocId : function (doc_id) {
-	// 	console.log('loading_new_document_id')
-	// 	this.state.doc_id = doc_id
-	// 	this._navigate({ doc_id : doc_id });
-	// 	// this.props.data = this.data_fn()
-	// },
-
-	// _setDocTool : function (doc_tool) {
-	// 	this.state.doc_tool = doc_tool
-	// 	this._navigate({ doc_tool : doc_tool });
-	// 	// return {loading : true}
-	// },
-
   getDefaultProps : function () {
     return {
       loading : false
@@ -64,21 +52,7 @@ var SourceDataDashboard = React.createClass({
 
   render : function () {
     var loading = this.props.loading;
-		var data = this.props.indicators
 		var region = this.props.region
-
-		console.log(loading)
-
-    const fields = {
-    	map_link: {
-    		title: 'map_link',
-    		key: 'id',
-    		renderer: (id) => {
-						// console.log(campaign)
-    				return id
-    			}
-    	},
-    };
 
 		var doc_id = 66
 
@@ -131,14 +105,12 @@ var SourceDataDashboard = React.createClass({
 		var schema = parseSchema(some_schema)
 
 		// data table //
-		var review_table = <ResultsTable
-					data={data}
-					schema={schema}
-					fields={fields}
+		var review_table = <MappingTable
 					region={region}
 					loading={loading}
+					doc_id={doc_id}
 					>
-				</ResultsTable>
+				</MappingTable>
 
 		return (<div className="row">
 					<div className="medium-9 columns">

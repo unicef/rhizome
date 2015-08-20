@@ -51,7 +51,6 @@ var DocResults = React.createClass({
 		return <LocalDatascope
 				data={data}
 				schema={this.props.schema}
-				fields={this.props.fields}
 				pageSize={25}>
 				<Datascope>
 				<Paginator />
