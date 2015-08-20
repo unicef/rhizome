@@ -31,6 +31,8 @@ var SourceDataDashboard = React.createClass({
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
+		doc_id    : React.PropTypes.number.isRequired,
+		doc_tab    : React.PropTypes.string.isRequired,
 
     loading   : React.PropTypes.bool
   },
@@ -42,6 +44,8 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
+      doc_id    	 : -1,
+			doc_tab    	 : 'results',
     };
   },
 
@@ -52,9 +56,11 @@ var SourceDataDashboard = React.createClass({
   },
 
   render : function () {
+		console.log('...rendering... source data dashboard')
     var loading = this.props.loading;
 		var region = this.props.region
-
+		var loading = this.props.loading;
+		var doc_id = this.state.doc_id
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -65,22 +71,17 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
-		var doc_tools = MenuItem.fromArray(
-			_.map(['overview','mapping','validate','results','dashboard'], d => {
-				return {
-					title : d,
-					value : d
-				};
-			}),
-			this._setDocTool);
-
-		var doc_id = -1
-		if (this.state.doc_id){
-			var doc_id = this.state.doc_id
-		}
-
-		var docName = doc_id
-		var doc_tool = 'validate'
+		var doc_tabs = MenuItem.fromArray([{'title':'validate','value':'valiate'}])
+		var doc_tab = this.state.doc_dab
+		// if (this.state.doc_id){
+		// 	var doc_id = this.state.doc_id
+		// 	console.log('this is th doc_id')
+		// 	console.log(doc_id)
+		// }
+		// else{
+		// 	console.log('doc is negative one')
+		// 	var doc_id = -1
+		// }
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
@@ -91,13 +92,13 @@ var SourceDataDashboard = React.createClass({
 		<div className="admin-container">
 			<h1 className="admin-header"></h1>
 			<div className="row">
-				document_id: <TitleMenu text={docName}>
+				document_id: <TitleMenu text={doc_id}>
 					{docItems}
 				</TitleMenu>
 			</div>
 			<div className="row">
-			<TitleMenu text={doc_tool}>
-				{doc_tools}
+			<TitleMenu text={'validate'}>
+				{doc_tabs}
 			</TitleMenu>
 			</div>
 		</div>;
@@ -133,10 +134,21 @@ var SourceDataDashboard = React.createClass({
 
 	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
+		console.log(doc_id)
+		this._navigate({ doc_id : doc_id });
+		this.state.doc_id = doc_id
+		this.forceUpdate();
+	},
+
+_setDocTab : function (doc_tab) {
+		console.log('loading_new_document_tab')
+		// console.log(doc_tab)
+		// this._navigate({ doc_tab : doc_tab });
+		// this.state.doc_tab = doc_tab
+		// this.forceUpdate();
 		// this._navigate({ doc_id : doc_id });
 		// this.state.doc_id = doc_id
-		this.forceUpdate();
-		return {}
+		// this.forceUpdate();
 	},
 
 

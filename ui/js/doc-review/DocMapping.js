@@ -41,19 +41,19 @@ var DocMapping = React.createClass({
 		};
 	},
 
+	dataFn : function(){
+		console.log('calling the database with props.docId')
+		console.log(this.props.doc_id)
+		return API.admin.docMap({},null,{'cache-control':'no-cache'})
+	},
+
 	render() {
 
 		var loading = this.props.loading
 		var doc_id = this.props.doc_id
 		var region = this.props.region
 
-		if(loading && this.state.doc_id != doc_id) return this.renderLoading();
-
-		var data_fn = function(){
-			console.log('calling the database')
-			console.log(doc_id)
-			return API.admin.docMap({},null,{'cache-control':'no-cache'})
-		};
+		if(loading && !(doc_id)) return this.renderLoading();
 
 		var meta_fn = function(){
 			return API.admin.docMapMeta()
@@ -62,7 +62,7 @@ var DocMapping = React.createClass({
 		return <ReviewPage
 			title="ToMap"
 			getMetadata={meta_fn}
-			getData={data_fn}
+			getData={this.dataFn}
 			fields={fields}
 			loading={loading}
 			doc_id={doc_id}
