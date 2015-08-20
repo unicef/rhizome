@@ -106,12 +106,14 @@ var SourceDataDashboard = React.createClass({
 
 		const fieldNamesOnTable = ['id']//,'content_type','source_object_code','master_object_id'];
 
+		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.doc_id;
 		// data table //
 		var review_table = <ReviewPage
 					title='sample title'
 					getMetadata={api.admin.docMapMeta}
 					getData={api.admin.docMap}
 					region={region}
+					key={table_key}
 					>
 					<Paginator />
 					<SimpleDataTable>
@@ -120,7 +122,7 @@ var SourceDataDashboard = React.createClass({
 						})}
 					</SimpleDataTable>
 			</ReviewPage>
-		
+
 		var review_breakdown = <DocOverview
 			title={'some Sample Titl'}
 			loading={loading}

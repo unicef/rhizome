@@ -58,30 +58,17 @@ var ReviewPage = React.createClass({
 		},
 	render() {
 
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && (!this.state.loading);
+		var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading);
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata} = this.state;
-		var fields = this.props.fields
-
-		var region_name = _.kebabCase(this.props.region.name);
-
-		console.log('this is data len')
-		console.log(data.length)
+		var {data, schema} = this.state;
 
 		return <div>
-		<div>
-			<h1> make this table below dynamic </h1>
-			<BaseTable key={region_name} data={data} schema={schema} pageSize={25} isLoaded={isLoaded} datascope_data={this.props.children} >
-			</BaseTable>
-		</div>
-		 <div>	<h1>OLD TABLE  </h1>
-        <LocalDatascope key={region_name} data={data} schema={schema} pageSize={25}>
+        <LocalDatascope data={data} schema={schema} pageSize={25}>
 	         <Datascope>
 	           {this.props.children}
 	         </Datascope>
          </LocalDatascope>
-    </div>
 		</div>
 	},
 	renderLoading() {
