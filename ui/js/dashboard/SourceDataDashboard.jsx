@@ -84,7 +84,6 @@ var SourceDataDashboard = React.createClass({
 		var docName = doc_id
 		var doc_tool = 'validate'
 
-
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
 		var schema = parseSchema(some_schema)

@@ -43,11 +43,13 @@ var DocMapping = React.createClass({
 
 	render() {
 		var loading = this.props.loading
-		var doc_id = this.props.doc_id
+		var doc_id = 3//this.props.doc_id
 		var region = this.props.region
 
 		var data_fn = function(){
-			return API.admin.docMap({},null,{'cache-control':'no-cache'})
+			console.log('calling the database')
+			console.log(doc_id)
+			return API.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
 		};
 
 		var meta_fn = function(){
