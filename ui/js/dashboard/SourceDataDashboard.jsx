@@ -43,55 +43,31 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-	_navigate : function (params) {
-	    var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-	    var region   = _.get(params, 'region', this.props.region.name);
-	    var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-			var doc_id = _.get(params, 'doc_id', this.state.doc_id);
-			var doc_tool = _.get(params, 'doc_tool', this.state.doc_tool);
+	// _setDocId : function (doc_id) {
+	// 	console.log('loading_new_document_id')
+	// 	this.state.doc_id = doc_id
+	// 	this._navigate({ doc_id : doc_id });
+	// 	// this.props.data = this.data_fn()
+	// },
 
-	    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id + '/' + doc_tool);
-	  },
-		_showDefault : function (ctx) {
-		},
-
-		_show : function (ctx) {
-		},
-
-	_setDocId : function (doc_id) {
-		console.log('loading_new_document_id')
-		this.state.doc_id = doc_id
-		this._navigate({ doc_id : doc_id });
-		// this.props.data = this.data_fn()
-	},
-
-	_setDocTool : function (doc_tool) {
-		this.state.doc_tool = doc_tool
-		this._navigate({ doc_tool : doc_tool });
-		// return {loading : true}
-	},
+	// _setDocTool : function (doc_tool) {
+	// 	this.state.doc_tool = doc_tool
+	// 	this._navigate({ doc_tool : doc_tool });
+	// 	// return {loading : true}
+	// },
 
   getDefaultProps : function () {
     return {
       loading : false
     };
   },
-	renderLoading() {
-		return <div className='admin-loading'>......Admin Loading.......</div>
-	},
 
   render : function () {
     var loading = this.props.loading;
 		var data = this.props.indicators
+		var region = this.props.region
 
-		console.log('logging inside data')
-		console.log(this.props.data.inside)
-
-		console.log('STATE loading')
-		console.log(this.state)
-		// var isLoaded = this.props.loading;
-		// if(!isLoaded) return this.renderLoading();
-		// var data    = this.props.data.inside;
+		console.log(loading)
 
     const fields = {
     	map_link: {
@@ -154,19 +130,13 @@ var SourceDataDashboard = React.createClass({
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
 		var schema = parseSchema(some_schema)
 
-		var data_fn = function(){
-			return this.props.indicators
-		};
-
-		var meta_fn = function(){
-			return api.admin.indicatorsMetadata
-		};
-
 		// data table //
 		var review_table = <ResultsTable
 					data={data}
 					schema={schema}
 					fields={fields}
+					region={region}
+					loading={loading}
 					>
 				</ResultsTable>
 
@@ -181,9 +151,6 @@ var SourceDataDashboard = React.createClass({
 			</div>
 		</div>);;
   },
-	// renderLoading() {
-	// 	return <div className='admin-loading'>Loading...</div>
-	// },
 });
 
 module.exports = SourceDataDashboard;

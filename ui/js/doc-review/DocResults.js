@@ -28,12 +28,28 @@ const fields = {
 const fieldNamesOnTable = ['id','map_link'];
 
 var DocResults = React.createClass({
+	propTypes : {
+		data    : React.PropTypes.object.isRequired,
+		region 	: React.PropTypes.object.isRequired,
+		loading : React.PropTypes.bool
+	},
+
+	getDefaultProps : function () {
+		return {
+			loading : false
+		};
+	},
+
 	render() {
+		var data    = this.props.data;
+		var region    = this.props.region;
+	  var loading = this.props.loading;
+
+		console.log(region)
 
 		// var doc_id = this.props.params.docId
-
 		return <LocalDatascope
-				data={this.props.data}
+				data={data}
 				schema={this.props.schema}
 				fields={this.props.fields}
 				pageSize={25}>
@@ -46,7 +62,12 @@ var DocResults = React.createClass({
 				</SimpleDataTable>
 				</Datascope>
 			</LocalDatascope>
-	}
+	},
+
+	renderLoading() {
+		return <div className='admin-loading'>......Admin Loading.......</div>
+	},
+
 });
 
 module.exports = DocResults;
