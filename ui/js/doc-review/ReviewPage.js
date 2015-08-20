@@ -20,14 +20,16 @@ var ReviewPage = React.createClass({
 	propTypes: {
 		title: React.PropTypes.string.isRequired,
 		getMetadata: React.PropTypes.func.isRequired,
-		getData: React.PropTypes.func.isRequired
+		getData: React.PropTypes.func.isRequired,
+    loading   : React.PropTypes.bool,
 	},
 	getInitialState: function() {
 		return {
 			data: null,
 			schema: null,
 			query: {},
-			areFiltersVisible: false
+			areFiltersVisible: false,
+			loading   : false
 		}
 	},
 
@@ -46,14 +48,35 @@ var ReviewPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
+
+		// var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
+		// if(!isLoaded) return this.renderLoading();
+
+		if (this.state.loading) return this.renderLoading();
 		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
 		if(!isLoaded) return this.renderLoading();
 
 		var {data, schema, metadata} = this.state;
 
-		return <div>
+		const fields = {
+			map_link: {
+				title: 'Master Object Name',
+				key: 'id',
+				renderer: (id) => {
+						return MapButtonFunction(id)
+					}
+			},
+		};
 
-			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={25}>
+		const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
+
+		console.log('rendering the datascope data, schema and fields..')
+		console.log(data)
+		console.log(schema)
+		console.log(fields)
+
+		return <div>
+			<LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
 				<Datascope>
 					{this.props.children}
 				</Datascope>
@@ -61,7 +84,7 @@ var ReviewPage = React.createClass({
 		</div>
 	},
 	renderLoading() {
-		return <div className='admin-loading'>Loading...</div>
+		return <div className='admin-loading'> .... Review Page Loading .... </div>
 	},
 	renderFilters() {
 		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';

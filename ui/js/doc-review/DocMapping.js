@@ -31,7 +31,10 @@ const fieldNamesOnTable = ['id','content_type','source_object_code','master_obje
 var DocMapping = React.createClass({
 	propTypes : {
 		region 	: React.PropTypes.object.isRequired,
+		campaign 	: React.PropTypes.object.isRequired,
 		doc_id 	: React.PropTypes.number.isRequired,
+		doc_tab 	: React.PropTypes.string.isRequired,
+
 		loading : React.PropTypes.bool
 	},
 
@@ -46,16 +49,25 @@ var DocMapping = React.createClass({
 		var loading = this.props.loading
 		var doc_id = this.props.doc_id
 		var region = this.props.region
+		var campaign = this.props.campaign
 
 		if(loading && !(doc_id)) return this.renderLoading();
+
+		var parseSchema = require('../ufadmin/utils/parseSchema');
+		var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
+		var schema = parseSchema(some_schema)
+
 
 		return <ReviewPage
 			title="ToMap"
 			getMetadata={api.admin.docMapMeta}
 			getData={api.admin.docMap}
+			schema={schema}
 			fields={fields}
 			loading={loading}
 			doc_id={doc_id}
+			region={region}
+			campaign={campaign}
 			>
 				<Paginator />
 				<SimpleDataTable>

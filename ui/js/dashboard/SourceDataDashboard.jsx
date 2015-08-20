@@ -12,8 +12,7 @@ var Breakdown  = require('dashboard/nco/Breakdown.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var NavigationStore     = require('stores/NavigationStore');
 
-var ResultsTable = require('doc-review/DocResults.js');
-var DocTable = require('doc-review/DocMapping.js');
+var ReviewPage = require('doc-review/ReviewPage.js');
 
 var DocOverview = require('doc-review/DocOverview.js');
 var TitleMenu  = require('component/TitleMenu.jsx');
@@ -59,9 +58,11 @@ var SourceDataDashboard = React.createClass({
   render : function () {
 		console.log('...rendering... source data dashboard')
     var loading = this.props.loading;
-		var region = this.props.region
+		var campaign = this.props.campaign;
+		var region = this.props.region;
 		var loading = this.props.loading;
-		var doc_id = this.state.doc_id
+		var doc_id = this.state.doc_id;
+		var doc_tab = this.props.doc_tab
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -83,10 +84,6 @@ var SourceDataDashboard = React.createClass({
 
 		var doc_tab = this.state.doc_dab
 
-		var parseSchema = require('../ufadmin/utils/parseSchema');
-	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
-		var schema = parseSchema(some_schema)
-
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
 		<div className="admin-container">
@@ -103,17 +100,38 @@ var SourceDataDashboard = React.createClass({
 			</div>
 		</div>;
 
+		const fields = {
+			map_link: {
+				title: 'Master Object Name',
+				key: 'id',
+				renderer: (id) => {
+						return MapButtonFunction(id)
+					}
+			},
+		};
+
+		const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
+
 		// data table //
-		var review_table = <DocTable
-					region={region}
-					loading={loading}
-					doc_id={doc_id}
+		var review_table = <ReviewPage
+					title='sample title'
+					getMetadata={api.admin.docMapMeta}
+					getData={api.admin.docMap}
 					>
-				</DocTable>
+					<Paginator />
+					<SimpleDataTable>
+						{fieldNamesOnTable.map(fieldName => {
+							return <SimpleDataTableColumn name={fieldName} />
+						})}
+					</SimpleDataTable>
+			</ReviewPage>
+
 
 		var review_breakdown = <DocOverview
-			doc_id={doc_id}
+			title={'some Sample Titl'}
 			loading={loading}
+			getMetadata={api.admin.docMapMeta}
+			getData={api.admin.docMap}
 			>
 		</DocOverview>
 
@@ -123,7 +141,7 @@ var SourceDataDashboard = React.createClass({
 					<div className="row">
 					<div className="medium-9 columns">
 					<h2 style={{ textAlign: 'right' }} className="ufadmin-page-heading">{tab_title}</h2>
-						{review_table}
+					{review_table}
 					</div>
 					<div className="medium-3 columns">
 						{review_nav}
