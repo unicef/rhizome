@@ -22,7 +22,6 @@ var ReviewTable = React.createClass({
 		getMetadata: React.PropTypes.func.isRequired,
 		getData: React.PropTypes.func.isRequired,
     loading   : React.PropTypes.bool.isRequired,
-		fields 		: React.PropTypes.object.isRequired,
 		region 		: React.PropTypes.object.isRequired,
 	},
 	getInitialState: function() {
@@ -48,9 +47,7 @@ var ReviewTable = React.createClass({
 
 	componentWillUpdate : function (nextProps, nextState) {
 			if (nextProps.region != this.props.region) {
-				console.log('updating!')
 				return;
-			console.log('not updating')
 			}
 		},
 

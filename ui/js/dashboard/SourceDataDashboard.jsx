@@ -25,8 +25,8 @@ var SourceDataDashboard = React.createClass({
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
-		doc_id    : React.PropTypes.number.isRequired,
-		doc_tab    : React.PropTypes.string.isRequired,
+		doc_id    : React.PropTypes.number,
+		doc_tab    : React.PropTypes.string,
 
     loading   : React.PropTypes.bool
   },
@@ -94,41 +94,41 @@ var SourceDataDashboard = React.createClass({
 			</div>
 		</div>;
 
-		const fields = {
-			map_link: {
-				title: 'Master Object Name',
-				key: 'id',
-				renderer: (id) => {
-						return MapButtonFunction(id)
-					}
-			},
-		};
+		const table_definition = {
+			'mapping':{
+				  'meta_fn' : api.admin.docMapMeta,
+					'data_fn' : api.admin.docMap,
+					'fields' : ['id','content_type','source_object_code','master_object_id']
+				},
+			'validate':{'fields' : ['id','document_id','region','campaign','indicator','value','validate']},
+			'results':{'fields' : ['id','document_id','region','campaign','indicator','value']},
+			'doc_index':{'fields' : ['id','docfile','uploaded_by','created_at']},
+		}
 
-
-		const fieldNamesOnTable = {'mapping':['id','content_type','source_object_code','master_object_id']}//];
-
-		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.doc_id;
+		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.doc_id + doc_id;
 		// data table //
 		var review_table = <ReviewTable
 					title='sample title'
-					getMetadata={api.admin.docMapMeta}
-					getData={api.admin.docMap}
+					getMetadata={table_definition[doc_tab]['meta_fn']}
+					getData={table_definition[doc_tab]['data_fn']}
 					region={region}
 					key={table_key}
+					loading={loading}
 					>
 					<Paginator />
 					<SimpleDataTable>
-						{fieldNamesOnTable[doc_tab].map(fieldName => {
+						{table_definition[doc_tab]['fields'].map(fieldName => {
 							return <SimpleDataTableColumn name={fieldName} />
 						})}
 					</SimpleDataTable>
 			</ReviewTable>
 
 		var review_breakdown = <DocOverview
+			key={table_key + 'breakdown'}
 			loading={loading}
 			doc_id={doc_id}
 			>
-		</DocOverview>
+			</DocOverview>
 
 		var tab_title = 'Mapping For document_id: ' + doc_id
 
