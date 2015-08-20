@@ -47,16 +47,12 @@ var DocMapping = React.createClass({
 		var doc_id = this.props.doc_id
 		var region = this.props.region
 
-		console.log('==')
-		console.log(this.props)
-		console.log(this.state)
-
-		// if(loading) return this.renderLoading();
+		if(loading && this.state.doc_id != doc_id) return this.renderLoading();
 
 		var data_fn = function(){
 			console.log('calling the database')
 			console.log(doc_id)
-			return API.admin.docMap({document:doc_id},null,{'cache-control':'no-cache'})
+			return API.admin.docMap({},null,{'cache-control':'no-cache'})
 		};
 
 		var meta_fn = function(){
@@ -80,7 +76,7 @@ var DocMapping = React.createClass({
 		</ReviewPage>
 	},
 	renderLoading() {
-		return <div className='admin-loading'>Loading Map Data...</div>
+		return <div className='admin-loading'>.......Loading Map Data.........</div>
 	},
 });
 

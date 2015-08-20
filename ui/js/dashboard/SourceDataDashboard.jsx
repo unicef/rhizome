@@ -74,13 +74,10 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTool);
 
-		var doc_id = 66
+		var doc_id = -1
 		if (this.state.doc_id){
 			var doc_id = this.state.doc_id
 		}
-
-		console.log('what is the doc_id???')
-		console.log(doc_id)
 
 		var docName = doc_id
 		var doc_tool = 'validate'
@@ -105,13 +102,11 @@ var SourceDataDashboard = React.createClass({
 			</div>
 		</div>;
 
-
-		console.log(doc_id)
 		// data table //
 		var review_table = <MappingTable
 					region={region}
 					loading={loading}
-					doc_id={99}
+					doc_id={doc_id}
 					>
 				</MappingTable>
 
@@ -121,8 +116,12 @@ var SourceDataDashboard = React.createClass({
 			>
 		</DocOverview>
 
-		return (<div className="row">
+		var tab_title = 'Mapping For document_id: ' + doc_id
+
+		return (
+					<div className="row">
 					<div className="medium-9 columns">
+					<h2 style={{ textAlign: 'right' }} className="ufadmin-page-heading">{tab_title}</h2>
 						{review_table}
 					</div>
 					<div className="medium-3 columns">
@@ -134,8 +133,9 @@ var SourceDataDashboard = React.createClass({
 
 	_setDocId : function (doc_id) {
 		console.log('loading_new_document_id')
-		this._navigate({ doc_id : doc_id });
-		this.state.doc_id = doc_id
+		// this._navigate({ doc_id : doc_id });
+		// this.state.doc_id = doc_id
+		this.forceUpdate();
 		return {}
 	},
 

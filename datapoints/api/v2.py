@@ -1,6 +1,7 @@
 import json
 import datetime
 import traceback
+from random import randint
 from pprint import pprint
 from collections import defaultdict
 
@@ -21,6 +22,7 @@ from datapoints.models import *
 from datapoints.cache_tasks import CacheRefresh
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
+
 
 class v2Request(object):
 
@@ -54,8 +56,7 @@ class v2Request(object):
             'datapoint': {'orm_obj':DataPoint,
                 'permission_function':None},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
-                # 'permission_function': self.filter_source_objects_by_doc_id},
-                'permission_function': None},
+                'permission_function': self.filter_source_objects_by_doc_id},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': None},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
@@ -114,7 +115,12 @@ class v2Request(object):
 
         ## TODO  take intersection of these #
 
-        data = SourceObjectMap.objects.filter(id__in=source_object_ids)
+        random_int = (randint(1,9))
+        print 'random'
+        print random_int
+
+        # data = SourceObjectMap.objects.filter(id__in=source_object_ids[:random_int])
+        data = SourceObjectMap.objects.all()[:random_int]
 
         return None, data
 
