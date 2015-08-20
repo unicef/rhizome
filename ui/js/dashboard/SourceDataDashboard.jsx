@@ -31,6 +31,7 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
+
 	getInitialState : function () {
     return {
       regions      : [],
@@ -50,7 +51,6 @@ var SourceDataDashboard = React.createClass({
   },
 
   render : function () {
-		console.log('...rendering... source data dashboard')
     var loading = this.props.loading;
 		var campaign = this.props.campaign;
 		var region = this.props.region;
@@ -76,7 +76,7 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
-		var doc_tab = this.state.doc_dab
+		var doc_tab = this.state.doc_tab
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -111,6 +111,7 @@ var SourceDataDashboard = React.createClass({
 					title='sample title'
 					getMetadata={api.admin.docMapMeta}
 					getData={api.admin.docMap}
+					region={region}
 					>
 					<Paginator />
 					<SimpleDataTable>
@@ -145,13 +146,13 @@ var SourceDataDashboard = React.createClass({
 		</div>);;
   },
 
-	_setDocId : function (doc_id) {
-		console.log('loading_new_document_id')
-		console.log(doc_id)
-		this._navigate({ doc_id : doc_id });
-		this.state.doc_id = doc_id
-		this.forceUpdate();
-	},
+_setDocId : function (doc_id) {
+	console.log('loading_new_document_id')
+	console.log(doc_id)
+	this._navigate({ doc_id : doc_id });
+	this.state.doc_id = doc_id
+	this.forceUpdate();
+},
 
 _setDocTab : function (doc_tab) {
 	console.log('loading_new_doc_tabd')
@@ -161,18 +162,19 @@ _setDocTab : function (doc_tab) {
 	this.forceUpdate();
 	},
 
-	_navigate : function (params) {
-		var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-		var region   = _.get(params, 'region', this.props.region.name);
-		var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+_navigate : function (params) {
+	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+	var region   = _.get(params, 'region', this.props.region.name);
+	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
 
-		if (_.isNumber(region)) {
-			region = _.find(this.state.regions, r => r.id === region).name;
-		}
-		console.log('NAVIGATING')
-    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
-	},
+	if (_.isNumber(region)) {
+		region = _.find(this.state.regions, r => r.id === region).name;
+	}
+	console.log('NAVIGATING')
+  page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
+},
+
 
 });
 

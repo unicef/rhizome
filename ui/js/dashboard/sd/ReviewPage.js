@@ -23,24 +23,40 @@ var ReviewPage = React.createClass({
 		getData: React.PropTypes.func.isRequired,
     loading   : React.PropTypes.bool.isRequired,
 		fields 		: React.PropTypes.object.isRequired,
+		region 		: React.PropTypes.object.isRequired,
 	},
 	getInitialState: function() {
 		return {
 			data: null,
 			schema: null,
 			query: {},
-			loading   : false
+			loading   : false,
 		}
 	},
-
 	componentWillMount: function() {
-		this.props.getMetadata({},null,{'cache-control':'no-cache'}).then(response => this.setState({
+		console.log('querying')
+		this.props.getMetadata().then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));
-		this.props.getData().then(response => this.setState({data: response.objects}));
+		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
 		},
 
+	componentWillUpdate : function (nextProps, nextState) {
+		// update this.state.data if there is a metadata change //
+			if (nextProps.region != this.props.region) {
+				return;
+			}
+		},
+
+	componentWillReceiveProps: function(nextProps) {
+		console.log('querying')
+		this.props.getMetadata().then(response => this.setState({
+			metadata: response,
+			schema: parseSchema(response)
+		}));
+		this.props.getData({region_id:nextProps.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		},
 	render() {
 
 		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && (!this.state.loading);
@@ -49,6 +65,8 @@ var ReviewPage = React.createClass({
 		var {data, schema, metadata} = this.state;
 
 		var fields = this.props.fields
+
+		console.log('returning render of review page')
 
 		return <div>
 			<LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
