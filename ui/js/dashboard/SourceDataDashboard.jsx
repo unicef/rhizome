@@ -9,14 +9,14 @@ var page = require('page');
 var AppActions          = require('actions/AppActions');
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
-var TitleMenu  = require('component/TitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
-var MenuItem            = require('component/MenuItem.jsx');
 var NavigationStore     = require('stores/NavigationStore');
 
 var ResultsTable = require('doc-review/DocResults.js');
 var MappingTable = require('doc-review/DocMapping.js');
 var DocOverview = require('doc-review/DocOverview.js');
+var TitleMenu  = require('component/TitleMenu.jsx');
+var MenuItem            = require('component/MenuItem.jsx');
 
 
 var {
@@ -55,9 +55,6 @@ var SourceDataDashboard = React.createClass({
     var loading = this.props.loading;
 		var region = this.props.region
 
-		var doc_id = 66
-
-		const fieldNamesOnTable = ['id','map_link'];
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -78,10 +75,20 @@ var SourceDataDashboard = React.createClass({
 			this._setDocTool);
 
 		var docName = doc_id
-		var doc_tool = 'some tool'
-		var review_header =
+		var doc_tool = 'validate'
+
+
+		var doc_id = 66
+		var parseSchema = require('../ufadmin/utils/parseSchema');
+	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
+		var schema = parseSchema(some_schema)
+
+
+
+		// navigation to set doc-id and doc-processor //
+		var review_nav =
 		<div className="admin-container">
-      <h1 className="admin-header"></h1>
+			<h1 className="admin-header"></h1>
 			<div className="row">
 				document_id: <TitleMenu text={docName}>
 					{docItems}
@@ -92,12 +99,7 @@ var SourceDataDashboard = React.createClass({
 				{doc_tools}
 			</TitleMenu>
 			</div>
-	  </div>;
-
-
-		var parseSchema = require('../ufadmin/utils/parseSchema');
-	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
-		var schema = parseSchema(some_schema)
+		</div>;
 
 		// data table //
 		var review_table = <MappingTable
@@ -118,6 +120,7 @@ var SourceDataDashboard = React.createClass({
 						{review_table}
 					</div>
 					<div className="medium-3 columns">
+						{review_nav}
 						{review_breakdown}
 					</div>
 		</div>);;

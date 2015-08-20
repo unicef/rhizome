@@ -2,6 +2,7 @@
 	var _ = require('lodash');
 	var API = require('../data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
+	var NavigationStore     = require('stores/NavigationStore');
 
 	var DocOverview = React.createClass({
 		propTypes : {
@@ -22,13 +23,10 @@
 			};
 		},
 
-	  render() {
 
+	  render() {
 			var doc_id = this.props.doc_id
 			var loading = this.props.loading
-
-			console.log('logging doc id')
-			console.log(doc_id)
 
 			var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
 			var refreshMasterButton = refreshMasterUrl ?
@@ -37,8 +35,8 @@
 				</div> : null;
 
 			return <div>
-			<h2> overview component doc ID : {doc_id} </h2>
-			{refreshMasterButton}
+			<h2> doc ID : {doc_id} </h2>
+			<div>{refreshMasterButton} </div>
 		 </div>
 		}
 	});
