@@ -132,6 +132,7 @@ var SourceDataDashboard = React.createClass({
 			loading={loading}
 			getMetadata={api.admin.docMapMeta}
 			getData={api.admin.docMap}
+			fields={fields}
 			>
 		</DocOverview>
 
