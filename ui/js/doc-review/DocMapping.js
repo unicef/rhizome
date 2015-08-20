@@ -42,9 +42,16 @@ var DocMapping = React.createClass({
 	},
 
 	render() {
+
 		var loading = this.props.loading
-		var doc_id = 3//this.props.doc_id
+		var doc_id = this.props.doc_id
 		var region = this.props.region
+
+		console.log('==')
+		console.log(this.props)
+		console.log(this.state)
+
+		// if(loading) return this.renderLoading();
 
 		var data_fn = function(){
 			console.log('calling the database')
@@ -71,7 +78,10 @@ var DocMapping = React.createClass({
 					})}
 				</SimpleDataTable>
 		</ReviewPage>
-	}
+	},
+	renderLoading() {
+		return <div className='admin-loading'>Loading Map Data...</div>
+	},
 });
 
 module.exports = DocMapping;
