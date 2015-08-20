@@ -7,11 +7,11 @@ var moment = require('moment');
 var page = require('page');
 
 var NavigationStore     = require('stores/NavigationStore');
-var ReviewPage = require('dashboard/sd/ReviewPage.js');
+var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
 
 var TitleMenu  = require('component/TitleMenu.jsx');
-var MenuItem            = require('component/MenuItem.jsx');
+var MenuItem    = require('component/MenuItem.jsx');
 
 var {
 	Datascope, LocalDatascope,
@@ -40,7 +40,7 @@ var SourceDataDashboard = React.createClass({
       campaign     : null,
       dashboard    : null,
       doc_id    	 : -1,
-			doc_tab    	 : 'results',
+			doc_tab    	 : 'mapping',
     };
   },
 
@@ -76,7 +76,7 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
-		var doc_tab = this.state.doc_tab
+		var doc_tab = 'mapping'//this.state.doc_tab
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -104,11 +104,12 @@ var SourceDataDashboard = React.createClass({
 			},
 		};
 
-		const fieldNamesOnTable = ['id']//,'content_type','source_object_code','master_object_id'];
+
+		const fieldNamesOnTable = {'mapping':['id','content_type','source_object_code','master_object_id']}//];
 
 		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.doc_id;
 		// data table //
-		var review_table = <ReviewPage
+		var review_table = <ReviewTable
 					title='sample title'
 					getMetadata={api.admin.docMapMeta}
 					getData={api.admin.docMap}
@@ -117,18 +118,15 @@ var SourceDataDashboard = React.createClass({
 					>
 					<Paginator />
 					<SimpleDataTable>
-						{fieldNamesOnTable.map(fieldName => {
+						{fieldNamesOnTable[doc_tab].map(fieldName => {
 							return <SimpleDataTableColumn name={fieldName} />
 						})}
 					</SimpleDataTable>
-			</ReviewPage>
+			</ReviewTable>
 
 		var review_breakdown = <DocOverview
-			title={'some Sample Titl'}
 			loading={loading}
-			getMetadata={api.admin.docMapMeta}
-			getData={api.admin.docMap}
-			fields={fields}
+			doc_id={doc_id}
 			>
 		</DocOverview>
 
