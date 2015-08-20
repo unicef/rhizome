@@ -9,11 +9,12 @@ var page = require('page');
 var AppActions          = require('actions/AppActions');
 var Overview   = require('dashboard/nco/Overview.jsx');
 var Breakdown  = require('dashboard/nco/Breakdown.jsx');
-var AdminPage = require('ufadmin/AdminPage');
 var TitleMenu  = require('component/TitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
 var NavigationStore     = require('stores/NavigationStore');
+
+var ResultsTable = require('doc-review/DocResults.js');
 
 
 var {
@@ -162,19 +163,12 @@ var SourceDataDashboard = React.createClass({
 		};
 
 		// data table //
-		var review_table = <AdminPage
-					title="Users"
-					getMetadata={api.admin.indicatorsMetadata}
-					getData={api.admin.indicators}
+		var review_table = <ResultsTable
+					data={data}
+					schema={schema}
 					fields={fields}
 					>
-				<Paginator />
-				<SimpleDataTable>
-					{fieldNamesOnTable.map(fieldName => {
-						return <SimpleDataTableColumn name={fieldName} />
-					})}
-				</SimpleDataTable>
-				</AdminPage>
+				</ResultsTable>
 
 		return (<div className="row">
 					<div className="medium-9 columns">

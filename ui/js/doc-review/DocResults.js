@@ -10,7 +10,6 @@ var {
 	FilterPanel, FilterDateRange
 	} = require('react-datascope');
 
-var ReviewPage = require('./ReviewPage');
 
 var MapButtonFunction = function(data){
 	return <a href={`/datapoints/campaigns/update/${data}`}> THIS IS JOHN </a>;
@@ -26,41 +25,27 @@ const fields = {
 	},
 };
 
-
-const fieldNamesOnTable = ['id','region_id','campaign_id','indicator_id','value'];
+const fieldNamesOnTable = ['id','map_link'];
 
 var DocResults = React.createClass({
 	render() {
 
-		var doc_id = this.props.params.docId
+		// var doc_id = this.props.params.docId
 
-		var datascopeFilters =
-			<div>
-				<SearchBar placeholder="..search.."/>
-				<FilterPanel>
-					// <FilterDateRange name="start_date" time={false} />
-					// <FilterDateRange name="end_date" time={false} />
-					</FilterPanel>
-			</div>;
-
-		var data_fn = function(){
-			return API.admin.docResults({document:doc_id})
-		};
-
-		return <ReviewPage
-			title="Datapoint With Computed Data"
-			getMetadata={API.admin.DataPointMetaData}
-			getData={data_fn}
-			datascopeFilters={datascopeFilters}
-			fields={fields}
-			>
+		return <LocalDatascope
+				data={this.props.data}
+				schema={this.props.schema}
+				fields={this.props.fields}
+				pageSize={25}>
+				<Datascope>
 				<Paginator />
 				<SimpleDataTable>
 					{fieldNamesOnTable.map(fieldName => {
 						return <SimpleDataTableColumn name={fieldName} />
 					})}
 				</SimpleDataTable>
-		</ReviewPage>
+				</Datascope>
+			</LocalDatascope>
 	}
 });
 
