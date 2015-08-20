@@ -33,13 +33,13 @@ var ReviewPage = React.createClass({
 			loading   : false,
 		}
 	},
+
 	componentWillMount: function() {
-		console.log('querying')
 		this.props.getMetadata().then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));
-		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
 		},
 
 	componentWillUpdate : function (nextProps, nextState) {
@@ -50,12 +50,13 @@ var ReviewPage = React.createClass({
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		console.log('querying')
+		console.log('NEW PROPSS!!!!')
 		this.props.getMetadata().then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));
-		this.props.getData({region_id:nextProps.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		this.props.getData({master_object_id:nextProps.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		this.forceUpdate()
 		},
 	render() {
 

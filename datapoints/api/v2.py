@@ -56,7 +56,7 @@ class v2Request(object):
             'datapoint': {'orm_obj':DataPoint,
                 'permission_function':None},
             'doc_mapping' : {'orm_obj':SourceObjectMap,
-                'permission_function': self.filter_source_objects_by_doc_id},
+                'permission_function': None}, ##self.filter_source_objects_by_doc_id},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': None},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
@@ -110,13 +110,16 @@ class v2Request(object):
 
     def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
+        print 'filtering..'
+        print len(list_of_object_ids)
+        print list_of_object_ids
+
         source_object_ids = DocumentSourceObjectctMap.objects.filter(document_id = \
             self.document_id).values_list('source_object_map_id',flat=True)
 
         ## TODO  take intersection of these #
 
-        # data = SourceObjectMap.objects.filter(id__in=source_object_ids[:random_int])
-        data = SourceObjectMap.objects.all()
+        data = SourceObjectMap.objects.filter(id__in=source_object_ids)
 
         return None, data
 
