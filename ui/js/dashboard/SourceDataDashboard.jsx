@@ -2,22 +2,16 @@
 
 var _     = require('lodash');
 var React = require('react');
-var api = require('../data/api.js')
+var api = require('data/api.js')
 var moment = require('moment');
 var page = require('page');
 
-var AppActions          = require('actions/AppActions');
-var Overview   = require('dashboard/nco/Overview.jsx');
-var Breakdown  = require('dashboard/nco/Breakdown.jsx');
-var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var NavigationStore     = require('stores/NavigationStore');
+var ReviewPage = require('dashboard/sd/ReviewPage.js');
+var DocOverview = require('dashboard/sd/DocOverview.js');
 
-var ReviewPage = require('doc-review/ReviewPage.js');
-
-var DocOverview = require('doc-review/DocOverview.js');
 var TitleMenu  = require('component/TitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
-
 
 var {
 	Datascope, LocalDatascope,
@@ -110,7 +104,7 @@ var SourceDataDashboard = React.createClass({
 			},
 		};
 
-		const fieldNamesOnTable = ['id','content_type','source_object_code','master_object_id'];
+		const fieldNamesOnTable = ['id']//,'content_type','source_object_code','master_object_id'];
 
 		// data table //
 		var review_table = <ReviewPage

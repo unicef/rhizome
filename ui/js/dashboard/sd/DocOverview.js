@@ -1,6 +1,6 @@
-	var React = require('react/addons');
+var React = require('react/addons');
 	var _ = require('lodash');
-	var API = require('../data/api');
+	var API = require('data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 	var NavigationStore     = require('stores/NavigationStore');
 

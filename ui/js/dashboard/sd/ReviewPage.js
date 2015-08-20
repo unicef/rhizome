@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var React = require('react/addons');
-var API = require('../data/api');
+var API = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
@@ -14,7 +14,7 @@ const {
 	FilterPanel, FilterDateRange, FilterInputRadio
 	} = require('react-datascope');
 
-var parseSchema = require('../ufadmin/utils/parseSchema');
+var parseSchema = require('ufadmin/utils/parseSchema');
 
 var ReviewPage = React.createClass({
 	propTypes: {
@@ -34,7 +34,7 @@ var ReviewPage = React.createClass({
 	},
 
 	componentWillMount: function() {
-		this.props.getMetadata().then(response => this.setState({
+		this.props.getMetadata({},null,{'cache-control':'no-cache'}).then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));
