@@ -4,7 +4,6 @@ var API = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var BaseTable =  require('dashboard/sd/BaseTable.js');
 
 const {
 	Datascope, LocalDatascope,
@@ -53,7 +52,10 @@ var ReviewPage = React.createClass({
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.props.getData({master_object_id:nextProps.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		this.props.getData({master_object_id:nextProps.region.id}
+			,null,{'cache-control':'no-cache'}).then(
+					response => this.setState({data: response.objects})
+				);
 		this.forceUpdate()
 		},
 	render() {
