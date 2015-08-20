@@ -53,7 +53,7 @@ var ReviewPage = React.createClass({
 
 		return <div>
 
-			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
+			<LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={25}>
 				<Datascope>
 					{this.props.children}
 				</Datascope>

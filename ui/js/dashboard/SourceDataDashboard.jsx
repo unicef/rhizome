@@ -16,6 +16,7 @@ var NavigationStore     = require('stores/NavigationStore');
 
 var ResultsTable = require('doc-review/DocResults.js');
 var MappingTable = require('doc-review/DocMapping.js');
+var DocOverview = require('doc-review/DocOverview.js');
 
 
 var {
@@ -93,12 +94,6 @@ var SourceDataDashboard = React.createClass({
 			</div>
 	  </div>;
 
-		// refresh master button //
-		var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
-		var refreshMasterButton = refreshMasterUrl ?
-			<div className="ufadmin-create-button">
-				<a className="button" href={refreshMasterUrl}>Refresh Master</a>
-			</div> : null;
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
@@ -112,15 +107,19 @@ var SourceDataDashboard = React.createClass({
 					>
 				</MappingTable>
 
+		var review_breakdown = <DocOverview
+			doc_id={doc_id}
+			loading={loading}
+			>
+		</DocOverview>
+
 		return (<div className="row">
 					<div className="medium-9 columns">
-					{review_table}
+						{review_table}
 					</div>
-			<div className="medium-3 columns">
-			{review_header}
-			<h2> Document ID : {doc_id} </h2>
-			{refreshMasterButton}
-			</div>
+					<div className="medium-3 columns">
+						{review_breakdown}
+					</div>
 		</div>);;
   },
 });

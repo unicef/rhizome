@@ -4,11 +4,10 @@
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 
 	var DocOverview = React.createClass({
-		// propTypes : {
-		// 	indicators    : React.PropTypes.object.isRequired,
-		// 	region    : React.PropTypes.object.isRequired,
-		// 	loading   : React.PropTypes.bool
-		// },
+		propTypes : {
+			doc_id 	: React.PropTypes.number.isRequired,
+			loading : React.PropTypes.bool
+		},
 
 		getDefaultProps : function () {
 			return {
@@ -16,40 +15,30 @@
 			};
 		},
 
-		getInitialState: function() {
-				// https://facebook.github.io/react/tips/initial-ajax.html
-				return {doc_overview: {'docfile':null}, indicators: {'indicators':null}};
+
+		getInitialState : function () {
+			return {
+				doc_id       : null,
+			};
 		},
-
-
-		componentDidMount: function() {
-
-    API.document({id:this.props.params.docId},null,{'cache-control':'no-cache'}).then(function(result) {
-	      var api_data = result.objects[0];
-	      if (this.isMounted()) {
-	        this.setState({doc_overview:api_data});
-	      }
-	    }.bind(this));
-		},
-
 
 	  render() {
-			var self = this;
 
-			var refreshMasterUrl = '/source_data/refresh_master/' + this.props.params.docId
+			var doc_id = this.props.doc_id
+			var loading = this.props.loading
+
+			console.log('logging doc id')
+			console.log(doc_id)
+
+			var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
 			var refreshMasterButton = refreshMasterUrl ?
 				<div className="ufadmin-create-button">
 					<a className="button" href={refreshMasterUrl}>Refresh Master</a>
 				</div> : null;
 
 			return <div>
-			<h2> Document ID : {this.state.doc_overview.id} </h2>
-			<h2> Document Name: {this.state.doc_overview.docfile} </h2>
-
-			<h2> Uploaded By: {this.state.doc_overview.created_by_id} </h2>
+			<h2> overview component doc ID : {doc_id} </h2>
 			{refreshMasterButton}
-
-
 		 </div>
 		}
 	});

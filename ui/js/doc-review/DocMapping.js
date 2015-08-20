@@ -60,6 +60,7 @@ var DocMapping = React.createClass({
 			getData={data_fn}
 			fields={fields}
 			loading={loading}
+			doc_id={doc_id}
 			>
 				<Paginator />
 				<SimpleDataTable>
