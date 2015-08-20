@@ -74,16 +74,20 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTool);
 
+		try {
+			var doc_id = this.state.doc_id
+		}
+		catch(err) {
+			var doc_id = -1
+		}
+
 		var docName = doc_id
 		var doc_tool = 'validate'
 
 
-		var doc_id = 66
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
 		var schema = parseSchema(some_schema)
-
-
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -125,6 +129,29 @@ var SourceDataDashboard = React.createClass({
 					</div>
 		</div>);;
   },
+
+	_setDocId : function (doc_id) {
+		console.log('loading_new_document_id')
+		this._navigate({ doc_id : doc_id });
+		this._navigate({ doc_id : doc_id });
+		this.state.doc_id = doc_id
+		return {}
+	},
+
+
+	_navigate : function (params) {
+		var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+		var region   = _.get(params, 'region', this.props.region.name);
+		var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+		var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+
+		if (_.isNumber(region)) {
+			region = _.find(this.state.regions, r => r.id === region).name;
+		}
+		console.log('NAVIGATING')
+    page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
+	},
+
 });
 
 module.exports = SourceDataDashboard;
