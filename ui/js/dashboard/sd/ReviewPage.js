@@ -46,16 +46,13 @@ var ReviewPage = React.createClass({
 	componentWillUpdate : function (nextProps, nextState) {
 		// update this.state.data if there is a metadata change //
 			if (nextProps.region != this.props.region) {
+				console.log('updating!')
 				return;
+			console.log('not updating')
 			}
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		console.log('NEW PROPSS!!!!')
-		this.props.getMetadata().then(response => this.setState({
-			metadata: response,
-			schema: parseSchema(response)
-		}));
 		this.props.getData({master_object_id:nextProps.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
 		this.forceUpdate()
 		},
@@ -65,25 +62,26 @@ var ReviewPage = React.createClass({
 		if(!isLoaded) return this.renderLoading();
 
 		var {data, schema, metadata} = this.state;
-
 		var fields = this.props.fields
 
-		return <div>
-		 <div>
-                      <LocalDatascope data={data} schema={schema} pageSize={25}>
-                               <Datascope>
-                                       {this.props.children}
-                               </Datascope>
-                       </LocalDatascope>
-                       <BaseTable data={data} schema={schema} pageSize={25} isLoaded={isLoaded} >
-                       </BaseTable>
-                </div>
+		var region_name = _.kebabCase(this.props.region.name);
 
+		console.log('this is data len')
+		console.log(data.length)
+
+		return <div>
 		<div>
-			BASSSS TABLEEE {fields}
-			<BaseTable data={data} schema={schema} pageSize={25} isLoaded={isLoaded} datascope_data={this.props.children} >
+			<h1> make this table below dynamic </h1>
+			<BaseTable key={region_name} data={data} schema={schema} pageSize={25} isLoaded={isLoaded} datascope_data={this.props.children} >
 			</BaseTable>
 		</div>
+		 <div>	<h1>OLD TABLE  </h1>
+        <LocalDatascope key={region_name} data={data} schema={schema} pageSize={25}>
+	         <Datascope>
+	           {this.props.children}
+	         </Datascope>
+         </LocalDatascope>
+    </div>
 		</div>
 	},
 	renderLoading() {

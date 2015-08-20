@@ -32,27 +32,55 @@ var BaseTable = React.createClass({
 		}
 	},
 
+
+	componentWillMount: function() {
+		this.setState({data: this.props.data});
+
+		// this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+		},
+
+	componentWillUpdate : function (nextProps, nextState) {
+		if (nextProps.data != this.props.data) {
+
+			var node = this.getDOMNode();
+			React.unmountComponentAtNode(node);
+
+			console.log('updating!')
+			return;
+		}
+		},
+
+	componentWillReceiveProps: function(nextProps) {
+		this.setState({data: nextProps.data})
+		this.forceUpdate()
+		},
+
 	render() {
 
-		var data = this.props.data;
+		// var data = ;
 		var schema = this.props.schema
-		var datascope_data = this.props.datascope_data
-		
-		console.log('render??? loading??')
 
-		var isLoaded = _.isArray(data) && schema;
+		var isLoaded = _.isArray(this.state.data) && schema;
 		if(!isLoaded) return this.renderLoading();
 
-		console.log('renddderrr')
-		console.log(data)
-		console.log(schema)
+		console.log('the length of the data element is.. ' + (this.state.data).length)
+
+		// var data = this.state.data
+
+		var data = []
+
 		return <div>
-			SOMETHING
-			<LocalDatascope data={data} schema={schema} pageSize={25}>
-				<Datascope>
-					{datascope_data}
-				</Datascope>
-			</LocalDatascope>
+		<h2>Your Recent CSV Uploads</h2>
+		<table>
+			<tbody>{data}</tbody>
+			<tfoot>
+				<tr>
+					<td className="more" colSpan="3">
+						<a href="/source_data/document_index/">see all uploads</a>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
 		</div>
 	},
 	renderLoading() {
