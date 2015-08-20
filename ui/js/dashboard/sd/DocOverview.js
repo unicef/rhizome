@@ -7,6 +7,7 @@ var React = require('react/addons');
 	var DocOverview = React.createClass({
 		propTypes : {
 			doc_id 	: React.PropTypes.number.isRequired,
+			doc_tab : React.PropTypes.string.isRequired,
 			loading : React.PropTypes.bool
 		},
 
@@ -16,16 +17,23 @@ var React = require('react/addons');
 			};
 		},
 
-
 		getInitialState : function () {
 			return {
 				doc_id       : null,
 			};
 		},
 
+		componentWillUpdate : function (nextProps, nextState) {
+				if (nextProps.doc_id != this.props.doc_id) {
+					console.log('updating')
+					return;
+				}
+			},
+
 
 	  render() {
 			var doc_id = this.props.doc_id
+			var doc_tab = this.props.doc_tab
 			var loading = this.props.loading
 
 			var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
@@ -35,6 +43,7 @@ var React = require('react/addons');
 				</div> : null;
 
 			return <div>
+			{doc_tab} For document_id: {doc_id}
 			<h2> doc ID : {doc_id} </h2>
 			<div>{refreshMasterButton} </div>
 		 </div>

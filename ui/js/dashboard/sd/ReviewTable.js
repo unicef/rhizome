@@ -47,18 +47,30 @@ var ReviewTable = React.createClass({
 
 	componentWillUpdate : function (nextProps, nextState) {
 			if (nextProps.region != this.props.region) {
+				console.log('updagint now new regions')
+				return;
+			}
+			if (nextProps.getMetadata != this.props.getMetadata) {
+				console.log('bring up a new tabl')
 				return;
 			}
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.props.getData({master_object_id:nextProps.region.id}
-			,null,{'cache-control':'no-cache'}).then(
-					response => this.setState({data: response.objects})
-				);
+		this.props.getMetadata()
+		.then(response => this.setState({
+				schema: parseSchema(response)
+		}));
+
+		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'})
+			.then(response => this.setState({
+						data: response.objects
+			}));
+
 		this.forceUpdate()
 		},
 	render() {
+
 
 		var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading);
 		if(!isLoaded) return this.renderLoading();

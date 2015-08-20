@@ -68,7 +68,7 @@ var SourceDataDashboard = React.createClass({
 			this._setDocId);
 
 		var doc_tabs = MenuItem.fromArray(
-			_.map(['overview','mapping','validate','results'], d => {
+			_.map(['mapping','validate','results','doc_index'], d => {
 				return {
 					title : d,
 					value : d
@@ -76,7 +76,7 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
-		var doc_tab = 'mapping'//this.state.doc_tab
+		var doc_tab = this.state.doc_tab//this.state.doc_tab
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -100,12 +100,23 @@ var SourceDataDashboard = React.createClass({
 					'data_fn' : api.admin.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_id']
 				},
-			'validate':{'fields' : ['id','document_id','region','campaign','indicator','value','validate']},
-			'results':{'fields' : ['id','document_id','region','campaign','indicator','value']},
-			'doc_index':{'fields' : ['id','docfile','uploaded_by','created_at']},
+			'validate':{
+				'meta_fn' : api.admin.docValidateMeta,
+				'data_fn' : api.admin.docValidate,
+				'fields' : ['id','document']
+			},
+			'results':{
+				'meta_fn' : api.admin.DataPointMetaData,
+				'data_fn' : api.admin.docResults,
+				'fields' : ['id']
+			},
+			'doc_index':{
+				'meta_fn' : api.document_meta,
+				'data_fn' : api.document,
+				'fields' : ['id','docfile','uploaded_by','created_at']},
 		}
 
-		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.doc_id + doc_id;
+		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.state.doc_id + this.state.doc_tab;
 		// data table //
 		var review_table = <ReviewTable
 					title='sample title'
@@ -140,7 +151,7 @@ var SourceDataDashboard = React.createClass({
 					</div>
 					<div className="medium-3 columns">
 						{review_nav}
-						{review_breakdown}
+						// {review_breakdown}
 					</div>
 		</div>);;
   },
