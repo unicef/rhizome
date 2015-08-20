@@ -4,6 +4,7 @@ var API = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var BaseTable =  require('dashboard/sd/BaseTable.js');
 
 const {
 	Datascope, LocalDatascope,
@@ -67,16 +68,22 @@ var ReviewPage = React.createClass({
 
 		var fields = this.props.fields
 
-		console.log('returning render of review page')
-		console.log(data.length)
-		console.log('tat was the len of the data..')
-
 		return <div>
-			<LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
-				<Datascope>
-					{this.props.children}
-				</Datascope>
-			</LocalDatascope>
+		 <div>
+                      <LocalDatascope data={data} schema={schema} pageSize={25}>
+                               <Datascope>
+                                       {this.props.children}
+                               </Datascope>
+                       </LocalDatascope>
+                       <BaseTable data={data} schema={schema} pageSize={25} isLoaded={isLoaded} >
+                       </BaseTable>
+                </div>
+
+		<div>
+			BASSSS TABLEEE {fields}
+			<BaseTable data={data} schema={schema} pageSize={25} isLoaded={isLoaded} datascope_data={this.props.children} >
+			</BaseTable>
+		</div>
 		</div>
 	},
 	renderLoading() {

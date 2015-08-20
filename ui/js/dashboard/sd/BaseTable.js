@@ -17,10 +17,10 @@ const {
 
 var BaseTable = React.createClass({
 	propTypes: {
-		data 			: React.PropTypes.object.isRequired,
+		data 			: React.PropTypes.array.isRequired,
 		schema 		: React.PropTypes.object.isRequired,
-		fields 		: React.PropTypes.object.isRequired,
 		loading   : React.PropTypes.bool.isRequired,
+		datascope_data : React.PropTypes.object.isRequired,
 
 	},
 	getInitialState: function() {
@@ -28,21 +28,29 @@ var BaseTable = React.createClass({
 			data: null,
 			schema: null,
 			fields: [],
-			loading   : false,
+			isLoaded   : false,
 		}
 	},
 
 	render() {
 
-		var loading = this.props.loading
-		if(loading) return this.renderLoading();
+		var data = this.props.data;
+		var schema = this.props.schema
+		var datascope_data = this.props.datascope_data
+		
+		console.log('render??? loading??')
 
-		var {data, schema, fields} = this.props;
+		var isLoaded = _.isArray(data) && schema;
+		if(!isLoaded) return this.renderLoading();
 
+		console.log('renddderrr')
+		console.log(data)
+		console.log(schema)
 		return <div>
-			<LocalDatascope data={data} schema={schema} fields={fields} pageSize={25}>
+			SOMETHING
+			<LocalDatascope data={data} schema={schema} pageSize={25}>
 				<Datascope>
-					{this.props.children}
+					{datascope_data}
 				</Datascope>
 			</LocalDatascope>
 		</div>

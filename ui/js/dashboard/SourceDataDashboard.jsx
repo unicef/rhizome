@@ -120,8 +120,7 @@ var SourceDataDashboard = React.createClass({
 						})}
 					</SimpleDataTable>
 			</ReviewPage>
-
-
+		
 		var review_breakdown = <DocOverview
 			title={'some Sample Titl'}
 			loading={loading}
