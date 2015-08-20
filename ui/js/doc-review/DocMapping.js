@@ -1,7 +1,7 @@
 var React = require('react/addons');
 var _ = require('lodash');
 
-var API = require('../data/api');
+var api = require('../data/api');
 
 var {
 	Datascope, LocalDatascope,
@@ -41,12 +41,6 @@ var DocMapping = React.createClass({
 		};
 	},
 
-	dataFn : function(){
-		console.log('calling the database with props.docId')
-		console.log(this.props.doc_id)
-		return API.admin.docMap({},null,{'cache-control':'no-cache'})
-	},
-
 	render() {
 
 		var loading = this.props.loading
@@ -55,14 +49,10 @@ var DocMapping = React.createClass({
 
 		if(loading && !(doc_id)) return this.renderLoading();
 
-		var meta_fn = function(){
-			return API.admin.docMapMeta()
-		};
-
 		return <ReviewPage
 			title="ToMap"
-			getMetadata={meta_fn}
-			getData={this.dataFn}
+			getMetadata={api.admin.docMapMeta}
+			getData={api.admin.docMap}
 			fields={fields}
 			loading={loading}
 			doc_id={doc_id}

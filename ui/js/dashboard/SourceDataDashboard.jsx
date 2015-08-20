@@ -13,7 +13,8 @@ var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var NavigationStore     = require('stores/NavigationStore');
 
 var ResultsTable = require('doc-review/DocResults.js');
-var MappingTable = require('doc-review/DocMapping.js');
+var DocTable = require('doc-review/DocMapping.js');
+
 var DocOverview = require('doc-review/DocOverview.js');
 var TitleMenu  = require('component/TitleMenu.jsx');
 var MenuItem            = require('component/MenuItem.jsx');
@@ -71,17 +72,16 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocId);
 
-		var doc_tabs = MenuItem.fromArray([{'title':'validate','value':'valiate'}])
+		var doc_tabs = MenuItem.fromArray(
+			_.map(['overview','mapping','validate','results'], d => {
+				return {
+					title : d,
+					value : d
+				};
+			}),
+			this._setDocTab);
+
 		var doc_tab = this.state.doc_dab
-		// if (this.state.doc_id){
-		// 	var doc_id = this.state.doc_id
-		// 	console.log('this is th doc_id')
-		// 	console.log(doc_id)
-		// }
-		// else{
-		// 	console.log('doc is negative one')
-		// 	var doc_id = -1
-		// }
 
 		var parseSchema = require('../ufadmin/utils/parseSchema');
 	  var some_schema = {"fields": [{"name": "id", "title": "id"},{"name": "campaign", "title": "campaign"}]}
@@ -104,12 +104,12 @@ var SourceDataDashboard = React.createClass({
 		</div>;
 
 		// data table //
-		var review_table = <MappingTable
+		var review_table = <DocTable
 					region={region}
 					loading={loading}
 					doc_id={doc_id}
 					>
-				</MappingTable>
+				</DocTable>
 
 		var review_breakdown = <DocOverview
 			doc_id={doc_id}
@@ -141,16 +141,12 @@ var SourceDataDashboard = React.createClass({
 	},
 
 _setDocTab : function (doc_tab) {
-		console.log('loading_new_document_tab')
-		// console.log(doc_tab)
-		// this._navigate({ doc_tab : doc_tab });
-		// this.state.doc_tab = doc_tab
-		// this.forceUpdate();
-		// this._navigate({ doc_id : doc_id });
-		// this.state.doc_id = doc_id
-		// this.forceUpdate();
+	console.log('loading_new_doc_tabd')
+	console.log(doc_tab)
+	this._navigate({ doc_tab : doc_tab });
+	this.state.doc_tab = doc_tab
+	this.forceUpdate();
 	},
-
 
 	_navigate : function (params) {
 		var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
