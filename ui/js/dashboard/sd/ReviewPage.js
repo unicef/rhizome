@@ -35,15 +35,18 @@ var ReviewPage = React.createClass({
 	},
 
 	componentWillMount: function() {
-		this.props.getMetadata().then(response => this.setState({
-			metadata: response,
-			schema: parseSchema(response)
+		this.props.getMetadata()
+		.then(response => this.setState({
+				schema: parseSchema(response)
 		}));
-		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'}).then(response => this.setState({data: response.objects}));
+
+		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'})
+			.then(response => this.setState({
+						data: response.objects
+			}));
 		},
 
 	componentWillUpdate : function (nextProps, nextState) {
-		// update this.state.data if there is a metadata change //
 			if (nextProps.region != this.props.region) {
 				console.log('updating!')
 				return;
