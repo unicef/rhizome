@@ -115,12 +115,8 @@ class v2Request(object):
 
         ## TODO  take intersection of these #
 
-        random_int = (randint(1,9))
-        print 'random'
-        print random_int
-
         # data = SourceObjectMap.objects.filter(id__in=source_object_ids[:random_int])
-        data = SourceObjectMap.objects.all()[:random_int]
+        data = SourceObjectMap.objects.all()
 
         return None, data
 

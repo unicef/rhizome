@@ -29,7 +29,6 @@ var ReviewPage = React.createClass({
 			data: null,
 			schema: null,
 			query: {},
-			areFiltersVisible: false,
 			loading   : false
 		}
 	},
@@ -44,9 +43,7 @@ var ReviewPage = React.createClass({
 
 	render() {
 
-		// FIX //
-		if (this.state.loading) return this.renderLoading();
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
+		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema && (!this.state.loading);
 		if(!isLoaded) return this.renderLoading();
 
 		var {data, schema, metadata} = this.state;
