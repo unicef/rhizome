@@ -1120,7 +1120,7 @@ class Migration(migrations.Migration):
         SELECT 95,10;
 
 
-        -- CAMPAIGNS --
+-- CAMPAIGNS --
 
         INSERT INTO campaign
         (id, start_date,end_date,slug,campaign_type_id, office_id, created_at)
@@ -1168,7 +1168,9 @@ class Migration(migrations.Migration):
         SELECT 221,'04/01/15','04/01/15','nigeria-2015-04-01' UNION ALL
         SELECT 222,'05/01/15','05/01/15','nigeria-2015-05-01' UNION ALL
         SELECT 223,'06/01/15','06/01/15','nigeria-2015-06-01'
+
         )x;
+
 
 
         -- source_object_map --
@@ -1176,6 +1178,7 @@ class Migration(migrations.Migration):
         (master_object_id, source_object_code, content_type, mapped_by_id)
 
         SELECT *,1 FROM (
+        SELECT * FROM (
         SELECT 32 as master_object_id ,'Number of Unicef polio positions in their posts in PBR-approved structures'  as source_object_code,'indicator' as content_type UNION ALL
         SELECT 31 as master_object_id ,'Target number of Unicef polio positions in PBR-approved structures'  as source_object_code,'indicator' as content_type UNION ALL
         SELECT 24 as master_object_id ,'Number of children missed due to other reasons'  as source_object_code,'indicator' as content_type UNION ALL
@@ -1597,7 +1600,13 @@ class Migration(migrations.Migration):
         SELECT 121 as master_object_id ,'group_msd_chd-msd_nofeltneedm'  as source_object_code,'indicator' as content_type UNION ALL
         SELECT 151 as master_object_id ,'group_spec_events-spec_pregnantmother'  as source_object_code,'indicator' as content_type UNION ALL
         SELECT 117 as master_object_id ,'group_msd_chd-msd_noconsentm'  as source_object_code,'indicator' as content_type UNION ALL
-        SELECT 55 as master_object_id ,'Number of target children'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'Number of target children'  as source_object_code,'indicator' as content_type
+        ) ind
+        WHERE EXISTS ( SELECT 1 FROM indicator i where ind.master_object_id = i.id)
+
+        UNION ALL
+
+        SELECT * FROM (
         SELECT 99 as master_object_id ,'Nigeria November 2013'  as source_object_code,'campaign' as content_type UNION ALL
         SELECT 100 as master_object_id ,'Nigeria November 2014'  as source_object_code,'campaign' as content_type UNION ALL
         SELECT 101 as master_object_id ,'Nigeria September 2013'  as source_object_code,'campaign' as content_type UNION ALL
@@ -1817,7 +1826,11 @@ class Migration(migrations.Migration):
         SELECT 193 as master_object_id ,'Pakistan March 2013'  as source_object_code,'campaign' as content_type UNION ALL
         SELECT 196 as master_object_id ,'Pakistan December 2012'  as source_object_code,'campaign' as content_type UNION ALL
         SELECT 185 as master_object_id ,'Pakistan April 2012'  as source_object_code,'campaign' as content_type
+        )c
+        WHERE EXISTS ( SELECT 1 FROM campaign camp where c.master_object_id = camp.id)
+
         )x;
+
 
 
 
