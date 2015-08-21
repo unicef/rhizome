@@ -39,7 +39,7 @@ var ReviewTable = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));
@@ -62,7 +62,7 @@ var ReviewTable = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));

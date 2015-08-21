@@ -40,7 +40,7 @@ var ReviewPage = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({master_object_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));
@@ -55,7 +55,7 @@ var ReviewPage = React.createClass({
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.props.getData({master_object_id:nextProps.region.id}
+		this.props.getData({region_id:nextProps.region.id}
 			,null,{'cache-control':'no-cache'}).then(
 					response => this.setState({data: response.objects})
 				);

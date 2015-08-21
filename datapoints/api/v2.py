@@ -60,7 +60,7 @@ class v2Request(object):
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.pretty_doc_datapoint},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
-                'permission_function': None},
+                'permission_function': self.filter_calced_dp_by_doc_id},
             'document': {'orm_obj':Document,
                 'permission_function':self.apply_document_permissions },
             'custom_dashboard': {'orm_obj':CustomDashboard,
@@ -125,6 +125,7 @@ class v2Request(object):
             on dd.campaign_id = c.id
             INNER JOIN indicator i
             ON dd.indicator_id = i.id
+            WHERE dd.id = ANY(%s);
         ''',[list_of_object_ids])
 
         return None, data
@@ -148,10 +149,23 @@ class v2Request(object):
         top_lvl_region_ids = Region.objects.filter\
             (parent_region_id__isnull=True).values_list('id',flat=True)
 
-        calced_data = DataPointComputed.objects.filter\
-            (region_id__in = top_lvl_region_ids)
+        data = DataPointComputed.objects.raw('''
+            SELECT
+                dwc.id
+                , r.name as region_id
+                ,c.slug as campaign_id
+                ,i.short_name as indicator_id
+                ,dwc.value
+            FROM datapoint_with_computed dwc
+            INNER JOIN region r
+            ON dwc.region_id = r.id
+            INNER JOIN campaign c
+            on dwc.campaign_id = c.id
+            INNER JOIN indicator i
+            ON dwc.indicator_id = i.id
+            WHERE dwc.id = ANY(%s);''',[list_of_object_ids])
 
-        return None, calced_data
+        return None, data
 
     ## permissions functions ##
     def apply_cust_dashboard_permissions(self,list_of_object_ids):
