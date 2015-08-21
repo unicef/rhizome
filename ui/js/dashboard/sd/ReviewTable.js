@@ -39,19 +39,24 @@ var ReviewTable = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({document:this.props.doc_id,region_id:this.props.region.id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));
 		},
 
 	componentWillUpdate : function (nextProps, nextState) {
+			// FIXME -> needs cleanup
 			if (nextProps.region != this.props.region) {
-				console.log('updagint now new regions')
+				console.log('updagin with  new regions')
 				return;
 			}
 			if (nextProps.getMetadata != this.props.getMetadata) {
-				console.log('bring up a new tabl')
+				console.log('bring up a new table')
+				return;
+			}
+			if (nextProps.doc_id != this.props.doc_id) {
+				console.log('new doc id')
 				return;
 			}
 		},
@@ -62,7 +67,7 @@ var ReviewTable = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({region_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({document:this.props.doc_id,region_id:this.props.region.id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));

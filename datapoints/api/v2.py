@@ -55,7 +55,7 @@ class v2Request(object):
                 'permission_function':None},
             'datapoint': {'orm_obj':DataPoint,
                 'permission_function':None},
-            'doc_mapping' : {'orm_obj':SourceObjectMap,
+            'doc_mapping' : {'orm_obj':DocumentSourceObjectMap,
                 'permission_function': None}, ##self.filter_source_objects_by_doc_id},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.pretty_doc_datapoint},
@@ -133,7 +133,7 @@ class v2Request(object):
 
     def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
-        source_object_ids = DocumentSourceObjectctMap.objects.filter(document_id = \
+        source_object_ids = DocumentSourceObjectMap.objects.filter(document_id = \
             self.document_id).values_list('source_object_map_id',flat=True)
 
         ## TODO  take intersection of these #

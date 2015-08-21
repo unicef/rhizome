@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='DocumentSourceObjectctMap',
+            name='DocumentSourceObjectMap',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('document', models.ForeignKey(to='source_data.Document')),
@@ -120,7 +120,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='documentsourceobjectctmap',
+            model_name='DocumentSourceObjectMap',
             name='source_object_map',
             field=models.ForeignKey(to='source_data.SourceObjectMap'),
         ),
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
             unique_together=set([('content_type', 'source_object_code')]),
         ),
         migrations.AlterUniqueTogether(
-            name='documentsourceobjectctmap',
+            name='DocumentSourceObjectMap',
             unique_together=set([('document', 'source_object_map')]),
         ),
         migrations.AlterUniqueTogether(

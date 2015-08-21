@@ -117,7 +117,7 @@ var SourceDataDashboard = React.createClass({
 			},
 		};
 
-		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.state.doc_id + this.state.doc_tab;
+		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
 		var review_table = <ReviewTable
 					title='sample title'
@@ -126,6 +126,7 @@ var SourceDataDashboard = React.createClass({
 					region={region}
 					key={table_key}
 					loading={loading}
+					doc_id={doc_id}
 					>
 					<Paginator />
 					<SimpleDataTable>

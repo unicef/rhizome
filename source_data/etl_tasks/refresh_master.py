@@ -108,7 +108,7 @@ class MasterRefresh(object):
             'mapped_by_id':self.user_id
             })
 
-        sm_obj, created = DocumentSourceObjectctMap.objects.get_or_create\
+        sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
             (document_id = self.document_id,source_object_map_id = sm_obj.id)
 
         return sm_obj.id
