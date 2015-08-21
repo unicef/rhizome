@@ -33,7 +33,7 @@ var ReviewTable = React.createClass({
 		}
 	},
 
-	componentWillMount: function() {
+	_callApi : function(){
 		this.props.getMetadata()
 		.then(response => this.setState({
 				schema: parseSchema(response)
@@ -43,7 +43,18 @@ var ReviewTable = React.createClass({
 			.then(response => this.setState({
 						data: response.objects
 			}));
+			this.forceUpdate();
+	},
+
+	componentWillMount: function() {
+		  // this deals with init //
+			this._callApi()
 		},
+
+	componentWillReceiveProps: function(nextProps) {
+		// this deals with update //
+		this._callApi()
+	},
 
 	componentWillUpdate : function (nextProps, nextState) {
 			// FIXME -> needs cleanup
@@ -61,19 +72,6 @@ var ReviewTable = React.createClass({
 			}
 		},
 
-	componentWillReceiveProps: function(nextProps) {
-		this.props.getMetadata()
-		.then(response => this.setState({
-				schema: parseSchema(response)
-		}));
-
-		this.props.getData({document:this.props.doc_id,region_id:this.props.region.id},null,{'cache-control':'no-cache'})
-			.then(response => this.setState({
-						data: response.objects
-			}));
-
-		this.forceUpdate()
-		},
 	render() {
 
 
