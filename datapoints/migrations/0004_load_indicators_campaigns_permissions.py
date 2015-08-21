@@ -688,473 +688,7 @@ class Migration(migrations.Migration):
             SELECT 475,55,'WHOLE' UNION ALL
             SELECT 475,21,'PART'
             )x;
-        -- CAMPAIGNS --
-        INSERT INTO campaign
-        (start_date,end_date,slug,campaign_type_id, office_id, created_at)
-        SELECT CAST(the_date AS DATE), CAST(the_date AS DATE),the_slug,ct.id,o.id, now() FROM (
-        SELECT '2014-08-01' as the_date,'nigeria-august-2014' as the_slug UNION ALL
-        SELECT '2014-03-01','nigeria-march-2014' UNION ALL
-        SELECT '2014-06-01','nigeria-june-2014' UNION ALL
-        SELECT '2014-04-01','nigeria-april-2014' UNION ALL
-        SELECT '2014-10-01','nigeria-october-2014' UNION ALL
-        SELECT '2014-07-01','nigeria-july-2014' UNION ALL
-        SELECT '2014-05-01','nigeria-may-2014' UNION ALL
-        SELECT '2014-09-01','nigeria-september-2014' UNION ALL
-        SELECT '2014-02-01','nigeria-february-2014' UNION ALL
-        SELECT '2014-11-01','nigeria-november-2014' UNION ALL
-        SELECT '2014-12-01','nigeria-2014-12-01' UNION ALL
-        SELECT '2015-01-01','nigeria-2015-01-01' UNION ALL
-        SELECT '2015-02-01','nigeria-2015-02-01' UNION ALL
-        SELECT '2015-03-01','nigeria-2015-03-01' UNION ALL
-        SELECT '2015-06-01','nigeria-2015-06-01'
-        )x
-        INNER JOIN office o
-        ON o.name = 'Nigeria'
-        INNER JOIN campaign_type ct
-        ON ct.name = 'National Immunization Days (NID)';
 
-        INSERT INTO source_object_map
-        (source_object_code, master_object_id, mapped_by_id, content_type)
-
-        SELECT c.slug, c.id, u.id, 'campaign'
-        FROM campaign c
-        INNER JOIN auth_user u
-        ON u.username = 'demo_user';
-
-
-    DROP TABLE IF EXISTS _tmp_indicator_map;
-	CREATE TABLE _tmp_indicator_map AS
-	SELECT 'Number of Unicef polio positions in their posts in PBR-approved structures' as indicator_name,32 as indicator_id UNION ALL
-	SELECT 'Target number of Unicef polio positions in PBR-approved structures',31 UNION ALL
-	SELECT 'Number of children missed due to other reasons',24 UNION ALL
-	SELECT 'Number of refusals before re-visit',25 UNION ALL
-	SELECT 'Number of refusals after re-visit',26 UNION ALL
-	SELECT 'Number of target social mobilizers',35 UNION ALL
-	SELECT 'Number of female social mobilizers',40 UNION ALL
-	SELECT 'Percentage of States/Regions with OPV supply arriving at state/region level in sufficient time before campaign',67 UNION ALL
-	SELECT 'YoungstRI',418 UNION ALL
-	SELECT 'RCorctCAT',420 UNION ALL
-	SELECT 'TotalYoungest',417 UNION ALL
-	SELECT 'RIncorect',421 UNION ALL
-	SELECT 'HHvisitedTEAMS',415 UNION ALL
-	SELECT 'RXCorctCAT',423 UNION ALL
-	SELECT 'RXAssessMrk',422 UNION ALL
-	SELECT 'RXIncorect',424 UNION ALL
-	SELECT 'Sum of Marked0to59',269 UNION ALL
-	SELECT 'Sum of UnImmun0to59',270 UNION ALL
-	SELECT 'TOTAL teams Checked',38 UNION ALL
-	SELECT '# HR areas (Clusters) with social mobilizers',34 UNION ALL
-	SELECT ' # target social mobilizers',35 UNION ALL
-	SELECT '# caregivers',29 UNION ALL
-	SELECT '# refusals before re-visit',25 UNION ALL
-	SELECT '# Microplans incoroporating social data',28 UNION ALL
-	SELECT 'Amount committed',44 UNION ALL
-	SELECT '# districts having NO stock-outs of OPV',53 UNION ALL
-	SELECT '# teams w/ at least one female worker',37 UNION ALL
-	SELECT '# teams',38 UNION ALL
-	SELECT '# w/ capacity',62 UNION ALL
-	SELECT ' # of HR areas (clusters) targeted  ',33 UNION ALL
-	SELECT '# Microplans in LPD',27 UNION ALL
-	SELECT 'Other reasons',24 UNION ALL
-	SELECT '# refusals after re-visit',26 UNION ALL
-	SELECT '# female social mobilizers',40 UNION ALL
-	SELECT '# of targeted under-five children',55 UNION ALL
-	SELECT 'Amount TOTAL FRR funds',43 UNION ALL
-	SELECT '# in place',36 UNION ALL
-	SELECT '# vaccine doses used',5 UNION ALL
-	SELECT '# HR areas with social mobilizers',34 UNION ALL
-	SELECT 'Number of core polio communication personnel in place in a country programme',32 UNION ALL
-	SELECT '# Microplans in High Risk District',27 UNION ALL
-	SELECT '# front line workers',41 UNION ALL
-	SELECT 'Target number of core polio personnel in place in a country programme',31 UNION ALL
-	SELECT 'CensusNewBornsF',93 UNION ALL
-	SELECT '# trained on RI in past 6 mos.',49 UNION ALL
-	SELECT '# children vaccined',51 UNION ALL
-	SELECT ' # front line workers',41 UNION ALL
-	SELECT 'Target core polio personnel in place in a country programme',31 UNION ALL
-	SELECT '# aware',30 UNION ALL
-	SELECT ' # of HR areas targeted  ',33 UNION ALL
-	SELECT 'Total # of targetted social mobilizers',35 UNION ALL
-	SELECT '# target social mobilizers',35 UNION ALL
-	SELECT '# trained on RI in past 6 months.',49 UNION ALL
-	SELECT 'Target core polio communication personnel in place in a country programme',31 UNION ALL
-	SELECT ' # teams',38 UNION ALL
-	SELECT '# workers w/ IPC skills',42 UNION ALL
-	SELECT 'Number of core polio personnel in place in a country programme',32 UNION ALL
-	SELECT 'CensusNewBornsM',94 UNION ALL
-	SELECT '# health facilities w/ capacity',62 UNION ALL
-	SELECT 'Tot_Newborns',83 UNION ALL
-	SELECT '# received payment timely',46 UNION ALL
-	SELECT '% w/ capacity',62 UNION ALL
-	SELECT 'Census2_11MoF',85 UNION ALL
-	SELECT 'Target # of core polio communication',31 UNION ALL
-	SELECT 'Census2_11MoM',84 UNION ALL
-	SELECT '# of core polio communication personnel in place',32 UNION ALL
-	SELECT '# of HR areas targeted',33 UNION ALL
-	SELECT 'Number of cases of cVDPV2',69 UNION ALL
-	SELECT 'Number of cases of iVDPV2',162 UNION ALL
-	SELECT 'Number of cases of WPV1',70 UNION ALL
-	SELECT 'Number of cases of WPV3',160 UNION ALL
-	SELECT 'Number of cases of aVDPV2',159 UNION ALL
-	SELECT 'Number of cases of WPV1WPV3',161 UNION ALL
-	SELECT 'Target number of core polio communications in place',31 UNION ALL
-	SELECT 'Number of social mobilisers who are female',40 UNION ALL
-	SELECT '# of teams',38 UNION ALL
-	SELECT 'Tot_2_11Months',90 UNION ALL
-	SELECT 'Target number of core polio communication positions',31 UNION ALL
-	SELECT '# Microplans incorporating social data',28 UNION ALL
-	SELECT '# of core polio communication in place',32 UNION ALL
-	SELECT 'Target number of social mobilisers',35 UNION ALL
-	SELECT 'All missed children',21 UNION ALL
-	SELECT 'Number of social mobilisers who were paid on time',46 UNION ALL
-	SELECT 'Census12_59MoF',91 UNION ALL
-	SELECT 'Number of social mobilisers in place',36 UNION ALL
-	SELECT '# of subregional units',56 UNION ALL
-	SELECT 'Target # of core polio communication ',31 UNION ALL
-	SELECT 'Number of social mobilizers who were paid on time',46 UNION ALL
-	SELECT 'Number of social mobilizers paid on time',46 UNION ALL
-	SELECT 'Number of social mobilizers in place',36 UNION ALL
-	SELECT 'Amount FRR',43 UNION ALL
-	SELECT '# of social mobilizers who received payment on time',46 UNION ALL
-	SELECT '% with OPV arriving in sufficient time',67 UNION ALL
-	SELECT '# of children vaccined',51 UNION ALL
-	SELECT 'Target # of social mobilizers',35 UNION ALL
-	SELECT '# of social mobilizers in place',36 UNION ALL
-	SELECT '# of HR areas with social mobilizers',34 UNION ALL
-	SELECT '# of subregional units where OPV arrived in sufficient time',57 UNION ALL
-	SELECT 'Census12_59MoM',87 UNION ALL
-	SELECT '# of social mobilizers paid on time',46 UNION ALL
-	SELECT '# of female social mobilizers',40 UNION ALL
-	SELECT 'Target number of social mobilizers',35 UNION ALL
-	SELECT '# polio teams w/ at least one female worker',37 UNION ALL
-	SELECT 'NOimmReas19',263 UNION ALL
-	SELECT 'Tot_12_59Months',92 UNION ALL
-	SELECT 'ZeroDose',416 UNION ALL
-	SELECT 'NOimmReas13',257 UNION ALL
-	SELECT 'NOimmReas12',256 UNION ALL
-	SELECT 'NOimmReas11',255 UNION ALL
-	SELECT 'NOimmReas10',254 UNION ALL
-	SELECT 'NOimmReas17',261 UNION ALL
-	SELECT 'NOimmReas16',260 UNION ALL
-	SELECT 'STannounc',295 UNION ALL
-	SELECT 'UnImmun0to59',270 UNION ALL
-	SELECT 'NOimmReas3',246 UNION ALL
-	SELECT 'NOimmReas2',268 UNION ALL
-	SELECT 'NOimmReas1',267 UNION ALL
-	SELECT 'NOimmReas7',250 UNION ALL
-	SELECT 'NOimmReas6',249 UNION ALL
-	SELECT 'Tot_Census',75 UNION ALL
-	SELECT 'NOimmReas4',247 UNION ALL
-	SELECT 'NOimmReas18',262 UNION ALL
-	SELECT 'VaxNewBornsF',82 UNION ALL
-	SELECT 'VaxNewBornsM',81 UNION ALL
-	SELECT 'SRadio',296 UNION ALL
-	SELECT 'Tot_VaxNewBorn',89 UNION ALL
-	SELECT 'SMosque',299 UNION ALL
-	SELECT 'SReiliglead',298 UNION ALL
-	SELECT 'SRelative',303 UNION ALL
-	SELECT 'STradlead',297 UNION ALL
-	SELECT 'Vax2_11MoF',77 UNION ALL
-	SELECT 'Sbanner',302 UNION ALL
-	SELECT 'Scommmob',305 UNION ALL
-	SELECT 'SNOTAWARE',277 UNION ALL
-	SELECT 'NOimmReas20',266 UNION ALL
-	SELECT 'NOimmReas5',248 UNION ALL
-	SELECT 'SNewspaper',300 UNION ALL
-	SELECT 'Vax2_11MoM',78 UNION ALL
-	SELECT 'Tot_Vax2_11Mo',86 UNION ALL
-	SELECT 'Influence5',279 UNION ALL
-	SELECT 'Influence4',284 UNION ALL
-	SELECT 'Influence7',283 UNION ALL
-	SELECT 'Influence6',281 UNION ALL
-	SELECT 'Influence1',278 UNION ALL
-	SELECT 'Vax12_59MoF',80 UNION ALL
-	SELECT 'Influence3',282 UNION ALL
-	SELECT 'Influence2',280 UNION ALL
-	SELECT 'Vax12_59MoM',79 UNION ALL
-	SELECT 'Tot_Vax12_59Mo',88 UNION ALL
-	SELECT 'NOimmReas14',258 UNION ALL
-	SELECT 'Influence8',285 UNION ALL
-	SELECT 'HHsampled',414 UNION ALL
-	SELECT 'Tot_Vax',74 UNION ALL
-	SELECT 'Tot_Missed',76 UNION ALL
-	SELECT 'NOimmReas15',259 UNION ALL
-	SELECT 'NOimmReas9',253 UNION ALL
-	SELECT 'Marked0to59',269 UNION ALL
-	SELECT 'NOimmReas8',252 UNION ALL
-	SELECT 'SHworker',304 UNION ALL
-	SELECT 'SPoster',301 UNION ALL
-	SELECT 'ReasonNotGiven',382 UNION ALL
-	SELECT 'PoliticalDifferences',375 UNION ALL
-	SELECT 'NotImmRedo',370 UNION ALL
-	SELECT 'SettlementsRedo',386 UNION ALL
-	SELECT 'TargetRedo',390 UNION ALL
-	SELECT 'ChildNCShool',352 UNION ALL
-	SELECT 'COMImmRedo',341 UNION ALL
-	SELECT 'NoNeedFelt',368 UNION ALL
-	SELECT 'IMMSCRelNC',363 UNION ALL
-	SELECT 'ChildAbsent',350 UNION ALL
-	SELECT 'COMImmRedoABSENT',354 UNION ALL
-	SELECT 'IMMSCOtherNC',362 UNION ALL
-	SELECT 'Reason1ABS',376 UNION ALL
-	SELECT 'ChildNCOther',351 UNION ALL
-	SELECT 'IMMOTTradNC',359 UNION ALL
-	SELECT 'NoNCShools',367 UNION ALL
-	SELECT 'Reason2ABS',377 UNION ALL
-	SELECT 'HHRevisited',355 UNION ALL
-	SELECT 'RELImmRedo',342 UNION ALL
-	SELECT 'OTRevisited',374 UNION ALL
-	SELECT 'SCRevisited',385 UNION ALL
-	SELECT 'ImmRedoABSENT',360 UNION ALL
-	SELECT 'NoNOCOther',369 UNION ALL
-	SELECT 'OTHERImRedoABSENT',373 UNION ALL
-	SELECT 'Reason4ABS',379 UNION ALL
-	SELECT 'MissedRedo',389 UNION ALL
-	SELECT 'ChildSick',353 UNION ALL
-	SELECT 'NotImmRedoABSENT',371 UNION ALL
-	SELECT 'Reason6ABS',381 UNION ALL
-	SELECT 'UnhappyWith',388 UNION ALL
-	SELECT 'IMMSCCommNC',361 UNION ALL
-	SELECT 'RAssessMrk',419 UNION ALL
-	SELECT 'Reason5ABS',380 UNION ALL
-	SELECT 'NoCaregiver',365 UNION ALL
-	SELECT 'RELImmRedoABSENT',384 UNION ALL
-	SELECT 'IMMOTOtherNC',357 UNION ALL
-	SELECT 'IMMSCTradNC',364 UNION ALL
-	SELECT 'IMMOTRelNC',358 UNION ALL
-	SELECT 'NoHHRedo',366 UNION ALL
-	SELECT 'Reason3ABS',378 UNION ALL
-	SELECT 'ImmRedo',340 UNION ALL
-	SELECT 'IMMOTCommNC',356 UNION ALL
-	SELECT 'OTHERImRedo',343 UNION ALL
-	SELECT 'ReligiousBelief',383 UNION ALL
-	SELECT 'NonCompliance',344 UNION ALL
-	SELECT 'OpvSafety',372 UNION ALL
-	SELECT 'TooManyRounds',387 UNION ALL
-	SELECT '0to23mth Seen',402 UNION ALL
-	SELECT '0to23mth notMarked',403 UNION ALL
-	SELECT '24to59mth notMarked',405 UNION ALL
-	SELECT 'TOTAL Seen',275 UNION ALL
-	SELECT 'totSeet2',395 UNION ALL
-	SELECT 'totSeet3',392 UNION ALL
-	SELECT 'totSeet1',394 UNION ALL
-	SELECT 'totSeet6',411 UNION ALL
-	SELECT 'totSeet4',408 UNION ALL
-	SELECT 'totSeet5',410 UNION ALL
-	SELECT '0to9mth Seen',400 UNION ALL
-	SELECT 'totMist2',397 UNION ALL
-	SELECT 'totMist3',393 UNION ALL
-	SELECT 'totMist1',396 UNION ALL
-	SELECT 'totMist6',413 UNION ALL
-	SELECT 'TOTAL Notmarked',273 UNION ALL
-	SELECT 'totMist4',409 UNION ALL
-	SELECT 'totMist5',412 UNION ALL
-	SELECT 'Unvaccinated this round',399 UNION ALL
-	SELECT '24to59mth Seen',404 UNION ALL
-	SELECT 'numberof Locations',398 UNION ALL
-	SELECT '0to9mth notMarked',401 UNION ALL
-	SELECT 'Number of cases of W1W3',161 UNION ALL
-	SELECT 'Reason for inaccessible children - No reason provided',451 UNION ALL
-	SELECT 'Political issues',441 UNION ALL
-	SELECT 'Environment issues',440 UNION ALL
-	SELECT 'Management issues',439 UNION ALL
-	SELECT 'Security Operations / Incidents',438 UNION ALL
-	SELECT 'Militant / Anti-Govt Elements',437 UNION ALL
-	SELECT 'Crime',436 UNION ALL
-	SELECT 'Local community not supportive',435 UNION ALL
-	SELECT 'Perception of fear',434 UNION ALL
-	SELECT 'Number of functional active cold chain equipment in the district',198 UNION ALL
-	SELECT 'Number of HRDs that have polio vaccine wastage rate in SIAs between 5 and 15%',221 UNION ALL
-	SELECT 'Vaccine wastage rate',220 UNION ALL
-	SELECT 'Number of social  mobilizers in place',36 UNION ALL
-	SELECT 'd4',433 UNION ALL
-	SELECT 'd1_3',432 UNION ALL
-	SELECT 'd0',431 UNION ALL
-	SELECT 'cVDPV2',69 UNION ALL
-	SELECT 'WPV1',70 UNION ALL
-	SELECT 'Number of cases of WPV 1',70 UNION ALL
-	SELECT 'Number of children 12 months and under',243 UNION ALL
-	SELECT 'Number of children under 12 months who received DPT3 or Penta3',244 UNION ALL
-	SELECT '# of children vaccinated at transit points last month',177 UNION ALL
-	SELECT 'Number of children missed due to all access issues',158 UNION ALL
-	SELECT 'Amount total requested FRR funds',43 UNION ALL
-	SELECT 'Amount FRR funds committed',44 UNION ALL
-	SELECT 'Number of RI sessions monitored',217 UNION ALL
-	SELECT 'Number of RI sessions monitored having stockouts of any vaccine in the last month',216 UNION ALL
-	SELECT 'Number of high risk districts',195 UNION ALL
-	SELECT 'Number of HR districts with locations where OPV is delivered together with any other polio-funded services demanded by the community',218 UNION ALL
-	SELECT 'Number of RI defaulters mobilized by social mobilizers last month (with accessibility breakdown)',192 UNION ALL
-	SELECT 'Number of caregivers in HR districts',29 UNION ALL
-	SELECT '# of HRD which reported on balance SIA vaccine stocks after last SIA round',197 UNION ALL
-	SELECT 'Total number of all active cold chain equipment in the district',199 UNION ALL
-	SELECT 'Number of children vaccinated in HRD',51 UNION ALL
-	SELECT 'Number of vaccine doses used in HRD',5 UNION ALL
-	SELECT 'HR District did not receive polio vaccine supply at least 3 days before the planned start date of campaign (yes/no)',196 UNION ALL
-	SELECT 'Number of social mobilizers who received on-the-job supervision during their last working week',210 UNION ALL
-	SELECT 'Number of SMs trained or refreshed with the integrated health package in the last 6 months',209 UNION ALL
-	SELECT 'Number of vaccination teams',38 UNION ALL
-	SELECT 'Number of vaccination teams with at least 1 member from the local community',208 UNION ALL
-	SELECT 'Target # of social mobilizers and supervisors',207 UNION ALL
-	SELECT 'Number of SMs and supervisors in place',206 UNION ALL
-	SELECT 'Number of HR sub-districts',33 UNION ALL
-	SELECT 'Number of HR sub-districts with at least 1 permanent SM',34 UNION ALL
-	SELECT '# health fcilities having NO stock-outs of OPV',66 UNION ALL
-	SELECT '# children received Penta3',244 UNION ALL
-	SELECT 'Amount FRR updated amount',45 UNION ALL
-	SELECT '# received payment on time',46 UNION ALL
-	SELECT ' # polio teams',38 UNION ALL
-	SELECT '# social mobilizers in place',36 UNION ALL
-	SELECT 'Target # of core polio communication personnel',31 UNION ALL
-	SELECT 'Number of social mobilizers who received timely payment for last campaign/month''s salary',46 UNION ALL
-	SELECT 'Number of vaccinators and SMs operating in HRDs trained on professional IPC package in last 6 months',42 UNION ALL
-	SELECT 'Number of vaccination teams with at least 1 female member',37 UNION ALL
-	SELECT 'Number of vaccinators and SMs operating in HRD who have been trained on professional Inter Personal Communication packaged in the last 6 months',42 UNION ALL
-	SELECT 'Number of vaccinators and SMs',41 UNION ALL
-	SELECT 'Number of children targeted in high-risk districts',55 UNION ALL
-	SELECT 'Number of vaccination teams with at least one female',37 UNION ALL
-	SELECT 'Number of vaccinators and social mobilizers',41 UNION ALL
-	SELECT 'spec_grp_choice',95 UNION ALL
-	SELECT 'TSettle',208 UNION ALL
-	SELECT 'Number of absences after re-visit',214 UNION ALL
-	SELECT 'Number of absences before re-visit',213 UNION ALL
-	SELECT 'Number of non-polio AFP cases with 1-3 doses of OPV',432 UNION ALL
-	SELECT 'Number of non-polio AFP cases with zero doses of OPV',431 UNION ALL
-	SELECT 'Number of non-polio AFP cases with 4+ doses of OPV',433 UNION ALL
-	SELECT 'Number of WPV1 cases',70 UNION ALL
-	SELECT 'Number of cVDPV2 cases',69 UNION ALL
-	SELECT 'Is an access-challenged district',203 UNION ALL
-	SELECT 'Total number of LT vaccination transit points planned by the programme',204 UNION ALL
-	SELECT 'Number of children vaccined in HRD',51 UNION ALL
-	SELECT 'Number of high risk sub-districts',33 UNION ALL
-	SELECT 'Number of social mobilizers receiving timely payment for last campaign',46 UNION ALL
-	SELECT 'Target number of social mobilizers and supervisors',207 UNION ALL
-	SELECT 'Number of high risk sub-districts covered by at least 1 social mobilizer',34 UNION ALL
-	SELECT 'Number of children vaccinated at transit points last month',177 UNION ALL
-	SELECT '# of vaccination teams in HRA',38 UNION ALL
-	SELECT 'Is an access-challenged district that has a specific access approach identified',202 UNION ALL
-	SELECT 'Number of established LT vaccination transit points',175 UNION ALL
-	SELECT 'number of social mobilisers participating the telephone survey',463 UNION ALL
-	SELECT 'Number of social mobilizers trained or refreshed with the integrated health package in the last 6 months',209 UNION ALL
-	SELECT 'Is an HRD that has polio vaccine wastage rate in SIAs between 5 and 15%',221 UNION ALL
-	SELECT 'HR district did NOT receive polio vaccine supply at least 3 days before the planned start date of campaign',196 UNION ALL
-	SELECT 'Number of social mobilizers and supervisors in place',206 UNION ALL
-	SELECT 'Number of established LT vaccination transit points with a dedicated social mobilizer',176 UNION ALL
-	SELECT 'Is a high risk district',195 UNION ALL
-	SELECT 'Is an access-challenged district (Yes/No)',203 UNION ALL
-	SELECT 'Has a specific access approach identified (Yes/No)',202 UNION ALL
-	SELECT '# of children who received Penta 3',244 UNION ALL
-	SELECT '# of children 7-12 months old',243 UNION ALL
-	SELECT '# of micro plans reviewed',27 UNION ALL
-	SELECT 'District reported balance of SIA vaccine stocks (Yes/No)',197 UNION ALL
-	SELECT 'Number of vaccination teams with at least one member from local community',208 UNION ALL
-	SELECT 'Number of children missed due to all access reasons',158 UNION ALL
-	SELECT 'Reason for inaccessible children - Environment issues',440 UNION ALL
-	SELECT 'Reason for inaccessible children - Crime',436 UNION ALL
-	SELECT 'Reason for inaccessible children - Militant / Anti-Govt Elements',437 UNION ALL
-	SELECT 'Reason for inaccessible children - Management issues',439 UNION ALL
-	SELECT 'Reason for inaccessible children - Local community not supportive',435 UNION ALL
-	SELECT 'Reason for inaccessible children - Security Operations / Incidents',438 UNION ALL
-	SELECT 'Reason for inaccessible children - Perception of fear',434 UNION ALL
-	SELECT 'Total number of all active cold chain equipment in district',199 UNION ALL
-	SELECT 'Number of refusals afte re-visit',26 UNION ALL
-	SELECT 'Number of microplans reviewed',27 UNION ALL
-	SELECT 'Number of vaccinators',41 UNION ALL
-	SELECT 'Number of vaccinators trained on IPC skills',42 UNION ALL
-	SELECT '# of health facilities',199 UNION ALL
-	SELECT 'Number of targeted children in HRA',55 UNION ALL
-	SELECT '# of high-risk districts with 90% of active cold chain equipments functional',198 UNION ALL
-	SELECT 'Number of Microplans incoroporating social data',28 UNION ALL
-	SELECT '# of identfied/planned target points',204 UNION ALL
-	SELECT 'Number of planned SM and supervisors',207 UNION ALL
-	SELECT '# of target children',55 UNION ALL
-	SELECT 'District DID NOT receiv OPV 3 days before campaign',196 UNION ALL
-	SELECT '# absences after re-visit',214 UNION ALL
-	SELECT '# of absences before re-visit',213 UNION ALL
-	SELECT '# of refusals before re-visit',25 UNION ALL
-	SELECT 'Number of clusters (sub-district units)',33 UNION ALL
-	SELECT 'district wastage rate between 5 - 15%',221 UNION ALL
-	SELECT '# of children missed due to access issues',470 UNION ALL
-	SELECT '# of female SMs in place',40 UNION ALL
-	SELECT 'Number of social mobilizers who received timely payment',46 UNION ALL
-	SELECT '# of established transit points',175 UNION ALL
-	SELECT '# of children vaccinated at TP',177 UNION ALL
-	SELECT '% wastage',220 UNION ALL
-	SELECT 'Number of social mobilizers responding telephone survey',463 UNION ALL
-	SELECT '# vaccination teams with at least one female ',37 UNION ALL
-	SELECT 'District is high-risk',195 UNION ALL
-	SELECT '# of SMs in place',36 UNION ALL
-	SELECT '# of children missed due to absence',350 UNION ALL
-	SELECT '# vaccination teams with at least one member from local community',208 UNION ALL
-	SELECT '# of established transit points with social mobiliser',176 UNION ALL
-	SELECT 'Number of clusters covered by SMs',34 UNION ALL
-	SELECT 'group_msd_chd-msd_poldiffsf',112 UNION ALL
-	SELECT 'group_spec_events-spec_newborn',125 UNION ALL
-	SELECT 'group_msd_chd-msd_toomanyroundsm',141 UNION ALL
-	SELECT 'group_msd_chd-msd_poliouncommonf',143 UNION ALL
-	SELECT 'group_msd_chd-msd_poliohascuref',132 UNION ALL
-	SELECT 'group_msd_chd-msd_playgroundf',124 UNION ALL
-	SELECT 'group_msd_chd-msd_marketm',98 UNION ALL
-	SELECT 'group_spec_events-spec_zerodose',135 UNION ALL
-	SELECT 'group_msd_chd-msd_soceventm',109 UNION ALL
-	SELECT 'group_msd_chd-msd_familymovedm',131 UNION ALL
-	SELECT 'group_msd_chd-msd_noplusesf',106 UNION ALL
-	SELECT 'group_msd_chd-msd_familymovedf',130 UNION ALL
-	SELECT 'group_msd_chd-msd_noconsentf',118 UNION ALL
-	SELECT 'group_msd_chd-msd_sideeffectsm',129 UNION ALL
-	SELECT 'group_msd_chd-msd_nogovtservicesf',146 UNION ALL
-	SELECT 'group_msd_chd-tot_missed_check',127 UNION ALL
-	SELECT 'group_msd_chd-msd_poliouncommonm',142 UNION ALL
-	SELECT 'group_msd_chd-msd_relbeliefsf',119 UNION ALL
-	SELECT 'group_msd_chd-msd_agedoutf',103 UNION ALL
-	SELECT 'group_msd_chd-msd_unhappywteamm',136 UNION ALL
-	SELECT 'group_msd_chd-msd_marketf',99 UNION ALL
-	SELECT 'group_msd_chd-msd_nogovtservicesm',145 UNION ALL
-	SELECT 'group_spec_events-spec_otherdisease',150 UNION ALL
-	SELECT 'group_msd_chd-msd_farmf',97 UNION ALL
-	SELECT 'group_spec_events-spec_vcmattendedncer',152 UNION ALL
-	SELECT 'group_spec_events-spec_cmamreferral',149 UNION ALL
-	SELECT 'group_msd_chd-msd_hhnotvisitedf',138 UNION ALL
-	SELECT 'group_msd_chd-msd_poldiffsm',111 UNION ALL
-	SELECT 'group_msd_chd-msd_farmm',96 UNION ALL
-	SELECT 'group_msd_chd-msd_agedoutm',102 UNION ALL
-	SELECT 'group_spec_events-spec_rireferral',144 UNION ALL
-	SELECT 'group_msd_chd-msd_nofeltneedf',120 UNION ALL
-	SELECT 'group_msd_chd-msd_childdiedm',114 UNION ALL
-	SELECT 'group_msd_chd-msd_soceventf',110 UNION ALL
-	SELECT 'group_msd_chd-msd_toomanyroundsf',141 UNION ALL
-	SELECT 'group_msd_chd-msd_hhnotvisitedm',139 UNION ALL
-	SELECT 'group_spec_events-spec_mslscase',134 UNION ALL
-	SELECT 'group_spec_events-spec_fic',104 UNION ALL
-	SELECT 'group_msd_chd-msd_poliohascurem',133 UNION ALL
-	SELECT 'group_msd_chd-msd_securityf',108 UNION ALL
-	SELECT 'group_spec_events-spec_afpcase',126 UNION ALL
-	SELECT 'group_msd_chd-msd_relbeliefsm',122 UNION ALL
-	SELECT 'tot_missed',76 UNION ALL
-	SELECT 'group_msd_chd-msd_childdiedf',113 UNION ALL
-	SELECT 'group_msd_chd-msd_unhappywteamf',137 UNION ALL
-	SELECT 'group_msd_chd-msd_schoolm',101 UNION ALL
-	SELECT 'group_msd_chd-msd_otherprotectionf',147 UNION ALL
-	SELECT 'group_msd_chd-msd_securitym',107 UNION ALL
-	SELECT 'group_msd_chd-msd_otherprotectionm',148 UNION ALL
-	SELECT 'group_msd_chd-msd_playgroundm',123 UNION ALL
-	SELECT 'group_msd_chd-msd_schoolf',100 UNION ALL
-	SELECT 'group_msd_chd-msd_childsickm',115 UNION ALL
-	SELECT 'group_msd_chd-msd_childsickf',116 UNION ALL
-	SELECT 'group_msd_chd-msd_noplusesm',105 UNION ALL
-	SELECT 'group_msd_chd-msd_sideeffectsf',128 UNION ALL
-	SELECT 'group_msd_chd-msd_nofeltneedm',121 UNION ALL
-	SELECT 'group_spec_events-spec_pregnantmother',151 UNION ALL
-	SELECT 'group_msd_chd-msd_noconsentm',117 UNION ALL
-	SELECT 'Number of target children',55 ;
-
-
-    INSERT INTO source_object_map
-    (content_type, master_object_id, source_object_code, mapped_by_id)
-
-    SELECT 'indicator',indicator_id,indicator_name, 1
-    FROM _tmp_indicator_map im
-    INNER JOIN auth_user au
-    ON au.username = 'demo_user';
 
     INSERT INTO indicator_tag
         (id, tag_name)
@@ -1584,6 +1118,709 @@ class Migration(migrations.Migration):
         SELECT 152,10 UNION ALL
         SELECT 135,10 UNION ALL
         SELECT 95,10;
+
+
+        -- CAMPAIGNS --
+
+        INSERT INTO campaign
+        (id, start_date,end_date,slug,campaign_type_id, office_id, created_at)
+
+        SELECT id, CAST(x.start_date AS DATE),CAST(x.end_date as date),x.slug, 1,1,now() FROM (
+        SELECT 99 as id,'11/01/13' as start_date,'11/01/13' as end_date,'nigeria-november-2013'  as slug UNION ALL
+        SELECT 101,'09/01/13','09/01/13','nigeria-september-2013' UNION ALL
+        SELECT 102,'03/01/12','03/01/12','nigeria-march-2012' UNION ALL
+        SELECT 103,'06/01/12','06/01/12','nigeria-june-2012' UNION ALL
+        SELECT 104,'08/01/14','08/01/14','nigeria-august-2014' UNION ALL
+        SELECT 105,'03/01/13','03/01/13','nigeria-march-2013' UNION ALL
+        SELECT 106,'10/01/13','10/01/13','nigeria-october-2013' UNION ALL
+        SELECT 107,'05/01/13','05/01/13','nigeria-may-2013' UNION ALL
+        SELECT 108,'03/01/14','03/01/14','nigeria-march-2014' UNION ALL
+        SELECT 109,'02/01/13','02/01/13','nigeria-february-2013' UNION ALL
+        SELECT 110,'12/01/12','12/01/12','nigeria-december-2012' UNION ALL
+        SELECT 111,'06/01/14','06/01/14','nigeria-june-2014' UNION ALL
+        SELECT 112,'12/01/13','12/01/13','nigeria-december-2013' UNION ALL
+        SELECT 113,'09/01/12','09/01/12','nigeria-september-2012' UNION ALL
+        SELECT 114,'04/01/13','04/01/13','nigeria-april-2013' UNION ALL
+        SELECT 115,'04/01/14','04/01/14','nigeria-april-2014' UNION ALL
+        SELECT 116,'06/01/13','06/01/13','nigeria-june-2013' UNION ALL
+        SELECT 117,'01/01/14','01/01/14','nigeria-january-2014' UNION ALL
+        SELECT 118,'01/01/12','01/01/12','nigeria-january-2012' UNION ALL
+        SELECT 119,'08/01/12','08/01/12','nigeria-august-2012' UNION ALL
+        SELECT 120,'01/01/13','01/01/13','nigeria-january-2013' UNION ALL
+        SELECT 121,'10/01/12','10/01/12','nigeria-october-2012' UNION ALL
+        SELECT 122,'10/01/14','10/01/14','nigeria-october-2014' UNION ALL
+        SELECT 123,'08/01/13','08/01/13','nigeria-august-2013' UNION ALL
+        SELECT 124,'07/01/14','07/01/14','nigeria-july-2014' UNION ALL
+        SELECT 125,'05/01/14','05/01/14','nigeria-may-2014' UNION ALL
+        SELECT 126,'11/01/12','11/01/12','nigeria-november-2012' UNION ALL
+        SELECT 127,'07/01/12','07/01/12','nigeria-july-2012' UNION ALL
+        SELECT 128,'09/01/14','09/01/14','nigeria-september-2014' UNION ALL
+        SELECT 129,'04/01/12','04/01/12','nigeria-april-2012' UNION ALL
+        SELECT 130,'02/01/14','02/01/14','nigeria-february-2014' UNION ALL
+        SELECT 131,'07/01/13','07/01/13','nigeria-july-2013' UNION ALL
+        SELECT 132,'05/01/12','05/01/12','nigeria-may-2012' UNION ALL
+        SELECT 100,'11/01/14','11/01/14','nigeria-november-2014' UNION ALL
+        SELECT 201,'12/01/14','12/01/14','nigeria-2014-12-01' UNION ALL
+        SELECT 210,'01/01/15','01/01/15','nigeria-2015-01-01' UNION ALL
+        SELECT 211,'02/01/15','02/01/15','nigeria-2015-02-01' UNION ALL
+        SELECT 212,'03/01/15','03/01/15','nigeria-2015-03-01' UNION ALL
+        SELECT 216,'02/01/12','02/01/12','nigeria-2012-02-01' UNION ALL
+        SELECT 221,'04/01/15','04/01/15','nigeria-2015-04-01' UNION ALL
+        SELECT 222,'05/01/15','05/01/15','nigeria-2015-05-01' UNION ALL
+        SELECT 223,'06/01/15','06/01/15','nigeria-2015-06-01'
+        )x;
+
+
+        -- source_object_map --
+        INSERT INTO source_object_map
+        (master_object_id, source_object_code, content_type, mapped_by_id)
+
+        SELECT *,1 FROM (
+        SELECT 32 as master_object_id ,'Number of Unicef polio positions in their posts in PBR-approved structures'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target number of Unicef polio positions in PBR-approved structures'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 24 as master_object_id ,'Number of children missed due to other reasons'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 25 as master_object_id ,'Number of refusals before re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 26 as master_object_id ,'Number of refusals after re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'Number of target social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 40 as master_object_id ,'Number of female social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 67 as master_object_id ,'Percentage of States/Regions with OPV supply arriving at state/region level in sufficient time before campaign'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 418 as master_object_id ,'YoungstRI'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 420 as master_object_id ,'RCorctCAT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 417 as master_object_id ,'TotalYoungest'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 421 as master_object_id ,'RIncorect'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 415 as master_object_id ,'HHvisitedTEAMS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 423 as master_object_id ,'RXCorctCAT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 422 as master_object_id ,'RXAssessMrk'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 424 as master_object_id ,'RXIncorect'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 269 as master_object_id ,'Sum of Marked0to59'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 270 as master_object_id ,'Sum of UnImmun0to59'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,'TOTAL teams Checked'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'# HR areas (Clusters) with social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,' # target social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 29 as master_object_id ,'# caregivers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 25 as master_object_id ,'# refusals before re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 28 as master_object_id ,'# Microplans incoroporating social data'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 44 as master_object_id ,'Amount committed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 53 as master_object_id ,'# districts having NO stock-outs of OPV'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 37 as master_object_id ,'# teams w/ at least one female worker'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,'# teams'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 62 as master_object_id ,'# w/ capacity'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,' # of HR areas (clusters) targeted  '  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 27 as master_object_id ,'# Microplans in LPD'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 24 as master_object_id ,'Other reasons'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 26 as master_object_id ,'# refusals after re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 40 as master_object_id ,'# female social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'# of targeted under-five children'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 43 as master_object_id ,'Amount TOTAL FRR funds'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'# in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 5 as master_object_id ,'# vaccine doses used'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'# HR areas with social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 32 as master_object_id ,'Number of core polio communication personnel in place in a country programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 27 as master_object_id ,'# Microplans in High Risk District'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 41 as master_object_id ,'# front line workers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target number of core polio personnel in place in a country programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 93 as master_object_id ,'CensusNewBornsF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 49 as master_object_id ,'# trained on RI in past 6 mos.'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 51 as master_object_id ,'# children vaccined'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 41 as master_object_id ,' # front line workers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target core polio personnel in place in a country programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 30 as master_object_id ,'# aware'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,' # of HR areas targeted  '  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'Total # of targetted social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'# target social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 49 as master_object_id ,'# trained on RI in past 6 months.'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target core polio communication personnel in place in a country programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,' # teams'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 42 as master_object_id ,'# workers w/ IPC skills'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 32 as master_object_id ,'Number of core polio personnel in place in a country programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 94 as master_object_id ,'CensusNewBornsM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 62 as master_object_id ,'# health facilities w/ capacity'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 83 as master_object_id ,'Tot_Newborns'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'# received payment timely'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 62 as master_object_id ,'% w/ capacity'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 85 as master_object_id ,'Census2_11MoF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target # of core polio communication'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 84 as master_object_id ,'Census2_11MoM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 32 as master_object_id ,'# of core polio communication personnel in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,'# of HR areas targeted'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 69 as master_object_id ,'Number of cases of cVDPV2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 162 as master_object_id ,'Number of cases of iVDPV2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 70 as master_object_id ,'Number of cases of WPV1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 160 as master_object_id ,'Number of cases of WPV3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 159 as master_object_id ,'Number of cases of aVDPV2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 161 as master_object_id ,'Number of cases of WPV1WPV3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target number of core polio communications in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 40 as master_object_id ,'Number of social mobilisers who are female'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,'# of teams'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 90 as master_object_id ,'Tot_2_11Months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target number of core polio communication positions'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 28 as master_object_id ,'# Microplans incorporating social data'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 32 as master_object_id ,'# of core polio communication in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'Target number of social mobilisers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 21 as master_object_id ,'All missed children'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilisers who were paid on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 91 as master_object_id ,'Census12_59MoF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'Number of social mobilisers in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 56 as master_object_id ,'# of subregional units'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target # of core polio communication '  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilizers who were paid on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilizers paid on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'Number of social mobilizers in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 43 as master_object_id ,'Amount FRR'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'# of social mobilizers who received payment on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 67 as master_object_id ,'% with OPV arriving in sufficient time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 51 as master_object_id ,'# of children vaccined'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'Target # of social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'# of social mobilizers in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'# of HR areas with social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 57 as master_object_id ,'# of subregional units where OPV arrived in sufficient time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 87 as master_object_id ,'Census12_59MoM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'# of social mobilizers paid on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 40 as master_object_id ,'# of female social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 35 as master_object_id ,'Target number of social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 37 as master_object_id ,'# polio teams w/ at least one female worker'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 263 as master_object_id ,'NOimmReas19'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 92 as master_object_id ,'Tot_12_59Months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 416 as master_object_id ,'ZeroDose'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 257 as master_object_id ,'NOimmReas13'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 256 as master_object_id ,'NOimmReas12'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 255 as master_object_id ,'NOimmReas11'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 254 as master_object_id ,'NOimmReas10'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 261 as master_object_id ,'NOimmReas17'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 260 as master_object_id ,'NOimmReas16'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 295 as master_object_id ,'STannounc'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 270 as master_object_id ,'UnImmun0to59'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 246 as master_object_id ,'NOimmReas3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 268 as master_object_id ,'NOimmReas2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 267 as master_object_id ,'NOimmReas1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 250 as master_object_id ,'NOimmReas7'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 249 as master_object_id ,'NOimmReas6'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 75 as master_object_id ,'Tot_Census'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 247 as master_object_id ,'NOimmReas4'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 262 as master_object_id ,'NOimmReas18'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 82 as master_object_id ,'VaxNewBornsF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 81 as master_object_id ,'VaxNewBornsM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 296 as master_object_id ,'SRadio'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 89 as master_object_id ,'Tot_VaxNewBorn'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 299 as master_object_id ,'SMosque'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 298 as master_object_id ,'SReiliglead'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 303 as master_object_id ,'SRelative'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 297 as master_object_id ,'STradlead'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 77 as master_object_id ,'Vax2_11MoF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 302 as master_object_id ,'Sbanner'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 305 as master_object_id ,'Scommmob'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 277 as master_object_id ,'SNOTAWARE'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 266 as master_object_id ,'NOimmReas20'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 248 as master_object_id ,'NOimmReas5'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 300 as master_object_id ,'SNewspaper'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 78 as master_object_id ,'Vax2_11MoM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 86 as master_object_id ,'Tot_Vax2_11Mo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 279 as master_object_id ,'Influence5'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 284 as master_object_id ,'Influence4'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 283 as master_object_id ,'Influence7'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 281 as master_object_id ,'Influence6'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 278 as master_object_id ,'Influence1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 80 as master_object_id ,'Vax12_59MoF'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 282 as master_object_id ,'Influence3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 280 as master_object_id ,'Influence2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 79 as master_object_id ,'Vax12_59MoM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 88 as master_object_id ,'Tot_Vax12_59Mo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 258 as master_object_id ,'NOimmReas14'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 285 as master_object_id ,'Influence8'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 414 as master_object_id ,'HHsampled'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 74 as master_object_id ,'Tot_Vax'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 76 as master_object_id ,'Tot_Missed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 259 as master_object_id ,'NOimmReas15'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 253 as master_object_id ,'NOimmReas9'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 269 as master_object_id ,'Marked0to59'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 252 as master_object_id ,'NOimmReas8'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 304 as master_object_id ,'SHworker'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 301 as master_object_id ,'SPoster'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 382 as master_object_id ,'ReasonNotGiven'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 375 as master_object_id ,'PoliticalDifferences'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 370 as master_object_id ,'NotImmRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 386 as master_object_id ,'SettlementsRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 390 as master_object_id ,'TargetRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 352 as master_object_id ,'ChildNCShool'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 341 as master_object_id ,'COMImmRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 368 as master_object_id ,'NoNeedFelt'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 363 as master_object_id ,'IMMSCRelNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 350 as master_object_id ,'ChildAbsent'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 354 as master_object_id ,'COMImmRedoABSENT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 362 as master_object_id ,'IMMSCOtherNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 376 as master_object_id ,'Reason1ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 351 as master_object_id ,'ChildNCOther'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 359 as master_object_id ,'IMMOTTradNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 367 as master_object_id ,'NoNCShools'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 377 as master_object_id ,'Reason2ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 355 as master_object_id ,'HHRevisited'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 342 as master_object_id ,'RELImmRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 374 as master_object_id ,'OTRevisited'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 385 as master_object_id ,'SCRevisited'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 360 as master_object_id ,'ImmRedoABSENT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 369 as master_object_id ,'NoNOCOther'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 373 as master_object_id ,'OTHERImRedoABSENT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 379 as master_object_id ,'Reason4ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 389 as master_object_id ,'MissedRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 353 as master_object_id ,'ChildSick'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 371 as master_object_id ,'NotImmRedoABSENT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 381 as master_object_id ,'Reason6ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 388 as master_object_id ,'UnhappyWith'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 361 as master_object_id ,'IMMSCCommNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 419 as master_object_id ,'RAssessMrk'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 380 as master_object_id ,'Reason5ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 365 as master_object_id ,'NoCaregiver'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 384 as master_object_id ,'RELImmRedoABSENT'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 357 as master_object_id ,'IMMOTOtherNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 364 as master_object_id ,'IMMSCTradNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 358 as master_object_id ,'IMMOTRelNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 366 as master_object_id ,'NoHHRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 378 as master_object_id ,'Reason3ABS'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 340 as master_object_id ,'ImmRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 356 as master_object_id ,'IMMOTCommNC'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 343 as master_object_id ,'OTHERImRedo'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 383 as master_object_id ,'ReligiousBelief'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 344 as master_object_id ,'NonCompliance'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 372 as master_object_id ,'OpvSafety'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 387 as master_object_id ,'TooManyRounds'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 402 as master_object_id ,'0to23mth Seen'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 403 as master_object_id ,'0to23mth notMarked'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 405 as master_object_id ,'24to59mth notMarked'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 275 as master_object_id ,'TOTAL Seen'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 395 as master_object_id ,'totSeet2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 392 as master_object_id ,'totSeet3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 394 as master_object_id ,'totSeet1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 411 as master_object_id ,'totSeet6'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 408 as master_object_id ,'totSeet4'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 410 as master_object_id ,'totSeet5'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 400 as master_object_id ,'0to9mth Seen'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 397 as master_object_id ,'totMist2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 393 as master_object_id ,'totMist3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 396 as master_object_id ,'totMist1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 413 as master_object_id ,'totMist6'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 273 as master_object_id ,'TOTAL Notmarked'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 409 as master_object_id ,'totMist4'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 412 as master_object_id ,'totMist5'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 399 as master_object_id ,'Unvaccinated this round'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 404 as master_object_id ,'24to59mth Seen'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 398 as master_object_id ,'numberof Locations'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 401 as master_object_id ,'0to9mth notMarked'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 161 as master_object_id ,'Number of cases of W1W3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 451 as master_object_id ,'Reason for inaccessible children - No reason provided'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 441 as master_object_id ,'Political issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 440 as master_object_id ,'Environment issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 439 as master_object_id ,'Management issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 438 as master_object_id ,'Security Operations / Incidents'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 437 as master_object_id ,'Militant / Anti-Govt Elements'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 436 as master_object_id ,'Crime'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 435 as master_object_id ,'Local community not supportive'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 434 as master_object_id ,'Perception of fear'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 198 as master_object_id ,'Number of functional active cold chain equipment in the district'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 221 as master_object_id ,'Number of HRDs that have polio vaccine wastage rate in SIAs between 5 and 15%'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 220 as master_object_id ,'Vaccine wastage rate'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'Number of social  mobilizers in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 433 as master_object_id ,'d4'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 432 as master_object_id ,'d1_3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 431 as master_object_id ,'d0'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 69 as master_object_id ,'cVDPV2'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 70 as master_object_id ,'WPV1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 70 as master_object_id ,'Number of cases of WPV 1'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 243 as master_object_id ,'Number of children 12 months and under'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 244 as master_object_id ,'Number of children under 12 months who received DPT3 or Penta3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 177 as master_object_id ,'# of children vaccinated at transit points last month'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 158 as master_object_id ,'Number of children missed due to all access issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 43 as master_object_id ,'Amount total requested FRR funds'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 44 as master_object_id ,'Amount FRR funds committed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 217 as master_object_id ,'Number of RI sessions monitored'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 216 as master_object_id ,'Number of RI sessions monitored having stockouts of any vaccine in the last month'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 195 as master_object_id ,'Number of high risk districts'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 218 as master_object_id ,'Number of HR districts with locations where OPV is delivered together with any other polio-funded services demanded by the community'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 192 as master_object_id ,'Number of RI defaulters mobilized by social mobilizers last month (with accessibility breakdown)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 29 as master_object_id ,'Number of caregivers in HR districts'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 197 as master_object_id ,'# of HRD which reported on balance SIA vaccine stocks after last SIA round'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 199 as master_object_id ,'Total number of all active cold chain equipment in the district'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 51 as master_object_id ,'Number of children vaccinated in HRD'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 5 as master_object_id ,'Number of vaccine doses used in HRD'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 196 as master_object_id ,'HR District did not receive polio vaccine supply at least 3 days before the planned start date of campaign (yes/no)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 210 as master_object_id ,'Number of social mobilizers who received on-the-job supervision during their last working week'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 209 as master_object_id ,'Number of SMs trained or refreshed with the integrated health package in the last 6 months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,'Number of vaccination teams'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 208 as master_object_id ,'Number of vaccination teams with at least 1 member from the local community'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 207 as master_object_id ,'Target # of social mobilizers and supervisors'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 206 as master_object_id ,'Number of SMs and supervisors in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,'Number of HR sub-districts'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'Number of HR sub-districts with at least 1 permanent SM'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 66 as master_object_id ,'# health fcilities having NO stock-outs of OPV'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 244 as master_object_id ,'# children received Penta3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 45 as master_object_id ,'Amount FRR updated amount'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'# received payment on time'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,' # polio teams'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'# social mobilizers in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 31 as master_object_id ,'Target # of core polio communication personnel'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilizers who received timely payment for last campaign/month''s salary'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 42 as master_object_id ,'Number of vaccinators and SMs operating in HRDs trained on professional IPC package in last 6 months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 37 as master_object_id ,'Number of vaccination teams with at least 1 female member'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 42 as master_object_id ,'Number of vaccinators and SMs operating in HRD who have been trained on professional Inter Personal Communication packaged in the last 6 months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 41 as master_object_id ,'Number of vaccinators and SMs'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'Number of children targeted in high-risk districts'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 37 as master_object_id ,'Number of vaccination teams with at least one female'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 41 as master_object_id ,'Number of vaccinators and social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 95 as master_object_id ,'spec_grp_choice'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 208 as master_object_id ,'TSettle'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 214 as master_object_id ,'Number of absences after re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 213 as master_object_id ,'Number of absences before re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 432 as master_object_id ,'Number of non-polio AFP cases with 1-3 doses of OPV'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 431 as master_object_id ,'Number of non-polio AFP cases with zero doses of OPV'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 433 as master_object_id ,'Number of non-polio AFP cases with 4+ doses of OPV'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 70 as master_object_id ,'Number of WPV1 cases'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 69 as master_object_id ,'Number of cVDPV2 cases'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 203 as master_object_id ,'Is an access-challenged district'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 204 as master_object_id ,'Total number of LT vaccination transit points planned by the programme'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 51 as master_object_id ,'Number of children vaccined in HRD'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,'Number of high risk sub-districts'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilizers receiving timely payment for last campaign'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 207 as master_object_id ,'Target number of social mobilizers and supervisors'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'Number of high risk sub-districts covered by at least 1 social mobilizer'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 177 as master_object_id ,'Number of children vaccinated at transit points last month'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 38 as master_object_id ,'# of vaccination teams in HRA'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 202 as master_object_id ,'Is an access-challenged district that has a specific access approach identified'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 175 as master_object_id ,'Number of established LT vaccination transit points'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 463 as master_object_id ,'number of social mobilisers participating the telephone survey'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 209 as master_object_id ,'Number of social mobilizers trained or refreshed with the integrated health package in the last 6 months'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 221 as master_object_id ,'Is an HRD that has polio vaccine wastage rate in SIAs between 5 and 15%'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 196 as master_object_id ,'HR district did NOT receive polio vaccine supply at least 3 days before the planned start date of campaign'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 206 as master_object_id ,'Number of social mobilizers and supervisors in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 176 as master_object_id ,'Number of established LT vaccination transit points with a dedicated social mobilizer'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 195 as master_object_id ,'Is a high risk district'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 203 as master_object_id ,'Is an access-challenged district (Yes/No)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 202 as master_object_id ,'Has a specific access approach identified (Yes/No)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 244 as master_object_id ,'# of children who received Penta 3'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 243 as master_object_id ,'# of children 7-12 months old'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 27 as master_object_id ,'# of micro plans reviewed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 197 as master_object_id ,'District reported balance of SIA vaccine stocks (Yes/No)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 208 as master_object_id ,'Number of vaccination teams with at least one member from local community'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 158 as master_object_id ,'Number of children missed due to all access reasons'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 440 as master_object_id ,'Reason for inaccessible children - Environment issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 436 as master_object_id ,'Reason for inaccessible children - Crime'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 437 as master_object_id ,'Reason for inaccessible children - Militant / Anti-Govt Elements'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 439 as master_object_id ,'Reason for inaccessible children - Management issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 435 as master_object_id ,'Reason for inaccessible children - Local community not supportive'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 438 as master_object_id ,'Reason for inaccessible children - Security Operations / Incidents'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 434 as master_object_id ,'Reason for inaccessible children - Perception of fear'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 199 as master_object_id ,'Total number of all active cold chain equipment in district'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 26 as master_object_id ,'Number of refusals afte re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 27 as master_object_id ,'Number of microplans reviewed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 41 as master_object_id ,'Number of vaccinators'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 42 as master_object_id ,'Number of vaccinators trained on IPC skills'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 199 as master_object_id ,'# of health facilities'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'Number of targeted children in HRA'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 198 as master_object_id ,'# of high-risk districts with 90% of active cold chain equipments functional'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 28 as master_object_id ,'Number of Microplans incoroporating social data'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 204 as master_object_id ,'# of identfied/planned target points'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 207 as master_object_id ,'Number of planned SM and supervisors'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'# of target children'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 196 as master_object_id ,'District DID NOT receiv OPV 3 days before campaign'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 214 as master_object_id ,'# absences after re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 213 as master_object_id ,'# of absences before re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 25 as master_object_id ,'# of refusals before re-visit'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 33 as master_object_id ,'Number of clusters (sub-district units)'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 221 as master_object_id ,'district wastage rate between 5 - 15%'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 470 as master_object_id ,'# of children missed due to access issues'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 40 as master_object_id ,'# of female SMs in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 46 as master_object_id ,'Number of social mobilizers who received timely payment'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 175 as master_object_id ,'# of established transit points'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 177 as master_object_id ,'# of children vaccinated at TP'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 220 as master_object_id ,'% wastage'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 463 as master_object_id ,'Number of social mobilizers responding telephone survey'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 37 as master_object_id ,'# vaccination teams with at least one female '  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 195 as master_object_id ,'District is high-risk'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 36 as master_object_id ,'# of SMs in place'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 350 as master_object_id ,'# of children missed due to absence'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 208 as master_object_id ,'# vaccination teams with at least one member from local community'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 176 as master_object_id ,'# of established transit points with social mobiliser'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 34 as master_object_id ,'Number of clusters covered by SMs'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 112 as master_object_id ,'group_msd_chd-msd_poldiffsf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 125 as master_object_id ,'group_spec_events-spec_newborn'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 141 as master_object_id ,'group_msd_chd-msd_toomanyroundsm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 143 as master_object_id ,'group_msd_chd-msd_poliouncommonf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 132 as master_object_id ,'group_msd_chd-msd_poliohascuref'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 124 as master_object_id ,'group_msd_chd-msd_playgroundf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 98 as master_object_id ,'group_msd_chd-msd_marketm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 135 as master_object_id ,'group_spec_events-spec_zerodose'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 109 as master_object_id ,'group_msd_chd-msd_soceventm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 131 as master_object_id ,'group_msd_chd-msd_familymovedm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 106 as master_object_id ,'group_msd_chd-msd_noplusesf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 130 as master_object_id ,'group_msd_chd-msd_familymovedf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 118 as master_object_id ,'group_msd_chd-msd_noconsentf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 129 as master_object_id ,'group_msd_chd-msd_sideeffectsm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 146 as master_object_id ,'group_msd_chd-msd_nogovtservicesf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 127 as master_object_id ,'group_msd_chd-tot_missed_check'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 142 as master_object_id ,'group_msd_chd-msd_poliouncommonm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 119 as master_object_id ,'group_msd_chd-msd_relbeliefsf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 103 as master_object_id ,'group_msd_chd-msd_agedoutf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 136 as master_object_id ,'group_msd_chd-msd_unhappywteamm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 99 as master_object_id ,'group_msd_chd-msd_marketf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 145 as master_object_id ,'group_msd_chd-msd_nogovtservicesm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 150 as master_object_id ,'group_spec_events-spec_otherdisease'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 97 as master_object_id ,'group_msd_chd-msd_farmf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 152 as master_object_id ,'group_spec_events-spec_vcmattendedncer'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 149 as master_object_id ,'group_spec_events-spec_cmamreferral'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 138 as master_object_id ,'group_msd_chd-msd_hhnotvisitedf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 111 as master_object_id ,'group_msd_chd-msd_poldiffsm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 96 as master_object_id ,'group_msd_chd-msd_farmm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 102 as master_object_id ,'group_msd_chd-msd_agedoutm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 144 as master_object_id ,'group_spec_events-spec_rireferral'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 120 as master_object_id ,'group_msd_chd-msd_nofeltneedf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 114 as master_object_id ,'group_msd_chd-msd_childdiedm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 110 as master_object_id ,'group_msd_chd-msd_soceventf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 141 as master_object_id ,'group_msd_chd-msd_toomanyroundsf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 139 as master_object_id ,'group_msd_chd-msd_hhnotvisitedm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 134 as master_object_id ,'group_spec_events-spec_mslscase'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 104 as master_object_id ,'group_spec_events-spec_fic'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 133 as master_object_id ,'group_msd_chd-msd_poliohascurem'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 108 as master_object_id ,'group_msd_chd-msd_securityf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 126 as master_object_id ,'group_spec_events-spec_afpcase'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 122 as master_object_id ,'group_msd_chd-msd_relbeliefsm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 76 as master_object_id ,'tot_missed'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 113 as master_object_id ,'group_msd_chd-msd_childdiedf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 137 as master_object_id ,'group_msd_chd-msd_unhappywteamf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 101 as master_object_id ,'group_msd_chd-msd_schoolm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 147 as master_object_id ,'group_msd_chd-msd_otherprotectionf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 107 as master_object_id ,'group_msd_chd-msd_securitym'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 148 as master_object_id ,'group_msd_chd-msd_otherprotectionm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 123 as master_object_id ,'group_msd_chd-msd_playgroundm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 100 as master_object_id ,'group_msd_chd-msd_schoolf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 115 as master_object_id ,'group_msd_chd-msd_childsickm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 116 as master_object_id ,'group_msd_chd-msd_childsickf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 105 as master_object_id ,'group_msd_chd-msd_noplusesm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 128 as master_object_id ,'group_msd_chd-msd_sideeffectsf'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 121 as master_object_id ,'group_msd_chd-msd_nofeltneedm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 151 as master_object_id ,'group_spec_events-spec_pregnantmother'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 117 as master_object_id ,'group_msd_chd-msd_noconsentm'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 55 as master_object_id ,'Number of target children'  as source_object_code,'indicator' as content_type UNION ALL
+        SELECT 99 as master_object_id ,'Nigeria November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 100 as master_object_id ,'Nigeria November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 101 as master_object_id ,'Nigeria September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 102 as master_object_id ,'Nigeria March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 103 as master_object_id ,'Nigeria June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 104 as master_object_id ,'Nigeria August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 105 as master_object_id ,'Nigeria March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 106 as master_object_id ,'Nigeria October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 107 as master_object_id ,'Nigeria May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 108 as master_object_id ,'Nigeria March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 109 as master_object_id ,'Nigeria February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 110 as master_object_id ,'Nigeria December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 111 as master_object_id ,'Nigeria June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 112 as master_object_id ,'Nigeria December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 113 as master_object_id ,'Nigeria September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 114 as master_object_id ,'Nigeria April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 115 as master_object_id ,'Nigeria April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 116 as master_object_id ,'Nigeria June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 117 as master_object_id ,'Nigeria January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 118 as master_object_id ,'Nigeria January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 119 as master_object_id ,'Nigeria August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 120 as master_object_id ,'Nigeria January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 121 as master_object_id ,'Nigeria October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 122 as master_object_id ,'Nigeria October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 123 as master_object_id ,'Nigeria August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 124 as master_object_id ,'Nigeria July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 125 as master_object_id ,'Nigeria May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 126 as master_object_id ,'Nigeria November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 127 as master_object_id ,'Nigeria July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 128 as master_object_id ,'Nigeria September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 129 as master_object_id ,'Nigeria April 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 130 as master_object_id ,'Nigeria February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 131 as master_object_id ,'Nigeria July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 132 as master_object_id ,'Nigeria May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 133 as master_object_id ,'Afghanistan July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 134 as master_object_id ,'Afghanistan November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 135 as master_object_id ,'Afghanistan December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 136 as master_object_id ,'Afghanistan September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 137 as master_object_id ,'Afghanistan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 138 as master_object_id ,'Afghanistan March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 139 as master_object_id ,'Afghanistan June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 140 as master_object_id ,'Afghanistan September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 141 as master_object_id ,'Afghanistan October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 143 as master_object_id ,'Afghanistan June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 144 as master_object_id ,'Afghanistan September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 145 as master_object_id ,'Afghanistan November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 146 as master_object_id ,'Afghanistan May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 147 as master_object_id ,'Afghanistan August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 148 as master_object_id ,'Afghanistan February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 149 as master_object_id ,'Afghanistan August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 150 as master_object_id ,'Afghanistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 151 as master_object_id ,'Afghanistan July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 152 as master_object_id ,'Afghanistan August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 153 as master_object_id ,'Afghanistan January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 154 as master_object_id ,'Afghanistan March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 156 as master_object_id ,'Afghanistan January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 157 as master_object_id ,'Afghanistan March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 158 as master_object_id ,'Afghanistan December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 159 as master_object_id ,'Afghanistan October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 160 as master_object_id ,'Afghanistan January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 161 as master_object_id ,'Afghanistan February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 162 as master_object_id ,'Afghanistan June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 163 as master_object_id ,'Pakistan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 164 as master_object_id ,'Pakistan November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 165 as master_object_id ,'Pakistan August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 166 as master_object_id ,'Pakistan June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 167 as master_object_id ,'Pakistan January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 168 as master_object_id ,'Pakistan December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 169 as master_object_id ,'Pakistan May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 170 as master_object_id ,'Pakistan July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 171 as master_object_id ,'Pakistan July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 172 as master_object_id ,'Pakistan October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 173 as master_object_id ,'Pakistan April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 174 as master_object_id ,'Pakistan June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 175 as master_object_id ,'Pakistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 176 as master_object_id ,'Pakistan March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 177 as master_object_id ,'Pakistan April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 178 as master_object_id ,'Pakistan August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 179 as master_object_id ,'Pakistan September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 106 as master_object_id ,'Nigeria 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 112 as master_object_id ,'Nigeria 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 120 as master_object_id ,'Nigeria 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 105 as master_object_id ,'Nigeria 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 109 as master_object_id ,'Nigeria 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 107 as master_object_id ,'Nigeria 2013.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 114 as master_object_id ,'Nigeria 2013.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 131 as master_object_id ,'Nigeria 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 116 as master_object_id ,'Nigeria 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 101 as master_object_id ,'Nigeria 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 123 as master_object_id ,'Nigeria 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 180 as master_object_id ,'Pakistan 2014.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 178 as master_object_id ,'Pakistan 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 171 as master_object_id ,'Pakistan 2014.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 174 as master_object_id ,'Pakistan 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 175 as master_object_id ,'Pakistan 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 177 as master_object_id ,'Pakistan 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 176 as master_object_id ,'Pakistan 2014.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 163 as master_object_id ,'Pakistan 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 167 as master_object_id ,'Pakistan 2014.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 181 as master_object_id ,'Pakistan 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 182 as master_object_id ,'Pakistan 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 183 as master_object_id ,'Pakistan 2012.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 184 as master_object_id ,'Pakistan 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 185 as master_object_id ,'Pakistan 2012.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 186 as master_object_id ,'Pakistan 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 187 as master_object_id ,'Pakistan 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 188 as master_object_id ,'Pakistan 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 189 as master_object_id ,'Pakistan 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 137 as master_object_id ,'Afghanistan 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 144 as master_object_id ,'Afghanistan 2014.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 152 as master_object_id ,'Afghanistan 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 134 as master_object_id ,'Afghanistan 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 141 as master_object_id ,'Afghanistan 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 153 as master_object_id ,'Afghanistan 2014.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 135 as master_object_id ,'Afghanistan 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 139 as master_object_id ,'Afghanistan 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 150 as master_object_id ,'Afghanistan 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 190 as master_object_id ,'Afghanistan 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 173 as master_object_id ,'Pakistan 2013.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 169 as master_object_id ,'Pakistan 2013.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 166 as master_object_id ,'Pakistan 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 170 as master_object_id ,'Pakistan 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 191 as master_object_id ,'Pakistan 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 192 as master_object_id ,'Pakistan 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 193 as master_object_id ,'Pakistan 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 165 as master_object_id ,'Pakistan 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 179 as master_object_id ,'Pakistan 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 130 as master_object_id ,'Nigeria 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 108 as master_object_id ,'Nigeria 2014.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 111 as master_object_id ,'Nigeria 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 124 as master_object_id ,'Nigeria 2014.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 115 as master_object_id ,'Nigeria 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 125 as master_object_id ,'Nigeria 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 104 as master_object_id ,'Nigeria 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 110 as master_object_id ,'Nigeria 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 121 as master_object_id ,'Nigeria 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 126 as master_object_id ,'Nigeria 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 160 as master_object_id ,'Afghanistan 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 161 as master_object_id ,'Afghanistan 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 138 as master_object_id ,'Afghanistan 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 119 as master_object_id ,'Nigeria 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 113 as master_object_id ,'Nigeria 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 143 as master_object_id ,'Afghanistan 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 151 as master_object_id ,'Afghanistan 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 129 as master_object_id ,'Nigeria 2012.4'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 132 as master_object_id ,'Nigeria 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 103 as master_object_id ,'Nigeria 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 127 as master_object_id ,'Nigeria 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 118 as master_object_id ,'Nigeria 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 102 as master_object_id ,'Nigeria 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 194 as master_object_id ,'Pakistan 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 195 as master_object_id ,'Pakistan 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 196 as master_object_id ,'Pakistan 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 140 as master_object_id ,'Afghanistan 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 149 as master_object_id ,'Afghanistan 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 146 as master_object_id ,'Afghanistan 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 133 as master_object_id ,'Afghanistan 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 162 as master_object_id ,'Afghanistan 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 156 as master_object_id ,'Afghanistan 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 154 as master_object_id ,'Afghanistan 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 148 as master_object_id ,'Afghanistan 2012.2'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 168 as master_object_id ,'Pakistan 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 172 as master_object_id ,'Pakistan 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 164 as master_object_id ,'Pakistan 2013.11'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 147 as master_object_id ,'Afghanistan 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 136 as master_object_id ,'Afghanistan 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 158 as master_object_id ,'Afghanistan 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 159 as master_object_id ,'Afghanistan 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 145 as master_object_id ,'Afghanistan 2013.11'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 115 as master_object_id ,'Tue Apr 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 201 as master_object_id ,'Mon Dec 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 111 as master_object_id ,'Sun Jun 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 201 as master_object_id ,'41974'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 207 as master_object_id ,'Pakistan January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 208 as master_object_id ,'Pakistan February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 206 as master_object_id ,'Afghanistan February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 211 as master_object_id ,'Nigeria February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 210 as master_object_id ,'Nigeria January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 214 as master_object_id ,'Pakistan March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 213 as master_object_id ,'Afghanistan March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 209 as master_object_id ,'Afghanistan January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 212 as master_object_id ,'Nigeria March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 142 as master_object_id ,'Afghanistan April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 155 as master_object_id ,'Afghanistan May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 216 as master_object_id ,'Nigeria February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 215 as master_object_id ,'Afghanistan April 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 210 as master_object_id ,'Nigeria Jan 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 212 as master_object_id ,'Nigeria Mar 1, 2015'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 223 as master_object_id ,'nigeria-2015-06-01'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 197 as master_object_id ,'Pakistan December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 200 as master_object_id ,'Afghanistan December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 190 as master_object_id ,'Afghanistan April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 198 as master_object_id ,'Afghanistan October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 201 as master_object_id ,'Nigeria December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 202 as master_object_id ,'Afghanistan November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 199 as master_object_id ,'Afghanistan July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 203 as master_object_id ,'Pakistan November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 204 as master_object_id ,'Pakistan October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 180 as master_object_id ,'Pakistan September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 171 as master_object_id ,'Pakistan Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 199 as master_object_id ,'Afghanistan Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 124 as master_object_id ,'Nigeria Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 163 as master_object_id ,'Paksitan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 150 as master_object_id ,'Afganistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 191 as master_object_id ,'Pakistan January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 188 as master_object_id ,'Pakistan September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 189 as master_object_id ,'Pakistan August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 195 as master_object_id ,'Pakistan October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 194 as master_object_id ,'Pakistan November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 187 as master_object_id ,'Pakistan June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 181 as master_object_id ,'Pakistan January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 186 as master_object_id ,'Pakistan July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 192 as master_object_id ,'Pakistan February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 184 as master_object_id ,'Pakistan May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 183 as master_object_id ,'Pakistan February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 182 as master_object_id ,'Pakistan March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 193 as master_object_id ,'Pakistan March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 196 as master_object_id ,'Pakistan December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+        SELECT 185 as master_object_id ,'Pakistan April 2012'  as source_object_code,'campaign' as content_type
+        )x;
+
+
+
     """)
 
     ]
