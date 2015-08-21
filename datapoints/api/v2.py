@@ -127,6 +127,10 @@ class v2Request(object):
             		AND dtm.document_id = %s
             	);
 
+            SELECT t.id, t.source_object_code, t.content_type, 'needs-mapping' FROM _tmp_object_map t
+            WHERE master_object_id = -1
+
+            UNION ALL
 
             SELECT t.id, t.source_object_code, t.content_type, r.name as master_object_name FROM _tmp_object_map t
             INNER JOIN region r
@@ -145,12 +149,7 @@ class v2Request(object):
             SELECT t.id, t.source_object_code, t.content_type, ind.short_name FROM _tmp_object_map t
             INNER JOIN indicator ind
             ON t.master_object_id = t.id
-            AND content_type = 'indicator'
-
-            UNION ALL
-
-            SELECT t.id, t.source_object_code, t.content_type, 'needs-mapping' FROM _tmp_object_map t
-            WHERE master_object_id = -1;
+            AND content_type = 'indicator';
 
         ''',[self.document_id])
 

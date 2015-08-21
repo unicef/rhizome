@@ -39,7 +39,7 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-      doc_id    	 : 3,
+      doc_id    	 : 2,
 			doc_tab    	 : 'mapping',
     };
   },
