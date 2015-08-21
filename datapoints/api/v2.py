@@ -112,9 +112,6 @@ class v2Request(object):
         '''
         '''
 
-        print 'self . kwrags'
-        print self.kwargs
-
         data = SourceObjectMap.objects.raw('''
 
             DROP TABLE IF EXISTS _tmp_object_map;
