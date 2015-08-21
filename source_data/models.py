@@ -75,10 +75,12 @@ class Document(models.Model):
         super(Document, self).save(*args, **kwargs)
 
 
-
 class SourceObjectMap(models.Model):
+    # FIXME -> need to check what would be foreign keys
+    # so regoin_maps / campaign_maps are vlide
 
     master_object_id = models.IntegerField() ## need to think about to FK this.
+    master_object_name = models.CharField(max_length=255,null=True)
     source_object_code = models.CharField(max_length=255)
     content_type = models.CharField(max_length=10)
     mapped_by = models.ForeignKey(User)

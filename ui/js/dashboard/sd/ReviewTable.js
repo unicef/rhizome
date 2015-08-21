@@ -23,6 +23,7 @@ var ReviewTable = React.createClass({
 		getData: React.PropTypes.func.isRequired,
     loading   : React.PropTypes.bool.isRequired,
 		region 		: React.PropTypes.object.isRequired,
+		campaign 	: React.PropTypes.object.isRequired,
 	},
 	getInitialState: function() {
 		return {
@@ -39,7 +40,11 @@ var ReviewTable = React.createClass({
 				schema: parseSchema(response)
 		}));
 
-		this.props.getData({document:this.props.doc_id,region_id:this.props.region.id},null,{'cache-control':'no-cache'})
+		this.props.getData({
+				document_id:this.props.doc_id,
+				region_id:this.props.region.id,
+				campaign_id:this.props.campaign.id
+			},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 						data: response.objects
 			}));

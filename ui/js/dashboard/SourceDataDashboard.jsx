@@ -39,7 +39,7 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-      doc_id    	 : -1,
+      doc_id    	 : 3,
 			doc_tab    	 : 'mapping',
     };
   },
@@ -103,7 +103,7 @@ var SourceDataDashboard = React.createClass({
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_id']
+					'fields' : ['id','content_type','source_object_code','master_object_name']
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
@@ -127,6 +127,7 @@ var SourceDataDashboard = React.createClass({
 					key={table_key}
 					loading={loading}
 					doc_id={doc_id}
+					campaign={campaign}
 					>
 					<Paginator />
 					<SimpleDataTable>

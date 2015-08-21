@@ -55,8 +55,8 @@ class v2Request(object):
                 'permission_function':None},
             'datapoint': {'orm_obj':DataPoint,
                 'permission_function':None},
-            'doc_mapping' : {'orm_obj':DocumentSourceObjectMap,
-                'permission_function': None}, ##self.filter_source_objects_by_doc_id},
+            'doc_mapping' : {'orm_obj':SourceObjectMap,
+                'permission_function': self.pretty_doc_mapping},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.pretty_doc_datapoint},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
@@ -107,6 +107,57 @@ class v2Request(object):
         }
 
         return response_data
+
+    def pretty_doc_mapping(self, list_of_object_ids):
+        '''
+        '''
+
+        print 'self . kwrags'
+        print self.kwargs
+
+        data = SourceObjectMap.objects.raw('''
+
+            DROP TABLE IF EXISTS _tmp_object_map;
+            CREATE TABLE _tmp_object_map
+            AS
+            	    SELECT
+            		*
+            	    FROM source_object_map som
+            	    WHERE EXISTS (
+            		SELECT 1
+            		FROM document_to_source_object_map dtm
+            		WHERE som.id = dtm.source_object_map_id
+            		AND dtm.document_id = %s
+            	);
+
+
+            SELECT t.id, t.source_object_code, t.content_type, r.name as master_object_name FROM _tmp_object_map t
+            INNER JOIN region r
+            ON t.master_object_id = r.id
+            AND content_type = 'region'
+
+            UNION ALL
+
+            SELECT t.id, t.source_object_code, t.content_type, c.slug FROM _tmp_object_map t
+            INNER JOIN campaign c
+            ON t.master_object_id = c.id
+            AND content_type = 'campaign'
+
+            UNION ALL
+
+            SELECT t.id, t.source_object_code, t.content_type, ind.short_name FROM _tmp_object_map t
+            INNER JOIN indicator ind
+            ON t.master_object_id = t.id
+            AND content_type = 'indicator'
+
+            UNION ALL
+
+            SELECT t.id, t.source_object_code, t.content_type, 'needs-mapping' FROM _tmp_object_map t
+            WHERE master_object_id = -1;
+
+        ''',[self.document_id])
+
+        return None, data
 
     def pretty_doc_datapoint(self,list_of_object_ids):
 
@@ -597,7 +648,7 @@ class v2GetRequest(v2Request):
         operator_lookup = {}
 
         try:
-            self.document_id = query_dict['document']
+            self.document_id = query_dict['document_id']
         except KeyError:
             self.document_id = -1
 
