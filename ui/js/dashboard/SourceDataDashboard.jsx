@@ -88,13 +88,18 @@ var SourceDataDashboard = React.createClass({
 				</TitleMenu>
 			</div>
 			<div className="row">
-			<TitleMenu text={'validate'}>
+			<TitleMenu text={doc_tab}>
 				{doc_tabs}
 			</TitleMenu>
 			</div>
 		</div>;
 
 		const table_definition = {
+			'doc_index':{
+				'meta_fn' : api.document_meta,
+				'data_fn' : api.document,
+				'fields' : ['id','docfile']
+			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
@@ -103,18 +108,14 @@ var SourceDataDashboard = React.createClass({
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
-				'fields' : ['id','document']
+				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value']
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
-				'fields' : ['id']
+				'fields' : ['id','region_id','indicator_id','campaign_id','value']
 			},
-			'doc_index':{
-				'meta_fn' : api.document_meta,
-				'data_fn' : api.document,
-				'fields' : ['id','docfile','uploaded_by','created_at']},
-		}
+		};
 
 		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + this.state.doc_id + this.state.doc_tab;
 		// data table //
@@ -141,17 +142,17 @@ var SourceDataDashboard = React.createClass({
 			>
 			</DocOverview>
 
-		var tab_title = 'Mapping For document_id: ' + doc_id
 
+		var table_title = doc_tab	 + ' for document_id: ' + doc_id;
 		return (
 					<div className="row">
 					<div className="medium-9 columns">
-					<h2 style={{ textAlign: 'right' }} className="ufadmin-page-heading">{tab_title}</h2>
+					<h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{table_title}</h2>
 					{review_table}
 					</div>
 					<div className="medium-3 columns">
 						{review_nav}
-						// {review_breakdown}
+							{review_breakdown}
 					</div>
 		</div>);;
   },

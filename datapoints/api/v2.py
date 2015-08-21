@@ -58,7 +58,7 @@ class v2Request(object):
             'doc_mapping' : {'orm_obj':SourceObjectMap,
                 'permission_function': None}, ##self.filter_source_objects_by_doc_id},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
-                'permission_function': None},
+                'permission_function': self.pretty_doc_datapoint},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
                 'permission_function': None},
             'document': {'orm_obj':Document,
@@ -108,11 +108,29 @@ class v2Request(object):
 
         return response_data
 
-    def filter_source_objects_by_doc_id(self,list_of_object_ids):
+    def pretty_doc_datapoint(self,list_of_object_ids):
 
-        print 'filtering..'
-        print len(list_of_object_ids)
-        print list_of_object_ids
+        data = DocDataPoint.objects.raw('''
+            SELECT
+                dd.id
+                , r.name as region_id
+                ,c.slug as campaign_id
+                ,i.short_name as indicator_id
+                ,dd.value
+                ,dd.document_id
+            FROM doc_datapoint dd
+            INNER JOIN region r
+            ON dd.region_id = r.id
+            INNER JOIN campaign c
+            on dd.campaign_id = c.id
+            INNER JOIN indicator i
+            ON dd.indicator_id = i.id
+        ''',[list_of_object_ids])
+
+        return None, data
+
+
+    def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
         source_object_ids = DocumentSourceObjectctMap.objects.filter(document_id = \
             self.document_id).values_list('source_object_map_id',flat=True)

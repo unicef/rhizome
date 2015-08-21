@@ -43,8 +43,8 @@ var React = require('react/addons');
 				</div> : null;
 
 			return <div>
-			{doc_tab} For document_id: {doc_id}
-			<h2> doc ID : {doc_id} </h2>
+			<h2> Document Overview </h2>
+			<h3> doc_id : {doc_id} </h3>
 			<div>{refreshMasterButton} </div>
 		 </div>
 		}
