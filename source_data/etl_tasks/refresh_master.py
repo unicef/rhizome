@@ -47,17 +47,21 @@ class MasterRefresh(object):
     def main(self):
         '''
 from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-x = mr(1,2)
+x = mr(1,3)
         '''
 
         BATCH_SIZE = 100
 
         new_source_submission_ids = SourceSubmission.objects.filter(
-            document_id = 2
+            document_id = self.document_id
             ,process_status = 'TO_PROCESS'
         ).values_list('id',flat=True)
 
         to_process = new_source_submission_ids[:BATCH_SIZE]
+
+        print '== length of TO PROCESS =='
+        print len(to_process)
+
 
         source_object_map_ids = self.upsert_source_object_map\
             (to_process)
@@ -187,18 +191,17 @@ x = mr(1,2)
             if dp_obj:
                 dp_batch.append(dp_obj)
 
-        DocDataPoint.objects.filter(document_id = self.document_id).delete()
         batch_result = DocDataPoint.objects.bulk_create(dp_batch)
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
 
         try:
             indicator_id = self.source_map_dict[('indicator',ind_code)]
-            if indicator_id == -1:
-                return None
         except KeyError:
+            print 'NO INDICATOR_MAP '
             return None
 
+        print indicator_id
         try:
             cleaned_val = float(val)
         except ValueError:
