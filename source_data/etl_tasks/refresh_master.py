@@ -165,6 +165,7 @@ x = mr(1,2)
 
         dp_batch = []
 
+        print ' === processing row === '
 
         try:
             region_id = self.source_map_dict[('region',region_code)]
@@ -175,6 +176,8 @@ x = mr(1,2)
         try:
             campaign_id = self.source_map_dict[('campaign',campaign_code)]
         except KeyError:
+            print campaign_code
+            print 'NO CAMPAIGN MAP'
             return
 
         for k,v in submission_data.iteritems():

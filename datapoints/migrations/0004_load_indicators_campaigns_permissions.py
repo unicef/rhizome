@@ -1120,7 +1120,7 @@ class Migration(migrations.Migration):
         SELECT 95,10;
 
 
--- CAMPAIGNS --
+        -- CAMPAIGNS --
 
         INSERT INTO campaign
         (id, start_date,end_date,slug,campaign_type_id, office_id, created_at)
@@ -1173,8 +1173,6 @@ class Migration(migrations.Migration):
         SELECT 223,'06/01/15','06/01/15','nigeria-2015-06-01'
 
         )x;
-
-
 
         -- source_object_map --
         INSERT INTO source_object_map
@@ -1834,9 +1832,16 @@ class Migration(migrations.Migration):
 
         )x;
 
-
-
-
+        INSERT INTO source_object_map (master_object_id, source_object_code, mapped_by_id, content_type)
+        SELECT
+            c.id
+            , c.slug
+            , 1
+            , 'campaign'
+        FROM campaign c WHERE NOT EXISTS (
+            SELECT 1 FROM source_object_map m
+            WHERE m.source_object_code = c.slug
+            );
     """)
 
     ]
