@@ -45,26 +45,39 @@ class MasterRefresh(object):
         self.computed_datapoint_ids = self.main()
 
     def main(self):
+        '''
+        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+        x = mr(1,2)
+        '''
+
+        BATCH_SIZE = 100
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = 2
             ,process_status = 'TO_PROCESS'
         ).values_list('id',flat=True)
 
-        print '=='
-        print new_source_submission_ids
+        to_process = new_source_submission_ids[:BATCH_SIZE]
 
         source_object_map_ids = self.upsert_source_object_map\
-            (new_source_submission_ids)
+            (to_process)
 
-        # doc_datapoint_ids = self.process_doc_datapoints\
-        #     (new_source_submission_ids)
-        #
-        # datapoint_ids = self.sync_doc_datapoint()
-        # cr = CacheRefresh([d.id for d in datapoint_ids])
-        # computed_datapoint_ids = cr.main()
+        SourceSubmission.objects.filter(id__in=to_process)\
+            .update(process_status = 'PROCESSED')
 
-        return []
+
+        doc_datapoint_ids = self.process_doc_datapoints\
+            (to_process)
+
+        print 'len(to_process)'
+        print len(to_process)
+
+
+        datapoint_ids = self.sync_doc_datapoint()
+        cr = CacheRefresh([d.id for d in datapoint_ids])
+        computed_datapoint_ids = cr.main()
+
+        return computed_datapoint_ids
 
     def upsert_source_object_map(self,source_submission_id_list):
         '''

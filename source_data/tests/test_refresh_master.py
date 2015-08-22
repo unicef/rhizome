@@ -58,12 +58,19 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
 
         dt = DocTransform(self.document.id)
-        source_submissions = dt.process_file()
+        self.self. = dt.process_file()
 
         test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')
         file_line_count = sum(1 for line in test_file) - 1 # for the header!
 
         self.assertEqual(len(source_submissions),file_line_count)
+
+    def test_source_data_points_to_doc_datapoints(self):
+
+        mr = MasterRefresh(self.user.id, self.document.id)
+        doc_datapoint_ids = mr.process_doc_datapoints(self.source_submissions)
+
+        self.assertTrue(doc_datapoint_ids)
 
     def test_refresh_master_init(self):
 
