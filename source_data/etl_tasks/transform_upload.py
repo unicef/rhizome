@@ -12,7 +12,7 @@ from datapoints.models import DataPoint
 
 class DocTransform(object):
 
-    def __init__(self,document_id):
+    def __init__(self,document_id,file_path=None):
 
         self.source_datapoints = []
         self.document_id = document_id
@@ -21,8 +21,14 @@ class DocTransform(object):
         self.file_delimiter = ','
         self.unique_id_column = 'uq_id'
 
-        self.file_path = str(Document.objects.get(id=self.document_id).\
-            docfile)
+        if not file_path:
+            file_path = str(Document.objects.get(id=self.document_id).\
+                docfile)
+
+        self.file_path = file_path
+        print '====== FILE PATH ======='
+        print self.file_path
+
         self.to_process_status = ProcessStatus.objects.\
             get(status_text='TO_PROCESS').id
 
@@ -39,6 +45,10 @@ class DocTransform(object):
         return file_stream
 
     def process_file(self):
+        '''
+        Returns a list of source submisison objects
+        '''
+
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.prep_file(full_file_path)
@@ -63,4 +73,6 @@ class DocTransform(object):
                 }
                 batch.append(SourceSubmission(**submission_dict))
 
-        SourceSubmission.objects.bulk_create(batch)
+        ss = SourceSubmission.objects.bulk_create(batch)
+
+        return ss

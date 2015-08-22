@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv
 
+from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import *
 from datapoints.models import*
@@ -24,9 +25,11 @@ class RefreshMasterTestCase(TestCase):
         self.campaign = Campaign.objects.get(slug='nigeria-2015-06-01')
         self.region = Region.objects.get(name='Bauchi (Province)')
 
+        self.test_file_location = 'ebola_situation_report_vol_194.csv'
+
         self.document = Document.objects.create(
             created_by=self.user,
-            docfile='test-doc',
+            docfile=self.test_file_location,
             guid='test-doc',
             doc_text='test-doc',
             is_processed=False,
@@ -44,12 +47,23 @@ class RefreshMasterTestCase(TestCase):
 
         Uploading the csv to the server is itself a different task.. so for now
         we preform "transform_upload" on the test file.
+
+        This method is in charge of one specific thing.. taking an input stream
+        such as a csv, or an ODK submission, and creating one row in the
+        database with the schema that it was received.  Later in the ingest
+        process, users are allowed to specify settings to each file in order
+        to translate them into data the application can consume and visualize.
         '''
 
-        sdp_df = read_csv('datapoints/tests/_data/source_datapoint_msd_chd.csv')
-        sdp_ids = []
+        self.set_up()
 
-        return sdp_ids
+        dt = DocTransform(self.document.id)
+        source_submissions = dt.process_file()
+
+        test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')
+        file_line_count = sum(1 for line in test_file) - 1 # for the header!
+
+        self.assertEqual(len(source_submissions),file_line_count)
 
     def test_refresh_master_init(self):
 
