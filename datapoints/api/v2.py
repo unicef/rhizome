@@ -209,19 +209,8 @@ class v2Request(object):
                 AND dd.campaign_id = %s
             INNER JOIN indicator i
                 ON dd.indicator_id = i.id;;
-                
+
             ''',[r,self.document_id,self.kwargs['campaign_id']])
-
-            # , r.name as region_id
-            # ,c.slug as campaign_id
-            # ,i.short_name as indicator_id
-
-            #
-            # ''',[self.user_id,region_id_list, self.kwargs['campaign_id'],self.kwargs['document_id']])
-
-
-
-        print data
 
         return None, data
     def filter_source_objects_by_doc_id(self,list_of_object_ids):
