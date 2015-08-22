@@ -1125,6 +1125,9 @@ class Migration(migrations.Migration):
         INSERT INTO campaign
         (id, start_date,end_date,slug,campaign_type_id, office_id, created_at)
 
+        -- to do this in excel... :) --
+        -- CONCATENATE("SELECT ",A1,",'",TEXT(B1,"mm/dd/yy"),"','",TEXT(B1,"mm/dd/yy"),"','",D1,"' UNION ALL")
+
         SELECT id, CAST(x.start_date AS DATE),CAST(x.end_date as date),x.slug, 1,1,now() FROM (
         SELECT 99 as id,'11/01/13' as start_date,'11/01/13' as end_date,'nigeria-november-2013'  as slug UNION ALL
         SELECT 101,'09/01/13','09/01/13','nigeria-september-2013' UNION ALL

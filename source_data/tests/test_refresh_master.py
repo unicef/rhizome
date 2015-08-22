@@ -24,7 +24,6 @@ class RefreshMasterTestCase(TestCase):
         self.campaign = Campaign.objects.get(slug='nigeria-2015-06-01')
         self.region = Region.objects.get(name='Bauchi (Province)')
 
-
         self.document = Document.objects.create(
             created_by=self.user,
             docfile='test-doc',
@@ -36,15 +35,15 @@ class RefreshMasterTestCase(TestCase):
         self.source_datapoints = [] # self.build_source_datapoint_list()
 
 
-    def build_source_datapoint_list(self):
+    def test_doc_to_source_submission(self):
         '''
         Part of the set up method, this takes a csv and inserts it into the
-        source datapoints table.  This method in context of this test represents
+        source submissino table.  This method in context of this test represents
         what would happen when a user uploads a csv and the data flows through
         "etl_tasks/transform_upload"
 
-        i.e. this testing method should actually just call "transform_upload"
-        with the csv directory below.
+        Uploading the csv to the server is itself a different task.. so for now
+        we preform "transform_upload" on the test file.
         '''
 
         sdp_df = read_csv('datapoints/tests/_data/source_datapoint_msd_chd.csv')
