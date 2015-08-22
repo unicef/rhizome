@@ -157,27 +157,73 @@ class v2Request(object):
 
     def pretty_doc_datapoint(self,list_of_object_ids):
 
+        r = self.kwargs['region_id']
+
         data = DocDataPoint.objects.raw('''
+
+        	DROP TABLE IF EXISTS region_tree;
+
+        	CREATE TABLE region_tree AS
+        	WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
+          	(
+
+          	SELECT
+          		rg.parent_region_id
+          		,rg.parent_region_id as immediate_parent_id
+          		,rg.id as region_id
+          		,1 as lvl
+          	FROM region rg
+
+          	UNION ALL
+
+          	-- recursive term --
+          	SELECT
+          		r_recurs.parent_region_id
+          		,rt.parent_region_id as immediate_parent_id
+          		,rt.region_id
+          		,rt.lvl + 1
+          	FROM region AS r_recurs
+          	INNER JOIN region_tree AS rt
+          	ON (r_recurs.id = rt.parent_region_id)
+          	AND r_recurs.parent_region_id IS NOT NULL
+          	)
+
+          	SELECT region_id  FROM REGION_TREE
+          	WHERE ( parent_region_id = %s );
+
             SELECT
                 dd.id
-                , r.name as region_id
-                ,c.slug as campaign_id
-                ,i.short_name as indicator_id
                 ,dd.value
                 ,dd.document_id
+                ,c.slug as campaign_id
+                ,i.short_name as indicator_id
+                ,r.name as region_id
             FROM doc_datapoint dd
+            INNER join region_tree rt
+                ON dd.region_id = rt.region_id
+                AND dd.document_id = %s
             INNER JOIN region r
-            ON dd.region_id = r.id
+                ON rt.region_id = r.id
             INNER JOIN campaign c
-            on dd.campaign_id = c.id
+                ON dd.campaign_id = c.id
+                AND dd.campaign_id = %s
             INNER JOIN indicator i
-            ON dd.indicator_id = i.id
-            WHERE dd.id = ANY(%s);
-        ''',[list_of_object_ids])
+                ON dd.indicator_id = i.id;;
+                
+            ''',[r,self.document_id,self.kwargs['campaign_id']])
+
+            # , r.name as region_id
+            # ,c.slug as campaign_id
+            # ,i.short_name as indicator_id
+
+            #
+            # ''',[self.user_id,region_id_list, self.kwargs['campaign_id'],self.kwargs['document_id']])
+
+
+
+        print data
 
         return None, data
-
-
     def filter_source_objects_by_doc_id(self,list_of_object_ids):
 
         source_object_ids = DocumentSourceObjectMap.objects.filter(document_id = \
@@ -607,6 +653,8 @@ class v2GetRequest(v2Request):
         ## IF THERE ARE NO FILTERS, THE API DOES NOT NEED TO ##
         ## QUERY THE DATABASE BEFORE APPLYING PERMISSIONS ##
         if not self.kwargs and self.content_type in ['region']:
+            qset = None
+        elif self.content_type in ['doc_datapoint'] :
             qset = None
         else:
             qset = list(self.db_obj.objects.filter(**self.kwargs).values())
