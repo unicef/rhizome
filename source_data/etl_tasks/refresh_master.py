@@ -35,10 +35,10 @@ class MasterRefresh(object):
 
         map_df_cols = ['master_object_id','source_object_code','content_type']
 
-        self.source_map_dict =  DataFrame(list(SourceObjectMap.objects.all()\
+        self.source_map_dict =  DataFrame(list(SourceObjectMap.objects.filter(master_object_id__gt=0)\
             .values_list(*['master_object_id']))\
             ,columns = ['master_object_id']\
-            ,index= SourceObjectMap.objects.all()\
+            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0)\
             .values_list(*['content_type','source_object_code']))\
             .to_dict()['master_object_id']
 
@@ -46,8 +46,8 @@ class MasterRefresh(object):
 
     def main(self):
         '''
-        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-        x = mr(1,2)
+from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+x = mr(1,2)
         '''
 
         BATCH_SIZE = 100
@@ -65,15 +65,17 @@ class MasterRefresh(object):
         SourceSubmission.objects.filter(id__in=to_process)\
             .update(process_status = 'PROCESSED')
 
-
         doc_datapoint_ids = self.process_doc_datapoints\
             (to_process)
 
-        print 'len(to_process)'
-        print len(to_process)
-
+        print '== length of new doc dps =='
+        print len(doc_datapoint_ids)
 
         datapoint_ids = self.sync_doc_datapoint()
+        print '== length of datapoint dps =='
+        print len(datapoint_ids)
+
+
         cr = CacheRefresh([d.id for d in datapoint_ids])
         computed_datapoint_ids = cr.main()
 
@@ -139,7 +141,10 @@ class MasterRefresh(object):
         for i,(row) in enumerate(source_dp_json):
             self.process_source_submission(row)
 
-        return DocDataPoint.objects.filter(document_id = self.document_id)
+        new_doc_dp_ids = DocDataPoint.objects.filter(document_id = \
+            self.document_id).values_list('id',flat=True)
+
+        return new_doc_dp_ids
 
     def sync_doc_datapoint(self):
         ## merge into datapoitns from doc datapoints #
@@ -160,17 +165,15 @@ class MasterRefresh(object):
 
         dp_batch = []
 
+
         try:
             region_id = self.source_map_dict[('region',region_code)]
-            if region_id == -1:
-                return None
         except KeyError:
+            print 'NO REGION MAP'
             return
 
         try:
             campaign_id = self.source_map_dict[('campaign',campaign_code)]
-            if campaign_id == -1:
-                return None
         except KeyError:
             return
 
