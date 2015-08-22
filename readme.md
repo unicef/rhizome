@@ -42,6 +42,15 @@ privileges, so you'll need to `sudo` the above command.
     $ sudo gem install sass compass
 
 
+## running test ##
+ 
+ - backend: 
+   $ python manage.py test --settings=polio.settings_test
+
+- frontend:
+   coming soon...
+
+
 ## Setting up the database
 
 Our backend is built off of postgres.  In order to quickly install postgres and

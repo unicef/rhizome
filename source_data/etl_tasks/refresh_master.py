@@ -42,25 +42,29 @@ class MasterRefresh(object):
             .values_list(*['content_type','source_object_code']))\
             .to_dict()['master_object_id']
 
+        self.computed_datapoint_ids = self.main()
+
     def main(self):
 
         new_source_submission_ids = SourceSubmission.objects.filter(
-            document_id = self.document_id
+            document_id = 2
             ,process_status = 'TO_PROCESS'
         ).values_list('id',flat=True)
+
+        print '=='
+        print new_source_submission_ids
 
         source_object_map_ids = self.upsert_source_object_map\
             (new_source_submission_ids)
 
+        # doc_datapoint_ids = self.process_doc_datapoints\
+        #     (new_source_submission_ids)
+        #
+        # datapoint_ids = self.sync_doc_datapoint()
+        # cr = CacheRefresh([d.id for d in datapoint_ids])
+        # computed_datapoint_ids = cr.main()
 
-        doc_datapoint_ids = self.process_doc_datapoints\
-            (new_source_submission_ids)
-
-        datapoint_ids = self.sync_doc_datapoint()
-        cr = CacheRefresh([d.id for d in datapoint_ids])
-        computed_datapoint_ids = cr.main()
-
-
+        return []
 
     def upsert_source_object_map(self,source_submission_id_list):
         '''
