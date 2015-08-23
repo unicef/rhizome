@@ -50,10 +50,17 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-validateForm : function(){
-		return <input type="checkbox"  /> ;
-	},
+validateForm : function(is_checked){
 
+	console.log(is_checked)
+	//onChange={handleChange}
+	if (is_checked){
+		return <input type="checkbox" checked  />;
+	}
+	else{
+		return <input type="checkbox" />;
+	}
+},
 
   render : function () {
     var loading = this.props.loading;
@@ -115,7 +122,7 @@ validateForm : function(){
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
-				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
+				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','is_valid'],
 				'row_on_click' : null
 			},
 			'results':{
@@ -127,11 +134,11 @@ validateForm : function(){
 		};
 
 	const fields = {
-		edit_link: {
+		is_valid: {
 			title: 'Validate',
 			key: 'id',
-			renderer: (id) =>
-				{ return this.validateForm() }
+			renderer: (id,is_valid) =>
+				{ return this.validateForm(is_valid) }
 		},
 	};
 

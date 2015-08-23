@@ -168,6 +168,7 @@ class v2Request(object):
                 ,c.slug as campaign_id
                 ,i.short_name as indicator_id
                 ,r.name as region_id
+                ,dd.is_valid
             FROM doc_datapoint dd
             INNER join region_tree rt
                 ON dd.region_id = rt.region_id
