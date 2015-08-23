@@ -40,7 +40,7 @@ var SourceDataDashboard = React.createClass({
       campaign     : null,
       dashboard    : null,
       doc_id    	 : 2,
-			doc_tab    	 : 'mapping',
+			doc_tab    	 : 'validate',
     };
   },
 
@@ -50,12 +50,9 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-	validateForm : function () {
-		console.log('validating')
-			return {
-      loading : false
-    };
-  },
+validateForm : function(){
+		return <input type="checkbox"  /> ;
+	},
 
 
   render : function () {
@@ -133,7 +130,8 @@ var SourceDataDashboard = React.createClass({
 		edit_link: {
 			title: 'Validate',
 			key: 'id',
-			renderer: (id) => <a href={`/datapoints/users/update/${id}`}>Edit User</a>
+			renderer: (id) =>
+				{ return this.validateForm() }
 		},
 	};
 
