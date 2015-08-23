@@ -28,6 +28,9 @@ const fields = {
 	last_login: { format: 'MMM D YYYY, h:mm a' }
 };
 
+console.log('USER ADMIN FIELDS')
+
+console.log(fields)
 const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link'];
 
 const UsersAdmin = React.createClass({

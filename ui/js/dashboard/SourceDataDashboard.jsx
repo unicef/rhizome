@@ -50,6 +50,14 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
+	validateForm : function () {
+		console.log('validating')
+			return {
+      loading : false
+    };
+  },
+
+
   render : function () {
     var loading = this.props.loading;
 		var campaign = this.props.campaign;
@@ -98,28 +106,45 @@ var SourceDataDashboard = React.createClass({
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
-				'fields' : ['id','docfile']
+				'fields' : ['id','docfile'],
+				'row_on_click' : null
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name']
+					'fields' : ['id','content_type','source_object_code','master_object_name'],
+					'row_on_click' : null
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
-				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value']
+				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value'],
+				'row_on_click' : null
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
-				'fields' : ['id','region_id','indicator_id','campaign_id','value']
+				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
+				'row_on_click' : null
 			},
 		};
 
-		var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
+	const fields = {
+		validate_check_box_form: {
+			title: 'Validate',
+			key: 'is_valid',
+			renderer: (is_valid) => {
+					return this.ValidateForm(is_valid)
+				}
+		},
+	};
+
+	console.log('fieeeellldss')
+	console.log(fields)
+
+	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
-		var review_table = <ReviewTable
+	var review_table = <ReviewTable
 					title='sample title'
 					getMetadata={table_definition[doc_tab]['meta_fn']}
 					getData={table_definition[doc_tab]['data_fn']}
@@ -128,6 +153,7 @@ var SourceDataDashboard = React.createClass({
 					loading={loading}
 					doc_id={doc_id}
 					campaign={campaign}
+					fields={fields}
 					>
 					<Paginator />
 					<SimpleDataTable>

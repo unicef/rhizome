@@ -50,7 +50,7 @@ from source_data.etl_tasks.refresh_master import MasterRefresh as mr
 x = mr(1,3)
         '''
 
-        BATCH_SIZE = 100
+        BATCH_SIZE = 500
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id
