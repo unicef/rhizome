@@ -289,6 +289,7 @@ def refresh_metadata(request):
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
     user_cache_data = cache_tasks.cache_user_abstracted()
     campaign_cache_data = cache_tasks.cache_campaign_abstracted()
+    region_tree_cache_data = cache_tasks.cache_region_tree()
 
     return HttpResponseRedirect(reverse('datapoints:cache_control'))
 

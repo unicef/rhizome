@@ -580,6 +580,53 @@ def cache_campaign_abstracted():
         upsert_meta_data(c_raw, CampaignAbstracted)
 
 
+def cache_region_tree():
+
+    rt_raw = RegionTree.objects.raw(
+    '''
+    TRUNCATE TABLE region_tree;
+
+
+    INSERT INTO region_tree
+    (parent_region_id, immediate_parent_id, region_id, lvl)
+
+
+    WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
+    (
+
+    SELECT
+    	rg.parent_region_id
+    	,rg.parent_region_id as immediate_parent_id
+    	,rg.id as region_id
+    	,1 as lvl
+    FROM region rg
+
+    UNION ALL
+
+    -- recursive term --
+    SELECT
+    	r_recurs.parent_region_id
+    	,rt.parent_region_id as immediate_parent_id
+    	,rt.region_id
+    	,rt.lvl + 1
+    FROM region AS r_recurs
+    INNER JOIN region_tree AS rt
+    ON (r_recurs.id = rt.parent_region_id)
+    AND r_recurs.parent_region_id IS NOT NULL
+    )
+
+    SELECT
+    	COALESCE(parent_region_id, region_id)  AS parent_region_id
+    	,COALESCE(immediate_parent_id, region_id)  AS immediate_parent_id
+    	,region_id
+    	,lvl
+    FROM region_tree;
+
+    SELECT * FROM region_tree;
+    ''')
+
+    for x in rt_raw:
+        pass # in order to execute raw sql
 
 
 def upsert_meta_data(qset, abstract_model):
