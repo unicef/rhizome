@@ -161,36 +161,6 @@ class v2Request(object):
 
         data = DocDataPoint.objects.raw('''
 
-        	DROP TABLE IF EXISTS region_tree;
-
-        	CREATE TABLE region_tree AS
-        	WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
-          	(
-
-          	SELECT
-          		rg.parent_region_id
-          		,rg.parent_region_id as immediate_parent_id
-          		,rg.id as region_id
-          		,1 as lvl
-          	FROM region rg
-
-          	UNION ALL
-
-          	-- recursive term --
-          	SELECT
-          		r_recurs.parent_region_id
-          		,rt.parent_region_id as immediate_parent_id
-          		,rt.region_id
-          		,rt.lvl + 1
-          	FROM region AS r_recurs
-          	INNER JOIN region_tree AS rt
-          	ON (r_recurs.id = rt.parent_region_id)
-          	AND r_recurs.parent_region_id IS NOT NULL
-          	)
-
-          	SELECT region_id  FROM REGION_TREE
-          	WHERE ( parent_region_id = %s );
-
             SELECT
                 dd.id
                 ,dd.value
@@ -201,6 +171,7 @@ class v2Request(object):
             FROM doc_datapoint dd
             INNER join region_tree rt
                 ON dd.region_id = rt.region_id
+          	    AND parent_region_id = %s
                 AND dd.document_id = %s
             INNER JOIN region r
                 ON rt.region_id = r.id
