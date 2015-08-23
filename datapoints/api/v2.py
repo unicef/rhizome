@@ -208,7 +208,7 @@ class v2Request(object):
                 ON dd.campaign_id = c.id
                 AND dd.campaign_id = %s
             INNER JOIN indicator i
-                ON dd.indicator_id = i.id;;
+                ON dd.indicator_id = i.id;
 
             ''',[r,self.document_id,self.kwargs['campaign_id']])
 

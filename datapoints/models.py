@@ -254,6 +254,22 @@ class Region(models.Model):
         db_table = 'region'
         unique_together = ('name','region_type','office')
 
+class RegionTree(models.Model):
+    '''
+    region tree that is refreshed with "refresh_metadata"
+
+    Nigeria for instance as a parent region, will have ALL children recursively
+    stored with the cooresponding level to indicate its depth in the tree.
+    '''
+
+    parent_region = models.ForeignKey(Region, related_name='ultimate_parent')
+    immediate_parent = models.ForeignKey(Region, related_name='immediate_parent')
+    region = models.ForeignKey(Region)
+    lvl = models.IntegerField()
+
+    class Meta:
+        db_table = 'region_tree'
+        unique_together = [('parent_region','region')]
 
 class RegionPolygon(models.Model):
     '''
