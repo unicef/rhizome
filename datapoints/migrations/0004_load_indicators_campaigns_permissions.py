@@ -1842,6 +1842,16 @@ class Migration(migrations.Migration):
             SELECT 1 FROM source_object_map m
             WHERE m.source_object_code = c.slug
             );
+
+
+        INSERT INTO document_to_source_object_map
+        (document_id,source_object_map_id)
+        SELECT sd.id , som.id
+        FROM source_data_document sd
+        INNER JOIN source_object_map som
+        ON som.content_type in ('indicator','campaign')
+        AND sd.docfile = 'initialize-db';
+
     """)
 
     ]

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     INSERT INTO source_data_document
             (created_by_id,docfile,guid,doc_text,is_processed,created_at)
-            SELECT id,'initialize-ng-regions','init_ng_regions','init_ng_regions', CAST(1 AS BOOLEAN),NOW()
+            SELECT id,'initialize-db','init_ng_regions','init_ng_regions', CAST(1 AS BOOLEAN),NOW()
             FROM auth_user
             WHERE NOT EXISTS (
                 SELECT 1 FROM source_data_document sdd
@@ -3167,5 +3167,15 @@ class Migration(migrations.Migration):
 	SELECT region_code, r.id, 'region' ,x.id FROM region r
     INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) x
     ON 1=1;
+
+    INSERT INTO document_to_source_object_map
+    (document_id,source_object_map_id)
+    SELECT sd.id , som.id
+    FROM source_data_document sd
+    INNER JOIN source_object_map som
+    ON som.content_type = 'region'
+    AND sd.docfile = 'initialize-db';
+
+
     """)
     ]
