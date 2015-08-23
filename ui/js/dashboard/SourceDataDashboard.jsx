@@ -106,41 +106,36 @@ var SourceDataDashboard = React.createClass({
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
-				'fields' : ['id','docfile'],
+				'fields' : ['id','docfile','edit_link'],
 				'row_on_click' : null
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name'],
+					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
 					'row_on_click' : null
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
-				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value'],
+				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
 				'row_on_click' : null
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
-				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
+				'fields' : ['id','region_id','indicator_id','campaign_id','value','edit_link'],
 				'row_on_click' : null
 			},
 		};
 
 	const fields = {
-		validate_check_box_form: {
+		edit_link: {
 			title: 'Validate',
-			key: 'is_valid',
-			renderer: (is_valid) => {
-					return this.ValidateForm(is_valid)
-				}
+			key: 'id',
+			renderer: (id) => <a href={`/datapoints/users/update/${id}`}>Edit User</a>
 		},
 	};
-
-	console.log('fieeeellldss')
-	console.log(fields)
 
 	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //

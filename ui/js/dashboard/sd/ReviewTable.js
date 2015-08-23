@@ -85,9 +85,18 @@ var ReviewTable = React.createClass({
 		if(!isLoaded) return this.renderLoading();
 
 		var {data, schema} = this.state;
+		var fields = this.props.fields
+
+		console.log('fields')
+		console.log(fields)
+
 
 		return <div>
-        <LocalDatascope data={data} schema={schema} pageSize={25}>
+        <LocalDatascope
+				 		data={data}
+						schema={schema}
+						fields={fields}
+						pageSize={25}>
 	         <Datascope>
 	           {this.props.children}
 	         </Datascope>
