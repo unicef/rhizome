@@ -46,8 +46,8 @@ class MasterRefresh(object):
 
     def main(self):
         '''
-from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-x = mr(1,3)
+        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+        x = mr(1,3)
         '''
 
         BATCH_SIZE = 500
@@ -59,10 +59,6 @@ x = mr(1,3)
 
         to_process = new_source_submission_ids[:BATCH_SIZE]
 
-        print '== length of TO PROCESS =='
-        print len(to_process)
-
-
         source_object_map_ids = self.upsert_source_object_map\
             (to_process)
 
@@ -72,13 +68,7 @@ x = mr(1,3)
         doc_datapoint_ids = self.process_doc_datapoints\
             (to_process)
 
-        print '== length of new doc dps =='
-        print len(doc_datapoint_ids)
-
         datapoint_ids = self.sync_doc_datapoint()
-        print '== length of datapoint dps =='
-        print len(datapoint_ids)
-
 
         cr = CacheRefresh([d.id for d in datapoint_ids])
         computed_datapoint_ids = cr.main()

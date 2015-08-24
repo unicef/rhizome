@@ -19,15 +19,12 @@ class DocTransform(object):
 
         ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
         self.file_delimiter = ','
-        self.unique_id_column = 'uq_id'
 
         if not file_path:
             file_path = str(Document.objects.get(id=self.document_id).\
                 docfile)
 
         self.file_path = file_path
-        print '====== FILE PATH ======='
-        print self.file_path
 
         self.to_process_status = ProcessStatus.objects.\
             get(status_text='TO_PROCESS').id
@@ -68,7 +65,7 @@ class DocTransform(object):
                     'submission_json': submission_data,
                     'document_id': self.document_id,
                     'row_number': i,
-                    'instance_guid': submission_data[self.unique_id_column],
+                    'instance_guid': i,
                     'process_status': 'TO_PROCESS',
                 }
                 batch.append(SourceSubmission(**submission_dict))
