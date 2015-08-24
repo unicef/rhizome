@@ -50,16 +50,15 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-validateForm : function(is_checked){
-
-	console.log(is_checked)
+validateForm : function(id){
+	return <input type="checkbox" checked  />;
 	//onChange={handleChange}
-	if (is_checked){
-		return <input type="checkbox" checked  />;
-	}
-	else{
-		return <input type="checkbox" />;
-	}
+	// if (is_checked){
+	// 	return <input type="checkbox" checked  />;
+	// }
+	// else{
+	// 	return <input type="checkbox" />;
+	// }
 },
 
   render : function () {
@@ -110,13 +109,13 @@ validateForm : function(is_checked){
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
-				'fields' : ['id','docfile','edit_link'],
+				'fields' : ['id','docfile'],
 				'row_on_click' : null
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
+					'fields' : ['id','content_type','source_object_code','master_object_name'],
 					'row_on_click' : null
 				},
 			'validate':{
@@ -128,7 +127,7 @@ validateForm : function(is_checked){
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
-				'fields' : ['id','region_id','indicator_id','campaign_id','value','edit_link'],
+				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
 				'row_on_click' : null
 			},
 		};
@@ -137,8 +136,8 @@ validateForm : function(is_checked){
 		is_valid: {
 			title: 'Validate',
 			key: 'id',
-			renderer: (id,is_valid) =>
-				{ return this.validateForm(is_valid) }
+			renderer: (id) =>
+				{ return this.validateForm(id) }
 		},
 	};
 
@@ -186,16 +185,12 @@ validateForm : function(is_checked){
   },
 
 _setDocId : function (doc_id) {
-	console.log('loading_new_document_id')
-	console.log(doc_id)
 	this._navigate({ doc_id : doc_id });
 	this.state.doc_id = doc_id
 	this.forceUpdate();
 },
 
 _setDocTab : function (doc_tab) {
-	console.log('loading_new_doc_tabd')
-	console.log(doc_tab)
 	this._navigate({ doc_tab : doc_tab });
 	this.state.doc_tab = doc_tab
 	this.forceUpdate();
@@ -210,7 +205,6 @@ _navigate : function (params) {
 	if (_.isNumber(region)) {
 		region = _.find(this.state.regions, r => r.id === region).name;
 	}
-	console.log('NAVIGATING')
   page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
 },
 
