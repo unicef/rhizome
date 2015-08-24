@@ -51,7 +51,19 @@ $ docker build -t polio .
 Run Docker instance
 
 ```
-$ docker run -i -p 8000:8000 -v $PWD:/etc/polio polio
+$ docker run -it -p 8000:8000 -v $PWD:/etc/polio polio /bin/bash
+```
+
+Set up database
+```
+$ python manage.py syncdb
+$ python manage.py migrate
+$ bash bin/build_db.sh
+```
+
+Start Django server
+```
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ### Installing frontend dependencies
@@ -63,8 +75,8 @@ $ docker run -i -p 8000:8000 -v $PWD:/etc/polio polio
 
 
 ## running test ##
- 
- - backend: 
+
+ - backend:
    $ python manage.py test --settings=polio.settings_test
 
 - frontend:

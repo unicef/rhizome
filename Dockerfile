@@ -28,4 +28,3 @@ RUN /etc/init.d/postgresql start && \
   createdb rhizome --owner ${DB_USER} --encoding=utf8 --template template0
 
 WORKDIR '/etc/polio'
-CMD ["./init.sh"]
