@@ -156,7 +156,7 @@ var CustomDashboard = React.createClass({
     return (
       <div className='row'>{charts}{addChart}</div>
     );
-  },
+  }
 });
 
 module.exports = CustomDashboard;
