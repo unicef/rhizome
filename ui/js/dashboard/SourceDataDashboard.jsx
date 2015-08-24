@@ -51,15 +51,17 @@ var SourceDataDashboard = React.createClass({
   },
 
 validateForm : function(id){
-	return <input type="checkbox" checked  />;
-	//onChange={handleChange}
-	// if (is_checked){
-	// 	return <input type="checkbox" checked  />;
-	// }
-	// else{
-	// 	return <input type="checkbox" />;
-	// }
+	if (this.state.doc_tab == 'mapping') {
+		return <a href="#">Map!</a>
+	}
+
+
+	else {
+		return <input type="checkbox" checked  />;
+	}
+
 },
+
 
   render : function () {
     var loading = this.props.loading;
@@ -115,7 +117,7 @@ validateForm : function(id){
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name'],
+					'fields' : ['id','content_type','source_object_code','master_object_name','is_valid'],
 					'row_on_click' : null
 				},
 			'validate':{

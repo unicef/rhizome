@@ -127,7 +127,7 @@ class v2Request(object):
             		AND dtm.document_id = %s
             	);
 
-            SELECT t.id, t.source_object_code, t.content_type, 'needs-mapping' FROM _tmp_object_map t
+            SELECT t.id, t.source_object_code, t.content_type, NULL as master_object_name FROM _tmp_object_map t
             WHERE master_object_id = -1
 
             UNION ALL

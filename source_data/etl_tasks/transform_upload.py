@@ -46,7 +46,6 @@ class DocTransform(object):
         Returns a list of source submisison objects
         '''
 
-
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.prep_file(full_file_path)
         file_row_count = len(file_stream)
@@ -57,9 +56,7 @@ class DocTransform(object):
             submission_data = dict(zip(self.file_header, \
                 submission.split(self.file_delimiter)))
 
-            instance_guid = submission_data['uq_id']
-
-            if instance_guid != '': ## so as to not process empty rows
+            if submission_data != '': ## so as to not process empty rows
 
                 submission_dict = {
                     'submission_json': submission_data,
