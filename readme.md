@@ -8,11 +8,6 @@
 4. [Ruby][] 2.0
 5. [PostgreSQL][]
 
-## Recommended
-
-1. [Virtualenv][]
-2. [Virtualenvwrapper][]
-
 ## Building technical documentation
 
 1. cd docs
@@ -22,17 +17,54 @@
 
 ## Setting up the development environment
 
-### Virtual Environment (optional)
+### Docker
 
-It is recommended that you create a virtual environment for Python. For more
-information see the documentation on [virtualenv][] and [virtualenvwrapper][].
+Prerequisites
 
-### Installing backend dependencies
+1. VirtualBox
 
-    $ pip install -r requirements.txt
+Install Docker Machine. In Mac OS X you could install via `brew`
 
-If you are not installing in a virtual environment, you may require root
-privileges, so you'll need to `sudo` the above command.
+```
+$ brew install docker-machine
+```
+Initialise Docker environment
+
+```
+$ docker-machine create -d virtualbox dev
+$ docker-machine start dev
+```
+Add `eval "$(docker-machine env dev)"` into .bashrc file
+
+In Mac OS X, forward the port to host
+
+```
+$ VBoxManage controlvm dev natpf1 "django,tcp,127.0.0.1,8000,,8000"
+```
+Navigate to repository directory, de-comment Line.8 `ENV CHINESE_LOCAL_PIP_CONFIG="--index-url http://pypi.douban.com/simple --trusted-host pypi.douban.com"` to use Chinese pip mirror.
+
+Run
+
+```
+$ docker build -t polio .
+```
+Run Docker instance
+
+```
+$ docker run -it -p 8000:8000 -v $PWD:/etc/polio polio /bin/bash
+```
+
+Set up database
+```
+$ python manage.py syncdb
+$ python manage.py migrate
+$ bash bin/build_db.sh
+```
+
+Start Django server
+```
+$ python manage.py runserver 0.0.0.0:8000
+```
 
 ### Installing frontend dependencies
 
@@ -43,8 +75,8 @@ privileges, so you'll need to `sudo` the above command.
 
 
 ## running test ##
- 
- - backend: 
+
+ - backend:
    $ python manage.py test --settings=polio.settings_test
 
 - frontend:
