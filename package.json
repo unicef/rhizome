@@ -19,6 +19,7 @@
     "react-datascope": "git://github.com/SeedScientific/react-datascope.git#5e1090671",
     "react-dnd": "^0.9.8",
     "react-layer": "^1.0.1",
+    "react-popup": "^0.1.1",
     "react-router": "^0.13.3",
     "reflux": "^0.2.7",
     "superagent": "^0.20.0",
