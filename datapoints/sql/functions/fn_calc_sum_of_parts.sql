@@ -1,4 +1,4 @@
-﻿DROP FUNCTION IF EXISTS fn_calc_sum_of_parts(cache_job_id int);
+DROP FUNCTION IF EXISTS fn_calc_sum_of_parts(cache_job_id int);
 CREATE FUNCTION fn_calc_sum_of_parts(cache_job_id int)
 RETURNS TABLE(id int) AS
 $func$
