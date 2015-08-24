@@ -1,5 +1,5 @@
-@import "_react-widgets.scss";
-@import "_react-widgets-core.scss";
+@import "react-widgets";
+@import "react-widgets-core";
 
 @mixin user-select($select) {
 	-webkit-user-select: $select;

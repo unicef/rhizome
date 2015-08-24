@@ -1,0 +1,1 @@
+window.Polio = require('./PolioScape')

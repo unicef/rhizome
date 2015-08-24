@@ -1,0 +1,16 @@
+@font-face {
+  font-family:"<%= fontConfig.fontName %>";
+  src:font-url("<%= fontConfig.fontName %>.eot?hash=<%= fontConfig.hash %>");
+  src:font-url("<%= fontConfig.fontName %>.eot?hash=<%= fontConfig.hash %>#iefix") format("embedded-opentype"),
+      font-url("<%= fontConfig.fontName %>.woff2?hash=<%= fontConfig.hash %>") format("woff2"),
+      font-url("<%= fontConfig.fontName %>.woff?hash=<%= fontConfig.hash %>") format("woff"),
+      font-url("<%= fontConfig.fontName %>.ttf?hash=<%= fontConfig.hash %>") format("truetype");
+}
+
+.<%= fontConfig.fontShortName %>{
+  use-font-<%= fontConfig.fontShortName %>();
+}
+
+<% for (var idx = 0; idx < glyphs.length; idx++) { %>
+.<%= fontConfig.fontShortName %><%= fontConfig.bem?'-':'' %>-<%= glyphs[idx].name %>:before { content: $<%= fontConfig.fontShortName %>-var-<%= glyphs[idx].name %>;}<% } %>
+

@@ -1,0 +1,18 @@
+{
+  "browser": {
+    "react/addons": "react/addons",
+    "vue": "vue",
+    "d3": "d3",
+    "reflux": "reflux",
+    "superagent": "superagent",
+    "lodash": "lodash",
+    "moment": "moment"
+  },
+  "browserify": {
+    "transform": [
+      "html-browserify",
+      "babelify",
+      "envify"
+    ]
+  }
+}
