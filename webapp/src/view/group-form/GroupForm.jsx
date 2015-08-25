@@ -2,7 +2,7 @@
 
 var _      = require('lodash');
 var React  = require('react');
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 
 var GroupFormStore        = require("stores/GroupFormStore");
 var GroupFormActions      = require('actions/GroupFormActions');

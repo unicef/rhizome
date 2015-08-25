@@ -1,7 +1,7 @@
 'use strict';
 
 var _      = require('lodash');
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 var api = require('data/api');
 
 var treeify = require('data/transform/treeify');

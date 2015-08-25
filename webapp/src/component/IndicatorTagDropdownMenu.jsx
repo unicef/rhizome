@@ -1,7 +1,7 @@
 'use strict';
 
 var _      = require('lodash');
-var React  = require('react/addons');
+var React  = require('react');
 var moment = require('moment');
 
 var DropdownMenu     = require('component/DropdownMenu.jsx');

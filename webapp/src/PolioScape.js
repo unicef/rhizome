@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react/addons');
+var React = require('react');
 var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');

@@ -1,6 +1,6 @@
 {
   "browser": {
-    "react/addons": "react/addons",
+    "react": "react",
     "vue": "vue",
     "d3": "d3",
     "reflux": "reflux",

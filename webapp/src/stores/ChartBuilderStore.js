@@ -1,5 +1,5 @@
 'use strict';
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 var ChartBuilderActions = require('actions/ChartBuilderActions');
 
 var _      = require('lodash');

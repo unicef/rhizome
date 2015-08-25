@@ -4,7 +4,7 @@ var _      = require('lodash');
 //var moment = require('moment');
 var React  = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 
 var dashboardInit = require('data/dashboardInit');

@@ -1,7 +1,7 @@
 'use strict';
 
 var _      = require('lodash');
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 var moment = require('moment');
 
 var api      = require('data/api');

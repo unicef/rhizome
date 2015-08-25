@@ -1,5 +1,5 @@
 'use strict';
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 
 module.exports = Reflux.createActions([
 		"initialize",

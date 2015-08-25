@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var React = require('react/addons');
+var React = require('react');
 var API = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');

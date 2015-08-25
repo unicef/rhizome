@@ -3,7 +3,7 @@
 var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 
 var NavigationStore = require('stores/NavigationStore');
 

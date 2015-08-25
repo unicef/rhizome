@@ -1,6 +1,6 @@
 'use strict';
 
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 
 var DataActions = Reflux.createActions([
 	'fetch',

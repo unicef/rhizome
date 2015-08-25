@@ -2,7 +2,7 @@
 
 var _      = require('lodash');
 var React  = require('react');
-var Reflux = require('reflux/src');
+var Reflux = require('reflux');
 var page   = require('page');
 var moment = require('moment');
 
