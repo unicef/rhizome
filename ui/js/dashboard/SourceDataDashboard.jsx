@@ -1,17 +1,19 @@
 'use strict';
 
-var _     = require('lodash');
-var React = require('react');
-var api = require('data/api.js')
-var moment = require('moment');
-var page = require('page');
+var _     	= require('lodash');
+var React		= require('react');
+var api 		= require('data/api.js')
+var moment 	= require('moment');
+var page 		= require('page');
 
-var NavigationStore     = require('stores/NavigationStore');
+var NavigationStore    	= require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
 
-var TitleMenu  = require('component/TitleMenu.jsx');
+var TitleMenu  	= require('component/TitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var MapForm 		= require('dashboard/sd/MapForm.js')
 
 var {
 	Datascope, LocalDatascope,
@@ -51,17 +53,14 @@ var SourceDataDashboard = React.createClass({
   },
 
 validateForm : function(id){
-	if (this.state.doc_tab == 'mapping') {
-		return <a href="#">Map!</a>
-	}
+		if (this.state.doc_tab == 'mapping') {
+			return <a href="#">Map!</a>
+		}
 
-
-	else {
-		return <input type="checkbox" checked  />;
-	}
-
-},
-
+		else {
+			return <input type="checkbox" checked  />;
+		}
+	},
 
   render : function () {
     var loading = this.props.loading;
@@ -169,7 +168,13 @@ validateForm : function(id){
 			loading={loading}
 			doc_id={doc_id}
 			>
-			</DocOverview>
+			</DocOverview>;
+
+		var map_form = <div>
+		<h1>WUDDDDUP</h1>
+		<MapForm>
+		</MapForm>
+		</div>
 
 
 		var table_title = doc_tab	 + ' for document_id: ' + doc_id;
@@ -181,10 +186,11 @@ validateForm : function(id){
 					</div>
 					<div className="medium-3 columns">
 						{review_nav}
-							{review_breakdown}
+						{review_breakdown}
+						{map_form}
 					</div>
-		</div>);;
-  },
+		</div>);
+	}, // render
 
 _setDocId : function (doc_id) {
 	this._navigate({ doc_id : doc_id });
