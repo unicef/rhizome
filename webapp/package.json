@@ -9,9 +9,11 @@
   "dependencies": {
     "babel-runtime": "^5.8.20",
     "d3": "^3.4.13",
+    "es6-promise": "^3.0.2",
     "fixed-data-table": "^0.4.6",
     "lodash": "^3.10.1",
     "moment": "^2.8.4",
+    "object-assign": "^4.0.1",
     "page": "^1.6.3",
     "react": "^0.13.3",
     "react-datascope": "git://github.com/SeedScientific/react-datascope.git#5e1090671",
