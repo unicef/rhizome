@@ -11,9 +11,17 @@ var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
 
 var TitleMenu  	= require('component/TitleMenu.jsx');
+var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var MapForm 		= require('dashboard/sd/MapForm.js')
+// var MapForm 		= require('dashboard/sd/MapForm.js')
+
+var Modal = require('react-modal');
+
+var appElement = document.getElementById('main');
+Modal.setAppElement(appElement);
+Modal.injectCSS();
+
 
 var {
 	Datascope, LocalDatascope,
@@ -42,9 +50,18 @@ var SourceDataDashboard = React.createClass({
       campaign     : null,
       dashboard    : null,
       doc_id    	 : 2,
-			doc_tab    	 : 'validate',
-    };
+			doc_tab    	 : 'mapping',
+    	modalIsOpen	 : false,
+		};
   },
+
+	openModal: function() {
+		this.setState({modalIsOpen: true});
+	},
+
+	closeModal: function() {
+		this.setState({modalIsOpen: false});
+	},
 
   getDefaultProps : function () {
     return {
@@ -52,14 +69,37 @@ var SourceDataDashboard = React.createClass({
     };
   },
 
-validateForm : function(id){
-		if (this.state.doc_tab == 'mapping') {
-			return <a href="#">Map!</a>
-		}
+	postMetaMap : function(source_object_map_id) {
+		console.log(source_object_map_id)
+	},
 
-		else {
+	mapForm : function(source_object_map_id){ //, source_object_code
+
+		var source_object_name = 'some-fake-metadata'
+		var content_type = 'region'
+		//
+		var dropDown = <RegionTitleMenu
+			                     regions={NavigationStore.regions}
+													 selected={this.props.region}
+			                     sendValue={this.postMetaMap} />
+		//
+
+		return <div><button className="tiny" onClick={this.openModal}> map! </button>
+		        <Modal
+		          isOpen={this.state.modalIsOpen}
+		          onRequestClose={this.closeModal}
+		        >
+		          <h2>Mapping for {content_type} - {source_object_name} </h2>
+		          <form>
+							{dropDown}
+		          </form>
+		        </Modal></div>
+
+	},
+
+	validateForm : function(id){
+			// onclick post to api..
 			return <input type="checkbox" checked  />;
-		}
 	},
 
   render : function () {
@@ -135,10 +175,16 @@ validateForm : function(id){
 
 	const fields = {
 		is_valid: {
-			title: 'Validate',
+			title: 'Edit',
 			key: 'id',
-			renderer: (id) =>
-				{ return this.validateForm(id) }
+			renderer: (id) => {
+					if (this.state.doc_tab == 'validate') {
+						return this.validateForm(id)
+				}
+					else if (this.state.doc_tab == 'mapping') {
+						return this.mapForm(id)
+				}
+			}
 		},
 	};
 
@@ -170,13 +216,6 @@ validateForm : function(id){
 			>
 			</DocOverview>;
 
-		var map_form = <div>
-		<h1>WUDDDDUP</h1>
-		<MapForm>
-		</MapForm>
-		</div>
-
-
 		var table_title = doc_tab	 + ' for document_id: ' + doc_id;
 		return (
 					<div className="row">
@@ -188,7 +227,6 @@ validateForm : function(id){
 					<div className="medium-3 columns">
 						{review_nav}
 						{review_breakdown}
-						{map_form}
 					</div>
 		</div>);
 	}, // render
