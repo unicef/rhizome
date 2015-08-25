@@ -1,9 +1,9 @@
 var React = require('react');
 var Modal = require('react-modal');
 
-// var appElement = document.getElementById('your-app-element');
-// Modal.setAppElement(appElement);
-// Modal.injectCSS();
+var appElement = document.getElementById('main');
+Modal.setAppElement(appElement);
+Modal.injectCSS();
 
 var MapForm = React.createClass({
 
