@@ -24,7 +24,7 @@ gulp.config('tasks.build', {
 
 gulp.task('dev', () => {
   gulp.config(gulp.DEV_MODE, true)
-  gulp.start(['build', 'server'])
+  gulp.start(['build'])
 })
 
 gulp.task('default', ['build'])
