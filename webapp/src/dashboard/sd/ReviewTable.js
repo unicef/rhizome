@@ -2,8 +2,11 @@ var _											= require('lodash');
 var React 								= require('react');
 var RegionTitleMenu     	= require('component/RegionTitleMenu.jsx');
 var DashboardStore    		= require('stores/DashboardStore');
-var MapForm 							= require('dashboard/sd/MapForm.js');
+var GroupFormStore 				= require('stores/GroupFormStore');
+var ChartBuilderStore 		= require('stores/ChartBuilderStore');
 
+var MapForm 							= require('dashboard/sd/MapForm.js');
+var api 									= require('data/api.js');
 
 const {
 	Datascope, LocalDatascope,
@@ -65,7 +68,11 @@ var ReviewTable = React.createClass({
 	},
 
 	componentWillMount: function() {
-			this._callApi()
+		api.indicatorsTree().then(indicators => this.setState({
+				indicators: indicators
+		}));
+
+		this._callApi()
 		},
 
 	componentWillReceiveProps: function(nextProps) {
@@ -91,8 +98,8 @@ var ReviewTable = React.createClass({
 
 	render() {
 
-		var indicators = []
-
+		console.log(this.state.indicators)
+		
 		const fields = {
 			is_valid: {
 				title: 'Edit',
@@ -103,6 +110,7 @@ var ReviewTable = React.createClass({
 						}
 						else if (this.props.doc_tab == 'mapping') {
 							return <MapForm
+											indicators={this.state.indicators}
 											campaigns={DashboardStore.campaigns}
 											regions={DashboardStore.regions}
 							 				source_object_map_id={id}

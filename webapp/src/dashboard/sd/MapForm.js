@@ -26,7 +26,6 @@ var MapForm = React.createClass({
     regions : React.PropTypes.object.isRequired,
     campaigns : React.PropTypes.object.isRequired,
     indicators : React.PropTypes.object.isRequired,
-
     },
 
 	getInitialState: function() {
@@ -60,14 +59,14 @@ var MapForm = React.createClass({
                selected={defaultSelected}
                sendValue={this.postMetaMap} /></div>;
     }
-    // if (content_type == 'indicator') {
-    //   return <div>
-    //     <IndicatorDropdownMenu
-    //     text='Map Indicator'
-    //     indicators={DashboardStore.indicatorList}
-    //     sendValue={this.postMetaMap}>
-    //   </IndicatorDropdownMenu></div>;
-    // }
+    if (content_type == 'indicator') {
+      return <div>
+        <IndicatorDropdownMenu
+        text='Map Indicator'
+        indicators={this.props.indicators}
+        sendValue={this.postMetaMap}>
+      </IndicatorDropdownMenu></div>;
+    }
     if (content_type == 'campaign') {
       return <div>
       <CampaignDropdownMenu
@@ -83,7 +82,7 @@ var MapForm = React.createClass({
 render : function(){
 
   var source_object_map_id = this.props.source_object_map_id
-  var modalStyle = {width:400, height:300, marginLeft:400}; // rendered as "height:10px"f
+  var modalStyle = {width:400, height:300, marginLeft:400};
 
   return <div><button className="tiny" onClick={this.openModal}> map! </button>
           <Modal
