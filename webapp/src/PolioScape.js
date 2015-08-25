@@ -45,13 +45,6 @@ module.exports = {
 			components: { 'uf-entry-form': require('./view/entry-form') }
 		});
 	},
-	FieldMapping: function (el,document_id) {
-		new Vue({
-			el: el,
-			components: { 'uf-field-mapping': require('./view/field-mapping') },
-			data:{'document_id':document_id}
-		});
-	},
 	UserAccount: function (el,user_id) {
 		new Vue({
 			el: el,

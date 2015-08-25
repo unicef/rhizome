@@ -88,9 +88,6 @@ function _campaignRow(campaign, i) {
 function _uploadRow(upload, i) {
   return (
     <tr className={i % 2 === 0 ? 'odd' : 'even'} key={upload.id}>
-      <td>
-        <a href={'/source_data/field_mapping/' + upload.id}>{upload.title}</a>
-      </td>
       <td>{upload.status}</td>
     </tr>
   );

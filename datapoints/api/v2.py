@@ -91,6 +91,8 @@ class v2Request(object):
                 'permission_function':None},
             'region_type': {'orm_obj':RegionType,
                 'permission_function':None},
+            'source_object_map' : {'orm_obj': SourceObjectMap,
+                'permission_function':None},
         }
 
 

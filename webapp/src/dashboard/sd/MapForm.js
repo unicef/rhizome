@@ -33,13 +33,20 @@ var MapForm = React.createClass({
   openModal: function() {
     console.log('opening modal..')
     this.setState({ modalIsOpen: true });
-    // some_state_var: 'someeee-variable'
+
+    api.get_source_object_map({id: this.props.source_object_map_id})
+		.then(response => this.setState({
+				response_data: response
+		}));
+    console.log(this.state)
+
   },
 
-// closeModal: function() {
-//   this.setState({modalIsOpen: false});
-// },
-//
+  closeModal: function() {
+    this.setState({modalIsOpen: false});
+
+  },
+
 // postMetaMap : function(source_object_map_id) {
 //   console.log('posting')
 //   console.log(source_object_map_id)
@@ -57,7 +64,7 @@ render : function(){
   //                        selected={this.props.region}
   //                        sendValue={this.postMetaMap} />
 
-  var modalStyle = {width:400, marginLeft:400}; // rendered as "height:10px"
+  var modalStyle = {width:400, height:300, marginLeft:400}; // rendered as "height:10px"
 
   return <div><button className="tiny" onClick={this.openModal}> map! </button>
           <Modal
@@ -65,8 +72,9 @@ render : function(){
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
           >
-              <h2>Mapping for - something fake </h2>
+              <h2>Mapping for - {source_object_map_id} </h2>
               <form>
+              {this.state.response_data}
               </form>
           </Modal></div>
 

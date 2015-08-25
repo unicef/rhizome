@@ -232,10 +232,6 @@ module.exports = {
   regions: endPoint('/region/', 'get', 2),
   region_type: endPoint('/region_type/', 'get', 2),
   document_review: endPoint('/document_review/', 'get', 2),
-  //map_field             : endPoint('/api_map_meta/','post',2),
-  map_indicator: endPoint('/indicator_map/', 'post', 2),
-  map_region: endPoint('/region_map/', 'post', 2),
-  map_campaign: endPoint('/campaign_map/', 'post', 2),
   user_permissions: endPoint('/user_permission/', 'get', 2),
   groups: endPoint('/group/', 'get', 2),
   groupUpsert: endPoint('/group/', 'post', 2),
@@ -249,6 +245,10 @@ module.exports = {
 
   save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
+  // GET / POST mapping //
+  get_source_object_map: endPoint('/source_object_map','get',2,false),
+  post_source_object_map: endPoint('/source_object_map','post',2,false),
+
   admin: {
     usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
     users: endPoint('/user/', 'get', 2, false),
@@ -262,7 +262,6 @@ module.exports = {
     indicators: endPoint('/indicator/', 'get', 2, false),
 
     // DOCUMENT VALIDATION APP //
-
     // mapping tab //
     docMap: endPoint('/doc_mapping/', 'get', 2, false),
     docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
