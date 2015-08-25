@@ -36,7 +36,8 @@ var MapForm = React.createClass({
 
     api.get_source_object_map({id: this.props.source_object_map_id})
 		.then(response => this.setState({
-				response_data: response
+				source_object_code: response.objects[0].source_object_code,
+				content_type: response.objects[0].content_type
 		}));
     console.log(this.state)
 
@@ -59,10 +60,13 @@ render : function(){
   // var source_object_name = source_object_map_id
   var content_type = 'region'
 
-  // var dropDown = <RegionTitleMenu
-  //                        regions={DashboardStore.regions}
-  //                        selected={this.props.region}
-  //                        sendValue={this.postMetaMap} />
+  var defaultSelected = {'name':'please map:'}
+
+
+  var dropDown = <RegionTitleMenu
+                         regions={DashboardStore.regions}
+                         selected={defaultSelected}
+                         sendValue={this.postMetaMap} />
 
   var modalStyle = {width:400, height:300, marginLeft:400}; // rendered as "height:10px"
 
@@ -72,9 +76,11 @@ render : function(){
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
           >
-              <h2>Mapping for - {source_object_map_id} </h2>
+              <h1> Source Map Id: {source_object_map_id} </h1>
               <form>
-              {this.state.response_data}
+              <h2> Content Type: {this.state.content_type} </h2>
+              <h2> Source Code: {this.state.source_object_code} </h2>
+              <h2> {dropDown} </h2>
               </form>
           </Modal></div>
 

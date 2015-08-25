@@ -101,9 +101,7 @@ var ReviewTable = React.createClass({
 							return this.validateForm(id)
 						}
 						else if (this.props.doc_tab == 'mapping') {
-							return <MapForm
-								source_object_map_id={id}
-								/>
+							return <MapForm source_object_map_id={id} />
 					}
 				}
 			},
