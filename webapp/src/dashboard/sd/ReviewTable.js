@@ -59,6 +59,7 @@ var ReviewTable = React.createClass({
   },
 
 	postMetaMap : function(source_object_map_id) {
+		console.log('posting')
 		console.log(source_object_map_id)
 	},
 
@@ -73,15 +74,18 @@ var ReviewTable = React.createClass({
 			                     sendValue={this.postMetaMap} />
 		//
 
+		var modalStyle = {width:400, marginLeft:400}; // rendered as "height:10px"
+
 		return <div><button className="tiny" onClick={this.openModal}> map! </button>
 		        <Modal
+							style={modalStyle}
 		          isOpen={this.state.modalIsOpen}
 		          onRequestClose={this.closeModal}
 		        >
-		          <h2>Mapping for {content_type} - {source_object_name} </h2>
-		          <form>
-							{dropDown}
-		          </form>
+			          <h2>Mapping for {content_type} - {source_object_name} </h2>
+			          <form>
+								{dropDown}
+			          </form>
 		        </Modal></div>
 
 	},
