@@ -1,10 +1,29 @@
 import gulp from 'gulp'
 
+const cssDir = `${gulp.config('base.dist')}/css`
+
 export default {
-  src: [
-    `styles/**/*.{,scss,sass}`
-  ],
-  dest: `${gulp.config('base.dist')}/css`,
+  files: [{
+    entry: [
+      `${gulp.config('base.src')}/**/style.scss`,
+      `styles/screen.scss`
+    ],
+    src: [
+      `${gulp.config('base.src')}/**/style.scss`,
+      `styles/*.{,scss,sass}`
+    ],
+    dest: cssDir,
+    options: {
+      filename: 'screen.css'
+    }
+  }, {
+    entry: 'styles/print.scss',
+    src: [
+      `styles/_settings.scss`,
+      `styles/print.scss`
+    ],
+    dest: cssDir
+  }],
   options: {
     includePaths: [
       'bower_components',

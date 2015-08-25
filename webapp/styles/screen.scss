@@ -2,11 +2,12 @@
 @import "mixins";
 @import "foundation/scss/foundation";
 @import "fontawesome/scss/font-awesome";
-@import "components";
 @import "forms";
 @import "charts";
 @import "dashboards";
 @import "admin";
+@import "react-widgets";
+@import "react-widgets-core";
 
 body {
   font-size: rem-calc(10);

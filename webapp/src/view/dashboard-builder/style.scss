@@ -13,27 +13,28 @@
   }
 
   .next-button {
-  	width: 200px !important;
+    width: 200px !important;
   }
-
 }
+
 .empty-dashboard-add-container {
   margin: 200px auto;
   width: 500px;
-  text-align:center;
+  text-align: center;
 }
+
 .custom-dashboard-title-container {
-	width: 300px;
-	margin-left: 10px;
+  width: 300px;
+  margin-left: 10px;
 }
 
 .dashboard-builder-controls {
-	width: 500px;
+  width: 500px;
 }
 
 .dashboard-footer {
   position: fixed;
-  box-shadow: rgba(0,0,0,0.3) 0px -1px 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px -1px 8px;
   bottom: 0;
   left: 0;
   width: 100%;
