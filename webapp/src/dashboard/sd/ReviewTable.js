@@ -4,6 +4,13 @@ var API = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var DashboardStore    	= require('stores/DashboardStore');
+var Modal = require('react-modal');
+
+var appElement = document.getElementById('main');
+Modal.setAppElement(appElement);
+Modal.injectCSS();
+
 
 const {
 	Datascope, LocalDatascope,
@@ -24,6 +31,8 @@ var ReviewTable = React.createClass({
     loading   : React.PropTypes.bool.isRequired,
 		region 		: React.PropTypes.object.isRequired,
 		campaign 	: React.PropTypes.object.isRequired,
+		doc_tab 	: React.PropTypes.string.isRequired,
+
 	},
 	getInitialState: function() {
 		return {
@@ -32,6 +41,54 @@ var ReviewTable = React.createClass({
 			query: {},
 			loading   : false,
 		}
+	},
+
+
+	openModal: function() {
+		this.setState({modalIsOpen: true});
+	},
+
+	closeModal: function() {
+		this.setState({modalIsOpen: false});
+	},
+
+  getDefaultProps : function () {
+    return {
+      loading : false
+    };
+  },
+
+	postMetaMap : function(source_object_map_id) {
+		console.log(source_object_map_id)
+	},
+
+	mapForm : function(source_object_map_id){ //, source_object_code
+
+		var source_object_name = 'some-fake-metadata'
+		var content_type = 'region'
+		//
+		var dropDown = <RegionTitleMenu
+			                     regions={DashboardStore.regions}
+													 selected={this.props.region}
+			                     sendValue={this.postMetaMap} />
+		//
+
+		return <div><button className="tiny" onClick={this.openModal}> map! </button>
+		        <Modal
+		          isOpen={this.state.modalIsOpen}
+		          onRequestClose={this.closeModal}
+		        >
+		          <h2>Mapping for {content_type} - {source_object_name} </h2>
+		          <form>
+							{dropDown}
+		          </form>
+		        </Modal></div>
+
+	},
+
+	validateForm : function(id){
+			// onclick post to api..
+			return <input type="checkbox" checked  />;
 	},
 
 	_callApi : function(){
@@ -52,12 +109,10 @@ var ReviewTable = React.createClass({
 	},
 
 	componentWillMount: function() {
-		  // this deals with init //
 			this._callApi()
 		},
 
 	componentWillReceiveProps: function(nextProps) {
-		// this deals with update //
 		this._callApi()
 	},
 
@@ -79,17 +134,25 @@ var ReviewTable = React.createClass({
 
 	render() {
 
-
+		const fields = {
+			is_valid: {
+				title: 'Edit',
+				key: 'id',
+				renderer: (id) => {
+						if (this.props.doc_tab == 'validate') {
+							return this.validateForm(id)
+					}
+						else if (this.props.doc_tab == 'mapping') {
+							return this.mapForm(id)
+					}
+				}
+			},
+		};
 
 		var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading);
 		if(!isLoaded) return this.renderLoading();
 
 		var {data, schema} = this.state;
-		var fields = this.props.fields
-
-		console.log('fields')
-		console.log(fields)
-
 
 		return <div>
         <LocalDatascope

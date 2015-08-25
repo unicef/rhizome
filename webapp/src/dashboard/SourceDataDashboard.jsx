@@ -6,7 +6,6 @@ var api 		= require('data/api.js')
 var moment 	= require('moment');
 var page 		= require('page');
 
-var DashboardStore    	= require('stores/DashboardStore');
 var NavigationStore    	= require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
@@ -15,13 +14,6 @@ var TitleMenu  	= require('component/TitleMenu.jsx');
 var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
-// var MapForm 		= require('dashboard/sd/MapForm.js')
-
-var Modal = require('react-modal');
-
-var appElement = document.getElementById('main');
-Modal.setAppElement(appElement);
-Modal.injectCSS();
 
 
 var {
@@ -57,52 +49,6 @@ var SourceDataDashboard = React.createClass({
 		};
   },
 
-	openModal: function() {
-		this.setState({modalIsOpen: true});
-	},
-
-	closeModal: function() {
-		this.setState({modalIsOpen: false});
-	},
-
-  getDefaultProps : function () {
-    return {
-      loading : false
-    };
-  },
-
-	postMetaMap : function(source_object_map_id) {
-		console.log(source_object_map_id)
-	},
-
-	mapForm : function(source_object_map_id){ //, source_object_code
-
-		var source_object_name = 'some-fake-metadata'
-		var content_type = 'region'
-		//
-		var dropDown = <RegionTitleMenu
-			                     regions={DashboardStore.regions}
-													 selected={this.props.region}
-			                     sendValue={this.postMetaMap} />
-		//
-
-		return <div><button className="tiny" onClick={this.openModal}> map! </button>
-		        <Modal
-		          isOpen={this.state.modalIsOpen}
-		          onRequestClose={this.closeModal}
-		        >
-		          <h2>Mapping for {content_type} - {source_object_name} </h2>
-		          <form>
-							{dropDown}
-		          </form>
-		        </Modal></div>
-
-	},
-
-	validateForm : function(id){
-			// onclick post to api..
-			return <input type="checkbox" checked  />;
-	},
 
   render : function () {
     var loading = this.props.loading;
@@ -130,7 +76,7 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
-		var doc_tab = this.state.doc_tab//this.state.doc_tab
+		var doc_tab = this.state.doc_tab
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -153,42 +99,24 @@ var SourceDataDashboard = React.createClass({
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
 				'fields' : ['id','docfile'],
-				'row_on_click' : null
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_name','is_valid'],
-					'row_on_click' : null
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
 				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','is_valid'],
-				'row_on_click' : null
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
 				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
-				'row_on_click' : null
 			},
 		};
 
-	const fields = {
-		is_valid: {
-			title: 'Edit',
-			key: 'id',
-			renderer: (id) => {
-					if (this.state.doc_tab == 'validate') {
-						return this.validateForm(id)
-				}
-					else if (this.state.doc_tab == 'mapping') {
-						return this.mapForm(id)
-				}
-			}
-		},
-	};
 
 	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
@@ -200,8 +128,8 @@ var SourceDataDashboard = React.createClass({
 					key={table_key}
 					loading={loading}
 					doc_id={doc_id}
+					doc_tab={doc_tab}
 					campaign={campaign}
-					fields={fields}
 					>
 					<Paginator />
 					<SimpleDataTable>
@@ -234,28 +162,28 @@ var SourceDataDashboard = React.createClass({
 	}, // render
 
 _setDocId : function (doc_id) {
-	this._navigate({ doc_id : doc_id });
+	// this._navigate({ doc_id : doc_id });
 	this.state.doc_id = doc_id
 	this.forceUpdate();
 },
 
 _setDocTab : function (doc_tab) {
-	this._navigate({ doc_tab : doc_tab });
+	// this._navigate({ doc_tab : doc_tab });
 	this.state.doc_tab = doc_tab
 	this.forceUpdate();
 	},
 
-_navigate : function (params) {
-	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-	var region   = _.get(params, 'region', this.props.region.name);
-	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
-
-	if (_.isNumber(region)) {
-		region = _.find(this.state.regions, r => r.id === region).name;
-	}
-  page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
-},
+// _navigate : function (params) {
+// 	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+// 	var region   = _.get(params, 'region', this.props.region.name);
+// 	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+// 	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+//
+// 	if (_.isNumber(region)) {
+// 		region = _.find(this.state.regions, r => r.id === region).name;
+// 	}
+//   page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
+// },
 
 
 });
