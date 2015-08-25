@@ -6,6 +6,7 @@ var api 		= require('data/api.js')
 var moment 	= require('moment');
 var page 		= require('page');
 
+var DashboardStore    	= require('stores/DashboardStore');
 var NavigationStore    	= require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
@@ -35,6 +36,7 @@ var SourceDataDashboard = React.createClass({
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
+		regions   : React.PropTypes.object.isRequired,
 		doc_id    : React.PropTypes.number,
 		doc_tab    : React.PropTypes.string,
 
@@ -79,7 +81,7 @@ var SourceDataDashboard = React.createClass({
 		var content_type = 'region'
 		//
 		var dropDown = <RegionTitleMenu
-			                     regions={NavigationStore.regions}
+			                     regions={DashboardStore.regions}
 													 selected={this.props.region}
 			                     sendValue={this.postMetaMap} />
 		//
