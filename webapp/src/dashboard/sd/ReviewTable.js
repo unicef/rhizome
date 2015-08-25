@@ -1,15 +1,10 @@
-var _ = require('lodash');
-var React = require('react');
-var API = require('data/api');
-var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+var _											= require('lodash');
+var React 								= require('react');
+var RegionTitleMenu     	= require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var DashboardStore    	= require('stores/DashboardStore');
-var Modal = require('react-modal');
-
-var appElement = document.getElementById('main');
-Modal.setAppElement(appElement);
-Modal.injectCSS();
+var CampaignDropdownMenu 	= require('component/CampaignDropdownMenu.jsx');
+var DashboardStore    		= require('stores/DashboardStore');
+var MapForm 							= require('dashboard/sd/MapForm.js');
 
 
 const {
@@ -32,8 +27,8 @@ var ReviewTable = React.createClass({
 		region 		: React.PropTypes.object.isRequired,
 		campaign 	: React.PropTypes.object.isRequired,
 		doc_tab 	: React.PropTypes.string.isRequired,
-
 	},
+
 	getInitialState: function() {
 		return {
 			data: null,
@@ -43,52 +38,11 @@ var ReviewTable = React.createClass({
 		}
 	},
 
-
-	openModal: function() {
-		this.setState({modalIsOpen: true});
-	},
-
-	closeModal: function() {
-		this.setState({modalIsOpen: false});
-	},
-
-  getDefaultProps : function () {
+	getDefaultProps : function () {
     return {
       loading : false
     };
   },
-
-	postMetaMap : function(source_object_map_id) {
-		console.log('posting')
-		console.log(source_object_map_id)
-	},
-
-	mapForm : function(source_object_map_id){ //, source_object_code
-
-		var source_object_name = 'some-fake-metadata'
-		var content_type = 'region'
-		//
-		var dropDown = <RegionTitleMenu
-			                     regions={DashboardStore.regions}
-													 selected={this.props.region}
-			                     sendValue={this.postMetaMap} />
-		//
-
-		var modalStyle = {width:400, marginLeft:400}; // rendered as "height:10px"
-
-		return <div><button className="tiny" onClick={this.openModal}> map! </button>
-		        <Modal
-							style={modalStyle}
-		          isOpen={this.state.modalIsOpen}
-		          onRequestClose={this.closeModal}
-		        >
-			          <h2>Mapping for {content_type} - {source_object_name} </h2>
-			          <form>
-								{dropDown}
-			          </form>
-		        </Modal></div>
-
-	},
 
 	validateForm : function(id){
 			// onclick post to api..
@@ -145,9 +99,11 @@ var ReviewTable = React.createClass({
 				renderer: (id) => {
 						if (this.props.doc_tab == 'validate') {
 							return this.validateForm(id)
-					}
+						}
 						else if (this.props.doc_tab == 'mapping') {
-							return this.mapForm(id)
+							return <MapForm
+								source_object_map_id={id}
+								/>
 					}
 				}
 			},
