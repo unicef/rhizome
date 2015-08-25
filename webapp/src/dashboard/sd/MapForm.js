@@ -25,31 +25,17 @@ var MapForm = React.createClass({
 	propTypes: {
 	  source_object_map_id 	: React.PropTypes.number.isRequired,
     },
-//
-// 	getInitialState: function() {
-// 		return {
-// 			loading   : false,
-//       source_object_map_id : null
-//       doc_tab : null
-// 		}
-// 	},
-//
-// 	getDefaultProps : function () {
-//     return {
-//       loading : false
-//     };
-//   },
-//
-//
-//
-// openModal: function(source_object_map_id) {
-//
-//   this.setState({
-//     modalIsOpen: true,
-//     some_state_var: 'someeee-variable'
-//   });
-// },
-//
+
+	getInitialState: function() {
+		return { modalIsOpen: false }
+	},
+
+  openModal: function() {
+    console.log('opening modal..')
+    this.setState({ modalIsOpen: true });
+    // some_state_var: 'someeee-variable'
+  },
+
 // closeModal: function() {
 //   this.setState({modalIsOpen: false});
 // },
@@ -60,31 +46,29 @@ var MapForm = React.createClass({
 // },
 
 render : function(){
-
-  return <div> yo </div>
+  console.log('rendering')
+  var source_object_map_id = this.props.source_object_map_id
 
   // var source_object_name = source_object_map_id
-  // var content_type = 'region'
-  // //
+  var content_type = 'region'
+
   // var dropDown = <RegionTitleMenu
   //                        regions={DashboardStore.regions}
   //                        selected={this.props.region}
   //                        sendValue={this.postMetaMap} />
-  // //
-  //
-  // var modalStyle = {width:400, marginLeft:400}; // rendered as "height:10px"
-  //
-  // return <div><button className="tiny" onClick={this.openModal(source_object_map_id)}> map! </button>
-  //         <Modal
-  //           style={modalStyle}
-  //           isOpen={this.state.modalIsOpen}
-  //           onRequestClose={this.closeModal}
-  //         >
-  //             <h2>Mapping for {content_type} - {this.state.some_state_var} </h2>
-  //             <form>
-  //             {dropDown}
-  //             </form>
-  //         </Modal></div>
+
+  var modalStyle = {width:400, marginLeft:400}; // rendered as "height:10px"
+
+  return <div><button className="tiny" onClick={this.openModal}> map! </button>
+          <Modal
+            style={modalStyle}
+            isOpen={this.state.modalIsOpen}
+            onRequestClose={this.closeModal}
+          >
+              <h2>Mapping for - something fake </h2>
+              <form>
+              </form>
+          </Modal></div>
 
 },
 });
