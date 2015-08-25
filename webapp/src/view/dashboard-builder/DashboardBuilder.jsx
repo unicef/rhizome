@@ -30,8 +30,6 @@ var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
 
-window.perf = React.addons.Perf;
-
 module.exports = React.createClass({
 	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore"),Reflux.connect(DashboardStore,"dashboardStore"),Reflux.ListenerMixin],
 	componentWillMount:function(){
