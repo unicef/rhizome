@@ -10,21 +10,16 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets/bundles/'),
-)
-
-WEBPACK_LOADER = {
-    'BUNDLE_DIR_NAME': 'bundles/',
-    'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
-    'POLL_DELAY': 0.2,
-    'IGNORE': ['.+\.hot-update.js', '.+\.map']
-}
-
 STATIC_URL = '/static/'
+
+# todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 LOGIN_REDIRECT_URL = '/datapoints'
 
 # Quick-start development settings - unsuitable for production
@@ -81,7 +76,7 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend', # this is default
+    'django.contrib.auth.backends.ModelBackend',  # this is default
 )
 
 ANONYMOUS_USER_ID = -1

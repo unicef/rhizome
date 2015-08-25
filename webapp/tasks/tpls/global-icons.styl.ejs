@@ -1,0 +1,11 @@
+use-font-<%= fontConfig.fontShortName %>()
+  font-family: "<%= fontConfig.fontName %>";
+  position: relative
+  display: inline-block
+  font-style: normal
+  font-weight: normal
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+
+<% for (var idx = 0; idx < glyphs.length; idx++) { %>
+$<%= fontConfig.fontShortName %>-var-<%= glyphs[idx].name %> = "\<%= glyphs[idx].codePoint %>";<% } %>

@@ -5,7 +5,6 @@
 1. [Python][] 2.7
 2. [PIP][]
 3. [Node][] >= 0.10.0
-4. [Ruby][] 2.0
 5. [PostgreSQL][]
 
 ## Building technical documentation
@@ -68,11 +67,8 @@ $ python manage.py runserver 0.0.0.0:8000
 
 ### Installing frontend dependencies
 
+    $ npm install -g gulp 
     $ npm install
-    $ npm install -g gulp bower
-    $ bower install
-    $ sudo gem install sass compass
-
 
 ## running test ##
 
@@ -158,40 +154,25 @@ deploy the static files. ([Read more about static files in Django.][static-files
 
 # Gulp tasks
 
-The default task runs `clean`, `fonts`, `browserify`, and `styles` so that if
+The default task runs `clean`, `copy`, `sass` and `browserify`, so that if
 you simply execute
 
-    $ gulp
+## dev
+
+```
+$ gulp dev
+```
 
 from the command line it will build the entire frontend for development.
-
-## webpack-dev
-
-Start a livereload server and that dynmically rebuilds your javascript
-and styles  
 
 ## build
 
 Compile the SASS, pack the JavaScript, and copy both, along with any fonts into
 `static/`.
 
-## clean
+## package
 
-Delete the `build/`, `dist/`, and `static/` directories.
-
-## dist
-
-Build the backend and frontend zip files. (Executes `dist-py` and `dist-ui`.)
-
-## dist-py
-
-Create `dist/uf04-backend.zip` which contains `requirements.txt` and all of the
-Python and SQL files.
-
-## dist-ui
-
-Execute `collectstatic` and then zip up all of the files contained in `build/`.
-The zip file is `dist/uf04-frontend.zip`.
+Create `dist/rhizome.zip` which contains `requirements.txt` and all files
 
 
 [Django]: https://djangoproject.com/
@@ -199,6 +180,5 @@ The zip file is `dist/uf04-frontend.zip`.
 [PIP]: https://pip.pypa.io/en/latest/
 [PostgreSQL]: http://www.postgresql.org/
 [Python]: http://python.org
-[Ruby]: https://www.ruby-lang.org/en/
 [Virtualenv]: https://virtualenv.pypa.io/en/latest/
 [Virtualenvwrapper]: https://virtualenvwrapper.readthedocs.org/en/latest/
