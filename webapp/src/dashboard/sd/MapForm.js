@@ -4,7 +4,6 @@ var api = require('data/api');
 var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var DashboardStore    	= require('stores/DashboardStore');
 var Modal = require('react-modal');
 
 var appElement = document.getElementById('main');
@@ -24,6 +23,10 @@ const {
 var MapForm = React.createClass({
 	propTypes: {
 	  source_object_map_id 	: React.PropTypes.number.isRequired,
+    regions : React.PropTypes.object.isRequired,
+    campaigns : React.PropTypes.object.isRequired,
+    indicators : React.PropTypes.object.isRequired,
+
     },
 
 	getInitialState: function() {
@@ -53,7 +56,7 @@ var MapForm = React.createClass({
 
     if (content_type == 'region') {
       return <div><RegionTitleMenu
-               regions={DashboardStore.regions}
+               regions={this.props.regions}
                selected={defaultSelected}
                sendValue={this.postMetaMap} /></div>;
     }
@@ -69,15 +72,11 @@ var MapForm = React.createClass({
       return <div>
       <CampaignDropdownMenu
         text={defaultSelected}
-        campaigns={DashboardStore.regions}
+        campaigns={this.props.campaigns}
         sendValue={this.postMetaMap}>
       </CampaignDropdownMenu>
       </div>;
-
-
-
-             }
-
+     }
   },
 
 

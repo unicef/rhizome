@@ -88,7 +88,10 @@ var ReviewTable = React.createClass({
 			}
 		},
 
+
 	render() {
+
+		var indicators = []
 
 		const fields = {
 			is_valid: {
@@ -100,6 +103,8 @@ var ReviewTable = React.createClass({
 						}
 						else if (this.props.doc_tab == 'mapping') {
 							return <MapForm
+											campaigns={DashboardStore.campaigns}
+											regions={DashboardStore.regions}
 							 				source_object_map_id={id}
 											key={id}
 											/>
