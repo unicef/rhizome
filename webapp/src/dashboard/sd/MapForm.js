@@ -36,36 +36,49 @@ var MapForm = React.createClass({
     api.get_source_object_map({id: this.props.source_object_map_id})
 		.then(response => this.setState({
 				source_object_code: response.objects[0].source_object_code,
-				content_type: response.objects[0].content_type
+				content_type: response.objects[0].content_type,
 		}));
   },
 
   closeModal: function() {
-    this.setState({modalIsOpen: false});
-
+    this.setState({modalIsOpen: false, content_type: null});
   },
 
-postMetaMap : function(source_object_map_id) {
-  console.log('posting')
-  console.log(source_object_map_id)
-},
+  postMetaMap : function() {
+    console.log('posting')
+  },
 
-renderDropDown : function(content_type) {
-  var defaultSelected = {'name':'please map..'}
+  renderDropDown : function(content_type) {
+    var defaultSelected = {'name':'please map..'}
 
-  if (content_type == 'region') {
-    return <h2> REEEEGIon </h2>;
-   }
-   else if (content_type == 'indicator') {
-     return <h2> indICATOR </h2>;
-   }
-   else if (content_type == 'campaign') {
-      return <h2> CAMPAIIIIGGGNNN </h2>;
-   }
-   else {
-     return <h2> error </h2>;
-   }
-},
+    if (content_type == 'region') {
+      return <div><RegionTitleMenu
+               regions={DashboardStore.regions}
+               selected={defaultSelected}
+               sendValue={this.postMetaMap} /></div>;
+    }
+    // if (content_type == 'indicator') {
+    //   return <div>
+    //     <IndicatorDropdownMenu
+    //     text='Map Indicator'
+    //     indicators={DashboardStore.indicatorList}
+    //     sendValue={this.postMetaMap}>
+    //   </IndicatorDropdownMenu></div>;
+    // }
+    if (content_type == 'campaign') {
+      return <div>
+      <CampaignDropdownMenu
+        text={defaultSelected}
+        campaigns={DashboardStore.regions}
+        sendValue={this.postMetaMap}>
+      </CampaignDropdownMenu>
+      </div>;
+
+
+
+             }
+
+  },
 
 
 render : function(){
@@ -81,7 +94,7 @@ render : function(){
           >
               <h1> Source Map Id: {source_object_map_id} </h1>
               <form>
-              <h2> Content Type: {this.state.content_type} </h2>
+              <h2> Content PROPS: {this.state.content_type} </h2>
               <h2> Source Code: {this.state.source_object_code} </h2>
               <h2> {this.renderDropDown(this.state.content_type)} </h2>
               </form>

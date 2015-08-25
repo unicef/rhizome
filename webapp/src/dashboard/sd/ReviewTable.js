@@ -1,8 +1,6 @@
 var _											= require('lodash');
 var React 								= require('react');
 var RegionTitleMenu     	= require('component/RegionTitleMenu.jsx');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var CampaignDropdownMenu 	= require('component/CampaignDropdownMenu.jsx');
 var DashboardStore    		= require('stores/DashboardStore');
 var MapForm 							= require('dashboard/sd/MapForm.js');
 
@@ -101,7 +99,10 @@ var ReviewTable = React.createClass({
 							return this.validateForm(id)
 						}
 						else if (this.props.doc_tab == 'mapping') {
-							return <MapForm source_object_map_id={id} />
+							return <MapForm
+							 				source_object_map_id={id}
+											key={id}
+											/>
 					}
 				}
 			},
