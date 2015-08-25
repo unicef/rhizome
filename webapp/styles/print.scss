@@ -8,8 +8,8 @@
 // classes for screen-only grids into our print styles.
 $include-html-grid-classes: false;
 $include-html-block-grid-classes: false;
-@import "foundation/components/block-grid";
-@import "foundation/components/grid";
+@import "foundation/scss/foundation/components/block-grid";
+@import "foundation/scss/foundation/components/grid";
 
 @page {
 	margin: 0;

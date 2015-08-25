@@ -1,21 +1,13 @@
-/* Welcome to Compass.
- * In this file you should write your main styles. (or centralize your imports)
- * Import this file using the following HTML or equivalent:
- * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
-
 @import "settings";
-@import "foundation";
-
-@import "compass/utilities/general/clearfix";
-@import "compass/css3/images";
-
-@import "forms";
+@import "foundation/scss/foundation";
+@import "fontawesome/scss/font-awesome";
+@import "components";
 @import "charts";
 @import "dashboards";
 @import "admin";
 
 body {
-	font-size : rem-calc(10);
+  font-size: rem-calc(10);
 }
 
 #main {
@@ -23,101 +15,100 @@ body {
 }
 
 h6 {
-	margin-bottom : 0.1rem;
-	margin-top    : 3px;
-	overflow      : hidden;
-	text-overflow : ellipsis;
-	white-space   : nowrap;
+  margin-bottom: 0.1rem;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 header {
-	@include background(linear-gradient(bottom, #333, #3a3a3a));
-
-	margin-bottom: 1rem;
+  background: linear-gradient(to bottom, #333, #3a3a3a);
+  margin-bottom: 1rem;
 }
 
-h1,h2,h3,h4,h5,h6 {
-	a {
-		color : inherit;
+h1, h2, h3, h4, h5, h6 {
+  a {
+    color: inherit;
 
-		&:not([href]) {
-			color  : inherit;
-			cursor : default;
-		}
-	}
+    &:not([href]) {
+      color: inherit;
+      cursor: default;
+    }
+  }
 
-	label {
-		display        : inline-block;
-		text-transform : none;
-		font-size      : rem-calc(12);
-		margin-right   : 1em;
-	}
+  label {
+    display: inline-block;
+    text-transform: none;
+    font-size: rem-calc(12);
+    margin-right: 1em;
+  }
 
-	input[type="radio"] {
-		margin-bottom: 0;
-	}
+  input[type="radio"] {
+    margin-bottom: 0;
+  }
 }
 
 h3 {
-	border-bottom  : 1px solid $iron;
-	color          : $steel;
-	text-transform : uppercase;
+  border-bottom: 1px solid $iron;
+  color: $steel;
+  text-transform: uppercase;
 }
 
 h4 {
-	margin      : 0;
-	overflow    : hidden;
-	white-space : nowrap;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 select {
-	padding-right: 1.5em;
+  padding-right: 1.5em;
 }
 
 nav {
-	@include clearfix;
+  @include clearfix;
 
-	ul {
-		display    : inline-block;
-		font-size  : 9pt;
-		list-style : none;
-		margin     : 0;
+  ul {
+    display: inline-block;
+    font-size: 9pt;
+    list-style: none;
+    margin: 0;
 
-		&.right:last-child {
-			margin-right: -12pt;
-		}
+    &.right:last-child {
+      margin-right: -12pt;
+    }
 
-		li {
-			border-top    : 2px solid transparent;
-			display       : inline-block;
-			margin-bottom : 3px;
-			padding       : 4pt 12pt 3pt 12pt;
-		}
+    li {
+      border-top: 2px solid transparent;
+      display: inline-block;
+      margin-bottom: 3px;
+      padding: 4pt 12pt 3pt 12pt;
+    }
 
-	}
+  }
 
-	a {
-		color: #fff;
-		opacity: 0.5;
-		text-decoration: none;
-		transition: opacity 300ms ease;
+  a {
+    color: #fff;
+    opacity: 0.5;
+    text-decoration: none;
+    transition: opacity 300ms ease;
 
-		&:focus,
-		&:hover {
-			color: #fff !important;
-			opacity: 1;
-			outline: none;
-		}
-	}
+    &:focus,
+    &:hover {
+      color: #fff !important;
+      opacity: 1;
+      outline: none;
+    }
+  }
 }
 
 p {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .pageWelcome {
-	color: #999;
-	margin: 10px 0 20px 0;
+  color: #999;
+  margin: 10px 0 20px 0;
 }
 
 body.home nav .home,
@@ -125,160 +116,158 @@ body.dashboard nav .dashboard,
 body.data nav .data,
 body.data-entry nav .data-entry,
 body.admin nav .admin {
-	border-top: 2px solid #ffcc67;
+  border-top: 2px solid #ffcc67;
 
-	a {
-		opacity: 1;
-	}
+  a {
+    opacity: 1;
+  }
 }
 
 .bottom {
-	position: absolute;
-	bottom: 0;
+  position: absolute;
+  bottom: 0;
 }
 
 .error {
-	color: $alert-color;
-	margin-top: 1.3em;
+  color: $alert-color;
+  margin-top: 1.3em;
 }
 
 a {
-	transition: color 300ms ease-in-out;
+  transition: color 300ms ease-in-out;
 
-	&[href]:hover {
-		color: $secondary-color;
-	}
+  &[href]:hover {
+    color: $secondary-color;
+  }
 }
 
 table {
-	border: 1px solid #DDDDDD;
-	border-collapse : collapse;
-	margin-top      : 10pt;
-	min-width       : 100%;
+  border: 1px solid #DDDDDD;
+  border-collapse: collapse;
+  margin-top: 10pt;
+  min-width: 100%;
 
-	th {
-		padding: 5pt 0;
-		text-align: left;
-	}
+  th {
+    padding: 5pt 0;
+    text-align: left;
+  }
 
-	td {
-		background-color: white;
-		cursor: default;
-		font-size: 9pt;
-		padding: 3pt 0;
-	}
+  td {
+    background-color: white;
+    cursor: default;
+    font-size: 9pt;
+    padding: 3pt 0;
+  }
 
-	tbody {
-		tr:not(.empty):hover {
-			td {
-				background-color: $ghost;
-			}
-		}
-	}
+  tbody {
+    tr:not(.empty):hover {
+      td {
+        background-color: $ghost;
+      }
+    }
+  }
 
-	tfoot {
-		td {
-			background-color : #DDDDDD;
-			padding: 0;
+  tfoot {
+    td {
+      background-color: #DDDDDD;
+      padding: 0;
 
-			&.more {
-				font-size   : rem-calc(10);
-				text-align  : center;
+      &.more {
+        font-size: rem-calc(10);
+        text-align: center;
 
-				&:hover {
-					background-color : #DDDDDD;
-				}
+        &:hover {
+          background-color: #DDDDDD;
+        }
 
-				a {
-					color       : $body-font-color;
-					display     : block;
-					font-weight : bold;
-					opacity     : 0.6;
+        a {
+          color: $body-font-color;
+          display: block;
+          font-weight: bold;
+          opacity: 0.6;
 
-					transition  : opacity 300ms ease-in-out;
+          transition: opacity 300ms ease-in-out;
 
-					&:hover {
-						color   : inherit;
-						opacity : 1;
-					}
-				}
-			}
-		}
-	}
+          &:hover {
+            color: inherit;
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
 
-	.numeric {
-		text-align: right;
-	}
+  .numeric {
+    text-align: right;
+  }
 
-	.empty {
-		td {
-			background-color: transparent;
-			font-size: 150%;
-			padding: 2em 0;
-			text-align: center;
-		}
-	}
+  .empty {
+    td {
+      background-color: transparent;
+      font-size: 150%;
+      padding: 2em 0;
+      text-align: center;
+    }
+  }
 
-	.odd {
-		td {
-			background-color: #f0f0f0;
-		}
-	}
+  .odd {
+    td {
+      background-color: #f0f0f0;
+    }
+  }
 
+  &.pie-charts {
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0.5em;
 
+    margin: 0.25em 0 1.25rem 0;
 
-	&.pie-charts {
-		border          : none;
-		border-collapse : separate;
-		border-spacing  : 0.5em;
+    tr {
+      background-color: transparent !important;
 
-		margin          : 0.25em 0 1.25rem 0;
-
-		tr {
-			background-color: transparent !important;
-
-			td {
-				font-size      : 0.625rem;
-				line-height    : 1;
-				padding        : 0;
-				vertical-align : middle;
-			}
-		}
-	}
+      td {
+        font-size: 0.625rem;
+        line-height: 1;
+        padding: 0;
+        vertical-align: middle;
+      }
+    }
+  }
 }
 
 *[role="menuitem"] {
-	color   : $body-font-color;
-	display : block;
-	padding : 5pt;
+  color: $body-font-color;
+  display: block;
+  padding: 5pt;
 
-	&:hover {
-		background-color : $primary-color;
-		color            : white;
-	}
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+  }
 }
 
 button,
 .button,
 *[role="button"] {
-	@include button($radius: true);
-	border-bottom-width: 3px;
+  @include button($radius: true);
+  border-bottom-width: 3px;
 
-	transition: all 300ms ease-in-out;
+  transition: all 300ms ease-in-out;
 
-	&:not(.disabled):not(.success):hover {
-		border-color: $secondary-color
-	}
+  &:not(.disabled):not(.success):hover {
+    border-color: $secondary-color
+  }
 
-	&:focus {
-		outline: none;
-	}
+  &:focus {
+    outline: none;
+  }
 
-	&.small {
-		border-bottom-width : 2px;
-		font-size           : rem-calc(9);
-		padding             : 0.5em 1.5em;
-	}
+  &.small {
+    border-bottom-width: 2px;
+    font-size: rem-calc(9);
+    padding: 0.5em 1.5em;
+  }
 }
 
 .button-bar {
@@ -291,140 +280,142 @@ button,
     transition: color 300ms ease;
 
     &:hover {
-      color : $secondary-color;
+      color: $secondary-color;
     }
   }
 }
 
 [class*="block-grid-"] > li {
-	padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 .disabled {
-	cursor: $button-disabled-cursor;
-	opacity: $button-disabled-opacity;
+  cursor: $button-disabled-cursor;
+  opacity: $button-disabled-opacity;
 }
 
 .button.read-only {
-   border-bottom-width: 1px;
-   cursor:initial;
-   &:not(.disabled):not(.success):hover {
-   	border-color: $button-border-color;
-   }
+  border-bottom-width: 1px;
+  cursor: initial;
+  &:not(.disabled):not(.success):hover {
+    border-color: $button-border-color;
+  }
 
 }
 
 /* fixed-header tables */
 .fixed-table-container {
 
-	$defaultTableHeight: 475px;
-	$defaultHeaderHeight: 50px;
-	$defaultHeaderLineHeight: 25px;
-	$borderColor: #ddd;
+  $defaultTableHeight: 475px;
+  $defaultHeaderHeight: 50px;
+  $defaultHeaderLineHeight: 25px;
+  $borderColor: #ddd;
 
-	display: inline-block; /* required to make horizontal scrolling work */
-	height: $defaultTableHeight;
-	background-color: white;
-	position: relative; /* could be absolute or relative */
-	padding-top: $defaultHeaderHeight; /* height of header */
+  display: inline-block; /* required to make horizontal scrolling work */
+  height: $defaultTableHeight;
+  background-color: white;
+  position: relative; /* could be absolute or relative */
+  padding-top: $defaultHeaderHeight; /* height of header */
 
-	.fixed-table-container-inner {
-		overflow-x: hidden;
-		overflow-y: auto;
-		height: 100%;
-		border: 1px solid $borderColor;
-		border-top: none;
-		border-left: none;
-	}
+  .fixed-table-container-inner {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    border: 1px solid $borderColor;
+    border-top: none;
+    border-left: none;
+  }
 
-	.header-background {
-		height: $defaultHeaderHeight; /* height of header */
-		background-color: #F5F5F5;
-		border: solid 1px $borderColor;
-		border-bottom: none;
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-	}
+  .header-background {
+    height: $defaultHeaderHeight; /* height of header */
+    background-color: #F5F5F5;
+    border: solid 1px $borderColor;
+    border-bottom: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+  }
 
-	table {
-		background-color: white;
-		width: 100%;
-		overflow-x: hidden;
-		overflow-y: auto;
-		margin: -18px 0 -1px 0;
+  table {
+    background-color: white;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: -18px 0 -1px 0;
 
-		th {
-			border-bottom: 1px solid $borderColor;
-		}
+    th {
+      border-bottom: 1px solid $borderColor;
+    }
 
-		td {
-			border-left: 1px solid $borderColor;
-			&:first-child {
-				border-left: none;
-			}
+    td {
+      border-left: 1px solid $borderColor;
+      &:first-child {
+        border-left: none;
+      }
 
-			&.section-header, &.section-header:hover {
-				font-size: 11px;
-				background-color: #999;
-				font-weight: 100;
-				color: #fff;
-				text-transform: uppercase;
-			}
-		}
+      &.section-header, &.section-header:hover {
+        font-size: 11px;
+        background-color: #999;
+        font-weight: 100;
+        color: #fff;
+        text-transform: uppercase;
+      }
+    }
 
-		.th-inner {
-			position: absolute;
-			top: 1px;
-			line-height: $defaultHeaderLineHeight; /* height of header */
-			text-align: left;
-			height: $defaultHeaderHeight;
-			padding-left: 5px;
-			margin-left: -10px;
-			z-index: 900;
+    .th-inner {
+      position: absolute;
+      top: 1px;
+      line-height: $defaultHeaderLineHeight; /* height of header */
+      text-align: left;
+      height: $defaultHeaderHeight;
+      padding-left: 5px;
+      margin-left: -10px;
+      z-index: 900;
 
-			border-left: 1px solid $borderColor;
-			background-color: #F5F5F5;
+      border-left: 1px solid $borderColor;
+      background-color: #F5F5F5;
 
-			/* to hide overflow text, and then reveal on hover: */
-			white-space: nowrap;
-			overflow-x: hidden;
-			&:hover {
-				overflow-x: visible;
-				z-index: 1000;
-				width: auto;
-				padding-right: 10px;
-			}
-		}
-		th:first-child .th-inner {
-			border-left: none;
-		}
+      /* to hide overflow text, and then reveal on hover: */
+      white-space: nowrap;
+      overflow-x: hidden;
+      &:hover {
+        overflow-x: visible;
+        z-index: 1000;
+        width: auto;
+        padding-right: 10px;
+      }
+    }
+    th:first-child .th-inner {
+      border-left: none;
+    }
 
-	}
+  }
 
 }
 
 .statusText-good {
-	color: #29A13A;
+  color: #29A13A;
 }
+
 .statusText-okay {
-	color: rgb(242, 129, 0);
+  color: rgb(242, 129, 0);
 }
+
 .statusText-bad {
-	color: #EC1C24;
+  color: #EC1C24;
 }
 
 .hidden {
-	visibility: hidden;
+  visibility: hidden;
 }
 
 .login {
-	background-color: $oil;
+  background-color: $oil;
 
   .wrapper {
-		background: url('/webapp/assets/img/RhizomeLogoWhOnBk-md.png') no-repeat top center;
-		padding-top: 150px;
+    background: url('../img/RhizomeLogoWhOnBk-md.png') no-repeat top center;
+    padding-top: 150px;
     margin: 70pt auto;
 
     p {
@@ -440,9 +431,9 @@ button,
     max-width: 300px;
     margin: 0 auto;
 
-		label {
-			color: $white;
-		}
+    label {
+      color: $white;
+    }
 
     input {
       width: 100%;
@@ -455,262 +446,263 @@ button,
     margin-bottom: 1.2em;
   }
 }
+
 svg {
-	width: 100%;
+  width: 100%;
 }
 
 .pagination {
-	a {
-		display: inline-block;
-		font-size: 9pt;
-		padding: 2pt;
+  a {
+    display: inline-block;
+    font-size: 9pt;
+    padding: 2pt;
 
-		&.current {
-			background-color: $primary-color;
-			color: #fff;
-		}
+    &.current {
+      background-color: $primary-color;
+      color: #fff;
+    }
 
-		&:hover {
-			background-color: $secondary-color;
-			color: #fff;
-		}
-	}
+    &:hover {
+      background-color: $secondary-color;
+      color: #fff;
+    }
+  }
 }
 
 .highlight {
-	color       : $secondary-color;
-	font-weight : bold;
+  color: $secondary-color;
+  font-weight: bold;
 }
 
 #new-polio-cases {
-	color       : $down-color;
-	font-weight : bold;
-	position    : absolute;
-	top         : 0;
-	left        : 0;
-	z-index     : 999;
-	padding     : 0 2pt;
-	font-size   : 9pt
+  color: $down-color;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  padding: 0 2pt;
+  font-size: 9pt
 }
 
 ul {
-	&.pie {
-		list-style     : none;
-		padding-left   : 16pt;
-		margin         : 0;
+  &.pie {
+    list-style: none;
+    padding-left: 16pt;
+    margin: 0;
 
-		li {
-			font-size     : 8px;
-			line-height   : 1;
-			margin-bottom : 2pt;
-			padding-top   : 3pt;
-		}
+    li {
+      font-size: 8px;
+      line-height: 1;
+      margin-bottom: 2pt;
+      padding-top: 3pt;
+    }
 
-		div.chart {
-			display     : inline-block;
-			float       : left;
-			margin-left : -14pt;
-			margin-top  : -2px;
-			max-width   : 12pt;
-		}
-	}
+    div.chart {
+      display: inline-block;
+      float: left;
+      margin-left: -14pt;
+      margin-top: -2px;
+      max-width: 12pt;
+    }
+  }
 }
 
 .transit-points {
-	.chart {
-		svg {
-			height : 14pt;
-			width  : 14pt;
-		}
-	}
+  .chart {
+    svg {
+      height: 14pt;
+      width: 14pt;
+    }
+  }
 }
 
 .accessibility {
-	.chart {
-		svg {
-			height : 12pt;
-			width  : 12pt;
-		}
-	}
+  .chart {
+    svg {
+      height: 12pt;
+      width: 12pt;
+    }
+  }
 }
 
 .tooltip {
-	color: white;
-  margin : 10px;
+  color: white;
+  margin: 10px;
   z-index: 9999;
 
-	h1,h2,h3,h4,h5,h6 {
-		border: none;
-		color : inherit;
-	}
+  h1, h2, h3, h4, h5, h6 {
+    border: none;
+    color: inherit;
+  }
 
-	p {
-		color     : inherit;
-		font-size : .625rem;
+  p {
+    color: inherit;
+    font-size: .625rem;
 
-		table {
-			display : inline-block;
-			float   : left;
-			margin  : 0 1em 0 0;
-		}
-	}
+    table {
+      display: inline-block;
+      float: left;
+      margin: 0 1em 0 0;
+    }
+  }
 
-	table {
-		background-color : transparent;
-		border-top       : 1px solid $steel;
-		border-left      : none;
-		border-right     : none;
-		border-bottom    : none;
-		min-width        : 0;
-		table-layout     : auto;
-		width            : initial;
+  table {
+    background-color: transparent;
+    border-top: 1px solid $steel;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    min-width: 0;
+    table-layout: auto;
+    width: initial;
 
-		tr {
-			background-color : transparent;
-			padding          : 0 0.5em;
-		}
+    tr {
+      background-color: transparent;
+      padding: 0 0.5em;
+    }
 
-		td, th {
-			background-color : transparent;
-			border-bottom    : 1px solid $steel;
-			color            : inherit;
-			font-size        : .625rem;
-			padding          : 0.1em;
-		}
-	}
+    td, th {
+      background-color: transparent;
+      border-bottom: 1px solid $steel;
+      color: inherit;
+      font-size: .625rem;
+      padding: 0.1em;
+    }
+  }
 
   svg {
     .bg {
-      fill : transparent;
+      fill: transparent;
     }
   }
 }
 
 .inline {
-	display: block;
+  display: block;
 }
 
 .menu-button {
-	color     : white !important;
-	cursor    : pointer !important;
-	font-size : 1rem;
+  color: white !important;
+  cursor: pointer !important;
+  font-size: 1rem;
 
-	.fa-circle {
-		color       : $button-border-color;
-		text-shadow : 0 2px #667c89;
-	}
+  .fa-circle {
+    color: $button-border-color;
+    text-shadow: 0 2px #667c89;
+  }
 
-	.fa-circle-thin {
-		color : $button-border-color;
-	}
+  .fa-circle-thin {
+    color: $button-border-color;
+  }
 
-	&:active {
-		.fa-circle {
-			text-shadow : 0 1px #667c89;
-		}
-	}
+  &:active {
+    .fa-circle {
+      text-shadow: 0 1px #667c89;
+    }
+  }
 }
 
 .menu {
-	&:focus {
-		outline : none;
-	}
+  &:focus {
+    outline: none;
+  }
 
-	.background {
-		border-color: $gainsboro;
+  .background {
+    border-color: $gainsboro;
 
-		.arrow {
-			border-bottom-color: $gainsboro !important;
-		}
-	}
+    .arrow {
+      border-bottom-color: $gainsboro !important;
+    }
+  }
 
-	li.campaign {
-		.office {
-			color       : $jumbo;
-			font-weight : bold;
-		}
-	}
+  li.campaign {
+    .office {
+      color: $jumbo;
+      font-weight: bold;
+    }
+  }
 
-	hr {
-		margin : 0
-	}
+  hr {
+    margin: 0
+  }
 }
 
 .menu {
-	*[role="search"] {
-		input {
-			background-color: $vapor;
-		}
-	}
+  *[role="search"] {
+    input {
+      background-color: $vapor;
+    }
+  }
 }
 
 .inverse {
-	background-color : $gainsboro;
-	color            : $body-font-color;
-	padding          : 0.2em 0.7em;
+  background-color: $gainsboro;
+  color: $body-font-color;
+  padding: 0.2em 0.7em;
 }
 
 .indicator-ranges {
-	tbody {
-		th {
-			padding-right : 1em;
-		}
-	}
+  tbody {
+    th {
+      padding-right: 1em;
+    }
+  }
 }
 
 @media #{$small-up} {
-	.small {
-		&.inline {
-			display: inline-block;
-		}
-	}
+  .small {
+    &.inline {
+      display: inline-block;
+    }
+  }
 }
 
 @media #{$medium-up} {
-	.medium {
-		&.inline {
-			display: inline-block;
-		}
-	}
+  .medium {
+    &.inline {
+      display: inline-block;
+    }
+  }
 }
 
 @media #{$large-up} {
-	.large {
-		&.inline {
-			display: inline-block;
-		}
-	}
+  .large {
+    &.inline {
+      display: inline-block;
+    }
+  }
 }
 
 .overlay {
-	background-color : transparentize($ghost, 0.3);
-	color            : $aluminum;
-	opacity          : 1;
-	text-align       : center;
+  background-color: transparentize($ghost, 0.3);
+  color: $aluminum;
+  opacity: 1;
+  text-align: center;
 
-	position         : absolute;
-	top              : 0;
-	left             : 0;
-	bottom           : 0;
-	right            : 0;
-	z-index          : 9998;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 9998;
 
-	& > div {
-		display: table;
-		width: 100%;
-		height: 100%;
+  & > div {
+    display: table;
+    width: 100%;
+    height: 100%;
 
-		& > div {
-			display: table-cell;
-			vertical-align: middle;
-		}
-	}
+    & > div {
+      display: table-cell;
+      vertical-align: middle;
+    }
+  }
 
-	.empty {
-		color            : rgb(175, 55, 62);
-		padding          : 0;
-		background-color : transparent;
-	}
+  .empty {
+    color: rgb(175, 55, 62);
+    padding: 0;
+    background-color: transparent;
+  }
 }
 
 
