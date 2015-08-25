@@ -11,7 +11,7 @@ export default {
     },
     {
       src: [
-        'bower_components/fontawesome/fonts/**'
+        'node_modules/font-awesome/fonts/**'
       ],
       dest: `${gulp.config('base.dist')}/fonts`
     }

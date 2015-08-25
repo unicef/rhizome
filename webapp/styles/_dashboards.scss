@@ -1,7 +1,7 @@
 $include-html-grid-classes: false;
 $include-html-block-grid-classes: false;
-@import "foundation/scss/foundation/components/block-grid";
-@import "foundation/scss/foundation/components/grid";
+@import "foundation/components/block-grid";
+@import "foundation/components/grid";
 
 $total-columns: 7;
 @media #{$small-up} {

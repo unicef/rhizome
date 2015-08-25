@@ -2,7 +2,6 @@
   "name": "uf04-polios",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "bower install",
     "dev": "gulp dev",
     "build": "NODE_ENV=production gulp build",
     "package": "npm run build && gulp package"
@@ -12,6 +11,8 @@
     "d3": "^3.5.6",
     "es6-promise": "^3.0.2",
     "fixed-data-table": "^0.4.6",
+    "font-awesome": "^4.4.0",
+    "foundation-sites": "^5.5.2",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "object-assign": "^4.0.1",
@@ -30,7 +31,6 @@
   "devDependencies": {
     "babel": "^5.8.21",
     "babelify": "^6.2.0",
-    "bower": "^1.5.1",
     "browser-sync": "^2.8.2",
     "browserify": "^11.0.1",
     "bundle-collapser": "^1.2.1",

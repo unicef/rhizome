@@ -53,7 +53,7 @@
 // $rem-base: 16px;
 
 // Allows the use of rem-calc() or lower-bound() in your settings
-@import "foundation/scss/foundation/functions";
+@import "foundation/functions";
 
 $axis-font-size: rem-calc(10);
 

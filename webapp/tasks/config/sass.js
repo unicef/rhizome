@@ -26,7 +26,8 @@ export default {
   }],
   options: {
     includePaths: [
-      'bower_components',
+      'node_modules/foundation-sites/scss',
+      'node_modules/font-awesome/scss',
       'node_modules/jeet/scss/jeet'
     ],
     autoprefixer: {
