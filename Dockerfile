@@ -20,11 +20,19 @@ USER root
 COPY ./requirements.txt /tmp/
 RUN pip install --requirement /tmp/requirements.txt ${CHINESE_LOCAL_PIP_CONFIG}
 
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/${POSTGRES_VERSION}/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/${POSTGRES_VERSION}/main/postgresql.conf
+
+EXPOSE 5432
+
 USER postgres
 RUN /etc/init.d/postgresql start && \
   createuser --no-createdb --no-createrole --no-superuser djangoapp && \
   psql -c "ALTER USER ${DB_USER} WITH PASSWORD '${DB_PWD}';" && \
+  createuser --no-createdb --no-createrole --no-superuser root && \
+  psql -c "ALTER USER root WITH PASSWORD 'root';" && \
   createdb polio --owner ${DB_USER} --encoding=utf8 --template template0 && \
   createdb rhizome --owner ${DB_USER} --encoding=utf8 --template template0
 
 WORKDIR '/etc/polio'
+USER root
