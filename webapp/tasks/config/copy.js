@@ -5,15 +5,20 @@ export default {
     {
       src: [
         `${gulp.config('base.src')}/index.html`,
-        `assets/**`
       ],
       dest: `${gulp.config('base.dist')}`
     },
     {
       src: [
+        `${gulp.config('base.src')}/static/**/*.*`
+      ],
+      dest: `${gulp.config('base.dist')}/static`
+    },
+    {
+      src: [
         'node_modules/font-awesome/fonts/**'
       ],
-      dest: `${gulp.config('base.dist')}/fonts`
+      dest: `${gulp.config('base.dist')}/static/fonts`
     }
   ]
 }
