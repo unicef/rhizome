@@ -47,19 +47,13 @@ def _build_dependencies():
         execfile(activate_this_file, dict(__file__=activate_this_file))
 
     # update/install dependencies
-    local ("npm install")
-    local("./node_modules/.bin/bower install")
-    local ("pip install -r requirements.txt")
+    local ("cd webapp && npm install")
 
-    # clean out old webpack builds
-    local("rm assets/bundles/*")
+    # build fe #
+    local("cd webapp && ./node_modules/.bin/gulp build")
 
-    local("./node_modules/.bin/webpack --config webpack.config.dev.js")
-    local("./node_modules/.bin/gulp fonts")
-    local("./node_modules/.bin/gulp dist")
-
-    # collect all of the static files to /static
-    local("python manage.py collectstatic --noinput")
+    # zip the project up #
+    local("zip -r dist/rhizome.zip ./ -x '.git/*' 'media/*' 'webapp/node_modules/*' 'venv/*'")
 
 # push build to remote
 def _push_to_remote():
@@ -86,34 +80,29 @@ def _push_to_remote():
         #  so the 'find' command above may not be deleting enough compiled pycs]
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
 
-    ## scp static javascript
-    put ('static/main*', remote_frontend_path)
+    # scp static js and css
+    # FIXME -> Ideally this is done with 'gulp dist' then unpacking on server
+    put ('static/js/main.js', remote_frontend_path)
+    put ('static/js/vendor.js', remote_frontend_path)
+    put ('static/css/screen.css', remote_frontend_path)
+    put ('static/css/print.css', remote_frontend_path)
 
     # in server path -
     with cd(remote_backend_path):
         # remove compiled files
         run('sudo rm -rf `find . -name "*.pyc"`')
 
-        # run("chgrp -R www-data *")
-        # run("chmod -R g+w *")
-
+        # install python dependencies
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        ## need to do this in a specific order becuase upon inception ##
-        ## the datapoints app is dependent on the auth app ##
-        run("python manage.py migrate auth --settings=settings")
-        run("python manage.py migrate datapoints --settings=settings")
-        run("python manage.py migrate source_data --settings=settings")
         run("python manage.py migrate --settings=settings")
-
 
         # echo "== BUILDING STORED PROCEDURES =="
         run("bash bin/build_db.sh")
 
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
-
 
         # echo "== RUNNING TESTS =="
         # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
