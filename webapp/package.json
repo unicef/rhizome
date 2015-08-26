@@ -53,6 +53,7 @@
     "gulp-zip": "^3.0.2",
     "html-browserify": "0.0.6",
     "jeet": "^6.1.2",
+    "node-sass": "3.2.0",
     "merge-stream": "^1.0.0",
     "proxy-middleware": "^0.13.1",
     "require-dir": "^0.3.0",
