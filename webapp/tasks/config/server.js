@@ -23,7 +23,7 @@ export default {
       baseDir: `${gulp.config('base.dist')}`,
       middleware: [
         process.env.NODE_ENV === 'production' ? compress() : middlewareNope(),
-        proxyTo('/api/v2', url.format(config.get('server'))),
+        proxyTo('/api/v2', url.format(config.get('server')))
       ]
     },
     ui: {
