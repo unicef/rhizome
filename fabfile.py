@@ -18,7 +18,7 @@ def deploy(venv_path=None):
     local_venv_path = venv_path;
 
     # on local machine...
-    _build_dependencies()
+    # _build_dependencies()
 
     # on target machine
     stop_apache()
@@ -73,7 +73,6 @@ def _push_to_remote():
         # probably have files we want to keep in it. This way we ensure that we
         # clean out old scripts before deploying. Set mindepth to 2 so that we
         # can keep the server's settings.py file in the application folder
-        run("find %s -mindepth 2 -regextype 'posix-extended' -regex '.*\.(pyc?|sql|html) -delete'" % remote_backend_path)
 
         # [these unzips were trying to overwrite .pyc files owned by www-root
         #  so the 'find' command above may not be deleting enough compiled pycs]
