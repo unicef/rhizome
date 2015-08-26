@@ -47,6 +47,8 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
+            'refresh_master': {'orm_obj':Document,
+                'permission_function':self.refresh_master_for_document},
             'campaign': {'orm_obj':CampaignAbstracted,
                 'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
@@ -109,6 +111,19 @@ class v2Request(object):
         }
 
         return response_data
+
+    def refresh_master_for_document(self, list_of_object_ids):
+
+
+        mr = MasterRefresh(self.user_id,self.document_id)
+        qset = Document.objects.raw('''
+
+            SELECT id FROM source_data_document WHERE id = %s;
+
+        ''',[self.document_id])
+
+        return None, qset
+
 
     def pretty_doc_mapping(self, list_of_object_ids):
         '''

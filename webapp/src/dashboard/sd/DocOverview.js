@@ -1,6 +1,6 @@
 var React = require('react');
 	var _ = require('lodash');
-	var API = require('data/api');
+	var api = require('data/api');
 	var DropdownMenu     = require('component/DropdownMenu.jsx');
 	var NavigationStore     = require('stores/NavigationStore');
 
@@ -30,22 +30,31 @@ var React = require('react');
 				}
 			},
 
+		refreshMaster : function () {
+				console.log('refreshing master')
+
+				api.refresh_master({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
+				.then(response => this.setState({
+						some_var: 'hello'
+						// source_object_code: response.objects[0].source_object_code,
+						// content_type: response.objects[0].content_type,
+				}));
+			},
 
 	  render() {
-			var doc_id = this.props.doc_id
-			var doc_tab = this.props.doc_tab
-			var loading = this.props.loading
+			var doc_id = this.props.doc_id;
+			var doc_tab = this.props.doc_tab;
+			var loading = this.props.loading;
 
-			var refreshMasterUrl = '/source_data/refresh_master/' + doc_id
-			var refreshMasterButton = refreshMasterUrl ?
-				<div className="ufadmin-create-button">
-					<a className="button" href={refreshMasterUrl}>Refresh Master</a>
-				</div> : null;
+		  var refresh_master_btn = <div>
+				<button className="tiny" onClick={this.refreshMaster}> Refresh Master!
+				</button>
+				</div>
 
 			return <div>
 			<h2> Document Overview </h2>
 			<h3> doc_id : {doc_id} </h3>
-			<div>{refreshMasterButton} </div>
+			{refresh_master_btn}
 		 </div>
 		}
 	});

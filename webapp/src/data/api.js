@@ -248,6 +248,8 @@ module.exports = {
   // GET / POST mapping //
   get_source_object_map: endPoint('/source_object_map/','get',2,false),
   post_source_object_map: endPoint('/source_object_map/','post',2,false),
+  refresh_master: endPoint('/refresh_master/', 'get', 2, false),
+
 
   admin: {
     usersMetadata: endPoint('/user/metadata/', 'get', 2, false),

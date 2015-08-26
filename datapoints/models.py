@@ -391,7 +391,7 @@ class DocDataPoint(models.Model):
     For Validation of upload datapoints.
     '''
 
-    document = models.ForeignKey('source_data.Document')
+    document = models.ForeignKey('source_data.Document') ## redundant
     indicator = models.ForeignKey(Indicator)
     region = models.ForeignKey(Region)
     campaign = models.ForeignKey(Campaign)
@@ -403,7 +403,12 @@ class DocDataPoint(models.Model):
 
     class Meta:
         db_table = 'doc_datapoint'
-        unique_together = (('source_submission','indicator'))
+
+        # unique_together = (('source_submission','region','campaign'))
+        ## each row in an odk form, or a csv should represent one region /
+        ## campaign combination.  For now that is the type of data the app
+        ## expects, however the source_submission schema is flexible for
+        ## different types of data models / transformation in the future
 
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
