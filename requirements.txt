@@ -7,8 +7,6 @@ django-simple-history==1.6.3
 django-tastypie==0.12.2
 ecdsa==0.13
 jsonfield==1.0.3
-numpy==1.9.2
-pandas==0.16.2
 paramiko==1.15.2
 psycopg2==2.6.1
 pycrypto==2.6.1

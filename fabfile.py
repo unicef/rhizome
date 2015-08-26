@@ -67,7 +67,6 @@ def _push_to_remote():
 
     # unzip stuff #
     with cd(remote_work_path):
-        run("rm -rf %s" % remote_frontend_path)
 
         # Delete all Python, HTML, and SQL files. We don't delete the entire
         # directory because that will catch the media/ directory which will

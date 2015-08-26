@@ -67,7 +67,7 @@ $ python manage.py runserver 0.0.0.0:8000
 
 ### Installing frontend dependencies
 
-    $ npm install -g gulp 
+    $ npm install -g gulp
     $ npm install
 
 ## running test ##
@@ -126,7 +126,32 @@ edits to our javascript and have the front end automatically rebuild them.
 
 ## Deploying ##
 
-see fabfile.py for more info
+when spinning up a new ubuntu instance nstall the following dependencies :
+
+```
+$ sudo apt-get update
+$ sudo apt-get install apache2 --fix-missing
+$ sudo apt-get install unzip --fix-missing
+$ sudo apt-get install python-pip --fix-missing
+$ sudo apt-get install python-pandas --fix-missing
+$ sudo apt-get install python-dev
+$ sudo apt-get install libpq-dev
+$ sudo apt-get install postgresql-9.3
+$ sudo apt-get install python-psycopg2
+```
+
+to set up the db..
+
+```
+$ CREATE USER djangoapp WITH PASSWORD 'somepassword' SUPERUSER LOGIN;
+```
+
+then create the directory for the polio django app, and static files
+```
+$ sudo mkdir /var/www/apps/
+$ sudo mkdir /var/www/apps/polio/
+```
+
 
 
 # Serving the Django Application with Apache.
