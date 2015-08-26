@@ -138,6 +138,8 @@ $ sudo apt-get install python-dev
 $ sudo apt-get install libpq-dev
 $ sudo apt-get install postgresql-9.3
 $ sudo apt-get install python-psycopg2
+$ sudo apt-get install libapache2-mod-wsgi
+sudo apt-get install apache2 apache2 apache2-mpm-prefork apache2-utils libexpat1 ssl-cert
 ```
 
 to set up the db..

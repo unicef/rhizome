@@ -74,9 +74,9 @@ class MasterRefresh(object):
         print '== sync datapoints =='
         datapoint_ids = self.sync_doc_datapoint()
 
-        print '== cache datapoints =='
-        cr = CacheRefresh([d.id for d in datapoint_ids])
-        computed_datapoint_ids = cr.main()
+        # print '== cache datapoints =='
+        # cr = CacheRefresh([d.id for d in datapoint_ids])
+        # computed_datapoint_ids = cr.main()
 
         return datapoint_ids
 
