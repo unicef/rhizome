@@ -20,6 +20,12 @@ var React = require('react');
 		getInitialState : function () {
 			return {
 				doc_id       : null,
+				docfile: null,
+				doc_title: null,
+				doc_datapoint_cnt: null,
+				source_submission_total_cnt: null,
+				source_submission_to_process_cnt: null,
+
 			};
 		},
 
@@ -35,9 +41,11 @@ var React = require('react');
 
 				api.refresh_master({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
 				.then(response => this.setState({
-						some_var: 'hello'
-						// source_object_code: response.objects[0].source_object_code,
-						// content_type: response.objects[0].content_type,
+					docfile: response.objects[0].docfile,
+					doc_title: response.objects[0].doc_title,
+					doc_datapoint_cnt: response.objects[0].doc_datapoint_cnt,
+					source_submission_total_cnt: response.objects[0].source_submission_total_cnt,
+					source_submission_to_process_cnt: response.objects[0].source_submission_to_process_cnt,
 				}));
 			},
 
@@ -51,9 +59,16 @@ var React = require('react');
 				</button>
 				</div>
 
+			var process_pct = this.state.source_submission_to_process_cnt / this.state.source_submission_total_cnt
+
 			return <div>
 			<h2> Document Overview </h2>
 			<h3> doc_id : {doc_id} </h3>
+			<h4> doc_file : {this.state.docfile} </h4>
+			<h4> Doc Name : {this.state.doc_title} </h4>
+			<h4> Doc DataPoint Count : {this.state.doc_datapoint_cnt} </h4>
+			<h4> percentage to process : {process_pct} </h4>
+
 			{refresh_master_btn}
 		 </div>
 		}

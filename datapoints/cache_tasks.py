@@ -114,13 +114,16 @@ class CacheRefresh(object):
           - return the result to be stored in the etl_job table.
         '''
 
-        task_result = 'SUCCESS'
+        try:
+            cache_job_id = self.cache_job.id
+        except AttributeError:
+            return 'PENDING'
 
         self.agg_dp_ids = self.agg_datapoints()
         self.calc_dp_ids = self.calc_datapoints()
         self.abstract_dp_ids = self.pivot_datapoints()
 
-        return task_result
+        return 'SUCCESS'
 
     def set_cache_job_id_for_raw_datapoints(self):
         '''
@@ -167,7 +170,6 @@ class CacheRefresh(object):
               of the same region_type all I see is Kirachi.
         '''
 
-        #
         adp_cursor = DataPoint.objects.raw("""
             SELECT * FROM fn_agg_datapoint(%s);
             """,[self.cache_job.id])

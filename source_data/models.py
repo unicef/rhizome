@@ -56,17 +56,13 @@ class ProcessStatus(models.Model):
 class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d',null=True)
-    doc_text = models.TextField(null=True)
+    doc_title = models.TextField(null=True)
     created_by = models.ForeignKey(User)
     guid = models.CharField(max_length=255)
-    source_datapoint_count = models.IntegerField(null=True)
-    master_datapoint_count = models.IntegerField(null=True)
-    is_processed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('docfile','doc_text')
-        ordering = ('-id',)
+        ordering = ('-created_at',)
 
     def save(self, *args, **kwargs):
         if not self.guid:

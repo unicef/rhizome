@@ -128,16 +128,37 @@ class v2Request(object):
 
             SELECT
                 td.*
-                ,x.doc_datapoint_count
+                ,x.doc_datapoint_cnt
+				,y.source_submission_total_cnt
+				,z.source_submission_to_process_cnt
             FROM _this_doc td
             INNER JOIN (
-                SELECT COUNT(1) as doc_datapoint_count
+                SELECT COUNT(1) as doc_datapoint_cnt
                 FROM doc_datapoint dd
                 WHERE EXISTS (
                         SELECT 1 FROM _this_doc td
                         WHERE dd.document_id = td.id
                     )
                 )x
+            ON 1=1
+            INNER JOIN (
+                SELECT COUNT(1) as source_submission_total_cnt
+                FROM source_submission ss
+                WHERE EXISTS (
+                        SELECT 1 FROM _this_doc td
+                        WHERE ss.document_id = td.id
+                    )
+                )y
+            ON 1=1
+            INNER JOIN (
+                SELECT COUNT(1) as source_submission_to_process_cnt
+                FROM source_submission ss
+                WHERE EXISTS (
+                        SELECT 1 FROM _this_doc td
+                        WHERE ss.document_id = td.id
+                    )
+                AND ss.process_status = 'TO_PROCESS'
+                )z
             ON 1=1;
 
         ''',[self.document_id])

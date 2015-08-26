@@ -50,7 +50,7 @@ class MasterRefresh(object):
         x = mr(1,3)
         '''
 
-        BATCH_SIZE = 10
+        BATCH_SIZE = 25
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id
@@ -59,21 +59,26 @@ class MasterRefresh(object):
 
         to_process = new_source_submission_ids[:BATCH_SIZE]
 
+        print '=== mapping === '
         source_object_map_ids = self.upsert_source_object_map\
             (to_process)
 
+        print '== source_submissions =='
         SourceSubmission.objects.filter(id__in=to_process)\
             .update(process_status = 'PROCESSED')
 
+        print '== doc datapoints =='
         doc_datapoint_ids = self.process_doc_datapoints\
             (to_process)
 
+        print '== sync datapoints =='
         datapoint_ids = self.sync_doc_datapoint()
 
+        print '== cache datapoints =='
         cr = CacheRefresh([d.id for d in datapoint_ids])
         computed_datapoint_ids = cr.main()
 
-        return computed_datapoint_ids
+        return datapoint_ids
 
     def upsert_source_object_map(self,source_submission_id_list):
         '''
@@ -159,19 +164,14 @@ class MasterRefresh(object):
 
         dp_batch = []
 
-        print ' === processing row === '
-
         try:
             region_id = self.source_map_dict[('region',region_code)]
         except KeyError:
-            print 'NO REGION MAP'
             return
 
         try:
             campaign_id = self.source_map_dict[('campaign',campaign_code)]
         except KeyError:
-            print campaign_code
-            print 'NO CAMPAIGN MAP'
             return
 
         for k,v in submission_data.iteritems():
@@ -188,10 +188,8 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',ind_code)]
         except KeyError:
-            print 'NO INDICATOR_MAP '
             return None
 
-        print indicator_id
         try:
             cleaned_val = float(val)
         except ValueError:
