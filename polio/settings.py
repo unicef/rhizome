@@ -51,10 +51,7 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
-    'tastypie',
-    'webpack_loader',
-    # 'stronghold',
-    # 'debug_toolbar',
+    'tastypie'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,8 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'stronghold.middleware.LoginRequiredMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
 
 DEBUG_TOOLBAR_PANELS = (
