@@ -3,7 +3,7 @@ import path from 'path'
 import _ from 'lodash'
 
 const vendorBrowser = require(path.join(process.cwd(), gulp.config('base.src'), 'package.json')).browser
-const jsDestFolder = `${gulp.config('base.dist')}/js`
+const jsDestFolder = `${gulp.config('base.dist')}/static/js`
 const basedir = path.join(process.cwd(), gulp.config('base.src'))
 
 export default {

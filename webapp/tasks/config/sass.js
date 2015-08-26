@@ -1,12 +1,12 @@
 import gulp from 'gulp'
 
-const cssDir = `${gulp.config('base.dist')}/css`
+const cssDir = `${gulp.config('base.dist')}/static/css`
 
 export default {
   files: [{
     entry: [
       `${gulp.config('base.src')}/**/style.scss`,
-      `styles/screen.scss`
+      `${gulp.config('base.src')}/styles/screen.scss`
     ],
     src: [
       `${gulp.config('base.src')}/**/style.scss`,
@@ -17,10 +17,10 @@ export default {
       filename: 'screen.css'
     }
   }, {
-    entry: 'styles/print.scss',
+    entry: `${gulp.config('base.src')}/styles/print.scss`,
     src: [
-      `styles/_settings.scss`,
-      `styles/print.scss`
+      `${gulp.config('base.src')}/styles/_settings.scss`,
+      `${gulp.config('base.src')}/styles/print.scss`
     ],
     dest: cssDir
   }],

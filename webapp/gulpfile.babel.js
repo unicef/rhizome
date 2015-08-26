@@ -9,7 +9,7 @@ gulpTaskConfig(gulp)
 requireDir('./tasks')
 
 gulp.config('base.src', './src')
-gulp.config('base.dist', path.join(__dirname, '../static'))
+gulp.config('base.dist', './public')
 
 gulp.config('tasks', requireDir('./tasks/config'))
 
