@@ -246,8 +246,8 @@ module.exports = {
   save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
   // GET / POST mapping //
-  get_source_object_map: endPoint('/source_object_map','get',2,false),
-  post_source_object_map: endPoint('/source_object_map','post',2,false),
+  get_source_object_map: endPoint('/source_object_map/','get',2,false),
+  post_source_object_map: endPoint('/source_object_map/','post',2,false),
 
   admin: {
     usersMetadata: endPoint('/user/metadata/', 'get', 2, false),

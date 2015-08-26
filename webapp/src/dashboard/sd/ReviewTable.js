@@ -82,15 +82,12 @@ var ReviewTable = React.createClass({
 	componentWillUpdate : function (nextProps, nextState) {
 			// FIXME -> needs cleanup
 			if (nextProps.region != this.props.region) {
-				console.log('updagin with  new regions')
 				return;
 			}
 			if (nextProps.getMetadata != this.props.getMetadata) {
-				console.log('bring up a new table')
 				return;
 			}
 			if (nextProps.doc_id != this.props.doc_id) {
-				console.log('new doc id')
 				return;
 			}
 		},
@@ -98,8 +95,6 @@ var ReviewTable = React.createClass({
 
 	render() {
 
-		console.log(this.state.indicators)
-		
 		const fields = {
 			is_valid: {
 				title: 'Edit',

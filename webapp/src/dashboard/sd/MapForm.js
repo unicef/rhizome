@@ -29,7 +29,7 @@ var MapForm = React.createClass({
     },
 
 	getInitialState: function() {
-		return { modalIsOpen: false }
+		return { modalIsOpen: false, master_object_id: null }
 	},
 
   openModal: function() {
@@ -46,8 +46,18 @@ var MapForm = React.createClass({
     this.setState({modalIsOpen: false, content_type: null});
   },
 
-  postMetaMap : function() {
-    console.log('posting')
+  postMetaMap : function(master_object_id) {
+
+    api.post_source_object_map({
+        id: this.props.source_object_map_id,
+        source_object_code: this.source_object_code,
+        content_type: this.state.content_type,
+        master_object_id: master_object_id,
+        mapped_by_id: 1 // FIXME
+      }).then(response => this.setState({
+				master_object_id: response.objects.updated_values.master_object_id
+		}));
+
   },
 
   renderDropDown : function(content_type) {
@@ -92,8 +102,9 @@ render : function(){
           >
               <h1> Source Map Id: {source_object_map_id} </h1>
               <form>
-              <h2> Content PROPS: {this.state.content_type} </h2>
+              <h2> Content Type: {this.state.content_type} </h2>
               <h2> Source Code: {this.state.source_object_code} </h2>
+              <h2> Master Object ID : {this.state.master_object_id} </h2>
               <h2> {this.renderDropDown(this.state.content_type)} </h2>
               </form>
           </Modal></div>
