@@ -118,7 +118,27 @@ class v2Request(object):
         mr = MasterRefresh(self.user_id,self.document_id)
         qset = Document.objects.raw('''
 
-            SELECT id FROM source_data_document WHERE id = %s;
+            DROP TABLE IF EXISTS _this_doc;
+            CREATE TEMP TABLE _this_doc AS
+            SELECT
+                sd.*
+            FROM
+            source_data_document sd
+            WHERE id = %s;
+
+            SELECT
+                td.*
+                ,x.doc_datapoint_count
+            FROM _this_doc td
+            INNER JOIN (
+                SELECT COUNT(1) as doc_datapoint_count
+                FROM doc_datapoint dd
+                WHERE EXISTS (
+                        SELECT 1 FROM _this_doc td
+                        WHERE dd.document_id = td.id
+                    )
+                )x
+            ON 1=1;
 
         ''',[self.document_id])
 
