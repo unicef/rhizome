@@ -95,13 +95,21 @@ class DocumentSourceObjectMap(models.Model):
         unique_together = (('document','source_object_map'))
         db_table = 'document_to_source_object_map'
 
+class DocDetailType(models.Model):
+    '''
+    '''
+    name = models.CharField(max_length=255,unique=True)
+
+    class Meta:
+        db_table = 'document_detail_type'
+
 
 class DocumentDetail(models.Model):
     '''
     '''
 
     document =  models.ForeignKey(Document)
-    doc_detail_type = models.CharField(max_length=25)
+    doc_detail_type = models.ForeignKey(DocDetailType)
     doc_detail_value = models.CharField(max_length=255)
 
     class Meta:
