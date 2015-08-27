@@ -161,13 +161,11 @@ var SourceDataDashboard = React.createClass({
 
 _setDocId : function (doc_id) {
 	this._navigate({ doc_id : doc_id });
-	this.state.doc_id = doc_id
 	this.forceUpdate();
 },
 
 _setDocTab : function (doc_tab) {
 	this._navigate({ doc_tab : doc_tab });
-	this.state.doc_tab = doc_tab
 	this.forceUpdate();
 	},
 
@@ -182,7 +180,7 @@ _navigate : function (params) {
 		region = _.find(this.state.regions, r => r.id === region).name;
 	}
 
-  page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_tab + '/' + doc_id  );
+  page('/datapoints/' + [slug, region, campaign].join('/') + '/' + doc_tab + '/' + doc_id  );
 },
 
 
