@@ -31,7 +31,7 @@ var LAYOUT = {
   'Management Dashboard'    : require('dashboard/ManagementDashboard.jsx'),
   'NGA Campaign Monitoring' : require('dashboard/NCODashboard.jsx'),
   'District Dashboard'      : require('dashboard/District.jsx'),
-  'Source Data'      : require('dashboard/SourceDataDashboard.jsx')
+  'Source Data'             : require('dashboard/SourceDataDashboard.jsx')
 };
 
 var Dashboard = React.createClass({
@@ -51,6 +51,7 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount : function () {
+    page('/datapoints/:dashboard/:region/:year/:month/:doc_tab/:doc_id', this._showSourceData);
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
@@ -306,13 +307,28 @@ var Dashboard = React.createClass({
 
   _show : function (ctx) {
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    console.log('that was the context ( _show function )')
+    console.log(ctx)
 
     DashboardActions.setDashboard({
       dashboard,
       region : ctx.params.region,
       date   : [ctx.params.year, ctx.params.month].join('-')
     });
-  }
+  },
+  _showSourceData : function (ctx) {
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    console.log('that was the context for the source_data dash')
+    console.log(ctx)
+
+    DashboardActions.setDashboard({
+      dashboard,
+      region : ctx.params.region,
+      date   : [ctx.params.year, ctx.params.month].join('-')
+
+    });
+  },
+
 });
 
 module.exports = Dashboard;

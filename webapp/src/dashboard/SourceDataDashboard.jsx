@@ -43,8 +43,8 @@ var SourceDataDashboard = React.createClass({
       region       : null,
       campaign     : null,
       dashboard    : null,
-      doc_id    	 : 2,
-			doc_tab    	 : 'mapping',
+      doc_id    	 : null,
+			doc_tab    	 : 'doc_index',
     	modalIsOpen	 : false,
 		};
   },
@@ -162,28 +162,30 @@ var SourceDataDashboard = React.createClass({
 	}, // render
 
 _setDocId : function (doc_id) {
-	// this._navigate({ doc_id : doc_id });
+	this._navigate({ doc_id : doc_id });
 	this.state.doc_id = doc_id
 	this.forceUpdate();
 },
 
 _setDocTab : function (doc_tab) {
-	// this._navigate({ doc_tab : doc_tab });
+	this._navigate({ doc_tab : doc_tab });
 	this.state.doc_tab = doc_tab
 	this.forceUpdate();
 	},
 
-// _navigate : function (params) {
-// 	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-// 	var region   = _.get(params, 'region', this.props.region.name);
-// 	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-// 	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
-//
-// 	if (_.isNumber(region)) {
-// 		region = _.find(this.state.regions, r => r.id === region).name;
-// 	}
-//   page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_id);
-// },
+_navigate : function (params) {
+	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
+	var region   = _.get(params, 'region', this.props.region.name);
+	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+	var doc_tab = _.get(params, 'doc_tab', this.state.doc_tab);
+	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+
+	if (_.isNumber(region)) {
+		region = _.find(this.state.regions, r => r.id === region).name;
+	}
+
+  page('/datapoints/' + [slug, region, campaign].join('/') + '#' + doc_tab + '/' + doc_id  );
+},
 
 
 });
