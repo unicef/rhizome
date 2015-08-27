@@ -14,7 +14,7 @@ include
 /docs/_build
 /docs/_static
 /docs/_templates
-/source_data/ODK/odk_settings.sh
+/source_data/odk_settings.py
 /viz
 /bower_components
 /build

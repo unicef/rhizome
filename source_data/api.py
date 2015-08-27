@@ -16,10 +16,6 @@ from source_data.etl_tasks.refresh_master import MasterRefresh
 
 from datapoints import cache_tasks
 
-try:
-    import source_data.prod_odk_settings as odk_settings
-except ImportError:
-    import source_data.dev_odk_settings as odk_settings
 
 
 class EtlResource(ModelResource):
