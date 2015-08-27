@@ -9,7 +9,7 @@ local_venv_path = None
 # /var/www/clients.seedscientific.com/uf/UF04
 remote_work_path = '~/deploy/polio-work'
 remote_backend_path = '/var/www/apps/polio/'
-remote_frontend_path = '/var/www/apps/polio/static/'
+remote_frontend_path = '/var/www/apps/polio/webapp/public/static/'
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
@@ -47,13 +47,12 @@ def _build_dependencies():
         execfile(activate_this_file, dict(__file__=activate_this_file))
 
     # update/install dependencies
-    local ("cd webapp && npm install")
+    local("cd webapp && npm install")
 
-    # build fe #
-    local("cd webapp && ./node_modules/.bin/gulp build")
+    # build fe and package the project
+    # with NODE_ENV=production, uglify have be done.
+    local("cd webapp && npm run package")
 
-    # zip the project up #
-    local("zip -r dist/rhizome.zip ./ -x '.git/*' 'media/*' 'webapp/node_modules/*' 'venv/*'")
 
 # push build to remote
 def _push_to_remote():
@@ -76,14 +75,8 @@ def _push_to_remote():
 
         # [these unzips were trying to overwrite .pyc files owned by www-root
         #  so the 'find' command above may not be deleting enough compiled pycs]
+        # when the unzip fe files will be included
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
-
-    # scp static js and css
-    # FIXME -> Ideally this is done with 'gulp dist' then unpacking on server
-    put ('static/js/main.js', remote_frontend_path)
-    put ('static/js/vendor.js', remote_frontend_path)
-    put ('static/css/screen.css', remote_frontend_path)
-    put ('static/css/print.css', remote_frontend_path)
 
     # in server path -
     with cd(remote_backend_path):

@@ -4,7 +4,7 @@ import path from 'path'
 export default {
   src: [
     '{bin,polio,datapoints,source_data,templates}/**/*.*',
-    'webapp/public/**/*.*',
+    'webapp*/public*/**/*.*',
     'manage.py',
     'requirements.txt'
   ].map((file)=> {
