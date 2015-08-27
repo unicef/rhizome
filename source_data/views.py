@@ -41,10 +41,6 @@ def file_upload(request):
         to_upload = request.FILES['docfile']
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        # dt = DocTransform(newdoc.id)
-        # source_submissions = dt.process_file()
-
-
         return HttpResponseRedirect('/source_data/map_header/%s' % newdoc.id)
 
 def map_header(request,document_id):
@@ -57,6 +53,23 @@ def map_header(request,document_id):
         context_instance=RequestContext(request)
     )
 
+def process_file(request,document_id):
+
+    doc_mappings = request.GET
+    print doc_mappings
+
+    for k,v in doc_mappings.iteritems():
+        print k
+        print v
+        print '=='
+
+    # dt = DocTransform(document_id)
+    # source_submissions = dt.process_file()
+
+    return_url = '/datapoints/source-data/Nigeria/2015/06/mapping/%s' % \
+        document_id
+
+    return HttpResponseRedirect(return_url)
 
 
 def get_doc_file_cols(to_upload):

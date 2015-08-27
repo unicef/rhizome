@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-{% if messages %}
-<h3><ul class="messages">
-  {% for message in messages %}
-  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-  {% endfor %}
-</ul></h3>
-{% endif %}
 
 <div>
 
-  <form action="#" method="GET">
+  {% if messages %}
+  <h3><ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul></h3>
+  {% endif %}
+
+  <form action="{% url 'source_data:process_file' document_id %}" method="GET">
   Select Campaign Column <select id="campaign_col" name="campaign_col">
     {% for column in file_columns %}
        <option value="{{column}}">{{column}}</option>
@@ -21,6 +22,25 @@
     {% for column in file_columns %}
        <option value="{{column}}"> {{column}} </option>
     {% endfor %}
+  </select>
+
+  Select User Column <select id="user_col" name="user_col">
+  {% for column in file_columns %}
+  <option value="{{column}}"> {{column}} </option>
+  {% endfor %}
+  </select>
+
+  Uniqe ID Column <select id="uq_id_col" name="uq_id_col">
+  {% for column in file_columns %}
+  <option value="{{column}}"> {{column}} </option>
+  {% endfor %}
+  </select>
+
+  Select Photo Column <select id="photo_col" name="photo_col">
+  {% for column in file_columns %}
+  <option value="{{column}}"> {{column}} </option>
+  {% endfor %}
+  </select>
 
   <button type="submit" class="btn btn-primary"> Map! </button></a>
 
