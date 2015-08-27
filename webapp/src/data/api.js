@@ -263,7 +263,13 @@ module.exports = {
     indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
     indicators: endPoint('/indicator/', 'get', 2, false),
 
-    // DOCUMENT VALIDATION APP //
+    // doc validation app //
+
+
+    // upload //
+    docDetail: endPoint('/document_detail/', 'get', 2, false),
+    docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
+
     // mapping tab //
     docMap: endPoint('/doc_mapping/', 'get', 2, false),
     docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),

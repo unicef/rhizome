@@ -102,7 +102,7 @@ class DocumentDetail(models.Model):
 
     document =  models.ForeignKey(Document)
     doc_detail_type = models.CharField(max_length=25)
-    doc_detail_json = JSONField()
+    doc_detail_value = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'document_detail'

@@ -47,6 +47,8 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
+            'document_detail': {'orm_obj':DocumentDetail,
+                'permission_function':None},
             'refresh_master': {'orm_obj':Document,
                 'permission_function':self.refresh_master_for_document},
             'campaign': {'orm_obj':CampaignAbstracted,
@@ -379,23 +381,6 @@ class v2Request(object):
         data = Document.objects.filter(**filter_kwargs)
 
         return None, data
-
-    def refresh_document_meta(self,list_of_object_ids):
-        '''
-        This function is not actually about permissions, but rather data
-        manipulation needed for the front end.  Here i create three nodes
-        (region, campaign, indicator) and add all metadata here.
-        '''
-
-        raw_data = DocumentDetail.objects.filter(id__in= list_of_object_ids)
-
-        # to_return = []
-        # for row in raw_data:
-        #     row_dict = dict(row.__dict__)
-        #     to_return = row_dict['doc_detail_json']
-
-        return None, raw_data
-
 
 class v2PostRequest(v2Request):
     '''

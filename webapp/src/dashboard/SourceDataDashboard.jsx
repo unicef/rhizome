@@ -46,12 +46,6 @@ var SourceDataDashboard = React.createClass({
 		if (! doc_tab) {
 			var doc_tab = 'doc_index'
 		}
-		console.log('doc_tab')
-		console.log(doc_tab)
-		console.log('---')
-		console.log('doc_id')
-		console.log(doc_id)
-
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -63,7 +57,7 @@ var SourceDataDashboard = React.createClass({
 			this._setDocId);
 
 		var doc_tabs = MenuItem.fromArray(
-			_.map(['mapping','validate','results','doc_index'], d => {
+			_.map(['upload','mapping','validate','results','doc_index'], d => {
 				return {
 					title : d,
 					value : d
@@ -88,6 +82,11 @@ var SourceDataDashboard = React.createClass({
 		</div>;
 
 		const table_definition = {
+			'upload':{
+				'meta_fn' : api.admin.docDetailMeta,
+				'data_fn' : api.admin.docDetail,
+				'fields' : ['id','doc_detail_type','doc_detail_value'],
+			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
