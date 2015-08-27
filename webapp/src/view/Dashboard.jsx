@@ -130,7 +130,7 @@ var Dashboard = React.createClass({
       doc_tab    : doc_tab,
       doc_id     : doc_id
     };
-    
+
     var dashboard = React.createElement(
       _.get(LAYOUT, dashboardName, CustomDashboard),
       dashboardProps);
@@ -323,10 +323,11 @@ var Dashboard = React.createClass({
   },
   _showSourceData : function (ctx) {
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    var doc_tab = ctx.params.doc_tab;
 
     this.setState({
       doc_id: ctx.params.doc_id,
-      doc_tab: ctx.params.doc_tab,
+      doc_tab: doc_tab,
     })
 
     DashboardActions.setDashboard({

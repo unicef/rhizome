@@ -35,21 +35,6 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
-
-	// getInitialState : function () {
-  //   return {
-  //     regions      : [],
-  //     campaigns    : [],
-  //     region       : null,
-  //     campaign     : null,
-  //     dashboard    : null,
-  //     doc_id    	 : null,
-	// 		doc_tab    	 : null,
-  //   	modalIsOpen	 : false,
-	// 	};
-  // },
-
-
   render : function () {
     var loading = this.props.loading;
 		var campaign = this.props.campaign;
@@ -57,6 +42,16 @@ var SourceDataDashboard = React.createClass({
 		var loading = this.props.loading;
 		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
+
+		if (! doc_tab) {
+			var doc_tab = 'doc_index'
+		}
+		console.log('doc_tab')
+		console.log(doc_tab)
+		console.log('---')
+		console.log('doc_id')
+		console.log(doc_id)
+
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
