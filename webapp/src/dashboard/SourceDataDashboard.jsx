@@ -29,25 +29,25 @@ var SourceDataDashboard = React.createClass({
     data      : React.PropTypes.object.isRequired,
     region    : React.PropTypes.object.isRequired,
 		regions   : React.PropTypes.object.isRequired,
-		doc_id    : React.PropTypes.number,
-		doc_tab    : React.PropTypes.string,
+		doc_id    : React.PropTypes.number.isRequired,
+		doc_tab    : React.PropTypes.string.isRequired,
 
     loading   : React.PropTypes.bool
   },
 
 
-	getInitialState : function () {
-    return {
-      regions      : [],
-      campaigns    : [],
-      region       : null,
-      campaign     : null,
-      dashboard    : null,
-      doc_id    	 : null,
-			doc_tab    	 : 'doc_index',
-    	modalIsOpen	 : false,
-		};
-  },
+	// getInitialState : function () {
+  //   return {
+  //     regions      : [],
+  //     campaigns    : [],
+  //     region       : null,
+  //     campaign     : null,
+  //     dashboard    : null,
+  //     doc_id    	 : null,
+	// 		doc_tab    	 : null,
+  //   	modalIsOpen	 : false,
+	// 	};
+  // },
 
 
   render : function () {
@@ -55,8 +55,12 @@ var SourceDataDashboard = React.createClass({
 		var campaign = this.props.campaign;
 		var region = this.props.region;
 		var loading = this.props.loading;
-		var doc_id = this.state.doc_id;
+		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
+
+		console.log('====this.props====')
+		console.log(this.props)
+		console.log(doc_tab)
 
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
@@ -75,8 +79,6 @@ var SourceDataDashboard = React.createClass({
 				};
 			}),
 			this._setDocTab);
-
-		var doc_tab = this.state.doc_tab
 
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
@@ -177,8 +179,8 @@ _navigate : function (params) {
 	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
 	var region   = _.get(params, 'region', this.props.region.name);
 	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-	var doc_tab = _.get(params, 'doc_tab', this.state.doc_tab);
-	var doc_id = _.get(params, 'doc_id', this.state.doc_id);
+	var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab);
+	var doc_id = _.get(params, 'doc_id', this.props.doc_id);
 
 	if (_.isNumber(region)) {
 		region = _.find(this.state.regions, r => r.id === region).name;

@@ -114,7 +114,7 @@ var DashboardStore = Reflux.createStore({
 			campaigns  : _.filter(campaigns, function (c) {
 				return c.office_id === region.office_id;
 			}),
-      hasMap     : hasMap
+      hasMap     : hasMap,
 		});
 	},
 

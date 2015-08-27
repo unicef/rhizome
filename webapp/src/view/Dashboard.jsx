@@ -75,6 +75,7 @@ var Dashboard = React.createClass({
   },
 
   render : function () {
+
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize      : '2rem',
@@ -94,6 +95,10 @@ var Dashboard = React.createClass({
     var loading       = this.state.loading;
     var region        = this.state.region;
     var dashboardName = _.get(dashboardDef, 'title', '');
+    var doc_id        = this.state.doc_id;
+    var doc_tab        = this.state.doc_tab;
+
+
 
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,
@@ -121,8 +126,13 @@ var Dashboard = React.createClass({
       data       : data,
       indicators : indicators,
       loading    : loading,
-      region     : region
+      region     : region,
+      doc_tab    : doc_tab,
+      doc_id     : doc_id
     };
+
+    console.log('dashboardProps')
+    console.log(dashboardProps)
 
     var dashboard = React.createElement(
       _.get(LAYOUT, dashboardName, CustomDashboard),
@@ -307,8 +317,6 @@ var Dashboard = React.createClass({
 
   _show : function (ctx) {
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-    console.log('that was the context ( _show function )')
-    console.log(ctx)
 
     DashboardActions.setDashboard({
       dashboard,
@@ -318,15 +326,18 @@ var Dashboard = React.createClass({
   },
   _showSourceData : function (ctx) {
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-    console.log('that was the context for the source_data dash')
-    console.log(ctx)
+
+    this.setState({
+      doc_id: ctx.params.doc_id,
+      doc_tab: ctx.params.doc_tab,
+    })
 
     DashboardActions.setDashboard({
       dashboard,
       region : ctx.params.region,
-      date   : [ctx.params.year, ctx.params.month].join('-')
-
+      date   : [ctx.params.year, ctx.params.month].join('-'),
     });
+
   },
 
 });
