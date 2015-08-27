@@ -41,11 +41,33 @@ def file_upload(request):
         to_upload = request.FILES['docfile']
         newdoc = Document.objects.create(docfile=to_upload,created_by=created_by)
 
-        dt = DocTransform(newdoc.id)
-        source_submissions = dt.process_file()
+        # dt = DocTransform(newdoc.id)
+        # source_submissions = dt.process_file()
 
-        return HttpResponseRedirect('/doc_review/overview/%s' % newdoc.id)
 
+        return HttpResponseRedirect('/source_data/map_header/%s' % newdoc.id)
+
+def map_header(request,document_id):
+
+    file_columns = get_doc_file_cols(Document.objects.get(id=document_id).docfile)
+
+    return render_to_response(
+        'upload/map_header.html',
+        {'file_columns': file_columns,'document_id':document_id},
+        context_instance=RequestContext(request)
+    )
+
+
+
+def get_doc_file_cols(to_upload):
+
+    for i,(line) in enumerate(to_upload):
+
+        if i == 0:
+            header_data = line.split('\r')[0]
+            header = header_data.split(',')
+
+    return header
 
 def refresh_master(request,document_id):
 
