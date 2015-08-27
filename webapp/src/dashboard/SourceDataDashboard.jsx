@@ -58,10 +58,6 @@ var SourceDataDashboard = React.createClass({
 		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
 
-		console.log('====this.props====')
-		console.log(this.props)
-		console.log(doc_tab)
-
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
 				return {

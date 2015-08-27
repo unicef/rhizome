@@ -130,10 +130,7 @@ var Dashboard = React.createClass({
       doc_tab    : doc_tab,
       doc_id     : doc_id
     };
-
-    console.log('dashboardProps')
-    console.log(dashboardProps)
-
+    
     var dashboard = React.createElement(
       _.get(LAYOUT, dashboardName, CustomDashboard),
       dashboardProps);
