@@ -57,7 +57,7 @@ var SourceDataDashboard = React.createClass({
 			this._setDocId);
 
 		var doc_tabs = MenuItem.fromArray(
-			_.map(['upload','mapping','validate','results','doc_index'], d => {
+			_.map(['view_raw','mapping','validate','results','doc_index'], d => {
 				return {
 					title : d,
 					value : d
@@ -82,11 +82,13 @@ var SourceDataDashboard = React.createClass({
 		</div>;
 
 		const table_definition = {
-			'upload':{
-				'meta_fn' : api.admin.docDetailMeta,
-				'data_fn' : api.admin.docDetail,
-				'fields' : ['id','doc_detail_type','doc_detail_value'],
+			'view_raw':{
+				'meta_fn' : api.document_meta, // FIXME : should be /source_submission
+				'data_fn' : api.document,
+				'fields' : ['id','docfile'],
 			},
+
+
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
