@@ -265,7 +265,6 @@ module.exports = {
 
     // doc validation app //
 
-
     // upload //
     docDetail: endPoint('/document_detail/', 'get', 2, false),
     docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
