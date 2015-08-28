@@ -118,6 +118,8 @@ class v2Request(object):
 
     def pretty_doc_detail(self, list_of_object_ids):
 
+        print self.document_id
+
         d_raw = Document.objects.raw('''
 
             SELECT

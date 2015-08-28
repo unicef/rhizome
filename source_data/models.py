@@ -134,6 +134,7 @@ class SourceSubmissionDetail(models.Model):
     '''
     '''
 
+    document = models.ForeignKey(Document)
     source_submission = models.OneToOneField(SourceSubmission)
     submission_username = models.CharField(max_length=1000)
     img_location = models.CharField(max_length=1000)
