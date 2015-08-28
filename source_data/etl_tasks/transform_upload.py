@@ -70,7 +70,8 @@ class DocTransform(object):
             submission_data = row.submission_json
             submission_detail_dict = {
                 'source_submission_id': row.id,
-                'img_location':  submission_data[image_col], 
+                'img_location':  submission_data[image_col],
+                'document_id':   self.document_id,
                 'submission_username':  submission_data[username_column],
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
