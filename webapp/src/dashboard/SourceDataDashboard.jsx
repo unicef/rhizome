@@ -86,33 +86,41 @@ var SourceDataDashboard = React.createClass({
 			'viewraw':{
 				'meta_fn' : api.admin.submissionMeta,
 				'data_fn' : api.admin.submission,
-				'fields' : ['id','submission_username','edit_link']//['id','instance_guid','process_status'],
+				'fields' : ['id','submission_username','edit_link'],
+				'search_field' :'id',
 			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
 				'fields' : ['id','docfile','edit_link'],
+				'search_field' :'docfile',
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
+					'search_field' :'id',
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
 				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
+				'search_field' :'id',
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
 				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
+				'search_field' :'id',
 			},
 		};
 
 	var datascopeFilters =
 		<div>
-			<SearchBar placeholder="search..."/>
+			<SearchBar
+				fieldNames={['docfile']}
+				placeholder="search docfile..."
+				/>
 		</div>;
 
 	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;

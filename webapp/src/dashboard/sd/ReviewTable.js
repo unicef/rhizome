@@ -157,7 +157,6 @@ var ReviewTable = React.createClass({
 		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
 		var { areFiltersVisible } = this.state;
 
-		console.log(' === logging ===  ')
 		return <div className="ufadmin-filters-container">
 			<div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
 
