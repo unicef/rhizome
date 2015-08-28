@@ -26,12 +26,28 @@ class MasterRefresh(object):
 
         self.new_datapoints = []
         self.document_metadata = {
-            'instance_guid':'uq_id',
-            'file_type':'columns_are_indicators',
-            'region_column':'Wardcode',
-            'campaign_column':'Campaign',
-            'agg_regions':True
+            ## these are defaults ##
+            'agg_regions':True,
+            'clean_source_campaigns':True,
+            'office_id':1,
+
         }
+
+        print self.document_metadata
+
+        dmd_qs = DocumentDetail.objects.raw('''
+            SELECT
+                dd.id
+                ,ddt.name as k
+                ,dd.doc_detail_value as v
+            FROM document_detail dd
+            INNER JOIN document_detail_type ddt
+            ON dd.doc_detail_type_id = ddt.id
+            AND dd.document_id = %s;
+            ''',[self.document_id])
+
+        for row in dmd_qs:
+            self.document_metadata[row.k] = row.v
 
         map_df_cols = ['master_object_id','source_object_code','content_type']
 
