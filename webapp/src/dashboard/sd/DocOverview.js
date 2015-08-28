@@ -46,7 +46,6 @@ var React = require('react');
 			.then(response => this.setState({
 				doc_deets: response.objects,
 			}));
-
 		},
 
 		refreshMaster : function () {
@@ -73,7 +72,7 @@ var React = require('react');
 			if(!doc_deets) return this.renderLoading();
 
 		  var refresh_master_btn = <div>
-				<button className="tiny" onClick={this.pullDocDetails}> Refresh Doc Details!
+				<button className="tiny" onClick={this.refreshMaster}> Refresh Master!
 				</button>
 				</div>
 

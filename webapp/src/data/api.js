@@ -245,7 +245,7 @@ module.exports = {
 
   save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
-  // GET / POST mapping //
+
   get_source_object_map: endPoint('/source_object_map/','get',2,false),
   post_source_object_map: endPoint('/source_object_map/','post',2,false),
   refresh_master: endPoint('/refresh_master/', 'get', 2, false),
@@ -264,6 +264,10 @@ module.exports = {
     indicators: endPoint('/indicator/', 'get', 2, false),
 
     // doc validation app //
+
+    // raw data //
+    submission: endPoint('/source_submission/', 'get', 2, false),
+    submissionMeta: endPoint('/source_submission/metadata/', 'get', 2, false),
 
     // upload //
     docDetail: endPoint('/document_detail/', 'get', 2, false),

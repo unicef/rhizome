@@ -57,7 +57,7 @@ var SourceDataDashboard = React.createClass({
 			this._setDocId);
 
 		var doc_tabs = MenuItem.fromArray(
-			_.map(['view_raw','mapping','validate','results','doc_index'], d => {
+			_.map(['viewraw','mapping','validate','results','doc_index'], d => {
 				return {
 					title : d,
 					value : d
@@ -82,13 +82,11 @@ var SourceDataDashboard = React.createClass({
 		</div>;
 
 		const table_definition = {
-			'view_raw':{
-				'meta_fn' : api.document_meta, // FIXME : should be /source_submission
-				'data_fn' : api.document,
-				'fields' : ['id','docfile'],
+			'viewraw':{
+				'meta_fn' : api.admin.submissionMeta,
+				'data_fn' : api.admin.submission,
+				'fields' : ['id','instance_guid'],
 			},
-
-
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
@@ -110,7 +108,6 @@ var SourceDataDashboard = React.createClass({
 				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
 			},
 		};
-
 
 	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
