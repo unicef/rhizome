@@ -14,8 +14,8 @@ class Migration(migrations.Migration):
     migrations.RunSQL("""
 
     INSERT INTO source_data_document
-            (created_by_id,docfile,guid,doc_text,is_processed,created_at)
-            SELECT id,'initialize-db','init_ng_regions','init_ng_regions', CAST(1 AS BOOLEAN),NOW()
+            (created_by_id,docfile,guid,doc_title,created_at)
+            SELECT id,'initialize-db','init_ng_regions','init_ng_regions',NOW()
             FROM auth_user
             WHERE NOT EXISTS (
                 SELECT 1 FROM source_data_document sdd
