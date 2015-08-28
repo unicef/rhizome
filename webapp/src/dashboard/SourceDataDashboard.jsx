@@ -86,8 +86,8 @@ var SourceDataDashboard = React.createClass({
 			'viewraw':{
 				'meta_fn' : api.admin.submissionMeta,
 				'data_fn' : api.admin.submission,
-				'fields' : ['id','submission_username','edit_link'],
-				'search_fields' :['submission_username'],
+				'fields' : ['id','username_code','region_code','campaign_code','region_display','edit_link'],
+				'search_fields' :['id','username_code','region_code','campaign_code','region_display'],
 			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,
@@ -114,6 +114,8 @@ var SourceDataDashboard = React.createClass({
 				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 		};
+
+
 
 	var search_fields = table_definition[doc_tab]['search_fields']
 	var datascopeFilters =
