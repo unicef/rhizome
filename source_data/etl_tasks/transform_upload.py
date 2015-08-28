@@ -1,6 +1,7 @@
 from pandas import read_csv
 from pandas import notnull
 from pprint import pprint
+import json
 
 from django.conf import settings
 from django.db import transaction
@@ -81,11 +82,9 @@ class DocTransform(object):
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
 
-        # remove this delete #
-        SourceSubmissionDetail.objects.all().delete()
-        SourceSubmissionDetail.objects.bulk_create(batch)
+        ss = SourceSubmissionDetail.objects.bulk_create(batch)
 
-        return []
+        return ss
 
     def process_file(self):
         '''
@@ -95,18 +94,18 @@ class DocTransform(object):
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.pre_process_file(full_file_path)
 
-        print
-        batch = []
+        batch = {}
         for i,(submission) in enumerate(file_stream):
 
-            ss = self.process_source_submission(submission,i)
+            ss, instance_guid = self.process_source_submission(submission,i)
             if ss:
-                batch.append(ss)
+                batch[instance_guid] = ss
 
-        ss = SourceSubmission.objects.bulk_create(batch)
-        to_return = self.post_process_file()
+        object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
+        ss = SourceSubmission.objects.bulk_create(object_list)
 
-        return to_return
+        to_return = self.post_process_file()        
+        return ss
 
     def process_source_submission(self, submission, i):
 
@@ -114,7 +113,6 @@ class DocTransform(object):
             submission.split(self.file_delimiter)))
 
         instance_guid = submission_data[self.uq_id_column]
-        print instance_guid
 
         if instance_guid == '':
             return None
@@ -126,4 +124,4 @@ class DocTransform(object):
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
-        return SourceSubmission(**submission_dict)
+        return submission_dict, instance_guid
