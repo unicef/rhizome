@@ -43,6 +43,8 @@ render : function(){
   var source_submission_id = this.props.source_submission_id
   var modalStyle = {width:400, height:300, marginLeft:400};
 
+	console.log('raaaeeender')
+
   return <div>
 						<button
 							className="tiny"

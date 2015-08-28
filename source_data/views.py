@@ -70,7 +70,7 @@ def process_file(request,document_id):
     dt = DocTransform(document_id)
     source_submissions = dt.process_file()
 
-    return_url = '/datapoints/source-data/Nigeria/2015/06/mapping/%s' % \
+    return_url = '/datapoints/source-data/Nigeria/2015/06/viewraw/%s' % \
         document_id
 
     return HttpResponseRedirect(return_url)

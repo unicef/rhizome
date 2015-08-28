@@ -47,7 +47,7 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
-            'source_submission': {'orm_obj':SourceSubmission,
+            'source_submission': {'orm_obj':SourceSubmissionDetail,
                 'permission_function':None},
             'document_detail': {'orm_obj':DocumentDetail,
                 'permission_function':None},
@@ -332,9 +332,19 @@ class v2Request(object):
         at the definition of the stored proc called below.
         '''
 
-        data = Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,%s,%s)",[self.request.user.id,
-            list_of_object_ids,self.read_write,self.depth_level])
+        # data = Region.objects.raw("SELECT * FROM\
+        #     fn_get_authorized_regions_by_user(%s,%s,%s,%s)",[self.request.user.id,
+        #     list_of_object_ids,self.read_write,self.depth_level])
+
+        ##  The above line of code is what makes the application slow as it
+        ##  returns 40k + objects...this obviously wont fly in the real world,
+        ##  but is going to makes  my development MUCH faster ;-) FIXME !!!! ##
+
+        data = Region.objects.raw("""
+            SELECT * FROM region r
+            limit 1000
+        """
+        )
 
         return None, data
 

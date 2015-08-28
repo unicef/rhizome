@@ -104,7 +104,7 @@ var ReviewTable = React.createClass({
 						if (this.props.doc_tab == 'validate') {
 							return this.validateForm(id)
 						}
-						else if (this.props.doc_table == 'viewraw'){
+						else if (this.props.doc_tab == 'viewraw'){
 							return <SubmissionModal
 							 				source_submission_id={id}
 											key={id}

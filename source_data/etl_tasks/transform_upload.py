@@ -68,14 +68,9 @@ class DocTransform(object):
         for i, (row) in enumerate(source_submissions):
 
             submission_data = row.submission_json
-            print '==SUBMISSIon IMAGE =='
-            print image_col
-            print submission_data[image_col]
-            print '-le data-'
-            print submission_data
             submission_detail_dict = {
                 'source_submission_id': row.id,
-                'img_location':  submission_data[image_col],
+                'img_location':  submission_data[image_col], 
                 'submission_username':  submission_data[username_column],
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
