@@ -23,7 +23,30 @@ class Migration(migrations.Migration):
 
     migrations.RunSQL("""
 
-        -- INSERT INTO OFFICE --
+        --  DOCUMENT DETAIL  --
+
+        INSERT INTO document_detail_type
+        (name)
+        SELECT 'odk_host' UNION ALL
+        SELECT 'odk_form_name' UNION ALL
+        SELECT 'region_column' UNION ALL
+        SELECT 'campaign_column' UNION ALL
+        SELECT 'username_column' UNION ALL
+        SELECT 'uq_id_column' UNION ALL
+        SELECT 'agg_on_region' UNION ALL
+        SELECT 'image_col' UNION ALL
+        SELECT 'delimiter' UNION ALL
+        SELECT 'submission_count' UNION ALL
+        SELECT 'submission_processed_count' UNION ALL
+        SELECT 'doc_datapoint_count' UNION ALL
+        SELECT 'datapoint_count' UNION ALL
+        SELECT 'agg_datapoint_count' UNION ALL
+        SELECT 'calc_datapoint_count' UNION ALL
+        SELECT 'lat_col' UNION ALL
+        SELECT 'lon_col';
+
+        --  OFFICE --
+
         INSERT INTO office (name,created_at)
         SELECT 'Nigeria',NOW() UNION ALL
         SELECT 'Afghanistan',NOW() UNION ALL
