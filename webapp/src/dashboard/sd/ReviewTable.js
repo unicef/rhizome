@@ -5,6 +5,7 @@ var DashboardStore    		= require('stores/DashboardStore');
 var GroupFormStore 				= require('stores/GroupFormStore');
 var ChartBuilderStore 		= require('stores/ChartBuilderStore');
 
+var SubmissionModal			  = require('dashboard/sd/SubmissionModal.js');
 var MapForm 							= require('dashboard/sd/MapForm.js');
 var api 									= require('data/api.js');
 
@@ -103,6 +104,12 @@ var ReviewTable = React.createClass({
 						if (this.props.doc_tab == 'validate') {
 							return this.validateForm(id)
 						}
+						else if (this.props.doc_table == 'viewraw'){
+							return <SubmissionModal
+							 				source_submission_id={id}
+											key={id}
+											/>
+						}
 						else if (this.props.doc_tab == 'mapping') {
 							return <MapForm
 											indicators={this.state.indicators}
@@ -122,7 +129,7 @@ var ReviewTable = React.createClass({
 		var {data, schema} = this.state;
 
 		return <div>
-        <LocalDatascope
+		      <LocalDatascope
 				 		data={data}
 						schema={schema}
 						fields={fields}
