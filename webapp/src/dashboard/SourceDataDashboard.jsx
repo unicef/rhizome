@@ -87,38 +87,39 @@ var SourceDataDashboard = React.createClass({
 				'meta_fn' : api.admin.submissionMeta,
 				'data_fn' : api.admin.submission,
 				'fields' : ['id','submission_username','edit_link'],
-				'search_field' :'id',
+				'search_fields' :['submission_username'],
 			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
 				'fields' : ['id','docfile','edit_link'],
-				'search_field' :'docfile',
+				'search_fields' :['docfile'],
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
-					'search_field' :'id',
+					'search_fields' :['content_type','source_object_code','master_object_name'],
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
 				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
-				'search_field' :'id',
+				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
 				'data_fn' : api.admin.docResults,
 				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
-				'search_field' :'id',
+				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 		};
 
+	var search_fields = table_definition[doc_tab]['search_fields']
 	var datascopeFilters =
 		<div>
 			<SearchBar
-				fieldNames={['docfile']}
+				fieldNames={search_fields}
 				placeholder="search docfile..."
 				/>
 		</div>;
