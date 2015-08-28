@@ -153,12 +153,11 @@ var SourceDataDashboard = React.createClass({
 			>
 			</DocOverview>;
 
-		var table_title = doc_tab	 + ' for document_id: ' + doc_id;
 		return (
 					<div className="row">
 					<div id="popUp"></div>
 					<div className="medium-9 columns">
-					<h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{table_title}</h2>
+					<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
 					{review_table}
 					</div>
 					<div className="medium-3 columns">

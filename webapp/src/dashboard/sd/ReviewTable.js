@@ -139,7 +139,7 @@ var ReviewTable = React.createClass({
 						fields={fields}
 						pageSize={25}>
 	         <Datascope>
-					 	 {this.props.datascopeFilters ? this.renderFilters(): null}
+					 	{this.props.datascopeFilters ? this.renderFilters(): null}
 	           {this.props.children}
 	         </Datascope>
          </LocalDatascope>
@@ -157,10 +157,15 @@ var ReviewTable = React.createClass({
 		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
 		var { areFiltersVisible } = this.state;
 
-		return <div className="ufadmin-filters-content">
-					{this.props.datascopeFilters}
-				</div>
-
+		return <div className="row">
+		<div className="medium-7 columns">
+		</div>
+		<div className="medium-5 columns">
+		<div className="ufadmin-filters-content">
+			{this.props.datascopeFilters}
+		</div>
+		</div>
+	</div>
 }
 });
 
