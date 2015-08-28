@@ -35,6 +35,7 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
+
   render : function () {
     var loading = this.props.loading;
 		var campaign = this.props.campaign;
@@ -109,6 +110,11 @@ var SourceDataDashboard = React.createClass({
 			},
 		};
 
+	var datascopeFilters =
+		<div>
+			<SearchBar placeholder="search..."/>
+		</div>;
+
 	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
 	var review_table = <ReviewTable
@@ -121,6 +127,7 @@ var SourceDataDashboard = React.createClass({
 					doc_id={doc_id}
 					doc_tab={doc_tab}
 					campaign={campaign}
+					datascopeFilters={datascopeFilters}
 					>
 					<Paginator />
 					<SimpleDataTable>

@@ -131,6 +131,7 @@ var ReviewTable = React.createClass({
 
 		var {data, schema} = this.state;
 
+		console.log('==test jd log==')
 		return <div>
 		      <LocalDatascope
 				 		data={data}
@@ -138,6 +139,7 @@ var ReviewTable = React.createClass({
 						fields={fields}
 						pageSize={25}>
 	         <Datascope>
+					 	 {this.props.datascopeFilters ? this.renderFilters(): null}
 	           {this.props.children}
 	         </Datascope>
          </LocalDatascope>
@@ -146,6 +148,42 @@ var ReviewTable = React.createClass({
 	renderLoading() {
 		return <div className='admin-loading'> Review Page Loading...</div>
 	},
+
+	onToggleFilterContainer() {
+		this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
+	},
+
+	renderFilters() {
+		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
+		var { areFiltersVisible } = this.state;
+
+		console.log(' === logging ===  ')
+		return <div className="ufadmin-filters-container">
+			<div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
+
+				{areFiltersVisible ?
+					<span>
+						<ClearQueryLink>
+							Filter results {filterExpander}
+						</ClearQueryLink>
+						<span onClick={e => {e.stopPropagation()}}>
+							<ClearQueryLink>
+								<a className='admin-clear-filters'>Clear filters</a>
+							</ClearQueryLink>
+						</span>
+					</span>
+				:
+					<span>Filter results {filterExpander}</span>
+				}
+			</div>
+
+			{areFiltersVisible ?
+				<div className="ufadmin-filters-content">
+					{this.props.datascopeFilters}
+				</div>
+			: null}
+		</div>
+}
 });
 
 
