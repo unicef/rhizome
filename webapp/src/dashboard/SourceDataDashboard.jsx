@@ -120,7 +120,7 @@ var SourceDataDashboard = React.createClass({
 		<div>
 			<SearchBar
 				fieldNames={search_fields}
-				placeholder="search docfile..."
+				placeholder="search ..."
 				/>
 		</div>;
 

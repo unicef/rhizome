@@ -157,31 +157,10 @@ var ReviewTable = React.createClass({
 		var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
 		var { areFiltersVisible } = this.state;
 
-		return <div className="ufadmin-filters-container">
-			<div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
-
-				{areFiltersVisible ?
-					<span>
-						<ClearQueryLink>
-							Filter results {filterExpander}
-						</ClearQueryLink>
-						<span onClick={e => {e.stopPropagation()}}>
-							<ClearQueryLink>
-								<a className='admin-clear-filters'>Clear filters</a>
-							</ClearQueryLink>
-						</span>
-					</span>
-				:
-					<span>Filter results {filterExpander}</span>
-				}
-			</div>
-
-			{areFiltersVisible ?
-				<div className="ufadmin-filters-content">
+		return <div className="ufadmin-filters-content">
 					{this.props.datascopeFilters}
 				</div>
-			: null}
-		</div>
+
 }
 });
 
