@@ -60,8 +60,15 @@ def process_file(request,document_id):
 
     for k,v in doc_mappings.iteritems():
         print k
-        print v
-        print '=='
+        doc_detail_type = DocDetailType.objects.get(name=k)
+        doc_detail, created = DocumentDetail.objects.get_or_create(
+            doc_detail_type_id = doc_detail_type.id ,
+            document_id = document_id,
+            defaults = {
+                'doc_detail_value':v
+            }
+        )
+
 
     # dt = DocTransform(document_id)
     # source_submissions = dt.process_file()

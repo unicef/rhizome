@@ -12,31 +12,31 @@
   {% endif %}
 
   <form action="{% url 'source_data:process_file' document_id %}" method="GET">
-  Select Campaign Column <select id="campaign_col" name="campaign_col">
+  Select Campaign Column <select id="campaign_column" name="campaign_column">
     {% for column in file_columns %}
        <option value="{{column}}">{{column}}</option>
     {% endfor %}
   </select>
 
-  Select Region Code Column <select id="region_code_col" name="region_code_col">
+  Select Region Code Column <select id="region_column" name="region_column">
     {% for column in file_columns %}
        <option value="{{column}}"> {{column}} </option>
     {% endfor %}
   </select>
 
-  Select User Column <select id="user_col" name="user_col">
+  Select User Column <select id="username_column" name="username_column">
   {% for column in file_columns %}
   <option value="{{column}}"> {{column}} </option>
   {% endfor %}
   </select>
 
-  Uniqe ID Column <select id="uq_id_col" name="uq_id_col">
+  Uniqe ID Column <select id="uq_id_column" name="uq_id_column">
   {% for column in file_columns %}
   <option value="{{column}}"> {{column}} </option>
   {% endfor %}
   </select>
 
-  Select Photo Column <select id="photo_col" name="photo_col">
+  Select Photo Column <select id="image_col" name="image_col">
   {% for column in file_columns %}
   <option value="{{column}}"> {{column}} </option>
   {% endfor %}
