@@ -33,7 +33,12 @@ class DocTransform(object):
     def prep_file(self,full_file_path):
 
         f_header = open(full_file_path,'r')
-        self.file_header = f_header.readlines()[0].split(self.file_delimiter)
+        top_row = f_header.readlines()[0]
+        cleaned = top_row.replace('\r','').replace('\n','')
+        self.file_header = cleaned.split(self.file_delimiter)
+
+        print self.file_header
+        print '===='
         f_header.close()
 
         f = open(full_file_path,'r')
@@ -56,24 +61,22 @@ class DocTransform(object):
             doc_detail_type_id = doc_detail_type_id
         ).doc_detail_value
 
-
+        batch = []
         for i,(submission) in enumerate(file_stream):
 
-            batch = []
             submission_data = dict(zip(self.file_header, \
                 submission.split(self.file_delimiter)))
 
-            if submission_data != '': ## so as to not process empty rows
+            print submission_data[uq_id_column]
+            submission_dict = {
+                'submission_json': submission_data,
+                'document_id': self.document_id,
+                'row_number': i,
+                'instance_guid': submission_data[uq_id_column],
+                'process_status': 'TO_PROCESS',
+            }
+            batch.append(SourceSubmission(**submission_dict))
 
-                submission_dict = {
-                    'submission_json': submission_data,
-                    'document_id': self.document_id,
-                    'row_number': i,
-                    'instance_guid': submission_data[uq_id_column],
-                    'process_status': 'TO_PROCESS',
-                }
-                batch.append(SourceSubmission(**submission_dict))
+        ss = SourceSubmission.objects.bulk_create(batch)
 
-            ss = SourceSubmission.objects.bulk_create(batch)
-
-            return ss
+        return ss
