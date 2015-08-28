@@ -26,11 +26,10 @@ var SubmissionModal = React.createClass({
     this.setState({ modalIsOpen: true });
 		console.log('call the api and get the image data..')
 
-    // api.get_source_object_map({id: this.props.source_object_map_id})
-		// .then(response => this.setState({
-		// 		source_object_code: response.objects[0].source_object_code,
-		// 		content_type: response.objects[0].content_type,
-		// }));
+    api.admin.submission({id: this.props.source_submission_id})
+		.then(response => this.setState({
+				img_location: response.objects[0].img_location,
+		}));
   },
 
   closeModal: function() {
@@ -43,8 +42,6 @@ render : function(){
   var source_submission_id = this.props.source_submission_id
   var modalStyle = {width:400, height:300, marginLeft:400};
 
-	console.log('raaaeeender')
-
   return <div>
 						<button
 							className="tiny"
@@ -56,7 +53,10 @@ render : function(){
 	            isOpen={this.state.modalIsOpen}
 	            onRequestClose={this.closeModal}
 	          >
-	              <h1> Ssource_submission_id: {source_submission_id} </h1>
+	              <h1> Source_submission_id: {source_submission_id} </h1>
+
+								<img src={this.state.img_location} />
+
 	          </Modal>
 					</div>
 
