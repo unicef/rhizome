@@ -76,6 +76,7 @@ def _push_to_remote():
         # [these unzips were trying to overwrite .pyc files owned by www-root
         #  so the 'find' command above may not be deleting enough compiled pycs]
         # when the unzip fe files will be included
+
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
 
     # in server path -
