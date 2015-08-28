@@ -165,7 +165,7 @@ var SourceDataDashboard = React.createClass({
 						{review_breakdown}
 					</div>
 		</div>);
-	}, // render
+	},
 
 _setDocId : function (doc_id) {
 	this._navigate({ doc_id : doc_id });

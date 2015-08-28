@@ -30,6 +30,13 @@
     {% endfor %}
   </select>
 
+  Select Region Display Column <select id="region_display_name" name="region_display_name">
+    {% for column in file_columns %}
+       <option value="{{column}}"> {{column}} </option>
+    {% endfor %}
+  </select>
+
+
   Select User Column <select id="username_column" name="username_column">
   {% for column in file_columns %}
   <option value="{{column}}"> {{column}} </option>

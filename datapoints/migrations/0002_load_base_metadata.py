@@ -43,7 +43,8 @@ class Migration(migrations.Migration):
         SELECT 'agg_datapoint_count' UNION ALL
         SELECT 'calc_datapoint_count' UNION ALL
         SELECT 'lat_col' UNION ALL
-        SELECT 'lon_col';
+        SELECT 'lon_col' UNION ALL
+        SELECT 'region_display_name';
 
         --  OFFICE --
 
