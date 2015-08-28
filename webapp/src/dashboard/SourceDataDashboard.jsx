@@ -85,7 +85,7 @@ var SourceDataDashboard = React.createClass({
 			'viewraw':{
 				'meta_fn' : api.admin.submissionMeta,
 				'data_fn' : api.admin.submission,
-				'fields' : ['id','instance_guid'],
+				'fields' : ['id','instance_guid','process_status'],
 			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,

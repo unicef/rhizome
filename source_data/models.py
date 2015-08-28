@@ -130,6 +130,19 @@ class SourceSubmission(models.Model):
         db_table = 'source_submission'
         unique_together = (('document','instance_guid'))
 
+class SourceSubmissionDetail(models.Model):
+    '''
+    '''
+
+    source_submission = models.OneToOneField(SourceSubmission)
+    submission_username = models.CharField(max_length=1000)
+    img_location = models.CharField(max_length=1000)
+    # ...
+
+    class Meta:
+        db_table = 'source_submission_detail'
+
+
 
 class ODKForm(models.Model):
     '''

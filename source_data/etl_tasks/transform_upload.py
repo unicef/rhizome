@@ -30,7 +30,7 @@ class DocTransform(object):
             get(status_text='TO_PROCESS').id
 
 
-    def prep_file(self,full_file_path):
+    def pre_process_file(self,full_file_path):
 
         f_header = open(full_file_path,'r')
         top_row = f_header.readlines()[0]
@@ -44,13 +44,55 @@ class DocTransform(object):
 
         return file_stream
 
+    def post_process_file(self):
+        '''
+        Put the submission data into a clean table for the view_raw section
+        of the source data management app.
+        '''
+
+        username_column = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name=\
+                'username_column').id
+        ).doc_detail_value
+
+        image_col = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name='image_col').id
+        ).doc_detail_value
+
+        source_submissions = SourceSubmission.objects.filter(document_id = \
+            self.document_id)
+
+        batch = []
+        for i, (row) in enumerate(source_submissions):
+
+            submission_data = row.submission_json
+            print '==SUBMISSIon IMAGE =='
+            print image_col
+            print submission_data[image_col]
+            print '-le data-'
+            print submission_data
+            submission_detail_dict = {
+                'source_submission_id': row.id,
+                'img_location':  submission_data[image_col],
+                'submission_username':  submission_data[username_column],
+            }
+            batch.append(SourceSubmissionDetail(**submission_detail_dict))
+
+        # remove this delete #
+        SourceSubmissionDetail.objects.all().delete()
+        SourceSubmissionDetail.objects.bulk_create(batch)
+
+        return []
+
     def process_file(self):
         '''
         Returns a list of source submisison objects
         '''
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
-        file_stream = self.prep_file(full_file_path)
+        file_stream = self.pre_process_file(full_file_path)
         file_row_count = len(file_stream)
 
         doc_detail_type_id = DocDetailType.objects.get(name='uq_id_column').id
@@ -65,7 +107,6 @@ class DocTransform(object):
             submission_data = dict(zip(self.file_header, \
                 submission.split(self.file_delimiter)))
 
-            print submission_data[uq_id_column]
             submission_dict = {
                 'submission_json': submission_data,
                 'document_id': self.document_id,
@@ -75,6 +116,10 @@ class DocTransform(object):
             }
             batch.append(SourceSubmission(**submission_dict))
 
+        ## FIXME this delete is for testing .. REMOVE!
+        SourceSubmission.objects.filter(document_id=self.document_id).delete()
         ss = SourceSubmission.objects.bulk_create(batch)
+
+        to_return = self.post_process_file()
 
         return ss

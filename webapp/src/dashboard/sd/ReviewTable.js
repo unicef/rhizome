@@ -116,9 +116,6 @@ var ReviewTable = React.createClass({
 			},
 		};
 
-		console.log('------JOHN IS LOGGING -------')
-		console.log(this.state.data)
-		console.log(this.state.schema)
 		var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading);
 		if(!isLoaded) return this.renderLoading();
 
