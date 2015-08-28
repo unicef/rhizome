@@ -97,7 +97,7 @@ var ReviewTable = React.createClass({
 	render() {
 
 		const fields = {
-			is_valid: {
+			edit_link: {
 				title: 'Edit',
 				key: 'id',
 				renderer: (id) => {
@@ -109,6 +109,9 @@ var ReviewTable = React.createClass({
 							 				source_submission_id={id}
 											key={id}
 											/>
+						}
+						else if (this.props.doc_tab == 'doc_index'){
+							return <a href={`/datapoints/source-data/Nigeria/2015/06/viewraw/${id}`}>View Raw Data</a>;
 						}
 						else if (this.props.doc_tab == 'mapping') {
 							return <MapForm

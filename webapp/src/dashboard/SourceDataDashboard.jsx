@@ -85,22 +85,22 @@ var SourceDataDashboard = React.createClass({
 			'viewraw':{
 				'meta_fn' : api.admin.submissionMeta,
 				'data_fn' : api.admin.submission,
-				'fields' : ['id','submission_username','is_valid']//['id','instance_guid','process_status'],
+				'fields' : ['id','submission_username','edit_link']//['id','instance_guid','process_status'],
 			},
 			'doc_index':{
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
-				'fields' : ['id','docfile'],
+				'fields' : ['id','docfile','edit_link'],
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name','is_valid'],
+					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
 				'data_fn' : api.admin.docValidate,
-				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','is_valid'],
+				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
 			},
 			'results':{
 				'meta_fn' : api.admin.DataPointMetaData,
