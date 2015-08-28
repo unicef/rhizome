@@ -56,10 +56,8 @@ def map_header(request,document_id):
 def process_file(request,document_id):
 
     doc_mappings = request.GET
-    print doc_mappings
 
     for k,v in doc_mappings.iteritems():
-        print k
         doc_detail_type = DocDetailType.objects.get(name=k)
         doc_detail, created = DocumentDetail.objects.get_or_create(
             doc_detail_type_id = doc_detail_type.id ,
@@ -69,9 +67,8 @@ def process_file(request,document_id):
             }
         )
 
-
-    # dt = DocTransform(document_id)
-    # source_submissions = dt.process_file()
+    dt = DocTransform(document_id)
+    source_submissions = dt.process_file()
 
     return_url = '/datapoints/source-data/Nigeria/2015/06/mapping/%s' % \
         document_id

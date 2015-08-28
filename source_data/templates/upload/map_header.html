@@ -11,8 +11,14 @@
   </ul></h3>
   {% endif %}
 
+
   <form action="{% url 'source_data:process_file' document_id %}" method="GET">
-  Select Campaign Column <select id="campaign_column" name="campaign_column">
+    Uniqe ID Column <select id="uq_id_column" name="uq_id_column">
+    {% for column in file_columns %}
+    <option value="{{column}}"> {{column}} </option>
+    {% endfor %}
+
+  </select>Select Campaign Column <select id="campaign_column" name="campaign_column">
     {% for column in file_columns %}
        <option value="{{column}}">{{column}}</option>
     {% endfor %}
@@ -25,12 +31,6 @@
   </select>
 
   Select User Column <select id="username_column" name="username_column">
-  {% for column in file_columns %}
-  <option value="{{column}}"> {{column}} </option>
-  {% endfor %}
-  </select>
-
-  Uniqe ID Column <select id="uq_id_column" name="uq_id_column">
   {% for column in file_columns %}
   <option value="{{column}}"> {{column}} </option>
   {% endfor %}

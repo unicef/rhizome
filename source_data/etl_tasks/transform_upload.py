@@ -50,9 +50,16 @@ class DocTransform(object):
         file_stream = self.prep_file(full_file_path)
         file_row_count = len(file_stream)
 
-        batch = []
+        doc_detail_type_id = DocDetailType.objects.get(name='uq_id_column').id
+        uq_id_column = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = doc_detail_type_id
+        ).doc_detail_value
+
+
         for i,(submission) in enumerate(file_stream):
 
+            batch = []
             submission_data = dict(zip(self.file_header, \
                 submission.split(self.file_delimiter)))
 
@@ -62,11 +69,11 @@ class DocTransform(object):
                     'submission_json': submission_data,
                     'document_id': self.document_id,
                     'row_number': i,
-                    'instance_guid': i,
+                    'instance_guid': submission_data[uq_id_column],
                     'process_status': 'TO_PROCESS',
                 }
                 batch.append(SourceSubmission(**submission_dict))
 
-        ss = SourceSubmission.objects.bulk_create(batch)
+            ss = SourceSubmission.objects.bulk_create(batch)
 
-        return ss
+            return ss
