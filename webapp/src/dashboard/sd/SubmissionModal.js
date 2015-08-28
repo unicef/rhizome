@@ -40,7 +40,7 @@ var SubmissionModal = React.createClass({
 render : function(){
 
   var source_submission_id = this.props.source_submission_id
-  var modalStyle = {width:400, height:300, marginLeft:400};
+  var modalStyle = {width:650, height:500, marginLeft:400};
 
   return <div>
 						<button

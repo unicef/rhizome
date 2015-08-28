@@ -30,18 +30,17 @@ var React = require('react');
 		},
 
 		componentWillMount : function (nextProps, nextState) {
-					console.log('mounting!')
 					this.pullDocDetails()
 			},
 
 		componentWillUpdate : function (nextProps, nextState) {
 				if (nextProps.doc_id != this.props.doc_id) {
-					console.log('updating')
 					return;
 				}
 			},
 
 		pullDocDetails : function () {
+
 			api.admin.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 				doc_deets: response.objects,
@@ -76,8 +75,6 @@ var React = require('react');
 				</button>
 				</div>
 
-			var process_pct = this.state.source_submission_to_process_cnt / this.state.source_submission_total_cnt
-
 			var doc_detail_list = []
 
 			var rows = [];
@@ -85,7 +82,7 @@ var React = require('react');
 			    // rows.push(<ObjectRow />);
 					var doc_detail = doc_deets[i]
 					console.log(doc_detail.doc_detail_type_id)
-					rows.push(<li>{doc_detail.doc_detail_type_id} : {doc_detail.doc_detail_value} </li>)
+					rows.push(<li>{doc_detail.doc_detail_type} : {doc_detail.doc_detail_value} </li>)
 					// rows.push(<li> doc_detail['doc_detail_type_id'] : doc_detail['doc_detail_value'] </li>);
 			}
 
@@ -93,11 +90,6 @@ var React = require('react');
 
 			<h3> Document Overview </h3>
 			<ul>{rows}</ul>
-			<h4> doc_id : {doc_id} </h4>
-			<h4> doc_file : {this.state.docfile} </h4>
-			<h4> Doc Name : {this.state.doc_title} </h4>
-			<h4> Doc DataPoint Count : {this.state.doc_datapoint_cnt} </h4>
-			<h4> percentage to process : {process_pct} </h4>
 
 			{refresh_master_btn}
 		 </div>

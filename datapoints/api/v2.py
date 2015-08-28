@@ -50,7 +50,7 @@ class v2Request(object):
             'source_submission': {'orm_obj':SourceSubmissionDetail,
                 'permission_function':None},
             'document_detail': {'orm_obj':DocumentDetail,
-                'permission_function':None},
+                'permission_function':self.pretty_doc_detail},
             'refresh_master': {'orm_obj':Document,
                 'permission_function':self.refresh_master_for_document},
             'campaign': {'orm_obj':CampaignAbstracted,
@@ -115,6 +115,23 @@ class v2Request(object):
         }
 
         return response_data
+
+    def pretty_doc_detail(self, list_of_object_ids):
+
+        d_raw = Document.objects.raw('''
+
+            SELECT
+                dd.document_id as id
+                ,ddt.name as doc_detail_type
+                ,dd.doc_detail_value
+            FROM document_detail dd
+            INNER JOIN document_detail_type ddt
+            ON dd.doc_detail_type_id = ddt.id
+            WHERE dd.document_id = %s;
+
+        ''',[self.document_id])
+
+        return None, d_raw
 
     def refresh_master_for_document(self, list_of_object_ids):
 
