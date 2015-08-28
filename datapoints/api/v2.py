@@ -47,6 +47,8 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
+            'source_submission': {'orm_obj':SourceSubmission,
+                'permission_function':None},
             'document_detail': {'orm_obj':DocumentDetail,
                 'permission_function':None},
             'refresh_master': {'orm_obj':Document,

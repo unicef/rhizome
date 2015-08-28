@@ -37,8 +37,6 @@ class DocTransform(object):
         cleaned = top_row.replace('\r','').replace('\n','')
         self.file_header = cleaned.split(self.file_delimiter)
 
-        print self.file_header
-        print '===='
         f_header.close()
 
         f = open(full_file_path,'r')
