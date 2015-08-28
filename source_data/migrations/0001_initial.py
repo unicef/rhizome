@@ -14,28 +14,35 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='DocDetailType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'db_table': 'document_detail_type',
+            },
+        ),
+        migrations.CreateModel(
             name='Document',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('docfile', models.FileField(null=True, upload_to=b'documents/%Y/%m/%d')),
-                ('doc_text', models.TextField(null=True)),
+                ('doc_title', models.TextField(null=True)),
                 ('guid', models.CharField(max_length=255)),
-                ('source_datapoint_count', models.IntegerField(null=True)),
-                ('master_datapoint_count', models.IntegerField(null=True)),
-                ('is_processed', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'ordering': ('-id',),
+                'ordering': ('-created_at',),
             },
         ),
         migrations.CreateModel(
             name='DocumentDetail',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('doc_detail_type', models.CharField(max_length=25)),
-                ('doc_detail_json', jsonfield.fields.JSONField()),
+                ('doc_detail_value', models.CharField(max_length=255)),
+                ('doc_detail_type', models.ForeignKey(to='source_data.DocDetailType')),
                 ('document', models.ForeignKey(to='source_data.Document')),
             ],
             options={
@@ -96,6 +103,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('master_object_id', models.IntegerField()),
+                ('master_object_name', models.CharField(max_length=255, null=True)),
                 ('source_object_code', models.CharField(max_length=255)),
                 ('content_type', models.CharField(max_length=10)),
                 ('mapped_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -119,8 +127,21 @@ class Migration(migrations.Migration):
                 'db_table': 'source_submission',
             },
         ),
+        migrations.CreateModel(
+            name='SourceSubmissionDetail',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('submission_username', models.CharField(max_length=1000)),
+                ('img_location', models.CharField(max_length=1000)),
+                ('document', models.ForeignKey(to='source_data.Document')),
+                ('source_submission', models.OneToOneField(to='source_data.SourceSubmission')),
+            ],
+            options={
+                'db_table': 'source_submission_detail',
+            },
+        ),
         migrations.AddField(
-            model_name='DocumentSourceObjectMap',
+            model_name='documentsourceobjectmap',
             name='source_object_map',
             field=models.ForeignKey(to='source_data.SourceObjectMap'),
         ),
@@ -133,15 +154,11 @@ class Migration(migrations.Migration):
             unique_together=set([('content_type', 'source_object_code')]),
         ),
         migrations.AlterUniqueTogether(
-            name='DocumentSourceObjectMap',
+            name='documentsourceobjectmap',
             unique_together=set([('document', 'source_object_map')]),
         ),
         migrations.AlterUniqueTogether(
             name='documentdetail',
             unique_together=set([('document', 'doc_detail_type')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='document',
-            unique_together=set([('docfile', 'doc_text')]),
         ),
     ]

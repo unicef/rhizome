@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('auth', '0006_require_contenttypes_0002'),
-        ('source_data', '__first__'),
+        ('source_data', '0001_initial'),
     ]
 
     operations = [
@@ -339,6 +339,19 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='RegionTree',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('lvl', models.IntegerField()),
+                ('immediate_parent', models.ForeignKey(related_name='immediate_parent', to='datapoints.Region')),
+                ('parent_region', models.ForeignKey(related_name='ultimate_parent', to='datapoints.Region')),
+                ('region', models.ForeignKey(to='datapoints.Region')),
+            ],
+            options={
+                'db_table': 'region_tree',
+            },
+        ),
+        migrations.CreateModel(
             name='RegionType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -501,6 +514,10 @@ class Migration(migrations.Migration):
             unique_together=set([('user', 'indicator', 'region')]),
         ),
         migrations.AlterUniqueTogether(
+            name='regiontree',
+            unique_together=set([('parent_region', 'region')]),
+        ),
+        migrations.AlterUniqueTogether(
             name='regionpermission',
             unique_together=set([('user', 'region', 'read_write')]),
         ),
@@ -519,10 +536,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='indicatorpermission',
             unique_together=set([('group', 'indicator')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='docdatapoint',
-            unique_together=set([('source_submission', 'indicator')]),
         ),
         migrations.AlterUniqueTogether(
             name='datapointcomputed',
