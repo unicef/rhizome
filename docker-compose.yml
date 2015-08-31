@@ -1,0 +1,19 @@
+polio:
+  build: .
+  links:
+    - db:postgres
+  ports:
+    - 8000:8000
+  volumes:
+    - .:/polio
+  working_dir: /polio
+  entrypoint: /polio/bin/start.sh
+
+db:
+  image: postgres:9.3
+  ports:
+    - 5432:5432
+  environment:
+    POSTGRES_DB: rhizome
+    POSTGRES_USER: djangoapp
+    POSTGRES_PASSWORD: w3b@p01i0
