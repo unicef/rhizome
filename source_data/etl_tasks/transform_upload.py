@@ -114,6 +114,7 @@ class DocTransform(object):
         ss = SourceSubmission.objects.bulk_create(object_list)
 
         to_return = self.post_process_file()
+
         return ss
 
     def process_source_submission(self, submission, i):
@@ -122,9 +123,6 @@ class DocTransform(object):
             submission.split(self.file_delimiter)))
 
         instance_guid = submission_data[self.doc_deets['uq_id_column']]
-
-        print '---'
-        print instance_guid
 
         if instance_guid == '':
             return None, None

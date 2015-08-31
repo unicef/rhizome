@@ -131,7 +131,6 @@ var ReviewTable = React.createClass({
 
 		var {data, schema} = this.state;
 
-		console.log('==test jd log==')
 		return <div>
 		      <LocalDatascope
 				 		data={data}

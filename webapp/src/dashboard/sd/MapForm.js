@@ -23,6 +23,7 @@ const {
 var MapForm = React.createClass({
 	propTypes: {
 	  source_object_map_id 	: React.PropTypes.number.isRequired,
+		source_object_code		: React.PropTypes.string.isRequired,
     regions : React.PropTypes.object.isRequired,
     campaigns : React.PropTypes.object.isRequired,
     indicators : React.PropTypes.object.isRequired,
@@ -47,10 +48,13 @@ var MapForm = React.createClass({
   },
 
   postMetaMap : function(master_object_id) {
+		console.log('logging post meta map')
+		console.log('logging post meta map')
+		console.log('logging post meta map')
 
     api.post_source_object_map({
         id: this.props.source_object_map_id,
-        source_object_code: this.source_object_code,
+        source_object_code: this.state.source_object_code,
         content_type: this.state.content_type,
         master_object_id: master_object_id,
         mapped_by_id: 1 // FIXME

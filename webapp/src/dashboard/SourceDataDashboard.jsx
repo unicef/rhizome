@@ -93,13 +93,13 @@ var SourceDataDashboard = React.createClass({
 				'meta_fn' : api.document_meta,
 				'data_fn' : api.document,
 				'fields' : ['id','docfile','edit_link'],
-				'search_fields' :['docfile'],
+				'search_fields' :['id','docfile'],
 			},
 			'mapping':{
 				  'meta_fn' : api.admin.docMapMeta,
 					'data_fn' : api.admin.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
-					'search_fields' :['content_type','source_object_code','master_object_name'],
+					'search_fields' :['id','content_type','source_object_code','master_object_name'],
 				},
 			'validate':{
 				'meta_fn' : api.admin.docValidateMeta,
