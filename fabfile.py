@@ -90,9 +90,6 @@ def _push_to_remote():
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
 
-        # echo "== BUILDING STORED PROCEDURES =="
-        run("bash bin/build_db.sh")
-
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
 
