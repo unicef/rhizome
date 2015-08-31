@@ -48,10 +48,6 @@ var MapForm = React.createClass({
   },
 
   postMetaMap : function(master_object_id) {
-		console.log('logging post meta map')
-		console.log('logging post meta map')
-		console.log('logging post meta map')
-
     api.post_source_object_map({
         id: this.props.source_object_map_id,
         source_object_code: this.state.source_object_code,
@@ -77,7 +73,7 @@ var MapForm = React.createClass({
       return <div>
         <IndicatorDropdownMenu
         text='Map Indicator'
-        indicators={this.props.indicators.objects}
+        indicators={this.props.indicators.flat}
         sendValue={this.postMetaMap}>
       </IndicatorDropdownMenu></div>;
     }
