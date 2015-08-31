@@ -25,7 +25,7 @@ Prerequisites
 Install Docker Machine. In Mac OS X you could install via `brew`
 
 ```
-$ brew install docker-machine
+$ brew install docker-machine docker-compose
 ```
 Initialise Docker environment
 
@@ -45,30 +45,20 @@ Navigate to repository directory, de-comment Line.8 `ENV CHINESE_LOCAL_PIP_CONFI
 Run
 
 ```
-$ docker build -t polio .
+$ docker-compose build && docker-compose up.
 ```
-Run Docker instance
+Entry Docker instance
 
 ```
-$ docker run -it -p 8000:8000 -v $PWD:/etc/polio polio /bin/bash
-```
-
-Set up database
-```
-$ python manage.py syncdb
-$ python manage.py migrate
-$ bash bin/build_db.sh
-```
-
-Start Django server
-```
-$ python manage.py runserver 0.0.0.0:8000
+$ docker exec -it polio_polio_1 bash
 ```
 
 ### Installing frontend dependencies
 
-    $ npm install -g gulp
-    $ npm install
+```
+$ npm install -g gulp
+$ npm install
+```
 
 ## running test ##
 
@@ -89,12 +79,14 @@ The current settings file ( which you should edit especially if deploying to
 a a remote server ;-) ) has the password for the django login to: w3b@p01i0
 so feel free to set the djangoapp password to that when getting started!
 
-    $ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
-    Password:
-    $ createdb polio --owner djangoapp
-    $ python manage.py migrate auth
-    $ python manage.py syncdb
-    $ python manage.py migrate
+```
+$ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
+Password:
+$ createdb polio --owner djangoapp
+$ python manage.py migrate auth
+$ python manage.py syncdb
+$ python manage.py migrate
+```
 
 The password for the djangoapp user can be found in `settings.py`.
 
