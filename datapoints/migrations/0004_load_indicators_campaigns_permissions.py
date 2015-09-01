@@ -1843,6 +1843,71 @@ class Migration(migrations.Migration):
             WHERE m.source_object_code = c.slug
             );
 
+        -- JD 9/1/2015 ODK INGEST--
+
+        INSERT INTO source_object_map
+        (source_object_code,master_object_id,content_type,mapped_by_id)
+
+        SELECT * , 'indicator',1 FROM (
+        SELECT 'group_msd_chd:Msd_FarmM',96 UNION ALL
+        SELECT 'group_msd_chd:Msd_FarmF',97 UNION ALL
+        SELECT 'group_msd_chd:Msd_MarketM',98 UNION ALL
+        SELECT 'group_msd_chd:Msd_MarketF',99 UNION ALL
+        SELECT 'group_msd_chd:Msd_SchoolF',100 UNION ALL
+        SELECT 'group_msd_chd:Msd_SchoolM',101 UNION ALL
+        SELECT 'group_msd_chd:Msd_AgedOutM',102 UNION ALL
+        SELECT 'group_msd_chd:Msd_AgedOutF',103 UNION ALL
+        SELECT 'group_spec_events:Spec_FIC',104 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoPlusesM',105 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoPlusesF',106 UNION ALL
+        SELECT 'group_msd_chd:Msd_SecurityM',107 UNION ALL
+        SELECT 'group_msd_chd:Msd_SecurityF',108 UNION ALL
+        SELECT 'group_msd_chd:Msd_SocEventM',109 UNION ALL
+        SELECT 'group_msd_chd:Msd_SocEventF',110 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolDiffsM',111 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolDiffsF',112 UNION ALL
+        SELECT 'group_msd_chd:Msd_ChildDiedF',113 UNION ALL
+        SELECT 'group_msd_chd:Msd_ChildDiedM',114 UNION ALL
+        SELECT 'group_msd_chd:Msd_ChildSickM',115 UNION ALL
+        SELECT 'group_msd_chd:Msd_ChildSickF',116 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoConsentM',117 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoConsentF',118 UNION ALL
+        SELECT 'group_msd_chd:Msd_RelBeliefsF',119 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoFeltNeedF',120 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoFeltNeedM',121 UNION ALL
+        SELECT 'group_msd_chd:Msd_RelBeliefsM',122 UNION ALL
+        SELECT 'group_msd_chd:Msd_PlaygroundM',123 UNION ALL
+        SELECT 'group_msd_chd:Msd_PlaygroundF',124 UNION ALL
+        SELECT 'group_spec_events:Spec_Newborn',125 UNION ALL
+        SELECT 'group_spec_events:Spec_AFPCase',126 UNION ALL
+        SELECT 'group_msd_chd:Tot_Missed_Check',127 UNION ALL
+        SELECT 'group_msd_chd:Msd_SideEffectsF',128 UNION ALL
+        SELECT 'group_msd_chd:Msd_SideEffectsM',129 UNION ALL
+        SELECT 'group_msd_chd:Msd_FamilyMovedF',130 UNION ALL
+        SELECT 'group_msd_chd:Msd_FamilyMovedM',131 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolioHasCureF',132 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolioHasCureM',133 UNION ALL
+        SELECT 'group_spec_events:Spec_MslsCase',134 UNION ALL
+        SELECT 'group_spec_events:Spec_ZeroDose',135 UNION ALL
+        SELECT 'group_msd_chd:Msd_UnhappyWTeamM',136 UNION ALL
+        SELECT 'group_msd_chd:Msd_UnhappyWTeamF',137 UNION ALL
+        SELECT 'group_msd_chd:Msd_HHNotVisitedF',138 UNION ALL
+        SELECT 'group_msd_chd:Msd_HHNotVisitedM',139 UNION ALL
+        SELECT 'group_msd_chd:Msd_TooManyRoundsF',140 UNION ALL
+        SELECT 'group_msd_chd:Msd_TooManyRoundsM',141 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolioUncommonM',142 UNION ALL
+        SELECT 'group_msd_chd:Msd_PolioUncommonF',143 UNION ALL
+        SELECT 'group_spec_events:Spec_RIReferral',144 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoGovtServicesM',145 UNION ALL
+        SELECT 'group_msd_chd:Msd_NoGovtServicesF',146 UNION ALL
+        SELECT 'group_msd_chd:Msd_OtherProtectionF',147 UNION ALL
+        SELECT 'group_msd_chd:Msd_OtherProtectionM',148 UNION ALL
+        SELECT 'group_spec_events:Spec_CMAMReferral',149 UNION ALL
+        SELECT 'group_spec_events:Spec_OtherDisease',150 UNION ALL
+        SELECT 'group_spec_events:Spec_PregnantMother',151 UNION ALL
+        SELECT 'group_spec_events:Spec_VCMAttendedNCer',152
+        )x;
+
 
         INSERT INTO document_to_source_object_map
         (document_id,source_object_map_id)
