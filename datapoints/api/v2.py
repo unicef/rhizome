@@ -47,43 +47,12 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
-            'source_submission': {'orm_obj':SourceSubmissionDetail,
-                'permission_function':None},
-            'document_detail': {'orm_obj':DocumentDetail,
-                'permission_function':self.pretty_doc_detail},
-            'refresh_master': {'orm_obj':Document,
-                'permission_function':self.refresh_master_for_document},
+            ## MIGRATE TO api/meta_data.py
             'region': {'orm_obj':Region,
-                'permission_function':self.apply_region_permissions},
+                'permission_function':None},
             'indicator': {'orm_obj':IndicatorAbstracted,
                 'permission_function':None},
-            'datapoint': {'orm_obj':DataPoint,
-                'permission_function':None},
-            'doc_mapping' : {'orm_obj':SourceObjectMap,
-                'permission_function': self.pretty_doc_mapping},
-            'doc_datapoint' : {'orm_obj':DocDataPoint,
-                'permission_function': self.pretty_doc_datapoint},
-            'synced_datapoint' : {'orm_obj':DataPointComputed,
-                'permission_function': self.filter_calced_dp_by_doc_id},
-            'document': {'orm_obj':Document,
-                'permission_function':self.apply_document_permissions },
-            'custom_dashboard': {'orm_obj':CustomDashboard,
-                'permission_function':self.apply_cust_dashboard_permissions},
-            # 'user_permission': {'orm_obj':UserAuthFunction,
-                # 'permission_function':self.filter_permissions_to_current_user},
-            'user_permission': {'orm_obj':User,
-                'permission_function':None},
-            'group_permission': {'orm_obj':IndicatorPermission,
-                'permission_function':None},
             'geo': {'orm_obj':RegionPolygon,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':User,
-                'permission_function':None},
-            'region_permission': {'orm_obj':RegionPermission,
-                'permission_function':None},
-            'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
             'office': {'orm_obj':Office,
                 'permission_function':None},
@@ -95,6 +64,39 @@ class v2Request(object):
                 'permission_function':None},
             'region_type': {'orm_obj':RegionType,
                 'permission_function':None},
+            'user_permission': {'orm_obj':User,
+                'permission_function':None},
+            'group_permission': {'orm_obj':IndicatorPermission,
+                'permission_function':None},
+            'group': {'orm_obj':Group,
+                'permission_function':None},
+            'user': {'orm_obj':User,
+                'permission_function':None},
+            'region_permission': {'orm_obj':RegionPermission,
+                'permission_function':None},
+            'user_group': {'orm_obj':UserGroup,
+                'permission_function':None},
+            # 'user_permission': {'orm_obj':UserAuthFunction,
+                # 'permission_function':self.filter_permissions_to_current_user},
+
+
+            ## MIGRATE TO ETL API ##
+            'source_submission': {'orm_obj':SourceSubmissionDetail,
+                'permission_function':None},
+            'document_detail': {'orm_obj':DocumentDetail,
+                'permission_function':self.pretty_doc_detail},
+            'refresh_master': {'orm_obj':Document,
+                'permission_function':self.refresh_master_for_document},
+            'doc_mapping' : {'orm_obj':SourceObjectMap,
+                'permission_function': self.pretty_doc_mapping},
+            'doc_datapoint' : {'orm_obj':DocDataPoint,
+                'permission_function': self.pretty_doc_datapoint},
+            'synced_datapoint' : {'orm_obj':DataPointComputed,
+                'permission_function': self.filter_calced_dp_by_doc_id},
+            'document': {'orm_obj':Document,
+                'permission_function':self.apply_document_permissions },
+            'custom_dashboard': {'orm_obj':CustomDashboard,
+                'permission_function':self.apply_cust_dashboard_permissions},
             'source_object_map' : {'orm_obj': SourceObjectMap,
                 'permission_function':None},
         }
@@ -340,54 +342,6 @@ class v2Request(object):
 
         return None, data
 
-    def apply_region_permissions(self, list_of_object_ids):
-        '''
-        This returns a raw queryset, that is the query itself isn't actually
-        executed until the data is unpacked in the serialize method.
-
-        For more information on how region permissions work, take a look
-        at the definition of the stored proc called below.
-        '''
-
-        # data = Region.objects.raw("SELECT * FROM\
-        #     fn_get_authorized_regions_by_user(%s,%s,%s,%s)",[self.request.user.id,
-        #     list_of_object_ids,self.read_write,self.depth_level])
-
-        ##  The above line of code is what makes the application slow as it
-        ##  returns 40k + objects...this obviously wont fly in the real world,
-        ##  but is going to makes  my development MUCH faster ;-) FIXME !!!! ##
-
-        data = Region.objects.raw("""
-            SELECT * FROM region r
-            limit 1000
-        """
-        )
-
-        return None, data
-
-    def apply_campaign_permissions(self, list_of_object_ids):
-        '''
-        As in above, this returns a raw queryset, and will be executed in the
-        serialize method.
-
-        The below query reads: "show me all campaigns for regions that I am
-        permitted to see."  As indicated below, this deduction is made by
-        joining my permitted regions to the campaigns table on the office_id
-        column.
-        '''
-
-        data = Campaign.objects.raw("""
-            SELECT DISTINCT c.* FROM campaign_abstracted c
-            INNER JOIN region r
-                ON c.office_id = r.office_id
-            INNER JOIN region_permission rm
-                ON r.id = rm.region_id
-                AND rm.user_id = %s
-            WHERE c.id = ANY(COALESCE(%s,ARRAY[c.id]))
-            ORDER BY c.start_date DESC
-        """, [self.user_id, list_of_object_ids])
-
-        return None, data
 
     def apply_document_permissions(self, list_of_object_ids):
         '''

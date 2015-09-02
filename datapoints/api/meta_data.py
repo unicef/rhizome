@@ -23,6 +23,13 @@ class CampaignResource(BaseModelResource):
         queryset = CampaignAbstracted.objects.all()
         resource_name = 'campaign'
 
+class RegionResource(BaseModelResource):
+
+    class Meta:
+        queryset = Region.objects.all().values()
+        resource_name = 'region'
+
+
 class RegionPolygonResource(BaseNonModelResource):
     '''
     A non model resource that allows us to query for shapefiles based on a

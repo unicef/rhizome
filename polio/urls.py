@@ -10,7 +10,7 @@ from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
-from datapoints.api.base import debug
+from datapoints.views import debug
 from datapoints import views
 
 from source_data.api import EtlResource
@@ -25,6 +25,7 @@ v1_api.register(DataPointEntryResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 v1_api.register(CampaignResource())
+v1_api.register(RegionResource())
 
 urlpatterns = patterns('',
 

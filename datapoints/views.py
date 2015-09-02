@@ -8,7 +8,7 @@ import itertools
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.views import generic
@@ -411,3 +411,39 @@ def v2_api(request,content_type,is_meta=False):
         data = request_object.main()
 
     return HttpResponse(json.dumps(data),content_type="application/json")
+
+
+def html_decorator(func):
+    """
+    This decorator wraps the output of the django debug tooldbar in html.
+    (From http://stackoverflow.com/a/14647943)
+    """
+
+    def _decorated(*args, **kwargs):
+        response = func(*args, **kwargs)
+
+        wrapped = ("<html><body>",
+                   response.content,
+                   "</body></html>")
+
+        return HttpResponse(wrapped)
+
+    return _decorated
+
+
+@html_decorator
+def debug(request):
+    """
+    Debug endpoint that uses the html_decorator,
+    """
+    path = request.META.get("PATH_INFO")
+    api_url = path.replace("debug/", "")
+
+    view = resolve(api_url)
+
+    accept = request.META.get("HTTP_ACCEPT")
+    accept += ",application/json"
+    request.META["HTTP_ACCEPT"] = accept
+
+    res = view.func(request, **view.kwargs)
+    return HttpResponse(res._container)
