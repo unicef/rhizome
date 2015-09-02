@@ -328,8 +328,8 @@ class CampaignAbstracted(models.Model):
     Everything in campaign plus the "pct_complete" attribute
     '''
 
-    office = models.ForeignKey(Office)
-    campaign_type = models.ForeignKey(CampaignType)
+    office_id = models.IntegerField()
+    campaign_type_id = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
@@ -345,7 +345,6 @@ class CampaignAbstracted(models.Model):
     class Meta:
         db_table = 'campaign_abstracted'
         ordering = ('-start_date',)
-        unique_together = ('office','start_date')
 
 class DataPoint(models.Model):
     '''

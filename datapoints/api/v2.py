@@ -53,8 +53,6 @@ class v2Request(object):
                 'permission_function':self.pretty_doc_detail},
             'refresh_master': {'orm_obj':Document,
                 'permission_function':self.refresh_master_for_document},
-            'campaign': {'orm_obj':CampaignAbstracted,
-                'permission_function':self.apply_campaign_permissions},
             'region': {'orm_obj':Region,
                 'permission_function':self.apply_region_permissions},
             'indicator': {'orm_obj':IndicatorAbstracted,

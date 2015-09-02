@@ -214,7 +214,7 @@ function tagTree(q) {
 }
 
 module.exports = {
-  campaign: endPoint('/campaign/', 'get', 2),
+  campaign: endPoint('/campaign/', 'get', 1),
   dashboardsCustom: endPoint('/custom_dashboard/', 'get', 2),
   datapoints: datapoint,
   datapointsRaw: endPoint('/datapointentry/'),
