@@ -24,6 +24,7 @@ v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
 v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
+v1_api.register(CampaignResource())
 
 urlpatterns = patterns('',
 

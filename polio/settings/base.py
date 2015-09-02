@@ -52,7 +52,8 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
-    'tastypie'
+    'tastypie',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (

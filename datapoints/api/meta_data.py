@@ -1,13 +1,14 @@
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
-from tastypie.cache import SimpleCache
 from tastypie.resources import Resource
 from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 import json
+
+## Result Objects for API Resources ##
 
 class GeoJsonResult(object):
     region_id = int()
@@ -16,20 +17,11 @@ class GeoJsonResult(object):
     geometry = dict()
 
 
-class CustomCache(SimpleCache):
-    '''
-    Set up to override the simple cache method in order to customize the
-    behavior of the cache control headers.
-    '''
+class CampaignResource(BaseModelResource):
 
-    def cache_control(self):
-        '''
-        Instatiate the cache_control instance, and add the headers needed.
-        '''
-        control = super(CustomCache, self).cache_control()
-        control.update({'must_revalidate':True, 'max_age': 3600})
-        return control
-
+    class Meta:
+        queryset = CampaignAbstracted.objects.all()
+        resource_name = 'campaign'
 
 class RegionPolygonResource(BaseNonModelResource):
     '''
@@ -48,7 +40,6 @@ class RegionPolygonResource(BaseNonModelResource):
         filtering = {
             "region_id": ALL,
         }
-        cache = CustomCache()
 
     def get_object_list(self,request):
         '''

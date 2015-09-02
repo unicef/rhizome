@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import Authentication
 from tastypie.resources import ModelResource, Resource, ALL
+from tastypie.cache import SimpleCache
 
 from datapoints.models import RegionType,Region,RegionPermission
 
@@ -24,6 +25,20 @@ class CustomAuthentication(Authentication):
             return True
 
         return False
+
+class CustomCache(SimpleCache):
+    '''
+    Set up to override the simple cache method in order to customize the
+    behavior of the cache control headers.
+    '''
+
+    def cache_control(self):
+        '''
+        Instatiate the cache_control instance, and add the headers needed.
+        '''
+        control = super(CustomCache, self).cache_control()
+        control.update({'must_revalidate':True, 'max_age': 3600})
+        return control
 
 
 class BaseModelResource(ModelResource):
@@ -47,6 +62,8 @@ class BaseModelResource(ModelResource):
         filtering = {
             "id": ALL,
         }
+        cache = CustomCache()
+
 
 class BaseNonModelResource(Resource):
     '''
@@ -64,6 +81,8 @@ class BaseNonModelResource(Resource):
         authentication = CustomAuthentication()
         authorization = DjangoAuthorization()
         always_return_data = True
+        cache = CustomCache()
+
 
     def parse_url_strings(self,query_dict):
         '''
