@@ -20,7 +20,7 @@ class GeoJsonResult(object):
 class CampaignResource(BaseModelResource):
 
     class Meta:
-        queryset = CampaignAbstracted.objects.all()
+        queryset = CampaignAbstracted.objects.all().values()
         resource_name = 'campaign'
 
 class RegionResource(BaseModelResource):
