@@ -26,6 +26,14 @@ v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 v1_api.register(CampaignResource())
 v1_api.register(RegionResource())
+v1_api.register(IndicatorResource())
+v1_api.register(OfficeResource())
+v1_api.register(CampaignTypeResource())
+v1_api.register(RegionTypeResource())
+v1_api.register(IndicatorTagResource())
+v1_api.register(IndicatorToTagResource())
+
+
 
 urlpatterns = patterns('',
 

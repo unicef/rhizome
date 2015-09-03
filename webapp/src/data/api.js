@@ -218,12 +218,12 @@ module.exports = {
   regions: endPoint('/region/', 'get', 1),
   datapointsRaw: endPoint('/datapointentry/','get', 1),
   indicators: endPoint('/indicator/', 'get', 1),
+  office: endPoint('/office/', 'get', 1),
+  region_type: endPoint('/region_type/', 'get', 1),
+  indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
+  indicator_tag: endPoint('/indicator_tag/', 'get', 1),
 
   // TO MIGRATE //
-  indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 2),
-  indicator_tag: endPoint('/indicator_tag/', 'get', 2),
-  office: endPoint('/office/', 'get', 2),
-  region_type: endPoint('/region_type/', 'get', 2),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
   document: endPoint('/document/', 'get', 2),
   document_meta: endPoint('/document/metadata/', 'get', 2),

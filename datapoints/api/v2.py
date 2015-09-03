@@ -48,21 +48,7 @@ class v2Request(object):
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
             ## MIGRATE TO api/meta_data.py
-            'region': {'orm_obj':Region,
-                'permission_function':None},
-            'indicator': {'orm_obj':IndicatorAbstracted,
-                'permission_function':None},
             'geo': {'orm_obj':RegionPolygon,
-                'permission_function':None},
-            'office': {'orm_obj':Office,
-                'permission_function':None},
-            'indicator_tag': {'orm_obj':IndicatorTag,
-                'permission_function':None},
-            'indicator_to_tag': {'orm_obj':IndicatorToTag,
-                'permission_function':None},
-            'campaign_type': {'orm_obj':CampaignType,
-                'permission_function':None},
-            'region_type': {'orm_obj':RegionType,
                 'permission_function':None},
             'user_permission': {'orm_obj':User,
                 'permission_function':None},

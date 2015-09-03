@@ -8,14 +8,6 @@ from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 import json
 
-## Result Objects for API Resources ##
-
-class GeoJsonResult(object):
-    region_id = int()
-    type = unicode()
-    properties = dict()
-    geometry = dict()
-
 
 class CampaignResource(BaseModelResource):
 
@@ -28,6 +20,51 @@ class RegionResource(BaseModelResource):
     class Meta:
         queryset = Region.objects.all().values()
         resource_name = 'region'
+
+class IndicatorResource(BaseModelResource):
+
+    class Meta:
+        queryset = IndicatorAbstracted.objects.all().values()
+        resource_name = 'indicator'
+
+class OfficeResource(BaseModelResource):
+
+    class Meta:
+        queryset = Office.objects.all().values()
+        resource_name = 'office'
+
+class CampaignTypeResource(BaseModelResource):
+
+    class Meta:
+        queryset = CampaignType.objects.all().values()
+        resource_name = 'campaign_type'
+
+class RegionTypeResource(BaseModelResource):
+
+    class Meta:
+        queryset = CampaignType.objects.all().values()
+        resource_name = 'region_type'
+
+class IndicatorTagResource(BaseModelResource):
+
+    class Meta:
+        queryset = IndicatorTag.objects.all().values()
+        resource_name = 'indicator_tag'
+
+class IndicatorToTagResource(BaseModelResource):
+
+    class Meta:
+        queryset = IndicatorToTag.objects.all().values()
+        resource_name = 'indicator_to_tag'
+
+
+## Result Objects for geo Resources ##
+
+class GeoJsonResult(object):
+    region_id = int()
+    type = unicode()
+    properties = dict()
+    geometry = dict()
 
 
 class RegionPolygonResource(BaseNonModelResource):
