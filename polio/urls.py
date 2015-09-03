@@ -41,14 +41,13 @@ v1_api.register(GroupPermissionResource())
 v1_api.register(DocumentReviewResource())
 v1_api.register(SourceObjectMapResource())
 v1_api.register(UserResource())
+v1_api.register(SourceSubmissionResource())
+v1_api.register(DocumentDetailResource())
+v1_api.register(DocDataPointResource())
+v1_api.register(ComputedDataPointResource())
 
 
 urlpatterns = patterns('',
-
-    ## V2 API ##
-    url(r'^api/v2/(?P<content_type>\w+)/$', login_required(views.v2_api), name='v2_api'),
-    url(r'^api/v2/(?P<content_type>\w+)/metadata/$', login_required(views.v2_meta_api),
-        name='v2_meta_api'),
 
     ## TASTYPIE API ##
     (r'^api/', include(v1_api.urls)),

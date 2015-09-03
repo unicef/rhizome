@@ -113,6 +113,29 @@ class SourceObjectMapResource(BaseModelResource):
         queryset = SourceObjectMap.objects.all().values()
         resource_name = 'source_object_map'
 
+class SourceSubmissionResource(BaseModelResource):
+
+    class Meta:
+        queryset = SourceSubmission.objects.all().values()
+        resource_name = 'source_submission'
+
+class DocumentDetailResource(BaseModelResource):
+
+    class Meta:
+        queryset = DocumentDetail.objects.all().values()
+        resource_name = 'document_detail'
+
+class DocDataPointResource(BaseModelResource):
+
+    class Meta:
+        queryset = DocDataPoint.objects.all().values()
+        resource_name = 'doc_datapoint'
+
+class ComputedDataPointResource(BaseModelResource):
+
+    class Meta:
+        queryset = DataPointComputed.objects.all().values()
+        resource_name = 'computed_datapoint'
 
 
 ## Result Objects for geo Resources ##

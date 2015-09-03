@@ -81,9 +81,7 @@ var React = require('react');
 			for (var i=0; i < doc_deets.length; i++) {
 			    // rows.push(<ObjectRow />);
 					var doc_detail = doc_deets[i]
-					console.log(doc_detail.doc_detail_type_id)
 					rows.push(<li>{doc_detail.doc_detail_type} : {doc_detail.doc_detail_value} </li>)
-					// rows.push(<li> doc_detail['doc_detail_type_id'] : doc_detail['doc_detail_value'] </li>);
 			}
 
 			return <div>

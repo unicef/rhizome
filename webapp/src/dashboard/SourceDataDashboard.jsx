@@ -100,7 +100,7 @@ var SourceDataDashboard = React.createClass({
 					'search_fields' :['id','content_type','source_object_code','master_object_name'],
 				},
 			'validate':{
-				'data_fn' : api.docDataPOing,
+				'data_fn' : api.docDatapoint,
 				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
 				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},

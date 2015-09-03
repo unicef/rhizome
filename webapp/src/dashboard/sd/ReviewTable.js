@@ -53,6 +53,8 @@ var ReviewTable = React.createClass({
 
 	_callApi : function(){
 
+		console.log(this.props)
+
 		this.props.getData({
 				document_id:this.props.doc_id,
 				region_id:this.props.region.id,

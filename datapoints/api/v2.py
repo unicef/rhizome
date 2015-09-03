@@ -46,21 +46,6 @@ class v2Request(object):
         self.err = None
 
         # Tells the API which models are avail for GET / POST / META requests #
-        self.orm_mapping = {
-
-            ## MIGRATE TO ETL API ##
-            'source_submission': {'orm_obj':SourceSubmissionDetail,
-                'permission_function':None},
-            'document_detail': {'orm_obj':DocumentDetail,
-                'permission_function':self.pretty_doc_detail},
-            'doc_datapoint' : {'orm_obj':DocDataPoint,
-                'permission_function': self.pretty_doc_datapoint},
-            'synced_datapoint' : {'orm_obj':DataPointComputed,
-                'permission_function': self.filter_calced_dp_by_doc_id},
-            'source_object_map' : {'orm_obj': SourceObjectMap,
-                'permission_function':None},
-        }
-
 
     def main(self):
         '''

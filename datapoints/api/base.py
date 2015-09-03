@@ -91,6 +91,7 @@ class BaseModelResource(ModelResource):
 
     def get_list(self, request, **kwargs):
         """
+        Overriden from Tastypie..
         """
 
         base_bundle = self.build_bundle(request=request)

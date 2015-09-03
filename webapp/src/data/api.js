@@ -244,20 +244,15 @@ module.exports = {
   source_doc: endPoint('/source_doc/', 'get', 1),
   submission: endPoint('/source_submission/', 'get', 1, false),
   docDetail: endPoint('/document_detail/', 'get', 1, false),
-  // mapping tab //
   docMap: endPoint('/source_object_map/', 'get', 1, false),
-  // validation tab //
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
-  // aggregated and computed results //
-  docResults: endPoint('/synced_datapoint/', 'get', 2, false),
+  docResults: endPoint('/computed_datapoint/', 'get', 1, false),
 
   // POST //
   datapointUpsert: endPoint('/datapointentry/', 'post'),
-  save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
-  set_region_permission: endPoint('/region_permission/', 'post', 2),
-  set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 2),
-  post_source_object_map: endPoint('/source_object_map/','post',2,false),
-
-
+  save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
+  set_region_permission: endPoint('/region_permission/', 'post', 1),
+  set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),
+  post_source_object_map: endPoint('/source_object_map/','post', 1,false),
 
 };
