@@ -26,6 +26,13 @@ var AdminPage = React.createClass({
 		}
 	},
 
+		// componentWillMount: function() {
+		// 	this.props.getData().then(response => this.setState({
+		// 		data: response.objects,
+		// 		schema: parseSchema(response.objects[0])
+		// 	}));
+		// },
+
 	componentWillMount: function() {
 		this.props.getMetadata().then(response => this.setState({
 			metadata: response,

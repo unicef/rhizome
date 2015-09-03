@@ -40,8 +40,8 @@ var CampaignsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Campaigns"
-			getMetadata={api.campaignsMetadata}
-			getData={api.campaigns}
+			getMetadata={api.campaign}
+			getData={api.campaign}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
