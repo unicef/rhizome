@@ -90,25 +90,21 @@ var SourceDataDashboard = React.createClass({
 				'search_fields' :['id','username_code','region_code','campaign_code','region_display'],
 			},
 			'doc_index':{
-				'meta_fn' : api.document_meta,
 				'data_fn' : api.source_doc,
 				'fields' : ['id','docfile','edit_link'],
 				'search_fields' :['id','docfile'],
 			},
 			'mapping':{
-				  'meta_fn' : api.docMapMeta,
 					'data_fn' : api.docMap,
 					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
 					'search_fields' :['id','content_type','source_object_code','master_object_name'],
 				},
 			'validate':{
-				'meta_fn' : api.docValidateMeta,
-				'data_fn' : api.docValidate,
+				'data_fn' : api.docDataPOing,
 				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
 				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 			'results':{
-				'meta_fn' : api.DataPointMetaData,
 				'data_fn' : api.docResults,
 				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
 				'search_fields' :['region_id','indicator_id','campaign_id'],
@@ -130,7 +126,6 @@ var SourceDataDashboard = React.createClass({
 		// data table //
 	var review_table = <ReviewTable
 					title='sample title'
-					getMetadata={table_definition[doc_tab]['meta_fn']}
 					getData={table_definition[doc_tab]['data_fn']}
 					region={region}
 					key={table_key}

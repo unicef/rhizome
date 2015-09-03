@@ -52,10 +52,6 @@ var ReviewTable = React.createClass({
 	},
 
 	_callApi : function(){
-		this.props.getMetadata()
-		.then(response => this.setState({
-				schema: parseSchema(response)
-		}));
 
 		this.props.getData({
 				document_id:this.props.doc_id,
@@ -63,6 +59,7 @@ var ReviewTable = React.createClass({
 				campaign_id:this.props.campaign.id
 			},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
+						schema: parseSchema(response),
 						data: response.objects
 			}));
 			this.forceUpdate();
@@ -85,7 +82,7 @@ var ReviewTable = React.createClass({
 			if (nextProps.region != this.props.region) {
 				return;
 			}
-			if (nextProps.getMetadata != this.props.getMetadata) {
+			if (nextProps.getData != this.props.getData) {
 				return;
 			}
 			if (nextProps.doc_id != this.props.doc_id) {

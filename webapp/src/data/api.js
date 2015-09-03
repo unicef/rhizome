@@ -133,7 +133,7 @@ datapoint.toString = function (query, version) {
 
 function indicatorsTree(q) {
   var fetch1 = endPoint('/indicator/', 'get', 1);
-  var fetch2 = endPoint('/indicator_tag', 'get', 2);
+  var fetch2 = endPoint('/indicator_tag', 'get', 1);
   var makeTagId = function (tId) {
     return 'tag-' + tId;
   };
@@ -220,7 +220,7 @@ module.exports = {
   indicatorsTree: indicatorsTree,
   tagTree: tagTree,
 
-  // basic GET requests //
+  // BASIC GET REQUESTS //
   campaign: endPoint('/campaign/', 'get', 1),
   regions: endPoint('/region/', 'get', 1),
   datapointsRaw: endPoint('/datapointentry/','get', 1),
@@ -230,7 +230,6 @@ module.exports = {
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
-  source_doc: endPoint('/source_doc/', 'get', 1),
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
@@ -239,7 +238,18 @@ module.exports = {
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/','get',1),
   user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
-  refresh_master: endPoint('/document/', 'get', 2, false), // FIXME
+  refresh_master: endPoint('/document/', 'get', 1, false), // FIXME
+
+  // SOURCE DATA DASHBOARD REQUESTS //
+  source_doc: endPoint('/source_doc/', 'get', 1),
+  submission: endPoint('/source_submission/', 'get', 1, false),
+  docDetail: endPoint('/document_detail/', 'get', 1, false),
+  // mapping tab //
+  docMap: endPoint('/source_object_map/', 'get', 1, false),
+  // validation tab //
+  docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
+  // aggregated and computed results //
+  docResults: endPoint('/synced_datapoint/', 'get', 2, false),
 
   // POST //
   datapointUpsert: endPoint('/datapointentry/', 'post'),
@@ -248,18 +258,6 @@ module.exports = {
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 2),
   post_source_object_map: endPoint('/source_object_map/','post',2,false),
 
-  // ADMIN METADATA - THIS NEEDS TO BE COLLAPSED INTO EACH CALL //
 
-
-  // raw data //
-  submission: endPoint('/source_submission/', 'get', 2, false),
-  // upload //
-  docDetail: endPoint('/document_detail/', 'get', 2, false),
-  // mapping tab //
-  docMap: endPoint('/doc_mapping/', 'get', 2, false),
-  // validation tab //
-  docValidate: endPoint('/doc_datapoint/', 'get', 2, false),
-  // aggregated and computed results //
-  docResults: endPoint('/synced_datapoint/', 'get', 2, false),
 
 };
