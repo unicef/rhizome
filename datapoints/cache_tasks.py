@@ -181,7 +181,7 @@ class CacheRefresh(object):
 
     def calc_datapoints(self):
         '''
-        When the agg_datapoint method runs, it will leave the agg_datapoitn table
+        When the agg_datapoint method runs, it will leave the agg_datapoint table
         in a state that all of the rows that were altered, and need to be cached
         thats is the ``calc_refreshed`` column will = 'f' for all of the rows
         that this task effected.

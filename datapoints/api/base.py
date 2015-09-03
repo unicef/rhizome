@@ -17,7 +17,7 @@ from datapoints.models import RegionType,Region,RegionPermission
 class CustomAuthentication(Authentication):
     '''
     Super Simple permissions check to ensure user is logged in.  Futher
-    permissions are appled for GET and POST for the datapoitn resource
+    permissions are appled for GET and POST for the datapoint resource
     based on the regional and indicator level permission of the user found
     in the request.
     '''

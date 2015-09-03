@@ -205,7 +205,7 @@ User POST
 ``api/v2/user``
 
 - NOT Implemented!!!!
-- Please use django admin form found at /datapoints/users/create and datapoitns/users/edit/<id>
+- Please use django admin form found at /datapoints/users/create and datapoints/users/edit/<id>
 
 
 Group POST

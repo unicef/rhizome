@@ -116,7 +116,7 @@ class CalculatedIndicatorComponent(models.Model):
     Notice however that calculations are multi layered, for instance certain
     percentage calculations, use an indicator that is calculated from the sum
     of a set of other indicators as it's denominator.  This means, that the
-    order in which we calculated datapoitns matters.  For more on how this works
+    order in which we calculated datapoints matters.  For more on how this works
     check out the fn_calc_datapoint() stored procedure.
     '''
 

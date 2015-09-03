@@ -15,7 +15,7 @@ from datapoints.models import *
 
 class MasterRefresh(object):
     '''
-    Take source datapoints from a document_id and upsert into datapoitns table
+    Take source datapoints from a document_id and upsert into datapoints table
     based on mapping and audits from the doc_review app.
     '''
 
@@ -162,7 +162,7 @@ class MasterRefresh(object):
         return new_doc_dp_ids
 
     def sync_doc_datapoint(self):
-        ## merge into datapoitns from doc datapoints #
+        ## merge into datapoints from doc datapoints #
 
         new_dps = DataPoint.objects.raw('''
             SELECT * FROM fn_upsert_source_dps(%s,%s)

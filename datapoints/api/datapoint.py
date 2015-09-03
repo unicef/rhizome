@@ -36,11 +36,6 @@ class DataPointResource(BaseNonModelResource):
     datapoint_abstracted table.  The schema of that table is region_id,
     campaign_id, indicator_json and because of which there is very little
     data transformation on request here.
-
-    There is some custom functionality here which is the reason i was not so
-    quick to convert this endpoint ( the most important endpoint in the
-    application ) from v1 to v2.
-
     '''
 
     error = None
