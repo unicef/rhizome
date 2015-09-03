@@ -40,6 +40,7 @@ v1_api.register(RegionPermissionResource())
 v1_api.register(GroupPermissionResource())
 v1_api.register(DocumentReviewResource())
 v1_api.register(SourceObjectMapResource())
+v1_api.register(UserResource())
 
 
 urlpatterns = patterns('',

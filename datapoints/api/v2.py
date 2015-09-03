@@ -47,23 +47,14 @@ class v2Request(object):
 
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
-            ## MIGRATE TO api/meta_data.py
-            'group_permission': {'orm_obj':IndicatorPermission,
-                'permission_function':None},
-            'group': {'orm_obj':Group,
-                'permission_function':None},
-            'user': {'orm_obj':User,
-                'permission_function':None},
 
+            'campaign': {'orm_obj':Campaign,
+                'permission_function':None},
             ## MIGRATE TO ETL API ##
             'source_submission': {'orm_obj':SourceSubmissionDetail,
                 'permission_function':None},
             'document_detail': {'orm_obj':DocumentDetail,
                 'permission_function':self.pretty_doc_detail},
-            'refresh_master': {'orm_obj':Document,
-                'permission_function':self.refresh_master_for_document},
-            'doc_mapping' : {'orm_obj':SourceObjectMap,
-                'permission_function': self.pretty_doc_mapping},
             'doc_datapoint' : {'orm_obj':DocDataPoint,
                 'permission_function': self.pretty_doc_datapoint},
             'synced_datapoint' : {'orm_obj':DataPointComputed,

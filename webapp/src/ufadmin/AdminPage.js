@@ -14,7 +14,6 @@ var parseSchema = require('./utils/parseSchema');
 var AdminPage = React.createClass({
 	propTypes: {
 		title: React.PropTypes.string.isRequired,
-		getMetadata: React.PropTypes.func.isRequired,
 		getData: React.PropTypes.func.isRequired
 	},
 	getInitialState: function() {
@@ -34,7 +33,7 @@ var AdminPage = React.createClass({
 		// },
 
 	componentWillMount: function() {
-		this.props.getMetadata().then(response => this.setState({
+		this.props.getData().then(response => this.setState({
 			metadata: response,
 			schema: parseSchema(response)
 		}));

@@ -103,7 +103,13 @@ class BaseModelResource(ModelResource):
         # Dehydrate the bundles in preparation for serialization.
         bundles = [obj for obj in to_be_serialized[self._meta.collection_name]]
 
-        return self.create_response(request, bundles)
+        response_data = {
+            'objects': bundles,
+            'meta': [],
+            'error': None
+        }
+
+        return self.create_response(request, response_data)
 
 class BaseNonModelResource(Resource):
     '''

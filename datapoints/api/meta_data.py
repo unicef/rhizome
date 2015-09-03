@@ -71,6 +71,12 @@ class DocumentResource(BaseModelResource):
         queryset = Document.objects.all().values()
         resource_name = 'source_doc'
 
+class UserResource(BaseModelResource):
+
+    class Meta:
+        queryset = User.objects.all().values()
+        resource_name = 'user'
+
 class GroupResource(BaseModelResource):
 
     class Meta:
