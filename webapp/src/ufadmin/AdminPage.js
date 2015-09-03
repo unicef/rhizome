@@ -25,19 +25,11 @@ var AdminPage = React.createClass({
 		}
 	},
 
-		// componentWillMount: function() {
-		// 	this.props.getData().then(response => this.setState({
-		// 		data: response.objects,
-		// 		schema: parseSchema(response.objects[0])
-		// 	}));
-		// },
-
 	componentWillMount: function() {
 		this.props.getData().then(response => this.setState({
-			metadata: response,
-			schema: parseSchema(response)
+			schema: parseSchema(response),
+			data: response.objects,
 		}));
-		this.props.getData().then(response => this.setState({data: response.objects}));
 	},
 
 	onToggleFilterContainer() {
@@ -46,13 +38,13 @@ var AdminPage = React.createClass({
 
 	render() {
 		// render loading indicator until data has loaded
-		var isLoaded = _.isArray(this.state.data) && this.state.metadata && this.state.schema;
+		var isLoaded = _.isArray(this.state.data) && this.state.schema;
 		if(!isLoaded) return this.renderLoading();
 
-		var {data, schema, metadata} = this.state;
+		var {data, schema} = this.state;
 
 		// make the "Create X" button if we have a creation URL
-		var createUrl = _.get(metadata, 'objects.url_patterns.create', null);
+		var createUrl = '/datapoitns/region/create/'
 		if(createUrl) createUrl = '/' + createUrl;
 		// strip the "s" from the end of plural title
 		var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
