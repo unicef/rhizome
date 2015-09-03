@@ -9,7 +9,7 @@ var {
 	FilterPanel, FilterDateRange, FilterInputRadio
 } = require('react-datascope');
 
-var API = require('../data/api');
+var api = require('../data/api');
 
 var AdminPage = require('./AdminPage');
 
@@ -39,8 +39,8 @@ var GroupsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Roles"
-			getMetadata={API.admin.groupsMetadata}
-			getData={API.admin.groups}
+			getMetadata={api.groupsMetadata}
+			getData={api.groups}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>

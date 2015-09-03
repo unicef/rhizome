@@ -10,7 +10,7 @@ const {
 
 const AdminPage = require('./AdminPage');
 
-const API = require('../data/api');
+const api = require('../data/api');
 
 // display rules for datascope fields
 const yesNoRenderer = (val) => val ? "Yes" : "No";
@@ -52,8 +52,8 @@ const UsersAdmin = React.createClass({
 
 		return <AdminPage
 			title="Users"
-			getMetadata={API.admin.usersMetadata}
-			getData={API.admin.users}
+			getMetadata={api.usersMetadata}
+			getData={api.users}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>

@@ -41,7 +41,7 @@ var React = require('react');
 
 		pullDocDetails : function () {
 
-			api.admin.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
+			api.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
 				doc_deets: response.objects,
 			}));

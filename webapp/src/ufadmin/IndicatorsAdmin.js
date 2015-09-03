@@ -1,7 +1,7 @@
 var React = require('react');
 var _ = require('lodash');
 
-var API = require('../data/api');
+var api = require('../data/api');
 
 var {
 	Datascope, LocalDatascope,
@@ -33,8 +33,8 @@ var IndicatorsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Indicators"
-			getMetadata={API.admin.indicatorsMetadata}
-			getData={API.admin.indicators}
+			getMetadata={api.indicatorsMetadata}
+			getData={api.indicators}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>

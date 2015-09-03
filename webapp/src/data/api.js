@@ -214,7 +214,13 @@ function tagTree(q) {
 }
 
 module.exports = {
-  // get //
+
+  // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
+  datapoints: datapoint,
+  indicatorsTree: indicatorsTree,
+  tagTree: tagTree,
+
+  // basic GET requests //
   campaign: endPoint('/campaign/', 'get', 1),
   regions: endPoint('/region/', 'get', 1),
   datapointsRaw: endPoint('/datapointentry/','get', 1),
@@ -226,12 +232,13 @@ module.exports = {
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
   source_doc: endPoint('/source_doc/', 'get', 1),
   groups: endPoint('/group/', 'get', 1),
-  user_permissions: endPoint('/user_group/', 'get', 1),
+  users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
   region_permission: endPoint('/region_permission/', 'get', 1),
   group_permissions: endPoint('/group_permission/', 'get', 1),
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/','get',1),
+  user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
   refresh_master: endPoint('/document/', 'get', 2, false), // FIXME
 
   // POST //
@@ -241,46 +248,31 @@ module.exports = {
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 2),
   post_source_object_map: endPoint('/source_object_map/','post',2,false),
 
+  // ADMIN METADATA - THIS NEEDS TO BE COLLAPSED INTO EACH CALL //
 
-  // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
-  datapoints: datapoint,
-  indicatorsTree: indicatorsTree,
-  tagTree: tagTree,
+  usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
+  groupsMetadata: endPoint('/group/metadata/', 'get', 2, false),
+  regionsMetadata: endPoint('/region/metadata/', 'get', 2, false),
+  campaignsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
+  indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
 
+  // raw data //
+  submission: endPoint('/source_submission/', 'get', 2, false),
+  submissionMeta: endPoint('/source_submission/metadata/', 'get', 2, false),
+  // upload //
+  docDetail: endPoint('/document_detail/', 'get', 2, false),
+  docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
+  // mapping tab //
+  docMap: endPoint('/doc_mapping/', 'get', 2, false),
+  docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
+  // validation tab //
+  docValidate: endPoint('/doc_datapoint/', 'get', 2, false),
+  docValidateMeta: endPoint('/doc_datapoint/metadata/', 'get', 2, false),
+  // aggregated and computed results //
+  docResults: endPoint('/synced_datapoint/', 'get', 2, false),
+  DataPointMetaData: endPoint('/synced_datapoint/metadata/', 'get', 2, false),
 
-  // THIS NEEDS TO BE GONE //
+  // doc index //
+  document_meta: endPoint('/document/metadata/', 'get', 2),
 
-  admin: {
-    usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
-    users: endPoint('/user/', 'get', 2, false),
-    groupsMetadata: endPoint('/group/metadata/', 'get', 2, false),
-    groups: endPoint('/group/', 'get', 2, false),
-    regionsMetadata: endPoint('/region/metadata/', 'get', 2, false),
-    regions: endPoint('/region/', 'get', 2, false),
-    campaignsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
-    campaigns: endPoint('/campaign/', 'get', 2, false),
-    indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
-    indicators: endPoint('/indicator/', 'get', 2, false),
-
-    // raw data //
-    submission: endPoint('/source_submission/', 'get', 2, false),
-    submissionMeta: endPoint('/source_submission/metadata/', 'get', 2, false),
-    // upload //
-    docDetail: endPoint('/document_detail/', 'get', 2, false),
-    docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
-    // mapping tab //
-    docMap: endPoint('/doc_mapping/', 'get', 2, false),
-    docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
-    // validation tab //
-    docValidate: endPoint('/doc_datapoint/', 'get', 2, false),
-    docValidateMeta: endPoint('/doc_datapoint/metadata/', 'get', 2, false),
-    // aggregated and computed results //
-    docResults: endPoint('/synced_datapoint/', 'get', 2, false),
-    DataPointMetaData: endPoint('/synced_datapoint/metadata/', 'get', 2, false),
-
-    // doc index //
-    document_meta: endPoint('/document/metadata/', 'get', 2),
-
-
-  }
 };

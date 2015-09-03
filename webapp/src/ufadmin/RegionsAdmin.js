@@ -8,7 +8,7 @@ var {
 	FilterPanel, FilterDateRange, FilterInputRadio
 	} = require('react-datascope');
 
-var API = require('../data/api');
+var api = require('../data/api');
 
 var AdminPage = require('./AdminPage');
 
@@ -37,8 +37,8 @@ var RegionsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Regions"
-			getMetadata={API.admin.regionsMetadata}
-			getData={API.admin.regions}
+			getMetadata={api.regionsMetadata}
+			getData={api.regions}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>

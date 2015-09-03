@@ -1,7 +1,7 @@
 var React = require('react');
 var _ = require('lodash');
 
-var API = require('../data/api');
+var api = require('../data/api');
 
 var {
 	Datascope, LocalDatascope,
@@ -40,8 +40,8 @@ var CampaignsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Campaigns"
-			getMetadata={API.admin.campaignsMetadata}
-			getData={API.admin.campaigns}
+			getMetadata={api.campaignsMetadata}
+			getData={api.campaigns}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
@@ -56,5 +56,3 @@ var CampaignsAdmin = React.createClass({
 });
 
 module.exports = CampaignsAdmin;
-
-

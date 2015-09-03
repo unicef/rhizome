@@ -47,7 +47,7 @@ var ReviewTable = React.createClass({
   },
 
 	validateForm : function(id){
-			// onclick post to api..
+			// onclick post to api //
 			return <input type="checkbox" checked  />;
 	},
 
