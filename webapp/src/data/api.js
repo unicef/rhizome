@@ -132,7 +132,7 @@ datapoint.toString = function (query, version) {
 };
 
 function indicatorsTree(q) {
-  var fetch1 = endPoint('/indicator/', 'get', 2);
+  var fetch1 = endPoint('/indicator/', 'get', 1);
   var fetch2 = endPoint('/indicator_tag', 'get', 2);
   var makeTagId = function (tId) {
     return 'tag-' + tId;
@@ -215,41 +215,46 @@ function tagTree(q) {
 
 module.exports = {
   campaign: endPoint('/campaign/', 'get', 1),
-  dashboardsCustom: endPoint('/custom_dashboard/', 'get', 2),
-  datapoints: datapoint,
-  datapointsRaw: endPoint('/datapointentry/'),
-  datapointUpsert: endPoint('/datapointentry/', 'post'),
+  regions: endPoint('/region/', 'get', 1),
+  datapointsRaw: endPoint('/datapointentry/','get', 1),
+  indicators: endPoint('/indicator/', 'get', 1),
+
+  // TO MIGRATE //
+  indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 2),
+  indicator_tag: endPoint('/indicator_tag/', 'get', 2),
+  office: endPoint('/office/', 'get', 2),
+  region_type: endPoint('/region_type/', 'get', 2),
+  get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
   document: endPoint('/document/', 'get', 2),
   document_meta: endPoint('/document/metadata/', 'get', 2),
   geo: endPoint('/geo/'),
-  indicators: endPoint('/indicator/', 'get', 2),
-  indicatorsTree: indicatorsTree,
-  tagTree: tagTree,
-  indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 2),
-  indicator_tag: endPoint('/indicator_tag/', 'get', 2),
-
-  office: endPoint('/office/', 'get', 2),
-  regions: endPoint('/region/', 'get', 2),
-  region_type: endPoint('/region_type/', 'get', 2),
-  document_review: endPoint('/document_review/', 'get', 2),
-  user_permissions: endPoint('/user_permission/', 'get', 2),
   groups: endPoint('/group/', 'get', 2),
-  groupUpsert: endPoint('/group/', 'post', 2),
   user_groups: endPoint('/user_group/', 'get', 2),
-  group_permissions: endPoint('/group_permission/', 'get', 2),
-  group_permissionUpsert: endPoint('/group_permission/', 'post', 2),
-  map_user_group: endPoint('/user_group/', 'post', 2),
   region_permission: endPoint('/region_permission/', 'get', 2),
-  set_region_permission: endPoint('/region_permission/', 'post', 2),
-  set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 2),
+  user_permissions: endPoint('/user_permission/', 'get', 2),
 
-  save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
-  get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
+  // MOVE THIS TO ETL API //
 
+  document_review: endPoint('/document_review/', 'get', 2),
   get_source_object_map: endPoint('/source_object_map/','get',2,false),
-  post_source_object_map: endPoint('/source_object_map/','post',2,false),
   refresh_master: endPoint('/refresh_master/', 'get', 2, false),
 
+
+  // POST //
+  datapointUpsert: endPoint('/datapointentry/', 'post'),
+  save_dashboard: endPoint('/custom_dashboard/', 'post', 2),
+  set_region_permission: endPoint('/region_permission/', 'post', 2),
+  set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 2),
+  post_source_object_map: endPoint('/source_object_map/','post',2,false),
+
+
+  // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
+  datapoints: datapoint,
+  indicatorsTree: indicatorsTree,
+  tagTree: tagTree,
+
+
+  // THIS NEEDS TO BE GONE //
 
   admin: {
     usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
@@ -263,16 +268,12 @@ module.exports = {
     indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
     indicators: endPoint('/indicator/', 'get', 2, false),
 
-    // doc validation app //
-
     // raw data //
     submission: endPoint('/source_submission/', 'get', 2, false),
     submissionMeta: endPoint('/source_submission/metadata/', 'get', 2, false),
-
     // upload //
     docDetail: endPoint('/document_detail/', 'get', 2, false),
     docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
-
     // mapping tab //
     docMap: endPoint('/doc_mapping/', 'get', 2, false),
     docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),

@@ -30,7 +30,7 @@ var NavigationStore = Reflux.createStore({
 			depth_level : 0
 		});
 
-		var dashboards = api.dashboardsCustom();
+		var dashboards = api.get_dashboard();
 
 		var documents = api.document();
 
