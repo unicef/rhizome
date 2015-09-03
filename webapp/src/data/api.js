@@ -250,29 +250,16 @@ module.exports = {
 
   // ADMIN METADATA - THIS NEEDS TO BE COLLAPSED INTO EACH CALL //
 
-  usersMetadata: endPoint('/user/metadata/', 'get', 2, false),
-  groupsMetadata: endPoint('/group/metadata/', 'get', 2, false),
-  regionsMetadata: endPoint('/region/metadata/', 'get', 2, false),
-  campaignsMetadata: endPoint('/campaign/metadata/', 'get', 2, false),
-  indicatorsMetadata: endPoint('/indicator/metadata/', 'get', 2, false),
 
   // raw data //
   submission: endPoint('/source_submission/', 'get', 2, false),
-  submissionMeta: endPoint('/source_submission/metadata/', 'get', 2, false),
   // upload //
   docDetail: endPoint('/document_detail/', 'get', 2, false),
-  docDetailMeta: endPoint('/document_detail/metadata/', 'get', 2, false),
   // mapping tab //
   docMap: endPoint('/doc_mapping/', 'get', 2, false),
-  docMapMeta: endPoint('/doc_mapping/metadata/', 'get', 2, false),
   // validation tab //
   docValidate: endPoint('/doc_datapoint/', 'get', 2, false),
-  docValidateMeta: endPoint('/doc_datapoint/metadata/', 'get', 2, false),
   // aggregated and computed results //
   docResults: endPoint('/synced_datapoint/', 'get', 2, false),
-  DataPointMetaData: endPoint('/synced_datapoint/metadata/', 'get', 2, false),
-
-  // doc index //
-  document_meta: endPoint('/document/metadata/', 'get', 2),
 
 };

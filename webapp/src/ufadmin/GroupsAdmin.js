@@ -39,7 +39,6 @@ var GroupsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Roles"
-			getMetadata={api.groupsMetadata}
 			getData={api.groups}
 			datascopeFilters={datascopeFilters}
 			fields={fields}

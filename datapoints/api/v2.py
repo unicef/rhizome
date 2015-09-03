@@ -48,8 +48,6 @@ class v2Request(object):
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
 
-            'campaign': {'orm_obj':Campaign,
-                'permission_function':None},
             ## MIGRATE TO ETL API ##
             'source_submission': {'orm_obj':SourceSubmissionDetail,
                 'permission_function':None},

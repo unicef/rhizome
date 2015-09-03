@@ -37,7 +37,6 @@ var RegionsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Regions"
-			getMetadata={api.regionsMetadata}
 			getData={api.regions}
 			datascopeFilters={datascopeFilters}
 			fields={fields}

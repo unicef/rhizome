@@ -52,7 +52,6 @@ const UsersAdmin = React.createClass({
 
 		return <AdminPage
 			title="Users"
-			getMetadata={api.usersMetadata}
 			getData={api.users}
 			datascopeFilters={datascopeFilters}
 			fields={fields}

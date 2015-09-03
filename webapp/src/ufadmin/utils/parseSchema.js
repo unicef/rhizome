@@ -18,21 +18,10 @@ module.exports = function parseSchema(data) {
 			type: "object",
 			properties: _(fields).map(field => {
 				return [field.name, _.transform(field, (result, val, key) => {
-					// if(key === 'type' && val === 'datetime') {
-					// 	result.type = 'string';
-					// 	result.format = 'date-time';
-					// } else if(key === 'constraints') {
-					// 	if(val && val.items && val.items.oneOf && val.items.oneOf.length) {
-					// 		result.items = {type: typeof val, enum: val.items.oneOf};
-					// 	}
-					// } else if(_.includes(['type', 'title'], key)) {
 					result[key] = val;
-					// }
 				})]
 			}).object().value()
 		}
 	};
-	console.log('----')
-	console.log(schema)
 	return schema;
 };

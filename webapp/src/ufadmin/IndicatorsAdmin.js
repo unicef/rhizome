@@ -33,7 +33,6 @@ var IndicatorsAdmin = React.createClass({
 
 		return <AdminPage
 			title="Indicators"
-			getMetadata={api.indicatorsMetadata}
 			getData={api.indicators}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
