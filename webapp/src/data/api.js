@@ -222,10 +222,10 @@ module.exports = {
   region_type: endPoint('/region_type/', 'get', 1),
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
+  get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
+  document: endPoint('/document/', 'get', 1),
 
   // TO MIGRATE //
-  get_dashboard: endPoint('/custom_dashboard/', 'get', 2),
-  document: endPoint('/document/', 'get', 2),
   document_meta: endPoint('/document/metadata/', 'get', 2),
   geo: endPoint('/geo/'),
   groups: endPoint('/group/', 'get', 2),

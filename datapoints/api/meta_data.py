@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
+from source_data.models import Document
 import json
 
 
@@ -56,6 +57,19 @@ class IndicatorToTagResource(BaseModelResource):
     class Meta:
         queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'
+
+class DashboardResource(BaseModelResource):
+
+    class Meta:
+        queryset = CustomDashboard.objects.all().values()
+        resource_name = 'custom_dashboard'
+
+class DocumentResource(BaseModelResource):
+
+    class Meta:
+        queryset = Document.objects.all().values()
+        resource_name = 'document'
+
 
 
 ## Result Objects for geo Resources ##

@@ -62,9 +62,6 @@ class v2Request(object):
                 'permission_function':None},
             'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
-            # 'user_permission': {'orm_obj':UserAuthFunction,
-                # 'permission_function':self.filter_permissions_to_current_user},
-
 
             ## MIGRATE TO ETL API ##
             'source_submission': {'orm_obj':SourceSubmissionDetail,
@@ -79,10 +76,6 @@ class v2Request(object):
                 'permission_function': self.pretty_doc_datapoint},
             'synced_datapoint' : {'orm_obj':DataPointComputed,
                 'permission_function': self.filter_calced_dp_by_doc_id},
-            'document': {'orm_obj':Document,
-                'permission_function':self.apply_document_permissions },
-            'custom_dashboard': {'orm_obj':CustomDashboard,
-                'permission_function':self.apply_cust_dashboard_permissions},
             'source_object_map' : {'orm_obj': SourceObjectMap,
                 'permission_function':None},
         }
@@ -329,27 +322,6 @@ class v2Request(object):
         return None, data
 
 
-    def apply_document_permissions(self, list_of_object_ids):
-        '''
-        The default behavior of the Document api is to send all of the documents
-        uploaded by the current user.  If however, the show_all flag is set then
-        all documents are returned.  We also make sure here that the basic
-        API filters are applied here by filtering the document table by the list
-        of IDs we retreived in the prior step
-
-        '''
-
-        filter_kwargs = {}
-
-        if list_of_object_ids:
-            filter_kwargs['id__in'] = list_of_object_ids
-
-        if not self.show_all:
-            filter_kwargs['created_by_id'] = self.user_id
-
-        data = Document.objects.filter(**filter_kwargs)
-
-        return None, data
 
 class v2PostRequest(v2Request):
     '''

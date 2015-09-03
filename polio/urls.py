@@ -32,8 +32,8 @@ v1_api.register(CampaignTypeResource())
 v1_api.register(RegionTypeResource())
 v1_api.register(IndicatorTagResource())
 v1_api.register(IndicatorToTagResource())
-
-
+v1_api.register(DashboardResource())
+v1_api.register(DocumentResource())
 
 urlpatterns = patterns('',
 
