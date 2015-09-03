@@ -23,8 +23,8 @@ var parseSchema = require('ufadmin/utils/parseSchema');
 var ReviewTable = React.createClass({
 	propTypes: {
 		title: React.PropTypes.string.isRequired,
-		getMetadata: React.PropTypes.func.isRequired,
 		getData: React.PropTypes.func.isRequired,
+		fields:  React.PropTypes.array.isRequired,
     loading   : React.PropTypes.bool.isRequired,
 		region 		: React.PropTypes.object.isRequired,
 		campaign 	: React.PropTypes.object.isRequired,
@@ -61,7 +61,7 @@ var ReviewTable = React.createClass({
 				campaign_id:this.props.campaign.id
 			},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
-						schema: parseSchema(response),
+						schema: parseSchema(this.props.fields),
 						data: response.objects
 			}));
 			this.forceUpdate();

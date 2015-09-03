@@ -2,9 +2,7 @@ var _ = require('lodash');
 
 module.exports = function parseSchema(data) {
 
-	var data_fields = Object.keys(data.objects[0]);
-	//
-	var fields = data_fields.map(function(f){
+	var fields = data.map(function(f){
 	   var fObj = {'name':f,'title':f};
 	   return fObj;
 	});

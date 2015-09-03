@@ -127,6 +127,7 @@ var SourceDataDashboard = React.createClass({
 	var review_table = <ReviewTable
 					title='sample title'
 					getData={table_definition[doc_tab]['data_fn']}
+					fields={table_definition[doc_tab]['fields']}
 					region={region}
 					key={table_key}
 					loading={loading}
