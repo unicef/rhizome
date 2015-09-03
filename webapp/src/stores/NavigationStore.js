@@ -32,7 +32,7 @@ var NavigationStore = Reflux.createStore({
 
 		var dashboards = api.get_dashboard();
 
-		var documents = api.document();
+		var documents = api.source_doc();
 
 		var offices = api.office().then(function (response) {
 			return _.indexBy(response.objects, 'id');

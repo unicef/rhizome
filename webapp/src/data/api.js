@@ -214,6 +214,7 @@ function tagTree(q) {
 }
 
 module.exports = {
+  // get //
   campaign: endPoint('/campaign/', 'get', 1),
   regions: endPoint('/region/', 'get', 1),
   datapointsRaw: endPoint('/datapointentry/','get', 1),
@@ -223,22 +224,15 @@ module.exports = {
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
-  document: endPoint('/document/', 'get', 1),
-
-  // TO MIGRATE //
-  document_meta: endPoint('/document/metadata/', 'get', 2),
-  geo: endPoint('/geo/'),
-  groups: endPoint('/group/', 'get', 2),
-  user_groups: endPoint('/user_group/', 'get', 2),
-  region_permission: endPoint('/region_permission/', 'get', 2),
-  user_permissions: endPoint('/user_permission/', 'get', 2),
-
-  // MOVE THIS TO ETL API //
-
-  document_review: endPoint('/document_review/', 'get', 2),
-  get_source_object_map: endPoint('/source_object_map/','get',2,false),
-  refresh_master: endPoint('/refresh_master/', 'get', 2, false),
-
+  source_doc: endPoint('/source_doc/', 'get', 1),
+  groups: endPoint('/group/', 'get', 1),
+  user_permissions: endPoint('/user_group/', 'get', 1),
+  user_groups: endPoint('/user_group/', 'get', 1),
+  region_permission: endPoint('/region_permission/', 'get', 1),
+  group_permissions: endPoint('/group_permission/', 'get', 1),
+  geo: endPoint('/geo/', 'get', 1),
+  get_source_object_map: endPoint('/source_object_map/','get',1),
+  refresh_master: endPoint('/document/', 'get', 2, false), // FIXME
 
   // POST //
   datapointUpsert: endPoint('/datapointentry/', 'post'),
@@ -283,6 +277,10 @@ module.exports = {
     // aggregated and computed results //
     docResults: endPoint('/synced_datapoint/', 'get', 2, false),
     DataPointMetaData: endPoint('/synced_datapoint/metadata/', 'get', 2, false),
+
+    // doc index //
+    document_meta: endPoint('/document/metadata/', 'get', 2),
+
 
   }
 };

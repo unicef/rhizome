@@ -90,8 +90,8 @@ var SourceDataDashboard = React.createClass({
 				'search_fields' :['id','username_code','region_code','campaign_code','region_display'],
 			},
 			'doc_index':{
-				'meta_fn' : api.document_meta,
-				'data_fn' : api.document,
+				'meta_fn' : api.admin.document_meta,
+				'data_fn' : api.source_doc,
 				'fields' : ['id','docfile','edit_link'],
 				'search_fields' :['id','docfile'],
 			},
