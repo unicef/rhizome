@@ -34,6 +34,13 @@ v1_api.register(IndicatorTagResource())
 v1_api.register(IndicatorToTagResource())
 v1_api.register(DashboardResource())
 v1_api.register(DocumentResource())
+v1_api.register(GroupResource())
+v1_api.register(UserGroupResource())
+v1_api.register(RegionPermissionResource())
+v1_api.register(GroupPermissionResource())
+v1_api.register(DocumentReviewResource())
+v1_api.register(SourceObjectMapResource())
+
 
 urlpatterns = patterns('',
 

@@ -48,19 +48,11 @@ class v2Request(object):
         # Tells the API which models are avail for GET / POST / META requests #
         self.orm_mapping = {
             ## MIGRATE TO api/meta_data.py
-            'geo': {'orm_obj':RegionPolygon,
-                'permission_function':None},
-            'user_permission': {'orm_obj':User,
-                'permission_function':None},
             'group_permission': {'orm_obj':IndicatorPermission,
                 'permission_function':None},
             'group': {'orm_obj':Group,
                 'permission_function':None},
             'user': {'orm_obj':User,
-                'permission_function':None},
-            'region_permission': {'orm_obj':RegionPermission,
-                'permission_function':None},
-            'user_group': {'orm_obj':UserGroup,
                 'permission_function':None},
 
             ## MIGRATE TO ETL API ##

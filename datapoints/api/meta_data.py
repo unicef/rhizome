@@ -2,11 +2,12 @@ from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import Resource
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
-from source_data.models import Document
+from source_data.models import *
+
 import json
 
 
@@ -68,7 +69,43 @@ class DocumentResource(BaseModelResource):
 
     class Meta:
         queryset = Document.objects.all().values()
-        resource_name = 'document'
+        resource_name = 'source_doc'
+
+class GroupResource(BaseModelResource):
+
+    class Meta:
+        queryset = Group.objects.all().values()
+        resource_name = 'group'
+
+class UserGroupResource(BaseModelResource):
+
+    class Meta:
+        queryset = UserGroup.objects.all().values()
+        resource_name = 'user_group'
+
+class RegionPermissionResource(BaseModelResource):
+
+    class Meta:
+        queryset = RegionPermission.objects.all().values()
+        resource_name = 'region_permission'
+
+class GroupPermissionResource(BaseModelResource):
+
+    class Meta:
+        queryset = IndicatorPermission.objects.all().values()
+        resource_name = 'group_permission'
+
+class DocumentReviewResource(BaseModelResource):
+
+    class Meta:
+        queryset = IndicatorPermission.objects.all().values()
+        resource_name = 'document_review'
+
+class SourceObjectMapResource(BaseModelResource):
+
+    class Meta:
+        queryset = SourceObjectMap.objects.all().values()
+        resource_name = 'source_object_map'
 
 
 
