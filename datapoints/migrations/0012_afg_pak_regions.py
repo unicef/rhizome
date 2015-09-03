@@ -1190,14 +1190,14 @@ class Migration(migrations.Migration):
 
 
         -- PROVINCE --
-        INSERT INTO region (name, region_code, slug, office_id, parent_region_id, region_type_id, created_at)
+        INSERT INTO region (name, region_code, slug, office_id, region_type_id,parent_region_id, created_at)
         SELECT
         	region_name
         	,tr.region_code
         	,tr.region_slug
         	,o.id as office_id
-        	,parent_region_id
         	,rt.id as region_type_id
+            ,r.id as parent_region_id
         	,now() as created_at
         from _tmp_regions tr
         INNER JOIN office o
@@ -1210,14 +1210,14 @@ class Migration(migrations.Migration):
 
 
         -- DISTRICT --
-        INSERT INTO region (name, region_code, slug, office_id, parent_region_id, region_type_id, created_at)
+        INSERT INTO region (name, region_code, slug, office_id, region_type_id, parent_region_id, created_at)
         SELECT
         	region_name
         	,tr.region_code
         	,tr.region_slug
         	,o.id as office_id
-        	,parent_region_id
         	,rt.id as region_type_id
+            ,r.id as parent_region_id
         	,now() as created_at
         from _tmp_regions tr
         INNER JOIN office o
@@ -1231,14 +1231,14 @@ class Migration(migrations.Migration):
 
         -- SUB DISTRICT --
 
-        INSERT INTO region (name, region_code, slug, office_id, parent_region_id, region_type_id, created_at)
+        INSERT INTO region (name, region_code, slug, office_id, region_type_id, parent_region_id, created_at)
         SELECT
         	region_name
         	,tr.region_code
         	,tr.region_slug
         	,o.id as office_id
-        	,parent_region_id
         	,rt.id as region_type_id
+            ,r.id as parent_region_id
         	,now() as created_at
         from _tmp_regions tr
         INNER JOIN office o
@@ -1248,6 +1248,18 @@ class Migration(migrations.Migration):
         INNER JOIN region r
         ON tr.parent_region_code = r.region_code
         AND tr.region_type = 'sub-district';
+
+        -- INSERT MAPPINGS --
+
+        INSERT INTO source_object_map
+        (master_object_id, source_object_code, content_type, mapped_by_id)
+        SELECT r.id, region_code, 'region', 1
+        FROM region r
+        WHERE NOT EXISTS (
+        	SELECT 1 FROM source_object_map som
+        	WHERE r.region_code = som.source_object_code
+        	AND content_type = 'region'
+        );
 
         ''')
     ]
