@@ -101,18 +101,13 @@ class BaseModelResource(ModelResource):
         paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
         to_be_serialized = paginator.page()
 
-        print paginator
-        print dir(paginator)
-
         # Dehydrate the bundles in preparation for serialization.
         bundles = [obj for obj in to_be_serialized[self._meta.collection_name]]
         response_meta = {
             'limit':paginator.get_limit(),
             'offset':paginator.get_offset(),
             'total_count':len(objects),
-
         }
-
 
         response_data = {
             'objects': bundles,
