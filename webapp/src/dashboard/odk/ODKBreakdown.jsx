@@ -24,7 +24,22 @@ var ODKBreakdown = React.createClass({
     var data       = this.props.data;
 
     return <div>
-      <div> <h1> this will be a breakdown </h1> </div>
+        <div className='row'>
+          <div className='small-6 columns'>
+            <h3>VCM Summary</h3>
+          </div>
+          <div className='small-6 columns'>
+            <h3>Health Camps</h3>
+          </div>
+      </div>
+      <div className='row'>
+        <div className='small-6 columns'>
+          <h3>Birth Tracking</h3>
+        </div>
+        <div className='small-6 columns'>
+          <h3>Supportive Supervision</h3>
+        </div>
+    </div>
     </div>
   }
 });

@@ -31,28 +31,22 @@ var NCODashboard = React.createClass({
         <section>
           <div className='row'>
             <div className='small-6 columns'>
-              <h3>Overview for {this.props.region.name}</h3>
+              <h3>{this.props.region.name} - Overview</h3>
               <ODKOverview
                loading={loading}
                data={data}
               />
             </div>
             <div className='small-6 columns'>
-              <h3>Non Compliance for {this.props.region.name}</h3>
-              <ODKOverview
+              <h3>{this.props.region.name} - Non Compliance </h3>
+              <ODKMap
                loading={loading}
                data={data}
               />
             </div>
           </div>
         </section>
-
         <section>
-          <div className='row'>
-            <div className='small-12 columns'>
-              <h3>VCM Breakdown</h3>
-            </div>
-          </div>
           <ODKBreakdown data={data} loading={loading} />
         </section>
 
