@@ -31,7 +31,6 @@ function ChartFactory(type, el, data, options) {
 	if (!_.isFunction(CHARTS[type])) {
 		throw new Error(type + ' is not a valid chart type');
 	}
-
 	_.defaults(CHARTS[type].prototype, ChartFactory.prototype);
 
 	var chart = new CHARTS[type]();

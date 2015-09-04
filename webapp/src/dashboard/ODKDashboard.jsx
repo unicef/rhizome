@@ -3,8 +3,7 @@
 var _     = require('lodash');
 var React = require('react');
 
-var Overview  = require('dashboard/nco/Overview.jsx');
-var Breakdown = require('dashboard/nco/Breakdown.jsx');
+var Overview  = require('dashboard/odk/Overview.jsx');
 
 var NCODashboard = React.createClass({
   propTypes : {
@@ -23,6 +22,10 @@ var NCODashboard = React.createClass({
 
   render : function () {
     var data    = this.props.data;
+
+    console.log('======')
+    console.log(data)
+
     var loading = this.props.loading;
 
     return (
@@ -33,18 +36,7 @@ var NCODashboard = React.createClass({
               <h3>Overview for {this.props.region.name}</h3>
             </div>
           </div>
-
           <Overview data={data.overview} loading={loading} />
-        </section>
-
-        <section>
-          <div className='row'>
-            <div className='small-12 columns'>
-              <h3>Breakdown by Sub-Regions</h3>
-            </div>
-          </div>
-
-          <Breakdown data={data.breakdown} loading={loading} />
         </section>
       </div>
     );

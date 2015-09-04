@@ -99,8 +99,6 @@ var Dashboard = React.createClass({
     var doc_id        = this.state.doc_id;
     var doc_tab        = this.state.doc_tab;
 
-
-
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,
       _(_.get(dashboardDef, 'charts', []))
@@ -109,7 +107,6 @@ var Dashboard = React.createClass({
         .uniq()
         .value()
     );
-
 
     var data = dashboardInit(
       dashboardDef,
