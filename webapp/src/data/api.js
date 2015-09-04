@@ -110,7 +110,7 @@ function datapoint(q) {
         return d.campaign;
       });
 
-      endPoint('/campaign/', 'get', 2)({
+      endPoint('/campaign/', 'get', 1)({
         id__in: _.uniq(campaigns)
       }).then(function (campaignData) {
         var campaigns = _.indexBy(campaignData.objects, 'id');
@@ -194,7 +194,7 @@ function indicatorsTree(q) {
   });
 }
 function tagTree(q) {
-  var fetch = endPoint('/indicator_tag', 'get', 2);
+  var fetch = endPoint('/indicator_tag', 'get', 1);
   return new Promise(function (fulfill, reject) {
 
     fetch().then(function (tags) {

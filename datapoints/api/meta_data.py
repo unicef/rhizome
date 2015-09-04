@@ -13,127 +13,127 @@ import json
 
 class CampaignResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = CampaignAbstracted.objects.all().values()
         resource_name = 'campaign'
 
 class RegionResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = Region.objects.all().values()
         resource_name = 'region'
 
 class IndicatorResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = IndicatorAbstracted.objects.all().values()
         resource_name = 'indicator'
 
 class OfficeResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = Office.objects.all().values()
         resource_name = 'office'
 
 class CampaignTypeResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
         resource_name = 'campaign_type'
 
 class RegionTypeResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
         resource_name = 'region_type'
 
 class IndicatorTagResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values()
         resource_name = 'indicator_tag'
 
 class IndicatorToTagResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'
 
 class DashboardResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = CustomDashboard.objects.all().values()
         resource_name = 'custom_dashboard'
 
 class DocumentResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = Document.objects.all().values()
         resource_name = 'source_doc'
 
 class UserResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = User.objects.all().values()
         resource_name = 'user'
 
 class GroupResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = Group.objects.all().values()
         resource_name = 'group'
 
 class UserGroupResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = UserGroup.objects.all().values()
         resource_name = 'user_group'
 
 class RegionPermissionResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = RegionPermission.objects.all().values()
         resource_name = 'region_permission'
 
 class GroupPermissionResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'group_permission'
 
 class DocumentReviewResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'document_review'
 
 class SourceObjectMapResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = SourceObjectMap.objects.all().values()
         resource_name = 'source_object_map'
 
 class SourceSubmissionResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = SourceSubmission.objects.all().values()
         resource_name = 'source_submission'
 
 class DocumentDetailResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = DocumentDetail.objects.all().values()
         resource_name = 'document_detail'
 
 class DocDataPointResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = DocDataPoint.objects.all().values()
         resource_name = 'doc_datapoint'
 
 class ComputedDataPointResource(BaseModelResource):
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = DataPointComputed.objects.all().values()
         resource_name = 'computed_datapoint'
 

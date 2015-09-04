@@ -65,7 +65,7 @@ class BaseModelResource(ModelResource):
     the job of the API easy.
     '''
 
-    class Meta():
+    class Meta:
         authentication = CustomAuthentication()
         authorization = DjangoAuthorization()
         always_return_data = True
