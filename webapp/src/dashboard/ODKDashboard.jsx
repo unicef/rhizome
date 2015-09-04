@@ -25,6 +25,8 @@ var NCODashboard = React.createClass({
     var data    = this.props.data;
     var loading = this.props.loading;
 
+    console.log('THIS IS THE DATA')
+    console.log(data)
 
     return (
       <div id='nco-dashboard'>

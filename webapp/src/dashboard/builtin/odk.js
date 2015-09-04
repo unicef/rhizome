@@ -15,9 +15,11 @@ module.exports = {
     'timeRange': 0
 	},
 	{
-		'title': 'BREAKDOWN DATA',
+		'title': 'Missed Children',
 		'section': 'breakdown',
-		'indicators': [287],
-		'timeRange': 0
-	}]
+		'regions': 'subregions',
+		'timeRange': 0,
+		'indicators': [267,268,251,264]
+	},
+]
 };

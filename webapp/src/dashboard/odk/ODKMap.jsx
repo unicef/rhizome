@@ -25,15 +25,10 @@ var ODKMap = React.createClass({
 
     return <div>
     <div className='small-12 columns'>
-      <h4 style={{ textAlign : 'center' }}> test label </h4>
+      <h4 style={{ textAlign : 'center' }}> Non Compliance Map </h4>
     </div>
 
-    <div className='medium-6 push-3 end columns'>
-      <DonutChart
-        loading={loading}
-        data={data.nonCompliance}
-      />
-    </div>
+
 
     </div>
   }
