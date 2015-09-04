@@ -66,7 +66,7 @@ class MasterRefresh(object):
         x = mr(1,3)
         '''
 
-        BATCH_SIZE = 250
+        BATCH_SIZE = 2500
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id

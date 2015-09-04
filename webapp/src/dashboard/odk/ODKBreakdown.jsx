@@ -57,14 +57,32 @@ var ODKBreakdown = React.createClass({
           </div>
           <div className='small-6 columns'>
             <h3>Health Camps</h3>
+            <ToggleableStackedBar
+              title='Missed Children'
+              loading={loading}
+              options={options}
+              data={prep(data.missedChildren)}
+           />
           </div>
       </div>
       <div className='row'>
         <div className='small-6 columns'>
           <h3>Birth Tracking</h3>
+          <ToggleableStackedBar
+            title='Missed Children'
+            loading={loading}
+            options={options}
+            data={prep(data.missedChildren)}
+         />
         </div>
         <div className='small-6 columns'>
           <h3>Supportive Supervision</h3>
+          <ToggleableStackedBar
+            title='Missed Children'
+            loading={loading}
+            options={options}
+            data={prep(data.missedChildren)}
+         />
         </div>
     </div>
     </div>
