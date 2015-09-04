@@ -27,19 +27,22 @@ def process_geo_json_file(file_path):
 
     features = data['features']
     for feature in features:
-        region_result = process_region(feature)
-    # pprint(data.keys())
+        process_region(feature)
 
 def process_region(geo_json):
 
-    print '-'
-
     try:
-        print geo_json['properties']['ADM0_CODE']
         region_id = Region.objects.get(region_code = geo_json['properties']['ADM0_CODE'] ).id
-        print region_id
     except ObjectDoesNotExist:
-        print 'DOES NOT EXISTS'
+        print geo_json['properties']['ADM0_CODE'] + 'DOES NOT EXISTS'
+        return
+
+    rp = RegionPolygon.objects.create(
+        region_id = region_id,
+        geo_json = geo_json
+    )
+
+    print rp.id
 
 
 
