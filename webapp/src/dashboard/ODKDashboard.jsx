@@ -23,7 +23,7 @@ var NCODashboard = React.createClass({
   render : function () {
     var data    = this.props.data;
 
-    console.log('======')
+    console.log('===OPEN DATA KIT===')
     console.log(data)
 
     var loading = this.props.loading;
