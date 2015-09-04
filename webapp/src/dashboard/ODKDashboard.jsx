@@ -2,7 +2,7 @@
 
 var _     = require('lodash');
 var React = require('react');
-var DonutChart = require('component/DonutChart.jsx');
+var ODKOverview = require('dashboard/odk/ODKOverview.jsx');
 
 var NCODashboard = React.createClass({
   propTypes : {
@@ -21,36 +21,7 @@ var NCODashboard = React.createClass({
 
   render : function () {
     var data    = this.props.data;
-
-    console.log('===OPEN DATA KIT===')
-    console.log(data)
-
     var loading = this.props.loading;
-
-    var options = {
-      innerRadius : 0.6,
-      domain      : _.constant([0, 1]),
-      labelStyle  : {
-        lineHeight : 1
-      }
-    };
-    
-    // var label = ..
-
-    var caregiver_donut = <div className='row'>
-      <div className='small-12 columns'>
-        <h4 style={{ textAlign : 'center' }}>Caregiver Awareness</h4>
-      </div>
-
-      <div className='medium-6 push-3 end columns'>
-        <DonutChart
-          loading={loading}
-          data={data.caregiverAwareness}
-          options={options} />
-      </div>
-
-    </div>
-
 
 
     return (
@@ -59,12 +30,10 @@ var NCODashboard = React.createClass({
           <div className='row'>
             <div className='small-12 columns'>
               <h3>Overview for {this.props.region.name}</h3>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='medium-6 columns'>
-
-            {caregiver_donut}
+              <ODKOverview
+               loading={loading}
+               data={data}
+              />
             </div>
           </div>
         </section>
