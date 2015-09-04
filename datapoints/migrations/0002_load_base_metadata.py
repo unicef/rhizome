@@ -74,9 +74,9 @@ class Migration(migrations.Migration):
             ,rt.id as region_type_id
             ,NOW()
         FROM (
-            SELECT 'Nigeria' as region_name, 'NGA' as region_code UNION ALL
-            SELECT 'Afghanistan', 'AFG' UNION ALL
-            SELECT 'Pakistan', 'PAK'
+            SELECT 'Nigeria' as region_name, 'NG001000000000000000' as region_code UNION ALL
+            SELECT 'Afghanistan', 'AF001000000000000000' UNION ALL
+            SELECT 'Pakistan', 'PK001000000000000000'
         )x
         INNER JOIN office o
         ON o.name = x.region_name

@@ -35,6 +35,7 @@ def process_region(geo_json):
     print '-'
 
     try:
+        print geo_json['properties']['ADM0_CODE']
         region_id = Region.objects.get(region_code = geo_json['properties']['ADM0_CODE'] ).id
         print region_id
     except ObjectDoesNotExist:
@@ -45,6 +46,7 @@ def process_region(geo_json):
 class Migration(migrations.Migration):
 
     dependencies = [
+    # DELETE FROM django_migrations WHERE name = '0013_ingest_geojson';
         ('datapoints', '0012_afg_pak_regions'),
     ]
 
