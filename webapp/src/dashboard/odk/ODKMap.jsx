@@ -24,7 +24,17 @@ var ODKMap = React.createClass({
     var data       = this.props.data;
 
     return <div>
-      <div> <h1> this will be a map </h1> </div>
+    <div className='small-12 columns'>
+      <h4 style={{ textAlign : 'center' }}> test label </h4>
+    </div>
+
+    <div className='medium-6 push-3 end columns'>
+      <DonutChart
+        loading={loading}
+        data={data.nonCompliance}
+      />
+    </div>
+
     </div>
   }
 });

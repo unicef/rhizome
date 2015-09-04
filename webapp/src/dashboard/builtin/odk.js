@@ -8,5 +8,16 @@ module.exports = {
 		'section': 'overview',
 		'indicators': [276],
     'timeRange': 0
+	},{
+		'title': 'Non Compliance',
+		'section': 'map',
+		'indicators': [289],
+    'timeRange': 0
+	},
+	{
+		'title': 'BREAKDOWN DATA',
+		'section': 'breakdown',
+		'indicators': [287],
+		'timeRange': 0
 	}]
 };
