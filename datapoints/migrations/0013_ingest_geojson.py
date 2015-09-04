@@ -14,7 +14,6 @@ def ingest_geo(apps, schema_editor):
     GEO_JSON_DIR = '/Users/john/data/geo'
 
     for x in range(0,3):
-        print x
         process_geo_level(x,GEO_JSON_DIR)
 
 def process_geo_level(lvl,data_dir):
@@ -27,8 +26,6 @@ def process_geo_level(lvl,data_dir):
                     (os.path.join(root, name)),lvl)
 
 def process_geo_json_file(file_path,lvl):
-
-    print '==%s==' % file_path
 
     with open(file_path) as data_file:
         data = json.load(data_file)
@@ -44,17 +41,12 @@ def process_region(geo_json, lvl):
     try:
         region_id = Region.objects.get(region_code = region_code).id
     except ObjectDoesNotExist:
-        print geo_json['properties']['ADM0_CODE'] + 'DOES NOT EXISTS'
         return
 
     rp = RegionPolygon.objects.create(
         region_id = region_id,
         geo_json = geo_json
     )
-
-    print rp.id
-
-
 
 class Migration(migrations.Migration):
 
