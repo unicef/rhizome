@@ -23,6 +23,18 @@ class Migration(migrations.Migration):
 
     migrations.RunSQL("""
 
+        -- INITIAL DOCUMENT --
+
+        INSERT INTO source_data_document
+        (created_by_id,docfile,guid,doc_title,created_at)
+        SELECT id,'initialize-db','initialize-db','initialize-db',NOW()
+        FROM auth_user
+        WHERE NOT EXISTS (
+            SELECT 1 FROM source_data_document sdd
+            WHERE guid = 'initialize-db'
+        )
+        LIMIT 1;
+
         --  DOCUMENT DETAIL  --
 
         INSERT INTO document_detail_type

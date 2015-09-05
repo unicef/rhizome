@@ -33,8 +33,6 @@ class MasterRefresh(object):
 
         }
 
-        print self.document_metadata
-
         dmd_qs = DocumentDetail.objects.raw('''
             SELECT
                 dd.id
