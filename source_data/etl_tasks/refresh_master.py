@@ -60,8 +60,8 @@ class MasterRefresh(object):
 
     def main(self):
         '''
-from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-x = mr(1,3)
+        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+        x = mr(1,2)
         '''
 
         BATCH_SIZE = 5000

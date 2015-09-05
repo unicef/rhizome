@@ -32,14 +32,14 @@ var NCODashboard = React.createClass({
       <div id='nco-dashboard'>
         <section>
           <div className='row'>
-            <div className='small-6 columns'>
+            <div className='small-7 columns'>
               <h3>{this.props.region.name} - Overview</h3>
               <ODKOverview
                loading={loading}
                data={data.overview}
               />
             </div>
-            <div className='small-6 columns'>
+            <div className='small-5 columns'>
               <h3>{this.props.region.name} - Non Compliance </h3>
               <ODKMap
                loading={loading}

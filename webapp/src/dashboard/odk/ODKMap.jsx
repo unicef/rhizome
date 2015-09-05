@@ -25,8 +25,8 @@ var ODKMap = React.createClass({
 
     var missedChildrenMap = data.nonCompliance;
 
-    return <div>
-        <h4>Missed Children</h4>
+    return <div className='row'>
+        <h4> Missed Children</h4>
         <Chart type='ChoroplethMap'
           data={missedChildrenMap}
           loading={loading}
@@ -35,7 +35,7 @@ var ODKMap = React.createClass({
             value   : _.property('properties[475]'),
             yFormat : d3.format('%'),
           }} />
-  </div>
+        </div>
   }
 });
 
