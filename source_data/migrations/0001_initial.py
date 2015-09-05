@@ -131,12 +131,8 @@ class Migration(migrations.Migration):
             name='SourceSubmissionDetail',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('username_code', models.CharField(max_length=1000)),
-                ('campaign_code', models.CharField(max_length=1000)),
-                ('region_code', models.CharField(max_length=1000)),
-                ('region_display', models.CharField(max_length=1000)),
+                ('submission_username', models.CharField(max_length=1000)),
                 ('img_location', models.CharField(max_length=1000)),
-                ('raw_data_proxy', models.CharField(max_length=1)),
                 ('document', models.ForeignKey(to='source_data.Document')),
                 ('source_submission', models.OneToOneField(to='source_data.SourceSubmission')),
             ],

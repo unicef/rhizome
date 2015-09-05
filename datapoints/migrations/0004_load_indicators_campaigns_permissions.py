@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0003_load_regions'),
+        ('datapoints', '0003_load_ng_regions'),
     ]
 
     operations = [
