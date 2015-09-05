@@ -4,7 +4,7 @@ import os
 import json
 from pprint import pprint
 
-from django.db import models, migrations
+from django.db import models, migrations, IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from datapoints.models import Region, RegionPolygon
@@ -14,6 +14,7 @@ def ingest_geo(apps, schema_editor):
     GEO_JSON_DIR = '/Users/john/data/geo'
 
     for x in range(0,3):
+        print '===== PROCESSING LEVEL %s ===  ' % x
         process_geo_level(x,GEO_JSON_DIR)
 
 def process_geo_level(lvl,data_dir):
@@ -27,6 +28,8 @@ def process_geo_level(lvl,data_dir):
 
 def process_geo_json_file(file_path,lvl):
 
+    print '===== PROCESSING FILE %s ===  ' % file_path
+
     with open(file_path) as data_file:
         data = json.load(data_file)
 
@@ -36,17 +39,36 @@ def process_geo_json_file(file_path,lvl):
 
 def process_region(geo_json, lvl):
 
-    region_code = geo_json['properties']['ADM%s_CODE' %  lvl]
+    full_region_code = geo_json['properties']['ADM%s_CODE' %  lvl]
+
+    NG_PREFIX = 'NG0010'
+    RHIZOME_REGION_CODE_LEN = lvl * 2
+
+    if full_region_code.startswith(NG_PREFIX):
+        trimmed = full_region_code.replace(NG_PREFIX,'')
+        region_code = trimmed[:RHIZOME_REGION_CODE_LEN]
+
+    else:
+        region_code = full_region_code
 
     try:
         region_id = Region.objects.get(region_code = region_code).id
     except ObjectDoesNotExist:
+        print 'region_code %s DOES NOT EXISTS ' % region_code
         return
 
-    rp = RegionPolygon.objects.create(
+    rp, created = RegionPolygon.objects.get_or_create(
         region_id = region_id,
-        geo_json = geo_json
+        defaults = {'geo_json': geo_json}
     )
+
+    if not created:
+
+        print  geo_json['properties']['ADM%s_CODE' %  lvl]
+        print RHIZOME_REGION_CODE_LEN
+        print region_code
+        print ' is a dupe '
+
 
 class Migration(migrations.Migration):
 
