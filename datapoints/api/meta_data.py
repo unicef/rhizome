@@ -171,16 +171,16 @@ class RegionPolygonResource(BaseNonModelResource):
         ugly data munging to convert the results from the DB into geojson
         '''
 
-        self.err = None
-        err, regions_to_return = self.get_regions_to_return_from_url(request)
-        ## since this is not a model resource i will filter explicitly #
+        try:
+            region_id_list = list(Region.objects.filter(parent_region_id=\
+                request.GET['parent_region']).values_list('id',flat=True))
+        except KeyError:
 
-        if err:
-            self.err = err
-            return []
+            region_id_list =[12341321]##list(request.GET['region__in'])
+            # region_id_list = list(request.GET['region__in'])
 
         polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
-            regions_to_return).values()
+            region_id_list).values()
 
         features = []
 
@@ -220,7 +220,7 @@ class RegionPolygonResource(BaseNonModelResource):
         ## get rid of the meta_dict. i will add my own meta data.
         data['type'] = "FeatureCollection"
         data['features'] = data['objects']
-        data['error'] = self.err
+        data['error'] = None # FIXME
 
         data.pop("objects",None)
         data.pop("meta",None)
