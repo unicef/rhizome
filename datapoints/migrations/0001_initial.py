@@ -83,6 +83,8 @@ class Migration(migrations.Migration):
             name='CampaignAbstracted',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('office_id', models.IntegerField()),
+                ('campaign_type_id', models.IntegerField()),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
                 ('slug', autoslug.fields.AutoSlugField(populate_from=b'get_full_name', unique=True, editable=False)),
@@ -466,16 +468,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='campaignabstracted',
-            name='campaign_type',
-            field=models.ForeignKey(to='datapoints.CampaignType'),
-        ),
-        migrations.AddField(
-            model_name='campaignabstracted',
-            name='office',
-            field=models.ForeignKey(to='datapoints.Office'),
-        ),
-        migrations.AddField(
             model_name='campaign',
             name='campaign_type',
             field=models.ForeignKey(to='datapoints.CampaignType'),
@@ -548,10 +540,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='datapoint',
             unique_together=set([('indicator', 'region', 'campaign')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='campaignabstracted',
-            unique_together=set([('office', 'start_date')]),
         ),
         migrations.AlterUniqueTogether(
             name='campaign',
