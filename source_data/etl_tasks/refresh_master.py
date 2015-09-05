@@ -62,11 +62,11 @@ class MasterRefresh(object):
 
     def main(self):
         '''
-        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-        x = mr(1,3)
+from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+x = mr(1,3)
         '''
 
-        BATCH_SIZE = 2500
+        BATCH_SIZE = 5000
 
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id
