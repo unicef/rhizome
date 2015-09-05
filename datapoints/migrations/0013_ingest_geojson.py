@@ -20,11 +20,13 @@ def process_geo_level(lvl,data_dir):
     for root, dirs, files in os.walk(data_dir, topdown=False):
         for name in files:
 
-            if name.endswith('adm%s.geojson' % lvl):
+            if name.endswith('adm%s.geojson' % lvl) and name.startswith('nga'):
                 file_results = process_geo_json_file(\
                     (os.path.join(root, name)),lvl)
 
 def process_geo_json_file(file_path,lvl):
+
+    print '\n PROCESSING: %s'  % file_path
 
     with open(file_path) as data_file:
         data = json.load(data_file)
@@ -35,17 +37,30 @@ def process_geo_json_file(file_path,lvl):
 
 def process_region(geo_json, lvl):
 
+    # NG001034001000000000 # binji
+    # NG001034001000000000 # binji
+    # NG001034010000000000 # binji ( Inside Monitoring Code )
+
     region_code = geo_json['properties']['ADM%s_CODE' %  lvl]
+    region_name = geo_json['properties']['ADM%s_NAME' %  lvl]
 
-    try:
-        region_id = Region.objects.get(region_code = region_code).id
-    except ObjectDoesNotExist:
-        return
 
-    rp, created = RegionPolygon.objects.get_or_create(
-        region_id = region_id,
-        defaults = {'geo_json': geo_json}
-    )
+    if region_code.startswith('NG001034'):
+
+        print region_code
+
+        try:
+            region_id = Region.objects.get(region_code = region_code).id
+            print 'FOUND IT: %s ' %  Region.objects.get(region_code = region_code).name
+            print 'is apparently...%s in the json files :) ' % region_name
+        except ObjectDoesNotExist:
+            print ' ===== CAN NOT FIND %s' % region_name
+            return
+
+        rp, created = RegionPolygon.objects.get_or_create(
+            region_id = region_id,
+            defaults = {'geo_json': geo_json}
+        )
 
 class Migration(migrations.Migration):
 
