@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('datapoints', '0001_initial'),
         ('datapoints', '0002_load_base_metadata'),
-        ('datapoints', '0003_load_ng_regions'),
+        ('datapoints', '0003_load_regions'),
         ('datapoints', '0004_load_indicators_campaigns_permissions'),
         ('datapoints', '0005_cache_and_cleanup_metadata'),
     ]

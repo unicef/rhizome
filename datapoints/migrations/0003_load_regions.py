@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
     # DELETE FROM django_migrations WHERE name = '0013_ingest_geojson';
-        ('datapoints', 'load_base_metadata'),
+        ('datapoints', '0002_load_base_metadata'),
     ]
 
     operations = [
