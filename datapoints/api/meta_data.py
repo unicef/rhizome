@@ -110,7 +110,9 @@ class DocumentReviewResource(BaseModelResource):
 class SourceObjectMapResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = SourceObjectMap.objects.all().values()
+
+        som_ids = DocumentSourceObjectMap.objects.filter(document_id=4)
+        queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
         resource_name = 'source_object_map'
 
 class SourceSubmissionResource(BaseModelResource):

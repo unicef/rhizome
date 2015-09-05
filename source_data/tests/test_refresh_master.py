@@ -57,7 +57,7 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        dt = DocTransform(self.document.id)
+        dt = DocTransform(self.user_id, self.document.id)
         self.self. = dt.process_file()
 
         test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')

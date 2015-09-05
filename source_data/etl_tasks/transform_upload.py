@@ -13,9 +13,10 @@ from datapoints.models import DataPoint
 
 class DocTransform(object):
 
-    def __init__(self,document_id,file_path=None):
+    def __init__(self,user_id,document_id,file_path=None):
 
         self.source_datapoints = []
+        self.user_id = user_id
         self.document_id = document_id
 
         ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
@@ -97,13 +98,14 @@ class DocTransform(object):
         Returns a list of source submisison objects
         '''
 
+        print 'PROCESSINGGGGG=====\n' * 5
+
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.pre_process_file(full_file_path)
 
         batch = {}
         for i,(submission) in enumerate(file_stream):
 
-            print i
             ss, instance_guid = self.process_source_submission(submission,i)
             if ss is not None:
                 batch[instance_guid] = ss
@@ -113,9 +115,61 @@ class DocTransform(object):
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
 
-        to_return = self.post_process_file()
+        doc_deets = self.post_process_file()
+        mappings = self.upsert_source_object_map()
 
         return ss
+
+    def upsert_source_object_map(self):
+        '''
+        TODO: save the source_strings so i dont have to iterate through
+        the source_submission json.
+
+        endpoint: api/v2/doc_mapping/?document=66
+        '''
+
+        source_dp_json = SourceSubmission.objects.filter(
+            document_id = self.document_id).values_list('submission_json')
+
+        if len(source_dp_json) == 0:
+            return
+
+        all_codes = [('indicator',k) for k,v in json.loads(source_dp_json[0][0]).iteritems()]
+        rg_codes, cp_codes = [],[]
+
+        for row in source_dp_json:
+            row_dict = json.loads(row[0])
+            rg_codes.append(row_dict[self.doc_deets['region_column']])
+            cp_codes.append(row_dict[self.doc_deets['campaign_column']])
+
+        for r in list(set(rg_codes)):
+            all_codes.append(('region',r))
+
+        for c in list(set(cp_codes)):
+            all_codes.append(('campaign',c))
+
+        for content_type, source_object_code in all_codes:
+            self.source_submission_meta_upsert(content_type, source_object_code)
+
+    def source_submission_meta_upsert(self, content_type, source_object_code):
+        '''
+        Create new metadata if not exists
+        Add a record tying this document to the newly inserted metadata
+        '''
+
+        sm_obj, created = SourceObjectMap.objects.get_or_create(\
+            content_type = content_type\
+           ,source_object_code = source_object_code\
+           ,defaults = {
+            'master_object_id':-1,
+            'mapped_by_id':self.user_id
+            })
+
+        sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
+            (document_id = self.document_id,source_object_map_id = sm_obj.id)
+
+        return sm_obj.id
+
 
     def process_source_submission(self, submission, i):
 

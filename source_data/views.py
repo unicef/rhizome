@@ -67,7 +67,7 @@ def process_file(request,document_id):
             }
         )
 
-    dt = DocTransform(document_id)
+    dt = DocTransform(request.user.id, document_id)
     source_submissions = dt.process_file()
 
     return_url = '/datapoints/source-data/Nigeria/2015/06/viewraw/%s' % \
