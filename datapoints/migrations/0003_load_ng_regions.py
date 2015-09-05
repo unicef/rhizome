@@ -3101,7 +3101,7 @@ class Migration(migrations.Migration):
 
 
 	UPDATE _tmp_ng_regions
-	SET who_region_code = 'NG0010' || who_region_code || '000000000000'
+	SET who_region_code = 'NG0010' || unicef_region_code || '000000000000'
 	WHERE region_type = 'Province';
 	-- MISMATCHES: bauchi, borno
 
@@ -3149,8 +3149,8 @@ class Migration(migrations.Migration):
         (name,region_code,slug,office_id,region_type_id,parent_region_id,created_at)
         SELECT
             tng.region_name
-            ,tng.region_code
-            ,tng.region_code
+            ,tng.who_region_code
+            ,tng.who_region_code
             ,o.id
             ,rt.id
             ,pr.id
@@ -3161,8 +3161,11 @@ class Migration(migrations.Migration):
         INNER JOIN region_type rt
             ON tng.region_type = rt.name
             AND tng.region_type = 'District'
+    	INNER JOIN _tmp_ng_regions prt
+    	    ON LEFT(CAST(tng.unicef_region_code AS VARCHAR),2) = CAST(prt.unicef_region_code AS VARCHAR)
         INNER JOIN region pr
-	    ON LEFT(CAST(tng.region_code AS VARCHAR),2) = CAST(pr.region_code AS VARCHAR);
+	        ON prt.who_region_code = pr.region_code;
+
 
         INSERT INTO region
         (name,region_code,slug,office_id,region_type_id,parent_region_id,created_at)
@@ -3181,23 +3184,24 @@ class Migration(migrations.Migration):
             ON tng.region_type = rt.name
             AND tng.region_type = 'Sub-District'
 	INNER JOIN _tmp_ng_regions prt
-	    ON LEFT(CAST(tng.unicef_region_code AS VARCHAR),4) = CAST(prt.unicef_region_code AS VARCHAR);
+	    ON LEFT(CAST(tng.unicef_region_code AS VARCHAR),4) = CAST(prt.unicef_region_code AS VARCHAR)
         INNER JOIN region pr
-	    ON prt.who_region_code = pr.region_code
+	    ON prt.who_region_code = pr.region_code;
 
 	INSERT INTO source_object_map
 	(source_object_code,master_object_id,content_type,mapped_by_id)
 
-	SELECT * FROM (
-		SELECT region_code, r.id, 'region' ,x.id FROM region r  UNION ALL
+	SELECT region_code, x.id, 'region', y.id
+    FROM (
+		SELECT region_code, r.id FROM region r  UNION ALL
 
-		SELECT unicef_region_code, r.id, 'region' ,x.id
+		SELECT unicef_region_code, r.id
 		FROM region r
-		INNER JOIN _tmp_ng_regions t
-		ON r.region_code = t.who_region_code
+    		INNER JOIN _tmp_ng_regions t
+    		ON r.region_code = t.who_region_code
 	) x
 	INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) y
-	ON 1=1
+	ON 1=1;
 
 	INSERT INTO document_to_source_object_map
 	(document_id,source_object_map_id)
@@ -3206,7 +3210,5 @@ class Migration(migrations.Migration):
 	INNER JOIN source_object_map som
 	ON som.content_type = 'region'
 	AND sd.docfile = 'initialize-db';
-
-
     """)
     ]
