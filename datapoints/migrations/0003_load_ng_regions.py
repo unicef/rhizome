@@ -3143,7 +3143,8 @@ class Migration(migrations.Migration):
             ON tng.region_type = rt.name
             AND tng.region_type = 'District'
         INNER JOIN region pr
-            ON LEFT(CAST(tng.region_code AS VARCHAR),2) = CAST(pr.region_code AS VARCHAR);
+    	    ON SUBSTRING(pr.region_code from 7 for 2) = SUBSTRING(tng.region_code from 7 for 2);
+
 
         INSERT INTO region
         (name,region_code,slug,office_id,region_type_id,parent_region_id,created_at)
@@ -3162,14 +3163,23 @@ class Migration(migrations.Migration):
             ON tng.region_type = rt.name
             AND tng.region_type = 'Sub-District'
         INNER JOIN region pr
-            ON LEFT(CAST(tng.region_code AS VARCHAR),4) = CAST(pr.region_code AS VARCHAR);
+    	    ON SUBSTRING(pr.region_code from 7 for 4) = SUBSTRING(tng.region_code from 7 for 4);
 
 	INSERT INTO source_object_map
 	(source_object_code,master_object_id,content_type,mapped_by_id)
 
 	SELECT region_code, r.id, 'region' ,x.id FROM region r
     INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) x
-    ON 1=1;
+    ON 1=1
+
+    UNION ALL
+
+    SELECT SUBSTRING(region_code from 7 for 6), r.id, 'region' ,x.id
+    FROM region r
+    INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) x
+    ON 1=1
+    INNER JOIN region_type rt on r.region_type_id = rt.id AND rt.name = 'Sub-District';
+    
 
     INSERT INTO document_to_source_object_map
     (document_id,source_object_map_id)
