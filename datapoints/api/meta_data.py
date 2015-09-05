@@ -107,14 +107,6 @@ class DocumentReviewResource(BaseModelResource):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'document_review'
 
-class SourceObjectMapResource(BaseModelResource):
-
-    class Meta(BaseModelResource.Meta):
-
-        som_ids = DocumentSourceObjectMap.objects.filter(document_id=4)
-        queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
-        resource_name = 'source_object_map'
-
 class SourceSubmissionResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
@@ -138,6 +130,19 @@ class ComputedDataPointResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = DataPointComputed.objects.all().values()
         resource_name = 'computed_datapoint'
+
+class SourceObjectMapResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        som_ids = DocumentSourceObjectMap.objects.filter(document_id=request.GET['document_id'])
+        queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
+
+        return queryset
+
+    class Meta(BaseModelResource.Meta):
+
+        resource_name = 'source_object_map'
 
 
 ## Result Objects for geo Resources ##
