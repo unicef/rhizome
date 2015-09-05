@@ -109,7 +109,7 @@ module.exports = {
 			];
 
 			var datapoints = api.datapoints({
-				parent_region__in : this.region.id,
+				parent_region : this.region.id,
 				level             : 'district',
 				indicator__in     : indicators,
 				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),

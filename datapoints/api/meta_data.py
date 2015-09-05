@@ -175,9 +175,8 @@ class RegionPolygonResource(BaseNonModelResource):
             region_id_list = list(Region.objects.filter(parent_region_id=\
                 request.GET['parent_region']).values_list('id',flat=True))
         except KeyError:
-
-            region_id_list =[12341321]##list(request.GET['region__in'])
-            # region_id_list = list(request.GET['region__in'])
+            # region_id_list =[12341321]##list(request.GET['region__in'])
+            region_id_list = list(request.GET['region__in'])
 
         polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
             region_id_list).values()
