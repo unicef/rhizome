@@ -12,9 +12,7 @@ def readSQLFromFile(filename):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('source_data', '0001_initial'),
-        ('source_data', '0002_auto_20150828_1152')
-    ]
+        ('source_data', '0001_initial'),    ]
 
     operations = [
         migrations.RunSQL(readSQLFromFile('functions/fn_upsert_source_dps.sql'))

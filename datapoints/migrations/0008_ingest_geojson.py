@@ -45,28 +45,23 @@ def process_region(geo_json, lvl):
     region_name = geo_json['properties']['ADM%s_NAME' %  lvl]
 
 
-    if region_code.startswith('NG001034'):
+    try:
+        region_id = Region.objects.get(region_code = region_code).id
+        print 'FOUND IT: %s ' %  Region.objects.get(region_code = region_code).name
+    except ObjectDoesNotExist:
+        print ' ===== CAN NOT FIND %s' % region_name
+        return
 
-        print region_code
-
-        try:
-            region_id = Region.objects.get(region_code = region_code).id
-            print 'FOUND IT: %s ' %  Region.objects.get(region_code = region_code).name
-            print 'is apparently...%s in the json files :) ' % region_name
-        except ObjectDoesNotExist:
-            print ' ===== CAN NOT FIND %s' % region_name
-            return
-
-        rp, created = RegionPolygon.objects.get_or_create(
-            region_id = region_id,
-            defaults = {'geo_json': geo_json}
-        )
+    rp, created = RegionPolygon.objects.get_or_create(
+        region_id = region_id,
+        defaults = {'geo_json': geo_json}
+    )
 
 class Migration(migrations.Migration):
 
     dependencies = [
     # DELETE FROM django_migrations WHERE name = '0013_ingest_geojson';
-        ('datapoints', '0012_afg_pak_regions'),
+        ('datapoints', '0007_afg_pak_regions'),
     ]
 
     operations = [
