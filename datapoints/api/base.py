@@ -11,7 +11,6 @@ except ImportError:
     def csrf_exempt(func):
         return func
 
-
 from datapoints.models import RegionType,Region,RegionPermission
 
 class CustomAuthentication(Authentication):
@@ -96,16 +95,16 @@ class BaseModelResource(ModelResource):
 
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
-        sorted_objects = self.apply_sorting(objects, options=request.GET)
+        # sorted_objects = self.apply_sorting(objects, options=request.GET)
 
-        paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
-        to_be_serialized = paginator.page()
+        # paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
+        # to_be_serialized = paginator.page()
 
         # Dehydrate the bundles in preparation for serialization.
-        bundles = [obj for obj in to_be_serialized[self._meta.collection_name]]
+        bundles = [obj for obj in objects]#[self._meta.collection_name]]
         response_meta = {
-            'limit':paginator.get_limit(),
-            'offset':paginator.get_offset(),
+            'limit':None, ## paginator.get_limit(),
+            'offset': None, ## paginator.get_offset(),
             'total_count':len(objects),
         }
 
