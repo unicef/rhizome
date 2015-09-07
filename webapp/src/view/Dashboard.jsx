@@ -55,6 +55,7 @@ var Dashboard = React.createClass({
     page('/datapoints/:dashboard/:year/:month/:region_id/:doc_tab/:doc_id', this._showSourceData);
     page('/datapoints/:dashboard/:year/:month/:region_id', this._show);
     page('/datapoints/:dashboard', this._showDefault);
+    AppActions.init()
   },
 
   componentWillUpdate : function (nextProps, nextState) {
@@ -102,14 +103,16 @@ var Dashboard = React.createClass({
     var doc_id        = this.state.doc_id;
     var doc_tab        = this.state.doc_tab;
 
-    var indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
-        .pluck('indicators')
-        .flatten()
-        .uniq()
-        .value()
-    );
+    var indicatorIds = _(_.get(dashboardDef, 'charts', []))
+      .pluck('indicators')
+      .flatten()
+      .uniq()
+      .value()
+
+    // var indicators = IndicatorStore.getById(apply(indicatorIds);
+    var indicators = []
+    console.log('== INDICATORS ===')
+    console.log(indicators)
 
     var data = dashboardInit(
       dashboardDef,
@@ -120,6 +123,10 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
+
+    console.log('== DATA ===')
+    console.log(data)
+    console.log('===')
 
     var dashboardProps = {
       campaign   : campaign,

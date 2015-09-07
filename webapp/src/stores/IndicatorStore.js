@@ -22,16 +22,19 @@ var IndicatorStore = Reflux.createStore({
 	onInit : function () {
 		api.indicators().then(function (response) {
 			var indicators = response.objects;
-
 			this.indicators = _.indexBy(indicators, 'id');
-
 			this.trigger({ indicators : indicators });
+
 		}.bind(this));
 	},
 
-	getById : function (/* ids */) {
+	getById : function () {
+		console.log('==get indicator by id ===')
+		console.log('==get indicator by id ===')
 		return _(arguments)
 			.map(function (id) {
+				// console.log(id)
+				// console.log('==id==')
 				return this.indicators[id];
 			}.bind(this))
 			.filter()
