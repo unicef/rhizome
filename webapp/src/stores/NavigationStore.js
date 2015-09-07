@@ -67,6 +67,7 @@ var NavigationStore = Reflux.createStore({
 			.map(function (d) {
 				var availableRegions = regions;
 
+
 				// Filter regions by default office, if one is specified
 				if (_.isFinite(d.default_office)) {
 					availableRegions = availableRegions.filter(function (r) { return r.office_id == d.default_office; });
@@ -171,33 +172,36 @@ var NavigationStore = Reflux.createStore({
 
   getDashboard : function (slug, region_id) {
 
-		// api.regions({parent_region_id: region_id})
-		// .then(response => this.setState({
-		// 			regions: response.objects,
-		// 			region_tree: response.meta.region_tree
-		// 		}));
+		console.log(' - getting dashboard - ')
+		console.log(region_id)
 
-		var this_obj = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
-		// var this_region = _.find(this.regions, d => r.id === region_id);
+		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+		var region_promise = api.regions({parent_region_id: 999})
 
-		var this_region = {
-				id: 1,
-				name: 'Nigeria',
-				parent_region_id: null,
-		}
+		var regions   = _(region_promise.objects).map(function(d) {
+				return d;
+			}).value();
 
-		this_obj.region = this_region
+		// this.documents = _(documents.objects)
 
-		// console.log(this.dashboards)
-		// console.log('==villalobos==')
-		// console.log(this_region)
-		// console.log('===MOONEAR===')
-		// console.log(this_obj)
+		// var x = Promise.all([regions]).then(function (data) {
+		// 	_.each(data.objects, function (region) {
+		// 		region.foo = 'bar'
+		// 	});
+		// 	return data;
+		// });
 
-		return this_obj
+		// dashboard.region = _.find(regions, d => d.id === region_id);
+		dashboard.regions = [{
+				'id': 1,
+				'name': 'Nigeria',
+				'parent_region_id': null
+		}]
+		console.log(regions)
+		console.log('== almost afterhours ==')
 
+		return dashboard
   }
-
 });
 
 module.exports = NavigationStore;

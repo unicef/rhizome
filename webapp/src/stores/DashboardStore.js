@@ -58,12 +58,8 @@ var DashboardStore = Reflux.createStore({
 	},
 
 	onSetDashboard : function (definition) {
-
-		console.log('this is the set dashboard method')
-		console.log(definition)
-
 		var dashboard  = this.dashboard = definition.dashboard;
-		var region  	 = dashboard.region;
+		var region  	 = dashboard.regions[0];
 		this.date      = definition.date || this.date;
 
 		if (!this.loaded) {

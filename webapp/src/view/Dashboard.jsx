@@ -91,9 +91,6 @@ var Dashboard = React.createClass({
     }
 
     var region = this.state.region;
-    console.log('---->logging region in DASHBOARD RENDER ')
-    console.log(region)
-
 
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
@@ -142,6 +139,9 @@ var Dashboard = React.createClass({
       .reverse()
       .value();
 
+    var regions = _(this.state.regions)
+      .filter(r => r.office_id === 1)
+      .value();
 
     var dashboardItems = MenuItem.fromArray(
       _.map(NavigationStore.dashboards, d => {
@@ -178,6 +178,10 @@ var Dashboard = React.createClass({
                   campaigns={campaigns}
                   selected={campaign}
                   sendValue={this._setCampaign} />
+                <RegionTitleMenu
+                  regions={regions}
+                  selected={region}
+                  sendValue={this._setRegion} />
                 &emsp;
               </h1>
             </div>
