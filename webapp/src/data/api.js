@@ -226,7 +226,6 @@ module.exports = {
   datapointsRaw: endPoint('/datapointentry/','get', 1),
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
-  region_type: endPoint('/region_type/', 'get', 1),
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),

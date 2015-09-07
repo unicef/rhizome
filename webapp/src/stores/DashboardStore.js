@@ -16,16 +16,15 @@ var DashboardStore = Reflux.createStore({
 		this.loaded = false;
 		this.indicators = {};
 
-		Promise.all([api.regions({parent_region_id: 1}), api.region_type(), api.campaign()])
+		Promise.all([api.regions({parent_region_id: 1}), api.campaign()])
 			.then(function (responses) {
-        var types     = _.indexBy(responses[1].objects, 'id');
         var regionIdx = _.indexBy(responses[0].objects, 'id');
 
 				this.regions    = responses[0].objects;
-				this.campaigns  = responses[2].objects;
+				this.campaigns  = responses[1].objects;
 
         _.each(this.regions, function (r) {
-          r.region_type = _.get(types[r.region_type_id], 'name');
+          r.region_type = regionIdx[r.region_type_id];
           r.parent = regionIdx[r.parent_region_id];
         });
 
@@ -60,6 +59,10 @@ var DashboardStore = Reflux.createStore({
 	onSetDashboard : function (definition) {
 		var dashboard  = this.dashboard = definition.dashboard;
 		var region  	 = dashboard.regions[0];
+		// var region = _.find(regions, function (r) {
+		// 		return r.id === this.region_id;
+		// 	}.bind(this));
+
 		this.date      = definition.date || this.date;
 
 		if (!this.loaded) {
@@ -79,26 +82,9 @@ var DashboardStore = Reflux.createStore({
 			})
 			.sortBy('name');
 
-		// var region = _.find(regions, function (r) {
-		// 		return r.id === this.region_id;
-		// 	}.bind(this));
-
-
-		// FOR HANDLIGN DEFAULT REGIONS //
-
-		// if (_.isFinite(dashboard.default_office_id) && _.get(region, 'office_id') !== dashboard.default_office_id) {
-		// 	region = topLevelRegions.find(function (r) {
-		// 		return r.office_id === dashboard.default_office_id;
-		// 	});
-		// }
-		//
-		// if (!region) {
-		// 	region = topLevelRegions.first();
-		// }
-
 		var campaign = _(campaigns)
 				.filter(function (c) {
-					return c.office_id === 1 && // FIXME region.office_id
+					return c.office_id === 1 && region.office_id
 					(!this.date || _.startsWith(c.start_date, this.date));
 				}.bind(this))
 				.sortBy('start_date')
@@ -116,7 +102,7 @@ var DashboardStore = Reflux.createStore({
 
 			regions    : regions,
 			campaigns  : _.filter(campaigns, function (c) {
-				return c.office_id === 1 //FIXME region.office_id;
+				return c.office_id === 1 region.office_id;
 			}),
       hasMap     : hasMap,
 		});
