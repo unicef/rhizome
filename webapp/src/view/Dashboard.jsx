@@ -35,6 +35,7 @@ var LAYOUT = {
 };
 
 var Dashboard = React.createClass({
+
   mixins : [
     Reflux.ListenerMixin,
     Reflux.connect(require('stores/DataStore'))
@@ -51,10 +52,9 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount : function () {
-    page('/datapoints/:dashboard/:year/:month/:region/:doc_tab/:doc_id', this._showSourceData);
-    page('/datapoints/:dashboard/:year/:month/:region', this._show);
+    page('/datapoints/:dashboard/:year/:month/:region_id/:doc_tab/:doc_id', this._showSourceData);
+    page('/datapoints/:dashboard/:year/:month/:region_id', this._show);
     page('/datapoints/:dashboard', this._showDefault);
-    AppActions.init('this-is-a-param');
   },
 
   componentWillUpdate : function (nextProps, nextState) {
@@ -90,10 +90,14 @@ var Dashboard = React.createClass({
       );
     }
 
+    var region = this.state.region;
+    console.log('---->logging region in DASHBOARD RENDER ')
+    console.log(region)
+
+
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
     var loading       = this.state.loading;
-    var region        = this.state.region;
     var dashboardName = _.get(dashboardDef, 'title', '');
     var doc_id        = this.state.doc_id;
     var doc_tab        = this.state.doc_tab;
@@ -133,14 +137,11 @@ var Dashboard = React.createClass({
       dashboardProps);
 
     var campaigns = _(this.state.campaigns)
-      .filter(c => c.office_id === region.office_id)
+      .filter(c => c.office_id === 1)
       .sortBy('start_date')
       .reverse()
       .value();
 
-    if (campaign.office_id !== region.office_id) {
-      campaign = campaigns[0];
-    }
 
     var dashboardItems = MenuItem.fromArray(
       _.map(NavigationStore.dashboards, d => {
@@ -178,10 +179,6 @@ var Dashboard = React.createClass({
                   selected={campaign}
                   sendValue={this._setCampaign} />
                 &emsp;
-                <RegionTitleMenu
-                  regions={this.state.regions}
-                  selected={region}
-                  sendValue={this._setRegion} />
               </h1>
             </div>
 
@@ -304,22 +301,26 @@ var Dashboard = React.createClass({
   },
 
   _showDefault : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-    DashboardActions.setDashboard({ dashboard });
-  },
-
-  _show : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,1) //FIXME use builtin...
 
     DashboardActions.setDashboard({
       dashboard,
-      region : ctx.params.region,
+    })
+  },
+
+  _show : function (ctx) {
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,ctx.params.region_id);
+
+    console.log('this is the show method')
+    console.log(dashboard)
+
+    DashboardActions.setDashboard({
+      dashboard,
       date   : [ctx.params.year, ctx.params.month].join('-')
     });
   },
   _showSourceData : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,ctx.params.region_id)
     var doc_tab = ctx.params.doc_tab;
 
     this.setState({
@@ -329,7 +330,6 @@ var Dashboard = React.createClass({
 
     DashboardActions.setDashboard({
       dashboard,
-      region : ctx.params.region,
       date   : [ctx.params.year, ctx.params.month].join('-'),
     });
 

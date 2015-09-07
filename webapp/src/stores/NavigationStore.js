@@ -13,6 +13,7 @@ var NavigationStore = Reflux.createStore({
 
 		console.log('==> NAV STORE ARGUMENTS')
 		console.log(arguments)
+		console.log(this)
 		console.log('NAV STORE ARGUMENTS <==')
 
     this.campaigns        = [];
@@ -20,6 +21,9 @@ var NavigationStore = Reflux.createStore({
     this.customDashboards = null;
     this.documents          = [];
     this.loaded           = false;
+
+		var dashboards = api.get_dashboard();
+		var documents = api.source_doc();
 
 		var campaigns = api.campaign()
 			.then(function (data) {
@@ -34,18 +38,11 @@ var NavigationStore = Reflux.createStore({
 			parent_region_id: 1,
 		});
 
-		var dashboards = api.get_dashboard();
-
-		var documents = api.source_doc();
-
 		var offices = api.office().then(function (response) {
 			return _.indexBy(response.objects, 'id');
 		});
 
-		this.permissions = [];
-		var permissions = api.user_permissions();
-
-		Promise.all([campaigns, regions, offices, permissions, dashboards, documents])
+		Promise.all([campaigns, regions, offices, dashboards, documents])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -54,20 +51,17 @@ var NavigationStore = Reflux.createStore({
 		return {
 			campaigns  : this.campaigns,
 			dashboards : this.dashboards,
-			permissions: this.permissions,
 			documents    : this.documents,
       loaded     : this.loaded
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, documents) {
+	loadDashboards : function (campaigns, regions, offices, dashboards, documents) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
 		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
 
-		// parse permissions
-		this.permissions = _.map(permissions.objects, function(p) { return p.auth_code; });
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
@@ -175,8 +169,33 @@ var NavigationStore = Reflux.createStore({
 		});
 	},
 
-  getDashboard : function (slug) {
-    return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+  getDashboard : function (slug, region_id) {
+
+		// api.regions({parent_region_id: region_id})
+		// .then(response => this.setState({
+		// 			regions: response.objects,
+		// 			region_tree: response.meta.region_tree
+		// 		}));
+
+		var this_obj = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+		// var this_region = _.find(this.regions, d => r.id === region_id);
+
+		var this_region = {
+				id: 1,
+				name: 'Nigeria',
+				parent_region_id: null,
+		}
+
+		this_obj.region = this_region
+
+		// console.log(this.dashboards)
+		// console.log('==villalobos==')
+		// console.log(this_region)
+		// console.log('===MOONEAR===')
+		// console.log(this_obj)
+
+		return this_obj
+
   }
 
 });
