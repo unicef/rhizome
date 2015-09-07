@@ -84,7 +84,7 @@ var DashboardStore = Reflux.createStore({
 
 		var campaign = _(campaigns)
 				.filter(function (c) {
-					return c.office_id === 1 && region.office_id
+					return c.office_id === 1 && //FIXME
 					(!this.date || _.startsWith(c.start_date, this.date));
 				}.bind(this))
 				.sortBy('start_date')
@@ -102,7 +102,7 @@ var DashboardStore = Reflux.createStore({
 
 			regions    : regions,
 			campaigns  : _.filter(campaigns, function (c) {
-				return c.office_id === 1 region.office_id;
+				return c.office_id === 1 ; //FIXME
 			}),
       hasMap     : hasMap,
 		});
