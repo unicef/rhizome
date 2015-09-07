@@ -51,8 +51,8 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount : function () {
-    page('/datapoints/:dashboard/:region/:year/:month/:doc_tab/:doc_id', this._showSourceData);
-    page('/datapoints/:dashboard/:region/:year/:month', this._show);
+    page('/datapoints/:dashboard/:year/:month/:region/:doc_tab/:doc_id', this._showSourceData);
+    page('/datapoints/:dashboard/:year/:month/:region', this._show);
     page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
   },

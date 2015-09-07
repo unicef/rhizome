@@ -60,7 +60,11 @@ urlpatterns = patterns('',
 
     ## DASHBOARD WITH URL PARAMS ##
     url(r'^datapoints/[-a-zA-Z]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    # ex: nga-campaign-monitoring/2015/06/1
+    url(r'^datapoints/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[0-9]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+
+    ## this is what i use for source-data
     url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
 
 
