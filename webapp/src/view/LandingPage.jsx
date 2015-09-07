@@ -6,7 +6,6 @@ var React  = require('react');
 var Reflux = require('reflux');
 
 var NavigationStore = require('stores/NavigationStore');
-
 var DashboardStore = require('stores/DashboardStore');
 
 function _loadCampaigns(campaigns, offices) {
@@ -24,7 +23,6 @@ function _loadCampaigns(campaigns, offices) {
 
 function _loadDocuments(documents) {
   var recent = _.take(documents, 5);
-
   this.setState({ uploads : recent });
 }
 
@@ -57,6 +55,7 @@ function _campaignRow(campaign, i) {
   var others = [];
 
   _.each(campaign.dashboards, function (d) {
+
     switch (d.title) {
       case 'Management Dashboard':
         country = (<a href={'/datapoints/' + d.path}>Country</a>);
@@ -111,6 +110,7 @@ module.exports = React.createClass({
   },
 
   render : function () {
+
     var campaigns;
     if (_.isFinite(this.state.visibleCampaigns)) {
        campaigns = _(this.state.campaigns)
@@ -121,26 +121,14 @@ module.exports = React.createClass({
        campaigns = _(this.state.campaigns).map(_campaignRow).value();
     }
 
-    // data entry section, according to permissions
-    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
+      var csv_upload_button = <a className="small button" href="/source_data/file_upload">
+            <i className="fa fa-upload"></i>&emsp;Upload data
+          </a>;
 
-      var csv_upload_button = '';
-      if (NavigationStore.userHasPermission('upload_csv')) {
-        csv_upload_button = (
-                <a className="small button" href="/source_data/file_upload">
-                  <i className="fa fa-upload"></i>&emsp;Upload data
-                </a>
-              );
-      }
 
-      var data_entry_button = '';
-      if (NavigationStore.userHasPermission('data_entry_form')) {
-        data_entry_button = (
-                <a className="small button" href="/datapoints/entry">
+      var data_entry_button = <a className="small button" href="/datapoints/entry">
                   <i className="fa fa-table"></i>&emsp;Data Entry Form
-                </a>
-              );
-      }
+                </a>;
 
       var uploads = <tr><td>No uploads yet.</td></tr>;
       if (this.state.documents && this.state.documents.length > 0) {
@@ -150,8 +138,7 @@ module.exports = React.createClass({
                       .value();
       }
 
-      var dataEntry = (
-          <div className="row">
+      var dataEntry = <div className="row">
             <div className="medium-4 columns">
               <h2>Enter Data</h2>
               {data_entry_button}
@@ -171,10 +158,7 @@ module.exports = React.createClass({
                 </tfoot>
               </table>
             </div>
-          </div>
-        );
-
-    }
+          </div>;
 
     return (
       <div className="row">

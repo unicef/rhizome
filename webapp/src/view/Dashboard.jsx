@@ -54,7 +54,7 @@ var Dashboard = React.createClass({
     page('/datapoints/:dashboard/:year/:month/:region/:doc_tab/:doc_id', this._showSourceData);
     page('/datapoints/:dashboard/:year/:month/:region', this._show);
     page('/datapoints/:dashboard', this._showDefault);
-    AppActions.init();
+    AppActions.init('this-is-a-param');
   },
 
   componentWillUpdate : function (nextProps, nextState) {

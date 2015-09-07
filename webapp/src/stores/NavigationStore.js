@@ -10,6 +10,11 @@ var builtins = require('dashboard/builtin');
 
 var NavigationStore = Reflux.createStore({
 	init : function () {
+
+		console.log('==> NAV STORE ARGUMENTS')
+		console.log(arguments)
+		console.log('NAV STORE ARGUMENTS <==')
+
     this.campaigns        = [];
     this.dashboards       = [];
     this.customDashboards = null;
@@ -53,10 +58,6 @@ var NavigationStore = Reflux.createStore({
 			documents    : this.documents,
       loaded     : this.loaded
 		};
-	},
-
-	userHasPermission: function(permissionString) {
-		return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
 	},
 
 	loadDashboards : function (campaigns, regions, offices, permissions, dashboards, documents) {
