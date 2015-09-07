@@ -16,8 +16,7 @@ var MenuItem            = require('component/MenuItem.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
-var SourceDataStore      = require('stores/DashboardStore');
-var DashboardStore      = require('stores/SourceDataStore');
+var DashboardStore      = require('stores/DashboardStore');
 var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 var NavigationStore     = require('stores/NavigationStore');

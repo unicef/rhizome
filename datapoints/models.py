@@ -265,6 +265,7 @@ class RegionTree(models.Model):
     parent_region = models.ForeignKey(Region, related_name='ultimate_parent')
     immediate_parent = models.ForeignKey(Region, related_name='immediate_parent')
     region = models.ForeignKey(Region)
+    name = models.CharField(max_length=255)
     lvl = models.IntegerField()
 
     class Meta:

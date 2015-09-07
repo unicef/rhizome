@@ -26,8 +26,7 @@ var NavigationStore = Reflux.createStore({
 			});
 
 		var regions = api.regions({
-			read_write  : 'r',
-			depth_level : 0
+			parent_region_id: 1,
 		});
 
 		var dashboards = api.get_dashboard();

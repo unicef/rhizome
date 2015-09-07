@@ -15,7 +15,7 @@ var DashboardStore = Reflux.createStore({
 		this.loaded = false;
 		this.indicators = {};
 
-		Promise.all([api.regions(), api.region_type(), api.campaign()])
+		Promise.all([api.regions({parent_region_id: 1}), api.region_type(), api.campaign()])
 			.then(function (responses) {
         var types     = _.indexBy(responses[1].objects, 'id');
         var regionIdx = _.indexBy(responses[0].objects, 'id');
