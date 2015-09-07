@@ -16,23 +16,14 @@ var DashboardStore = Reflux.createStore({
 		this.loaded = false;
 		this.indicators = {};
 
-		Promise.all([api.regions({parent_region_id: 1}), api.campaign()])
+		Promise.all([api.campaign()])
 			.then(function (responses) {
-        var regionIdx = _.indexBy(responses[0].objects, 'id');
 
-				this.regions    = responses[0].objects;
-				this.campaigns  = responses[1].objects;
-
-        _.each(this.regions, function (r) {
-          r.region_type = regionIdx[r.region_type_id];
-          r.parent = regionIdx[r.parent_region_id];
-        });
-
+				this.campaigns  = responses[0].objects;
 				this.loaded = true;
 
         this.trigger({
           loaded    : this.loaded,
-          regions   : this.regions,
           campaigns : this.campaign
         });
 			}.bind(this));
