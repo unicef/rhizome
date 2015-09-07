@@ -11,13 +11,8 @@ var builtins = require('dashboard/builtin');
 var NavigationStore = Reflux.createStore({
 	init : function () {
 
-		console.log('==> NAV STORE ARGUMENTS')
-		console.log(arguments)
-		console.log(this)
-		console.log('NAV STORE ARGUMENTS <==')
-
     this.campaigns        = [];
-    this.dashboards       = [];
+		this.dashboards       = [];
     this.customDashboards = null;
     this.documents          = [];
     this.loaded           = false;
@@ -34,15 +29,12 @@ var NavigationStore = Reflux.createStore({
 				return data;
 			});
 
-		var regions = api.regions({
-			parent_region_id: 1,
-		});
 
 		var offices = api.office().then(function (response) {
 			return _.indexBy(response.objects, 'id');
 		});
 
-		Promise.all([campaigns, regions, offices, dashboards, documents])
+		Promise.all([campaigns, offices, dashboards, documents])
 			.then(_.spread(this.loadDashboards));
 
 	},
@@ -56,39 +48,21 @@ var NavigationStore = Reflux.createStore({
 		};
 	},
 
-	loadDashboards : function (campaigns, regions, offices, dashboards, documents) {
+	loadDashboards : function (campaigns, offices, dashboards, documents) {
 		var allDashboards = builtins.concat(dashboards.objects);
 
-		regions   = _(regions.objects);
 		campaigns = _(campaigns.objects);
-
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
-				var availableRegions = regions;
+				var availableRegions = [{'id':1, 'name': 'Nigiera', 'parent_region_id': null, 'office_id': 1}];
 
-
-				// Filter regions by default office, if one is specified
-				if (_.isFinite(d.default_office)) {
-					availableRegions = availableRegions.filter(function (r) { return r.office_id == d.default_office; });
-				}
-
-				// If no regions for the default office are available, or no default
-				// office is provided and this dashboard is limited by office, filter the
-				// list of regions to those offices
-				if (availableRegions.size() < 1) {
-					availableRegions = regions;
-				}
-
-				// If after all of that, there are no regions left that this user is
-				// allowed to see for this dashboard, return null so it can be filtered
-				if (availableRegions.size() < 1) {
-					return null;
-				}
+				console.log('thes are the avail regions')
+				console.log(availableRegions)
 
 				// Take the first region alphabetically at the highest geographic level
 				// available as the default region for this dashboard
-				var region = availableRegions.sortBy('name').min(_.property('lvl'));
+				var region = availableRegions[0]
 
 				// Find the latest campaign for the chosen region
 				var campaign = campaigns
@@ -96,13 +70,7 @@ var NavigationStore = Reflux.createStore({
 					.max(_.method('start_date.valueOf'));
 
 				// Build the path for the dashboard
-				try {
-					var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
-				}
-				catch(err) {
-					  console.log('FIXME')
-						var path = '/'
-				}
+				var path = '/' + campaign.start_date.format('YYYY/MM') + '/' + region.id ;
 
         // Patch the non-comformant API response
         d.charts = d.charts || d.dashboard_json;
@@ -178,27 +146,26 @@ var NavigationStore = Reflux.createStore({
 		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
 		var region_promise = api.regions({parent_region_id: 999})
 
-		var regions   = _(region_promise.objects).map(function(d) {
+		var regions = _(region_promise.objects).map(function(d) {
 				return d;
 			}).value();
 
-		// this.documents = _(documents.objects)
-
-		// var x = Promise.all([regions]).then(function (data) {
-		// 	_.each(data.objects, function (region) {
-		// 		region.foo = 'bar'
-		// 	});
-		// 	return data;
-		// });
-
+		console.log(regions)
 		// dashboard.region = _.find(regions, d => d.id === region_id);
+		// dashboard.regions = regions
+
 		dashboard.regions = [{
 				'id': 1,
-				'name': 'Nigeria',
+				'name': 'Nigeriaaaa ',
+				'office_id': 1,
+				'parent_region_id': null
+		},{
+				'id': 2,
+				'name': 'Paistan! ',
+				'office_id': 1,
 				'parent_region_id': null
 		}]
-		console.log(regions)
-		console.log('== almost afterhours ==')
+
 
 		return dashboard
   }

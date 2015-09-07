@@ -92,6 +92,9 @@ var Dashboard = React.createClass({
 
     var region = this.state.region;
 
+    console.log('region in render.. this.state.region')
+    console.log(region)
+
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
     var loading       = this.state.loading;
