@@ -28,18 +28,16 @@ var IndicatorStore = Reflux.createStore({
 		}.bind(this));
 	},
 
-	getById : function () {
-		console.log('==get indicator by id ===')
-		console.log('==get indicator by id ===')
-		return _(arguments)
-			.map(function (id) {
-				// console.log(id)
-				// console.log('==id==')
-				return this.indicators[id];
-			}.bind(this))
-			.filter()
-			.value();
-	},
+	getById : function (/* ids */) {
+			return this.indicators
+			// return _(arguments)
+			// 	.map(function (id) {
+			// 		return this.indicators[id];
+			// 	}.bind(this))
+			// 	.filter()
+			// 	.value();
+		},
+
 
 });
 

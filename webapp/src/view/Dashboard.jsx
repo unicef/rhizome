@@ -109,9 +109,11 @@ var Dashboard = React.createClass({
       .uniq()
       .value()
 
-    // var indicators = IndicatorStore.getById(apply(indicatorIds);
-    var indicators = []
-    console.log('== INDICATORS ===')
+    var indicators = IndicatorStore.getById.apply(indicatorIds);
+    //
+    // var indicators = IndicatorStore.getById();
+    // var indicators = []
+    console.log('== INDI---CATORS ===')
     console.log(indicators)
 
     var data = dashboardInit(
