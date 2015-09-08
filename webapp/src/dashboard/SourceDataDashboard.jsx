@@ -96,8 +96,8 @@ var SourceDataDashboard = React.createClass({
 			},
 			'mapping':{
 					'data_fn' : api.docMap,
-					'fields' : ['id','content_type','source_object_code','master_object_name','edit_link'],
-					'search_fields' :['id','content_type','source_object_code','master_object_name'],
+					'fields' : ['id','content_type','source_object_code','master_object_id','master_object_name','edit_link'],
+					'search_fields' :['id','content_type','source_object_code','master_object_id','master_object_name'],
 				},
 			'validate':{
 				'data_fn' : api.docDatapoint,

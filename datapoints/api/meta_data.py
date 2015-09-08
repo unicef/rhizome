@@ -128,7 +128,16 @@ class SourceObjectMapResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        som_ids = DocumentSourceObjectMap.objects.filter(document_id=request.GET['document_id'])
+        print request.GET['document_id']
+        som_ids = DocumentSourceObjectMap.objects\
+            .filter(document_id=request.GET['document_id']).\
+            values_list('source_object_map_id',flat=True)
+
+
+        print '==\n' * 5
+        print som_ids
+        print '--===--' * 5
+
         queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
 
         return queryset
