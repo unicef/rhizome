@@ -77,7 +77,8 @@ var Dashboard = React.createClass({
 
   render : function () {
 
-    if (!(this.state.loaded && this.state.dashboard)) {
+    console.log(this.state)
+    if (!(this.state.dashboard)) {
       var style = {
         fontSize      : '2rem',
       };
@@ -91,10 +92,8 @@ var Dashboard = React.createClass({
       );
     }
 
-    var region = this.state.region;
     var regions = this.state.dashboard.regions
-    console.log('regions')
-    console.log(region)
+    var region = regions[0]
 
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
@@ -109,9 +108,9 @@ var Dashboard = React.createClass({
       .uniq()
       .value()
 
+    // FIXME this doesnt actually filter the indicator by what is passed //
     var indicators = IndicatorStore.getById.apply(indicatorIds);
-    // var indicators = IndicatorStore.getById();
-    // var indicators = []
+
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
@@ -121,10 +120,6 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
-
-    console.log('== DATA ===')
-    console.log(data)
-    console.log('===')
 
     var dashboardProps = {
       campaign   : campaign,
@@ -145,10 +140,6 @@ var Dashboard = React.createClass({
       .filter(c => c.office_id === 1)
       .sortBy('start_date')
       .reverse()
-      .value();
-
-    var regions = _(this.state.regions)
-      .filter(r => r.office_id === 1)
       .value();
 
     var dashboardItems = MenuItem.fromArray(
@@ -323,9 +314,8 @@ var Dashboard = React.createClass({
   _show : function (ctx) {
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,ctx.params.region_id);
 
-    console.log('this is the show method')
-    console.log(dashboard)
-
+    // region and regions are assigned as properties of the
+    // dashboard objet .. (see getDashboard)
     DashboardActions.setDashboard({
       dashboard,
       date   : [ctx.params.year, ctx.params.month].join('-')

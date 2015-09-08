@@ -42,9 +42,6 @@ var NavigationStore = Reflux.createStore({
 	loadDashboards : function (campaigns) {
 		var allDashboards = builtins;
 
-		console.log('==LOGGING ALL DASHBOARDS==')
-		console.log(allDashboards)
-
 		campaigns = _(campaigns.objects);
 
 		this.dashboards = _(allDashboards)
@@ -118,30 +115,17 @@ var NavigationStore = Reflux.createStore({
 
 		console.log('GETTING DASHBOARD')
 		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
-		var region_promise = api.regions({parent_region_id: 999})
+		var region_promise = api.regions({parent_region_id: region_id})
 
-		var regions = _(region_promise.objects).map(function(d) {
-				return d;
-			}).value();
+		// var regions = _(region_promise.objects).map(function(d) {
+		// 		return d;
+		// 	}).value();
 
+		var allRegions = builtins.concat(region_promise.objects);
 		console.log('===builtInRegion==')
 		console.log(builtInRegion)
 		console.log('===builtInRegion==')
 
-		// dashboard.region = _.find(regions, d => d.id === region_id);
-		// dashboard.regions = regions
-
-		// dashboard.regions = [{
-		// 		'id': 1,
-		// 		'name': 'Nigeriaaaa ',
-		// 		'office_id': 1,
-		// 		'parent_region_id': null
-		// },{
-		// 		'id': 2,
-		// 		'name': 'Paistan! ',
-		// 		'office_id': 1,
-		// 		'parent_region_id': null
-		// }]
 
 		dashboard.regions = builtInRegion
 
