@@ -7,7 +7,7 @@ var Reflux = require('reflux');
 var api = require('data/api');
 
 var builtins = require('dashboard/builtin');
-var builtInRegion = require('dashboard/odk/builtInRegion');
+var builtInRegions = require('dashboard/odk/builtInRegion');
 
 var NavigationStore = Reflux.createStore({
 	init : function () {
@@ -47,7 +47,7 @@ var NavigationStore = Reflux.createStore({
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
 
-				var availableRegions = builtInRegion;
+				var availableRegions = builtInRegions;
 				var region = availableRegions[0]
 
 				// Find the latest campaign for the chosen region
@@ -113,21 +113,15 @@ var NavigationStore = Reflux.createStore({
 
   getDashboard : function (slug, region_id) {
 
-		console.log('GETTING DASHBOARD')
 		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
-		var region_promise = api.regions({parent_region_id: region_id})
 
+		// FIXME: the dashboar regions should be fro the API.. not builtin!!
+		// var region_promise = api.regions({parent_region_id: region_id})
 		// var regions = _(region_promise.objects).map(function(d) {
 		// 		return d;
 		// 	}).value();
 
-		var allRegions = builtins.concat(region_promise.objects);
-		console.log('===builtInRegion==')
-		console.log(builtInRegion)
-		console.log('===builtInRegion==')
-
-
-		dashboard.regions = builtInRegion
+		dashboard.regions = builtInRegions
 
 		return dashboard
   }

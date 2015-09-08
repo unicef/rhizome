@@ -50,6 +50,7 @@ var DashboardStore = Reflux.createStore({
 	onSetDashboard : function (definition) {
 		var dashboard  = this.dashboard = definition.dashboard;
 		var region  	 = dashboard.regions[0];
+
 		// var region = _.find(regions, function (r) {
 		// 		return r.id === this.region_id;
 		// 	}.bind(this));

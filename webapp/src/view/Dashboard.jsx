@@ -77,7 +77,6 @@ var Dashboard = React.createClass({
 
   render : function () {
 
-    console.log(this.state)
     if (!(this.state.dashboard)) {
       var style = {
         fontSize      : '2rem',
