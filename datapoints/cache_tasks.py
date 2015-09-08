@@ -588,8 +588,9 @@ def cache_region_tree():
     '''
     TRUNCATE TABLE region_tree;
 
+
     INSERT INTO region_tree
-    (parent_region_id, immediate_parent_id, region_id, lvl, name)
+    (parent_region_id, immediate_parent_id, region_id, lvl)
 
 
     WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
@@ -617,19 +618,17 @@ def cache_region_tree():
     )
 
     SELECT
-    	COALESCE(rt.parent_region_id, region_id)  AS parent_region_id
-    	,COALESCE(rt.immediate_parent_id, rt.region_id)  AS immediate_parent_id
-    	,rt.region_id
+    	COALESCE(parent_region_id, region_id)  AS parent_region_id
+    	,COALESCE(immediate_parent_id, region_id)  AS immediate_parent_id
+    	,region_id
     	,lvl
-        ,r.name as region_name
-    FROM region_tree rt
-    INNER JOIN region r
-    on rt.parent_region_id = r.id;
+    FROM region_tree;
 
     SELECT * FROM region_tree;
     ''')
 
-    upsert_meta_data(rt_raw, RegionTree)
+    for x in rt_raw:
+        pass # in order to execute raw sql
 
 
 def upsert_meta_data(qset, abstract_model):

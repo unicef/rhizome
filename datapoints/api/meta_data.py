@@ -1,18 +1,14 @@
-import json
-
-from django.contrib.auth.models import User, Group
-from django.utils.datastructures import MultiValueDictKeyError
-
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import Resource
-from tastypie.http import HttpBadRequest
-from tastypie.exceptions import ImmediateHttpResponse
+from django.contrib.auth.models import User, Group
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 from source_data.models import *
+
+import json
 
 
 class CampaignResource(BaseModelResource):
@@ -24,48 +20,8 @@ class CampaignResource(BaseModelResource):
 class RegionResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
+        queryset = Region.objects.all().values()
         resource_name = 'region'
-
-    def get_list(self, request, **kwargs):
-        """
-        """
-
-        region_tree = [rt for rt in RegionTree.objects\
-            .filter(region_id=request.GET['parent_region_id'])\
-            .values('parent_region_id','lvl','name')]
-
-        base_bundle = self.build_bundle(request=request)
-        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
-        bundles = [obj for obj in objects]#[self._meta.collection_name]]
-        response_meta = {
-            'limit':None, ## paginator.get_limit(),
-            'offset': None, ## paginator.get_offset(),
-            'total_count':len(objects),
-            'region_tree': region_tree
-        }
-
-        response_data = {
-            'objects': bundles,
-            'meta': response_meta,
-            'error': None
-        }
-        return self.create_response(request, response_data)
-
-    def get_object_list(self,request):
-
-        try:
-            parent_region_id = request.GET['parent_region_id']
-            region_id_list = list(Region.objects.filter(parent_region_id = \
-                parent_region_id).values_list('id',flat=True))
-            region_id_list.append(parent_region_id)
-        except MultiValueDictKeyError:
-
-            print '===='
-            raise ImmediateHttpResponse(
-                HttpBadRequest("v1 Region Resource requires a \
-                    'parent_region_id'parameter"))
-
-        return Region.objects.filter(id__in=region_id_list).values()
 
 class IndicatorResource(BaseModelResource):
 

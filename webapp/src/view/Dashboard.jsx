@@ -16,7 +16,8 @@ var MenuItem            = require('component/MenuItem.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
-var DashboardStore      = require('stores/DashboardStore');
+var SourceDataStore      = require('stores/DashboardStore');
+var DashboardStore      = require('stores/SourceDataStore');
 var GeoStore            = require('stores/GeoStore');
 var IndicatorStore      = require('stores/IndicatorStore');
 var NavigationStore     = require('stores/NavigationStore');
@@ -35,7 +36,6 @@ var LAYOUT = {
 };
 
 var Dashboard = React.createClass({
-
   mixins : [
     Reflux.ListenerMixin,
     Reflux.connect(require('stores/DataStore'))
@@ -52,10 +52,10 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount : function () {
-    page('/datapoints/:dashboard/:year/:month/:region_id/:doc_tab/:doc_id', this._showSourceData);
-    page('/datapoints/:dashboard/:year/:month/:region_id', this._show);
+    page('/datapoints/:dashboard/:region/:year/:month/:doc_tab/:doc_id', this._showSourceData);
+    page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page('/datapoints/:dashboard', this._showDefault);
-    AppActions.init()
+    AppActions.init();
   },
 
   componentWillUpdate : function (nextProps, nextState) {
@@ -77,7 +77,7 @@ var Dashboard = React.createClass({
 
   render : function () {
 
-    if (!(this.state.dashboard)) {
+    if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize      : '2rem',
       };
@@ -91,33 +91,29 @@ var Dashboard = React.createClass({
       );
     }
 
-    console.log(this.state.dashboard.region)
-    var regions = this.state.dashboard.regions
-    var region = this.state.dashboard.region
-
-
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
     var loading       = this.state.loading;
+    var region        = this.state.region;
     var dashboardName = _.get(dashboardDef, 'title', '');
     var doc_id        = this.state.doc_id;
     var doc_tab        = this.state.doc_tab;
 
-    var indicatorIds = _(_.get(dashboardDef, 'charts', []))
-      .pluck('indicators')
-      .flatten()
-      .uniq()
-      .value()
-
-    // FIXME this doesnt actually filter the indicator by what is passed //
-    var indicators = IndicatorStore.getById.apply(indicatorIds);
+    var indicators = IndicatorStore.getById.apply(
+      IndicatorStore,
+      _(_.get(dashboardDef, 'charts', []))
+        .pluck('indicators')
+        .flatten()
+        .uniq()
+        .value()
+    );
 
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
       region,
       campaign,
-      regions,
+      this.state.regions,
       indicators,
       GeoStore.features
     );
@@ -138,10 +134,14 @@ var Dashboard = React.createClass({
       dashboardProps);
 
     var campaigns = _(this.state.campaigns)
-      .filter(c => c.office_id === 1)
+      .filter(c => c.office_id === region.office_id)
       .sortBy('start_date')
       .reverse()
       .value();
+
+    if (campaign.office_id !== region.office_id) {
+      campaign = campaigns[0];
+    }
 
     var dashboardItems = MenuItem.fromArray(
       _.map(NavigationStore.dashboards, d => {
@@ -166,50 +166,33 @@ var Dashboard = React.createClass({
       );
     }
 
-    // _.map(this.state.region_tree, r => {
-    var breadCrumbLi =  MenuItem.fromArray(
-        _.map(['Nigeria','Global'], r => {
-          return {
-            title : r,
-            value : 1,
-          };
-      }), this._setRegion);
-
-    var breadCrumb =  <ul className="breadcrumbs" style={{
-          backgroundColor: "#FFFFFF",
-          borderColor: "#FFFFFF",
-          padding: null}}>
-        {breadCrumbLi}
-      </ul>
-
-
     return (
       <div>
         <div classNameName='clearfix'></div>
 
         <form className='inline no-print'>
           <div className='row'>
-            <div className='medium-7 columns'>
-              <h4 style={{ textAlign: 'left ' }}>
+            <div className='medium-6 columns'>
+              <h1>
                 <CampaignTitleMenu
                   campaigns={campaigns}
                   selected={campaign}
                   sendValue={this._setCampaign} />
-              <RegionTitleMenu
-                  regions={regions}
+                &emsp;
+                <RegionTitleMenu
+                  regions={this.state.regions}
                   selected={region}
                   sendValue={this._setRegion} />
-                &emsp;
-              </h4>
-              {breadCrumb}
+              </h1>
             </div>
-            <div className='medium-3 columns'>
-              <h4 style={{ textAlign: 'right' }}>
+
+            <div className='medium-4 columns'>
+              <h2 style={{ textAlign: 'right' }}>
                 {edit}
                 <TitleMenu text={dashboardName}>
                   {dashboardItems}
                 </TitleMenu>
-              </h4>
+              </h2>
             </div>
           </div>
         </form>
@@ -322,25 +305,22 @@ var Dashboard = React.createClass({
   },
 
   _showDefault : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,1) //FIXME use builtin...
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
-    DashboardActions.setDashboard({
-      dashboard,
-    })
+    DashboardActions.setDashboard({ dashboard });
   },
 
   _show : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,ctx.params.region_id);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
-    // region and regions are assigned as properties of the
-    // dashboard objet .. (see getDashboard)
     DashboardActions.setDashboard({
       dashboard,
+      region : ctx.params.region,
       date   : [ctx.params.year, ctx.params.month].join('-')
     });
   },
   _showSourceData : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard,ctx.params.region_id)
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
     var doc_tab = ctx.params.doc_tab;
 
     this.setState({
@@ -350,6 +330,7 @@ var Dashboard = React.createClass({
 
     DashboardActions.setDashboard({
       dashboard,
+      region : ctx.params.region,
       date   : [ctx.params.year, ctx.params.month].join('-'),
     });
 

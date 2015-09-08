@@ -26,6 +26,8 @@ from datapoints.models import *
 from datapoints.forms import *
 from datapoints import cache_tasks
 from datapoints.mixins import PermissionRequiredMixin
+from datapoints.api.v2 import v2PostRequest, v2GetRequest, v2MetaRequest
+
 
 class IndexView(generic.ListView):
     paginate_by = 20
@@ -387,6 +389,29 @@ class IndicatorEditView(PermissionRequiredMixin,generic.UpdateView):
         context['pk'] = indicator_obj.id
 
         return context
+
+def v2_meta_api(request,content_type):
+
+    return v2_api(request,content_type,True)
+
+@django_cache_control(must_revalidate=True, max_age=3600,private=True)
+def v2_api(request,content_type,is_meta=False):
+
+    if is_meta:
+        request_object = v2MetaRequest(request, content_type)
+        data = request_object.main()
+
+    ## Handles Delete and Update.
+    elif request.POST:
+        request_object = v2PostRequest(request, content_type)
+        data = request_object.main()
+
+    else:
+        request_object = v2GetRequest(request, content_type)
+        data = request_object.main()
+
+    return HttpResponse(json.dumps(data),content_type="application/json")
+
 
 def html_decorator(func):
     """

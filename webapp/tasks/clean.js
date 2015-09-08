@@ -3,10 +3,9 @@ import del from 'del'
 
 const TASK_NAME = 'clean'
 
-function clean(callback) {
+function clean(callBack) {
   gulp.autoRegister(TASK_NAME, (config)=> {
-    del.sync(config.src)
-    callback()
+    del(config.src, callBack)
   })
 }
 

@@ -22,22 +22,21 @@ var IndicatorStore = Reflux.createStore({
 	onInit : function () {
 		api.indicators().then(function (response) {
 			var indicators = response.objects;
-			this.indicators = _.indexBy(indicators, 'id');
-			this.trigger({ indicators : indicators });
 
+			this.indicators = _.indexBy(indicators, 'id');
+
+			this.trigger({ indicators : indicators });
 		}.bind(this));
 	},
 
 	getById : function (/* ids */) {
-			return this.indicators
-			// return _(arguments)
-			// 	.map(function (id) {
-			// 		return this.indicators[id];
-			// 	}.bind(this))
-			// 	.filter()
-			// 	.value();
-		},
-
+		return _(arguments)
+			.map(function (id) {
+				return this.indicators[id];
+			}.bind(this))
+			.filter()
+			.value();
+	},
 
 });
 
