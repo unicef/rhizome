@@ -49,7 +49,7 @@ class MasterRefresh(object):
 
         map_df_cols = ['master_object_id','source_object_code','content_type']
 
-        sm_ids = DocumentSourceObjectMap.object.filter(document_id =\
+        sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('id',flat=True)
 
         self.source_map_dict =  DataFrame(list(SourceObjectMap.objects\
@@ -57,7 +57,8 @@ class MasterRefresh(object):
                 master_object_id__gt=0,
                 id__in = sm_ids).values_list(*['master_object_id']))
             ,columns = ['master_object_id']\
-            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0)\
+            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0
+            ,kid__in = sm_ids)\
             .values_list(*['content_type','source_object_code']))\
             .to_dict()['master_object_id']
 

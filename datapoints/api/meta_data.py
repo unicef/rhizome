@@ -10,7 +10,6 @@ from source_data.models import *
 
 import json
 
-
 class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
@@ -107,12 +106,6 @@ class DocumentReviewResource(BaseModelResource):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'document_review'
 
-class SourceSubmissionResource(BaseModelResource):
-
-    class Meta(BaseModelResource.Meta):
-        queryset = SourceSubmission.objects.all().values()
-        resource_name = 'source_submission'
-
 class DocumentDetailResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
@@ -144,6 +137,18 @@ class SourceObjectMapResource(BaseModelResource):
 
         resource_name = 'source_object_map'
 
+
+class SourceSubmissionResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        queryset = SourceSubmission.objects.filter(document_id=request\
+            .GET['document_id']).values()
+
+        return queryset
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'source_submission'
 
 ## Result Objects for geo Resources ##
 
