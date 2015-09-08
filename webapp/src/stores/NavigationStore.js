@@ -114,6 +114,13 @@ var NavigationStore = Reflux.createStore({
   getDashboard : function (slug, region_id) {
 
 		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+		var this_region_id = parseInt(region_id)
+		var regionObject = _.find(builtInRegions, r => r.id === this_region_id);
+
+		console.log(this_region_id)
+
+		console.log('==regionObject==')
+		console.log(regionObject)
 
 		// FIXME: the dashboard regions should be fro the API.. not builtin!!
 		// var region_promise = api.regions({parent_region_id: region_id})
@@ -122,7 +129,7 @@ var NavigationStore = Reflux.createStore({
 		// 	}).value();
 
 		dashboard.regions = builtInRegions
-		dashboard.region = builtInRegions[region_id]
+		dashboard.region = regionObject
 
 		return dashboard
   }
