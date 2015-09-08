@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, Group
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 from source_data.models import *
+from source_data.etl_tasks.refresh_master import MasterRefresh
 
 import json
 
@@ -133,11 +134,6 @@ class SourceObjectMapResource(BaseModelResource):
             .filter(document_id=request.GET['document_id']).\
             values_list('source_object_map_id',flat=True)
 
-
-        print '==\n' * 5
-        print som_ids
-        print '--===--' * 5
-
         queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
 
         return queryset
@@ -145,7 +141,6 @@ class SourceObjectMapResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
 
         resource_name = 'source_object_map'
-
 
 class SourceSubmissionResource(BaseModelResource):
 
@@ -158,6 +153,20 @@ class SourceSubmissionResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_submission'
+
+
+class RefreshMasterResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        doc_id = request.GET['document_id']
+        mr = MasterRefresh(1,doc_id)
+        queryset = Document.objects.filter(id=doc_id).values()
+
+        return queryset
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'refresh_master'
 
 ## Result Objects for geo Resources ##
 

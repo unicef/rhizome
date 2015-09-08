@@ -109,7 +109,7 @@ class EtlTask(object):
 
         self.task_guid = task_guid
         self.form_name = form_name
-        self.user_id = User.objects.get(username='john').id
+        self.user_id = User.objects.get(username='demo_user').id
 
         self.function_mappings = {
             'test_api' : self.test_api,
