@@ -142,7 +142,7 @@ class SourceSubmissionResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        queryset = SourceSubmission.objects.filter(document_id=request\
+        queryset = SourceSubmissionDetail.objects.filter(document_id=request\
             .GET['document_id']).values()
 
         return queryset
