@@ -167,10 +167,10 @@ var Dashboard = React.createClass({
 
     // _.map(this.state.region_tree, r => {
     var breadCrumbLi =  MenuItem.fromArray(
-        _.map([3], r => {
+        _.map(['Nigeria','Global'], r => {
           return {
             title : r,
-            value : r,
+            value : 1,
           };
       }), this._setRegion);
 
@@ -188,28 +188,27 @@ var Dashboard = React.createClass({
 
         <form className='inline no-print'>
           <div className='row'>
-            <div className='medium-6 columns'>
-              <h1>
+            <div className='medium-7 columns'>
+              <h4 style={{ textAlign: 'left ' }}>
                 <CampaignTitleMenu
                   campaigns={campaigns}
                   selected={campaign}
                   sendValue={this._setCampaign} />
-                <RegionTitleMenu
+              <RegionTitleMenu
                   regions={regions}
                   selected={region}
                   sendValue={this._setRegion} />
-                {breadCrumb}
                 &emsp;
-              </h1>
+              </h4>
+              {breadCrumb}
             </div>
-
-            <div className='medium-4 columns'>
-              <h2 style={{ textAlign: 'right' }}>
+            <div className='medium-3 columns'>
+              <h4 style={{ textAlign: 'right' }}>
                 {edit}
                 <TitleMenu text={dashboardName}>
                   {dashboardItems}
                 </TitleMenu>
-              </h2>
+              </h4>
             </div>
           </div>
         </form>
