@@ -91,8 +91,10 @@ var Dashboard = React.createClass({
       );
     }
 
+    console.log(this.state.dashboard.region)
     var regions = this.state.dashboard.regions
-    var region = regions[0]
+    var region = this.state.dashboard.region
+
 
     var campaign      = this.state.campaign;
     var dashboardDef  = this.state.dashboard;
