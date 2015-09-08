@@ -165,6 +165,23 @@ var Dashboard = React.createClass({
       );
     }
 
+    // _.map(this.state.region_tree, r => {
+    var breadCrumbLi =  MenuItem.fromArray(
+        _.map([3], r => {
+          return {
+            title : r,
+            value : r,
+          };
+      }), this._setRegion);
+
+    var breadCrumb =  <ul className="breadcrumbs" style={{
+          backgroundColor: "#FFFFFF",
+          borderColor: "#FFFFFF",
+          padding: null}}>
+        {breadCrumbLi}
+      </ul>
+
+
     return (
       <div>
         <div classNameName='clearfix'></div>
@@ -181,6 +198,7 @@ var Dashboard = React.createClass({
                   regions={regions}
                   selected={region}
                   sendValue={this._setRegion} />
+                {breadCrumb}
                 &emsp;
               </h1>
             </div>
