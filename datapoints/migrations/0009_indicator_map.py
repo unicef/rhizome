@@ -453,6 +453,43 @@ class Migration(migrations.Migration):
         AND d.document_id = sdd.id
     );
 
+    DROP TABLE IF EXISTS _seed_data;
+    CREATE TABLE _seed_data
+    (region_code VARCHAR
+    ,indicator_code VARCHAR
+    ,campaign_code VARCHAR
+    ,value VARCHAR
+    );
+
+    COPY _seed_data FROM '/Users/john/Desktop/seed_data_to_ingest.csv' DELIMITER ',' CSV;
+
+    INSERT INTO datapoint
+    (region_id, campaign_id,indicator_id,value, changed_by_id, created_at, source_submission_id, cache_job_id)
+
+    SELECT
+          som_r.master_object_id as region_id
+        , som_c.master_object_id as  campaign_id
+        , som_i.master_object_id as indicator_id
+        , CAST(sd.value AS FLOAT)
+        , 1
+        , now()
+        , x.source_submission_id
+        , -1
+    FROM _seed_data sd
+    INNER JOIN source_object_map som_r
+        ON som_r.content_type = 'region'
+        AND sd.region_code = som_r.source_object_code
+        AND som_r.master_object_id > 0
+    INNER JOIN source_object_map som_i
+        ON som_i.content_type = 'indicator'
+        AND sd.indicator_code = som_i.source_object_code
+        AND som_i.master_object_id > 0
+    INNER JOIN source_object_map som_c
+        ON som_c.content_type = 'campaign'
+        AND sd.campaign_code = som_c.source_object_code
+        AND som_c.master_object_id > 0
+    INNER JOIN ( SELECT MIN(id) as source_submission_id FROM source_submission ) x
+    ON 1=1;
 
     """)
     ]
