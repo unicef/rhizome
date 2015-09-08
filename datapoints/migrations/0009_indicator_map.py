@@ -461,6 +461,7 @@ class Migration(migrations.Migration):
     ,value VARCHAR
     );
 
+    COPY _seed_data FROM '/home/ubuntu/seed_data_to_ingest.csv' DELIMITER ',' CSV;
     COPY _seed_data FROM '/Users/john/Desktop/seed_data_to_ingest.csv' DELIMITER ',' CSV;
 
     INSERT INTO datapoint
