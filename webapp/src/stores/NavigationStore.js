@@ -7,6 +7,7 @@ var Reflux = require('reflux');
 var api = require('data/api');
 
 var builtins = require('dashboard/builtin');
+var builtInRegion = require('dashboard/odk/builtInRegion');
 
 var NavigationStore = Reflux.createStore({
 	init : function () {
@@ -41,12 +42,15 @@ var NavigationStore = Reflux.createStore({
 	loadDashboards : function (campaigns) {
 		var allDashboards = builtins;
 
+		console.log('==LOGGING ALL DASHBOARDS==')
+		console.log(allDashboards)
+
 		campaigns = _(campaigns.objects);
 
 		this.dashboards = _(allDashboards)
 			.map(function (d) {
 
-				var availableRegions = [{'id':1, 'name': 'Nigiera', 'parent_region_id': null, 'office_id': 1}];
+				var availableRegions = builtInRegion;
 				var region = availableRegions[0]
 
 				// Find the latest campaign for the chosen region
@@ -112,9 +116,7 @@ var NavigationStore = Reflux.createStore({
 
   getDashboard : function (slug, region_id) {
 
-		console.log(' - getting dashboard - ')
-		console.log(region_id)
-
+		console.log('GETTING DASHBOARD')
 		var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
 		var region_promise = api.regions({parent_region_id: 999})
 
@@ -122,22 +124,26 @@ var NavigationStore = Reflux.createStore({
 				return d;
 			}).value();
 
-		console.log(regions)
+		console.log('===builtInRegion==')
+		console.log(builtInRegion)
+		console.log('===builtInRegion==')
+
 		// dashboard.region = _.find(regions, d => d.id === region_id);
 		// dashboard.regions = regions
 
-		dashboard.regions = [{
-				'id': 1,
-				'name': 'Nigeriaaaa ',
-				'office_id': 1,
-				'parent_region_id': null
-		},{
-				'id': 2,
-				'name': 'Paistan! ',
-				'office_id': 1,
-				'parent_region_id': null
-		}]
+		// dashboard.regions = [{
+		// 		'id': 1,
+		// 		'name': 'Nigeriaaaa ',
+		// 		'office_id': 1,
+		// 		'parent_region_id': null
+		// },{
+		// 		'id': 2,
+		// 		'name': 'Paistan! ',
+		// 		'office_id': 1,
+		// 		'parent_region_id': null
+		// }]
 
+		dashboard.regions = builtInRegion
 
 		return dashboard
   }

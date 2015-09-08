@@ -110,12 +110,8 @@ var Dashboard = React.createClass({
       .value()
 
     var indicators = IndicatorStore.getById.apply(indicatorIds);
-    //
     // var indicators = IndicatorStore.getById();
     // var indicators = []
-    console.log('== INDI---CATORS ===')
-    console.log(indicators)
-
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
