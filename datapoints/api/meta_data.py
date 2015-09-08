@@ -146,10 +146,16 @@ class SourceSubmissionResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        queryset = SourceSubmissionDetail.objects.filter(document_id=request\
-            .GET['document_id']).values()
+        try:
+            qs = SourceSubmission.objects.filter(id=request\
+                .GET['id']).values()
+        except KeyError:
+            qs = SourceSubmissionDetail.objects.filter(document_id=request\
+                .GET['document_id']).values()
+        except KeyError:
+            qs = SourceSubmission.objects.filter(id=-1)
 
-        return queryset
+        return qs
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_submission'
