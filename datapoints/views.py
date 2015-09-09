@@ -151,7 +151,7 @@ def refresh_cache(request):
 
     cr = cache_tasks.CacheRefresh()
 
-    return HttpResponseRedirect(reverse('datapoints:cache_control'))
+    return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
 def test_data_coverage(request):
@@ -289,7 +289,7 @@ def refresh_metadata(request):
     campaign_cache_data = cache_tasks.cache_campaign_abstracted()
     region_tree_cache_data = cache_tasks.cache_region_tree()
 
-    return HttpResponseRedirect(reverse('datapoints:cache_control'))
+    return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
 class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
