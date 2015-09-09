@@ -17,8 +17,9 @@ def deploy(venv_path=None):
     global local_venv_path
     local_venv_path = venv_path;
 
-    # on local machine...
+    # on local machine
     _build_dependencies()
+    run_tests()
 
     # on target machine
     stop_apache()
@@ -31,6 +32,11 @@ def stop_apache():
 
 def start_apache():
     run("sudo /etc/init.d/apache2 start")
+
+def run_tests():
+
+    local("coverage run manage.py test datapoints.models datapoints.views  --settings=polio.settings.test")
+    local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
 
 # build dependencies
@@ -52,7 +58,6 @@ def _build_dependencies():
     # build fe and package the project
     # with NODE_ENV=production, uglify have be done.
     local("cd webapp && npm run package")
-
 
 # push build to remote
 def _push_to_remote():

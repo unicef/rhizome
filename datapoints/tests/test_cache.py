@@ -44,16 +44,7 @@ class CacheRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        self.build_db() # builds sprocs and views needed to test cache refresh
         self.create_metadata()
-
-
-    def build_db(self):
-        '''
-        please fix me
-        '''
-        ## remove the build_test_db script and pass a $DB param to build_db.sh
-        call(["bash" ,"/Users/johndingee_seed/code/UF04/polio/bin/build_test_db.sh"])
 
     def create_metadata(self):
         '''
