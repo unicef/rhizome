@@ -71,7 +71,7 @@ class CacheRefreshTestCase(TestCase):
                 status_description = 'test').id
 
         document_id = Document.objects.create(
-            doc_text = 'test',
+            doc_title = 'test',
             created_by_id = user_id,
             source_id = source_id1,
             guid = 'test').id

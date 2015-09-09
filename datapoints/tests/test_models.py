@@ -11,15 +11,11 @@ class MasterModelTestCase(TestCase):
 
     def set_up(self):
 
-        self.source = Source.objects.create(
-            source_name = 'test',
-            source_description = 'test')
-
         self.user = User.objects.create(
             username='john')
 
         self.document = Document.objects.create(
-            doc_text = 'test',
+            doc_title = 'test',
             created_by_id = self.user.id,
             guid = 'test')
 
@@ -33,8 +29,7 @@ class IndicatorTest(MasterModelTestCase):
         dpi = Indicator.objects.create(
             name = 'test',
             description = 'test',
-            is_reported = 0,
-            source_id = self.source.id)
+            is_reported = 0)
 
         self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
@@ -46,22 +41,15 @@ class RegionTest(MasterModelTestCase):
 
     def set_up(self):
 
-        self.source = Source.objects.create(
-            source_name = 'test',
-            source_description = 'test')
-
         self.region_type_id = RegionType.objects.create(name='test').id
 
     def create_region(self, name = "test", office_id=1):
 
         self.set_up()
 
-        # source_id = self.create_source_region()
-
         region = Region.objects.create(name = name\
             ,office_id = office_id
-            ,region_type_id = self.region_type_id\
-            ,source_id = self.source.id)
+            ,region_type_id = self.region_type_id)
 
         return region
 
@@ -81,30 +69,13 @@ class DataPointTest(MasterModelTestCase):
             status_text = 'test',
             status_description = 'test')
 
-        self.source = Source.objects.create(
-            source_name = 'test',
-            source_description = 'test')
-
         self.user = User.objects.create(
             username='john')
 
         self.document = Document.objects.create(
-            doc_text = 'test',
+            doc_title = 'test',
             created_by_id = self.user.id,
             guid = 'test')
-
-    def create_source_datapoint(self):
-
-        self.set_up()
-
-        sdp_id = SourceDataPoint.objects.create(
-            document_id = self.document.id,
-            row_number = 0,
-            source_id =self.source.id,
-            status_id = self.status.id).id
-
-
-        return sdp_id
 
 
     def create_datapoint(self, note="test", indicator_id=99, region_id = 99,
