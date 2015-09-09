@@ -354,8 +354,8 @@ class DataPoint(models.Model):
     Note that this table does not store the aggregated or calculated data, only
     the raw data that we get from the source.
 
-    The source_datapoint_id shows the original source of the data in the
-    source_datapoint_table.  The source_datapoint_id is -1 in the case of data
+    The source_submission shows the original source of the data in the
+    source_submissino.  The source_submission is -1 in the case of data
     entry.
 
     The cache_job_id column allows us to find out when and why a particular

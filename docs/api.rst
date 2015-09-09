@@ -101,7 +101,6 @@ POST DATA
    "name": "fake indicator name",
    "short_name": "fake short name",
    "slug": "fake_indicator",
-   "source_id": "1"
   }
 
 

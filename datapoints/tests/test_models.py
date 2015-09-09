@@ -11,13 +11,7 @@ class MasterModelTestCase(TestCase):
 
     def set_up(self):
 
-        self.user = User.objects.create(
-            username='john')
-
-        self.document = Document.objects.create(
-            doc_title = 'test',
-            created_by_id = self.user.id,
-            guid = 'test')
+        print 'pass'
 
 
 class IndicatorTest(MasterModelTestCase):
@@ -77,11 +71,16 @@ class DataPointTest(MasterModelTestCase):
             created_by_id = self.user.id,
             guid = 'test')
 
-
     def create_datapoint(self, note="test", indicator_id=99, region_id = 99,
         campaign_id=99, value=100.01, changed_by_id = 1):
 
-        sdp_id = self.create_source_datapoint()
+        self.set_up()
+
+        source_submission = SourceSubmission.objects.create(
+            document_id = self.document.id,
+            submission_json = '',
+            row_number = 1
+        )
 
         dp = DataPoint.objects.create(
             indicator_id=indicator_id,
@@ -89,7 +88,7 @@ class DataPointTest(MasterModelTestCase):
             campaign_id=campaign_id,
             value = value,
             changed_by_id=changed_by_id,
-            source_datapoint_id = sdp_id,
+            source_submission_id = source_submission.id
             )
 
         return dp

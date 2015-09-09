@@ -39,18 +39,21 @@ class CacheRefreshTestCase(TestCase):
 
         data_df = read_csv('datapoints/tests/_data/calc_data.csv')
 
-        self.changed_by_id = 1
+        self.create_metadata()
+
+        self.user = User.objects.get(username='test')
 
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        self.create_metadata()
 
     def create_metadata(self):
         '''
         Creating the Indicator, Region, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
+
+
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
         region_df= read_csv('datapoints/tests/_data/regions.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
@@ -61,28 +64,11 @@ class CacheRefreshTestCase(TestCase):
 
         office_id = Office.objects.create(id=1,name='test').id
 
-        source_id1 = Source.objects.create(id=1,source_name='test1',source_description='test1').id
-        source_id2 = Source.objects.create(id=2,source_name='test2',source_description='test2').id
-
         cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01', is_error = False)
 
         status_id = ProcessStatus.objects.create(
                 status_text = 'test',
                 status_description = 'test').id
-
-        document_id = Document.objects.create(
-            doc_title = 'test',
-            created_by_id = user_id,
-            source_id = source_id1,
-            guid = 'test').id
-
-        sdp_id = SourceDataPoint.objects.create(
-            id = -1,
-            document_id = document_id,
-            row_number = 0,
-            source_id = source_id1,
-            status_id = status_id).id
-
 
         region_type1 = RegionType.objects.create(id=1,name="country")
         region_type2 = RegionType.objects.create(id=2,name="settlement")
@@ -97,6 +83,17 @@ class CacheRefreshTestCase(TestCase):
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
+
+        document = Document.objects.create(
+            doc_title = 'test',
+            created_by_id = user_id,
+            guid = 'test')
+
+        ss = SourceSubmission.objects.create(
+            document_id = document.id,
+            submission_json = '',
+            row_number = 0
+        ).id
 
 
     def model_df_to_data(self,model_df,model):
@@ -129,13 +126,16 @@ class CacheRefreshTestCase(TestCase):
         in order to test caching.
         '''
 
+        document_id = Document.objects.get(doc_title='test').id
+        ss_id = SourceSubmission.objects.get(document_id = document_id).id
+
         dp_id = DataPoint.objects.create(
             region_id = region_id,
             campaign_id = campaign_id,
             indicator_id = indicator_id,
             value = value,
-            changed_by_id = self.changed_by_id,
-            source_datapoint_id = -1
+            changed_by_id = self.user.id,
+            source_submission_id = ss_id
         ).id
 
         return dp_id

@@ -483,7 +483,6 @@ class DataPointEntryResource(BaseModelResource):
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
             bundle.obj.value = bundle.data['value']
 
-        bundle.obj.source_datapoint_id = -1
         bundle.obj.cache_job_id = -1
         bundle.obj.changed_by_id = bundle.data['changed_by_id']
 

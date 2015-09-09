@@ -3,7 +3,7 @@ import random
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from pandas import read_csv
+from pandas import read_csv, notnull
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -18,8 +18,10 @@ class RefreshMasterTestCase(TestCase):
 
     def set_up(self):
 
+        self.create_metadata()
+
         self.region_list = Region.objects.all().values_list('name',flat=True)
-        self.user = User.objects.get(username='demo_user')
+        self.user = User.objects.get(username='test')
 
         self.indicator = Indicator.objects.get(name='Number of all missed children')
         self.campaign = Campaign.objects.get(slug='nigeria-2015-06-01')
@@ -35,8 +37,7 @@ class RefreshMasterTestCase(TestCase):
             is_processed=False,
         )
 
-        self.source_datapoints = [] # self.build_source_datapoint_list()
-
+        self.create_metadata()
 
     def test_doc_to_source_submission(self):
         '''
@@ -105,4 +106,63 @@ class RefreshMasterTestCase(TestCase):
         cooresponds to a non existing mapping that we remove it.
         '''
         pass
-#
+
+    def test_re_mapping(self):
+        '''
+        When metadata assigned to a new master_id - make sure that datapoints do as well
+        '''
+
+    def create_metadata(self):
+        '''
+        Creating the Indicator, Region, Campaign, meta data needed for the
+        system to aggregate / caclulate.
+        '''
+        campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        region_df= read_csv('datapoints/tests/_data/regions.csv')
+        indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
+        calc_indicator_df = read_csv\
+            ('datapoints/tests/_data/calculated_indicator_component.csv')
+
+        user_id = User.objects.create_user('test','john@john.com', 'test').id
+        office_id = Office.objects.create(id=1,name='test').id
+
+        cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01',\
+            is_error = False)
+
+        status_id = ProcessStatus.objects.create(
+                status_text = 'test',
+                status_description = 'test').id
+
+        document_id = Document.objects.create(
+            doc_title = 'test',
+            created_by_id = user_id,
+            guid = 'test').id
+
+        region_type1 = RegionType.objects.create(id=1,name="country")
+        region_type2 = RegionType.objects.create(id=2,name="settlement")
+        region_type3 = RegionType.objects.create(id=3,name="province")
+        region_type4 = RegionType.objects.create(id=4,name="district")
+        region_type5 = RegionType.objects.create(id=5,name="sub-district")
+
+        campaign_type = CampaignType.objects.create(id=1,name="test")
+
+        region_ids = self.model_df_to_data(region_df,Region)
+        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
+            CalculatedIndicatorComponent)
+
+
+    def model_df_to_data(self,model_df,model):
+
+        meta_ids = []
+
+        non_null_df = model_df.where((notnull(model_df)), None)
+        list_of_dicts = non_null_df.transpose().to_dict()
+
+        for row_ix, row_dict in list_of_dicts.iteritems():
+
+            row_id = model.objects.create(**row_dict)
+            meta_ids.append(row_id)
+
+        return meta_ids
