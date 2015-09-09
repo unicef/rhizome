@@ -150,30 +150,7 @@ def manage_data_refresh(request):
 def refresh_cache(request):
 
     cr = cache_tasks.CacheRefresh()
-
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
-
-
-def test_data_coverage(request):
-
-    failed = ReconData.objects.raw("SELECT * FROM fn_test_data_accuracy()")
-
-    final_qa_data = []
-    for row in failed:
-        row_d = {'region_id':row.region_id,
-    	'campaign_id':row.campaign_id,
-        'indicator_id':row.indicator_id,
-        'target_value':row.target_value,
-        'actual_value':row.actual_value}
-
-        final_qa_data.append(row_d)
-
-    test_count = ReconData.objects.count()
-    qa_score = 1 - float((len(final_qa_data))/ float(test_count))
-
-    return render_to_response('qa_data.html',
-        {'qa_data': final_qa_data, 'qa_score':qa_score},\
-        context_instance=RequestContext(request))
 
 def qa_failed(request,region_id,campaign_id,indicator_id):
     # http://localhost:8000/datapoints/qa_failed/233/12910/99
