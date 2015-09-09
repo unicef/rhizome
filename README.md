@@ -2,10 +2,8 @@
 
 ## Prerequisites
 
-1. [Python][] 2.7
-2. [PIP][]
-3. [Node][] >= 0.10.0
-5. [PostgreSQL][]
+1. [Node][] >= 0.10.0
+2. VirtualBox
 
 ## Building technical documentation
 
@@ -19,8 +17,6 @@
 ### Docker
 
 Prerequisites
-
-1. VirtualBox
 
 Install Docker Machine. In Mac OS X you could install via `brew`
 
@@ -45,7 +41,7 @@ Navigate to repository directory, de-comment Line.8 `ENV CHINESE_LOCAL_PIP_CONFI
 Run
 
 ```
-$ docker-compose build && docker-compose up.
+$ docker-compose build && docker-compose up
 ```
 Entry Docker instance
 
@@ -53,7 +49,11 @@ Entry Docker instance
 $ docker exec -it polio_polio_1 bash
 ```
 
+The app is hosted at http://localhost:8000
+
 ### Installing frontend dependencies
+
+Go to `webapp/` folder
 
 ```
 $ npm install -g gulp
@@ -68,53 +68,11 @@ $ npm install
 - frontend:
    coming soon...
 
-
-## Setting up the database
-
-Our backend is built off of postgres.  In order to quickly install postgres and
-get started on building the application, either install postgres with homebrew
-or with http://postgresapp.com/.
-
-The current settings file ( which you should edit especially if deploying to
-a a remote server ;-) ) has the password for the django login to: w3b@p01i0
-so feel free to set the djangoapp password to that when getting started!
-
-```
-$ createuser --no-createdb --no-createrole --no-superuser --password djangoapp
-Password:
-$ createdb polio --owner djangoapp
-$ python manage.py migrate auth
-$ python manage.py syncdb
-$ python manage.py migrate
-```
-
-The password for the djangoapp user can be found in `settings.py`.
-
 ## Building the Front End
 
-    $ gulp build
+Go to `webapp/` folder
 
-## Your Development Environment
-
-In development you will need to run two operations *
-     $ python manage.py runserver
-     $ webpack --config webpack.config.dev.js --watch
-
-After running these two commands in two separate terminals visit:
-
-    http://localhost:8000
-
-To see the application.
-
-Note - Currently webpack only re-compiles javascript.. not css. If you make a
-change to a css file you will nee to run 'gulp build' in order to see those
-changes in your development envi.
-
-We are moving towards a de-coupled application in which node will serve
-all static pages, scripts and assets, but for now, this set up along with the
-configurations provided by the [Django Webpack Loader
-Package](https://github.com/owais/django-webpack-loader/) allows us to create
-edits to our javascript and have the front end automatically rebuild them.
+    $ gulp dev
 
 ## Deploying ##
 
@@ -145,8 +103,6 @@ then create the directory for the polio django app, and static files
 $ sudo mkdir /var/www/apps/
 $ sudo mkdir /var/www/apps/polio/
 ```
-
-
 
 # Serving the Django Application with Apache.
 
@@ -183,11 +139,6 @@ $ gulp dev
 ```
 
 from the command line it will build the entire frontend for development.
-
-## build
-
-Compile the SASS, pack the JavaScript, and copy both, along with any fonts into
-`static/`.
 
 ## package
 
