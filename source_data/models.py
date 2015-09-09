@@ -145,28 +145,3 @@ class SourceSubmissionDetail(models.Model):
 
     class Meta:
         db_table = 'source_submission_detail'
-
-
-
-class ODKForm(models.Model):
-    '''
-    This table holds all of the ODK forms that the system processes.  If you
-    want a new form to be brought in via the ODK ingest, simply insert a new row
-    here with the exact name of a form that you would like ingested.  The
-    get_odk_forms_to_process api call queries this table and returns to the ODK
-    ingest a list of strings taken from the form_name column.
-
-    As all odk forms are also documents, i.e. each document has a cooresponding
-    URL that allows users to map and sync any new data associated with these
-    documents.
-    '''
-
-    document = models.ForeignKey(Document,null=True)
-    last_processed = models.DateTimeField(null=True)
-    response_msg = models.CharField(null=True,max_length=255)
-    source_datapoint_count = models.IntegerField(default=0)
-    master_datapoint_count = models.IntegerField(default=0)
-    form_name = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'odk_form'

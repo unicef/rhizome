@@ -67,6 +67,11 @@ class EtlResource(ModelResource):
         except KeyError:
             cron_guid = 'no_job_id_provided'
 
+        try:
+            self.document_id = request.GET['document_id']
+        except KeyError:
+            self.document_id = -1
+
         tic = strftime("%Y-%m-%d %H:%M:%S")
 
         # stage the job #
@@ -230,7 +235,10 @@ class EtlTask(object):
         TO DO - pull this from document metadata.
         '''
 
-        odk_form_list = ODKForm.objects.all().values_list('form_name',flat=True)
+        odk_form_list = DocumentDetail.objects.filter(
+            document_id =  self.document_id,
+            doc_detail_type = DocDetailType.objects.get(name = 'odk_form')
+        )
         cleaned_forms = [str(x) for x in odk_form_list]
 
         return None, cleaned_forms

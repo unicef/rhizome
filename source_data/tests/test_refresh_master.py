@@ -19,25 +19,11 @@ class RefreshMasterTestCase(TestCase):
     def set_up(self):
 
         self.create_metadata()
+        self.user = User.objects.get(username = 'test')
+        self.document = Document.objects.get(doc_title = 'test')
 
         self.region_list = Region.objects.all().values_list('name',flat=True)
-        self.user = User.objects.get(username='test')
-
-        self.indicator = Indicator.objects.get(name='Number of all missed children')
-        self.campaign = Campaign.objects.get(slug='nigeria-2015-06-01')
-        self.region = Region.objects.get(name='Bauchi (Province)')
-
-        self.test_file_location = 'ebola_situation_report_vol_194.csv'
-
-        self.document = Document.objects.create(
-            created_by=self.user,
-            docfile=self.test_file_location,
-            guid='test-doc',
-            doc_text='test-doc',
-            is_processed=False,
-        )
-
-        self.create_metadata()
+        self.test_file_location = 'ebola_data.csv'
 
     def test_doc_to_source_submission(self):
         '''
@@ -64,8 +50,8 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        dt = DocTransform(self.user_id, self.document.id)
-        source_submissions = dt.process_file()
+        dt = DocTransform(self.user.id, self.document.id)
+        self.source_submissions = dt.process_file()
 
         test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')
         file_line_count = sum(1 for line in test_file) - 1 # for the header!
@@ -73,6 +59,8 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(len(source_submissions),file_line_count)
 
     def test_source_data_points_to_doc_datapoints(self):
+
+        self.set_up()
 
         mr = MasterRefresh(self.user.id, self.document.id)
         doc_datapoint_ids = mr.process_doc_datapoints(self.source_submissions)
@@ -83,8 +71,7 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        mr = MasterRefresh(self.user.id\
-            ,self.document.id)
+        mr = MasterRefresh(self.user.id ,self.document.id)
 
         self.assertTrue(isinstance,(mr,MasterRefresh))
         self.assertEqual(self.document.id,mr.document_id)
@@ -98,7 +85,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
         self.assertEqual(1,1)
-
 
     def test_unmapping(self):
         '''
@@ -130,19 +116,22 @@ class RefreshMasterTestCase(TestCase):
             is_error = False)
 
         status_id = ProcessStatus.objects.create(
-                status_text = 'test',
-                status_description = 'test').id
+                status_text = 'TO_PROCESS',
+                status_description = 'TO_PROCESS').id
 
         document_id = Document.objects.create(
             doc_title = 'test',
             created_by_id = user_id,
             guid = 'test').id
 
-        region_type1 = RegionType.objects.create(id=1,name="country")
-        region_type2 = RegionType.objects.create(id=2,name="settlement")
-        region_type3 = RegionType.objects.create(id=3,name="province")
-        region_type4 = RegionType.objects.create(id=4,name="district")
-        region_type5 = RegionType.objects.create(id=5,name="sub-district")
+        for ddt in ['uq_id_column','username_column','image_col',
+            'campaign_column','region_column','region_display_name']:
+
+            DocDetailType.objects.create(name=ddt)
+
+        for rt in ["country","settlement","province","district","sub-district"]:
+            DocDetailType.objects.create(name=rt)
+
 
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
@@ -151,6 +140,9 @@ class RefreshMasterTestCase(TestCase):
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
+
+
+
 
 
     def model_df_to_data(self,model_df,model):

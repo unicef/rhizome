@@ -195,10 +195,13 @@ class CacheRefreshTestCase(TestCase):
         ## now just try for one id (see POLIO-491 )
         cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
 
+        ## FIXIME
         actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
             raw_indicator_id)
 
         self.assertEqual(actual_value,agg_value_target)
+
+        self.assertEqual(90909090,agg_value_target)
 
     def get_dwc_value(self,region_id,campaign_id,indicator_id):
         '''
@@ -210,10 +213,12 @@ class CacheRefreshTestCase(TestCase):
         later that the dataopint_abstracted transformation is working properly
         '''
 
-        actual_value = DataPointComputed.objects.get(
-            region_id = region_id,
-            indicator_id = indicator_id,
-            campaign_id = campaign_id
-        ).value
+        # actual_value = DataPointComputed.objects.get(
+        #     region_id = region_id,
+        #     indicator_id = indicator_id,
+        #     campaign_id = campaign_id
+        # ).value
+
+        actual_value = 9090909090
 
         return actual_value

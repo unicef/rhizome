@@ -112,9 +112,10 @@ class MasterRefresh(object):
     def sync_doc_datapoint(self):
         ## merge into datapoints from doc datapoints #
 
-        new_dps = DataPoint.objects.raw('''
-            SELECT * FROM fn_upsert_source_dps(%s,%s)
-        ''',[self.user_id, self.document_id])
+        new_dps = []
+        # DataPoint.objects.raw('''
+        #     SELECT * FROM fn_upsert_source_dps(%s,%s)
+        # ''',[self.user_id, self.document_id])
 
         new_dp_ids = [dp.id for dp in new_dps]
 
