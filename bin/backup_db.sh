@@ -4,7 +4,7 @@
 
 BACKUPDIR=/var/lib/postgresql/sql_backups/
 DATE=`date +%Y-%m-%dT%H:%M:%S`
-DB=polio
+DB=rhizome
 USER=djangoapp
 
 DUMPALL="/usr/bin/pg_dumpall"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DB=polio
-HOST=polio_prod
+DB=rizome
+HOST=not_real
 USER=djangoapp
 
 # FIXME: It would be nice to have command-line switches for skipping back-up and
@@ -12,7 +12,7 @@ USER=djangoapp
 
 echo
 echo Downloading data from $HOST:$DB...
-ssh $HOST 'sudo -u postgres pg_dump polio' > db.sql
+ssh $HOST "sudo -u postgres pg_dump $DB" > db.sql
 
 echo done.
 
@@ -24,11 +24,10 @@ psql -c"select pg_terminate_backend(pid)
    from pg_stat_activity
    where datname = '$DB';"
 
-echo "just terminated all of your psql connections.. dropping the database in 5..4.."
+echo "just terminated all of your psql connections.. dropping the database in 3...2.."
 
-sleep 5
+sleep 3
 psql -c "DROP DATABASE IF EXISTS $DB;"
-
 
 echo "...CREATING DATABASE..."
 
@@ -39,7 +38,6 @@ psql -c "CREATE DATABASE $DB
        LC_COLLATE = 'en_US.UTF-8'
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;" postgres > /dev/null
-
 
 echo Loading production data...
 psql -f db.sql $DB $USER
