@@ -138,12 +138,12 @@ class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ##############################
     ##############################
 
-def cache_control(request):
+def manage_data_refresh(request):
 
     cache_jobs = CacheJob.objects.all().\
         exclude(response_msg='NOTHING_TO_PROCESS').order_by('-id')
 
-    return render_to_response('cache_control.html',{'cache_jobs':cache_jobs},
+    return render_to_response('manage_data_refresh.html',{'cache_jobs':cache_jobs},
     context_instance=RequestContext(request))
 
 
