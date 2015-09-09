@@ -35,7 +35,7 @@ def start_apache():
 
 def run_tests():
 
-    local("coverage run manage.py test datapoints.models datapoints.views  --settings=polio.settings.test")
+    local("coverage run manage.py test --settings=polio.settings.test")
     local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
 

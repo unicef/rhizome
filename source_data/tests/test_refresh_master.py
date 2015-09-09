@@ -53,12 +53,18 @@ class RefreshMasterTestCase(TestCase):
         database with the schema that it was received.  Later in the ingest
         process, users are allowed to specify settings to each file in order
         to translate them into data the application can consume and visualize.
-        '''
+
+        The Doc Transofrm Method is responsible for the following:
+            1. Inserting one record into source_submission for each csv row
+            2. Inserting any new mappings into source_object_map
+            3. Associating *all* source_object_maps with self.document_id ( even
+              those created in other documents)
+            4. Inserting one record into source_submission_detail        '''
 
         self.set_up()
 
         dt = DocTransform(self.user_id, self.document.id)
-        self.self. = dt.process_file()
+        source_submissions = dt.process_file()
 
         test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')
         file_line_count = sum(1 for line in test_file) - 1 # for the header!
