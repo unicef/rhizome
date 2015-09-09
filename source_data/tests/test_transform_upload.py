@@ -25,44 +25,49 @@ class RefreshMasterTestCase(TestCase):
         self.region_list = Region.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
 
-    def test_refresh_master_init(self):
+    def test_doc_to_source_submission(self):
+        '''
+        Part of the set up method, this takes a csv and inserts it into the
+        source submission table.  This method in context of this test represents
+        what would happen when a user uploads a csv and the data flows through
+        "etl_tasks/transform_upload"
+
+        Uploading the csv to the server is itself a different task.. so for now
+        we preform "transform_upload" on the test file.
+
+        This method is in charge of one specific thing.. taking an input stream
+        such as a csv, or an ODK submission, and creating one row in the
+        database with the schema that it was received.  Later in the ingest
+        process, users are allowed to specify settings to each file in order
+        to translate them into data the application can consume and visualize.
+
+        The Doc Transofrm Method is responsible for the following:
+            1. Inserting one record into source_submission for each csv row
+            2. Inserting any new mappings into source_object_map
+            3. Associating *all* source_object_maps with self.document_id ( even
+              those created in other documents)
+            4. Inserting one record into source_submission_detail        '''
 
         self.set_up()
 
-        mr = MasterRefresh(self.user.id ,self.document.id)
+        ## create the uq_id_column configuration ##
 
-        self.assertTrue(isinstance,(mr,MasterRefresh))
-        self.assertEqual(self.document.id,mr.document_id)
+        uq_id_config = DocumentDetail.objects.create(
+            document_id = self.document.id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='uq_id_column').id,
+            doc_detail_value = 'uq_id'
+        )
 
+        dt = DocTransform(self.user.id, self.document.id\
+            , self.test_file_location)
 
-    # def test_source_submission_to_doc_datapoints(self):
-    #     '''
-    #     '''
-    #     self.set_up()
-    #
-    #     mr = MasterRefresh(self.user.id, self.document.id)
-    #     doc_datapoint_ids = mr.process_doc_datapoints(self.source_submissions)
-    #
-    #     self.assertTrue(doc_datapoint_ids)
-    #
-    # def test_mapping(self):
-    #     '''
-    #     Here we ensure that after mapping all of the meta data that we have the
-    #     expected number of rows with the appropiate data associated.
-    #     '''
-    #
-    # def test_unmapping(self):
-    #     '''
-    #     Here we ensure that if there is data in the datapoints table that
-    #     cooresponds to a non existing mapping that we remove it.
-    #     '''
-    #     pass
-    #
-    # def test_re_mapping(self):
-    #     '''
-    #     When metadata assigned to a new master_id - make sure that datapoints do as well
-    #     '''
+        source_submissions = dt.process_file()
 
+        test_file = open(settings.MEDIA_ROOT + self.test_file_location ,'r')
+        file_line_count = sum(1 for line in test_file) - 1 # for the header!
+
+        self.assertEqual(len(source_submissions),file_line_count)
 
     def create_metadata(self):
         '''
@@ -78,8 +83,8 @@ class RefreshMasterTestCase(TestCase):
         user_id = User.objects.create_user('test','john@john.com', 'test').id
         office_id = Office.objects.create(id=1,name='test').id
 
-        cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01',\
-            is_error = False)
+        cache_job_id = CacheJob.objects.create(id = -2, \
+            date_attempted = '2015-01-01',is_error = False)
 
         status_id = ProcessStatus.objects.create(
                 status_text = 'TO_PROCESS',

@@ -31,26 +31,14 @@ class DocTransform(object):
         self.to_process_status = ProcessStatus.objects.\
             get(status_text='TO_PROCESS').id
 
-        self.doc_deets ={
-            'uq_id_column': None,
-            'username_column': None,
-            'image_col': None,
-            'campaign_column': None,
-            'region_column': None,
-            'region_display_name': None
-        }
-
-        for k,v in self.doc_deets.iteritems():
-
-            new_value = DocumentDetail.objects.get(
-                document_id = self.document_id,
-                doc_detail_type_id = DocDetailType.objects.get(name=k).id
-            ).doc_detail_value
-
-            self.doc_deets[k] = new_value
+        self.uq_id_column = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='uq_id_column').id,
+        ).doc_detail_value
 
 
-    def pre_process_file(self,full_file_path):
+    def get_document_file_stream(self,full_file_path):
 
         f_header = open(full_file_path,'r')
         top_row = f_header.readlines()[0]
@@ -95,13 +83,13 @@ class DocTransform(object):
 
     def process_file(self):
         '''
-        Returns a list of source submisison objects
+        Takes a file and dumps the data into the source submission table.
+
+        Returns a list of source_submission_ids
         '''
 
-        print 'PROCESSINGGGGG=====\n' * 5
-
         full_file_path = settings.MEDIA_ROOT + self.file_path
-        file_stream = self.pre_process_file(full_file_path)
+        file_stream = self.get_document_file_stream(full_file_path)
 
         batch = {}
         for i,(submission) in enumerate(file_stream):
@@ -115,10 +103,8 @@ class DocTransform(object):
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
 
-        doc_deets = self.post_process_file()
-        mappings = self.upsert_source_object_map()
+        return [x.id for x in ss]
 
-        return ss
 
     def upsert_source_object_map(self):
         '''
@@ -176,7 +162,7 @@ class DocTransform(object):
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
 
-        instance_guid = submission_data[self.doc_deets['uq_id_column']]
+        instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '':
             return None, None
@@ -185,7 +171,7 @@ class DocTransform(object):
             'submission_json': submission_data,
             'document_id': self.document_id,
             'row_number': i,
-            'instance_guid': submission_data[self.doc_deets['uq_id_column']],
+            'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
         return submission_dict, instance_guid
