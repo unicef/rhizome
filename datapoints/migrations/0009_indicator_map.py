@@ -12,7 +12,7 @@ def forwards_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0008_ingestgeojson'),
+        ('datapoints', '0008_ingest_geojson'),
     ]
 
     operations = [
