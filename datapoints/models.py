@@ -355,7 +355,7 @@ class DataPoint(models.Model):
     the raw data that we get from the source.
 
     The source_submission shows the original source of the data in the
-    source_submissino.  The source_submission is -1 in the case of data
+    source_submission.  The source_submission is -1 in the case of data
     entry.
 
     The cache_job_id column allows us to find out when and why a particular

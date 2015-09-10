@@ -119,7 +119,24 @@ class MasterRefresh(object):
 
     def submissions_to_doc_datapoints(self):
 
-        pass
+        print 'submissions_to_doc_datapoints\n' * 3
+
+        submissions_ready_for_sync = []
+
+        ss_ids_in_batch = [ss_id for ss_id, ss_json in self.submission_data]
+        ready_for_doc_datapoint_sync = SourceSubmissionDetail.objects\
+            .filter(
+                 source_submission_id__in= ss_ids_in_batch,
+                region_id__isnull= False,
+                campaign_id__isnull= False
+            ).values('region_id','campaign_id','source_submission_id')
+
+        print 'LEN OF QS: %s' % len(ss_ids_in_batch)
+
+        for row in ready_for_doc_datapoint_sync:
+            print '==ST HEAVEN==\n' * 3
+            print row
+
 
     ## main() helper methods ##
 

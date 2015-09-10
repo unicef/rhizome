@@ -97,17 +97,22 @@ class RefreshMasterTestCase(TestCase):
         A few things this method checks:
             1. there is a record in document_to_source_object_map even for
               mappings that existed before this document was ingested.
-            2. There are no zero or null values allowed in doc_datapoint
-            3. DocDataPoint records are created if the necessary mapping exists
+            2. WHen the submission detail is refreshed, the reiogn/campaign ids
+               that we mapped should exist in that row.
+            2. DocDataPoint records are created if the necessary mapping exists
+            3. There are no zero or null values allowed in doc_datapoint
         '''
 
         self.set_up()
         mr = MasterRefresh(self.user.id ,self.document.id)
 
         # first_submission = json.loads(
-        first_submission = json.loads(SourceSubmission.objects\
+
+        submission_qs = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
-            .values_list('submission_json',flat=True)[0])
+            .values_list('id','submission_json')[0]
+
+        ss_id, first_submission = submission_qs[0],json.loads(submission_qs[1])
 
         region_code = first_submission[self.region_code_input_column]
         campaign_code = first_submission[self.campaign_code_input_column]
@@ -115,24 +120,27 @@ class RefreshMasterTestCase(TestCase):
 
         indicator_code = raw_indicator_list[-1]
 
+        map_region_id = Region.objects.all()[0].id
         som_id_r = SourceObjectMap.objects.create(
             content_type = 'region',
             source_object_code = region_code,
-            master_object_id = Region.objects.all()[0].id,
+            master_object_id = map_region_id,
             mapped_by_id = self.user.id
         )
 
+        map_campaign_id = Campaign.objects.all()[0].id
         som_id_c = SourceObjectMap.objects.create(
             content_type = 'campaign',
             source_object_code = campaign_code,
-            master_object_id = Campaign.objects.all()[0].id,
+            master_object_id = map_campaign_id,
             mapped_by_id = self.user.id
         )
 
+        map_indicator_id = Indicator.objects.all()[0].id
         som_id_i = SourceObjectMap.objects.create(
             content_type = 'indicator',
             source_object_code = indicator_code,
-            master_object_id = Indicator.objects.all()[0].id,
+            master_object_id = map_indicator_id,
             mapped_by_id = self.user.id
         )
 
@@ -147,17 +155,24 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertEqual(len(doc_som_id_for_region_code),1) # 1
 
-        # mr.refresh_submission_details()
-        # mr.submissions_to_doc_datapoints()
+        ## Test Case 1 ##
+        mr.refresh_submission_details()
 
-        # first_submssion_detail = SourceSubmissionDetail.objects.get(
-        #     source_submission_id = first_submission.id
-        # )
+        first_submission_detail = SourceSubmissionDetail.objects\
+            .get(source_submission_id = ss_id)
 
-        # source_doc_dp_ids = DocDataPoint.objects.filter(document_id =
-        #     self.document.id)
-        #
-        # self.assertEqual(1,len(source_doc_dp_ids))
+        ## Test Case 2 ##
+        self.assertEqual(first_submission_detail.region_id, map_region_id)
+        self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
+
+        ##
+        mr.submissions_to_doc_datapoints()
+
+        source_doc_dp_ids = DocDataPoint.objects.filter(document_id =
+            self.document.id)
+
+        ## Test Case #3
+        self.assertEqual(1,len(source_doc_dp_ids))
 
     # def test_batch_size()
 
