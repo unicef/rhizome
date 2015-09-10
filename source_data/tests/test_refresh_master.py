@@ -78,7 +78,7 @@ class RefreshMasterTestCase(TestCase):
         ## FIXME replace source_submission_data with read_csv(self.test_file)
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
-            .values('id','submission_json')
+            .values_list('id',flat=True)
 
         mr.refresh_submission_details()
 
@@ -88,7 +88,7 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(len(source_submissions_data)\
             ,len(submission_details))
 
-    def test_submission_to_doc_datapoint(self):
+    def test_submission_to_datapoint(self):
         '''
         This simulates a new document being processed with source_object_map
         records that have been sucessfullly mapped to master_ids but from a
@@ -101,6 +101,7 @@ class RefreshMasterTestCase(TestCase):
                that we mapped should exist in that row.
             2. DocDataPoint records are created if the necessary mapping exists
             3. There are no zero or null values allowed in doc_datapoint
+            4. The doc_datapoint from #3 is merged into datpaoint.
         '''
 
         self.set_up()
@@ -163,40 +164,17 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
 
         mr.submissions_to_doc_datapoints()
-        source_doc_dp_ids = DocDataPoint.objects.filter(document_id =
+        doc_dp_ids = DocDataPoint.objects.filter(document_id =
             self.document.id)
 
         ## Test Case #3
-        self.assertEqual(1,len(source_doc_dp_ids))
+        self.assertEqual(1,len(doc_dp_ids))
 
-
-    def test_sync_datapoint(self):
-
-        self.set_up()
-        datapoint_value = 2.3
-
-        doc_dp = DocDataPoint.objects.create(**{
-            'indicator_id':  1,
-            'region_id': 1,
-            'campaign_id': 1,
-            'value': datapoint_value,
-            'document_id': self.document.id,
-            'source_submission_id': 1,
-            'changed_by_id': self.user.id,
-            'is_valid': True,
-            'agg_on_region': True,
-        })
-
-        mr = MasterRefresh(self.user.id ,self.document.id)
         mr.sync_datapoint()
+        dps = DataPoint.objects.all()
 
-        dp_value = DataPoint.objects.get(
-            region_id = 1,
-            campaign_id = 1,
-            indicator_id = 1,
-        ).value
-
-        self.assertEqual(datapoint_value, dp_value)
+        ## Test Case #4
+        self.assertEqual(1,len(doc_dp_ids))
 
 
     # def test_unmapping(self):
@@ -210,7 +188,6 @@ class RefreshMasterTestCase(TestCase):
     #     '''
     #     When metadata assigned to a new master_id - make sure that datapoints do as well
     #     '''
-
 
     def create_metadata(self):
         '''

@@ -80,8 +80,10 @@ class MasterRefresh(object):
         for ss_id, submission in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission)
-            region_codes.append(submission_dict[self.db_doc_deets['region_column']])
-            campaign_codes.append(submission_dict[self.db_doc_deets['campaign_column']])
+            region_codes\
+                .append(submission_dict[self.db_doc_deets['region_column']])
+            campaign_codes\
+                .append(submission_dict[self.db_doc_deets['campaign_column']])
 
         source_codes['region'] = list(set(region_codes))
         source_codes['campaign'] = list(set(campaign_codes))
@@ -151,12 +153,12 @@ class MasterRefresh(object):
         doc_dps = DocDataPoint.objects.filter(\
             source_submission_id__in = ss_id_list,
             is_valid= True
-        ).values('value','campaign_id','changed_by_id','document_id',\
+        ).values('value','campaign_id','changed_by_id',\
             'indicator_id','region_id','source_submission_id')
 
         for ddp in doc_dps:
-            ddp['cache_job_id'] -1
-            dp_batch.append(**ddp)
+            ddp['cache_job_id'] = -1
+            dp_batch.append(DataPoint(**ddp))
 
         DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
         DataPoint.objects.bulk_create(dp_batch)
