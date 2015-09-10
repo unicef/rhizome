@@ -116,7 +116,7 @@ class RefreshMasterTestCase(TestCase):
         indicator_code = raw_indicator_list[-1]
 
         som_id_r = SourceObjectMap.objects.create(
-            content_type = 'indicator',
+            content_type = 'region',
             source_object_code = region_code,
             master_object_id = Region.objects.all()[0].id,
             mapped_by_id = self.user.id
