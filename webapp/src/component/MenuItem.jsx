@@ -19,7 +19,7 @@ var MenuItem = React.createClass({
         depth = 0;
       }
 
-      return _.map(arr, function (item) {
+      return arr.map(item => {
         return (
           <MenuItem
             key={item.value}
