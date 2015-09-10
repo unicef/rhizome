@@ -54,16 +54,17 @@ class RefreshMasterTestCase(TestCase):
 
         mr.refresh_doc_meta()
 
-        source_db_indicators = SourceObjectMap.objects.filter(\
-            content_type = 'indicator',
-            source_object_code__in = raw_indicator_list
-        )
-
-
+        source_indicator_id_for_this_doc = DocumentSourceObjectMap.objects\
+            .filter(id__in= SourceObjectMap.objects.filter(\
+                    content_type = 'indicator',
+                    source_object_code__in = raw_indicator_list
+                ).values_list('id',flat=True)
+            )
 
         ## should be more specific here.. but this proves with a high degree ##
         ## of certainty that the source_object_map rows have been created ##
-        self.assertEqual(len(source_db_indicators),raw_indicator_list)
+        self.assertEqual(len(source_indicator_id_for_this_doc)\
+            ,len(raw_indicator_list))
 
     def create_doc_deets(self,document_id):
 

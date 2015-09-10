@@ -78,11 +78,12 @@ class MasterRefresh(object):
         source_codes = {'indicators' :[k for k,v in json\
             .loads(ss_list[0]['submission_json']).iteritems()]}
 
-        print 'source doces!!!\n' * 10
-        print source_codes
+        source_object_map_ids = self.upsert_source_codes(source_codes)
 
+    def upsert_source_codes(self, source_codes):
+
+        som_batch = []
         for source_code in source_codes['indicators']:
-            print '==yo=='
             som_object, created = SourceObjectMap.objects.get_or_create(
                 source_object_code = source_code,
                 content_type = 'indicator',
@@ -93,11 +94,18 @@ class MasterRefresh(object):
                 }
             )
 
-            print som_object
+            doc_som_object = DocumentSourceObjectMap(**{
+                'source_object_map_id': som_object.id,
+                'document_id': self.document_id
+            })
+            #
+            som_batch.append(doc_som_object)
 
-        print sourc
+        DocumentSourceObjectMap.objects\
+            .filter(document_id = self.document_id)\
+            .delete()
 
-        print first_submission
+        DocumentSourceObjectMap.objects.bulk_create(som_batch)
 
 
     def main(self):
