@@ -73,9 +73,29 @@ class MasterRefresh(object):
 
         ss_list = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
-            .values_list('id','submission_json')
+            .values('id','submission_json')
 
-        first_submission = ss_list[0][0]
+        source_codes = {'indicators' :[k for k,v in json\
+            .loads(ss_list[0]['submission_json']).iteritems()]}
+
+        print 'source doces!!!\n' * 10
+        print source_codes
+
+        for source_code in source_codes['indicators']:
+            print '==yo=='
+            som_object, created = SourceObjectMap.objects.get_or_create(
+                source_object_code = source_code,
+                content_type = 'indicator',
+                defaults = {
+                     'master_object_id' : -1,
+                     'master_object_name': 'To Map!',
+                     'mapped_by_id' : self.user_id
+                }
+            )
+
+            print som_object
+
+        print sourc
 
         print first_submission
 

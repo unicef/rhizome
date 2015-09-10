@@ -1,5 +1,6 @@
 import hashlib
 import random
+import json
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -40,13 +41,29 @@ class RefreshMasterTestCase(TestCase):
 
     def test_refresh_doc_meta(self):
 
-        print 'HELLO\n' * 5
         self.set_up()
         mr = MasterRefresh(self.user.id ,self.document.id)
 
-        print self.source_submissions_ids
+        ## load this w read_csv(self.test_file_location) remove DocTransform
+        source_submissions_data = SourceSubmission.objects\
+            .filter(document_id = self.document.id)\
+            .values('id','submission_json')
 
-        self.assertEqual(1,2)
+        raw_indicator_list = [k for k,v in json\
+            .loads(source_submissions_data[0]['submission_json']).iteritems()]
+
+        mr.refresh_doc_meta()
+
+        source_db_indicators = SourceObjectMap.objects.filter(\
+            content_type = 'indicator',
+            source_object_code__in = raw_indicator_list
+        )
+
+
+
+        ## should be more specific here.. but this proves with a high degree ##
+        ## of certainty that the source_object_map rows have been created ##
+        self.assertEqual(len(source_db_indicators),raw_indicator_list)
 
     def create_doc_deets(self,document_id):
 
