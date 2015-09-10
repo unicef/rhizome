@@ -90,14 +90,12 @@ class MasterRefresh(object):
     def refresh_submission_details(self):
 
         source_map_dict = self.get_document_meta_mappings()
-        print source_map_dict
 
         ss_id_list, ss_detail_batch = [],[]
 
         for row in self.submission_data:
 
             ss_id, submission_dict = row[0],json.loads(row[1])
-
             region_column, campaign_column = self.db_doc_deets['region_column']\
                 , self.db_doc_deets['campaign_column']
 
@@ -128,6 +126,8 @@ class MasterRefresh(object):
 
     def submissions_to_doc_datapoints(self):
 
+        source_map_dict = self.get_document_meta_mappings()
+
         submissions_ready_for_sync = []
 
         ss_ids_in_batch = [ss_id for ss_id, ss_json in self.submission_data]
@@ -139,10 +139,41 @@ class MasterRefresh(object):
             ).values('region_id','campaign_id','source_submission_id')
 
         for row in ready_for_doc_datapoint_sync:
-            print row
+            doc_dps = self.process_source_submission(row['region_id'], \
+                row['campaign_id'], row['source_submission_id'],source_map_dict)
 
 
     ## main() helper methods ##
+
+    def process_source_submission(self,region_id,campaign_id,ss_id,som_dict):
+
+        doc_dp_batch = []
+        ## dont make this query.. use self.submission_data ##
+        submission  = SourceSubmission.objects.get(id=ss_id)\
+            .submission_json
+        print submission
+
+        for k,v in submission.iteritems():
+
+            try:
+                doc_dp_batch.append(\
+                    DocDataPoint(**{
+                        'indicator_id':  som_dict[('indicator',k)],
+                        'value': v,
+                        'region_id': region_id,
+                        'campaign_id': campaign_id,
+                        'document_id': self.document_id,
+                        'source_submission_id': ss_id,
+                        'changed_by_id': self.user_id,
+                        'is_valid': True,
+                        'agg_on_region': True,
+                    }))
+            except KeyError:
+                pass
+
+        DocDataPoint.objects.filter(source_submission_id=ss_id).delete()
+        DocDataPoint.objects.bulk_create(doc_dp_batch)
+
 
     def upsert_source_codes(self, source_codes):
 
