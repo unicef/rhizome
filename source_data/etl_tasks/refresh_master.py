@@ -21,6 +21,7 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
+        self.ss_batch_size = 500
         self.document_id = document_id
         self.user_id = user_id
 
@@ -58,11 +59,26 @@ class MasterRefresh(object):
                 id__in = sm_ids).values_list(*['master_object_id']))
             ,columns = ['master_object_id']\
             ,index= SourceObjectMap.objects.filter(master_object_id__gt=0
-            ,id__in = sm_ids)\
-            .values_list(*['content_type','source_object_code']))\
-            .to_dict()['master_object_id']
+                ,id__in = sm_ids)\
+                .values_list(*['content_type','source_object_code']))\
+                .to_dict()['master_object_id']
 
         self.computed_datapoint_ids = self.main()
+
+    def refresh_doc_meta(self):
+
+        db_doc_deets = DocumentDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values()
+
+        ss_list = SourceSubmission.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('id','submission_json')
+
+        first_submission = ss_list[0][0]
+
+        print first_submission
+
 
     def main(self):
         '''
@@ -70,18 +86,18 @@ class MasterRefresh(object):
         x = mr(1,2)
         '''
 
-        BATCH_SIZE = 5000
-
         new_source_submission_ids = SourceSubmission.objects.filter(
             document_id = self.document_id
             ,process_status = 'TO_PROCESS'
         ).values_list('id',flat=True)
 
-        to_process = new_source_submission_ids[:BATCH_SIZE]
+        to_process = new_source_submission_ids[:self.ss_batch_size]
 
         print '== source_submissions =='
         SourceSubmission.objects.filter(id__in=to_process)\
             .update(process_status = 'PROCESSED')
+
+        ## john test the above ... ##
 
         print '== doc datapoints =='
         doc_datapoint_ids = self.process_doc_datapoints\
@@ -89,10 +105,6 @@ class MasterRefresh(object):
 
         print '== sync datapoints =='
         datapoint_ids = self.sync_doc_datapoint()
-
-        print '== cache datapoints =='
-        cr = CacheRefresh([d.id for d in datapoint_ids])
-        computed_datapoint_ids = cr.main()
 
         return datapoint_ids
 
@@ -124,8 +136,8 @@ class MasterRefresh(object):
     def process_source_submission(self,ss_row):
 
         submission_data = json.loads(ss_row['submission_json'])
-        region_code = submission_data[self.document_metadata['region_column']]
-        campaign_code = submission_data[self.document_metadata['campaign_column']]
+        region_code = submission_data[self.db_doc_deets['region_column']]
+        campaign_code = submission_data[self.db_doc_deets['campaign_column']]
 
         dp_batch = []
 

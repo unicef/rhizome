@@ -50,15 +50,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        ## create the uq_id_column configuration ##
-
-        uq_id_config = DocumentDetail.objects.create(
-            document_id = self.document.id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='uq_id_column').id,
-            doc_detail_value = 'uq_id'
-        )
-
         dt = DocTransform(self.user.id, self.document.id\
             , self.test_file_location)
 
@@ -111,6 +102,16 @@ class RefreshMasterTestCase(TestCase):
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
+
+        ## create the uq_id_column configuration ##
+
+        uq_id_config = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='uq_id_column').id,
+            doc_detail_value = 'uq_id'
+        )
+
 
     def model_df_to_data(self,model_df,model):
 

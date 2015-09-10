@@ -18,23 +18,39 @@ class RefreshMasterTestCase(TestCase):
 
     def set_up(self):
 
+        self.region_list = Region.objects.all().values_list('name',flat=True)
+        self.test_file_location = 'ebola_data.csv'
+
         self.create_metadata()
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
 
-        self.region_list = Region.objects.all().values_list('name',flat=True)
-        self.test_file_location = 'ebola_data.csv'
+        dt = DocTransform(self.user.id, self.document.id\
+            , self.test_file_location)
+
+        self.source_submissions_ids = dt.process_file()
+        self.create_doc_deets(self.document.id)
 
     def test_refresh_master_init(self):
 
         self.set_up()
-
         mr = MasterRefresh(self.user.id ,self.document.id)
 
         self.assertTrue(isinstance,(mr,MasterRefresh))
-        self.assertEqual(self.document.id,mr.document_id)
 
+    def test_refresh_doc_meta(self):
 
+        print 'HELLO\n' * 5
+        self.set_up()
+        mr = MasterRefresh(self.user.id ,self.document.id)
+
+        print self.source_submissions_ids
+
+        self.assertEqual(1,2)
+
+    def create_doc_deets(self,document_id):
+
+        pass
     # def test_source_submission_to_doc_datapoints(self):
     #     '''
     #     '''
@@ -106,6 +122,28 @@ class RefreshMasterTestCase(TestCase):
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
+
+        rg_conif = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='region_column').id,
+            doc_detail_value = 'Wardcode'
+        )
+
+        cp_conif = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='campaign_column').id,
+            doc_detail_value = 'Campaign'
+        )
+
+        uq_id_config = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='uq_id_column').id,
+            doc_detail_value = 'uq_id'
+        )
+
 
     def model_df_to_data(self,model_df,model):
 
