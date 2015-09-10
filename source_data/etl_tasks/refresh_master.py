@@ -26,20 +26,7 @@ class MasterRefresh(object):
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
-
-        sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
-            self.document_id).values_list('source_object_map_id',flat=True)
-
-        self.source_map_dict =  DataFrame(list(SourceObjectMap.objects\
-            # {'content_type': source_code} : master_object_id #
-            .filter(
-                master_object_id__gt=0,
-                id__in = sm_ids).values_list(*['master_object_id']))
-            ,columns = ['master_object_id']\
-            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0
-                ,id__in = sm_ids)\
-                .values_list(*['content_type','source_object_code']))\
-                .to_dict()['master_object_id']
+        self.source_map_dict = self.get_document_meta_mappings()
 
         self.submission_data = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
@@ -62,6 +49,24 @@ class MasterRefresh(object):
                 row['doc_detail_value']
 
         return document_details
+
+    def get_document_meta_mappings(self):
+
+        sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
+            self.document_id).values_list('source_object_map_id',flat=True)
+
+        source_map_dict =  DataFrame(list(SourceObjectMap.objects\
+            # tuple dict -> {('region': "PAK") : 3 , ('region': "PAK") : 3}
+            .filter(
+                master_object_id__gt=0,
+                id__in = sm_ids).values_list(*['master_object_id']))
+            ,columns = ['master_object_id']\
+            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0
+                ,id__in = sm_ids)\
+                .values_list(*['content_type','source_object_code']))\
+                .to_dict()['master_object_id']
+
+        return source_map_dict
 
     def refresh_doc_meta(self):
 
