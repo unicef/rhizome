@@ -102,17 +102,11 @@ class MasterRefresh(object):
             region_column, campaign_column = self.db_doc_deets['region_column']\
                 , self.db_doc_deets['campaign_column']
 
-            try:
-                region_id = source_map_dict[('region'\
-                    ,submission_dict[region_column])]
-            except KeyError:
-                region_id = None
+            region_id = source_map_dict.get(('region'\
+                    ,submission_dict[region_column]),None)
 
-            try:
-                campaign_id = source_map_dict[('campaign'\
-                    ,submission_dict[campaign_column])]
-            except KeyError:
-                campaign_id = None
+            campaign_id = source_map_dict.get(('campaign'\
+                    ,submission_dict[campaign_column]),None)
 
             ss_id_list.append(ss_id)
             ss_detail_batch.append(SourceSubmissionDetail(**{
@@ -209,43 +203,13 @@ class MasterRefresh(object):
                          'mapped_by_id' : self.user_id
                     }
                 )
-
-                doc_som_object = DocumentSourceObjectMap(**{
-                    'source_object_map_id': som_object.id,
-                    'document_id': self.document_id
-                })
-                #
-                som_batch.append(doc_som_object)
+                som_batch.append(DocumentSourceObjectMap(**{
+                        'source_object_map_id': som_object.id,
+                        'document_id': self.document_id
+                    }))
 
         DocumentSourceObjectMap.objects\
             .filter(document_id = self.document_id)\
             .delete()
 
         DocumentSourceObjectMap.objects.bulk_create(som_batch)
-
-
-    def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
-
-        try:
-            indicator_id = self.source_map_dict[('indicator',ind_code)]
-        except KeyError:
-            return None
-
-        try:
-            cleaned_val = float(val)
-        except ValueError:
-            return
-
-        doc_dp_obj = DocDataPoint(**{
-            'document_id':self.document_id,
-            'region_id':region_id,
-            'campaign_id':campaign_id,
-            'indicator_id':indicator_id,
-            'value':val,
-            'changed_by_id':self.user_id,
-            'source_submission_id':ss_id,
-            'is_valid':True, ## TODO # make this based off user input
-            'agg_on_region':True
-        })
-
-        return doc_dp_obj

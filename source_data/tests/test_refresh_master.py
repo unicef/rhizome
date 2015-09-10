@@ -176,7 +176,6 @@ class RefreshMasterTestCase(TestCase):
         ## Test Case #4
         self.assertEqual(1,len(doc_dp_ids))
 
-
     # def test_unmapping(self):
     #     '''
     #     Here we ensure that if there is data in the datapoints table that
