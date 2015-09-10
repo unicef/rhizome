@@ -32,6 +32,7 @@ class MasterRefresh(object):
             .filter(document_id = self.document_id)\
             .values_list('id','submission_json')[:self.ss_batch_size]
 
+    ## __init__ helper methods ##
     def get_document_config(self):
 
         detail_types, document_details = {}, {}
@@ -56,7 +57,7 @@ class MasterRefresh(object):
             self.document_id).values_list('source_object_map_id',flat=True)
 
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
-            # tuple dict -> {('region': "PAK") : 3 , ('region': "PAK") : 3}
+            # tuple dict ex: {('region': "PAK") : 3 , ('region': "PAK") : 3}
             .filter(
                 master_object_id__gt=0,
                 id__in = sm_ids).values_list(*['master_object_id']))
@@ -68,8 +69,8 @@ class MasterRefresh(object):
 
         return source_map_dict
 
+    ## main methods .. called by views and APIs in order to move data ##
     def refresh_doc_meta(self):
-
 
         ss_list = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
@@ -115,6 +116,12 @@ class MasterRefresh(object):
 
         SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
+
+    def submissions_to_doc_datapoints(self):
+
+        pass
+
+    ## main() helper methods ##
 
     def upsert_source_codes(self, source_codes):
 
