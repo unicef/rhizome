@@ -26,7 +26,6 @@ class MasterRefresh(object):
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
-        self.source_map_dict = self.get_document_meta_mappings()
 
         self.submission_data = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
@@ -72,16 +71,26 @@ class MasterRefresh(object):
     ## main methods .. called by views and APIs in order to move data ##
     def refresh_doc_meta(self):
 
-        ss_list = SourceSubmission.objects\
-            .filter(document_id = self.document_id)\
-            .values('id','submission_json')
+        source_codes = {'indicator' :[k for k,v in json\
+            .loads(self.submission_data[0][1]).iteritems()]}
 
-        source_codes = {'indicators' :[k for k,v in json\
-            .loads(ss_list[0]['submission_json']).iteritems()]}
+        region_codes, campaign_codes = [],[]
+
+        for ss_id, submission in self.submission_data:
+
+            submission_dict = json.loads(submission)
+            region_codes.append(submission_dict[self.db_doc_deets['region_column']])
+            campaign_codes.append(submission_dict[self.db_doc_deets['campaign_column']])
+
+        source_codes['region'] = list(set(region_codes))
+        source_codes['campaign'] = list(set(campaign_codes))
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
     def refresh_submission_details(self):
+
+        source_map_dict = self.get_document_meta_mappings()
+        print source_map_dict
 
         ss_id_list, ss_detail_batch = [],[]
 
@@ -93,13 +102,13 @@ class MasterRefresh(object):
                 , self.db_doc_deets['campaign_column']
 
             try:
-                region_id = self.source_map_dict[('region'\
+                region_id = source_map_dict[('region'\
                     ,submission_dict[region_column])]
             except KeyError:
                 region_id = None
 
             try:
-                campaign_id = self.source_map_dict[('campaign'\
+                campaign_id = source_map_dict[('campaign'\
                     ,submission_dict[campaign_column])]
             except KeyError:
                 campaign_id = None
@@ -119,22 +128,17 @@ class MasterRefresh(object):
 
     def submissions_to_doc_datapoints(self):
 
-        print 'submissions_to_doc_datapoints\n' * 3
-
         submissions_ready_for_sync = []
 
         ss_ids_in_batch = [ss_id for ss_id, ss_json in self.submission_data]
         ready_for_doc_datapoint_sync = SourceSubmissionDetail.objects\
             .filter(
                  source_submission_id__in= ss_ids_in_batch,
-                region_id__isnull= False,
-                campaign_id__isnull= False
+                 region_id__isnull= False,
+                 campaign_id__isnull= False
             ).values('region_id','campaign_id','source_submission_id')
 
-        print 'LEN OF QS: %s' % len(ss_ids_in_batch)
-
         for row in ready_for_doc_datapoint_sync:
-            print '==ST HEAVEN==\n' * 3
             print row
 
 
@@ -143,23 +147,25 @@ class MasterRefresh(object):
     def upsert_source_codes(self, source_codes):
 
         som_batch = []
-        for source_code in source_codes['indicators']:
-            som_object, created = SourceObjectMap.objects.get_or_create(
-                source_object_code = source_code,
-                content_type = 'indicator',
-                defaults = {
-                     'master_object_id' : -1,
-                     'master_object_name': 'To Map!',
-                     'mapped_by_id' : self.user_id
-                }
-            )
+        for content_type, source_code_list in source_codes.iteritems():
 
-            doc_som_object = DocumentSourceObjectMap(**{
-                'source_object_map_id': som_object.id,
-                'document_id': self.document_id
-            })
-            #
-            som_batch.append(doc_som_object)
+            for source_code in source_code_list:
+                som_object, created = SourceObjectMap.objects.get_or_create(
+                    source_object_code = source_code,
+                    content_type = content_type,
+                    defaults = {
+                         'master_object_id' : -1,
+                         'master_object_name': 'To Map!',
+                         'mapped_by_id' : self.user_id
+                    }
+                )
+
+                doc_som_object = DocumentSourceObjectMap(**{
+                    'source_object_map_id': som_object.id,
+                    'document_id': self.document_id
+                })
+                #
+                som_batch.append(doc_som_object)
 
         DocumentSourceObjectMap.objects\
             .filter(document_id = self.document_id)\
@@ -167,86 +173,6 @@ class MasterRefresh(object):
 
         DocumentSourceObjectMap.objects.bulk_create(som_batch)
 
-
-    def main(self):
-        '''
-        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-        x = mr(1,2)
-        '''
-
-        new_source_submission_ids = SourceSubmission.objects.filter(
-            document_id = self.document_id
-            ,process_status = 'TO_PROCESS'
-        ).values_list('id',flat=True)
-
-        to_process = new_source_submission_ids[:self.ss_batch_size]
-
-        print '== source_submissions =='
-        SourceSubmission.objects.filter(id__in=to_process)\
-            .update(process_status = 'PROCESSED')
-
-        ## john test the above ... ##
-
-        print '== doc datapoints =='
-        doc_datapoint_ids = self.process_doc_datapoints\
-            (to_process)
-
-        print '== sync datapoints =='
-        datapoint_ids = self.sync_doc_datapoint()
-
-        return datapoint_ids
-
-    def process_doc_datapoints(self,source_submission_id_list):
-
-        source_dp_json = SourceSubmission.objects.filter(
-            id__in = source_submission_id_list).values()
-
-        for i,(row) in enumerate(source_dp_json):
-            self.process_source_submission(row)
-
-        new_doc_dp_ids = DocDataPoint.objects.filter(document_id = \
-            self.document_id).values_list('id',flat=True)
-
-        return new_doc_dp_ids
-
-    def sync_doc_datapoint(self):
-        ## merge into datapoints from doc datapoints #
-
-        new_dps = []
-        # DataPoint.objects.raw('''
-        #     SELECT * FROM fn_upsert_source_dps(%s,%s)
-        # ''',[self.user_id, self.document_id])
-
-        new_dp_ids = [dp.id for dp in new_dps]
-
-        return DataPoint.objects.filter(id__in=new_dp_ids)
-
-    def process_source_submission(self,ss_row):
-
-        submission_data = json.loads(ss_row['submission_json'])
-        region_code = submission_data[self.db_doc_deets['region_column']]
-        campaign_code = submission_data[self.db_doc_deets['campaign_column']]
-
-        dp_batch = []
-
-        try:
-            region_id = self.source_map_dict[('region',region_code)]
-        except KeyError:
-            return
-
-        try:
-            campaign_id = self.source_map_dict[('campaign',campaign_code)]
-        except KeyError:
-            return
-
-        for k,v in submission_data.iteritems():
-
-            dp_obj = self.process_submission_instance(region_id,campaign_id,k,v,ss_row['id'])
-
-            if dp_obj:
-                dp_batch.append(dp_obj)
-
-        batch_result = DocDataPoint.objects.bulk_create(dp_batch)
 
     def process_submission_instance(self,region_id,campaign_id,ind_code,val,ss_id):
 
@@ -273,25 +199,3 @@ class MasterRefresh(object):
         })
 
         return doc_dp_obj
-
-
-    def clean_cell_value(self,cell_value):
-
-        if cell_value == None:
-            return None
-
-        try:
-            cleaned = float(cell_value.replace(',',''))
-        except ValueError:
-            cleaned = None
-
-        return cleaned
-
-    def delete_un_mapped(self):
-
-        datapoint_ids = MissingMapping.objects.filter(document_id=\
-            self.document_id).values_list('datapoint_id',flat=True)
-
-        MissingMapping.objects.filter(document_id=self.document_id).delete()
-
-        DataPoint.objects.filter(id__in=datapoint_ids).delete()

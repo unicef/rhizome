@@ -142,8 +142,8 @@ class SourceSubmissionDetail(models.Model):
     region_display = models.CharField(max_length=1000)
     img_location = models.CharField(max_length=1000)
     raw_data_proxy = models.CharField(max_length=1) ## hack so the admin metadata call works
-    region_id = models.ForeignKey('datapoints.region', null=True)
-    campaign_id = models.ForeignKey('datapoints.campaign', null=True)
+    region = models.ForeignKey('datapoints.region', null=True)
+    campaign = models.ForeignKey('datapoints.campaign', null=True)
 
     class Meta:
         db_table = 'source_submission_detail'

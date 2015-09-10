@@ -118,6 +118,10 @@ class RefreshMasterTestCase(TestCase):
         campaign_code = first_submission[self.campaign_code_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
 
+
+        print 'REGION CODE: %s / CAMPAGIN_CODE: %s' % (region_code,\
+            campaign_code)
+
         indicator_code = raw_indicator_list[-1]
 
         map_region_id = Region.objects.all()[0].id
@@ -153,11 +157,10 @@ class RefreshMasterTestCase(TestCase):
                 ).values_list('id',flat=True)
             ).values_list('id',flat=True)
 
+        ## Test Case 1 ##
         self.assertEqual(len(doc_som_id_for_region_code),1) # 1
 
-        ## Test Case 1 ##
         mr.refresh_submission_details()
-
         first_submission_detail = SourceSubmissionDetail.objects\
             .get(source_submission_id = ss_id)
 
@@ -165,9 +168,7 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(first_submission_detail.region_id, map_region_id)
         self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
 
-        ##
         mr.submissions_to_doc_datapoints()
-
         source_doc_dp_ids = DocDataPoint.objects.filter(document_id =
             self.document.id)
 
