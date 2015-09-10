@@ -80,6 +80,12 @@ class MasterRefresh(object):
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
+    def refresh_submission_details(self):
+
+        pass
+
+
+
     def upsert_source_codes(self, source_codes):
 
         som_batch = []

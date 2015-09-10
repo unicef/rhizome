@@ -30,7 +30,6 @@ class RefreshMasterTestCase(TestCase):
             , self.test_file_location)
 
         self.source_submissions_ids = dt.process_file()
-        self.create_doc_deets(self.document.id)
 
     def test_refresh_master_init(self):
 
@@ -66,9 +65,25 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(len(source_indicator_id_for_this_doc)\
             ,len(raw_indicator_list))
 
-    def create_doc_deets(self,document_id):
+    def test_submission_detail_refresh(self,):
 
-        pass
+        self.set_up()
+        mr = MasterRefresh(self.user.id ,self.document.id)
+        mr.refresh_doc_meta()
+
+        source_submissions_data = SourceSubmission.objects\
+            .filter(document_id = self.document.id)\
+            .values('id','submission_json')
+
+        mr.refresh_submission_details()
+
+        submission_details = SourceSubmissionDetail.objects\
+            .filter(document_id = self.document.id)
+
+        self.assertEqual(len(source_submissions_data)\
+            ,len(submission_details))
+
+
     # def test_source_submission_to_doc_datapoints(self):
     #     '''
     #     '''
