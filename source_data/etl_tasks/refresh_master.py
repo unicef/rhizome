@@ -34,25 +34,12 @@ class MasterRefresh(object):
 
         }
 
-        dmd_qs = DocumentDetail.objects.raw('''
-            SELECT
-                dd.id
-                ,ddt.name as k
-                ,dd.doc_detail_value as v
-            FROM document_detail dd
-            INNER JOIN document_detail_type ddt
-            ON dd.doc_detail_type_id = ddt.id
-            AND dd.document_id = %s;
-            ''',[self.document_id])
-
-        for row in dmd_qs:
-            self.document_metadata[row.k] = row.v
-
-        map_df_cols = ['master_object_id','source_object_code','content_type']
+        self.db_doc_deets = self.get_document_config()
 
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
 
+        # {'content_type': source_code} : master_object_id
         self.source_map_dict =  DataFrame(list(SourceObjectMap.objects\
             .filter(
                 master_object_id__gt=0,
@@ -63,13 +50,26 @@ class MasterRefresh(object):
                 .values_list(*['content_type','source_object_code']))\
                 .to_dict()['master_object_id']
 
-        self.computed_datapoint_ids = self.main()
+    def get_document_config(self):
+
+        detail_types, document_details = {}, {}
+        ddt_qs = DocDetailType.objects.all().values()
+
+        for row in ddt_qs:
+            detail_types[row['id']] = row['name']
+
+        dd_qs = DocumentDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values()
+
+        for row in dd_qs:
+            document_details[detail_types[row['doc_detail_type_id']]] =\
+                row['doc_detail_value']
+
+        return document_details
 
     def refresh_doc_meta(self):
 
-        db_doc_deets = DocumentDetail.objects\
-            .filter(document_id = self.document_id)\
-            .values()
 
         ss_list = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
@@ -82,9 +82,41 @@ class MasterRefresh(object):
 
     def refresh_submission_details(self):
 
-        pass
+        ss_id_list, ss_detail_batch = [],[]
+        for row in SourceSubmission.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('id','submission_json'):
 
+            ss_id, submission_dict = row[0],json.loads(row[1])
 
+            region_column, campaign_column = self.db_doc_deets['region_column']\
+                , self.db_doc_deets['campaign_column']
+
+            # region_column, campaign_column = 'Wardcode', 'Campaign'
+            try:
+                region_id = self.source_map_dict[('region'\
+                    ,submission_dict[region_column])]
+            except KeyError:
+                region_id = None
+
+            try:
+                campaign_id = self.source_map_dict[('campaign'\
+                    ,submission_dict[campaign_column])]
+            except KeyError:
+                campaign_id = None
+
+            ss_id_list.append(ss_id)
+            ss_detail_batch.append(SourceSubmissionDetail(**{
+                'document_id': self.document_id,
+                'source_submission_id': ss_id,
+                'region_code':submission_dict[region_column],
+                'campaign_code':submission_dict[campaign_column],
+                'region_id': region_id,
+                'campaign_id': campaign_id,
+            }))
+
+        SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
+        SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
     def upsert_source_codes(self, source_codes):
 
