@@ -71,6 +71,7 @@ class RefreshMasterTestCase(TestCase):
         mr = MasterRefresh(self.user.id ,self.document.id)
         mr.refresh_doc_meta()
 
+        ## FIXME replace source_submission_data with read_csv(self.test_file)
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
             .values('id','submission_json')
@@ -82,6 +83,21 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertEqual(len(source_submissions_data)\
             ,len(submission_details))
+
+    def test_submission_to_doc_datapoint(self):
+        self.set_up()
+
+        mr = MasterRefresh(self.user.id ,self.document.id)
+        mr.refresh_doc_meta()
+
+        ## FIXME replace source_submission_data with read_csv(self.test_file)
+        source_submissions_data = SourceSubmission.objects\
+            .filter(document_id = self.document.id)\
+            .values('id','submission_json')
+
+        mr.refresh_submission_details()
+
+    # def test_batch_size()
 
 
     # def test_source_submission_to_doc_datapoints(self):

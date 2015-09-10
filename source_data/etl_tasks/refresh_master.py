@@ -25,22 +25,13 @@ class MasterRefresh(object):
         self.document_id = document_id
         self.user_id = user_id
 
-        self.new_datapoints = []
-        self.document_metadata = {
-            ## these are defaults ##
-            'agg_regions':True,
-            'clean_source_campaigns':True,
-            'office_id':1,
-
-        }
-
         self.db_doc_deets = self.get_document_config()
 
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
 
-        # {'content_type': source_code} : master_object_id
         self.source_map_dict =  DataFrame(list(SourceObjectMap.objects\
+            # {'content_type': source_code} : master_object_id #
             .filter(
                 master_object_id__gt=0,
                 id__in = sm_ids).values_list(*['master_object_id']))
@@ -49,6 +40,10 @@ class MasterRefresh(object):
                 ,id__in = sm_ids)\
                 .values_list(*['content_type','source_object_code']))\
                 .to_dict()['master_object_id']
+
+        self.submission_data = SourceSubmission.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('id','submission_json')[:self.ss_batch_size]
 
     def get_document_config(self):
 
@@ -83,16 +78,14 @@ class MasterRefresh(object):
     def refresh_submission_details(self):
 
         ss_id_list, ss_detail_batch = [],[]
-        for row in SourceSubmission.objects\
-            .filter(document_id = self.document_id)\
-            .values_list('id','submission_json'):
+
+        for row in self.submission_data:
 
             ss_id, submission_dict = row[0],json.loads(row[1])
 
             region_column, campaign_column = self.db_doc_deets['region_column']\
                 , self.db_doc_deets['campaign_column']
 
-            # region_column, campaign_column = 'Wardcode', 'Campaign'
             try:
                 region_id = self.source_map_dict[('region'\
                     ,submission_dict[region_column])]
