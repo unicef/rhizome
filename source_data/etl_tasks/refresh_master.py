@@ -142,17 +142,18 @@ class MasterRefresh(object):
             doc_dps = self.process_source_submission(row['region_id'], \
                 row['campaign_id'], row['source_submission_id'],source_map_dict)
 
+    def sync_datapoint(self):
+
+        pass
 
     ## main() helper methods ##
-
     def process_source_submission(self,region_id,campaign_id,ss_id,som_dict):
 
         doc_dp_batch = []
         ## dont make this query.. use self.submission_data ##
         submission  = SourceSubmission.objects.get(id=ss_id)\
             .submission_json
-        print submission
-
+        
         for k,v in submission.iteritems():
 
             try:

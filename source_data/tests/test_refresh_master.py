@@ -106,8 +106,6 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
         mr = MasterRefresh(self.user.id ,self.document.id)
 
-        # first_submission = json.loads(
-
         submission_qs = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
             .values_list('id','submission_json')[0]
@@ -117,10 +115,6 @@ class RefreshMasterTestCase(TestCase):
         region_code = first_submission[self.region_code_input_column]
         campaign_code = first_submission[self.campaign_code_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
-
-
-        print 'REGION CODE: %s / CAMPAGIN_CODE: %s' % (region_code,\
-            campaign_code)
 
         indicator_code = raw_indicator_list[-1]
 
@@ -175,25 +169,36 @@ class RefreshMasterTestCase(TestCase):
         ## Test Case #3
         self.assertEqual(1,len(source_doc_dp_ids))
 
-    # def test_batch_size()
+
+    def test_sync_datapoint(self):
+
+        self.set_up()
+        datapoint_value = 2.3
+
+        doc_dp = DocDataPoint.objects.create(**{
+            'indicator_id':  1,
+            'region_id': 1,
+            'campaign_id': 1,
+            'value': datapoint_value,
+            'document_id': self.document.id,
+            'source_submission_id': 1,
+            'changed_by_id': self.user.id,
+            'is_valid': True,
+            'agg_on_region': True,
+        })
+
+        mr = MasterRefresh(self.user.id ,self.document.id)
+        mr.sync_datapoint()
+
+        dp_value = DataPoint.objects.get(
+            region_id = 1,
+            campaign_id = 1,
+            indicator_id = 1,
+        ).value
+
+        self.assertEqual(datapoint_value, dp_value)
 
 
-    # def test_source_submission_to_doc_datapoints(self):
-    #     '''
-    #     '''
-    #     self.set_up()
-    #
-    #     mr = MasterRefresh(self.user.id, self.document.id)
-    #     doc_datapoint_ids = mr.process_doc_datapoints(self.source_submissions)
-    #
-    #     self.assertTrue(doc_datapoint_ids)
-    #
-    # def test_mapping(self):
-    #     '''
-    #     Here we ensure that after mapping all of the meta data that we have the
-    #     expected number of rows with the appropiate data associated.
-    #     '''
-    #
     # def test_unmapping(self):
     #     '''
     #     Here we ensure that if there is data in the datapoints table that
