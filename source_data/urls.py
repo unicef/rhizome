@@ -1,10 +1,9 @@
 
 from django.conf.urls import url
-from source_data.views import *
+from source_data.views import file_upload, process_file, map_header
 
 urlpatterns = [
     url(r'^file_upload/$', file_upload, name='file_upload'),
     url(r'^process_file/(?P<document_id>[0-9]+)$', process_file, name='process_file'),
     url(r'^map_header/(?P<document_id>[0-9]+)$', map_header, name='map_header'),
-    url(r'^refresh_master/(?P<document_id>[0-9]+)$', refresh_master,name='refresh_master'),
-    url(r'^odk_review/',odk_review, name='odk_review'),]
+]

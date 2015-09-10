@@ -167,6 +167,13 @@ class RefreshMasterResource(BaseModelResource):
 
         doc_id = request.GET['document_id']
         mr = MasterRefresh(1,doc_id)
+
+        mr = MasterRefresh(request.user.id, document_id)
+        mr.refresh_doc_meta()
+        mr.refresh_submission_details()
+        mr.submissions_to_doc_datapoints()
+        mr.sync_datapoint()
+
         queryset = Document.objects.filter(id=doc_id).values()
 
         return queryset

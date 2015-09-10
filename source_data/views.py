@@ -69,6 +69,9 @@ def process_file(request,document_id):
 
     dt = DocTransform(request.user.id, document_id)
     source_submissions = dt.process_file()
+    mr = MasterRefresh(request.user.id, document_id)
+    mr.refresh_doc_meta()
+    mr.refresh_submission_details()
 
     return_url = '/datapoints/source-data/Nigeria/2015/06/viewraw/%s' % \
         document_id
@@ -85,14 +88,6 @@ def get_doc_file_cols(to_upload):
             header = header_data.split(',')
 
     return header
-
-def refresh_master(request,document_id):
-
-    mr = MasterRefresh(request.user.id, document_id)
-    mr.main()
-
-    return HttpResponseRedirect('/doc_review/overview/%s' % document_id)
-
 
 def odk_review(request):
 

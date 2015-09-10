@@ -68,14 +68,12 @@ class MasterRefresh(object):
 
         return source_map_dict
 
-    ## main methods .. called by views and APIs in order to move data ##
     def refresh_doc_meta(self):
 
         first_submission = json.loads(self.submission_data.values()[0])
 
-        source_codes = {'indicator' :first_submission.keys()}
-
-        region_codes, campaign_codes = [],[]
+        source_codes, region_codes, campaign_codes = \
+            {'indicator' :first_submission.keys()}, [], []
 
         for ss_id, submission in self.submission_data.iteritems():
 

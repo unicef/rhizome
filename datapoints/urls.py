@@ -1,6 +1,5 @@
 from django.conf.urls import url
 from datapoints import views
-from datapoints.models import *
 from django.views.generic import TemplateView
 
 urlpatterns = [
@@ -100,8 +99,4 @@ urlpatterns = [
     url(r'^refresh_metadata/$', views.refresh_metadata, name='refresh_metadata'),
     url(r'^manage_data_refresh/$', views.manage_data_refresh, name='manage_data_refresh'),
     url(r'^refresh_cache/$', views.refresh_cache, name='refresh_cache'),
-
-    url(r'^qa_failed/(?P<indicator_id>[0-9]+)/(?P<region_id>[0-9]+)/(?P<campaign_id>[0-9]+)$', views.qa_failed, name='qa_failed'),
-    url(r'^test_data_coverage/$', views.test_data_coverage, name='test_data_coverage'),
-
 ]
