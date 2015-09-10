@@ -18,12 +18,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='sourcesubmissiondetail',
-            name='campaign_id',
+            name='campaign',
             field=models.ForeignKey(to='datapoints.Campaign', null=True),
         ),
         migrations.AddField(
             model_name='sourcesubmissiondetail',
-            name='region_id',
+            name='region',
             field=models.ForeignKey(to='datapoints.Region', null=True),
         ),
         migrations.DeleteModel(
