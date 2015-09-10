@@ -27,9 +27,9 @@ class MasterRefresh(object):
 
         self.db_doc_deets = self.get_document_config()
 
-        self.submission_data = SourceSubmission.objects\
+        self.submission_data = dict(SourceSubmission.objects\
             .filter(document_id = self.document_id)\
-            .values_list('id','submission_json')[:self.ss_batch_size]
+            .values_list('id','submission_json')[:self.ss_batch_size])
 
     ## __init__ helper methods ##
     def get_document_config(self):
@@ -71,12 +71,13 @@ class MasterRefresh(object):
     ## main methods .. called by views and APIs in order to move data ##
     def refresh_doc_meta(self):
 
-        source_codes = {'indicator' :[k for k,v in json\
-            .loads(self.submission_data[0][1]).iteritems()]}
+        first_submission = json.loads(self.submission_data.values()[0])
+
+        source_codes = {'indicator' :first_submission.keys()}
 
         region_codes, campaign_codes = [],[]
 
-        for ss_id, submission in self.submission_data:
+        for ss_id, submission in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission)
             region_codes.append(submission_dict[self.db_doc_deets['region_column']])
@@ -93,9 +94,9 @@ class MasterRefresh(object):
 
         ss_id_list, ss_detail_batch = [],[]
 
-        for row in self.submission_data:
+        for ss_id, submission_json in self.submission_data.iteritems():
 
-            ss_id, submission_dict = row[0],json.loads(row[1])
+            submission_dict = json.loads(submission_json)
             region_column, campaign_column = self.db_doc_deets['region_column']\
                 , self.db_doc_deets['campaign_column']
 
@@ -130,7 +131,7 @@ class MasterRefresh(object):
 
         submissions_ready_for_sync = []
 
-        ss_ids_in_batch = [ss_id for ss_id, ss_json in self.submission_data]
+        ss_ids_in_batch = self.submission_data.keys()
         ready_for_doc_datapoint_sync = SourceSubmissionDetail.objects\
             .filter(
                  source_submission_id__in= ss_ids_in_batch,
@@ -144,16 +145,31 @@ class MasterRefresh(object):
 
     def sync_datapoint(self):
 
+        dp_batch = []
+        ss_id_list = self.submission_data.keys()
+
+        doc_dps = DocDataPoint.objects.filter(\
+            source_submission_id__in = ss_id_list,
+            is_valid= True
+        ).values('value','campaign_id','changed_by_id','document_id',\
+            'indicator_id','region_id','source_submission_id')
+
+        for ddp in doc_dps:
+            ddp['cache_job_id'] -1
+            dp_batch.append(**ddp)
+
+        DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
+        DataPoint.objects.bulk_create(dp_batch)
+
         pass
 
     ## main() helper methods ##
     def process_source_submission(self,region_id,campaign_id,ss_id,som_dict):
 
         doc_dp_batch = []
-        ## dont make this query.. use self.submission_data ##
-        submission  = SourceSubmission.objects.get(id=ss_id)\
-            .submission_json
-        
+
+        submission  = json.loads(self.submission_data[ss_id])
+
         for k,v in submission.iteritems():
 
             try:
@@ -181,7 +197,7 @@ class MasterRefresh(object):
         som_batch = []
         for content_type, source_code_list in source_codes.iteritems():
 
-            for source_code in source_code_list:
+            for source_code in list(set(source_code_list)):
                 som_object, created = SourceObjectMap.objects.get_or_create(
                     source_object_code = source_code,
                     content_type = content_type,
