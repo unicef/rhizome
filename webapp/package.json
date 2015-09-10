@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "gulp dev",
     "build": "NODE_ENV=production gulp build",
+    "test": "gulp lint && gulp mocha",
     "package": "npm run build && gulp package"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "browser-sync": "^2.8.2",
     "browserify": "^11.0.1",
     "bundle-collapser": "^1.2.1",
+    "chai": "^3.2.0",
     "compression": "^1.5.2",
     "config": "^1.15.0",
     "del": "^1.2.1",
@@ -56,6 +58,7 @@
     "node-sass": "3.2.0",
     "merge-stream": "^1.0.0",
     "proxy-middleware": "^0.13.1",
+    "jsdom": "^3.1.2",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.2",
     "through": "^2.3.8",
