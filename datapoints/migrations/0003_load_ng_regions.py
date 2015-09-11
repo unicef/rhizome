@@ -497,7 +497,11 @@ class Migration(migrations.Migration):
         SELECT 181101, 'Basirka','Sub-District','Nigeria' UNION ALL
         SELECT 210204, 'Batagarawa (Sub-District)','Sub-District','Nigeria' UNION ALL
         SELECT 200202, 'Bataiya','Sub-District','Nigeria' UNION ALL
-        SELECT 180202, 'Batali','Sub-District','Nigeria' UNION ALL
+        SELECT 180202, 'Batali','Sub-District','Nigeria';
+
+    	INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 210302, 'Batsari (Sub-District)','Sub-District','Nigeria' UNION ALL
         SELECT 180401, 'Batu','Sub-District','Nigeria' UNION ALL
         SELECT 181801, 'Baturiya','Sub-District','Nigeria' UNION ALL
@@ -992,7 +996,11 @@ class Migration(migrations.Migration):
         SELECT 220904, 'Fakai\ Kuka','Sub-District','Nigeria' UNION ALL
         SELECT 181903, 'Fake','Sub-District','Nigeria' UNION ALL
         SELECT 342306, 'Fakka','Sub-District','Nigeria' UNION ALL
-        SELECT 341001, 'Fakku','Sub-District','Nigeria' UNION ALL
+        SELECT 341001, 'Fakku','Sub-District','Nigeria';
+
+    	INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 212001, 'Fakuwa /Kafin Dangi','Sub-District','Nigeria' UNION ALL
         SELECT 370604, 'Falale','Sub-District','Nigeria' UNION ALL
         SELECT 220203, 'Falde','Sub-District','Nigeria' UNION ALL
@@ -1489,7 +1497,11 @@ class Migration(migrations.Migration):
         SELECT 421507, 'Jangu','Sub-District','Nigeria' UNION ALL
         SELECT 203905, 'Janguza','Sub-District','Nigeria' UNION ALL
         SELECT 212605, 'Jani','Sub-District','Nigeria' UNION ALL
-        SELECT 430405, 'Jara Dali','Sub-District','Nigeria' UNION ALL
+        SELECT 430405, 'Jara Dali','Sub-District','Nigeria';
+
+        INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 430406, 'Jara Gol','Sub-District','Nigeria' UNION ALL
         SELECT 431502, 'Jarawa','Sub-District','Nigeria' UNION ALL
         SELECT 341404, 'Jaredi','Sub-District','Nigeria' UNION ALL
@@ -1988,7 +2000,11 @@ class Migration(migrations.Migration):
         SELECT 360106, 'Lawan Musa','Sub-District','Nigeria' UNION ALL
         SELECT 432308, 'Layi','Sub-District','Nigeria' UNION ALL
         SELECT 191707, 'Lazuru/Tuddai','Sub-District','Nigeria' UNION ALL
-        SELECT 180508, 'Lelenkudu','Sub-District','Nigeria' UNION ALL
+        SELECT 180508, 'Lelenkudu','Sub-District','Nigeria';
+
+    	INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 220208, 'Lema/Jantulu','Sub-District','Nigeria' UNION ALL
         SELECT 203507, 'Leni','Sub-District','Nigeria' UNION ALL
         SELECT 191708, 'Lere (Sub-District)','Sub-District','Nigeria' UNION ALL
@@ -2481,7 +2497,11 @@ class Migration(migrations.Migration):
         SELECT 211006, 'Sabon Gari (Daura)','Sub-District','Nigeria' UNION ALL
         SELECT 211410, 'Sabon Gari (Funtua)','Sub-District','Nigeria' UNION ALL
         SELECT 191608, 'Sabon Gari (Kudan)','Sub-District','Nigeria' UNION ALL
-        SELECT 182207, 'Sabon Gari (Miga)','Sub-District','Nigeria' UNION ALL
+        SELECT 182207, 'Sabon Gari (Miga)','Sub-District','Nigeria';
+
+    	INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 204108, 'Sabon Gari (Tudun Wada)','Sub-District','Nigeria' UNION ALL
         SELECT 204408, 'Sabon Gari (Wudil)','Sub-District','Nigeria' UNION ALL
         SELECT 340509, 'Sabon Gari Dole','Sub-District','Nigeria' UNION ALL
@@ -2977,7 +2997,11 @@ class Migration(migrations.Migration):
         SELECT 213409, 'Yar Daje','Sub-District','Nigeria' UNION ALL
         SELECT 221710, 'Yarbesse','Sub-District','Nigeria' UNION ALL
         SELECT 210210, 'Yargamji','Sub-District','Nigeria' UNION ALL
-        SELECT 200914, 'Yargaya','Sub-District','Nigeria' UNION ALL
+        SELECT 200914, 'Yargaya','Sub-District','Nigeria';
+
+    	INSERT INTO _tmp_ng_regions
+    	(unicef_region_code, region_name, region_type, country)
+
         SELECT 370209, 'Yargeda','Sub-District','Nigeria' UNION ALL
         SELECT 211909, 'Yargoje','Sub-District','Nigeria' UNION ALL
         SELECT 203915, 'Yarimawa','Sub-District','Nigeria' UNION ALL
