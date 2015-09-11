@@ -9,6 +9,7 @@ var page 		= require('page');
 var NavigationStore    	= require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
+var DocForm = require('dashboard/sd/DocForm.js');
 
 var TitleMenu  	= require('component/TitleMenu.jsx');
 var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
@@ -66,20 +67,29 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
+		// var newDocBtn = <div>
+		// 	<button className="tiny" onClick={}> Upload New Data Source!
+		// 	</button>
+		// 	</div>
+
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
 		<div className="admin-container">
 			<h1 className="admin-header"></h1>
 			<div className="row">
 				document_id: <TitleMenu text={doc_id}>
-					{docItems}
+					{DocForm}
 				</TitleMenu>
 			</div>
 			<div className="row">
 			<TitleMenu text={doc_tab}>
 				{doc_tabs}
 			</TitleMenu>
+
+			<h6>{newDocBtn}</h6>
+
 			</div>
+
 		</div>;
 
 		const table_definition = {
