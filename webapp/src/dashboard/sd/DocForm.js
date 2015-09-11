@@ -1,6 +1,8 @@
 
 var React		= require('react');
+var api 		= require('data/api.js')
 var DocForm = React.createClass({
+// see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
 
   // since we are starting off without any data, there is no initial value
   getInitialState: function() {
@@ -21,12 +23,11 @@ var DocForm = React.createClass({
     var reader = new FileReader();
     var file = e.target.files[0];
 
-    var x = 'test'
-
     reader.onload = function(upload) {
       self.setState({
         data_uri: upload.target.result,
       });
+      api.uploadPost({docfile:upload.target.result})
     }
 
     reader.readAsDataURL(file);
@@ -36,11 +37,18 @@ var DocForm = React.createClass({
   render: function() {
 
     // since JSX is case sensitive, be sure to use 'encType'
-    return (
-      <form onSubmit={this.handleSubmit} encType="multipart/form-data">
+    return (<div>
+      <h6>Upload New File</h6>
+      <form
+        onSubmit={this.handleSubmit}
+        encType="multipart/form-data"
+        className="form"
+        method="post"
+        style={{ textAlign: 'right' }}
+      >
         <input type="file" onChange={this.handleFile} />
       </form>
-    );
+    </div>);
   },
 });
 

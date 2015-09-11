@@ -16,7 +16,6 @@ var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
 
-
 var {
 	Datascope, LocalDatascope,
 	SimpleDataTable, SimpleDataTableColumn,
@@ -150,25 +149,23 @@ var SourceDataDashboard = React.createClass({
 					</SimpleDataTable>
 			</ReviewTable>
 
-		var review_breakdown = <DocOverview
-			key={table_key + 'breakdown'}
-			loading={loading}
-			doc_id={doc_id}
-			>
-			</DocOverview>;
-
-
 		if (doc_tab =='doc_index') {
-			var docForm = <DocForm></DocForm>
+			var docForm = <DocForm></DocForm>;
+			var review_breakdown = '';
 		}
 		else {
-			var docForm = ''
+			var docForm = '';
+			var review_breakdown = <DocOverview
+				key={table_key + 'breakdown'}
+				loading={loading}
+				doc_id={doc_id}
+				>
+				</DocOverview>;
 		}
 
 		return (
 					<div>
 						<div className="row">
-							{docForm}
 						</div>
 						<div className="row">
 						<div id="popUp"></div>
@@ -177,6 +174,7 @@ var SourceDataDashboard = React.createClass({
 						{review_table}
 						</div>
 						<div className="medium-3 columns">
+							{docForm}
 							{review_nav}
 							{review_breakdown}
 						</div>

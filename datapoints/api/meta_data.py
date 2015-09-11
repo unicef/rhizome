@@ -1,15 +1,19 @@
+import json
+import cStringIO
+
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import Resource
 from django.contrib.auth.models import User, Group
+from django.core.files.base import ContentFile
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 
-import json
+
 
 class CampaignResource(BaseModelResource):
 
@@ -66,9 +70,50 @@ class DashboardResource(BaseModelResource):
         resource_name = 'custom_dashboard'
 
 class DocumentResource(BaseModelResource):
+    docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
-    class Meta(BaseModelResource.Meta):
+    class Meta:
         queryset = Document.objects.all().values()
+        resource_name = 'source_doc'
+
+
+    def get_object_list(self,request):
+        '''
+        '''
+        try:
+            doc_data = request.POST['docfile']
+        except KeyError:
+            return super(DocumentResource, self).get_object_list(request)
+
+        post_results = self.post_doc_data(doc_data, request.user.id)
+
+        return super(DocumentResource, self).get_object_list(request)
+
+
+    def post_doc_data(self, post_data, user_id):
+
+        in_memory_file = ContentFile(cStringIO.StringIO(post_data))
+        sd = Document.objects.create(
+                doc_title = 'daaaata',
+                docfile = in_memory_file,
+                created_by_id = user_id,
+                guid = 'test')
+
+        print '-===MADE IT===-'
+        print sd.id
+        print '-======-'
+
+
+    # def obj_create(self, bundle, **kwargs):
+    #     """
+    #     """
+    #     print '====\n' * 10
+    #     print 'BUNDLE\n' * 10
+
+class Meta(BaseModelResource.Meta):
+        queryset = Document.objects.all().values()
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post']
         resource_name = 'source_doc'
 
 class UserResource(BaseModelResource):

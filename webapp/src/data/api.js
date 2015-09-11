@@ -249,6 +249,7 @@ module.exports = {
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
 
   // POST //
+  uploadPost: endPoint('/source_doc/', 'post'),
   datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
   set_region_permission: endPoint('/region_permission/', 'post', 1),
