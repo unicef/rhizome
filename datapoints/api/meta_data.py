@@ -109,9 +109,20 @@ class DocumentReviewResource(BaseModelResource):
 
 class DocumentDetailResource(BaseModelResource):
 
+    def get_object_list(self,request):
+
+        queryset = DocumentDetail.objects\
+            .filter(document_id=request.GET['document_id']).values()
+
+        return queryset
+
     class Meta(BaseModelResource.Meta):
         queryset = DocumentDetail.objects.all().values()
         resource_name = 'document_detail'
+        filtering = {
+            "id": ALL,
+        }
+
 
 class DocDataPointResource(BaseModelResource):
 
@@ -129,7 +140,6 @@ class SourceObjectMapResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        print request.GET['document_id']
         som_ids = DocumentSourceObjectMap.objects\
             .filter(document_id=request.GET['document_id']).\
             values_list('source_object_map_id',flat=True)

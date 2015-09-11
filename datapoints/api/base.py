@@ -69,9 +69,9 @@ class BaseModelResource(ModelResource):
         authorization = DjangoAuthorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
-        filtering = {
-            "id": ALL,
-        }
+        # filtering = {
+        #     "id": ALL,
+        # }
         cache = CustomCache()
 
 
