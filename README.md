@@ -18,6 +18,12 @@
 
 Prerequisites
 
+  - docker-toolbox https://www.docker.com/toolbox
+ 
+[static-files]: https://docs.djangoproject.com/en/1.7/howto/static-files/)
+
+
+
 Install Docker Machine. In Mac OS X you could install via `brew`
 
 ```
