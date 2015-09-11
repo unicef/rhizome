@@ -67,7 +67,9 @@ var React = require('react');
 			var doc_id = this.props.doc_id;
 			var doc_tab = this.props.doc_tab;
 			var doc_deets = this.state.doc_deets;
+			var docBtn = <h6> doc button </h6>
 
+			if(!doc_id) return docBtn;
 			if(!doc_deets) return this.renderLoading();
 
 		  var refresh_master_btn = <div>

@@ -34,6 +34,7 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
+
     // since JSX is case sensitive, be sure to use 'encType'
     return (
       <form onSubmit={this.handleSubmit} encType="multipart/form-data">
@@ -42,3 +43,6 @@ var DocForm = React.createClass({
     );
   },
 });
+
+
+module.exports = DocForm;

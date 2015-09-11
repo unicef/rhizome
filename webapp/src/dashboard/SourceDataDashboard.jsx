@@ -78,16 +78,13 @@ var SourceDataDashboard = React.createClass({
 			<h1 className="admin-header"></h1>
 			<div className="row">
 				document_id: <TitleMenu text={doc_id}>
-					{DocForm}
+					{docItems}
 				</TitleMenu>
 			</div>
 			<div className="row">
 			<TitleMenu text={doc_tab}>
 				{doc_tabs}
 			</TitleMenu>
-
-			<h6>{newDocBtn}</h6>
-
 			</div>
 
 		</div>;
@@ -120,7 +117,6 @@ var SourceDataDashboard = React.createClass({
 				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 		};
-
 
 
 	var search_fields = table_definition[doc_tab]['search_fields']
@@ -161,18 +157,31 @@ var SourceDataDashboard = React.createClass({
 			>
 			</DocOverview>;
 
+
+		if (doc_tab =='doc_index') {
+			var docForm = <DocForm></DocForm>
+		}
+		else {
+			var docForm = ''
+		}
+
 		return (
-					<div className="row">
-					<div id="popUp"></div>
-					<div className="medium-9 columns">
-					<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
-					{review_table}
+					<div>
+						<div className="row">
+							{docForm}
+						</div>
+						<div className="row">
+						<div id="popUp"></div>
+						<div className="medium-9 columns">
+						<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
+						{review_table}
+						</div>
+						<div className="medium-3 columns">
+							{review_nav}
+							{review_breakdown}
+						</div>
 					</div>
-					<div className="medium-3 columns">
-						{review_nav}
-						{review_breakdown}
-					</div>
-		</div>);
+				</div>);
 	},
 
 _setDocId : function (doc_id) {
