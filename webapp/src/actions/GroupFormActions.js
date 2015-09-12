@@ -2,9 +2,9 @@
 var Reflux = require('reflux');
 
 module.exports = Reflux.createActions([
-		"initialize",
-        "addIndicatorSelection",
-        "removeIndicatorSelection",
-        "updateName",
-        "saveGroupForm"
-    ]);
+  "initialize",
+  "addIndicatorSelection",
+  "removeIndicatorSelection",
+  "updateName",
+  "saveGroupForm"
+]);

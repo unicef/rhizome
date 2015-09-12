@@ -1,34 +1,37 @@
 'use strict';
 
-var _      = require('lodash');
-var React  = require('react');
+var _ = require('lodash');
+var React = require('react');
 var Reflux = require('reflux');
 
-var NavMenu         = require('component/NavMenu.jsx');
-var NavMenuItem     = require('component/NavMenuItem.jsx');
+var NavMenu = require('component/NavMenu.jsx');
+var NavMenuItem = require('component/NavMenuItem.jsx');
 var NavigationStore = require('stores/NavigationStore');
 
 var Navigation = React.createClass({
-
-  mixins : [
+  mixins: [
     Reflux.connect(NavigationStore)
   ],
 
   render : function () {
-
     var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
       .filter(d => d.builtin || d.owned_by_current_user)
-      .map(function (d) {
-        return _.assign({ key : 'dashboard-nav-' + d.id }, d);
+      .map(function(d) {
+        return _.assign({
+          key: 'dashboard-nav-' + d.id
+        }, d);
       })
       .value()
     );
 
     var enterData = '';
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
-
-      var formLink = NavigationStore.userHasPermission('data_entry_form') ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>) : '';
-      var uploadLink = NavigationStore.userHasPermission('upload_csv') ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>) : '';
+      var formLink = NavigationStore.userHasPermission('data_entry_form')
+        ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>)
+        : '';
+      var uploadLink = NavigationStore.userHasPermission('upload_csv')
+        ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>)
+        : '';
 
       var enterData = (
           <li className='data'>
@@ -38,7 +41,6 @@ var Navigation = React.createClass({
             </NavMenu>
           </li>
         );
-
     }
 
     var manage = '';
@@ -55,19 +57,22 @@ var Navigation = React.createClass({
     return (
       <nav>
         <ul>
-          <li className='home'><a href='/'>
-            Rhizome DB
-          </a></li>
+          <li className='home'><a href='/'>Rhizome DB</a></li>
 
           <li className='dashboard'>
             <NavMenu text={'Explore Data'} icon={'fa-bar-chart'}>
               {dashboards}
+
               <li className='separator'><hr /></li>
+
               <NavMenuItem href='/datapoints/table'>Data Browser</NavMenuItem>
+
               <li className='separator'><hr /></li>
+
               <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
+
               <NavMenuItem href='/datapoints/dashboards/edit'>
                 Create New dashboard
               </NavMenuItem>
@@ -77,7 +82,6 @@ var Navigation = React.createClass({
           {enterData}
 
           {manage}
-
         </ul>
 
         <ul className='right'>

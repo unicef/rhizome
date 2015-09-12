@@ -1,64 +1,63 @@
 'use strict';
 
-var _      = require('lodash');
-var React  = require('react');
+var _ = require('lodash');
+var React = require('react');
 var Reflux = require('reflux');
-var page   = require('page');
+var page = require('page');
 var moment = require('moment');
 
-var api           = require('data/api');
 var dashboardInit = require('data/dashboardInit');
 
-var TitleMenu           = require('component/TitleMenu.jsx');
-var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
-var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
-var MenuItem            = require('component/MenuItem.jsx');
+var TitleMenu = require('component/TitleMenu.jsx');
+var RegionTitleMenu = require('component/RegionTitleMenu.jsx');
+var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
+var MenuItem = require('component/MenuItem.jsx');
 
-var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
+var CustomDashboard = require('dashboard/CustomDashboard.jsx');
 
-var SourceDataStore      = require('stores/DashboardStore');
-var DashboardStore      = require('stores/SourceDataStore');
-var GeoStore            = require('stores/GeoStore');
-var IndicatorStore      = require('stores/IndicatorStore');
-var NavigationStore     = require('stores/NavigationStore');
+var SourceDataStore = require('stores/DashboardStore');
+var DashboardStore = require('stores/SourceDataStore');
+var GeoStore = require('stores/GeoStore');
+var IndicatorStore = require('stores/IndicatorStore');
+var NavigationStore = require('stores/NavigationStore');
 
-var AppActions          = require('actions/AppActions');
-var DashboardActions    = require('actions/DashboardActions');
-var DataActions         = require('actions/DataActions');
-var GeoActions          = require('actions/GeoActions');
+var AppActions = require('actions/AppActions');
+var DashboardActions = require('actions/DashboardActions');
+var DataActions = require('actions/DataActions');
+var GeoActions = require('actions/GeoActions');
 
 var LAYOUT = {
-  'Management Dashboard'    : require('dashboard/ManagementDashboard.jsx'),
-  'NGA Campaign Monitoring' : require('dashboard/NCODashboard.jsx'),
-  'District Dashboard'      : require('dashboard/District.jsx'),
-  'Source Data'             : require('dashboard/SourceDataDashboard.jsx'),
-  'ODK Dashboard'             : require('dashboard/ODKDashboard.jsx'),
+  'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
+  'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
+  'District Dashboard': require('dashboard/District.jsx'),
+  'Source Data': require('dashboard/SourceDataDashboard.jsx'),
+  'ODK Dashboard': require('dashboard/ODKDashboard.jsx'),
 };
 
 var Dashboard = React.createClass({
-  mixins : [
+  mixins: [
     Reflux.ListenerMixin,
     Reflux.connect(require('stores/DataStore'))
   ],
 
-  getInitialState : function () {
+  getInitialState: function() {
     return {
-      regions      : [],
-      campaigns    : [],
-      region       : null,
-      campaign     : null,
-      dashboard    : null,
+      regions: [],
+      campaigns: [],
+      region: null,
+      campaign: null,
+      dashboard: null,
     };
   },
 
-  componentWillMount : function () {
+  componentWillMount: function() {
     page('/datapoints/:dashboard/:region/:year/:month/:doc_tab/:doc_id', this._showSourceData);
     page('/datapoints/:dashboard/:region/:year/:month', this._show);
     page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
   },
 
-  componentWillUpdate : function (nextProps, nextState) {
+  componentWillUpdate: function(nextProps, nextState) {
     if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
       return;
     }
@@ -75,11 +74,161 @@ var Dashboard = React.createClass({
     }
   },
 
-  render : function () {
 
+  componentDidMount: function() {
+    this.dashboardUnsubscribe = this.listenTo(
+      DashboardStore,
+      this._onDashboardChange);
+
+    this.indicatorUnsubscribe = this.listenTo(
+      IndicatorStore,
+      this._onIndicatorsChange);
+
+    this.geoUnsubscribe = this.listenTo(
+      GeoStore,
+      this._onGeographyLoaded);
+
+    this.navigateUnsubscribe = this.listenTo(
+      DashboardActions.navigate,
+      this._navigate);
+
+    this.navigationStoreUnsubscribe = this.listenTo(
+      NavigationStore,
+      this._onNavigationChange);
+  },
+
+  componentWillUnmount: function() {
+    this.dashboardUnsubscribe();
+    this.indicatorUnsubscribe();
+    this.geoUnsubscribe();
+    this.navigateUnsubscribe();
+    this.navigationStoreUnsubscribe();
+  },
+
+  _onDashboardChange: function(state) {
+    var fetchData = this.state.loaded;
+
+    this.setState(state);
+
+    if (fetchData) {
+      var q = DashboardStore.getQueries();
+
+      if (_.isEmpty(q)) {
+        DataActions.clear();
+      } else {
+        DataActions.fetch(this.state.campaign, this.state.region, q);
+      }
+
+      if (this.state.hasMap) {
+        GeoActions.fetch(this.state.region);
+      }
+    } else if (NavigationStore.loaded) {
+      page({
+        click: false
+      });
+    }
+  },
+
+  _onIndicatorsChange: function() {
+    this.forceUpdate();
+  },
+
+  _onGeographyLoaded: function() {
+    this.forceUpdate();
+  },
+
+  _setCampaign: function(id) {
+    var campaign = _.find(this.state.campaigns, c => c.id === id);
+
+    if (!campaign) {
+      return;
+    }
+
+    this._navigate({
+      campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
+    });
+  },
+
+  _setRegion: function(id) {
+    var region = _.find(this.state.regions, r => r.id === id)
+
+    if (!region) {
+      return;
+    }
+
+    this._navigate({
+      region: region.name
+    });
+  },
+
+  _setDashboard: function(slug) {
+    this._navigate({
+      dashboard: slug
+    });
+  },
+
+  _onNavigationChange: function(nav) {
+    if (NavigationStore.loaded && DashboardStore.loaded) {
+      page({
+        click: false
+      });
+    }
+  },
+
+  _navigate: function(params) {
+    var slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
+    var region = _.get(params, 'region', this.state.region.name);
+    var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
+
+    if (_.isNumber(region)) {
+      region = _.find(this.state.regions, r => r.id === region).name;
+    }
+
+    page('/datapoints/' + [slug, region, campaign].join('/'));
+  },
+
+  _showDefault: function(ctx) {
+    console.log("_showDefault", ctx.params);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+
+    DashboardActions.setDashboard({
+      dashboard
+    });
+  },
+
+  _show: function(ctx) {
+    console.log("_show", ctx.params);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+
+    DashboardActions.setDashboard({
+      dashboard,
+      region: ctx.params.region,
+      date: [ctx.params.year, ctx.params.month].join('-')
+    });
+  },
+
+  _showSourceData: function(ctx) {
+    console.log("_showSourceData", ctx.params);
+    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
+    var doc_tab = ctx.params.doc_tab;
+
+    this.setState({
+      doc_id: ctx.params.doc_id,
+      doc_tab: doc_tab,
+    })
+
+    DashboardActions.setDashboard({
+      dashboard,
+      region: ctx.params.region,
+      date: [ctx.params.year, ctx.params.month].join('-'),
+    });
+
+  },
+
+  render: function () {
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
-        fontSize      : '2rem',
+        fontSize: '2rem',
       };
 
       return (
@@ -119,14 +268,14 @@ var Dashboard = React.createClass({
     );
 
     var dashboardProps = {
-      campaign   : campaign,
-      dashboard  : dashboardDef,
-      data       : data,
-      indicators : indicators,
-      loading    : loading,
-      region     : region,
-      doc_tab    : doc_tab,
-      doc_id     : doc_id
+      campaign: campaign,
+      dashboard: dashboardDef,
+      data: data,
+      indicators: indicators,
+      loading: loading,
+      region: region,
+      doc_tab: doc_tab,
+      doc_id: doc_id
     };
 
     var dashboard = React.createElement(
@@ -146,8 +295,8 @@ var Dashboard = React.createClass({
     var dashboardItems = MenuItem.fromArray(
       _.map(NavigationStore.dashboards, d => {
         return {
-          title : d.title,
-          value : _.kebabCase(d.title)
+          title: d.title,
+          value: _.kebabCase(d.title)
         };
       }),
       this._setDashboard);
@@ -200,140 +349,6 @@ var Dashboard = React.createClass({
         {dashboard}
       </div>
     );
-  },
-
-  componentDidMount : function () {
-    this.dashboardUnsubscribe = this.listenTo(
-      DashboardStore,
-      this._onDashboardChange);
-
-    this.indicatorUnsubscribe = this.listenTo(
-      IndicatorStore,
-      this._onIndicatorsChange);
-
-    this.geoUnsubscribe = this.listenTo(
-      GeoStore,
-      this._onGeographyLoaded);
-
-    this.navigateUnsubscribe = this.listenTo(
-      DashboardActions.navigate,
-      this._navigate);
-
-    this.navigationStoreUnsubscribe = this.listenTo(
-      NavigationStore,
-      this._onNavigationChange);
-  },
-
-  componentWillUnmount : function () {
-    this.dashboardUnsubscribe();
-    this.indicatorUnsubscribe();
-    this.geoUnsubscribe();
-    this.navigateUnsubscribe();
-    this.navigationStoreUnsubscribe();
-  },
-
-  _onDashboardChange : function (state) {
-    var fetchData = this.state.loaded;
-
-    this.setState(state);
-
-    if (fetchData) {
-      var q = DashboardStore.getQueries();
-
-      if (_.isEmpty(q)) {
-        DataActions.clear();
-      } else {
-        DataActions.fetch(this.state.campaign, this.state.region, q);
-      }
-
-      if (this.state.hasMap) {
-        GeoActions.fetch(this.state.region);
-      }
-    } else if (NavigationStore.loaded) {
-      page({ click : false });
-    }
-  },
-
-  _onIndicatorsChange : function () {
-    this.forceUpdate();
-  },
-
-  _onGeographyLoaded : function () {
-    this.forceUpdate();
-  },
-
-  _setCampaign : function (id) {
-    var campaign  = _.find(this.state.campaigns, c => c.id === id);
-
-    if (!campaign) {
-      return;
-    }
-
-    this._navigate({ campaign : moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') });
-  },
-
-  _setRegion : function (id) {
-    var region    = _.find(this.state.regions, r => r.id === id)
-
-    if (!region) {
-      return;
-    }
-
-    this._navigate({ region : region.name });
-  },
-
-  _setDashboard : function (slug) {
-    this._navigate({ dashboard : slug });
-  },
-
-  _onNavigationChange : function (nav) {
-    if (NavigationStore.loaded && DashboardStore.loaded) {
-      page({ click : false });
-    }
-  },
-
-  _navigate : function (params) {
-    var slug     = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
-    var region   = _.get(params, 'region', this.state.region.name);
-    var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-
-    if (_.isNumber(region)) {
-      region = _.find(this.state.regions, r => r.id === region).name;
-    }
-
-    page('/datapoints/' + [slug, region, campaign].join('/'));
-  },
-
-  _showDefault : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-    DashboardActions.setDashboard({ dashboard });
-  },
-
-  _show : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-    DashboardActions.setDashboard({
-      dashboard,
-      region : ctx.params.region,
-      date   : [ctx.params.year, ctx.params.month].join('-')
-    });
-  },
-  _showSourceData : function (ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-    var doc_tab = ctx.params.doc_tab;
-
-    this.setState({
-      doc_id: ctx.params.doc_id,
-      doc_tab: doc_tab,
-    })
-
-    DashboardActions.setDashboard({
-      dashboard,
-      region : ctx.params.region,
-      date   : [ctx.params.year, ctx.params.month].join('-'),
-    });
-
   },
 
 });
