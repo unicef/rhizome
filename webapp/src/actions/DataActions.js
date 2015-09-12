@@ -2,9 +2,7 @@
 
 var Reflux = require('reflux');
 
-var DataActions = Reflux.createActions([
+module.exports = Reflux.createActions([
   'fetch',
   'clear'
 ]);
-
-module.exports = DataActions;

@@ -2,8 +2,6 @@
 
 var Reflux = require('reflux');
 
-var GeoActions = Reflux.createActions([
+module.exports = Reflux.createActions([
   'fetch'
 ]);
-
-module.exports = GeoActions;

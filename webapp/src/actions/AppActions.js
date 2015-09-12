@@ -2,8 +2,6 @@
 
 var Reflux = require('reflux');
 
-var AppActions = Reflux.createActions([
+module.exports = Reflux.createActions([
   'init'
 ]);
-
-module.exports = AppActions;

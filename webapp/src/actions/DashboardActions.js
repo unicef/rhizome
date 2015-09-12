@@ -2,10 +2,8 @@
 
 var Reflux = require('reflux');
 
-var DashboardActions = Reflux.createActions([
+module.exports = Reflux.createActions([
   'setDashboard',
   'setRegion',
   'navigate'
 ]);
-
-module.exports = DashboardActions;
