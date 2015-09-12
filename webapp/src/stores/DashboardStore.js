@@ -4,6 +4,9 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
+var RegionStore = require('stores/RegionStore');
+var CampaignStore = require('stores/CampaignStore');
+
 var api = require('data/api');
 // var builtins = require('dashboard/builtin');
 
@@ -13,14 +16,17 @@ var DashboardStore = Reflux.createStore({
   init: function() {
     this.loaded = false;
     this.indicators = {};
+    Promise.all([
+        RegionStore.getRegions(),
+        RegionStore.getRegionTypes(),
+	    	CampaignStore.getCampaigns(),
+    	])
+      .then(_.spread((regions, regionsTypes, campaigns)=> {
+        this.regions = regions;
+        this.campaigns = campaigns;
 
-    Promise.all([api.regions(), api.region_type(), api.campaign()])
-      .then(function(responses) {
-        var types = _.indexBy(responses[1].objects, 'id');
-        var regionIdx = _.indexBy(responses[0].objects, 'id');
-
-        this.regions = responses[0].objects;
-        this.campaigns = responses[2].objects;
+        var regionIdx = _.indexBy(regions, 'id');
+        var types = _.indexBy(regionsTypes, 'id');
 
         _.each(this.regions, function(r) {
           r.region_type = _.get(types[r.region_type_id], 'name');
@@ -34,7 +40,7 @@ var DashboardStore = Reflux.createStore({
           regions: this.regions,
           campaigns: this.campaign
         });
-      }.bind(this));
+      }));
   },
 
   getQueries: function() {
@@ -55,6 +61,7 @@ var DashboardStore = Reflux.createStore({
     });
   },
 
+  // action handlers
   onSetDashboard: function(definition) {
     var dashboard = this.dashboard = definition.dashboard;
     this.region = definition.region || this.region;
@@ -129,6 +136,7 @@ var DashboardStore = Reflux.createStore({
     }
   },
 
+  // helpers
   addChartDefinition: function(chart) {
     var base = _.omit(chart, 'indicators', 'title');
 

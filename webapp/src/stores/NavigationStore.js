@@ -4,6 +4,9 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
+var RegionStore = require('stores/RegionStore');
+var CampaignStore = require('stores/CampaignStore');
+
 var api = require('data/api');
 var builtins = require('dashboard/builtin');
 
@@ -11,38 +14,20 @@ var NavigationStore = Reflux.createStore({
   init: function() {
     this.campaigns = [];
     this.dashboards = [];
+    this.permissions = [];
     this.customDashboards = null;
     this.documents = [];
     this.loaded = false;
 
-    var campaigns = api.campaign()
-      .then(function(data) {
-        _.each(data.objects, function(campaign) {
-          campaign.start_date = moment(campaign.start_date, 'YYYY-MM-DD');
-        });
-
-        return data;
-      });
-
-    var regions = api.regions({
-      read_write: 'r',
-      depth_level: 0
-    });
-
-    var dashboards = api.get_dashboard();
-
-    var documents = api.source_doc();
-
-    var offices = api.office().then(function(response) {
-      return _.indexBy(response.objects, 'id');
-    });
-
-    this.permissions = [];
-    var permissions = api.user_permissions();
-
-    Promise.all([campaigns, regions, offices, permissions, dashboards, documents])
-      .then(_.spread(this.loadDashboards));
-
+    Promise.all([
+    		CampaignStore.getCampaigns(),
+    		RegionStore.getRegions(),
+    		api.office().then(response => _.indexBy(response.objects, 'id')),
+    		api.user_permissions(),
+    		api.get_dashboard(),
+    		api.source_doc()
+    	])
+      .then(_.spread(this._loadDashboards));
   },
 
   getInitialState: function() {
@@ -55,15 +40,21 @@ var NavigationStore = Reflux.createStore({
     };
   },
 
+  // API
   userHasPermission: function(permissionString) {
     return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
   },
 
-  loadDashboards: function(campaigns, regions, offices, permissions, dashboards, documents) {
+  getDashboard: function(slug) {
+    return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
+  },
+
+  // Helpers
+  _loadDashboards: function(campaigns, regions, offices, permissions, dashboards, documents) {
     var allDashboards = builtins.concat(dashboards.objects);
 
-    regions = _(regions.objects);
-    campaigns = _(campaigns.objects);
+    regions = _(regions);
+    campaigns = _(campaigns);
 
     // parse permissions
     this.permissions = _.map(permissions.objects, function(p) {
@@ -103,13 +94,12 @@ var NavigationStore = Reflux.createStore({
           .filter(function(c) {
             return region.office_id === c.office_id;
           })
-          .max(_.method('start_date.valueOf'));
+          .max(_.method("moment(start_date, 'YYYY-MM-DD').valueOf"));
 
         // Build the path for the dashboard
         try {
-          var path = '/' + region.name + '/' + campaign.start_date.format('YYYY/MM');
+          var path = '/' + region.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
         } catch (err) {
-          console.log('FIXME')
           var path = '/'
         }
 
@@ -131,7 +121,7 @@ var NavigationStore = Reflux.createStore({
       .value();
 
     this.campaigns = campaigns
-      .map(function(c) {
+      .map(c => {
         var m = moment(c.start_date, 'YYYY-MM-DD');
         var dt = m.format('YYYY/MM');
         var officeName = offices[c.office_id].name;
@@ -165,26 +155,21 @@ var NavigationStore = Reflux.createStore({
     });
   },
 
-  loadDocuments: function(response) {
-    var documents = _.map(response.objects, function(d) {
-      var status = (d.is_processed === 'False') ? 'INCOMPLETE' : 'COMPLETE';
+  // loadDocuments: function(response) {
+  //   var documents = _.map(response.objects, function(d) {
+  //     var status = (d.is_processed === 'False') ? 'INCOMPLETE' : 'COMPLETE';
 
-      return {
-        id: d.id,
-        title: d.docfile,
-        status: status
-      };
-    });
+  //     return {
+  //       id: d.id,
+  //       title: d.docfile,
+  //       status: status
+  //     };
+  //   });
 
-    this.trigger({
-      documents: documents
-    });
-  },
-
-  getDashboard: function(slug) {
-    return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
-  }
-
+  //   this.trigger({
+  //     documents: documents
+  //   });
+  // },
 });
 
 module.exports = NavigationStore;

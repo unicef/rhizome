@@ -50,7 +50,6 @@ var IndicatorDropdownMenu = React.createClass({
   }, */
   render : function () {
     var self = this;
-    //console.log(this.props.indicators);
     if (this.props.indicators.length === 0) {
       return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Indicators...</button>);
     }

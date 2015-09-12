@@ -158,7 +158,6 @@ var Dashboard = React.createClass({
     var slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
     var region = _.get(params, 'region', this.state.region.name);
     var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-
     if (_.isNumber(region)) {
       region = _.find(this.state.regions, r => r.id === region).name;
     }
@@ -167,7 +166,6 @@ var Dashboard = React.createClass({
   },
 
   _showDefault: function(ctx) {
-    console.log("_showDefault", ctx.params);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
@@ -176,7 +174,6 @@ var Dashboard = React.createClass({
   },
 
   _show: function(ctx) {
-    console.log("_show", ctx.params);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
@@ -187,7 +184,6 @@ var Dashboard = React.createClass({
   },
 
   _showSourceData: function(ctx) {
-    console.log("_showSourceData", ctx.params);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
     var doc_tab = ctx.params.doc_tab;
 
