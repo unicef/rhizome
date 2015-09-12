@@ -19,6 +19,16 @@ class CampaignResource(BaseModelResource):
 
 class RegionResource(BaseModelResource):
 
+    def get_object_list(self,request):
+
+        try:
+            pr_id = request.GET['parent_region_id']
+            qs = Region.objects.filter(parent_region_id=pr_id).values()
+        except KeyError:
+            qs =  Region.objects.all().values()
+
+        return qs
+
     class Meta(BaseModelResource.Meta):
         queryset = Region.objects.all().values()
         resource_name = 'region'
@@ -129,7 +139,6 @@ class SourceObjectMapResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        print request.GET['document_id']
         som_ids = DocumentSourceObjectMap.objects\
             .filter(document_id=request.GET['document_id']).\
             values_list('source_object_map_id',flat=True)
