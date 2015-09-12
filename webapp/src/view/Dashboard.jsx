@@ -16,6 +16,7 @@ var MenuItem = require('component/MenuItem.jsx');
 var CustomDashboard = require('dashboard/CustomDashboard.jsx');
 
 var DashboardStore = require('stores/DashboardStore');
+var DataStore = require('stores/DataStore');
 var GeoStore = require('stores/GeoStore');
 var IndicatorStore = require('stores/IndicatorStore');
 var NavigationStore = require('stores/NavigationStore');
@@ -36,7 +37,7 @@ var LAYOUT = {
 var Dashboard = React.createClass({
   mixins: [
     Reflux.ListenerMixin,
-    Reflux.connect(require('stores/DataStore'))
+    Reflux.connect(DataStore)
   ],
 
   getInitialState: function() {
@@ -75,33 +76,12 @@ var Dashboard = React.createClass({
 
 
   componentDidMount: function() {
-    this.dashboardUnsubscribe = this.listenTo(
-      DashboardStore,
-      this._onDashboardChange);
-
-    this.indicatorUnsubscribe = this.listenTo(
-      IndicatorStore,
-      this._onIndicatorsChange);
-
-    this.geoUnsubscribe = this.listenTo(
-      GeoStore,
-      this._onGeographyLoaded);
-
-    this.navigateUnsubscribe = this.listenTo(
-      DashboardActions.navigate,
-      this._navigate);
-
-    this.navigationStoreUnsubscribe = this.listenTo(
-      NavigationStore,
-      this._onNavigationChange);
-  },
-
-  componentWillUnmount: function() {
-    this.dashboardUnsubscribe();
-    this.indicatorUnsubscribe();
-    this.geoUnsubscribe();
-    this.navigateUnsubscribe();
-    this.navigationStoreUnsubscribe();
+    // Reflux.ListenerMixin will unmount listeners
+    this.listenTo(DashboardStore, this._onDashboardChange);
+    this.listenTo(IndicatorStore, this._onIndicatorsChange);
+    this.listenTo(GeoStore, this._onGeographyLoaded);
+    this.listenTo(DashboardActions.navigate, this._navigate);
+    this.listenTo(NavigationStore, this._onNavigationChange);
   },
 
   _onDashboardChange: function(state) {

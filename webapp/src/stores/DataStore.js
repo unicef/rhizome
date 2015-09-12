@@ -20,7 +20,6 @@ function melt (d) {
 }
 
 var DataStore = Reflux.createStore({
-
   listenables : [DataActions],
 
   init : function () {
