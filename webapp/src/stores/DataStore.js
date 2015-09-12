@@ -1,6 +1,6 @@
 'use strict';
 
-var _      = require('lodash');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
@@ -8,50 +8,50 @@ var api = require('data/api');
 
 var DataActions = require('actions/DataActions');
 
-function melt (d) {
+function melt(d) {
   var base = _.omit(d, 'indicators');
 
-  return _.map(d.indicators, function (i) {
+  return _.map(d.indicators, function(i) {
     return _.assign({
-        indicator : i.indicator,
-        value     : i.value
-      }, base);
+      indicator: i.indicator,
+      value: i.value
+    }, base);
   });
 }
 
 var DataStore = Reflux.createStore({
-  listenables : [DataActions],
+  listenables: [DataActions],
 
-  init : function () {
+  init: function() {
     this.loading = false;
-    this.data    = [];
+    this.data = [];
   },
 
-  getInitialState : function () {
+  getInitialState: function() {
     return {
-      loading : this.loading,
-      data    : this.data
+      loading: this.loading,
+      data: this.data
     };
   },
 
-  onClear : function () {
+  onClear: function() {
     this.loading = false;
-    this.data    = [];
+    this.data = [];
 
     this.trigger({
-      loading : false,
-      data    : []
+      loading: false,
+      data: []
     });
   },
 
-  onFetch : function (campaign, region, charts) {
-    var m     = moment(campaign.start_date, 'YYYY-MM-DD');
-    var end   = campaign.end_date;
+  onFetch: function(campaign, region, charts) {
+    var m = moment(campaign.start_date, 'YYYY-MM-DD');
+    var end = campaign.end_date;
 
-    var promises = _.map(charts, function (def) {
+    var promises = _.map(charts, function(def) {
       var q = {
-        indicator__in  : def.indicators,
-        campaign_end   : end
+        indicator__in: def.indicators,
+        campaign_end: end
       };
 
       // If no timeRange or startOf property is provided, the chart should fetch
@@ -88,7 +88,7 @@ var DataStore = Reflux.createStore({
       return api.datapoints(q);
     });
 
-    Promise.all(promises).then(function (responses) {
+    Promise.all(promises).then(function(responses) {
       this.data = _(responses)
         .pluck('objects')
         .flatten()
@@ -99,17 +99,17 @@ var DataStore = Reflux.createStore({
       this.loading = false;
 
       this.trigger({
-        loading : false,
-        data    : this.data
+        loading: false,
+        data: this.data
       });
     }.bind(this));
 
     this.loading = true;
-    this.data    = [];
+    this.data = [];
 
     this.trigger({
-      loading : true,
-      data    : []
+      loading: true,
+      data: []
     });
   }
 
