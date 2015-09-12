@@ -6,6 +6,7 @@ var React  = require('react');
 var Reflux = require('reflux');
 
 var NavigationStore = require('stores/NavigationStore');
+var PermissionStore = require('stores/PermissionStore');
 
 var DashboardStore = require('stores/DashboardStore');
 
@@ -105,7 +106,7 @@ module.exports = React.createClass({
     };
   },
 
-    showAllCampaigns: function(e) {
+  showAllCampaigns: function(e) {
     this.setState({ visibleCampaigns: Infinity });
     e.preventDefault();
   },
@@ -122,10 +123,10 @@ module.exports = React.createClass({
     }
 
     // data entry section, according to permissions
-    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
+    if (PermissionStore.userHasPermission('upload_csv') || PermissionStore.userHasPermission('data_entry_form')) {
 
       var csv_upload_button = '';
-      if (NavigationStore.userHasPermission('upload_csv')) {
+      if (PermissionStore.userHasPermission('upload_csv')) {
         csv_upload_button = (
                 <a className="small button" href="/source_data/file_upload">
                   <i className="fa fa-upload"></i>&emsp;Upload data
@@ -134,7 +135,7 @@ module.exports = React.createClass({
       }
 
       var data_entry_button = '';
-      if (NavigationStore.userHasPermission('data_entry_form')) {
+      if (PermissionStore.userHasPermission('data_entry_form')) {
         data_entry_button = (
                 <a className="small button" href="/datapoints/entry">
                   <i className="fa fa-table"></i>&emsp;Data Entry Form

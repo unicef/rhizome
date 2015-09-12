@@ -63,6 +63,7 @@ var DashboardStore = Reflux.createStore({
 
   // action handlers
   onSetDashboard: function(definition) {
+    console.log("DashboardStore -> onSetDashboard:", definition)
     var dashboard = this.dashboard = definition.dashboard;
     this.region = definition.region || this.region;
     this.date = definition.date || this.date;
@@ -87,7 +88,14 @@ var DashboardStore = Reflux.createStore({
     var region = _.find(regions, function(r) {
       return r.name === this.region;
     }.bind(this));
+    console.log("2:", this.region, region);
 
+    /**
+
+      Question ???
+      - onSetDashboard receives correct region, but after this condition rewrites it to Nigeria
+
+    **/
     if (_.isFinite(dashboard.default_office_id) && _.get(region, 'office_id') !== dashboard.default_office_id) {
       region = topLevelRegions.find(function(r) {
         return r.office_id === dashboard.default_office_id;
@@ -97,6 +105,7 @@ var DashboardStore = Reflux.createStore({
     if (!region) {
       region = topLevelRegions.first();
     }
+    console.log("4:", this.region, region);
 
     var campaign = _(campaigns)
       .filter(function(c) {
@@ -110,6 +119,8 @@ var DashboardStore = Reflux.createStore({
       .pluck('type')
       .any(t => _.endsWith(t, 'Map'));
 
+
+    console.log("AFTER:", region);
     this.trigger({
       dashboard: this.dashboard,
       region: region,

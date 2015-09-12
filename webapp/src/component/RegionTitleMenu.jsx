@@ -1,58 +1,41 @@
 'use strict';
 
-var _     = require('lodash');
+var _ = require('lodash');
 var React = require('react');
 
 var TitleMenu = require('component/TitleMenu.jsx');
-var MenuItem  = require('component/MenuItem.jsx');
+var MenuItem = require('component/MenuItem.jsx');
 
 var RegionTitleMenu = React.createClass({
-  propTypes : {
-    regions   : React.PropTypes.array.isRequired,
-    selected  : React.PropTypes.object.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+  propTypes: {
+    regions: React.PropTypes.array.isRequired,
+    selected: React.PropTypes.object.isRequired,
+    sendValue: React.PropTypes.func.isRequired
   },
 
-  getInitialState : function () {
+  getInitialState: function() {
     return {
-      filter : ''
+      filter: ''
     };
   },
+
   shouldComponentUpdate: function(nextProps, nextState) {
-
-      return (nextProps.regions.length !== this.props.regions.length || nextProps.selected.id !==this.props.selected.id);
+    return nextProps.regions.length !== this.props.regions.length
+      || nextProps.selected.id !== this.props.selected.id;
   },
 
-  render : function () {
-    var region = this.props.selected.name;
-
-    var filter  = this.state.filter;
-
-    var regions = this._buildRegions(this.props.regions, filter)
-
-    var items = MenuItem.fromArray(_.sortBy(regions, 'title'), this.props.sendValue);
-
-    return (
-      <TitleMenu
-        icon='fa-globe'
-        text={region}
-        searchable={true}
-        onSearch={this._setFilter}>
-        {items}
-      </TitleMenu>
-    );
-  },
-
-  _setFilter : function (pattern) {
-    this.setState({ filter : pattern })
+  _setFilter: function(pattern) {
+    this.setState({
+      filter: pattern
+    })
   },
 
   _buildRegions: function(originalRegions, filter) {
     var regions = originalRegions.map(r => {
       return {
-        title  : r.name,
-        value  : r.id,
-        parent : r.parent_region_id
+        title: r.name,
+        value: r.id,
+        parent: r.parent_region_id
       };
     });
 
@@ -77,6 +60,24 @@ var RegionTitleMenu = React.createClass({
     }
 
     return regions
+  },
+
+  render: function () {
+    // console.log("RegionTitleMenu RENDER:", this.props.selected);
+    var region = this.props.selected.name;
+    var filter  = this.state.filter;
+    var regions = this._buildRegions(this.props.regions, filter)
+    var items = MenuItem.fromArray(_.sortBy(regions, 'title'), this.props.sendValue);
+
+    return (
+      <TitleMenu
+        icon='fa-globe'
+        text={region}
+        searchable={true}
+        onSearch={this._setFilter}>
+        {items}
+      </TitleMenu>
+    );
   }
 });
 

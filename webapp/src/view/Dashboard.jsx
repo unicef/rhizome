@@ -74,14 +74,15 @@ var Dashboard = React.createClass({
     }
   },
 
-
   componentDidMount: function() {
     // Reflux.ListenerMixin will unmount listeners
     this.listenTo(DashboardStore, this._onDashboardChange);
-    this.listenTo(IndicatorStore, this._onIndicatorsChange);
-    this.listenTo(GeoStore, this._onGeographyLoaded);
-    this.listenTo(DashboardActions.navigate, this._navigate);
     this.listenTo(NavigationStore, this._onNavigationChange);
+
+    this.listenTo(DashboardActions.navigate, this._navigate);
+
+    this.listenTo(IndicatorStore, () => this.forceUpdate());
+    this.listenTo(GeoStore, () => this.forceUpdate());
   },
 
   _onDashboardChange: function(state) {
@@ -108,12 +109,12 @@ var Dashboard = React.createClass({
     }
   },
 
-  _onIndicatorsChange: function() {
-    this.forceUpdate();
-  },
-
-  _onGeographyLoaded: function() {
-    this.forceUpdate();
+  _onNavigationChange: function(nav) {
+    if (NavigationStore.loaded && DashboardStore.loaded) {
+      page({
+        click: false
+      });
+    }
   },
 
   _setCampaign: function(id) {
@@ -130,6 +131,7 @@ var Dashboard = React.createClass({
 
   _setRegion: function(id) {
     var region = _.find(this.state.regions, r => r.id === id)
+    console.log("_setRegion:", id, region);
 
     if (!region) {
       return;
@@ -144,14 +146,6 @@ var Dashboard = React.createClass({
     this._navigate({
       dashboard: slug
     });
-  },
-
-  _onNavigationChange: function(nav) {
-    if (NavigationStore.loaded && DashboardStore.loaded) {
-      page({
-        click: false
-      });
-    }
   },
 
   _navigate: function(params) {
@@ -174,6 +168,7 @@ var Dashboard = React.createClass({
   },
 
   _show: function(ctx) {
+    console.log("_show:", ctx, ctx.params.region);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
@@ -201,6 +196,7 @@ var Dashboard = React.createClass({
   },
 
   render: function () {
+    console.log("RENDER", this.state.region);
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize: '2rem',
@@ -215,13 +211,9 @@ var Dashboard = React.createClass({
       );
     }
 
-    var campaign      = this.state.campaign;
+    var {campaign, loading, region, doc_id, doc_tab} = this.state;
     var dashboardDef  = this.state.dashboard;
-    var loading       = this.state.loading;
-    var region        = this.state.region;
     var dashboardName = _.get(dashboardDef, 'title', '');
-    var doc_id        = this.state.doc_id;
-    var doc_tab        = this.state.doc_tab;
 
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,

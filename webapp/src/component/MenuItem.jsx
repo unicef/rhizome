@@ -5,7 +5,7 @@ var MenuItem = React.createClass({
 	propTypes: {
     sendValue      : React.PropTypes.func.isRequired,
     title          : React.PropTypes.string.isRequired,
-    value          : React.PropTypes.number.isRequired,
+    value          : React.PropTypes.string.isRequired,
 
     ancestryString : React.PropTypes.string,
     children       : React.PropTypes.array,

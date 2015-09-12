@@ -14,7 +14,6 @@ var NavigationStore = Reflux.createStore({
   init: function() {
     this.campaigns = [];
     this.dashboards = [];
-    this.permissions = [];
     this.customDashboards = null;
     this.documents = [];
     this.loaded = false;
@@ -23,7 +22,6 @@ var NavigationStore = Reflux.createStore({
     		CampaignStore.getCampaigns(),
     		RegionStore.getRegions(),
     		api.office().then(response => _.indexBy(response.objects, 'id')),
-    		api.user_permissions(),
     		api.get_dashboard(),
     		api.source_doc()
     	])
@@ -34,32 +32,22 @@ var NavigationStore = Reflux.createStore({
     return {
       campaigns: this.campaigns,
       dashboards: this.dashboards,
-      permissions: this.permissions,
       documents: this.documents,
       loaded: this.loaded
     };
   },
 
   // API
-  userHasPermission: function(permissionString) {
-    return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
-  },
-
   getDashboard: function(slug) {
     return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
   },
 
   // Helpers
-  _loadDashboards: function(campaigns, regions, offices, permissions, dashboards, documents) {
+  _loadDashboards: function(campaigns, regions, offices, dashboards, documents) {
     var allDashboards = builtins.concat(dashboards.objects);
 
     regions = _(regions);
     campaigns = _(campaigns);
-
-    // parse permissions
-    this.permissions = _.map(permissions.objects, function(p) {
-      return p.auth_code;
-    });
 
     this.dashboards = _(allDashboards)
       .map(function(d) {

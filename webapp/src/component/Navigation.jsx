@@ -7,6 +7,7 @@ var Reflux = require('reflux');
 var NavMenu = require('component/NavMenu.jsx');
 var NavMenuItem = require('component/NavMenuItem.jsx');
 var NavigationStore = require('stores/NavigationStore');
+var PermissionStore = require('stores/PermissionStore');
 
 var Navigation = React.createClass({
   mixins: [
@@ -25,11 +26,11 @@ var Navigation = React.createClass({
     );
 
     var enterData = '';
-    if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
-      var formLink = NavigationStore.userHasPermission('data_entry_form')
+    if (PermissionStore.userHasPermission('upload_csv') || PermissionStore.userHasPermission('data_entry_form')) {
+      var formLink = PermissionStore.userHasPermission('data_entry_form')
         ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>)
         : '';
-      var uploadLink = NavigationStore.userHasPermission('upload_csv')
+      var uploadLink = PermissionStore.userHasPermission('upload_csv')
         ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>)
         : '';
 
@@ -44,7 +45,7 @@ var Navigation = React.createClass({
     }
 
     var manage = '';
-    if (NavigationStore.userHasPermission('manage_system')) {
+    if (PermissionStore.userHasPermission('manage_system')) {
       manage = (
         <li>
           <a href='/ufadmin/users'>
