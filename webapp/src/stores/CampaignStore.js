@@ -5,15 +5,27 @@ var api = require('data/api');
 
 var CampaignStore = Reflux.createStore({
   init() {
-    this.campaigns = api.campaign()
+    this.campaigns = [];
+
+    this.campaignsPromise = api.campaign()
     	.then(data => {
-        return data.objects;
+        this.campaigns = data.objects;
+        this.trigger({
+          campaigns: this.campaigns
+        });
+        return this.campaigns;
       });
   },
 
+  getInitialState() {
+    return {
+      campaigns: this.campaigns
+    };
+  },
+
   // API
-  getCampaigns() {
-    return this.campaigns;
+  getCampaignsPromise() {
+    return this.campaignsPromise;
   }
 });
 

@@ -19,8 +19,8 @@ var NavigationStore = Reflux.createStore({
     this.loaded = false;
 
     Promise.all([
-    		CampaignStore.getCampaigns(),
-    		RegionStore.getRegions(),
+    		CampaignStore.getCampaignsPromise(),
+    		RegionStore.getRegionsPromise(),
     		api.office().then(response => _.indexBy(response.objects, 'id')),
     		api.get_dashboard(),
     		api.source_doc()
