@@ -13,7 +13,11 @@ var DocForm = React.createClass({
   getInitialState: function() {
     return {
       data_uri: null,
-      config_options: []
+      config_options: [],
+      uq_id_column: null,
+      region_column: null,
+      campaign_column: null,
+      created_doc_id: null
     };
   },
 
@@ -34,9 +38,10 @@ var DocForm = React.createClass({
         data_uri: upload.target.result,
       });
       api.uploadPost({docfile:upload.target.result}).then(function (response) {
-        var file_header = response.objects[0].file_header
+        var response = response.objects[0]
         self.setState({
-          config_options: file_header.replace('"','').split(','),
+          config_options: response.file_header.replace('"','').split(','),
+          created_doc_id: response.id
         });
       })
     }
@@ -44,10 +49,22 @@ var DocForm = React.createClass({
     reader.readAsDataURL(file);
   },
 
-  _setDocConfig : function (config_val) {
-    console.log(config_val)
-  	},
+  setDocConfig : function (config_val) {
+    var self = this;
+    var doc_id = this.state.doc_id;
 
+    api.docDetailPost({
+        document_id: this.state.created_doc_id,
+        doc_detail_type_id:6,
+        doc_detail_value: config_val
+    }).then(function (response) {
+      self.setState({
+        uq_id_column: response.objects[0].doc_detail_value,
+      });
+    })
+    console.log('=====')
+    console.log(this.state.uq_id_column)
+  	},
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
@@ -61,23 +78,30 @@ var DocForm = React.createClass({
           value : d
         };
       }),
-      this._setDocConfig);
+      this.setDocConfig);
 
       if (headerList.length > 0) {
-        var fileConfig = <div>
-          <TitleMenu text="Unique ID Col">
-            {headerList}
-          </TitleMenu>
-          <TitleMenu text="Region Column">
-            {headerList}
-          </TitleMenu>
-          <TitleMenu text="Campaign Column">
-            {headerList}
-          </TitleMenu>
-      </div>
+        var uq_col = "Unique ID Col" || this.state.uq_id_column
+        var rg_col = "Region Col"
+        var cp_col = "Campaign Col"
+
+        var fileConfigForm = <form action={this.handleSubmit}>
+
+        <TitleMenu text={uq_col}>
+          {headerList}
+        </TitleMenu>
+
+        <TitleMenu text= {rg_col}>
+          {headerList}
+        </TitleMenu>
+
+        <TitleMenu text= {cp_col}>
+          {headerList}
+        </TitleMenu>
+      </form>
       }
       else {
-        var fileConfig = ''
+        var fileConfigForm = ''
       }
 
     // since JSX is case sensitive, be sure to use 'encType'
@@ -91,10 +115,9 @@ var DocForm = React.createClass({
         style={{ textAlign: 'right' }}
       >
         <input type="file" onChange={this.handleFile} className="upload" />
-        <input type="text" label="file name:" />
       </form>
 
-      {fileConfig}
+      {fileConfigForm}
 
     </div>);
   },

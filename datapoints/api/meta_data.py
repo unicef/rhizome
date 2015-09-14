@@ -15,7 +15,6 @@ from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 
 
-
 class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
@@ -153,18 +152,28 @@ class DocumentDetailResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        queryset = DocumentDetail.objects\
-            .filter(document_id=request.GET['document_id']).values()
+        try:
+            document_id = request.POST['document_id']
+        except KeyError:
+            return super(DocumentDetailResource, self).get_object_list(request)
 
-        return queryset
+        post_data = request.POST
+
+        doc_detail_dict = {
+            'document_id': int(post_data['document_id']),
+            'doc_detail_type_id': int(post_data['doc_detail_type_id']),
+            'doc_detail_value': post_data['doc_detail_value'],
+        }
+        dd = DocumentDetail.objects.create(**doc_detail_dict)
+
+        return DocumentDetail.objects.filter(id=dd.id).values()
 
     class Meta(BaseModelResource.Meta):
         queryset = DocumentDetail.objects.all().values()
-        resource_name = 'document_detail'
+        resource_name = 'doc_detail'
         filtering = {
             "id": ALL,
         }
-
 
 class DocDataPointResource(BaseModelResource):
 
@@ -232,6 +241,13 @@ class RefreshMasterResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
+
+class DocDetailTypeResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        queryset = DocDetailType.objects.all().values()
+        resource_name = 'doc_detail_type'
+
 
 ## Result Objects for geo Resources ##
 
