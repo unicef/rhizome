@@ -7,6 +7,7 @@ from tastypie.bundle import Bundle
 from tastypie.resources import Resource
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
+from django.core import serializers
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
@@ -79,36 +80,30 @@ class DocumentResource(BaseModelResource):
 
     def get_object_list(self,request):
         '''
+        If post, create file and return the JSON of that object.
+        If get, just query the source_doc table with request parameters
         '''
         try:
             doc_data = request.POST['docfile']
         except KeyError:
             return super(DocumentResource, self).get_object_list(request)
 
-        post_results = self.post_doc_data(doc_data, request.user.id)
+        new_doc = self.post_doc_data(doc_data, request.user.id)
 
-        return super(DocumentResource, self).get_object_list(request)
-
+        return Document.objects.filter(id=new_doc.id).values()
 
     def post_doc_data(self, post_data, user_id):
 
         in_memory_file = ContentFile(cStringIO.StringIO(post_data))
+        file_header = in_memory_file.readline()
         sd = Document.objects.create(
                 doc_title = 'daaaata',
                 docfile = in_memory_file,
                 created_by_id = user_id,
                 guid = 'test')
 
-        print '-===MADE IT===-'
-        print sd.id
-        print '-======-'
+        return sd
 
-
-    # def obj_create(self, bundle, **kwargs):
-    #     """
-    #     """
-    #     print '====\n' * 10
-    #     print 'BUNDLE\n' * 10
 
 class Meta(BaseModelResource.Meta):
         queryset = Document.objects.all().values()

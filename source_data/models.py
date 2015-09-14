@@ -57,6 +57,7 @@ class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d',null=True)
     doc_title = models.TextField(null=True)
+    file_header = models.TextField(null=True)
     created_by = models.ForeignKey(User)
     guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
@@ -67,6 +68,15 @@ class Document(models.Model):
     def save(self, *args, **kwargs):
         if not self.guid:
             self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+        if not self.file_header and self.docfile:
+            for i,(line) in enumerate(self.docfile):
+
+                if i == 0:
+                    header_data = line.split('\r')[0]
+                    header = header_data.split(',')
+
+            self.file_header = header
 
         super(Document, self).save(*args, **kwargs)
 
