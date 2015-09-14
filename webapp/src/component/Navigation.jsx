@@ -25,14 +25,8 @@ var Navigation = React.createClass({
       .value()
     );
 
-    var enterData = '';
-    if (PermissionStore.userHasPermission('upload_csv') || PermissionStore.userHasPermission('data_entry_form')) {
-      var formLink = PermissionStore.userHasPermission('data_entry_form')
-        ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>)
-        : '';
-      var uploadLink = PermissionStore.userHasPermission('upload_csv')
-        ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>)
-        : '';
+      var formLink = <NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>
+      var uploadLink = <NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>
 
       var enterData = (
           <li className='data'>
@@ -42,18 +36,15 @@ var Navigation = React.createClass({
             </NavMenu>
           </li>
         );
-    }
 
-    var manage = '';
-    if (PermissionStore.userHasPermission('manage_system')) {
-      manage = (
+
+    var manage = (
         <li>
           <a href='/ufadmin/users'>
             <i className='fa fa-cogs'></i>&ensp;Manage System
           </a>
         </li>
       );
-    }
 
     return (
       <nav>
@@ -79,9 +70,7 @@ var Navigation = React.createClass({
               </NavMenuItem>
             </NavMenu>
           </li>
-
           {enterData}
-
           {manage}
         </ul>
 
