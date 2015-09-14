@@ -17,7 +17,8 @@ var DocForm = React.createClass({
       uq_id_column: null,
       region_column: null,
       campaign_column: null,
-      created_doc_id: null
+      created_doc_id: null,
+      docDetailMeta: null,
     };
   },
 
@@ -44,59 +45,85 @@ var DocForm = React.createClass({
           created_doc_id: response.id
         });
       })
+      api.docDetailType().then(function (response) {
+        self.setState({docDetailMeta:response.objects})
+      })
     }
-
     reader.readAsDataURL(file);
   },
 
-  setDocConfig : function (config_val) {
+  setCpConfig :function (config_val) {
+    console.log('campaign config')
+    console.log(config_val)
+  },
+
+  setRgConfig :function (config_val) {
+    console.log('region config')
+    console.log(config_val)
+  },
+
+  setUqConfig : function (config_val) {
     var self = this;
-    var doc_id = this.state.doc_id;
 
     api.docDetailPost({
-        document_id: this.state.created_doc_id,
-        doc_detail_type_id:6,
-        doc_detail_value: config_val
+          document_id: this.state.created_doc_id,
+          doc_detail_type_id:6,
+          doc_detail_value: config_val
     }).then(function (response) {
-      self.setState({
-        uq_id_column: response.objects[0].doc_detail_value,
+        var selected_uq_id = response.objects[0].doc_detail_value
+        self.setState({uq_id_column:selected_uq_id})
       });
-    })
-    console.log('=====')
-    console.log(this.state.uq_id_column)
-  	},
+  },
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
 
     var state_header = this.state.config_options
 
-    var headerList = MenuItem.fromArray(
+    var uqHeaderList = MenuItem.fromArray(
       _.map(state_header, d => {
         return {
           title : d,
           value : d
         };
       }),
-      this.setDocConfig);
+      this.setUqConfig);
 
-      if (headerList.length > 0) {
-        var uq_col = "Unique ID Col" || this.state.uq_id_column
+    var rgHeaderList = MenuItem.fromArray(
+      _.map(state_header, d => {
+        return {
+          title : d,
+          value : d
+        };
+      }),
+      this.setRgConfig);
+
+    var cpHeaderList = MenuItem.fromArray(
+      _.map(state_header, d => {
+        return {
+          title : d,
+          value : d
+        };
+      }),
+      this.setCpConfig);
+
+      if (uqHeaderList.length > 0) {
+        var uq_col = this.state.uq_id_column
         var rg_col = "Region Col"
         var cp_col = "Campaign Col"
 
         var fileConfigForm = <form action={this.handleSubmit}>
 
         <TitleMenu text={uq_col}>
-          {headerList}
+          {uqHeaderList}
         </TitleMenu>
 
         <TitleMenu text= {rg_col}>
-          {headerList}
+          {rgHeaderList}
         </TitleMenu>
 
         <TitleMenu text= {cp_col}>
-          {headerList}
+          {cpHeaderList}
         </TitleMenu>
       </form>
       }
