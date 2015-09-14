@@ -18,7 +18,8 @@ var DocForm = React.createClass({
       region_column: null,
       campaign_column: null,
       created_doc_id: null,
-      docDetailMeta: null,
+      doc_detail_meta: null,
+      doc_is_refreshed: false,
     };
   },
 
@@ -49,7 +50,7 @@ var DocForm = React.createClass({
 
       api.docDetailType().then(function (response) {
         var doc_detail_types = response.objects
-        self.setState({docDetailMeta:doc_detail_types})
+        self.setState({doc_detail_meta:doc_detail_types})
       })
     }
     reader.readAsDataURL(file);
@@ -94,6 +95,15 @@ var DocForm = React.createClass({
     }).then(function (response) {
         var selected_uq_id = response.objects[0].doc_detail_value
         self.setState({uq_id_column:selected_uq_id})
+      });
+  },
+
+  syncDocData : function (config_val) {
+      var self = this;
+
+      api.transformUpload({document_id: this.state.created_doc_id})
+      .then(function (response) {
+          self.setState({doc_is_refreshed: true})
       });
   },
 
@@ -162,7 +172,15 @@ var DocForm = React.createClass({
         var fileConfigForm = ''
       }
 
-    if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column){
+      if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column){
+        var refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
+      }
+      else {
+        var refreshBtn = ''
+      }
+
+
+    if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column && this.state.doc_is_refreshed){
       var next_link = "viewraw/" + this.state.created_doc_id;
       var reviewBtn = <a href={next_link}  className="button"> Review Upload</a>
     }
@@ -184,6 +202,7 @@ var DocForm = React.createClass({
       </form>
 
       {fileConfigForm}
+      {refreshBtn}
       {reviewBtn}
 
     </div>);
