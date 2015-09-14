@@ -150,7 +150,13 @@ var SourceDataDashboard = React.createClass({
 			</ReviewTable>
 
 		if (doc_tab =='doc_index') {
-			var docForm = <DocForm></DocForm>;
+			var docForm = <div className="row">
+					<div className="medium-3 columns">x</div>
+				  <div className="medium-6 columns" style={{border:"2px solid black" }}>
+						<DocForm></DocForm>
+					</div>
+					<div className="medium-3 columns">y</div>
+			</div>
 			var review_breakdown = '';
 		}
 		else {
@@ -165,8 +171,7 @@ var SourceDataDashboard = React.createClass({
 
 		return (
 					<div>
-						<div className="row">
-						</div>
+							{docForm}
 						<div className="row">
 						<div id="popUp"></div>
 						<div className="medium-9 columns">
@@ -174,7 +179,6 @@ var SourceDataDashboard = React.createClass({
 						{review_table}
 						</div>
 						<div className="medium-3 columns">
-							{docForm}
 							{review_nav}
 							{review_breakdown}
 						</div>

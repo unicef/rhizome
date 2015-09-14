@@ -46,7 +46,7 @@ var DocForm = React.createClass({
         method="post"
         style={{ textAlign: 'right' }}
       >
-        <input type="file" onChange={this.handleFile} />
+        <input type="file" onChange={this.handleFile} className="upload" />
       </form>
     </div>);
   },
