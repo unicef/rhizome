@@ -1,6 +1,11 @@
 
+var _     	= require('lodash');
 var React		= require('react');
 var api 		= require('data/api.js')
+var TitleMenu  	= require('component/TitleMenu.jsx');
+var MenuItem    = require('component/MenuItem.jsx');
+
+
 var DocForm = React.createClass({
 // see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
 
@@ -33,8 +38,25 @@ var DocForm = React.createClass({
     reader.readAsDataURL(file);
   },
 
+  _setDocConfig : function (config_val) {
+    console.log('-----====------')
+    console.log(config_val)
+    console.log('-----====------')
+  	},
+
+
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
+
+    var defaultHeader = 'test'
+    var headerList = MenuItem.fromArray(
+      _.map(['test','this','component'], d => {
+        return {
+          title : d,
+          value : d
+        };
+      }),
+      this._setDocConfig);
 
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div>
@@ -48,6 +70,10 @@ var DocForm = React.createClass({
       >
         <input type="file" onChange={this.handleFile} className="upload" />
       </form>
+      <TitleMenu text={defaultHeader}>
+        {headerList}
+      </TitleMenu>
+
     </div>);
   },
 });
