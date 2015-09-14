@@ -9,9 +9,11 @@ var PermissionStore = Reflux.createStore({
 
     this.permissionsPromise = api.user_permissions()
       .then(data => {
-        this.permissions = _.map(data.objects, p => p.auth_code);
+        this.permissions = data.objects.map(p => {
+          return p.auth_code
+        });
         this.trigger({
-          permissions: this.permissions,
+          permissions: this.permissions
         });
         return this.permissions;
       });
@@ -19,7 +21,7 @@ var PermissionStore = Reflux.createStore({
 
   getInitialState() {
     return {
-      permissions: this.permissions,
+      permissions: this.permissions
     };
   },
 

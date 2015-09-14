@@ -8,7 +8,7 @@ var CampaignStore = Reflux.createStore({
     this.campaigns = [];
 
     this.campaignsPromise = api.campaign()
-    	.then(data => {
+      .then(data => {
         this.campaigns = data.objects;
         this.trigger({
           campaigns: this.campaigns

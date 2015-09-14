@@ -11,7 +11,7 @@ var DataActions = require('actions/DataActions');
 function melt(d) {
   var base = _.omit(d, 'indicators');
 
-  return _.map(d.indicators, function(i) {
+  return d.indicators.map(i => {
     return _.assign({
       indicator: i.indicator,
       value: i.value
