@@ -1,5 +1,5 @@
 import json
-import cStringIO
+import base64
 
 from tastypie.resources import ALL
 from tastypie import fields
@@ -94,13 +94,17 @@ class DocumentResource(BaseModelResource):
 
     def post_doc_data(self, post_data, user_id):
 
-        in_memory_file = ContentFile(cStringIO.StringIO(post_data))
-        file_header = in_memory_file.readline()
+        file_meta, base64data = post_data.split(',')
+        print file_meta
+
+        file_content = ContentFile(base64.b64decode(base64data))
+
         sd = Document.objects.create(
                 doc_title = 'daaaata',
-                docfile = in_memory_file,
-                created_by_id = user_id,
-                guid = 'test')
+                created_by_id = user_id)
+
+        sd.docfile.save(sd.guid, file_content)
+
 
         return sd
 
