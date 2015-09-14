@@ -13,6 +13,7 @@ from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.etl_tasks.transform_upload import DocTransform
 
 
 class CampaignResource(BaseModelResource):
@@ -208,19 +209,30 @@ class SourceSubmissionResource(BaseModelResource):
     def get_object_list(self,request):
 
         try:
-            qs = SourceSubmission.objects.filter(id=request\
-                .GET['id']).values()
-        except KeyError:
             qs = SourceSubmissionDetail.objects.filter(document_id=request\
                 .GET['document_id']).values()
         except KeyError:
-            qs = SourceSubmission.objects.filter(id=-1)
+            qs = SourceSubmission.objects.filter(id=request\
+                .GET['id']).values()
 
         return qs
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_submission'
 
+
+class DocTransFormResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        doc_id = request.GET['document_id']
+        dt = DocTransform(1,doc_id)
+        dt.main()
+
+        return Document.objects.filter(id = doc_id).values()
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'transform_upload'
 
 class RefreshMasterResource(BaseModelResource):
 

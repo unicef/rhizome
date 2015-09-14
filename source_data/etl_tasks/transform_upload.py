@@ -37,6 +37,22 @@ class DocTransform(object):
                 .objects.get(name='uq_id_column').id,
         ).doc_detail_value
 
+        self.region_column = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='region_column').id,
+        ).doc_detail_value
+
+        self.campaign_column = DocumentDetail.objects.get(
+            document_id = self.document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='campaign_column').id,
+        ).doc_detail_value
+
+    def main(self):
+        self.process_file()
+        self.post_process_file()
+        self.upsert_source_object_map()
 
     def get_document_file_stream(self,full_file_path):
 
@@ -67,12 +83,12 @@ class DocTransform(object):
             submission_data = row.submission_json
             submission_detail_dict = {
                 'source_submission_id': row.id,
-                'img_location':  submission_data[self.doc_deets['image_col']],
+                # 'img_location':  submission_data[self.doc_deets['image_col']],
                 'document_id':   self.document_id,
-                'username_code':  submission_data[self.doc_deets['username_column']],
-                'campaign_code':  submission_data[self.doc_deets['campaign_column']],
-                'region_code':  submission_data[self.doc_deets['region_column']],
-                'region_display':  submission_data[self.doc_deets['region_display_name']],
+                # 'username_code':  submission_data[self.doc_deets['username_column']],
+                'campaign_code':  submission_data[self.campaign_column],
+                'region_code':  submission_data[self.region_column],
+                # 'region_display':  submission_data[self.doc_deets['region_display_name']],
                 'raw_data_proxy' :''
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
@@ -125,8 +141,8 @@ class DocTransform(object):
 
         for row in source_dp_json:
             row_dict = json.loads(row[0])
-            rg_codes.append(row_dict[self.doc_deets['region_column']])
-            cp_codes.append(row_dict[self.doc_deets['campaign_column']])
+            rg_codes.append(row_dict[self.region_column])
+            cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
             all_codes.append(('region',r))

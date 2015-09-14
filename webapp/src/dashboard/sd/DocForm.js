@@ -135,8 +135,7 @@ var DocForm = React.createClass({
         var rg_col = this.state.region_column
         var cp_col = this.state.campaign_column
 
-        var fileConfigForm = <form action={this.handleSubmit}>
-
+        var fileConfigForm = <div>
         <ul>
         <li>
           Unique ID Column:
@@ -157,12 +156,19 @@ var DocForm = React.createClass({
             </TitleMenu>
         </li>
       </ul>
-
-      </form>
+    </div>
       }
       else {
         var fileConfigForm = ''
       }
+
+    if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column){
+      var next_link = "viewraw/" + this.state.created_doc_id;
+      var reviewBtn = <a href={next_link}  className="button"> Review Upload</a>
+    }
+    else {
+      var reviewBtn = ''
+    }
 
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div>
@@ -178,6 +184,7 @@ var DocForm = React.createClass({
       </form>
 
       {fileConfigForm}
+      {reviewBtn}
 
     </div>);
   },
