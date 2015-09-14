@@ -63,6 +63,23 @@ var DocForm = React.createClass({
       }),
       this._setDocConfig);
 
+      if (headerList.length > 0) {
+        var fileConfig = <div>
+          <TitleMenu text="Unique ID Col">
+            {headerList}
+          </TitleMenu>
+          <TitleMenu text="Region Column">
+            {headerList}
+          </TitleMenu>
+          <TitleMenu text="Campaign Column">
+            {headerList}
+          </TitleMenu>
+      </div>
+      }
+      else {
+        var fileConfig = ''
+      }
+
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div>
       <h6>Upload New File</h6>
@@ -76,9 +93,8 @@ var DocForm = React.createClass({
         <input type="file" onChange={this.handleFile} className="upload" />
         <input type="text" label="file name:" />
       </form>
-      <TitleMenu text="Unique ID Col">
-        {headerList}
-      </TitleMenu>
+
+      {fileConfig}
 
     </div>);
   },
