@@ -95,8 +95,6 @@ class DocumentResource(BaseModelResource):
     def post_doc_data(self, post_data, user_id):
 
         file_meta, base64data = post_data.split(',')
-        print file_meta
-
         file_content = ContentFile(base64.b64decode(base64data))
 
         sd = Document.objects.create(

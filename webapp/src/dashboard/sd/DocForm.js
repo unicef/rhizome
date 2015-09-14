@@ -13,6 +13,7 @@ var DocForm = React.createClass({
   getInitialState: function() {
     return {
       data_uri: null,
+      config_options: []
     };
   },
 
@@ -32,25 +33,29 @@ var DocForm = React.createClass({
       self.setState({
         data_uri: upload.target.result,
       });
-      api.uploadPost({docfile:upload.target.result})
+      api.uploadPost({docfile:upload.target.result}).then(function (response) {
+        var file_header = response.objects[0].file_header
+        self.setState({
+          config_options: file_header.replace('"','').split(','),
+        });
+      })
     }
 
     reader.readAsDataURL(file);
   },
 
   _setDocConfig : function (config_val) {
-    console.log('-----====------')
     console.log(config_val)
-    console.log('-----====------')
   	},
 
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
 
-    var defaultHeader = 'test'
+    var state_header = this.state.config_options
+
     var headerList = MenuItem.fromArray(
-      _.map(['test','this','component'], d => {
+      _.map(state_header, d => {
         return {
           title : d,
           value : d
@@ -69,8 +74,9 @@ var DocForm = React.createClass({
         style={{ textAlign: 'right' }}
       >
         <input type="file" onChange={this.handleFile} className="upload" />
+        <input type="text" label="file name:" />
       </form>
-      <TitleMenu text={defaultHeader}>
+      <TitleMenu text="Unique ID Col">
         {headerList}
       </TitleMenu>
 
