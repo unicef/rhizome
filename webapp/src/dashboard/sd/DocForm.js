@@ -38,6 +38,7 @@ var DocForm = React.createClass({
       self.setState({
         data_uri: upload.target.result,
       });
+
       api.uploadPost({docfile:upload.target.result}).then(function (response) {
         var response = response.objects[0]
         self.setState({
@@ -45,29 +46,50 @@ var DocForm = React.createClass({
           created_doc_id: response.id
         });
       })
+
       api.docDetailType().then(function (response) {
-        self.setState({docDetailMeta:response.objects})
+        var doc_detail_types = response.objects
+        self.setState({docDetailMeta:doc_detail_types})
       })
     }
     reader.readAsDataURL(file);
   },
 
   setCpConfig :function (config_val) {
-    console.log('campaign config')
-    console.log(config_val)
+    var self = this;
+
+    api.docDetailPost({
+          document_id: this.state.created_doc_id,
+          doc_detail_type_id: 4, // FIXME!!!!!! cp_doc_detail_type_id,
+          doc_detail_value: config_val
+    }).then(function (response) {
+        var selected_cp_id = response.objects[0].doc_detail_value
+        self.setState({campaign_column:selected_cp_id})
+      });
   },
 
   setRgConfig :function (config_val) {
-    console.log('region config')
-    console.log(config_val)
+    var self = this;
+
+    api.docDetailPost({
+          document_id: this.state.created_doc_id,
+          doc_detail_type_id: 3, // FIXME!!!!!! rg_doc_detail_type_id,
+          doc_detail_value: config_val
+    }).then(function (response) {
+        var selected_rg_id = response.objects[0].doc_detail_value
+        self.setState({region_column:selected_rg_id})
+      });
   },
 
   setUqConfig : function (config_val) {
     var self = this;
 
+    // FIXME uncaught TypeError: Cannot read property 'find' of undefined
+    // var uq_doc_detail_type_id = self.state._.find(this.state.docDetailMeta, d => d.name === 'uq_id_column').id;
+
     api.docDetailPost({
           document_id: this.state.created_doc_id,
-          doc_detail_type_id:6,
+          doc_detail_type_id: 6, // FIXME!!!!!! uq_doc_detail_type_id,
           doc_detail_value: config_val
     }).then(function (response) {
         var selected_uq_id = response.objects[0].doc_detail_value
@@ -77,6 +99,7 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
+
 
     var state_header = this.state.config_options
 
@@ -107,24 +130,34 @@ var DocForm = React.createClass({
       }),
       this.setCpConfig);
 
-      if (uqHeaderList.length > 0) {
+      if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
-        var rg_col = "Region Col"
-        var cp_col = "Campaign Col"
+        var rg_col = this.state.region_column
+        var cp_col = this.state.campaign_column
 
         var fileConfigForm = <form action={this.handleSubmit}>
 
-        <TitleMenu text={uq_col}>
-          {uqHeaderList}
-        </TitleMenu>
+        <ul>
+        <li>
+          Unique ID Column:
+          <TitleMenu text={uq_col}>
+            {uqHeaderList}
+          </TitleMenu>
+        </li>
+        <li>
+          Region Code Column:
+            <TitleMenu text={rg_col}>
+              {rgHeaderList}
+            </TitleMenu>
+        </li>
+        <li>
+          Campaign Code Column:
+            <TitleMenu text= {cp_col}>
+              {cpHeaderList}
+            </TitleMenu>
+        </li>
+      </ul>
 
-        <TitleMenu text= {rg_col}>
-          {rgHeaderList}
-        </TitleMenu>
-
-        <TitleMenu text= {cp_col}>
-          {cpHeaderList}
-        </TitleMenu>
       </form>
       }
       else {

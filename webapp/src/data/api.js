@@ -247,7 +247,7 @@ module.exports = {
   docMap: endPoint('/source_object_map/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
-  docDetailType: endPoint('/doc_detail/', 'get', 1, false),
+  docDetailType: endPoint('/doc_detail_type/', 'get', 1, false),
 
   // POST //
   docDetailPost: endPoint('/doc_detail/', 'post'),
