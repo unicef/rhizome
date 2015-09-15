@@ -116,8 +116,10 @@ var DocForm = React.createClass({
   render: function() {
 
     var uqHeaderList = this.buildHeaderList('uq_id_column')
+    var rgHeaderList = this.buildHeaderList('region_column')
+    var cpHeaderList = this.buildHeaderList('campaign_column')
 
-      if (this.state.created_doc_id) {
+    if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
         var rg_col = this.state.region_column
         var cp_col = this.state.campaign_column
@@ -133,7 +135,13 @@ var DocForm = React.createClass({
           <li>
             Region Column:
             <TitleMenu text={rg_col}>
-              {uqHeaderList}
+              {rgHeaderList}
+            </TitleMenu>
+          </li>
+          <li>
+            Campaign Column:
+            <TitleMenu text={cp_col}>
+              {cpHeaderList}
             </TitleMenu>
           </li>
         </ul>
@@ -152,7 +160,7 @@ var DocForm = React.createClass({
 
 
     if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column && this.state.doc_is_refreshed){
-      var next_link = "Nigeria/06/2015/viewraw/" + this.state.created_doc_id;
+      var next_link = "Nigeria/2015/06/viewraw/" + this.state.created_doc_id;
       var reviewBtn = <a href={next_link}  className="button"> Review Upload</a>
     }
     else {
