@@ -4,6 +4,8 @@ var React		= require('react');
 var api 		= require('data/api.js')
 var TitleMenu  	= require('component/TitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
+var FileInput = require('react-file-input');
+var Dropzone = require("dropzone");
 
 
 var DocForm = React.createClass({
@@ -188,17 +190,19 @@ var DocForm = React.createClass({
       var reviewBtn = ''
     }
 
+
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div>
-      <h6>Upload New File</h6>
       <form
         onSubmit={this.handleSubmit}
         encType="multipart/form-data"
         className="form"
-        method="post"
-        style={{ textAlign: 'right' }}
       >
-        <input type="file" onChange={this.handleFile} className="upload" />
+      <FileInput name="sourceUpload"
+                 accept=".csv,.xls,.xlsx"
+                 placeholder="Click here to Upload a New File"
+                 className="inputClass"
+                 onChange={this.handleFile} />
       </form>
 
       {fileConfigForm}
