@@ -150,13 +150,7 @@ var SourceDataDashboard = React.createClass({
 			</ReviewTable>
 
 		if (doc_tab =='doc_index') {
-			var docForm = <div className="row">
-					<div className="medium-2 columns"></div>
-				  <div className="medium-6 columns" style={{align:"center" }}>
-						<DocForm></DocForm>
-					</div>
-					<div className="medium-4 columns"></div>
-			</div>
+			var docForm = <div><DocForm></DocForm></div>
 			var review_breakdown = '';
 		}
 		else {

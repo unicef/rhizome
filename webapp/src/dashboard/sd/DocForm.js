@@ -5,8 +5,7 @@ var api 		= require('data/api.js')
 var TitleMenu  	= require('component/TitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var FileInput = require('react-file-input');
-var Dropzone = require("dropzone");
-
+var Dropzone = require('react-dropzone');
 
 var DocForm = React.createClass({
 // see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
@@ -23,6 +22,10 @@ var DocForm = React.createClass({
       doc_detail_meta: null,
       doc_is_refreshed: false,
     };
+  },
+
+  onDrop: function (files) {
+    console.log('Received files: ', files);
   },
 
   // prevent form from submitting; we are going to capture the file contents
@@ -190,25 +193,24 @@ var DocForm = React.createClass({
       var reviewBtn = ''
     }
 
+    var divZoneStyle = {
+      margin: 'auto',
+      width: '50%',
+      padding: '10px',
+    };
+
+    var dropZoneStyle = {
+      minHeight: '150px',
+      border: '2px dashed #0087F7',
+      padding: '54px 54px',
+      marginRight: '150px',
+    };
 
     // since JSX is case sensitive, be sure to use 'encType'
-    return (<div>
-      <form
-        onSubmit={this.handleSubmit}
-        encType="multipart/form-data"
-        className="form"
-      >
-      <FileInput name="sourceUpload"
-                 accept=".csv,.xls,.xlsx"
-                 placeholder="Click here to Upload a New File"
-                 className="inputClass"
-                 onChange={this.handleFile} />
-      </form>
-
-      {fileConfigForm}
-      {refreshBtn}
-      {reviewBtn}
-
+    return (<div style={divZoneStyle}>
+      <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
+        <div style={{textAlign:"center"}}>Click here, or Drag a File to Upload New Data!</div>
+      </Dropzone>
     </div>);
   },
 });
