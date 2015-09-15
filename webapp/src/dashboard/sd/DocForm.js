@@ -27,7 +27,6 @@ var DocForm = React.createClass({
   onDrop: function (files) {
     console.log('Received files: ', files);
     this.handleFile(files[0])
-
   },
 
   // prevent form from submitting; we are going to capture the file contents
@@ -38,27 +37,27 @@ var DocForm = React.createClass({
   // when a file is passed to the input field, retrieve the contents as a
   // base64-encoded data URI and save it to the component's state
   handleFile: function(file) {
-
-    console.log('HANDLIGN FILE')
-    console.log(file.body)
-    console.log('---')
     var self = this;
+
     var reader = new FileReader();
-    // var file = e.target.files[0];
 
     reader.onload = function(upload) {
       self.setState({
         data_uri: upload.target.result,
       });
 
-      api.uploadPost({docfile:file.body}).then(function (response) {
+      api.uploadPost({
+          docfile:upload.target.result,
+          doc_title:file.name,
+        }).then(function (response) {
+
         var response = response.objects[0]
-        console.log('response')
         console.log(response)
 
         self.setState({
           config_options: response.file_header.replace('"','').split(','),
-          created_doc_id: response.id
+          created_doc_id: response.id,
+          doc_title: response.doc_title,
         });
       })
 

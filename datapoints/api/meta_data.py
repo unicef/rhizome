@@ -88,17 +88,23 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             return super(DocumentResource, self).get_object_list(request)
 
-        new_doc = self.post_doc_data(doc_data, request.user.id)
+        try:
+            doc_title = request.POST['doc_title']
+        except KeyError:
+            doc_title = doc_data[:10]
+
+
+        new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
 
         return Document.objects.filter(id=new_doc.id).values()
 
-    def post_doc_data(self, post_data, user_id):
+    def post_doc_data(self, post_data, user_id, doc_title):
 
         file_meta, base64data = post_data.split(',')
         file_content = ContentFile(base64.b64decode(base64data))
 
         sd = Document.objects.create(
-                doc_title = 'daaaata',
+                doc_title = doc_title,
                 created_by_id = user_id)
 
         sd.docfile.save(sd.guid, file_content)
