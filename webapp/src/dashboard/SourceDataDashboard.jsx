@@ -35,6 +35,20 @@ var SourceDataDashboard = React.createClass({
     loading   : React.PropTypes.bool
   },
 
+	getInitialState : function () {
+		return {
+			doc_obj : null
+		}
+	},
+
+	componentWillMount : function (nextProps, nextState) {
+		var self = this;
+
+		// on mount, get the document object from the API //
+				api.source_doc({id:this.props.doc_id}).then(function(response){
+				self.setState({doc_obj:response.objects[0]})
+				})
+		},
 
   render : function () {
     var loading = this.props.loading;
@@ -44,6 +58,13 @@ var SourceDataDashboard = React.createClass({
 		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
 
+		var doc_obj = this.state.doc_obj;
+
+		if (!doc_obj) {
+			return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
+		}
+
+
 		if (! doc_tab) {
 			var doc_tab = 'doc_index'
 		}
@@ -51,7 +72,7 @@ var SourceDataDashboard = React.createClass({
 		var docItems = MenuItem.fromArray(
 			_.map(NavigationStore.documents, d => {
 				return {
-					title : d.docfile,
+					title : d.doc_title,
 					value : d.id
 				};
 			}),
@@ -66,17 +87,12 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
-		// var newDocBtn = <div>
-		// 	<button className="tiny" onClick={}> Upload New Data Source!
-		// 	</button>
-		// 	</div>
-
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
 		<div className="admin-container">
 			<h1 className="admin-header"></h1>
 			<div className="row">
-				document_id: <TitleMenu text={doc_id}>
+				<TitleMenu text={doc_obj.doc_title}>
 					{docItems}
 				</TitleMenu>
 			</div>

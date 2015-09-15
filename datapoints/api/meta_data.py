@@ -87,7 +87,9 @@ class DocumentResource(BaseModelResource):
     class Meta:
         queryset = Document.objects.all().values()
         resource_name = 'source_doc'
-
+        filtering = {
+            "id": ALL,
+        }
 
     def get_object_list(self,request):
         '''
