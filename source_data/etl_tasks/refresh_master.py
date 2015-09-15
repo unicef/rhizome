@@ -21,14 +21,16 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
-        self.ss_batch_size = 50
+        self.ss_batch_size = 500
         self.document_id = document_id
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
 
         self.submission_data = dict(SourceSubmission.objects\
-            .filter(document_id = self.document_id)\
+            .filter(\
+                document_id = self.document_id,
+                process_status = 'TO_PROCESS')\
             .values_list('id','submission_json')[:self.ss_batch_size])
 
     ## __init__ helper methods ##
@@ -136,6 +138,11 @@ class MasterRefresh(object):
         for row in ready_for_doc_datapoint_sync:
             doc_dps = self.process_source_submission(row['region_id'], \
                 row['campaign_id'], row['source_submission_id'],source_map_dict)
+
+        ## update these submissions to processed ##
+        SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
+            .update(process_status = 'PROCEESED')
+
 
     def sync_datapoint(self):
 

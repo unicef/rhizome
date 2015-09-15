@@ -16,6 +16,7 @@ from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
+from datapoints.cache_tasks import CacheRefresh
 
 
 class CampaignResource(BaseModelResource):
@@ -23,6 +24,10 @@ class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = CampaignAbstracted.objects.all().values()
         resource_name = 'campaign'
+        filtering = {
+            "id": ALL,
+        }
+
 
 class RegionResource(BaseModelResource):
 
@@ -261,9 +266,40 @@ class RefreshMasterResource(BaseModelResource):
         document_id = request.GET['document_id']
 
         mr = MasterRefresh(request.user.id, document_id)
-
         mr.submissions_to_doc_datapoints()
         mr.sync_datapoint()
+
+        cr = CacheRefresh()
+        cr.main()
+
+        ## upsert document meta from the last run ##
+
+        ## fixme -> abstract this <- ##
+
+        doc_detail, created = DocumentDetail.objects.update_or_create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name = 'submission_processed_count').id,
+            defaults= {'doc_detail_value': SourceSubmission.objects\
+                .filter(process_status = 'PROCEESED').count()\
+            },
+        )
+
+        doc_detail, created = DocumentDetail.objects.update_or_create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name = 'doc_datapoint_count').id,
+            defaults= {'doc_detail_value': DocDataPoint.objects\
+                .filter(document_id = document_id).count()\
+            },
+        )
+
+        doc_detail, created = DocumentDetail.objects.update_or_create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name = 'datapoint_count').id,
+            defaults= {'doc_detail_value': DataPoint.objects\
+                .filter(source_submission_id__in=SourceSubmission.objects\
+                .filter(document_id = document_id).values_list('id',flat=True)).count()\
+            },
+        )
 
         queryset = DocumentDetail.objects\
             .filter(document_id=document_id).values()
