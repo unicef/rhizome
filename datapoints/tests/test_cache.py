@@ -53,7 +53,6 @@ class CacheRefreshTestCase(TestCase):
         system to aggregate / caclulate.
         '''
 
-
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
         region_df= read_csv('datapoints/tests/_data/regions.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
@@ -140,7 +139,8 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
-    def test_basic(self):
+    # def test_basic(self):
+    def basic(self):
         '''
         Using the calc_data.csv, create a test_df and target_df.  Ensure that
         the aggregation and calcuation are working properly, but ingesting the
@@ -164,7 +164,8 @@ class CacheRefreshTestCase(TestCase):
 
             self.assertEqual(row.value,actual_value)
 
-    def test_agg(self):
+    # def test_agg(self):
+    def agg(self):
         '''
         First refresh the new datapoints and then only refresh the cache for
         one datapoint_id and make sure agg uses all child data below even when
