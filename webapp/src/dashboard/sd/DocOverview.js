@@ -34,6 +34,9 @@ var React = require('react');
 				if (nextProps.doc_id != this.props.doc_id) {
 					return;
 				}
+				if (nextProps.doc_deets != this.props.doc_deets) {
+					return;
+				}
 			},
 
 		pullDocDetails : function () {
@@ -54,7 +57,7 @@ var React = require('react');
 
 				api.refresh_master({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
 				.then(response => this.setState({
-					doc_title: response.objects[0].doc_title,
+						doc_deets: response.objects
 				}));
 			},
 
