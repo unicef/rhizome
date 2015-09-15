@@ -1,5 +1,6 @@
 import json
 import base64
+import time
 
 from tastypie.resources import ALL
 from tastypie import fields
@@ -89,10 +90,11 @@ class DocumentResource(BaseModelResource):
             return super(DocumentResource, self).get_object_list(request)
 
         try:
-            doc_title = request.POST['doc_title']
+            doc_title = request.POST['doc_title'] + '-' + str(int(time.time()))
         except KeyError:
             doc_title = doc_data[:10]
 
+        print doc_title
 
         new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
 
@@ -108,7 +110,6 @@ class DocumentResource(BaseModelResource):
                 created_by_id = user_id)
 
         sd.docfile.save(sd.guid, file_content)
-
 
         return sd
 
