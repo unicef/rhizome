@@ -61,25 +61,31 @@ var DocForm = React.createClass({
       })
 
       api.docDetailType().then(function (response) {
-        var doc_detail_types = response.objects
+        var doc_detail_types = _.indexBy(response.objects, 'name');
         self.setState({doc_detail_meta:doc_detail_types})
       })
     }
     reader.readAsDataURL(file);
   },
 
-  setDocConfig :function (config_val, config_type) {
-    // Needs Cleanup //
+  setDocConfig :function (config_type, config_val) {
     var self = this;
+    var doc_detail_type_lookup = {}
+
+    var x = 1
+
+    var doc_detail_meta = this.state.doc_detail_meta
+    var doc_detail_type = doc_detail_meta[config_type]
+
+    console.log('=====doc_detail_type: ', doc_detail_type.id)
 
     api.docDetailPost({
           document_id: this.state.created_doc_id,
-          doc_detail_type_id: 4, // FIXME!!!!!! cp_doc_detail_type_id,
+          doc_detail_type_id:  doc_detail_type.id,
           doc_detail_value: config_val
     }).then(function (response) {
         var stateObject = {}
-        stateObject[response.objects[0].doc_detail_value] = [config_type]
-        console.log('STATE OBJECT:', stateObject)
+        stateObject[config_type] = response.objects[0].doc_detail_value
         self.setState(stateObject)
       });
   },
@@ -96,8 +102,6 @@ var DocForm = React.createClass({
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function() {
 
-    console.log('this is this dot state on reender',this.state)
-
     var state_header = this.state.config_options
 
     var uqHeaderList = MenuItem.fromArray(
@@ -109,7 +113,6 @@ var DocForm = React.createClass({
       }),
       this.setDocConfig.bind('config_type','uq_id_column'));
 
-
       if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
         var rg_col = this.state.region_column
@@ -117,14 +120,20 @@ var DocForm = React.createClass({
 
         var fileConfigForm = <div>
         <ul>
-        <li>
-          Unique ID Column:
-          <TitleMenu text={uq_col}>
-            {uqHeaderList}
-          </TitleMenu>
-        </li>
-      </ul>
-    </div>
+          <li>
+            Unique ID Column:
+            <TitleMenu text={uq_col}>
+              {uqHeaderList}
+            </TitleMenu>
+          </li>
+          <li>
+            Region Column:
+            <TitleMenu text={rg_col}>
+              {uqHeaderList}
+            </TitleMenu>
+          </li>
+        </ul>
+      </div>
       }
       else {
         var fileConfigForm = ''
