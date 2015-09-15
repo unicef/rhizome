@@ -238,8 +238,8 @@ module.exports = {
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/','get',1),
   user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
-  refresh_master: endPoint('/document/', 'get', 1, false), // FIXME
-
+  refresh_master: endPoint('/refresh_master/', 'get', 1, false),
+    
   // SOURCE DATA DASHBOARD REQUESTS //
   source_doc: endPoint('/source_doc/', 'get', 1),
   submission: endPoint('/source_submission/', 'get', 1, false),

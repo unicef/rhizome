@@ -1,6 +1,7 @@
 import json
 import base64
 import time
+import traceback
 
 from tastypie.resources import ALL
 from tastypie import fields
@@ -257,16 +258,15 @@ class RefreshMasterResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        doc_id = request.GET['document_id']
-        mr = MasterRefresh(1,doc_id)
+        document_id = request.GET['document_id']
 
         mr = MasterRefresh(request.user.id, document_id)
-        mr.refresh_doc_meta()
-        mr.refresh_submission_details()
+
         mr.submissions_to_doc_datapoints()
         mr.sync_datapoint()
 
-        queryset = Document.objects.filter(id=doc_id).values()
+        queryset = DocumentDetail.objects\
+            .filter(document_id=document_id).values()
 
         return queryset
 

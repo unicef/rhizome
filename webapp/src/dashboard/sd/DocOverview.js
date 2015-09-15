@@ -75,7 +75,6 @@ var React = require('react');
 				</div>
 
 			var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id');
-			console.log('====',doc_detail_type_lookup)
 
 			var rows = [];
 			for (var i=0; i < doc_deets.length; i++) {

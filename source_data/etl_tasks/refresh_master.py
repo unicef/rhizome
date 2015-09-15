@@ -21,7 +21,7 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
-        self.ss_batch_size = 500
+        self.ss_batch_size = 50
         self.document_id = document_id
         self.user_id = user_id
 
@@ -142,15 +142,26 @@ class MasterRefresh(object):
         dp_batch = []
         ss_id_list = self.submission_data.keys()
 
-        doc_dps = DocDataPoint.objects.filter(\
-            source_submission_id__in = ss_id_list,
-            is_valid= True
-        ).values('value','campaign_id','changed_by_id',\
-            'indicator_id','region_id','source_submission_id')
+        doc_dps = DocDataPoint.objects.raw('''
+                SELECT
+                      MAX(id) as id
+                    , region_id
+                    , indicator_id
+                    , campaign_id
+                    , MAX(source_submission_id) as source_submission_id
+                    , SUM(value) as value
+                FROM doc_datapoint dd
+                WHERE source_submission_id = ANY(%s)
+                AND is_valid = 't'
+                GROUP BY region_id, indicator_id, campaign_id;
+            ''',[ss_id_list])
 
         for ddp in doc_dps:
-            ddp['cache_job_id'] = -1
-            dp_batch.append(DataPoint(**ddp))
+            ddp_dict = dict(ddp.__dict__)
+            del ddp_dict['_state']
+            ddp_dict['cache_job_id'] = -1
+            ddp_dict['changed_by_id'] = self.user_id
+            dp_batch.append(DataPoint(**ddp_dict))
 
         DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
         DataPoint.objects.bulk_create(dp_batch)
@@ -165,12 +176,32 @@ class MasterRefresh(object):
         submission  = json.loads(self.submission_data[ss_id])
 
         for k,v in submission.iteritems():
+            doc_dp = self.process_submission_datapoint(k,v,region_id,\
+                campaign_id,ss_id,som_dict)
+            if doc_dp:
+                doc_dp_batch.append(doc_dp)
+
+        DocDataPoint.objects.filter(source_submission_id=ss_id).delete()
+        DocDataPoint.objects.bulk_create(doc_dp_batch)
+
+
+    def process_submission_datapoint(self, ind_str, val, region_id, \
+        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
 
             try:
-                doc_dp_batch.append(\
-                    DocDataPoint(**{
-                        'indicator_id':  som_dict[('indicator',k)],
-                        'value': v,
+                cleaned_val = self.clean_val(val)
+            except ValueError:
+                return None
+
+            try:
+                indicator_id = som_dict[('indicator',ind_str)]
+            except KeyError:
+                return None
+
+            try:
+                doc_dp = DocDataPoint(**{
+                        'indicator_id':  indicator_id,
+                        'value': cleaned_val,
                         'region_id': region_id,
                         'campaign_id': campaign_id,
                         'document_id': self.document_id,
@@ -178,12 +209,25 @@ class MasterRefresh(object):
                         'changed_by_id': self.user_id,
                         'is_valid': True,
                         'agg_on_region': True,
-                    }))
+                    })
             except KeyError:
-                pass
+                return None
 
-        DocDataPoint.objects.filter(source_submission_id=ss_id).delete()
-        DocDataPoint.objects.bulk_create(doc_dp_batch)
+            return doc_dp
+
+
+    def clean_val(self, val):
+
+        try:
+            cleaned_val = float(val)
+        except ValueError:
+            raise ValueError(' can not convert to float')
+
+        if cleaned_val == float(0):
+            raise ValueError('No Zeros Allowed in Doc Data Point')
+
+        return cleaned_val
+
 
 
     def upsert_source_codes(self, source_codes):
