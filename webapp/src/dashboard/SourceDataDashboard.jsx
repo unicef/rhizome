@@ -52,12 +52,16 @@ var SourceDataDashboard = React.createClass({
 			this.getDocObj(this.props.doc_id)
 	},
 
-	componentWillUpdate : function (nextProps, nextState) {
+	componentWillReceiveProps: function(nextProps) {
 		this.getDocObj(nextProps.doc_id)
 	},
-	shouldComponentUpdate: function(nextProps, nextState) {
-  	return nextProps.doc_id !== this.props.doc_id;
-	},
+
+	componentWillUpdate : function (nextProps, nextState) {
+			if (nextProps.doc_id != this.props.doc_id) {
+				return;
+			}
+		},
+
 
   render : function () {
     var loading = this.props.loading;
@@ -188,13 +192,15 @@ var SourceDataDashboard = React.createClass({
 				</DocOverview>;
 		}
 
+		var page_title = doc_obj.doc_title + ' - ' + doc_tab
+
 		return (
 					<div>
 							{docForm}
 						<div className="row">
 						<div id="popUp"></div>
 						<div className="medium-9 columns">
-						<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
+						<h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{page_title} </h2>
 						{review_table}
 						</div>
 						<div className="medium-3 columns">
