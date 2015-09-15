@@ -13,7 +13,6 @@ from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.views import debug
 from datapoints import views
 
-from source_data.api import EtlResource
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -22,7 +21,6 @@ admin.autodiscover()
 v1_api = Api(api_name='v1')
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
-v1_api.register(EtlResource())
 v1_api.register(RegionPolygonResource())
 v1_api.register(CampaignResource())
 v1_api.register(RegionResource())
@@ -46,7 +44,8 @@ v1_api.register(DocumentDetailResource())
 v1_api.register(DocDataPointResource())
 v1_api.register(ComputedDataPointResource())
 v1_api.register(RefreshMasterResource())
-
+v1_api.register(DocDetailTypeResource())
+v1_api.register(DocTransFormResource())
 
 urlpatterns = patterns('',
 

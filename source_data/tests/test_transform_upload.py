@@ -112,6 +112,20 @@ class RefreshMasterTestCase(TestCase):
             doc_detail_value = 'uq_id'
         )
 
+        region_column_config = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='region_column').id,
+            doc_detail_value = 'Wardcode'
+        )
+
+        campaign_column_config = DocumentDetail.objects.create(
+            document_id = document_id,
+            doc_detail_type_id = DocDetailType\
+                .objects.get(name='campaign_column').id,
+            doc_detail_value = 'Campaign'
+        )
+
 
     def model_df_to_data(self,model_df,model):
 

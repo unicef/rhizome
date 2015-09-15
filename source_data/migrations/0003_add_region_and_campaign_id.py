@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('datapoints', '0009_indicator_map'),
-        ('source_data', '0002_build_functions'),
+        ('source_data', '0001_initial'),
     ]
 
     operations = [

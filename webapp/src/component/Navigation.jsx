@@ -26,7 +26,7 @@ var Navigation = React.createClass({
     );
 
       var formLink = <NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>
-      var uploadLink = <NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>
+      var uploadLink = <NavMenuItem href='/datapoints/source-data'>Upload Data via CSV File</NavMenuItem>
 
       var enterData = (
           <li className='data'>

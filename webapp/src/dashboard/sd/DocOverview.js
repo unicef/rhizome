@@ -88,7 +88,6 @@ var React = require('react');
 
 			<h3> Document Overview </h3>
 			<ul>{rows}</ul>
-
 			{refresh_master_btn}
 		 </div>
 		}

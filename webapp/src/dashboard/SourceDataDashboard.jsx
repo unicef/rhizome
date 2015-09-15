@@ -9,12 +9,12 @@ var page 		= require('page');
 var NavigationStore    	= require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.js');
+var DocForm = require('dashboard/sd/DocForm.js');
 
 var TitleMenu  	= require('component/TitleMenu.jsx');
 var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
-
 
 var {
 	Datascope, LocalDatascope,
@@ -66,6 +66,11 @@ var SourceDataDashboard = React.createClass({
 			}),
 			this._setDocTab);
 
+		// var newDocBtn = <div>
+		// 	<button className="tiny" onClick={}> Upload New Data Source!
+		// 	</button>
+		// 	</div>
+
 		// navigation to set doc-id and doc-processor //
 		var review_nav =
 		<div className="admin-container">
@@ -80,6 +85,7 @@ var SourceDataDashboard = React.createClass({
 				{doc_tabs}
 			</TitleMenu>
 			</div>
+
 		</div>;
 
 		const table_definition = {
@@ -91,8 +97,8 @@ var SourceDataDashboard = React.createClass({
 			},
 			'doc_index':{
 				'data_fn' : api.source_doc,
-				'fields' : ['id','docfile','edit_link'],
-				'search_fields' :['id','docfile'],
+				'fields' : ['id','doc_title','edit_link'],
+				'search_fields' :['id','doc_title'],
 			},
 			'mapping':{
 					'data_fn' : api.docMap,
@@ -110,7 +116,6 @@ var SourceDataDashboard = React.createClass({
 				'search_fields' :['region_id','indicator_id','campaign_id'],
 			},
 		};
-
 
 
 	var search_fields = table_definition[doc_tab]['search_fields']
@@ -144,25 +149,35 @@ var SourceDataDashboard = React.createClass({
 					</SimpleDataTable>
 			</ReviewTable>
 
-		var review_breakdown = <DocOverview
-			key={table_key + 'breakdown'}
-			loading={loading}
-			doc_id={doc_id}
-			>
-			</DocOverview>;
+		if (doc_tab =='doc_index') {
+			var docForm = <div><DocForm></DocForm></div>
+			var review_breakdown = '';
+		}
+		else {
+			var docForm = '';
+			var review_breakdown = <DocOverview
+				key={table_key + 'breakdown'}
+				loading={loading}
+				doc_id={doc_id}
+				>
+				</DocOverview>;
+		}
 
 		return (
-					<div className="row">
-					<div id="popUp"></div>
-					<div className="medium-9 columns">
-					<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
-					{review_table}
+					<div>
+							{docForm}
+						<div className="row">
+						<div id="popUp"></div>
+						<div className="medium-9 columns">
+						<h2 style={{ textAlign: 'left' }} className="ufadmin-page-heading">{doc_tab}</h2>
+						{review_table}
+						</div>
+						<div className="medium-3 columns">
+							{review_nav}
+							{review_breakdown}
+						</div>
 					</div>
-					<div className="medium-3 columns">
-						{review_nav}
-						{review_breakdown}
-					</div>
-		</div>);
+				</div>);
 	},
 
 _setDocId : function (doc_id) {

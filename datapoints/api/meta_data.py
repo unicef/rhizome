@@ -1,15 +1,21 @@
+import json
+import base64
+import time
+
 from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import Resource
 from django.contrib.auth.models import User, Group
+from django.core.files.base import ContentFile
+from django.core import serializers
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
+from source_data.etl_tasks.transform_upload import DocTransform
 
-import json
 
 class CampaignResource(BaseModelResource):
 
@@ -76,9 +82,52 @@ class DashboardResource(BaseModelResource):
         resource_name = 'custom_dashboard'
 
 class DocumentResource(BaseModelResource):
+    docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
-    class Meta(BaseModelResource.Meta):
+    class Meta:
         queryset = Document.objects.all().values()
+        resource_name = 'source_doc'
+
+
+    def get_object_list(self,request):
+        '''
+        If post, create file and return the JSON of that object.
+        If get, just query the source_doc table with request parameters
+        '''
+        try:
+            doc_data = request.POST['docfile']
+        except KeyError:
+            return super(DocumentResource, self).get_object_list(request)
+
+        try:
+            doc_title = request.POST['doc_title'] + '-' + str(int(time.time()))
+        except KeyError:
+            doc_title = doc_data[:10]
+
+        print doc_title
+
+        new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
+
+        return Document.objects.filter(id=new_doc.id).values()
+
+    def post_doc_data(self, post_data, user_id, doc_title):
+
+        file_meta, base64data = post_data.split(',')
+        file_content = ContentFile(base64.b64decode(base64data))
+
+        sd = Document.objects.create(
+                doc_title = doc_title,
+                created_by_id = user_id)
+
+        sd.docfile.save(sd.guid, file_content)
+
+        return sd
+
+
+class Meta(BaseModelResource.Meta):
+        queryset = Document.objects.all().values()
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post']
         resource_name = 'source_doc'
 
 class UserResource(BaseModelResource):
@@ -119,9 +168,30 @@ class DocumentReviewResource(BaseModelResource):
 
 class DocumentDetailResource(BaseModelResource):
 
+    def get_object_list(self,request):
+
+        try:
+            document_id = request.POST['document_id']
+        except KeyError:
+            return super(DocumentDetailResource, self).get_object_list(request)
+
+        post_data = request.POST
+
+        doc_detail_dict = {
+            'document_id': int(post_data['document_id']),
+            'doc_detail_type_id': int(post_data['doc_detail_type_id']),
+            'doc_detail_value': post_data['doc_detail_value'],
+        }
+        dd = DocumentDetail.objects.create(**doc_detail_dict)
+
+        return DocumentDetail.objects.filter(id=dd.id).values()
+
     class Meta(BaseModelResource.Meta):
         queryset = DocumentDetail.objects.all().values()
-        resource_name = 'document_detail'
+        resource_name = 'doc_detail'
+        filtering = {
+            "id": ALL,
+        }
 
 class DocDataPointResource(BaseModelResource):
 
@@ -156,19 +226,30 @@ class SourceSubmissionResource(BaseModelResource):
     def get_object_list(self,request):
 
         try:
-            qs = SourceSubmission.objects.filter(id=request\
-                .GET['id']).values()
-        except KeyError:
             qs = SourceSubmissionDetail.objects.filter(document_id=request\
                 .GET['document_id']).values()
         except KeyError:
-            qs = SourceSubmission.objects.filter(id=-1)
+            qs = SourceSubmission.objects.filter(id=request\
+                .GET['id']).values()
 
         return qs
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_submission'
 
+
+class DocTransFormResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        doc_id = request.GET['document_id']
+        dt = DocTransform(1,doc_id)
+        dt.main()
+
+        return Document.objects.filter(id = doc_id).values()
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'transform_upload'
 
 class RefreshMasterResource(BaseModelResource):
 
@@ -189,6 +270,13 @@ class RefreshMasterResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
+
+class DocDetailTypeResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        queryset = DocDetailType.objects.all().values()
+        resource_name = 'doc_detail_type'
+
 
 ## Result Objects for geo Resources ##
 

@@ -247,8 +247,12 @@ module.exports = {
   docMap: endPoint('/source_object_map/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
+  docDetailType: endPoint('/doc_detail_type/', 'get', 1, false),
+  transformUpload: endPoint('/transform_upload/', 'get', 1, false),
 
   // POST //
+  docDetailPost: endPoint('/doc_detail/', 'post'),
+  uploadPost: endPoint('/source_doc/', 'post'),
   datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
   set_region_permission: endPoint('/region_permission/', 'post', 1),
