@@ -28,7 +28,7 @@ var Navigation = React.createClass({
     if (NavigationStore.userHasPermission('upload_csv') || NavigationStore.userHasPermission('data_entry_form')) {
 
       var formLink = NavigationStore.userHasPermission('data_entry_form') ? (<NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>) : '';
-      var uploadLink = NavigationStore.userHasPermission('upload_csv') ? (<NavMenuItem href='/upload/file_upload'>Upload Data via CSV File</NavMenuItem>) : '';
+      var uploadLink = NavigationStore.userHasPermission('upload_csv') ? (<NavMenuItem href='/datapoints/source-data/'>Upload Data via CSV File</NavMenuItem>) : '';
 
       var enterData = (
           <li className='data'>
