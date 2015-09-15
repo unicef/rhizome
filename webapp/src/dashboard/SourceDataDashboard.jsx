@@ -41,14 +41,23 @@ var SourceDataDashboard = React.createClass({
 		}
 	},
 
-	componentWillMount : function (nextProps, nextState) {
+	getDocObj : function (doc_id) {
 		var self = this;
+		api.source_doc({id:doc_id}).then(function(response){
+		self.setState({doc_obj:response.objects[0]})
+		})
+	},
 
-		// on mount, get the document object from the API //
-				api.source_doc({id:this.props.doc_id}).then(function(response){
-				self.setState({doc_obj:response.objects[0]})
-				})
-		},
+	componentWillMount : function (nextProps, nextState) {
+			this.getDocObj(this.props.doc_id)
+	},
+
+	componentWillUpdate : function (nextProps, nextState) {
+		this.getDocObj(nextProps.doc_id)
+	},
+	shouldComponentUpdate: function(nextProps, nextState) {
+  	return nextProps.doc_id !== this.props.doc_id;
+	},
 
   render : function () {
     var loading = this.props.loading;
