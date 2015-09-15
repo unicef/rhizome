@@ -68,7 +68,8 @@ var DocForm = React.createClass({
     reader.readAsDataURL(file);
   },
 
-  setCpConfig :function (config_val) {
+  setDocConfig :function (config_val, config_type) {
+    // Needs Cleanup //
     var self = this;
 
     api.docDetailPost({
@@ -76,37 +77,10 @@ var DocForm = React.createClass({
           doc_detail_type_id: 4, // FIXME!!!!!! cp_doc_detail_type_id,
           doc_detail_value: config_val
     }).then(function (response) {
-        var selected_cp_id = response.objects[0].doc_detail_value
-        self.setState({campaign_column:selected_cp_id})
-      });
-  },
-
-  setRgConfig :function (config_val) {
-    var self = this;
-
-    api.docDetailPost({
-          document_id: this.state.created_doc_id,
-          doc_detail_type_id: 3, // FIXME!!!!!! rg_doc_detail_type_id,
-          doc_detail_value: config_val
-    }).then(function (response) {
-        var selected_rg_id = response.objects[0].doc_detail_value
-        self.setState({region_column:selected_rg_id})
-      });
-  },
-
-  setUqConfig : function (config_val) {
-    var self = this;
-
-    // FIXME uncaught TypeError: Cannot read property 'find' of undefined
-    // var uq_doc_detail_type_id = self.state._.find(this.state.docDetailMeta, d => d.name === 'uq_id_column').id;
-
-    api.docDetailPost({
-          document_id: this.state.created_doc_id,
-          doc_detail_type_id: 6, // FIXME!!!!!! uq_doc_detail_type_id,
-          doc_detail_value: config_val
-    }).then(function (response) {
-        var selected_uq_id = response.objects[0].doc_detail_value
-        self.setState({uq_id_column:selected_uq_id})
+        var stateObject = {}
+        stateObject[response.objects[0].doc_detail_value] = [config_type]
+        console.log('STATE OBJECT:', stateObject)
+        self.setState(stateObject)
       });
   },
 
@@ -133,25 +107,8 @@ var DocForm = React.createClass({
           value : d
         };
       }),
-      this.setUqConfig);
+      this.setDocConfig.bind('config_type','uq_id_column'));
 
-    var rgHeaderList = MenuItem.fromArray(
-      _.map(state_header, d => {
-        return {
-          title : d,
-          value : d
-        };
-      }),
-      this.setRgConfig);
-
-    var cpHeaderList = MenuItem.fromArray(
-      _.map(state_header, d => {
-        return {
-          title : d,
-          value : d
-        };
-      }),
-      this.setCpConfig);
 
       if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
@@ -165,18 +122,6 @@ var DocForm = React.createClass({
           <TitleMenu text={uq_col}>
             {uqHeaderList}
           </TitleMenu>
-        </li>
-        <li>
-          Region Code Column:
-            <TitleMenu text={rg_col}>
-              {rgHeaderList}
-            </TitleMenu>
-        </li>
-        <li>
-          Campaign Code Column:
-            <TitleMenu text= {cp_col}>
-              {cpHeaderList}
-            </TitleMenu>
         </li>
       </ul>
     </div>
@@ -194,7 +139,7 @@ var DocForm = React.createClass({
 
 
     if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column && this.state.doc_is_refreshed){
-      var next_link = "viewraw/" + this.state.created_doc_id;
+      var next_link = "Nigeria/06/2015/viewraw/" + this.state.created_doc_id;
       var reviewBtn = <a href={next_link}  className="button"> Review Upload</a>
     }
     else {
