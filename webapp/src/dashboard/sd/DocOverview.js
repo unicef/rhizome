@@ -45,6 +45,7 @@ var React = require('react');
 			.then(response => this.setState({
 				doc_deets: response.objects,
 			}));
+
 		},
 
 		refreshMaster : function () {
@@ -79,9 +80,8 @@ var React = require('react');
 
 			var rows = [];
 			for (var i=0; i < doc_deets.length; i++) {
-			    // rows.push(<ObjectRow />);
 					var doc_detail = doc_deets[i]
-					rows.push(<li>{doc_detail.doc_detail_type} : {doc_detail.doc_detail_value} </li>)
+					rows.push(<li>{doc_detail.doc_detail_type_id} : {doc_detail.doc_detail_value} </li>)
 			}
 
 			return <div>

@@ -243,7 +243,7 @@ module.exports = {
   // SOURCE DATA DASHBOARD REQUESTS //
   source_doc: endPoint('/source_doc/', 'get', 1),
   submission: endPoint('/source_submission/', 'get', 1, false),
-  docDetail: endPoint('/document_detail/', 'get', 1, false),
+  docDetail: endPoint('/doc_detail/', 'get', 1, false),
   docMap: endPoint('/source_object_map/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
