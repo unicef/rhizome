@@ -40,10 +40,7 @@ class CacheRefresh(object):
         table as well as the start / end time.
         '''
 
-        x = CacheJob.objects.filter(date_completed=None).values_list()
-        if len(x) > 0:
-            print '===='
-            print x
+        if CacheJob.objects.filter(date_completed=None):
             print 'CACHE_RUNNING'
             return
 
@@ -53,7 +50,16 @@ class CacheRefresh(object):
         response_msg = self.set_up()
 
         if response_msg != 'NOTHING_TO_PROCESS':
-            response_msg = self.main()
+            try:
+                response_msg = self.main()
+            ## BLINDLY CATCH AND STORE ALL ERRORS ##
+            except Exception as err:
+
+                self.cache_job.date_completed = datetime.now()
+                self.cache_job.response_msg = str(err)[:254]
+                self.cache_job.save()
+
+                return
 
         # mark job as completed and save
         self.cache_job.date_completed = datetime.now()
@@ -87,7 +93,6 @@ class CacheRefresh(object):
             is_error = False,
             response_msg = 'PENDING'
         )
-        print 'SETTING UP'
 
         if self.datapoint_id_list is None:
             self.datapoint_id_list = self.get_datapoints_to_cache()
@@ -114,12 +119,9 @@ class CacheRefresh(object):
         except AttributeError:
             return 'PENDING'
 
-        print 'AGGREGATING..'
-        # self.agg_dp_ids = self.agg_datapoints()
-        # print 'CALCULATING..'
-        # self.calc_dp_ids = self.calc_datapoints()
-        # print 'ABSTRACTING..'
-        # self.abstract_dp_ids = self.pivot_datapoints()
+        self.agg_dp_ids = self.agg_datapoints()
+        self.calc_dp_ids = self.calc_datapoints()
+        self.abstract_dp_ids = self.pivot_datapoints()
 
         return 'SUCCESS'
 
@@ -148,6 +150,8 @@ class CacheRefresh(object):
         '''
         Datapoints are aggregated in two steps with two separate stored
         procedures.
+          - init_agg_datapoints : save all of the raw (non aggregated) data
+          - agg_datapoints_by_region_type: given
 
         This method first calls the ``fn_init_agg_datapoint`` and then calls ``
         agg_datapoints_by_region_type`` for each region_type starting from the
@@ -167,174 +171,8 @@ class CacheRefresh(object):
         '''
 
         adp_cursor = DataPoint.objects.raw("""
-
-			DROP TABLE IF EXISTS _campaign_indicator;
-			DROP TABLE IF EXISTS _to_agg;
-			DROP TABLE IF EXISTS _tmp_agg;
-
-			CREATE TABLE _campaign_indicator AS
-			SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
-			WHERE d.cache_job_id = %s;
-
-			CREATE TABLE _to_agg AS
-
-			WITH RECURSIVE region_tree AS
-					(
-					-- non-recursive term ( rows where the components aren't
-					-- master_indicators in another calculation )
-
-					SELECT
-						rg.parent_region_id
-						,rg.parent_region_id as immediate_parent_id
-						,rg.id as region_id
-						,0 as lvl
-					FROM region rg
-
-					UNION ALL
-
-					-- recursive term --
-					SELECT
-						r_recurs.parent_region_id
-						,rt.parent_region_id as immediate_parent_id
-						,rt.region_id
-						,rt.lvl + 1
-					FROM region AS r_recurs
-					INNER JOIN region_tree AS rt
-					ON (r_recurs.id = rt.parent_region_id)
-				AND r_recurs.parent_region_id IS NOT NULL
-			)
-
-			SELECT DISTINCT
-				d.id as datapoint_id
-				,d.indicator_id
-				,d.campaign_id
-				,d.region_id
-				,d.value
-				,rt.parent_region_id
-				,rt.immediate_parent_id
-			FROM region_tree rt
-			INNER JOIN datapoint d
-			ON rt.region_id = d.region_id
-			AND d.value IS NOT NULL
-			INNER JOIN _campaign_indicator ci
-			ON d.indicator_id = ci.indicator_id
-			AND d.campaign_id = ci.campaign_id
-			WHERE EXISTS (
-
-						SELECT 1 -- DATA AT SAME REGIONAL LEVEL AS REQUESTED
-						FROM region r
-						WHERE r.parent_region_id = rt.parent_region_id
-						AND rt.region_id = d.region_id
-
-						UNION ALL
-
-						SELECT 1-- DATA AT SAME REGIONAL LEVEL AS REQUESTED
-						FROM region r
-						WHERE r.id = rt.region_id
-						AND r.parent_region_id IS NULL
-
-			)
-			and d.value IS NOT NULL
-			and d.value != 'NaN';
-
-			CREATE TABLE _tmp_agg AS
-
-			SELECT DISTINCT
-				d.datapoint_id
-				,d.region_id
-				,d.campaign_id
-				,d.indicator_id
-				,d.value
-			FROM _to_agg d
-
-			UNION ALL
-
-			SELECT
-				CAST(NULL AS INT) as id
-				,d.parent_region_id
-				,d.campaign_id
-				,d.indicator_id
-				,SUM(d.value) as value
-			FROM _to_agg d
-
-			WHERE NOT EXISTS (
-				SELECT 1 FROM _to_agg ta
-				WHERE d.immediate_parent_id = ta.region_id
-				AND d.campaign_id = ta.campaign_id
-				AND d.indicator_id = ta.indicator_id
-			)
-			AND NOT EXISTS (
-				SELECT 1 FROM _to_agg ta
-				WHERE d.parent_region_id = ta.region_id
-				AND d.campaign_id = ta.campaign_id
-				AND d.indicator_id = ta.indicator_id
-			)
-			AND d.parent_region_id is not null
-			GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
-
-			CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
-
-			-- OVERRIDES --
-			UPDATE _tmp_agg ta
-			SET   value = d.value
-				, datapoint_id = d.id
-			FROM datapoint d
-			WHERE ta.region_id = d.region_id
-			AND ta.campaign_id = d.campaign_id
-			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NOT NULL
-			AND d.value != 'NaN';
-
-			-- DELETES in data entry (value is null) --
-			DELETE FROM _tmp_agg ta
-			USING datapoint d
-			WHERE ta.region_id = d.region_id
-			AND ta.campaign_id = d.campaign_id
-			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NULL
-			AND d.value != 'NaN';
-
-
-			--- UPDATE THE REST OF THE DATAPOINT TABLE SO WE--
-			--- WONT NEED TO RE-PROCESS THIS DATA AGAIN ---
-			UPDATE datapoint d
-			SET cache_job_id = %s
-			WHERE d.id in (
-				SELECT datapoint_id
-				FROM _to_agg ta
-				WHERE ta.datapoint_id IS NOT NULL
-			);
-
-			--------------------
-			--- BEGIN UPSERT ---
-			--------------------
-
-			-- UPDATE EXISTING --
-			UPDATE agg_datapoint ad
-				SET cache_job_id = %s
-				, value = ta.value
-			FROM _tmp_agg ta
-			WHERE ta.region_id = ad.region_id
-			AND ta.campaign_id = ad.campaign_id
-			AND ta.indicator_id = ad.indicator_id;
-
-			-- INSERT NEW --
-			INSERT INTO agg_datapoint
-			(region_id, campaign_id, indicator_id, value,cache_job_id)
-			SELECT region_id, campaign_id, indicator_id, value, %s
-			FROM _tmp_agg ta
-			WHERE NOT EXISTS (
-				SELECT 1 FROM agg_datapoint ad
-				WHERE ta.region_id = ad.region_id
-				AND ta.campaign_id = ad.campaign_id
-				AND ta.indicator_id = ad.indicator_id
-			);
-
-			SELECT ad.region_id FROM agg_datapoint ad
-			WHERE ad.cache_job_id = %s
-			LIMIT 1;
-
-            """,[self.cache_job.id,self.cache_job.id,self.cache_job.id,self.cache_job.id])
+            SELECT * FROM fn_agg_datapoint(%s);
+            """,[self.cache_job.id])
 
         adps = [adp.id for adp in adp_cursor]
 
