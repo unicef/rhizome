@@ -19,13 +19,10 @@ var React = require('react');
 
 		getInitialState : function () {
 			return {
-				doc_id       : null,
-				docfile: null,
-				doc_title: null,
-				doc_datapoint_cnt: null,
-				source_submission_total_cnt: null,
-				source_submission_to_process_cnt: null,
-
+				doc_id       			: null,
+				doc_title					: null,
+				doc_detail_types	: null,
+				doc_deets					: null,
 			};
 		},
 
@@ -46,17 +43,18 @@ var React = require('react');
 				doc_deets: response.objects,
 			}));
 
+			api.docDetailType()
+			.then(response => this.setState({
+				doc_detail_types: response.objects,
+			}));
+
 		},
 
 		refreshMaster : function () {
 
 				api.refresh_master({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
 				.then(response => this.setState({
-					docfile: response.objects[0].docfile,
 					doc_title: response.objects[0].doc_title,
-					doc_datapoint_cnt: response.objects[0].doc_datapoint_cnt,
-					source_submission_total_cnt: response.objects[0].source_submission_total_cnt,
-					source_submission_to_process_cnt: response.objects[0].source_submission_to_process_cnt,
 				}));
 			},
 
@@ -76,12 +74,13 @@ var React = require('react');
 				</button>
 				</div>
 
-			var doc_detail_list = []
+			var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id');
+			console.log('====',doc_detail_type_lookup)
 
 			var rows = [];
 			for (var i=0; i < doc_deets.length; i++) {
 					var doc_detail = doc_deets[i]
-					rows.push(<li>{doc_detail.doc_detail_type_id} : {doc_detail.doc_detail_value} </li>)
+					rows.push(<li>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name} : {doc_detail.doc_detail_value} </li>)
 			}
 
 			return <div>
