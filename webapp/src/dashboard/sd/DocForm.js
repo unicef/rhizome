@@ -99,19 +99,23 @@ var DocForm = React.createClass({
       });
   },
 
-  // return the structure to display and bind the onChange, onSubmit handlers
-  render: function() {
-
+  buildHeaderList : function (config_type){
     var state_header = this.state.config_options
 
-    var uqHeaderList = MenuItem.fromArray(
+    return MenuItem.fromArray(
       _.map(state_header, d => {
         return {
           title : d,
           value : d
         };
       }),
-      this.setDocConfig.bind('config_type','uq_id_column'));
+      this.setDocConfig.bind('config_type',config_type));
+  },
+
+  // return the structure to display and bind the onChange, onSubmit handlers
+  render: function() {
+
+    var uqHeaderList = this.buildHeaderList('uq_id_column')
 
       if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
