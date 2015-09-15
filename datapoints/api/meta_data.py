@@ -203,8 +203,32 @@ class DocumentDetailResource(BaseModelResource):
 
 class DocDataPointResource(BaseModelResource):
 
+    def get_object_list(self,request):
+
+        try:
+            document_id = request.GET['document_id']
+        except KeyError:
+            document_id = None
+
+        try:
+            campaign_id = request.GET['campaign_id']
+        except KeyError:
+            campaign_id = None
+
+        try:
+            region_id = request.GET['region_id']
+            all_region_ids = RegionTree.objects\
+                .filter(parent_region_id = region_id).values_list('region_id',flat=True)
+        except KeyError:
+            all_region_ids = []
+
+        return DocDataPoint.objects.filter(
+            document_id = document_id,
+            campaign_id = campaign_id,
+            region_id__in=all_region_ids,
+            ).values()
+
     class Meta(BaseModelResource.Meta):
-        queryset = DocDataPoint.objects.all().values()
         resource_name = 'doc_datapoint'
 
 class ComputedDataPointResource(BaseModelResource):
@@ -221,9 +245,7 @@ class SourceObjectMapResource(BaseModelResource):
             .filter(document_id=request.GET['document_id']).\
             values_list('source_object_map_id',flat=True)
 
-        queryset = SourceObjectMap.objects.filter(id__in=som_ids).values()
-
-        return queryset
+        return SourceObjectMap.objects.filter(id__in=som_ids).values()
 
     class Meta(BaseModelResource.Meta):
 

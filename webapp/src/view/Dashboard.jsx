@@ -131,7 +131,7 @@ var Dashboard = React.createClass({
 
   _setRegion: function(id) {
     var region = _.find(this.state.regions, r => r.id === id)
-    console.log("_setRegion:", id, region);
+    // console.log("_setRegion:", id, region);
 
     if (!region) {
       return;
@@ -168,7 +168,7 @@ var Dashboard = React.createClass({
   },
 
   _show: function(ctx) {
-    console.log("_show:", ctx, ctx.params.region);
+    // console.log("_show:", ctx, ctx.params.region);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
@@ -196,7 +196,7 @@ var Dashboard = React.createClass({
   },
 
   render: function () {
-    console.log("RENDER", this.state.region);
+    // console.log("RENDER", this.state.region);
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize: '2rem',
@@ -223,6 +223,7 @@ var Dashboard = React.createClass({
         .uniq()
         .value()
     );
+    console.log('THIS IS this.state.data: ', this.state.data)
 
     var data = dashboardInit(
       dashboardDef,
@@ -233,6 +234,8 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
+
+    console.log('THIS IS THE DATA FROM DASHBAORD INIT: ', data)
 
     var dashboardProps = {
       campaign: campaign,
