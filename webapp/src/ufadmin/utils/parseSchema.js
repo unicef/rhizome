@@ -2,13 +2,10 @@ var _ = require('lodash');
 
 module.exports = function parseSchema(data) {
 
-	if (_.isArray(data.meta)){ // this is for the ufadmin..
-		var data = Object.keys(data.objects[0])
-	}
+	var _data = _.isArray(data) ? data : Object.keys(data.objects[0])
 
-	var fields = data.map(function(f){
-	   var fObj = {'name':f,'title':f};
-	   return fObj;
+	var fields = _data.map(f => {
+	   return {'name': f, 'title': f};
 	});
 
 	var schema = {
