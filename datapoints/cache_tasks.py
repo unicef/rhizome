@@ -631,6 +631,49 @@ def cache_region_tree():
         pass # in order to execute raw sql
 
 
+def update_source_object_names(self):
+
+    som_raw = SourceObject.objects.raw(
+    '''
+        DROP TABLE IF EXISTS _tmp_object_names;
+        CREATE TEMP TABLE _tmp_object_names
+        AS
+
+        SELECT som.master_object_id, i.short_name as master_object_name, som.content_type
+        FROM source_object_map som
+        INNER JOIN indicator i
+            ON som.master_object_id = i.id
+            AND som.content_type = 'indicator'
+
+        UNION ALL
+
+        SELECT som.master_object_id, c.slug, som.content_type
+        FROM source_object_map som
+        INNER JOIN campaign c
+            ON som.master_object_id = c.id
+            AND som.content_type = 'campaign'
+
+        UNION ALL
+
+        SELECT som.master_object_id, r.name, som.content_type
+        FROM source_object_map som
+        INNER JOIN region r
+            ON som.master_object_id = r.id
+            AND som.content_type = 'region';
+
+        UPDATE source_object_map som
+        set master_object_name = t.master_object_name
+        FROM _tmp_object_names t
+        WHERE t.master_object_id = som.master_object_id
+        AND t.content_type = som.content_type;
+
+        SELECT * FROM source_object_map limit 1;
+
+    ''')
+
+    for row in som_raw:
+        print row.id
+
 def upsert_meta_data(qset, abstract_model):
     '''
     Given a raw queryset, and the model of the table to be upserted into,
