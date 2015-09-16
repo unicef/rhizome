@@ -101,21 +101,15 @@ class BaseModelResource(ModelResource):
         print '==='
         print base_bundle
 
-        # Dehydrate the bundles in preparation for serialization.
-        # bundles = [obj for obj in objects]
-
         bundles = []
 
-        # obj_keys = obj.__init__
-
-
+        fields = objects[0].keys()
 
         for obj in objects:
-            print '=='
-            print dir(obj)
+            print '==='
+            if 'submission_json' in fields:
+                obj['submission_json'] = json.loads(obj['submission_json'])
 
-            print obj.has_key('submission_json')
-            obj['submission_json'] = json.loads(obj['submission_json'])
             bundles.append(obj)
 
         response_meta = {
