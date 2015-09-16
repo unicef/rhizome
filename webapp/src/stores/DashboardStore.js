@@ -63,7 +63,7 @@ var DashboardStore = Reflux.createStore({
 
   // action handlers
   onSetDashboard: function(definition) {
-    console.log("DashboardStore -> onSetDashboard:", definition)
+    // console.log("DashboardStore -> onSetDashboard:", definition)
     var dashboard = this.dashboard = definition.dashboard;
     this.region = definition.region || this.region;
     this.date = definition.date || this.date;
@@ -88,7 +88,7 @@ var DashboardStore = Reflux.createStore({
     var region = _.find(regions, function(r) {
       return r.name === this.region;
     }.bind(this));
-    console.log("2:", this.region, region);
+    // console.log("2:", this.region, region);
 
     /**
 
@@ -105,7 +105,7 @@ var DashboardStore = Reflux.createStore({
     if (!region) {
       region = topLevelRegions.first();
     }
-    console.log("4:", this.region, region);
+    // console.log("4:", this.region, region);
 
     var campaign = _(campaigns)
       .filter(function(c) {
@@ -120,7 +120,7 @@ var DashboardStore = Reflux.createStore({
       .any(t => _.endsWith(t, 'Map'));
 
 
-    console.log("AFTER:", region);
+    // console.log("AFTER:", region);
     this.trigger({
       dashboard: this.dashboard,
       region: region,

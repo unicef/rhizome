@@ -223,7 +223,6 @@ var Dashboard = React.createClass({
         .uniq()
         .value()
     );
-    console.log('THIS IS this.state.data: ', this.state.data)
 
     var data = dashboardInit(
       dashboardDef,
@@ -234,8 +233,6 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
-
-    console.log('THIS IS THE DATA FROM DASHBAORD INIT: ', data)
 
     var dashboardProps = {
       campaign: campaign,

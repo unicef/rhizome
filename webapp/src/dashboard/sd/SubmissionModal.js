@@ -18,7 +18,8 @@ var SubmissionModal = React.createClass({
 	getInitialState: function() {
 		return {
 				modalIsOpen: false,
-			 	source_submission_id: null
+			 	source_submission_id: null,
+				submission_data: null
 			}
 	},
 
@@ -26,7 +27,7 @@ var SubmissionModal = React.createClass({
     this.setState({ modalIsOpen: true });
     api.submission({id: this.props.source_submission_id})
 		.then(response => this.setState({
-				img_location: response.objects[0].img_location,
+				submission_data: response.objects[0],
 		}));
   },
 
@@ -40,6 +41,12 @@ render : function(){
   var source_submission_id = this.props.source_submission_id
   var modalStyle = {width:650, height:500, marginLeft:400};
 
+	var submission_data = ''
+	if (this.state.modalIsOpen){
+		var submission_data = this.state.submission_data;
+		console.log(submission_data)
+	}
+
   return <div>
 						<button
 							className="tiny"
@@ -52,9 +59,8 @@ render : function(){
 	            onRequestClose={this.closeModal}
 	          >
 	              <h1> Source_submission_id: {source_submission_id} </h1>
-
-								<img src={this.state.img_location} />
-
+								// <img src={this.state.img_location} />
+								{submission_data}
 	          </Modal>
 					</div>
 
