@@ -241,11 +241,18 @@ class SourceObjectMapResource(BaseModelResource):
 
     def get_object_list(self,request):
 
-        som_ids = DocumentSourceObjectMap.objects\
-            .filter(document_id=request.GET['document_id']).\
-            values_list('source_object_map_id',flat=True)
+        try:
+            som_ids = DocumentSourceObjectMap.objects\
+                .filter(document_id=request.GET['document_id']).\
+                values_list('source_object_map_id',flat=True)
 
-        return SourceObjectMap.objects.filter(id__in=som_ids).values()
+            qs = SourceObjectMap.objects.filter(id__in=som_ids).values()
+        except KeyError:
+            qs = SourceObjectMap.objects.filter(id=request.GET['id']).values()
+        except KeyError:
+            qs = SourceObjectMap.objects.all().values()
+
+        return qs
 
     class Meta(BaseModelResource.Meta):
 
