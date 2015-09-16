@@ -262,7 +262,7 @@ class SourceSubmissionResource(BaseModelResource):
             qs = SourceSubmission.objects.filter(id=SourceSubmissionDetail\
                 .objects.get(id=request\
                 .GET['id']).source_submission_id)\
-                .values_list('submission_json')
+                .values()
 
         return qs
 

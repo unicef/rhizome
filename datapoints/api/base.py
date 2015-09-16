@@ -1,3 +1,5 @@
+import json
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import DjangoAuthorization
@@ -12,6 +14,7 @@ except ImportError:
         return func
 
 from datapoints.models import RegionType,Region,RegionPermission
+from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 class CustomAuthentication(Authentication):
     '''
@@ -69,11 +72,11 @@ class BaseModelResource(ModelResource):
         authorization = DjangoAuthorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
-        # filtering = {
+        # filtering = { ##FIXME have subclass inherit this and add their own..
         #     "id": ALL,
         # }
         cache = CustomCache()
-
+        serializer = CustomSerializer()
 
     def dispatch(self, request_type, request, **kwargs):
         """
@@ -95,13 +98,26 @@ class BaseModelResource(ModelResource):
 
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
-        # sorted_objects = self.apply_sorting(objects, options=request.GET)
-
-        # paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
-        # to_be_serialized = paginator.page()
+        print '==='
+        print base_bundle
 
         # Dehydrate the bundles in preparation for serialization.
-        bundles = [obj for obj in objects]#[self._meta.collection_name]]
+        # bundles = [obj for obj in objects]
+
+        bundles = []
+
+        # obj_keys = obj.__init__
+
+
+
+        for obj in objects:
+            print '=='
+            print dir(obj)
+
+            print obj.has_key('submission_json')
+            obj['submission_json'] = json.loads(obj['submission_json'])
+            bundles.append(obj)
+
         response_meta = {
             'limit':None, ## paginator.get_limit(),
             'offset': None, ## paginator.get_offset(),

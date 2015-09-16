@@ -30,6 +30,7 @@ class CustomJSONSerializer(Serializer):
         pass
 
     def to_json(self, data, options=None):
+
         options = options or {}
         data = self.to_simple(data, options)
 
