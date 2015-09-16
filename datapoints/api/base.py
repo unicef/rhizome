@@ -98,16 +98,11 @@ class BaseModelResource(ModelResource):
 
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
-        print '==='
-        print base_bundle
-
         bundles = []
 
-        fields = objects[0].keys()
-
         for obj in objects:
-            print '==='
-            if 'submission_json' in fields:
+            if obj.has_key('submission_json'):
+                # to do -> abstract this for all JSONField models
                 obj['submission_json'] = json.loads(obj['submission_json'])
 
             bundles.append(obj)
