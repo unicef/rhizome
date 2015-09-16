@@ -176,7 +176,7 @@ def refresh_metadata(request):
     user_cache_data = cache_tasks.cache_user_abstracted()
     campaign_cache_data = cache_tasks.cache_campaign_abstracted()
     region_tree_cache_data = cache_tasks.cache_region_tree()
-    source_object_cache = cache_tasks.cache_region_tree()
+    source_object_cache = cache_tasks.update_source_object_names()
 
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 

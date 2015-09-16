@@ -2,9 +2,9 @@ import pandas as pd
 from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
 
-
 from django.contrib.auth.models import User
 from datapoints.models import *
+from source_data.models import SourceObjectMap
 
 class CacheRefresh(object):
     '''
@@ -631,9 +631,9 @@ def cache_region_tree():
         pass # in order to execute raw sql
 
 
-def update_source_object_names(self):
+def update_source_object_names():
 
-    som_raw = SourceObject.objects.raw(
+    som_raw = SourceObjectMap.objects.raw(
     '''
         DROP TABLE IF EXISTS _tmp_object_names;
         CREATE TEMP TABLE _tmp_object_names
