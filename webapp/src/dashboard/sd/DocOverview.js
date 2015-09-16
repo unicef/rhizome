@@ -27,7 +27,8 @@ var React = require('react');
 		},
 
 		componentWillMount : function (nextProps, nextState) {
-					this.pullDocDetails()
+					this.pullDocDetailTypes()
+					this.refreshMaster()
 			},
 
 		componentWillUpdate : function (nextProps, nextState) {
@@ -39,12 +40,12 @@ var React = require('react');
 				}
 			},
 
-		pullDocDetails : function () {
+		pullDocDetailTypes : function () {
 
-			api.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
-			.then(response => this.setState({
-				doc_deets: response.objects,
-			}));
+			// api.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
+			// .then(response => this.setState({
+			// 	doc_deets: response.objects,
+			// }));
 
 			api.docDetailType()
 			.then(response => this.setState({
