@@ -24,8 +24,6 @@ var SubmissionModal = React.createClass({
 
   openModal: function() {
     this.setState({ modalIsOpen: true });
-		console.log('call the api and get the image data..')
-
     api.submission({id: this.props.source_submission_id})
 		.then(response => this.setState({
 				img_location: response.objects[0].img_location,

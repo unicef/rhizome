@@ -50,12 +50,10 @@ var MapForm = React.createClass({
   postMetaMap : function(master_object_id) {
     api.post_source_object_map({
         id: this.props.source_object_map_id,
-        source_object_code: this.state.source_object_code,
-        content_type: this.state.content_type,
         master_object_id: master_object_id,
         mapped_by_id: 1 // FIXME
       }).then(response => this.setState({
-				master_object_id: response.objects.updated_values.master_object_id
+				master_object_id: response.objects[0].master_object_id
 		}));
 
   },
