@@ -242,6 +242,18 @@ class SourceObjectMapResource(BaseModelResource):
     def get_object_list(self,request):
 
         try:
+            request.POST['id']
+            som_id = request.POST['id']
+            som_obj = SourceObjectMap.objects.get(id=som_id)
+            som_obj.master_object_id = request.POST['master_object_id']
+            som_obj.mapped_by_id = request.POST['mapped_by_id']
+            som_obj.save()
+
+            return SourceObjectMap.objects.filter(id=som_id).values()
+        except KeyError:
+            pass
+
+        try:
             som_ids = DocumentSourceObjectMap.objects\
                 .filter(document_id=request.GET['document_id']).\
                 values_list('source_object_map_id',flat=True)
