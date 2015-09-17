@@ -208,7 +208,7 @@ class Office(models.Model):
             ('view_office', 'View office'),
         )
 
-class RegionType(models.Model):
+class LocationType(models.Model):
     '''
     Country, Province, District, Sub-District, Settlement.
 
@@ -221,6 +221,7 @@ class RegionType(models.Model):
     '''
 
     name = models.CharField(max_length=55, unique=True)
+    admin_level = models.IntegerField()
 
     def __unicode__(self):
         return unicode(self.name)
@@ -228,7 +229,7 @@ class RegionType(models.Model):
     class Meta:
         db_table = 'region_type'
 
-class Region(models.Model):
+class Location(models.Model):
     '''
     A point in space with a name, region_code, office_id, lat/lon, and parent
     region id.  The parent region id is used to create the tree used to create
@@ -237,53 +238,53 @@ class Region(models.Model):
 
 
     name = models.CharField(max_length=255,unique=True)
-    region_code = models.CharField(max_length=255, unique=True)
-    region_type = models.ForeignKey(RegionType)
+    location_code = models.CharField(max_length=255, unique=True)
+    location_type = models.ForeignKey(LocationType)
     office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True,blank=True)
     longitude = models.FloatField(null=True,blank=True)
     slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now=True)
-    parent_region = models.ForeignKey("self",null=True)
+    parent_location = models.ForeignKey("self",null=True)
 
     def __unicode__(self):
         return unicode(self.name)
 
     class Meta:
 
-        db_table = 'region'
-        unique_together = ('name','region_type','office')
+        db_table = 'location'
+        unique_together = ('name','location','office')
 
-class RegionTree(models.Model):
+class LocationTree(models.Model):
     '''
-    region tree that is refreshed with "refresh_metadata"
+    location tree that is refreshed with "refresh_metadata"
 
     Nigeria for instance as a parent region, will have ALL children recursively
     stored with the cooresponding level to indicate its depth in the tree.
     '''
 
-    parent_region = models.ForeignKey(Region, related_name='ultimate_parent')
+    parent_location = models.ForeignKey(Region, related_name='ultimate_parent')
     immediate_parent = models.ForeignKey(Region, related_name='immediate_parent')
-    region = models.ForeignKey(Region)
+    location = models.ForeignKey(Region)
     lvl = models.IntegerField()
 
     class Meta:
-        db_table = 'region_tree'
-        unique_together = [('parent_region','region')]
+        db_table = 'location_tree'
+        unique_together = [('parent_location','location')]
 
-class RegionPolygon(models.Model):
+class LocationPolygon(models.Model):
     '''
     A shape file when avaiable for a region.
     '''
 
-    region = models.OneToOneField(Region)
+    location = models.OneToOneField(Location)
     geo_json = JSONField()
 
     class Meta:
-        db_table = 'region_polygon'
+        db_table = 'location_polygon'
 
 
-class CampaignType(models.Model):
+class ResultStructureType(models.Model):
     '''
     Each campaign must have a campaign_type_id.
 
@@ -299,13 +300,13 @@ class CampaignType(models.Model):
     class Meta:
         db_table = 'campaign_type'
 
-class Campaign(models.Model):
+class ResultStructure(models.Model):
     '''
     A period in time in wich a campaign was initaited by the country office.
     '''
 
     office = models.ForeignKey(Office)
-    campaign_type = models.ForeignKey(CampaignType)
+    result_structure = models.ForeignKey(ResultStructureType)
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
@@ -319,17 +320,17 @@ class Campaign(models.Model):
         return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
-        db_table = 'campaign'
+        db_table = 'result_structure'
         ordering = ('-start_date',)
         unique_together = ('office','start_date')
 
-class CampaignAbstracted(models.Model):
+class ResultStructureAbstracted(models.Model):
     '''
     Everything in campaign plus the "pct_complete" attribute
     '''
 
     office_id = models.IntegerField()
-    campaign_type_id = models.IntegerField()
+    result_structure_type_id = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
@@ -343,7 +344,7 @@ class CampaignAbstracted(models.Model):
         return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
-        db_table = 'campaign_abstracted'
+        db_table = 'result_structure_abstracted'
         ordering = ('-start_date',)
 
 class DataPoint(models.Model):
@@ -364,26 +365,20 @@ class DataPoint(models.Model):
     '''
 
     indicator = models.ForeignKey(Indicator)
-    region = models.ForeignKey(Region)
-    campaign = models.ForeignKey(Campaign)
+    location = models.ForeignKey(Location)
+    result_structure = models.ForeignKey(ResultStructure)
     value = models.FloatField(null=True)
-    note = models.CharField(max_length=255,null=True,blank=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     cache_job = models.ForeignKey(CacheJob,default=-1)
-
 
     def get_val(self):
         return self.value
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','region','campaign')
-        ordering = ['region', 'campaign']
-        permissions = (
-            ('view_datapoint', 'View datapoint'),
-        )
+        unique_together = ('indicator','location','results_structure')
 
 class DocDataPoint(models.Model):
     '''
@@ -392,8 +387,8 @@ class DocDataPoint(models.Model):
 
     document = models.ForeignKey('source_data.Document') ## redundant
     indicator = models.ForeignKey(Indicator)
-    region = models.ForeignKey(Region)
-    campaign = models.ForeignKey(Campaign)
+    location = models.ForeignKey(Location)
+    result_structure = models.ForeignKey(ResultStructure)
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
@@ -402,12 +397,6 @@ class DocDataPoint(models.Model):
 
     class Meta:
         db_table = 'doc_datapoint'
-
-        # unique_together = (('source_submission','region','campaign'))
-        ## each row in an odk form, or a csv should represent one region /
-        ## campaign combination.  For now that is the type of data the app
-        ## expects, however the source_submission schema is flexible for
-        ## different types of data models / transformation in the future
 
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
@@ -421,67 +410,41 @@ class DataPointEntry(DataPoint):
         proxy = True
 
 
-class Responsibility(models.Model):
-
-    user = models.ForeignKey('auth.User')
-    indicator = models.ForeignKey(Indicator)
-    region = models.ForeignKey(Region)
-
-    class Meta:
-        db_table = 'responsibility'
-        ordering = ('indicator',)
-        unique_together = ('user','indicator','region')
-
-
 class DataPointAbstracted(models.Model):
 
-    region = models.ForeignKey(Region)
-    campaign = models.ForeignKey(Campaign)
+    location = models.ForeignKey(Location)
+    result_structure = models.ForeignKey(ResultStructure)
     indicator_json = JSONField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('region','campaign')
+        unique_together = ('location','reslut_structure')
 
 class DataPointComputed(models.Model):
 
-    region_id = models.IntegerField()
-    campaign_id = models.IntegerField()
-    indicator_id = models.IntegerField()
+
     value = models.FloatField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        unique_together = ('region_id','campaign_id','indicator_id')
+        unique_together = ('location','result_strcture','indicator')
 
 class AggDataPoint(models.Model):
 
-    region_id = models.IntegerField()
-    campaign_id = models.IntegerField()
-    indicator_id = models.IntegerField()
+    indicator = models.ForeignKey(Indicator)
+    location = models.ForeignKey(Location)
+    result_structure = models.ForeignKey(ResultStructure)
     value = models.FloatField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'
-        unique_together = ('region_id','campaign_id','indicator_id')
+        unique_together = ('location','result_strcture','indicator')
 
 
-class ReconData(models.Model):
-
-    region = models.ForeignKey(Region)
-    campaign = models.ForeignKey(Campaign)
-    indicator = models.ForeignKey(Indicator)
-    target_value = models.FloatField()
-
-    class Meta:
-        db_table = 'recon_data'
-        unique_together = ('region','campaign','indicator')
-
-
-class RegionPermission(models.Model):
+class LocationPermission(models.Model):
     '''
     Individual Users must be assigned regional permissions.  If i am assigned
     a region, I will be able to view all of its children recursively.  The
@@ -495,7 +458,7 @@ class RegionPermission(models.Model):
     '''
 
     user = models.ForeignKey('auth.User')
-    region = models.ForeignKey(Region)
+    location = models.ForeignKey(Location)
     read_write = models.CharField(max_length=1)
 
     class Meta:
