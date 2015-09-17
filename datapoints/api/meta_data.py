@@ -36,7 +36,7 @@ class LocationResource(BaseModelResource):
             pr_id = request.GET['parent_region_id']
             qs = Location.objects.filter(parent_location_id=pr_id).values()
         except KeyError:
-            qs =  Location.objects.all().values()[:10]
+            qs =  Location.objects.all().values()
 
         return qs
 
