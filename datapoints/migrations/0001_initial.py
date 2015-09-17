@@ -110,7 +110,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('value', models.FloatField(null=True)),
                 ('is_valid', models.BooleanField()),
-                ('agg_on_region', models.BooleanField()),
+                ('agg_on_location', models.BooleanField()),
             ],
             options={
                 'db_table': 'doc_datapoint',
@@ -238,7 +238,7 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'db_table': 'region_permission',
+                'db_table': 'location_permission',
             },
         ),
         migrations.CreateModel(
@@ -273,7 +273,7 @@ class Migration(migrations.Migration):
                 ('admin_level', models.IntegerField()),
             ],
             options={
-                'db_table': 'region_type',
+                'db_table': 'location_type',
             },
         ),
         migrations.CreateModel(
@@ -327,7 +327,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=55)),
             ],
             options={
-                'db_table': 'campaign_type',
+                'db_table': 'result_structure_type',
             },
         ),
         migrations.CreateModel(
@@ -344,7 +344,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField()),
                 ('date_joined', models.DateTimeField()),
                 ('group_json', jsonfield.fields.JSONField()),
-                ('region_permission_json', jsonfield.fields.JSONField()),
+                ('location_permission_json', jsonfield.fields.JSONField()),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={

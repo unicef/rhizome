@@ -97,7 +97,7 @@ class UserAbstracted(models.Model):
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
     group_json = JSONField()
-    region_permission_json = JSONField()
+    location_permission_json = JSONField()
 
     class Meta:
         db_table = 'user_abstracted'
@@ -227,7 +227,7 @@ class LocationType(models.Model):
         return unicode(self.name)
 
     class Meta:
-        db_table = 'region_type'
+        db_table = 'location_type'
 
 class Location(models.Model):
     '''
@@ -296,7 +296,7 @@ class ResultStructureType(models.Model):
         return unicode(self.name)
 
     class Meta:
-        db_table = 'campaign_type'
+        db_table = 'result_structure_type'
 
 class ResultStructure(models.Model):
     '''
@@ -391,7 +391,7 @@ class DocDataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     is_valid = models.BooleanField()
-    agg_on_region = models.BooleanField()
+    agg_on_location = models.BooleanField()
 
     class Meta:
         db_table = 'doc_datapoint'
@@ -462,7 +462,7 @@ class LocationPermission(models.Model):
     read_write = models.CharField(max_length=1)
 
     class Meta:
-        db_table = 'region_permission'
+        db_table = 'location_permission'
         unique_together = ('user','location','read_write')
 
 
