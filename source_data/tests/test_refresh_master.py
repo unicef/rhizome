@@ -23,7 +23,7 @@ class RefreshMasterTestCase(TestCase):
 
     def set_up(self):
 
-        self.region_list = Region.objects.all().values_list('name',flat=True)
+        self.region_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
 
         self.create_metadata()
@@ -119,7 +119,7 @@ class RefreshMasterTestCase(TestCase):
 
         indicator_code = raw_indicator_list[-1]
 
-        map_region_id = Region.objects.all()[0].id
+        map_region_id = Location.objects.all()[0].id
         som_id_r = SourceObjectMap.objects.create(
             content_type = 'region',
             source_object_code = region_code,
@@ -127,7 +127,7 @@ class RefreshMasterTestCase(TestCase):
             mapped_by_id = self.user.id
         )
 
-        map_campaign_id = Campaign.objects.all()[0].id
+        map_campaign_id = ResultStructure.objects.all()[0].id
         som_id_c = SourceObjectMap.objects.create(
             content_type = 'campaign',
             source_object_code = campaign_code,
@@ -223,10 +223,10 @@ class RefreshMasterTestCase(TestCase):
             DocDetailType.objects.create(name=rt)
 
 
-        campaign_type = CampaignType.objects.create(id=1,name="test")
+        campaign_type = ResultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df,Region)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+        region_ids = self.model_df_to_data(region_df,Location)
+        campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)

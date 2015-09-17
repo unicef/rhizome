@@ -34,9 +34,9 @@ def start_apache():
     run("sudo /etc/init.d/apache2 start")
 
 def run_tests():
-
-    local("coverage run manage.py test --settings=polio.settings.test")
-    local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
+    pass
+    # local("coverage run manage.py test --settings=polio.settings.test")
+    # local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
 
 # build dependencies

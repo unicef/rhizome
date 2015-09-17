@@ -35,15 +35,15 @@ class RegionTest(MasterModelTestCase):
 
     def set_up(self):
 
-        self.region_type_id = RegionType.objects.create(name='test').id
+        self.location_type_id = LocationType.objects.create(name='test').id
 
     def create_region(self, name = "test", office_id=1):
 
         self.set_up()
 
-        region = Region.objects.create(name = name\
+        region = Location.objects.create(name = name\
             ,office_id = office_id
-            ,region_type_id = self.region_type_id)
+            ,location_type_id = self.location_type_id)
 
         return region
 

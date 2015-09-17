@@ -102,10 +102,10 @@ class MasterRefresh(object):
             region_column, campaign_column = self.db_doc_deets['region_column']\
                 , self.db_doc_deets['campaign_column']
 
-            region_id = source_map_dict.get(('region'\
+            region_id = source_map_dict.get(('location'\
                     ,submission_dict[region_column]),None)
 
-            campaign_id = source_map_dict.get(('campaign'\
+            result_structure_id = source_map_dict.get(('result_structure'\
                     ,submission_dict[campaign_column]),None)
 
             ss_id_list.append(ss_id)
@@ -114,8 +114,8 @@ class MasterRefresh(object):
                 'source_submission_id': ss_id,
                 'region_code':submission_dict[region_column],
                 'campaign_code':submission_dict[campaign_column],
-                'region_id': region_id,
-                'campaign_id': campaign_id,
+                'location_id': region_id,
+                'result_structure_id': campaign_id,
             }))
 
         SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()

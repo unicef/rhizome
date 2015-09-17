@@ -1,4 +1,4 @@
-id,office_id,start_date,end_date,slug,created_at,campaign_type_id
+id,office_id,start_date,end_date,slug,created_at,result_structure_type_id
 99,1,2013-11-01,2013-11-01,nigeria-november-2013,2014-12-29 15:27:18.191214+00,1
 101,1,2013-09-01,2013-09-01,nigeria-september-2013,2014-12-29 15:27:18.191214+00,1
 102,1,2012-03-01,2012-03-01,nigeria-march-2012,2014-12-29 15:27:18.191214+00,1

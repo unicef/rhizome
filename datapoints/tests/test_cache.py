@@ -75,10 +75,10 @@ class CacheRefreshTestCase(TestCase):
         region_type4 = RegionType.objects.create(id=4,name="district")
         region_type5 = RegionType.objects.create(id=5,name="sub-district")
 
-        campaign_type = CampaignType.objects.create(id=1,name="test")
+        campaign_type = RestultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df,Region)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+        region_ids = self.model_df_to_data(region_df, region_df,Location)
+        campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)

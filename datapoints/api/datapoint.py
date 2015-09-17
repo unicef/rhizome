@@ -382,8 +382,6 @@ class DataPointEntryResource(BaseModelResource):
             else:
                 raise InputError(0, 'Could not get User ID from cookie')
 
-            self.validate_permissions(user_id,bundle.data)
-
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
 
@@ -502,50 +500,6 @@ class DataPointEntryResource(BaseModelResource):
                 del bundle.data[key]
         return bundle
 
-    def validate_permissions(self, user_id, bundle_data):
-        '''
-        Ensure that the user has write permissions for the indicator in the
-        request, and if they do not, throw an exception.
-
-        Users need to be validated against the "region_permission" table
-        as well as the indicator_permissions (via user_to_group table)
-        '''
-
-        ## CHECK INDICATOR PERMISSIONS ##
-        indicator_id = bundle_data['indicator_id']
-
-        user_qs = User.objects.raw('''
-            SELECT u.id
-            FROM auth_user u
-            INNER JOIN auth_user_groups aug
-                ON u.id = aug.user_id
-            INNER JOIN indicator_permission ip
-                ON aug.group_id = ip.group_id
-            WHERE u.id = %s
-            AND ip.indicator_id = %s;
-        ''',[user_id, indicator_id])
-
-        user_id_list = [u.id for u in user_qs]
-
-        if len(user_id_list) == 0:
-            raise InputError(4, 'User does not have permissions for \
-                indicator_id: {0}'.format(indicator_id))
-
-        ## CHECK REGION PERMISSION ##
-
-        region_id_list = []
-        region_id_list.append(int(bundle_data['region_id']))
-
-        permitted_region_qs =  Region.objects.raw("SELECT * FROM\
-            fn_get_authorized_regions_by_user(%s,%s,'w',NULL)",[user_id,
-            region_id_list])
-
-        permitted_region_ids = [x.id for x in permitted_region_qs]
-
-        if len(permitted_region_ids) == 0:
-            raise InputError(4, 'User does not have permissions for \
-                region_id: {0}'.format(bundle_data['region_id']))
-
 
     def validate_object(self, obj):
         """
@@ -582,7 +536,7 @@ class DataPointEntryResource(BaseModelResource):
         # ensure that region, campaign, and indicator, if present, are valid values
         if obj.has_key('region_id'):
             region_id = int(obj['region_id'])
-            Region.objects.get(id=region_id)
+            Location.objects.get(id=region_id)
 
         if obj.has_key('campaign_id'):
             campaign_id = int(obj['campaign_id'])

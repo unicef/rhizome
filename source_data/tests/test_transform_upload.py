@@ -22,7 +22,7 @@ class RefreshMasterTestCase(TestCase):
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
 
-        self.region_list = Region.objects.all().values_list('name',flat=True)
+        self.region_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
 
     def test_doc_to_source_submission(self):
@@ -95,10 +95,10 @@ class RefreshMasterTestCase(TestCase):
             DocDetailType.objects.create(name=rt)
 
 
-        campaign_type = CampaignType.objects.create(id=1,name="test")
+        campaign_type = ResultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df,Region)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+        region_ids = self.model_df_to_data(region_df,Location)
+        campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)

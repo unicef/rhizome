@@ -1,4 +1,4 @@
-id,office_id,latitude,longitude,slug,created_at,region_code,name,parent_region_id,region_type_id
+id,office_id,latitude,longitude,slug,created_at,location_code,name,parent_location_id,location_type_id
 12907,1,9.593636,8.105325,nigeria,05:45.6,NGA,Nigeria,,1
 12910,1,12.094488,6.246565,zamfara,06:22.2,37,Zamfara,12907,3
 12911,1,12.308674,11.421943,yobe,06:22.2,36,Yobe,12907,3
