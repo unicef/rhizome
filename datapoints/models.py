@@ -304,7 +304,7 @@ class ResultStructure(models.Model):
     '''
 
     office = models.ForeignKey(Office)
-    result_structure = models.ForeignKey(ResultStructureType)
+    result_structure_type = models.ForeignKey(ResultStructureType)
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)

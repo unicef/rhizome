@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
                 ('master_object_id', models.IntegerField()),
                 ('master_object_name', models.CharField(max_length=255, null=True)),
                 ('source_object_code', models.CharField(max_length=255)),
-                ('content_type', models.CharField(max_length=10)),
+                ('content_type', models.CharField(max_length=20)),
                 ('mapped_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={

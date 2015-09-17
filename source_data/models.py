@@ -89,7 +89,7 @@ class SourceObjectMap(models.Model):
     master_object_id = models.IntegerField() ## need to think about to FK this.
     master_object_name = models.CharField(max_length=255,null=True)
     source_object_code = models.CharField(max_length=255)
-    content_type = models.CharField(max_length=10)
+    content_type = models.CharField(max_length=20)
     mapped_by = models.ForeignKey(User)
 
     class Meta:

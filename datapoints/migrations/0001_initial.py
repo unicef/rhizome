@@ -353,7 +353,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='resultstructure',
-            name='result_structure',
+            name='result_structure_type',
             field=models.ForeignKey(to='datapoints.ResultStructureType'),
         ),
         migrations.AddField(

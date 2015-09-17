@@ -548,38 +548,38 @@ def cache_campaign_abstracted():
         '''
         '''
 
-        c_raw = Campaign.objects.raw(
+        rs_raw = ResultStructure.objects.raw(
         '''
         DROP TABLE IF EXISTS campaign_cnt;
         CREATE TEMP TABLE campaign_cnt
         AS
 
-    	SELECT c.id as campaign_id, coalesce(dp_cnt, 0) as dp_cnt FROM campaign c
+    	SELECT c.id as result_structure_id, coalesce(dp_cnt, 0) as dp_cnt FROM result_structure c
     	LEFT JOIN (
-    		SELECT campaign_id, COUNT(1) as dp_cnt
+    		SELECT result_structure_id, COUNT(1) as dp_cnt
     		FROM datapoint
-    		GROUP BY campaign_id
+    		GROUP BY result_structure_id
     	)x
-    	ON c.id = x.campaign_id;
+    	ON c.id = x.result_structure_id;
 
 
         SELECT DISTINCT
             c.*
             ,COALESCE(CAST(ccnt.dp_cnt AS FLOAT) / CAST(NULLIF(x.max_dp_cnt,0) AS FLOAT),0) as pct_complete
-        FROM campaign c
+        FROM result_structure c
         INNER JOIN campaign_cnt ccnt
-            ON c.id = ccnt.campaign_id
+            ON c.id = ccnt.result_structure_id
         INNER JOIN (
             SELECT c.office_id, max(dp_cnt) as max_dp_cnt
             FROM campaign_cnt cc
-            INNER JOIN campaign c
-            ON cc.campaign_id = c.id
+            INNER JOIN result_structure c
+            ON cc.result_structure_id = c.id
             GROUP BY c.office_id
         )x
             ON c.office_id = x.office_id;
         ''')
 
-        upsert_meta_data(c_raw, CampaignAbstracted)
+        upsert_meta_data(rs_raw, ResultStructureAbstracted)
 
 
 def cache_region_tree():
