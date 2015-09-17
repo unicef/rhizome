@@ -13,7 +13,7 @@ except ImportError:
     def csrf_exempt(func):
         return func
 
-from datapoints.models import RegionType,Region,RegionPermission
+from datapoints.models import LocationType, Location, LocationPermission
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 class CustomAuthentication(Authentication):

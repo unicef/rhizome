@@ -84,34 +84,30 @@ class DashBoardView(IndexView):
 
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model = Campaign
+    model = ResultStructure
     success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
-    permission_required = 'datapoints.add_campaign'
-    fields = ['office','campaign_type','start_date','end_date']
-
+    fields = ['office','result_structure_type','start_date','end_date']
 
 
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
-    model=Campaign
+    model = ResultStructure
     success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
-    form_class = CampaignForm
+    form_class = ResultStructureForm
     # permission_required = 'datapoints.change_campaign'
-
 
     ###############
     ### REGIONS ###
     ###############
 
-
 class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model=Region
+    model = Location
     template_name='regions/create.html'
     permission_required = 'datapoints.add_region'
-    form_class = RegionForm
+    form_class = LocationForm
     success_url= '/ufadmin/regions'
 
     def form_valid(self, form):
@@ -126,7 +122,7 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
 
 class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
-    model = Region
+    model = Location
     success_url = '/ufadmin/regions'
     template_name = 'regions/update.html'
     permission_required = 'datapoints.change_region'

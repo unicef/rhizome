@@ -306,8 +306,8 @@ class DataPointEntryResource(BaseModelResource):
     ]
     # for validating foreign keys
     keys_models = {
-        'region_id': Region,
-        'campaign_id': Campaign,
+        'region_id': Location,
+        'campaign_id': ResultStructure,
         'indicator_id': Indicator
     }
     region = fields.IntegerField(attribute = 'region_id')

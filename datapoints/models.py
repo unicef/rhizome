@@ -251,9 +251,7 @@ class Location(models.Model):
         return unicode(self.name)
 
     class Meta:
-
         db_table = 'location'
-        unique_together = ('name','location','office')
 
 class LocationTree(models.Model):
     '''
@@ -263,9 +261,9 @@ class LocationTree(models.Model):
     stored with the cooresponding level to indicate its depth in the tree.
     '''
 
-    parent_location = models.ForeignKey(Region, related_name='ultimate_parent')
-    immediate_parent = models.ForeignKey(Region, related_name='immediate_parent')
-    location = models.ForeignKey(Region)
+    parent_location = models.ForeignKey(Location, related_name='ultimate_parent')
+    immediate_parent = models.ForeignKey(Location, related_name='immediate_parent')
+    location = models.ForeignKey(Location)
     lvl = models.IntegerField()
 
     class Meta:
@@ -378,7 +376,7 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','location','results_structure')
+        unique_together = ('indicator','location','result_structure')
 
 class DocDataPoint(models.Model):
     '''
@@ -419,17 +417,19 @@ class DataPointAbstracted(models.Model):
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('location','reslut_structure')
+        unique_together = ('location','result_structure')
 
 class DataPointComputed(models.Model):
 
-
     value = models.FloatField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
+    indicator = models.ForeignKey(Indicator)
+    location = models.ForeignKey(Location)
+    result_structure = models.ForeignKey(ResultStructure)
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        unique_together = ('location','result_strcture','indicator')
+        unique_together = ('location','result_structure','indicator')
 
 class AggDataPoint(models.Model):
 
@@ -441,7 +441,7 @@ class AggDataPoint(models.Model):
 
     class Meta:
         db_table = 'agg_datapoint'
-        unique_together = ('location','result_strcture','indicator')
+        unique_together = ('location','result_structure','indicator')
 
 
 class LocationPermission(models.Model):
@@ -463,7 +463,7 @@ class LocationPermission(models.Model):
 
     class Meta:
         db_table = 'region_permission'
-        unique_together = ('user','region','read_write')
+        unique_together = ('user','location','read_write')
 
 
 class IndicatorPermission(models.Model):

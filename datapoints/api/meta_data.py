@@ -19,30 +19,29 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
 
 
-class CampaignResource(BaseModelResource):
+class ResultStructureResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = CampaignAbstracted.objects.all().values()
+        queryset = ResultStructureAbstracted.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,
         }
 
-
-class RegionResource(BaseModelResource):
+class LocationResource(BaseModelResource):
 
     def get_object_list(self,request):
 
         try:
             pr_id = request.GET['parent_region_id']
-            qs = Region.objects.filter(parent_region_id=pr_id).values()
+            qs = Location.objects.filter(parent_location_id=pr_id).values()
         except KeyError:
-            qs =  Region.objects.all().values()
+            qs =  Location.objects.all().values()
 
         return qs
 
     class Meta(BaseModelResource.Meta):
-        queryset = Region.objects.all().values()
+        queryset = Location.objects.all().values()
         resource_name = 'region'
 
 class IndicatorResource(BaseModelResource):
@@ -57,16 +56,16 @@ class OfficeResource(BaseModelResource):
         queryset = Office.objects.all().values()
         resource_name = 'office'
 
-class CampaignTypeResource(BaseModelResource):
+class ResultStructureTypeResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = CampaignType.objects.all().values()
+        queryset = ResultStructureType.objects.all().values()
         resource_name = 'campaign_type'
 
-class RegionTypeResource(BaseModelResource):
+class LocationTypeResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = CampaignType.objects.all().values()
+        queryset = LocationType.objects.all().values()
         resource_name = 'region_type'
 
 class IndicatorTagResource(BaseModelResource):
@@ -156,10 +155,10 @@ class UserGroupResource(BaseModelResource):
         queryset = UserGroup.objects.all().values()
         resource_name = 'user_group'
 
-class RegionPermissionResource(BaseModelResource):
+class LocationPermissionResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = RegionPermission.objects.all().values()
+        queryset = LocationPermission.objects.all().values()
         resource_name = 'region_permission'
 
 class GroupPermissionResource(BaseModelResource):
@@ -368,7 +367,7 @@ class GeoJsonResult(object):
     geometry = dict()
 
 
-class RegionPolygonResource(BaseNonModelResource):
+class GeoResource(BaseNonModelResource):
     '''
     A non model resource that allows us to query for shapefiles based on a
     colletion of parameters.
