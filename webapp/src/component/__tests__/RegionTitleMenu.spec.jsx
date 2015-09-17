@@ -9,15 +9,15 @@ describe(__filename, () => {
         {
           'name': 'America - Maine',
           'id': 10,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'America - Texas',
           'id': 11,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'England - Merseyside',
           'id': 20,
-          'parent_region_id': 2
+          'parent_location_id': 2
         }
       ]
       const filter = 'America'
@@ -40,11 +40,11 @@ describe(__filename, () => {
         {
           'name': 'America - Maine',
           'id': 10,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'America - Texas',
           'id': 11,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }
       ]
       const filter = 'am'
@@ -67,15 +67,15 @@ describe(__filename, () => {
         {
           'name': 'America - Maine',
           'id': 10,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'America - Texas',
           'id': 11,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'America',
           'id': 1,
-          'parent_region_id': 0
+          'parent_location_id': 0
         }
       ]
       const filter = 'am'
@@ -105,23 +105,23 @@ describe(__filename, () => {
         {
           'name': 'America - Maine',
           'id': 10,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'America - Texas',
           'id': 11,
-          'parent_region_id': 1
+          'parent_location_id': 1
         }, {
           'name': 'England - Merseyside',
           'id': 20,
-          'parent_region_id': 2
+          'parent_location_id': 2
         }, {
           'name': 'America',
           'id': 1,
-          'parent_region_id': 0
+          'parent_location_id': 0
         }, {
           'name': 'England',
           'id': 2,
-          'parent_region_id': 0
+          'parent_location_id': 0
         }
       ]
       const filter = 'am'

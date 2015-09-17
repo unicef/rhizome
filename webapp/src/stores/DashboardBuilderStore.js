@@ -54,7 +54,7 @@ var DashboardBuilderStore = Reflux.createStore({
 		var regionIdx = _.indexBy(this.data.regions, 'id');
 		var topLevelRegions = _(this.data.regions)
 			.filter(function (r) {
-				return !regionIdx.hasOwnProperty(r.parent_region_id);
+				return !regionIdx.hasOwnProperty(r.parent_location_id);
 			})
 			.sortBy('name');
 		this.data.region = topLevelRegions.first();

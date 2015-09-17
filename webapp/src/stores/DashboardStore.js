@@ -29,8 +29,8 @@ var DashboardStore = Reflux.createStore({
         var types = _.indexBy(regionsTypes, 'id');
 
         _.each(this.regions, function(r) {
-          r.region_type = _.get(types[r.region_type_id], 'name');
-          r.parent = regionIdx[r.parent_region_id];
+          r.location_type = _.get(types[r.location_type_id], 'name');
+          r.parent = regionIdx[r.parent_location_id];
         });
 
         this.loaded = true;
@@ -81,7 +81,7 @@ var DashboardStore = Reflux.createStore({
     var regionIdx = _.indexBy(regions, 'id');
     var topLevelRegions = _(regions)
       .filter(function(r) {
-        return !regionIdx.hasOwnProperty(r.parent_region_id);
+        return !regionIdx.hasOwnProperty(r.parent_location_id);
       })
       .sortBy('name');
 

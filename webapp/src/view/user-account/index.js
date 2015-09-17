@@ -42,7 +42,7 @@ module.exports = {
 	     			'title'  : region.name,
 	     			'value'  : region.id,
 	     			'id'     : region.id,
-	     			'parent' : region.parent_region_id
+	     			'parent' : region.parent_location_id
 	     		};
 	     	})
 	     	.sortBy('title')

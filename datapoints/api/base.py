@@ -162,7 +162,7 @@ class BaseNonModelResource(Resource):
 
         ## REGION TYPE ##
         try:
-            self.region_type_id = RegionType.objects.get(name = query_dict\
+            self.rtype_id = LocationType.objects.get(name = query_dict\
                 ['level'].lower()).id
         except KeyError:
             pass
@@ -206,17 +206,17 @@ class BaseNonModelResource(Resource):
         ## CASE 1 ##
         if self.region__in is not None:
 
-            region_ids = Region.objects.filter(id__in = self.region__in)\
+            region_ids = Location.objects.filter(id__in = self.region__in)\
                 .values_list('id',flat=True)
 
         ## CASE 2 #
         elif self.parent_region__in is not None and self.region_type_id is None:
 
-            region_ids = Region.objects.filter(parent_region__in = \
+            region_ids = Location.objects.filter(parent_location_id__in = \
                 self.parent_region__in).values_list('id',flat=True)
 
         else:
-            region_ids = Region.objects.filter(parent_region_id__isnull=True).\
+            region_ids = Location.objects.filter(parent_location_id__isnull=True).\
                 values_list('id',flat=True)
 
         ## now apply regional permissions ##

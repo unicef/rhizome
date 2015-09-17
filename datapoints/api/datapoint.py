@@ -126,14 +126,14 @@ class DataPointResource(BaseNonModelResource):
             return []
 
         db_data = DataPointAbstracted.objects.filter(
-            region_id__in = region_ids,
-            campaign_id__in = self.parsed_params['campaign__in'])\
-            .order_by('-campaign__start_date')
+            location_id__in = region_ids,
+            result_structure_id__in = self.parsed_params['campaign__in'])\
+            .order_by('-result_structure__start_date')
 
         for row in db_data:
             r = ResultObject()
-            r.region = row.region_id
-            r.campaign = row.campaign_id
+            r.region = row.location_id
+            r.campaign = row.result_structure_id
 
             indicator_json = row.indicator_json
             cleaned = self.clean_indicator_json(indicator_json)
@@ -287,7 +287,7 @@ class DataPointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        cs = Campaign.objects.filter(
+        cs = ResultStructure.objects.filter(
             start_date__gte = campaign_start,\
             start_date__lte = campaign_end,\
         )
@@ -586,7 +586,7 @@ class DataPointEntryResource(BaseModelResource):
 
         if obj.has_key('campaign_id'):
             campaign_id = int(obj['campaign_id'])
-            Campaign.objects.get(id=campaign_id)
+            ResultStructure.objects.get(id=campaign_id)
 
         if obj.has_key('indicator_id'):
             indicator_id = int(obj['indicator_id'])

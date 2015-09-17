@@ -145,7 +145,7 @@ module.exports = Reflux.createStore({
 		campaignList:[],
 		indicatorsSelected:[],//[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-		regionSelected:{parent_region_id: null, office_id: 1, region_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
+		regionSelected:{parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
 		aggregatedRegions:[],
 		title: "",
 		description: "",
@@ -225,7 +225,7 @@ module.exports = Reflux.createStore({
 			  		return {
 			  			'title'  : region.name,
 			  			'value'  : region.id,
-			  			'parent' : region.parent_region_id
+			  			'parent' : region.parent_location_id
 			  		};
 			  	})
 			  	.sortBy('title')
@@ -393,17 +393,17 @@ module.exports = Reflux.createStore({
 	    }
 		else if(regionRadioValue==="type")
 		{
-		   if(regionSelected.parent_region_id && regionSelected.parent_region_id != "None")
+		   if(regionSelected.parent_location_id && regionSelected.parent_location_id != "None")
 		   {
-		     regions = _.filter(this._regionIndex, {region_type_id:regionSelected.region_type_id,office_id:regionSelected.office_id});
+		     regions = _.filter(this._regionIndex, {location_type_id:regionSelected.location_type_id,office_id:regionSelected.office_id});
 		   }
 		   else {
-		   	 regions = _.filter(this._regionIndex, {region_type_id:this.data.regionSelected.region_type_id});
+		   	 regions = _.filter(this._regionIndex, {location_type_id:this.data.regionSelected.location_type_id});
 		   }
 		}
 		else if(regionRadioValue==="subregions")
 		{
-		   regions = _.filter(this._regionIndex, {parent_region_id:regionSelected.id});
+		   regions = _.filter(this._regionIndex, {parent_location_id:regionSelected.id});
 		}
 		this.data.aggregatedRegions = regions;
 		if(this.canFetchChartData())

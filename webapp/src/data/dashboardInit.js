@@ -57,12 +57,12 @@ function inChart(chart, campaign, region, datum) {
       inRegion = childOf(region, datum.region);
 
       if (!_.isEmpty(chart.level)) {
-        inRegion = inRegion && chart.level === datum.region.region_type;
+        inRegion = inRegion && chart.level === datum.region.location_type;
       }
       break;
 
     case 'type':
-      inRegion = datum.region.region_type === region.region_type;
+      inRegion = datum.region.location_type === region.location_type;
       break;
 
     default:
@@ -204,7 +204,7 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
     var chartName   = _.get(chart, 'id', _.camelCase(chart.title));
     var section     = _.get(results, sectionName, {});
     var regionProp  = chart.region === 'subregions' ?
-      'region.parent_region_id' :
+      'region.parent_location_id' :
       'region.id';
 
     var datumInChart = _.partial(inChart, chart, campaign, region);

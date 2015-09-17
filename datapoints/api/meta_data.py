@@ -36,7 +36,7 @@ class LocationResource(BaseModelResource):
             pr_id = request.GET['parent_region_id']
             qs = Location.objects.filter(parent_location_id=pr_id).values()
         except KeyError:
-            qs =  Location.objects.all().values()
+            qs =  Location.objects.all().values()[:10]
 
         return qs
 
@@ -66,7 +66,7 @@ class LocationTypeResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         queryset = LocationType.objects.all().values()
-        resource_name = 'region_type'
+        resource_name = 'location_type'
 
 class IndicatorTagResource(BaseModelResource):
 

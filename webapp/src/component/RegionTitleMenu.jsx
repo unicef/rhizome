@@ -35,7 +35,7 @@ var RegionTitleMenu = React.createClass({
       return {
         title: r.name,
         value: r.id,
-        parent: r.parent_region_id
+        parent: r.parent_location_id
       };
     });
 

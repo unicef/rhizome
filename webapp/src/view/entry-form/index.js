@@ -115,7 +115,7 @@ module.exports = {
 						.then(makeMap)
 						.then(function(map) {
 							// create array of children in each parent
-							return connectChildren(map, 'parent_region_id', 'children');
+							return connectChildren(map, 'parent_location_id', 'children');
 						}),
 
 					// indicators data
@@ -166,7 +166,7 @@ module.exports = {
 							})
 							.map(function(d) {
 								return {
-									'parent': d.parent_region_id,
+									'parent': d.parent_location_id,
 									'title': d.name,
 									'value': d.id
 								};
@@ -271,7 +271,7 @@ module.exports = {
 					var ra = self.$data.regionData[a];
 					var rb = self.$data.regionData[b];
 					// sort by region type first
-					if (ra.region_type_id !== rb.region_type_id) { return ra.region_type_id - rb.region_type_id; }
+					if (ra.location_type_id !== rb.location_type_id) { return ra.location_type_id - rb.location_type_id; }
 					// then name (alpha)
 					else { return ra.name > rb.name ? 1 : -1; }
 				});

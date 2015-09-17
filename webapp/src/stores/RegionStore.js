@@ -17,7 +17,7 @@ var RegionStore = Reflux.createStore({
         return this.regions;
       });
 
-    this.regionTypesPromise = api.region_type()
+    this.regionTypesPromise = api.location_type()
     	.then(data => {
         this.regionTypes = data.objects;
         this.trigger({

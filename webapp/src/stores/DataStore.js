@@ -74,7 +74,7 @@ var DataStore = Reflux.createStore({
             q.parent_region__in = parent;
           }
 
-          q.region_type = region.region_type;
+          q.location_type = region.location_type;
           break;
         default:
           q.region__in = region.id;
