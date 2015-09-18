@@ -1929,6 +1929,16 @@ class Migration(migrations.Migration):
             	WHERE c.office_id = ac.office_id
             	AND c.start_date = ac.start_date
             );
+
+            INSERT INTO source_object_map
+            (content_type, source_object_code, master_object_id, mapped_by_id)
+            SELECT 'indicator', id, id, 1 from indicator i WHERE NOT EXISTS (
+                SELECT 1 FROM source_object_map som
+                WHERE som.content_type = 'indicator'
+                AND som.source_object_code = CAST(i.id AS VARCHAR)
+            );
+
+
         """)
 
     ]
