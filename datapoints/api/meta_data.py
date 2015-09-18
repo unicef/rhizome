@@ -332,6 +332,7 @@ class RefreshMasterResource(BaseModelResource):
         document_id = request.GET['document_id']
 
         mr = MasterRefresh(request.user.id, document_id)
+        print 'mr'
         mr.submissions_to_doc_datapoints()
         mr.sync_datapoint()
 

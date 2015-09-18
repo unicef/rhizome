@@ -21,7 +21,7 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
-        self.ss_batch_size = 500
+        self.ss_batch_size = 5
         self.document_id = document_id
         self.user_id = user_id
 
@@ -135,6 +135,9 @@ class MasterRefresh(object):
                  campaign_id__isnull= False
             ).values('location_id','campaign_id','source_submission_id')
 
+        print '====='
+        print 'not ready for batch?'
+        print ready_for_doc_datapoint_sync
         for row in ready_for_doc_datapoint_sync:
             doc_dps = self.process_source_submission(row['location_id'], \
                 row['campaign_id'], row['source_submission_id'],source_map_dict)
@@ -182,6 +185,7 @@ class MasterRefresh(object):
 
         submission  = json.loads(self.submission_data[ss_id])
 
+        print '==='
         for k,v in submission.iteritems():
             doc_dp = self.process_submission_datapoint(k,v,location_id,\
                 campaign_id,ss_id,som_dict)
@@ -194,6 +198,8 @@ class MasterRefresh(object):
 
     def process_submission_datapoint(self, ind_str, val, location_id, \
         campaign_id, ss_id, som_dict): ## FIXME use kwargs..
+
+            print 'process_subumssion_id: %s ' % ss_id
 
             try:
                 cleaned_val = self.clean_val(val)
@@ -218,6 +224,7 @@ class MasterRefresh(object):
                         'agg_on_location': True,
                     })
             except KeyError:
+                print '_KEY EEEERRROR _'
                 return None
 
             return doc_dp
