@@ -42,8 +42,6 @@ class MasterRefresh(object):
             .filter(location_code__in = self.location_codes_to_process)\
             .values_list('source_submission_id',flat = True)\
 
-        print self.submission_ids_in_location_batch
-        print '==='
         self.submission_data = dict(SourceSubmission.objects\
             .filter(id__in = self.submission_ids_in_location_batch)
             .values_list('id','submission_json'))
@@ -205,7 +203,6 @@ class MasterRefresh(object):
 
         submission  = json.loads(self.submission_data[ss_id])
 
-        print '==='
         for k,v in submission.iteritems():
             doc_dp = self.process_submission_datapoint(k,v,location_id,\
                 campaign_id,ss_id,som_dict)
@@ -242,7 +239,6 @@ class MasterRefresh(object):
                         'agg_on_location': True,
                     })
             except KeyError:
-                print '_KEY EEEERRROR _'
                 return None
 
             return doc_dp
