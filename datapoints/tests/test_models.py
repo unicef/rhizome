@@ -31,11 +31,11 @@ class IndicatorTest(MasterModelTestCase):
         print '...Done Testing Indicator Model...'
 
 
-class locationTest(MasterModelTestCase):
+class LocationTest(MasterModelTestCase):
 
     def set_up(self):
 
-        self.location_type_id = LocationType.objects.create(name='test').id
+        self.location_type_id = LocationType.objects.create(name='test',admin_level=0).id
 
     def create_location(self, name = "test", office_id=1):
 
@@ -50,7 +50,7 @@ class locationTest(MasterModelTestCase):
     def test_location_creation(self):
 
         r = self.create_location()
-        self.assertTrue(isinstance,(r,location))
+        self.assertTrue(isinstance,(r,Location))
         self.assertEqual(r.__unicode__(),r.name)
 
         print '...Done Testing location Model...'

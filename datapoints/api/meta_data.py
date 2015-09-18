@@ -19,10 +19,10 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
 
 
-class ResultStructureResource(BaseModelResource):
+class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = ResultStructureAbstracted.objects.all().values()
+        queryset = CampaignAbstracted.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,
@@ -56,10 +56,10 @@ class OfficeResource(BaseModelResource):
         queryset = Office.objects.all().values()
         resource_name = 'office'
 
-class ResultStructureTypeResource(BaseModelResource):
+class CampaignTypeResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = ResultStructureType.objects.all().values()
+        queryset = CampaignType.objects.all().values()
         resource_name = 'campaign_type'
 
 class LocationTypeResource(BaseModelResource):

@@ -741,7 +741,7 @@ class Migration(migrations.Migration):
             SELECT 3,'Newborn',2 UNION ALL
             SELECT 4,'Census',2 UNION ALL
             SELECT 8,'Missed Children',2 UNION ALL
-            SELECT 9,'result_structure',2 UNION ALL
+            SELECT 9,'campaign',2 UNION ALL
             SELECT 10,'Group',2 UNION ALL
             SELECT 5,'Outside',1 UNION ALL
             SELECT 6,'Redo',1 UNION ALL
@@ -1115,8 +1115,8 @@ class Migration(migrations.Migration):
             SELECT 135,10 UNION ALL
             SELECT 95,10;
             -- CAMPAIGNS --
-            INSERT INTO result_structure
-            (id, start_date,end_date,slug,result_structure_type_id, office_id, created_at)
+            INSERT INTO campaign
+            (id, start_date,end_date,slug,campaign_type_id, office_id, created_at)
             -- to do this in excel... :) --
             -- CONCATENATE("SELECT ",A1,",'",TEXT(B1,"mm/dd/yy"),"','",TEXT(B1,"mm/dd/yy"),"','",D1,"' UNION ALL")
             SELECT id, CAST(x.start_date AS DATE),CAST(x.end_date as date),x.slug, 1,1,now() FROM (
@@ -1594,235 +1594,235 @@ class Migration(migrations.Migration):
             WHERE EXISTS ( SELECT 1 FROM indicator i where ind.master_object_id = i.id)
             UNION ALL
             SELECT * FROM (
-            SELECT 99 as master_object_id ,'Nigeria November 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 100 as master_object_id ,'Nigeria November 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 101 as master_object_id ,'Nigeria September 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 102 as master_object_id ,'Nigeria March 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 103 as master_object_id ,'Nigeria June 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 104 as master_object_id ,'Nigeria August 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 105 as master_object_id ,'Nigeria March 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 106 as master_object_id ,'Nigeria October 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 107 as master_object_id ,'Nigeria May 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 108 as master_object_id ,'Nigeria March 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 109 as master_object_id ,'Nigeria February 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 110 as master_object_id ,'Nigeria December 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 111 as master_object_id ,'Nigeria June 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 112 as master_object_id ,'Nigeria December 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 113 as master_object_id ,'Nigeria September 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 114 as master_object_id ,'Nigeria April 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 115 as master_object_id ,'Nigeria April 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 116 as master_object_id ,'Nigeria June 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 117 as master_object_id ,'Nigeria January 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 118 as master_object_id ,'Nigeria January 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 119 as master_object_id ,'Nigeria August 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 120 as master_object_id ,'Nigeria January 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 121 as master_object_id ,'Nigeria October 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 122 as master_object_id ,'Nigeria October 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 123 as master_object_id ,'Nigeria August 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 124 as master_object_id ,'Nigeria July 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 125 as master_object_id ,'Nigeria May 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 126 as master_object_id ,'Nigeria November 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 127 as master_object_id ,'Nigeria July 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 128 as master_object_id ,'Nigeria September 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 129 as master_object_id ,'Nigeria April 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 130 as master_object_id ,'Nigeria February 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 131 as master_object_id ,'Nigeria July 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 132 as master_object_id ,'Nigeria May 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 133 as master_object_id ,'Afghanistan July 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 134 as master_object_id ,'Afghanistan November 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 135 as master_object_id ,'Afghanistan December 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 136 as master_object_id ,'Afghanistan September 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 137 as master_object_id ,'Afghanistan February 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 138 as master_object_id ,'Afghanistan March 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 139 as master_object_id ,'Afghanistan June 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 140 as master_object_id ,'Afghanistan September 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 141 as master_object_id ,'Afghanistan October 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 143 as master_object_id ,'Afghanistan June 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 144 as master_object_id ,'Afghanistan September 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 145 as master_object_id ,'Afghanistan November 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 146 as master_object_id ,'Afghanistan May 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 147 as master_object_id ,'Afghanistan August 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 148 as master_object_id ,'Afghanistan February 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 149 as master_object_id ,'Afghanistan August 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 150 as master_object_id ,'Afghanistan May 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 151 as master_object_id ,'Afghanistan July 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 152 as master_object_id ,'Afghanistan August 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 153 as master_object_id ,'Afghanistan January 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 154 as master_object_id ,'Afghanistan March 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 156 as master_object_id ,'Afghanistan January 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 157 as master_object_id ,'Afghanistan March 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 158 as master_object_id ,'Afghanistan December 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 159 as master_object_id ,'Afghanistan October 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 160 as master_object_id ,'Afghanistan January 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 161 as master_object_id ,'Afghanistan February 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 162 as master_object_id ,'Afghanistan June 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 163 as master_object_id ,'Pakistan February 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 164 as master_object_id ,'Pakistan November 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 165 as master_object_id ,'Pakistan August 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 166 as master_object_id ,'Pakistan June 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 167 as master_object_id ,'Pakistan January 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 168 as master_object_id ,'Pakistan December 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 169 as master_object_id ,'Pakistan May 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 170 as master_object_id ,'Pakistan July 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 171 as master_object_id ,'Pakistan July 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 172 as master_object_id ,'Pakistan October 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 173 as master_object_id ,'Pakistan April 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 174 as master_object_id ,'Pakistan June 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 175 as master_object_id ,'Pakistan May 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 176 as master_object_id ,'Pakistan March 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 177 as master_object_id ,'Pakistan April 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 178 as master_object_id ,'Pakistan August 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 179 as master_object_id ,'Pakistan September 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 106 as master_object_id ,'Nigeria 2013.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 112 as master_object_id ,'Nigeria 2013.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 120 as master_object_id ,'Nigeria 2013.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 105 as master_object_id ,'Nigeria 2013.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 109 as master_object_id ,'Nigeria 2013.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 107 as master_object_id ,'Nigeria 2013.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 114 as master_object_id ,'Nigeria 2013.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 131 as master_object_id ,'Nigeria 2013.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 116 as master_object_id ,'Nigeria 2013.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 101 as master_object_id ,'Nigeria 2013.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 123 as master_object_id ,'Nigeria 2013.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 180 as master_object_id ,'Pakistan 2014.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 178 as master_object_id ,'Pakistan 2014.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 171 as master_object_id ,'Pakistan 2014.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 174 as master_object_id ,'Pakistan 2014.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 175 as master_object_id ,'Pakistan 2014.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 177 as master_object_id ,'Pakistan 2014.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 176 as master_object_id ,'Pakistan 2014.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 163 as master_object_id ,'Pakistan 2014.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 167 as master_object_id ,'Pakistan 2014.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 181 as master_object_id ,'Pakistan 2012.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 182 as master_object_id ,'Pakistan 2012.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 183 as master_object_id ,'Pakistan 2012.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 184 as master_object_id ,'Pakistan 2012.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 185 as master_object_id ,'Pakistan 2012.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 186 as master_object_id ,'Pakistan 2012.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 187 as master_object_id ,'Pakistan 2012.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 188 as master_object_id ,'Pakistan 2012.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 189 as master_object_id ,'Pakistan 2012.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 137 as master_object_id ,'Afghanistan 2014.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 144 as master_object_id ,'Afghanistan 2014.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 152 as master_object_id ,'Afghanistan 2014.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 134 as master_object_id ,'Afghanistan 2012.11'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 141 as master_object_id ,'Afghanistan 2012.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 153 as master_object_id ,'Afghanistan 2014.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 135 as master_object_id ,'Afghanistan 2012.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 139 as master_object_id ,'Afghanistan 2014.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 150 as master_object_id ,'Afghanistan 2014.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 190 as master_object_id ,'Afghanistan 2014.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 173 as master_object_id ,'Pakistan 2013.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 169 as master_object_id ,'Pakistan 2013.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 166 as master_object_id ,'Pakistan 2013.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 170 as master_object_id ,'Pakistan 2013.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 191 as master_object_id ,'Pakistan 2013.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 192 as master_object_id ,'Pakistan 2013.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 193 as master_object_id ,'Pakistan 2013.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 165 as master_object_id ,'Pakistan 2013.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 179 as master_object_id ,'Pakistan 2013.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 130 as master_object_id ,'Nigeria 2014.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 108 as master_object_id ,'Nigeria 2014.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 111 as master_object_id ,'Nigeria 2014.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 124 as master_object_id ,'Nigeria 2014.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 115 as master_object_id ,'Nigeria 2014.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 125 as master_object_id ,'Nigeria 2014.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 104 as master_object_id ,'Nigeria 2014.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 110 as master_object_id ,'Nigeria 2012.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 121 as master_object_id ,'Nigeria 2012.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 126 as master_object_id ,'Nigeria 2012.11'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 160 as master_object_id ,'Afghanistan 2013.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 161 as master_object_id ,'Afghanistan 2013.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 138 as master_object_id ,'Afghanistan 2013.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 119 as master_object_id ,'Nigeria 2012.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 113 as master_object_id ,'Nigeria 2012.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 143 as master_object_id ,'Afghanistan 2013.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 151 as master_object_id ,'Afghanistan 2013.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 129 as master_object_id ,'Nigeria 2012.4'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 132 as master_object_id ,'Nigeria 2012.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 103 as master_object_id ,'Nigeria 2012.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 127 as master_object_id ,'Nigeria 2012.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 118 as master_object_id ,'Nigeria 2012.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 102 as master_object_id ,'Nigeria 2012.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 194 as master_object_id ,'Pakistan 2012.11'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 195 as master_object_id ,'Pakistan 2012.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 196 as master_object_id ,'Pakistan 2012.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 140 as master_object_id ,'Afghanistan 2012.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 149 as master_object_id ,'Afghanistan 2012.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 146 as master_object_id ,'Afghanistan 2012.5'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 133 as master_object_id ,'Afghanistan 2012.7'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 162 as master_object_id ,'Afghanistan 2012.6'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 156 as master_object_id ,'Afghanistan 2012.1'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 154 as master_object_id ,'Afghanistan 2012.3'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 148 as master_object_id ,'Afghanistan 2012.2'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 168 as master_object_id ,'Pakistan 2013.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 172 as master_object_id ,'Pakistan 2013.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 164 as master_object_id ,'Pakistan 2013.11'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 147 as master_object_id ,'Afghanistan 2013.8'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 136 as master_object_id ,'Afghanistan 2013.9'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 158 as master_object_id ,'Afghanistan 2013.12'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 159 as master_object_id ,'Afghanistan 2013.10'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 145 as master_object_id ,'Afghanistan 2013.11'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 115 as master_object_id ,'Tue Apr 01 00:00:00 UTC 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 201 as master_object_id ,'Mon Dec 01 00:00:00 UTC 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 111 as master_object_id ,'Sun Jun 01 00:00:00 UTC 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 201 as master_object_id ,'41974'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 207 as master_object_id ,'Pakistan January 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 208 as master_object_id ,'Pakistan February 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 206 as master_object_id ,'Afghanistan February 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 211 as master_object_id ,'Nigeria February 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 210 as master_object_id ,'Nigeria January 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 214 as master_object_id ,'Pakistan March 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 213 as master_object_id ,'Afghanistan March 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 209 as master_object_id ,'Afghanistan January 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 212 as master_object_id ,'Nigeria March 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 142 as master_object_id ,'Afghanistan April 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 155 as master_object_id ,'Afghanistan May 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 216 as master_object_id ,'Nigeria February 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 215 as master_object_id ,'Afghanistan April 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 210 as master_object_id ,'Nigeria Jan 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 212 as master_object_id ,'Nigeria Mar 1, 2015'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 223 as master_object_id ,'nigeria-2015-06-01'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 197 as master_object_id ,'Pakistan December 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 200 as master_object_id ,'Afghanistan December 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 190 as master_object_id ,'Afghanistan April 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 198 as master_object_id ,'Afghanistan October 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 201 as master_object_id ,'Nigeria December 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 202 as master_object_id ,'Afghanistan November 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 199 as master_object_id ,'Afghanistan July 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 203 as master_object_id ,'Pakistan November 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 204 as master_object_id ,'Pakistan October 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 180 as master_object_id ,'Pakistan September 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 171 as master_object_id ,'Pakistan Jul 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 199 as master_object_id ,'Afghanistan Jul 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 124 as master_object_id ,'Nigeria Jul 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 163 as master_object_id ,'Paksitan February 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 150 as master_object_id ,'Afganistan May 2014'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 191 as master_object_id ,'Pakistan January 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 188 as master_object_id ,'Pakistan September 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 189 as master_object_id ,'Pakistan August 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 195 as master_object_id ,'Pakistan October 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 194 as master_object_id ,'Pakistan November 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 187 as master_object_id ,'Pakistan June 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 181 as master_object_id ,'Pakistan January 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 186 as master_object_id ,'Pakistan July 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 192 as master_object_id ,'Pakistan February 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 184 as master_object_id ,'Pakistan May 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 183 as master_object_id ,'Pakistan February 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 182 as master_object_id ,'Pakistan March 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 193 as master_object_id ,'Pakistan March 2013'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 196 as master_object_id ,'Pakistan December 2012'  as source_object_code,'result_structure' as content_type UNION ALL
-            SELECT 185 as master_object_id ,'Pakistan April 2012'  as source_object_code,'result_structure' as content_type
+            SELECT 99 as master_object_id ,'Nigeria November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 100 as master_object_id ,'Nigeria November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 101 as master_object_id ,'Nigeria September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 102 as master_object_id ,'Nigeria March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 103 as master_object_id ,'Nigeria June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 104 as master_object_id ,'Nigeria August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 105 as master_object_id ,'Nigeria March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 106 as master_object_id ,'Nigeria October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 107 as master_object_id ,'Nigeria May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 108 as master_object_id ,'Nigeria March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 109 as master_object_id ,'Nigeria February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 110 as master_object_id ,'Nigeria December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 111 as master_object_id ,'Nigeria June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 112 as master_object_id ,'Nigeria December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 113 as master_object_id ,'Nigeria September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 114 as master_object_id ,'Nigeria April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 115 as master_object_id ,'Nigeria April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 116 as master_object_id ,'Nigeria June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 117 as master_object_id ,'Nigeria January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 118 as master_object_id ,'Nigeria January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 119 as master_object_id ,'Nigeria August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 120 as master_object_id ,'Nigeria January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 121 as master_object_id ,'Nigeria October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 122 as master_object_id ,'Nigeria October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 123 as master_object_id ,'Nigeria August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 124 as master_object_id ,'Nigeria July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 125 as master_object_id ,'Nigeria May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 126 as master_object_id ,'Nigeria November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 127 as master_object_id ,'Nigeria July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 128 as master_object_id ,'Nigeria September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 129 as master_object_id ,'Nigeria April 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 130 as master_object_id ,'Nigeria February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 131 as master_object_id ,'Nigeria July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 132 as master_object_id ,'Nigeria May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 133 as master_object_id ,'Afghanistan July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 134 as master_object_id ,'Afghanistan November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 135 as master_object_id ,'Afghanistan December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 136 as master_object_id ,'Afghanistan September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 137 as master_object_id ,'Afghanistan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 138 as master_object_id ,'Afghanistan March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 139 as master_object_id ,'Afghanistan June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 140 as master_object_id ,'Afghanistan September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 141 as master_object_id ,'Afghanistan October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 143 as master_object_id ,'Afghanistan June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 144 as master_object_id ,'Afghanistan September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 145 as master_object_id ,'Afghanistan November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 146 as master_object_id ,'Afghanistan May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 147 as master_object_id ,'Afghanistan August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 148 as master_object_id ,'Afghanistan February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 149 as master_object_id ,'Afghanistan August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 150 as master_object_id ,'Afghanistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 151 as master_object_id ,'Afghanistan July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 152 as master_object_id ,'Afghanistan August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 153 as master_object_id ,'Afghanistan January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 154 as master_object_id ,'Afghanistan March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 156 as master_object_id ,'Afghanistan January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 157 as master_object_id ,'Afghanistan March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 158 as master_object_id ,'Afghanistan December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 159 as master_object_id ,'Afghanistan October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 160 as master_object_id ,'Afghanistan January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 161 as master_object_id ,'Afghanistan February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 162 as master_object_id ,'Afghanistan June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 163 as master_object_id ,'Pakistan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 164 as master_object_id ,'Pakistan November 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 165 as master_object_id ,'Pakistan August 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 166 as master_object_id ,'Pakistan June 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 167 as master_object_id ,'Pakistan January 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 168 as master_object_id ,'Pakistan December 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 169 as master_object_id ,'Pakistan May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 170 as master_object_id ,'Pakistan July 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 171 as master_object_id ,'Pakistan July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 172 as master_object_id ,'Pakistan October 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 173 as master_object_id ,'Pakistan April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 174 as master_object_id ,'Pakistan June 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 175 as master_object_id ,'Pakistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 176 as master_object_id ,'Pakistan March 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 177 as master_object_id ,'Pakistan April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 178 as master_object_id ,'Pakistan August 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 179 as master_object_id ,'Pakistan September 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 106 as master_object_id ,'Nigeria 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 112 as master_object_id ,'Nigeria 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 120 as master_object_id ,'Nigeria 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 105 as master_object_id ,'Nigeria 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 109 as master_object_id ,'Nigeria 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 107 as master_object_id ,'Nigeria 2013.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 114 as master_object_id ,'Nigeria 2013.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 131 as master_object_id ,'Nigeria 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 116 as master_object_id ,'Nigeria 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 101 as master_object_id ,'Nigeria 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 123 as master_object_id ,'Nigeria 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 180 as master_object_id ,'Pakistan 2014.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 178 as master_object_id ,'Pakistan 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 171 as master_object_id ,'Pakistan 2014.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 174 as master_object_id ,'Pakistan 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 175 as master_object_id ,'Pakistan 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 177 as master_object_id ,'Pakistan 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 176 as master_object_id ,'Pakistan 2014.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 163 as master_object_id ,'Pakistan 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 167 as master_object_id ,'Pakistan 2014.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 181 as master_object_id ,'Pakistan 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 182 as master_object_id ,'Pakistan 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 183 as master_object_id ,'Pakistan 2012.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 184 as master_object_id ,'Pakistan 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 185 as master_object_id ,'Pakistan 2012.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 186 as master_object_id ,'Pakistan 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 187 as master_object_id ,'Pakistan 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 188 as master_object_id ,'Pakistan 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 189 as master_object_id ,'Pakistan 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 137 as master_object_id ,'Afghanistan 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 144 as master_object_id ,'Afghanistan 2014.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 152 as master_object_id ,'Afghanistan 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 134 as master_object_id ,'Afghanistan 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 141 as master_object_id ,'Afghanistan 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 153 as master_object_id ,'Afghanistan 2014.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 135 as master_object_id ,'Afghanistan 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 139 as master_object_id ,'Afghanistan 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 150 as master_object_id ,'Afghanistan 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 190 as master_object_id ,'Afghanistan 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 173 as master_object_id ,'Pakistan 2013.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 169 as master_object_id ,'Pakistan 2013.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 166 as master_object_id ,'Pakistan 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 170 as master_object_id ,'Pakistan 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 191 as master_object_id ,'Pakistan 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 192 as master_object_id ,'Pakistan 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 193 as master_object_id ,'Pakistan 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 165 as master_object_id ,'Pakistan 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 179 as master_object_id ,'Pakistan 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 130 as master_object_id ,'Nigeria 2014.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 108 as master_object_id ,'Nigeria 2014.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 111 as master_object_id ,'Nigeria 2014.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 124 as master_object_id ,'Nigeria 2014.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 115 as master_object_id ,'Nigeria 2014.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 125 as master_object_id ,'Nigeria 2014.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 104 as master_object_id ,'Nigeria 2014.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 110 as master_object_id ,'Nigeria 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 121 as master_object_id ,'Nigeria 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 126 as master_object_id ,'Nigeria 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 160 as master_object_id ,'Afghanistan 2013.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 161 as master_object_id ,'Afghanistan 2013.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 138 as master_object_id ,'Afghanistan 2013.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 119 as master_object_id ,'Nigeria 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 113 as master_object_id ,'Nigeria 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 143 as master_object_id ,'Afghanistan 2013.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 151 as master_object_id ,'Afghanistan 2013.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 129 as master_object_id ,'Nigeria 2012.4'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 132 as master_object_id ,'Nigeria 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 103 as master_object_id ,'Nigeria 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 127 as master_object_id ,'Nigeria 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 118 as master_object_id ,'Nigeria 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 102 as master_object_id ,'Nigeria 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 194 as master_object_id ,'Pakistan 2012.11'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 195 as master_object_id ,'Pakistan 2012.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 196 as master_object_id ,'Pakistan 2012.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 140 as master_object_id ,'Afghanistan 2012.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 149 as master_object_id ,'Afghanistan 2012.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 146 as master_object_id ,'Afghanistan 2012.5'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 133 as master_object_id ,'Afghanistan 2012.7'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 162 as master_object_id ,'Afghanistan 2012.6'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 156 as master_object_id ,'Afghanistan 2012.1'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 154 as master_object_id ,'Afghanistan 2012.3'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 148 as master_object_id ,'Afghanistan 2012.2'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 168 as master_object_id ,'Pakistan 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 172 as master_object_id ,'Pakistan 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 164 as master_object_id ,'Pakistan 2013.11'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 147 as master_object_id ,'Afghanistan 2013.8'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 136 as master_object_id ,'Afghanistan 2013.9'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 158 as master_object_id ,'Afghanistan 2013.12'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 159 as master_object_id ,'Afghanistan 2013.10'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 145 as master_object_id ,'Afghanistan 2013.11'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 115 as master_object_id ,'Tue Apr 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 201 as master_object_id ,'Mon Dec 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 111 as master_object_id ,'Sun Jun 01 00:00:00 UTC 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 201 as master_object_id ,'41974'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 207 as master_object_id ,'Pakistan January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 208 as master_object_id ,'Pakistan February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 206 as master_object_id ,'Afghanistan February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 211 as master_object_id ,'Nigeria February 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 210 as master_object_id ,'Nigeria January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 214 as master_object_id ,'Pakistan March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 213 as master_object_id ,'Afghanistan March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 209 as master_object_id ,'Afghanistan January 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 212 as master_object_id ,'Nigeria March 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 142 as master_object_id ,'Afghanistan April 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 155 as master_object_id ,'Afghanistan May 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 216 as master_object_id ,'Nigeria February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 215 as master_object_id ,'Afghanistan April 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 210 as master_object_id ,'Nigeria Jan 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 212 as master_object_id ,'Nigeria Mar 1, 2015'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 223 as master_object_id ,'nigeria-2015-06-01'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 197 as master_object_id ,'Pakistan December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 200 as master_object_id ,'Afghanistan December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 190 as master_object_id ,'Afghanistan April 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 198 as master_object_id ,'Afghanistan October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 201 as master_object_id ,'Nigeria December 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 202 as master_object_id ,'Afghanistan November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 199 as master_object_id ,'Afghanistan July 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 203 as master_object_id ,'Pakistan November 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 204 as master_object_id ,'Pakistan October 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 180 as master_object_id ,'Pakistan September 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 171 as master_object_id ,'Pakistan Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 199 as master_object_id ,'Afghanistan Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 124 as master_object_id ,'Nigeria Jul 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 163 as master_object_id ,'Paksitan February 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 150 as master_object_id ,'Afganistan May 2014'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 191 as master_object_id ,'Pakistan January 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 188 as master_object_id ,'Pakistan September 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 189 as master_object_id ,'Pakistan August 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 195 as master_object_id ,'Pakistan October 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 194 as master_object_id ,'Pakistan November 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 187 as master_object_id ,'Pakistan June 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 181 as master_object_id ,'Pakistan January 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 186 as master_object_id ,'Pakistan July 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 192 as master_object_id ,'Pakistan February 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 184 as master_object_id ,'Pakistan May 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 183 as master_object_id ,'Pakistan February 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 182 as master_object_id ,'Pakistan March 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 193 as master_object_id ,'Pakistan March 2013'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 196 as master_object_id ,'Pakistan December 2012'  as source_object_code,'campaign' as content_type UNION ALL
+            SELECT 185 as master_object_id ,'Pakistan April 2012'  as source_object_code,'campaign' as content_type
             )c
-            WHERE EXISTS ( SELECT 1 FROM result_structure camp where c.master_object_id = camp.id)
+            WHERE EXISTS ( SELECT 1 FROM campaign camp where c.master_object_id = camp.id)
             )x;
             INSERT INTO source_object_map (master_object_id, source_object_code, mapped_by_id, content_type)
             SELECT
                 c.id
                 , c.slug
                 , 1
-                , 'result_structure'
-            FROM result_structure c WHERE NOT EXISTS (
+                , 'campaign'
+            FROM campaign c WHERE NOT EXISTS (
                 SELECT 1 FROM source_object_map m
                 WHERE m.source_object_code = c.slug
                 );
@@ -1895,12 +1895,12 @@ class Migration(migrations.Migration):
             SELECT sd.id , som.id
             FROM source_data_document sd
             INNER JOIN source_object_map som
-            ON som.content_type in ('indicator','result_structure')
+            ON som.content_type in ('indicator','campaign')
             AND sd.docfile = 'initialize-db';
 
             -- only want 2014-15 campaigns, but we want all possibilities --
 
-            DELETE FROM result_structure CASCADE
+            DELETE FROM campaign CASCADE
             WHERE start_date < '2014-01-01';
 
             DROP TABLE IF EXISTS _all_campaigns;
@@ -1919,13 +1919,13 @@ class Migration(migrations.Migration):
             )x
             ON 1=1;
 
-            INSERT INTO result_structure
-            (office_id, slug, start_date, end_date, result_structure_type_id, created_at)
+            INSERT INTO campaign
+            (office_id, slug, start_date, end_date, campaign_type_id, created_at)
             SELECT
             	office_id, slug, start_date, end_date, campaign_type_id, now()
             FROM _all_campaigns ac
             WHERE NOT EXISTS (
-            	SELECT 1 FROM result_structure c
+            	SELECT 1 FROM campaign c
             	WHERE c.office_id = ac.office_id
             	AND c.start_date = ac.start_date
             );

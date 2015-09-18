@@ -1,5 +1,5 @@
 from django import forms
-from datapoints.models import Location, Indicator, ResultStructure, LocationPermission
+from datapoints.models import Location, Indicator, Campaign, LocationPermission
 
 
 from django.contrib.auth.models import User
@@ -18,10 +18,10 @@ class IndicatorForm(forms.ModelForm):
         fields = ['name','short_name']
 
 
-class ResultStructureForm(forms.ModelForm):
+class CampaignForm(forms.ModelForm):
 
     class Meta:
-        model = ResultStructure
+        model = Campaign
         exclude = ['created_at']
 
 class LocationPermissionForm(forms.ModelForm):

@@ -74,7 +74,7 @@ class MasterRefresh(object):
 
         first_submission = json.loads(self.submission_data.values()[0])
 
-        source_codes, location_codes, result_framework_codes = \
+        source_codes, location_codes, campaign_codes = \
             {'indicator' :first_submission.keys()}, [], []
 
         for ss_id, submission in self.submission_data.iteritems():
@@ -82,12 +82,12 @@ class MasterRefresh(object):
             submission_dict = json.loads(submission)
             location_codes\
                 .append(submission_dict[self.db_doc_deets['location_column']])
-            result_framework_codes\
+            campaign_codes\
                 .append(submission_dict[self.db_doc_deets\
-                    ['result_framework_column']])
+                    ['campaign_column']])
 
         source_codes['location'] = list(set(location_codes))
-        source_codes['result_framework'] = list(set(result_framework_codes))
+        source_codes['campaign'] = list(set(campaign_codes))
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
@@ -100,25 +100,25 @@ class MasterRefresh(object):
         for ss_id, submission_json in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission_json)
-            location_column, result_framework_column = self.db_doc_deets\
+            location_column, campaign_column = self.db_doc_deets\
                 ['location_column']\
-                , self.db_doc_deets['result_framework_column']
+                , self.db_doc_deets['campaign_column']
 
             location_id = source_map_dict.get(('location'\
                     ,submission_dict[location_column]),None)
 
-            result_structure_id = source_map_dict.get(('result_structure'\
-                    ,submission_dict[result_framework_column]),None)
+            campaign_id = source_map_dict.get(('campaign'\
+                    ,submission_dict[campaign_column]),None)
 
             ss_id_list.append(ss_id)
             ss_detail_batch.append(SourceSubmissionDetail(**{
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
                 'location_code':submission_dict[location_column],
-                'result_framework_code':submission_dict\
-                    [result_framework_column],
+                'campaign_code':submission_dict\
+                    [campaign_column],
                 'location_id': location_id,
-                'result_structure_id': result_structure_id,
+                'campaign_id': campaign_id,
             }))
 
         SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
@@ -135,12 +135,12 @@ class MasterRefresh(object):
             .filter(
                  source_submission_id__in= ss_ids_in_batch,
                  location_id__isnull= False,
-                 result_framework_id__isnull= False
-            ).values('location_id','result_framework_id','source_submission_id')
+                 campaign_id__isnull= False
+            ).values('location_id','campaign_id','source_submission_id')
 
         for row in ready_for_doc_datapoint_sync:
-            doc_dps = self.process_source_submission(row['location_id'], \
-                row['result_framework_id'], row['source_submission_id'],\
+            doc_dps = self.submission_to_doc_datapoint(row['location_id'], \
+                row['campaign_id'], row['source_submission_id'],\
                 source_map_dict)
 
         ## update these submissions to processed ##
@@ -158,13 +158,13 @@ class MasterRefresh(object):
                       MAX(id) as id
                     , location_id
                     , indicator_id
-                    , result_framework_id
+                    , campaign_id
                     , MAX(source_submission_id) as source_submission_id
                     , SUM(value) as value
                 FROM doc_datapoint dd
                 WHERE source_submission_id = ANY(%s)
                 AND is_valid = 't'
-                GROUP BY location_id, indicator_id, result_framework_id;
+                GROUP BY location_id, indicator_id, campaign_id;
             ''',[ss_id_list])
 
         for ddp in doc_dps:
@@ -178,15 +178,19 @@ class MasterRefresh(object):
         DataPoint.objects.bulk_create(dp_batch)
 
     ## main() helper methods ##
-    def process_source_submission(self,location_id,result_framework_id,ss_id,\
+    def submission_to_doc_datapoint(self,location_id,campaign_id,ss_id,\
         som_dict):
 
         doc_dp_batch = []
         submission  = json.loads(self.submission_data[ss_id])
 
+        print location_id
+        print submission
+        print campaign_id
+
         for k,v in submission.iteritems():
             doc_dp = self.process_submission_datapoint(k,v,location_id,\
-                result_framework_id,ss_id,som_dict)
+                campaign_id,ss_id,som_dict)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -195,7 +199,7 @@ class MasterRefresh(object):
 
 
     def process_submission_datapoint(self, ind_str, val, location_id, \
-        result_framework_id, ss_id, som_dict): ## FIXME use kwargs..
+        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
 
             try:
                 cleaned_val = self.clean_val(val)
@@ -212,6 +216,7 @@ class MasterRefresh(object):
                         'indicator_id':  indicator_id,
                         'value': cleaned_val,
                         'location_id': location_id,
+                        'campaign_id': campaign_id,
                         'document_id': self.document_id,
                         'source_submission_id': ss_id,
                         'changed_by_id': self.user_id,

@@ -7,7 +7,7 @@ from django.core.serializers import json as djangojson
 from pandas import DataFrame
 from tastypie.serializers import Serializer
 
-from datapoints.models import ResultStructure, Indicator, Location
+from datapoints.models import Campaign, Indicator, Location
 
 class CustomJSONSerializer(Serializer):
     """Does not allow out of range float values
@@ -117,7 +117,7 @@ class CustomSerializer(Serializer):
 
     def to_csv(self, data, options=None):
         '''
-        First lookup the metadata (result_structure, location, indicator) and build a map
+        First lookup the metadata (campaign, location, indicator) and build a map
         cooresponding to id / name.  Afterwords iterate through the dataobjecst
         passed, unpack the indicator objects and create a dataframe which gets
         converted to a csv.
@@ -138,7 +138,7 @@ class CustomSerializer(Serializer):
             expanded_obj = {}
 
             expanded_obj['location'] = meta_lookup['location'][obj['location']]
-            expanded_obj['result_structure'] = meta_lookup['result_structure'][obj['result_structure']]
+            expanded_obj['campaign'] = meta_lookup['campaign'][obj['campaign']]
 
             for ind_dict in obj['indicators']:
 
@@ -170,11 +170,11 @@ class CustomSerializer(Serializer):
 
         '''
         # set up the lookup object
-        meta_lookup = {'location':{},'result_structure':{},'indicator':{}}
+        meta_lookup = {'location':{},'campaign':{},'indicator':{}}
 
-        ## find the location and result_structure ids from the object list
+        ## find the location and campaign ids from the object list
         location_ids = [obj['location'] for obj in object_list]
-        result_structure_ids = [obj['result_structure'] for obj in object_list]
+        campaign_ids = [obj['campaign'] for obj in object_list]
 
 
         ## every object has all indicators, so find the first one, and the IDs
@@ -190,8 +190,8 @@ class CustomSerializer(Serializer):
         for r in Location.objects.filter(id__in=location_ids):
             meta_lookup['location'][r.id] = r.__unicode__()
 
-        for c in result_structure.objects.filter(id__in=result_structure_ids):
-            meta_lookup['result_structure'][c.id] = c.__unicode__()
+        for c in campaign.objects.filter(id__in=campaign_ids):
+            meta_lookup['campaign'][c.id] = c.__unicode__()
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):
             meta_lookup['indicator'][ind.id] = ind.__unicode__()

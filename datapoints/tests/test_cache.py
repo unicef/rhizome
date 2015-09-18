@@ -78,7 +78,7 @@ class CacheRefreshTestCase(TestCase):
         campaign_type = RestultStructureType.objects.create(id=1,name="test")
 
         location_ids = self.model_df_to_data(location_df, location_df,Location)
-        campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
+        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)

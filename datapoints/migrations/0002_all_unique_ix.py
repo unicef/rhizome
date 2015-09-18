@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='docdatapoint',
-            name='result_structure',
-            field=models.ForeignKey(to='datapoints.ResultStructure'),
+            name='campaign',
+            field=models.ForeignKey(to='datapoints.Campaign'),
         ),
         migrations.AddField(
             model_name='docdatapoint',
@@ -67,8 +67,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='datapointcomputed',
-            name='result_structure',
-            field=models.ForeignKey(to='datapoints.ResultStructure'),
+            name='campaign',
+            field=models.ForeignKey(to='datapoints.Campaign'),
         ),
         migrations.AddField(
             model_name='datapointabstracted',
@@ -82,8 +82,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='datapointabstracted',
-            name='result_structure',
-            field=models.ForeignKey(to='datapoints.ResultStructure'),
+            name='campaign',
+            field=models.ForeignKey(to='datapoints.Campaign'),
         ),
         migrations.AddField(
             model_name='datapoint',
@@ -107,8 +107,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='datapoint',
-            name='result_structure',
-            field=models.ForeignKey(to='datapoints.ResultStructure'),
+            name='campaign',
+            field=models.ForeignKey(to='datapoints.Campaign'),
         ),
         migrations.AddField(
             model_name='datapoint',
@@ -152,8 +152,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='aggdatapoint',
-            name='result_structure',
-            field=models.ForeignKey(to='datapoints.ResultStructure'),
+            name='campaign',
+            field=models.ForeignKey(to='datapoints.Campaign'),
         ),
         migrations.CreateModel(
             name='DataPointEntry',
@@ -165,7 +165,7 @@ class Migration(migrations.Migration):
             bases=('datapoints.datapoint',),
         ),
         migrations.AlterUniqueTogether(
-            name='resultstructure',
+            name='Campaign',
             unique_together=set([('office', 'start_date')]),
         ),
         migrations.AlterUniqueTogether(
@@ -186,18 +186,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='datapointcomputed',
-            unique_together=set([('location', 'result_structure', 'indicator')]),
+            unique_together=set([('location', 'campaign', 'indicator')]),
         ),
         migrations.AlterUniqueTogether(
             name='datapointabstracted',
-            unique_together=set([('location', 'result_structure')]),
+            unique_together=set([('location', 'campaign')]),
         ),
         migrations.AlterUniqueTogether(
             name='datapoint',
-            unique_together=set([('indicator', 'location', 'result_structure')]),
+            unique_together=set([('indicator', 'location', 'campaign')]),
         ),
         migrations.AlterUniqueTogether(
             name='aggdatapoint',
-            unique_together=set([('location', 'result_structure', 'indicator')]),
+            unique_together=set([('location', 'campaign', 'indicator')]),
         ),
     ]

@@ -84,18 +84,18 @@ class DashBoardView(IndexView):
 
 class CampaignCreateView(PermissionRequiredMixin,generic.CreateView):
 
-    model = ResultStructure
+    model = Campaign
     success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
-    fields = ['office','result_structure_type','start_date','end_date']
+    fields = ['office','campaign_type','start_date','end_date']
 
 
 class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
-    model = ResultStructure
+    model = Campaign
     success_url = '/ufadmin/campaigns'
     template_name = 'campaigns/create.html'
-    form_class = ResultStructureForm
+    form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
 
     ###############

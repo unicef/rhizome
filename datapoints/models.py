@@ -221,7 +221,7 @@ class LocationType(models.Model):
     '''
 
     name = models.CharField(max_length=55, unique=True)
-    admin_level = models.IntegerField()
+    admin_level = models.IntegerField(unique=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -282,7 +282,7 @@ class LocationPolygon(models.Model):
         db_table = 'location_polygon'
 
 
-class ResultStructureType(models.Model):
+class CampaignType(models.Model):
     '''
     Each campaign must have a campaign_type_id.
 
@@ -296,15 +296,15 @@ class ResultStructureType(models.Model):
         return unicode(self.name)
 
     class Meta:
-        db_table = 'result_structure_type'
+        db_table = 'campaign_type'
 
-class ResultStructure(models.Model):
+class Campaign(models.Model):
     '''
     A period in time in wich a campaign was initaited by the country office.
     '''
 
     office = models.ForeignKey(Office)
-    result_structure_type = models.ForeignKey(ResultStructureType)
+    campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
@@ -318,17 +318,17 @@ class ResultStructure(models.Model):
         return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
-        db_table = 'result_structure'
+        db_table = 'campaign'
         ordering = ('-start_date',)
         unique_together = ('office','start_date')
 
-class ResultStructureAbstracted(models.Model):
+class CampaignAbstracted(models.Model):
     '''
     Everything in campaign plus the "pct_complete" attribute
     '''
 
     office_id = models.IntegerField()
-    result_structure_type_id = models.IntegerField()
+    campaign_type_id = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
@@ -342,7 +342,7 @@ class ResultStructureAbstracted(models.Model):
         return unicode(self.office.name + '-' + unicode(self.start_date))
 
     class Meta:
-        db_table = 'result_structure_abstracted'
+        db_table = 'campaign_abstracted'
         ordering = ('-start_date',)
 
 class DataPoint(models.Model):
@@ -364,7 +364,7 @@ class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    result_structure = models.ForeignKey(ResultStructure)
+    campaign = models.ForeignKey(Campaign)
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -376,7 +376,7 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','location','result_structure')
+        unique_together = ('indicator','location','campaign')
 
 class DocDataPoint(models.Model):
     '''
@@ -386,7 +386,7 @@ class DocDataPoint(models.Model):
     document = models.ForeignKey('source_data.Document') ## redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    result_structure = models.ForeignKey(ResultStructure)
+    campaign = models.ForeignKey(Campaign)
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
@@ -411,13 +411,13 @@ class DataPointEntry(DataPoint):
 class DataPointAbstracted(models.Model):
 
     location = models.ForeignKey(Location)
-    result_structure = models.ForeignKey(ResultStructure)
+    campaign = models.ForeignKey(Campaign)
     indicator_json = JSONField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'datapoint_abstracted'
-        unique_together = ('location','result_structure')
+        unique_together = ('location','campaign')
 
 class DataPointComputed(models.Model):
 
@@ -425,23 +425,23 @@ class DataPointComputed(models.Model):
     cache_job = models.ForeignKey(CacheJob,default=-1)
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    result_structure = models.ForeignKey(ResultStructure)
+    campaign = models.ForeignKey(Campaign)
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        unique_together = ('location','result_structure','indicator')
+        unique_together = ('location','campaign','indicator')
 
 class AggDataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    result_structure = models.ForeignKey(ResultStructure)
+    campaign = models.ForeignKey(Campaign)
     value = models.FloatField()
     cache_job = models.ForeignKey(CacheJob,default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'
-        unique_together = ('location','result_structure','indicator')
+        unique_together = ('location','campaign','indicator')
 
 
 class LocationPermission(models.Model):

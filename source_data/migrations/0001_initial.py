@@ -119,14 +119,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('username_code', models.CharField(max_length=1000)),
-                ('result_structure_code', models.CharField(max_length=1000)),
+                ('campaign_code', models.CharField(max_length=1000)),
                 ('location_code', models.CharField(max_length=1000)),
                 ('location_display', models.CharField(max_length=1000)),
                 ('img_location', models.CharField(max_length=1000)),
                 ('raw_data_proxy', models.CharField(max_length=1)),
                 ('document', models.ForeignKey(to='source_data.Document')),
                 ('location', models.ForeignKey(to='datapoints.Location', null=True)),
-                ('result_structure', models.ForeignKey(to='datapoints.ResultStructure', null=True)),
+                ('campaign', models.ForeignKey(to='datapoints.Campaign', null=True)),
                 ('source_submission', models.OneToOneField(to='source_data.SourceSubmission')),
             ],
             options={

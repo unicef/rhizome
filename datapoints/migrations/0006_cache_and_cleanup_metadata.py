@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL("""
         SELECT setval('indicator_id_seq', (SELECT MAX(id) FROM indicator));
-        SELECT setval('result_structure_id_seq', (SELECT MAX(id) FROM result_structure));
+        SELECT setval('campaign_id_seq', (SELECT MAX(id) FROM campaign));
         SELECT setval('location_id_seq', (SELECT MAX(id) FROM location));
         SELECT setval('indicator_tag_id_seq', (SELECT MAX(id) FROM indicator_tag));
         """),

@@ -127,13 +127,13 @@ class DataPointResource(BaseNonModelResource):
 
         db_data = DataPointAbstracted.objects.filter(
             location_id__in = location_ids,
-            result_structure_id__in = self.parsed_params['campaign__in'])\
-            .order_by('-result_structure__start_date')
+            campaign_id__in = self.parsed_params['campaign__in'])\
+            .order_by('-campaign__start_date')
 
         for row in db_data:
             r = ResultObject()
             r.location = row.location_id
-            r.campaign = row.result_structure_id
+            r.campaign = row.campaign_id
 
             indicator_json = row.indicator_json
             cleaned = self.clean_indicator_json(indicator_json)
@@ -287,7 +287,7 @@ class DataPointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        cs = ResultStructure.objects.filter(
+        cs = Campaign.objects.filter(
             start_date__gte = campaign_start,\
             start_date__lte = campaign_end,\
         )
@@ -307,7 +307,7 @@ class DataPointEntryResource(BaseModelResource):
     # for validating foreign keys
     keys_models = {
         'location_id': Location,
-        'campaign_id': ResultStructure,
+        'campaign_id': Campaign,
         'indicator_id': Indicator
     }
     location = fields.IntegerField(attribute = 'location_id')
@@ -540,7 +540,7 @@ class DataPointEntryResource(BaseModelResource):
 
         if obj.has_key('campaign_id'):
             campaign_id = int(obj['campaign_id'])
-            ResultStructure.objects.get(id=campaign_id)
+            Campaign.objects.get(id=campaign_id)
 
         if obj.has_key('indicator_id'):
             indicator_id = int(obj['indicator_id'])

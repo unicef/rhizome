@@ -110,7 +110,7 @@ class DocTransform(object):
         batch = {}
         for i,(submission) in enumerate(file_stream):
 
-            ss, instance_guid = self.process_source_submission(submission,i)
+            ss, instance_guid = self.process_raw_source_submission(submission,i)
             if ss is not None:
                 batch[instance_guid] = ss
             else:
@@ -173,7 +173,7 @@ class DocTransform(object):
         return sm_obj.id
 
 
-    def process_source_submission(self, submission, i):
+    def process_raw_source_submission(self, submission, i):
 
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))

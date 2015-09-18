@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
         SELECT 'processed_sucessfully','processed_sucessfully' UNION ALL
         SELECT 'TO_PROCESS','TO_PROCESS';
         -- CAMPAIGN_TYPE --
-        INSERT INTO result_structure_type
+        INSERT INTO campaign_type
         (name)
         SELECT 'National Immunization Days (NID)' UNION ALL
         SELECT 'Sub-national Immunization Days (SNID)' UNION ALL

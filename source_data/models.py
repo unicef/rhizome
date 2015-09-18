@@ -6,7 +6,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
-from datapoints.models import Indicator, Location, ResultStructure
+from datapoints.models import Indicator, Location, Campaign
 from jsonfield import JSONField
 
     ###################
@@ -84,7 +84,7 @@ class Document(models.Model):
 
 class SourceObjectMap(models.Model):
     # FIXME -> need to check what would be foreign keys
-    # so regoin_maps / result_structure_maps are vlide
+    # so regoin_maps / campaign_maps are vlide
 
     master_object_id = models.IntegerField() ## need to think about to FK this.
     master_object_name = models.CharField(max_length=255,null=True)
@@ -148,13 +148,13 @@ class SourceSubmissionDetail(models.Model):
     document = models.ForeignKey(Document)
     source_submission = models.OneToOneField(SourceSubmission)
     username_code = models.CharField(max_length=1000)
-    result_structure_code = models.CharField(max_length=1000)
+    campaign_code = models.CharField(max_length=1000)
     location_code = models.CharField(max_length=1000)
     location_display = models.CharField(max_length=1000)
     img_location = models.CharField(max_length=1000)
     raw_data_proxy = models.CharField(max_length=1) ## hack so the admin metadata call works
     location = models.ForeignKey('datapoints.location', null=True)
-    result_structure = models.ForeignKey('datapoints.resultstructure', null=True)
+    campaign = models.ForeignKey('datapoints.Campaign', null=True)
 
     class Meta:
         db_table = 'source_submission_detail'

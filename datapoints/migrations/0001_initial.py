@@ -270,7 +270,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(unique=True, max_length=55)),
-                ('admin_level', models.IntegerField()),
+                ('admin_level', models.IntegerField(unique=True),
             ],
             options={
                 'db_table': 'location_type',
@@ -289,7 +289,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='ResultStructure',
+            name='Campaign',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start_date', models.DateField()),
@@ -300,15 +300,15 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-start_date',),
-                'db_table': 'result_structure',
+                'db_table': 'campaign',
             },
         ),
         migrations.CreateModel(
-            name='ResultStructureAbstracted',
+            name='CampaignAbstracted',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('office_id', models.IntegerField()),
-                ('result_structure_type_id', models.IntegerField()),
+                ('campaign_type_id', models.IntegerField()),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
                 ('slug', autoslug.fields.AutoSlugField(populate_from=b'get_full_name', unique=True, editable=False)),
@@ -317,17 +317,17 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-start_date',),
-                'db_table': 'result_structure_abstracted',
+                'db_table': 'campaign_abstracted',
             },
         ),
         migrations.CreateModel(
-            name='ResultStructureType',
+            name='CampaignType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=55)),
             ],
             options={
-                'db_table': 'result_structure_type',
+                'db_table': 'campaign_type',
             },
         ),
         migrations.CreateModel(
@@ -352,9 +352,9 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='resultstructure',
-            name='result_structure_type',
-            field=models.ForeignKey(to='datapoints.ResultStructureType'),
+            model_name='Campaign',
+            name='campaign_type',
+            field=models.ForeignKey(to='datapoints.CampaignType'),
         ),
         migrations.AddField(
             model_name='location',
@@ -383,7 +383,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='historicaldatapointentry',
-            name='result_structure',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='datapoints.ResultStructure', null=True),
+            name='campaign',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='datapoints.Campaign', null=True),
         ),
     ]

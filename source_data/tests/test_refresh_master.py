@@ -127,7 +127,7 @@ class RefreshMasterTestCase(TestCase):
             mapped_by_id = self.user.id
         )
 
-        map_campaign_id = ResultStructure.objects.all()[0].id
+        map_campaign_id = Campaign.objects.all()[0].id
         som_id_c = SourceObjectMap.objects.create(
             content_type = 'campaign',
             source_object_code = campaign_code,
@@ -223,10 +223,10 @@ class RefreshMasterTestCase(TestCase):
             DocDetailType.objects.create(name=rt)
 
 
-        campaign_type = ResultStructureType.objects.create(id=1,name="test")
+        campaign_type = CampaignType.objects.create(id=1,name="test")
 
         location_ids = self.model_df_to_data(location_df,Location)
-        campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
+        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
