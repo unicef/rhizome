@@ -221,7 +221,7 @@ class BaseNonModelResource(Resource):
 
         ## now apply locational permissions ##
 
-        # permitted_location_qs = locationTree.objects.filter(parent_location_id__in =\
+        # permitted_location_qs = LocationTree.objects.filter(parent_location_id__in =\
         #     location_ids).values_list('location_id',flat=True)
 
         # final_location_ids = list(set(location_ids).intersection(set\

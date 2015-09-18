@@ -584,7 +584,7 @@ def cache_campaign_abstracted():
 
 def cache_location_tree():
 
-    rt_raw = locationTree.objects.raw(
+    rt_raw = LocationTree.objects.raw(
     '''
     TRUNCATE TABLE location_tree;
 

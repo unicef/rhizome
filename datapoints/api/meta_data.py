@@ -240,7 +240,7 @@ class DocDataPointResource(BaseModelResource):
 
         try:
             location_id = request.GET['location_id']
-            all_location_ids = locationTree.objects\
+            all_location_ids = LocationTree.objects\
                 .filter(parent_location_id = location_id).values_list('location_id',flat=True)
         except KeyError:
             all_location_ids = []

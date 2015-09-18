@@ -169,7 +169,7 @@ class Migration(migrations.Migration):
             unique_together=set([('office', 'start_date')]),
         ),
         migrations.AlterUniqueTogether(
-            name='locationtree',
+            name='LocationTree',
             unique_together=set([('parent_location', 'location')]),
         ),
         migrations.AlterUniqueTogether(
