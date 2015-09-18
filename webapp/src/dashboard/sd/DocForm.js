@@ -93,7 +93,7 @@ var DocForm = React.createClass({
   syncDocData : function (config_val) {
       var self = this;
 
-      api.transformUpload({document_id: this.state.created_doc_id})
+      api.transformUpload({document_id: this.state.created_doc_id,null,{'cache-control':'no-cache'}})
       .then(function (response) {
           self.setState({doc_is_refreshed: true})
       });

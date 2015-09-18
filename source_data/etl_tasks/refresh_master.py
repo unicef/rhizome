@@ -21,17 +21,32 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
-        self.ss_batch_size = 250
+        self.ss_location_code_batch_size = 10
         self.document_id = document_id
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
 
-        self.submission_data = dict(SourceSubmission.objects\
+        self.all_to_process_ss_ids = SourceSubmission.objects.filter(\
+            document_id = self.document_id,
+            process_status = 'TO_PROCESS').values_list('id',flat=True)\
+
+        self.location_codes_to_process = SourceSubmissionDetail.objects\
             .filter(\
-                document_id = self.document_id,
-                process_status = 'TO_PROCESS')\
-            .values_list('id','submission_json')[:self.ss_batch_size])
+                source_submission_id__in = self.all_to_process_ss_ids)\
+            .values_list('location_code',flat = True)\
+                [:self.ss_location_code_batch_size]
+
+        self.submission_ids_in_location_batch = SourceSubmissionDetail\
+            .objects\
+            .filter(location_code__in = self.location_codes_to_process)\
+            .values_list('source_submission_id',flat = True)\
+
+        print self.submission_ids_in_location_batch
+        print '==='
+        self.submission_data = dict(SourceSubmission.objects\
+            .filter(id__in = self.submission_ids_in_location_batch)
+            .values_list('id','submission_json'))
 
         self.refresh_submission_details()
 
@@ -143,7 +158,6 @@ class MasterRefresh(object):
                  campaign_id__isnull= False
             ).values('location_id','campaign_id','source_submission_id')
 
-        print ready_for_doc_datapoint_sync
         for row in ready_for_doc_datapoint_sync:
             doc_dps = self.process_source_submission(row['location_id'], \
                 row['campaign_id'], row['source_submission_id'],source_map_dict)
