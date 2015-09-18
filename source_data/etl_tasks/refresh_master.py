@@ -205,8 +205,6 @@ class MasterRefresh(object):
     def process_submission_datapoint(self, ind_str, val, location_id, \
         campaign_id, ss_id, som_dict): ## FIXME use kwargs..
 
-            print 'process_subumssion_id: %s ' % ss_id
-
             try:
                 cleaned_val = self.clean_val(val)
             except ValueError:
