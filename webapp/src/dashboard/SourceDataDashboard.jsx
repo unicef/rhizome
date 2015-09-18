@@ -12,7 +12,6 @@ var DocOverview = require('dashboard/sd/DocOverview.js');
 var DocForm = require('dashboard/sd/DocForm.js');
 
 var TitleMenu  	= require('component/TitleMenu.jsx');
-var RegionTitleMenueMenu  	= require('component/RegionTitleMenu');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
 
