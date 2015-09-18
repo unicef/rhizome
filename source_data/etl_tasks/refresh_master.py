@@ -91,6 +91,11 @@ class MasterRefresh(object):
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
     def refresh_submission_details(self):
+        '''
+        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
+        x = mr(1,2)
+        x.refresh_submission_details()
+        '''
 
         source_map_dict = self.get_document_meta_mappings()
 
@@ -118,7 +123,8 @@ class MasterRefresh(object):
                 'campaign_id': campaign_id,
             }))
 
-        SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
+        SourceSubmissionDetail.objects\
+            .filter(source_submission_id__in=ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
     def submissions_to_doc_datapoints(self):
