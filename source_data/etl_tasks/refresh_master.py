@@ -33,6 +33,8 @@ class MasterRefresh(object):
                 process_status = 'TO_PROCESS')\
             .values_list('id','submission_json')[:self.ss_batch_size])
 
+        self.refresh_submission_details()
+
     ## __init__ helper methods ##
     def get_document_config(self):
 
@@ -141,8 +143,6 @@ class MasterRefresh(object):
                  campaign_id__isnull= False
             ).values('location_id','campaign_id','source_submission_id')
 
-        print '====='
-        print 'not ready for batch?'
         print ready_for_doc_datapoint_sync
         for row in ready_for_doc_datapoint_sync:
             doc_dps = self.process_source_submission(row['location_id'], \
