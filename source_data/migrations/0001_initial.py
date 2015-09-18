@@ -37,6 +37,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-created_at',),
+                'db_table': 'source_doc',
             },
         ),
         migrations.CreateModel(
@@ -75,6 +76,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-date_attempted',),
+                'db_table': 'etl_job',
             },
         ),
         migrations.CreateModel(
@@ -84,6 +86,9 @@ class Migration(migrations.Migration):
                 ('status_text', models.CharField(max_length=25)),
                 ('status_description', models.CharField(max_length=255)),
             ],
+            options={
+                'db_table': 'process_status',
+            },
         ),
         migrations.CreateModel(
             name='SourceObjectMap',
