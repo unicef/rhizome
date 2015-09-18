@@ -1,6 +1,5 @@
 var _											= require('lodash');
 var React 								= require('react');
-var RegionTitleMenueMenu     	= require('component/RegionTitleMenu');
 var DashboardStore    		= require('stores/DashboardStore');
 var GroupFormStore 				= require('stores/GroupFormStore');
 var ChartBuilderStore 		= require('stores/ChartBuilderStore');
@@ -52,7 +51,7 @@ var ReviewTable = React.createClass({
 	},
 
 	_callApi : function(){
-		
+
 		this.props.getData({
 				document_id:this.props.doc_id,
 				location_id:this.props.location.id,

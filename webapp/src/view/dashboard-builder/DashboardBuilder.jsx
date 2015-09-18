@@ -22,7 +22,7 @@ var IndicatorStore      = require('stores/IndicatorStore');
 var GeoStore            = require('stores/GeoStore');
 var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
-var RegionTitleMenueMenu     = require('component/RegionTitleMenu');
+var RegionTitleMenu     = require('component/RegionTitleMenu');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
 
@@ -277,7 +277,7 @@ module.exports = React.createClass({
 	                     selected={campaign}
 	                     sendValue={this._setCampaign} />
 	                   &emsp;
-	                   <RegionTitleMenueMenu
+	                   <RegionTitleMenu
 	                     locations={this.state.dashboardStore.locations}
 	                     selected={location}
 	                     sendValue={this._setlocation} />

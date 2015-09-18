@@ -9,7 +9,7 @@ var moment = require('moment');
 var dashboardInit = require('data/dashboardInit');
 
 var TitleMenu = require('component/TitleMenu.jsx');
-var RegionTitleMenueMenu = require('component/RegionTitleMenu');
+var RegionTitleMenu = require('component/RegionTitleMenu');
 var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 
@@ -295,7 +295,7 @@ var Dashboard = React.createClass({
                   selected={campaign}
                   sendValue={this._setCampaign} />
                 &emsp;
-                <RegionTitleMenueMenu
+                <RegionTitleMenu
                   locations={this.state.locations}
                   selected={location}
                   sendValue={this._setlocation} />
