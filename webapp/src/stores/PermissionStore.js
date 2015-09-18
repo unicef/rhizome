@@ -27,7 +27,7 @@ var PermissionStore = Reflux.createStore({
 
   // API
   userHasPermission(permissionString) {
-    console.log("userHasPermission:", permissionString, this.permissions.indexOf(permissionString.toLowerCase()) > -1);
+    // console.log("userHasPermission:", permissionString, this.permissions.indexOf(permissionString.toLowerCase()) > -1);
     return this.permissions.indexOf(permissionString.toLowerCase()) > -1;
   },
 
