@@ -24,7 +24,13 @@ BEGIN
   INNER JOIN _tmp_calc_datapoint d_whole
       ON whole.indicator_component_id = d_whole.indicator_id
       AND d_part.campaign_id = d_whole.campaign_id
-      AND d_part.location_id = d_whole.location_id;
+      AND d_part.location_id = d_whole.location_id
+  WHERE NOT EXISTS ( 
+      SELECT 1 FROM _tmp_calc_datapoint tcd
+      WHERE tcd.campaign_id = d_part.campaign_id
+      AND tcd.location_id = d_part.location_id
+      AND tcd.indicator_id = part.indicator_id
+      );
 
     RETURN QUERY
 
