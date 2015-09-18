@@ -46,7 +46,7 @@ class RefreshMasterTestCase(TestCase):
             2. Inserting any new mappings into source_object_map
             3. Associating *all* source_object_maps with self.document_id ( even
               those created in other documents)
-            4. Inserting one record into source_submission_detail        '''
+            4. Inserting one record into submission_detail        '''
 
         self.set_up()
 

@@ -420,7 +420,7 @@ class Migration(migrations.Migration):
         WHERE tim.indicator_slug = som.source_object_code
     );
     -- attribute to document --
-    INSERT INTO document_to_source_object_map
+    INSERT INTO doc_object_map
     (document_id, source_object_map_id)
     SELECT
         sdd.id
@@ -428,10 +428,10 @@ class Migration(migrations.Migration):
     FROM source_object_map som
     INNER JOIN _tmp_indicator_map tim
     ON tim.indicator_slug = som.source_object_code
-    INNER JOIN source_data_document sdd
+    INNER JOIN source_doc sdd
     ON sdd.guid = 'initialize-db'
     WHERE NOT EXISTS (
-        SELECT 1 FROM document_to_source_object_map d
+        SELECT 1 FROM doc_object_map d
         WHERE d.source_object_map_id = som.id
         AND d.document_id = sdd.id
     );

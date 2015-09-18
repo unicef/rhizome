@@ -38,7 +38,7 @@ class MasterRefresh(object):
     ## __init__ helper methods ##
     def get_document_config(self):
 
-        detail_types, document_details = {}, {}
+        detail_types, doc_details = {}, {}
         ddt_qs = DocDetailType.objects.all().values()
 
         for row in ddt_qs:
@@ -49,10 +49,10 @@ class MasterRefresh(object):
             .values()
 
         for row in dd_qs:
-            document_details[detail_types[row['doc_detail_type_id']]] =\
+            doc_details[detail_types[row['doc_detail_type_id']]] =\
                 row['doc_detail_value']
 
-        return document_details
+        return doc_details
 
     def get_document_meta_mappings(self):
 

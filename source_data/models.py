@@ -25,6 +25,7 @@ class EtlJob(models.Model):
     success_msg = models.CharField(max_length=255)
 
     class Meta:
+        db_table = 'etl_job'
         ordering = ('-date_attempted',)
 
 
@@ -49,6 +50,8 @@ class ProcessStatus(models.Model):
 
     class Meta:
         app_label = 'source_data'
+        db_table = 'process_status'
+
 
     ##########################
     ####### CSV UPLOAD #######
@@ -64,6 +67,7 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'source_doc'
         ordering = ('-created_at',)
 
     def save(self, *args, **kwargs):
@@ -104,7 +108,7 @@ class DocumentSourceObjectMap(models.Model):
     class Meta:
 
         unique_together = (('document','source_object_map'))
-        db_table = 'document_to_source_object_map'
+        db_table = 'doc_object_map'
 
 class DocDetailType(models.Model):
     '''
@@ -112,7 +116,7 @@ class DocDetailType(models.Model):
     name = models.CharField(max_length=255,unique=True)
 
     class Meta:
-        db_table = 'document_detail_type'
+        db_table = 'doc_detail_type'
 
 
 class DocumentDetail(models.Model):
@@ -124,7 +128,7 @@ class DocumentDetail(models.Model):
     doc_detail_value = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'document_detail'
+        db_table = 'doc_detail'
         unique_together = (('document','doc_detail_type'))
 
 
@@ -157,4 +161,4 @@ class SourceSubmissionDetail(models.Model):
     campaign = models.ForeignKey('datapoints.Campaign', null=True)
 
     class Meta:
-        db_table = 'source_submission_detail'
+        db_table = 'submission_detail'

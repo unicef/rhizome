@@ -3204,10 +3204,10 @@ class Migration(migrations.Migration):
 	) x
 	INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) y
 	ON 1=1;
-	INSERT INTO document_to_source_object_map
+	INSERT INTO doc_object_map
 	(document_id,source_object_map_id)
 	SELECT sd.id , som.id
-	FROM source_data_document sd
+	FROM source_doc sd
 	INNER JOIN source_object_map som
 	ON som.content_type = 'location'
 	AND sd.docfile = 'initialize-db';

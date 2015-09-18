@@ -1890,10 +1890,10 @@ class Migration(migrations.Migration):
             SELECT 'group_spec_events:Spec_VCMAttendedNCer',152
             )x;
 
-            INSERT INTO document_to_source_object_map
+            INSERT INTO doc_object_map
             (document_id,source_object_map_id)
             SELECT sd.id , som.id
-            FROM source_data_document sd
+            FROM source_doc sd
             INNER JOIN source_object_map som
             ON som.content_type in ('indicator','campaign')
             AND sd.docfile = 'initialize-db';

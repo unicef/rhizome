@@ -22,17 +22,17 @@ class Migration(migrations.Migration):
 
     migrations.RunSQL("""
         -- INITIAL DOCUMENT --
-        INSERT INTO source_data_document
+        INSERT INTO source_doc
         (created_by_id,docfile,guid,doc_title,created_at)
         SELECT id,'initialize-db','initialize-db','initialize-db',NOW()
         FROM auth_user
         WHERE NOT EXISTS (
-            SELECT 1 FROM source_data_document sdd
+            SELECT 1 FROM source_doc sdd
             WHERE guid = 'initialize-db'
         )
         LIMIT 1;
         --  DOCUMENT DETAIL  --
-        INSERT INTO document_detail_type
+        INSERT INTO doc_detail_type
         (name)
         SELECT 'odk_host' UNION ALL
         SELECT 'odk_form_name' UNION ALL
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
         INSERT INTO cache_job (id,date_attempted,date_completed,is_error,response_msg)
         SELECT -1, now(),now(),CAST(0 as BOOLEAN),'';
         -- PROCESS STATUS --
-        INSERT INTO source_data_processstatus
+        INSERT INTO process_status
         (status_text, status_description)
         SELECT 'processed_sucessfully','processed_sucessfully' UNION ALL
         SELECT 'TO_PROCESS','TO_PROCESS';

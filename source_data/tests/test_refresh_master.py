@@ -95,7 +95,7 @@ class RefreshMasterTestCase(TestCase):
         different document.
 
         A few things this method checks:
-            1. there is a record in document_to_source_object_map even for
+            1. there is a record in doc_object_map even for
               mappings that existed before this document was ingested.
             2. WHen the submission detail is refreshed, the reiogn/campaign ids
                that we mapped should exist in that row.

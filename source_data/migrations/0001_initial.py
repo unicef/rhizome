@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=255)),
             ],
             options={
-                'db_table': 'document_detail_type',
+                'db_table': 'doc_detail_type',
             },
         ),
         migrations.CreateModel(
@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('document', models.ForeignKey(to='source_data.Document')),
             ],
             options={
-                'db_table': 'document_detail',
+                'db_table': 'doc_detail',
             },
         ),
         migrations.CreateModel(
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('document', models.ForeignKey(to='source_data.Document')),
             ],
             options={
-                'db_table': 'document_to_source_object_map',
+                'db_table': 'doc_object_map',
             },
         ),
         migrations.CreateModel(
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
                 ('source_submission', models.OneToOneField(to='source_data.SourceSubmission')),
             ],
             options={
-                'db_table': 'source_submission_detail',
+                'db_table': 'submission_detail',
             },
         ),
         migrations.AddField(
