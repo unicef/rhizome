@@ -83,8 +83,7 @@ class MasterRefresh(object):
             location_codes\
                 .append(submission_dict[self.db_doc_deets['location_column']])
             campaign_codes\
-                .append(submission_dict[self.db_doc_deets\
-                    ['campaign_column']])
+                .append(submission_dict[self.db_doc_deets['campaign_column']])
 
         source_codes['location'] = list(set(location_codes))
         source_codes['campaign'] = list(set(campaign_codes))
@@ -100,8 +99,7 @@ class MasterRefresh(object):
         for ss_id, submission_json in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission_json)
-            location_column, campaign_column = self.db_doc_deets\
-                ['location_column']\
+            location_column, campaign_column = self.db_doc_deets['location_column']\
                 , self.db_doc_deets['campaign_column']
 
             location_id = source_map_dict.get(('location'\
@@ -115,8 +113,7 @@ class MasterRefresh(object):
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
                 'location_code':submission_dict[location_column],
-                'campaign_code':submission_dict\
-                    [campaign_column],
+                'campaign_code':submission_dict[campaign_column],
                 'location_id': location_id,
                 'campaign_id': campaign_id,
             }))
@@ -126,7 +123,7 @@ class MasterRefresh(object):
 
     def submissions_to_doc_datapoints(self):
 
-        self.som_dict = self.get_document_meta_mappings()
+        source_map_dict = self.get_document_meta_mappings()
 
         submissions_ready_for_sync = []
 
@@ -139,8 +136,8 @@ class MasterRefresh(object):
             ).values('location_id','campaign_id','source_submission_id')
 
         for row in ready_for_doc_datapoint_sync:
-            doc_dps = self.submission_to_doc_datapoint(row['location_id'], \
-                row['campaign_id'], row['source_submission_id'])
+            doc_dps = self.process_source_submission(row['location_id'], \
+                row['campaign_id'], row['source_submission_id'],source_map_dict)
 
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
@@ -176,15 +173,18 @@ class MasterRefresh(object):
         DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
         DataPoint.objects.bulk_create(dp_batch)
 
+        pass
+
     ## main() helper methods ##
-    def submission_to_doc_datapoint(self,location_id,campaign_id,ss_id):
+    def process_source_submission(self,location_id,campaign_id,ss_id,som_dict):
 
         doc_dp_batch = []
+
         submission  = json.loads(self.submission_data[ss_id])
 
         for k,v in submission.iteritems():
             doc_dp = self.process_submission_datapoint(k,v,location_id,\
-                campaign_id,ss_id)
+                campaign_id,ss_id,som_dict)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -193,7 +193,7 @@ class MasterRefresh(object):
 
 
     def process_submission_datapoint(self, ind_str, val, location_id, \
-        campaign_id, ss_id): ## FIXME use kwargs..
+        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
 
             try:
                 cleaned_val = self.clean_val(val)
@@ -201,7 +201,7 @@ class MasterRefresh(object):
                 return None
 
             try:
-                indicator_id = self.som_dict[('indicator',ind_str)]
+                indicator_id = som_dict[('indicator',ind_str)]
             except KeyError:
                 return None
 
