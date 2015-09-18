@@ -126,7 +126,7 @@ class MasterRefresh(object):
 
     def submissions_to_doc_datapoints(self):
 
-        source_map_dict = self.get_document_meta_mappings()
+        self.som_dict = self.get_document_meta_mappings()
 
         submissions_ready_for_sync = []
 
@@ -140,8 +140,7 @@ class MasterRefresh(object):
 
         for row in ready_for_doc_datapoint_sync:
             doc_dps = self.submission_to_doc_datapoint(row['location_id'], \
-                row['campaign_id'], row['source_submission_id'],\
-                source_map_dict)
+                row['campaign_id'], row['source_submission_id'])
 
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
@@ -178,19 +177,14 @@ class MasterRefresh(object):
         DataPoint.objects.bulk_create(dp_batch)
 
     ## main() helper methods ##
-    def submission_to_doc_datapoint(self,location_id,campaign_id,ss_id,\
-        som_dict):
+    def submission_to_doc_datapoint(self,location_id,campaign_id,ss_id):
 
         doc_dp_batch = []
         submission  = json.loads(self.submission_data[ss_id])
 
-        print location_id
-        print submission
-        print campaign_id
-
         for k,v in submission.iteritems():
             doc_dp = self.process_submission_datapoint(k,v,location_id,\
-                campaign_id,ss_id,som_dict)
+                campaign_id,ss_id)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -199,7 +193,7 @@ class MasterRefresh(object):
 
 
     def process_submission_datapoint(self, ind_str, val, location_id, \
-        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
+        campaign_id, ss_id): ## FIXME use kwargs..
 
             try:
                 cleaned_val = self.clean_val(val)
@@ -207,7 +201,7 @@ class MasterRefresh(object):
                 return None
 
             try:
-                indicator_id = som_dict[('indicator',ind_str)]
+                indicator_id = self.som_dict[('indicator',ind_str)]
             except KeyError:
                 return None
 
