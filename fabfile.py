@@ -1,8 +1,9 @@
 # example invocation
 # $ fab -H ubuntu@xx.x.xxx.xx deploy -i ~/.ssh/some.key
 
-from fabric.api import local, run, cd, put
+from fabric.api import local, run, cd, put, env
 
+env.use_ssh_config = True
 # this can be set by passing venv_path arg to deploy() target
 local_venv_path = None
 
