@@ -21,12 +21,12 @@ fi;
 # deploy to target
 TARGET=""
 if [ $deploy_target = "TEST" ]; then
-    TARGET="ul04.seedscientific.com"
+    TARGET=""
 fi;
 if [ $deploy_target = "STAGE" ]; then
-    TARGET="poliostage.seedscientific.com"
+    TARGET=""
 fi;
 if [ $deploy_target = "PROD" ]; then
-    TARGET="polio.seedscientific.com"
+    TARGET=""
 fi;
 fab -H ubuntu@$TARGET deploy
