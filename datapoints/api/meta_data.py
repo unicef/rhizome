@@ -92,10 +92,15 @@ class DashboardResource(BaseModelResource):
                 title=dash_title,
                 owner_id = request.user.id
                 ).id
+
+            qs = CustomDashboard.objects.filter(id=dash_id).values()
+            return qs
+
         except KeyError:
             dash_id = -1
 
-        return CustomDashboard.objects.filter(id=dash_id).values()
+        return super(DashboardResource, self).get_object_list(request)
+
 
     class Meta(BaseModelResource.Meta):
         queryset = CustomDashboard.objects.all().values()
