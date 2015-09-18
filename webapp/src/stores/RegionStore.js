@@ -3,7 +3,7 @@
 var Reflux = require('reflux');
 var api = require('data/api');
 
-var locationStore = Reflux.createStore({
+var RegionStore = Reflux.createStore({
   init() {
     this.locations = []
     this.locationTypes = []
@@ -44,4 +44,4 @@ var locationStore = Reflux.createStore({
   }
 });
 
-module.exports = locationStore;
+module.exports = RegionStore;

@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
-var locationStore = require('stores/locationStore');
+var RegionStore = require('stores/RegionStore');
 var CampaignStore = require('stores/CampaignStore');
 
 var api = require('data/api');
@@ -17,8 +17,8 @@ var DashboardStore = Reflux.createStore({
     this.loaded = false;
     this.indicators = {};
     Promise.all([
-        locationStore.getlocationsPromise(),
-        locationStore.getlocationTypesPromise(),
+        RegionStore.getlocationsPromise(),
+        RegionStore.getlocationTypesPromise(),
 	    	CampaignStore.getCampaignsPromise(),
     	])
       .then(_.spread((locations, locationsTypes, campaigns)=> {

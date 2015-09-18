@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
-var locationStore = require('stores/locationStore');
+var RegionStore = require('stores/RegionStore');
 var CampaignStore = require('stores/CampaignStore');
 
 var api = require('data/api');
@@ -20,7 +20,7 @@ var NavigationStore = Reflux.createStore({
 
     Promise.all([
     		CampaignStore.getCampaignsPromise(),
-    		locationStore.getlocationsPromise(),
+    		RegionStore.getlocationsPromise(),
     		api.office().then(response => _.indexBy(response.objects, 'id')),
     		api.get_dashboard(),
     		api.source_doc()

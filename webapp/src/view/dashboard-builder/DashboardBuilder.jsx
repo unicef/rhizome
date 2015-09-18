@@ -22,7 +22,7 @@ var IndicatorStore      = require('stores/IndicatorStore');
 var GeoStore            = require('stores/GeoStore');
 var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
-var locationTitleMenu     = require('component/locationTitleMenu.jsx');
+var locationTitleMenu     = require('component/RegionTitleMenu');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
 

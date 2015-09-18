@@ -25,7 +25,7 @@ const fields = {
 
 const fieldNamesOnTable = ['id', 'name', 'edit_link'];
 
-var locationsAdmin = React.createClass({
+var RegionAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
@@ -51,4 +51,4 @@ var locationsAdmin = React.createClass({
 	}
 });
 
-module.exports = locationsAdmin;
+module.exports = RegionAdmin;

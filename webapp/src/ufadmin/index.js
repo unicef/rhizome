@@ -22,7 +22,7 @@ var routes = (
 	<Route name="app" path="/ufadmin/" handler={AdminApp}>
 		<Route name="users" handler={require('./UsersAdmin')} />
 		<Route name="roles" handler={require('./GroupsAdmin')} />
-		<Route name="locations" handler={require('./locationsAdmin')} />
+		<Route name="locations" handler={require('./RegionAdmin')} />
 		<Route name="campaigns" handler={require('./CampaignsAdmin')} />
 		<Route name="indicators" handler={require('./IndicatorsAdmin')} />
 	</Route>

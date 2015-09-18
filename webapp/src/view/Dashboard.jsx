@@ -9,7 +9,7 @@ var moment = require('moment');
 var dashboardInit = require('data/dashboardInit');
 
 var TitleMenu = require('component/TitleMenu.jsx');
-var locationTitleMenu = require('component/locationTitleMenu.jsx');
+var locationTitleMenu = require('component/RegionTitleMenu');
 var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 

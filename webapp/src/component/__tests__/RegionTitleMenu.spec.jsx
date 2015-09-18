@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
-import locationTitleMenu from '../locationTitleMenu.jsx'
+import locationTitleMenu from '../RegionTitleMenu'
+
 
 describe(__filename, () => {
   context('build up location data', () => {
