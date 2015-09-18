@@ -423,7 +423,7 @@ class GeoResource(BaseNonModelResource):
             self.err = err
             return []
 
-        polygon_values_list = locationPolygon.objects.filter(location_id__in=\
+        polygon_values_list = LocationPolygon.objects.filter(location_id__in=\
             locations_to_return).values()
 
         features = []
