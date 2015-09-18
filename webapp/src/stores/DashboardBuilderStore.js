@@ -37,7 +37,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	 else {
 	 	api.get_dashboard({id:id})
 	 		.then(function (response) {
-	 		    
+
 	 			self.data.dashboard = response.objects[0];
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
 	 			self.data.dashboardTitle = 	response.objects[0].title;
@@ -96,7 +96,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	  this.data.dashboard.charts[newIndex] = temp;
 	  this.saveDashboard()
 	  this.trigger(this.data);
-	},  
+	},
     onMoveBackward:function(index){
       var newIndex;
       if(index==0)
@@ -111,7 +111,7 @@ var DashboardBuilderStore = Reflux.createStore({
       this.data.dashboard.charts[newIndex] = temp;
       this.saveDashboard()
       this.trigger(this.data);
-    },  
+    },
     onDeleteDashboard:function(){
        var data = {
          description: this.data.dashboardDescription,
@@ -122,7 +122,7 @@ var DashboardBuilderStore = Reflux.createStore({
        delete this.data.dashboard.charts;
        var dj = JSON.stringify(this.data.dashboard.dashboard_json);
        this.data.dashboard.id = '';
-       
+
        api.save_dashboard({id:'',title:this.data.dashboard.title}).then(function(response){
           window.location = '/';
        });
@@ -134,9 +134,10 @@ var DashboardBuilderStore = Reflux.createStore({
 	     dashboard_json:'[]'
 	   };
 	   api.save_dashboard(data).then(function(response){
-	      if(response.objects.new_id)
+			 	var chart_obj = response.objects[0]
+	      if(chart_obj.id)
 	      {
-	      	window.location = "/datapoints/dashboards/edit/"+response.objects.new_id;
+	      	window.location = "/datapoints/dashboards/edit/"+ chart_obj.id;
 	      }
 	      else {
 	      	alert("There was an error saving your chart");
@@ -175,7 +176,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	onUpdateDescription:function(description){
 	   this.data.dashboardDescription = description;
 	  // this.trigger(this.data);
-	   
+
 	   clearTimeout(this.timer);
 	   this.timer = setTimeout(function(){this.saveDashboard()}.bind(this), 1000);
 	},

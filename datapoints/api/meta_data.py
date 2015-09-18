@@ -82,9 +82,28 @@ class IndicatorToTagResource(BaseModelResource):
 
 class DashboardResource(BaseModelResource):
 
+    def get_object_list(self,request):
+        '''
+        '''
+
+        try:
+            dash_title = request.POST['title']
+            dash_id = CustomDashboard.objects.create(\
+                title=dash_title,
+                owner_id = request.user.id
+                ).id
+        except KeyError:
+            dash_id = -1
+
+        return CustomDashboard.objects.filter(id=dash_id).values()
+
     class Meta(BaseModelResource.Meta):
         queryset = CustomDashboard.objects.all().values()
         resource_name = 'custom_dashboard'
+        filtering = {
+            "id": ALL,
+        }
+
 
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)

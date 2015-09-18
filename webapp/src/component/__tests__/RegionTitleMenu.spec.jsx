@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import locationTitleMenu from '../RegionTitleMenu'
+import RegionTitleMenueMenu from '../RegionTitleMenu'
 
 
 describe(__filename, () => {
@@ -22,7 +22,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'America'
-      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      let location = RegionTitleMenueMenu.prototype._buildlocations(originallocations, filter)
       expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
@@ -49,7 +49,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      let location = RegionTitleMenueMenu.prototype._buildlocations(originallocations, filter)
       expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
@@ -80,7 +80,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      let location = RegionTitleMenueMenu.prototype._buildlocations(originallocations, filter)
       expect(location).to.deep.eql([
         {
           'children': [
@@ -126,7 +126,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      let location = RegionTitleMenueMenu.prototype._buildlocations(originallocations, filter)
       expect(location).to.deep.eql([
         {
           'children': [

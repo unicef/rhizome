@@ -6,7 +6,7 @@ var React = require('react');
 var TitleMenu = require('component/TitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 
-var locationTitleMenu = React.createClass({
+var RegionTitleMenu = React.createClass({
   propTypes: {
     locations: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -63,7 +63,7 @@ var locationTitleMenu = React.createClass({
   },
 
   render: function () {
-    // console.log("locationTitleMenu RENDER:", this.props.selected);
+    // console.log("RegionTitleMenueMenu RENDER:", this.props.selected);
     var location = this.props.selected.name;
     var filter  = this.state.filter;
     var locations = this._buildlocations(this.props.locations, filter)
@@ -81,4 +81,4 @@ var locationTitleMenu = React.createClass({
   }
 });
 
-module.exports = locationTitleMenu;
+module.exports = RegionTitleMenu;

@@ -1,6 +1,6 @@
 var _											= require('lodash');
 var React 								= require('react');
-var locationTitleMenu     	= require('component/RegionTitleMenu');
+var RegionTitleMenueMenu     	= require('component/RegionTitleMenu');
 var DashboardStore    		= require('stores/DashboardStore');
 var GroupFormStore 				= require('stores/GroupFormStore');
 var ChartBuilderStore 		= require('stores/ChartBuilderStore');
