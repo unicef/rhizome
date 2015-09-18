@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0008_afg_pak_regions'),
+        ('datapoints', '0008_afg_pak_locations'),
     ]
 
     operations = [
@@ -44,13 +44,13 @@ class Migration(migrations.Migration):
     SELECT 1,'polio-cases-ytd' UNION ALL
     SELECT 53,'number-of-districts-having-no-stockouts-of-opv' UNION ALL
     SELECT 463,'number-of-social-mobilisers-participating-the-telephone-survey' UNION ALL
-    SELECT 56,'number-of-sub-regional-units' UNION ALL
-    SELECT 57,'number-of-sub-regional-units-where-opv-arrived-in-sufficient-time' UNION ALL
+    SELECT 56,'number-of-sub-locational-units' UNION ALL
+    SELECT 57,'number-of-sub-locational-units-where-opv-arrived-in-sufficient-time' UNION ALL
     SELECT 70,'number-of-wpv-cases' UNION ALL
     SELECT 62,'number-of-health-facilities-w-capacity' UNION ALL
     SELECT 66,'number-of-health-facilities-having-no-stock-outs-of-opv' UNION ALL
     SELECT 176,'number-of-established-lt-vaccination-transit-points-with-a-dedicated-social-mobilizer' UNION ALL
-    SELECT 67,'percentage-of-statesregions-with-opv-supply-arriving-at-stateregion-level-in-sufficient-time-before-campaign' UNION ALL
+    SELECT 67,'percentage-of-stateslocations-with-opv-supply-arriving-at-statelocation-level-in-sufficient-time-before-campaign' UNION ALL
     SELECT 470,'number-of-children-missed-due-to-all-access-issues' UNION ALL
     SELECT 69,'number-of-cvdpv-cases' UNION ALL
     SELECT 160,'number-of-wpv3-cases' UNION ALL

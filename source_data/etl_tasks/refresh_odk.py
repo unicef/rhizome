@@ -27,11 +27,11 @@ class ODKRefreshTask(object):
 
     def main(self):
 
-        ## NOT INTEGRATING REGIONS FOR A WHILE - NEED VALIDATION ON CURRENT
+        ## NOT INTEGRATING locationS FOR A WHILE - NEED VALIDATION ON CURRENT
           ## STRUCTURE AS WELL AS WAY TO MOVE FORWARD WITH MAPPING ##
 
-        # pull_regions(base_url_string)
-        # refresh_regions(base_url_string)
+        # pull_locations(base_url_string)
+        # refresh_locations(base_url_string)
 
         forms_to_process = self.get_forms_to_process()
 
@@ -49,20 +49,20 @@ class ODKRefreshTask(object):
 
         return etl_api_response
 
-    def pull_regions(self):
+    def pull_locations(self):
 
-        REGION_FORM="VCM_Sett_Coordinates_1.2"
+        location_FORM="VCM_Sett_Coordinates_1.2"
 
         # START ODK JAR FILE #
-        self.api_wrapper({'task':'start_odk_jar','form_name':REGION_FORM})
+        self.api_wrapper({'task':'start_odk_jar','form_name':location_FORM})
 
         # PULL ODK DATA #
         sleep(2)
-        self.pull_odk_form_data(REGION_FORM)
+        self.pull_odk_form_data(location_FORM)
         sleep(2)
 
         # DONE WITH ODK JAR FILE #
-        self.api_wrapper({'task':'finish_odk_jar','form_name':REGION_FORM})
+        self.api_wrapper({'task':'finish_odk_jar','form_name':location_FORM})
 
 
     def pull_odk_form_data(self, form):
@@ -80,9 +80,9 @@ class ODKRefreshTask(object):
           ])
 
 
-    def refresh_regions(base_url_string):
+    def refresh_locations(base_url_string):
 
-        etl_api_response = self.api_wrapper({'task':'ingest_odk_regions'})
+        etl_api_response = self.api_wrapper({'task':'ingest_odk_locations'})
 
     def get_forms_to_process(self):
 

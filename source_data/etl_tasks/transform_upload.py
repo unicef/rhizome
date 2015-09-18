@@ -37,10 +37,10 @@ class DocTransform(object):
                 .objects.get(name='uq_id_column').id,
         ).doc_detail_value
 
-        self.region_column = DocumentDetail.objects.get(
+        self.location_column = DocumentDetail.objects.get(
             document_id = self.document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='region_column').id,
+                .objects.get(name='location_column').id,
         ).doc_detail_value
 
         self.campaign_column = DocumentDetail.objects.get(
@@ -87,8 +87,8 @@ class DocTransform(object):
                 'document_id':   self.document_id,
                 # 'username_code':  submission_data[self.doc_deets['username_column']],
                 'campaign_code':  submission_data[self.campaign_column],
-                'region_code':  submission_data[self.region_column],
-                # 'region_display':  submission_data[self.doc_deets['region_display_name']],
+                'location_code':  submission_data[self.location_column],
+                # 'location_display':  submission_data[self.doc_deets['location_display_name']],
                 'raw_data_proxy' :''
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
@@ -141,11 +141,11 @@ class DocTransform(object):
 
         for row in source_dp_json:
             row_dict = json.loads(row[0])
-            rg_codes.append(row_dict[self.region_column])
+            rg_codes.append(row_dict[self.location_column])
             cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
-            all_codes.append(('region',r))
+            all_codes.append(('location',r))
 
         for c in list(set(cp_codes)):
             all_codes.append(('campaign',c))

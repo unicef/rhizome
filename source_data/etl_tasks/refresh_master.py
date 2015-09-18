@@ -58,7 +58,7 @@ class MasterRefresh(object):
             self.document_id).values_list('source_object_map_id',flat=True)
 
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
-            # tuple dict ex: {('region': "PAK") : 3 , ('region': "PAK") : 3}
+            # tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
             .filter(
                 master_object_id__gt=0,
                 id__in = sm_ids).values_list(*['master_object_id']))
@@ -74,19 +74,20 @@ class MasterRefresh(object):
 
         first_submission = json.loads(self.submission_data.values()[0])
 
-        source_codes, region_codes, campaign_codes = \
+        source_codes, location_codes, result_framework_codes = \
             {'indicator' :first_submission.keys()}, [], []
 
         for ss_id, submission in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission)
-            region_codes\
-                .append(submission_dict[self.db_doc_deets['region_column']])
-            campaign_codes\
-                .append(submission_dict[self.db_doc_deets['campaign_column']])
+            location_codes\
+                .append(submission_dict[self.db_doc_deets['location_column']])
+            result_framework_codes\
+                .append(submission_dict[self.db_doc_deets\
+                    ['result_framework_column']])
 
-        source_codes['region'] = list(set(region_codes))
-        source_codes['campaign'] = list(set(campaign_codes))
+        source_codes['location'] = list(set(location_codes))
+        source_codes['result_framework'] = list(set(result_framework_codes))
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
@@ -99,23 +100,25 @@ class MasterRefresh(object):
         for ss_id, submission_json in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission_json)
-            region_column, campaign_column = self.db_doc_deets['region_column']\
-                , self.db_doc_deets['campaign_column']
+            location_column, result_framework_column = self.db_doc_deets\
+                ['location_column']\
+                , self.db_doc_deets['result_framework_column']
 
-            region_id = source_map_dict.get(('location'\
-                    ,submission_dict[region_column]),None)
+            location_id = source_map_dict.get(('location'\
+                    ,submission_dict[location_column]),None)
 
             result_structure_id = source_map_dict.get(('result_structure'\
-                    ,submission_dict[campaign_column]),None)
+                    ,submission_dict[result_framework_column]),None)
 
             ss_id_list.append(ss_id)
             ss_detail_batch.append(SourceSubmissionDetail(**{
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
-                'region_code':submission_dict[region_column],
-                'campaign_code':submission_dict[campaign_column],
-                'location_id': region_id,
-                'result_structure_id': campaign_id,
+                'location_code':submission_dict[location_column],
+                'result_framework_code':submission_dict\
+                    [result_framework_column],
+                'location_id': location_id,
+                'result_structure_id': result_structure_id,
             }))
 
         SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
@@ -131,13 +134,14 @@ class MasterRefresh(object):
         ready_for_doc_datapoint_sync = SourceSubmissionDetail.objects\
             .filter(
                  source_submission_id__in= ss_ids_in_batch,
-                 region_id__isnull= False,
-                 campaign_id__isnull= False
-            ).values('region_id','campaign_id','source_submission_id')
+                 location_id__isnull= False,
+                 result_framework_id__isnull= False
+            ).values('location_id','result_framework_id','source_submission_id')
 
         for row in ready_for_doc_datapoint_sync:
-            doc_dps = self.process_source_submission(row['region_id'], \
-                row['campaign_id'], row['source_submission_id'],source_map_dict)
+            doc_dps = self.process_source_submission(row['location_id'], \
+                row['result_framework_id'], row['source_submission_id'],\
+                source_map_dict)
 
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
@@ -152,15 +156,15 @@ class MasterRefresh(object):
         doc_dps = DocDataPoint.objects.raw('''
                 SELECT
                       MAX(id) as id
-                    , region_id
+                    , location_id
                     , indicator_id
-                    , campaign_id
+                    , result_framework_id
                     , MAX(source_submission_id) as source_submission_id
                     , SUM(value) as value
                 FROM doc_datapoint dd
                 WHERE source_submission_id = ANY(%s)
                 AND is_valid = 't'
-                GROUP BY region_id, indicator_id, campaign_id;
+                GROUP BY location_id, indicator_id, result_framework_id;
             ''',[ss_id_list])
 
         for ddp in doc_dps:
@@ -173,18 +177,16 @@ class MasterRefresh(object):
         DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
         DataPoint.objects.bulk_create(dp_batch)
 
-        pass
-
     ## main() helper methods ##
-    def process_source_submission(self,region_id,campaign_id,ss_id,som_dict):
+    def process_source_submission(self,location_id,result_framework_id,ss_id,\
+        som_dict):
 
         doc_dp_batch = []
-
         submission  = json.loads(self.submission_data[ss_id])
 
         for k,v in submission.iteritems():
-            doc_dp = self.process_submission_datapoint(k,v,region_id,\
-                campaign_id,ss_id,som_dict)
+            doc_dp = self.process_submission_datapoint(k,v,location_id,\
+                result_framework_id,ss_id,som_dict)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -192,8 +194,8 @@ class MasterRefresh(object):
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
 
-    def process_submission_datapoint(self, ind_str, val, region_id, \
-        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
+    def process_submission_datapoint(self, ind_str, val, location_id, \
+        result_framework_id, ss_id, som_dict): ## FIXME use kwargs..
 
             try:
                 cleaned_val = self.clean_val(val)
@@ -209,13 +211,12 @@ class MasterRefresh(object):
                 doc_dp = DocDataPoint(**{
                         'indicator_id':  indicator_id,
                         'value': cleaned_val,
-                        'region_id': region_id,
-                        'campaign_id': campaign_id,
+                        'location_id': location_id,
                         'document_id': self.document_id,
                         'source_submission_id': ss_id,
                         'changed_by_id': self.user_id,
                         'is_valid': True,
-                        'agg_on_region': True,
+                        'agg_on_location': True,
                     })
             except KeyError:
                 return None

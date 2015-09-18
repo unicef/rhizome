@@ -151,10 +151,10 @@ class CacheRefresh(object):
         Datapoints are aggregated in two steps with two separate stored
         procedures.
           - init_agg_datapoints : save all of the raw (non aggregated) data
-          - agg_datapoints_by_region_type: given
+          - agg_datapoints_by_location_type: given
 
         This method first calls the ``fn_init_agg_datapoint`` and then calls ``
-        agg_datapoints_by_region_type`` for each region_type starting from the
+        agg_datapoints_by_location_type`` for each location_type starting from the
         leaf level and moving up to the country level.
 
         It is important that this function touches as little data as possible
@@ -162,12 +162,12 @@ class CacheRefresh(object):
         updates to effect aggregation
 
         TO DO:
-            - add region_type_sproc in this method
+            - add location_type_sproc in this method
             - Add datapoint_id_list as a param to both of these sprocs
             - look into more closely why a purely recursive query wont work.
               My initial diagnosis was that there was bad parent/child data in
-              the regions table but currenlty when i look at regions with parents
-              of the same region_type all I see is Kirachi.
+              the locations table but currenlty when i look at locations with parents
+              of the same location_type all I see is Kirachi.
         '''
 
         adp_cursor = DataPoint.objects.raw("""
@@ -264,39 +264,39 @@ class CacheRefresh(object):
 
         return dp_ids
 
-    def get_region_ids_to_process(self):
+    def get_location_ids_to_process(self):
 
-        region_cursor = Region.objects.raw('''
+        location_cursor = location.objects.raw('''
             SELECT DISTINCT
-                region_id as id
+                location_id as id
             FROM datapoint d
             WHERE cache_job_id = %s''',[self.cache_job.id])
 
-        region_ids = [r.id for r in region_cursor]
+        location_ids = [r.id for r in location_cursor]
 
-        return region_ids
+        return location_ids
 
 
     def get_abstracted_datapoint_ids(self):
         '''
         Being as that the cache table the API uses to provide data to the site
-        is stored with a unique key of region_id, campaign_id we need this data
+        is stored with a unique key of location_id, campaign_id we need this data
         in order to figure out what data we will need to delete from the
         datapoint_abstracted table
 
-        This will also need to take into consideration the parent region Ids
+        This will also need to take into consideration the parent location Ids
 
         '''
         rc_raw = DataPoint.objects.raw('''
             SELECT
                   MIN(id) as id
-                , region_id
+                , location_id
                 , campaign_id
             FROM datapoint
             WHERE id = ANY (%s)
-            GROUP BY region_id, campaign_id''',[self.datapoint_id_list])
+            GROUP BY location_id, campaign_id''',[self.datapoint_id_list])
 
-        rc_list_of_tuples = [(rc.region_id,rc.campaign_id) for rc in rc_raw]
+        rc_list_of_tuples = [(rc.location_id,rc.campaign_id) for rc in rc_raw]
 
         return rc_list_of_tuples
 
@@ -306,9 +306,9 @@ class CacheRefresh(object):
         aggregated and calculated data is transformed into a format friendly
         for the api.
 
-        region_id | campaign_id | indicator_json
+        location_id | campaign_id | indicator_json
 
-        Think of the data explorer and how the campaign / region are the unique
+        Think of the data explorer and how the campaign / location are the unique
         keys to each row, and the requested indicators are the headers.
 
         Unlike the other two cache methods ( agg_datapoint, and calc_datapoint)
@@ -319,7 +319,7 @@ class CacheRefresh(object):
 
         ## We need to get data for indicators that weren't necessarily created
         ## with thie Cache Job ID.  That is, we need to process all of the
-        ## indicators that exists for the regions and campaigns that we are
+        ## indicators that exists for the locations and campaigns that we are
         ## processing.  If we just say "give me all the indicators for this
         ## cache job id" we will end up not storing valid data stored in a prior
         ## cache.
@@ -330,7 +330,7 @@ class CacheRefresh(object):
             WHERE EXISTS (
                 SELECT 1 FROM datapoint_with_computed dwc_cache_job
                 WHERE dwc_cache_job.cache_job_id = %s
-                AND dwc.region_id = dwc_cache_job.region_id
+                AND dwc.location_id = dwc_cache_job.location_id
                 AND dwc.campaign_id = dwc_cache_job.campaign_id
             )
             """,[self.cache_job.id])
@@ -341,22 +341,22 @@ class CacheRefresh(object):
         rc_curs = DataPointComputed.objects.raw("""
             SELECT DISTINCT
                 MIN(dwc.id) as id
-                , dwc.region_id
+                , dwc.location_id
                 , dwc.campaign_id
             FROM datapoint_with_computed dwc
-            INNER JOIN region r
-                ON dwc.region_id = r.id
+            INNER JOIN location r
+                ON dwc.location_id = r.id
             INNER JOIN campaign c
                 ON dwc.campaign_id = c.id
                 AND c.office_id = r.office_id
             WHERE dwc.cache_job_id = %s
-            GROUP BY dwc.region_id, dwc.campaign_id;
+            GROUP BY dwc.location_id, dwc.campaign_id;
             """,[self.cache_job.id])
 
 
-        rc_tuple_list = [(rc.region_id,rc.campaign_id) for rc in rc_curs]
+        rc_tuple_list = [(rc.location_id,rc.campaign_id) for rc in rc_curs]
 
-        rc_df = DataFrame(rc_tuple_list,columns=['region_id','campaign_id'])
+        rc_df = DataFrame(rc_tuple_list,columns=['location_id','campaign_id'])
         rc_df = rc_df.reset_index(level=[0,1])
 
         for i,(i_id) in enumerate(all_indicator_ids):
@@ -367,17 +367,17 @@ class CacheRefresh(object):
 
     def add_indicator_data_to_rc_df(self,rc_df, i_id):
         '''
-        left join the region / campaign dataframe with the stored data for each
+        left join the location / campaign dataframe with the stored data for each
         campaign.
         '''
-        column_header = ['region_id','campaign_id']
+        column_header = ['location_id','campaign_id']
         column_header.append(i_id)
 
         indicator_df = DataFrame(list(DataPointComputed.objects.filter(
             indicator_id = i_id).values()))
 
         pivoted_indicator_df = pivot_table(indicator_df, values='value',\
-            columns=['indicator_id'],index = ['region_id','campaign_id'])
+            columns=['indicator_id'],index = ['location_id','campaign_id'])
 
         cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
 
@@ -394,7 +394,7 @@ class CacheRefresh(object):
             - drop the index of the dataframe
             - transorm the above dataframe and convert to a dictionary in which
               the index ( or row number ) is the key, and the data is the
-              region_id, campaign_id, and indicator_json needed to create
+              location_id, campaign_id, and indicator_json needed to create
               each row in datapoint_abstracted.
 
         NOTE: This is the final stage of the cache as it stands right now.
@@ -413,14 +413,14 @@ class CacheRefresh(object):
 
         for r_no, r_data in rc_dict.iteritems():
 
-            region_id, campaign_id = r_data['region_id'],r_data['campaign_id']
+            location_id, campaign_id = r_data['location_id'],r_data['campaign_id']
 
             del r_data["index"]
-            del r_data["region_id"]
+            del r_data["location_id"]
             del r_data["campaign_id"]
 
             dd_abstracted = {
-                "region_id": region_id,
+                "location_id": location_id,
                 "campaign_id":campaign_id,
                 "indicator_json": r_data,
                 "cache_job_id": self.cache_job.id,
@@ -434,7 +434,7 @@ class CacheRefresh(object):
 
             DELETE FROM datapoint_abstracted da
             USING datapoint_with_computed dwc
-            WHERE da.region_id = dwc.region_id
+            WHERE da.location_id = dwc.location_id
             AND da.campaign_id = dwc.campaign_id
             AND dwc.cache_job_id = %s;
 
@@ -499,7 +499,7 @@ def cache_indicator_abstracted():
 def cache_user_abstracted():
     '''
     Just like indicator_abstracted, the user_abstraced table holds information
-    that is keyed to the user, for instance, their groups and region permission.
+    that is keyed to the user, for instance, their groups and location permission.
 
     This data is cached in the cache_metadata process so the API is able to
     return data without transformation.
@@ -520,7 +520,7 @@ def cache_user_abstracted():
         	,au.is_active
         	,au.date_joined
 			,gr.group_json
-            ,rp.region_permission_json
+            ,rp.location_permission_json
         FROM auth_user au
         LEFT JOIN (
         	SELECT
@@ -533,8 +533,8 @@ def cache_user_abstracted():
         LEFT JOIN (
         	SELECT
         		 rp.user_id
-        		,json_agg(row_to_json(rp.*)) as region_permission_json
-        	FROM region_permission rp
+        		,json_agg(row_to_json(rp.*)) as location_permission_json
+        	FROM location_permission rp
         	GROUP BY rp.user_id
         ) rp
         ON au.id = rp.user_id
@@ -582,49 +582,49 @@ def cache_campaign_abstracted():
         upsert_meta_data(rs_raw, ResultStructureAbstracted)
 
 
-def cache_region_tree():
+def cache_location_tree():
 
-    rt_raw = RegionTree.objects.raw(
+    rt_raw = locationTree.objects.raw(
     '''
-    TRUNCATE TABLE region_tree;
+    TRUNCATE TABLE location_tree;
 
 
-    INSERT INTO region_tree
-    (parent_region_id, immediate_parent_id, region_id, lvl)
+    INSERT INTO location_tree
+    (parent_location_id, immediate_parent_id, location_id, lvl)
 
 
-    WITH RECURSIVE region_tree(parent_region_id, immediate_parent_id, region_id, lvl) AS
+    WITH RECURSIVE location_tree(parent_location_id, immediate_parent_id, location_id, lvl) AS
     (
 
     SELECT
-    	rg.parent_region_id
-    	,rg.parent_region_id as immediate_parent_id
-    	,rg.id as region_id
+    	rg.parent_location_id
+    	,rg.parent_location_id as immediate_parent_id
+    	,rg.id as location_id
     	,1 as lvl
-    FROM region rg
+    FROM location rg
 
     UNION ALL
 
     -- recursive term --
     SELECT
-    	r_recurs.parent_region_id
-    	,rt.parent_region_id as immediate_parent_id
-    	,rt.region_id
+    	r_recurs.parent_location_id
+    	,rt.parent_location_id as immediate_parent_id
+    	,rt.location_id
     	,rt.lvl + 1
-    FROM region AS r_recurs
-    INNER JOIN region_tree AS rt
-    ON (r_recurs.id = rt.parent_region_id)
-    AND r_recurs.parent_region_id IS NOT NULL
+    FROM location AS r_recurs
+    INNER JOIN location_tree AS rt
+    ON (r_recurs.id = rt.parent_location_id)
+    AND r_recurs.parent_location_id IS NOT NULL
     )
 
     SELECT
-    	COALESCE(parent_region_id, region_id)  AS parent_region_id
-    	,COALESCE(immediate_parent_id, region_id)  AS immediate_parent_id
-    	,region_id
+    	COALESCE(parent_location_id, location_id)  AS parent_location_id
+    	,COALESCE(immediate_parent_id, location_id)  AS immediate_parent_id
+    	,location_id
     	,lvl
-    FROM region_tree;
+    FROM location_tree;
 
-    SELECT * FROM region_tree;
+    SELECT * FROM location_tree;
     ''')
 
     for x in rt_raw:
@@ -657,9 +657,9 @@ def update_source_object_names():
 
         SELECT som.master_object_id, r.name, som.content_type
         FROM source_object_map som
-        INNER JOIN region r
+        INNER JOIN location r
             ON som.master_object_id = r.id
-            AND som.content_type = 'region';
+            AND som.content_type = 'location';
 
         UPDATE source_object_map som
         set master_object_name = t.master_object_name

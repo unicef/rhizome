@@ -33,7 +33,7 @@ function getOptions(chart, campaign, data) {
 
     case 'BarChart':
       opts.y = _.property((chart.groupBy === 'indicator') ?
-        'region.name' :
+        'location.name' :
         'indicator.short_name'
       );
 

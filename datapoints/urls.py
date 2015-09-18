@@ -43,16 +43,16 @@ urlpatterns = [
         name='update_campaign'),
 
         #############
-        ## REGIONS ##
+        ## locationS ##
         #############
 
     ## CREATE ##
-    url(r'^regions/create/$', views.RegionCreateView.as_view(),
-        name='create_region'),
+    url(r'^locations/create/$', views.locationCreateView.as_view(),
+        name='create_location'),
 
     ## UPDATE ##
-    url(r'^regions/update/(?P<pk>[0-9]+)/$', views.RegionUpdateView.as_view(),
-        name='update_region'),
+    url(r'^locations/update/(?P<pk>[0-9]+)/$', views.locationUpdateView.as_view(),
+        name='update_location'),
 
 
         ################

@@ -25,7 +25,7 @@ function getFacet(datum, path) {
 }
 
 /**
- * Recursively determine if child is a child of parent region.
+ * Recursively determine if child is a child of parent location.
  */
 function childOf(parent, child) {
   if (!child || !child.parent) {
@@ -39,7 +39,7 @@ function childOf(parent, child) {
   return childOf(parent, child.parent);
 }
 
-function inChart(chart, campaign, region, datum) {
+function inChart(chart, campaign, location, datum) {
   var dt       = moment(datum.campaign.start_date).valueOf()
   var end      = moment(campaign.start_date, 'YYYY-MM-DD');
   var start    = -Infinity;
@@ -50,39 +50,39 @@ function inChart(chart, campaign, region, datum) {
 
   var inPeriod = dt >= start && dt <= end.valueOf();
 
-  var inRegion = false;
+  var inlocation = false;
 
-  switch (chart.regions) {
-    case 'subregions':
-      inRegion = childOf(region, datum.region);
+  switch (chart.locations) {
+    case 'sublocations':
+      inlocation = childOf(location, datum.location);
 
       if (!_.isEmpty(chart.level)) {
-        inRegion = inRegion && chart.level === datum.region.location_type;
+        inlocation = inlocation && chart.level === datum.location.location_type;
       }
       break;
 
     case 'type':
-      inRegion = datum.region.location_type === region.location_type;
+      inlocation = datum.location.location_type === location.location_type;
       break;
 
     default:
-      inRegion = region.id === datum.region.id;
+      inlocation = location.id === datum.location.id;
       break;
   }
 
-  return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inRegion;
+  return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inlocation;
 }
 
 function choropleth(chart, data, campaign, features) {
   // Make sure we only get data for the current campaign; maps can't
-  // display historical data. Index by region for quick lookup.
+  // display historical data. Index by location for quick lookup.
   var dataIdx = _(data)
     .filter(d => d.campaign.id === campaign.id)
-    .indexBy('region.id')
+    .indexBy('location.id')
     .value();
 
   _.each(features, f => {
-    var d = dataIdx[f.properties.region_id];
+    var d = dataIdx[f.properties.location_id];
     if (d) {
       f.properties[d.indicator.id] = d.value;
     }
@@ -105,7 +105,7 @@ function stackedData(chart, data) {
 
   switch (chart.type) {
     case 'BarChart':
-      x = chart.groupBy === 'indicator' ? 'region.name' : 'indicator.short_name';
+      x = chart.groupBy === 'indicator' ? 'location.name' : 'indicator.short_name';
       break;
 
     default:
@@ -146,7 +146,7 @@ function column(chart, data) {
 function scatter(chart, data, campaign) {
   return _(data)
     .filter(d => d.campaign.id === campaign.id)
-    .groupBy('region.id')
+    .groupBy('location.id')
     .map(values => {
       return _.reduce(values, (result, d) => {
         _.defaults(result, d);
@@ -156,7 +156,7 @@ function scatter(chart, data, campaign) {
         return _.omit(result, 'indicator', 'value');
       }, {});
     })
-    .filter(d => _(d).omit('region', 'campaign').values().all(_.isFinite))
+    .filter(d => _(d).omit('location', 'campaign').values().all(_.isFinite))
     .value();
 }
 
@@ -169,19 +169,19 @@ var process = {
   'ScatterChart'    : scatter,
 };
 
-function dashboardInit(dashboard, data, region, campaign, regionList, indicators, features) {
+function dashboardInit(dashboard, data, location, campaign, locationList, indicators, features) {
   var results = {};
 
   var indicatorsById = _.indexBy(indicators, 'id');
-  var regionsById    = _.indexBy(regionList, 'id');
+  var locationsById    = _.indexBy(locationList, 'id');
 
-  // Merge region metadata into the properties object of each geographic feature
+  // Merge location metadata into the properties object of each geographic feature
   _.each(features, function (f) {
-    var id = f.properties.region_id;
-    _.assign(f.properties, regionsById[id]);
+    var id = f.properties.location_id;
+    _.assign(f.properties, locationsById[id]);
   });
 
-  // Fill in indicators and regions on all the data objects. If we haven't
+  // Fill in indicators and locations on all the data objects. If we haven't
   // loaded indicators yet, continue displaying charts as if we have no data
   _.each(data, function (d) {
     var ind = indicatorsById[d.indicator];
@@ -189,9 +189,9 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
       d.indicator = ind;
     }
 
-    var reg = regionsById[d.region];
+    var reg = locationsById[d.location];
     if (reg) {
-      d.region = reg;
+      d.location = reg;
     }
   });
 
@@ -203,11 +203,11 @@ function dashboardInit(dashboard, data, region, campaign, regionList, indicators
     var sectionName = _.get(chart, 'section', '__none__');
     var chartName   = _.get(chart, 'id', _.camelCase(chart.title));
     var section     = _.get(results, sectionName, {});
-    var regionProp  = chart.region === 'subregions' ?
-      'region.parent_location_id' :
-      'region.id';
+    var locationProp  = chart.location === 'sublocations' ?
+      'location.parent_location_id' :
+      'location.id';
 
-    var datumInChart = _.partial(inChart, chart, campaign, region);
+    var datumInChart = _.partial(inChart, chart, campaign, location);
     var chartData    = _.filter(data, datumInChart);
     section[chartName] = _.get(process, chart.type, _.constant(chartData))(
       chart,

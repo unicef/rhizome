@@ -123,7 +123,7 @@ module.exports = React.createClass({
           domain     : _domain,
           value      : _.partial(_value, _, campaign),
           marker     : _.partial(_marker, _, campaign),
-          y          : _.property('region'),
+          y          : _.property('location'),
           width      : 154,
           height     : 51.3,
           fill       : _.partial(_fill, _, campaign, targets),

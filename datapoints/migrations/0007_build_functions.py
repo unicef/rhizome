@@ -25,5 +25,5 @@ class Migration(migrations.Migration):
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_part_of_difference.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_upsert_computed.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_datapoint.sql')),
-        migrations.RunSQL(readSQLFromFile('functions/fn_get_authorized_regions_by_user.sql'))
+        migrations.RunSQL(readSQLFromFile('functions/fn_get_authorized_locations_by_user.sql'))
     ]

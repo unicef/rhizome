@@ -99,16 +99,16 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
     # permission_required = 'datapoints.change_campaign'
 
     ###############
-    ### REGIONS ###
+    ### locationS ###
     ###############
 
-class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
+class locationCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Location
-    template_name='regions/create.html'
-    permission_required = 'datapoints.add_region'
+    template_name='locations/create.html'
+    permission_required = 'datapoints.add_location'
     form_class = LocationForm
-    success_url= '/ufadmin/regions'
+    success_url= '/ufadmin/locations'
 
     def form_valid(self, form):
         # this inserts into the changed_by field with  the user who made the insert
@@ -120,12 +120,12 @@ class RegionCreateView(PermissionRequiredMixin,generic.CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class RegionUpdateView(PermissionRequiredMixin,generic.UpdateView):
+class locationUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Location
-    success_url = '/ufadmin/regions'
-    template_name = 'regions/update.html'
-    permission_required = 'datapoints.change_region'
+    success_url = '/ufadmin/locations'
+    template_name = 'locations/update.html'
+    permission_required = 'datapoints.change_location'
 
 
     ##############################
@@ -171,7 +171,7 @@ def refresh_metadata(request):
     indicator_cache_data = cache_tasks.cache_indicator_abstracted()
     user_cache_data = cache_tasks.cache_user_abstracted()
     campaign_cache_data = cache_tasks.cache_campaign_abstracted()
-    region_tree_cache_data = cache_tasks.cache_region_tree()
+    location_tree_cache_data = cache_tasks.cache_location_tree()
     source_object_cache = cache_tasks.update_source_object_names()
 
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))

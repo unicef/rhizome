@@ -22,7 +22,7 @@ var IndicatorStore      = require('stores/IndicatorStore');
 var GeoStore            = require('stores/GeoStore');
 var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
-var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+var locationTitleMenu     = require('component/locationTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
 
@@ -113,11 +113,11 @@ module.exports = React.createClass({
 	      if (_.isEmpty(q)) {
 	        DataActions.clear();
 	      } else {
-	        DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.region, q);
+	        DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q);
 	      }
 
 	      if (this.state.dashboardStore.hasMap) {
-	        GeoActions.fetch(this.state.dashboardStore.region);
+	        GeoActions.fetch(this.state.dashboardStore.location);
 	      }
 	    }
 	},
@@ -130,14 +130,14 @@ module.exports = React.createClass({
 
 	    DashboardActions.setDashboard({dashboard:this.state.store.dashboard,date:moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')});
 	},
-	_setRegion : function (id) {
-	    var region    = _.find(this.state.dashboardStore.regions, r => r.id === id)
+	_setlocation : function (id) {
+	    var location    = _.find(this.state.dashboardStore.locations, r => r.id === id)
 
-	    if (!region) {
+	    if (!location) {
 	      return;
 	    }
 
-	   DashboardActions.setDashboard({dashboard:this.state.store.dashboard,region:region.name});
+	   DashboardActions.setDashboard({dashboard:this.state.store.dashboard,location:location.name});
 	},
     _onDataLoaded : function(){
      if(this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard)
@@ -198,7 +198,7 @@ module.exports = React.createClass({
       var campaign      = this.state.dashboardStore.campaign;
       var dashboardDef  = this.state.store.dashboard;
       var loading       = this.state.dashboardStore.loading;
-      var region        = this.state.dashboardStore.region;
+      var location        = this.state.dashboardStore.location;
       var dashboardName = _.get(dashboardDef, 'title', '');
 
       var indicators = IndicatorStore.getById.apply(
@@ -212,9 +212,9 @@ module.exports = React.createClass({
       var data = dashboardInit(
         dashboardDef,
         this.state.dataStore.data,
-        region,
+        location,
         campaign,
-        this.state.dashboardStore.regions,
+        this.state.dashboardStore.locations,
         indicators,
         GeoStore.features
       );
@@ -224,7 +224,7 @@ module.exports = React.createClass({
         data        : data,
         indicators  : indicators,
         loading     : loading,
-        region      : region,
+        location      : location,
         editable    : true,
         onAddChart  : this.newChart,
         onEditChart : this.editChart,
@@ -238,12 +238,12 @@ module.exports = React.createClass({
         dashboardProps);
 
       var campaigns = _(this.state.dashboardStore.campaigns)
-        .filter(c => c.office_id === region.office_id)
+        .filter(c => c.office_id === location.office_id)
         .sortBy('start_date')
         .reverse()
         .value();
 
-       if (campaign.office_id !== region.office_id) {
+       if (campaign.office_id !== location.office_id) {
          campaign = campaigns[0];
        }
 
@@ -277,10 +277,10 @@ module.exports = React.createClass({
 	                     selected={campaign}
 	                     sendValue={this._setCampaign} />
 	                   &emsp;
-	                   <RegionTitleMenu
-	                     regions={this.state.dashboardStore.regions}
-	                     selected={region}
-	                     sendValue={this._setRegion} />
+	                   <locationTitleMenu
+	                     locations={this.state.dashboardStore.locations}
+	                     selected={location}
+	                     sendValue={this._setlocation} />
 	                 </h1>
 	               </div>
 	             </div>
@@ -323,7 +323,7 @@ module.exports = React.createClass({
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
 	   	console.log(chartDef,this.state.store.dashboard.charts);
-	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} region={region} />);
+	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} location={location} />);
 	   }
 	   else {
 	   	return dashboardBuilderContainer;

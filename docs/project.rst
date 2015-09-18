@@ -13,9 +13,9 @@ Which does the following:
   - Makes an API request to the app saying "starting_odk_jar"
   - Runs the ODK Jar file for the relevant forms.
   - Makes an API request to the app saying "done_with_odk_jar"
-  - Makes an API request that says "ingest_odk_regions"
-      -> Takes any new regions from the vcm_settlement form and merges them into the source_region table
-      -> A new source_region must have a parent_region_code.
+  - Makes an API request that says "ingest_odk_locations"
+      -> Takes any new locations from the vcm_settlement form and merges them into the source_location table
+      -> A new source_location must have a parent_location_code.
       -> Adds Lon/Lat when able
   - Makes an API request that says "convert_odk_ingest_to_document"
       -> For how ever many forms there are, create one document for each form

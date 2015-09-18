@@ -48,7 +48,7 @@ var Monitoring = React.createClass({
     };
 
     var inside = _(data.insideMonitoring)
-      .groupBy('region.name')
+      .groupBy('location.name')
       .map(values => _.transform(values, (result, d) => {
         _.defaults(result, _.omit(d, 'indicator', 'value'));
         result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
@@ -58,7 +58,7 @@ var Monitoring = React.createClass({
       .value();
 
     var outside = _(data.outsideMonitoring)
-      .groupBy('region.name')
+      .groupBy('location.name')
       .map(values => _.transform(values, (result, d) => {
         _.defaults(result, _.omit(d, 'indicator', 'value'));
         result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;

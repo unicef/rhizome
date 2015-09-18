@@ -16,7 +16,7 @@ var DocForm = React.createClass({
       data_uri: null,
       config_options: [],
       uq_id_column: null,
-      region_column: null,
+      location_column: null,
       campaign_column: null,
       created_doc_id: null,
       doc_detail_meta: null,
@@ -116,12 +116,12 @@ var DocForm = React.createClass({
   render: function() {
 
     var uqHeaderList = this.buildHeaderList('uq_id_column')
-    var rgHeaderList = this.buildHeaderList('region_column')
+    var rgHeaderList = this.buildHeaderList('location_column')
     var cpHeaderList = this.buildHeaderList('campaign_column')
 
     if (this.state.created_doc_id) {
         var uq_col = this.state.uq_id_column
-        var rg_col = this.state.region_column
+        var rg_col = this.state.location_column
         var cp_col = this.state.campaign_column
 
         var fileConfigForm = <div>
@@ -133,7 +133,7 @@ var DocForm = React.createClass({
             </TitleMenu>
           </li>
           <li>
-            Region Column:
+            location Column:
             <TitleMenu text={rg_col}>
               {rgHeaderList}
             </TitleMenu>
@@ -151,7 +151,7 @@ var DocForm = React.createClass({
         var fileConfigForm = ''
       }
 
-      if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column){
+      if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column){
         var refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
       }
       else {
@@ -159,7 +159,7 @@ var DocForm = React.createClass({
       }
 
 
-    if (this.state.uq_id_column && this.state.region_column && this.state.campaign_column && this.state.doc_is_refreshed){
+    if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed){
       var next_link = "/datapoints/source-data/Nigeria/2015/06/viewraw/" + this.state.created_doc_id;
       // FIXME ^^
       var reviewBtn = <a href={next_link}  className="button"> Review Upload</a>

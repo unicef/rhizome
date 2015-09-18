@@ -17,7 +17,7 @@ var ManagementDashboard = React.createClass({
     campaign   : React.PropTypes.object,
     data       : React.PropTypes.object,
     loading    : React.PropTypes.bool,
-    region     : React.PropTypes.object,
+    location     : React.PropTypes.object,
   },
 
   getDefaultProps : function () {
@@ -33,7 +33,7 @@ var ManagementDashboard = React.createClass({
     var data       = this.props.data;
     var indicators = _.indexBy(this.props.indicators, 'id');
     var loading    = this.props.loading;
-    var region     = _.get(this.props, 'region.name', '');
+    var location     = _.get(this.props, 'location.name', '');
 
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
@@ -53,7 +53,7 @@ var ManagementDashboard = React.createClass({
           <div className='small-12 columns'>
             <h1>
               <span className='campaign'>{ printDate }</span>
-              <span className='region'>{ region }</span>
+              <span className='location'>{ location }</span>
             </h1>
             <h2>
               Polio<br />

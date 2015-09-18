@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
-var RegionStore = require('stores/RegionStore');
+var locationStore = require('stores/locationStore');
 var CampaignStore = require('stores/CampaignStore');
 
 var api = require('data/api');
@@ -17,27 +17,27 @@ var DashboardStore = Reflux.createStore({
     this.loaded = false;
     this.indicators = {};
     Promise.all([
-        RegionStore.getRegionsPromise(),
-        RegionStore.getRegionTypesPromise(),
+        locationStore.getlocationsPromise(),
+        locationStore.getlocationTypesPromise(),
 	    	CampaignStore.getCampaignsPromise(),
     	])
-      .then(_.spread((regions, regionsTypes, campaigns)=> {
-        this.regions = regions;
+      .then(_.spread((locations, locationsTypes, campaigns)=> {
+        this.locations = locations;
         this.campaigns = campaigns;
 
-        var regionIdx = _.indexBy(regions, 'id');
-        var types = _.indexBy(regionsTypes, 'id');
+        var locationIdx = _.indexBy(locations, 'id');
+        var types = _.indexBy(locationsTypes, 'id');
 
-        _.each(this.regions, function(r) {
+        _.each(this.locations, function(r) {
           r.location_type = _.get(types[r.location_type_id], 'name');
-          r.parent = regionIdx[r.parent_location_id];
+          r.parent = locationIdx[r.parent_location_id];
         });
 
         this.loaded = true;
 
         this.trigger({
           loaded: this.loaded,
-          regions: this.regions,
+          locations: this.locations,
           campaigns: this.campaign
         });
       }));
@@ -49,7 +49,7 @@ var DashboardStore = Reflux.createStore({
       return [
         definition.duration,
         definition.startOf,
-        definition.regions
+        definition.locations
       ].join('-');
     });
     return _.map(qs, function(arr) {
@@ -65,7 +65,7 @@ var DashboardStore = Reflux.createStore({
   onSetDashboard: function(definition) {
     // console.log("DashboardStore -> onSetDashboard:", definition)
     var dashboard = this.dashboard = definition.dashboard;
-    this.region = definition.region || this.region;
+    this.location = definition.location || this.location;
     this.date = definition.date || this.date;
 
     if (!this.loaded) {
@@ -75,41 +75,41 @@ var DashboardStore = Reflux.createStore({
     this.indicators = {};
     _.each(dashboard.charts, this.addChartDefinition);
 
-    var regions = this.regions;
+    var locations = this.locations;
     var campaigns = this.campaigns;
 
-    var regionIdx = _.indexBy(regions, 'id');
-    var topLevelRegions = _(regions)
+    var locationIdx = _.indexBy(locations, 'id');
+    var topLevellocations = _(locations)
       .filter(function(r) {
-        return !regionIdx.hasOwnProperty(r.parent_location_id);
+        return !locationIdx.hasOwnProperty(r.parent_location_id);
       })
       .sortBy('name');
 
-    var region = _.find(regions, function(r) {
-      return r.name === this.region;
+    var location = _.find(locations, function(r) {
+      return r.name === this.location;
     }.bind(this));
-    // console.log("2:", this.region, region);
+    // console.log("2:", this.location, location);
 
     /**
 
       Question ???
-      - onSetDashboard receives correct region, but after this condition rewrites it to Nigeria
+      - onSetDashboard receives correct location, but after this condition rewrites it to Nigeria
 
     **/
-    if (_.isFinite(dashboard.default_office_id) && _.get(region, 'office_id') !== dashboard.default_office_id) {
-      region = topLevelRegions.find(function(r) {
+    if (_.isFinite(dashboard.default_office_id) && _.get(location, 'office_id') !== dashboard.default_office_id) {
+      location = topLevellocations.find(function(r) {
         return r.office_id === dashboard.default_office_id;
       });
     }
 
-    if (!region) {
-      region = topLevelRegions.first();
+    if (!location) {
+      location = topLevellocations.first();
     }
-    // console.log("4:", this.region, region);
+    // console.log("4:", this.location, location);
 
     var campaign = _(campaigns)
       .filter(function(c) {
-        return c.office_id === region.office_id &&
+        return c.office_id === location.office_id &&
           (!this.date || _.startsWith(c.start_date, this.date));
       }.bind(this))
       .sortBy('start_date')
@@ -120,29 +120,29 @@ var DashboardStore = Reflux.createStore({
       .any(t => _.endsWith(t, 'Map'));
 
 
-    // console.log("AFTER:", region);
+    // console.log("AFTER:", location);
     this.trigger({
       dashboard: this.dashboard,
-      region: region,
+      location: location,
       campaign: campaign,
       loaded: true,
 
-      regions: regions,
+      locations: locations,
       campaigns: _.filter(campaigns, function(c) {
-        return c.office_id === region.office_id;
+        return c.office_id === location.office_id;
       }),
       hasMap: hasMap,
     });
   },
 
-  onSetRegion: function(id) {
-    var region = _.find(this.regions, function(r) {
+  onSetlocation: function(id) {
+    var location = _.find(this.locations, function(r) {
       return r.id === id;
     }.bind(this));
 
-    if (region) {
+    if (location) {
       this.trigger({
-        region: region
+        location: location
       });
     }
   },
@@ -153,7 +153,7 @@ var DashboardStore = Reflux.createStore({
 
     _.each(chart.indicators, function(id) {
       var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity;
-      var hash = [id, chart.startOf, chart.regions].join('-');
+      var hash = [id, chart.startOf, chart.locations].join('-');
 
       if (!this.indicators.hasOwnProperty(hash) || duration > this.indicators[hash].duration) {
         this.indicators[hash] = _.defaults({

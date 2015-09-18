@@ -17,7 +17,7 @@ BEGIN
 
 	-- FIX ME --
 	DELETE FROM datapoint_with_computed dwc
-	WHERE region_id is null;
+	WHERE location_id is null;
 
 	RETURN QUERY
 

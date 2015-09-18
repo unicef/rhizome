@@ -1,4 +1,4 @@
-id,indicator_id,region_id,campaign_id,value,is_raw
+id,indicator_id,location_id,campaign_id,value,is_raw
 1112292,164,12907,111,0.0168469945355191,0
 9927023,22,12910,111,180,1
 9923643,55,12910,111,10496,1

@@ -15,7 +15,7 @@ class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
 
-        self.region_code_input_column = 'Wardcode'
+        self.location_code_input_column = 'Wardcode'
         self.campaign_code_input_column = 'Campaign'
         self.uq_code_input_column = 'uq_id'
 
@@ -23,7 +23,7 @@ class RefreshMasterTestCase(TestCase):
 
     def set_up(self):
 
-        self.region_list = Location.objects.all().values_list('name',flat=True)
+        self.location_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
 
         self.create_metadata()
@@ -113,17 +113,17 @@ class RefreshMasterTestCase(TestCase):
 
         ss_id, first_submission = submission_qs[0],json.loads(submission_qs[1])
 
-        region_code = first_submission[self.region_code_input_column]
+        location_code = first_submission[self.location_code_input_column]
         campaign_code = first_submission[self.campaign_code_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
 
         indicator_code = raw_indicator_list[-1]
 
-        map_region_id = Location.objects.all()[0].id
+        map_location_id = Location.objects.all()[0].id
         som_id_r = SourceObjectMap.objects.create(
-            content_type = 'region',
-            source_object_code = region_code,
-            master_object_id = map_region_id,
+            content_type = 'location',
+            source_object_code = location_code,
+            master_object_id = map_location_id,
             mapped_by_id = self.user.id
         )
 
@@ -145,22 +145,22 @@ class RefreshMasterTestCase(TestCase):
 
         mr.refresh_doc_meta()
 
-        doc_som_id_for_region_code = DocumentSourceObjectMap.objects\
+        doc_som_id_for_location_code = DocumentSourceObjectMap.objects\
             .filter(id__in= SourceObjectMap.objects.filter(\
-                    content_type = 'region',
-                    source_object_code = region_code,
+                    content_type = 'location',
+                    source_object_code = location_code,
                 ).values_list('id',flat=True)
             ).values_list('id',flat=True)
 
         ## Test Case 1 ##
-        self.assertEqual(len(doc_som_id_for_region_code),1) # 1
+        self.assertEqual(len(doc_som_id_for_location_code),1) # 1
 
         mr.refresh_submission_details()
         first_submission_detail = SourceSubmissionDetail.objects\
             .get(source_submission_id = ss_id)
 
         ## Test Case 2 ##
-        self.assertEqual(first_submission_detail.region_id, map_region_id)
+        self.assertEqual(first_submission_detail.location_id, map_location_id)
         self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
 
         mr.submissions_to_doc_datapoints()
@@ -190,11 +190,11 @@ class RefreshMasterTestCase(TestCase):
 
     def create_metadata(self):
         '''
-        Creating the Indicator, Region, Campaign, meta data needed for the
+        Creating the Indicator, location, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
-        region_df= read_csv('datapoints/tests/_data/regions.csv')
+        location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
@@ -215,7 +215,7 @@ class RefreshMasterTestCase(TestCase):
             guid = 'test').id
 
         for ddt in ['uq_id_column','username_column','image_col',
-            'campaign_column','region_column','region_display_name']:
+            'campaign_column','location_column','location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
@@ -225,7 +225,7 @@ class RefreshMasterTestCase(TestCase):
 
         campaign_type = ResultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df,Location)
+        location_ids = self.model_df_to_data(location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
@@ -234,8 +234,8 @@ class RefreshMasterTestCase(TestCase):
         rg_conif = DocumentDetail.objects.create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='region_column').id,
-            doc_detail_value = self.region_code_input_column
+                .objects.get(name='location_column').id,
+            doc_detail_value = self.location_code_input_column
 
         )
 

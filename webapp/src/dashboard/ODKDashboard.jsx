@@ -10,7 +10,7 @@ var NCODashboard = React.createClass({
   propTypes : {
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
-    region    : React.PropTypes.object.isRequired,
+    location    : React.PropTypes.object.isRequired,
 
     loading   : React.PropTypes.bool
   },
@@ -33,14 +33,14 @@ var NCODashboard = React.createClass({
         <section>
           <div className='row'>
             <div className='small-7 columns'>
-              <h3>{this.props.region.name} - Overview</h3>
+              <h3>{this.props.location.name} - Overview</h3>
               <ODKOverview
                loading={loading}
                data={data.overview}
               />
             </div>
             <div className='small-5 columns'>
-              <h3>{this.props.region.name} - Non Compliance </h3>
+              <h3>{this.props.location.name} - Non Compliance </h3>
               <ODKMap
                loading={loading}
                data={data.map}

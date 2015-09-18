@@ -27,10 +27,10 @@ class CacheJob(models.Model):
 class Indicator(models.Model):
     '''
     The type of data that we are tracing, for instance
-     - Number of children missed due to religious regions
+     - Number of children missed due to religious locations
      - Number of vaccinators paid on time
      - Number of iVDPV cases
-     - Percentage of children missed due to religious regions.
+     - Percentage of children missed due to religious locations.
 
     Note that both calculated and raw indicators are stored in this table.  For
     more information on how indicicators are used to calculated data for more
@@ -79,7 +79,7 @@ class UserAbstracted(models.Model):
     '''
     Similar to the IndicatorAbstcated model, this allows us to store and return
     data associated with each user that is not stored directly in the user
-    table, but in tables keyed off user_id ( user_to_group, region_permission).
+    table, but in tables keyed off user_id ( user_to_group, location_permission).
 
     The transformation between Indicator and IndicatorAbstracted is handled in
     datapoints/cache_tasks.py -> cache_user_abstracted()
@@ -188,9 +188,9 @@ class Office(models.Model):
     Unless there are any other outbreaks of Polio, this list will remain
     Nigeria, Pakistan, and Nigeria.
 
-    Both regions and campaigns are associated with offices.  This is helpful
+    Both locations and campaigns are associated with offices.  This is helpful
     because often, bad mappings, or bad data in general lead us having
-    datapoints with a campaign/region combination that do not have the same
+    datapoints with a campaign/location combination that do not have the same
     office.  Having this ID in both of these tables makes bad data much easier
     to find.
     '''
@@ -213,10 +213,10 @@ class LocationType(models.Model):
     Country, Province, District, Sub-District, Settlement.
 
     While each country has it's own nomenclature for the different levels of
-    the regional heirarchy ( i.e. Nigeria calls Districts LGAs ) the region
-    type table allows us to assocaite a region_type key to each region.
+    the locational heirarchy ( i.e. Nigeria calls Districts LGAs ) the location
+    type table allows us to assocaite a location_type key to each location.
 
-    For our purpose the 5 region types are the definitive types of regions that
+    For our purpose the 5 location types are the definitive types of locations that
     the system supports.
     '''
 
@@ -231,8 +231,8 @@ class LocationType(models.Model):
 
 class Location(models.Model):
     '''
-    A point in space with a name, region_code, office_id, lat/lon, and parent
-    region id.  The parent region id is used to create the tree used to create
+    A point in space with a name, location_code, office_id, lat/lon, and parent
+    location id.  The parent location id is used to create the tree used to create
     aggregate statistics based on the information stored at the leaf leve.
     '''
 
@@ -257,7 +257,7 @@ class LocationTree(models.Model):
     '''
     location tree that is refreshed with "refresh_metadata"
 
-    Nigeria for instance as a parent region, will have ALL children recursively
+    Nigeria for instance as a parent location, will have ALL children recursively
     stored with the cooresponding level to indicate its depth in the tree.
     '''
 
@@ -272,7 +272,7 @@ class LocationTree(models.Model):
 
 class LocationPolygon(models.Model):
     '''
-    A shape file when avaiable for a region.
+    A shape file when avaiable for a location.
     '''
 
     location = models.OneToOneField(Location)
@@ -446,11 +446,11 @@ class AggDataPoint(models.Model):
 
 class LocationPermission(models.Model):
     '''
-    Individual Users must be assigned regional permissions.  If i am assigned
-    a region, I will be able to view all of its children recursively.  The
+    Individual Users must be assigned locational permissions.  If i am assigned
+    a location, I will be able to view all of its children recursively.  The
     default for a user
 
-    Regional permissions must also specify the read/write flag.  So for instance
+    locational permissions must also specify the read/write flag.  So for instance
     as a Cluster Supervisor in Sokoto, I should be able to see all of Nigeria's
     data, but i only should be able to insert / edit data for Sokoto. Thus i
     would have two records, one that says "i can read all of NG", and one that

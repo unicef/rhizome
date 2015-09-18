@@ -17,7 +17,7 @@ const fields = {
 		title: 'Edit',
 		key: 'id',
 		renderer: (id) => {
-			return <a href={`/datapoints/regions/update/${id}`}>Edit Region</a>;
+			return <a href={`/datapoints/locations/update/${id}`}>Edit location</a>;
 		}
 	},
 	created_at: { format: 'MMM D YYYY, h:mm a' }
@@ -25,19 +25,19 @@ const fields = {
 
 const fieldNamesOnTable = ['id', 'name', 'edit_link'];
 
-var RegionsAdmin = React.createClass({
+var locationsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
 				<SearchBar
 					fieldNames={['name']}
-					placeholder="search regions"
+					placeholder="search locations"
 					/>
 			</div>;
 
 		return <AdminPage
-			title="Regions"
-			getData={api.regions}
+			title="locations"
+			getData={api.locations}
 			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
@@ -51,4 +51,4 @@ var RegionsAdmin = React.createClass({
 	}
 });
 
-module.exports = RegionsAdmin;
+module.exports = locationsAdmin;

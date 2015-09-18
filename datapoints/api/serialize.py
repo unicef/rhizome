@@ -117,7 +117,7 @@ class CustomSerializer(Serializer):
 
     def to_csv(self, data, options=None):
         '''
-        First lookup the metadata (result_structure, region, indicator) and build a map
+        First lookup the metadata (result_structure, location, indicator) and build a map
         cooresponding to id / name.  Afterwords iterate through the dataobjecst
         passed, unpack the indicator objects and create a dataframe which gets
         converted to a csv.
@@ -137,7 +137,7 @@ class CustomSerializer(Serializer):
 
             expanded_obj = {}
 
-            expanded_obj['region'] = meta_lookup['region'][obj['region']]
+            expanded_obj['location'] = meta_lookup['location'][obj['location']]
             expanded_obj['result_structure'] = meta_lookup['result_structure'][obj['result_structure']]
 
             for ind_dict in obj['indicators']:

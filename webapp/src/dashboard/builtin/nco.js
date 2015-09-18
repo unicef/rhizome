@@ -51,55 +51,55 @@ module.exports = {
 	}, {
 		'title': 'Inside Monitoring',
 		'section': 'overview',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [276, 272]
 	}, {
 		'title': 'Outside Monitoring',
 		'section': 'overview',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [276, 274]
 	}, {
 		'title': 'Missed Children',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [267,268,251,264]
 	}, {
 		'title': 'Missed Children (Inside vs Outside)',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [265,273]
 	}, {
 		'title': 'Absences',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [246,247,248,249,250]
 	}, {
 		'title': 'Non-Compliance',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [252,255,258,261,253,256,259,254,257,260,263,262,266]
 	}, {
 		'title': 'Non-Compliance Resolutions',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [340,341,342,343]
 	}, {
 		'title': 'Influencers',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [278,279,280,281,282,283,284,285]
 	}, {
 		'title': 'Sources of Information',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
     'timeRange': 0,
 		'indicators': [295,299,303,296,300,304,297,301,305,298,302]
 	}]

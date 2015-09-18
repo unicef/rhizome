@@ -10,14 +10,14 @@ module.exports = {
 	template: require('./template.html'),
 	data: function(){
 	  return {
-		regions:[],
+		locations:[],
 		groups:[]    
 	  };
 	},
 	created: function() {
 	  var self = this;
 	 // console.log(self);
-	  self.$set('regionalAccessLoading',true);
+	  self.$set('locationalAccessLoading',true);
 	  var MenuComponent = Vue.extend(MenuVue);
 	  
 	  api.groups().then(function(response){
@@ -33,16 +33,16 @@ module.exports = {
 	  });
 
 	  
-	  api.regions().then(function(items){
-	     self.loadRegionalAccess(); 
-	     self.region_map = _.indexBy(items.objects, 'id');
-	     var regions = _(items.objects)
-	     	.map(function (region) {
+	  api.locations().then(function(items){
+	     self.loadlocationalAccess(); 
+	     self.location_map = _.indexBy(items.objects, 'id');
+	     var locations = _(items.objects)
+	     	.map(function (location) {
 	     		return {
-	     			'title'  : region.name,
-	     			'value'  : region.id,
-	     			'id'     : region.id,
-	     			'parent' : region.parent_location_id
+	     			'title'  : location.name,
+	     			'value'  : location.id,
+	     			'id'     : location.id,
+	     			'parent' : location.parent_location_id
 	     		};
 	     	})
 	     	.sortBy('title')
@@ -50,14 +50,14 @@ module.exports = {
 	     	.thru(_.curryRight(treeify)('id'))
 	     	.thru(ancestoryString)
 	     	.value();
-	     self.$set('regions',regions);
+	     self.$set('locations',locations);
 	     
 	  }).then(function () { 
-	    self.regionMenu = new MenuComponent({
-	    	   el     : '#regions'
+	    self.locationMenu = new MenuComponent({
+	    	   el     : '#locations'
 	    });
-	    self.regionMenu.items = self.$data.regions;
-	    self.regionMenu.$on('field-selected',self.addRegionalAccess);
+	    self.locationMenu.items = self.$data.locations;
+	    self.locationMenu.$on('field-selected',self.addlocationalAccess);
 	  }); 
 	},
 	methods: {
@@ -71,40 +71,40 @@ module.exports = {
 	       api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
          }	
   	  },
-	  addRegionalAccess: function(data){
+	  addlocationalAccess: function(data){
 	    var self = this;
-	    self.$set('regionalAccessLoading',true);
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:'r' }).then(function(){
-	      self.loadRegionalAccess();
+	    self.$set('locationalAccessLoading',true);
+	    api.set_location_permission( {user_id:this.$parent.$data.user_id, location_id:data, read_write:'r' }).then(function(){
+	      self.loadlocationalAccess();
 	    });
 	  },
-	  deleteRegionalAccess: function(data){
+	  deletelocationalAccess: function(data){
 	    var self = this;
-	    var readWrite = _.find(self.$get('region_permissions'),{region_id:data}).read_write;
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:data, read_write:readWrite,id:'' }).then(function(){
-	      self.loadRegionalAccess();
+	    var readWrite = _.find(self.$get('location_permissions'),{location_id:data}).read_write;
+	    api.set_location_permission( {user_id:this.$parent.$data.user_id, location_id:data, read_write:readWrite,id:'' }).then(function(){
+	      self.loadlocationalAccess();
 	    });
 	  },
-	  updateRegionalAccessCanRead: function(e){
+	  updatelocationalAccessCanRead: function(e){
 	    var self = this;
-	    var regionId = e.target.getAttribute('data-region-id');
+	    var locationId = e.target.getAttribute('data-location-id');
 	    var internalId = e.target.getAttribute('data-internal-id');
 	    var readWrite = (e.target.checked?'w':'r');
-	    api.set_region_permission( {user_id:this.$parent.$data.user_id, region_id:regionId, read_write:readWrite,id:internalId });
+	    api.set_location_permission( {user_id:this.$parent.$data.user_id, location_id:locationId, read_write:readWrite,id:internalId });
 	  },
 	  
-	  loadRegionalAccess: function(){
+	  loadlocationalAccess: function(){
 	    var self = this;
 	    
 	    
-	    api.region_permission( {user:this.$parent.$data.user_id}).then(function(data){
-	      var regions = data.objects;
-	       _.forEach(regions,function(region){
-	           region.name = self.region_map[region.region_id].name;
-	           region.canEnter = region.read_write=='w';
+	    api.location_permission( {user:this.$parent.$data.user_id}).then(function(data){
+	      var locations = data.objects;
+	       _.forEach(locations,function(location){
+	           location.name = self.location_map[location.location_id].name;
+	           location.canEnter = location.read_write=='w';
 	       });
-	      self.$set('region_permissions',regions); 
-	      self.$set('regionalAccessLoading',false);
+	      self.$set('location_permissions',locations); 
+	      self.$set('locationalAccessLoading',false);
 	    });
 	  }
 	}

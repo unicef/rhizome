@@ -97,7 +97,7 @@ function _columnData(data, groups, groupBy) {
 	});
 	_.each(columnData,function(series){
 
-	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{region:series.values[0].region,indicator:series.values[0].indicator}));
+	   var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{location:series.values[0].location,indicator:series.values[0].indicator}));
 	   series.values = _.assign(baseGroupValues,_.cloneDeep(series.values));
 	});
 
@@ -140,18 +140,18 @@ var chartOptions = {
 	};
 module.exports = Reflux.createStore({
 	data: {
-		regionList:[],
+		locationList:[],
 		indicatorList:[],
 		campaignList:[],
 		indicatorsSelected:[],//[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
 		campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-		regionSelected:{parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
-		aggregatedRegions:[],
+		locationSelected:{parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
+		aggregatedlocations:[],
 		title: "",
 		description: "",
-		regionRadios:[{value:"selected",title:"Selected region only"},{value:"type",title:"Regions with the same type"},{value:"subregions",title:"Subregions 1 level below selected"}],
-		regionRadioValue: 2,
-		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"region",title:"Regions"}],
+		locationRadios:[{value:"selected",title:"Selected location only"},{value:"type",title:"locations with the same type"},{value:"sublocations",title:"Sublocations 1 level below selected"}],
+		locationRadioValue: 2,
+		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"location",title:"locations"}],
 		groupByRadioValue: 1,
 		timeRadios:function(){
 		            var self = this;
@@ -197,7 +197,7 @@ module.exports = Reflux.createStore({
 			    title: this.title,
 				type: this.chartTypes[this.selectedChart].name,
 				indicators:_.map(this.indicatorsSelected,_.property('id')),
-				regions:this.regionRadios[this.regionRadioValue].value,
+				locations:this.locationRadios[this.locationRadioValue].value,
 				groupBy:this.groupByRadios[this.groupByRadioValue].value,
 				x:this.xAxis,
 				y:this.yAxis,
@@ -212,20 +212,20 @@ module.exports = Reflux.createStore({
 	getInitialState: function(){
 	   return this.data;
 	},
-	onInitialize: function(chartDef,region,campaign){
-	this.data.regionSelected = region;
+	onInitialize: function(chartDef,location,campaign){
+	this.data.locationSelected = location;
 	this.data.campaignSelected = campaign;
     this.resetChartDef();
 
 	var self = this;
-			var regionPromise = api.regions().then(function(items){
-			  self._regionIndex = _.indexBy(items.objects, 'id');
-			  self.data.regionList = _(items.objects)
-			  	.map(function (region) {
+			var locationPromise = api.locations().then(function(items){
+			  self._locationIndex = _.indexBy(items.objects, 'id');
+			  self.data.locationList = _(items.objects)
+			  	.map(function (location) {
 			  		return {
-			  			'title'  : region.name,
-			  			'value'  : region.id,
-			  			'parent' : region.parent_location_id
+			  			'title'  : location.name,
+			  			'value'  : location.id,
+			  			'parent' : location.parent_location_id
 			  		};
 			  	})
 			  	.sortBy('title')
@@ -234,7 +234,7 @@ module.exports = Reflux.createStore({
 			  	.map(ancestoryString)
 			  	.value();
 			  	self.trigger(self.data);
-			  	self.aggregateRegions();
+			  	self.aggregatelocations();
 			 });
 
 			api.indicatorsTree().then(function(items) {
@@ -288,10 +288,10 @@ module.exports = Reflux.createStore({
 	   this.data.description = value;
 	   this.trigger(this.data);
 	},
-	onSelectShowRegionRadio:function(value){
-	   this.data.regionRadioValue = value;
+	onSelectShowlocationRadio:function(value){
+	   this.data.locationRadioValue = value;
 	   this.trigger(this.data);
-	   this.aggregateRegions();
+	   this.aggregatelocations();
 	},
 	onSelectGroupByRadio:function(value){
 	   this.data.groupByRadioValue = value;
@@ -327,10 +327,10 @@ module.exports = Reflux.createStore({
 		this.trigger(this.data);
 		this.getChartData();
 	},
-	onAddRegionSelection: function(value){
-		this.data.regionSelected = this._regionIndex[value];
+	onAddlocationSelection: function(value){
+		this.data.locationSelected = this._locationIndex[value];
 		this.trigger(this.data);
-		this.aggregateRegions();
+		this.aggregatelocations();
 	},
 	onSelectXAxis: function(value){
 	    this.data.xAxis = value;
@@ -351,7 +351,7 @@ module.exports = Reflux.createStore({
        	  return self._indicatorIndex[id];
        });
        this.data.title = chartDef.title;
-       this.data.regionRadioValue = _.findIndex(this.data.regionRadios,{value:chartDef.regions});
+       this.data.locationRadioValue = _.findIndex(this.data.locationRadios,{value:chartDef.locations});
        this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy});
        this.data.formatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'yFormat', ',.0f') });
        this.data.xFormatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'xFormat', ',.0f') });
@@ -378,34 +378,34 @@ module.exports = Reflux.createStore({
 	   this.data.selectedChart = 0;
 	   this.data.indicatorsSelected = [];
 	   this.data.title = '';
-	   this.data.regionRadioValue = 0;
+	   this.data.locationRadioValue = 0;
 	   this.data.groupByRadioValue = 0;
 	   this.data.timeRadioValue = 0;
 	   this.trigger(this.data);
 	},
-	aggregateRegions: function(){
-	    var regions;
-	    var regionSelected = this.data.regionSelected;
-	    var regionRadioValue = this.data.regionRadios[this.data.regionRadioValue].value;
-	    if(regionRadioValue==="selected")
+	aggregatelocations: function(){
+	    var locations;
+	    var locationSelected = this.data.locationSelected;
+	    var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value;
+	    if(locationRadioValue==="selected")
 	    {
-    	   regions = [regionSelected];
+    	   locations = [locationSelected];
 	    }
-		else if(regionRadioValue==="type")
+		else if(locationRadioValue==="type")
 		{
-		   if(regionSelected.parent_location_id && regionSelected.parent_location_id != "None")
+		   if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
 		   {
-		     regions = _.filter(this._regionIndex, {location_type_id:regionSelected.location_type_id,office_id:regionSelected.office_id});
+		     locations = _.filter(this._locationIndex, {location_type_id:locationSelected.location_type_id,office_id:locationSelected.office_id});
 		   }
 		   else {
-		   	 regions = _.filter(this._regionIndex, {location_type_id:this.data.regionSelected.location_type_id});
+		   	 locations = _.filter(this._locationIndex, {location_type_id:this.data.locationSelected.location_type_id});
 		   }
 		}
-		else if(regionRadioValue==="subregions")
+		else if(locationRadioValue==="sublocations")
 		{
-		   regions = _.filter(this._regionIndex, {parent_location_id:regionSelected.id});
+		   locations = _.filter(this._locationIndex, {parent_location_id:locationSelected.id});
 		}
-		this.data.aggregatedRegions = regions;
+		this.data.aggregatedlocations = locations;
 		if(this.canFetchChartData())
 		{
 			this.getChartData();
@@ -444,8 +444,8 @@ module.exports = Reflux.createStore({
 	    var groupBy = this.data.groupByRadios[this.data.groupByRadioValue].value;
 	    var self = this;
 		var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id');//;
-		var regionsIndex = _.indexBy(this.data.aggregatedRegions, 'id');
-		var groups = (groupBy == 'indicator'?indicatorsIndex:regionsIndex);
+		var locationsIndex = _.indexBy(this.data.aggregatedlocations, 'id');
+		var groups = (groupBy == 'indicator'?indicatorsIndex:locationsIndex);
 		var start = moment(this.data.campaignSelected.start_date);
 		var meltObjects  = _.flow(_.property('objects'), melt);
 		var lower = this.getLower(start);//.subtract(1, 'year');
@@ -453,14 +453,14 @@ module.exports = Reflux.createStore({
         var indicatorArray = _.map(this.data.indicatorsSelected,_.property('id'))
 	    var q = {
 		indicator__in  : indicatorArray,
-		region__in     : _.map(this.data.aggregatedRegions,_.property('id')),
+		location__in     : _.map(this.data.aggregatedlocations,_.property('id')),
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
 
 
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedRegions,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedlocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;

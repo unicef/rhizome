@@ -8,7 +8,7 @@ var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx');
 
 function prep (data) {
   return _(data)
-    .groupBy('region.id')
+    .groupBy('location.id')
     .filter(v => _(v).pluck('value').some(_.isFinite))
     .flatten()
     .groupBy('indicator.short_name')
@@ -34,7 +34,7 @@ var Breakdown = React.createClass({
 
     var options = {
       x : _.property('value'),
-      y : _.property('region.name'),
+      y : _.property('location.name'),
       margin : {
         top    : 0,
         right  : 80,

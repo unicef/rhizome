@@ -31,29 +31,29 @@ class IndicatorTest(MasterModelTestCase):
         print '...Done Testing Indicator Model...'
 
 
-class RegionTest(MasterModelTestCase):
+class locationTest(MasterModelTestCase):
 
     def set_up(self):
 
         self.location_type_id = LocationType.objects.create(name='test').id
 
-    def create_region(self, name = "test", office_id=1):
+    def create_location(self, name = "test", office_id=1):
 
         self.set_up()
 
-        region = Location.objects.create(name = name\
+        location = Location.objects.create(name = name\
             ,office_id = office_id
             ,location_type_id = self.location_type_id)
 
-        return region
+        return location
 
-    def test_region_creation(self):
+    def test_location_creation(self):
 
-        r = self.create_region()
-        self.assertTrue(isinstance,(r,Region))
+        r = self.create_location()
+        self.assertTrue(isinstance,(r,location))
         self.assertEqual(r.__unicode__(),r.name)
 
-        print '...Done Testing Region Model...'
+        print '...Done Testing location Model...'
 
 class DataPointTest(MasterModelTestCase):
 
@@ -71,7 +71,7 @@ class DataPointTest(MasterModelTestCase):
             created_by_id = self.user.id,
             guid = 'test')
 
-    def create_datapoint(self, note="test", indicator_id=99, region_id = 99,
+    def create_datapoint(self, note="test", indicator_id=99, location_id = 99,
         campaign_id=99, value=100.01, changed_by_id = 1):
 
         self.set_up()
@@ -84,7 +84,7 @@ class DataPointTest(MasterModelTestCase):
 
         dp = DataPoint.objects.create(
             indicator_id=indicator_id,
-            region_id = region_id,
+            location_id = location_id,
             campaign_id=campaign_id,
             value = value,
             changed_by_id=changed_by_id,

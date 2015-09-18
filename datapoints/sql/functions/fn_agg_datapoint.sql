@@ -14,60 +14,60 @@
 
 			CREATE TABLE _to_agg AS
 
-			WITH RECURSIVE region_tree AS
+			WITH RECURSIVE location_tree AS
 					(
 					-- non-recursive term ( rows where the components aren't
 					-- master_indicators in another calculation )
 
 					SELECT
-						rg.parent_region_id
-						,rg.parent_region_id as immediate_parent_id
-						,rg.id as region_id
+						rg.parent_location_id
+						,rg.parent_location_id as immediate_parent_id
+						,rg.id as location_id
 						,0 as lvl
-					FROM region rg
+					FROM location rg
 
 					UNION ALL
 
 					-- recursive term --
 					SELECT
-						r_recurs.parent_region_id
-						,rt.parent_region_id as immediate_parent_id
-						,rt.region_id
+						r_recurs.parent_location_id
+						,rt.parent_location_id as immediate_parent_id
+						,rt.location_id
 						,rt.lvl + 1
-					FROM region AS r_recurs
-					INNER JOIN region_tree AS rt
-					ON (r_recurs.id = rt.parent_region_id)
-				AND r_recurs.parent_region_id IS NOT NULL
+					FROM location AS r_recurs
+					INNER JOIN location_tree AS rt
+					ON (r_recurs.id = rt.parent_location_id)
+				AND r_recurs.parent_location_id IS NOT NULL
 			)
 
 			SELECT DISTINCT
 				d.id as datapoint_id
 				,d.indicator_id
 				,d.campaign_id
-				,d.region_id
+				,d.location_id
 				,d.value
-				,rt.parent_region_id
+				,rt.parent_location_id
 				,rt.immediate_parent_id
-			FROM region_tree rt
+			FROM location_tree rt
 			INNER JOIN datapoint d
-			ON rt.region_id = d.region_id
+			ON rt.location_id = d.location_id
 			AND d.value IS NOT NULL
 			INNER JOIN _campaign_indicator ci
 			ON d.indicator_id = ci.indicator_id
 			AND d.campaign_id = ci.campaign_id
 			WHERE EXISTS (
 
-						SELECT 1 -- DATA AT SAME REGIONAL LEVEL AS REQUESTED
-						FROM region r
-						WHERE r.parent_region_id = rt.parent_region_id
-						AND rt.region_id = d.region_id
+						SELECT 1 -- DATA AT SAME locationAL LEVEL AS REQUESTED
+						FROM location r
+						WHERE r.parent_location_id = rt.parent_location_id
+						AND rt.location_id = d.location_id
 
 						UNION ALL
 
-						SELECT 1-- DATA AT SAME REGIONAL LEVEL AS REQUESTED
-						FROM region r
-						WHERE r.id = rt.region_id
-						AND r.parent_region_id IS NULL
+						SELECT 1-- DATA AT SAME locationAL LEVEL AS REQUESTED
+						FROM location r
+						WHERE r.id = rt.location_id
+						AND r.parent_location_id IS NULL
 
 			)
 			and d.value IS NOT NULL
@@ -77,7 +77,7 @@
 
 			SELECT DISTINCT
 				d.datapoint_id
-				,d.region_id
+				,d.location_id
 				,d.campaign_id
 				,d.indicator_id
 				,d.value
@@ -87,7 +87,7 @@
 
 			SELECT
 				CAST(NULL AS INT) as id
-				,d.parent_region_id
+				,d.parent_location_id
 				,d.campaign_id
 				,d.indicator_id
 				,SUM(d.value) as value
@@ -95,27 +95,27 @@
 
 			WHERE NOT EXISTS (
 				SELECT 1 FROM _to_agg ta
-				WHERE d.immediate_parent_id = ta.region_id
+				WHERE d.immediate_parent_id = ta.location_id
 				AND d.campaign_id = ta.campaign_id
 				AND d.indicator_id = ta.indicator_id
 			)
 			AND NOT EXISTS (
 				SELECT 1 FROM _to_agg ta
-				WHERE d.parent_region_id = ta.region_id
+				WHERE d.parent_location_id = ta.location_id
 				AND d.campaign_id = ta.campaign_id
 				AND d.indicator_id = ta.indicator_id
 			)
-			AND d.parent_region_id is not null
-			GROUP BY d.parent_region_id, d.campaign_id, d.indicator_id;
+			AND d.parent_location_id is not null
+			GROUP BY d.parent_location_id, d.campaign_id, d.indicator_id;
 
-			CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(region_id,campaign_id,indicator_id);
+			CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(location_id,campaign_id,indicator_id);
 
 			-- OVERRIDES --
 			UPDATE _tmp_agg ta
 			SET   value = d.value
 				, datapoint_id = d.id
 			FROM datapoint d
-			WHERE ta.region_id = d.region_id
+			WHERE ta.location_id = d.location_id
 			AND ta.campaign_id = d.campaign_id
 			AND ta.indicator_id = d.indicator_id
 			AND d.value IS NOT NULL
@@ -124,7 +124,7 @@
 			-- DELETES in data entry (value is null) --
 			DELETE FROM _tmp_agg ta
 			USING datapoint d
-			WHERE ta.region_id = d.region_id
+			WHERE ta.location_id = d.location_id
 			AND ta.campaign_id = d.campaign_id
 			AND ta.indicator_id = d.indicator_id
 			AND d.value IS NULL
@@ -150,18 +150,18 @@
 				SET cache_job_id = $1
 				, value = ta.value
 			FROM _tmp_agg ta
-			WHERE ta.region_id = ad.region_id
+			WHERE ta.location_id = ad.location_id
 			AND ta.campaign_id = ad.campaign_id
 			AND ta.indicator_id = ad.indicator_id;
 
 			-- INSERT NEW --
 			INSERT INTO agg_datapoint
-			(region_id, campaign_id, indicator_id, value,cache_job_id)
-			SELECT region_id, campaign_id, indicator_id, value, $1
+			(location_id, campaign_id, indicator_id, value,cache_job_id)
+			SELECT location_id, campaign_id, indicator_id, value, $1
 			FROM _tmp_agg ta
 			WHERE NOT EXISTS (
 				SELECT 1 FROM agg_datapoint ad
-				WHERE ta.region_id = ad.region_id
+				WHERE ta.location_id = ad.location_id
 				AND ta.campaign_id = ad.campaign_id
 				AND ta.indicator_id = ad.indicator_id
 			);
@@ -169,7 +169,7 @@
 
 			RETURN QUERY
 
-			SELECT ad.region_id FROM agg_datapoint ad
+			SELECT ad.location_id FROM agg_datapoint ad
 			WHERE ad.cache_job_id = $1
 			LIMIT 1;
 

@@ -16,13 +16,13 @@ BEGIN
 	      --> but we do need to be able to determine where this information
 	      --> is to effect any downstream calculatiosn for this job.
 
-				DROP TABLE IF EXISTS _region_campaign;
+				DROP TABLE IF EXISTS _location_campaign;
 				DROP TABLE IF EXISTS _raw_indicators;
 				DROP TABLE IF EXISTS _indicators_needed_to_calc;
 				DROP TABLE IF EXISTS _tmp_calc_datapoint ;
 
-				CREATE TABLE _region_campaign AS
-				SELECT DISTINCT ad.region_id, ad.campaign_id
+				CREATE TABLE _location_campaign AS
+				SELECT DISTINCT ad.location_id, ad.campaign_id
 				FROM agg_datapoint ad
 				WHERE ad.cache_job_id = $1;
 
@@ -103,7 +103,7 @@ BEGIN
 
 				SELECT DISTINCT
 					ad.id
-					,ad.region_id
+					,ad.location_id
 					,ad.campaign_id
 					,ad.indicator_id
 					,ad.value
@@ -111,11 +111,11 @@ BEGIN
 				FROM agg_datapoint ad
 				INNER JOIN _indicators_needed_to_calc intc
 					ON ad.indicator_id = intc.indicator_id
-				INNER JOIN _region_campaign rc
-					ON ad.region_id = rc.region_id
+				INNER JOIN _location_campaign rc
+					ON ad.location_id = rc.location_id
 					AND ad.campaign_id = rc.campaign_id;
 
-	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (region_id, campaign_id, indicator_id);
+	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (location_id, campaign_id, indicator_id);
 
 	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
 

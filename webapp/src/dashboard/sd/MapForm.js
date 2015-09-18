@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var React = require('react');
 var api = require('data/api');
-var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
+var locationTitleMenu     = require('component/locationTitleMenu.jsx');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 var Modal = require('react-modal');
@@ -24,7 +24,7 @@ var MapForm = React.createClass({
 	propTypes: {
 	  source_object_map_id 	: React.PropTypes.number.isRequired,
 		source_object_code		: React.PropTypes.string.isRequired,
-    regions : React.PropTypes.object.isRequired,
+    locations : React.PropTypes.object.isRequired,
     campaigns : React.PropTypes.object.isRequired,
     indicators : React.PropTypes.object.isRequired,
     },
@@ -61,9 +61,9 @@ var MapForm = React.createClass({
   renderDropDown : function(content_type) {
     var defaultSelected = {'name':'please map..'}
 
-    if (content_type == 'region') {
-      return <div><RegionTitleMenu
-               regions={this.props.regions}
+    if (content_type == 'location') {
+      return <div><locationTitleMenu
+               locations={this.props.locations}
                selected={defaultSelected}
                sendValue={this.postMetaMap} /></div>;
     }

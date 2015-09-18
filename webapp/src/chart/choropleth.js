@@ -135,16 +135,16 @@ _.extend(ChoroplethMap.prototype, {
         '#2D2525'
       ]);
 
-		var region = g.selectAll('.region')
-			.data(features, function (d, i) { return _.get(d, 'properties.region_id', i); });
+		var location = g.selectAll('.location')
+			.data(features, function (d, i) { return _.get(d, 'properties.location_id', i); });
 
-		region.enter().append('path');
+		location.enter().append('path');
 
-		region.attr({
+		location.attr({
 				'd'     : path,
 				'class' : function (d) {
 					var v = options.value(d);
-					var classNames = ['region'];
+					var classNames = ['location'];
 
 					if (_.isFinite(v)) {
 						classNames.push('clickable');
@@ -158,12 +158,12 @@ _.extend(ChoroplethMap.prototype, {
         return _.isFinite(v) ? colorScale(v) : '#fff';
       })
 			.on('click', function (d) {
-				options.onClick(_.get(d, 'properties.region_id'));
+				options.onClick(_.get(d, 'properties.location_id'));
 			})
 			.on('mousemove', _.partial(this._onMouseMove, _, options))
 			.on('mouseout', this._onMouseOut);
 
-		region.exit().remove();
+		location.exit().remove();
 
     // Generate ticks for the legend by inverting output range of the quantize
     // scale, mapping the format function to the values, and joining them

@@ -12,7 +12,7 @@ var DocOverview = require('dashboard/sd/DocOverview.js');
 var DocForm = require('dashboard/sd/DocForm.js');
 
 var TitleMenu  	= require('component/TitleMenu.jsx');
-var RegionTitleMenu  	= require('component/RegionTitleMenu.jsx');
+var locationTitleMenu  	= require('component/locationTitleMenu.jsx');
 var MenuItem    = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
 
@@ -27,8 +27,8 @@ var SourceDataDashboard = React.createClass({
   propTypes : {
     dashboard : React.PropTypes.object.isRequired,
     data      : React.PropTypes.object.isRequired,
-    region    : React.PropTypes.object.isRequired,
-		regions   : React.PropTypes.object.isRequired,
+    location    : React.PropTypes.object.isRequired,
+		locations   : React.PropTypes.object.isRequired,
 		doc_id    : React.PropTypes.number.isRequired,
 		doc_tab    : React.PropTypes.string.isRequired,
 
@@ -66,7 +66,7 @@ var SourceDataDashboard = React.createClass({
   render : function () {
     var loading = this.props.loading;
 		var campaign = this.props.campaign;
-		var region = this.props.region;
+		var location = this.props.location;
 		var loading = this.props.loading;
 		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
@@ -121,8 +121,8 @@ var SourceDataDashboard = React.createClass({
 			'viewraw':{
 				'meta_fn' : api.submissionMeta,
 				'data_fn' : api.submission,
-				'fields' : ['id','username_code','region_code','campaign_code','region_display','edit_link'],
-				'search_fields' :['id','username_code','region_code','campaign_code','region_display'],
+				'fields' : ['id','username_code','location_code','campaign_code','location_display','edit_link'],
+				'search_fields' :['id','username_code','location_code','campaign_code','location_display'],
 			},
 			'doc_index':{
 				'data_fn' : api.source_doc,
@@ -136,13 +136,13 @@ var SourceDataDashboard = React.createClass({
 				},
 			'validate':{
 				'data_fn' : api.docDatapoint,
-				'fields' :['id','document_id','region_id','indicator_id','campaign_id','value','edit_link'],
-				'search_fields' :['region_id','indicator_id','campaign_id'],
+				'fields' :['id','document_id','location_id','indicator_id','campaign_id','value','edit_link'],
+				'search_fields' :['location_id','indicator_id','campaign_id'],
 			},
 			'results':{
 				'data_fn' : api.docResults,
-				'fields' : ['id','region_id','indicator_id','campaign_id','value'],
-				'search_fields' :['region_id','indicator_id','campaign_id'],
+				'fields' : ['id','location_id','indicator_id','campaign_id','value'],
+				'search_fields' :['location_id','indicator_id','campaign_id'],
 			},
 		};
 
@@ -156,13 +156,13 @@ var SourceDataDashboard = React.createClass({
 				/>
 		</div>;
 
-	var table_key = _.kebabCase(this.props.region.name) + this.props.campaign.slug + doc_id + doc_tab;
+	var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab;
 		// data table //
 	var review_table = <ReviewTable
 					title='sample title'
 					getData={table_definition[doc_tab]['data_fn']}
 					fields={table_definition[doc_tab]['fields']}
-					region={region}
+					location={location}
 					key={table_key}
 					loading={loading}
 					doc_id={doc_id}
@@ -223,16 +223,16 @@ _setDocTab : function (doc_tab) {
 
 _navigate : function (params) {
 	var slug     = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-	var region   = _.get(params, 'region', this.props.region.name);
+	var location   = _.get(params, 'location', this.props.location.name);
 	var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
 	var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab);
 	var doc_id = _.get(params, 'doc_id', this.props.doc_id);
 
-	if (_.isNumber(region)) {
-		region = _.find(this.state.regions, r => r.id === region).name;
+	if (_.isNumber(location)) {
+		location = _.find(this.state.locations, r => r.id === location).name;
 	}
 
-  page('/datapoints/' + [slug, region, campaign].join('/') + '/' + doc_tab + '/' + doc_id  );
+  page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id  );
 },
 
 

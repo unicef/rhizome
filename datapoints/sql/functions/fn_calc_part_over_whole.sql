@@ -7,11 +7,11 @@ BEGIN
 
   ----- PART / WHOLE ------
   INSERT INTO _tmp_calc_datapoint
-  (indicator_id,region_id,campaign_id,value)
+  (indicator_id,location_id,campaign_id,value)
 
   SELECT DISTINCT
   part.indicator_id as master_id
-  ,d_part.region_id
+  ,d_part.location_id
   ,d_part.campaign_id
   ,d_part.value / NULLIF(d_whole.value,0) as value
   FROM calculated_indicator_component part
@@ -24,7 +24,7 @@ BEGIN
   INNER JOIN _tmp_calc_datapoint d_whole
       ON whole.indicator_component_id = d_whole.indicator_id
       AND d_part.campaign_id = d_whole.campaign_id
-      AND d_part.region_id = d_whole.region_id;
+      AND d_part.location_id = d_whole.location_id;
 
     RETURN QUERY
 

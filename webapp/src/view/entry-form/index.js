@@ -18,15 +18,15 @@ module.exports = {
 			indicator_sets: require('./structure/indicator_sets'),
 			noEditableSets: false,
 			loaded: false,
-			includeSubRegions: false,
-			regions: [],
+			includeSublocations: false,
+			locations: [],
 			indicators: [],
 			pagination: {
 				total_count: 0
 			},
 			table: {
 				loading: false,
-				columns: ['region', 'campaign'],
+				columns: ['location', 'campaign'],
 				rows: []
 			},
 
@@ -50,7 +50,7 @@ module.exports = {
 
 	ready: function() {
 
-		this.$watch('campaign_id', this.refreshRegionsDropdown);
+		this.$watch('campaign_id', this.refreshlocationsDropdown);
 
 		this.load();
 
@@ -59,12 +59,12 @@ module.exports = {
 	attached: function () {
 		var self = this;
 
-		// setup regions dropdown
-		self._regions = new Dropdown({
-			el     : '#regions'
+		// setup locations dropdown
+		self._locations = new Dropdown({
+			el     : '#locations'
 		});
-		self._regions.$on('dropdown-value-changed', function (items) {
-			self.regions = _.values(items);
+		self._locations.$on('dropdown-value-changed', function (items) {
+			self.locations = _.values(items);
 		});
 
 		this.$on('page-changed', function (data) {
@@ -75,7 +75,7 @@ module.exports = {
 	computed: {
 
 		hasSelection: function () {
-			return this.regions.length > 0;
+			return this.locations.length > 0;
 		}
 
 	},
@@ -110,8 +110,8 @@ module.exports = {
 
 			Promise.all([
 
-					// regions data
-					api.regions({ depth_level: 2, read_write: 'w' })
+					// locations data
+					api.locations({ depth_level: 2, read_write: 'w' })
 						.then(makeMap)
 						.then(function(map) {
 							// create array of children in each parent
@@ -140,7 +140,7 @@ module.exports = {
 
 				]).then(function(allData) {
 
-					self.$data.regionData = allData[0];
+					self.$data.locationData = allData[0];
 					self.$data.indicators = allData[1];
 					self.$data.campaigns = allData[2];
 
@@ -149,18 +149,18 @@ module.exports = {
 					self.$data.loaded = true;
 
 					self.filterIndicatorSets();
-					self.refreshRegionsDropdown();
+					self.refreshlocationsDropdown();
 
 				});
 
 		},
 
-		refreshRegionsDropdown: function() {
+		refreshlocationsDropdown: function() {
 			var self = this;
 
 			var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id); });
 
-			var items = _.chain(self.$data.regionData)
+			var items = _.chain(self.$data.locationData)
 							.filter(function(d) {
 								return d.office_id === campaign.office_id;
 							})
@@ -173,12 +173,12 @@ module.exports = {
 							})
 							.value();
 
-			self._regions.items = items;
-			self._regions.itemTree = treeify(items, 'value');
+			self._locations.items = items;
+			self._locations.itemTree = treeify(items, 'value');
 
 			// if this campaign has a different office than the previous one, we have to clear the dropdown selection
 			if (self.$data.campaign_office_id !== null && campaign.office_id !== self.$data.campaign_office_id) {
-				self._regions.selection = {};
+				self._locations.selection = {};
 			}
 
 			// set office id to track when the office changes
@@ -239,38 +239,38 @@ module.exports = {
 			var options = {
 				campaign__in: parseInt(self.$data.campaign_id),
 				indicator__in: [],
-				region__in: []
+				location__in: []
 			};
 
-			// add regions to request
-			if (self.regions.length > 0) {
+			// add locations to request
+			if (self.locations.length > 0) {
 
-				// get all high risk children of selected regions
-				_.forEach(self.regions, function(regionVue) {
+				// get all high risk children of selected locations
+				_.forEach(self.locations, function(locationVue) {
 
-					var region = self.$data.regionData[regionVue.value];
-					options.region__in.push(region.id);
+					var location = self.$data.locationData[locationVue.value];
+					options.location__in.push(location.id);
 
-					if (self.includeSubRegions) {
-						// this will include all child regions:
-						var children = flattenChildren(region, 'children', null, function() { return true; }, 1);
-						// this will include only high risk child regions
-						// var children = flattenChildren(region, 'children', null, function(d) { return d.is_high_risk === true; });
+					if (self.includeSublocations) {
+						// this will include all child locations:
+						var children = flattenChildren(location, 'children', null, function() { return true; }, 1);
+						// this will include only high risk child locations
+						// var children = flattenChildren(location, 'children', null, function(d) { return d.is_high_risk === true; });
 						if (children.length > 0) {
-							options.region__in = options.region__in.concat(_.map(children, 'id'));
+							options.location__in = options.location__in.concat(_.map(children, 'id'));
 						}
 					}
 
 				});
 
 				// make unique
-				options.region__in = _.uniq(options.region__in);
+				options.location__in = _.uniq(options.location__in);
 
-				// sort regions
-				options.region__in = options.region__in.sort(function(a,b) {
-					var ra = self.$data.regionData[a];
-					var rb = self.$data.regionData[b];
-					// sort by region type first
+				// sort locations
+				options.location__in = options.location__in.sort(function(a,b) {
+					var ra = self.$data.locationData[a];
+					var rb = self.$data.locationData[b];
+					// sort by location type first
 					if (ra.location_type_id !== rb.location_type_id) { return ra.location_type_id - rb.location_type_id; }
 					// then name (alpha)
 					else { return ra.name > rb.name ? 1 : -1; }
@@ -293,12 +293,12 @@ module.exports = {
 					headerClasses: 'medium-3'
 				}
 			];
-			// add region names as columns
-			_.forEach(options.region__in, function(region_id) {
+			// add location names as columns
+			_.forEach(options.location__in, function(location_id) {
 				columns.push({
-					header: self.$data.regionData[region_id].name,
+					header: self.$data.locationData[location_id].name,
 					type: 'value',
-					key: region_id,
+					key: location_id,
 					children: null
 				});
 			});
@@ -316,11 +316,11 @@ module.exports = {
 				// finished fetching data
 				self.table.loading = false;
 
-				// arrange datapoints into an object of indicators > regions
+				// arrange datapoints into an object of indicators > locations
 				var byIndicator = {};
 				data.objects.forEach(function(d) {
 					if (!byIndicator[d.indicator_id]) { byIndicator[d.indicator_id] = {}; }
-					byIndicator[d.indicator_id][d.region_id] = d;
+					byIndicator[d.indicator_id][d.location_id] = d;
 				});
 
 				// assemble data points into rows for table
@@ -370,8 +370,8 @@ module.exports = {
 										cell.note = null;
 									}
 									// tooltip
-									if (self.$data.regionData[column.key] && self.$data.indicators[indicator_id]) {
-										cell.tooltip = self.$data.indicators[indicator_id].name + ' value for ' + self.$data.regionData[column.key].name;
+									if (self.$data.locationData[column.key] && self.$data.indicators[indicator_id]) {
+										cell.tooltip = self.$data.indicators[indicator_id].name + ' value for ' + self.$data.locationData[column.key].name;
 									} else {
 										cell.tooltip = null;
 									}
@@ -394,7 +394,7 @@ module.exports = {
 											datapoint_id: cell.datapoint_id,
 											campaign_id: options.campaign__in,
 											indicator_id: indicator_id,
-											region_id: column.key,
+											location_id: column.key,
 											value: parseFloat(newVal)
 										};
 										return api.datapointUpsert(upsert_options);

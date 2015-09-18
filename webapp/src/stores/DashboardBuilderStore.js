@@ -16,7 +16,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	   return this.data;
 	},
 	data:{charts:[],
-	      regions:[],
+	      locations:[],
 	      campaigns:[],
 	      indicators:{},
 	      loaded:false,
@@ -51,16 +51,16 @@ var DashboardBuilderStore = Reflux.createStore({
 	},
 	setDashboard:function(){
 		var date = '2013-03';
-		var regionIdx = _.indexBy(this.data.regions, 'id');
-		var topLevelRegions = _(this.data.regions)
+		var locationIdx = _.indexBy(this.data.locations, 'id');
+		var topLevellocations = _(this.data.locations)
 			.filter(function (r) {
-				return !regionIdx.hasOwnProperty(r.parent_location_id);
+				return !locationIdx.hasOwnProperty(r.parent_location_id);
 			})
 			.sortBy('name');
-		this.data.region = topLevelRegions.first();
+		this.data.location = topLevellocations.first();
 		this.data.campaign = _(this.data.campaigns)
 				.filter(function (c) {
-					return c.office_id === this.data.region.office_id &&
+					return c.office_id === this.data.location.office_id &&
 					(!date || _.startsWith(c.start_date, date));
 				}.bind(this))
 				.sortBy('start_date')

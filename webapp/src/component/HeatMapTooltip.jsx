@@ -85,7 +85,7 @@ var HeatMapTooltip = React.createClass({
         <div className='clearfix'></div>
         {targets}
         <p>
-          {reported} / {this.props.total} regions reported values for {this.props.column}.
+          {reported} / {this.props.total} locations reported values for {this.props.column}.
         </p>
       </div>
     );

@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
     migrations.RunSQL('''
 
 
-    DROP TABLE IF EXISTS _tmp_regions;
-    CREATE TABLE _tmp_regions
+    DROP TABLE IF EXISTS _tmp_locations;
+    CREATE TABLE _tmp_locations
     AS
     SELECT
             'Afghanistan'  as office
-        	,'balkh-province' as region_slug
-        	,'AF001036000000000000' as region_code
-        	,'Balkh' as region_name
-        	,'AF001000000000000000' as parent_region_code
-        	,'province' as region_type UNION ALL
+        	,'balkh-province' as location_slug
+        	,'AF001036000000000000' as location_code
+        	,'Balkh' as location_name
+        	,'AF001000000000000000' as parent_location_code
+        	,'province' as location_type UNION ALL
         SELECT 'Afghanistan','bamyan-province','AF001037000000000000','Bamyan','AF001000000000000000','province' UNION ALL
         SELECT 'Afghanistan','farah-province','AF001039000000000000','Farah','AF001000000000000000','province' UNION ALL
         SELECT 'Afghanistan','ghazni-province','AF001041000000000000','Ghazni','AF001000000000000000','province' UNION ALL
@@ -1136,82 +1136,82 @@ class Migration(migrations.Migration):
         SELECT 'Pakistan','PK001007011000000000Binqasim','PK001007011000000000Binqasim','Binqasim (Khibinqasim)','PK001007011000000000','sub-district' UNION ALL
         SELECT 'Pakistan','PK001007010000000000Baldia','PK001007010000000000Baldia','Baldia (Khibaldia)','PK001007010000000000','sub-district';
 
-        UPDATE _tmp_regions
-        SET region_name = x.new_name
+        UPDATE _tmp_locations
+        SET location_name = x.new_name
         FROM (
-        	SELECT tr.region_name, tr.region_name || ' (' || tr_parent.region_name || ')' as new_name
-        	FROM _tmp_regions tr
-        	INNER JOIN _tmp_regions tr_parent
-        	ON tr.parent_region_code = tr_parent.region_code
+        	SELECT tr.location_name, tr.location_name || ' (' || tr_parent.location_name || ')' as new_name
+        	FROM _tmp_locations tr
+        	INNER JOIN _tmp_locations tr_parent
+        	ON tr.parent_location_code = tr_parent.location_code
         	WHERE EXISTS (
         		SELECT 1 FROM location r
-        		WHERE r.name = tr.region_name
+        		WHERE r.name = tr.location_name
         		AND r.office_id = 1
         	)
         )x
-        WHERE _tmp_regions.region_name = x.region_name;
+        WHERE _tmp_locations.location_name = x.location_name;
 
         -- PROVINCE --
 
         INSERT INTO location
         (name, location_code, slug, office_id, location_type_id,parent_location_id, created_at)
         SELECT
-        	region_name
-        	,tr.region_code
-        	,tr.region_slug
+        	location_name
+        	,tr.location_code
+        	,tr.location_slug
         	,o.id as office_id
-        	,rt.id as region_type_id
-            ,r.id as parent_region_id
+        	,rt.id as location_type_id
+            ,r.id as parent_location_id
         	,now() as created_at
-        from _tmp_regions tr
+        from _tmp_locations tr
         INNER JOIN office o
         on o.name = tr.office
         INNER JOIN location_type rt
-        ON tr.region_type = lower(rt.name)
+        ON tr.location_type = lower(rt.name)
         INNER JOIN location r
-        ON tr.parent_region_code = r.location_code
-        AND tr.region_type = 'province';
+        ON tr.parent_location_code = r.location_code
+        AND tr.location_type = 'province';
 
         -- DISTRICT --
         INSERT INTO location
         (name, location_code, slug, office_id, location_type_id,parent_location_id, created_at)
         SELECT
-        	region_name
-        	,tr.region_code
-        	,tr.region_slug
+        	location_name
+        	,tr.location_code
+        	,tr.location_slug
         	,o.id as office_id
-        	,rt.id as region_type_id
-            ,r.id as parent_region_id
+        	,rt.id as location_type_id
+            ,r.id as parent_location_id
         	,now() as created_at
-        from _tmp_regions tr
+        from _tmp_locations tr
         INNER JOIN office o
         on o.name = tr.office
         INNER JOIN location_type rt
-        ON tr.region_type = lower(rt.name)
+        ON tr.location_type = lower(rt.name)
         INNER JOIN location r
-        ON tr.parent_region_code = r.location_code
-        AND tr.region_type = 'district';
+        ON tr.parent_location_code = r.location_code
+        AND tr.location_type = 'district';
 
         -- SUB DISTRICT --
         INSERT INTO location
         (name, location_code, slug, office_id, location_type_id,parent_location_id, created_at)
 
         SELECT
-        	region_name
-        	,tr.region_code
-        	,tr.region_slug
+        	location_name
+        	,tr.location_code
+        	,tr.location_slug
         	,o.id as office_id
-        	,rt.id as region_type_id
-            ,r.id as parent_region_id
+        	,rt.id as location_type_id
+            ,r.id as parent_location_id
         	,now() as created_at
-        from _tmp_regions tr
+        from _tmp_locations tr
         INNER JOIN office o
         on o.name = tr.office
         INNER JOIN location_type rt
-        ON tr.region_type = lower(rt.name)
+        ON tr.location_type = lower(rt.name)
         INNER JOIN location r
-        ON tr.parent_region_code = r.location_code
-        AND tr.region_type = 'sub-district';
+        ON tr.parent_location_code = r.location_code
+        AND tr.location_type = 'sub-district';
 
         -- INSERT MAPPINGS --
         INSERT INTO source_object_map

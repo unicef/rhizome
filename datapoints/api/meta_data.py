@@ -33,7 +33,7 @@ class LocationResource(BaseModelResource):
     def get_object_list(self,request):
 
         try:
-            pr_id = request.GET['parent_region_id']
+            pr_id = request.GET['parent_location_id']
             qs = Location.objects.filter(parent_location_id=pr_id).values()
         except KeyError:
             qs =  Location.objects.all().values()
@@ -42,7 +42,7 @@ class LocationResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         queryset = Location.objects.all().values()
-        resource_name = 'region'
+        resource_name = 'location'
 
 class IndicatorResource(BaseModelResource):
 
@@ -159,7 +159,7 @@ class LocationPermissionResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         queryset = LocationPermission.objects.all().values()
-        resource_name = 'region_permission'
+        resource_name = 'location_permission'
 
 class GroupPermissionResource(BaseModelResource):
 
@@ -215,16 +215,16 @@ class DocDataPointResource(BaseModelResource):
             campaign_id = None
 
         try:
-            region_id = request.GET['region_id']
-            all_region_ids = RegionTree.objects\
-                .filter(parent_region_id = region_id).values_list('region_id',flat=True)
+            location_id = request.GET['location_id']
+            all_location_ids = locationTree.objects\
+                .filter(parent_location_id = location_id).values_list('location_id',flat=True)
         except KeyError:
-            all_region_ids = []
+            all_location_ids = []
 
         return DocDataPoint.objects.filter(
             document_id = document_id,
             campaign_id = campaign_id,
-            region_id__in=all_region_ids,
+            location_id__in=all_location_ids,
             ).values()
 
     class Meta(BaseModelResource.Meta):
@@ -361,7 +361,7 @@ class DocDetailTypeResource(BaseModelResource):
 ## Result Objects for geo Resources ##
 
 class GeoJsonResult(object):
-    region_id = int()
+    location_id = int()
     type = unicode()
     properties = dict()
     geometry = dict()
@@ -373,7 +373,7 @@ class GeoResource(BaseNonModelResource):
     colletion of parameters.
     '''
 
-    region_id = fields.IntegerField(attribute = 'region_id')
+    location_id = fields.IntegerField(attribute = 'location_id')
     type = fields.CharField(attribute = 'type')
     properties = fields.DictField(attribute = 'properties')
     geometry = fields.DictField(attribute = 'geometry')
@@ -382,7 +382,7 @@ class GeoResource(BaseNonModelResource):
         object_class = GeoJsonResult
         resource_name = 'geo'
         filtering = {
-            "region_id": ALL,
+            "location_id": ALL,
         }
 
     def get_object_list(self,request):
@@ -392,15 +392,15 @@ class GeoResource(BaseNonModelResource):
         '''
 
         self.err = None
-        err, regions_to_return = self.get_regions_to_return_from_url(request)
+        err, locations_to_return = self.get_locations_to_return_from_url(request)
         ## since this is not a model resource i will filter explicitly #
 
         if err:
             self.err = err
             return []
 
-        polygon_values_list = RegionPolygon.objects.filter(region_id__in=\
-            regions_to_return).values()
+        polygon_values_list = locationPolygon.objects.filter(location_id__in=\
+            locations_to_return).values()
 
         features = []
 
@@ -409,10 +409,10 @@ class GeoResource(BaseNonModelResource):
             geo_dict = json.loads(p['geo_json'])
 
             geo_obj = GeoJsonResult()
-            geo_obj.region_id = p['region_id']
+            geo_obj.location_id = p['location_id']
             geo_obj.geometry = geo_dict['geometry']
             geo_obj.type = geo_dict['type']
-            geo_obj.properties = {'region_id': p['region_id']}
+            geo_obj.properties = {'location_id': p['location_id']}
 
             features.append(geo_obj)
 
@@ -428,7 +428,7 @@ class GeoResource(BaseNonModelResource):
 
     def dehydrate(self, bundle):
 
-        bundle.data.pop("resource_uri",None)# = bundle.obj.region.id
+        bundle.data.pop("resource_uri",None)# = bundle.obj.location.id
         return bundle
 
     def alter_list_data_to_serialize(self, request, data):

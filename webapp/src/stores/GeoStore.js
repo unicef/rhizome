@@ -10,22 +10,22 @@ var GeoStore = Reflux.createStore({
   listenables : [require('actions/GeoActions')],
 
   init : function () {
-    this.region = null;
+    this.location = null;
     this.features = [];
   },
 
-  onFetch : function (region) {
-    this.region = region;
+  onFetch : function (location) {
+    this.location = location;
     Promise.all([
-        api.geo({ parent_region__in : region.id }),
-        api.geo({ region__in : region.id })
+        api.geo({ parent_location__in : location.id }),
+        api.geo({ location__in : location.id })
       ])
       .then(this.loadGeography);
   },
 
   loadGeography : function (responses) {
     this.features = _(responses).pluck('objects.features').flatten().value();
-    var border = _.find(this.features, f => f.properties.region_id === this.region.id);
+    var border = _.find(this.features, f => f.properties.location_id === this.location.id);
 
     border.properties.isBorder = true;
 

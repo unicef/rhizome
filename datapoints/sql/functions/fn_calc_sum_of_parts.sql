@@ -39,11 +39,11 @@ BEGIN
     )
 
     INSERT INTO _tmp_calc_datapoint
-    (indicator_id,region_id,campaign_id,value)
+    (indicator_id,location_id,campaign_id,value)
 
     SELECT
         ig.indicator_id
-      , dwc.region_id
+      , dwc.location_id
       , dwc.campaign_id
       , SUM(COALESCE(dwc.value,0.00)) as agg_value
     FROM ind_graph ig
@@ -52,12 +52,12 @@ BEGIN
         AND ig.indicator_component_id = dwc.indicator_id
     AND NOT EXISTS (
       SELECT 1 FROM _tmp_calc_datapoint tcd
-      WHERE dwc.region_id = tcd.region_id
+      WHERE dwc.location_id = tcd.location_id
       AND dwc.campaign_id = tcd.campaign_id
       AND ig.indicator_id = tcd.indicator_id
     )
 
-    GROUP BY ig.indicator_id, dwc.region_id, dwc.campaign_id;
+    GROUP BY ig.indicator_id, dwc.location_id, dwc.campaign_id;
 
 	RETURN QUERY
 

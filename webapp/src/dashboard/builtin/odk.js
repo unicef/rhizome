@@ -18,7 +18,7 @@ module.exports = {
 	{
 		'title': 'Missed Children',
 		'section': 'breakdown',
-		'regions': 'subregions',
+		'locations': 'sublocations',
 		'timeRange': 0,
 		'indicators': [267,268,251,264]
 	},

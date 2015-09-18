@@ -6,10 +6,10 @@ module.exports = {
     'title'      : '',
     'id'         : 'district-heat-map',
     'type'       : 'HeatMapChart',
-    'regions'    : 'subregions',
+    'locations'    : 'sublocations',
     'level'      : 'district',
     'timeRange'  : 0,
-    'groupBy'    : 'region.name',
+    'groupBy'    : 'location.name',
     'indicators' : [
       475,166,164,167,165, // Missed Children
       222, // Microplans

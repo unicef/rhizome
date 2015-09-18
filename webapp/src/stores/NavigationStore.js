@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
-var RegionStore = require('stores/RegionStore');
+var locationStore = require('stores/locationStore');
 var CampaignStore = require('stores/CampaignStore');
 
 var api = require('data/api');
@@ -20,7 +20,7 @@ var NavigationStore = Reflux.createStore({
 
     Promise.all([
     		CampaignStore.getCampaignsPromise(),
-    		RegionStore.getRegionsPromise(),
+    		locationStore.getlocationsPromise(),
     		api.office().then(response => _.indexBy(response.objects, 'id')),
     		api.get_dashboard(),
     		api.source_doc()
@@ -42,51 +42,51 @@ var NavigationStore = Reflux.createStore({
     return _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
   },
 
-  _filterRegions: function(dashboard, regions) {
+  _filterlocations: function(dashboard, locations) {
     if (!_.isFinite(dashboard.default_office)) {
-      return regions;
+      return locations;
     }
 
-    var availableRegions = regions.filter(function(r) {
+    var availablelocations = locations.filter(function(r) {
       return r.office_id === dashboard.default_office;
     })
 
-    return availableRegions.size() < 1 ? regions : availableRegions;
+    return availablelocations.size() < 1 ? locations : availablelocations;
   },
 
   // Helpers
-  _loadDashboards: function(campaigns, regions, offices, dashboards, documents) {
+  _loadDashboards: function(campaigns, locations, offices, dashboards, documents) {
     var allDashboards = builtins.concat(dashboards.objects);
     var self = this;
 
-    regions = _(regions);
+    locations = _(locations);
     campaigns = _(campaigns);
 
     this.dashboards = _(allDashboards)
       .map(function(d) {
-        var availableRegions = self._filterRegions(d, regions);
+        var availablelocations = self._filterlocations(d, locations);
 
-        // If after all of that, there are no regions left that this user is
+        // If after all of that, there are no locations left that this user is
         // allowed to see for this dashboard, return null so it can be filtered
-        if (availableRegions.size() < 1) {
+        if (availablelocations.size() < 1) {
           return null;
         }
 
-        // Take the first region alphabetically at the highest geographic level
-        // available as the default region for this dashboard
-        var region = availableRegions.sortBy('name').min(_.property('lvl'));
+        // Take the first location alphabetically at the highest geographic level
+        // available as the default location for this dashboard
+        var location = availablelocations.sortBy('name').min(_.property('lvl'));
 
-        // Find the latest campaign for the chosen region
+        // Find the latest campaign for the chosen location
         var campaign = campaigns
           .filter(function(c) {
-            return region.office_id === c.office_id;
+            return location.office_id === c.office_id;
           })
           .max(_.method("moment(start_date, 'YYYY-MM-DD').valueOf"));
 
         // Build the path for the dashboard
         var path = '';
         try {
-          path = '/' + region.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+          path = '/' + location.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
         } catch (err) {
           path = '/'
         }

@@ -22,7 +22,7 @@ class RefreshMasterTestCase(TestCase):
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
 
-        self.region_list = Location.objects.all().values_list('name',flat=True)
+        self.location_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
 
     def test_doc_to_source_submission(self):
@@ -62,11 +62,11 @@ class RefreshMasterTestCase(TestCase):
 
     def create_metadata(self):
         '''
-        Creating the Indicator, Region, Campaign, meta data needed for the
+        Creating the Indicator, location, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
-        region_df= read_csv('datapoints/tests/_data/regions.csv')
+        location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
@@ -87,7 +87,7 @@ class RefreshMasterTestCase(TestCase):
             guid = 'test').id
 
         for ddt in ['uq_id_column','username_column','image_col',
-            'campaign_column','region_column','region_display_name']:
+            'campaign_column','location_column','location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
@@ -97,7 +97,7 @@ class RefreshMasterTestCase(TestCase):
 
         campaign_type = ResultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df,Location)
+        location_ids = self.model_df_to_data(location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
@@ -112,10 +112,10 @@ class RefreshMasterTestCase(TestCase):
             doc_detail_value = 'uq_id'
         )
 
-        region_column_config = DocumentDetail.objects.create(
+        location_column_config = DocumentDetail.objects.create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='region_column').id,
+                .objects.get(name='location_column').id,
             doc_detail_value = 'Wardcode'
         )
 

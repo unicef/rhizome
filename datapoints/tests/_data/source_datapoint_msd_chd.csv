@@ -1,4 +1,4 @@
-id,region_string,campaign_string,indicator_string,cell_value,row_number,source_id,document_id,source_guid,status_id,guid,created_at,region_code
+id,location_string,campaign_string,indicator_string,cell_value,row_number,source_id,document_id,source_guid,status_id,guid,created_at,location_code
 530292,Nigeria - Bauchi,Nigeria June 2014,Number of all missed children,213,348,4,848,Nigeria June 2014 - Bauchi - Number of all missed children,1,orig_db_id: 348,32:41.5,Nigeria---Bauchi
 526829,Nigeria - Bauchi,Nigeria December 2013,Number of all missed children,213,2118,4,848,Nigeria December 2013 - Bauchi - Number of all missed children,1,orig_db_id: 2118,32:41.5,Nigeria---Bauchi
 529123,Nigeria - Bauchi,Nigeria March 2014,Number of all missed children,506,1504,4,848,Nigeria March 2014 - Bauchi - Number of all missed children,1,orig_db_id: 1504,32:41.5,Nigeria---Bauchi

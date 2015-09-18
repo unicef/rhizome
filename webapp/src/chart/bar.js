@@ -21,7 +21,7 @@ var defaults = {
 	x           : _.property('value'),
 	xFormat     : String,
 	xScale      : d3.scale.linear,
-	y           : _.property('region.name'),
+	y           : _.property('location.name'),
 	yFormat     : String,
 
 	margin : {

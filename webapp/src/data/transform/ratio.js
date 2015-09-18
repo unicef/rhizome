@@ -40,7 +40,7 @@ module.exports = function ratio(numerator, denominator) {
 				}
 
 				series.push({
-					region    : row.region,
+					location    : row.location,
 					campaign  : row.campaign,
 					indicators: row.indicators,
 					value     : n / d

@@ -9,7 +9,7 @@ var moment = require('moment');
 var dashboardInit = require('data/dashboardInit');
 
 var TitleMenu = require('component/TitleMenu.jsx');
-var RegionTitleMenu = require('component/RegionTitleMenu.jsx');
+var locationTitleMenu = require('component/locationTitleMenu.jsx');
 var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 
@@ -42,30 +42,30 @@ var Dashboard = React.createClass({
 
   getInitialState: function() {
     return {
-      regions: [],
+      locations: [],
       campaigns: [],
-      region: null,
+      location: null,
       campaign: null,
       dashboard: null,
     };
   },
 
   componentWillMount: function() {
-    page('/datapoints/:dashboard/:region/:year/:month/:doc_tab/:doc_id', this._showSourceData);
-    page('/datapoints/:dashboard/:region/:year/:month', this._show);
+    page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData);
+    page('/datapoints/:dashboard/:location/:year/:month', this._show);
     page('/datapoints/:dashboard', this._showDefault);
     AppActions.init();
   },
 
   componentWillUpdate: function(nextProps, nextState) {
-    if (!(nextState.campaign && nextState.region && nextState.dashboard)) {
+    if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
       return;
     }
 
     var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
     var title = [
       nextState.dashboard.title,
-      [nextState.region.name, campaign].join(' '),
+      [nextState.location.name, campaign].join(' '),
       'RhizomeDB'
     ].join(' - ');
 
@@ -96,11 +96,11 @@ var Dashboard = React.createClass({
       if (_.isEmpty(q)) {
         DataActions.clear();
       } else {
-        DataActions.fetch(this.state.campaign, this.state.region, q);
+        DataActions.fetch(this.state.campaign, this.state.location, q);
       }
 
       if (this.state.hasMap) {
-        GeoActions.fetch(this.state.region);
+        GeoActions.fetch(this.state.location);
       }
     } else if (NavigationStore.loaded) {
       page({
@@ -129,16 +129,16 @@ var Dashboard = React.createClass({
     });
   },
 
-  _setRegion: function(id) {
-    var region = _.find(this.state.regions, r => r.id === id)
-    // console.log("_setRegion:", id, region);
+  _setlocation: function(id) {
+    var location = _.find(this.state.locations, r => r.id === id)
+    // console.log("_setlocation:", id, location);
 
-    if (!region) {
+    if (!location) {
       return;
     }
 
     this._navigate({
-      region: region.name
+      location: location.name
     });
   },
 
@@ -150,13 +150,13 @@ var Dashboard = React.createClass({
 
   _navigate: function(params) {
     var slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
-    var region = _.get(params, 'region', this.state.region.name);
+    var location = _.get(params, 'location', this.state.location.name);
     var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-    if (_.isNumber(region)) {
-      region = _.find(this.state.regions, r => r.id === region).name;
+    if (_.isNumber(location)) {
+      location = _.find(this.state.locations, r => r.id === location).name;
     }
 
-    page('/datapoints/' + [slug, region, campaign].join('/'));
+    page('/datapoints/' + [slug, location, campaign].join('/'));
   },
 
   _showDefault: function(ctx) {
@@ -168,12 +168,12 @@ var Dashboard = React.createClass({
   },
 
   _show: function(ctx) {
-    // console.log("_show:", ctx, ctx.params.region);
+    // console.log("_show:", ctx, ctx.params.location);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
     DashboardActions.setDashboard({
       dashboard,
-      region: ctx.params.region,
+      location: ctx.params.location,
       date: [ctx.params.year, ctx.params.month].join('-')
     });
   },
@@ -189,14 +189,14 @@ var Dashboard = React.createClass({
 
     DashboardActions.setDashboard({
       dashboard,
-      region: ctx.params.region,
+      location: ctx.params.location,
       date: [ctx.params.year, ctx.params.month].join('-'),
     });
 
   },
 
   render: function () {
-    // console.log("RENDER", this.state.region);
+    // console.log("RENDER", this.state.location);
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize: '2rem',
@@ -211,7 +211,7 @@ var Dashboard = React.createClass({
       );
     }
 
-    var {campaign, loading, region, doc_id, doc_tab} = this.state;
+    var {campaign, loading, location, doc_id, doc_tab} = this.state;
     var dashboardDef  = this.state.dashboard;
     var dashboardName = _.get(dashboardDef, 'title', '');
 
@@ -227,9 +227,9 @@ var Dashboard = React.createClass({
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
-      region,
+      location,
       campaign,
-      this.state.regions,
+      this.state.locations,
       indicators,
       GeoStore.features
     );
@@ -240,7 +240,7 @@ var Dashboard = React.createClass({
       data: data,
       indicators: indicators,
       loading: loading,
-      region: region,
+      location: location,
       doc_tab: doc_tab,
       doc_id: doc_id
     };
@@ -250,12 +250,12 @@ var Dashboard = React.createClass({
       dashboardProps);
 
     var campaigns = _(this.state.campaigns)
-      .filter(c => c.office_id === region.office_id)
+      .filter(c => c.office_id === location.office_id)
       .sortBy('start_date')
       .reverse()
       .value();
 
-    if (campaign.office_id !== region.office_id) {
+    if (campaign.office_id !== location.office_id) {
       campaign = campaigns[0];
     }
 
@@ -295,10 +295,10 @@ var Dashboard = React.createClass({
                   selected={campaign}
                   sendValue={this._setCampaign} />
                 &emsp;
-                <RegionTitleMenu
-                  regions={this.state.regions}
-                  selected={region}
-                  sendValue={this._setRegion} />
+                <locationTitleMenu
+                  locations={this.state.locations}
+                  selected={location}
+                  sendValue={this._setlocation} />
               </h1>
             </div>
 

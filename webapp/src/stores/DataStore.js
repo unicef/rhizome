@@ -44,7 +44,7 @@ var DataStore = Reflux.createStore({
     });
   },
 
-  onFetch: function(campaign, region, charts) {
+  onFetch: function(campaign, location, charts) {
     var m = moment(campaign.start_date, 'YYYY-MM-DD');
     var end = campaign.end_date;
 
@@ -63,21 +63,21 @@ var DataStore = Reflux.createStore({
           .format('YYYY-MM-DD');
       }
 
-      switch (def.regions) {
-        case 'subregions':
-          q.parent_region__in = region.id;
+      switch (def.locations) {
+        case 'sublocations':
+          q.parent_location__in = location.id;
           break;
 
         case 'type':
-          var parent = _.get(region, 'parent.id');
+          var parent = _.get(location, 'parent.id');
           if (!_.isUndefined(parent)) {
-            q.parent_region__in = parent;
+            q.parent_location__in = parent;
           }
 
-          q.location_type = region.location_type;
+          q.location_type = location.location_type;
           break;
         default:
-          q.region__in = region.id;
+          q.location__in = location.id;
           break;
       }
 

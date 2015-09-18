@@ -162,7 +162,7 @@ _.extend(Heatmap.prototype, {
 			.remove();
 
 		cell
-      .attr('id', d => [d.region.name, d.indicator.short_name].join('-'))
+      .attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
 			.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
 			.on('mousemove', options.onMouseMove)
 			.on('mouseout', options.onMouseOut)

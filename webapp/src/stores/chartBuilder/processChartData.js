@@ -89,7 +89,7 @@ function _columnData(data, groups, groupBy) {
      _.each(baseCampaigns,function(baseCampaign,index){
          if(!_.find(series.values,function(value){return value.campaign.id == baseCampaign.id}))
          {
-           series.values.splice(index,0,{campaign:baseCampaign,region:series.values[0].region,indicator:series.values[0].indicator,value:0});
+           series.values.splice(index,0,{campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0});
          }
      });
      series.values =  _.sortBy(series.values,_.method('campaign.start_date.getTime'));
@@ -157,7 +157,7 @@ function _getIndicator(d) {
 }
 
 module.exports = {
-  init:function(dataPromise,chartType,indicators,regions,lower,upper,groups,groupBy,xAxis,yAxis){
+  init:function(dataPromise,chartType,indicators,locations,lower,upper,groups,groupBy,xAxis,yAxis){
     var indicatorArray = _.map(indicators,_.property('id'));
     var meltPromise = dataPromise.then(function(data){
                   return melt(data,indicatorArray);
@@ -167,13 +167,13 @@ module.exports = {
     } else if (chartType=="PieChart") {
      return this.processPieChart(meltPromise, indicators);
     } else if (chartType=="ChoroplethMap") {
-     return this.processChoroplethMap(meltPromise,regions);
+     return this.processChoroplethMap(meltPromise,locations);
     } else if (chartType=="ColumnChart") {
      return this.processColumnChart(meltPromise,lower,upper,groups,groupBy);
     } else if (chartType=="ScatterChart") {
-     return this.processScatterChart(dataPromise,regions,indicators,xAxis,yAxis);
+     return this.processScatterChart(dataPromise,locations,indicators,xAxis,yAxis);
     } else if (chartType=="BarChart") {
-     return this.processBarChart(dataPromise,regions,indicators,xAxis,yAxis);
+     return this.processBarChart(dataPromise,locations,indicators,xAxis,yAxis);
     }
   },
   processLineChart:function(dataPromise,lower,upper,groups,groupBy){
@@ -212,21 +212,21 @@ module.exports = {
       return {options:chartOptions,data:data};
     });
   },
-  processChoroplethMap:function(dataPromise,regions){
-    var regionsIndex = _.indexBy(regions, 'id');
+  processChoroplethMap:function(dataPromise,locations){
+    var locationsIndex = _.indexBy(locations, 'id');
 
-    return Promise.all([dataPromise,api.geo({ region__in :_.map(regions,function(region){return region.id}) })])
+    return Promise.all([dataPromise,api.geo({ location__in :_.map(locations,function(location){return location.id}) })])
     .then(_.spread(function(data, border){
-      var index = _.indexBy(data,'region');
+      var index = _.indexBy(data,'location');
       var chartOptions = {
               aspect: 1,
-              name  : d => _.get(regionsIndex, '[' + d.properties.region_id + '].name', ''),
+              name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
               border: border.objects.features
               };
         var chartData = _.map(border.objects.features, function (feature) {
-                    var region = _.get(index, feature.properties.region_id);
+                    var location = _.get(index, feature.properties.location_id);
                     return _.merge({}, feature, {
-                        properties : { value : _.get(region, 'value') }
+                        properties : { value : _.get(location, 'value') }
                       });
                   });
       return {options:chartOptions,data:chartData};
@@ -263,9 +263,9 @@ module.exports = {
 
     });
   },
-  processScatterChart: function(dataPromise,regions,indicators,xAxis,yAxis){
+  processScatterChart: function(dataPromise,locations,indicators,xAxis,yAxis){
     var indicatorsIndex = _.indexBy(indicators, 'id');//;
-    var regionsIndex = _.indexBy(regions, 'id');
+    var locationsIndex = _.indexBy(locations, 'id');
 
     return dataPromise.then(function(data){
          console.log(_(data.objects).pluck('indicators').flatten().value());
@@ -292,8 +292,8 @@ module.exports = {
           var index = _.indexBy(d.indicators, 'indicator');
 
           return {
-            id   : d.region,
-            name : regionsIndex[d.region].name,
+            id   : d.location,
+            name : locationsIndex[d.location].name,
             x    : value(index[indicators[xAxis].id]),
             y    : value(index[indicators[yAxis].id])
           };
@@ -336,31 +336,31 @@ module.exports = {
       return {options:chartOptions,data:chartData};
     });
   },
-  processBarChart: function(dataPromise,regions,indicators,xAxis,yAxis){
+  processBarChart: function(dataPromise,locations,indicators,xAxis,yAxis){
       return dataPromise.then(function(data){
          var indicatorsIndex = _.indexBy(indicators, 'id');//;
-         var regionsIndex = _.indexBy(regions, 'id');
+         var locationsIndex = _.indexBy(locations, 'id');
          var datapoints = _(data)
           .thru(util.unpivot)
           .forEach(function (d) {
             d.indicator = indicatorsIndex[d.indicator];
-            var temp = d.region;
-            d.region    = regionsIndex[d.region];
+            var temp = d.location;
+            d.location    = locationsIndex[d.location];
           })
           .groupBy(function (d) {
             return d.indicator.id;
           }).value();
 
-          var regionMapping = {
+          var locationMapping = {
             'value'       : 'x',
-            'region.name' : 'y'
+            'location.name' : 'y'
           };
 
           var chartOptions = {
             offset  : 'zero',
             xFormat : d3.format('%')
           };
-          var chartData = _barData(datapoints, _.pluck(indicators,'id'), regionMapping, _getIndicator);
+          var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator);
         return {options:chartOptions,data:chartData};
       });
   }

@@ -1,11 +1,11 @@
 import { expect } from 'chai'
 
-import RegionTitleMenu from '../RegionTitleMenu.jsx'
+import locationTitleMenu from '../locationTitleMenu.jsx'
 
 describe(__filename, () => {
-  context('build up region data', () => {
+  context('build up location data', () => {
     it('should return data with valid filter', () => {
-      const originalRegions = [
+      const originallocations = [
         {
           'name': 'America - Maine',
           'id': 10,
@@ -21,8 +21,8 @@ describe(__filename, () => {
         }
       ]
       const filter = 'America'
-      let region = RegionTitleMenu.prototype._buildRegions(originalRegions, filter)
-      expect(region).to.deep.eql([
+      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
           'value': 10,
@@ -35,8 +35,8 @@ describe(__filename, () => {
       ])
     })
 
-    it('should return data without filter or parent region', () => {
-      const originalRegions = [
+    it('should return data without filter or parent location', () => {
+      const originallocations = [
         {
           'name': 'America - Maine',
           'id': 10,
@@ -48,8 +48,8 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let region = RegionTitleMenu.prototype._buildRegions(originalRegions, filter)
-      expect(region).to.deep.eql([
+      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
           'value': 10,
@@ -62,8 +62,8 @@ describe(__filename, () => {
       ])
     })
 
-    it('should return data without filter but with parent region', () => {
-      const originalRegions = [
+    it('should return data without filter but with parent location', () => {
+      const originallocations = [
         {
           'name': 'America - Maine',
           'id': 10,
@@ -79,8 +79,8 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let region = RegionTitleMenu.prototype._buildRegions(originalRegions, filter)
-      expect(region).to.deep.eql([
+      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      expect(location).to.deep.eql([
         {
           'children': [
             {
@@ -100,8 +100,8 @@ describe(__filename, () => {
       ])
     })
 
-    it('should return data without filter but with parent region, a complex example', () => {
-      const originalRegions = [
+    it('should return data without filter but with parent location, a complex example', () => {
+      const originallocations = [
         {
           'name': 'America - Maine',
           'id': 10,
@@ -125,8 +125,8 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let region = RegionTitleMenu.prototype._buildRegions(originalRegions, filter)
-      expect(region).to.deep.eql([
+      let location = locationTitleMenu.prototype._buildlocations(originallocations, filter)
+      expect(location).to.deep.eql([
         {
           'children': [
             {

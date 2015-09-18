@@ -1,4 +1,4 @@
-<h3>{{ region }}</h3>
+<h3>{{ location }}</h3>
 <h4>{{ indicator }}:&emsp;{{ value }}</h4>
 <h6>Distribution of Districts by Performance</h6>
 <svg class="histogram" v-attr="width : width, height : height">
@@ -50,6 +50,6 @@
 </table>
 
 <p>
-	{{ reporting_regions }} / {{ total_regions }} regions reported values
+	{{ reporting_locations }} / {{ total_locations }} locations reported values
 	for {{ indicator }}.
 </p>

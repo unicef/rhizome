@@ -142,7 +142,7 @@ _.extend(ScatterPlot.prototype, {
 
   _onMouseMove : function (d) {
     var evt = d3.event;
-    var name = _.get(d, 'name', _.get(d, 'region.name'));
+    var name = _.get(d, 'name', _.get(d, 'location.name'));
 
     if (_.isUndefined(name)) {
       return;

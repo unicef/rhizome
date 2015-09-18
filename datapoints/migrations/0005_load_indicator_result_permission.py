@@ -7,7 +7,7 @@ from datapoints import cache_tasks
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0004_load_ng_regions'),
+        ('datapoints', '0004_load_ng_locations'),
     ]
 
     operations = [
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             	indicator_id, name, description, short_name, CAST(indicator_id as VARCHAR), CAST(0 AS BOOLEAN), now()
             FROM (
             SELECT 461 as indicator_id,'# of established LT vaccination transit points vs. total # identified by the programme' as name,'# of established LT vaccination transit points vs. total # identified by the programme' as description,'# of established LT vaccination transit points vs. total # identified by the programme' as short_name UNION ALL
-            SELECT 462,'Number of regions sampled','The total number of regions sampled.','# regions sampled' UNION ALL
+            SELECT 462,'Number of locations sampled','The total number of locations sampled.','# locations sampled' UNION ALL
             SELECT 41,'Number of vaccinators','Number of vaccinators','Number of vaccinators' UNION ALL
             SELECT 159,'Number of aVDPV2 cases','Number of aVDPV2 cases','Number of aVDPV2 cases' UNION ALL
             SELECT 162,'Number of iVDPV cases','Number of iVDPV cases','Number of iVDPV cases' UNION ALL
@@ -74,13 +74,13 @@ class Migration(migrations.Migration):
             SELECT 1,'Polio Cases YTDYYYY','Polio Cases YTDYYYY','Polio Cases YTDYYYY' UNION ALL
             SELECT 53,'Number of districts having NO stockouts of OPV','Number of districts having NO stockouts of OPV','Number of districts having NO stockouts of OPV' UNION ALL
             SELECT 463,'number of social mobilisers participating the telephone survey','number of social mobilisers participating the telephone survey','number of social mobilisers participating the telephone survey' UNION ALL
-            SELECT 56,'Number of sub-regional units','Number of sub-regional units','Number of sub-regional units' UNION ALL
-            SELECT 57,'Number of sub-regional units where OPV arrived in sufficient time','Number of sub-regional units where OPV arrived in sufficient time','Number of sub-regional units where OPV arrived in time' UNION ALL
+            SELECT 56,'Number of sub-locational units','Number of sub-locational units','Number of sub-locational units' UNION ALL
+            SELECT 57,'Number of sub-locational units where OPV arrived in sufficient time','Number of sub-locational units where OPV arrived in sufficient time','Number of sub-locational units where OPV arrived in time' UNION ALL
             SELECT 70,'Number of WPV1 cases','Number of WPV1 cases','Number of WPV1 cases' UNION ALL
             SELECT 62,'Number of health facilities w/ capacity','Number of health facilities w/ capacity','Number of health facilities w/ capacity' UNION ALL
             SELECT 66,'Number of health facilities having NO stock-outs of OPV','Number of health facilities having NO stock-outs of OPV','Number of health facilities having NO stock-outs of OPV' UNION ALL
             SELECT 176,'Number of established LT vaccination transit points with a dedicated social mobilizer','Number of established LT vaccination transit points with a dedicated social mobilizer','LT Transit Points with SM' UNION ALL
-            SELECT 67,'Percentage of States/Regions with OPV supply arriving at state/region level in sufficient time before campaign','Percentage of States/Regions with OPV supply arriving at state/region level in sufficient time before campaign','Percentage of States/Regions with OPV supply arriving a' UNION ALL
+            SELECT 67,'Percentage of States/locations with OPV supply arriving at state/location level in sufficient time before campaign','Percentage of States/locations with OPV supply arriving at state/location level in sufficient time before campaign','Percentage of States/locations with OPV supply arriving a' UNION ALL
             SELECT 470,'Number of children missed due to all access issues (TEMP)','TEMPORARY INDICATOR','Inaccessible Children (TEMP)' UNION ALL
             SELECT 69,'Number of cVDPV2 cases','Number of cVDPV2 cases','Number of cVDPV2 cases' UNION ALL
             SELECT 160,'Number of WPV3 cases','Number of WPV3 cases','Number of WPV3 cases' UNION ALL
@@ -1175,7 +1175,7 @@ class Migration(migrations.Migration):
             SELECT 26 as master_object_id ,'Number of refusals after re-visit'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 35 as master_object_id ,'Number of target social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 40 as master_object_id ,'Number of female social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
-            SELECT 67 as master_object_id ,'Percentage of States/Regions with OPV supply arriving at state/region level in sufficient time before campaign'  as source_object_code,'indicator' as content_type UNION ALL
+            SELECT 67 as master_object_id ,'Percentage of States/locations with OPV supply arriving at state/location level in sufficient time before campaign'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 418 as master_object_id ,'YoungstRI'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 420 as master_object_id ,'RCorctCAT'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 417 as master_object_id ,'TotalYoungest'  as source_object_code,'indicator' as content_type UNION ALL
@@ -1253,7 +1253,7 @@ class Migration(migrations.Migration):
             SELECT 46 as master_object_id ,'Number of social mobilisers who were paid on time'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 91 as master_object_id ,'Census12_59MoF'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 36 as master_object_id ,'Number of social mobilisers in place'  as source_object_code,'indicator' as content_type UNION ALL
-            SELECT 56 as master_object_id ,'# of subregional units'  as source_object_code,'indicator' as content_type UNION ALL
+            SELECT 56 as master_object_id ,'# of sublocational units'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 31 as master_object_id ,'Target # of core polio communication '  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 46 as master_object_id ,'Number of social mobilizers who were paid on time'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 46 as master_object_id ,'Number of social mobilizers paid on time'  as source_object_code,'indicator' as content_type UNION ALL
@@ -1265,7 +1265,7 @@ class Migration(migrations.Migration):
             SELECT 35 as master_object_id ,'Target # of social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 36 as master_object_id ,'# of social mobilizers in place'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 34 as master_object_id ,'# of HR areas with social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL
-            SELECT 57 as master_object_id ,'# of subregional units where OPV arrived in sufficient time'  as source_object_code,'indicator' as content_type UNION ALL
+            SELECT 57 as master_object_id ,'# of sublocational units where OPV arrived in sufficient time'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 87 as master_object_id ,'Census12_59MoM'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 46 as master_object_id ,'# of social mobilizers paid on time'  as source_object_code,'indicator' as content_type UNION ALL
             SELECT 40 as master_object_id ,'# of female social mobilizers'  as source_object_code,'indicator' as content_type UNION ALL

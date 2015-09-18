@@ -21,10 +21,10 @@ from numpy import nan
 class ResultObject(object):
     '''
     This is the same as a row in the CSV export in which one row has a distinct
-    region / campaign combination, and the remaing columns represent the
+    location / campaign combination, and the remaing columns represent the
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
-    region = None
+    location = None
     campaign = None
     indicators = list()
 
@@ -33,14 +33,14 @@ class DataPointResource(BaseNonModelResource):
     This is the class that coincides with the /api/v1/datapoint endpoint.
 
     At it's core this resource is a simple wrapper on top of the
-    datapoint_abstracted table.  The schema of that table is region_id,
+    datapoint_abstracted table.  The schema of that table is location_id,
     campaign_id, indicator_json and because of which there is very little
     data transformation on request here.
     '''
 
     error = None
     parsed_params = {}
-    region = fields.IntegerField(attribute = 'region')
+    location = fields.IntegerField(attribute = 'location')
     campaign = fields.IntegerField(attribute = 'campaign')
     indicators = fields.ListField(attribute = 'indicators')
 
@@ -49,7 +49,7 @@ class DataPointResource(BaseNonModelResource):
         As this is a NON model resource, we must specify the object_class
         that will represent the data returned to the applicaton.  In this case
         as specified by the ResultObject the fields in our response will be
-        region_id, campaign_id, indcator_json.
+        location_id, campaign_id, indcator_json.
 
         The resource name is datapoint, which means this resource is accessed by
         /api/v1/datapoint/.
@@ -100,11 +100,11 @@ class DataPointResource(BaseNonModelResource):
     def get_object_list(self,request):
         '''
         This is where the action happens in this resource.  AFter passing the
-        url paremeters, get the list of regions based on the parameters passed
+        url paremeters, get the list of locations based on the parameters passed
         in the url as well as the permissions granted to the user responsible
         for the request.
 
-        Using the region_ids from the get_regions_to_return_from_url method
+        Using the location_ids from the get_locations_to_return_from_url method
         we query the datapoint abstracted table, then iterate through these
         values cleaning the indicator_json based in the indicator_ids passed
         in the url parameters, and creating a ResultObject for each row in the
@@ -120,19 +120,19 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        err, region_ids = self.get_regions_to_return_from_url(request)
+        err, location_ids = self.get_locations_to_return_from_url(request)
         if err:
             self.error = err
             return []
 
         db_data = DataPointAbstracted.objects.filter(
-            location_id__in = region_ids,
+            location_id__in = location_ids,
             result_structure_id__in = self.parsed_params['campaign__in'])\
             .order_by('-result_structure__start_date')
 
         for row in db_data:
             r = ResultObject()
-            r.region = row.location_id
+            r.location = row.location_id
             r.campaign = row.result_structure_id
 
             indicator_json = row.indicator_json
@@ -146,10 +146,10 @@ class DataPointResource(BaseNonModelResource):
     def clean_indicator_json(self,indicator_json):
         '''
         When we query the datapoint_abstracted table, the full list of
-        indicators is sent along with the region / campaign for which it is
+        indicators is sent along with the location / campaign for which it is
         associated.
 
-        This method only returns indicator data for the region / campaign tuple
+        This method only returns indicator data for the location / campaign tuple
         that is requested by the API.
         '''
 
@@ -243,7 +243,7 @@ class DataPointResource(BaseNonModelResource):
         ## there return the default values ( given in the dict below)
         optional_params = {'the_limit':10000,'the_offset':0,'agg_level':'mixed',\
             'campaign_start':'2012-01-01','campaign_end':'2900-01-01' ,\
-            'campaign__in':None,'region__in': None}
+            'campaign__in':None,'location__in': None}
 
         for k,v in optional_params.iteritems():
             try:
@@ -301,16 +301,16 @@ class DataPointEntryResource(BaseModelResource):
 
     required_keys = [
         # 'datapoint_id',
-        'indicator_id', 'region_id',
+        'indicator_id', 'location_id',
         'campaign_id', 'value', #'changed_by_id',
     ]
     # for validating foreign keys
     keys_models = {
-        'region_id': Location,
+        'location_id': Location,
         'campaign_id': ResultStructure,
         'indicator_id': Indicator
     }
-    region = fields.IntegerField(attribute = 'region_id')
+    location = fields.IntegerField(attribute = 'location_id')
     campaign = fields.IntegerField(attribute = 'campaign_id')
     indicator = fields.IntegerField(attribute = 'indicator_id')
 
@@ -325,7 +325,7 @@ class DataPointEntryResource(BaseModelResource):
         filtering = {
             'indicator': ALL,
             'campaign': ALL,
-            'region': ALL,
+            'location': ALL,
         }
         serializer = CustomJSONSerializer()
 
@@ -386,7 +386,7 @@ class DataPointEntryResource(BaseModelResource):
             if existing_datapoint is not None:
 
                 update_kwargs = {
-                    'region_id': existing_datapoint.region_id,
+                    'location_id': existing_datapoint.location_id,
                     'campaign_id': existing_datapoint.campaign_id,
                     'indicator_id': existing_datapoint.indicator_id
                 }
@@ -456,7 +456,7 @@ class DataPointEntryResource(BaseModelResource):
         (i.e. data should have passed validate_object first)
         """
         try:
-            obj = DataPointEntry.objects.get(region_id=int(data['region_id']),
+            obj = DataPointEntry.objects.get(location_id=int(data['location_id']),
                 campaign_id=int(data['campaign_id']),
                 indicator_id=int(data['indicator_id']),
             )
@@ -467,16 +467,16 @@ class DataPointEntryResource(BaseModelResource):
     def hydrate(self, bundle):
 
         if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPointEntry) \
-            and hasattr(bundle.obj, 'region_id') and bundle.obj.region_id is not None \
-            and hasattr(bundle.obj, 'campaign_id') and bundle.obj.region_id is not None \
-            and hasattr(bundle.obj, 'indicator_id') and bundle.obj.region_id is not None:
+            and hasattr(bundle.obj, 'location_id') and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'campaign_id') and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'indicator_id') and bundle.obj.location_id is not None:
             # we get here if there's an existing datapoint being modified
 
             pass
         else:
             # we get here if we're inserting a brand new datapoint
             bundle.obj = DataPointEntry()
-            bundle.obj.region_id = int(bundle.data['region_id'])
+            bundle.obj.location_id = int(bundle.data['location_id'])
             bundle.obj.campaign_id = int(bundle.data['campaign_id'])
             bundle.obj.indicator_id = int(bundle.data['indicator_id'])
             bundle.obj.value = bundle.data['value']
@@ -493,7 +493,7 @@ class DataPointEntryResource(BaseModelResource):
         else: # otherwise, this is a GET request
             bundle.data['datapoint_id'] = bundle.data['id']
             del bundle.data['id']
-            for key in ['campaign', 'indicator', 'region']:
+            for key in ['campaign', 'indicator', 'location']:
                 bundle.data['{0}_id'.format(key)] = bundle.data[key]
                 del bundle.data[key]
             for key in ['created_at', 'resource_uri']:
@@ -533,10 +533,10 @@ class DataPointEntryResource(BaseModelResource):
         # user_id = int(obj['changed_by_id'])
         # User.objects.get(id=user_id)
 
-        # ensure that region, campaign, and indicator, if present, are valid values
-        if obj.has_key('region_id'):
-            region_id = int(obj['region_id'])
-            Location.objects.get(id=region_id)
+        # ensure that location, campaign, and indicator, if present, are valid values
+        if obj.has_key('location_id'):
+            location_id = int(obj['location_id'])
+            Location.objects.get(id=location_id)
 
         if obj.has_key('campaign_id'):
             campaign_id = int(obj['campaign_id'])

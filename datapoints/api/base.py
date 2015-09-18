@@ -20,7 +20,7 @@ class CustomAuthentication(Authentication):
     '''
     Super Simple permissions check to ensure user is logged in.  Futher
     permissions are appled for GET and POST for the datapoint resource
-    based on the regional and indicator level permission of the user found
+    based on the locational and indicator level permission of the user found
     in the request.
     '''
 
@@ -141,38 +141,38 @@ class BaseNonModelResource(Resource):
 
     def parse_url_strings(self,query_dict):
         '''
-        As the geo endpoint is based off of the region/parent_region paremeter
+        As the geo endpoint is based off of the location/parent_location paremeter
         we go through a pretty hacky try / except frenzy in order to find the
-        parameters necessary to get region/shape data for the front end.  The
-        parameters here for region_in,level, and parent_region in were
+        parameters necessary to get location/shape data for the front end.  The
+        parameters here for location_in,level, and parent_location in were
         constructed in accordance to the request from the front end team.
         '''
 
-        self.region__in, self.region_type_id, self.parent_region__in = \
+        self.location__in, self.location_type_id, self.parent_location__in = \
             None, None, None
 
-        ## REGION_ID
+        ## location_ID
         try:
-            self.region__in = [int(r) for r in query_dict['region__in']\
+            self.location__in = [int(r) for r in query_dict['location__in']\
                 .split(',')]
         except KeyError:
             pass
         except ValueError:
             pass
 
-        ## REGION TYPE ##
+        ## location TYPE ##
         try:
             self.rtype_id = LocationType.objects.get(name = query_dict\
                 ['level'].lower()).id
         except KeyError:
             pass
         except ObjectDoesNotExist:
-            all_r_types = RegionType.objects.all().values_list('name',flat=True)
-            err = 'region type doesnt exist. options are:  %s' % all_r_types
+            all_r_types = locationType.objects.all().values_list('name',flat=True)
+            err = 'location type doesnt exist. options are:  %s' % all_r_types
             return err, []
 
         try:
-            self.parent_region__in = [int(r) for r in query_dict['parent_region__in']\
+            self.parent_location__in = [int(r) for r in query_dict['parent_location__in']\
                 .split(',')]
         except KeyError:
             pass
@@ -182,17 +182,17 @@ class BaseNonModelResource(Resource):
         return None
 
 
-    def get_regions_to_return_from_url(self,request):
+    def get_locations_to_return_from_url(self,request):
         '''
         This method is used in both the /geo and /datapoint endpoints.  Based
-        on the values parsed from the URL parameters find the regions needed
+        on the values parsed from the URL parameters find the locations needed
         to fulfill the request based on the four rules below.
-        1  region__in returns geo data for the regions requested
-        2. passing only parent_region__in  should return the shapes for all the
-           immediate children in that region if no level parameter is supplied
-        3. no params - return regions at the top of the tree ( no parent_id).
+        1  location__in returns geo data for the locations requested
+        2. passing only parent_location__in  should return the shapes for all the
+           immediate children in that location if no level parameter is supplied
+        3. no params - return locations at the top of the tree ( no parent_id).
         After the four steps are worked through in this method, we apply the
-        permissions function in order to determine the final list of regions
+        permissions function in order to determine the final list of locations
         to return based on the user making the request.
         '''
 
@@ -204,27 +204,27 @@ class BaseNonModelResource(Resource):
             return err, []
 
         ## CASE 1 ##
-        if self.region__in is not None:
+        if self.location__in is not None:
 
-            region_ids = Location.objects.filter(id__in = self.region__in)\
+            location_ids = Location.objects.filter(id__in = self.location__in)\
                 .values_list('id',flat=True)
 
         ## CASE 2 #
-        elif self.parent_region__in is not None and self.region_type_id is None:
+        elif self.parent_location__in is not None and self.location_type_id is None:
 
-            region_ids = Location.objects.filter(parent_location_id__in = \
-                self.parent_region__in).values_list('id',flat=True)
+            location_ids = Location.objects.filter(parent_location_id__in = \
+                self.parent_location__in).values_list('id',flat=True)
 
         else:
-            region_ids = Location.objects.filter(parent_location_id__isnull=True).\
+            location_ids = Location.objects.filter(parent_location_id__isnull=True).\
                 values_list('id',flat=True)
 
-        ## now apply regional permissions ##
+        ## now apply locational permissions ##
 
-        # permitted_region_qs = RegionTree.objects.filter(parent_region_id__in =\
-        #     region_ids).values_list('region_id',flat=True)
+        # permitted_location_qs = locationTree.objects.filter(parent_location_id__in =\
+        #     location_ids).values_list('location_id',flat=True)
 
-        # final_region_ids = list(set(region_ids).intersection(set\
-        #     (permitted_region_ids)))
+        # final_location_ids = list(set(location_ids).intersection(set\
+        #     (permitted_location_ids)))
 
-        return None, region_ids
+        return None, location_ids

@@ -76,8 +76,8 @@ module.exports = {
 		return {
 			campaign : null,
 			columns  : [],
-			region   : null,
-			regions  : {},
+			location   : null,
+			locations  : {},
 			series   : [],
 			showEmpty: false,
 		};
@@ -92,7 +92,7 @@ module.exports = {
 		load : function () {
 			this.loading = true;
 
-			if (!(this.campaign && this.region)) {
+			if (!(this.campaign && this.location)) {
 				return;
 			}
 
@@ -109,7 +109,7 @@ module.exports = {
 			];
 
 			var datapoints = api.datapoints({
-				parent_region__in : this.region.id,
+				parent_location__in : this.location.id,
 				level             : 'district',
 				indicator__in     : indicators,
 				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
@@ -142,10 +142,10 @@ module.exports = {
 
 					var series = _.map(data[1].objects, function (d) {
 						var dataIdx = _.indexBy(d.indicators, 'indicator');
-						var name    = d.region;
+						var name    = d.location;
 
-						if (self.regions[name]) {
-							name = self.regions[name];
+						if (self.locations[name]) {
+							name = self.locations[name];
 						}
 
 						if (name.name) {
@@ -262,7 +262,7 @@ module.exports = {
 				.filter(function (d) { return d.indicator === Number(match[2]); })
 				.pluck('value');
 
-			var total_regions = data.size();
+			var total_locations = data.size();
 
 			data = data.reject(_.isNull)
 				.thru(histogram)
@@ -329,10 +329,10 @@ module.exports = {
 				},
 				data     : {
 					orientation       : 'top',
-					region            : match[1],
+					location            : match[1],
 					indicator         : indicators[match[2]].short_name,
-					total_regions     : total_regions,
-					reporting_regions : _.sum(data, 'y'),
+					total_locations     : total_locations,
+					reporting_locations : _.sum(data, 'y'),
 					value             : fmt(val),
 					template          : 'tooltip-heatmap',
 					width             : width,
@@ -358,7 +358,7 @@ module.exports = {
 		},
 
 		navigate : function (d) {
-			var region = d;
+			var location = d;
 
 			if (!_.isString(d)) {
 				var re = /(.+)-(\d+)/;
@@ -368,14 +368,14 @@ module.exports = {
 					return;
 				}
 
-				region = match[1]
+				location = match[1]
 			}
 
 			this.$dispatch('tooltip-hide', {
 				el : this.$el
 			});
 
-			page('/datapoints/management-dashboard/' + region + '/' +
+			page('/datapoints/management-dashboard/' + location + '/' +
 				moment(this.campaign.start_date).format('YYYY/MM'));
 		},
 
@@ -405,7 +405,7 @@ module.exports = {
 	watch : {
 		'campaign'  : 'load',
 		'columns'   : 'render',
-		'region'    : 'load',
+		'location'    : 'load',
 		'series'    : 'render',
 		'showEmpty' : 'render'
 	}

@@ -15,7 +15,7 @@ module.exports = {
 
 	data: function () {
 		return {
-			regions: [],
+			locations: [],
 			indicators: [],
 			indicatorsForList: [],
 			pagination: {
@@ -25,7 +25,7 @@ module.exports = {
 			},
 			table: {
 				loading: false,
-				columns: ['region', 'campaign'],
+				columns: ['location', 'campaign'],
 				rows: []
 			},
 			campaign: {
@@ -38,9 +38,9 @@ module.exports = {
 	attached: function () {
 		var self = this;
 
-		this._regions = new Dropdown({
-			el      : '#regions',
-			source  : api.regions,
+		this._locations = new Dropdown({
+			el      : '#locations',
+			source  : api.locations,
 			mapping : {
 				'parent_location_id' : 'parent',
 				'name'             : 'title',
@@ -48,8 +48,8 @@ module.exports = {
 			}
 		});
 
-		this._regions.$on('dropdown-value-changed', function (items) {
-			self.regions = _.values(items);
+		this._locations.$on('dropdown-value-changed', function (items) {
+			self.locations = _.values(items);
 		});
 
 		this._indicators = new Dropdown({
@@ -85,7 +85,7 @@ module.exports = {
 	computed: {
 
 		hasSelection: function () {
-			return this.regions.length > 0 && this.indicators.length > 0;
+			return this.locations.length > 0 && this.indicators.length > 0;
 		}
 
 	},
@@ -117,22 +117,22 @@ module.exports = {
 
 			var self = this;
 
-			var regionNames = _.indexBy(this.regions, 'value');
-			var regions     = _.map(this.regions, 'value');
+			var locationNames = _.indexBy(this.locations, 'value');
+			var locations     = _.map(this.locations, 'value');
 			var options     = { indicator__in : [] };
 			var columns     = [{
-					prop: 'region',
-					display: 'Region',
+					prop: 'location',
+					display: 'location',
 					format: function (v) {
-						return regionNames[v].title;
+						return locationNames[v].title;
 					}
 				}, {
 					prop: 'campaign',
 					display: 'Campaign'
 				}];
 
-			if (regions.length > 0) {
-				options.region__in = regions;
+			if (locations.length > 0) {
+				options.location__in = locations;
 			}
 
 			if (this.campaign.start) {
@@ -180,7 +180,7 @@ module.exports = {
 				}
 
 				var datapoints = data.objects.map(function (v) {
-					var d = _.pick(v, 'region');
+					var d = _.pick(v, 'location');
 
 					d.campaign = moment(v.campaign.start_date).format('MMM YYYY');
 
@@ -203,7 +203,7 @@ module.exports = {
 			this.downloading = true;
 
 			var indicators   = _.map(this.indicators, 'value');
-			var regions      = _.map(this.regions, 'value');
+			var locations      = _.map(this.locations, 'value');
 			var query        = {
 				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
 				'limit'  : 10000000,
@@ -217,8 +217,8 @@ module.exports = {
 			}
 
 			query.indicator__in = indicators;
-			if (regions.length > 0) {
-				query.region__in = regions;
+			if (locations.length > 0) {
+				query.location__in = locations;
 			}
 
 			if (this.campaign.start) {

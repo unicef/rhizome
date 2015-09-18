@@ -4,7 +4,7 @@ module.exports = [
 
 			'id': 1,
 			'title': 'Management Dashboard: National Indicators',
-			'region_level': 1,
+			'location_level': 1,
 			'indicators': [
 				{ 'type': 'section-header', 'title': 'Resources' },
 				{ 'id': 44 }, 
@@ -19,7 +19,7 @@ module.exports = [
 
 			'id': 3,
 			'title': 'Management Dashboard: Provincial Indicators',
-			'region_level': 1,
+			'location_level': 1,
 			'indicators': [
 
 				{ 'type': 'section-header', 'title': 'Immunity Gap' },
@@ -39,7 +39,7 @@ module.exports = [
 
 			'id': 2,
 			'title': 'Management Dashboard: District Indicators',
-			'region_level': 4,
+			'location_level': 4,
 			'indicators': [
 
 				{ 'type': 'section-header', 'title': 'District Info' },

@@ -25,9 +25,9 @@ class CacheRefreshTestCase(TestCase):
         ## or ##
 
         from datapoints.cache_tasks import CacheRefresh
-        from datapoints.models import DataPoint, Region
-        r_ids = Region.objects.filter(parent_region_id = 12907).values_list('id',flat=True)
-        dp_ids = DataPoint.objects.filter(region_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
+        from datapoints.models import DataPoint, location
+        r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
+        dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
         mr = CacheRefresh(list(dp_ids))
     '''
 
@@ -49,12 +49,12 @@ class CacheRefreshTestCase(TestCase):
 
     def create_metadata(self):
         '''
-        Creating the Indicator, Region, Campaign, meta data needed for the
+        Creating the Indicator, location, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
 
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
-        region_df= read_csv('datapoints/tests/_data/regions.csv')
+        location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
@@ -69,15 +69,15 @@ class CacheRefreshTestCase(TestCase):
                 status_text = 'test',
                 status_description = 'test').id
 
-        region_type1 = RegionType.objects.create(id=1,name="country")
-        region_type2 = RegionType.objects.create(id=2,name="settlement")
-        region_type3 = RegionType.objects.create(id=3,name="province")
-        region_type4 = RegionType.objects.create(id=4,name="district")
-        region_type5 = RegionType.objects.create(id=5,name="sub-district")
+        location_type1 = locationType.objects.create(id=1,name="country")
+        location_type2 = locationType.objects.create(id=2,name="settlement")
+        location_type3 = locationType.objects.create(id=3,name="province")
+        location_type4 = locationType.objects.create(id=4,name="district")
+        location_type5 = locationType.objects.create(id=5,name="sub-district")
 
         campaign_type = RestultStructureType.objects.create(id=1,name="test")
 
-        region_ids = self.model_df_to_data(region_df, region_df,Location)
+        location_ids = self.model_df_to_data(location_df, location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,ResultStructure)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
@@ -114,11 +114,11 @@ class CacheRefreshTestCase(TestCase):
 
         for row_ix,row_data in self.test_df.iterrows():
 
-            dp_id = self.create_datapoint(row_data.region_id, row_data\
+            dp_id = self.create_datapoint(row_data.location_id, row_data\
                 .campaign_id, row_data.indicator_id, row_data.value)
 
 
-    def create_datapoint(self, region_id, campaign_id, indicator_id, value):
+    def create_datapoint(self, location_id, campaign_id, indicator_id, value):
         '''
         Right now this is being performed as a database insert.  I would like to
         Test this against the data entry resource, but this will do for now
@@ -129,7 +129,7 @@ class CacheRefreshTestCase(TestCase):
         ss_id = SourceSubmission.objects.get(document_id = document_id).id
 
         dp_id = DataPoint.objects.create(
-            region_id = region_id,
+            location_id = location_id,
             campaign_id = campaign_id,
             indicator_id = indicator_id,
             value = value,
@@ -145,7 +145,7 @@ class CacheRefreshTestCase(TestCase):
         Using the calc_data.csv, create a test_df and target_df.  Ensure that
         the aggregation and calcuation are working properly, but ingesting the
         stored data, running the cache, and checking that the calculated data
-        for the aggregate region (parent region, in this case Nigeria) is as
+        for the aggregate location (parent location, in this case Nigeria) is as
         expected.
         '''
 
@@ -156,10 +156,10 @@ class CacheRefreshTestCase(TestCase):
 
         for ix, row in self.target_df.iterrows():
 
-            region_id, campaign_id, indicator_id = int(row.region_id),\
+            location_id, campaign_id, indicator_id = int(row.location_id),\
                int(row.campaign_id),int(row.indicator_id)
 
-            actual_value = self.get_dwc_value(region_id, campaign_id,\
+            actual_value = self.get_dwc_value(location_id, campaign_id,\
                 indicator_id)
 
             self.assertEqual(row.value,actual_value)
@@ -176,7 +176,7 @@ class CacheRefreshTestCase(TestCase):
         ``transaction.atomic`` or ``TrasactionTestCase`` in order to persist
         multiple DB changes within one test
         '''
-        raw_indicator_id, campaign_id, raw_region_id, agg_region_id = 22, 111,\
+        raw_indicator_id, campaign_id, raw_location_id, agg_location_id = 22, 111,\
             12939, 12907
 
         self.set_up()
@@ -186,7 +186,7 @@ class CacheRefreshTestCase(TestCase):
              raw_indicator_id]['value'].sum()
 
         dp_id_to_refresh = DataPoint.objects.filter(
-            region_id = raw_region_id,
+            location_id = raw_location_id,
             campaign_id = campaign_id ,
             indicator_id = raw_indicator_id
         ).values_list('id',flat=True)
@@ -197,14 +197,14 @@ class CacheRefreshTestCase(TestCase):
         cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
 
         ## FIXIME
-        actual_value = self.get_dwc_value(agg_region_id,campaign_id,\
+        actual_value = self.get_dwc_value(agg_location_id,campaign_id,\
             raw_indicator_id)
 
         self.assertEqual(actual_value,agg_value_target)
 
         self.assertEqual(90909090,agg_value_target)
 
-    def get_dwc_value(self,region_id,campaign_id,indicator_id):
+    def get_dwc_value(self,location_id,campaign_id,indicator_id):
         '''
         This testings the API for a row in the target dataframe and returns
         the corresponding value
@@ -215,7 +215,7 @@ class CacheRefreshTestCase(TestCase):
         '''
 
         # actual_value = DataPointComputed.objects.get(
-        #     region_id = region_id,
+        #     location_id = location_id,
         #     indicator_id = indicator_id,
         #     campaign_id = campaign_id
         # ).value

@@ -4,6 +4,6 @@ var Reflux = require('reflux');
 
 module.exports = Reflux.createActions([
   'setDashboard',
-  'setRegion',
+  'setlocation',
   'navigate'
 ]);

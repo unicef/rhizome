@@ -52,12 +52,12 @@ pass a json dictionary in accordance to the ids you want to delete as well as:
 id = ''
 
 
-Region POST
+location POST
 -----------
 
-``api/v2/region``
+``api/v2/location``
 
-- ``django model: Region``
+- ``django model: location``
 
 
 POST DATA
@@ -67,9 +67,9 @@ POST DATA
   {
      "name": "fake_place",
      "office_id": "2",
-     "parent_region_id": "12908",
-     "region_code": "fake_code",
-     "region_type_id": "1",
+     "parent_location_id": "12908",
+     "location_code": "fake_code",
+     "location_type_id": "1",
   }
 
 POST RESPONSE
@@ -174,8 +174,8 @@ POST RESPONSE
 MapTable POST
 -------------
 
-``POST api/v2/<region;indicator;campaign>_map;``
-  - ``django model: CampaignMap; IndicatorMap, RegionMmap``
+``POST api/v2/<location;indicator;campaign>_map;``
+  - ``django model: CampaignMap; IndicatorMap, locationMmap``
 
 
 sample post
@@ -291,12 +291,12 @@ POST RESPONSE
   }
 
 
-Region Permission POST
+location Permission POST
 ----------------------
 
-``api/v2/region_permission``
+``api/v2/location_permission``
 
-- ``django model: RegionPermission``
+- ``django model: locationPermission``
 
 POST DATA
 
@@ -304,7 +304,7 @@ POST DATA
 
   {
     "user_id": 1,
-    "region_id":12910
+    "location_id":12910
 
   }
 
@@ -346,7 +346,7 @@ Global Parameters and Query Filters
 
   *note - For the /v2 api, the limit / offset is applied after the queryset is
   returned.  Since most of the object lists are small this isnt a huge issue
-  , however it is to be of note when querying the region endpoint which returns
+  , however it is to be of note when querying the location endpoint which returns
   20k+ results*
 
 ``format``
@@ -411,15 +411,15 @@ permissions to the result set.  The api itself is closely related to the django
 ORM and because of which, all of the filters that are available to django are
 available in the url.
 
-Each resource has attached to it a model ( Region, Indicator, Campaign ) etc,
+Each resource has attached to it a model ( location, Indicator, Campaign ) etc,
 and an optional permission function.  The permission function takes the Model
 type and the list of IDs that were the result of the initial filter.
 
 The flow of the /v2 api is as follows:
 
   1. Parse the query parameters and query the database using this dictionary as the filter kwargs for that model.
-      - i.e. if the url is /region/?id=12907, the Api translates that into:
-        results = Region.objects.filter(**{'id':12907})
+      - i.e. if the url is /location/?id=12907, the Api translates that into:
+        results = location.objects.filter(**{'id':12907})
   2. Using the primary keys of the above result, apply the permission_function
      for that resource.
       - If there is no permission function applied, then return all the data from step 1.
@@ -433,18 +433,18 @@ The flow of the /v2 api is as follows:
 ``/api/v1/datapoint/``
 ++++++++++++++++++++++
 
-Return datapoints grouped by unique pairs of region and campaign. If no data is
-stored for a requested region, the value is computed by aggregating sub-regions.
+Return datapoints grouped by unique pairs of location and campaign. If no data is
+stored for a requested location, the value is computed by aggregating sub-locations.
 
 Parameters
 ~~~~~~~~~~
 
 ``indicator__in``
   A comma-separated list of indicator IDs to fetch. By default, all indicators
-  are collected in a single object for each unique pair of region and campaign
+  are collected in a single object for each unique pair of location and campaign
 
-``region__in``
-  A comma-separated list of region IDs
+``location__in``
+  A comma-separated list of location IDs
 
 ``campaign_start``
   format: ``YYYY-MM-DD``
@@ -463,7 +463,7 @@ Parameters
   listed campaigns will be returned
 
   Return only one datapoint per object. Instead of collecting all requested
-  indicators into a single object, return one object per region, campaign,
+  indicators into a single object, return one object per location, campaign,
   indicator set.
 
 
@@ -481,7 +481,7 @@ Response Format
     },
 
     objects: [{
-      region: ...,
+      location: ...,
       campaign: ...,
       indicators: [{
         indicator: ...,
@@ -495,8 +495,8 @@ Response Format
     errors: { ..}
   }
 
-``region``
-  The region for this set of data. Region will be the ID of the resource.
+``location``
+  The location for this set of data. location will be the ID of the resource.
 
 ``campaign``
   The campaign for this set of data. Campaign will be the ID of the resource.
@@ -535,7 +535,7 @@ Response Format
 Custom Serialization
 --------------------
 
-This takes the response given to the api ( list of objects where the region / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / region couple is the cooresponding cell value.  This method also looks up the region/campaign/indicator id and passes these strings ( not ids ) back to the API.
+This takes the response given to the api ( list of objects where the location / campaigns are the keys), and translates that data into a csv where the indicators are columns, and the value for each campaign / location couple is the cooresponding cell value.  This method also looks up the location/campaign/indicator id and passes these strings ( not ids ) back to the API.
 
   .. autoclass:: datapoints.api.serialize.CustomSerializer
      :members:
@@ -619,15 +619,15 @@ Custom Parameters
     errors: {...}
   }
 
-``/api/v2/region/``
+``/api/v2/location/``
 +++++++++++++++++++
 
-Return a list of region definitions in accordance to the schema melow.
+Return a list of location definitions in accordance to the schema melow.
 
-This endpoint will only return regions that the user has permissions for.  In
-this case, and in all other instances of GET requests dealing with regions,
-and region_ids, we use the ``fn_get_authorized_regions_by_user`` stored
-procedure which gets recursively the list of region_ids that a user can
+This endpoint will only return locations that the user has permissions for.  In
+this case, and in all other instances of GET requests dealing with locations,
+and location_ids, we use the ``fn_get_authorized_locations_by_user`` stored
+procedure which gets recursively the list of location_ids that a user can
 access.
 
 
@@ -636,10 +636,10 @@ Custom Parameters
 
 ``depth_level``
   - default = 0
-  - the depth parameter controls how far down the region tree the API should
-    traverse when returning region data.
+  - the depth parameter controls how far down the location tree the API should
+    traverse when returning location data.
   - a parameter of 0 returns ALL data, while a parameter of 1 retreives
-    regions at most one level underneath the regions avaliable to that user.
+    locations at most one level underneath the locations avaliable to that user.
       -> that is if a user has permission to see Nigeria only, and they pass
          a depth=1 parameter, they will see data Nigeria, as well as for the
          provinces but not for districts, sub-districts and settlemnts.
@@ -660,11 +660,11 @@ Custom Parameters
       slug: <String>
       latitude: <Number>,
       longitude: <Number>,
-      region_code: <String>,
-      region_type: <String>,
+      location_code: <String>,
+      location_type: <String>,
       shape_file_path: <String>,
       office: <reference>,
-      parent_region: <reference>,
+      parent_location: <reference>,
       resource_uri: <String>,
       created_at: "YYYY-MM-DDTHH:MM:SS.sss",
     }],
@@ -680,10 +680,10 @@ parameter.
 +++++++++++++++++++
 
 Return a list of office definitions. Offices are administrative concepts that
-represent different parts of the organization that oversee regions. For example,
+represent different parts of the organization that oversee locations. For example,
 there might be an office for Nigeria that represents the Nigerian Country
-Office. The region Nigeria that represents the country, as well as all of its
-sub-regions, would be associated with the Nigeria office.
+Office. The location Nigeria that represents the country, as well as all of its
+sub-locations, would be associated with the Nigeria office.
 
 .. code-block:: json
 
@@ -721,10 +721,10 @@ campaigns ( for instance a mop-up in the area surrounding a new case ).
     errors: {...}
   }
 
-``/api/v2/region_type/``
+``/api/v2/location_type/``
 +++++++++++++++++++
 
-List of region types ( each region must have a region type ).  For now we are
+List of location types ( each location must have a location type ).  For now we are
 dealing with Country, Province, District, Sub-District and Settlement.
 
 .. code-block:: json
@@ -814,7 +814,7 @@ See section on campaign_map
   }
 
 
-``/api/v2/region_map/``
+``/api/v2/location_map/``
 +++++++++++++++++++
 
 See section on campaign_map.
@@ -879,7 +879,7 @@ the apply_document_permissions function
 +++++++++++++++++++++++++++++
 
 The document_review API is used by the document review page which gives the user
-an overview of the metadata in each document ( source_regions, source_campaigns
+an overview of the metadata in each document ( source_locations, source_campaigns
 and source_indicators ) as well as the ability to map them to master IDs.
 This call will be called with a document_id and used to populate the mapping
 interface.  The interface shows the user how many source_datapoints are
@@ -1042,12 +1042,12 @@ here to all of the fields included in the response.
   }
 
 
-``/api/v2/region_permission/``
+``/api/v2/location_permission/``
 ++++++++++++++++++++++++++++++
 
-This endpoint tells which regions a user has access to read or write to.
-If you want only the regions that a user can WRITE to pass the read_write=w
-parameter.  By default, this endpoint retreives the regions that a user can
+This endpoint tells which locations a user has access to read or write to.
+If you want only the locations that a user can WRITE to pass the read_write=w
+parameter.  By default, this endpoint retreives the locations that a user can
 read.
 
 .. code-block:: json
@@ -1059,7 +1059,7 @@ read.
       id: <Number>,
       read_write: <Text>,
       user_id: <Number>,
-      region_id: <Number>
+      location_id: <Number>
     }],
 
     errors: {...}
@@ -1103,8 +1103,8 @@ for instance:
 .. code-block:: python
 
   {
-  "region": {"orm_obj":Region,
-    "permission_function":self.apply_region_permissions},
+  "location": {"orm_obj":location,
+    "permission_function":self.apply_location_permissions},
   }
 
-permissions are largely based around the *fn_get_authorized_regions_by_user* stored procedure which uses a recursive CTE and the *region_permission* table to find the regions a particular user is allowed to read or write to.
+permissions are largely based around the *fn_get_authorized_locations_by_user* stored procedure which uses a recursive CTE and the *location_permission* table to find the locations a particular user is allowed to read or write to.

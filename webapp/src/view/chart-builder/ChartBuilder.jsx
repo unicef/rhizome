@@ -55,7 +55,7 @@ module.exports = React.createClass({
     }
   },
   componentDidMount: function () {
-    ChartBuilderActions.initialize(this.props.chartDef, this.props.region, this.props.campaign);
+    ChartBuilderActions.initialize(this.props.chartDef, this.props.location, this.props.campaign);
     this.setState({title: this.props.chartDef.title});
   },
   _updateTitle: function (newText) {
@@ -109,13 +109,13 @@ module.exports = React.createClass({
       filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
       ChartBuilderActions.addIndicatorSelection);
 
-    var regionSelection = !!this.state.store.regionSelected ?
-      this.state.store.regionSelected.name :
-      'Select Region';
+    var locationSelection = !!this.state.store.locationSelected ?
+      this.state.store.locationSelected.name :
+      'Select location';
 
-    var regions = MenuItem.fromArray(
-      filterMenu(this.state.store.regionList, this.state.regionFilter),
-      ChartBuilderActions.addRegionSelection);
+    var locations = MenuItem.fromArray(
+      filterMenu(this.state.store.locationList, this.state.locationFilter),
+      ChartBuilderActions.addlocationSelection);
 
     var axisOptions = this.state.store.indicatorsSelected.map(function (indicator, index) {
       return <option key={indicator.id} value={index}>{indicator.name}</option>;
@@ -172,8 +172,8 @@ module.exports = React.createClass({
           {this.state.store.chartTypes[this.state.store.selectedChart].groupBy ? groupBy : null}
           <div className="grouping">
             <div className="titleDiv">Show</div>
-            <RadioGroup name="show" horizontal={true} value={this.state.store.regionRadioValue}
-                        values={this.state.store.regionRadios} onChange={ChartBuilderActions.selectShowRegionRadio}/>
+            <RadioGroup name="show" horizontal={true} value={this.state.store.locationRadioValue}
+                        values={this.state.store.locationRadios} onChange={ChartBuilderActions.selectShowlocationRadio}/>
           </div>
           <div className="grouping">
             <div className="titleDiv">Time Span</div>
@@ -204,10 +204,10 @@ module.exports = React.createClass({
               <div className="dropdown-wrapper">
                 <DropdownMenu
                   icon='fa-globe'
-                  text={regionSelection}
+                  text={locationSelection}
                   searchable={true}
-                  onSearch={_.partial(this.setFilter, 'region')}>
-                  {regions}
+                  onSearch={_.partial(this.setFilter, 'location')}>
+                  {locations}
                 </DropdownMenu>
               </div>
               {this.state.store.loading ? loadingDiv : null}

@@ -7,13 +7,13 @@ Backend Source Code
 Standardization and Validation of Information
 =============================================
 
-The polio backend is based around the **datapoint** table which has a key for region, indicator and campaign.  The datapoint table gathers and consolidates information from Data Entry, CSV upload, ETL of 3rd party APIs and Data Sources and makes this information available to a REST api.  This api powers the dashboards, as well as the data explorer.
+The polio backend is based around the **datapoint** table which has a key for location, indicator and campaign.  The datapoint table gathers and consolidates information from Data Entry, CSV upload, ETL of 3rd party APIs and Data Sources and makes this information available to a REST api.  This api powers the dashboards, as well as the data explorer.
 
 The system differentiates between conflicts and information from different sources via the **source_datapoint** table which holds information uploaded directly from spreadsheets.
 
-In addition the system maintains **source_indicators** , **source_regions**, and **source_campaigns** all of which have cooresponding mapping tables.  Each of the source tables have a cooresponding **document_id** which gives a link to the source of the raw data.
+In addition the system maintains **source_indicators** , **source_locations**, and **source_campaigns** all of which have cooresponding mapping tables.  Each of the source tables have a cooresponding **document_id** which gives a link to the source of the raw data.
 
-When a source_datapoint has mappings for region, campaign, and indicator, by using the **refresh_master** method for that document_id will create, or update ( if a conflicting datapoint exists ) the datapoint table.
+When a source_datapoint has mappings for location, campaign, and indicator, by using the **refresh_master** method for that document_id will create, or update ( if a conflicting datapoint exists ) the datapoint table.
 
 There are two ways that information gets into the system.
 
@@ -39,7 +39,7 @@ The flow of data in the ETL Process is as follows:
 
 - Each file, or incoming data stream has a corresponding *document_id*
 - Each fact in a document is then translated to a *source_datapoint* which
-  contains principally a *campaign_string*, *region_string*,
+  contains principally a *campaign_string*, *location_string*,
   *indicator_string* and *value*.
 
 RefreshMaster
@@ -49,7 +49,7 @@ RefreshMaster
 - Creates an necessary meta_data rows (ex. source_indicator) from the
   raw data.
 - **INSERT** a datapoint for each source_datapoint that has a corresponding
-  mapping for the region, campaign, and indicator.
+  mapping for the location, campaign, and indicator.
 - **UPDATE** datapoints only in the case when that original datapoint was
   the result of another source_datapoint. That is, this method will NOT
   override data that was inserted via the data_entry form (a datapoint that
@@ -59,7 +59,7 @@ RefreshMaster
    that were the result of that document_id
       - so if you load a csv with 10 source_datapoints, map everything,
         then refresh master you should see 10 datapoints.
-      - if then you delete the mapping for a region in this document that
+      - if then you delete the mapping for a location in this document that
         has attached to it 2 datapoints, and refreshed master, you would
         then see that the document_id has 8 datapoints instead of 10.
 
@@ -76,7 +76,7 @@ Mapping
   this metadata when visiting the document_review page
   ''/source_data/document_review/<document_id>''
 
-Regarding POLIO-205 - How are we to determine the semantic identities of Regions in a complex regional heirarchy.
+Regarding POLIO-205 - How are we to determine the semantic identities of locations in a complex locational heirarchy.
 
 Consider the following wikipedia page:
 
@@ -88,10 +88,10 @@ Consider the following wikipedia page:
 In our system we map data from each source, to semantic identites in our system.  For instance, "# vaccinated" is the same as "num vaccinated," and "NG JUN 2014" is the same as "Nigeria June 2014."
 
 When ingesting a spreadsheet, here are the rules as to how datapoints are mapped and validated.
-  - each souce_datapoint must have a record explicilty mapping the indicator_string, campaign_string and region_code to their respective IDs.
-  - Regions are not Auto mapped on their Name, but rather their region code.
+  - each souce_datapoint must have a record explicilty mapping the indicator_string, campaign_string and location_code to their respective IDs.
+  - locations are not Auto mapped on their Name, but rather their location code.
 
-**Region Codes**
+**location Codes**
 
 *NIGERIA*
   - WHO has a the following naming convention for Settlements in Nigeria:
@@ -112,7 +112,7 @@ Needs Documentation
     ->CSV Non Pivoted
     ->ODK
 
-Future Topics Regarding Regions
+Future Topics Regarding locations
 -------------------------------
   - when boundaries change over time
   - outbreak countries and new office_ids
@@ -128,7 +128,7 @@ calculation cycle are available to you for debugging missing and incorrect
 information
 
 - ``datapoint`` - the level at which raw data is stored
-- ``agg_datapoint`` - raw data aggregated regionally.
+- ``agg_datapoint`` - raw data aggregated locationally.
 - ``datapoint_with_computed`` - both raw and aggregated data stored including
   data for calculated indicators.
 - ``datapoint_abstracted`` - the aggregated and calculated data stored in a
@@ -153,8 +153,8 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
     from datapoints.cache_tasks import CacheRefresh
     from datapoints.models import DataPoint
 
-    ## get a List of DataPoint IDs for the region Arghestan ##
-    dp_ids = DataPoint.objects.filter(region_id = 13317).values_list('id',flat=True)
+    ## get a List of DataPoint IDs for the location Arghestan ##
+    dp_ids = DataPoint.objects.filter(location_id = 13317).values_list('id',flat=True)
 
     ## refresh the cache for the datapoint_ids retrieved above ##
     cr = CacheRefresh(datapoint_id_list = dp_ids)
@@ -225,12 +225,12 @@ application.
 - document_id
 - source_datapoint
 - datapoint
-- region
-  Regions have a parent, lon / lat, region type
-  **uniqueness for region is defined by region_name, region_type, country**
-  Prior we had an issue in which two regions with the same name ( HRA Level ) and in our ingestion we collapsed both regions into one, causing regional aggregation to break and display conflicting data.
-  We also had an issue in which a region in the same country has the same name but with a different region type ( sokoto settlement vs. sokoto state).
-  We will also be storing a region_geo_json table that will hold region_id, geo_json ( as a blob )
+- location
+  locations have a parent, lon / lat, location type
+  **uniqueness for location is defined by location_name, location_type, country**
+  Prior we had an issue in which two locations with the same name ( HRA Level ) and in our ingestion we collapsed both locations into one, causing locational aggregation to break and display conflicting data.
+  We also had an issue in which a location in the same country has the same name but with a different location type ( sokoto settlement vs. sokoto state).
+  We will also be storing a location_geo_json table that will hold location_id, geo_json ( as a blob )
 
 - indicator
 - campaign
@@ -242,27 +242,27 @@ application.
 - audit_table
 
 
-Aggregation by Region
+Aggregation by location
 ---------------------
 
-If you request a region for which there is no data, the system will traverse the
-hierarchy of regions down and aggregate the data it finds at those levels by
+If you request a location for which there is no data, the system will traverse the
+hierarchy of locations down and aggregate the data it finds at those levels by
 adding them together. For example, if you request the "Number of Missed
 Children" for Nigeria, but that indicator is not stored in the database for
 Nigeria, the system will iterate over the states that comprise Nigeria and add
 the values it finds for that indicator together. For each state that does not
-have a value, it will check its constituent regions, and so on until it finds a
-region with a value for that indicator or it runs out of sub-regions to check.
+have a value, it will check its constituent locations, and so on until it finds a
+location with a value for that indicator or it runs out of sub-locations to check.
 
 .. image:: img/geo_agg.png
 
-If the value of an indicator was generated by aggregating data from sub-regions,
+If the value of an indicator was generated by aggregating data from sub-locations,
 the indicator object will have an ``is_agg`` property:
 
 .. code-block:: json
 
   ...
-  region: 23,
+  location: 23,
   indicators: [{
     indicator: 1,
     value: ...
@@ -273,39 +273,39 @@ the indicator object will have an ``is_agg`` property:
   }]
   ...
 
-In the above example, a value for indicator 1 was found for region 23. No value
-for indicator 2 was found for region 23, so the system calculated that value by
-aggregating the values of it sub-regions.
+In the above example, a value for indicator 1 was found for location 23. No value
+for indicator 2 was found for location 23, so the system calculated that value by
+aggregating the values of it sub-locations.
 
-Conflicts with Sub-regions
+Conflicts with Sub-locations
 ++++++++++++++++++++++++++
 
-If a value is stored for a given region, that is the value returned regardless
-of whether or not the region's sub-regions also have values. Because there is
-nothing preventing a value being stored for a region and its sub-regions, it is
+If a value is stored for a given location, that is the value returned regardless
+of whether or not the location's sub-locations also have values. Because there is
+nothing preventing a value being stored for a location and its sub-locations, it is
 possible that the stored values at differing levels may conflict.
 
 .. image:: img/geo_agg_conflict.png
 
-In the above example one of the regions has a stored value of 7, and its three
-sub-regions have values of 1, 1, and 3. This could be indicative of an error in
+In the above example one of the locations has a stored value of 7, and its three
+sub-locations have values of 1, 1, and 3. This could be indicative of an error in
 the data and should be flagged. Regardless of whether this is an error or
-intentional, the value returned for that region (and the value used in
-aggregation for any of its parent regions) is the value stored for the region;
-the values in the sub-regions are ignored except when they are explicitly
+intentional, the value returned for that location (and the value used in
+aggregation for any of its parent locations) is the value stored for the location;
+the values in the sub-locations are ignored except when they are explicitly
 requested.
 
 Partial Missing Values
 ++++++++++++++++++++++
 
 When aggregating data geographically, it is possible to calculate the value for
-a region even if not all of its sub-regions have data.
+a location even if not all of its sub-locations have data.
 
 .. image:: img/geo_agg_partial.png
 
 These situations should be flagged so that users are aware of them when they
 occur. It's important to know that the value for the country you are seeing is
-actually only representative of some portion of its sub-regions and not the
+actually only representative of some portion of its sub-locations and not the
 entire country.
 
 Controlling Aggregation Behavior
@@ -316,13 +316,13 @@ You can control the behavior of the aggregation using the ```` parameter.
 ``mixed``
   default
 
-  If the requested region has stored data, use that, otherwise travers the sub-
-  regions to aggregate the indicators found there
+  If the requested location has stored data, use that, otherwise travers the sub-
+  locations to aggregate the indicators found there
 
 ``agg-only``
-  Only return data aggregated from sub-regions. If the region you requested
+  Only return data aggregated from sub-locations. If the location you requested
   actually has data stored on it, it will be ignored
 
 ``no-agg``
-  Do not travers the sub-regions to aggregate data if the requested region does
+  Do not travers the sub-locations to aggregate data if the requested location does
   not have a value stored

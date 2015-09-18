@@ -98,8 +98,8 @@ var District = React.createClass({
       onMouseOut       : this._onMouseOut,
       onColumnHeadOver : this._onHeaderOver,
       onColumnHeadOut  : this._onHeaderOut,
-      onClick          : this._onRegionClick,
-      onRowClick       : this._onRegionClick
+      onClick          : this._onlocationClick,
+      onRowClick       : this._onlocationClick
     };
 
     return (
@@ -170,7 +170,7 @@ var District = React.createClass({
         total,
         format    : formatUtil.general,
         indicator : d.indicator,
-        row       : d.region.name,
+        row       : d.location.name,
         value     : d.value
       });
 
@@ -243,10 +243,10 @@ var District = React.createClass({
     }
   },
 
-  _onRegionClick : function (d) {
+  _onlocationClick : function (d) {
     var params = {
       dashboard : 'management-dashboard',
-      region    : _.isString(d) ? d : d.region.name
+      location    : _.isString(d) ? d : d.location.name
     };
 
     DashboardActions.navigate(params);

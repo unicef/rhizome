@@ -36,11 +36,11 @@ class Migration(migrations.Migration):
         (name)
         SELECT 'odk_host' UNION ALL
         SELECT 'odk_form_name' UNION ALL
-        SELECT 'region_column' UNION ALL
+        SELECT 'location_column' UNION ALL
         SELECT 'campaign_column' UNION ALL
         SELECT 'username_column' UNION ALL
         SELECT 'uq_id_column' UNION ALL
-        SELECT 'agg_on_region' UNION ALL
+        SELECT 'agg_on_location' UNION ALL
         SELECT 'image_col' UNION ALL
         SELECT 'delimiter' UNION ALL
         SELECT 'submission_count' UNION ALL
@@ -52,37 +52,37 @@ class Migration(migrations.Migration):
         SELECT 'calc_datapoint_count' UNION ALL
         SELECT 'lat_col' UNION ALL
         SELECT 'lon_col' UNION ALL
-        SELECT 'region_display_name';
+        SELECT 'location_display_name';
         --  OFFICE --
         INSERT INTO office (name,created_at)
         SELECT 'Nigeria',NOW() UNION ALL
         SELECT 'Afghanistan',NOW() UNION ALL
         SELECT 'Pakistan',NOW();
-        -- REGION TYPE --
+        -- location TYPE --
         INSERT INTO location_type (name,admin_level)
         SELECT 'Country',0 UNION ALL
         SELECT 'Province',1 UNION ALL
         SELECT 'District',2 UNION ALL
         SELECT 'Sub-District',3 UNION ALL
         SELECT 'Settlement',4;
-        -- REGION --
+        -- location --
 
         INSERT INTO location
         (name,location_code,slug,office_id,location_type_id,created_at)
         SELECT
-             x.region_name as region_name
-            ,x.region_code as region_code
-            ,lower(x.region_name) as slug
+             x.location_name as location_name
+            ,x.location_code as location_code
+            ,lower(x.location_name) as slug
             ,o.id as office_id
-            ,rt.id as region_type_id
+            ,rt.id as location_type_id
             ,NOW()
         FROM (
-            SELECT 'Nigeria' as region_name, 'NG001000000000000000' as region_code UNION ALL
+            SELECT 'Nigeria' as location_name, 'NG001000000000000000' as location_code UNION ALL
             SELECT 'Afghanistan', 'AF001000000000000000' UNION ALL
             SELECT 'Pakistan', 'PK001000000000000000'
         )x
         INNER JOIN office o
-        ON o.name = x.region_name
+        ON o.name = x.location_name
         INNER JOIN location_type rt
         ON rt.name = 'Country';
         -- CACHE_JOB --

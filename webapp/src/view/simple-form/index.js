@@ -12,7 +12,7 @@ module.exports = {
 	template: require('./template.html'),
 	data: function(){
 	  return {
-		regions:[],
+		locations:[],
 		groups:[]
 	  };
 	},

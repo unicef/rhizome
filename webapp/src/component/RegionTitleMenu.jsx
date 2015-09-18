@@ -6,9 +6,9 @@ var React = require('react');
 var TitleMenu = require('component/TitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 
-var RegionTitleMenu = React.createClass({
+var locationTitleMenu = React.createClass({
   propTypes: {
-    regions: React.PropTypes.array.isRequired,
+    locations: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired
   },
@@ -20,7 +20,7 @@ var RegionTitleMenu = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    return nextProps.regions.length !== this.props.regions.length
+    return nextProps.locations.length !== this.props.locations.length
       || nextProps.selected.id !== this.props.selected.id;
   },
 
@@ -30,8 +30,8 @@ var RegionTitleMenu = React.createClass({
     })
   },
 
-  _buildRegions: function(originalRegions, filter) {
-    var regions = originalRegions.map(r => {
+  _buildlocations: function(originallocations, filter) {
+    var locations = originallocations.map(r => {
       return {
         title: r.name,
         value: r.id,
@@ -40,39 +40,39 @@ var RegionTitleMenu = React.createClass({
     });
 
     if (filter.length > 2) {
-      regions = regions.filter(r => {
+      locations = locations.filter(r => {
         return new RegExp(filter, 'i').test(r.title)
       })
     } else {
-      var idx = _.indexBy(regions, 'value');
-      regions = [];
-      _.each(idx, region => {
-        if (idx.hasOwnProperty(region.parent)) {
-          var p = idx[region.parent];
+      var idx = _.indexBy(locations, 'value');
+      locations = [];
+      _.each(idx, location => {
+        if (idx.hasOwnProperty(location.parent)) {
+          var p = idx[location.parent];
           var children = p.children || []
 
-          children.push(region);
+          children.push(location);
           p.children = _.sortBy(children, 'title');
         } else {
-          regions.push(region);
+          locations.push(location);
         }
       });
     }
 
-    return regions
+    return locations
   },
 
   render: function () {
-    // console.log("RegionTitleMenu RENDER:", this.props.selected);
-    var region = this.props.selected.name;
+    // console.log("locationTitleMenu RENDER:", this.props.selected);
+    var location = this.props.selected.name;
     var filter  = this.state.filter;
-    var regions = this._buildRegions(this.props.regions, filter)
-    var items = MenuItem.fromArray(_.sortBy(regions, 'title'), this.props.sendValue);
+    var locations = this._buildlocations(this.props.locations, filter)
+    var items = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue);
 
     return (
       <TitleMenu
         icon='fa-globe'
-        text={region}
+        text={location}
         searchable={true}
         onSearch={this._setFilter}>
         {items}
@@ -81,4 +81,4 @@ var RegionTitleMenu = React.createClass({
   }
 });
 
-module.exports = RegionTitleMenu;
+module.exports = locationTitleMenu;

@@ -12,17 +12,17 @@ class Migration(migrations.Migration):
 
     operations = [
     migrations.RunSQL("""
-	DROP TABLE IF EXISTS _tmp_ng_regions;
-	CREATE TABLE _tmp_ng_regions
+	DROP TABLE IF EXISTS _tmp_ng_locations;
+	CREATE TABLE _tmp_ng_locations
 	(
-	    unicef_region_code VARCHAR
-	    ,who_region_code VARCHAR NULL
-	    ,region_name VARCHAR
-	    ,region_type VARCHAR
+	    unicef_location_code VARCHAR
+	    ,who_location_code VARCHAR NULL
+	    ,location_name VARCHAR
+	    ,location_type VARCHAR
 	    ,country VARCHAR
 	);
-	INSERT INTO _tmp_ng_regions
-	(unicef_region_code, region_name, region_type, country)
+	INSERT INTO _tmp_ng_locations
+	(unicef_location_code, location_name, location_type, country)
         SELECT 42, 'Bauchi (Province)','Province','Nigeria' UNION ALL
         SELECT 43, 'Borno','Province','Nigeria' UNION ALL
         SELECT 18, 'Jigawa (Province)','Province','Nigeria' UNION ALL
@@ -494,8 +494,8 @@ class Migration(migrations.Migration):
         SELECT 210204, 'Batagarawa (Sub-District)','Sub-District','Nigeria' UNION ALL
         SELECT 200202, 'Bataiya','Sub-District','Nigeria' UNION ALL
         SELECT 180202, 'Batali','Sub-District','Nigeria';
-    	INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+    	INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 210302, 'Batsari (Sub-District)','Sub-District','Nigeria' UNION ALL
         SELECT 180401, 'Batu','Sub-District','Nigeria' UNION ALL
         SELECT 181801, 'Baturiya','Sub-District','Nigeria' UNION ALL
@@ -991,8 +991,8 @@ class Migration(migrations.Migration):
         SELECT 181903, 'Fake','Sub-District','Nigeria' UNION ALL
         SELECT 342306, 'Fakka','Sub-District','Nigeria' UNION ALL
         SELECT 341001, 'Fakku','Sub-District','Nigeria';
-    	INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+    	INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 212001, 'Fakuwa /Kafin Dangi','Sub-District','Nigeria' UNION ALL
         SELECT 370604, 'Falale','Sub-District','Nigeria' UNION ALL
         SELECT 220203, 'Falde','Sub-District','Nigeria' UNION ALL
@@ -1490,8 +1490,8 @@ class Migration(migrations.Migration):
         SELECT 203905, 'Janguza','Sub-District','Nigeria' UNION ALL
         SELECT 212605, 'Jani','Sub-District','Nigeria' UNION ALL
         SELECT 430405, 'Jara Dali','Sub-District','Nigeria';
-        INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+        INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 430406, 'Jara Gol','Sub-District','Nigeria' UNION ALL
         SELECT 431502, 'Jarawa','Sub-District','Nigeria' UNION ALL
         SELECT 341404, 'Jaredi','Sub-District','Nigeria' UNION ALL
@@ -1991,8 +1991,8 @@ class Migration(migrations.Migration):
         SELECT 432308, 'Layi','Sub-District','Nigeria' UNION ALL
         SELECT 191707, 'Lazuru/Tuddai','Sub-District','Nigeria' UNION ALL
         SELECT 180508, 'Lelenkudu','Sub-District','Nigeria';
-    	INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+    	INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 220208, 'Lema/Jantulu','Sub-District','Nigeria' UNION ALL
         SELECT 203507, 'Leni','Sub-District','Nigeria' UNION ALL
         SELECT 191708, 'Lere (Sub-District)','Sub-District','Nigeria' UNION ALL
@@ -2486,8 +2486,8 @@ class Migration(migrations.Migration):
         SELECT 211410, 'Sabon Gari (Funtua)','Sub-District','Nigeria' UNION ALL
         SELECT 191608, 'Sabon Gari (Kudan)','Sub-District','Nigeria' UNION ALL
         SELECT 182207, 'Sabon Gari (Miga)','Sub-District','Nigeria';
-    	INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+    	INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 204108, 'Sabon Gari (Tudun Wada)','Sub-District','Nigeria' UNION ALL
         SELECT 204408, 'Sabon Gari (Wudil)','Sub-District','Nigeria' UNION ALL
         SELECT 340509, 'Sabon Gari Dole','Sub-District','Nigeria' UNION ALL
@@ -2984,8 +2984,8 @@ class Migration(migrations.Migration):
         SELECT 221710, 'Yarbesse','Sub-District','Nigeria' UNION ALL
         SELECT 210210, 'Yargamji','Sub-District','Nigeria' UNION ALL
         SELECT 200914, 'Yargaya','Sub-District','Nigeria';
-    	INSERT INTO _tmp_ng_regions
-    	(unicef_region_code, region_name, region_type, country)
+    	INSERT INTO _tmp_ng_locations
+    	(unicef_location_code, location_name, location_type, country)
         SELECT 370209, 'Yargeda','Sub-District','Nigeria' UNION ALL
         SELECT 211909, 'Yargoje','Sub-District','Nigeria' UNION ALL
         SELECT 203915, 'Yarimawa','Sub-District','Nigeria' UNION ALL
@@ -3106,23 +3106,23 @@ class Migration(migrations.Migration):
         SELECT 421913, 'Zurgwai','Sub-District','Nigeria' UNION ALL
         SELECT 371411, 'Zurmi (Sub-District)','Sub-District','Nigeria' UNION ALL
         SELECT 202415, 'Zuwo','Sub-District','Nigeria';
-	UPDATE _tmp_ng_regions
-	SET who_region_code = 'NG0010' || unicef_region_code || '000000000000'
-	WHERE region_type = 'Province';
+	UPDATE _tmp_ng_locations
+	SET who_location_code = 'NG0010' || unicef_location_code || '000000000000'
+	WHERE location_type = 'Province';
 	-- MISMATCHES: bauchi, borno
-	UPDATE _tmp_ng_regions
-	SET who_region_code = 'NG0010'
-		|| LEFT(unicef_region_code,2)
-		|| '0' || substring(unicef_region_code from 3 for 2)
+	UPDATE _tmp_ng_locations
+	SET who_location_code = 'NG0010'
+		|| LEFT(unicef_location_code,2)
+		|| '0' || substring(unicef_location_code from 3 for 2)
 		|| '000000000'
-	WHERE region_type = 'District';
-	UPDATE _tmp_ng_regions
-	SET who_region_code = 'NG0010'
-		|| LEFT(unicef_region_code,2)
-		|| '0' || substring(unicef_region_code from 3 for 2)
-		|| '0' || substring(unicef_region_code from 5 for 2)
+	WHERE location_type = 'District';
+	UPDATE _tmp_ng_locations
+	SET who_location_code = 'NG0010'
+		|| LEFT(unicef_location_code,2)
+		|| '0' || substring(unicef_location_code from 3 for 2)
+		|| '0' || substring(unicef_location_code from 5 for 2)
 		|| '000000'
-	WHERE region_type = 'Sub-District';
+	WHERE location_type = 'Sub-District';
 		-- NG001034001000000000 # binji ( who shape files )
 	-- 3401 # binji ( Inside Monitoring Code )
 
@@ -3133,19 +3133,19 @@ class Migration(migrations.Migration):
     INSERT INTO location
         (name,location_code,slug,office_id,location_type_id,parent_location_id,created_at)
         SELECT
-             tng.region_name
-            ,tng.who_region_code
-            ,tng.who_region_code
+             tng.location_name
+            ,tng.who_location_code
+            ,tng.who_location_code
             ,o.id
             ,rt.id
             ,pr.id
             ,now()
-        FROM _tmp_ng_regions tng
+        FROM _tmp_ng_locations tng
         INNER JOIN office o
             ON o.name = 'Nigeria'
         INNER JOIN location_type rt
-            ON tng.region_type = rt.name
-            AND tng.region_type = 'Province'
+            ON tng.location_type = rt.name
+            AND tng.location_type = 'Province'
         INNER JOIN location pr
             ON pr.name = 'Nigeria';
 
@@ -3153,54 +3153,54 @@ class Migration(migrations.Migration):
         INSERT INTO location
         (name,location_code,slug,office_id,location_type_id,parent_location_id,created_at)
         SELECT
-            tng.region_name
-            ,tng.who_region_code
-            ,tng.who_region_code
+            tng.location_name
+            ,tng.who_location_code
+            ,tng.who_location_code
             ,o.id
             ,rt.id
             ,pr.id
             ,now()
-        FROM _tmp_ng_regions tng
+        FROM _tmp_ng_locations tng
         INNER JOIN office o
             ON o.name = 'Nigeria'
         INNER JOIN location_type rt
-            ON tng.region_type = rt.name
-            AND tng.region_type = 'District'
-    	INNER JOIN _tmp_ng_regions prt
-    	    ON LEFT(CAST(tng.unicef_region_code AS VARCHAR),2) = CAST(prt.unicef_region_code AS VARCHAR)
+            ON tng.location_type = rt.name
+            AND tng.location_type = 'District'
+    	INNER JOIN _tmp_ng_locations prt
+    	    ON LEFT(CAST(tng.unicef_location_code AS VARCHAR),2) = CAST(prt.unicef_location_code AS VARCHAR)
         INNER JOIN location pr
-	        ON prt.who_region_code = pr.location_code;
+	        ON prt.who_location_code = pr.location_code;
 
         INSERT INTO location
         (name,location_code,slug,office_id,location_type_id,parent_location_id,created_at)
         SELECT
-             tng.region_name
-            ,tng.who_region_code
-            ,tng.who_region_code
+             tng.location_name
+            ,tng.who_location_code
+            ,tng.who_location_code
             ,o.id
             ,rt.id
             ,pr.id
             ,now()
-        FROM _tmp_ng_regions tng
+        FROM _tmp_ng_locations tng
         INNER JOIN office o
             ON o.name = 'Nigeria'
         INNER JOIN location_type rt
-            ON tng.region_type = rt.name
-            AND tng.region_type = 'Sub-District'
-	INNER JOIN _tmp_ng_regions prt
-	    ON LEFT(CAST(tng.unicef_region_code AS VARCHAR),4) = CAST(prt.unicef_region_code AS VARCHAR)
+            ON tng.location_type = rt.name
+            AND tng.location_type = 'Sub-District'
+	INNER JOIN _tmp_ng_locations prt
+	    ON LEFT(CAST(tng.unicef_location_code AS VARCHAR),4) = CAST(prt.unicef_location_code AS VARCHAR)
         INNER JOIN location pr
-	    ON prt.who_region_code = pr.location_code;
+	    ON prt.who_location_code = pr.location_code;
 
 	INSERT INTO source_object_map
 	(source_object_code,master_object_id,content_type,mapped_by_id)
 	SELECT location_code, x.id, 'location', y.id
     FROM (
 		SELECT location_code, r.id FROM location r  UNION ALL
-		SELECT unicef_region_code, r.id
+		SELECT unicef_location_code, r.id
 		FROM location r
-    		INNER JOIN _tmp_ng_regions t
-    		ON r.location_code = t.who_region_code
+    		INNER JOIN _tmp_ng_locations t
+    		ON r.location_code = t.who_location_code
 	) x
 	INNER JOIN ( SELECT id FROM auth_user WHERE username = 'demo_user' ) y
 	ON 1=1;

@@ -222,7 +222,7 @@ module.exports = {
 
   // BASIC GET REQUESTS //
   campaign: endPoint('/campaign/', 'get', 1),
-  regions: endPoint('/region/', 'get', 1),
+  locations: endPoint('/location/', 'get', 1),
   datapointsRaw: endPoint('/datapointentry/','get', 1),
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
@@ -233,7 +233,7 @@ module.exports = {
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
-  region_permission: endPoint('/region_permission/', 'get', 1),
+  location_permission: endPoint('/location_permission/', 'get', 1),
   group_permissions: endPoint('/group_permission/', 'get', 1),
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/','get',1),
@@ -255,7 +255,7 @@ module.exports = {
   uploadPost: endPoint('/source_doc/', 'post'),
   datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
-  set_region_permission: endPoint('/region_permission/', 'post', 1),
+  set_location_permission: endPoint('/location_permission/', 'post', 1),
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),
   post_source_object_map: endPoint('/source_object_map/','post', 1,false),
 

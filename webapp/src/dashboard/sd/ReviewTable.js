@@ -1,6 +1,6 @@
 var _											= require('lodash');
 var React 								= require('react');
-var RegionTitleMenu     	= require('component/RegionTitleMenu.jsx');
+var locationTitleMenu     	= require('component/locationTitleMenu.jsx');
 var DashboardStore    		= require('stores/DashboardStore');
 var GroupFormStore 				= require('stores/GroupFormStore');
 var ChartBuilderStore 		= require('stores/ChartBuilderStore');
@@ -26,7 +26,7 @@ var ReviewTable = React.createClass({
 		getData: React.PropTypes.func.isRequired,
 		fields:  React.PropTypes.array.isRequired,
     loading   : React.PropTypes.bool.isRequired,
-		region 		: React.PropTypes.object.isRequired,
+		location 		: React.PropTypes.object.isRequired,
 		campaign 	: React.PropTypes.object.isRequired,
 		doc_tab 	: React.PropTypes.string.isRequired,
 	},
@@ -55,7 +55,7 @@ var ReviewTable = React.createClass({
 		
 		this.props.getData({
 				document_id:this.props.doc_id,
-				region_id:this.props.region.id,
+				location_id:this.props.location.id,
 				campaign_id:this.props.campaign.id
 			},null,{'cache-control':'no-cache'})
 			.then(response => this.setState({
@@ -79,7 +79,7 @@ var ReviewTable = React.createClass({
 
 	componentWillUpdate : function (nextProps, nextState) {
 			// FIXME -> needs cleanup
-			if (nextProps.region != this.props.region) {
+			if (nextProps.location != this.props.location) {
 				return;
 			}
 			if (nextProps.getData != this.props.getData) {
@@ -114,7 +114,7 @@ var ReviewTable = React.createClass({
 							return <MapForm
 											indicators={this.state.indicators}
 											campaigns={DashboardStore.campaigns}
-											regions={DashboardStore.regions}
+											locations={DashboardStore.locations}
 							 				source_object_map_id={id}
 											key={id}
 											/>
