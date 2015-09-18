@@ -265,7 +265,7 @@ module.exports = React.createClass({
 	           <div className="custom-dashboard-title-container right">
 					Dashboard Title
 					<TitleInput initialText={this.state.title} save={this._updateTitle} />
-					
+
 	           </div>
 
 	           <form className='inline no-print'>
@@ -285,15 +285,13 @@ module.exports = React.createClass({
 	               </div>
 	             </div>
 	           </form>
-	           {this.state.store.dashboard.charts.length?null:addDashboardLinkContainer}
 	           {dashboard}
-
 	           <div className="dashboard-footer">
 	              <div className="right">
 	                	<a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
 	                    	<i className='fa fa-icon fa-fw fa-trash'></i>&ensp;Delete this dashboard
 	                	</a>
-	                </div> 
+	                </div>
 
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
@@ -303,7 +301,7 @@ module.exports = React.createClass({
 		          <span>
 		          	&ensp;
 			          Description
-			      
+
 		              <TitleInput class="descriptionField" initialText={this.state.description} save={this._updateDescription} />
 		          </span>
 
