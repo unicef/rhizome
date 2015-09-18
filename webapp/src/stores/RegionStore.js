@@ -6,7 +6,7 @@ var api = require('data/api');
 var RegionStore = Reflux.createStore({
   init() {
     this.locations = []
-    this.locationTypes = []
+    this.LocationTypes = []
 
     this.locationsPromise = api.locations()
       .then(data => {
@@ -17,20 +17,20 @@ var RegionStore = Reflux.createStore({
         return this.locations;
       });
 
-    this.locationTypesPromise = api.location_type()
+    this.LocationTypesPromise = api.location_type()
     	.then(data => {
-        this.locationTypes = data.objects;
+        this.LocationTypes = data.objects;
         this.trigger({
-          locationTypes: this.locationTypes
+          LocationTypes: this.LocationTypes
         });
-        return this.locationTypes;
+        return this.LocationTypes;
       });
   },
 
   getInitialState() {
     return {
       locations: this.locations,
-      locationTypes: this.locationTypes,
+      LocationTypes: this.LocationTypes,
     };
   },
 
@@ -39,8 +39,8 @@ var RegionStore = Reflux.createStore({
     return this.locationsPromise;
   },
 
-  getlocationTypesPromise() {
-    return this.locationTypesPromise;
+  getLocationTypesPromise() {
+    return this.LocationTypesPromise;
   }
 });
 

@@ -69,11 +69,11 @@ class CacheRefreshTestCase(TestCase):
                 status_text = 'test',
                 status_description = 'test').id
 
-        location_type1 = locationType.objects.create(id=1,name="country")
-        location_type2 = locationType.objects.create(id=2,name="settlement")
-        location_type3 = locationType.objects.create(id=3,name="province")
-        location_type4 = locationType.objects.create(id=4,name="district")
-        location_type5 = locationType.objects.create(id=5,name="sub-district")
+        location_type1 = LocationType.objects.create(id=1,name="country")
+        location_type2 = LocationType.objects.create(id=2,name="settlement")
+        location_type3 = LocationType.objects.create(id=3,name="province")
+        location_type4 = LocationType.objects.create(id=4,name="district")
+        location_type5 = LocationType.objects.create(id=5,name="sub-district")
 
         campaign_type = RestultStructureType.objects.create(id=1,name="test")
 
