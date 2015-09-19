@@ -138,7 +138,7 @@ class MasterRefresh(object):
 
         ## indicators available for mappings are all colum headers that havent been
         ## selected as a document config .. that is 'uq_ix' is not an indicator to map
-        indicator_codes =  set([h for h in self.file_header]).intersection(set(\
+        indicator_codes =  set([h for h in self.file_header]).difference(set(\
             [v for k,v in self.db_doc_deets.iteritems()]))
 
 
