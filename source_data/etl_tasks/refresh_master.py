@@ -54,7 +54,8 @@ class MasterRefresh(object):
 
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
-        self.ss_ids_to_process = self.refresh_submission_details()
+        self.ss_ids_to_process, self.all_ss_ids =\
+            self.refresh_submission_details()
 
         self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
             self.ss_ids_to_process).values_list('id','submission_json'))
@@ -238,7 +239,7 @@ class MasterRefresh(object):
             ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
-        return ss_id_list
+        return ss_id_list, dict(submission_qs).keys()
 
     def submissions_to_doc_datapoints(self):
         '''
@@ -247,19 +248,15 @@ class MasterRefresh(object):
 
         ss_ids_in_batch = self.submission_data.keys()
 
-        print 'ss_ids_in_batch :%s' % ss_ids_in_batch
-
         for row in SourceSubmissionDetail.objects.filter(\
                  source_submission_id__in= ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
 
             doc_dps = self.process_source_submission(row)
 
-        print 'these are processed %s' % ss_ids_in_batch
-
-        ## update these submissions to processed ##
-        SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
+        SourceSubmission.objects.filter(id__in=self.all_ss_ids)\
             .update(process_status = 'PROCESSED')
+
 
     def sync_datapoint(self):
 
@@ -309,7 +306,6 @@ class MasterRefresh(object):
 
         DocDataPoint.objects.filter(source_submission_id=ss_id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
-
 
     def source_submission_row_to_doc_datapoints(self, ind_str, val, location_id, \
         campaign_id, ss_id):
