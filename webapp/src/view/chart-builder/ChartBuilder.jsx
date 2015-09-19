@@ -55,7 +55,12 @@ module.exports = React.createClass({
     }
   },
   componentDidMount: function () {
-    ChartBuilderActions.initialize(this.props.chartDef, this.props.location, this.props.campaign);
+    ChartBuilderActions.initialize(
+        this.props.chartDef,
+        this.props.location,
+        this.props.campaign
+      );
+    console.log('this is this.props: ', this.props)
     this.setState({title: this.props.chartDef.title});
   },
   _updateTitle: function (newText) {

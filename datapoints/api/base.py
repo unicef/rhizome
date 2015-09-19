@@ -13,7 +13,8 @@ except ImportError:
     def csrf_exempt(func):
         return func
 
-from datapoints.models import LocationType, Location, LocationPermission
+from datapoints.models import LocationType, Location, LocationPermission, \
+    LocationTree
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 class CustomAuthentication(Authentication):
@@ -188,10 +189,11 @@ class BaseNonModelResource(Resource):
 
         query_dict = request.GET
 
+
         try:
             parent_location_list = query_dict['parent_location__in']
-            location_ids = Location.objects.filter(parent_location_id__in=\
-                parent_location_list).values_list('id',flat=True)
+            location_ids = LocationTree.objects.filter(parent_location_id__in=\
+                parent_location_list).values_list('location_id',flat=True)
         except KeyError:
             location_ids = query_dict['location__in']
 

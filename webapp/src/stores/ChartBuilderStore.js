@@ -213,6 +213,9 @@ module.exports = Reflux.createStore({
 	   return this.data;
 	},
 	onInitialize: function(chartDef,location,campaign){
+	console.log('on initialize:', location)
+	console.log('on initialize:', campaign)
+
 	this.data.locationSelected = location;
 	this.data.campaignSelected = campaign;
     this.resetChartDef();

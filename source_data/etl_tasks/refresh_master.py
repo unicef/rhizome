@@ -21,7 +21,7 @@ class MasterRefresh(object):
 
     def __init__(self,user_id,document_id):
 
-        self.ss_location_code_batch_size = 10
+        self.ss_location_code_batch_size = 50
         self.document_id = document_id
         self.user_id = user_id
 

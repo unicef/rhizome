@@ -88,12 +88,11 @@ class DashboardResource(BaseModelResource):
 
         try:
             dash_title = request.POST['title']
-            dash_id = CustomDashboard.objects.create(\
+            dash, created = CustomDashboard.objects.get_or_create(\
                 title=dash_title,
-                owner_id = request.user.id
-                ).id
+                defaults = {'owner_id':request.user.id})
 
-            qs = CustomDashboard.objects.filter(id=dash_id).values()
+            qs = CustomDashboard.objects.filter(id=dash.id).values()
             return qs
 
         except KeyError:

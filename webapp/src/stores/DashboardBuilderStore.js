@@ -37,7 +37,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	 else {
 	 	api.get_dashboard({id:id})
 	 		.then(function (response) {
-
+				console.log('GETTING DASHBOARD')
 	 			self.data.dashboard = response.objects[0];
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
 	 			self.data.dashboardTitle = 	response.objects[0].title;
