@@ -87,8 +87,8 @@ def _push_to_remote():
 
     # in server path -
     with cd(remote_backend_path):
-        # remove both compiled and source python files
-        run('sudo rm -rf `find . -name "*.py*"`')
+        # remove both compiled files
+        run('sudo rm -rf `find . -name "*.pyc*"`')
 
         # install python dependencies
         run("pip install -r requirements.txt")

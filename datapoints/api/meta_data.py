@@ -341,7 +341,7 @@ class RefreshMasterResource(BaseModelResource):
             document_id = document_id,
             doc_detail_type_id = DocDetailType.objects.get(name = 'submission_processed_count').id,
             defaults= {'doc_detail_value': SourceSubmission.objects\
-                .filter(process_status = 'PROCEESED',\
+                .filter(process_status = 'PROCESSED',\
                     document_id = document_id).count()\
             },
         )
