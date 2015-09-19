@@ -141,11 +141,14 @@ class MasterRefresh(object):
         indicator_codes =  set([h for h in self.file_header]).intersection(set(\
             [v for k,v in self.db_doc_deets.iteritems()]))
 
+
         source_codes = {
             'indicator': indicator_codes,
             'location': self.location_codes_to_process,
             'campaign': self.campaign_codes_to_process
         }
+
+        pprint(source_codes)
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 

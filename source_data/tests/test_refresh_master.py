@@ -44,6 +44,7 @@ class RefreshMasterTestCase(TestCase):
             , self.test_file_location)
 
         self.source_submissions_ids = dt.process_file()
+        self.source_submission_detail_ids = dt.post_process_file()
 
     def test_refresh_master_init(self):
 
@@ -168,7 +169,7 @@ class RefreshMasterTestCase(TestCase):
         ## Test Case 1 ##
         self.assertEqual(len(doc_som_id_for_location_code),1) # 1
 
-        mr.refresh_submission_details()
+        mr_with_new_meta = mr = MasterRefresh(self.user.id ,self.document.id)
         first_submission_detail = SourceSubmissionDetail.objects\
             .get(source_submission_id = ss_id)
 
@@ -188,18 +189,6 @@ class RefreshMasterTestCase(TestCase):
 
         ## Test Case #4
         self.assertEqual(1,len(doc_dp_ids))
-
-    # def test_unmapping(self):
-    #     '''
-    #     Here we ensure that if there is data in the datapoints table that
-    #     cooresponds to a non existing mapping that we remove it.
-    #     '''
-    #     pass
-    #
-    # def test_re_mapping(self):
-    #     '''
-    #     When metadata assigned to a new master_id - make sure that datapoints do as well
-    #     '''
 
     def create_metadata(self):
         '''

@@ -136,6 +136,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'submission_detail',
+                'ordering': ('document', 'location_code', 'campaign_code'),
             },
         ),
         migrations.AddField(

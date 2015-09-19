@@ -6,15 +6,14 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull
 
 from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import *
 from datapoints.models import*
 
-class RefreshMasterTestCase(TestCase):
+class TransformUploadTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
 
-        super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
+        super(TransformUploadTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
 
