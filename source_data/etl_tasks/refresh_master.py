@@ -222,16 +222,19 @@ class MasterRefresh(object):
             campaign_id = self.source_map_dict.get(('campaign'\
                     ,submission_dict[campaign_column]),None)
 
-            ss_id_list.append(ss_id)
-            ss_detail_batch.append(SourceSubmissionDetail(**{
-                'document_id': self.document_id,
-                'source_submission_id': ss_id,
-                'location_code':submission_dict[location_column],
-                'campaign_code':submission_dict[campaign_column],
-                'location_id': location_id,
-                'campaign_id': campaign_id,
-            }))
+            if location_id and campaign_id:
 
+                ss_id_list.append(ss_id)
+                ss_detail_batch.append(SourceSubmissionDetail(**{
+                    'document_id': self.document_id,
+                    'source_submission_id': ss_id,
+                    'location_code':submission_dict[location_column],
+                    'campaign_code':submission_dict[campaign_column],
+                    'location_id': location_id,
+                    'campaign_id': campaign_id,
+                }))
+
+        print ss_id_list
         SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
