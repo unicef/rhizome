@@ -51,8 +51,8 @@ class MasterRefresh(object):
 
         self.ss_ids_to_process = self.refresh_submission_details()
 
-        self.submission_data = SourceSubmission.objects.filter(id__in = \
-            self.ss_ids_to_process).values_list('id','submission_json')
+        self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
+            self.ss_ids_to_process).values_list('id','submission_json'))
 
     ## __init__ HELPER METHOD ##
 
@@ -207,11 +207,15 @@ class MasterRefresh(object):
 
             submission_dict = json.loads(submission_json)
 
+            location_code = submission_dict[self.db_doc_deets\
+                ['location_column']]
             location_id = self.source_map_dict.get(('location'\
-                    ,submission_dict[self.db_doc_deets['location_column']]),None)
+                    ,location_code),None)
 
+            campaign_code = submission_dict[self.db_doc_deets\
+                ['campaign_column']]
             campaign_id = self.source_map_dict.get(('campaign'\
-                    ,submission_dict[self.db_doc_deets['campaign_column']]),None)
+                    ,campaign_code),None)
 
             if location_id and campaign_id:
 
@@ -219,8 +223,8 @@ class MasterRefresh(object):
                 ss_detail_batch.append(SourceSubmissionDetail(**{
                     'document_id': self.document_id,
                     'source_submission_id': ss_id,
-                    'location_code':submission_dict[location_column],
-                    'campaign_code':submission_dict[campaign_column],
+                    'location_code':location_code,
+                    'campaign_code':campaign_code,
                     'location_id': location_id,
                     'campaign_id': campaign_id,
                 }))
@@ -243,8 +247,7 @@ class MasterRefresh(object):
                  source_submission_id__in= ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
 
-            doc_dps = self.process_source_submission(row['location_id'], \
-                row['campaign_id'], row['source_submission_id'])
+            doc_dps = self.process_source_submission(row)
 
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
@@ -292,7 +295,7 @@ class MasterRefresh(object):
 
         for k,v in submission.iteritems():
             doc_dp = self.source_submission_row_to_doc_datapoints(k,v,location_id,\
-                campaign_id,ss_id,self.source_map_dict)
+                campaign_id,ss_id)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
