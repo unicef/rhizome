@@ -35,7 +35,7 @@ def start_apache():
     run("sudo /etc/init.d/apache2 start")
 
 def run_tests():
-    
+
     local("coverage run manage.py test --settings=polio.settings.test")
     local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
@@ -87,8 +87,8 @@ def _push_to_remote():
 
     # in server path -
     with cd(remote_backend_path):
-        # remove compiled files
-        run('sudo rm -rf `find . -name "*.pyc"`')
+        # remove both compiled and source python files
+        run('sudo rm -rf `find . -name "*.py*"`')
 
         # install python dependencies
         run("pip install -r requirements.txt")

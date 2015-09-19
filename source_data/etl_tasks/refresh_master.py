@@ -48,11 +48,6 @@ class MasterRefresh(object):
             .values_list('location_code',flat = True)))\
             [:self.ss_location_code_batch_size]
 
-        # self.location_codes_to_process = list(set(SourceSubmissionDetail.objects\
-        #     .filter(id__in = .values_list('id',flat=True)
-        #     .values_list('location_code',flat = True))))\
-        #     [:self.ss_location_code_batch_size]
-
         self.campaign_codes_to_process = list(set(SourceSubmissionDetail.objects\
             .filter(document_id = self.document_id)\
             .values_list('campaign_code',flat = True)))
@@ -207,44 +202,40 @@ class MasterRefresh(object):
 
         ## find soure_submission_ids based of location_codes to process then get the json
         ## of all of the related submissions .
-        submission_qs = SourceSubmission.objects.filter(id__in =
-            SourceSubmissionDetail.objects\
+        submission_qs = SourceSubmission.objects\
+            .filter(id__in = SourceSubmissionDetail.objects\
                 .filter(location_code__in = self.location_codes_to_process)\
-                .values_list('source_submission_id',flat=True))\
+                .values_list('source_submission_id',flat=True),
+                process_status = 'TO_PROCESS')\
             .values_list('id','submission_json')
 
+        ss_id_list = []
         for ss_id, submission_json in submission_qs:
 
             submission_dict = json.loads(submission_json)
+            location_column, campaign_column = self.db_doc_deets['location_column']\
+                , self.db_doc_deets['campaign_column']
 
-            location_code = submission_dict[self.db_doc_deets\
-                ['location_column']]
             location_id = self.source_map_dict.get(('location'\
-                    ,location_code),None)
+                    ,submission_dict[location_column]),None)
 
-            campaign_code = submission_dict[self.db_doc_deets\
-                ['campaign_column']]
             campaign_id = self.source_map_dict.get(('campaign'\
-                    ,campaign_code),None)
+                    ,submission_dict[campaign_column]),None)
 
-            if location_id and campaign_id:
+            ss_id_list.append(ss_id)
+            ss_detail_batch.append(SourceSubmissionDetail(**{
+                'document_id': self.document_id,
+                'source_submission_id': ss_id,
+                'location_code':submission_dict[location_column],
+                'campaign_code':submission_dict[campaign_column],
+                'location_id': location_id,
+                'campaign_id': campaign_id,
+            }))
 
-                ss_id_list_to_process.append(ss_id)
-                ss_detail_batch.append(SourceSubmissionDetail(**{
-                    'document_id': self.document_id,
-                    'source_submission_id': ss_id,
-                    'location_code':location_code,
-                    'campaign_code':campaign_code,
-                    'location_id': location_id,
-                    'campaign_id': campaign_id,
-                }))
-
-
-        SourceSubmissionDetail.objects\
-            .filter(source_submission_id__in=ss_id_list_to_process).delete()
+        SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
-        return ss_id_list_to_process
+        return ss_id_list
 
     def submissions_to_doc_datapoints(self):
         '''
@@ -253,15 +244,19 @@ class MasterRefresh(object):
 
         ss_ids_in_batch = self.submission_data.keys()
 
+        print 'ss_ids_in_batch :%s' % ss_ids_in_batch
+
         for row in SourceSubmissionDetail.objects.filter(\
                  source_submission_id__in= ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
 
             doc_dps = self.process_source_submission(row)
 
+        print 'these are processed %s' % ss_ids_in_batch
+
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
-            .update(process_status = 'PROCEESED')
+            .update(process_status = 'PROCESSED')
 
     def sync_datapoint(self):
 
