@@ -58,7 +58,6 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
         mr = MasterRefresh(self.user.id ,self.document.id)
 
-        ## load this w read_csv(self.test_file_location) remove DocTransform
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
             .values('id','submission_json')
@@ -75,10 +74,10 @@ class RefreshMasterTestCase(TestCase):
                 ).values_list('id',flat=True)
             )
 
-        ## should be more specific here.. but this proves with a high degree ##
-        ## of certainty that the source_object_map rows have been created ##
+        ## -3 because we dont want campaign_col,indicator_col and unique_col
+        ## showing up as indicators to map!
         self.assertEqual(len(source_indicator_id_for_this_doc)\
-            ,len(raw_indicator_list))
+            ,len(raw_indicator_list) -3 )
 
     def test_submission_detail_refresh(self,):
 
