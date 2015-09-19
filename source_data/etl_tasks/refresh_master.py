@@ -39,9 +39,19 @@ class MasterRefresh(object):
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
 
-        self.location_codes_to_process = list(set(SourceSubmissionDetail.objects\
-            .filter(document_id = self.document_id)\
-            .values_list('location_code',flat = True)))[:self.ss_location_code_batch_size]
+        self.to_process_ss_ids = SourceSubmission.objects\
+                .filter(document_id = self.document_id,\
+                    process_status='TO_PROCESS')
+
+        self.location_codes_to_process = list(set(SourceSubmissionDetail\
+            .objects.filter(source_submission__in = self.to_process_ss_ids)\
+            .values_list('location_code',flat = True)))\
+            [:self.ss_location_code_batch_size]
+
+        # self.location_codes_to_process = list(set(SourceSubmissionDetail.objects\
+        #     .filter(id__in = .values_list('id',flat=True)
+        #     .values_list('location_code',flat = True))))\
+        #     [:self.ss_location_code_batch_size]
 
         self.campaign_codes_to_process = list(set(SourceSubmissionDetail.objects\
             .filter(document_id = self.document_id)\
