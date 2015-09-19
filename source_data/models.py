@@ -162,3 +162,4 @@ class SourceSubmissionDetail(models.Model):
 
     class Meta:
         db_table = 'submission_detail'
+        ordering = (('document','region_code','campaign_code'))

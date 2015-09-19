@@ -32,52 +32,72 @@ class MasterRefresh(object):
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_location_code_batch_size = 50
+        self.ss_location_code_batch_size = 10
         self.document_id = document_id
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
+        self.source_map_dict = self.get_document_meta_mappings()
 
-        self.location_codes_to_process = SourceSubmissionDetail.objects\
-            .filter(\
-                source_submission_id__in = self.all_to_process_ss_ids)\
-            .values_list('location_code',flat = True)\
-                [:self.ss_location_code_batch_size]
+        self.location_codes_to_process = list(set(SourceSubmissionDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('location_code',flat = True)))[:self.ss_location_code_batch_size]
+
+        self.campaign_codes_to_process = list(set(SourceSubmissionDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('campaign_code',flat = True)))
+
+        self.file_header = Document.objects.get(id=self.document_id).file_header
+
+        self.ss_ids_to_process = self.refresh_submission_details()
 
         self.submission_data = dict(SourceSubmission.objects\
-            .filter(location_code__in = self.location_codes_to_process)
+            .filter(id__in = ss_ids_to_process)\
             .values_list('id','submission_json'))
 
-        ## this method finds the location_id/campaign_id for a row if it is new, or for
-        ## instance, if the source_object_map table has been updated during the ingest
-        self.refresh_submission_details()
+    ## __init__ HELPER METHOD ##
 
-    ## __init__ helper methods ##
     def get_document_config(self):
+        '''
+        When ingesting a file the user must set the following configurtions:
+            - unique_id_column
+            - location_code_column
+            - campaign_code_column
 
-        detail_types, doc_details = {}, {}
-        ddt_qs = DocDetailType.objects.all().values()
+        The user can in addition add a number of optional configurations in order to both
+        set up ingestion ( ex. odk_form_name, odk_host ) as well as enhance reporting
+        of the data ( photo_column, uploaded_by_column, lat_column, lon_column )
 
-        for row in ddt_qs:
-            detail_types[row['id']] = row['name']
+        When the MasterRefresh object is intialized this method is called which queries
+        the table containing these configurations and makes it available for use within
+        this module.
+        '''
 
-        dd_qs = DocumentDetail.objects\
-            .filter(document_id = self.document_id)\
-            .values()
+        detail_types = {row['id']: row['name'] for row in \
+            DocDetailType.objects.all().values()}
 
-        for row in dd_qs:
-            doc_details[detail_types[row['doc_detail_type_id']]] =\
-                row['doc_detail_value']
+        doc_details  = [{ row['doc_detail_type_id']: row['doc_detail_value']} for row in \
+            DocumentDetail.objects\
+                .filter(document_id = self.document_id)\
+                .values()\
+            ]
 
         return doc_details
 
     def get_document_meta_mappings(self):
+        '''
+        Depending on the configuration of the required location and campagin column,
+        query the source object map table and find the equivelant master_object_id_ids
+        needed to go through the remainder of the ETL process.
+        '''
 
+        ## during the DocTransform process we associate new AND existing mappings between
+        ## the metadata assoicated with this doucment.
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
 
+        # create a tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
-            # tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
             .filter(
                 master_object_id__gt=0,
                 id__in = sm_ids).values_list(*['master_object_id']))
@@ -89,48 +109,85 @@ class MasterRefresh(object):
 
         return source_map_dict
 
+    ## MAIN METHODS ##
+
     def refresh_doc_meta(self):
+        '''
+        Based on mappings set the location and campaign id for an associated row.  If
+        there is not a mapping for both then we know we do not have to process those rows.
 
-        first_submission = json.loads(self.submission_data.values()[0])
+        For instance if we have 100 rows in a csv and only 3 rows have both locatino and
+        campaign mapped, then we can save 97 iterations through the associated json
+        '''
 
-        source_codes, location_codes, campaign_codes = \
-            {'indicator' :first_submission.keys()}, [], []
+        ## indicators available for mappings are all colum headers that havent been
+        ## selected as a document config .. that is 'uq_ix' is not an indicator to map
+        indicator_codes =  [h for h in file_header.split(',')].interesection([v for k,v \
+                        in self.db_doc_deets]),
 
-        for ss_id, submission in self.submission_data.iteritems():
-
-            submission_dict = json.loads(submission)
-            location_codes\
-                .append(submission_dict[self.db_doc_deets['location_column']])
-            campaign_codes\
-                .append(submission_dict[self.db_doc_deets['campaign_column']])
-
-        source_codes['location'] = list(set(location_codes))
-        source_codes['campaign'] = list(set(campaign_codes))
+        source_codes = {
+            'indicator': indicator_codes,
+            'location': self.location_codes_to_process,
+            'campaign': self.campaign_codes_to_process
+        }
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
 
+    def upsert_source_codes(self, source_codes):
+        '''
+        From the above metadata items, create any new mappings as well as assign all
+        this document_id a reference to mappings that have been created from other
+        documents.
+        '''
+
+        som_batch = []
+        for content_type, source_code_list in source_codes.iteritems():
+
+            for source_code in list(set(source_code_list)):
+                som_object, created = SourceObjectMap.objects.get_or_create(
+                    source_object_code = source_code,
+                    content_type = content_type,
+                    defaults = {
+                         'master_object_id' : -1,
+                         'master_object_name': 'To Map!',
+                         'mapped_by_id' : self.user_id
+                    }
+                )
+                som_batch.append(DocumentSourceObjectMap(**{
+                        'source_object_map_id': som_object.id,
+                        'document_id': self.document_id
+                    }))
+
+        DocumentSourceObjectMap.objects\
+            .filter(document_id = self.document_id)\
+            .delete()
+
+        DocumentSourceObjectMap.objects.bulk_create(som_batch)
+
     def refresh_submission_details(self):
         '''
-        from source_data.etl_tasks.refresh_master import MasterRefresh as mr
-        x = mr(1,2)
-        x.refresh_submission_details()
+        Based on new and existing mappings, upsert the cooresponding master_object_id_ids
+        and determine which rows are ready to process.. since we need a master_location
+        and a master_campaign in order to have a successful submission this method helps
+        us filter the data that we need to process.
+
+        Would like to be more careful here about what i delete as most things wont be
+        touched when it comes to this re-processing, and thus the delete and re-insert
+        will be for not.. however the benefit is that it's a clean upsert.. dont have to
+        worry about old data that should have been blown away hanging around.
         '''
 
-        source_map_dict = self.get_document_meta_mappings()
-
-        ss_id_list, ss_detail_batch = [],[]
+        ss_id_list_to_process, all_ss_id_list, ss_detail_batch = [],[],[]
 
         for ss_id, submission_json in self.submission_data.iteritems():
 
             submission_dict = json.loads(submission_json)
-            location_column, campaign_column = self.db_doc_deets['location_column']\
-                , self.db_doc_deets['campaign_column']
 
-            location_id = source_map_dict.get(('location'\
-                    ,submission_dict[location_column]),None)
+            location_id = self.source_map_dict.get(('location'\
+                    ,submission_dict[self.db_doc_deets['location_column']]),None)
 
-            campaign_id = source_map_dict.get(('campaign'\
-                    ,submission_dict[campaign_column]),None)
+            campaign_id = self.source_map_dict.get(('campaign'\
+                    ,submission_dict[self.db_doc_deets['campaign_column']]),None)
 
             ss_id_list.append(ss_id)
             ss_detail_batch.append(SourceSubmissionDetail(**{
@@ -142,32 +199,32 @@ class MasterRefresh(object):
                 'campaign_id': campaign_id,
             }))
 
+            if location_id and campaign_id
+                ss_id_list_to_process.append(ss_id)
+
         SourceSubmissionDetail.objects\
             .filter(source_submission_id__in=ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
+        return ss_id_list_to_process
+
     def submissions_to_doc_datapoints(self):
-
-        source_map_dict = self.get_document_meta_mappings()
-
-        submissions_ready_for_sync = []
+        '''
+        Send all rows queued for processing to the process_source_submission method.
+        '''
 
         ss_ids_in_batch = self.submission_data.keys()
-        ready_for_doc_datapoint_sync = SourceSubmissionDetail.objects\
-            .filter(
-                 source_submission_id__in= ss_ids_in_batch,
-                 location_id__isnull= False,
-                 campaign_id__isnull= False
-            ).values('location_id','campaign_id','source_submission_id')
 
-        for row in ready_for_doc_datapoint_sync:
+        for row in SourceSubmissionDetail.objects.filter(\
+                 source_submission_id__in= ss_ids_in_batch)\
+            .values('location_id','campaign_id','source_submission_id'):
+
             doc_dps = self.process_source_submission(row['location_id'], \
-                row['campaign_id'], row['source_submission_id'],source_map_dict)
+                row['campaign_id'], row['source_submission_id'])
 
         ## update these submissions to processed ##
         SourceSubmission.objects.filter(id__in=ss_ids_in_batch)\
             .update(process_status = 'PROCEESED')
-
 
     def sync_datapoint(self):
 
@@ -201,15 +258,17 @@ class MasterRefresh(object):
         pass
 
     ## main() helper methods ##
-    def process_source_submission(self,location_id,campaign_id,ss_id,som_dict):
+    def process_source_submission(self,row):
+
+        location_id,campaign_id,ss_id = row['location_id'],row['campaign_id'],\
+            row['source_submission_id']
 
         doc_dp_batch = []
-
         submission  = json.loads(self.submission_data[ss_id])
 
         for k,v in submission.iteritems():
-            doc_dp = self.process_submission_datapoint(k,v,location_id,\
-                campaign_id,ss_id,som_dict)
+            doc_dp = self.source_submission_row_to_doc_datapoints(k,v,location_id,\
+                campaign_id,ss_id,self.source_map_dict)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -217,38 +276,47 @@ class MasterRefresh(object):
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
 
-    def process_submission_datapoint(self, ind_str, val, location_id, \
-        campaign_id, ss_id, som_dict): ## FIXME use kwargs..
+    def source_submission_row_to_doc_datapoints(self, ind_str, val, location_id, \
+        campaign_id, ss_id):
+        '''
+        This method prepares a batch insert into docdatapoint by creating a list of
+        DocDataPoint objects.  The Database handles all docdatapoitns in a submission
+        row at once in process_source_submission.
+        '''
 
-            try:
-                cleaned_val = self.clean_val(val)
-            except ValueError:
-                return None
+        try:
+            cleaned_val = self.clean_val(val)
+        except ValueError:
+            return None
 
-            try:
-                indicator_id = som_dict[('indicator',ind_str)]
-            except KeyError:
-                return None
+        try:
+            indicator_id = self.source_map_dict[('indicator',ind_str)]
+        except KeyError:
+            return None
 
-            try:
-                doc_dp = DocDataPoint(**{
-                        'indicator_id':  indicator_id,
-                        'value': cleaned_val,
-                        'location_id': location_id,
-                        'campaign_id': campaign_id,
-                        'document_id': self.document_id,
-                        'source_submission_id': ss_id,
-                        'changed_by_id': self.user_id,
-                        'is_valid': True,
-                        'agg_on_location': True,
-                    })
-            except KeyError:
-                return None
+        doc_dp = DocDataPoint(**{
+                'indicator_id':  indicator_id,
+                'value': cleaned_val,
+                'location_id': location_id,
+                'campaign_id': campaign_id,
+                'document_id': self.document_id,
+                'source_submission_id': ss_id,
+                'changed_by_id': self.user_id,
+                'is_valid': True,
+                'agg_on_location': True,
+            })
 
-            return doc_dp
+        return doc_dp
 
 
     def clean_val(self, val):
+        '''
+        This needs alot of work but basically determines if a particular submission
+        cell is alllowed.
+
+        Big point of future controversy... what do we do with zero values?  In order to
+        keep the size of the database manageable, we only accept non zero values.
+        '''
 
         try:
             cleaned_val = float(val)
@@ -259,31 +327,3 @@ class MasterRefresh(object):
             raise ValueError('No Zeros Allowed in Doc Data Point')
 
         return cleaned_val
-
-
-
-    def upsert_source_codes(self, source_codes):
-
-        som_batch = []
-        for content_type, source_code_list in source_codes.iteritems():
-
-            for source_code in list(set(source_code_list)):
-                som_object, created = SourceObjectMap.objects.get_or_create(
-                    source_object_code = source_code,
-                    content_type = content_type,
-                    defaults = {
-                         'master_object_id' : -1,
-                         'master_object_name': 'To Map!',
-                         'mapped_by_id' : self.user_id
-                    }
-                )
-                som_batch.append(DocumentSourceObjectMap(**{
-                        'source_object_map_id': som_object.id,
-                        'document_id': self.document_id
-                    }))
-
-        DocumentSourceObjectMap.objects\
-            .filter(document_id = self.document_id)\
-            .delete()
-
-        DocumentSourceObjectMap.objects.bulk_create(som_batch)
