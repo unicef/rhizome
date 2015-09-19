@@ -59,8 +59,8 @@ class DocTransform(object):
         f_header = open(full_file_path,'r')
         top_row = f_header.readlines()[0]
         cleaned = top_row.replace('\r','').replace('\n','')
-        self.file_header = cleaned.split(self.file_delimiter)
 
+        self.file_header = cleaned.split(self.file_delimiter)
         f_header.close()
 
         f = open(full_file_path,'r')
@@ -83,13 +83,13 @@ class DocTransform(object):
             submission_data = row.submission_json
             submission_detail_dict = {
                 'source_submission_id': row.id,
-                # 'img_location':  submission_data[self.doc_deets['image_col']],
                 'document_id':   self.document_id,
-                # 'username_code':  submission_data[self.doc_deets['username_column']],
                 'campaign_code':  submission_data[self.campaign_column],
                 'location_code':  submission_data[self.location_column],
-                # 'location_display':  submission_data[self.doc_deets['location_display_name']],
                 'raw_data_proxy' :''
+                # 'location_display':  submission_data[self.doc_deets['location_display_name']],
+                # 'username_code':  submission_data[self.doc_deets['username_column']],
+                # 'img_location':  submission_data[self.doc_deets['image_col']],
             }
             batch.append(SourceSubmissionDetail(**submission_detail_dict))
 
@@ -106,6 +106,10 @@ class DocTransform(object):
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.get_document_file_stream(full_file_path)
+
+        doc_obj = Document.objects.get(id = self.document_id)
+        doc_obj.file_header = self.file_header
+        doc_obj.save()
 
         batch = {}
         for i,(submission) in enumerate(file_stream):

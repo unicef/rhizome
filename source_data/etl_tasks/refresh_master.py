@@ -51,9 +51,8 @@ class MasterRefresh(object):
 
         self.ss_ids_to_process = self.refresh_submission_details()
 
-        self.submission_data = dict(SourceSubmission.objects\
-            .filter(id__in = ss_ids_to_process)\
-            .values_list('id','submission_json'))
+        self.submission_data = SourceSubmission.objects.filter(id__in = \
+            self.ss_ids_to_process).values_list('id','submission_json')
 
     ## __init__ HELPER METHOD ##
 
@@ -73,14 +72,31 @@ class MasterRefresh(object):
         this module.
         '''
 
-        detail_types = {row['id']: row['name'] for row in \
-            DocDetailType.objects.all().values()}
+        # detail_types = {row['id']: row['name'] for row in \
+        #     DocDetailType.objects.all().values()}
+        #
+        # doc_details  = [{ row['doc_detail_type_id']: row['doc_detail_value']} for row in \
+        #     DocumentDetail.objects\
+        #         .filter(document_id = self.document_id)\
+        #         .values()\
+        #     ]
 
-        doc_details  = [{ row['doc_detail_type_id']: row['doc_detail_value']} for row in \
-            DocumentDetail.objects\
-                .filter(document_id = self.document_id)\
-                .values()\
-            ]
+        detail_types, document_details = {}, {}
+        ddt_qs = DocDetailType.objects.all().values()
+
+        for row in ddt_qs:
+            detail_types[row['id']] = row['name']
+
+        dd_qs = DocumentDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values()
+
+        for row in dd_qs:
+            document_details[detail_types[row['doc_detail_type_id']]] =\
+                row['doc_detail_value']
+
+        return document_details
+
 
         return doc_details
 
@@ -122,8 +138,8 @@ class MasterRefresh(object):
 
         ## indicators available for mappings are all colum headers that havent been
         ## selected as a document config .. that is 'uq_ix' is not an indicator to map
-        indicator_codes =  [h for h in file_header.split(',')].interesection([v for k,v \
-                        in self.db_doc_deets]),
+        indicator_codes =  set([h for h in self.file_header]).intersection(set(\
+            [v for k,v in self.db_doc_deets.iteritems()]))
 
         source_codes = {
             'indicator': indicator_codes,
@@ -177,9 +193,17 @@ class MasterRefresh(object):
         worry about old data that should have been blown away hanging around.
         '''
 
-        ss_id_list_to_process, all_ss_id_list, ss_detail_batch = [],[],[]
+        ss_id_list_to_process, ss_detail_batch = [],[]
 
-        for ss_id, submission_json in self.submission_data.iteritems():
+        ## find soure_submission_ids based of location_codes to process then get the json
+        ## of all of the related submissions .
+        submission_qs = SourceSubmission.objects.filter(id__in =
+            SourceSubmissionDetail.objects\
+                .filter(location_code__in = self.location_codes_to_process)\
+                .values_list('source_submission_id',flat=True))\
+            .values_list('id','submission_json')
+
+        for ss_id, submission_json in submission_qs:
 
             submission_dict = json.loads(submission_json)
 
@@ -189,21 +213,21 @@ class MasterRefresh(object):
             campaign_id = self.source_map_dict.get(('campaign'\
                     ,submission_dict[self.db_doc_deets['campaign_column']]),None)
 
-            ss_id_list.append(ss_id)
-            ss_detail_batch.append(SourceSubmissionDetail(**{
-                'document_id': self.document_id,
-                'source_submission_id': ss_id,
-                'location_code':submission_dict[location_column],
-                'campaign_code':submission_dict[campaign_column],
-                'location_id': location_id,
-                'campaign_id': campaign_id,
-            }))
+            if location_id and campaign_id:
 
-            if location_id and campaign_id
                 ss_id_list_to_process.append(ss_id)
+                ss_detail_batch.append(SourceSubmissionDetail(**{
+                    'document_id': self.document_id,
+                    'source_submission_id': ss_id,
+                    'location_code':submission_dict[location_column],
+                    'campaign_code':submission_dict[campaign_column],
+                    'location_id': location_id,
+                    'campaign_id': campaign_id,
+                }))
+
 
         SourceSubmissionDetail.objects\
-            .filter(source_submission_id__in=ss_id_list).delete()
+            .filter(source_submission_id__in=ss_id_list_to_process).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
         return ss_id_list_to_process
