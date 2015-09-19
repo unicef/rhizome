@@ -32,24 +32,32 @@ class MasterRefresh(object):
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_batch_size = 100
+        self.ss_location_code_batch_size = 10
         self.document_id = document_id
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
 
+        self.to_process_ss_ids = SourceSubmission.objects\
+                .filter(document_id = self.document_id,\
+                    process_status='TO_PROCESS')
+
+        self.location_codes_to_process = list(set(SourceSubmissionDetail\
+            .objects.filter(source_submission__in = self.to_process_ss_ids)\
+            .values_list('location_code',flat = True)))\
+            [:self.ss_location_code_batch_size]
+
+        self.campaign_codes_to_process = list(set(SourceSubmissionDetail.objects\
+            .filter(document_id = self.document_id)\
+            .values_list('campaign_code',flat = True)))
+
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
-        self.submission_data = dict(SourceSubmission.objects.filter(
-                document_id = self.document_id,\
-                process_status='TO_PROCESS')
-            .values_list('id','submission_json')[:self.ss_batch_size])
+        self.ss_ids_to_process = self.refresh_submission_details()
 
-        self.ss_id_list = self.submission_data.keys()
-
-        self.refresh_submission_details()
-
+        self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
+            self.ss_ids_to_process).values_list('id','submission_json'))
 
     ## __init__ HELPER METHOD ##
 
@@ -138,19 +146,10 @@ class MasterRefresh(object):
         indicator_codes =  set([h for h in self.file_header]).difference(set(\
             [v for k,v in self.db_doc_deets.iteritems()]))
 
-        location_codes = list(set(SourceSubmissionDetail.objects\
-            .filter(source_submission_id__in = self.ss_id_list)\
-            .values_list('location_code',flat = True)))\
-
-        campaign_codes = SourceSubmissionDetail.objects\
-            .filter(source_submission_id__in = self.ss_id_list)\
-            .values_list('campaign_code',flat = True)
-
-
         source_codes = {
             'indicator': indicator_codes,
-            'location': location_codes,
-            'campaign': campaign_codes
+            'location': self.location_codes_to_process,
+            'campaign': self.campaign_codes_to_process
         }
 
         source_object_map_ids = self.upsert_source_codes(source_codes)
@@ -201,8 +200,17 @@ class MasterRefresh(object):
 
         ss_id_list_to_process, ss_detail_batch = [],[]
 
+        ## find soure_submission_ids based of location_codes to process then get the json
+        ## of all of the related submissions .
+        submission_qs = SourceSubmission.objects\
+            .filter(id__in = SourceSubmissionDetail.objects\
+                .filter(location_code__in = self.location_codes_to_process)\
+                .values_list('source_submission_id',flat=True),
+                process_status = 'TO_PROCESS')\
+            .values_list('id','submission_json')
+
         ss_id_list = []
-        for ss_id, submission_json in self.submission_data.iteritems():
+        for ss_id, submission_json in submission_qs:
 
             submission_dict = json.loads(submission_json)
             location_column, campaign_column = self.db_doc_deets['location_column']\
