@@ -20,6 +20,17 @@ class MasterRefresh(object):
     '''
 
     def __init__(self,user_id,document_id):
+        '''
+        Batches run based on locations becasue some configurations low for regional
+        aggregation and for that reaso, all locations within a document must be processed
+        in the same batch.
+
+        In order to grab the batch of data to process, we first find all of the location
+        codes that have not been proessed yet, and take onlyt the first 'n' values.
+
+        We then query submissions with this list of location_ids and create the
+        self.submission_data variable with these list of ids.
+        '''
 
         self.ss_location_code_batch_size = 50
         self.document_id = document_id
@@ -27,25 +38,18 @@ class MasterRefresh(object):
 
         self.db_doc_deets = self.get_document_config()
 
-        self.all_to_process_ss_ids = SourceSubmission.objects.filter(\
-            document_id = self.document_id,
-            process_status = 'TO_PROCESS').values_list('id',flat=True)\
-
         self.location_codes_to_process = SourceSubmissionDetail.objects\
             .filter(\
                 source_submission_id__in = self.all_to_process_ss_ids)\
             .values_list('location_code',flat = True)\
                 [:self.ss_location_code_batch_size]
 
-        self.submission_ids_in_location_batch = SourceSubmissionDetail\
-            .objects\
-            .filter(location_code__in = self.location_codes_to_process)\
-            .values_list('source_submission_id',flat = True)\
-
         self.submission_data = dict(SourceSubmission.objects\
-            .filter(id__in = self.submission_ids_in_location_batch)
+            .filter(location_code__in = self.location_codes_to_process)
             .values_list('id','submission_json'))
 
+        ## this method finds the location_id/campaign_id for a row if it is new, or for
+        ## instance, if the source_object_map table has been updated during the ingest
         self.refresh_submission_details()
 
     ## __init__ helper methods ##

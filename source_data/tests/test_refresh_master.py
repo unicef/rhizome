@@ -22,6 +22,16 @@ class RefreshMasterTestCase(TestCase):
         super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
+        '''
+        Refresh master needs a few peices of metadata to be abel to do it's job.
+        Location, Campaign, User .. all of the main models that you can see
+        initialized in the first migrations in the datapoints application.
+
+        The set up method also runs the DocTransform method which simulates
+        the upload of a csv or processing of an ODK submission.  Ideally this
+        test will run independently of this module, but for now this is how
+        we initialize data in the system via the .csv below.
+        '''
 
         self.location_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
@@ -76,12 +86,15 @@ class RefreshMasterTestCase(TestCase):
         mr.refresh_doc_meta()
 
         ## FIXME replace source_submission_data with read_csv(self.test_file)
+
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
             .values_list('id',flat=True)
 
-        mr.refresh_submission_details()
+        # = read_csv(self.test_file)
+        ## fake the submission_data
 
+        mr.refresh_submission_details()
         submission_details = SourceSubmissionDetail.objects\
             .filter(document_id = self.document.id)
 
