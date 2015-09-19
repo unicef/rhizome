@@ -337,15 +337,12 @@ class RefreshMasterResource(BaseModelResource):
         cr = CacheRefresh()
         cr.main()
 
-        ## upsert document meta from the last run ##
-
-        ## fixme -> abstract this <- ##
-
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType.objects.get(name = 'submission_processed_count').id,
             defaults= {'doc_detail_value': SourceSubmission.objects\
-                .filter(process_status = 'PROCEESED').count()\
+                .filter(process_status = 'PROCEESED',\
+                    document_id = document_id).count()\
             },
         )
 
