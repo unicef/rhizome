@@ -234,8 +234,8 @@ class MasterRefresh(object):
                     'campaign_id': campaign_id,
                 }))
 
-        print ss_id_list
-        SourceSubmissionDetail.objects.filter(id__in=ss_id_list).delete()
+        SourceSubmissionDetail.objects.filter(source_submission_id__in =\
+            ss_id_list).delete()
         SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
 
         return ss_id_list
