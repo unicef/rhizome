@@ -17,13 +17,14 @@ class DocTransform(object):
 
         self.source_datapoints = []
         self.user_id = user_id
-        self.document_id = document_id
+        self.document = Document.objects.get(id=document_id)
+        self.file_header = self.document.file_header.split(",")
 
         ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
         self.file_delimiter = ','
 
         if not file_path:
-            file_path = str(Document.objects.get(id=self.document_id).\
+            file_path = str(Document.objects.get(id=self.document.id).\
                 docfile)
 
         self.file_path = file_path
@@ -32,19 +33,19 @@ class DocTransform(object):
             get(status_text='TO_PROCESS').id
 
         self.uq_id_column = DocumentDetail.objects.get(
-            document_id = self.document_id,
+            document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
                 .objects.get(name='uq_id_column').id,
         ).doc_detail_value
 
         self.location_column = DocumentDetail.objects.get(
-            document_id = self.document_id,
+            document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
                 .objects.get(name='location_column').id,
         ).doc_detail_value
 
         self.campaign_column = DocumentDetail.objects.get(
-            document_id = self.document_id,
+            document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
                 .objects.get(name='campaign_column').id,
         ).doc_detail_value
@@ -55,13 +56,6 @@ class DocTransform(object):
         self.upsert_source_object_map()
 
     def get_document_file_stream(self,full_file_path):
-
-        f_header = open(full_file_path,'r')
-        top_row = f_header.readlines()[0]
-        cleaned = top_row.replace('\r','').replace('\n','')
-
-        self.file_header = cleaned.split(self.file_delimiter)
-        f_header.close()
 
         f = open(full_file_path,'r')
         file_stream = f.readlines()[1:]
@@ -75,7 +69,7 @@ class DocTransform(object):
         '''
 
         source_submissions = SourceSubmission.objects.filter(document_id = \
-            self.document_id)
+            self.document.id)
 
         batch = []
         for i, (row) in enumerate(source_submissions):
@@ -83,7 +77,7 @@ class DocTransform(object):
             submission_data = row.submission_json
             submission_detail_dict = {
                 'source_submission_id': row.id,
-                'document_id':   self.document_id,
+                'document_id':   self.document.id,
                 'campaign_code':  submission_data[self.campaign_column],
                 'location_code':  submission_data[self.location_column],
                 'raw_data_proxy' :''
@@ -107,12 +101,11 @@ class DocTransform(object):
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.get_document_file_stream(full_file_path)
 
-        doc_obj = Document.objects.get(id = self.document_id)
-        doc_obj.file_header = self.file_header
-        doc_obj.save()
-
         batch = {}
         for i,(submission) in enumerate(file_stream):
+
+            print submission
+            print '===='
 
             ss, instance_guid = self.process_raw_source_submission(submission,i)
             if ss is not None:
@@ -135,7 +128,7 @@ class DocTransform(object):
         '''
 
         source_dp_json = SourceSubmission.objects.filter(
-            document_id = self.document_id).values_list('submission_json')
+            document_id = self.document.id).values_list('submission_json')
 
         if len(source_dp_json) == 0:
             return
@@ -172,7 +165,7 @@ class DocTransform(object):
             })
 
         sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
-            (document_id = self.document_id,source_object_map_id = sm_obj.id)
+            (document_id = self.document.id,source_object_map_id = sm_obj.id)
 
         return sm_obj.id
 
@@ -182,6 +175,8 @@ class DocTransform(object):
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
 
+        pprint(submission_data)
+
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '':
@@ -189,7 +184,7 @@ class DocTransform(object):
 
         submission_dict = {
             'submission_json': submission_data,
-            'document_id': self.document_id,
+            'document_id': self.document.id,
             'row_number': i,
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',

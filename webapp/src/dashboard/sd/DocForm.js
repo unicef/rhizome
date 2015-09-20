@@ -101,7 +101,7 @@ var DocForm = React.createClass({
       _.map(state_header, d => {
         return {
           title : d.replace('"',''),
-          value : d.replace('"','')
+          value : d.replace('"',''),
         };
       }),
       this.setDocConfig.bind('config_type',config_type));
