@@ -26,7 +26,6 @@ var DocForm = React.createClass({
   },
 
   onDrop: function (files) {
-    console.log('Received files: ', files);
     this.handleFile(files[0])
   },
 
@@ -72,12 +71,8 @@ var DocForm = React.createClass({
     var self = this;
     var doc_detail_type_lookup = {}
 
-    var x = 1
-
     var doc_detail_meta = this.state.doc_detail_meta
     var doc_detail_type = doc_detail_meta[config_type]
-
-    console.log('=====doc_detail_type: ', doc_detail_type.id)
 
     api.docDetailPost({
           document_id: this.state.created_doc_id,
@@ -105,8 +100,8 @@ var DocForm = React.createClass({
     return MenuItem.fromArray(
       _.map(state_header, d => {
         return {
-          title : d,
-          value : d
+          title : d.replace('"',''),
+          value : d.replace('"','')
         };
       }),
       this.setDocConfig.bind('config_type',config_type));
