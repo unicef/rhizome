@@ -189,7 +189,6 @@ class BaseNonModelResource(Resource):
 
         query_dict = request.GET
 
-
         try:
             parent_location_list = query_dict['parent_location__in']
             location_ids = LocationTree.objects.filter(parent_location_id__in=\

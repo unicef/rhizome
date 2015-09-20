@@ -204,7 +204,8 @@ class MasterRefresh(object):
         ## find soure_submission_ids based of location_codes to process then get the json
         ## of all of the related submissions .
         submission_qs = SourceSubmission.objects\
-            .filter(id__in = SourceSubmissionDetail.objects\
+            .filter(document_id = self.document_id,
+                    id__in = SourceSubmissionDetail.objects\
                 .filter(location_code__in = self.location_codes_to_process)\
                 .values_list('source_submission_id',flat=True),
                 process_status = 'TO_PROCESS')\
@@ -214,8 +215,9 @@ class MasterRefresh(object):
         for ss_id, submission_json in submission_qs:
 
             submission_dict = json.loads(submission_json)
-            location_column, campaign_column = self.db_doc_deets['location_column']\
-                , self.db_doc_deets['campaign_column']
+
+            location_column, campaign_column = str(self.db_doc_deets['location_column'])\
+                , str(self.db_doc_deets['campaign_column'])
 
             location_id = self.source_map_dict.get(('location'\
                     ,submission_dict[location_column]),None)

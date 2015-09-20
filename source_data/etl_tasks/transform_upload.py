@@ -175,8 +175,6 @@ class DocTransform(object):
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
 
-        pprint(submission_data)
-
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '':
