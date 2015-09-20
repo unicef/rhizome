@@ -18,7 +18,6 @@ class DocTransform(object):
         self.source_datapoints = []
         self.user_id = user_id
         self.document = Document.objects.get(id=document_id)
-        self.file_header = self.document.file_header.split(",")
 
         ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
         self.file_delimiter = ','
@@ -56,6 +55,13 @@ class DocTransform(object):
         self.upsert_source_object_map()
 
     def get_document_file_stream(self,full_file_path):
+
+        f_header = open(full_file_path,'r')
+        top_row = f_header.readlines()[0]
+        cleaned = top_row.replace('\r','').replace('\n','')
+
+        self.file_header = cleaned.split(self.file_delimiter)
+        f_header.close()
 
         f = open(full_file_path,'r')
         file_stream = f.readlines()[1:]
@@ -101,11 +107,12 @@ class DocTransform(object):
         full_file_path = settings.MEDIA_ROOT + self.file_path
         file_stream = self.get_document_file_stream(full_file_path)
 
+        doc_obj = Document.objects.get(id = self.document.id)
+        doc_obj.file_header = self.file_header
+        doc_obj.save()
+
         batch = {}
         for i,(submission) in enumerate(file_stream):
-
-            print submission
-            print '===='
 
             ss, instance_guid = self.process_raw_source_submission(submission,i)
             if ss is not None:
