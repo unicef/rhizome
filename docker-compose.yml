@@ -1,13 +1,13 @@
-polio:
+rhizome:
   build: .
   links:
     - db:postgres
   ports:
     - 8000:8000
   volumes:
-    - .:/polio
-  working_dir: /polio
-  entrypoint: /polio/bin/start.sh
+    - .:/rhizome
+  working_dir: /rhizome
+  entrypoint: /rhizome/bin/start.sh
 
 db:
   image: postgres:9.3

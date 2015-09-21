@@ -19,7 +19,7 @@
 Prerequisites
 
   - docker-toolbox https://www.docker.com/toolbox
- 
+
 [static-files]: https://docs.djangoproject.com/en/1.7/howto/static-files/)
 
 
@@ -52,7 +52,7 @@ $ docker-compose build && docker-compose up
 Entry Docker instance
 
 ```
-$ docker exec -it polio_polio_1 bash
+$ docker exec -it rhizome_rhizome_1 bash
 ```
 
 The app is hosted at http://localhost:8000
@@ -69,7 +69,7 @@ $ npm install
 ## running test ##
 
  - backend:
-   $ python manage.py test --settings=polio.settings_test
+   $ python manage.py test --settings=rhizome.settings_test
 
 - frontend:
    coming soon...
@@ -104,10 +104,10 @@ to set up the db..
 $ CREATE USER djangoapp WITH PASSWORD 'somepassword' SUPERUSER LOGIN;
 ```
 
-then create the directory for the polio django app, and static files
+then create the directory for the rhizome django app, and static files
 ```
 $ sudo mkdir /var/www/apps/
-$ sudo mkdir /var/www/apps/polio/
+$ sudo mkdir /var/www/apps/rhizome/
 ```
 
 # Serving the Django Application with Apache.

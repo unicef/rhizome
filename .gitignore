@@ -29,9 +29,9 @@ node_modules
 sql_backups
 db.sql
 /geo
-datapoints/sql/polio/public
+datapoints/sql/rhizome/public
 static/odk_source
-polio/secrets.py
+rhizome/secrets.py
 *~
 **/#*#
 static/

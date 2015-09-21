@@ -8,4 +8,4 @@ ENV CHINESE_LOCAL_PIP_CONFIG="--index-url http://pypi.douban.com/simple --truste
 COPY ./requirements.txt /tmp/
 RUN pip install --requirement /tmp/requirements.txt ${CHINESE_LOCAL_PIP_CONFIG}
 
-WORKDIR '/polio'
+WORKDIR '/rhizome'

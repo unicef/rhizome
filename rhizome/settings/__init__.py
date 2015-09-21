@@ -1,5 +1,5 @@
 import os
-from polio.settings.base import *
+from rhizome.settings.base import *
 
 """ ENV default 'development' """
 
@@ -14,4 +14,4 @@ if env == 'production':
 elif env == 'test':
     from polio.settings.test import *
 else:
-    from polio.settings.development import *
+    from rhizome.settings.development import *

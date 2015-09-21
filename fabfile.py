@@ -8,9 +8,9 @@ env.use_ssh_config = True
 local_venv_path = None
 
 # /var/www/clients.seedscientific.com/uf/UF04
-remote_work_path = '~/deploy/polio-work'
-remote_backend_path = '/var/www/apps/polio/'
-remote_frontend_path = '/var/www/apps/polio/webapp/public/static/'
+remote_work_path = '~/deploy/rhizome-work'
+remote_backend_path = '/var/www/apps/rhizome/'
+remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
@@ -36,7 +36,7 @@ def start_apache():
 
 def run_tests():
 
-    local("coverage run manage.py test --settings=polio.settings.test")
+    local("coverage run manage.py test --settings=rhizome.settings.test")
     local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
 
@@ -100,4 +100,4 @@ def _push_to_remote():
         # run("cd docs/ && make clean && make html")
 
         # echo "== RUNNING TESTS =="
-        # python manage.py test datapoints.tests.test_cache --settings=polio.settings_test
+        # python manage.py test datapoints.tests.test_cache --settings=rhizome.settings_test

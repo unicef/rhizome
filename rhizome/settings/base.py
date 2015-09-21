@@ -79,8 +79,8 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = -1
 
-ROOT_URLCONF = 'polio.urls'
-WSGI_APPLICATION = 'polio.wsgi.application'
+ROOT_URLCONF = 'rhizome.urls'
+WSGI_APPLICATION = 'rhizome.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

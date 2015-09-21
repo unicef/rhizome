@@ -1,4 +1,4 @@
-from polio.settings.base import *
+from rhizome.settings.base import *
 
 
 class DisableMigrations(object):
