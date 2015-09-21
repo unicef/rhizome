@@ -193,15 +193,39 @@ class BaseNonModelResource(Resource):
 
     def get_locations_to_return_from_url(self,request):
         '''
+        This method is used in both the /geo and /datapoint endpoints.  Based
+        on the values parsed from the URL parameters find the locations needed
+        to fulfill the request based on the four rules below.
+        1  location__in returns geo data for the locations requested
+        2. passing only parent_location__in  should return the shapes for all the
+           immediate children in that location if no level parameter is supplied
+        3. no params - return locations at the top of the tree ( no parent_id).
+        After the four steps are worked through in this method, we apply the
+        permissions function in order to determine the final list of locations
+        to return based on the user making the request.
         '''
 
-        query_dict = request.GET
+        ## attach these to self and return only error #
+        err = self.parse_url_strings(request.GET)
 
-        try:
-            parent_location_list = query_dict['parent_location__in']
-            location_ids = LocationTree.objects.filter(parent_location_id__in=\
-                parent_location_list).values_list('location_id',flat=True)
-        except KeyError:
-            location_ids = query_dict['location__in']
+        if err:
+            self.err = err
+            return err, []
+
+        ## CASE 1 ##
+        if self.location__in is not None:
+
+            location_ids = Location.objects.filter(id__in = self.location__in)\
+                .values_list('id',flat=True)
+
+        ## CASE 2 #
+        elif self.parent_location__in is not None and self.location_type_id is None:
+
+            location_ids = Location.objects.filter(parent_location__in = \
+                self.parent_location__in).values_list('id',flat=True)
+
+        else:
+            location_ids = Location.objects.filter(parent_location_id__isnull=True).\
+                values_list('id',flat=True)
 
         return None, location_ids
