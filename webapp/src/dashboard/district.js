@@ -85,8 +85,6 @@ module.exports = {
 
 	methods : {
 		error : function () {
-			// FIXME
-			window.alert('Dammit!');
 		},
 
 		load : function () {
@@ -115,6 +113,9 @@ module.exports = {
 				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
 				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
 			});
+
+			console.log(datapoints)
+			console.log('DATAPOINTS APOVE')
 
 			var columns = api.indicators({ id__in : indicators })
 				.then(_.partialRight(_heatmapColumns, indicators));

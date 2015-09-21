@@ -7,7 +7,7 @@ module.exports = {
     'id'         : 'district-heat-map',
     'type'       : 'HeatMapChart',
     'locations'    : 'sublocations',
-    'level'      : 'district',
+    'admin_level'      : 2,
     'timeRange'  : 0,
     'groupBy'    : 'location.name',
     'indicators' : [
