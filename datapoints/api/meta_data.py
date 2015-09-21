@@ -38,7 +38,14 @@ class LocationResource(BaseModelResource):
 
         try:
             pr_id = request.GET['parent_location_id']
+            if pr_id == '-1':
+                pr_id = None
+
             qs = Location.objects.filter(parent_location_id=pr_id).values()
+            print '----=====-----'
+            print pr_id
+            print qs
+
         except KeyError:
             qs =  Location.objects.all().values()
 
