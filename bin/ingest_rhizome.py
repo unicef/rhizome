@@ -30,7 +30,7 @@ def get_location():
 
     query_string = 'location/?' + urlencode(filters)
     data = query_api(query_string)
-    location_id = data[0][u'id']
+    location_id = data[-1][u'id']
 
     return location_id
 
@@ -62,17 +62,16 @@ def get_datapoints(location_id,indicator_id_list):
     data = query_api(query_string)
 
     for row in data:
-        print '==='
         print row
 
 
 def query_api(query_string):
 
-    HOST = 'http://localhost:8000/api/v1/'
+    HOST = 'http://rhizome.work/api/v1/'
 
     auth = {
-        'username': 'demo_user',
-        'api_key': 'e12866a229d8dea305a681886aeaadefdd95cfa0'
+        'username': '', ## FILL ME IN 
+        'api_key': '' ## FILL ME IN !
     }
 
     url = HOST + query_string + '&' + urlencode(auth)
@@ -85,5 +84,3 @@ def query_api(query_string):
 
 if __name__ == "__main__":
     main()
-
-    print 'YAAAS'
