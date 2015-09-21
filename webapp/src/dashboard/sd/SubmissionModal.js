@@ -41,11 +41,13 @@ render : function(){
   var source_submission_id = this.props.source_submission_id
   var modalStyle = {width:650, height:500, marginLeft:400};
 
-	var submission_data = ''
+	var submission_data = [];
 	if (this.state.modalIsOpen){
-		var submission_data = this.state.submission_data;
-		console.log(submission_data)
-	}
+		var submission_json = this.state.submission_data.submission_json;
+		_.forIn(submission_json, function(value, key){
+				submission_data.push(<li><b>{key}</b> : {value} </li>)
+		})
+	};
 
   return <div>
 						<button
@@ -59,7 +61,6 @@ render : function(){
 	            onRequestClose={this.closeModal}
 	          >
 	              <h1> Source_submission_id: {source_submission_id} </h1>
-								// <img src={this.state.img_location} />
 								{submission_data}
 	          </Modal>
 					</div>
