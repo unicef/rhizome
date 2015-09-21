@@ -3,7 +3,7 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authentication import BasicAuthentication, ApiKeyAuthentication,\
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,\
     MultiAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 from tastypie.cache import SimpleCache
@@ -52,7 +52,7 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(BasicAuthentication(),\
+        authentication = MultiAuthentication(SessionAuthentication(),\
             ApiKeyAuthentication())
         # authorization = DjangoAuthorization()
         always_return_data = True
@@ -141,7 +141,7 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        authentication = MultiAuthentication(BasicAuthentication(),\
+        authentication = MultiAuthentication(SessionAuthentication(),\
             ApiKeyAuthentication())
         authorization = DjangoAuthorization()
         always_return_data = True
