@@ -83,7 +83,7 @@ def _push_to_remote():
         #  so the 'find' command above may not be deleting enough compiled pycs]
         # when the unzip fe files will be included
 
-        run("unzip -o rhizome.zip -d %s" % remote_backend_path)
+        run("unzip rhizome.zip -d %s -o" % remote_backend_path)
 
     # in server path -
     with cd(remote_backend_path):
