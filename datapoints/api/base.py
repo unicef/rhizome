@@ -157,10 +157,10 @@ class BaseNonModelResource(Resource):
         constructed in accordance to the request from the front end team.
         '''
 
-        self.location__in, self.location_type_id, self.parent_location__in = \
-            None, None, None
 
-        ## location_ID
+        self.location__in, self.parent_location__in = \
+            None, None
+
         try:
             self.location__in = [int(r) for r in query_dict['location__in']\
                 .split(',')]
@@ -169,15 +169,16 @@ class BaseNonModelResource(Resource):
         except ValueError:
             pass
 
-        ## location TYPE ##
         try:
-            self.rtype_id = LocationType.objects.get(name = query_dict\
-                ['level'].lower()).id
+            admin_level = query_dict['admin_level']
+            self.location_type_id = LocationType.objects.get(admin_level =\
+                admin_level).id
         except KeyError:
-            pass
+            self.location_type_id = None
         except ObjectDoesNotExist:
             all_r_types = LocationType.objects.all().values_list('name',flat=True)
             err = 'location type doesnt exist. options are:  %s' % all_r_types
+            self.location_type_id = None
             return err, []
 
         try:
@@ -196,13 +197,13 @@ class BaseNonModelResource(Resource):
         This method is used in both the /geo and /datapoint endpoints.  Based
         on the values parsed from the URL parameters find the locations needed
         to fulfill the request based on the four rules below.
-        1  location__in returns geo data for the locations requested
-        2. passing only parent_location__in  should return the shapes for all the
-           immediate children in that location if no level parameter is supplied
-        3. no params - return locations at the top of the tree ( no parent_id).
-        After the four steps are worked through in this method, we apply the
-        permissions function in order to determine the final list of locations
-        to return based on the user making the request.
+        1  region__in returns geo data for the regions requested
+        2. parent_region__in + level should return the shapes for all the child
+           regions at the specified level that are within the region specified
+        3. passing only parent_region__in  should return the shapes for all the
+           immediate children in that region if no level parameter is supplied
+        4. no params - return top 10 regions.
+
         '''
 
         ## attach these to self and return only error #
@@ -214,16 +215,39 @@ class BaseNonModelResource(Resource):
 
         ## CASE 1 ##
         if self.location__in is not None:
+            print '=== CASE ONE ==='
 
             location_ids = Location.objects.filter(id__in = self.location__in)\
                 .values_list('id',flat=True)
 
-        ## CASE 2 #
-        elif self.parent_location__in is not None and self.location_type_id is None:
+        ## CASE 2 ##
+        elif self.parent_location__in is not None and self.location_type_id is not None:
 
+            print '=== CASE TWO ==='
+            location_qs = Location.objects.raw('''
+                SELECT * FROM location_tree lt
+                INNER JOIN location l
+                ON lt.location_id = l.id
+                AND lt.parent_location_id = ANY(%s)
+                INNER JOIN location_type ltype
+                ON l.location_type_id = ltype.id
+                AND ltype.admin_level = %s
+                ''',[self.parent_location__in,self.location_type_id])
+
+        
+
+            print location_qs
+            location_ids = [l.id for l in location_qs]
+            print location_ids
+
+
+        ## CASE 3 #
+
+        elif self.parent_location__in is not None and self.location_type_id is None:
+            print '=== CASE THREE ==='
             location_ids = Location.objects.filter(parent_location__in = \
                 self.parent_location__in).values_list('id',flat=True)
-
+        ## CASE 4 ##
         else:
             location_ids = Location.objects.filter(parent_location_id__isnull=True).\
                 values_list('id',flat=True)

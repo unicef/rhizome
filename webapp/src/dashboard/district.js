@@ -110,7 +110,7 @@ module.exports = {
 
 			var datapoints = api.datapoints({
 				parent_location__in : this.location.id,
-				level             : 'district',
+				admin_level       : 2,
 				indicator__in     : indicators,
 				campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
 				campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
