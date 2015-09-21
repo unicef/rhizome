@@ -54,10 +54,11 @@ class BaseModelResource(ModelResource):
     class Meta:
         authentication = MultiAuthentication(SessionAuthentication(),\
             ApiKeyAuthentication())
-        # authorization = DjangoAuthorization()
+        authorization = DjangoAuthorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
-        # filtering = { ##FIXME have subclass inherit this and add their own..
+        # filtering = {
+        # FIXME have subclass inherit this and add their own..
         #     "id": ALL,
         # }
         cache = CustomCache()

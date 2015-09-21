@@ -8,22 +8,18 @@ import urllib2
 from datetime import datetime
 from urllib2 import Request, urlopen
 from urllib import urlencode
+from pprint import pprint
 
 def main():
     '''
     Pull 2015 for Top Level Regions and Save as a CSV...
     '''
 
-    location_id_list = get_locations()
-    # campaign_id_list = get_campaigns(location_id_list)
+    location_id = get_location()
+    indicator_id_list = get_indicators()
+    all_data = get_datapoints(location_id,indicator_id_list)
 
-    # for location_id, campaign_id in zip(location_id_list,campaign_id_list):
-    #     csv_row = get_datapoints
-
-    print objects
-
-
-def get_locations():
+def get_location():
     '''
     Customize this based on what campaigns, regions and indicators you want.
     '''
@@ -34,23 +30,40 @@ def get_locations():
 
     query_string = 'location/?' + urlencode(filters)
     data = query_api(query_string)
+    location_id = data[0][u'id']
 
-    print '=='
-    print data
+    return location_id
 
-def get_campaigns(self,location_id_list):
+def get_indicators():
     '''
-    Customize this based on what campaigns, regions and indicators you want.
     '''
 
-    pass
+    filters = {
+        'name__startswith': 'ODK',
+    }
 
-def get_datapoints(location_id,campaign_id):
+    query_string = 'indicator/?' + urlencode(filters)
+    data = query_api(query_string)
+    indicator_ids = [unicode(indicator[u'id']) for indicator in data]
+
+    return indicator_ids
+
+def get_datapoints(location_id,indicator_id_list):
     '''
     Get all indicator data for location/campaign combo
     '''
+    filters = {
+        'location__in': location_id,
+        'indicator__in': ",".join(indicator_id_list),
+        'campaign_start': '2015-01-01',
+    }
 
-    pass
+    query_string = 'datapoint/?' + urlencode(filters)
+    data = query_api(query_string)
+
+    for row in data:
+        print '==='
+        print row
 
 
 def query_api(query_string):
@@ -64,7 +77,7 @@ def query_api(query_string):
 
     url = HOST + query_string + '&' + urlencode(auth)
 
-    print url
+    print '=== HITTING API %s === '% url
     response = urlopen(url)
     objects = json.loads(response.read())['objects']
 

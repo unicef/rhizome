@@ -125,10 +125,16 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
+        print '+++++=\n' * 10
+        print self.parsed_params['campaign__in']
+        print self.parsed_params['location__in']
+
         db_data = DataPointAbstracted.objects.filter(
-            location_id__in = location_ids,
-            campaign_id__in = self.parsed_params['campaign__in'])\
+            campaign__in = self.parsed_params['campaign__in'],
+            location__in = self.parsed_params['location__in'])\
             .order_by('-campaign__start_date')
+            # location__in = [1,2,3])\
+            # campaign_id__in = self.parsed_params['campaign__in'])\
 
         for row in db_data:
             r = ResultObject()
@@ -236,7 +242,6 @@ class DataPointResource(BaseNonModelResource):
         to the expected ( both required and optional ) parameters in the request
         URL.
         '''
-
         parsed_params = {}
 
         ## try to find optional parameters in the dictionary. If they are not

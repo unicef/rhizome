@@ -42,9 +42,6 @@ class LocationResource(BaseModelResource):
                 pr_id = None
 
             qs = Location.objects.filter(parent_location_id=pr_id).values()
-            print '----=====-----'
-            print pr_id
-            print qs
 
         except KeyError:
             qs =  Location.objects.all().values()
@@ -60,6 +57,10 @@ class IndicatorResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorAbstracted.objects.all().values()
         resource_name = 'indicator'
+        filtering = {
+            "id": ALL,
+            "name": ALL,
+        }
 
 class OfficeResource(BaseModelResource):
 
