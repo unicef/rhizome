@@ -3,7 +3,8 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authentication import Authentication
+from tastypie.authentication import BasicAuthentication, ApiKeyAuthentication,\
+    MultiAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 from tastypie.cache import SimpleCache
 
@@ -16,24 +17,6 @@ except ImportError:
 from datapoints.models import LocationType, Location, LocationPermission, \
     LocationTree
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
-
-class CustomAuthentication(Authentication):
-    '''
-    Super Simple permissions check to ensure user is logged in.  Futher
-    permissions are appled for GET and POST for the datapoint resource
-    based on the locational and indicator level permission of the user found
-    in the request.
-    '''
-
-    def is_authenticated(self, request, **kwargs):
-        '''
-        If the user is logged in, return True else return False...
-        '''
-
-        if request.user.id:
-            return True
-
-        return False
 
 class CustomCache(SimpleCache):
     '''
@@ -69,8 +52,9 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta:
-        authentication = CustomAuthentication()
-        authorization = DjangoAuthorization()
+        authentication = MultiAuthentication(BasicAuthentication(),\
+            ApiKeyAuthentication())
+        # authorization = DjangoAuthorization()
         always_return_data = True
         allowed_methods = ['get','post','put','patch', 'delete']
         # filtering = { ##FIXME have subclass inherit this and add their own..
@@ -84,6 +68,28 @@ class BaseModelResource(ModelResource):
         Overrides Tastypie and calls get_list.  For now, that makes these
         resources GET only. ( no POST / PUT / PATCH ).
         """
+
+        # allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
+        #
+        # if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
+        #     request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
+
+        # request_method = self.method_check(request, allowed=allowed_methods)
+        # method = getattr(self, "%s_%s" % (request_method, request_type), None)
+
+        # if method is None:
+        #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
+
+        self.is_authenticated(request)
+        self.throttle_check(request)
+        # All clear. Process the request.
+
+        # If what comes back isn't a ``HttpResponse``, assume that the
+        # request was accepted and that some action occurred. This also
+        # prevents Django from freaking out.
+
+        # request = convert_post_to_put(request)
+        # response = method(request, **kwargs)
 
         response = self.get_list(request, **kwargs)
 
@@ -135,7 +141,8 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        authentication = CustomAuthentication()
+        authentication = MultiAuthentication(BasicAuthentication(),\
+            ApiKeyAuthentication())
         authorization = DjangoAuthorization()
         always_return_data = True
         cache = CustomCache()

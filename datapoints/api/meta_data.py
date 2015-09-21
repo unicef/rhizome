@@ -7,6 +7,11 @@ from tastypie.resources import ALL
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import Resource
+
+from tastypie.authentication import Authentication
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,\
+    MultiAuthentication
+
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 from django.core import serializers
@@ -17,7 +22,6 @@ from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
-
 
 class CampaignResource(BaseModelResource):
 
