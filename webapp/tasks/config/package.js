@@ -3,7 +3,7 @@ import path from 'path'
 
 export default {
   src: [
-    '{bin,polio,datapoints,source_data,templates}/**/*.*',
+    '{bin,rhizome,datapoints,source_data,templates}/**/*.*',
     'webapp*/public*/**/*.*',
     'docs*/_build/**/*.*',
     'manage.py',
