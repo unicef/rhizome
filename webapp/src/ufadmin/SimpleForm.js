@@ -43,11 +43,15 @@ var SimpleForm = React.createClass({
       return <div>'LOADING'</div>
     }
 
-    // var doc = {
-    //     name: "HI THIS IS JOIN ",
-    //     short_name: " Hi "
-    // };
     var doc = indicatorObject
+    if (!indicatorId){ // render a create form //
+      var doc = {
+          name: "HI THIS IS JOIN ",
+          short_name: " Hi "
+      };
+    }
+
+
 
     var settings = {
         form: true,

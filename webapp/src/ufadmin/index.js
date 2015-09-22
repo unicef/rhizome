@@ -28,7 +28,7 @@ var AdminApp = React.createClass({
 
 var routes = (
 		<Route name="app" path="/ufadmin/" handler={AdminApp}>
-			<Route name="manage" path="/ufadmin/manage/:id" handler={SimpleForm}/>
+			<Route name="manage" path="/ufadmin/manage/:id?" handler={SimpleForm}/>
 			<Route name="users" handler={require('./UsersAdmin')} />
 			<Route name="roles" handler={require('./GroupsAdmin')} />
 			<Route name="locations" handler={require('./RegionAdmin')} />
