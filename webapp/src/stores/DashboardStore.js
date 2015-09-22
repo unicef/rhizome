@@ -14,8 +14,6 @@ var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
   init: function() {
-
-    console.log('init dashboard store')
     this.loaded = false;
     this.indicators = {};
     Promise.all([
@@ -65,14 +63,9 @@ var DashboardStore = Reflux.createStore({
 
   // action handlers
   onSetDashboard: function(definition) {
-
-    console.log('dashboard definintion : ', definition)
-    // console.log("DashboardStore -> onSetDashboard:", definition)
     var dashboard = this.dashboard = definition.dashboard;
     this.location = definition.location || this.location;
     this.date = definition.date || this.date;
-
-    console.log('this_location (setting dashboar): ',this.location)
 
     if (!this.loaded) {
       return;
@@ -106,8 +99,6 @@ var DashboardStore = Reflux.createStore({
     //     return r.office_id === dashboard.default_office_id;
     //   });
     // }
-
-    console.log("line ninety 7:", this.location, location);
 
     if (!location) {
       location = topLevellocations.first();

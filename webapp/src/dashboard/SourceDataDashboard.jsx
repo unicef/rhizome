@@ -70,9 +70,6 @@ var SourceDataDashboard = React.createClass({
 		var doc_id = this.props.doc_id;
 		var doc_tab = this.props.doc_tab
 
-
-		console.log('LOCATION: ', this.props.location)
-
 		var doc_obj = this.state.doc_obj;
 
 		if (!doc_obj) {
