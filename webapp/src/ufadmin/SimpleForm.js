@@ -12,7 +12,7 @@ var { Route, Router} = ReactRouter;
 
 var SimpleForm = React.createClass({
   mixins: [
-    Reflux.connect(SimpleFormStore),
+    Reflux.connect(SimpleFormStore, 'store'),
     // ReactRouter.State ,
   ],
 
@@ -26,10 +26,14 @@ var SimpleForm = React.createClass({
   },
 
   componentWillMount: function() {
-    console.log('HELLLoooo')
+    console.log('query indicators for id: ',this.props.params.id)
+    SimpleFormActions.initialize(this.props.params.id)
 	},
 
   render : function () {
+
+    console.log('this dot props: ', this.props)
+    console.log('this dot state dot store : ', this.state.store)
 
     var q_params = this.context.router.getCurrentParams()
 
