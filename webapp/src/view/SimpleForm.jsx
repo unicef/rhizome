@@ -4,21 +4,30 @@ var moment = require('moment');
 var React  = require('react');
 var Reflux = require('reflux');
 var ReactJson = require('react-json')
+var SimpleFormStore = require('stores/SimpleFormStore');
+var SimpleFormActions = require('actions/SimpleFormActions');
 
 var SimpleForm = React.createClass({
+  mixins: [
+    Reflux.connect(SimpleFormStore)
+  ],
 
   getInitialState : function () {
     return {
       visibleCampaigns : 6,
-      visibleUploads   : 5
+      visibleUploads   : 3
     };
   },
 
+  componentWillMount: function() {
+		// init store, passing indicator id if present
+		SimpleFormActions.init(164);
+	},
 
   render : function () {
     var doc = {
-        user: "",
-        password: ""
+        name: "",
+        short_name: ""
     };
 
     var settings = {
@@ -29,11 +38,14 @@ var SimpleForm = React.createClass({
     return (
 
           <div className="row">
-            <div className="small-12 columns">
+            <div className="small-8s columns">
               <p className="pageWelcome">
-                Welcome to UNICEF&rsquo;s Polio Eradication data portal.
+                Create an Indicator Below
               </p>
-              <ReactJson value={ doc } settings={ settings }/>,
+              <form>
+                <ReactJson value={ doc } settings={ settings }/>,
+
+                  </form>
             </div>
           </div>
     );
