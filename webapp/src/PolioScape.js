@@ -3,6 +3,7 @@
 var React = require('react');
 var Vue = require('vue');
 
+var SimpleForm 			 = require('view/SimpleForm.jsx')
 var LandingPage      = require('view/LandingPage.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
@@ -54,14 +55,17 @@ module.exports = {
 	},
 	/// start johns new components //
 
-	SimpleForm: function (el,indicator_id) {
-		new Vue({
-			el: el,
-			components: { 'uf-simple-form': require('./view/simple-form') },
-			data:{'indicator_id':indicator_id}
-		});
-	},
+	// SimpleForm: function (el,indicator_id) {
+	// 	new Vue({
+	// 		el: el,
+	// 		components: { 'uf-simple-form': require('./view/simple-form') },
+	// 		data:{'indicator_id':indicator_id}
+	// 	});
+	// },
 
+	SimpleForm: function (el) {
+		React.render(React.createElement(SimpleForm), el);
+	},
 	/// done with johns new components //
 
 	LandingPage: function (el) {

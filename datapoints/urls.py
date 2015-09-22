@@ -59,6 +59,9 @@ urlpatterns = [
         ## INDICATORS ##
         ################
 
+    ## simple form ##
+
+
     # ## CREATE ##
     url(r'^indicators/create/$', views.IndicatorCreateView.as_view(),\
         name='create_indicator'),
