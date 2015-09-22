@@ -1,6 +1,7 @@
 var React = require('react');
 var Router = require('react-router');
 var {Route, DefaultRoute, RouteHandler, Link} = Router;
+var SimpleForm = require('./SimpleForm')
 
 var AdminApp = React.createClass({
 	contextTypes: {
@@ -27,7 +28,7 @@ var AdminApp = React.createClass({
 
 var routes = (
 		<Route name="app" path="/ufadmin/" handler={AdminApp}>
-			<Route name="manage" path="/ufadmin/manage/:id" handler={require('./SimpleForm')} />
+			<Route name="manage" path="/ufadmin/manage/:id" handler={SimpleForm}/>
 			<Route name="users" handler={require('./UsersAdmin')} />
 			<Route name="roles" handler={require('./GroupsAdmin')} />
 			<Route name="locations" handler={require('./RegionAdmin')} />

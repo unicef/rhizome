@@ -16,6 +16,10 @@ var SimpleForm = React.createClass({
     // ReactRouter.State ,
   ],
 
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
   getInitialState : function () {
     return {
     };
@@ -26,6 +30,8 @@ var SimpleForm = React.createClass({
 	},
 
   render : function () {
+
+    var q_params = this.context.router.getCurrentParams()
 
     var doc = {
         name: "",
