@@ -1,10 +1,9 @@
 'use strict';
-
 var _      = require('lodash');
 var moment = require('moment');
 var React  = require('react');
 var Reflux = require('reflux');
-
+var ReactJson = require('react-json')
 
 var SimpleForm = React.createClass({
 
@@ -15,8 +14,18 @@ var SimpleForm = React.createClass({
     };
   },
 
+
   render : function () {
-    console.log('RENDER')
+    var doc = {
+        user: "",
+        password: ""
+    };
+
+    var settings = {
+        form: true,
+        fields: { password: {type: 'password'} }
+    };
+
     return (
 
           <div className="row">
@@ -24,6 +33,7 @@ var SimpleForm = React.createClass({
               <p className="pageWelcome">
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
               </p>
+              <ReactJson value={ doc } settings={ settings }/>,
             </div>
           </div>
     );
