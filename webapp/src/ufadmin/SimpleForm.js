@@ -32,15 +32,22 @@ var SimpleForm = React.createClass({
 
   render : function () {
 
-    console.log('this dot props: ', this.props)
-    console.log('this dot state dot store : ', this.state.store)
+    // console.log('this dot props: ', this.props)
+    // console.log('this dot state : ', this.state)
 
-    var q_params = this.context.router.getCurrentParams()
+    var indicatorId  = this.props.params.id
+    var indicatorObject  = this.state.store.indicatorObject
+    console.log('indicatorObject : ', indicatorObject)
 
-    var doc = {
-        name: "",
-        short_name: ""
-    };
+    if (indicatorId && !indicatorObject){
+      return <div>'LOADING'</div>
+    }
+
+    // var doc = {
+    //     name: "HI THIS IS JOIN ",
+    //     short_name: " Hi "
+    // };
+    var doc = indicatorObject
 
     var settings = {
         form: true,

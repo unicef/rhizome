@@ -11,7 +11,7 @@ var SimpleFormActions = require('actions/SimpleFormActions');
 var SimpleFormStore = Reflux.createStore({
   data: {
     indicatorId: null,
-    shortName: null,
+    indicatorObject: null,
     loading: true,
     saving: false
   },
@@ -28,16 +28,15 @@ var SimpleFormStore = Reflux.createStore({
 
     // updating existing group? need to get more data
     if (self.data.indicatorId) {
-      console.log('initiate promise')
       Promise.all([
           api.indicators({ id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' })
         ])
         .then(_.spread(function(indicators) {
 
-          var ind = indicators[0]
+          var ind = indicators.objects[0]
           // find current indicator
           // var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
-          // self.data.groupName = g.name;
+          self.data.indicatorObject = ind;
 
           // select current permissions
           // _.each(groupPermissions.objects, function(d) {
