@@ -55,6 +55,7 @@ module.exports = React.createClass({
     }
   },
   componentDidMount: function () {
+    console.log('=== MOUNTING ==')
     ChartBuilderActions.initialize(
         this.props.chartDef,
         this.props.location,

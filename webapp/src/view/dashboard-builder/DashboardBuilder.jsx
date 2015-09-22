@@ -36,6 +36,8 @@ module.exports = React.createClass({
 	AppActions.init();
 	},
 	componentDidMount:function(){
+		console.log('MOUNTING dashbuilda')
+
 	   DashboardBuilderActions.initialize(this.props.dashboard_id);
 	   this.listenTo(DashboardStore,this._onDataLoaded);
 	   this.listenTo(DashboardBuilderStore,this._onDataLoaded);
