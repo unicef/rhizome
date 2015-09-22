@@ -18,9 +18,6 @@ var CampaignMenuItem = React.createClass({
     fromArray : function (arr, sendValue) {
       return arr.map(function (campaign) {
         var date = moment(campaign.start_date, 'YYYY-MM-DD').toDate();
-
-        console.log('-----====------')
-        console.log(campaign)
         return (
           <CampaignMenuItem key={'campaign-' + campaign.id}
             sendValue={sendValue}

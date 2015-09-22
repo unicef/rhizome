@@ -171,6 +171,8 @@ var Dashboard = React.createClass({
     // console.log("_show:", ctx, ctx.params.location);
     var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
 
+    console.log('setting dashboard: ', ctx.params.location)
+
     DashboardActions.setDashboard({
       dashboard,
       location: ctx.params.location,
@@ -212,6 +214,7 @@ var Dashboard = React.createClass({
     }
 
     var {campaign, loading, location, doc_id, doc_tab} = this.state;
+
     var dashboardDef  = this.state.dashboard;
     var dashboardName = _.get(dashboardDef, 'title', '');
 
