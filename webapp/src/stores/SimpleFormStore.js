@@ -10,11 +10,12 @@ var SimpleFormStore = Reflux.createStore({
     this.indicator = [];
 
     this.currentIndicatorPromise = api.indicators()
-      .then(data => {
-        this.indicator = objects[0];
+      .then(response => {
+        this.indicator = response.objects[0];
         // this.trigger({
         //   locations: this.locations
         // });
+        console.log(this.indicator)
         return this.indicator;
       });
   },

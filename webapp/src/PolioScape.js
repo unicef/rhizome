@@ -3,7 +3,6 @@
 var React = require('react');
 var Vue = require('vue');
 
-var SimpleForm 			 = require('view/SimpleForm.jsx')
 var LandingPage      = require('view/LandingPage.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
@@ -53,10 +52,6 @@ module.exports = {
 			data:{'user_id':user_id}
 		});
 	},
-	SimpleForm: function (el) {
-		React.render(React.createElement(SimpleForm), el);
-	},
-
 	LandingPage: function (el) {
 		React.render(React.createElement(LandingPage), el);
 	},
