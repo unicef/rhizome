@@ -2,7 +2,7 @@ import json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from tastypie.authorization import DjangoAuthorization
+from tastypie.authorization import Authorization
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,\
     MultiAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
@@ -17,6 +17,44 @@ except ImportError:
 from datapoints.models import LocationType, Location, LocationPermission, \
     LocationTree
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
+
+
+
+class CustomSessionAuthentication(SessionAuthentication):
+    """
+    """
+    def is_authenticated(self, request, **kwargs):
+        """
+        """
+
+        ## this is the line i have to override in order to get
+        ## POST request to successfully authenticate ##
+        if request.method in ('GET', 'HEAD', 'OPTIONS', 'TRACE', 'POST'):
+            return request.user.is_authenticated()
+
+        if getattr(request, '_dont_enforce_csrf_checks', False):
+            return request.user.is_authenticated()
+
+        csrf_token = _sanitize_token(request.COOKIES.get(settings.CSRF_COOKIE_NAME, ''))
+
+        if request.is_secure():
+            referer = request.META.get('HTTP_REFERER')
+
+            if referer is None:
+                return False
+
+            good_referer = 'https://%s/' % request.get_host()
+
+            if not same_origin(referer, good_referer):
+                return False
+
+        request_csrf_token = request.META.get('HTTP_X_CSRFTOKEN', '')
+
+        if not constant_time_compare(request_csrf_token, csrf_token):
+            return False
+
+        return request.user.is_authenticated()
+
 
 class CustomCache(SimpleCache):
     '''
@@ -52,11 +90,11 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(SessionAuthentication(),\
+        authentication = MultiAuthentication(CustomSessionAuthentication(),\
             ApiKeyAuthentication())
-        authorization = DjangoAuthorization()
+        authorization = Authorization()
         always_return_data = True
-        allowed_methods = ['get','post','put','patch', 'delete']
+        allowed_methods = ['get','post']
         # filtering = {
         # FIXME have subclass inherit this and add their own..
         #     "id": ALL,
@@ -66,17 +104,16 @@ class BaseModelResource(ModelResource):
 
     def dispatch(self, request_type, request, **kwargs):
         """
-        Overrides Tastypie and calls get_list.  For now, that makes these
-        resources GET only. ( no POST / PUT / PATCH ).
+        Overrides Tastypie and calls get_list.
         """
 
-        # allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
+        allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
         #
-        # if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
-        #     request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
+        if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
+            request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
 
-        # request_method = self.method_check(request, allowed=allowed_methods)
-        # method = getattr(self, "%s_%s" % (request_method, request_type), None)
+        request_method = self.method_check(request, allowed=allowed_methods)
+        method = getattr(self, "%s_%s" % (request_method, request_type), None)
 
         # if method is None:
         #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
@@ -142,9 +179,10 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        authentication = MultiAuthentication(SessionAuthentication(),\
+        authentication = MultiAuthentication(CustomSessionAuthentication(),\
             ApiKeyAuthentication())
-        authorization = DjangoAuthorization()
+        allowed_methods = ['get','post']
+        authorization = Authorization()
         always_return_data = True
         cache = CustomCache()
 
@@ -223,7 +261,6 @@ class BaseNonModelResource(Resource):
         ## CASE 2 ##
         elif self.parent_location__in is not None and self.location_type_id is not None:
 
-            print '=== CASE TWO ==='
             location_qs = Location.objects.raw('''
                 SELECT * FROM location_tree lt
                 INNER JOIN location l
@@ -234,12 +271,7 @@ class BaseNonModelResource(Resource):
                 AND ltype.admin_level = %s
                 ''',[self.parent_location__in,self.location_type_id])
 
-        
-
-            print location_qs
             location_ids = [l.id for l in location_qs]
-            print location_ids
-
 
         ## CASE 3 #
 
