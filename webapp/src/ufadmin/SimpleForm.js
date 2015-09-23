@@ -12,14 +12,27 @@ var { Route, Router} = ReactRouter;
 
 var SimpleFormComponent = React.createClass({
   propTypes: {
+    objectId : React.PropTypes.number.isRequired,
+    contentType : React.PropTypes.string.isRequired,
     componentTitle : React.PropTypes.string.isRequired,
     onClick : React.PropTypes.isRequired,
-    style : React.PropTypes.object,
-    rowData : React.PropTypes.array,
+    getRowData : React.PropTypes.isRequired,
     },
 
+  getInitialState : function(){
+    return {
+        modalIsOpen: false,
+        rowData : null
+      }
+  },
+
+  componentWillMount: function() {
+    console.log('gETTING ROW DATA SUB COMPONENT')
+    this.props.getRowData(164)
+	},
+
   render : function(){
-    var rowData = this.props.rowData;
+    var rowData = this.state.rowData;
     var componentTitle = this.props.componentTitle;
 
     var formComponentStyle = {
@@ -28,20 +41,26 @@ var SimpleFormComponent = React.createClass({
       padding: '10px',
     };
 
+    var rowLi =[]
+    _.forEach(rowData, function(row) {
+        // var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
+        var delete_btn = <span className="fa fa-times"></span>
+        rowData.push(<li> 'fake name' ({row.id}) {delete_btn} </li>)
+    });
+
+
     return <div style={formComponentStyle}>
       <h4> {componentTitle} </h4>
-      <br></br>
-      <ul>
-        {rowData}
-      </ul>
+        <br></br>
+        <ul>
+          {rowLi}
+        </ul>
       <span
         onClick={this.props.onClick}
         className="fa fa-plus fa-large"
       > add new tag!
-    </span>
-  </div>;
-
-
+      </span>
+    </div>;
   }
 
 })
@@ -68,6 +87,10 @@ var SimpleForm = React.createClass({
 
   logSomething : function() {
     console.log('logSomething')
+  },
+
+  getSubComponentData : function() {
+    SimpleFormActions.getTagForIndicator();
   },
 
   render : function () {
@@ -108,18 +131,7 @@ var SimpleForm = React.createClass({
         <ReactJson value={ base_form_data } settings={{form: true}}/>,
       </div>;
 
-    var tag_rows =[]
-    _.forEach(tag_form_data, function(tag_id) {
-        var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
-        var delete_btn = <span className="fa fa-times"></span>
-        tag_rows.push(<li> {tag_name} ({tag_id}) {delete_btn} </li>)
-    });
-
-    var calc_rows =[]
-    _.forEach(calc_form_data, function(tag_id) {
-        console.log(tag_id)
-    });
-
+    console.log('LOGGING INDICATOR ID BEFORE RENDER : ',indicatorId)
     return (
       <div className="row">
         <div className="small-8 columns">
@@ -127,18 +139,14 @@ var SimpleForm = React.createClass({
         </div>
         <div className="small-4 columns">
           <SimpleFormComponent
+              objectId={indicatorId}
+              contentType='indicator'
               componentTitle="Tags and Dashboards"
-              rowData={tag_rows}
+              getRowData={this.getSubComponentData}
               onClick={this.logSomething}
             >
           </SimpleFormComponent>
           <br></br>
-          <SimpleFormComponent
-              componentTitle="Component Indicators and Calculations"
-              rowData={calc_rows}
-              onClick={this.logSomething}
-            >
-          </SimpleFormComponent>
         </div>
       </div>
     );
