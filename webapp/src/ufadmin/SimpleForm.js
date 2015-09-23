@@ -42,7 +42,6 @@ var SimpleForm = React.createClass({
 
     console.log('alltags: ', allTags)
 
-    // var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
@@ -84,7 +83,13 @@ var SimpleForm = React.createClass({
 
     var tag_rows =[]
     _.forEach(tag_form_data, function(tag_id) {
-          var tag_row = <li>{tag_id}</li>
+
+          var tag_object = _.find(allTags, function(t) { return t.id === tag_id });
+          var tag_name = tag_object.tag_name
+
+          console.log('TAG OBJECT: ', tag_object)
+
+          var tag_row = <li> {tag_name} ({tag_id})</li>
           tag_rows.push(tag_row)
           console.log('tag_row', tag_row)
           return tag_row;
