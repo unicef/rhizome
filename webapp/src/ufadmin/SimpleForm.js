@@ -10,6 +10,42 @@ var ReactRouter = require('react-router')
 var { Route, Router} = ReactRouter;
 
 
+var SimpleFormComponent = React.createClass({
+  propTypes: {
+    componentTitle : React.PropTypes.string.isRequired,
+    onClick : React.PropTypes.isRequired,
+    style : React.PropTypes.object,
+    rowData : React.PropTypes.array,
+    },
+
+  render : function(){
+    var rowData = this.props.rowData;
+    var componentTitle = this.props.componentTitle;
+
+    var formComponentStyle = {
+      border: '1px dashed #000000',
+      width: '90%',
+      padding: '10px',
+    };
+
+    return <div style={formComponentStyle}>
+      <h4> {componentTitle} </h4>
+      <br></br>
+      <ul>
+        {rowData}
+      </ul>
+      <span
+        onClick={this.props.onClick}
+        className="fa fa-plus fa-large"
+      > add new tag!
+    </span>
+  </div>;
+
+
+  }
+
+})
+
 var SimpleForm = React.createClass({
   mixins: [
     Reflux.connect(SimpleFormStore, 'store'),
@@ -31,9 +67,6 @@ var SimpleForm = React.createClass({
 	},
 
   logSomething : function() {
-    console.log('logSomething')
-    console.log('logSomething')
-    console.log('logSomething')
     console.log('logSomething')
   },
 
@@ -70,18 +103,9 @@ var SimpleForm = React.createClass({
         var calc_form_data = {};
     };
 
-    var base_form_settings = {
-        form: true,
-    };
-
-    var tag_form_settings = {
-        form: true,
-        fields: { tag_json: {type: 'array'} }
-    };
-
     var base_form = <div>
         <p className="pageWelcome"> {form_welcome_text} </p>
-        <ReactJson value={ base_form_data } settings={ base_form_settings }/>,
+        <ReactJson value={ base_form_data } settings={{form: true}}/>,
       </div>;
 
     var tag_rows =[]
@@ -94,44 +118,7 @@ var SimpleForm = React.createClass({
     var calc_rows =[]
     _.forEach(calc_form_data, function(tag_id) {
         console.log(tag_id)
-        // var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
-        // var delete_btn = <span className="fa fa-times"></span>
-        // tag_rows.push(<li> {tag_name} ({tag_id}) {delete_btn} </li>)
     });
-
-    var formComponentStyle = {
-      border: '1px dashed #000000',
-      width: '90%',
-      padding: '10px',
-    };
-
-    var tag_form = <div style={formComponentStyle}>
-        <h4> Tags and Dashboards </h4>
-          <br></br>
-          <ul>
-            {tag_rows}
-          </ul>
-          <span
-            onClick={this.logSomething}
-            className="fa fa-plus fa-large"
-          > add new tag!
-        </span>
-      </div>;
-
-    var calc_form = <div style={formComponentStyle}>
-        <br></br>
-        <h4> Component Indicators </h4>
-        <ul>
-          {calc_rows}
-        </ul>
-        <span
-          onClick={this.logSomething}
-          className="fa fa-plus fa-large"
-          style={{"textAlign": "right"}}
-        > add new calculation!
-      </span>
-      <br></br>
-    </div>;
 
     return (
       <div className="row">
@@ -139,9 +126,19 @@ var SimpleForm = React.createClass({
           {base_form}
         </div>
         <div className="small-4 columns">
-          {tag_form}
+          <SimpleFormComponent
+              componentTitle="Tags and Dashboards"
+              rowData={tag_rows}
+              onClick={this.logSomething}
+            >
+          </SimpleFormComponent>
           <br></br>
-          {calc_form}
+          <SimpleFormComponent
+              componentTitle="Component Indicators and Calculations"
+              rowData={calc_rows}
+              onClick={this.logSomething}
+            >
+          </SimpleFormComponent>
         </div>
       </div>
     );
