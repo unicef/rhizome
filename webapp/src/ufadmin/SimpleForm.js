@@ -38,7 +38,7 @@ var SimpleForm = React.createClass({
   },
 
   render : function () {
-    var tag_form_data, bound_form_data, calc_form_data = {};
+    var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
     // console.log('this dot state : ', this.state)
@@ -67,7 +67,6 @@ var SimpleForm = React.createClass({
         var form_welcome_text = 'Update Indicator: ' + indicatorObject.short_name
         var base_form_data = {name: indicatorObject.name, short_name: indicatorObject.short_name}
         var tag_form_data = indicatorObject.tag_json;
-        var bound_form_data = {};
         var calc_form_data = {};
     };
 
@@ -89,24 +88,50 @@ var SimpleForm = React.createClass({
     _.forEach(tag_form_data, function(tag_id) {
         var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
         var delete_btn = <span className="fa fa-times"></span>
-        var tag_row = <li> {tag_name} ({tag_id}) {delete_btn} </li>
-        tag_rows.push(tag_row)
-        return tag_row;
+        tag_rows.push(<li> {tag_name} ({tag_id}) {delete_btn} </li>)
     });
 
-    var tag_form = <div>
-        <p className="pageWelcome"> some tag data </p>
+    var calc_rows =[]
+    _.forEach(calc_form_data, function(tag_id) {
+        console.log(tag_id)
+        // var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
+        // var delete_btn = <span className="fa fa-times"></span>
+        // tag_rows.push(<li> {tag_name} ({tag_id}) {delete_btn} </li>)
+    });
+
+    var formComponentStyle = {
+      border: '1px dashed #000000',
+      width: '90%',
+      padding: '10px',
+    };
+
+    var tag_form = <div style={formComponentStyle}>
+        <h4> Tags and Dashboards </h4>
+          <br></br>
           <ul>
             {tag_rows}
           </ul>
-
           <span
             onClick={this.logSomething}
             className="fa fa-plus fa-large"
-            style={{"textAlign": "right"}}
           > add new tag!
         </span>
       </div>;
+
+    var calc_form = <div style={formComponentStyle}>
+        <br></br>
+        <h4> Component Indicators </h4>
+        <ul>
+          {calc_rows}
+        </ul>
+        <span
+          onClick={this.logSomething}
+          className="fa fa-plus fa-large"
+          style={{"textAlign": "right"}}
+        > add new calculation!
+      </span>
+      <br></br>
+    </div>;
 
     return (
       <div className="row">
@@ -115,6 +140,8 @@ var SimpleForm = React.createClass({
         </div>
         <div className="small-4 columns">
           {tag_form}
+          <br></br>
+          {calc_form}
         </div>
       </div>
     );
