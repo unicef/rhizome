@@ -29,22 +29,15 @@ var SimpleFormStore = Reflux.createStore({
     // updating existing group? need to get more data
     if (self.data.indicatorId) {
       Promise.all([
-          api.indicators({ id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' })
+          api.indicators({ id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' }),
+          api.indicator_tag()
         ])
-        .then(_.spread(function(indicators) {
-
+        .then(_.spread(function(indicators, indicator_tags) {
+          var ind_tags = indicator_tags.objects
           var ind = indicators.objects[0]
-          // find current indicator
-          // var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
+
           self.data.indicatorObject = ind;
-
-          // select current permissions
-          // _.each(groupPermissions.objects, function(d) {
-          //   if (d.indicator_id) {
-          //     self.data.indicatorsSelected.push(self._indicatorIndex[d.indicator_id]);
-          //   }
-          // });
-
+          self.data.indTags = ind_tags;
           self.data.loading = false;
           self.trigger(self.data);
         }));

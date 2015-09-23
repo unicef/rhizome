@@ -38,6 +38,11 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
+    var allTags = this.state.store.indTags;
+
+    console.log('alltags: ', allTags)
+
+    // var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId });
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
