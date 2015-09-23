@@ -36,25 +36,22 @@ var SimpleFormComponent = React.createClass({
   },
 
   render : function(){
-    // var rowData = this.state.store.data.rowData;
+
     var rowData = this.props.rowData;
-    console.log('rowData ====>', rowData)
     if (!rowData){
       return <div>Loading Form Component </div>
     }
 
     var componentTitle = this.props.componentTitle;
-
     var formComponentStyle = {
       border: '1px dashed #000000',
       width: '90%',
       padding: '10px',
     };
 
-    var rowLi =[]
+    var rowLi = []
     _.forEach(rowData, function(row) {
-        var delete_btn = <span className="fa fa-times"></span>
-        rowLi.push(<li> 'fake name' ({row}) {delete_btn} </li>)
+        rowLi.push(<li>{row.display} ({row.id}) </li>)
     });
 
     return <div style={formComponentStyle}>
@@ -109,7 +106,12 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
-    var indicatorTagList  = this.state.store.indicatorTagList
+    var indicatorTagList  = []
+    _.forEach(this.state.store.indicatorTagList, function(row) {
+        var rowCleaned = {'id': row.id, 'display': row.id}
+        indicatorTagList.push(rowCleaned)
+    });
+
     var indicatorCalcList  = this.state.store.indicatorCalcList
     // self.data.indicatorCalcList = indicator_calc_list.objects;
 
@@ -160,7 +162,7 @@ var SimpleForm = React.createClass({
             <SimpleFormComponent
                 objectId={indicatorId}
                 contentType='indicator'
-                componentTitle="Indicator Calculations"
+                componentTitle="Component Indicators"
                 rowData={indicatorCalcList}
                 onClick={this.logSomething}
               >
