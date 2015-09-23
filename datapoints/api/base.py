@@ -150,6 +150,10 @@ class BaseModelResource(ModelResource):
                 # to do -> abstract this for all JSONField models
                 obj['submission_json'] = json.loads(obj['submission_json'])
 
+            if obj.has_key('dashboard_json'):
+                # to do -> abstract this for all JSONField models
+                obj['dashboard_json'] = json.loads(obj['dashboard_json'])
+
             bundles.append(obj)
 
         response_meta = {

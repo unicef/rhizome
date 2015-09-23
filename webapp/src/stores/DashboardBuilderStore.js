@@ -39,6 +39,8 @@ var DashboardBuilderStore = Reflux.createStore({
 	 		.then(function (response) {
 				console.log('GETTING DASHBOARD')
 	 			self.data.dashboard = response.objects[0];
+				console.log(response.objects[0].dashboard_json)
+				console.log('=====')
 	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
 	 			self.data.dashboardTitle = 	response.objects[0].title;
 	 			self.data.dashboardDescription = response.objects[0].description;
@@ -70,6 +72,7 @@ var DashboardBuilderStore = Reflux.createStore({
 		this.trigger(this.data);
     },
 	onAddChart:function(chartDef){
+		console.log('adding chart for chartdef --> : ',chartDef)
 	  chartDef.id = chartDef.title + (new Date()).valueOf();
 	  this.data.dashboard.charts.push(chartDef);
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});

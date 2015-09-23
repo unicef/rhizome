@@ -100,25 +100,32 @@ class DashboardResource(BaseModelResource):
 
         if request.POST:
 
-            try:
-                dash_id = request.POST['id']
-            except KeyError:
-                dash_id = -1
+            user_id = request.user.id
 
-            post_data = request.POST
+            try:
+                dash_id = int(request.POST['id'][0])
+            except KeyError:
+                dash_id = None
+
+            post_data = dict(request.POST)
+            defaults = {
+                'id' : dash_id,
+                'title' : post_data['title'][0],
+                'dashboard_json' : post_data['dashboard_json'][0],
+                # 'description' : post_data['description'][0],
+            }
 
             dashboard, created = CustomDashboard.objects.update_or_create(
-                id=dash_id,default_office_id=1, defaults=post_data
+                id=dash_id,\
+                owner_id = user_id,\
+                default_office_id=1,\
+                defaults=defaults
             )
-                # dash_id = -1
-                # print ' posting ..'
-                # print request.POST
-                # dash_title = request.POST['title']
-                # dash, created = CustomDashboard.objects.get_or_create(\
-                #     title=dash_title,
-                #     defaults = {'owner_id':request.user.id})
-            qs = CustomDashboard.objects.filter(id=dash_id).values()
+            dash_id = dashboard.id
+            qs = CustomDashboard.objects.filter(id=dash_id).values() #dash_id).values()
+
             return qs
+
         else:
             return super(DashboardResource, self).get_object_list(request)
 

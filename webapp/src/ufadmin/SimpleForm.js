@@ -47,15 +47,14 @@ var SimpleForm = React.createClass({
     if (!indicatorId){ // render a create form //
       var doc = {
           name: "HI THIS IS JOIN ",
-          short_name: " Hi "
+          short_name: 'john'
       };
     }
 
-
-
+    https://github.com/arqex/react-json/blob/master/docs/baseFieldTypes.md#array
     var settings = {
         form: true,
-        fields: { password: {type: 'password'} }
+        fields: { short_name: {type: 'text'} }
     };
 
     return (

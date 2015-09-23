@@ -298,22 +298,17 @@ module.exports = React.createClass({
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
 		          </a>
-
-
 		          <span>
 		          	&ensp;
 			          Description
-
 		              <TitleInput class="descriptionField" initialText={this.state.description} save={this._updateDescription} />
 		          </span>
 
 		          <span>
 	              	&ensp;Changes are saved when you make them.
-				  </span>
-
-	           </div>
-
-	         </div>
+				  		</span>
+           </div>
+       </div>
 	   );
 	   if(!this.state.store.loaded)
 	   {
@@ -321,11 +316,14 @@ module.exports = React.createClass({
 	   }
 	   else if(this.state.chartBuilderActive)
 	   {
-	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
-	   	console.log(chartDef,this.state.store.dashboard.charts);
+			console.log(this.state.store)
+			console.log(this.state.store.dashboard)
+			var chartDef = this.state.store.dashboard.charts[0]
+	    // var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
 	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} location={location} />);
 	   }
 	   else {
+
 	   	return dashboardBuilderContainer;
 	   }
 	}
