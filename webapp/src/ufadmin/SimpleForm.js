@@ -30,6 +30,13 @@ var SimpleForm = React.createClass({
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
+  logSomething : function() {
+    console.log('logSomething')
+    console.log('logSomething')
+    console.log('logSomething')
+    console.log('logSomething')
+  },
+
   render : function () {
     var tag_form_data, bound_form_data, calc_form_data = {};
 
@@ -92,6 +99,13 @@ var SimpleForm = React.createClass({
           <ul>
             {tag_rows}
           </ul>
+
+          <span
+            onClick={this.logSomething}
+            className="fa fa-plus fa-large"
+            style={{"textAlign": "right"}}
+          > add new tag!
+        </span>
       </div>;
 
     return (
