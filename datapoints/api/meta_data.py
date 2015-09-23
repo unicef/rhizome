@@ -105,13 +105,10 @@ class DashboardResource(BaseModelResource):
             except KeyError:
                 dash_id = -1
 
-            # new_ID, UPDATED_ID
-
             post_data = request.POST
-            post_data['default_office_id'] = 1
 
             dashboard, created = CustomDashboard.objects.update_or_create(
-                id=dash_id, defaults=post_data
+                id=dash_id,default_office_id=1, defaults=post_data
             )
                 # dash_id = -1
                 # print ' posting ..'
