@@ -4,9 +4,7 @@ var Reflux = require('reflux');
 var api = require('data/api');
 var _      = require('lodash');
 
-
 var SimpleFormActions = require('actions/SimpleFormActions');
-
 
 var SimpleFormStore = Reflux.createStore({
   data: {
@@ -45,19 +43,20 @@ var SimpleFormStore = Reflux.createStore({
       self.data.loading = false;
       self.trigger(self.data);
     }
-  },
-  getTagForIndicator: function(indicator_id) {
-      var self = this;
+    },
+  onGetTagForIndicator: function(indicator_id) {
+    var self = this;
 
-      api.indicator_to_tag({ indicator_id: indicator_id }).
-        then(function(response){
-          var indicatorTags = response.objects
+    Promise.all([api.indicator_to_tag({ indicator_id: 164 })])
+      .then(_.spread(function(response) {
+        var indicatorTags = response.objects
 
-          self.data.rowData = indicatorTags;
-          self.data.loading = false;
-          self.trigger(self.data);
-        })
-      },
+        self.data.rowData = indicatorTags;
+        self.data.loading = false;
+        self.trigger(self.data);
+
+      }));
+    },
 
 });
 

@@ -11,28 +11,38 @@ var { Route, Router} = ReactRouter;
 
 
 var SimpleFormComponent = React.createClass({
+  mixins: [
+    Reflux.connect(SimpleFormStore, 'store'),
+    // ReactRouter.State ,
+  ],
+
   propTypes: {
     objectId : React.PropTypes.number.isRequired,
     contentType : React.PropTypes.string.isRequired,
     componentTitle : React.PropTypes.string.isRequired,
     onClick : React.PropTypes.isRequired,
-    getRowData : React.PropTypes.isRequired,
+    rowData : React.PropTypes.array,
     },
 
   getInitialState : function(){
     return {
         modalIsOpen: false,
-        rowData : null
       }
   },
 
-  componentWillMount: function() {
-    console.log('gETTING ROW DATA SUB COMPONENT')
-    this.props.getRowData(164)
-	},
+  componentWillMount: function () {
+    console.log('=== MOUNTING ==')
+    // SimpleFormActions.initialize();
+  },
 
   render : function(){
-    var rowData = this.state.rowData;
+    // var rowData = this.state.store.data.rowData;
+    var rowData = this.props.rowData;
+    console.log('rowData ====>', rowData)
+    if (!rowData){
+      return <div>Loading Form Component </div>
+    }
+
     var componentTitle = this.props.componentTitle;
 
     var formComponentStyle = {
@@ -43,11 +53,9 @@ var SimpleFormComponent = React.createClass({
 
     var rowLi =[]
     _.forEach(rowData, function(row) {
-        // var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
         var delete_btn = <span className="fa fa-times"></span>
-        rowData.push(<li> 'fake name' ({row.id}) {delete_btn} </li>)
+        rowLi.push(<li> 'fake name' ({row}) {delete_btn} </li>)
     });
-
 
     return <div style={formComponentStyle}>
       <h4> {componentTitle} </h4>
@@ -81,7 +89,7 @@ var SimpleForm = React.createClass({
   },
 
   componentWillMount: function() {
-    console.log('query indicators for id: ',this.props.params.id)
+    console.log('initialize parent component and query /api/v1/indicator/ ',this.props.params.id)
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
@@ -101,7 +109,6 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
-    var allTags = this.state.store.indTags;
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
@@ -122,7 +129,7 @@ var SimpleForm = React.createClass({
     else {
         var form_welcome_text = 'Update Indicator: ' + indicatorObject.short_name
         var base_form_data = {name: indicatorObject.name, short_name: indicatorObject.short_name}
-        var tag_form_data = indicatorObject.tag_json;
+        var tagData = indicatorObject.tag_json;
         var calc_form_data = {};
     };
 
@@ -142,7 +149,7 @@ var SimpleForm = React.createClass({
               objectId={indicatorId}
               contentType='indicator'
               componentTitle="Tags and Dashboards"
-              getRowData={this.getSubComponentData}
+              rowData={tagData}
               onClick={this.logSomething}
             >
           </SimpleFormComponent>
