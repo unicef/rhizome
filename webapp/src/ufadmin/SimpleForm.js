@@ -106,14 +106,16 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
-    var indicatorTagList  = []
-    _.forEach(this.state.store.indicatorTagList, function(row) {
-        var rowCleaned = {'id': row.id, 'display': row.id}
-        indicatorTagList.push(rowCleaned)
+
+    var indicatorTagList  = _.map(this.state.store.indicatorTagList, function(row) {
+        var rowCleaned = {'id': row.id, 'display': row.indicator_tag__tag_name}
+        return rowCleaned
     });
 
-    var indicatorCalcList  = this.state.store.indicatorCalcList
-    // self.data.indicatorCalcList = indicator_calc_list.objects;
+    var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
+        var rowCleaned = {'id': row.id, 'display': row.indicator_component__short_name}
+        return rowCleaned
+    });
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
