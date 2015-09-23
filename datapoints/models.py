@@ -125,7 +125,6 @@ class CalculatedIndicatorComponent(models.Model):
     calculation = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
-
     def __unicode__(self):
         return unicode(self.indicator.name)
 

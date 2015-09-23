@@ -42,6 +42,7 @@ var SimpleFormComponent = React.createClass({
       return <div>Loading Form Component </div>
     }
 
+    var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
     var formComponentStyle = {
       border: '1px dashed #000000',
@@ -63,7 +64,7 @@ var SimpleFormComponent = React.createClass({
       <span
         onClick={this.props.onClick}
         className="fa fa-plus fa-large"
-      > add new tag!
+      > add new {contentType}!
       </span>
     </div>;
   }
@@ -86,7 +87,6 @@ var SimpleForm = React.createClass({
   },
 
   componentWillMount: function() {
-    console.log('initialize parent component and query /api/v1/indicator/ ',this.props.params.id)
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
@@ -113,7 +113,7 @@ var SimpleForm = React.createClass({
     });
 
     var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
-        var rowCleaned = {'id': row.id, 'display': row.indicator_component__short_name}
+        var rowCleaned = {'id': row.indicator_component_id, 'display': row.indicator_component__short_name}
         return rowCleaned
     });
 
@@ -145,7 +145,6 @@ var SimpleForm = React.createClass({
         <ReactJson value={ base_form_data } settings={base_form_settings}/>,
       </div>;
 
-    console.log('LOGGING INDICATOR ID BEFORE RENDER : ',indicatorId)
     return (
       <div className="row">
         <div className="small-8 columns">
@@ -154,7 +153,7 @@ var SimpleForm = React.createClass({
         <div className="small-4 columns">
           <SimpleFormComponent
               objectId={indicatorId}
-              contentType='indicator'
+              contentType='indicator_tag'
               componentTitle="Tags and Dashboards"
               rowData={indicatorTagList}
               onClick={this.logSomething}
@@ -163,7 +162,7 @@ var SimpleForm = React.createClass({
           <br></br>
             <SimpleFormComponent
                 objectId={indicatorId}
-                contentType='indicator'
+                contentType='indicator_component'
                 componentTitle="Component Indicators"
                 rowData={indicatorCalcList}
                 onClick={this.logSomething}
@@ -176,72 +175,3 @@ var SimpleForm = React.createClass({
 });
 
 module.exports = SimpleForm;
-
-
-// module.exports = {
-// 	template: require('./template.html'),
-// 	data: function(){
-// 	  return {
-// 		locations:[],
-// 		groups:[]
-// 	  };
-// 	},
-// 	created: function() {
-// 	  var self = this;
-//
-// 	  self.$set('tagLoading',true);
-//
-// 		// load indicators in the table
-// 		self.loadIndicatorTag();
-//
-// 		// render tag tree dropdown
-// 		api.tagTree() //
-// 			.then(function(response) {
-// 				var ddProps = {
-// 					tag_tree: response.objects,
-// 					text: 'Add Tag',
-// 					sendValue: self.addTagToIndicator
-// 				};
-// 				self.indicatorDropdown = React.render(React.createElement(IndicatorTagDropdownMenu, ddProps), document.getElementById("tagSelector"));
-// 			});
-//
-// 	},
-// 		addTagToIndicator: function(data){
-// 	    var self = this;
-// 	    self.$set('tagLoading',true);
-// 	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
-// 	      self.loadIndicatorTag();
-// 	    });
-// 	  },
-// 	  deleteTagFromIndicator: function(data){
-// 	    var self = this;
-// 	    api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data
-// 				,id:'' }).then(function(){
-// 	      self.loadIndicatorTag();
-// 	    });
-// 	  },
-// 	  loadIndicatorTag: function(){
-// 			// first load the tags, then map the values of the given indicator //
-// 	    var self = this;
-// 	    self.$set('tagLoading',true);
-//
-// 			api.indicator_tag().then(function(data){
-// 				var tag_map = [];
-// 				var indicator_tags = data.objects;
-// 				_.forEach(indicator_tags,function(tag){
-// 					tag_map[tag.id] = tag.tag_name;
-// 				});
-// 				self.$set('tag_map',tag_map);
-// 			});
-//
-// 			api.indicator_to_tag({indicator_id:this.$parent.$data.indicator_id},null,{'cache-control':'no-cache'}).then(function(data){
-// 				var indicator_tags = data.objects;
-// 				_.forEach(indicator_tags,function(indicator_tag){
-// 				   indicator_tag.tag_name = self.tag_map[indicator_tag.indicator_tag_id];
-// 				 });
-// 				self.$set('indicator_tags',indicator_tags);
-// 				self.$set('tagLoading',false);
-// 			});
-// 		},
-// 	}
-// };
