@@ -157,7 +157,15 @@ var SimpleForm = React.createClass({
             >
           </SimpleFormComponent>
           <br></br>
-        </div>
+            <SimpleFormComponent
+                objectId={indicatorId}
+                contentType='indicator'
+                componentTitle="Indicator Calculations"
+                rowData={indicatorCalcList}
+                onClick={this.logSomething}
+              >
+            </SimpleFormComponent>
+          </div>
       </div>
     );
   }
