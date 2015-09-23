@@ -213,6 +213,7 @@ module.exports = Reflux.createStore({
 	   return this.data;
 	},
 	onInitialize: function(chartDef,location,campaign){
+	console.log('on initialize chart def:', chartDef)
 	console.log('on initialize:', location)
 	console.log('on initialize:', campaign)
 

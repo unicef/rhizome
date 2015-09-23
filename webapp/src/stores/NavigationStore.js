@@ -91,6 +91,7 @@ var NavigationStore = Reflux.createStore({
           path = '/'
         }
 
+        console.log(d)
         // Patch the non-comformant API response
         d.charts = d.charts || d.dashboard_json;
 

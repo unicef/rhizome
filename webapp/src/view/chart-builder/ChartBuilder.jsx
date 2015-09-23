@@ -97,6 +97,11 @@ module.exports = React.createClass({
     this.setState(state);
   },
   createChart: function () {
+
+    console.log('CREATING CHART callback:', this.props.callback )
+    console.log(this.props.callback )
+    console.log(this.state)
+
     this.props.callback(this.state.store.chartDefinition());
   },
 

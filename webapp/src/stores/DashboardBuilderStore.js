@@ -152,6 +152,7 @@ var DashboardBuilderStore = Reflux.createStore({
 	      default_office_id: null,
 	      dashboard_json:JSON.stringify(this.data.dashboard.charts)
 	    };
+			console.log('trying to save dashboard..')
 	    api.save_dashboard(data).then(function(response){
 	       console.log(response);
 	       //self.data.charts = response.objects[0].dashboard_json;
@@ -159,6 +160,10 @@ var DashboardBuilderStore = Reflux.createStore({
 	    });
 	},
 	onUpdateChart:function(chartDef,index){
+
+		console.log('chartDef: ', chartDef)
+		console.log('index: ', index)
+
 	  this.data.dashboard.charts[index] = chartDef;
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
 	  this.saveDashboard();
