@@ -37,35 +37,44 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
-    console.log('indicatorObject : ', indicatorObject)
 
     if (indicatorId && !indicatorObject){
       return <div>'LOADING'</div>
     }
 
-    var doc = indicatorObject
-    if (!indicatorId){ // render a create form //
-      var doc = {
-          name: "HI THIS IS JOIN ",
-          short_name: 'john'
-      };
+    if (!indicatorId){
+    // render a create form with none of the additional components //
+        var form_welcome_text = 'Create a New Indicator Below'
+        base_form_data = {
+            name: "",
+            short_name: ''
+        };
+        var tag_form_data = {};
+        var bound_form_data = {};
+        var calc_form_data = {};
     }
-
-    https://github.com/arqex/react-json/blob/master/docs/baseFieldTypes.md#array
-    var settings = {
-        form: true,
-        fields: { short_name: {type: 'text'} }
+    else {
+        var form_welcome_text = 'Update Indicator: ' + indicatorObject.short_name
+        var base_form_data = {name: indicatorObject.name, short_name: indicatorObject.short_name}
+        var tag_form_data = {};
+        var bound_form_data = {};
+        var calc_form_data = {};
     };
+
+    var base_form_settings = {
+        form: true,
+    };
+
+    var base_form = <div>
+        <p className="pageWelcome"> {form_welcome_text} </p>
+        <ReactJson value={ base_form_data } settings={ base_form_settings }/>,
+      </div>
+;
 
     return (
       <div className="row">
         <div className="small-8 columns">
-          <p className="pageWelcome">
-            Create an Indicator Below
-          </p>
-          <form>
-            <ReactJson value={ doc } settings={ settings }/>,
-          </form>
+          {base_form}
         </div>
       </div>
     );
