@@ -227,6 +227,7 @@ module.exports = {
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
   location_type: endPoint('/location_type/', 'get', 1),
+  indicator_calculation: endPoint('/indicator_calculation/', 'get', 1),
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
@@ -239,7 +240,7 @@ module.exports = {
   get_source_object_map: endPoint('/source_object_map/','get',1),
   user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
-    
+
   // SOURCE DATA DASHBOARD REQUESTS //
   source_doc: endPoint('/source_doc/', 'get', 1),
   submission: endPoint('/source_submission/', 'get', 1, false),

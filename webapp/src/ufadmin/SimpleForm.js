@@ -109,6 +109,9 @@ var SimpleForm = React.createClass({
 
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
+    var indicatorTagList  = this.state.store.indicatorTagList
+    var indicatorCalcList  = this.state.store.indicatorCalcList
+    // self.data.indicatorCalcList = indicator_calc_list.objects;
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
@@ -125,17 +128,17 @@ var SimpleForm = React.createClass({
         };
     }
 
-    // CASE 3 -> He have the object - render the 3 component forms for indicator
+    // CASE 3 -> He have the object - render the component forms for indicator
     else {
         var form_welcome_text = 'Update Indicator: ' + indicatorObject.short_name
         var base_form_data = {name: indicatorObject.name, short_name: indicatorObject.short_name}
-        var tagData = indicatorObject.tag_json;
         var calc_form_data = {};
     };
 
+    var base_form_settings = {form: true}
     var base_form = <div>
         <p className="pageWelcome"> {form_welcome_text} </p>
-        <ReactJson value={ base_form_data } settings={{form: true}}/>,
+        <ReactJson value={ base_form_data } settings={base_form_settings}/>,
       </div>;
 
     console.log('LOGGING INDICATOR ID BEFORE RENDER : ',indicatorId)
@@ -149,7 +152,7 @@ var SimpleForm = React.createClass({
               objectId={indicatorId}
               contentType='indicator'
               componentTitle="Tags and Dashboards"
-              rowData={tagData}
+              rowData={indicatorTagList}
               onClick={this.logSomething}
             >
           </SimpleFormComponent>

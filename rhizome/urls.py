@@ -46,6 +46,7 @@ v1_api.register(ComputedDataPointResource())
 v1_api.register(RefreshMasterResource())
 v1_api.register(DocDetailTypeResource())
 v1_api.register(DocTransFormResource())
+v1_api.register(CalculatedIndicatorComponentResource())
 
 urlpatterns = patterns('',
 

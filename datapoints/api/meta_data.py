@@ -88,9 +88,42 @@ class IndicatorTagResource(BaseModelResource):
 
 class IndicatorToTagResource(BaseModelResource):
 
+    def get_object_list(self,request):
+
+        try:
+            indicator_id = request.GET['indicator_id']
+        except KeyError:
+            indicator_id = -1
+
+        qs = IndicatorToTag.objects\
+            .filter(indicator_id=indicator_id).values()
+        # qs = CalculatedIndicatorComponent.objects.values()
+
+        return qs
+
     class Meta(BaseModelResource.Meta):
-        queryset = IndicatorToTag.objects.all().values()
+        # queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'
+
+class CalculatedIndicatorComponentResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        # queryset = CalculatedIndicatorComponent.objects.all().values()
+        resource_name = 'indicator_calculation'
+
+    def get_object_list(self,request):
+
+        try:
+            indicator_id = request.GET['indicator_id']
+        except KeyError:
+            indicator_id = -1
+
+        qs = CalculatedIndicatorComponent.objects\
+            .filter(indicator_id=indicator_id).values()
+        # qs = CalculatedIndicatorComponent.objects.values()
+
+        return qs
+
 
 class DashboardResource(BaseModelResource):
 
