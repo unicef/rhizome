@@ -40,9 +40,6 @@ var SimpleForm = React.createClass({
     var indicatorObject  = this.state.store.indicatorObject
     var allTags = this.state.store.indTags;
 
-    console.log('alltags: ', allTags)
-
-
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
       return <div>'LOADING'</div>
@@ -83,17 +80,12 @@ var SimpleForm = React.createClass({
 
     var tag_rows =[]
     _.forEach(tag_form_data, function(tag_id) {
-
-          var tag_object = _.find(allTags, function(t) { return t.id === tag_id });
-          var tag_name = tag_object.tag_name
-
-          console.log('TAG OBJECT: ', tag_object)
-
-          var tag_row = <li> {tag_name} ({tag_id})</li>
-          tag_rows.push(tag_row)
-          console.log('tag_row', tag_row)
-          return tag_row;
-        });
+        var tag_name = _.find(allTags, function(t) { return t.id === tag_id }).tag_name;
+        var delete_btn = <span className="fa fa-times"></span>
+        var tag_row = <li> {tag_name} ({tag_id}) {delete_btn} </li>
+        tag_rows.push(tag_row)
+        return tag_row;
+    });
 
     var tag_form = <div>
         <p className="pageWelcome"> some tag data </p>
