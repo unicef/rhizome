@@ -40,24 +40,16 @@ var SimpleFormComponent = React.createClass({
   },
 
   componentWillMount: function () {
-    var self = this;
-
+    // shoudld be.. this.props.getRowData //
     SimpleFormActions.getTagForIndicator(this.props.objectId)
-    console.log('=====mounting======')
-    var x = this.props.getRowData()
-    console.log('===========', x)
-
     // shoudld be.. this.props.getDropDownData //
-    // api.tagTree().then(function(response){
-    //     self.setState({dropDownData: response.objects})
-    //     console.log('taG response respone',response.objects)
-    // })
+    // SimpleFormActions.getTagForIndicator(this.props.objectId)
   },
 
   render : function(){
 
-    console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
+    // console.log('this dot props: ', this.props)
+    // console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
@@ -83,7 +75,6 @@ var SimpleFormComponent = React.createClass({
     if (contentType == 'indicator_tag'){
       var tagTree = this.state.dropDownData
 
-      console.log('HELELLOO')
       var componentForm = <div>
         <IndicatorTagDropdownMenu
           tag_tree={tagTree}
