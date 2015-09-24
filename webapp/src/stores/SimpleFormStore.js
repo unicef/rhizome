@@ -77,20 +77,22 @@ var SimpleFormStore = Reflux.createStore({
     // });
   },
 
-  onGetTagForIndicator: function(indicator_id) {
+  onInitIndicatorToTag: function(indicator_id) {
     var self = this;
 
-    Promise.all([api.indicator_to_tag({ indicator_id: indicator_id })])
-      .then(_.spread(function(response) {
-        var indicatorTags = response.objects
+    Promise.all(
+      [api.indicator_to_tag({ indicator_id: indicator_id }),
+       api.tagTree()] // cache_control
+      )
+      .then(_.spread(function(indicator_to_tag,tag_tree) {
+        var indicatorTags = indicator_to_tag.objects
+        var allTags = tag_tree.objects
 
         self.data.rowData = indicatorTags;
+        self.data.dropDownData = allTags;
 
         self.data.loading = false;
         self.trigger(self.data);
-
-        // console.log('indicatorTags',indicatorTags)
-        // console.log('====indicatorTags====')
 
         return indicatorTags
 

@@ -41,7 +41,7 @@ var SimpleFormComponent = React.createClass({
 
   componentWillMount: function () {
     // shoudld be.. this.props.getRowData //
-    SimpleFormActions.getTagForIndicator(this.props.objectId)
+    SimpleFormActions.initIndicatorToTag(this.props.objectId)
     // shoudld be.. this.props.getDropDownData //
     // SimpleFormActions.getTagForIndicator(this.props.objectId)
   },
@@ -73,7 +73,7 @@ var SimpleFormComponent = React.createClass({
     var componentForm = ''
     console.log(contentType)
     if (contentType == 'indicator_tag'){
-      var tagTree = this.state.dropDownData
+      var tagTree = this.state.store.dropDownData
 
       var componentForm = <div>
         <IndicatorTagDropdownMenu
