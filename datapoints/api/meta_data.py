@@ -122,7 +122,7 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         qs = CalculatedIndicatorComponent.objects\
             .filter(indicator_id=indicator_id)\
             .values('id','indicator_id','indicator_component_id'
-            ,'indicator_component__short_name')
+            ,'indicator_component__short_name','calculation')
 
         return qs
 

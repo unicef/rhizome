@@ -61,7 +61,7 @@ var SimpleForm = React.createClass({
     });
 
     var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
-        var rowCleaned = {'id': row.indicator_component_id, 'display': row.indicator_component__short_name}
+        var rowCleaned = {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
         return rowCleaned
     });
 
