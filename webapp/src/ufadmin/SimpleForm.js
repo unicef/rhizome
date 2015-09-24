@@ -39,6 +39,7 @@ var SimpleForm = React.createClass({
     SimpleFormActions.addIndicatorCalc(this.props.params.id)
     // component makes query as ooposed to passing the data via props //
     console.log('addIndicatorCalc')
+    console.log('addIndicatorCalc')
   },
   // // component makes query as ooposed to passing the data via props //
   // getSubComponentData : function() {

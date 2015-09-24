@@ -7,13 +7,9 @@ var ReactJson = require('react-json')
 var ReactRouter = require('react-router')
 var { Route, Router} = ReactRouter;
 
+var SimpleFormModal = require('./SimpleFormModal');
 
 var SimpleFormComponent = React.createClass({
-  // mixins: [
-  //   Reflux.connect(SimpleFormStore, 'store'),
-  //   // ReactRouter.State ,
-  // ],
-
   propTypes: {
     objectId : React.PropTypes.number.isRequired,
     contentType : React.PropTypes.string.isRequired,
@@ -65,11 +61,12 @@ var SimpleFormComponent = React.createClass({
         <ul>
           {rowLi}
         </ul>
-      <span
+      <SimpleFormModal
         onClick={this.props.onClick}
-        className="fa fa-plus fa-large"
-      > add new {contentType}!
-      </span>
+        contentType={contentType}
+        >
+      </SimpleFormModal>
+
     </div>;
   }
 })
