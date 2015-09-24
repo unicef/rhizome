@@ -8,7 +8,8 @@ var ReactJson = require('react-json')
 var ReactRouter = require('react-router')
 var { Route, Router} = ReactRouter;
 
-var SimpleFormModal = require('./SimpleFormModal');
+var SimpleFormStore = require('stores/SimpleFormStore');
+var SimpleFormActions = require('actions/SimpleFormActions');
 var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
 
 var SimpleFormComponent = React.createClass({
@@ -17,9 +18,13 @@ var SimpleFormComponent = React.createClass({
     contentType : React.PropTypes.string.isRequired,
     componentTitle : React.PropTypes.string.isRequired,
     onClick : React.PropTypes.isRequired,
-    rowData : React.PropTypes.array,
+    getRowData : React.PropTypes.func.isRequired,
     getDropDownData : React.PropTypes.isRequired,
     },
+
+  mixins: [
+    Reflux.connect(SimpleFormStore, 'store'),
+  ],
 
   getDefaultProps : function () {
     return {
@@ -29,29 +34,34 @@ var SimpleFormComponent = React.createClass({
 
   getInitialState : function(){
     return {
-        modalIsOpen: false,
+        rowData: [],
         dropDownData: []
       }
   },
 
   componentWillMount: function () {
     var self = this;
+
+    SimpleFormActions.getTagForIndicator(this.props.objectId)
     console.log('=====mounting======')
+    var x = this.props.getRowData()
+    console.log('===========', x)
+
     // shoudld be.. this.props.getDropDownData //
-    api.tagTree().then(function(response){
-        self.setState({dropDownData: response.objects})
-        console.log('taG response respone',response.objects)
-    })
+    // api.tagTree().then(function(response){
+    //     self.setState({dropDownData: response.objects})
+    //     console.log('taG response respone',response.objects)
+    // })
   },
 
   render : function(){
 
-    // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
+    console.log('this dot props: ', this.props)
+    console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
-    var rowData = this.props.rowData;
+    var rowData = this.state.store.rowData;
 
     if (!rowData){
       return <div>Loading Form Component </div>

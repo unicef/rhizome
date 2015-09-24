@@ -29,6 +29,10 @@ var SimpleForm = React.createClass({
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
+  getTagForIndicator : function() {
+    SimpleFormActions.getTagForIndicator(this.props.params.id)
+  },
+
   addTagToIndicator : function(e) {
     var tag_id = e
     SimpleFormActions.addTagToIndicator(this.props.params.id, e)
@@ -41,13 +45,7 @@ var SimpleForm = React.createClass({
   addIndicatorCalc : function() {
     SimpleFormActions.addIndicatorCalc(this.props.params.id)
     // component makes query as ooposed to passing the data via props //
-    console.log('addIndicatorCalc')
-    console.log('addIndicatorCalc')
   },
-  // // component makes query as ooposed to passing the data via props //
-  // getSubComponentData : function() {
-  //   console.log('getSubComponentData')
-  // },
 
   render : function () {
     var tag_form_data, calc_form_data = {};
@@ -58,15 +56,15 @@ var SimpleForm = React.createClass({
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
 
-    var indicatorTagList  = _.map(this.state.store.indicatorTagList, function(row) {
-        var rowCleaned = {'id': row.id, 'display': row.indicator_tag__tag_name}
-        return rowCleaned
-    });
-
-    var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
-        var rowCleaned = {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
-        return rowCleaned
-    });
+    // var indicatorTagList  = _.map(this.state.store.indicatorTagList, function(row) {
+    //     var rowCleaned = {'id': row.id, 'display': row.indicator_tag__tag_name}
+    //     return rowCleaned
+    // });
+    //
+    // var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
+    //     var rowCleaned = {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
+    //     return rowCleaned
+    // });
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
@@ -106,7 +104,7 @@ var SimpleForm = React.createClass({
               objectId={indicatorId}
               contentType='indicator_tag'
               componentTitle="Tags and Dashboards"
-              rowData={indicatorTagList}
+              getRowData={this.getTagForIndicator}
               onClick={this.addTagToIndicator}
               getDropDownData={this.getIndicatorTree}
             >
@@ -116,7 +114,7 @@ var SimpleForm = React.createClass({
                 objectId={indicatorId}
                 contentType='indicator_component'
                 componentTitle="Component Indicators"
-                rowData={indicatorCalcList}
+                getRowData={this.getTagForIndicator}
                 onClick={this.addIndicatorCalc}
                 getDropDownData={this.getIndicatorTree}
               >
