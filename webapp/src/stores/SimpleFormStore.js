@@ -49,18 +49,20 @@ var SimpleFormStore = Reflux.createStore({
       }
     },
 
-	// addTagToIndicator: function(data){
-  //   var self = this;
-  //   api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
-  //     self.loadIndicatorTag();
-  //   });
-  // },
-  // deleteTagFromIndicator: function(data){
-  //   var self = this;
-  //   api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data,id:'' }).then(function(){
-  //     self.loadIndicatorTag();
-  //   });
-  // },
+	addTagToIndicator: function(data){
+    console.log('addTagToIndicator')
+    // var self = this;
+    // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
+    //   self.loadIndicatorTag();
+    // });
+  },
+  deleteTagFromIndicator: function(data){
+    console.log(deleteTagFromIndicator)
+    // var self = this;
+    // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data,id:'' }).then(function(){
+    //   self.loadIndicatorTag();
+    // });
+  },
 
   // onGetTagForIndicator: function(indicator_id) {
   //   var self = this;
