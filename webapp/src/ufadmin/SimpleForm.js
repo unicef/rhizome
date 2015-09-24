@@ -74,7 +74,7 @@ var SimpleForm = React.createClass({
     // render a create form with none of the additional components //
     if (!indicatorId){
         var form_welcome_text = 'Create a New Indicator Below'
-        base_form_data = {
+        var base_form_data = {
             name: "",
             short_name: ''
         };

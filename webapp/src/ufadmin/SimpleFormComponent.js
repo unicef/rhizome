@@ -55,6 +55,10 @@ var SimpleFormComponent = React.createClass({
         rowLi.push(<li>{row.display} ({row.id}) </li>)
     });
 
+    var modalForm = <div>
+      <ReactJson value={ {'hello':'','world':''} } settings={{form: true}}/>,
+    </div>;
+
     return <div style={formComponentStyle}>
       <h4> {componentTitle} </h4>
         <br></br>
@@ -62,6 +66,7 @@ var SimpleFormComponent = React.createClass({
           {rowLi}
         </ul>
       <SimpleFormModal
+        modalForm={modalForm}
         onClick={this.props.onClick}
         contentType={contentType}
         >

@@ -12,6 +12,7 @@ Modal.injectCSS();
 
 var SimpleFormModal = React.createClass({
 	propTypes: {
+		modalForm : React.PropTypes.object,
 	  onClick 	: React.PropTypes.isRequired,
 		contentType : React.PropTypes.string.isRequired,
 
@@ -40,6 +41,7 @@ render : function(){
 
   var modalStyle = {width:650, height:500, marginLeft:400};
 	var contentType = this.props.contentType;
+	var modalForm = this.props.modalForm;
 
   return <div>
 						<span
@@ -52,7 +54,8 @@ render : function(){
 	            isOpen={this.state.modalIsOpen}
 	            onRequestClose={this.closeModal}
 	          >
-	              <h1> SOMETHING </h1>
+	              <h1> {contentType} </h1>
+								{modalForm}
 	          </Modal>
 					</div>
 
