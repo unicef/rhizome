@@ -56,11 +56,6 @@ var SimpleForm = React.createClass({
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
 
-    // var indicatorTagList  = _.map(this.state.store.indicatorTagList, function(row) {
-    //     var rowCleaned = {'id': row.id, 'display': row.indicator_tag__tag_name}
-    //     return rowCleaned
-    // });
-    //
     // var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
     //     var rowCleaned = {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
     //     return rowCleaned

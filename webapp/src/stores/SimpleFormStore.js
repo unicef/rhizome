@@ -28,12 +28,10 @@ var SimpleFormStore = Reflux.createStore({
     if (self.data.indicatorId) {
       Promise.all([
           api.indicators({ id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' }),
-          api.indicator_calculation({ indicator_id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' }),
         ])
-        .then(_.spread(function(indicators, indicator_calc_list) {
+        .then(_.spread(function(indicators) {
 
           self.data.indicatorObject = indicators.objects[0];
-          self.data.indicatorCalcList = indicator_calc_list.objects;
 
           self.data.loading = false;
           self.trigger(self.data);
@@ -82,11 +80,13 @@ var SimpleFormStore = Reflux.createStore({
 
     Promise.all(
       [api.indicator_to_tag({ indicator_id: indicator_id }),
-       api.tagTree()] // cache_control
+       api.tagTree({},null,{'cache-control':'no-cache'})] // cache_control
       )
       .then(_.spread(function(indicator_to_tag,tag_tree) {
-        var indicatorTags = indicator_to_tag.objects
         var allTags = tag_tree.objects
+        var indicatorTags = _.map(indicator_to_tag.objects, function(row) {
+            return {'id': row.id, 'display': row.indicator_tag__tag_name}
+        });
 
         self.data.rowData = indicatorTags;
         self.data.dropDownData = allTags;
