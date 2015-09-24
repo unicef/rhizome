@@ -91,6 +91,21 @@ class IndicatorToTagResource(BaseModelResource):
     def get_object_list(self,request):
 
         try:
+            indicator_id = request.POST['indicator_id']
+            indicator_tag_id = request.POST['indicator_tag_id']
+
+            it = IndicatorToTag.objects.create(
+                indicator_id = indicator_id,
+                indicator_tag_id = indicator_tag_id,
+            )
+
+            return IndicatorToTag.objects.filter(id=it.id).values()
+
+        except KeyError:
+            pass
+
+
+        try:
             indicator_id = request.GET['indicator_id']
         except KeyError:
             indicator_id = -1
@@ -101,6 +116,7 @@ class IndicatorToTagResource(BaseModelResource):
                 'indicator_tag__tag_name')
 
         return qs
+
 
     class Meta(BaseModelResource.Meta):
         # queryset = IndicatorToTag.objects.all().values()
