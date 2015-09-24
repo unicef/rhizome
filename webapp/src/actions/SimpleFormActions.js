@@ -7,6 +7,6 @@ module.exports = Reflux.createActions([
   "initialize",
   "addTagToIndicator",
   "addIndicatorCalc",
-  // "updateName",
+  "getTagTree",
   // "saveGroupForm"
 ]);

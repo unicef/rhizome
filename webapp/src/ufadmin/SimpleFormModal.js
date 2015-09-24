@@ -15,7 +15,6 @@ var SimpleFormModal = React.createClass({
 		modalForm : React.PropTypes.object,
 	  onClick 	: React.PropTypes.isRequired,
 		contentType : React.PropTypes.string.isRequired,
-
   },
 
 	getInitialState: function() {
@@ -26,10 +25,6 @@ var SimpleFormModal = React.createClass({
 
   openModal: function() {
     this.setState({ modalIsOpen: true });
-    // api.submission({id: this.props.source_submission_id})
-		// .then(response => this.setState({
-		// 		submission_data: response.objects[0],
-		// }));
   },
 
   closeModal: function() {
@@ -37,9 +32,9 @@ var SimpleFormModal = React.createClass({
   },
 
 
-render : function(){
+	render : function(){
 
-  var modalStyle = {width:650, height:500, marginLeft:400};
+  var modalStyle = {'margin':'auto','marginTop':'50px', 'width':'50%', 'height':'300px'};
 	var contentType = this.props.contentType;
 	var modalForm = this.props.modalForm;
 

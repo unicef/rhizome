@@ -49,6 +49,13 @@ var SimpleFormStore = Reflux.createStore({
       }
     },
 
+  onGetTagTree: function(data){
+      api.tagTree().then(function(response){
+        console.log('taG response respone')
+        return response.objects
+      }) //
+  },
+
   onAddIndicatorCalc: function(data){
       console.log('onAddIndicatorCalc ( from the simpleform store )')
       // var self = this;

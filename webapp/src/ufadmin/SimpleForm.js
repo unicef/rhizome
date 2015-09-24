@@ -31,8 +31,10 @@ var SimpleForm = React.createClass({
 
   addTagToIndicator : function() {
     SimpleFormActions.addTagToIndicator(this.props.params.id)
-    // component makes query as ooposed to passing the data via props //
-    console.log('addComponentData')
+  },
+
+  getTagTree  : function() {
+    SimpleFormActions.getTagTree()
   },
 
   addIndicatorCalc : function() {
@@ -105,6 +107,7 @@ var SimpleForm = React.createClass({
               componentTitle="Tags and Dashboards"
               rowData={indicatorTagList}
               onClick={this.addTagToIndicator}
+              getDropDownData={this.getIndicatorTree}
             >
           </SimpleFormComponent>
           <br></br>
@@ -114,6 +117,7 @@ var SimpleForm = React.createClass({
                 componentTitle="Component Indicators"
                 rowData={indicatorCalcList}
                 onClick={this.addIndicatorCalc}
+                getDropDownData={this.getIndicatorTree}
               >
             </SimpleFormComponent>
           </div>
