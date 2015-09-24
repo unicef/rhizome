@@ -15,7 +15,6 @@ var SimpleFormComponent = require('./SimpleFormComponent');
 var SimpleForm = React.createClass({
   mixins: [
     Reflux.connect(SimpleFormStore, 'store'),
-    // ReactRouter.State ,
   ],
 
   contextTypes: {
@@ -23,21 +22,28 @@ var SimpleForm = React.createClass({
   },
 
   getInitialState : function () {
-    return {
-    };
+    return {};
   },
 
   componentWillMount: function() {
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
-  logSomething : function() {
-    console.log('logSomething')
+  addTagToIndicator : function() {
+    SimpleFormActions.addTagToIndicator(this.props.params.id)
+    // component makes query as ooposed to passing the data via props //
+    console.log('addComponentData')
   },
 
-  getSubComponentData : function() {
-    SimpleFormActions.getTagForIndicator();
+  addIndicatorCalc : function() {
+    SimpleFormActions.addIndicatorCalc(this.props.params.id)
+    // component makes query as ooposed to passing the data via props //
+    console.log('addIndicatorCalc')
   },
+  // // component makes query as ooposed to passing the data via props //
+  // getSubComponentData : function() {
+  //   console.log('getSubComponentData')
+  // },
 
   render : function () {
     var tag_form_data, calc_form_data = {};
@@ -97,7 +103,7 @@ var SimpleForm = React.createClass({
               contentType='indicator_tag'
               componentTitle="Tags and Dashboards"
               rowData={indicatorTagList}
-              onClick={this.logSomething}
+              onClick={this.addTagToIndicator}
             >
           </SimpleFormComponent>
           <br></br>
@@ -106,7 +112,7 @@ var SimpleForm = React.createClass({
                 contentType='indicator_component'
                 componentTitle="Component Indicators"
                 rowData={indicatorCalcList}
-                onClick={this.logSomething}
+                onClick={this.addIndicatorCalc}
               >
             </SimpleFormComponent>
           </div>

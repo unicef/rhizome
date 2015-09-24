@@ -49,8 +49,16 @@ var SimpleFormStore = Reflux.createStore({
       }
     },
 
-	addTagToIndicator: function(data){
-    console.log('addTagToIndicator')
+  onAddIndicatorCalc: function(data){
+      console.log('onAddIndicatorCalc ( from the simpleform store )')
+      // var self = this;
+      // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
+      //   self.loadIndicatorTag();
+      // });
+  },
+
+  onAddTagToIndicator: function(data){
+    console.log('addTagToIndicator ( from the simpleform store )')
     // var self = this;
     // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
     //   self.loadIndicatorTag();
