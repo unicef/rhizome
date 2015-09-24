@@ -11,10 +11,10 @@ var { Route, Router} = ReactRouter;
 
 
 var SimpleFormComponent = React.createClass({
-  mixins: [
-    Reflux.connect(SimpleFormStore, 'store'),
-    // ReactRouter.State ,
-  ],
+  // mixins: [
+  //   Reflux.connect(SimpleFormStore, 'store'),
+  //   // ReactRouter.State ,
+  // ],
 
   propTypes: {
     objectId : React.PropTypes.number.isRequired,
@@ -23,6 +23,12 @@ var SimpleFormComponent = React.createClass({
     onClick : React.PropTypes.isRequired,
     rowData : React.PropTypes.array,
     },
+
+  getDefaultProps : function () {
+    return {
+      onClick    : _.noop,
+    };
+  },
 
   getInitialState : function(){
     return {
