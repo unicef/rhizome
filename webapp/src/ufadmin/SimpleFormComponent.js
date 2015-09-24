@@ -36,6 +36,7 @@ var SimpleFormComponent = React.createClass({
 
   componentWillMount: function () {
     var self = this;
+    console.log('=====mounting======')
     // shoudld be.. this.props.getDropDownData //
     api.tagTree().then(function(response){
         self.setState({dropDownData: response.objects})
@@ -45,8 +46,8 @@ var SimpleFormComponent = React.createClass({
 
   render : function(){
 
-    console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
+    // console.log('this dot props: ', this.props)
+    // console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
@@ -67,16 +68,18 @@ var SimpleFormComponent = React.createClass({
         rowLi.push(<li>{row.display} ({row.id}) </li>)
     });
 
-    var modalForm = ''
+    var componentForm = ''
+    console.log(contentType)
     if (contentType == 'indicator_tag'){
       var tagTree = this.state.dropDownData
-      var modalForm = <div>
+
+      console.log('HELELLOO')
+      var componentForm = <div>
         <IndicatorTagDropdownMenu
           tag_tree={tagTree}
           text='Add Tag'
           sendValue = {this.props.onClick}>
         </IndicatorTagDropdownMenu>
-        <ReactJson value={ {'hello':'','world':''} } settings={{'form': 'true'}}/>
       </div>
     };
 
@@ -86,13 +89,7 @@ var SimpleFormComponent = React.createClass({
         <ul>
           {rowLi}
         </ul>
-      <SimpleFormModal
-        modalForm={modalForm}
-        onClick={this.props.onClick}
-        contentType={contentType}
-        >
-      </SimpleFormModal>
-
+          {componentForm}
     </div>;
   }
 })

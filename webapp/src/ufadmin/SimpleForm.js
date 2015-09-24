@@ -29,8 +29,9 @@ var SimpleForm = React.createClass({
     SimpleFormActions.initialize(this.props.params.id)
 	},
 
-  addTagToIndicator : function() {
-    SimpleFormActions.addTagToIndicator(this.props.params.id)
+  addTagToIndicator : function(e) {
+    var tag_id = e
+    SimpleFormActions.addTagToIndicator(this.props.params.id, e)
   },
 
   getTagTree  : function() {

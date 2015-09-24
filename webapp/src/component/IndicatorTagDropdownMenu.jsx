@@ -50,7 +50,7 @@ var IndicatorTagDropdownMenu = React.createClass({
     var self = this;
 
     if (this.props.tag_tree.length === 0) {
-      return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>);
+      return (<button className="tiny"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>);
     }
 
     var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue);

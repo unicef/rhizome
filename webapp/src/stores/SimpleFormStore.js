@@ -49,12 +49,12 @@ var SimpleFormStore = Reflux.createStore({
       }
     },
 
-  onGetTagTree: function(data){
-      api.tagTree().then(function(response){
-        console.log('taG response respone')
-        return response.objects
-      }) //
-  },
+  // onGetTagTree: function(data){
+  //     api.tagTree().then(function(response){
+  //       console.log('taG response respone')
+  //       return response.objects
+  //     }) //
+  // },
 
   onAddIndicatorCalc: function(data){
       console.log('onAddIndicatorCalc ( from the simpleform store )')
@@ -64,8 +64,10 @@ var SimpleFormStore = Reflux.createStore({
       // });
   },
 
-  onAddTagToIndicator: function(data){
-    console.log('addTagToIndicator ( from the simpleform store )')
+  onAddTagToIndicator: function(indicator_id, tag_id){
+    console.log('addTagToIndicator', indicator_id)
+    console.log('for tag: ', tag_id)
+
     // var self = this;
     // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
     //   self.loadIndicatorTag();
