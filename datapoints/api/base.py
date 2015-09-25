@@ -155,6 +155,10 @@ class BaseModelResource(ModelResource):
             if obj.has_key('tag_json'):
                 # to do -> abstract this for all JSONField models
                 obj['tag_json'] = json.loads(obj['tag_json'])
+            ## hack lvl attribute
+            if obj.has_key('location_type_id'):
+                obj['lvl'] = obj['location_type_id'] -1
+
 
 
             bundles.append(obj)
