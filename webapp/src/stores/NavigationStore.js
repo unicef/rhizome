@@ -74,14 +74,17 @@ var NavigationStore = Reflux.createStore({
 
         // Take the first location alphabetically at the highest geographic level
         // available as the default location for this dashboard
-        var location = availablelocations.sortBy('name').min(_.property('lvl'));
+        var location = availablelocations.sortBy('name').min(_.property('id'));
 
         // Find the latest campaign for the chosen location
         var campaign = campaigns
-          .filter(function(c) {
+          .filter(c => {
             return location.office_id === c.office_id;
           })
-          .max(_.method("moment(start_date, 'YYYY-MM-DD').valueOf"));
+          .max(c => {
+            return moment(c.start_date, 'YYYY-MM-DD').valueOf()
+          });
+
 
         // Build the path for the dashboard
         var path = '';
