@@ -7,11 +7,11 @@ env = os.environ.get('ENV', 'development')
 instance = os.environ.get('INSTANCE', '')
 
 if instance == 'docker':
-    from polio.settings.docker import *
+    from rhizome.settings.docker import *
 
 if env == 'production':
-    from polio.settings.production import *
+    from rhizome.settings.production import *
 elif env == 'test':
-    from polio.settings.test import *
+    from rhizome.settings.test import *
 else:
     from rhizome.settings.development import *
