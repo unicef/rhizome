@@ -10,6 +10,7 @@ var SimpleFormStore = Reflux.createStore({
   data: {
     indicatorId: null,
     indicatorObject: null,
+    componentData: {},
     loading: true,
     saving: false
   },
@@ -75,6 +76,29 @@ var SimpleFormStore = Reflux.createStore({
     // });
   },
 
+
+  onInitIndicatorToCalc: function(indicator_id) {
+    var self = this;
+
+    Promise.all(
+      [api.indicator_to_calc({ indicator_id: indicator_id }),
+       api.indicators({},null,{'cache-control':'no-cache'})]
+      )
+      .then(_.spread(function(indicator_to_calc,indicators) {
+        var allIndicators = indicators.objects
+
+        var indicatorCalcList  = _.map(indicator_to_calc, function(row) {
+            return {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
+        });
+
+        self.data.componentData['indicator_calc'] = {'componentRows':indicatorCalcList, 'dropDownData':allIndicators};
+        console.log('componentRows',indicatorCalcList)
+
+        self.data.loading = false;
+        self.trigger(self.data);
+    }));
+  },
+
   onInitIndicatorToTag: function(indicator_id) {
     var self = this;
 
@@ -86,16 +110,12 @@ var SimpleFormStore = Reflux.createStore({
         var allTags = tag_tree.objects
         var indicatorTags = _.map(indicator_to_tag.objects, function(row) {
             return {'id': row.id, 'display': row.indicator_tag__tag_name}
-        });
+        })
 
-        var componentData = {'indicator_tag':{'componentRows':indicatorTags, 'dropDownData':allTags}}
-
-        self.data.componentData = componentData;
+        self.data.componentData['indicator_tag'] = {'componentRows':indicatorTags, 'dropDownData':allTags};
 
         self.data.loading = false;
         self.trigger(self.data);
-
-        return indicatorTags
 
       }));
     },

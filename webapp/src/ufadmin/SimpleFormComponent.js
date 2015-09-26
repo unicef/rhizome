@@ -40,30 +40,41 @@ var SimpleFormComponent = React.createClass({
   },
 
   componentWillMount: function () {
-    // shoudld be.. this.props.getRowData //
-    SimpleFormActions.initIndicatorToTag(this.props.objectId)
-    // shoudld be.. this.props.getDropDownData //
-    // SimpleFormActions.getTagForIndicator(this.props.objectId)
+    if (this.props.contentType == 'indicator_tag'){
+      SimpleFormActions.initIndicatorToTag(this.props.objectId)
+    }
+    else if (this.props.contentType == 'indicator_calc'){
+      console.log('InitIndicatorToCalc...')
+      SimpleFormActions.initIndicatorToCalc(this.props.objectId)
+    }
+
+    // shoudld be.. this.props.getData //
   },
 
   render : function(){
 
     // console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
+    // console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
-    var data =  this.state.store.componentData //[contentType]
+    var data =  this.state.store.componentData
 
-    if (!data){
+    var compnent_data_exists = _.has(data, contentType);
+
+    if (!compnent_data_exists){
       return <div>Loading Form Component </div>
     }
 
-    var rowData = data[contentType].componentRows
-    var dropDownData = data[contentType].dropDownData
+    var data =  this.state.store.componentData[contentType]
+
     console.log('data:', data)
     console.log('contentType', contentType)
-    console.log('rowData:', rowData)
+
+    var rowData = data.componentRows
+    var dropDownData = data.dropDownData
+
+    // console.log('rowData:', rowData)
 
 
     var formComponentStyle = {

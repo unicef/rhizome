@@ -56,10 +56,6 @@ var SimpleForm = React.createClass({
     var indicatorId  = this.props.params.id
     var indicatorObject  = this.state.store.indicatorObject
 
-    // var indicatorCalcList  = _.map(this.state.store.indicatorCalcList, function(row) {
-    //     var rowCleaned = {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
-    //     return rowCleaned
-    // });
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
     if (indicatorId && !indicatorObject){
@@ -99,9 +95,14 @@ var SimpleForm = React.createClass({
               objectId={indicatorId}
               contentType='indicator_tag'
               componentTitle="Tags and Dashboards"
-              getRowData={this.getTagForIndicator}
               onClick={this.addTagToIndicator}
-              getDropDownData={this.getIndicatorTree}
+            >
+          </SimpleFormComponent>
+          <SimpleFormComponent
+              objectId={indicatorId}
+              contentType='indicator_calc'
+              componentTitle="Component Indicators"
+              onClick={this.addTagToIndicator}
             >
           </SimpleFormComponent>
           <br></br>

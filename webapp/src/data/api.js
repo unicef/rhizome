@@ -227,7 +227,7 @@ module.exports = {
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
   location_type: endPoint('/location_type/', 'get', 1),
-  indicator_calculation: endPoint('/indicator_calculation/', 'get', 1),
+  indicator_to_calc: endPoint('/indicator_calculation/', 'get', 1),
   indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
   indicator_tag: endPoint('/indicator_tag/', 'get', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
