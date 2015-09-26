@@ -21,37 +21,33 @@ var SimpleFormStore = Reflux.createStore({
     return this.data;
   },
 
-  onInitialize: function(indicator_id) {
+  onInitialize: function(object_id,content_type) {
     var self = this;
-    self.data.indicatorId = indicator_id;
+    self.data.objectId = object_id;
 
-    // updating existing group? need to get more data
-    if (self.data.indicatorId) {
-      Promise.all([
-          api.indicators({ id: self.data.indicatorId }, null, { 'cache-control': 'no-cache' }),
-        ])
-        .then(_.spread(function(indicators) {
+    var fnLookup = {'indicator': api.indicators,'indicator_tag': api.indicator_tags}
+    var api_fn = fnLookup[content_type];
 
-          self.data.indicatorObject = indicators.objects[0];
+    console.log('fnLookup: ',fnLookup)
+    console.log('api_fn: ',api_fn)
 
-          self.data.loading = false;
-          self.trigger(self.data);
-        }));
+    if (self.data.objectId) {
+        Promise.all([
+            api_fn({ id: self.data.objectId }, null, { 'cache-control': 'no-cache' }),
+          ])
+          .then(_.spread(function(dataObject) {
 
-    }
-    // creating new indicator
-    else {
-      self.data.loading = false;
-      self.trigger(self.data);
+            self.data.dataObject = dataObject.objects[0];
+
+            self.data.loading = false;
+            self.trigger(self.data);
+          }));
       }
-    },
-
-  // onGetTagTree: function(data){
-  //     api.tagTree().then(function(response){
-  //       console.log('taG response respone')
-  //       return response.objects
-  //     }) //
-  // },
+      else {
+        self.data.loading = false;
+        self.trigger(self.data);
+        }
+  },
 
   onAddIndicatorCalc: function(data){
       console.log('onAddIndicatorCalc ( from the simpleform store )')
@@ -92,8 +88,6 @@ var SimpleFormStore = Reflux.createStore({
         });
 
         self.data.componentData['indicator_calc'] = {'componentRows':indicatorCalcList, 'dropDownData':allIndicators};
-        console.log('componentRows',indicatorCalcList)
-
         self.data.loading = false;
         self.trigger(self.data);
     }));
@@ -113,7 +107,6 @@ var SimpleFormStore = Reflux.createStore({
         })
 
         self.data.componentData['indicator_tag'] = {'componentRows':indicatorTags, 'dropDownData':allTags};
-
         self.data.loading = false;
         self.trigger(self.data);
 

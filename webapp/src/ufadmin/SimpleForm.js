@@ -26,7 +26,7 @@ var SimpleForm = React.createClass({
   },
 
   componentWillMount: function() {
-    SimpleFormActions.initialize(this.props.params.id)
+      SimpleFormActions.initialize(this.props.params.id,this.props.params.contentType)
 	},
 
   getTagForIndicator : function() {
@@ -36,10 +36,6 @@ var SimpleForm = React.createClass({
   addTagToIndicator : function(e) {
     var tag_id = e
     SimpleFormActions.addTagToIndicator(this.props.params.id, e)
-  },
-
-  getTagTree  : function() {
-    SimpleFormActions.getTagTree()
   },
 
   addIndicatorCalc : function() {
@@ -53,19 +49,19 @@ var SimpleForm = React.createClass({
     // console.log('this dot props: ', this.props)
     // console.log('this dot state : ', this.state)
 
-    var indicatorId  = this.props.params.id
-    var indicatorObject  = this.state.store.indicatorObject
+    var objectId  = this.props.params.id
+    var contentType = this.props.params.contentType
+    var dataObject  = this.state.store.dataObject
 
 
     // CASE 1 ->  There is an id in the url but the request is still pending //
-    if (indicatorId && !indicatorObject){
-      return <div>'LOADING'</div>
+    if (objectId && !dataObject){
+      return <div>Loading MetaData Manager</div>
     }
 
     // CASE 2 -> no object_id: load only the base form for this model
     // render a create form with none of the additional components //
-    if (!indicatorId){
-        var form_welcome_text = 'Create a New Indicator Below'
+    if (!objectId){
         var base_form_data = {
             name: "",
             short_name: ''
@@ -74,14 +70,13 @@ var SimpleForm = React.createClass({
 
     // CASE 3 -> He have the object - render the component forms for indicator
     else {
-        var form_welcome_text = 'Update Indicator: ' + indicatorObject.short_name
-        var base_form_data = {name: indicatorObject.name, short_name: indicatorObject.short_name}
+        var base_form_data = {name: dataObject.name, short_name: dataObject.short_name}
         var calc_form_data = {};
     };
 
     var base_form_settings = {form: true}
     var base_form = <div>
-        <p className="pageWelcome"> {form_welcome_text} </p>
+        <p className="pageWelcome"> Welcome! </p>
         <ReactJson value={ base_form_data } settings={base_form_settings}/>,
       </div>;
 
@@ -92,17 +87,17 @@ var SimpleForm = React.createClass({
         </div>
         <div className="small-4 columns">
           <SimpleFormComponent
-              objectId={indicatorId}
-              contentType='indicator_tag'
-              componentTitle="Tags and Dashboards"
+              objectId={objectId}
+              contentType={contentType}
+              componentTitle="componentTitle"
               onClick={this.addTagToIndicator}
             >
           </SimpleFormComponent>
           <br></br>
           <SimpleFormComponent
-              objectId={indicatorId}
+              objectId={objectId}
               contentType='indicator_calc'
-              componentTitle="Component Indicators"
+              componentTitle="componentTitle"
               onClick={this.addTagToIndicator}
             >
           </SimpleFormComponent>

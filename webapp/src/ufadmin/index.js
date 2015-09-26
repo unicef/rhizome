@@ -10,26 +10,30 @@ var AdminApp = React.createClass({
 
 	render: function() {
 		var q_params = this.context.router.getCurrentParams()
+		console.log('q_params: ',q_params)
+
+		// var indicator_params = q_params
+
+
 
 		return <div className="admin-container">
 			<ul className="admin-nav">
-				<li><Link to="manage-indicators" params={q_params} >Manage Indicators</Link></li>
-				<li><Link to="manage-tags" params={q_params} >Manage Tags</Link></li>
+				<li><Link to="manage" params={{'id' : q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
+				<li><Link to="manage" params={{'id' : q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
 				<li><Link to="users">Users</Link></li>
 				<li><Link to="roles">Roles</Link></li>
 				<li><Link to="locations">locations</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
 			</ul>
-			<RouteHandler />
+			<RouteHandler/>
 		</div>;
 	}
 });
 
 var routes = (
 		<Route name="app" path="/ufadmin/" handler={AdminApp}>
-			<Route name="manage-indicators" path="/ufadmin/manage/indicators/:id?" handler={SimpleForm}/>
-			<Route name="manage-tags" path="/ufadmin/manage/indicator_tag/:id?" handler={SimpleForm}/>
+			<Route name="manage" path="/ufadmin/manage/:contentType/:id?" handler={SimpleForm}/>
 			<Route name="users" handler={require('./UsersAdmin')} />
 			<Route name="roles" handler={require('./GroupsAdmin')} />
 			<Route name="locations" handler={require('./RegionAdmin')} />
