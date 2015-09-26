@@ -87,7 +87,9 @@ var SimpleFormStore = Reflux.createStore({
       .then(_.spread(function(indicator_to_calc,indicators) {
         var allIndicators = indicators.objects
 
-        var indicatorCalcList  = _.map(indicator_to_calc, function(row) {
+        var indicatorCalcList  = _.map(indicator_to_calc.objects, function(row) {
+            console.log(row)
+            console.log({'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name})
             return {'id': row.indicator_component_id, 'display': row.calculation + ' - ' + row.indicator_component__short_name}
         });
 

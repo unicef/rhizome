@@ -68,14 +68,8 @@ var SimpleFormComponent = React.createClass({
 
     var data =  this.state.store.componentData[contentType]
 
-    console.log('data:', data)
-    console.log('contentType', contentType)
-
     var rowData = data.componentRows
     var dropDownData = data.dropDownData
-
-    // console.log('rowData:', rowData)
-
 
     var formComponentStyle = {
       border: '1px dashed #000000',

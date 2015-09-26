@@ -98,6 +98,7 @@ var SimpleForm = React.createClass({
               onClick={this.addTagToIndicator}
             >
           </SimpleFormComponent>
+          <br></br>
           <SimpleFormComponent
               objectId={indicatorId}
               contentType='indicator_calc'
