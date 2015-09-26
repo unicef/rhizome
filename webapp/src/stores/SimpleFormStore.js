@@ -8,9 +8,10 @@ var SimpleFormActions = require('actions/SimpleFormActions');
 
 var SimpleFormStore = Reflux.createStore({
   data: {
-    indicatorId: null,
-    indicatorObject: null,
+    objectId: null,
+    dataObject: null,
     componentData: {},
+    formData: {},
     loading: true,
     saving: false
   },
@@ -23,29 +24,28 @@ var SimpleFormStore = Reflux.createStore({
 
   onInitialize: function(object_id,content_type) {
     var self = this;
+    if (!object_id) {
+        var object_id = -1
+      }
+
     self.data.objectId = object_id;
 
     var fnLookup = {'indicator': api.basic_indicator,'indicator_tag': api.indicator_tag}
     var api_fn = fnLookup[content_type];
+    console.log('api_fn',api_fn)
 
-    self.data.form_data = {name: "", short_name: ""};
-    self.data.form_settings = {form: true}
+    Promise.all([
+          api_fn({ id: self.data.objectId }, null, { 'cache-control': 'no-cache' }),
+        ])
+          .then(_.spread(function(apiResponse) {
 
-    if (self.data.objectId) {
-        Promise.all([
-            api_fn({ id: self.data.objectId }, null, { 'cache-control': 'no-cache' }),
-          ])
-          .then(_.spread(function(dataObject) {
+            console.log('logging form_data in promise: ',apiResponse)
+            self.data.formData = apiResponse.meta.form_data;
 
-            self.data.dataObject = dataObject.objects[0];
+            self.data.dataObject = apiResponse.objects[0];
             self.data.loading = false;
             self.trigger(self.data);
           }));
-      }
-     else { // render create new screen //
-        self.data.loading = false;
-        self.trigger(self.data);
-      }
     },
 
   onAddIndicatorCalc: function(data){

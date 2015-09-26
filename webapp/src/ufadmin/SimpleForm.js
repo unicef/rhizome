@@ -47,30 +47,24 @@ var SimpleForm = React.createClass({
     var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
+    console.log('this dot state : ', this.state)
 
     var objectId  = this.props.params.id
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
-    var form_data = this.state.store.form_data;
-    var form_settings = this.state.store.form_settings
+    var formData = this.state.store.formData;
+    var formSettings = {'form': true}// this.state.store.form_settings;
+
+    console.log('form data:',formData)
 
     // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){
       return <div>Loading MetaData Manager</div>
     }
 
-    delete dataObject['id']
-    delete dataObject['created_at']
-    delete dataObject['slug']
-    delete dataObject['parent_tag_id']
-
-    console.log('dataObject: ',dataObject)
-    console.log('dataObject: ',dataObject)
-    console.log('dataObject: ',dataObject)
     var base_form = <div>
         <p className="pageWelcome"> Welcome! </p>
-        <ReactJson value={dataObject} settings={form_settings}/>,
+        <ReactJson value={formData} settings={formSettings}/>,
       </div>;
 
     return (
