@@ -105,15 +105,6 @@ var SimpleForm = React.createClass({
             >
           </SimpleFormComponent>
           <br></br>
-            <SimpleFormComponent
-                objectId={indicatorId}
-                contentType='indicator_component'
-                componentTitle="Component Indicators"
-                getRowData={this.getTagForIndicator}
-                onClick={this.addIndicatorCalc}
-                getDropDownData={this.getIndicatorTree}
-              >
-            </SimpleFormComponent>
           </div>
       </div>
     );

@@ -88,8 +88,9 @@ var SimpleFormStore = Reflux.createStore({
             return {'id': row.id, 'display': row.indicator_tag__tag_name}
         });
 
-        self.data.rowData = indicatorTags;
-        self.data.dropDownData = allTags;
+        var componentData = {'indicator_tag':{'componentRows':indicatorTags, 'dropDownData':allTags}}
+
+        self.data.componentData = componentData;
 
         self.data.loading = false;
         self.trigger(self.data);

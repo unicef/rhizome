@@ -49,15 +49,22 @@ var SimpleFormComponent = React.createClass({
   render : function(){
 
     // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
+    console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
-    var rowData = this.state.store.rowData;
+    var data =  this.state.store.componentData //[contentType]
 
-    if (!rowData){
+    if (!data){
       return <div>Loading Form Component </div>
     }
+
+    var rowData = data[contentType].componentRows
+    var dropDownData = data[contentType].dropDownData
+    console.log('data:', data)
+    console.log('contentType', contentType)
+    console.log('rowData:', rowData)
+
 
     var formComponentStyle = {
       border: '1px dashed #000000',
@@ -71,13 +78,11 @@ var SimpleFormComponent = React.createClass({
     });
 
     var componentForm = ''
-    console.log(contentType)
     if (contentType == 'indicator_tag'){
-      var tagTree = this.state.store.dropDownData
 
       var componentForm = <div>
         <IndicatorTagDropdownMenu
-          tag_tree={tagTree}
+          tag_tree={dropDownData}
           text='Add Tag'
           sendValue = {this.props.onClick}>
         </IndicatorTagDropdownMenu>
