@@ -11,6 +11,7 @@ var { Route, Router} = ReactRouter;
 var SimpleFormStore = require('stores/SimpleFormStore');
 var SimpleFormActions = require('actions/SimpleFormActions');
 var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 
 var SimpleFormComponent = React.createClass({
   propTypes: {
@@ -83,6 +84,7 @@ var SimpleFormComponent = React.createClass({
     });
 
     var componentForm = ''
+    // fixme.....
     if (contentType == 'indicator_tag'){
 
       var componentForm = <div>
@@ -92,6 +94,26 @@ var SimpleFormComponent = React.createClass({
           sendValue = {this.props.onClick}>
         </IndicatorTagDropdownMenu>
       </div>
+    }
+    else if (contentType == 'indicator_calc'){
+      var componentForm = '1'
+
+      var componentForm = <form>
+          <IndicatorDropdownMenu
+          text='Add Component'
+          indicators={dropDownData}
+          sendValue={this.props.onClick}>
+        </IndicatorDropdownMenu>;
+        <select>
+          <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
+          <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
+          <option value="WHOLE_OF_DIFFERENCE">WHOLE_OF_DIFFERENCE</option>
+          <option value="PART">PART</option>
+          <option value="WHOLE">WHOLE</option>
+          <option value="WHOLE_OF_DIFFERENCE_DENOMINATOR">WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
+        </select>
+        <button> Add! </button>
+      </form>
     };
 
     return <div style={formComponentStyle}>
