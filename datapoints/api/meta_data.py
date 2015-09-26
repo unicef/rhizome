@@ -85,6 +85,18 @@ class IndicatorTagResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values()
         resource_name = 'indicator_tag'
+        filtering = {
+            "id": ALL,
+        }
+
+class BaseIndicatorResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        queryset = Indicator.objects.all().values()
+        resource_name = 'basic_indicator'
+        filtering = {
+            "id": ALL,
+        }
 
 class IndicatorToTagResource(BaseModelResource):
 

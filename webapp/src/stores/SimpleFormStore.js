@@ -25,11 +25,11 @@ var SimpleFormStore = Reflux.createStore({
     var self = this;
     self.data.objectId = object_id;
 
-    var fnLookup = {'indicator': api.indicators,'indicator_tag': api.indicator_tags}
+    var fnLookup = {'indicator': api.basic_indicator,'indicator_tag': api.indicator_tag}
     var api_fn = fnLookup[content_type];
 
-    console.log('fnLookup: ',fnLookup)
-    console.log('api_fn: ',api_fn)
+    self.data.form_data = {name: "", short_name: ""};
+    self.data.form_settings = {form: true}
 
     if (self.data.objectId) {
         Promise.all([
@@ -38,16 +38,15 @@ var SimpleFormStore = Reflux.createStore({
           .then(_.spread(function(dataObject) {
 
             self.data.dataObject = dataObject.objects[0];
-
             self.data.loading = false;
             self.trigger(self.data);
           }));
       }
-      else {
+     else { // render create new screen //
         self.data.loading = false;
         self.trigger(self.data);
-        }
-  },
+      }
+    },
 
   onAddIndicatorCalc: function(data){
       console.log('onAddIndicatorCalc ( from the simpleform store )')

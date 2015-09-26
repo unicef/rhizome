@@ -52,32 +52,25 @@ var SimpleForm = React.createClass({
     var objectId  = this.props.params.id
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
+    var form_data = this.state.store.form_data;
+    var form_settings = this.state.store.form_settings
 
-
-    // CASE 1 ->  There is an id in the url but the request is still pending //
+    // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){
       return <div>Loading MetaData Manager</div>
     }
 
-    // CASE 2 -> no object_id: load only the base form for this model
-    // render a create form with none of the additional components //
-    if (!objectId){
-        var base_form_data = {
-            name: "",
-            short_name: ''
-        };
-    }
+    delete dataObject['id']
+    delete dataObject['created_at']
+    delete dataObject['slug']
+    delete dataObject['parent_tag_id']
 
-    // CASE 3 -> He have the object - render the component forms for indicator
-    else {
-        var base_form_data = {name: dataObject.name, short_name: dataObject.short_name}
-        var calc_form_data = {};
-    };
-
-    var base_form_settings = {form: true}
+    console.log('dataObject: ',dataObject)
+    console.log('dataObject: ',dataObject)
+    console.log('dataObject: ',dataObject)
     var base_form = <div>
         <p className="pageWelcome"> Welcome! </p>
-        <ReactJson value={ base_form_data } settings={base_form_settings}/>,
+        <ReactJson value={dataObject} settings={form_settings}/>,
       </div>;
 
     return (

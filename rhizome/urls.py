@@ -47,7 +47,7 @@ v1_api.register(RefreshMasterResource())
 v1_api.register(DocDetailTypeResource())
 v1_api.register(DocTransFormResource())
 v1_api.register(CalculatedIndicatorComponentResource())
-
+v1_api.register(BaseIndicatorResource())
 urlpatterns = patterns('',
 
     ## TASTYPIE API ##
