@@ -43,9 +43,6 @@ var SimpleFormStore = Reflux.createStore({
 
           self.data.loading = false;
           self.trigger(self.data);
-
-          console.log('new_obj',self.data.dataObject)
-
         }));
   },
 
@@ -91,9 +88,11 @@ var SimpleFormStore = Reflux.createStore({
           return {'id': row.id, 'display': row.indicator_tag__tag_name}
       })
 
-      self.data.componentData['indicator_tag']['componentRows'] = indicatorTags
-      self.data.loading = false;
-      self.trigger(self.data);
+      SimpleFormActions.initIndicatorToTag(indicator_id)
+
+      // self.data.componentData['indicator_tag']['componentRows'] = indicatorTags
+      // self.data.loading = false;
+      // self.trigger(self.data);
 
     });
 

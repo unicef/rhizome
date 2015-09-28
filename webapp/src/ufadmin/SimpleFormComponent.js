@@ -36,16 +36,9 @@ var SimpleFormComponent = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    // next_component_rows = nextState.store.componentData[nextProps.contentType]
-    // these_component_rows = zzz
-    console.log('SHOULD COMPONENT UPDATE ( next component data )')
-    console.log('SHOULD COMPONENT UPDATE ( this component data )')
+    // fixme be more specific
     return nextState.store == this.state.store;
   },
-
-  // componentWillReceiveProps: function(nextProps) {
-  //   this.refreshComponent()
-  // },
 
   componentWillMount: function () {
     if (this.props.contentType == 'indicator_tag'){
@@ -56,15 +49,6 @@ var SimpleFormComponent = React.createClass({
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
     }
    },
-
-  //  componentWillUpdate : function (nextProps, nextState) {
-  //      if (nextProps.doc_id != this.props.doc_id) {
-  //        return;
-  //      }
-  //      if (nextProps.doc_deets != this.props.doc_deets) {
-  //        return;
-  //      }
-  // },
 
   render : function(){
 
