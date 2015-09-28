@@ -115,7 +115,6 @@ var SimpleForm = React.createClass({
       }
     }
 
-    var additional_form_components = ''
     if (contentType = 'indicator_tag' && dataObject) {
 
       var selected =  this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
@@ -129,6 +128,11 @@ var SimpleForm = React.createClass({
       >
       </IndicatorTagDropdownMenu>
       </div>
+    }
+    if (contentType = 'indicator') {
+
+      var additional_form_components = ''
+
     }
 
     // this is the basic form used for all content types
