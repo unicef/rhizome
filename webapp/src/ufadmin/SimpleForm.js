@@ -23,10 +23,13 @@ var SimpleForm = React.createClass({
   },
 
   getInitialState : function () {
-    return {};
+    return {
+        objectId: -1
+    };
   },
 
   componentWillMount: function() {
+      this.setState({'objectId':this.props.params.id})
       SimpleFormActions.initialize(this.props.params.id,this.props.params.contentType)
 	},
 
@@ -44,6 +47,8 @@ var SimpleForm = React.createClass({
         return;
       }
       if (nextState.store.dataObject != this.state.store.dataObject){
+        // when creating new //
+        this.setState({'objectId':this.state.store.objectId})
         return;
       }
     },
@@ -60,7 +65,7 @@ var SimpleForm = React.createClass({
     // console.log('this dot props: ', this.props)
     // console.log('this dot state : ', this.state)
 
-    var objectId  = this.props.params.id
+    var objectId  = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
     var formData = this.state.store.formData;
@@ -70,6 +75,8 @@ var SimpleForm = React.createClass({
     if (objectId && !dataObject){
       return <div>Loading MetaData Manager</div>
     }
+
+
     if (dataObject){
       // match up the data from the dataObject
       for (var key in formData) {
@@ -87,11 +94,12 @@ var SimpleForm = React.createClass({
       </div>;
 
     var sub_form_list = '';
-    if (contentType == 'indicator' && objectId > 0) {
+
+    if (contentType == 'indicator') {
         var sub_form_list =<div><SimpleFormComponent
             objectId={objectId}
-            contentType={contentType}
-            componentTitle="componentTitle"
+            contentType={'indicator_tag'}
+            componentTitle="Add Tags to Indicators"
             onClick={this.addTagToIndicator}
           >
         </SimpleFormComponent>
@@ -99,7 +107,7 @@ var SimpleForm = React.createClass({
         <SimpleFormComponent
             objectId={objectId}
             contentType='indicator_calc'
-            componentTitle="componentTitle"
+            componentTitle="Add Calculations to Indicators"
             onClick={this.addTagToIndicator}
           >
         </SimpleFormComponent></div>

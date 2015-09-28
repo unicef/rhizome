@@ -94,8 +94,6 @@ var SimpleFormComponent = React.createClass({
       </div>
     }
     else if (contentType == 'indicator_calc'){
-      var componentForm = '1'
-
       var componentForm = <form>
           <IndicatorDropdownMenu
           text='Add Component'

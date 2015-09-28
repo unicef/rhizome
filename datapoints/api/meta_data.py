@@ -82,16 +82,6 @@ class LocationTypeResource(BaseModelResource):
         queryset = LocationType.objects.all().values()
         resource_name = 'location_type'
 
-def clean_post_data(self, post_data_dict):
-
-    cleaned = {}
-    for k,v in post_data_dict.iteritems():
-        cleaned_v = v.replace("[u'","","]","")
-
-        print cleaned_v
-        cleaned[k] = cleaned_v
-
-    return cleaned
 
 class IndicatorTagResource(BaseModelResource):
 
@@ -130,10 +120,16 @@ class BaseIndicatorResource(BaseModelResource):
 
         try:
             ind_id = request.POST['id']
-            if tag_id == '-1':
-                tag_id = None
+            if ind_id == '-1':
+                ind_id = None
 
-            qs = Location.objects.filter(parent_location_id=pr_id).values()
+            ind_post_data = clean_post_data(dict(request.POST))
+            del ind_post_data['id']
+
+            ind_obj, created = Indicator.objects.update_or_create(id=ind_id,
+                defaults = ind_post_data)
+
+            qs = Indicator.objects.filter(id=ind_obj.id).values('id','name','short_name')
 
         except KeyError:
             return super(BaseIndicatorResource, self).get_object_list(request)
@@ -141,7 +137,7 @@ class BaseIndicatorResource(BaseModelResource):
         return qs
 
     class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values()
+        queryset = Indicator.objects.all().values('id','name','short_name')
         resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
@@ -642,3 +638,26 @@ class GeoResource(BaseNonModelResource):
         data.pop("meta",None)
 
         return data
+
+
+##
+def clean_post_data(post_data_dict):
+
+    print 'CLEAAAAANING:'
+    print post_data_dict
+
+    cleaned = {}
+    for k,v in post_data_dict.iteritems():
+
+        to_clean = v[0]
+        print '====---===='
+
+        # if type(v) == list:
+        #     cleaned_v = [v_element.replace("[u'","").replace("]","") for v_element in v]
+        # else:
+        cleaned_v = to_clean.replace("[u'","").replace("]","")
+
+
+        cleaned[k] = cleaned_v
+
+    return cleaned
