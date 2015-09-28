@@ -24,7 +24,26 @@ var SimpleFormStore = Reflux.createStore({
 
   onBaseFormSave: function(object_id,content_type,data_to_post){
     var self = this;
+    var fnLookup = {'indicator': api.post_basic_indicator,'indicator_tag': api.post_indicator_tag}
+    var api_fn = fnLookup[content_type];
+
+    var id_to_post = object_id || -1;
+
+    data_to_post['id'] = id_to_post
     console.log('POSTING',data_to_post)
+
+    Promise.all([
+        api_fn(data_to_post),
+      ])
+        .then(_.spread(function(apiResponse) {
+
+          console.log('logging form_data in promise: ',apiResponse)
+          self.data.formData = apiResponse.meta.form_data;
+
+          self.data.dataObject = apiResponse.objects[0];
+          self.data.loading = false;
+          self.trigger(self.data);
+        }));
   },
 
   onInitialize: function(object_id,content_type) {
@@ -35,7 +54,7 @@ var SimpleFormStore = Reflux.createStore({
 
     self.data.objectId = object_id;
 
-    var fnLookup = {'indicator': api.basic_indicator,'indicator_tag': api.indicator_tag}
+    var fnLookup = {'indicator': api.get_basic_indicator,'indicator_tag': api.get_indicator_tag}
     var api_fn = fnLookup[content_type];
 
     Promise.all([
