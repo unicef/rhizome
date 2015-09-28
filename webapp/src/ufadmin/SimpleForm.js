@@ -42,11 +42,17 @@ var SimpleForm = React.createClass({
       if (nextProps.params != this.props.params) {
         return;
       }
+      if (nextState.store.dataObject != this.state.store.dataObject){
+        return;
+      }
     },
   onSubmit: function( e ){
     e.preventDefault();
     var data = this.refs.form_data.getValue();
     SimpleFormActions.baseFormSave(this.props.params.id,this.props.params.contentType,data)
+    console.log("SAVED")
+    console.log(this.state.store)
+
   },
 
   render : function () {
@@ -60,6 +66,13 @@ var SimpleForm = React.createClass({
     var dataObject  = this.state.store.dataObject
     var formData = this.state.store.formData;
     var formSettings = {'form': true, fields: {'tag_name': { type: 'string'}} } // this.state.store.form_settings;
+
+    // match up the data from the dataObject
+
+    for (var key in formData) {
+      formData[key] = dataObject[key]
+    }
+    console.log('formData',formData)
 
     // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){

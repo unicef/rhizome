@@ -40,7 +40,9 @@ var SimpleFormStore = Reflux.createStore({
           console.log('logging form_data in promise: ',apiResponse)
           self.data.formData = apiResponse.meta.form_data;
 
+          self.data.objectId = apiResponse.objects[0].id;
           self.data.dataObject = apiResponse.objects[0];
+
           self.data.loading = false;
           self.trigger(self.data);
         }));
