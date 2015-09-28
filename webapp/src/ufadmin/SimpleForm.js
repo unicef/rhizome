@@ -45,7 +45,6 @@ var SimpleForm = React.createClass({
           self.setState({'tagTree':response.objects})
         }) // end of .then function
       } // end of if condition
-
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -62,6 +61,9 @@ var SimpleForm = React.createClass({
         return;
       }
       if (nextState.store.dataObject != this.state.store.dataObject){
+        return;
+      }
+      if (nextState.extraFormData != this.state.extraFormData){
         return;
       }
     },
@@ -113,15 +115,21 @@ var SimpleForm = React.createClass({
       }
     }
 
+    else {
+      dataObject = {}
+    }
+
     var additional_form_components = ''
     if (contentType = 'indicator_tag'){
 
-      var selectedText = dataObject.parent_tag__tag_name
+      var selected =  this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
+      console.log(selected)
       var tagTree = this.state.tagTree
+
       var additional_form_components = <div> <p>Parent Tag:</p> <br></br>
       <IndicatorTagDropdownMenu
         tag_tree={tagTree}
-        text={selectedText}
+        text={selected}
         sendValue={ this.setParentTag }
       >
       </IndicatorTagDropdownMenu>
