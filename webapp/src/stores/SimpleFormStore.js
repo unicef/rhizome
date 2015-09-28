@@ -22,6 +22,11 @@ var SimpleFormStore = Reflux.createStore({
     return this.data;
   },
 
+  onBaseFormSave: function(object_id,content_type,data_to_post){
+    var self = this;
+    console.log('POSTING',data_to_post)
+  },
+
   onInitialize: function(object_id,content_type) {
     var self = this;
     if (!object_id) {
@@ -32,7 +37,6 @@ var SimpleFormStore = Reflux.createStore({
 
     var fnLookup = {'indicator': api.basic_indicator,'indicator_tag': api.indicator_tag}
     var api_fn = fnLookup[content_type];
-    console.log('api_fn',api_fn)
 
     Promise.all([
           api_fn({ id: self.data.objectId }, null, { 'cache-control': 'no-cache' }),

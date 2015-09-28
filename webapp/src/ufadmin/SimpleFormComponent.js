@@ -18,9 +18,7 @@ var SimpleFormComponent = React.createClass({
     objectId : React.PropTypes.number.isRequired,
     contentType : React.PropTypes.string.isRequired,
     componentTitle : React.PropTypes.string.isRequired,
-    onClick : React.PropTypes.isRequired,
-    getRowData : React.PropTypes.func.isRequired,
-    getDropDownData : React.PropTypes.isRequired,
+    onClick : React.PropTypes.func,
     },
 
   mixins: [

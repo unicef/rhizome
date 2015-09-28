@@ -43,21 +43,23 @@ var SimpleForm = React.createClass({
         return;
       }
     },
+  onSubmit: function( e ){
+    e.preventDefault();
+    var data = this.refs.form_data.getValue();
+    SimpleFormActions.baseFormSave(this.props.params.id,this.props.params.contentType,data)
+  },
 
   render : function () {
     var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
-    console.log('this dot props params : ', this.props.params)
+    // console.log('this dot state : ', this.state)
 
     var objectId  = this.props.params.id
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
     var formData = this.state.store.formData;
-    var formSettings = {'form': true}// this.state.store.form_settings;
-
-    console.log('form data:',formData)
+    var formSettings = {'form': true, fields: {'tag_name': { type: 'string'}} } // this.state.store.form_settings;
 
     // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){
@@ -66,8 +68,28 @@ var SimpleForm = React.createClass({
 
     var base_form = <div>
         <p className="pageWelcome"> Welcome! </p>
-        <ReactJson value={formData} settings={formSettings}/>,
+        <ReactJson value={formData} settings={formSettings} ref="form_data" />,
+        <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
       </div>;
+
+    var sub_form_list = '';
+    if (contentType == 'indicator' && objectId > 0) {
+        var sub_form_list =<div><SimpleFormComponent
+            objectId={objectId}
+            contentType={contentType}
+            componentTitle="componentTitle"
+            onClick={this.addTagToIndicator}
+          >
+        </SimpleFormComponent>
+          <br></br>
+        <SimpleFormComponent
+            objectId={objectId}
+            contentType='indicator_calc'
+            componentTitle="componentTitle"
+            onClick={this.addTagToIndicator}
+          >
+        </SimpleFormComponent></div>
+    }
 
     return (
       <div className="row">
@@ -75,23 +97,8 @@ var SimpleForm = React.createClass({
           {base_form}
         </div>
         <div className="small-4 columns">
-          <SimpleFormComponent
-              objectId={objectId}
-              contentType={contentType}
-              componentTitle="componentTitle"
-              onClick={this.addTagToIndicator}
-            >
-          </SimpleFormComponent>
-          <br></br>
-          <SimpleFormComponent
-              objectId={objectId}
-              contentType='indicator_calc'
-              componentTitle="componentTitle"
-              onClick={this.addTagToIndicator}
-            >
-          </SimpleFormComponent>
-          <br></br>
-          </div>
+          {sub_form_list}
+        </div>
       </div>
     );
   }
