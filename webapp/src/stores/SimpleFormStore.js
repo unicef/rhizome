@@ -30,14 +30,12 @@ var SimpleFormStore = Reflux.createStore({
     var id_to_post = object_id || -1;
 
     data_to_post['id'] = id_to_post
-    console.log('POSTING',data_to_post)
 
     Promise.all([
         api_fn(data_to_post),
       ])
         .then(_.spread(function(apiResponse) {
 
-          console.log('logging form_data in promise: ',apiResponse)
           self.data.formData = apiResponse.meta.form_data;
 
           self.data.objectId = apiResponse.objects[0].id;

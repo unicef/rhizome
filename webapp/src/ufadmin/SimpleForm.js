@@ -24,7 +24,8 @@ var SimpleForm = React.createClass({
 
   getInitialState : function () {
     return {
-        objectId: -1
+        objectId: -1,
+        saveSuccess: false
     };
   },
 
@@ -47,8 +48,6 @@ var SimpleForm = React.createClass({
         return;
       }
       if (nextState.store.dataObject != this.state.store.dataObject){
-        // when creating new //
-        this.setState({'objectId':this.state.store.objectId})
         return;
       }
     },
@@ -56,6 +55,9 @@ var SimpleForm = React.createClass({
     e.preventDefault();
     var data = this.refs.form_data.getValue();
     SimpleFormActions.baseFormSave(this.props.params.id,this.props.params.contentType,data)
+    // when creating new //
+    console.log('setting state after save')
+    this.setState({'objectId':this.state.store.objectId, 'saveSuccess':true})
 
   },
 
@@ -63,19 +65,20 @@ var SimpleForm = React.createClass({
     var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
+    console.log('this dot state : ', this.state)
 
     var objectId  = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
     var formData = this.state.store.formData;
-    var formSettings = {'form': true, fields: {'tag_name': { type: 'string'}} } // this.state.store.form_settings;
+
+    // TODO -> pull this from the DB
+    var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false} }}
 
     // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){
       return <div>Loading MetaData Manager</div>
     }
-
 
     if (dataObject){
       // match up the data from the dataObject
@@ -89,10 +92,16 @@ var SimpleForm = React.createClass({
     // this is the basic form used for all content types
     var base_form = <div>
         <p className="pageWelcome"> Welcome! </p>
+        <h5>id: {this.state.store.objectId} </h5>
+        <br></br>
         <ReactJson value={formData} settings={formSettings} ref="form_data" />,
         <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
       </div>;
 
+    var base_form_success = ''
+    if (this.state.saveSuccess){
+      var base_form_success = <i className="fa fa-check"> saved successfully </i>
+    }
     var sub_form_list = '';
 
     if (contentType == 'indicator') {
@@ -117,6 +126,7 @@ var SimpleForm = React.createClass({
       <div className="row">
         <div className="small-8 columns">
           {base_form}
+          <div>{base_form_success}</div>
         </div>
         <div className="small-4 columns">
           {sub_form_list}

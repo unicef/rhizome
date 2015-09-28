@@ -650,14 +650,7 @@ def clean_post_data(post_data_dict):
     for k,v in post_data_dict.iteritems():
 
         to_clean = v[0]
-        print '====---===='
-
-        # if type(v) == list:
-        #     cleaned_v = [v_element.replace("[u'","").replace("]","") for v_element in v]
-        # else:
         cleaned_v = to_clean.replace("[u'","").replace("]","")
-
-
         cleaned[k] = cleaned_v
 
     return cleaned
