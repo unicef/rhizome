@@ -15,6 +15,7 @@ from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 from django.core import serializers
+from django.utils.html import escape
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
@@ -22,6 +23,7 @@ from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
+from django.utils.html import escape
 
 class CampaignResource(BaseModelResource):
 
@@ -80,7 +82,40 @@ class LocationTypeResource(BaseModelResource):
         queryset = LocationType.objects.all().values()
         resource_name = 'location_type'
 
+def clean_post_data(self, post_data_dict):
+
+    cleaned = {}
+    for k,v in post_data_dict.iteritems():
+        cleaned_v = v.replace("[u'","","]","")
+
+        print cleaned_v
+        cleaned[k] = cleaned_v
+
+    return cleaned
+
 class IndicatorTagResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        try:
+            tag_id = request.POST['id']
+
+            if tag_id == '-1':
+                tag_id = None
+
+            tag_post_data = clean_post_data(dict(request.POST))
+            del tag_post_data['id']
+
+            tag_obj, created = IndicatorTag.objects.update_or_create(id=tag_id,
+                defaults = tag_post_data)
+
+            qs = IndicatorTag.objects.filter(id=tag_obj.id).values()
+
+        except KeyError:
+            return super(IndicatorTagResource, self).get_object_list(request)
+
+        return qs
+
 
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values()
@@ -90,6 +125,20 @@ class IndicatorTagResource(BaseModelResource):
         }
 
 class BaseIndicatorResource(BaseModelResource):
+
+    def get_object_list(self,request):
+
+        try:
+            ind_id = request.POST['id']
+            if tag_id == '-1':
+                tag_id = None
+
+            qs = Location.objects.filter(parent_location_id=pr_id).values()
+
+        except KeyError:
+            return super(BaseIndicatorResource, self).get_object_list(request)
+
+        return qs
 
     class Meta(BaseModelResource.Meta):
         queryset = Indicator.objects.all().values()
