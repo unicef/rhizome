@@ -115,15 +115,10 @@ var SimpleForm = React.createClass({
       }
     }
 
-    else {
-      dataObject = {}
-    }
-
     var additional_form_components = ''
-    if (contentType = 'indicator_tag'){
+    if (contentType = 'indicator_tag' && dataObject) {
 
       var selected =  this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
-      console.log(selected)
       var tagTree = this.state.tagTree
 
       var additional_form_components = <div> <p>Parent Tag:</p> <br></br>
