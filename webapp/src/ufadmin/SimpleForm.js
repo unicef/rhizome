@@ -28,6 +28,7 @@ var SimpleForm = React.createClass({
     return {
         objectId: null,
         saveSuccess: false,
+        extraFormData: {},
         tagTree: [],
     };
   },
@@ -67,10 +68,21 @@ var SimpleForm = React.createClass({
   onSubmit: function( e ){
     e.preventDefault();
     var data = this.refs.form_data.getValue();
+
+    // if there is any data in the react-json form add it here //
+    for (var key in this.state.extraFormData) {
+        data[key] = this.state.extraFormData[key];
+    }
+
     SimpleFormActions.baseFormSave(this.props.params.id,this.props.params.contentType,data)
     // when creating new //
     this.setState({'objectId':this.state.store.objectId, 'saveSuccess':true})
+  },
 
+  setParentTag: function ( e ) {
+      var extraFormData = { 'parent_tag_id': e }
+      console.log(extraFormData)
+      this.setState({'extraFormData':extraFormData})
   },
 
   render : function () {
@@ -109,7 +121,9 @@ var SimpleForm = React.createClass({
       var additional_form_components = <div> <p>Parent Tag:</p> <br></br>
       <IndicatorTagDropdownMenu
         tag_tree={tagTree}
-        text={selectedText}>
+        text={selectedText}
+        sendValue={ this.setParentTag }
+      >
       </IndicatorTagDropdownMenu>
       </div>
     }
