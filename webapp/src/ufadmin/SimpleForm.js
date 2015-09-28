@@ -29,8 +29,8 @@ var SimpleForm = React.createClass({
       SimpleFormActions.initialize(this.props.params.id,this.props.params.contentType)
 	},
 
-  getTagForIndicator : function() {
-    SimpleFormActions.getTagForIndicator(this.props.params.id)
+  componentWillReceiveProps: function(nextProps) {
+    SimpleFormActions.initialize(nextProps.params.id,nextProps.params.contentType)
   },
 
   addTagToIndicator : function(e) {
@@ -38,16 +38,18 @@ var SimpleForm = React.createClass({
     SimpleFormActions.addTagToIndicator(this.props.params.id, e)
   },
 
-  addIndicatorCalc : function() {
-    SimpleFormActions.addIndicatorCalc(this.props.params.id)
-    // component makes query as ooposed to passing the data via props //
-  },
+  componentWillUpdate : function (nextProps, nextState) {
+      if (nextProps.params != this.props.params) {
+        return;
+      }
+    },
 
   render : function () {
     var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
     console.log('this dot state : ', this.state)
+    console.log('this dot props params : ', this.props.params)
 
     var objectId  = this.props.params.id
     var contentType = this.props.params.contentType

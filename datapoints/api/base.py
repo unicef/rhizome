@@ -18,8 +18,6 @@ from datapoints.models import LocationType, Location, LocationPermission, \
     LocationTree
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
-
-
 class CustomSessionAuthentication(SessionAuthentication):
     """
     """
@@ -159,23 +157,37 @@ class BaseModelResource(ModelResource):
             if obj.has_key('location_type_id'):
                 obj['lvl'] = obj['location_type_id'] -1
 
-
-
             bundles.append(obj)
 
         response_meta = {
             'limit':None, ## paginator.get_limit(),
             'offset': None, ## paginator.get_offset(),
             'total_count':len(objects),
+            'form_data': self.get_form_data()
         }
 
         response_data = {
             'objects': bundles,
             'meta': response_meta, ## add paginator info here..
-            'error': None
+            'error': None,
         }
 
         return self.create_response(request, response_data)
+
+    def get_form_data(self):
+
+        all_form_data = {
+            "basic_indicator": {"short_name":"","name":""},
+            "indicator_tag": {"tag_name":""}
+        }
+
+        try:
+            form_data = all_form_data[self.Meta.resource_name]
+        except KeyError:
+            form_data = []
+
+        return form_data
+
 
 class BaseNonModelResource(Resource):
     '''
