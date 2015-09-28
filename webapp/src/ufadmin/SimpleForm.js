@@ -24,7 +24,7 @@ var SimpleForm = React.createClass({
 
   getInitialState : function () {
     return {
-        objectId: -1,
+        objectId: null,
         saveSuccess: false
     };
   },
@@ -56,7 +56,6 @@ var SimpleForm = React.createClass({
     var data = this.refs.form_data.getValue();
     SimpleFormActions.baseFormSave(this.props.params.id,this.props.params.contentType,data)
     // when creating new //
-    console.log('setting state after save')
     this.setState({'objectId':this.state.store.objectId, 'saveSuccess':true})
 
   },
@@ -102,6 +101,7 @@ var SimpleForm = React.createClass({
     if (this.state.saveSuccess){
       var base_form_success = <i className="fa fa-check"> saved successfully </i>
     }
+
     var sub_form_list = '';
 
     if (contentType == 'indicator') {

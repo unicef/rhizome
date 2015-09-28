@@ -32,11 +32,20 @@ var SimpleFormComponent = React.createClass({
   },
 
   getInitialState : function(){
-    return {
-        rowData: [],
-        dropDownData: []
-      }
+    return {}
   },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    // next_component_rows = nextState.store.componentData[nextProps.contentType]
+    // these_component_rows = zzz
+    console.log('SHOULD COMPONENT UPDATE ( next component data )')
+    console.log('SHOULD COMPONENT UPDATE ( this component data )')
+    return nextState.store == this.state.store;
+  },
+
+  // componentWillReceiveProps: function(nextProps) {
+  //   this.refreshComponent()
+  // },
 
   componentWillMount: function () {
     if (this.props.contentType == 'indicator_tag'){
@@ -46,14 +55,21 @@ var SimpleFormComponent = React.createClass({
       console.log('InitIndicatorToCalc...')
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
     }
+   },
 
-    // shoudld be.. this.props.getData //
-  },
+  //  componentWillUpdate : function (nextProps, nextState) {
+  //      if (nextProps.doc_id != this.props.doc_id) {
+  //        return;
+  //      }
+  //      if (nextProps.doc_deets != this.props.doc_deets) {
+  //        return;
+  //      }
+  // },
 
   render : function(){
 
     // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
+    console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
