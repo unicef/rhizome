@@ -15,7 +15,7 @@ const fields = {
 		title: 'Edit',
 		key: 'id',
 		renderer: (id) => {
-			return <a href={`/datapoints/indicators/update/${id}`}>Edit Indicator</a>;
+			return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>;
 		}
 	}
 };
