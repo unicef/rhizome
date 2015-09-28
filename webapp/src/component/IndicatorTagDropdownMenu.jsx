@@ -37,6 +37,7 @@ var IndicatorTagDropdownMenu = React.createClass({
 
   propTypes : {
     tag_tree : React.PropTypes.array.isRequired,
+    text: React.PropTypes.string.isRequired,
     sendValue : React.PropTypes.func.isRequired
   },
 
@@ -55,10 +56,12 @@ var IndicatorTagDropdownMenu = React.createClass({
 
     var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue);
     var props = _.omit(this.props, 'tag_tree', 'sendValue');
+    var selected_name = this.props.text; // this is a name not an object!
 
     return (
       <DropdownMenu
         searchable={true}
+        text={selected_name}
         onSearch={this._setPattern}
         {...props}>
         {tag_tree}

@@ -62,7 +62,6 @@ var SimpleFormStore = Reflux.createStore({
         ])
           .then(_.spread(function(apiResponse) {
 
-            console.log('logging form_data in promise: ',apiResponse)
             self.data.formData = apiResponse.meta.form_data;
 
             self.data.dataObject = apiResponse.objects[0];
@@ -77,24 +76,19 @@ var SimpleFormStore = Reflux.createStore({
       // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
       //   self.loadIndicatorTag();
       // });
+
+      SimpleFormActions.initIndicatorToCalc(indicator_id)
+
   },
 
   onAddTagToIndicator: function(indicator_id, tag_id){
     var self = this;
 
     api.set_indicator_to_tag( {indicator_id:indicator_id, indicator_tag_id:tag_id }).then(function(response){
-
-      var indicatorTags = _.map(response.objects, function(row) {
-          return {'id': row.id, 'display': row.indicator_tag__tag_name}
-      })
-
-      SimpleFormActions.initIndicatorToTag(indicator_id)
-
-      // self.data.componentData['indicator_tag']['componentRows'] = indicatorTags
-      // self.data.loading = false;
-      // self.trigger(self.data);
-
+      return
     });
+
+    SimpleFormActions.initIndicatorToTag(indicator_id)
 
   },
   deleteTagFromIndicator: function(data){

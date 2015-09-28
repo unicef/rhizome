@@ -1,6 +1,7 @@
 'use strict';
 var _      = require('lodash');
 var moment = require('moment');
+var api = require('data/api');
 var React  = require('react');
 var page  = require('page');
 var Reflux = require('reflux');
@@ -11,6 +12,7 @@ var { Route, Router} = ReactRouter;
 var SimpleFormStore = require('stores/SimpleFormStore');
 var SimpleFormActions = require('actions/SimpleFormActions');
 var SimpleFormComponent = require('./SimpleFormComponent');
+var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
 
 
 var SimpleForm = React.createClass({
@@ -25,14 +27,25 @@ var SimpleForm = React.createClass({
   getInitialState : function () {
     return {
         objectId: null,
-        saveSuccess: false
+        saveSuccess: false,
+        tagTree: [],
     };
   },
 
   componentWillMount: function() {
+      var self = this;
       this.setState({'objectId':this.props.params.id})
       SimpleFormActions.initialize(this.props.params.id,this.props.params.contentType)
-	},
+
+      // Hack alert.. FIXME ( this is for the parent_tag_dropdown) //
+      if (this.props.params.contentType == 'indicator_tag'){
+        api.tagTree({},null,{'cache-control': 'no-cache'}).then(function(response){
+          console.log('logging response of tag tree',response)
+          self.setState({'tagTree':response.objects})
+        }) // end of .then function
+      } // end of if condition
+
+  },
 
   componentWillReceiveProps: function(nextProps) {
     SimpleFormActions.initialize(nextProps.params.id,nextProps.params.contentType)
@@ -64,7 +77,7 @@ var SimpleForm = React.createClass({
     var tag_form_data, calc_form_data = {};
 
     // console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
+    // console.log('this dot state : ', this.state)
 
     var objectId  = this.state.objectId
     var contentType = this.props.params.contentType
@@ -88,12 +101,27 @@ var SimpleForm = React.createClass({
       }
     }
 
+    var additional_form_components = ''
+    if (contentType = 'indicator_tag'){
+
+      var selectedText = dataObject.parent_tag__tag_name
+      var tagTree = this.state.tagTree
+      var additional_form_components = <div> <p>Parent Tag:</p> <br></br>
+      <IndicatorTagDropdownMenu
+        tag_tree={tagTree}
+        text={selectedText}>
+      </IndicatorTagDropdownMenu>
+      </div>
+    }
+
     // this is the basic form used for all content types
     var base_form = <div>
         <p className="pageWelcome"> Welcome! </p>
         <h5>id: {this.state.store.objectId} </h5>
         <br></br>
         <ReactJson value={formData} settings={formSettings} ref="form_data" />,
+        {additional_form_components}
+        <br></br>
         <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
       </div>;
 

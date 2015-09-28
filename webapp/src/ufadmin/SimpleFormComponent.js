@@ -36,24 +36,23 @@ var SimpleFormComponent = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    // fixme be more specific
+    // FIXME be more specific
     return nextState.store == this.state.store;
   },
 
   componentWillMount: function () {
+    // FIXME use data as opposed to hacky control flow here!
     if (this.props.contentType == 'indicator_tag'){
       SimpleFormActions.initIndicatorToTag(this.props.objectId)
     }
     else if (this.props.contentType == 'indicator_calc'){
-      console.log('InitIndicatorToCalc...')
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
     }
    },
 
   render : function(){
-
     // console.log('this dot props: ', this.props)
-    console.log('this dot state : ', this.state)
+    // console.log('this dot state : ', this.state)
 
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
@@ -66,7 +65,6 @@ var SimpleFormComponent = React.createClass({
     }
 
     var data =  this.state.store.componentData[contentType]
-
     var rowData = data.componentRows
     var dropDownData = data.dropDownData
 
