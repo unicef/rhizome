@@ -27,5 +27,6 @@ six==1.9.0
 snowballstemmer==1.2.0
 sphinx-rtd-theme==0.1.8
 sqlparse==0.1.16
+titlecase==0.7.2
 wsgiref==0.1.2
 xlrd==0.9.4
