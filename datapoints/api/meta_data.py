@@ -271,9 +271,12 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             doc_title = doc_data[:10]
 
-        print doc_title
-
-        new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
+        try:
+            new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
+        except Exception as err:
+            print '==='
+            print err
+            print '==='
 
         return Document.objects.filter(id=new_doc.id).values()
 
@@ -495,6 +498,23 @@ class DocTransFormResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'transform_upload'
+
+class CacheRefreshResource(BaseModelResource):
+
+    def get_object_list(self, request):
+
+        cr = CacheRefresh()
+        cr.main()
+
+        queryset = DocumentDetail.objects\
+            .filter(document_id=1).values()
+
+        return queryset
+
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'refresh_cache'
+
 
 class RefreshMasterResource(BaseModelResource):
 
