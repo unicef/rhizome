@@ -276,7 +276,6 @@ class BaseNonModelResource(Resource):
 
         ## CASE 1 ##
         if self.location__in is not None:
-            print '=== CASE ONE ==='
 
             location_ids = Location.objects.filter(id__in = self.location__in)\
                 .values_list('id',flat=True)
@@ -299,7 +298,7 @@ class BaseNonModelResource(Resource):
         ## CASE 3 #
 
         elif self.parent_location__in is not None and self.location_type_id is None:
-            print '=== CASE THREE ==='
+
             location_ids = Location.objects.filter(parent_location__in = \
                 self.parent_location__in).values_list('id',flat=True)
         ## CASE 4 ##

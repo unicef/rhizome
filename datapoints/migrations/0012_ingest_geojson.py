@@ -5,6 +5,7 @@ import json
 
 from django.db import models, migrations, IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 
 from datapoints.models import Location, LocationPolygon
 
@@ -20,7 +21,7 @@ def process_geo_level(lvl,data_dir):
     for root, dirs, files in os.walk(data_dir, topdown=False):
         for name in files:
 
-            if name.endswith('adm%s.geojson' % lvl) and name.startswith('nga'):
+            if name.endswith('adm%s.geojson' % lvl):
                 file_results = process_geo_json_file(\
                     (os.path.join(root, name)),lvl)
 
@@ -52,16 +53,19 @@ def process_location(geo_json, lvl):
         print ' ===== CAN NOT FIND %s' % location_name
         return
 
-    rp, created = LocationPolygon.objects.get_or_create(
-        location_id = location_id,
-        defaults = {'geo_json': geo_json}
-    )
+    try:
+        rp, created = LocationPolygon.objects.get_or_create(
+            location_id = location_id,
+            defaults = {'geo_json': geo_json}
+        )
+    except ValidationError:
+        print 'ValidationError!!'
 
 class Migration(migrations.Migration):
 
     dependencies = [
     # DELETE FROM django_migrations WHERE name = '0013_ingest_geojson';
-        ('datapoints', '0009_indicator_map'),
+        ('datapoints', '0011_odk_and_seed_campaign_maps'),
     ]
 
     operations = [
