@@ -24,15 +24,16 @@ var GeoStore = Reflux.createStore({
 
   loadGeography : function (response) {
     this.features = _(response).pluck('objects.features').flatten().value();
-    console.log('LOGGING THIS LOCATION: ',this.location.id)
-    console.log('LENGTH OF FEATURES: ', this.features.length)
-    var border = _.find(this.features, f => f.properties.location_id === this.location.id);
+    // var border = _.find(this.features, f => f.properties.location_id === this.location.id);
 
+    // console.log('border',border)
+    // console.log('LOGGING THIS LOCATION: ',this.location.id)
+    // console.log('LENGTH OF FEATURES: ', this.features.length)
 
-    border.properties.isBorder = true;
+    // border.properties.isBorder = true;
 
     this.trigger({
-      reatures : this.reatures
+      features : this.features
     });
   }
 });
