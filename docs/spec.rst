@@ -69,11 +69,29 @@ Home page
 Admin
 =====
 
+The Admin Module allows users to Add / Edit and View metadata required for the system.
+
+The header at the top of the component switches the content type and renders by default the Index page.  The "Create New" button expands the top peice of the screen and renders the create form.
+
+The index page has an edit link, which opens up a component underneath the admin index with the a form that allows for inline editing.  Any changes must be persisted to the database with the "submit" button.  If the API returns a success message, there should be a "saved" icon alert, and if there is an error, the front end should report this as part of teh form.
+
+The index has a search functionality as well as the ability to sort and filter column values.
+
+* API Format *:
+  - Index:
+      -
+  - POST:
+      - New
+      - Update
+
+
 Index
 ~~~~~
 
 .. image:: http://s30.postimg.org/dnzmymlq9/Rhizome_Admin_Index.png
    :width: 600pt
+
+NOTE: the current ufadmin application calls data **FOR EVERY CONTENT TYPE** even though data is only needed for the content type that is selected.  To se this in action check out the inspector for http://rhizome.work/ufadmin/indicators
 
 Create
 ~~~~~~
