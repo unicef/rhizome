@@ -299,8 +299,10 @@ class BaseNonModelResource(Resource):
 
         elif self.parent_location__in is not None and self.location_type_id is None:
 
-            location_ids = Location.objects.filter(parent_location__in = \
-                self.parent_location__in).values_list('id',flat=True)
+            location_ids = list(self.parent_location__in) + list(Location.objects.filter(parent_location__in = \
+                self.parent_location__in).values_list('id',flat=True))
+
+
         ## CASE 4 ##
         else:
             location_ids = Location.objects.filter(parent_location_id__isnull=True).\

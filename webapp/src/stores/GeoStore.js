@@ -18,14 +18,16 @@ var GeoStore = Reflux.createStore({
     this.location = location;
     Promise.all([
         api.geo({ parent_location__in : location.id }),
-        api.geo({ location__in : location.id })
       ])
       .then(this.loadGeography);
   },
 
-  loadGeography : function (responses) {
-    this.features = _(responses).pluck('objects.features').flatten().value();
+  loadGeography : function (response) {
+    this.features = _(response).pluck('objects.features').flatten().value();
+    console.log('LOGGING THIS LOCATION: ',this.location.id)
+    console.log('LENGTH OF FEATURES: ', this.features.length)
     var border = _.find(this.features, f => f.properties.location_id === this.location.id);
+
 
     border.properties.isBorder = true;
 
