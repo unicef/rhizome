@@ -88,13 +88,13 @@ Campaign Drop Down
 
 The campaign drop down must have the following structure.  Right now, unlike the location drop down which is a tree view, this is flat.  We need to enhance this so we can see the following:
 
-> Nigeria
-   > campaign_type_1
-   > campaign_type_2
-       > Campaign_type_2 in Month January 2015
-       > Campaign_type_2 in Month February 2015
-       > ...
-   > campaign_type_3
+- Nigeria
+   - campaign_type_1
+   - campaign_type_2
+       - Campaign_type_2 in Month January 2015
+       - Campaign_type_2 in Month February 2015
+       - ...
+   - campaign_type_3
 
 The response for the api should allow the application to render this data without any front end data manipulation.  Currently, the api for Locations and indicatorsTree pivots the data in order to build the tree view.
 
@@ -267,7 +267,7 @@ Base
 All api calls require a location_id and campaign_id.  The below API name spaces inherit from what is in Base.py
 
 *Headers*
-    - 200, 400, 401, 500 etc.  Make sure that these are avaliable for FE team.
+    - 200, 400, 401, 500 etc.  Make sure that these are avaialable for FE team.
 
 *Errors*
 
@@ -298,6 +298,24 @@ New Functionality Needed
    - Requires Location_id and returns only campaigns for which there is data for that location.
 
 
-Data Entry
-~~~~~~~~~~
-  - see DataEntryResource
+Who is Working on what
+======================
+
+Week of Oct 5
+    - John: API Enhancements
+    - Rouran / Sichu: refactor region Data Access
+    - Ang: Design
+
+Week of Oct 12
+    - John: Admin Module
+    - Rouran: Custom dash
+    - Sichu: Implement New Styles From Jim
+    - Ang: ....
+
+Week of Oct 19
+    - John: Admin Module
+    - Rouran / Sichu: Custom dash
+    - Ang: ....
+
+Week of Oct 26
+    - All hands on deck to make the application stable.
