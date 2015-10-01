@@ -20,18 +20,17 @@ Stack
 
 We will have two environments, Test and Production ( C.I. After Nov 4th ) and each will need the following:
    - One DB Server Running Postgres
-   - One Web Server
+   - One Web Server Running django / apache
+   - One ODK Server Running ODK sync 4 Times Daily
 
+Total: 6 Servers @
+Average Data Transfer cost: ??
 
-Deployment
-~~~~~~~~~~
-
-See fabfile.py
 
 Refactoring
 ~~~~~~~~~~~
 
-Note to Developers: ** We are not going to have time to de-couple these apps given our deadline **  Taking over the front end code has frankly been a nightmare and we are goign to need to do a pretty serious re-write in order to acheive what we need for November 4th.
+Note to Developers: **We are not going to have time to de-couple these apps given our deadline**  Taking over the front end code has frankly been a nightmare and we are goign to need to do a pretty serious re-write in order to achieve what we need for November 4th.
 
 However, we do have time to set ourselves up for this when our November deadline passes by **removing all references to django templates with the exception of the django admin.**  For November 4th We will continue to serve the static assets as well as the application logic with apache / modwsgi.
 
@@ -39,13 +38,19 @@ There are a few major refactoring efforts that are needed in the front end:
    - Application Must be a Single Page HTML App.
    - All references to vue must be removed.
    - Remove all dependencies on Django Templates with the exception of Login and Admin pages ( and the one .html file needed to run our javascript).
-   - The data acess layer was very poorly designed and thoguht through, and i've already done alot to help this, but there is alot more to do.   see more in the [LINK ME] application overview.
+   - The data acess layer was very poorly designed and though, and i've already done alot to help this, but there is alot more to do.   see more in the [LINK ME] application overview.
 
 
 Application Overview
 ~~~~~~~~~~~~~~~~~~~~
 
-The current application has the idea of a "dashboard" but also have.  These dashboards are effective because they allow the user to filter their experience based on
+The current application has the idea of a "dashboard" but also have.  These dashboards are effective because they allow the user to filter their experience based on who they are and what they need to see.  This big difference between the current set up and what we need in the next weeks is that from a technical perspective **everything is a dashboard**.  The dashboard is the entry point for everything in the application and depending on the URL, we will render subcomponents as necessary.
+
+The layout of the .js should be as follows:
+
+webapp
+  > src
+     > component
 
 
 Navigation
@@ -77,13 +82,12 @@ The index page has an edit link, which opens up a component underneath the admin
 
 The index has a search functionality as well as the ability to sort and filter column values.
 
-* API Format *:
-  - Index:
-      -
+*API Format *:
+~~~~~~~~~~~~~~
+  - GET:
   - POST:
       - New
       - Update
-
 
 Index
 ~~~~~
@@ -107,12 +111,17 @@ Edit
 
 
 Content Type Behavior
-~~~~~~~~~~~~~~~~~~~~
-  - user
+~~~~~~~~~~~~~~~~~~~~~
+  - user:
+      -> subcomponents: location_permissions
   - location
+        -> subcomponents: associated_mappings
   - campaign
+        -> subcomponents: associated_mappings
   - indicator
+        -> subcomponents: associated_mappings, tags, calculations, bounds
   - tag
+        -> subcomponents: tags ( view/add indicators for tag)
 
 Source Data API
 ~~~~~~~~~~~~~~~
@@ -131,3 +140,49 @@ Source Data Management
 
 Data Entry
 ==========
+
+Back End Business Rules and ETL
+===============================
+
+ETL - Source Data Backend
+~~~~~~~~~~~~~~~~~~~~~~~~~
+  .. image:: http://s27.postimg.org/hh2retykz/rhizome_data_flow.png
+     :width: 600pt
+
+1. A unique source (ODK form, csv upload, .shp file) has a corresponding source_dic_id as well as a pointer to the raw data stored on the file system.
+2. A user specifies configurations for this sources, for instance, the unique_id column, region and campaign columns.
+3. Based on the “document_details” the raw data is translated into source_submissions.  The source_submission table has a document_id, and the raw json of the submission.
+4. Based on the configurations, source_object_maps are created and queued up for a user to map.  This table contains {content_type, source_object_code, master_obj_id}. Note, if meta data mapped from other source_docs, the user need not map them again.
+5. Based on the metadata mappings, submissions are transformed into datapoints with their corresponding master object ids.  This table does not have any unique indexes.,
+6. A user can validate, invalidate and resolve conflicts from the source data
+7. Based on validation and business logic, chose valid create datapoitns from above table. doc_datapoint and datapoint  same exact except datapoint has a unique index on region_id, campaign_id, location_id
+8. Datapoint are our main source of truth, data stored and collected at the lowest level possible.  In step 8 datapoints are aggregated and values created for all parents recursively.
+9. Based on metadata about indicator calculation definitions, we create new indicators based on calculations from the raw and aggregated values. For instance, % of missed children due to refusal.
+10. The datapoint API and the application as a whole use campaign_id and region_id as parameters to initialize a dashboard.  So, the datapoints model here is transformed so that *[ region_id, campaign_id, indicator_id, value ]* --- becomes --->  *[ region_id, campaign_id, indicator_json ]*
+
+
+ODK
+~~~
+
+Detailed API Specifications
+===========================
+
+Base
+~~~~
+
+All api calls require a location_id and campaign_id.  The below API name spaces inherit from what is in Base.py
+
+source_data
+~~~~~~~~~~~
+      - POST document configurations, GET document data at various stages of ETL process
+      - required params: document_id
+
+manage
+~~~~~~
+    - add/edit/view campaigns, indicators, locations and datapoints.
+    - required params: content_type
+    - dashboard
+
+Data Entry
+~~~~~~~~~~
+  - see DataEntryResource
