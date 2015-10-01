@@ -195,6 +195,31 @@ Custom Dashboard Functionality
 
 * Rendering Custom Dashboards is exactly the same as rending static dashboards *  See above for more information on this.
 
+*Creating a dashboard* :  When the user clicks "create dashboard" they are taken to the screen below where they name the dashboard and pick **one of 4 layouts**.  On save, the application should POST - the title, and the layout ID in
+
+API Calls needed for this:
+  - On page init -> GET /new_dashboard
+        -> returns: the 3 layoutobjects
+  - on save -> POST / dashboard {title:<x>,layout_id<y>}
+
+  .. image:: http://s10.postimg.org/b7mp6sf3d/Custom_Dash_Landing.png
+     :width: 600pt
+
+*Layout Details*
+
+  - Layout #1: Basic (selected by default)
+      - Very Similar to
+  - Layout #2: Heat Map Matrix
+  - Layout #3: Map
+
+
+Data Model For Dashbaord Table:
+    - id
+    - Title
+    - dashboard_json
+    - layout_id
+
+
 Source Data Management
 ======================
 
