@@ -169,22 +169,31 @@ Content Type Behavior
   - tag
         -> subcomponents: tags ( view/add indicators for tag)
 
-Source Data API
-~~~~~~~~~~~~~~~
-
 Dashboards
 ==========
 
 As i mentioned earlier **everything is a dashboard**.  Lets review the flow of data when we land on a dashboard:
 
-For our purpos
+Currently The Management Dashboard Makes 21 API Calls.  This is outrageous and we should only need the following calls:
 
-Assume the URL is:
+  -  /api/location/?parent_location_id=<x>
+      - returns this location, it's lineage ( parent / grandparent etc ), and it's children
+  -  /api/campaign/?id=<y>
+      - Gets us the campaign object so we know the start/end date and display name
+  -  /api/geo/?parent_location_id=<x>
+      - Gets us the geojson to draw a map.
+  -  /api/datapoints/  ( One of These Calls Per Chart Section )
+      - ?location_id=<x>&campaign_id=<y>&indicator__in=<z>
+      - ?location_id=<x>&campaign_start=<some_date>&campaign_end=<some_other_date>&&indicator__in=<z>
+      - ?parent_location_id=<x>&campaign_id=<y>&indicator__in=<z>
+
+in the case of the management dashboard, given the variety of data that appears on this dashboard, the calls to the /api/datapoint endpoint will remain the same, however i have already fixed the FE code so that the /location and /geo endpoint is hit only once.
+
 
 Custom Dashboard Functionality
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Static Dashboards should be handles exactly like Custom Dashboards *
+* Rendering Custom Dashboards is exactly the same as rending static dashboards *  See above for more information on this.
 
 Source Data Management
 ======================
@@ -229,21 +238,10 @@ Aggregation and Calculation
 
 As an example
 
-                  Total Missed Children
-                        /    \
-                       /      \
-                      /        \
-            Missed due        Missed Due
-            to absence         to Refusal
-              [7]            [no stored value]
-              / \                   / \
-             /   \                 /   \
-            /     \               /     \
-          child   at         refusal   refusal
-         sick    school        due to   due to
-         [4]        [2]        religious  too many
-                             reasons   rounds
-                               [7]       [5]
+.. image:: http://s7.postimg.org/nbr4cvxyz/Screen_Shot_2015_09_30_at_10_08_53_PM.png
+   :width: 300pt
+
+
 
 In the above case, the Total number of missed children is 19 because the value of 7 overrides the aggregated values.
 
@@ -258,7 +256,7 @@ ODK
       - Find any new submissions by looking for meta-instance-ids that do not exist in the source_submission table for that documentation.
       - Append those rows to the submission table for taht documentation
       - Sync datapoints by running RefreshMaster for the document_id of the form.
-    
+
 
 Detailed API Specifications
 ===========================
