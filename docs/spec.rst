@@ -191,33 +191,78 @@ in the case of the management dashboard, given the variety of data that appears 
 
 
 Custom Dashboard Functionality
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==============================
 
-* Rendering Custom Dashboards is exactly the same as rending static dashboards *  See above for more information on this.
-
-*Creating a dashboard* :  When the user clicks "create dashboard" they are taken to the screen below where they name the dashboard and pick **one of 4 layouts**.  On save, the application should POST - the title, and the layout ID in
-
-API Calls needed for this:
-  - On page init -> GET /new_dashboard
-        -> returns: the 3 layoutobjects
-  - on save -> POST / dashboard {title:<x>,layout_id<y>}
-
-  .. image:: http://s10.postimg.org/b7mp6sf3d/Custom_Dash_Landing.png
-     :width: 600pt
-
-*Layout Details*
-
-  - Layout #1: Basic (selected by default)
-      - Very Similar to
-  - Layout #2: Heat Map Matrix
-  - Layout #3: Map
-
+* Rendering Custom Dashboards is exactly the same as rending static dashboards *  See above for more information on this.  This section will be about creating and editing dashboards.
 
 Data Model For Dashbaord Table:
     - id
     - Title
     - dashboard_json
     - layout_id
+    - default_office_id
+
+Creating a dashboard
+~~~~~~~~~~~~~~~~~~~~
+
+When the user clicks "create dashboard" they are taken to the screen below where they name the dashboard and pick **one of 4 layouts**.  On save, the application should POST - the title, the layout ID and the default office_id, as it has been selected in the drop down.
+
+API Calls needed for this:
+  - On page init -> GET /new_dashboard
+        -> returns: the 3 layout objects, and all offices to populate the drop down at the lower right.
+  - on save -> POST / dashboard {title:<x>,layout_id<y>,default_office_id=<z>}
+
+  .. image:: http://s4.postimg.org/5h4ahvwkt/Custom_Dash_Landing_1.png
+     :width: 600pt
+
+See: http://rhizome.work/datapoints/dashboards/edit for the current version of this page.
+
+Layout Details
+~~~~~~~~~~~~~~
+
+Each layout must be mobile, tablet and desktop responsive.  The current app renders nicely on a macbook, but tweaks when dealing with a desktop monitor.  It's critical that these layouts are clean and can show on any and all screens.
+
+  - Layout #1: Basic (selected by default)
+      - Very Similar to the management dashboard.  8 Charts , fluid layout
+  - Layout #2: Heat Map Matrix
+      - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
+      - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
+  - Layout #3: Map
+      - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
+
+
+Editing A Dashboard
+~~~~~~~~~~~~~~~~~~~
+When it comes to editing the "dashboard" there is actually very little functionality needed, as the vast amount of logic and functionality is handled in the chart builder.  The following basic functions are needed.
+
+    - *Render Dashboard*:  with the ability to *click* into each chart component
+    - *Select Chart*: User clicks on a chart section and this allows them to enter into the "chart edit" mode
+    - *Update Title*: Ajax POST to save the title of a dashboard
+    - *Naviation* : This inherits from the navigation used througout the application and will dynmically shift the data in the charts accordingly.
+
+Note - once the default_office_id and layout_id have been set **they can not be changed**
+
+Editing A Chart
+~~~~~~~~~~~~~~~
+
+see here: http://rhizome.work/datapoints/dashboards/edit/1/
+
+Unlike the current dashboard builder, there will be no "create chart" method.  The charts will be pre-populated based on the layout_id and the user will have the ability to click in and alter the information provided.  By default, each chart within a particular layout will have a *chart_type* (chloroploeth, line, column, bar, pie, scatter plot ).
+
+Assume that the user chose *layout-1* and clicked the *chart-8* component in the top right which by default is a map.
+
+When the user clicks into a chart component, the see the following:
+
+
+
+Dashboard Json Specification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently the dashboard builder posts "dashboard_json" which contains the definition of the dashboard.  The schema is as follows:
+
+  - bla
+      -bla
+  - bla
 
 
 Source Data Management
