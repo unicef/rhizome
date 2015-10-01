@@ -372,18 +372,17 @@ Who is Working on what
 Week of Oct 5
     - John: API Enhancements
     - Rouran / Sichu: refactor region Data Access
-    - Ang: Design
+    - Ang: Designing / scoping the performance management / source data app
 
 Week of Oct 12
     - John: Admin Module
-    - Rouran: Custom dash
-    - Sichu: Implement New Styles From Jim
-    - Ang: ....
+    - Rouran / Sichu: Custom dash
+    - Ang: Designing / scoping the performance management / source data app
 
 Week of Oct 19
     - John: Admin Module
     - Rouran / Sichu: Custom dash
-    - Ang: ....
 
 Week of Oct 26
+    - John : Implement New Styles From Jim
     - All hands on deck to make the application stable.
