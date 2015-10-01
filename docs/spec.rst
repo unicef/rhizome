@@ -253,6 +253,11 @@ Assume that the user chose *layout-1* and clicked the *chart-8* component in the
 
 When the user clicks into a chart component, the see the following:
 
+.. image:: http://s27.postimg.org/w6gr4eggj/Custom_Dash_Edit_Chart.png
+   :width: 600pt
+
+
+Note - Unlike the current set up in which there are navigation controls *within the chart builder* the user must instead use the campaign / location navigation at the top right of the screen to see the preview adapt accordingly.
 
 
 Dashboard Json Specification
@@ -263,6 +268,10 @@ Currently the dashboard builder posts "dashboard_json" which contains the defini
   - bla
       -bla
   - bla
+
+Business Rules for Chart Types:
+   - chloropleth Map accepts exactly 1 indicator.
+
 
 
 Source Data Management
