@@ -38,32 +38,78 @@ There are a few major refactoring efforts that are needed in the front end:
    - Application Must be a Single Page HTML App.
    - All references to vue must be removed.
    - Remove all dependencies on Django Templates with the exception of Login and Admin pages ( and the one .html file needed to run our javascript).
-   - The data acess layer was very poorly designed and though, and i've already done alot to help this, but there is alot more to do.   see more in the [LINK ME] application overview.
+   - The data acess layer was very poorly designed and though, and i've already done alot to help this, but there is alot more to do.  ( see more in the application overview )
 
 
 Application Overview
 ~~~~~~~~~~~~~~~~~~~~
 
-The current application has the idea of a "dashboard" but also have.  These dashboards are effective because they allow the user to filter their experience based on who they are and what they need to see.  This big difference between the current set up and what we need in the next weeks is that from a technical perspective **everything is a dashboard**.  The dashboard is the entry point for everything in the application and depending on the URL, we will render subcomponents as necessary.
-
-The layout of the .js should be as follows:
-
-webapp
-  > src
-     > component
-
+The current application has the idea of a "dashboard" but also has.  These dashboards are effective because they allow the user to filter their experience based on who they are and what they need to see.  This big difference between the current set up and what we need in the next weeks is that from a technical perspective **everything is a dashboard**.  The dashboard is the entry point for everything in the application and depending on the URL, we will render subcomponents as necessary.
 
 Navigation
 ==========
 
-Campaign Drop Down
-~~~~~~~~~~~~~~~~~~
+The Navigation Drives the data flow of the application.  Each page that a user sees will be restricted by location_id and campaign_id.
+
+**IMPORTANT** : We will need to change the current Url structure such that:
+
+  - /datapoints/management-dashboard/Nigeria/2015/06/
+becomes
+  - /datapoints/management-dashboard/<location_id/<campaign_id>
+
+
+The current behavior ( using the old URL ) requires the following logic:
+   - indiscriminently fetch all regions in the database
+   - Look up the ID for "Nigeria" or whatever fit the location variable in the URL
+   - Make API calls for *datapoints* and *shapes* based on the id found in step 2.
+
+The New behavior will be as follows:
+   - Take the <location_id> from the URL
+   - Pass <location_id> as the *parent_location_id* parameter to the location endpoint, *returning only direct children of existing location*
+   - Pass <location_id> to the datapoint and geo and whatever other endpoint needed to render data on the page.
+
+This means that whenever the user is viewing a particular page, the only data rendering on the page shoudl be relevant to the location in the url, as well as it's direct children.  This means for instance, when i am viewing "Bauchi Province" the API only needs to return Bauchi, it's children, and if it its lineage ( in this case that would be Nigeria) so that we can build the bread crumb.  Currently the API returns over 4000 regions, the application makes no use of almost all of these and the user experiences unnaceptable load times.
+
+Also to note:  The campaign list that is rendered **is dependent on locations** that is you should not be able to select a campaign in pakistan if you are viewing data about nigeria.  This also means that *any time a location is changed in teh navigation* the application has to make another call to the campaign api.
+
 
 Location Drop Down
 ~~~~~~~~~~~~~~~~~~
 
+**VERY IMPORTANT** The application as it is designed currently sees huge performance hits because whenever a call is made, ALL REGIONS are returned.  We need to change this ASAP such that the API works with the application to acheive the following.
+
+   - each request from the .js must pass a location_id.
+   - If the URL has no location provided, pass 1 ( Nigeria ) and update the URL accordingly.
+        > yes not pretty but Nigeria is our main use case, and i can gaurentee you that it will have ID = 1 ;)
+
+
+Campaign Drop Down
+~~~~~~~~~~~~~~~~~~
+
+The campaign drop down must have the following structure.  Right now, unlike the location drop down which is a tree view, this is flat.  We need to enhance this so we can see the following:
+
+> Nigeria
+   > campaign_type_1
+   > campaign_type_2
+       > Campaign_type_2 in Month January 2015
+       > Campaign_type_2 in Month February 2015
+       > ...
+   > campaign_type_3
+
+The response for the api should allow the application to render this data without any front end data manipulation.  Currently, the api for Locations and indicatorsTree pivots the data in order to build the tree view.
+
 Dashboard Drop Down
 ~~~~~~~~~~~~~~~~~~
+
+> Static Dashboards
+   > Management
+   > District
+   > Campaign Monitoring
+> Custom Dashboards
+  > dash_1
+  > dash_2
+  > dash_3
+
 
 Home page
 =========
@@ -76,7 +122,7 @@ Admin
 
 The Admin Module allows users to Add / Edit and View metadata required for the system.
 
-The header at the top of the component switches the content type and renders by default the Index page.  The "Create New" button expands the top peice of the screen and renders the create form.
+The header at the top of the component switches the content type and renders by default the Index page.  The "Create New" button expands the top piece of the screen and renders the create form.
 
 The index page has an edit link, which opens up a component underneath the admin index with the a form that allows for inline editing.  Any changes must be persisted to the database with the "submit" button.  If the API returns a success message, there should be a "saved" icon alert, and if there is an error, the front end should report this as part of teh form.
 
@@ -127,19 +173,28 @@ Source Data API
 ~~~~~~~~~~~~~~~
 
 Dashboards
-=================
+==========
 
-Custom
-~~~~~~
+As i mentioned earlier **everything is a dashboard**.  Lets review the flow of data when we land on a dashboard:
 
-Static
-~~~~~~
+For our purpos
+
+Assume the URL is:
+
+Custom Dashboard Functionality
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Static Dashboards should be handles exactly like Custom Dashboards *
 
 Source Data Management
 ======================
 
+This is complete, but needs a design treatment.  **THIS APP CAN EASILY BE EXTENDED TO HANDLE PERFORMANCE MANAGEMENT** so it would be good to get their designer on this.
+
 Data Entry
 ==========
+
+This is complete.
 
 Back End Business Rules and ETL
 ===============================
@@ -161,8 +216,49 @@ ETL - Source Data Backend
 10. The datapoint API and the application as a whole use campaign_id and region_id as parameters to initialize a dashboard.  So, the datapoints model here is transformed so that *[ region_id, campaign_id, indicator_id, value ]* --- becomes --->  *[ region_id, campaign_id, indicator_json ]*
 
 
+*Misc Rules*
+  - No datapoint can be the result of data from two documents.  In a case where there is a location/campaign/indicator dupe between two
+
+
+Aggregation and Calculation
+===========================
+
+- When a value in datapoints exists for location X, populate agg_datapoint with this value and NOT the aggregated values of X's children
+- When a value in datapoint exists for a calculated indicator, chose this value as opposed the calculated value.
+- When there is a recursive relationship bewteen "PART_OF_SUM" indicators, aggregate recursively, but allow for overrides ( as noted in the use case directly above. )
+
+As an example
+
+                  Total Missed Children
+                        /    \
+                       /      \
+                      /        \
+            Missed due        Missed Due
+            to absence         to Refusal
+              [7]            [no stored value]
+              / \                   / \
+             /   \                 /   \
+            /     \               /     \
+          child   at         refusal   refusal
+         sick    school        due to   due to
+         [4]        [2]        religious  too many
+                             reasons   rounds
+                               [7]       [5]
+
+In the above case, the Total number of missed children is 19 because the value of 7 overrides the aggregated values.
+
 ODK
 ~~~
+
+4 Times Daily Run a job that does the following:
+
+   - Look up in document_detail all of the documents that have been configured with the "ODK_FORM" and "ODK_HOST" configuration
+   - For each of those strings
+      - Execute a odk_breifcase.jar for that from
+      - Find any new submissions by looking for meta-instance-ids that do not exist in the source_submission table for that documentation.
+      - Append those rows to the submission table for taht documentation
+      - Sync datapoints by running RefreshMaster for the document_id of the form.
+    
 
 Detailed API Specifications
 ===========================
@@ -171,6 +267,22 @@ Base
 ~~~~
 
 All api calls require a location_id and campaign_id.  The below API name spaces inherit from what is in Base.py
+
+*Headers*
+    - 200, 400, 401, 500 etc.  Make sure that these are avaliable for FE team.
+
+*Errors*
+
+*Meta*
+    - Form Data
+    - Pagination
+    -
+
+geo
+~~~
+    - required parameter = parent_region_id
+    - retuns shapes for the parent_region requested as well as all of it's children
+
 
 source_data
 ~~~~~~~~~~~
@@ -182,6 +294,11 @@ manage
     - add/edit/view campaigns, indicators, locations and datapoints.
     - required params: content_type
     - dashboard
+
+New Functionality Needed
+*/api/campaign/*
+   - Requires Location_id and returns only campaigns for which there is data for that location.
+
 
 Data Entry
 ~~~~~~~~~~
