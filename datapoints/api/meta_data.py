@@ -216,10 +216,17 @@ class DashboardResource(BaseModelResource):
                 dash_id = None
 
             post_data = dict(request.POST)
+
+            dashboard_json = json.loads(post_data['dashboard_json'][0])
+
+            print 'THIS IS THE DASHBOARD_JSON'
+            print dashboard_json
+            print 'THIS waS THE DASHBOARD_JSON'
+
             defaults = {
                 'id' : dash_id,
                 'title' : post_data['title'][0],
-                'dashboard_json' : post_data['dashboard_json'][0],
+                'dashboard_json' : dashboard_json,
                 # 'description' : post_data['description'][0],
             }
 

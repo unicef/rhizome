@@ -276,6 +276,7 @@ module.exports = Reflux.createStore({
 				}));
 	},
 	onAddIndicatorSelection: function(value){
+
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
 		this.getChartData();
@@ -286,8 +287,9 @@ module.exports = Reflux.createStore({
 	  this.getChartData();
 	},
 	onUpdateTitle:function(value){
+		 console.log('onUpdateTitle',value)
 	   this.data.title = value;
-	   //this.trigger(this.data);
+	   this.trigger(this.data);
 	},
 	onUpdateDescription:function(value){
 	   this.data.description = value;
@@ -467,6 +469,7 @@ module.exports = Reflux.createStore({
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
 
+		console.log('query', q)
 
         processChartData
         .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedlocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
