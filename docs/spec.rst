@@ -366,12 +366,12 @@ New Functionality Needed
    - Requires Location_id and returns only campaigns for which there is data for that location.
 
 
-Who is Working on what
-======================
+Suggested Work Time Line
+========================
 
 Week of Oct 5
     - John: API Enhancements
-    - Rouran / Sichu: refactor region Data Access
+    - Rouran / Sichu: refactor Data Access
     - Ang: Designing / scoping the performance management / source data app
 
 Week of Oct 12
