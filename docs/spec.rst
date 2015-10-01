@@ -128,13 +128,6 @@ The index page has an edit link, which opens up a component underneath the admin
 
 The index has a search functionality as well as the ability to sort and filter column values.
 
-*API Format *:
-~~~~~~~~~~~~~~
-  - GET:
-  - POST:
-      - New
-      - Update
-
 Index
 ~~~~~
 
@@ -272,8 +265,6 @@ Currently the dashboard builder posts "dashboard_json" which contains the defini
 Business Rules for Chart Types:
    - chloropleth Map accepts exactly 1 indicator.
 
-
-
 Source Data Management
 ======================
 
@@ -317,10 +308,8 @@ Aggregation and Calculation
 
 As an example
 
-.. image:: http://s7.postimg.org/nbr4cvxyz/Screen_Shot_2015_09_30_at_10_08_53_PM.png
+.. image:: http://s29.postimg.org/cvegbyfmf/imageedit_3_6644065823.png
    :width: 300pt
-
-
 
 In the above case, the Total number of missed children is 19 because the value of 7 overrides the aggregated values.
 
