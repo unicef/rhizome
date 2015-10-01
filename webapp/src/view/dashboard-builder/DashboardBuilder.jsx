@@ -89,6 +89,8 @@ module.exports = React.createClass({
        }
     },
 	newChart:function(){
+		console.log('this is the new chart method')
+
 	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
 	},
 	saveChart:function(chartDef){
@@ -314,14 +316,19 @@ module.exports = React.createClass({
 	   }
 	   else if(this.state.chartBuilderActive)
 	   {
-			console.log(this.state.store)
-			console.log(this.state.store.dashboard)
-			var chartDef = this.state.store.dashboard.charts[0]
-	    // var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
-	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} location={location} />);
+
+	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
+			console.log('INITITING SUB COMPONENT FOR CHART BUILDER: ', chartDef)
+	   	return (<ChartBuilder
+					dashboardId={this.props.dashboard_id}
+					chartDef={chartDef}
+					callback={this.saveChart}
+					cancel={this.cancelEditChart}
+					campaign={campaign}
+					location={location}
+				/>);
 	   }
 	   else {
-
 	   	return dashboardBuilderContainer;
 	   }
 	}

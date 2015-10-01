@@ -106,8 +106,13 @@ module.exports = React.createClass({
   },
 
   render: function () {
+
+    console.log('indicatorList from store: ', this.state.store.indicatorList)
+    console.log('this.state: ', this.state)
+    console.log('this.props: ', this.props)
+
     var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name}
-                       data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions}/>;
+                   data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions}/>;
     var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>);
     var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
 
@@ -144,7 +149,7 @@ module.exports = React.createClass({
       <IndicatorDropdownMenu
         text='Add Indicators'
         icon='fa-plus'
-        indicators={this.state.store.indicatorList}
+        indicators={indicators}
         sendValue={ChartBuilderActions.addIndicatorSelection}>
       </IndicatorDropdownMenu>
 

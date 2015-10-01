@@ -153,6 +153,7 @@ module.exports = Reflux.createStore({
 		locationRadioValue: 2,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"location",title:"locations"}],
 		groupByRadioValue: 1,
+
 		timeRadios:function(){
 		            var self = this;
 		            var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}];
@@ -320,6 +321,8 @@ module.exports = Reflux.createStore({
     this.getChartData();
   },
 	onSelectChart: function(value){
+			console.log('LOGGING onSelectChart', value)
+
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
 	   //this.data.chartOptions = chartOptions;
@@ -350,6 +353,7 @@ module.exports = Reflux.createStore({
        this.data.yAxis = chartDef.y;
        this.data.id = chartDef.id;
 
+			 console.log('applyChartDef', chartDef)
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
        	  return self._indicatorIndex[id];
@@ -438,6 +442,7 @@ module.exports = Reflux.createStore({
 	    }
 	},
 	getChartData: function(){
+			console.log('LOGGING this dot data in  getChartData ', this.data)
 	    if(!this.data.indicatorsSelected.length)
 	    {
 	     return;
