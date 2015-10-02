@@ -227,6 +227,12 @@ var Dashboard = React.createClass({
         .value()
     );
 
+    // this.state.data is empty for custom dashboards.. tryign to fix
+    // var data_for_init = this.state.data ||
+    var data_for_init = this.state.dashboard.charts
+
+    console.log('data_for_init',data_for_init)
+
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
@@ -236,6 +242,8 @@ var Dashboard = React.createClass({
       indicators,
       GeoStore.features
     );
+
+    console.log('data var AFTER DASHBOARD INIT', data)
 
     var dashboardProps = {
       campaign: campaign,

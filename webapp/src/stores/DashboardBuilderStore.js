@@ -37,14 +37,17 @@ var DashboardBuilderStore = Reflux.createStore({
 	 else {
 	 	api.get_dashboard({id:id})
 	 		.then(function (response) {
-				console.log('GETTING DASHBOARD FROM API')
-	 			self.data.dashboard = response.objects[0];
-	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
-				console.log('dashboard.charts',self.data.dashboard.charts)
-	 			self.data.dashboardTitle = 	response.objects[0].title;
-	 			self.data.dashboardDescription = response.objects[0].description;
-	 			self.data.loaded = true;
-	 			self.trigger(self.data);
+
+					console.log('GET DASHBOAR RESPONSE', response) 
+					self.data.dashboard = response.objects[0];
+		 			self.data.dashboard.charts = response.objects[0].dashboard_json;
+		 			self.data.dashboardTitle = 	response.objects[0].title;
+		 			self.data.dashboardDescription = response.objects[0].description;
+		 			self.data.loaded = true;
+		 			self.trigger(self.data);
+
+					console.log('DASHBOARD CHHARTS', self.data.dashboard.charts)
+
 	 		});
 	 }
 
@@ -158,14 +161,14 @@ var DashboardBuilderStore = Reflux.createStore({
 			console.log('trying to save dashboard..')
 	    api.save_dashboard(data).then(function(response){
 	       console.log(response);
-	       //self.data.charts = response.objects[0].dashboard_json;
-	       //self.trigger(self.data);
+	      //  self.data.charts = response.objects[0].dashboard_json;
+	      //  self.trigger(self.data);
 	    });
 	},
 	onUpdateChart:function(chartDef,index){
 
-		console.log('chartDef: ', chartDef)
-		console.log('index: ', index)
+		console.log('onUpdateChart CHART DEF: ', chartDef)
+		console.log('onUpdateChart index: ', index)
 
 	  this.data.dashboard.charts[index] = chartDef;
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});

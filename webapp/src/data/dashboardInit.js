@@ -172,6 +172,8 @@ var process = {
 function dashboardInit(dashboard, data, location, campaign, locationList, indicators, features) {
   var results = {};
 
+  console.log('this is the data passed to dashboard init',data);
+
   var indicatorsById = _.indexBy(indicators, 'id');
   var locationsById    = _.indexBy(locationList, 'id');
 

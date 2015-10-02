@@ -276,6 +276,7 @@ module.exports = Reflux.createStore({
 				}));
 	},
 	onAddIndicatorSelection: function(value){
+		console.log('THIS IS THE onAddIndicatorSelection method', value)
 
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
@@ -445,6 +446,7 @@ module.exports = Reflux.createStore({
 	},
 	getChartData: function(){
 			console.log('LOGGING this dot data in  getChartData ', this.data)
+
 	    if(!this.data.indicatorsSelected.length)
 	    {
 	     return;
