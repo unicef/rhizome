@@ -386,3 +386,11 @@ Week of Oct 19
 Week of Oct 26
     - John : Implement New Styles From Jim
     - All hands on deck to make the application stable.
+
+
+GETTING THE DASHBOARD BUILDER WORKING
+=====================================
+
+  - Make sure that a radio button is selected for each row
+  - Click a few chart types in order to get the indicator drop down working
+  
