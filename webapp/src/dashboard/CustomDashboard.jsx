@@ -94,19 +94,14 @@ var CustomDashboard = React.createClass({
   },
 
   render : function () {
-
-
-
-    // var numCharts = this.props.dashboard.charts.length;
-    var numCharts = 0
-    var chart_data = [] //this.props.dashboard.charts
+    var numCharts = this.props.dashboard.charts.length;
 
     var data     = this.props.data;
     var loading  = this.props.loading;
     var campaign = this.props.campaign;
     var editable = this.props.editable;
 
-    var charts = _.map(this.props.dashboard.chart_data, (chart, i) => {
+    var charts = _.map(this.props.dashboard.charts, (chart, i) => {
       var title  = chart.title;
       var key    = _.get(chart, 'id', _.kebabCase(title));
       var id     = _.get(chart, 'id', _.camelCase(title));
@@ -161,7 +156,7 @@ var CustomDashboard = React.createClass({
     return (
       <div className='row'>{charts}{addChart}</div>
     );
-  }
+  },
 });
 
 module.exports = CustomDashboard;

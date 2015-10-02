@@ -177,9 +177,8 @@ module.exports = {
     }
   },
   processLineChart:function(dataPromise,lower,upper,groups,groupBy){
-
     return dataPromise.then(function(data){
-      console.log('== data in data promiese chartbuilder ', data)
+      console.log('Datain the process line chart function',data)
       if(!lower) //set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
@@ -270,7 +269,7 @@ module.exports = {
     var locationsIndex = _.indexBy(locations, 'id');
 
     return dataPromise.then(function(data){
-         console.log(_(data.objects).pluck('indicators').flatten().value());
+
       var domain = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()

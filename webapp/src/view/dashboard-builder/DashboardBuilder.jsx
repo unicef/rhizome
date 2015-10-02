@@ -4,7 +4,7 @@ var _      = require('lodash');
 //var moment = require('moment');
 var React  = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
-var Reflux = require('reflux');
+var Reflux = require('reflux/src');
 var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
 
 var dashboardInit = require('data/dashboardInit');
@@ -22,13 +22,15 @@ var IndicatorStore      = require('stores/IndicatorStore');
 var GeoStore            = require('stores/GeoStore');
 var GeoActions          = require('actions/GeoActions');
 var AppActions          = require('actions/AppActions');
-var RegionTitleMenu     = require('component/RegionTitleMenu');
+var RegionTitleMenu     = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu   = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
 
 var CustomDashboard     = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
+
+window.perf = React.addons.Perf;
 
 module.exports = React.createClass({
 	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore"),Reflux.connect(DashboardStore,"dashboardStore"),Reflux.ListenerMixin],
@@ -89,8 +91,6 @@ module.exports = React.createClass({
        }
     },
 	newChart:function(){
-		console.log('this is the new chart method')
-
 	  this.setState({chartBuilderindex : null,chartBuilderActive:true});
 	},
 	saveChart:function(chartDef){
@@ -132,7 +132,7 @@ module.exports = React.createClass({
 
 	    DashboardActions.setDashboard({dashboard:this.state.store.dashboard,date:moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')});
 	},
-	_setlocation : function (id) {
+	_setRegion : function (id) {
 	    var location    = _.find(this.state.dashboardStore.locations, r => r.id === id)
 
 	    if (!location) {
@@ -220,13 +220,6 @@ module.exports = React.createClass({
         indicators,
         GeoStore.features
       );
-
-			// THIS RIGHT HERE ABOVE IS THE PROBLEm.. THERE EXISTS DASHBAORD DATA
-			// BUT THIS RETURNS NULLLLLL
-			console.log('data from dashboard builder .jsx');
-			console.log('data', data)
-
-
       var dashboardProps = {
         campaign    : campaign,
         dashboard   : dashboardDef,
@@ -245,8 +238,6 @@ module.exports = React.createClass({
       var dashboard = React.createElement(
         CustomDashboard,
         dashboardProps);
-
-			console.log('THIS IS THE DASHBOARD in render of custom dash ', dashboard)
 
       var campaigns = _(this.state.dashboardStore.campaigns)
         .filter(c => c.office_id === location.office_id)
@@ -291,12 +282,14 @@ module.exports = React.createClass({
 	                   <RegionTitleMenu
 	                     locations={this.state.dashboardStore.locations}
 	                     selected={location}
-	                     sendValue={this._setlocation} />
+	                     sendValue={this._setRegion} />
 	                 </h1>
 	               </div>
 	             </div>
 	           </form>
+	           {this.state.store.dashboard.charts.length?null:addDashboardLinkContainer}
 	           {dashboard}
+
 	           <div className="dashboard-footer">
 	              <div className="right">
 	                	<a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
@@ -307,17 +300,22 @@ module.exports = React.createClass({
 		          <a role='button' className='button' onClick={this.newChart}>
 		            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
 		          </a>
+
+
 		          <span>
 		          	&ensp;
 			          Description
+
 		              <TitleInput class="descriptionField" initialText={this.state.description} save={this._updateDescription} />
 		          </span>
 
 		          <span>
 	              	&ensp;Changes are saved when you make them.
-				  		</span>
-           </div>
-       </div>
+				  </span>
+
+	           </div>
+
+	         </div>
 	   );
 	   if(!this.state.store.loaded)
 	   {
@@ -325,21 +323,9 @@ module.exports = React.createClass({
 	   }
 	   else if(this.state.chartBuilderActive)
 	   {
-
-	    var tmpChartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
-
-			var chartDef = tmpChartDef || [];
-			console.log('INITITING SUB COMPONENT FOR CHART BUILDER: ', chartDef)
-
-
-	   	return (<ChartBuilder
-					dashboardId={this.props.dashboard_id}
-					chartDef={chartDef}
-					callback={this.saveChart}
-					cancel={this.cancelEditChart}
-					campaign={campaign}
-					location={location}
-				/>);
+	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
+	   	console.log(chartDef,this.state.store.dashboard.charts);
+	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} location={location} />);
 	   }
 	   else {
 	   	return dashboardBuilderContainer;

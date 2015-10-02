@@ -1,7 +1,7 @@
 'use strict';
 
 var _      = require('lodash');
-var Reflux = require('reflux');
+var Reflux = require('reflux/src');
 var api = require('data/api');
 
 var treeify = require('data/transform/treeify');
@@ -38,16 +38,12 @@ var DashboardBuilderStore = Reflux.createStore({
 	 	api.get_dashboard({id:id})
 	 		.then(function (response) {
 
-					console.log('GET DASHBOAR RESPONSE', response) 
-					self.data.dashboard = response.objects[0];
-		 			self.data.dashboard.charts = response.objects[0].dashboard_json;
-		 			self.data.dashboardTitle = 	response.objects[0].title;
-		 			self.data.dashboardDescription = response.objects[0].description;
-		 			self.data.loaded = true;
-		 			self.trigger(self.data);
-
-					console.log('DASHBOARD CHHARTS', self.data.dashboard.charts)
-
+	 			self.data.dashboard = response.objects[0];
+	 			self.data.dashboard.charts = response.objects[0].dashboard_json;
+	 			self.data.dashboardTitle = 	response.objects[0].title;
+	 			self.data.dashboardDescription = response.objects[0].description;
+	 			self.data.loaded = true;
+	 			self.trigger(self.data);
 	 		});
 	 }
 
@@ -56,12 +52,12 @@ var DashboardBuilderStore = Reflux.createStore({
 	setDashboard:function(){
 		var date = '2013-03';
 		var locationIdx = _.indexBy(this.data.locations, 'id');
-		var topLevellocations = _(this.data.locations)
+		var topLevelLocations = _(this.data.locations)
 			.filter(function (r) {
 				return !locationIdx.hasOwnProperty(r.parent_location_id);
 			})
 			.sortBy('name');
-		this.data.location = topLevellocations.first();
+		this.data.location = topLevelLocations.first();
 		this.data.campaign = _(this.data.campaigns)
 				.filter(function (c) {
 					return c.office_id === this.data.location.office_id &&
@@ -74,8 +70,6 @@ var DashboardBuilderStore = Reflux.createStore({
 		this.trigger(this.data);
     },
 	onAddChart:function(chartDef){
-		console.log('adding chart for chartdef --> : ',chartDef)
-		console.log('this.data.dashboard --> : ',this.data.dashboard)
 	  chartDef.id = chartDef.title + (new Date()).valueOf();
 	  this.data.dashboard.charts.push(chartDef);
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
@@ -140,10 +134,9 @@ var DashboardBuilderStore = Reflux.createStore({
 	     dashboard_json:'[]'
 	   };
 	   api.save_dashboard(data).then(function(response){
-			 	var chart_obj = response.objects[0]
-	      if(chart_obj.id)
+	      if(response.objects[0].id)
 	      {
-	      	window.location = "/datapoints/dashboards/edit/"+ chart_obj.id;
+	      	window.location = "/datapoints/dashboards/edit/"+response.objects[0].id;
 	      }
 	      else {
 	      	alert("There was an error saving your chart");
@@ -158,18 +151,13 @@ var DashboardBuilderStore = Reflux.createStore({
 	      default_office_id: null,
 	      dashboard_json:JSON.stringify(this.data.dashboard.charts)
 	    };
-			console.log('trying to save dashboard..')
 	    api.save_dashboard(data).then(function(response){
 	       console.log(response);
-	      //  self.data.charts = response.objects[0].dashboard_json;
-	      //  self.trigger(self.data);
+	       //self.data.charts = response.objects[0].dashboard_json;
+	       //self.trigger(self.data);
 	    });
 	},
 	onUpdateChart:function(chartDef,index){
-
-		console.log('onUpdateChart CHART DEF: ', chartDef)
-		console.log('onUpdateChart index: ', index)
-
 	  this.data.dashboard.charts[index] = chartDef;
 	  DashboardActions.setDashboard({dashboard:this.data.dashboard});
 	  this.saveDashboard();

@@ -1,5 +1,5 @@
 'use strict';
-var Reflux = require('reflux');
+var Reflux = require('reflux/src');
 var ChartBuilderActions = require('actions/ChartBuilderActions');
 
 var _      = require('lodash');
@@ -153,7 +153,6 @@ module.exports = Reflux.createStore({
 		locationRadioValue: 2,
 		groupByRadios:[{value:"indicator",title:"Indicators"},{value:"location",title:"locations"}],
 		groupByRadioValue: 1,
-
 		timeRadios:function(){
 		            var self = this;
 		            var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}];
@@ -214,10 +213,6 @@ module.exports = Reflux.createStore({
 	   return this.data;
 	},
 	onInitialize: function(chartDef,location,campaign){
-	console.log('on initialize chart def:', chartDef)
-	console.log('on initialize:', location)
-	console.log('on initialize:', campaign)
-
 	this.data.locationSelected = location;
 	this.data.campaignSelected = campaign;
     this.resetChartDef();
@@ -239,7 +234,7 @@ module.exports = Reflux.createStore({
 			  	.map(ancestoryString)
 			  	.value();
 			  	self.trigger(self.data);
-			  	self.aggregatelocations();
+			  	self.aggregateLocations();
 			 });
 
 			api.indicatorsTree().then(function(items) {
@@ -276,8 +271,6 @@ module.exports = Reflux.createStore({
 				}));
 	},
 	onAddIndicatorSelection: function(value){
-		console.log('THIS IS THE onAddIndicatorSelection method', value)
-
 		this.data.indicatorsSelected.push(this._indicatorIndex[value]);
 	    this.trigger(this.data);
 		this.getChartData();
@@ -288,18 +281,17 @@ module.exports = Reflux.createStore({
 	  this.getChartData();
 	},
 	onUpdateTitle:function(value){
-		 console.log('onUpdateTitle',value)
 	   this.data.title = value;
-	   this.trigger(this.data);
+	   //this.trigger(this.data);
 	},
 	onUpdateDescription:function(value){
 	   this.data.description = value;
 	   this.trigger(this.data);
 	},
-	onSelectShowlocationRadio:function(value){
+	onSelectShowLocationRadio:function(value){
 	   this.data.locationRadioValue = value;
 	   this.trigger(this.data);
-	   this.aggregatelocations();
+	   this.aggregateLocations();
 	},
 	onSelectGroupByRadio:function(value){
 	   this.data.groupByRadioValue = value;
@@ -324,8 +316,6 @@ module.exports = Reflux.createStore({
     this.getChartData();
   },
 	onSelectChart: function(value){
-			console.log('LOGGING onSelectChart', value)
-
 	   this.data.selectedChart = value;
 	   this.data.chartData = [];
 	   //this.data.chartOptions = chartOptions;
@@ -337,10 +327,10 @@ module.exports = Reflux.createStore({
 		this.trigger(this.data);
 		this.getChartData();
 	},
-	onAddlocationSelection: function(value){
+	onAddLocationSelection: function(value){
 		this.data.locationSelected = this._locationIndex[value];
 		this.trigger(this.data);
-		this.aggregatelocations();
+		this.aggregateLocations();
 	},
 	onSelectXAxis: function(value){
 	    this.data.xAxis = value;
@@ -356,7 +346,6 @@ module.exports = Reflux.createStore({
        this.data.yAxis = chartDef.y;
        this.data.id = chartDef.id;
 
-			 console.log('applyChartDef', chartDef)
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type});
        this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
        	  return self._indicatorIndex[id];
@@ -394,7 +383,7 @@ module.exports = Reflux.createStore({
 	   this.data.timeRadioValue = 0;
 	   this.trigger(this.data);
 	},
-	aggregatelocations: function(){
+	aggregateLocations: function(){
 	    var locations;
 	    var locationSelected = this.data.locationSelected;
 	    var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value;
@@ -406,7 +395,7 @@ module.exports = Reflux.createStore({
 		{
 		   if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
 		   {
-		     locations = _.filter(this._locationIndex, {location_type_id:locationSelected.location_type_id,office_id:locationSelected.office_id});
+		     locations = _.filter(this.locationIndex, {location_type_id:locationSelected.location_type_id,office_id:locationSelected.office_id});
 		   }
 		   else {
 		   	 locations = _.filter(this._locationIndex, {location_type_id:this.data.locationSelected.location_type_id});
@@ -416,7 +405,7 @@ module.exports = Reflux.createStore({
 		{
 		   locations = _.filter(this._locationIndex, {parent_location_id:locationSelected.id});
 		}
-		this.data.aggregatedlocations = locations;
+		this.data.aggregatedLocations = locations;
 		if(this.canFetchChartData())
 		{
 			this.getChartData();
@@ -445,8 +434,6 @@ module.exports = Reflux.createStore({
 	    }
 	},
 	getChartData: function(){
-			console.log('LOGGING this dot data in  getChartData ', this.data)
-
 	    if(!this.data.indicatorsSelected.length)
 	    {
 	     return;
@@ -457,7 +444,7 @@ module.exports = Reflux.createStore({
 	    var groupBy = this.data.groupByRadios[this.data.groupByRadioValue].value;
 	    var self = this;
 		var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id');//;
-		var locationsIndex = _.indexBy(this.data.aggregatedlocations, 'id');
+		var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id');
 		var groups = (groupBy == 'indicator'?indicatorsIndex:locationsIndex);
 		var start = moment(this.data.campaignSelected.start_date);
 		var meltObjects  = _.flow(_.property('objects'), melt);
@@ -466,15 +453,14 @@ module.exports = Reflux.createStore({
         var indicatorArray = _.map(this.data.indicatorsSelected,_.property('id'))
 	    var q = {
 		indicator__in  : indicatorArray,
-		location__in     : _.map(this.data.aggregatedlocations,_.property('id')),
+		location__in     : _.map(this.data.aggregatedLocations,_.property('id')),
 		campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
 		campaign_end   : upper.format('YYYY-MM-DD')
 	    			};
 
-		console.log('query', q)
 
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedlocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
+        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedLocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
         .then(function(chart){
           self.data.loading = false;
           self.data.chartOptions = chart.options;
