@@ -208,34 +208,31 @@ class DashboardResource(BaseModelResource):
 
         if request.POST:
 
+            post_data = dict(request.POST)
             user_id = request.user.id
 
             try:
-                dash_id = int(request.POST['id'][0])
+                dash_id = int(post_data['id'][0])
+                print dash_id
             except KeyError:
                 dash_id = None
 
-            post_data = dict(request.POST)
-
             dashboard_json = json.loads(post_data['dashboard_json'][0])
-
-            print 'THIS IS THE DASHBOARD_JSON'
-            print dashboard_json
-            print 'THIS waS THE DASHBOARD_JSON'
 
             defaults = {
                 'id' : dash_id,
                 'title' : post_data['title'][0],
                 'dashboard_json' : dashboard_json,
+                'owner_id': user_id,
+                'default_office_id' : 1,
                 # 'description' : post_data['description'][0],
             }
 
             dashboard, created = CustomDashboard.objects.update_or_create(
                 id=dash_id,\
-                owner_id = user_id,\
-                default_office_id=1,\
                 defaults=defaults
             )
+
             dash_id = dashboard.id
             qs = CustomDashboard.objects.filter(id=dash_id).values() #dash_id).values()
 
@@ -281,9 +278,7 @@ class DocumentResource(BaseModelResource):
         try:
             new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
         except Exception as err:
-            print '==='
-            print err
-            print '==='
+            pass
 
         return Document.objects.filter(id=new_doc.id).values()
 
@@ -669,9 +664,6 @@ class GeoResource(BaseNonModelResource):
 
 ##
 def clean_post_data(post_data_dict):
-
-    print 'CLEAAAAANING:'
-    print post_data_dict
 
     cleaned = {}
     for k,v in post_data_dict.iteritems():
