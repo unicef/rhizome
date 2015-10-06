@@ -53,6 +53,7 @@ var CampaignDropdownMenu = React.createClass({
     var self = this;
 
     var re = new RegExp(this.state.pattern);
+    console.log('CAMPAIGN props LENGTH: ', this.props.campaigns.length)
 
     // If the pattern is longer than two characters, filter the list with it,
     // otherwise, return true to include all campaigns in the dropdown
@@ -61,7 +62,14 @@ var CampaignDropdownMenu = React.createClass({
       _.constant(true);
 
     var campaigns = _(this.props.campaigns)
-      .uniq(false, function (c) { return moment(c.start_date).format('YYYYMM'); })
+      // .uniq(false, function (c) { return moment(c.start_date).format('YYYYMM'); })
+
+      // JD commenting this out because in the mapping screen we need to be able
+      // to show camapigns with the same start date in different offices.
+
+      // Uniquenss is handled at the database level ( campaign_type_id,
+      // office_id, start_Date), thus the line of code below is unecessary
+
       .filter(filterCampaigns)
       .sortBy(_.method('start_date.getTime'))
       .reverse()
