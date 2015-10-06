@@ -122,7 +122,7 @@ module.exports = React.createClass({
 
     var locations = MenuItem.fromArray(
       filterMenu(this.state.store.locationList, this.state.locationFilter),
-      ChartBuilderActions.addlocationSelection);
+      ChartBuilderActions.addLocationSelection);
 
     var axisOptions = this.state.store.indicatorsSelected.map(function (indicator, index) {
       return <option key={indicator.id} value={index}>{indicator.name}</option>;
