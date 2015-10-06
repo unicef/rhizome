@@ -18,10 +18,18 @@
 
 Prerequisites
 
-  - docker-toolbox https://www.docker.com/toolbox
+  1. VirtualBox
+
+for OSX:
+```
+$ brew update
+$ brew tap phinze/homebrew-cask
+$ brew install brew-cask
+$ brew cask install virtualbox
+```
+
 
 [static-files]: https://docs.djangoproject.com/en/1.7/howto/static-files/)
-
 
 
 Install Docker Machine. In Mac OS X you could install via `brew`
