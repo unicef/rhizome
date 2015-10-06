@@ -10,7 +10,7 @@ module.exports = Reflux.createActions([
   "removeIndicatorSelection",
   "updateTitle",
   "updateDescription",
-  "selectShowlocationRadio",
+  "selectShowLocationRadio",
   "selectGroupByRadio",
   "selectTimeRadio",
   "selectXFormatRadio",

@@ -180,7 +180,7 @@ module.exports = React.createClass({
           <div className="grouping">
             <div className="titleDiv">Show</div>
             <RadioGroup name="show" horizontal={true} value={this.state.store.locationRadioValue}
-                        values={this.state.store.locationRadios} onChange={ChartBuilderActions.selectShowlocationRadio}/>
+                        values={this.state.store.locationRadios} onChange={ChartBuilderActions.selectShowLocationRadio}/>
           </div>
           <div className="grouping">
             <div className="titleDiv">Time Span</div>
