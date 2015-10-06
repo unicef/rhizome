@@ -61,11 +61,12 @@ var Tooltip = React.createClass({
     var state = { align : 'left', orient : 'top' };
 
     if (this.props.left - window.pageXOffset > window.innerWidth / 2) {
-      state.align = 'right';
+      //state.align = 'right'; // fix the tooltip position incorrect issue.
     }
 
+    //
     if (this.props.top - window.pageYOffset + el.height > window.innerHeight) {
-      state.orient = 'bottom';
+      //state.orient = 'bottom'; // fix the tooltip position incorrect issue.
     }
 
     this.setState(state);
