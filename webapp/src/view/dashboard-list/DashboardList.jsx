@@ -9,12 +9,14 @@ var api = require('data/api');
 var _tableRow = function(row) {
   var path = '/datapoints/' + _.kebabCase(row.title) + '/';
   var editPath = '/datapoints/dashboards/edit/'+row.id+'/';
-  var editLink = (row.owned_by_current_user) ? (<span>(<a href={editPath}>edit</a>)</span>) : '';
+  var editLink = <span>(<a href={editPath}>edit</a>)</span>;
   return (
       <tr>
         <td><a href={path}>{row.title}</a> {editLink}</td>
         <td>{row.description}</td>
         <td>{row.owner_username}</td>
+        <td>{row.owner_username}</td>
+
       </tr>
     );
 };
