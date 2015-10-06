@@ -53,7 +53,6 @@ var CampaignDropdownMenu = React.createClass({
     var self = this;
 
     var re = new RegExp(this.state.pattern);
-    console.log('CAMPAIGN props LENGTH: ', this.props.campaigns.length)
 
     // If the pattern is longer than two characters, filter the list with it,
     // otherwise, return true to include all campaigns in the dropdown

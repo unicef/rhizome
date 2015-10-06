@@ -324,7 +324,6 @@ module.exports = React.createClass({
 	   else if(this.state.chartBuilderActive)
 	   {
 	    var chartDef = (_.isNull(this.state.chartBuilderindex)?null:this.state.store.dashboard.charts[this.state.chartBuilderindex]);
-	   	console.log(chartDef,this.state.store.dashboard.charts);
 	   	return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart} cancel={this.cancelEditChart} campaign={campaign} location={location} />);
 	   }
 	   else {
@@ -332,6 +331,3 @@ module.exports = React.createClass({
 	   }
 	}
 });
-
-
-/*  */

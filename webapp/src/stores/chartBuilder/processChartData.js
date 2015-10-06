@@ -178,7 +178,6 @@ module.exports = {
   },
   processLineChart:function(dataPromise,lower,upper,groups,groupBy){
     return dataPromise.then(function(data){
-      console.log('Datain the process line chart function',data)
       if(!lower) //set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));

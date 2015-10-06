@@ -9,10 +9,8 @@ var ButtonMenu = React.createClass({
 
   propTypes : {
     text  : React.PropTypes.string,
-
     icon  : React.PropTypes.string,
     size  : React.PropTypes.string,
-
     multi : React.PropTypes.bool
   },
 

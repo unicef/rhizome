@@ -55,13 +55,11 @@ module.exports = React.createClass({
     }
   },
   componentDidMount: function () {
-    console.log('=== MOUNTING ==')
     ChartBuilderActions.initialize(
         this.props.chartDef,
         this.props.location,
         this.props.campaign
       );
-    console.log('this is this.props: ', this.props)
     this.setState({title: this.props.chartDef.title});
   },
   _updateTitle: function (newText) {
@@ -111,10 +109,6 @@ module.exports = React.createClass({
     var campaignSelection = !!this.state.store.campaignSelected ?
       campaignDisplayFormat(this.state.store.campaignSelected) :
       'Select Campaign';
-
-    var indicators = MenuItem.fromArray(
-      filterMenu(this.state.store.indicatorList, this.state.indicatorFilter),
-      ChartBuilderActions.addIndicatorSelection);
 
     var locationSelection = !!this.state.store.locationSelected ?
       this.state.store.locationSelected.name :
