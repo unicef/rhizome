@@ -72,7 +72,6 @@ var CampaignDropdownMenu = React.createClass({
 
       .filter(filterCampaigns)
       .sortBy(_.method('start_date.getTime'))
-      .reverse()
       .map(function (campaign) {
         return (
           <CampaignMenuItem key={'campaign-' + campaign.id}
