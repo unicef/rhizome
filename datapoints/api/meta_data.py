@@ -279,9 +279,14 @@ class CustomDashboardResource(BaseModelResource):
             dash_id = dashboard.id
 
         else:
-            dash_id = request.GET['id']
 
-        return CustomDashboard.objects.filter(id=dash_id).values()
+            try:
+                dash_id_list = list(request.GET['id'])
+            except KeyError:
+                dash_id_list = CustomDashboard.objects.all().values_list('id',flat=True)
+
+
+        return CustomDashboard.objects.filter(id__in=dash_id_list).values()
 
 
 class DocumentResource(BaseModelResource):
