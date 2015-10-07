@@ -241,9 +241,8 @@ class CustomChartResource(BaseModelResource):
 
 class CustomDashboardResource(BaseModelResource):
 
-
     class Meta(BaseModelResource.Meta):
-        resource_name = 'custom_chart'
+        resource_name = 'custom_dashboard'
         filtering = {
             "dashboard_id": ALL,
         }
@@ -263,7 +262,6 @@ class CustomDashboardResource(BaseModelResource):
                 dash_id = None
 
             default_office_id = int(post_data['default_office_id'][0])
-            dashboard_json = json.loads(post_data['dashboard_json'][0])
 
             defaults = {
                 'id' : dash_id,
@@ -279,12 +277,11 @@ class CustomDashboardResource(BaseModelResource):
             )
 
             dash_id = dashboard.id
-            qs = CustomDashboard.objects.filter(id=dash_id).values() #dash_id).values()
-
-            return qs
 
         else:
-            return super(DashboardResource, self).get_object_list(request)
+            dash_id = request.GET['id']
+
+        return CustomDashboard.objects.filter(id=dash_id).values()
 
 
 class DocumentResource(BaseModelResource):
