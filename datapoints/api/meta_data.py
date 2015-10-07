@@ -200,7 +200,53 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         return qs
 
 
-class DashboardResource(BaseModelResource):
+class CustomChartResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'custom_chart'
+        filtering = {
+            "id": ALL,
+        }
+
+    def get_object_list(self,request):
+
+        if request.POST:
+
+            user_id = request.user.id
+            post_data = dict(request.POST)
+
+            try:
+                chart_id = int(post_data['id'][0])
+            except KeyError:
+                chart_id = None
+
+            chart_json = json.loads(post_data['chart_json'][0])
+            dashboard_id = json.loads(post_data['dashboard_id'][0])
+
+            defaults = {
+                'id' : chart_id,
+                'dashboard_id' : dashboard_id,
+                'chart_json': chart_json,
+            }
+
+            dashboard, created = CustomDashboard.objects.update_or_create(
+                id=dash_id,\
+                defaults=defaults
+            )
+
+        else:
+            return CustomChart.objects.filter(dashboard_id =\
+                request.GET['dashboard_id']).values()
+
+
+class CustomDashboardResource(BaseModelResource):
+
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'custom_chart'
+        filtering = {
+            "dashboard_id": ALL,
+        }
 
     def get_object_list(self,request):
         '''
@@ -213,18 +259,17 @@ class DashboardResource(BaseModelResource):
 
             try:
                 dash_id = int(post_data['id'][0])
-                print dash_id
             except KeyError:
                 dash_id = None
 
+            default_office_id = int(post_data['default_office_id'][0])
             dashboard_json = json.loads(post_data['dashboard_json'][0])
 
             defaults = {
                 'id' : dash_id,
                 'title' : post_data['title'][0],
-                'dashboard_json' : dashboard_json,
                 'owner_id': user_id,
-                'default_office_id' : 1,
+                'default_office_id' : default_office_id,
                 # 'description' : post_data['description'][0],
             }
 
@@ -240,14 +285,6 @@ class DashboardResource(BaseModelResource):
 
         else:
             return super(DashboardResource, self).get_object_list(request)
-
-
-    class Meta(BaseModelResource.Meta):
-        queryset = CustomDashboard.objects.all().values()
-        resource_name = 'custom_dashboard'
-        filtering = {
-            "id": ALL,
-        }
 
 
 class DocumentResource(BaseModelResource):
