@@ -10,7 +10,7 @@ export default {
     ],
     src: [
       `${gulp.config('base.src')}/**/style.scss`,
-      `styles/*.{,scss,sass}`
+      `${gulp.config('base.src')}/styles/**/*.{,scss,sass}`
     ],
     dest: cssDir,
     options: {
