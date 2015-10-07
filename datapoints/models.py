@@ -512,7 +512,22 @@ class CustomDashboard(models.Model):
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
     default_office = models.ForeignKey(Office,null=True)
-    dashboard_json = JSONField(null=True)
 
     class Meta:
         db_table = 'custom_dashboard'
+
+class CustomChart(models.Model):
+    '''
+    A table containing all of the custom dashboards in the system.  The data
+    in teh dashboard_json field is how the FE is able to draw and render the
+    specific vizulaizations.  If inserted via POST the application will
+    validate the json, but if you insert directly in the table it will not
+    so be careful when testing!
+    '''
+
+    dashboard = models.ForeignKey(CustomDashboard)
+    chart_title = models.CharField(max_length=100)
+    chart_json  = JSONField()
+
+    class Meta:
+        db_table = 'custom_chart'
