@@ -512,7 +512,8 @@ class CustomDashboard(models.Model):
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
     default_office = models.ForeignKey(Office,null=True)
-
+    dashboard_json = JSONField()
+    
     class Meta:
         db_table = 'custom_dashboard'
 
