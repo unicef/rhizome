@@ -147,9 +147,9 @@ class BaseModelResource(ModelResource):
             if obj.has_key('submission_json'):
                 # to do -> abstract this for all JSONField models
                 obj['submission_json'] = json.loads(obj['submission_json'])
-            if obj.has_key('dashboard_json'):
+            if obj.has_key('chart_json'):
                 # to do -> abstract this for all JSONField models
-                obj['dashboard_json'] = json.loads(obj['dashboard_json'])
+                obj['chart_json'] = json.loads(obj['chart_json'])
             if obj.has_key('tag_json'):
                 # to do -> abstract this for all JSONField models
                 obj['tag_json'] = json.loads(obj['tag_json'])
