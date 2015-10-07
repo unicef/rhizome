@@ -12,12 +12,10 @@ var PieChartList     = require('component/PieChartList.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
-
-
 function series(values, name) {
   return {
-    name   : name,
-    values : _.sortBy(values, _.result('campaign.start_date.getTime'))
+    name: name,
+    values: _.sortBy(values, _.result('campaign.start_date.getTime'))
   };
 }
 
@@ -55,6 +53,9 @@ var Performance = React.createClass({
       .y(_.property('value'));
 
     var missed = _(data.missedChildren)
+      .reject(d => {
+        return d.value <= 0.005
+      })
       .groupBy('indicator.short_name')
       .map(series)
       .thru(stack)
