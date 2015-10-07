@@ -33,9 +33,13 @@ var moment = require('moment');
 window.perf = React.addons.Perf;
 
 module.exports = React.createClass({
-	mixins: [Reflux.connect(DashboardBuilderStore,"store"), Reflux.connect(DataStore,"dataStore"),Reflux.connect(DashboardStore,"dashboardStore"),Reflux.ListenerMixin],
+	mixins: [Reflux.connect(DashboardBuilderStore, "store"),
+		Reflux.connect(DataStore, "dataStore"),
+		Reflux.connect(DashboardStore, "dashboardStore"),
+		Reflux.ListenerMixin
+	],
 	componentWillMount:function(){
-	AppActions.init();
+		AppActions.init();
 	},
 	componentDidMount:function(){
 	   DashboardBuilderActions.initialize(this.props.dashboard_id);
@@ -184,7 +188,7 @@ module.exports = React.createClass({
 	  }
       else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
         var style = {
-          fontSize      : '2rem',
+          fontSize: '2rem',
         };
 
         return (
@@ -226,7 +230,7 @@ module.exports = React.createClass({
         data        : data,
         indicators  : indicators,
         loading     : loading,
-        location      : location,
+        location    : location,
         editable    : true,
         onAddChart  : this.newChart,
         onEditChart : this.editChart,

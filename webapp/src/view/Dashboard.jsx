@@ -160,40 +160,38 @@ var Dashboard = React.createClass({
   },
 
   _showDefault: function(ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-    DashboardActions.setDashboard({
-      dashboard
-    });
+    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+      DashboardActions.setDashboard({
+        dashboard
+      });
+    })
   },
 
   _show: function(ctx) {
-    // console.log("_show:", ctx, ctx.params.location);
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-
-    console.log('setting dashboard: ', ctx.params.location)
-
-    DashboardActions.setDashboard({
-      dashboard,
-      location: ctx.params.location,
-      date: [ctx.params.year, ctx.params.month].join('-')
-    });
+    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+      DashboardActions.setDashboard({
+        dashboard,
+        location: ctx.params.location,
+        date: [ctx.params.year, ctx.params.month].join('-')
+      });
+    })
   },
 
   _showSourceData: function(ctx) {
-    var dashboard = NavigationStore.getDashboard(ctx.params.dashboard);
-    var doc_tab = ctx.params.doc_tab;
+    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+      var doc_tab = ctx.params.doc_tab;
 
-    this.setState({
-      doc_id: ctx.params.doc_id,
-      doc_tab: doc_tab,
+      this.setState({
+        doc_id: ctx.params.doc_id,
+        doc_tab: doc_tab,
+      })
+
+      DashboardActions.setDashboard({
+        dashboard,
+        location: ctx.params.location,
+        date: [ctx.params.year, ctx.params.month].join('-'),
+      });
     })
-
-    DashboardActions.setDashboard({
-      dashboard,
-      location: ctx.params.location,
-      date: [ctx.params.year, ctx.params.month].join('-'),
-    });
 
   },
 
