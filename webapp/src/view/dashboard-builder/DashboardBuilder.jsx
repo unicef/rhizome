@@ -105,7 +105,7 @@ module.exports = React.createClass({
 	    else {//add chart
 	      DashboardBuilderActions.addChart(chartDef);
 	    }
-		this.setState({chartBuilderindex : null,chartBuilderActive:false});
+		this.setState({chartBuilderindex : null, chartBuilderActive:false});
 	},
 	_onIndicatorsChange : function () {
 	  this.forceUpdate();

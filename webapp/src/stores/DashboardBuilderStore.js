@@ -42,9 +42,11 @@ var DashboardBuilderStore = Reflux.createStore({
                     self.data.dashboardDescription = response.objects[0].description;
                     self.data.loaded = true;
 
-                    api.get_chart({dashboard_id: id}).then(res => {
+                    api.get_chart({dashboard_id: id}, null, {'cache-control': 'no-cache'}).then(res => {
                         self.data.dashboard.charts = res.objects.map(chart => {
-                            return chart.chart_json
+                            var result = chart.chart_json;
+                            result.id = chart.id;
+                            return result;
                         })
                         self.trigger(self.data);
                     });
@@ -73,11 +75,29 @@ var DashboardBuilderStore = Reflux.createStore({
         this.trigger(this.data);
     },
     onAddChart: function (chartDef) {
-        chartDef.id = chartDef.title + (new Date()).valueOf();
+        //in this api do not need set the chart id.
+        //chartDef.id = chartDef.title + (new Date()).valueOf();
+
         this.data.dashboard.charts.push(chartDef);
         DashboardActions.setDashboard({dashboard: this.data.dashboard});
-        this.saveDashboard();
-        this.trigger(this.data);
+
+        //do not save the whole dashboard.
+        //this.saveDashboard();
+
+        //just save the chart.
+        var data = {
+            dashboard_id: this.data.dashboardId,
+            chart_json: JSON.stringify(chartDef)
+        };
+
+        api.post_chart(data).then((res)=> {
+            chartDef.id = res.objects[0].id;
+            this.trigger(this.data);
+        }, (res)=> {
+            console.log("add chart error,", res);
+            this.trigger(this.data);
+        });
+
     },
     onRemoveChart: function (index) {
         this.data.dashboard.charts.splice(index, 1);
@@ -160,8 +180,21 @@ var DashboardBuilderStore = Reflux.createStore({
     onUpdateChart: function (chartDef, index) {
         this.data.dashboard.charts[index] = chartDef;
         DashboardActions.setDashboard({dashboard: this.data.dashboard});
-        this.saveDashboard();
-        this.trigger(this.data);
+
+        //this api do no need to save the dashboard.
+        //this.saveDashboard();
+
+        var data = {
+            id : chartDef.id,
+            chart_json: JSON.stringify(chartDef)
+        };
+
+        api.post_chart(data).then((res)=> {
+            this.trigger(this.data);
+        }, (res)=> {
+            console.log("add chart error,", res);
+            this.trigger(this.data);
+        });
     },
     onUpdateTitle: function (title) {
         this.data.dashboardTitle = title;
