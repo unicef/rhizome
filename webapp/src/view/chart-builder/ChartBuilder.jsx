@@ -60,7 +60,7 @@ module.exports = React.createClass({
         this.props.location,
         this.props.campaign
       );
-    this.setState({title: this.props.chartDef.title});
+    this.props.chartDef && this.setState({title: this.props.chartDef.title});
   },
   _updateTitle: function (newText) {
     //this.setState({title:e.currentTarget.value});
