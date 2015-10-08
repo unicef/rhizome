@@ -282,9 +282,7 @@ class CustomDashboardResource(BaseModelResource):
             defaults=defaults
         )
 
-        print dashboard
         bundle.obj = dashboard
-
         bundle.data['id'] = dashboard.id
 
         return bundle
@@ -293,38 +291,10 @@ class CustomDashboardResource(BaseModelResource):
         '''
         '''
 
-        if request.POST:
-
-            post_data = dict(request.POST)
-            user_id = request.user.id
-
-            try:
-                dash_id = int(post_data['id'][0])
-            except KeyError:
-                dash_id = None
-
-            default_office_id = 1 # FIXME int(post_data['default_office_id'][0])
-
-            defaults = {
-                'id' : dash_id,
-                'title' : post_data['title'][0],
-                'owner_id': user_id,
-                'default_office_id' : default_office_id,
-            }
-
-            dashboard, created = CustomDashboard.objects.update_or_create(
-                id=dash_id,\
-                defaults=defaults
-            )
-
-            dash_id_list = [dashboard.id]
-
-        else:
-
-            try:
-                dash_id_list = list(request.GET['id'])
-            except KeyError:
-                dash_id_list = CustomDashboard.objects.all().values_list('id',flat=True)
+        try:
+            dash_id_list = list(request.GET['id'])
+        except KeyError:
+            dash_id_list = CustomDashboard.objects.all().values_list('id',flat=True)
 
         return CustomDashboard.objects.filter(id__in=dash_id_list).values()
 

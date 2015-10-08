@@ -113,10 +113,6 @@ class BaseModelResource(ModelResource):
         request_method = self.method_check(request, allowed=allowed_methods)
         method = getattr(self, "%s_%s" % (request_method, request_type), None)
 
-        print '==='
-        print 'METHOD %s' % method
-        print '==='
-
         # if method is None:
         #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
 
