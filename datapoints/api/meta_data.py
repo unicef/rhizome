@@ -264,7 +264,7 @@ class CustomDashboardResource(BaseModelResource):
         user_id = bundle.request.user.id
 
         try:
-            dash_id = int(post_data['id'][0])
+            dash_id = int(post_data['id'])
         except KeyError:
             dash_id = None
 
@@ -272,7 +272,7 @@ class CustomDashboardResource(BaseModelResource):
 
         defaults = {
             'id' : dash_id,
-            'title' : post_data['title'][0],
+            'title' : post_data['title'],
             'owner_id': user_id,
             'default_office_id' : default_office_id,
         }
