@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from datapoints.models import Indicator
 from source_data.models import Document
 
+from tastypie.test import TestApiClient
+import json
 
 class IndicatorResourceTest(ResourceTestCase):
 
@@ -19,6 +21,7 @@ class IndicatorResourceTest(ResourceTestCase):
             'john@john.com', self.password)
 
         self.get_credentials()
+
         # create their api_key
 
     def get_credentials(self):
@@ -34,19 +37,12 @@ class IndicatorResourceTest(ResourceTestCase):
 
     def test_dashboard_post(self):
 
-        post_data = {'title':'test title'}
+        post_data = {'title':'this is the title'}
 
+        resp = self.api_client.post('/api/v1/custom_dashboard/', format='json',\
+            data=post_data,authentication=self.get_credentials())
 
-        post_data = {
-                'title': 'Second Post!',
-                'slug': 'second-post',
-                'created': '2012-05-01T22:05:12'
-        }
+        response_data = self.deserialize(resp)
 
-        resp = self.api_client.get('/api/v1/custom_dashboard/', format='json',\
-            data=post_data)
-
-        data = self.deserialize(resp)["objects"]
-        print data
-
-        self.assertValidJSONResponse(resp)
+        self.assertHttpCreated(resp)
+        self.assertEqual(post_data['title'],response_data['title'])

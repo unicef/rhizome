@@ -260,7 +260,7 @@ class CustomDashboardResource(BaseModelResource):
 
     def obj_create(self, bundle, **kwargs):
 
-        post_data = dict(bundle.request.POST)
+        post_data = bundle.data
         user_id = bundle.request.user.id
 
         try:
