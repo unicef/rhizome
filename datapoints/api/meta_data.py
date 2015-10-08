@@ -210,40 +210,42 @@ class CustomChartResource(BaseModelResource):
             "id": ALL,
         }
 
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        try:
+            chart_id = int(post_data['id'])
+            dashboard_id = CustomChart.objects.get(id=chart_id).dashboard_id
+        except KeyError:
+            chart_id = None
+            dashboard_id = post_data['dashboard_id']
+
+        chart_json = post_data['chart_json']
+
+        defaults = {
+            'dashboard_id' : dashboard_id,
+            'chart_json': chart_json,
+        }
+
+        chart, created = CustomChart.objects.update_or_create(
+            id=chart_id,\
+            defaults=defaults
+        )
+
+        bundle.obj = chart
+        bundle.data['id'] = chart.id
+
+        return bundle
+
+
     def get_object_list(self,request):
 
-        if request.POST:
-
-            post_data = dict(request.POST)
-
-            try:
-                chart_id = int(post_data['id'][0])
-                dashboard_id = CustomChart.objects.get(id=chart_id).dashboard_id
-            except KeyError:
-                chart_id = None
-                dashboard_id = json.loads(post_data['dashboard_id'][0])
-
-            chart_json = json.loads(post_data['chart_json'][0])
-
-            defaults = {
-                'dashboard_id' : dashboard_id,
-                'chart_json': chart_json,
-            }
-
-            chart, created = CustomChart.objects.update_or_create(
-                id=chart_id,\
-                defaults=defaults
-            )
-
-            chart_id_list = [chart.id]
-
-        else:
-
-            try:
-                chart_id_list = CustomChart.objects.filter(dashboard_id =\
-                    request.GET['dashboard_id']).values_list('id',flat=True)
-            except KeyError:
-                chart_id_list = list(request.GET['id'])
+        try:
+            chart_id_list = CustomChart.objects.filter(dashboard_id =\
+                request.GET['dashboard_id']).values_list('id',flat=True)
+        except KeyError:
+            chart_id_list = list(request.GET['id'])
 
         return CustomChart.objects.filter(id__in = chart_id_list)\
             .values()

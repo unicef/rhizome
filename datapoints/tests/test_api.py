@@ -3,7 +3,7 @@ from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 
-from datapoints.models import Indicator
+from datapoints.models import Indicator,CustomDashboard,CustomChart
 from source_data.models import Document
 
 from tastypie.test import TestApiClient
@@ -46,3 +46,18 @@ class IndicatorResourceTest(ResourceTestCase):
 
         self.assertHttpCreated(resp)
         self.assertEqual(post_data['title'],response_data['title'])
+
+    def test_chart_create(self):
+
+        dash = CustomDashboard.objects.create(title='test',owner_id = self.user.id)
+
+        post_data = {'dashboard_id':dash.id,'chart_json':{'foo':'bar'}}
+
+        resp = self.api_client.post('/api/v1/custom_chart/', format='json',\
+            data=post_data,authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+
+        self.assertHttpCreated(resp)
+        self.assertEqual(post_data['dashboard_id'], response_data['dashboard_id'])
+        self.assertEqual(post_data['chart_json'], response_data['chart_json'])
