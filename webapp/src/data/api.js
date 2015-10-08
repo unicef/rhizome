@@ -235,6 +235,7 @@ module.exports = {
   post_indicator_tag: endPoint('/indicator_tag/', 'post', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
   get_chart: endPoint('/custom_chart/', 'get', 1),
+  post_chart: endPoint('/custom_chart/', 'post', 1),
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
