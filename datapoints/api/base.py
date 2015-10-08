@@ -27,7 +27,7 @@ class CustomSessionAuthentication(SessionAuthentication):
 
         ## this is the line i have to override in order to get
         ## POST request to successfully authenticate ##
-        if request.method in ('GET', 'HEAD', 'OPTIONS', 'TRACE', 'POST'):
+        if request.method in ('GET','POST'):
             return request.user.is_authenticated()
 
         if getattr(request, '_dont_enforce_csrf_checks', False):
@@ -113,6 +113,10 @@ class BaseModelResource(ModelResource):
         request_method = self.method_check(request, allowed=allowed_methods)
         method = getattr(self, "%s_%s" % (request_method, request_type), None)
 
+        print '==='
+        print 'METHOD %s' % method
+        print '==='
+
         # if method is None:
         #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
 
@@ -125,9 +129,7 @@ class BaseModelResource(ModelResource):
         # prevents Django from freaking out.
 
         # request = convert_post_to_put(request)
-        # response = method(request, **kwargs)
-
-        response = self.get_list(request, **kwargs)
+        response = method(request, **kwargs)
 
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
@@ -220,7 +222,6 @@ class BaseNonModelResource(Resource):
         parameters here for location_in,level, and parent_location in were
         constructed in accordance to the request from the front end team.
         '''
-
 
         self.location__in, self.parent_location__in = \
             None, None

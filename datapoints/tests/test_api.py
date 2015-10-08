@@ -21,17 +21,32 @@ class IndicatorResourceTest(ResourceTestCase):
         self.get_credentials()
         # create their api_key
 
-        # # create create an indicator
-        self.indicator = Indicator.objects.create(name='First Indicator',
-            description='First Indicator Description')
-
     def get_credentials(self):
 
         result = self.api_client.client.login(username=self.username,
                                               password=self.password)
         return result
 
-    def test_indicator_get(self):
+    def test_auth_valid(self):
 
-        resp = self.api_client.get('/api/v1/indicator/', format='json')
+        resp = self.api_client.get('/api/v1/', format='json')
+        self.assertValidJSONResponse(resp)
+
+    def test_dashboard_post(self):
+
+        post_data = {'title':'test title'}
+
+
+        post_data = {
+                'title': 'Second Post!',
+                'slug': 'second-post',
+                'created': '2012-05-01T22:05:12'
+        }
+
+        resp = self.api_client.get('/api/v1/custom_dashboard/', format='json',\
+            data=post_data)
+
+        data = self.deserialize(resp)["objects"]
+        print data
+
         self.assertValidJSONResponse(resp)

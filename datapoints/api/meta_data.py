@@ -214,11 +214,6 @@ class CustomChartResource(BaseModelResource):
 
         if request.POST:
 
-            try:
-                user_id = request.user.id
-            except MultiValueDictKeyError:
-                user_id = 1
-
             post_data = dict(request.POST)
 
             try:
@@ -261,6 +256,38 @@ class CustomDashboardResource(BaseModelResource):
         filtering = {
             "id": ALL,
         }
+        always_return_data = True
+
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = dict(bundle.request.POST)
+        user_id = bundle.request.user.id
+
+        try:
+            dash_id = int(post_data['id'][0])
+        except KeyError:
+            dash_id = None
+
+        default_office_id = 1 # FIXME int(post_data['default_office_id'][0])
+
+        defaults = {
+            'id' : dash_id,
+            'title' : post_data['title'][0],
+            'owner_id': user_id,
+            'default_office_id' : default_office_id,
+        }
+
+        dashboard, created = CustomDashboard.objects.update_or_create(
+            id=dash_id,\
+            defaults=defaults
+        )
+
+        print dashboard
+        bundle.obj = dashboard
+
+        bundle.data['id'] = dashboard.id
+
+        return bundle
 
     def get_object_list(self,request):
         '''
@@ -276,21 +303,19 @@ class CustomDashboardResource(BaseModelResource):
             except KeyError:
                 dash_id = None
 
-            default_office_id = 1 # int(post_data['default_office_id'][0])
+            default_office_id = 1 # FIXME int(post_data['default_office_id'][0])
 
             defaults = {
                 'id' : dash_id,
                 'title' : post_data['title'][0],
                 'owner_id': user_id,
                 'default_office_id' : default_office_id,
-                # 'description' : post_data['description'][0],
             }
 
             dashboard, created = CustomDashboard.objects.update_or_create(
                 id=dash_id,\
                 defaults=defaults
             )
-
 
             dash_id_list = [dashboard.id]
 

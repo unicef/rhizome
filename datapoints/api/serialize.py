@@ -108,12 +108,21 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
 
 
 class CustomSerializer(Serializer):
-    formats = ['json', 'csv']
+    formats = ['json', 'csv','urlencode']
     content_types = {
         'json': 'application/json',
         'csv': 'text/csv',
+        'urlencode': 'application/x-www-form-urlencoded',
     }
 
+    def from_urlencode(self, data,options=None):
+        """ handles basic formencoded url posts """
+        qs = dict((k, v if len(v)>1 else v[0] )
+            for k, v in urlparse.parse_qs(data).iteritems())
+        return qs
+
+    def to_urlencode(self,content):
+        pass
 
     def to_csv(self, data, options=None):
         '''
