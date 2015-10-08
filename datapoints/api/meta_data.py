@@ -252,7 +252,7 @@ class CustomDashboardResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_dashboard'
         filtering = {
-            "dashboard_id": ALL,
+            "id": ALL,
         }
 
     def get_object_list(self,request):
@@ -284,7 +284,8 @@ class CustomDashboardResource(BaseModelResource):
                 defaults=defaults
             )
 
-            dash_id = dashboard.id
+
+            dash_id_list = [dashboard.id]
 
         else:
 
@@ -293,9 +294,7 @@ class CustomDashboardResource(BaseModelResource):
             except KeyError:
                 dash_id_list = CustomDashboard.objects.all().values_list('id',flat=True)
 
-
         return CustomDashboard.objects.filter(id__in=dash_id_list).values()
-
 
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
