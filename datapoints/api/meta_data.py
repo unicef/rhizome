@@ -221,6 +221,7 @@ class CustomChartResource(BaseModelResource):
                 chart_id = None
 
             chart_json = json.loads(post_data['chart_json'][0])
+
             dashboard_id = json.loads(post_data['dashboard_id'][0])
 
             defaults = {
@@ -235,8 +236,15 @@ class CustomChartResource(BaseModelResource):
             )
 
         else:
-            return CustomChart.objects.filter(dashboard_id =\
-                request.GET['dashboard_id']).values()
+
+            try:
+                chart_id_list = CustomChart.objects.filter(dashboard_id =\
+                    request.GET['dashboard_id']).values_list('id',flat=True)
+            except KeyError:
+                chart_id_list = list(request.GET['id'])
+
+            return CustomChart.objects.filter(id__in = chart_id_list)\
+                .values()
 
 
 class CustomDashboardResource(BaseModelResource):
