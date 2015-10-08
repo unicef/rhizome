@@ -9,7 +9,7 @@ from source_data.models import Document
 
 class IndicatorResourceTest(ResourceTestCase):
 
-     def setUp(self):
+    def setUp(self):
         super(IndicatorResourceTest, self).setUp()
 
         # Create a user.
@@ -18,20 +18,20 @@ class IndicatorResourceTest(ResourceTestCase):
         self.user = User.objects.create_user(self.username,
             'john@john.com', self.password)
 
+        self.get_credentials()
         # create their api_key
-        self.api_key = ApiKey.objects.create(user=self.user)
-
-        self.document_id = Document.objects.create(
-            doc_title = 'test',
-            created_by_id = self.user.id,
-            guid = 'test').id
 
         # # create create an indicator
         self.indicator = Indicator.objects.create(name='First Indicator',
             description='First Indicator Description')
 
-     def test_indicator_get(self):
+    def get_credentials(self):
 
-        resp = self.api_client.get('/api/v1/indicator', format='json')
+        result = self.api_client.client.login(username=self.username,
+                                              password=self.password)
+        return result
 
-        # self.assertValidJSONRespons(resp)
+    def test_indicator_get(self):
+
+        resp = self.api_client.get('/api/v1/indicator/', format='json')
+        self.assertValidJSONResponse(resp)

@@ -101,4 +101,4 @@ def _push_to_remote():
         # run("cd docs/ && make clean && make html")
 
         # echo "== RUNNING TESTS =="
-        # python manage.py test datapoints.tests.test_cache --settings=rhizome.settings_test
+        python manage.py test datapoints.tests.test_api --settings=rhizome.settings.test
