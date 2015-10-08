@@ -24,6 +24,8 @@ from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
 from django.utils.html import escape
+from django.utils.datastructures import MultiValueDictKeyError
+
 
 class CampaignResource(BaseModelResource):
 
@@ -212,7 +214,11 @@ class CustomChartResource(BaseModelResource):
 
         if request.POST:
 
-            user_id = request.user.id
+            try:
+                user_id = request.user.id
+            except MultiValueDictKeyError:
+                user_id = 1
+
             post_data = dict(request.POST)
 
             try:
