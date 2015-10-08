@@ -51,7 +51,7 @@ class IndicatorResourceTest(ResourceTestCase):
 
         dash = CustomDashboard.objects.create(title='test',owner_id = self.user.id)
 
-        post_data = {'dashboard_id':dash.id,'chart_json':{'foo':'bar'}}
+        post_data = {'dashboard_id':dash.id,'chart_json':json.dumps({'foo':'bar'})}
 
         resp = self.api_client.post('/api/v1/custom_chart/', format='json',\
             data=post_data,authentication=self.get_credentials())
