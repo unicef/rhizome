@@ -221,7 +221,7 @@ class CustomChartResource(BaseModelResource):
             chart_id = None
             dashboard_id = post_data['dashboard_id']
 
-        chart_json = post_data['chart_json']
+        chart_json = json.loads(post_data['chart_json'])
 
         defaults = {
             'dashboard_id' : dashboard_id,
