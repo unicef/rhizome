@@ -269,7 +269,7 @@ class CustomDashboardResource(BaseModelResource):
             except KeyError:
                 dash_id = None
 
-            default_office_id = int(post_data['default_office_id'][0])
+            default_office_id = 1 # int(post_data['default_office_id'][0])
 
             defaults = {
                 'id' : dash_id,
