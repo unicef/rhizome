@@ -166,3 +166,6 @@ Create `dist/rhizome.zip` which contains `requirements.txt` and all files
 [Python]: http://python.org
 [Virtualenv]: https://virtualenv.pypa.io/en/latest/
 [Virtualenvwrapper]: https://virtualenvwrapper.readthedocs.org/en/latest/
+
+
+## test slack integration 
