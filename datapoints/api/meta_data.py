@@ -238,6 +238,20 @@ class CustomChartResource(BaseModelResource):
 
         return bundle
 
+    def obj_delete(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete``.
+
+        Takes optional ``kwargs``, which are used to narrow the query to find
+        the instance.
+        """
+
+        print 'THIS SIS DELETE'
+        path = bundle.request.path
+        request_id = int(path.replace('/api/v1/custom_chart/','').replace('/',''))
+
+        CustomChart.objects.filter(id=request_id).delete()
+
 
     def get_object_list(self,request):
 
@@ -245,7 +259,12 @@ class CustomChartResource(BaseModelResource):
             chart_id_list = CustomChart.objects.filter(dashboard_id =\
                 request.GET['dashboard_id']).values_list('id',flat=True)
         except KeyError:
+            pass
+
+        try:
             chart_id_list = list(request.GET['id'])
+        except KeyError:
+            chart_id_list = []
 
         return CustomChart.objects.filter(id__in = chart_id_list)\
             .values()

@@ -9,20 +9,6 @@ import jsonfield.fields
 
 class Migration(migrations.Migration):
 
-    def dash_json_to_charts(apps, schema_editor):
-
-        dashboards = CustomDashboard.objects.all()
-
-        for dash in dashboards:
-
-            all_chart_data = dash.dashboard_json
-            
-            for chart in all_chart_data:
-
-                CustomChart.objects.create(
-                    dashboard_id = dash.id,
-                    chart_json = chart
-                )
 
     dependencies = [
         ('datapoints', '0014_indicator_bound'),
@@ -44,7 +30,6 @@ class Migration(migrations.Migration):
             name='dashboard',
             field=models.ForeignKey(to='datapoints.CustomDashboard'),
         ),
-    migrations.RunPython(dash_json_to_charts),
 
     migrations.RemoveField(
         model_name='customdashboard',

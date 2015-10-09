@@ -27,7 +27,7 @@ class CustomSessionAuthentication(SessionAuthentication):
 
         ## this is the line i have to override in order to get
         ## POST request to successfully authenticate ##
-        if request.method in ('GET','POST'):
+        if request.method in ('GET','POST','DELETE'):
             return request.user.is_authenticated()
 
         if getattr(request, '_dont_enforce_csrf_checks', False):
@@ -92,7 +92,7 @@ class BaseModelResource(ModelResource):
             ApiKeyAuthentication())
         authorization = Authorization()
         always_return_data = True
-        allowed_methods = ['get','post']
+        allowed_methods = ['get','post','delete']
         # filtering = {
         # FIXME have subclass inherit this and add their own..
         #     "id": ALL,
@@ -100,37 +100,37 @@ class BaseModelResource(ModelResource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
-    def dispatch(self, request_type, request, **kwargs):
-        """
-        Overrides Tastypie and calls get_list.
-        """
-
-        allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
-        #
-        if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
-            request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
-
-        request_method = self.method_check(request, allowed=allowed_methods)
-        method = getattr(self, "%s_%s" % (request_method, request_type), None)
-
-        # if method is None:
-        #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
-
-        self.is_authenticated(request)
-        self.throttle_check(request)
-        # All clear. Process the request.
-
-        # If what comes back isn't a ``HttpResponse``, assume that the
-        # request was accepted and that some action occurred. This also
-        # prevents Django from freaking out.
-
-        # request = convert_post_to_put(request)
-        response = method(request, **kwargs)
-
-        if not isinstance(response, HttpResponse):
-            return http.HttpNoContent()
-
-        return response
+    # def dispatch(self, request_type, request, **kwargs):
+    #     """
+    #     Overrides Tastypie and calls get_list.
+    #     """
+    #
+    #     allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
+    #     #
+    #     if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
+    #         request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
+    #
+    #     request_method = self.method_check(request, allowed=allowed_methods)
+    #     method = getattr(self, "%s_%s" % (request_method, request_type), None)
+    #
+    #     # if method is None:
+    #     #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
+    #
+    #     self.is_authenticated(request)
+    #     self.throttle_check(request)
+    #     # All clear. Process the request.
+    #
+    #     # If what comes back isn't a ``HttpResponse``, assume that the
+    #     # request was accepted and that some action occurred. This also
+    #     # prevents Django from freaking out.
+    #
+    #     # request = convert_post_to_put(request)
+    #     response = method(request, **kwargs)
+    #
+    #     if not isinstance(response, HttpResponse):
+    #         return http.HttpNoContent()
+    #
+    #     return response
 
     def get_list(self, request, **kwargs):
         """
