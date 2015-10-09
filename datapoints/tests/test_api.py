@@ -67,9 +67,11 @@ class IndicatorResourceTest(ResourceTestCase):
         c1 = CustomChart.objects.create(dashboard_id = d.id,chart_json={'hello':'world'})
         c2 = CustomChart.objects.create(dashboard_id = d.id,chart_json={'goodnight':'moon'})
 
-        delete_url = '/api/v1/custom_chart/%s/' % c1.id
+        delete_url = '/api/v1/custom_chart/'
+        params = {'id':c1.id}
 
-        self.api_client.delete(delete_url,format='json',\
+
+        self.api_client.delete(delete_url,format='json',data=params,
             authentication=self.get_credentials())
 
         self.assertEqual(CustomChart.objects.count(), 1)

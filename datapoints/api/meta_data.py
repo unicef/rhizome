@@ -16,6 +16,7 @@ from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 from django.core import serializers
 from django.utils.html import escape
+from django.http import QueryDict
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
@@ -25,7 +26,6 @@ from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
 from django.utils.html import escape
 from django.utils.datastructures import MultiValueDictKeyError
-
 
 class CampaignResource(BaseModelResource):
 
@@ -238,23 +238,20 @@ class CustomChartResource(BaseModelResource):
 
         return bundle
 
-    def obj_delete(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_delete``.
 
-        Takes optional ``kwargs``, which are used to narrow the query to find
-        the instance.
+    def obj_delete_list(self, bundle, **kwargs):
+        """
         """
 
-        path = bundle.request.path
-        request_id = int(path.replace('/api/v1/custom_chart/','').replace('/',''))
+        req = dict(QueryDict(bundle.request.body))
+        params = req.keys()[0]
 
-        CustomChart.objects.filter(id=request_id).delete()
+        chart_id = int(params.replace("{'id': ","").replace("}",""))
+        CustomChart.objects.filter(id=chart_id).delete()
 
 
     def get_object_list(self,request):
 
-        print 'GETTING.. charts'
         chart_id_list = []
 
         try:
