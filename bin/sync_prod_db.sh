@@ -1,36 +1,44 @@
-!/bin/bash
+#!/bin/bash
 
 DB=rhizome
-USER=djangoapp
+DB_USER=djangoapp
+DB_PASS="w3b@p01i0"
+PORT=6432
+OPTS="-U $DB_USER -h 127.0.0.1 -p $PORT"
+export PGPASSWORD=$DB_PASS
 
-echo "pulling zipped .sql file"
-wget https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -P ~/
+echo "Pulling zipped .sql file"
+curl https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -o ~/rhizome_latest.sql.gz
 
-echo "unzipping sql file"
+echo "Unzipping sql file"
 gunzip -f ~/rhizome_latest.sql.gz
 
-echo "killing all connections..."
+echo "Killing all connections..."
 
 # Kill All Connections to DB #
-psql -c"select pg_terminate_backend(pid)
+psql $OPTS -d postgres -c "select pg_terminate_backend(pid)
    from pg_stat_activity
    where datname = '$DB';"
 #
-echo "just terminated all of your psql connections.. dropping the database in 5..4.."
+echo "Terminated all of your psql connections.. Dropping the database in 5..4.."
 
 sleep 5
-psql -c "DROP DATABASE IF EXISTS $DB;"
+echo "Drop database $DB"
+psql $OPTS -d postgres -c "DROP DATABASE IF EXISTS $DB;"
 
 echo "...CREATING DATABASE..."
 #
-psql -c "CREATE DATABASE $DB
+psql $OPTS -c "CREATE DATABASE $DB
   WITH OWNER = djangoapp
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
-       LC_COLLATE = 'en_US.UTF-8'
-       LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;" postgres > /dev/null
 
 # echo Loading production data...
-psql -f ~/rhizome_latest.sql $DB $USER
-echo done.
+psql $OPTS -d $DB -f ~/rhizome_latest.sql
+
+echo "Cleaning temporary SQL files"
+rm ~/rhizome_latest.sql
+unset PGPASSWORD
+
+echo "Done"
