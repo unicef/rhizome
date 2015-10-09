@@ -246,7 +246,6 @@ class CustomChartResource(BaseModelResource):
         the instance.
         """
 
-        print 'THIS SIS DELETE'
         path = bundle.request.path
         request_id = int(path.replace('/api/v1/custom_chart/','').replace('/',''))
 
