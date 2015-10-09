@@ -80,7 +80,7 @@ $ npm install
 Use the following script to pull the production database and sync it with your local
 
 ```
-$ bash ./sync_prod_data.sh
+$ ./sync_prod_data.sh
 ```
 
 
