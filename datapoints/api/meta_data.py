@@ -243,11 +243,8 @@ class CustomChartResource(BaseModelResource):
         """
         """
 
-        req = dict(QueryDict(bundle.request.body))
-        params = json.loads(req.keys()[0])
-        chart_id =  params['id']
-
-        CustomChart.objects.filter(id=chart_id).delete()
+        obj_id = int(bundle.request.GET[u'id'])
+        CustomChart.objects.filter(id=obj_id).delete()
 
     def get_object_list(self,request):
 
