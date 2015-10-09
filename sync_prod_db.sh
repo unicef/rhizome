@@ -4,8 +4,11 @@ DB=polio
 USER=djangoapp
 
 echo "pulling zipped .sql file"
+wget https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -P ~/rhizome_latest.sql.gz -O
 
-wget https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -P ~/
+echo "unzipping sql file"
+gunzip ~/rhizome_latest.sql.gz
+
 #
 # echo "killing all connections..."
 #
