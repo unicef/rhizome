@@ -67,12 +67,23 @@ The app is hosted at http://localhost:8000
 
 ### Installing frontend dependencies
 
+Note - in order to do development on the front end within docker, you will need to install npm outside over your docker, ( see below ) and run `gulp dev` in order to for the front end build to watch and build new code.
+
 Go to `webapp/` folder
 
 ```
 $ npm install -g gulp
 $ npm install
 ```
+
+## Populating Data ##
+Use the following script to pull the production database and sync it with your local
+
+```
+$ ./sync_prod_data.sh
+```
+
+
 
 ## running test ##
 
@@ -168,4 +179,4 @@ Create `dist/rhizome.zip` which contains `requirements.txt` and all files
 [Virtualenvwrapper]: https://virtualenvwrapper.readthedocs.org/en/latest/
 
 
-## test slack integration 
+## test slack integration
