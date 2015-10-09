@@ -91,7 +91,7 @@ var DashboardBuilderStore = Reflux.createStore({
         };
 
         api.post_chart(data).then((res)=> {
-            chartDef.id = res.objects[0].id;
+            chartDef.id = res.objects.id;
             this.trigger(this.data);
         }, (res)=> {
             console.log("add chart error,", res);
@@ -100,10 +100,21 @@ var DashboardBuilderStore = Reflux.createStore({
 
     },
     onRemoveChart: function (index) {
-        this.data.dashboard.charts.splice(index, 1);
+        var chart = this.data.dashboard.charts.splice(index, 1)[0];
         DashboardActions.setDashboard({dashboard: this.data.dashboard});
-        this.saveDashboard();
-        this.trigger(this.data);
+
+        //do not save the whole dashboard.
+        //this.saveDashboard();
+        var data ={
+            id: chart.id
+        };
+
+        api.delete_chart(data).then((res)=> {
+            this.trigger(this.data);
+        }, (res)=> {
+            console.log("remove chart error,", res);
+            this.trigger(this.data);
+        });
     },
     onMoveForward: function (index) {
         var newIndex;
@@ -193,7 +204,7 @@ var DashboardBuilderStore = Reflux.createStore({
         api.post_chart(data).then((res)=> {
             this.trigger(this.data);
         }, (res)=> {
-            console.log("add chart error,", res);
+            console.log("update chart error,", res);
             this.trigger(this.data);
         });
     },

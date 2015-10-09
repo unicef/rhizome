@@ -51,7 +51,7 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
     var req = prefix(request(mode, versionedPath));
 
     // form GET request
-    if (mode === 'GET') {
+    if (mode === 'GET' || mode == 'DELETE') {
       var q = useDefaults ? _.defaults({}, query, defaults) : query;
       req.query(q)
         .set(headers)
@@ -236,6 +236,7 @@ module.exports = {
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
   get_chart: endPoint('/custom_chart/', 'get', 1),
   post_chart: endPoint('/custom_chart/', 'post', 1),
+  delete_chart: endPoint('/custom_chart', 'delete', 1, false),
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
