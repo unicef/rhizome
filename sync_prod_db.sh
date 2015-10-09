@@ -1,38 +1,36 @@
 !/bin/bash
 
-DB=polio
+DB=rhizome
 USER=djangoapp
 
 echo "pulling zipped .sql file"
-wget https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -P ~/rhizome_latest.sql.gz -O
+wget https://s3.amazonaws.com/rhizome-backup/rhizome_latest.sql.gz -P ~/
 
 echo "unzipping sql file"
-gunzip ~/rhizome_latest.sql.gz
+gunzip -f ~/rhizome_latest.sql.gz
 
+echo "killing all connections..."
+
+# Kill All Connections to DB #
+psql -c"select pg_terminate_backend(pid)
+   from pg_stat_activity
+   where datname = '$DB';"
 #
-# echo "killing all connections..."
+echo "just terminated all of your psql connections.. dropping the database in 5..4.."
+
+sleep 5
+psql -c "DROP DATABASE IF EXISTS $DB;"
+
+echo "...CREATING DATABASE..."
 #
-# # Kill All Connections to DB #
-# psql -c"select pg_terminate_backend(pid)
-#    from pg_stat_activity
-#    where datname = '$DB';"
-#
-# echo "just terminated all of your psql connections.. dropping the database in 5..4.."
-#
-# sleep 5
-# psql -c "DROP DATABASE IF EXISTS $DB;"
-#
-#
-# echo "...CREATING DATABASE..."
-#
-# psql -c "CREATE DATABASE $DB
-#   WITH OWNER = djangoapp
-#        ENCODING = 'UTF8'
-#        TABLESPACE = pg_default
-#        LC_COLLATE = 'en_US.UTF-8'
-#        LC_CTYPE = 'en_US.UTF-8'
-#        CONNECTION LIMIT = -1;" postgres > /dev/null
-#
+psql -c "CREATE DATABASE $DB
+  WITH OWNER = djangoapp
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'en_US.UTF-8'
+       LC_CTYPE = 'en_US.UTF-8'
+       CONNECTION LIMIT = -1;" postgres > /dev/null
+
 # echo Loading production data...
-# psql -f db.sql $DB $USER
+psql -f ~/rhizome_latest.sql $DB $USER
 echo done.
