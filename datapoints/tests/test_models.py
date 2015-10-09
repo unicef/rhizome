@@ -28,8 +28,6 @@ class IndicatorTest(MasterModelTestCase):
         self.assertTrue(isinstance,(dpi,Indicator))
         self.assertEqual(dpi.__unicode__(),dpi.name)
 
-        print '...Done Testing Indicator Model...'
-
 
 class LocationTest(MasterModelTestCase):
 
@@ -97,6 +95,5 @@ class DataPointTest(MasterModelTestCase):
 
         dp = self.create_datapoint()
         self.assertTrue(isinstance,(dp,DataPoint))
-        print '....Done Testing DataPoint Model...'
 
         # self.assertEqual(dp.__unicode__(),dp.value)
