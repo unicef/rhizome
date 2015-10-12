@@ -396,23 +396,24 @@ class DocumentReviewResource(BaseModelResource):
 
 class DocumentDetailResource(BaseModelResource):
 
-    def get_object_list(self,request):
+    def obj_create(self, bundle, **kwargs):
 
-        try:
-            document_id = request.POST['document_id']
-        except KeyError:
-            return super(DocumentDetailResource, self).get_object_list(request)
+        post_data = bundle.data
 
-        post_data = request.POST
-
-        doc_detail_dict = {
-            'document_id': int(post_data['document_id']),
-            'doc_detail_type_id': int(post_data['doc_detail_type_id']),
+        defaults = {
             'doc_detail_value': post_data['doc_detail_value'],
         }
-        dd = DocumentDetail.objects.create(**doc_detail_dict)
 
-        return DocumentDetail.objects.filter(id=dd.id).values()
+        chart, created = DocumentDetail.objects.update_or_create(
+            document_id=post_data['document_id'],\
+            doc_detail_type_id=post_data['doc_detail_type_id'],
+            defaults=defaults
+        )
+
+        bundle.obj = chart
+        bundle.data['id'] = chart.id
+
+        return bundle
 
     class Meta(BaseModelResource.Meta):
         queryset = DocumentDetail.objects.all().values()
@@ -695,7 +696,7 @@ class GeoResource(BaseNonModelResource):
 
     def dehydrate(self, bundle):
 
-        bundle.data.pop("resource_uri",None)# = bundle.obj.location.id
+        bundle.data.pop("resource_uri",None)
         return bundle
 
     def alter_list_data_to_serialize(self, request, data):

@@ -74,14 +74,18 @@ var DocForm = React.createClass({
 
     var doc_detail_meta = this.state.doc_detail_meta
     var doc_detail_type = doc_detail_meta[config_type]
+    var doc_detail_type_id = doc_detail_type['id']
+
+    // console.log('doc_detail_type',doc_detail_type['id'])
+    // console.log('doc_detail_type_id',doc_detail_type_id)
 
     api.docDetailPost({
           document_id: this.state.created_doc_id,
-          doc_detail_type_id:  doc_detail_type.id,
+          doc_detail_type_id: doc_detail_type_id,
           doc_detail_value: config_val
     }).then(function (response) {
         var stateObject = {}
-        stateObject[config_type] = response.objects[0].doc_detail_value
+        stateObject[config_type] = response.objects.doc_detail_value
         self.setState(stateObject)
       });
   },
