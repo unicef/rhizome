@@ -17,6 +17,8 @@ from django.core.files.base import ContentFile
 from django.core import serializers
 from django.utils.html import escape
 from django.http import QueryDict
+from django.utils.html import escape
+from django.utils.datastructures import MultiValueDictKeyError
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import *
@@ -24,8 +26,6 @@ from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
-from django.utils.html import escape
-from django.utils.datastructures import MultiValueDictKeyError
 
 class CampaignResource(BaseModelResource):
 
@@ -318,54 +318,50 @@ class CustomDashboardResource(BaseModelResource):
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
-    class Meta:
+    class Meta(BaseModelResource.Meta):
         queryset = Document.objects.all().values()
         resource_name = 'source_doc'
         filtering = {
             "id": ALL,
         }
 
-    def get_object_list(self,request):
+    def obj_create(self, bundle, **kwargs):
         '''
         If post, create file and return the JSON of that object.
         If get, just query the source_doc table with request parameters
         '''
-        try:
-            doc_data = request.POST['docfile']
-        except KeyError:
-            return super(DocumentResource, self).get_object_list(request)
+
+        doc_data = bundle.data['docfile']
 
         try:
-            doc_title = request.POST['doc_title'] + '-' + str(int(time.time()))
+            doc_title = bundle.data['doc_title'] + '-' + str(int(time.time()))
         except KeyError:
             doc_title = doc_data[:10]
 
-        try:
-            new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
-        except Exception as err:
-            pass
+        # new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
+        new_doc = self.post_doc_data(doc_data, 1, doc_title)
+        print 'DONE WITH DOCUMENT_ID: %s' % new_doc
 
-        return Document.objects.filter(id=new_doc.id).values()
+        bundle.obj = new_doc
+        bundle.data['id'] = new_doc.id
+
+        return bundle
 
     def post_doc_data(self, post_data, user_id, doc_title):
 
         file_meta, base64data = post_data.split(',')
         file_content = ContentFile(base64.b64decode(base64data))
 
+        print 'user_id: %s ' %  user_id
         sd = Document.objects.create(
                 doc_title = doc_title,
+                docfile = file_content,
                 created_by_id = user_id)
 
-        sd.docfile.save(sd.guid, file_content)
+        # sd.docfile.save(sd.guid, file_content)
 
+        print 'Posting is now completeeeee'
         return sd
-
-
-class Meta(BaseModelResource.Meta):
-        queryset = Document.objects.all().values()
-        list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'post']
-        resource_name = 'source_doc'
 
 class UserResource(BaseModelResource):
 
