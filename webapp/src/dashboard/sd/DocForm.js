@@ -52,7 +52,6 @@ var DocForm = React.createClass({
         }).then(function (response) {
 
         var new_doc_obj = response.objects
-        console.log('new_doc_obk',new_doc_obj)
 
         self.setState({
           config_options: new_doc_obj.file_header.replace('"','').split(','),

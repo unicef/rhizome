@@ -330,7 +330,6 @@ class DocumentResource(BaseModelResource):
         If post, create file and return the JSON of that object.
         If get, just query the source_doc table with request parameters
         '''
-
         doc_data = bundle.data['docfile']
 
         try:
@@ -340,7 +339,6 @@ class DocumentResource(BaseModelResource):
 
         # new_doc = self.post_doc_data(doc_data, request.user.id, doc_title)
         new_doc = self.post_doc_data(doc_data, 1, doc_title)
-        print 'DONE WITH DOCUMENT_ID: %s' % new_doc
 
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
@@ -350,17 +348,14 @@ class DocumentResource(BaseModelResource):
     def post_doc_data(self, post_data, user_id, doc_title):
 
         file_meta, base64data = post_data.split(',')
-        file_content = ContentFile(base64.b64decode(base64data))
 
-        print 'user_id: %s ' %  user_id
+        file_content = ContentFile(base64.b64decode(base64data))
         sd = Document.objects.create(
                 doc_title = doc_title,
-                docfile = file_content,
                 created_by_id = user_id)
 
-        # sd.docfile.save(sd.guid, file_content)
+        sd.docfile.save(sd.guid, file_content)
 
-        print 'Posting is now completeeeee'
         return sd
 
 class UserResource(BaseModelResource):
