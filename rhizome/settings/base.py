@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'simple_history',
     'tastypie',
     'debug_toolbar',
+    'django_cron',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -76,6 +77,10 @@ DEBUG_TOOLBAR_PANELS = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # this is default
 )
+
+CRON_CLASSES = [
+    "rhizome.cron.MyCronJob",
+]
 
 ANONYMOUS_USER_ID = -1
 
