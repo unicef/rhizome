@@ -225,10 +225,6 @@ var Dashboard = React.createClass({
         .value()
     );
 
-    // this.state.data is empty for custom dashboards.. tryign to fix
-    // var data_for_init = this.state.data ||
-    var data_for_init = this.state.dashboard.charts
-
     var data = dashboardInit(
       dashboardDef,
       this.state.data,
