@@ -1,11 +1,13 @@
 from django_cron import CronJobBase, Schedule
+from datapoints.cache_tasks import CacheRefresh
 
-class MyCronJob(CronJobBase):
+class AggAndComputeDataPoint(CronJobBase):
     RUN_EVERY_MINS = 1
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'rhizome.my_cron_job'    # a unique code
+    code = 'rhizome.agg_and_compute_datapoint'    # a unique code
 
     def do(self):
-        print 'RHIZOME MY CRON JOB'
-        pass    # do your thing here
+
+        print '==REEFFRESSH=='
+        cr = CacheRefresh()

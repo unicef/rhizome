@@ -79,7 +79,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 CRON_CLASSES = [
-    "rhizome.cron.MyCronJob",
+    "rhizome.cron.AggAndComputeDataPoint",
 ]
 
 ANONYMOUS_USER_ID = -1
