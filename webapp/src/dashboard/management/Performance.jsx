@@ -53,8 +53,10 @@ var Performance = React.createClass({
       .y(_.property('value'));
 
     var missed = _(data.missedChildren)
-      .reject(d => {
-        return d.value <= 0.001
+      .each(d => {
+        if (d.value <= 0.001) {
+          d.value = 0.001
+        }
       })
       .groupBy('indicator.short_name')
       .map(series)
