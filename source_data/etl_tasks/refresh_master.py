@@ -125,7 +125,7 @@ class MasterRefresh(object):
         self.submissions_to_doc_datapoints()
         self.sync_datapoint()
 
-        SourceSubmission.objects.filter(id__in=self.to_process_ss_ids)\
+        SourceSubmission.objects.filter(id__in=self.all_ss_ids)\
             .update(process_status = 'PROCESSED')
 
     ## MAIN METHODS ##
