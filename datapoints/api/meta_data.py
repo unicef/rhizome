@@ -593,9 +593,6 @@ class RefreshMasterResource(BaseModelResource):
         mr.submissions_to_doc_datapoints()
         mr.sync_datapoint()
 
-        cr = CacheRefresh()
-        cr.main()
-
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType.objects.get(name = 'submission_processed_count').id,

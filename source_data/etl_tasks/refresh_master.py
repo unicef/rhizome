@@ -78,15 +78,6 @@ class MasterRefresh(object):
         this module.
         '''
 
-        # detail_types = {row['id']: row['name'] for row in \
-        #     DocDetailType.objects.all().values()}
-        #
-        # doc_details  = [{ row['doc_detail_type_id']: row['doc_detail_value']} for row in \
-        #     DocumentDetail.objects\
-        #         .filter(document_id = self.document_id)\
-        #         .values()\
-        #     ]
-
         detail_types, document_details = {}, {}
         ddt_qs = DocDetailType.objects.all().values()
 
@@ -102,9 +93,6 @@ class MasterRefresh(object):
                 row['doc_detail_value']
 
         return document_details
-
-
-        return doc_details
 
     def get_document_meta_mappings(self):
         '''
@@ -130,6 +118,15 @@ class MasterRefresh(object):
                 .to_dict()['master_object_id']
 
         return source_map_dict
+
+    def main(self):
+
+        self.refresh_submission_details()
+        self.submissions_to_doc_datapoints()
+        self.sync_datapoint()
+
+        SourceSubmission.objects.filter(id__in=self.to_process_ss_ids)\
+            .update(process_status = 'PROCESSED')
 
     ## MAIN METHODS ##
 
@@ -256,10 +253,6 @@ class MasterRefresh(object):
 
             doc_dps = self.process_source_submission(row)
 
-        SourceSubmission.objects.filter(id__in=self.all_ss_ids)\
-            .update(process_status = 'PROCESSED')
-
-
     def sync_datapoint(self):
 
         dp_batch = []
@@ -288,8 +281,6 @@ class MasterRefresh(object):
 
         DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
         DataPoint.objects.bulk_create(dp_batch)
-
-        pass
 
     ## main() helper methods ##
     def process_source_submission(self,row):
