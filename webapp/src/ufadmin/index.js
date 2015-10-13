@@ -10,11 +10,6 @@ var AdminApp = React.createClass({
 
 	render: function() {
 		var q_params = this.context.router.getCurrentParams()
-		console.log('q_params: ',q_params)
-
-		// var indicator_params = q_params
-
-
 
 		return <div className="admin-container">
 			<ul className="admin-nav">
