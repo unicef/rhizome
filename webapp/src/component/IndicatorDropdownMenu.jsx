@@ -45,9 +45,7 @@ var IndicatorDropdownMenu = React.createClass({
       pattern : ''
     };
   },
-/*  shouldComponentUpdate: function(nextProps, nextState) {
-      return (nextProps.indicators.length !== this.props.indicators.length || nextProps.text !==this.props.text);
-  }, */
+
   render : function () {
     var self = this;
     if (this.props.indicators.length === 0) {

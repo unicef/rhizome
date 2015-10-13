@@ -51,16 +51,13 @@ var SimpleFormComponent = React.createClass({
    },
 
   render : function(){
-    // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
-
     var contentType = this.props.contentType;
     var componentTitle = this.props.componentTitle;
     var data =  this.state.store.componentData
 
-    var compnent_data_exists = _.has(data, contentType);
+    var componentDataExists = _.has(data, contentType);
 
-    if (!compnent_data_exists){
+    if (!componentDataExists){
       return <div>Loading Form Component </div>
     }
 
@@ -79,35 +76,40 @@ var SimpleFormComponent = React.createClass({
         rowLi.push(<li>{row.display} ({row.id}) </li>)
     });
 
-    var componentForm = ''
-    // fixme.....
+    var componentForm;
     if (contentType == 'indicator_tag'){
-
-      var componentForm = <div>
-        <IndicatorTagDropdownMenu
-          tag_tree={dropDownData}
-          text='Add Tag'
-          sendValue = {this.props.onClick}>
-        </IndicatorTagDropdownMenu>
-      </div>
+      componentForm = (
+        <div>
+          <IndicatorTagDropdownMenu
+            tag_tree={dropDownData}
+            text='Add Tag'
+            sendValue = {this.props.onClick}>
+          </IndicatorTagDropdownMenu>
+        </div>
+      )
     }
-    else if (contentType == 'indicator_calc'){
-      var componentForm = <form>
+    else if (contentType == 'indicator_calc') {
+      dropDownData.forEach(data => {
+        data.title = data.description
+      })
+      componentForm = (
+        <form>
           <IndicatorDropdownMenu
-          text='Add Component'
-          indicators={dropDownData}
-          sendValue={this.props.onClick}>
-        </IndicatorDropdownMenu>;
-        <select>
-          <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
-          <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
-          <option value="WHOLE_OF_DIFFERENCE">WHOLE_OF_DIFFERENCE</option>
-          <option value="PART">PART</option>
-          <option value="WHOLE">WHOLE</option>
-          <option value="WHOLE_OF_DIFFERENCE_DENOMINATOR">WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
-        </select>
-        <button> Add! </button>
-      </form>
+            text='Add Component'
+            indicators={dropDownData}
+            sendValue={this.props.onClick}>
+          </IndicatorDropdownMenu>;
+          <select>
+            <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
+            <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
+            <option value="WHOLE_OF_DIFFERENCE">WHOLE_OF_DIFFERENCE</option>
+            <option value="PART">PART</option>
+            <option value="WHOLE">WHOLE</option>
+            <option value="WHOLE_OF_DIFFERENCE_DENOMINATOR">WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
+          </select>
+          <button> Add! </button>
+        </form>
+      )
     };
 
     return <div style={formComponentStyle}>
