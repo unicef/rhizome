@@ -20,6 +20,7 @@ var SubmissionModalStore = Reflux.createStore({
         var self = this;
         api.submission(id)
             .then(response => {
+                self.data.modalIsOpen = true;
                 self.data.submission_data = response.objects[0];
                 self.trigger(self.data);
             });

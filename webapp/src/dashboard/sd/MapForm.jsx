@@ -43,9 +43,7 @@ var MapForm = React.createClass({
     },
 
     openModal: function () {
-        this.setState({modalIsOpen: true});
         MapFormActions.openModal({id: this.props.source_object_map_id});
-
     },
 
     closeModal: function () {

@@ -32,7 +32,6 @@ var SubmissionModal = React.createClass({
     },
 
     openModal: function () {
-        this.setState({modalIsOpen: true});
         SubmissionModalActions.openModel({id: this.props.source_submission_id});
     },
 

@@ -20,6 +20,7 @@ var MapFormStore = Reflux.createStore({
 
         api.get_source_object_map(id)
             .then(response => {
+                self.data.modalIsOpen = true;
                 self.data.source_object_code = response.objects[0].source_object_code;
                 self.data.content_type = response.objects[0].content_type;
                 self.trigger(self.data);
