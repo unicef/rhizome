@@ -118,7 +118,7 @@ var SimpleForm = React.createClass({
     }
 
     var additionalFormComponents;
-    if (contentType = 'indicator_tag' && dataObject) {
+    if (contentType === 'indicator_tag' && dataObject) {
       var selected =  this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
       var tagTree = this.state.tagTree
 
@@ -134,7 +134,7 @@ var SimpleForm = React.createClass({
         </div>
       )
     }
-    if (contentType = 'indicator') {
+    if (contentType === 'indicator') {
       additionalFormComponents = ''
     }
 
@@ -144,7 +144,7 @@ var SimpleForm = React.createClass({
         <p className="pageWelcome"> Welcome! </p>
         <h5>id: {this.state.store.objectId} </h5>
         <br></br>
-        <ReactJson value={formData} settings={formSettings} ref="form_data" />,
+        <ReactJson value={formData} settings={formSettings} ref="form_data" />
         {additionalFormComponents}
         <br></br>
         <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
