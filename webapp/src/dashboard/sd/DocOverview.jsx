@@ -1,12 +1,18 @@
 var _ = require('lodash');
-var api = require('data/api');
 var Reflux = require('reflux');
 var React = require('react');
 
 var DropdownMenu = require('component/DropdownMenu.jsx');
 var NavigationStore = require('stores/NavigationStore');
 
+var DocOverviewActions = require('actions/DocOverviewActions');
+var DocOverviewStore = require('stores/DocOverviewStore');
+
 var DocOverview = React.createClass({
+    mixins: [
+        Reflux.connect(DocOverviewStore)
+    ],
+
     propTypes: {
         doc_id: React.PropTypes.number.isRequired,
         doc_tab: React.PropTypes.string.isRequired,
@@ -43,25 +49,12 @@ var DocOverview = React.createClass({
     },
 
     pullDocDetailTypes: function () {
-
-        // api.docDetail({document_id: this.props.doc_id},null,{'cache-control':'no-cache'})
-        // .then(response => this.setState({
-        // 	doc_deets: response.objects,
-        // }));
-
-        api.docDetailType()
-            .then(response => this.setState({
-                doc_detail_types: response.objects,
-            }));
-
+        DocOverviewActions.getDocDetailTypes();
     },
 
     refreshMaster: function () {
-
-        api.refresh_master({document_id: this.props.doc_id}, null, {'cache-control': 'no-cache'})
-            .then(response => this.setState({
-                doc_deets: response.objects
-            }));
+        var self = this;
+        DocOverviewActions.refreshMaster({document_id: self.props.doc_id});
     },
 
     renderLoading() {

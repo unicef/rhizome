@@ -8,7 +8,7 @@ var page = require('page');
 
 var NavigationStore = require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.jsx');
-var DocOverview = require('dashboard/sd/DocOverview.js');
+var DocOverview = require('dashboard/sd/DocOverview.jsx');
 var DocForm = require('dashboard/sd/DocForm.jsx');
 
 var TitleMenu = require('component/TitleMenu.jsx');
