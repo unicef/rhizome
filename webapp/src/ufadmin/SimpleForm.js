@@ -90,9 +90,6 @@ var SimpleForm = React.createClass({
   render : function () {
     var tag_form_data, calc_form_data = {};
 
-    // console.log('this dot props: ', this.props)
-    // console.log('this dot state : ', this.state)
-
     var objectId  = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject  = this.state.store.dataObject
@@ -101,9 +98,14 @@ var SimpleForm = React.createClass({
     // TODO -> pull this from the DB
     var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false} }}
 
-    // There is an id in the url but the request is still pending //
     if (objectId && !dataObject){
-      return <div>Loading MetaData Manager</div>
+      if (this.state.store.loading) {
+        return <div>Loading MetaData Manager</div>
+      } else {
+        return (
+          <div>Error. There is no data received.</div>
+        )
+      }
     }
 
     if (dataObject){
@@ -115,70 +117,76 @@ var SimpleForm = React.createClass({
       }
     }
 
+    var additionalFormComponents;
     if (contentType = 'indicator_tag' && dataObject) {
-
       var selected =  this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
       var tagTree = this.state.tagTree
 
-      var additional_form_components = <div> <p>Parent Tag:</p> <br></br>
-      <IndicatorTagDropdownMenu
-        tag_tree={tagTree}
-        text={selected}
-        sendValue={ this.setParentTag }
-      >
-      </IndicatorTagDropdownMenu>
-      </div>
+      additionalFormComponents = (
+        <div>
+          <p>Parent Tag:</p><br></br>
+          <IndicatorTagDropdownMenu
+            tag_tree={tagTree}
+            text={selected}
+            sendValue={ this.setParentTag }
+          >
+          </IndicatorTagDropdownMenu>
+        </div>
+      )
     }
     if (contentType = 'indicator') {
-
-      var additional_form_components = ''
-
+      additionalFormComponents = ''
     }
 
     // this is the basic form used for all content types
-    var base_form = <div>
+    var base_form = (
+      <div>
         <p className="pageWelcome"> Welcome! </p>
         <h5>id: {this.state.store.objectId} </h5>
         <br></br>
         <ReactJson value={formData} settings={formSettings} ref="form_data" />,
-        {additional_form_components}
+        {additionalFormComponents}
         <br></br>
         <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
-      </div>;
+      </div>);
 
-    var base_form_success = ''
+    var baseFormSuccess = ''
     if (this.state.saveSuccess){
-      var base_form_success = <i className="fa fa-check"> saved successfully </i>
+      var baseFormSuccess = <i className="fa fa-check"> saved successfully </i>
     }
 
-    var sub_form_list = '';
+    var subFormList;
 
     if (contentType == 'indicator') {
-        var sub_form_list =<div><SimpleFormComponent
-            objectId={objectId}
-            contentType={'indicator_tag'}
-            componentTitle="Add Tags to Indicators"
-            onClick={this.addTagToIndicator}
-          >
-        </SimpleFormComponent>
-          <br></br>
-        <SimpleFormComponent
-            objectId={objectId}
-            contentType='indicator_calc'
-            componentTitle="Add Calculations to Indicators"
-            onClick={this.addTagToIndicator}
-          >
-        </SimpleFormComponent></div>
+        subFormList = (
+          <div>
+            <SimpleFormComponent
+              objectId={objectId}
+              contentType={'indicator_tag'}
+              componentTitle="Add Tags to Indicators"
+              onClick={this.addTagToIndicator}
+            >
+            </SimpleFormComponent>
+            <br></br>
+            <SimpleFormComponent
+                objectId={objectId}
+                contentType='indicator_calc'
+                componentTitle="Add Calculations to Indicators"
+                onClick={this.addTagToIndicator}
+              >
+            </SimpleFormComponent>
+          </div>
+        )
     }
 
     return (
       <div className="row">
         <div className="small-8 columns">
           {base_form}
-          <div>{base_form_success}</div>
+          <div>{baseFormSuccess}</div>
         </div>
         <div className="small-4 columns">
-          {sub_form_list}
+          {subFormList}
         </div>
       </div>
     );

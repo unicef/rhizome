@@ -32,7 +32,7 @@ class MasterRefresh(object):
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_location_code_batch_size = 10
+        self.ss_location_code_batch_size = 50
         self.document_id = document_id
         self.user_id = user_id
 
