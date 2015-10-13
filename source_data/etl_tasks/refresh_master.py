@@ -32,7 +32,7 @@ class MasterRefresh(object):
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_location_code_batch_size = 50
+        self.ss_location_code_batch_size = 5
         self.document_id = document_id
         self.user_id = user_id
 
@@ -258,29 +258,44 @@ class MasterRefresh(object):
         dp_batch = []
         ss_id_list = self.submission_data.keys()
 
-        doc_dps = DocDataPoint.objects.raw('''
-                SELECT
-                      MAX(id) as id
-                    , location_id
-                    , indicator_id
-                    , campaign_id
-                    , MAX(source_submission_id) as source_submission_id
-                    , SUM(value) as value
-                FROM doc_datapoint dd
-                WHERE source_submission_id = ANY(%s)
-                AND is_valid = 't'
-                GROUP BY location_id, indicator_id, campaign_id;
-            ''',[ss_id_list])
+        dps = DataPoint.objects.raw('''
+            DROP TABLE IF EXISTS _tmp_dp;
+            CREATE TABLE _tmp_dp
+            AS
+            SELECT
+                  MAX(id) as id
+                , location_id
+                , indicator_id
+                , campaign_id
+                , MAX(source_submission_id) as source_submission_id
+                , SUM(value) as value
+            FROM doc_datapoint dd
+            WHERE source_submission_id = ANY(%s)
+            AND is_valid = 't'
+            GROUP BY location_id, indicator_id, campaign_id;
 
-        for ddp in doc_dps:
-            ddp_dict = dict(ddp.__dict__)
-            del ddp_dict['_state']
-            ddp_dict['cache_job_id'] = -1
-            ddp_dict['changed_by_id'] = self.user_id
-            dp_batch.append(DataPoint(**ddp_dict))
 
-        DataPoint.objects.filter(source_submission_id__in = ss_id_list).delete()
-        DataPoint.objects.bulk_create(dp_batch)
+            DELETE FROM datapoint d
+            USING _tmp_dp t
+            WHERE d.location_id = t.location_id
+            AND d.campaign_id = t.campaign_id
+            AND d.indicator_id = t.indicator_id;
+
+            INSERT INTO datapoint
+            (location_id, campaign_id, indicator_id, value, cache_job_id, source_submission_id, created_at, changed_by_id)
+            SELECT location_id, campaign_id, indicator_id, value, -1, source_submission_id, now(), %s
+            FROM  _tmp_dp;
+
+            SELECT d.id FROM datapoint d
+            INNER JOIN _tmp_dp t
+            ON d.location_id = t.location_id
+            AND d.campaign_id = t.campaign_id
+            AND d.indicator_id = t.indicator_id
+            LIMIT 1;
+        ''',[ss_id_list,self.user_id])
+
+        for dp in dps:
+            print dp.id
 
     ## main() helper methods ##
     def process_source_submission(self,row):
