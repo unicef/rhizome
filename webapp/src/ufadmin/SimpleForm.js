@@ -124,10 +124,11 @@ var SimpleForm = React.createClass({
 
       additionalFormComponents = (
         <div>
-          <p>Parent Tag:</p><br></br>
+          <p>{`Parent Tag: ${selected}`}</p>
+          <br></br>
           <IndicatorTagDropdownMenu
             tag_tree={tagTree}
-            text={selected}
+            text='Parent tag'
             sendValue={ this.setParentTag }
           >
           </IndicatorTagDropdownMenu>
