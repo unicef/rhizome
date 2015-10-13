@@ -1,12 +1,17 @@
 var _ = require('lodash');
 var React = require('react');
-var api = require('data/api');
+var Reflux = require('reflux');
+
 var RegionTitleMenu = require('component/RegionTitleMenu');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var Modal = require('react-modal');
 
+var MapFormActions = require('actions/MapFormActions');
+var MapFormStore = require('stores/MapFormStore');
+
+var Modal = require('react-modal');
 var appElement = document.getElementById('main');
+
 Modal.setAppElement(appElement);
 Modal.injectCSS();
 
@@ -21,6 +26,10 @@ const {
 
 
 var MapForm = React.createClass({
+    mixins: [
+        Reflux.connect(MapFormStore)
+    ],
+
     propTypes: {
         source_object_map_id: React.PropTypes.number.isRequired,
         source_object_code: React.PropTypes.string.isRequired,
@@ -35,12 +44,8 @@ var MapForm = React.createClass({
 
     openModal: function () {
         this.setState({modalIsOpen: true});
+        MapFormActions.openModal({id: this.props.source_object_map_id});
 
-        api.get_source_object_map({id: this.props.source_object_map_id})
-            .then(response => this.setState({
-                source_object_code: response.objects[0].source_object_code,
-                content_type: response.objects[0].content_type,
-            }));
     },
 
     closeModal: function () {
@@ -48,14 +53,11 @@ var MapForm = React.createClass({
     },
 
     postMetaMap: function (master_object_id) {
-        api.post_source_object_map({
+        MapFormActions.updateMetaMap({
             id: this.props.source_object_map_id,
             master_object_id: master_object_id,
             mapped_by_id: 1 // FIXME
-        }).then(response => this.setState({
-            master_object_id: response.objects[0].master_object_id
-        }));
-
+        });
     },
 
     renderDropDown: function (content_type) {

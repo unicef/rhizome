@@ -7,7 +7,7 @@ var GroupFormStore = require('stores/GroupFormStore');
 var ChartBuilderStore = require('stores/ChartBuilderStore');
 
 var SubmissionModal = require('dashboard/sd/SubmissionModal.js');
-var MapForm = require('dashboard/sd/MapForm.js');
+var MapForm = require('dashboard/sd/MapForm.jsx');
 var ReviewTableActions = require('actions/ReviewTableActions');
 var ReviewTableStore = require('stores/ReviewTableStore');
 
