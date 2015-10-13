@@ -33,7 +33,7 @@ var DocFormStore = Reflux.createStore({
             var new_doc_obj = response.objects
             self.data.config_options = new_doc_obj.file_header.replace('"', '').split(',');
             self.data.created_doc_id = new_doc_obj.id;
-            self.data.new_doc_title = response.doc_title;
+            self.data.new_doc_title = new_doc_obj.doc_title;
             self.trigger(self.data);
         });
 
