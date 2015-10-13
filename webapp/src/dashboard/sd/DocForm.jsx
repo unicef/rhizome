@@ -12,7 +12,7 @@ var DocFormStore = require('stores/DocFormStore');
 
 
 var DocForm = React.createClass({
-// see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
+    // see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
 
     mixins: [
         Reflux.connect(DocFormStore)
