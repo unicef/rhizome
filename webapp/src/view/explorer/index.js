@@ -52,19 +52,6 @@ module.exports = {
 			self.locations = _.values(items);
 		});
 
-		this._indicators = new Dropdown({
-			el      : '#indicators',
-			source  : api.indicators,
-			mapping : {
-				'name' : 'title',
-				'id'   : 'value'
-			}
-		});
-
-		this._indicators.$on('dropdown-value-changed', function (items) {
-			self.indicators = _.values(items);
-		});
-
 		this.$on('page-changed', function (data) {
 			this.refresh(data);
 		});
