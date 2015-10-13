@@ -1,16 +1,24 @@
 var _ = require('lodash');
 var React = require('react');
-var api = require('data/api');
+var Reflux = require('reflux');
+
 var RegionTitleMenu = require('component/RegionTitleMenu');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 var Modal = require('react-modal');
+
+var SubmissionModalActions = require('actions/SubmissionModalActions');
+var SubmissionModalStore = require('stores/SubmissionModalStore');
 
 var appElement = document.getElementById('main');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
 
 var SubmissionModal = React.createClass({
+    mixins: [
+        Reflux.connect(SubmissionModalStore)
+    ],
+
     propTypes: {
         source_submission_id: React.PropTypes.number.isRequired,
     },
@@ -25,10 +33,7 @@ var SubmissionModal = React.createClass({
 
     openModal: function () {
         this.setState({modalIsOpen: true});
-        api.submission({id: this.props.source_submission_id})
-            .then(response => this.setState({
-                submission_data: response.objects[0],
-            }));
+        SubmissionModalActions.openModel({id: this.props.source_submission_id});
     },
 
     closeModal: function () {

@@ -29,7 +29,7 @@ var MapFormStore = Reflux.createStore({
 
     onUpdateMetaMap: function (info) {
         var self = this;
-        
+
         api.post_source_object_map(info).then(response => {
             self.data.master_object_id = response.objects[0].master_object_id;
             self.trigger(self.data);
