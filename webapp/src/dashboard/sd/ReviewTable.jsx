@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var React = require('react')
 var Reflux = require('reflux');
-var api = require('data/api.js');
 
 var DashboardStore = require('stores/DashboardStore');
 var GroupFormStore = require('stores/GroupFormStore');
@@ -51,7 +50,6 @@ var ReviewTable = React.createClass({
     },
 
     validateForm: function (id) {
-        // onclick post to api //
         return <input type="checkbox" checked/>;
     },
 
@@ -60,7 +58,7 @@ var ReviewTable = React.createClass({
             document_id: this.props.doc_id,
             location_id: this.props.location.id,
             campaign_id: this.props.campaign.id
-        }, doc_tab);
+        }, this.props.fields, this.props.doc_tab);
         this.forceUpdate();
     },
 

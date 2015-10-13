@@ -1,4 +1,3 @@
-
 var _ = require('lodash');
 var React = require('react');
 var api = require('data/api');
@@ -36,9 +35,7 @@ var SubmissionModal = React.createClass({
         this.setState({modalIsOpen: false});
     },
 
-
     render: function () {
-
         var source_submission_id = this.props.source_submission_id
         var modalStyle = {width: 650, height: 500, marginLeft: 400};
 

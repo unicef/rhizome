@@ -1,9 +1,8 @@
-/**
- * Created by sczhang on 10/13/15.
- */
-var React = require('react');
 var _ = require('lodash');
 var api = require('data/api');
+var Reflux = require('reflux');
+var React = require('react');
+
 var DropdownMenu = require('component/DropdownMenu.jsx');
 var NavigationStore = require('stores/NavigationStore');
 

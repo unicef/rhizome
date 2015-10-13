@@ -1,6 +1,3 @@
-/**
- * Created by sczhang on 10/13/15.
- */
 var _ = require('lodash');
 var React = require('react');
 var api = require('data/api');
@@ -91,7 +88,6 @@ var MapForm = React.createClass({
 
 
     render: function () {
-
         var source_object_map_id = this.props.source_object_map_id
         var modalStyle = {width: 400, height: 300, marginLeft: 400};
 

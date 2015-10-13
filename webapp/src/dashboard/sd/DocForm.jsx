@@ -1,16 +1,22 @@
-/**
- * Created by sczhang on 10/13/15.
- */
 var _ = require('lodash');
 var React = require('react');
-var api = require('data/api.js');
+var Reflux = require('reflux');
+
 var TitleMenu = require('component/TitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 var FileInput = require('react-file-input');
 var Dropzone = require('react-dropzone');
 
+var DocFormActions = require('actions/DocFormActions');
+var DocFormStore = require('stores/DocFormStore');
+
+
 var DocForm = React.createClass({
 // see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
+
+    mixins: [
+        Reflux.connect(DocFormStore)
+    ],
 
     // since we are starting off without any data, there is no initial value
     getInitialState: function () {
@@ -44,28 +50,7 @@ var DocForm = React.createClass({
         var reader = new FileReader();
 
         reader.onload = function (upload) {
-            self.setState({
-                data_uri: upload.target.result,
-            });
-
-            api.uploadPost({
-                docfile: upload.target.result,
-                doc_title: file.name,
-            }).then(function (response) {
-
-        var new_doc_obj = response.objects
-
-                self.setState({
-                    config_options: new_doc_obj.file_header.replace('"', '').split(','),
-                    created_doc_id: new_doc_obj.id,
-                    new_doc_title: response.doc_title,
-                });
-            })
-
-            api.docDetailType().then(function (response) {
-                var doc_detail_types = _.indexBy(response.objects, 'name');
-                self.setState({doc_detail_meta: doc_detail_types})
-            })
+            DocFormActions.getData(file, upload);
         }
         reader.readAsDataURL(file);
     },
@@ -74,31 +59,23 @@ var DocForm = React.createClass({
         var self = this;
         var doc_detail_type_lookup = {}
 
-        var doc_detail_meta = this.state.doc_detail_meta
+        var doc_detail_meta = self.state.doc_detail_meta
         var doc_detail_type = doc_detail_meta[config_type]
-    var doc_detail_type_id = doc_detail_type['id']
+        var doc_detail_type_id = doc_detail_type['id']
 
-    // console.log('doc_detail_type',doc_detail_type['id'])
-    // console.log('doc_detail_type_id',doc_detail_type_id)
+        // console.log('doc_detail_type',doc_detail_type['id'])
+        // console.log('doc_detail_type_id',doc_detail_type_id)
 
-        api.docDetailPost({
-            document_id: this.state.created_doc_id,
-          doc_detail_type_id: doc_detail_type_id,
+        DocFormActions.setDocConfig({
+            document_id: self.state.created_doc_id,
+            doc_detail_type_id: doc_detail_type_id,
             doc_detail_value: config_val
-        }).then(function (response) {
-            var stateObject = {}
-        stateObject[config_type] = response.objects.doc_detail_value
-            self.setState(stateObject)
         });
     },
 
     syncDocData: function (config_val) {
         var self = this;
-
-        api.transformUpload({document_id: this.state.created_doc_id}, null, {'cache-control': 'no-cache'})
-            .then(function (response) {
-                self.setState({doc_is_refreshed: true})
-            });
+        DocFormActions.transformUpload({document_id: self.state.created_doc_id});
     },
 
     buildHeaderList: function (config_type) {

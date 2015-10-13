@@ -1,3 +1,7 @@
-/**
- * Created by sczhang on 10/13/15.
- */
+'use strict';
+
+var Reflux = require('reflux');
+
+module.exports = Reflux.createActions([
+
+]);
