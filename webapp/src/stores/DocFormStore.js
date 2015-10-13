@@ -44,10 +44,10 @@ var DocFormStore = Reflux.createStore({
         });
     },
 
-    onSetDocConfig: function (config) {
+    onSetDocConfig: function (config, config_type) {
         var self = this;
         api.docDetailPost(config).then(function (response) {
-            self.data.config_type = response.objects.doc_detail_value;
+            self.data[config_type] = response.objects.doc_detail_value;
             self.trigger(self.data);
         });
     },
