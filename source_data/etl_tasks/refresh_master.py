@@ -239,17 +239,11 @@ class MasterRefresh(object):
         Send all rows queued for processing to the process_source_submission method.
         '''
 
-        print 'THIS IS submissions_to_doc_datapoints'
-        print self.submission_data
-
         ss_ids_in_batch = self.submission_data.keys()
 
         for row in SourceSubmissionDetail.objects.filter(\
                  source_submission_id__in= ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
-
-            print '==='
-            print row
 
             doc_dps = self.process_source_submission(row)
 
@@ -273,6 +267,7 @@ class MasterRefresh(object):
             WHERE source_submission_id = ANY(%s)
             AND is_valid = 't'
             GROUP BY location_id, indicator_id, campaign_id;
+
             DELETE FROM datapoint d
             USING _tmp_dp t
             WHERE d.location_id = t.location_id
@@ -290,11 +285,11 @@ class MasterRefresh(object):
             AND d.campaign_id = t.campaign_id
             AND d.indicator_id = t.indicator_id
             LIMIT 1;
-
         ''',[ss_id_list,self.user_id])
 
         for dp in dps:
             print dp.id
+
 
     ## main() helper methods ##
     def process_source_submission(self,row):

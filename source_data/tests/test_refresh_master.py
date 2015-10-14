@@ -185,11 +185,11 @@ class RefreshMasterTestCase(TestCase):
         ## Test Case #3
         self.assertEqual(1,len(doc_dp_ids))
 
-        mr.sync_datapoint()
+        mr_with_new_meta.sync_datapoint()
         dps = DataPoint.objects.all()
 
         ## Test Case #4
-        self.assertEqual(1,len(doc_dp_ids))
+        self.assertEqual(1,len(dps))
 
     def create_metadata(self):
         '''
