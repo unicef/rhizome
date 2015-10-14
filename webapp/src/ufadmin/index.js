@@ -20,6 +20,7 @@ var AdminApp = React.createClass({
 				<li><Link to="locations">locations</Link></li>
 				<li><Link to="campaigns">Campaigns</Link></li>
 				<li><Link to="indicators">Indicators</Link></li>
+				<li><Link to="tags">Tags</Link></li>
 			</ul>
 			<RouteHandler/>
 		</div>;
@@ -34,6 +35,7 @@ var routes = (
 			<Route name="locations" handler={require('./RegionAdmin')} />
 			<Route name="campaigns" handler={require('./CampaignsAdmin')} />
 			<Route name="indicators" handler={require('./IndicatorsAdmin')} />
+			<Route name="tags" handler={require('./TagsAdmin')} />
 	</Route>
 );
 

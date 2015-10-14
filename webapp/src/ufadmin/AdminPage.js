@@ -47,7 +47,7 @@ var AdminPage = React.createClass({
 		var createUrl = '/datapoints/campaigns/create/';
 		if(this.props.title == "Indicators")
 			createUrl = "/ufadmin/manage/indicator/";
-		else if(this.props.title == "Indicators")
+		else if(this.props.title == "Tags")
 			createUrl = "/ufadmin/manage/indicator_tag/";
 
 		// strip the "s" from the end of plural title
