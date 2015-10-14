@@ -6,12 +6,10 @@ var Reflux = require('reflux');
 
 var SubmissionModalStore = Reflux.createStore({
 
-    listenables: [require('actions/SubmissionModalActions')],
-
     init: function () {
     },
 
-    onGetSubmission: function (id) {
+    getSubmission: function (id) {
         return api.submission(id)
             .then(response => {
                 return response.objects[0];
