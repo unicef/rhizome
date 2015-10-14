@@ -55,6 +55,10 @@ var SimpleForm = React.createClass({
     SimpleFormActions.addTagToIndicator(this.props.params.id, e)
   },
 
+  removeTagFromIndicator: function(id){
+    SimpleFormActions.removeTagFromIndicator(this.props.params.id, id)
+  },
+
   componentWillUpdate : function (nextProps, nextState) {
       if (nextProps.params != this.props.params) {
         return;
@@ -165,6 +169,8 @@ var SimpleForm = React.createClass({
               contentType={'indicator_tag'}
               componentTitle="Add Tags to Indicators"
               onClick={this.addTagToIndicator}
+              smallItemCouldClick = {true}
+              onSmallItemClick = {this.removeTagFromIndicator}
             >
             </SimpleFormComponent>
             <br></br>

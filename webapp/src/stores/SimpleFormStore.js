@@ -85,12 +85,18 @@ var SimpleFormStore = Reflux.createStore({
     var self = this;
 
     api.set_indicator_to_tag( {indicator_id:indicator_id, indicator_tag_id:tag_id }).then(function(response){
-      return
+       SimpleFormActions.initIndicatorToTag(indicator_id);
     });
-
-    SimpleFormActions.initIndicatorToTag(indicator_id)
-
   },
+
+  onRemoveTagFromIndicator: function(indicator_id, id){
+    var self = this;
+
+    api.remove_indicator_from_tag({id:id}).then(function(response){
+      SimpleFormActions.initIndicatorToTag(indicator_id);
+    });
+  },
+
   deleteTagFromIndicator: function(data){
     console.log(deleteTagFromIndicator)
     // var self = this;
