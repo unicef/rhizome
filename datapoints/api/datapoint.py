@@ -136,8 +136,7 @@ class DataPointResource(BaseNonModelResource):
         p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
             columns=['location_id','campaign_id'],aggfunc=np.sum)
 
-        # pivoted_data = p_table.fillna(value=0).to_dict()
-        pivoted_data = p_table.to_dict()
+        pivoted_data = p_table.fillna(value=0).to_dict()
 
         for row, indicator_dict in pivoted_data.iteritems():
 
