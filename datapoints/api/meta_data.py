@@ -495,19 +495,23 @@ class ComputedDataPointResource(BaseModelResource):
 
 class SourceObjectMapResource(BaseModelResource):
 
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        som_id = int(post_data['id'])
+
+        som_obj = SourceObjectMap.objects.get(id = som_id)
+        som_obj.master_object_id = post_data['master_object_id']
+        som_obj.mapped_by_id = post_data['mapped_by_id']
+
+        bundle.obj = som_obj
+        bundle.data['id'] = som_obj.id
+
+        return bundle
+
+
     def get_object_list(self,request):
-
-        try:
-            request.POST['id']
-            som_id = request.POST['id']
-            som_obj = SourceObjectMap.objects.get(id=som_id)
-            som_obj.master_object_id = request.POST['master_object_id']
-            som_obj.mapped_by_id = request.POST['mapped_by_id']
-            som_obj.save()
-
-            return SourceObjectMap.objects.filter(id=som_id).values()
-        except KeyError:
-            pass
 
         try:
             som_ids = DocumentSourceObjectMap.objects\
@@ -523,7 +527,6 @@ class SourceObjectMapResource(BaseModelResource):
         return qs
 
     class Meta(BaseModelResource.Meta):
-
         resource_name = 'source_object_map'
 
 class SourceSubmissionResource(BaseModelResource):
