@@ -2,20 +2,18 @@
 
 var _ = require('lodash');
 var React = require('react');
-var Reflux = require('reflux');
+var api = require('data/api.js')
 var moment = require('moment');
 var page = require('page');
 
 var NavigationStore = require('stores/NavigationStore');
-var ReviewTable = require('dashboard/sd/ReviewTable.jsx');
+var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.jsx');
 var DocForm = require('dashboard/sd/DocForm.jsx');
 
 var TitleMenu = require('component/TitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
 var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
-var SourceDataDashboardActions = require('actions/SourceDataDashboardActions');
-var SourceDataDashboardStore = require('stores/SourceDataDashboardStore');
 
 var {
     Datascope, LocalDatascope,
@@ -25,10 +23,6 @@ var {
     } = require('react-datascope');
 
 var SourceDataDashboard = React.createClass({
-    mixins: [
-        Reflux.connect(SourceDataDashboardStore)
-    ],
-
     propTypes: {
         dashboard: React.PropTypes.object.isRequired,
         data: React.PropTypes.object.isRequired,
@@ -36,6 +30,7 @@ var SourceDataDashboard = React.createClass({
         locations: React.PropTypes.object.isRequired,
         doc_id: React.PropTypes.number.isRequired,
         doc_tab: React.PropTypes.string.isRequired,
+
         loading: React.PropTypes.bool
     },
 
@@ -46,22 +41,26 @@ var SourceDataDashboard = React.createClass({
     },
 
     getDocObj: function (doc_id) {
-        SourceDataDashboardActions.getDocObj(doc_id);
+        var self = this;
+        api.source_doc({id: doc_id}).then(function (response) {
+            self.setState({doc_obj: response.objects[0]})
+        })
     },
 
     componentWillMount: function (nextProps, nextState) {
-        this.getDocObj(this.props.doc_id);
+        this.getDocObj(this.props.doc_id)
     },
 
     componentWillReceiveProps: function (nextProps) {
-        if (nextProps.doc_id != null)
-            this.getDocObj(nextProps.doc_id);
+        this.getDocObj(nextProps.doc_id)
     },
 
     componentWillUpdate: function (nextProps, nextState) {
-        if (nextProps.doc_id != this.props.doc_id)
+        if (nextProps.doc_id != this.props.doc_id) {
             return;
+        }
     },
+
 
     render: function () {
         var loading = this.props.loading;
@@ -69,12 +68,14 @@ var SourceDataDashboard = React.createClass({
         var location = this.props.location;
         var loading = this.props.loading;
         var doc_id = this.props.doc_id;
-        var doc_tab = this.props.doc_tab;
+        var doc_tab = this.props.doc_tab
 
         var doc_obj = this.state.doc_obj;
+
         if (!doc_obj) {
             return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
         }
+
 
         if (!doc_tab) {
             var doc_tab = 'doc_index'
@@ -113,26 +114,33 @@ var SourceDataDashboard = React.createClass({
                         {doc_tabs}
                     </TitleMenu>
                 </div>
+
             </div>;
 
         const table_definition = {
             'viewraw': {
+                'meta_fn': api.submissionMeta,
+                'data_fn': api.submission,
                 'fields': ['id', 'username_code', 'location_code', 'campaign_code', 'location_display', 'edit_link'],
                 'search_fields': ['id', 'username_code', 'location_code', 'campaign_code', 'location_display'],
             },
             'doc_index': {
+                'data_fn': api.source_doc,
                 'fields': ['id', 'doc_title', 'edit_link'],
                 'search_fields': ['id', 'doc_title'],
             },
             'mapping': {
+                'data_fn': api.docMap,
                 'fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
                 'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name'],
             },
             'validate': {
+                'data_fn': api.docDatapoint,
                 'fields': ['id', 'document_id', 'location_id', 'indicator_id', 'campaign_id', 'value', 'edit_link'],
                 'search_fields': ['location_id', 'indicator_id', 'campaign_id'],
             },
             'results': {
+                'data_fn': api.docResults,
                 'fields': ['indicator_id', 'indicator__short_name', 'value'],
                 'search_fields': ['indicator_id', 'indicator__short_name', 'value'],
             },
@@ -152,6 +160,7 @@ var SourceDataDashboard = React.createClass({
         // data table //
         var review_table = <ReviewTable
             title='sample title'
+            getData={table_definition[doc_tab]['data_fn']}
             fields={table_definition[doc_tab]['fields']}
             location={location}
             key={table_key}
@@ -183,7 +192,7 @@ var SourceDataDashboard = React.createClass({
             </DocOverview>;
         }
 
-        var page_title = doc_obj.doc_title + ' - ' + doc_tab;
+        var page_title = doc_obj.doc_title + ' - ' + doc_tab
 
         return (
             <div>

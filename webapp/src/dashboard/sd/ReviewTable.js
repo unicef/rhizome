@@ -1,15 +1,12 @@
 var _ = require('lodash');
-var React = require('react')
-var Reflux = require('reflux');
-
+var React = require('react');
 var DashboardStore = require('stores/DashboardStore');
 var GroupFormStore = require('stores/GroupFormStore');
 var ChartBuilderStore = require('stores/ChartBuilderStore');
 
 var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx');
 var MapForm = require('dashboard/sd/MapForm.jsx');
-var ReviewTableActions = require('actions/ReviewTableActions');
-var ReviewTableStore = require('stores/ReviewTableStore');
+var api = require('data/api.js');
 
 const {
     Datascope, LocalDatascope,
@@ -20,13 +17,12 @@ const {
     FilterPanel, FilterDateRange, FilterInputRadio
     } = require('react-datascope');
 
-var ReviewTable = React.createClass({
-    mixins: [
-        Reflux.connect(ReviewTableStore)
-    ],
+var parseSchema = require('ufadmin/utils/parseSchema');
 
+var ReviewTable = React.createClass({
     propTypes: {
         title: React.PropTypes.string.isRequired,
+        getData: React.PropTypes.func.isRequired,
         fields: React.PropTypes.array.isRequired,
         loading: React.PropTypes.bool.isRequired,
         location: React.PropTypes.object.isRequired,
@@ -50,25 +46,34 @@ var ReviewTable = React.createClass({
     },
 
     validateForm: function (id) {
+        // onclick post to api //
         return <input type="checkbox" checked/>;
     },
 
-    getData: function () {
-        ReviewTableActions.getData({
+    _callApi: function () {
+
+        this.props.getData({
             document_id: this.props.doc_id,
             location_id: this.props.location.id,
             campaign_id: this.props.campaign.id
-        }, this.props.fields, this.props.doc_tab);
+        }, null, {'cache-control': 'no-cache'})
+            .then(response => this.setState({
+                schema: parseSchema(this.props.fields),
+                data: response.objects
+            }));
         this.forceUpdate();
     },
 
     componentWillMount: function () {
-        ReviewTableActions.getIndicators();
-        this.getData()
+        api.indicatorsTree().then(indicators => this.setState({
+            indicators: indicators
+        }));
+
+        this._callApi()
     },
 
     componentWillReceiveProps: function (nextProps) {
-        this.getData()
+        this._callApi()
     },
 
     componentWillUpdate: function (nextProps, nextState) {
