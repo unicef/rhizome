@@ -7,8 +7,6 @@ var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 
 var MapFormActions = require('actions/MapFormActions');
-var MapFormStore = require('stores/MapFormStore');
-
 var Modal = require('react-modal');
 var appElement = document.getElementById('main');
 
@@ -26,9 +24,6 @@ const {
 
 
 var MapForm = React.createClass({
-    mixins: [
-        Reflux.connect(MapFormStore)
-    ],
 
     propTypes: {
         source_object_map_id: React.PropTypes.number.isRequired,
@@ -43,7 +38,14 @@ var MapForm = React.createClass({
     },
 
     openModal: function () {
-        MapFormActions.openModal({id: this.props.source_object_map_id});
+        MapFormActions.getSourceMap({id: this.props.source_object_map_id}).then(data => {
+            this.setState(
+                {
+                    source_object_code: data.source_object_code,
+                    content_type: data.content_type,
+                    modalIsOpen: true
+                });
+        });
     },
 
     closeModal: function () {
@@ -55,6 +57,8 @@ var MapForm = React.createClass({
             id: this.props.source_object_map_id,
             master_object_id: master_object_id,
             mapped_by_id: 1 // FIXME
+        }).then(data => {
+            this.setState({master_object_id: data});
         });
     },
 
