@@ -124,30 +124,30 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
+        ## Pivot the data on request instead of caching ##
+        ## in the datapoint_abstracted table ##
+
+        df_columns = ['indicator_id','campaign_id','location_id','value']
         dwc_df = DataFrame(list(DataPointComputed.objects.filter(
             campaign__in = self.parsed_params['campaign__in'],
             location__in = location_ids,
             indicator__in = self.parsed_params['indicator__in']
-        ).values_list('indicator_id','campaign_id','location_id','value'),\
-        ),columns=['indicator_id','campaign_id','location_id','value'])
+        ).values_list(*df_columns)),columns=df_columns)
 
         p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
             columns=['location_id','campaign_id'])
 
         pivoted_data = p_table.to_dict()
-        print pivoted_data
 
         for row, indicator_dict in pivoted_data.iteritems():
+
             r = ResultObject()
-            # print row
-            # print  x
             r.location = row[0]
             r.campaign = row[1]
-            r.indicators = [{'indicator':unicode(k) ,'value':v} for k,v in indicator_dict.\
-                iteritems()]
+            r.indicators = [{'indicator': unicode(k) ,'value':v} for k,v in \
+                indicator_dict.iteritems()]
 
             results.append(r)
-
 
         return results
 
