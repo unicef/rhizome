@@ -1,5 +1,7 @@
 import traceback
+from numpy import nan
 
+from pandas import DataFrame, pivot_table
 from tastypie import fields
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
@@ -14,9 +16,6 @@ from django.contrib.auth.models import User
 from datapoints.models import *
 from datapoints.api.meta_data import *
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
-
-from numpy import nan
-
 
 class ResultObject(object):
     '''
@@ -125,52 +124,36 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        db_data = DataPointAbstracted.objects.filter(
+        dwc_df = DataFrame(list(DataPointComputed.objects.filter(
             campaign__in = self.parsed_params['campaign__in'],
-            location__in = location_ids)\
-            .order_by('-campaign__start_date')
+            location__in = location_ids,
+            indicator__in = self.parsed_params['indicator__in']
+        ).values_list('indicator_id','campaign_id','location_id','value'),\
+        ),columns=['indicator_id','campaign_id','location_id','value'])
 
-        for row in db_data:
-            r = ResultObject()
-            r.location = row.location_id
-            r.campaign = row.campaign_id
+        print '===='
+        print dwc_df
+        print '===='
+        dwc_df = dwc_df[:10]
 
-            indicator_json = row.indicator_json
-            cleaned = self.clean_indicator_json(indicator_json)
-            r.indicators = cleaned
-            results.append(r)
+        p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
+            columns=['location_id','campaign_id'])
+
+        print p_table.to_dict()
+        print '===='
+
+        # for row in pivoted_data:
+        #     r = ResultObject()
+        #     r.location = row.location_id
+        #     r.campaign = row.campaign_id
+        #
+        #     indicator_json = row.indicator_json
+        #     cleaned = self.clean_indicator_json(indicator_json)
+        #     r.indicators = cleaned
+        #     results.append(r)
 
 
         return results
-
-    def clean_indicator_json(self,indicator_json):
-        '''
-        When we query the datapoint_abstracted table, the full list of
-        indicators is sent along with the location / campaign for which it is
-        associated.
-
-        This method only returns indicator data for the location / campaign tuple
-        that is requested by the API.
-        '''
-
-        cleaned = []
-
-        for k,v in indicator_json.iteritems():
-
-            try:
-                if int(k) in self.parsed_params['indicator__in']:
-
-                    if v is None:
-                        v = 0
-
-                    indicator_dict = {'indicator':k,'value':v}
-                    cleaned.append(indicator_dict)
-            except ValueError:
-                # fails on ind(k) because k = 'campaign_id' for one node
-                pass
-
-
-        return cleaned
 
 
     def obj_get_list(self,bundle,**kwargs):
