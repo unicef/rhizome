@@ -1,5 +1,5 @@
 import traceback
-from numpy import nan
+import numpy as np
 
 from pandas import DataFrame, pivot_table
 from tastypie import fields
@@ -126,7 +126,6 @@ class DataPointResource(BaseNonModelResource):
 
         ## Pivot the data on request instead of caching ##
         ## in the datapoint_abstracted table ##
-
         df_columns = ['indicator_id','campaign_id','location_id','value']
         dwc_df = DataFrame(list(DataPointComputed.objects.filter(
             campaign__in = self.parsed_params['campaign__in'],
@@ -135,18 +134,26 @@ class DataPointResource(BaseNonModelResource):
         ).values_list(*df_columns)),columns=df_columns)
 
         p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
-            columns=['location_id','campaign_id'])
+            columns=['location_id','campaign_id'],aggfunc=np.sum)
 
+        # pivoted_data = p_table.fillna(value=0).to_dict()
         pivoted_data = p_table.to_dict()
 
         for row, indicator_dict in pivoted_data.iteritems():
 
+            indicator_objects = [{'indicator': unicode(k) ,'value':v}\
+                for k,v in indicator_dict.iteritems()]
+
+            missing_indicators = list(set(self.parsed_params['indicator__in']) -
+                set(indicator_dict.keys()))
+
+            for ind in missing_indicators:
+                indicator_objects.append({'indicator':ind,'value':None})
+
             r = ResultObject()
             r.location = row[0]
             r.campaign = row[1]
-            r.indicators = [{'indicator': unicode(k) ,'value':v} for k,v in \
-                indicator_dict.iteritems()]
-
+            r.indicators = indicator_objects
             results.append(r)
 
         return results
