@@ -5,7 +5,7 @@ var api = require('data/api');
 var Reflux = require('reflux');
 
 var MapFormStore = Reflux.createStore({
-    
+
     init: function () {
     },
 

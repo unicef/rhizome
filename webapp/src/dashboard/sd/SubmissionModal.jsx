@@ -7,7 +7,7 @@ var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 var Modal = require('react-modal');
 
-var SubmissionModalActions = require('actions/SubmissionModalActions');
+var SubmissionModalStore = require('stores/SubmissionModalStore');
 
 var appElement = document.getElementById('main');
 Modal.setAppElement(appElement);
@@ -27,7 +27,7 @@ var SubmissionModal = React.createClass({
     },
 
     openModal: function () {
-        SubmissionModalActions.getSubmission({id: this.props.source_submission_id}).then(data => {
+        SubmissionModalStore.getSubmission({id: this.props.source_submission_id}).then(data => {
             this.setState({submission_data: data, modalIsOpen: true});
         });
     },
