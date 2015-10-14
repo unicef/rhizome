@@ -504,6 +504,7 @@ class SourceObjectMapResource(BaseModelResource):
         som_obj = SourceObjectMap.objects.get(id = som_id)
         som_obj.master_object_id = post_data['master_object_id']
         som_obj.mapped_by_id = post_data['mapped_by_id']
+        som_obj.save()
 
         bundle.obj = som_obj
         bundle.data['id'] = som_obj.id
