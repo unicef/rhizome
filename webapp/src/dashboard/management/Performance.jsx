@@ -60,8 +60,9 @@ var Performance = React.createClass({
       })
       .groupBy('indicator.short_name')
       .map(series)
-      .thru(stack)
       .value();
+      //.thru(stack)
+
 
     var missedScale = _.map(d3.time.scale()
         .domain([lower.valueOf(), upper.valueOf()])
