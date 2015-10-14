@@ -147,22 +147,22 @@ class BaseIndicatorResource(BaseModelResource):
 
 class IndicatorToTagResource(BaseModelResource):
 
+    def obj_create(self, bundle, **kwargs):
+
+        indicator_id = bundle.data['indicator_id']
+        indicator_tag_id = bundle.data['indicator_tag_id']
+
+        it = IndicatorToTag.objects.create(
+            indicator_id = indicator_id,
+            indicator_tag_id = indicator_tag_id,
+        )
+
+        bundle.obj = it
+        bundle.data['id'] = it.id
+
+        return bundle
+
     def get_object_list(self,request):
-
-        try:
-            indicator_id = request.POST['indicator_id']
-            indicator_tag_id = request.POST['indicator_tag_id']
-
-            it = IndicatorToTag.objects.create(
-                indicator_id = indicator_id,
-                indicator_tag_id = indicator_tag_id,
-            )
-
-            return IndicatorToTag.objects.filter(id=it.id).values()
-
-        except KeyError:
-            pass
-
 
         try:
             indicator_id = request.GET['indicator_id']
@@ -237,7 +237,6 @@ class CustomChartResource(BaseModelResource):
         bundle.data['id'] = chart.id
 
         return bundle
-
 
     def obj_delete_list(self, bundle, **kwargs):
         """
