@@ -8,6 +8,7 @@ var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 
 var MapFormStore = require('stores/MapFormStore');
 var Modal = require('react-modal');
+
 var appElement = document.getElementById('main');
 
 Modal.setAppElement(appElement);
@@ -44,12 +45,14 @@ var MapForm = React.createClass({
                 {
                     source_object_code: data.source_object_code,
                     content_type: data.content_type,
+                    master_object_id: data.master_object_id,
                     modalIsOpen: true
                 });
         });
     },
 
     closeModal: function () {
+        this.props.onModalClose();
         this.setState({modalIsOpen: false, content_type: null});
     },
 
@@ -94,9 +97,8 @@ var MapForm = React.createClass({
 
 
     render: function () {
-        var source_object_map_id = this.props.source_object_map_id
+        var sourceObjectMapId = this.props.source_object_map_id
         var modalStyle = {width: 400, height: 300, marginLeft: 400};
-
         return <div>
             <button className="tiny" onClick={this.openModal}> map!</button>
             <Modal
@@ -104,16 +106,13 @@ var MapForm = React.createClass({
                 isOpen={this.state.modalIsOpen}
                 onRequestClose={this.closeModal}
                 >
-                <h1> Source Map Id: {source_object_map_id} </h1>
+                <h1> Source Map Id: {sourceObjectMapId} </h1>
 
                 <form>
                     <h2> Content Type: {this.state.content_type} </h2>
-
                     <h2> Source Code: {this.state.source_object_code} </h2>
-
                     <h2> Master Object ID : {this.state.master_object_id} </h2>
-
-                    <h2> {this.renderDropDown(this.state.content_type)} </h2>
+                    {this.renderDropDown(this.state.content_type)}
                 </form>
             </Modal></div>
 

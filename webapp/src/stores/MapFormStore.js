@@ -10,12 +10,9 @@ var MapFormStore = Reflux.createStore({
     },
 
     getSourceMap: function (id) {
-        return api.get_source_object_map(id)
+        return api.get_source_object_map(id, null, {'cache-control': 'no-cache'})
             .then(function (response) {
-                return {
-                    source_object_code: response.objects[0].source_object_code,
-                    content_type: response.objects[0].content_type
-                }
+                return response.objects[0]
             });
     },
 
