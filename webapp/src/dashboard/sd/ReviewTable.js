@@ -61,20 +61,20 @@ var ReviewTable = React.createClass({
               schema: parseSchema(this.props.fields),
               data: response.objects
             })
-            // this.forceUpdate();
           });
     },
 
     componentWillMount: function () {
-        api.indicatorsTree().then(indicators => this.setState({
+        api.indicatorsTree().then(indicators => {
+          this.setState({
             indicators: indicators
-        }));
+          })
 
-        this._callApi()
+          this._callApi()
+        });
     },
 
     componentWillReceiveProps: function (nextProps) {
-        this._callApi()
     },
 
     componentWillUpdate: function (nextProps, nextState) {
@@ -89,7 +89,6 @@ var ReviewTable = React.createClass({
             return;
         }
     },
-
 
     render() {
         const fields = {
@@ -128,7 +127,8 @@ var ReviewTable = React.createClass({
 
         var {data, schema} = this.state;
 
-        return <div>
+        return (
+          <div>
             <LocalDatascope
                 data={data}
                 schema={schema}
@@ -139,7 +139,8 @@ var ReviewTable = React.createClass({
                     {this.props.children}
                 </Datascope>
             </LocalDatascope>
-        </div>
+          </div>
+        )
     },
     renderLoading() {
         return <div className='admin-loading'> Review Page Loading...</div>
@@ -153,7 +154,8 @@ var ReviewTable = React.createClass({
         var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
         var { areFiltersVisible } = this.state;
 
-        return <div className="row">
+        return (
+          <div className="row">
             <div className="medium-7 columns">
             </div>
             <div className="medium-5 columns">
@@ -161,7 +163,8 @@ var ReviewTable = React.createClass({
                     {this.props.datascopeFilters}
                 </div>
             </div>
-        </div>
+          </div>
+        )
     }
 });
 

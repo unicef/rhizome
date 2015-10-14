@@ -56,11 +56,11 @@ var MapForm = React.createClass({
         this.setState({modalIsOpen: false, content_type: null});
     },
 
-    postMetaMap: function (master_object_id) {
+    postMetaMap: function (masterObjectId) {
         var self = this;
         MapFormStore.updateMetaMap({
             id: this.props.source_object_map_id,
-            master_object_id: master_object_id,
+            master_object_id: masterObjectId,
             mapped_by_id: 1 // FIXME
         }).then(function (data) {
             self.setState({master_object_id: data});
@@ -69,7 +69,6 @@ var MapForm = React.createClass({
 
     renderDropDown: function (content_type) {
         var defaultSelected = {'name': 'please map..'}
-
         if (content_type == 'location') {
             return <div><RegionTitleMenu
                 locations={this.props.locations}
