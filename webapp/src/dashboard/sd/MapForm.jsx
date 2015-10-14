@@ -6,7 +6,7 @@ var RegionTitleMenu = require('component/RegionTitleMenu');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 
-var MapFormActions = require('actions/MapFormActions');
+var MapFormStore = require('stores/MapFormStore');
 var Modal = require('react-modal');
 var appElement = document.getElementById('main');
 
@@ -38,8 +38,9 @@ var MapForm = React.createClass({
     },
 
     openModal: function () {
-        MapFormActions.getSourceMap({id: this.props.source_object_map_id}).then(data => {
-            this.setState(
+        var self = this;
+        MapFormStore.getSourceMap({id: this.props.source_object_map_id}).then(function (data) {
+            self.setState(
                 {
                     source_object_code: data.source_object_code,
                     content_type: data.content_type,
@@ -53,12 +54,13 @@ var MapForm = React.createClass({
     },
 
     postMetaMap: function (master_object_id) {
-        MapFormActions.updateMetaMap({
+        var self = this;
+        MapFormStore.updateMetaMap({
             id: this.props.source_object_map_id,
             master_object_id: master_object_id,
             mapped_by_id: 1 // FIXME
-        }).then(data => {
-            this.setState({master_object_id: data});
+        }).then(function (data) {
+            self.setState({master_object_id: data});
         });
     },
 
