@@ -274,29 +274,6 @@ class CacheRefresh(object):
         return location_ids
 
 
-    def add_indicator_data_to_rc_df(self,rc_df, i_id):
-        '''
-        left join the location / campaign dataframe with the stored data for each
-        campaign.
-        '''
-        column_header = ['location_id','campaign_id']
-        column_header.append(i_id)
-
-        indicator_df = DataFrame(list(DataPointComputed.objects.filter(
-            indicator_id = i_id).values()))
-
-        pivoted_indicator_df = pivot_table(indicator_df, values='value',\
-            columns=['indicator_id'],index = ['location_id','campaign_id'])
-
-        cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
-
-        merged_df = rc_df.merge(cleaned_df,how='left')
-        merged_df = merged_df.reset_index(drop=True)
-
-        return merged_df
-
-
-
 def cache_indicator_abstracted():
     '''
     Delete indicator abstracted, then re-insert by joiniding indicator boudns

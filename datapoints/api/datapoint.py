@@ -128,8 +128,11 @@ class DataPointResource(BaseNonModelResource):
             indicator__in = self.parsed_params['indicator__in']
         ).values_list(*df_columns)),columns=df_columns)
 
-        p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
-            columns=['location_id','campaign_id'],aggfunc=np.sum)
+        try:
+            p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
+                columns=['location_id','campaign_id'],aggfunc=np.sum)
+        except KeyError:
+            return results
 
         pivoted_data = p_table.fillna(value=0).to_dict()
 
