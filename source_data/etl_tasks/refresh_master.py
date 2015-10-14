@@ -24,15 +24,13 @@ class MasterRefresh(object):
         Batches run based on locations becasue some configurations low for regional
         aggregation and for that reaso, all locations within a document must be processed
         in the same batch.
-
         In order to grab the batch of data to process, we first find all of the location
         codes that have not been proessed yet, and take onlyt the first 'n' values.
-
         We then query submissions with this list of location_ids and create the
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_location_code_batch_size = 5
+        self.ss_location_code_batch_size = 50
         self.document_id = document_id
         self.user_id = user_id
 
@@ -68,11 +66,9 @@ class MasterRefresh(object):
             - unique_id_column
             - location_code_column
             - campaign_code_column
-
         The user can in addition add a number of optional configurations in order to both
         set up ingestion ( ex. odk_form_name, odk_host ) as well as enhance reporting
         of the data ( photo_column, uploaded_by_column, lat_column, lon_column )
-
         When the MasterRefresh object is intialized this method is called which queries
         the table containing these configurations and makes it available for use within
         this module.
@@ -134,7 +130,6 @@ class MasterRefresh(object):
         '''
         Based on mappings set the location and campaign id for an associated row.  If
         there is not a mapping for both then we know we do not have to process those rows.
-
         For instance if we have 100 rows in a csv and only 3 rows have both locatino and
         campaign mapped, then we can save 97 iterations through the associated json
         '''
@@ -189,7 +184,6 @@ class MasterRefresh(object):
         and determine which rows are ready to process.. since we need a master_location
         and a master_campaign in order to have a successful submission this method helps
         us filter the data that we need to process.
-
         Would like to be more careful here about what i delete as most things wont be
         touched when it comes to this re-processing, and thus the delete and re-insert
         will be for not.. however the benefit is that it's a clean upsert.. dont have to
@@ -245,11 +239,17 @@ class MasterRefresh(object):
         Send all rows queued for processing to the process_source_submission method.
         '''
 
+        print 'THIS IS submissions_to_doc_datapoints'
+        print self.submission_data
+
         ss_ids_in_batch = self.submission_data.keys()
 
         for row in SourceSubmissionDetail.objects.filter(\
                  source_submission_id__in= ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
+
+            print '==='
+            print row
 
             doc_dps = self.process_source_submission(row)
 
@@ -273,8 +273,6 @@ class MasterRefresh(object):
             WHERE source_submission_id = ANY(%s)
             AND is_valid = 't'
             GROUP BY location_id, indicator_id, campaign_id;
-
-
             DELETE FROM datapoint d
             USING _tmp_dp t
             WHERE d.location_id = t.location_id
@@ -292,6 +290,7 @@ class MasterRefresh(object):
             AND d.campaign_id = t.campaign_id
             AND d.indicator_id = t.indicator_id
             LIMIT 1;
+
         ''',[ss_id_list,self.user_id])
 
         for dp in dps:
@@ -352,7 +351,6 @@ class MasterRefresh(object):
         '''
         This needs alot of work but basically determines if a particular submission
         cell is alllowed.
-
         Big point of future controversy... what do we do with zero values?  In order to
         keep the size of the database manageable, we only accept non zero values.
         '''
