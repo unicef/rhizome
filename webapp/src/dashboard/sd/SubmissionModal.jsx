@@ -8,17 +8,12 @@ var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 var Modal = require('react-modal');
 
 var SubmissionModalActions = require('actions/SubmissionModalActions');
-var SubmissionModalStore = require('stores/SubmissionModalStore');
 
 var appElement = document.getElementById('main');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
 
 var SubmissionModal = React.createClass({
-    mixins: [
-        Reflux.connect(SubmissionModalStore)
-    ],
-
     propTypes: {
         source_submission_id: React.PropTypes.number.isRequired,
     },
@@ -32,7 +27,9 @@ var SubmissionModal = React.createClass({
     },
 
     openModal: function () {
-        SubmissionModalActions.openModel({id: this.props.source_submission_id});
+        SubmissionModalActions.getSubmission({id: this.props.source_submission_id}).then(data => {
+            this.setState({submission_data: data, modalIsOpen: true});
+        });
     },
 
     closeModal: function () {
@@ -44,13 +41,13 @@ var SubmissionModal = React.createClass({
         var modalStyle = {width: 650, height: 500, marginLeft: 400};
 
         var submission_data = [];
-        if (this.state.modalIsOpen) {
+        if (this.state.modalIsOpen &&
+            this.state.submission_data != null) {
             var submission_json = this.state.submission_data.submission_json;
             _.forIn(submission_json, function (value, key) {
                 submission_data.push(<li><b>{key}</b> : {value} </li>)
-            })
-        }
-        ;
+            });
+        };
 
         return <div>
             <button
