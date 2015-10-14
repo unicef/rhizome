@@ -131,26 +131,22 @@ class DataPointResource(BaseNonModelResource):
         ).values_list('indicator_id','campaign_id','location_id','value'),\
         ),columns=['indicator_id','campaign_id','location_id','value'])
 
-        print '===='
-        print dwc_df
-        print '===='
-        dwc_df = dwc_df[:10]
-
         p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
             columns=['location_id','campaign_id'])
 
-        print p_table.to_dict()
-        print '===='
+        pivoted_data = p_table.to_dict()
+        print pivoted_data
 
-        # for row in pivoted_data:
-        #     r = ResultObject()
-        #     r.location = row.location_id
-        #     r.campaign = row.campaign_id
-        #
-        #     indicator_json = row.indicator_json
-        #     cleaned = self.clean_indicator_json(indicator_json)
-        #     r.indicators = cleaned
-        #     results.append(r)
+        for row, indicator_dict in pivoted_data.iteritems():
+            r = ResultObject()
+            # print row
+            # print  x
+            r.location = row[0]
+            r.campaign = row[1]
+            r.indicators = [{'indicator':unicode(k) ,'value':v} for k,v in indicator_dict.\
+                iteritems()]
+
+            results.append(r)
 
 
         return results
