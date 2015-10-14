@@ -41,10 +41,9 @@ var SimpleForm = React.createClass({
       // Hack alert.. FIXME ( this is for the parent_tag_dropdown) //
       if (this.props.params.contentType == 'indicator_tag'){
         api.tagTree({},null,{'cache-control': 'no-cache'}).then(function(response){
-          console.log('logging response of tag tree',response)
           self.setState({'tagTree':response.objects})
-        }) // end of .then function
-      } // end of if condition
+        })
+      }
   },
 
   componentWillReceiveProps: function(nextProps) {

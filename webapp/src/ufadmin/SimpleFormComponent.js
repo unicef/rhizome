@@ -98,7 +98,7 @@ var SimpleFormComponent = React.createClass({
             text='Add Component'
             indicators={dropDownData}
             sendValue={this.props.onClick}>
-          </IndicatorDropdownMenu>;
+          </IndicatorDropdownMenu>
           <select>
             <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
             <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
