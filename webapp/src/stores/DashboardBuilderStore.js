@@ -12,9 +12,11 @@ var DashboardActions = require('actions/DashboardActions');
 
 var DashboardBuilderStore = Reflux.createStore({
     listenables: [require('actions/DashboardBuilderActions')],
+
     getInitialState: function () {
         return this.data;
     },
+
     data: {
         charts: [],
         locations: [],
@@ -25,6 +27,7 @@ var DashboardBuilderStore = Reflux.createStore({
         dashboardTitle: '',
         dashboardDescription: ''
     },
+
     onInitialize: function (id) {
         var self = this;
         this.data.dashboardId = id;
@@ -74,6 +77,7 @@ var DashboardBuilderStore = Reflux.createStore({
         this.data.loading = false;
         this.trigger(this.data);
     },
+
     onAddChart: function (chartDef) {
         //in this api do not need set the chart id.
         //chartDef.id = chartDef.title + (new Date()).valueOf();
