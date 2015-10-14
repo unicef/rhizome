@@ -30,11 +30,6 @@ class ResultObject(object):
 class DataPointResource(BaseNonModelResource):
     '''
     This is the class that coincides with the /api/v1/datapoint endpoint.
-
-    At it's core this resource is a simple wrapper on top of the
-    datapoint_abstracted table.  The schema of that table is location_id,
-    campaign_id, indicator_json and because of which there is very little
-    data transformation on request here.
     '''
 
     error = None
