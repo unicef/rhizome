@@ -297,6 +297,10 @@ button,
   opacity: $button-disabled-opacity;
 }
 
+.clickable{
+  cursor: pointer;
+}
+
 .button.read-only {
   border-bottom-width: 1px;
   cursor: initial;

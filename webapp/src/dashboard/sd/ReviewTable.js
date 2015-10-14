@@ -51,17 +51,18 @@ var ReviewTable = React.createClass({
     },
 
     _callApi: function () {
-
         this.props.getData({
-            document_id: this.props.doc_id,
-            location_id: this.props.location.id,
-            campaign_id: this.props.campaign.id
-        }, null, {'cache-control': 'no-cache'})
-            .then(response => this.setState({
-                schema: parseSchema(this.props.fields),
-                data: response.objects
-            }));
-        this.forceUpdate();
+              document_id: this.props.doc_id,
+              location_id: this.props.location.id,
+              campaign_id: this.props.campaign.id
+          }, null, {'cache-control': 'no-cache'})
+          .then(response => {
+            this.setState({
+              schema: parseSchema(this.props.fields),
+              data: response.objects
+            })
+            // this.forceUpdate();
+          });
     },
 
     componentWillMount: function () {
@@ -91,7 +92,6 @@ var ReviewTable = React.createClass({
 
 
     render() {
-
         const fields = {
             edit_link: {
                 title: 'Edit',
@@ -116,6 +116,7 @@ var ReviewTable = React.createClass({
                             locations={DashboardStore.locations}
                             source_object_map_id={id}
                             key={id}
+                            onModalClose={this._callApi}
                             />
                     }
                 }

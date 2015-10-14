@@ -177,6 +177,13 @@ class IndicatorToTagResource(BaseModelResource):
         return qs
 
 
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        """
+
+        obj_id = int(bundle.request.GET[u'id'])
+        IndicatorToTag.objects.filter(id=obj_id).delete()
+
     class Meta(BaseModelResource.Meta):
         # queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'

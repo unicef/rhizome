@@ -3,12 +3,13 @@
 var Reflux = require('reflux');
 
 module.exports = Reflux.createActions([
-  "currentIndicatorPromise",
-  "initialize",
-  "baseFormSave",
-  "addTagToIndicator",
-  "addIndicatorCalc",
-  "getTagTree",
-  "initIndicatorToTag",
-  "initIndicatorToCalc"
+    "currentIndicatorPromise",
+    "initialize",
+    "baseFormSave",
+    "addTagToIndicator",
+    "removeTagFromIndicator",
+    "addIndicatorCalc",
+    "getTagTree",
+    "initIndicatorToTag",
+    "initIndicatorToCalc"
 ]);
