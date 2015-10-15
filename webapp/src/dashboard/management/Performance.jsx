@@ -1,50 +1,44 @@
 'use strict';
 
-var _      = require('lodash');
-var d3     = require('d3');
+var _ = require('lodash');
+var d3 = require('d3');
 var moment = require('moment');
-var React  = require('react');
+var React = require('react');
 
-var colors           = require('colors');
+var colors = require('colors');
 
-var Chart            = require('component/Chart.jsx');
-var PieChartList     = require('component/PieChartList.jsx');
+var Chart = require('component/Chart.jsx');
+var PieChartList = require('component/PieChartList.jsx');
 
 var DashboardActions = require('actions/DashboardActions');
 
-function series(values, name) {
+var series = function (values, name) {
   return {
     name: name,
     values: _.sortBy(values, _.result('campaign.start_date.getTime'))
   };
-}
+};
 
-function indicatorForCampaign(campaign, indicator) {
+var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator;
-}
+};
+
 
 var Performance = React.createClass({
-
-  propTypes : {
-    campaign : React.PropTypes.object.isRequired,
-    data     : React.PropTypes.object,
-    loading  : React.PropTypes.bool
+  propTypes: {
+    campaign: React.PropTypes.object.isRequired,
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      data    : [],
-      loading : false
+      data: [],
+      loading: false
     };
   },
 
-  render : function () {
-    var data     = this.props.data;
-    var campaign = this.props.campaign;
-    var upper    = moment(campaign.start_date, 'YYYY-MM-DD');
-    var lower    = upper.clone().startOf('month').subtract(1, 'year');
-    var loading  = this.props.loading;
-
+  generateMissedChildrenChartData: function (originalData) {
     var stack = d3.layout.stack()
       .order('default')
       .offset('zero')
@@ -54,16 +48,28 @@ var Performance = React.createClass({
 
     var missed;
     try {
-      missed = _(data.missedChildren)
-      .groupBy('indicator.short_name')
-      .map(series)
-      .thru(stack)
-      .value();
-    } catch(err) {
+      missed = _(originalData)
+        .groupBy('indicator.short_name')
+        .map(series)
+        .thru(stack)
+        .value();
+    } catch (err) {
       console.error(err);
-      console.log(`Data error in ${data.missedChildren}`);
+      console.log(`Data error in ${originalData}`);
       missed = [];
     }
+
+    return missed;
+  },
+
+  render: function () {
+    var data = this.props.data;
+    var campaign = this.props.campaign;
+    var upper = moment(campaign.start_date, 'YYYY-MM-DD');
+    var lower = upper.clone().startOf('month').subtract(1, 'year');
+    var loading = this.props.loading;
+
+    var missed = this.generateMissedChildrenChartData(data.missedChildren);
 
     var missedScale = _.map(d3.time.scale()
         .domain([lower.valueOf(), upper.valueOf()])
@@ -84,7 +90,7 @@ var Performance = React.createClass({
       var den = _.get(microplans, 'value');
 
       return _.isFinite(num) && _.isFinite(den) ?
-        num + ' / ' + den + ' microplans incorporate social data' :
+      num + ' / ' + den + ' microplans incorporate social data' :
         '';
     }
 
@@ -102,22 +108,22 @@ var Performance = React.createClass({
       vaccinated = (<p>No vaccination data.</p>);
     }
 
-    var planned    = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
-    var inPlace    = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value');
-    var withSM     = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
+    var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
+    var inPlace = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value');
+    var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
 
     var transitPoints = [];
     if (!_.any([inPlace, planned], _.isUndefined)) {
       transitPoints.push([{
-        title : inPlace + ' / ' + planned + ' in place',
-        value : inPlace / planned
+        title: inPlace + ' / ' + planned + ' in place',
+        value: inPlace / planned
       }]);
     }
 
     if (!_.any([withSM, inPlace], _.isUndefined)) {
       transitPoints.push([{
-        title : withSM + ' / ' + inPlace + ' have a social mobilizer',
-        value : withSM / inPlace
+        title: withSM + ' / ' + inPlace + ' have a social mobilizer',
+        value: withSM / inPlace
       }]);
     }
 
@@ -135,26 +141,26 @@ var Performance = React.createClass({
           <section>
             <h4>Missed Children</h4>
             <Chart type='ColumnChart' data={missed}
-              loading={loading}
-              options={{
+                   loading={loading}
+                   options={{
                 aspect  : 2.26,
                 color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
                 domain  : _.constant(missedScale),
                 x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
                 xFormat : d => moment(d).format('MMM YYYY'),
                 yFormat : pct
-              }} />
+              }}/>
           </section>
 
           <section>
             <h4>Conversions</h4>
             <Chart type='LineChart' data={conversions}
-              loading={loading}
-              options={{
+                   loading={loading}
+                   options={{
                 aspect  : 2.26,
                 domain  : _.constant([lower.toDate(), upper.toDate()]),
                 yFormat : pct
-              }} />
+              }}/>
           </section>
 
           <section>
@@ -168,21 +174,21 @@ var Performance = React.createClass({
                 domain  : _.constant([0, _.get(microplans, 'value', 1)]),
                 size    : 24,
                 palette : colors,
-              }} />
+              }}/>
           </section>
         </div>
 
         <section className='medium-2 columns'>
           <h4>Missed Children</h4>
           <Chart type='ChoroplethMap'
-            data={missedChildrenMap}
-            loading={loading}
-            options={{
+                 data={missedChildrenMap}
+                 loading={loading}
+                 options={{
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
               yFormat : d3.format('%'),
               onClick : d => { DashboardActions.navigate({ location : d }) }
-            }} />
+            }}/>
         </section>
 
         <section className='transit-points medium-1 column'>
@@ -200,7 +206,7 @@ var Performance = React.createClass({
               size    : 24,
               palette : colors
             }}
-            emptyText='No transit point data available' />
+            emptyText='No transit point data available'/>
         </section>
       </div>
     );
