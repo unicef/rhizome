@@ -52,16 +52,18 @@ var Performance = React.createClass({
       .x(_.property('campaign.start_date'))
       .y(_.property('value'));
 
-    var missed = _(data.missedChildren)
-      .each(d => {
-        if (d.value <= 0.001) {
-          d.value = 0.001
-        }
-      })
+    var missed;
+    try {
+      missed = _(data.missedChildren)
       .groupBy('indicator.short_name')
       .map(series)
       .thru(stack)
       .value();
+    } catch(err) {
+      console.error(err);
+      console.log(`Data error in ${data.missedChildren}`);
+      missed = [];
+    }
 
     var missedScale = _.map(d3.time.scale()
         .domain([lower.valueOf(), upper.valueOf()])
