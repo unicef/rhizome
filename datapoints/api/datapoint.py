@@ -160,8 +160,8 @@ class DataPointResource(BaseNonModelResource):
             try:
                 if int(k) in self.parsed_params['indicator__in']:
 
-                    if v is None:
-                        v = 0
+                    # if v is None:
+                    #     v = 0
 
                     indicator_dict = {'indicator':k,'value':v}
                     cleaned.append(indicator_dict)
