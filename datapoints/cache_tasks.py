@@ -21,8 +21,6 @@ class CacheRefresh(object):
           processed.
         - Executes stored pSQL stored procedures to first aggregate, then
           calculate information.
-        - Deletes, then re-inserts relevant rows in the datapoint_abstracted
-          table.
     '''
 
 
@@ -121,7 +119,6 @@ class CacheRefresh(object):
 
         self.agg_dp_ids = self.agg_datapoints()
         self.calc_dp_ids = self.calc_datapoints()
-        self.abstract_dp_ids = self.pivot_datapoints()
 
         return 'SUCCESS'
 
@@ -275,176 +272,6 @@ class CacheRefresh(object):
         location_ids = [r.id for r in location_cursor]
 
         return location_ids
-
-
-    def get_abstracted_datapoint_ids(self):
-        '''
-        Being as that the cache table the API uses to provide data to the site
-        is stored with a unique key of location_id, campaign_id we need this data
-        in order to figure out what data we will need to delete from the
-        datapoint_abstracted table
-
-        This will also need to take into consideration the parent location Ids
-
-        '''
-        rc_raw = DataPoint.objects.raw('''
-            SELECT
-                  MIN(id) as id
-                , location_id
-                , campaign_id
-            FROM datapoint
-            WHERE id = ANY (%s)
-            GROUP BY location_id, campaign_id''',[self.datapoint_id_list])
-
-        rc_list_of_tuples = [(rc.location_id,rc.campaign_id) for rc in rc_raw]
-
-        return rc_list_of_tuples
-
-    def pivot_datapoints(self):
-        '''
-        Once the datapoint_with_computed table is refreshed, all of the raw
-        aggregated and calculated data is transformed into a format friendly
-        for the api.
-
-        location_id | campaign_id | indicator_json
-
-        Think of the data explorer and how the campaign / location are the unique
-        keys to each row, and the requested indicators are the headers.
-
-        Unlike the other two cache methods ( agg_datapoint, and calc_datapoint)
-        this transformation is dealt with in python, primary because, python
-        makes it easy to serialize the JSON and stick it into the abstracted
-        datapoint table.
-        '''
-
-        ## We need to get data for indicators that weren't necessarily created
-        ## with thie Cache Job ID.  That is, we need to process all of the
-        ## indicators that exists for the locations and campaigns that we are
-        ## processing.  If we just say "give me all the indicators for this
-        ## cache job id" we will end up not storing valid data stored in a prior
-        ## cache.
-
-        indicator_raw = Indicator.objects.raw("""
-            SELECT DISTINCT dwc.indicator_id as id
-            FROM datapoint_with_computed dwc
-            WHERE EXISTS (
-                SELECT 1 FROM datapoint_with_computed dwc_cache_job
-                WHERE dwc_cache_job.cache_job_id = %s
-                AND dwc.location_id = dwc_cache_job.location_id
-                AND dwc.campaign_id = dwc_cache_job.campaign_id
-            )
-            """,[self.cache_job.id])
-
-        all_indicator_ids = [x.id for x in indicator_raw]
-        indicator_df = DataFrame(columns = all_indicator_ids)
-
-        rc_curs = DataPointComputed.objects.raw("""
-            SELECT DISTINCT
-                MIN(dwc.id) as id
-                , dwc.location_id
-                , dwc.campaign_id
-            FROM datapoint_with_computed dwc
-            INNER JOIN location r
-                ON dwc.location_id = r.id
-            INNER JOIN campaign c
-                ON dwc.campaign_id = c.id
-                AND c.office_id = r.office_id
-            WHERE dwc.cache_job_id = %s
-            GROUP BY dwc.location_id, dwc.campaign_id;
-            """,[self.cache_job.id])
-
-
-        rc_tuple_list = [(rc.location_id,rc.campaign_id) for rc in rc_curs]
-
-        rc_df = DataFrame(rc_tuple_list,columns=['location_id','campaign_id'])
-        rc_df = rc_df.reset_index(level=[0,1])
-
-        for i,(i_id) in enumerate(all_indicator_ids):
-
-            rc_df = self.add_indicator_data_to_rc_df(rc_df, i_id)
-
-        self.r_c_df_to_db(rc_df)
-
-    def add_indicator_data_to_rc_df(self,rc_df, i_id):
-        '''
-        left join the location / campaign dataframe with the stored data for each
-        campaign.
-        '''
-        column_header = ['location_id','campaign_id']
-        column_header.append(i_id)
-
-        indicator_df = DataFrame(list(DataPointComputed.objects.filter(
-            indicator_id = i_id).values()))
-
-        pivoted_indicator_df = pivot_table(indicator_df, values='value',\
-            columns=['indicator_id'],index = ['location_id','campaign_id'])
-
-        cleaned_df = pivoted_indicator_df.reset_index(level=[0,1], inplace=False)
-
-        merged_df = rc_df.merge(cleaned_df,how='left')
-        merged_df = merged_df.reset_index(drop=True)
-
-        return merged_df
-
-
-    def r_c_df_to_db(self,rc_df):
-        '''
-        For each row in the transformed data frame:
-            - convert all NaN to NULL
-            - drop the index of the dataframe
-            - transorm the above dataframe and convert to a dictionary in which
-              the index ( or row number ) is the key, and the data is the
-              location_id, campaign_id, and indicator_json needed to create
-              each row in datapoint_abstracted.
-
-        NOTE: This is the final stage of the cache as it stands right now.
-        Currently due to simplicity and the size of the data, this step uses
-        Postgres as the backend for our cache.  The style however of the schema
-        is very much influenced by redis/memcache and is set up so that the
-        transition from postgres to a more modern data store is as simple as
-        possible.
-        '''
-
-        nan_to_null_df = rc_df.where((pd.notnull(rc_df)), None)
-        indexed_df = nan_to_null_df.reset_index(drop=True)
-        rc_dict = indexed_df.transpose().to_dict()
-
-        batch = []
-
-        for r_no, r_data in rc_dict.iteritems():
-
-            location_id, campaign_id = r_data['location_id'],r_data['campaign_id']
-
-            del r_data["index"]
-            del r_data["location_id"]
-            del r_data["campaign_id"]
-
-            dd_abstracted = {
-                "location_id": location_id,
-                "campaign_id":campaign_id,
-                "indicator_json": r_data,
-                "cache_job_id": self.cache_job.id,
-            }
-
-            dda_obj = DataPointAbstracted(**dd_abstracted)
-
-            batch.append(dda_obj)
-
-        da_curs = DataPoint.objects.raw('''
-
-            DELETE FROM datapoint_abstracted da
-            USING datapoint_with_computed dwc
-            WHERE da.location_id = dwc.location_id
-            AND da.campaign_id = dwc.campaign_id
-            AND dwc.cache_job_id = %s;
-
-            SELECT id FROM datapoint limit 1;
-
-        ''',[self.cache_job.id])
-
-        da_id = [x.id for x in da_curs]
-
-        DataPointAbstracted.objects.bulk_create(batch)
 
 
 def cache_indicator_abstracted():

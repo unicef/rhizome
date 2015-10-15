@@ -407,17 +407,6 @@ class DataPointEntry(DataPoint):
         proxy = True
 
 
-class DataPointAbstracted(models.Model):
-
-    location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
-    indicator_json = JSONField()
-    cache_job = models.ForeignKey(CacheJob,default=-1)
-
-    class Meta:
-        db_table = 'datapoint_abstracted'
-        unique_together = ('location','campaign')
-
 class DataPointComputed(models.Model):
 
     value = models.FloatField()
@@ -512,7 +501,7 @@ class CustomDashboard(models.Model):
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
     default_office = models.ForeignKey(Office,null=True)
-    
+
     class Meta:
         db_table = 'custom_dashboard'
 
