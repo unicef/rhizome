@@ -36,7 +36,38 @@ class Migration(migrations.Migration):
         SELECT 'nigeria-may-2013','2013-05-01' UNION ALL
         SELECT 'nigeria-november-2013','2013-11-01' UNION ALL
         SELECT 'nigeria-october-2013','2013-10-01' UNION ALL
-        SELECT 'nigeria-september-2013','2013-09-01';
+        SELECT 'nigeria-september-2013','2013-09-01' UNION ALL
+
+        SELECT 'afghanistan-april-2013','2013-04-01' UNION ALL
+        SELECT 'afghanistan-august-2013','2013-08-01' UNION ALL
+        SELECT 'afghanistan-december-2013','2013-12-01' UNION ALL
+        SELECT 'afghanistan-february-2013','2013-02-01' UNION ALL
+        SELECT 'afghanistan-january-2013','2013-01-01' UNION ALL
+        SELECT 'afghanistan-july-2013','2013-07-01' UNION ALL
+        SELECT 'afghanistan-june-2013','2013-06-01' UNION ALL
+        SELECT 'afghanistan-march-2013','2013-03-01' UNION ALL
+        SELECT 'afghanistan-may-2013','2013-05-01' UNION ALL
+        SELECT 'afghanistan-november-2013','2013-11-01' UNION ALL
+        SELECT 'afghanistan-october-2013','2013-10-01' UNION ALL
+        SELECT 'afghanistan-september-2013','2013-09-01' UNION ALL
+
+        SELECT 'pakistan-april-2013','2013-04-01' UNION ALL
+        SELECT 'pakistan-august-2013','2013-08-01' UNION ALL
+        SELECT 'pakistan-december-2013','2013-12-01' UNION ALL
+        SELECT 'pakistan-2013-02-01','2013-02-01' UNION ALL
+        SELECT 'pakistan-2013-01-01','2013-01-01' UNION ALL
+        SELECT 'pakistan-july-2013','2013-07-01' UNION ALL
+        SELECT 'pakistan-june-2013','2013-06-01' UNION ALL
+        SELECT 'pakistan-2013-03-01','2013-03-01' UNION ALL
+        SELECT 'pakistan-may-2013','2013-05-01' UNION ALL
+        SELECT 'pakistan-november-2013','2013-11-01' UNION ALL
+        SELECT 'pakistan-october-2013','2013-10-01' UNION ALL
+        SELECT 'pakistan-september-2013','2013-09-01';
+
+        UPDATE campaign c
+        SET start_date = CAST(f.new_date AS DATE)
+        FROM _campaign_fix_naija f
+        WHERE c.slug = f.slug;
 
         UPDATE campaign c
         SET start_date = CAST(f.new_date AS DATE)
