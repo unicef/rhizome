@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPyhon('''
+        migrations.RunSQL('''
         DROP TABLE IF EXISTS _campaign_fix_naija;
         CREATE TABLE _campaign_fix_naija (
             slug VARCHAR,
-            new_date DATE
+            new_date VARCHAR
         );
 
         INSERT INTO _campaign_fix_naija
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         SELECT 'nigeria-september-2013','2013-09-01';
 
         UPDATE campaign c
-        SET start_date = f.new_date
+        SET start_date = CAST(f.new_date AS DATE)
         FROM _campaign_fix_naija f
         WHERE c.slug = f.slug;
 
