@@ -63,7 +63,7 @@ urlpatterns = patterns('',
     url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
 
     ## DASHBOARD WITH URL PARAMS ##
-    url(r'^datapoints/[-a-zA-Z]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+    url(r'^datapoints/[-a-zA-Z0-9]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
     url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
 
