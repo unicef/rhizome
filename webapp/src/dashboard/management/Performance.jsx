@@ -77,7 +77,8 @@ var Performance = React.createClass({
       _.method('getTime')
     );
 
-    var conversions = _(data.conversions)
+    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
+    var conversions = _(sortedConversions)
       .groupBy('indicator.short_name')
       .map(series)
       .value();
