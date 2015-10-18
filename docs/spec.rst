@@ -261,15 +261,15 @@ Each layout must be mobile, tablet and desktop responsive.  The current app rend
 .. image:: http://s15.postimg.org/safbke97v/mount_chart_to_dash.jpg
    :width: 600pt
 
-  - Layout #1: Chart is Dashboard
-      - Simply mount the created chart on an empty dashboard and assign a unique URL for that dashboard.
-  - Layout #2: Basic (selected by default)
-      - Very Similar to the management dashboard.  8 Charts , fluid layout
-  - Layout #3: Heat Map Matrix
-      - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
-      - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
-  - Layout #4: Map
-      - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
+- Layout #1: Chart is Dashboard
+    - Simply mount the created chart on an empty dashboard and assign a unique URL for that dashboard.
+- Layout #2: Basic (selected by default)
+    - Very Similar to the management dashboard.  8 Charts , fluid layout
+- Layout #3: Heat Map Matrix
+    - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
+    - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
+- Layout #4: Map
+    - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
 
 After selecteing the layout, the user simply clicks the " add new chart " option and goes to the beginning of the flow in whic they are prompted to select an indicator in order to create a chart, finally mounting it on the parent dashboard.
 
@@ -286,8 +286,6 @@ Note - once the default_office_id and layout_id have been set **they can not be 
 
 Editing A Chart
 ~~~~~~~~~~~~~~~
-
-see here: http://rhizome.work/datapoints/dashboards/edit/1/
 
 Unlike the current dashboard builder, there will be no "create chart" method.  The charts will be pre-populated based on the layout_id and the user will have the ability to click in and alter the information provided.  By default, each chart within a particular layout will have a *chart_type* (chloroploeth, line, column, bar, pie, scatter plot ).
 Assume that the user chose *layout-1* and clicked the *chart-8* component in the top right which by default is a map.
