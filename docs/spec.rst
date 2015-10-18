@@ -192,6 +192,7 @@ Creating a dashboard
 New Data Models Needed:
   - chart_type
   - chart_type_to_indicator
+  - layout_id
 
 When the user clicks "create dashboard" they are taken to the screen below where they pick one indicator to get started.
 
@@ -207,17 +208,50 @@ On the next screen the user must pick the type of chart that they would like to 
 
 Based on the id's above returned, the user will the have the option to pick from the chart types that the system allows for the above indicator.
 
+.. image:: http://s16.postimg.org/e1hkvr87p/Custom_Chose_Chart_Type.jpg
+   :width: 600pt
 
+When the user selects the chart_type the system will then POST:
+  POST: custom_chart {id: this.chart.id, chart_type_id:selected.chart_type_id }
 
-API Calls needed for this:
-  - On page init -> GET /new_dashboard
-        -> returns: the 3 layout objects, and all offices to populate the drop down at the lower right.
-  - on save -> POST / dashboard {title:<x>,layout_id<y>,default_office_id=<z>}
+IN the next screen the user should see the indicator plotted using the mechanism selected, however with this control, they will be able to do two additional operations;
+  - add additional indicators to the visualization
+  - select a time frame - start_date, end_date and time period ( quarterly, monthly etc. )
+  - change the "group by" logic ( group by indicators vs. locations)
 
-  .. image:: http://s4.postimg.org/5h4ahvwkt/Custom_Dash_Landing_1.png
-     :width: 600pt
+  - NOTE: all of the above attributes are to be saved in the "chart_json" data type
+  - NOTE: for scatter plot, if only one indicator is selected then the second ( x-axis ) value will be time.
 
-See: http://rhizome.work/datapoints/dashboards/edit for the current version of this page.
+Throughout this part of the process, changes that the user makes to the definiton of the chart are to be dynamic and reflect themselves immediately in the chart preview section of the page.
+
+Note: for the most part we will be using the existing chart bulider functionalityt o accomplish the chart building / saving neccessary for Beta.
+
+The following charts will have the following behaviors:
+
+Chloropleth map
+~~~~~~~~~~~~~~
+    - Ability to switch between shape, satalite, and roaadway views/
+    - Ability to add circles on top of the map in which the radius of the circle represent the size of the indicator, and the point on the map represents the lon/lat of the location.
+
+Pie Chart
+~~~~~~~~~~~~~~
+
+Scatter Plot
+~~~~~~~~~~~~~~
+
+Bar Chart
+~~~~~~~~~
+
+Line Chart
+~~~~~~~~~~
+
+After saving the dashboard, the user will be able to Mount the chart on a dashbaord.
+
+The simplest thing the user can do is mount a single vizualization in which the created chart consumes the entier container.
+
+THis chart will have a unique URL as well as a export function to .jpeg, .pdf, and direct)lin,
+
+If however, the user wants to mount this chart on a dashboard with other charts, they can pick from a variety of layouts, mounting the created chart at the default, first position of each layout.
 
 Layout Details
 ~~~~~~~~~~~~~~
@@ -232,6 +266,7 @@ Each layout must be mobile, tablet and desktop responsive.  The current app rend
   - Layout #3: Map
       - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
 
+After selecteing the layout, the user simply clicks the " add new chart " option and goes to the beginning of the flow in whic they are prompted to select an indicator in order to create a chart, finally mounting it on the parent dashboard. 
 
 Editing A Dashboard
 ~~~~~~~~~~~~~~~~~~~
@@ -250,7 +285,6 @@ Editing A Chart
 see here: http://rhizome.work/datapoints/dashboards/edit/1/
 
 Unlike the current dashboard builder, there will be no "create chart" method.  The charts will be pre-populated based on the layout_id and the user will have the ability to click in and alter the information provided.  By default, each chart within a particular layout will have a *chart_type* (chloroploeth, line, column, bar, pie, scatter plot ).
-
 Assume that the user chose *layout-1* and clicked the *chart-8* component in the top right which by default is a map.
 
 When the user clicks into a chart component, the see the following:
@@ -356,7 +390,7 @@ All api calls require a location_id and campaign_id.  The below API name spaces 
 geo
 ~~~
     - required parameter = parent_region_id
-    - retuns shapes for the parent_region requested as well as all of it's children
+    - returns shapes for the parent_region requested as well as all of it's children
 
 
 source_data
@@ -395,10 +429,3 @@ Week of Oct 19
 Week of Oct 26
     - John : Implement New Styles From Jim
     - All hands on deck to make the application stable.
-
-
-GETTING THE DASHBOARD BUILDER WORKING
-=====================================
-
-  - Make sure that a radio button is selected for each row
-  - Click a few chart types in order to get the indicator drop down working
