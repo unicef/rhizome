@@ -208,7 +208,7 @@ On the next screen the user must pick the type of chart that they would like to 
 
 Based on the id's above returned, the user will the have the option to pick from the chart types that the system allows for the above indicator.
 
-.. image:: http://s16.postimg.org/e1hkvr87p/Custom_Chose_Chart_Type.jpg
+.. image:: http://s30.postimg.org/533euleo1/Custom_Chart_Choose_Chart_Type.jpg
    :width: 600pt
 
 When the user selects the chart_type the system will then POST:
@@ -258,15 +258,20 @@ Layout Details
 
 Each layout must be mobile, tablet and desktop responsive.  The current app renders nicely on a macbook, but tweaks when dealing with a desktop monitor.  It's critical that these layouts are clean and can show on any and all screens.
 
-  - Layout #1: Basic (selected by default)
+.. image:: http://s15.postimg.org/safbke97v/mount_chart_to_dash.jpg
+   :width: 600pt
+
+  - Layout #1: Chart is Dashboard
+      - Simply mount the created chart on an empty dashboard and assign a unique URL for that dashboard.
+  - Layout #2: Basic (selected by default)
       - Very Similar to the management dashboard.  8 Charts , fluid layout
-  - Layout #2: Heat Map Matrix
+  - Layout #3: Heat Map Matrix
       - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
       - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
-  - Layout #3: Map
+  - Layout #4: Map
       - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
 
-After selecteing the layout, the user simply clicks the " add new chart " option and goes to the beginning of the flow in whic they are prompted to select an indicator in order to create a chart, finally mounting it on the parent dashboard. 
+After selecteing the layout, the user simply clicks the " add new chart " option and goes to the beginning of the flow in whic they are prompted to select an indicator in order to create a chart, finally mounting it on the parent dashboard.
 
 Editing A Dashboard
 ~~~~~~~~~~~~~~~~~~~
