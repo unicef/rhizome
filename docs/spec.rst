@@ -186,19 +186,28 @@ in the case of the management dashboard, given the variety of data that appears 
 Custom Dashboard Functionality
 ==============================
 
-* Rendering Custom Dashboards is exactly the same as rending static dashboards *  See above for more information on this.  This section will be about creating and editing dashboards.
-
-Data Model For Dashbaord Table:
-    - id
-    - Title
-    - dashboard_json
-    - layout_id
-    - default_office_id
-
 Creating a dashboard
 ~~~~~~~~~~~~~~~~~~~~
 
-When the user clicks "create dashboard" they are taken to the screen below where they name the dashboard and pick **one of 4 layouts**.  On save, the application should POST - the title, the layout ID and the default office_id, as it has been selected in the drop down.
+New Data Models Needed:
+  - chart_type
+  - chart_type_to_indicator
+
+When the user clicks "create dashboard" they are taken to the screen below where they pick one indicator to get started.
+
+.. image:: http://s16.postimg.org/e1hkvr87p/Custom_Chose_Chart_Type.jpg
+   :width: 600pt
+
+When picking this indicator the api calls:
+
+  POST - custom_chart { primary_indicator_id: selected.indicator_id, office_id: selected.office_idc }
+  RETURN - { custom_chart_id: <new_id>, available_chart_type_ids: [<id_1>,<id_3>,<id_3>] }
+
+On the next screen the user must pick the type of chart that they would like to vsualize.
+
+Based on the id's above returned, the user will the have the option to pick from the chart types that the system allows for the above indicator.
+
+
 
 API Calls needed for this:
   - On page init -> GET /new_dashboard
@@ -393,4 +402,3 @@ GETTING THE DASHBOARD BUILDER WORKING
 
   - Make sure that a radio button is selected for each row
   - Click a few chart types in order to get the indicator drop down working
-  
