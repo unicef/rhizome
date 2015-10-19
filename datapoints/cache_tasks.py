@@ -1,3 +1,5 @@
+import traceback
+
 import pandas as pd
 from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
@@ -48,15 +50,15 @@ class CacheRefresh(object):
         response_msg = self.set_up()
 
         if response_msg != 'NOTHING_TO_PROCESS':
-            try:
-                response_msg = self.main()
-            ## BLINDLY CATCH AND STORE ALL ERRORS ##
-            except Exception as err:
+            response_msg = self.main()
 
+            if response_msg == 'ERROR':
+                print 'ERROR\n' * 5
+                print self.cache_job.id
+                self.cache_job.response_msg = str(self.err)[:254]
                 self.cache_job.date_completed = datetime.now()
-                self.cache_job.response_msg = str(err)[:254]
+                self.is_error = True
                 self.cache_job.save()
-
                 return
 
         # mark job as completed and save
@@ -117,8 +119,12 @@ class CacheRefresh(object):
         except AttributeError:
             return 'PENDING'
 
+        # try:
         self.agg_dp_ids = self.agg_datapoints()
         self.calc_dp_ids = self.calc_datapoints()
+        # except Exception as err:
+        #     self.err = traceback.format_exc()
+        #     return 'ERROR'
 
         return 'SUCCESS'
 
@@ -242,9 +248,6 @@ class CacheRefresh(object):
         limit is set to 100.
         '''
 
-        if limit is None:
-            limit = 1000
-
         dps = DataPoint.objects.raw('''
             SELECT id from datapoint d
             WHERE cache_job_id = -1
@@ -254,8 +257,7 @@ class CacheRefresh(object):
                 LIMIT 1
             )
             ORDER BY d.indicator_id
-            LIMIT %s
-        ''',[limit])
+        ''')
 
         dp_ids = [row.id for row in dps]
 

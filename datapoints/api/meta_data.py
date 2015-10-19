@@ -573,7 +573,6 @@ class CacheRefreshResource(BaseModelResource):
     def get_object_list(self, request):
 
         cr = CacheRefresh()
-        cr.main()
 
         queryset = DocumentDetail.objects\
             .filter(document_id=1).values()

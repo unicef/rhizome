@@ -4,10 +4,12 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
-        INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value)
+INSERT INTO _tmp_calc_datapoint
+(indicator_id,location_id,campaign_id,value)
 
-        SELECT DISTINCT
+  SELECT indicator_id,x.location_id,x.campaign_id, x.calculated_value
+  FROM (
+  SELECT DISTINCT
     		denom.master_id
     		,denom.location_id
     		,denom.campaign_id
@@ -56,7 +58,15 @@ BEGIN
           )denom
           ON num_whole.location_id = denom.location_id
           AND num_whole.master_id = denom.master_id
-          AND num_whole.campaign_id = denom.campaign_id;
+          AND num_whole.campaign_id = denom.campaign_id
+    )x
+    WHERE NOT EXISTS (
+
+    SELECT 1 FROM _tmp_calc_datapoint t
+    WHERE x.location_id = t.location_id
+    AND x.campaign_id = t.campaign_id
+    AND x.indicator_id = t.indicator_id
+    );
 
     RETURN QUERY
 
