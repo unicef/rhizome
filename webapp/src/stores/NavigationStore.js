@@ -24,8 +24,7 @@ var NavigationStore = Reflux.createStore({
             api.office().then(response => _.indexBy(response.objects, 'id')),
             api.get_dashboard(),
             api.source_doc()
-        ])
-            .then(_.spread(this._loadDashboards));
+        ]).then(_.spread(this._loadDashboards));
     },
 
     getInitialState: function () {

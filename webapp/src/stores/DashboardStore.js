@@ -7,9 +7,6 @@ var moment = require('moment');
 var RegionStore = require('stores/RegionStore');
 var CampaignStore = require('stores/CampaignStore');
 
-var api = require('data/api');
-// var builtins = require('dashboard/builtin');
-
 var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
