@@ -1,6 +1,5 @@
 .Python
 env
-lib
 include
 .DS_Store
 *.pyc
