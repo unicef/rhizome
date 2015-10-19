@@ -315,11 +315,11 @@ class CustomDashboardResource(BaseModelResource):
         '''
 
         try:
-            dash_id_list = list(request.GET['id'])
+            dash_id = request.GET['id']
+            return CustomDashboard.objects.filter(id=dash_id).values()
         except KeyError:
-            dash_id_list = CustomDashboard.objects.all().values_list('id',flat=True)
+            return CustomDashboard.objects.all().values()
 
-        return CustomDashboard.objects.filter(id__in=dash_id_list).values()
 
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
