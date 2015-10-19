@@ -7,10 +7,10 @@ BEGIN
 INSERT INTO _tmp_calc_datapoint
 (indicator_id,location_id,campaign_id,value)
 
-  SELECT indicator_id,x.location_id,x.campaign_id, x.calculated_value
+  SELECT x.indicator_id,x.location_id,x.campaign_id, x.calculated_value
   FROM (
   SELECT DISTINCT
-    		denom.master_id
+    		denom.master_id as indicator_id
     		,denom.location_id
     		,denom.campaign_id
     		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
