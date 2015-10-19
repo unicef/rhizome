@@ -4,6 +4,7 @@ python:
 
 before_script:
   - sh -c "psql -c 'CREATE ROLE djangoapp WITH SUPERUSER LOGIN;' -U postgres; fi"
+  - npm install -g npm@latest
   - cd webapp/ && npm install && npm install -g gulp && cd ..
 
 script:
