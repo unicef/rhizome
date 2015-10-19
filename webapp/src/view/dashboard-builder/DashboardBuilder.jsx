@@ -98,11 +98,9 @@ module.exports = React.createClass({
     this.setState({chartBuilderindex: null, chartBuilderActive: true});
   },
   saveChart: function (chartDef) {
-    if (!_.isNull(this.state.chartBuilderindex)) //if editing, replace the chart at the index in JSON,
-    {
+    if (!_.isNull(this.state.chartBuilderindex)) {
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex);
-    }
-    else {//add chart
+    } else {
       DashboardBuilderActions.addChart(chartDef);
     }
     this.setState({chartBuilderindex: null, chartBuilderActive: false});
@@ -130,55 +128,47 @@ module.exports = React.createClass({
   _setCampaign: function (id) {
     var campaign = _.find(this.state.dashboardStore.campaigns, c => c.id === id);
 
-    if (!campaign) {
-      return;
+    if (!!campaign) {
+      DashboardActions.setDashboard({
+	      dashboard: this.state.store.dashboard,
+	      date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
+	    });
     }
-
-    DashboardActions.setDashboard({
-      dashboard: this.state.store.dashboard,
-      date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
-    });
   },
+
   _setRegion: function (id) {
     var location = _.find(this.state.dashboardStore.locations, r => r.id === id)
 
-    if (!location) {
-      return;
+    if (!!location) {
+      DashboardActions.setDashboard({dashboard: this.state.store.dashboard, location: location.name});
     }
-
-    DashboardActions.setDashboard({dashboard: this.state.store.dashboard, location: location.name});
   },
+
   _onDataLoaded: function () {
     if (this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
       DashboardActions.setDashboard({dashboard: this.state.store.dashboard});
       this.setState({title: this.state.store.dashboardTitle, description: this.state.store.dashboardDescription})
     }
-
   },
+
   _updateTitle: function (newText) {
-    //this.setState({title:e.currentTarget.value});
-
-    //clearTimeout(this.timer);
-    //this.timer = setTimeout(function(){
     DashboardBuilderActions.updateTitle(newText);
-    // }.bind(this), 1000);
   },
+
   _updateNewTitle: function (e) {
     this.setState({title: e.currentTarget.value});
-
-    //clearTimeout(this.timer);
-    //this.timer = setTimeout(function(){
     DashboardBuilderActions.updateTitle(e.currentTarget.value);
-    // }.bind(this), 1000);
   },
+
   _updateDescription: function (newText) {
-    //this.setState({description:e.currentTarget.value});
     DashboardBuilderActions.updateDescription(newText);
   },
+
   _handleSubmit: function (e) {
     e.preventDefault();
     DashboardBuilderActions.addDashboard();
   },
+
   render: function () {
     if (this.state.store.newDashboard) {
       return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
@@ -257,18 +247,13 @@ module.exports = React.createClass({
       campaign = campaigns[0];
     }
 
-    // var charts = this.state.store.dashboard.charts.map(function(chart,index){
-    //     return (
-    //       <tr key={index}>
-    //       <td>{chart.title}</td>
-    //       <td><a href="#" onClick={self.editChart.bind(null,index)} className="button">edit chart</a></td>
-    //       </tr>
-    //     );
-    //  });
     var addDashboardLinkContainer = (
-      <div className="empty-dashboard-add-container"><a role='button' className='button' onClick={this.newChart}>
-        <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
-      </a></div>);
+      <div className="empty-dashboard-add-container">
+				<a role='button' className='button' onClick={this.newChart}>
+        	<i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
+      	</a>
+    	</div>
+		);
     var dashboardBuilderContainer = (
       <div>
         <div classNameName='clearfix'></div>
@@ -276,7 +261,6 @@ module.exports = React.createClass({
         <div className="custom-dashboard-title-container right">
           Dashboard Title
           <TitleInput initialText={this.state.title} save={this._updateTitle}/>
-
         </div>
 
         <form className='inline no-print'>
