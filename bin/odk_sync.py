@@ -36,7 +36,7 @@ def main():
         csv_file = EXPORT_DIRECTORY + str(form_name) + '.csv'
         with open(csv_file, 'rb') as full_file:
              csv_base_64 = base64.b64encode(full_file.read())
-            #  post_file_data(document_id, csv_base_64, str(form_name))
+             post_file_data(document_id, csv_base_64, str(form_name))
              refresh_file_data(document_id)
 
 def post_file_data(document_id, base_64_data, doc_title):
