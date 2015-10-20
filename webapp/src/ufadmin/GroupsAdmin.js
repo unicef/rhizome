@@ -33,7 +33,7 @@ var GroupsAdmin = React.createClass({
 			<div>
 				<SearchBar
 					fieldNames={['name']}
-					placeholder="search roles"
+					placeholder="Search roles ..."
 					/>
 			</div>;
 

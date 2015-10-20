@@ -30,7 +30,10 @@ var CampaignsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search campaigns"/>
+				<SearchBar
+					placeholder="search campaigns"
+					fieldNames={['id', 'slug', 'edit_link']}
+					/>
 				<FilterPanel>
 					<FilterDateRange name="start_date" time={false} />
 					<FilterDateRange name="end_date" time={false} />
@@ -41,7 +44,6 @@ var CampaignsAdmin = React.createClass({
 		return <AdminPage
 			title="Campaigns"
 			getData={api.campaign}
-			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
 				<Paginator />

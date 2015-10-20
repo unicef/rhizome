@@ -32,7 +32,7 @@ const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email',
 
 const UsersAdmin = React.createClass({
 	getInitialState() {
-		return {areFiltersVisible: false};
+		return {areFiltersVisible: true};
 	},
 	onToggleFilterContainer() {
 		this.setState((prevState) => ({areFiltersVisible: !prevState.areFiltersVisible}));
@@ -42,7 +42,7 @@ const UsersAdmin = React.createClass({
 		var datascopeFilters =
 			<div>
 				<SearchBar
-					fieldNames={['username', 'first_name', 'last_name', 'id']}
+					fieldNames={['id', 'username', 'first_name', 'last_name', 'email', 'edit_link']}
 					placeholder="search users"
 					/>
 				<FilterPanel>
@@ -53,7 +53,6 @@ const UsersAdmin = React.createClass({
 		return <AdminPage
 			title="Users"
 			getData={api.users}
-			datascopeFilters={datascopeFilters}
 			fields={fields}
 			>
 				<Paginator />

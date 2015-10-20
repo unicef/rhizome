@@ -28,7 +28,10 @@ var TagsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search tags"/>
+				<SearchBar
+					placeholder="Search tags ..."
+					fieldNames={fieldNamesOnTable}
+					/>
 			</div>;
 
 		return <AdminPage
