@@ -421,11 +421,20 @@ class DocumentDetailResource(BaseModelResource):
 
         return bundle
 
+    def get_object_list(self, request):
+
+        try:
+            doc_detail_type = request.GET['doc_detail_type']
+            return DocumentDetail.objects\
+                .filter(doc_detail_type__name=doc_detail_type).values()
+        except KeyError:
+            return DocumentDetail.objects.all().values()
+
     class Meta(BaseModelResource.Meta):
-        queryset = DocumentDetail.objects.all().values()
         resource_name = 'doc_detail'
         filtering = {
             "id": ALL,
+            "document": ALL,
         }
 
 class DocDataPointResource(BaseModelResource):
