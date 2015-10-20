@@ -183,6 +183,10 @@ Currently The Management Dashboard Makes 21 API Calls.  This is outrageous and w
 Custom Dashboard Functionality
 ==============================
 
+Vincent Feedback
+~~~~~~~~~~~~~~~~
+
+
 Creating a dashboard
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -197,12 +201,28 @@ The user must first pick the country, and then the indicator.
 
 When picking the country, the indicator drop down should update so that we can filter to data that exists in that country. i.e. you will need to pass a ?office_id=<x> parameter to the indicator API when it is selected.  The indicator drop down shoudl be disabled until a country is selected.
 
-.. image:: http://s16.postimg.org/e1hkvr87p/Custom_Chose_Chart_Type.jpg
+.. image:: http://s29.postimg.org/3kudy8bx3/Custom_Chose_Chart_Type.png
    :width: 600pt
+
+Next the User will pick the locations that they would like to visualize.  The location can either be:
+   - static: there is no location drop down that allows you to chose different location_ids
+   - dynamic: for one chart, the locations can be filtered using the location title menu that we use to navigate through current dashboards.
+
+Note: unlike the current dashboard schema in which the dashboard is bound by location, in the new set up, the user will be able to control the location of each chart.
+
+In addition at this step the user will be able to choose if they want to see on their visualization:
+   - Just this location
+   - Sub Locations of Selected.
+   - Choose multiple Locations.
+
+So for instance, if you selected Nigeria, and wanted to see a bar chart for all of teh provinces, you would simply select "Show Sub Locations of Selected."
+
+If however you wanted to look at 5 specific districts in Pakistan, you would click "choose multiple locations", select the 5 you wanted to visualize and click next.
+
 
 On the next screen the user must pick the type of chart that they would like to visualize.
 
-Based on the id's above returned, the user will the have the option to pick from the chart types that the system allows for the above indicator.
+Based on the charty_type_id returned when selecting the indicator, the user will the have the option to pick from the chart types that the system allows for the above indicator.
 
 .. image:: http://s30.postimg.org/533euleo1/Custom_Chart_Choose_Chart_Type.jpg
    :width: 600pt
@@ -219,6 +239,8 @@ In addition to the chart builder functionality the next screen the user should s
   - Dev Note: all of the above attributes are to be saved in the `chart_json` data type
 
 Throughout this part of the process, changes that the user makes to the definition of the chart are to be dynamic and reflect themselves immediately in the chart preview section of the page.
+
+The date will default to the most recent data when creating a chart.
 
 Note: for the most part we will be using the existing chart builder functionality to accomplish the chart building / saving neccessary for Beta.
 
@@ -244,17 +266,36 @@ Scatter Plot
     - The user can pick the x or the y value as the additional indicator to be plotted, but the two indicators must be different in order for the data to be previewed.
     - The indicators available in the the drop down will have a `?chart_type=scatter` parameter added to the request in order to properly filter indicators for the drop down.
 
+Note: Here it is important that we have a hover over both indicator drop downs that display the instructions for the scatter plot.  We need this for all charts, but for scatterplot fistly as this is the most complicated chart type.
+
 Bar Chart
 ~~~~~~~~~
     - Ability to group by either indicator or location
     - Choose up to 5 indicators
     - Chose quarterly or monthly break down.
 
+For missing data: a bar is skipped if x axis is time and we dont have data for a particular month.
+
 Line Chart
 ~~~~~~~~~~
     - No more than two Indicators can be used in a line chart vizualzation
     - The user can choose the time line such that two line charts coudld appear in the same chart for the same indicator but for different years ( See top left polio case counter in management dashboard )
 
+For missing data: if a month does not have data, the line should "smooth" or extrapolate the difference.  So instead of going from 4->0->5 in the case where zer represents a month of missing data.. simply skip over the month without data and draw a line from 4->5.
+
+Heat Map Matrix
+~~~~~~~~~~~~~~~
+    - Note: Optional for Beta.
+    - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
+    - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
+
+Chart Styles
+~~~~~~~~~~~~
+    - After creating the chart the user goes thorugh a "style" wizard in which they are prompted to do the following:
+       -> give chart a name
+       -> pick from one of 3 palletes for the chart
+       -> label x-axis / y-axis
+       -> select legend title and position
 
 Mounting Chart to Layout
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -279,11 +320,9 @@ Each layout must be mobile, tablet and desktop responsive.  The current app rend
     - Simply mount the created chart on an empty dashboard and assign a unique URL for that dashboard.
 - Layout #2: Basic (selected by default)
     - Very Similar to the management dashboard.  8 Charts , fluid layout
-- Layout #3: Heat Map Matrix
-    - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
-    - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
-- Layout #4: Map
+- Layout #3: Map
     - This layout focuses on the Map on the left hand corner and provides three sections for custom chart on the right hand side.
+- Layout #4: 3 charts, no Map.  See the design for the homepage re-design for an idea how this layout works.
 
 After selecting the layout, the user simply clicks the " add new chart " option and goes to the beginning of the flow in which they are prompted to select an indicator in order to create a chart, finally mounting it on the parent dashboard.
 
@@ -296,7 +335,25 @@ When it comes to editing the "dashboard" there is actually very little functiona
     - *Drag and Drop Chart Position*: The user should be able to drag and drop a chart from one position of the template into any other on the page.  When this happens, the other charts fill in the missing space based on what chart has been moved.  I.e. if chart 4 is moved to position 1, the original chart 1 will be chart 2 and so on.
     - *Update Title*: Ajax POST to save the title of a dashboard
     - *Naviation* : This inherits from the navigation used througout the application and will dynmically shift the data in the charts according to the *campaign* selected.  Being as that the char itself has it's own location_control then we do not need this control for the parent (dashboard) page.
+    - *Add New Chart*: When viewing the dashboard in edit mode, the "add new chart" button will appear at the bottom right hand of the screen in same place that we have it currently (within the footer)
 
+
+Dashboard Export
+~~~~~~~~~~~~~~~~
+When in "view" mode of a dashboard, at the bottom right there is an "export" button.
+
+Clicking that button has the same functionality as the chart export and will allow for:
+    - .pdf, .jpg, .png
+    - direct link , embed code
+
+NOTE: This is separate from the chart export funciton, that is users should be able to export a chart itself, or the entire dashboard.
+
+Other Requirements
+~~~~~~~~~~~~~~~~~~
+  - Both the Builder and the Render of the custom Dashbboard must be compatiable with all modern web browsers including:
+    - i.e. 10+
+    - firefox
+    - chrome
 
 Source Data Management
 ======================
