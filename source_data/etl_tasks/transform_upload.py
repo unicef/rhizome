@@ -49,6 +49,10 @@ class DocTransform(object):
                 .objects.get(name='campaign_column').id,
         ).doc_detail_value
 
+        self.existing_submission_keys = SourceSubmission.objects.filter(
+            document_id = self.document.id
+        ).values_list('instance_guid',flat=True)
+
     def main(self):
         self.process_file()
         self.post_process_file()
@@ -80,18 +84,17 @@ class DocTransform(object):
         batch = []
         for i, (row) in enumerate(source_submissions):
 
-            submission_data = row.submission_json
-            submission_detail_dict = {
-                'source_submission_id': row.id,
-                'document_id':   self.document.id,
-                'campaign_code':  submission_data[self.campaign_column],
-                'location_code':  submission_data[self.location_column],
-                'raw_data_proxy' :''
-                # 'location_display':  submission_data[self.doc_deets['location_display_name']],
-                # 'username_code':  submission_data[self.doc_deets['username_column']],
-                # 'img_location':  submission_data[self.doc_deets['image_col']],
-            }
-            batch.append(SourceSubmissionDetail(**submission_detail_dict))
+            if row.instance_guid not in self.existing_submission_keys:
+
+                submission_data = row.submission_json
+                submission_detail_dict = {
+                    'source_submission_id': row.id,
+                    'document_id':   self.document.id,
+                    'campaign_code':  submission_data[self.campaign_column],
+                    'location_code':  submission_data[self.location_column],
+                    'raw_data_proxy' :''
+                }
+                batch.append(SourceSubmissionDetail(**submission_detail_dict))
 
         ss = SourceSubmissionDetail.objects.bulk_create(batch)
 
@@ -115,10 +118,9 @@ class DocTransform(object):
         for i,(submission) in enumerate(file_stream):
 
             ss, instance_guid = self.process_raw_source_submission(submission,i)
+
             if ss is not None:
                 batch[instance_guid] = ss
-            else:
-                pass
 
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
@@ -184,7 +186,7 @@ class DocTransform(object):
 
         instance_guid = submission_data[self.uq_id_column]
 
-        if instance_guid == '':
+        if instance_guid == '' or instance_guid in self.existing_submission_keys:
             return None, None
 
         submission_dict = {

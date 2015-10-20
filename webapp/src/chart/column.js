@@ -145,12 +145,7 @@ _.extend(ColumnChart.prototype, {
       _.flow(options.name, color.scale(_.map(data, options.name)));
 
     series.style('fill', fill);
-
-    series.exit()
-      .transition()
-      .duration(500)
-      .style('opacity', 0)
-      .remove();
+    series.exit().remove();
 
     var hover = d3.dispatch('over', 'out');
 
@@ -257,7 +252,6 @@ _.extend(ColumnChart.prototype, {
           .duration(300)
           .style('opacity', 1);
 
-        
         svg.selectAll('.x.axis text').style('opacity', 1);
         svg.select('.annotation').selectAll('.series.label')
           .data(labels)
