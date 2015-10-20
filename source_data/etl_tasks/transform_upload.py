@@ -184,6 +184,14 @@ class DocTransform(object):
 
         instance_guid = submission_data[self.uq_id_column]
 
+        ## if exists, dont re-write.  This is so for ODK submissions we only
+        ## insert new submissions that must be processed ##
+        if SourceSubmission.objects.get(document_id = self.document.id,\
+            instance_guid = instance_guid):
+
+            return None, None
+
+
         if instance_guid == '':
             return None, None
 

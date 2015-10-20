@@ -12,6 +12,7 @@ from urllib import urlencode
 from pprint import pprint
 import requests
 
+
 def main():
     '''
     Pull 2015 for Top Level Regions and Save as a CSV...
@@ -35,15 +36,16 @@ def main():
         csv_file = EXPORT_DIRECTORY + str(form_name) + '.csv'
         with open(csv_file, 'rb') as full_file:
              csv_base_64 = base64.b64encode(full_file.read())
-             post_file_data(document_id, csv_base_64, str(form_name))
+            #  post_file_data(document_id, csv_base_64, str(form_name))
+             refresh_file_data(document_id)
 
 def post_file_data(document_id, base_64_data, doc_title):
 
+    print 'POSTING FILE DATA'
     data =  json.dumps({\
         'id':document_id,
         'docfile':base_64_data,
         'doc_title':doc_title
-        # 'Content-type': 'application/x-www-form-urlencoded'
     })
 
     headers = {'content-type': 'application/json'}
@@ -51,11 +53,24 @@ def post_file_data(document_id, base_64_data, doc_title):
     url = 'http://localhost:8000/api/v1/source_doc/?username=%s&api_key=%s' % \
         (RHIZOME_USERNAME, RHIZOME_KEY)
 
-    print url
     r = requests.post(url,data=data,headers=headers)
-    result = r.text
-    print result
 
+    print 'THIS IS WHERE I AM NOW'
+
+    r.close()
+
+def refresh_file_data(document_id):
+
+    filters = {
+        'document_id': document_id,
+        'username': RHIZOME_USERNAME,
+        'api_key': RHIZOME_KEY,
+    }
+
+    query_string = 'transform_upload/?' + urlencode(filters)
+    data = query_api(query_string)
+
+    print data[0]
 
 def get_forms_to_process():
     '''
