@@ -38,7 +38,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
     }
     else {
-      api.get_dashboard({id: id})
+      api.get_dashboard({id: id}, null, {'cache-control': 'no-cache'})
         .then(function (response) {
           self.data.dashboard = response.objects[0];
           self.data.dashboardTitle = response.objects[0].title;
