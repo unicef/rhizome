@@ -28,7 +28,10 @@ var IndicatorsAdmin = React.createClass({
 	render() {
 		var datascopeFilters =
 			<div>
-				<SearchBar placeholder="search indicators"/>
+				<SearchBar
+					fieldNames={fieldNamesOnTable}
+					placeholder="Search indicators ..."
+					/>
 			</div>;
 
 		return <AdminPage
