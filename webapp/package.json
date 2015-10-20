@@ -19,7 +19,7 @@
     "object-assign": "^4.0.1",
     "page": "^1.6.3",
     "react": "^0.13.3",
-    "react-datascope": "git://github.com/SeedScientific/react-datascope.git#5e1090671",
+    "react-datascope": "file:../external/react-datascope",
     "react-dnd": "^1.1.5",
     "react-dropzone": "^2.1.0",
     "react-file-input": "^0.2.4",

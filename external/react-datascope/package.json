@@ -1,0 +1,58 @@
+{
+  "name": "react-datascope",
+  "description": "Datascope component for filtering, searching and sorting data",
+  "author": {
+    "name": "Dan Delany",
+    "email": "dan.delany@gmail.com"
+  },
+  "version": "0.0.3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeedScientific/react-datascope.git"
+  },
+  "private": true,
+  "main": "lib/index.js",
+  "dependencies": {
+    "classnames": "^2.1.1",
+    "fixed-data-table": "^0.1.2",
+    "lodash": ">=3.8.0",
+    "moment": "^2.10.2",
+    "numeral": "^1.5.3",
+    "react-widgets": "^2.6.2"
+  },
+  "peerDependencies": {
+    "react": ">=0.13.3"
+  },
+  "devDependencies": {
+    "babel": "^5.2.15",
+    "babel-core": "^5.2.15",
+    "babel-loader": "^5.0.0",
+    "css-loader": "^0.12.0",
+    "extract-text-webpack-plugin": "^0.7.1",
+    "grunt": "~0.4.5",
+    "grunt-babel": "^5.0.0",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-less": "~1.0.1",
+    "grunt-contrib-uglify": "~0.9.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-shell": "^1.1.2",
+    "grunt-webpack": "^1.0.8",
+    "load-grunt-tasks": "~3.1.0",
+    "react-hot-loader": "^1.2.6",
+    "style-loader": "^0.12.1",
+    "webpack": "^1.8.11",
+    "webpack-dev-server": "^1.8.2"
+  },
+  "gitHead": "e451a632703c02f366a4b7995ae2eb5ea4af005b",
+  "readme": "#react-datascope\n\n###A React Component for filtering, searching, sorting, paginating and displaying data.\n\n### Docs coming soon!\n\nMaintained by Dan Delany\ndelany@seedscientific.com",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/SeedScientific/react-datascope/issues"
+  },
+  "homepage": "https://github.com/SeedScientific/react-datascope#readme",
+  "_id": "react-datascope@0.0.3",
+  "_shasum": "4528d5b9838f06a0564fcda4e1dc25cb0ace0f30",
+  "_from": "git://github.com/unicef/datascope.git#e451a63",
+  "_resolved": "git://github.com/unicef/datascope.git#e451a632703c02f366a4b7995ae2eb5ea4af005b"
+}
