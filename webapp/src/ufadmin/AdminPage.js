@@ -12,6 +12,7 @@ const {
 var parseSchema = require('./utils/parseSchema');
 
 var AdminPage = React.createClass({
+
   propTypes: {
     title: React.PropTypes.string.isRequired,
     getData: React.PropTypes.func.isRequired
@@ -26,10 +27,20 @@ var AdminPage = React.createClass({
   },
 
   componentWillMount: function () {
-    this.props.getData().then(response => this.setState({
-      schema: parseSchema(response),
-      data: response.objects,
-    }));
+    this.props.getData().then(response => {
+      var schema = parseSchema(response);
+      if (this.props.schema != null) {
+        var schemaSetting = this.props.schema;
+        _.each(schemaSetting, function (item, key) {
+          schema.items.properties[key].type = item.type;
+          schema.items.properties[key].format = item.format;
+        });
+      }
+      this.setState({
+        schema: schema,
+        data: response.objects,
+      });
+    });
   },
 
   onToggleFilterContainer() {
