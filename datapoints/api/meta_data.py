@@ -426,7 +426,7 @@ class DocumentDetailResource(BaseModelResource):
         try:
             doc_detail_type = request.GET['doc_detail_type']
             return DocumentDetail.objects\
-                .filter(doc_detail_type__name=doc_detail_type).values()
+                    .filter(doc_detail_type__name=doc_detail_type).values()
         except KeyError:
             return DocumentDetail.objects.all().values()
 
