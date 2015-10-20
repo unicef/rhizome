@@ -183,9 +183,6 @@ Currently The Management Dashboard Makes 21 API Calls.  This is outrageous and w
 Custom Dashboard Functionality
 ==============================
 
-Vincent Feedback
-~~~~~~~~~~~~~~~~
-
 
 Creating a dashboard
 ~~~~~~~~~~~~~~~~~~~~
@@ -199,10 +196,18 @@ When the user clicks "create dashboard" they are taken to the screen below where
 
 The user must first pick the country, and then the indicator.
 
-When picking the country, the indicator drop down should update so that we can filter to data that exists in that country. i.e. you will need to pass a ?office_id=<x> parameter to the indicator API when it is selected.  The indicator drop down shoudl be disabled until a country is selected.
-
-.. image:: http://s29.postimg.org/3kudy8bx3/Custom_Chose_Chart_Type.png
+.. image:: http://s28.postimg.org/pux4cy5st/ang_li_dash_01.png
    :width: 600pt
+
+After picking the country, the indicator drop down should update so that we can filter to data that exists in that country.
+
+.. image:: http://s22.postimg.org/s30fwsp1d/ang_li_dash_02.png
+   :width: 600pt
+
+ - Technical Note: you will need to pass a ?office_id=<x> parameter to the indicator API when it is selected.  The indicator drop down shoudl be disabled until a country is selected.
+
+
+NOTE: BELOW NEEDS WIREFRAME
 
 Next the User will pick the locations that they would like to visualize.  The location can either be:
    - static: there is no location drop down that allows you to chose different location_ids
@@ -219,17 +224,18 @@ So for instance, if you selected Nigeria, and wanted to see a bar chart for all 
 
 If however you wanted to look at 5 specific districts in Pakistan, you would click "choose multiple locations", select the 5 you wanted to visualize and click next.
 
+NOTE: THE ABOVE NEEDS WIREFRAMES
 
 On the next screen the user must pick the type of chart that they would like to visualize.
 
 Based on the charty_type_id returned when selecting the indicator, the user will the have the option to pick from the chart types that the system allows for the above indicator.
 
-.. image:: http://s30.postimg.org/533euleo1/Custom_Chart_Choose_Chart_Type.jpg
+.. image:: http://s17.postimg.org/keksqydov/ang_li_dash_03.png
    :width: 600pt
 
 After choosing the chart type, the user is taken to the existing chart builder / chart preview screen as shown below.
 
-.. image:: http://s28.postimg.org/iwvj5rl6l/chart_builder.png
+.. image:: http://s8.postimg.org/imv8a40w5/ang_li_dash_05.png
    :width: 600pt
 
 In addition to the chart builder functionality the next screen the user should see the indicator plotted using the mechanism selected, however with this control, they will be able to perform the following operations:
@@ -289,8 +295,11 @@ Heat Map Matrix
     - This is a way to create a heat map matrix ( see district dashboard ) for a custom set of indicators
     - See district dashboard: http://rhizome.work/datapoints/district-dashboard/Afghanistan/2014/11/
 
-Chart Styles
+Chart Style Wizard
 ~~~~~~~~~~~~
+
+User clicks "you may also change additional chart settings " in order to acess the below
+
     - After creating the chart the user goes thorugh a "style" wizard in which they are prompted to do the following:
        -> give chart a name
        -> pick from one of 3 palletes for the chart
