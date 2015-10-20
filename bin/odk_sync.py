@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import csv
 import json
-import urllib2
+import urllib2, urllib
+import httplib
 import subprocess
 import base64
 
@@ -9,7 +10,7 @@ from datetime import datetime
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from pprint import pprint
-
+import requests
 
 def main():
     '''
@@ -34,34 +35,27 @@ def main():
         csv_file = EXPORT_DIRECTORY + str(form_name) + '.csv'
         with open(csv_file, 'rb') as full_file:
              csv_base_64 = base64.b64encode(full_file.read())
-             post_file_data(document_id, csv_base_64)
+             post_file_data(document_id, csv_base_64, str(form_name))
 
-def post_file_data(document_id, base_64_data):
+def post_file_data(document_id, base_64_data, doc_title):
 
+    data =  json.dumps({\
+        'id':document_id,
+        'docfile':base_64_data,
+        'doc_title':doc_title
+        # 'Content-type': 'application/x-www-form-urlencoded'
+    })
 
-    url = 'http://localhost:8000/api/source_doc/'
+    headers = {'content-type': 'application/json'}
 
-    method = 'POST'
-    post_data = json.dumps({'document_id':document_id,'docfile':base_64_data})
-    handler = urllib2.HTTPHandler()
-    opener = urllib2.build_opener(handler)
-    request = urllib2.Request(url, data=post_data)
+    url = 'http://localhost:8000/api/v1/source_doc/?username=%s&api_key=%s' % \
+        (RHIZOME_USERNAME, RHIZOME_KEY)
 
+    print url
+    r = requests.post(url,data=data,headers=headers)
+    result = r.text
+    print result
 
-    print 'request\n' * 5
-    print request
-
-    request.add_header("Content-Type",'application/json')
-    request.get_method = lambda: method
-
-    try:
-        connection = opener.open(request)
-    except urllib2.HTTPError,e:
-        connection = e
-
-
-    if connection.code == 200:
-        data = connection.read()
 
 def get_forms_to_process():
     '''

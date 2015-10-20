@@ -81,8 +81,7 @@ class Document(models.Model):
                     header_data = line.split("\r")[0]
 
             self.file_header = header_data
-            print self.file_header
-
+            
         super(Document, self).save(*args, **kwargs)
 
 
