@@ -30,6 +30,7 @@
   .chart-wizard__expandable {
     display: none;
     min-height: 200px;
+    padding: 10px;
   }
 
   &.active .chart-wizard__expandable {
