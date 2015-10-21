@@ -38,8 +38,8 @@ var SimpleFormStore = Reflux.createStore({
 
         self.data.formData = apiResponse.meta.form_data;
 
-        self.data.objectId = apiResponse.objects[0].id;
-        self.data.dataObject = apiResponse.objects[0];
+        self.data.objectId = apiResponse.id;
+        self.data.dataObject = apiResponse;
 
         self.data.loading = false;
         self.trigger(self.data);

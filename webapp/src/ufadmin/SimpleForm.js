@@ -61,7 +61,7 @@ var SimpleForm = React.createClass({
     var mainID = this.props.params.id;
     if (mainID == null)
       return;
-    
+
     SimpleFormActions.addCalculationToIndicator(mainID, indicator_id, typeInfo)
   },
 
@@ -107,7 +107,6 @@ var SimpleForm = React.createClass({
 
   setParentTag: function (e) {
     var extraFormData = {'parent_tag_id': e}
-    console.log(extraFormData)
     this.setState({'extraFormData': extraFormData})
   },
 

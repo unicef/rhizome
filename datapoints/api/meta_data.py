@@ -118,25 +118,38 @@ class IndicatorTagResource(BaseModelResource):
 
 class BaseIndicatorResource(BaseModelResource):
 
-    def get_object_list(self,request):
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
 
         try:
-            ind_id = request.POST['id']
-            if ind_id == '-1':
+            ind_id = int(post_data['id'])
+            if ind_id == -1:
                 ind_id = None
-
-            ind_post_data = clean_post_data(dict(request.POST))
-            del ind_post_data['id']
-
-            ind_obj, created = Indicator.objects.update_or_create(id=ind_id,
-                defaults = ind_post_data)
-
-            qs = Indicator.objects.filter(id=ind_obj.id).values('id','name','short_name')
-
         except KeyError:
-            return super(BaseIndicatorResource, self).get_object_list(request)
+            ind_id = None
 
-        return qs
+        defaults = {
+            'name' : post_data['name'],
+            'short_name': post_data['name'],
+        }
+
+        ind, created = Indicator.objects.update_or_create(
+            id=ind_id,\
+            defaults=defaults
+        )
+
+        print 'CREATED? '
+        print created
+
+        print 'ind id'
+        print ind.id
+
+        bundle.obj = ind
+        bundle.data['id'] = ind.id
+
+
+        return bundle
 
     class Meta(BaseModelResource.Meta):
         queryset = Indicator.objects.all().values('id','name','short_name')
@@ -144,6 +157,7 @@ class BaseIndicatorResource(BaseModelResource):
         filtering = {
             "id": ALL,
         }
+
 
 class IndicatorToTagResource(BaseModelResource):
 
