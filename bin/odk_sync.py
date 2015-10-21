@@ -9,7 +9,6 @@ import base64
 from datetime import datetime
 from urllib2 import Request, urlopen
 from urllib import urlencode
-from pprint import pprint
 import requests
 
 import odk_settings
@@ -21,23 +20,23 @@ def main():
     forms_to_process = get_forms_to_process()
     for form_name,document_id in forms_to_process.iteritems():
 
-        # subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
-        #     '--form_id', form_name, \
-        #     '--export_filename',form_name +'.csv', \
-        #     '--aggregate_url',odk_settings.AGGREGATE_URL, \
-        #     '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
-        #     '--export_directory',odk_settings.EXPORT_DIRECTORY, \
-        #     '--odk_username',odk_settings.ODK_USER, \
-        #     '--odk_password',odk_settings.ODK_PASS, \
-        #     '--overwrite_csv_export' ,\
-        #     '--exclude_media_export' \
-        #   ])
+        subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+            '--form_id', form_name, \
+            '--export_filename',form_name +'.csv', \
+            '--aggregate_url',odk_settings.AGGREGATE_URL, \
+            '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
+            '--export_directory',odk_settings.EXPORT_DIRECTORY, \
+            '--odk_username',odk_settings.ODK_USER, \
+            '--odk_password',odk_settings.ODK_PASS, \
+            '--overwrite_csv_export' ,\
+            '--exclude_media_export' \
+          ])
 
         csv_file = odk_settings.EXPORT_DIRECTORY + str(form_name) + '.csv'
         with open(csv_file, 'rb') as full_file:
              csv_base_64 = base64.b64encode(full_file.read())
              post_file_data(document_id, csv_base_64, str(form_name))
-             refresh_file_data(document_id)
+             output_data = refresh_file_data(document_id)
 
 def post_file_data(document_id, base_64_data, doc_title):
 
@@ -52,10 +51,7 @@ def post_file_data(document_id, base_64_data, doc_title):
     url = odk_settings.API_ROOT + 'source_doc/?username=%s&api_key=%s' % \
         (odk_settings.RHIZOME_USERNAME, odk_settings.RHIZOME_KEY)
 
-    print url
-
     r = requests.post(url,data=data,headers=headers)
-
     r.close()
 
 def refresh_file_data(document_id):
@@ -67,11 +63,9 @@ def refresh_file_data(document_id):
     }
 
     query_string = odk_settings.API_ROOT + 'transform_upload/?' + urlencode(filters)
-
-    print query_string
     data = query_api(query_string)
 
-    print data[0]
+    return data
 
 def get_forms_to_process():
     '''
@@ -94,8 +88,6 @@ def get_forms_to_process():
     return forms_to_process
 
 def query_api(query_string):
-
-    # print
 
     response = urlopen(query_string)
     objects = json.loads(response.read())['objects']
