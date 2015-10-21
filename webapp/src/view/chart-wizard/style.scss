@@ -1,0 +1,36 @@
+.chart-wizard {
+  width: 1230px;
+  margin: 20px auto;
+}
+
+.chart-wizard__step-list {
+  width: 30%;
+  min-width: 300px;
+}
+
+.chart-wizard__step {
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid #666;
+  border-bottom: none;
+
+  &:last-child {
+    border-bottom: 1px solid #666;
+  }
+
+  h2 {
+    background: #ddd;
+    padding: 5px 10px;
+    margin: 0;
+    border-bottom: 1px solid #666;
+  }
+
+  .chart-wizard__expandable {
+    display: none;
+    min-height: 200px;
+  }
+
+  &.active .chart-wizard__expandable {
+    display: block;
+  }
+}
