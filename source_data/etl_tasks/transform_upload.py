@@ -54,6 +54,7 @@ class DocTransform(object):
         ).values_list('instance_guid',flat=True)
 
     def main(self):
+
         self.process_file()
         self.post_process_file()
         self.upsert_source_object_map()
@@ -117,6 +118,7 @@ class DocTransform(object):
         batch = {}
         for i,(submission) in enumerate(file_stream):
 
+            print i
             ss, instance_guid = self.process_raw_source_submission(submission,i)
 
             if ss is not None:
@@ -184,8 +186,12 @@ class DocTransform(object):
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
 
+        print self.uq_id_column
+        print submission_data
+
         instance_guid = submission_data[self.uq_id_column]
 
+        print instance_guid
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
             return None, None
 

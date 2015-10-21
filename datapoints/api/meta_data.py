@@ -337,8 +337,6 @@ class DocumentResource(BaseModelResource):
         If get, just query the source_doc table with request parameters
         '''
 
-        print 'POST DOC DATA -- API FILE \n' * 10
-
         doc_data = bundle.data['docfile']
 
         try:
@@ -351,15 +349,12 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             doc_title = doc_data[:10]
 
-        print 'POST DOC DATA METHOD\n' * 10
-
         new_doc = self.post_doc_data(doc_data, bundle.request.user.id,\
             doc_title, doc_id)
 
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
 
-        print 'DONE WITH BUNDLE FOR SOURCE DOC\n' * 10
         return bundle
 
     def post_doc_data(self, post_data, user_id, doc_title, doc_id):
@@ -380,10 +375,6 @@ class DocumentResource(BaseModelResource):
         )
 
         sd.docfile.save(sd.guid, file_content)
-
-        # if not created:
-        #     d = DocTransform(user_id,sd.id)
-        #     d.main()
 
         return sd
 
