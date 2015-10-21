@@ -30,7 +30,7 @@ from datapoints.cache_tasks import CacheRefresh
 class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = CampaignAbstracted.objects.all().values()
+        queryset = Campaign.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,

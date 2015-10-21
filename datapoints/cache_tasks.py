@@ -1,4 +1,6 @@
 import traceback
+import json
+from pprint import pprint
 
 import pandas as pd
 from pandas import DataFrame, read_sql
@@ -374,41 +376,20 @@ def cache_user_abstracted():
 
 
 def cache_campaign_abstracted():
-        '''
-        '''
+    '''
+    '''
 
-        rs_raw = Campaign.objects.raw(
-        '''
-        DROP TABLE IF EXISTS campaign_cnt;
-        CREATE TEMP TABLE campaign_cnt
-        AS
+    all_indicators = []
+    with open('webapp/src/dashboard/builtin/management.js') as data_file:
+        for line in data_file:
+            if 'indicators' in line:
+                cleaned_line = line.replace("'indicators' : ","")\
+                    .replace("],","").replace("\t","").replace("\n","")\
+                    .replace("[","").replace(" ","")
 
-    	SELECT c.id as campaign_id, coalesce(dp_cnt, 0) as dp_cnt FROM campaign c
-    	LEFT JOIN (
-    		SELECT campaign_id, COUNT(1) as dp_cnt
-    		FROM datapoint
-    		GROUP BY campaign_id
-    	)x
-    	ON c.id = x.campaign_id;
+                all_indicators.extend([int(x) for x in cleaned_line.split(',')])
 
-
-        SELECT DISTINCT
-            c.*
-            ,COALESCE(CAST(ccnt.dp_cnt AS FLOAT) / CAST(NULLIF(x.max_dp_cnt,0) AS FLOAT),0) as pct_complete
-        FROM campaign c
-        INNER JOIN campaign_cnt ccnt
-            ON c.id = ccnt.campaign_id
-        INNER JOIN (
-            SELECT c.office_id, max(dp_cnt) as max_dp_cnt
-            FROM campaign_cnt cc
-            INNER JOIN campaign c
-            ON cc.campaign_id = c.id
-            GROUP BY c.office_id
-        )x
-            ON c.office_id = x.office_id;
-        ''')
-
-        upsert_meta_data(rs_raw, CampaignAbstracted)
+    print all_indicators
 
 
 def cache_location_tree():
