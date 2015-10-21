@@ -8,6 +8,8 @@ module.exports = Reflux.createActions([
     "baseFormSave",
     "addTagToIndicator",
     "removeTagFromIndicator",
+    "addCalculationToIndicator",
+    "removeCalculationFromIndicator",
     "addIndicatorCalc",
     "getTagTree",
     "initIndicatorToTag",

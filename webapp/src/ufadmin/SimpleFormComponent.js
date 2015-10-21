@@ -54,6 +54,12 @@ var SimpleFormComponent = React.createClass({
         }
     },
 
+    _onClick: function(value){
+        if(this.props.onClick != null){
+            this.props.onClick.call(this, this.refs.selectBox.getDOMNode().value, value);
+        }
+    },
+
     render: function () {
         var self = this;
         var contentType = this.props.contentType;
@@ -78,7 +84,7 @@ var SimpleFormComponent = React.createClass({
 
         var rowLi = []
         _.forEach(rowData, function (row) {
-            rowLi.push(<li>{row.display} ({row.id}) { self.props.smallItemCouldClick && (<span onClick={self.props.onSmallItemClick.bind(row, row.id)} className='fa fa-fw fa-times clickable'></span>)} </li>)
+            rowLi.push(<li>{row.display} ({row.displayId}) { self.props.smallItemCouldClick && (<span onClick={self.props.onSmallItemClick.bind(row, row.id)} className='fa fa-fw fa-times clickable'></span>)} </li>)
         });
 
         var componentForm;
@@ -94,17 +100,9 @@ var SimpleFormComponent = React.createClass({
             )
         }
         else if (contentType == 'indicator_calc') {
-            dropDownData.forEach(data => {
-                data.title = data.description
-            })
             componentForm = (
                 <form>
-                    <IndicatorDropdownMenu
-                        text='Add Component'
-                        indicators={dropDownData}
-                        sendValue={this.props.onClick}>
-                    </IndicatorDropdownMenu>
-                    <select>
+                    <select ref="selectBox">
                         <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
                         <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
                         <option value="WHOLE_OF_DIFFERENCE">WHOLE_OF_DIFFERENCE</option>
@@ -112,7 +110,11 @@ var SimpleFormComponent = React.createClass({
                         <option value="WHOLE">WHOLE</option>
                         <option value="WHOLE_OF_DIFFERENCE_DENOMINATOR">WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
                     </select>
-                    <button> Add!</button>
+                    <IndicatorDropdownMenu
+                        text='Add Component'
+                        indicators={dropDownData}
+                        sendValue= {this._onClick}>
+                    </IndicatorDropdownMenu>
                 </form>
             )
         };
