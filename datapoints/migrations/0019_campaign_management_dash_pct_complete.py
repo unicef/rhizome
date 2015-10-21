@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='campaign',
             name='management_dash_pct_complete',
-            field=models.FloatField(default=.001),
+            field=models.FloatField(default=0.001),
             preserve_default=False,
         ),
     ]
