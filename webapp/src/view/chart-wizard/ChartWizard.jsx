@@ -5,18 +5,17 @@ import ChartWizardStepList from './ChartWizardStepList.jsx'
 import ChartWizardScreen from './ChartWizardScreen.jsx'
 import ChartWizardScreenList from './ChartWizardScreenList.jsx'
 
-const chartDef = {"title":"Polio Case","type":"LineChart","indicators":[168],"locations":"selected","groupBy":"indicator","x":0,"y":0,"xFormat":",.0f","yFormat":",.0f","timeRange":null,"id":22}
-
 let ChartWizard = React.createClass({
   getInitialState() {
     return {
       refer: 'country',
-      title: chartDef.title
+      title: this.props.chartDef.title
     }
   },
 
   createChart() {
-    this.props.save(chartDef)
+    this.props.chartDef.title = this.state.title
+    this.props.save(this.props.chartDef)
   },
 
   editTitle(e) {
@@ -24,10 +23,9 @@ let ChartWizard = React.createClass({
     this.setState({
       title: title
     })
-    chartDef.title = title
   },
 
-  activeStep(refer) {
+  toggleStep(refer) {
     this.setState({
       refer: refer
     })
@@ -45,7 +43,7 @@ let ChartWizard = React.createClass({
 
     return (
       <div className='chart-wizard'>
-        <ChartWizardStepList onToggle={this.activeStep} active={this.state.refer}>
+        <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
           <ChartWizardStep title='Select Country' refer='country'>
             <p>select country here</p>
           </ChartWizardStep>
