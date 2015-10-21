@@ -75,3 +75,15 @@ class IndicatorResourceTest(ResourceTestCase):
     #         authentication=self.get_credentials())
     #
     #     self.assertEqual(CustomChart.objects.count(), 1)
+
+    def test_create_calculation(self):
+        pass
+
+    def test_remove_calulation(self):
+        pass
+
+    def test_create_tag(self):
+        pass
+
+    def test_remove_tag(self):
+        pass

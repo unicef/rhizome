@@ -290,6 +290,9 @@ module.exports = {
     get_basic_indicator: endPoint('/basic_indicator/', 'get', 1),
     post_basic_indicator: endPoint('/basic_indicator/', 'post', 1),
     indicator_to_calc: endPoint('/indicator_calculation/', 'get', 1),
+    remove_calc_from_indicator: emptyResponsePoint('/indicator_calculation', 'delete', 1, false),
+    set_calc_to_indicator: endPoint('/indicator_calculation/', 'post', 1),
+
     indicator_to_tag: endPoint('/indicator_to_tag/', 'get', 1),
     get_indicator_tag: endPoint('/indicator_tag/', 'get', 1),
     post_indicator_tag: endPoint('/indicator_tag/', 'post', 1),
