@@ -209,6 +209,29 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         return qs
 
 
+    def obj_create(self, bundle, **kwargs):
+        indicator_id = bundle.data['indicator_id']
+        component_id = bundle.data['component_id']
+        typeInfo = bundle.data['typeInfo']
+
+        it = CalculatedIndicatorComponent.objects.create(
+            indicator_id = indicator_id,
+            indicator_component_id = component_id,
+            calculation = typeInfo,
+        )
+
+        bundle.obj = it
+        bundle.data['id'] = it.id
+
+        return bundle
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        """
+
+        obj_id = int(bundle.request.GET[u'id'])
+        CalculatedIndicatorComponent.objects.filter(id=obj_id).delete()
+
 class CustomChartResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
