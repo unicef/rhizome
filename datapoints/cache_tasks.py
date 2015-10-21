@@ -389,7 +389,26 @@ def cache_campaign_abstracted():
 
                 all_indicators.extend([int(x) for x in cleaned_line.split(',')])
 
-    print all_indicators
+    # How many indicators does the ultimate parent have for each campaign #
+    c_raw = Campaign.objects.raw(
+        '''
+        SELECT
+            campaign_id as id
+            ,COUNT(1) as indicator_cnt
+        FROM datapoint_with_computed dwc
+        WHERE indicator_id = ANY(%s)
+        AND location_id IN (
+            SELECT id FROM location l
+            WHERE l.parent_location_id IS NULL
+        )
+        GROUP BY campaign_id;
+        ''',[all_indicators])
+
+    for c in c_raw:
+        c_obj = Campaign.objects.get(id=c.id)
+        c_obj.management_dash_pct_complete = c.indicator_cnt / \
+            float(len(list(set(all_indicators))))
+        c_obj.save()
 
 
 def cache_location_tree():
