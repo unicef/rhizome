@@ -10,12 +10,21 @@ const chartDef = {"title":"Polio Case","type":"LineChart","indicators":[168],"lo
 let ChartWizard = React.createClass({
   getInitialState() {
     return {
-      refer: 'country'
+      refer: 'country',
+      title: chartDef.title
     }
   },
 
   createChart() {
     this.props.save(chartDef)
+  },
+
+  editTitle(e) {
+    let title = e.target.value
+    this.setState({
+      title: title
+    })
+    chartDef.title = title
   },
 
   activeStep(refer) {
@@ -27,7 +36,7 @@ let ChartWizard = React.createClass({
   render() {
     let previewStep = (
       <div>
-        <input type='text' value={chartDef.title} />
+        <input type='text' value={this.state.title} onChange={this.editTitle} />
         <a href="#" className="button success" onClick={this.createChart}>
           {this.props.chartDef ? "Update Chart" : "Create Chart"}
         </a>
