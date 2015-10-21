@@ -83,25 +83,29 @@ var SimpleFormStore = Reflux.createStore({
 
   onAddTagToIndicator: function (indicator_id, tag_id) {
     api.set_indicator_to_tag({indicator_id: indicator_id, indicator_tag_id: tag_id}).then(function (response) {
-      SimpleFormActions.initIndicatorToTag(indicator_id);
+      SimpleFormActions.refreshTags(indicator_id);
     });
   },
 
   onRemoveTagFromIndicator: function (indicator_id, id) {
     api.remove_indicator_from_tag({id: id}).then(function (response) {
-      SimpleFormActions.initIndicatorToTag(indicator_id);
+      SimpleFormActions.refreshTags(indicator_id);
     });
   },
 
   onAddCalculationToIndicator: function (indicator_id, component_id, typeInfo) {
-    api.set_calc_to_indicator({indicator_id: indicator_id, component_id: component_id, typeInfo: typeInfo}).then(function (response) {
-      SimpleFormActions.initIndicatorToCalc(indicator_id);
+    api.set_calc_to_indicator({
+      indicator_id: indicator_id,
+      component_id: component_id,
+      typeInfo: typeInfo
+    }).then(function (response) {
+      SimpleFormActions.refreshCalculation(indicator_id);
     });
   },
 
   onRemoveCalculationFromIndicator: function (indicator_id, id) {
-    api.remove_calc_from_indicator({id:id}).then(function (response) {
-      SimpleFormActions.initIndicatorToCalc(indicator_id);
+    api.remove_calc_from_indicator({id: id}).then(function (response) {
+      SimpleFormActions.refreshCalculation(indicator_id);
     });
   },
 
@@ -109,11 +113,39 @@ var SimpleFormStore = Reflux.createStore({
   },
 
 
+  onRefreshTags: function (indicator_id) {
+    var self = this;
+    api.indicator_to_tag({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_tag) {
+      var indicatorTags = _.map(indicator_to_tag.objects, function (row) {
+        return {'id': row.id, displayId: row.id, 'display': row.indicator_tag__tag_name}
+      })
+
+      self.data.componentData['indicator_tag'].componentRows = indicatorTags;
+      self.trigger(self.data);
+    });
+  },
+
+  onRefreshCalculation: function (indicator_id) {
+    var self = this;
+    api.indicator_to_calc({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_calc) {
+      var indicatorCalcList = _.map(indicator_to_calc.objects, function (row) {
+        return {
+          'id': row.id,
+          displayId: row.indicator_component_id,
+          'display': row.calculation + ' - ' + row.indicator_component__short_name
+        }
+      });
+
+      self.data.componentData['indicator_calc'].componentRows = indicatorCalcList;
+      self.trigger(self.data);
+    });
+  },
+
   onInitIndicatorToCalc: function (indicator_id) {
     var self = this;
 
     Promise.all(
-      [api.indicator_to_calc({indicator_id: indicator_id} ,null, {'cache-control': 'no-cache'}),
+      [api.indicator_to_calc({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}),
         api.indicatorsTree()]
     )
       .then(_.spread(function (indicator_to_calc, indicators) {
