@@ -6,6 +6,11 @@ import ChartWizardScreen from './ChartWizardScreen.jsx'
 import ChartWizardScreenList from './ChartWizardScreenList.jsx'
 
 let ChartWizard = React.createClass({
+  propTypes: {
+    save: React.PropTypes.func,
+    cancel: React.PropTypes.func
+  },
+
   getInitialState() {
     return {
       refer: 'country',

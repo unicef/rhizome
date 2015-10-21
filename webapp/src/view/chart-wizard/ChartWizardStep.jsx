@@ -1,6 +1,13 @@
 import React from 'react'
 
 let ChartWizardStep = React.createClass({
+  propTypes: {
+    title: React.PropTypes.string,
+    onToggle: React.PropTypes.func,
+    active: React.PropTypes.string,
+    refer: React.PropTypes.string
+  },
+
   getInitialState() {
     return {
       title: this.props.title

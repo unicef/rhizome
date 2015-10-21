@@ -1,11 +1,17 @@
 import React from 'react'
 
 let ChartWizardStepList = React.createClass({
+  propTypes: {
+    active: React.PropTypes.string,
+    onToggle: React.PropTypes.func
+  },
+
   render() {
-    let children = this.props.children.map(item => {
+    let children = this.props.children.map((item, idx) => {
       return React.addons.cloneWithProps(item, {
         onToggle: this.props.onToggle,
-        active: this.props.active
+        active: this.props.active,
+        key: idx
       })
     })
 
