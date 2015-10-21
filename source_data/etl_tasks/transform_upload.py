@@ -1,6 +1,5 @@
 from pandas import read_csv
 from pandas import notnull
-from pprint import pprint
 import json
 
 from django.conf import settings
@@ -37,17 +36,17 @@ class DocTransform(object):
                 .objects.get(name='uq_id_column').id,
         ).doc_detail_value
 
-        self.location_column = DocumentDetail.objects.get(
+        self.location_column = str(DocumentDetail.objects.get(
             document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
                 .objects.get(name='location_column').id,
-        ).doc_detail_value
+        ).doc_detail_value)
 
-        self.campaign_column = DocumentDetail.objects.get(
+        self.campaign_column = str(DocumentDetail.objects.get(
             document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
                 .objects.get(name='campaign_column').id,
-        ).doc_detail_value
+        ).doc_detail_value)
 
         self.existing_submission_keys = SourceSubmission.objects.filter(
             document_id = self.document.id
@@ -61,9 +60,9 @@ class DocTransform(object):
 
     def get_document_file_stream(self,full_file_path):
 
-        f_header = open(full_file_path,'r')
+        f_header = open(full_file_path,'rb')
         top_row = f_header.readlines()[0]
-        cleaned = top_row.replace('\r','').replace('\n','')
+        cleaned = top_row.replace('\r','').replace('\n','').replace('"','')
 
         self.file_header = cleaned.split(self.file_delimiter)
         f_header.close()
@@ -118,8 +117,8 @@ class DocTransform(object):
         batch = {}
         for i,(submission) in enumerate(file_stream):
 
-            print i
-            ss, instance_guid = self.process_raw_source_submission(submission,i)
+            ss, instance_guid = self.process_raw_source_submission(\
+                submission.replace('"','') ,i)
 
             if ss is not None:
                 batch[instance_guid] = ss
@@ -149,6 +148,7 @@ class DocTransform(object):
 
         for row in source_dp_json:
             row_dict = json.loads(row[0])
+
             rg_codes.append(row_dict[self.location_column])
             cp_codes.append(row_dict[self.campaign_column])
 
@@ -186,12 +186,8 @@ class DocTransform(object):
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
 
-        print self.uq_id_column
-        print submission_data
-
         instance_guid = submission_data[self.uq_id_column]
 
-        print instance_guid
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
             return None, None
 

@@ -9,7 +9,6 @@ import base64
 from datetime import datetime
 from urllib2 import Request, urlopen
 from urllib import urlencode
-from pprint import pprint
 import requests
 
 import odk_settings
@@ -37,7 +36,7 @@ def main():
         with open(csv_file, 'rb') as full_file:
              csv_base_64 = base64.b64encode(full_file.read())
              post_file_data(document_id, csv_base_64, str(form_name))
-             refresh_file_data(document_id)
+             output_data = refresh_file_data(document_id)
 
 def post_file_data(document_id, base_64_data, doc_title):
 
@@ -53,7 +52,6 @@ def post_file_data(document_id, base_64_data, doc_title):
         (odk_settings.RHIZOME_USERNAME, odk_settings.RHIZOME_KEY)
 
     r = requests.post(url,data=data,headers=headers)
-
     r.close()
 
 def refresh_file_data(document_id):
@@ -64,10 +62,10 @@ def refresh_file_data(document_id):
         'api_key': odk_settings.RHIZOME_KEY,
     }
 
-    query_string = 'transform_upload/?' + urlencode(filters)
+    query_string = odk_settings.API_ROOT + 'transform_upload/?' + urlencode(filters)
     data = query_api(query_string)
 
-    print data[0]
+    return data
 
 def get_forms_to_process():
     '''
@@ -81,7 +79,7 @@ def get_forms_to_process():
         'api_key': odk_settings.RHIZOME_KEY,
     }
 
-    query_string = 'doc_detail/?' + urlencode(filters)
+    query_string = odk_settings.API_ROOT + 'doc_detail/?' + urlencode(filters)
     data = query_api(query_string)
 
     for result in data:
@@ -91,9 +89,7 @@ def get_forms_to_process():
 
 def query_api(query_string):
 
-    url = odk_settings.API_ROOT + query_string
-
-    response = urlopen(url)
+    response = urlopen(query_string)
     objects = json.loads(response.read())['objects']
 
     return objects
