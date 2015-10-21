@@ -80,6 +80,7 @@ let ChartWizard = React.createClass({
             <h1>Preview page</h1>
           </ChartWizardScreen>
         </div>
+        <a className='chart-wizard__cancel' href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
       </div>
     )
   }
