@@ -4,8 +4,10 @@
 }
 
 .chart-wizard__step-list {
-  width: 30%;
+  width: 25%;
   min-width: 300px;
+  margin: 0;
+  display: inline-block;
 }
 
 .chart-wizard__step {
@@ -31,6 +33,20 @@
   }
 
   &.active .chart-wizard__expandable {
+    display: block;
+  }
+}
+
+.chart-wizard__screen-list {
+  width: 60%;
+  display: inline-block;
+  margin-left: 50px;
+  vertical-align: top;
+}
+
+.chart-wizard__screen {
+  display: none;
+  &.active {
     display: block;
   }
 }
