@@ -307,7 +307,7 @@ class Campaign(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name',unique=True)
-    management_dash_pct_complete = models.FloatField()
+    management_dash_pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
 
