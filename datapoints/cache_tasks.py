@@ -1,6 +1,6 @@
 import traceback
 import json
-from pprint import pprint
+from django.conf import settings
 
 import pandas as pd
 from pandas import DataFrame, read_sql
@@ -380,7 +380,7 @@ def cache_campaign_abstracted():
     '''
 
     all_indicators = []
-    with open('webapp/src/dashboard/builtin/management.js') as data_file:
+    with open(settings.BASE_DIR + '/webapp/src/dashboard/builtin/management.js') as data_file:
         for line in data_file:
             if 'indicators' in line:
                 cleaned_line = line.replace("'indicators' : ","")\
