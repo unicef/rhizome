@@ -21,17 +21,17 @@ def main():
     forms_to_process = get_forms_to_process()
     for form_name,document_id in forms_to_process.iteritems():
 
-        subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
-            '--form_id', form_name, \
-            '--export_filename',form_name +'.csv', \
-            '--aggregate_url',odk_settings.AGGREGATE_URL, \
-            '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
-            '--export_directory',odk_settings.EXPORT_DIRECTORY, \
-            '--odk_username',odk_settings.ODK_USER, \
-            '--odk_password',odk_settings.ODK_PASS, \
-            '--overwrite_csv_export' ,\
-            '--exclude_media_export' \
-          ])
+        # subprocess.call(['java','-jar',odk_settings.JAR_FILE,\
+        #     '--form_id', form_name, \
+        #     '--export_filename',form_name +'.csv', \
+        #     '--aggregate_url',odk_settings.AGGREGATE_URL, \
+        #     '--storage_directory',odk_settings.STORAGE_DIRECTORY, \
+        #     '--export_directory',odk_settings.EXPORT_DIRECTORY, \
+        #     '--odk_username',odk_settings.ODK_USER, \
+        #     '--odk_password',odk_settings.ODK_PASS, \
+        #     '--overwrite_csv_export' ,\
+        #     '--exclude_media_export' \
+        #   ])
 
         csv_file = odk_settings.EXPORT_DIRECTORY + str(form_name) + '.csv'
         with open(csv_file, 'rb') as full_file:
@@ -52,6 +52,8 @@ def post_file_data(document_id, base_64_data, doc_title):
     url = odk_settings.API_ROOT + 'source_doc/?username=%s&api_key=%s' % \
         (odk_settings.RHIZOME_USERNAME, odk_settings.RHIZOME_KEY)
 
+    print url
+
     r = requests.post(url,data=data,headers=headers)
 
     r.close()
@@ -64,7 +66,9 @@ def refresh_file_data(document_id):
         'api_key': odk_settings.RHIZOME_KEY,
     }
 
-    query_string = 'transform_upload/?' + urlencode(filters)
+    query_string = odk_settings.API_ROOT + 'transform_upload/?' + urlencode(filters)
+
+    print query_string
     data = query_api(query_string)
 
     print data[0]
@@ -81,7 +85,7 @@ def get_forms_to_process():
         'api_key': odk_settings.RHIZOME_KEY,
     }
 
-    query_string = 'doc_detail/?' + urlencode(filters)
+    query_string = odk_settings.API_ROOT + 'doc_detail/?' + urlencode(filters)
     data = query_api(query_string)
 
     for result in data:
@@ -91,9 +95,9 @@ def get_forms_to_process():
 
 def query_api(query_string):
 
-    url = odk_settings.API_ROOT + query_string
+    # print
 
-    response = urlopen(url)
+    response = urlopen(query_string)
     objects = json.loads(response.read())['objects']
 
     return objects
