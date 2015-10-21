@@ -377,17 +377,29 @@ def cache_user_abstracted():
 
 def cache_campaign_abstracted():
     '''
+    Add the pct-complete to the campaign based ont he pct of management
+    indiators present for that campaign for the top level locations.
     '''
 
-    all_indicators = []
-    with open(settings.BASE_DIR + '/webapp/src/dashboard/builtin/management.js') as data_file:
-        for line in data_file:
-            if 'indicators' in line:
-                cleaned_line = line.replace("'indicators' : ","")\
-                    .replace("],","").replace("\t","").replace("\n","")\
-                    .replace("[","").replace(" ","")
+    ## temporarily harcoding indicators until we get management dashboard
+    ## definition loading from the api... see:
+    ## https://trello.com/c/nHSev5t9/226-8-front-end-api-calls-use-indicator-tag-to-populate-charts-and-dashboards
+    ## the code belwo that i commented out gets the indciator list by opening
+    ## the hardcoded builtin.js file that defines the management dashobard.
 
-                all_indicators.extend([int(x) for x in cleaned_line.split(',')])
+    # with open(settings.BASE_DIR + '/webapp/src/dashboard/builtin/management.js') as data_file:
+    #     for line in data_file:
+    #         if 'indicators' in line:
+    #             cleaned_line = line.replace("'indicators' : ","")\
+    #                 .replace("],","").replace("\t","").replace("\n","")\
+    #                 .replace("[","").replace(" ","")
+    #
+    #             all_indicators.extend([int(x) for x in cleaned_line.split(',')])
+
+    all_indicators = [168, 431, 432, 433, 166, 164, 167, 165, 475, 187, 189, \
+    27, 28, 175, 176, 177, 204, 178, 228, 179, 184, 180, 185, 230, 226, 239, \
+    245, 236, 192, 193, 191, 194, 219, 173, 172, 169, 233, 158, 174, 442, 443, \
+    444, 445, 446, 447, 448, 449, 450]
 
     # How many indicators does the ultimate parent have for each campaign #
     c_raw = Campaign.objects.raw(
