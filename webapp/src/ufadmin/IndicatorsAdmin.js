@@ -19,13 +19,12 @@ const fields = {
     }
   },
   id: {title: "ID", name: "id"},
-  slug: {title: "Slug", name: 'slug'},
   short_name: {title: 'Short Name', name: 'short_name'},
   name: {title: 'Name', name: 'name'},
   description: {title: 'Description', name: 'description'}
 };
 
-const fieldNamesOnTable = ['id', 'slug', 'short_name', 'name', 'description', 'edit_link'];
+const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link'];
 
 // console.log(this.props);
 
@@ -41,7 +40,7 @@ var IndicatorsAdmin = React.createClass({
 
     return <AdminPage
       title="Indicators"
-      getData={api.indicators}
+      getData={api.get_basic_indicator}
       datascopeFilters={datascopeFilters}
       fields={fields}
       >

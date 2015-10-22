@@ -152,7 +152,7 @@ class BaseIndicatorResource(BaseModelResource):
         return bundle
 
     class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values('id','name','short_name')
+        queryset = Indicator.objects.all().values('id','name','short_name','description')
         resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
