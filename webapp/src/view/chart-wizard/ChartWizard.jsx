@@ -36,6 +36,8 @@ let ChartWizard = React.createClass({
       indicators: this.state.data.indicatorSelected.map(item => {
         return item.id
       })
+    }, (a, b) => {
+      return b
     })
 
     this.props.save(chart)
