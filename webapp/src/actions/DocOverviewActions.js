@@ -3,6 +3,7 @@
 var Reflux = require('reflux');
 
 module.exports = Reflux.createActions([
-    "getDocDetailTypes",
-    "refreshMaster"
+  "getDocDetailTypes",
+  "refreshMaster",
+  "queueReprocess"
 ]);
