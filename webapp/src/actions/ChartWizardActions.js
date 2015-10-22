@@ -1,7 +1,9 @@
 import Reflux from 'reflux'
 
 let ChartWizardActions = Reflux.createActions([
-  'initialize'
+  'initialize',
+  'addIndicator',
+  'removeIndicator'
 ])
 
 export default ChartWizardActions
