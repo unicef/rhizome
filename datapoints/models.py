@@ -493,3 +493,19 @@ class CustomChart(models.Model):
 
     class Meta:
         db_table = 'custom_chart'
+
+class ChartType(models.Model):
+
+    name = models.CharField(max_length=255,unique=True)
+
+    class Meta:
+        db_table = 'chart_type'
+
+class ChartTypeToIndicator(models.Model):
+
+    indicator = models.ForeignKey(Indicator,related_name='indicator')
+    chart_type = models.ForeignKey(ChartType,related_name='chart_type')
+
+    class Meta:
+        db_table = 'chart_type_to_indicator'
+        unique_together = ('indicator','chart_type')
