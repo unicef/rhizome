@@ -170,7 +170,7 @@ class BaseModelResource(ModelResource):
     def get_form_data(self):
 
         all_form_data = {
-            "basic_indicator": {"short_name":"","name":""},
+            "indicator": {"short_name":"","name":""},
             "indicator_tag": {"tag_name":""}
         }
 
