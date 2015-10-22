@@ -26,7 +26,7 @@ let ChartWizard = React.createClass({
   },
 
   componentDidMount() {
-    ChartWizardActions.initialize()
+    ChartWizardActions.initialize(this.props.chartDef)
   },
 
   createChart() {
