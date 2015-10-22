@@ -725,6 +725,25 @@ class DocDetailTypeResource(BaseModelResource):
         queryset = DocDetailType.objects.all().values()
         resource_name = 'doc_detail_type'
 
+class ChartTypeTypeResource(BaseModelResource):
+
+    class Meta(BaseModelResource.Meta):
+        queryset = ChartType.objects.all().values()
+        resource_name = 'chart_type'
+
+    def get_object_list(self, request):
+
+        try:
+            primary_indicator_id = request.GET['primary_indicator_id']
+            chart_type_ids = ChartTypeToIndicator.objects.filter(indicator_id=\
+                primary_indicator_id).values_list('chart_type_id')
+
+            return ChartType.objects.filter(id__in=chart_type_ids).values()
+        except KeyError:
+            return super(ChartTypeTypeResource, self).get_object_list(request)
+
+
+
 
 ## Result Objects for geo Resources ##
 
