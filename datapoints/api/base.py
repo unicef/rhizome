@@ -137,7 +137,15 @@ class BaseModelResource(ModelResource):
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         bundles = []
 
+        ## this is a temporary hack to get data_entry working ##
+        ## long term fix is to make DataPointEntryResource a NonModelResource
+        ## https://trello.com/c/skxxpzYj/327-rp-bug-2005-cannot-load-entry-form-in-enter-data-via-form
+        if self.Meta.resource_name == 'datapointentry':
+            return super(ModelResource, self).get_list(request, **kwargs)
+
         if len(objects) > 0 :
+            ## find json_fields ( should be explicit here and check data type)
+            ## of the field, but for this works..
             json_obj_keys = [k for k, v in objects[0].items() if 'json' in k]
 
         for obj in objects:
