@@ -138,4 +138,14 @@ class IndicatorResourceTest(ResourceTestCase):
 
 
     def test_create_indicator(self):
-        pass
+        Indicator.objects.all().delete()
+
+        self.assertEqual(Indicator.objects.count(), 0)
+
+        post_data = {'name': 'New test indicator name', 'short_name': 'New test short name', 'id': -1}
+
+        resp = self.api_client.post('/api/v1/basic_indicator/', format='json', \
+                                    data=post_data, authentication=self.get_credentials())
+
+        self.assertEqual(Indicator.objects.count(), 1)
+        
