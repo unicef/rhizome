@@ -137,25 +137,18 @@ class BaseModelResource(ModelResource):
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         bundles = []
 
+        if len(objects) > 0 :
+            json_obj_keys = [k for k, v in objects[0].items() if 'json' in k]
+
         for obj in objects:
 
-            # try:
-            if obj.has_key('submission_json'):
-                # to do -> abstract this for all JSONField models
-                obj['submission_json'] = json.loads(obj['submission_json'])
-            if obj.has_key('chart_json'):
-                # to do -> abstract this for all JSONField models
-                obj['chart_json'] = json.loads(obj['chart_json'])
-            if obj.has_key('tag_json'):
-                # to do -> abstract this for all JSONField models
-                obj['tag_json'] = json.loads(obj['tag_json'])
-            if obj.has_key('bound_json'):
-                # to do -> abstract this for all JSONField models
-                obj['bound_json'] = json.loads(obj['bound_json'])
-                ## hack lvl attribute
+            ## serialize json fields ##
+            for json_key in json_obj_keys:
+                obj[json_key] = json.loads(obj[json_key])
+
+            ## hack lvl attribute
             if obj.has_key('location_type_id'):
                 obj['lvl'] = obj['location_type_id'] -1
-            # except 
 
             bundles.append(obj)
 
