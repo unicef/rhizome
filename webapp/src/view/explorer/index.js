@@ -192,10 +192,7 @@ module.exports = {
 			var indicators   = _.map(this.indicators, 'value');
 			var locations      = _.map(this.locations, 'value');
 			var query        = {
-				// FIXME: Hack to get around no way of setting no limit for the 12/9 demo.
-				'limit'  : 10000000,
 				'format'     : 'csv',
-				'uri_display': 'slug'
 			};
 
 			if (indicators.length < 1) {

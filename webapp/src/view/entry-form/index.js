@@ -111,7 +111,7 @@ module.exports = {
 			Promise.all([
 
 					// locations data
-					api.locations({ depth_level: 2, read_write: 'w' })
+					api.locations()
 						.then(makeMap)
 						.then(function(map) {
 							// create array of children in each parent
@@ -140,6 +140,7 @@ module.exports = {
 
 				]).then(function(allData) {
 
+					console.log('ALL DATA ', allData[0])
 					self.$data.locationData = allData[0];
 					self.$data.indicators = allData[1];
 					self.$data.campaigns = allData[2];
@@ -212,7 +213,7 @@ module.exports = {
 						filtered.indicators.splice(filtered.indicators.length-1, 1);
 					}
 					filtered.indicators.push(row);
-				} 
+				}
 				// indicator
 				else {
 					// filter out indicators the user cannot edit

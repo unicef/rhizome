@@ -1,4 +1,6 @@
 import traceback
+import json
+from django.conf import settings
 
 import pandas as pd
 from pandas import DataFrame, read_sql
@@ -374,41 +376,51 @@ def cache_user_abstracted():
 
 
 def cache_campaign_abstracted():
+    '''
+    Add the pct-complete to the campaign based ont he pct of management
+    indiators present for that campaign for the top level locations.
+    '''
+
+    ## temporarily harcoding indicators until we get management dashboard
+    ## definition loading from the api... see:
+    ## https://trello.com/c/nHSev5t9/226-8-front-end-api-calls-use-indicator-tag-to-populate-charts-and-dashboards
+    ## the code belwo that i commented out gets the indciator list by opening
+    ## the hardcoded builtin.js file that defines the management dashobard.
+
+    # with open(settings.BASE_DIR + '/webapp/src/dashboard/builtin/management.js') as data_file:
+    #     for line in data_file:
+    #         if 'indicators' in line:
+    #             cleaned_line = line.replace("'indicators' : ","")\
+    #                 .replace("],","").replace("\t","").replace("\n","")\
+    #                 .replace("[","").replace(" ","")
+    #
+    #             all_indicators.extend([int(x) for x in cleaned_line.split(',')])
+
+    all_indicators = [168, 431, 432, 433, 166, 164, 167, 165, 475, 187, 189, \
+    27, 28, 175, 176, 177, 204, 178, 228, 179, 184, 180, 185, 230, 226, 239, \
+    245, 236, 192, 193, 191, 194, 219, 173, 172, 169, 233, 158, 174, 442, 443, \
+    444, 445, 446, 447, 448, 449, 450]
+
+    # How many indicators does the ultimate parent have for each campaign #
+    c_raw = Campaign.objects.raw(
         '''
-        '''
+        SELECT
+            campaign_id as id
+            ,COUNT(1) as indicator_cnt
+        FROM datapoint_with_computed dwc
+        WHERE indicator_id = ANY(%s)
+        AND location_id IN (
+            SELECT id FROM location l
+            WHERE l.parent_location_id IS NULL
+        )
+        GROUP BY campaign_id;
+        ''',[all_indicators])
 
-        rs_raw = Campaign.objects.raw(
-        '''
-        DROP TABLE IF EXISTS campaign_cnt;
-        CREATE TEMP TABLE campaign_cnt
-        AS
-
-    	SELECT c.id as campaign_id, coalesce(dp_cnt, 0) as dp_cnt FROM campaign c
-    	LEFT JOIN (
-    		SELECT campaign_id, COUNT(1) as dp_cnt
-    		FROM datapoint
-    		GROUP BY campaign_id
-    	)x
-    	ON c.id = x.campaign_id;
-
-
-        SELECT DISTINCT
-            c.*
-            ,COALESCE(CAST(ccnt.dp_cnt AS FLOAT) / CAST(NULLIF(x.max_dp_cnt,0) AS FLOAT),0) as pct_complete
-        FROM campaign c
-        INNER JOIN campaign_cnt ccnt
-            ON c.id = ccnt.campaign_id
-        INNER JOIN (
-            SELECT c.office_id, max(dp_cnt) as max_dp_cnt
-            FROM campaign_cnt cc
-            INNER JOIN campaign c
-            ON cc.campaign_id = c.id
-            GROUP BY c.office_id
-        )x
-            ON c.office_id = x.office_id;
-        ''')
-
-        upsert_meta_data(rs_raw, CampaignAbstracted)
+    for c in c_raw:
+        c_obj = Campaign.objects.get(id=c.id)
+        c_obj.management_dash_pct_complete = c.indicator_cnt / \
+            float(len(list(set(all_indicators))))
+        c_obj.save()
 
 
 def cache_location_tree():

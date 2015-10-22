@@ -30,7 +30,7 @@ from datapoints.cache_tasks import CacheRefresh
 class CampaignResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = CampaignAbstracted.objects.all().values()
+        queryset = Campaign.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,
@@ -65,6 +65,40 @@ class IndicatorResource(BaseModelResource):
             "id": ALL,
             "name": ALL,
         }
+
+
+    def get_object_list(self,request):
+
+        try:
+            office_id = request.GET['office_id']
+            indicator_id_list = self.get_indicator_id_by_office(office_id)
+
+            qs = IndicatorAbstracted.objects.filter(id__in = \
+                indicator_id_list).values()
+        except KeyError:
+            qs = IndicatorAbstracted.objects.all().values()
+
+        return qs
+
+    def get_indicator_id_by_office(self, office_id):
+
+        indicator_ids = []
+
+        i_raw = Indicator.objects.raw('''
+            SELECT DISTINCT dwc.indicator_id as id
+            FROM datapoint_with_computed dwc
+            WHERE EXISTS (
+                SELECT 1 FROM location l
+                WHERE dwc.location_id = l.id
+                AND l.office_id = %s
+            )
+        ''',[office_id])
+
+        for ind in i_raw:
+            indicator_ids.append(ind.id)
+
+        return indicator_ids
+
 
 class OfficeResource(BaseModelResource):
 
@@ -118,32 +152,46 @@ class IndicatorTagResource(BaseModelResource):
 
 class BaseIndicatorResource(BaseModelResource):
 
-    def get_object_list(self,request):
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
 
         try:
-            ind_id = request.POST['id']
-            if ind_id == '-1':
+            ind_id = int(post_data['id'])
+            if ind_id == -1:
                 ind_id = None
-
-            ind_post_data = clean_post_data(dict(request.POST))
-            del ind_post_data['id']
-
-            ind_obj, created = Indicator.objects.update_or_create(id=ind_id,
-                defaults = ind_post_data)
-
-            qs = Indicator.objects.filter(id=ind_obj.id).values('id','name','short_name')
-
         except KeyError:
-            return super(BaseIndicatorResource, self).get_object_list(request)
+            ind_id = None
 
-        return qs
+        defaults = {
+            'name' : post_data['name'],
+            'short_name': post_data['short_name'],
+        }
+
+        ind, created = Indicator.objects.update_or_create(
+            id=ind_id,\
+            defaults=defaults
+        )
+
+        print 'CREATED? '
+        print created
+
+        print 'ind id'
+        print ind.id
+
+        bundle.obj = ind
+        bundle.data['id'] = ind.id
+
+
+        return bundle
 
     class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values('id','name','short_name')
+        queryset = Indicator.objects.all().values('id','name','short_name','description')
         resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
         }
+
 
 class IndicatorToTagResource(BaseModelResource):
 
@@ -208,6 +256,29 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
 
         return qs
 
+
+    def obj_create(self, bundle, **kwargs):
+        indicator_id = bundle.data['indicator_id']
+        component_id = bundle.data['component_id']
+        typeInfo = bundle.data['typeInfo']
+
+        it = CalculatedIndicatorComponent.objects.create(
+            indicator_id = indicator_id,
+            indicator_component_id = component_id,
+            calculation = typeInfo,
+        )
+
+        bundle.obj = it
+        bundle.data['id'] = it.id
+
+        return bundle
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        """
+
+        obj_id = int(bundle.request.GET[u'id'])
+        CalculatedIndicatorComponent.objects.filter(id=obj_id).delete()
 
 class CustomChartResource(BaseModelResource):
 
@@ -337,8 +408,6 @@ class DocumentResource(BaseModelResource):
         If get, just query the source_doc table with request parameters
         '''
 
-        print 'POST DOC DATA -- API FILE \n' * 10
-
         doc_data = bundle.data['docfile']
 
         try:
@@ -351,15 +420,12 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             doc_title = doc_data[:10]
 
-        print 'POST DOC DATA METHOD\n' * 10
-
         new_doc = self.post_doc_data(doc_data, bundle.request.user.id,\
             doc_title, doc_id)
 
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
 
-        print 'DONE WITH BUNDLE FOR SOURCE DOC\n' * 10
         return bundle
 
     def post_doc_data(self, post_data, user_id, doc_title, doc_id):
@@ -380,10 +446,6 @@ class DocumentResource(BaseModelResource):
         )
 
         sd.docfile.save(sd.guid, file_content)
-
-        # if not created:
-        #     d = DocTransform(user_id,sd.id)
-        #     d.main()
 
         return sd
 

@@ -199,7 +199,7 @@ class CustomSerializer(Serializer):
         for r in Location.objects.filter(id__in=location_ids):
             meta_lookup['location'][r.id] = r.__unicode__()
 
-        for c in campaign.objects.filter(id__in=campaign_ids):
+        for c in Campaign.objects.filter(id__in=campaign_ids):
             meta_lookup['campaign'][c.id] = c.__unicode__()
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):

@@ -13,7 +13,7 @@ include
 /docs/_build
 /docs/_static
 /docs/_templates
-/source_data/odk_settings.py
+/bin/odk_settings.py
 /viz
 /bower_components
 /build

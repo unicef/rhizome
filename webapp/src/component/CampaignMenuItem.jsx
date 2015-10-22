@@ -24,7 +24,7 @@ var CampaignMenuItem = React.createClass({
             id={campaign.id}
             start_date={date}
             slug={campaign.slug}
-            pct_complete={campaign.pct_complete}/>
+            management_dash_pct_complete={campaign.management_dash_pct_complete}/>
         );
       });
     }
@@ -35,12 +35,12 @@ var CampaignMenuItem = React.createClass({
     // var start_date           = m.format('YYYY-MM-DD');
     // var formatted_start_date = m.format('MMMM YYYY');
     var campaign_slug = this.props.slug
-    var pct_complete_string  = ' (' + Math.round(this.props.pct_complete * 100) + '% complete)'
+    var management_dash_pct_complete_string  = ' (' + Math.round(this.props.management_dash_pct_complete * 100) + '% complete)'
 
     return (
       <li key={'campaign-' + this.props.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-        {campaign_slug} {pct_complete_string}
+        {campaign_slug} {management_dash_pct_complete_string}
         </a>
       </li>
     );
