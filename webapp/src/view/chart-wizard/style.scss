@@ -38,18 +38,11 @@
   }
 }
 
-.chart-wizard__screen-list {
+.preview-screen {
   width: 60%;
   display: inline-block;
   margin-left: 50px;
   vertical-align: top;
-}
-
-.chart-wizard__screen {
-  display: none;
-  &.active {
-    display: block;
-  }
 }
 
 .chart-wizard__cancel {
