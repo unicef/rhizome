@@ -1,5 +1,6 @@
 import React from 'react'
 import Reflux from 'reflux'
+import _ from 'lodash'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
@@ -30,8 +31,14 @@ let ChartWizard = React.createClass({
   },
 
   createChart() {
-    this.props.chartDef.title = this.state.title
-    this.props.save(this.props.chartDef)
+    let chart = _.merge(this.props.chartDef, {
+      title: this.state.title,
+      indicators: this.state.data.indicatorSelected.map(item => {
+        return item.id
+      })
+    })
+
+    this.props.save(chart)
   },
 
   editTitle(e) {

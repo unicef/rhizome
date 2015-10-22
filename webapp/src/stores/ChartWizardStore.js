@@ -16,7 +16,6 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onInitialize(chartDef) {
-
     api.indicatorsTree().then(data => {
       this.indicatorIndex = _.indexBy(data.flat, 'id');
       this.data.indicatorList = _(data.objects)
