@@ -5,6 +5,7 @@ import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -63,8 +64,9 @@ let ChartWizard = React.createClass({
           text='Add Indicators'
           icon='fa-plus'
           indicators={this.state.data.indicatorList}
-          sendValue={() => {}}>
+          sendValue={ChartWizardActions.addIndicator}>
         </IndicatorDropdownMenu>
+        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
       </div>
     )
 
