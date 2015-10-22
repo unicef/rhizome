@@ -12,7 +12,6 @@
 
 .chart-wizard__step {
   list-style: none;
-  cursor: pointer;
   border: 1px solid #666;
   border-bottom: none;
 
@@ -25,11 +24,12 @@
     padding: 5px 10px;
     margin: 0;
     border-bottom: 1px solid #666;
+    cursor: pointer;
   }
 
   .chart-wizard__expandable {
     display: none;
-    min-height: 200px;
+    min-height: 300px;
     padding: 10px;
   }
 
