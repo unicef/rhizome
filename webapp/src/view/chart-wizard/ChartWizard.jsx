@@ -1,10 +1,17 @@
 import React from 'react'
+import Reflux from 'reflux'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+
+import ChartWizardActions from 'actions/ChartWizardActions'
+import ChartWizardStore from 'stores/ChartWizardStore'
 
 let ChartWizard = React.createClass({
+  mixins: [Reflux.connect(ChartWizardStore, 'data')],
+
   propTypes: {
     save: React.PropTypes.func,
     cancel: React.PropTypes.func
@@ -15,6 +22,10 @@ let ChartWizard = React.createClass({
       refer: 'country',
       title: this.props.chartDef.title
     }
+  },
+
+  componentDidMount() {
+    ChartWizardActions.initialize()
   },
 
   createChart() {
@@ -46,6 +57,17 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let indicatorStep = (
+      <div>
+        <IndicatorDropdownMenu
+          text='Add Indicators'
+          icon='fa-plus'
+          indicators={this.state.data.indicatorList}
+          sendValue={() => {}}>
+        </IndicatorDropdownMenu>
+      </div>
+    )
+
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
@@ -53,7 +75,7 @@ let ChartWizard = React.createClass({
             <p>select country here</p>
           </ChartWizardStep>
           <ChartWizardStep title='Select Indicator' refer='indicator'>
-            <p>select indicators here</p>
+            {indicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Location' refer='location'>
             <p>select location here</p>
