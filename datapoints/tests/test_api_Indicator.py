@@ -7,7 +7,9 @@ from datapoints.models import Indicator, IndicatorTag, CustomDashboard, CustomCh
     IndicatorToTag
 from source_data.models import Document
 from tastypie.test import TestApiClient
+
 import json
+
 
 class IndicatorResourceTest(ResourceTestCase):
     def setUp(self):
@@ -33,21 +35,21 @@ class IndicatorResourceTest(ResourceTestCase):
         self.assertValidJSONResponse(resp)
 
     def test_create_calculation(self):
+        Indicator.objects.create(short_name='Test Indicator 1', \
+                                 name='Test Indicator for the Tag 1', \
+                                 description='Test Indicator for the Tag 1 Description', )
 
-        Indicator.objects.create(short_name='Test Indicator 1',\
-                                 name= 'Test Indicator for the Tag 1',\
-                                 description = 'Test Indicator for the Tag 1 Description',)
-
-        Indicator.objects.create(short_name='Test Indicator 2',\
-                                 name= 'Test Indicator for the Tag 2',\
-                                 description = 'Test Indicator for the Tag 2 Description',)
+        Indicator.objects.create(short_name='Test Indicator 2', \
+                                 name='Test Indicator for the Tag 2', \
+                                 description='Test Indicator for the Tag 2 Description', )
 
         list = Indicator.objects.all().order_by('-id')
 
         indicator_1 = list[0]
         indicator_2 = list[1]
 
-        CalculatedIndicatorComponent.objects.filter(indicator_id=indicator_1.id, indicator_component_id=indicator_2.id).delete()
+        CalculatedIndicatorComponent.objects.filter(indicator_id=indicator_1.id,
+                                                    indicator_component_id=indicator_2.id).delete()
 
         post_data = {'indicator_id': indicator_1.id, 'component_id': indicator_2.id, 'typeInfo': 'WHOLE'}
 
@@ -64,15 +66,40 @@ class IndicatorResourceTest(ResourceTestCase):
         self.assertEqual(indicator_calculation.calculation, response_data['typeInfo'])
 
     def test_remove_calculation(self):
-        pass
+        Indicator.objects.create(short_name='Test Indicator 1', \
+                                 name='Test Indicator for the Tag 1', \
+                                 description='Test Indicator for the Tag 1 Description', )
+        Indicator.objects.create(short_name='Test Indicator 2', \
+                                 name='Test Indicator for the Tag 2', \
+                                 description='Test Indicator for the Tag 2 Description', )
+
+        list = Indicator.objects.all().order_by('-id')
+
+        indicator_1 = list[0]
+        indicator_2 = list[1]
+
+        CalculatedIndicatorComponent.objects.all().delete()
+
+        component = CalculatedIndicatorComponent.objects.create(indicator_id=indicator_1.id,
+                                                    indicator_component_id=indicator_2.id,
+                                                    calculation = 'test calculation')
+
+        self.assertEqual(CalculatedIndicatorComponent.objects.count(), 1)
+
+        delete_url = '/api/v1/indicator_calculation/?id=' + str(component.id)
+
+        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+
+        self.assertEqual(CalculatedIndicatorComponent.objects.count(), 0)
+
 
     def test_create_tag(self):
-        Indicator.objects.create(short_name='Test Indicator',\
-                                 name= 'Test Indicator for the Tag',\
-                                 description = 'Test Indicator for the Tag Description',)
+        Indicator.objects.create(short_name='Test Indicator', \
+                                 name='Test Indicator for the Tag', \
+                                 description='Test Indicator for the Tag Description', )
         indicatior = Indicator.objects.all().order_by('-id')[0]
 
-        IndicatorTag.objects.create(tag_name = 'Test tag')
+        IndicatorTag.objects.create(tag_name='Test tag')
         tag = IndicatorTag.objects.all().order_by('-id')[0]
 
         IndicatorToTag.objects.filter(indicator_id=indicatior.id, indicator_tag_id=tag.id).delete()
@@ -91,6 +118,24 @@ class IndicatorResourceTest(ResourceTestCase):
         self.assertEqual(tag.id, response_data['indicator_tag_id'])
 
     def test_remove_tag(self):
+        indicatior = Indicator.objects.create(short_name='Test Indicator', \
+                                              name='Test Indicator for the Tag', \
+                                              description='Test Indicator for the Tag Description', )
+
+        tag = IndicatorTag.objects.create(tag_name='Test tag')
+
+        IndicatorToTag.objects.all().delete()
+
+        indicatior_tag = IndicatorToTag.objects.create(indicator_id=indicatior.id, indicator_tag_id=tag.id)
+
+        self.assertEqual(IndicatorToTag.objects.count(), 1)
+
+        delete_url = '/api/v1/indicator_to_tag/?id=' + str(indicatior_tag.id)
+
+        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+
+        self.assertEqual(IndicatorToTag.objects.count(), 0)
+
+
+    def test_create_indicator(self):
         pass
-
-
