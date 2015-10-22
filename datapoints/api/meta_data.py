@@ -66,6 +66,40 @@ class IndicatorResource(BaseModelResource):
             "name": ALL,
         }
 
+
+    def get_object_list(self,request):
+
+        try:
+            office_id = request.GET['office_id']
+            indicator_id_list = self.get_indicator_id_by_office(office_id)
+
+            qs = IndicatorAbstracted.objects.filter(id__in = \
+                indicator_id_list).values()
+        except KeyError:
+            qs = IndicatorAbstracted.objects.all().values()
+
+        return qs
+
+    def get_indicator_id_by_office(self, office_id):
+
+        indicator_ids = []
+
+        i_raw = Indicator.objects.raw('''
+            SELECT DISTINCT dwc.indicator_id as id
+            FROM datapoint_with_computed dwc
+            WHERE EXISTS (
+                SELECT 1 FROM location l
+                WHERE dwc.location_id = l.id
+                AND l.office_id = %s
+            )
+        ''',[office_id])
+
+        for ind in i_raw:
+            indicator_ids.append(ind.id)
+
+        return indicator_ids
+
+
 class OfficeResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
