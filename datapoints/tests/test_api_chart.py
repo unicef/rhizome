@@ -8,7 +8,6 @@ from tastypie.test import TestApiClient
 
 import json
 
-
 class ChartResourceTest(ResourceTestCase):
     def setUp(self):
         super(ChartResourceTest, self).setUp()
