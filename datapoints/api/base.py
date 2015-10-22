@@ -138,6 +138,8 @@ class BaseModelResource(ModelResource):
         bundles = []
 
         for obj in objects:
+
+            # try:
             if obj.has_key('submission_json'):
                 # to do -> abstract this for all JSONField models
                 obj['submission_json'] = json.loads(obj['submission_json'])
@@ -150,9 +152,10 @@ class BaseModelResource(ModelResource):
             if obj.has_key('bound_json'):
                 # to do -> abstract this for all JSONField models
                 obj['bound_json'] = json.loads(obj['bound_json'])
-            ## hack lvl attribute
+                ## hack lvl attribute
             if obj.has_key('location_type_id'):
                 obj['lvl'] = obj['location_type_id'] -1
+            # except 
 
             bundles.append(obj)
 
