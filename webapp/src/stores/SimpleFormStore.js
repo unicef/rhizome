@@ -13,7 +13,8 @@ var SimpleFormStore = Reflux.createStore({
     componentData: {},
     formData: {},
     loading: true,
-    saving: false
+    saving: false,
+    saveSuccess: false
   },
 
   listenables: [SimpleFormActions],
@@ -36,12 +37,14 @@ var SimpleFormStore = Reflux.createStore({
     ])
       .then(_.spread(function (apiResponse) {
 
-        self.data.formData = apiResponse.meta.form_data;
+        debugger;
+        self.data.formData = apiResponse.objects;
 
-        self.data.objectId = apiResponse.id;
+        self.data.objectId = apiResponse.objects.id;
         self.data.dataObject = apiResponse;
 
         self.data.loading = false;
+        self.data.saveSuccess = true;
         self.trigger(self.data);
       }));
   },

@@ -27,7 +27,6 @@ var SimpleForm = React.createClass({
   getInitialState: function () {
     return {
       objectId: null,
-      saveSuccess: false,
       extraFormData: {},
       tagTree: [],
     };
@@ -101,8 +100,6 @@ var SimpleForm = React.createClass({
     }
 
     SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
-    // when creating new //
-    this.setState({'objectId': this.state.store.objectId, 'saveSuccess': true})
   },
 
   setParentTag: function (e) {
@@ -175,8 +172,14 @@ var SimpleForm = React.createClass({
       </div>);
 
     var baseFormSuccess = ''
-    if (this.state.saveSuccess) {
+    if (this.state.store.saveSuccess) {
+      debugger;
       var baseFormSuccess = <i className="fa fa-check"> saved successfully </i>
+      var newId = this.state.store.objectId;
+      setTimeout(function(){
+          page('/ufadmin/manage/indicator/'+ newId);
+        }
+      , 500);
     }
 
     var subFormList;
