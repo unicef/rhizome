@@ -9,7 +9,7 @@ from tastypie.bundle import Bundle
 from tastypie.resources import Resource
 
 from tastypie.authentication import Authentication
-from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,\
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, \
     MultiAuthentication
 
 from django.contrib.auth.models import User, Group
@@ -27,8 +27,8 @@ from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
 
-class CampaignResource(BaseModelResource):
 
+class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = Campaign.objects.all().values()
         resource_name = 'campaign'
@@ -36,9 +36,9 @@ class CampaignResource(BaseModelResource):
             "id": ALL,
         }
 
-class LocationResource(BaseModelResource):
 
-    def get_object_list(self,request):
+class LocationResource(BaseModelResource):
+    def get_object_list(self, request):
 
         try:
             pr_id = request.GET['parent_location_id']
@@ -48,7 +48,7 @@ class LocationResource(BaseModelResource):
             qs = Location.objects.filter(parent_location_id=pr_id).values()
 
         except KeyError:
-            qs =  Location.objects.all().values()
+            qs = Location.objects.all().values()
 
         return qs
 
@@ -56,8 +56,8 @@ class LocationResource(BaseModelResource):
         queryset = Location.objects.all().values()
         resource_name = 'location'
 
-class IndicatorResource(BaseModelResource):
 
+class IndicatorResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorAbstracted.objects.all().values()
         resource_name = 'indicator'
@@ -66,15 +66,14 @@ class IndicatorResource(BaseModelResource):
             "name": ALL,
         }
 
-
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         try:
             office_id = request.GET['office_id']
             indicator_id_list = self.get_indicator_id_by_office(office_id)
 
-            qs = IndicatorAbstracted.objects.filter(id__in = \
-                indicator_id_list).values()
+            qs = IndicatorAbstracted.objects.filter(id__in= \
+                                                        indicator_id_list).values()
         except KeyError:
             qs = IndicatorAbstracted.objects.all().values()
 
@@ -92,7 +91,7 @@ class IndicatorResource(BaseModelResource):
                 WHERE dwc.location_id = l.id
                 AND l.office_id = %s
             )
-        ''',[office_id])
+        ''', [office_id])
 
         for ind in i_raw:
             indicator_ids.append(ind.id)
@@ -101,27 +100,25 @@ class IndicatorResource(BaseModelResource):
 
 
 class OfficeResource(BaseModelResource):
-
     class Meta(BaseModelResource.Meta):
         queryset = Office.objects.all().values()
         resource_name = 'office'
 
-class CampaignTypeResource(BaseModelResource):
 
+class CampaignTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
         resource_name = 'campaign_type'
 
-class LocationTypeResource(BaseModelResource):
 
+class LocationTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = LocationType.objects.all().values()
         resource_name = 'location_type'
 
 
 class IndicatorTagResource(BaseModelResource):
-
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         try:
             tag_id = request.POST['id']
@@ -133,7 +130,7 @@ class IndicatorTagResource(BaseModelResource):
             del tag_post_data['id']
 
             tag_obj, created = IndicatorTag.objects.update_or_create(id=tag_id,
-                defaults = tag_post_data)
+                                                                     defaults=tag_post_data)
 
             qs = IndicatorTag.objects.filter(id=tag_obj.id).values()
 
@@ -142,16 +139,15 @@ class IndicatorTagResource(BaseModelResource):
 
         return qs
 
-
     class Meta(BaseModelResource.Meta):
-        queryset = IndicatorTag.objects.all().values('id','parent_tag_id','tag_name','parent_tag__tag_name')
+        queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
         resource_name = 'indicator_tag'
         filtering = {
             "id": ALL,
         }
 
-class BaseIndicatorResource(BaseModelResource):
 
+class BaseIndicatorResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
@@ -164,12 +160,12 @@ class BaseIndicatorResource(BaseModelResource):
             ind_id = None
 
         defaults = {
-            'name' : post_data['name'],
+            'name': post_data['name'],
             'short_name': post_data['short_name'],
         }
 
         ind, created = Indicator.objects.update_or_create(
-            id=ind_id,\
+            id=ind_id, \
             defaults=defaults
         )
 
@@ -182,11 +178,10 @@ class BaseIndicatorResource(BaseModelResource):
         bundle.obj = ind
         bundle.data['id'] = ind.id
 
-
         return bundle
 
     class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values('id','name','short_name','description')
+        queryset = Indicator.objects.all().values('id', 'name', 'short_name', 'description')
         resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
@@ -194,15 +189,14 @@ class BaseIndicatorResource(BaseModelResource):
 
 
 class IndicatorToTagResource(BaseModelResource):
-
     def obj_create(self, bundle, **kwargs):
 
         indicator_id = bundle.data['indicator_id']
         indicator_tag_id = bundle.data['indicator_tag_id']
 
         it = IndicatorToTag.objects.create(
-            indicator_id = indicator_id,
-            indicator_tag_id = indicator_tag_id,
+            indicator_id=indicator_id,
+            indicator_tag_id=indicator_tag_id,
         )
 
         bundle.obj = it
@@ -210,20 +204,19 @@ class IndicatorToTagResource(BaseModelResource):
 
         return bundle
 
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         try:
             indicator_id = request.GET['indicator_id']
         except KeyError:
             indicator_id = -1
 
-        qs = IndicatorToTag.objects\
-            .filter(indicator_id=indicator_id)\
-            .values('id','indicator_id','indicator__short_name',\
-                'indicator_tag__tag_name')
+        qs = IndicatorToTag.objects \
+            .filter(indicator_id=indicator_id) \
+            .values('id', 'indicator_id', 'indicator__short_name', \
+                    'indicator_tag__tag_name')
 
         return qs
-
 
     def obj_delete_list(self, bundle, **kwargs):
         """
@@ -236,26 +229,25 @@ class IndicatorToTagResource(BaseModelResource):
         # queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'
 
-class CalculatedIndicatorComponentResource(BaseModelResource):
 
+class CalculatedIndicatorComponentResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         # queryset = CalculatedIndicatorComponent.objects.all().values()
         resource_name = 'indicator_calculation'
 
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         try:
             indicator_id = request.GET['indicator_id']
         except KeyError:
             indicator_id = -1
 
-        qs = CalculatedIndicatorComponent.objects\
-            .filter(indicator_id=indicator_id)\
-            .values('id','indicator_id','indicator_component_id'
-            ,'indicator_component__short_name','calculation')
+        qs = CalculatedIndicatorComponent.objects \
+            .filter(indicator_id=indicator_id) \
+            .values('id', 'indicator_id', 'indicator_component_id'
+                    , 'indicator_component__short_name', 'calculation')
 
         return qs
-
 
     def obj_create(self, bundle, **kwargs):
         indicator_id = bundle.data['indicator_id']
@@ -263,9 +255,9 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         typeInfo = bundle.data['typeInfo']
 
         it = CalculatedIndicatorComponent.objects.create(
-            indicator_id = indicator_id,
-            indicator_component_id = component_id,
-            calculation = typeInfo,
+            indicator_id=indicator_id,
+            indicator_component_id=component_id,
+            calculation=typeInfo,
         )
 
         bundle.obj = it
@@ -280,8 +272,8 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         obj_id = int(bundle.request.GET[u'id'])
         CalculatedIndicatorComponent.objects.filter(id=obj_id).delete()
 
-class CustomChartResource(BaseModelResource):
 
+class CustomChartResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
         filtering = {
@@ -302,12 +294,12 @@ class CustomChartResource(BaseModelResource):
         chart_json = json.loads(post_data['chart_json'])
 
         defaults = {
-            'dashboard_id' : dashboard_id,
+            'dashboard_id': dashboard_id,
             'chart_json': chart_json,
         }
 
         chart, created = CustomChart.objects.update_or_create(
-            id=chart_id,\
+            id=chart_id, \
             defaults=defaults
         )
 
@@ -323,14 +315,14 @@ class CustomChartResource(BaseModelResource):
         obj_id = int(bundle.request.GET[u'id'])
         CustomChart.objects.filter(id=obj_id).delete()
 
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         chart_id_list = []
 
         try:
             dashboard_id = request.GET['dashboard_id']
-            chart_id_list = CustomChart.objects.filter(dashboard_id =\
-                dashboard_id).values_list('id',flat=True)
+            chart_id_list = CustomChart.objects.filter(dashboard_id= \
+                                                           dashboard_id).values_list('id', flat=True)
         except KeyError:
             pass
 
@@ -339,12 +331,11 @@ class CustomChartResource(BaseModelResource):
         except KeyError:
             pass
 
-        return CustomChart.objects.filter(id__in = chart_id_list)\
+        return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()
 
 
 class CustomDashboardResource(BaseModelResource):
-
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_dashboard'
         filtering = {
@@ -362,17 +353,17 @@ class CustomDashboardResource(BaseModelResource):
         except KeyError:
             dash_id = None
 
-        default_office_id = 1 # FIXME int(post_data['default_office_id'][0])
+        default_office_id = 1  # FIXME int(post_data['default_office_id'][0])
 
         defaults = {
-            'id' : dash_id,
-            'title' : post_data['title'],
+            'id': dash_id,
+            'title': post_data['title'],
             'owner_id': user_id,
-            'default_office_id' : default_office_id,
+            'default_office_id': default_office_id,
         }
 
         dashboard, created = CustomDashboard.objects.update_or_create(
-            id=dash_id,\
+            id=dash_id, \
             defaults=defaults
         )
 
@@ -381,7 +372,7 @@ class CustomDashboardResource(BaseModelResource):
 
         return bundle
 
-    def get_object_list(self,request):
+    def get_object_list(self, request):
         '''
         '''
 
@@ -420,8 +411,8 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             doc_title = doc_data[:10]
 
-        new_doc = self.post_doc_data(doc_data, bundle.request.user.id,\
-            doc_title, doc_id)
+        new_doc = self.post_doc_data(doc_data, bundle.request.user.id, \
+                                     doc_title, doc_id)
 
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
@@ -440,53 +431,53 @@ class DocumentResource(BaseModelResource):
             base64data = post_data
 
         file_content = ContentFile(base64.b64decode(base64data))
-        sd,created = Document.objects.update_or_create(
-            id = doc_id,
-            defaults = {'doc_title': doc_title,'created_by_id': user_id}
+        sd, created = Document.objects.update_or_create(
+            id=doc_id,
+            defaults={'doc_title': doc_title, 'created_by_id': user_id}
         )
 
         sd.docfile.save(sd.guid, file_content)
 
         return sd
 
-class UserResource(BaseModelResource):
 
+class UserResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = User.objects.all().values()
         resource_name = 'user'
 
-class GroupResource(BaseModelResource):
 
+class GroupResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = Group.objects.all().values()
         resource_name = 'group'
 
-class UserGroupResource(BaseModelResource):
 
+class UserGroupResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = UserGroup.objects.all().values()
         resource_name = 'user_group'
 
-class LocationPermissionResource(BaseModelResource):
 
+class LocationPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = LocationPermission.objects.all().values()
         resource_name = 'location_permission'
 
-class GroupPermissionResource(BaseModelResource):
 
+class GroupPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'group_permission'
 
-class DocumentReviewResource(BaseModelResource):
 
+class DocumentReviewResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorPermission.objects.all().values()
         resource_name = 'document_review'
 
-class DocumentDetailResource(BaseModelResource):
 
+class DocumentDetailResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
@@ -496,7 +487,7 @@ class DocumentDetailResource(BaseModelResource):
         }
 
         chart, created = DocumentDetail.objects.update_or_create(
-            document_id=post_data['document_id'],\
+            document_id=post_data['document_id'], \
             doc_detail_type_id=post_data['doc_detail_type_id'],
             defaults=defaults
         )
@@ -510,8 +501,8 @@ class DocumentDetailResource(BaseModelResource):
 
         try:
             doc_detail_type = request.GET['doc_detail_type']
-            return DocumentDetail.objects\
-                    .filter(doc_detail_type__name=doc_detail_type).values()
+            return DocumentDetail.objects \
+                .filter(doc_detail_type__name=doc_detail_type).values()
         except KeyError:
             return DocumentDetail.objects.all().values()
 
@@ -522,9 +513,9 @@ class DocumentDetailResource(BaseModelResource):
             "document": ALL,
         }
 
-class DocDataPointResource(BaseModelResource):
 
-    def get_object_list(self,request):
+class DocDataPointResource(BaseModelResource):
+    def get_object_list(self, request):
 
         try:
             document_id = request.GET['document_id']
@@ -538,23 +529,23 @@ class DocDataPointResource(BaseModelResource):
 
         try:
             location_id = request.GET['location_id']
-            all_location_ids = LocationTree.objects\
-                .filter(parent_location_id = location_id).values_list('location_id',flat=True)
+            all_location_ids = LocationTree.objects \
+                .filter(parent_location_id=location_id).values_list('location_id', flat=True)
         except KeyError:
             all_location_ids = []
 
         return DocDataPoint.objects.filter(
-            document_id = document_id,
-            campaign_id = campaign_id,
+            document_id=document_id,
+            campaign_id=campaign_id,
             location_id__in=all_location_ids,
-            ).values()
+        ).values()
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_datapoint'
 
-class ComputedDataPointResource(BaseModelResource):
 
-    def get_object_list(self,request):
+class ComputedDataPointResource(BaseModelResource):
+    def get_object_list(self, request):
 
         try:
             document_id = request.GET['document_id']
@@ -572,36 +563,35 @@ class ComputedDataPointResource(BaseModelResource):
             location_id = None
 
         som_ids = DocumentSourceObjectMap.objects.filter(
-            document_id = document_id,
-        ).values_list('source_object_map_id',flat=True)
+            document_id=document_id,
+        ).values_list('source_object_map_id', flat=True)
 
         indicator_id_list = list(SourceObjectMap.objects.filter(
-            id__in = som_ids,\
-            content_type = 'indicator',
-            master_object_id__gt = 0,
-        ).values_list('master_object_id',flat=True))
+            id__in=som_ids, \
+            content_type='indicator',
+            master_object_id__gt=0,
+        ).values_list('master_object_id', flat=True))
 
         queryset = DataPointComputed.objects.filter(
-            location_id = location_id,
-            campaign_id = campaign_id,
-            indicator_id__in = indicator_id_list
-        ).values('indicator_id','indicator__short_name','value')
+            location_id=location_id,
+            campaign_id=campaign_id,
+            indicator_id__in=indicator_id_list
+        ).values('indicator_id', 'indicator__short_name', 'value')
 
         return queryset
-
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'computed_datapoint'
 
-class SourceObjectMapResource(BaseModelResource):
 
+class SourceObjectMapResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
 
         som_id = int(post_data['id'])
 
-        som_obj = SourceObjectMap.objects.get(id = som_id)
+        som_obj = SourceObjectMap.objects.get(id=som_id)
         som_obj.master_object_id = post_data['master_object_id']
         som_obj.mapped_by_id = post_data['mapped_by_id']
         som_obj.save()
@@ -611,13 +601,12 @@ class SourceObjectMapResource(BaseModelResource):
 
         return bundle
 
-
-    def get_object_list(self,request):
+    def get_object_list(self, request):
 
         try:
-            som_ids = DocumentSourceObjectMap.objects\
-                .filter(document_id=request.GET['document_id']).\
-                values_list('source_object_map_id',flat=True)
+            som_ids = DocumentSourceObjectMap.objects \
+                .filter(document_id=request.GET['document_id']). \
+                values_list('source_object_map_id', flat=True)
 
             qs = SourceObjectMap.objects.filter(id__in=som_ids).values()
         except KeyError:
@@ -630,17 +619,17 @@ class SourceObjectMapResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_object_map'
 
-class SourceSubmissionResource(BaseModelResource):
 
-    def get_object_list(self,request):
+class SourceSubmissionResource(BaseModelResource):
+    def get_object_list(self, request):
 
         try:
-            qs = SourceSubmissionDetail.objects.filter(document_id=request\
-                .GET['document_id']).values()
+            qs = SourceSubmissionDetail.objects.filter(document_id=request \
+                                                       .GET['document_id']).values()
         except KeyError:
-            qs = SourceSubmission.objects.filter(id=SourceSubmissionDetail\
-                .objects.get(id=request\
-                .GET['id']).source_submission_id)\
+            qs = SourceSubmission.objects.filter(id=SourceSubmissionDetail \
+                                                 .objects.get(id=request \
+                                                              .GET['id']).source_submission_id) \
                 .values()
 
         return qs
@@ -650,70 +639,64 @@ class SourceSubmissionResource(BaseModelResource):
 
 
 class DocTransFormResource(BaseModelResource):
-
-    def get_object_list(self,request):
-
+    def get_object_list(self, request):
         doc_id = request.GET['document_id']
-        dt = DocTransform(request.user.id,doc_id)
+        dt = DocTransform(request.user.id, doc_id)
         dt.main()
 
-        return Document.objects.filter(id = doc_id).values()
+        return Document.objects.filter(id=doc_id).values()
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'transform_upload'
 
+
 class CacheRefreshResource(BaseModelResource):
-
     def get_object_list(self, request):
-
         cr = CacheRefresh()
 
-        queryset = DocumentDetail.objects\
+        queryset = DocumentDetail.objects \
             .filter(document_id=1).values()
 
         return queryset
-
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_cache'
 
 
 class RefreshMasterResource(BaseModelResource):
-
-    def get_object_list(self,request):
-
+    def get_object_list(self, request):
         document_id = request.GET['document_id']
 
         mr = MasterRefresh(request.user.id, document_id)
         mr.main()
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType.objects.get(name = 'submission_processed_count').id,
-            defaults= {'doc_detail_value': SourceSubmission.objects\
-                .filter(process_status = 'PROCESSED',\
-                    document_id = document_id).count()\
-            },
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType.objects.get(name='submission_processed_count').id,
+            defaults={'doc_detail_value': SourceSubmission.objects \
+                .filter(process_status='PROCESSED', \
+                        document_id=document_id).count() \
+                      },
         )
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType.objects.get(name = 'doc_datapoint_count').id,
-            defaults= {'doc_detail_value': DocDataPoint.objects\
-                .filter(document_id = document_id).count()\
-            },
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType.objects.get(name='doc_datapoint_count').id,
+            defaults={'doc_detail_value': DocDataPoint.objects \
+                .filter(document_id=document_id).count() \
+                      },
         )
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType.objects.get(name = 'datapoint_count').id,
-            defaults= {'doc_detail_value': DataPoint.objects\
-                .filter(source_submission_id__in=SourceSubmission.objects\
-                .filter(document_id = document_id).values_list('id',flat=True)).count()\
-            },
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType.objects.get(name='datapoint_count').id,
+            defaults={'doc_detail_value': DataPoint.objects \
+                .filter(source_submission_id__in=SourceSubmission.objects \
+                        .filter(document_id=document_id).values_list('id', flat=True)).count() \
+                      },
         )
 
-        queryset = DocumentDetail.objects\
+        queryset = DocumentDetail.objects \
             .filter(document_id=document_id).values()
 
         return queryset
@@ -721,8 +704,23 @@ class RefreshMasterResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
 
-class DocDetailTypeResource(BaseModelResource):
 
+class QueueProcessResource(BaseModelResource):
+    def get_object_list(self, request):
+        document_id = request.GET['document_id']
+
+        SourceSubmission.objects.filter(document_id=document_id).update(process_status='TO_PROCESS')
+
+        queryset = DocumentDetail.objects \
+            .filter(document_id=document_id).values()
+
+        return queryset
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'queue_process'
+
+
+class DocDetailTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = DocDetailType.objects.all().values()
         resource_name = 'doc_detail_type'
@@ -743,10 +741,10 @@ class GeoResource(BaseNonModelResource):
     colletion of parameters.
     '''
 
-    location_id = fields.IntegerField(attribute = 'location_id')
-    type = fields.CharField(attribute = 'type')
-    properties = fields.DictField(attribute = 'properties')
-    geometry = fields.DictField(attribute = 'geometry')
+    location_id = fields.IntegerField(attribute='location_id')
+    type = fields.CharField(attribute='type')
+    properties = fields.DictField(attribute='properties')
+    geometry = fields.DictField(attribute='geometry')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = GeoJsonResult
@@ -755,7 +753,7 @@ class GeoResource(BaseNonModelResource):
             "location_id": ALL,
         }
 
-    def get_object_list(self,request):
+    def get_object_list(self, request):
         '''
         parse the url, query the polygons table and do some
         ugly data munging to convert the results from the DB into geojson
@@ -769,13 +767,12 @@ class GeoResource(BaseNonModelResource):
             self.err = err
             return []
 
-        polygon_values_list = LocationPolygon.objects.filter(location_id__in=\
-            locations_to_return).values()
+        polygon_values_list = LocationPolygon.objects.filter(location_id__in= \
+                                                                 locations_to_return).values()
 
         features = []
 
         for p in polygon_values_list:
-
             geo_dict = json.loads(p['geo_json'])
 
             geo_obj = GeoJsonResult()
@@ -788,7 +785,7 @@ class GeoResource(BaseNonModelResource):
 
         return features
 
-    def obj_get_list(self,bundle,**kwargs):
+    def obj_get_list(self, bundle, **kwargs):
         '''
         Outer method for get_object_list... this calls get_object_list and
         could be a point at which additional build_agg_rc_dfing may be applied
@@ -798,7 +795,7 @@ class GeoResource(BaseNonModelResource):
 
     def dehydrate(self, bundle):
 
-        bundle.data.pop("resource_uri",None)
+        bundle.data.pop("resource_uri", None)
         return bundle
 
     def alter_list_data_to_serialize(self, request, data):
@@ -812,20 +809,18 @@ class GeoResource(BaseNonModelResource):
         data['features'] = data['objects']
         data['error'] = self.err
 
-        data.pop("objects",None)
-        data.pop("meta",None)
+        data.pop("objects", None)
+        data.pop("meta", None)
 
         return data
 
 
 ##
 def clean_post_data(post_data_dict):
-
     cleaned = {}
-    for k,v in post_data_dict.iteritems():
-
+    for k, v in post_data_dict.iteritems():
         to_clean = v[0]
-        cleaned_v = to_clean.replace("[u'","").replace("]","")
+        cleaned_v = to_clean.replace("[u'", "").replace("]", "")
         cleaned[k] = cleaned_v
 
     return cleaned
