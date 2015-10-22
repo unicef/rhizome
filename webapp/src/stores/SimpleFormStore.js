@@ -37,11 +37,9 @@ var SimpleFormStore = Reflux.createStore({
     ])
       .then(_.spread(function (apiResponse) {
 
-        self.data.formData = apiResponse.objects;
-
+        self.data.formData = apiResponse.meta.form_data;
         self.data.objectId = apiResponse.objects.id;
         self.data.dataObject = apiResponse;
-
         self.data.loading = false;
         self.data.saveSuccess = true;
         self.trigger(self.data);
@@ -65,7 +63,6 @@ var SimpleFormStore = Reflux.createStore({
       .then(_.spread(function (apiResponse) {
 
         self.data.formData = apiResponse.meta.form_data;
-
         self.data.dataObject = apiResponse.objects[0];
         self.data.loading = false;
         self.trigger(self.data);
@@ -74,11 +71,6 @@ var SimpleFormStore = Reflux.createStore({
 
   onAddIndicatorCalc: function (data) {
     console.log('onAddIndicatorCalc ( from the simpleform store )')
-    // var self = this;
-    // api.set_indicator_to_tag( {indicator_id:this.$parent.$data.indicator_id, indicator_tag_id:data }).then(function(){
-    //   self.loadIndicatorTag();
-    // });
-
     SimpleFormActions.initIndicatorToCalc(indicator_id)
 
   },

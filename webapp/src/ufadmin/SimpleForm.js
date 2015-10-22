@@ -122,6 +122,7 @@ var SimpleForm = React.createClass({
       if (this.state.store.loading) {
         return <div>Loading MetaData Manager</div>
       } else {
+        page('/ufadmin/manage/' + contentType +'/')
         return (
           <div>Error. There is no data received.</div>
         )
@@ -159,7 +160,6 @@ var SimpleForm = React.createClass({
       additionalFormComponents = ''
     }
 
-    // this is the basic form used for all content types
     var base_form = (
       <div>
         <p className="pageWelcome"> Welcome! </p>
@@ -175,10 +175,9 @@ var SimpleForm = React.createClass({
     if (this.state.store.saveSuccess) {
       var baseFormSuccess = <i className="fa fa-check"> saved successfully </i>
       var newId = this.state.store.objectId;
-      setTimeout(function(){
-          page('/ufadmin/manage/indicator/'+ newId);
-        }
-      , 500);
+      this.state.store.saveSuccess = false;
+      page('/ufadmin/manage/' + contentType +'/'+ newId);
+      SimpleFormActions.initialize(newId, contentType);
     }
 
     var subFormList;
