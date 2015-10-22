@@ -15,12 +15,16 @@ let ChartWizardStore = Reflux.createStore({
     return this.data
   },
 
-  onInitialize() {
+  onInitialize(chartDef) {
+
     api.indicatorsTree().then(data => {
       this.indicatorIndex = _.indexBy(data.flat, 'id');
       this.data.indicatorList = _(data.objects)
         .sortBy('title')
         .value()
+      this.data.indicatorSelected = chartDef.indicators.map(id => {
+        return this.indicatorIndex[id]
+      })
       this.trigger(this.data)
     })
   },
