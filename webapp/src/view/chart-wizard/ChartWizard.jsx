@@ -38,6 +38,7 @@ let ChartWizard = React.createClass({
   render() {
     let previewStep = (
       <div>
+        <label>Title</label>
         <input type='text' value={this.state.title} onChange={this.editTitle} />
         <a href="#" className="button success" onClick={this.createChart}>
           {this.props.chartDef ? "Update Chart" : "Create Chart"}
