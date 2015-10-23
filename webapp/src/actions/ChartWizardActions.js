@@ -6,7 +6,8 @@ let ChartWizardActions = Reflux.createActions([
   'addIndicator',
   'removeIndicator',
   'changeChart',
-  'previewChart'
+  'previewChart',
+  'saveChart'
 ])
 
 export default ChartWizardActions
