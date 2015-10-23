@@ -16,7 +16,7 @@ class BadFileHeaderException(Exception):
 
 class DocTransform(object):
 
-    def __init__(self,user_id,document_id,file_path=None):
+    def __init__(self,user_id,document_id):
 
         self.source_datapoints = []
         self.user_id = user_id
@@ -25,11 +25,8 @@ class DocTransform(object):
         ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
         self.file_delimiter = ','
 
-        if not file_path:
-            file_path = str(Document.objects.get(id=self.document.id).\
-                docfile)
-
-        self.file_path = file_path
+        self.file_path = str(Document.objects.get(id=self.document.id).\
+            docfile)
 
         self.to_process_status = ProcessStatus.objects.\
             get(status_text='TO_PROCESS').id
@@ -62,19 +59,6 @@ class DocTransform(object):
         self.post_process_file()
         self.upsert_source_object_map()
 
-    def get_document_file_stream(self,full_file_path):
-
-        f_header = open(full_file_path,'rb')
-        top_row = f_header.readlines()[0]
-        cleaned = top_row.replace('\r','').replace('\n','').replace('"','')
-
-        self.file_header = cleaned.split(self.file_delimiter)
-        f_header.close()
-
-        f = open(full_file_path,'r')
-        file_stream = f.readlines()[1:]
-
-        return file_stream
 
     def post_process_file(self):
         '''
@@ -112,17 +96,20 @@ class DocTransform(object):
         '''
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
-        file_stream = self.get_document_file_stream(full_file_path)
+        csv_df = read_csv(full_file_path)
 
         doc_obj = Document.objects.get(id = self.document.id)
-        doc_obj.file_header = self.file_header
+        doc_obj.file_header = list(csv_df.columns.values)
         doc_obj.save()
 
-        batch = {}
-        for i,(submission) in enumerate(file_stream):
+        ## this probably break the test..shoudl see if i can get this in init ##
+        self.file_header = doc_obj.file_header
 
-            ss, instance_guid = self.process_raw_source_submission(\
-                submission.replace('"','') ,i)
+        batch = {}
+
+        for submission in csv_df.itertuples():
+
+            ss, instance_guid = self.process_raw_source_submission(submission)
 
             if ss is not None:
                 batch[instance_guid] = ss
@@ -185,14 +172,11 @@ class DocTransform(object):
         return sm_obj.id
 
 
-    def process_raw_source_submission(self, submission, i):
+    def process_raw_source_submission(self, submission):
 
-        if len(self.file_header) != len(submission.split(self.file_delimiter)):
-            raise BadFileHeaderException()
+        submission_ix, submission_data = submission[0], submission[1:]
 
-        submission_data = dict(zip(self.file_header, \
-            submission.split(self.file_delimiter)))
-
+        submission_data = dict(zip(self.file_header,submission_data))
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
@@ -201,7 +185,7 @@ class DocTransform(object):
         submission_dict = {
             'submission_json': submission_data,
             'document_id': self.document.id,
-            'row_number': i,
+            'row_number': submission_ix,
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
