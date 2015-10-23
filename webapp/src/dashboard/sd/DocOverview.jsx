@@ -38,7 +38,6 @@ var DocOverview = React.createClass({
 
   componentWillMount: function (nextProps, nextState) {
     this.pullDocDetailTypes()
-    this.refreshMaster()
   },
 
   componentWillUpdate: function (nextProps, nextState) {
