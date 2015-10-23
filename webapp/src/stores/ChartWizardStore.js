@@ -57,6 +57,11 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onPreviewChart() {
+    if (!this.data.indicatorSelected.length) {
+      this.data.canDisplayChart = false
+      this.trigger(this.data)
+      return
+    }
     let chartType = this.data.chartType
     let groupBy = this.data.groupBy
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
