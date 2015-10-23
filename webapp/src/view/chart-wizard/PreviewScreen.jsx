@@ -6,6 +6,7 @@ let PreviewScreen = React.createClass({
       <div className='preview-screen'>
         <h1>Preview</h1>
         <p>Chart preview will be generated after country, indicator, campaign, and chart type are selected.</p>
+        {this.props.children}
       </div>
     )
   }

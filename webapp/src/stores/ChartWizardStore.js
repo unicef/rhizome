@@ -1,21 +1,31 @@
 import Reflux from 'reflux'
 import _ from 'lodash'
+import moment from 'moment'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
+import processChartData from 'stores/chartBuilder/processChartData'
 
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
     indicatorList: [],
-    indicatorSelected: []
+    indicatorSelected: [],
+    canDisplayChart: false
   },
 
   getInitialState() {
     return this.data
   },
 
-  onInitialize(chartDef) {
+  onInitialize(chartDef, location, campaign) {
+    this.data.chartType = chartDef.type
+    this.data.groupBy = chartDef.groupBy
+    this.data.x = chartDef.x
+    this.data.y = chartDef.y
+    this.data.location = location
+    this.data.campaign = campaign
+
     api.indicatorsTree().then(data => {
       this.indicatorIndex = _.indexBy(data.flat, 'id');
       this.data.indicatorList = _(data.objects)
@@ -24,18 +34,56 @@ let ChartWizardStore = Reflux.createStore({
       this.data.indicatorSelected = chartDef.indicators.map(id => {
         return this.indicatorIndex[id]
       })
-      this.trigger(this.data)
+      this.onPreviewChart()
     })
   },
 
   onAddIndicator(index) {
     this.data.indicatorSelected.push(this.indicatorIndex[index])
-    this.trigger(this.data)
+    this.onPreviewChart()
   },
 
   onRemoveIndicator(id) {
-    _.remove(this.data.indicatorSelected, {id: id});
-	  this.trigger(this.data);
+    _.remove(this.data.indicatorSelected, {id: id})
+    this.onPreviewChart()
+  },
+
+  onPreviewChart() {
+    let chartType = this.data.chartType
+    let groupBy = this.data.groupBy
+    let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
+    let groups = indicatorIndex // need work
+    let start = moment(this.data.campaign.start_date)
+    let lower = null // all time
+    let upper = start.clone().startOf('month')
+    let indicatorArray = _.map(this.data.indicatorSelected, _.property('id'))
+    let query = {
+      indicator__in: indicatorArray,
+      location__in: _.map([this.data.location], _.property('id')),
+      campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
+      campaign_end: upper.format('YYYY-MM-DD')
+    }
+
+    processChartData.init(api.datapoints(query),
+      chartType,
+      this.data.indicatorsSelected,
+      [this.data.location],
+      lower,
+      upper,
+      groups,
+      groupBy,
+      this.data.x,
+      this.data.y)
+    .then(chart => {
+      if (!chart.options || !chart.data) {
+        this.data.canDisplayChart = false
+      } else {
+        this.data.canDisplayChart = true
+        this.data.chartOptions = chart.options
+        this.data.chartData = chart.data
+      }
+      this.trigger(this.data)
+    });
   }
 })
 
