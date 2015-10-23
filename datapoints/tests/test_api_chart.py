@@ -27,17 +27,6 @@ class ChartResourceTest(ResourceTestCase):
                                               password=self.password)
         return result
 
-    def test_dashboard_post(self):
-        post_data = {'title': 'this is the title'}
-
-        resp = self.api_client.post('/api/v1/custom_dashboard/', format='json', \
-                                    data=post_data, authentication=self.get_credentials())
-
-        response_data = self.deserialize(resp)
-
-        self.assertHttpCreated(resp)
-        self.assertEqual(post_data['title'], response_data['title'])
-
     def test_chart_create(self):
         dash = CustomDashboard.objects.create(title='test', owner_id=self.user.id)
 
