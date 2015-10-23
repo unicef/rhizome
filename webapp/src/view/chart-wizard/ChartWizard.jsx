@@ -7,6 +7,7 @@ import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
+import Chart from 'component/Chart.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -27,7 +28,7 @@ let ChartWizard = React.createClass({
   },
 
   componentDidMount() {
-    ChartWizardActions.initialize(this.props.chartDef)
+    ChartWizardActions.initialize(this.props.chartDef, this.props.location, this.props.campaign)
   },
 
   createChart() {
@@ -51,6 +52,7 @@ let ChartWizard = React.createClass({
   },
 
   toggleStep(refer) {
+    ChartWizardActions.previewChart()
     this.setState({
       refer: refer
     })
@@ -79,6 +81,10 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let chart = (
+      <Chart id="custom-chart" type={this.state.data.chartType} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
+    )
+
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
@@ -104,7 +110,9 @@ let ChartWizard = React.createClass({
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>
-        <PreviewScreen />
+        <PreviewScreen>
+          {this.state.data.canDisplayChart ? chart : <p>No data</p>}
+        </PreviewScreen>
         <a className='chart-wizard__cancel' href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
       </div>
     )

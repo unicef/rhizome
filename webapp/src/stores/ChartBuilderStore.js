@@ -447,7 +447,6 @@ module.exports = Reflux.createStore({
 		var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id');
 		var groups = (groupBy == 'indicator'?indicatorsIndex:locationsIndex);
 		var start = moment(this.data.campaignSelected.start_date);
-		var meltObjects  = _.flow(_.property('objects'), melt);
 		var lower = this.getLower(start);//.subtract(1, 'year');
 		var upper = start.clone().startOf('month');
         var indicatorArray = _.map(this.data.indicatorsSelected,_.property('id'))

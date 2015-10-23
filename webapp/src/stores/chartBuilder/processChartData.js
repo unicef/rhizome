@@ -160,8 +160,8 @@ module.exports = {
   init:function(dataPromise,chartType,indicators,locations,lower,upper,groups,groupBy,xAxis,yAxis){
     var indicatorArray = _.map(indicators,_.property('id'));
     var meltPromise = dataPromise.then(function(data){
-                  return melt(data,indicatorArray);
-                  });
+      return melt(data,indicatorArray);
+    });
     if(chartType=="LineChart"){
      return this.processLineChart(meltPromise,lower,upper,groups,groupBy);
     } else if (chartType=="PieChart") {
@@ -178,6 +178,9 @@ module.exports = {
   },
   processLineChart:function(dataPromise,lower,upper,groups,groupBy){
     return dataPromise.then(function(data){
+      if (!data || data.length == 0) {
+        return {options: null, data: null}
+      }
       if(!lower) //set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
@@ -198,6 +201,9 @@ module.exports = {
     var idx = _.indexBy(indicators, 'id');
 
     return dataPromise.then(function(data){
+      if (!data || data.length == 0) {
+        return {options: null, data: null}
+      }
       var total = _(data).map(function(n){ return n.value;}).sum();
       var chartOptions = {
           domain  : _.constant([0, total]),
@@ -217,6 +223,9 @@ module.exports = {
 
     return Promise.all([dataPromise,api.geo({ location__in :_.map(locations,function(location){return location.id}) })])
     .then(_.spread(function(data, border){
+      if (!data || data.length == 0) {
+        return {options: null, data: null}
+      }
       var index = _.indexBy(data,'location');
       var chartOptions = {
               aspect: 1,
@@ -234,11 +243,14 @@ module.exports = {
   },
   processColumnChart: function(dataPromise,lower,upper,groups,groupBy){
     return dataPromise.then(function(data){
-        if(!lower) //set the lower bound from the lowest datapoint value
-        {
-          var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
-          lower = moment(_.first(sortedDates).campaign.start_date);
-        }
+      if (!data || data.length == 0) {
+        return {options: null, data: null}
+      }
+      if(!lower) //set the lower bound from the lowest datapoint value
+      {
+        var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'));
+        lower = moment(_.first(sortedDates).campaign.start_date);
+      }
       var columnScale = _.map(d3.time.scale()
             .domain([lower.valueOf(), upper.valueOf()])
             .ticks(d3.time.month, 1),
@@ -268,7 +280,9 @@ module.exports = {
     var locationsIndex = _.indexBy(locations, 'id');
 
     return dataPromise.then(function(data){
-
+      if (!data || data.length == 0) {
+        return {options: null, data: null}
+      }
       var domain = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
@@ -278,7 +292,6 @@ module.exports = {
         .pluck('value')
         .value()
       );
-      console.log(domain);
       var range = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
@@ -302,28 +315,9 @@ module.exports = {
           return _.isFinite(d.x) && _.isFinite(d.y);
         })
         .value();
-        var showTooltip = function (d, i, el) {
-          var evt = d3.event;
-
-          /*tooltipVue.$emit('tooltip-show', {
-            el       : el,
-            position : {
-              x : evt.pageX,
-              y : evt.pageY
-            },
-            data : {
-              // Have to make sure we use the default tooltip, otherwise if a
-              // different template was used, this shows the old template
-              template : 'tooltip-default',
-              text     : d.name,
-              delay    : 0
-            }
-          });*/
-        };
-
-        var hideTooltip = function (d, i, el) {
-          //tooltipVue.$emit('tooltip-hide', { el : el });
-        };
+      var showTooltip = function (d, i, el) {
+        var evt = d3.event;
+      };
       var chartOptions = {
         aspect      : 1.7,
         domain      : _.constant(domain),
@@ -338,9 +332,12 @@ module.exports = {
   },
   processBarChart: function(dataPromise,locations,indicators,xAxis,yAxis){
       return dataPromise.then(function(data){
-         var indicatorsIndex = _.indexBy(indicators, 'id');//;
-         var locationsIndex = _.indexBy(locations, 'id');
-         var datapoints = _(data)
+        if (!data || data.length == 0) {
+          return {options: null, data: null}
+        }
+        var indicatorsIndex = _.indexBy(indicators, 'id');//;
+        var locationsIndex = _.indexBy(locations, 'id');
+        var datapoints = _(data)
           .thru(util.unpivot)
           .forEach(function (d) {
             d.indicator = indicatorsIndex[d.indicator];
@@ -351,16 +348,16 @@ module.exports = {
             return d.indicator.id;
           }).value();
 
-          var locationMapping = {
-            'value'       : 'x',
-            'location.name' : 'y'
-          };
+        var locationMapping = {
+          'value'       : 'x',
+          'location.name' : 'y'
+        };
 
-          var chartOptions = {
-            offset  : 'zero',
-            xFormat : d3.format('%')
-          };
-          var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator);
+        var chartOptions = {
+          offset  : 'zero',
+          xFormat : d3.format('%')
+        };
+        var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator);
         return {options:chartOptions,data:chartData};
       });
   }
