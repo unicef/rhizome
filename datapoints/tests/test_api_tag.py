@@ -41,6 +41,7 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.assertHttpCreated(resp)
         self.assertNotEqual(post_data['id'], response_data['id'])
         self.assertEqual(IndicatorTag.objects.count(), 1)
+        self.assertNotEqual(IndicatorTag.objects.all()[0].id, -1)
 
     def test_update_tag(self):
 
@@ -50,7 +51,6 @@ class IndicatorTagResourceTest(ResourceTestCase):
                                     tag_name='Test Tag Name', )
 
         self.assertEqual(IndicatorTag.objects.count(), 1)
-
         new_tag_name = "New Tag Name"
         post_data = {"id": tag.id, "tag_name": new_tag_name }
         resp = self.api_client.post('/api/v1/indicator_tag/', format='json', \
