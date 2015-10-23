@@ -21,7 +21,8 @@ var NavigationStore = Reflux.createStore({
       CampaignStore.getCampaignsPromise(),
       RegionStore.getlocationsPromise(),
       api.office().then(response => _.indexBy(response.objects, 'id')),
-      api.get_dashboard(),
+      //api.get_dashboard(),
+        []
     ]).then(_.spread(this._loadDashboards));
   },
 
@@ -70,7 +71,8 @@ var NavigationStore = Reflux.createStore({
 
   // Helpers
   _loadDashboards: function (campaigns, locations, offices, dashboards) {
-    var allDashboards = builtins.concat(dashboards.objects);
+    //var allDashboards = builtins.concat(dashboards.objects);
+    var allDashboards = builtins;
     var self = this;
 
     locations = _(locations);
@@ -79,7 +81,6 @@ var NavigationStore = Reflux.createStore({
     this.dashboards = _(allDashboards)
       .map(function (d) {
         var availablelocations = self._filterlocations(d, locations);
-
         // If after all of that, there are no locations left that this user is
         // allowed to see for this dashboard, return null so it can be filtered
         if (availablelocations.size() < 1) {
