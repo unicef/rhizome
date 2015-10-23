@@ -98,8 +98,6 @@ var DocForm = React.createClass({
         var rgHeaderList = this.buildHeaderList('location_column')
         var cpHeaderList = this.buildHeaderList('campaign_column')
 
-        console.log('THIS DOT STATE',this.state)
-
         if (this.state.created_doc_id) {
             var uq_col = this.state.uq_id_column
             // var uq_col = this.state.data['']
