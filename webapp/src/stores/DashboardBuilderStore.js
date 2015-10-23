@@ -174,13 +174,14 @@ var DashboardBuilderStore = Reflux.createStore({
       dashboard_json: '[]'
     };
     api.save_dashboard(data).then(function (response) {
-
       if (response.objects.id) {
         window.location = "/datapoints/dashboards/edit/" + response.objects.id;
       }
       else {
         alert("There was an error saving your chart");
       }
+    },function(response){
+      alert(response.msg);
     });
   },
   saveDashboard: function () {
