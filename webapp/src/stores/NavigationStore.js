@@ -15,7 +15,6 @@ var NavigationStore = Reflux.createStore({
     this.campaigns = [];
     this.dashboards = [];
     this.customDashboards = null;
-    this.documents = [];
     this.loaded = false;
 
     Promise.all([
@@ -23,7 +22,6 @@ var NavigationStore = Reflux.createStore({
       RegionStore.getlocationsPromise(),
       api.office().then(response => _.indexBy(response.objects, 'id')),
       api.get_dashboard(),
-      api.source_doc()
     ]).then(_.spread(this._loadDashboards));
   },
 
@@ -71,7 +69,7 @@ var NavigationStore = Reflux.createStore({
   },
 
   // Helpers
-  _loadDashboards: function (campaigns, locations, offices, dashboards, documents) {
+  _loadDashboards: function (campaigns, locations, offices, dashboards) {
     var allDashboards = builtins.concat(dashboards.objects);
     var self = this;
 
@@ -141,10 +139,6 @@ var NavigationStore = Reflux.createStore({
           dashboards: links
         }, c);
       });
-
-    this.documents = _(documents.objects)
-      .sortBy('docfile')
-      .value();
 
     this.loaded = true;
 
