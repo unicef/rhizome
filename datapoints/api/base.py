@@ -141,7 +141,6 @@ class BaseModelResource(ModelResource):
             errorCode = DataPointsException.defaultCode
             errorMessage = DataPointsException.defaultMessage
 
-            print error
             if isinstance(error, DataPointsException):
                 errorCode = error.code
                 errorMessage = error.message
