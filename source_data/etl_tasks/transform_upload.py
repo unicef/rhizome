@@ -17,7 +17,7 @@ class BadFileHeaderException(Exception):
 class DocTransform(object):
 
     def __init__(self,user_id,document_id):
-        
+
         self.source_datapoints = []
         self.user_id = user_id
         self.document = Document.objects.get(id=document_id)
@@ -161,7 +161,7 @@ class DocTransform(object):
 
         sm_obj, created = SourceObjectMap.objects.get_or_create(\
             content_type = content_type\
-           ,source_object_code = source_object_code\
+           ,source_object_code = str(source_object_code)\
            ,defaults = {
             'master_object_id':-1,
             'mapped_by_id':self.user_id

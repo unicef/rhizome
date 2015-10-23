@@ -212,10 +212,10 @@ class MasterRefresh(object):
                 , str(self.db_doc_deets['campaign_column'])
 
             location_id = self.source_map_dict.get(('location'\
-                    ,submission_dict[location_column]),None)
+                    ,unicode(submission_dict[location_column])),None)
 
             campaign_id = self.source_map_dict.get(('campaign'\
-                    ,submission_dict[campaign_column]),None)
+                    ,unicode(submission_dict[campaign_column])),None)
 
             if location_id and campaign_id:
 

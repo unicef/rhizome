@@ -32,16 +32,16 @@ class RefreshMasterTestCase(TestCase):
         test will run independently of this module, but for now this is how
         we initialize data in the system via the .csv below.
         '''
-
-        self.location_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
-
+        self.location_list = Location.objects.all().values_list('name',flat=True)
         self.create_metadata()
         self.user = User.objects.get(username = 'test')
-        self.document = Document.objects.get(doc_title = 'test')
 
-        dt = DocTransform(self.user.id, self.document.id\
-            , self.test_file_location)
+        self.document = Document.objects.get(doc_title = 'test')
+        self.document.docfile = self.test_file_location
+        self.document.save()
+
+        dt = DocTransform(self.user.id, self.document.id)
 
         self.source_submissions_ids = dt.process_file()
         self.source_submission_detail_ids = dt.post_process_file()
