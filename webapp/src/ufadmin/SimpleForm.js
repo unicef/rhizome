@@ -160,11 +160,17 @@ var SimpleForm = React.createClass({
       additionalFormComponents = ''
     }
 
+    var idInfo = '';
+    if (this.state.store.objectId != -1) {
+         idInfo = (<div>
+         <h5>id: {this.state.store.objectId} </h5>
+         <br></br></div>);
+    }
+
     var base_form = (
       <div>
         <p className="pageWelcome"> Welcome! </p>
-        <h5>id: {this.state.store.objectId} </h5>
-        <br></br>
+        {idInfo}
         <ReactJson value={formData} settings={formSettings} ref="form_data"/>
         {additionalFormComponents}
         <br></br>
