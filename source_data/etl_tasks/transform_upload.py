@@ -9,6 +9,10 @@ from pandas.io.excel import read_excel
 from source_data.models import *
 from datapoints.models import DataPoint
 
+class BadFileHeaderException(Exception):
+    defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
+    defaultCode = -2
+
 
 class DocTransform(object):
 
@@ -182,6 +186,9 @@ class DocTransform(object):
 
 
     def process_raw_source_submission(self, submission, i):
+
+        if len(self.file_header) != len(submission.split(self.file_delimiter)):
+            raise BadFileHeaderException()
 
         submission_data = dict(zip(self.file_header, \
             submission.split(self.file_delimiter)))
