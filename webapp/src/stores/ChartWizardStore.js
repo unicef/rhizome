@@ -10,6 +10,7 @@ import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
+    title: '',
     indicatorList: [],
     indicatorSelected: [],
     chartType: '',
@@ -21,6 +22,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onInitialize(chartDef, location, campaign) {
+    this.data.title = chartDef.title
     this.data.chartType = chartDef.type
     this.data.groupBy = chartDef.groupBy
     this.data.x = chartDef.x
@@ -30,14 +32,17 @@ let ChartWizardStore = Reflux.createStore({
 
     api.indicatorsTree().then(data => {
       this.indicatorIndex = _.indexBy(data.flat, 'id');
-      this.data.indicatorList = _(data.objects)
-        .sortBy('title')
-        .value()
+      this.data.indicatorList = _.sortBy(data.objects, 'title')
       this.data.indicatorSelected = chartDef.indicators.map(id => {
         return this.indicatorIndex[id]
       })
       this.onPreviewChart()
     })
+  },
+
+  onEditTitle(value) {
+    this.data.title = value
+    this.trigger(this.data)
   },
 
   onAddIndicator(index) {

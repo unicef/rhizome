@@ -7,6 +7,7 @@ import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
+import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import ChartSelect from '../chart-builder/ChartSelect.jsx'
 
@@ -36,7 +37,6 @@ let ChartWizard = React.createClass({
   getInitialState() {
     return {
       refer: 'country',
-      title: this.props.chartDef ? this.props.chartDef.title : ''
     }
   },
 
@@ -47,7 +47,7 @@ let ChartWizard = React.createClass({
 
   createChart() {
     let chart = _.merge(this.chartDef, {
-      title: this.state.title,
+      title: this.state.data.title,
       type: this.state.data.chartType,
       indicators: this.state.data.indicatorSelected.map(item => {
         return item.id
@@ -57,13 +57,6 @@ let ChartWizard = React.createClass({
     })
 
     this.props.save(chart)
-  },
-
-  editTitle(e) {
-    let title = e.target.value
-    this.setState({
-      title: title
-    })
   },
 
   toggleStep(refer) {
@@ -76,7 +69,7 @@ let ChartWizard = React.createClass({
     let previewStep = (
       <div>
         <label>Title</label>
-        <input type='text' value={this.state.title} onChange={this.editTitle} />
+        <TitleInput initialText={this.state.data.title} save={ChartWizardActions.editTitle} />
         <a href="#" className="button success" onClick={this.createChart}>
           {this.props.chartDef ? "Update Chart" : "Create Chart"}
         </a>
