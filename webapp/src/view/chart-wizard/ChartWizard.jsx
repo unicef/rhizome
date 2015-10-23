@@ -48,6 +48,7 @@ let ChartWizard = React.createClass({
   createChart() {
     let chart = _.merge(this.chartDef, {
       title: this.state.title,
+      type: this.state.data.chartType,
       indicators: this.state.data.indicatorSelected.map(item => {
         return item.id
       })
