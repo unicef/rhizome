@@ -10,11 +10,10 @@ import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
-    title: '',
     indicatorList: [],
     indicatorSelected: [],
-    chartType: '',
-    canDisplayChart: false
+    canDisplayChart: false,
+    chartDef: {}
   },
 
   getInitialState() {
@@ -22,11 +21,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onInitialize(chartDef, location, campaign) {
-    this.data.title = chartDef.title
-    this.data.chartType = chartDef.type
-    this.data.groupBy = chartDef.groupBy
-    this.data.x = chartDef.x
-    this.data.y = chartDef.y
+    this.data.chartDef = chartDef
     this.data.location = location
     this.data.campaign = campaign
 
@@ -41,7 +36,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onEditTitle(value) {
-    this.data.title = value
+    this.data.chartDef.title = value
     this.trigger(this.data)
   },
 
@@ -56,7 +51,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onChangeChart(value) {
-    this.data.chartType = value
+    this.data.chartDef.type = value
     this.data.chartData = []
     this.onPreviewChart()
   },
@@ -67,8 +62,8 @@ let ChartWizardStore = Reflux.createStore({
       this.trigger(this.data)
       return
     }
-    let chartType = this.data.chartType
-    let groupBy = this.data.groupBy
+    let chartType = this.data.chartDef.type
+    let groupBy = this.data.chartDef.groupBy
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
     let groups = indicatorIndex // need work
     let start = moment(this.data.campaign.start_date)
@@ -84,14 +79,14 @@ let ChartWizardStore = Reflux.createStore({
 
     processChartData.init(api.datapoints(query),
       chartType,
-      this.data.indicatorsSelected,
+      this.data.chartDef.indicatorsSelected,
       [this.data.location],
       lower,
       upper,
       groups,
       groupBy,
-      this.data.x,
-      this.data.y)
+      this.data.chartDef.x,
+      this.data.chartDef.y)
     .then(chart => {
       if (!chart.options || !chart.data) {
         this.data.canDisplayChart = false
@@ -102,6 +97,16 @@ let ChartWizardStore = Reflux.createStore({
       }
       this.trigger(this.data)
     });
+  },
+
+  onSaveChart(callback) {
+    callback(_.merge(this.data.chartDef, {
+      indicators: this.data.indicatorSelected.map(item => {
+        return item.id
+      })
+    }, (a, b) => {
+      return b
+    }))
   }
 })
 

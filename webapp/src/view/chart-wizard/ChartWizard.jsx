@@ -16,6 +16,7 @@ import ChartWizardStore from 'stores/ChartWizardStore'
 import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 
 const defaultChartDef = {
+  title: '',
   type: 'LineChart',
   indicators: [],
   groupBy: 'indicator',
@@ -45,18 +46,8 @@ let ChartWizard = React.createClass({
     ChartWizardActions.initialize(this.chartDef, this.props.location, this.props.campaign)
   },
 
-  createChart() {
-    let chart = _.merge(this.chartDef, {
-      title: this.state.data.title,
-      type: this.state.data.chartType,
-      indicators: this.state.data.indicatorSelected.map(item => {
-        return item.id
-      })
-    }, (a, b) => {
-      return b
-    })
-
-    this.props.save(chart)
+  saveChart() {
+    ChartWizardActions.saveChart(this.props.save)
   },
 
   toggleStep(refer) {
@@ -69,8 +60,8 @@ let ChartWizard = React.createClass({
     let previewStep = (
       <div>
         <label>Title</label>
-        <TitleInput initialText={this.state.data.title} save={ChartWizardActions.editTitle} />
-        <a href="#" className="button success" onClick={this.createChart}>
+        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle} />
+        <a href="#" className="button success" onClick={this.saveChart}>
           {this.props.chartDef ? "Update Chart" : "Create Chart"}
         </a>
       </div>
@@ -90,13 +81,13 @@ let ChartWizard = React.createClass({
 
     let chartTypeStep = (
       <div>
-        <ChartSelect charts={chartDefinitions} value={this.state.data.chartType}
+        <ChartSelect charts={chartDefinitions} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
       </div>
     )
 
     let chart = (
-      <Chart id="custom-chart" type={this.state.data.chartType} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
+      <Chart id="custom-chart" type={this.state.data.chartDef.type} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
     )
 
     return (
