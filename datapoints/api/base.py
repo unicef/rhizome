@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -146,6 +147,7 @@ class BaseModelResource(ModelResource):
                 errorMessage = error.message
 
             data = {
+                'traceback': traceback.format_exc(),
                 'error': errorMessage,
                 'code': errorCode
             }
