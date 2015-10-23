@@ -14,6 +14,17 @@ import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
 import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 
+const defaultChartDef = {
+  type: 'LineChart',
+  indicators: [],
+  groupBy: 'indicator',
+  timeRange: null,
+  x: 0,
+  xFormat: ',.0f',
+  y: 0,
+  yFormat: ',.0f'
+}
+
 let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data')],
 
@@ -25,16 +36,17 @@ let ChartWizard = React.createClass({
   getInitialState() {
     return {
       refer: 'country',
-      title: this.props.chartDef.title
+      title: this.props.chartDef ? this.props.chartDef.title : ''
     }
   },
 
   componentDidMount() {
-    ChartWizardActions.initialize(this.props.chartDef, this.props.location, this.props.campaign)
+    this.chartDef = this.props.chartDef || defaultChartDef
+    ChartWizardActions.initialize(this.chartDef, this.props.location, this.props.campaign)
   },
 
   createChart() {
-    let chart = _.merge(this.props.chartDef, {
+    let chart = _.merge(this.chartDef, {
       title: this.state.title,
       indicators: this.state.data.indicatorSelected.map(item => {
         return item.id
