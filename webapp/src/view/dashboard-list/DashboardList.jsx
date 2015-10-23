@@ -29,12 +29,31 @@ module.exports = React.createClass({
     Reflux.connect(NavigationStore, 'store')
   ],
 
+  getInitialState: function() {
+    return {
+      customDashboards: []
+    }
+  },
+
+  getCustomDashboards: function() {
+    var self = this;
+    api.get_dashboard().then(function(response) {
+      var customDashboards = _(response.objects).sortBy('title').value();
+      self.setState({customDashboards: customDashboards});
+    });
+  },
+
+  componentWillMount: function() {
+    this.getCustomDashboards();
+  },
+
   render : function () {
-    var rows;
-    if (_.isNull(NavigationStore.customDashboards)) {
+    var self = this;
+    var rows = self.state.customDashboards;
+    if (_.isNull(rows)) {
       rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading&hellip;</td></tr>;
-    } else if (NavigationStore.customDashboards.length > 0) {
-      rows = NavigationStore.customDashboards.map(_tableRow);
+    } else if (rows.length > 0) {
+      rows = rows.map(_tableRow);
     } else {
       rows = <tr><td>No custom dashboards created yet.</td></tr>;
     }
