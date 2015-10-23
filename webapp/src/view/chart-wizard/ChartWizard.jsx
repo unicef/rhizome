@@ -8,9 +8,11 @@ import PreviewScreen from './PreviewScreen.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 import Chart from 'component/Chart.jsx'
+import ChartSelect from '../chart-builder/ChartSelect.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
+import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 
 let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data')],
@@ -52,7 +54,6 @@ let ChartWizard = React.createClass({
   },
 
   toggleStep(refer) {
-    ChartWizardActions.previewChart()
     this.setState({
       refer: refer
     })
@@ -81,6 +82,13 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let chartTypeStep = (
+      <div>
+        <ChartSelect charts={chartDefinitions} value={this.state.data.chartType}
+          onChange={ChartWizardActions.changeChart}/>
+      </div>
+    )
+
     let chart = (
       <Chart id="custom-chart" type={this.state.data.chartType} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
     )
@@ -101,7 +109,7 @@ let ChartWizard = React.createClass({
             <p>select campaign here</p>
           </ChartWizardStep>
           <ChartWizardStep title='Select Chart Type' refer='chart-type'>
-            <p>select chart type here</p>
+            {chartTypeStep}
           </ChartWizardStep>
           <ChartWizardStep title='Customise Styles' refer='style'>
             <p>Customise styles here</p>
@@ -111,7 +119,7 @@ let ChartWizard = React.createClass({
           </ChartWizardStep>
         </ChartWizardStepList>
         <PreviewScreen>
-          {this.state.data.canDisplayChart ? chart : <p>No data</p>}
+          {this.state.data.canDisplayChart ? chart : null}
         </PreviewScreen>
         <a className='chart-wizard__cancel' href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
       </div>

@@ -5,12 +5,14 @@ import moment from 'moment'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
 import processChartData from 'stores/chartBuilder/processChartData'
+import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
 
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
     indicatorList: [],
     indicatorSelected: [],
+    chartType: '',
     canDisplayChart: false
   },
 
@@ -45,6 +47,12 @@ let ChartWizardStore = Reflux.createStore({
 
   onRemoveIndicator(id) {
     _.remove(this.data.indicatorSelected, {id: id})
+    this.onPreviewChart()
+  },
+
+  onChangeChart(value) {
+    this.data.chartType = value
+    this.data.chartData = []
     this.onPreviewChart()
   },
 
