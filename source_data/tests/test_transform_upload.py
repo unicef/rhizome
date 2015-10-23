@@ -21,8 +21,12 @@ class TransformUploadTestCase(TestCase):
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
 
-        self.location_list = Location.objects.all().values_list('name',flat=True)
         self.test_file_location = 'ebola_data.csv'
+        self.document.docfile = self.test_file_location
+        self.document.save()
+
+
+        self.location_list = Location.objects.all().values_list('name',flat=True)
 
     def test_doc_to_source_submission(self):
         '''
@@ -49,8 +53,7 @@ class TransformUploadTestCase(TestCase):
 
         self.set_up()
 
-        dt = DocTransform(self.user.id, self.document.id\
-            , self.test_file_location)
+        dt = DocTransform(self.user.id, self.document.id)
 
         source_submissions = dt.process_file()
 
