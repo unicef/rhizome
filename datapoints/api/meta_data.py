@@ -118,25 +118,35 @@ class LocationTypeResource(BaseModelResource):
 
 class IndicatorTagResource(BaseModelResource):
     def get_object_list(self, request):
-
         try:
-            tag_id = request.POST['id']
-
-            if tag_id == '-1':
-                tag_id = None
-
-            tag_post_data = clean_post_data(dict(request.POST))
-            del tag_post_data['id']
-
-            tag_obj, created = IndicatorTag.objects.update_or_create(id=tag_id,
-                                                                     defaults=tag_post_data)
-
-            qs = IndicatorTag.objects.filter(id=tag_obj.id).values()
-
+            tag_id = request.GET['id']
+            return IndicatorTag.objects.filter(id=tag_id).values()
         except KeyError:
             return super(IndicatorTagResource, self).get_object_list(request)
 
-        return qs
+    def obj_create(self, bundle, **kwargs):
+        post_data = bundle.data
+
+        try:
+            id = int(post_data['id'])
+            if id == -1:
+                id = None
+        except KeyError:
+            id = None
+
+        defaults = {
+            'tag_name': post_data['tag_name']
+        }
+
+        tag, created = IndicatorTag.objects.update_or_create(
+            id=id, \
+            defaults=defaults
+        )
+
+        bundle.obj = tag
+        bundle.data['id'] = tag.id
+
+        return bundle
 
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
