@@ -17,7 +17,7 @@ class BadFileHeaderException(Exception):
 class DocTransform(object):
 
     def __init__(self,user_id,document_id):
-
+        
         self.source_datapoints = []
         self.user_id = user_id
         self.document = Document.objects.get(id=document_id)
@@ -96,7 +96,8 @@ class DocTransform(object):
         '''
 
         full_file_path = settings.MEDIA_ROOT + self.file_path
-        csv_df = read_csv(full_file_path)
+        raw_csv_df = read_csv(full_file_path)
+        csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(csv_df.columns.values)
