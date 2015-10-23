@@ -6,7 +6,9 @@ var Reflux = require('reflux');
 var page = require('page');
 var moment = require('moment');
 
+var api = require('data/api');
 var dashboardInit = require('data/dashboardInit');
+var builtins = require('dashboard/builtin');
 
 var TitleMenu = require('component/TitleMenu.jsx');
 var RegionTitleMenu = require('component/RegionTitleMenu');
@@ -47,10 +49,22 @@ var Dashboard = React.createClass({
             location: null,
             campaign: null,
             dashboard: null,
+            allDashboards: []
         };
     },
 
+    getallDashboards: function() {
+        var self = this;
+        api.get_dashboard().then(function(response) {
+            var customDashboards = _(response.objects).sortBy('title').value();
+            var allDashboards = builtins.concat(customDashboards);
+            console.log(allDashboards);
+            self.setState({allDashboards: allDashboards});
+        });
+    },
+
     componentWillMount: function () {
+        this.getallDashboards();
         page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData);
         page('/datapoints/:dashboard/:location/:year/:month', this._show);
         page('/datapoints/:dashboard', this._showDefault);
@@ -148,6 +162,27 @@ var Dashboard = React.createClass({
         });
     },
 
+    _getDashboard: function (slug) {
+        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+        if (dashboard.id <= 0) {
+            return new Promise(resolve => {
+                resolve(dashboard)
+            })
+        } else {
+            return api.get_chart({dashboard_id: dashboard.id}, null, {'cache-control': 'no-cache'}).then(res => {
+                dashboard.charts = res.objects.map(chart => {
+                    var result = chart.chart_json;
+                    result.id = chart.id;
+                    return result;
+                })
+                return dashboard
+            }, function (err) {
+                console.log(err);
+                dashboard.charts = [];
+            });
+        }
+    },
+
     _navigate: function (params) {
         var slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title));
         var location = _.get(params, 'location', this.state.location.name);
@@ -160,7 +195,7 @@ var Dashboard = React.createClass({
     },
 
     _showDefault: function (ctx) {
-        NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+        this._getDashboard(ctx.params.dashboard).then(dashboard => {
             DashboardActions.setDashboard({
                 dashboard
             });
@@ -261,7 +296,7 @@ var Dashboard = React.createClass({
         }
 
         var dashboardItems = MenuItem.fromArray(
-            _.map(NavigationStore.dashboards, d => {
+            _.map(this.state.allDashboards, d => {
                 return {
                     title: d.title,
                     value: _.kebabCase(d.title)
