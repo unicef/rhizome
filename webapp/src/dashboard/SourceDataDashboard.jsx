@@ -5,11 +5,14 @@ var React = require('react');
 var api = require('data/api.js')
 var moment = require('moment');
 var page = require('page');
+var Reflux = require('reflux');
 
 var NavigationStore = require('stores/NavigationStore');
 var ReviewTable = require('dashboard/sd/ReviewTable.js');
 var DocOverview = require('dashboard/sd/DocOverview.jsx');
 var DocForm = require('dashboard/sd/DocForm.jsx');
+var SourceDataDashboardStore = require('stores/SourceDataDashboardStore');
+var SourceDataDashboardAction = require('actions/SourceDataDashboardActions');
 
 var TitleMenu = require('component/TitleMenu.jsx');
 var MenuItem = require('component/MenuItem.jsx');
@@ -23,6 +26,10 @@ var {
     } = require('react-datascope');
 
 var SourceDataDashboard = React.createClass({
+    mixins : [
+        Reflux.connect(SourceDataDashboardStore)
+    ],
+
     propTypes: {
         dashboard: React.PropTypes.object.isRequired,
         data: React.PropTypes.object.isRequired,
@@ -40,21 +47,11 @@ var SourceDataDashboard = React.createClass({
         }
     },
 
-    getDocObj: function (doc_id) {
-        var self = this;
-        api.source_doc({id: doc_id}).then(function (response) {
-            self.setState({doc_obj: response.objects[0]})
-        })
-    },
-
     componentWillMount: function (nextProps, nextState) {
-        this.getDocObj(this.props.doc_id)
+        var data = SourceDataDashboardAction.getDocObj(this.props.doc_id);
+        this.setState({doc_obj: data.doc_obj});
     },
-
-    componentWillReceiveProps: function (nextProps) {
-        this.getDocObj(nextProps.doc_id)
-    },
-
+    
     componentWillUpdate: function (nextProps, nextState) {
         if (nextProps.doc_id != this.props.doc_id) {
             return;
