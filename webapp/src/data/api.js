@@ -129,7 +129,8 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
         if (error) {
           reject({
             status: res.status,
-            msg: res.body.error
+            msg: ((!!res.body) ? res.body.error : ''),
+            code: ((!!res.body) ? res.body.code : -1)
           });
         } else {
           fulfill({
