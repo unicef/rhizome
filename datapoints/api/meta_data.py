@@ -633,12 +633,9 @@ class SourceSubmissionResource(BaseModelResource):
 
         try:
             qs = SourceSubmissionDetail.objects.filter(document_id=request \
-                                                       .GET['document_id']).values()
+               .GET['document_id']).values()
         except KeyError:
-            qs = SourceSubmission.objects.filter(id=SourceSubmissionDetail \
-                                                 .objects.get(id=request \
-                                                              .GET['id']).source_submission_id) \
-                .values()
+            qs = SourceSubmission.objects.filter(id=request.GET['id']).values()
 
         return qs
 

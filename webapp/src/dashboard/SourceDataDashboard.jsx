@@ -51,7 +51,7 @@ var SourceDataDashboard = React.createClass({
         var data = SourceDataDashboardAction.getDocObj(this.props.doc_id);
         this.setState({doc_obj: data.doc_obj});
     },
-    
+
     componentWillUpdate: function (nextProps, nextState) {
         if (nextProps.doc_id != this.props.doc_id) {
             return;
@@ -118,8 +118,8 @@ var SourceDataDashboard = React.createClass({
             'viewraw': {
                 'meta_fn': api.submissionMeta,
                 'data_fn': api.submission,
-                'fields': ['id', 'username_code', 'location_code', 'campaign_code', 'location_display', 'edit_link'],
-                'search_fields': ['id', 'username_code', 'location_code', 'campaign_code', 'location_display'],
+                'fields': ['source_submission_id', 'username_code', 'location_code', 'campaign_code', 'location_display', 'edit_link'],
+                'search_fields': ['source_submission_id', 'username_code', 'location_code', 'campaign_code', 'location_display'],
             },
             'doc_index': {
                 'data_fn': api.source_doc,

@@ -58,7 +58,6 @@ var Dashboard = React.createClass({
         api.get_dashboard().then(function(response) {
             var customDashboards = _(response.objects).sortBy('title').value();
             var allDashboards = builtins.concat(customDashboards);
-            console.log(allDashboards);
             self.setState({allDashboards: allDashboards});
         });
     },
