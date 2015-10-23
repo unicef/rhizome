@@ -1,4 +1,5 @@
 import traceback
+import locale
 
 from decimal import InvalidOperation
 from pprint import pprint
@@ -350,7 +351,14 @@ class MasterRefresh(object):
         keep the size of the database manageable, we only accept non zero values.
         '''
 
+        if val is None:
+            return None
+
+        locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
+
         try:
+            cleaned_val = locale.atoi(val) # 100,000 -> 100000.oo
+        except AttributeError:
             cleaned_val = float(val)
         except ValueError:
             raise ValueError(' can not convert to float')
