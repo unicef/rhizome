@@ -20,13 +20,12 @@ from django.http import QueryDict
 from django.utils.html import escape
 from django.utils.datastructures import MultiValueDictKeyError
 
-from datapoints.api.base import BaseModelResource, BaseNonModelResource
+from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.cache_tasks import CacheRefresh
-
 
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -355,17 +354,26 @@ class CustomDashboardResource(BaseModelResource):
 
         default_office_id = 1  # FIXME int(post_data['default_office_id'][0])
 
+        title = post_data['title']
+
         defaults = {
             'id': dash_id,
-            'title': post_data['title'],
+            'title': title,
             'owner_id': user_id,
             'default_office_id': default_office_id,
         }
 
+        if(CustomDashboard.objects.filter(title=title).count()>0):
+            raise DataPointsException('the custom dashboard "{0}" already exists'.format(title))
+
         dashboard, created = CustomDashboard.objects.update_or_create(
-            id=dash_id, \
-            defaults=defaults
-        )
+                id=dash_id, \
+                defaults=defaults)
+        # try:
+        #
+        # except:
+        #     raise ImmediateHttpResponse(
+        #         HttpForbidden("This custom dashboard already exists."))
 
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id

@@ -3,10 +3,11 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from tastypie.authorization import Authorization
-from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,\
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, \
     MultiAuthentication
 from tastypie.resources import ModelResource, Resource, ALL
 from tastypie.cache import SimpleCache
+from tastypie import http
 
 try:
     from django.views.decorators.csrf import csrf_exempt
@@ -18,16 +19,27 @@ from datapoints.models import LocationType, Location, LocationPermission, \
     LocationTree
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
+
+class DataPointsException(Exception):
+    defaultMessage = "Sorry, this request could not be processed."
+    defaultCode = -1
+
+    def __init__(self, message=defaultMessage, code=defaultCode):
+        self.message = message
+        self.code = code
+
+
 class CustomSessionAuthentication(SessionAuthentication):
     """
     """
+
     def is_authenticated(self, request, **kwargs):
         """
         """
 
         ## this is the line i have to override in order to get
         ## POST request to successfully authenticate ##
-        if request.method in ('GET','POST','DELETE'):
+        if request.method in ('GET', 'POST', 'DELETE'):
             return request.user.is_authenticated()
 
         if getattr(request, '_dont_enforce_csrf_checks', False):
@@ -65,7 +77,7 @@ class CustomCache(SimpleCache):
         Instatiate the cache_control instance, and add the headers needed.
         '''
         control = super(CustomCache, self).cache_control()
-        control.update({'must_revalidate':True, 'max_age': 3600})
+        control.update({'must_revalidate': True, 'max_age': 3600})
         return control
 
 
@@ -88,11 +100,11 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(CustomSessionAuthentication(),\
-            ApiKeyAuthentication())
+        authentication = MultiAuthentication(CustomSessionAuthentication(), \
+                                             ApiKeyAuthentication())
         authorization = Authorization()
         always_return_data = True
-        allowed_methods = ['get','post','delete']
+        allowed_methods = ['get', 'post', 'delete']
         cache = CustomCache()
         serializer = CustomSerializer()
 
@@ -121,7 +133,29 @@ class BaseModelResource(ModelResource):
         # prevents Django from freaking out.
 
         # request = convert_post_to_put(request)
-        response = method(request, **kwargs)
+
+        try:
+            response = method(request, **kwargs)
+        except Exception as error:
+
+            errorCode = DataPointsException.defaultCode
+            errorMessage = DataPointsException.defaultMessage
+
+            print error
+            if isinstance(error, DataPointsException):
+                errorCode = error.code
+                errorMessage = error.message
+
+            data = {
+                'error': errorMessage,
+                'code': errorCode
+            }
+
+            return self.error_response(
+                request,
+                data,
+                response_class=http.HttpApplicationError
+            )
 
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
@@ -143,7 +177,7 @@ class BaseModelResource(ModelResource):
         if self.Meta.resource_name == 'datapointentry':
             return super(ModelResource, self).get_list(request, **kwargs)
 
-        if len(objects) > 0 :
+        if len(objects) > 0:
             ## find json_fields ( should be explicit here and check data type)
             ## of the field, but for this works..
             json_obj_keys = [k for k, v in objects[0].items() if 'json' in k]
@@ -156,20 +190,20 @@ class BaseModelResource(ModelResource):
 
             ## hack lvl attribute
             if obj.has_key('location_type_id'):
-                obj['lvl'] = obj['location_type_id'] -1
+                obj['lvl'] = obj['location_type_id'] - 1
 
             bundles.append(obj)
 
         response_meta = {
-            'limit':None, ## paginator.get_limit(),
-            'offset': None, ## paginator.get_offset(),
-            'total_count':len(objects),
+            'limit': None,  ## paginator.get_limit(),
+            'offset': None,  ## paginator.get_offset(),
+            'total_count': len(objects),
             'form_data': self.get_form_data()
         }
 
         response_data = {
             'objects': bundles,
-            'meta': response_meta, ## add paginator info here..
+            'meta': response_meta,  ## add paginator info here..
             'error': None,
         }
 
@@ -178,9 +212,9 @@ class BaseModelResource(ModelResource):
     def get_form_data(self):
 
         all_form_data = {
-            "indicator": {"short_name":"","name":""},
-            "basic_indicator": {"short_name":"","name":""},
-            "indicator_tag": {"tag_name":""}
+            "indicator": {"short_name": "", "name": ""},
+            "basic_indicator": {"short_name": "", "name": ""},
+            "indicator_tag": {"tag_name": ""}
         }
 
         try:
@@ -204,14 +238,14 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        authentication = MultiAuthentication(CustomSessionAuthentication(),\
-            ApiKeyAuthentication())
-        allowed_methods = ['get','post']
+        authentication = MultiAuthentication(CustomSessionAuthentication(), \
+                                             ApiKeyAuthentication())
+        allowed_methods = ['get', 'post']
         authorization = Authorization()
         always_return_data = True
         cache = CustomCache()
 
-    def parse_url_strings(self,query_dict):
+    def parse_url_strings(self, query_dict):
         '''
         As the geo endpoint is based off of the location/parent_location paremeter
         we go through a pretty hacky try / except frenzy in order to find the
@@ -224,7 +258,7 @@ class BaseNonModelResource(Resource):
             None, None
 
         try:
-            self.location__in = [int(r) for r in query_dict['location__in']\
+            self.location__in = [int(r) for r in query_dict['location__in'] \
                 .split(',')]
         except KeyError:
             pass
@@ -233,18 +267,18 @@ class BaseNonModelResource(Resource):
 
         try:
             admin_level = query_dict['admin_level']
-            self.location_type_id = LocationType.objects.get(admin_level =\
-                admin_level).id
+            self.location_type_id = LocationType.objects.get(admin_level= \
+                                                                 admin_level).id
         except KeyError:
             self.location_type_id = None
         except ObjectDoesNotExist:
-            all_r_types = LocationType.objects.all().values_list('name',flat=True)
+            all_r_types = LocationType.objects.all().values_list('name', flat=True)
             err = 'location type doesnt exist. options are:  %s' % all_r_types
             self.location_type_id = None
             return err, []
 
         try:
-            self.parent_location__in = [int(r) for r in query_dict['parent_location__in']\
+            self.parent_location__in = [int(r) for r in query_dict['parent_location__in'] \
                 .split(',')]
         except KeyError:
             pass
@@ -253,8 +287,7 @@ class BaseNonModelResource(Resource):
 
         return None
 
-
-    def get_locations_to_return_from_url(self,request):
+    def get_locations_to_return_from_url(self, request):
         '''
         This method is used in both the /geo and /datapoint endpoints.  Based
         on the values parsed from the URL parameters find the locations needed
@@ -278,8 +311,8 @@ class BaseNonModelResource(Resource):
         ## CASE 1 ##
         if self.location__in is not None:
 
-            location_ids = Location.objects.filter(id__in = self.location__in)\
-                .values_list('id',flat=True)
+            location_ids = Location.objects.filter(id__in=self.location__in) \
+                .values_list('id', flat=True)
 
         ## CASE 2 ##
         elif self.parent_location__in is not None and self.location_type_id is not None:
@@ -292,7 +325,7 @@ class BaseNonModelResource(Resource):
                 INNER JOIN location_type ltype
                 ON l.location_type_id = ltype.id
                 AND ltype.admin_level = %s
-                ''',[self.parent_location__in,self.location_type_id])
+                ''', [self.parent_location__in, self.location_type_id])
 
             location_ids = [l.id for l in location_qs]
 
@@ -300,13 +333,14 @@ class BaseNonModelResource(Resource):
 
         elif self.parent_location__in is not None and self.location_type_id is None:
 
-            location_ids = list(self.parent_location__in) + list(Location.objects.filter(parent_location__in = \
-                self.parent_location__in).values_list('id',flat=True))
+            location_ids = list(self.parent_location__in) + list(Location.objects.filter(parent_location__in= \
+                                                                                             self.parent_location__in).values_list(
+                'id', flat=True))
 
 
         ## CASE 4 ##
         else:
-            location_ids = Location.objects.filter(parent_location_id__isnull=True).\
-                values_list('id',flat=True)
+            location_ids = Location.objects.filter(parent_location_id__isnull=True). \
+                values_list('id', flat=True)
 
         return None, location_ids
