@@ -81,7 +81,7 @@ class Document(models.Model):
                     header_data = line.split("\r")[0]
 
             self.file_header = header_data
-            
+
         super(Document, self).save(*args, **kwargs)
 
 
@@ -136,9 +136,14 @@ class SourceSubmission(models.Model):
     document = models.ForeignKey(Document)
     instance_guid = models.CharField(max_length=255)
     row_number = models.IntegerField()
+    campaign_code = models.CharField(max_length=1000)
+    location_code = models.CharField(max_length=1000)
+    location_display = models.CharField(max_length=1000)
+    location = models.ForeignKey('datapoints.location', null=True)
+    campaign = models.ForeignKey('datapoints.Campaign', null=True)
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)
-    process_status = models.CharField(max_length=25)
+    process_status = models.CharField(max_length=25) ## should be a FK
 
     class Meta:
         db_table = 'source_submission'
