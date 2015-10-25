@@ -51,6 +51,10 @@ var SubmissionModal = React.createClass({
             });
         };
 
+        console.log('====')
+        console.log('submission_data',submission_data)
+        console.log('====')
+        
         return <div>
             <button
                 className="tiny"

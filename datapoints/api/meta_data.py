@@ -178,12 +178,6 @@ class BaseIndicatorResource(BaseModelResource):
             defaults=defaults
         )
 
-        print 'CREATED? '
-        print created
-
-        print 'ind id'
-        print ind.id
-
         bundle.obj = ind
         bundle.data['id'] = ind.id
 
@@ -642,8 +636,9 @@ class SourceSubmissionResource(BaseModelResource):
     def get_object_list(self, request):
 
         try:
-            qs = SourceSubmissionDetail.objects.filter(document_id=request \
-               .GET['document_id']).values()
+            ## see: https://trello.com/c/IGNzN87U/296-3-collapse-source-submission-adn-submission-detail
+            qs = SourceSubmission.objects.filter(document_id=request.\
+                GET['document_id']).values()
         except KeyError:
             qs = SourceSubmission.objects.filter(id=request.GET['id']).values()
 
