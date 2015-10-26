@@ -138,7 +138,7 @@ class DocTransform(object):
 
             rg_codes.append(row_dict[self.location_column])
             cp_codes.append(row_dict[self.campaign_column])
-
+            
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
 
@@ -153,6 +153,7 @@ class DocTransform(object):
         Create new metadata if not exists
         Add a record tying this document to the newly inserted metadata
         '''
+
 
         sm_obj, created = SourceObjectMap.objects.get_or_create(\
             content_type = content_type\

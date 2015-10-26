@@ -102,8 +102,13 @@ class MasterRefresh(object):
 
         ## during the DocTransform process we associate new AND existing mappings between
         ## the metadata assoicated with this doucment.
+
+
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
+        print '====='
+        pprint(sm_ids)
+        print '====='
 
         # create a tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
@@ -115,6 +120,15 @@ class MasterRefresh(object):
                 ,id__in = sm_ids)\
                 .values_list(*['content_type','source_object_code']))\
                 .to_dict()['master_object_id']
+
+        # print '====='
+        # pprint(source_map_dict)
+        # print '====='
+        #
+        # sm = SourceObjectMap.objects.filter(content_type = u'campaign').values()
+        # print '====='
+        # pprint(sm)
+        # print '====='
 
         return source_map_dict
 
@@ -207,21 +221,26 @@ class MasterRefresh(object):
 
             submission_dict = submission.submission_json
 
-            location_column, campaign_column = str(self\
-                .db_doc_deets['location_column'])\
-                , str(self.db_doc_deets['campaign_column'])
+            location_column, campaign_column = \
+                self.db_doc_deets['location_column']\
+                , self.db_doc_deets['campaign_column']
 
-            location_id = self.source_map_dict.get(('location'\
-                    ,unicode(submission_dict[location_column])),None)
+            campaign_code, location_code = submission_dict[location_column]\
+                , submission_dict[campaign_column]
 
-            campaign_id = self.source_map_dict.get(('campaign'\
-                    ,unicode(submission_dict[campaign_column])),None)
+            print '==\n' *3
+            print campaign_code
+            print location_code
+            print '==\n' *3
+
+            location_id, campaign_id = self.source_map_dict.get(('location'\
+                ,location_code),None),self.source_map_dict.get(('campaign'\
+                ,campaign_code),None)
 
             if location_id and campaign_id:
-
                 ss_id_list_to_process.append(submission.id)
-                location_code = submission_dict[location_column]
-                campaign_code = submission_dict[campaign_column]
+                submission.location_code = location_code
+                submission.campaign_code = campaign_code
                 location_id = location_id
                 campaign_id =  campaign_id
 

@@ -94,12 +94,12 @@ class RefreshMasterTestCase(TestCase):
         # = read_csv(self.test_file)
         ## fake the submission_data
 
-        # mr.refresh_submission_details()
-        # submission_details = SourceSubmission.objects\
-        #     .filter(document_id = self.document.id)
-        #
-        # self.assertEqual(len(source_submissions_data)\
-        #     ,len(submission_details))
+        mr.refresh_submission_details()
+        submission_details = SourceSubmission.objects\
+            .filter(document_id = self.document.id)
+
+        self.assertEqual(len(source_submissions_data)\
+            ,len(submission_details))
 
     def test_submission_to_datapoint(self):
         '''
