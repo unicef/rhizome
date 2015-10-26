@@ -55,11 +55,12 @@ var AdminPage = React.createClass({
     var {data, schema} = this.state;
 
     // make the "Create X" button if we have a creation URL
-    var createUrl = '/datapoints/campaigns/create/';
+    var createUrl = '/datapoints/users/create/';
     if (this.props.title == "Indicators")
       createUrl = "/ufadmin/manage/indicator/";
     else if (this.props.title == "Tags")
       createUrl = "/ufadmin/manage/indicator_tag/";
+
 
     // strip the "s" from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;

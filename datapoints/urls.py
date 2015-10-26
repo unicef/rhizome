@@ -88,7 +88,7 @@ urlpatterns = [
 
     ## CREATE ##
     url(r'^groups/create/$', views.GroupCreateView.as_view(),
-        name='create_user'),
+        name='create_group'),
 
     # ## UPDATE ##
     url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GroupEditView.as_view(),

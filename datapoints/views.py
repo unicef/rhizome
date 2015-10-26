@@ -182,6 +182,15 @@ class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Group
     template_name = 'group_create.html'
 
+    form_class = GroupCreateForm
+
+    def form_valid(self, form):
+
+        new_group = form.save()
+
+        return HttpResponseRedirect(reverse('datapoints:create_group', \
+            kwargs={'pk':new_group.id}))
+
 
 class GroupEditView(PermissionRequiredMixin,generic.UpdateView):
 
