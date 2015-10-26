@@ -26,7 +26,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onInitialize(chartDef, location, campaign) {
-    this.data.chartDef = chartDef
+    this.data.chartDef = _.clone(chartDef)
     this.data.location = location
     this.data.campaign = campaign
     this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: this.data.chartDef.groupBy})
