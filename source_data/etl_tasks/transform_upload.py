@@ -1,6 +1,7 @@
 from pandas import read_csv
 from pandas import notnull
 import json
+from pprint import pprint
 
 from django.conf import settings
 from django.db import transaction
@@ -83,7 +84,11 @@ class DocTransform(object):
 
             ss, instance_guid = self.process_raw_source_submission(submission)
 
-            if ss is not None:
+            if ss is not None and instance_guid is not None:
+                ss['instance_guid'] = instance_guid
+                print '=='
+                pprint(ss)
+                print '=='
                 batch[instance_guid] = ss
 
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
