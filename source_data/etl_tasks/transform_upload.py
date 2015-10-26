@@ -57,31 +57,7 @@ class DocTransform(object):
     def main(self):
 
         self.process_file()
-        self.post_process_file()
         self.upsert_source_object_map()
-
-
-    def post_process_file(self):
-        '''
-        Put the submission data into a clean table for the view_raw section
-        of the source data management app.
-        '''
-
-        source_submissions = SourceSubmission.objects.filter(document_id = \
-            self.document.id)
-
-        batch = []
-        for i, (row) in enumerate(source_submissions):
-
-            if row.instance_guid not in self.existing_submission_keys:
-
-                submission_data = row.submission_json
-                row.campaign_code = submission_data[self.campaign_column],
-                row.location_code = submission_data[self.location_column],
-
-        ss = bulk_update(source_submissions)
-
-        return ss
 
     def process_file(self):
         '''
@@ -138,7 +114,7 @@ class DocTransform(object):
 
             rg_codes.append(row_dict[self.location_column])
             cp_codes.append(row_dict[self.campaign_column])
-            
+
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
 
@@ -183,6 +159,8 @@ class DocTransform(object):
             'submission_json': submission_data,
             'document_id': self.document.id,
             'row_number': submission_ix,
+            'location_code': submission_data[self.location_column],
+            'campaign_code': submission_data[self.campaign_column],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }

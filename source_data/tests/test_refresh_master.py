@@ -44,7 +44,6 @@ class RefreshMasterTestCase(TestCase):
         dt = DocTransform(self.user.id, self.document.id)
 
         self.source_submissions_ids = dt.process_file()
-        self.source_submission_detail_ids = dt.post_process_file()
 
     def test_refresh_master_init(self):
 

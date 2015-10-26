@@ -44,14 +44,14 @@ class MasterRefresh(object):
                 .filter(document_id = self.document_id,\
                     process_status='TO_PROCESS')
 
-        self.location_codes_to_process = list(set(SourceSubmission\
+        self.location_codes_to_process = SourceSubmission\
             .objects.filter(id__in = self.to_process_ss_ids)\
-            .values_list('location_code',flat = True)))\
+            .values_list('location_code',flat = True).distinct()\
             [:self.ss_location_code_batch_size]
 
-        self.campaign_codes_to_process = list(set(SourceSubmission.objects\
+        self.campaign_codes_to_process = SourceSubmission.objects\
             .filter(document_id = self.document_id)\
-            .values_list('campaign_code',flat = True)))
+            .values_list('campaign_code',flat = True).distinct()
 
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
@@ -106,29 +106,18 @@ class MasterRefresh(object):
 
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
-        print '====='
-        pprint(sm_ids)
-        print '====='
 
         # create a tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
             .filter(
-                master_object_id__gt=0,
-                id__in = sm_ids).values_list(*['master_object_id']))
+                master_object_id__gt=0)\
+                # id__in = sm_ids)\
+            .values_list(*['master_object_id']))
             ,columns = ['master_object_id']\
-            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0
-                ,id__in = sm_ids)\
+            ,index= SourceObjectMap.objects.filter(master_object_id__gt=0)
+                # ,id__in = sm_ids)\
                 .values_list(*['content_type','source_object_code']))\
                 .to_dict()['master_object_id']
-
-        # print '====='
-        # pprint(source_map_dict)
-        # print '====='
-        #
-        # sm = SourceObjectMap.objects.filter(content_type = u'campaign').values()
-        # print '====='
-        # pprint(sm)
-        # print '====='
 
         return source_map_dict
 
@@ -175,6 +164,7 @@ class MasterRefresh(object):
         for content_type, source_code_list in source_codes.iteritems():
 
             for source_code in list(set(source_code_list)):
+
                 som_object, created = SourceObjectMap.objects.get_or_create(
                     source_object_code = source_code,
                     content_type = content_type,
@@ -209,8 +199,8 @@ class MasterRefresh(object):
 
         ss_id_list_to_process, all_ss_ids = [],[]
 
-        ## find soure_submission_ids based of location_codes to process then get the json
-        ## of all of the related submissions .
+        ## find soure_submission_ids based of location_codes to process
+        ## then get the json of all of the related submissions .
         submission_qs = SourceSubmission.objects\
             .filter(document_id = self.document_id,
                 location_code__in = self.location_codes_to_process,
@@ -219,30 +209,16 @@ class MasterRefresh(object):
         for submission in submission_qs:
             all_ss_ids.append(submission.id)
 
-            submission_dict = submission.submission_json
+            location_id = self.source_map_dict.get(('location'\
+                    ,unicode(submission.location_code)),None)
 
-            location_column, campaign_column = \
-                self.db_doc_deets['location_column']\
-                , self.db_doc_deets['campaign_column']
-
-            campaign_code, location_code = submission_dict[location_column]\
-                , submission_dict[campaign_column]
-
-            print '==\n' *3
-            print campaign_code
-            print location_code
-            print '==\n' *3
-
-            location_id, campaign_id = self.source_map_dict.get(('location'\
-                ,location_code),None),self.source_map_dict.get(('campaign'\
-                ,campaign_code),None)
+            campaign_id = self.source_map_dict.get(('campaign'\
+                    ,unicode(submission.campaign_code)),None)
 
             if location_id and campaign_id:
                 ss_id_list_to_process.append(submission.id)
-                submission.location_code = location_code
-                submission.campaign_code = campaign_code
-                location_id = location_id
-                campaign_id =  campaign_id
+                submission.location_id = location_id
+                submission.campaign_id =  campaign_id
 
         bulk_update(submission_qs)
 
@@ -257,7 +233,7 @@ class MasterRefresh(object):
 
         for row in SourceSubmission.objects.filter(\
                  id__in = ss_ids_in_batch)\
-            .values('location_id','campaign_id','source_submission_id'):
+            .values('location_id','campaign_id','id'):
 
             doc_dps = self.process_source_submission(row)
 
@@ -309,7 +285,7 @@ class MasterRefresh(object):
     def process_source_submission(self,row):
 
         location_id,campaign_id,ss_id = row['location_id'],row['campaign_id'],\
-            row['source_submission_id']
+            row['id']
 
         doc_dp_batch = []
         submission  = json.loads(self.submission_data[ss_id])
