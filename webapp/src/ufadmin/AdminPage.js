@@ -56,7 +56,13 @@ var AdminPage = React.createClass({
 
     // make the "Create X" button if we have a creation URL
     var createUrl = '/datapoints/users/create/';
-    if (this.props.title == "Indicators")
+    if (this.props.title == "Campaigns")
+      createUrl = '/datapoints/campaigns/create/';
+    if (this.props.title == "locations")
+      createUrl = '/datapoints/locations/create/';
+    else if (this.props.title == "Roles")
+      createUrl = '/datapoints/groups/create/';
+    else if (this.props.title == "Indicators")
       createUrl = "/ufadmin/manage/indicator/";
     else if (this.props.title == "Tags")
       createUrl = "/ufadmin/manage/indicator_tag/";
