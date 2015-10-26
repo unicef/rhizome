@@ -4,7 +4,6 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var moment = require('moment');
 
-var RegionStore = require('stores/RegionStore');
 var CampaignStore = require('stores/CampaignStore');
 
 var api = require('data/api');
