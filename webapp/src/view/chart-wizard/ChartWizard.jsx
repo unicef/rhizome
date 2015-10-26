@@ -5,6 +5,8 @@ import _ from 'lodash'
 import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 import TitleInput from 'component/TitleInput.jsx'
@@ -27,6 +29,32 @@ const defaultChartDef = {
   yFormat: ',.0f'
 }
 
+function filterMenu(items, pattern) {
+  if (!pattern || pattern.length < 3) {
+    return items
+  }
+
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
+
+  return _(items).map(match).flatten().value();
+}
+
+function findMatches(item, re) {
+  var matches = [];
+
+  if (re.test(_.get(item, 'title'))) {
+    matches.push(_.assign({}, item, {filtered: true}));
+  }
+
+  if (!_.isEmpty(_.get(item, 'children'))) {
+    _.each(item.children, function (child) {
+      matches = matches.concat(findMatches(child, re));
+    })
+  }
+
+  return matches;
+}
+
 let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data')],
 
@@ -37,7 +65,7 @@ let ChartWizard = React.createClass({
 
   getInitialState() {
     return {
-      refer: 'country',
+      refer: 'location',
     }
   },
 
@@ -56,15 +84,23 @@ let ChartWizard = React.createClass({
     })
   },
 
+  setLocationSearch(pattern) {
+    this.setState({
+      locationSearch: pattern
+    })
+  },
+
   render() {
-    let previewStep = (
-      <div>
-        <label>Title</label>
-        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle} />
-        <a href="#" className="button success" onClick={this.saveChart}>
-          {this.props.chartDef ? "Update Chart" : "Create Chart"}
-        </a>
-      </div>
+    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+
+    let locationStep = (
+      <DropdownMenu
+        icon='fa-globe'
+        text={this.state.data.location && this.state.data.location.name || 'Select Location'}
+        searchable={true}
+        onSearch={this.setLocationSearch} >
+        {locations}
+      </DropdownMenu>
     )
 
     let indicatorStep = (
@@ -86,6 +122,16 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let previewStep = (
+      <div>
+        <label>Title</label>
+        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle} />
+        <a href="#" className="button success" onClick={this.saveChart}>
+          {this.props.chartDef ? "Update Chart" : "Create Chart"}
+        </a>
+      </div>
+    )
+
     let chart = (
       <Chart id="custom-chart" type={this.state.data.chartDef.type} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
     )
@@ -93,14 +139,11 @@ let ChartWizard = React.createClass({
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title='Select Country' refer='country'>
-            <p>select country here</p>
+          <ChartWizardStep title='Select Location' refer='location'>
+            {locationStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Indicator' refer='indicator'>
             {indicatorStep}
-          </ChartWizardStep>
-          <ChartWizardStep title='Select Location' refer='location'>
-            <p>select location here</p>
           </ChartWizardStep>
           <ChartWizardStep title='Select Campaign' refer='campaign'>
             <p>select campaign here</p>
