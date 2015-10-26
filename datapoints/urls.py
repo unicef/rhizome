@@ -47,11 +47,11 @@ urlpatterns = [
         #############
 
     ## CREATE ##
-    url(r'^locations/create/$', views.locationCreateView.as_view(),
+    url(r'^locations/create/$', views.LocationCreateView.as_view(),
         name='create_location'),
 
     ## UPDATE ##
-    url(r'^locations/update/(?P<pk>[0-9]+)/$', views.locationUpdateView.as_view(),
+    url(r'^locations/update/(?P<pk>[0-9]+)/$', views.LocationUpdateView.as_view(),
         name='update_location'),
 
 

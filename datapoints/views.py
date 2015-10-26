@@ -102,10 +102,10 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
     ### locationS ###
     ###############
 
-class locationCreateView(PermissionRequiredMixin,generic.CreateView):
+class LocationCreateView(PermissionRequiredMixin,generic.CreateView):
 
     model = Location
-    template_name='locations/create.html'
+    template_name='regions/create.html'
     permission_required = 'datapoints.add_location'
     form_class = LocationForm
     success_url= '/ufadmin/locations'
@@ -120,13 +120,13 @@ class locationCreateView(PermissionRequiredMixin,generic.CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class locationUpdateView(PermissionRequiredMixin,generic.UpdateView):
+class LocationUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Location
     success_url = '/ufadmin/locations'
-    template_name = 'locations/update.html'
+    template_name = 'regions/update.html'
     permission_required = 'datapoints.change_location'
-
+    form_class = LocationForm
 
     ##############################
     ##############################
@@ -182,7 +182,7 @@ class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Group
     template_name = 'group_create.html'
 
-    form_class = GroupCreateForm
+    form_class = GroupForm
 
     def form_valid(self, form):
 
@@ -196,6 +196,8 @@ class GroupEditView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Group
     template_name = 'group_update.html'
+
+    form_class = GroupForm
 
     def get_success_url(self):
 

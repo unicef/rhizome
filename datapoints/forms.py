@@ -30,18 +30,18 @@ class LocationPermissionForm(forms.ModelForm):
         model = LocationPermission
         exclude = ['created_at']
 
+class GroupForm(forms.ModelForm):
+
+    class Meta:
+        model = Group
+        fields = ['name']
+
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
-
-class GroupCreateForm(forms.ModelForm):
-
-    class Meta:
-        model = Group
-        fields = ['name']
 
 class UserEditForm(forms.ModelForm):
 

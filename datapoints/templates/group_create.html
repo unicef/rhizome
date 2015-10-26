@@ -1,15 +1,8 @@
-{% extends "base.html" %}
+{% extends "dashboard-builder/base.html" %}
 {% block content %}
-
-<div class="row">
-	<div class="small-centered large-centered large-6 small-6 columns">
-		<form action = "" method = "post" class="form">
-			<h2>New Group</h2>
-			{% csrf_token %}
-			{{ form.as_p }}
-		  <button type="submit" class="btn btn-primary"> Submit </button>
-		</form>
-	</div>
-</div>
-
+{% endblock %}
+{% block scripts %}
+<script>
+	Polio.GroupForm(document.getElementById('main'));
+</script>
 {% endblock %}
