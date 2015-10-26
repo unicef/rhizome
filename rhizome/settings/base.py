@@ -63,7 +63,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 DEBUG_TOOLBAR_PANELS = (
@@ -127,3 +128,5 @@ TEMPLATE_DIRS = (
 TASTYPIE_DEFAULT_FORMATS = ['json']
 API_LIMIT_PER_PAGE = 0
 TASTYPIE_FULL_DEBUG = True
+
+INTERNAL_IPS=('127.0.0.1',)
