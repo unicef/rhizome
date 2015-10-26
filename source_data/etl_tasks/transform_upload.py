@@ -5,6 +5,7 @@ import json
 from django.conf import settings
 from django.db import transaction
 from pandas.io.excel import read_excel
+from bulk_update.helper import bulk_update
 
 from source_data.models import *
 from datapoints.models import DataPoint
@@ -75,16 +76,10 @@ class DocTransform(object):
             if row.instance_guid not in self.existing_submission_keys:
 
                 submission_data = row.submission_json
-                submission_detail_dict = {
-                    'source_submission_id': row.id,
-                    'document_id':   self.document.id,
-                    'campaign_code':  submission_data[self.campaign_column],
-                    'location_code':  submission_data[self.location_column],
-                    'raw_data_proxy' :''
-                }
-                batch.append(SourceSubmissionDetail(**submission_detail_dict))
+                row.campaign_code = submission_data[self.campaign_column],
+                row.location_code = submission_data[self.location_column],
 
-        ss = SourceSubmissionDetail.objects.bulk_create(batch)
+        ss = bulk_update(source_submissions)
 
         return ss
 

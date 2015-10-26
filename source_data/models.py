@@ -148,22 +148,3 @@ class SourceSubmission(models.Model):
     class Meta:
         db_table = 'source_submission'
         unique_together = (('document','instance_guid'))
-
-class SourceSubmissionDetail(models.Model):
-    '''
-    '''
-
-    document = models.ForeignKey(Document)
-    source_submission = models.OneToOneField(SourceSubmission)
-    username_code = models.CharField(max_length=1000)
-    campaign_code = models.CharField(max_length=1000)
-    location_code = models.CharField(max_length=1000)
-    location_display = models.CharField(max_length=1000)
-    img_location = models.CharField(max_length=1000)
-    raw_data_proxy = models.CharField(max_length=1) ## hack so the admin metadata call works
-    location = models.ForeignKey('datapoints.location', null=True)
-    campaign = models.ForeignKey('datapoints.Campaign', null=True)
-
-    class Meta:
-        db_table = 'submission_detail'
-        ordering = (('document','location_code','campaign_code'))

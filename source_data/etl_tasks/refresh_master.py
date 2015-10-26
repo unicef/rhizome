@@ -5,10 +5,12 @@ from decimal import InvalidOperation
 from pprint import pprint
 import json
 
+
 from django.db import IntegrityError
 from django.db import transaction
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from pandas import DataFrame
+from bulk_update.helper import bulk_update
 
 from source_data.models import *
 from datapoints.cache_tasks import CacheRefresh
@@ -42,12 +44,12 @@ class MasterRefresh(object):
                 .filter(document_id = self.document_id,\
                     process_status='TO_PROCESS')
 
-        self.location_codes_to_process = list(set(SourceSubmissionDetail\
-            .objects.filter(source_submission__in = self.to_process_ss_ids)\
+        self.location_codes_to_process = list(set(SourceSubmission\
+            .objects.filter(id__in = self.to_process_ss_ids)\
             .values_list('location_code',flat = True)))\
             [:self.ss_location_code_batch_size]
 
-        self.campaign_codes_to_process = list(set(SourceSubmissionDetail.objects\
+        self.campaign_codes_to_process = list(set(SourceSubmission.objects\
             .filter(document_id = self.document_id)\
             .values_list('campaign_code',flat = True)))
 
@@ -191,24 +193,22 @@ class MasterRefresh(object):
         worry about old data that should have been blown away hanging around.
         '''
 
-        ss_id_list_to_process, ss_detail_batch = [],[]
+        ss_id_list_to_process, all_ss_ids = [],[]
 
         ## find soure_submission_ids based of location_codes to process then get the json
         ## of all of the related submissions .
         submission_qs = SourceSubmission.objects\
             .filter(document_id = self.document_id,
-                    id__in = SourceSubmissionDetail.objects\
-                .filter(location_code__in = self.location_codes_to_process)\
-                .values_list('source_submission_id',flat=True),
-                process_status = 'TO_PROCESS')\
-            .values_list('id','submission_json')
+                location_code__in = self.location_codes_to_process,
+                process_status = 'TO_PROCESS')
 
-        ss_id_list = []
-        for ss_id, submission_json in submission_qs:
+        for submission in submission_qs:
+            all_ss_ids.append(submission.id)
 
-            submission_dict = json.loads(submission_json)
+            submission_dict = submission.submission_json
 
-            location_column, campaign_column = str(self.db_doc_deets['location_column'])\
+            location_column, campaign_column = str(self\
+                .db_doc_deets['location_column'])\
                 , str(self.db_doc_deets['campaign_column'])
 
             location_id = self.source_map_dict.get(('location'\
@@ -219,21 +219,15 @@ class MasterRefresh(object):
 
             if location_id and campaign_id:
 
-                ss_id_list.append(ss_id)
-                ss_detail_batch.append(SourceSubmissionDetail(**{
-                    'document_id': self.document_id,
-                    'source_submission_id': ss_id,
-                    'location_code':submission_dict[location_column],
-                    'campaign_code':submission_dict[campaign_column],
-                    'location_id': location_id,
-                    'campaign_id': campaign_id,
-                }))
+                ss_id_list_to_process.append(submission.id)
+                location_code = submission_dict[location_column]
+                campaign_code = submission_dict[campaign_column]
+                location_id = location_id
+                campaign_id =  campaign_id
 
-        SourceSubmissionDetail.objects.filter(source_submission_id__in =\
-            ss_id_list).delete()
-        SourceSubmissionDetail.objects.bulk_create(ss_detail_batch)
+        bulk_update(submission_qs)
 
-        return ss_id_list, dict(submission_qs).keys()
+        return ss_id_list_to_process,all_ss_ids
 
     def submissions_to_doc_datapoints(self):
         '''
@@ -242,8 +236,8 @@ class MasterRefresh(object):
 
         ss_ids_in_batch = self.submission_data.keys()
 
-        for row in SourceSubmissionDetail.objects.filter(\
-                 source_submission_id__in= ss_ids_in_batch)\
+        for row in SourceSubmission.objects.filter(\
+                 id__in = ss_ids_in_batch)\
             .values('location_id','campaign_id','source_submission_id'):
 
             doc_dps = self.process_source_submission(row)

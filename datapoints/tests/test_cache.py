@@ -19,16 +19,16 @@ from datapoints.cache_tasks import CacheRefresh
 class CacheRefreshTestCase(TestCase):
 
     '''
-        from datapoints.cache_tasks import CacheRefresh
-        mr = CacheRefresh()
+    from datapoints.cache_tasks import CacheRefresh
+    mr = CacheRefresh()
 
-        ## or ##
+    ## or ##
 
-        from datapoints.cache_tasks import CacheRefresh
-        from datapoints.models import DataPoint, location
-        r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
-        dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-        mr = CacheRefresh(list(dp_ids))
+    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.models import DataPoint, location
+    r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
+    dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
+    mr = CacheRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
