@@ -37,4 +37,5 @@ static/
 *target_natreg.csv
 concat_csv.py
 source_data/ODK/odk_source
-rhizome/
+rhizome/bin/
+rhizome/lib/
