@@ -16,6 +16,7 @@ let ChartWizardStore = Reflux.createStore({
     indicatorSelected: [],
     locationList: [],
     locationSelected: null,
+    groupByValue: 0,
     canDisplayChart: false,
     chartDef: {}
   },
@@ -28,6 +29,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef = chartDef
     this.data.location = location
     this.data.campaign = campaign
+    this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: this.data.chartDef.groupBy})
 
     Promise.all([api.indicatorsTree(), api.locations()]).then(([indicators, locations]) => {
       this.indicatorIndex = _.indexBy(indicators.flat, 'id')
@@ -80,6 +82,11 @@ let ChartWizardStore = Reflux.createStore({
     this.onPreviewChart()
   },
 
+  onChangeGroupRadio(value) {
+    this.data.groupByValue = value
+    this.onPreviewChart()
+  },
+
   onPreviewChart() {
     if (!this.data.indicatorSelected.length) {
       this.data.canDisplayChart = false
@@ -87,9 +94,10 @@ let ChartWizardStore = Reflux.createStore({
       return
     }
     let chartType = this.data.chartDef.type
-    let groupBy = this.data.chartDef.groupBy
+    let groupBy = chartDefinitions.groups[this.data.groupByValue].value
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
-    let groups = indicatorIndex // need work
+    let locationIndex = _.indexBy([this.data.location], 'id')
+    let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex
     let start = moment(this.data.campaign.start_date)
     let lower = null // all time
     let upper = start.clone().startOf('month')
@@ -127,7 +135,8 @@ let ChartWizardStore = Reflux.createStore({
     callback(_.merge(this.data.chartDef, {
       indicators: this.data.indicatorSelected.map(item => {
         return item.id
-      })
+      }),
+      groupBy: chartDefinitions.groups[this.data.groupByValue].value
     }, (a, b) => {
       return b
     }))

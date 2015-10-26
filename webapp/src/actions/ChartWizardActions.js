@@ -7,6 +7,7 @@ let ChartWizardActions = Reflux.createActions([
   'addIndicator',
   'removeIndicator',
   'changeChart',
+  'changeGroupRadio',
   'previewChart',
   'saveChart'
 ])

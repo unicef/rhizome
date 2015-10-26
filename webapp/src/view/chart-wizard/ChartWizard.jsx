@@ -11,6 +11,7 @@ import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
+import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ChartSelect from '../chart-builder/ChartSelect.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -117,8 +118,15 @@ let ChartWizard = React.createClass({
 
     let chartTypeStep = (
       <div>
-        <ChartSelect charts={chartDefinitions} value={this.state.data.chartDef.type}
+        <ChartSelect charts={chartDefinitions.charts} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
+      </div>
+    )
+
+    let styleStep = (
+      <div>
+        <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
+          values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
       </div>
     )
 
@@ -152,7 +160,7 @@ let ChartWizard = React.createClass({
             {chartTypeStep}
           </ChartWizardStep>
           <ChartWizardStep title='Customise Styles' refer='style'>
-            <p>Customise styles here</p>
+            {styleStep}
           </ChartWizardStep>
           <ChartWizardStep title='Preview' refer='preview'>
             {previewStep}
