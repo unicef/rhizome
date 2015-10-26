@@ -123,7 +123,7 @@ var SourceDataDashboard = React.createClass({
             },
             'doc_index': {
                 'data_fn': api.source_doc,
-                'fields': ['id', 'doc_title', 'edit_link'],
+                'fields': ['id', 'doc_title', 'edit_link','created_at'],
                 'search_fields': ['id', 'doc_title'],
             },
             'mapping': {
