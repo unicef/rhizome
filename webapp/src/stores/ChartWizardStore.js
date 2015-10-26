@@ -6,12 +6,16 @@ import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
 import processChartData from 'stores/chartBuilder/processChartData'
 import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
+import treeify from 'data/transform/treeify'
+import ancestryString from 'data/transform/ancestryString'
 
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
     indicatorList: [],
     indicatorSelected: [],
+    locationList: [],
+    locationSelected: null,
     canDisplayChart: false,
     chartDef: {}
   },
@@ -25,12 +29,27 @@ let ChartWizardStore = Reflux.createStore({
     this.data.location = location
     this.data.campaign = campaign
 
-    api.indicatorsTree().then(data => {
-      this.indicatorIndex = _.indexBy(data.flat, 'id');
-      this.data.indicatorList = _.sortBy(data.objects, 'title')
+    Promise.all([api.indicatorsTree(), api.locations()]).then(([indicators, locations]) => {
+      this.indicatorIndex = _.indexBy(indicators.flat, 'id')
+      this.data.indicatorList = _.sortBy(indicators.objects, 'title')
       this.data.indicatorSelected = chartDef.indicators.map(id => {
         return this.indicatorIndex[id]
       })
+
+      this.locationIndex = _.indexBy(locations.objects, 'id')
+      this.data.locationList = _(locations.objects)
+        .map(location => {
+          return {
+            'title'  : location.name,
+            'value'  : location.id,
+            'parent' : location.parent_location_id
+          }
+        })
+        .sortBy('title')
+        .reverse()
+        .thru(_.curryRight(treeify)('value'))
+        .map(ancestryString)
+        .value()
       this.onPreviewChart()
     })
   },
@@ -38,6 +57,11 @@ let ChartWizardStore = Reflux.createStore({
   onEditTitle(value) {
     this.data.chartDef.title = value
     this.trigger(this.data)
+  },
+
+  onAddLocation(value) {
+    this.data.location = this.locationIndex[value]
+    this.onPreviewChart()
   },
 
   onAddIndicator(index) {
