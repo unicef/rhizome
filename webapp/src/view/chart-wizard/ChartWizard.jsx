@@ -56,6 +56,10 @@ function findMatches(item, re) {
   return matches;
 }
 
+function findChartType(type) {
+  return chartDefinitions.charts[_.findIndex(chartDefinitions.charts, {name: type})] || {}
+}
+
 let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data')],
 
@@ -123,10 +127,13 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let groupBy = (
+      <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
+        values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+    )
     let styleStep = (
       <div>
-        <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
-          values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
+        {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
       </div>
     )
 
