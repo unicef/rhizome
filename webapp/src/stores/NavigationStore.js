@@ -18,7 +18,7 @@ var NavigationStore = Reflux.createStore({
 
     Promise.all([
       CampaignStore.getCampaignsPromise(),
-      api.office().then(response=>response.objects)
+      api.office().then(response => response.objects)
     ]).then(_.spread(this._loadDashboards));
   },
 
@@ -59,16 +59,16 @@ var NavigationStore = Reflux.createStore({
 
     campaigns = _(campaigns);
 
+    // Take the first location alphabetically at the highest geographic level
+    // available as the default location for this dashboard
+    var office = _.min(offices, _.property('id'));
+
     this.dashboards = _(allDashboards)
       .map(function (d) {
-        // Take the first location alphabetically at the highest geographic level
-        // available as the default location for this dashboard
-        var location = _(offices).min(_.property('id'));
-
         // Find the latest campaign for the chosen location
         var campaign = campaigns
           .filter(c => {
-            return location.id === c.office_id;
+            return office.id === c.office_id;
           })
           .max(c => {
             return moment(c.start_date, 'YYYY-MM-DD').valueOf()
@@ -78,7 +78,7 @@ var NavigationStore = Reflux.createStore({
         // Build the path for the dashboard
         var path = '';
         try {
-          path = '/' + location.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
+          path = '/' + office.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM');
         } catch (err) {
           path = '/'
         }
@@ -92,11 +92,12 @@ var NavigationStore = Reflux.createStore({
       .reject(_.isNull)
       .value();
 
+    var indexedOffices = _.indexBy(offices, 'id');
     this.campaigns = campaigns
       .map(c => {
         var m = moment(c.start_date, 'YYYY-MM-DD');
         var dt = m.format('YYYY/MM');
-        var officeName = _.indexBy(offices, 'id')[c.office_id].name;
+        var officeName = indexedOffices[c.office_id].name;
         var title = officeName + ': ' + m.format('MMMM YYYY');
 
         var links = _.map(allDashboards, function (d) {
