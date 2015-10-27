@@ -123,12 +123,11 @@ let ChartWizard = React.createClass({
 
     let campaignStep = (
       <div>
-        <p>Yooooo</p>
-          <CampaignDropdownMenu
-            text='Select campaign'
-            campaigns={this.state.data.campaignList}
-            sendValue={() => {}}>
-          </CampaignDropdownMenu>
+        <CampaignDropdownMenu
+          text='Select campaign'
+          campaigns={this.state.data.campaignFilteredList}
+          sendValue={() => {}}>
+        </CampaignDropdownMenu>
       </div>
     )
 

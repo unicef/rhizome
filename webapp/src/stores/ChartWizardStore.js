@@ -16,10 +16,16 @@ let ChartWizardStore = Reflux.createStore({
     indicatorSelected: [],
     locationList: [],
     locationSelected: null,
-    campaignList: [],
+    campaignFilteredList: [],
     groupByValue: 0,
     canDisplayChart: false,
     chartDef: {}
+  },
+
+  filterCampaignByLocation(campaigns, location) {
+    return campaigns.filter(campaign => {
+      return campaign.office.name == location.name
+    })
   },
 
   getInitialState() {
@@ -56,7 +62,7 @@ let ChartWizardStore = Reflux.createStore({
           .value()
 
         let officeIndex = _.indexBy(offices.objects, 'id')
-        this.data.campaignList = _(campaigns.objects)
+        this.campaignList = _(campaigns.objects)
           .map(campaign => {
             return _.assign({}, campaign, {
               'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
@@ -67,7 +73,8 @@ let ChartWizardStore = Reflux.createStore({
           .sortBy(_.method('start_date.getTime'))
           .reverse()
           .value()
-        this.campaignIndex = _.indexBy(this.data.campaignList, 'id')
+        this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+        this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
         this.onPreviewChart()
     })
@@ -80,6 +87,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddLocation(value) {
     this.data.location = this.locationIndex[value]
+    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
     this.onPreviewChart()
   },
 
