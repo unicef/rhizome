@@ -10,6 +10,8 @@
 @import "react-widgets-core";
 @import "rw-dateTimePicker";
 
+@import "variables";
+
 body {
   font-size: rem-calc(10);
   overflow-x:hidden;
@@ -17,6 +19,13 @@ body {
 
 @import "header";
 @import "about";
+
+@import "homepage";
+
+
+body {
+  background-color: $rhz-background-color;
+}
 
 #main {
   padding-bottom: 70px;

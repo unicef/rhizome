@@ -1,0 +1,37 @@
+@import "variables";
+
+
+.charts {
+  padding: 2px;
+
+  .chart-panel {
+  //background-color: $rhz-background-color;
+  //padding: 2px;
+  //
+  //.chart-panel-content {
+  //  background-color: $rhz-chart-panel-color;
+  //  margin: 2px;
+  //  padding: 10px 16px;
+  //
+  //  .chart-button {
+  //    background-color: $rhz-button-bg-color;
+  //    color: $rhz-button-color;
+  //    text-transform: uppercase;
+  //  }
+  //}
+
+    float: left;
+    width: 33.33%;
+
+    background-color: $rhz-chart-panel-color;
+    margin: 2px;
+    padding: 10px 16px;
+
+    h5 {
+      text-transform: uppercase;
+    }
+  }
+
+  @include clearfix;
+}
+
