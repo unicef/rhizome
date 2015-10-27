@@ -8,10 +8,8 @@ var moment = require('moment');
 var CampaignMenuItem = React.createClass({
   propTypes : {
     sendValue  : React.PropTypes.func.isRequired,
-
     id         : React.PropTypes.number.isRequired,
     slug       : React.PropTypes.string.isRequired,
-    start_date : React.PropTypes.instanceOf(Date).isRequired,
   },
 
   statics : {
@@ -22,7 +20,6 @@ var CampaignMenuItem = React.createClass({
           <CampaignMenuItem key={'campaign-' + campaign.id}
             sendValue={sendValue}
             id={campaign.id}
-            start_date={date}
             slug={campaign.slug}
             management_dash_pct_complete={campaign.management_dash_pct_complete}/>
         );
@@ -31,16 +28,13 @@ var CampaignMenuItem = React.createClass({
   },
 
   render : function () {
-    var m                    = moment(this.props.start_date);
-    // var start_date           = m.format('YYYY-MM-DD');
-    // var formatted_start_date = m.format('MMMM YYYY');
-    var campaign_slug = this.props.slug
-    var management_dash_pct_complete_string  = ' (' + Math.round(this.props.management_dash_pct_complete * 100) + '% complete)'
+    var campaignSlug = this.props.slug
+    var percentageComplete = ' (' + Math.round(this.props.management_dash_pct_complete * 100) + '% complete)'
 
     return (
       <li key={'campaign-' + this.props.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-        {campaign_slug} {management_dash_pct_complete_string}
+        {this.props.slug} {percentageComplete}
         </a>
       </li>
     );

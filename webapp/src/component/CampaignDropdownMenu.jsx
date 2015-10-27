@@ -61,21 +61,18 @@ var CampaignDropdownMenu = React.createClass({
       _.constant(true);
 
     var campaigns = _(this.props.campaigns)
-      // .uniq(false, function (c) { return moment(c.start_date).format('YYYYMM'); })
-
-      // JD commenting this out because in the mapping screen we need to be able
-      // to show camapigns with the same start date in different offices.
-
-      // Uniquenss is handled at the database level ( campaign_type_id,
-      // office_id, start_Date), thus the line of code below is unecessary
-
       .filter(filterCampaigns)
       .sortBy(_.method('start_date.getTime'))
+      .reverse()
       .map(function (campaign) {
+        let slug = campaign.office.name + ' ' + moment(campaign.start_date).format('MMMM YYYY')
         return (
           <CampaignMenuItem key={'campaign-' + campaign.id}
             sendValue={self.props.sendValue}
-            {...campaign} />
+            id={campaign.id}
+            slug={slug}
+            management_dash_pct_complete={campaign.management_dash_pct_complete}
+            />
         );
       })
       .value();

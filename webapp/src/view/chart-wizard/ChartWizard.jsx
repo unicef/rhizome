@@ -8,6 +8,7 @@ import PreviewScreen from './PreviewScreen.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
@@ -120,6 +121,17 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let campaignStep = (
+      <div>
+        <p>Yooooo</p>
+          <CampaignDropdownMenu
+            text='Select campaign'
+            campaigns={this.state.data.campaignList}
+            sendValue={() => {}}>
+          </CampaignDropdownMenu>
+      </div>
+    )
+
     let chartTypeStep = (
       <div>
         <ChartSelect charts={chartDefinitions.charts} value={this.state.data.chartDef.type}
@@ -161,7 +173,7 @@ let ChartWizard = React.createClass({
             {indicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Campaign' refer='campaign'>
-            <p>select campaign here</p>
+            {campaignStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Chart Type' refer='chart-type'>
             {chartTypeStep}
