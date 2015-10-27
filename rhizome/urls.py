@@ -77,6 +77,8 @@ urlpatterns = patterns('',
     ## UFADMIN ##
     url(r'^ufadmin/', login_required(TemplateView.as_view(template_name='ufadmin.html')), name='ufadmin'),
 
+    url(r'^about/', TemplateView.as_view(template_name="about.html"), name='about'),
+
     ## DOCUMENT_REVIEW ##
     url(r'^doc_review/', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
 
