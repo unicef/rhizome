@@ -101,13 +101,15 @@ let ChartWizard = React.createClass({
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
     let locationStep = (
-      <DropdownMenu
-        icon='fa-globe'
-        text={this.state.data.location && this.state.data.location.name || 'Select Location'}
-        searchable={true}
-        onSearch={this.setLocationSearch} >
-        {locations}
-      </DropdownMenu>
+      <div>
+        <DropdownMenu
+          icon='fa-globe'
+          text={this.state.data.location && this.state.data.location.name || 'Select Location'}
+          searchable={true}
+          onSearch={this.setLocationSearch} >
+          {locations}
+        </DropdownMenu>
+      </div>
     )
 
     let indicatorStep = (
