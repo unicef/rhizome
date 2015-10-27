@@ -219,13 +219,11 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
     model = User
     template_name = 'user_create.html'
     form_class = UserCreateForm
+    success_url= '/ufadmin/users#reload'
 
     def form_valid(self, form):
-
         new_user = form.save()
-
-        return HttpResponseRedirect(reverse('datapoints:user_update', \
-            kwargs={'pk':new_user.id}))
+        return HttpResponseRedirect(self.success_url)
 
 
 class UserEditView(PermissionRequiredMixin,generic.UpdateView):
