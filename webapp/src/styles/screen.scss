@@ -12,10 +12,11 @@
 
 body {
   font-size: rem-calc(10);
-  overflow:hidden;
+  overflow-x:hidden;
 }
 
 @import "header";
+@import "about";
 
 #main {
   padding-bottom: 70px;
@@ -444,12 +445,6 @@ button,
     input {
       width: 100%;
     }
-  }
-}
-
-.about {
-  p {
-    margin-bottom: 1.2em;
   }
 }
 
