@@ -85,8 +85,8 @@ let ChartWizardStore = Reflux.createStore({
     this.trigger(this.data)
   },
 
-  onAddLocation(value) {
-    this.data.location = this.locationIndex[value]
+  onAddLocation(index) {
+    this.data.location = this.locationIndex[index]
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
     this.onPreviewChart()
   },
@@ -98,6 +98,11 @@ let ChartWizardStore = Reflux.createStore({
 
   onRemoveIndicator(id) {
     _.remove(this.data.indicatorSelected, {id: id})
+    this.onPreviewChart()
+  },
+
+  onAddCampaign(index) {
+    this.data.campaign = this.campaignIndex[index]
     this.onPreviewChart()
   },
 

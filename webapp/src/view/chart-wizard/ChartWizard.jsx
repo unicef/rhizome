@@ -129,7 +129,7 @@ let ChartWizard = React.createClass({
         <CampaignDropdownMenu
           text={this.state.data.campaign && campaignDisplay || 'Select Campaign'}
           campaigns={this.state.data.campaignFilteredList}
-          sendValue={() => {}}>
+          sendValue={ChartWizardActions.addCampaign}>
         </CampaignDropdownMenu>
       </div>
     )
