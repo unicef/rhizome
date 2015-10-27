@@ -9,6 +9,7 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var List                  = require('component/list/List.jsx');
+var DateTimePicker        = require('react-widgets/lib/DateTimePicker');
 
 module.exports = {
 	template: require('./template.html'),
