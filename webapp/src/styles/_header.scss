@@ -1,0 +1,59 @@
+@import "variables";
+
+header {
+  background-color: $rhz-navigation-bg-color;
+  color: $rhz-navigation-color;
+
+  .pull-right {
+    float: right;
+  }
+
+  #navigation-bar {
+    height: 98px;
+    overflow: hidden;
+  }
+
+  #chanels {
+    float: left;
+
+    li {
+      margin: 0;
+      padding: 38px 30px;
+
+      font-size: 1rem;
+
+      .tab {
+        span {
+          padding-left: 4px;
+          text-transform: uppercase;
+        }
+      }
+
+      &.active {
+        background-color: $rhz-background-color;
+      }
+    }
+  }
+
+  .logo {
+    text-align: center;
+    img {
+      height: 80%;
+    }
+  }
+
+  #dashboard-control {
+    float: right;
+
+    li {
+      margin: 8% 0;
+      font-size: 1rem;
+
+      span {
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  @include clearfix;
+}

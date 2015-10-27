@@ -14,6 +14,8 @@ body {
   overflow:hidden;
 }
 
+@import "header";
+
 #main {
   padding-bottom: 70px;
 }
@@ -24,11 +26,6 @@ h6 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-header {
-  background: linear-gradient(to bottom, #333, #3a3a3a);
-  margin-bottom: 1rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
