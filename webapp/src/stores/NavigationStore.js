@@ -18,7 +18,7 @@ var NavigationStore = Reflux.createStore({
 
     Promise.all([
       CampaignStore.getCampaignsPromise(),
-      api.office()
+      api.office().then(response=>response.objects)
     ]).then(_.spread(this._loadDashboards));
   },
 
@@ -58,13 +58,12 @@ var NavigationStore = Reflux.createStore({
     var allDashboards = builtins;
 
     campaigns = _(campaigns);
-    var chainOffices = _(offices.objects);
 
     this.dashboards = _(allDashboards)
       .map(function (d) {
         // Take the first location alphabetically at the highest geographic level
         // available as the default location for this dashboard
-        var location = chainOffices.min(_.property('id'));
+        var location = _(offices).min(_.property('id'));
 
         // Find the latest campaign for the chosen location
         var campaign = campaigns
@@ -97,7 +96,7 @@ var NavigationStore = Reflux.createStore({
       .map(c => {
         var m = moment(c.start_date, 'YYYY-MM-DD');
         var dt = m.format('YYYY/MM');
-        var officeName = _.indexBy(offices.objects, 'id')[c.office_id].name;
+        var officeName = _.indexBy(offices, 'id')[c.office_id].name;
         var title = officeName + ': ' + m.format('MMMM YYYY');
 
         var links = _.map(allDashboards, function (d) {
