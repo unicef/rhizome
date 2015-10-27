@@ -27,7 +27,7 @@ var AdminPage = React.createClass({
   },
 
   componentWillMount: function () {
-    this.props.getData().then(response => {
+    this.props.getData(null, null, {'cache-control': 'no-cache'}).then(response => {
       var schema = parseSchema(response);
       if (this.props.schema != null) {
         var schemaSetting = this.props.schema;

@@ -219,7 +219,7 @@ class UserCreateView(PermissionRequiredMixin,generic.CreateView):
     model = User
     template_name = 'user_create.html'
     form_class = UserCreateForm
-    success_url= '/ufadmin/users#reload'
+    success_url= '/ufadmin/users'
 
     def form_valid(self, form):
         new_user = form.save()
