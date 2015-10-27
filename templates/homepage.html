@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block section %}home{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-4 columns chart-padding">
+            <div class="charts">
+                <h5>Afghanistan</h5>
+                <carousel>
+                    <chart></chart>
+                </carousel>
+                <div class="chart-button-group">
+                    <div class="chart-button">Country<br>overview</div>
+                    <div class="chart-button">District<br>summary</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="large-4 columns chart-padding">
+            <div class="charts">
+                <h5>Pakistan</h5>
+                <carousel>
+                    <chart></chart>
+                </carousel>
+                <div class="chart-button-group">
+                    <div class="chart-button">Country<br>overview</div>
+                    <div class="chart-button">District<br>summary</div>
+                </div>
+            </div>
+        </div>
+        <div class="large-4 columns chart-padding">
+            <div class="charts">
+                <h5>Nigeria</h5>
+                <carousel>
+                    <chart></chart>
+                </carousel>
+                <div class="chart-button-group">
+                    <div class="chart-button">Country<br>overview</div>
+                    <div class="chart-button">District<br>summary</div>
+                    <div class="chart-button">NGA Campaign<br>Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

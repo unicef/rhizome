@@ -1,0 +1,33 @@
+@import "variables";
+
+.chart-padding {
+  padding-left: 0px;
+  padding-right: 0px;
+
+  .charts {
+    background-color: $rhz-chart-panel-color;
+    margin: 2px;
+    padding: 2px;
+
+    h5 {
+      text-transform: uppercase;
+      padding: 12px 20px
+    }
+
+    .chart-button-group {
+      display: inline-flex;
+      width: 100%;
+    }
+
+    .chart-button {
+      background-color: $rhz-button-bg-color;
+      color: $rhz-button-color;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 2px;
+      padding: 10px 16px;
+      width: 100%;
+    }
+  }
+}
+

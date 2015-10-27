@@ -9,8 +9,20 @@
 @import "react-widgets";
 @import "react-widgets-core";
 
+@import "variables";
+
 body {
   font-size: rem-calc(10);
+  overflow-x:hidden;
+}
+
+@import "header";
+@import "about";
+
+@import "homepage";
+
+body {
+  background-color: $rhz-background-color;
 }
 
 #main {
@@ -23,11 +35,6 @@ h6 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-header {
-  background: linear-gradient(to bottom, #333, #3a3a3a);
-  margin-bottom: 1rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -448,12 +455,6 @@ button,
   }
 }
 
-.about {
-  p {
-    margin-bottom: 1.2em;
-  }
-}
-
 svg {
   width: 100%;
 }
@@ -714,3 +715,5 @@ ul {
     background-color: transparent;
   }
 }
+
+@import "footer";
