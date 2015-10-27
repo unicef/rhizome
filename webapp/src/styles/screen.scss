@@ -11,6 +11,7 @@
 
 body {
   font-size: rem-calc(10);
+  overflow:hidden;
 }
 
 #main {
@@ -714,3 +715,5 @@ ul {
     background-color: transparent;
   }
 }
+
+@import "footer";
