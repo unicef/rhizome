@@ -9,6 +9,8 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var List                  = require('component/list/List.jsx');
+var DateRangePicker 			= require('component/DateTimePicker.jsx');
+
 
 module.exports = {
 	template: require('./template.html'),
@@ -67,6 +69,13 @@ module.exports = {
 				self.indicatorMap = _.indexBy(response.flat, 'id');
 				self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
 			});
+
+		var dateRangePickerProps = {
+			start: self.campaign.start,
+			end: self.campaign.end,
+			sendValue: self.updateDateRangePicker
+		};
+		React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById("dateRangePicker"));
 	},
 
 	computed: {
@@ -95,6 +104,10 @@ module.exports = {
 		removeIndicatorFromSelection: function(id) {
 			_.remove(this.indicators, function(d) { return d.id === id; });
 			this.renderIndicatorList();
+		},
+
+		updateDateRangePicker: function(key, value) {
+			this.campaign[key] = value;
 		},
 
 		refresh: function (pagination) {

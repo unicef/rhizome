@@ -8,8 +8,6 @@ var Reflux = require('reflux');
 var NavigationStore = require('stores/NavigationStore');
 var PermissionStore = require('stores/PermissionStore');
 
-var DashboardStore = require('stores/DashboardStore');
-
 function _loadCampaigns(campaigns, offices) {
   var recent = _(campaigns)
     .each(function (campaign, i) {
