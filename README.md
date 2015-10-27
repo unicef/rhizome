@@ -1,3 +1,5 @@
+<a href='https://travis-ci.org/unicef/rhizome' target='_blank'><img src='https://travis-ci.org/unicef/rhizome.svg' /></a>
+
 # Set up
 
 ## Prerequisites
