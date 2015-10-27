@@ -9,51 +9,8 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var List                  = require('component/list/List.jsx');
-var DateTimePicker = require('react-widgets/lib/DateTimePicker');
+var DateRangePicker 			= require('component/DateTimePicker.jsx');
 
-
-var DateRangePicker = React.createClass({
-
-	propTypes: {
-		start: React.PropTypes.object.isRequired,
-		end: React.PropTypes.object.isRequired,
-		sendValue : React.PropTypes.func.isRequired
-	},
-
-	getInitialState: function() {
-		return {
-			start: new Date(),
-			end: new Date()
-		}
-	},
-
-	handleDateChange: function(type, date, dateStr) {
-		if (type == 'start') {
-			this.setState({start: date});
-		}
-		else {
-			this.setState({end: date});
-		}
-		this.props.sendValue(type, dateStr);
-	},
-
-	render() {
-		return (<div>
-			<DateTimePicker
-					value={this.state.start}
-					time={false}
-					format={'yyyy-MM-d'}
-					onChange={this.handleDateChange.bind(this, 'start')}/>
-
-			<div class="centered">to</div>
-			<DateTimePicker
-					value={this.state.end}
-					time={false}
-					format={'yyyy-MM-d'}
-					onChange={this.handleDateChange.bind(this, 'end')}/>
-		</div>)
-	}
-});
 
 module.exports = {
 	template: require('./template.html'),
