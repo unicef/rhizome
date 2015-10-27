@@ -9,7 +9,51 @@ var api      = require('../../data/api');
 var Dropdown = require('../../component/dropdown');
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
 var List                  = require('component/list/List.jsx');
-var DateTimePicker        = require('react-widgets/lib/DateTimePicker');
+var DateTimePicker = require('react-widgets/lib/DateTimePicker');
+
+
+var DateRangePicker = React.createClass({
+
+	propTypes: {
+		start: React.PropTypes.object.isRequired,
+		end: React.PropTypes.object.isRequired,
+		sendValue : React.PropTypes.func.isRequired
+	},
+
+	getInitialState: function() {
+		return {
+			start: new Date(),
+			end: new Date()
+		}
+	},
+
+	handleStartDateChange: function(date, dateStr) {
+		this.setState({start: date});
+		this.props.sendValue('start', dateStr);
+	},
+
+	handleEndDateChange: function(date, dateStr) {
+		this.setState({end: date});
+		this.props.sendValue('end', dateStr);
+	},
+
+	render() {
+		return (<div>
+			<DateTimePicker
+					value={this.state.start}
+					time={false}
+					format={'yyyy-MM-d'}
+					onChange={this.handleStartDateChange}/>
+
+			<div class="centered">to</div>
+			<DateTimePicker
+					value={this.state.end}
+					time={false}
+					format={'yyyy-MM-d'}
+					onChange={this.handleEndDateChange}/>
+		</div>)
+	}
+});
 
 module.exports = {
 	template: require('./template.html'),
@@ -68,6 +112,13 @@ module.exports = {
 				self.indicatorMap = _.indexBy(response.flat, 'id');
 				self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
 			});
+
+		var dateRangePickerProps = {
+			start: self.campaign.start,
+			end: self.campaign.end,
+			sendValue: self.updateDateRangePicker
+		};
+		React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById("dateRangePicker"));
 	},
 
 	computed: {
@@ -96,6 +147,10 @@ module.exports = {
 		removeIndicatorFromSelection: function(id) {
 			_.remove(this.indicators, function(d) { return d.id === id; });
 			this.renderIndicatorList();
+		},
+
+		updateDateRangePicker: function(key, value) {
+			this.campaign[key] = value;
 		},
 
 		refresh: function (pagination) {
