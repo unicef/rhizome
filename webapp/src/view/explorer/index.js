@@ -27,14 +27,14 @@ var DateRangePicker = React.createClass({
 		}
 	},
 
-	handleStartDateChange: function(date, dateStr) {
-		this.setState({start: date});
-		this.props.sendValue('start', dateStr);
-	},
-
-	handleEndDateChange: function(date, dateStr) {
-		this.setState({end: date});
-		this.props.sendValue('end', dateStr);
+	handleDateChange: function(type, date, dateStr) {
+		if (type == 'start') {
+			this.setState({start: date});
+		}
+		else {
+			this.setState({end: date});
+		}
+		this.props.sendValue(type, dateStr);
 	},
 
 	render() {
@@ -43,14 +43,14 @@ var DateRangePicker = React.createClass({
 					value={this.state.start}
 					time={false}
 					format={'yyyy-MM-d'}
-					onChange={this.handleStartDateChange}/>
+					onChange={this.handleDateChange.bind(this, 'start')}/>
 
 			<div class="centered">to</div>
 			<DateTimePicker
 					value={this.state.end}
 					time={false}
 					format={'yyyy-MM-d'}
-					onChange={this.handleEndDateChange}/>
+					onChange={this.handleDateChange.bind(this, 'end')}/>
 		</div>)
 	}
 });
