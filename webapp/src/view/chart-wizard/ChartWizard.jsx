@@ -1,6 +1,7 @@
 import React from 'react'
 import Reflux from 'reflux'
 import _ from 'lodash'
+import moment from 'moment'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
@@ -121,10 +122,12 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let campaignDisplay = (this.state.data.location && this.state.data.location.name) + ' ' +
+      (this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMM YYYY'))
     let campaignStep = (
       <div>
         <CampaignDropdownMenu
-          text='Select campaign'
+          text={this.state.data.campaign && campaignDisplay || 'Select Campaign'}
           campaigns={this.state.data.campaignFilteredList}
           sendValue={() => {}}>
         </CampaignDropdownMenu>
