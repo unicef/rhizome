@@ -145,3 +145,9 @@
 		font-weight: normal;
 	}
 }
+
+.create-user{
+  .errorlist{
+	color: $alert-color;
+  }
+}
