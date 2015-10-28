@@ -352,7 +352,4 @@ class MasterRefresh(object):
         except ValueError:
             raise ValueError(' can not convert to float')
 
-        if cleaned_val == float(0):
-            raise ValueError('No Zeros Allowed in Doc Data Point')
-
         return cleaned_val
