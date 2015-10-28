@@ -220,7 +220,8 @@ class MasterRefresh(object):
                 submission.location_id = location_id
                 submission.campaign_id =  campaign_id
 
-        bulk_update(submission_qs)
+        if len(submission_qs) > 0:
+            bulk_update(submission_qs)
 
         return ss_id_list_to_process,all_ss_ids
 
