@@ -50,10 +50,6 @@ var SubmissionModal = React.createClass({
                 submission_data.push(<li><b>{key}</b> : {value} </li>)
             });
         };
-
-        console.log('====')
-        console.log('submission_data',submission_data)
-        console.log('====')
         
         return <div>
             <button
