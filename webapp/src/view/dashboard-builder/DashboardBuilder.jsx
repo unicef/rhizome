@@ -6,6 +6,7 @@ var React = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var Reflux = require('reflux/src');
 var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx');
+var ChartWizard = require('view/chart-wizard/ChartWizard.jsx');
 
 var dashboardInit = require('data/dashboardInit');
 
@@ -316,8 +317,12 @@ module.exports = React.createClass({
     }
     else if (this.state.chartBuilderActive) {
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex]);
-      return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart}
-                            cancel={this.cancelEditChart} campaign={campaign} location={location}/>);
+      return (
+        <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
+          cancel={this.cancelEditChart} campaign={campaign} location={location}/>
+      )
+      // return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart}
+      //                       cancel={this.cancelEditChart} campaign={campaign} location={location}/>);
     }
     else {
       return dashboardBuilderContainer;

@@ -41,8 +41,6 @@ var MenuControl = {
 			);
 
 			if (!this.layer) {
-				var self = this;
-
 				this.layer = new Layer(document.body, function () {
 					return menu;
 				});

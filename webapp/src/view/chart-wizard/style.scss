@@ -1,0 +1,52 @@
+.chart-wizard {
+  width: 1230px;
+  margin: 20px auto;
+}
+
+.chart-wizard__step-list {
+  width: 25%;
+  min-width: 300px;
+  margin: 0;
+  display: inline-block;
+}
+
+.chart-wizard__step {
+  list-style: none;
+  border: 1px solid #666;
+  border-bottom: none;
+
+  &:last-child {
+    border-bottom: 1px solid #666;
+  }
+
+  h2 {
+    background: #ddd;
+    padding: 5px 10px;
+    margin: 0;
+    border-bottom: 1px solid #666;
+    cursor: pointer;
+  }
+
+  .chart-wizard__expandable {
+    display: none;
+    min-height: 300px;
+    padding: 10px;
+  }
+
+  &.active .chart-wizard__expandable {
+    display: block;
+  }
+}
+
+.preview-screen {
+  width: 60%;
+  display: inline-block;
+  margin-left: 50px;
+  vertical-align: top;
+}
+
+.chart-wizard__cancel {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+}

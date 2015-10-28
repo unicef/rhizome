@@ -142,16 +142,6 @@ var CustomDashboard = React.createClass({
     });
 
     var addChart;
-    // if (editable) {
-    //   addChart = (
-    //     <div className='medium-4 large-3 columns end'>
-    //       <a role='button' onClick={this.props.onAddChart}
-    //         style={{whiteSpace:'nowrap', width:'100%', height:'100%'}}>
-    //         <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
-    //       </a>
-    //     </div>
-    //   );
-    // }
 
     return (
       <div className='row'>{charts}{addChart}</div>

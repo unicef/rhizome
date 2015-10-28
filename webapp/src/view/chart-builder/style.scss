@@ -78,8 +78,7 @@ $right-page-width: 900px;
   .chart-box-wrapper {
     padding: 10px 10px 8px 10px;
     display: inline-block;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px;
     margin: 0 $chart-wrapper-margin;
     .chart-box {
       border-radius: 5px;
@@ -97,7 +96,6 @@ $right-page-width: 900px;
   .chart-box-wrapper.active {
     background-color: $chart-container-color;
     .chart-box {
-      background-color: #fff;
       opacity: 1.0;
     }
   }
