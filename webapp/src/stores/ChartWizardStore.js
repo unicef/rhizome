@@ -76,7 +76,7 @@ let ChartWizardStore = Reflux.createStore({
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
         this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
-        this.onPreviewChart()
+        this.previewChart()
     })
   },
 
@@ -88,36 +88,47 @@ let ChartWizardStore = Reflux.createStore({
   onAddLocation(index) {
     this.data.location = this.locationIndex[index]
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-    this.onPreviewChart()
+    this.previewChart()
   },
 
   onAddIndicator(index) {
     this.data.indicatorSelected.push(this.indicatorIndex[index])
-    this.onPreviewChart()
+    this.previewChart()
   },
 
   onRemoveIndicator(id) {
     _.remove(this.data.indicatorSelected, {id: id})
-    this.onPreviewChart()
+    this.previewChart()
   },
 
   onAddCampaign(index) {
     this.data.campaign = this.campaignIndex[index]
-    this.onPreviewChart()
+    this.previewChart()
   },
 
   onChangeChart(value) {
     this.data.chartDef.type = value
     this.data.chartData = []
-    this.onPreviewChart()
+    this.previewChart()
   },
 
   onChangeGroupRadio(value) {
     this.data.groupByValue = value
-    this.onPreviewChart()
+    this.previewChart()
   },
 
-  onPreviewChart() {
+  onSaveChart(callback) {
+    callback(_.merge(this.data.chartDef, {
+      indicators: this.data.indicatorSelected.map(item => {
+        return item.id
+      }),
+      groupBy: chartDefinitions.groups[this.data.groupByValue].value
+    }, (a, b) => {
+      return b
+    }))
+  },
+
+  previewChart() {
     if (!this.data.indicatorSelected.length) {
       this.data.canDisplayChart = false
       this.trigger(this.data)
@@ -159,17 +170,6 @@ let ChartWizardStore = Reflux.createStore({
       }
       this.trigger(this.data)
     });
-  },
-
-  onSaveChart(callback) {
-    callback(_.merge(this.data.chartDef, {
-      indicators: this.data.indicatorSelected.map(item => {
-        return item.id
-      }),
-      groupBy: chartDefinitions.groups[this.data.groupByValue].value
-    }, (a, b) => {
-      return b
-    }))
   }
 })
 
