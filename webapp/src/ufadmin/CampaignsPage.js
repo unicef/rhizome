@@ -15,6 +15,7 @@ var CampaignsPage = (function () {
         var input_dom = document.createElement("div");
         input_dom.id = id + "_date_picker";
         parent_dom.appendChild(input_dom);
+        input_dom.className ="admin_campaigns_date_picker"
 
         var sendValue = function (date, dateStr) {
           original_dom.value = dateStr;
