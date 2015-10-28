@@ -155,7 +155,7 @@ let ChartWizard = React.createClass({
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         <label>Time Span: </label>
         <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
-          values={chartDefinitions.times} onChange={ChartWizardActions.changeTimeRadio} />
+          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
       </div>
     )
 
