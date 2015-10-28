@@ -72,5 +72,8 @@ module.exports = {
 	GroupForm: function(el, group_id) {
 		// React.render(React.createElement(GroupForm), el);
 		React.render(React.createElement(GroupForm, {group_id: group_id}), el);
+	},
+	AdminCampaigns: function(start_date_id, end_date_id){
+		alert(start_date_id + " " + end_date_id);
 	}
 };
