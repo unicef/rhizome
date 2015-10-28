@@ -28,6 +28,13 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
+  applyChartDef(chartDef) {
+    let timeValue = !chartDef.timeRange ? 'all' :
+      chartDef.timeRange.years ? '1year' :
+      chartDef.timeRange.months ? +chartDef.timeRange.months + 1 + 'month' : 'all'
+    this.data.timeValue = Math.max(_.findIndex(chartDefinitions.times, {value: timeValue}), 0);
+  },
+
   getInitialState() {
     return this.data
   },
@@ -76,6 +83,8 @@ let ChartWizardStore = Reflux.createStore({
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
         this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
+        this.applyChartDef(chartDef)
+
         this.previewChart()
     })
   },
@@ -117,12 +126,18 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangeTimeRadio(value) {
+    this.data.timeValue = value
+    this.previewChart()
+  },
+
   onSaveChart(callback) {
     callback(_.merge(this.data.chartDef, {
       indicators: this.data.indicatorSelected.map(item => {
         return item.id
       }),
-      groupBy: chartDefinitions.groups[this.data.groupByValue].value
+      groupBy: chartDefinitions.groups[this.data.groupByValue].value,
+      timeRange: chartDefinitions.times[this.data.timeValue].json
     }, (a, b) => {
       return b
     }))
@@ -140,7 +155,7 @@ let ChartWizardStore = Reflux.createStore({
     let locationIndex = _.indexBy([this.data.location], 'id')
     let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex
     let start = moment(this.data.campaign.start_date)
-    let lower = null // all time
+    let lower = chartDefinitions.times[this.data.timeValue].getLower(start)
     let upper = start.clone().startOf('month')
     let indicatorArray = _.map(this.data.indicatorSelected, _.property('id'))
     let query = {

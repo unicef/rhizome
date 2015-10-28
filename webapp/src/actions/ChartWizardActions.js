@@ -9,6 +9,7 @@ let ChartWizardActions = Reflux.createActions([
   'addCampaign',
   'changeChart',
   'changeGroupRadio',
+  'changeTimeRadio',
   'saveChart'
 ])
 

@@ -144,12 +144,18 @@ let ChartWizard = React.createClass({
     )
 
     let groupBy = (
-      <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
-        values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+      <div>
+        <label>Group By: </label>
+        <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
+          values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+      </div>
     )
     let styleStep = (
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
+        <label>Time Span: </label>
+        <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
+          values={chartDefinitions.times} onChange={ChartWizardActions.changeTimeRadio} />
       </div>
     )
 
