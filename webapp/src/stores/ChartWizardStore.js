@@ -18,6 +18,7 @@ let ChartWizardStore = Reflux.createStore({
     locationSelected: null,
     campaignFilteredList: [],
     groupByValue: 0,
+    timeValue: 0,
     canDisplayChart: false,
     chartDef: {}
   },
@@ -29,10 +30,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   applyChartDef(chartDef) {
-    let timeValue = !chartDef.timeRange ? 'all' :
-      chartDef.timeRange.years ? '1year' :
-      chartDef.timeRange.months ? +chartDef.timeRange.months + 1 + 'month' : 'all'
-    this.data.timeValue = Math.max(_.findIndex(chartDefinitions.times, {value: timeValue}), 0);
+    this.data.timeValue = Math.max(_.findIndex(chartDefinitions.times, {json: chartDef.timeRange}), 0)
   },
 
   getInitialState() {
