@@ -1,17 +1,20 @@
 @import "variables";
 
-.chart-padding {
-  padding-left: 0px;
-  padding-right: 0px;
+.homepage-charts {
+  padding: 2px;
+}
 
-  .charts {
+.chart-container {
+  padding-left: 0;
+  padding-right: 0;
+
+  .chart {
     background-color: $rhz-chart-panel-color;
     margin: 2px;
-    padding: 2px;
+    padding: 18px;
 
     h5 {
       text-transform: uppercase;
-      padding: 12px 20px
     }
 
     .chart-button-group {
@@ -26,8 +29,22 @@
       text-align: center;
       margin: 2px;
       padding: 10px 16px;
-      width: 100%;
     }
+
   }
 }
 
+
+#afghanistan-chart, #pakistan-chart {
+  .chart-button {
+    width: 50%;
+    padding: 10px 64px;
+  }
+}
+
+#nigeria-chart {
+  .chart-button {
+    width: 33.33%;
+    padding: 10px 24px;
+  }
+}
