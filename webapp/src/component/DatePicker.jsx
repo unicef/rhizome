@@ -7,13 +7,13 @@ var DateTimePicker = require('react-widgets/lib/DateTimePicker');
 var DatePicker = React.createClass({
 
   propTypes: {
-    date: React.PropTypes.object.isRequired,
+    date: React.PropTypes.object,
     sendValue: React.PropTypes.func.isRequired
   },
 
   getInitialState: function () {
     return {
-      date: new Date()
+      date: this.props.date
     }
   },
 
