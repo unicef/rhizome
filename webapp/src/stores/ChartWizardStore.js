@@ -1,6 +1,7 @@
 import Reflux from 'reflux'
 import _ from 'lodash'
 import moment from 'moment'
+import d3 from 'd3'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
@@ -20,6 +21,7 @@ let ChartWizardStore = Reflux.createStore({
     timeRangeFilteredList: [],
     groupByValue: 0,
     timeValue: 0,
+    yFormatValue: 0,
     canDisplayChart: false,
     chartDef: {}
   },
@@ -38,7 +40,16 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   applyChartDef(chartDef) {
+    this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: chartDef.groupBy})
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
+    this.data.yFormatValue = _.findIndex(chartDefinitions.formats, {value: chartDef.yFormat})
+  },
+
+  integrateChartOption(chartOption) {
+    if (!chartOption.yFormat) {
+      chartOption.yFormat = d3.format(chartDefinitions.formats[this.data.yFormatValue].value)
+    }
+    return chartOption
   },
 
   getInitialState() {
@@ -49,7 +60,6 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef = _.clone(chartDef)
     this.data.location = location
     this.data.campaign = campaign
-    this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: this.data.chartDef.groupBy})
 
     Promise.all([api.indicatorsTree(), api.locations(), api.campaign(), api.office()]).
       then(([indicators, locations, campaigns, offices]) => {
@@ -140,13 +150,19 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangeYFormatRadio(value) {
+    this.data.yFormatValue = value
+    this.previewChart()
+  },
+
   onSaveChart(callback) {
     callback(_.merge(this.data.chartDef, {
       indicators: this.data.indicatorSelected.map(item => {
         return item.id
       }),
       groupBy: chartDefinitions.groups[this.data.groupByValue].value,
-      timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json
+      timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
+      yFormat: chartDefinitions.formats[this.data.yFormatValue].value
     }, (a, b) => {
       return b
     }))
@@ -189,7 +205,7 @@ let ChartWizardStore = Reflux.createStore({
         this.data.canDisplayChart = false
       } else {
         this.data.canDisplayChart = true
-        this.data.chartOptions = chart.options
+        this.data.chartOptions = this.integrateChartOption(chart.options)
         this.data.chartData = chart.data
       }
       this.trigger(this.data)
