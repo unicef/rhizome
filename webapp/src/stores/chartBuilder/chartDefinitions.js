@@ -36,5 +36,19 @@ export default {
       getLower: start => { return start.clone().startOf('month') },
       json: {months: 0}
     }
+  ],
+  formats: [
+    {
+      value: ',.0f',
+      title: 'Integer'
+    },
+    {
+      value: ',.4f',
+      title: 'Real Number'
+    },
+    {
+      value: '%',
+      title: 'Percentage'
+    }
   ]
 }

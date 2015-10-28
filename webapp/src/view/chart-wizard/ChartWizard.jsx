@@ -156,6 +156,9 @@ let ChartWizard = React.createClass({
         <label>Time Span: </label>
         <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
           values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        <label>Format: </label>
+        <RadioGroup name="format" horizontal={true} value={this.state.data.yFormatValue}
+          values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
       </div>
     )
 
