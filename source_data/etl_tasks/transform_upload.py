@@ -86,9 +86,6 @@ class DocTransform(object):
 
             if ss is not None and instance_guid is not None:
                 ss['instance_guid'] = instance_guid
-                print '=='
-                pprint(ss)
-                print '=='
                 batch[instance_guid] = ss
 
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
