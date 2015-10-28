@@ -8,6 +8,7 @@ var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
 var GroupForm = require('view/group-form/GroupForm.jsx');
+var HomepageChartsView = require('view/HomepageChartsView.jsx');
 
 Vue.config.debug = true;
 
@@ -57,6 +58,9 @@ module.exports = {
 	},
 	DashboardList: function (el) {
 		React.render(React.createElement(DashboardList), el);
+	},
+	HomepageCharts: function(el) {
+		React.render(React.createElement(HomepageChartsView), el);
 	},
 	DashboardBuilder: function (el,dashboard_id) {
 	  var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx');

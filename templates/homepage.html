@@ -2,44 +2,11 @@
 {% block section %}home{% endblock %}
 
 {% block content %}
-    <div class="row homepage-charts">
-        <div class="large-4 columns chart-container" id="afghanistan-chart">
-            <div class="chart">
-                <h5>Afghanistan</h5>
-                <carousel>
-                    <chart></chart>
-                </carousel>
-                <div class="chart-button-group">
-                    <div class="chart-button"><span>Country overview</span></div>
-                    <div class="chart-button"><span>District summary</span></div>
-                </div>
-            </div>
+    <div class="row homepage-charts" id="homepage-charts">
 
-        </div>
-        <div class="large-4 columns chart-container" id="pakistan-chart">
-            <div class="chart">
-                <h5>Pakistan</h5>
-                <carousel>
-                    <chart></chart>
-                </carousel>
-                <div class="chart-button-group">
-                    <div class="chart-button"><span>Country overview</span></div>
-                    <div class="chart-button"><span>District summary</span></div>
-                </div>
-            </div>
-        </div>
-        <div class="large-4 columns chart-container" id="nigeria-chart">
-            <div class="chart">
-                <h5>Nigeria</h5>
-                <carousel>
-                    <chart></chart>
-                </carousel>
-                <div class="chart-button-group">
-                    <div class="chart-button"><span>Country overview</span></div>
-                    <div class="chart-button"><span>District summary</span></div>
-                    <div class="chart-button"><span>NGA Campaign Monitoring</span></div>
-                </div>
-            </div>
-        </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>Polio.HomepageCharts(document.getElementById('homepage-charts'));</script>
 {% endblock %}

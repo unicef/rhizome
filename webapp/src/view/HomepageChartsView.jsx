@@ -28,15 +28,7 @@ var DashboardActions = require('actions/DashboardActions');
 var DataActions = require('actions/DataActions');
 var GeoActions = require('actions/GeoActions');
 
-var LAYOUT = {
-    'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
-    'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
-    'District Dashboard': require('dashboard/District.jsx'),
-    'Source Data': require('dashboard/SourceDataDashboard.jsx'),
-    'ODK Dashboard': require('dashboard/ODKDashboard.jsx'),
-};
-
-var Dashboard = React.createClass({
+var HomepageChartsView = React.createClass({
     mixins: [
         Reflux.ListenerMixin,
         Reflux.connect(DataStore)
@@ -59,14 +51,16 @@ var Dashboard = React.createClass({
             var customDashboards = _(response.objects).sortBy('title').value();
             var allDashboards = builtins.concat(customDashboards);
             self.setState({allDashboards: allDashboards});
+            self._showDefault();
         });
     },
 
     componentWillMount: function () {
         this.getallDashboards();
-        page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData);
-        page('/datapoints/:dashboard/:location/:year/:month', this._show);
-        page('/datapoints/:dashboard', this._showDefault);
+        //page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData);
+        //page('/datapoints/:dashboard/:location/:year/:month', this._show);
+        //page('/', this._showDefault);
+        //this._showDefault();
         AppActions.init();
     },
 
@@ -88,6 +82,7 @@ var Dashboard = React.createClass({
     },
 
     componentDidMount: function () {
+        console.log("component Did Mount");
         // Reflux.ListenerMixin will unmount listeners
         this.listenTo(DashboardStore, this._onDashboardChange);
         this.listenTo(NavigationStore, this._onNavigationChange);
@@ -100,12 +95,15 @@ var Dashboard = React.createClass({
 
     _onDashboardChange: function (state) {
         var fetchData = this.state.loaded;
+        console.log(state);
 
         this.setState(state);
 
-        if (fetchData) {
+
+        if (this.state.loaded) {
             var q = DashboardStore.getQueries();
             console.log(q);
+
             if (_.isEmpty(q)) {
                 DataActions.clear();
             } else {
@@ -143,8 +141,7 @@ var Dashboard = React.createClass({
     },
 
     _setlocation: function (id) {
-        var location = _.find(this.state.locations, r => r.id === id)
-        // console.log("_setlocation:", id, location);
+        var location = _.find(this.state.locations, r => r.id === id);
 
         if (!location) {
             return;
@@ -162,7 +159,7 @@ var Dashboard = React.createClass({
     },
 
     _getDashboard: function (slug) {
-        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug);
         if (dashboard.id <= 0) {
             return new Promise(resolve => {
                 resolve(dashboard)
@@ -173,7 +170,7 @@ var Dashboard = React.createClass({
                     var result = chart.chart_json;
                     result.id = chart.id;
                     return result;
-                })
+                });
                 return dashboard
             }, function (err) {
                 console.log(err);
@@ -193,8 +190,8 @@ var Dashboard = React.createClass({
         page('/datapoints/' + [slug, location, campaign].join('/'));
     },
 
-    _showDefault: function (ctx) {
-        this._getDashboard(ctx.params.dashboard).then(dashboard => {
+    _showDefault: function () {
+        this._getDashboard('management-dashboard').then(dashboard => {
             DashboardActions.setDashboard({
                 dashboard
             });
@@ -217,23 +214,22 @@ var Dashboard = React.createClass({
 
             this.setState({
                 doc_id: ctx.params.doc_id,
-                doc_tab: doc_tab,
-            })
+                doc_tab: doc_tab
+            });
 
             DashboardActions.setDashboard({
                 dashboard,
                 location: ctx.params.location,
-                date: [ctx.params.year, ctx.params.month].join('-'),
+                date: [ctx.params.year, ctx.params.month].join('-')
             });
         })
 
     },
 
     render: function () {
-        // console.log("RENDER", this.state.location);
         if (!(this.state.loaded && this.state.dashboard)) {
             var style = {
-                fontSize: '2rem',
+                fontSize: '2rem'
             };
 
             return (
@@ -248,7 +244,6 @@ var Dashboard = React.createClass({
         var {campaign, loading, location, doc_id, doc_tab} = this.state;
 
         var dashboardDef = this.state.dashboard;
-        var dashboardName = _.get(dashboardDef, 'title', '');
 
         var indicators = IndicatorStore.getById.apply(
             IndicatorStore,
@@ -280,79 +275,15 @@ var Dashboard = React.createClass({
             doc_id: doc_id
         };
 
-        var dashboard = React.createElement(
-            _.get(LAYOUT, dashboardName, CustomDashboard),
-            dashboardProps);
-
-        var campaigns = _(this.state.campaigns)
-            .filter(c => c.office_id === location.office_id)
-            .sortBy('start_date')
-            .reverse()
-            .value();
-
-        if (campaign.office_id !== location.office_id) {
-            campaign = campaigns[0];
-        }
-
-        var dashboardItems = MenuItem.fromArray(
-            _.map(this.state.allDashboards, d => {
-                return {
-                    title: d.title,
-                    value: _.kebabCase(d.title)
-                };
-            }),
-            this._setDashboard);
-
-        var edit;
-        if (dashboardDef.owned_by_current_user) {
-            edit = (
-                <span>
-          <a className='menu-button fa-stack'
-             href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
-              <i className='fa fa-stack-2x fa-circle'></i>
-              <i className='fa fa-stack-1x fa-pencil'></i>
-          </a>
-                    &emsp;
-        </span>
-            );
-        }
+        var dashboard = React.createElement(require('dashboard/homepage/HomepageCharts.jsx'), dashboardProps);
 
         return (
             <div>
-                <div classNameName='clearfix'></div>
-
-                <form className='inline no-print'>
-                    <div className='row'>
-                        <div className='medium-6 columns'>
-                            <h1>
-                                <CampaignTitleMenu
-                                    campaigns={campaigns}
-                                    selected={campaign}
-                                    sendValue={this._setCampaign}/>
-                                &emsp;
-                                <RegionTitleMenu
-                                    locations={this.state.locations}
-                                    selected={location}
-                                    sendValue={this._setlocation}/>
-                            </h1>
-                        </div>
-
-                        <div className='medium-4 columns'>
-                            <h2 style={{ textAlign: 'right' }}>
-                                {edit}
-                                <TitleMenu text={dashboardName}>
-                                    {dashboardItems}
-                                </TitleMenu>
-                            </h2>
-                        </div>
-                    </div>
-                </form>
-
                 {dashboard}
             </div>
         );
-    },
+    }
 
 });
 
-module.exports = Dashboard;
+module.exports = HomepageChartsView;
