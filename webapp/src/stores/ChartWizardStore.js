@@ -17,6 +17,7 @@ let ChartWizardStore = Reflux.createStore({
     locationList: [],
     locationSelected: null,
     campaignFilteredList: [],
+    timeRangeFilteredList: [],
     groupByValue: 0,
     timeValue: 0,
     canDisplayChart: false,
@@ -29,8 +30,15 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
+  filterTimeRangeByChartType(timeRanges, chartType) {
+    let expectTimes = _.find(chartDefinitions.charts, {name: chartType}).timeRadios
+    return timeRanges.filter(time => {
+      return _.includes(expectTimes, time.value)
+    })
+  },
+
   applyChartDef(chartDef) {
-    this.data.timeValue = Math.max(_.findIndex(chartDefinitions.times, {json: chartDef.timeRange}), 0)
+    this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
   },
 
   getInitialState() {
@@ -55,9 +63,9 @@ let ChartWizardStore = Reflux.createStore({
         this.data.locationList = _(locations.objects)
           .map(location => {
             return {
-              'title'  : location.name,
-              'value'  : location.id,
-              'parent' : location.parent_location_id
+              'title': location.name,
+              'value': location.id,
+              'parent': location.parent_location_id
             }
           })
           .sortBy('title')
@@ -70,17 +78,19 @@ let ChartWizardStore = Reflux.createStore({
         this.campaignList = _(campaigns.objects)
           .map(campaign => {
             return _.assign({}, campaign, {
-              'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-              'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-              'office'     : officeIndex[campaign.office_id]
+              'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+              'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+              'office': officeIndex[campaign.office_id]
             });
           })
           .sortBy(_.method('start_date.getTime'))
           .reverse()
           .value()
-        this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+
         this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
+        this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+        this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(chartDefinitions.times, this.data.chartDef.type)
         this.applyChartDef(chartDef)
 
         this.previewChart()
@@ -115,6 +125,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeChart(value) {
     this.data.chartDef.type = value
+    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(chartDefinitions.times, this.data.chartDef.type)
     this.data.chartData = []
     this.previewChart()
   },
@@ -135,7 +146,7 @@ let ChartWizardStore = Reflux.createStore({
         return item.id
       }),
       groupBy: chartDefinitions.groups[this.data.groupByValue].value,
-      timeRange: chartDefinitions.times[this.data.timeValue].json
+      timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json
     }, (a, b) => {
       return b
     }))
