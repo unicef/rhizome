@@ -37,25 +37,25 @@ function filterMenu(items, pattern) {
     return items
   }
 
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
+  let match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
-  return _(items).map(match).flatten().value();
+  return _(items).map(match).flatten().value()
 }
 
 function findMatches(item, re) {
-  var matches = [];
+  let matches = []
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, {filtered: true}));
+    matches.push(_.assign({}, item, {filtered: true}))
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
     _.each(item.children, function (child) {
-      matches = matches.concat(findMatches(child, re));
+      matches = matches.concat(findMatches(child, re))
     })
   }
 
-  return matches;
+  return matches
 }
 
 function findChartType(type) {
