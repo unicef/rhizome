@@ -5,9 +5,11 @@ var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
 var DashboardNav    = require('component/DashboardNav.jsx');
+var LandingPage = require('view/LandingPage.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
-var Navigation       = require('component/Navigation.jsx');
-var AdminApp         = require('./ufadmin');
+var Navigation = require('component/Navigation.jsx');
+var AdminApp = require('./ufadmin');
+var CampaignsPage = require('./ufadmin/CampaignsPage.js');
 var GroupForm = require('view/group-form/GroupForm.jsx');
 var HomepageChartsView = require('view/HomepageChartsView.jsx');
 
@@ -27,8 +29,8 @@ Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'));
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
 
 React.render(
-	React.createElement(Navigation),
-	document.getElementById('main-nav')
+  React.createElement(Navigation),
+  document.getElementById('main-nav')
 );
 
 React.render(
@@ -85,5 +87,8 @@ module.exports = {
 	},
 	AdminCampaigns: function(start_date_id, end_date_id){
 		alert(start_date_id + " " + end_date_id);
-	}
+	},
+  CampaignsPage: function (start_date_dom_id, end_date_dom_id) {
+    CampaignsPage.render(start_date_dom_id, end_date_dom_id);
+  }
 };
