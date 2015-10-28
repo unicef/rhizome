@@ -123,7 +123,7 @@ var Dashboard = React.createClass({
     },
 
     _onNavigationChange: function (nav) {
-        if (NavigationStore.loaded && DashboardStore.loaded) {
+        if (NavigationStore.loaded) {
             page({
                 click: false
             });
@@ -194,11 +194,19 @@ var Dashboard = React.createClass({
     },
 
     _showDefault: function (ctx) {
-        this._getDashboard(ctx.params.dashboard).then(dashboard => {
-            DashboardActions.setDashboard({
-                dashboard
+        var self = this;
+
+        api.get_dashboard().then(function(response) {
+            var customDashboards = _(response.objects).sortBy('title').value();
+            var allDashboards = builtins.concat(customDashboards);
+
+            self.setState({allDashboards: allDashboards});
+            self._getDashboard(ctx.params.dashboard).then(dashboard => {
+                DashboardActions.setDashboard({
+                    dashboard
+                });
             });
-        })
+        });
     },
 
     _show: function (ctx) {
