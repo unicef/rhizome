@@ -94,7 +94,7 @@ class CampaignUpdateView(PermissionRequiredMixin,generic.UpdateView):
 
     model = Campaign
     success_url = '/ufadmin/campaigns'
-    template_name = 'campaigns/create.html'
+    template_name = 'campaigns/update.html'
     form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
 
