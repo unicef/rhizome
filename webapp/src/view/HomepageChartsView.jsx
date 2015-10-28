@@ -128,7 +128,9 @@ var HomepageChartsView = React.createClass({
     _showDefault: function () {
         this._getDashboard('management-dashboard').then(dashboard => {
             DashboardActions.setDashboard({
-                dashboard
+                dashboard,
+                location: 'Nigeria',
+                date: '2015-09'
             });
         })
     },
@@ -183,7 +185,13 @@ var HomepageChartsView = React.createClass({
             doc_id: doc_id
         };
 
-        var dashboard = React.createElement(require('dashboard/homepage/HomepageCharts.jsx'), dashboardProps);
+        var homepageData = {
+            data: data.performance,
+            campaign: campaign,
+            loading: loading,
+        };
+
+        var dashboard = React.createElement(require('dashboard/homepage/HomepageCharts.jsx'), homepageData);
 
         return (
             <div>

@@ -76,6 +76,13 @@ var HomepageCharts = React.createClass({
     );
 
     var social = _.find(data.microplans, indicatorForCampaign(campaign.id, 28));
+
+      var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
+    var conversions = _(sortedConversions)
+      .groupBy('indicator.short_name')
+      .map(series)
+      .value();
+
     social = !_.isEmpty(social) ? [[social]] : [];
 
     var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
@@ -149,6 +156,13 @@ var HomepageCharts = React.createClass({
                 <div className="chart">
                     <h5>Nigeria</h5>
                     <carousel>
+                        <Chart type='LineChart' data={conversions}
+                               loading={loading}
+                               options={{
+                            aspect  : 2.26,
+                            domain  : _.constant([lower.toDate(), upper.toDate()]),
+                            yFormat : pct
+                          }}/>
                     </carousel>
                     <div className="chart-button-group">
                         <div className="chart-button"><span>Country overview</span></div>
