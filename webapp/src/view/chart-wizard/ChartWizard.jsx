@@ -37,25 +37,25 @@ function filterMenu(items, pattern) {
     return items
   }
 
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
+  let match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
-  return _(items).map(match).flatten().value();
+  return _(items).map(match).flatten().value()
 }
 
 function findMatches(item, re) {
-  var matches = [];
+  let matches = []
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, {filtered: true}));
+    matches.push(_.assign({}, item, {filtered: true}))
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
     _.each(item.children, function (child) {
-      matches = matches.concat(findMatches(child, re));
+      matches = matches.concat(findMatches(child, re))
     })
   }
 
-  return matches;
+  return matches
 }
 
 function findChartType(type) {
@@ -144,12 +144,21 @@ let ChartWizard = React.createClass({
     )
 
     let groupBy = (
-      <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
-        values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+      <div>
+        <label>Group By: </label>
+        <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
+          values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+      </div>
     )
     let styleStep = (
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
+        <label>Time Span: </label>
+        <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
+          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        <label>Format: </label>
+        <RadioGroup name="format" horizontal={true} value={this.state.data.yFormatValue}
+          values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
       </div>
     )
 
