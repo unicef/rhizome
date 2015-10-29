@@ -136,13 +136,11 @@ class MasterRefresh(object):
         ## if a user re-maps data, we need to delete the
         ## old data and make way for the new
 
-        som_data = SourceObjectMap.objects.filter(
-        master_object_id__gt = 0,
-        id__in =
-            DocumentSourceObjectMap.objects\
-            .filter(document_id = self.document_id)\
-            .values_list('source_object_map_id',flat=True))\
-            .values_list('content_type','master_object_id')
+        som_data = SourceObjectMap.objects.filter(master_object_id__gt = 0,
+            id__in = DocumentSourceObjectMap.objects\
+                .filter(document_id = self.document_id)\
+                .values_list('source_object_map_id',flat=True))\
+                .values_list('content_type','master_object_id')
 
         som_lookup = defaultdict(list)
 
@@ -154,11 +152,15 @@ class MasterRefresh(object):
             source_submission_id__in = self.ss_ids_to_process,
         ).exclude(indicator_id__in=som_lookup['indicator']).delete()
 
-        # ## delete bad_indicator_data ##
-        # DataPoint.objects.filter(
-        #     source_submission_id__in = self.ss_ids_to_process,
-        # ).exclude(indicator_id__in=som_lookup['indicator']).delete()
+        ## delete bad_location_data ##
+        DataPoint.objects.filter(
+            source_submission_id__in = self.ss_ids_to_process,
+        ).exclude(location_id__in=som_lookup['location']).delete()
 
+        ## delete bad_campaign_data ##
+        DataPoint.objects.filter(
+            source_submission_id__in = self.ss_ids_to_process,
+        ).exclude(location_id__in=som_lookup['campaign']).delete()
 
 
     def refresh_submission_details(self):

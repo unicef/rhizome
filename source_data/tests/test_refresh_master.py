@@ -176,11 +176,6 @@ class RefreshMasterTestCase(TestCase):
         som_id_i.master_object_id = new_indicator_id
         som_id_i.save()
 
-        print '---'
-        print first_indicator_id
-        print new_indicator_id
-        print '---'
-
         mr_after_new_mapping = MasterRefresh(self.user.id ,self.document.id)
         mr_after_new_mapping.main()
 
