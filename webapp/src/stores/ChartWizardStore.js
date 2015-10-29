@@ -20,6 +20,7 @@ let ChartWizardStore = Reflux.createStore({
     campaignFilteredList: [],
     timeRangeFilteredList: [],
     groupByValue: 0,
+    locationLevelValue: 0,
     timeValue: 0,
     yFormatValue: 0,
     canDisplayChart: false,
@@ -144,6 +145,11 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeGroupRadio(value) {
     this.data.groupByValue = value
+    this.previewChart()
+  },
+
+  onChangeLocationLevelRadio(value) {
+    this.data.locationLevelValue = value
     this.previewChart()
   },
 

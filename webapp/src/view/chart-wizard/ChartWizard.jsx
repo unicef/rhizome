@@ -146,7 +146,7 @@ let ChartWizard = React.createClass({
     let groupBy = (
       <div>
         <label>Group By: </label>
-        <RadioGroup name="groupby" horizontal={true} value={this.state.data.groupByValue}
+        <RadioGroup name='groupby' horizontal={true} value={this.state.data.groupByValue}
           values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
       </div>
     )
@@ -154,13 +154,18 @@ let ChartWizard = React.createClass({
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         <div>
+          <label>Location level: </label>
+          <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
+            values={chartDefinitions.locationLevels} onChange={ChartWizardActions.changeLocationLevelRadio}/>
+        </div>
+        <div>
           <label>Time Span: </label>
-          <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
+          <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
             values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
         </div>
         <div>
           <label>Format: </label>
-          <RadioGroup name="format" horizontal={true} value={this.state.data.yFormatValue}
+          <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
             values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
         </div>
       </div>
@@ -170,14 +175,14 @@ let ChartWizard = React.createClass({
       <div>
         <label>Title</label>
         <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle} />
-        <a href="#" className="button success" onClick={this.saveChart}>
-          {this.props.chartDef ? "Update Chart" : "Create Chart"}
+        <a href='#' className='button success' onClick={this.saveChart}>
+          {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
         </a>
       </div>
     )
 
     let chart = (
-      <Chart id="custom-chart" type={this.state.data.chartDef.type} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
+      <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
     )
 
     return (
@@ -205,7 +210,7 @@ let ChartWizard = React.createClass({
         <PreviewScreen>
           {this.state.data.canDisplayChart ? chart : null}
         </PreviewScreen>
-        <a className='chart-wizard__cancel' href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
+        <a className='chart-wizard__cancel' href='#' onClick={this.props.cancel}>Cancel without saving chart</a>
       </div>
     )
   }

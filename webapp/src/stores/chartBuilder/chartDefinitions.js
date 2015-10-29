@@ -50,5 +50,10 @@ export default {
       value: '%',
       title: 'Percentage'
     }
+  ],
+  locationLevels: [
+    {value: "selected", title: "Selected location only"},
+    {value: "type", title: "Locations with the same level"},
+    {value: "sublocations", title: "Sublocations 1 level below selected"}
   ]
 }
