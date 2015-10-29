@@ -315,9 +315,8 @@ module.exports = {
           return _.isFinite(d.x) && _.isFinite(d.y);
         })
         .value();
-      var showTooltip = function (d, i, el) {
-        var evt = d3.event;
-      };
+      var showTooltip = function () {};
+      var hideTooltip = function () {};
       var chartOptions = {
         aspect      : 1.7,
         domain      : _.constant(domain),
@@ -335,7 +334,7 @@ module.exports = {
         if (!data || data.length == 0) {
           return {options: null, data: null}
         }
-        var indicatorsIndex = _.indexBy(indicators, 'id');//;
+        var indicatorsIndex = _.indexBy(indicators, 'id');
         var locationsIndex = _.indexBy(locations, 'id');
         var datapoints = _(data)
           .thru(util.unpivot)

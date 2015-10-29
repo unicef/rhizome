@@ -1,15 +1,22 @@
 ul.list {
-   margin-left: 0px;
-   li {
-   	list-style: none;
-   	border: 1px solid #BBC6D1;
-   	color: #333;
-   	padding: 8px;
-   	border-radius: 5px;
-   	background-color: #fafafa;
-   	margin-bottom: 4px;
-   	.clear-btn { 
-   		float: right;
-   	}
-   }
+  margin-left: 0px;
+
+  li {
+    list-style: none;
+    position: relative;
+    margin-bottom: 4px;
+    padding: 8px;
+    padding-right: 20px;
+    border: 1px solid #BBC6D1;
+    border-radius: 5px;
+    background-color: #fafafa;
+    color: #333;
+
+    .clear-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 14px;
+    }
+  }
 }

@@ -23,6 +23,8 @@ let ChartWizardStore = Reflux.createStore({
     timeValue: 0,
     yFormatValue: 0,
     canDisplayChart: false,
+    chartOptions: {},
+    chartData: {},
     chartDef: {}
   },
 
@@ -180,7 +182,7 @@ let ChartWizardStore = Reflux.createStore({
     let locationIndex = _.indexBy([this.data.location], 'id')
     let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex
     let start = moment(this.data.campaign.start_date)
-    let lower = chartDefinitions.times[this.data.timeValue].getLower(start)
+    let lower = this.data.timeRangeFilteredList[this.data.timeValue].getLower(start)
     let upper = start.clone().startOf('month')
     let indicatorArray = _.map(this.data.indicatorSelected, _.property('id'))
     let query = {
@@ -192,7 +194,7 @@ let ChartWizardStore = Reflux.createStore({
 
     processChartData.init(api.datapoints(query),
       chartType,
-      this.data.chartDef.indicatorsSelected,
+      this.data.indicatorSelected,
       [this.data.location],
       lower,
       upper,
