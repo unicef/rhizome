@@ -117,7 +117,7 @@ module.exports = {
 			console.log(datapoints)
 			console.log('DATAPOINTS APOVE')
 
-			var columns = api.indicators({ id__in : indicators })
+			var columns = api.indicators({ id__in : indicators }, null, {'cache-control': 'no-cache'})
 				.then(_.partialRight(_heatmapColumns, indicators));
 
 			var self = this;

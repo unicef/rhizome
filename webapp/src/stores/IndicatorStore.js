@@ -20,7 +20,7 @@ var IndicatorStore = Reflux.createStore({
 	},
 
 	onInit : function () {
-		api.indicators().then(function (response) {
+		api.indicators(null, null, {'cache-control': 'no-cache'}).then(function (response) {
 			var indicators = response.objects;
 
 			this.indicators = _.indexBy(indicators, 'id');
