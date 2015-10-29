@@ -2,6 +2,7 @@ import traceback
 import locale
 
 from decimal import InvalidOperation
+from collections import defaultdict
 from pprint import pprint
 import json
 
@@ -125,65 +126,37 @@ class MasterRefresh(object):
 
         self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
+        self.delete_unmapped()
         self.sync_datapoint()
 
         SourceSubmission.objects.filter(id__in=self.all_ss_ids)\
             .update(process_status = 'PROCESSED')
 
-    ## MAIN METHODS ##
+    def delete_unmapped(self):
+        ## if a user re-maps data, we need to delete the
+        ## old data and make way for the new
 
-    def refresh_doc_meta(self):
-        '''
-        Based on mappings set the location and campaign id for an associated row.  If
-        there is not a mapping for both then we know we do not have to process those rows.
-        For instance if we have 100 rows in a csv and only 3 rows have both locatino and
-        campaign mapped, then we can save 97 iterations through the associated json
-        '''
-
-        ## indicators available for mappings are all colum headers that havent been
-        ## selected as a document config .. that is 'uq_ix' is not an indicator to map
-        indicator_codes =  set([h for h in self.file_header]).difference(set(\
-            [v for k,v in self.db_doc_deets.iteritems()]))
-
-        source_codes = {
-            'indicator': indicator_codes,
-            'location': self.location_codes_to_process,
-            'campaign': self.campaign_codes_to_process
-        }
-
-        source_object_map_ids = self.upsert_source_codes(source_codes)
-
-    def upsert_source_codes(self, source_codes):
-        '''
-        From the above metadata items, create any new mappings as well as assign all
-        this document_id a reference to mappings that have been created from other
-        documents.
-        '''
-
-        som_batch = []
-        for content_type, source_code_list in source_codes.iteritems():
-
-            for source_code in list(set(source_code_list)):
-
-                som_object, created = SourceObjectMap.objects.get_or_create(
-                    source_object_code = source_code,
-                    content_type = content_type,
-                    defaults = {
-                         'master_object_id' : -1,
-                         'master_object_name': 'To Map!',
-                         'mapped_by_id' : self.user_id
-                    }
-                )
-                som_batch.append(DocumentSourceObjectMap(**{
-                        'source_object_map_id': som_object.id,
-                        'document_id': self.document_id
-                    }))
-
-        DocumentSourceObjectMap.objects\
+        som_data = SourceObjectMap.objects.filter(
+        master_object_id__gt = 0,
+        id__in =
+            DocumentSourceObjectMap.objects\
             .filter(document_id = self.document_id)\
-            .delete()
+            .values_list('source_object_map_id',flat=True))\
+            .values_list('content_type','master_object_id')
 
-        DocumentSourceObjectMap.objects.bulk_create(som_batch)
+        som_lookup = defaultdict(list)
+
+        for content_type,master_object_id in som_data:
+            som_lookup[content_type].append(master_object_id)
+
+        pprint(som_lookup)
+
+
+    #     ## bad location data ##
+    #
+    #     ## bad indicator data ##
+    #
+    #     ## bad campaign data ##
 
     def refresh_submission_details(self):
         '''
