@@ -225,6 +225,7 @@ function indicatorsTree(q) {
         _.each(indicators.objects, function (i) {
           i.title = i.name;
           i.value = i.id;
+          i.displayTitle = i.name + " (" + i.id + ")";
           if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
             otherTag.children.push(i);
           }
