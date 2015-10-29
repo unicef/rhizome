@@ -71,27 +71,18 @@ var Access = React.createClass({
     };
 
     return (
-      <div className='medium-2 columns'>
+      <div className='medium-4 columns'>
         <h3>Access Challenged Districts</h3>
-        <h6>Number of Inaccessible Children</h6>
-
-        <Chart type='LineChart' data={inaccessible}
-          loading={loading}
-          options={lineChartOptions} />
-
-        <div className='row'>
-          <div className='medium-3 columns'>
-            <h6>Districts with Access Plan</h6>
-            <DonutChart data={plans} label={planLabel}
-              loading={loading}
-              options={{
-                innerRadius : 0.6,
-                domain      : _.constant([0, 1]),
-                palette     : palette
-              }} />
+        
+        <div className="row">
+          <div className="medium-4 columns">
+            <h6>Number of Inaccessible Children</h6>
+            <Chart type='LineChart' data={inaccessible}
+            loading={loading}
+            options={lineChartOptions} />
           </div>
 
-          <div className='accessibility medium-4 columns'>
+          <div className='accessibility medium-2 columns'>
             <h6>Inaccessibiity Breakdown</h6>
             <PieChartList keyPrefix='inaccessibility-breakdown'
               loading={loading}
@@ -103,10 +94,22 @@ var Access = React.createClass({
                 palette : palette
               }} />
           </div>
+
+          <div className='medium-2 columns'>
+            <h6>Districts with Access Plan</h6>
+            <DonutChart data={plans} label={planLabel}
+              loading={loading}
+              options={{
+                innerRadius : 0.6,
+                domain      : _.constant([0, 1]),
+                palette     : palette
+              }} />
+          </div>
+
         </div>
       </div>
     );
-  },
+  }
 });
 
 module.exports = Access;

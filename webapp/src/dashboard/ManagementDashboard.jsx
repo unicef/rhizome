@@ -83,9 +83,6 @@ var ManagementDashboard = React.createClass({
           <div className='medium-1 column'>
             <h3>Polio+</h3>
             <BulletChartSection data={data.__none__.polio} campaign={campaign} indicators={sections.undefined.polio} loading={loading} cols={1} />
-          </div>
-
-          <div className='medium-1 column'>
             <h3>Resources</h3>
             <BulletChartSection data={data.__none__.resources} campaign={campaign} indicators={sections.undefined.resources} loading={loading} cols={1} />
           </div>
