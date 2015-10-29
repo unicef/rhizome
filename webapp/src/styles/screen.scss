@@ -300,6 +300,11 @@ button,
 
 .clickable{
   cursor: pointer;
+  color: $oil;
+}
+
+.underline{
+  text-decoration: underline;
 }
 
 .button.read-only {
