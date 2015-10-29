@@ -4,6 +4,7 @@ var React = require('react');
 var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
+var DashboardMenu    = require('component/DashboardMenu.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
@@ -28,6 +29,11 @@ Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'));
 React.render(
 	React.createElement(Navigation),
 	document.getElementById('main-nav')
+);
+
+React.render(
+	React.createElement(DashboardMenu),
+	document.getElementById('dashboard-menu')
 );
 
 module.exports = {

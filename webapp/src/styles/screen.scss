@@ -1,5 +1,7 @@
-@import "settings";
+@import "variables";
 @import "mixins";
+
+@import "settings";
 @import "foundation";
 @import "font-awesome";
 @import "forms";
@@ -11,8 +13,6 @@
 @import "react-widgets";
 @import "react-widgets-core";
 @import "rw-dateTimePicker";
-
-@import "variables";
 
 body {
   font-size: rem-calc(10);

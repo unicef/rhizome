@@ -1,20 +1,15 @@
-@import "variables";
-
 header {
   background-color: $rhz-navigation-bg-color;
   color: $rhz-navigation-color;
+  font-size: 1rem;
 
-  .pull-right {
-    float: right;
-  }
-
-  #navigation-bar {
-    height: 98px;
+  .navigation-bar {
+    height: $header-height;
     overflow: hidden;
   }
 
-  #chanels {
-    float: left;
+  .channels {
+    text-align: left;
 
     li {
       margin: 0;
@@ -42,18 +37,61 @@ header {
     }
   }
 
-  #dashboard-control {
-    float: right;
-
+  .dashboard-control {
+    text-align: right;
     li {
-      margin: 8% 0;
+      //margin: 8% 0;
       font-size: 1rem;
+    }
+  }
+}
 
-      span {
-        text-transform: uppercase;
+ul.dashboards-nav {
+  display: block;
+  position: relative;
+
+  > li {
+    margin: 0;
+    padding: 0;
+    border: none;
+
+    &:hover {
+      background-color: $rhz-navigation-hover-bg-color;
+      .dashboard-menu {
+        display: block;
+      }
+    }
+
+    > a {
+      padding: 0 20px;
+      display: block;
+      height: $header-height;
+      line-height: $header-height;
+      opacity: 1;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.dashboard-menu {
+  display: none;
+  position: absolute;
+  
+  ul {
+    display: block;
+    margin: 0;
+    border: 1px solid #fff;
+    background-color: $rhz-navigation-hover-bg-color;
+    > li {
+      display: block;
+      padding: 0;
+      margin: 0;
+      border: none;
+      a {
+        display: block;
+        margin: 10px;
+        opacity: 1;
       }
     }
   }
-
-  @include clearfix;
 }

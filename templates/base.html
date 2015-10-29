@@ -24,8 +24,8 @@
 
 <header class="no-print">
     <nav id="main-nav"></nav>
-    <div class="row" id="navigation-bar">
-        <nav id="chanels" class="large-4 medium-4 columns">
+    <div class="row navigation-bar">
+        <nav class="large-4 medium-4 columns channels">
             <ul>
                 <li><a href="#">
                     <div class="tab"><i class="fa fa-lg fa-plus"></i><span>SOP</span></div>
@@ -44,17 +44,16 @@
             <img src="{% static 'img/RhizomeLogoWhiteResized.png' %}" alt="Rhizome Logo">
         </div>
 
-        <nav id="dashboard-control"  class="large-4 medium-4 columns">
-            <div class="pull-right">
-                <ul>
-                    <li><a href="#">
-                        <div><span>View My Dashboards</span></div>
-                    </a></li>
-                    <li><a href="/datapoints/dashboards/edit">
-                        <div><span>Create a dashboard</span></div>
-                    </a></li>
-                </ul>
-            </div>
+        <nav class="large-4 medium-4 columns dashboard-control">
+            <ul class="dashboards-nav">
+                <li class="has-dropdown">
+                    <a href="#">View My Dashboards</a>
+                    <div id="dashboard-menu" class="dashboard-menu"></div>
+                </li>
+                <li>
+                    <a href="/datapoints/dashboards/edit">Create a dashboard</a>
+                </li>
+            </ul>
         </nav>
     </div>
 
