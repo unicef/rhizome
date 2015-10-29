@@ -208,6 +208,8 @@ var SimpleForm = React.createClass({
             onClick={this.addCalculationToIndicator}
             smallItemCouldClick={true}
             onSmallItemClick={this.removeCalculationFromIndicator}
+            smallIDCouldClick={true}
+            smallIDBaseUrl='/ufadmin/manage/indicator/'
             >
           </SimpleFormComponent>
         </div>
