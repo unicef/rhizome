@@ -13,26 +13,28 @@ footer {
     position: absolute;
     bottom: 50px;
     margin-left: 0;
-    background-color: $rhz-background-color;
+    background-color: $rhz-navigation-hover-bg-color;
     > li {
+      margin: 10px 15px;
       padding: 0;
-      margin: 0;
+      display: block;
+      float: none;
     }
     a {
-      display: block;
-      margin: 10px;
       padding: 0;
+      display: block;
       font-size: 0.9rem;
       color: $rhz-navigation-color;
       opacity: 1;
 
       &:hover {
-        color: $rhz-background-color !important;
+        color: $rhz-navigation-color !important;
+        text-decoration: underline;
       }
     }
   }
 
-  .actions>ul, .static-links>ul {
+  .actions > ul, .static-links > ul {
     margin-left: 0;
     position: relative;
     display: block;
