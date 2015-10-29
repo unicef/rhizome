@@ -5,48 +5,85 @@ footer {
   position: fixed;
   width: 100%;
   bottom: 0;
-  height: 48px;
+  height: 50px;
   z-index: 9999;
 
-  #actions {
-    float: left;
-
+  .menu {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    margin-left: 0;
+    background-color: $rhz-background-color;
+    > li {
+      padding: 0;
+      margin: 0;
+    }
     a {
-      .action {
-        padding: 8px;
-        font-size: 0.9rem;
-        color: $rhz-navigation-color;
+      display: block;
+      margin: 10px;
+      padding: 0;
+      font-size: 0.9rem;
+      color: $rhz-navigation-color;
+      opacity: 1;
 
-        span {
-          text-transform: uppercase;
-        }
+      &:hover {
+        color: $rhz-background-color !important;
+      }
+    }
+  }
 
-        &:hover {
-          color: $rhz-background-color;
+  .actions>ul, .static-links>ul {
+    margin-left: 0;
+    position: relative;
+    display: block;
+    > li {
+      padding: 0;
+      margin: 0 12px;
+      border: none;
+      display: inline-block;
+
+      &.sub-nav {
+        display: inline-block;
+        padding: 0;
+        margin: 0 12px;
+        overflow: inherit;
+        &:hover .menu {
+          display: block;
         }
       }
     }
-
   }
 
-  #static-links {
-    float: right;
+  .action {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    font-size: 0.9rem;
+    color: $rhz-navigation-color;
+    opacity: 1;
 
-
-    a {
-      .action {
-        padding: 8px;
-        font-size: 0.9rem;
-        color: $rhz-navigation-color;
-        text-transform: uppercase;
-
-        &:hover {
-          color: $rhz-background-color;
-        }
-      }
+    &:hover {
+      color: $rhz-background-color !important;
+      cursor: pointer;
     }
 
+    span {
+      text-transform: uppercase;
+    }
   }
 
-  @include clearfix;
+  .fa {
+    margin-right: 5px;
+  }
+
+  .actions {
+    position: absolute;
+    left: 0;
+  }
+
+  .static-links {
+    position: absolute;
+    right: 0;
+  }
+
 }

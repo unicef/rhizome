@@ -188,7 +188,7 @@ var HomepageChartsView = React.createClass({
         var homepageData = {
             data: data.performance,
             campaign: campaign,
-            loading: loading,
+            loading: loading
         };
 
         var dashboard = React.createElement(require('dashboard/homepage/HomepageCharts.jsx'), homepageData);

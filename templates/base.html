@@ -67,63 +67,64 @@
     <div id="tooltip" v-component="vue-tooltip"></div>
 </div>
 
+<footer>
+    <nav class="actions">
+        <ul>
+            <li>
+                <a href="/ufadmin/users" class="action">
+                    <i class="fa fa-lg fa-cog"></i>
+                    <span>Manage system</span>
+                </a>
+            </li>
+            <li class="sub-nav">
+                <a href="javascript:;" class="action">
+                    <i class="fa fa-lg fa-plus"></i>
+                    <span>Add Data</span>
+                </a>
+                <ul class="menu">
+                    <li><a href="/datapoints/entry">Enter Data via Form</a></li>
+                    <li><a href="/datapoints/source-data">Upload Data via CSV File</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/" class="action">
+                    <i class="fa fa-lg fa-list"></i>
+                    <span>View raw data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <nav class="static-links">
+        <ul>
+            <li>
+                <a href="/about" class="action">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Sitemap</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Report a bug</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Contact us</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</footer>
+
 <script src="{% static 'js/vendor.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 
 {% block scripts %}{% endblock %}
-
-<footer>
-    <nav id="actions">
-        <ul>
-            <li>
-                <a href="/ufadmin/users">
-                    <div class="action"><i class="fa fa-lg fa-cog"></i>
-                        <span>Manage system</span>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="/datapoints/source-data">
-                    <div class="action"><i class="fa fa-lg fa-plus"></i>
-                        <span>Add data</span>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="/">
-                    <div class="action"><i class="fa fa-lg fa-list"></i>
-                        <span>View raw data</span>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </nav>
-
-    <nav id="static-links">
-        <ul>
-            <li><a href="/about">
-                <div class="action">
-                    <span>About</span>
-                </div>
-            </a></li>
-            <li><a href="#">
-                <div class="action">
-                    <span>Sitemap</span>
-                </div>
-            </a></li>
-            <li><a href="#">
-                <div class="action">
-                    <span>Report a bug</span>
-                </div>
-            </a></li>
-            <li><a href="#">
-                <div class="action">
-                    <span>Contact us</span>
-                </div>
-            </a></li>
-        </ul>
-    </nav>
-</footer>
 
 </body>
 </html>
