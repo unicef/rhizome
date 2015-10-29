@@ -79,7 +79,7 @@ var MapForm = React.createClass({
             return <div>
                 <IndicatorDropdownMenu
                     text='Map Indicator'
-                    indicators={this.props.indicators.flat}
+                    indicators={this.props.indicators}
                     sendValue={this.postMetaMap}>
                 </IndicatorDropdownMenu></div>;
         }
