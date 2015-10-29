@@ -42,8 +42,7 @@ class RefreshMasterTestCase(TestCase):
         self.document.save()
 
         dt = DocTransform(self.user.id, self.document.id)
-
-        self.source_submissions_ids = dt.process_file()
+        dt.main()
 
     def test_refresh_master_init(self):
 
@@ -52,39 +51,10 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertTrue(isinstance,(mr,MasterRefresh))
 
-    def test_refresh_doc_meta(self):
-
-        self.set_up()
-        mr = MasterRefresh(self.user.id ,self.document.id)
-
-        source_submissions_data = SourceSubmission.objects\
-            .filter(document_id = self.document.id)\
-            .values('id','submission_json')
-
-        raw_indicator_list = [k for k,v in json\
-            .loads(source_submissions_data[0]['submission_json']).iteritems()]
-
-        mr.refresh_doc_meta()
-
-        source_indicator_id_for_this_doc = DocumentSourceObjectMap.objects\
-            .filter(id__in= SourceObjectMap.objects.filter(\
-                    content_type = 'indicator',
-                    source_object_code__in = raw_indicator_list
-                ).values_list('id',flat=True)
-            )
-
-        ## -3 because we dont want campaign_col,indicator_col and unique_col
-        ## showing up as indicators to map!
-        self.assertEqual(len(source_indicator_id_for_this_doc)\
-            ,len(raw_indicator_list) -3 )
-
     def test_submission_detail_refresh(self,):
 
         self.set_up()
         mr = MasterRefresh(self.user.id ,self.document.id)
-        mr.refresh_doc_meta()
-
-        ## FIXME replace source_submission_data with read_csv(self.test_file)
 
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
@@ -102,22 +72,32 @@ class RefreshMasterTestCase(TestCase):
 
     def test_submission_to_datapoint(self):
         '''
-        This simulates a new document being processed with source_object_map
-        records that have been sucessfullly mapped to master_ids but from a
-        different document.
+        This simulates the following use case:
 
-        A few things this method checks:
-            1. there is a record in doc_object_map even for
-              mappings that existed before this document was ingested.
-            2. WHen the submission detail is refreshed, the reiogn/campaign ids
+        As a user journey we can describe this test case as:
+            - user uploads file ( see how set_up method calls DocTransform )
+            - user maps metadata
+            - user clicks " refresh master "
+                -> user checks to see if data is correct
+            - user realizes that the data is wrong, due to an invalid mapping
+            - user re-mapps the data and clicks " refresh master"
+                -> data from old mapping should be deleted and associated to
+                   the newly mapped value
+
+        TEST CASES:
+            1. WHen the submission detail is refreshed, the location/campaign ids
                that we mapped should exist in that row.
             2. DocDataPoint records are created if the necessary mapping exists
             3. There are no zero or null values allowed in doc_datapoint
             4. The doc_datapoint from #3 is merged into datpaoint.
+            5. I create mappings, sync data, realize the mapping was incorrect,
+               re-map the metadata and the old data should be deleted, the new
+               data created.
+                 -> was the old data deleted?
+                 -> was the new data created?
         '''
 
         self.set_up()
-        mr = MasterRefresh(self.user.id ,self.document.id)
 
         submission_qs = SourceSubmission.objects\
             .filter(document_id = self.document.id)\
@@ -131,41 +111,37 @@ class RefreshMasterTestCase(TestCase):
 
         indicator_code = raw_indicator_list[-1]
 
+        ## SIMULATED USER MAPPING ##
+        ## see: datapoints/source-data/Nigeria/2015/06/mapping/2
+
+        ## choose meta data values for the source_map update ##
         map_location_id = Location.objects.all()[0].id
-        som_id_r = SourceObjectMap.objects.create(
+        map_campaign_id = Campaign.objects.all()[0].id
+        first_indicator_id = Indicator.objects.all()[0].id
+
+        ## map location ##
+        som_id_l = SourceObjectMap.objects.get(
             content_type = 'location',
             source_object_code = location_code,
-            master_object_id = map_location_id,
-            mapped_by_id = self.user.id
         )
+        som_id_l.master_object_id = map_location_id
+        som_id_l.save()
 
-        map_campaign_id = Campaign.objects.all()[0].id
-        som_id_c = SourceObjectMap.objects.create(
+        ## map campaign ##
+        som_id_c = SourceObjectMap.objects.get(
             content_type = 'campaign',
             source_object_code = campaign_code,
-            master_object_id = map_campaign_id,
-            mapped_by_id = self.user.id
         )
+        som_id_c.master_object_id = map_campaign_id
+        som_id_c.save()
 
-        map_indicator_id = Indicator.objects.all()[0].id
-        som_id_i = SourceObjectMap.objects.create(
+        ## map indicator ##
+        som_id_i = SourceObjectMap.objects.get(
             content_type = 'indicator',
             source_object_code = indicator_code,
-            master_object_id = map_indicator_id,
-            mapped_by_id = self.user.id
         )
-
-        mr.refresh_doc_meta()
-
-        doc_som_id_for_location_code = DocumentSourceObjectMap.objects\
-            .filter(id__in= SourceObjectMap.objects.filter(\
-                    content_type = 'location',
-                    source_object_code = location_code,
-                ).values_list('id',flat=True)
-            ).values_list('id',flat=True)
-
-        ## Test Case 1 ##
-        self.assertEqual(len(doc_som_id_for_location_code),1) # 1
+        som_id_i.master_object_id = first_indicator_id
+        som_id_i.save()
 
         mr_with_new_meta = MasterRefresh(self.user.id ,self.document.id)
         mr_with_new_meta.refresh_submission_details()
@@ -176,6 +152,9 @@ class RefreshMasterTestCase(TestCase):
         ## Test Case 2 ##
         self.assertEqual(first_submission_detail.location_id, map_location_id)
         self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
+
+        ## now that we have created the mappign, "refresh_master" ##
+        ##         should create the relevant datapoints          ##
 
         mr_with_new_meta.submissions_to_doc_datapoints()
         doc_dp_ids = DocDataPoint.objects.filter(document_id =
@@ -189,6 +168,30 @@ class RefreshMasterTestCase(TestCase):
 
         ## Test Case #4
         self.assertEqual(1,len(dps))
+
+        ## Test Case #5
+
+        ## update the mapping with a new indicator value ##
+        new_indicator_id = Indicator.objects.all()[1].id
+        som_id_i.master_object_id = new_indicator_id
+        som_id_i.save()
+
+        mr_after_new_mapping = MasterRefresh(self.user.id ,self.document.id)
+        mr_after_new_mapping.main()
+
+        dp_with_new_indicator = DataPoint.objects.filter(indicator_id = \
+            new_indicator_id)
+
+        dp_with_old_indicator = DataPoint.objects.filter(indicator_id = \
+            first_indicator_id)
+
+        ## did new indicator flow through the system ?##
+        self.assertEqual(1,len(dp_with_new_indicator))
+
+        ## did the old indicator data get deleted?
+        self.assertEqual(0,len(dp_with_old_indicator))
+
+
 
     def create_metadata(self):
         '''
