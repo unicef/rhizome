@@ -3,6 +3,8 @@ $include-html-block-grid-classes: false;
 @import "foundation/components/block-grid";
 @import "foundation/components/grid";
 
+@import "variables";
+
 $total-columns: 8;
 @media #{$small-up} {
 	#management-dashboard {
@@ -46,3 +48,12 @@ $total-columns: 8;
 	}
 }
 
+#management-dashboard {
+  h3 {
+	background: $rhz-chart-title-bg-color;
+    color: $rhz-chart-title-color;
+    text-transform: uppercase;
+    font-family: serif;
+    padding: 2px 4px;
+  }
+}
