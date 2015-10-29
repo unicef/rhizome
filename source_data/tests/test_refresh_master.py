@@ -194,7 +194,7 @@ class RefreshMasterTestCase(TestCase):
         self.assertEqual(1,len(dp_with_new_indicator))
 
         ## did the old indicator data get deleted?
-        # self.assertEqual(0,len(dp_with_old_indicator))
+        self.assertEqual(0,len(dp_with_old_indicator))
 
 
 
