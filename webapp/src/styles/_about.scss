@@ -1,21 +1,22 @@
 .about {
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+
+  color: $rhz-font-color;
+
   .content {
-    width: 50%;
-    margin: 0 auto;
-    div {
-      text-align: center;
-    }
+    text-align: left;
   }
 
   h1 {
-    text-align: center;
-    font-size: 30px;
     margin-top: 1.2em;
+    color: inherit;
+    font-size: 30px;
   }
 
   p {
-    font-family: proxima-bold, Arial, Helvetica, sans-serif;
-    font-size: 16px;
     margin-bottom: 1.2em;
+    font-size: 1rem;
   }
 }
