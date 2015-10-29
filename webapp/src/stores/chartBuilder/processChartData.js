@@ -335,7 +335,7 @@ module.exports = {
         if (!data || data.length == 0) {
           return {options: null, data: null}
         }
-        var indicatorsIndex = _.indexBy(indicators, 'id');//;
+        var indicatorsIndex = _.indexBy(indicators, 'id');
         var locationsIndex = _.indexBy(locations, 'id');
         var datapoints = _(data)
           .thru(util.unpivot)
