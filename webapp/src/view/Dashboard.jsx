@@ -348,8 +348,8 @@ var Dashboard = React.createClass({
                             </div>
                         </div>
 
-                        <div className='medium-4 columns'>
-                            <div style={{ textAlign: 'right' }}>
+                        <div className='medium-2 columns'>
+                            <div>
                                 {edit}
                                 <TitleMenu text={dashboardName} icon='fa-chevron-down'>
                                     {dashboardItems}
