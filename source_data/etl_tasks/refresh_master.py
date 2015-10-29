@@ -129,7 +129,7 @@ class MasterRefresh(object):
         self.delete_unmapped()
         self.sync_datapoint()
 
-        SourceSubmission.objects.filter(id__in=self.all_ss_ids)\
+        SourceSubmission.objects.filter(id__in = self.ss_ids_to_process)\
             .update(process_status = 'PROCESSED')
 
     def delete_unmapped(self):
@@ -149,14 +149,17 @@ class MasterRefresh(object):
         for content_type,master_object_id in som_data:
             som_lookup[content_type].append(master_object_id)
 
-        pprint(som_lookup)
+        ## delete bad_indicator_data ##
+        DataPoint.objects.filter(
+            source_submission_id__in = self.ss_ids_to_process,
+        ).exclude(indicator_id__in=som_lookup['indicator']).delete()
+
+        # ## delete bad_indicator_data ##
+        # DataPoint.objects.filter(
+        #     source_submission_id__in = self.ss_ids_to_process,
+        # ).exclude(indicator_id__in=som_lookup['indicator']).delete()
 
 
-    #     ## bad location data ##
-    #
-    #     ## bad indicator data ##
-    #
-    #     ## bad campaign data ##
 
     def refresh_submission_details(self):
         '''
