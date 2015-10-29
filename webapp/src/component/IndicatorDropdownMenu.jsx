@@ -1,17 +1,20 @@
 'use strict';
 
-var _      = require('lodash');
-var React  = require('react');
+var _ = require('lodash');
+var React = require('react');
 var moment = require('moment');
 
-var DropdownMenu     = require('component/DropdownMenu.jsx');
-var MenuItem         = require('component/MenuItem.jsx');
+var DropdownMenu = require('component/DropdownMenu.jsx');
+var MenuItem = require('component/MenuItem.jsx');
 
 function findMatches(item, re) {
   var matches = [];
 
-  if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, { filtered : true }));
+  if (re.test(_.get(item, 'value')) && item.noValue != true) {
+    matches.push(_.assign({}, item, {filtered: true}));
+  }
+  if (re.test(_.get(item, 'title')) && item.noValue != true) {
+    matches.push(_.assign({}, item, {filtered: true}));
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
@@ -24,7 +27,7 @@ function findMatches(item, re) {
 };
 
 function filterMenu(items, pattern) {
-  if (_.size(pattern) < 3) {
+  if (_.size(pattern) < 2) {
     return items;
   }
 
@@ -35,18 +38,18 @@ function filterMenu(items, pattern) {
 
 var IndicatorDropdownMenu = React.createClass({
 
-  propTypes : {
-    indicators : React.PropTypes.array.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+  propTypes: {
+    indicators: React.PropTypes.array.isRequired,
+    sendValue: React.PropTypes.func.isRequired
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      pattern : ''
+      pattern: ''
     };
   },
 
-  render : function () {
+  render: function () {
     var self = this;
     if (this.props.indicators.length === 0) {
       return (<button className="button"><i className="fa fa-spinner fa-spin"></i> Loading Indicators...</button>);
@@ -66,8 +69,8 @@ var IndicatorDropdownMenu = React.createClass({
     );
   },
 
-  _setPattern : function (value) {
-    this.setState({ pattern : value })
+  _setPattern: function (value) {
+    this.setState({pattern: value})
   }
 });
 
