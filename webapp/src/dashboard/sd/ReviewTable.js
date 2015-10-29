@@ -67,7 +67,7 @@ var ReviewTable = React.createClass({
     componentWillMount: function () {
         api.indicatorsTree().then(indicators => {
           this.setState({
-            indicators: indicators
+            indicators: indicators.objects
           })
 
           this._callApi()
