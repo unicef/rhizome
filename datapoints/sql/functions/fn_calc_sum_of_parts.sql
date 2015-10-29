@@ -4,7 +4,38 @@ RETURNS TABLE(id int) AS
 $func$
 BEGIN
 
-  ---- SUM OF PARTS ------
+
+    -- THIS QUERY ENSURES THAT IF DATA IS STORED AT A HIGHER lvl
+    -- THEN IT's SUB COMPONENTS, DATA AT THE HIGHER LEVEL WINS
+        --> for instance, if i have data stored at indicator_id 251
+        --> as well as the component indicators of 251 ( 24,251,267,268,264 )
+        --> we will take the data for 251 over it's sub-components
+
+    INSERT INTO _tmp_calc_datapoint
+    (indicator_id,location_id,campaign_id,value)
+
+    SELECT
+    cic.indicator_id
+      , dwc.location_id
+      , dwc.campaign_id
+      , SUM(COALESCE(dwc.value,0.00)) as agg_value
+    FROM calculated_indicator_component cic
+    INNER JOIN _tmp_calc_datapoint dwc
+    ON 1 = 1
+    AND cic.indicator_component_id = dwc.indicator_id
+    AND calculation = 'PART_TO_BE_SUMMED'
+    AND NOT EXISTS (
+      SELECT 1 FROM _tmp_calc_datapoint tcd
+      WHERE dwc.location_id = tcd.location_id
+      AND dwc.campaign_id = tcd.campaign_id
+      AND cic.indicator_id = tcd.indicator_id
+    )
+
+    GROUP BY cic.indicator_id, dwc.location_id, dwc.campaign_id;
+
+    -- THIS HANDLES INDICATORS WHERE THE SUM IS MULTI LAYERED see:
+    -- http://rhizome.work/ufadmin/manage/indicator/21
+    -- http://rhizome.work/ufadmin/manage/indicator/251
 
     WITH RECURSIVE ind_graph AS
     (
