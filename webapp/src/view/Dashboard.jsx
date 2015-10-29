@@ -332,26 +332,29 @@ var Dashboard = React.createClass({
                 <form className='inline no-print search-criteria'>
                     <div className='row'>
                         <div className='medium-4 columns'>
-                            <h1>
-                                <CampaignTitleMenu
+                            <div className="row">
+                                <div className="medium-4 columns">
+                                    <CampaignTitleMenu
                                     campaigns={campaigns}
                                     selected={campaign}
                                     sendValue={this._setCampaign}/>
-                                &emsp;
-                                <RegionTitleMenu
+                                </div>
+                                <div className="medium-4 columns">
+                                    <RegionTitleMenu
                                     locations={this.state.locations}
                                     selected={location}
                                     sendValue={this._setlocation}/>
-                            </h1>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='medium-4 columns'>
-                            <h2 style={{ textAlign: 'right' }}>
+                            <div style={{ textAlign: 'right' }}>
                                 {edit}
-                                <TitleMenu text={dashboardName}>
+                                <TitleMenu text={dashboardName} icon='fa-chevron-down'>
                                     {dashboardItems}
                                 </TitleMenu>
-                            </h2>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -359,7 +362,7 @@ var Dashboard = React.createClass({
                 {dashboard}
             </div>
         );
-    },
+    }
 
 });
 

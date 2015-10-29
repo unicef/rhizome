@@ -26,3 +26,20 @@ $total-columns: 8;
 		@include block-grid-html-classes($size:large,$include-spacing:false);
 	}
 }
+
+.dropdown-list {
+  background-color: white;
+  color: $rhz-background-color;
+  font-size: 0.825rem;
+  position: relative;
+  padding: 10px;
+  margin: 16px 0;
+  cursor: pointer;
+
+  a {
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: $rhz-background-color;
+  }
+}

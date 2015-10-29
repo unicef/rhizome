@@ -20,7 +20,7 @@ var CampaignTitleMenu = React.createClass({
 
     return (
       <TitleMenu
-        icon='fa-calendar'
+        icon='fa-chevron-down'
         text={startDate}>
         {campaigns}
       </TitleMenu>
