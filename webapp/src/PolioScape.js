@@ -4,7 +4,7 @@ var React = require('react');
 var Vue = require('vue');
 
 var LandingPage      = require('view/LandingPage.jsx');
-var DashboardMenu    = require('component/DashboardMenu.jsx');
+var DashboardNav    = require('component/DashboardNav.jsx');
 var DashboardList = require('view/dashboard-list/DashboardList.jsx');
 var Navigation       = require('component/Navigation.jsx');
 var AdminApp         = require('./ufadmin');
@@ -32,8 +32,8 @@ React.render(
 );
 
 React.render(
-	React.createElement(DashboardMenu),
-	document.getElementById('dashboard-menu')
+	React.createElement(DashboardNav),
+	document.getElementById('dashboards-nav')
 );
 
 module.exports = {

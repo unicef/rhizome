@@ -57,6 +57,7 @@ ul.dashboards-nav {
 
     &:hover {
       background-color: $rhz-navigation-hover-bg-color;
+
       .dashboard-menu {
         display: block;
       }
@@ -76,22 +77,26 @@ ul.dashboards-nav {
 .dashboard-menu {
   display: none;
   position: absolute;
-  
-  ul {
+  margin: 0;
+  border: 1px solid #fff;
+  background-color: $rhz-navigation-hover-bg-color;
+  width: 350px; //todo:
+
+  > li {
     display: block;
+    padding: 0;
     margin: 0;
-    border: 1px solid #fff;
-    background-color: $rhz-navigation-hover-bg-color;
-    > li {
+    border: none;
+    text-align: left;
+    overflow-x: hidden;
+
+    a {
       display: block;
-      padding: 0;
-      margin: 0;
-      border: none;
-      a {
-        display: block;
-        margin: 10px;
-        opacity: 1;
-      }
+      padding: 10px;
+      opacity: 1;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
     }
   }
 }

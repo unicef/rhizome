@@ -20,6 +20,12 @@
 {#    #main-nav {#}
 {#        display: none;#}
 {#    }#}
+{#    header .navigation-bar {#}
+{#        overflow: inherit;#}
+{#    }#}
+{#    #main {#}
+{#        display: none;#}
+{#    }#}
 </style>
 
 <header class="no-print">
@@ -45,15 +51,7 @@
         </div>
 
         <nav class="large-4 medium-4 columns dashboard-control">
-            <ul class="dashboards-nav">
-                <li class="has-dropdown">
-                    <a href="#">View My Dashboards</a>
-                    <div id="dashboard-menu" class="dashboard-menu"></div>
-                </li>
-                <li>
-                    <a href="/datapoints/dashboards/edit">Create a dashboard</a>
-                </li>
-            </ul>
+            <div id="dashboards-nav"></div>
         </nav>
     </div>
 
