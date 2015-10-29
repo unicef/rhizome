@@ -329,9 +329,9 @@ var Dashboard = React.createClass({
             <div>
                 <div classNameName='clearfix'></div>
 
-                <form className='inline no-print'>
+                <form className='inline no-print search-criteria'>
                     <div className='row'>
-                        <div className='medium-6 columns'>
+                        <div className='medium-4 columns'>
                             <h1>
                                 <CampaignTitleMenu
                                     campaigns={campaigns}

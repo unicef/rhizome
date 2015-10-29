@@ -1,0 +1,28 @@
+$include-html-grid-classes: false;
+$include-html-block-grid-classes: false;
+
+@import "foundation/components/block-grid";
+@import "foundation/components/grid";
+
+$total-columns: 8;
+
+@media #{$small-up} {
+	.search-criteria {
+		@include grid-html-classes($size:small);
+		@include block-grid-html-classes($size:small,$include-spacing:false);
+	}
+}
+
+@media #{$medium-up} {
+	.search-criteria {
+		@include grid-html-classes($size:medium);
+		@include block-grid-html-classes($size:medium,$include-spacing:false);
+	}
+}
+
+@media #{$large-up} {
+	.search-criteria {
+		@include grid-html-classes($size:large);
+		@include block-grid-html-classes($size:large,$include-spacing:false);
+	}
+}

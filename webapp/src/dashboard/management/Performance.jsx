@@ -134,7 +134,7 @@ var Performance = React.createClass({
 
     return (
       <div>
-        <div className='medium-5 columns'>
+        <div className='medium-6 columns'>
           <h3>Performance of Front Line Workers</h3>
         </div>
 
@@ -179,7 +179,7 @@ var Performance = React.createClass({
           </section>
         </div>
 
-        <section className='medium-2 columns'>
+        <section className='medium-3 columns'>
           <h4>Missed Children</h4>
           <Chart type='ChoroplethMap'
                  data={missedChildrenMap}
