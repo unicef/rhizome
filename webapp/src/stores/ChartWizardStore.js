@@ -192,7 +192,7 @@ let ChartWizardStore = Reflux.createStore({
 
     processChartData.init(api.datapoints(query),
       chartType,
-      this.data.chartDef.indicatorsSelected,
+      this.data.indicatorSelected,
       [this.data.location],
       lower,
       upper,
