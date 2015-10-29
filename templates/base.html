@@ -16,32 +16,32 @@
 
 <body class="{% block section %}{% endblock %}">
 
-<style>
+{#<style>#}
 {#    #main-nav {#}
 {#        display: none;#}
 {#    }#}
-{#    header .navigation-bar {#}
-{#        overflow: inherit;#}
-{#    }#}
-{#    #main {#}
-{#        display: none;#}
-{#    }#}
-</style>
+{#</style>#}
 
 <header class="no-print">
     <nav id="main-nav"></nav>
     <div class="row navigation-bar">
-        <nav class="large-4 medium-4 columns channels">
-            <ul>
-                <li><a href="#">
-                    <div class="tab"><i class="fa fa-lg fa-plus"></i><span>SOP</span></div>
-                </a></li>
-                <li><a href="#">
-                    <div class="tab"><i class="fa fa-lg fa-plus"></i><span>C4D</span></div>
-                </a></li>
-                <li class="active"><a href="/">
-                    <div class="tab"><i class="fa fa-lg fa-times"></i><span>Data</span></div>
-                </a></li>
+        <nav class="large-4 medium-4 columns">
+            <ul class="channels">
+                <li>
+                    <a href="#" class="tab">
+                        <i class="fa fa-lg fa-plus"></i><span>SOP</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="tab">
+                        <i class="fa fa-lg fa-plus"></i><span>C4D</span>
+                    </a>
+                </li>
+                <li class="tab active">
+                    <a href="/">
+                        <i class="fa fa-lg fa-times"></i><span>Data</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 

@@ -1,48 +1,51 @@
 header {
   background-color: $rhz-navigation-bg-color;
   color: $rhz-navigation-color;
-  font-size: 1rem;
+  text-transform: uppercase;
+  z-index: 10000;
+
+  a {
+    color: $rhz-font-color;
+    font-size: 1rem;
+
+    &:hover {
+      color: $rhz-font-color !important;
+    }
+  }
 
   .navigation-bar {
     height: $header-height;
-    overflow: hidden;
   }
 
   .channels {
-    text-align: left;
-
     li {
       margin: 0;
-      padding: 38px 30px;
-
-      font-size: 1rem;
-
-      .tab {
-        span {
-          padding-left: 4px;
-          text-transform: uppercase;
-        }
-      }
+      display: inline-block;
 
       &.active {
         background-color: $rhz-background-color;
+      }
+
+      > a {
+        padding: 0 20px;
+        display: block;
+        height: $header-height;
+        line-height: $header-height;
+        opacity: 1;
+      }
+
+      .fa {
+        margin-right: 5px;
       }
     }
   }
 
   .logo {
     text-align: center;
-    img {
-      height: 80%;
-    }
   }
 
   .dashboard-control {
     text-align: right;
-    li {
-      //margin: 8% 0;
-      font-size: 1rem;
-    }
   }
 }
 
@@ -54,6 +57,7 @@ ul.dashboards-nav {
     margin: 0;
     padding: 0;
     border: none;
+    display: inline-block;
 
     &:hover {
       background-color: $rhz-navigation-hover-bg-color;
@@ -78,9 +82,10 @@ ul.dashboards-nav {
   display: none;
   position: absolute;
   margin: 0;
-  border: 1px solid #fff;
+  border: 1px solid #fff; //todo:
   background-color: $rhz-navigation-hover-bg-color;
   width: 350px; //todo:
+  z-index: 10001;
 
   > li {
     display: block;

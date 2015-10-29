@@ -82,14 +82,17 @@ select {
   padding-right: 1.5em;
 }
 
-nav {
+ul {
+  list-style: none;
+  margin: 0;
+}
+
+nav#main-nav {
   @include clearfix;
 
   ul {
     display: inline-block;
     font-size: 9pt;
-    list-style: none;
-    margin: 0;
 
     &.right:last-child {
       margin-right: -12pt;
