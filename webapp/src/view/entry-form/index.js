@@ -119,7 +119,7 @@ module.exports = {
 						}),
 
 					// indicators data
-					api.indicators({ read_write: 'w' }).then(makeMap),
+					api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'}).then(makeMap),
 
 					// campaigns data
 					api.campaign().then(function(data) {
