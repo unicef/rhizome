@@ -52,32 +52,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertTrue(isinstance,(mr,MasterRefresh))
 
-    def test_refresh_doc_meta(self):
-
-        self.set_up()
-        mr = MasterRefresh(self.user.id ,self.document.id)
-
-        source_submissions_data = SourceSubmission.objects\
-            .filter(document_id = self.document.id)\
-            .values('id','submission_json')
-
-        raw_indicator_list = [k for k,v in json\
-            .loads(source_submissions_data[0]['submission_json']).iteritems()]
-
-        mr.refresh_doc_meta()
-
-        source_indicator_id_for_this_doc = DocumentSourceObjectMap.objects\
-            .filter(id__in= SourceObjectMap.objects.filter(\
-                    content_type = 'indicator',
-                    source_object_code__in = raw_indicator_list
-                ).values_list('id',flat=True)
-            )
-
-        ## -3 because we dont want campaign_col,indicator_col and unique_col
-        ## showing up as indicators to map!
-        self.assertEqual(len(source_indicator_id_for_this_doc)\
-            ,len(raw_indicator_list) -3 )
-
     def test_submission_detail_refresh(self,):
 
         self.set_up()
@@ -114,6 +88,11 @@ class RefreshMasterTestCase(TestCase):
             2. DocDataPoint records are created if the necessary mapping exists
             3. There are no zero or null values allowed in doc_datapoint
             4. The doc_datapoint from #3 is merged into datpaoint.
+            5. I create mappings, sync data, realize the mapping was incorrect,
+               re-map the metadata and the old data should be deleted, the new
+               data created.
+                 -> was the old data deleted?
+                 -> was the new data created?
         '''
 
         self.set_up()
@@ -147,11 +126,11 @@ class RefreshMasterTestCase(TestCase):
             mapped_by_id = self.user.id
         )
 
-        map_indicator_id = Indicator.objects.all()[0].id
+        first_indicator_id = Indicator.objects.all()[0].id
         som_id_i = SourceObjectMap.objects.create(
             content_type = 'indicator',
             source_object_code = indicator_code,
-            master_object_id = map_indicator_id,
+            master_object_id = first_indicator_id,
             mapped_by_id = self.user.id
         )
 
@@ -189,6 +168,35 @@ class RefreshMasterTestCase(TestCase):
 
         ## Test Case #4
         self.assertEqual(1,len(dps))
+
+        ## Test Case #5
+
+        ## update the mapping with a new indicator value ##
+        new_indicator_id = Indicator.objects.all()[1].id
+        som_id_i.master_object_id = new_indicator_id
+        som_id_i.save()
+
+        print '---'
+        print first_indicator_id
+        print new_indicator_id
+        print '---'
+
+        mr_after_new_mapping = MasterRefresh(self.user.id ,self.document.id)
+        mr_after_new_mapping.main()
+
+        dp_with_new_indicator = DataPoint.objects.filter(indicator_id = \
+            new_indicator_id)
+
+        dp_with_old_indicator = DataPoint.objects.filter(indicator_id = \
+            first_indicator_id)
+
+        ## did new indicator flow through the system ?##
+        self.assertEqual(1,len(dp_with_new_indicator))
+
+        ## did the old indicator data get deleted?
+        # self.assertEqual(0,len(dp_with_old_indicator))
+
+
 
     def create_metadata(self):
         '''
