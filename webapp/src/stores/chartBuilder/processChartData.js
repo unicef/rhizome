@@ -318,6 +318,7 @@ module.exports = {
       var showTooltip = function (d, i, el) {
         var evt = d3.event;
       };
+      var hideTooltip = function () {};
       var chartOptions = {
         aspect      : 1.7,
         domain      : _.constant(domain),
