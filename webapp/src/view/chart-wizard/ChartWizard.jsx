@@ -150,15 +150,19 @@ let ChartWizard = React.createClass({
           values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
       </div>
     )
-    let styleStep = (
+    let optionStep = (
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
-        <label>Time Span: </label>
-        <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
-          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
-        <label>Format: </label>
-        <RadioGroup name="format" horizontal={true} value={this.state.data.yFormatValue}
-          values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
+        <div>
+          <label>Time Span: </label>
+          <RadioGroup name="time" horizontal={true} value={this.state.data.timeValue}
+            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        </div>
+        <div>
+          <label>Format: </label>
+          <RadioGroup name="format" horizontal={true} value={this.state.data.yFormatValue}
+            values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
+        </div>
       </div>
     )
 
@@ -191,8 +195,8 @@ let ChartWizard = React.createClass({
           <ChartWizardStep title='Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Customise Styles' refer='style'>
-            {styleStep}
+          <ChartWizardStep title='Customise Options' refer='option'>
+            {optionStep}
           </ChartWizardStep>
           <ChartWizardStep title='Preview' refer='preview'>
             {previewStep}
