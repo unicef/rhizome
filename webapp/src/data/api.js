@@ -199,8 +199,8 @@ function indicatorsTree(q) {
   };
   return new Promise(function (fulfill, reject) {
 
-    fetch1(q).then(function (indicators) {
-      fetch2().then(function (tags) {
+    fetch1(q, null, {'cache-control': 'no-cache'}).then(function (indicators) {
+      fetch2(null, null, {'cache-control': 'no-cache'}).then(function (tags) {
         tags.objects = _.sortBy(tags.objects, 'tag_name').reverse();
         var tags_map = {};
         _.each(tags.objects, function (t) {
