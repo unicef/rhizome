@@ -315,9 +315,7 @@ module.exports = {
           return _.isFinite(d.x) && _.isFinite(d.y);
         })
         .value();
-      var showTooltip = function (d, i, el) {
-        var evt = d3.event;
-      };
+      var showTooltip = function () {};
       var hideTooltip = function () {};
       var chartOptions = {
         aspect      : 1.7,
