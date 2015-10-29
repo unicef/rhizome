@@ -1,7 +1,7 @@
 import traceback
 import numpy as np
 
-from pandas import DataFrame, pivot_table
+from pandas import DataFrame, pivot_table, notnull
 from tastypie import fields
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
@@ -128,7 +128,9 @@ class DataPointResource(BaseNonModelResource):
         except KeyError:
             return results
 
-        pivoted_data = p_table.fillna(value=0).to_dict()
+        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+
+        pivoted_data = no_nan_pivoted_df.to_dict()
 
         for row, indicator_dict in pivoted_data.iteritems():
 
