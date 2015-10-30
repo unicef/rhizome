@@ -97,7 +97,7 @@ _.extend(ColumnChart.prototype, {
       .domain(domain)
       .rangeBands([0, w], options.padding);
 
-    var x = _.flow(options.x, xScale)
+    var x = _.flow(options.x, xScale);
 
     var range;
     if (_.isFunction(options.range)) {
@@ -159,7 +159,7 @@ _.extend(ColumnChart.prototype, {
       'height': height,
       'width': xScale.rangeBand(),
       'x': x,
-      'y': y,
+      'y': y
     })
       .on('mouseover', hover.over)
       .on('mouseout', hover.out);
