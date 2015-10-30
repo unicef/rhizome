@@ -321,8 +321,6 @@ module.exports = React.createClass({
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
           cancel={this.cancelEditChart} campaign={campaign} location={location}/>
       )
-      // return (<ChartBuilder dashboardId={this.props.dashboard_id} chartDef={chartDef} callback={this.saveChart}
-      //                       cancel={this.cancelEditChart} campaign={campaign} location={location}/>);
     }
     else {
       return dashboardBuilderContainer;

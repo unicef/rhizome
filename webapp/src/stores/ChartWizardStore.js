@@ -43,6 +43,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   applyChartDef(chartDef) {
+    this.data.locationSelected = [this.data.location]
     this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: chartDef.groupBy})
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
     this.data.yFormatValue = _.findIndex(chartDefinitions.formats, {value: chartDef.yFormat})
@@ -117,6 +118,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddLocation(index) {
     this.data.location = this.locationIndex[index]
+    this.data.locationSelected = [this.data.location]
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
     this.previewChart()
   },
@@ -185,7 +187,7 @@ let ChartWizardStore = Reflux.createStore({
     let chartType = this.data.chartDef.type
     let groupBy = chartDefinitions.groups[this.data.groupByValue].value
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
-    let locationIndex = _.indexBy([this.data.location], 'id')
+    let locationIndex = _.indexBy(this.data.locationSelected, 'id')
     let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex
     let start = moment(this.data.campaign.start_date)
     let lower = this.data.timeRangeFilteredList[this.data.timeValue].getLower(start)
@@ -193,7 +195,7 @@ let ChartWizardStore = Reflux.createStore({
     let indicatorArray = _.map(this.data.indicatorSelected, _.property('id'))
     let query = {
       indicator__in: indicatorArray,
-      location__in: _.map([this.data.location], _.property('id')),
+      location__in: _.map(this.data.locationSelected, _.property('id')),
       campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
       campaign_end: upper.format('YYYY-MM-DD')
     }
@@ -201,7 +203,7 @@ let ChartWizardStore = Reflux.createStore({
     processChartData.init(api.datapoints(query),
       chartType,
       this.data.indicatorSelected,
-      [this.data.location],
+      this.data.locationSelected,
       lower,
       upper,
       groups,
