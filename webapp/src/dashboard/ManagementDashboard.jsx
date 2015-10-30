@@ -80,23 +80,23 @@ var ManagementDashboard = React.createClass({
             <BulletChartSection data={data.__none__.vaccinators} campaign={campaign} indicators={sections.undefined.vaccinators} loading={loading} cols={1} />
           </div>
 
-          <div className='medium-1 column'>
+          <div className='medium-1 columns'>
             <h3>Supply</h3>
             <BulletChartSection data={data.__none__.supply} campaign={campaign} indicators={sections.undefined.supply} loading={loading} cols={1} />
           </div>
 
-          <div className='medium-1 column'>
+          <div className='medium-1 columns'>
             <h3>Polio+</h3>
             <BulletChartSection data={data.__none__.polio} campaign={campaign} indicators={sections.undefined.polio} loading={loading} cols={1} />
             <h3>Resources</h3>
             <BulletChartSection data={data.__none__.resources} campaign={campaign} indicators={sections.undefined.resources} loading={loading} cols={1} />
           </div>
 
-          <div className="medium-4 column">
+          <div className="medium-4 columns">
             <h3>Inaccessible Children</h3>
             <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
             <div className="row">
-              <div className="medium-4 column">
+              <div className="medium-4 columns right">
                 <h3>Microplan Social Data Usage</h3>
               </div>
             </div>
