@@ -92,6 +92,7 @@ var DataStore = Reflux.createStore({
       this.data = _(responses)
         .pluck('objects')
         .flatten()
+        .sortBy(_.method('campaign.start_date.getTime'))
         .map(melt)
         .flatten()
         .value();
