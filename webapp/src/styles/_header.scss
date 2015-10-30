@@ -18,9 +18,11 @@ header {
   }
 
   .channels {
+    @include clearfix();
     li {
       margin: 0;
       display: inline-block;
+      text-align: center;
 
       &.active {
         background-color: $rhz-background-color;
@@ -52,12 +54,14 @@ header {
 ul.dashboards-nav {
   display: block;
   position: relative;
+  @include clearfix();
 
   > li {
     margin: 0;
     padding: 0;
     border: none;
     display: inline-block;
+    text-align: left;
 
     &:hover {
       background-color: $rhz-navigation-hover-bg-color;
