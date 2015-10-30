@@ -8,6 +8,7 @@ var Impact             = require('dashboard/management/Impact.jsx');
 var Performance        = require('dashboard/management/Performance.jsx');
 var Access             = require('dashboard/management/Access.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
+var DonutChart   = require('component/DonutChart.jsx');
 
 var ManagementDashboard = React.createClass({
   propTypes : {
@@ -91,7 +92,15 @@ var ManagementDashboard = React.createClass({
             <BulletChartSection data={data.__none__.resources} campaign={campaign} indicators={sections.undefined.resources} loading={loading} cols={1} />
           </div>
 
-          <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
+          <div className="medium-4 column">
+            <h3>Inaccessible Children</h3>
+            <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
+            <div className="row">
+              <div className="medium-4 column">
+                <h3>Microplan Social Data Usage</h3>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

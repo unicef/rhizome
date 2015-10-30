@@ -96,6 +96,12 @@ module.exports = {
 			'section'    : 'access',
 			'indicators' : [442,443,444,445,446,447,448,449,450],
       'timeRange'  : 0
+		}, {
+			'title'			 : 'Microplans Incorporating Social Data',
+			'indicators' : [28],
+			'timeRange'  : {
+				months : 4
+			}
 		}
 	]
 };
