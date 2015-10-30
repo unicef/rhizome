@@ -42,7 +42,6 @@ var ManagementDashboard = React.createClass({
         _.each(charts, (c, i) => {
           section[_.camelCase(_.get(c, 'title', i))] = _.map(c.indicators, ind => indicators[ind]);
         });
-
         result[sectionName] = section;
       })
       .value();
@@ -70,10 +69,15 @@ var ManagementDashboard = React.createClass({
         </div>
 
         <div className='row'>
-          <section className='medium-2 columns'>
-            <h3>FLWs' Capacity to Perform</h3>
-            <BulletChartSection data={data.__none__.flwSCapacityToPerform} campaign={campaign} indicators={sections.undefined.flwSCapacityToPerform} loading={loading} cols={2} />
-          </section>
+          <div className='medium-1 columns'>
+            <h3>Soc. Mob.</h3>
+            <BulletChartSection data={data.__none__.flwSCapacityToPerform} campaign={campaign} indicators={sections.undefined.flwSCapacityToPerform} loading={loading} cols={1} />
+          </div>
+
+          <div className='medium-1 columns'>
+            <h3>Vaccinators</h3>
+            <BulletChartSection data={data.__none__.vaccinators} campaign={campaign} indicators={sections.undefined.vaccinators} loading={loading} cols={1} />
+          </div>
 
           <div className='medium-1 column'>
             <h3>Supply</h3>

@@ -51,19 +51,25 @@ module.exports = {
 			'indicators' : [175,176,177,204],
 		}, {
 			'title'      : 'FLW\'s Capacity to Perform',
-			'indicators' : [178,228,179,184,180,185,230,226,239],
+			'indicators' : [178,179,239,184,185,226],
 			'timeRange'  : {
 				months : 4
 			}
 		}, {
-			'title'      : 'Polio+',
-			'indicators' : [245,236,192,193,191],
+			'title'      : 'Vaccinators',
+			'indicators' : [180,230,228],
 			'timeRange'  : {
 				months : 4
 			}
 		}, {
 			'title'      : 'Supply',
-			'indicators' : [194,219,173,172],
+			'indicators' : [67,219,173,172],
+			'timeRange'  : {
+				months : 4
+			}
+		}, {
+			'title'      : 'Polio+',
+			'indicators' : [245,236],
 			'timeRange'  : {
 				months : 4
 			}

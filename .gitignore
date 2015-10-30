@@ -40,3 +40,4 @@ source_data/ODK/odk_source
 rhizome/bin/
 rhizome/lib/
 dev/
+webapp/npm-debug.log

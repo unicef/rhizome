@@ -180,7 +180,7 @@ var Performance = React.createClass({
         </div>
 
         <section className='medium-3 columns'>
-          <h4>Missed Children</h4>
+          <h4>Afghanistan, country overview</h4>
           <Chart type='ChoroplethMap'
                  data={missedChildrenMap}
                  loading={loading}

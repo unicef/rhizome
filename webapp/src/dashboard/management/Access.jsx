@@ -72,7 +72,7 @@ var Access = React.createClass({
 
     return (
       <div className='medium-4 columns'>
-        <h3>Access Challenged Districts</h3>
+        <h3>Inaccessible Children</h3>
 
         <div className="row">
           <div className="medium-4 columns">

@@ -197,9 +197,9 @@ var Dashboard = React.createClass({
         var self = this;
 
         api.get_dashboard().then(function(response) {
+            console.log(1,builtins);
             var customDashboards = _(response.objects).sortBy('title').value();
             var allDashboards = builtins.concat(customDashboards);
-
             self.setState({allDashboards: allDashboards});
             self._getDashboard(ctx.params.dashboard).then(dashboard => {
                 DashboardActions.setDashboard({
