@@ -1,7 +1,6 @@
 /* Welcome to Compass. Use this file to define print styles.
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
-
 @import "settings";
 
 // Make sure that importing these to components doesn't dump all the HTML
@@ -12,109 +11,130 @@ $include-html-block-grid-classes: false;
 @import "foundation/components/grid";
 
 @page {
-	margin: 0;
+  margin: 0;
 }
 
 body {
-	margin: 0.25in;
+  margin: 0.25in;
 }
 
 form,
 nav,
 header {
-	display: none !important;
+  display: none !important;
 }
 
-@include grid-html-classes($size:small);
-@include block-grid-html-classes($size:small,$include-spacing:false);
+@include grid-html-classes($size: small);
+@include block-grid-html-classes($size: small, $include-spacing: false);
 
 @media (min-width: 8in) {
-	@include grid-html-classes($size:medium);
-  @include block-grid-html-classes($size:medium,$include-spacing:false);
+  @include grid-html-classes($size: medium);
+  @include block-grid-html-classes($size: medium, $include-spacing: false);
 }
 
 @media (min-width: 10.5in) {
-	@include grid-html-classes($size:large);
-  @include block-grid-html-classes($size:large,$include-spacing:false);
+  @include grid-html-classes($size: large);
+  @include block-grid-html-classes($size: large, $include-spacing: false);
 }
 
 h4,
 h6 {
-	margin-top: 0;
-	margin-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .highlight {
-	color: $secondary-color !important;
+  color: $secondary-color !important;
 }
 
 #management-dashboard {
-	color: #a7aeaf;
+  color: #a7aeaf;
 
-	h1 {
-		display    : inline-block;
-		font-size  : 25pt;
-		font-weight: bold;
+  h1 {
+    display: inline-block;
+    font-size: 25pt;
+    font-weight: bold;
 
-		.location {
-			text-transform: uppercase;
-		}
+    .location {
+      text-transform: uppercase;
+    }
 
-		.campaign {
-			font-weight: normal;
-		}
-	}
+    .campaign {
+      font-weight: normal;
+    }
+  }
 
-	h2 {
-		display    : inline-block;
-		font-size  : 6pt;
-		line-height: 1;
-	}
+  h2 {
+    display: inline-block;
+    font-size: 6pt;
+    line-height: 1;
+  }
+
+  .bullet-chart svg {
+    width: 3.177cm;
+    height: 1.05cm;
+  }
+
+  .chart.pie-chart svg {
+    width: 2.3cm;
+    height: 2.3cm;
+  }
 }
 
 .ie #management-dashboard {
-	#polio-cases-ytd svg {
-		width : 6.843cm;
-		height: 3.894cm;
-	}
+  #polio-cases-ytd svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
 
-	#immunity-gap svg {
-		width : 6.843cm;
-		height: 3.894cm;
-	}
+  #immunity-gap svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
 
-	#inaccessible-children svg {
-		width : 6.843cm;
-		height: 2.66cm;
-	}
+  #inaccessible-children svg {
+    width: 6.843cm;
+    height: 2.66cm;
+  }
 
-	#missed-children svg {
-		width : 6.845cm;
-		height: 3.028cm;
-	}
+  #missed-children svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
 
-	#conversions svg {
-		width : 6.845cm;
-		height: 3.028cm;
-	}
+  #conversions svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
 
-	#missed-children-map svg {
-		width : 6.845cm;
-		height: 6.81672137cm;
-	}
+  #missed-children-map svg {
+    width: 6.845cm;
+    height: 6.81672137cm;
+  }
 
-	#missed-children-legend {
-		height: 2cm;
-	}
+  #missed-children-legend {
+    height: 2cm;
+  }
 
-	.bullet-chart svg {
-		width : 3.247cm;
-		height: 1.022cm;
-	}
+  .bullet-chart svg {
+    width: 3.247cm;
+    height: 1.022cm;
+  }
 }
 
 .logo {
-	display: inline;
-	height : 25pt;
-	float  : right;
+  display: inline;
+  height: 25pt;
+  float: right;
+  margin-top: 0.2cm;
+}
+
+#main {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.dashboard {
+  margin-bottom: 0;
+  margin-top: 0;
 }
