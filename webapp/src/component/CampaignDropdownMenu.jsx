@@ -62,7 +62,7 @@ var CampaignDropdownMenu = React.createClass({
       .sortBy(_.method('start_date.getTime'))
       .reverse()
       .map(function (campaign) {
-        let slug = campaign.office.name + ' ' + moment(campaign.start_date).format('MMM YYYY')
+        let slug = campaign.office_id + ' ' + moment(campaign.start_date).format('MMM YYYY')
         return (
           <CampaignMenuItem key={'campaign-' + campaign.id}
             sendValue={self.props.sendValue}
