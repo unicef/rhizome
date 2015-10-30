@@ -5,7 +5,6 @@ footer {
   position: fixed;
   width: 100%;
   bottom: 0;
-  height: 50px;
   z-index: 9999;
 
   .menu {
@@ -56,6 +55,10 @@ footer {
     }
   }
 
+  .static-links {
+    text-align: left;
+  }
+
   .action {
     display: block;
     height: 50px;
@@ -78,14 +81,10 @@ footer {
     margin-right: 5px;
   }
 
-  .actions {
-    position: absolute;
-    left: 0;
-  }
+}
 
-  .static-links {
-    position: absolute;
-    right: 0;
+@media only screen and (min-width: 64.0625em) {
+  footer .static-links {
+    text-align: right;
   }
-
 }
