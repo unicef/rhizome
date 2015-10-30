@@ -29,10 +29,9 @@ header {
       }
 
       > a {
-        padding: 0 20px;
+        padding: 2.1em 0.7em;
         display: block;
         height: $header-height;
-        line-height: $header-height;
         opacity: 1;
       }
 
@@ -72,10 +71,9 @@ ul.dashboards-nav {
     }
 
     > a {
-      padding: 0 20px;
+      padding: 2.1em 0.7em;
       display: block;
       height: $header-height;
-      line-height: $header-height;
       opacity: 1;
       text-transform: uppercase;
     }

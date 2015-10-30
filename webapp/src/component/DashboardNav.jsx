@@ -9,7 +9,7 @@ module.exports = React.createClass({
 
     return (
       <ul className="dashboards-nav">
-        <li className="large-6 columns">
+        <li className="medium-6 columns">
           <a href="#">View My Dashboards</a>
           <ul className="dashboard-menu">
             <li>
@@ -25,11 +25,11 @@ module.exports = React.createClass({
               <a href="/datapoints/odk-dashboard">ODK Dashboard</a>
             </li>
             <li>
-              <a href="#">sadfasdf</a>
+                <a href="/datapoints/dashboards">See all custom dashboards</a>
             </li>
           </ul>
         </li>
-        <li className="large-6 columns">
+        <li className="medium-6 columns">
           <a href="/datapoints/dashboards/edit">Create a dashboard</a>
         </li>
       </ul>
