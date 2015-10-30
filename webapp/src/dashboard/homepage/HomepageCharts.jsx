@@ -130,7 +130,7 @@ var HomepageCharts = React.createClass({
                     </div>
                 </div>
             </div>
-                
+
             <div className="large-4 columns chart-container" id="pakistan-chart">
                 <div className="chart">
                     <h5>Pakistan</h5>
@@ -138,7 +138,7 @@ var HomepageCharts = React.createClass({
                         <Chart type='ColumnChart' data={missed}
                                loading={loading}
                                options={{
-                            aspect  : 2.26,
+                            aspect  : 1,
                             color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
                             domain  : _.constant(missedScale),
                             x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
@@ -159,7 +159,7 @@ var HomepageCharts = React.createClass({
                         <Chart type='LineChart' data={conversions}
                                loading={loading}
                                options={{
-                            aspect  : 2.26,
+                            aspect  : 1,
                             domain  : _.constant([lower.toDate(), upper.toDate()]),
                             yFormat : pct
                           }}/>
