@@ -128,7 +128,7 @@ var Performance = React.createClass({
       }]);
     }
 
-    var pct = d3.format('%');
+    var pct = d3.format(',.1%');
 
     var missedChildrenMap = data.missedChildrenByProvince;
 
