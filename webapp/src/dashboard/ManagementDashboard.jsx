@@ -7,6 +7,7 @@ var moment = require('moment');
 var Impact             = require('dashboard/management/Impact.jsx');
 var Performance        = require('dashboard/management/Performance.jsx');
 var Access             = require('dashboard/management/Access.jsx');
+var SocialData         = require('dashboard/management/SocialData.jsx');
 var BulletChartSection = require('./BulletChartSection.jsx');
 var DonutChart   = require('component/DonutChart.jsx');
 
@@ -46,6 +47,8 @@ var ManagementDashboard = React.createClass({
         result[sectionName] = section;
       })
       .value();
+
+    console.log(sections.undefined);
 
     return (
       <div id='management-dashboard'>
@@ -98,6 +101,7 @@ var ManagementDashboard = React.createClass({
             <div className="row">
               <div className="medium-4 columns right">
                 <h3>Microplan Social Data Usage</h3>
+                <SocialData data={data.__none__.microplansIncorporatingSocialData} campaign={campaign} indicators={sections.undefined.microplansIncorporatingSocialData} loading={loading} />
               </div>
             </div>
           </div>
@@ -105,7 +109,7 @@ var ManagementDashboard = React.createClass({
 
       </div>
     );
-  },
+  }
 });
 
 module.exports = ManagementDashboard;
