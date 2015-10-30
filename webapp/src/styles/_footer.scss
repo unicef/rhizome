@@ -13,11 +13,16 @@ footer {
     bottom: 50px;
     margin-left: 0;
     background-color: $rhz-navigation-hover-bg-color;
+    text-transform: uppercase;
     > li {
-      margin: 10px 15px;
-      padding: 0;
+      margin: 0;
+      padding: 8px 12px;
       display: block;
       float: none;
+
+      &:hover {
+        background-color: $rhz-background-color;
+      }
     }
     a {
       padding: 0;
@@ -25,11 +30,6 @@ footer {
       font-size: 0.9rem;
       color: $rhz-navigation-color;
       opacity: 1;
-
-      &:hover {
-        color: $rhz-navigation-color !important;
-        text-decoration: underline;
-      }
     }
   }
 
