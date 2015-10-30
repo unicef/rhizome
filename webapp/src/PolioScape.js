@@ -80,8 +80,8 @@ module.exports = {
 	},
 	AdminCampaigns: function(start_date_id, end_date_id){
 		alert(start_date_id + " " + end_date_id);
-	},
-);
+	}
+}
 
 module.exports = {
   Explorer: function (el) {
@@ -127,7 +127,6 @@ module.exports = {
     // React.render(React.createElement(GroupForm), el);
     React.render(React.createElement(GroupForm, {group_id: group_id}), el);
   },
->>>>>>> development
   CampaignsPage: function (start_date_dom_id, end_date_dom_id) {
     CampaignsPage.render(start_date_dom_id, end_date_dom_id);
   }
