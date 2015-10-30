@@ -3,7 +3,9 @@
 var _      = require('lodash');
 var React  = require('react');
 
-var BulletChartSection = require('dashboard/BulletChartSection.jsx');
+var DonutChart   = require('component/DonutChart.jsx');
+
+var palette = require('colors');
 
 var SocialData = React.createClass({
   propTypes : {
@@ -18,10 +20,23 @@ var SocialData = React.createClass({
     var indicators = this.props.indicators;
     var loading  = this.props.loading;
 
+    var planLabel = function (d) {
+      var fmt = d3.format('%');
+      var v   = _.get(d, '[0].value', '');
+
+      return fmt(v);
+    };
+
     return (
         <div className="row">
           <div className="medium-4 columns">
-            <BulletChartSection data={data} campaign={campaign} indicators={indicators} loading={loading} cols={1} />
+            <DonutChart data={data} label={planLabel}
+              loading={loading}
+              options={{
+                innerRadius : 0.6,
+                domain      : _.constant([0, 1]),
+                palette     : palette
+              }} />
           </div>
         </div>
     );
