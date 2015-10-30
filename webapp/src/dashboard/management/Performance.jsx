@@ -174,7 +174,7 @@ var Performance = React.createClass({
               options={{
                 domain  : _.constant([0, _.get(microplans, 'value', 1)]),
                 size    : 24,
-                palette : colors,
+                palette : colors
               }}/>
           </section>
         </div>
@@ -188,7 +188,7 @@ var Performance = React.createClass({
               aspect  : 0.6,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
-              yFormat : d3.format('%'),
+              yFormat : pct,
               onClick : d => { DashboardActions.navigate({ location : d }) }
             }}/>
         </section>
