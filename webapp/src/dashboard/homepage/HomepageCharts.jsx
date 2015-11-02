@@ -158,7 +158,9 @@ var HomepageCharts = React.createClass({
                    options={{
                         aspect  : 1,
                         domain  : _.constant([lower.toDate(), upper.toDate()]),
-                        yFormat : pct
+                        yFormat : pct,
+                          width: 390,
+                          height: 390
                     }}
             />
         );
@@ -195,9 +197,9 @@ var HomepageCharts = React.createClass({
             <div className="large-4 columns chart-container" id="nigeria-chart">
                 <div className="chart">
                     <h5>Nigeria</h5>
-                    <carousel decorators={HomepageCarouselDecorators}>
+                    <Carousel decorators={HomepageCarouselDecorators}>
                         {nigeriaList}
-                    </carousel>
+                    </Carousel>
                     <div className="chart-button-group">
                         <div className="chart-button"><span>Country overview</span></div>
                         <div className="chart-button"><span>District summary</span></div>
