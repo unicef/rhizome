@@ -131,9 +131,9 @@ module.exports = React.createClass({
 
     if (!!campaign) {
       DashboardActions.setDashboard({
-	      dashboard: this.state.store.dashboard,
-	      date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
-	    });
+        dashboard: this.state.store.dashboard,
+        date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
+      });
     }
   },
 
@@ -250,35 +250,33 @@ module.exports = React.createClass({
 
     var addDashboardLinkContainer = (
       <div className="empty-dashboard-add-container">
-				<a role='button' className='button' onClick={this.newChart}>
-        	<i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
-      	</a>
-    	</div>
-		);
+        <a role='button' className='button' onClick={this.newChart}>
+          <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
+        </a>
+      </div>
+    );
     var dashboardBuilderContainer = (
       <div>
-        <div className='clearfix'></div>
-
-        <div className="custom-dashboard-title-container right">
-          Dashboard Title
-          <TitleInput initialText={this.state.title} save={this._updateTitle}/>
-        </div>
-
-        <form className='inline no-print'>
-          <div className='row'>
+        <form className='inline no-print row cd-bg-color'>
+          <div className='medium-6 columns'>
             <div className='medium-6 columns'>
-              <h1>
-                <CampaignTitleMenu
-                  campaigns={campaigns}
-                  selected={campaign}
-                  sendValue={this._setCampaign}/>
-                &emsp;
-                <RegionTitleMenu
-                  locations={this.state.dashboardStore.locations}
-                  selected={location}
-                  sendValue={this._setRegion}/>
-              </h1>
+              <CampaignTitleMenu
+                campaigns={campaigns}
+                selected={campaign}
+                sendValue={this._setCampaign}/>
             </div>
+
+            <div className='medium-6 columns'>
+              <RegionTitleMenu
+                locations={this.state.dashboardStore.locations}
+                selected={location}
+                sendValue={this._setRegion}/>
+            </div>
+          </div>
+
+          <div className="medium-3 columns right">
+            Dashboard Title
+            <TitleInput initialText={this.state.title} save={this._updateTitle}/>
           </div>
         </form>
         {this.state.store.dashboard.charts.length ? null : addDashboardLinkContainer}
@@ -319,7 +317,7 @@ module.exports = React.createClass({
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex]);
       return (
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
-          cancel={this.cancelEditChart} campaign={campaign} location={location}/>
+                     cancel={this.cancelEditChart} campaign={campaign} location={location}/>
       )
     }
     else {
