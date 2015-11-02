@@ -48,8 +48,6 @@ var ManagementDashboard = React.createClass({
       })
       .value();
 
-    console.log(sections.undefined);
-
     return (
       <div id='management-dashboard'>
         <div className='row print-only'>
