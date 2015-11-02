@@ -32,6 +32,9 @@ module.exports = React.createClass({
           <a onClick={this._toggleMenu} tabIndex='-1'>View My Dashboards</a>
             <ul className="dashboard-menu">
               {dashboards}
+              <NavMenuItem href='/datapoints/dashboards/'>
+                See all custom dashboards
+              </NavMenuItem>
             </ul>
           </li>
           <li className="medium-4 columns">
