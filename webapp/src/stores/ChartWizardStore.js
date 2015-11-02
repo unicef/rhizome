@@ -121,7 +121,10 @@ let ChartWizardStore = Reflux.createStore({
     this.data.location = this.locationIndex[index]
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-    this.data.campaign = this.data.campaignFilteredList[0]
+    let newCampaign = this.data.campaignFilteredList.filter(campaign => {
+      return moment(campaign.start_date).format() == moment(this.data.campaign.start_date).format()
+    })
+    this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
     this.previewChart()
   },
 
