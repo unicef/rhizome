@@ -1,227 +1,241 @@
 'use strict';
 
-var _         = require('lodash');
-var d3        = require('d3');
-var moment    = require('moment');
-var React     = require('react');
+var _ = require('lodash');
+var d3 = require('d3');
+var moment = require('moment');
+var React = require('react');
 
-var browser   = require('util/browser');
-var colors    = require('colors');
-var data      = require('util/data');
-var format    = require('util/format');
+var browser = require('util/browser');
+var colors = require('colors');
+var data = require('util/data');
+var format = require('util/format');
 var hoverLine = require('chart/behavior/hover-line');
-var label     = require('chart/renderer/label');
+var label = require('chart/renderer/label');
 
 var DEFAULTS = {
-	margin  : {
-		top    : 12,
-		right  : 0,
-		bottom : 12,
-		left   : 0
-	},
-	scale      : d3.scale.linear,
-	seriesName : _.property('name'),
-	values     : _.property('values'),
-	x          : _.property('campaign.start_date'),
-	xFormat    : format.timeAxis,
-	y          : _.property('value'),
-	yFormat    : d3.format(',d')
+  margin: {
+    top: 12,
+    right: 0,
+    bottom: 12,
+    left: 0
+  },
+  scale: d3.scale.linear,
+  seriesName: _.property('name'),
+  values: _.property('values'),
+  x: _.property('campaign.start_date'),
+  xFormat: format.timeAxis,
+  y: _.property('value'),
+  yFormat: d3.format(',d')
 };
 
-function LineChart() {}
+function LineChart() {
+}
 
 _.extend(LineChart.prototype, {
-	defaults : DEFAULTS,
+  defaults: DEFAULTS,
 
-	update : function (series, options) {
-		options = _.assign(this._options, options);
+  update: function (series, options) {
 
-		var margin = options.margin
+    ////remove the null value in each series
+    //trello #427
+    //management-dashboard-conversion-rates-line-chart issue
 
-	  var svg    = this._svg;
-	  var width  = this._width - margin.left - margin.right;
-	  var height = this._height - margin.top - margin.bottom;
+    series = _(series).each(serie => {
+      serie.values = _(serie.values).reject(item => {
+        return item.value == null;
+      }).value();
+    }).value();
 
-	  var color = options.color;
+    options = _.assign(this._options, options);
 
-	  if (!_.isFunction(color)) {
-	  	var colorScale = d3.scale.ordinal()
-	  		.domain(_.map(series, options.seriesName))
-	  		.range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc']);
+    var margin = options.margin
 
-	  	color = _.flow(options.seriesName, colorScale);
-	  }
+    var svg = this._svg;
+    var width = this._width - margin.left - margin.right;
+    var height = this._height - margin.top - margin.bottom;
 
-	  var domain = _.isFunction(options.domain) ?
-	  	options.domain(series) :
-	  	d3.extent(_(series)
-	  		.map(options.values)
-	  		.flatten()
-	  		.map(options.x)
-	  		.value());
+    var color = options.color;
 
-	  var xScale = d3.time.scale()
-	  	.domain(domain)
-	  	.range([0, width]);
+    if (!_.isFunction(color)) {
+      var colorScale = d3.scale.ordinal()
+        .domain(_.map(series, options.seriesName))
+        .range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc']);
 
-	  var range = _.isFunction(options.range) ?
-	  	options.range(series) :
-	  	d3.extent(_(series)
-	  			.map(options.values)
-	  			.flatten()
-	  			.map(options.y)
-	  			.value());
+      color = _.flow(options.seriesName, colorScale);
+    }
 
-	  range[0] = Math.min(range[0], 0);
+    var domain = _.isFunction(options.domain) ?
+      options.domain(series) :
+      d3.extent(_(series)
+        .map(options.values)
+        .flatten()
+        .map(options.x)
+        .value());
 
-	  var yScale = options.scale()
-	  	.domain(range)
-	  	.range([height, 0]);
+    var xScale = d3.time.scale()
+      .domain(domain)
+      .range([0, width]);
 
-	  var x = _.flow(options.x, xScale);
-	  var y = _.flow(options.y, yScale);
+    var range = _.isFunction(options.range) ?
+      options.range(series) :
+      d3.extent(_(series)
+        .map(options.values)
+        .flatten()
+        .map(options.y)
+        .value());
 
-	  // Set up the hover interaction
-	  svg.attr('class', 'line')
-	  	.call(hoverLine()
-				.width(width)
-				.height(height)
-				.xFormat(options.xFormat)
-				.yFormat(options.yFormat)
-				.x(options.x)
-				.y(options.y)
-				.xScale(xScale)
-				.yScale(yScale)
-				.value(options.y)
-				.seriesName(_.property('seriesName'))
-				.sort(true)
-				.datapoints(_(series).map(function (s) {
-						// Set the series name on each datapoint for easy retrieval
-						return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
-					})
-					.flatten()
-					.value()
-				)
-			);
+    range[0] = Math.min(range[0], 0);
 
-	  var g = svg.select('.data')
-	    .selectAll('.series')
-	    .data(series, options.seriesName);
+    var yScale = options.scale()
+      .domain(range)
+      .range([height, 0]);
 
-	  g.enter()
-	    .append('g')
-	    .attr('class', 'series');
+    var x = _.flow(options.x, xScale);
+    var y = _.flow(options.y, yScale);
 
-	  g.style({
-	    'fill'   : color,
-	    'stroke' : color
-	  });
+    // Set up the hover interaction
+    svg.attr('class', 'line')
+      .call(hoverLine()
+        .width(width)
+        .height(height)
+        .xFormat(options.xFormat)
+        .yFormat(options.yFormat)
+        .x(options.x)
+        .y(options.y)
+        .xScale(xScale)
+        .yScale(yScale)
+        .value(options.y)
+        .seriesName(_.property('seriesName'))
+        .sort(true)
+        .datapoints(_(series).map(function (s) {
+          // Set the series name on each datapoint for easy retrieval
+          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
+        })
+          .flatten()
+          .value()
+      )
+    );
 
-	  g.exit().remove();
+    var g = svg.select('.data')
+      .selectAll('.series')
+      .data(series, options.seriesName);
 
-	  var path = g.selectAll('path')
-	    .data(function (d) { return [options.values(d)]; });
+    g.enter()
+      .append('g')
+      .attr('class', 'series');
 
-	  path.enter().append('path');
+    g.style({
+      'fill': color,
+      'stroke': color
+    });
 
-	  path.transition()
-	    .duration(500)
-	    .attr('d', d3.svg.line().x(x).y(y))
+    g.exit().remove();
 
-	  var point = g.selectAll('circle')
-	    .data(options.values);
+    var path = g.selectAll('path')
+      .data(function (d) {
+        return [options.values(d)];
+      });
 
-	  point.enter()
-	    .append('circle')
-	    .attr({
-	      'cx' : x,
-	      'cy' : y,
-	      'r'  : 0
-	    });
+    path.enter().append('path');
 
-	  point.transition()
-	    .duration(500)
-	    .attr({
-	      'cx' : x,
-	      'cy' : y,
-	      'r'  : 3
-	    });
+    path.transition()
+      .duration(500)
+      .attr('d', d3.svg.line().x(x).y(y))
 
-	  point.exit()
-	    .transition()
-	    .duration(500)
-	    .attr('r', 0)
-	    .remove();
+    var point = g.selectAll('circle')
+      .data(options.values);
 
-	  var labels = _(series)
-	    .map(function (d) {
-	      var last = _.max(options.values(d), options.x);
-	      var v    = options.y(last);
+    point.enter()
+      .append('circle')
+      .attr({
+        'cx': x,
+        'cy': y,
+        'r': 0
+      });
 
-	      return {
-	        text    : options.seriesName(d) + ' ' + options.yFormat(v),
-	        x       : x(last),
-	        y       : y(last),
-	        defined : _.isFinite(v)
-	      };
-	    })
-	    .filter('defined')
-	    .sortBy('y')
-	    .value();
+    point.transition()
+      .duration(500)
+      .attr({
+        'cx': x,
+        'cy': y,
+        'r': 3
+      });
 
-	  svg.select('.annotation')
-	    .selectAll('.series.label')
-	    .data(labels)
-	    .call(label()
-	      .addClass('series')
-	      .width(width)
-	      .height(height)
-	      .align(false));
+    point.exit()
+      .transition()
+      .duration(500)
+      .attr('r', 0)
+      .remove();
 
-	  var gx = svg.select('.x.axis')
-	    .call(d3.svg.axis()
-	      .tickFormat(options.xFormat)
-	      .outerTickSize(0)
-	      .ticks(4)
-	      .scale(xScale)
-	      .orient('bottom'));
+    var labels = _(series)
+      .map(function (d) {
+        var last = _.max(options.values(d), options.x);
+        var v = options.y(last);
 
-	  // Prevent labels from overflowing the left and right edges of the SVG
-	  var svgBox = svg.node().getBoundingClientRect();
-	  gx.selectAll('text')
-	   .attr('dx', function () {
-	     var bbox = this.getBoundingClientRect();
-	     var dx = null;
+        return {
+          text: options.seriesName(d) + ' ' + options.yFormat(v),
+          x: x(last),
+          y: y(last),
+          defined: _.isFinite(v)
+        };
+      })
+      .filter('defined')
+      .sortBy('y')
+      .value();
 
-	     if (bbox.right > svgBox.right) {
-	       dx = svgBox.right - bbox.right;
-	     }
+    svg.select('.annotation')
+      .selectAll('.series.label')
+      .data(labels)
+      .call(label()
+        .addClass('series')
+        .width(width)
+        .height(height)
+        .align(false));
 
-	     if (bbox.left < svgBox.left) {
-	       dx = svgBox.left - bbox.left;
-	     }
+    var gx = svg.select('.x.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.xFormat)
+        .outerTickSize(0)
+        .ticks(4)
+        .scale(xScale)
+        .orient('bottom'));
 
-	     return dx;
-	   });
+    // Prevent labels from overflowing the left and right edges of the SVG
+    var svgBox = svg.node().getBoundingClientRect();
+    gx.selectAll('text')
+      .attr('dx', function () {
+        var bbox = this.getBoundingClientRect();
+        var dx = null;
 
-	  var gy = svg.select('.y.axis')
-	    .call(d3.svg.axis()
-	      .tickFormat(options.yFormat)
-	      .tickSize(width)
-	      .ticks(3)
-	      .scale(yScale)
-	      .orient('right'));
+        if (bbox.right > svgBox.right) {
+          dx = svgBox.right - bbox.right;
+        }
 
-	  gy.selectAll('text')
-	    .attr({
-				'x'  : 4,
-				'dy' : -4
-	    });
+        if (bbox.left < svgBox.left) {
+          dx = svgBox.left - bbox.left;
+        }
 
-	  gy.selectAll('g').classed('minor', function (d) {
-	    return d !== range[0];
-	  });
-	}
+        return dx;
+      });
+
+    var gy = svg.select('.y.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.yFormat)
+        .tickSize(width)
+        .ticks(3)
+        .scale(yScale)
+        .orient('right'));
+
+    gy.selectAll('text')
+      .attr({
+        'x': 4,
+        'dy': -4
+      });
+
+    gy.selectAll('g').classed('minor', function (d) {
+      return d !== range[0];
+    });
+  }
 });
 
 module.exports = LineChart;

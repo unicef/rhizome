@@ -257,7 +257,7 @@ module.exports = React.createClass({
 		);
     var dashboardBuilderContainer = (
       <div>
-        <div classNameName='clearfix'></div>
+        <div className='clearfix'></div>
 
         <div className="custom-dashboard-title-container right">
           Dashboard Title
