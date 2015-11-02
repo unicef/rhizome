@@ -189,7 +189,7 @@ let ChartWizard = React.createClass({
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title='Select Location' refer='location'>
+          <ChartWizardStep title={`Select Location - ${this.state.data.location && this.state.data.location.name}`} refer='location'>
             {locationStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Indicator' refer='indicator'>
