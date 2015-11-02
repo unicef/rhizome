@@ -6,7 +6,7 @@ import d3 from 'd3'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
 import processChartData from 'stores/chartBuilder/processChartData'
-import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
+import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
 
@@ -36,23 +36,23 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   filterTimeRangeByChartType(timeRanges, chartType) {
-    let expectTimes = _.find(chartDefinitions.charts, {name: chartType}).timeRadios
+    let expectTimes = _.find(builderDefinitions.charts, {name: chartType}).timeRadios
     return timeRanges.filter(time => {
       return _.includes(expectTimes, time.value)
     })
   },
 
   applyChartDef(chartDef) {
-    this.data.locationLevelValue = Math.max(_.findIndex(chartDefinitions.locationLevels, {value: chartDef.locations}), 0)
-    this.data.locationSelected = chartDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.data.groupByValue = Math.max(_.findIndex(chartDefinitions.groups, {value: chartDef.groupBy}), 0)
+    this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, {value: chartDef.locations}), 0)
+    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, {value: chartDef.groupBy}), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
-    this.data.yFormatValue = Math.max(_.findIndex(chartDefinitions.formats, {value: chartDef.yFormat}), 0)
+    this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, {value: chartDef.yFormat}), 0)
   },
 
   integrateChartOption(chartOption) {
     if (!chartOption.yFormat) {
-      chartOption.yFormat = d3.format(chartDefinitions.formats[this.data.yFormatValue].value)
+      chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
     }
     return chartOption
   },
@@ -105,7 +105,7 @@ let ChartWizardStore = Reflux.createStore({
         this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-        this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(chartDefinitions.times, this.data.chartDef.type)
+        this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
         this.applyChartDef(chartDef)
 
         this.previewChart()
@@ -119,7 +119,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddLocation(index) {
     this.data.location = this.locationIndex[index]
-    this.data.locationSelected = chartDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
     this.previewChart()
   },
@@ -141,7 +141,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeChart(value) {
     this.data.chartDef.type = value
-    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(chartDefinitions.times, this.data.chartDef.type)
+    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.chartData = []
     this.previewChart()
   },
@@ -153,7 +153,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeLocationLevelRadio(value) {
     this.data.locationLevelValue = value
-    this.data.locationSelected = chartDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationSelected = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
@@ -172,10 +172,10 @@ let ChartWizardStore = Reflux.createStore({
       indicators: this.data.indicatorSelected.map(item => {
         return item.id
       }),
-      groupBy: chartDefinitions.groups[this.data.groupByValue].value,
-      locations: chartDefinitions.locationLevels[this.data.locationLevelValue].value,
+      groupBy: builderDefinitions.groups[this.data.groupByValue].value,
+      locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
       timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
-      yFormat: chartDefinitions.formats[this.data.yFormatValue].value
+      yFormat: builderDefinitions.formats[this.data.yFormatValue].value
     }, (a, b) => {
       return b
     }))
@@ -188,7 +188,7 @@ let ChartWizardStore = Reflux.createStore({
       return
     }
     let chartType = this.data.chartDef.type
-    let groupBy = chartDefinitions.groups[this.data.groupByValue].value
+    let groupBy = builderDefinitions.groups[this.data.groupByValue].value
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
     let locationIndex = _.indexBy(this.data.locationSelected, 'id')
     let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex

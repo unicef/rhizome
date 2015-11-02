@@ -18,7 +18,7 @@ import ChartSelect from '../chart-builder/ChartSelect.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
-import chartDefinitions from 'stores/chartBuilder/chartDefinitions'
+import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 
 const defaultChartDef = {
   title: '',
@@ -59,7 +59,7 @@ function findMatches(item, re) {
 }
 
 function findChartType(type) {
-  return chartDefinitions.charts[_.findIndex(chartDefinitions.charts, {name: type})] || {}
+  return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
 }
 
 let ChartWizard = React.createClass({
@@ -136,7 +136,7 @@ let ChartWizard = React.createClass({
 
     let chartTypeStep = (
       <div>
-        <ChartSelect charts={chartDefinitions.charts} value={this.state.data.chartDef.type}
+        <ChartSelect charts={builderDefinitions.charts} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
       </div>
     )
@@ -145,7 +145,7 @@ let ChartWizard = React.createClass({
       <div>
         <label>Group By: </label>
         <RadioGroup name='groupby' horizontal={true} value={this.state.data.groupByValue}
-          values={chartDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+          values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
       </div>
     )
     let optionStep = (
@@ -154,7 +154,7 @@ let ChartWizard = React.createClass({
         <div>
           <label>Location level: </label>
           <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
-            values={chartDefinitions.locationLevels} onChange={ChartWizardActions.changeLocationLevelRadio}/>
+            values={builderDefinitions.locationLevels} onChange={ChartWizardActions.changeLocationLevelRadio}/>
         </div>
         <div>
           <label>Time Span: </label>
@@ -164,7 +164,7 @@ let ChartWizard = React.createClass({
         <div>
           <label>Format: </label>
           <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
-            values={chartDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
+            values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
         </div>
       </div>
     )

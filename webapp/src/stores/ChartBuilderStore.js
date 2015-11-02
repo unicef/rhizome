@@ -179,7 +179,7 @@ module.exports = Reflux.createStore({
     formatRadioValue : 0,
     xFormatRadioValue : 0,
 		timeRadioValue:2,
-		chartTypes:require('./chartBuilder/chartDefinitions'),
+		chartTypes:require('./chartBuilder/builderDefinitions'),
 		selectedChart:0,
 		chartData:[],
 	    chartOptions : chartOptions,
