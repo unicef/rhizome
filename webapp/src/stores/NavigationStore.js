@@ -18,6 +18,7 @@ var NavigationStore = Reflux.createStore({
 
     Promise.all([
       CampaignStore.getCampaignsPromise(),
+      api.get_dashboard(),
       api.office().then(response => response.objects)
     ]).then(_.spread(this._loadDashboards));
   },
@@ -63,8 +64,8 @@ var NavigationStore = Reflux.createStore({
   },
 
   // Helpers
-  _loadDashboards: function (campaigns, offices) {
-    var allDashboards = builtins;
+  _loadDashboards: function (campaigns, dashboards, offices) {
+    var allDashboards = builtins.concat(dashboards.objects);
 
     campaigns = _(campaigns);
 

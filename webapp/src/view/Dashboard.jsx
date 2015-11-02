@@ -164,7 +164,8 @@ var Dashboard = React.createClass({
     },
 
     _getDashboard: function (slug) {
-        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug);
+
         if (dashboard.id <= 0) {
             return new Promise(resolve => {
                 resolve(dashboard)
