@@ -101,6 +101,8 @@ var Dashboard = React.createClass({
     _onDashboardChange: function (state) {
         var fetchData = this.state.loaded;
 
+      fetchData = true;
+
         this.setState(state);
 
         if (fetchData) {
