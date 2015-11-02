@@ -61,6 +61,7 @@ ul.dashboards-nav {
     border: none;
     display: inline-block;
     text-align: left;
+    background-color: $rhz-navigation-bg-color;
 
     &:hover {
       background-color: $rhz-navigation-hover-bg-color;
@@ -69,13 +70,17 @@ ul.dashboards-nav {
         display: block;
       }
     }
+    .lay-out {
+      padding: 2.3em 0.7em;
+    }
 
     > a {
-      padding: 2.1em 0.7em;
+      padding: 1.3em 0.7em;
       display: block;
       height: $header-height;
       opacity: 1;
       text-transform: uppercase;
+      text-align: center;
     }
   }
 }

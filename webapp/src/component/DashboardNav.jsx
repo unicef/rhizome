@@ -28,14 +28,20 @@ module.exports = React.createClass({
 
     return (
         <ul className="dashboards-nav">
-          <li className="medium-6 columns">
+          <li className="medium-4 columns">
           <a onClick={this._toggleMenu} tabIndex='-1'>View My Dashboards</a>
             <ul className="dashboard-menu">
               {dashboards}
             </ul>
           </li>
-          <li className="medium-6 columns">
+          <li className="medium-4 columns">
             <a href="/datapoints/dashboards/edit">Create a dashboard</a>
+          </li>
+          <li className="medium-4 columns">
+            <a href='/accounts/logout?next=/' title='logout' className="lay-out">
+              <i className='fa fa-lg fa-sign-out'/>
+              log out
+            </a>
           </li>
         </ul>
     );
