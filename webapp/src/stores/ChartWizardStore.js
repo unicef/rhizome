@@ -43,10 +43,11 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   applyChartDef(chartDef) {
-    this.data.locationSelected = [this.data.location]
-    this.data.groupByValue = _.findIndex(chartDefinitions.groups, {value: chartDef.groupBy})
+    this.data.locationLevelValue = Math.max(_.findIndex(chartDefinitions.locationLevels, {value: chartDef.locations}), 0)
+    this.data.locationSelected = chartDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.groupByValue = Math.max(_.findIndex(chartDefinitions.groups, {value: chartDef.groupBy}), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
-    this.data.yFormatValue = _.findIndex(chartDefinitions.formats, {value: chartDef.yFormat})
+    this.data.yFormatValue = Math.max(_.findIndex(chartDefinitions.formats, {value: chartDef.yFormat}), 0)
   },
 
   integrateChartOption(chartOption) {
@@ -118,7 +119,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddLocation(index) {
     this.data.location = this.locationIndex[index]
-    this.data.locationSelected = [this.data.location]
+    this.data.locationSelected = chartDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
     this.previewChart()
   },
@@ -152,6 +153,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeLocationLevelRadio(value) {
     this.data.locationLevelValue = value
+    this.data.locationSelected = chartDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
@@ -171,6 +173,7 @@ let ChartWizardStore = Reflux.createStore({
         return item.id
       }),
       groupBy: chartDefinitions.groups[this.data.groupByValue].value,
+      locations: chartDefinitions.locationLevels[this.data.locationLevelValue].value,
       timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
       yFormat: chartDefinitions.formats[this.data.yFormatValue].value
     }, (a, b) => {

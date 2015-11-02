@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export default {
   charts: [
     {name: 'LineChart', groupBy: true, chooseAxis: false, timeRadios: ['all', '1year', '3month']},
@@ -52,8 +54,22 @@ export default {
     }
   ],
   locationLevels: [
-    {value: "selected", title: "Selected location only"},
-    {value: "type", title: "Locations with the same level"},
-    {value: "sublocations", title: "Sublocations 1 level below selected"}
+    {
+      value: "selected",
+      title: "Selected location only",
+      getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
+    },
+    {
+      value: "type",
+      title: "Locations with the same level",
+      getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
+    },
+    {
+      value: "sublocations",
+      title: "Sublocations 1 level below selected",
+      getAggregated: (locationSelected, locationIndex) => {
+        return _.filter(locationIndex, {parent_location_id: locationSelected.id})
+      }
+    }
   ]
 }
