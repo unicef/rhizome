@@ -116,41 +116,53 @@ var HomepageCharts = React.createClass({
     var pakistanList = [];
     var nigeriaList = [];
 
-    for (var i = 0; i < 3; i++) {
-        afghanistanList.push(<Chart type='ChoroplethMap'
-                             data={missedChildrenMap}
-                             loading={loading}
-                             options={{
-                          domain  : _.constant([0, 0.1]),
-                          value   : _.property('properties[475]'),
-                          yFormat : d3.format('%'),
-                          onClick : d => { DashboardActions.navigate({ location : d }) }
-                        }}/>);
+    for (var i = 0; i < 1; i++) {
+        afghanistanList.push(
+            <Chart type='ChoroplethMap'
+                 data={missedChildrenMap}
+                 loading={loading}
+                 options={{
+                  domain  : _.constant([0, 0.1]),
+                  value   : _.property('properties[475]'),
+                  yFormat : d3.format('%'),
+                  width: 390,
+                  height: 390,
+                  onClick : d => { DashboardActions.navigate({ location : d }) }
+                }}
+            />
+        );
     }
 
     for (var i = 0; i < 3; i++) {
-        pakistanList.push(<Chart type='ColumnChart' data={missed}
-                               loading={loading}
-                               options={{
-                            aspect  : 1,
-                            color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-                            domain  : _.constant(missedScale),
-                            x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                            xFormat : d => moment(d).format('MMM YYYY'),
-                            yFormat : pct
-                          }}/>);
+        pakistanList.push(
+            <Chart type='ColumnChart' data={missed}
+                   loading={loading}
+                   options={{
+                        aspect  : 1,
+                        color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
+                        domain  : _.constant(missedScale),
+                        x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                        xFormat : d => moment(d).format('MMM YYYY'),
+                        yFormat : pct,
+                      width: 390,
+                      height: 390
+                    }}
+            />
+        );
     }
 
     for (var i = 0; i < 3; i++) {
-                    nigeriaList.push(<Chart type='LineChart' data={conversions}
-                               loading={loading}
-                               options={{
-                            aspect  : 1,
-                            domain  : _.constant([lower.toDate(), upper.toDate()]),
-                            yFormat : pct
-                          }}/>);
+        nigeriaList.push(
+            <Chart type='LineChart' data={conversions}
+                   loading={loading}
+                   options={{
+                        aspect  : 1,
+                        domain  : _.constant([lower.toDate(), upper.toDate()]),
+                        yFormat : pct
+                    }}
+            />
+        );
     }
-
 
     return (
         <div>

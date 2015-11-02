@@ -68,17 +68,18 @@ _.extend(ChoroplethMap.prototype, {
 
     var margin = options.margin;
 
-    var w = this._width = el.clientWidth;
-    var h = this._height = w * options.aspect;
+	var aspect   = _.get(options, 'aspect', 1);
+	this._width  = _.get(options, 'width', el.clientWidth);
+	this._height = _.get(options, 'height', this._width / aspect);
 
     var svg = this._svg = d3.select(el).append('svg')
       .attr('class', 'reds')
-      .attr('viewBox', '0 0 ' + w + ' ' + h);
+      .attr('viewBox', '0 0 ' + this._width + ' ' + this._height);
 
     if (browser.isIE()) {
       svg.attr({
-        'width': w,
-        'height': h
+        'width': this._width,
+        'height': this._height
       });
     }
 

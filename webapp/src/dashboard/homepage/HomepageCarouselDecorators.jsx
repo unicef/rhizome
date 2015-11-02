@@ -7,31 +7,39 @@ var HomepageCarouselDecorators = [
     component: React.createClass({
       render() {
         return (
-            <div className="navigator-button" onClick={this.props.previousSlide}>
-              <i className="fa fa-chevron-circle-left"></i>
+            <div className="navigator-button"
+                 style={this.getButtonStyles(this.props.currentSlide === 0)}
+                 onClick={this.props.previousSlide}>
+              <i className="fa fa-chevron-left"></i>
             </div>
         )
+      },
+      getButtonStyles(disabled) {
+        return {
+          opacity: disabled ? 0.3 : 1
+        }
       }
     }),
-    position: 'CenterLeft',
-    style: {
-      padding: 20
-    }
+    position: 'CenterLeft'
   },
   {
     component: React.createClass({
       render() {
         return (
-            <div className="navigator-button" onClick={this.props.nextSlide}>
-              <i className="fa fa-chevron-circle-right"></i>
+            <div className="navigator-button"
+                 style={this.getButtonStyles(this.props.currentSlide + this.props.slidesToScroll >= this.props.slideCount)}
+                 onClick={this.props.nextSlide}>
+              <i className="fa fa-chevron-right"></i>
             </div>
         )
+      },
+      getButtonStyles(disabled) {
+        return {
+          opacity: disabled ? 0.3 : 1
+        }
       }
     }),
-    position: 'CenterRight',
-    style: {
-      padding: 20
-    }
+    position: 'CenterRight'
   },
   {
     component: React.createClass({
@@ -83,9 +91,9 @@ var HomepageCarouselDecorators = [
           background: 'transparent',
           color: 'black',
           cursor: 'pointer',
-          padding: 10,
+          padding: 0,
           outline: 0,
-          fontSize: 24,
+          fontSize: 36,
           opacity: active ? 1 : 0.5
         }
       }
