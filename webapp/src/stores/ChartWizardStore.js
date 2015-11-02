@@ -31,7 +31,7 @@ let ChartWizardStore = Reflux.createStore({
 
   filterCampaignByLocation(campaigns, location) {
     return campaigns.filter(campaign => {
-      return campaign.office.name == location.name
+      return campaign.office_id == location.office_id
     })
   },
 

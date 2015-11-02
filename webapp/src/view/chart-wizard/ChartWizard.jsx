@@ -124,12 +124,10 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let campaignDisplay = (this.state.data.location && this.state.data.location.name) + ' ' +
-      (this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMM YYYY'))
     let campaignStep = (
       <div>
         <CampaignDropdownMenu
-          text={this.state.data.campaign && campaignDisplay || 'Select Campaign'}
+          text={this.state.data.campaign && this.state.data.campaign.slug || 'Select Campaign'}
           campaigns={this.state.data.campaignFilteredList}
           sendValue={ChartWizardActions.addCampaign}>
         </CampaignDropdownMenu>
