@@ -3,7 +3,10 @@
 var _ = require('lodash');
 var d3 = require('d3');
 var moment = require('moment');
+
 var React = require('react');
+var Carousel = require('nuka-carousel');
+var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx');
 
 var colors = require('colors');
 
@@ -108,13 +111,13 @@ var HomepageCharts = React.createClass({
 
     var missedChildrenMap = data.missedChildrenByProvince;
 
-    return (
-        <div>
-            <div className="large-4 columns chart-container" id="afghanistan-chart">
-                <div className="chart">
-                    <h5>Afghanistan</h5>
-                    <carousel>
-                        <Chart type='ChoroplethMap'
+
+    var afghanistanList = [];
+    var pakistanList = [];
+    var nigeriaList = [];
+
+    for (var i = 0; i < 3; i++) {
+        afghanistanList.push(<Chart type='ChoroplethMap'
                              data={missedChildrenMap}
                              loading={loading}
                              options={{
@@ -122,8 +125,42 @@ var HomepageCharts = React.createClass({
                           value   : _.property('properties[475]'),
                           yFormat : d3.format('%'),
                           onClick : d => { DashboardActions.navigate({ location : d }) }
-                        }}/>
-                    </carousel>
+                        }}/>);
+    }
+
+    for (var i = 0; i < 3; i++) {
+        pakistanList.push(<Chart type='ColumnChart' data={missed}
+                               loading={loading}
+                               options={{
+                            aspect  : 1,
+                            color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
+                            domain  : _.constant(missedScale),
+                            x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                            xFormat : d => moment(d).format('MMM YYYY'),
+                            yFormat : pct
+                          }}/>);
+    }
+
+    for (var i = 0; i < 3; i++) {
+                    nigeriaList.push(<Chart type='LineChart' data={conversions}
+                               loading={loading}
+                               options={{
+                            aspect  : 1,
+                            domain  : _.constant([lower.toDate(), upper.toDate()]),
+                            yFormat : pct
+                          }}/>);
+    }
+
+
+    return (
+        <div>
+            <div className="large-4 columns chart-container" id="afghanistan-chart">
+                <div className="chart">
+                    <h5>Afghanistan</h5>
+
+                    <Carousel decorators={HomepageCarouselDecorators}>
+                        {afghanistanList}
+                    </Carousel>
                     <div className="chart-button-group">
                         <div className="chart-button"><span>Country overview</span></div>
                         <div className="chart-button"><span>District summary</span></div>
@@ -134,18 +171,9 @@ var HomepageCharts = React.createClass({
             <div className="large-4 columns chart-container" id="pakistan-chart">
                 <div className="chart">
                     <h5>Pakistan</h5>
-                    <carousel>
-                        <Chart type='ColumnChart' data={missed}
-                               loading={loading}
-                               options={{
-                            aspect  : 1,
-                            color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-                            domain  : _.constant(missedScale),
-                            x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                            xFormat : d => moment(d).format('MMM YYYY'),
-                            yFormat : pct
-                          }}/>
-                    </carousel>
+                    <Carousel decorators={HomepageCarouselDecorators}>
+                        {pakistanList}
+                    </Carousel>
                     <div className="chart-button-group">
                         <div className="chart-button"><span>Country overview</span></div>
                         <div className="chart-button"><span>District summary</span></div>
@@ -155,14 +183,8 @@ var HomepageCharts = React.createClass({
             <div className="large-4 columns chart-container" id="nigeria-chart">
                 <div className="chart">
                     <h5>Nigeria</h5>
-                    <carousel>
-                        <Chart type='LineChart' data={conversions}
-                               loading={loading}
-                               options={{
-                            aspect  : 1,
-                            domain  : _.constant([lower.toDate(), upper.toDate()]),
-                            yFormat : pct
-                          }}/>
+                    <carousel decorators={HomepageCarouselDecorators}>
+                        {nigeriaList}
                     </carousel>
                     <div className="chart-button-group">
                         <div className="chart-button"><span>Country overview</span></div>

@@ -16,6 +16,7 @@
     "foundation-sites": "^5.5.2",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
+    "nuka-carousel": "0.0.9",
     "object-assign": "^4.0.1",
     "page": "^1.6.3",
     "react": "^0.13.3",
