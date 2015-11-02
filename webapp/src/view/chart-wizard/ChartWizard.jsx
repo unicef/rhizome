@@ -124,20 +124,28 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let campaignStep = (
-      <div>
-        <CampaignDropdownMenu
-          text={this.state.data.campaign && this.state.data.campaign.slug || 'Select Campaign'}
-          campaigns={this.state.data.campaignFilteredList}
-          sendValue={ChartWizardActions.addCampaign}>
-        </CampaignDropdownMenu>
-      </div>
-    )
-
     let chartTypeStep = (
       <div>
         <ChartSelect charts={builderDefinitions.charts} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
+      </div>
+    )
+
+    this.state.data.campaignFilteredList.forEach(campaign => {
+      campaign.slug = moment(campaign.start_date).format('MMMM YYYY')
+    })
+    let timeRangeStep = (
+      <div>
+        <CampaignDropdownMenu
+          text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Campaign'}
+          campaigns={this.state.data.campaignFilteredList}
+          sendValue={ChartWizardActions.addCampaign}>
+        </CampaignDropdownMenu>
+        <div>
+          <label>Time Range: </label>
+          <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
+            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        </div>
       </div>
     )
 
@@ -155,11 +163,6 @@ let ChartWizard = React.createClass({
           <label>Location level: </label>
           <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
             values={builderDefinitions.locationLevels} onChange={ChartWizardActions.changeLocationLevelRadio}/>
-        </div>
-        <div>
-          <label>Time Span: </label>
-          <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
-            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
         </div>
         <div>
           <label>Format: </label>
@@ -192,11 +195,11 @@ let ChartWizard = React.createClass({
           <ChartWizardStep title='Select Indicator' refer='indicator'>
             {indicatorStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Select Campaign' refer='campaign'>
-            {campaignStep}
-          </ChartWizardStep>
           <ChartWizardStep title='Select Chart Type' refer='chart-type'>
             {chartTypeStep}
+          </ChartWizardStep>
+          <ChartWizardStep title='Select Time Range' refer='time-range'>
+            {timeRangeStep}
           </ChartWizardStep>
           <ChartWizardStep title='Customise Options' refer='option'>
             {optionStep}
