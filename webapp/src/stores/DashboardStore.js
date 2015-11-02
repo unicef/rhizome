@@ -97,9 +97,11 @@ var DashboardStore = Reflux.createStore({
       .sortBy('start_date')
       .last();
 
-    var hasMap = _(dashboard.charts)
+    if(dashboard) {
+       var hasMap = _(dashboard.charts)
       .pluck('type')
       .any(t => _.endsWith(t, 'Map'));
+    }
 
     this.trigger({
       dashboard: this.dashboard,

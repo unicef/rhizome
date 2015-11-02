@@ -202,7 +202,8 @@ var Dashboard = React.createClass({
     },
 
     _show: function (ctx) {
-        NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === ctx.params.dashboard);
+        NavigationStore.getDashboard(dashboard).then(dashboard => {
             DashboardActions.setDashboard({
                 dashboard,
                 location: ctx.params.location,
@@ -217,13 +218,13 @@ var Dashboard = React.createClass({
 
             this.setState({
                 doc_id: ctx.params.doc_id,
-                doc_tab: doc_tab,
-            })
+                doc_tab: doc_tab
+            });
 
             DashboardActions.setDashboard({
                 dashboard,
                 location: ctx.params.location,
-                date: [ctx.params.year, ctx.params.month].join('-'),
+                date: [ctx.params.year, ctx.params.month].join('-')
             });
         })
 
@@ -233,7 +234,7 @@ var Dashboard = React.createClass({
         // console.log("RENDER", this.state.location);
         if (!(this.state.loaded && this.state.dashboard)) {
             var style = {
-                fontSize: '2rem',
+                fontSize: '2rem'
             };
 
             return (
@@ -351,7 +352,7 @@ var Dashboard = React.createClass({
                 {dashboard}
             </div>
         );
-    },
+    }
 
 });
 
