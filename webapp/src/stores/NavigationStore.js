@@ -36,14 +36,6 @@ var NavigationStore = Reflux.createStore({
   getDashboard: function (slug) {
     var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug) || {};
 
-    if(!dashboard.id) {
-      dashboard.charts = [];
-      return Promise.reject('dashboard does not exist').then(function(reason) {
-      }, function(reason) {
-        console.log(reason);
-      });
-    }
-
     if (dashboard.id <= 0) {
       return new Promise(resolve => {
         resolve(dashboard)
