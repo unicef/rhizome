@@ -101,11 +101,12 @@ var Dashboard = React.createClass({
     _onDashboardChange: function (state) {
         var fetchData = this.state.loaded;
 
+      fetchData = true;
+
         this.setState(state);
 
         if (fetchData) {
             var q = DashboardStore.getQueries();
-
             if (_.isEmpty(q)) {
                 DataActions.clear();
             } else {
@@ -123,7 +124,7 @@ var Dashboard = React.createClass({
     },
 
     _onNavigationChange: function (nav) {
-        if (NavigationStore.loaded && DashboardStore.loaded) {
+        if (NavigationStore.loaded) {
             page({
                 click: false
             });
@@ -162,7 +163,8 @@ var Dashboard = React.createClass({
     },
 
     _getDashboard: function (slug) {
-        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug);
+
         if (dashboard.id <= 0) {
             return new Promise(resolve => {
                 resolve(dashboard)
@@ -194,16 +196,22 @@ var Dashboard = React.createClass({
     },
 
     _showDefault: function (ctx) {
-        this._getDashboard(ctx.params.dashboard).then(dashboard => {
-            DashboardActions.setDashboard({
-                dashboard
+        var self = this;
+
+        api.get_dashboard().then(function(response) {
+            var customDashboards = _(response.objects).sortBy('title').value();
+            var allDashboards = builtins.concat(customDashboards);
+            self.setState({allDashboards: allDashboards});
+            self._getDashboard(ctx.params.dashboard).then(dashboard => {
+                DashboardActions.setDashboard({
+                    dashboard
+                });
             });
-        })
+        });
     },
 
     _show: function (ctx) {
-        var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === ctx.params.dashboard);
-        NavigationStore.getDashboard(dashboard).then(dashboard => {
+        NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
             DashboardActions.setDashboard({
                 dashboard,
                 location: ctx.params.location,
@@ -322,29 +330,32 @@ var Dashboard = React.createClass({
             <div>
                 <div classNameName='clearfix'></div>
 
-                <form className='inline no-print'>
+                <form className='inline no-print search-criteria'>
                     <div className='row'>
-                        <div className='medium-6 columns'>
-                            <h1>
-                                <CampaignTitleMenu
+                        <div className='medium-4 columns'>
+                            <div className="row">
+                                <div className="medium-4 columns">
+                                    <CampaignTitleMenu
                                     campaigns={campaigns}
                                     selected={campaign}
                                     sendValue={this._setCampaign}/>
-                                &emsp;
-                                <RegionTitleMenu
+                                </div>
+                                <div className="medium-4 columns">
+                                    <RegionTitleMenu
                                     locations={this.state.locations}
                                     selected={location}
                                     sendValue={this._setlocation}/>
-                            </h1>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className='medium-4 columns'>
-                            <h2 style={{ textAlign: 'right' }}>
+                        <div className='medium-2 columns'>
+                            <div>
                                 {edit}
-                                <TitleMenu text={dashboardName}>
+                                <TitleMenu text={dashboardName} icon='fa-chevron-down'>
                                     {dashboardItems}
                                 </TitleMenu>
-                            </h2>
+                            </div>
                         </div>
                     </div>
                 </form>

@@ -23,6 +23,13 @@ export default {
       `${gulp.config('base.src')}/styles/print.scss`
     ],
     dest: cssDir
+  }, {
+    entry: `${gulp.config('base.src')}/styles/print-redesign.scss`,
+    src: [
+      `${gulp.config('base.src')}/styles/_settings.scss`,
+      `${gulp.config('base.src')}/styles/print-redesign.scss`
+    ],
+    dest: cssDir
   }],
   options: {
     includePaths: [

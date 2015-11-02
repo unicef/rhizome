@@ -90,7 +90,7 @@ var ImmunityGap = React.createClass({
           data={stack(data)}
           loading={loading}
           options={{
-            aspect  : 1.757,
+            aspect  : 2.26,
             color   : color,
             domain  : _.constant(immunityScale),
             values  : _.property('values'),

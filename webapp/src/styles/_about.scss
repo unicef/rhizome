@@ -1,0 +1,22 @@
+.about {
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+
+  color: $rhz-navigation-bg-color;
+
+  .content {
+    text-align: left;
+  }
+
+  h1 {
+    margin-top: 1.2em;
+    color: inherit;
+    font-size: 30px;
+  }
+
+  p {
+    margin-bottom: 1.2em;
+    font-size: 1rem;
+  }
+}

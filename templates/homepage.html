@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block section %}home{% endblock %}
+
+{% block content %}
+    <div class="row homepage-charts" id="homepage-charts">
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>Polio.HomepageCharts(document.getElementById('homepage-charts'));</script>
+{% endblock %}

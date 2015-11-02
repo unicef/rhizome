@@ -32,7 +32,7 @@ var Impact = React.createClass({
         <ImmunityGap data={data.underImmunizedChildren} campaign={campaign} loading={loading} />
       </div>
     );
-  },
+  }
 });
 
 module.exports = Impact;

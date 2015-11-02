@@ -1,0 +1,68 @@
+@import "variables";
+
+.homepage-charts {
+  padding: 2px;
+}
+
+.chart-container {
+  padding-left: 0;
+  padding-right: 0;
+
+  .chart {
+    background-color: $rhz-chart-panel-color;
+    margin: 2px;
+    padding: 18px;
+
+    h5 {
+      text-transform: uppercase;
+    }
+
+    .chart-button-group {
+      display: inline-flex;
+      width: 100%;
+    }
+
+    .chart-button {
+      background-color: $rhz-button-bg-color;
+      color: $rhz-button-color;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 2px;
+      padding: 10px 16px;
+    }
+
+    svg {
+      height: 30em;
+      margin: 0;
+      padding: 0;
+      background-color: inherit;
+    }
+  }
+}
+
+
+#afghanistan-chart, #pakistan-chart {
+  .chart-button {
+    width: 50%;
+    padding: 10px 64px;
+    cursor: pointer;
+  }
+}
+
+#nigeria-chart {
+  .chart-button {
+    width: 33.33%;
+    padding: 10px 24px;
+  }
+}
+
+.navigator-button {
+  font-size: 2rem;
+  font-weight: normal;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.4);
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.8);
+  }
+}

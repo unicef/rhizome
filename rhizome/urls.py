@@ -59,7 +59,7 @@ urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
 
     ## HOME PAGE
-    url(r'^$', login_required(TemplateView.as_view(template_name="index.html")), name='index'),
+    url(r'^$', login_required(TemplateView.as_view(template_name="homepage.html")), name='homepage'),
 
     ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
@@ -77,12 +77,18 @@ urlpatterns = patterns('',
     ## UFADMIN ##
     url(r'^ufadmin/', login_required(TemplateView.as_view(template_name='ufadmin.html')), name='ufadmin'),
 
+    url(r'^about/', TemplateView.as_view(template_name="about.html"), name='about'),
+
     ## DOCUMENT_REVIEW ##
     url(r'^doc_review/', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
 
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+from django.conf import settings
+from django.conf.urls import include, patterns, url
+
 if settings.DEBUG:
+    import debug_toolbar
     urlpatterns += patterns('',
-        url(r'^debug/', debug),
+        url(r'^debug/', include(debug_toolbar.urls)),
     )

@@ -79,7 +79,7 @@ module.exports = React.createClass({
         .value());
 
     return (
-      <section id='polio-cases-ytd'>
+      <div id='polio-cases-ytd'>
         {title}
         <div style={{ position : 'relative' }}>
           {newCaseLabel}
@@ -88,10 +88,10 @@ module.exports = React.createClass({
             loading={loading}
             options={{
               color  : _.flow(_.property('name'), color),
-              aspect : 1.757
+              aspect  : 2.26
             }} />
         </div>
-      </section>
+      </div>
     )
   },
 

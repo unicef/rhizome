@@ -1,3 +1,4 @@
+/webapp/npm-debug.log
 .Python
 env
 include
@@ -37,4 +38,7 @@ static/
 *target_natreg.csv
 concat_csv.py
 source_data/ODK/odk_source
+rhizome/bin/
+rhizome/lib/
 dev/
+webapp/npm-debug.log

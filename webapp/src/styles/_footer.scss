@@ -1,0 +1,90 @@
+@import "variables";
+
+footer {
+  background-color: $rhz-navigation-bg-color;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 9999;
+
+  .menu {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    margin-left: 0;
+    background-color: $rhz-navigation-hover-bg-color;
+    text-transform: uppercase;
+    > li {
+      margin: 0;
+      padding: 8px 12px;
+      display: block;
+      float: none;
+
+      &:hover {
+        background-color: $rhz-background-color;
+      }
+    }
+    a {
+      padding: 0;
+      display: block;
+      font-size: 0.9rem;
+      color: $rhz-navigation-color;
+      opacity: 1;
+    }
+  }
+
+  .actions > ul, .static-links > ul {
+    margin-left: 0;
+    position: relative;
+    display: block;
+    > li {
+      padding: 0;
+      margin: 0 12px;
+      border: none;
+      display: inline-block;
+
+      &.sub-nav {
+        display: inline-block;
+        padding: 0;
+        margin: 0 12px;
+        overflow: inherit;
+        &:hover .menu {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .static-links {
+    text-align: left;
+  }
+
+  .action {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    font-size: 0.9rem;
+    color: $rhz-navigation-color;
+    opacity: 1;
+
+    &:hover {
+      color: $rhz-background-color !important;
+      cursor: pointer;
+    }
+
+    span {
+      text-transform: uppercase;
+    }
+  }
+
+  .fa {
+    margin-right: 5px;
+  }
+
+}
+
+@media only screen and (min-width: 64.0625em) {
+  footer .static-links {
+    text-align: right;
+  }
+}

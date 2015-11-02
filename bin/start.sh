@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sleep 5
-
 python ./manage.py syncdb --noinput
 python ./manage.py migrate --noinput
 

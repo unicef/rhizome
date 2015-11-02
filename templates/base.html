@@ -10,13 +10,51 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700">
 
     <link rel="stylesheet" href="{% static 'css/screen.css' %}">
-    <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+    <link rel="stylesheet" href="{% static 'css/print-redesign.css' %}" media="print">
 
 </head>
 
 <body class="{% block section %}{% endblock %}">
+
+<style>
+    #main-nav {
+        display: none;
+    }
+</style>
+
 <header class="no-print">
     <nav id="main-nav"></nav>
+    <div class="row navigation-bar">
+        <nav class="medium-4 columns">
+            <ul class="channels raw">
+                <li class="medium-4 columns">
+                    <a href="#" class="tab">
+                        <i class="fa fa-lg fa-plus"></i><span>SOP</span>
+                    </a>
+                </li>
+                <li class="medium-4 columns">
+                    <a href="#" class="tab">
+                        <i class="fa fa-lg fa-plus"></i><span>C4D</span>
+                    </a>
+                </li>
+                <li class="medium-4 columns tab active">
+                    <a href="/">
+                        <i class="fa fa-lg fa-times"></i><span>Data</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+
+        <div class="medium-4 columns logo">
+            <img src="{% static 'img/RhizomeLogoWhiteResized.png' %}" alt="Rhizome Logo">
+        </div>
+
+        <nav class="medium-4 columns dashboard-control">
+            <div id="dashboards-nav" class="row"></div>
+        </nav>
+    </div>
+
 </header>
 
 <div id="main" role="main">
@@ -25,6 +63,60 @@
 
     <div id="tooltip" v-component="vue-tooltip"></div>
 </div>
+
+<footer class="row">
+    <nav class="large-6 columns actions">
+        <ul>
+            <li>
+                <a href="/ufadmin/users" class="action">
+                    <i class="fa fa-lg fa-cog"></i>
+                    <span>Manage system</span>
+                </a>
+            </li>
+            <li class="sub-nav">
+                <a href="javascript:;" class="action">
+                    <i class="fa fa-lg fa-plus"></i>
+                    <span>Add Data</span>
+                </a>
+                <ul class="menu">
+                    <li><a href="/datapoints/entry">Data entry form</a></li>
+                    <li><a href="/datapoints/source-data">CSV uploader</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/datapoints/table" class="action">
+                    <i class="fa fa-lg fa-list"></i>
+                    <span>View raw data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <nav class="large-6 columns static-links">
+        <ul>
+            <li>
+                <a href="/about" class="action">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Sitemap</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Report a bug</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="action">
+                    <span>Contact us</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</footer>
 
 <script src="{% static 'js/vendor.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>

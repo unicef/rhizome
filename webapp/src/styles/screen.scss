@@ -1,10 +1,14 @@
-@import "settings";
+@import "variables";
 @import "mixins";
+
+@import "settings";
 @import "foundation";
 @import "font-awesome";
 @import "forms";
 @import "charts";
-@import "dashboards";
+@import "dashboards-redesign";
+@import "search-criteria";
+
 @import "admin";
 @import "react-widgets";
 @import "react-widgets-core";
@@ -12,10 +16,26 @@
 
 body {
   font-size: rem-calc(10);
+  overflow-x:hidden;
+}
+
+@import "header";
+@import "about";
+
+@import "homepage";
+
+#management-dashboard {
+  background-color: $rhz-dashboard-bg-color;
 }
 
 #main {
-  padding-bottom: 70px;
+  padding-bottom: 100px;
+}
+
+@media only screen and (min-width: 64.0625em) {
+  #main {
+    padding-bottom: 70px;
+  }
 }
 
 h6 {
@@ -24,11 +44,6 @@ h6 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-header {
-  background: linear-gradient(to bottom, #333, #3a3a3a);
-  margin-bottom: 1rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -69,14 +84,17 @@ select {
   padding-right: 1.5em;
 }
 
-nav {
+ul {
+  list-style: none;
+  margin: 0;
+}
+
+nav#main-nav {
   @include clearfix;
 
   ul {
     display: inline-block;
     font-size: 9pt;
-    list-style: none;
-    margin: 0;
 
     &.right:last-child {
       margin-right: -12pt;
@@ -454,12 +472,6 @@ button,
   }
 }
 
-.about {
-  p {
-    margin-bottom: 1.2em;
-  }
-}
-
 svg {
   width: 100%;
 }
@@ -599,8 +611,6 @@ ul {
 }
 
 .menu-button {
-  color: white !important;
-  cursor: pointer !important;
   font-size: 1rem;
 
   .fa-circle {
@@ -720,3 +730,5 @@ ul {
     background-color: transparent;
   }
 }
+
+@import "footer";

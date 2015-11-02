@@ -11,7 +11,7 @@ var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
   init: function() {
-    this.loaded = false;
+    this.loaded = true;
     this.indicators = {};
     Promise.all([
         RegionStore.getlocationsPromise(),
@@ -58,16 +58,7 @@ var DashboardStore = Reflux.createStore({
     });
   },
 
-  // action handlers
-  onSetDashboard: function(definition) {
-    var dashboard = this.dashboard = definition.dashboard;
-    this.location = definition.location || this.location;
-    this.date = definition.date || this.date;
-
-    if (!this.loaded) {
-      return;
-    }
-
+  setDashboardInternal: function(dashboard) {
     this.indicators = {};
     _.each(dashboard.charts, this.addChartDefinition);
 
@@ -113,8 +104,35 @@ var DashboardStore = Reflux.createStore({
       campaigns: _.filter(campaigns, function(c) {
         return c.office_id === location.office_id;
       }),
-      hasMap: hasMap,
+      hasMap: hasMap
     });
+  },
+
+  // action handlers
+  onSetDashboard: function(definition) {
+    var dashboard = this.dashboard = definition.dashboard;
+    this.location = definition.location || this.location;
+    this.date = definition.date || this.date;
+
+    Promise.all([
+        RegionStore.getlocationsPromise(),
+        RegionStore.getLocationTypesPromise(),
+	    	CampaignStore.getCampaignsPromise()
+    	])
+      .then(_.spread((locations, locationsTypes, campaigns)=> {
+        this.locations = locations;
+        this.campaigns = campaigns;
+
+        var locationIdx = _.indexBy(locations, 'id');
+        var types = _.indexBy(locationsTypes, 'id');
+
+        _.each(this.locations, function(r) {
+          r.location_type = _.get(types[r.location_type_id], 'name');
+          r.parent = locationIdx[r.parent_location_id];
+        });
+
+        this.setDashboardInternal(dashboard);
+      }));
   },
 
   onSetlocation: function(id) {
