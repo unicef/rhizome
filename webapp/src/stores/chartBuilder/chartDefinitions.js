@@ -62,7 +62,13 @@ export default {
     {
       value: "type",
       title: "Locations with the same level",
-      getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
+      getAggregated: (locationSelected, locationIndex) => {
+        return _.filter(locationIndex,
+          (locationSelected.parent_location_id && locationSelected.parent_location_id != "None") ?
+            {location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id} :
+            {location_type_id: locationSelected.location_type_id}
+        )
+      }
     },
     {
       value: "sublocations",
