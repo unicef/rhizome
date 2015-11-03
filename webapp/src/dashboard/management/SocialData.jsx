@@ -3,9 +3,14 @@
 var _      = require('lodash');
 var React  = require('react');
 
-var DonutChart   = require('component/DonutChart.jsx');
+var PieChartList = require('component/PieChartList.jsx');
+var Chart = require('component/Chart.jsx');
 
-var palette = require('colors');
+var colors = require('colors');
+
+var indicatorForCampaign = function (campaign, indicator) {
+  return d => d.campaign.id === campaign && d.indicator.id === indicator;
+};
 
 var SocialData = React.createClass({
   propTypes : {
@@ -17,26 +22,36 @@ var SocialData = React.createClass({
   render : function() {
     var data     = this.props.data;
     var campaign = this.props.campaign;
-    var indicators = this.props.indicators;
     var loading  = this.props.loading;
 
-    var planLabel = function (d) {
-      var fmt = d3.format('%');
-      var v   = _.get(d, '[0].value', '');
+    var social = _.find(data, indicatorForCampaign(campaign.id, 28));
+    var microplans = _.find(data, indicatorForCampaign(campaign.id, 27));
 
-      return fmt(v);
+    var microplansText = function () {
+      var num = _.get(social, '[0][0].value');
+      var den = _.get(microplans, 'value');
+
+      return _.isFinite(num) && _.isFinite(den) ?
+      num + ' / ' + den + ' microplans incorporate social data' :
+        '';
     };
+
+    social = !_.isEmpty(social) ? [[social]] : [];
 
     return (
         <div className="row">
           <div className="medium-4 columns">
-            <DonutChart data={data} label={planLabel}
+              <PieChartList
               loading={loading}
+              keyPrefix='microplans'
+              data={social}
+              name={microplansText}
+              emptyText='No microplan data available'
               options={{
-                innerRadius : 0.6,
-                domain      : _.constant([0, 1]),
-                palette     : palette
-              }} />
+                domain  : _.constant([0, _.get(microplans, 'value', 1)]),
+                size    : 24,
+                palette : colors
+              }}/>
           </div>
         </div>
     );
