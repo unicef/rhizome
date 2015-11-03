@@ -68,6 +68,7 @@ var Performance = React.createClass({
     var upper = moment(campaign.start_date, 'YYYY-MM-DD');
     var lower = upper.clone().startOf('month').subtract(1, 'year');
     var loading = this.props.loading;
+    var location = this.props.location;
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren);
 
@@ -152,7 +153,7 @@ var Performance = React.createClass({
         </div>
 
         <section className='medium-3 columns'>
-          <h4>Afghanistan, country overview</h4>
+          <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
                  data={missedChildrenMap}
                  loading={loading}
