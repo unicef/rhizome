@@ -274,9 +274,11 @@ module.exports = React.createClass({
             </div>
           </div>
 
-          <div className="medium-3 columns right">
-            Dashboard Title
-            <TitleInput initialText={this.state.title} save={this._updateTitle}/>
+          <div className="medium-6 columns">
+            <div className="medium-6 columns cd-header-title">Dashboard Title</div>
+            <div className="medium-6 columns">
+              <TitleInput class="description" initialText={this.state.title} save={this._updateTitle}/>
+            </div>
           </div>
         </form>
         {this.state.store.dashboard.charts.length ? null : addDashboardLinkContainer}
@@ -289,7 +291,7 @@ module.exports = React.createClass({
             </span>
             </div>
             <div className="large-7 columns">
-              <div className="large-2 columns description-text">Description:</div>
+              <div className="large-2 columns description-text">Description&ensp;:</div>
               <div className="large-5 columns">
                 <TitleInput class="description" initialText={this.state.description}
                             save={this._updateDescription}/>
