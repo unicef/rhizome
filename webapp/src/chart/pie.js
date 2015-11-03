@@ -90,7 +90,7 @@ _.extend(PieChart.prototype, {
 
 		var arc = d3.svg.arc()
 			.innerRadius(s / 2 * options.innerRadius)
-			.outerRadius(s / 2);
+			.outerRadius(s / 2 * (options.outerRadius == null? 1: options.outerRadius));
 
 		svg.select('.bg')
 			.datum({

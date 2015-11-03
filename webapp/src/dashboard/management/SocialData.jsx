@@ -51,13 +51,14 @@ var SocialData = React.createClass({
               <DonutChart data={data} label={planLabel}
               loading={loading}
               options={{
-                innerRadius : 0.6,
+                innerRadius : 0.4,
+                outerRadius : 0.6,
                 domain      : _.constant([0, 1]),
                 palette     : palette
               }} />
           </div>
           <div className="medium-4 columns">
-            {microText}<
+            {microText}
           </div>
         </div>
     );
