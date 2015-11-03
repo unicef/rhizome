@@ -83,20 +83,6 @@ var Performance = React.createClass({
       .map(series)
       .value();
 
-    var social = _.find(data.microplans, indicatorForCampaign(campaign.id, 28));
-    var microplans = _.find(data.microplans, indicatorForCampaign(campaign.id, 27));
-
-    var microplansText = function () {
-      var num = _.get(social, '[0][0].value');
-      var den = _.get(microplans, 'value');
-
-      return _.isFinite(num) && _.isFinite(den) ?
-      num + ' / ' + den + ' microplans incorporate social data' :
-        '';
-    }
-
-    social = !_.isEmpty(social) ? [[social]] : [];
-
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value');
 
     if (!_.isUndefined(vaccinated)) {
@@ -161,20 +147,6 @@ var Performance = React.createClass({
                 aspect  : 2.26,
                 domain  : _.constant([lower.toDate(), upper.toDate()]),
                 yFormat : pct
-              }}/>
-          </section>
-
-          <section>
-            <PieChartList
-              loading={loading}
-              keyPrefix='microplans'
-              data={social}
-              name={microplansText}
-              emptyText='No microplan data available'
-              options={{
-                domain  : _.constant([0, _.get(microplans, 'value', 1)]),
-                size    : 24,
-                palette : colors
               }}/>
           </section>
         </div>

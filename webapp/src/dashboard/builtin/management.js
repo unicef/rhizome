@@ -40,11 +40,6 @@ module.exports = {
 				months : 12
 			}
 		}, {
-			'title'      : 'Microplans',
-			'section'    : 'performance',
-      'timeRange'  : 0,
-			'indicators' : [27,28],
-		}, {
 			'title'      : 'Transit Points',
 			'section'    : 'performance',
       'timeRange'  : 0,

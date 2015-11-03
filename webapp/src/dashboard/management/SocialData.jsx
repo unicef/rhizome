@@ -4,8 +4,6 @@ var _      = require('lodash');
 var React  = require('react');
 
 var PieChartList = require('component/PieChartList.jsx');
-var Chart = require('component/Chart.jsx');
-
 var colors = require('colors');
 
 var indicatorForCampaign = function (campaign, indicator) {
