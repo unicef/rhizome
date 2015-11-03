@@ -12,9 +12,9 @@
     font-size: 37px;
   }
 
-  .next-button {
-    width: 200px !important;
-  }
+  //.next-button {
+  //  width: 200px !important;
+  //}
 }
 
 .empty-dashboard-add-container {
@@ -43,12 +43,12 @@
     margin: 0 5px;
   }
 
-  .button {
-    font-size: 13px;
-    white-space: nowrap;
-    height: 40px;
-    padding: 9px 12px;
-  }
+  //.button {
+  //  font-size: 13px;
+  //  white-space: nowrap;
+  //  height: 40px;
+  //  padding: 9px 12px;
+  //}
 
   .descriptionField {
     width: 40%;
@@ -57,4 +57,13 @@
     max-width: 600px;
   }
 
+}
+
+.cd-button {
+  width: 50%;
+  padding: 10px 64px;
+  cursor: pointer;
+  background-color: #344B61;
+  color: #FEFEFE;
+  text-transform: uppercase;
 }

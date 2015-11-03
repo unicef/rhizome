@@ -178,7 +178,7 @@ module.exports = React.createClass({
         <div className="titleDiv">Dashboard Title</div>
         <input type="text" value={this.state.title} onChange={this._updateNewTitle}/>
         {this.state.store.dashboardTitle.length ?
-          <a href="#" className="button next-button" onClick={DashboardBuilderActions.addDashboard}>Next</a> : null}
+          <span href="#" className="cd-button" onClick={DashboardBuilderActions.addDashboard}>Next</span> : null}
       </form>);
     }
     else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
