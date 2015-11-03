@@ -281,31 +281,29 @@ module.exports = React.createClass({
         </form>
         {this.state.store.dashboard.charts.length ? null : addDashboardLinkContainer}
         {dashboard}
-
-        <div className="dashboard-footer">
-          <div className="right">
-            <a role='button' className='button deleteButton' href='#' onClick={this._deleteDashboard}>
-              <i className='fa fa-icon fa-fw fa-trash'></i>&ensp;Delete this dashboard
-            </a>
+        <div className="cd-footer">
+          <div className="row">
+            <div className="large-2 columns cd-button">
+            <span onClick={this.newChart}>
+              <i className='fa fa-icon fa-fw fa-plus'/>Add Chart
+            </span>
+            </div>
+            <div className="large-7 columns">
+              <div className="large-2 columns description-text">Description:</div>
+              <div className="large-5 columns">
+                <TitleInput class="description" initialText={this.state.description}
+                            save={this._updateDescription}/>
+              </div>
+              <div className="large-5 columns description-text">
+                Changes are saved when you make them.
+              </div>
+            </div>
+            <div className="large-2 columns cd-button">
+              <span href='#' onClick={this._deleteDashboard}>
+                <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
+              </span>
+            </div>
           </div>
-
-          <a role='button' className='button' onClick={this.newChart}>
-            <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add Chart
-          </a>
-
-
-		          <span>
-		          	&ensp;
-                Description
-
-		              <TitleInput class="descriptionField" initialText={this.state.description}
-                              save={this._updateDescription}/>
-		          </span>
-
-		          <span>
-	              	&ensp;Changes are saved when you make them.
-				  </span>
-
         </div>
 
       </div>
