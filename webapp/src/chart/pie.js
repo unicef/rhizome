@@ -154,13 +154,13 @@ _.extend(PieChart.prototype, {
 
 		slice.exit().remove();
 
-    if (data.length > 1) {
-      svg.select('.legend')
-        .attr('transform', 'translate(' + (w + 4) +',0)')
-        .call(legend().scale(colorScale));
-    } else {
-      svg.select('.legend').selectAll('g').remove();
-    }
+    //if (data.length > 1) {
+    //  svg.select('.legend')
+    //    .attr('transform', 'translate(' + (w + 4) +',0)')
+    //    .call(legend().scale(colorScale));
+    //} else {
+    //  svg.select('.legend').selectAll('g').remove();
+    //}
 	}
 });
 
