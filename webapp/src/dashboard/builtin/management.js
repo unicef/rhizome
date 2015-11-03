@@ -94,9 +94,7 @@ module.exports = {
 		}, {
 			'title'			 : 'Microplans',
 			'indicators' : [27,28],
-			'timeRange'  : {
-				months : 4
-			}
+			'timeRange'  : 0
 		}
 	]
 };

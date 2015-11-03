@@ -3,8 +3,8 @@
 var _      = require('lodash');
 var React  = require('react');
 
-var PieChartList = require('component/PieChartList.jsx');
-var colors = require('colors');
+var DonutChart   = require('component/DonutChart.jsx');
+var palette = require('colors');
 
 var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator;
@@ -14,42 +14,50 @@ var SocialData = React.createClass({
   propTypes : {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.object.isRequired,
-    data: React.PropTypes.object,
+    data: React.PropTypes.object
   },
 
   render : function() {
-    var data     = this.props.data;
+    //var data     = this.props.data;
     var campaign = this.props.campaign;
     var loading  = this.props.loading;
+
+    var data =_.filter(this.props.data,
+      d => d.campaign.id === campaign.id && _.isFinite(d.value));
 
     var social = _.find(data, indicatorForCampaign(campaign.id, 28));
     var microplans = _.find(data, indicatorForCampaign(campaign.id, 27));
 
-    var microplansText = function () {
-      var num = _.get(social, '[0][0].value');
-      var den = _.get(microplans, 'value');
+    var num = _.get(social, 'value');
+    var den = _.get(microplans, 'value');
 
-      return _.isFinite(num) && _.isFinite(den) ?
-      num + ' / ' + den + ' microplans incorporate social data' :
-        '';
+    var microText = '';
+
+    if (_.isFinite(num) && _.isFinite(den)) {
+      microText = num + ' / ' + den + ' microplans incorporate social data';
+      _.forEach(data, d=>d.value = num/den);
+    }
+
+    var planLabel = function (d) {
+      var fmt = d3.format('%');
+      var v   = _.get(d, '[0].value', '');
+
+      return fmt(v);
     };
-
-    social = !_.isEmpty(social) ? [[social]] : [];
 
     return (
         <div className="row">
           <div className="medium-4 columns">
-              <PieChartList
+              <DonutChart data={data} label={planLabel}
               loading={loading}
-              keyPrefix='microplans'
-              data={social}
-              name={microplansText}
-              emptyText='No microplan data available'
               options={{
-                domain  : _.constant([0, _.get(microplans, 'value', 1)]),
-                size    : 24,
-                palette : colors
-              }}/>
+                innerRadius : 0.6,
+                domain      : _.constant([0, 1]),
+                palette     : palette
+              }} />
+          </div>
+          <div className="medium-4 columns">
+            {microText}<
           </div>
         </div>
     );

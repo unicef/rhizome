@@ -32,25 +32,25 @@ function legend() {
 
 			g.classed('interactive', _interactive);
 
-			var seriesEnter = series.enter()
-				.append('g')
-				.attr({
-					'class'     : 'series',
-					'transform' : translate
-				});
+			//var seriesEnter = series.enter()
+			//	.append('g')
+			//	.attr({
+			//		'class'     : 'series',
+			//		'transform' : translate
+			//	});
+            //
+			//seriesEnter.append('rect')
+			//	.attr({
+			//		'width'  : _size,
+			//		'height' : _size
+			//	});
 
-			seriesEnter.append('rect')
-				.attr({
-					'width'  : _size,
-					'height' : _size
-				});
-
-			seriesEnter.append('text')
-				.attr({
-					'x'  : _size + _padding,
-					'y'  : _size / 2,
-					'dy' : '0.4em'
-				});
+			//seriesEnter.append('text')
+			//	.attr({
+			//		'x'  : _size + _padding,
+			//		'y'  : _size / 2,
+			//		'dy' : '0.4em'
+			//	});
 
 			series
 				.on('click', _clickHandler)
