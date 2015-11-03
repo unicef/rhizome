@@ -23,9 +23,11 @@ let ChartWizardStore = Reflux.createStore({
     locationLevelValue: 0,
     timeValue: 0,
     yFormatValue: 0,
+    xFormatValue: 0,
     canDisplayChart: false,
+    isLoading: true,
     chartOptions: {},
-    chartData: {},
+    chartData: [],
     chartDef: {}
   },
 
@@ -48,11 +50,15 @@ let ChartWizardStore = Reflux.createStore({
     this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, {value: chartDef.groupBy}), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, {value: chartDef.yFormat}), 0)
+    this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, {value: chartDef.xFormat}), 0)
   },
 
   integrateChartOption(chartOption) {
     if (!chartOption.yFormat) {
       chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
+    }
+    if(!chartOption.xFormat){
+      chartOption.xFormat = d3.format(builderDefinitions.formats[this.data.xFormatValue].value)
     }
     return chartOption
   },
@@ -171,6 +177,11 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangeXFormatRadio(value) {
+    this.data.xFormatValue = value
+    this.previewChart()
+  },
+
   onSaveChart(callback) {
     callback(_.merge(this.data.chartDef, {
       indicators: this.data.indicatorSelected.map(item => {
@@ -179,7 +190,8 @@ let ChartWizardStore = Reflux.createStore({
       groupBy: builderDefinitions.groups[this.data.groupByValue].value,
       locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
       timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
-      yFormat: builderDefinitions.formats[this.data.yFormatValue].value
+      yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
+      xFormat: builderDefinitions.formats[this.data.xFormatValue].value
     }, (a, b) => {
       return b
     }))
@@ -191,6 +203,10 @@ let ChartWizardStore = Reflux.createStore({
       this.trigger(this.data)
       return
     }
+
+    this.data.isLoading = true
+    this.trigger(this.data)
+
     let chartType = this.data.chartDef.type
     let groupBy = builderDefinitions.groups[this.data.groupByValue].value
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
@@ -225,6 +241,7 @@ let ChartWizardStore = Reflux.createStore({
         this.data.chartOptions = this.integrateChartOption(chart.options)
         this.data.chartData = chart.data
       }
+      this.data.isLoading = false
       this.trigger(this.data)
     });
   }

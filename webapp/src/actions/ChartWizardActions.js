@@ -12,6 +12,7 @@ let ChartWizardActions = Reflux.createActions([
   'changeLocationLevelRadio',
   'changeTimeRadio',
   'changeYFormatRadio',
+  'changeXFormatRadio',
   'saveChart'
 ])
 
