@@ -70,7 +70,7 @@ _.extend(ChoroplethMap.prototype, {
 
 	var aspect   = _.get(options, 'aspect', 1);
 	this._width  = _.get(options, 'width', el.clientWidth);
-	this._height = _.get(options, 'height', this._width / aspect);
+	this._height = _.get(options, 'height', this._width * aspect);
 
     var svg = this._svg = d3.select(el).append('svg')
       .attr('class', 'reds')
