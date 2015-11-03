@@ -48,6 +48,15 @@ var ManagementDashboard = React.createClass({
       })
       .value();
 
+    if (data.__none__.supply.length != 0) {
+      _.filter(data.__none__.supply, d => {
+        if (d.indicator.id == 194) {
+          d.indicator.short_name = 'On-Time OPV Supply';
+          d.value = 1 - d.value;
+        }
+      });
+    }
+
     return (
       <div id='management-dashboard'>
         <div className='row print-only'>
