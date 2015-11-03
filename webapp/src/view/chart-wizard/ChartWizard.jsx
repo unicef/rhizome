@@ -208,8 +208,11 @@ let ChartWizard = React.createClass({
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>
-        <PreviewScreen>
-          {this.state.data.canDisplayChart ? chart : null}
+        <PreviewScreen isLoading={this.state.data.isLoading}>
+          {this.state.data.canDisplayChart ?
+            chart :
+            (<div className='empty'>No Data</div>)
+          }
         </PreviewScreen>
         <a className='chart-wizard__cancel' href='#' onClick={this.props.cancel}>Cancel without saving chart</a>
       </div>
