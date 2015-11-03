@@ -15,6 +15,7 @@ import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ChartSelect from '../chart-builder/ChartSelect.jsx'
+import ScatterAxisChooser from './ScatterAxisChooser.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -97,6 +98,14 @@ let ChartWizard = React.createClass({
     })
   },
 
+  _updateXAxis(value){
+    this.state.data.chartDef.x = value;
+  },
+
+  _updateYAxis(value){
+    this.state.data.chartDef.y = value;
+  },
+
   render() {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
@@ -106,7 +115,7 @@ let ChartWizard = React.createClass({
           icon='fa-globe'
           text={this.state.data.location && this.state.data.location.name || 'Select Location'}
           searchable={true}
-          onSearch={this.setLocationSearch} >
+          onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>
       </div>
@@ -120,20 +129,21 @@ let ChartWizard = React.createClass({
           indicators={this.state.data.indicatorList}
           sendValue={ChartWizardActions.addIndicator}>
         </IndicatorDropdownMenu>
-        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
+        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator}/>
       </div>
     )
 
     let chartTypeStep = (
       <div>
         <ChartSelect charts={builderDefinitions.charts} value={this.state.data.chartDef.type}
-          onChange={ChartWizardActions.changeChart}/>
+                     onChange={ChartWizardActions.changeChart}/>
       </div>
     )
 
     this.state.data.campaignFilteredList.forEach(campaign => {
       campaign.slug = moment(campaign.start_date).format('MMMM YYYY')
     })
+
     let timeRangeStep = (
       <div>
         <CampaignDropdownMenu
@@ -141,10 +151,11 @@ let ChartWizard = React.createClass({
           campaigns={this.state.data.campaignFilteredList}
           sendValue={ChartWizardActions.addCampaign}>
         </CampaignDropdownMenu>
+
         <div>
           <label>Time Range: </label>
           <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
-            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+                      values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
         </div>
       </div>
     )
@@ -153,29 +164,41 @@ let ChartWizard = React.createClass({
       <div>
         <label>Group By: </label>
         <RadioGroup name='groupby' horizontal={true} value={this.state.data.groupByValue}
-          values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
+                    values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
       </div>
     )
+
     let optionStep = (
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         <div>
           <label>Location level: </label>
           <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
-            values={builderDefinitions.locationLevels} onChange={ChartWizardActions.changeLocationLevelRadio}/>
+                      values={builderDefinitions.locationLevels}
+                      onChange={ChartWizardActions.changeLocationLevelRadio}/>
         </div>
-        <div>
-          <label>Format: </label>
-          <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
-            values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
-        </div>
+        {findChartType(this.state.data.chartDef.type).chooseAxis ?
+          <ScatterAxisChooser xValue={this.state.data.xFormatValue}
+                              onXFormatChange={ChartWizardActions.changeXFormatRadio}
+                              yValue={this.state.data.yFormatValue}
+                              onYFormatChange={ChartWizardActions.changeYFormatRadio}
+                              formatValues={builderDefinitions.formats}
+                              indicatorArray={this.state.data.indicatorSelected}
+                              onXAxisChange={this._updateXAxis}
+                              onYAxisChange={this._updateYAxis}
+            /> :
+          (<div>
+            <label>Format: </label>
+            <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
+                        values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
+          </div>)}
       </div>
     )
 
     let previewStep = (
       <div>
         <label>Title</label>
-        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle} />
+        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
         <a href='#' className='button success' onClick={this.saveChart}>
           {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
         </a>
@@ -183,13 +206,15 @@ let ChartWizard = React.createClass({
     )
 
     let chart = (
-      <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData} options={this.state.data.chartOptions}/>
+      <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
+             options={this.state.data.chartOptions}/>
     )
 
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title={`Select Location - ${this.state.data.location && this.state.data.location.name}`} refer='location'>
+          <ChartWizardStep title={`Select Location - ${this.state.data.location && this.state.data.location.name}`}
+                           refer='location'>
             {locationStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Indicator' refer='indicator'>
