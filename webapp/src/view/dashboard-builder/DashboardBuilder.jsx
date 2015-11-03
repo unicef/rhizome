@@ -250,23 +250,23 @@ module.exports = React.createClass({
 
     var addDashboardLinkContainer = (
       <div className="empty-dashboard-add-container">
-        <a role='button' className='button' onClick={this.newChart}>
+        <span className="cd-button new-dashboard-font" onClick={this.newChart}>
           <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
-        </a>
+        </span>
       </div>
     );
     var dashboardBuilderContainer = (
       <div>
         <form className='inline no-print row cd-bg-color'>
-          <div className='medium-6 columns'>
-            <div className='medium-6 columns'>
+          <div className='large-6 columns'>
+            <div className='large-6 columns'>
               <CampaignTitleMenu
                 campaigns={campaigns}
                 selected={campaign}
                 sendValue={this._setCampaign}/>
             </div>
 
-            <div className='medium-6 columns'>
+            <div className='large-6 columns'>
               <RegionTitleMenu
                 locations={this.state.dashboardStore.locations}
                 selected={location}
@@ -274,9 +274,9 @@ module.exports = React.createClass({
             </div>
           </div>
 
-          <div className="medium-6 columns">
-            <div className="medium-6 columns cd-header-title">Dashboard Title</div>
-            <div className="medium-6 columns">
+          <div className="large-6 columns">
+            <div className="large-6 columns cd-header-title">Dashboard Title</div>
+            <div className="large-6 columns">
               <TitleInput class="description" initialText={this.state.title} save={this._updateTitle}/>
             </div>
           </div>
