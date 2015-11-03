@@ -51,7 +51,6 @@ module.exports = {
     });
 
     this._locations.$on('dropdown-value-changed', function (items) {
-      debugger;
       self.locations = _.values(items);
     });
 
