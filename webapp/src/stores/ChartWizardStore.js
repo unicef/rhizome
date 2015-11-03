@@ -25,7 +25,7 @@ let ChartWizardStore = Reflux.createStore({
     yFormatValue: 0,
     canDisplayChart: false,
     chartOptions: {},
-    chartData: {},
+    chartData: [],
     chartDef: {}
   },
 

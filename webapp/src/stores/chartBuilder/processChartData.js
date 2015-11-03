@@ -221,23 +221,23 @@ module.exports = {
   processChoroplethMap:function(dataPromise,locations){
     var locationsIndex = _.indexBy(locations, 'id');
 
-    return Promise.all([dataPromise,api.geo({ location__in :_.map(locations,function(location){return location.id}) })])
+    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function(location){return location.id}) })])
     .then(_.spread(function(data, border){
-      if (!data || data.length == 0) {
-        return {options: null, data: null}
-      }
       var index = _.indexBy(data,'location');
       var chartOptions = {
-              aspect: 1,
-              name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
-              border: border.objects.features
-              };
-        var chartData = _.map(border.objects.features, function (feature) {
-                    var location = _.get(index, feature.properties.location_id);
-                    return _.merge({}, feature, {
-                        properties : { value : _.get(location, 'value') }
-                      });
-                  });
+        aspect: 1,
+        name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
+        border: border.objects.features
+      };
+      if (!data || data.length == 0) {
+        return {options: chartOptions, data: border.objects.features}
+      }
+      var chartData = _.map(border.objects.features, function (feature) {
+        var location = _.get(index, feature.properties.location_id);
+        return _.merge({}, feature, {
+          properties : { value : _.get(location, 'value') }
+        });
+      });
       return {options:chartOptions,data:chartData};
     }));
   },
