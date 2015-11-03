@@ -58,7 +58,7 @@ module.exports = {
 			}
 		}, {
 			'title'      : 'Supply',
-			'indicators' : [67,219,173,172],
+			'indicators' : [194,219,173,172],
 			'timeRange'  : {
 				months : 4
 			}
