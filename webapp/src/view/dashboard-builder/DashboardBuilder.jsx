@@ -175,10 +175,12 @@ module.exports = React.createClass({
       return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
         <h1>Create a New Custom Dashboard</h1>
 
-        <div className="titleDiv">Dashboard Title</div>
-        <input type="text" value={this.state.title} onChange={this._updateNewTitle}/>
+        <div className="cd-title">Dashboard Title</div>
+        <input className="description" type="text" value={this.state.title} onChange={this._updateNewTitle}/>
         {this.state.store.dashboardTitle.length ?
-          <span href="#" className="cd-button" onClick={DashboardBuilderActions.addDashboard}>Next</span> : null}
+          <div className="cd-button large-2 columns">
+            <span href="#"  onClick={DashboardBuilderActions.addDashboard}>Next</span>
+          </div> : null}
       </form>);
     }
     else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {

@@ -2,14 +2,16 @@
   width: 1000px;
   margin: 20px auto;
 
-  .vis-box {
-    width: 32%;
-    display: inline-block;
-    height: 300px;
-    border: 1px solid #333;
-    text-align: center;
-    padding: 20px;
-    font-size: 37px;
+  .description {
+    margin: 10px;
+    border: 1px solid #344B61;
+  }
+
+  .cd-title {
+    font-size: 13px;
+    margin-bottom: 4px;
+    float: left;
+    padding: 10px;
   }
 }
 
@@ -20,10 +22,6 @@
   .new-dashboard-font {
     font-size: 0.9rem;
   }
-}
-
-.dashboard-builder-controls {
-  width: 500px;
 }
 
 .cd-button {
