@@ -287,8 +287,8 @@ module.exports = React.createClass({
         {dashboard}
         <div className="cd-footer">
           <div className="row">
-            <div className="large-2 columns cd-button">
-            <span onClick={this.newChart}>
+            <div className="large-2 columns cd-button" onClick={this.newChart}>
+            <span>
               <i className='fa fa-icon fa-fw fa-plus'/>Add Chart
             </span>
             </div>
