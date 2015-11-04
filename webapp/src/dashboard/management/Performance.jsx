@@ -151,7 +151,7 @@ var Performance = React.createClass({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-              aspect  : 0.6,
+              aspect  : 0.555,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
               yFormat : pct,
