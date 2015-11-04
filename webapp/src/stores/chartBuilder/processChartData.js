@@ -187,11 +187,12 @@ module.exports = {
         lower = moment(_.first(sortedDates).campaign.start_date);
       }
       var chartOptions = {
-          domain  : _.constant([lower.toDate(), upper.toDate()]),
-          aspect : 2.664831804,
-          values  : _.property('values'),
-          x       : _.property('campaign.start_date'),
-          y       : _.property('value'),
+          domain: _.constant([lower.toDate(), upper.toDate()]),
+          aspect: 2.664831804,
+          values: _.property('values'),
+          x: _.property('campaign.start_date'),
+          xFormat: function (d) { return moment(d).format('MMM YYYY')},
+          y: _.property('value'),
         }
       var chartData =  _groupBySeries(data, groups,groupBy);
         return {options:chartOptions,data:chartData};
