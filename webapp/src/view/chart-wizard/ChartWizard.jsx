@@ -167,16 +167,19 @@ let ChartWizard = React.createClass({
           values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
       </div>
     )
+    let locationLevel = (
+      <div>
+        <label>Location level: </label>
+        <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
+          values={builderDefinitions.locationLevels}
+          onChange={ChartWizardActions.changeLocationLevelRadio}/>
+      </div>
+    )
 
     let optionStep = (
       <div>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
-        <div>
-          <label>Location level: </label>
-          <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
-                      values={builderDefinitions.locationLevels}
-                      onChange={ChartWizardActions.changeLocationLevelRadio}/>
-        </div>
+        {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
         {findChartType(this.state.data.chartDef.type).chooseAxis ?
           (
             <ScatterAxisChooser xValue={this.state.data.xFormatValue}

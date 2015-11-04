@@ -2,12 +2,12 @@ import _ from 'lodash'
 
 export default {
   charts: [
-    {name: 'LineChart', groupBy: true, chooseAxis: false, timeRadios: ['all', '1year', '3month']},
-    {name: 'PieChart', groupBy: false, chooseAxis: false, timeRadios :['1month']},
-    {name: 'ChoroplethMap' ,groupBy:false, chooseAxis:false, timeRadios: ['1month']},
-    {name: 'ColumnChart', groupBy: true, chooseAxis: false, timeRadios: ['1year', '3month', '1month']},
-    {name: 'ScatterChart', groupBy: false, chooseAxis: true, timeRadios: ['1month']},
-    {name: 'BarChart', groupBy: true, chooseAxis: false, timeRadios: ['1month']}
+    {name: 'LineChart', groupBy: true, locationLevel: true, chooseAxis: false, timeRadios: ['all', '1year', '3month']},
+    {name: 'PieChart', groupBy: false, locationLevel: true, chooseAxis: false, timeRadios :['1month']},
+    {name: 'ChoroplethMap' ,groupBy: false, locationLevel: false, chooseAxis: false, timeRadios: ['1month']},
+    {name: 'ColumnChart', groupBy: true, locationLevel: true, chooseAxis: false, timeRadios: ['1year', '3month', '1month']},
+    {name: 'ScatterChart', groupBy: false, locationLevel: true, chooseAxis: true, timeRadios: ['1month']},
+    {name: 'BarChart', groupBy: true, locationLevel: true, chooseAxis: false, timeRadios: ['1month']}
   ],
   groups: [
     {value: 'indicator', title: 'Indicators'},
@@ -55,24 +55,24 @@ export default {
   ],
   locationLevels: [
     {
-      value: "selected",
-      title: "Selected location only",
+      value: 'selected',
+      title: 'Selected location only',
       getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
     },
     {
-      value: "type",
-      title: "Locations with the same level",
+      value: 'type',
+      title: 'Locations with the same level',
       getAggregated: (locationSelected, locationIndex) => {
         return _.filter(locationIndex,
-          (locationSelected.parent_location_id && locationSelected.parent_location_id != "None") ?
+          (locationSelected.parent_location_id && locationSelected.parent_location_id != 'None') ?
             {location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id} :
             {location_type_id: locationSelected.location_type_id}
         )
       }
     },
     {
-      value: "sublocations",
-      title: "Sublocations 1 level below selected",
+      value: 'sublocations',
+      title: 'Sublocations 1 level below selected',
       getAggregated: (locationSelected, locationIndex) => {
         return _.filter(locationIndex, {parent_location_id: locationSelected.id})
       }
