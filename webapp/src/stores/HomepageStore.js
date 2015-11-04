@@ -7,12 +7,12 @@ var moment = require('moment');
 var RegionStore = require('stores/RegionStore');
 var CampaignStore = require('stores/CampaignStore');
 
-var DashboardStore = Reflux.createStore({
+var HomepageStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
   init: function() {
-    this.loaded = true;
     this.indicators = {};
+
     Promise.all([
         RegionStore.getlocationsPromise(),
         RegionStore.getLocationTypesPromise(),
@@ -30,10 +30,8 @@ var DashboardStore = Reflux.createStore({
           r.parent = locationIdx[r.parent_location_id];
         });
 
-        this.loaded = true;
-
         this.trigger({
-          loaded: this.loaded,
+          loaded: true,
           locations: this.locations,
           campaigns: this.campaign
         });
@@ -49,6 +47,7 @@ var DashboardStore = Reflux.createStore({
         definition.locations
       ].join('-');
     });
+
     return _.map(qs, function(arr) {
       return _.merge.apply(null, arr.concat(function(a, b) {
         if (_.isArray(a)) {
@@ -72,9 +71,8 @@ var DashboardStore = Reflux.createStore({
       })
       .sortBy('name');
 
-    var realLocation = dashboard.title.split(' ')[1];
     var location = _.find(locations, function(r) {
-      return r.name === realLocation;
+      return r.name === this.location;
     }.bind(this));
 
     if (!location) {
@@ -96,7 +94,7 @@ var DashboardStore = Reflux.createStore({
     }
 
     this.trigger({
-      dashboard: dashboard,
+      dashboard: this.dashboard,
       location: location,
       campaign: campaign,
       loaded: true,
@@ -124,8 +122,8 @@ var DashboardStore = Reflux.createStore({
         this.locations = locations;
         this.campaigns = campaigns;
 
-        var locationIdx = _.indexBy(locations, 'id');
         var types = _.indexBy(locationsTypes, 'id');
+        var locationIdx = _.indexBy(locations, 'id');
 
         _.each(this.locations, function(r) {
           r.location_type = _.get(types[r.location_type_id], 'name');
@@ -166,4 +164,4 @@ var DashboardStore = Reflux.createStore({
   }
 });
 
-module.exports = DashboardStore;
+module.exports = HomepageStore;
