@@ -3,5 +3,5 @@ module.exports = [
 	require('./district'),
 	require('./nco'),
 	//require('./sourcedata'),
-	require('./odk'),
+	require('./odk')
 ];
