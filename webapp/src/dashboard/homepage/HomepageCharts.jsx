@@ -9,10 +9,7 @@ var Carousel = require('nuka-carousel');
 var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx');
 
 var colors = require('colors');
-
 var Chart = require('component/Chart.jsx');
-
-var DashboardActions = require('actions/DashboardActions');
 
 var series = function (values, name) {
   return {
@@ -63,7 +60,7 @@ var HomepageCharts = React.createClass({
     return missed;
   },
 
-  render: function () {
+  prepareChartsData: function() {
     var data = this.props.data;
     var campaign = this.props.campaign;
     var upper = moment(campaign.start_date, 'YYYY-MM-DD');
@@ -80,7 +77,7 @@ var HomepageCharts = React.createClass({
 
     var social = _.find(data.microplans, indicatorForCampaign(campaign.id, 28));
 
-      var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
+    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
     var conversions = _(sortedConversions)
       .groupBy('indicator.short_name')
       .map(series)
@@ -111,103 +108,58 @@ var HomepageCharts = React.createClass({
 
     var missedChildrenMap = data.missedChildrenByProvince;
 
+    var charts = [];
 
-    var afghanistanList = [];
-    var pakistanList = [];
-    var nigeriaList = [];
+    charts.push(
+      <Chart type='ChoroplethMap'
+        data={missedChildrenMap}
+        loading={loading}
+        options={{
+          domain  : _.constant([0, 0.1]),
+          value   : _.property('properties[475]'),
+          yFormat : d3.format('%'),
+          width: 390,
+          height: 390
+        }}
+      />);
 
-    for (var i = 0; i < 1; i++) {
-        afghanistanList.push(
-            <Chart type='ChoroplethMap'
-                 data={missedChildrenMap}
-                 loading={loading}
-                 options={{
-                  domain  : _.constant([0, 0.1]),
-                  value   : _.property('properties[475]'),
-                  yFormat : d3.format('%'),
-                  width: 390,
-                  height: 390,
-                  onClick : d => { DashboardActions.navigate({ location : d }) }
-                }}
-            />
-        );
-    }
+    charts.push(
+      <Chart type='ColumnChart' data={missed}
+        loading={loading}
+        options={{
+          aspect  : 1,
+          color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
+          domain  : _.constant(missedScale),
+          x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
+          xFormat : d => moment(d).format('MMM YYYY'),
+          yFormat : pct,
+          width: 390,
+          height: 390
+        }}
+      />);
 
-    for (var i = 0; i < 3; i++) {
-        pakistanList.push(
-            <Chart type='ColumnChart' data={missed}
-                   loading={loading}
-                   options={{
-                        aspect  : 1,
-                        color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-                        domain  : _.constant(missedScale),
-                        x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                        xFormat : d => moment(d).format('MMM YYYY'),
-                        yFormat : pct,
-                      width: 390,
-                      height: 390
-                    }}
-            />
-        );
-    }
+    charts.push(
+      <Chart type='LineChart' data={conversions}
+        loading={loading}
+        options={{
+          aspect  : 1,
+          domain  : _.constant([lower.toDate(), upper.toDate()]),
+          yFormat : pct,
+          width: 390,
+          height: 390
+        }}
+      />);
 
-    for (var i = 0; i < 3; i++) {
-        nigeriaList.push(
-            <Chart type='LineChart' data={conversions}
-                   loading={loading}
-                   options={{
-                        aspect  : 1,
-                        domain  : _.constant([lower.toDate(), upper.toDate()]),
-                        yFormat : pct,
-                          width: 390,
-                          height: 390
-                    }}
-            />
-        );
-    }
+    return charts;
+  },
+
+  render: function () {
+    var list = this.prepareChartsData();
 
     return (
-        <div>
-            <div className="large-4 columns chart-container" id="afghanistan-chart">
-                <div className="chart">
-                    <h5>Afghanistan</h5>
-
-                    <Carousel decorators={HomepageCarouselDecorators}>
-                        {afghanistanList}
-                    </Carousel>
-                    <div className="chart-button-group">
-                        <div className="chart-button"><span>Country overview</span></div>
-                        <div className="chart-button"><span>District summary</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="large-4 columns chart-container" id="pakistan-chart">
-                <div className="chart">
-                    <h5>Pakistan</h5>
-                    <Carousel decorators={HomepageCarouselDecorators}>
-                        {pakistanList}
-                    </Carousel>
-                    <div className="chart-button-group">
-                        <div className="chart-button"><span>Country overview</span></div>
-                        <div className="chart-button"><span>District summary</span></div>
-                    </div>
-                </div>
-            </div>
-            <div className="large-4 columns chart-container" id="nigeria-chart">
-                <div className="chart">
-                    <h5>Nigeria</h5>
-                    <Carousel decorators={HomepageCarouselDecorators}>
-                        {nigeriaList}
-                    </Carousel>
-                    <div className="chart-button-group">
-                        <div className="chart-button"><span>Country overview</span></div>
-                        <div className="chart-button"><span>District summary</span></div>
-                        <div className="chart-button"><span>NGA Campaign Monitoring</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <Carousel decorators={HomepageCarouselDecorators}>
+          {list}
+      </Carousel>
     );
   }
 });

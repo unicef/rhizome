@@ -34,7 +34,7 @@ var NavigationStore = Reflux.createStore({
 
   // API
   getDashboard: function (slug) {
-    var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug) || {};
+    var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug);
 
     if (dashboard.id <= 0) {
       return new Promise(resolve => {

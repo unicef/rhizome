@@ -3,7 +3,7 @@
   margin: 20px auto;
 
   .description {
-    margin: 10px;
+    margin: 20px 10px;
     border: 1px solid #344B61;
   }
 
@@ -33,21 +33,24 @@
   text-transform: uppercase;
   text-align: center;
   font-size: 0.625rem;
-  margin: 10px;
+  margin: 20px 10px;
+  &:hover {
+    color: #FEFEFE !important;
+  }
 }
 
 .cd-footer {
   background-color: #F3F3F3;
 
   .description-text {
-    font-size: 13px;
-    padding: 20px;
-    text-align: -webkit-center;
+    font-size: 14px;
     text-transform: uppercase;
+    margin: 30px 0;
+    text-align: right;
   }
 
   .description {
-    margin: 10px;
+    margin: 20px 10px;
     border: 1px solid #344B61;
   }
 }

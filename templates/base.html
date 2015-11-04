@@ -25,32 +25,32 @@
 <header class="no-print">
     <nav id="main-nav"></nav>
     <div class="row navigation-bar">
-        <nav class="medium-4 columns">
+        <nav class="large-3 columns">
             <ul class="channels raw">
-                <li class="medium-4 columns">
+                <li class="large-4 columns">
                     <a href="#" class="tab">
-                        <i class="fa fa-lg fa-plus"></i><span>SOP</span>
+                        <i class="fa fa-times"></i><span>SOP</span>
                     </a>
                 </li>
-                <li class="medium-4 columns">
+                <li class="large-4 columns">
                     <a href="#" class="tab">
-                        <i class="fa fa-lg fa-plus"></i><span>C4D</span>
+                        <i class="fa fa-plus"></i><span>C4D</span>
                     </a>
                 </li>
-                <li class="medium-4 columns tab active">
+                <li class="large-4 columns tab active">
                     <a href="/">
-                        <i class="fa fa-lg fa-times"></i><span>Data</span>
+                        <i class="fa fa-times"></i><span>Data</span>
                     </a>
                 </li>
             </ul>
         </nav>
 
 
-        <div class="medium-4 columns logo">
-            <img src="{% static 'img/RhizomeLogoWhiteResized.png' %}" alt="Rhizome Logo">
+        <div class="large-6 columns logo">
+            <img class="image-style" src="{% static 'img/RhizomeLogoWhiteResized.png' %}" alt="Rhizome Logo">
         </div>
 
-        <nav class="medium-4 columns dashboard-control">
+        <nav class="large-3 columns dashboard-control">
             <div id="dashboards-nav" class="row"></div>
         </nav>
     </div>
@@ -69,14 +69,14 @@
         <ul>
             <li>
                 <a href="/ufadmin/users" class="action">
-                    <i class="fa fa-lg fa-cog"></i>
-                    <span>Manage system</span>
+                    <span><i class="fa fa-cog"></i>
+                      Manage system</span>
                 </a>
             </li>
             <li class="sub-nav">
                 <a href="javascript:;" class="action">
-                    <i class="fa fa-lg fa-plus"></i>
-                    <span>Add Data</span>
+                    <span><i class="fa fa-plus"></i>
+                      Add Data</span>
                 </a>
                 <ul class="menu">
                     <li><a href="/datapoints/entry">Data entry form</a></li>
@@ -85,8 +85,8 @@
             </li>
             <li>
                 <a href="/datapoints/table" class="action">
-                    <i class="fa fa-lg fa-list"></i>
-                    <span>View raw data</span>
+                    <span><i class="fa fa-list"></i>
+                      View raw data</span>
                 </a>
             </li>
         </ul>

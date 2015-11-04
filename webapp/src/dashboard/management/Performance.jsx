@@ -72,12 +72,6 @@ var Performance = React.createClass({
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren);
 
-    var missedScale = _.map(d3.time.scale()
-        .domain([lower.valueOf(), upper.valueOf()])
-        .ticks(d3.time.month, 1),
-      _.method('getTime')
-    );
-
     var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
     var conversions = _(sortedConversions)
       .groupBy('indicator.short_name')
@@ -86,7 +80,7 @@ var Performance = React.createClass({
 
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value');
 
-    if (!_.isUndefined(vaccinated)) {
+    if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
       var num = d3.format('n');
 
       vaccinated = (
@@ -101,14 +95,14 @@ var Performance = React.createClass({
     var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
 
     var transitPoints = [];
-    if (!_.any([inPlace, planned], _.isUndefined)) {
+    if ((!_.any([inPlace, planned], _.isUndefined)) && (!_.any([inPlace, planned], _.isNull))) {
       transitPoints.push([{
         title: inPlace + ' / ' + planned + ' in place',
         value: inPlace / planned
       }]);
     }
 
-    if (!_.any([withSM, inPlace], _.isUndefined)) {
+    if ((!_.any([withSM, inPlace], _.isUndefined)) && (!_.any([withSM, inPlace], _.isNull))) {
       transitPoints.push([{
         title: withSM + ' / ' + inPlace + ' have a social mobilizer',
         value: withSM / inPlace
@@ -128,12 +122,11 @@ var Performance = React.createClass({
         <div className='medium-2 columns'>
           <section>
             <h4>Missed Children</h4>
-            <Chart type='ColumnChart' data={missed}
+            <Chart type='LineChart' data={missed}
                    loading={loading}
                    options={{
                 aspect  : 2.26,
-                color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-                domain  : _.constant(missedScale),
+                domain  : _.constant([lower.valueOf(), upper.valueOf()]),
                 x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
                 xFormat : d => moment(d).format('MMM YYYY'),
                 yFormat : pct
@@ -158,7 +151,7 @@ var Performance = React.createClass({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-              aspect  : 0.6,
+              aspect  : 0.555,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
               yFormat : pct,

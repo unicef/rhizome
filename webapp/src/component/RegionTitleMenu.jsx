@@ -71,6 +71,7 @@ var RegionTitleMenu = React.createClass({
 
     return (
       <TitleMenu
+        className="title-font"
         icon='fa-chevron-down'
         text={location}
         searchable={true}

@@ -15,8 +15,6 @@ var _tableRow = function(row) {
         <td><a href={path}>{row.title}</a> {editLink}</td>
         <td>{row.description}</td>
         <td>{row.owner_username}</td>
-        <td>{row.owner_username}</td>
-
       </tr>
     );
 };

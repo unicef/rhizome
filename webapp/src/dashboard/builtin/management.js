@@ -63,7 +63,7 @@ module.exports = {
 				months : 4
 			}
 		}, {
-			'title'      : 'Polio+',
+			'title'      : 'Routine',
 			'indicators' : [245,236],
 			'timeRange'  : {
 				months : 4

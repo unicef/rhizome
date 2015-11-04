@@ -50,9 +50,11 @@ var ManagementDashboard = React.createClass({
 
     if (data.__none__.supply.length != 0) {
       _.filter(data.__none__.supply, d => {
-        if (d.indicator.id == 194) {
+        if (_.isEqual(d.indicator.id, 194)) {
           d.indicator.short_name = 'On-Time OPV Supply';
-          d.value = 1 - d.value;
+          if (!_.isNull(d.value)) {
+            d.value = 1 - d.value;
+          }
         }
       });
     }
@@ -96,8 +98,8 @@ var ManagementDashboard = React.createClass({
           </div>
 
           <div className='medium-1 columns'>
-            <h3>Polio+</h3>
-            <BulletChartSection data={data.__none__.polio} campaign={campaign} indicators={sections.undefined.polio} loading={loading} cols={1} />
+            <h3>Routine</h3>
+            <BulletChartSection data={data.__none__.routine} campaign={campaign} indicators={sections.undefined.routine} loading={loading} cols={1} />
             <h3>Resources</h3>
             <BulletChartSection data={data.__none__.resources} campaign={campaign} indicators={sections.undefined.resources} loading={loading} cols={1} />
           </div>

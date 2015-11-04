@@ -57,13 +57,16 @@ footer {
 
   .static-links {
     text-align: left;
+    span {
+      font-weight: 600;
+    }
   }
 
   .action {
     display: block;
     height: 50px;
     line-height: 50px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: $rhz-navigation-color;
     opacity: 1;
 
@@ -74,6 +77,7 @@ footer {
 
     span {
       text-transform: uppercase;
+      margin: 20px;
     }
   }
 

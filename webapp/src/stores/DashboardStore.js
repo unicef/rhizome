@@ -95,7 +95,7 @@ var DashboardStore = Reflux.createStore({
     }
 
     this.trigger({
-      dashboard: this.dashboard,
+      dashboard: dashboard,
       location: location,
       campaign: campaign,
       loaded: true,

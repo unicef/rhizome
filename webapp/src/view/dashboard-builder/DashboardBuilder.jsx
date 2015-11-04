@@ -178,9 +178,7 @@ module.exports = React.createClass({
         <div className="cd-title">Dashboard Title</div>
         <input className="description" type="text" value={this.state.title} onChange={this._updateNewTitle}/>
         {this.state.store.dashboardTitle.length ?
-          <div className="cd-button large-2 columns">
-            <span href="#"  onClick={DashboardBuilderActions.addDashboard}>Next</span>
-          </div> : null}
+          <a href="#" className="cd-button" onClick={DashboardBuilderActions.addDashboard}>Next</a> : null}
       </form>);
     }
     else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
@@ -288,9 +286,9 @@ module.exports = React.createClass({
         <div className="cd-footer">
           <div className="row">
             <div className="large-2 columns cd-button" onClick={this.newChart}>
-            <span>
-              <i className='fa fa-icon fa-fw fa-plus'/>Add Chart
-            </span>
+              <span>
+                <i className='fa fa-icon fa-fw fa-plus'/>Add Chart
+              </span>
             </div>
             <div className="large-7 columns">
               <div className="large-2 columns description-text">Description&ensp;:</div>
@@ -302,11 +300,9 @@ module.exports = React.createClass({
                 Changes are saved when you make them.
               </div>
             </div>
-            <div className="large-2 columns cd-button">
-              <span href='#' onClick={this._deleteDashboard}>
-                <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
-              </span>
-            </div>
+            <a className="large-2 columns cd-button" href='#' onClick={this._deleteDashboard}>
+              <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
+            </a>
           </div>
         </div>
 
