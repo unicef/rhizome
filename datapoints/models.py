@@ -41,6 +41,7 @@ class Indicator(models.Model):
     name = models.CharField(max_length=255,unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
+    data_format = models.CharField(max_length=10)
     slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
