@@ -16,7 +16,10 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-    var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
+    var dashboards = this.state.dashboards;
+
+    var builtins = NavMenuItem.fromArray(_(dashboards)
+      .filter(d=>d.builtin)
       .map(function(d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
@@ -25,14 +28,21 @@ module.exports = React.createClass({
       .value()
     );
 
-    var builtins = _.slice(dashboards,0,4);
-    var customDashboards = _.slice(dashboards,4);
+    if (!_.isUndefined(dashboards)) {
+      if (dashboards.length>14) {
+        dashboards = _.slice(dashboards,0,14);
+      }
+    }
 
-    if (customDashboards.length>10) {
-      customDashboards = _.slice(customDashboards,0,10)
-    }
-    else {
-    }
+    var customDashboards = NavMenuItem.fromArray(_(dashboards)
+      .filter(d=>!d.builtin)
+      .map(function(d) {
+        return _.assign({
+          key: 'dashboard-nav-' + d.id
+        }, d);
+      })
+      .value()
+    );
 
     return (
         <ul className="dashboards-nav">
