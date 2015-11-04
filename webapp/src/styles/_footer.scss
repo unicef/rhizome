@@ -16,20 +16,20 @@ footer {
     text-transform: uppercase;
     > li {
       margin: 0;
-      padding: 8px 12px;
+      padding: 5px 10px;
       display: block;
       float: none;
 
       &:hover {
         background-color: $rhz-background-color;
+        color: $rhz-navigation-color;
       }
     }
     a {
       padding: 0;
       display: block;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: $rhz-navigation-color;
-      opacity: 1;
     }
   }
 
