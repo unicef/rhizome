@@ -174,9 +174,11 @@ let ChartWizard = React.createClass({
         {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
         {findChartType(this.state.data.chartDef.type).chooseAxis ?
           (
-            <ScatterAxisChooser xValue={this.state.data.xFormatValue}
+            <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
+              xFormatValue={this.state.data.xFormatValue}
               onXFormatChange={ChartWizardActions.changeXFormatRadio}
-              yValue={this.state.data.yFormatValue}
+              yAxisValue={this.state.data.chartDef.y}
+              yFormatValue={this.state.data.yFormatValue}
               onYFormatChange={ChartWizardActions.changeYFormatRadio}
               formatValues={builderDefinitions.formats}
               indicatorArray={this.state.data.indicatorSelected}
