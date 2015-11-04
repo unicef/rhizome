@@ -16,7 +16,7 @@ var CampaignTitleMenu = React.createClass({
 
   render : function () {
     var campaigns = CampaignMenuItem.fromArray(this.props.campaigns, this.props.sendValue);
-    var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMM YYYY');
+    var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY');
 
     return (
       <TitleMenu
