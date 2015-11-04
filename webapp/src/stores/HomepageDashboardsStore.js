@@ -146,6 +146,14 @@ var HomepageDashboardsStore = Reflux.createStore({
     };
   },
 
+  countriesPromise: function() {
+    var promises = [1, 2, 3].map(function(locationId) {
+      return api.geo({ parent_location__in : locationId });
+    });
+
+    return Promise.all(promises);
+  },
+
   onFetchDashboards: function( ) {
     var dashboardDefs = [
           {
@@ -169,9 +177,10 @@ var HomepageDashboardsStore = Reflux.createStore({
         RegionStore.getlocationsPromise(),
         RegionStore.getLocationTypesPromise(),
 	    	CampaignStore.getCampaignsPromise(),
-        IndicatorStore.getIndicatorsPromise()
+        IndicatorStore.getIndicatorsPromise(),
+        this.countriesPromise()
     	])
-      .then(_.spread((locations, locationsTypes, campaigns, indicators) => {
+      .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
         var partialPrepare = _.partial((dashboard) => {
           return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
         });
@@ -205,22 +214,11 @@ var HomepageDashboardsStore = Reflux.createStore({
 
         });
 
-        var queries = dashboardDefs
-          .map(this.getDashboardByName)
-          .map(partialPrepare)
+        var queries = enhanced
           .map(this.fetchData);
 
-        var featuresQueries = dashboardDefs
-          .map(this.getDashboardByName)
-          .map(partialPrepare)
-          .map(function(dashboard) {
-            return api.geo({ parent_location__in : dashboard.location.id })
-          });
-
-        var all = queries.concat(featuresQueries);
-        Promise.all(all).then(_.spread((d1, d2, d3, f1, f2, f3) => {
-
-            var dashboards = _.zip([d1, d2, d3], [f1, f2, f3])
+        Promise.all(queries).then(_.spread((d1, d2, d3) => {
+            var dashboards = _.zip([d1, d2, d3], countries)
               .map((item) => {
                 return {
                   data: item[0],
