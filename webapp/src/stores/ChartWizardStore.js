@@ -120,7 +120,6 @@ let ChartWizardStore = Reflux.createStore({
 
   onEditTitle(value) {
     this.data.chartDef.title = value
-    this.trigger(this.data)
   },
 
   onAddLocation(index) {

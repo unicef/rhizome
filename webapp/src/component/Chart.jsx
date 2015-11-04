@@ -76,6 +76,10 @@ module.exports = React.createClass({
       this.props.options);
   },
 
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return nextProps.data !== this.props.data
+  },
+
   componentWillReceiveProps: function(nextProps) {
   	if(nextProps.type != this.props.type)
   	{
