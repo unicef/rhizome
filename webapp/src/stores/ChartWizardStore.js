@@ -211,6 +211,7 @@ let ChartWizardStore = Reflux.createStore({
   previewChart() {
     if (!this.data.indicatorSelected.length) {
       this.data.canDisplayChart = false
+      this.data.isLoading = false
       this.trigger(this.data)
       return
     }
