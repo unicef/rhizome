@@ -151,6 +151,7 @@ let ChartWizardStore = Reflux.createStore({
   onChangeChart(value) {
     this.data.chartDef.type = value
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+    this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
     this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
