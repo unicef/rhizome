@@ -73,7 +73,7 @@ let ChartWizard = React.createClass({
 
   getInitialState() {
     return {
-      refer: 'location',
+      refer: 'location'
     }
   },
 
@@ -136,7 +136,7 @@ let ChartWizard = React.createClass({
     let chartTypeStep = (
       <div>
         <ChartSelect charts={builderDefinitions.charts} value={this.state.data.chartDef.type}
-                     onChange={ChartWizardActions.changeChart}/>
+          onChange={ChartWizardActions.changeChart}/>
       </div>
     )
 
@@ -155,7 +155,7 @@ let ChartWizard = React.createClass({
         <div>
           <label>Time Range: </label>
           <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
-                      values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
+            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
         </div>
       </div>
     )
@@ -164,7 +164,7 @@ let ChartWizard = React.createClass({
       <div>
         <label>Group By: </label>
         <RadioGroup name='groupby' horizontal={true} value={this.state.data.groupByValue}
-                    values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
+          values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
       </div>
     )
 
@@ -178,20 +178,25 @@ let ChartWizard = React.createClass({
                       onChange={ChartWizardActions.changeLocationLevelRadio}/>
         </div>
         {findChartType(this.state.data.chartDef.type).chooseAxis ?
-          <ScatterAxisChooser xValue={this.state.data.xFormatValue}
-                              onXFormatChange={ChartWizardActions.changeXFormatRadio}
-                              yValue={this.state.data.yFormatValue}
-                              onYFormatChange={ChartWizardActions.changeYFormatRadio}
-                              formatValues={builderDefinitions.formats}
-                              indicatorArray={this.state.data.indicatorSelected}
-                              onXAxisChange={this._updateXAxis}
-                              onYAxisChange={this._updateYAxis}
-            /> :
-          (<div>
-            <label>Format: </label>
-            <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
-                        values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
-          </div>)}
+          (
+            <ScatterAxisChooser xValue={this.state.data.xFormatValue}
+              onXFormatChange={ChartWizardActions.changeXFormatRadio}
+              yValue={this.state.data.yFormatValue}
+              onYFormatChange={ChartWizardActions.changeYFormatRadio}
+              formatValues={builderDefinitions.formats}
+              indicatorArray={this.state.data.indicatorSelected}
+              onXAxisChange={this._updateXAxis}
+              onYAxisChange={this._updateYAxis}
+            />
+          ) :
+          (
+            <div>
+              <label>Format: </label>
+              <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
+              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
+            </div>
+          )
+        }
       </div>
     )
 
@@ -207,14 +212,14 @@ let ChartWizard = React.createClass({
 
     let chart = (
       <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
-             options={this.state.data.chartOptions}/>
+        options={this.state.data.chartOptions}/>
     )
 
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
           <ChartWizardStep title={`Select Location - ${this.state.data.location && this.state.data.location.name}`}
-                           refer='location'>
+            refer='location'>
             {locationStep}
           </ChartWizardStep>
           <ChartWizardStep title='Select Indicator' refer='indicator'>

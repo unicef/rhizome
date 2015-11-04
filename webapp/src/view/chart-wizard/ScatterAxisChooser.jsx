@@ -38,34 +38,31 @@ let ScatterAxisChooser = React.createClass({
     this.props.onYAxisChange(parseInt(e.target.value))
   },
 
-  componentDidMount() {
-  },
-
   render() {
     let axisOptions = _(this.props.indicatorArray).map(function (indicator, index) {
       return <option key={indicator.id} value={index}>{indicator.name}</option>
-    }).value();
+    }).value()
 
-    let chooseAxis = (<div>
+    return (
       <div>
-        <label>X Format</label>
-        <RadioGroup name="xFormat" horizontal={true} value={this.props.xValue}
-                    values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
+        <div>
+          <label>X Format</label>
+          <RadioGroup name="xFormat" horizontal={true} value={this.props.xValue}
+            values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
+        </div>
+        <div>
+          <label>Y Format</label>
+          <RadioGroup name="yFormat" horizontal={true} value={this.props.yValue}
+            values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
+        </div>
+        <div>
+          <label>X Axis</label>
+          <select onChange={this._updateXAxis}>{axisOptions}</select></div>
+        <div>
+          <label>Y Axis</label>
+          <select onChange={this._updateYAxis}>{axisOptions}</select></div>
       </div>
-      <div>
-        <label>Y Format</label>
-        <RadioGroup name="yFormat" horizontal={true} value={this.props.yValue}
-                    values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
-      </div>
-      <div>
-        <label>X Axis</label>
-        <select onChange={this._updateXAxis}>{axisOptions}</select></div>
-      <div>
-        <label>Y Axis</label>
-        <select onChange={this._updateYAxis}>{axisOptions}</select></div>
-    </div>)
-
-    return chooseAxis
+    )
   }
 })
 
