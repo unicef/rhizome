@@ -45,12 +45,13 @@ let ScatterAxisChooser = React.createClass({
   render() {
     let self = this
     let axisOptions = function (selectedValue, updateXAxis) {
-      var selected = false
-      let result = _(self.props.indicatorArray).map(function (indicator) {
-        if (!selected) selected = selectedValue === indicator.id
-        return <option value={indicator.id} selected={selectedValue === indicator.id}>{indicator.name}</option>
-      }).value()
-      if (!selected && self.props.indicatorArray.length > 0)
+      var hasSelected = false
+      let result = self.props.indicatorArray.map(indicator => {
+        let selected = selectedValue === indicator.id
+        if (!hasSelected && selected) hasSelected = true
+        return <option value={indicator.id} selected={selected}>{indicator.name}</option>
+      })
+      if (!hasSelected && self.props.indicatorArray.length > 0)
         updateXAxis(self.props.indicatorArray[0].id)
       return result
     }
