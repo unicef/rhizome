@@ -16,7 +16,7 @@ var Navigation = React.createClass({
 
   render : function () {
     var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
-      .filter(d => d.builtin || d.owned_by_current_user)
+      .filter(d => d.builtin)
       .map(function(d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
