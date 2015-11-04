@@ -9,10 +9,7 @@ var Carousel = require('nuka-carousel');
 var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx');
 
 var colors = require('colors');
-
 var Chart = require('component/Chart.jsx');
-
-var DashboardActions = require('actions/DashboardActions');
 
 var series = function (values, name) {
   return {
@@ -122,8 +119,7 @@ var HomepageCharts = React.createClass({
           value   : _.property('properties[475]'),
           yFormat : d3.format('%'),
           width: 390,
-          height: 390,
-        onClick : d => { DashboardActions.navigate({ location : d }) }
+          height: 390
         }}
       />);
 
