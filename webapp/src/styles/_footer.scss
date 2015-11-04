@@ -57,6 +57,9 @@ footer {
 
   .static-links {
     text-align: left;
+    span {
+      font-weight: 600;
+    }
   }
 
   .action {
@@ -74,6 +77,7 @@ footer {
 
     span {
       text-transform: uppercase;
+      margin: 20px;
     }
   }
 
