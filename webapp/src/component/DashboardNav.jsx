@@ -16,10 +16,7 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-
-    var allDashboards = _.slice(this.state.dashboards,0,10);
-
-    var dashboards = NavMenuItem.fromArray(_(allDashboards)
+    var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
       .map(function(d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
@@ -28,12 +25,23 @@ module.exports = React.createClass({
       .value()
     );
 
+    var builtins = _.slice(dashboards,0,4);
+    var customDashboards = _.slice(dashboards,4);
+
+    if (customDashboards.length>10) {
+      customDashboards = _.slice(customDashboards,0,10)
+    }
+    else {
+    }
+
     return (
         <ul className="dashboards-nav">
           <li className="medium-4 columns">
           <a onClick={this._toggleMenu} tabIndex='-1'>View My Dashboards</a>
             <ul className="dashboard-menu">
-              {dashboards}
+              {builtins}
+              <li className='separator'><hr /></li>
+              {customDashboards}
               <NavMenuItem href='/datapoints/dashboards/'>
                 See all custom dashboards
               </NavMenuItem>
