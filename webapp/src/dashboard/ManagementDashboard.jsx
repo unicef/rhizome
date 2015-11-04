@@ -50,9 +50,11 @@ var ManagementDashboard = React.createClass({
 
     if (data.__none__.supply.length != 0) {
       _.filter(data.__none__.supply, d => {
-        if (d.indicator.id == 194) {
+        if (_.isEqual(d.indicator.id, 194)) {
           d.indicator.short_name = 'On-Time OPV Supply';
-          d.value = 1 - d.value;
+          if (!_.isNull(d.value)) {
+            d.value = 1 - d.value;
+          }
         }
       });
     }
