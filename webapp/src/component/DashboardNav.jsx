@@ -16,8 +16,10 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-    var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
-      .filter(d => d.builtin || d.owned_by_current_user)
+
+    var allDashboards = _.slice(this.state.dashboards,0,10);
+
+    var dashboards = NavMenuItem.fromArray(_(allDashboards)
       .map(function(d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
