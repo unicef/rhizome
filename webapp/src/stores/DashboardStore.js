@@ -72,9 +72,8 @@ var DashboardStore = Reflux.createStore({
       })
       .sortBy('name');
 
-    var realLocation = dashboard.title.split(' ')[1];
     var location = _.find(locations, function(r) {
-      return r.name === realLocation;
+      return r.name === this.location;
     }.bind(this));
 
     if (!location) {
