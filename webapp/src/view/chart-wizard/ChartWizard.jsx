@@ -98,14 +98,6 @@ let ChartWizard = React.createClass({
     })
   },
 
-  _updateXAxis(value){
-    this.state.data.chartDef.x = value;
-  },
-
-  _updateYAxis(value){
-    this.state.data.chartDef.y = value;
-  },
-
   render() {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
@@ -188,8 +180,8 @@ let ChartWizard = React.createClass({
               onYFormatChange={ChartWizardActions.changeYFormatRadio}
               formatValues={builderDefinitions.formats}
               indicatorArray={this.state.data.indicatorSelected}
-              onXAxisChange={this._updateXAxis}
-              onYAxisChange={this._updateYAxis}
+              onXAxisChange={ChartWizardActions.changeXAxis}
+              onYAxisChange={ChartWizardActions.changeYAxis}
             />
           ) :
           (

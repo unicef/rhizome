@@ -184,6 +184,16 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangeXAxis(value){
+    this.data.chartDef.x = value
+    this.previewChart()
+  },
+
+  onChangeYAxis(value){
+    this.data.chartDef.y = value
+    this.previewChart()
+  },
+
   onSaveChart(callback) {
     callback(_.merge(this.data.chartDef, {
       indicators: this.data.indicatorSelected.map(item => {
