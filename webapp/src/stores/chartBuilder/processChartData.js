@@ -288,7 +288,7 @@ module.exports = {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-           return d.indicator == indicators[xAxis].id;
+           return d.indicator == xAxis;
          })
         .pluck('value')
         .value()
@@ -296,7 +296,7 @@ module.exports = {
       var range = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
-        .filter(function (d) { return d.indicator == indicators[yAxis].id;})
+        .filter(function (d) { return d.indicator == yAxis;})
         .pluck('value')
         .value()
       );
@@ -308,8 +308,8 @@ module.exports = {
           return {
             id   : d.location,
             name : locationsIndex[d.location].name,
-            x    : value(index[indicators[xAxis].id]),
-            y    : value(index[indicators[yAxis].id])
+            x    : value(index[xAxis]),
+            y    : value(index[yAxis])
           };
         })
         .filter(function (d) {
