@@ -34,7 +34,7 @@ body {
 
 @media only screen and (min-width: 64.0625em) {
   #main {
-    padding-bottom: 70px;
+    padding-bottom: 50px;
   }
 }
 
@@ -736,6 +736,10 @@ ul {
     padding: 0;
     background-color: transparent;
   }
+}
+
+.cd-charts {
+  margin: 0 0 40px 0;
 }
 
 @import "footer";
