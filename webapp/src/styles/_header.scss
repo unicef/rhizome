@@ -70,17 +70,23 @@ ul.dashboards-nav {
         display: block;
       }
     }
-    .lay-out {
-      padding: 2.3em 0.7em;
+    .log-out {
+      display: table-cell;
     }
 
     > a {
       padding: 1.3em 0.7em;
-      display: block;
+      display: table-caption;
       height: $header-height;
       opacity: 1;
       text-transform: uppercase;
-      text-align: center;
+      text-align: left;
+      font-size: 0.8rem;
+      vertical-align: middle;
+
+      .span-style {
+        vertical-align: -webkit-baseline-middle;
+      }
     }
   }
 }
@@ -119,6 +125,12 @@ ul.dashboards-nav {
       overflow-x: hidden;
       text-overflow: ellipsis;
       text-transform: uppercase;
+      font-size: 0.8rem;
+      color: $rhz-font-color;
+
+      &:hover {
+        background-color: $rhz-background-color;
+      }
     }
   }
 
@@ -128,4 +140,8 @@ ul.dashboards-nav {
       font-size: 0.6rem;
     }
   }
+}
+
+.image-style {
+  margin: -5px;
 }

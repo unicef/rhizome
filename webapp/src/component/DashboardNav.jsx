@@ -29,8 +29,8 @@ module.exports = React.createClass({
     );
 
     if (!_.isUndefined(dashboards)) {
-      if (dashboards.length>14) {
-        dashboards = _.slice(dashboards,0,14);
+      if (dashboards.length > 14) {
+        dashboards = _.slice(dashboards, 0, 14);
       }
     }
 
@@ -45,30 +45,31 @@ module.exports = React.createClass({
     );
 
     return (
-        <ul className="dashboards-nav">
-          <li className="medium-4 columns">
-          <a onClick={this._toggleMenu} tabIndex='-1'>View My Dashboards</a>
-            <ul className="dashboard-menu">
-              {builtins}
-              <li className='separator'><hr /></li>
-              {customDashboards}
-              <li className='allCustomDashboards'>
-                <a role='menuitem' href='/datapoints/dashboards/' tabIndex='-1'>
-                  See all custom dashboards
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li className="medium-4 columns">
-            <a href="/datapoints/dashboards/edit">Create a dashboard</a>
-          </li>
-          <li className="medium-4 columns">
-            <a href='/accounts/logout?next=/' title='logout' className="lay-out">
-              <i className='fa fa-lg fa-sign-out'/>
-              log out
-            </a>
-          </li>
-        </ul>
+      <ul className="dashboards-nav">
+        <li className="large-4 columns">
+          <a tabIndex='-1'>
+            <span className="span-style">View My Dashboards</span></a>
+          <ul className="dashboard-menu">
+            {builtins}
+            <li className='separator'>
+              <hr />
+            </li>
+            {customDashboards}
+            <NavMenuItem href='/datapoints/dashboards/'>
+              See all custom dashboards
+            </NavMenuItem>
+          </ul>
+        </li>
+        <li className="large-4 columns">
+          <a href="/datapoints/dashboards/edit">
+            <span className="span-style">Create a dashboard</span></a>
+        </li>
+        <li className="large-4 columns">
+          <a href='/accounts/logout?next=/' title='logout' className="log-out">
+            <i className='fa fa-lg fa-sign-out'/>log out
+          </a>
+        </li>
+      </ul>
     );
   }
 });
