@@ -11,6 +11,15 @@ var IndicatorStore = Reflux.createStore({
 
 	init : function () {
 		this.indicators = [];
+		this.indicatorsPromise =
+			api.indicators(null, null, {'cache-control': 'no-cache'}).then(function (response) {
+				var indicators = response.objects;
+				this.indicators = _.indexBy(indicators, 'id');
+
+				this.trigger({ indicators : indicators });
+
+				return this.indicators;
+			}.bind(this));
 	},
 
 	getInitialState : function () {
@@ -38,6 +47,9 @@ var IndicatorStore = Reflux.createStore({
 			.value();
 	},
 
+	getIndicatorsPromise: function() {
+		return this.indicatorsPromise;
+	}
 });
 
 module.exports = IndicatorStore;
