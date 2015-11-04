@@ -30,6 +30,9 @@ footer {
       display: block;
       font-size: 0.8rem;
       color: $rhz-navigation-color;
+      &:hover {
+        color: $rhz-navigation-color;
+      }
     }
   }
 

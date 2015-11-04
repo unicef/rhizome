@@ -25,7 +25,11 @@ module.exports = React.createClass({
           key: 'dashboard-nav-' + d.id
         }, d);
       })
-      .value()
+      .value(), function (h) {
+        if(h.title.indexOf('Homepage') == -1) {
+          return h;
+        }
+      })
     );
 
     if (!_.isUndefined(dashboards)) {
@@ -55,9 +59,11 @@ module.exports = React.createClass({
               <hr />
             </li>
             {customDashboards}
-            <NavMenuItem href='/datapoints/dashboards/'>
-              See all custom dashboards
-            </NavMenuItem>
+            <li className='allCustomDashboards'>
+                <a role='menuitem' href='/datapoints/dashboards/' tabIndex='-1'>
+                  See all custom dashboards
+                </a>
+              </li>
           </ul>
         </li>
         <li className="large-4 columns">
