@@ -86,7 +86,7 @@ var Performance = React.createClass({
 
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value');
 
-    if (!_.isUndefined(vaccinated)) {
+    if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
       var num = d3.format('n');
 
       vaccinated = (
@@ -101,14 +101,14 @@ var Performance = React.createClass({
     var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
 
     var transitPoints = [];
-    if (!_.any([inPlace, planned], _.isUndefined)) {
+    if ((!_.any([inPlace, planned], _.isUndefined)) && (!_.any([inPlace, planned], _.isNull))) {
       transitPoints.push([{
         title: inPlace + ' / ' + planned + ' in place',
         value: inPlace / planned
       }]);
     }
 
-    if (!_.any([withSM, inPlace], _.isUndefined)) {
+    if ((!_.any([withSM, inPlace], _.isUndefined)) && (!_.any([withSM, inPlace], _.isNull))) {
       transitPoints.push([{
         title: withSM + ' / ' + inPlace + ' have a social mobilizer',
         value: withSM / inPlace
