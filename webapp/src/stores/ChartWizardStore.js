@@ -195,18 +195,23 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onSaveChart(callback) {
-    callback(_.merge(this.data.chartDef, {
-      indicators: this.data.indicatorSelected.map(item => {
-        return item.id
-      }),
-      groupBy: builderDefinitions.groups[this.data.groupByValue].value,
-      locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
-      timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
-      yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
-      xFormat: builderDefinitions.formats[this.data.xFormatValue].value
-    }, (default, override) => {
-      return override
-    }))
+    callback(
+      _.merge(
+        this.data.chartDef,
+        {
+          indicators: this.data.indicatorSelected.map(item => {
+            return item.id
+          }),
+          groupBy: builderDefinitions.groups[this.data.groupByValue].value,
+          locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
+          timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
+          yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
+          xFormat: builderDefinitions.formats[this.data.xFormatValue].value
+        }, override => {
+          return override
+        }
+      )
+    )
   },
 
   previewChart() {
