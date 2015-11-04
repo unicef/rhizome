@@ -52,9 +52,11 @@ module.exports = React.createClass({
               {builtins}
               <li className='separator'><hr /></li>
               {customDashboards}
-              <NavMenuItem href='/datapoints/dashboards/'>
-                See all custom dashboards
-              </NavMenuItem>
+              <li className='allCustomDashboards'>
+                <a role='menuitem' href='/datapoints/dashboards/' tabIndex='-1'>
+                  See all custom dashboards
+                </a>
+              </li>
             </ul>
           </li>
           <li className="medium-4 columns">
