@@ -150,17 +150,17 @@ var HomepageDashboardsStore = Reflux.createStore({
     var dashboardDefs = [
           {
             name: 'homepage-afghanistan',
-            date: '2014-01',
+            date: '2015-03',
             location: 'Afghanistan'
           },
           {
             name: 'homepage-pakistan',
-            date: '2014-01',
+            date: '2015-03',
             location: 'Pakistan'
           },
           {
             name: 'homepage-nigeria',
-            date: '2014-01',
+            date: '2015-03',
             location: 'Nigeria'
           }
         ];
@@ -194,12 +194,12 @@ var HomepageDashboardsStore = Reflux.createStore({
             {
               data: dashboardInit(
                 dashboardDef.dashboard,
-                data,
+                data.data,
                 dashboardDef.location,
                 dashboardDef.campaign,
                 locations,
                 indicators,
-                GeoStore.features
+                data.features
               )
             });
 
@@ -210,20 +210,37 @@ var HomepageDashboardsStore = Reflux.createStore({
           .map(partialPrepare)
           .map(this.fetchData);
 
-        Promise.all(queries).then(_.spread((d1, d2, d3) => {
-            var dashboards = [d1, d2, d3].map((responses) => {
-              return _(responses)
-              .pluck('objects')
-              .flatten()
-              .sortBy(_.method('campaign.start_date.getTime'))
-              .map(this.melt)
-              .flatten()
-              .value();
-            }).map(function(item) {
-              var country = item[0].campaign.slug.split('-')[0];
-              return partialDashboardInit(country, item);
-            });
+        var featuresQueries = dashboardDefs
+          .map(this.getDashboardByName)
+          .map(partialPrepare)
+          .map(function(dashboard) {
+            return api.geo({ parent_location__in : dashboard.location.id })
+          });
 
+        var all = queries.concat(featuresQueries);
+        Promise.all(all).then(_.spread((d1, d2, d3, f1, f2, f3) => {
+
+            var dashboards = _.zip([d1, d2, d3], [f1, f2, f3])
+              .map((item) => {
+                return {
+                  data: item[0],
+                  features: _(item[1].objects.features).flatten().value()
+                };
+              }).map((item) => {
+                return {
+                  data:_(item.data)
+                  .pluck('objects')
+                  .flatten()
+                  .sortBy(_.method('campaign.start_date.getTime'))
+                  .map(this.melt)
+                  .flatten()
+                  .value(),
+                  features: item.features
+                };
+              }).map(function(item) {
+                var country = item.data[0].campaign.slug.split('-')[0];
+                return partialDashboardInit(country, item);
+              });
             this.trigger({
               dashboards: dashboards
             });
