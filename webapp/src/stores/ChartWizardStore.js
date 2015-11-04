@@ -204,8 +204,8 @@ let ChartWizardStore = Reflux.createStore({
       timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
       yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
       xFormat: builderDefinitions.formats[this.data.xFormatValue].value
-    }, (a, b) => {
-      return b
+    }, (default, override) => {
+      return override
     }))
   },
 
