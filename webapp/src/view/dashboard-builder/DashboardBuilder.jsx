@@ -263,6 +263,7 @@ module.exports = React.createClass({
               <CampaignTitleMenu
                 campaigns={campaigns}
                 selected={campaign}
+                location={location}
                 sendValue={this._setCampaign}/>
             </div>
 
