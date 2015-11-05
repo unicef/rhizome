@@ -52,7 +52,7 @@ module.exports = React.createClass({
       (<h4>
         Polio cases in {year} (as of {month}):&ensp;<span
         style={{
-          'color'       : '#AF373E',
+          'color'      : '#D95348',
           'fontWeight' : 'bold'
         }}>{totalCases}</span>
       </h4>);
@@ -70,7 +70,7 @@ module.exports = React.createClass({
     }
 
     var color = d3.scale.ordinal()
-      .range(['#AF373E', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
+      .range(['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc'])
       .domain(_(this.props.data)
         .map(_.method('campaign.start_date.getFullYear'))
         .uniq()
