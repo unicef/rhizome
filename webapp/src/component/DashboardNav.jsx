@@ -47,8 +47,7 @@ module.exports = React.createClass({
     return (
       <ul className="dashboards-nav">
         <li className="large-4 columns">
-          <a tabIndex='-1'>
-            <span className="span-style">View My Dashboards</span></a>
+          <a>View My<br />Dashboards</a>
           <ul className="dashboard-menu">
             {builtins}
             <li className='separator'>
@@ -63,12 +62,11 @@ module.exports = React.createClass({
           </ul>
         </li>
         <li className="large-4 columns">
-          <a href="/datapoints/dashboards/edit">
-            <span className="span-style">Create a dashboard</span></a>
+          <a href="/datapoints/dashboards/edit">Create a<br />dashboard</a>
         </li>
-        <li className="large-4 columns">
-          <a href='/accounts/logout?next=/' title='logout' className="log-out">
-            <i className='fa fa-lg fa-sign-out'/>log out
+        <li className="large-4 columns log-out">
+          <a href='/accounts/logout?next=/' title='logout'>
+            <i className='fa fa-lg fa-sign-out'/><br />log out
           </a>
         </li>
       </ul>

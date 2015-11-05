@@ -16,7 +16,7 @@
 
 body {
   font-size: rem-calc(10);
-  overflow-x:hidden;
+  overflow-x: hidden;
 }
 
 @import "header";
@@ -44,6 +44,8 @@ h6 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 1em;
+  color: #7A909E;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -133,7 +135,11 @@ p {
   margin: 10px 0 20px 0;
 }
 
-body.home nav .home,
+body.home {
+  background-color: $rhz-background-color;
+}
+
+nav .home,
 body.dashboard nav .dashboard,
 body.data nav .data,
 body.data-entry nav .data-entry,
@@ -323,12 +329,12 @@ button,
   opacity: $button-disabled-opacity;
 }
 
-.clickable{
+.clickable {
   cursor: pointer;
   color: $oil;
 }
 
-.underline{
+.underline {
   text-decoration: underline;
 }
 
@@ -741,6 +747,7 @@ ul {
 .cd-charts {
   margin: 0 0 115px 0;
 }
+
 .cd-chart-size {
   width: 340px;
 }

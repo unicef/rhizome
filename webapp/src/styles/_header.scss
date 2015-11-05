@@ -55,9 +55,13 @@ ul.dashboards-nav {
   position: relative;
   @include clearfix();
 
+  .log-out {
+      text-align: center;
+    }
+
   > li {
     margin: 0;
-    padding: 0;
+    padding: 27px 3px;
     border: none;
     display: inline-block;
     text-align: left;
@@ -71,23 +75,13 @@ ul.dashboards-nav {
         display: block;
       }
     }
-    .log-out {
-      display: table-cell;
-    }
 
     > a {
-      padding: 1.3em 0.7em;
-      display: table-caption;
       height: $header-height;
       opacity: 1;
       text-transform: uppercase;
       text-align: left;
       font-size: 0.8rem;
-      vertical-align: middle;
-
-      .span-style {
-        vertical-align: -webkit-baseline-middle;
-      }
     }
   }
 }
@@ -95,10 +89,10 @@ ul.dashboards-nav {
 .dashboard-menu {
   display: none;
   position: absolute;
-  margin: 0;
+  margin: 27px -4px;
   border: 1px solid #fff; //todo:
   background-color: $rhz-navigation-hover-bg-color;
-  width: 350px; //todo:
+  width: 300px; //todo:
   z-index: 10001;
 
   > li {
@@ -143,3 +137,5 @@ ul.dashboards-nav {
 .image-style {
   margin: -5px;
 }
+
+

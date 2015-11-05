@@ -73,14 +73,14 @@ var Access = React.createClass({
     return (
         <div className="row">
           <div className="medium-4 columns">
-            <h6>Number of Inaccessible Children</h6>
+            <h4>Number of Inaccessible Children</h4>
             <Chart type='LineChart' data={inaccessible}
             loading={loading}
             options={lineChartOptions} />
           </div>
 
           <div className='accessibility medium-2 columns'>
-            <h6>Inaccessibiity Breakdown</h6>
+            <h4>Inaccessibiity<br />Breakdown</h4>
             <PieChartList keyPrefix='inaccessibility-breakdown'
               loading={loading}
               data={reasons}
@@ -93,7 +93,8 @@ var Access = React.createClass({
           </div>
 
           <div className='medium-2 columns'>
-            <h6>Districts with Access Plan</h6>
+            <h4>Districts with<br />
+              Access Plan</h4>
             <DonutChart data={plans} label={planLabel}
               loading={loading}
               options={{
