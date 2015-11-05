@@ -85,6 +85,7 @@ _.extend(ColumnChart.prototype, {
 
     var h = this._height - margin.top - margin.bottom;
     var w = this._width - margin.left - margin.right;
+    var dataMarginLeft = 20;
 
     var domain;
 
@@ -98,7 +99,11 @@ _.extend(ColumnChart.prototype, {
       .domain(domain)
       .rangeBands([0, w], options.padding);
 
-    var x = _.flow(options.x, xScale);
+    var dataScale = d3.scale.ordinal()
+      .domain(domain)
+      .rangeBands([dataMarginLeft, w], options.padding);
+
+    var x = _.flow(options.x, dataScale);
 
     var range;
     if (_.isFunction(options.range)) {

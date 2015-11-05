@@ -36,7 +36,7 @@ var ImmunityGap = React.createClass({
             x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf(); },
             xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY'); },
             y0      : _.property('y0'),
-            yFormat : d3.format(',.1%')
+            yFormat : d3.format(',%')
           }} />
       </div>
     );
