@@ -11,11 +11,12 @@ var CampaignTitleMenu = React.createClass({
   propTypes : {
     campaigns : React.PropTypes.array.isRequired,
     selected  : React.PropTypes.object.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+    sendValue : React.PropTypes.func.isRequired,
+    location  : React.PropTypes.object.isRequired
   },
 
   render : function () {
-    var campaigns = CampaignMenuItem.fromArray(this.props.campaigns, this.props.sendValue);
+    var campaigns = CampaignMenuItem.fromArray(this.props.campaigns, this.props.location, this.props.sendValue);
     var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY');
 
     return (

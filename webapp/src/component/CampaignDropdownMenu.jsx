@@ -47,8 +47,6 @@ var CampaignDropdownMenu = React.createClass({
   },
 
   render : function () {
-    var self = this;
-
     var re = new RegExp(this.state.pattern);
 
     // If the pattern is longer than two characters, filter the list with it,
@@ -62,14 +60,8 @@ var CampaignDropdownMenu = React.createClass({
       .sortBy(_.method('start_date.getTime'))
       .reverse()
       .map(function (campaign) {
-        let slug = campaign.slug
         return (
-          <CampaignMenuItem key={'campaign-' + campaign.id}
-            sendValue={self.props.sendValue}
-            id={campaign.id}
-            slug={slug}
-            management_dash_pct_complete={campaign.management_dash_pct_complete}
-            />
+          <CampaignMenuItem />
         );
       })
       .value();

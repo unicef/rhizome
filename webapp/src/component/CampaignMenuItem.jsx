@@ -13,35 +13,33 @@ var CampaignMenuItem = React.createClass({
   },
 
   statics : {
-    fromArray : function (arr, sendValue) {
+    fromArray : function (arr, location, sendValue) {
       return arr.map(function (campaign) {
-        var date = moment(campaign.start_date, 'YYYY-MM-DD').toDate();
         return (
-          <CampaignMenuItem key={'campaign-' + campaign.id}
-            sendValue={sendValue}
-            id={campaign.id}
-            slug={campaign.slug}
-            management_dash_pct_complete={campaign.management_dash_pct_complete}/>
+          <CampaignMenuItem
+            campaign={campaign}
+            location={location.name}
+            sendValue={sendValue} />
         );
       });
     }
   },
 
   render : function () {
-    var campaignSlug = this.props.slug
-    var percentageComplete = ' (' + Math.round(this.props.management_dash_pct_complete * 100) + '% complete)'
+    var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)';
+    var date = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMMM YYYY');
 
     return (
-      <li key={'campaign-' + this.props.id} className='campaign'>
+      <li key={'campaign-' + this.props.campaign.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-        {this.props.slug} {percentageComplete}
+          {this.props.location} {date} {percentageComplete}
         </a>
       </li>
     );
   },
 
   _onClick : function () {
-    this.props.sendValue(this.props.id);
+    this.props.sendValue(this.props.campaign.id);
   }
 
 });
