@@ -144,7 +144,7 @@ var CustomDashboard = React.createClass({
     var addChart;
 
     return (
-      <div className='row cd-charts'>{charts}{addChart}</div>
+      <div className='row cd-charts'>{charts} {addChart}</div>
     );
   },
 });

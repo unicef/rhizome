@@ -514,13 +514,12 @@ svg {
 
 #new-polio-cases {
   color: $down-color;
-  font-weight: bold;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 999;
   padding: 0 2pt;
-  font-size: 9pt
+  font-size: 0.875rem
 }
 
 ul {

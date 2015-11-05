@@ -15,7 +15,7 @@ module.exports = React.createClass({
   getDefaultProps : function () {
     return {
       data     : [],
-      loading  : false,
+      loading  : false
     };
   },
 
@@ -49,12 +49,10 @@ module.exports = React.createClass({
     // Set the title based on whether there is data
     var title = _.isEmpty(this.props.data) ?
       (<h4>Wild Polio Cases</h4>) :
-      (<h4>
-        Polio cases in {year} (as of {month}):&ensp;<span
-        style={{
-          'color'      : '#D95348',
-          'fontWeight' : 'bold'
-        }}>{totalCases}</span>
+      (<h4 style={{
+          'color'      : '#D95348'
+        }}>
+        {totalCases} Polio cases this year
       </h4>);
 
     var newCaseLabel = '';
@@ -62,10 +60,7 @@ module.exports = React.createClass({
     if (_.isFinite(newCases) && newCases > 0) {
       var plural = newCases !== 1 ? 's' : '';
       newCaseLabel = (
-        <div id='new-polio-cases'
-          style={{
-            position :'absolute'
-          }}>{newCases} new case{plural}</div>
+        <div id='new-polio-cases'>{newCases} new case{plural}</div>
       );
     }
 

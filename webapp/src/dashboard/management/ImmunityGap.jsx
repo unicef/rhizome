@@ -70,7 +70,7 @@ var ImmunityGap = React.createClass({
       _.property('name'),
       d3.scale.ordinal()
         .domain(_(data).pluck('name').sortBy().value())
-        .range(['#AF373E', '#FABAA2'])
+        .range(['#D95348', '#B6CFD4'])
     );
 
     var start = moment(this.props.campaign.start_date);
