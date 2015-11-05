@@ -27,7 +27,8 @@ var RegionTitleMenu = React.createClass({
   _setFilter: function(pattern) {
     this.setState({
       filter: pattern
-    })
+    });
+    this.forceUpdate();
   },
 
   _buildlocations: function(originallocations, filter) {
@@ -39,7 +40,7 @@ var RegionTitleMenu = React.createClass({
       };
     });
 
-    if (filter.length > 2) {
+    if (filter.length > 1) {
       locations = locations.filter(r => {
         return new RegExp(filter, 'i').test(r.title)
       })
@@ -49,7 +50,7 @@ var RegionTitleMenu = React.createClass({
       _.each(idx, location => {
         if (idx.hasOwnProperty(location.parent)) {
           var p = idx[location.parent];
-          var children = p.children || []
+          var children = p.children || [];
 
           children.push(location);
           p.children = _.sortBy(children, 'title');
@@ -66,7 +67,7 @@ var RegionTitleMenu = React.createClass({
     // console.log("RegionTitleMenu RENDER:", this.props.selected);
     var location = this.props.selected.name;
     var filter  = this.state.filter;
-    var locations = this._buildlocations(this.props.locations, filter)
+    var locations = this._buildlocations(this.props.locations, filter);
     var items = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue);
 
     return (
