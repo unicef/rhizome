@@ -6,6 +6,7 @@ var d3 = require('d3');
 var browser = require('util/browser');
 var label = require('chart/renderer/label');
 var color = require('util/color');
+var legend  = require('chart/renderer/legend');
 
 var defaults = {
   margin: {
@@ -73,7 +74,6 @@ _.extend(ColumnChart.prototype, {
       'transform': 'translate(0,' + h + ')'
     });
     g.append('g').attr('class', 'legend');
-    g.append('g').attr('class', 'annotation');
 
     this.update(data, options);
   },
@@ -212,34 +212,33 @@ _.extend(ColumnChart.prototype, {
         'dy': -4
       });
 
-    var fmt = _.flow(options.y, options.yFormat);
-    var labels = _(data)
-      .map(function (s) {
-        return _.assign({},
-          _.max(options.values(s), options.x),
-          {name: options.name(s)}
-        );
-      })
+    var legendText = _(data)
       .map(function (d) {
-        return {
-          text: d.name + ' ' + fmt(d),
-          x: x(d),
-          y: y(d),
-          defined: _.isFinite(d.value)
-        };
+        return options.name(d);
       })
       .reverse()
       .value();
 
-    var seriesLabel = label()
-      .addClass('series')
-      .width(w)
-      .height(h)
-      .align(false);
+    var fillColor = d3.scale.ordinal().range(['#B6D0D4', '#D95449']);
+    var legend = svg.select('.legend').selectAll('*')
+      .data(legendText)
+      .enter().append('g')
+      .attr('class', 'series')
+      .attr("transform", function(d, i) { return "translate(0," + i * 15 + ")"; });
 
-    svg.select('.annotation').selectAll('.series.label')
-      .data(labels)
-			.call(seriesLabel);
+    legend.append('rect')
+      .attr("x", w-15)
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", fillColor);
+
+    legend.append("text")
+      .attr("x", w-20)
+      .attr("y", 7)
+      .attr("dy", ".15em")
+      .style("text-anchor", "end")
+      .style("fill", "#999999")
+      .text(function(d) { return d; });
 
     var timeout = null;
 
@@ -253,11 +252,6 @@ _.extend(ColumnChart.prototype, {
           .style('opacity', 1);
 
         svg.selectAll('.x.axis text').style('opacity', 1);
-        svg.select('.annotation').selectAll('.series.label')
-          .data(labels)
-					.call(seriesLabel.align(false));
-
-        svg.selectAll('.annotation .axis.label').remove();
       }, 200);
     });
 
@@ -275,53 +269,6 @@ _.extend(ColumnChart.prototype, {
         });
 
       svg.selectAll('.x.axis text').style('opacity', 0);
-
-      var annotations = _(data)
-        .map(function (s) {
-          return _.assign({},
-            _.find(options.values(s), function (e) {
-              return options.x(d) === options.x(e);
-            }),
-            {name: options.name(s)}
-          );
-        })
-        .map(function (d) {
-          return {
-            text: d.name + ' ' + fmt(d),
-            x: x(d),
-            y: y(d),
-            defined: _.isFinite(d.value)
-          };
-        })
-        .tap(list => {
-          if (_(list).some(item => (item.y >= h || item.y < 0)))
-            list.forEach(item => {
-              item.y = 0;
-            })
-        })
-        .each(item => {item.y = 0; })
-        .reverse()
-        .value();
-
-      svg.select('.annotation').selectAll('.series.label')
-        .data(annotations)
-        .call(seriesLabel.align(true));
-
-      var axisLabel = svg.select('.annotation')
-        .selectAll('.axis.label')
-        .data([options.x(d)]);
-
-      axisLabel.enter()
-        .append('text')
-        .attr('class', 'axis label')
-        .style('text-anchor', 'middle');
-
-      axisLabel
-        .attr({
-          'transform': 'translate(' + x(d) + ',' + (h + margin.bottom) + ')',
-          'dx': xScale.rangeBand() / 2
-        })
-        .text(options.xFormat);
     });
   }
 

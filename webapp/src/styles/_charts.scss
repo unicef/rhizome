@@ -109,6 +109,10 @@ svg {
 		padding     : 1pt 0;
 		text-shadow : $legibility-shadow;
 	}
+
+  .legend {
+    font-size: 0.625rem;
+  }
 }
 
 .choropleth {
