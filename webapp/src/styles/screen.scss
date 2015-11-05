@@ -169,9 +169,16 @@ table {
   margin-top: 10pt;
   min-width: 100%;
 
-  th {
-    padding: 5pt 0;
-    text-align: left;
+  thead {
+    tr {
+      th {
+        color: $rhz-font-color;
+        padding: 0.5rem 0.625rem 0.625rem;
+        text-align: left;
+        text-transform: uppercase;
+        background-color: $rhz-background-color;
+      }
+    }
   }
 
   td {
