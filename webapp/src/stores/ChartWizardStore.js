@@ -53,6 +53,10 @@ let ChartWizardStore = Reflux.createStore({
       this.data.chartTypeFilteredList = builderDefinitions.charts.filter(chart => {
         return _.includes(availableCharts, chart.name)
       })
+
+      if (!_.includes(availableCharts, this.data.chartDef.type)) {
+        this.onChangeChart(this.data.chartTypeFilteredList[0].name)
+      }
     })
   },
 
