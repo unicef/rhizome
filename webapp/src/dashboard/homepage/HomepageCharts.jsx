@@ -72,9 +72,54 @@ var HomepageCharts = React.createClass({
   },
 
   preparePolioCasesData: function() {
+    var campaign   = this.props.campaign;
+    var year       = '';
+    var month      = '';
+    var totalCases = null;
+    var newCases   = null;
+
+    if (campaign) {
+      var m = moment(campaign.start_date, 'YYYY-MM-DD');
+      year  = m.format('YYYY');
+      month = m.format('MMM');
+
+      // Sum all of the reported Polio cases for the year
+      totalCases = _(this.props.data.impact.polioCasesYtd)
+        .filter(function (d) { return d.campaign.start_date.getFullYear() == year; })
+        .pluck('value')
+        .sum();
+
+      // Find the number of reported cases for this campaign
+      newCases = _.get(
+        _.find(
+          this.props.data.impact.polioCasesYtd,
+          function (d) { return d.campaign.start_date.getTime() === m.valueOf();}),
+        'value');
+    }
+
+    // Set the title based on whether there is data
+    var title = <h4 className="chart-title">
+        <span style={{
+          'color': '#F18448'
+        }}>{totalCases} Polio cases this year</span>
+      </h4>;
+
+    var newCaseLabel = '';
+
+    if (_.isFinite(newCases) && newCases > 0) {
+      var plural = newCases !== 1 ? 's' : '';
+      newCaseLabel = (
+        <div id='new-polio-cases'
+          style={{
+            position :'absolute',
+            color: '#D84E43'
+          }}>{newCases} new case{plural}</div>
+      );
+    }
+
     var color = d3.scale.ordinal()
       .range(['#AF373E', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
-      .domain(_(this.props.data)
+      .domain(_(this.props.data.impact.polioCasesYtd)
         .map(_.method('campaign.start_date.getFullYear'))
         .uniq()
         .sortBy()
@@ -82,6 +127,8 @@ var HomepageCharts = React.createClass({
         .value());
 
     return {
+      title: title,
+      newCaseLabel: newCaseLabel,
       data: this.props.data.impact.polioCasesYtd,
       colors: color
     }
@@ -90,6 +137,7 @@ var HomepageCharts = React.createClass({
   preparePerformanceData: function() {
     var data = this.props.data.performance;
     var campaign = this.props.campaign;
+    var location = this.props.location;
 
     var upper = moment(campaign.start_date, 'YYYY-MM-DD');
     var lower = upper.clone().startOf('month').subtract(1, 'year');
@@ -107,7 +155,8 @@ var HomepageCharts = React.createClass({
     return {
       missedChildrenMap: missedChildrenMap,
       missed: missed,
-      missedScale: missedScale
+      missedScale: missedScale,
+      location: location
     };
   },
 
@@ -182,11 +231,15 @@ var HomepageCharts = React.createClass({
     var charts = [];
 
     var performanceData = this.preparePerformanceData();
-    var impactData = this.prepareUnderImmunizedData();
+    var underImmunizedData = this.prepareUnderImmunizedData();
     var polioCasesData = this.preparePolioCasesData();
 
     charts.push(
-      <YtDChart
+      <div id='polio-cases-ytd'>
+        {polioCasesData.title}
+        <div style={{ position : 'relative' }}>
+          {polioCasesData.newCaseLabel}
+          <YtDChart
             data={polioCasesData.data}
             loading={loading}
             options={{
@@ -195,10 +248,14 @@ var HomepageCharts = React.createClass({
               width: 390,
               height: 390
             }} />
+          </div>
+        </div>
     );
 
     charts.push(
-      <Chart type='ChoroplethMap'
+      <div>
+        <h4 className="chart-title">Missed children, {performanceData.location}</h4>
+        <Chart type='ChoroplethMap'
         data={performanceData.missedChildrenMap}
         loading={loading}
         options={{
@@ -208,31 +265,38 @@ var HomepageCharts = React.createClass({
           width: 390,
           height: 390
         }}
-      />);
+      />
+      </div>
+      );
 
     charts.push(
-      <Chart type='ColumnChart' data={performanceData.missed}
-        loading={loading}
-        options={{
-          aspect  : 1,
-          color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-          domain  : _.constant(performanceData.missedScale),
-          x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-          xFormat : d => moment(d).format('MMM YYYY'),
-          yFormat : pct,
-          width: 390,
-          height: 390
-        }}
-      />);
-
-    charts.push(
-      <Chart type='ColumnChart'
-          data={impactData.data}
+      <div>
+        <h4 className="chart-title">Missed children, trend</h4>
+        <Chart type='ColumnChart' data={performanceData.missed}
           loading={loading}
           options={{
             aspect  : 1,
-            color   : impactData.color,
-            domain  : _.constant(impactData.immunityScale),
+            color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
+            domain  : _.constant(performanceData.missedScale),
+            x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
+            xFormat : d => moment(d).format('MMM YYYY'),
+            yFormat : pct,
+            width: 390,
+            height: 390
+          }}
+        />
+      </div>);
+
+    charts.push(
+      <div>
+        <h4 className="chart-title">Under Immunized Children</h4>
+        <Chart type='ColumnChart'
+          data={underImmunizedData.data}
+          loading={loading}
+          options={{
+            aspect  : 1,
+            color   : underImmunizedData.color,
+            domain  : _.constant(underImmunizedData.immunityScale),
             values  : _.property('values'),
             x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf(); },
             xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY'); },
@@ -241,7 +305,8 @@ var HomepageCharts = React.createClass({
             width: 390,
             height: 390
           }}
-        />);
+        />
+      </div>);
 
     return _.shuffle(charts);
   },
