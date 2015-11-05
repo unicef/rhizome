@@ -64,6 +64,7 @@ ul.dashboards-nav {
     background-color: $rhz-navigation-bg-color;
 
     &:hover {
+
       background-color: $rhz-navigation-hover-bg-color;
 
       .dashboard-menu {
@@ -101,9 +102,6 @@ ul.dashboards-nav {
   z-index: 10001;
 
   > li {
-    &:hover {
-      background-color: $rhz-background-color;
-    }
 
     display: block;
     padding: 0;

@@ -281,8 +281,7 @@ module.exports = React.createClass({
             </div>
           </div>
         </form>
-        {this.state.store.dashboard.charts.length ? null : addDashboardLinkContainer}
-        {dashboard}
+        {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className="cd-footer">
           <div className="row">
             <div className="large-2 columns cd-button" onClick={this.newChart}>

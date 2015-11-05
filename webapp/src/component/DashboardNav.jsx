@@ -18,18 +18,14 @@ module.exports = React.createClass({
   render : function () {
     var dashboards = this.state.dashboards;
 
-    var builtins = NavMenuItem.fromArray(_(dashboards)
-      .filter(d=>(d.builtin && d.id != -4))
-      .map(function(d) {
-        return _.assign({
-          key: 'dashboard-nav-' + d.id
-        }, d);
-      })
-      .value(), function (h) {
-        if(h.title.indexOf('Homepage') == -1) {
-          return h;
-        }
-      })
+    var builtins = NavMenuItem.fromArray(
+      _.filter(_(dashboards)
+        .filter(d=>d.builtin)
+        .value(), function (h) {
+          if(h.title.indexOf('Homepage') == -1) {
+            return h;
+          }
+        })
     );
 
     if (!_.isUndefined(dashboards)) {

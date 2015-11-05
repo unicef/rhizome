@@ -108,7 +108,7 @@ var CustomDashboard = React.createClass({
       var series = data[id];
       var cols   = chart.type === 'BarChart' ?
         'small-10 end columns' :
-        'medium-4 large-3 columns end';
+        'medium-4 columns end cd-chart-size';
 
       var options = getOptions(chart, campaign, data);
 
@@ -144,7 +144,7 @@ var CustomDashboard = React.createClass({
     var addChart;
 
     return (
-      <div className='row cd-charts'>{charts} {addChart}</div>
+      <div className='row cd-charts'>{charts}{addChart}</div>
     );
   },
 });
