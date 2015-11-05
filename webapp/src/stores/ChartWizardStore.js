@@ -19,6 +19,7 @@ let ChartWizardStore = Reflux.createStore({
     locationSelected: null,
     campaignFilteredList: [],
     timeRangeFilteredList: [],
+    chartTypeFilteredList: [],
     groupByValue: 0,
     locationLevelValue: 0,
     timeValue: 0,
@@ -41,6 +42,17 @@ let ChartWizardStore = Reflux.createStore({
     let expectTimes = _.find(builderDefinitions.charts, {name: chartType}).timeRadios
     return timeRanges.filter(time => {
       return _.includes(expectTimes, time.value)
+    })
+  },
+
+  filterChartTypeByIndicator() {
+    api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
+      let availableCharts = res.objects.map(chart => {
+        return chart.name
+      })
+      this.data.chartTypeFilteredList = builderDefinitions.charts.filter(chart => {
+        return _.includes(availableCharts, chart.name)
+      })
     })
   },
 
@@ -112,6 +124,12 @@ let ChartWizardStore = Reflux.createStore({
 
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
         this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+        this.data.chartTypeFilteredList = builderDefinitions.charts
+
+        if (this.data.indicatorSelected.length > 0) {
+          this.filterChartTypeByIndicator()
+        }
+
         this.applyChartDef(chartDef)
 
         this.previewChart()
@@ -135,11 +153,17 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddIndicator(index) {
     this.data.indicatorSelected.push(this.indicatorIndex[index])
+    if (this.data.indicatorSelected.length === 1) {
+      this.filterChartTypeByIndicator()
+    }
     this.previewChart()
   },
 
   onRemoveIndicator(id) {
     _.remove(this.data.indicatorSelected, {id: id})
+    if (this.data.indicatorSelected.length ===  0) {
+      this.data.chartTypeFilteredList = builderDefinitions.charts
+    }
     this.previewChart()
   },
 

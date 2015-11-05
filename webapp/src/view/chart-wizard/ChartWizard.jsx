@@ -127,7 +127,7 @@ let ChartWizard = React.createClass({
 
     let chartTypeStep = (
       <div>
-        <ChartSelect charts={builderDefinitions.charts} value={this.state.data.chartDef.type}
+        <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
       </div>
     )

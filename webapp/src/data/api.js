@@ -312,6 +312,7 @@ module.exports = {
   user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
   queue_reprocess: endPoint('/queue_process/', 'get', 1, false),
+  chartType: endPoint('/chart_type/', 'get', 1),
 
   // SOURCE DATA DASHBOARD REQUESTS //
   source_doc: endPoint('/source_doc/', 'get', 1),
