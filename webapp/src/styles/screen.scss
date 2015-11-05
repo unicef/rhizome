@@ -280,40 +280,47 @@ table {
   }
 }
 
-button,
+//button,
 .button,
 *[role="button"] {
-  @include button($radius: true);
-  border-bottom-width: 3px;
-
-  transition: all 300ms ease-in-out;
+  background-color: $rhz-button-bg-color;
+  color: $rhz-font-color;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  border-style: hidden;
 
   &:not(.disabled):not(.success):hover {
-    border-color: $secondary-color
+    background-color: #426281;
+    color: $rhz-font-color;
   }
 
   &:focus {
     outline: none;
   }
+}
 
-  &.small {
-    border-bottom-width: 2px;
-    font-size: rem-calc(9);
-    padding: 0.5em 1.5em;
+.search-button {
+  background-color: #FAFAFA;
+  .icon {
+    color: #000000;
+  }
+  &:not(.disabled):not(.success):hover {
+    background-color: #FAFAFA;
   }
 }
 
 .button-bar {
   button, .button, *[role="button"] {
     background-color: transparent;
-    border: none;
-    color: $jumbo;
-    margin: 0;
-    padding: 0;
-    transition: color 300ms ease;
+    //border: none;
+    color: $rhz-font-color;
+    //margin: 0;
+    //padding: 0;
+    //transition: color 300ms ease;
 
     &:hover {
-      color: $secondary-color;
+      background-color: #426281;
+      color: $rhz-font-color;
     }
   }
 }
@@ -337,10 +344,13 @@ button,
 }
 
 .button.read-only {
-  border-bottom-width: 1px;
-  cursor: initial;
+  //border-bottom-width: 1px;
+  //cursor: initial;
+  color: $rhz-font-color;
   &:not(.disabled):not(.success):hover {
-    border-color: $button-border-color;
+    //border-color: $button-border-color;
+    background-color: #426281;
+    color: $rhz-font-color;
   }
 
 }
@@ -622,10 +632,11 @@ ul {
 
 .menu-button {
   font-size: 1rem;
+  color: $rhz-font-color;
 
   .fa-circle {
     color: $button-border-color;
-    text-shadow: 0 2px #667c89;
+    //text-shadow: 0 2px #667c89;
   }
 
   .fa-circle-thin {
