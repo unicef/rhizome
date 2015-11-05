@@ -77,7 +77,8 @@ module.exports = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    return nextProps.data !== this.props.data
+    return nextProps.loading !== this.props.loading
+    //return nextProps.data !== this.props.data
   },
 
   componentWillReceiveProps: function(nextProps) {
