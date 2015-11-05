@@ -95,7 +95,7 @@ function preparePolioCasesData(original) {
   }
 
   var color = d3.scale.ordinal()
-    .range(['#AF373E', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
+    .range(['#377EA4', '#F15046', '#82888e', '#98a0a8', '#b6c0cc'])
     .domain(_(original.data)
       .map(_.method('campaign.start_date.getFullYear'))
       .uniq()
@@ -190,7 +190,7 @@ function prepareUnderImmunizedData(original) {
     _.property('name'),
     d3.scale.ordinal()
       .domain(_(data).pluck('name').sortBy().value())
-      .range(['#AF373E', '#FABAA2'])
+      .range(['#D95449', '#B6D0D4'])
   );
 
   return {

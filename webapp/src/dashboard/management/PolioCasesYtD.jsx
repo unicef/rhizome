@@ -50,7 +50,7 @@ module.exports = React.createClass({
     var title = _.isEmpty(this.props.data) ?
       (<h4>Wild Polio Cases</h4>) :
       (<h4 style={{
-          'color'      : '#D95348'
+          'color'      : '#F15046'
         }}>
         {totalCases} Polio cases this year
       </h4>);
