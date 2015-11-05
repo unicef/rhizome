@@ -10,6 +10,7 @@ var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx');
 
 var colors = require('colors');
 var Chart = require('component/Chart.jsx');
+var YtDChart = require('component/YtDChart.jsx');
 
 var series = function (values, name) {
   return {
@@ -21,6 +22,16 @@ var series = function (values, name) {
 var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator;
 };
+
+function percentage(dataset) {
+  var total = _(dataset).pluck('value').sum();
+
+  _.forEach(dataset, function (d) {
+    d.value /= total;
+  });
+
+  return dataset;
+}
 
 var HomepageCharts = React.createClass({
   propTypes: {
@@ -60,12 +71,28 @@ var HomepageCharts = React.createClass({
     return missed;
   },
 
-  prepareChartsData: function() {
-    var data = this.props.data;
+  preparePolioCasesData: function() {
+    var color = d3.scale.ordinal()
+      .range(['#AF373E', '#525b5e', '#82888e', '#98a0a8', '#b6c0cc'])
+      .domain(_(this.props.data)
+        .map(_.method('campaign.start_date.getFullYear'))
+        .uniq()
+        .sortBy()
+        .reverse()
+        .value());
+
+    return {
+      data: this.props.data.impact.polioCasesYtd,
+      colors: color
+    }
+  },
+
+  preparePerformanceData: function() {
+    var data = this.props.data.performance;
     var campaign = this.props.campaign;
+
     var upper = moment(campaign.start_date, 'YYYY-MM-DD');
     var lower = upper.clone().startOf('month').subtract(1, 'year');
-    var loading = this.props.loading;
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren);
 
@@ -75,44 +102,104 @@ var HomepageCharts = React.createClass({
       _.method('getTime')
     );
 
-    var social = _.find(data.microplans, indicatorForCampaign(campaign.id, 28));
+    var missedChildrenMap = data.missedChildrenByProvince;
 
-    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
-    var conversions = _(sortedConversions)
+    return {
+      missedChildrenMap: missedChildrenMap,
+      missed: missed,
+      missedScale: missedScale
+    };
+  },
+
+  prepareUnderImmunizedData: function () {
+    var stack = d3.layout.stack()
+      .offset('zero')
+      .values(function (d) { return d.values; })
+      .x(function (d) { return d.campaign.start_date; })
+      .y(function (d) { return d.value; });
+
+    var data = _(this.props.data.impact.underImmunizedChildren)
+      .each(function (d) {
+        // Add a property to each datapoint indicating the fiscal quarter
+        d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY');
+      })
+      .groupBy(function (d) {
+        return d.indicator.id + '-' + d.quarter;
+      })
+      .map(function (datapoints) {
+        // Calculate the total number of children with X doses of OPV for
+        // each quarter
+        return _.assign({}, datapoints[0], {
+          'value' : _(datapoints).pluck('value').sum()
+        });
+      })
+      .groupBy('quarter')
+      .map(percentage)
+      .flatten()
+      .reject(function (d) {
+        // Exclude 4+ doses, because that is implied as 1 - <0 doses> - <1–3 doses>
+        return d.indicator.id === 433;
+      })
       .groupBy('indicator.short_name')
-      .map(series)
+      .map(function (values, name) {
+        return {
+          name   : name,
+          values : values
+        };
+      })
+      .sortBy('name')
       .value();
 
-    social = !_.isEmpty(social) ? [[social]] : [];
+    var start = moment(this.props.campaign.start_date);
+    var lower = start.clone().startOf('quarter').subtract(3, 'years');
+    var upper = start.clone().endOf('quarter');
 
-    var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
-    var inPlace = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value');
-    var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
+    var immunityScale = _.map(d3.time.scale()
+        .domain([lower.valueOf(), upper.valueOf()])
+        .ticks(d3.time.month, 3),
+      _.method('getTime')
+    );
 
-    var transitPoints = [];
-    if (!_.any([inPlace, planned], _.isUndefined)) {
-      transitPoints.push([{
-        title: inPlace + ' / ' + planned + ' in place',
-        value: inPlace / planned
-      }]);
-    }
+    var color = _.flow(
+      _.property('name'),
+      d3.scale.ordinal()
+        .domain(_(data).pluck('name').sortBy().value())
+        .range(['#AF373E', '#FABAA2'])
+    );
 
-    if (!_.any([withSM, inPlace], _.isUndefined)) {
-      transitPoints.push([{
-        title: withSM + ' / ' + inPlace + ' have a social mobilizer',
-        value: withSM / inPlace
-      }]);
-    }
+    return {
+      data: stack(data),
+      immunityScale: immunityScale,
+      color: color
+    };
+  },
 
+  prepareChartsData: function() {
     var pct = d3.format('%');
 
-    var missedChildrenMap = data.missedChildrenByProvince;
+    var loading = this.props.loading;
 
     var charts = [];
 
+    var performanceData = this.preparePerformanceData();
+    var impactData = this.prepareUnderImmunizedData();
+    var polioCasesData = this.preparePolioCasesData();
+
+    charts.push(
+      <YtDChart
+            data={polioCasesData.data}
+            loading={loading}
+            options={{
+              color  : _.flow(_.property('name'), polioCasesData.colors),
+              aspect  : 1,
+              width: 390,
+              height: 390
+            }} />
+    );
+
     charts.push(
       <Chart type='ChoroplethMap'
-        data={missedChildrenMap}
+        data={performanceData.missedChildrenMap}
         loading={loading}
         options={{
           domain  : _.constant([0, 0.1]),
@@ -124,12 +211,12 @@ var HomepageCharts = React.createClass({
       />);
 
     charts.push(
-      <Chart type='ColumnChart' data={missed}
+      <Chart type='ColumnChart' data={performanceData.missed}
         loading={loading}
         options={{
           aspect  : 1,
           color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
-          domain  : _.constant(missedScale),
+          domain  : _.constant(performanceData.missedScale),
           x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
           xFormat : d => moment(d).format('MMM YYYY'),
           yFormat : pct,
@@ -139,18 +226,24 @@ var HomepageCharts = React.createClass({
       />);
 
     charts.push(
-      <Chart type='LineChart' data={conversions}
-        loading={loading}
-        options={{
-          aspect  : 1,
-          domain  : _.constant([lower.toDate(), upper.toDate()]),
-          yFormat : pct,
-          width: 390,
-          height: 390
-        }}
-      />);
+      <Chart type='ColumnChart'
+          data={impactData.data}
+          loading={loading}
+          options={{
+            aspect  : 1,
+            color   : impactData.color,
+            domain  : _.constant(impactData.immunityScale),
+            values  : _.property('values'),
+            x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf(); },
+            xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY'); },
+            y0      : _.property('y0'),
+            yFormat : d3.format(',.1%'),
+            width: 390,
+            height: 390
+          }}
+        />);
 
-    return charts;
+    return _.shuffle(charts);
   },
 
   render: function () {

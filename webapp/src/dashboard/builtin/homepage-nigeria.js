@@ -3,6 +3,22 @@ module.exports = {
 	'title' : 'Homepage Nigeria',
   'builtin': true,
 	'charts' : [{
+			'title'      : 'Polio Cases YTD',
+			'section'    : 'impact',
+			'indicators' : [168],
+			'startOf'    : 'year',
+			'timeRange'  : {
+				years : 2
+			}
+		}, {
+			'title'      : 'Under-Immunized Children',
+			'section'    : 'impact',
+			'indicators' : [431,432,433],
+			'startOf'    : 'quarter',
+			'timeRange'  : {
+				years : 3
+			}
+		}, {
 			'title'      : 'Missed Children',
 			'section'    : 'performance',
 			'indicators' : [166,164,167,165],
@@ -16,13 +32,6 @@ module.exports = {
       'locations'  : 'sublocations',
       'timeRange'  : 0,
 			'indicators' : [475]
-		}, {
-			'title'      : 'Conversions',
-			'section'    : 'performance',
-			'indicators' : [187,189],
-			'timeRange'  : {
-				months : 12
-			}
 		}
 	]
 };
