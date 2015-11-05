@@ -3,6 +3,7 @@ module.exports = [
 	require('./district'),
 	require('./nco'),
 	require('./odk'),
+  require('./sourcedata'),
 	require('./homepage-afghanistan'),
 	require('./homepage-pakistan'),
 	require('./homepage-nigeria')
