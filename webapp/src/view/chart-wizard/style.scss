@@ -12,19 +12,18 @@
 
 .chart-wizard__step {
   list-style: none;
-  border: 1px solid #666;
+  border: 1px solid #ccc;
   border-bottom: none;
 
   &:last-child {
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid #ccc;
   }
 
   h2 {
-    background: #ddd;
     padding: 5px 10px;
     margin: 0;
-    border-bottom: 1px solid #666;
     cursor: pointer;
+    background: #fff;
   }
 
   .chart-wizard__expandable {
@@ -33,8 +32,15 @@
     padding: 10px;
   }
 
-  &.active .chart-wizard__expandable {
-    display: block;
+  &.active {
+    h2 {
+      background: #436380;
+      color: #fff;
+    }
+
+    .chart-wizard__expandable {
+      display: block;
+    }
   }
 }
 
@@ -43,10 +49,28 @@
   display: inline-block;
   margin-left: 50px;
   vertical-align: top;
+
+  h1 {
+    background: #436380;
+    color: #fff;
+    margin: 0;
+    padding: 5px 10px;
+  }
 }
 
+.chart-wizard__save,
 .chart-wizard__cancel {
   display: block;
   margin: 10px 0;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  text-transform: uppercase;
+  background: #344b61;
   font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  &:hover {
+    background: #426281;
+  }
 }

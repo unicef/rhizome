@@ -201,9 +201,9 @@ let ChartWizard = React.createClass({
       <div>
         <label>Title</label>
         <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
-        <a href='#' className='button success' onClick={this.saveChart}>
+        <span className='chart-wizard__save' onClick={this.saveChart}>
           {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
-        </a>
+        </span>
       </div>
     )
 
@@ -241,7 +241,7 @@ let ChartWizard = React.createClass({
             (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
-        <a className='chart-wizard__cancel' href='#' onClick={this.props.cancel}>Cancel without saving chart</a>
+        <span className='chart-wizard__cancel' href='#' onClick={this.props.cancel}>Cancel</span>
       </div>
     )
   }
