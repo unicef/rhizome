@@ -53,12 +53,13 @@ module.exports = React.createClass({
     } else if (rows.length > 0) {
       rows = rows.map(_tableRow);
     } else {
-      rows = <tr><td>No custom dashboards created yet.</td></tr>;
+      rows = <tr><td colSpan="3">No custom dashboards created yet.</td></tr>;
     }
 
     return (
       <div className="row">
         <div className="medium-12 columns">
+          <h5 className="all-dashboard">all custom dashboard</h5>
           <table>
             <thead>
               <tr>

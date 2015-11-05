@@ -26,9 +26,15 @@
     }
     a {
       padding: 8px;
-      background: #f0f0f0;
+      background-color: $rhz-button-bg-color;
+      color: $rhz-font-color;
+
+      &:hover {
+        background-color: #426281;
+      }
+
       &.active {
-        background: #0099ff;
+        background: #426281;
         color: #f0f0f0;
       }
     }

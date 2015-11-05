@@ -1,6 +1,5 @@
 @import "variables";
 @import "mixins";
-
 @import "settings";
 @import "foundation";
 @import "font-awesome";
@@ -8,7 +7,6 @@
 @import "charts";
 @import "dashboards-redesign";
 @import "search-criteria";
-
 @import "admin";
 @import "react-widgets";
 @import "react-widgets-core";
@@ -749,6 +747,13 @@ ul {
 
 .cd-chart-size {
   width: 340px;
+}
+
+.all-dashboard {
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 10px;
 }
 
 @import "footer";

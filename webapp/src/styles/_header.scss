@@ -53,6 +53,7 @@ header {
 ul.dashboards-nav {
   display: block;
   position: relative;
+  padding-left: 70px;
   @include clearfix();
 
   .log-out {
@@ -61,7 +62,7 @@ ul.dashboards-nav {
 
   > li {
     margin: 0;
-    padding: 27px 3px;
+    padding: 27px 10px;
     border: none;
     display: inline-block;
     text-align: left;
@@ -89,7 +90,7 @@ ul.dashboards-nav {
 .dashboard-menu {
   display: none;
   position: absolute;
-  margin: 27px -4px;
+  margin: 27px -10px;
   border: 1px solid #fff; //todo:
   background-color: $rhz-navigation-hover-bg-color;
   width: 300px; //todo:
@@ -98,7 +99,6 @@ ul.dashboards-nav {
   > li {
 
     display: block;
-    padding: 0;
     margin: 0;
     border: none;
     text-align: left;
@@ -112,7 +112,7 @@ ul.dashboards-nav {
       color: $rhz-font-color;
       font-size: 1rem;
       display: block;
-      padding: 5px;
+      padding: 5px 10px;
       opacity: 1;
       overflow-x: hidden;
       text-overflow: ellipsis;
@@ -121,7 +121,7 @@ ul.dashboards-nav {
       color: $rhz-font-color;
 
       &:hover {
-        background-color: $rhz-background-color;
+        background-color: $rhz-button-bg-color;
       }
     }
   }
@@ -130,6 +130,7 @@ ul.dashboards-nav {
     text-decoration: underline;
     a {
       font-size: 0.6rem;
+      text-transform: lowercase;
     }
   }
 }
