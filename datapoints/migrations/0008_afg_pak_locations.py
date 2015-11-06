@@ -6,7 +6,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0007_build_functions'),
+        ('datapoints', '0006_cache_and_cleanup_metadata'),
     ]
 
     operations = [
