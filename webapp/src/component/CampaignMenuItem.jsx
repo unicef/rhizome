@@ -8,8 +8,7 @@ var moment = require('moment');
 var CampaignMenuItem = React.createClass({
   propTypes : {
     sendValue  : React.PropTypes.func.isRequired,
-    id         : React.PropTypes.number.isRequired,
-    slug       : React.PropTypes.string.isRequired,
+    campaign   : React.PropTypes.object.isRequired
   },
 
   statics : {
@@ -31,7 +30,7 @@ var CampaignMenuItem = React.createClass({
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-          {date} {percentageComplete}
+          {this.props.campaign.slug} {percentageComplete}
         </a>
       </li>
     );

@@ -47,6 +47,7 @@ var CampaignDropdownMenu = React.createClass({
   },
 
   render : function () {
+    var self = this;
     var re = new RegExp(this.state.pattern);
 
     // If the pattern is longer than two characters, filter the list with it,
@@ -61,7 +62,8 @@ var CampaignDropdownMenu = React.createClass({
       .reverse()
       .map(function (campaign) {
         return (
-          <CampaignMenuItem campaign={campaign}/>
+          <CampaignMenuItem campaign={campaign}
+            sendValue={self.props.sendValue} />
         );
       })
       .value();
