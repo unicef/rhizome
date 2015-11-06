@@ -19,7 +19,6 @@ from source_data.models import *
 from datapoints.agg_tasks import CacheRefresh
 
 
-# class CacheRefreshTestCase(TransactionTestCase):
 class CacheRefreshTestCase(TestCase):
 
     '''
@@ -149,30 +148,6 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
-    def get_agg_value(self,location_id,campaign_id,indicator_id):
-
-        actual_value = AggDataPoint.objects.all()[0].value
-
-        print actual_value
-
-    def get_dwc_value(self,location_id,campaign_id,indicator_id):
-        '''
-        This testings the API for a row in the target dataframe and returns
-        the corresponding value
-
-        Testing the Value agains the API test_client currenlty is not working.
-        Instead I will query the datapoint_with_computed table and ensure
-        later that the dataopint_abstracted transformation is working properly
-        '''
-
-        actual_value = AggDataPoint.objects.get(
-            location_id = location_id,
-            indicator_id = indicator_id,
-            campaign_id = campaign_id
-        ).value
-
-        return actual_value
-
     def test_location_aggregation(self):
         '''
         Using the calc_data.csv, create a test_df and target_df.  Ensure that
@@ -184,11 +159,16 @@ class CacheRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
-        indicator_id, campaign_id = 22, 111
+        indicator_id, campaign_id, raw_location_id,\
+            agg_location_id = 22,111,12910,12907
+
+        location_ids = Location.objects.filter(parent_location_id =\
+            agg_location_id).values_list('id',flat=True)
 
         dps = DataPoint.objects.filter(\
             indicator_id = indicator_id,
             campaign_id = campaign_id,
+            location_id__in = location_ids
             ).values_list('id','value')
 
         sum_dp_value = sum([y for x,y in dps])
@@ -196,10 +176,30 @@ class CacheRefreshTestCase(TestCase):
 
         cr = CacheRefresh(datapoint_id_list=dp_ids)
 
+        #################################################
+        ## ensure that raw data gets into AggDataPoint ##
+        #################################################
+
+        raw_value = DataPoint.objects.get(campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            location_id = raw_location_id)\
+            .value
+
+        raw_value_in_agg = AggDataPoint.objects.get(campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            location_id = raw_location_id)\
+            .value
+
+        self.assertEqual(raw_value, raw_value_in_agg)
+
+        #############################################
+        ## ensure that the aggregated data gets in ##
+        #############################################
+
         agg_value = AggDataPoint.objects.get(
             indicator_id = indicator_id,
             campaign_id = campaign_id,
-            location_id = 12907
+            location_id = agg_location_id
         ).value
 
         self.assertEqual(agg_value, sum_dp_value)

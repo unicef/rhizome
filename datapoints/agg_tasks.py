@@ -121,12 +121,10 @@ class CacheRefresh(object):
 
         # try:
         self.agg_dp_ids = self.agg_datapoints()
-        # self.calc_dp_ids = self.calc_datapoints()
+        self.calc_dp_ids = self.calc_datapoints()
         # except Exception as err:
         #     self.err = traceback.format_exc()
         #     return 'ERROR'
-
-        print self.agg_dp_ids
 
         return 'SUCCESS'
 
@@ -361,13 +359,29 @@ class CacheRefresh(object):
 
         '''
 
-        calc_curs = AggDataPoint.objects\
-            .raw("SELECT * FROM fn_calc_datapoint(%s)",[self.cache_job.id])
+        self.calc_prep()
+        self.sum_of_parts()
+        self.part_over_whole()
+        self.part_of_difference()
+        self.upsert_computed()
 
-        calc_dp_ids = [x.id for x in calc_curs]
+        return []
 
-        return calc_dp_ids
-
+    def calc_prep(self):
+        # PERFORM * FROM fn_calc_prep($1);
+        pass
+    def sum_of_parts(self):
+        # PERFORM * FROM fn_calc_sum_of_parts($1);
+        pass
+    def part_over_whole(self):
+        # PERFORM * FROM fn_calc_part_over_whole($1);
+        pass
+    def part_of_difference(self):
+        # PERFORM * FROM fn_calc_part_of_difference($1);
+        pass
+    def upsert_computed(self):
+        pass
+        # PERFORM * FROM upsert_computed($1);
 
     def get_indicator_ids(self):
         '''
