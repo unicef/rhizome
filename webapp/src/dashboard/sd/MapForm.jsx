@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var moment = require('moment');
 var React = require('react');
 var Reflux = require('reflux');
 
@@ -84,13 +85,23 @@ var MapForm = React.createClass({
                 </IndicatorDropdownMenu></div>;
         }
         if (content_type == 'campaign') {
-            return <div>
-                <CampaignDropdownMenu
-                    text={defaultSelected}
-                    campaigns={this.props.campaigns}
-                    sendValue={this.postMetaMap}>
-                </CampaignDropdownMenu>
-            </div>;
+          var office = {
+            1: 'Nigeria',
+            2: 'Afghanistan',
+            3: 'Pakistan'
+          }
+          var campaigns = this.props.campaigns.map(campaign => {
+            return _.assign({}, campaign, {
+              slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY')
+            })
+          })
+          return <div>
+              <CampaignDropdownMenu
+                  text={defaultSelected}
+                  campaigns={campaigns}
+                  sendValue={this.postMetaMap}>
+              </CampaignDropdownMenu>
+          </div>;
         }
     },
 

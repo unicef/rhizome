@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('lodash');
-//var moment = require('moment');
 var React = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var Reflux = require('reflux/src');
@@ -240,6 +239,11 @@ module.exports = React.createClass({
 
     var campaigns = _(this.state.dashboardStore.campaigns)
       .filter(c => c.office_id === location.office_id)
+      .map(campaign => {
+        return _.assign({}, campaign, {
+          slug: moment(campaign.start_date).format('MMMM YYYY')
+        })
+      })
       .sortBy('start_date')
       .reverse()
       .value();
@@ -263,7 +267,6 @@ module.exports = React.createClass({
               <CampaignTitleMenu
                 campaigns={campaigns}
                 selected={campaign}
-                location={location}
                 sendValue={this._setCampaign}/>
             </div>
 

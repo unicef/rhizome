@@ -293,6 +293,11 @@ var Dashboard = React.createClass({
 
         var campaigns = _(this.state.campaigns)
             .filter(c => c.office_id === location.office_id)
+            .map(campaign => {
+              return _.assign({}, campaign, {
+                slug: moment(campaign.start_date).format('MMMM YYYY')
+              })
+            })
             .sortBy('start_date')
             .reverse()
             .value();

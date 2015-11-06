@@ -3,8 +3,6 @@ var React = require('react');
 var Reflux = require('reflux');
 
 var RegionTitleMenu = require('component/RegionTitleMenu');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
 var Modal = require('react-modal');
 
 var SubmissionModalStore = require('stores/SubmissionModalStore');
@@ -50,7 +48,7 @@ var SubmissionModal = React.createClass({
                 submission_data.push(<li><b>{key}</b> : {value} </li>)
             });
         };
-        
+
         return <div>
             <button
                 className="tiny"

@@ -132,15 +132,17 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    this.state.data.campaignFilteredList.forEach(campaign => {
-      campaign.slug = moment(campaign.start_date).format('MMMM YYYY')
+    let campaignListAsDate = this.state.data.campaignFilteredList.map(campaign => {
+      return _.assign({}, campaign, {
+        slug: moment(campaign.start_date).format('MMMM YYYY')
+      })
     })
 
     let timeRangeStep = (
       <div>
         <CampaignDropdownMenu
           text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Campaign'}
-          campaigns={this.state.data.campaignFilteredList}
+          campaigns={campaignListAsDate}
           sendValue={ChartWizardActions.addCampaign}>
         </CampaignDropdownMenu>
 
