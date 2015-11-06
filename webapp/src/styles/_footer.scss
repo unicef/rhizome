@@ -1,11 +1,56 @@
 @import "variables";
 
+$break-small: 1010px;
+$break-large: 1200px;
+
+@mixin respond-to($media) {
+  @if $media == handhelds {
+    @media only screen and (max-width: $break-small) {
+      @content;
+    }
+  } @else if $media == medium-screens {
+    @media only screen and (min-width: $break-small + 1) and (max-width: $break-large - 1) {
+      @content;
+    }
+  } @else if $media == wide-screens {
+    @media only screen and (min-width: $break-large) {
+      @content;
+    }
+  }
+}
+
 footer {
+
   background-color: $rhz-navigation-bg-color;
   position: fixed;
   width: 100%;
   bottom: 0;
   z-index: 9999;
+  min-width: 100%;
+
+  @include respond-to(medium-screens) {
+    nav {
+      text-align: center !important;
+    }
+
+    ul > li {
+      margin: 0 !important;
+    }
+  }
+
+  @include respond-to(handhelds) {
+    nav {
+      text-align: center !important;
+    }
+
+    ul > li {
+      margin: 0 !important;
+    }
+    ul > li > a {
+      height: 36px !important;
+      line-height: 35px !important;
+    }
+  }
 
   .menu {
     display: none;
