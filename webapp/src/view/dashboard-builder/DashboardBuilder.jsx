@@ -25,7 +25,8 @@ var AppActions = require('actions/AppActions');
 var RegionTitleMenu = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
-
+var LayoutOptions = require('component/LayoutOptions.jsx');
+var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js');
 var CustomDashboard = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
@@ -176,6 +177,9 @@ module.exports = React.createClass({
 
         <div className="cd-title">Dashboard Title</div>
         <input className="description" type="text" value={this.state.title} onChange={this._updateNewTitle}/>
+        <LayoutOptions values= {LayoutDefaultSettings.values}
+                       value={this.state.store.layout}
+                       onChange={DashboardBuilderActions.changeLayout} />
         {this.state.store.dashboardTitle.length ?
           <a href="#" className="cd-button" onClick={DashboardBuilderActions.addDashboard}>Next</a> : null}
       </form>);

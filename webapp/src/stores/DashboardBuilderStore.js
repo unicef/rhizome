@@ -9,6 +9,7 @@ var ancestoryString = require('data/transform/ancestryString');
 var moment = require('moment');
 
 var DashboardActions = require('actions/DashboardActions');
+var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js');
 
 var DashboardBuilderStore = Reflux.createStore({
   listenables: [require('actions/DashboardBuilderActions')],
@@ -25,7 +26,8 @@ var DashboardBuilderStore = Reflux.createStore({
     loaded: false,
     newDashboard: false,
     dashboardTitle: '',
-    dashboardDescription: ''
+    dashboardDescription: '',
+    layout: LayoutDefaultSettings.defaultValue
   },
 
   onInitialize: function (id) {
@@ -171,7 +173,8 @@ var DashboardBuilderStore = Reflux.createStore({
     var data = {
       title: this.data.dashboardTitle,
       default_office_id: null,
-      dashboard_json: '[]'
+      dashboard_json: '[]',
+      layout: this.data.layout
     };
     api.save_dashboard(data).then(function (response) {
       if (response.objects.id) {
@@ -236,6 +239,10 @@ var DashboardBuilderStore = Reflux.createStore({
       this.saveDashboard()
     }.bind(this), 1000);
   },
+  onChangeLayout: function(value){
+    this.data.layout = value;
+    this.trigger(this.data);
+  }
 });
 
 module.exports = DashboardBuilderStore;

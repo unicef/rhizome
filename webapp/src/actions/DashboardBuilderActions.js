@@ -15,5 +15,6 @@ module.exports = Reflux.createActions([
   "moveForward",
   "moveBackward",
   "updateDescription",
-  "deleteDashboard"
+  "deleteDashboard",
+  "changeLayout"
 ]);

@@ -360,11 +360,18 @@ class CustomDashboardResource(BaseModelResource):
 
         title = post_data['title']
 
+        try:
+            layout = int(post_data['layout'])
+        except KeyError:
+            layout = 0
+
+
         defaults = {
             'id': dash_id,
             'title': title,
             'owner_id': user_id,
             'default_office_id': default_office_id,
+            'layout': layout
         }
 
         if(CustomDashboard.objects.filter(title=title).count()>0 and (dash_id is None)):
