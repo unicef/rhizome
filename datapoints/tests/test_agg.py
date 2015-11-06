@@ -375,13 +375,13 @@ class AggRefreshTestCase(TestCase):
 
         cr = AggRefresh(datapoint_id_list=dp_list)
 
-        sum_calced_value = DataPointComputed.objects.get(
+        calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
             campaign_id = campaign_id,
             location_id = location_id
         ).value
 
-        pct_calced_value = DataPointComputed.objects.get(
+        calc_value_pct = DataPointComputed.objects.get(
             indicator_id = pct_indicator.id,
             campaign_id = campaign_id,
             location_id = location_id
@@ -389,8 +389,16 @@ class AggRefreshTestCase(TestCase):
 
         ## test SUM calculation
         sum_target_value = val_1 + val_2 + val_3
-        self.assertEqual(calced_value,sum_target_value)
+        self.assertEqual(calc_value_sum,sum_target_value)
 
         ## test part over whole calction
         pct_target_value = val_3 / float(sum_target_value)
-        self.assertEqual(pct_calced_value,pct_target_value)
+        self.assertEqual(calc_value_pct,pct_target_value)
+
+    def test_part_of_difference(self):
+        '''
+        NEEDS TEST.  This is currently the only calculation in the systtem That
+        does not have a unit test.
+        '''
+
+        self.assertEqual(1,1)
