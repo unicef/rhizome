@@ -1,8 +1,38 @@
+$break-small: 340px;
+$break-large: 1200px;
+
+@mixin respond-to($media) {
+  @if $media == handhelds {
+    @media only screen and (max-width: $break-small) {
+      @content;
+    }
+  } @else if $media == medium-screens {
+    @media only screen and (min-width: $break-small + 1) and (max-width: $break-large - 1) {
+      @content;
+    }
+  } @else if $media == wide-screens {
+    @media only screen and (min-width: $break-large) {
+      @content;
+    }
+  }
+}
+
 header {
   background-color: $rhz-navigation-bg-color;
   color: $rhz-navigation-color;
   text-transform: uppercase;
   z-index: 10000;
+
+  @include respond-to(medium-screens) {
+    nav {
+      text-align: center !important;
+      padding: 0 !important;
+    }
+    .dashboards-nav, .dashboards-bar, nav > ul > li{
+      padding: 0 !important;
+    }
+  }
+
 
   a {
     color: $rhz-font-color;
@@ -43,6 +73,7 @@ header {
 
   .logo {
     text-align: center;
+    height: 100%;
   }
 
   .dashboard-control {

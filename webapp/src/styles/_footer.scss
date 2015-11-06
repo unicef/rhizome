@@ -1,6 +1,6 @@
 @import "variables";
 
-$break-small: 1010px;
+$break-small: 340px;
 $break-large: 1200px;
 
 @mixin respond-to($media) {
@@ -31,16 +31,7 @@ footer {
   @include respond-to(medium-screens) {
     nav {
       text-align: center !important;
-    }
-
-    ul > li {
-      margin: 0 !important;
-    }
-  }
-
-  @include respond-to(handhelds) {
-    nav {
-      text-align: center !important;
+      padding: 0 !important;
     }
 
     ul > li {
@@ -50,7 +41,14 @@ footer {
       height: 36px !important;
       line-height: 35px !important;
     }
+    .menu {
+      bottom: 36px !important;
+    }
+    .menu > li {
+      padding: 0 10px !important;
+    }
   }
+
 
   .menu {
     display: none;
