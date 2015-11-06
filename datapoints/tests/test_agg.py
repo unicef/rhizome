@@ -254,7 +254,7 @@ class AggRefreshTestCase(TestCase):
         self.assertEqual(agg_value, sum_dp_value)
 
 
-    def test_sum_component_indicators(self):
+    def test_sum_and_pct(self):
         '''
         The system uses the "PART_TO_BE_SUMMED" edge type in order to create
         indicators such that the sum of:
@@ -266,9 +266,14 @@ class AggRefreshTestCase(TestCase):
           - Non Compliance(264)
 
         gives us: All Missed Children (21)
+        as well as: pct missed children due to refusal (166)
 
         Here we create new metadata so we can test this functionality for an
-        Abstracted use case.
+        Abstracted use case and test that
+
+        1.  We can SUM indicators
+        2.  We can use the result of #2 as the denominator for a percentage
+            calculation.
         '''
 
         self.set_up()
@@ -302,7 +307,13 @@ class AggRefreshTestCase(TestCase):
             data_format = 'int'
         )
 
-        ## create the calculations ##
+        pct_indicator = Indicator.objects.create(
+            name = 'pct of Deaths due to Hunger',
+            short_name = 'pct of Deaths due to Hunger',
+            data_format = 'pct'
+        )
+
+        ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_1.id,
@@ -317,6 +328,18 @@ class AggRefreshTestCase(TestCase):
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_3.id,
             calculation = EDGE_TYPE
+        )
+
+        ## FOR PART OVER WHOLE CALCULATIONS ##
+        indicator_calc_numerator = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_indicator.id,
+            indicator_component_id = sub_indicator_3.id,
+            calculation = 'PART'
+        )
+        indicator_calc_denominator = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_indicator.id,
+            indicator_component_id = parent_indicator.id,
+            calculation = 'WHOLE'
         )
 
         ## create the datapoints ##
@@ -352,11 +375,22 @@ class AggRefreshTestCase(TestCase):
 
         cr = AggRefresh(datapoint_id_list=dp_list)
 
-        calced_value = DataPointComputed.objects.get(
+        sum_calced_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
             campaign_id = campaign_id,
             location_id = location_id
         ).value
 
-        target_value = val_1 + val_2 + val_3
-        self.assertEqual(calced_value,target_value)
+        pct_calced_value = DataPointComputed.objects.get(
+            indicator_id = pct_indicator.id,
+            campaign_id = campaign_id,
+            location_id = location_id
+        ).value
+
+        ## test SUM calculation
+        sum_target_value = val_1 + val_2 + val_3
+        self.assertEqual(calced_value,sum_target_value)
+
+        ## test part over whole calction
+        pct_target_value = val_3 / float(sum_target_value)
+        self.assertEqual(pct_calced_value,pct_target_value)
