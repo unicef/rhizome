@@ -247,7 +247,6 @@ _.extend(ColumnChart.prototype, {
       .map(function (d) {
         return options.name(d);
       })
-      .reverse()
       .value();
 
     var fillColor = d3.scale.ordinal().range(['#B6D0D4', '#D95449']);
