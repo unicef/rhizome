@@ -64,8 +64,6 @@ class CacheRefreshTestCase(TestCase):
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
         location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
-        calc_indicator_df = read_csv\
-            ('datapoints/tests/_data/calculated_indicator_component.csv')
 
         user_id = User.objects.create_user('test','john@john.com', 'test').id
 
@@ -87,8 +85,6 @@ class CacheRefreshTestCase(TestCase):
         location_ids = self.model_df_to_data(location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
-        calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
-            CalculatedIndicatorComponent)
 
         document = Document.objects.create(
             doc_title = 'test',
@@ -256,3 +252,105 @@ class CacheRefreshTestCase(TestCase):
         ).value
 
         self.assertEqual(agg_value, sum_dp_value)
+
+
+    def test_sum_component_indicators(self):
+        '''
+        The system uses the "PART_TO_BE_SUMMED" edge type in order to create
+        indicators such that the sum of:
+          - Number Missed
+          - Missed due to other reasons(24)
+          - Child Absent(251)
+          - Not in Plan (267)
+          - Not Visited (268)
+          - Non Compliance(264)
+
+        gives us: All Missed Children (21)
+
+        Here we create new metadata so we can test this functionality for an
+        Abstracted use case.
+        '''
+
+        self.set_up()
+
+        EDGE_TYPE = 'PART_TO_BE_SUMMED'
+        campaign_id, location_id, agg_location_id = 111,12910,12907
+        val_1, val_2, val_3 = 303, 808, 909
+
+        ## create the parent and sub indicators ##
+        parent_indicator = Indicator.objects.create(
+            name = 'Number of Avoidable Deaths',
+            short_name = 'Number of Avoidable Deaths',
+            data_format = 'int'
+        )
+
+        sub_indicator_1 = Indicator.objects.create(
+            name = 'Number of Deaths due to Conflict',
+            short_name = 'Number of Deaths due to Conflict',
+            data_format = 'int'
+        )
+
+        sub_indicator_2 = Indicator.objects.create(
+            name = 'Number of Deaths due to Malaria',
+            short_name = 'Number of Deaths due to Malaria',
+            data_format = 'int'
+        )
+
+        sub_indicator_3 = Indicator.objects.create(
+            name = 'Number of Deaths due to Hunger',
+            short_name = 'Number of Deaths due to Hunger',
+            data_format = 'int'
+        )
+
+        ## create the calculations ##
+        indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_1.id,
+            calculation = EDGE_TYPE
+        )
+        indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_2.id,
+            calculation = EDGE_TYPE
+        )
+        indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_3.id,
+            calculation = EDGE_TYPE
+        )
+
+        ## create the datapoints ##
+        dp_1 = DataPoint.objects.create(
+            indicator_id = sub_indicator_1.id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            changed_by_id = self.user.id,
+            source_submission_id = 1,
+            cache_job_id = -1,
+        )
+        dp_2 = DataPoint.objects.create(
+            indicator_id = sub_indicator_2.id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            changed_by_id = self.user.id,
+            source_submission_id = 1,
+            cache_job_id = -1,
+        )
+        dp_3 = DataPoint.objects.create(
+            indicator_id = sub_indicator_3.id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            changed_by_id = self.user.id,
+            source_submission_id = 1,
+            cache_job_id = -1,
+        )
+
+        cr = CacheRefresh(datapoint_id_list=[dp_1.id,dp_2.id,dp_3.id])
+
+        calced_value = DataPointComputed.objects.get(
+            indicator_id = parent_indicator.id,
+            campaign_id = campaign_id,
+            location_id = location_id
+        ).value
+
+        self.assertEqual(calced_value,sum(val_1, val_2, val_3))
