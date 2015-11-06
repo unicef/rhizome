@@ -14,6 +14,7 @@ var CHARTS = {
 	HeatMapChart    : require('./heatmap'),
   Histogram       : require('./histogram'),
 	LineChart       : require('./line'),
+	AreaChart       : require('./area'),
 	PieChart        : require('./pie'),
 	ScatterChart    : require('./scatter')
 };

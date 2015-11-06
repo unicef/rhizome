@@ -28,10 +28,10 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 };
 
-function LineChart() {
+function AreaChart() {
 }
 
-_.extend(LineChart.prototype, {
+_.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
@@ -48,25 +48,20 @@ _.extend(LineChart.prototype, {
 
     options = _.assign(this._options, options);
 
-    var margin = options.margin
+    var margin = options.margin;
 
     var svg = this._svg;
     var width = this._width - margin.left - margin.right;
     var height = this._height - margin.top - margin.bottom;
 
-    var dataColor = options.color;
-    var colorRange = ['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc'];
+    var color = options.color;
 
-    if (!_.isFunction(dataColor)) {
-      var dataColorScale = d3.scale.ordinal()
-        .domain(_(series)
-          .map(options.seriesName)
-          .uniq()
-          .sortBy()
-          .value())
-        .range(colorRange);
+    if (!_.isFunction(color)) {
+      var colorScale = d3.scale.ordinal()
+        .domain(_.map(series, options.seriesName))
+        .range(['#C4D9DC', '#A2AAB3', '#E5E9EC', '#D8D9E1']);
 
-      dataColor = _.flow(options.seriesName, dataColorScale);
+      color = _.flow(options.seriesName, colorScale);
     }
 
     var domain = _.isFunction(options.domain) ?
@@ -81,10 +76,6 @@ _.extend(LineChart.prototype, {
       .domain(domain)
       .range([0, width]);
 
-    var dataXScale = d3.time.scale()
-      .domain(domain)
-      .range([30, width]);
-
     var range = _.isFunction(options.range) ?
       options.range(series) :
       d3.extent(_(series)
@@ -93,14 +84,37 @@ _.extend(LineChart.prototype, {
         .map(options.y)
         .value());
 
-    range[0] = Math.min(range[0], 0);
+    range[0] = 0;
 
     var yScale = options.scale()
       .domain(range)
       .range([height, 0]);
 
-    var x = _.flow(options.x, dataXScale);
+    var x = _.flow(options.x, xScale);
     var y = _.flow(options.y, yScale);
+
+    // Set up the hover interaction
+    svg.attr('class', 'area')
+      .call(hoverLine()
+        .width(width)
+        .height(height)
+        .xFormat(options.xFormat)
+        .yFormat(options.yFormat)
+        .x(options.x)
+        .y(options.y)
+        .xScale(xScale)
+        .yScale(yScale)
+        .value(options.y)
+        .seriesName(_.property('seriesName'))
+        .sort(true)
+        .datapoints(_(series).map(function (s) {
+          // Set the series name on each datapoint for easy retrieval
+          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
+        })
+          .flatten()
+          .value()
+      )
+    );
 
     var g = svg.select('.data')
       .selectAll('.series')
@@ -111,8 +125,8 @@ _.extend(LineChart.prototype, {
       .attr('class', 'series');
 
     g.style({
-      'fill': dataColor,
-      'stroke': dataColor
+      'fill': color,
+      'stroke': color
     });
 
     g.exit().remove();
@@ -124,11 +138,14 @@ _.extend(LineChart.prototype, {
 
     path.enter().append('path');
 
-    path.transition()
-      .duration(500)
-      .attr('d', d3.svg.line().x(x).y(y));
+    var area = d3.svg.area()
+    .x(x)
+    .y0(height)
+    .y1(y);
 
-    g.selectAll('line').data(options.values);
+    path.transition()
+    .duration(500)
+    .attr('d', area);
 
     var labels = _(series)
       .map(function (d) {
@@ -146,48 +163,14 @@ _.extend(LineChart.prototype, {
       .sortBy('y')
       .value();
 
-    var legendColorScale = d3.scale.ordinal()
-        .domain(_(labels)
-        .map(function(d) {return d.text})
-        .uniq()
-        .sortBy()
-        .value())
-        .range(colorRange);
-
-    var legendColor = _.flow(function(d) {return d.text}, legendColorScale);
-
-    svg.select('.annotation').selectAll('.series.label')
+    svg.select('.annotation')
+      .selectAll('.series.label')
       .data(labels)
       .call(label()
         .addClass('series')
         .width(width)
         .height(height)
-        .align(false)
-        .scale(legendColor));
-
-    // Set up the hover interaction
-    svg.attr('class', 'line')
-      .call(hoverLine()
-        .width(width)
-        .height(height)
-        .xFormat(options.xFormat)
-        .yFormat(options.yFormat)
-        .x(options.x)
-        .y(options.y)
-        .xScale(dataXScale)
-        .yScale(yScale)
-        .value(options.y)
-        .seriesName(_.property('seriesName'))
-        .sort(true)
-        .colorRange(colorRange)
-        .datapoints(_(series).map(function (s) {
-          // Set the series name on each datapoint for easy retrieval
-          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
-        })
-          .flatten()
-          .value()
-      )
-    );
+        .align(false));
 
     var gx = svg.select('.x.axis')
       .call(d3.svg.axis()
@@ -235,4 +218,4 @@ _.extend(LineChart.prototype, {
   }
 });
 
-module.exports = LineChart;
+module.exports = AreaChart;
