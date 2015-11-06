@@ -166,9 +166,6 @@
 				AND ta.indicator_id = ad.indicator_id
 			);
 
-
-			RETURN QUERY
-
 			SELECT ad.location_id FROM agg_datapoint ad
 			WHERE ad.cache_job_id = $1
 			LIMIT 1;

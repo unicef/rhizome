@@ -17,6 +17,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 
 from django.template import RequestContext
+from django.db import models, migrations
 
 from pandas import read_csv
 from pandas import DataFrame

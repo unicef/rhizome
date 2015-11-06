@@ -1,6 +1,7 @@
 import json
 from subprocess import call
 from pprint import pprint
+from os import path
 
 from django.db import transaction
 from django.test import TransactionTestCase, TestCase
@@ -8,6 +9,8 @@ from django.contrib.auth.models import User
 from tastypie.test import ResourceTestCase
 from django.test import Client
 from django.core.management import call_command
+from django.db import migrations
+
 # from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv, notnull
 
@@ -45,9 +48,13 @@ class CacheRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-
         # ./manage.py migrate --fake myapp 0004_previous_migration
         # ./manage.py migrate myapp 0005_migration_to_run
+
+    def readSQLFromFile(self,filename):
+        SQL_DIR = path.join(path.dirname(path.dirname(path.\
+            abspath(__file__))), 'sql')
+        return open(path.join(SQL_DIR, filename), 'r').read()
 
     def create_metadata(self):
         '''
@@ -71,6 +78,14 @@ class CacheRefreshTestCase(TestCase):
         status_id = ProcessStatus.objects.create(
                 status_text = 'test',
                 status_description = 'test').id
+
+        location_type1 = LocationType.objects.create(admin_level=0,name="country")
+        location_type2 = LocationType.objects.create(admin_level=1,name="province")
+        location_type3 = LocationType.objects.create(admin_level=2,name="district")
+        location_type4 = LocationType.objects.create(admin_level=3,name="sub-district")
+        location_type5 = LocationType.objects.create(admin_level=4,name="settlement")
+
+        campaign_type1 = CampaignType.objects.create(name='test')
 
         location_ids = self.model_df_to_data(location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,Campaign)
@@ -154,7 +169,7 @@ class CacheRefreshTestCase(TestCase):
 
         return actual_value
 
-    def basic(self):
+    def test_basic(self):
         '''
         Using the calc_data.csv, create a test_df and target_df.  Ensure that
         the aggregation and calcuation are working properly, but ingesting the
