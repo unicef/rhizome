@@ -368,8 +368,33 @@ class CacheRefresh(object):
         return []
 
     def calc_prep(self):
-        # PERFORM * FROM fn_calc_prep($1);
-        pass
+
+        raw_qs = AggDataPoint.objects.raw('''
+
+        CREATE TABLE _tmp_calc_datapoint AS
+        SELECT DISTINCT
+            ad.id
+            ,ad.location_id
+            ,ad.campaign_id
+            ,ad.indicator_id
+            ,ad.value
+            ,ad.cache_job_id
+        FROM agg_datapoint ad
+        WHERE ad.cache_job_id = %s;
+
+        CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (location_id,
+            campaign_id, indicator_id);
+
+        -- FIX --
+        DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN';
+
+        SELECT * FROM agg_datapoint
+        LIMIT 1;
+
+        ''',[self.cache_job.id])
+
+        return [x.id for x in raw_qs]
+
     def sum_of_parts(self):
         # PERFORM * FROM fn_calc_sum_of_parts($1);
         pass
@@ -379,9 +404,39 @@ class CacheRefresh(object):
     def part_of_difference(self):
         # PERFORM * FROM fn_calc_part_of_difference($1);
         pass
+
     def upsert_computed(self):
-        pass
-        # PERFORM * FROM upsert_computed($1);
+
+        raw_qs = AggDataPoint.objects.raw('''
+
+    	UPDATE datapoint_with_computed dwc
+    		SET value = tcd.value
+    			, cache_job_id = tcd.cache_job_id
+    	FROM _tmp_calc_datapoint tcd
+    	WHERE dwc.location_id = tcd.location_id
+    	AND dwc.indicator_id = tcd.indicator_id
+    	AND dwc.campaign_id = tcd.campaign_id
+    	AND tcd.value IS NOT NULL ; -- FIXME
+
+    	INSERT INTO datapoint_with_computed
+    	(location_id, campaign_id, indicator_id, value, cache_job_id)
+
+    	SELECT location_id, campaign_id, indicator_id, value, cache_job_id
+    	FROM _tmp_calc_datapoint tcd
+    	WHERE NOT EXISTS (
+    		SELECT 1 FROM datapoint_with_computed dwc
+    		WHERE tcd.location_id = dwc.location_id
+    		AND tcd.campaign_id = dwc.campaign_id
+    	 	AND tcd.indicator_id = dwc.indicator_id
+    	)
+    	AND tcd.value IS NOT NULL; -- FIXME
+
+    	SELECT ad.id FROM agg_datapoint ad
+    	WHERE ad.cache_job_id = %s
+    	LIMIT 1;
+        ''',[self.cache_job.id])
+
+        return [x.id for x in raw_qs]
 
     def get_indicator_ids(self):
         '''

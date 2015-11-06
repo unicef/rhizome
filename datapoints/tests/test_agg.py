@@ -42,7 +42,7 @@ class CacheRefreshTestCase(TestCase):
 
         data_df = read_csv('datapoints/tests/_data/calc_data.csv')
         self.create_metadata()
-        self.user = User.objects.get(id=1)
+        self.user = User.objects.get(username="test")
 
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
@@ -80,9 +80,7 @@ class CacheRefreshTestCase(TestCase):
 
         location_type1 = LocationType.objects.create(admin_level=0,name="country")
         location_type2 = LocationType.objects.create(admin_level=1,name="province")
-        location_type3 = LocationType.objects.create(admin_level=2,name="district")
-        location_type4 = LocationType.objects.create(admin_level=3,name="sub-district")
-        location_type5 = LocationType.objects.create(admin_level=4,name="settlement")
+        # location_type3 = LocationType.objects.create(admin_level=2,name="district")
 
         campaign_type1 = CampaignType.objects.create(name='test')
 
@@ -186,6 +184,61 @@ class CacheRefreshTestCase(TestCase):
             .value
 
         raw_value_in_agg = AggDataPoint.objects.get(campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            location_id = raw_location_id)\
+            .value
+
+        self.assertEqual(raw_value, raw_value_in_agg)
+
+        #############################################
+        ## ensure that the aggregated data gets in ##
+        #############################################
+
+        agg_value = AggDataPoint.objects.get(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = agg_location_id
+        ).value
+
+        self.assertEqual(agg_value, sum_dp_value)
+
+    def test_raw_data_to_computed(self):
+        '''
+        This just makes sure that any data in the datapoint table, gets into the
+        Calculated DataPoint table.  That is, i insert a value for missed
+        children in Borno, the same exact data should be in the
+        datapoint_with_computed table no matter what.
+        '''
+
+        self.set_up()
+        self.create_raw_datapoints()
+        indicator_id, campaign_id, raw_location_id,\
+            agg_location_id = 22,111,12910,12907
+
+        location_ids = Location.objects.filter(parent_location_id =\
+            agg_location_id).values_list('id',flat=True)
+
+        dps = DataPoint.objects.filter(\
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id__in = location_ids
+            ).values_list('id','value')
+
+        sum_dp_value = sum([y for x,y in dps])
+        dp_ids = [x for x,y in dps]
+
+        cr = CacheRefresh(datapoint_id_list=dp_ids)
+
+        #################################################
+        ## ensure that raw data gets into datapoint_with_computed ##
+        #################################################
+
+        raw_value = DataPoint.objects.get(campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            location_id = raw_location_id)\
+            .value
+
+        raw_value_in_agg = DataPointComputed.objects.get(campaign_id = campaign_id,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value

@@ -99,25 +99,7 @@ BEGIN
 					WHERE ri.indicator_id = intc.indicator_id
 				);
 
-				CREATE TABLE _tmp_calc_datapoint AS
-
-				SELECT DISTINCT
-					ad.id
-					,ad.location_id
-					,ad.campaign_id
-					,ad.indicator_id
-					,ad.value
-					,'t' as is_calc
-				FROM agg_datapoint ad
-				INNER JOIN _indicators_needed_to_calc intc
-					ON ad.indicator_id = intc.indicator_id
-				INNER JOIN _location_campaign rc
-					ON ad.location_id = rc.location_id
-					AND ad.campaign_id = rc.campaign_id;
-
-	CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (location_id, campaign_id, indicator_id);
-
-	DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN'; -- FIX
+			
 
   RETURN QUERY
 
