@@ -335,7 +335,6 @@ var Dashboard = React.createClass({
                                 <div className="medium-4 columns">
                                     <CampaignTitleMenu
                                     campaigns={campaigns}
-                                    location={this.state.location}
                                     selected={campaign}
                                     sendValue={this._setCampaign}/>
                                 </div>

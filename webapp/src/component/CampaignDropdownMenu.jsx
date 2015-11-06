@@ -61,7 +61,7 @@ var CampaignDropdownMenu = React.createClass({
       .reverse()
       .map(function (campaign) {
         return (
-          <CampaignMenuItem />
+          <CampaignMenuItem campaign={campaign}/>
         );
       })
       .value();

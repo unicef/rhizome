@@ -13,12 +13,11 @@ var CampaignMenuItem = React.createClass({
   },
 
   statics : {
-    fromArray : function (arr, location, sendValue) {
+    fromArray : function (arr, sendValue) {
       return arr.map(function (campaign) {
         return (
           <CampaignMenuItem
             campaign={campaign}
-            location={location.name}
             sendValue={sendValue} />
         );
       });
@@ -32,7 +31,7 @@ var CampaignMenuItem = React.createClass({
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-          {this.props.location} {date} {percentageComplete}
+          {date} {percentageComplete}
         </a>
       </li>
     );
