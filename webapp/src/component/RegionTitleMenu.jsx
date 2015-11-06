@@ -40,7 +40,7 @@ var RegionTitleMenu = React.createClass({
       };
     });
 
-    if (filter.length > 1) {
+    if (filter.length > 2) {
       locations = locations.filter(r => {
         return new RegExp(filter, 'i').test(r.title)
       })
