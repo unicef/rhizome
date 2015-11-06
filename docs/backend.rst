@@ -134,15 +134,15 @@ information
 - ``datapoint_abstracted`` - the aggregated and calculated data stored in a
   format that mimics the response format of the ``api/v1/datapoint`` API.
 
-The Cache is refresh by instatiating the CacheRefresh Object.
+The Cache is refresh by instatiating the AggRefresh Object.
 
 For example:
   .. code-block:: python
 
-    from datapoints.agg_tasks import CacheRefresh
+    from datapoints.agg_tasks import AggRefresh
 
     ## refresh the cache with the default behavior
-    cr = CacheRefresh()
+    cr = AggRefresh()
     print cr.status
 
     >> 'SUCCESS'
@@ -150,14 +150,14 @@ For example:
 Or In the case where you want to refresh the cache for a list of datapoint_ids:
   .. code-block:: python
 
-    from datapoints.agg_tasks import CacheRefresh
+    from datapoints.agg_tasks import AggRefresh
     from datapoints.models import DataPoint
 
     ## get a List of DataPoint IDs for the location Arghestan ##
     dp_ids = DataPoint.objects.filter(location_id = 13317).values_list('id',flat=True)
 
     ## refresh the cache for the datapoint_ids retrieved above ##
-    cr = CacheRefresh(datapoint_id_list = dp_ids)
+    cr = AggRefresh(datapoint_id_list = dp_ids)
     print cr.status
 
     >> 'SUCCESS'
@@ -165,7 +165,7 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-  .. autoclass:: datapoints.agg_tasks.CacheRefresh
+  .. autoclass:: datapoints.agg_tasks.AggRefresh
 
 **When the __init__() method is called two subsequent methods are called:**
 
@@ -174,20 +174,20 @@ The Cache Refresh Class
 
 the set_up() method
 -------------------
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.set_up
+  .. automethod:: datapoints.agg_tasks.AggRefresh.set_up
 
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.get_indicator_ids
+  .. automethod:: datapoints.agg_tasks.AggRefresh.get_indicator_ids
 
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.get_datapoints_to_cache
+  .. automethod:: datapoints.agg_tasks.AggRefresh.get_datapoints_to_cache
 
 the main() method
 -----------------
 
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.main
+  .. automethod:: datapoints.agg_tasks.AggRefresh.main
 
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.agg_datapoints
+  .. automethod:: datapoints.agg_tasks.AggRefresh.agg_datapoints
 
-  .. automethod:: datapoints.agg_tasks.CacheRefresh.calc_datapoints
+  .. automethod:: datapoints.agg_tasks.AggRefresh.calc_datapoints
 
 
 

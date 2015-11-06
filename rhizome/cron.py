@@ -1,7 +1,7 @@
 from django_cron import CronJobBase, Schedule
 from django.contrib.auth.models import User
 
-from datapoints.agg_tasks import CacheRefresh
+from datapoints.agg_tasks import AggRefresh
 
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import SourceSubmission
@@ -13,7 +13,7 @@ class AggAndComputeDataPoint(CronJobBase):
     code = 'rhizome.agg_and_compute_datapoint'    # a unique code
 
     def do(self):
-        cr = CacheRefresh()
+        cr = AggRefresh()
 
 class MasterRefreshJob(CronJobBase):
     RUN_EVERY_MINS = 1

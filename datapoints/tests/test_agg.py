@@ -16,27 +16,27 @@ from pandas import read_csv, notnull
 
 from datapoints.models import *
 from source_data.models import *
-from datapoints.agg_tasks import CacheRefresh
+from datapoints.agg_tasks import AggRefresh
 
 
-class CacheRefreshTestCase(TestCase):
+class AggRefreshTestCase(TestCase):
 
     '''
-    from datapoints.agg_tasks import CacheRefresh
-    mr = CacheRefresh()
+    from datapoints.agg_tasks import AggRefresh
+    mr = AggRefresh()
 
     ## or ##
 
-    from datapoints.agg_tasks import CacheRefresh
+    from datapoints.agg_tasks import AggRefresh
     from datapoints.models import DataPoint, location
     r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
     dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-    mr = CacheRefresh(list(dp_ids))
+    mr = AggRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
 
-        super(CacheRefreshTestCase, self).__init__(*args, **kwargs)
+        super(AggRefreshTestCase, self).__init__(*args, **kwargs)
 
     def set_up(self):
 
@@ -168,7 +168,7 @@ class CacheRefreshTestCase(TestCase):
         sum_dp_value = sum([y for x,y in dps])
         dp_ids = [x for x,y in dps]
 
-        cr = CacheRefresh(datapoint_id_list=dp_ids)
+        cr = AggRefresh(datapoint_id_list=dp_ids)
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
@@ -223,7 +223,7 @@ class CacheRefreshTestCase(TestCase):
         sum_dp_value = sum([y for x,y in dps])
         dp_ids = [x for x,y in dps]
 
-        cr = CacheRefresh(datapoint_id_list=dp_ids)
+        cr = AggRefresh(datapoint_id_list=dp_ids)
 
         #################################################
         ## ensure that raw data gets into datapoint_with_computed ##
@@ -324,6 +324,7 @@ class CacheRefreshTestCase(TestCase):
             indicator_id = sub_indicator_1.id,
             campaign_id = campaign_id,
             location_id = location_id,
+            value = val_1,
             changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -332,6 +333,7 @@ class CacheRefreshTestCase(TestCase):
             indicator_id = sub_indicator_2.id,
             campaign_id = campaign_id,
             location_id = location_id,
+            value = val_2,
             changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -340,12 +342,15 @@ class CacheRefreshTestCase(TestCase):
             indicator_id = sub_indicator_3.id,
             campaign_id = campaign_id,
             location_id = location_id,
+            value = val_3,
             changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )
 
-        cr = CacheRefresh(datapoint_id_list=[dp_1.id,dp_2.id,dp_3.id])
+        dp_list = [dp_1.id,dp_2.id,dp_3.id]
+
+        cr = AggRefresh(datapoint_id_list=dp_list)
 
         calced_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -353,4 +358,5 @@ class CacheRefreshTestCase(TestCase):
             location_id = location_id
         ).value
 
-        self.assertEqual(calced_value,sum(val_1, val_2, val_3))
+        target_value = val_1 + val_2 + val_3
+        self.assertEqual(calced_value,target_value)

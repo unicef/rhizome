@@ -142,7 +142,7 @@ def manage_data_refresh(request):
 
 
 def refresh_cache(request):
-    cr = agg_tasks.CacheRefresh()
+    cr = agg_tasks.AggRefresh()
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 

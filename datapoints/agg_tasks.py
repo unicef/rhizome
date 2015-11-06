@@ -10,11 +10,11 @@ from django.contrib.auth.models import User
 from datapoints.models import *
 from source_data.models import SourceObjectMap
 
-class CacheRefresh(object):
+class AggRefresh(object):
     '''
     Any time a user wants to refresh the cache, that is make any changes in the
     datapoint table avalaible to the API and the platform as a whole, the
-    CacheRefresh object is instatiated.  The flow of data is as follows:
+    AggRefresh object is instatiated.  The flow of data is as follows:
         - Create a row in the ETL Job table.  This record will track the
           time each tasks takes, and in addition this ID is used as a key
           in the datapoints table so we can see when and why the cache was
@@ -43,7 +43,6 @@ class CacheRefresh(object):
         '''
 
         if CacheJob.objects.filter(date_completed=None):
-            print 'CACHE_RUNNING'
             return
 
         self.datapoint_id_list = datapoint_id_list
@@ -73,12 +72,12 @@ class CacheRefresh(object):
         what the status of the job is.
 
         Next, this method finds the datapoint ids that it will use to run the
-        cache job using ``CacheRefresh.get_datapoints_to_cache()``.  Only data that is relevenat to these datapoint ids should be
+        cache job using ``AggRefresh.get_datapoints_to_cache()``.  Only data that is relevenat to these datapoint ids should be
         altered.  That includes any data for parents of the associated datapoints
         as well as any indicators that are stored as the result of the
         calculation on the underlying datapoints.
 
-        Finally this method calls ``CacheRefresh.get_indicator_ids()`` to get
+        Finally this method calls ``AggRefresh.get_indicator_ids()`` to get
         indicators needed to loop through ( both raw and computed ) that will
         need to be refreshed.
 
@@ -371,6 +370,7 @@ class CacheRefresh(object):
 
         raw_qs = AggDataPoint.objects.raw('''
 
+        DROP TABLE IF EXISTS _tmp_calc_datapoint;
         CREATE TABLE _tmp_calc_datapoint AS
         SELECT DISTINCT
             ad.id
@@ -396,8 +396,106 @@ class CacheRefresh(object):
         return [x.id for x in raw_qs]
 
     def sum_of_parts(self):
-        # PERFORM * FROM fn_calc_sum_of_parts($1);
-        pass
+        '''
+        For more info on this see:
+        https://github.com/unicef/rhizome/blob/master/docs/spec.rst#aggregation-and-calculation
+
+        '''
+
+        raw_qs = AggDataPoint.objects.raw('''
+
+        -- THIS QUERY ENSURES THAT IF DATA IS STORED AT A HIGHER lvl
+        -- THEN IT's SUB COMPONENTS, DATA AT THE HIGHER LEVEL WINS
+            --> for instance, if i have data stored at indicator_id 251
+            --> as well as the component indicators of 251 ( 24,251,267,268,264 )
+            --> we will take the data for 251 over it's sub-components
+
+        INSERT INTO _tmp_calc_datapoint
+        (indicator_id,location_id,campaign_id,value,cache_job_id)
+
+        SELECT
+        cic.indicator_id
+          , dwc.location_id
+          , dwc.campaign_id
+          , SUM(COALESCE(dwc.value,0.00)) as agg_value
+          , %s
+        FROM calculated_indicator_component cic
+        INNER JOIN _tmp_calc_datapoint dwc
+        ON 1 = 1
+        AND cic.indicator_component_id = dwc.indicator_id
+        AND calculation = 'PART_TO_BE_SUMMED'
+        AND NOT EXISTS (
+          SELECT 1 FROM _tmp_calc_datapoint tcd
+          WHERE dwc.location_id = tcd.location_id
+          AND dwc.campaign_id = tcd.campaign_id
+          AND cic.indicator_id = tcd.indicator_id
+        )
+
+        GROUP BY cic.indicator_id, dwc.location_id, dwc.campaign_id;
+
+        -- THIS HANDLES INDICATORS WHERE THE SUM IS MULTI LAYERED see:
+        -- http://rhizome.work/ufadmin/manage/indicator/21
+        -- http://rhizome.work/ufadmin/manage/indicator/251
+
+        WITH RECURSIVE ind_graph AS
+        (
+        -- non-recursive term ( rows where the components aren't
+        -- master_indicators in another calculation )
+
+      	SELECT
+        		 cic.id
+      		,cic.indicator_id
+      		,cic.indicator_component_id
+      		--,0 as lvl
+      	FROM calculated_indicator_component cic
+      	WHERE NOT EXISTS (
+      		SELECT 1 FROM calculated_indicator_component cic_leaf
+      		WHERE cic.indicator_component_id = cic_leaf.indicator_id
+      	)
+      	AND calculation = 'PART_TO_BE_SUMMED'
+
+      	UNION ALL
+
+      	-- recursive term --
+      	SELECT
+      		cic_recurs.id
+      		,cic_recurs.indicator_id
+      		,ig.indicator_component_id
+      		--,ig.lvl + 1
+      	FROM calculated_indicator_component AS cic_recurs
+      	INNER JOIN ind_graph AS ig
+      	ON (cic_recurs.indicator_component_id = ig.indicator_id)
+      	AND calculation = 'PART_TO_BE_SUMMED'
+
+        )
+
+        INSERT INTO _tmp_calc_datapoint
+        (indicator_id,location_id,campaign_id,value,cache_job_id)
+
+        SELECT
+            ig.indicator_id
+          , dwc.location_id
+          , dwc.campaign_id
+          , SUM(COALESCE(dwc.value,0.00)) as agg_value
+          , %s
+        FROM ind_graph ig
+        INNER JOIN _tmp_calc_datapoint dwc
+            ON 1 = 1
+            AND ig.indicator_component_id = dwc.indicator_id
+        AND NOT EXISTS (
+          SELECT 1 FROM _tmp_calc_datapoint tcd
+          WHERE dwc.location_id = tcd.location_id
+          AND dwc.campaign_id = tcd.campaign_id
+          AND ig.indicator_id = tcd.indicator_id
+        )
+        GROUP BY ig.indicator_id, dwc.location_id, dwc.campaign_id;
+
+    	SELECT ad.id FROM agg_datapoint ad
+    	LIMIT 1;'''
+        , [self.cache_job.id,self.cache_job.id])
+
+        return [x.id for x in raw_qs]
+
     def part_over_whole(self):
         # PERFORM * FROM fn_calc_part_over_whole($1);
         pass
@@ -407,7 +505,7 @@ class CacheRefresh(object):
 
     def upsert_computed(self):
 
-        raw_qs = AggDataPoint.objects.raw('''
+        raw_qs = DataPointComputed.objects.raw('''
 
     	UPDATE datapoint_with_computed dwc
     		SET value = tcd.value
@@ -431,7 +529,7 @@ class CacheRefresh(object):
     	)
     	AND tcd.value IS NOT NULL; -- FIXME
 
-    	SELECT ad.id FROM agg_datapoint ad
+    	SELECT ad.id FROM datapoint_with_computed ad
     	WHERE ad.cache_job_id = %s
     	LIMIT 1;
         ''',[self.cache_job.id])
@@ -618,17 +716,6 @@ def cache_campaign_abstracted():
     ## temporarily harcoding indicators until we get management dashboard
     ## definition loading from the api... see:
     ## https://trello.com/c/nHSev5t9/226-8-front-end-api-calls-use-indicator-tag-to-populate-charts-and-dashboards
-    ## the code belwo that i commented out gets the indciator list by opening
-    ## the hardcoded builtin.js file that defines the management dashobard.
-
-    # with open(settings.BASE_DIR + '/webapp/src/dashboard/builtin/management.js') as data_file:
-    #     for line in data_file:
-    #         if 'indicators' in line:
-    #             cleaned_line = line.replace("'indicators' : ","")\
-    #                 .replace("],","").replace("\t","").replace("\n","")\
-    #                 .replace("[","").replace(" ","")
-    #
-    #             all_indicators.extend([int(x) for x in cleaned_line.split(',')])
 
     all_indicators = [168, 431, 432, 433, 166, 164, 167, 165, 475, 187, 189, \
     27, 28, 175, 176, 177, 204, 178, 228, 179, 184, 180, 185, 230, 226, 239, \
