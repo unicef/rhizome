@@ -537,9 +537,9 @@ class AggRefresh(object):
         raw_qs = AggDataPoint.objects.raw('''
 
         INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value)
+        (indicator_id,location_id,campaign_id,value,cache_job_id)
 
-          SELECT x.indicator_id,x.location_id,x.campaign_id, x.calculated_value
+          SELECT x.indicator_id,x.location_id,x.campaign_id, x.calculated_value, %s
           FROM (
           SELECT DISTINCT
         		denom.master_id as indicator_id
@@ -602,7 +602,7 @@ class AggRefresh(object):
 
         SELECT id from agg_datapoint limit 1;
 
-        ''')
+        ''',[self.cache_job.id])
 
         return [x.id for x in raw_qs]
 

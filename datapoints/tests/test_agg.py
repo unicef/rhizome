@@ -278,7 +278,6 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
 
-        EDGE_TYPE = 'PART_TO_BE_SUMMED'
         campaign_id, location_id, agg_location_id = 111,12910,12907
         val_1, val_2, val_3 = 303, 808, 909
 
@@ -317,17 +316,17 @@ class AggRefreshTestCase(TestCase):
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_1.id,
-            calculation = EDGE_TYPE
+            calculation = 'PART_TO_BE_SUMMED'
         )
         indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_2.id,
-            calculation = EDGE_TYPE
+            calculation = 'PART_TO_BE_SUMMED'
         )
         indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_3.id,
-            calculation = EDGE_TYPE
+            calculation = 'PART_TO_BE_SUMMED'
         )
 
         ## FOR PART OVER WHOLE CALCULATIONS ##
@@ -397,8 +396,86 @@ class AggRefreshTestCase(TestCase):
 
     def test_part_of_difference(self):
         '''
-        NEEDS TEST.  This is currently the only calculation in the systtem That
-        does not have a unit test.
+        see here: rhizome.work/ufadmin/manage/indicator/187
+
+        We use this calculation to perform the following calculation:
+
+        WHOLE_OF_DIFFERENCE(x) - PART_OF_DIFFERENCE(y)
+        -----------------------------------------
+             WHOLE_OF_DIFFERENCE_DENOMINATOR(x)
         '''
 
-        self.assertEqual(1,1)
+        self.set_up()
+
+        campaign_id, location_id, agg_location_id = 111,12910,12907
+        x, y = 303.00, 808.00
+
+        ## create the parent and sub indicators ##
+        parent_indicator = Indicator.objects.create(
+            name = 'Refsual Conversion',
+            short_name = 'Refsual Conversion',
+            data_format = 'pct'
+        )
+
+        sub_indicator_part = Indicator.objects.create(
+            name = 'Refusals After Revisit',
+            short_name = 'Refusals After Revisit',
+            data_format = 'int'
+        )
+
+        sub_indicator_denom = Indicator.objects.create(
+            name = 'Refusals Before Revisit',
+            short_name = 'Refusals Before Revisit',
+            data_format = 'int'
+        )
+
+        ## FOR SUM OF PARTS CALUCLATIONS ##
+        indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_part.id,
+            calculation = 'PART_OF_DIFFERENCE'
+        )
+        indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_denom.id,
+            calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
+        )
+        indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_denom.id,
+            calculation = 'WHOLE_OF_DIFFERENCE'
+        )
+
+        ## create the datapoints ##
+        dp_1 = DataPoint.objects.create(
+            indicator_id = sub_indicator_denom.id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            value = x,
+            changed_by_id = self.user.id,
+            source_submission_id = 1,
+            cache_job_id = -1,
+        )
+        dp_2 = DataPoint.objects.create(
+            indicator_id = sub_indicator_part.id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            value = y,
+            changed_by_id = self.user.id,
+            source_submission_id = 1,
+            cache_job_id = -1,
+        )
+
+        dp_list = [dp_1.id,dp_2.id]
+
+        cr = AggRefresh(datapoint_id_list=dp_list)
+
+        calc_value = DataPointComputed.objects.get(
+            indicator_id = parent_indicator.id,
+            campaign_id = campaign_id,
+            location_id = location_id
+        ).value
+
+        ## test SUM calculation
+        target_value = (x-y) / x
+        self.assertEqual(round(calc_value,4),round(target_value,4))
