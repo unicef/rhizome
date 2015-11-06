@@ -144,28 +144,22 @@ let ChartWizard = React.createClass({
           sendValue={ChartWizardActions.addCampaign}>
         </CampaignDropdownMenu>
 
-        <div>
-          <label>Time Range: </label>
-          <RadioGroup name='time' horizontal={true} value={this.state.data.timeValue}
-            values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
-        </div>
+        <RadioGroup name='time' title='Time Range'
+          value={this.state.data.timeValue}
+          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
       </div>
     )
 
     let groupBy = (
-      <div>
-        <label>Group By: </label>
-        <RadioGroup name='groupby' horizontal={true} value={this.state.data.groupByValue}
-          values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio}/>
-      </div>
+      <RadioGroup name='groupby' title='Group By: '
+        value={this.state.data.groupByValue}
+        values={builderDefinitions.groups} onChange={ChartWizardActions.changeGroupRadio} />
     )
     let locationLevel = (
-      <div>
-        <label>Location level: </label>
-        <RadioGroup name='location-level' horizontal={true} value={this.state.data.locationLevelValue}
-          values={builderDefinitions.locationLevels}
-          onChange={ChartWizardActions.changeLocationLevelRadio}/>
-      </div>
+      <RadioGroup name='location-level' title='Location Level: '
+        value={this.state.data.locationLevelValue}
+        values={builderDefinitions.locationLevels}
+        onChange={ChartWizardActions.changeLocationLevelRadio}/>
     )
 
     let optionStep = (
@@ -187,11 +181,9 @@ let ChartWizard = React.createClass({
             />
           ) :
           (
-            <div>
-              <label>Format: </label>
-              <RadioGroup name='format' horizontal={true} value={this.state.data.yFormatValue}
-              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio}/>
-            </div>
+            <RadioGroup name='format' title='Format: '
+              value={this.state.data.yFormatValue}
+              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
           )
         }
       </div>

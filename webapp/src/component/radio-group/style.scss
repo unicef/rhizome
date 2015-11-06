@@ -1,7 +1,10 @@
-.radioGroupContainer {
-	div {
-	  height: 21px;
+.radio-group-container {
+	margin: 10px 0;
+
+	input[type='radio'] {
+		margin: 0
 	}
+
 	.horizontal {
 		display: inline-block;
 		margin-right: 10px;

@@ -75,11 +75,13 @@ $right-page-width: 900px;
 }
 
 .chart-select {
+  text-align: center;
+
   .chart-box-wrapper {
-    padding: 10px 10px 8px 10px;
+    padding: 10px;
     display: inline-block;
-    border-radius: 10px;
-    margin: 0 $chart-wrapper-margin;
+    margin: 0;
+
     .chart-box {
       border-radius: 5px;
       text-align: center;
@@ -87,22 +89,26 @@ $right-page-width: 900px;
       cursor: pointer;
       opacity: 0.6;
     }
+
     .chart-icon {
       width: 80px;
       display: block;
       text-align: center;
     }
-  }
-  .chart-box-wrapper.active {
-    background-color: $chart-container-color;
-    .chart-box {
-      opacity: 1.0;
+
+    &.active {
+      background-color: #436380;
+      color: #fff;
+      .chart-box {
+        opacity: 1.0;
+      }
     }
-  }
-  .chart-box-wrapper:hover:not(.active) {
-    background-color: #f3f3f3;
-    .chart-box {
-      opacity: 1.0;
+
+    &:hover:not(.active) {
+      background-color: lighten(#436380, 50%);
+      .chart-box {
+        opacity: 1.0;
+      }
     }
   }
 }

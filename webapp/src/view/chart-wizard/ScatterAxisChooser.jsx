@@ -1,7 +1,6 @@
 import React from 'react'
 import Reflux from 'reflux'
 import _ from 'lodash'
-import moment from 'moment'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 let ScatterAxisChooser = React.createClass({
@@ -58,16 +57,12 @@ let ScatterAxisChooser = React.createClass({
 
     return (
       <div>
-        <div>
-          <label>X Format</label>
-          <RadioGroup name="xFormat" horizontal={true} value={this.props.xFormatValue}
-                      values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
-        </div>
-        <div>
-          <label>Y Format</label>
-          <RadioGroup name="yFormat" horizontal={true} value={this.props.yFormatValue}
-                      values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
-        </div>
+        <RadioGroup name="xFormat" title='X Format: '
+          value={this.props.xFormatValue}
+          values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
+        <RadioGroup name="yFormat" title='Y Format: '
+          value={this.props.yFormatValue}
+          values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
         <div>
           <label>X Axis</label>
           <select onChange={this._updateXAxis}>{axisOptions(this.props.xAxisValue, this.props.onXAxisChange)}</select></div>
