@@ -116,18 +116,18 @@ var CustomDashboard = React.createClass({
       if (editable) {
         controls = (
           <div className='button-bar' style={{float : 'right'}}>
-            <a role='button' onClick={this.props.onMoveBackward.bind(null, i)}>
+            <span className='button-bar__edit' onClick={this.props.onMoveBackward.bind(null, i)}>
               <i className='fa fa-icon fa-arrow-left fa-fw'></i>
-            </a>
-            <a role='button' onClick={this.props.onMoveForward.bind(null, i)}>
+            </span>
+            <span className='button-bar__edit' onClick={this.props.onMoveForward.bind(null, i)}>
               <i className='fa fa-icon fa-arrow-right fa-fw'></i>
-            </a>
-            <a role='button' onClick={this.props.onDeleteChart.bind(null, i)}>
+            </span>
+            <span className='button-bar__edit' onClick={this.props.onDeleteChart.bind(null, i)}>
               <i className='fa fa-icon fa-trash fa-fw'></i>
-            </a>
-            <a role='button' onClick={this.props.onEditChart.bind(null, i)}>
+            </span>
+            <span className='button-bar__edit' onClick={this.props.onEditChart.bind(null, i)}>
               <i className='fa fa-icon fa-pencil fa-fw'></i>
-            </a>
+            </span>
           </div>
         );
       }
