@@ -60,7 +60,7 @@ class IndicatorAbstracted(models.Model):
     information the API needs for each indicator.
 
     The transformation between Indicator and IndicatorAbstracted is handled in
-    datapoints/cache_tasks.py -> cache_indicator_abstracted()
+    datapoints/agg_tasks.py -> cache_indicator_abstracted()
     '''
 
     description = models.CharField(max_length=255)
@@ -83,7 +83,7 @@ class UserAbstracted(models.Model):
     table, but in tables keyed off user_id ( user_to_group, location_permission).
 
     The transformation between Indicator and IndicatorAbstracted is handled in
-    datapoints/cache_tasks.py -> cache_user_abstracted()
+    datapoints/agg_tasks.py -> cache_user_abstracted()
 
     '''
 

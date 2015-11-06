@@ -139,7 +139,7 @@ The Cache is refresh by instatiating the CacheRefresh Object.
 For example:
   .. code-block:: python
 
-    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.agg_tasks import CacheRefresh
 
     ## refresh the cache with the default behavior
     cr = CacheRefresh()
@@ -150,7 +150,7 @@ For example:
 Or In the case where you want to refresh the cache for a list of datapoint_ids:
   .. code-block:: python
 
-    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.agg_tasks import CacheRefresh
     from datapoints.models import DataPoint
 
     ## get a List of DataPoint IDs for the location Arghestan ##
@@ -165,7 +165,7 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-  .. autoclass:: datapoints.cache_tasks.CacheRefresh
+  .. autoclass:: datapoints.agg_tasks.CacheRefresh
 
 **When the __init__() method is called two subsequent methods are called:**
 
@@ -174,20 +174,20 @@ The Cache Refresh Class
 
 the set_up() method
 -------------------
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.set_up
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.set_up
 
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.get_indicator_ids
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.get_indicator_ids
 
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.get_datapoints_to_cache
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.get_datapoints_to_cache
 
 the main() method
 -----------------
 
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.main
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.main
 
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.agg_datapoints
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.agg_datapoints
 
-  .. automethod:: datapoints.cache_tasks.CacheRefresh.calc_datapoints
+  .. automethod:: datapoints.agg_tasks.CacheRefresh.calc_datapoints
 
 
 

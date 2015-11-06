@@ -25,7 +25,7 @@ from functools import partial
 
 from datapoints.models import *
 from datapoints.forms import *
-from datapoints import cache_tasks
+from datapoints import agg_tasks
 from datapoints.mixins import PermissionRequiredMixin
 
 
@@ -142,7 +142,7 @@ def manage_data_refresh(request):
 
 
 def refresh_cache(request):
-    cr = cache_tasks.CacheRefresh()
+    cr = agg_tasks.CacheRefresh()
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
@@ -164,11 +164,11 @@ def refresh_metadata(request):
     This is what happens when you click the "refresh_metadata" button
     '''
 
-    indicator_cache_data = cache_tasks.cache_indicator_abstracted()
-    user_cache_data = cache_tasks.cache_user_abstracted()
-    campaign_cache_data = cache_tasks.cache_campaign_abstracted()
-    location_tree_cache_data = cache_tasks.cache_location_tree()
-    source_object_cache = cache_tasks.update_source_object_names()
+    indicator_cache_data = agg_tasks.cache_indicator_abstracted()
+    user_cache_data = agg_tasks.cache_user_abstracted()
+    campaign_cache_data = agg_tasks.cache_campaign_abstracted()
+    location_tree_cache_data = agg_tasks.cache_location_tree()
+    source_object_cache = agg_tasks.update_source_object_names()
 
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 

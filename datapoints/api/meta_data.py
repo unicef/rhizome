@@ -25,7 +25,7 @@ from datapoints.models import *
 from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.agg_tasks import CacheRefresh
 
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

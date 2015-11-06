@@ -2,13 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from datapoints import cache_tasks
+from datapoints import agg_tasks
 
 def cache_metadata(apps, schema_editor):
 
 
-    indicator_cache_data = cache_tasks.cache_indicator_abstracted()
-    campaign_cache_data = cache_tasks.cache_campaign_abstracted()
+    indicator_cache_data = agg_tasks.cache_indicator_abstracted()
+    campaign_cache_data = agg_tasks.cache_campaign_abstracted()
 
 
 

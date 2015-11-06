@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from datapoints import cache_tasks
+from datapoints import agg_tasks
 
 class Migration(migrations.Migration):
 

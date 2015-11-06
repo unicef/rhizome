@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from os import path
 
 from django.db import models, migrations
-from datapoints import cache_tasks
+from datapoints import agg_tasks
 
 SQL_DIR = path.join(path.dirname(path.dirname(path.abspath(__file__))), 'sql')
 
@@ -17,13 +17,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(readSQLFromFile('functions/fn_agg_datapoint.sql')),
-
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_prep.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_sum_of_parts.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_part_over_whole.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_part_of_difference.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_upsert_computed.sql')),
         migrations.RunSQL(readSQLFromFile('functions/fn_calc_datapoint.sql')),
-        migrations.RunSQL(readSQLFromFile('functions/fn_get_authorized_locations_by_user.sql'))
     ]

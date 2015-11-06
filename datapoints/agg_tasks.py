@@ -55,8 +55,6 @@ class CacheRefresh(object):
             response_msg = self.main()
 
             if response_msg == 'ERROR':
-                print 'ERROR\n' * 5
-                print self.cache_job.id
                 self.cache_job.response_msg = str(self.err)[:254]
                 self.cache_job.date_completed = datetime.now()
                 self.is_error = True
@@ -123,10 +121,12 @@ class CacheRefresh(object):
 
         # try:
         self.agg_dp_ids = self.agg_datapoints()
-        self.calc_dp_ids = self.calc_datapoints()
+        # self.calc_dp_ids = self.calc_datapoints()
         # except Exception as err:
         #     self.err = traceback.format_exc()
         #     return 'ERROR'
+
+        print self.agg_dp_ids
 
         return 'SUCCESS'
 

@@ -16,19 +16,19 @@ from pandas import read_csv, notnull
 
 from datapoints.models import *
 from source_data.models import *
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.agg_tasks import CacheRefresh
 
 
 # class CacheRefreshTestCase(TransactionTestCase):
 class CacheRefreshTestCase(TestCase):
 
     '''
-    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.agg_tasks import CacheRefresh
     mr = CacheRefresh()
 
     ## or ##
 
-    from datapoints.cache_tasks import CacheRefresh
+    from datapoints.agg_tasks import CacheRefresh
     from datapoints.models import DataPoint, location
     r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
     dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
@@ -149,6 +149,12 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
+    def get_agg_value(self,location_id,campaign_id,indicator_id):
+
+        actual_value = AggDataPoint.objects.all()[0].value
+
+        print actual_value
+
     def get_dwc_value(self,location_id,campaign_id,indicator_id):
         '''
         This testings the API for a row in the target dataframe and returns
@@ -159,17 +165,15 @@ class CacheRefreshTestCase(TestCase):
         later that the dataopint_abstracted transformation is working properly
         '''
 
-        # actual_value = DataPointComputed.objects.get(
-        #     location_id = location_id,
-        #     indicator_id = indicator_id,
-        #     campaign_id = campaign_id
-        # ).value
-
-        actual_value = DataPointComputed.objects.all()[0].value
+        actual_value = AggDataPoint.objects.get(
+            location_id = location_id,
+            indicator_id = indicator_id,
+            campaign_id = campaign_id
+        ).value
 
         return actual_value
 
-    def test_basic(self):
+    def test_location_aggregation(self):
         '''
         Using the calc_data.csv, create a test_df and target_df.  Ensure that
         the aggregation and calcuation are working properly, but ingesting the
@@ -180,56 +184,22 @@ class CacheRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
+        indicator_id, campaign_id = 22, 111
 
-        cr = CacheRefresh()
-        cr.main()
+        dps = DataPoint.objects.filter(\
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            ).values_list('id','value')
 
-        for ix, row in self.target_df.iterrows():
+        sum_dp_value = sum([y for x,y in dps])
+        dp_ids = [x for x,y in dps]
 
-            location_id, campaign_id, indicator_id = int(row.location_id),\
-               int(row.campaign_id),int(row.indicator_id)
+        cr = CacheRefresh(datapoint_id_list=dp_ids)
 
-            actual_value = self.get_dwc_value(location_id, campaign_id,\
-                indicator_id)
+        agg_value = AggDataPoint.objects.get(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = 12907
+        ).value
 
-            self.assertEqual(row.value,actual_value)
-
-    # def test_agg(self):
-    # def agg(self):
-    #     '''
-    #     First refresh the new datapoints and then only refresh the cache for
-    #     one datapoint_id and make sure agg uses all child data below even when
-    #     that data is from a different job
-    #
-    #     To Do - After the first cache_refresh, update the value and make sure
-    #     that the aggregated total works.  Note - will need to use either
-    #     ``transaction.atomic`` or ``TrasactionTestCase`` in order to persist
-    #     multiple DB changes within one test
-    #     '''
-    #     raw_indicator_id, campaign_id, raw_location_id, agg_location_id = 22, 111,\
-    #         12939, 12907
-    #
-    #     self.set_up()
-    #     self.create_raw_datapoints()
-    #
-    #     agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
-    #          raw_indicator_id]['value'].sum()
-    #
-    #     dp_id_to_refresh = DataPoint.objects.filter(
-    #         location_id = raw_location_id,
-    #         campaign_id = campaign_id ,
-    #         indicator_id = raw_indicator_id
-    #     ).values_list('id',flat=True)
-    #
-    #     cr = CacheRefresh()
-    #
-    #     ## now just try for one id (see POLIO-491 )
-    #     cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
-    #
-    #     ## FIXIME
-    #     actual_value = self.get_dwc_value(agg_location_id,campaign_id,\
-    #         raw_indicator_id)
-    #
-    #     self.assertEqual(actual_value,agg_value_target)
-    #
-    #     self.assertEqual(90909090,agg_value_target)
+        self.assertEqual(agg_value, sum_dp_value)

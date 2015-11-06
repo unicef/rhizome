@@ -14,7 +14,7 @@ from pandas import DataFrame
 from bulk_update.helper import bulk_update
 
 from source_data.models import *
-from datapoints.cache_tasks import CacheRefresh
+from datapoints.agg_tasks import CacheRefresh
 from datapoints.models import *
 
 class MasterRefresh(object):
