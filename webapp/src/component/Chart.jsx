@@ -1,6 +1,6 @@
 'use strict';
 
-var _     = require('lodash');
+var _ = require('lodash');
 var React = require('react');
 
 var ChartFactory = require('chart');
@@ -22,30 +22,30 @@ function isEmpty(type, data, options) {
 }
 
 module.exports = React.createClass({
-  propTypes : {
-    data     : React.PropTypes.array.isRequired,
-    type     : React.PropTypes.string.isRequired,
+  propTypes: {
+    data: React.PropTypes.array.isRequired,
+    type: React.PropTypes.string.isRequired,
 
-    id       : React.PropTypes.string,
-    loading  : React.PropTypes.bool,
-    options  : React.PropTypes.object,
+    id: React.PropTypes.string,
+    loading: React.PropTypes.bool,
+    options: React.PropTypes.object,
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     };
   },
 
-  render : function () {
+  render: function () {
     var overlay;
 
     if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
       var position = _.get(this.props, 'options.margin', {
-        top    : 0,
-        right  : 0,
-        bottom : 0,
-        left   : 0
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
       });
 
       var message = (this.props.loading) ?
@@ -68,7 +68,8 @@ module.exports = React.createClass({
     );
   },
 
-  componentDidMount : function () {
+  componentDidMount: function () {
+    //console.log("%c Did Mount", 'background: #222; color: #bada55');
     this._chart = ChartFactory(
       this.props.type,
       React.findDOMNode(this),
@@ -76,24 +77,33 @@ module.exports = React.createClass({
       this.props.options);
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
-    return nextProps.loading !== this.props.loading
-    //return nextProps.data !== this.props.data
+  shouldComponentUpdate: function (nextProps, nextState) {
+    //console.log("Next Props", nextProps);
+    //console.log("Next State", nextState);
+    //
+    //console.log("This Props", this.props);
+    //console.log("This State", this.state);
+    //
+    //console.log("Data Different", nextProps.data !== this.props.data);
+    //console.log("Loading Differnet", nextProps.loading !== this.props.loading);
+
+    return (nextProps.data !== this.props.data || nextProps.loading !== this.props.loading)
   },
 
-  componentWillReceiveProps: function(nextProps) {
-  	if(nextProps.type != this.props.type)
-  	{
-	    React.findDOMNode(this).innerHTML = '';
-  		this._chart = ChartFactory(
-		    nextProps.type,
-		    React.findDOMNode(this),
-		    nextProps.data,
-		    nextProps.options);
-  	}
+  componentWillReceiveProps: function (nextProps) {
+    //console.log("%c Receive Props", 'background: #333; color: #bada55');
+    if (nextProps.type != this.props.type) {
+      React.findDOMNode(this).innerHTML = '';
+      this._chart = ChartFactory(
+        nextProps.type,
+        React.findDOMNode(this),
+        nextProps.data,
+        nextProps.options);
+    }
   },
 
-  componentDidUpdate : function () {
+  componentDidUpdate: function () {
+    //console.log("%c Update Chart", 'background: #444; color: #bada55');
     this._chart.update(this.props.data, this.props.options);
   }
 });
