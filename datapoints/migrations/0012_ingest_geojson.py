@@ -30,8 +30,6 @@ def process_geo_level(lvl,data_dir):
 
 def process_geo_json_file(file_path,lvl):
 
-    print '\n PROCESSING: %s'  % file_path
-
     with open(file_path) as data_file:
         data = json.load(data_file)
 
@@ -61,7 +59,6 @@ def process_location(geo_json, lvl):
 
     try:
         location_id = Location.objects.get(location_code = location_code).id
-        print 'FOUND IT: %s ' %  location_name
     except ObjectDoesNotExist:
         location_id = None
 
@@ -69,9 +66,7 @@ def process_location(geo_json, lvl):
         try:
             location_id = Location.objects.get(name = location_name,\
                 location_type_id = location_type.id).id
-            print 'FOUND IT: %s ' %  location_name
         except ObjectDoesNotExist:
-            print '%s: DOES NOT EXIST!!!!  ' %  location_name
             location_id = None
 
     if not location_id:
@@ -79,9 +74,7 @@ def process_location(geo_json, lvl):
         try:
             location_id = Location.objects.get(name = location_name_with_type,\
                 location_type_id = location_type.id).id
-            print 'FOUND IT: %s ' %  location_name_with_type
         except ObjectDoesNotExist:
-            print '%s: DOES NOT EXIST!!!!  ' %  location_name_with_type
             location_id = None
 
     if not location_id:

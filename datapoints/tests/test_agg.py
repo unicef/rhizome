@@ -7,6 +7,7 @@ from django.test import TransactionTestCase, TestCase
 from django.contrib.auth.models import User
 from tastypie.test import ResourceTestCase
 from django.test import Client
+from django.core.management import call_command
 # from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv, notnull
 
@@ -38,14 +39,15 @@ class CacheRefreshTestCase(TestCase):
     def set_up(self):
 
         data_df = read_csv('datapoints/tests/_data/calc_data.csv')
-
         self.create_metadata()
-
-        self.user = User.objects.get(username='test')
+        self.user = User.objects.get(id=1)
 
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
+
+        # ./manage.py migrate --fake myapp 0004_previous_migration
+        # ./manage.py migrate myapp 0005_migration_to_run
 
     def create_metadata(self):
         '''
@@ -63,21 +65,14 @@ class CacheRefreshTestCase(TestCase):
 
         office_id = Office.objects.create(id=1,name='test').id
 
-        cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01', is_error = False)
+        cache_job_id = CacheJob.objects.create(id = -2,date_completed=\
+            '2015-01-01',date_attempted = '2015-01-01', is_error = False)
 
         status_id = ProcessStatus.objects.create(
                 status_text = 'test',
                 status_description = 'test').id
 
-        location_type1 = LocationType.objects.create(id=1,name="country")
-        location_type2 = LocationType.objects.create(id=2,name="settlement")
-        location_type3 = LocationType.objects.create(id=3,name="province")
-        location_type4 = LocationType.objects.create(id=4,name="district")
-        location_type5 = LocationType.objects.create(id=5,name="sub-district")
-
-        campaign_type = RestultStructureType.objects.create(id=1,name="test")
-
-        location_ids = self.model_df_to_data(location_df, location_df,Location)
+        location_ids = self.model_df_to_data(location_df,Location)
         campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
@@ -139,71 +134,6 @@ class CacheRefreshTestCase(TestCase):
 
         return dp_id
 
-    # def test_basic(self):
-    def basic(self):
-        '''
-        Using the calc_data.csv, create a test_df and target_df.  Ensure that
-        the aggregation and calcuation are working properly, but ingesting the
-        stored data, running the cache, and checking that the calculated data
-        for the aggregate location (parent location, in this case Nigeria) is as
-        expected.
-        '''
-
-        self.set_up()
-        self.create_raw_datapoints()
-
-        cr = CacheRefresh()
-
-        for ix, row in self.target_df.iterrows():
-
-            location_id, campaign_id, indicator_id = int(row.location_id),\
-               int(row.campaign_id),int(row.indicator_id)
-
-            actual_value = self.get_dwc_value(location_id, campaign_id,\
-                indicator_id)
-
-            self.assertEqual(row.value,actual_value)
-
-    # def test_agg(self):
-    def agg(self):
-        '''
-        First refresh the new datapoints and then only refresh the cache for
-        one datapoint_id and make sure agg uses all child data below even when
-        that data is from a different job
-
-        To Do - After the first cache_refresh, update the value and make sure
-        that the aggregated total works.  Note - will need to use either
-        ``transaction.atomic`` or ``TrasactionTestCase`` in order to persist
-        multiple DB changes within one test
-        '''
-        raw_indicator_id, campaign_id, raw_location_id, agg_location_id = 22, 111,\
-            12939, 12907
-
-        self.set_up()
-        self.create_raw_datapoints()
-
-        agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
-             raw_indicator_id]['value'].sum()
-
-        dp_id_to_refresh = DataPoint.objects.filter(
-            location_id = raw_location_id,
-            campaign_id = campaign_id ,
-            indicator_id = raw_indicator_id
-        ).values_list('id',flat=True)
-
-        cr = CacheRefresh()
-
-        ## now just try for one id (see POLIO-491 )
-        cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
-
-        ## FIXIME
-        actual_value = self.get_dwc_value(agg_location_id,campaign_id,\
-            raw_indicator_id)
-
-        self.assertEqual(actual_value,agg_value_target)
-
-        self.assertEqual(90909090,agg_value_target)
-
     def get_dwc_value(self,location_id,campaign_id,indicator_id):
         '''
         This testings the API for a row in the target dataframe and returns
@@ -220,6 +150,71 @@ class CacheRefreshTestCase(TestCase):
         #     campaign_id = campaign_id
         # ).value
 
-        actual_value = 9090909090
+        actual_value = DataPointComputed.objects.all()[0].value
 
         return actual_value
+
+    def basic(self):
+        '''
+        Using the calc_data.csv, create a test_df and target_df.  Ensure that
+        the aggregation and calcuation are working properly, but ingesting the
+        stored data, running the cache, and checking that the calculated data
+        for the aggregate location (parent location, in this case Nigeria) is as
+        expected.
+        '''
+
+        self.set_up()
+        self.create_raw_datapoints()
+
+        cr = CacheRefresh()
+        cr.main()
+
+        for ix, row in self.target_df.iterrows():
+
+            location_id, campaign_id, indicator_id = int(row.location_id),\
+               int(row.campaign_id),int(row.indicator_id)
+
+            actual_value = self.get_dwc_value(location_id, campaign_id,\
+                indicator_id)
+
+            self.assertEqual(row.value,actual_value)
+
+    # def test_agg(self):
+    # def agg(self):
+    #     '''
+    #     First refresh the new datapoints and then only refresh the cache for
+    #     one datapoint_id and make sure agg uses all child data below even when
+    #     that data is from a different job
+    #
+    #     To Do - After the first cache_refresh, update the value and make sure
+    #     that the aggregated total works.  Note - will need to use either
+    #     ``transaction.atomic`` or ``TrasactionTestCase`` in order to persist
+    #     multiple DB changes within one test
+    #     '''
+    #     raw_indicator_id, campaign_id, raw_location_id, agg_location_id = 22, 111,\
+    #         12939, 12907
+    #
+    #     self.set_up()
+    #     self.create_raw_datapoints()
+    #
+    #     agg_value_target = self.test_df = self.test_df[self.test_df['indicator_id'] ==\
+    #          raw_indicator_id]['value'].sum()
+    #
+    #     dp_id_to_refresh = DataPoint.objects.filter(
+    #         location_id = raw_location_id,
+    #         campaign_id = campaign_id ,
+    #         indicator_id = raw_indicator_id
+    #     ).values_list('id',flat=True)
+    #
+    #     cr = CacheRefresh()
+    #
+    #     ## now just try for one id (see POLIO-491 )
+    #     cr = CacheRefresh(datapoint_id_list=list(dp_id_to_refresh))
+    #
+    #     ## FIXIME
+    #     actual_value = self.get_dwc_value(agg_location_id,campaign_id,\
+    #         raw_indicator_id)
+    #
+    #     self.assertEqual(actual_value,agg_value_target)
+    #
+    #     self.assertEqual(90909090,agg_value_target)
