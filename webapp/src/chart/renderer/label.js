@@ -14,6 +14,7 @@ function label() {
 	var x               = function (d) { return d.x; };
 	var y               = function (d) { return d.y; };
 	var align           = true;
+  var scale           = d3.scale.category20b();
 
 	/**
 	 * @private
@@ -157,7 +158,10 @@ function label() {
 	function chart(labels) {
 		labels.enter()
 			.append('text')
-			.style('opacity', 0)
+			.style({
+        'opacity': 0,
+        'fill'   : scale
+      })
 			.attr({
 				'dy': '-4',
 				'x' : x,
@@ -312,6 +316,15 @@ function label() {
 		y = value;
 		return chart;
 	};
+
+  chart.scale = function(value) {
+    if (!arguments.length) {
+      return scale;
+    }
+
+    scale = value;
+    return chart;
+  };
 
 	return chart;
 }

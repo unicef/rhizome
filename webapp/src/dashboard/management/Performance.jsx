@@ -140,6 +140,7 @@ var Performance = React.createClass({
                    options={{
                 aspect  : 2.26,
                 domain  : _.constant([lower.toDate(), upper.toDate()]),
+                range   : _.constant([0, 1]),
                 x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
                 xFormat : d => moment(d).format('MMM YYYY'),
                 yFormat : pct

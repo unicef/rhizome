@@ -54,14 +54,15 @@ _.extend(LineChart.prototype, {
     var width = this._width - margin.left - margin.right;
     var height = this._height - margin.top - margin.bottom;
 
-    var color = options.color;
+    var dataColor = options.color;
+    var colorRange = ['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc'];
 
-    if (!_.isFunction(color)) {
-      var colorScale = d3.scale.ordinal()
+    if (!_.isFunction(dataColor)) {
+      var dataColorScale = d3.scale.ordinal()
         .domain(_.map(series, options.seriesName))
-        .range(['#525b5e', '#82888e', '#98a0a8', '#b6c0cc']);
+        .range(colorRange);
 
-      color = _.flow(options.seriesName, colorScale);
+      dataColor = _.flow(options.seriesName, dataColorScale);
     }
 
     var domain = _.isFunction(options.domain) ?
@@ -75,6 +76,10 @@ _.extend(LineChart.prototype, {
     var xScale = d3.time.scale()
       .domain(domain)
       .range([0, width]);
+
+    var dataXScale = d3.time.scale()
+      .domain(domain)
+      .range([20, width]);
 
     var range = _.isFunction(options.range) ?
       options.range(series) :
@@ -125,8 +130,8 @@ _.extend(LineChart.prototype, {
       .attr('class', 'series');
 
     g.style({
-      'fill': color,
-      'stroke': color
+      'fill': dataColor,
+      'stroke': dataColor
     });
 
     g.exit().remove();
@@ -142,30 +147,7 @@ _.extend(LineChart.prototype, {
       .duration(500)
       .attr('d', d3.svg.line().x(x).y(y))
 
-    var point = g.selectAll('circle')
-      .data(options.values);
-
-    point.enter()
-      .append('circle')
-      .attr({
-        'cx': x,
-        'cy': y,
-        'r': 0
-      });
-
-    point.transition()
-      .duration(500)
-      .attr({
-        'cx': x,
-        'cy': y,
-        'r': 3
-      });
-
-    point.exit()
-      .transition()
-      .duration(500)
-      .attr('r', 0)
-      .remove();
+    g.selectAll('line').data(options.values);
 
     var labels = _(series)
       .map(function (d) {
@@ -183,14 +165,20 @@ _.extend(LineChart.prototype, {
       .sortBy('y')
       .value();
 
-    svg.select('.annotation')
-      .selectAll('.series.label')
+    var legendColorScale = d3.scale.ordinal()
+        .domain(_.map(labels, function(d) {return d.text}))
+        .range(colorRange);
+
+    var legendColor = _.flow(function(d) {return d.text}, legendColorScale);
+
+    svg.select('.annotation').selectAll('.series.label')
       .data(labels)
       .call(label()
         .addClass('series')
         .width(width)
         .height(height)
-        .align(false));
+        .align(false)
+        .scale(legendColor));
 
     var gx = svg.select('.x.axis')
       .call(d3.svg.axis()

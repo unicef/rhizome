@@ -266,8 +266,10 @@ _.extend(ColumnChart.prototype, {
       .attr("x", w-20)
       .attr("y", 7)
       .attr("dy", ".15em")
-      .style("text-anchor", "end")
-      .style("fill", "#999999")
+      .style({
+        "text-anchor": 'end',
+        'fill': '#999999'
+        })
       .text(function(d) { return d; });
 
     var timeout = null;
@@ -344,7 +346,7 @@ _.extend(ColumnChart.prototype, {
       axisLabel
         .attr({
           'transform': 'translate(' + x(d) + ',' + (h + margin.bottom) + ')',
-          'dx': xScale.rangeBand() / 2
+          'dx': xScale.rangeBand() / 2,
         })
         .text(options.xFormat);
     });
