@@ -101,16 +101,13 @@ class AggRefresh(object):
 
         self.set_cache_job_id_for_raw_datapoints()
 
-        self.indicator_ids = self.get_indicator_ids()
+        self.campaign_id = DataPoint.objects.filter(cache_job_id = \
+            self.cache_job.id)[0].value
 
         return 'PENDING_AGG'
 
     def main(self):
         '''
-        For the given datapoint_ids ( self.datapoint_id_list )
-          - execute the "agg_datapoint".
-          - excecute the "calc_datapoint" sproc.
-          - return the result to be stored in the etl_job table.
         '''
 
         try:
@@ -119,7 +116,7 @@ class AggRefresh(object):
             return 'PENDING'
 
         # try:
-        self.agg_dp_ids = self.agg_datapoints()
+        self.agg_datapoints()
         self.calc_dp_ids = self.calc_datapoints()
         # except Exception as err:
         #     self.err = traceback.format_exc()
@@ -150,201 +147,23 @@ class AggRefresh(object):
 
     def agg_datapoints(self):
         '''
-        Datapoints are aggregated in two steps with two separate stored
-        procedures.
-          - init_agg_datapoints : save all of the raw (non aggregated) data
-          - agg_datapoints_by_location_type: given
+        Regional Aggregation based on the adjacency list built on top of the
+        parent_location_id column.
 
-        This method first calls the ``fn_init_agg_datapoint`` and then calls ``
-        agg_datapoints_by_location_type`` for each location_type starting from the
-        leaf level and moving up to the country level.
-
-        It is important that this function touches as little data as possible
-        while altering exactly the data that needs to be altered for the latest
-        updates to effect aggregation
-
-        TO DO:
-            - add location_type_sproc in this method
-            - Add datapoint_id_list as a param to both of these sprocs
-            - look into more closely why a purely recursive query wont work.
-              My initial diagnosis was that there was bad parent/child data in
-              the locations table but currenlty when i look at locations with parents
-              of the same location_type all I see is Kirachi.
+        Data stored in the DataPoint table for a location with the same
+        indicator, campaign will always override the aggregated values.
         '''
 
-        adp_cursor = DataPoint.objects.raw("""
+        agg_dp_batch = []
+        dp_objects = DataPoint.objects.filter(cache_job_id = self.cache_job.id)\
+            .values('indicator_id','campaign_id','location_id','value',\
+                'cache_job_id')
 
-            DROP TABLE IF EXISTS _campaign_indicator;
-			DROP TABLE IF EXISTS _to_agg;
-			DROP TABLE IF EXISTS _tmp_agg;
+        for dp in dp_objects:
+            agg_dp_batch.append(AggDataPoint(**dp))
 
-			CREATE TABLE _campaign_indicator AS
-			SELECT DISTINCT campaign_id, indicator_id FROM datapoint d
-			WHERE d.cache_job_id = %s;
-
-			CREATE TABLE _to_agg AS
-
-			WITH RECURSIVE location_tree AS
-					(
-					-- non-recursive term ( rows where the components aren't
-					-- master_indicators in another calculation )
-
-					SELECT
-						rg.parent_location_id
-						,rg.parent_location_id as immediate_parent_id
-						,rg.id as location_id
-						,0 as lvl
-					FROM location rg
-
-					UNION ALL
-
-					-- recursive term --
-					SELECT
-						r_recurs.parent_location_id
-						,rt.parent_location_id as immediate_parent_id
-						,rt.location_id
-						,rt.lvl + 1
-					FROM location AS r_recurs
-					INNER JOIN location_tree AS rt
-					ON (r_recurs.id = rt.parent_location_id)
-				AND r_recurs.parent_location_id IS NOT NULL
-			)
-
-			SELECT DISTINCT
-				d.id as datapoint_id
-				,d.indicator_id
-				,d.campaign_id
-				,d.location_id
-				,d.value
-				,rt.parent_location_id
-				,rt.immediate_parent_id
-			FROM location_tree rt
-			INNER JOIN datapoint d
-			ON rt.location_id = d.location_id
-			AND d.value IS NOT NULL
-			INNER JOIN _campaign_indicator ci
-			ON d.indicator_id = ci.indicator_id
-			AND d.campaign_id = ci.campaign_id
-			WHERE EXISTS (
-
-						SELECT 1 -- DATA AT SAME locationAL LEVEL AS REQUESTED
-						FROM location r
-						WHERE r.parent_location_id = rt.parent_location_id
-						AND rt.location_id = d.location_id
-
-						UNION ALL
-
-						SELECT 1-- DATA AT SAME locationAL LEVEL AS REQUESTED
-						FROM location r
-						WHERE r.id = rt.location_id
-						AND r.parent_location_id IS NULL
-
-			)
-			and d.value IS NOT NULL
-			and d.value != 'NaN';
-
-			CREATE TABLE _tmp_agg AS
-
-			SELECT DISTINCT
-				d.datapoint_id
-				,d.location_id
-				,d.campaign_id
-				,d.indicator_id
-				,d.value
-			FROM _to_agg d
-
-			UNION ALL
-
-			SELECT
-				CAST(NULL AS INT) as id
-				,d.parent_location_id
-				,d.campaign_id
-				,d.indicator_id
-				,SUM(d.value) as value
-			FROM _to_agg d
-
-			WHERE NOT EXISTS (
-				SELECT 1 FROM _to_agg ta
-				WHERE d.immediate_parent_id = ta.location_id
-				AND d.campaign_id = ta.campaign_id
-				AND d.indicator_id = ta.indicator_id
-			)
-			AND NOT EXISTS (
-				SELECT 1 FROM _to_agg ta
-				WHERE d.parent_location_id = ta.location_id
-				AND d.campaign_id = ta.campaign_id
-				AND d.indicator_id = ta.indicator_id
-			)
-			AND d.parent_location_id is not null
-			GROUP BY d.parent_location_id, d.campaign_id, d.indicator_id;
-
-			CREATE UNIQUE INDEX rc_agg_ix ON _tmp_agg(location_id,campaign_id,indicator_id);
-
-			-- OVERRIDES --
-			UPDATE _tmp_agg ta
-			SET   value = d.value
-				, datapoint_id = d.id
-			FROM datapoint d
-			WHERE ta.location_id = d.location_id
-			AND ta.campaign_id = d.campaign_id
-			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NOT NULL
-			AND d.value != 'NaN';
-
-			-- DELETES in data entry (value is null) --
-			DELETE FROM _tmp_agg ta
-			USING datapoint d
-			WHERE ta.location_id = d.location_id
-			AND ta.campaign_id = d.campaign_id
-			AND ta.indicator_id = d.indicator_id
-			AND d.value IS NULL
-			AND d.value != 'NaN';
-
-
-			--- UPDATE THE REST OF THE DATAPOINT TABLE SO WE--
-			--- WONT NEED TO RE-PROCESS THIS DATA AGAIN ---
-			UPDATE datapoint d
-			SET cache_job_id = %s
-			WHERE d.id in (
-				SELECT datapoint_id
-				FROM _to_agg ta
-				WHERE ta.datapoint_id IS NOT NULL
-			);
-
-			--------------------
-			--- BEGIN UPSERT ---
-			--------------------
-
-			-- UPDATE EXISTING --
-			UPDATE agg_datapoint ad
-				SET cache_job_id = %s
-				, value = ta.value
-			FROM _tmp_agg ta
-			WHERE ta.location_id = ad.location_id
-			AND ta.campaign_id = ad.campaign_id
-			AND ta.indicator_id = ad.indicator_id;
-
-			-- INSERT NEW --
-			INSERT INTO agg_datapoint
-			(location_id, campaign_id, indicator_id, value,cache_job_id)
-			SELECT location_id, campaign_id, indicator_id, value, %s
-			FROM _tmp_agg ta
-			WHERE NOT EXISTS (
-				SELECT 1 FROM agg_datapoint ad
-				WHERE ta.location_id = ad.location_id
-				AND ta.campaign_id = ad.campaign_id
-				AND ta.indicator_id = ad.indicator_id
-			);
-
-            SELECT id FROM agg_datapoint limit 1;
-
-            """,[self.cache_job.id,self.cache_job.id,self.cache_job.id,\
-                self.cache_job.id])
-
-        adps = [adp.id for adp in adp_cursor]
-
-        return []
-
+        AggDataPoint.objects.filter(campaign_id = self.campaign_id).delete()
+        AggDataPoint.objects.bulk_create(agg_dp_batch)
 
     def calc_datapoints(self):
         '''
@@ -639,50 +458,12 @@ class AggRefresh(object):
 
         return [x.id for x in raw_qs]
 
-    def get_indicator_ids(self):
-        '''
-        Given the raw indicator ids for the datapoints to process, find all
-        of the indicator ids that will need to be effected by the calculations.
-        That includes the computed indicators that need to be effected by
-        updates in the underliying data, as well as the raw indicators.
-        '''
-
-        curs = Indicator.objects.raw('''
-
-        DROP TABLE IF EXISTS _raw_indicators;
-        CREATE TEMP TABLE _raw_indicators
-        AS
-        SELECT distinct indicator_id
-        FROM datapoint
-        WHERE id = ANY (%s);
-
-        SELECT x.indicator_id as id FROM (
-
-            SELECT cic.indicator_id
-            FROM calculated_indicator_component cic
-                INNER JOIN _raw_indicators ri
-                ON cic.indicator_component_id = ri.indicator_id
-
-
-            UNION ALL
-
-            SELECT indicator_id from _raw_indicators
-        ) x;
-
-        ''',[self.datapoint_id_list])
-
-        indicator_ids = [ind.id for ind in curs]
-
-        return indicator_ids
-
 
     def get_datapoints_to_cache(self,limit=None):
         '''
-        Called as a part of the ``set_up()`` method to find the unprocessed
-        datapoints that need to be cached.  If the datapoint_id_list parameter
-        is provided when the class is instantiated, this method need not be
-        called.  If there is no limit provided to this method, the default
-        limit is set to 100.
+        Since there are complicated dependencies for location aggregation, as
+        well as the interrationship between indicators, processing one campaign
+        at a time makes our code much simpler.
         '''
 
         dps = DataPoint.objects.raw('''
@@ -693,7 +474,6 @@ class AggRefresh(object):
                 WHERE cache_job_id = -1
                 LIMIT 1
             )
-            ORDER BY d.indicator_id
         ''')
 
         dp_ids = [row.id for row in dps]
