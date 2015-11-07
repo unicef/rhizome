@@ -20,6 +20,7 @@ function hoverLine() {
 	var yFormat    = String;
 	var yScale     = d3.scale.linear();
 	var _value     = _.property('value');
+  var colorRange = "#000000";
 
 	// Use this to keep track of what value we're currently hovering over so we
 	// can bail out of onMouseMove if the movement wouldn't change our display
@@ -147,6 +148,15 @@ function hoverLine() {
 		_value = value;
 		return chart;
 	};
+
+  chart.colorRange = function(value) {
+    if (!arguments.length) {
+      return colorRange;
+    }
+
+    colorRange = value;
+    return chart;
+  };
 
 	function axisTranslate(d) {
 		// jshint validthis:true
@@ -294,9 +304,19 @@ function hoverLine() {
 			.append('g')
 			.attr('class', 'label-group');
 
+    var colorScale = d3.scale.ordinal()
+        .domain(_(labelData)
+        .map(function(d)  {return d.text;})
+        .uniq()
+        .sortBy()
+        .value())
+        .range(colorRange);
+
+    var color = _.flow(function(d) {return d.text;}, colorScale);
+
 		labelGroup.selectAll('.hover.label')
-			.data(function (d) { return d; })
-			.call(label().addClass('hover').width(width).height(height));
+			.data(function(d) {return d;})
+			.call(label().addClass('hover').width(width).height(height).scale(color));
 
 			// Determine the label orientation based on the bounding box. We prefer
 			// left-aligned, but if that gets cut off, we will right-align the text
@@ -322,15 +342,15 @@ function hoverLine() {
 			.style('opacity', 0)
 			.remove();
 
-			svg.selectAll('.x.axis text')
-				.transition()
-				.duration(300)
-				.style('opacity', 1);
+    svg.selectAll('.x.axis text')
+      .transition()
+      .duration(300)
+      .style('opacity', 1);
 
-			svg.selectAll('.annotation .series.label')
-				.transition()
-				.duration(300)
-				.style('opacity', 1);
+    svg.selectAll('.annotation .series.label')
+      .transition()
+      .duration(300)
+      .style('opacity', 1);
 	}
 
 	return chart;

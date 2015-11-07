@@ -102,29 +102,6 @@ _.extend(LineChart.prototype, {
     var x = _.flow(options.x, xScale);
     var y = _.flow(options.y, yScale);
 
-    // Set up the hover interaction
-    svg.attr('class', 'line')
-      .call(hoverLine()
-        .width(width)
-        .height(height)
-        .xFormat(options.xFormat)
-        .yFormat(options.yFormat)
-        .x(options.x)
-        .y(options.y)
-        .xScale(xScale)
-        .yScale(yScale)
-        .value(options.y)
-        .seriesName(_.property('seriesName'))
-        .sort(true)
-        .datapoints(_(series).map(function (s) {
-          // Set the series name on each datapoint for easy retrieval
-          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
-        })
-          .flatten()
-          .value()
-      )
-    );
-
     var g = svg.select('.data')
       .selectAll('.series')
       .data(series, options.seriesName);
@@ -187,6 +164,30 @@ _.extend(LineChart.prototype, {
         .height(height)
         .align(false)
         .scale(legendColor));
+
+    // Set up the hover interaction
+    svg.attr('class', 'line')
+      .call(hoverLine()
+        .width(width)
+        .height(height)
+        .xFormat(options.xFormat)
+        .yFormat(options.yFormat)
+        .x(options.x)
+        .y(options.y)
+        .xScale(xScale)
+        .yScale(yScale)
+        .value(options.y)
+        .seriesName(_.property('seriesName'))
+        .sort(true)
+        .colorRange(colorRange)
+        .datapoints(_(series).map(function (s) {
+          // Set the series name on each datapoint for easy retrieval
+          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
+        })
+          .flatten()
+          .value()
+      )
+    );
 
     var gx = svg.select('.x.axis')
       .call(d3.svg.axis()
