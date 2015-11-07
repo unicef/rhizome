@@ -83,7 +83,7 @@ _.extend(LineChart.prototype, {
 
     var dataXScale = d3.time.scale()
       .domain(domain)
-      .range([20, width]);
+      .range([30, width]);
 
     var range = _.isFunction(options.range) ?
       options.range(series) :
@@ -99,7 +99,7 @@ _.extend(LineChart.prototype, {
       .domain(range)
       .range([height, 0]);
 
-    var x = _.flow(options.x, xScale);
+    var x = _.flow(options.x, dataXScale);
     var y = _.flow(options.y, yScale);
 
     var g = svg.select('.data')
@@ -174,7 +174,7 @@ _.extend(LineChart.prototype, {
         .yFormat(options.yFormat)
         .x(options.x)
         .y(options.y)
-        .xScale(xScale)
+        .xScale(dataXScale)
         .yScale(yScale)
         .value(options.y)
         .seriesName(_.property('seriesName'))
