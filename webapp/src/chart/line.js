@@ -59,7 +59,11 @@ _.extend(LineChart.prototype, {
 
     if (!_.isFunction(dataColor)) {
       var dataColorScale = d3.scale.ordinal()
-        .domain(_.map(series, options.seriesName))
+        .domain(_(series)
+          .map(options.seriesName)
+          .uniq()
+          .sortBy()
+          .value())
         .range(colorRange);
 
       dataColor = _.flow(options.seriesName, dataColorScale);
@@ -166,7 +170,11 @@ _.extend(LineChart.prototype, {
       .value();
 
     var legendColorScale = d3.scale.ordinal()
-        .domain(_.map(labels, function(d) {return d.text}))
+        .domain(_(labels)
+        .map(function(d) {return d.text})
+        .uniq()
+        .sortBy()
+        .value())
         .range(colorRange);
 
     var legendColor = _.flow(function(d) {return d.text}, legendColorScale);
