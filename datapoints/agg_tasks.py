@@ -155,12 +155,29 @@ class AggRefresh(object):
         '''
 
         agg_dp_batch = []
-        dp_objects = DataPoint.objects.filter(cache_job_id = self.cache_job.id)\
-            .values('indicator_id','campaign_id','location_id','value',\
-                'cache_job_id')
 
-        for dp in dp_objects:
-            agg_dp_batch.append(AggDataPoint(**dp))
+        datapoint_columns =['indicator_id','campaign_id', 'location_id',\
+            'value','cache_job_id']
+
+        location_tree_columns = ['location_id','parent_location_id']
+
+        dp_df = DataFrame(list(DataPoint.objects\
+            .filter(cache_job_id = self.cache_job.id)\
+            .values_list(*datapoint_columns)),columns=datapoint_columns)
+
+        location_id_list = list(dp_df['location_id'].unique())
+        location_tree_df = DataFrame(list(LocationTree.objects\
+            .filter(location_id__in=location_id_list)
+            .values_list(*location_tree_columns)),columns=location_tree_columns)
+
+        merged_df = dp_df.merge(location_tree_df)
+        grouped_df = DataFrame(merged_df.groupby(['parent_location_id', 'campaign_id',\
+            'indicator_id'])['value'].sum())
+
+        # final_df = pd.concat(merged_df, grouped_df)
+        # for dp in final_df:
+        for ix, dp in dp_df.iterrows():
+            agg_dp_batch.append(AggDataPoint(**dp.to_dict()))
 
         AggDataPoint.objects.filter(campaign_id = self.campaign_id).delete()
         AggDataPoint.objects.bulk_create(agg_dp_batch)
