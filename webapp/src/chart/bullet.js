@@ -7,18 +7,18 @@ var qualitativeAxis = require('./qualitative-axis');
 
 var defaults = {
 	domain     : _.constant([0, 1]),
-	fontSize   : 12,
-	lineHeight : 2,
-	padding    : 0.1,
+	fontSize   : 10,
+	lineHeight : 1.2,
+	padding    : 0,
 	scale      : d3.scale.linear,
 	thresholds : [],
 	targets    : [],
 	format     : String,
 
 	margin : {
-		top    : 12,
+		top    : 0,
 		right  : 0,
-		bottom : 12,
+		bottom : 0,
 		left   : 0
 	}
 };
@@ -99,6 +99,7 @@ _.extend(BulletChart.prototype, {
 			svg.select('.x.axis')
 				.call(qualitativeAxis()
 					.height(h + margin.top + margin.bottom)
+          .width(w)
 					.scale(xScale)
 					.threshold(d3.scale.threshold()
 						.domain([])
@@ -155,16 +156,16 @@ _.extend(BulletChart.prototype, {
 				return _.isFinite(v) && _.isFinite(m) ? [d] : [];
 			});
 
-		var measureHeight = yScale.rangeBand() * 0.4;
+		var measureHeight = yScale.rangeBand() * 0.1;
 
 		var initAttr = {
 			'class'  : 'comparative-measure',
 			'width'  : 3,
-			'height' : yScale.rangeBand() + measureHeight,
-			'y'      : -measureHeight / 2,
+			'height' : yScale.rangeBand() - measureHeight,
+			'y'      : measureHeight / 2
 		};
 
-		measure.enter().append('rect').attr(initAttr).style('fill', 'inherit');
+		measure.enter().append('rect').attr(initAttr).style('fill', '#FFFFFF');
 		measure.attr(initAttr).attr('x', x);
 		measure.exit().remove();
 
@@ -177,14 +178,17 @@ _.extend(BulletChart.prototype, {
 		label.enter()
 			.append('text')
 			.attr({
-				'class'     : 'label',
-				'dx'        : '4'
+				'class'     : 'label'
 			});
 
 		label
 			.attr({
+        'x'         :w,
+        'y'         :-15,
+        'text-anchor': 'end',
 				'dy'        : (options.lineHeight / 4) + 'em',
-				'transform' : 'translate(0,' + (h / 2) + ')'
+				'transform' : 'translate(0,' + (h / 2) + ')',
+        'fill'      : 'inherit'
 			})
 			.style('font-size', options.fontSize)
 			.text(options.format);

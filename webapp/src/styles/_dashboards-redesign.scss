@@ -51,10 +51,11 @@ $total-columns: 8;
 #management-dashboard {
   h3 {
 	background: $rhz-chart-title-bg-color;
-    color: $rhz-chart-title-color;
-    text-transform: uppercase;
-    font-family: ADELLE REGULAR;
-    padding: 2px 4px;
+  color: $rhz-chart-title-color;
+  text-transform: uppercase;
+  font-family: ADELLE REGULAR;
+  font-size: 0.75rem;
+  padding: 2px 4px;
 	margin: 10px 0;
 	border: none;
 	font-weight: bold;

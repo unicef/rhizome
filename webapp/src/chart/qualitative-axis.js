@@ -6,8 +6,9 @@ var d3 = require('d3');
 function _inherit (d) { return [d]; }
 
 function qualitativeAxis () {
-	var _colors    = ['#B3B3B3', '#E6E6E6'];
+	var _colors    = ['#F8DDDB','#B6D0D4', '#A1C3C6'];
 	var _height    = 0;
+  var _width     = 0;
 	var _scale     = d3.scale.linear()
 	var _threshold = d3.scale.threshold();
 
@@ -62,8 +63,12 @@ function qualitativeAxis () {
 			label.enter().append('text');
 
 			label.attr({
-					'dx'        : '2',
-					'transform' : 'translate(0, ' + _height + ')'
+					//'dx'        : '2',
+					'transform' : 'translate(0, ' + _height + ')',
+          'x'         : _width,
+          'y'         : _height/2,
+          'fill'      : '#ffffff',
+          'opacity'   : 0
 				})
 				.text(String);
 		});
@@ -84,6 +89,15 @@ function qualitativeAxis () {
 		}
 
 		_height = height;
+		return axis;
+	};
+
+  axis.width = function (width) {
+		if (!arguments.length) {
+			return _width;
+		}
+
+		_width = width;
 		return axis;
 	};
 

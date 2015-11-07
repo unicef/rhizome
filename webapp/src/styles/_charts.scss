@@ -352,6 +352,7 @@ svg {
 		.bar,
 		.comparative-measure {
 			fill: $coolgray5;
+      z-index: 999;
 		}
 
 		.ranges {
@@ -362,12 +363,18 @@ svg {
 
 		.label {
 			text-shadow: none;
-			fill       : $white;
+			//fill       : $white;
 
 			&.dark {
 				fill: $oil;
 			}
 		}
+
+    .tick {
+      text {
+        text-transform: uppercase;
+      }
+    }
 	}
 
 

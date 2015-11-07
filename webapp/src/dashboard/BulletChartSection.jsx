@@ -83,8 +83,8 @@ function _targetRanges(indicator) {
 
 function _fill(data, campaign, targets) {
   var color = d3.scale.ordinal()
-    .domain(['bad', 'ok', 'okay', 'good', ''])
-    .range(['#AF373E', 'auto', 'auto', '#2B8CBE']);
+    .domain(['bad', 'ok', 'good'])
+    .range(['#D95449', '#7A909E', '#39B0D1']);
 
   var scale = d3.scale.threshold()
     .domain(targets[1])
@@ -125,7 +125,7 @@ module.exports = React.createClass({
           marker     : _.partial(_marker, _, campaign),
           y          : _.property('location'),
           width      : 154,
-          height     : 51.3,
+          height     : 10,
           fill       : _.partial(_fill, _, campaign, targets),
           format     : d3.format('%'),
           thresholds : targets[1],

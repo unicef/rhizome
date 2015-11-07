@@ -37,7 +37,7 @@ body {
 }
 
 h6 {
-  margin-bottom: 0.1rem;
+  //margin-bottom: 0.1rem;
   margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -746,9 +746,10 @@ ul {
   }
 
   .empty {
-    color: rgb(175, 55, 62);
+    color: #B9C3CB;
     padding: 0;
     background-color: transparent;
+    text-transform: uppercase;
   }
 }
 
