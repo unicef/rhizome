@@ -70,7 +70,6 @@ module.exports = React.createClass({
         .map(_.method('campaign.start_date.getFullYear'))
         .uniq()
         .sortBy()
-        .reverse()
         .value());
 
     return (
