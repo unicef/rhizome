@@ -129,7 +129,7 @@ class AggRefreshTestCase(TestCase):
         document_id = Document.objects.get(doc_title='test').id
         ss_id = SourceSubmission.objects.get(document_id = document_id).id
 
-        dp_id = DataPoint.objects.create(
+        dp = DataPoint.objects.create(
             location_id = location_id,
             campaign_id = campaign_id,
             indicator_id = indicator_id,
@@ -137,9 +137,9 @@ class AggRefreshTestCase(TestCase):
             changed_by_id = self.user.id,
             cache_job_id = -1,
             source_submission_id = ss_id
-        ).id
+        )
 
-        return dp_id
+        return dp
 
     def test_location_aggregation(self):
         '''
@@ -204,7 +204,20 @@ class AggRefreshTestCase(TestCase):
         ## ensure that any raw data will override aggregate ##
         ######################################################
 
-        # self.assertEqual(agg_value, sum_dp_value)
+        override_value = 909090
+        agg_override_dp = self.create_datapoint(agg_location_id,campaign_id,\
+            indicator_id, override_value)
+
+        dp_ids.append(agg_override_dp.id)
+
+        ar = AggRefresh(datapoint_id_list = dp_ids)
+
+        override_value_in_agg = AggDataPoint.objects.get(campaign_id =\
+            campaign_id ,indicator_id = indicator_id, location_id =\
+             agg_location_id).value
+
+        self.assertEqual(override_value, override_value_in_agg)
+
 
     def test_raw_data_to_computed(self):
         '''
@@ -233,9 +246,9 @@ class AggRefreshTestCase(TestCase):
 
         cr = AggRefresh(datapoint_id_list=dp_ids)
 
-        #################################################
+        ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
-        #################################################
+        ############################################################
 
         raw_value = DataPoint.objects.get(campaign_id = campaign_id,
             indicator_id = indicator_id,
@@ -248,19 +261,6 @@ class AggRefreshTestCase(TestCase):
             .value
 
         self.assertEqual(raw_value, raw_value_in_agg)
-
-        # #############################################
-        # ## ensure that the aggregated data gets in ##
-        # #############################################
-        #
-        agg_value = AggDataPoint.objects.get(
-            indicator_id = indicator_id,
-            campaign_id = campaign_id,
-            location_id = agg_location_id
-        ).value
-
-        self.assertEqual(agg_value, sum_dp_value)
-
 
     def test_sum_and_pct(self):
         '''

@@ -5,6 +5,7 @@ from django.conf import settings
 import pandas as pd
 from pandas import DataFrame, read_sql
 from pandas.tools.pivot import pivot_table
+from pprint import pprint
 
 from django.contrib.auth.models import User
 from datapoints.models import *
@@ -102,7 +103,7 @@ class AggRefresh(object):
         self.set_cache_job_id_for_raw_datapoints()
 
         self.campaign_id = DataPoint.objects.filter(cache_job_id = \
-            self.cache_job.id)[0].value
+            self.cache_job.id)[0].campaign_id
 
         return 'PENDING_AGG'
 
@@ -158,35 +159,34 @@ class AggRefresh(object):
         is the value.  This way we add to the dict the aggregated values, then
         iterrate through the raw values, adding or updating the data in the
         tuple dict before bulk inserting the data.
+
+        The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}
         '''
 
-        agg_dp_batch = []
-        tuple_dict = {} # {(1, 201, 164): 12, (2, 101, 168): .234 }
-
+        agg_dp_batch, tuple_dict = [],{}
+        location_tree_columns = ['location_id','parent_location_id']
         datapoint_columns =['indicator_id','campaign_id', 'location_id',\
             'value','cache_job_id']
-
-        location_tree_columns = ['location_id','parent_location_id']
 
         dp_df = DataFrame(list(DataPoint.objects\
             .filter(cache_job_id = self.cache_job.id)\
             .values_list(*datapoint_columns)),columns=datapoint_columns)
 
-        location_id_list = list(dp_df['location_id'].unique())
+        ## represents the location heirarchy as a cache from the location table
         location_tree_df = DataFrame(list(LocationTree.objects\
-            .filter(location_id__in=location_id_list)
+            .filter(location_id__in=list(dp_df['location_id'].unique()))
             .values_list(*location_tree_columns)),columns=location_tree_columns)
 
-        merged_df = dp_df.merge(location_tree_df,how='left',on='location_id')
+        ## join the location tree to the datapoints and group by parent location
+        grouped_df = DataFrame(dp_df.merge(location_tree_df)\
+            .groupby(['parent_location_id', 'indicator_id','campaign_id'])\
+            ['value'].sum())
 
-        grouped_df = DataFrame(merged_df.groupby(['parent_location_id', \
-            'indicator_id','campaign_id'])['value'].sum())
-
-        ## first process the aggregates ##
+        ## add aggregate values to the tuple dict ##
         for ix, dp in grouped_df.iterrows():
             tuple_dict[ix] = dp.value
 
-        ## first process the raw ( overriding agregate if exists ) ##
+        ## now add the raw data to the dict ( overriding agregate if exists )
         for ix, dp in dp_df.iterrows():
             tuple_dict[(dp.location_id, dp.indicator_id, dp.campaign_id)] \
                 = dp.value
@@ -203,9 +203,6 @@ class AggRefresh(object):
 
         AggDataPoint.objects.filter(campaign_id = self.campaign_id).delete()
         AggDataPoint.objects.bulk_create(agg_dp_batch)
-
-
-
 
     def calc_datapoints(self):
         '''
