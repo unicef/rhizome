@@ -16,7 +16,7 @@ var HomepageCarouselDecorators = [
       },
       getButtonStyles(disabled) {
         return {
-          opacity: disabled ? 0.3 : 1
+          opacity: disabled ? 0.3 : 0.7
         }
       }
     }),
@@ -35,7 +35,7 @@ var HomepageCarouselDecorators = [
       },
       getButtonStyles(disabled) {
         return {
-          opacity: disabled ? 0.3 : 1
+          opacity: disabled ? 0.3 : 0.7
         }
       }
     }),
@@ -75,7 +75,7 @@ var HomepageCarouselDecorators = [
         return {
           position: 'relative',
           margin: 0,
-          top: -10,
+          top: 30,
           padding: 0
         }
       },
@@ -89,7 +89,7 @@ var HomepageCarouselDecorators = [
         return {
           border: 0,
           background: 'transparent',
-          color: 'black',
+          color: '#BCBCBC',
           cursor: 'pointer',
           padding: 0,
           outline: 0,
