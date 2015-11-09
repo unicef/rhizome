@@ -402,7 +402,7 @@ class AggRefreshTestCase(TestCase):
         pct_target_value = val_3 / float(sum_target_value)
         self.assertEqual(calc_value_pct,pct_target_value)
 
-    def part_of_difference(self):
+    def test_part_of_difference(self):
         '''
         see here: rhizome.work/ufadmin/manage/indicator/187
 

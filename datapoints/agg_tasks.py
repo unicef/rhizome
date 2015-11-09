@@ -43,6 +43,9 @@ class AggRefresh(object):
         table as well as the start / end time.
         '''
 
+        self.dp_columns =['indicator_id','campaign_id', 'location_id',\
+            'value','cache_job_id']
+
         self.dwc_batch, self.dwc_tuple_dict = [],{}
 
         if CacheJob.objects.filter(date_completed=None):
@@ -117,12 +120,11 @@ class AggRefresh(object):
 
         agg_dp_batch, tuple_dict = [],{}
         location_tree_columns = ['location_id','parent_location_id']
-        datapoint_columns =['indicator_id','campaign_id', 'location_id',\
-            'value','cache_job_id']
+
 
         dp_df = DataFrame(list(DataPoint.objects\
             .filter(campaign_id = self.campaign_id)\
-            .values_list(*datapoint_columns)),columns=datapoint_columns)
+            .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         ## represents the location heirarchy as a cache from the location table
         location_tree_df = DataFrame(list(LocationTree.objects\
@@ -172,7 +174,7 @@ class AggRefresh(object):
         ## since raw data is the last calculation, this will override all else
         # self.sum_of_parts()
         # self.part_over_whole()
-        # self.part_of_difference()
+        self.part_of_difference()
         self.raw_data()
 
         self.upsert_computed()
@@ -326,78 +328,50 @@ class AggRefresh(object):
 
 
     def part_of_difference(self):
+        '''
+        (x - y) / x
+        '''
 
-        raw_qs = AggDataPoint.objects.raw('''
+        calc_list = ['WHOLE_OF_DIFFERENCE_DENOMINATOR','PART_OF_DIFFERENCE']
 
-        INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value,cache_job_id)
+        ## get the indicator_ids we need to make the calculation ##
+        calc_df = DataFrame(list(CalculatedIndicatorComponent.objects\
+            .filter(calculation__in= calc_list)\
+            .values_list('indicator_id','indicator_component_id','calculation'))\
+                ,columns=['calc_indicator_id','indicator_component_id','calc'])
 
-          SELECT x.indicator_id,x.location_id,x.campaign_id, x.calculated_value, %s
-          FROM (
-          SELECT DISTINCT
-        		denom.master_id as indicator_id
-        		,denom.location_id
-        		,denom.campaign_id
-        		,(CAST(num_whole.value as FLOAT) - CAST(num_part.value as FLOAT)) / NULLIF(CAST(denom.value AS FLOAT),0) as calculated_value
-                  FROM (
-                  	SELECT
-                  		cic.indicator_id as master_id
-                  		,ad.location_id
-                  		,ad.indicator_id
-                  		,ad.campaign_id
-                  		,ad.value
-                  	FROM _tmp_calc_datapoint ad
-                  	INNER JOIN calculated_indicator_component cic
-                  	ON cic.indicator_component_id = ad.indicator_id
-                  	AND calculation = 'PART_OF_DIFFERENCE'
-                  )num_part
+        ## get the datapoints for the above indicator_ids ##
+        dp_df = DataFrame(list(DataPoint.objects.all()\
+            .filter(indicator_id__in = calc_df['indicator_component_id']\
+                .unique(),campaign_id = self.campaign_id)\
+            .values_list(*self.dp_columns)),columns=self.dp_columns)
 
-              INNER JOIN (
-              	SELECT
-              		cic.indicator_id as master_id
-              		,ad.location_id
-              		,ad.indicator_id
-              		,ad.campaign_id
-              		,ad.value
-              	FROM  _tmp_calc_datapoint ad
-              	INNER JOIN calculated_indicator_component cic
-              	ON cic.indicator_component_id = ad.indicator_id
-              	AND calculation = 'WHOLE_OF_DIFFERENCE'
-              )num_whole
-              ON num_part.master_id = num_whole.master_id
-              AND num_part.location_id = num_whole.location_id
-              AND num_part.campaign_id = num_whole.campaign_id
+        ## join the above two dataframes in order to determine ##
+            ## which indicators require which caluclations ##
+        dp_df_with_calc = dp_df.merge(calc_df,left_on='indicator_id',right_on=\
+            'indicator_component_id')
 
-              INNER JOIN
-              (
-              	SELECT
-              		cic.indicator_id as master_id
-              		,ad.location_id
-              		,ad.indicator_id
-              		,ad.campaign_id
-              		,ad.value
-              	FROM _tmp_calc_datapoint ad
-              	INNER JOIN calculated_indicator_component cic
-              	ON cic.indicator_component_id = ad.indicator_id
-              	AND calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
-              )denom
-              ON num_whole.location_id = denom.location_id
-              AND num_whole.master_id = denom.master_id
-              AND num_whole.campaign_id = denom.campaign_id
-        )x
-        WHERE NOT EXISTS (
+        ## now join the above dataframe on itself to set up the calculation ##
+        prepped_for_calc_df = dp_df_with_calc.merge(dp_df_with_calc,\
+            on=['location_id','campaign_id','calc_indicator_id'])
 
-        SELECT 1 FROM _tmp_calc_datapoint t
-        WHERE x.location_id = t.location_id
-        AND x.campaign_id = t.campaign_id
-        AND x.indicator_id = t.indicator_id
-        );
+        ## iterrate through the dataframe above, determine the calculated value
+        ## and finally, create the tuple dict calue for the - calculated data
+        for ix, row_data in prepped_for_calc_df.iterrows():
 
-        SELECT id from agg_datapoint limit 1;
+            if row_data.calc_x == 'WHOLE_OF_DIFFERENCE_DENOMINATOR' \
+                and row_data.calc_y == 'PART_OF_DIFFERENCE':
 
-        ''',[self.cache_job.id])
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
+                    row_data.campaign_id)
 
-        return [x.id for x in raw_qs]
+                ## this one line is where the calculation happens ##
+                calculated_value = (row_data.value_x -row_data.value_y) / \
+                    row_data.value_x
+
+
+                self.dwc_tuple_dict[row_tuple] = calculated_value
+
 
     def upsert_computed(self):
         '''
