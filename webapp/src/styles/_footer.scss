@@ -25,7 +25,7 @@ footer {
   position: fixed;
   width: 100%;
   bottom: 0;
-  z-index: 9999;
+  z-index: 9997;
   min-width: 100%;
 
   @include respond-to(medium-screens) {

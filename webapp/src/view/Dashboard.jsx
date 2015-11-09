@@ -240,7 +240,8 @@ var Dashboard = React.createClass({
         // console.log("RENDER", this.state.location);
         if (!(this.state.loaded && this.state.dashboard)) {
             var style = {
-                fontSize: '2rem'
+                fontSize: '2rem',
+                zIndex: 9999
             };
 
             return (

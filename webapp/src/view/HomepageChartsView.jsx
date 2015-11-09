@@ -23,7 +23,8 @@ var HomepageChartsView = React.createClass({
     render: function () {
       if (this.state.dashboards.length === 0) {
           var style = {
-              fontSize: '2rem'
+              fontSize: '2rem',
+              zIndex: 9999
           };
 
           return (

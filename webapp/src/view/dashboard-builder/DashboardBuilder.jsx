@@ -183,6 +183,7 @@ module.exports = React.createClass({
     else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
       var style = {
         fontSize: '2rem',
+        zIndex: 9999
       };
 
       return (
