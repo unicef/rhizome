@@ -28,28 +28,28 @@ var HomepageChartsSection = React.createClass({
         if(this.props.location === 'Nigeria') {
             controls =
               <div className="chart-button-group">
-                <a href={this.getManagementDashboardUrl()}>
-                  <div className="chart-button"><span>Country overview</span></div>
+                <a href={this.getManagementDashboardUrl()} className="chart-button small-4 columns">
+                  Country<br />overview
                 </a>
 
-                <a href={this.getDistrictSummaryUrl()}>
-                  <div className="chart-button"><span>District summary</span></div>
+                <a href={this.getDistrictSummaryUrl()} className="chart-button small-4 columns">
+                  District<br />summary
                 </a>
 
-                <a href={this.getNGACampaignMonitoringUrl()}>
-                  <div className="chart-button"><span>NGA Campaign Monitoring</span></div>
+                <a href={this.getNGACampaignMonitoringUrl()} className="chart-button small-4 columns">
+                  NGA Campaign Monitoring
                 </a>
               </div>
         } else {
             controls =
-              <div className="chart-button-group">
-                <a href={this.getManagementDashboardUrl()}>
-                  <div className="chart-button"><span>Country overview</span></div>
+              <dev className="chart-button-group">
+                <a href={this.getManagementDashboardUrl()} className="chart-button small-6 columns">
+                  Country<br />overview
                 </a>
-                <a href={this.getDistrictSummaryUrl()}>
-                  <div className="chart-button"><span>District summary</span></div>
+                <a href={this.getDistrictSummaryUrl()} className="chart-button small-6 columns">
+                  District<br />summary
                 </a>
-              </div>
+              </dev>
         }
 
         return (
