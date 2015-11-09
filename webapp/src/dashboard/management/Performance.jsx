@@ -109,7 +109,7 @@ var Performance = React.createClass({
       }]);
     }
 
-    var pct = d3.format(',.1%');
+    var pct = d3.format('%');
 
     var missedChildrenMap = data.missedChildrenByProvince;
 
@@ -129,7 +129,8 @@ var Performance = React.createClass({
                 domain  : _.constant([lower.valueOf(), upper.valueOf()]),
                 x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
                 xFormat : d => moment(d).format('MMM YYYY'),
-                yFormat : pct
+                yFormat : d3.format(',.1%')
+
               }}/>
           </section>
 
