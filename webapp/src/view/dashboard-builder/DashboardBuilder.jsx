@@ -175,9 +175,14 @@ module.exports = React.createClass({
       return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
         <h1>Create a New Custom Dashboard</h1>
 
-        <div className="cd-title">Dashboard Title</div>
-        <input className="description" type="text" value={this.state.title} onChange={this._updateNewTitle}/>
-        <LayoutOptions values= {LayoutDefaultSettings.values}
+        <div className="cd-title small-12">Dashboard Title</div>
+        <input type="text"
+               className="description small-12"
+               value={this.state.title}
+               onChange={this._updateNewTitle}
+               autoFocus={true} />
+        <div className="cd-title float-none">Choose a Layout</div>
+        <LayoutOptions values={LayoutDefaultSettings.values}
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
         {this.state.store.dashboardTitle.length ?
@@ -298,9 +303,13 @@ module.exports = React.createClass({
         {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className="cd-footer">
           <div className="row">
-            <div className="large-2 columns cd-button" onClick={this.newChart}>
+            <div className="large-2 columns cd-button" onClick={this.newChart}
+                 style={{visibility: (this.state.store.dashboard.layout === 1 && this.state.store.dashboard.charts.length
+                                      ? 'hidden'
+                                      : 'visible')}}>
               <span>
-                <i className='fa fa-icon fa-fw fa-plus'/>Add Chart
+                <i className='fa fa-icon fa-fw fa-plus' />
+                   Add Chart
               </span>
             </div>
             <div className="large-7 columns">

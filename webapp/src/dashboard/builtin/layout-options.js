@@ -1,8 +1,8 @@
 module.exports = {
 	values: [
-        {name: 'Layout1', value: 1, src:''},
-        {name: 'Layout2', value: 2, src:''},
-        {name: 'Layout3', value: 3, src:''},
-        {name: 'Layout4', value: 4, src:''}],
+    {name: 'Single Chart Layout', value: 1, src:'/static/img/RhizomeLogoWhiteResized.png'},
+    {name: 'Basic Layout', value: 2, src:'/static/img/RhizomeLogoWhiteResized.png'},
+    {name: 'Triptychs', value: 3, src:'/static/img/RhizomeLogoWhiteResized.png'}
+  ],
   defaultValue: 2
 };

@@ -1,0 +1,22 @@
+@import "../../styles/variables";
+
+.layout-option {
+  display: inline-block;
+  text-align: center;
+
+  img {
+    border: 1px solid $rhz-button-bg-color;
+  }
+  input[type="radio"] {
+    display: none;
+    &+label {
+      margin: 0;
+      width: 100%;
+    }
+  }
+  &.active {
+    img {
+      background: $rhz-background-color
+    }
+  }
+}

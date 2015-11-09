@@ -106,11 +106,6 @@ var CustomDashboard = React.createClass({
       var key    = _.get(chart, 'id', _.kebabCase(title));
       var id     = _.get(chart, 'id', _.camelCase(title));
       var series = data[id];
-      var cols   = chart.type === 'BarChart' ?
-        'small-10 end columns' :
-        'medium-4 columns end cd-chart-size';
-
-      var options = getOptions(chart, campaign, data);
 
       var controls;
       if (editable) {
@@ -131,6 +126,23 @@ var CustomDashboard = React.createClass({
           </div>
         );
       }
+
+      var cols
+      switch(this.props.dashboard.layout) {
+        case 1: // Single
+          cols = 'small-12 end columns'
+          break;
+        case 3: // Triptych
+
+          break;
+        default: // Default
+          cols   = chart.type === 'BarChart' ?
+            'small-10 end columns' :
+            'medium-4 columns end cd-chart-size';
+          break;
+      }
+
+      var options = getOptions(chart, campaign, data);
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>

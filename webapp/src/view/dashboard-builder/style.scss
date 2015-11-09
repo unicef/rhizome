@@ -1,17 +1,21 @@
-.dashboard-builder-container {
-  width: 1000px;
-  margin: 20px auto;
+@import "../../styles/variables";
+@import "foundation/components/block-grid";
+@import "foundation/components/grid";
 
-  .description {
-    margin: 20px 10px;
-    border: 1px solid #344B61;
-  }
+@media #{$small-up} {
+  .dashboard-builder-container {
+    max-width: 70%;
+    margin: 20px auto;
 
-  .cd-title {
-    font-size: 13px;
-    margin-bottom: 4px;
-    float: left;
-    padding: 10px;
+    .description {
+      border: 1px solid #344B61;
+    }
+
+    .cd-title {
+      font-size: 13px;
+      margin-bottom: 4px;
+      padding: 10px 0;
+    }
   }
 }
 
