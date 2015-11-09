@@ -152,9 +152,16 @@ class AggRefresh(object):
 
         Data stored in the DataPoint table for a location with the same
         indicator, campaign will always override the aggregated values.
+
+        Here, we create a tuple_dict in which the unique key of (locaiton,
+        indicator, campaign) represents the key, and the cooresponding value
+        is the value.  This way we add to the dict the aggregated values, then
+        iterrate through the raw values, adding or updating the data in the
+        tuple dict before bulk inserting the data.
         '''
 
         agg_dp_batch = []
+        tuple_dict = {} # {(1, 201, 164): 12, (2, 101, 168): .234 }
 
         datapoint_columns =['indicator_id','campaign_id', 'location_id',\
             'value','cache_job_id']
@@ -170,17 +177,35 @@ class AggRefresh(object):
             .filter(location_id__in=location_id_list)
             .values_list(*location_tree_columns)),columns=location_tree_columns)
 
-        merged_df = dp_df.merge(location_tree_df)
-        grouped_df = DataFrame(merged_df.groupby(['parent_location_id', 'campaign_id',\
-            'indicator_id'])['value'].sum())
+        merged_df = dp_df.merge(location_tree_df,how='left',on='location_id')
 
-        # final_df = pd.concat(merged_df, grouped_df)
-        # for dp in final_df:
+        grouped_df = DataFrame(merged_df.groupby(['parent_location_id', \
+            'indicator_id','campaign_id'])['value'].sum())
+
+        ## first process the aggregates ##
+        for ix, dp in grouped_df.iterrows():
+            tuple_dict[ix] = dp.value
+
+        ## first process the raw ( overriding agregate if exists ) ##
         for ix, dp in dp_df.iterrows():
-            agg_dp_batch.append(AggDataPoint(**dp.to_dict()))
+            tuple_dict[(dp.location_id, dp.indicator_id, dp.campaign_id)] \
+                = dp.value
+
+        ## now prep the batch for the bulk insert ##
+        for dp_unique_key, value in tuple_dict.iteritems():
+            dp_dict =  dict(zip(('location_id','indicator_id','campaign_id')\
+                ,dp_unique_key))
+
+            dp_dict['value'] = value
+            dp_dict['cache_job_id'] = self.cache_job.id
+
+            agg_dp_batch.append(AggDataPoint(**dp_dict))
 
         AggDataPoint.objects.filter(campaign_id = self.campaign_id).delete()
         AggDataPoint.objects.bulk_create(agg_dp_batch)
+
+
+
 
     def calc_datapoints(self):
         '''

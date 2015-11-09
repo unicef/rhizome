@@ -194,12 +194,16 @@ class AggRefreshTestCase(TestCase):
         ## ensure that the aggregated data gets in ##
         #############################################
 
-        # agg_value = AggDataPoint.objects.get(
-        #     indicator_id = indicator_id,
-        #     campaign_id = campaign_id,
-        #     location_id = agg_location_id
-        # ).value
-        #
+        agg_value = AggDataPoint.objects.get(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = agg_location_id
+        ).value
+
+        ######################################################
+        ## ensure that any raw data will override aggregate ##
+        ######################################################
+
         # self.assertEqual(agg_value, sum_dp_value)
 
     def test_raw_data_to_computed(self):
@@ -249,13 +253,13 @@ class AggRefreshTestCase(TestCase):
         # ## ensure that the aggregated data gets in ##
         # #############################################
         #
-        # agg_value = AggDataPoint.objects.get(
-        #     indicator_id = indicator_id,
-        #     campaign_id = campaign_id,
-        #     location_id = agg_location_id
-        # ).value
-        #
-        # self.assertEqual(agg_value, sum_dp_value)
+        agg_value = AggDataPoint.objects.get(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = agg_location_id
+        ).value
+
+        self.assertEqual(agg_value, sum_dp_value)
 
 
     def test_sum_and_pct(self):
