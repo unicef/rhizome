@@ -263,6 +263,10 @@ function hoverLine() {
 			.transition()
 			.duration(300)
 			.attr('transform', axisTranslate)
+      .attr({
+        'dy': '.71em',
+        'y' : '9'
+      })
 			.style('opacity', 1);
 
 		xLabel.exit()

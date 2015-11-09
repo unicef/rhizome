@@ -194,7 +194,7 @@ _.extend(LineChart.prototype, {
         .tickFormat(options.xFormat)
         .outerTickSize(0)
         .ticks(4)
-        .scale(xScale)
+        .scale(dataXScale)
         .orient('bottom'));
 
     // Prevent labels from overflowing the left and right edges of the SVG

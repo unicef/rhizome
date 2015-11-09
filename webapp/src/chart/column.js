@@ -185,7 +185,7 @@ _.extend(ColumnChart.prototype, {
           return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length;
         }))
         .tickFormat(options.xFormat)
-        .scale(xScale));
+        .scale(dataXScale));
 
     var svgBox = this._svg.node().getBoundingClientRect();
     svg.selectAll('.x.axis text')
