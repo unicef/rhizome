@@ -83,10 +83,8 @@ let ChartWizardStore = Reflux.createStore({
     return this.data
   },
 
-  onInitialize(chartDef, location, campaign) {
+  onInitialize(chartDef) {
     this.data.chartDef = _.clone(chartDef)
-    this.data.location = location
-    this.data.campaign = campaign
 
     Promise.all([api.indicatorsTree({ office_id: this.data.location.office_id }), api.locations(), api.campaign(), api.office()]).
       then(([indicators, locations, campaigns, offices]) => {
@@ -111,6 +109,13 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
+        if(chartDef.locationValue && this.locationIndex[chartDef.locationValue]){
+          this.data.location = this.locationIndex[chartDef.locationValue]
+        }
+        else {
+          this.data.location = this.data.locationList.length > 0 ? this.locationIndex[this.data.locationList[0].value] : null
+        }
+
         let officeIndex = _.indexBy(offices.objects, 'id')
         this.campaignList = _(campaigns.objects)
           .map(campaign => {
@@ -124,12 +129,19 @@ let ChartWizardStore = Reflux.createStore({
           .reverse()
           .value()
 
-        this.campaignIndex = _.indexBy(this.campaignList, 'id')
 
+        this.campaignIndex = _.indexBy(this.campaignList, 'id')
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
         this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
         this.data.chartTypeFilteredList = builderDefinitions.charts
 
+        if(chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]){
+          this.data.campaign = this.campaignIndex[chartDef.campaignValue]
+        }
+        else{
+          this.data.campaign = this.data.campaignFilteredList.length > 0 ? this.campaignIndex[this.data.campaignFilteredList[0].id] : null
+        }
+        
         if (this.data.indicatorSelected.length > 0) {
           this.filterChartTypeByIndicator()
         }
@@ -241,6 +253,8 @@ let ChartWizardStore = Reflux.createStore({
           }),
           groupBy: builderDefinitions.groups[this.data.groupByValue].value,
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
+          locationValue: this.data.location.id,
+          campaignValue: this.data.campaign.id,
           timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
           xFormat: builderDefinitions.formats[this.data.xFormatValue].value

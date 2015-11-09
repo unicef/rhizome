@@ -79,7 +79,7 @@ let ChartWizard = React.createClass({
 
   componentDidMount() {
     this.chartDef = this.props.chartDef || defaultChartDef
-    ChartWizardActions.initialize(this.chartDef, this.props.location, this.props.campaign)
+    ChartWizardActions.initialize(this.chartDef)
   },
 
   saveChart() {

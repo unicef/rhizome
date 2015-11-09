@@ -318,7 +318,7 @@ module.exports = React.createClass({
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex]);
       return (
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
-                     cancel={this.cancelEditChart} campaign={campaign} location={location}/>
+                     cancel={this.cancelEditChart} />
       )
     }
     else {
