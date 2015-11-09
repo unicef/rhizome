@@ -93,6 +93,23 @@ function _fill(data, campaign, targets) {
   return color(scale(_value(data, campaign)));
 }
 
+function _valueText(value, targets) {
+  var threshold = targets[1];
+  var target = targets[0];
+  if (!_.isNull(value) && _.isFinite(value)) {
+    if (value < threshold[0]) {
+      return target[0];
+    }
+    else if (value >= threshold[0] && value < threshold[1]) {
+      return target[1];
+    }
+    else {
+      return target[2];
+    }
+  }
+  return '';
+}
+
 module.exports = React.createClass({
   propTypes : {
     campaign   : React.PropTypes.object.isRequired,
@@ -129,7 +146,8 @@ module.exports = React.createClass({
           fill       : _.partial(_fill, _, campaign, targets),
           format     : d3.format('%'),
           thresholds : targets[1],
-          targets    : targets[0]
+          targets    : targets[0],
+          valueText  : _.partial(_valueText, _, targets)
         };
 
         var title = _.get(indicator, 'short_name');

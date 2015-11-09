@@ -169,7 +169,7 @@ _.extend(BulletChart.prototype, {
 		measure.attr(initAttr).attr('x', x);
 		measure.exit().remove();
 
-		var label = bar.selectAll('text')
+		var label = bar.selectAll('.label')
 			.data(function (d) {
 				var v = options.value(d);
 				return _.isFinite(v) ? [v] : [];
@@ -193,6 +193,28 @@ _.extend(BulletChart.prototype, {
 			.style('font-size', options.fontSize)
 			.text(options.format);
 		label.exit().remove();
+
+    var compareValue = bar.selectAll('.comparative-text')
+      .data(function(d) {
+        var v = options.value(d);
+        return [options.valueText(v)];
+      });
+
+    compareValue.enter().append('text')
+      .attr('class', 'comparative-text');
+
+    compareValue
+			.attr({
+        'x'         :0,
+        'y'         :0,
+        'text-anchor': 'start',
+				'dy'        : (options.lineHeight / 4) + 'em',
+				'transform' : 'translate(0,' + (h / 2) + ')',
+        'fill'      : '#FFFFFF'
+			})
+			.style('font-size', options.fontSize-2)
+			.text(function(d) {return d});
+    compareValue.exit().remove();
 	},
 
 	resize : function (el) {
