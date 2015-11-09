@@ -169,7 +169,7 @@ var SimpleForm = React.createClass({
 
     var base_form = (
       <div>
-        <p className="pageWelcome"> Welcome! </p>
+        <h2>Manage Admin Page</h2>
         {idInfo}
         <ReactJson value={formData} settings={formSettings} ref="form_data"/>
         {additionalFormComponents}
