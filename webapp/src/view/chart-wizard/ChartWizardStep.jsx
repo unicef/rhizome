@@ -25,4 +25,6 @@ let ChartWizardStep = React.createClass({
   }
 })
 
+ab=addDeclaredGlobals;21223;[3;32]
+
 export default ChartWizardStep
