@@ -61,8 +61,8 @@ var Access = React.createClass({
     var lower = m.clone().startOf('month').subtract(1, 'year');
     var upper = m.clone().endOf('month');
 
-    var lineChartOptions = {
-      aspect  : 2.572,
+    var chartOptions = {
+      aspect  : 2.26,
       domain  : _.constant([lower.toDate(), upper.toDate()]),
       values  : _.property('values'),
       x       : _.property('campaign.start_date'),
@@ -74,9 +74,9 @@ var Access = React.createClass({
         <div className="row">
           <div className="medium-4 columns">
             <h4>Number of Inaccessible Children</h4>
-            <Chart type='LineChart' data={inaccessible}
+            <Chart type='AreaChart' data={inaccessible}
             loading={loading}
-            options={lineChartOptions} />
+            options={chartOptions} />
           </div>
 
           <div className='accessibility medium-2 columns'>
