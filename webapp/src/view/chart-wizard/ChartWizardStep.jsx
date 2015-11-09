@@ -13,10 +13,13 @@ let ChartWizardStep = React.createClass({
   },
 
   render() {
-    let isActive = this.props.active == this.props.refer ? 'active' : ''
+    let isActive = this.props.active === this.props.refer
     return (
-      <li className={'chart-wizard__step ' + isActive}>
-        <h2 onClick={this.activeStep}>{this.props.title}</h2>
+      <li className={'chart-wizard__step ' + (isActive ? 'active' : '')}>
+        <h2 onClick={this.activeStep}>
+          {this.props.title}
+          <i className={'fa ' + (isActive ? 'fa-minus' : 'fa-plus')}></i>
+        </h2>
         <div className='chart-wizard__expandable'>
           {this.props.children}
         </div>

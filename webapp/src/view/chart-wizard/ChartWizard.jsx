@@ -220,23 +220,23 @@ let ChartWizard = React.createClass({
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title={`Select Location - ${this.state.data.location && this.state.data.location.name}`}
+          <ChartWizardStep title={`1. Select Location - ${this.state.data.location && this.state.data.location.name}`}
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Select Indicator' refer='indicator'>
+          <ChartWizardStep title='2. Select Indicator' refer='indicator'>
             {indicatorStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Select Chart Type' refer='chart-type'>
+          <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Select Time Range' refer='time-range'>
+          <ChartWizardStep title='4. Select Time Range' refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Customise Options' refer='option'>
+          <ChartWizardStep title='5. Customise Options' refer='option'>
             {optionStep}
           </ChartWizardStep>
-          <ChartWizardStep title='Preview' refer='preview'>
+          <ChartWizardStep title='6. Preview' refer='preview'>
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>

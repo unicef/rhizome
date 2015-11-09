@@ -21,10 +21,17 @@
   }
 
   h2 {
+    background: #fff;
     padding: 5px 10px;
     margin: 0;
+    font-size: 16px;
     cursor: pointer;
-    background: #fff;
+
+    .fa {
+      float: right;
+      font-size: 20px;
+      line-height: 28px;
+    }
   }
 
   .chart-wizard__expandable {
