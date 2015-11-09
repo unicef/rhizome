@@ -66,7 +66,7 @@ class AggRefreshTestCase(TestCase):
 
         office_id = Office.objects.create(id=1,name='test').id
 
-        cache_job_id = CacheJob.objects.create(id = -2,date_completed=\
+        cache_job_id = CacheJob.objects.create(id = -1,date_completed=\
             '2015-01-01',date_attempted = '2015-01-01', is_error = False)
 
         status_id = ProcessStatus.objects.create(
@@ -172,7 +172,7 @@ class AggRefreshTestCase(TestCase):
         sum_dp_value = sum([y for x,y in dps])
         dp_ids = [x for x,y in dps]
 
-        ag_r = AggRefresh(datapoint_id_list=dp_ids)
+        ag_r = AggRefresh()
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
@@ -210,7 +210,7 @@ class AggRefreshTestCase(TestCase):
 
         dp_ids.append(agg_override_dp.id)
 
-        ar = AggRefresh(datapoint_id_list = dp_ids)
+        ar = AggRefresh()
 
         override_value_in_agg = AggDataPoint.objects.get(campaign_id =\
             campaign_id ,indicator_id = indicator_id, location_id =\
@@ -244,7 +244,7 @@ class AggRefreshTestCase(TestCase):
         sum_dp_value = sum([y for x,y in dps])
         dp_ids = [x for x,y in dps]
 
-        cr = AggRefresh(datapoint_id_list=dp_ids)
+        cr = AggRefresh()
 
         ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
@@ -380,7 +380,7 @@ class AggRefreshTestCase(TestCase):
 
         dp_list = [dp_1.id,dp_2.id,dp_3.id]
 
-        cr = AggRefresh(datapoint_id_list=dp_list)
+        cr = AggRefresh()
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -474,9 +474,7 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        dp_list = [dp_1.id,dp_2.id]
-
-        cr = AggRefresh(datapoint_id_list=dp_list)
+        cr = AggRefresh()
 
         calc_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,

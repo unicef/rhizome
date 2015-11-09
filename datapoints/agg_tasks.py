@@ -29,7 +29,7 @@ class AggRefresh(object):
     '''
 
 
-    def __init__(self,datapoint_id_list=None):
+    def __init__(self,campaign_id=None):
         '''
         If there is a job running, return to with a status code of
         "cache_running".
@@ -46,104 +46,54 @@ class AggRefresh(object):
         if CacheJob.objects.filter(date_completed=None):
             return
 
-        self.datapoint_id_list = datapoint_id_list
+        self.campaign_id = campaign_id
 
-        # set up and run the cache job
-        response_msg = self.set_up()
+        if self.campaign_id is None:
 
-        if response_msg != 'NOTHING_TO_PROCESS':
-            response_msg = self.main()
+            try:
+                self.campaign_id = DataPoint.objects.filter(cache_job_id=-1)[0]\
+                    .campaign_id
+            except IndexError:
+                return 'NOTHING_TO_PROCESS'
 
-            if response_msg == 'ERROR':
-                self.cache_job.response_msg = str(self.err)[:254]
-                self.cache_job.date_completed = datetime.now()
-                self.is_error = True
-                self.cache_job.save()
-                return
-
-        # mark job as completed and save
-        self.cache_job.date_completed = datetime.now()
-        self.cache_job.response_msg = response_msg
-        self.cache_job.save()
-
-    def set_up(self):
-        '''
-        First reate a row in the ``source_data_etl_job`` table.  This table
-        will store when the cache_task was created, when it was complete, and
-        what the status of the job is.
-
-        Next, this method finds the datapoint ids that it will use to run the
-        cache job using ``AggRefresh.get_datapoints_to_cache()``.  Only data that is relevenat to these datapoint ids should be
-        altered.  That includes any data for parents of the associated datapoints
-        as well as any indicators that are stored as the result of the
-        calculation on the underlying datapoints.
-
-        Finally this method calls ``AggRefresh.get_indicator_ids()`` to get
-        indicators needed to loop through ( both raw and computed ) that will
-        need to be refreshed.
-
-        TO DO
-        -----
-        Every datapoint should have a cache_job_id so we can see when and why
-        a particular datapoint was cached.
-
-        '''
 
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
         )
 
-        if self.datapoint_id_list is None:
-            self.datapoint_id_list = self.get_datapoints_to_cache()
+        response_msg = self.main()
 
-            if len(self.datapoint_id_list) == 0:
-                return 'NOTHING_TO_PROCESS'
+        if response_msg == 'ERROR':
+            self.cache_job.response_msg = str(self.err)[:254]
+            self.cache_job.date_completed = datetime.now()
+            self.is_error = True
+            self.cache_job.save()
+            return
 
-        self.set_cache_job_id_for_raw_datapoints()
+        ## update the datapoint table with this cache_job_id
+        DataPoint.objects.filter(campaign_id = self.campaign_id)\
+            .update(cache_job_id = self.cache_job.id)
 
-        self.campaign_id = DataPoint.objects.filter(cache_job_id = \
-            self.cache_job.id)[0].campaign_id
+        ## mark job as completed and save
+        self.cache_job.date_completed = datetime.now()
+        self.cache_job.response_msg = response_msg
+        self.cache_job.save()
 
-        return 'PENDING_AGG'
 
     def main(self):
         '''
+        Blindly catch any erros from the two aggregation functions.
         '''
 
         try:
-            cache_job_id = self.cache_job.id
-        except AttributeError:
-            return 'PENDING'
-
-        # try:
-        self.agg_datapoints()
-        self.calc_dp_ids = self.calc_datapoints()
-        # except Exception as err:
-        #     self.err = traceback.format_exc()
-        #     return 'ERROR'
+            self.agg_datapoints()
+            self.calc_datapoints()
+        except Exception as err:
+            self.err = traceback.format_exc()
+            return 'ERROR'
 
         return 'SUCCESS'
-
-    def set_cache_job_id_for_raw_datapoints(self):
-        '''
-        After we find what datapoint IDs need to be refreshed, we set the
-        cache_job_id coorespondonding to the current job so we can find
-        these datapoints easily both within this class, and for engineers /
-        analysts debugging the cache process
-        '''
-
-        dp_curs = DataPoint.objects.raw('''
-
-            UPDATE datapoint
-            SET cache_job_id = %s
-            WHERE id = ANY(%s);
-
-            SELECT ID from datapoint LIMIT 1;
-
-        ''',[self.cache_job.id,self.datapoint_id_list])
-
-        x = [dp.id for dp in dp_curs]
 
 
     def agg_datapoints(self):
@@ -169,7 +119,7 @@ class AggRefresh(object):
             'value','cache_job_id']
 
         dp_df = DataFrame(list(DataPoint.objects\
-            .filter(cache_job_id = self.cache_job.id)\
+            .filter(campaign_id = self.campaign_id)\
             .values_list(*datapoint_columns)),columns=datapoint_columns)
 
         ## represents the location heirarchy as a cache from the location table
@@ -498,24 +448,15 @@ class AggRefresh(object):
         return [x.id for x in raw_qs]
 
 
-    def get_datapoints_to_cache(self,limit=None):
+    def get_datapoints_to_agg(self,limit=None):
         '''
         Since there are complicated dependencies for location aggregation, as
         well as the interrationship between indicators, processing one campaign
         at a time makes our code much simpler.
         '''
 
-        dps = DataPoint.objects.raw('''
-            SELECT id from datapoint d
-            WHERE cache_job_id = -1
-            AND campaign_id in ( -- one campaign at a time
-                SELECT campaign_id FROM datapoint d2
-                WHERE cache_job_id = -1
-                LIMIT 1
-            )
-        ''')
-
-        dp_ids = [row.id for row in dps]
+        dp_ids = DataPoint.objects.filter(campaign_id = self.campaign_id)\
+            .values_list('id',flat=True)
 
         return dp_ids
 
