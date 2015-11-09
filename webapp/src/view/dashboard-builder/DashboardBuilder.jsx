@@ -25,8 +25,8 @@ var AppActions = require('actions/AppActions');
 var RegionTitleMenu = require('component/RegionTitleMenu.jsx');
 var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx');
 var TitleInput = require('component/TitleInput.jsx');
-var LayoutOptions = require('component/LayoutOptions.jsx');
-var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js');
+var LayoutOptions = require('component/layout-options/LayoutOptions.jsx');
+var LayoutDefaultSettings = require('dashboard/builtin/layout-options');
 var CustomDashboard = require('dashboard/CustomDashboard.jsx');
 
 var moment = require('moment');
