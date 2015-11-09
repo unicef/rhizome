@@ -34,7 +34,7 @@ let ChartWizardStore = Reflux.createStore({
 
   filterCampaignByLocation(campaigns, location) {
     return campaigns.filter(campaign => {
-      return campaign.office_id == location.office_id
+      return campaign.office_id === location.office_id
     })
   },
 
@@ -157,7 +157,7 @@ let ChartWizardStore = Reflux.createStore({
 
       this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
       let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-        return moment(campaign.start_date).format() == moment(this.data.campaign.start_date).format()
+        return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
       })
       this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
       this.previewChart()
@@ -266,7 +266,7 @@ let ChartWizardStore = Reflux.createStore({
     let groupBy = builderDefinitions.groups[this.data.groupByValue].value
     let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
     let locationIndex = _.indexBy(this.data.locationSelected, 'id')
-    let groups = this.data.groupByValue == 0 ? indicatorIndex : locationIndex
+    let groups = this.data.groupByValue === 0 ? indicatorIndex : locationIndex
     let start = moment(this.data.campaign.start_date)
     let lower = this.data.timeRangeFilteredList[this.data.timeValue].getLower(start)
     let upper = start.clone().startOf('month')
