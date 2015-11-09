@@ -262,7 +262,7 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(raw_value, raw_value_in_agg)
 
-    def test_sum_and_pct(self):
+    def sum_and_pct(self):
         '''
         The system uses the "PART_TO_BE_SUMMED" edge type in order to create
         indicators such that the sum of:
@@ -402,7 +402,7 @@ class AggRefreshTestCase(TestCase):
         pct_target_value = val_3 / float(sum_target_value)
         self.assertEqual(calc_value_pct,pct_target_value)
 
-    def test_part_of_difference(self):
+    def part_of_difference(self):
         '''
         see here: rhizome.work/ufadmin/manage/indicator/187
 
