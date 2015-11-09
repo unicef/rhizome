@@ -1,11 +1,11 @@
 'use strict';
 
-var _      = require('lodash');
-var Layer  = require('react-layer');
-var React  = require('react');
+var _ = require('lodash');
+var Layer = require('react-layer');
+var React = require('react');
 var moment = require('moment');
 
-var Chart   = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx');
 var Tooltip = require('component/Tooltip.jsx');
 
 function _domain(data) {
@@ -58,8 +58,8 @@ function _targetRanges(indicator) {
       var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
 
       return _.assign({}, bound, {
-        mn_val : lower,
-        mx_val : upper
+        mn_val: lower,
+        mx_val: upper
       });
     })
     .filter(function (bound) {
@@ -81,10 +81,10 @@ function _targetRanges(indicator) {
   return [_.pluck(targets, 'bound_name'), boundaries];
 }
 
-function _fill(data, campaign, targets) {
+function _fill(data, campaign, targets, colorRange) {
   var color = d3.scale.ordinal()
     .domain(['bad', 'ok', 'good'])
-    .range(['#D95449', '#7A909E', '#39B0D1']);
+    .range(colorRange);
 
   var scale = d3.scale.threshold()
     .domain(targets[1])
@@ -111,43 +111,46 @@ function _valueText(value, targets) {
 }
 
 module.exports = React.createClass({
-  propTypes : {
-    campaign   : React.PropTypes.object.isRequired,
-    indicators : React.PropTypes.array.isRequired,
+  propTypes: {
+    campaign: React.PropTypes.object.isRequired,
+    indicators: React.PropTypes.array.isRequired,
 
-    cols       : React.PropTypes.number,
-    data       : React.PropTypes.array,
+    cols: React.PropTypes.number,
+    data: React.PropTypes.array,
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      cols     : 1,
+      cols: 1,
     };
   },
 
-  render : function () {
+  render: function () {
     var campaign = this.props.campaign;
     var showHelp = this.props.showHelp;
     var hideHelp = this.props.hideHelp;
-    var data     = this.props.data;
-    var loading  = this.props.loading;
+    var data = this.props.data;
+    var loading = this.props.loading;
+    var dataColorRange = ['#D95449', '#7A909E', '#39B0D1'];
+    var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6'];
 
     var charts = _(this.props.indicators)
       .map((indicator, i) => {
         var targets = _targetRanges(indicator);
 
         var options = {
-          domain     : _domain,
-          value      : _.partial(_value, _, campaign),
-          marker     : _.partial(_marker, _, campaign),
-          y          : _.property('location'),
-          width      : 154,
-          height     : 10,
-          fill       : _.partial(_fill, _, campaign, targets),
-          format     : d3.format('%'),
-          thresholds : targets[1],
-          targets    : targets[0],
-          valueText  : _.partial(_valueText, _, targets)
+          domain: _domain,
+          value: _.partial(_value, _, campaign),
+          marker: _.partial(_marker, _, campaign),
+          y: _.property('location'),
+          width: 154,
+          height: 10,
+          dataFill: _.partial(_fill, _, campaign, targets, dataColorRange),
+          axisFill: _.partial(_fill, _, campaign, targets, xAxisColorRange),
+          format: d3.format('%'),
+          thresholds: targets[1],
+          targets: targets[0],
+          valueText: _.partial(_valueText, _, targets)
         };
 
         var title = _.get(indicator, 'short_name');
@@ -161,7 +164,7 @@ module.exports = React.createClass({
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
             <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
-            <Chart type='BulletChart' loading={loading} data={chartData} options={options} />
+            <Chart type='BulletChart' loading={loading} data={chartData} options={options}/>
           </li>
         );
       })
@@ -170,11 +173,12 @@ module.exports = React.createClass({
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
   },
 
-  _showHelp : function (indicator, evt) {
+  _showHelp: function (indicator, evt) {
     var render = function () {
       return (
         <Tooltip left={evt.pageX} top={evt.pageY}>
           <h3>{indicator.name}</h3>
+
           <p>{indicator.description}</p>
         </Tooltip>
       );
@@ -189,7 +193,7 @@ module.exports = React.createClass({
     this.layer.render();
   },
 
-  _hideHelp : function () {
+  _hideHelp: function () {
     if (this.layer) {
       this.layer.destroy();
       this.layer = null;
