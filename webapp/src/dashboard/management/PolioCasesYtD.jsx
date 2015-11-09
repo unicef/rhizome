@@ -64,14 +64,6 @@ module.exports = React.createClass({
       );
     }
 
-    var color = d3.scale.ordinal()
-      .range(['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc'])
-      .domain(_(this.props.data)
-        .map(_.method('campaign.start_date.getFullYear'))
-        .uniq()
-        .sortBy()
-        .value());
-
     return (
       <div id='polio-cases-ytd'>
         {title}
@@ -81,7 +73,6 @@ module.exports = React.createClass({
             data={this.props.data}
             loading={loading}
             options={{
-              color  : _.flow(_.property('name'), color),
               aspect  : 2.26
             }} />
         </div>
