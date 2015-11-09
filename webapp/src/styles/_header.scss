@@ -93,14 +93,13 @@ ul.dashboards-nav {
 
   > li {
     margin: 0;
-    padding: 27px 10px;
+    padding: 0;
     border: none;
     display: inline-block;
     text-align: left;
     background-color: $rhz-navigation-bg-color;
 
     &:hover {
-
       background-color: $rhz-navigation-hover-bg-color;
 
       .dashboard-menu {
@@ -114,6 +113,8 @@ ul.dashboards-nav {
       text-transform: uppercase;
       text-align: left;
       font-size: 0.8rem;
+      padding: 27px 20px;
+      display: block;
     }
   }
 }
@@ -169,5 +170,3 @@ ul.dashboards-nav {
 .image-style {
   margin: -5px;
 }
-
-
