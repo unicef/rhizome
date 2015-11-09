@@ -1,11 +1,12 @@
 .chart-wizard {
-  width: 1230px;
+  max-width: 1230px;
+  width: 100%;
   margin: 20px auto;
 }
 
 .chart-wizard__step-list {
   width: 25%;
-  min-width: 300px;
+  min-width: 250px;
   margin: 0;
   display: inline-block;
 }
@@ -48,7 +49,7 @@
 .preview-screen {
   width: 70%;
   display: inline-block;
-  margin-left: 50px;
+  margin-left: 2%;
   vertical-align: top;
 
   h1 {
