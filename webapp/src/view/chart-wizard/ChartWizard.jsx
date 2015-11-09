@@ -110,6 +110,7 @@ let ChartWizard = React.createClass({
           onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'indicator')}>Next</span>
       </div>
     )
 
@@ -122,6 +123,7 @@ let ChartWizard = React.createClass({
           sendValue={ChartWizardActions.addIndicator}>
         </IndicatorDropdownMenu>
         <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator}/>
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'chart-type')}>Next</span>
       </div>
     )
 
@@ -129,6 +131,7 @@ let ChartWizard = React.createClass({
       <div>
         <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'time-range')}>Next</span>
       </div>
     )
 
@@ -148,7 +151,8 @@ let ChartWizard = React.createClass({
 
         <RadioGroup name='time' title='Time Range'
           value={this.state.data.timeValue}
-          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio}/>
+          values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'option')}>Next</span>
       </div>
     )
 
@@ -188,6 +192,7 @@ let ChartWizard = React.createClass({
               values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
           )
         }
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'preview')}>Next</span>
       </div>
     )
 
@@ -235,7 +240,7 @@ let ChartWizard = React.createClass({
             (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
-        <span className='chart-wizard__cancel' href='#' onClick={this.props.cancel}>Cancel</span>
+        <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>
       </div>
     )
   }

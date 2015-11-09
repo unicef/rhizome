@@ -28,8 +28,9 @@
 
   .chart-wizard__expandable {
     display: none;
+    position: relative;
     min-height: 300px;
-    padding: 10px;
+    padding: 10px 10px 80px;
   }
 
   &.active {
@@ -45,7 +46,7 @@
 }
 
 .preview-screen {
-  width: 60%;
+  width: 70%;
   display: inline-block;
   margin-left: 50px;
   vertical-align: top;
@@ -59,11 +60,10 @@
 }
 
 .chart-wizard__save,
-.chart-wizard__cancel {
+.chart-wizard__cancel,
+.chart-wizard__next {
   display: block;
   margin: 10px 0;
-  padding: 20px;
-  width: 250px;
   text-align: center;
   text-transform: uppercase;
   background: #344b61;
@@ -73,4 +73,18 @@
   &:hover {
     background: #426281;
   }
+}
+
+.chart-wizard__save,
+.chart-wizard__cancel {
+  width: 250px;
+  padding: 20px;
+}
+
+.chart-wizard__next {
+  width: 100px;
+  padding: 10px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
