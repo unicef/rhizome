@@ -367,7 +367,7 @@ class CustomDashboardResource(BaseModelResource):
             'default_office_id': default_office_id,
         }
 
-        if(CustomDashboard.objects.filter(title=title).count()>0):
+        if(CustomDashboard.objects.filter(title=title).count()>0 and (dash_id is None)):
             raise DataPointsException('the custom dashboard "{0}" already exists'.format(title))
 
         dashboard, created = CustomDashboard.objects.update_or_create(
