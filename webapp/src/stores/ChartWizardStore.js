@@ -88,7 +88,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.location = location
     this.data.campaign = campaign
 
-    Promise.all([api.indicatorsTree(), api.locations(), api.campaign(), api.office()]).
+    Promise.all([api.indicatorsTree({ office_id: this.data.location.office_id }), api.locations(), api.campaign(), api.office()]).
       then(([indicators, locations, campaigns, offices]) => {
         this.indicatorIndex = _.indexBy(indicators.flat, 'id')
         this.data.indicatorList = _.sortBy(indicators.objects, 'title')
@@ -147,12 +147,21 @@ let ChartWizardStore = Reflux.createStore({
   onAddLocation(index) {
     this.data.location = this.locationIndex[index]
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-    let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-      return moment(campaign.start_date).format() == moment(this.data.campaign.start_date).format()
+
+    api.indicatorsTree({ office_id: this.data.location.office_id }).then(indicators => {
+      this.indicatorIndex = _.indexBy(indicators.flat, 'id')
+      this.data.indicatorList = _.sortBy(indicators.objects, 'title')
+      this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
+        return this.indicatorIndex[id]
+      })
+
+      this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+      let newCampaign = this.data.campaignFilteredList.filter(campaign => {
+        return moment(campaign.start_date).format() == moment(this.data.campaign.start_date).format()
+      })
+      this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
+      this.previewChart()
     })
-    this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
-    this.previewChart()
   },
 
   onAddIndicator(index) {
