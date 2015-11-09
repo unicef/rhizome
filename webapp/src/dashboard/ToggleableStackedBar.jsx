@@ -21,7 +21,7 @@ var ToggleableStackedBar = React.createClass({
   },
 
   render : function () {
-    var name    = _.kebabCase(this.props.title)
+    var name    = _.kebabCase(this.props.title);
     var props   = _.omit(this.props, 'title', 'options');
     var options = _.assign({}, this.props.options, {
       offset  : this.state.offset,

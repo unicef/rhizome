@@ -76,7 +76,7 @@ var HomepageCharts = React.createClass({
         options={{
           domain  : _.constant([0, 0.1]),
           value   : _.property('properties[475]'),
-          yFormat : d3.format('%'),
+          yFormat : d3.format(',.1%'),
           width: 390,
           height: 390
         }}
@@ -95,7 +95,7 @@ var HomepageCharts = React.createClass({
             domain  : _.constant(missedChildrenData.missedScale),
             x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
             xFormat : d => moment(d).format('MMM YYYY'),
-            yFormat : d3.format('%'),
+            yFormat : d3.format(',.1%'),
             width: 390,
             height: 390
           }}

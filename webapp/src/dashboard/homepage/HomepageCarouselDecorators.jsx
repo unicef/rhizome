@@ -75,7 +75,7 @@ var HomepageCarouselDecorators = [
         return {
           position: 'relative',
           margin: 0,
-          top: 30,
+          top: 25,
           padding: 0
         }
       },
