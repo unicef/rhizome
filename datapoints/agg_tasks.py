@@ -43,6 +43,8 @@ class AggRefresh(object):
         table as well as the start / end time.
         '''
 
+        self.dwc_batch, self.dwc_tuple_dict = [],{}
+
         if CacheJob.objects.filter(date_completed=None):
             return
 
@@ -166,42 +168,22 @@ class AggRefresh(object):
 
         '''
 
-        self.calc_prep()
-        self.sum_of_parts()
-        self.part_over_whole()
-        self.part_of_difference()
+        ## the order of these calculations defines their priority, meaning
+        ## since raw data is the last calculation, this will override all else
+        # self.sum_of_parts()
+        # self.part_over_whole()
+        # self.part_of_difference()
+        self.raw_data()
+
         self.upsert_computed()
 
         return []
 
-    def calc_prep(self):
+    def raw_data(self):
 
-        raw_qs = AggDataPoint.objects.raw('''
-
-        DROP TABLE IF EXISTS _tmp_calc_datapoint;
-        CREATE TABLE _tmp_calc_datapoint AS
-        SELECT DISTINCT
-            ad.id
-            ,ad.location_id
-            ,ad.campaign_id
-            ,ad.indicator_id
-            ,ad.value
-            ,ad.cache_job_id
-        FROM agg_datapoint ad
-        WHERE ad.cache_job_id = %s;
-
-        CREATE UNIQUE INDEX uq_ix ON _tmp_calc_datapoint (location_id,
-            campaign_id, indicator_id);
-
-        -- FIX --
-        DELETE FROM _tmp_calc_datapoint WHERE value = 'NaN';
-
-        SELECT * FROM agg_datapoint
-        LIMIT 1;
-
-        ''',[self.cache_job.id])
-
-        return [x.id for x in raw_qs]
+        for adp in AggDataPoint.objects.filter(campaign_id = self.campaign_id):
+            adp_tuple = (adp.location_id, adp.indicator_id, adp.campaign_id)
+            self.dwc_tuple_dict[adp_tuple] = adp.value
 
     def sum_of_parts(self):
         '''
@@ -307,16 +289,18 @@ class AggRefresh(object):
     def part_over_whole(self):
 
         raw_qs = AggDataPoint.objects.raw('''
-        INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value,cache_job_id)
 
         SELECT DISTINCT
-            part.indicator_id as master_id
+             x.id
+            ,part.indicator_id
             ,d_part.location_id
             ,d_part.campaign_id
             ,d_part.value / NULLIF(d_whole.value,0) as value
             ,d_part.cache_job_id
         FROM calculated_indicator_component part
+        INNER JOIN (
+            SELECT id from agg_datapoint LIMIT 1
+            ) x ON 1=1
         INNER JOIN calculated_indicator_component whole
             ON part.indicator_id = whole.indicator_id
             AND whole.calculation = 'WHOLE'
@@ -334,11 +318,12 @@ class AggRefresh(object):
             AND tcd.indicator_id = part.indicator_id
         );
 
-        SELECT id FROM agg_datapoint limit 1;
-
         ''')
 
-        return [x.id for x in raw_qs]
+        for row in raw_qs:
+            uq_tuple = (row.location_id, row.indicator_id, row.campaign_id)
+            self.dwc_tuple_dict[uq_tuple] = row.value
+
 
     def part_of_difference(self):
 
@@ -415,35 +400,24 @@ class AggRefresh(object):
         return [x.id for x in raw_qs]
 
     def upsert_computed(self):
+        '''
+        Using the tuple dict that defined the unique key and associated value
+        for the various calculations, prepare this bulk insert, delete the
+        existing campaign data then perform the bulk insert.
+        '''
+        for uq_tuple, val in self.dwc_tuple_dict.iteritems():
 
+            dwc_dict = {'location_id': uq_tuple[0],
+                'indicator_id': uq_tuple[1],
+                'campaign_id': uq_tuple[2],
+                'value': val,
+                'cache_job_id': self.cache_job.id
+            }
 
-        raw_qs = DataPointComputed.objects.raw('''
-
-    	--INSERT INTO datapoint_with_computed
-    	--(location_id, campaign_id, indicator_id, value, cache_job_id)
-
-    	SELECT x.id, location_id, campaign_id, indicator_id, value, cache_job_id
-    	FROM _tmp_calc_datapoint tcd
-        INNER JOIN (
-            SELECT ad.id FROM agg_datapoint ad LIMIT 1
-        ) x ON 1=1
-        WHERE NOT EXISTS (
-    		SELECT 1 FROM datapoint_with_computed dwc
-    		WHERE tcd.location_id = dwc.location_id
-    		AND tcd.campaign_id = dwc.campaign_id
-    	 	AND tcd.indicator_id = dwc.indicator_id
-    	);
-        ''')
-
-        dwc_batch = []
-        for row in raw_qs:
-            row_dict = row.__dict__
-            del row_dict['_state']
-            del row_dict['id']
-            dwc_batch.append(DataPointComputed(**row_dict))
+            self.dwc_batch.append(DataPointComputed(**dwc_dict))
 
         DataPointComputed.objects.filter(campaign_id=self.campaign_id).delete()
-        DataPointComputed.objects.bulk_create(dwc_batch)
+        DataPointComputed.objects.bulk_create(self.dwc_batch)
 
 
 
