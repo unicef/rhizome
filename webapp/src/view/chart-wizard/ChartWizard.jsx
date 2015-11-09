@@ -103,6 +103,7 @@ let ChartWizard = React.createClass({
 
     let locationStep = (
       <div>
+        <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
         <DropdownMenu
           icon='fa-globe'
           text={this.state.data.location && this.state.data.location.name || 'Select Location'}
@@ -116,6 +117,7 @@ let ChartWizard = React.createClass({
 
     let indicatorStep = (
       <div>
+        <p className='chart-wizard__para'>Which indicators will be included in the new chart?</p>
         <IndicatorDropdownMenu
           text='Add Indicators'
           icon='fa-plus'
@@ -129,6 +131,7 @@ let ChartWizard = React.createClass({
 
     let chartTypeStep = (
       <div>
+        <p className='chart-wizard__para'>What would the new chart look like?</p>
         <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'time-range')}>Next</span>
@@ -143,6 +146,8 @@ let ChartWizard = React.createClass({
 
     let timeRangeStep = (
       <div>
+        <p className='chart-wizard__para'>Which time period would you like to display the data for?</p>
+        <h4>Ending Time: </h4>
         <CampaignDropdownMenu
           text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Campaign'}
           campaigns={campaignListAsDate}
@@ -170,6 +175,7 @@ let ChartWizard = React.createClass({
 
     let optionStep = (
       <div>
+        <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
         {findChartType(this.state.data.chartDef.type).chooseAxis ?
