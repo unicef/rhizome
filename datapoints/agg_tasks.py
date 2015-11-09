@@ -86,12 +86,12 @@ class AggRefresh(object):
         Blindly catch any erros from the two aggregation functions.
         '''
 
-        try:
-            self.agg_datapoints()
-            self.calc_datapoints()
-        except Exception as err:
-            self.err = traceback.format_exc()
-            return 'ERROR'
+        # try:
+        self.agg_datapoints()
+        self.calc_datapoints()
+        # except Exception as err:
+        #     self.err = traceback.format_exc()
+        #     return 'ERROR'
 
         return 'SUCCESS'
 
@@ -416,36 +416,35 @@ class AggRefresh(object):
 
     def upsert_computed(self):
 
+
         raw_qs = DataPointComputed.objects.raw('''
 
-    	UPDATE datapoint_with_computed dwc
-    		SET value = tcd.value
-    			, cache_job_id = tcd.cache_job_id
-    	FROM _tmp_calc_datapoint tcd
-    	WHERE dwc.location_id = tcd.location_id
-    	AND dwc.indicator_id = tcd.indicator_id
-    	AND dwc.campaign_id = tcd.campaign_id
-    	AND tcd.value IS NOT NULL ; -- FIXME
+    	--INSERT INTO datapoint_with_computed
+    	--(location_id, campaign_id, indicator_id, value, cache_job_id)
 
-    	INSERT INTO datapoint_with_computed
-    	(location_id, campaign_id, indicator_id, value, cache_job_id)
-
-    	SELECT location_id, campaign_id, indicator_id, value, cache_job_id
+    	SELECT x.id, location_id, campaign_id, indicator_id, value, cache_job_id
     	FROM _tmp_calc_datapoint tcd
-    	WHERE NOT EXISTS (
+        INNER JOIN (
+            SELECT ad.id FROM agg_datapoint ad LIMIT 1
+        ) x ON 1=1
+        WHERE NOT EXISTS (
     		SELECT 1 FROM datapoint_with_computed dwc
     		WHERE tcd.location_id = dwc.location_id
     		AND tcd.campaign_id = dwc.campaign_id
     	 	AND tcd.indicator_id = dwc.indicator_id
-    	)
-    	AND tcd.value IS NOT NULL; -- FIXME
+    	);
+        ''')
 
-    	SELECT ad.id FROM datapoint_with_computed ad
-    	WHERE ad.cache_job_id = %s
-    	LIMIT 1;
-        ''',[self.cache_job.id])
+        dwc_batch = []
+        for row in raw_qs:
+            row_dict = row.__dict__
+            del row_dict['_state']
+            del row_dict['id']
+            dwc_batch.append(DataPointComputed(**row_dict))
 
-        return [x.id for x in raw_qs]
+        DataPointComputed.objects.filter(campaign_id=self.campaign_id).delete()
+        DataPointComputed.objects.bulk_create(dwc_batch)
+
 
 
     def get_datapoints_to_agg(self,limit=None):
