@@ -172,7 +172,7 @@ class AggRefresh(object):
 
         ## the order of these calculations defines their priority, meaning
         ## since raw data is the last calculation, this will override all else
-        # self.sum_of_parts()
+        self.sum_of_parts()
         # self.part_over_whole()
         self.part_of_difference()
         self.raw_data()
@@ -180,6 +180,24 @@ class AggRefresh(object):
         self.upsert_computed()
 
         return []
+
+    def build_calc_df(self,calc_list):
+
+        calc_df = DataFrame(list(CalculatedIndicatorComponent.objects\
+            .filter(calculation__in= calc_list)\
+            .values_list('indicator_id','indicator_component_id','calculation'))\
+            ,columns=['calc_indicator_id','indicator_component_id','calc'])
+
+        return calc_df
+
+    def build_dp_df(self,indicator_id_list):
+
+        dp_df = DataFrame(list(DataPoint.objects.all()\
+            .filter(indicator_id__in = indicator_id_list\
+                .unique(),campaign_id = self.campaign_id)\
+            .values_list(*self.dp_columns)),columns=self.dp_columns)
+
+        return dp_df
 
     def raw_data(self):
 
@@ -194,99 +212,13 @@ class AggRefresh(object):
 
         '''
 
-        raw_qs = AggDataPoint.objects.raw('''
+        ## get the indicator_ids we need to make the calculation ##
+        calc_df = self.build_calc_df(['PART_TO_BE_SUMMED'])
 
-        -- THIS QUERY ENSURES THAT IF DATA IS STORED AT A HIGHER lvl
-        -- THEN IT's SUB COMPONENTS, DATA AT THE HIGHER LEVEL WINS
-            --> for instance, if i have data stored at indicator_id 251
-            --> as well as the component indicators of 251 ( 24,251,267,268,264 )
-            --> we will take the data for 251 over it's sub-components
+        ## get the datapoints for the above indicator_ids ##
+        dp_df = self.build_dp_df(calc_df['indicator_component_id'])
 
-        INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value,cache_job_id)
-
-        SELECT
-        cic.indicator_id
-          , dwc.location_id
-          , dwc.campaign_id
-          , SUM(COALESCE(dwc.value,0.00)) as agg_value
-          , %s
-        FROM calculated_indicator_component cic
-        INNER JOIN _tmp_calc_datapoint dwc
-        ON 1 = 1
-        AND cic.indicator_component_id = dwc.indicator_id
-        AND calculation = 'PART_TO_BE_SUMMED'
-        AND NOT EXISTS (
-          SELECT 1 FROM _tmp_calc_datapoint tcd
-          WHERE dwc.location_id = tcd.location_id
-          AND dwc.campaign_id = tcd.campaign_id
-          AND cic.indicator_id = tcd.indicator_id
-        )
-
-        GROUP BY cic.indicator_id, dwc.location_id, dwc.campaign_id;
-
-        -- THIS HANDLES INDICATORS WHERE THE SUM IS MULTI LAYERED see:
-        -- http://rhizome.work/ufadmin/manage/indicator/21
-        -- http://rhizome.work/ufadmin/manage/indicator/251
-
-        WITH RECURSIVE ind_graph AS
-        (
-        -- non-recursive term ( rows where the components aren't
-        -- master_indicators in another calculation )
-
-      	SELECT
-        		 cic.id
-      		,cic.indicator_id
-      		,cic.indicator_component_id
-      		--,0 as lvl
-      	FROM calculated_indicator_component cic
-      	WHERE NOT EXISTS (
-      		SELECT 1 FROM calculated_indicator_component cic_leaf
-      		WHERE cic.indicator_component_id = cic_leaf.indicator_id
-      	)
-      	AND calculation = 'PART_TO_BE_SUMMED'
-
-      	UNION ALL
-
-      	-- recursive term --
-      	SELECT
-      		cic_recurs.id
-      		,cic_recurs.indicator_id
-      		,ig.indicator_component_id
-      		--,ig.lvl + 1
-      	FROM calculated_indicator_component AS cic_recurs
-      	INNER JOIN ind_graph AS ig
-      	ON (cic_recurs.indicator_component_id = ig.indicator_id)
-      	AND calculation = 'PART_TO_BE_SUMMED'
-
-        )
-
-        INSERT INTO _tmp_calc_datapoint
-        (indicator_id,location_id,campaign_id,value,cache_job_id)
-
-        SELECT
-            ig.indicator_id
-          , dwc.location_id
-          , dwc.campaign_id
-          , SUM(COALESCE(dwc.value,0.00)) as agg_value
-          , %s
-        FROM ind_graph ig
-        INNER JOIN _tmp_calc_datapoint dwc
-            ON 1 = 1
-            AND ig.indicator_component_id = dwc.indicator_id
-        AND NOT EXISTS (
-          SELECT 1 FROM _tmp_calc_datapoint tcd
-          WHERE dwc.location_id = tcd.location_id
-          AND dwc.campaign_id = tcd.campaign_id
-          AND ig.indicator_id = tcd.indicator_id
-        )
-        GROUP BY ig.indicator_id, dwc.location_id, dwc.campaign_id;
-
-    	SELECT ad.id FROM agg_datapoint ad
-    	LIMIT 1;'''
-        , [self.cache_job.id,self.cache_job.id])
-
-        return [x.id for x in raw_qs]
+        # ...
 
     def part_over_whole(self):
 
