@@ -86,13 +86,8 @@ let ChartWizardStore = Reflux.createStore({
   onInitialize(chartDef) {
     this.data.chartDef = _.clone(chartDef)
 
-    Promise.all([api.indicatorsTree({ office_id: this.data.location.office_id }), api.locations(), api.campaign(), api.office()]).
-      then(([indicators, locations, campaigns, offices]) => {
-        this.indicatorIndex = _.indexBy(indicators.flat, 'id')
-        this.data.indicatorList = _.sortBy(indicators.objects, 'title')
-        this.data.indicatorSelected = chartDef.indicators.map(id => {
-          return this.indicatorIndex[id]
-        })
+    Promise.all([api.locations(), api.campaign(), api.office()])
+      .then(([locations, campaigns, offices]) => {
 
         this.locationIndex = _.indexBy(locations.objects, 'id')
         this.data.locationList = _(locations.objects)
@@ -109,12 +104,20 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        if(chartDef.locationValue && this.locationIndex[chartDef.locationValue]){
-          this.data.location = this.locationIndex[chartDef.locationValue]
-        }
-        else {
-          this.data.location = this.data.locationList.length > 0 ? this.locationIndex[this.data.locationList[0].value] : null
-        }
+        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue] ?
+          this.locationIndex[chartDef.locationValue]:
+          this.locationIndex[this.data.locationList[0].value]
+
+        let officeId = this.data.location.office_id
+
+        api.indicatorsTree({ office_id: officeId}).then(indicators => {
+          this.indicatorIndex = _.indexBy(indicators.flat, 'id')
+          this.data.indicatorList = _.sortBy(indicators.objects, 'title')
+          this.data.indicatorSelected = chartDef.indicators.map(id => {
+            return this.indicatorIndex[id]
+          })
+          this.previewChart()
+        })
 
         let officeIndex = _.indexBy(offices.objects, 'id')
         this.campaignList = _(campaigns.objects)
@@ -141,7 +144,7 @@ let ChartWizardStore = Reflux.createStore({
         else{
           this.data.campaign = this.data.campaignFilteredList.length > 0 ? this.campaignIndex[this.data.campaignFilteredList[0].id] : null
         }
-        
+
         if (this.data.indicatorSelected.length > 0) {
           this.filterChartTypeByIndicator()
         }
