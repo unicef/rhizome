@@ -24,7 +24,7 @@ var HomepageChartsSection = React.createClass({
         var chartId = `${this.props.location.toLowerCase()}-chart`
 
         var controls
-        if(this.props.location === 'Nigeria') {
+        if (this.props.location === 'Nigeria') {
             controls =
               <div className='chart-button-group'>
                 <a href={this.getManagementDashboardUrl()} className='chart-button small-4 columns'>

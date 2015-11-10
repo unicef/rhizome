@@ -117,7 +117,7 @@ module.exports = React.createClass({
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
-        if(state.dashboard.builtin)
+        if (state.dashboard.builtin)
           DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q)
         else{
           DataActions.fetchForChart(this.state.dashboardStore.campaign, this.state.dashboardStore.location,
