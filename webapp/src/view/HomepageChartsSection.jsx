@@ -4,17 +4,17 @@ var React = require('react')
 var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx')
 
 var HomepageChartsSection = React.createClass({
-    getManagementDashboardUrl: function() {
+    getManagementDashboardUrl: function () {
       var [year, month] = this.props.date.split('-')
       return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
     },
 
-    getDistrictSummaryUrl: function() {
+    getDistrictSummaryUrl: function () {
       var [year, month] = this.props.date.split('-')
       return `/datapoints/district-dashboard/${this.props.location}/${year}/${month}`
     },
 
-    getNGACampaignMonitoringUrl: function() {
+    getNGACampaignMonitoringUrl: function () {
       var [year, month] = this.props.date.split('-')
       return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
     },

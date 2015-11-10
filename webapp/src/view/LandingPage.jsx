@@ -104,7 +104,7 @@ module.exports = React.createClass({
     }
   },
 
-  showAllCampaigns: function(e) {
+  showAllCampaigns: function (e) {
     this.setState({ visibleCampaigns: Infinity })
     e.preventDefault()
   },

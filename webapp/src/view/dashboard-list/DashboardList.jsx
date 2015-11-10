@@ -6,7 +6,7 @@ var Reflux = require('reflux')
 
 var api = require('data/api')
 
-var _tableRow = function(row) {
+var _tableRow = function (row) {
   var path = '/datapoints/' + _.kebabCase(row.title) + '/'
   var editPath = '/datapoints/dashboards/edit/'+row.id+'/'
   var editLink = <span>(<a href={editPath}>edit</a>)</span>
@@ -26,21 +26,21 @@ module.exports = React.createClass({
     Reflux.connect(NavigationStore, 'store')
   ],
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       customDashboards: []
     }
   },
 
-  getCustomDashboards: function() {
+  getCustomDashboards: function () {
     var self = this
-    api.get_dashboard().then(function(response) {
+    api.get_dashboard().then(function (response) {
       var customDashboards = _(response.objects).sortBy('title').value()
       self.setState({customDashboards: customDashboards})
     })
   },
 
-  componentWillMount: function() {
+  componentWillMount: function () {
     this.getCustomDashboards()
   },
 

@@ -49,7 +49,7 @@ var HomepageCarouselDecorators = [
         return (
           <ul style={self.getListStyles()}>
             {
-              indexes.map(function(index) {
+              indexes.map(function (index) {
                 return (
                   <li style={self.getListItemStyles()} key={index}>
                     <button

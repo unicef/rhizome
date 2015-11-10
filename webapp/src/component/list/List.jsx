@@ -5,9 +5,9 @@ module.exports = React.createClass({
         items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired, // [{id:1,title:'abc'},...]
         removeItem: React.PropTypes.func.isRequired
     },
-    render: function(){
+    render: function (){
         var self = this
-        var listItems = this.props.items.map(function(item){
+        var listItems = this.props.items.map(function (item){
              return (<li key={item.id}>{item.name}
                         <a
                         className='clear-btn'

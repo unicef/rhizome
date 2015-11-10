@@ -13,25 +13,25 @@ var RegionTitleMenu = React.createClass({
     sendValue: React.PropTypes.func.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       filter: ''
     }
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     return nextProps.locations.length !== this.props.locations.length
       || nextProps.selected.id !== this.props.selected.id
   },
 
-  _setFilter: function(pattern) {
+  _setFilter: function (pattern) {
     this.setState({
       filter: pattern
     })
     this.forceUpdate()
   },
 
-  _buildlocations: function(originallocations, filter) {
+  _buildlocations: function (originallocations, filter) {
     var locations = originallocations.map(r => {
       return {
         title: r.name,

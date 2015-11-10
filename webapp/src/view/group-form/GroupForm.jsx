@@ -1,6 +1,5 @@
 'use strict'
 
-var _ = require('lodash')
 var React = require('react')
 var Reflux = require('reflux')
 
@@ -12,21 +11,21 @@ var List = require('component/list/List.jsx')
 module.exports = React.createClass({
     mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
-    componentWillMount: function() {
+    componentWillMount: function () {
         // init store, passing group id if present
         GroupFormActions.initialize(this.props.group_id)
     },
 
-    updateName: function(e) {
+    updateName: function (e) {
         GroupFormActions.updateName(e.target.value)
     },
 
-    submitForm: function(e) {
+    submitForm: function (e) {
         GroupFormActions.saveGroupForm()
         e.preventDefault()
     },
 
-    render: function() {
+    render: function () {
         var indicators = (<strong>This role cannot enter data for any indicators.</strong>)
         if (this.state.store.indicatorsSelected.length > 0) {
             indicators = (<div><strong>This role can enter data for the following indicators:</strong>
@@ -41,21 +40,18 @@ module.exports = React.createClass({
         }
 
         var indicatorsSection = ''
-        // no id yet -- creating new
-        if (!this.state.store.groupId) {
+        if (!this.state.store.groupId) { // no id yet -- creating new
             indicatorsSection = (<div className='alert-box secondary'>You must save this role (above) before adding indicator permissions.</div>)
-        }
-        // found id -- editing
-        else {
-            indicatorsSection = (<div>
-                                    <IndicatorDropdownMenu
-                                        text='Add Indicators'
-                                        icon='fa-plus'
-                                        indicators={this.state.store.indicatorList}
-                                        sendValue={GroupFormActions.addIndicatorSelection}>
-                                    </IndicatorDropdownMenu>
-                                    {indicators}
-                                </div>)
+        } else { // found id -- editing
+          indicatorsSection = (<div>
+                                  <IndicatorDropdownMenu
+                                      text='Add Indicators'
+                                      icon='fa-plus'
+                                      indicators={this.state.store.indicatorList}
+                                      sendValue={GroupFormActions.addIndicatorSelection}>
+                                  </IndicatorDropdownMenu>
+                                  {indicators}
+                              </div>)
         }
 
         var saveClasses = 'btn btn-primary'

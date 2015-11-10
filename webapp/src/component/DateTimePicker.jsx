@@ -13,14 +13,14 @@ var DateRangePicker = React.createClass({
         sendValue : React.PropTypes.func.isRequired
     },
 
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             start: new Date(),
             end: new Date()
         }
     },
 
-    handleDateChange: function(type, date, dateStr) {
+    handleDateChange: function (type, date, dateStr) {
         if (type === 'start') {
             this.setState({start: date})
         }
@@ -32,7 +32,7 @@ var DateRangePicker = React.createClass({
 
     render() {
         var self = this
-    var dateTimePicker = function(dateValue, type) {
+    var dateTimePicker = function (dateValue, type) {
             var self1 = self
       return (<DateTimePicker
           value={dateValue}

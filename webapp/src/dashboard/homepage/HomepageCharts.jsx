@@ -28,7 +28,7 @@ var HomepageCharts = React.createClass({
     }
   },
 
-  prepareChartsData: function() {
+  prepareChartsData: function () {
     var loading = this.props.loading
 
     var missedChildrenData = ChartUtil.prepareMissedChildrenData({

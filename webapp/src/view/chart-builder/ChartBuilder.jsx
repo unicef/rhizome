@@ -66,7 +66,7 @@ module.exports = React.createClass({
     //this.setState({title:e.currentTarget.value})
 
     //clearTimeout(this.timer)
-    //this.timer = setTimeout(function(){
+    //this.timer = setTimeout(function (){
     ChartBuilderActions.updateTitle(newText)
     // }.bind(this), 1000)
   },

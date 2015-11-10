@@ -14,7 +14,7 @@ var HomepageChartsView = React.createClass({
         Reflux.connect(HomepageDashboardsStore, 'dashboards')
     ],
 
-    getInitialState: function() {
+    getInitialState: function () {
       return {
         dashboards: []
       }
@@ -37,7 +37,7 @@ var HomepageChartsView = React.createClass({
       }
 
       var list = []
-      this.state.dashboards.dashboards.forEach(function(item) {
+      this.state.dashboards.dashboards.forEach(function (item) {
         var dashboardProps = {
             campaign: item.campaign,
             data: item.data,

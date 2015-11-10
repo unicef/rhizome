@@ -8,15 +8,15 @@ module.exports = React.createClass({
   	onChange: React.PropTypes.func.isRequired,
   	horizontal: React.PropTypes.bool
   },
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       horizontal: false
     }
   },
-  _handleChange: function(event) {
+  _handleChange: function (event) {
     this.props.onChange(event.target.value)
   },
-  render: function() {
+  render: function () {
     var radios = this.props.values.map((radio,index) => {
       return (
         <div key={radio.value} className={this.props.horizontal ? 'horizontal' : null}>

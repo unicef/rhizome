@@ -6,12 +6,12 @@ module.exports = React.createClass({
   	value: React.PropTypes.number.isRequired,
   	onChange: React.PropTypes.func.isRequired,
   },
-  _handleChange: function(event){
+  _handleChange: function (event){
     this.props.onChange(event.target.value)
   },
-  render: function(){
+  render: function (){
       var self = this
-      var chartBoxes = this.props.charts.map(function(chart, index){
+      var chartBoxes = this.props.charts.map(function (chart, index){
         return (
           <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === self.props.value ? 'active' : '')}>
 	          <div className='chart-box' onClick={self.props.onChange.bind(null, chart.name)}>
