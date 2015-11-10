@@ -12,7 +12,7 @@ function prep (data) {
     .filter(v => _(v).pluck('value').some(_.isFinite))
     .flatten()
     .groupBy('indicator.short_name')
-    .map((v, n) => { return { name : n, values : v }; })
+    .map((v, n) => { return { name : n, values : v } })
     .value()
 }
 

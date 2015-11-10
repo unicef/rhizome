@@ -34,7 +34,7 @@ module.exports = React.createClass({
 
       // Sum all of the reported Polio cases for the year
       totalCases = _(this.props.data)
-        .filter(function (d) { return d.campaign.start_date.getFullYear() == year; })
+        .filter(function (d) { return d.campaign.start_date.getFullYear() == year })
         .pluck('value')
         .sum()
 
@@ -42,7 +42,7 @@ module.exports = React.createClass({
       newCases = _.get(
         _.find(
           this.props.data,
-          function (d) { return d.campaign.start_date.getTime() === m.valueOf();}),
+          function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
         'value')
     }
 

@@ -57,4 +57,4 @@ var HomepageChartsView = React.createClass({
     }
 })
 
-module.exports = HomepageChartsView;
+module.exports = HomepageChartsView

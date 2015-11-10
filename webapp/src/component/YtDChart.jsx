@@ -57,7 +57,7 @@ module.exports = React.createClass({
       .value()
 
     // Convert a 2-digit month number to a 3-character month name
-    var fmtMonth = function (d) { return moment(d, 'MM').format('MMM'); }
+    var fmtMonth = function (d) { return moment(d, 'MM').format('MMM') }
 
     var props = _.merge({},
       _.omit(this.props, 'id', 'data'), {
