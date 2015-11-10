@@ -140,7 +140,6 @@ module.exports = Vue.extend({
 
         handleEvent: function (evt) {
             switch (evt.type) {
-
             case 'keyup':
                 // ESC
                 if (evt.keyCode === 27) {

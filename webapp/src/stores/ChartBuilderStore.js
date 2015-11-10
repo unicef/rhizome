@@ -74,7 +74,6 @@ var canDisplayChartReason = function () {
 }
 
 function _columnData(data, groups, groupBy) {
-
     var columnData = _(data)
         .groupBy(groupBy)
         .map(_.partialRight(seriesObject, groups))
@@ -91,7 +90,6 @@ function _columnData(data, groups, groupBy) {
                 value:0, y: 0, y0: 0}
     })
     _.each(columnData, function (series) {
-
        var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length), { location: series.values[0].location, indicator: series.values[0].indicator}))
        series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
     })

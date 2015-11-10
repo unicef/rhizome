@@ -64,7 +64,6 @@ function nullValuesToZero(values) {
 
 }
 function _columnData(data, groups, groupBy) {
-
   var columnData = _(data)
     .groupBy(groupBy)
     .map(_.partialRight(seriesObject, groups))

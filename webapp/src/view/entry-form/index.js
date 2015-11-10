@@ -9,7 +9,6 @@ var flattenChildren = require('../../data/transform/flattenChildren')
 var treeify = require('../../data/transform/treeify')
 
 module.exports = {
-
     template: require('./template.html'),
 
     data: function () {
@@ -38,7 +37,6 @@ module.exports = {
     },
 
     created: function () {
-
         // processing on indicator sets data
         _.forEach(this.indicator_sets, function (d) {
             // copy values for v-select:
@@ -49,7 +47,6 @@ module.exports = {
     },
 
     ready: function () {
-
         this.$watch('campaign_id', this.refreshlocationsDropdown)
 
         this.load()
@@ -73,7 +70,6 @@ module.exports = {
     },
 
     computed: {
-
         hasSelection: function () {
             return this.locations.length > 0
         }
@@ -81,7 +77,6 @@ module.exports = {
     },
 
     methods: {
-
         load: function () {
             var self = this
 
@@ -139,7 +134,6 @@ module.exports = {
                     })
 
                 ]).then(function (allData) {
-
                     console.log('ALL DATA ', allData[0])
                     self.$data.locationData = allData[0]
                     self.$data.indicators = allData[1]
@@ -244,10 +238,8 @@ module.exports = {
 
             // add locations to request
             if (self.locations.length > 0) {
-
                 // get all high risk children of selected locations
                 _.forEach(self.locations, function (locationVue) {
-
                     var location = self.$data.locationData[locationVue.value]
                     options.location__in.push(location.id)
 
@@ -325,7 +317,6 @@ module.exports = {
                 // assemble data points into rows for table
                 var rows = []
                 _.each(indicatorSet.indicators, function (rowInfo) {
-
                     var row = []
 
                     // section header row
@@ -340,19 +331,16 @@ module.exports = {
                     }
                     // normal indicator row
                     else {
-
                         var indicator_id = rowInfo.id
 
                         // add columns
                         columns.forEach(function (column) {
-
                             var cell = {
                                 isEditable: false,
                                 type: column.type
                             }
 
                             switch (column.type) {
-
                                 // editable value
                                 case 'value':
                                     cell.isEditable = true

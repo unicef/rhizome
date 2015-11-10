@@ -5,7 +5,6 @@ var api = require('data/api')
 var Reflux = require('reflux')
 
 var DocOverviewStore = Reflux.createStore({
-
   listenables: [require('actions/DocOverviewActions')],
 
   init: function () {

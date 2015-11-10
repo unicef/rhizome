@@ -3,7 +3,6 @@
 var _ = require('lodash')
 
 module.exports = {
-
     replace: true,
     inherit: true,
     template: require('./menuItem.html'),

@@ -88,7 +88,6 @@ let ChartWizardStore = Reflux.createStore({
 
     Promise.all([api.locations(), api.campaign(), api.office()])
       .then(([locations, campaigns, offices]) => {
-
         this.locationIndex = _.indexBy(locations.objects, 'id')
         this.data.locationList = _(locations.objects)
           .map(location => {

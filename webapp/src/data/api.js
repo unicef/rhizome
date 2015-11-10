@@ -160,7 +160,6 @@ function datapoint(q) {
   // Return a promise so we can chain the requests for datapoints with the
   // campaign lookups.
   return new Promise(function (fulfill, reject) {
-
     // Fetch datapoints first, then look up the campaigns. Once campaign data
     // has been filled in, fulfill the promise.
 
@@ -197,7 +196,6 @@ function indicatorsTree(q) {
     return 'tag-' + tId
   }
   return new Promise(function (fulfill, reject) {
-
     fetch1(q, null, {'cache-control': 'no-cache'}).then(function (indicators) {
       fetch2(null, null, {'cache-control': 'no-cache'}).then(function (tags) {
         tags.objects = _.sortBy(tags.objects, 'tag_name').reverse()
@@ -256,7 +254,6 @@ function indicatorsTree(q) {
 function tagTree(q) {
   var fetch = endPoint('/indicator_tag', 'get', 1)
   return new Promise(function (fulfill, reject) {
-
     fetch().then(function (tags) {
       var tags_map = {}
       _.each(tags.objects, function (t) {
@@ -274,7 +271,6 @@ function tagTree(q) {
 }
 
 module.exports = {
-
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
   datapoints: datapoint,
   indicatorsTree: indicatorsTree,

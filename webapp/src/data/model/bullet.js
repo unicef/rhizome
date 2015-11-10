@@ -2,7 +2,6 @@
 var _ = require('lodash')
 
 module.exports = function bullet(name, numerator, denominator, ranges) {
-
     function model(data) {
         var obj = {
             campaign: {
@@ -19,7 +18,6 @@ module.exports = function bullet(name, numerator, denominator, ranges) {
 
             if (!indicators.hasOwnProperty(denominator) ||
                     !indicators.hasOwnProperty(numerator)) {
-
                 continue
             }
 

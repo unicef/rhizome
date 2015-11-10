@@ -75,7 +75,6 @@ module.exports = {
     },
 
     methods: {
-
         toggleMenu: function (event) {
             event.stopPropagation()
 

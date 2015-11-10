@@ -5,7 +5,6 @@ var api = require('data/api')
 var Reflux = require('reflux')
 
 var SourceDataDashboardStore = Reflux.createStore({
-
     listenables: [require('actions/SourceDataDashboardActions')],
 
     init: function () {

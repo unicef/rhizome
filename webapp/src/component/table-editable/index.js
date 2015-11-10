@@ -21,11 +21,9 @@ var scales = {
 }
 
 module.exports = {
-
     template: require('./template.html'),
 
     ready: function () {
-
         _.defaults(this.$data, {
             groupSize: 5
         })
@@ -36,7 +34,6 @@ module.exports = {
     },
 
     methods: {
-
         // update table stats
         updateStats: function () {
             var self = this
@@ -55,21 +52,17 @@ module.exports = {
             }
 
             if (self.rows.length > 0) {
-
                 _.forEach(self.rows, function (row, rowIndex) {
-
                     if (stats.byRow[rowIndex] === undefined) {
                         stats.byRow[rowIndex] = newCounter()
                     }
 
                     _.forEach(row, function (cell, colIndex) {
-
                         if (stats.byColumn[colIndex] === undefined) {
                             stats.byColumn[colIndex] = newCounter()
                         }
 
                         if (cell.isEditable) {
-
                             stats.total.total ++
                             stats.byRow[rowIndex].total ++
                             stats.byColumn[colIndex].total ++
@@ -93,7 +86,6 @@ module.exports = {
     },
 
     filters: {
-
         percent: function (v) {
             return formats.percent(v)
         },

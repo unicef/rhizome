@@ -1,7 +1,6 @@
 module.exports = [
 
         {
-
             'id': 1,
             'title': 'Management Dashboard: National Indicators',
             'location_level': 1,
@@ -16,7 +15,6 @@ module.exports = [
         },
 
         {
-
             'id': 3,
             'title': 'Management Dashboard: Provincial Indicators',
             'location_level': 1,
@@ -36,7 +34,6 @@ module.exports = [
         },
 
         {
-
             'id': 2,
             'title': 'Management Dashboard: District Indicators',
             'location_level': 4,

@@ -12,7 +12,6 @@ const {
 var parseSchema = require('./utils/parseSchema')
 
 var AdminPage = React.createClass({
-
   propTypes: {
     title: React.PropTypes.string.isRequired,
     getData: React.PropTypes.func.isRequired
@@ -96,7 +95,6 @@ var AdminPage = React.createClass({
   },
 
   renderOriginalFilters() {
-
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
 

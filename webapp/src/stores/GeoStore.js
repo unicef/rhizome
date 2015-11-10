@@ -6,7 +6,6 @@ var _ = require('lodash')
 var api = require('data/api')
 
 var GeoStore = Reflux.createStore({
-
   listenables: [require('actions/GeoActions')],
 
   init: function () {

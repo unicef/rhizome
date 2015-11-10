@@ -1,7 +1,6 @@
 var _ = require('lodash')
 
 module.exports = function parseData(response) {
-
     var my_data = {
         items: {
             properties: _(response.objects).map(object => {

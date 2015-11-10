@@ -244,7 +244,6 @@ _.extend(BulletChart.prototype, {
   },
 
   resize: function (el) {
-
   }
 })
 

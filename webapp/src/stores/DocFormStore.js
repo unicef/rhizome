@@ -5,7 +5,6 @@ var api = require('data/api')
 var Reflux = require('reflux')
 
 var DocFormStore = Reflux.createStore({
-
     listenables: [require('actions/DocFormActions')],
 
     init: function () {

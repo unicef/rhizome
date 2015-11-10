@@ -36,7 +36,6 @@ var SimpleFormStore = Reflux.createStore({
       api_fn(data_to_post),
     ])
       .then(_.spread(function (apiResponse) {
-
         self.data.formData = apiResponse.meta.form_data
         self.data.objectId = apiResponse.objects.id
         self.data.dataObject = apiResponse
@@ -61,7 +60,6 @@ var SimpleFormStore = Reflux.createStore({
       api_fn({ id: self.data.objectId}, null, {'cache-control': 'no-cache'}),
     ])
       .then(_.spread(function (apiResponse) {
-
         self.data.formData = apiResponse.meta.form_data
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false

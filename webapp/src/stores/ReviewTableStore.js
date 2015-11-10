@@ -6,7 +6,6 @@ var Reflux = require('reflux')
 var parseSchema = require('ufadmin/utils/parseSchema')
 
 var ReviewTableStore = Reflux.createStore({
-
     listenables: [require('actions/ReviewTableActions')],
 
     init: function () {

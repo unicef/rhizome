@@ -35,7 +35,6 @@ _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-
     ////remove the null value in each series
     //trello #427
     //management-dashboard-conversion-rates-line-chart issue

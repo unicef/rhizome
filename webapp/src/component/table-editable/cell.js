@@ -18,7 +18,6 @@ module.exports = {
     },
 
     created: function () {
-
         // set previous value
         this.previousValue = this.value || null
 
@@ -45,7 +44,6 @@ module.exports = {
     },
 
     methods: {
-
         // switch editing mode
         toggleEditing: function (op) {
             if (this.$data.isEditable === true) {
@@ -65,10 +63,8 @@ module.exports = {
             self.hasError = false
 
             if (self.isSaving === false) {
-
                 // only perform the save if value has changed
                 if (self.value !== self.previousValue) {
-
                     self.isSaving = true
                     var passed = true
                     var value = self.$data.value
@@ -89,7 +85,6 @@ module.exports = {
 
                     // submit value for saving
                     if (passed === true && self.buildSubmitPromise !== undefined) {
-
                         // TODO: validation of value
 
                         var promise = self.buildSubmitPromise(value)
@@ -103,7 +98,6 @@ module.exports = {
                             self.isSaving = false
 
                         }, function (error) {
-
                             // or rejected
                             if (self.withError) {
                                 self.withError(error)
@@ -133,7 +127,6 @@ module.exports = {
     },
 
     computed: {
-
         formatted: function () {
             if (this.value === undefined || this.value === null) {
                 return ''
@@ -160,19 +153,15 @@ module.exports = {
     },
 
     filters: {
-
         // validate value
         validator: {
-
             write: function (val) {
-
                 // string
                 if (_.isString(val)) {
                     if (val.length === 0) { val = null }
                 }
                 // number
                 else if (_.isNumber(val)) {
-
                 }
                 // NaN
                 else if (_.isNaN(val)) {

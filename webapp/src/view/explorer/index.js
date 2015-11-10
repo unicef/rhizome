@@ -84,7 +84,6 @@ module.exports = {
   },
 
   methods: {
-
     renderIndicatorList: function () {
       var listProps = {
         items: this.indicators,

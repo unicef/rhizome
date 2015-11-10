@@ -3,7 +3,6 @@
 var _ = require('lodash')
 
 module.exports = {
-
     replace: true,
     template: require('./item.html'),
 
@@ -19,7 +18,6 @@ module.exports = {
     },
 
     computed: {
-
         selected: function () {
             return this.selection.hasOwnProperty(this.value)
         },
@@ -35,7 +33,6 @@ module.exports = {
     },
 
     methods: {
-
         onClick: function () {
             this.$dispatch('dropdown-item-toggle', _.assign({}, this.$data))
         },

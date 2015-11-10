@@ -6,7 +6,6 @@ var Reflux = require('reflux')
 var api = require('data/api')
 
 var IndicatorStore = Reflux.createStore({
-
     listenables: [require('actions/AppActions')],
 
     init: function () {

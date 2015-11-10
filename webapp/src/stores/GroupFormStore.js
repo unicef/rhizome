@@ -25,7 +25,6 @@ module.exports = Reflux.createStore({
 
         // always get the indicator tree
         api.indicatorsTree().then(function (indicators) {
-
             // process indicators
             self._indicatorIndex = _.indexBy(indicators.flat, 'id')
             self.data.indicatorList = _(indicators.objects)
@@ -39,7 +38,6 @@ module.exports = Reflux.createStore({
                         api.group_permissions({ group: self.data.groupId }, null, { 'cache-control': 'no-cache' })
                     ])
                     .then(_.spread(function (groups, groupPermissions) {
-
                         // find current group
                         var g = _.find(groups.objects, function (d) { return d.id === self.data.groupId })
                         self.data.groupName = g.name

@@ -24,7 +24,6 @@ module.exports = {
          var groups = response.objects//
          api.user_groups({'user': self.$parent.$data.user_id}).then(function (data) {
              _.forEach(groups, function (group) {
-
                group.active = _.some(data.objects, {'group_id': group.id})
              })
              self.$set('groups', response.objects)
