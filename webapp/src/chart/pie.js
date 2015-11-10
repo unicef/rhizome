@@ -12,7 +12,7 @@ var React = require('react')
 var Layer = require('react-layer')
 var Tooltip = require('component/Tooltip.jsx')
 
-function _domain(data, options) {
+function _domain (data, options) {
   return [0, _(data).map(options.value).sum()]
 }
 
@@ -32,7 +32,7 @@ var DEFAULTS = {
   }
 }
 
-function PieChart() {
+function PieChart () {
 }
 
 _.extend(PieChart.prototype, {

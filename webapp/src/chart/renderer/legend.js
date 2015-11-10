@@ -2,7 +2,7 @@
 
 var d3 = require('d3')
 
-function legend() {
+function legend () {
     var _clickHandler = null
     var _filled = function () { return true }
     var _interactive = false
@@ -10,7 +10,7 @@ function legend() {
     var _scale = d3.scale.category20b()
     var _size = 7
 
-    function fill(d, i) {
+    function fill (d, i) {
         if (!_interactive || _filled(d, i)) {
             return _scale(d)
         }
@@ -18,11 +18,11 @@ function legend() {
         return 'transparent'
     }
 
-    function stroke(d, i) {
+    function stroke (d, i) {
         return _scale(d)
     }
 
-    function chart(selection) {
+    function chart (selection) {
         selection.each(function () {
             var g = d3.select(this)
             var series = g.selectAll('.series')
@@ -141,7 +141,7 @@ function legend() {
         return chart
     }
 
-    function translate(d, i) {
+    function translate (d, i) {
         return 'translate(0, ' + (i * (_size + _padding)) + ')'
     }
 

@@ -1,7 +1,7 @@
-module.exports = function sort(accessor) {
+module.exports = function sort (accessor) {
     'use strict'
 
-    function transform(data) {
+    function transform (data) {
         data.sort(function (a, b) {
             return accessor(a) < accessor(b) ? -1 : 1
         })

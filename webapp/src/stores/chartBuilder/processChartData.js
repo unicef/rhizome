@@ -7,7 +7,7 @@ var Vue = require('vue') //for tooltip display
 var path = require('vue/src/parsers/path')
 var util = require('util/data')
 
-function melt(data, indicatorArray) {
+function melt (data, indicatorArray) {
   var dataset = data.objects
   var baseIndicators = _.map(indicatorArray, function (indicator) {
     return { indicator: indicator + '', value: 0}
@@ -24,7 +24,7 @@ function melt(data, indicatorArray) {
     .value()
   return o
 }
-function _groupBySeries(data, groups, groupBy) {
+function _groupBySeries (data, groups, groupBy) {
   return _(data)
     .groupBy(groupBy)
     .map(function (d, ind) {
@@ -38,14 +38,14 @@ function _groupBySeries(data, groups, groupBy) {
     .value()
 }
 
-function seriesObject(d, ind, collection, groups) {
+function seriesObject (d, ind, collection, groups) {
   return {
     name: groups[ind].name,
     values: d
   }
 }
 
-function value(datapoint) {
+function value (datapoint) {
   if (datapoint && datapoint.hasOwnProperty('value')) {
     return datapoint.value
   }
@@ -54,7 +54,7 @@ function value(datapoint) {
 
 var tooltipDiv = document.createElement('div') //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv)
-function nullValuesToZero(values) {
+function nullValuesToZero (values) {
   _.each(values, function (value) {
     if (_.isNull(value.value))
     {
@@ -63,7 +63,7 @@ function nullValuesToZero(values) {
   })
 
 }
-function _columnData(data, groups, groupBy) {
+function _columnData (data, groups, groupBy) {
   var columnData = _(data)
     .groupBy(groupBy)
     .map(_.partialRight(seriesObject, groups))
@@ -102,7 +102,7 @@ function _columnData(data, groups, groupBy) {
 
   return stack(columnData)
 }
-function _barData(datapoints, indicators, properties, series) {
+function _barData (datapoints, indicators, properties, series) {
   return _(datapoints)
     .pick(indicators)
     .values()
@@ -112,7 +112,7 @@ function _barData(datapoints, indicators, properties, series) {
     .thru(_makeSeries(series))
     .value()
 }
-function _mapProperties(mapping) {
+function _mapProperties (mapping) {
   return function (d) {
     var datum = _.clone(d)
 
@@ -123,7 +123,7 @@ function _mapProperties(mapping) {
     return datum
   }
 }
-function _filterMissing(data) {
+function _filterMissing (data) {
   return _(data)
     .groupBy('y')
     .filter(function (v) {
@@ -138,7 +138,7 @@ function _filterMissing(data) {
     })
     .value()
 }
-function _makeSeries(getSeries) {
+function _makeSeries (getSeries) {
   return function (data) {
     return _(data)
       .groupBy(getSeries)
@@ -151,7 +151,7 @@ function _makeSeries(getSeries) {
       .value()
     }
 }
-function _getIndicator(d) {
+function _getIndicator (d) {
   return d.indicator.short_name
 }
 

@@ -16,7 +16,7 @@ var DEFAULTS = {
   }
 }
 
-function Histogram() {}
+function Histogram () {}
 
 _.extend(Histogram.prototype, {
   defaults: DEFAULTS,

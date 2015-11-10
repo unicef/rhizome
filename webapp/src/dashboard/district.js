@@ -23,7 +23,7 @@ var RANGE_ORDER = {
  * @private
  * Return true if indicator is an object with an array of bound_json.
  */
-function _hasBounds(indicator) {
+function _hasBounds (indicator) {
     return _.isObject(indicator) && !_.isEmpty(indicator.bound_json)
 }
 
@@ -35,7 +35,7 @@ function _hasBounds(indicator) {
  * @param {Array} order An array of indicator IDs that defines the order of
  *   the returned array
  */
-function _heatmapColumns(indicators, order) {
+function _heatmapColumns (indicators, order) {
     return _(indicators.objects)
         .filter(_hasBounds)
         .sortBy(function (indicator) {
@@ -54,7 +54,7 @@ function _heatmapColumns(indicators, order) {
  *
  * @param {Object} bound A target range definition for an indicator
  */
-function _openBounds(bound) {
+function _openBounds (bound) {
     var lower = _.isNumber(bound.mn_val) ? bound.mn_val : -Infinity
     var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity
 
@@ -64,7 +64,7 @@ function _openBounds(bound) {
     })
 }
 
-function _getBoundOrder(bound) {
+function _getBoundOrder (bound) {
     return _.get(RANGE_ORDER, bound.bound_name, Infinity)
 }
 

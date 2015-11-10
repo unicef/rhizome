@@ -7,7 +7,7 @@ var d3 = require('d3')
 var DonutChart = require('component/DonutChart.jsx')
 var Chart = require('component/Chart.jsx')
 
-function donutLabel(data, labelText) {
+function donutLabel (data, labelText) {
   var value = _.get(data, '[0].value')
 
   if (!_.isFinite(value)) {

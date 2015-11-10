@@ -7,7 +7,7 @@ var Chart = require('component/Chart.jsx')
 var DonutChart = require('component/DonutChart.jsx')
 var Monitoring = require('dashboard/nco/Monitoring.jsx')
 
-function donutLabel(data, labelText) { // FIXME this is repeated in nco/overview
+function donutLabel (data, labelText) { // FIXME this is repeated in nco/overview
   var value = _.get(data, '[0].value')
 
   if (!_.isFinite(value)) {

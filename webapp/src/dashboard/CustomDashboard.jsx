@@ -7,7 +7,7 @@ var moment = require('moment')
 
 var Chart = require('component/Chart.jsx')
 
-function getOptions(chart, campaign, data) {
+function getOptions (chart, campaign, data) {
   var opts = {}
 
   if (chart.hasOwnProperty('yFormat')) {

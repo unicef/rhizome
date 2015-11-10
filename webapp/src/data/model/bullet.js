@@ -1,8 +1,8 @@
 'use strict'
 var _ = require('lodash')
 
-module.exports = function bullet(name, numerator, denominator, ranges) {
-    function model(data) {
+module.exports = function bullet (name, numerator, denominator, ranges) {
+    function model (data) {
         var obj = {
             campaign: {
                 start_date: 0

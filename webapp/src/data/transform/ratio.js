@@ -9,14 +9,14 @@ var _ = require('lodash')
  *
  * @returns a new array containing the ratio in the value property of each object.
  */
-module.exports = function ratio(numerator, denominator) {
+module.exports = function ratio (numerator, denominator) {
     'use strict'
 
     if (!(numerator instanceof Array)) {
         numerator = [numerator]
     }
 
-    function model(data) {
+    function model (data) {
         var collection = []
 
         for (var j = numerator.length - 1 j >= 0 --j) {

@@ -1,7 +1,7 @@
 module.exports = function (name) {
     'use strict'
 
-    function model(data) {
+    function model (data) {
         var series = {
             points: data
         }

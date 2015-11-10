@@ -7,7 +7,7 @@ var moment = require('moment')
 var DropdownMenu = require('component/DropdownMenu.jsx')
 var MenuItem = require('component/MenuItem.jsx')
 
-function findMatches(item, re) {
+function findMatches (item, re) {
   var matches = []
 
   if (re.test(_.get(item, 'title'))) {
@@ -23,7 +23,7 @@ function findMatches(item, re) {
   return matches
 }
 
-function filterMenu(items, pattern) {
+function filterMenu (items, pattern) {
   if (_.size(pattern) < 3) {
     return items
   }

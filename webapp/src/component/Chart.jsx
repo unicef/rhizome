@@ -5,7 +5,7 @@ var React = require('react')
 
 var ChartFactory = require('chart')
 
-function isEmpty(type, data, options) {
+function isEmpty (type, data, options) {
   // Bullet charts get special treatment because they're considered empty if
   // they have no current value, regardless of whether they have historical data
   // for the comparative measure

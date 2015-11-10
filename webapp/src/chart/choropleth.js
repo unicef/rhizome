@@ -26,7 +26,7 @@ var DEFAULTS = {
   name: _.property('properties.name')
 }
 
-function _calculateBounds(features) {
+function _calculateBounds (features) {
   var lat = _.property(1)
   var lng = _.property(0)
 
@@ -50,14 +50,14 @@ function _calculateBounds(features) {
   return [[left, top], [right, bottom]]
 }
 
-function _calculateCenter(bounds) {
+function _calculateCenter (bounds) {
   var lat = bounds[1][1] + ((bounds[0][1] - bounds[1][1]) / 2)
   var lng = bounds[0][0] + ((bounds[1][0] - bounds[0][0]) / 2)
 
   return [lng, lat]
 }
 
-function ChoroplethMap() {
+function ChoroplethMap () {
 }
 
 _.extend(ChoroplethMap.prototype, {

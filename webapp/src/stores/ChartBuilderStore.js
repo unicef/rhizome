@@ -12,7 +12,7 @@ var colors = require('colors')
 var Vue = require('vue') //for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 
-function melt(data, indicatorArray) {
+function melt (data, indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
         return { indicator: indicator + '', value: 0}
@@ -29,7 +29,7 @@ function melt(data, indicatorArray) {
         .value()
     return o
 }
-function _groupBySeries(data, groups, groupBy) {
+function _groupBySeries (data, groups, groupBy) {
     return _(data)
         .groupBy(groupBy)
         .map(function (d, ind) {
@@ -43,7 +43,7 @@ function _groupBySeries(data, groups, groupBy) {
         .value()
 }
 
-function seriesObject(d, ind, collection, indicators) {
+function seriesObject (d, ind, collection, indicators) {
     return {
         name: indicators[ind].name,
         values: d
@@ -73,7 +73,7 @@ var canDisplayChartReason = function () {
     return reason
 }
 
-function _columnData(data, groups, groupBy) {
+function _columnData (data, groups, groupBy) {
     var columnData = _(data)
         .groupBy(groupBy)
         .map(_.partialRight(seriesObject, groups))

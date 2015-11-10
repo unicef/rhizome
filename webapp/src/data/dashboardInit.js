@@ -6,7 +6,7 @@ var moment = require('moment')
 /**
  * Return the facet value for a datum given a path.
  */
-function getFacet(datum, path) {
+function getFacet (datum, path) {
   var facet = _.get(datum, path)
 
   // Handle pieces of the application that replace IDs with their
@@ -27,7 +27,7 @@ function getFacet(datum, path) {
 /**
  * Recursively determine if child is a child of parent location.
  */
-function childOf(parent, child) {
+function childOf (parent, child) {
   if (!child || !child.parent) {
     return false
   }
@@ -39,7 +39,7 @@ function childOf(parent, child) {
   return childOf(parent, child.parent)
 }
 
-function inChart(chart, campaign, location, datum) {
+function inChart (chart, campaign, location, datum) {
   var dt = moment(datum.campaign.start_date).valueOf()
   var end = moment(campaign.start_date, 'YYYY-MM-DD')
   var start = -Infinity
@@ -73,7 +73,7 @@ function inChart(chart, campaign, location, datum) {
   return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inlocation
 }
 
-function choropleth(chart, data, campaign, features) {
+function choropleth (chart, data, campaign, features) {
   // Make sure we only get data for the current campaign maps can't
   // display historical data. Index by location for quick lookup.
   var dataIdx = _(data)
@@ -91,7 +91,7 @@ function choropleth(chart, data, campaign, features) {
   return features
 }
 
-function series(chart, data) {
+function series (chart, data) {
   return _(data)
     .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
     .map((values, name) => ({ name, values }))
@@ -99,7 +99,7 @@ function series(chart, data) {
     .value()
 }
 
-function stackedData(chart, data) {
+function stackedData (chart, data) {
   var s = series(chart, data)
   var x
 
@@ -132,7 +132,7 @@ function stackedData(chart, data) {
   return s
 }
 
-function column(chart, data) {
+function column (chart, data) {
   var s = stackedData(chart, data)
   var stack = d3.layout.stack()
     .offset('zero')
@@ -143,7 +143,7 @@ function column(chart, data) {
   return stack(s)
 }
 
-function scatter(chart, data, campaign) {
+function scatter (chart, data, campaign) {
   return _(data)
     .filter(d => d.campaign.id === campaign.id)
     .groupBy('location.id')
@@ -169,7 +169,7 @@ var process = {
   'ScatterChart': scatter,
 }
 
-function dashboardInit(dashboard, data, location, campaign, locationList, indicators, features) {
+function dashboardInit (dashboard, data, location, campaign, locationList, indicators, features) {
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')

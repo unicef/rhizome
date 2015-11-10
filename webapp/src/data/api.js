@@ -11,13 +11,13 @@ var prefix = require('superagent-prefix')(BASE_URL)
 var treeify = require('../data/transform/treeify')
 var campaign = require('../data/model/campaign')
 
-function urlencode(query) {
+function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
       return encodeURIComponent(k) + '=' + encodeURIComponent(v)
     }).join('&')
 }
 
-function getCookie(name) {
+function getCookie (name) {
   var cookieValue = null
   if (document.cookie && document.cookie !== '') {
     var cookies = document.cookie.split('')
@@ -33,7 +33,7 @@ function getCookie(name) {
   return cookieValue
 }
 
-function emptyResponsePoint(path, mode, defaultVersion, useDefaults) {
+function emptyResponsePoint (path, mode, defaultVersion, useDefaults) {
   mode = (mode) ? mode.toUpperCase() : 'GET'
   defaultVersion = defaultVersion || 1
   useDefaults = _.isUndefined(useDefaults) ? true : useDefaults
@@ -42,7 +42,7 @@ function emptyResponsePoint(path, mode, defaultVersion, useDefaults) {
     format: 'json',
   }
 
-  function fetch(query, version, headers) {
+  function fetch (query, version, headers) {
     version = version || defaultVersion
     headers = headers || {}
 
@@ -92,7 +92,7 @@ function emptyResponsePoint(path, mode, defaultVersion, useDefaults) {
   return fetch
 }
 
-function endPoint(path, mode, defaultVersion, useDefaults) {
+function endPoint (path, mode, defaultVersion, useDefaults) {
   mode = (mode) ? mode.toUpperCase() : 'GET'
   defaultVersion = defaultVersion || 1
   useDefaults = _.isUndefined(useDefaults) ? true : useDefaults
@@ -101,7 +101,7 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
     format: 'json',
   }
 
-  function fetch(query, version, headers) {
+  function fetch (query, version, headers) {
     version = version || defaultVersion
     headers = headers || {}
 
@@ -154,7 +154,7 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
   return fetch
 }
 
-function datapoint(q) {
+function datapoint (q) {
   var fetch = endPoint('/datapoint/')
 
   // Return a promise so we can chain the requests for datapoints with the
@@ -188,7 +188,7 @@ datapoint.toString = function (query, version) {
   return endPoint('/datapoint/').toString(query, version)
 }
 
-function indicatorsTree(q) {
+function indicatorsTree (q) {
   var fetch1 = endPoint('/indicator/', 'get', 1)
   var fetch2 = endPoint('/indicator_tag', 'get', 1)
   var makeTagId = function (tId) {
@@ -250,7 +250,7 @@ function indicatorsTree(q) {
   })
 }
 
-function tagTree(q) {
+function tagTree (q) {
   var fetch = endPoint('/indicator_tag', 'get', 1)
   return new Promise(function (fulfill, reject) {
     fetch().then(function (tags) {

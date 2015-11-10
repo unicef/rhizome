@@ -5,7 +5,7 @@ var d3 = require('d3')
 
 var formatUtil = require('util/format')
 
-function _sortValue(s, sortCol) {
+function _sortValue (s, sortCol) {
   // jshint validthis: true
   var options = this._options
 
@@ -41,7 +41,7 @@ var DEFAULTS = {
   value: _.property('value'),
 }
 
-function Heatmap() {}
+function Heatmap () {}
 
 _.extend(Heatmap.prototype, {
     defaults: DEFAULTS,

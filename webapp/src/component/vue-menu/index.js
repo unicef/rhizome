@@ -7,7 +7,7 @@ var Vue = require('vue')
 
 var dom = require('util/dom')
 
-function findMatches(item, re) {
+function findMatches (item, re) {
     var matches = []
 
     if (re.test(item.title)) {

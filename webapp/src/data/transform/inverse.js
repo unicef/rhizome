@@ -1,7 +1,7 @@
-module.exports = function inverse() {
+module.exports = function inverse () {
     'use strict'
 
-    function transform(data) {
+    function transform (data) {
         data.value = 1 - data.value
     }
 

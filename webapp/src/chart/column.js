@@ -26,7 +26,7 @@ var defaults = {
   yScale: d3.scale.linear
 }
 
-function ColumnChart() {
+function ColumnChart () {
 }
 
 _.extend(ColumnChart.prototype, {

@@ -2,7 +2,7 @@ var _ = require('lodash')
 var moment = require('moment')
 var api = require('../api')
 
-function update(campaign, obj) {
+function update (campaign, obj) {
     'use strict'
 
     _.assign(campaign, _.omit(obj, 'created_at', 'start_date', 'end_date'))
@@ -14,7 +14,7 @@ function update(campaign, obj) {
     return campaign
 }
 
-function campaign(obj) {
+function campaign (obj) {
     'use strict'
 
     return obj ? update({}, obj) : {

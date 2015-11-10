@@ -28,7 +28,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function AreaChart() {
+function AreaChart () {
 }
 
 _.extend(AreaChart.prototype, {

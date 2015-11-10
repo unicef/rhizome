@@ -5,7 +5,7 @@
  * @param set - a function for setting the cumulative sum on each object, this
  *   function should return the object
  */
-module.exports = function cumsum(get, set) {
+module.exports = function cumsum (get, set) {
     'use strict'
 
     if (!get) {
@@ -18,7 +18,7 @@ module.exports = function cumsum(get, set) {
         }
     }
 
-    function transform(data) {
+    function transform (data) {
         var running = 0
         var collection = []
 

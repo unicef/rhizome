@@ -23,7 +23,7 @@ var defaults = {
   }
 }
 
-function BulletChart() {
+function BulletChart () {
 }
 
 _.extend(BulletChart.prototype, {

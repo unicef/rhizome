@@ -33,7 +33,7 @@ const defaultChartDef = {
   yFormat: ',.0f'
 }
 
-function filterMenu(items, pattern) {
+function filterMenu (items, pattern) {
   if (!pattern || pattern.length < 3) {
     return items
   }
@@ -43,7 +43,7 @@ function filterMenu(items, pattern) {
   return _(items).map(match).flatten().value()
 }
 
-function findMatches(item, re) {
+function findMatches (item, re) {
   let matches = []
 
   if (re.test(_.get(item, 'title'))) {
@@ -59,7 +59,7 @@ function findMatches(item, re) {
   return matches
 }
 
-function findChartType(type) {
+function findChartType (type) {
   return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
 }
 

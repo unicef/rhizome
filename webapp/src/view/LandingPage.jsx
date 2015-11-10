@@ -8,7 +8,7 @@ var Reflux = require('reflux')
 var NavigationStore = require('stores/NavigationStore')
 var PermissionStore = require('stores/PermissionStore')
 
-function _loadCampaigns(campaigns, offices) {
+function _loadCampaigns (campaigns, offices) {
   var recent = _(campaigns)
     .each(function (campaign, i) {
       campaign.office = offices[campaign.office_id]
@@ -21,13 +21,13 @@ function _loadCampaigns(campaigns, offices) {
   this.setState({ campaigns : recent })
 }
 
-function _loadDocuments(documents) {
+function _loadDocuments (documents) {
   var recent = _.take(documents, 5)
 
   this.setState({ uploads : recent })
 }
 
-function _includeDashboard(dashboard, office) {
+function _includeDashboard (dashboard, office) {
   var slug = dashboard.slug
   var offices = dashboard.offices
 
@@ -37,7 +37,7 @@ function _includeDashboard(dashboard, office) {
   )
 }
 
-function _dashboardSelect(dashboards, campaign) {
+function _dashboardSelect (dashboards, campaign) {
   if (_.isEmpty(dashboards)) {
     return null
   }
@@ -50,7 +50,7 @@ function _dashboardSelect(dashboards, campaign) {
   )
 }
 
-function _campaignRow(campaign, i) {
+function _campaignRow (campaign, i) {
   var country
   var district
   var others = []
@@ -84,7 +84,7 @@ function _campaignRow(campaign, i) {
   )
 }
 
-function _uploadRow(upload, i) {
+function _uploadRow (upload, i) {
   return (
     <tr className={i % 2 === 0 ? 'odd' : 'even'} key={upload.id}>
       <td>{upload.status}</td>

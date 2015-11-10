@@ -3,13 +3,13 @@
 
 var _ = require('lodash')
 
-function intStyle(el, property) {
+function intStyle (el, property) {
     var style = window.getComputedStyle(el)
 
     return parseInt(style.getPropertyValue(property), 10)
 }
 
-function dimensions(el, includeMargins) {
+function dimensions (el, includeMargins) {
     var dims = {
         height: el.offsetHeight,
         width: el.offsetWidth
@@ -23,7 +23,7 @@ function dimensions(el, includeMargins) {
     return dims
 }
 
-function offset(el) {
+function offset (el) {
     var off = {
         top: el.offsetTop,
         right: 0,
@@ -42,7 +42,7 @@ function offset(el) {
     return off
 }
 
-function documentOffset(el) {
+function documentOffset (el) {
     var bbox = el.getBoundingClientRect()
     var doc = el.ownerDocument.documentElement
 
@@ -54,14 +54,14 @@ function documentOffset(el) {
     }
 }
 
-function viewportOffset(el) {
+function viewportOffset (el) {
     return _.reduce({ top: window.pageYOffset, left: window.pageXOffset }, function (result, offset, key) {
         result[key] -= offset
         return result
     }, documentOffset(el))
 }
 
-function contains(el, pt) {
+function contains (el, pt) {
     var offset = documentOffset(el)
 
     if (pt instanceof MouseEvent) {
@@ -78,14 +78,14 @@ function contains(el, pt) {
         y >= 0 && y <= el.offsetHeight
 }
 
-function contentArea(el) {
+function contentArea (el) {
     return {
         width: el.clientWidth - intStyle(el, 'padding-left') - intStyle(el, 'padding-right'),
         height: el.clientHeight - intStyle(el, 'padding-top') - intStyle(el, 'padding-bottom')
     }
 }
 
-function parentOf(parent, child) {
+function parentOf (parent, child) {
     var p = child.parentElement
     var result = parent === child
 

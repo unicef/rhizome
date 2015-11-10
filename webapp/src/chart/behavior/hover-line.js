@@ -5,7 +5,7 @@ var d3 = require('d3')
 
 var label = require('../renderer/label')
 
-function hoverLine() {
+function hoverLine () {
     var datapoints = []
     var diff = function (a, b) { return a - b }
     var height = 1
@@ -26,7 +26,7 @@ function hoverLine() {
     // can bail out of onMouseMove if the movement wouldn't change our display
     var _currentTarget = null
 
-    function chart(selection) {
+    function chart (selection) {
         selection
             .on('mousemove.hoverline', onMouseMove)
             .on('mouseout.hoverline', onMouseOut)
@@ -158,7 +158,7 @@ function hoverLine() {
     return chart
   }
 
-    function axisTranslate(d) {
+    function axisTranslate (d) {
         // jshint validthis:true
         var box = this.getBBox()
         var min = box.width / 2
@@ -169,7 +169,7 @@ function hoverLine() {
             height + ')'
     }
 
-    function onMouseMove() {
+    function onMouseMove () {
         /* jshint validthis: true */
         var cursor = d3.mouse(this)[0]
 
@@ -334,7 +334,7 @@ function hoverLine() {
             .style('opacity', 0)
     }
 
-    function onMouseOut() {
+    function onMouseOut () {
         /* jshint validthis: true */
         var svg = d3.select(this)
 

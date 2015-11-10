@@ -7,7 +7,7 @@ var moment = require('moment')
 var DropdownMenu = require('component/DropdownMenu.jsx')
 var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
 
-function searchValue(campaign) {
+function searchValue (campaign) {
   var m = moment(campaign.start_date)
 
   // Include several possible date formats for matching against

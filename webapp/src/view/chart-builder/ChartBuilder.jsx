@@ -17,7 +17,7 @@ var MenuItem = require('component/MenuItem.jsx')
 var RadioGroup = require('component/radio-group/RadioGroup.jsx')
 var TitleInput = require('component/TitleInput.jsx')
 
-function findMatches(item, re) {
+function findMatches (item, re) {
   var matches = []
 
   if (re.test(_.get(item, 'title'))) {
@@ -33,7 +33,7 @@ function findMatches(item, re) {
   return matches
 }
 
-function filterMenu(items, pattern) {
+function filterMenu (items, pattern) {
   if (_.size(pattern) < 3) {
     return items
   }
@@ -43,7 +43,7 @@ function filterMenu(items, pattern) {
   return _(items).map(match).flatten().value()
 }
 
-function campaignDisplayFormat(campaign) {
+function campaignDisplayFormat (campaign) {
   return moment(campaign.start_date).format('MMMM YYYY')
 }
 

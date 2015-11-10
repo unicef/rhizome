@@ -9,7 +9,7 @@
  * @return an array containing one or two tokens, the first object in the array
  *         will be a Number, the second a String
  */
-function parseDuration(value) {
+function parseDuration (value) {
     var toks = value.split(/\s+/)
 
     if (toks.length === 1) {

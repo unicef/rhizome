@@ -8,7 +8,7 @@ var api = require('data/api')
 
 var DataActions = require('actions/DataActions')
 
-function melt(d) {
+function melt (d) {
   var base = _.omit(d, 'indicators')
 
   return d.indicators.map(i => {

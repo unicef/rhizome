@@ -18,7 +18,7 @@ var path = require('vue/src/parsers/path')
  *
  * @param {String} prop A path to the property to access on objects
  */
-function accessor(prop) {
+function accessor (prop) {
     return function (d) {
         var v = path.get(d, prop)
 
@@ -30,7 +30,7 @@ function accessor(prop) {
     }
 }
 
-function defined(value, accessor) {
+function defined (value, accessor) {
     if (arguments.length < 2) {
         accessor = _.identity
     }
@@ -43,7 +43,7 @@ function defined(value, accessor) {
         !isNaN(v)
 }
 
-function max(data, accessor) {
+function max (data, accessor) {
     var m = -Infinity
 
     accessor = accessor || Number
@@ -63,7 +63,7 @@ function max(data, accessor) {
     return m
 }
 
-function min(data, accessor) {
+function min (data, accessor) {
     var m = Infinity
 
     accessor = accessor || Number
@@ -83,7 +83,7 @@ function min(data, accessor) {
     return m
 }
 
-function parseBool(value) {
+function parseBool (value) {
     if (value instanceof String) {
         return value === 'true'
     }
@@ -91,7 +91,7 @@ function parseBool(value) {
     return Boolean(value)
 }
 
-function rename(obj, mapping) {
+function rename (obj, mapping) {
     var o = {}
 
     for (var k in obj) {
@@ -101,7 +101,7 @@ function rename(obj, mapping) {
     return o
 }
 
-function unpivot(data) {
+function unpivot (data) {
     return _(data.objects)
         .map(function (d) {
             var datapoints = []

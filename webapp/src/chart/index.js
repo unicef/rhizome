@@ -28,7 +28,7 @@ var DEFAULTS = {
     }
 }
 
-function ChartFactory(type, el, data, options) {
+function ChartFactory (type, el, data, options) {
     if (!_.isFunction(CHARTS[type])) {
         throw new Error(type + ' is not a valid chart type')
     }

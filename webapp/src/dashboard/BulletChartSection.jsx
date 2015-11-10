@@ -8,7 +8,7 @@ var moment = require('moment')
 var Chart = require('component/Chart.jsx')
 var Tooltip = require('component/Tooltip.jsx')
 
-function _domain(data) {
+function _domain (data) {
   var lower = _(data)
     .pluck('indicator.bound_json')
     .flatten()
@@ -28,12 +28,12 @@ function _domain(data) {
   return [Math.min(lower, 0), Math.max(upper, _(data).flatten().pluck('value').max(), 1)]
 }
 
-function _matchCampaign(datapoint, campaign) {
+function _matchCampaign (datapoint, campaign) {
   return _.result(datapoint, 'campaign.start_date.getTime') ===
     moment(campaign.start_date, 'YYYY-MM-DD').valueOf()
 }
 
-function _value(data, campaign) {
+function _value (data, campaign) {
   return _.get(
     _(data)
       .filter(_.partial(_matchCampaign, _, campaign))
@@ -41,7 +41,7 @@ function _value(data, campaign) {
     'value')
 }
 
-function _marker(data, campaign) {
+function _marker (data, campaign) {
   var hx = _(data)
     .reject(_.partial(_matchCampaign, _, campaign))
     .pluck('value')
@@ -51,7 +51,7 @@ function _marker(data, campaign) {
   return _.sum(hx) / hx.length
 }
 
-function _targetRanges(indicator) {
+function _targetRanges (indicator) {
   var targets = _(_.get(indicator, 'bound_json'))
     .map(function (bound) {
       var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity
@@ -81,7 +81,7 @@ function _targetRanges(indicator) {
   return [_.pluck(targets, 'bound_name'), boundaries]
 }
 
-function _fill(data, campaign, targets, colorRange) {
+function _fill (data, campaign, targets, colorRange) {
   var color = d3.scale.ordinal()
     .domain(['bad', 'ok', 'good'])
     .range(colorRange)
@@ -93,7 +93,7 @@ function _fill(data, campaign, targets, colorRange) {
   return color(scale(_value(data, campaign)))
 }
 
-function _valueText(value, targets) {
+function _valueText (value, targets) {
   var threshold = targets[1]
   var target = targets[0]
   if (!_.isNull(value) && _.isFinite(value)) {

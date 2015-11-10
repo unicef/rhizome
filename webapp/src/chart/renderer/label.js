@@ -5,7 +5,7 @@ var _ = require('lodash')
 /**
  * @constructor
  */
-function label() {
+function label () {
     var cls = ['label']
     var height = 1
     var text = function (d) { return d.text }
@@ -20,7 +20,7 @@ function label() {
      * @private
      * Find the center of a collection of bounding boxes.
      */
-    function findBounds(data) {
+    function findBounds (data) {
         var top = Infinity
         var right = -Infinity
         var bottom = -Infinity
@@ -54,7 +54,7 @@ function label() {
      * @author Manish Nag <nag@seedscientific.com
      * @author Evan Sheehan <sheehan@seedscientific.com
      */
-    function splay(selection) {
+    function splay (selection) {
         var l = selection.size()
 
         if (l < 2) {
@@ -130,7 +130,7 @@ function label() {
      * all labels are oriented the same way, and so that labels don't get clipped
      * by the edge of the SVG. Prefer 'start' over 'end.'
      */
-    function textAnchor(labels) {
+    function textAnchor (labels) {
         var anchor = 'start'
 
         labels.each(function (d) {
@@ -144,7 +144,7 @@ function label() {
         return anchor
     }
 
-    function calcAnchor(d, el) {
+    function calcAnchor (d, el) {
         var anchor = 'start'
         var bbox = el.getBBox()
 
@@ -155,7 +155,7 @@ function label() {
         return anchor
     }
 
-    function chart(labels) {
+    function chart (labels) {
         labels.enter()
             .append('text')
             .style({

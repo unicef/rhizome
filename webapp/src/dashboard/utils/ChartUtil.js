@@ -24,7 +24,7 @@ var percentage = function (dataset) {
   return dataset
 }
 
-function generateMissedChildrenChartData(original) {
+function generateMissedChildrenChartData (original) {
   var stack = d3.layout.stack()
     .order('default')
     .offset('zero')
@@ -48,7 +48,7 @@ function generateMissedChildrenChartData(original) {
   return missed
 }
 
-function preparePolioCasesData(original) {
+function preparePolioCasesData (original) {
   var campaign = original.campaign
   var year = ''
   var month = ''
@@ -111,7 +111,7 @@ function preparePolioCasesData(original) {
   }
 }
 
-function prepareMissedChildrenData(original) {
+function prepareMissedChildrenData (original) {
   var data = original.data
   var campaign = original.campaign
   var location = original.location
@@ -137,7 +137,7 @@ function prepareMissedChildrenData(original) {
   }
 }
 
-function prepareUnderImmunizedData(original) {
+function prepareUnderImmunizedData (original) {
   var stack = d3.layout.stack()
     .offset('zero')
     .values(function (d) { return d.values })

@@ -3,18 +3,18 @@
 var _ = require('lodash')
 var d3 = require('d3')
 
-function _inherit(d) {
+function _inherit (d) {
   return [d]
 }
 
-function qualitativeAxis() {
+function qualitativeAxis () {
   var _colors = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
   var _height = 0
   var _width = 0
   var _scale = d3.scale.linear()
   var _threshold = d3.scale.threshold()
 
-  function axis(selection) {
+  function axis (selection) {
     selection.each(function () {
       var n = d3.range(_threshold.range().length)
 

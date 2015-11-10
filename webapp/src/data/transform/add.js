@@ -11,14 +11,14 @@ var _ = require('lodash')
  * Will sum the indicators 1, 2, and 3, returned by the datapoints endpoint and
  * store them in the value property of a new object.
  */
-module.exports = function add(ids) {
+module.exports = function add (ids) {
     'use strict'
 
     if (!(ids instanceof Array)) {
         ids = [ids]
     }
 
-    function transform(data) {
+    function transform (data) {
         var collection = []
 
         for (var i = data.length - 1 i >= 0 i--) {
