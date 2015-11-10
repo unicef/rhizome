@@ -47,11 +47,6 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-    def readSQLFromFile(self,filename):
-        SQL_DIR = path.join(path.dirname(path.dirname(path.\
-            abspath(__file__))), 'sql')
-        return open(path.join(SQL_DIR, filename), 'r').read()
-
     def create_metadata(self):
         '''
         Creating the Indicator, location, Campaign, meta data needed for the

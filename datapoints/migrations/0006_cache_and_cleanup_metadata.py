@@ -8,7 +8,7 @@ def cache_metadata(apps, schema_editor):
 
 
     indicator_cache_data = agg_tasks.cache_indicator_abstracted()
-    campaign_cache_data = agg_tasks.cache_campaign_abstracted()
+    campaign_cache_data = agg_tasks.calculate_campaign_percentage_complete()
 
 
 

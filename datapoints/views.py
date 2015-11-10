@@ -26,6 +26,7 @@ from functools import partial
 from datapoints.models import *
 from datapoints.forms import *
 from datapoints import agg_tasks
+from datapoints import cache_meta
 from datapoints.mixins import PermissionRequiredMixin
 
 
@@ -164,11 +165,10 @@ def refresh_metadata(request):
     This is what happens when you click the "refresh_metadata" button
     '''
 
-    indicator_cache_data = agg_tasks.cache_indicator_abstracted()
-    user_cache_data = agg_tasks.cache_user_abstracted()
-    campaign_cache_data = agg_tasks.cache_campaign_abstracted()
-    location_tree_cache_data = agg_tasks.cache_location_tree()
-    source_object_cache = agg_tasks.update_source_object_names()
+    indicator_cache_data = cache_meta.cache_indicator_abstracted()
+    campaign_cache_data = cache_meta.cache_campaign_abstracted()
+    location_tree_cache_data = cache_meta.cache_location_tree()
+    source_object_cache = cache_meta.update_source_object_names()
 
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 

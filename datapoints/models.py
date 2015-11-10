@@ -76,34 +76,6 @@ class IndicatorAbstracted(models.Model):
     class Meta:
         db_table = 'indicator_abstracted'
 
-class UserAbstracted(models.Model):
-    '''
-    Similar to the IndicatorAbstcated model, this allows us to store and return
-    data associated with each user that is not stored directly in the user
-    table, but in tables keyed off user_id ( user_to_group, location_permission).
-
-    The transformation between Indicator and IndicatorAbstracted is handled in
-    datapoints/agg_tasks.py -> cache_user_abstracted()
-
-    '''
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    last_login = models.DateTimeField()
-    is_superuser = models.BooleanField()
-    username = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.BooleanField()
-    email = models.CharField(max_length=255)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    date_joined = models.DateTimeField()
-    group_json = JSONField()
-    location_permission_json = JSONField()
-
-    class Meta:
-        db_table = 'user_abstracted'
-
-
 
 class CalculatedIndicatorComponent(models.Model):
     '''
