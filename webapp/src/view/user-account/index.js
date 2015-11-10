@@ -10,8 +10,8 @@ module.exports = {
     template: require('./template.html'),
     data: function () {
       return {
-        locations:[],
-        groups:[]
+        locations: [],
+        groups: []
       }
     },
     created: function () {

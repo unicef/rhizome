@@ -135,18 +135,18 @@ var chartOptions = {
     }
 module.exports = Reflux.createStore({
     data: {
-        locationList:[],
-        indicatorList:[],
-        campaignList:[],
-        indicatorsSelected:[],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
+        locationList: [],
+        indicatorList: [],
+        campaignList: [],
+        indicatorsSelected: [],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
         campaignSelected:{ office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
         locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null, title: null},
-        aggregatedlocations:[],
+        aggregatedlocations: [],
         title: "",
         description: "",
-        locationRadios:[{ value: "selected", title:"Selected location only"}, { value: "type", title:"locations with the same type"}, { value: "sublocations", title:"Sublocations 1 level below selected"}],
+        locationRadios: [{ value: "selected", title:"Selected location only"}, { value: "type", title:"locations with the same type"}, { value: "sublocations", title:"Sublocations 1 level below selected"}],
         locationRadioValue: 2,
-        groupByRadios:[{ value: "indicator", title:"Indicators"}, { value: "location", title:"locations"}],
+        groupByRadios: [{ value: "indicator", title:"Indicators"}, { value: "location", title:"locations"}],
         groupByRadioValue: 1,
         timeRadios:function () {
                     var self = this
@@ -176,7 +176,7 @@ module.exports = Reflux.createStore({
         timeRadioValue:2,
         chartTypes:require('./chartBuilder/builderDefinitions'),
         selectedChart:0,
-        chartData:[],
+        chartData: [],
         chartOptions: chartOptions,
         canDisplayChart:canDisplayChart,
         canDisplayChartReason:canDisplayChartReason,
