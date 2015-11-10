@@ -69,11 +69,9 @@ _.extend(PieChart.prototype, {
       .value();
 
     var data = [{value: 0}, {value: 0}];
-    if (!_.isNull(values[0]) && !_.isUndefined(values[0])) {
-      if (!_.isNull(values[0].value) && !_.isUndefined(values[0].value)) {
+    if (values[0] && values[0].value) {
         data[0].value = Math.round(values[0].value * 100) / 100;
         data[1].value = 1 - data[0].value;
-      }
     }
 
     var w = this._width - margin.left - margin.right;
