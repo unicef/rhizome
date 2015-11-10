@@ -82,7 +82,7 @@ _.extend(Histogram.prototype, {
       })
 
     var label = bin.selectAll('.label').data(d => [d])
-    var labelTransform = d => 'translate(' + (width(d) / 2) + ',0)'
+    var labelTransform = d => 'translate(' + (width(d) / 2) + ', 0)'
 
     label.enter()
       .append('text')

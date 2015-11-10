@@ -180,7 +180,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         if (data.length > 1) {
             // Show the legend if we have at least two series
             svg.select('.legend')
-                .attr('transform', 'translate(' + (w + 4) + ',0)')
+                .attr('transform', 'translate(' + (w + 4) + ', 0)')
                 .call(legend()
                     .interactive(true)
                     .scale(colorScale)

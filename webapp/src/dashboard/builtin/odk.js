@@ -20,7 +20,7 @@ module.exports = {
         'section': 'breakdown',
         'locations': 'sublocations',
         'timeRange': 0,
-        'indicators': [267,268,251,264]
+        'indicators': [267, 268, 251, 264]
     },
 ]
 }

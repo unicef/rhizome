@@ -40,7 +40,7 @@ function qualitativeAxis() {
         var range = _threshold.invertExtent(d)
         var x = _.isFinite(range[0]) ? range[0] : _scale.domain()[0]
 
-        return 'translate(' + _scale(x) + ',0)'
+        return 'translate(' + _scale(x) + ', 0)'
       })
 
       var rect = tick.selectAll('rect').data(_inherit)

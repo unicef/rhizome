@@ -13,7 +13,7 @@ module.exports = {
         }, {
             'title'      : 'Under-Immunized Children',
             'section'    : 'impact',
-            'indicators' : [431,432,433],
+            'indicators' : [431, 432, 433],
             'startOf'    : 'quarter',
             'timeRange'  : {
                 years : 3
@@ -21,7 +21,7 @@ module.exports = {
         }, {
             'title'      : 'Missed Children',
             'section'    : 'performance',
-            'indicators' : [166,164,167,165],
+            'indicators' : [166, 164, 167, 165],
             'timeRange'  : {
                 months : 12
             }

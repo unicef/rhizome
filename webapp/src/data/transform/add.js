@@ -6,7 +6,7 @@ var _ = require('lodash')
  * For use in processing the results of a datapoint API call.
  *
  * Example:
- *     api.datapoints(...).then(add([1,2,3]))
+ *     api.datapoints(...).then(add([1, 2, 3]))
  *
  * Will sum the indicators 1, 2, and 3, returned by the datapoints endpoint and
  * store them in the value property of a new object.

@@ -184,7 +184,7 @@ _.extend(Heatmap.prototype, {
               'normal'
             }
         })
-                .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ',0) rotate(-45)')
+                .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
         .on('click', function (d, i) { self._setSort(d, i) })
         .on('mouseover', function (d, i) {
             options.onColumnHeadOver(d, i, this)
