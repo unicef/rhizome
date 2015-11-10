@@ -15,7 +15,7 @@ module.exports = React.createClass({
         return (
           <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === self.props.value ? 'active' : '')}>
 	          <div className='chart-box' onClick={self.props.onChange.bind(null, chart.name)}>
-              <img className='chart-icon' src={'/static/img/chart-icons/'+chart.name+'.png'} />
+              <img className='chart-icon' src={'/static/img/chart-icons/' + chart.name + '.png'} />
               {chart.name}
 	          </div>
 	        </div>

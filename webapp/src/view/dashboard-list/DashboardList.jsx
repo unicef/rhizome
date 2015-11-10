@@ -8,7 +8,7 @@ var api = require('data/api')
 
 var _tableRow = function (row) {
   var path = '/datapoints/' + _.kebabCase(row.title) + '/'
-  var editPath = '/datapoints/dashboards/edit/'+row.id+'/'
+  var editPath = '/datapoints/dashboards/edit/' + row.id + '/'
   var editLink = <span>(<a href={editPath}>edit</a>)</span>
   return (
       <tr>

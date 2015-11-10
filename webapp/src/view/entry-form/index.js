@@ -396,7 +396,7 @@ module.exports = {
                                 case 'label':
                                     cell.value = self.$data.indicators[indicator_id]
                                       ? self.$data.indicators[indicator_id].name
-                                      : 'Missing info for indicator '+indicator_id
+                                      : 'Missing info for indicator ' + indicator_id
                                     cell.classes = 'label'
                                     cell.width = 300
                                     break

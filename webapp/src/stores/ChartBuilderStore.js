@@ -15,7 +15,7 @@ var processChartData = require('./chartBuilder/processChartData')
 function melt(data, indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
-        return { indicator: indicator+'', value: 0}
+        return { indicator: indicator + '', value: 0}
     })
     var o = _(dataset)
         .map(function (d) {
