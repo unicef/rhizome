@@ -4,7 +4,16 @@
   display: inline-block;
   text-align: center;
 
+  padding: 0 5px;
+  &:nth-last-child(1) {
+    padding: 0 0 0 10px;
+  }
+  &:first-child {
+    padding: 0 10px 0 0;
+  }
+
   img {
+    width: 100%;
     border: 1px solid $rhz-button-bg-color;
   }
   input[type="radio"] {
