@@ -73,7 +73,7 @@ let ChartWizardStore = Reflux.createStore({
     if (!chartOption.yFormat) {
       chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
     }
-    if(!chartOption.xFormat){
+    if(!chartOption.xFormat) {
       chartOption.xFormat = d3.format(builderDefinitions.formats[this.data.xFormatValue].value)
     }
     return chartOption
@@ -138,7 +138,7 @@ let ChartWizardStore = Reflux.createStore({
         this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
         this.data.chartTypeFilteredList = builderDefinitions.charts
 
-        if(chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]){
+        if(chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
           this.data.campaign = this.campaignIndex[chartDef.campaignValue]
         }
         else{
@@ -236,12 +236,12 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onChangeXAxis(value){
+  onChangeXAxis(value) {
     this.data.chartDef.x = value
     this.previewChart()
   },
 
-  onChangeYAxis(value){
+  onChangeYAxis(value) {
     this.data.chartDef.y = value
     this.previewChart()
   },

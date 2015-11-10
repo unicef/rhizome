@@ -9,7 +9,7 @@ var util   = require('util/data')
 
 function melt(data,indicatorArray) {
   var dataset = data.objects
-  var baseIndicators = _.map(indicatorArray, function (indicator){
+  var baseIndicators = _.map(indicatorArray, function (indicator) {
     return {indicator:indicator+'',value:0}
   })
   var o = _(dataset)
@@ -54,8 +54,8 @@ function value(datapoint) {
 
 var tooltipDiv = document.createElement('div') //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv)
-function nullValuesToZero(values){
-  _.each(values, function (value){
+function nullValuesToZero(values) {
+  _.each(values, function (value) {
     if(_.isNull(value.value))
     {
       value.value = 0
@@ -70,14 +70,14 @@ function _columnData(data, groups, groupBy) {
     .map(_.partialRight(seriesObject, groups))
     .value()
   var baseCampaigns = []
-  _.each(columnData, function (series){
-     _.each(series.values, function (value){ //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
-       if(!_.find(baseCampaigns, function (campaign){return campaign.id==value.campaign.id}))
+  _.each(columnData, function (series) {
+     _.each(series.values, function (value) { //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
+       if(!_.find(baseCampaigns, function (campaign) {return campaign.id==value.campaign.id}))
        {
          baseCampaigns.push(value.campaign)
        }
      })
-     _.each(series.values, function (val){ //replace all null values with 0, caused d3 rect rendering errors in the chart
+     _.each(series.values, function (val) { //replace all null values with 0, caused d3 rect rendering errors in the chart
       if(_.isNull(val.value))
       {
         val.value = 0
@@ -85,9 +85,9 @@ function _columnData(data, groups, groupBy) {
      })
   })
   var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'))
-  _.each(columnData, function (series){
-     _.each(baseCampaigns, function (baseCampaign,index){
-         if(!_.find(series.values, function (value){return value.campaign.id === baseCampaign.id}))
+  _.each(columnData, function (series) {
+     _.each(baseCampaigns, function (baseCampaign,index) {
+         if(!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
          {
            series.values.splice(index,0,{campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
          }
@@ -157,12 +157,12 @@ function _getIndicator(d) {
 }
 
 module.exports = {
-  init:function (dataPromise,chartType,indicators,locations,lower,upper,groups,groupBy,xAxis,yAxis){
+  init:function (dataPromise,chartType,indicators,locations,lower,upper,groups,groupBy,xAxis,yAxis) {
     var indicatorArray = _.map(indicators,_.property('id'))
-    var meltPromise = dataPromise.then(function (data){
+    var meltPromise = dataPromise.then(function (data) {
       return melt(data,indicatorArray)
     })
-    if(chartType=="LineChart"){
+    if(chartType=="LineChart") {
      return this.processLineChart(meltPromise,lower,upper,groups,groupBy)
     } else if (chartType=="PieChart") {
      return this.processPieChart(meltPromise, indicators)
@@ -176,8 +176,8 @@ module.exports = {
      return this.processBarChart(dataPromise,locations,indicators,xAxis,yAxis)
     }
   },
-  processLineChart:function (dataPromise,lower,upper,groups,groupBy){
-    return dataPromise.then(function (data){
+  processLineChart:function (dataPromise,lower,upper,groups,groupBy) {
+    return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return {options: null, data: null}
       }
@@ -198,14 +198,14 @@ module.exports = {
         return {options:chartOptions,data:chartData}
     })
   },
-  processPieChart:function (dataPromise, indicators){
+  processPieChart:function (dataPromise, indicators) {
     var idx = _.indexBy(indicators, 'id')
 
-    return dataPromise.then(function (data){
+    return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return {options: null, data: null}
       }
-      var total = _(data).map(function (n){ return n.value}).sum()
+      var total = _(data).map(function (n) { return n.value}).sum()
       var chartOptions = {
           domain  : _.constant([0, total]),
           name    : d => _.get(idx, '[' + d.indicator + '].name', ''),
@@ -219,11 +219,11 @@ module.exports = {
       return {options:chartOptions,data:data}
     })
   },
-  processChoroplethMap:function (dataPromise,locations){
+  processChoroplethMap:function (dataPromise,locations) {
     var locationsIndex = _.indexBy(locations, 'id')
 
-    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location){return location.id}) })])
-    .then(_.spread(function (data, border){
+    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) {return location.id}) })])
+    .then(_.spread(function (data, border) {
       var index = _.indexBy(data,'location')
       var chartOptions = {
         aspect: 1,
@@ -242,8 +242,8 @@ module.exports = {
       return {options:chartOptions,data:chartData}
     }))
   },
-  processColumnChart: function (dataPromise,lower,upper,groups,groupBy){
-    return dataPromise.then(function (data){
+  processColumnChart: function (dataPromise,lower,upper,groups,groupBy) {
+    return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return {options: null, data: null}
       }
@@ -276,11 +276,11 @@ module.exports = {
 
     })
   },
-  processScatterChart: function (dataPromise,locations,indicators,xAxis,yAxis){
+  processScatterChart: function (dataPromise,locations,indicators,xAxis,yAxis) {
     var indicatorsIndex = _.indexBy(indicators, 'id')//
     var locationsIndex = _.indexBy(locations, 'id')
 
-    return dataPromise.then(function (data){
+    return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return {options: null, data: null}
       }
@@ -330,8 +330,8 @@ module.exports = {
       return {options:chartOptions,data:chartData}
     })
   },
-  processBarChart: function (dataPromise,locations,indicators,xAxis,yAxis){
-      return dataPromise.then(function (data){
+  processBarChart: function (dataPromise,locations,indicators,xAxis,yAxis) {
+      return dataPromise.then(function (data) {
         if (!data || data.length === 0) {
           return {options: null, data: null}
         }

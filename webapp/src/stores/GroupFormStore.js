@@ -15,7 +15,7 @@ module.exports = Reflux.createStore({
         saving: false
     },
     listenables: [ GroupFormActions ],
-    getInitialState: function (){
+    getInitialState: function () {
         return this.data
     },
     onInitialize: function (group_id) {

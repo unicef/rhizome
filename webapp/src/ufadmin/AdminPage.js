@@ -95,7 +95,7 @@ var AdminPage = React.createClass({
     return <div className='admin-loading'>Loading...</div>
   },
 
-  renderOriginalFilters(){
+  renderOriginalFilters() {
 
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state

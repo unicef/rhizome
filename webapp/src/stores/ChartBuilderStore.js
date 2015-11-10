@@ -15,7 +15,7 @@ var processChartData = require('./chartBuilder/processChartData')
 
 function melt(data,indicatorArray) {
     var dataset = data.objects
-    var baseIndicators = _.map(indicatorArray, function (indicator){
+    var baseIndicators = _.map(indicatorArray, function (indicator) {
         return {indicator:indicator+'',value:0}
     })
     var o = _(dataset)
@@ -50,7 +50,7 @@ function seriesObject(d, ind, collection, indicators) {
         values : d
     }
 }
-var canDisplayChart = function (){
+var canDisplayChart = function () {
     if(this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
     {
       return true
@@ -59,13 +59,13 @@ var canDisplayChart = function (){
         return false
     }
 }
-var canDisplayChartReason = function (){
+var canDisplayChartReason = function () {
     var reason
     if(this.indicatorsSelected.length === 0)
     {
       reason = "Please select at least one indicator"
     }
-    else if(!this.campaignSelected.id){
+    else if(!this.campaignSelected.id) {
       reason = "Please select a campaign"
     }
     else if(this.chartData.length === 0)
@@ -85,17 +85,17 @@ function _columnData(data, groups, groupBy) {
         .map(_.partialRight(seriesObject, groups))
         .value()
     var largestGroup = []
-    _.each(columnData, function (series){
+    _.each(columnData, function (series) {
        if(series.values.length > largestGroup.length)
        {
          largestGroup = series.values
        }
     })
-    var baseGroup = _.map(largestGroup, function (group){
+    var baseGroup = _.map(largestGroup, function (group) {
         return {campaign:group.campaign,
                 value:0,y:0,y0:0}
     })
-    _.each(columnData, function (series){
+    _.each(columnData, function (series) {
 
        var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{location:series.values[0].location,indicator:series.values[0].indicator}))
        series.values = _.assign(baseGroupValues,_.cloneDeep(series.values))
@@ -111,7 +111,7 @@ function _columnData(data, groups, groupBy) {
     return stack(columnData)
 }
 
-function formatTimeRange (val){
+function formatTimeRange (val) {
     switch (val) {
         case "pastYear":
             return {"years":1}
@@ -153,10 +153,10 @@ module.exports = Reflux.createStore({
         locationRadioValue: 2,
         groupByRadios:[{value:"indicator",title:"Indicators"},{value:"location",title:"locations"}],
         groupByRadioValue: 1,
-        timeRadios:function (){
+        timeRadios:function () {
                     var self = this
                     var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}]
-                    var timeRadios = _.filter(radios, function (radio){ return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
+                    var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if(timeRadios.length -1 < this.timeRadioValue)
                     {
                       this.timeRadioValue = 0
@@ -188,7 +188,7 @@ module.exports = Reflux.createStore({
         xAxis:0,
         yAxis:0,
         loading:false,
-        chartDefinition:function (){
+        chartDefinition:function () {
       var formatOpts = this.formatRadios()
       var xFormat = formatOpts[this.xFormatRadioValue].value
       var yFormat = formatOpts[this.formatRadioValue].value
@@ -209,16 +209,16 @@ module.exports = Reflux.createStore({
         }
     },
     listenables: [ChartBuilderActions],
-    getInitialState: function (){
+    getInitialState: function () {
        return this.data
     },
-    onInitialize: function (chartDef,location,campaign){
+    onInitialize: function (chartDef,location,campaign) {
     this.data.locationSelected = location
     this.data.campaignSelected = campaign
     this.resetChartDef()
 
     var self = this
-            var locationPromise = api.locations().then(function (items){
+            var locationPromise = api.locations().then(function (items) {
               self._locationIndex = _.indexBy(items.objects, 'id')
               self.data.locationList = _(items.objects)
                 .map(function (location) {
@@ -270,35 +270,35 @@ module.exports = Reflux.createStore({
                     self.trigger(self.data)
                 }))
     },
-    onAddIndicatorSelection: function (value){
+    onAddIndicatorSelection: function (value) {
         this.data.indicatorsSelected.push(this._indicatorIndex[value])
         this.trigger(this.data)
         this.getChartData()
     },
-    onRemoveIndicatorSelection: function (id){
+    onRemoveIndicatorSelection: function (id) {
       _.remove(this.data.indicatorsSelected,{id:id})
       this.trigger(this.data)
       this.getChartData()
     },
-    onUpdateTitle:function (value){
+    onUpdateTitle:function (value) {
        this.data.title = value
        //this.trigger(this.data)
     },
-    onUpdateDescription:function (value){
+    onUpdateDescription:function (value) {
        this.data.description = value
        this.trigger(this.data)
     },
-    onSelectShowLocationRadio:function (value){
+    onSelectShowLocationRadio:function (value) {
        this.data.locationRadioValue = value
        this.trigger(this.data)
        this.aggregateLocations()
     },
-    onSelectGroupByRadio:function (value){
+    onSelectGroupByRadio:function (value) {
        this.data.groupByRadioValue = value
        this.trigger(this.data)
        this.getChartData()
     },
-    onSelectTimeRadio:function (value){
+    onSelectTimeRadio:function (value) {
        this.data.timeRadioValue = value
        this.trigger(this.data)
        this.getChartData()
@@ -315,39 +315,39 @@ module.exports = Reflux.createStore({
     this.trigger(this.data)
     this.getChartData()
   },
-    onSelectChart: function (value){
+    onSelectChart: function (value) {
        this.data.selectedChart = value
        this.data.chartData = []
        //this.data.chartOptions = chartOptions
        this.trigger(this.data)
        this.getChartData()
     },
-    onAddCampaignSelection: function (value){
+    onAddCampaignSelection: function (value) {
         this.data.campaignSelected = this._campaignIndex[value]
         this.trigger(this.data)
         this.getChartData()
     },
-    onAddLocationSelection: function (value){
+    onAddLocationSelection: function (value) {
         this.data.locationSelected = this._locationIndex[value]
         this.trigger(this.data)
         this.aggregateLocations()
     },
-    onSelectXAxis: function (value){
+    onSelectXAxis: function (value) {
         this.data.xAxis = value
         this.getChartData()
     },
-    onSelectYAxis: function (value){
+    onSelectYAxis: function (value) {
         this.data.yAxis = value
         this.getChartData()
     },
-    applyChartDef:function (chartDef){
+    applyChartDef:function (chartDef) {
        var self = this
        this.data.xAxis = chartDef.x
        this.data.yAxis = chartDef.y
        this.data.id = chartDef.id
 
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type})
-       this.data.indicatorsSelected = _.map(chartDef.indicators, function (id){
+       this.data.indicatorsSelected = _.map(chartDef.indicators, function (id) {
           return self._indicatorIndex[id]
        })
        this.data.title = chartDef.title
@@ -359,11 +359,11 @@ module.exports = Reflux.createStore({
        var timeString = JSON.stringify(chartDef.timeRange)
        var timeValue
 
-       if(timeString=='{"months":2}'){
+       if(timeString=='{"months":2}') {
        timeValue = "3Months"
-       } else if(timeString=='{"years":1}'){
+       } else if(timeString=='{"years":1}') {
        timeValue = "pastYear"
-       } else if(timeString=='{"months":0}'){
+       } else if(timeString=='{"months":0}') {
        timeValue = "current"
        } else {
         timeValue = "allTime"
@@ -374,7 +374,7 @@ module.exports = Reflux.createStore({
        this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{value:timeValue}), 0)
        this.trigger(this.data)
     },
-    resetChartDef:function (){
+    resetChartDef:function () {
        this.data.selectedChart = 0
        this.data.indicatorsSelected = []
        this.data.title = ''
@@ -383,7 +383,7 @@ module.exports = Reflux.createStore({
        this.data.timeRadioValue = 0
        this.trigger(this.data)
     },
-    aggregateLocations: function (){
+    aggregateLocations: function () {
         var locations
         var locationSelected = this.data.locationSelected
         var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value
@@ -411,7 +411,7 @@ module.exports = Reflux.createStore({
             this.getChartData()
         }
     },
-    canFetchChartData : function (){
+    canFetchChartData : function () {
         if(this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
         {
           return true
@@ -421,19 +421,19 @@ module.exports = Reflux.createStore({
         }
     },
     //Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
-    getLower:  function (start){
+    getLower:  function (start) {
         var range = this.data.timeRadios()[this.data.timeRadioValue].value
-        if(range=="current"){
+        if(range=="current") {
             return start.clone().startOf('month')
-        } else if (range=="3Months"){
+        } else if (range=="3Months") {
             return start.clone().startOf('month').subtract(3,'month')
-        } else if (range=="pastYear"){
+        } else if (range=="pastYear") {
             return start.clone().startOf('month').subtract(1,'year')
-        } else if (range=="allTime"){
+        } else if (range=="allTime") {
             return null
         }
     },
-    getChartData: function (){
+    getChartData: function () {
         if(!this.data.indicatorsSelected.length)
         {
          return
@@ -460,7 +460,7 @@ module.exports = Reflux.createStore({
 
         processChartData
         .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedLocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
-        .then(function (chart){
+        .then(function (chart) {
           self.data.loading = false
           self.data.chartOptions = chart.options
           self.data.chartData = chart.data

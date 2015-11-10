@@ -80,7 +80,7 @@ module.exports = {
     UFAdmin: function (el) {
         AdminApp.render(document.getElementById('main'))
     },
-    CampaignsPage: function (id_start_date, id_end_date){
+    CampaignsPage: function (id_start_date, id_end_date) {
         CampaignsPage.render(id_start_date, id_end_date)
     },
     GroupForm: function (el, group_id) {
