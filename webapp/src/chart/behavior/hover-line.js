@@ -310,7 +310,7 @@ function hoverLine () {
 
     var colorScale = d3.scale.ordinal()
         .domain(_(labelData)
-        .map(function (d)  { return d.text })
+        .map(function (d) { return d.text })
         .uniq()
         .sortBy()
         .value())

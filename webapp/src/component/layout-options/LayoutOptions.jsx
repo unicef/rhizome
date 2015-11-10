@@ -19,7 +19,7 @@ let LayoutOptions = React.createClass({
     var radios = this.props.values.map(radio => {
       var radioID = 'layout-option-id-' + radio.value
 
-      return  <div href='#' key={radio.value}
+      return <div href='#' key={radio.value}
                    className={'medium-4 small-12 layout-option ' + (self.props.value === radio.value ? 'active' : 'inactive')}>
                 <label htmlFor={radioID}>
                   <img src={radio.src} alt="" />

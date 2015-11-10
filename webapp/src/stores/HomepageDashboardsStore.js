@@ -52,7 +52,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   fetchData: function (dashboard) {
     var campaign = dashboard.campaign
     var location = dashboard.location
-    var charts =  dashboard.charts
+    var charts = dashboard.charts
 
     var start = moment(campaign.start_date, 'YYYY-MM-DD')
     var end = campaign.end_date

@@ -87,7 +87,7 @@ function _columnData (data, groups, groupBy) {
            series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
          }
      })
-     series.values =  _.sortBy(series.values, _.method('campaign.start_date.getTime'))
+     series.values = _.sortBy(series.values, _.method('campaign.start_date.getTime'))
   })
   var stack = d3.layout.stack()
     .order('default')
@@ -189,7 +189,7 @@ module.exports = {
           xFormat: function (d) { return moment(d).format('MMM YYYY') },
           y: _.property('value')
         }
-      var chartData =  _groupBySeries(data, groups, groupBy)
+      var chartData = _groupBySeries(data, groups, groupBy)
         return { options: chartOptions, data: chartData}
     })
   },

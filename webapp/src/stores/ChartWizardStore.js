@@ -188,7 +188,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onRemoveIndicator (id) {
     _.remove(this.data.indicatorSelected, { id: id })
-    if (this.data.indicatorSelected.length ===  0) {
+    if (this.data.indicatorSelected.length === 0) {
       this.data.chartTypeFilteredList = builderDefinitions.charts
     }
     this.previewChart()

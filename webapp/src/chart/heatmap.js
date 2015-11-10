@@ -228,7 +228,7 @@ _.extend(Heatmap.prototype, {
         this._svg.selectAll('.row')
             .transition().duration(300)
             .style('opacity', function (e) {
-                return  (seriesName(e) === target) ? 1 : 0.4
+                return (seriesName(e) === target) ? 1 : 0.4
             })
     },
 
