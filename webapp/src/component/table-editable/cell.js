@@ -3,7 +3,7 @@
 var _ = require('lodash')
 
 module.exports = {
-    replace : true,
+    replace: true,
 
     template: require('./cell.html'),
 
@@ -29,7 +29,7 @@ module.exports = {
 
         this.$el.addEventListener('mouseover', function () {
             self.$dispatch('tooltip-show', {
-                el  : self.$el,
+                el: self.$el,
                 data: {
                     text: self.hoverText,
                     orientation: 'bottom'
@@ -103,14 +103,14 @@ module.exports = {
                             self.isSaving = false
 
                         }, function (error) {
-                        
+
                             // or rejected
                             if (self.withError) {
                                 self.withError(error)
                             } else {
                                 console.log('Error', error)
                             }
-                            
+
                             // set to previous value
                             self.hasError = true
                             self.value = self.previousValue

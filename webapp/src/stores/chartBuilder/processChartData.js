@@ -40,8 +40,8 @@ function _groupBySeries(data, groups, groupBy) {
 
 function seriesObject(d, ind, collection, groups) {
   return {
-    name   : groups[ind].name,
-    values : d
+    name: groups[ind].name,
+    values: d
   }
 }
 
@@ -145,8 +145,8 @@ function _makeSeries(getSeries) {
       .groupBy(getSeries)
       .map(function (v, k) {
         return {
-          name   : k,
-          values : v
+          name: k,
+          values: v
         }
       })
       .value()
@@ -207,13 +207,13 @@ module.exports = {
       }
       var total = _(data).map(function (n) { return n.value}).sum()
       var chartOptions = {
-          domain  : _.constant([0, total]),
-          name    : d => _.get(idx, '[' + d.indicator + '].name', ''),
-          margin  : {
-            top    : 0,
-            right  : 200,
-            bottom : 0,
-            left   : 0
+          domain: _.constant([0, total]),
+          name: d => _.get(idx, '[' + d.indicator + '].name', ''),
+          margin: {
+            top: 0,
+            right: 200,
+            bottom: 0,
+            left: 0
           }
         }
       return { options: chartOptions, data: data}
@@ -227,7 +227,7 @@ module.exports = {
       var index = _.indexBy(data, 'location')
       var chartOptions = {
         aspect: 1,
-        name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
+        name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         border: border.objects.features
       }
       if (!data || data.length === 0) {
@@ -236,7 +236,7 @@ module.exports = {
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
         return _.merge({}, feature, {
-          properties : { value : _.get(location, 'value') }
+          properties: { value: _.get(location, 'value') }
         })
       })
       return { options: chartOptions, data: chartData}
@@ -260,13 +260,13 @@ module.exports = {
         var chartData = _columnData(data, groups, groupBy)
 
       var chartOptions = {
-        aspect : 2.664831804,
-        values  : _.property('values'),
-        domain : _.constant(columnScale),
-        color  : _.flow(
+        aspect: 2.664831804,
+        values: _.property('values'),
+        domain: _.constant(columnScale),
+        color: _.flow(
           _.property('name'),
           d3.scale.ordinal().range(colors)),
-        x      : function (d) {
+        x: function (d) {
                       var start = d.campaign.start_date
                       return moment(start).startOf('month').toDate().getTime()
                       },
@@ -306,10 +306,10 @@ module.exports = {
           var index = _.indexBy(d.indicators, 'indicator')
 
           return {
-            id   : d.location,
-            name : locationsIndex[d.location].name,
-            x    : value(index[xAxis]),
-            y    : value(index[yAxis])
+            id: d.location,
+            name: locationsIndex[d.location].name,
+            x: value(index[xAxis]),
+            y: value(index[yAxis])
           }
         })
         .filter(function (d) {
@@ -319,13 +319,13 @@ module.exports = {
       var showTooltip = function () {}
       var hideTooltip = function () {}
       var chartOptions = {
-        aspect      : 1.7,
-        domain      : _.constant(domain),
-        onMouseOut  : hideTooltip,
-        onMouseOver : showTooltip,
-        range       : _.constant(range),
-        xLabel      : 'Caregiver Awareness',
-        yLabel      : 'Missed Children'
+        aspect: 1.7,
+        domain: _.constant(domain),
+        onMouseOut: hideTooltip,
+        onMouseOver: showTooltip,
+        range: _.constant(range),
+        xLabel: 'Caregiver Awareness',
+        yLabel: 'Missed Children'
       }
       return { options: chartOptions, data: chartData}
     })
@@ -349,13 +349,13 @@ module.exports = {
           }).value()
 
         var locationMapping = {
-          'value'       : 'x',
-          'location.name' : 'y'
+          'value': 'x',
+          'location.name': 'y'
         }
 
         var chartOptions = {
-          offset  : 'zero',
-          xFormat : d3.format('%')
+          offset: 'zero',
+          xFormat: d3.format('%')
         }
         var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
         return { options: chartOptions, data: chartData}

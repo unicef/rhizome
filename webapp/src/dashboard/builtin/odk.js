@@ -1,16 +1,16 @@
 module.exports = {
-    'id'                : -5,
-    'title'             : 'ODK Dashboard',
+    'id': -5,
+    'title': 'ODK Dashboard',
   'builtin': true,
-    'default_office_id' : 1,
-    'charts' : [{
+    'default_office_id': 1,
+    'charts': [{
         'title': 'Caregiver Awareness',
         'section': 'overview',
         'indicators': [276],
     'timeRange': 0
     }, {
         'title': 'Non Compliance',
-        'type'       : 'ChoroplethMap',
+        'type': 'ChoroplethMap',
         'section': 'map',
         'indicators': [289],
     'timeRange': 0

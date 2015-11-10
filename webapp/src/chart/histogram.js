@@ -4,24 +4,24 @@ var _ = require('lodash')
 var d3 = require('d3')
 
 var DEFAULTS = {
-  className  : _.constant(''),
-  format     : d3.format('n'),
-  value      : _.property('value'),
-  yAxisTitle : '',
-  margin : {
-    top    : 12,
-    right  : 6,
-    bottom : 12,
-    left   : 12
+  className: _.constant(''),
+  format: d3.format('n'),
+  value: _.property('value'),
+  yAxisTitle: '',
+  margin: {
+    top: 12,
+    right: 6,
+    bottom: 12,
+    left: 12
   }
 }
 
 function Histogram() {}
 
 _.extend(Histogram.prototype, {
-  defaults : DEFAULTS,
+  defaults: DEFAULTS,
 
-  update : function (data, options) {
+  update: function (data, options) {
     options = _.assign(this._options, options)
 
     var margin = options.margin
@@ -56,8 +56,8 @@ _.extend(Histogram.prototype, {
     bin.enter()
       .append('g')
       .attr({
-        'class'     : 'bin',
-        'transform' : d => 'translate(' + x(d) + ',' + h + ')'
+        'class': 'bin',
+        'transform': d => 'translate(' + x(d) + ',' + h + ')'
       })
 
     bin.transition().duration(500).attr('transform', transform)
@@ -68,17 +68,17 @@ _.extend(Histogram.prototype, {
 
     bar.enter().append('rect')
       .attr({
-        'class'  : 'bar',
-        'width'  : width,
-        'height' : 0
+        'class': 'bar',
+        'width': width,
+        'height': 0
       })
 
     bar.transition()
       .duration(500)
       .attr({
-        'width'  : width,
-        'height' : d => h - yScale(d.y),
-        'class'  : d => 'bar ' + options.className(d)
+        'width': width,
+        'height': d => h - yScale(d.y),
+        'class': d => 'bar ' + options.className(d)
       })
 
     var label = bin.selectAll('.label').data(d => [d])
@@ -87,10 +87,10 @@ _.extend(Histogram.prototype, {
     label.enter()
       .append('text')
       .attr({
-        'class'       : 'label',
-        'text-anchor' : 'middle',
-        'dy'          : '-.2em',
-        'transform'   : labelTransform
+        'class': 'label',
+        'text-anchor': 'middle',
+        'dy': '-.2em',
+        'transform': labelTransform
       })
 
     // We know these are counts, so we don't need a formatter
@@ -122,9 +122,9 @@ _.extend(Histogram.prototype, {
     yAxis.enter().append('text')
 
     yAxis.attr({
-        'transform'   : 'translate(0, ' + (h / 2) + ') rotate(-90)',
-        'text-anchor' : 'middle',
-        'dy'          : '-6'
+        'transform': 'translate(0, ' + (h / 2) + ') rotate(-90)',
+        'text-anchor': 'middle',
+        'dy': '-6'
       })
       .text(String)
   }

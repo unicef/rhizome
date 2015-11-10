@@ -20,6 +20,6 @@ function timeAxis(value) {
 }
 
 module.exports = {
-  general  : general,
-  timeAxis : timeAxis,
+  general: general,
+  timeAxis: timeAxis,
 }

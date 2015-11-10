@@ -3,7 +3,7 @@ import _ from 'lodash'
 export default {
   charts: [
     { name: 'LineChart', groupBy: true, locationLevel: true, chooseAxis: false, timeRadios: ['all', '1year', '3month']},
-    { name: 'PieChart', groupBy: false, locationLevel: true, chooseAxis: false, timeRadios :['1month']},
+    { name: 'PieChart', groupBy: false, locationLevel: true, chooseAxis: false, timeRadios:['1month']},
     { name: 'ChoroplethMap' , groupBy: false, locationLevel: false, chooseAxis: false, timeRadios: ['1month']},
     { name: 'ColumnChart', groupBy: true, locationLevel: true, chooseAxis: false, timeRadios: ['1year', '3month', '1month']},
     { name: 'ScatterChart', groupBy: false, locationLevel: true, chooseAxis: true, timeRadios: ['1month']},
@@ -65,7 +65,7 @@ export default {
       getAggregated: (locationSelected, locationIndex) => {
         return _.filter(locationIndex,
           (locationSelected.parent_location_id && locationSelected.parent_location_id != 'None') ?
-            { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id} :
+            { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id}:
             { location_type_id: locationSelected.location_type_id}
         )
       }

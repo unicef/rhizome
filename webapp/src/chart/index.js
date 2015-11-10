@@ -6,25 +6,25 @@ var d3 = require('d3')
 var browser = require('util/browser')
 
 var CHARTS = {
-    BarChart        : require('./bar'),
-    BulletChart     : require('./bullet'),
-    ChoroplethMap   : require('./choropleth'),
-    ColumnChart     : require('./column'),
-    GroupedBarChart : require('./grouped-bar'),
-    HeatMapChart    : require('./heatmap'),
-  Histogram       : require('./histogram'),
-    LineChart       : require('./line'),
-    AreaChart       : require('./area'),
-    PieChart        : require('./pie'),
-    ScatterChart    : require('./scatter')
+    BarChart: require('./bar'),
+    BulletChart: require('./bullet'),
+    ChoroplethMap: require('./choropleth'),
+    ColumnChart: require('./column'),
+    GroupedBarChart: require('./grouped-bar'),
+    HeatMapChart: require('./heatmap'),
+  Histogram: require('./histogram'),
+    LineChart: require('./line'),
+    AreaChart: require('./area'),
+    PieChart: require('./pie'),
+    ScatterChart: require('./scatter')
 }
 
 var DEFAULTS = {
-    margin : {
-        top    : 0,
-        right  : 0,
-        bottom : 0,
-        left   : 0
+    margin: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
     }
 }
 
@@ -52,19 +52,19 @@ ChartFactory.prototype.initialize = function (el, data, options) {
 
     if (browser.isIE()) {
         svg.attr({
-            'width'  : this._width,
-            'height' : this._height
+            'width': this._width,
+            'height': this._height
         })
     }
     var h = this._height - options.margin.top - options.margin.bottom
 
     svg.append('rect')
         .attr({
-            'class'  : 'bg',
-            'x'      : options.margin.left,
-            'y'      : options.margin.top,
-            'width'  : this._width - options.margin.left - options.margin.right,
-            'height' : h
+            'class': 'bg',
+            'x': options.margin.left,
+            'y': options.margin.top,
+            'width': this._width - options.margin.left - options.margin.right,
+            'height': h
         })
 
     var g = svg.append('g')
@@ -73,8 +73,8 @@ ChartFactory.prototype.initialize = function (el, data, options) {
 
     g.append('g').attr('class', 'y axis')
     g.append('g').attr({
-        'class'     : 'x axis',
-        'transform' : 'translate(0, ' + h + ')'
+        'class': 'x axis',
+        'transform': 'translate(0, ' + h + ')'
     })
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'annotation')

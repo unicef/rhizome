@@ -24,41 +24,41 @@ function findMatches(item, re) {
 }
 
 module.exports = {
-    replace  : true,
-    template : require('./template.html'),
+    replace: true,
+    template: require('./template.html'),
 
-    paramAttributes : [
+    paramAttributes: [
         'data-change-event',
         'data-searchable',
         'full-size-menu' //used to remove the fa-stack class on the menu-button element, so the menu can be expanded into a full size button
     ],
 
-    data : function () {
+    data: function () {
         return {
-            items       : [],
-            open        : false,
-            pattern     : '',
-            searchable  : false,
+            items: [],
+            open: false,
+            pattern: '',
+            searchable: false,
 
-            marginLeft  : 0,
-            maxHeight   : 'none',
-            orientation : 'center',
+            marginLeft: 0,
+            maxHeight: 'none',
+            orientation: 'center',
 
-            changeEvent : 'menu-item-click',
+            changeEvent: 'menu-item-click',
         }
     },
 
-    ready : function () {
+    ready: function () {
         window.addEventListener('resize', this.onResize)
         window.addEventListener('scroll', this.onResize)
     },
 
-    computed : {
-        filtered : function () {
+    computed: {
+        filtered: function () {
             return this.pattern.length > 2
         },
 
-        filteredItems : function () {
+        filteredItems: function () {
             if (!this.filtered) {
                 return this.items
             }
@@ -74,9 +74,9 @@ module.exports = {
         }
     },
 
-    methods : {
+    methods: {
 
-        toggleMenu : function (event) {
+        toggleMenu: function (event) {
             event.stopPropagation()
 
             this.open = !this.open
@@ -85,17 +85,17 @@ module.exports = {
             Vue.nextTick(this.onResize)
         },
 
-        clearSearch : function (evt) {
+        clearSearch: function (evt) {
             evt.stopPropagation()
             this.pattern = ''
         },
 
-        onClick : function () {
+        onClick: function () {
             this.open = false
             this.pattern = ''
         },
 
-        onResize : function () {
+        onResize: function () {
             if (!this.open) {
                 return
             }
@@ -129,7 +129,7 @@ module.exports = {
         }
     },
 
-    components : {
-        'vue-menuitem' : require('./menuItem.js')
+    components: {
+        'vue-menuitem': require('./menuItem.js')
     }
 }

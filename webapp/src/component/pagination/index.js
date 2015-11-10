@@ -5,8 +5,8 @@ module.exports = {
 
     data: function () {
         return {
-            limit      : 0,
-            offset     : 0,
+            limit: 0,
+            offset: 0,
             total_count: 0,
             window_size: 1,
         }
@@ -50,7 +50,7 @@ module.exports = {
             if (page > 2) {
                 pages.push({
                     number: Math.ceil(page / 2),
-                    jump  : true
+                    jump: true
                 })
             }
 
@@ -61,7 +61,7 @@ module.exports = {
             if (page < this.pageCount) {
                 pages.push({
                     number: Math.floor(page + (this.pageCount - page) / 2),
-                    jump  : true
+                    jump: true
                 })
             }
 

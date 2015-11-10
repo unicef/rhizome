@@ -13,8 +13,8 @@ var AdminApp = React.createClass({
 
         return <div className="admin-container">
             <ul className="admin-nav">
-                <li><Link to="manage" params={{'id' : q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
-                <li><Link to="manage" params={{'id' : q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
+                <li><Link to="manage" params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
+                <li><Link to="manage" params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
                 <li><Link to="users">Users</Link></li>
                 <li><Link to="roles">Roles</Link></li>
                 <li><Link to="locations">locations</Link></li>

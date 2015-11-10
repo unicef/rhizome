@@ -248,11 +248,11 @@ function hoverLine() {
             .append('text')
             .style({
                 'text-anchor': 'middle',
-                'opacity'    : 0
+                'opacity': 0
             })
             .attr({
-                'dy'       : '9',
-                'class'    : 'axis',
+                'dy': '9',
+                'class': 'axis',
                 'transform': axisTranslate
             })
 
@@ -265,7 +265,7 @@ function hoverLine() {
             .attr('transform', axisTranslate)
       .attr({
         'dy': '.71em',
-        'y' : '9'
+        'y': '9'
       })
             .style('opacity', 1)
 
@@ -283,8 +283,8 @@ function hoverLine() {
                 var name = seriesName ? seriesName(d) + ' ' : ''
 
                 return {
-                    x   : xScale(x(d)),
-                    y   : yScale(y(d)),
+                    x: xScale(x(d)),
+                    y: yScale(y(d)),
                     text: name + yFormat(_value(d))
                 }
             })

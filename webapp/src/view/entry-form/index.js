@@ -61,7 +61,7 @@ module.exports = {
 
         // setup locations dropdown
         self._locations = new Dropdown({
-            el     : '#locations'
+            el: '#locations'
         })
         self._locations.$on('dropdown-value-changed', function (items) {
             self.locations = _.values(items)
@@ -414,7 +414,9 @@ module.exports = {
 
                                 // indicator name
                                 case 'label':
-                                    cell.value = self.$data.indicators[indicator_id] ? self.$data.indicators[indicator_id].name : 'Missing info for indicator '+indicator_id
+                                    cell.value = self.$data.indicators[indicator_id]
+                                      ? self.$data.indicators[indicator_id].name
+                                      : 'Missing info for indicator '+indicator_id
                                     cell.classes = 'label'
                                     cell.width = 300
                                     break

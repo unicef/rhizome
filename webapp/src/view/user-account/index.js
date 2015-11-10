@@ -38,10 +38,10 @@ module.exports = {
          var locations = _(items.objects)
             .map(function (location) {
                 return {
-                    'title'  : location.name,
-                    'value'  : location.id,
-                    'id'     : location.id,
-                    'parent' : location.parent_location_id
+                    'title': location.name,
+                    'value': location.id,
+                    'id': location.id,
+                    'parent': location.parent_location_id
                 }
             })
             .sortBy('title')
@@ -53,7 +53,7 @@ module.exports = {
 
       }).then(function () {
         self.locationMenu = new MenuComponent({
-               el     : '#locations'
+               el: '#locations'
         })
         self.locationMenu.items = self.$data.locations
         self.locationMenu.$on('field-selected', self.addlocationalAccess)
@@ -62,8 +62,7 @@ module.exports = {
     methods: {
       addRemoveUserGroup: function (e) {
          var groupId = e.target.getAttribute('data-group-id')
-         if (e.target.checked)
-         {
+         if (e.target.checked) {
            api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
          } else {
            api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})

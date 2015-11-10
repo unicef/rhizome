@@ -40,10 +40,10 @@ module.exports = function ratio(numerator, denominator) {
                 }
 
                 series.push({
-                    location    : row.location,
-                    campaign  : row.campaign,
+                    location: row.location,
+                    campaign: row.campaign,
                     indicators: row.indicators,
-                    value     : n / d
+                    value: n / d
                 })
             }
 

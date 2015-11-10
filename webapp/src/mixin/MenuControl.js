@@ -8,20 +8,20 @@ var Menu = require('component/Menu.jsx')
 var dom = require('util/dom')
 
 var MenuControl = {
-    getDefaultProps : function () {
+    getDefaultProps: function () {
         return {
-            searchable : false,
-            onSearch   : _.noop
+            searchable: false,
+            onSearch: _.noop
         }
     },
 
-    getInitialState : function () {
+    getInitialState: function () {
         return {
-            open : false
+            open: false
         }
     },
 
-    componentDidUpdate : function () {
+    componentDidUpdate: function () {
         if (this.state.open) {
             var items = this.props.children
             var offset = dom.documentOffset(React.findDOMNode(this))
@@ -65,11 +65,11 @@ var MenuControl = {
         }
     },
 
-    _toggleMenu : function () {
-        this.setState({open : !this.state.open })
+    _toggleMenu: function () {
+        this.setState({open: !this.state.open })
     },
 
-    handleEvent : function (evt) {
+    handleEvent: function (evt) {
         switch (evt.type) {
             case 'keyup':
                 if (evt.keyCode === 27) {
@@ -81,8 +81,8 @@ var MenuControl = {
         }
     },
 
-    close : function () {
-        this.setState({ open : false })
+    close: function () {
+        this.setState({ open: false })
     }
 }
 

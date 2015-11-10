@@ -31,17 +31,17 @@ module.exports = Vue.extend({
 
     data: function () {
         return {
-            itemTree   : [],
-            items      : [],
-            loading    : false,
-            menuHeight : 0,
-            menuX      : 0,
-            open       : false,
-            opening    : false,
-            pattern    : '',
-            selection  : {},
-            sortBy     : 'title',
-            sortDsc    : false,
+            itemTree: [],
+            items: [],
+            loading: false,
+            menuHeight: 0,
+            menuX: 0,
+            open: false,
+            opening: false,
+            pattern: '',
+            selection: {},
+            sortBy: 'title',
+            sortDsc: false,
         }
     },
 
@@ -249,8 +249,8 @@ module.exports = Vue.extend({
             source(params)
                 .then(function (data) {
                     return {
-                        meta   : data.meta,
-                        errors : data.errors,
+                        meta: data.meta,
+                        errors: data.errors,
                         objects: _.map(data.objects, function (v) {
                             return _.defaults(util.rename(v, mapping), { selected: false })
                         })
@@ -263,7 +263,7 @@ module.exports = Vue.extend({
 
                     if (meta.limit && meta.limit !== 0 && meta.limit + meta.offset < meta.total_count) {
                         self.load({
-                            limit : meta.limit,
+                            limit: meta.limit,
                             offset: meta.offset + meta.limit
                         }, accumulator)
                     } else {

@@ -7,19 +7,19 @@ var api = require('data/api')
 
 var GeoStore = Reflux.createStore({
 
-  listenables : [require('actions/GeoActions')],
+  listenables: [require('actions/GeoActions')],
 
-  init : function () {
+  init: function () {
     this.location = null
     this.features = []
   },
 
-  onFetch : function (location) {
+  onFetch: function (location) {
     this.location = location
-    api.geo({ parent_location__in : location.id }).then(this.loadGeography)
+    api.geo({ parent_location__in: location.id }).then(this.loadGeography)
   },
 
-  loadGeography : function (response) {
+  loadGeography: function (response) {
     this.features = _(response.objects.features).flatten().value()
     // var border = _.find(this.features, f => f.properties.location_id === this.location.id)
 
@@ -29,7 +29,7 @@ var GeoStore = Reflux.createStore({
 
     // border.properties.isBorder = true
     this.trigger({
-      features : this.features
+      features: this.features
     })
   }
 })

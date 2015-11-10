@@ -45,8 +45,8 @@ function _groupBySeries(data, groups, groupBy) {
 
 function seriesObject(d, ind, collection, indicators) {
     return {
-        name   : indicators[ind].name,
-        values : d
+        name: indicators[ind].name,
+        values: d
     }
 }
 var canDisplayChart = function () {
@@ -127,11 +127,11 @@ function formatTimeRange (val) {
 }
 
 var chartOptions = {
-        domain  : null,
-        values  : _.property('values'),
-        x       : _.property('campaign.start_date'),
-        y       : _.property('value'),
-        yFormat : d3.format(',.0f')
+        domain: null,
+        values: _.property('values'),
+        x: _.property('campaign.start_date'),
+        y: _.property('value'),
+        yFormat: d3.format(',.0f')
     }
 module.exports = Reflux.createStore({
     data: {
@@ -159,25 +159,25 @@ module.exports = Reflux.createStore({
                     return timeRadios
                     },
 
-    formatRadios : function () {
+    formatRadios: function () {
       return [{
-        value : ',.0f',
-        title : 'Integer'
+        value: ',.0f',
+        title: 'Integer'
       }, {
-        value : ',.4f',
-        title : 'Real Number'
+        value: ',.4f',
+        title: 'Real Number'
       }, {
-        value : '%',
-        title : 'Percentage'
+        value: '%',
+        title: 'Percentage'
       }]
     },
-    formatRadioValue : 0,
-    xFormatRadioValue : 0,
+    formatRadioValue: 0,
+    xFormatRadioValue: 0,
         timeRadioValue:2,
         chartTypes:require('./chartBuilder/builderDefinitions'),
         selectedChart:0,
         chartData:[],
-        chartOptions : chartOptions,
+        chartOptions: chartOptions,
         canDisplayChart:canDisplayChart,
         canDisplayChartReason:canDisplayChartReason,
         xAxis:0,
@@ -218,9 +218,9 @@ module.exports = Reflux.createStore({
               self.data.locationList = _(items.objects)
                 .map(function (location) {
                     return {
-                        'title'  : location.name,
-                        'value'  : location.id,
-                        'parent' : location.parent_location_id
+                        'title': location.name,
+                        'value': location.id,
+                        'parent': location.parent_location_id
                     }
                 })
                 .sortBy('title')
@@ -251,9 +251,9 @@ module.exports = Reflux.createStore({
                     self.data.campaignList = _(campaigns.objects)
                         .map(function (campaign) {
                             return _.assign({}, campaign, {
-                                'start_date' : moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-                                'end_date'   : moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-                                'office'     : officeIdx[campaign.office_id]
+                                'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+                                'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+                                'office': officeIdx[campaign.office_id]
                             })
                         })
                         .sortBy(_.method('start_date.getTime'))
@@ -298,13 +298,13 @@ module.exports = Reflux.createStore({
        this.trigger(this.data)
        this.getChartData()
     },
-  onSelectFormatRadio : function (value) {
+  onSelectFormatRadio: function (value) {
     this.data.formatRadioValue = value
     this.data.chartOptions.yFormat = d3.format(this.data.formatRadios()[value].value)
     this.trigger(this.data)
     this.getChartData()
   },
-  onSelectXFormatRadio : function (value) {
+  onSelectXFormatRadio: function (value) {
     this.data.xFormatRadioValue = value
     this.data.chartOptions.xFormat = d3.format(this.data.formatRadios()[value].value)
     this.trigger(this.data)
@@ -403,7 +403,7 @@ module.exports = Reflux.createStore({
             this.getChartData()
         }
     },
-    canFetchChartData : function () {
+    canFetchChartData: function () {
         if (this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
         {
           return true
@@ -442,10 +442,10 @@ module.exports = Reflux.createStore({
         var upper = start.clone().startOf('month')
         var indicatorArray = _.map(this.data.indicatorsSelected, _.property('id'))
         var q = {
-        indicator__in  : indicatorArray,
-        location__in     : _.map(this.data.aggregatedLocations, _.property('id')),
-        campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
-        campaign_end   : upper.format('YYYY-MM-DD')
+        indicator__in: indicatorArray,
+        location__in: _.map(this.data.aggregatedLocations, _.property('id')),
+        campaign_start: (lower?lower.format('YYYY-MM-DD'):null),
+        campaign_end: upper.format('YYYY-MM-DD')
                     }
 
         processChartData

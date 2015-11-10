@@ -147,7 +147,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
   countriesPromise: function () {
     var promises = [1, 2, 3].map(function (locationId) {
-      return api.geo({ parent_location__in : locationId })
+      return api.geo({ parent_location__in: locationId })
     })
 
     return Promise.all(promises)

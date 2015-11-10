@@ -4,17 +4,17 @@ var _ = require('lodash')
 
 module.exports = {
 
-    replace : true,
+    replace: true,
     template: require('./item.html'),
 
     data: function () {
         return {
-            padding   : 17,
-            level     : 0,
-            open      : false,
-            selected  : false,
-            children  : [],
-            selection : {}
+            padding: 17,
+            level: 0,
+            open: false,
+            selected: false,
+            children: [],
+            selection: {}
         }
     },
 

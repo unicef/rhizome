@@ -36,12 +36,12 @@ function label() {
         }
 
         return {
-            top   : top,
-            right : right,
+            top: top,
+            right: right,
             bottom: bottom,
-            left  : left,
-            cx    : left + (right - left) / 2,
-            cy    : top + (bottom - top) / 2,
+            left: left,
+            cx: left + (right - left) / 2,
+            cy: top + (bottom - top) / 2,
         }
     }
 
@@ -160,12 +160,12 @@ function label() {
             .append('text')
             .style({
         'opacity': 0,
-        'fill'   : scale
+        'fill': scale
       })
             .attr({
                 'dy': '-4',
-                'x' : x,
-                'y' : y
+                'x': x,
+                'y': y
             })
             .text(text)
 
@@ -190,9 +190,9 @@ function label() {
             .transition()
             .duration(transitionSpeed)
             .attr({
-                'x'          : x,
-                'y'          : y,
-                'dx'         : function (d) {
+                'x': x,
+                'y': y,
+                'dx': function (d) {
                     if (align) {
                         return dx
                     }

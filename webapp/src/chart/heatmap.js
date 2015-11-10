@@ -9,45 +9,45 @@ function _sortValue(s, sortCol) {
   // jshint validthis: true
   var options = this._options
 
-  var val = (sortCol === null) ?
-    options.seriesName(s) :
-    options.value(_.find(options.values(s), d => options.column(d) === sortCol))
+  var val = (sortCol === null)
+    ? options.seriesName(s)
+    : options.value(_.find(options.values(s), d => options.column(d) === sortCol))
 
     return val
 }
 
 var DEFAULTS = {
-  cellSize   : 16,
-  column     : _.property('indicator.short_name'),
-  fontSize   : 12,
-  format     : formatUtil.general,
-  headerText : _.property('short_name'),
-  headers    : [],
-  margin : {
-    top    : 120,
-    right  : 120,
-    bottom : 0,
-    left   : 120
+  cellSize: 16,
+  column: _.property('indicator.short_name'),
+  fontSize: 12,
+  format: formatUtil.general,
+  headerText: _.property('short_name'),
+  headers: [],
+  margin: {
+    top: 120,
+    right: 120,
+    bottom: 0,
+    left: 120
   },
-  onClick          : null,
-  onColumnHeadOver : null,
-  onColumnHeadOut  : null,
-  onMouseMove      : null,
-  onMouseOut       : null,
-  onRowClick       : null,
-  seriesName       : _.property('name'),
-  sortValue        : _sortValue,
-  values           : _.property('values'),
-  value            : _.property('value'),
+  onClick: null,
+  onColumnHeadOver: null,
+  onColumnHeadOut: null,
+  onMouseMove: null,
+  onMouseOut: null,
+  onRowClick: null,
+  seriesName: _.property('name'),
+  sortValue: _sortValue,
+  values: _.property('values'),
+  value: _.property('value'),
 }
 
 function Heatmap() {}
 
 _.extend(Heatmap.prototype, {
-    defaults : DEFAULTS,
-    sortCol  : null,
+    defaults: DEFAULTS,
+    sortCol: null,
 
-    initialize : function (el, data, options) {
+    initialize: function (el, data, options) {
         options = this._options = _.defaults({}, options, DEFAULTS)
         var margin = options.margin
 
@@ -65,7 +65,7 @@ _.extend(Heatmap.prototype, {
         this.update(data)
     },
 
-    update : function (data, options) {
+    update: function (data, options) {
         options = _.extend(this._options, options)
         var margin = options.margin
 
@@ -76,9 +76,9 @@ _.extend(Heatmap.prototype, {
 
         var svg = this._svg
             .attr({
-                'viewBox' : '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
-                'width'   : (w + margin.left + margin.right),
-                'height'  : (h + margin.top + margin.bottom)
+                'viewBox': '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
+                'width': (w + margin.left + margin.right),
+                'height': (h + margin.top + margin.bottom)
             })
       .datum(data)
 
@@ -114,8 +114,8 @@ _.extend(Heatmap.prototype, {
 
         row.enter().append('g')
             .attr({
-                'class'     : 'row',
-                'transform' : transform,
+                'class': 'row',
+                'transform': transform,
             })
 
         row.exit()
@@ -136,21 +136,21 @@ _.extend(Heatmap.prototype, {
             .duration(500)
             .style('fill', fill)
             .attr({
-                'height' : yScale.rangeBand(),
-                'width'  : xScale.rangeBand(),
-                'x'      : x
+                'height': yScale.rangeBand(),
+                'width': xScale.rangeBand(),
+                'x': x
             })
 
         cell.enter().append('rect')
             .attr({
-                'class'  : 'cell',
-                'height' : yScale.rangeBand(),
-                'x'      : x,
-                'width'  : xScale.rangeBand(),
+                'class': 'cell',
+                'height': yScale.rangeBand(),
+                'x': x,
+                'width': xScale.rangeBand(),
             })
             .style({
-                'opacity' : 0,
-                'fill'    : fill
+                'opacity': 0,
+                'fill': fill
             })
             .transition().duration(500)
             .style('opacity', 1)
@@ -176,11 +176,11 @@ _.extend(Heatmap.prototype, {
 
         svg.selectAll('.x.axis text')
                 .style({
-          'text-anchor' : 'start',
-          'font-size'   : options.fontSize,
-          'font-weight' : function (d) {
+          'text-anchor': 'start',
+          'font-size': options.fontSize,
+          'font-weight': function (d) {
             return (d === sortCol) ?
-              'bold' :
+              'bold':
               'normal'
             }
         })
@@ -221,7 +221,7 @@ _.extend(Heatmap.prototype, {
     }
     },
 
-    _onRowOver : function (d) {
+    _onRowOver: function (d) {
         var seriesName = this._options.seriesName
         var target = seriesName(d)
 
@@ -232,13 +232,13 @@ _.extend(Heatmap.prototype, {
             })
     },
 
-    _onRowOut : function () {
+    _onRowOut: function () {
         this._svg.selectAll('.row')
             .transition().duration(300)
             .style('opacity', 1)
     },
 
-    _setSort : function (d) {
+    _setSort: function (d) {
         this.sortCol = (d === this.sortCol) ? null : d
         this.update(this._svg.selectAll('.row').data())
     }

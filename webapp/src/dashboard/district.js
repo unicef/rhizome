@@ -13,10 +13,10 @@ var util = require('util/data')
 var Chart = require('component/Chart.jsx')
 
 var RANGE_ORDER = {
-    'bad'  : 0,
-    'ok'   : 1,
-    'okay' : 1,
-    'good' : 2
+    'bad': 0,
+    'ok': 1,
+    'okay': 1,
+    'good': 2
 }
 
 /**
@@ -59,8 +59,8 @@ function _openBounds(bound) {
     var upper = _.isNumber(bound.mx_val) ? bound.mx_val : Infinity
 
     return _.assign({}, bound, {
-        mn_val : lower,
-        mx_val : upper
+        mn_val: lower,
+        mx_val: upper
     })
 }
 
@@ -69,24 +69,24 @@ function _getBoundOrder(bound) {
 }
 
 module.exports = {
-    template : require('./district.html'),
+    template: require('./district.html'),
 
-    data : function () {
+    data: function () {
         return {
-            campaign : null,
-            columns  : [],
-            location   : null,
-            locations  : {},
-            series   : [],
+            campaign: null,
+            columns: [],
+            location: null,
+            locations: {},
+            series: [],
             showEmpty: false,
         }
     },
 
-    methods : {
-        error : function () {
+    methods: {
+        error: function () {
         },
 
-        load : function () {
+        load: function () {
             this.loading = true
 
             if (!(this.campaign && this.location)) {
@@ -106,17 +106,17 @@ module.exports = {
             ]
 
             var datapoints = api.datapoints({
-                parent_location__in : this.location.id,
-                admin_level       : 2,
-                indicator__in     : indicators,
-                campaign_start    : moment(this.campaign.start_date).format('YYYY-MM-DD'),
-                campaign_end      : moment(this.campaign.end_date).format('YYYY-MM-DD')
+                parent_location__in: this.location.id,
+                admin_level: 2,
+                indicator__in: indicators,
+                campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),
+                campaign_end: moment(this.campaign.end_date).format('YYYY-MM-DD')
             })
 
             console.log(datapoints)
             console.log('DATAPOINTS APOVE')
 
-            var columns = api.indicators({ id__in : indicators }, null, {'cache-control': 'no-cache'})
+            var columns = api.indicators({ id__in: indicators }, null, {'cache-control': 'no-cache'})
                 .then(_.partialRight(_heatmapColumns, indicators))
 
             var self = this
@@ -153,12 +153,12 @@ module.exports = {
                         }
 
                         return {
-                            id     : name,
-                            name   : name,
-                            values : _.map(columns, function (indicator) {
+                            id: name,
+                            name: name,
+                            values: _.map(columns, function (indicator) {
                                 var v = {
-                                    id        : name + '-' + indicator.id,
-                                    indicator : indicator.id
+                                    id: name + '-' + indicator.id,
+                                    indicator: indicator.id
                                 }
 
                                 var id = indicator.id
@@ -185,7 +185,7 @@ module.exports = {
                 }, this.error)
         },
 
-        render : function () {
+        render: function () {
             var valueDefined = _.partial(util.defined, _, function (d) { return d.value })
             var notEmpty = _.partial(_.some, _, valueDefined)
 
@@ -207,7 +207,7 @@ module.exports = {
             // objects for indicators that are visible
             var filterInvisibleIndicators = function (s) {
                 return _.assign({}, s, {
-                    values : _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(visible)))
+                    values: _.filter(s.values, _.flow(_.property('indicator'), _.propertyOf(visible)))
                 })
             }
 
@@ -228,20 +228,20 @@ module.exports = {
 
             props.sortValue = function (series, col) {
                 return (col === null) ?
-                    series.name :
+                    series.name:
                     RANGE_ORDER[series.values[col].range]
             }
 
             var heatmap = React.createElement(Chart, {
-                type    : 'HeatMap',
-                data    : _.map(this.series, filterInvisibleIndicators),
-                options : props
+                type: 'HeatMap',
+                data: _.map(this.series, filterInvisibleIndicators),
+                options: props
             })
 
             React.render(heatmap, this.$$.heatmap)
         },
 
-        showTooltip : function (d) {
+        showTooltip: function (d) {
             var evt = d3.event
             var val = d.value
             var indicators = _.indexBy(this.columns, 'id')
@@ -290,13 +290,13 @@ module.exports = {
                 var current = (val >= d.x) && (val <= (d.x + d.dx))
 
                 return {
-                    width   : xScale(d.x + d.dx) - xScale(d.x) - 1,
-                    height  : height - yScale(d.y),
-                    x       : xScale(d.x),
-                    y       : yScale(d.y),
-                    bin     : d.x,
-                    value   : d.y,
-                    current : current
+                    width: xScale(d.x + d.dx) - xScale(d.x) - 1,
+                    height: height - yScale(d.y),
+                    x: xScale(d.x),
+                    y: yScale(d.y),
+                    bin: d.x,
+                    value: d.y,
+                    current: current
                 }
             }
 
@@ -304,8 +304,8 @@ module.exports = {
 
             var tick = function (t) {
                 return {
-                    x     : xScale(t),
-                    value : fmt(t)
+                    x: xScale(t),
+                    value: fmt(t)
                 }
             }
 
@@ -314,50 +314,50 @@ module.exports = {
                 .sortBy(function (r) { return RANGE_ORDER[r.bound_name] })
                 .map(function (r) {
                     return {
-                        bound_name : r.bound_name,
-                        mn_val     : fmt(r.mn_val),
-                        mx_val     : fmt(r.mx_val)
+                        bound_name: r.bound_name,
+                        mn_val: fmt(r.mn_val),
+                        mx_val: fmt(r.mx_val)
                     }
                 })
                 .value()
 
             this.$dispatch('tooltip-show', {
-                el       : this.$el,
-                position : {
-                    x : evt.pageX,
-                    y : evt.pageY
+                el: this.$el,
+                position: {
+                    x: evt.pageX,
+                    y: evt.pageY
                 },
-                data     : {
-                    orientation       : 'top',
-                    location            : match[1],
-                    indicator         : indicators[match[2]].short_name,
-                    total_locations     : total_locations,
-                    reporting_locations : _.sum(data, 'y'),
-                    value             : fmt(val),
-                    template          : 'tooltip-heatmap',
-                    width             : width,
-                    height            : height,
-                    histogram         : _(data)
+                data: {
+                    orientation: 'top',
+                    location: match[1],
+                    indicator: indicators[match[2]].short_name,
+                    total_locations: total_locations,
+                    reporting_locations: _.sum(data, 'y'),
+                    value: fmt(val),
+                    template: 'tooltip-heatmap',
+                    width: width,
+                    height: height,
+                    histogram: _(data)
                         .filter(function (d) { return d.y > 0 })
                         .map(scale)
                         .value(),
-                    ticks             : _(data)
+                    ticks: _(data)
                         .pluck('x')
                         .map(tick)
-                        .push({ x : width, value : fmt(xScale.domain()[1]) })
+                        .push({ x: width, value: fmt(xScale.domain()[1]) })
                         .value(),
-                    targets            : targets
+                    targets: targets
                 }
             })
         },
 
-        hideTooltip : function () {
+        hideTooltip: function () {
             this.$dispatch('tooltip-hide', {
-                el : this.$el
+                el: this.$el
             })
         },
 
-        navigate : function (d) {
+        navigate: function (d) {
             var location = d
 
             if (!_.isString(d)) {
@@ -372,41 +372,41 @@ module.exports = {
             }
 
             this.$dispatch('tooltip-hide', {
-                el : this.$el
+                el: this.$el
             })
 
             page('/datapoints/management-dashboard/' + location + '/' +
                 moment(this.campaign.start_date).format('YYYY/MM'))
         },
 
-        indicatorOver : function (d, i, mouseover) {
+        indicatorOver: function (d, i, mouseover) {
             var indicators = _.indexBy(this.columns, 'short_name')
 
             this.$dispatch('tooltip-show', {
-                el          : this.$el,
-                position : {
-                    x : d3.event.pageX,
-                    y : d3.event.pageY
+                el: this.$el,
+                position: {
+                    x: d3.event.pageX,
+                    y: d3.event.pageY
                 },
-                data : {
-                    template    : 'tooltip-indicator',
-                    name        : d,
-                    orientation : 'top',
-                    description : indicators[d].description
+                data: {
+                    template: 'tooltip-indicator',
+                    name: d,
+                    orientation: 'top',
+                    description: indicators[d].description
                 }
             })
         },
 
-        indicatorOut : function () {
-            this.$dispatch('tooltip-hide', { el : this.$el })
+        indicatorOut: function () {
+            this.$dispatch('tooltip-hide', { el: this.$el })
         }
     },
 
-    watch : {
-        'campaign'  : 'load',
-        'columns'   : 'render',
-        'location'    : 'load',
-        'series'    : 'render',
-        'showEmpty' : 'render'
+    watch: {
+        'campaign': 'load',
+        'columns': 'render',
+        'location': 'load',
+        'series': 'render',
+        'showEmpty': 'render'
     }
 }

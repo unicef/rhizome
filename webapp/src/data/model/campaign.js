@@ -17,13 +17,13 @@ function update(campaign, obj) {
 function campaign(obj) {
     'use strict'
 
-    return obj ? update({}, obj) : {
-        id          : null,
-        created_at  : null,
-        start_date  : null,
-        end_date    : null,
-        name        : null,
-        slug        : null,
+    return obj ? update({}, obj): {
+        id: null,
+        created_at: null,
+        start_date: null,
+        end_date: null,
+        name: null,
+        slug: null,
         resource_uri: null
     }
 }

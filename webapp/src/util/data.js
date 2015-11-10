@@ -112,8 +112,8 @@ function unpivot(data) {
                 var datum = indicators[i]
 
                 datapoints.push(_.assign({
-                    indicator : datum.indicator,
-                    value     : datum.value
+                    indicator: datum.indicator,
+                    value: datum.value
                 }, props))
             }
 
@@ -124,11 +124,11 @@ function unpivot(data) {
 }
 
 module.exports = {
-    accessor  : accessor,
-    defined   : defined,
-    max       : max,
-    min       : min,
-    parseBool : parseBool,
-    rename    : rename,
-    unpivot   : unpivot,
+    accessor: accessor,
+    defined: defined,
+    max: max,
+    min: min,
+    parseBool: parseBool,
+    rename: rename,
+    unpivot: unpivot,
 }

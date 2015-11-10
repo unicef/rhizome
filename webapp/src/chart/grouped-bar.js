@@ -10,33 +10,33 @@ var color = require('util/color')
 var legend = require('chart/renderer/legend')
 
 var defaults = {
-    barHeight   : 14,
-    name        : _.partial(_.get, _, 'name', ''),
-    onMouseOut  : _.noop,
-    onMouseOver : _.noop,
-    padding     : 0.1,
-    values      : _.property('values'),
-    x           : _.property('x'),
-    xFormat     : String,
-    xScale      : d3.scale.linear,
-    y           : _.property('y'),
-    yFormat     : String,
+    barHeight: 14,
+    name: _.partial(_.get, _, 'name', ''),
+    onMouseOut: _.noop,
+    onMouseOver: _.noop,
+    padding: 0.1,
+    values: _.property('values'),
+    x: _.property('x'),
+    xFormat: String,
+    xScale: d3.scale.linear,
+    y: _.property('y'),
+    yFormat: String,
 
-    margin : {
-        top    : 0,
-        right  : 0,
-        bottom : 18,
-        left   : 80
+    margin: {
+        top: 0,
+        right: 0,
+        bottom: 18,
+        left: 80
     }
 }
 
 function BarChart () {}
 
 _.extend(BarChart.prototype, ColumnChart.prototype, {
-    classNames : 'chart stacked-bar',
-    defaults   : defaults,
+    classNames: 'chart stacked-bar',
+    defaults: defaults,
 
-    update : function (data, options) {
+    update: function (data, options) {
         var options = _.assign(this._options, options)
         var margin = options.margin
 
@@ -105,17 +105,17 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
         if (browser.isIE()) {
             svg.attr({
-                'width'  : canvasW,
-                'height' : canvasH
+                'width': canvasW,
+                'height': canvasH
             })
         }
 
         svg.select('.bg')
             .attr({
                 'height': h,
-                'width' : w,
-                'x'     : margin.left,
-                'y'     : margin.top
+                'width': w,
+                'x': margin.left,
+                'y': margin.top
             })
 
         var g = svg.select('.data').datum(data)
@@ -148,8 +148,8 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
             .on('mouseout', hover.out)
             .transition().duration(500)
             .attr({
-                'height' : options.barHeight,
-                'width'  : width,
+                'height': options.barHeight,
+                'width': width,
             })
             .transition().duration(500)
             .attr('y', y)
@@ -204,7 +204,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         })
     },
 
-    setSort : function (d) {
+    setSort: function (d) {
         this.sortBy = d
         this.update(this._svg.select('.data').datum())
     }

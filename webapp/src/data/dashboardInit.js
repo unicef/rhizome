@@ -123,7 +123,7 @@ function stackedData(chart, data) {
     var missing = _.difference(domain, _.pluck(dataSeries.values, x))
 
     _.each(missing, function (xval) {
-      var o = { value : 0 }
+      var o = { value: 0 }
       _.set(o, x, xval)
       dataSeries.values.push(o)
     })
@@ -161,12 +161,12 @@ function scatter(chart, data, campaign) {
 }
 
 var process = {
-  'BarChart'        : stackedData,
-  'ChoroplethMap'   : choropleth,
-  'ColumnChart'     : column,
-  'HeatMapChart'    : series,
-  'LineChart'       : series,
-  'ScatterChart'    : scatter,
+  'BarChart': stackedData,
+  'ChoroplethMap': choropleth,
+  'ColumnChart': column,
+  'HeatMapChart': series,
+  'LineChart': series,
+  'ScatterChart': scatter,
 }
 
 function dashboardInit(dashboard, data, location, campaign, locationList, indicators, features) {
@@ -204,7 +204,7 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
     var chartName = _.get(chart, 'id', _.camelCase(chart.title))
     var section = _.get(results, sectionName, {})
     var locationProp = chart.location === 'sublocations' ?
-      'location.parent_location_id' :
+      'location.parent_location_id':
       'location.id'
 
     var datumInChart = _.partial(inChart, chart, campaign, location)

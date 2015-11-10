@@ -25,10 +25,10 @@ function dimensions(el, includeMargins) {
 
 function offset(el) {
     var off = {
-        top   : el.offsetTop,
-        right : 0,
+        top: el.offsetTop,
+        right: 0,
         bottom: 0,
-        left  : el.offsetLeft
+        left: el.offsetLeft
     }
 
     var dims = dimensions(el, true)
@@ -47,10 +47,10 @@ function documentOffset(el) {
     var doc = el.ownerDocument.documentElement
 
     return {
-        top   : bbox.top + doc.clientTop + window.pageYOffset,
-        right : bbox.right + doc.clientLeft + window.pageXOffset,
+        top: bbox.top + doc.clientTop + window.pageYOffset,
+        right: bbox.right + doc.clientLeft + window.pageXOffset,
         bottom: bbox.bottom + doc.clientTop + window.pageYOffset,
-        left  : bbox.left + doc.clientLeft + window.pageXOffset,
+        left: bbox.left + doc.clientLeft + window.pageXOffset,
     }
 }
 
@@ -102,11 +102,11 @@ function parentOf(parent, child) {
 }
 
 module.exports = {
-    contains       : contains,
-    contentArea    : contentArea,
-    dimensions     : dimensions,
-    documentOffset : documentOffset,
-    offset         : offset,
-    parentOf       : parentOf,
-    viewportOffset : viewportOffset
+    contains: contains,
+    contentArea: contentArea,
+    dimensions: dimensions,
+    documentOffset: documentOffset,
+    offset: offset,
+    parentOf: parentOf,
+    viewportOffset: viewportOffset
 }

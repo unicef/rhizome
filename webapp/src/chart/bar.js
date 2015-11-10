@@ -13,32 +13,32 @@ var color = require('util/color')
 var legend = require('chart/renderer/legend')
 
 var defaults = {
-    barHeight   : 14,
-    name        : _.partial(_.get, _, 'name', ''),
-    offset      : 'zero',
-    padding     : 0.1,
-    values      : _.property('values'),
-    x           : _.property('value'),
-    xFormat     : String,
-    xScale      : d3.scale.linear,
-    y           : _.property('location.name'),
-    yFormat     : String,
+    barHeight: 14,
+    name: _.partial(_.get, _, 'name', ''),
+    offset: 'zero',
+    padding: 0.1,
+    values: _.property('values'),
+    x: _.property('value'),
+    xFormat: String,
+    xScale: d3.scale.linear,
+    y: _.property('location.name'),
+    yFormat: String,
 
-    margin : {
-        top    : 0,
-        right  : 0,
-        bottom : 18,
-        left   : 80
+    margin: {
+        top: 0,
+        right: 0,
+        bottom: 18,
+        left: 80
     }
 }
 
 function BarChart () {}
 
 _.extend(BarChart.prototype, ColumnChart.prototype, {
-    classNames : 'chart stacked-bar',
-    defaults   : defaults,
+    classNames: 'chart stacked-bar',
+    defaults: defaults,
 
-    update : function (data, options) {
+    update: function (data, options) {
         var options = _.assign(this._options, options)
         var margin = options.margin
 
@@ -139,17 +139,17 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
         if (browser.isIE()) {
             svg.attr({
-                'width'  : canvasW,
-                'height' : canvasH
+                'width': canvasW,
+                'height': canvasH
             })
         }
 
         svg.select('.bg')
             .attr({
                 'height': h,
-                'width' : w,
-                'x'     : margin.left,
-                'y'     : margin.top
+                'width': w,
+                'x': margin.left,
+                'y': margin.top
             })
 
         var g = svg.select('.data').datum(data)
@@ -179,9 +179,9 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
             .on('mouseout', hover.out)
             .transition().duration(500)
             .attr({
-                'height' : yScale.rangeBand(),
-                'width'  : width,
-                'x'      : x,
+                'height': yScale.rangeBand(),
+                'width': width,
+                'x': x,
             })
             .transition().duration(500)
             .attr('y', y)
@@ -233,9 +233,9 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       label.enter()
         .append('text')
         .attr({
-          'class' : 'label',
-          'dx'    : '2',
-          'dy'    : '.3em'
+          'class': 'label',
+          'dx': '2',
+          'dy': '.3em'
         })
 
       label.attr('transform', d => 'translate(0, ' + (y(d) + yScale.rangeBand() / 2) + ')')
@@ -280,7 +280,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         })
     },
 
-    setSort : function (d) {
+    setSort: function (d) {
         this.sortBy = d
         this.update(this._svg.select('.data').datum())
     }

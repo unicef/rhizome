@@ -70,7 +70,7 @@ _.extend(LineChart.prototype, {
     }
 
     var domain = _.isFunction(options.domain) ?
-      options.domain(series) :
+      options.domain(series):
       d3.extent(_(series)
         .map(options.values)
         .flatten()
@@ -86,7 +86,7 @@ _.extend(LineChart.prototype, {
       .range([30, width])
 
     var range = _.isFunction(options.range) ?
-      options.range(series) :
+      options.range(series):
       d3.extent(_(series)
         .map(options.values)
         .flatten()

@@ -86,13 +86,13 @@ var SimpleFormComponent = React.createClass({
     }
 
     var rowLi = rowData.map(row => {
-      let link = this.props.smallIDCouldClick ?
-        (
+      let link = this.props.smallIDCouldClick
+        ? (
           <a href={this.props.smallIDBaseUrl + row.displayId} target='_blank' className='clickable underline'>
             {row.displayId}
           </a>
-        ) :
-        (<span>{row.displayId}</span>)
+        )
+        : (<span>{row.displayId}</span>)
 
       return (
         <li>

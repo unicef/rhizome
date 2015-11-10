@@ -185,7 +185,7 @@ _.extend(BulletChart.prototype, {
       'class': 'comparative-measure',
       'width': 3,
       'height': yScale.rangeBand() + measureHeight,
-      'y'    : -measureHeight / 2
+      'y': -measureHeight / 2
     }
 
     measure.enter().append('rect').attr(initAttr)

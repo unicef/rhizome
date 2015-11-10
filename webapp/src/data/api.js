@@ -135,9 +135,9 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
         } else {
           fulfill({
             meta: res.body.meta || {},
-            objects: _.isArray(res.body) ?
-              res.body :
-            res.body.objects || _.omit(res.body, 'meta')
+            objects: _.isArray(res.body)
+              ? res.body
+              : res.body.objects || _.omit(res.body, 'meta')
           })
         }
       })

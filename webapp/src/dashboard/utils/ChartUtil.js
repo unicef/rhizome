@@ -156,7 +156,7 @@ function prepareUnderImmunizedData(original) {
       // Calculate the total number of children with X doses of OPV for
       // each quarter
       return _.assign({}, datapoints[0], {
-        'value' : _(datapoints).pluck('value').sum()
+        'value': _(datapoints).pluck('value').sum()
       })
     })
     .groupBy('quarter')
@@ -169,8 +169,8 @@ function prepareUnderImmunizedData(original) {
     .groupBy('indicator.short_name')
     .map(function (values, name) {
       return {
-        name   : name,
-        values : values
+        name: name,
+        values: values
       }
     })
     .sortBy('name')

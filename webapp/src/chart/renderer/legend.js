@@ -34,21 +34,21 @@ function legend() {
             var seriesEnter = series.enter()
                 .append('g')
                 .attr({
-                    'class'     : 'series',
-                    'transform' : translate
+                    'class': 'series',
+                    'transform': translate
                 })
 
             seriesEnter.append('rect')
                 .attr({
-                    'width'  : _size,
-                    'height' : _size
+                    'width': _size,
+                    'height': _size
                 })
 
             seriesEnter.append('text')
                 .attr({
-                    'x'  : _size + _padding,
-                    'y'  : _size / 2,
-                    'dy' : '0.4em'
+                    'x': _size + _padding,
+                    'y': _size / 2,
+                    'dy': '0.4em'
                 })
 
             series
@@ -59,14 +59,14 @@ function legend() {
 
             series.select('rect')
                 .attr({
-                    'fill'   : fill,
-                    'stroke' : stroke
+                    'fill': fill,
+                    'stroke': stroke
                 })
                 .transition()
                 .duration(300)
                 .attr({
-                    'width'  : _size,
-                    'height' : _size
+                    'width': _size,
+                    'height': _size
                 })
 
             series.select('text')
@@ -74,8 +74,8 @@ function legend() {
                 .transition()
                 .duration(300)
                 .attr({
-                    'x' : _size + _padding,
-                    'y' : _size / 2
+                    'x': _size + _padding,
+                    'y': _size / 2
                 })
         .style('font-size', Math.max(_size * 7 / 9, 9))
 

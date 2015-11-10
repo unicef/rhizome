@@ -9,8 +9,8 @@ var dom = require('../../util/dom')
 module.exports = {
     template: require('./template.html'),
 
-    inherit : true,
-    replace : true,
+    inherit: true,
+    replace: true,
 
     paramAttributes: [
         'data-orientation'
@@ -19,14 +19,14 @@ module.exports = {
     data: function () {
         return {
             orientation: 'top',
-            show       : false,
-            delay      : 500,
-            template   : 'tooltip-default',
+            show: false,
+            delay: 500,
+            template: 'tooltip-default',
 
-            top        : 0,
-            right      : 0,
-            bottom     : 0,
-            left       : 0
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
         }
     },
 
@@ -42,10 +42,10 @@ module.exports = {
 
             if (this._position) {
                 offset = {
-                    top   : this._position.y,
-                    right : this._position.x,
+                    top: this._position.y,
+                    right: this._position.x,
                     bottom: this._position.y,
-                    left  : this._position.x
+                    left: this._position.x
                 }
 
                 doc = window.document.body
@@ -89,7 +89,7 @@ module.exports = {
             Vue.nextTick(this.reorient)
         },
 
-        reorient : function () {
+        reorient: function () {
             var el = this.$el
             var offset = dom.viewportOffset(el)
             var reposition = false

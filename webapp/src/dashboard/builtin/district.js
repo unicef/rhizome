@@ -1,16 +1,16 @@
 module.exports = {
-  'id'     : -3,
-  'title'  : 'District Dashboard',
+  'id': -3,
+  'title': 'District Dashboard',
   'builtin': true,
-  'charts' : [{
-    'title'      : '',
-    'id'         : 'district-heat-map',
-    'type'       : 'HeatMapChart',
-    'locations'    : 'sublocations',
-    'admin_level'      : 2,
-    'timeRange'  : 0,
-    'groupBy'    : 'location.name',
-    'indicators' : [
+  'charts': [{
+    'title': '',
+    'id': 'district-heat-map',
+    'type': 'HeatMapChart',
+    'locations': 'sublocations',
+    'admin_level': 2,
+    'timeRange': 0,
+    'groupBy': 'location.name',
+    'indicators': [
       475, 166, 164, 167, 165, // Missed Children
       222, // Microplans
       187, 189, // Conversions

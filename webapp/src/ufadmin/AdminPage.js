@@ -69,10 +69,11 @@ var AdminPage = React.createClass({
 
     // strip the "s" from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
-    var createButton = createUrl ?
-      <div className="ufadmin-create-button">
-        <a className="button" href={createUrl}>Create {titleSingular}</a>
-      </div> : null
+    var createButton = createUrl
+      ? <div className="ufadmin-create-button">
+          <a className="button" href={createUrl}>Create {titleSingular}</a>
+        </div>
+      : null
 
     return <div>
       <h2 className="ufadmin-page-heading">{this.props.title} Admin Page</h2>
@@ -112,32 +113,34 @@ var AdminPage = React.createClass({
                 <a className='admin-clear-filters'>Clear filters</a>
               </ClearQueryLink>
             </span>
-          </span>
-          :
+          </span>:
           <span>Filter results {filterExpander}</span>
         }
       </div>
 
-      {areFiltersVisible ?
-        <div className="ufadmin-filters-content">
-          {this.props.datascopeFilters}
-        </div>
-        : null}
+      {areFiltersVisible
+        ? <div className="ufadmin-filters-content">
+            {this.props.datascopeFilters}
+          </div>
+        : null
+      }
     </div>
   },
 
   renderFilters() {
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
-    return areFiltersVisible ? <div className="row">
-      <div className="medium-7 columns">
-      </div>
-      <div className="medium-5 columns">
-        <div className="ufadmin-filters-content">
-          {this.props.datascopeFilters}
+    return areFiltersVisible
+      ? <div className="row">
+          <div className="medium-7 columns">
+          </div>
+          <div className="medium-5 columns">
+            <div className="ufadmin-filters-content">
+              {this.props.datascopeFilters}
+            </div>
+          </div>
         </div>
-      </div>
-    </div> : null
+      : null
   }
 })
 

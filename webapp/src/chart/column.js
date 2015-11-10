@@ -146,9 +146,9 @@ _.extend(ColumnChart.prototype, {
     series.enter().append('g')
       .attr('class', 'bar')
 
-    var fill = options.hasOwnProperty('color') ?
-      options.color :
-      _.flow(options.name, color.scale(_.map(data, options.name)))
+    var fill = options.hasOwnProperty('color')
+      ? options.color
+      : _.flow(options.name, color.scale(_.map(data, options.name)))
 
     series.style('fill', fill)
     series.exit().remove()

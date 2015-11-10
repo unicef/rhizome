@@ -10,29 +10,29 @@ var Tooltip = require('component/Tooltip.jsx')
 var palette = require('colors')
 
 var defaults = {
-    hoverRadius : 5,
-    radius      : 3,
-    x           : _.property('x'),
-    xFormat     : d3.format('n'),
-    xScale      : d3.scale.linear,
-    y           : _.property('y'),
-    yFormat     : d3.format('n'),
-    yScale      : d3.scale.linear,
+    hoverRadius: 5,
+    radius: 3,
+    x: _.property('x'),
+    xFormat: d3.format('n'),
+    xScale: d3.scale.linear,
+    y: _.property('y'),
+    yFormat: d3.format('n'),
+    yScale: d3.scale.linear,
 
-    margin : {
-        top    : 0,
-        right  : 0,
-        bottom : 24,
-        left   : 24
+    margin: {
+        top: 0,
+        right: 0,
+        bottom: 24,
+        left: 24
     }
 }
 
 function ScatterPlot () {}
 
 _.extend(ScatterPlot.prototype, {
-    defaults : defaults,
+    defaults: defaults,
 
-    update : function (data, options) {
+    update: function (data, options) {
     var self = this
 
         options = _.assign(this._options, options)
@@ -42,9 +42,9 @@ _.extend(ScatterPlot.prototype, {
         var w = this._width - margin.left - margin.right
         var h = this._height - margin.top - margin.bottom
 
-        var domain = _.isFunction(options.domain) ?
-            options.domain(data) :
-            d3.extent(_.map(data, options.x))
+        var domain = _.isFunction(options.domain)
+          ? options.domain(data)
+          : d3.extent(_.map(data, options.x))
 
         var xScale = options.xScale()
             .domain(domain)
@@ -53,9 +53,9 @@ _.extend(ScatterPlot.prototype, {
 
         var x = function (d) { return xScale(options.x(d)) }
 
-        var range = _.isFunction(options.range) ?
-            options.range(data) :
-            d3.extent(_.map(data, options.y))
+        var range = _.isFunction(options.range)
+          ? options.range(data)
+          : d3.extent(_.map(data, options.y))
 
         var yScale = options.yScale()
             .domain(range)
@@ -69,9 +69,9 @@ _.extend(ScatterPlot.prototype, {
         })
 
         var attrs = {
-            'cx'   : x,
-            'cy'   : y,
-            'r'    : options.radius
+            'cx': x,
+            'cy': y,
+            'r': options.radius
         }
 
         point.enter()
@@ -140,7 +140,7 @@ _.extend(ScatterPlot.prototype, {
             .call(yAxis)
     },
 
-  _onMouseMove : function (d) {
+  _onMouseMove: function (d) {
     var evt = d3.event
     var name = _.get(d, 'name', _.get(d, 'location.name'))
 
@@ -151,7 +151,7 @@ _.extend(ScatterPlot.prototype, {
     var render = function () {
       return React.createElement(
         Tooltip,
-        { left : evt.pageX + 2, top : evt.pageY + 2 },
+        { left: evt.pageX + 2, top: evt.pageY + 2 },
         name
       )
     }
@@ -165,7 +165,7 @@ _.extend(ScatterPlot.prototype, {
     this.layer.render()
   },
 
-  _onMouseOut : function () {
+  _onMouseOut: function () {
     if (this.layer) {
       this.layer.destroy()
       this.layer = null
