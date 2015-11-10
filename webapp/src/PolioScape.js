@@ -71,11 +71,11 @@ module.exports = {
     },
     DashboardBuilder: function (el,dashboard_id) {
       var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
-        React.render(React.createElement(DashboardBuilder,{ dashboard_id:dashboard_id}), el)
+        React.render(React.createElement(DashboardBuilder,{ dashboard_id: dashboard_id}), el)
     },
     ChartBuilder: function (el,dashboard_id) {
         var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
-        React.render(React.createElement(ChartBuilder,{ dashboard_id:dashboard_id}), el)
+        React.render(React.createElement(ChartBuilder,{ dashboard_id: dashboard_id}), el)
     },
     UFAdmin: function (el) {
         AdminApp.render(document.getElementById('main'))
