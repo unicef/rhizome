@@ -12,15 +12,15 @@ var colors    = require('colors')
 var Vue = require('vue') //for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 
-function melt(data,indicatorArray) {
+function melt(data, indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
-        return { indicator: indicator+'',value:0}
+        return { indicator: indicator+'', value:0}
     })
     var o = _(dataset)
         .map(function (d) {
             var base = _.omit(d, 'indicators')
-            var indicatorFullList = _.assign(_.cloneDeep(baseIndicators),d.indicators)
+            var indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
             return _.map(indicatorFullList, function (indicator) {
                 return _.assign({}, base, indicator)
             })
@@ -29,7 +29,7 @@ function melt(data,indicatorArray) {
         .value()
     return o
 }
-function _groupBySeries(data, groups,groupBy) {
+function _groupBySeries(data, groups, groupBy) {
     return _(data)
         .groupBy(groupBy)
         .map(function (d, ind) {
@@ -92,12 +92,12 @@ function _columnData(data, groups, groupBy) {
     })
     var baseGroup = _.map(largestGroup, function (group) {
         return { campaign: group.campaign,
-                value:0,y:0,y0:0}
+                value:0, y:0, y0:0}
     })
     _.each(columnData, function (series) {
 
-       var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{ location: series.values[0].location,indicator:series.values[0].indicator}))
-       series.values = _.assign(baseGroupValues,_.cloneDeep(series.values))
+       var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length),{ location: series.values[0].location, indicator:series.values[0].indicator}))
+       series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
     })
 
     var stack = d3.layout.stack()
@@ -142,19 +142,19 @@ module.exports = Reflux.createStore({
         locationList:[],
         indicatorList:[],
         campaignList:[],
-        indicatorsSelected:[],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
+        indicatorsSelected:[],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
         campaignSelected:{ office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null,title:null},
+        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null, title:null},
         aggregatedlocations:[],
         title: "",
         description: "",
-        locationRadios:[{ value: "selected",title:"Selected location only"},{ value: "type",title:"locations with the same type"},{ value: "sublocations",title:"Sublocations 1 level below selected"}],
+        locationRadios:[{ value: "selected", title:"Selected location only"},{ value: "type", title:"locations with the same type"},{ value: "sublocations", title:"Sublocations 1 level below selected"}],
         locationRadioValue: 2,
-        groupByRadios:[{ value: "indicator",title:"Indicators"},{ value: "location",title:"locations"}],
+        groupByRadios:[{ value: "indicator", title:"Indicators"},{ value: "location", title:"locations"}],
         groupByRadioValue: 1,
         timeRadios:function () {
                     var self = this
-                    var radios = [{ value: "allTime",title:"All Time"},{ value: "pastYear",title:"Past Year"},{ value: "3Months",title:"Past 3 Months"},{ value: "current",title:"Current Campaign"}]
+                    var radios = [{ value: "allTime", title:"All Time"},{ value: "pastYear", title:"Past Year"},{ value: "3Months", title:"Past 3 Months"},{ value: "current", title:"Current Campaign"}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if(timeRadios.length -1 < this.timeRadioValue)
                     {
@@ -195,7 +195,7 @@ module.exports = Reflux.createStore({
             return {
                 title: this.title,
                 type: this.chartTypes[this.selectedChart].name,
-                indicators:_.map(this.indicatorsSelected,_.property('id')),
+                indicators:_.map(this.indicatorsSelected, _.property('id')),
                 locations:this.locationRadios[this.locationRadioValue].value,
                 groupBy:this.groupByRadios[this.groupByRadioValue].value,
                 x:this.xAxis,
@@ -211,7 +211,7 @@ module.exports = Reflux.createStore({
     getInitialState: function () {
        return this.data
     },
-    onInitialize: function (chartDef,location,campaign) {
+    onInitialize: function (chartDef, location, campaign) {
     this.data.locationSelected = location
     this.data.campaignSelected = campaign
     this.resetChartDef()
@@ -394,7 +394,7 @@ module.exports = Reflux.createStore({
         {
            if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
-             locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id,office_id:locationSelected.office_id})
+             locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id:locationSelected.office_id})
            }
            else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})
@@ -448,16 +448,16 @@ module.exports = Reflux.createStore({
         var start = moment(this.data.campaignSelected.start_date)
         var lower = this.getLower(start)//.subtract(1, 'year')
         var upper = start.clone().startOf('month')
-        var indicatorArray = _.map(this.data.indicatorsSelected,_.property('id'))
+        var indicatorArray = _.map(this.data.indicatorsSelected, _.property('id'))
         var q = {
         indicator__in  : indicatorArray,
-        location__in     : _.map(this.data.aggregatedLocations,_.property('id')),
+        location__in     : _.map(this.data.aggregatedLocations, _.property('id')),
         campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
         campaign_end   : upper.format('YYYY-MM-DD')
                     }
 
         processChartData
-        .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedLocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
+        .init(api.datapoints(q), selectedChart, this.data.indicatorsSelected, this.data.aggregatedLocations, lower, upper, groups, groupBy, this.data.xAxis, this.data.yAxis)
         .then(function (chart) {
           self.data.loading = false
           self.data.chartOptions = chart.options

@@ -23,8 +23,8 @@ var GeoStore = Reflux.createStore({
     this.features = _(response.objects.features).flatten().value()
     // var border = _.find(this.features, f => f.properties.location_id === this.location.id)
 
-    // console.log('border',border)
-    // console.log('LOGGING THIS LOCATION: ',this.location.id)
+    // console.log('border', border)
+    // console.log('LOGGING THIS LOCATION: ', this.location.id)
     // console.log('LENGTH OF FEATURES: ', this.features.length)
 
     // border.properties.isBorder = true

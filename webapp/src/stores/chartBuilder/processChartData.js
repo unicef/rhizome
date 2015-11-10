@@ -7,15 +7,15 @@ var Vue = require('vue') //for tooltip display
 var path   = require('vue/src/parsers/path')
 var util   = require('util/data')
 
-function melt(data,indicatorArray) {
+function melt(data, indicatorArray) {
   var dataset = data.objects
   var baseIndicators = _.map(indicatorArray, function (indicator) {
-    return { indicator: indicator+'',value:0}
+    return { indicator: indicator+'', value:0}
   })
   var o = _(dataset)
     .map(function (d) {
       var base = _.omit(d, 'indicators')
-      var indicatorFullList = _.assign(_.cloneDeep(baseIndicators),d.indicators)
+      var indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
       return _.map(indicatorFullList, function (indicator) {
         return _.assign({}, base, indicator)
       })
@@ -24,7 +24,7 @@ function melt(data,indicatorArray) {
     .value()
   return o
 }
-function _groupBySeries(data, groups,groupBy) {
+function _groupBySeries(data, groups, groupBy) {
   return _(data)
     .groupBy(groupBy)
     .map(function (d, ind) {
@@ -84,15 +84,15 @@ function _columnData(data, groups, groupBy) {
       }
      })
   })
-  var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'))
+  var baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
   _.each(columnData, function (series) {
-     _.each(baseCampaigns, function (baseCampaign,index) {
+     _.each(baseCampaigns, function (baseCampaign, index) {
          if(!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
          {
-           series.values.splice(index, 0,{ campaign: baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
+           series.values.splice(index, 0,{ campaign: baseCampaign, location:series.values[0].location, indicator:series.values[0].indicator, value:0})
          }
      })
-     series.values =  _.sortBy(series.values,_.method('campaign.start_date.getTime'))
+     series.values =  _.sortBy(series.values, _.method('campaign.start_date.getTime'))
   })
   var stack = d3.layout.stack()
     .order('default')
@@ -157,26 +157,26 @@ function _getIndicator(d) {
 }
 
 module.exports = {
-  init:function (dataPromise,chartType,indicators,locations,lower,upper,groups,groupBy,xAxis,yAxis) {
-    var indicatorArray = _.map(indicators,_.property('id'))
+  init:function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
+    var indicatorArray = _.map(indicators, _.property('id'))
     var meltPromise = dataPromise.then(function (data) {
-      return melt(data,indicatorArray)
+      return melt(data, indicatorArray)
     })
     if(chartType=="LineChart") {
-     return this.processLineChart(meltPromise,lower,upper,groups,groupBy)
+     return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
     } else if (chartType=="PieChart") {
      return this.processPieChart(meltPromise, indicators)
     } else if (chartType=="ChoroplethMap") {
-     return this.processChoroplethMap(meltPromise,locations)
+     return this.processChoroplethMap(meltPromise, locations)
     } else if (chartType=="ColumnChart") {
-     return this.processColumnChart(meltPromise,lower,upper,groups,groupBy)
+     return this.processColumnChart(meltPromise, lower, upper, groups, groupBy)
     } else if (chartType=="ScatterChart") {
-     return this.processScatterChart(dataPromise,locations,indicators,xAxis,yAxis)
+     return this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis)
     } else if (chartType=="BarChart") {
-     return this.processBarChart(dataPromise,locations,indicators,xAxis,yAxis)
+     return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
     }
   },
-  processLineChart:function (dataPromise,lower,upper,groups,groupBy) {
+  processLineChart:function (dataPromise, lower, upper, groups, groupBy) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null}
@@ -194,8 +194,8 @@ module.exports = {
           xFormat: function (d) { return moment(d).format('MMM YYYY')},
           y: _.property('value'),
         }
-      var chartData =  _groupBySeries(data, groups,groupBy)
-        return { options: chartOptions,data:chartData}
+      var chartData =  _groupBySeries(data, groups, groupBy)
+        return { options: chartOptions, data:chartData}
     })
   },
   processPieChart:function (dataPromise, indicators) {
@@ -216,10 +216,10 @@ module.exports = {
             left   : 0
           }
         }
-      return { options: chartOptions,data:data}
+      return { options: chartOptions, data:data}
     })
   },
-  processChoroplethMap:function (dataPromise,locations) {
+  processChoroplethMap:function (dataPromise, locations) {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) {return location.id}) })])
@@ -239,10 +239,10 @@ module.exports = {
           properties : { value : _.get(location, 'value') }
         })
       })
-      return { options: chartOptions,data:chartData}
+      return { options: chartOptions, data:chartData}
     }))
   },
-  processColumnChart: function (dataPromise,lower,upper,groups,groupBy) {
+  processColumnChart: function (dataPromise, lower, upper, groups, groupBy) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null}
@@ -257,7 +257,7 @@ module.exports = {
             .ticks(d3.time.month, 1),
           _.method('getTime')
         )
-        var chartData = _columnData(data,groups,groupBy)
+        var chartData = _columnData(data, groups, groupBy)
 
       var chartOptions = {
         aspect : 2.664831804,
@@ -272,11 +272,11 @@ module.exports = {
                       },
         xFormat: function (d) { return moment(d).format('MMM YYYY')}
       }
-      return { options: chartOptions,data:chartData}
+      return { options: chartOptions, data:chartData}
 
     })
   },
-  processScatterChart: function (dataPromise,locations,indicators,xAxis,yAxis) {
+  processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
     var indicatorsIndex = _.indexBy(indicators, 'id')//
     var locationsIndex = _.indexBy(locations, 'id')
 
@@ -327,10 +327,10 @@ module.exports = {
         xLabel      : 'Caregiver Awareness',
         yLabel      : 'Missed Children'
       }
-      return { options: chartOptions,data:chartData}
+      return { options: chartOptions, data:chartData}
     })
   },
-  processBarChart: function (dataPromise,locations,indicators,xAxis,yAxis) {
+  processBarChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
       return dataPromise.then(function (data) {
         if (!data || data.length === 0) {
           return { options: null, data: null}
@@ -358,7 +358,7 @@ module.exports = {
           xFormat : d3.format('%')
         }
         var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator)
-        return { options: chartOptions,data:chartData}
+        return { options: chartOptions, data:chartData}
       })
   }
 }

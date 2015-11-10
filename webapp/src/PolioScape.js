@@ -53,7 +53,7 @@ module.exports = {
             components: { 'uf-entry-form': require('./view/entry-form') }
         })
     },
-    UserAccount: function (el,user_id) {
+    UserAccount: function (el, user_id) {
         new Vue({
             el: el,
             components: { 'uf-user-account': require('./view/user-account') },
@@ -69,11 +69,11 @@ module.exports = {
     HomepageCharts: function (el) {
         React.render(React.createElement(HomepageChartsView), el)
     },
-    DashboardBuilder: function (el,dashboard_id) {
+    DashboardBuilder: function (el, dashboard_id) {
       var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
         React.render(React.createElement(DashboardBuilder,{ dashboard_id: dashboard_id}), el)
     },
-    ChartBuilder: function (el,dashboard_id) {
+    ChartBuilder: function (el, dashboard_id) {
         var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
         React.render(React.createElement(ChartBuilder,{ dashboard_id: dashboard_id}), el)
     },

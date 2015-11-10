@@ -125,7 +125,7 @@ module.exports = {
                     api.campaign().then(function (data) {
                         if (!data.objects) { return null }
                         return data.objects
-                            .sort(function (a,b) {
+                            .sort(function (a, b) {
                                 if (a.office === b.office) {
                                     return a.start_date > b.start_date ? -1 : 1
                                 }
@@ -268,7 +268,7 @@ module.exports = {
                 options.location__in = _.uniq(options.location__in)
 
                 // sort locations
-                options.location__in = options.location__in.sort(function (a,b) {
+                options.location__in = options.location__in.sort(function (a, b) {
                     var ra = self.$data.locationData[a]
                     var rb = self.$data.locationData[b]
                     // sort by location type first
