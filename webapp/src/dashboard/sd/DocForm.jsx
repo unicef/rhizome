@@ -10,7 +10,6 @@ var Dropzone = require('react-dropzone')
 var DocFormActions = require('actions/DocFormActions')
 var DocFormStore = require('stores/DocFormStore')
 
-
 var DocForm = React.createClass({
     // see here: https://fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
 
@@ -137,7 +136,6 @@ var DocForm = React.createClass({
             var refreshBtn = ''
         }
 
-
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
             var next_link = '/datapoints/source-data/Nigeria/2015/06/viewraw/' + this.state.created_doc_id
             // FIXME ^^
@@ -171,6 +169,5 @@ var DocForm = React.createClass({
         </div>)
     },
 })
-
 
 module.exports = DocForm

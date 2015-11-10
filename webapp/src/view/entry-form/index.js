@@ -182,7 +182,7 @@ module.exports = {
                                                     return i.id && self.$data.indicators[i.id] !== undefined
                                                 })
                                             })
-            self.$data.noEditableSets = (self.$data.indicator_sets.length === 0) ? true : false
+            self.$data.noEditableSets = self.$data.indicator_sets.length === 0
         },
 
         getFilteredIndicatorSet: function (indicatorSetId) {
@@ -196,7 +196,7 @@ module.exports = {
                 // header
                 if (row.type === 'section-header') {
                     // remove previous section header if no indicators are inlcuded under it
-                    if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length-1].type === 'section-header') {
+                    if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
                         filtered.indicators.splice(filtered.indicators.length-1, 1)
                     }
                     filtered.indicators.push(row)

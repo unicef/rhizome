@@ -37,7 +37,6 @@ var Navigation = React.createClass({
           </li>
         )
 
-
     var manage = (
         <li>
           <a href='/ufadmin/users'>

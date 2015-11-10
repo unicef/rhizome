@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import RegionTitleMenu from '../RegionTitleMenu'
 
-
 describe(__filename, () => {
   context('build up location data', () => {
     it('should return data with valid filter', () => {

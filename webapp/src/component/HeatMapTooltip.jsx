@@ -24,7 +24,6 @@ var HeatMapTooltip = React.createClass({
     }
   },
 
-
   render : function () {
     var fmt = this.props.format
     var bounds = this.props.indicator.bound_json

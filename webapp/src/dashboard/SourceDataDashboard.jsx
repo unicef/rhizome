@@ -58,7 +58,6 @@ var SourceDataDashboard = React.createClass({
         }
     },
 
-
     render: function () {
         var loading = this.props.loading
         var campaign = this.props.campaign
@@ -72,7 +71,6 @@ var SourceDataDashboard = React.createClass({
         if (!doc_obj) {
             return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
         }
-
 
         if (!doc_tab) {
             var doc_tab = 'doc_index'
@@ -142,7 +140,6 @@ var SourceDataDashboard = React.createClass({
                 'search_fields': ['indicator_id', 'indicator__short_name', 'value'],
             },
         }
-
 
         var search_fields = table_definition[doc_tab]['search_fields']
         var datascopeFilters =

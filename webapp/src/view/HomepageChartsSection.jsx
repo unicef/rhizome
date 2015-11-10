@@ -19,7 +19,6 @@ var HomepageChartsSection = React.createClass({
       return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
     },
 
-
     render: function () {
         var dashboard = React.createElement(HomepageCharts, this.props.data)
         var chartId = `${this.props.location.toLowerCase()}-chart`

@@ -24,7 +24,6 @@ const {
     FilterPanel, FilterDateRange, FilterInputRadio
     } = require('react-datascope')
 
-
 var MapForm = React.createClass({
     propTypes: {
         source_object_map_id: React.PropTypes.number.isRequired,
@@ -103,7 +102,6 @@ var MapForm = React.createClass({
           </div>
         }
     },
-
 
     render: function () {
         var sourceObjectMapId = this.props.source_object_map_id

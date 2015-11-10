@@ -1,8 +1,6 @@
 var _ = require('lodash')
 var React = require('react')
 var DashboardStore = require('stores/DashboardStore')
-var GroupFormStore = require('stores/GroupFormStore')
-var ChartBuilderStore = require('stores/ChartBuilderStore')
 
 var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx')
 var MapForm = require('dashboard/sd/MapForm.jsx')

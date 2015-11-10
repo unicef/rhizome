@@ -7,7 +7,6 @@ var moment = require('moment')
 var Chart = require('component/Chart.jsx')
 var ChartUtil = require('../utils/ChartUtil.js')
 
-
 var ImmunityGap = React.createClass({
   propTypes : {
     campaign : React.PropTypes.object.isRequired,

@@ -21,7 +21,6 @@ var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator
 }
 
-
 var Performance = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
