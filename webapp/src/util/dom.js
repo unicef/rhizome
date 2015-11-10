@@ -71,8 +71,8 @@ function contains (el, pt) {
         }
     }
 
-    var x = pt.x - offset.left,
-        y = pt.y - offset.top
+    var x = pt.x - offset.left
+    var y = pt.y - offset.top
 
     return x >= 0 && x <= el.offsetWidth &&
         y >= 0 && y <= el.offsetHeight

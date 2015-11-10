@@ -103,8 +103,8 @@ var SimpleForm = React.createClass({
   },
 
   render: function () {
-    var tag_form_data, calc_form_data = {}
-
+    var tag_form_data
+    var calc_form_data = {}
     var objectId = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject
