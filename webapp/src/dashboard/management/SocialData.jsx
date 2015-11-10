@@ -4,7 +4,6 @@ var _      = require('lodash');
 var React  = require('react');
 
 var DonutChart   = require('component/DonutChart.jsx');
-var palette = require('colors');
 
 var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator;
@@ -21,6 +20,7 @@ var SocialData = React.createClass({
     //var data     = this.props.data;
     var campaign = this.props.campaign;
     var loading  = this.props.loading;
+    var colors = ['#377EA4','#B6D0D4'];
 
     var data =_.filter(this.props.data,
       d => d.campaign.id === campaign.id && _.isFinite(d.value));
@@ -51,10 +51,10 @@ var SocialData = React.createClass({
               <DonutChart data={data} label={planLabel}
               loading={loading}
               options={{
-                innerRadius : 0.4,
-                outerRadius : 0.6,
+                innerRadius : 0.3,
+                outerRadius : 0.5,
                 domain      : _.constant([0, 1]),
-                palette     : palette
+                palette     : colors
               }} />
           </div>
           <div className="medium-4 columns">

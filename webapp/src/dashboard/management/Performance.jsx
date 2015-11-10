@@ -5,8 +5,6 @@ var d3 = require('d3');
 var moment = require('moment');
 var React = require('react');
 
-var colors = require('colors');
-
 var Chart = require('component/Chart.jsx');
 var PieChartList = require('component/PieChartList.jsx');
 
@@ -69,6 +67,7 @@ var Performance = React.createClass({
     var lower = upper.clone().startOf('month').subtract(1, 'year');
     var loading = this.props.loading;
     var location = this.props.location;
+    var colors = ['#377EA4','#B6D0D4'];
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren);
 

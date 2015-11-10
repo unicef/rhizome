@@ -60,6 +60,8 @@ var Access = React.createClass({
     var m     = moment(this.props.campaign.start_date, 'YYYY-MM-DD')
     var lower = m.clone().startOf('month').subtract(1, 'year');
     var upper = m.clone().endOf('month');
+    
+    var colors = ['#377EA4','#B6D0D4','#FFFFFF'];
 
     var chartOptions = {
       aspect  : 2.26,
@@ -88,7 +90,7 @@ var Access = React.createClass({
               options={{
                 domain  : _.constant([0, 1]),
                 size    : 16,
-                palette : palette
+                palette : colors
               }} />
           </div>
 
@@ -98,10 +100,10 @@ var Access = React.createClass({
             <DonutChart data={plans} label={planLabel}
               loading={loading}
               options={{
-                innerRadius : 0.4,
-                outerRadius : 0.6,
+                innerRadius : 0.3,
+                outerRadius : 0.5,
                 domain      : _.constant([0, 1]),
-                palette     : palette
+                palette     : colors
               }} />
           </div>
 
