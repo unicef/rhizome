@@ -32,9 +32,9 @@ function getOptions (chart, campaign, data) {
       break
 
     case 'BarChart':
-      opts.y = _.property((chart.groupBy === 'indicator') ?
-        'location.name' :
-        'indicator.short_name'
+      opts.y = _.property((chart.groupBy === 'indicator')
+        ? 'location.name'
+        : 'indicator.short_name'
       )
 
       opts.xFormat = opts.yFormat
@@ -133,9 +133,9 @@ var CustomDashboard = React.createClass({
           cols = 'small-12 end columns'
           break
         case 3: // Triptych
-          cols = chart.type === 'BarChart' ?
-            'small-10 end columns' :
-            'medium-4 columns end cd-chart-size'
+          cols = chart.type === 'BarChart'
+            ? 'small-10 end columns'
+            : 'medium-4 columns end cd-chart-size'
           break
         default: // Default (Basic)
           break

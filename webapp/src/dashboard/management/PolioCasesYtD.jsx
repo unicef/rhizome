@@ -47,11 +47,9 @@ module.exports = React.createClass({
     }
 
     // Set the title based on whether there is data
-    var title = _.isEmpty(this.props.data) ?
-      (<h4>Wild Polio Cases</h4>) :
-      (<h4 style={{
-          'color'      : '#F15046'
-        }}>
+    var title = _.isEmpty(this.props.data)
+    ? (<h4>Wild Polio Cases</h4>)
+    : (<h4 style={{'color': '#F15046'}}>
         {totalCases} Polio cases this year
       </h4>)
 

@@ -26,13 +26,13 @@ var Search = React.createClass({
   },
 
   render : function () {
-    var clear = this.state.pattern.length > 0 ?
-      (
+    var clear = this.state.pattern.length > 0
+      ? (
         <a className='clear-btn' tabIndex='-1' onClick={this._clear}>
           <i className='fa fa-times-circle'></i>
         </a>
-      ) :
-      null
+      )
+      : null
 
     return (
       <div style={{ position : 'relative' }} role='search'>

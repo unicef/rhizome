@@ -84,9 +84,9 @@ var District = React.createClass({
 
     // Determine what headers are shown based on whether or not the "Show empty
     // columns" checkbox is on
-    var headers = this.state.showEmpty ?
-      indicatorList :
-      _.filter(indicatorList, i => visible[i.id])
+    var headers = this.state.showEmpty
+      ? indicatorList
+      : _.filter(indicatorList, i => visible[i.id])
 
     var options = {
       cellSize         : 36,

@@ -28,9 +28,9 @@ var ButtonMenu = React.createClass({
   },
 
   render : function () {
-    var icon = this.props.icon ?
-      (<i className={['fa', this.props.icon, this.props.size].join(' ')} />) :
-      null
+    var icon = this.props.icon
+      ? (<i className={['fa', this.props.icon, this.props.size].join(' ')} />)
+      : null
 
     var classes = 'menu-button'
 

@@ -63,25 +63,25 @@ _.extend(AreaChart.prototype, {
       color = _.flow(options.seriesName, colorScale)
     }
 
-    var domain = _.isFunction(options.domain) ?
-      options.domain(series) :
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.x)
-        .value())
+    var domain = _.isFunction(options.domain)
+      ? options.domain(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.x)
+          .value())
 
     var xScale = d3.time.scale()
       .domain(domain)
       .range([0, width])
 
-    var range = _.isFunction(options.range) ?
-      options.range(series) :
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.y)
-        .value())
+    var range = _.isFunction(options.range)
+      ? options.range(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.y)
+          .value())
 
     range[0] = 0
 

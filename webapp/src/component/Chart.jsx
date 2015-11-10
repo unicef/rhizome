@@ -49,9 +49,9 @@ module.exports = React.createClass({
         zIndex: 9997
       })
 
-      var message = (this.props.loading) ?
-        (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>) :
-        (<span className='empty'>No data</span>)
+      var message = (this.props.loading)
+        ? (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>)
+        : (<span className='empty'>No data</span>)
 
       overlay = (
         <div style={position} className='overlay'>

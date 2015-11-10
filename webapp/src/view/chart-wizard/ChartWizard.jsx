@@ -178,8 +178,8 @@ let ChartWizard = React.createClass({
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
-        {findChartType(this.state.data.chartDef.type).chooseAxis ?
-          (
+        {findChartType(this.state.data.chartDef.type).chooseAxis
+          ? (
             <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
               xFormatValue={this.state.data.xFormatValue}
               onXFormatChange={ChartWizardActions.changeXFormatRadio}
@@ -191,8 +191,8 @@ let ChartWizard = React.createClass({
               onXAxisChange={ChartWizardActions.changeXAxis}
               onYAxisChange={ChartWizardActions.changeYAxis}
             />
-          ) :
-          (
+          )
+          : (
             <RadioGroup name='format' title='Format: '
               value={this.state.data.yFormatValue}
               values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
@@ -241,9 +241,9 @@ let ChartWizard = React.createClass({
           </ChartWizardStep>
         </ChartWizardStepList>
         <PreviewScreen isLoading={this.state.data.isLoading}>
-          {this.state.data.canDisplayChart ?
-            chart :
-            (<div className='empty'>No Data</div>)
+          {this.state.data.canDisplayChart
+            ? chart
+            : (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
         <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>
