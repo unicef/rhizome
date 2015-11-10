@@ -133,7 +133,7 @@ module.exports = React.createClass({
   _setCampaign: function (id) {
     var campaign = _.find(this.state.dashboardStore.campaigns, c => c.id === id)
 
-    if (!!campaign) {
+    if (campaign) {
       DashboardActions.setDashboard({
         dashboard: this.state.store.dashboard,
         date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
@@ -144,7 +144,7 @@ module.exports = React.createClass({
   _setRegion: function (id) {
     var location = _.find(this.state.dashboardStore.locations, r => r.id === id)
 
-    if (!!location) {
+    if (location) {
       DashboardActions.setDashboard({dashboard: this.state.store.dashboard, location: location.name})
     }
   },

@@ -104,13 +104,13 @@ module.exports = React.createClass({
     var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>)
     var loadingDiv = (<div className='loading-div'><i className='fa fa-spinner fa-spin fa-5x'></i></div>)
 
-    var campaignSelection = !!this.state.store.campaignSelected ?
-      campaignDisplayFormat(this.state.store.campaignSelected) :
-      'Select Campaign'
+    var campaignSelection = this.state.store.campaignSelected
+      ? campaignDisplayFormat(this.state.store.campaignSelected)
+      : 'Select Campaign'
 
-    var locationSelection = !!this.state.store.locationSelected ?
-      this.state.store.locationSelected.name :
-      'Select location'
+    var locationSelection = this.state.store.locationSelected
+      ? this.state.store.locationSelected.name
+      : 'Select location'
 
     var locations = MenuItem.fromArray(
       filterMenu(this.state.store.locationList, this.state.locationFilter),
