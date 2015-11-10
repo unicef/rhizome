@@ -170,7 +170,7 @@ var process = {
   'ScatterChart': scatter
 }
 
-function dashboardInit(dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
+function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
 
   var results = {}
 
