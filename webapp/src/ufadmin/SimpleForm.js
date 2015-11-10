@@ -27,7 +27,7 @@ var SimpleForm = React.createClass({
     return {
       objectId: null,
       extraFormData: {},
-      tagTree: [],
+      tagTree: []
     }
   },
 

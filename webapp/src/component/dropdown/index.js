@@ -41,7 +41,7 @@ module.exports = Vue.extend({
             pattern: '',
             selection: {},
             sortBy: 'title',
-            sortDsc: false,
+            sortDsc: false
         }
     },
 
@@ -80,7 +80,7 @@ module.exports = Vue.extend({
                 .pluck('title')
                 .value()
                 .join(', ')
-        },
+        }
     },
 
     methods: {
@@ -306,7 +306,7 @@ module.exports = Vue.extend({
     },
 
     events: {
-        'dropdown-item-toggle': 'toggleItem',
+        'dropdown-item-toggle': 'toggleItem'
     },
 
     components: {

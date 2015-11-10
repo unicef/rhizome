@@ -223,7 +223,7 @@ function hoverLine () {
             .duration(300)
             .attr({
                 'x1': Number,
-                'x2': Number,
+                'x2': Number
             })
             .style('opacity', 1)
 

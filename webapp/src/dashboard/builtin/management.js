@@ -9,7 +9,7 @@ module.exports = {
             'startOf': 'year',
             'timeRange': {
                 years: 2
-            },
+            }
         }, {
             'title': 'Under-Immunized Children',
             'section': 'impact',
@@ -31,7 +31,7 @@ module.exports = {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-            'indicators': [475],
+            'indicators': [475]
         }, {
             'title': 'Conversions',
             'section': 'performance',
@@ -43,7 +43,7 @@ module.exports = {
             'title': 'Transit Points',
             'section': 'performance',
       'timeRange': 0,
-            'indicators': [175, 176, 177, 204],
+            'indicators': [175, 176, 177, 204]
         }, {
             'title': 'FLW\'s Capacity to Perform',
             'indicators': [178, 179, 239, 184, 185, 226],

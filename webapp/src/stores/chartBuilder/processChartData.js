@@ -191,7 +191,7 @@ module.exports = {
           values: _.property('values'),
           x: _.property('campaign.start_date'),
           xFormat: function (d) { return moment(d).format('MMM YYYY')},
-          y: _.property('value'),
+          y: _.property('value')
         }
       var chartData =  _groupBySeries(data, groups, groupBy)
         return { options: chartOptions, data: chartData}

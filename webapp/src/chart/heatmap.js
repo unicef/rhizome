@@ -115,7 +115,7 @@ _.extend(Heatmap.prototype, {
         row.enter().append('g')
             .attr({
                 'class': 'row',
-                'transform': transform,
+                'transform': transform
             })
 
         row.exit()
@@ -146,7 +146,7 @@ _.extend(Heatmap.prototype, {
                 'class': 'cell',
                 'height': yScale.rangeBand(),
                 'x': x,
-                'width': xScale.rangeBand(),
+                'width': xScale.rangeBand()
             })
             .style({
                 'opacity': 0,

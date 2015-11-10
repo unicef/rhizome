@@ -42,6 +42,6 @@ module.exports = {
             // Prevent opening a folder from toggling that item
             e.stopPropagation()
         }
-    },
+    }
 
 }

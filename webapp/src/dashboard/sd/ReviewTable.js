@@ -25,7 +25,7 @@ var ReviewTable = React.createClass({
         loading: React.PropTypes.bool.isRequired,
         location: React.PropTypes.object.isRequired,
         campaign: React.PropTypes.object.isRequired,
-        doc_tab: React.PropTypes.string.isRequired,
+        doc_tab: React.PropTypes.string.isRequired
     },
 
     getInitialState: function () {
@@ -33,7 +33,7 @@ var ReviewTable = React.createClass({
             data: null,
             schema: null,
             query: {},
-            loading: false,
+            loading: false
         }
     },
 
@@ -114,7 +114,7 @@ var ReviewTable = React.createClass({
                             />
                     }
                 }
-            },
+            }
         }
 
         var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading)

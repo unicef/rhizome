@@ -116,12 +116,12 @@ module.exports = React.createClass({
     indicators: React.PropTypes.array.isRequired,
 
     cols: React.PropTypes.number,
-    data: React.PropTypes.array,
+    data: React.PropTypes.array
   },
 
   getDefaultProps: function () {
     return {
-      cols: 1,
+      cols: 1
     }
   },
 

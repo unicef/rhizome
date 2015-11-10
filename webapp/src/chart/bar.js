@@ -181,7 +181,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
             .attr({
                 'height': yScale.rangeBand(),
                 'width': width,
-                'x': x,
+                'x': x
             })
             .transition().duration(500)
             .attr('y', y)

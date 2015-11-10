@@ -4,7 +4,7 @@ module.exports = React.createClass({
   propTypes: {
   	charts: React.PropTypes.array.isRequired,
   	value: React.PropTypes.number.isRequired,
-  	onChange: React.PropTypes.func.isRequired,
+  	onChange: React.PropTypes.func.isRequired
   },
   _handleChange: function (event){
     this.props.onChange(event.target.value)

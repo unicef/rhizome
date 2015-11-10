@@ -44,7 +44,7 @@ module.exports = {
             maxHeight: 'none',
             orientation: 'center',
 
-            changeEvent: 'menu-item-click',
+            changeEvent: 'menu-item-click'
         }
     },
 

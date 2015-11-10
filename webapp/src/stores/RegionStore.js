@@ -30,7 +30,7 @@ var RegionStore = Reflux.createStore({
   getInitialState () {
     return {
       locations: this.locations,
-      LocationTypes: this.LocationTypes,
+      LocationTypes: this.LocationTypes
     }
   },
 

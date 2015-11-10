@@ -39,7 +39,7 @@ function emptyResponsePoint (path, mode, defaultVersion, useDefaults) {
   useDefaults = _.isUndefined(useDefaults) ? true : useDefaults
 
   var defaults = {
-    format: 'json',
+    format: 'json'
   }
 
   function fetch (query, version, headers) {
@@ -98,7 +98,7 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
   useDefaults = _.isUndefined(useDefaults) ? true : useDefaults
 
   var defaults = {
-    format: 'json',
+    format: 'json'
   }
 
   function fetch (query, version, headers) {
@@ -325,6 +325,6 @@ module.exports = {
   set_location_permission: endPoint('/location_permission/', 'post', 1),
   remove_indicator_from_tag: emptyResponsePoint('/indicator_to_tag', 'delete', 1, false),
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),
-  post_source_object_map: endPoint('/source_object_map/', 'post', 1, false),
+  post_source_object_map: endPoint('/source_object_map/', 'post', 1, false)
 
 }

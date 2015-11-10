@@ -8,7 +8,7 @@ module.exports = {
             limit: 0,
             offset: 0,
             total_count: 0,
-            window_size: 1,
+            window_size: 1
         }
     },
 

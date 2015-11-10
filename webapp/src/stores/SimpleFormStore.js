@@ -172,7 +172,7 @@ var SimpleFormStore = Reflux.createStore({
         self.data.loading = false
         self.trigger(self.data)
       }))
-  },
+  }
 
 })
 

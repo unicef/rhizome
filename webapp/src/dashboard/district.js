@@ -78,7 +78,7 @@ module.exports = {
             location: null,
             locations: {},
             series: [],
-            showEmpty: false,
+            showEmpty: false
         }
     },
 

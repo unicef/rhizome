@@ -9,7 +9,7 @@ var YtDChart = require('component/YtDChart.jsx')
 module.exports = React.createClass({
   propTypes : {
     campaign : React.PropTypes.object,
-    data     : React.PropTypes.array,
+    data     : React.PropTypes.array
   },
 
   getDefaultProps : function () {
@@ -78,6 +78,6 @@ module.exports = React.createClass({
         </div>
       </div>
     )
-  },
+  }
 
 })

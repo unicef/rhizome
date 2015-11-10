@@ -10,7 +10,7 @@ var ChartUtil = require('../utils/ChartUtil.js')
 var ImmunityGap = React.createClass({
   propTypes : {
     campaign : React.PropTypes.object.isRequired,
-    data : React.PropTypes.array.isRequired,
+    data : React.PropTypes.array.isRequired
   },
 
   render : function () {

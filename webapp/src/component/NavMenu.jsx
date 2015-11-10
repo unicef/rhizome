@@ -24,7 +24,7 @@ var NavMenu = React.createClass({
         {display}&emsp;<i className='fa fa-chevron-down'></i>
       </a>
     )
-  },
+  }
 
 })
 

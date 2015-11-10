@@ -59,7 +59,7 @@ _.extend(ColumnChart.prototype, {
       'class': 'bg',
       'height': h + options.margin.top,
       'width': this._width - options.margin.left - options.margin.right,
-      'x': options.margin.left,
+      'x': options.margin.left
     })
 
     var g = svg.append('g')
@@ -347,7 +347,7 @@ _.extend(ColumnChart.prototype, {
       axisLabel
         .attr({
           'transform': 'translate(' + x(d) + ', ' + (h + margin.bottom) + ')',
-          'dx': xScale.rangeBand() / 2,
+          'dx': xScale.rangeBand() / 2
         })
         .text(options.xFormat)
     })

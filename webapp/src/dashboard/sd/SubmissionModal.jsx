@@ -13,7 +13,7 @@ Modal.injectCSS()
 
 var SubmissionModal = React.createClass({
     propTypes: {
-        source_submission_id: React.PropTypes.number.isRequired,
+        source_submission_id: React.PropTypes.number.isRequired
     },
 
     getInitialState: function () {

@@ -83,7 +83,7 @@ _.extend(PieChart.prototype, {
     var svg = this._svg
 
     svg.attr({
-      'viewBox': '0 0 ' + this._width + ' ' + this._height,
+      'viewBox': '0 0 ' + this._width + ' ' + this._height
     })
       .style({
         'width': this._width + 'px',

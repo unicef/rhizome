@@ -28,7 +28,7 @@ module.exports = React.createClass({
 
     id: React.PropTypes.string,
     loading: React.PropTypes.bool,
-    options: React.PropTypes.object,
+    options: React.PropTypes.object
   },
 
   getDefaultProps: function () {

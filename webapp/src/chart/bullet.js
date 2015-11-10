@@ -146,7 +146,7 @@ _.extend(BulletChart.prototype, {
     bar
       .attr({
         'class': 'bar',
-        'y': y,
+        'y': y
       })
       .style('fill', options.dataFill)
     bar.exit().remove()

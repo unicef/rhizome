@@ -27,7 +27,7 @@ var DocFormStore = Reflux.createStore({
 
         api.uploadPost({
             docfile: upload.target.result,
-            doc_title: file.name,
+            doc_title: file.name
         }).then(function (response) {
             var new_doc_obj = response.objects
             self.data.config_options = new_doc_obj.file_header.replace('"', '').split(',')

@@ -37,7 +37,7 @@ var AdminPage = React.createClass({
       }
       this.setState({
         schema: schema,
-        data: response.objects,
+        data: response.objects
       })
     })
   },

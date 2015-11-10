@@ -203,7 +203,7 @@ module.exports = {
       var indicators = _.map(this.indicators, 'value')
       var locations = _.map(this.locations, 'value')
       var query = {
-        'format': 'csv',
+        'format': 'csv'
       }
 
       if (indicators.length < 1) {

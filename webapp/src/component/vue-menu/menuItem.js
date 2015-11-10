@@ -32,7 +32,7 @@ module.exports = {
 
             if (this.filter) {
                 return {
-                    'padding-left': '5px',
+                    'padding-left': '5px'
                 }
             }
 

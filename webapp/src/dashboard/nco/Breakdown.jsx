@@ -114,7 +114,7 @@ var Breakdown = React.createClass({
 
       </div>
     )
-  },
+  }
 
 })
 

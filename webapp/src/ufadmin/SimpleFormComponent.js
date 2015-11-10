@@ -22,7 +22,7 @@ var SimpleFormComponent = React.createClass({
     smallItemCouldClick: React.PropTypes.bool,
     onSmallItemClick: React.PropTypes.func,
     smallIDCouldClick: React.PropTypes.bool,
-    smallIDBaseUrl: React.PropTypes.string,
+    smallIDBaseUrl: React.PropTypes.string
   },
 
   mixins: [
@@ -82,7 +82,7 @@ var SimpleFormComponent = React.createClass({
     var formComponentStyle = {
       border: '1px dashed #000000',
       width: '90%',
-      padding: '10px',
+      padding: '10px'
     }
 
     var rowLi = rowData.map(row => {

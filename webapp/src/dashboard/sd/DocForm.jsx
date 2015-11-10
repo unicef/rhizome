@@ -28,7 +28,7 @@ var DocForm = React.createClass({
             created_doc_id: null,
             doc_detail_meta: null,
             doc_is_refreshed: false,
-            new_doc_title: null,
+            new_doc_title: null
         }
     },
 
@@ -84,7 +84,7 @@ var DocForm = React.createClass({
             _.map(state_header, d => {
                 return {
                     title: d.replace('"', ''),
-                    value: d.replace('"', ''),
+                    value: d.replace('"', '')
                 }
             }),
             this.setDocConfig.bind('config_type', config_type))
@@ -149,13 +149,13 @@ var DocForm = React.createClass({
             margin: 'auto',
             width: '50%',
             padding: '10px',
-            border: '2px dashed #0087F7',
+            border: '2px dashed #0087F7'
         }
 
         var dropZoneStyle = {
             minHeight: '100px',
             padding: '54px 54px',
-            marginRight: '150px',
+            marginRight: '150px'
         }
 
         // since JSX is case sensitive, be sure to use 'encType'

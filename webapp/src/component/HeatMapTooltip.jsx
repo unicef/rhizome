@@ -15,12 +15,12 @@ var HeatMapTooltip = React.createClass({
     value     : React.PropTypes.number.isRequired,
     total     : React.PropTypes.number.isRequired,
 
-    format    : React.PropTypes.func,
+    format    : React.PropTypes.func
   },
 
   getDefaultProps : function () {
     return {
-      format : d3.format('n'),
+      format : d3.format('n')
     }
   },
 

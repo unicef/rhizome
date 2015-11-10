@@ -50,7 +50,7 @@ function documentOffset (el) {
         top: bbox.top + doc.clientTop + window.pageYOffset,
         right: bbox.right + doc.clientLeft + window.pageXOffset,
         bottom: bbox.bottom + doc.clientTop + window.pageYOffset,
-        left: bbox.left + doc.clientLeft + window.pageXOffset,
+        left: bbox.left + doc.clientLeft + window.pageXOffset
     }
 }
 

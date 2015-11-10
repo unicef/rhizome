@@ -41,7 +41,7 @@ function label () {
             bottom: bottom,
             left: left,
             cx: left + (right - left) / 2,
-            cy: top + (bottom - top) / 2,
+            cy: top + (bottom - top) / 2
         }
     }
 
@@ -176,7 +176,7 @@ function label () {
             .duration(transitionSpeed)
             .attr({
                 'x': x,
-                'y': y,
+                'y': y
             })
 
         // Fix overlaps

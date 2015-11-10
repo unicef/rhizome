@@ -4,7 +4,7 @@ module.exports = {
     computed: {
         display: function () {
             return this.$data.title || this.$data.value
-        },
+        }
     },
     methods: {
         onClick: function () {

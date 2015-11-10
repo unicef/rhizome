@@ -19,7 +19,7 @@ var ManagementDashboard = React.createClass({
     campaign   : React.PropTypes.object,
     data       : React.PropTypes.object,
     loading    : React.PropTypes.bool,
-    location     : React.PropTypes.object,
+    location     : React.PropTypes.object
   },
 
   getDefaultProps : function () {

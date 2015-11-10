@@ -13,7 +13,7 @@ var ReviewTableStore = Reflux.createStore({
             data: null,
             schema: null,
             query: {},
-            loading: false,
+            loading: false
         }
     },
 

@@ -149,7 +149,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
             .transition().duration(500)
             .attr({
                 'height': options.barHeight,
-                'width': width,
+                'width': width
             })
             .transition().duration(500)
             .attr('y', y)

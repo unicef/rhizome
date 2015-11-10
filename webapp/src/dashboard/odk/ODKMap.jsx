@@ -33,7 +33,7 @@ var ODKMap = React.createClass({
           options={{
             domain  : _.constant([0, 0.1]),
             value   : _.property('properties[475]'),
-            yFormat : d3.format('%'),
+            yFormat : d3.format('%')
           }} />
         </div>
   }

@@ -11,14 +11,14 @@ var PieChartList = React.createClass({
     keyPrefix : React.PropTypes.string.isRequired,
     options   : React.PropTypes.object,
     name      : React.PropTypes.func,
-    emptyText : React.PropTypes.string,
+    emptyText : React.PropTypes.string
   },
 
   getDefaultProps : function () {
     return {
       name      : _.property('indicator.short_name'),
       emptyText : 'No data',
-      loading   : false,
+      loading   : false
     }
   },
 
@@ -40,7 +40,7 @@ var PieChartList = React.createClass({
     return (
       <table className='pie-charts'>{pies}</table>
     )
-  },
+  }
 
 })
 
