@@ -34,7 +34,7 @@ const fields = {
 }
 
 const schema = {
-  last_login: { type: 'string', format: 'date-time'},
+  last_login: { type: 'string', format: 'date-time'}
 }
 
 const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link']

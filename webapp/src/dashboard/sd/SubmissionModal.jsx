@@ -64,7 +64,7 @@ var SubmissionModal = React.createClass({
                 {submission_data}
             </Modal>
         </div>
-    },
+    }
 })
 
 module.exports = SubmissionModal

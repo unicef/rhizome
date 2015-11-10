@@ -26,7 +26,7 @@ var NavMenuItem = React.createClass({
         </a>
       </li>
     )
-  },
+  }
 })
 
 module.exports = NavMenuItem

@@ -36,7 +36,7 @@ var DonutChart = React.createClass({
         {label}
       </div>
     )
-  },
+  }
 })
 
 module.exports = DonutChart

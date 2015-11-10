@@ -130,5 +130,5 @@ module.exports = {
     min: min,
     parseBool: parseBool,
     rename: rename,
-    unpivot: unpivot,
+    unpivot: unpivot
 }

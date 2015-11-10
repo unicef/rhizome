@@ -117,7 +117,7 @@ var Overview = React.createClass({
         </div>
       </div>
     )
-  },
+  }
 })
 
 module.exports = Overview

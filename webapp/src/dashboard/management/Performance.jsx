@@ -179,7 +179,7 @@ var Performance = React.createClass({
         </section>
       </div>
     )
-  },
+  }
 })
 
 module.exports = Performance

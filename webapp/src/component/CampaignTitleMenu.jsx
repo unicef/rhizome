@@ -26,7 +26,7 @@ var CampaignTitleMenu = React.createClass({
         {campaigns}
       </TitleMenu>
     )
-  },
+  }
 })
 
 module.exports = CampaignTitleMenu

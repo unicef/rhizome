@@ -122,7 +122,7 @@ var MapForm = React.createClass({
                     {this.renderDropDown(this.state.content_type)}
                 </form>
             </Modal></div>
-    },
+    }
 })
 
 module.exports = MapForm

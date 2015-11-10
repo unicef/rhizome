@@ -38,7 +38,7 @@ var DEFAULTS = {
   seriesName: _.property('name'),
   sortValue: _sortValue,
   values: _.property('values'),
-  value: _.property('value'),
+  value: _.property('value')
 }
 
 function Heatmap () {}

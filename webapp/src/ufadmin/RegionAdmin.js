@@ -26,7 +26,7 @@ const fields = {
 }
 
 const schema = {
-  created_at: { type: 'string', format: 'date-time'},
+  created_at: { type: 'string', format: 'date-time'}
 }
 
 const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link']

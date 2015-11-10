@@ -194,7 +194,7 @@ var CustomDashboard = React.createClass({
     return (
       <div className='row cd-charts'>{charts} {addChart}</div>
     )
-  },
+  }
 })
 
 module.exports = CustomDashboard

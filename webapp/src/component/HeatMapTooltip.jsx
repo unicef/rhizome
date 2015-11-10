@@ -88,7 +88,7 @@ var HeatMapTooltip = React.createClass({
         </p>
       </div>
     )
-  },
+  }
 })
 
 module.exports = HeatMapTooltip

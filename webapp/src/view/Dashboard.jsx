@@ -33,7 +33,7 @@ var LAYOUT = {
   'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
   'District Dashboard': require('dashboard/District.jsx'),
   'Source Data': require('dashboard/SourceDataDashboard.jsx'),
-  'ODK Dashboard': require('dashboard/ODKDashboard.jsx'),
+  'ODK Dashboard': require('dashboard/ODKDashboard.jsx')
 }
 
 var Dashboard = React.createClass({

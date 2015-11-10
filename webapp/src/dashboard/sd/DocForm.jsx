@@ -167,7 +167,7 @@ var DocForm = React.createClass({
             {refreshBtn}
             {reviewBtn}
         </div>)
-    },
+    }
 })
 
 module.exports = DocForm
