@@ -84,7 +84,7 @@ var Access = React.createClass({
                         name={pieChartName}
                         options={{
                 domain  : _.constant([0, 1]),
-                size    : 16
+                size    : 24
               }}/>
         </div>
 
