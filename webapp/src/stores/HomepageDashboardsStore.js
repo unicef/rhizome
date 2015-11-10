@@ -207,6 +207,7 @@ var HomepageDashboardsStore = Reflux.createStore({
                 dashboardDef.location,
                 dashboardDef.campaign,
                 locations,
+                campaigns,
                 indicators,
                 data.features
               )

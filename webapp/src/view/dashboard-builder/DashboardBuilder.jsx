@@ -231,6 +231,7 @@ module.exports = React.createClass({
       location,
       campaign,
       this.state.dashboardStore.locations,
+      this.state.dashboardStore.allCampaigns,
       indicators,
       GeoStore.features
     );

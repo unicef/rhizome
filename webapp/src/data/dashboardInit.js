@@ -169,11 +169,13 @@ var process = {
   'ScatterChart'    : scatter,
 };
 
-function dashboardInit(dashboard, data, location, campaign, locationList, indicators, features) {
+function dashboardInit(dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
+
   var results = {};
 
   var indicatorsById = _.indexBy(indicators, 'id');
   var locationsById    = _.indexBy(locationList, 'id');
+  var campaignsById = _.indexBy(campaignList, "id");
 
   // Merge location metadata into the properties object of each geographic feature
   _.each(features, function (f) {
@@ -195,6 +197,9 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
     }
   });
 
+  var selectedCampaign = campaign;
+  var selectedLocation = location;
+
   // Build up an object representing the data where each property of the object
   // corresponse to a section in the dashboard. Each section is an object where
   // each property corresponds to a chart. Each chart is an array of the data
@@ -206,6 +211,24 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
     var locationProp  = chart.location === 'sublocations' ?
       'location.parent_location_id' :
       'location.id';
+
+    if(chart.locationValue){
+        var chartLocation = locationsById[chart.locationValue];
+        if(chartLocation != null)
+          location = chartLocation;
+    }
+    else{
+      location = selectedLocation;
+    }
+
+    if(chart.campaignValue){
+        var chartCampaign = campaignsById[chart.campaignValue];
+        if(chartCampaign != null)
+          campaign = chartCampaign;
+    }
+    else{
+      campaign = selectedCampaign;
+    }
 
     var datumInChart = _.partial(inChart, chart, campaign, location);
     var chartData    = _.filter(data, datumInChart);

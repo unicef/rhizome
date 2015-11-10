@@ -279,6 +279,7 @@ var Dashboard = React.createClass({
       location,
       campaign,
       this.state.locations,
+      this.state.allCampaigns,
       indicators,
       GeoStore.features
     );
