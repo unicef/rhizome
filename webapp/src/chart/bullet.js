@@ -211,7 +211,7 @@ _.extend(BulletChart.prototype, {
         'y': -15,
         'text-anchor': 'end',
         'dy': (options.lineHeight / 4) + 'em',
-        'transform': 'translate(0,' + (h / 2) + ')',
+        'transform': 'translate(0, ' + (h / 2) + ')',
         'fill': 'inherit'
       })
       .style('font-size', options.fontSize)
@@ -233,7 +233,7 @@ _.extend(BulletChart.prototype, {
         'y': 0,
         'text-anchor': 'start',
         'dy': (options.lineHeight / 4) + 'em',
-        'transform': 'translate(0,' + (h / 2) + ')',
+        'transform': 'translate(0, ' + (h / 2) + ')',
         'fill': '#FFFFFF'
       })
       .style('font-size', options.fontSize - 2)

@@ -425,9 +425,9 @@ module.exports = Reflux.createStore({
         if(range=="current") {
             return start.clone().startOf('month')
         } else if (range=="3Months") {
-            return start.clone().startOf('month').subtract(3,'month')
+            return start.clone().startOf('month').subtract(3, 'month')
         } else if (range=="pastYear") {
-            return start.clone().startOf('month').subtract(1,'year')
+            return start.clone().startOf('month').subtract(1, 'year')
         } else if (range=="allTime") {
             return null
         }

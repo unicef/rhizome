@@ -126,7 +126,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
         series.style('fill', fill)
             .attr('transform', function (d, i) {
-                return 'translate(0,' + (i * options.barHeight) + ')'
+                return 'translate(0, ' + (i * options.barHeight) + ')'
             })
 
         series.exit()
@@ -159,7 +159,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         var t0 = svg.transition().duration(500)
 
         t0.select('.x.axis')
-            .attr('transform', 'translate(0,' + h + ')')
+            .attr('transform', 'translate(0, ' + h + ')')
             .call(d3.svg.axis()
                 .orient('bottom')
                 .ticks(4)

@@ -112,7 +112,7 @@ _.extend(Histogram.prototype, {
       .orient('bottom')
 
     svg.select('.x.axis')
-      .attr('transform', 'translate(0,' + h + ')')
+      .attr('transform', 'translate(0, ' + h + ')')
       .call(axis)
 
     var yAxis = svg.select('.y.axis')
@@ -122,7 +122,7 @@ _.extend(Histogram.prototype, {
     yAxis.enter().append('text')
 
     yAxis.attr({
-        'transform'   : 'translate(0,' + (h / 2) + ') rotate(-90)',
+        'transform'   : 'translate(0, ' + (h / 2) + ') rotate(-90)',
         'text-anchor' : 'middle',
         'dy'          : '-6'
       })

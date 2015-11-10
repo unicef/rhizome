@@ -64,10 +64,10 @@ module.exports = {
          var groupId = e.target.getAttribute('data-group-id')
          if(e.target.checked)
          {
-           api.map_user_group({'user_id': this.$parent.$data.user_id,'group_id': groupId})
+           api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
          }
          else {
-           api.map_user_group({'user_id': this.$parent.$data.user_id,'group_id': groupId, id: ''})
+           api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})
          }
       },
       addlocationalAccess: function (data) {

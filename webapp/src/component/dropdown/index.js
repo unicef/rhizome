@@ -13,7 +13,7 @@ module.exports = Vue.extend({
     template: require('./template.html'),
 
     // Object mapping property names of response objects to property names for the
-    // VM. Useful for setting the 'title,' 'value,' and 'parent' properties of the
+    // VM. Useful for setting the 'title, ' 'value, ' and 'parent' properties of the
     // dropdown items.
     mapping: {},
 

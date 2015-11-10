@@ -191,7 +191,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         var t0 = svg.transition().duration(500)
 
         t0.select('.x.axis')
-            .attr('transform', 'translate(0,' + h + ')')
+            .attr('transform', 'translate(0, ' + h + ')')
             .call(d3.svg.axis()
                 .orient('bottom')
                 .ticks(4)
@@ -238,7 +238,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           'dy'    : '.3em'
         })
 
-      label.attr('transform', d => 'translate(0,' + (y(d) + yScale.rangeBand() / 2) + ')')
+      label.attr('transform', d => 'translate(0, ' + (y(d) + yScale.rangeBand() / 2) + ')')
         .text(d => options.xFormat(options.x(d)))
 
       label.exit().remove()

@@ -143,7 +143,7 @@ function legend() {
     }
 
     function translate(d, i) {
-        return 'translate(0,' + (i * (_size + _padding)) + ')'
+        return 'translate(0, ' + (i * (_size + _padding)) + ')'
     }
 
     return chart

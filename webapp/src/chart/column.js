@@ -71,7 +71,7 @@ _.extend(ColumnChart.prototype, {
     g.append('g').attr('class', 'y axis')
     g.append('g').attr({
       'class': 'x axis',
-      'transform': 'translate(0,' + h + ')'
+      'transform': 'translate(0, ' + h + ')'
     })
     g.append('g').attr('class', 'legend')
     g.append('g').attr('class', 'annotation')

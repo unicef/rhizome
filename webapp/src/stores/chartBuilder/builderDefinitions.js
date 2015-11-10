@@ -23,13 +23,13 @@ export default {
     {
       value: '1year',
       title: 'Past Year',
-      getLower: start => { return start.clone().startOf('month').subtract(1,'year') },
+      getLower: start => { return start.clone().startOf('month').subtract(1, 'year') },
       json: { years: 1}
     },
     {
       value: '3month',
       title: 'Past 3 Months',
-      getLower: start => { return start.clone().startOf('month').subtract(3,'month') },
+      getLower: start => { return start.clone().startOf('month').subtract(3, 'month') },
       json: { months: 2}
     },
     {

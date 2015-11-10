@@ -98,7 +98,7 @@ _.extend(Heatmap.prototype, {
         var y = _.flow(options.seriesName, yScale)
 
         var transform = function (d, i) {
-            return 'translate(0,' + y(d) + ')'
+            return 'translate(0, ' + y(d) + ')'
         }
 
         var fill = options.scale

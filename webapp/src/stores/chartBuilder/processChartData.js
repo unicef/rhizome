@@ -224,7 +224,7 @@ module.exports = {
 
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) {return location.id}) })])
     .then(_.spread(function (data, border) {
-      var index = _.indexBy(data,'location')
+      var index = _.indexBy(data, 'location')
       var chartOptions = {
         aspect: 1,
         name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
@@ -357,7 +357,7 @@ module.exports = {
           offset  : 'zero',
           xFormat : d3.format('%')
         }
-        var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator)
+        var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
         return { options: chartOptions, data: chartData}
       })
   }
