@@ -38,7 +38,7 @@ function qualitativeAxis() {
 
       tick.attr('transform', function (d) {
         var range = _threshold.invertExtent(d)
-        var x = _.isFinite(range[0]) ? range[0]: _scale.domain()[0]
+        var x = _.isFinite(range[0]) ? range[0] : _scale.domain()[0]
 
         return 'translate(' + _scale(x) + ', 0)'
       })
@@ -51,8 +51,8 @@ function qualitativeAxis() {
         'x': function (d) {
           var domain = _scale.domain()
           var range = _threshold.invertExtent(d)
-          var lower = _.isFinite(range[0]) ? range[0]: domain[0]
-          var upper = _.isFinite(range[1]) ? range[1]: domain[1]
+          var lower = _.isFinite(range[0]) ? range[0] : domain[0]
+          var upper = _.isFinite(range[1]) ? range[1] : domain[1]
 
           return _scale(upper) - _scale(lower)
         },

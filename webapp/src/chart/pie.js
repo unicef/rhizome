@@ -28,7 +28,7 @@ var DEFAULTS = {
   value: _.property('value'),
   name: _.property('indicator.short_name'),
   format: function (d) {
-    return d3.format((Math.abs(d) < 1) ? '.4f': 'n')(d)
+    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d)
   }
 }
 

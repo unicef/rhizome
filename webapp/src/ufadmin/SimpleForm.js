@@ -121,7 +121,7 @@ var SimpleForm = React.createClass({
       if (this.state.store.loading) {
         return <div>Loading MetaData Manager</div>
       } else {
-        page('/ufadmin/manage/' + contentType +'/')
+        page('/ufadmin/manage/' + contentType + '/')
         return (
           <div>Error. There is no data received.</div>
         )
@@ -181,7 +181,7 @@ var SimpleForm = React.createClass({
       var baseFormSuccess = <i className='fa fa-check'> saved successfully </i>
       var newId = this.state.store.objectId
       this.state.store.saveSuccess = false
-      page('/ufadmin/manage/' + contentType +'/'+ newId)
+      page('/ufadmin/manage/' + contentType + '/' + newId)
       SimpleFormActions.initialize(newId, contentType)
     }
 

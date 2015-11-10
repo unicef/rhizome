@@ -51,9 +51,9 @@ var CampaignDropdownMenu = React.createClass({
 
     // If the pattern is longer than two characters, filter the list with it,
     // otherwise, return true to include all campaigns in the dropdown
-    var filterCampaigns = !_.isEmpty(this.state.pattern)?
-      _.flow(searchValue, function (v) { return re.test(v) }) :
-      _.constant(true)
+    var filterCampaigns = !_.isEmpty(this.state.pattern)
+      ? _.flow(searchValue, function (v) { return re.test(v) })
+      : _.constant(true)
 
     var campaigns = _(this.props.campaigns)
       .filter(filterCampaigns)

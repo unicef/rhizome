@@ -203,9 +203,9 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
     var sectionName = _.get(chart, 'section', '__none__')
     var chartName = _.get(chart, 'id', _.camelCase(chart.title))
     var section = _.get(results, sectionName, {})
-    var locationProp = chart.location === 'sublocations' ?
-      'location.parent_location_id':
-      'location.id'
+    var locationProp = chart.location === 'sublocations'
+      ? 'location.parent_location_id'
+      : 'location.id'
 
     var datumInChart = _.partial(inChart, chart, campaign, location)
     var chartData = _.filter(data, datumInChart)

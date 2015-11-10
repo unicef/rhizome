@@ -149,9 +149,8 @@ module.exports = Reflux.createStore({
         timeRadios:function () {
                     var self = this
                     var radios = [{ value: 'allTime', title:'All Time'}, { value: 'pastYear', title:'Past Year'}, { value: '3Months', title:'Past 3 Months'}, { value: 'current', title:'Current Campaign'}]
-                    var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
-                    if (timeRadios.length -1 < this.timeRadioValue)
-                    {
+                    var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value) > -1 })
+                    if (timeRadios.length - 1 < this.timeRadioValue) {
                       this.timeRadioValue = 0
                     }
                     return timeRadios
@@ -352,11 +351,11 @@ module.exports = Reflux.createStore({
        var timeString = JSON.stringify(chartDef.timeRange)
        var timeValue
 
-       if (timeString=='{\'months\':2}') {
+       if (timeString === '{\'months\':2}') {
        timeValue = '3Months'
-       } else if (timeString=='{\'years\':1}') {
+       } else if (timeString === '{\'years\':1}') {
        timeValue = 'pastYear'
-       } else if (timeString=='{\'months\':0}') {
+       } else if (timeString === '{\'months\':0}') {
        timeValue = 'current'
        } else {
         timeValue = 'allTime'
@@ -412,13 +411,13 @@ module.exports = Reflux.createStore({
     //Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
     getLower:  function (start) {
         var range = this.data.timeRadios()[this.data.timeRadioValue].value
-        if (range=='current') {
+        if (range === 'current') {
             return start.clone().startOf('month')
-        } else if (range=='3Months') {
+        } else if (range === '3Months') {
             return start.clone().startOf('month').subtract(3, 'month')
-        } else if (range=='pastYear') {
+        } else if (range === 'pastYear') {
             return start.clone().startOf('month').subtract(1, 'year')
-        } else if (range=='allTime') {
+        } else if (range === 'allTime') {
             return null
         }
     },
@@ -434,7 +433,7 @@ module.exports = Reflux.createStore({
         var self = this
         var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id')//
         var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id')
-        var groups = (groupBy === 'indicator'?indicatorsIndex:locationsIndex)
+        var groups = (groupBy === 'indicator' ? indicatorsIndex : locationsIndex)
         var start = moment(this.data.campaignSelected.start_date)
         var lower = this.getLower(start)//.subtract(1, 'year')
         var upper = start.clone().startOf('month')
@@ -442,7 +441,7 @@ module.exports = Reflux.createStore({
         var q = {
         indicator__in: indicatorArray,
         location__in: _.map(this.data.aggregatedLocations, _.property('id')),
-        campaign_start: (lower?lower.format('YYYY-MM-DD'):null),
+        campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
         campaign_end: upper.format('YYYY-MM-DD')
                     }
 

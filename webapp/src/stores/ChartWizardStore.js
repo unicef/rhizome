@@ -103,9 +103,9 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue] ?
-          this.locationIndex[chartDef.locationValue]:
-          this.locationIndex[this.data.locationList[0].value]
+        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue]
+          ? this.locationIndex[chartDef.locationValue]
+          : this.locationIndex[this.data.locationList[0].value]
 
         let officeId = this.data.location.office_id
 

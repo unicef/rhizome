@@ -227,9 +227,9 @@ module.exports = {
             props.headerText = _.property('short_name')
 
             props.sortValue = function (series, col) {
-                return (col === null) ?
-                    series.name:
-                    RANGE_ORDER[series.values[col].range]
+                return (col === null)
+                  ? series.name
+                  : RANGE_ORDER[series.values[col].range]
             }
 
             var heatmap = React.createElement(Chart, {

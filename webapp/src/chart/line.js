@@ -68,13 +68,13 @@ _.extend(LineChart.prototype, {
       dataColor = _.flow(options.seriesName, dataColorScale)
     }
 
-    var domain = _.isFunction(options.domain) ?
-      options.domain(series):
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.x)
-        .value())
+    var domain = _.isFunction(options.domain)
+      ? options.domain(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.x)
+          .value())
 
     var xScale = d3.time.scale()
       .domain(domain)
@@ -84,13 +84,13 @@ _.extend(LineChart.prototype, {
       .domain(domain)
       .range([30, width])
 
-    var range = _.isFunction(options.range) ?
-      options.range(series):
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.y)
-        .value())
+    var range = _.isFunction(options.range)
+      ? options.range(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.y)
+          .value())
 
     range[0] = Math.min(range[0], 0)
 

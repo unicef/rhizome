@@ -257,14 +257,14 @@ _.extend(ColumnChart.prototype, {
       .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
 
     legend.append('rect')
-      .attr('x', w-15)
+      .attr('x', w - 15)
       .attr('y', -25)
       .attr('width', 10)
       .attr('height', 10)
       .style('fill', fillColor)
 
     legend.append('text')
-      .attr('x', w-20)
+      .attr('x', w - 20)
       .attr('y', -25)
       .attr('dy', '0.85em')
       .style({

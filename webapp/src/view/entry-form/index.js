@@ -197,7 +197,7 @@ module.exports = {
                 if (row.type === 'section-header') {
                     // remove previous section header if no indicators are inlcuded under it
                     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-                        filtered.indicators.splice(filtered.indicators.length-1, 1)
+                        filtered.indicators.splice(filtered.indicators.length - 1, 1)
                     }
                     filtered.indicators.push(row)
                 }
@@ -210,7 +210,7 @@ module.exports = {
                 }
             })
             // remove last row if empty section header
-            if (filtered.indicators[filtered.indicators.length-1].type === 'section-header') {
+            if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
                 filtered.indicators.pop()
             }
 
@@ -387,7 +387,7 @@ module.exports = {
                                     // callback to handle error
                                     cell.withError = function (error) {
                                         console.log(error)
-                                        if (error.msg && error.msg.message) { alert('Error: ' + error.msg.message) }
+                                        if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
                                         cell.hasError = true
                                     }
                                     break
@@ -421,7 +421,7 @@ module.exports = {
             //  // finished fetching data
             //  self.table.loading = false
 
-            //  alert('There was an error loading the data.')
+            //  window.alert('There was an error loading the data.')
 
             // }
 

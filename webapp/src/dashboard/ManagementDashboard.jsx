@@ -56,8 +56,8 @@ var ManagementDashboard = React.createClass({
             d.value = 1 - d.value
           }
           _.filter(d.indicator.bound_json, s => {
-              var tmpMaxVal = Math.round((1 - s.mn_val)*1000)/1000
-              s.mn_val = Math.round((1 - s.mx_val)*1000)/1000
+              var tmpMaxVal = Math.round((1 - s.mn_val) * 1000) / 1000
+              s.mn_val = Math.round((1 - s.mx_val) * 1000) / 1000
               s.mx_val = tmpMaxVal
           })
         }

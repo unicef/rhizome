@@ -179,9 +179,9 @@ _.extend(Heatmap.prototype, {
           'text-anchor': 'start',
           'font-size': options.fontSize,
           'font-weight': function (d) {
-            return (d === sortCol) ?
-              'bold':
-              'normal'
+            return (d === sortCol)
+              ? 'bold'
+              : 'normal'
             }
         })
                 .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
