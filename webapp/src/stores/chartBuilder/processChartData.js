@@ -56,7 +56,7 @@ var tooltipDiv = document.createElement('div') //Vue needs a el to bind to to ho
 document.body.appendChild(tooltipDiv)
 function nullValuesToZero(values) {
   _.each(values, function (value) {
-    if(_.isNull(value.value))
+    if (_.isNull(value.value))
     {
       value.value = 0
     }
@@ -72,13 +72,13 @@ function _columnData(data, groups, groupBy) {
   var baseCampaigns = []
   _.each(columnData, function (series) {
      _.each(series.values, function (value) { //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
-       if(!_.find(baseCampaigns, function (campaign) {return campaign.id==value.campaign.id}))
+       if (!_.find(baseCampaigns, function (campaign) {return campaign.id==value.campaign.id}))
        {
          baseCampaigns.push(value.campaign)
        }
      })
      _.each(series.values, function (val) { //replace all null values with 0, caused d3 rect rendering errors in the chart
-      if(_.isNull(val.value))
+      if (_.isNull(val.value))
       {
         val.value = 0
       }
@@ -87,7 +87,7 @@ function _columnData(data, groups, groupBy) {
   var baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
   _.each(columnData, function (series) {
      _.each(baseCampaigns, function (baseCampaign, index) {
-         if(!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
+         if (!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
          {
            series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
          }
@@ -162,7 +162,7 @@ module.exports = {
     var meltPromise = dataPromise.then(function (data) {
       return melt(data, indicatorArray)
     })
-    if(chartType=="LineChart") {
+    if (chartType=="LineChart") {
      return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
     } else if (chartType=="PieChart") {
      return this.processPieChart(meltPromise, indicators)
@@ -181,7 +181,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null}
       }
-      if(!lower) //set the lower bound from the lowest datapoint value
+      if (!lower) //set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)
@@ -247,7 +247,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null}
       }
-      if(!lower) //set the lower bound from the lowest datapoint value
+      if (!lower) //set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)

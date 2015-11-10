@@ -115,7 +115,7 @@ module.exports = Vue.extend({
         toggleItem: function (item) {
             var self = this
             if (!this.multi) {
-                if(this.selection)
+                if (this.selection)
                 {
                     var keys = _.keys(self.selection)
                     _.each(keys, function (key) {

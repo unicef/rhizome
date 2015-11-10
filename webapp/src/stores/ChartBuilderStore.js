@@ -50,7 +50,7 @@ function seriesObject(d, ind, collection, indicators) {
     }
 }
 var canDisplayChart = function () {
-    if(this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
+    if (this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
     {
       return true
     } else {
@@ -59,12 +59,12 @@ var canDisplayChart = function () {
 }
 var canDisplayChartReason = function () {
     var reason
-    if(this.indicatorsSelected.length === 0)
+    if (this.indicatorsSelected.length === 0)
     {
       reason = "Please select at least one indicator"
-    } else if(!this.campaignSelected.id) {
+    } else if (!this.campaignSelected.id) {
       reason = "Please select a campaign"
-    } else if(this.chartData.length === 0)
+    } else if (this.chartData.length === 0)
     {
       reason = "No data to display"
     } else {
@@ -81,7 +81,7 @@ function _columnData(data, groups, groupBy) {
         .value()
     var largestGroup = []
     _.each(columnData, function (series) {
-       if(series.values.length > largestGroup.length)
+       if (series.values.length > largestGroup.length)
        {
          largestGroup = series.values
        }
@@ -152,7 +152,7 @@ module.exports = Reflux.createStore({
                     var self = this
                     var radios = [{ value: "allTime", title:"All Time"}, { value: "pastYear", title:"Past Year"}, { value: "3Months", title:"Past 3 Months"}, { value: "current", title:"Current Campaign"}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
-                    if(timeRadios.length -1 < this.timeRadioValue)
+                    if (timeRadios.length -1 < this.timeRadioValue)
                     {
                       this.timeRadioValue = 0
                     }
@@ -237,7 +237,7 @@ module.exports = Reflux.createStore({
                 self.data.indicatorList = _(items.objects)
                     .sortBy('title')
                     .value()
-                 if(chartDef)
+                 if (chartDef)
                  {
                    self.applyChartDef(chartDef)
                  }
@@ -354,11 +354,11 @@ module.exports = Reflux.createStore({
        var timeString = JSON.stringify(chartDef.timeRange)
        var timeValue
 
-       if(timeString=='{"months":2}') {
+       if (timeString=='{"months":2}') {
        timeValue = "3Months"
-       } else if(timeString=='{"years":1}') {
+       } else if (timeString=='{"years":1}') {
        timeValue = "pastYear"
-       } else if(timeString=='{"months":0}') {
+       } else if (timeString=='{"months":0}') {
        timeValue = "current"
        } else {
         timeValue = "allTime"
@@ -382,29 +382,29 @@ module.exports = Reflux.createStore({
         var locations
         var locationSelected = this.data.locationSelected
         var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value
-        if(locationRadioValue === "selected")
+        if (locationRadioValue === "selected")
         {
            locations = [locationSelected]
-        } else if(locationRadioValue === "type")
+        } else if (locationRadioValue === "type")
         {
-           if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
+           if (locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
              locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
            } else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})
            }
-        } else if(locationRadioValue === "sublocations")
+        } else if (locationRadioValue === "sublocations")
         {
            locations = _.filter(this._locationIndex, { parent_location_id: locationSelected.id})
         }
         this.data.aggregatedLocations = locations
-        if(this.canFetchChartData())
+        if (this.canFetchChartData())
         {
             this.getChartData()
         }
     },
     canFetchChartData : function () {
-        if(this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
+        if (this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
         {
           return true
         } else {
@@ -414,7 +414,7 @@ module.exports = Reflux.createStore({
     //Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
     getLower:  function (start) {
         var range = this.data.timeRadios()[this.data.timeRadioValue].value
-        if(range=="current") {
+        if (range=="current") {
             return start.clone().startOf('month')
         } else if (range=="3Months") {
             return start.clone().startOf('month').subtract(3, 'month')
@@ -425,7 +425,7 @@ module.exports = Reflux.createStore({
         }
     },
     getChartData: function () {
-        if(!this.data.indicatorsSelected.length)
+        if (!this.data.indicatorsSelected.length)
         {
          return
         }

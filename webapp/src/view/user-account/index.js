@@ -62,7 +62,7 @@ module.exports = {
     methods: {
       addRemoveUserGroup: function (e) {
          var groupId = e.target.getAttribute('data-group-id')
-         if(e.target.checked)
+         if (e.target.checked)
          {
            api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
          } else {
