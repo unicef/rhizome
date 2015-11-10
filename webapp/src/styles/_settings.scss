@@ -210,7 +210,7 @@ $global-radius: 5px;
 
 // We use this as cursors values for enabling the option of having custom cursors in the whole site's stylesheet
 // $cursor-crosshair-value: crosshair;
-// $cursor-default-value: default;
+$cursor-default-value: default;
 // $cursor-pointer-value: pointer;
 // $cursor-help-value: help;
 // $cursor-text-value: text;
@@ -489,7 +489,7 @@ $button-radius: $global-radius;
 
 // We use this to set default opacity and cursor for disabled buttons.
 $button-disabled-opacity: 0.4;
-// $button-disabled-cursor: $cursor-default-value;
+$button-disabled-cursor: $cursor-default-value;
 
 // 06. Button Groups
 // - - - - - - - - - - - - - - - - - - - - - - - - -

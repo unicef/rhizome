@@ -185,8 +185,9 @@ module.exports = React.createClass({
         <LayoutOptions values={LayoutDefaultSettings.values}
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
-        {this.state.store.dashboardTitle.length ?
-          <a href="#" className="cd-button" onClick={DashboardBuilderActions.addDashboard}>Next</a> : null}
+        <a href="#"
+           className={'cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
+           onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>);
     }
     else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
@@ -303,28 +304,32 @@ module.exports = React.createClass({
         {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className="cd-footer">
           <div className="row">
-            <div className="large-2 columns cd-button" onClick={this.newChart}
-                 style={{visibility: (this.state.store.dashboard.layout === 1 && this.state.store.dashboard.charts.length
-                                      ? 'hidden'
-                                      : 'visible')}}>
-              <span>
-                <i className='fa fa-icon fa-fw fa-plus' />
-                   Add Chart
-              </span>
+            <div className="large-2 columns">
+              <button className="cd-button"
+                      onClick={this.newChart}
+                      style={{visibility: (this.state.store.dashboard.layout === 1 && this.state.store.dashboard.charts.length
+                                        ? 'hidden'
+                                        : 'visible')}}>
+                <span> <i className='fa fa-icon fa-fw fa-plus' /> Add Chart </span>
+              </button>
             </div>
             <div className="large-7 columns">
-              <div className="large-2 columns description-text">Description&ensp;:</div>
+              <div className="large-2 columns">
+                <div className="description-text">Description&ensp;:</div>
+              </div>
               <div className="large-5 columns">
                 <TitleInput class="description" initialText={this.state.description}
                             save={this._updateDescription}/>
               </div>
-              <div className="large-5 columns description-text">
-                Changes are saved when you make them.
+              <div className="large-5 columns">
+                <div className="description-text">Changes are saved when you make them.</div>
               </div>
             </div>
-            <a className="large-2 columns cd-button" href='#' onClick={this._deleteDashboard}>
-              <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
-            </a>
+            <div className="large-3 columns">
+              <button className="cd-button float-right" href='#' onClick={this._deleteDashboard}>
+                <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
+              </button>
+            </div>
           </div>
         </div>
       </div>

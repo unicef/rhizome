@@ -29,34 +29,33 @@
 }
 
 .cd-button {
-  width: 50%;
   padding: 10px 64px;
   cursor: pointer;
-  background-color: #344B61;
-  color: #FEFEFE;
+  background-color: $rhz-button-bg-color;
+  color: $rhz-font-color;
   text-transform: uppercase;
   text-align: center;
   font-size: 0.625rem;
-  margin: 20px 10px;
   &:hover {
-    color: #FEFEFE !important;
+    color: $rhz-font-color !important;
     background-color: #426281;
   }
 }
 
 .cd-footer {
+  padding: 20px 10px 0;
   background-color: #F3F3F3;
 
   .description-text {
+    position: relative;
+    top: 10px;
     font-size: 11px;
     text-transform: uppercase;
-    margin: 30px 0;
     text-align: right;
   }
 
   .description {
-    margin: 20px 10px;
-    border: 1px solid #344B61;
+    border: 1px solid $rhz-button-bg-color;
   }
 }
 
