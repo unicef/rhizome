@@ -29,7 +29,6 @@ module.exports = {
         indent: function () {
             return (this.padding * this.level) + 'px'
         }
-
     },
 
     methods: {
@@ -43,7 +42,6 @@ module.exports = {
             // Prevent opening a folder from toggling that item
             e.stopPropagation()
         }
-
     },
 
 }

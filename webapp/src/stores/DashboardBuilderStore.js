@@ -37,7 +37,6 @@ var DashboardBuilderStore = Reflux.createStore({
       this.data.newDashboard = true
       this.data.loaded = true
       this.trigger(this.data)
-
     } else {
       api.get_dashboard({ id: id}, null, {'cache-control': 'no-cache'})
         .then(function (response) {
@@ -106,7 +105,6 @@ var DashboardBuilderStore = Reflux.createStore({
       console.log('add chart error,', res)
       this.trigger(this.data)
     })
-
   },
   onRemoveChart: function (index) {
     var chart = this.data.dashboard.charts.splice(index, 1)[0]

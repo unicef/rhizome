@@ -30,7 +30,6 @@ module.exports = {
 
         // update the stats object when the rows data changes
         this.$watch('rows', this.updateStats, true, true)
-
     },
 
     methods: {
@@ -72,17 +71,13 @@ module.exports = {
                                 stats.byRow[rowIndex].complete ++
                                 stats.byColumn[colIndex].complete ++
                             }
-
                         }
                     }) // end column loop
                 }) // end row loop
-
             }
 
             self.$set('stats', stats)
-
         }
-
     },
 
     filters: {
@@ -113,7 +108,6 @@ module.exports = {
                 return scales.completionClass(this.stats.byColumn[this.$index].complete / this.stats.byColumn[this.$index].total)
             }
         }
-
     },
 
     components: {

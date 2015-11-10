@@ -180,7 +180,6 @@ function datapoint(q) {
 
         fulfill(data)
       })
-
     }, reject)
   })
 }

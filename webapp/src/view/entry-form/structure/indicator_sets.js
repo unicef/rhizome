@@ -11,7 +11,6 @@ module.exports = [
                 { 'id': 32 },
                 { 'id': 31 }
             ]
-
         },
 
         {
@@ -30,7 +29,6 @@ module.exports = [
                 { 'id': 50, 'name': 'Number of caregivers in HRD who know times needed to visit RI site before 1 yo' },
 
             ]
-
         },
 
         {
@@ -118,7 +116,6 @@ module.exports = [
                 { 'id': 474, 'name': 'District passed microplan review (1=yes, 0=no)' },
 
             ]
-
         }
 
 ]

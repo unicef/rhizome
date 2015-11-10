@@ -69,7 +69,6 @@ module.exports = {
 
             return pages
         }
-
     },
 
     methods: {

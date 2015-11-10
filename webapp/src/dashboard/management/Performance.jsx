@@ -129,7 +129,6 @@ var Performance = React.createClass({
                 x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
                 xFormat : d => moment(d).format('MMM YYYY'),
                 yFormat : d3.format(',.1%')
-
               }}/>
           </section>
 

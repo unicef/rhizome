@@ -20,7 +20,6 @@ module.exports = {
     created: function () {
         // set previous value
         this.previousValue = this.value || null
-
     },
 
     attached: function () {
@@ -96,7 +95,6 @@ module.exports = {
                             // done saving
                             self.previousValue = self.value
                             self.isSaving = false
-
                         }, function (error) {
                             // or rejected
                             if (self.withError) {
@@ -112,18 +110,13 @@ module.exports = {
                             // done saving do not update value
                             self.isSaving = false
                         })
-
                     }
-
                 }
 
                 // toggle editing mode
                 self.toggleEditing(false)
-
             }
-
         }
-
     },
 
     computed: {
@@ -149,7 +142,6 @@ module.exports = {
                 return this.value
             }
         }
-
     },
 
     filters: {
@@ -175,11 +167,8 @@ module.exports = {
 
                 // update value
                 return val
-
             }
-
         }
-
     }
 
 }

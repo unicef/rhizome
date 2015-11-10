@@ -48,7 +48,6 @@ module.exports = React.createClass({
     this.listenTo(DashboardBuilderStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
-
   },
   getInitialState: function () {
     return {

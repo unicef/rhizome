@@ -52,7 +52,6 @@ module.exports = Reflux.createStore({
                         self.data.loading = false
                         self.trigger(self.data)
                     }))
-
             } 
             // creating new group
             else {
@@ -60,7 +59,6 @@ module.exports = Reflux.createStore({
                 self.trigger(self.data)
             }
         })
-
     },
     onAddIndicatorSelection: function (value) {
         var self = this

@@ -454,6 +454,5 @@ module.exports = Reflux.createStore({
           self.data.chartData = chart.data
           self.trigger(self.data)
         })
-
     }
 })

@@ -32,7 +32,6 @@ module.exports = {
             campaigns: [],
             campaign_id: null,
             campaign_office_id: null
-
         }
     },
 
@@ -43,14 +42,12 @@ module.exports = {
             d.value = d.id
             d.text = d.title
         })
-
     },
 
     ready: function () {
         this.$watch('campaign_id', this.refreshlocationsDropdown)
 
         this.load()
-
     },
 
     attached: function () {
@@ -73,7 +70,6 @@ module.exports = {
         hasSelection: function () {
             return this.locations.length > 0
         }
-
     },
 
     methods: {
@@ -146,7 +142,6 @@ module.exports = {
                     self.filterIndicatorSets()
                     self.refreshlocationsDropdown()
                 })
-
         },
 
         refreshlocationsDropdown: function () {
@@ -177,7 +172,6 @@ module.exports = {
 
             // set office id to track when the office changes
             self.$data.campaign_office_id = campaign.office_id
-
         },
 
         // filter list of indicator sets to exclude sets the user cannot edit at all
@@ -406,13 +400,11 @@ module.exports = {
                                     cell.classes = 'label'
                                     cell.width = 300
                                     break
-
                             }
 
                             // add cell to row
                             row.push(cell)
                         })
-
                     } // end normal indicator row
 
                     // add row to main array
@@ -421,7 +413,6 @@ module.exports = {
 
                 self.table.rows = rows
                 self.table.columns = columns
-
             }
 
             // var withError = function (err) {
@@ -447,6 +438,5 @@ module.exports = {
         hideTooltip: function () {
             this.$broadcast('tooltip-hide')
         }
-
     }
 }

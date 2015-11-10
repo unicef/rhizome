@@ -239,7 +239,6 @@ var Dashboard = React.createClass({
         date: [ctx.params.year, ctx.params.month].join('-')
       })
     })
-
   },
 
   render: function () {

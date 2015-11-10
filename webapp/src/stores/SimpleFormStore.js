@@ -70,7 +70,6 @@ var SimpleFormStore = Reflux.createStore({
   onAddIndicatorCalc: function (data) {
     console.log('onAddIndicatorCalc ( from the simpleform store )')
     SimpleFormActions.initIndicatorToCalc(indicator_id)
-
   },
 
   onAddTagToIndicator: function (indicator_id, tag_id) {

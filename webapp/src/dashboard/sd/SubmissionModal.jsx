@@ -64,7 +64,6 @@ var SubmissionModal = React.createClass({
                 {submission_data}
             </Modal>
         </div>
-
     },
 })
 
