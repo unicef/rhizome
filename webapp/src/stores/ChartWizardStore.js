@@ -207,7 +207,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
 
-    if(value === 'ChoroplethMap'){
+    if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
 

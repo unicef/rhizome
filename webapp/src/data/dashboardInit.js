@@ -214,8 +214,7 @@ function dashboardInit(dashboard, data, location, campaign, locationList, campai
 
     if(chart.locationValue){
         var chartLocation = locationsById[chart.locationValue];
-        if(chartLocation != null)
-          location = chartLocation;
+        if (chartLocation) location = chartLocation;
     }
     else{
       location = selectedLocation;
@@ -223,13 +222,12 @@ function dashboardInit(dashboard, data, location, campaign, locationList, campai
 
     if(chart.campaignValue){
         var chartCampaign = campaignsById[chart.campaignValue];
-        if(chartCampaign != null)
-          campaign = chartCampaign;
+        if (chartCampaign) campaign = chartCampaign;
     }
     else{
       campaign = selectedCampaign;
     }
-
+    
     var datumInChart = _.partial(inChart, chart, campaign, location);
     var chartData    = _.filter(data, datumInChart);
     section[chartName] = _.get(process, chart.type, _.constant(chartData))(
