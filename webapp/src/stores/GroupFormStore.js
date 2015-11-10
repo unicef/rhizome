@@ -33,8 +33,8 @@ module.exports = Reflux.createStore({
 
             // updating existing group? need to get more data
             if (self.data.groupId) {
-                Promise.all([ 
-                        api.groups(), 
+                Promise.all([
+                        api.groups(),
                         api.group_permissions({ group: self.data.groupId }, null, { 'cache-control': 'no-cache' })
                     ])
                     .then(_.spread(function (groups, groupPermissions) {
@@ -52,9 +52,7 @@ module.exports = Reflux.createStore({
                         self.data.loading = false
                         self.trigger(self.data)
                     }))
-            } 
-            // creating new group
-            else {
+            } else { // creating new group
                 self.data.loading = false
                 self.trigger(self.data)
             }
@@ -65,7 +63,7 @@ module.exports = Reflux.createStore({
         api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value })
             .then(function (response) {
                 self.data.indicatorsSelected.push(self._indicatorIndex[value])
-                self.trigger(self.data)             
+                self.trigger(self.data)
             })
     },
     onRemoveIndicatorSelection: function (value) {
@@ -73,7 +71,7 @@ module.exports = Reflux.createStore({
         api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value, id: '' })
             .then(function (response) {
                 _.remove(self.data.indicatorsSelected, { id: value })
-                self.trigger(self.data)             
+                self.trigger(self.data)
             })
     },
     onUpdateName: function (name) {

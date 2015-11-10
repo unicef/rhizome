@@ -148,15 +148,11 @@ module.exports = {
         // validate value
         validator: {
             write: function (val) {
-                // string
-                if (_.isString(val)) {
+                if (_.isString(val)) { // string
                     if (val.length === 0) { val = null }
-                }
-                // number
-                else if (_.isNumber(val)) {
-                }
-                // NaN
-                else if (_.isNaN(val)) {
+                } else if (_.isNumber(val)) { // number
+
+                } else if (_.isNaN(val)) { // NaN
                     val = null
                 }
 

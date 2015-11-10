@@ -193,16 +193,13 @@ module.exports = {
             var filtered = _.clone(indicatorSet)
             filtered.indicators = []
             _.each(indicatorSet.indicators, function (row) {
-                // header
-                if (row.type === 'section-header') {
+                if (row.type === 'section-header') { // header
                     // remove previous section header if no indicators are inlcuded under it
                     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
                         filtered.indicators.splice(filtered.indicators.length - 1, 1)
                     }
                     filtered.indicators.push(row)
-                }
-                // indicator
-                else {
+                } else { // indicator
                     // filter out indicators the user cannot edit
                     if (row.id && self.$data.indicators[row.id] !== undefined) {
                         filtered.indicators.push(row)
@@ -256,9 +253,11 @@ module.exports = {
                     var ra = self.$data.locationData[a]
                     var rb = self.$data.locationData[b]
                     // sort by location type first
-                    if (ra.location_type_id !== rb.location_type_id) { return ra.location_type_id - rb.location_type_id }
-                    // then name (alpha)
-                    else { return ra.name > rb.name ? 1 : -1 }
+                    if (ra.location_type_id !== rb.location_type_id) {
+                      return ra.location_type_id - rb.location_type_id
+                    } else { // then name (alpha)
+                      return ra.name > rb.name ? 1 : -1
+                    }
                 })
             }
 
@@ -313,8 +312,7 @@ module.exports = {
                 _.each(indicatorSet.indicators, function (rowInfo) {
                     var row = []
 
-                    // section header row
-                    if (rowInfo.type && rowInfo.type === 'section-header') {
+                    if (rowInfo.type && rowInfo.type === 'section-header') { // section header row
                         row.push({
                             isEditable: false,
                             type: 'label',
@@ -322,9 +320,7 @@ module.exports = {
                             class: 'section-header',
                             colspan: columns.length
                         })
-                    }
-                    // normal indicator row
-                    else {
+                    } else { // normal indicator row
                         var indicator_id = rowInfo.id
 
                         // add columns

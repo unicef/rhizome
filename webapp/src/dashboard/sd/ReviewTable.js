@@ -72,8 +72,7 @@ var ReviewTable = React.createClass({
         })
     },
 
-    componentWillReceiveProps: function (nextProps) {
-    },
+    componentWillReceiveProps: function (nextProps) {},
 
     componentWillUpdate: function (nextProps, nextState) {
         // FIXME -> needs cleanup

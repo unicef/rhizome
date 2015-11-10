@@ -243,8 +243,7 @@ _.extend(BulletChart.prototype, {
     compareValue.exit().remove()
   },
 
-  resize: function (el) {
-  }
+  resize: function (el) {}
 })
 
 module.exports = BulletChart

@@ -100,8 +100,7 @@ var SimpleFormStore = Reflux.createStore({
     })
   },
 
-  deleteTagFromIndicator: function (data) {
-  },
+  deleteTagFromIndicator: function (data) {},
 
   onRefreshTags: function (indicator_id) {
     var self = this

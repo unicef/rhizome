@@ -125,16 +125,14 @@ var DocForm = React.createClass({
                     </li>
                 </ul>
             </div>
-        }
-        else {
+        } else {
             fileConfigForm = ''
         }
 
         var refreshBtn
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
             refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
-        }
-        else {
+        } else {
             refreshBtn = ''
         }
 
@@ -143,8 +141,7 @@ var DocForm = React.createClass({
             var next_link = '/datapoints/source-data/Nigeria/2015/06/viewraw/' + this.state.created_doc_id
             // FIXME ^^
             reviewBtn = <a href={next_link} className='button'> Review Upload</a>
-        }
-        else {
+        } else {
             reviewBtn = ''
         }
 

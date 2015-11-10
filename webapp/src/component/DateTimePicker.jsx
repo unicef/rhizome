@@ -23,8 +23,7 @@ var DateRangePicker = React.createClass({
     handleDateChange: function (type, date, dateStr) {
         if (type === 'start') {
             this.setState({start: date})
-        }
-        else {
+        } else {
             this.setState({end: date})
         }
         this.props.sendValue(type, dateStr)

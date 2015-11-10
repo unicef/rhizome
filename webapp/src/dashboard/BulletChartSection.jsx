@@ -99,11 +99,9 @@ function _valueText (value, targets) {
   if (!_.isNull(value) && _.isFinite(value)) {
     if (value < threshold[0]) {
       return target[0]
-    }
-    else if (value >= threshold[0] && value < threshold[1]) {
+    } else if (value >= threshold[0] && value < threshold[1]) {
       return target[1]
-    }
-    else {
+    } else {
       return target[2]
     }
   }

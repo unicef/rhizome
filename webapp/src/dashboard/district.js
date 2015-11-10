@@ -83,8 +83,7 @@ module.exports = {
     },
 
     methods: {
-        error: function () {
-        },
+        error: function () {},
 
         load: function () {
             this.loading = true

@@ -193,8 +193,7 @@ module.exports = React.createClass({
            className={'cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
            onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>)
-    }
-    else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
+    } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
       var style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -347,15 +346,13 @@ module.exports = React.createClass({
     )
     if (!this.state.store.loaded) {
       return (<div>loading</div>)
-    }
-    else if (this.state.chartBuilderActive) {
+    } else if (this.state.chartBuilderActive) {
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex])
       return (
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
                      cancel={this.cancelEditChart}/>
       )
-    }
-    else {
+    } else {
       return dashboardBuilderContainer
     }
   }

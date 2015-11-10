@@ -49,15 +49,12 @@ function emptyResponsePoint (path, mode, defaultVersion, useDefaults) {
     var versionedPath = '/v' + version + path
     var req = prefix(request(mode, versionedPath))
 
-    // form GET request
     if (mode === 'GET' || mode === 'DELETE') {
       var q = useDefaults ? _.defaults({}, query, defaults) : query
       req.query(q)
         .set(headers)
         .send()
-    }
-    // form POST request
-    else if (mode === 'POST') {
+    } else if (mode === 'POST') {
       var csrftoken = getCookie('csrftoken')
       req.query(defaults)
         .set('X-CSRFToken', csrftoken)
@@ -108,15 +105,12 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
     var versionedPath = '/v' + version + path
     var req = prefix(request(mode, versionedPath))
 
-    // form GET request
     if (mode === 'GET' || mode === 'DELETE') {
       var q = useDefaults ? _.defaults({}, query, defaults) : query
       req.query(q)
         .set(headers)
         .send()
-    }
-    // form POST request
-    else if (mode === 'POST') {
+    } else if (mode === 'POST') {
       var csrftoken = getCookie('csrftoken')
       req.query(defaults)
         .set('X-CSRFToken', csrftoken)

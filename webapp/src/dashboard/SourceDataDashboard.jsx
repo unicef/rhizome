@@ -176,8 +176,7 @@ var SourceDataDashboard = React.createClass({
         if (doc_tab === 'doc_index') {
             docForm = <div><DocForm></DocForm></div>
             review_breakdown = ''
-        }
-        else {
+        } else {
             docForm = ''
             review_breakdown = <DocOverview
                 key={table_key + 'breakdown'}

@@ -5,8 +5,7 @@ var api = require('data/api')
 var Reflux = require('reflux')
 
 var MapFormStore = Reflux.createStore({
-    init: function () {
-    },
+    init: function () {},
 
     getSourceMap: function (id) {
         return api.get_source_object_map(id, null, {'cache-control': 'no-cache'})
