@@ -16,10 +16,7 @@ var GeoStore = Reflux.createStore({
 
   onFetch : function (location) {
     this.location = location;
-    Promise.all([
-        api.geo({ parent_location__in : location.id }),
-      ])
-      .then(this.loadGeography);
+    api.geo({ parent_location__in : location.id }).then(this.loadGeography);
   },
 
   loadGeography : function (response) {
