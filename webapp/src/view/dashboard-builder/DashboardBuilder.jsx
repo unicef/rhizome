@@ -13,10 +13,10 @@ var DataActions = require('actions/DataActions')
 var DataStore = require('stores/DataStore')
 
 var DashboardBuilderActions = require('actions/DashboardBuilderActions')
-var DashboardBuilderStore = require("stores/DashboardBuilderStore")
+var DashboardBuilderStore = require('stores/DashboardBuilderStore')
 
 var DashboardActions = require('actions/DashboardActions')
-var DashboardStore = require("stores/DashboardStore")
+var DashboardStore = require('stores/DashboardStore')
 
 var IndicatorStore = require('stores/IndicatorStore')
 var GeoStore = require('stores/GeoStore')
