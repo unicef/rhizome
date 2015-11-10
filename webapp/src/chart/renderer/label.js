@@ -1,38 +1,38 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 
 /**
  * @constructor
  */
 function label() {
-    var cls             = ['label']
-    var height          = 1
-    var text            = function (d) { return d.text }
+    var cls = ['label']
+    var height = 1
+    var text = function (d) { return d.text }
     var transitionSpeed = 300
-    var width           = 1
-    var x               = function (d) { return d.x }
-    var y               = function (d) { return d.y }
-    var align           = true
-  var scale           = d3.scale.category20b()
+    var width = 1
+    var x = function (d) { return d.x }
+    var y = function (d) { return d.y }
+    var align = true
+  var scale = d3.scale.category20b()
 
     /**
      * @private
      * Find the center of a collection of bounding boxes.
      */
     function findBounds(data) {
-        var top    = Infinity
-        var right  = -Infinity
+        var top = Infinity
+        var right = -Infinity
         var bottom = -Infinity
-        var left   = Infinity
+        var left = Infinity
 
         for (var i = data.length - 1; i >= 0; i--) {
-            var b  = data[i]
+            var b = data[i]
 
-            top    = Math.min(b.y - b._height, top)
-            right  = Math.max(b.x + b._width, right)
+            top = Math.min(b.y - b._height, top)
+            right = Math.max(b.x + b._width, right)
             bottom = Math.max(b.y, bottom)
-            left   = Math.min(b.x, left)
+            left = Math.min(b.x, left)
         }
 
         return {
@@ -61,16 +61,16 @@ function label() {
             return
         }
 
-        var data   = new Array(l)
+        var data = new Array(l)
 
         // Retrive all of the bounding boxes for each element in the selection.
         // Because D3 selections can be multi-dimensional, we use the built-in
         // for-each loop instead of a map call to ensure that we get everything
         selection.each(function (d, i) {
-            var bbox  = this.getBoundingClientRect()
+            var bbox = this.getBoundingClientRect()
             d._height = bbox.height
-            d._width  = bbox.width
-            data[i]   = d
+            d._width = bbox.width
+            data[i] = d
         })
 
         // We'll need these later to re-center the labels as close as possible to
@@ -110,7 +110,7 @@ function label() {
 
         // Recenter the labels
         var newBounds = findBounds(data)
-        var delta  = newBounds.cy - origBounds.cy
+        var delta = newBounds.cy - origBounds.cy
 
         if (top + delta < 0) {
             delta = -newBounds.top
@@ -146,7 +146,7 @@ function label() {
 
     function calcAnchor(d, el) {
         var anchor = 'start'
-        var bbox   = el.getBBox()
+        var bbox = el.getBBox()
 
         if (d.x + bbox.width > width) {
             anchor = 'end'
@@ -184,7 +184,7 @@ function label() {
 
         // Redraw everything with new positions to fix overlaps
         var anchor = textAnchor(labels)
-        var dx     = anchor === 'start' ? '4' : '-4'
+        var dx = anchor === 'start' ? '4' : '-4'
 
         labels
             .transition()

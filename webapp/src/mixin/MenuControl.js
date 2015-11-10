@@ -1,11 +1,11 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 var Layer = require('react-layer')
 
 var Menu = require('component/Menu.jsx')
-var dom  = require('util/dom')
+var dom = require('util/dom')
 
 var MenuControl = {
     getDefaultProps : function () {
@@ -23,9 +23,9 @@ var MenuControl = {
 
     componentDidUpdate : function () {
         if (this.state.open) {
-            var items  = this.props.children
+            var items = this.props.children
             var offset = dom.documentOffset(React.findDOMNode(this))
-            var props  = _.omit(this.props, 'text', 'icon', 'size')
+            var props = _.omit(this.props, 'text', 'icon', 'size')
 
             var x = (offset.right + offset.left) / 2
 

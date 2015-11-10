@@ -1,6 +1,6 @@
 'use strict'
 
-var _      = require('lodash')
+var _ = require('lodash')
 var moment = require('moment')
 
 /**
@@ -40,9 +40,9 @@ function childOf(parent, child) {
 }
 
 function inChart(chart, campaign, location, datum) {
-  var dt       = moment(datum.campaign.start_date).valueOf()
-  var end      = moment(campaign.start_date, 'YYYY-MM-DD')
-  var start    = -Infinity
+  var dt = moment(datum.campaign.start_date).valueOf()
+  var end = moment(campaign.start_date, 'YYYY-MM-DD')
+  var start = -Infinity
 
   if (!_.isNull(_.get(chart, 'timeRange', null))) {
     start = end.clone().subtract(chart.timeRange).valueOf()
@@ -173,7 +173,7 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
-  var locationsById    = _.indexBy(locationList, 'id')
+  var locationsById = _.indexBy(locationList, 'id')
 
   // Merge location metadata into the properties object of each geographic feature
   _.each(features, function (f) {
@@ -201,14 +201,14 @@ function dashboardInit(dashboard, data, location, campaign, locationList, indica
   // that can be used by that chart
   _.each(dashboard.charts, (chart, i) => {
     var sectionName = _.get(chart, 'section', '__none__')
-    var chartName   = _.get(chart, 'id', _.camelCase(chart.title))
-    var section     = _.get(results, sectionName, {})
-    var locationProp  = chart.location === 'sublocations' ?
+    var chartName = _.get(chart, 'id', _.camelCase(chart.title))
+    var section = _.get(results, sectionName, {})
+    var locationProp = chart.location === 'sublocations' ?
       'location.parent_location_id' :
       'location.id'
 
     var datumInChart = _.partial(inChart, chart, campaign, location)
-    var chartData    = _.filter(data, datumInChart)
+    var chartData = _.filter(data, datumInChart)
     section[chartName] = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,

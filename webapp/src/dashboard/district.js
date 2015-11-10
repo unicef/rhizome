@@ -1,13 +1,13 @@
 /* global window */
 'use strict'
 
-var _      = require('lodash')
-var d3     = require('d3')
+var _ = require('lodash')
+var d3 = require('d3')
 var moment = require('moment')
-var page   = require('page')
-var React  = require('react')
+var page = require('page')
+var React = require('react')
 
-var api  = require('data/api')
+var api = require('data/api')
 var util = require('util/data')
 
 var Chart = require('component/Chart.jsx')
@@ -142,7 +142,7 @@ module.exports = {
 
                     var series = _.map(data[1].objects, function (d) {
                         var dataIdx = _.indexBy(d.indicators, 'indicator')
-                        var name    = d.location
+                        var name = d.location
 
                         if (self.locations[name]) {
                             name = self.locations[name]
@@ -181,13 +181,13 @@ module.exports = {
                     })
 
                     self.columns = columns
-                    self.series  = series
+                    self.series = series
                 }, this.error)
         },
 
         render : function () {
             var valueDefined = _.partial(util.defined, _, function (d) { return d.value })
-            var notEmpty     = _.partial(_.some, _, valueDefined)
+            var notEmpty = _.partial(_.some, _, valueDefined)
 
             var visible = _(this.series)
                 .pluck('values')
@@ -215,16 +215,16 @@ module.exports = {
                     .domain(['bad', 'okay', 'ok', 'good'])
                     .range(['#AF373E', '#959595', '#959595','#2B8CBE'])
 
-            props.cellSize         = 36
-            props.fontSize         = 14
-            props.onMouseOver      = this.showTooltip
-            props.onMouseOut       = this.hideTooltip
-            props.onClick          = this.navigate
-            props.onRowClick       = this.navigate
+            props.cellSize = 36
+            props.fontSize = 14
+            props.onMouseOver = this.showTooltip
+            props.onMouseOut = this.hideTooltip
+            props.onClick = this.navigate
+            props.onRowClick = this.navigate
             props.onColumnHeadOver = this.indicatorOver
-            props.onColumnHeadOut  = this.indicatorOut
-            props.value            = _.property('range')
-            props.headerText       = _.property('short_name')
+            props.onColumnHeadOut = this.indicatorOut
+            props.value = _.property('range')
+            props.headerText = _.property('short_name')
 
             props.sortValue = function (series, col) {
                 return (col === null) ?
@@ -242,12 +242,12 @@ module.exports = {
         },
 
         showTooltip : function (d) {
-            var evt        = d3.event
-            var val        = d.value
+            var evt = d3.event
+            var val = d.value
             var indicators = _.indexBy(this.columns, 'id')
-            var histogram  = d3.layout.histogram()
-            var width      = 120 * 1.618
-            var height     = 120
+            var histogram = d3.layout.histogram()
+            var width = 120 * 1.618
+            var height = 120
 
             var re = /(.+)-(\d+)/
             var match = re.exec(d.id)

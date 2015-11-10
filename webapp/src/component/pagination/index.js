@@ -44,7 +44,7 @@ module.exports = {
             }
 
             // Start with page 2 because page 1 is always shown.
-            var page  = Math.max(2, this.current - this.window_size)
+            var page = Math.max(2, this.current - this.window_size)
             pages[0] = { number: 1 }
 
             if (page > 2) {

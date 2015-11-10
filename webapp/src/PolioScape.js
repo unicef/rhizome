@@ -3,12 +3,12 @@
 var React = require('react')
 var Vue = require('vue')
 
-var LandingPage      = require('view/LandingPage.jsx')
-var DashboardNav    = require('component/DashboardNav.jsx')
+var LandingPage = require('view/LandingPage.jsx')
+var DashboardNav = require('component/DashboardNav.jsx')
 var DashboardList = require('view/dashboard-list/DashboardList.jsx')
-var Navigation       = require('component/Navigation.jsx')
-var AdminApp         = require('./ufadmin')
-var CampaignsPage         = require('./ufadmin/CampaignsPage.js')
+var Navigation = require('component/Navigation.jsx')
+var AdminApp = require('./ufadmin')
+var CampaignsPage = require('./ufadmin/CampaignsPage.js')
 var GroupForm = require('view/group-form/GroupForm.jsx')
 var HomepageChartsView = require('view/HomepageChartsView.jsx')
 

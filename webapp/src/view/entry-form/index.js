@@ -1,9 +1,9 @@
 'use strict'
 
-var _        = require('lodash')
-var d3       = require('d3')
+var _ = require('lodash')
+var d3 = require('d3')
 
-var api      = require('../../data/api')
+var api = require('../../data/api')
 var Dropdown = require('../../component/dropdown')
 var flattenChildren = require('../../data/transform/flattenChildren')
 var treeify = require('../../data/transform/treeify')

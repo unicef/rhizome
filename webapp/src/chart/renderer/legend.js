@@ -5,11 +5,11 @@ var d3 = require('d3')
 
 function legend() {
     var _clickHandler = null
-    var _filled       = function () { return true }
-    var _interactive  = false
-    var _padding      = 5
-    var _scale        = d3.scale.category20b()
-    var _size         = 7
+    var _filled = function () { return true }
+    var _interactive = false
+    var _padding = 5
+    var _scale = d3.scale.category20b()
+    var _size = 7
 
     function fill(d, i) {
         if (!_interactive || _filled(d, i)) {
@@ -25,7 +25,7 @@ function legend() {
 
     function chart(selection) {
         selection.each(function () {
-            var g      = d3.select(this)
+            var g = d3.select(this)
             var series = g.selectAll('.series')
                 .data(_scale && _scale.domain ? _scale.domain() : [])
 

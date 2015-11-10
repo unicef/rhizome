@@ -1,6 +1,6 @@
-var _      = require('lodash')
+var _ = require('lodash')
 var moment = require('moment')
-var api    = require('../api')
+var api = require('../api')
 
 function update(campaign, obj) {
     'use strict'
@@ -9,7 +9,7 @@ function update(campaign, obj) {
 
     campaign.created_at = moment(obj.created_at).toDate()
     campaign.start_date = moment(obj.start_date, 'YYYY-MM-DD').toDate()
-    campaign.end_date   = moment(obj.end_date, 'YYYY-MM-DD').toDate()
+    campaign.end_date = moment(obj.end_date, 'YYYY-MM-DD').toDate()
 
     return campaign
 }

@@ -22,8 +22,8 @@ module.exports = function add(ids) {
         var collection = []
 
         for (var i = data.length - 1 i >= 0 i--) {
-            var value      = 0
-            var o          = data[i]
+            var value = 0
+            var o = data[i]
             var indicators = _.indexBy(o.indicators, 'indicator')
 
             for (var j = ids.length - 1 j >= 0 j--) {

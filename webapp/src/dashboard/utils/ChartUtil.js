@@ -49,15 +49,15 @@ function generateMissedChildrenChartData(original) {
 }
 
 function preparePolioCasesData(original) {
-  var campaign   = original.campaign
-  var year       = ''
-  var month      = ''
+  var campaign = original.campaign
+  var year = ''
+  var month = ''
   var totalCases = null
-  var newCases   = null
+  var newCases = null
 
   if (campaign) {
     var m = moment(campaign.start_date, 'YYYY-MM-DD')
-    year  = m.format('YYYY')
+    year = m.format('YYYY')
     month = m.format('MMM')
 
     // Sum all of the reported Polio cases for the year

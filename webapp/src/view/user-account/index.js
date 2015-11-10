@@ -1,5 +1,5 @@
 'use strict'
-var Vue  = require('vue')
+var Vue = require('vue')
 var _ = require('lodash')
 var api = require('../../data/api')
 var treeify = require('../../data/transform/treeify')

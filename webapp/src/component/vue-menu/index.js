@@ -2,7 +2,7 @@
 
 'use strict'
 
-var _   = require('lodash')
+var _ = require('lodash')
 var Vue = require('vue')
 
 var dom = require('util/dom')
@@ -63,7 +63,7 @@ module.exports = {
                 return this.items
             }
 
-            var items   = []
+            var items = []
             var pattern = this.pattern
 
             _.forEach(this.items, function (item) {
@@ -91,7 +91,7 @@ module.exports = {
         },
 
         onClick : function () {
-            this.open    = false
+            this.open = false
             this.pattern = ''
         },
 
@@ -100,31 +100,31 @@ module.exports = {
                 return
             }
 
-            var el     = dom.dimensions(this.$el)
-            var menu   = dom.dimensions(this.$$.menu)
-            var items  = dom.dimensions(this.$$.itemList)
+            var el = dom.dimensions(this.$el)
+            var menu = dom.dimensions(this.$$.menu)
+            var items = dom.dimensions(this.$$.itemList)
             var offset = dom.viewportOffset(this.$el)
 
             this.maxHeight = window.innerHeight - offset.top - (menu.height - items.height)
 
             var rightEdge = offset.left + (el.width / 2) + (menu.width / 2)
-            var leftEdge  = offset.left + (el.width / 2) - (menu.width / 2)
+            var leftEdge = offset.left + (el.width / 2) - (menu.width / 2)
 
             if (menu.width > window.innerWidth) {
                 this.orientation = 'left'
-                this.marginLeft  = 0
+                this.marginLeft = 0
             } else if (el.width >= menu.width) {
                 this.orientation = 'center'
-                this.marginLeft  = -menu.width / 2
+                this.marginLeft = -menu.width / 2
             } else if (leftEdge < 0) {
                 this.orientation = 'left'
-                this.marginLeft  = 0
+                this.marginLeft = 0
             } else if (rightEdge > window.innerWidth) {
                 this.orientation = 'right'
-                this.marginLeft  = 0
+                this.marginLeft = 0
             } else {
                 this.orientation = 'center'
-                this.marginLeft  = -menu.width / 2
+                this.marginLeft = -menu.width / 2
             }
         }
     },

@@ -1,10 +1,10 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 
-var React   = require('react')
-var Layer   = require('react-layer')
+var React = require('react')
+var Layer = require('react-layer')
 var Tooltip = require('component/Tooltip.jsx')
 
 var palette = require('colors')
@@ -35,12 +35,12 @@ _.extend(ScatterPlot.prototype, {
     update : function (data, options) {
     var self = this
 
-        options    = _.assign(this._options, options)
+        options = _.assign(this._options, options)
         var margin = options.margin
 
         var svg = this._svg
-        var w   = this._width - margin.left - margin.right
-        var h   = this._height - margin.top - margin.bottom
+        var w = this._width - margin.left - margin.right
+        var h = this._height - margin.top - margin.bottom
 
         var domain = _.isFunction(options.domain) ?
             options.domain(data) :

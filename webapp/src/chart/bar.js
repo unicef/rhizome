@@ -1,6 +1,6 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 var React = require('react')
 var Layer = require('react-layer')
@@ -9,8 +9,8 @@ var ColumnChart = require('./column')
 var Tooltip = require('component/Tooltip.jsx')
 
 var browser = require('util/browser')
-var color   = require('util/color')
-var legend  = require('chart/renderer/legend')
+var color = require('util/color')
+var legend = require('chart/renderer/legend')
 
 var defaults = {
     barHeight   : 14,
@@ -40,7 +40,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     update : function (data, options) {
         var options = _.assign(this._options, options)
-        var margin  = options.margin
+        var margin = options.margin
 
         var l = _(data).map(options.values).map('length').max()
         var h = Math.max(options.barHeight,
@@ -48,7 +48,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         var w = this._width - margin.left - margin.right
 
         var sortIdx = 0
-        var sortBy  = this.sortBy
+        var sortBy = this.sortBy
 
         if (sortBy) {
             sortIdx = _.findIndex(data, function (d) {
@@ -75,7 +75,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
             .y(options.x)
             .out(function (d, y0, y) {
                 d.x0 = y0
-                d.x  = y
+                d.x = y
             })
 
         var stacked = stack(_.cloneDeep(data))
@@ -102,7 +102,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
         var width = function (d) {
             var x0 = d.x0
-            var x  = d.x
+            var x = d.x
 
             return xScale(x0 + x) - xScale(x0)
         }
@@ -152,7 +152,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
                 'y'     : margin.top
             })
 
-        var g      = svg.select('.data').datum(data)
+        var g = svg.select('.data').datum(data)
         var series = g.selectAll('.bar').data(stacked)
 
         series.enter().append('g')

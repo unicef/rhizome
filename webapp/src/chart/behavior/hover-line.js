@@ -1,25 +1,25 @@
 'use strict'
 
-var _     = require('lodash')
-var d3    = require('d3')
+var _ = require('lodash')
+var d3 = require('d3')
 
 var label = require('../renderer/label')
 
 function hoverLine() {
     var datapoints = []
-    var diff       = function (a, b) { return a - b }
-    var height     = 1
+    var diff = function (a, b) { return a - b }
+    var height = 1
     var seriesName = null
-    var _sort      = false
-    var top        = 0
-    var width      = 1
-    var x          = function (d) { return d.x }
-    var xFormat    = String
-    var xScale     = d3.scale.linear()
-    var y          = function (d) { return d.y }
-    var yFormat    = String
-    var yScale     = d3.scale.linear()
-    var _value     = _.property('value')
+    var _sort = false
+    var top = 0
+    var width = 1
+    var x = function (d) { return d.x }
+    var xFormat = String
+    var xScale = d3.scale.linear()
+    var y = function (d) { return d.y }
+    var yFormat = String
+    var yScale = d3.scale.linear()
+    var _value = _.property('value')
   var colorRange = "#000000"
 
     // Use this to keep track of what value we're currently hovering over so we
@@ -180,8 +180,8 @@ function hoverLine() {
             .value()
 
         var right = d3.bisect(range, cursor)
-        var left  = right - 1
-        var data  = []
+        var left = right - 1
+        var data = []
 
         if (cursor >= 0 || cursor <= width) {
             if (left < 0) {
@@ -189,8 +189,8 @@ function hoverLine() {
             } else if (right >= range.length) {
                 data[0] = range[left]
             } else {
-                var r            = range[right]
-                var l            = range[left]
+                var r = range[right]
+                var l = range[left]
                 var closeToRight = (diff(cursor, l) / diff(r, l) > 0.5)
 
                 data[0] = closeToRight ? range[right] : range[left]
@@ -203,7 +203,7 @@ function hoverLine() {
 
         _currentTarget = data[0]
 
-        var svg  = d3.select(this)
+        var svg = d3.select(this)
         var line = svg.select('.annotation').selectAll('line')
             .data(data)
 
@@ -324,8 +324,8 @@ function hoverLine() {
 
             // Determine the label orientation based on the bounding box. We prefer
             // left-aligned, but if that gets cut off, we will right-align the text
-            // var box    = this.getBBox()
-            // var pos    = xScale(data[0])
+            // var box = this.getBBox()
+            // var pos = xScale(data[0])
             // var anchor = (pos + box.width + 2) < width ? 'start' : 'end'
 
         svg.selectAll('.series.label')

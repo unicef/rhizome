@@ -1,6 +1,6 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 
 var DEFAULTS = {
@@ -29,18 +29,18 @@ _.extend(Histogram.prototype, {
     var h = this._height - margin.top - margin.bottom
 
     var svg = this._svg.datum(data)
-    var g   = svg.select('.data')
+    var g = svg.select('.data')
 
     var histogram = d3.layout.histogram().value(options.value)
 
     var buckets = histogram(_.filter(data, d => _.isFinite(options.value(d))))
 
-    var domain  = [
+    var domain = [
       d3.min(buckets, _.property('x')),
       d3.max(buckets, d => d.x + d.dx)
     ]
     var xScale = d3.scale.linear().domain(domain).range([0, w])
-    var x     = d => xScale(d.x)
+    var x = d => xScale(d.x)
     var width = d => xScale(d.x + d.dx) - xScale(d.x)
 
     var yScale = d3.scale.linear()

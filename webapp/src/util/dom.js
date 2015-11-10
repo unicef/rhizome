@@ -31,12 +31,12 @@ function offset(el) {
         left  : el.offsetLeft
     }
 
-    var dims      = dimensions(el, true)
-    var parent    = el.offsetParent || document.body
+    var dims = dimensions(el, true)
+    var parent = el.offsetParent || document.body
 
     if (parent) {
         off.bottom = parent.scrollHeight - (off.top + dims.height)
-        off.right  = parent.scrollWidth - (off.left + dims.width)
+        off.right = parent.scrollWidth - (off.left + dims.width)
     }
 
     return off
@@ -44,7 +44,7 @@ function offset(el) {
 
 function documentOffset(el) {
     var bbox = el.getBoundingClientRect()
-    var doc  = el.ownerDocument.documentElement
+    var doc = el.ownerDocument.documentElement
 
     return {
         top   : bbox.top + doc.clientTop + window.pageYOffset,

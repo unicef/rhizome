@@ -1,7 +1,7 @@
 /* global window */
 'use strict'
 
-var _   = require('lodash')
+var _ = require('lodash')
 var Vue = require('vue')
 
 var dom = require('../../util/dom')
@@ -51,38 +51,38 @@ module.exports = {
                 doc = window.document.body
             } else if (this._parentEl) {
                 offset = dom.documentOffset(this._parentEl)
-                doc    = this._parentEl.ownerDocument.documentElement
+                doc = this._parentEl.ownerDocument.documentElement
             } else {
                 return
             }
 
             switch (this.orientation) {
             case 'right':
-                this.top    = offset.top + 'px'
-                this.right  = 'auto'
+                this.top = offset.top + 'px'
+                this.right = 'auto'
                 this.bottom = 'auto'
-                this.left   = offset.right + 'px'
+                this.left = offset.right + 'px'
                 break
 
             case 'bottom':
-                this.top    = offset.bottom + 'px'
-                this.right  = 'auto'
+                this.top = offset.bottom + 'px'
+                this.right = 'auto'
                 this.bottom = 'auto'
-                this.left   = offset.left + 'px'
+                this.left = offset.left + 'px'
                 break
 
             case 'left':
-                this.top    = offset.top + 'px'
-                this.right  = (doc.clientWidth - offset.left) + 'px'
+                this.top = offset.top + 'px'
+                this.right = (doc.clientWidth - offset.left) + 'px'
                 this.bottom = 'auto'
-                this.left   = 'auto'
+                this.left = 'auto'
                 break
 
             default:
-                this.top    = 'auto'
-                this.right  = 'auto'
+                this.top = 'auto'
+                this.right = 'auto'
                 this.bottom = (doc.clientHeight - offset.top) + 'px'
-                this.left   = offset.left + 'px'
+                this.left = offset.left + 'px'
                 break
             }
 
@@ -90,8 +90,8 @@ module.exports = {
         },
 
         reorient : function () {
-            var el         = this.$el
-            var offset     = dom.viewportOffset(el)
+            var el = this.$el
+            var offset = dom.viewportOffset(el)
             var reposition = false
 
             if (this.orientation !== 'bottom' && offset.top < 0) {
@@ -106,7 +106,7 @@ module.exports = {
 
         hideTooltip: function (options) {
             if (this._parentEl === options.el) {
-                this.show      = false
+                this.show = false
                 this._parentEl = null
                 this._position = null
 
@@ -154,7 +154,7 @@ module.exports = {
                 self.reposition()
                 window.addEventListener('resize', self.reposition)
 
-                self.show   = true
+                self.show = true
                 self._timer = null
             }, delay)
         }

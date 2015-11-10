@@ -1,6 +1,6 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 
 var formatUtil = require('util/format')
@@ -66,7 +66,7 @@ _.extend(Heatmap.prototype, {
     },
 
     update : function (data, options) {
-        options    = _.extend(this._options, options)
+        options = _.extend(this._options, options)
         var margin = options.margin
 
         var self = this
@@ -211,8 +211,8 @@ _.extend(Heatmap.prototype, {
         .call(options.legend)
         .attr('transform', function () {
           var bbox = this.getBoundingClientRect()
-          var dx   = w + margin.right - bbox.width
-          var dy   = 0
+          var dx = w + margin.right - bbox.width
+          var dy = 0
 
           return 'translate(' + dx + ',' + dy + ')'
         })
@@ -223,7 +223,7 @@ _.extend(Heatmap.prototype, {
 
     _onRowOver : function (d) {
         var seriesName = this._options.seriesName
-        var target     = seriesName(d)
+        var target = seriesName(d)
 
         this._svg.selectAll('.row')
             .transition().duration(300)

@@ -2,13 +2,13 @@
 var Reflux = require('reflux/src')
 var ChartBuilderActions = require('actions/ChartBuilderActions')
 
-var _      = require('lodash')
+var _ = require('lodash')
 var treeify = require('data/transform/treeify')
 var ancestoryString = require('data/transform/ancestryString')
 var api = require('data/api')
-var d3     = require('d3')
+var d3 = require('d3')
 var moment = require('moment')
-var colors    = require('colors')
+var colors = require('colors')
 var Vue = require('vue') //for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 

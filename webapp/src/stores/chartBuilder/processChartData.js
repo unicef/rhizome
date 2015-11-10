@@ -1,11 +1,11 @@
-var _      = require('lodash')
-var d3     = require('d3')
-var colors    = require('colors')
+var _ = require('lodash')
+var d3 = require('d3')
+var colors = require('colors')
 var moment = require('moment')
 var api = require('data/api')
 var Vue = require('vue') //for tooltip display
-var path   = require('vue/src/parsers/path')
-var util   = require('util/data')
+var path = require('vue/src/parsers/path')
+var util = require('util/data')
 
 function melt(data, indicatorArray) {
   var dataset = data.objects
@@ -342,7 +342,7 @@ module.exports = {
           .forEach(function (d) {
             d.indicator = indicatorsIndex[d.indicator]
             var temp = d.location
-            d.location    = locationsIndex[d.location]
+            d.location = locationsIndex[d.location]
           })
           .groupBy(function (d) {
             return d.indicator.id

@@ -2,10 +2,10 @@
 
 'use strict'
 
-var _    = require('lodash')
-var Vue  = require('vue')
+var _ = require('lodash')
+var Vue = require('vue')
 
-var dom  = require('../../util/dom')
+var dom = require('../../util/dom')
 var util = require('../../util/data')
 var treeify = require('../../data/transform/treeify')
 
@@ -46,9 +46,9 @@ module.exports = Vue.extend({
     },
 
     ready: function () {
-        this.multi      = util.parseBool(this.multi)
+        this.multi = util.parseBool(this.multi)
         this.searchable = util.parseBool(this.searchable)
-        this.sortDsc    = util.parseBool(this.sortDsc)
+        this.sortDsc = util.parseBool(this.sortDsc)
 
         this.load()
     },
@@ -166,16 +166,16 @@ module.exports = Vue.extend({
         },
 
         invalidateSize: _.throttle(function () {
-            var menu         = this.$el.getElementsByClassName('container')[0]
-            var ul           = menu.getElementsByTagName('ul')[0]
-            var style        = window.getComputedStyle(menu)
+            var menu = this.$el.getElementsByClassName('container')[0]
+            var ul = menu.getElementsByTagName('ul')[0]
+            var style = window.getComputedStyle(menu)
             var marginBottom = parseInt(style.getPropertyValue('margin-bottom'), 10)
-            var marginRight  = parseInt(style.getPropertyValue('margin-right'), 10)
-            var offset       = dom.viewportOffset(ul)
+            var marginRight = parseInt(style.getPropertyValue('margin-right'), 10)
+            var offset = dom.viewportOffset(ul)
             var dims
 
             if (this.multi) {
-                dims          = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true)
+                dims = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true)
                 marginBottom += dims.height
             }
 
@@ -237,12 +237,12 @@ module.exports = Vue.extend({
                 return
             }
 
-            params       = params || {}
-            accumulator  = accumulator || []
+            params = params || {}
+            accumulator = accumulator || []
 
-            var self     = this
-            var source   = self.$options.source
-            var mapping  = self.$options.mapping
+            var self = this
+            var source = self.$options.source
+            var mapping = self.$options.mapping
 
             self.loading = true
 
@@ -268,8 +268,8 @@ module.exports = Vue.extend({
                         }, accumulator)
                     } else {
                         self.itemTree = treeify(accumulator, 'value')
-                        self.items    = accumulator
-                        self.loading  = false
+                        self.items = accumulator
+                        self.loading = false
 
                         self.select(self.$options.defaults)
                         self.$emit('dropdown-value-changed', self.selection)

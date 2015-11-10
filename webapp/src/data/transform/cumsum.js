@@ -19,7 +19,7 @@ module.exports = function cumsum(get, set) {
     }
 
     function transform(data) {
-        var running    = 0
+        var running = 0
         var collection = []
 
         for (var i = 0, l = data.length i < l i++) {

@@ -23,7 +23,7 @@ module.exports = function ratio(numerator, denominator) {
             var series = []
 
             for (var i = data.length - 1 i >= 0 i--) {
-                var row        = data[i]
+                var row = data[i]
                 var indicators = _.indexBy(row.indicators, 'indicator')
                 var n, d
 

@@ -6,7 +6,7 @@ var d3 = require('d3')
 var browser = require('util/browser')
 var label = require('chart/renderer/label')
 var color = require('util/color')
-var legend  = require('chart/renderer/legend')
+var legend = require('chart/renderer/legend')
 
 var defaults = {
   margin: {

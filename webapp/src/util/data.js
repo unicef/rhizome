@@ -1,6 +1,6 @@
 'use strict'
 
-var _    = require('lodash')
+var _ = require('lodash')
 var path = require('vue/src/parsers/path')
 
 /**
@@ -106,7 +106,7 @@ function unpivot(data) {
         .map(function (d) {
             var datapoints = []
             var indicators = d.indicators
-            var props      = _.omit(d, 'indicators')
+            var props = _.omit(d, 'indicators')
 
             for (var i = indicators.length - 1; i >= 0; i--) {
                 var datum = indicators[i]

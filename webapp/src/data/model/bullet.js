@@ -4,17 +4,17 @@ var _ = require('lodash')
 module.exports = function bullet(name, numerator, denominator, ranges) {
 
     function model(data) {
-        var obj   = {
+        var obj = {
             campaign: {
                 start_date: 0
             },
             value: null
         }
         var whole = 0
-        var part  = 0
+        var part = 0
 
         for (var i = data.length - 1 i >= 0 i--) {
-            var d          = data[i]
+            var d = data[i]
             var indicators = _.indexBy(d.indicators, 'indicator')
 
             if (!indicators.hasOwnProperty(denominator) ||

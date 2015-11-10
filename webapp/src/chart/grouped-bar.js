@@ -1,13 +1,13 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 
 var ColumnChart = require('./column')
 
 var browser = require('util/browser')
-var color   = require('util/color')
-var legend  = require('chart/renderer/legend')
+var color = require('util/color')
+var legend = require('chart/renderer/legend')
 
 var defaults = {
     barHeight   : 14,
@@ -38,7 +38,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     update : function (data, options) {
         var options = _.assign(this._options, options)
-        var margin  = options.margin
+        var margin = options.margin
 
         var l = _(data).map(options.values).map('length').max() * data.length
         var h = Math.max(options.barHeight,
@@ -46,7 +46,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         var w = this._width - margin.left - margin.right
 
         var sortIdx = 0
-        var sortBy  = this.sortBy
+        var sortBy = this.sortBy
 
         if (sortBy) {
             sortIdx = _.findIndex(data, function (d) {
@@ -118,7 +118,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
                 'y'     : margin.top
             })
 
-        var g      = svg.select('.data').datum(data)
+        var g = svg.select('.data').datum(data)
         var series = g.selectAll('.bar').data(data)
 
         series.enter().append('g')

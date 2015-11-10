@@ -1,6 +1,6 @@
 'use strict'
 
-var _  = require('lodash')
+var _ = require('lodash')
 var d3 = require('d3')
 
 var browser = require('util/browser')
@@ -43,8 +43,8 @@ function ChartFactory(type, el, data, options) {
 ChartFactory.prototype.initialize = function (el, data, options) {
     options = this._options = _.defaults({}, options, this.defaults, DEFAULTS)
 
-    var aspect   = _.get(options, 'aspect', 1)
-    this._width  = _.get(options, 'width', el.clientWidth)
+    var aspect = _.get(options, 'aspect', 1)
+    this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width / aspect)
 
     var svg = this._svg = d3.select(el).append('svg')
