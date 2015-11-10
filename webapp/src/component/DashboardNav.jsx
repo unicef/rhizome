@@ -19,7 +19,7 @@ module.exports = React.createClass({
     var dashboards = this.state.dashboards
 
     var builtins = NavMenuItem.fromArray(_(dashboards)
-        .filter(d=>(d.builtin && d.id !== -4 && d.title.indexOf('Homepage') === -1))
+        .filter(d => (d.builtin && d.id !== -4 && d.title.indexOf('Homepage') === -1))
         .map(function (d) {
           return _.assign({
             key: 'dashboard-nav-' + d.id
@@ -35,7 +35,7 @@ module.exports = React.createClass({
     }
 
     var customDashboards = NavMenuItem.fromArray(_(dashboards)
-      .filter(d=>!d.builtin)
+      .filter(d => !d.builtin)
       .map(function (d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id

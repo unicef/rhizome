@@ -4,5 +4,3 @@ module.exports = [
   '#98a0a8',
   '#b6c0cc'
 ]
-
-
