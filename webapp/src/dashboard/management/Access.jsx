@@ -60,8 +60,8 @@ var Access = React.createClass({
     var m     = moment(this.props.campaign.start_date, 'YYYY-MM-DD')
     var lower = m.clone().startOf('month').subtract(1, 'year');
     var upper = m.clone().endOf('month');
-    
-    var colors = ['#377EA4','#B6D0D4','#FFFFFF'];
+
+    var colors = ['#377EA4','#B6D0D4'];
 
     var chartOptions = {
       aspect  : 2.26,
