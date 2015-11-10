@@ -96,13 +96,14 @@ var DocForm = React.createClass({
         var rgHeaderList = this.buildHeaderList('location_column')
         var cpHeaderList = this.buildHeaderList('campaign_column')
 
+        var fileConfigForm
         if (this.state.created_doc_id) {
             var uq_col = this.state.uq_id_column
             // var uq_col = this.state.data['']
             var rg_col = this.state.location_column
             var cp_col = this.state.campaign_column
 
-            var fileConfigForm = <div>
+            fileConfigForm = <div>
                 <ul>
                     <li>
                         Unique ID Column:
@@ -126,23 +127,25 @@ var DocForm = React.createClass({
             </div>
         }
         else {
-            var fileConfigForm = ''
+            fileConfigForm = ''
         }
 
+        var refreshBtn
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-            var refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
+            refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
         }
         else {
-            var refreshBtn = ''
+            refreshBtn = ''
         }
 
+        var reviewBtn
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
             var next_link = '/datapoints/source-data/Nigeria/2015/06/viewraw/' + this.state.created_doc_id
             // FIXME ^^
-            var reviewBtn = <a href={next_link} className='button'> Review Upload</a>
+            reviewBtn = <a href={next_link} className='button'> Review Upload</a>
         }
         else {
-            var reviewBtn = ''
+            reviewBtn = ''
         }
 
         var divZoneStyle = {

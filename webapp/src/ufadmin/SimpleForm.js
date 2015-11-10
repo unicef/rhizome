@@ -174,7 +174,7 @@ var SimpleForm = React.createClass({
 
     var baseFormSuccess = ''
     if (this.state.store.saveSuccess) {
-      var baseFormSuccess = <i className='fa fa-check'> saved successfully </i>
+      baseFormSuccess = <i className='fa fa-check'> saved successfully </i>
       var newId = this.state.store.objectId
       this.state.store.saveSuccess = false
       page('/ufadmin/manage/' + contentType + '/' + newId)

@@ -38,7 +38,7 @@ function PieChart () {
 _.extend(PieChart.prototype, {
   defaults: DEFAULTS,
 
-  initialize: function (el, data, options) {
+  initialize: function (el, data, opts) {
     var options = this._options = _.defaults({}, options, DEFAULTS)
     var margin = options.margin
 

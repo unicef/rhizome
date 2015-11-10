@@ -80,7 +80,7 @@ function _columnData (data, groups, groupBy) {
       }
      })
   })
-  var baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
+  baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
   _.each(columnData, function (series) {
      _.each(baseCampaigns, function (baseCampaign, index) {
          if (!_.find(series.values, function (value) { return value.campaign.id === baseCampaign.id })) {

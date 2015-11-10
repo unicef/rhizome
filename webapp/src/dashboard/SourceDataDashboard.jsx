@@ -62,7 +62,6 @@ var SourceDataDashboard = React.createClass({
         var loading = this.props.loading
         var campaign = this.props.campaign
         var location = this.props.location
-        var loading = this.props.loading
         var doc_id = this.props.doc_id
         var doc_tab = this.props.doc_tab
 
@@ -73,7 +72,7 @@ var SourceDataDashboard = React.createClass({
         }
 
         if (!doc_tab) {
-            var doc_tab = 'doc_index'
+            doc_tab = 'doc_index'
         }
 
         var docItems = MenuItem.fromArray(
@@ -172,13 +171,15 @@ var SourceDataDashboard = React.createClass({
             </SimpleDataTable>
         </ReviewTable>
 
+        var docForm
+        var review_breakdown
         if (doc_tab === 'doc_index') {
-            var docForm = <div><DocForm></DocForm></div>
-            var review_breakdown = ''
+            docForm = <div><DocForm></DocForm></div>
+            review_breakdown = ''
         }
         else {
-            var docForm = ''
-            var review_breakdown = <DocOverview
+            docForm = ''
+            review_breakdown = <DocOverview
                 key={table_key + 'breakdown'}
                 loading={loading}
                 doc_id={doc_id}

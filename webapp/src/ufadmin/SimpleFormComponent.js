@@ -75,7 +75,7 @@ var SimpleFormComponent = React.createClass({
       return <div>Loading Form Component </div>
     }
 
-    var data = this.state.store.componentData[contentType]
+    data = this.state.store.componentData[contentType]
     var rowData = data.componentRows
     var dropDownData = data.dropDownData
 
