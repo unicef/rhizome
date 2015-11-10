@@ -88,7 +88,7 @@ var ReviewTable = React.createClass({
         }
     },
 
-    render() {
+    render () {
         const fields = {
             edit_link: {
                 title: 'Edit',
@@ -137,15 +137,15 @@ var ReviewTable = React.createClass({
           </div>
         )
     },
-    renderLoading() {
+    renderLoading () {
         return <div className='admin-loading'> Review Page Loading...</div>
     },
 
-    onToggleFilterContainer() {
+    onToggleFilterContainer () {
         this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible}))
     },
 
-    renderFilters() {
+    renderFilters () {
         var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
         var { areFiltersVisible } = this.state
 

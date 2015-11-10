@@ -33,7 +33,7 @@ const schema = {
 const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link']
 
 var CampaignsAdmin = React.createClass({
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar

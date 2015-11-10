@@ -71,34 +71,34 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
-  getInitialState() {
+  getInitialState () {
     return {
       refer: 'location'
     }
   },
 
-  componentDidMount() {
+  componentDidMount () {
     this.chartDef = this.props.chartDef || defaultChartDef
     ChartWizardActions.initialize(this.chartDef)
   },
 
-  saveChart() {
+  saveChart () {
     ChartWizardActions.saveChart(this.props.save)
   },
 
-  toggleStep(refer) {
+  toggleStep (refer) {
     this.setState({
       refer: refer
     })
   },
 
-  setLocationSearch(pattern) {
+  setLocationSearch (pattern) {
     this.setState({
       locationSearch: pattern
     })
   },
 
-  render() {
+  render () {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
     let locationStep = (

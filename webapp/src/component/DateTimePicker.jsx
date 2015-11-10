@@ -30,7 +30,7 @@ var DateRangePicker = React.createClass({
         this.props.sendValue(type, dateStr)
     },
 
-    render() {
+    render () {
         var self = this
     var dateTimePicker = function (dateValue, type) {
             var self1 = self

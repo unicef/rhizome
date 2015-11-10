@@ -19,13 +19,13 @@ var DocOverview = React.createClass({
     loading: React.PropTypes.bool
   },
 
-  getDefaultProps: function () {
+  getDefaultProps () {
     return {
       loading: false
     }
   },
 
-  getInitialState: function () {
+  getInitialState () {
     return {
       doc_id: null,
       doc_title: null,
@@ -36,12 +36,12 @@ var DocOverview = React.createClass({
     }
   },
 
-  componentWillMount: function (nextProps, nextState) {
+  componentWillMount (nextProps, nextState) {
     this.pullDocDetailTypes()
     this.refreshMaster()
   },
 
-  componentWillUpdate: function (nextProps, nextState) {
+  componentWillUpdate (nextProps, nextState) {
     if (nextProps.doc_id != this.props.doc_id) {
       return
     }
@@ -50,25 +50,25 @@ var DocOverview = React.createClass({
     }
   },
 
-  pullDocDetailTypes: function () {
+  pullDocDetailTypes () {
     DocOverviewActions.getDocDetailTypes()
   },
 
-  refreshMaster: function () {
+  refreshMaster () {
     var self = this
     DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
   },
 
-  queueReprocess: function () {
+  queueReprocess () {
     var self = this
     DocOverviewActions.queueReprocess({document_id: self.props.doc_id})
   },
 
-  renderLoading() {
+  renderLoading () {
     return <div className='admin-loading'> Doc Details Loading...</div>
   },
 
-  render() {
+  render () {
     var doc_id = this.props.doc_id
     var doc_tab = this.props.doc_tab
     var doc_deets = this.state.doc_deets

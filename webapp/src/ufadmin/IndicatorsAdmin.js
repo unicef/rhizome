@@ -29,7 +29,7 @@ const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link
 // console.log(this.props)
 
 var IndicatorsAdmin = React.createClass({
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar

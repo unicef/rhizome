@@ -29,7 +29,7 @@ const fieldNamesOnTable = ['id', 'tag_name', 'parent_tag_id', 'parent_tag__tag_n
 // console.log(this.props)
 
 var TagsAdmin = React.createClass({
-    render() {
+    render () {
         var datascopeFilters =
             <div>
                 <SearchBar

@@ -42,11 +42,11 @@ var AdminPage = React.createClass({
     })
   },
 
-  onToggleFilterContainer() {
+  onToggleFilterContainer () {
     this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible}))
   },
 
-  render() {
+  render () {
     // render loading indicator until data has loaded
     var isLoaded = _.isArray(this.state.data) && this.state.schema
     if (!isLoaded) return this.renderLoading()
@@ -90,11 +90,12 @@ var AdminPage = React.createClass({
       </LocalDatascope>
     </div>
   },
-  renderLoading() {
+
+  renderLoading () {
     return <div className='admin-loading'>Loading...</div>
   },
 
-  renderOriginalFilters() {
+  renderOriginalFilters () {
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
 
@@ -125,7 +126,7 @@ var AdminPage = React.createClass({
     </div>
   },
 
-  renderFilters() {
+  renderFilters () {
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
     return areFiltersVisible

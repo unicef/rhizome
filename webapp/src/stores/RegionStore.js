@@ -4,7 +4,7 @@ var Reflux = require('reflux')
 var api = require('data/api')
 
 var RegionStore = Reflux.createStore({
-  init() {
+  init () {
     this.locations = []
     this.LocationTypes = []
 
@@ -27,7 +27,7 @@ var RegionStore = Reflux.createStore({
       })
   },
 
-  getInitialState() {
+  getInitialState () {
     return {
       locations: this.locations,
       LocationTypes: this.LocationTypes,
@@ -35,11 +35,11 @@ var RegionStore = Reflux.createStore({
   },
 
   // API
-  getlocationsPromise() {
+  getlocationsPromise () {
     return this.locationsPromise
   },
 
-  getLocationTypesPromise() {
+  getLocationTypesPromise () {
     return this.LocationTypesPromise
   }
 })

@@ -21,7 +21,7 @@ var DatePicker = React.createClass({
     this.props.sendValue(date, dateStr)
   },
 
-  render() {
+  render () {
     var self = this
     return (<DateTimePicker
       value={self.state.date}

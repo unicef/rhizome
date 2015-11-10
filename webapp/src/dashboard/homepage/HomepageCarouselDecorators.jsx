@@ -5,7 +5,7 @@ var React = require('react')
 var HomepageCarouselDecorators = [
   {
     component: React.createClass({
-      render() {
+      render () {
         return (
             <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide === 0)}
@@ -14,7 +14,7 @@ var HomepageCarouselDecorators = [
             </div>
         )
       },
-      getButtonStyles(disabled) {
+      getButtonStyles (disabled) {
         return {
           opacity: disabled ? 0.3 : 0.7
         }
@@ -24,7 +24,7 @@ var HomepageCarouselDecorators = [
   },
   {
     component: React.createClass({
-      render() {
+      render () {
         return (
             <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide + this.props.slidesToScroll >= this.props.slideCount)}
@@ -33,7 +33,7 @@ var HomepageCarouselDecorators = [
             </div>
         )
       },
-      getButtonStyles(disabled) {
+      getButtonStyles (disabled) {
         return {
           opacity: disabled ? 0.3 : 0.7
         }
@@ -43,7 +43,7 @@ var HomepageCarouselDecorators = [
   },
   {
     component: React.createClass({
-      render() {
+      render () {
         var self = this
         var indexes = this.getIndexes(self.props.slideCount, self.props.slidesToScroll)
         return (
@@ -64,14 +64,14 @@ var HomepageCarouselDecorators = [
           </ul>
         )
       },
-      getIndexes(count, inc) {
+      getIndexes (count, inc) {
         var arr = []
         for (var i = 0; i < count; i += inc) {
           arr.push(i)
         }
         return arr
       },
-      getListStyles() {
+      getListStyles () {
         return {
           position: 'relative',
           margin: 0,
@@ -79,13 +79,13 @@ var HomepageCarouselDecorators = [
           padding: 0
         }
       },
-      getListItemStyles() {
+      getListItemStyles () {
         return {
           listStyleType: 'none',
           display: 'inline-block'
         }
       },
-      getButtonStyles(active) {
+      getButtonStyles (active) {
         return {
           border: 0,
           background: 'transparent',

@@ -4,7 +4,7 @@ var Reflux = require('reflux')
 var api = require('data/api')
 
 var PermissionStore = Reflux.createStore({
-  init() {
+  init () {
     this.permissions = []
 
     this.permissionsPromise = api.user_permissions()
@@ -19,19 +19,18 @@ var PermissionStore = Reflux.createStore({
       })
   },
 
-  getInitialState() {
+  getInitialState () {
     return {
       permissions: this.permissions
     }
   },
 
   // API
-  userHasPermission(permissionString) {
-    // console.log('userHasPermission:', permissionString, this.permissions.indexOf(permissionString.toLowerCase()) > -1)
+  userHasPermission (permissionString) {
     return this.permissions.indexOf(permissionString.toLowerCase()) > -1
   },
 
-  getPermissionsPromise() {
+  getPermissionsPromise () {
     return this.permissionsPromise
   }
 })

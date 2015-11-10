@@ -4,7 +4,7 @@ var Reflux = require('reflux')
 var api = require('data/api')
 
 var CampaignStore = Reflux.createStore({
-  init() {
+  init () {
     this.campaigns = []
 
     this.campaignsPromise = api.campaign()
@@ -17,14 +17,14 @@ var CampaignStore = Reflux.createStore({
       })
   },
 
-  getInitialState() {
+  getInitialState () {
     return {
       campaigns: this.campaigns
     }
   },
 
   // API
-  getCampaignsPromise() {
+  getCampaignsPromise () {
     return this.campaignsPromise
   }
 })

@@ -40,14 +40,14 @@ const schema = {
 const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link']
 
 const UsersAdmin = React.createClass({
-  getInitialState() {
+  getInitialState () {
     return { areFiltersVisible: true}
   },
-  onToggleFilterContainer() {
+  onToggleFilterContainer () {
     this.setState((prevState) => ({ areFiltersVisible: !prevState.areFiltersVisible}))
   },
 
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar

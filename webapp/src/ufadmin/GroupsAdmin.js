@@ -29,7 +29,7 @@ const fields = {
 const fieldNamesOnTable = ['name', 'edit_link']
 
 var GroupsAdmin = React.createClass({
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar

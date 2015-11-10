@@ -9,11 +9,11 @@ let LayoutOptions = React.createClass({
     onClick: React.PropTypes.func.isRequired
   },
 
-  _handleChange(event) {
+  _handleChange (event) {
     this.props.onChange(event.target.value)
   },
 
-  render() {
+  render () {
     var self = this
 
     var radios = this.props.values.map(radio => {

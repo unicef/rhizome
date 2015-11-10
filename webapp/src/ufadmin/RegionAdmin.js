@@ -32,7 +32,7 @@ const schema = {
 const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link']
 
 var RegionAdmin = React.createClass({
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar
