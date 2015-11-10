@@ -16,11 +16,11 @@ var GeoStore = require('stores/GeoStore')
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],
 
-  init: function() {
+  init: function () {
     this.onFetchDashboards()
   },
 
-  getDashboardByName: function(dashboardDef) {
+  getDashboardByName: function (dashboardDef) {
     var obj = _.find(builtins, d => _.kebabCase(d.title) === dashboardDef.name)
 
     obj.location = dashboardDef.location
@@ -38,7 +38,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     return obj
   },
 
-  melt: function(d) {
+  melt: function (d) {
     var base = _.omit(d, 'indicators')
 
     return d.indicators.map(i => {
@@ -49,7 +49,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     })
   },
 
-  fetchData: function(dashboard) {
+  fetchData: function (dashboard) {
     var campaign  = dashboard.campaign
     var location = dashboard.location
     var charts =  dashboard.charts
@@ -57,7 +57,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     var start = moment(campaign.start_date, 'YYYY-MM-DD')
     var end = campaign.end_date
 
-    var promises = _.map(charts, function(def) {
+    var promises = _.map(charts, function (def) {
       var query = {
         indicator__in: def.indicators,
         campaign_end: end
@@ -98,11 +98,11 @@ var HomepageDashboardsStore = Reflux.createStore({
     return Promise.all(promises)
   },
 
-  prepareQuery: function(locations, campaigns, locationsTypes, dashboard) {
+  prepareQuery: function (locations, campaigns, locationsTypes, dashboard) {
     var locationIdx = _.indexBy(locations, 'id')
     var types = _.indexBy(locationsTypes, 'id')
 
-    _.each(this.locations, function(r) {
+    _.each(this.locations, function (r) {
       r.location_type = _.get(types[r.location_type_id], 'name')
       r.parent = locationIdx[r.parent_location_id]
     })
@@ -112,12 +112,12 @@ var HomepageDashboardsStore = Reflux.createStore({
     var query = this.getQueriesByIndicators(indicators)
 
     var topLevelLocations = _(locations)
-        .filter(function(r) {
+        .filter(function (r) {
           return !locationIdx.hasOwnProperty(r.parent_location_id)
         })
         .sortBy('name')
 
-    var location = _.find(locations, function(r) {
+    var location = _.find(locations, function (r) {
       return r.name === dashboard.location
     }.bind(this))
 
@@ -126,7 +126,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     }
 
     var campaign = _(campaigns)
-      .filter(function(c) {
+      .filter(function (c) {
         return c.office_id === location.office_id &&
           (!dashboard.date || _.startsWith(c.start_date, dashboard.date))
       }.bind(this))
@@ -146,15 +146,15 @@ var HomepageDashboardsStore = Reflux.createStore({
     }
   },
 
-  countriesPromise: function() {
-    var promises = [1, 2, 3].map(function(locationId) {
+  countriesPromise: function () {
+    var promises = [1, 2, 3].map(function (locationId) {
       return api.geo({ parent_location__in : locationId })
     })
 
     return Promise.all(promises)
   },
 
-  onFetchDashboards: function( ) {
+  onFetchDashboards: function ( ) {
     var dashboardDefs = [
           {
             name: 'homepage-afghanistan',
@@ -235,7 +235,7 @@ var HomepageDashboardsStore = Reflux.createStore({
                   .value(),
                   features: item.features
                 }
-              }).map(function(item) {
+              }).map(function (item) {
                 var country = item.data[0].campaign.slug.split('-')[0]
                 return partialDashboardInit(country, item)
               })
@@ -247,13 +247,13 @@ var HomepageDashboardsStore = Reflux.createStore({
       }))
   },
 
-  getQueriesByIndicators: function(indicators) {
-    var qs = _.groupBy(indicators, function(def) {
+  getQueriesByIndicators: function (indicators) {
+    var qs = _.groupBy(indicators, function (def) {
       return [def.duration, def.startOf, def.locations].join('-')
     })
 
-    return _.map(qs, function(arr) {
-      return _.merge.apply(null, arr.concat(function(a, b) {
+    return _.map(qs, function (arr) {
+      return _.merge.apply(null, arr.concat(function (a, b) {
         if (_.isArray(a)) {
           return a.concat(b)
         }
@@ -261,10 +261,10 @@ var HomepageDashboardsStore = Reflux.createStore({
     })
   },
 
-  generateIndicator: function(indicators, chart) {
+  generateIndicator: function (indicators, chart) {
     var base = _.omit(chart, 'indicators', 'title')
 
-    _.each(chart.indicators, function(id) {
+    _.each(chart.indicators, function (id) {
       var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity
       var hash = [id, chart.startOf, chart.locations].join('-')
 

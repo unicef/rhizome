@@ -118,7 +118,7 @@ module.exports = Vue.extend({
                 if(this.selection)
                 {
                     var keys = _.keys(self.selection)
-                    _.each(keys, function(key){
+                    _.each(keys, function (key){
                       delete self.selection[key]
                     })
                 }

@@ -10,7 +10,7 @@ var CampaignStore = require('stores/CampaignStore')
 var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
-  init: function() {
+  init: function () {
     this.loaded = true
     this.indicators = {}
     Promise.all([
@@ -25,7 +25,7 @@ var DashboardStore = Reflux.createStore({
         var locationIdx = _.indexBy(locations, 'id')
         var types = _.indexBy(locationsTypes, 'id')
 
-        _.each(this.locations, function(r) {
+        _.each(this.locations, function (r) {
           r.location_type = _.get(types[r.location_type_id], 'name')
           r.parent = locationIdx[r.parent_location_id]
         })
@@ -40,17 +40,17 @@ var DashboardStore = Reflux.createStore({
       }))
   },
 
-  getQueries: function() {
+  getQueries: function () {
     var indicators = this.indicators
-    var qs = _.groupBy(indicators, function(definition, key) {
+    var qs = _.groupBy(indicators, function (definition, key) {
       return [
         definition.duration,
         definition.startOf,
         definition.locations
       ].join('-')
     })
-    return _.map(qs, function(arr) {
-      return _.merge.apply(null, arr.concat(function(a, b) {
+    return _.map(qs, function (arr) {
+      return _.merge.apply(null, arr.concat(function (a, b) {
         if (_.isArray(a)) {
           return a.concat(b)
         }
@@ -58,7 +58,7 @@ var DashboardStore = Reflux.createStore({
     })
   },
 
-  setDashboardInternal: function(dashboard) {
+  setDashboardInternal: function (dashboard) {
     this.indicators = {}
     _.each(dashboard.charts, this.addChartDefinition)
 
@@ -67,12 +67,12 @@ var DashboardStore = Reflux.createStore({
 
     var locationIdx = _.indexBy(locations, 'id')
     var topLevellocations = _(locations)
-      .filter(function(r) {
+      .filter(function (r) {
         return !locationIdx.hasOwnProperty(r.parent_location_id)
       })
       .sortBy('name')
 
-    var location = _.find(locations, function(r) {
+    var location = _.find(locations, function (r) {
       return r.name === this.location
     }.bind(this))
 
@@ -81,7 +81,7 @@ var DashboardStore = Reflux.createStore({
     }
 
     var campaign = _(campaigns)
-      .filter(function(c) {
+      .filter(function (c) {
         return c.office_id === location.office_id &&
           (!this.date || _.startsWith(c.start_date, this.date))
       }.bind(this))
@@ -101,7 +101,7 @@ var DashboardStore = Reflux.createStore({
       loaded: true,
 
       locations: locations,
-      campaigns: _.filter(campaigns, function(c) {
+      campaigns: _.filter(campaigns, function (c) {
         return c.office_id === location.office_id
       }),
       allCampaigns: campaigns,
@@ -110,7 +110,7 @@ var DashboardStore = Reflux.createStore({
   },
 
   // action handlers
-  onSetDashboard: function(definition) {
+  onSetDashboard: function (definition) {
     var dashboard = this.dashboard = definition.dashboard
     this.location = definition.location || this.location
     this.date = definition.date || this.date
@@ -127,7 +127,7 @@ var DashboardStore = Reflux.createStore({
         var locationIdx = _.indexBy(locations, 'id')
         var types = _.indexBy(locationsTypes, 'id')
 
-        _.each(this.locations, function(r) {
+        _.each(this.locations, function (r) {
           r.location_type = _.get(types[r.location_type_id], 'name')
           r.parent = locationIdx[r.parent_location_id]
         })
@@ -136,8 +136,8 @@ var DashboardStore = Reflux.createStore({
       }))
   },
 
-  onSetlocation: function(id) {
-    var location = _.find(this.locations, function(r) {
+  onSetlocation: function (id) {
+    var location = _.find(this.locations, function (r) {
       return r.id === id
     }.bind(this))
 
@@ -149,10 +149,10 @@ var DashboardStore = Reflux.createStore({
   },
 
   // helpers
-  addChartDefinition: function(chart) {
+  addChartDefinition: function (chart) {
     var base = _.omit(chart, 'indicators', 'title')
 
-    _.each(chart.indicators, function(id) {
+    _.each(chart.indicators, function (id) {
       var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity
       var hash = [id, chart.startOf, chart.locations].join('-')
 

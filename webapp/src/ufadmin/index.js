@@ -8,7 +8,7 @@ var AdminApp = React.createClass({
         router: React.PropTypes.func
     },
 
-    render: function() {
+    render: function () {
         var q_params = this.context.router.getCurrentParams()
 
         return <div className="admin-container">
@@ -40,7 +40,7 @@ var routes = (
 )
 
 module.exports = {
-    render: function(container) {
+    render: function (container) {
         Router.run(routes, Router.HistoryLocation, Handler => {
             React.render(<Handler />, container)
         })

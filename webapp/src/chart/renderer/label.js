@@ -317,7 +317,7 @@ function label() {
         return chart
     }
 
-  chart.scale = function(value) {
+  chart.scale = function (value) {
     if (!arguments.length) {
       return scale
     }

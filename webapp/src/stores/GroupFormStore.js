@@ -15,16 +15,16 @@ module.exports = Reflux.createStore({
         saving: false
     },
     listenables: [ GroupFormActions ],
-    getInitialState: function(){
+    getInitialState: function (){
         return this.data
     },
-    onInitialize: function(group_id) {
+    onInitialize: function (group_id) {
         var self = this
 
         self.data.groupId = group_id
 
         // always get the indicator tree
-        api.indicatorsTree().then(function(indicators) {
+        api.indicatorsTree().then(function (indicators) {
 
             // process indicators
             self._indicatorIndex = _.indexBy(indicators.flat, 'id')
@@ -38,14 +38,14 @@ module.exports = Reflux.createStore({
                         api.groups(), 
                         api.group_permissions({ group: self.data.groupId }, null, { 'cache-control': 'no-cache' })
                     ])
-                    .then(_.spread(function(groups, groupPermissions) {
+                    .then(_.spread(function (groups, groupPermissions) {
 
                         // find current group
-                        var g = _.find(groups.objects, function(d) { return d.id === self.data.groupId })
+                        var g = _.find(groups.objects, function (d) { return d.id === self.data.groupId })
                         self.data.groupName = g.name
 
                         // select current permissions
-                        _.each(groupPermissions.objects, function(d) {
+                        _.each(groupPermissions.objects, function (d) {
                             if (d.indicator_id) {
                                 self.data.indicatorsSelected.push(self._indicatorIndex[d.indicator_id])
                             }
@@ -65,38 +65,38 @@ module.exports = Reflux.createStore({
         })
 
     },
-    onAddIndicatorSelection: function(value) {
+    onAddIndicatorSelection: function (value) {
         var self = this
         api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value })
-            .then(function(response) {
+            .then(function (response) {
                 self.data.indicatorsSelected.push(self._indicatorIndex[value])
                 self.trigger(self.data)             
             })
     },
-    onRemoveIndicatorSelection: function(value) {
+    onRemoveIndicatorSelection: function (value) {
         var self = this
         api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value, id: '' })
-            .then(function(response) {
+            .then(function (response) {
                 _.remove(self.data.indicatorsSelected, {id: value})
                 self.trigger(self.data)             
             })
     },
-    onUpdateName: function(name) {
+    onUpdateName: function (name) {
         this.data.groupName = name
         this.trigger(this.data)
     },
-    onSaveGroupForm: function() {
+    onSaveGroupForm: function () {
         var self = this
         self.data.saving = true
         var post = {
             name: self.data.groupName
         }
         if (self.data.groupId) post.id = self.data.groupId
-        api.groupUpsert(post).then(function(response) {
+        api.groupUpsert(post).then(function (response) {
             if (response.objects.new_id) {
                 self.data.groupId = response.objects.new_id
             }
-            setTimeout(function() {
+            setTimeout(function () {
                 self.data.saving = false
                 self.trigger(self.data)
             }, 500)

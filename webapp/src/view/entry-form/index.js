@@ -37,10 +37,10 @@ module.exports = {
         }
     },
 
-    created: function() {
+    created: function () {
 
         // processing on indicator sets data
-        _.forEach(this.indicator_sets, function(d) {
+        _.forEach(this.indicator_sets, function (d) {
             // copy values for v-select:
             d.value = d.id
             d.text = d.title
@@ -48,7 +48,7 @@ module.exports = {
 
     },
 
-    ready: function() {
+    ready: function () {
 
         this.$watch('campaign_id', this.refreshlocationsDropdown)
 
@@ -82,10 +82,10 @@ module.exports = {
 
     methods: {
 
-        load: function() {
+        load: function () {
             var self = this
 
-            var makeMap = function(data) {
+            var makeMap = function (data) {
                 if (data.objects) {
                     return _.indexBy(data.objects, 'id')
                 } else {
@@ -93,8 +93,8 @@ module.exports = {
                 }
             }
 
-            var connectChildren = function(map, parent_id_key, children_key) {
-                _.forIn(map, function(d) {
+            var connectChildren = function (map, parent_id_key, children_key) {
+                _.forIn(map, function (d) {
                     // obj has parent_id?
                     if (d[parent_id_key] !== undefined && d[parent_id_key] !== null) {
                         // parent found?
@@ -113,7 +113,7 @@ module.exports = {
                     // locations data
                     api.locations()
                         .then(makeMap)
-                        .then(function(map) {
+                        .then(function (map) {
                             // create array of children in each parent
                             return connectChildren(map, 'parent_location_id', 'children')
                         }),
@@ -122,23 +122,23 @@ module.exports = {
                     api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'}).then(makeMap),
 
                     // campaigns data
-                    api.campaign().then(function(data) {
+                    api.campaign().then(function (data) {
                         if (!data.objects) { return null }
                         return data.objects
-                            .sort(function(a,b) {
+                            .sort(function (a,b) {
                                 if (a.office === b.office) {
                                     return a.start_date > b.start_date ? -1 : 1
                                 }
                                 return a.office - b.office
                             })
-                            .map(function(d) {
+                            .map(function (d) {
                                 d.text = d.slug
                                 d.value = d.id
                                 return d
                             })
                     })
 
-                ]).then(function(allData) {
+                ]).then(function (allData) {
 
                     console.log('ALL DATA ', allData[0])
                     self.$data.locationData = allData[0]
@@ -156,16 +156,16 @@ module.exports = {
 
         },
 
-        refreshlocationsDropdown: function() {
+        refreshlocationsDropdown: function () {
             var self = this
 
-            var campaign = _.find(self.$data.campaigns, function(d) { return d.id === parseInt(self.$data.campaign_id) })
+            var campaign = _.find(self.$data.campaigns, function (d) { return d.id === parseInt(self.$data.campaign_id) })
 
             var items = _.chain(self.$data.locationData)
-                            .filter(function(d) {
+                            .filter(function (d) {
                                 return d.office_id === campaign.office_id
                             })
-                            .map(function(d) {
+                            .map(function (d) {
                                 return {
                                     'parent': d.parent_location_id,
                                     'title': d.name,
@@ -188,24 +188,24 @@ module.exports = {
         },
 
         // filter list of indicator sets to exclude sets the user cannot edit at all
-        filterIndicatorSets: function() {
+        filterIndicatorSets: function () {
             var self = this
-            self.$data.indicator_sets = _.filter(self.$data.indicator_sets, function(s) {
-                                                return _.find(s.indicators, function(i) {
+            self.$data.indicator_sets = _.filter(self.$data.indicator_sets, function (s) {
+                                                return _.find(s.indicators, function (i) {
                                                     return i.id && self.$data.indicators[i.id] !== undefined
                                                 })
                                             })
             self.$data.noEditableSets = (self.$data.indicator_sets.length === 0) ? true : false
         },
 
-        getFilteredIndicatorSet: function(indicatorSetId) {
+        getFilteredIndicatorSet: function (indicatorSetId) {
             var self = this
-            var indicatorSet = _.find(self.indicator_sets, function(d) { return d.id === parseInt(indicatorSetId) })
+            var indicatorSet = _.find(self.indicator_sets, function (d) { return d.id === parseInt(indicatorSetId) })
             if (!indicatorSet) return null
 
             var filtered = _.clone(indicatorSet)
             filtered.indicators = []
-            _.each(indicatorSet.indicators, function(row) {
+            _.each(indicatorSet.indicators, function (row) {
                 // header
                 if (row.type === 'section-header') {
                     // remove previous section header if no indicators are inlcuded under it
@@ -247,16 +247,16 @@ module.exports = {
             if (self.locations.length > 0) {
 
                 // get all high risk children of selected locations
-                _.forEach(self.locations, function(locationVue) {
+                _.forEach(self.locations, function (locationVue) {
 
                     var location = self.$data.locationData[locationVue.value]
                     options.location__in.push(location.id)
 
                     if (self.includeSublocations) {
                         // this will include all child locations:
-                        var children = flattenChildren(location, 'children', null, function() { return true }, 1)
+                        var children = flattenChildren(location, 'children', null, function () { return true }, 1)
                         // this will include only high risk child locations
-                        // var children = flattenChildren(location, 'children', null, function(d) { return d.is_high_risk === true })
+                        // var children = flattenChildren(location, 'children', null, function (d) { return d.is_high_risk === true })
                         if (children.length > 0) {
                             options.location__in = options.location__in.concat(_.map(children, 'id'))
                         }
@@ -268,7 +268,7 @@ module.exports = {
                 options.location__in = _.uniq(options.location__in)
 
                 // sort locations
-                options.location__in = options.location__in.sort(function(a,b) {
+                options.location__in = options.location__in.sort(function (a,b) {
                     var ra = self.$data.locationData[a]
                     var rb = self.$data.locationData[b]
                     // sort by location type first
@@ -282,8 +282,8 @@ module.exports = {
             var indicatorSet = self.getFilteredIndicatorSet(self.indicator_set_id)
 
             options.indicator__in = _(indicatorSet.indicators)
-                                        .filter(function(d) { return d.id })
-                                        .map(function(d) { return d.id })
+                                        .filter(function (d) { return d.id })
+                                        .map(function (d) { return d.id })
                                         .value()
 
             // define columns
@@ -295,7 +295,7 @@ module.exports = {
                 }
             ]
             // add location names as columns
-            _.forEach(options.location__in, function(location_id) {
+            _.forEach(options.location__in, function (location_id) {
                 columns.push({
                     header: self.$data.locationData[location_id].name,
                     type: 'value',
@@ -319,14 +319,14 @@ module.exports = {
 
                 // arrange datapoints into an object of indicators > locations
                 var byIndicator = {}
-                data.objects.forEach(function(d) {
+                data.objects.forEach(function (d) {
                     if (!byIndicator[d.indicator_id]) { byIndicator[d.indicator_id] = {} }
                     byIndicator[d.indicator_id][d.location_id] = d
                 })
 
                 // assemble data points into rows for table
                 var rows = []
-                _.each(indicatorSet.indicators, function(rowInfo) {
+                _.each(indicatorSet.indicators, function (rowInfo) {
 
                     var row = []
 
@@ -346,7 +346,7 @@ module.exports = {
                         var indicator_id = rowInfo.id
 
                         // add columns
-                        columns.forEach(function(column) {
+                        columns.forEach(function (column) {
 
                             var cell = {
                                 isEditable: false,
@@ -377,7 +377,7 @@ module.exports = {
                                         cell.tooltip = null
                                     }
                                     // generate validation for values
-                                    cell.validateValue = function(newVal) {
+                                    cell.validateValue = function (newVal) {
                                         var value, passed
 
                                         if (_.isNull(newVal)) {
@@ -390,7 +390,7 @@ module.exports = {
                                         return { 'value': value, 'passed': passed }
                                     }
                                     // generate promise for submitting a new value to the API for saving
-                                    cell.buildSubmitPromise = function(newVal) {
+                                    cell.buildSubmitPromise = function (newVal) {
                                         var upsert_options = {
                                             datapoint_id: cell.datapoint_id,
                                             campaign_id: options.campaign__in,
@@ -401,11 +401,11 @@ module.exports = {
                                         return api.datapointUpsert(upsert_options)
                                     }
                                     // callback to specifically handle response
-                                    cell.withResponse = function(response) {
+                                    cell.withResponse = function (response) {
                                         // console.log('done!', response)
                                     }
                                     // callback to handle error
-                                    cell.withError = function(error) {
+                                    cell.withError = function (error) {
                                         console.log(error)
                                         if (error.msg && error.msg.message) { alert('Error: ' + error.msg.message) }
                                         cell.hasError = true
@@ -436,7 +436,7 @@ module.exports = {
 
             }
 
-            // var withError = function(err) {
+            // var withError = function (err) {
             //  console.log(err)
 
             //  // finished fetching data
@@ -452,11 +452,11 @@ module.exports = {
             })
         },
 
-        showTooltip: function() {
+        showTooltip: function () {
             this.$broadcast('tooltip-show')
         },
 
-        hideTooltip: function() {
+        hideTooltip: function () {
             this.$broadcast('tooltip-hide')
         }
 

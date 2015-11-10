@@ -8,7 +8,7 @@ var formats = {
 }
 
 var scales = {
-    completionClass: function(v) {
+    completionClass: function (v) {
         if (v === 0) { return 'statusText-bad' }
         else if (v === 1) { return 'statusText-good' }
         else if (v > 0 && v < 1) { return 'statusText-okay' }
@@ -34,10 +34,10 @@ module.exports = {
     methods: {
 
         // update table stats
-        updateStats: function() {
+        updateStats: function () {
             var self = this
 
-            var newCounter = function() {
+            var newCounter = function () {
                 return {
                     'complete': 0,
                     'total': 0
@@ -52,13 +52,13 @@ module.exports = {
 
             if (self.rows.length > 0) {
 
-                _.forEach(self.rows, function(row, rowIndex) {
+                _.forEach(self.rows, function (row, rowIndex) {
 
                     if (stats.byRow[rowIndex] === undefined) {
                         stats.byRow[rowIndex] = newCounter()
                     }
 
-                    _.forEach(row, function(cell, colIndex) {
+                    _.forEach(row, function (cell, colIndex) {
 
                         if (stats.byColumn[colIndex] === undefined) {
                             stats.byColumn[colIndex] = newCounter()
@@ -92,29 +92,29 @@ module.exports = {
 
     filters: {
 
-        percent: function(v) {
+        percent: function (v) {
             return formats.percent(v)
         },
 
-        completionClass: function(v) {
+        completionClass: function (v) {
             return scales.completionClass(v)
         },
 
-        getStat: function(obj, by, prop) { 
+        getStat: function (obj, by, prop) { 
             if (this.stats[by] && this.stats[by][this.$index] !== undefined && this.stats[by][this.$index][prop] !== undefined) {
                 return this.stats[by][this.$index][prop]
             }
             return null
         },
 
-        rowCompletionClass: function() {
+        rowCompletionClass: function () {
             if (this.stats.byRow[this.$index] !== undefined) {
                 return scales.completionClass(this.stats.byRow[this.$index].complete / this.stats.byRow[this.$index].total)
             }
             return null
         },
 
-        colCompletionClass: function() {
+        colCompletionClass: function () {
             if (this.stats.byColumn[this.$index] !== undefined) {
                 return scales.completionClass(this.stats.byColumn[this.$index].complete / this.stats.byColumn[this.$index].total)
             }

@@ -7,7 +7,7 @@ module.exports = {
 
     template: require('./cell.html'),
 
-    data: function() {
+    data: function () {
         return {
             previousValue: null, // save the previous value to compare with edited value
             isSaving: false, // whether the cell is in the process of saving right now
@@ -17,7 +17,7 @@ module.exports = {
         }
     },
 
-    created: function() {
+    created: function () {
 
         // set previous value
         this.previousValue = this.value || null
@@ -47,7 +47,7 @@ module.exports = {
     methods: {
 
         // switch editing mode
-        toggleEditing: function(op) {
+        toggleEditing: function (op) {
             if (this.$data.isEditable === true) {
                 this.isEditing = op !== undefined ? op : !this.isEditing
 
@@ -59,7 +59,7 @@ module.exports = {
         },
 
         // user has finished editing: update cell state
-        submit: function() {
+        submit: function () {
             var self = this
 
             self.hasError = false
@@ -93,7 +93,7 @@ module.exports = {
                         // TODO: validation of value
 
                         var promise = self.buildSubmitPromise(value)
-                        promise.then(function(response) {
+                        promise.then(function (response) {
                             // fulfilled
                             if (self.withResponse) {
                                 self.withResponse(response)
@@ -102,7 +102,7 @@ module.exports = {
                             self.previousValue = self.value
                             self.isSaving = false
 
-                        }, function(error) {
+                        }, function (error) {
                         
                             // or rejected
                             if (self.withError) {
@@ -134,7 +134,7 @@ module.exports = {
 
     computed: {
 
-        formatted: function() {
+        formatted: function () {
             if (this.value === undefined || this.value === null) {
                 return ''
             }
@@ -144,11 +144,11 @@ module.exports = {
             }
         },
 
-        missing: function() {
+        missing: function () {
             return _.isNull(this.value)
         },
 
-        hoverText: function() {
+        hoverText: function () {
             if (this.tooltip) {
                 return this.tooltip
             }
@@ -166,7 +166,7 @@ module.exports = {
         // validate value
         validator: {
 
-            write: function(val) {
+            write: function (val) {
 
                 // string
                 if (_.isString(val)) {

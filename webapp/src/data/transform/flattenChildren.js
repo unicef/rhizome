@@ -18,7 +18,7 @@ function flattenChildren(root, childrenKey, arr, filterCondition, maxDepth) {
     }
 
     if (root[childrenKey] && _.isArray(root[childrenKey])) {
-        _.forEach(root[childrenKey], function(child) {
+        _.forEach(root[childrenKey], function (child) {
             if (!filterCondition || filterCondition(child)) {
                 arr.push(child)
             }

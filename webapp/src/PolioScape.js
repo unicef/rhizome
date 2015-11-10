@@ -66,7 +66,7 @@ module.exports = {
     DashboardList: function (el) {
         React.render(React.createElement(DashboardList), el)
     },
-    HomepageCharts: function(el) {
+    HomepageCharts: function (el) {
         React.render(React.createElement(HomepageChartsView), el)
     },
     DashboardBuilder: function (el,dashboard_id) {
@@ -77,13 +77,13 @@ module.exports = {
         var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
         React.render(React.createElement(ChartBuilder,{dashboard_id:dashboard_id}), el)
     },
-    UFAdmin: function(el) {
+    UFAdmin: function (el) {
         AdminApp.render(document.getElementById('main'))
     },
-    CampaignsPage: function(id_start_date, id_end_date){
+    CampaignsPage: function (id_start_date, id_end_date){
         CampaignsPage.render(id_start_date, id_end_date)
     },
-    GroupForm: function(el, group_id) {
+    GroupForm: function (el, group_id) {
         // React.render(React.createElement(GroupForm), el)
         React.render(React.createElement(GroupForm, {group_id: group_id}), el)
     }

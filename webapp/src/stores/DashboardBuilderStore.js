@@ -183,7 +183,7 @@ var DashboardBuilderStore = Reflux.createStore({
       else {
         alert("There was an error saving your chart")
       }
-    }, function(response){
+    }, function (response){
       alert(response.msg)
     })
   },
@@ -240,7 +240,7 @@ var DashboardBuilderStore = Reflux.createStore({
       this.saveDashboard()
     }.bind(this), 1000)
   },
-  onChangeLayout: function(value){
+  onChangeLayout: function (value){
     this.data.layout = value
     this.trigger(this.data)
   }

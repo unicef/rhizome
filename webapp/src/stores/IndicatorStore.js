@@ -47,7 +47,7 @@ var IndicatorStore = Reflux.createStore({
             .value()
     },
 
-    getIndicatorsPromise: function() {
+    getIndicatorsPromise: function () {
         return this.indicatorsPromise
     }
 })
