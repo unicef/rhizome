@@ -1,6 +1,5 @@
 var _ = require('lodash')
 
-
 module.exports = function parseData(response) {
 
     var my_data = {

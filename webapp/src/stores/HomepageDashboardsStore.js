@@ -107,7 +107,6 @@ var HomepageDashboardsStore = Reflux.createStore({
       r.parent = locationIdx[r.parent_location_id]
     })
 
-
     var indicators = _.reduce(dashboard.charts, this.generateIndicator, {})
     var query = this.getQueriesByIndicators(indicators)
 

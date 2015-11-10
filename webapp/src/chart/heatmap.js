@@ -86,7 +86,6 @@ _.extend(Heatmap.prototype, {
             .domain(_.map(options.headers, options.headerText))
             .rangeBands([0, w], .1)
 
-
         var x = _.flow(options.column, xScale)
 
         var sortCol = this.sortCol

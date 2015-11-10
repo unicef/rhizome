@@ -98,7 +98,6 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
         var svg = this._svg
 
-
         var canvasH = h + margin.top + margin.bottom
         var canvasW = w + margin.left + margin.right
 

@@ -106,7 +106,6 @@ var SimpleFormStore = Reflux.createStore({
   deleteTagFromIndicator: function (data) {
   },
 
-
   onRefreshTags: function (indicator_id) {
     var self = this
     api.indicator_to_tag({ indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_tag) {
@@ -144,7 +143,6 @@ var SimpleFormStore = Reflux.createStore({
     )
       .then(_.spread(function (indicator_to_calc, indicators) {
         var allIndicators = _(indicators.objects).sortBy('title').value()
-
 
         var indicatorCalcList = _.map(indicator_to_calc.objects, function (row) {
           return {

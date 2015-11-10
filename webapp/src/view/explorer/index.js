@@ -11,7 +11,6 @@ var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
 var List = require('component/list/List.jsx')
 var DateRangePicker = require('component/DateTimePicker.jsx')
 
-
 module.exports = {
   template: require('./template.html'),
 
@@ -115,7 +114,6 @@ module.exports = {
         return
       }
 
-
       debugger
       var self = this
 
@@ -167,7 +165,6 @@ module.exports = {
       })
 
       _.defaults(options, pagination, _.omit(this.pagination, 'total_count'))
-
 
       this.table.rows = []
       this.table.columns = columns

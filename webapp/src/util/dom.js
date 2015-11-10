@@ -101,7 +101,6 @@ function parentOf(parent, child) {
     return result
 }
 
-
 module.exports = {
     contains       : contains,
     contentArea    : contentArea,

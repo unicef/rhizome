@@ -67,7 +67,6 @@ var AdminPage = React.createClass({
     else if (this.props.title === "Tags")
       createUrl = "/ufadmin/manage/indicator_tag/"
 
-
     // strip the "s" from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
     var createButton = createUrl ?
@@ -119,7 +118,6 @@ var AdminPage = React.createClass({
         }
       </div>
 
-
       {areFiltersVisible ?
         <div className="ufadmin-filters-content">
           {this.props.datascopeFilters}
@@ -142,6 +140,5 @@ var AdminPage = React.createClass({
     </div> : null
   }
 })
-
 
 module.exports = AdminPage

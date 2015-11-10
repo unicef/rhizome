@@ -68,7 +68,6 @@ function _getBoundOrder(bound) {
     return _.get(RANGE_ORDER, bound.bound_name, Infinity)
 }
 
-
 module.exports = {
     template : require('./district.html'),
 

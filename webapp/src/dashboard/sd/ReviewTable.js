@@ -168,5 +168,4 @@ var ReviewTable = React.createClass({
     }
 })
 
-
 module.exports = ReviewTable

@@ -6,7 +6,6 @@ var _ = require('lodash')
 function flattenChildren(root, childrenKey, arr, filterCondition, maxDepth) {
     'use strict'
 
-
     arr = arr || []
 
     if (!_.isNumber(maxDepth)) {

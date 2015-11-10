@@ -76,7 +76,6 @@ var NavigationStore = Reflux.createStore({
             return moment(c.start_date, 'YYYY-MM-DD').valueOf()
           })
 
-
         // Build the path for the dashboard
         var path = ''
         try {

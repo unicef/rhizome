@@ -460,6 +460,5 @@ module.exports = {
             this.$broadcast('tooltip-hide')
         }
 
-
     }
 }

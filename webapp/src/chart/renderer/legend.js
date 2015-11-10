@@ -3,7 +3,6 @@
 var d3 = require('d3')
 
 
-
 function legend() {
     var _clickHandler = null
     var _filled       = function () { return true }

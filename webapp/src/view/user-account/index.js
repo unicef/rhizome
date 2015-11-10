@@ -32,7 +32,6 @@ module.exports = {
          })
       })
 
-
       api.locations().then(function (items) {
          self.loadlocationalAccess()
          self.location_map = _.indexBy(items.objects, 'id')
@@ -95,7 +94,6 @@ module.exports = {
 
       loadlocationalAccess: function () {
         var self = this
-
 
         api.location_permission( { user: this.$parent.$data.user_id}).then(function (data) {
           var locations = data.objects

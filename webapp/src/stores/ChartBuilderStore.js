@@ -12,7 +12,6 @@ var colors    = require('colors')
 var Vue = require('vue') //for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 
-
 function melt(data,indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
@@ -456,7 +455,6 @@ module.exports = Reflux.createStore({
         campaign_start : (lower?lower.format('YYYY-MM-DD'):null),
         campaign_end   : upper.format('YYYY-MM-DD')
                     }
-
 
         processChartData
         .init(api.datapoints(q),selectedChart,this.data.indicatorsSelected,this.data.aggregatedLocations,lower,upper,groups,groupBy,this.data.xAxis,this.data.yAxis)
