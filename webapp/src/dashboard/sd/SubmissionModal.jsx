@@ -40,8 +40,8 @@ var SubmissionModal = React.createClass({
 
         var submission_data = []
         if (this.state.modalIsOpen &&
-            this.state.submission_data != null &&
-            this.state.submission_data.submission_json != null
+            this.state.submission_data !== null &&
+            this.state.submission_data.submission_json !== null
         ) {
             var submission_json = this.state.submission_data.submission_json
             _.forIn(submission_json, function (value, key) {

@@ -10,10 +10,10 @@ var MenuItem = require('component/MenuItem.jsx')
 function findMatches (item, re) {
   var matches = []
 
-  if (re.test(_.get(item, 'value')) && item.noValue != true) {
+  if (re.test(_.get(item, 'value')) && item.noValue !== true) {
     matches.push(_.assign({}, item, {filtered: true}))
   }
-  if (re.test(_.get(item, 'title')) && item.noValue != true) {
+  if (re.test(_.get(item, 'title')) && item.noValue !== true) {
     matches.push(_.assign({}, item, {filtered: true}))
   }
 

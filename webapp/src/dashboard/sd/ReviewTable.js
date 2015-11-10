@@ -77,13 +77,13 @@ var ReviewTable = React.createClass({
 
     componentWillUpdate: function (nextProps, nextState) {
         // FIXME -> needs cleanup
-        if (nextProps.location != this.props.location) {
+        if (nextProps.location !== this.props.location) {
             return
         }
-        if (nextProps.getData != this.props.getData) {
+        if (nextProps.getData !== this.props.getData) {
             return
         }
-        if (nextProps.doc_id != this.props.doc_id) {
+        if (nextProps.doc_id !== this.props.doc_id) {
             return
         }
     },

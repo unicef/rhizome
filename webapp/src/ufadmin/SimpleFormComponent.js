@@ -58,7 +58,7 @@ var SimpleFormComponent = React.createClass({
   },
 
   _onClick: function (value) {
-    if (this.props.onClick != null) {
+    if (this.props.onClick !== null) {
       this.props.onClick.call(this, this.refs.selectBox.getDOMNode().value, value)
     }
   },

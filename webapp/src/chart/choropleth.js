@@ -35,7 +35,7 @@ function _calculateBounds (features) {
   }
 
   var coordinates = _(features).map(function (f) {
-    if (f.geometry.type != 'MultiPolygon') {
+    if (f.geometry.type !== 'MultiPolygon') {
       return _.flatten(f.geometry.coordinates)
     }
   })

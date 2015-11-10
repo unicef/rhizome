@@ -42,10 +42,10 @@ var DocOverview = React.createClass({
   },
 
   componentWillUpdate (nextProps, nextState) {
-    if (nextProps.doc_id != this.props.doc_id) {
+    if (nextProps.doc_id !== this.props.doc_id) {
       return
     }
-    if (nextProps.doc_deets != this.props.doc_deets) {
+    if (nextProps.doc_deets !== this.props.doc_deets) {
       return
     }
   },

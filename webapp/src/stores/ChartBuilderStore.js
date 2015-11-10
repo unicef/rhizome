@@ -384,7 +384,7 @@ module.exports = Reflux.createStore({
            locations = [locationSelected]
         } else if (locationRadioValue === 'type')
         {
-           if (locationSelected.parent_location_id && locationSelected.parent_location_id != 'None')
+           if (locationSelected.parent_location_id && locationSelected.parent_location_id !== 'None')
            {
              locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
            } else {

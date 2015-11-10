@@ -82,7 +82,7 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    if (nextProps.type != this.props.type) {
+    if (nextProps.type !== this.props.type) {
       React.findDOMNode(this).innerHTML = ''
       this._chart = ChartFactory(
         nextProps.type,

@@ -79,13 +79,13 @@ var SimpleForm = React.createClass({
   },
 
   componentWillUpdate: function (nextProps, nextState) {
-    if (nextProps.params != this.props.params) {
+    if (nextProps.params !== this.props.params) {
       return
     }
-    if (nextState.store.dataObject != this.state.store.dataObject) {
+    if (nextState.store.dataObject !== this.state.store.dataObject) {
       return
     }
-    if (nextState.extraFormData != this.state.extraFormData) {
+    if (nextState.extraFormData !== this.state.extraFormData) {
       return
     }
   },
@@ -160,7 +160,7 @@ var SimpleForm = React.createClass({
     }
 
     var idInfo = ''
-    if (this.state.store.objectId != -1) {
+    if (this.state.store.objectId !== -1) {
          idInfo = (<div>
          <h5>id: {this.state.store.objectId} </h5>
          <br></br></div>)

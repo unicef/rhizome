@@ -53,7 +53,7 @@ var SourceDataDashboard = React.createClass({
     },
 
     componentWillUpdate: function (nextProps, nextState) {
-        if (nextProps.doc_id != this.props.doc_id) {
+        if (nextProps.doc_id !== this.props.doc_id) {
             return
         }
     },
