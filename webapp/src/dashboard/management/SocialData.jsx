@@ -1,29 +1,27 @@
 'use strict';
 
-var _      = require('lodash');
-var React  = require('react');
+var _ = require('lodash');
+var React = require('react');
 
-var DonutChart   = require('component/DonutChart.jsx');
+var DonutChart = require('component/DonutChart.jsx');
 
 var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator;
 };
 
 var SocialData = React.createClass({
-  propTypes : {
+  propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.object.isRequired,
     data: React.PropTypes.object
   },
 
-  render : function() {
-    //var data     = this.props.data;
+  render: function () {
     var campaign = this.props.campaign;
-    var loading  = this.props.loading;
-    var colors = ['#377EA4','#B6D0D4'];
+    var loading = this.props.loading;
 
-    var data =_.filter(this.props.data,
-      d => d.campaign.id === campaign.id && _.isFinite(d.value));
+    var data = _.filter(this.props.data,
+        d => d.campaign.id === campaign.id && _.isFinite(d.value));
 
     var social = _.find(data, indicatorForCampaign(campaign.id, 28));
     var microplans = _.find(data, indicatorForCampaign(campaign.id, 27));
@@ -35,32 +33,31 @@ var SocialData = React.createClass({
 
     if (_.isFinite(num) && _.isFinite(den)) {
       microText = num + ' / ' + den + ' microplans incorporate social data';
-      _.forEach(data, d=>d.value = num/den);
+      _.forEach(data, d=>d.value = num / den);
     }
 
     var planLabel = function (d) {
       var fmt = d3.format('%');
-      var v   = _.get(d, '[0].value', '');
+      var v = _.get(d, '[0].value', '');
 
       return fmt(v);
     };
 
     return (
-        <div className="row">
-          <div className="medium-4 columns">
-              <DonutChart data={data} label={planLabel}
-              loading={loading}
-              options={{
+      <div className="row">
+        <div className="medium-4 columns">
+          <DonutChart data={data} label={planLabel}
+                      loading={loading}
+                      options={{
                 innerRadius : 0.3,
                 outerRadius : 0.5,
-                domain      : _.constant([0, 1]),
-                palette     : colors
-              }} />
-          </div>
-          <div className="medium-4 columns">
-            {microText}
-          </div>
+                domain      : _.constant([0, 1])
+              }}/>
         </div>
+        <div className="medium-4 columns">
+          {microText}
+        </div>
+      </div>
     );
   }
 });
