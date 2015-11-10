@@ -70,7 +70,6 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function () {
-    //console.log("%c Did Mount", 'background: #222; color: #bada55');
     this._chart = ChartFactory(
       this.props.type,
       React.findDOMNode(this),
@@ -79,20 +78,10 @@ module.exports = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    //console.log("Next Props", nextProps);
-    //console.log("Next State", nextState);
-    //
-    //console.log("This Props", this.props);
-    //console.log("This State", this.state);
-    //
-    //console.log("Data Different", nextProps.data !== this.props.data);
-    //console.log("Loading Differnet", nextProps.loading !== this.props.loading);
-
     return (nextProps.data !== this.props.data || nextProps.loading !== this.props.loading)
   },
 
   componentWillReceiveProps: function (nextProps) {
-    //console.log("%c Receive Props", 'background: #333; color: #bada55');
     if (nextProps.type != this.props.type) {
       React.findDOMNode(this).innerHTML = '';
       this._chart = ChartFactory(
@@ -104,7 +93,6 @@ module.exports = React.createClass({
   },
 
   componentDidUpdate: function () {
-    //console.log("%c Update Chart", 'background: #444; color: #bada55');
     this._chart.update(this.props.data, this.props.options);
   }
 });
