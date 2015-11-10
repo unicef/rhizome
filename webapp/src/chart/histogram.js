@@ -51,13 +51,13 @@ _.extend(Histogram.prototype, {
 
     var bin = g.selectAll('.bin').data(buckets)
 
-    var transform = d => 'translate(' + x(d) + ',' + y(d) + ')'
+    var transform = d => 'translate(' + x(d) + ', ' + y(d) + ')'
 
     bin.enter()
       .append('g')
       .attr({
         'class': 'bin',
-        'transform': d => 'translate(' + x(d) + ',' + h + ')'
+        'transform': d => 'translate(' + x(d) + ', ' + h + ')'
       })
 
     bin.transition().duration(500).attr('transform', transform)

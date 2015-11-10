@@ -84,7 +84,7 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     var g = svg.append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'legend')
@@ -189,7 +189,7 @@ _.extend(ChoroplethMap.prototype, {
       )
         .attr('transform', function () {
           var bbox = this.getBoundingClientRect()
-          return 'translate(' + (w - bbox.width) + ',' + (h - bbox.height) + ')'
+          return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
         })
     }
   },

@@ -90,10 +90,10 @@ _.extend(PieChart.prototype, {
         'height': this._height + 'px'
       })
       .select('.margin')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
     var g = svg.select('.data')
-      .attr('transform', 'translate(' + (w / 2) + ',' + (h / 2) + ')')
+      .attr('transform', 'translate(' + (w / 2) + ', ' + (h / 2) + ')')
 
     var arc = d3.svg.arc()
       .innerRadius(s / 2 * options.innerRadius)

@@ -2,7 +2,7 @@
 
 var d3 = require('d3')
 
-var colors = ['#377EA4','#B6D0D4']
+var colors = ['#377EA4', '#B6D0D4']
 
 function scale(categories, palette) {
   palette = palette || colors

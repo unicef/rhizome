@@ -213,7 +213,7 @@ module.exports = {
 
             props.scale = d3.scale.ordinal()
                     .domain(['bad', 'okay', 'ok', 'good'])
-                    .range(['#AF373E', '#959595', '#959595','#2B8CBE'])
+                    .range(['#AF373E', '#959595', '#959595', '#2B8CBE'])
 
             props.cellSize = 36
             props.fontSize = 14

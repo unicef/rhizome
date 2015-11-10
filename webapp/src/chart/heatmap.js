@@ -104,7 +104,7 @@ _.extend(Heatmap.prototype, {
         var fill = options.scale
 
         svg.select('.margin')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
         var g = svg.select('.data')
 
@@ -214,7 +214,7 @@ _.extend(Heatmap.prototype, {
           var dx = w + margin.right - bbox.width
           var dy = 0
 
-          return 'translate(' + dx + ',' + dy + ')'
+          return 'translate(' + dx + ', ' + dy + ')'
         })
     } else {
       svg.select('.legend').selectAll('*').remove()

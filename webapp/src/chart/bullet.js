@@ -54,7 +54,7 @@ _.extend(BulletChart.prototype, {
     svg.append('g')
       .attr({
         'class': 'data',
-        'transform': 'translate(' + options.margin.left + ',' + options.margin.top + ')'
+        'transform': 'translate(' + options.margin.left + ', ' + options.margin.top + ')'
       })
 
     this.update(data)
@@ -137,7 +137,7 @@ _.extend(BulletChart.prototype, {
     )
 
     var g = svg.select('.data')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
     // Draw value
     var bar = g.selectAll('.bar').data(data)

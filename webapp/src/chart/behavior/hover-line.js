@@ -165,7 +165,7 @@ function hoverLine() {
         var max = width - min
 
         return 'translate(' +
-            Math.max(min, Math.min(max, d)) + ',' +
+            Math.max(min, Math.min(max, d)) + ', ' +
             height + ')'
     }
 

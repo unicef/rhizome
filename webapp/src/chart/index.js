@@ -68,7 +68,7 @@ ChartFactory.prototype.initialize = function (el, data, options) {
         })
 
     var g = svg.append('g')
-        .attr('transform', 'translate(' + options.margin.left + ',' +
+        .attr('transform', 'translate(' + options.margin.left + ', ' +
             options.margin.top + ')')
 
     g.append('g').attr('class', 'y axis')

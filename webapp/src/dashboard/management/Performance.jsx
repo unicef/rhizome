@@ -67,7 +67,7 @@ var Performance = React.createClass({
     var lower = upper.clone().startOf('month').subtract(1, 'year')
     var loading = this.props.loading
     var location = this.props.location
-    var colors = ['#377EA4','#B6D0D4']
+    var colors = ['#377EA4', '#B6D0D4']
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
