@@ -83,16 +83,16 @@ var DashboardBuilderStore = Reflux.createStore({
   },
 
   onAddChart: function (chartDef) {
-    //in this api do not need set the chart id.
-    //chartDef.id = chartDef.title + (new Date()).valueOf()
+    // in this api do not need set the chart id.
+    // chartDef.id = chartDef.title + (new Date()).valueOf()
 
     this.data.dashboard.charts.push(chartDef)
     DashboardActions.setDashboard({ dashboard: this.data.dashboard})
 
-    //do not save the whole dashboard.
-    //this.saveDashboard()
+    // do not save the whole dashboard.
+    // this.saveDashboard()
 
-    //just save the chart.
+    // just save the chart.
     var data = {
       dashboard_id: this.data.dashboardId,
       chart_json: JSON.stringify(chartDef)
@@ -110,8 +110,8 @@ var DashboardBuilderStore = Reflux.createStore({
     var chart = this.data.dashboard.charts.splice(index, 1)[0]
     DashboardActions.setDashboard({ dashboard: this.data.dashboard})
 
-    //do not save the whole dashboard.
-    //this.saveDashboard()
+    // do not save the whole dashboard.
+    // this.saveDashboard()
     var data = {
       id: chart.id
     }
@@ -192,16 +192,16 @@ var DashboardBuilderStore = Reflux.createStore({
     }
     api.save_dashboard(data).then(function (response) {
       console.log(response)
-      //self.data.charts = response.objects[0].dashboard_json
-      //self.trigger(self.data)
+      // self.data.charts = response.objects[0].dashboard_json
+      // self.trigger(self.data)
     })
   },
   onUpdateChart: function (chartDef, index) {
     this.data.dashboard.charts[index] = chartDef
     DashboardActions.setDashboard({ dashboard: this.data.dashboard})
 
-    //this api do no need to save the dashboard.
-    //this.saveDashboard()
+    // this api do no need to save the dashboard.
+    // this.saveDashboard()
 
     var data = {
       id: chartDef.id,
@@ -217,7 +217,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onUpdateTitle: function (title) {
     this.data.dashboardTitle = title
-    //this.trigger(this.data)
+    // this.trigger(this.data)
     clearTimeout(this.timer)
     if (this.data.dashboard) {
       this.timer = setTimeout(function () {

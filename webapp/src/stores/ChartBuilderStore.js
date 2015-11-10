@@ -9,7 +9,7 @@ var api = require('data/api')
 var d3 = require('d3')
 var moment = require('moment')
 var colors = require('colors')
-var Vue = require('vue') //for tooltip display
+var Vue = require('vue') // for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 
 function melt (data, indicatorArray) {
@@ -136,9 +136,9 @@ module.exports = Reflux.createStore({
         locationList: [],
         indicatorList: [],
         campaignList: [],
-        indicatorsSelected: [],//[{ description: '% missed children due to refusal', short_name: 'Refused', indicator_bounds: [], id: 166, slug: '-missed-children-due-to-refusal', name: '% missed children due to refusal'}],
+        indicatorsSelected: [],// [{ description: '% missed children due to refusal', short_name: 'Refused', indicator_bounds: [], id: 166, slug: '-missed-children-due-to-refusal', name: '% missed children due to refusal'}],
         campaignSelected:{ office_id: 2, start_date: '2014-02-01', id: 137, end_date: '2014-02-01', slug: 'afghanistan-february-2014'},
-        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: 'Nigeria'},//{ id: null, title: null},
+        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: 'Nigeria'},// { id: null, title: null},
         aggregatedlocations: [],
         title: "",
         description: "",
@@ -274,7 +274,7 @@ module.exports = Reflux.createStore({
     },
     onUpdateTitle:function (value) {
        this.data.title = value
-       //this.trigger(this.data)
+       // this.trigger(this.data)
     },
     onUpdateDescription:function (value) {
        this.data.description = value
@@ -310,7 +310,7 @@ module.exports = Reflux.createStore({
     onSelectChart: function (value) {
        this.data.selectedChart = value
        this.data.chartData = []
-       //this.data.chartOptions = chartOptions
+       // this.data.chartOptions = chartOptions
        this.trigger(this.data)
        this.getChartData()
     },
@@ -408,7 +408,7 @@ module.exports = Reflux.createStore({
             return false
         }
     },
-    //Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
+    // Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
     getLower:  function (start) {
         var range = this.data.timeRadios()[this.data.timeRadioValue].value
         if (range === 'current') {
@@ -427,7 +427,7 @@ module.exports = Reflux.createStore({
          return
         }
         this.data.loading = true
-        this.trigger(this.data) //send the loading parameter to the view
+        this.trigger(this.data) // send the loading parameter to the view
         var selectedChart = this.data.chartTypes[this.data.selectedChart].name
         var groupBy = this.data.groupByRadios[this.data.groupByRadioValue].value
         var self = this
@@ -435,7 +435,7 @@ module.exports = Reflux.createStore({
         var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id')
         var groups = (groupBy === 'indicator' ? indicatorsIndex : locationsIndex)
         var start = moment(this.data.campaignSelected.start_date)
-        var lower = this.getLower(start)//.subtract(1, 'year')
+        var lower = this.getLower(start)// .subtract(1, 'year')
         var upper = start.clone().startOf('month')
         var indicatorArray = _.map(this.data.indicatorsSelected, _.property('id'))
         var q = {

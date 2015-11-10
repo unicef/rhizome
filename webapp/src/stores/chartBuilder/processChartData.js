@@ -3,7 +3,7 @@ var d3 = require('d3')
 var colors = require('colors')
 var moment = require('moment')
 var api = require('data/api')
-var Vue = require('vue') //for tooltip display
+var Vue = require('vue') // for tooltip display
 var path = require('vue/src/parsers/path')
 var util = require('util/data')
 
@@ -52,7 +52,7 @@ function value (datapoint) {
   return null
 }
 
-var tooltipDiv = document.createElement('div') //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
+var tooltipDiv = document.createElement('div') // Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv)
 function nullValuesToZero (values) {
   _.each(values, function (value) {
@@ -70,13 +70,13 @@ function _columnData (data, groups, groupBy) {
     .value()
   var baseCampaigns = []
   _.each(columnData, function (series) {
-     _.each(series.values, function (value) { //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
+     _.each(series.values, function (value) { // build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
        if (!_.find(baseCampaigns, function (campaign) {return campaign.id === value.campaign.id}))
        {
          baseCampaigns.push(value.campaign)
        }
      })
-     _.each(series.values, function (val) { //replace all null values with 0, caused d3 rect rendering errors in the chart
+     _.each(series.values, function (val) { // replace all null values with 0, caused d3 rect rendering errors in the chart
       if (_.isNull(val.value))
       {
         val.value = 0
@@ -180,7 +180,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null}
       }
-      if (!lower) //set the lower bound from the lowest datapoint value
+      if (!lower) // set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)
@@ -246,7 +246,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null}
       }
-      if (!lower) //set the lower bound from the lowest datapoint value
+      if (!lower) // set the lower bound from the lowest datapoint value
       {
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)

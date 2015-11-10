@@ -1,4 +1,4 @@
-// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+// This product includes color specifications and designs developed by Cynthia Brewer (http:// colorbrewer.org/).
 module.exports = { YlGn: {
 3: ['#f7fcb9', '#addd8e', '#31a354'],
 4: ['#ffffcc', '#c2e699', '#78c679', '#238443'],

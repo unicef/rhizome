@@ -1,7 +1,7 @@
 module.exports = {
     schemas: {
         users: {
-            '$schema': 'http://json-schema.org/draft-04/schema#',
+            '$schema': 'http:// json-schema.org/draft-04/schema#',
             title: 'Users',
             type: 'array',
 

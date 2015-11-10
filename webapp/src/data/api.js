@@ -22,7 +22,7 @@ function getCookie (name) {
   if (document.cookie && document.cookie !== '') {
     var cookies = document.cookie.split('')
     for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i]//jQuery.trim(cookies[i])
+      var cookie = cookies[i]// jQuery.trim(cookies[i])
       // Does this cookie string begin with the name we want?
       if (cookie.substring(0, name.length + 1) === (name + '=')) {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
@@ -235,7 +235,7 @@ function indicatorsTree (q) {
         if (otherTag.children.length > 0) {
           tags.objects.push(otherTag)
         }
-        //tags.objects.reverse()
+        // tags.objects.reverse()
         // sort indicators with each tag
         _.each(tags.objects, function (t) {
           t.children = _.sortBy(t.children, 'title')

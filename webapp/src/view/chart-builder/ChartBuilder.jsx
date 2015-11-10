@@ -63,10 +63,10 @@ module.exports = React.createClass({
     this.props.chartDef && this.setState({title: this.props.chartDef.title})
   },
   _updateTitle: function (newText) {
-    //this.setState({title:e.currentTarget.value})
+    // this.setState({title:e.currentTarget.value})
 
-    //clearTimeout(this.timer)
-    //this.timer = setTimeout(function (){
+    // clearTimeout(this.timer)
+    // this.timer = setTimeout(function (){
     ChartBuilderActions.updateTitle(newText)
     // }.bind(this), 1000)
   },

@@ -44,7 +44,7 @@ var ReviewTableStore = Reflux.createStore({
                 self.trigger(self.data)
             })
         } else {
-            //results
+            // results
             api.docResults(request, null, {'cache-control': 'no-cache'}).then(response => {
                 self.data.schema = parseSchema(fields)
                 self.data.data = response.objects
