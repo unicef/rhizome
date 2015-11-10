@@ -96,19 +96,19 @@ var ReviewTable = React.createClass({
                 title: 'Edit',
                 key: 'id',
                 renderer: (id) => {
-                    if (this.props.doc_tab==='validate') {
+                    if (this.props.doc_tab === 'validate') {
                         return this.validateForm(id)
                     }
-                    else if (this.props.doc_tab==='viewraw') {
+                    else if (this.props.doc_tab === 'viewraw') {
                         return <SubmissionModal
                             source_submission_id={id}
                             key={id}
                             />
                     }
-                    else if (this.props.doc_tab==='doc_index') {
+                    else if (this.props.doc_tab === 'doc_index') {
                         return <a href={`/datapoints/source-data/Nigeria/2015/06/viewraw/${id}`}>View Raw Data</a>
                     }
-                    else if (this.props.doc_tab==='mapping') {
+                    else if (this.props.doc_tab === 'mapping') {
                         return <MapForm
                             indicators={this.state.indicators}
                             campaigns={DashboardStore.campaigns}

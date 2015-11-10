@@ -128,7 +128,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onMoveForward: function (index) {
     var newIndex
-    if (index===this.data.dashboard.charts.length - 1) {
+    if (index === this.data.dashboard.charts.length - 1) {
       newIndex = 0
     }
     else {
@@ -142,7 +142,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onMoveBackward: function (index) {
     var newIndex
-    if (index===0) {
+    if (index === 0) {
       newIndex = this.data.dashboard.charts.length - 1
     }
     else {

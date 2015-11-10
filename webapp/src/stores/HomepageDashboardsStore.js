@@ -191,7 +191,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
         var partialDashboardInit = _.partial((country, data) => {
           var dashboardDef = _.find(enhanced, (item) => {
-            return country===item.location.name.toLowerCase()
+            return country === item.location.name.toLowerCase()
           })
 
           return _.extend({

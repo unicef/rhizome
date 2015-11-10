@@ -61,14 +61,14 @@ var canDisplayChart = function(){
 }
 var canDisplayChartReason = function(){
     var reason
-    if(this.indicatorsSelected.length===0)
+    if(this.indicatorsSelected.length === 0)
     {
       reason = "Please select at least one indicator"
     }
     else if(!this.campaignSelected.id){
       reason = "Please select a campaign"
     }
-    else if(this.chartData.length===0)
+    else if(this.chartData.length === 0)
     {
       reason = "No data to display"
     }
@@ -387,11 +387,11 @@ module.exports = Reflux.createStore({
         var locations
         var locationSelected = this.data.locationSelected
         var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value
-        if(locationRadioValue==="selected")
+        if(locationRadioValue === "selected")
         {
            locations = [locationSelected]
         }
-        else if(locationRadioValue==="type")
+        else if(locationRadioValue === "type")
         {
            if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
@@ -401,7 +401,7 @@ module.exports = Reflux.createStore({
              locations = _.filter(this._locationIndex, {location_type_id:this.data.locationSelected.location_type_id})
            }
         }
-        else if(locationRadioValue==="sublocations")
+        else if(locationRadioValue === "sublocations")
         {
            locations = _.filter(this._locationIndex, {parent_location_id:locationSelected.id})
         }
@@ -445,7 +445,7 @@ module.exports = Reflux.createStore({
         var self = this
         var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id')//
         var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id')
-        var groups = (groupBy==='indicator'?indicatorsIndex:locationsIndex)
+        var groups = (groupBy === 'indicator'?indicatorsIndex:locationsIndex)
         var start = moment(this.data.campaignSelected.start_date)
         var lower = this.getLower(start)//.subtract(1, 'year')
         var upper = start.clone().startOf('month')

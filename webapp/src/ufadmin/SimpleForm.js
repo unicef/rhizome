@@ -38,7 +38,7 @@ var SimpleForm = React.createClass({
     SimpleFormActions.initialize(this.props.params.id, this.props.params.contentType)
 
     // Hack alert.. FIXME ( this is for the parent_tag_dropdown) //
-    if (this.props.params.contentType==='indicator_tag') {
+    if (this.props.params.contentType === 'indicator_tag') {
       api.tagTree({}, null, {'cache-control': 'no-cache'}).then(function (response) {
         self.setState({'tagTree': response.objects})
       })
@@ -51,14 +51,14 @@ var SimpleForm = React.createClass({
 
   addTagToIndicator: function (tag_id) {
     var mainID = this.props.params.id
-    if (mainID===null)
+    if (mainID === null)
       return
     SimpleFormActions.addTagToIndicator(mainID, tag_id)
   },
 
   addCalculationToIndicator: function (typeInfo, indicator_id) {
     var mainID = this.props.params.id
-    if (mainID===null)
+    if (mainID === null)
       return
 
     SimpleFormActions.addCalculationToIndicator(mainID, indicator_id, typeInfo)
@@ -66,7 +66,7 @@ var SimpleForm = React.createClass({
 
   removeCalculationFromIndicator: function (id) {
     var mainID = this.props.params.id
-    if (mainID===null)
+    if (mainID === null)
       return
 
     SimpleFormActions.removeCalculationFromIndicator(mainID, id)
@@ -74,7 +74,7 @@ var SimpleForm = React.createClass({
 
   removeTagFromIndicator: function (id) {
     var mainID = this.props.params.id
-    if (mainID===null)
+    if (mainID === null)
       return
     SimpleFormActions.removeTagFromIndicator(mainID, id)
   },
@@ -188,7 +188,7 @@ var SimpleForm = React.createClass({
 
     var subFormList
 
-    if (contentType==='indicator') {
+    if (contentType === 'indicator') {
       subFormList = (
         <div>
           <SimpleFormComponent

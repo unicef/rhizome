@@ -42,7 +42,7 @@ _.extend(AreaChart.prototype, {
 
     series = _(series).each(serie => {
       serie.values = _(serie.values).reject(item => {
-        return item.value===null
+        return item.value === null
       }).value()
     }).value()
 

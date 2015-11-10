@@ -9,7 +9,7 @@ function _sortValue(s, sortCol) {
   // jshint validthis: true
   var options = this._options
 
-  var val = (sortCol===null) ?
+  var val = (sortCol === null) ?
     options.seriesName(s) :
     options.value(_.find(options.values(s), d => options.column(d) === sortCol))
 
