@@ -2,13 +2,13 @@ var React = require('react')
 
 module.exports = React.createClass({
     getInitialState:function (){
-	    return {
-	      text: this.props.initialText
-	    }
+      return {
+        text: this.props.initialText
+      }
     },
 
     componentWillReceiveProps: function (nextProps) {
-	     this.setState({text: nextProps.initialText})
+       this.setState({text: nextProps.initialText})
     },
 
     _updateText: function (e){

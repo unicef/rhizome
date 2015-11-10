@@ -24,25 +24,25 @@ module.exports = React.createClass({
     }
   },
 
-	getInitialState: function (){
-	   return {
-	     maxHeight   : 'none',
-	     marginLeft  : 0,
+  getInitialState: function (){
+     return {
+       maxHeight   : 'none',
+       marginLeft  : 0,
        orientation : 'center',
        pattern     : ''
-	   }
-	},
+     }
+  },
 
-	componentDidMount: function (){
-	  window.addEventListener('resize', this._onResize)
+  componentDidMount: function (){
+    window.addEventListener('resize', this._onResize)
 
-	  this._onResize()
+    this._onResize()
     if (this.props.search) {
       React.findDOMNode(this.refs.search).focus()
     } else {
       React.findDOMNode(this).focus()
     }
-	},
+  },
 
   componentDidUpdate : function () {
     this._onResize()
@@ -56,7 +56,7 @@ module.exports = React.createClass({
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
-	_onResize : function () {
+  _onResize : function () {
     var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
     var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height:0})
 
@@ -69,25 +69,25 @@ module.exports = React.createClass({
     var marginLeft = -menu.width / 2
 
     // Calculate the edges based on a centered menu
-		var rightEdge = x + (menu.width / 2)
-		var leftEdge = x - (menu.width / 2)
+    var rightEdge = x + (menu.width / 2)
+    var leftEdge = x - (menu.width / 2)
 
-		if (menu.width > window.innerWidth || leftEdge < 0) {
+    if (menu.width > window.innerWidth || leftEdge < 0) {
       orientation = 'left'
       marginLeft = 0
-		} else if (rightEdge > window.innerWidth) {
+    } else if (rightEdge > window.innerWidth) {
       orientation = 'right'
       marginLeft = 0
-		}
+    }
 
     this.setState({
       orientation : orientation,
       maxHeight   : window.innerHeight - y - (menu.height - items.height),
       marginLeft  : marginLeft
     })
-	},
+  },
 
-	render: function (){
+  render: function (){
     var itemlistStyle = { maxHeight : this.state.maxHeight }
     var containerStyle = { marginLeft : this.state.marginLeft }
     var position = {
@@ -117,7 +117,7 @@ module.exports = React.createClass({
         </div>
       </div>
     )
-	},
+  },
 
   onBlur : function () {
     var self = this

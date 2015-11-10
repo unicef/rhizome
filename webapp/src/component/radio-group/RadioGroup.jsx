@@ -2,11 +2,11 @@ var React = require('react')
 
 module.exports = React.createClass({
   propTypes: {
-  	values: React.PropTypes.array.isRequired,
-  	value: React.PropTypes.number.isRequired,
-  	name: React.PropTypes.string.isRequired,
-  	onChange: React.PropTypes.func.isRequired,
-  	horizontal: React.PropTypes.bool
+    values: React.PropTypes.array.isRequired,
+    value: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired,
+    horizontal: React.PropTypes.bool
   },
   getDefaultProps: function () {
     return {
@@ -22,8 +22,8 @@ module.exports = React.createClass({
         <div key={radio.value} className={this.props.horizontal ? 'horizontal' : null}>
           <input type='radio' name={this.props.name} id={radio.value}
             value={radio.value}
-						checked={this.props.value === index ? 'checked' : false}
-						onChange={this.props.onChange.bind(null,index)}/>
+            checked={this.props.value === index ? 'checked' : false}
+            onChange={this.props.onChange.bind(null,index)}/>
           <label htmlFor={radio.value}>{radio.title}</label>
         </div>
       )
