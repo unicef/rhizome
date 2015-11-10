@@ -11,13 +11,13 @@ function general (value) {
 }
 
 function timeAxis (value) {
-    var m = moment(value)
+  var m = moment(value)
 
-    if (m.month() === 0) {
-        return m.format('YYYY')
-    }
+  if (m.month() === 0) {
+    return m.format('YYYY')
+  }
 
-    return m.format('MMM')
+  return m.format('MMM')
 }
 
 module.exports = {

@@ -111,12 +111,12 @@ module.exports = React.createClass({
   render : function () {
     var campaigns
     if (_.isFinite(this.state.visibleCampaigns)) {
-       campaigns = _(this.state.campaigns)
+      campaigns = _(this.state.campaigns)
                       .take(this.state.visibleCampaigns)
                       .map(_campaignRow)
                       .value()
     } else {
-       campaigns = _(this.state.campaigns).map(_campaignRow).value()
+      campaigns = _(this.state.campaigns).map(_campaignRow).value()
     }
 
     // data entry section, according to permissions
