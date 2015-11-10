@@ -71,9 +71,7 @@ class AggRefresh(object):
 
         if response_msg == 'ERROR':
             self.cache_job.response_msg = str(self.err)[:254]
-            self.cache_job.date_completed = datetime.now()
             self.is_error = True
-            self.cache_job.save()
             return
 
         ## update the datapoint table with this cache_job_id
@@ -199,7 +197,31 @@ class AggRefresh(object):
 
         return dp_df
 
+    def build_calc_df(self,calc_list):
+
+        calc_df = DataFrame(list(CalculatedIndicatorComponent.objects\
+            .filter(calculation__in= calc_list)\
+            .values_list('indicator_id','indicator_component_id','calculation'))\
+                ,columns=['calc_indicator_id','indicator_component_id','calc'])
+
+        return calc_df
+
+    def join_dp_to_calc(self, calc_df, dp_df):
+        '''
+        '''
+
+        ## join the above two dataframes in order to determine ##
+            ## which indicators require which caluclations ##
+        dp_df_with_calc = dp_df.merge(calc_df,left_on='indicator_id',right_on=\
+            'indicator_component_id')
+
+        return dp_df_with_calc
+
     def raw_data(self):
+        '''
+        Add the raw indicator data to the tuple dict.  This happens last so
+        the raw indicator data will always override the calculated.
+        '''
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign_id):
             adp_tuple = (adp.location_id, adp.indicator_id, adp.campaign_id)
@@ -217,6 +239,9 @@ class AggRefresh(object):
 
         ## get the datapoints for the above indicator_ids ##
         dp_df = self.build_dp_df(calc_df['indicator_component_id'])
+
+        ## now join the above dataframe on itself to set up the calculation ##
+        prepped_for_calc_df = self.join_dp_to_calc(calc_df, dp_df)
 
         # ...
 
@@ -267,21 +292,11 @@ class AggRefresh(object):
         calc_list = ['WHOLE_OF_DIFFERENCE_DENOMINATOR','PART_OF_DIFFERENCE']
 
         ## get the indicator_ids we need to make the calculation ##
-        calc_df = DataFrame(list(CalculatedIndicatorComponent.objects\
-            .filter(calculation__in= calc_list)\
-            .values_list('indicator_id','indicator_component_id','calculation'))\
-                ,columns=['calc_indicator_id','indicator_component_id','calc'])
+        calc_df = self.build_calc_df(calc_list)
 
-        ## get the datapoints for the above indicator_ids ##
-        dp_df = DataFrame(list(DataPoint.objects.all()\
-            .filter(indicator_id__in = calc_df['indicator_component_id']\
-                .unique(),campaign_id = self.campaign_id)\
-            .values_list(*self.dp_columns)),columns=self.dp_columns)
-
-        ## join the above two dataframes in order to determine ##
-            ## which indicators require which caluclations ##
-        dp_df_with_calc = dp_df.merge(calc_df,left_on='indicator_id',right_on=\
-            'indicator_component_id')
+        ## get the datapoints for the above indicator_ids and join with dps ##
+        dp_df = self.build_dp_df(calc_df['indicator_component_id'])
+        dp_df_with_calc = self.join_dp_to_calc(calc_df, dp_df)
 
         ## now join the above dataframe on itself to set up the calculation ##
         prepped_for_calc_df = dp_df_with_calc.merge(dp_df_with_calc,\
