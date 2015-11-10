@@ -100,10 +100,10 @@ var DashboardBuilderStore = Reflux.createStore({
       chart_json: JSON.stringify(chartDef)
     }
 
-    api.post_chart(data).then((res)=> {
+    api.post_chart(data).then(res => {
       chartDef.id = res.objects.id
       this.trigger(this.data)
-    }, (res)=> {
+    }, res => {
       console.log("add chart error,", res)
       this.trigger(this.data)
     })
@@ -119,9 +119,9 @@ var DashboardBuilderStore = Reflux.createStore({
       id: chart.id
     }
 
-    api.delete_chart(data).then((res)=> {
+    api.delete_chart(data).then(res => {
       this.trigger(this.data)
-    }, (res)=> {
+    }, res => {
       console.log("remove chart error,", res)
       this.trigger(this.data)
     })
@@ -214,9 +214,9 @@ var DashboardBuilderStore = Reflux.createStore({
       chart_json: JSON.stringify(chartDef)
     }
 
-    api.post_chart(data).then((res)=> {
+    api.post_chart(data).then(res => {
       this.trigger(this.data)
-    }, (res)=> {
+    }, res => {
       console.log("update chart error,", res)
       this.trigger(this.data)
     })
