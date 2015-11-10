@@ -66,7 +66,7 @@ var MenuControl = {
     },
 
     _toggleMenu: function () {
-        this.setState({open: !this.state.open })
+        this.setState({ open: !this.state.open })
     },
 
     handleEvent: function (evt) {

@@ -200,7 +200,7 @@ _.extend(ChoroplethMap.prototype, {
     var render = function () {
       return React.createElement(
         Tooltip,
-        { left: evt.pageX + 2, top: evt.pageY + 2},
+        { left: evt.pageX + 2, top: evt.pageY + 2 },
         options.name(d)
       )
     }

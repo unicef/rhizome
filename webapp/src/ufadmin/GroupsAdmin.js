@@ -23,7 +23,7 @@ const fields = {
       return <a href={`/datapoints/groups/update/${id}`}>Edit Role</a>
     }
   },
-  name: { title: 'Name', name: 'name'}
+  name: { title: 'Name', name: 'name' }
 }
 
 const fieldNamesOnTable = ['name', 'edit_link']

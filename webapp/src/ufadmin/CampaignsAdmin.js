@@ -19,15 +19,15 @@ const fields = {
       return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>
     }
   },
-  id: { title: 'ID', name: 'id'},
-  slug: { title: 'Display Name', name: 'slug'},
-  start_date: { title: 'Start Date', name: 'start_date'},
-  end_date: { title: 'End Date', name: 'end_date'},
-  created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a'}
+  id: { title: 'ID', name: 'id' },
+  slug: { title: 'Display Name', name: 'slug' },
+  start_date: { title: 'Start Date', name: 'start_date' },
+  end_date: { title: 'End Date', name: 'end_date' },
+  created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
 }
 
 const schema = {
-  created_at: { type: 'string', format: 'date-time'}
+  created_at: { type: 'string', format: 'date-time' }
 }
 
 const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link']

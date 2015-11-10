@@ -117,7 +117,7 @@ module.exports = {
 
       var locationNames = _.indexBy(this.locations, 'value')
       var locations = _.map(this.locations, 'value')
-      var options = { indicator__in: []}
+      var options = { indicator__in: [] }
       var columns = [{
         prop: 'location',
         display: 'location',

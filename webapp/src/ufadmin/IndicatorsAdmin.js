@@ -18,10 +18,10 @@ const fields = {
       return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>
     }
   },
-  id: { title: 'ID', name: 'id'},
-  short_name: { title: 'Short Name', name: 'short_name'},
-  name: { title: 'Name', name: 'name'},
-  description: { title: 'Description', name: 'description'}
+  id: { title: 'ID', name: 'id' },
+  short_name: { title: 'Short Name', name: 'short_name' },
+  name: { title: 'Name', name: 'name' },
+  description: { title: 'Description', name: 'description' }
 }
 
 const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link']

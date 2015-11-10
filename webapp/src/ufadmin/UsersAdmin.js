@@ -21,30 +21,30 @@ const fields = {
     key: 'id',
     renderer: (id) => <a href={`/datapoints/users/update/${id}`}>Edit User</a>
   },
-  is_active: { title: 'active?', renderer: checkmarkRenderer},
-  is_staff: { title: 'staff?', renderer: checkmarkRenderer},
-  is_superuser: { title: 'superuser?', renderer: checkmarkRenderer},
-  date_joined: { format: 'MMM D YYYY'},
-  id: { title: 'ID', name: 'id'},
-  username: { title: 'User Name', name: 'username'},
-  first_name: { title: 'First Name', name: 'first_name'},
-  last_name: { title: 'Last Name', name: 'last_name'},
-  email: { title: 'Email', name: 'email'},
-  last_login: { title: 'Last Login', name: 'last_login', format: 'MMM D YYYY, h:mm a'}
+  is_active: { title: 'active?', renderer: checkmarkRenderer },
+  is_staff: { title: 'staff?', renderer: checkmarkRenderer },
+  is_superuser: { title: 'superuser?', renderer: checkmarkRenderer },
+  date_joined: { format: 'MMM D YYYY' },
+  id: { title: 'ID', name: 'id' },
+  username: { title: 'User Name', name: 'username' },
+  first_name: { title: 'First Name', name: 'first_name' },
+  last_name: { title: 'Last Name', name: 'last_name' },
+  email: { title: 'Email', name: 'email' },
+  last_login: { title: 'Last Login', name: 'last_login', format: 'MMM D YYYY, h:mm a' }
 }
 
 const schema = {
-  last_login: { type: 'string', format: 'date-time'}
+  last_login: { type: 'string', format: 'date-time' }
 }
 
 const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link']
 
 const UsersAdmin = React.createClass({
   getInitialState () {
-    return { areFiltersVisible: true}
+    return { areFiltersVisible: true }
   },
   onToggleFilterContainer () {
-    this.setState((prevState) => ({ areFiltersVisible: !prevState.areFiltersVisible}))
+    this.setState((prevState) => ({ areFiltersVisible: !prevState.areFiltersVisible }))
   },
 
   render () {

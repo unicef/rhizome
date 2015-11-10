@@ -223,7 +223,7 @@ _.extend(ColumnChart.prototype, {
       .map(function (s) {
         return _.assign({},
           _.max(options.values(s), options.x),
-          { name: options.name(s)}
+          { name: options.name(s) }
         )
       })
       .map(function (d) {
@@ -310,7 +310,7 @@ _.extend(ColumnChart.prototype, {
             _.find(options.values(s), function (e) {
               return options.x(d) === options.x(e)
             }),
-            { name: options.name(s)}
+            { name: options.name(s) }
           )
         })
         .map(function (d) {

@@ -42,7 +42,7 @@ module.exports = React.createClass({
                 month : d.month,
                 year  : year,
                 value : d.value,
-                x     : moment({ M : d.month}).toDate(),
+                x     : moment({ M : d.month }).toDate(),
                 total : _.get(_.last(result), 'total', 0) + _.get(d, 'value', 0)
               }
 
@@ -63,7 +63,7 @@ module.exports = React.createClass({
       _.omit(this.props, 'id', 'data'), {
         data    : series,
         options : {
-          domain  : _.constant([moment({ M : 0}).toDate(), moment({ M : 11 }).toDate()]),
+          domain  : _.constant([moment({ M : 0 }).toDate(), moment({ M : 11 }).toDate()]),
           range   : _.constant([0, _(series).pluck('values').flatten().pluck('total').max()]),
           x       : _.property('x'),
           xFormat : d3.time.format('%b'),

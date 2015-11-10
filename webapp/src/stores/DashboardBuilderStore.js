@@ -38,14 +38,14 @@ var DashboardBuilderStore = Reflux.createStore({
       this.data.loaded = true
       this.trigger(this.data)
     } else {
-      api.get_dashboard({ id: id}, null, {'cache-control': 'no-cache'})
+      api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' })
         .then(function (response) {
           self.data.dashboard = response.objects[0]
           self.data.dashboardTitle = response.objects[0].title
           self.data.dashboardDescription = response.objects[0].description
           self.data.loaded = true
 
-          api.get_chart({ dashboard_id: id}, null, {'cache-control': 'no-cache'}).then(res => {
+          api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
             self.data.dashboard.charts = res.objects.map(chart => {
               var result = chart.chart_json
               result.id = chart.id
@@ -87,7 +87,7 @@ var DashboardBuilderStore = Reflux.createStore({
     // chartDef.id = chartDef.title + (new Date()).valueOf()
 
     this.data.dashboard.charts.push(chartDef)
-    DashboardActions.setDashboard({ dashboard: this.data.dashboard})
+    DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
     // do not save the whole dashboard.
     // this.saveDashboard()
@@ -108,7 +108,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onRemoveChart: function (index) {
     var chart = this.data.dashboard.charts.splice(index, 1)[0]
-    DashboardActions.setDashboard({ dashboard: this.data.dashboard})
+    DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
     // do not save the whole dashboard.
     // this.saveDashboard()
@@ -160,7 +160,7 @@ var DashboardBuilderStore = Reflux.createStore({
     var dj = JSON.stringify(this.data.dashboard.dashboard_json)
     this.data.dashboard.id = ''
 
-    api.save_dashboard({ id: '', title: this.data.dashboard.title}).then(function (response) {
+    api.save_dashboard({ id: '', title: this.data.dashboard.title }).then(function (response) {
       window.location = '/'
     })
   },
@@ -198,7 +198,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onUpdateChart: function (chartDef, index) {
     this.data.dashboard.charts[index] = chartDef
-    DashboardActions.setDashboard({ dashboard: this.data.dashboard})
+    DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
     // this api do no need to save the dashboard.
     // this.saveDashboard()

@@ -68,7 +68,7 @@ _.extend(PieChart.prototype, {
       .reverse()
       .value()
 
-    var data = [{ value: 0}, { value: 0}]
+    var data = [{ value: 0 }, { value: 0 }]
     if (!_.isNull(values[0]) && !_.isUndefined(values[0])) {
       if (!_.isNull(values[0].value) && !_.isUndefined(values[0].value)) {
         data[0].value = Math.round(values[0].value * 100) / 100

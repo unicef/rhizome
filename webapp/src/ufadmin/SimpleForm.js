@@ -7,7 +7,7 @@ var page = require('page')
 var Reflux = require('reflux')
 var ReactJson = require('react-json')
 var ReactRouter = require('react-router')
-var { Route, Router} = ReactRouter
+var { Route, Router } = ReactRouter
 
 var SimpleFormStore = require('stores/SimpleFormStore')
 var SimpleFormActions = require('actions/SimpleFormActions')
@@ -99,7 +99,7 @@ var SimpleForm = React.createClass({
 
   setParentTag: function (e) {
     var extraFormData = {'parent_tag_id': e}
-    this.setState({'extraFormData': extraFormData })
+    this.setState({ 'extraFormData': extraFormData })
   },
 
   render: function () {
@@ -111,7 +111,7 @@ var SimpleForm = React.createClass({
     var formData = this.state.store.formData
 
     // TODO -> pull this from the DB
-    var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false}}}
+    var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false }}}
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {
@@ -169,7 +169,7 @@ var SimpleForm = React.createClass({
         <ReactJson value={formData} settings={formSettings} ref='form_data'/>
         {additionalFormComponents}
         <br></br>
-        <button className='tiny' style={{ textAlign: 'right'}} onClick={ this.onSubmit }>Save</button>
+        <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.onSubmit }>Save</button>
       </div>)
 
     var baseFormSuccess = ''

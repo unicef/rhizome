@@ -43,7 +43,7 @@ var AdminPage = React.createClass({
   },
 
   onToggleFilterContainer () {
-    this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible}))
+    this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible }))
   },
 
   render () {
