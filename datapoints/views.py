@@ -84,35 +84,6 @@ class CampaignUpdateView(PermissionRequiredMixin, generic.UpdateView):
     form_class = CampaignForm
     # permission_required = 'datapoints.change_campaign'
 
-    ###############
-    ### locationS ###
-    ###############
-
-
-class LocationCreateView(PermissionRequiredMixin, generic.CreateView):
-    model = Location
-    template_name = 'regions/create.html'
-    permission_required = 'datapoints.add_location'
-    form_class = LocationForm
-    success_url = '/ufadmin/locations'
-
-    def form_valid(self, form):
-        # this inserts into the changed_by field with  the user who made the insert
-
-        obj = form.save(commit=False)
-        obj.changed_by = self.request.user
-
-        obj.save()
-        return HttpResponseRedirect(self.success_url)
-
-
-class LocationUpdateView(PermissionRequiredMixin, generic.UpdateView):
-    model = Location
-    success_url = '/ufadmin/locations'
-    template_name = 'regions/update.html'
-    permission_required = 'datapoints.change_location'
-    form_class = LocationForm
-
     ##############################
     ##############################
     #### FUNCTION BASED VIEWS ####
@@ -224,37 +195,6 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect('/ufadmin/users')
-
-
-class IndicatorCreateView(PermissionRequiredMixin, generic.CreateView):
-    model = User
-    template_name = 'user_create.html'
-    form_class = IndicatorForm
-
-    def form_valid(self, form):
-        new_indicator = form.save()
-
-        return HttpResponseRedirect(reverse('datapoints:update_indicator', \
-                                            kwargs={'pk': new_indicator.id}))
-
-
-class IndicatorEditView(PermissionRequiredMixin, generic.UpdateView):
-    model = Indicator
-    template_name = 'indicators/upsert.html'
-    form_class = IndicatorForm
-
-    def get_success_url(self):
-        new_indicator_id = self.get_object().id
-
-        return reverse_lazy('datapoints:update_indicator', kwargs={'pk':
-                                                                       new_indicator_id})
-
-    def get_context_data(self, **kwargs):
-        context = super(IndicatorEditView, self).get_context_data(**kwargs)
-        indicator_obj = self.get_object()
-        context['pk'] = indicator_obj.id
-
-        return context
 
 
 def html_decorator(func):

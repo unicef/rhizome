@@ -5,19 +5,6 @@ from datapoints.models import Location,   Indicator, Campaign, LocationPermissio
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserCreationForm
 
-class LocationForm(forms.ModelForm):
-
-    class Meta:
-        model = Location
-        exclude = ['longitude','latitude']
-
-class IndicatorForm(forms.ModelForm):
-
-    class Meta:
-        model = Indicator
-        fields = ['name','short_name']
-
-
 class CampaignForm(forms.ModelForm):
 
     class Meta:
@@ -48,4 +35,3 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username','first_name','last_name')
-
