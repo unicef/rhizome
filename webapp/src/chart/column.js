@@ -187,23 +187,6 @@ _.extend(ColumnChart.prototype, {
         .tickFormat(options.xFormat)
         .scale(dataXScale));
 
-    var svgBox = this._svg.node().getBoundingClientRect();
-    svg.selectAll('.x.axis text')
-      .attr('dx', function () {
-        var bbox = this.getBoundingClientRect();
-        var dx = null;
-
-        if (bbox.right > svgBox.right) {
-          dx = svgBox.right - bbox.right;
-        }
-
-        if (bbox.left < svgBox.left) {
-          dx = svgBox.left - bbox.left;
-        }
-
-        return dx;
-      });
-
     svg.select('.y.axis')
       .call(d3.svg.axis()
         .orient('right')

@@ -197,24 +197,6 @@ _.extend(LineChart.prototype, {
         .scale(dataXScale)
         .orient('bottom'));
 
-    // Prevent labels from overflowing the left and right edges of the SVG
-    var svgBox = svg.node().getBoundingClientRect();
-    gx.selectAll('text')
-      .attr('dx', function () {
-        var bbox = this.getBoundingClientRect();
-        var dx = null;
-
-        if (bbox.right > svgBox.right) {
-          dx = svgBox.right - bbox.right;
-        }
-
-        if (bbox.left < svgBox.left) {
-          dx = svgBox.left - bbox.left;
-        }
-
-        return dx;
-      });
-
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(options.yFormat)
