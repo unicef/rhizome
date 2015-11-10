@@ -8,7 +8,7 @@ module.exports = {
         'section': 'overview',
         'indicators': [276],
     'timeRange': 0
-    },{
+    }, {
         'title': 'Non Compliance',
         'type'       : 'ChoroplethMap',
         'section': 'map',

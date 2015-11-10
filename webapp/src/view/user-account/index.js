@@ -25,7 +25,7 @@ module.exports = {
          api.user_groups({'user':self.$parent.$data.user_id}).then(function (data) {
              _.forEach(groups, function (group) {
 
-               group.active = _.some(data.objects,{'group_id':group.id})
+               group.active = _.some(data.objects, {'group_id':group.id})
 
              })
              self.$set('groups', response.objects)
@@ -79,7 +79,7 @@ module.exports = {
       },
       deletelocationalAccess: function (data) {
         var self = this
-        var readWrite = _.find(self.$get('location_permissions'),{ location_id: data}).read_write
+        var readWrite = _.find(self.$get('location_permissions'), { location_id: data}).read_write
         api.set_location_permission({ user_id: this.$parent.$data.user_id, location_id: data, read_write: readWrite, id: '' }).then(function () {
           self.loadlocationalAccess()
         })

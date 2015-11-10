@@ -96,7 +96,7 @@ function _columnData(data, groups, groupBy) {
     })
     _.each(columnData, function (series) {
 
-       var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length),{ location: series.values[0].location, indicator: series.values[0].indicator}))
+       var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length), { location: series.values[0].location, indicator: series.values[0].indicator}))
        series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
     })
 
@@ -148,13 +148,13 @@ module.exports = Reflux.createStore({
         aggregatedlocations:[],
         title: "",
         description: "",
-        locationRadios:[{ value: "selected", title:"Selected location only"},{ value: "type", title:"locations with the same type"},{ value: "sublocations", title:"Sublocations 1 level below selected"}],
+        locationRadios:[{ value: "selected", title:"Selected location only"}, { value: "type", title:"locations with the same type"}, { value: "sublocations", title:"Sublocations 1 level below selected"}],
         locationRadioValue: 2,
-        groupByRadios:[{ value: "indicator", title:"Indicators"},{ value: "location", title:"locations"}],
+        groupByRadios:[{ value: "indicator", title:"Indicators"}, { value: "location", title:"locations"}],
         groupByRadioValue: 1,
         timeRadios:function () {
                     var self = this
-                    var radios = [{ value: "allTime", title:"All Time"},{ value: "pastYear", title:"Past Year"},{ value: "3Months", title:"Past 3 Months"},{ value: "current", title:"Current Campaign"}]
+                    var radios = [{ value: "allTime", title:"All Time"}, { value: "pastYear", title:"Past Year"}, { value: "3Months", title:"Past 3 Months"}, { value: "current", title:"Current Campaign"}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if(timeRadios.length -1 < this.timeRadioValue)
                     {
@@ -167,10 +167,10 @@ module.exports = Reflux.createStore({
       return [{
         value : ',.0f',
         title : 'Integer'
-      },{
+      }, {
         value : ',.4f',
         title : 'Real Number'
-      },{
+      }, {
         value : '%',
         title : 'Percentage'
       }]
@@ -275,7 +275,7 @@ module.exports = Reflux.createStore({
         this.getChartData()
     },
     onRemoveIndicatorSelection: function (id) {
-      _.remove(this.data.indicatorsSelected,{ id: id})
+      _.remove(this.data.indicatorsSelected, { id: id})
       this.trigger(this.data)
       this.getChartData()
     },
@@ -345,13 +345,13 @@ module.exports = Reflux.createStore({
        this.data.yAxis = chartDef.y
        this.data.id = chartDef.id
 
-       this.data.selectedChart = _.findIndex(this.data.chartTypes,{ name: chartDef.type})
+       this.data.selectedChart = _.findIndex(this.data.chartTypes, { name: chartDef.type})
        this.data.indicatorsSelected = _.map(chartDef.indicators, function (id) {
           return self._indicatorIndex[id]
        })
        this.data.title = chartDef.title
-       this.data.locationRadioValue = _.findIndex(this.data.locationRadios,{ value: chartDef.locations})
-       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{ value: chartDef.groupBy})
+       this.data.locationRadioValue = _.findIndex(this.data.locationRadios, { value: chartDef.locations})
+       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios, { value: chartDef.groupBy})
        this.data.formatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'yFormat', ',.0f') })
        this.data.xFormatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'xFormat', ',.0f') })
 
@@ -370,7 +370,7 @@ module.exports = Reflux.createStore({
 
        // Ensure non-negative value for timeRadioValue because findIndex might
        // return -1 if it can't find the timeValue in the array of options
-       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{ value: timeValue}), 0)
+       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(), { value: timeValue}), 0)
        this.trigger(this.data)
     },
     resetChartDef:function () {
