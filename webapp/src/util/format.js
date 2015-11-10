@@ -1,5 +1,6 @@
 'use strict'
 
+var d3 = require('d3')
 var moment = require('moment')
 
 function general (value) {
