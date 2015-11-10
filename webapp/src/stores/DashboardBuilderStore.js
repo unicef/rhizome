@@ -175,10 +175,10 @@ var DashboardBuilderStore = Reflux.createStore({
       if (response.objects.id) {
         window.location = '/datapoints/dashboards/edit/' + response.objects.id
       } else {
-        alert('There was an error saving your chart')
+        window.alert('There was an error saving your chart')
       }
     }, function (response) {
-      alert(response.msg)
+      window.alert(response.msg)
     })
   },
   saveDashboard: function () {
