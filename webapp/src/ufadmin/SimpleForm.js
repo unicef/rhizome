@@ -178,7 +178,7 @@ var SimpleForm = React.createClass({
 
     var baseFormSuccess = ''
     if (this.state.store.saveSuccess) {
-      var baseFormSuccess = <i className="fa fa-check"> saved successfully </i>
+      var baseFormSuccess = <i className='fa fa-check'> saved successfully </i>
       var newId = this.state.store.objectId
       this.state.store.saveSuccess = false
       page('/ufadmin/manage/' + contentType +'/'+ newId)
@@ -193,7 +193,7 @@ var SimpleForm = React.createClass({
           <SimpleFormComponent
             objectId={objectId}
             contentType={'indicator_tag'}
-            componentTitle="Add Tags to Indicators"
+            componentTitle='Add Tags to Indicators'
             onClick={this.addTagToIndicator}
             smallItemCouldClick={true}
             onSmallItemClick={this.removeTagFromIndicator}
@@ -203,7 +203,7 @@ var SimpleForm = React.createClass({
           <SimpleFormComponent
             objectId={objectId}
             contentType='indicator_calc'
-            componentTitle="Add Calculations to Indicators"
+            componentTitle='Add Calculations to Indicators'
             onClick={this.addCalculationToIndicator}
             smallItemCouldClick={true}
             onSmallItemClick={this.removeCalculationFromIndicator}
@@ -217,11 +217,11 @@ var SimpleForm = React.createClass({
 
     return (
       <div className='row'>
-        <div className="small-8 columns">
+        <div className='small-8 columns'>
           {base_form}
           <div>{baseFormSuccess}</div>
         </div>
-        <div className="small-4 columns">
+        <div className='small-4 columns'>
           {subFormList}
         </div>
       </div>

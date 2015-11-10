@@ -254,7 +254,7 @@ _.extend(ColumnChart.prototype, {
       .data(legendText)
       .enter().append('g')
       .attr('class', 'series')
-      .attr('transform', function (d, i) { return "translate(0," + i * 15 + ")" })
+      .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
 
     legend.append('rect')
       .attr('x', w-15)
@@ -266,9 +266,9 @@ _.extend(ColumnChart.prototype, {
     legend.append('text')
       .attr('x', w-20)
       .attr('y', -25)
-      .attr('dy', "0.85em")
+      .attr('dy', '0.85em')
       .style({
-        "text-anchor": 'end',
+        'text-anchor': 'end',
         'fill': '#999999'
         })
       .text(function (d) { return d })

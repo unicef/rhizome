@@ -49,7 +49,7 @@ module.exports = React.createClass({
     var self = this
     var rows = self.state.customDashboards
     if (_.isNull(rows)) {
-      rows = <tr><td><i className="fa fa-spinner fa-spin"></i> Loading&hellip;</td></tr>
+      rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
     } else if (rows.length > 0) {
       rows = rows.map(_tableRow)
     } else {
@@ -58,8 +58,8 @@ module.exports = React.createClass({
 
     return (
       <div className='row'>
-        <div className="medium-12 columns">
-          <h5 className="all-dashboard">all custom dashboard</h5>
+        <div className='medium-12 columns'>
+          <h5 className='all-dashboard'>all custom dashboard</h5>
           <table>
             <thead>
               <tr>

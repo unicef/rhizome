@@ -102,7 +102,7 @@ module.exports = React.createClass({
 
     return (
       <div className='menu' style={position} tabIndex='-1' onBlur={this.onBlur}>
-        <div className={this.state.orientation + " container"}
+        <div className={this.state.orientation + ' container'}
           style={containerStyle}
           ref='menu'>
 

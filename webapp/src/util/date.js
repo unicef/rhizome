@@ -3,8 +3,8 @@
 /**
  * Split a string into tokens that can be passed to moment.duration.
  *
- * @param {String} value - A string of the format "<Number> <unit>" or simply
- *                 "<Number>"
+ * @param {String} value - A string of the format '<Number> <unit>' or simply
+ *                 '<Number>'
  *
  * @return an array containing one or two tokens, the first object in the array
  *         will be a Number, the second a String

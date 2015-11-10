@@ -76,7 +76,7 @@ function _campaignRow(campaign, i) {
   return (
     <tr className={cls} key={campaign.id}>
       <td>{campaign.title}</td>
-      <td>{(parseFloat(campaign.management_dash_pct_complete *100 ).toFixed(1)) + "% complete" }</td>
+      <td>{(parseFloat(campaign.management_dash_pct_complete *100 ).toFixed(1)) + '% complete' }</td>
       <td>{country}</td>
       <td>{district}</td>
       <td>{_dashboardSelect(others)}</td>
@@ -126,8 +126,8 @@ module.exports = React.createClass({
       var csv_upload_button = ''
       if (PermissionStore.userHasPermission('upload_csv')) {
         csv_upload_button = (
-                <a className="small button" href="/source_data/file_upload">
-                  <i className="fa fa-upload"></i>&emsp;Upload data
+                <a className='small button' href='/source_data/file_upload'>
+                  <i className='fa fa-upload'></i>&emsp;Upload data
                 </a>
               )
       }
@@ -135,8 +135,8 @@ module.exports = React.createClass({
       var data_entry_button = ''
       if (PermissionStore.userHasPermission('data_entry_form')) {
         data_entry_button = (
-                <a className="small button" href="/datapoints/entry">
-                  <i className="fa fa-table"></i>&emsp;Data Entry Form
+                <a className='small button' href='/datapoints/entry'>
+                  <i className='fa fa-table'></i>&emsp;Data Entry Form
                 </a>
               )
       }
@@ -151,20 +151,20 @@ module.exports = React.createClass({
 
       var dataEntry = (
           <div className='row'>
-            <div className="medium-4 columns">
+            <div className='medium-4 columns'>
               <h2>Enter Data</h2>
               {data_entry_button}
               &emsp
               {csv_upload_button}
             </div>
-            <div className="medium-8 columns">
+            <div className='medium-8 columns'>
               <h2>Your Recent CSV Uploads</h2>
               <table>
                 <tbody>{uploads}</tbody>
                 <tfoot>
                   <tr>
                     <td className='more' colSpan='3'>
-                      <a href="/source_data/document_index/">see all uploads</a>
+                      <a href='/source_data/document_index/'>see all uploads</a>
                     </td>
                   </tr>
                 </tfoot>
@@ -177,10 +177,10 @@ module.exports = React.createClass({
 
     return (
       <div className='row'>
-        <div className="medium-9 columns">
+        <div className='medium-9 columns'>
 
           <div className='row'>
-            <div className="small-12 columns">
+            <div className='small-12 columns'>
 
               <p className='pageWelcome'>
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
@@ -192,7 +192,7 @@ module.exports = React.createClass({
                 <tfoot>
                   <tr>
                     <td className='more' colSpan='6'>
-                      <a href="#" onClick={this.showAllCampaigns}>see all campaigns</a>
+                      <a href='#' onClick={this.showAllCampaigns}>see all campaigns</a>
                     </td>
                   </tr>
                 </tfoot>
@@ -204,8 +204,8 @@ module.exports = React.createClass({
 
         </div>
 
-        <div className="about medium-3 columns">
-          <img src="/static/img/RhizomeLogo.png" alt="Rhizome Logo" width="100%" />
+        <div className='about medium-3 columns'>
+          <img src='/static/img/RhizomeLogo.png' alt='Rhizome Logo' width='100%' />
           <h2>About</h2>
           <p>Rhizomes are underground systems that produce stems and roots of plants, allowing them to grow and thrive. They store nutrients that help plants survive and regenerate in the most challenging conditions. Ceaselessly establishing new connections between them, rhizomes constitute resilient, flexible and dynamic systems, rooted in their local environments and primed for long-term sustainability.</p>
           <p>Rhizome DB supports the polio programme’s critical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.</p>

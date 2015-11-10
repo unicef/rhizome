@@ -98,8 +98,8 @@ var SourceDataDashboard = React.createClass({
 
         // navigation to set doc-id and doc-processor //
         var review_nav =
-            <div className="admin-container">
-                <h1 className="admin-header"></h1>
+            <div className='admin-container'>
+                <h1 className='admin-header'></h1>
 
                 <div className='row'>
                     <TitleMenu text={doc_obj.doc_title}>
@@ -149,7 +149,7 @@ var SourceDataDashboard = React.createClass({
             <div>
                 <SearchBar
                     fieldNames={search_fields}
-                    placeholder="search ..."
+                    placeholder='search ...'
                     />
             </div>
 
@@ -196,11 +196,11 @@ var SourceDataDashboard = React.createClass({
                 {docForm}
                 <div className='row'>
                     <div id='popUp'></div>
-                    <div className="medium-9 columns">
-                        <h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{page_title} </h2>
+                    <div className='medium-9 columns'>
+                        <h2 style={{ textAlign: 'center' }} className='ufadmin-page-heading'>{page_title} </h2>
                         {review_table}
                     </div>
-                    <div className="medium-3 columns">
+                    <div className='medium-3 columns'>
                         {review_nav}
                         {review_breakdown}
                     </div>

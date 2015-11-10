@@ -69,7 +69,7 @@ var HomepageCharts = React.createClass({
 
     charts.push(
       <div>
-        <h4 className="chart-title">Missed children, {missedChildrenData.location}</h4>
+        <h4 className='chart-title'>Missed children, {missedChildrenData.location}</h4>
         <Chart type='ChoroplethMap'
         data={missedChildrenData.missedChildrenMap}
         loading={loading}
@@ -86,7 +86,7 @@ var HomepageCharts = React.createClass({
 
     charts.push(
       <div>
-        <h4 className="chart-title">Missed children, trend</h4>
+        <h4 className='chart-title'>Missed children, trend</h4>
         <Chart type='ColumnChart' data={missedChildrenData.missed}
           loading={loading}
           options={{
@@ -104,7 +104,7 @@ var HomepageCharts = React.createClass({
 
     charts.push(
       <div>
-        <h4 className="chart-title">Under Immunized Children</h4>
+        <h4 className='chart-title'>Under Immunized Children</h4>
         <Chart type='ColumnChart'
           data={underImmunizedData.data}
           loading={loading}

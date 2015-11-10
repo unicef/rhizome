@@ -180,17 +180,17 @@ module.exports = React.createClass({
       return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
         <h1>Create a New Custom Dashboard</h1>
 
-        <div className="cd-title small-12">Dashboard Title</div>
+        <div className='cd-title small-12'>Dashboard Title</div>
         <input type='text'
-               className="description small-12"
+               className='description small-12'
                value={this.state.title}
                onChange={this._updateNewTitle}
                autoFocus={true} />
-        <div className="cd-title float-none">Choose a Layout</div>
+        <div className='cd-title float-none'>Choose a Layout</div>
         <LayoutOptions values={LayoutDefaultSettings.values}
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
-        <a href="#"
+        <a href='#'
            className={'cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
            onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>)
@@ -269,8 +269,8 @@ module.exports = React.createClass({
     }
 
     var addDashboardLinkContainer = (
-      <div className="empty-dashboard-add-container">
-        <span className="cd-button new-dashboard-font" onClick={this.newChart}>
+      <div className='empty-dashboard-add-container'>
+        <span className='cd-button new-dashboard-font' onClick={this.newChart}>
           <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
         </span>
       </div>
@@ -308,37 +308,37 @@ module.exports = React.createClass({
           <div className='large-6 columns'>
             {settingFilter}
           </div>
-          <div className="large-6 columns">
-            <div className="large-6 columns cd-header-title">Dashboard Title</div>
-            <div className="large-6 columns">
+          <div className='large-6 columns'>
+            <div className='large-6 columns cd-header-title'>Dashboard Title</div>
+            <div className='large-6 columns'>
               <TitleInput class='description' initialText={this.state.title} save={this._updateTitle}/>
             </div>
           </div>
         </form>
         {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
-        <div className="cd-footer">
+        <div className='cd-footer'>
           <div className='row'>
-            <div className="large-2 columns">
-              <button className="cd-button"
+            <div className='large-2 columns'>
+              <button className='cd-button'
                       onClick={this.newChart}
                       style={{visibility: (showAddChartButton() ? 'visible': 'hidden')}}>
                 <span> <i className='fa fa-icon fa-fw fa-plus' /> Add Chart </span>
               </button>
             </div>
-            <div className="large-7 columns">
-              <div className="large-2 columns">
-                <div className="description-text">Description&ensp;:</div>
+            <div className='large-7 columns'>
+              <div className='large-2 columns'>
+                <div className='description-text'>Description&ensp;:</div>
               </div>
-              <div className="large-5 columns">
+              <div className='large-5 columns'>
                 <TitleInput class='description' initialText={this.state.description}
                             save={this._updateDescription}/>
               </div>
-              <div className="large-5 columns">
-                <div className="description-text">Changes are saved when you make them.</div>
+              <div className='large-5 columns'>
+                <div className='description-text'>Changes are saved when you make them.</div>
               </div>
             </div>
-            <div className="large-3 columns">
-              <button className="cd-button float-right" href='#' onClick={this._deleteDashboard}>
+            <div className='large-3 columns'>
+              <button className='cd-button float-right' href='#' onClick={this._deleteDashboard}>
                 <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
               </button>
             </div>

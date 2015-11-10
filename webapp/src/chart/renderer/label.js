@@ -128,7 +128,7 @@ function label() {
      *
      * Calculates the text-anchor ('start' or 'end') for a set of labels so that
      * all labels are oriented the same way, and so that labels don't get clipped
-     * by the edge of the SVG. Prefer 'start' over "end."
+     * by the edge of the SVG. Prefer 'start' over 'end.'
      */
     function textAnchor(labels) {
         var anchor = 'start'

@@ -7,10 +7,10 @@ var HomepageCarouselDecorators = [
     component: React.createClass({
       render() {
         return (
-            <div className="navigator-button"
+            <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide === 0)}
                  onClick={this.props.previousSlide}>
-              <i className="fa fa-chevron-left"></i>
+              <i className='fa fa-chevron-left'></i>
             </div>
         )
       },
@@ -26,10 +26,10 @@ var HomepageCarouselDecorators = [
     component: React.createClass({
       render() {
         return (
-            <div className="navigator-button"
+            <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide + this.props.slidesToScroll >= this.props.slideCount)}
                  onClick={this.props.nextSlide}>
-              <i className="fa fa-chevron-right"></i>
+              <i className='fa fa-chevron-right'></i>
             </div>
         )
       },

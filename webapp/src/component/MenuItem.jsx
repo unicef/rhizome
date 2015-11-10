@@ -85,7 +85,7 @@ var MenuItem = React.createClass({
           tabIndex='-1'>
 
           <i
-            className={"fa fa-lg fa-fw " + (this.state.open?"fa-caret-down":"fa-caret-right")}
+            className={'fa fa-lg fa-fw ' + (this.state.open?'fa-caret-down':'fa-caret-right')}
             onClick={this._toggleChildren}></i>
 
           {title}

@@ -27,26 +27,26 @@ var HomepageChartsSection = React.createClass({
         var controls
         if(this.props.location === 'Nigeria') {
             controls =
-              <div className="chart-button-group">
-                <a href={this.getManagementDashboardUrl()} className="chart-button small-4 columns">
+              <div className='chart-button-group'>
+                <a href={this.getManagementDashboardUrl()} className='chart-button small-4 columns'>
                   Country<br />overview
                 </a>
 
-                <a href={this.getDistrictSummaryUrl()} className="chart-button small-4 columns">
+                <a href={this.getDistrictSummaryUrl()} className='chart-button small-4 columns'>
                   District<br />summary
                 </a>
 
-                <a href={this.getNGACampaignMonitoringUrl()} className="chart-button small-4 columns">
+                <a href={this.getNGACampaignMonitoringUrl()} className='chart-button small-4 columns'>
                   NGA Campaign<br />Monitoring
                 </a>
               </div>
         } else {
             controls =
-              <dev className="chart-button-group">
-                <a href={this.getManagementDashboardUrl()} className="chart-button small-6 columns">
+              <dev className='chart-button-group'>
+                <a href={this.getManagementDashboardUrl()} className='chart-button small-6 columns'>
                   Country<br />overview
                 </a>
-                <a href={this.getDistrictSummaryUrl()} className="chart-button small-6 columns">
+                <a href={this.getDistrictSummaryUrl()} className='chart-button small-6 columns'>
                   District<br />summary
                 </a>
               </dev>
@@ -54,7 +54,7 @@ var HomepageChartsSection = React.createClass({
 
         return (
             <div>
-                <div className="large-4 columns chart-container" id={chartId}>
+                <div className='large-4 columns chart-container' id={chartId}>
                     <div className='chart'>
                         <h5>{this.props.location}</h5>
                         {dashboard}

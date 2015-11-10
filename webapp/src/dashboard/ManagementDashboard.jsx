@@ -109,11 +109,11 @@ var ManagementDashboard = React.createClass({
             <BulletChartSection data={data.__none__.resources} campaign={campaign} indicators={sections.undefined.resources} loading={loading} cols={1} />
           </div>
 
-          <div className="medium-4 columns">
+          <div className='medium-4 columns'>
             <h3>Inaccessible Children</h3>
             <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
             <div className='row'>
-              <div className="medium-4 columns right">
+              <div className='medium-4 columns right'>
                 <h3>Microplan Social Data Usage</h3>
                 <SocialData data={data.__none__.microplans} campaign={campaign} loading={loading} />
               </div>

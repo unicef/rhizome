@@ -20,7 +20,7 @@ function hoverLine() {
     var yFormat = String
     var yScale = d3.scale.linear()
     var _value = _.property('value')
-  var colorRange = "#000000"
+  var colorRange = '#000000'
 
     // Use this to keep track of what value we're currently hovering over so we
     // can bail out of onMouseMove if the movement wouldn't change our display

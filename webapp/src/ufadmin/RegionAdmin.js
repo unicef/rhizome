@@ -37,7 +37,7 @@ var RegionAdmin = React.createClass({
       <div>
         <SearchBar
           fieldNames={['name']}
-          placeholder="Search locations ..."
+          placeholder='Search locations ...'
           />
       </div>
 

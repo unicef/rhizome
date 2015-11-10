@@ -29,7 +29,7 @@ module.exports = React.createClass({
       )
     })
     return (
-      <div className="radio-group-container">
+      <div className='radio-group-container'>
         <h4>{this.props.title}</h4>
         {radios}
       </div>)

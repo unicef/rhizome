@@ -8,7 +8,7 @@ let PreviewScreen = React.createClass({
   render() {
     let loading = (
       <div className='loading'>
-        <i className="fa fa-spinner fa-spin fa-5x"></i>
+        <i className='fa fa-spinner fa-spin fa-5x'></i>
         <div>Loading</div>
       </div>
     )

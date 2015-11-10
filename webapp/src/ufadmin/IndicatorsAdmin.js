@@ -34,7 +34,7 @@ var IndicatorsAdmin = React.createClass({
       <div>
         <SearchBar
           fieldNames={fieldNamesOnTable}
-          placeholder="Search indicators ..."
+          placeholder='Search indicators ...'
           />
       </div>
 

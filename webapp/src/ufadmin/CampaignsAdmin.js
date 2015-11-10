@@ -20,7 +20,7 @@ const fields = {
     }
   },
   id: { title: 'ID', name: 'id'},
-  slug: { title: "Display Name", name: 'slug'},
+  slug: { title: 'Display Name', name: 'slug'},
   start_date: { title: 'Start Date', name: 'start_date'},
   end_date: { title: 'End Date', name: 'end_date'},
   created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a'}
@@ -37,7 +37,7 @@ var CampaignsAdmin = React.createClass({
     var datascopeFilters =
       <div>
         <SearchBar
-          placeholder="Search campaigns ..."
+          placeholder='Search campaigns ...'
           fieldNames={['id', 'slug', 'edit_link']}
           />
       </div>

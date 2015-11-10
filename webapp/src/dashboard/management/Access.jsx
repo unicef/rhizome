@@ -69,7 +69,7 @@ var Access = React.createClass({
 
     return (
       <div className='row'>
-        <div className="medium-4 columns">
+        <div className='medium-4 columns'>
           <h4>Number of Inaccessible Children</h4>
           <Chart type='AreaChart' data={inaccessible}
                  loading={loading}

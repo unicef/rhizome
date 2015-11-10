@@ -1,7 +1,7 @@
 module.exports = {
     schemas: {
         users: {
-            "$schema": "http://json-schema.org/draft-04/schema#",
+            '$schema': 'http://json-schema.org/draft-04/schema#',
             title: 'Users',
             type: 'array',
 
@@ -16,7 +16,7 @@ module.exports = {
                 properties: {
                     date_joined: {
                         title: 'date_joined',
-                        default: "2015-05-15 02:09:53.567367+00:00",
+                        default: '2015-05-15 02:09:53.567367+00:00',
                         maxLength: null,
                         editable: true,
                         type: 'string',
@@ -64,7 +64,7 @@ module.exports = {
                         items: {
                             enum: [ // oneOf matches one of multiple schemas, enum matches one of values
                                 {
-                                    title: "UNICEF HQ",
+                                    title: 'UNICEF HQ',
                                     value: 1
                                 }
                             ]
@@ -119,12 +119,12 @@ module.exports = {
                         }
                     },
                     last_login: {
-                        default: "2015-05-15 02:09:53.567582+00:00",
+                        default: '2015-05-15 02:09:53.567582+00:00',
                         maxLength: null,
                         title: 'last_login',
                         editable: true,
                         type: 'string',
-                        format: "date-time",
+                        format: 'date-time',
                         display: {
                             weightForm: 14,
                             on_table: true,

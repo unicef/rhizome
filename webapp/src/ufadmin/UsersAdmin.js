@@ -14,21 +14,21 @@ const api = require('../data/api')
 
 // display rules for datascope fields
 const yesNoRenderer = (val) => val ? 'Yes' : 'No'
-const checkmarkRenderer = (val) => val ? "✓" : ""
+const checkmarkRenderer = (val) => val ? '✓' : ""
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => <a href={`/datapoints/users/update/${id}`}>Edit User</a>
   },
-  is_active: { title: "active?", renderer: checkmarkRenderer},
-  is_staff: { title: "staff?", renderer: checkmarkRenderer},
-  is_superuser: { title: "superuser?", renderer: checkmarkRenderer},
+  is_active: { title: 'active?', renderer: checkmarkRenderer},
+  is_staff: { title: 'staff?', renderer: checkmarkRenderer},
+  is_superuser: { title: 'superuser?', renderer: checkmarkRenderer},
   date_joined: { format: 'MMM D YYYY'},
   id: { title: 'ID', name: 'id'},
-  username: { title: "User Name", name: 'username'},
-  first_name: { title: "First Name", name: 'first_name'},
-  last_name: { title: "Last Name", name: 'last_name'},
+  username: { title: 'User Name', name: 'username'},
+  first_name: { title: 'First Name', name: 'first_name'},
+  last_name: { title: 'Last Name', name: 'last_name'},
   email: { title: 'Email', name: 'email'},
   last_login: { title: 'Last Login', name: 'last_login', format: 'MMM D YYYY, h:mm a'}
 }
@@ -52,7 +52,7 @@ const UsersAdmin = React.createClass({
       <div>
         <SearchBar
           fieldNames={['id', 'username', 'first_name', 'last_name', 'email', 'edit_link']}
-          placeholder="Search users ..."
+          placeholder='Search users ...'
           />
       </div>
 

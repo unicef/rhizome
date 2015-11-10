@@ -11,8 +11,8 @@ var AdminApp = React.createClass({
     render: function () {
         var q_params = this.context.router.getCurrentParams()
 
-        return <div className="admin-container">
-            <ul className="admin-nav">
+        return <div className='admin-container'>
+            <ul className='admin-nav'>
                 <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
                 <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
                 <li><Link to='users'>Users</Link></li>
@@ -28,8 +28,8 @@ var AdminApp = React.createClass({
 })
 
 var routes = (
-        <Route name='app' path="/ufadmin/" handler={AdminApp}>
-            <Route name='manage' path="/ufadmin/manage/:contentType/:id?" handler={SimpleForm}/>
+        <Route name='app' path='/ufadmin/' handler={AdminApp}>
+            <Route name='manage' path='/ufadmin/manage/:contentType/:id?' handler={SimpleForm}/>
             <Route name='users' handler={require('./UsersAdmin')} />
             <Route name='roles' handler={require('./GroupsAdmin')} />
             <Route name='locations' handler={require('./RegionAdmin')} />

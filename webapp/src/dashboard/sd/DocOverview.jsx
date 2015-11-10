@@ -77,12 +77,12 @@ var DocOverview = React.createClass({
 
     var refresh_master_btn = <div>
       <p>
-        <button disabled={this.state.isProcessing} className='tiny' onClick={this.queueReprocess}> { this.state.isProcessing ? "To Reprocess..." : "To Reprocess!"}
+        <button disabled={this.state.isProcessing} className='tiny' onClick={this.queueReprocess}> { this.state.isProcessing ? 'To Reprocess...' : 'To Reprocess!'}
         </button>
       </p>
       <p>
         <button disabled={this.state.isRefreshing} className='tiny'
-                onClick={this.refreshMaster}> { this.state.isRefreshing ? "Refresh Master..." : "Refresh Master!"}
+                onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refresh Master...' : 'Refresh Master!'}
         </button>
       </p>
     </div>

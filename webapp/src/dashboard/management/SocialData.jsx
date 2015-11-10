@@ -45,7 +45,7 @@ var SocialData = React.createClass({
 
     return (
       <div className='row'>
-        <div className="medium-4 columns">
+        <div className='medium-4 columns'>
           <DonutChart data={socialData} label={planLabel}
                       loading={loading}
                       options={{
@@ -54,7 +54,7 @@ var SocialData = React.createClass({
                 domain      : _.constant([0, 1])
               }}/>
         </div>
-        <div className="medium-4 columns">
+        <div className='medium-4 columns'>
           {microText}
         </div>
       </div>

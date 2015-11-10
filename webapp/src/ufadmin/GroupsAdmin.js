@@ -14,7 +14,7 @@ var api = require('../data/api')
 var AdminPage = require('./AdminPage')
 
 // display rules for datascope fields
-const checkmarkRenderer = (val) => val ? "✓" : ""
+const checkmarkRenderer = (val) => val ? '✓' : ""
 const fields = {
   edit_link: {
     title: 'Edit',
@@ -34,7 +34,7 @@ var GroupsAdmin = React.createClass({
       <div>
         <SearchBar
           fieldNames={['name']}
-          placeholder="Search roles ..."
+          placeholder='Search roles ...'
           />
       </div>
 

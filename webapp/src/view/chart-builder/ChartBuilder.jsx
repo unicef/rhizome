@@ -101,9 +101,9 @@ module.exports = React.createClass({
   render: function () {
 
     var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name}
-                   data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions}/>
+                   data={this.state.store.chartData} id='custom-chart' options={this.state.store.chartOptions}/>
     var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>)
-    var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>)
+    var loadingDiv = (<div className='loading-div'><i className='fa fa-spinner fa-spin fa-5x'></i></div>)
 
 
     var campaignSelection = !!this.state.store.campaignSelected ?
@@ -125,7 +125,7 @@ module.exports = React.createClass({
     /*  <div className='titleDiv' onChange={this._updateDescription}>Description</div>
      <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
 
-    var leftPage = (<div className="left-page">
+    var leftPage = (<div className='left-page'>
       <div className='titleDiv'>Title</div>
       <TitleInput class='descriptionField' initialText={this.state.title} save={this._updateTitle}/>
 
@@ -140,9 +140,9 @@ module.exports = React.createClass({
 
       <List items={this.state.store.indicatorsSelected} removeItem={ChartBuilderActions.removeIndicatorSelection}/>
 
-      <a href="#" className="button success"
-         onClick={this.createChart}>{this.props.chartDef ? "Update Chart" : "Create Chart"}</a>
-      <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
+      <a href='#' className='button success'
+         onClick={this.createChart}>{this.props.chartDef ? 'Update Chart' : 'Create Chart'}</a>
+      <a href='#' onClick={this.props.cancel}>Cancel without saving chart</a>
 
     </div>)
     var groupBy = (<div className='grouping'>
@@ -153,10 +153,10 @@ module.exports = React.createClass({
     var chooseAxis = (<div className='grouping'>
       <div>
         <div className='titleDiv'>X Axis</div>
-        <select className="medium-6" onChange={this._updateXAxis}>{axisOptions}</select></div>
+        <select className='medium-6' onChange={this._updateXAxis}>{axisOptions}</select></div>
       <div>
         <div className='titleDiv'>Y Axis</div>
-        <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
+        <select className='medium-6' onChange={this._updateYAxis}>{axisOptions}</select></div>
     </div>)
     var formatXAxis = (
       <div className='grouping'>
@@ -165,11 +165,11 @@ module.exports = React.createClass({
                     values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio}/>
       </div>
     )
-    var rightPage = (<div className="right-page">
+    var rightPage = (<div className='right-page'>
         <ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart}
                      onChange={ChartBuilderActions.selectChart}/>
 
-        <div className="chart-options-container">
+        <div className='chart-options-container'>
           {this.state.store.chartTypes[this.state.store.selectedChart].groupBy ? groupBy : null}
           <div className='grouping'>
             <div className='titleDiv'>Show</div>
@@ -191,18 +191,18 @@ module.exports = React.createClass({
           </div>
           {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? chooseAxis : null}
         </div>
-        <div className="chart-container">
+        <div className='chart-container'>
           <div className='grouping'>
             <div className='titleDiv'>Preview</div>
-            <div className="preview-section">
-              <div className="dropdown-wrapper">
+            <div className='preview-section'>
+              <div className='dropdown-wrapper'>
                 <CampaignDropdownMenu
                   text={campaignSelection}
                   campaigns={this.state.store.campaignList}
                   sendValue={ChartBuilderActions.addCampaignSelection}>
                 </CampaignDropdownMenu>
               </div>
-              <div className="dropdown-wrapper">
+              <div className='dropdown-wrapper'>
                 <DropdownMenu
                   icon='fa-globe'
                   text={locationSelection}
@@ -220,7 +220,7 @@ module.exports = React.createClass({
     )
 
     return (<form className='inline'>
-        <div className="visualization-builder-container">
+        <div className='visualization-builder-container'>
           {leftPage}
           {rightPage}
         </div>

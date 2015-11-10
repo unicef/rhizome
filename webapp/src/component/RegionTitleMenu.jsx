@@ -64,7 +64,7 @@ var RegionTitleMenu = React.createClass({
   },
 
   render: function () {
-    // console.log("RegionTitleMenu RENDER:", this.props.selected)
+    // console.log('RegionTitleMenu RENDER:', this.props.selected)
     var location = this.props.selected.name
     var filter  = this.state.filter
     var locations = this._buildlocations(this.props.locations, filter)
@@ -72,7 +72,7 @@ var RegionTitleMenu = React.createClass({
 
     return (
       <TitleMenu
-        className="title-font"
+        className='title-font'
         icon='fa-chevron-down'
         text={location}
         searchable={true}

@@ -10,9 +10,9 @@ module.exports = React.createClass({
         var listItems = this.props.items.map(function(item){
              return (<li key={item.id}>{item.name}
                         <a
-                        className="clear-btn"
+                        className='clear-btn'
                         onClick={self.props.removeItem.bind(this,item.id)}>
-                            <i className="fa fa-times-circle"></i>
+                            <i className='fa fa-times-circle'></i>
                         </a>
                     </li>)
         })

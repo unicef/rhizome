@@ -53,7 +53,7 @@ var AdminPage = React.createClass({
 
     var {data, schema} = this.state
 
-    // make the "Create X" button if we have a creation URL
+    // make the 'Create X' button if we have a creation URL
     var createUrl = '/datapoints/users/create/'
     if (this.props.title === 'Campaigns')
       createUrl = '/datapoints/campaigns/create/'
@@ -62,20 +62,20 @@ var AdminPage = React.createClass({
     else if (this.props.title === 'Roles')
       createUrl = '/datapoints/groups/create/'
     else if (this.props.title === 'Indicators')
-      createUrl = "/ufadmin/manage/indicator/"
+      createUrl = '/ufadmin/manage/indicator/'
     else if (this.props.title === 'Tags')
-      createUrl = "/ufadmin/manage/indicator_tag/"
+      createUrl = '/ufadmin/manage/indicator_tag/'
 
     // strip the 's' from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
     var createButton = createUrl
-      ? <div className="ufadmin-create-button">
+      ? <div className='ufadmin-create-button'>
           <a className='button' href={createUrl}>Create {titleSingular}</a>
         </div>
       : null
 
     return <div>
-      <h2 className="ufadmin-page-heading">{this.props.title} Admin Page</h2>
+      <h2 className='ufadmin-page-heading'>{this.props.title} Admin Page</h2>
 
       {createButton}
 
@@ -98,8 +98,8 @@ var AdminPage = React.createClass({
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
 
-    return <div className="ufadmin-filters-container">
-      <div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
+    return <div className='ufadmin-filters-container'>
+      <div className='ufadmin-show-filters' onClick={this.onToggleFilterContainer}>
 
         {areFiltersVisible ?
           <span>
@@ -117,7 +117,7 @@ var AdminPage = React.createClass({
       </div>
 
       {areFiltersVisible
-        ? <div className="ufadmin-filters-content">
+        ? <div className='ufadmin-filters-content'>
             {this.props.datascopeFilters}
           </div>
         : null
@@ -130,10 +130,10 @@ var AdminPage = React.createClass({
     var { areFiltersVisible } = this.state
     return areFiltersVisible
       ? <div className='row'>
-          <div className="medium-7 columns">
+          <div className='medium-7 columns'>
           </div>
-          <div className="medium-5 columns">
-            <div className="ufadmin-filters-content">
+          <div className='medium-5 columns'>
+            <div className='ufadmin-filters-content'>
               {this.props.datascopeFilters}
             </div>
           </div>

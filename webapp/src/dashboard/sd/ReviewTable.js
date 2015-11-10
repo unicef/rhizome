@@ -153,10 +153,10 @@ var ReviewTable = React.createClass({
 
         return (
           <div className='row'>
-            <div className="medium-7 columns">
+            <div className='medium-7 columns'>
             </div>
-            <div className="medium-5 columns">
-                <div className="ufadmin-filters-content">
+            <div className='medium-5 columns'>
+                <div className='ufadmin-filters-content'>
                     {this.props.datascopeFilters}
                 </div>
             </div>

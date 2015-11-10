@@ -103,7 +103,7 @@ var DashboardBuilderStore = Reflux.createStore({
       chartDef.id = res.objects.id
       this.trigger(this.data)
     }, res => {
-      console.log("add chart error,", res)
+      console.log('add chart error,', res)
       this.trigger(this.data)
     })
 
@@ -121,7 +121,7 @@ var DashboardBuilderStore = Reflux.createStore({
     api.delete_chart(data).then(res => {
       this.trigger(this.data)
     }, res => {
-      console.log("remove chart error,", res)
+      console.log('remove chart error,', res)
       this.trigger(this.data)
     })
   },
@@ -175,9 +175,9 @@ var DashboardBuilderStore = Reflux.createStore({
     }
     api.save_dashboard(data).then(function (response) {
       if (response.objects.id) {
-        window.location = "/datapoints/dashboards/edit/" + response.objects.id
+        window.location = '/datapoints/dashboards/edit/' + response.objects.id
       } else {
-        alert("There was an error saving your chart")
+        alert('There was an error saving your chart')
       }
     }, function (response) {
       alert(response.msg)
@@ -213,7 +213,7 @@ var DashboardBuilderStore = Reflux.createStore({
     api.post_chart(data).then(res => {
       this.trigger(this.data)
     }, res => {
-      console.log("update chart error,", res)
+      console.log('update chart error,', res)
       this.trigger(this.data)
     })
   },
