@@ -15,7 +15,7 @@ var processChartData = require('./chartBuilder/processChartData')
 function melt(data, indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
-        return { indicator: indicator+'', value:0}
+        return { indicator: indicator+'', value: 0}
     })
     var o = _(dataset)
         .map(function (d) {
@@ -92,11 +92,11 @@ function _columnData(data, groups, groupBy) {
     })
     var baseGroup = _.map(largestGroup, function (group) {
         return { campaign: group.campaign,
-                value:0, y:0, y0:0}
+                value:0, y: 0, y0: 0}
     })
     _.each(columnData, function (series) {
 
-       var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length),{ location: series.values[0].location, indicator:series.values[0].indicator}))
+       var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length),{ location: series.values[0].location, indicator: series.values[0].indicator}))
        series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
     })
 
@@ -144,7 +144,7 @@ module.exports = Reflux.createStore({
         campaignList:[],
         indicatorsSelected:[],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
         campaignSelected:{ office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null, title:null},
+        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null, title: null},
         aggregatedlocations:[],
         title: "",
         description: "",
@@ -394,7 +394,7 @@ module.exports = Reflux.createStore({
         {
            if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
-             locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id:locationSelected.office_id})
+             locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
            }
            else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})

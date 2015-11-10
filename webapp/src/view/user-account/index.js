@@ -73,14 +73,14 @@ module.exports = {
       addlocationalAccess: function (data) {
         var self = this
         self.$set('locationalAccessLoading', true)
-        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id:data, read_write:'r' }).then(function () {
+        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id: data, read_write:'r' }).then(function () {
           self.loadlocationalAccess()
         })
       },
       deletelocationalAccess: function (data) {
         var self = this
         var readWrite = _.find(self.$get('location_permissions'),{ location_id: data}).read_write
-        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id:data, read_write:readWrite, id:'' }).then(function () {
+        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id: data, read_write: readWrite, id:'' }).then(function () {
           self.loadlocationalAccess()
         })
       },
@@ -89,7 +89,7 @@ module.exports = {
         var locationId = e.target.getAttribute('data-location-id')
         var internalId = e.target.getAttribute('data-internal-id')
         var readWrite = (e.target.checked?'w':'r')
-        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id:locationId, read_write:readWrite, id:internalId })
+        api.set_location_permission( { user_id: this.$parent.$data.user_id, location_id: locationId, read_write: readWrite, id: internalId })
       },
 
       loadlocationalAccess: function () {
