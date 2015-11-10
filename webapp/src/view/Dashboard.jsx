@@ -331,7 +331,7 @@ var Dashboard = React.createClass({
     }
 
     var settingFilter = '';
-    if (dashboardDef.builtin === true)
+    if (dashboardDef.builtin === true){
       settingFilter = (<div className="row">
         <div className="medium-4 columns">
           <CampaignTitleMenu
@@ -346,12 +346,12 @@ var Dashboard = React.createClass({
             sendValue={this._setlocation}/>
         </div>
       </div>);
+    }
 
     return (
       <div>
         <div classNameName='clearfix'></div>
         <form className='inline no-print search-criteria'>
-
           <div className='row'>
             <div className='medium-4 columns'>
               {settingFilter}

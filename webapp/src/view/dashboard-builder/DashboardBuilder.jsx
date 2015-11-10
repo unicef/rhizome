@@ -260,25 +260,30 @@ module.exports = React.createClass({
         </span>
       </div>
     );
+
+    var settingFilter = '';
+    if (dashboardDef.builtin === true) {
+      settingFilter = (<div className="row">
+        <div className='large-6 columns'>
+          <CampaignTitleMenu
+            campaigns={campaigns}
+            selected={campaign}
+            sendValue={this._setCampaign}/>
+        </div>
+        <div className='large-6 columns'>
+          <RegionTitleMenu
+            locations={this.state.dashboardStore.locations}
+            selected={location}
+            sendValue={this._setRegion}/>
+        </div>
+      </div>);
+    }
     var dashboardBuilderContainer = (
       <div>
         <form className='inline no-print row cd-bg-color'>
           <div className='large-6 columns'>
-            <div className='large-6 columns'>
-              <CampaignTitleMenu
-                campaigns={campaigns}
-                selected={campaign}
-                sendValue={this._setCampaign}/>
-            </div>
-
-            <div className='large-6 columns'>
-              <RegionTitleMenu
-                locations={this.state.dashboardStore.locations}
-                selected={location}
-                sendValue={this._setRegion}/>
-            </div>
+            {settingFilter}
           </div>
-
           <div className="large-6 columns">
             <div className="large-6 columns cd-header-title">Dashboard Title</div>
             <div className="large-6 columns">
@@ -309,7 +314,6 @@ module.exports = React.createClass({
             </a>
           </div>
         </div>
-
       </div>
     );
     if (!this.state.store.loaded) {
@@ -319,7 +323,7 @@ module.exports = React.createClass({
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex]);
       return (
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
-                     cancel={this.cancelEditChart} />
+                     cancel={this.cancelEditChart}/>
       )
     }
     else {
