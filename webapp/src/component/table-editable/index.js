@@ -9,9 +9,13 @@ var formats = {
 
 var scales = {
     completionClass: function (v) {
-        if (v === 0) { return 'statusText-bad' }
-        else if (v === 1) { return 'statusText-good' }
-        else if (v > 0 && v < 1) { return 'statusText-okay' }
+        if (v === 0) {
+          return 'statusText-bad'
+        } else if (v === 1) {
+          return 'statusText-good'
+        } else if (v > 0 && v < 1) {
+          return 'statusText-okay'
+        }
         return null
     }
 }
@@ -21,7 +25,7 @@ module.exports = {
     template: require('./template.html'),
 
     ready: function () {
-        
+
         _.defaults(this.$data, {
             groupSize: 5
         })
@@ -100,7 +104,7 @@ module.exports = {
             return scales.completionClass(v)
         },
 
-        getStat: function (obj, by, prop) { 
+        getStat: function (obj, by, prop) {
             if (this.stats[by] && this.stats[by][this.$index] !== undefined && this.stats[by][this.$index][prop] !== undefined) {
                 return this.stats[by][this.$index][prop]
             }

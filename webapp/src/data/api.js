@@ -228,8 +228,7 @@ function indicatorsTree(q) {
           i.displayTitle = i.name + " (" + i.id + ")"
           if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
             otherTag.children.push(i)
-          }
-          else if (_.isArray(i.tag_json)) {
+          } else if (_.isArray(i.tag_json)) {
             _.each(i.tag_json, function (tId) {
               tags_map[tId].children.push(i)
             })

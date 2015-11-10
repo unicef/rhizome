@@ -137,8 +137,7 @@ module.exports = {
         formatted: function () {
             if (this.value === undefined || this.value === null) {
                 return ''
-            }
-            else {
+            } else {
                 // format according to attached method if it exists
                 return this.format ? this.format(this.value) : this.value
             }
@@ -151,8 +150,7 @@ module.exports = {
         hoverText: function () {
             if (this.tooltip) {
                 return this.tooltip
-            }
-            else if (_.isNull(this.value)) {
+            } else if (_.isNull(this.value)) {
                 return 'Missing value'
             } else {
                 return this.value

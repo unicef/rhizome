@@ -52,8 +52,7 @@ var SimpleFormComponent = React.createClass({
     // FIXME use data as opposed to hacky control flow here!
     if (this.props.contentType === 'indicator_tag') {
       SimpleFormActions.initIndicatorToTag(this.props.objectId)
-    }
-    else if (this.props.contentType === 'indicator_calc') {
+    } else if (this.props.contentType === 'indicator_calc') {
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
     }
   },
@@ -116,8 +115,7 @@ var SimpleFormComponent = React.createClass({
           </IndicatorTagDropdownMenu>
         </div>
       )
-    }
-    else if (contentType === 'indicator_calc') {
+    } else if (contentType === 'indicator_calc') {
       componentForm = (
         <form>
           <select ref="selectBox">

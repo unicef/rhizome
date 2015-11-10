@@ -53,8 +53,7 @@ var canDisplayChart = function () {
     if(this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
     {
       return true
-    }
-    else {
+    } else {
         return false
     }
 }
@@ -63,15 +62,12 @@ var canDisplayChartReason = function () {
     if(this.indicatorsSelected.length === 0)
     {
       reason = "Please select at least one indicator"
-    }
-    else if(!this.campaignSelected.id) {
+    } else if(!this.campaignSelected.id) {
       reason = "Please select a campaign"
-    }
-    else if(this.chartData.length === 0)
+    } else if(this.chartData.length === 0)
     {
       reason = "No data to display"
-    }
-    else {
+    } else {
         reason = ''
     }
     return reason
@@ -389,18 +385,15 @@ module.exports = Reflux.createStore({
         if(locationRadioValue === "selected")
         {
            locations = [locationSelected]
-        }
-        else if(locationRadioValue === "type")
+        } else if(locationRadioValue === "type")
         {
            if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
              locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
-           }
-           else {
+           } else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})
            }
-        }
-        else if(locationRadioValue === "sublocations")
+        } else if(locationRadioValue === "sublocations")
         {
            locations = _.filter(this._locationIndex, { parent_location_id: locationSelected.id})
         }
@@ -414,8 +407,7 @@ module.exports = Reflux.createStore({
         if(this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
         {
           return true
-        }
-        else {
+        } else {
             return false
         }
     },

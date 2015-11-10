@@ -139,8 +139,7 @@ let ChartWizardStore = Reflux.createStore({
 
         if(chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
           this.data.campaign = this.campaignIndex[chartDef.campaignValue]
-        }
-        else{
+        } else{
           this.data.campaign = this.data.campaignFilteredList.length > 0 ? this.campaignIndex[this.data.campaignFilteredList[0].id] : null
         }
 

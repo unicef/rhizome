@@ -38,8 +38,7 @@ var DashboardBuilderStore = Reflux.createStore({
       this.data.loaded = true
       this.trigger(this.data)
 
-    }
-    else {
+    } else {
       api.get_dashboard({ id: id}, null, {'cache-control': 'no-cache'})
         .then(function (response) {
           self.data.dashboard = response.objects[0]
@@ -130,8 +129,7 @@ var DashboardBuilderStore = Reflux.createStore({
     var newIndex
     if (index === this.data.dashboard.charts.length - 1) {
       newIndex = 0
-    }
-    else {
+    } else {
       newIndex = index + 1
     }
     var temp = this.data.dashboard.charts[index]
@@ -144,8 +142,7 @@ var DashboardBuilderStore = Reflux.createStore({
     var newIndex
     if (index === 0) {
       newIndex = this.data.dashboard.charts.length - 1
-    }
-    else {
+    } else {
       newIndex = index - 1
     }
     var temp = this.data.dashboard.charts[index]
@@ -179,8 +176,7 @@ var DashboardBuilderStore = Reflux.createStore({
     api.save_dashboard(data).then(function (response) {
       if (response.objects.id) {
         window.location = "/datapoints/dashboards/edit/" + response.objects.id
-      }
-      else {
+      } else {
         alert("There was an error saving your chart")
       }
     }, function (response) {
