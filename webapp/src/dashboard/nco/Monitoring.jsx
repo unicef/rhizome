@@ -24,26 +24,26 @@ function donutLabel (data, labelText) {
   return (<span>{fmt(value)}{label}</span>)
 }
 var Monitoring = React.createClass({
-  propTypes : {
-    data    : React.PropTypes.object.isRequired,
-    loading : React.PropTypes.bool
+  propTypes: {
+    data: React.PropTypes.object.isRequired,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var loading = this.props.loading
     var data = this.props.data
 
     var options = {
-      innerRadius : 0.6,
-      domain      : _.constant([0, 1]),
-      labelStyle  : {
-        lineHeight : 1
+      innerRadius: 0.6,
+      domain: _.constant([0, 1]),
+      labelStyle: {
+        lineHeight: 1
       }
     }
 
@@ -79,13 +79,13 @@ var Monitoring = React.createClass({
       .value())
 
     var scatter = {
-      aspect  : 1.7,
-      domain  : _.constant(domain),
-      range   : _.constant(range),
-      xFormat : d3.format('%'),
-      xLabel  : 'Caregiver Awareness',
-      yFormat : d3.format('%'),
-      yLabel  : 'Missed Children'
+      aspect: 1.7,
+      domain: _.constant(domain),
+      range: _.constant(range),
+      xFormat: d3.format('%'),
+      xLabel: 'Caregiver Awareness',
+      yFormat: d3.format('%'),
+      yLabel: 'Missed Children'
     }
 
     // Match the scatter plot's left margin for nicer header alignment
@@ -107,7 +107,7 @@ var Monitoring = React.createClass({
                 loading={loading}
                 data={data.inside}
                 label={_.partial(donutLabel, _, 'Inside')}
-                labelStyle={{ lineHeight : 1 }}
+                labelStyle={{ lineHeight: 1 }}
                 options={options} />
             </div>
 
@@ -116,7 +116,7 @@ var Monitoring = React.createClass({
                 loading={loading}
                 data={data.outside}
                 label={_.partial(donutLabel, _, 'Outside')}
-                labelStyle={{ lineHeight : 1 }}
+                labelStyle={{ lineHeight: 1 }}
                 options={options} />
             </div>
           </div>
@@ -125,7 +125,7 @@ var Monitoring = React.createClass({
         <div className='medium-6 columns'>
           <div className='row'>
             <div className='small-12 columns'>
-              <h4 style={{ textAlign : 'center' }}>Caregiver Awareness</h4>
+              <h4 style={{ textAlign: 'center' }}>Caregiver Awareness</h4>
             </div>
 
             <div className='medium-6 push-3 end columns'>

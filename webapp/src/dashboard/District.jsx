@@ -16,7 +16,7 @@ var legend = require('chart/renderer/legend')
 var District = React.createClass({
   getInitialState: function () {
     return {
-      showEmpty : false
+      showEmpty: false
     }
   },
 
@@ -38,7 +38,7 @@ var District = React.createClass({
       .mapValues(ind => {
         var bounds = _(ind.bound_json)
           .reject(b => b.bound_name === 'invalid')
-          .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
+          .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val: -Infinity])
           .sortBy('1')
 
         var extents = bounds.pluck('1').slice(1).value()
@@ -85,8 +85,7 @@ var District = React.createClass({
     // Determine what headers are shown based on whether or not the "Show empty
     // columns" checkbox is on
     var headers = this.state.showEmpty
-      ? indicatorList
-      : _.filter(indicatorList, i => visible[i.id])
+      ? indicatorList: _.filter(indicatorList, i => visible[i.id])
 
     var options = {
       cellSize: 36,
@@ -137,8 +136,8 @@ var District = React.createClass({
     }
   },
 
-  _setShowEmpty : function (evt) {
-    this.setState({ showEmpty : evt.target.checked })
+  _setShowEmpty: function (evt) {
+    this.setState({ showEmpty: evt.target.checked })
   },
 
   _onMouseMove: function (d) {
@@ -247,7 +246,7 @@ var District = React.createClass({
   _onlocationClick: function (d) {
     var params = {
       dashboard: 'management-dashboard',
-      location: _.isString(d) ? d : d.location.name
+      location: _.isString(d) ? d: d.location.name
     }
 
     DashboardActions.navigate(params)

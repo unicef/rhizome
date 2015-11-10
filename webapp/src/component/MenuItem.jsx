@@ -26,8 +26,7 @@ var MenuItem = React.createClass({
             key={item.value}
             depth={depth}
             sendValue={sendValue}
-            {...item}>
-          </MenuItem>
+            {...item} />
         )
       })
     }
@@ -73,7 +72,7 @@ var MenuItem = React.createClass({
     }
 
     var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
-    var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
+    var title = prefix + (this.props.displayTitle === null ? this.props.title: this.props.displayTitle)
 
     return (
       <li>

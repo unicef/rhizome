@@ -108,19 +108,14 @@ function formatTimeRange (val) {
   switch (val) {
     case 'pastYear':
       return {'years': 1}
-      break
     case '3Months':
       return {'months': 2}
-      break
     case 'current':
       return {'months': 0}
-      break
     case 'allTime':
       return null
-      break
     default:
       return {'months': 0}
-      break
   }
 }
 

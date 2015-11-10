@@ -57,10 +57,10 @@ function getOptions (chart, campaign, data) {
 
     case 'PieChart':
       opts.margin = {
-        top    : 0,
-        right  : 80,
-        bottom : 0,
-        left   : 0
+        top: 0,
+        right: 80,
+        bottom: 0,
+        left: 0
       }
 
       break
@@ -73,27 +73,27 @@ function getOptions (chart, campaign, data) {
 }
 
 var CustomDashboard = React.createClass({
-  propTypes : {
-    editable      : React.PropTypes.bool,
-    onAddChart    : React.PropTypes.func,
-    onDeleteChart : React.PropTypes.func,
-    onEditChart   : React.PropTypes.func,
-    onMoveForward : React.PropTypes.func,
+  propTypes: {
+    editable: React.PropTypes.bool,
+    onAddChart: React.PropTypes.func,
+    onDeleteChart: React.PropTypes.func,
+    onEditChart: React.PropTypes.func,
+    onMoveForward: React.PropTypes.func,
     onMoveBackward: React.PropTypes.func
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      editable      : false,
-      onAddChart    : _.noop,
-      onDeleteChart : _.noop,
-      onEditChart   : _.noop,
-      onMoveForward : _.noop,
+      editable: false,
+      onAddChart: _.noop,
+      onDeleteChart: _.noop,
+      onEditChart: _.noop,
+      onMoveForward: _.noop,
       onMoveBackward: _.noop
     }
   },
 
-  render : function () {
+  render: function () {
     var numCharts = this.props.dashboard.charts.length
 
     var data = this.props.data
@@ -110,7 +110,7 @@ var CustomDashboard = React.createClass({
       var controls
       if (editable) {
         controls = (
-          <div className='button-bar' style={{float : 'right'}}>
+          <div className='button-bar' style={{float: 'right'}}>
             <span className='button-bar__edit' onClick={this.props.onMoveBackward.bind(null, i)}>
               <i className='fa fa-icon fa-arrow-left fa-fw'></i>
             </span>
@@ -180,7 +180,6 @@ var CustomDashboard = React.createClass({
             {addChart}
           </div>
         )
-        break
       default: // Any others
         return (
           <div className='row cd-charts'>
@@ -188,7 +187,6 @@ var CustomDashboard = React.createClass({
             {addChart}
           </div>
         )
-        break
     }
 
     return (

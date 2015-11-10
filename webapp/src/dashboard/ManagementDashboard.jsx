@@ -12,24 +12,24 @@ var BulletChartSection = require('./BulletChartSection.jsx')
 var DonutChart = require('component/DonutChart.jsx')
 
 var ManagementDashboard = React.createClass({
-  propTypes : {
-    dashboard  : React.PropTypes.object.isRequired,
-    indicators : React.PropTypes.object.isRequired,
+  propTypes: {
+    dashboard: React.PropTypes.object.isRequired,
+    indicators: React.PropTypes.object.isRequired,
 
-    campaign   : React.PropTypes.object,
-    data       : React.PropTypes.object,
-    loading    : React.PropTypes.bool,
-    location     : React.PropTypes.object
+    campaign: React.PropTypes.object,
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool,
+    location: React.PropTypes.object
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      data    : [],
-      loading : true
+      data: [],
+      loading: true
     }
   },
 
-  render : function () {
+  render: function () {
     var campaign = this.props.campaign
     var printDate = moment(campaign.start_date).format('MMM YYYY')
     var data = this.props.data

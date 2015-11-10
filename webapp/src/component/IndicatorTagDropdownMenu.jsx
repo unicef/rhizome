@@ -11,7 +11,7 @@ function findMatches (item, re) {
   var matches = []
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, { filtered : true }))
+    matches.push(_.assign({}, item, { filtered: true }))
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
@@ -34,15 +34,15 @@ function filterMenu (items, pattern) {
 }
 
 var IndicatorTagDropdownMenu = React.createClass({
-  propTypes : {
-    tag_tree : React.PropTypes.array.isRequired,
+  propTypes: {
+    tag_tree: React.PropTypes.array.isRequired,
     text: React.PropTypes.string.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      pattern : ''
+      pattern: ''
     }
   },
 
@@ -50,7 +50,7 @@ var IndicatorTagDropdownMenu = React.createClass({
     return nextProps.text !== this.props.text
   },
 
-  render : function () {
+  render: function () {
     var self = this
 
     if (this.props.tag_tree.length === 0) {
@@ -72,8 +72,8 @@ var IndicatorTagDropdownMenu = React.createClass({
     )
   },
 
-  _setPattern : function (value) {
-    this.setState({ pattern : value })
+  _setPattern: function (value) {
+    this.setState({ pattern: value })
   }
 })
 

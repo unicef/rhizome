@@ -138,13 +138,11 @@ var SimpleForm = React.createClass({
       additionalFormComponents = (
         <div>
           <p>{`Parent Tag: ${selected}`}</p>
-          <br></br>
+          <br />
           <IndicatorTagDropdownMenu
             tag_tree={tagTree}
             text='Parent tag'
-            sendValue={ this.setParentTag }
-            >
-          </IndicatorTagDropdownMenu>
+            sendValue={ this.setParentTag } />
         </div>
       )
     }
@@ -168,7 +166,7 @@ var SimpleForm = React.createClass({
         {idInfo}
         <ReactJson value={formData} settings={formSettings} ref='form_data'/>
         {additionalFormComponents}
-        <br></br>
+        <br />
         <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.onSubmit }>Save</button>
       </div>)
 
@@ -192,10 +190,8 @@ var SimpleForm = React.createClass({
             componentTitle='Add Tags to Indicators'
             onClick={this.addTagToIndicator}
             smallItemCouldClick={true}
-            onSmallItemClick={this.removeTagFromIndicator}
-            >
-          </SimpleFormComponent>
-          <br></br>
+            onSmallItemClick={this.removeTagFromIndicator} />
+          <br />
           <SimpleFormComponent
             objectId={objectId}
             contentType='indicator_calc'
@@ -204,9 +200,7 @@ var SimpleForm = React.createClass({
             smallItemCouldClick={true}
             onSmallItemClick={this.removeCalculationFromIndicator}
             smallIDCouldClick={true}
-            smallIDBaseUrl='/ufadmin/manage/indicator/'
-            >
-          </SimpleFormComponent>
+            smallIDBaseUrl='/ufadmin/manage/indicator/' />
         </div>
       )
     }

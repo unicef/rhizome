@@ -5,27 +5,27 @@ var React = require('react')
 var dom = require('util/dom')
 
 var Search = React.createClass({
-  propTypes : {
-    onChange  : React.PropTypes.func.isRequired,
+  propTypes: {
+    onChange: React.PropTypes.func.isRequired,
 
-    autoFocus : React.PropTypes.bool,
-    onBlur    : React.PropTypes.func
+    autoFocus: React.PropTypes.bool,
+    onBlur: React.PropTypes.func
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      autoFocus : false,
-      onBlur    : function () {} // noop
+      autoFocus: false,
+      onBlur: function () {} // noop
     }
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      pattern : ''
+      pattern: ''
     }
   },
 
-  render : function () {
+  render: function () {
     var clear = this.state.pattern.length > 0
       ? (
         <a className='clear-btn' tabIndex='-1' onClick={this._clear}>
@@ -35,7 +35,7 @@ var Search = React.createClass({
       : null
 
     return (
-      <div style={{ position : 'relative' }} role='search'>
+      <div style={{ position: 'relative' }} role='search'>
         <input ref='input' type='text' tabIndex='1'
           onChange={this._setPattern}
           onBlur={this._onBlur}
@@ -45,28 +45,28 @@ var Search = React.createClass({
     )
   },
 
-  componentDidMount : function () {
+  componentDidMount: function () {
     if (this.props.autoFocus) {
       this._focus()
     }
   },
 
-  _setPattern : function (e) {
+  _setPattern: function (e) {
     this.props.onChange(e.target.value)
-    this.setState({ pattern : e.target.value })
+    this.setState({ pattern: e.target.value })
   },
 
-  _clear : function () {
+  _clear: function () {
     this.props.onChange('')
-    this.setState({ pattern : '' })
+    this.setState({ pattern: '' })
     this._focus()
   },
 
-  _focus : function () {
+  _focus: function () {
     React.findDOMNode(this.refs.input).focus()
   },
 
-  _onBlur : function () {
+  _onBlur: function () {
     var self = this
 
     window.setTimeout(function () {

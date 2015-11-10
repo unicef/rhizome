@@ -35,18 +35,18 @@ function searchValue (campaign) {
 }
 
 var CampaignDropdownMenu = React.createClass({
-  propTypes : {
-    campaigns : React.PropTypes.array.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+  propTypes: {
+    campaigns: React.PropTypes.array.isRequired,
+    sendValue: React.PropTypes.func.isRequired
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      pattern : ''
+      pattern: ''
     }
   },
 
-  render : function () {
+  render: function () {
     var re = new RegExp(this.state.pattern, 'i')
 
     // If the pattern is longer than two characters, filter the list with it,
@@ -81,8 +81,8 @@ var CampaignDropdownMenu = React.createClass({
     )
   },
 
-  _setPattern : function (value) {
-    this.setState({ pattern : value })
+  _setPattern: function (value) {
+    this.setState({ pattern: value })
   }
 })
 

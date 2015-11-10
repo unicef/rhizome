@@ -9,12 +9,12 @@ var Chart = require('component/Chart.jsx')
 var ChartUtil = require('../utils/ChartUtil.js')
 
 var ImmunityGap = React.createClass({
-  propTypes : {
-    campaign : React.PropTypes.object.isRequired,
-    data : React.PropTypes.array.isRequired
+  propTypes: {
+    campaign: React.PropTypes.object.isRequired,
+    data: React.PropTypes.array.isRequired
   },
 
-  render : function () {
+  render: function () {
     var loading = this.props.loading
 
     var immunityGapData = ChartUtil.prepareUnderImmunizedData({
@@ -29,14 +29,14 @@ var ImmunityGap = React.createClass({
           data={immunityGapData.data}
           loading={loading}
           options={{
-            aspect  : 2.26,
-            color   : immunityGapData.color,
-            domain  : _.constant(immunityGapData.immunityScale),
-            values  : _.property('values'),
-            x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf() },
-            xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
-            y0      : _.property('y0'),
-            yFormat : d3.format(',%')
+            aspect: 2.26,
+            color: immunityGapData.color,
+            domain: _.constant(immunityGapData.immunityScale),
+            values: _.property('values'),
+            x: function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf() },
+            xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
+            y0: _.property('y0'),
+            yFormat: d3.format(',%')
           }} />
       </div>
     )

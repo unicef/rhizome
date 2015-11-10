@@ -7,21 +7,21 @@ var Overview = require('dashboard/nco/Overview.jsx')
 var Breakdown = require('dashboard/nco/Breakdown.jsx')
 
 var NCODashboard = React.createClass({
-  propTypes : {
-    dashboard : React.PropTypes.object.isRequired,
-    data      : React.PropTypes.object.isRequired,
-    location    : React.PropTypes.object.isRequired,
+  propTypes: {
+    dashboard: React.PropTypes.object.isRequired,
+    data: React.PropTypes.object.isRequired,
+    location: React.PropTypes.object.isRequired,
 
-    loading   : React.PropTypes.bool
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var data = this.props.data
     var loading = this.props.loading
 

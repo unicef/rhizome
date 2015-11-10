@@ -6,30 +6,30 @@ var Search = require('component/Search.jsx')
 var dom = require('util/dom')
 
 module.exports = React.createClass({
-  propTypes : {
-    onSearch   : React.PropTypes.func,
-    onBlur     : React.PropTypes.func,
-    searchable : React.PropTypes.bool,
-    x          : React.PropTypes.number,
-    y          : React.PropTypes.number
+  propTypes: {
+    onSearch: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
+    searchable: React.PropTypes.bool,
+    x: React.PropTypes.number,
+    y: React.PropTypes.number
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      onSearch   : _.noop,
-      onBlur     : _.noop,
-      searchable : false,
-      x          : 0,
-      y          : 0
+      onSearch: _.noop,
+      onBlur: _.noop,
+      searchable: false,
+      x: 0,
+      y: 0
     }
   },
 
   getInitialState: function (){
     return {
-      maxHeight   : 'none',
-      marginLeft  : 0,
-      orientation : 'center',
-      pattern     : ''
+      maxHeight: 'none',
+      marginLeft: 0,
+      orientation: 'center',
+      pattern: ''
     }
   },
 
@@ -44,19 +44,19 @@ module.exports = React.createClass({
     }
   },
 
-  componentDidUpdate : function () {
+  componentDidUpdate: function () {
     this._onResize()
   },
 
-  componentWillUnmount : function () {
+  componentWillUnmount: function () {
     window.removeEventListener('resize', this._onResize)
   },
 
-  shouldComponentUpdate : function (nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
-  _onResize : function () {
+  _onResize: function () {
     var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
     var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height: 0})
 
@@ -81,19 +81,19 @@ module.exports = React.createClass({
     }
 
     this.setState({
-      orientation : orientation,
-      maxHeight   : window.innerHeight - y - (menu.height - items.height),
-      marginLeft  : marginLeft
+      orientation: orientation,
+      maxHeight: window.innerHeight - y - (menu.height - items.height),
+      marginLeft: marginLeft
     })
   },
 
   render: function (){
-    var itemlistStyle = { maxHeight : this.state.maxHeight }
-    var containerStyle = { marginLeft : this.state.marginLeft }
+    var itemlistStyle = { maxHeight: this.state.maxHeight }
+    var containerStyle = { marginLeft: this.state.marginLeft }
     var position = {
-      position : 'absolute',
-      left     : this.props.x,
-      top      : this.props.y
+      position: 'absolute',
+      left: this.props.x,
+      top: this.props.y
     }
 
     var search = this.props.searchable
@@ -119,7 +119,7 @@ module.exports = React.createClass({
     )
   },
 
-  onBlur : function () {
+  onBlur: function () {
     var self = this
 
     window.setTimeout(function () {

@@ -5,16 +5,16 @@ var React = require('react')
 var MenuControl = require('mixin/MenuControl')
 
 var NavMenu = React.createClass({
-  mixins : [
+  mixins: [
     require('mixin/MenuControl')
   ],
 
-  propTypes : {
-    text : React.PropTypes.string.isRequired,
-    icon : React.PropTypes.string
+  propTypes: {
+    text: React.PropTypes.string.isRequired,
+    icon: React.PropTypes.string
   },
 
-  render : function () {
+  render: function () {
     var display = this.props.icon
       ? (<span><i className={'fa fa-lg ' + this.props.icon}></i>&ensp;{this.props.text}</span>)
       : (<span>{this.props.text}</span>)

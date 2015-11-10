@@ -3,31 +3,31 @@
 var React = require('react')
 
 var DropdownMenu = React.createClass({
-  mixins : [
+  mixins: [
     require('mixin/MenuControl')
   ],
 
-  propTypes : {
-    text  : React.PropTypes.string,
-    icon  : React.PropTypes.string,
-    size  : React.PropTypes.string,
-    multi : React.PropTypes.bool
+  propTypes: {
+    text: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    size: React.PropTypes.string,
+    multi: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      icon  : 'fa-bars',
-      multi : false
+      icon: 'fa-bars',
+      multi: false
     }
   },
 
-  componentWillReceiveProps : function (nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     if (!this.multi && nextProps.text !== this.props.text) {
-      this.setState({ open : false })
+      this.setState({ open: false })
     }
   },
 
-  render : function () {
+  render: function () {
     var icon = this.props.icon
       ? (<i className={['fa', this.props.icon, this.props.size].join(' ')} />)
       : null

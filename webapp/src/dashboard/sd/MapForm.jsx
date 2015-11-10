@@ -79,8 +79,8 @@ var MapForm = React.createClass({
         <IndicatorDropdownMenu
           text='Map Indicator'
           indicators={this.props.indicators}
-          sendValue={this.postMetaMap}>
-        </IndicatorDropdownMenu></div>
+          sendValue={this.postMetaMap} />
+        </div>
     }
     if (content_type === 'campaign') {
       var office = {
@@ -97,8 +97,7 @@ var MapForm = React.createClass({
         <CampaignDropdownMenu
           text={defaultSelected}
           campaigns={campaigns}
-          sendValue={this.postMetaMap}>
-        </CampaignDropdownMenu>
+          sendValue={this.postMetaMap} />
       </div>
     }
   },
@@ -118,7 +117,7 @@ var MapForm = React.createClass({
         <form>
           <h2> Content Type: {this.state.content_type} </h2>
           <h2> Source Code: {this.state.source_object_code} </h2>
-          <h2> Master Object ID : {this.state.master_object_id} </h2>
+          <h2> Master Object ID: {this.state.master_object_id} </h2>
           {this.renderDropDown(this.state.content_type)}
         </form>
       </Modal></div>

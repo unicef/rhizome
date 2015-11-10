@@ -15,7 +15,7 @@ module.exports = React.createClass({
     require('mixin/MenuControl')
   ],
 
-  render : function () {
+  render: function () {
     var dashboards = this.state.dashboards
 
     var builtins = NavMenuItem.fromArray(_(dashboards)

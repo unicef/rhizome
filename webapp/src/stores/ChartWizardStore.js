@@ -179,19 +179,19 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
-  onAddFirstIndicator(index) {
+  onAddFirstIndicator (index) {
     this.data.indicatorSelected[0] = this.indicatorIndex[index]
     this.filterChartTypeByIndicator()
     this.previewChart()
   },
 
-  onAddIndicator(index) {
+  onAddIndicator (index) {
     if (this.data.indicatorSelected.map(indicator => indicator.id).indexOf(index) >= 0) return
     this.data.indicatorSelected.push(this.indicatorIndex[index])
     this.previewChart()
   },
 
-  onRemoveIndicator(id) {
+  onRemoveIndicator (id) {
     _.remove(this.data.indicatorSelected, {id: id})
     this.previewChart()
   },

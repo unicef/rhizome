@@ -14,7 +14,7 @@ var Navigation = React.createClass({
     Reflux.connect(NavigationStore)
   ],
 
-  render : function () {
+  render: function () {
     var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
       .filter(d => d.builtin)
       .map(function (d) {

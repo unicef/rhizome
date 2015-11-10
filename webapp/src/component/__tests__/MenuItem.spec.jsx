@@ -20,14 +20,12 @@ describe(__filename, () => {
             key='alpha'
             depth={1}
             value='alpha'
-            sendValue='sendValue'>
-          </MenuItem>),
+            sendValue='sendValue' />),
           (<MenuItem
             key='beta'
             depth={1}
             value='beta'
-            sendValue='sendValue'>
-          </MenuItem>)
+            sendValue='sendValue' />)
         ]
       )
     })

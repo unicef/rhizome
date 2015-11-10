@@ -32,8 +32,8 @@ var LAYOUT = {
   'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
   'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
   'District Dashboard': require('dashboard/District.jsx'),
-  'Source Data': require('dashboard/SourceDataDashboard.jsx'),
-};
+  'Source Data': require('dashboard/SourceDataDashboard.jsx')
+}
 
 var Dashboard = React.createClass({
   mixins: [
@@ -336,7 +336,7 @@ var Dashboard = React.createClass({
     }
 
     var settingFilter = ''
-    if (dashboardDef.builtin === true){
+    if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
         <div className='medium-4 columns'>
           <CampaignTitleMenu
