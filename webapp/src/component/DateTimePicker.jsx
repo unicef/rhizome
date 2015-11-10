@@ -22,7 +22,7 @@ var DateRangePicker = React.createClass({
     },
 
     handleDateChange: function(type, date, dateStr) {
-        if (type == 'start') {
+        if (type === 'start') {
             this.setState({start: date})
         }
         else {

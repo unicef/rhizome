@@ -70,13 +70,13 @@ var MapForm = React.createClass({
 
     renderDropDown: function (content_type) {
         var defaultSelected = {'name': 'please map..'}
-        if (content_type == 'location') {
+        if (content_type === 'location') {
             return <div><RegionTitleMenu
                 locations={this.props.locations}
                 selected={defaultSelected}
                 sendValue={this.postMetaMap}/></div>
         }
-        if (content_type == 'indicator') {
+        if (content_type === 'indicator') {
             return <div>
                 <IndicatorDropdownMenu
                     text='Map Indicator'
@@ -84,7 +84,7 @@ var MapForm = React.createClass({
                     sendValue={this.postMetaMap}>
                 </IndicatorDropdownMenu></div>
         }
-        if (content_type == 'campaign') {
+        if (content_type === 'campaign') {
           var office = {
             1: 'Nigeria',
             2: 'Afghanistan',

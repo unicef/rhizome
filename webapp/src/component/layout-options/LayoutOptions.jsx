@@ -21,7 +21,7 @@ let LayoutOptions = React.createClass({
       var radioID = 'layout-option-id-' + radio.value
 
       return  <div href='#' key={radio.value}
-                   className={'medium-4 small-12 layout-option ' + (self.props.value == radio.value ? 'active' : 'inactive')}>
+                   className={'medium-4 small-12 layout-option ' + (self.props.value === radio.value ? 'active' : 'inactive')}>
                 <label htmlFor={radioID}>
                   <img src={radio.src} alt="" />
                   <h3> {radio.name} </h3>
@@ -29,7 +29,7 @@ let LayoutOptions = React.createClass({
                 <input type='radio'
                  name={radio.name}
                  value={radio.value}
-                 checked={self.props.value == radio.value ? 'checked' : false}
+                 checked={self.props.value === radio.value ? 'checked' : false}
                  onChange={self._handleChange.bind(radio)}
                  id={radioID} />
               </div>

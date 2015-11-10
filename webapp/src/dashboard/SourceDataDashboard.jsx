@@ -175,7 +175,7 @@ var SourceDataDashboard = React.createClass({
             </SimpleDataTable>
         </ReviewTable>
 
-        if (doc_tab == 'doc_index') {
+        if (doc_tab === 'doc_index') {
             var docForm = <div><DocForm></DocForm></div>
             var review_breakdown = ''
         }

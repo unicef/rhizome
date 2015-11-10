@@ -22,7 +22,7 @@ module.exports = React.createClass({
         <div key={radio.value} className={this.props.horizontal ? 'horizontal' : null}>
           <input type='radio' name={this.props.name} id={radio.value}
             value={radio.value}
-						checked={this.props.value == index ? 'checked' : false}
+						checked={this.props.value === index ? 'checked' : false}
 						onChange={this.props.onChange.bind(null,index)}/>
           <label htmlFor={radio.value}>{radio.title}</label>
         </div>
