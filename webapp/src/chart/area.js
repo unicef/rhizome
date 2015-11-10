@@ -35,11 +35,6 @@ _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-
-    ////remove the null value in each series
-    //trello #427
-    //management-dashboard-conversion-rates-line-chart issue
-
     series = _(series).each(serie => {
       serie.values = _(serie.values).reject(item => {
         return item.value == null;
@@ -54,14 +49,23 @@ _.extend(AreaChart.prototype, {
     var width = this._width - margin.left - margin.right;
     var height = this._height - margin.top - margin.bottom;
 
-    var color = options.color;
+    var fillColor = options.fill;
+    var strokeColor = options.stroke;
 
-    if (!_.isFunction(color)) {
-      var colorScale = d3.scale.ordinal()
+    if (!_.isFunction(fillColor)) {
+      var fillColorScale = d3.scale.ordinal()
         .domain(_.map(series, options.seriesName))
         .range(['#C4D9DC', '#A2AAB3', '#E5E9EC', '#D8D9E1']);
 
-      color = _.flow(options.seriesName, colorScale);
+      fillColor = _.flow(options.seriesName, fillColorScale);
+    }
+
+    if (!_.isFunction(strokeColor)) {
+      var strokeColorScale = d3.scale.ordinal()
+        .domain(_.map(series, options.seriesName))
+        .range(['#707070', '#87939F', '#B9C3CB', '#B0B3C3']);
+
+      strokeColor = _.flow(options.seriesName, strokeColorScale);
     }
 
     var domain = _.isFunction(options.domain) ?
@@ -125,8 +129,8 @@ _.extend(AreaChart.prototype, {
       .attr('class', 'series');
 
     g.style({
-      'fill': color,
-      'stroke': color
+      'fill': fillColor,
+      'stroke': strokeColor
     });
 
     g.exit().remove();
@@ -139,13 +143,13 @@ _.extend(AreaChart.prototype, {
     path.enter().append('path');
 
     var area = d3.svg.area()
-    .x(x)
-    .y0(height)
-    .y1(y);
+      .x(x)
+      .y0(height)
+      .y1(y);
 
     path.transition()
-    .duration(500)
-    .attr('d', area);
+      .duration(500)
+      .attr('d', area);
 
     var labels = _(series)
       .map(function (d) {
