@@ -11,7 +11,7 @@ module.exports = {
     data: function(){
       return {
         locations:[],
-        groups:[]    
+        groups:[]
       }
     },
     created: function() {
@@ -19,22 +19,22 @@ module.exports = {
      // console.log(self)
       self.$set('locationalAccessLoading',true)
       var MenuComponent = Vue.extend(MenuVue)
-      
+
       api.groups().then(function(response){
          var groups = response.objects//
          api.user_groups({'user':self.$parent.$data.user_id}).then(function(data){
              _.forEach(groups,function(group){
-                
+
                group.active = _.some(data.objects,{'group_id':group.id})
-                
+
              })
-             self.$set('groups',response.objects) 
+             self.$set('groups',response.objects)
          })
       })
 
-      
+
       api.locations().then(function(items){
-         self.loadlocationalAccess() 
+         self.loadlocationalAccess()
          self.location_map = _.indexBy(items.objects, 'id')
          var locations = _(items.objects)
             .map(function (location) {
@@ -51,14 +51,14 @@ module.exports = {
             .thru(ancestoryString)
             .value()
          self.$set('locations',locations)
-         
-      }).then(function () { 
+
+      }).then(function () {
         self.locationMenu = new MenuComponent({
                el     : '#locations'
         })
         self.locationMenu.items = self.$data.locations
         self.locationMenu.$on('field-selected',self.addlocationalAccess)
-      }) 
+      })
     },
     methods: {
       addRemoveUserGroup: function(e){
@@ -69,7 +69,7 @@ module.exports = {
          }
          else {
            api.map_user_group({'user_id':this.$parent.$data.user_id,'group_id':groupId,id:''})
-         }  
+         }
       },
       addlocationalAccess: function(data){
         var self = this
@@ -92,18 +92,18 @@ module.exports = {
         var readWrite = (e.target.checked?'w':'r')
         api.set_location_permission( {user_id:this.$parent.$data.user_id, location_id:locationId, read_write:readWrite,id:internalId })
       },
-      
+
       loadlocationalAccess: function(){
         var self = this
-        
-        
+
+
         api.location_permission( {user:this.$parent.$data.user_id}).then(function(data){
           var locations = data.objects
            _.forEach(locations,function(location){
                location.name = self.location_map[location.location_id].name
                location.canEnter = location.read_write=='w'
            })
-          self.$set('location_permissions',locations) 
+          self.$set('location_permissions',locations)
           self.$set('locationalAccessLoading',false)
         })
       }

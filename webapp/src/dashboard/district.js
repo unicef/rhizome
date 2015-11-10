@@ -228,7 +228,7 @@ module.exports = {
             props.headerText       = _.property('short_name')
 
             props.sortValue = function (series, col) {
-                return (col == null) ?
+                return (col===null) ?
                     series.name :
                     RANGE_ORDER[series.values[col].range]
             }
@@ -311,7 +311,7 @@ module.exports = {
             }
 
             var targets = _(indicators[match[2]].bound_json)
-                .reject(function (r) { return r.bound_name == 'invalid' })
+                .reject(function (r) { return r.bound_name==='invalid' })
                 .sortBy(function (r) { return RANGE_ORDER[r.bound_name] })
                 .map(function (r) {
                     return {

@@ -50,7 +50,7 @@ function emptyResponsePoint(path, mode, defaultVersion, useDefaults) {
     var req = prefix(request(mode, versionedPath))
 
     // form GET request
-    if (mode === 'GET' || mode == 'DELETE') {
+    if (mode === 'GET' || mode==='DELETE') {
       var q = useDefaults ? _.defaults({}, query, defaults) : query
       req.query(q)
         .set(headers)
@@ -109,7 +109,7 @@ function endPoint(path, mode, defaultVersion, useDefaults) {
     var req = prefix(request(mode, versionedPath))
 
     // form GET request
-    if (mode === 'GET' || mode == 'DELETE') {
+    if (mode === 'GET' || mode==='DELETE') {
       var q = useDefaults ? _.defaults({}, query, defaults) : query
       req.query(q)
         .set(headers)

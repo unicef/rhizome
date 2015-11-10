@@ -45,15 +45,15 @@ var SimpleFormComponent = React.createClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     // FIXME be more specific
-    return nextState.store == this.state.store
+    return nextState.store===this.state.store
   },
 
   componentWillMount: function () {
     // FIXME use data as opposed to hacky control flow here!
-    if (this.props.contentType == 'indicator_tag') {
+    if (this.props.contentType==='indicator_tag') {
       SimpleFormActions.initIndicatorToTag(this.props.objectId)
     }
-    else if (this.props.contentType == 'indicator_calc') {
+    else if (this.props.contentType==='indicator_calc') {
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
     }
   },
@@ -106,7 +106,7 @@ var SimpleFormComponent = React.createClass({
     })
 
     var componentForm
-    if (contentType == 'indicator_tag') {
+    if (contentType==='indicator_tag') {
       componentForm = (
         <div>
           <IndicatorTagDropdownMenu
@@ -117,7 +117,7 @@ var SimpleFormComponent = React.createClass({
         </div>
       )
     }
-    else if (contentType == 'indicator_calc') {
+    else if (contentType==='indicator_calc') {
       componentForm = (
         <form>
           <select ref="selectBox">

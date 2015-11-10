@@ -87,7 +87,7 @@ function _columnData(data, groups, groupBy) {
   var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'))
   _.each(columnData,function(series){
      _.each(baseCampaigns,function(baseCampaign,index){
-         if(!_.find(series.values,function(value){return value.campaign.id == baseCampaign.id}))
+         if(!_.find(series.values,function(value){return value.campaign.id===baseCampaign.id}))
          {
            series.values.splice(index,0,{campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
          }
@@ -178,7 +178,7 @@ module.exports = {
   },
   processLineChart:function(dataPromise,lower,upper,groups,groupBy){
     return dataPromise.then(function(data){
-      if (!data || data.length == 0) {
+      if (!data || data.length===0) {
         return {options: null, data: null}
       }
       if(!lower) //set the lower bound from the lowest datapoint value
@@ -202,7 +202,7 @@ module.exports = {
     var idx = _.indexBy(indicators, 'id')
 
     return dataPromise.then(function(data){
-      if (!data || data.length == 0) {
+      if (!data || data.length===0) {
         return {options: null, data: null}
       }
       var total = _(data).map(function(n){ return n.value}).sum()
@@ -230,7 +230,7 @@ module.exports = {
         name  : d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         border: border.objects.features
       }
-      if (!data || data.length == 0) {
+      if (!data || data.length===0) {
         return {options: chartOptions, data: border.objects.features}
       }
       var chartData = _.map(border.objects.features, function (feature) {
@@ -244,7 +244,7 @@ module.exports = {
   },
   processColumnChart: function(dataPromise,lower,upper,groups,groupBy){
     return dataPromise.then(function(data){
-      if (!data || data.length == 0) {
+      if (!data || data.length===0) {
         return {options: null, data: null}
       }
       if(!lower) //set the lower bound from the lowest datapoint value
@@ -281,14 +281,14 @@ module.exports = {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return dataPromise.then(function(data){
-      if (!data || data.length == 0) {
+      if (!data || data.length===0) {
         return {options: null, data: null}
       }
       var domain = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-           return d.indicator == xAxis
+           return d.indicator===xAxis
          })
         .pluck('value')
         .value()
@@ -296,7 +296,7 @@ module.exports = {
       var range = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
-        .filter(function (d) { return d.indicator == yAxis})
+        .filter(function (d) { return d.indicator===yAxis})
         .pluck('value')
         .value()
       )
@@ -332,7 +332,7 @@ module.exports = {
   },
   processBarChart: function(dataPromise,locations,indicators,xAxis,yAxis){
       return dataPromise.then(function(data){
-        if (!data || data.length == 0) {
+        if (!data || data.length===0) {
           return {options: null, data: null}
         }
         var indicatorsIndex = _.indexBy(indicators, 'id')

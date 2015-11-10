@@ -61,14 +61,14 @@ var canDisplayChart = function(){
 }
 var canDisplayChartReason = function(){
     var reason
-    if(this.indicatorsSelected.length == 0)
+    if(this.indicatorsSelected.length===0)
     {
       reason = "Please select at least one indicator"
     }
     else if(!this.campaignSelected.id){
       reason = "Please select a campaign"
     }
-    else if(this.chartData.length == 0)
+    else if(this.chartData.length===0)
     {
       reason = "No data to display"
     }
@@ -445,7 +445,7 @@ module.exports = Reflux.createStore({
         var self = this
         var indicatorsIndex = _.indexBy(this.data.indicatorsSelected, 'id')//
         var locationsIndex = _.indexBy(this.data.aggregatedLocations, 'id')
-        var groups = (groupBy == 'indicator'?indicatorsIndex:locationsIndex)
+        var groups = (groupBy==='indicator'?indicatorsIndex:locationsIndex)
         var start = moment(this.data.campaignSelected.start_date)
         var lower = this.getLower(start)//.subtract(1, 'year')
         var upper = start.clone().startOf('month')

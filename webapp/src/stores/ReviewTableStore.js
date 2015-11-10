@@ -20,28 +20,28 @@ var ReviewTableStore = Reflux.createStore({
 
     onGetData: function (request, fields, docTab) {
         var self = this
-        if (docTab == "viewraw") {
+        if (docTab==="viewraw") {
             api.submission(request, null, {'cache-control': 'no-cache'}).then(response => {
                 self.data.schema = parseSchema(fields)
                 self.data.data = response.objects
                 self.trigger(self.data)
             })
         }
-        else if (docTab == "doc_index") {
+        else if (docTab==="doc_index") {
             api.source_doc(request, null, {'cache-control': 'no-cache'}).then(response => {
                 self.data.schema = parseSchema(fields)
                 self.data.data = response.objects
                 self.trigger(self.data)
             })
         }
-        else if (docTab == "mapping") {
+        else if (docTab==="mapping") {
             api.docMap(request, null, {'cache-control': 'no-cache'}).then(response => {
                 self.data.schema = parseSchema(fields)
                 self.data.data = response.objects
                 self.trigger(self.data)
             })
         }
-        else if (docTab == "validate") {
+        else if (docTab==="validate") {
             api.docDatapoint(request, null, {'cache-control': 'no-cache'}).then(response => {
                 self.data.schema = parseSchema(fields)
                 self.data.data = response.objects
