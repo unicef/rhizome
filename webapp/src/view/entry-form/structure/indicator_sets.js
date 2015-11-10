@@ -26,7 +26,7 @@ module.exports = [
 
                 { 'type': 'section-header', 'title': 'Polio+' },
                 { 'id': 29, 'name': 'Number of caregivers in high risk districts' },
-                { 'id': 50, 'name': 'Number of caregivers in HRD who know times needed to visit RI site before 1 yo' },
+                { 'id': 50, 'name': 'Number of caregivers in HRD who know times needed to visit RI site before 1 yo' }
 
             ]
         },
@@ -113,7 +113,7 @@ module.exports = [
                 { 'id': 216, 'name': 'Number of RI sessions monitored having stockouts of any vaccine in the last month' },
                 { 'id': 192, 'name': 'Number of RI defaulters mobilized by SMs last month' },
                 { 'id': 473, 'name': 'District was sampled for microplan review  (1=yes, 0=no)' },
-                { 'id': 474, 'name': 'District passed microplan review (1=yes, 0=no)' },
+                { 'id': 474, 'name': 'District passed microplan review (1=yes, 0=no)' }
 
             ]
         }

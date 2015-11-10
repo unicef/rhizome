@@ -16,7 +16,7 @@ var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
 
 var SimpleForm = React.createClass({
   mixins: [
-    Reflux.connect(SimpleFormStore, 'store'),
+    Reflux.connect(SimpleFormStore, 'store')
   ],
 
   contextTypes: {

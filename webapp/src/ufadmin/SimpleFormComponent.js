@@ -26,7 +26,7 @@ var SimpleFormComponent = React.createClass({
   },
 
   mixins: [
-    Reflux.connect(SimpleFormStore, 'store'),
+    Reflux.connect(SimpleFormStore, 'store')
   ],
 
   getDefaultProps: function () {

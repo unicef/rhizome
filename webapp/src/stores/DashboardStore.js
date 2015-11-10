@@ -16,7 +16,7 @@ var DashboardStore = Reflux.createStore({
     Promise.all([
         RegionStore.getlocationsPromise(),
         RegionStore.getLocationTypesPromise(),
-        CampaignStore.getCampaignsPromise(),
+        CampaignStore.getCampaignsPromise()
       ])
       .then(_.spread((locations, locationsTypes, campaigns) => {
         this.locations = locations

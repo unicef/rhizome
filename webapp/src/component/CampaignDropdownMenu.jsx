@@ -30,7 +30,7 @@ function searchValue (campaign) {
     m.format('YY/MM'),
     m.format('MM/YY'),
     m.format('YY/M'),
-    m.format('M/YY'),
+    m.format('M/YY')
   ].join(' ')
 }
 
