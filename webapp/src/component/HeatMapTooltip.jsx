@@ -48,9 +48,9 @@ var HeatMapTooltip = React.createClass({
         <span>
           <h6>Targets</h6>
           <table className='indicator-ranges' style={{
-              float  : 'left',
-              margin : '0 1em 0 0'
-            }}>
+            float  : 'left',
+            margin : '0 1em 0 0'
+          }}>
             {rows}
           </table>
         </span>

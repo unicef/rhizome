@@ -13,8 +13,8 @@ var campaign = require('../data/model/campaign')
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
-      return encodeURIComponent(k) + '=' + encodeURIComponent(v)
-    }).join('&')
+    return encodeURIComponent(k) + '=' + encodeURIComponent(v)
+  }).join('&')
 }
 
 function getCookie (name) {

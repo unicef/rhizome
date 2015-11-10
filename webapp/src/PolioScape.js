@@ -28,63 +28,63 @@ Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'))
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'))
 
 React.render(
-    React.createElement(Navigation),
-    document.getElementById('main-nav')
+  React.createElement(Navigation),
+  document.getElementById('main-nav')
 )
 
 React.render(
-    React.createElement(DashboardNav),
-    document.getElementById('dashboards-nav')
+  React.createElement(DashboardNav),
+  document.getElementById('dashboards-nav')
 )
 
 module.exports = {
-    Explorer: function (el) {
-        new Vue({
-            el: el,
-            components: { 'uf-explorer': require('./view/explorer') }
-        })
-    },
-    Dashboard: function (el) {
-        React.render(React.createElement(require('view/Dashboard.jsx')), el)
-    },
-    DataEntry: function (el) {
-        new Vue({
-            el: el,
-            components: { 'uf-entry-form': require('./view/entry-form') }
-        })
-    },
-    UserAccount: function (el, user_id) {
-        new Vue({
-            el: el,
-            components: { 'uf-user-account': require('./view/user-account') },
-            data: {'user_id': user_id}
-        })
-    },
-    LandingPage: function (el) {
-        React.render(React.createElement(LandingPage), el)
-    },
-    DashboardList: function (el) {
-        React.render(React.createElement(DashboardList), el)
-    },
-    HomepageCharts: function (el) {
-        React.render(React.createElement(HomepageChartsView), el)
-    },
-    DashboardBuilder: function (el, dashboard_id) {
-      var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
-        React.render(React.createElement(DashboardBuilder, { dashboard_id: dashboard_id }), el)
-    },
-    ChartBuilder: function (el, dashboard_id) {
-        var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
-        React.render(React.createElement(ChartBuilder, { dashboard_id: dashboard_id }), el)
-    },
-    UFAdmin: function (el) {
-        AdminApp.render(document.getElementById('main'))
-    },
-    CampaignsPage: function (id_start_date, id_end_date) {
-        CampaignsPage.render(id_start_date, id_end_date)
-    },
-    GroupForm: function (el, group_id) {
-        // React.render(React.createElement(GroupForm), el)
-        React.render(React.createElement(GroupForm, { group_id: group_id }), el)
-    }
+  Explorer: function (el) {
+    new Vue({
+      el: el,
+      components: { 'uf-explorer': require('./view/explorer') }
+    })
+  },
+  Dashboard: function (el) {
+    React.render(React.createElement(require('view/Dashboard.jsx')), el)
+  },
+  DataEntry: function (el) {
+    new Vue({
+      el: el,
+      components: { 'uf-entry-form': require('./view/entry-form') }
+    })
+  },
+  UserAccount: function (el, user_id) {
+    new Vue({
+      el: el,
+      components: { 'uf-user-account': require('./view/user-account') },
+      data: {'user_id': user_id}
+    })
+  },
+  LandingPage: function (el) {
+    React.render(React.createElement(LandingPage), el)
+  },
+  DashboardList: function (el) {
+    React.render(React.createElement(DashboardList), el)
+  },
+  HomepageCharts: function (el) {
+    React.render(React.createElement(HomepageChartsView), el)
+  },
+  DashboardBuilder: function (el, dashboard_id) {
+    var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
+    React.render(React.createElement(DashboardBuilder, { dashboard_id: dashboard_id }), el)
+  },
+  ChartBuilder: function (el, dashboard_id) {
+    var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
+    React.render(React.createElement(ChartBuilder, { dashboard_id: dashboard_id }), el)
+  },
+  UFAdmin: function (el) {
+    AdminApp.render(document.getElementById('main'))
+  },
+  CampaignsPage: function (id_start_date, id_end_date) {
+    CampaignsPage.render(id_start_date, id_end_date)
+  },
+  GroupForm: function (el, group_id) {
+    // React.render(React.createElement(GroupForm), el)
+    React.render(React.createElement(GroupForm, { group_id: group_id }), el)
+  }
 }

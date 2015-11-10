@@ -86,11 +86,9 @@ function preparePolioCasesData (original) {
   if (_.isFinite(newCases) && newCases > 0) {
     var plural = newCases !== 1 ? 's' : ''
     newCaseLabel = (
-      <div id='new-polio-cases'
-           style={{
-            position: 'absolute',
-            color: '#D84E43'
-          }}>{newCases} new case{plural}</div>
+      <div id='new-polio-cases'style={{position: 'absolute', color: '#D84E43'}}>
+        {newCases} new case{plural}
+      </div>
     )
   }
 

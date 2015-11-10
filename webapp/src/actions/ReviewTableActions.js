@@ -3,6 +3,6 @@
 var Reflux = require('reflux')
 
 module.exports = Reflux.createActions([
-    'getData',
-    'getIndicators'
+  'getData',
+  'getIndicators'
 ])

@@ -69,25 +69,25 @@ function _columnData (data, groups, groupBy) {
     .value()
   var baseCampaigns = []
   _.each(columnData, function (series) {
-     _.each(series.values, function (value) { // build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
-       if (!_.find(baseCampaigns, function (campaign) { return campaign.id === value.campaign.id })) {
-         baseCampaigns.push(value.campaign)
-       }
-     })
-     _.each(series.values, function (val) { // replace all null values with 0, caused d3 rect rendering errors in the chart
+    _.each(series.values, function (value) { // build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
+      if (!_.find(baseCampaigns, function (campaign) { return campaign.id === value.campaign.id })) {
+        baseCampaigns.push(value.campaign)
+      }
+    })
+    _.each(series.values, function (val) { // replace all null values with 0, caused d3 rect rendering errors in the chart
       if (_.isNull(val.value)) {
         val.value = 0
       }
-     })
+    })
   })
   baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
   _.each(columnData, function (series) {
-     _.each(baseCampaigns, function (baseCampaign, index) {
-         if (!_.find(series.values, function (value) { return value.campaign.id === baseCampaign.id })) {
-           series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
-         }
-     })
-     series.values = _.sortBy(series.values, _.method('campaign.start_date.getTime'))
+    _.each(baseCampaigns, function (baseCampaign, index) {
+      if (!_.find(series.values, function (value) { return value.campaign.id === baseCampaign.id })) {
+        series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
+      }
+    })
+    series.values = _.sortBy(series.values, _.method('campaign.start_date.getTime'))
   })
   var stack = d3.layout.stack()
     .order('default')
@@ -145,7 +145,7 @@ function _makeSeries (getSeries) {
         }
       })
       .value()
-    }
+  }
 }
 function _getIndicator (d) {
   return d.indicator.short_name
@@ -158,17 +158,17 @@ module.exports = {
       return melt(data, indicatorArray)
     })
     if (chartType === 'LineChart') {
-     return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
+      return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
     } else if (chartType === 'PieChart') {
-     return this.processPieChart(meltPromise, indicators)
+      return this.processPieChart(meltPromise, indicators)
     } else if (chartType === 'ChoroplethMap') {
-     return this.processChoroplethMap(meltPromise, locations)
+      return this.processChoroplethMap(meltPromise, locations)
     } else if (chartType === 'ColumnChart') {
-     return this.processColumnChart(meltPromise, lower, upper, groups, groupBy)
+      return this.processColumnChart(meltPromise, lower, upper, groups, groupBy)
     } else if (chartType === 'ScatterChart') {
-     return this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis)
+      return this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis)
     } else if (chartType === 'BarChart') {
-     return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
+      return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
     }
   },
   processLineChart: function (dataPromise, lower, upper, groups, groupBy) {
@@ -182,15 +182,15 @@ module.exports = {
         lower = moment(_.first(sortedDates).campaign.start_date)
       }
       var chartOptions = {
-          domain: _.constant([lower.toDate(), upper.toDate()]),
-          aspect: 2.664831804,
-          values: _.property('values'),
-          x: _.property('campaign.start_date'),
-          xFormat: function (d) { return moment(d).format('MMM YYYY') },
-          y: _.property('value')
-        }
+        domain: _.constant([lower.toDate(), upper.toDate()]),
+        aspect: 2.664831804,
+        values: _.property('values'),
+        x: _.property('campaign.start_date'),
+        xFormat: function (d) { return moment(d).format('MMM YYYY') },
+        y: _.property('value')
+      }
       var chartData = _groupBySeries(data, groups, groupBy)
-        return { options: chartOptions, data: chartData }
+      return { options: chartOptions, data: chartData }
     })
   },
   processPieChart: function (dataPromise, indicators) {
@@ -202,15 +202,15 @@ module.exports = {
       }
       var total = _(data).map(function (n) { return n.value }).sum()
       var chartOptions = {
-          domain: _.constant([0, total]),
-          name: d => _.get(idx, '[' + d.indicator + '].name', ''),
-          margin: {
-            top: 0,
-            right: 200,
-            bottom: 0,
-            left: 0
-          }
+        domain: _.constant([0, total]),
+        name: d => _.get(idx, '[' + d.indicator + '].name', ''),
+        margin: {
+          top: 0,
+          right: 200,
+          bottom: 0,
+          left: 0
         }
+      }
       return { options: chartOptions, data: data }
     })
   },
@@ -248,11 +248,11 @@ module.exports = {
         lower = moment(_.first(sortedDates).campaign.start_date)
       }
       var columnScale = _.map(d3.time.scale()
-            .domain([lower.valueOf(), upper.valueOf()])
-            .ticks(d3.time.month, 1),
-          _.method('getTime')
-        )
-        var chartData = _columnData(data, groups, groupBy)
+          .domain([lower.valueOf(), upper.valueOf()])
+          .ticks(d3.time.month, 1),
+        _.method('getTime')
+      )
+      var chartData = _columnData(data, groups, groupBy)
 
       var chartOptions = {
         aspect: 2.664831804,
@@ -262,9 +262,9 @@ module.exports = {
           _.property('name'),
           d3.scale.ordinal().range(colors)),
         x: function (d) {
-                      var start = d.campaign.start_date
-                      return moment(start).startOf('month').toDate().getTime()
-                      },
+          var start = d.campaign.start_date
+          return moment(start).startOf('month').toDate().getTime()
+        },
         xFormat: function (d) { return moment(d).format('MMM YYYY') }
       }
       return { options: chartOptions, data: chartData }
@@ -282,8 +282,8 @@ module.exports = {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-           return d.indicator === xAxis
-         })
+          return d.indicator === xAxis
+        })
         .pluck('value')
         .value()
       )
@@ -325,34 +325,34 @@ module.exports = {
     })
   },
   processBarChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
-      return dataPromise.then(function (data) {
-        if (!data || data.length === 0) {
-          return { options: null, data: null }
-        }
-        var indicatorsIndex = _.indexBy(indicators, 'id')
-        var locationsIndex = _.indexBy(locations, 'id')
-        var datapoints = _(data)
-          .thru(util.unpivot)
-          .forEach(function (d) {
-            d.indicator = indicatorsIndex[d.indicator]
-            var temp = d.location
-            d.location = locationsIndex[d.location]
-          })
-          .groupBy(function (d) {
-            return d.indicator.id
-          }).value()
+    return dataPromise.then(function (data) {
+      if (!data || data.length === 0) {
+        return { options: null, data: null }
+      }
+      var indicatorsIndex = _.indexBy(indicators, 'id')
+      var locationsIndex = _.indexBy(locations, 'id')
+      var datapoints = _(data)
+        .thru(util.unpivot)
+        .forEach(function (d) {
+          d.indicator = indicatorsIndex[d.indicator]
+          var temp = d.location
+          d.location = locationsIndex[d.location]
+        })
+        .groupBy(function (d) {
+          return d.indicator.id
+        }).value()
 
-        var locationMapping = {
-          'value': 'x',
-          'location.name': 'y'
-        }
+      var locationMapping = {
+        'value': 'x',
+        'location.name': 'y'
+      }
 
-        var chartOptions = {
-          offset: 'zero',
-          xFormat: d3.format('%')
-        }
-        var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
-        return { options: chartOptions, data: chartData }
-      })
+      var chartOptions = {
+        offset: 'zero',
+        xFormat: d3.format('%')
+      }
+      var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
+      return { options: chartOptions, data: chartData }
+    })
   }
 }

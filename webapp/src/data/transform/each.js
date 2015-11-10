@@ -1,12 +1,12 @@
 
 module.exports = function each (fn) {
-    'use strict'
+  'use strict'
 
-    function transform (data) {
-        data.forEach(fn)
+  function transform (data) {
+    data.forEach(fn)
 
-        return data
-    }
+    return data
+  }
 
-    return transform
+  return transform
 }

@@ -16,22 +16,18 @@ describe(__filename, () => {
       ]
       expect(MenuItem.fromArray(arr, 'sendValue', 1)).to.deep.equal(
         [
-          (
-            <MenuItem
-              key='alpha'
-              depth={1}
-              value='alpha'
-              sendValue='sendValue'>
-            </MenuItem>
-          ),
-          (
-            <MenuItem
-              key='beta'
-              depth={1}
-              value='beta'
-              sendValue='sendValue'>
-            </MenuItem>
-          )
+          (<MenuItem
+            key='alpha'
+            depth={1}
+            value='alpha'
+            sendValue='sendValue'>
+          </MenuItem>),
+          (<MenuItem
+            key='beta'
+            depth={1}
+            value='beta'
+            sendValue='sendValue'>
+          </MenuItem>)
         ]
       )
     })

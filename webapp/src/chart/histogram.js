@@ -122,11 +122,11 @@ _.extend(Histogram.prototype, {
     yAxis.enter().append('text')
 
     yAxis.attr({
-        'transform': 'translate(0, ' + (h / 2) + ') rotate(-90)',
-        'text-anchor': 'middle',
-        'dy': '-6'
-      })
-      .text(String)
+      'transform': 'translate(0, ' + (h / 2) + ') rotate(-90)',
+      'text-anchor': 'middle',
+      'dy': '-6'
+    })
+    .text(String)
   }
 })
 

@@ -70,8 +70,8 @@ _.extend(PieChart.prototype, {
 
     var data = [{value: 0}, {value: 0}];
     if (values[0] && values[0].value) {
-        data[0].value = Math.round(values[0].value * 100) / 100;
-        data[1].value = 1 - data[0].value
+      data[0].value = Math.round(values[0].value * 100) / 100;
+      data[1].value = 1 - data[0].value
     }
 
     var w = this._width - margin.left - margin.right
@@ -110,8 +110,8 @@ _.extend(PieChart.prototype, {
 
     var pie = d3.layout.stack()
       .values(function (d) {
-      return [d]
-    })
+        return [d]
+      })
       .x(options.name)
       .y(options.value)
       .out(function (d, y0, y) {
