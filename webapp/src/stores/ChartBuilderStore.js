@@ -50,8 +50,7 @@ function seriesObject (d, ind, collection, indicators) {
     }
 }
 var canDisplayChart = function () {
-    if (this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0)
-    {
+    if (this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0) {
       return true
     } else {
         return false
@@ -59,13 +58,11 @@ var canDisplayChart = function () {
 }
 var canDisplayChartReason = function () {
     var reason
-    if (this.indicatorsSelected.length === 0)
-    {
+    if (this.indicatorsSelected.length === 0) {
       reason = 'Please select at least one indicator'
     } else if (!this.campaignSelected.id) {
       reason = 'Please select a campaign'
-    } else if (this.chartData.length === 0)
-    {
+    } else if (this.chartData.length === 0) {
       reason = 'No data to display'
     } else {
         reason = ''
@@ -80,8 +77,7 @@ function _columnData (data, groups, groupBy) {
         .value()
     var largestGroup = []
     _.each(columnData, function (series) {
-       if (series.values.length > largestGroup.length)
-       {
+       if (series.values.length > largestGroup.length) {
          largestGroup = series.values
        }
     })
@@ -234,8 +230,7 @@ module.exports = Reflux.createStore({
                 self.data.indicatorList = _(items.objects)
                     .sortBy('title')
                     .value()
-                 if (chartDef)
-                 {
+                 if (chartDef) {
                    self.applyChartDef(chartDef)
                  }
                  self.trigger(self.data)
@@ -379,30 +374,24 @@ module.exports = Reflux.createStore({
         var locations
         var locationSelected = this.data.locationSelected
         var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value
-        if (locationRadioValue === 'selected')
-        {
+        if (locationRadioValue === 'selected') {
            locations = [locationSelected]
-        } else if (locationRadioValue === 'type')
-        {
-           if (locationSelected.parent_location_id && locationSelected.parent_location_id !== 'None')
-           {
+        } else if (locationRadioValue === 'type') {
+           if (locationSelected.parent_location_id && locationSelected.parent_location_id !== 'None') {
              locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
            } else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})
            }
-        } else if (locationRadioValue === 'sublocations')
-        {
+        } else if (locationRadioValue === 'sublocations') {
            locations = _.filter(this._locationIndex, { parent_location_id: locationSelected.id})
         }
         this.data.aggregatedLocations = locations
-        if (this.canFetchChartData())
-        {
+        if (this.canFetchChartData()) {
             this.getChartData()
         }
     },
     canFetchChartData: function () {
-        if (this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id)
-        {
+        if (this.data.indicatorsSelected.length > 0 && this.data.campaignSelected.id) {
           return true
         } else {
             return false
@@ -422,8 +411,7 @@ module.exports = Reflux.createStore({
         }
     },
     getChartData: function () {
-        if (!this.data.indicatorsSelected.length)
-        {
+        if (!this.data.indicatorsSelected.length) {
          return
         }
         this.data.loading = true
