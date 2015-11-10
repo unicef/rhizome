@@ -147,7 +147,7 @@ module.exports = {
         refreshlocationsDropdown: function () {
             var self = this
 
-            var campaign = _.find(self.$data.campaigns, function (d) { return d.id === parseInt(self.$data.campaign_id) })
+            var campaign = _.find(self.$data.campaigns, function (d) { return d.id === parseInt(self.$data.campaign_id, 10) })
 
             var items = _.chain(self.$data.locationData)
                             .filter(function (d) {
@@ -187,7 +187,7 @@ module.exports = {
 
         getFilteredIndicatorSet: function (indicatorSetId) {
             var self = this
-            var indicatorSet = _.find(self.indicator_sets, function (d) { return d.id === parseInt(indicatorSetId) })
+            var indicatorSet = _.find(self.indicator_sets, function (d) { return d.id === parseInt(indicatorSetId, 10) })
             if (!indicatorSet) return null
 
             var filtered = _.clone(indicatorSet)
@@ -225,7 +225,7 @@ module.exports = {
             }
 
             var options = {
-                campaign__in: parseInt(self.$data.campaign_id),
+                campaign__in: parseInt(self.$data.campaign_id, 10),
                 indicator__in: [],
                 location__in: []
             }

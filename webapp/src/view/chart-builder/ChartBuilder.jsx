@@ -83,10 +83,10 @@ module.exports = React.createClass({
     this.setState(state)
   },
   _updateXAxis: function (e) {
-    ChartBuilderActions.selectXAxis(parseInt(e.target.value))
+    ChartBuilderActions.selectXAxis(parseInt(e.target.value, 10))
   },
   _updateYAxis: function (e) {
-    ChartBuilderActions.selectYAxis(parseInt(e.target.value))
+    ChartBuilderActions.selectYAxis(parseInt(e.target.value, 10))
   },
   setFilter: function (filterFor, pattern) {
     var state = {}

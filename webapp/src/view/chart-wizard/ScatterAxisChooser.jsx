@@ -33,11 +33,11 @@ let ScatterAxisChooser = React.createClass({
   },
 
   _updateXAxis(e){
-    this.props.onXAxisChange(parseInt(e.target.value))
+    this.props.onXAxisChange(parseInt(e.target.value, 10))
   },
 
   _updateYAxis(e){
-    this.props.onYAxisChange(parseInt(e.target.value))
+    this.props.onYAxisChange(parseInt(e.target.value, 10))
   },
 
   render() {
