@@ -2,7 +2,7 @@
 
 var React = require('react');
 
-var ButtonMenu = React.createClass({
+var DropdownMenu = React.createClass({
   mixins : [
     require('mixin/MenuControl')
   ],
@@ -48,4 +48,4 @@ var ButtonMenu = React.createClass({
   }
 });
 
-module.exports = ButtonMenu;
+module.exports = DropdownMenu;
