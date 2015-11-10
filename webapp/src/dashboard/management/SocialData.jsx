@@ -30,10 +30,11 @@ var SocialData = React.createClass({
     var den = _.get(microplans, 'value');
 
     var microText = '';
+    var socialData = {value:0};
 
     if (_.isFinite(num) && _.isFinite(den)) {
       microText = num + ' / ' + den + ' microplans incorporate social data';
-      _.forEach(data, d=>d.value = num / den);
+      socialData.value = num / den;
     }
 
     var planLabel = function (d) {
@@ -46,7 +47,7 @@ var SocialData = React.createClass({
     return (
       <div className="row">
         <div className="medium-4 columns">
-          <DonutChart data={data} label={planLabel}
+          <DonutChart data={[socialData]} label={planLabel}
                       loading={loading}
                       options={{
                 innerRadius : 0.3,
