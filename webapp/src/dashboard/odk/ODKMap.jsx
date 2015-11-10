@@ -1,41 +1,42 @@
 'use strict';
 
-var _     = require('lodash');
+var _ = require('lodash');
 var React = require('react');
 
-var Chart      = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx');
 var DonutChart = require('component/DonutChart.jsx');
 var Monitoring = require('dashboard/nco/Monitoring.jsx');
 
 var ODKMap = React.createClass({
-  propTypes : {
-    data : React.PropTypes.object.isRequired,
-    loading : React.PropTypes.bool
+  propTypes: {
+    data: React.PropTypes.object.isRequired,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     };
   },
 
-  render : function () {
-    var loading    = this.props.loading;
-    var data       = this.props.data;
+  render: function () {
+    var loading = this.props.loading;
+    var data = this.props.data;
 
     var missedChildrenMap = data.nonCompliance;
 
     return <div className='row'>
-        <h4> Missed Children</h4>
-        <Chart type='ChoroplethMap'
-          data={missedChildrenMap}
-          loading={loading}
-          options={{
+      <h4> Missed Children</h4>
+      <Chart type='ChoroplethMap'
+             data={missedChildrenMap}
+             loading={loading}
+             options={{
+            aspect  : 0.555,
             domain  : _.constant([0, 0.1]),
             value   : _.property('properties[475]'),
-            yFormat : d3.format('%'),
-          }} />
-        </div>
+            yFormat : d3.format('%')
+          }}/>
+    </div>
   }
 });
 
