@@ -61,7 +61,6 @@ module.exports = Reflux.createStore({
                 self.data.loading = false
                 self.trigger(self.data)
             }
-
         })
 
     },

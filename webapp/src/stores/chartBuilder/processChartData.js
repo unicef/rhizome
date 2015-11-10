@@ -273,7 +273,6 @@ module.exports = {
         xFormat: function (d) { return moment(d).format('MMM YYYY')}
       }
       return { options: chartOptions, data: chartData}
-
     })
   },
   processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis) {

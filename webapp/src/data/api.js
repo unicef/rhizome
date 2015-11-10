@@ -183,7 +183,6 @@ function datapoint(q) {
       })
 
     }, reject)
-
   })
 }
 

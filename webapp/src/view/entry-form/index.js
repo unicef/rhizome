@@ -151,7 +151,6 @@ module.exports = {
 
                     self.filterIndicatorSets()
                     self.refreshlocationsDropdown()
-
                 })
 
         },
@@ -261,7 +260,6 @@ module.exports = {
                             options.location__in = options.location__in.concat(_.map(children, 'id'))
                         }
                     }
-
                 })
 
                 // make unique

@@ -174,7 +174,6 @@ var SimpleFormStore = Reflux.createStore({
         self.data.componentData['indicator_tag'] = {'componentRows': indicatorTags, 'dropDownData': allTags}
         self.data.loading = false
         self.trigger(self.data)
-
       }))
   },
 

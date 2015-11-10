@@ -81,9 +81,7 @@ module.exports = {
                             }
 
                         }
-
                     }) // end column loop
-
                 }) // end row loop
 
             }

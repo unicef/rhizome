@@ -210,7 +210,6 @@ var HomepageDashboardsStore = Reflux.createStore({
                 data.features
               )
             })
-
         })
 
         var queries = enhanced
@@ -242,7 +241,6 @@ var HomepageDashboardsStore = Reflux.createStore({
               dashboards: dashboards
             })
           }))
-
       }))
   },
 
