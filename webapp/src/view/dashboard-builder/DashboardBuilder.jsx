@@ -118,7 +118,12 @@ module.exports = React.createClass({
       if (_.isEmpty(q)) {
         DataActions.clear();
       } else {
-        DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q);
+        if(state.dashboard.builtin)
+          DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q);
+        else{
+          DataActions.fetchForChart(this.state.dashboardStore.campaign, this.state.dashboardStore.location,
+            this.state.dashboardStore.allCampaigns, this.state.dashboardStore.locations, this.state.store.dashboard);
+        }
       }
 
       if (this.state.dashboardStore.hasMap) {

@@ -35,7 +35,7 @@ var DashboardStore = Reflux.createStore({
         this.trigger({
           loaded: this.loaded,
           locations: this.locations,
-          campaigns: this.campaign
+          campaigns: this.campaigns
         });
       }));
   },
@@ -104,6 +104,7 @@ var DashboardStore = Reflux.createStore({
       campaigns: _.filter(campaigns, function(c) {
         return c.office_id === location.office_id;
       }),
+      allCampaigns: campaigns,
       hasMap: hasMap
     });
   },

@@ -16,14 +16,11 @@ var GeoStore = Reflux.createStore({
 
   onFetch : function (location) {
     this.location = location;
-    Promise.all([
-        api.geo({ parent_location__in : location.id }),
-      ])
-      .then(this.loadGeography);
+    api.geo({ parent_location__in : location.id }).then(this.loadGeography);
   },
 
   loadGeography : function (response) {
-    this.features = _(response).pluck('objects.features').flatten().value();
+    this.features = _(response.objects.features).flatten().value();
     // var border = _.find(this.features, f => f.properties.location_id === this.location.id);
 
     // console.log('border',border)
@@ -31,7 +28,6 @@ var GeoStore = Reflux.createStore({
     // console.log('LENGTH OF FEATURES: ', this.features.length)
 
     // border.properties.isBorder = true;
-
     this.trigger({
       features : this.features
     });

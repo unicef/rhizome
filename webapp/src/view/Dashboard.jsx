@@ -46,6 +46,7 @@ var Dashboard = React.createClass({
     return {
       locations: [],
       campaigns: [],
+      allCampaigns: [],
       location: null,
       campaign: null,
       dashboard: null,
@@ -108,7 +109,12 @@ var Dashboard = React.createClass({
       if (_.isEmpty(q)) {
         DataActions.clear();
       } else {
-        DataActions.fetch(this.state.campaign, this.state.location, q);
+        if(state.dashboard.builtin)
+          DataActions.fetch(this.state.campaign, this.state.location, q);
+        else{
+          DataActions.fetchForChart(this.state.campaign, this.state.location,
+            this.state.allCampaigns, this.state.locations, this.state.dashboard);
+        }
       }
 
       if (this.state.hasMap) {
