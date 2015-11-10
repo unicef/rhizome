@@ -126,7 +126,7 @@ let ChartWizardStore = Reflux.createStore({
               'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
               'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
               'office': officeIndex[campaign.office_id]
-            });
+            })
           })
           .sortBy(_.method('start_date.getTime'))
           .reverse()
@@ -315,7 +315,7 @@ let ChartWizardStore = Reflux.createStore({
       }
       this.data.isLoading = false
       this.trigger(this.data)
-    });
+    })
   }
 })
 

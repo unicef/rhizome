@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-var Reflux = require('reflux');
-var api = require('data/api');
+var Reflux = require('reflux')
+var api = require('data/api')
 
 var RegionStore = Reflux.createStore({
   init() {
@@ -10,38 +10,38 @@ var RegionStore = Reflux.createStore({
 
     this.locationsPromise = api.locations()
       .then(data => {
-        this.locations = data.objects;
+        this.locations = data.objects
         this.trigger({
           locations: this.locations
-        });
-        return this.locations;
-      });
+        })
+        return this.locations
+      })
 
     this.LocationTypesPromise = api.location_type()
     	.then(data => {
-        this.LocationTypes = data.objects;
+        this.LocationTypes = data.objects
         this.trigger({
           LocationTypes: this.LocationTypes
-        });
-        return this.LocationTypes;
-      });
+        })
+        return this.LocationTypes
+      })
   },
 
   getInitialState() {
     return {
       locations: this.locations,
       LocationTypes: this.LocationTypes,
-    };
+    }
   },
 
   // API
   getlocationsPromise() {
-    return this.locationsPromise;
+    return this.locationsPromise
   },
 
   getLocationTypesPromise() {
-    return this.LocationTypesPromise;
+    return this.LocationTypesPromise
   }
-});
+})
 
-module.exports = RegionStore;
+module.exports = RegionStore

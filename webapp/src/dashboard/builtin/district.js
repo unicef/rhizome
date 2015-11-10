@@ -22,4 +22,4 @@ module.exports = {
       442,443,444,445,446,447,448,449,450 // Inaccessibility
     ]
   }]
-};
+}

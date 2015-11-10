@@ -1,22 +1,22 @@
-var React = require('react');
-var _ = require('lodash');
+var React = require('react')
+var _ = require('lodash')
 
-var api = require('../data/api');
+var api = require('../data/api')
 
 var {
   Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar,
   FilterPanel, FilterDateRange
-  } = require('react-datascope');
-var AdminPage = require('./AdminPage');
+  } = require('react-datascope')
+var AdminPage = require('./AdminPage')
 
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>;
+      return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>
     }
   },
   id: {title: "ID", name: "id"},
@@ -24,13 +24,13 @@ const fields = {
   start_date: {title: 'Start Date', name: 'start_date'},
   end_date: {title: 'End Date', name: 'end_date'},
   created_at: {title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a'}
-};
+}
 
 const schema = {
   created_at: {type: "string", format: 'date-time'},
-};
+}
 
-const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link'];
+const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link']
 
 var CampaignsAdmin = React.createClass({
   render() {
@@ -40,7 +40,7 @@ var CampaignsAdmin = React.createClass({
           placeholder="Search campaigns ..."
           fieldNames={['id', 'slug', 'edit_link']}
           />
-      </div>;
+      </div>
 
     return <AdminPage
       title="Campaigns"
@@ -57,6 +57,6 @@ var CampaignsAdmin = React.createClass({
       </SimpleDataTable>
     </AdminPage>
   }
-});
+})
 
-module.exports = CampaignsAdmin;
+module.exports = CampaignsAdmin

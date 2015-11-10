@@ -1,18 +1,18 @@
-'use strict';
-var _ = require('lodash');
-var moment = require('moment');
-var api = require('data/api');
-var React = require('react');
-var page = require('page');
-var Reflux = require('reflux');
+'use strict'
+var _ = require('lodash')
+var moment = require('moment')
+var api = require('data/api')
+var React = require('react')
+var page = require('page')
+var Reflux = require('reflux')
 var ReactJson = require('react-json')
 var ReactRouter = require('react-router')
-var { Route, Router} = ReactRouter;
+var { Route, Router} = ReactRouter
 
-var SimpleFormStore = require('stores/SimpleFormStore');
-var SimpleFormActions = require('actions/SimpleFormActions');
-var SimpleFormComponent = require('./SimpleFormComponent');
-var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
+var SimpleFormStore = require('stores/SimpleFormStore')
+var SimpleFormActions = require('actions/SimpleFormActions')
+var SimpleFormComponent = require('./SimpleFormComponent')
+var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
 
 
 var SimpleForm = React.createClass({
@@ -29,11 +29,11 @@ var SimpleForm = React.createClass({
       objectId: null,
       extraFormData: {},
       tagTree: [],
-    };
+    }
   },
 
   componentWillMount: function () {
-    var self = this;
+    var self = this
     this.setState({'objectId': this.props.params.id})
     SimpleFormActions.initialize(this.props.params.id, this.props.params.contentType)
 
@@ -50,53 +50,53 @@ var SimpleForm = React.createClass({
   },
 
   addTagToIndicator: function (tag_id) {
-    var mainID = this.props.params.id;
+    var mainID = this.props.params.id
     if (mainID == null)
-      return;
+      return
     SimpleFormActions.addTagToIndicator(mainID, tag_id)
   },
 
   addCalculationToIndicator: function (typeInfo, indicator_id) {
-    var mainID = this.props.params.id;
+    var mainID = this.props.params.id
     if (mainID == null)
-      return;
+      return
 
     SimpleFormActions.addCalculationToIndicator(mainID, indicator_id, typeInfo)
   },
 
   removeCalculationFromIndicator: function (id) {
-    var mainID = this.props.params.id;
+    var mainID = this.props.params.id
     if (mainID == null)
-      return;
+      return
 
     SimpleFormActions.removeCalculationFromIndicator(mainID, id)
   },
 
   removeTagFromIndicator: function (id) {
-    var mainID = this.props.params.id;
+    var mainID = this.props.params.id
     if (mainID == null)
-      return;
+      return
     SimpleFormActions.removeTagFromIndicator(mainID, id)
   },
 
   componentWillUpdate: function (nextProps, nextState) {
     if (nextProps.params != this.props.params) {
-      return;
+      return
     }
     if (nextState.store.dataObject != this.state.store.dataObject) {
-      return;
+      return
     }
     if (nextState.extraFormData != this.state.extraFormData) {
-      return;
+      return
     }
   },
   onSubmit: function (e) {
-    e.preventDefault();
-    var data = this.refs.form_data.getValue();
+    e.preventDefault()
+    var data = this.refs.form_data.getValue()
 
     // if there is any data in the react-json form add it here //
     for (var key in this.state.extraFormData) {
-      data[key] = this.state.extraFormData[key];
+      data[key] = this.state.extraFormData[key]
     }
 
     SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
@@ -108,12 +108,12 @@ var SimpleForm = React.createClass({
   },
 
   render: function () {
-    var tag_form_data, calc_form_data = {};
+    var tag_form_data, calc_form_data = {}
 
     var objectId = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject
-    var formData = this.state.store.formData;
+    var formData = this.state.store.formData
 
     // TODO -> pull this from the DB
     var formSettings = {'form': true, fields: {'tag_name': {type: 'string', editing: false}}}
@@ -133,12 +133,12 @@ var SimpleForm = React.createClass({
       // match up the data from the dataObject
       for (var key in formData) {
         if (dataObject.hasOwnProperty(key)) {
-          formData[key] = dataObject[key];
+          formData[key] = dataObject[key]
         }
       }
     }
 
-    var additionalFormComponents;
+    var additionalFormComponents
     if (contentType === 'indicator_tag' && dataObject) {
       var selected = this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
       var tagTree = this.state.tagTree
@@ -160,11 +160,11 @@ var SimpleForm = React.createClass({
       additionalFormComponents = ''
     }
 
-    var idInfo = '';
+    var idInfo = ''
     if (this.state.store.objectId != -1) {
          idInfo = (<div>
          <h5>id: {this.state.store.objectId} </h5>
-         <br></br></div>);
+         <br></br></div>)
     }
 
     var base_form = (
@@ -175,18 +175,18 @@ var SimpleForm = React.createClass({
         {additionalFormComponents}
         <br></br>
         <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
-      </div>);
+      </div>)
 
     var baseFormSuccess = ''
     if (this.state.store.saveSuccess) {
       var baseFormSuccess = <i className="fa fa-check"> saved successfully </i>
-      var newId = this.state.store.objectId;
-      this.state.store.saveSuccess = false;
-      page('/ufadmin/manage/' + contentType +'/'+ newId);
-      SimpleFormActions.initialize(newId, contentType);
+      var newId = this.state.store.objectId
+      this.state.store.saveSuccess = false
+      page('/ufadmin/manage/' + contentType +'/'+ newId)
+      SimpleFormActions.initialize(newId, contentType)
     }
 
-    var subFormList;
+    var subFormList
 
     if (contentType == 'indicator') {
       subFormList = (
@@ -226,8 +226,8 @@ var SimpleForm = React.createClass({
           {subFormList}
         </div>
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = SimpleForm;
+module.exports = SimpleForm

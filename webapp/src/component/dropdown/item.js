@@ -1,52 +1,52 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
+var _ = require('lodash')
 
 module.exports = {
 
-	replace : true,
-	template: require('./item.html'),
+    replace : true,
+    template: require('./item.html'),
 
-	data: function () {
-		return {
-			padding   : 17,
-			level     : 0,
-			open      : false,
-			selected  : false,
-			children  : [],
-			selection : {}
-		};
-	},
+    data: function () {
+        return {
+            padding   : 17,
+            level     : 0,
+            open      : false,
+            selected  : false,
+            children  : [],
+            selection : {}
+        }
+    },
 
-	computed: {
+    computed: {
 
-		selected: function () {
-			return this.selection.hasOwnProperty(this.value);
-		},
+        selected: function () {
+            return this.selection.hasOwnProperty(this.value)
+        },
 
-		hasChildren: function () {
-			return this.children && this.children.length > 0;
-		},
+        hasChildren: function () {
+            return this.children && this.children.length > 0
+        },
 
-		indent: function () {
-			return (this.padding * this.level) + 'px';
-		}
+        indent: function () {
+            return (this.padding * this.level) + 'px'
+        }
 
-	},
+    },
 
-	methods: {
+    methods: {
 
-		onClick: function () {
-			this.$dispatch('dropdown-item-toggle', _.assign({}, this.$data));
-		},
+        onClick: function () {
+            this.$dispatch('dropdown-item-toggle', _.assign({}, this.$data))
+        },
 
-		toggleFolder: function (e) {
-			this.open = !this.open;
+        toggleFolder: function (e) {
+            this.open = !this.open
 
-			// Prevent opening a folder from toggling that item
-			e.stopPropagation();
-		}
+            // Prevent opening a folder from toggling that item
+            e.stopPropagation()
+        }
 
-	},
+    },
 
-};
+}

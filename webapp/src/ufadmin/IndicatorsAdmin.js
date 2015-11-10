@@ -1,32 +1,32 @@
-var React = require('react');
-var _ = require('lodash');
+var React = require('react')
+var _ = require('lodash')
 
-var api = require('../data/api');
+var api = require('../data/api')
 
 var {
   Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
-  } = require('react-datascope');
-var AdminPage = require('./AdminPage');
+  } = require('react-datascope')
+var AdminPage = require('./AdminPage')
 
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>;
+      return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>
     }
   },
   id: {title: "ID", name: "id"},
   short_name: {title: 'Short Name', name: 'short_name'},
   name: {title: 'Name', name: 'name'},
   description: {title: 'Description', name: 'description'}
-};
+}
 
-const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link'];
+const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link']
 
-// console.log(this.props);
+// console.log(this.props)
 
 var IndicatorsAdmin = React.createClass({
   render() {
@@ -36,7 +36,7 @@ var IndicatorsAdmin = React.createClass({
           fieldNames={fieldNamesOnTable}
           placeholder="Search indicators ..."
           />
-      </div>;
+      </div>
 
     return <AdminPage
       title="Indicators"
@@ -52,6 +52,6 @@ var IndicatorsAdmin = React.createClass({
       </SimpleDataTable>
     </AdminPage>
   }
-});
+})
 
-module.exports = IndicatorsAdmin;
+module.exports = IndicatorsAdmin

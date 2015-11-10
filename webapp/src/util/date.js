@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Split a string into tokens that can be passed to moment.duration.
@@ -10,19 +10,19 @@
  *         will be a Number, the second a String
  */
 function parseDuration(value) {
-	var toks = value.split(/\s+/);
+    var toks = value.split(/\s+/)
 
-	if (toks.length === 1) {
-		return toks;
-	}
+    if (toks.length === 1) {
+        return toks
+    }
 
-	if (toks.length !== 2) {
-		throw new Error(value + ' cannot be parsed into a duration: too many spaces');
-	}
+    if (toks.length !== 2) {
+        throw new Error(value + ' cannot be parsed into a duration: too many spaces')
+    }
 
-	return [Number(toks[0]), toks[1]];
+    return [Number(toks[0]), toks[1]]
 }
 
 module.exports = {
-	parseDuration: parseDuration
-};
+    parseDuration: parseDuration
+}

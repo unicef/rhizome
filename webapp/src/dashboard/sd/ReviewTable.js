@@ -1,12 +1,12 @@
-var _ = require('lodash');
-var React = require('react');
-var DashboardStore = require('stores/DashboardStore');
-var GroupFormStore = require('stores/GroupFormStore');
-var ChartBuilderStore = require('stores/ChartBuilderStore');
+var _ = require('lodash')
+var React = require('react')
+var DashboardStore = require('stores/DashboardStore')
+var GroupFormStore = require('stores/GroupFormStore')
+var ChartBuilderStore = require('stores/ChartBuilderStore')
 
-var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx');
-var MapForm = require('dashboard/sd/MapForm.jsx');
-var api = require('data/api.js');
+var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx')
+var MapForm = require('dashboard/sd/MapForm.jsx')
+var api = require('data/api.js')
 
 const {
     Datascope, LocalDatascope,
@@ -15,9 +15,9 @@ const {
     Paginator,
     SearchBar,
     FilterPanel, FilterDateRange, FilterInputRadio
-    } = require('react-datascope');
+    } = require('react-datascope')
 
-var parseSchema = require('ufadmin/utils/parseSchema');
+var parseSchema = require('ufadmin/utils/parseSchema')
 
 var ReviewTable = React.createClass({
     propTypes: {
@@ -42,12 +42,12 @@ var ReviewTable = React.createClass({
     getDefaultProps: function () {
         return {
             loading: false
-        };
+        }
     },
 
     validateForm: function (id) {
         // onclick post to api //
-        return <input type="checkbox" checked/>;
+        return <input type="checkbox" checked/>
     },
 
     _callApi: function () {
@@ -61,7 +61,7 @@ var ReviewTable = React.createClass({
               schema: parseSchema(this.props.fields),
               data: response.objects
             })
-          });
+          })
     },
 
     componentWillMount: function () {
@@ -71,7 +71,7 @@ var ReviewTable = React.createClass({
           })
 
           this._callApi()
-        });
+        })
     },
 
     componentWillReceiveProps: function (nextProps) {
@@ -80,13 +80,13 @@ var ReviewTable = React.createClass({
     componentWillUpdate: function (nextProps, nextState) {
         // FIXME -> needs cleanup
         if (nextProps.location != this.props.location) {
-            return;
+            return
         }
         if (nextProps.getData != this.props.getData) {
-            return;
+            return
         }
         if (nextProps.doc_id != this.props.doc_id) {
-            return;
+            return
         }
     },
 
@@ -106,7 +106,7 @@ var ReviewTable = React.createClass({
                             />
                     }
                     else if (this.props.doc_tab == 'doc_index') {
-                        return <a href={`/datapoints/source-data/Nigeria/2015/06/viewraw/${id}`}>View Raw Data</a>;
+                        return <a href={`/datapoints/source-data/Nigeria/2015/06/viewraw/${id}`}>View Raw Data</a>
                     }
                     else if (this.props.doc_tab == 'mapping') {
                         return <MapForm
@@ -120,12 +120,12 @@ var ReviewTable = React.createClass({
                     }
                 }
             },
-        };
+        }
 
-        var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading);
-        if (!isLoaded) return this.renderLoading();
+        var isLoaded = _.isArray(this.state.data) && this.state.schema && (!this.state.loading)
+        if (!isLoaded) return this.renderLoading()
 
-        var {data, schema} = this.state;
+        var {data, schema} = this.state
 
         return (
           <div>
@@ -147,12 +147,12 @@ var ReviewTable = React.createClass({
     },
 
     onToggleFilterContainer() {
-        this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
+        this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}))
     },
 
     renderFilters() {
-        var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
-        var { areFiltersVisible } = this.state;
+        var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
+        var { areFiltersVisible } = this.state
 
         return (
           <div className="row">
@@ -166,7 +166,7 @@ var ReviewTable = React.createClass({
           </div>
         )
     }
-});
+})
 
 
-module.exports = ReviewTable;
+module.exports = ReviewTable

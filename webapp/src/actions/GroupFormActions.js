@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var Reflux = require('reflux');
+var Reflux = require('reflux')
 
 module.exports = Reflux.createActions([
   "initialize",
@@ -8,4 +8,4 @@ module.exports = Reflux.createActions([
   "removeIndicatorSelection",
   "updateName",
   "saveGroupForm"
-]);
+])

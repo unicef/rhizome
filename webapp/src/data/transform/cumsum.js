@@ -6,33 +6,33 @@
  *   function should return the object
  */
 module.exports = function cumsum(get, set) {
-	'use strict';
+    'use strict'
 
-	if (!get) {
-		get = Object;
-	}
+    if (!get) {
+        get = Object
+    }
 
-	if (!set) {
-		set = function (o, v) {
-			return v;
-		};
-	}
+    if (!set) {
+        set = function (o, v) {
+            return v
+        }
+    }
 
-	function transform(data) {
-		var running    = 0;
-		var collection = [];
+    function transform(data) {
+        var running    = 0
+        var collection = []
 
-		for (var i = 0, l = data.length; i < l; i++) {
-			var o = data[i];
-			var v = get(o);
+        for (var i = 0, l = data.length i < l i++) {
+            var o = data[i]
+            var v = get(o)
 
-			running += v;
+            running += v
 
-			collection.push(set(o, running));
-		}
+            collection.push(set(o, running))
+        }
 
-		return collection;
-	}
+        return collection
+    }
 
-	return transform;
-};
+    return transform
+}

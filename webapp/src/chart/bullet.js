@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var d3 = require('d3');
+var _ = require('lodash')
+var d3 = require('d3')
 
-var qualitativeAxis = require('./qualitative-axis');
+var qualitativeAxis = require('./qualitative-axis')
 
 var defaults = {
   domain: _.constant([0, 1]),
@@ -21,7 +21,7 @@ var defaults = {
     bottom: 0,
     left: 0
   }
-};
+}
 
 function BulletChart() {
 }
@@ -30,82 +30,82 @@ _.extend(BulletChart.prototype, {
   defaults: defaults,
 
   initialize: function (el, data, options) {
-    options = this._options = _.defaults({}, options, defaults);
+    options = this._options = _.defaults({}, options, defaults)
 
-    var n = Math.max(data.length, 1);
+    var n = Math.max(data.length, 1)
     var height = options.fontSize * n * options.lineHeight +
       options.fontSize * options.padding * (n - 1) +
       options.margin.top +
-      options.margin.bottom;
+      options.margin.bottom
 
-    this._width = el.clientWidth;
+    this._width = el.clientWidth
 
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + height,
         'width': this._width,
         'height': height
-      });
+      })
 
     // Append the x-axis container and a blank background
-    svg.append('g').attr('class', 'x axis');
+    svg.append('g').attr('class', 'x axis')
 
     // Append a data layer
     svg.append('g')
       .attr({
         'class': 'data',
         'transform': 'translate(' + options.margin.left + ',' + options.margin.top + ')'
-      });
+      })
 
-    this.update(data);
+    this.update(data)
   },
 
   update: function (data, options) {
-    options = _.assign(this._options, options);
+    options = _.assign(this._options, options)
 
-    var margin = options.margin;
-    var svg = this._svg;
+    var margin = options.margin
+    var svg = this._svg
 
-    var n = Math.max(data.length, 1);
-    var h = options.fontSize * n * options.lineHeight + options.fontSize * options.padding * (n - 1);
-    var w = this._width - margin.left - margin.right;
+    var n = Math.max(data.length, 1)
+    var h = options.fontSize * n * options.lineHeight + options.fontSize * options.padding * (n - 1)
+    var w = this._width - margin.left - margin.right
 
     var yScale = d3.scale.ordinal()
       .domain(_(data).flatten().map(options.y).uniq().value())
-      .rangeRoundBands([h, 0]);
+      .rangeRoundBands([h, 0])
 
-    var y = _.flow(options.y, yScale);
+    var y = _.flow(options.y, yScale)
 
     var xScale = options.scale()
       .domain(options.domain(data))
-      .range([0, w]);
+      .range([0, w])
 
-    var x = _.flow(options.marker, xScale);
-    var width = _.flow(options.value, xScale);
+    var x = _.flow(options.marker, xScale)
+    var width = _.flow(options.value, xScale)
 
-    var isEmpty = !_(data).map(options.value).all(_.isFinite);
+    var isEmpty = !_(data).map(options.value).all(_.isFinite)
 
     // Draw qualitative ranges
     if (!(isEmpty || _.isEmpty(options.thresholds) || _.isEmpty(options.targets))) {
-      var tick = svg.select('.x.axis').selectAll('.tick').data(data);
+      var tick = svg.select('.x.axis').selectAll('.tick').data(data)
 
       tick.enter()
         .append('g')
         .attr('class', 'tick')
-        .style('fill', options.axisFill);
-      tick.exit().remove();
+        .style('fill', options.axisFill)
+      tick.exit().remove()
 
       var rect = tick.selectAll('rect').data(function (d) {
-        return isEmpty ? [] : [d];
-      });
+        return isEmpty ? [] : [d]
+      })
       rect.enter().append('rect')
-        .style('fill', 'inherit');
+        .style('fill', 'inherit')
 
       rect
         .attr({
           'height': h + margin.top + margin.bottom,
           'width': w
-        });
+        })
     } else {
       svg.select('.x.axis')
         .call(qualitativeAxis()
@@ -117,14 +117,14 @@ _.extend(BulletChart.prototype, {
             .range([''])
         )
           .colors(['#F2F2F2', '#F2F2F2'])
-      );
+      )
     }
 
     svg.attr({
       'viewBox': '0 0 ' + w + ' ' + (h + margin.top + margin.bottom),
       'width': w,
       'height': h + margin.top + margin.bottom
-    });
+    })
 
     svg.select('.data').
       call(qualitativeAxis()
@@ -134,76 +134,76 @@ _.extend(BulletChart.prototype, {
           .domain(options.thresholds)
           .range(options.targets)
       )
-    );
+    )
 
     var g = svg.select('.data')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     // Draw value
-    var bar = g.selectAll('.bar').data(data);
+    var bar = g.selectAll('.bar').data(data)
 
-    bar.enter().append('g');
+    bar.enter().append('g')
     bar
       .attr({
         'class': 'bar',
         'y': y,
       })
-      .style('fill', options.dataFill);
-    bar.exit().remove();
+      .style('fill', options.dataFill)
+    bar.exit().remove()
 
     var value = bar.selectAll('.value').data(function (d) {
-      return isEmpty ? [] : [d];
-    });
+      return isEmpty ? [] : [d]
+    })
 
     var valueAttr = {
       'class': 'value',
       'height': yScale.rangeBand()
-    };
+    }
 
     value.enter()
       .append('rect')
       .attr(valueAttr)
-      .style('fill', 'inherit');
+      .style('fill', 'inherit')
 
     value.attr(valueAttr)
       .transition()
       .duration(500)
-      .attr('width', width);
-    value.exit().remove();
+      .attr('width', width)
+    value.exit().remove()
 
      // Draw comparitive measure
     var measure = bar.selectAll('.comparative-measure')
       .data(function (d) {
-        var v = options.value(d);
-        var m = options.marker(d);
-        return _.isFinite(v) && _.isFinite(m) ? [d] : [];
-      });
+        var v = options.value(d)
+        var m = options.marker(d)
+        return _.isFinite(v) && _.isFinite(m) ? [d] : []
+      })
 
-    var measureHeight = yScale.rangeBand() * 0.5;
+    var measureHeight = yScale.rangeBand() * 0.5
 
     var initAttr = {
       'class': 'comparative-measure',
       'width': 3,
       'height': yScale.rangeBand() + measureHeight,
       'y'    : -measureHeight / 2
-    };
+    }
 
     measure.enter().append('rect').attr(initAttr)
-      .style('fill', 'inherit');
-    measure.attr(initAttr).attr('x', x);
-    measure.exit().remove();
+      .style('fill', 'inherit')
+    measure.attr(initAttr).attr('x', x)
+    measure.exit().remove()
 
     var label = bar.selectAll('.label')
       .data(function (d) {
-        var v = options.value(d);
-        return _.isFinite(v) ? [v] : [];
-      });
+        var v = options.value(d)
+        return _.isFinite(v) ? [v] : []
+      })
 
     label.enter()
       .append('text')
       .attr({
         'class': 'label'
-      });
+      })
 
     label
       .attr({
@@ -215,17 +215,17 @@ _.extend(BulletChart.prototype, {
         'fill': 'inherit'
       })
       .style('font-size', options.fontSize)
-      .text(options.format);
-    label.exit().remove();
+      .text(options.format)
+    label.exit().remove()
 
     var compareValue = bar.selectAll('.comparative-text')
       .data(function (d) {
-        var v = options.value(d);
-        return [options.valueText(v)];
-      });
+        var v = options.value(d)
+        return [options.valueText(v)]
+      })
 
     compareValue.enter().append('text')
-      .attr('class', 'comparative-text');
+      .attr('class', 'comparative-text')
 
     compareValue
       .attr({
@@ -239,13 +239,13 @@ _.extend(BulletChart.prototype, {
       .style('font-size', options.fontSize - 2)
       .text(function (d) {
         return d
-      });
-    compareValue.exit().remove();
+      })
+    compareValue.exit().remove()
   },
 
   resize: function (el) {
 
   }
-});
+})
 
-module.exports = BulletChart;
+module.exports = BulletChart

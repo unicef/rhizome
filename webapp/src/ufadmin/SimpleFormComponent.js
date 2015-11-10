@@ -1,17 +1,17 @@
-'use strict';
-var _ = require('lodash');
-var api = require('data/api');
-var moment = require('moment');
-var React = require('react');
-var Reflux = require('reflux');
+'use strict'
+var _ = require('lodash')
+var api = require('data/api')
+var moment = require('moment')
+var React = require('react')
+var Reflux = require('reflux')
 var ReactJson = require('react-json')
 var ReactRouter = require('react-router')
-var { Route, Router} = ReactRouter;
+var { Route, Router} = ReactRouter
 
-var SimpleFormStore = require('stores/SimpleFormStore');
-var SimpleFormActions = require('actions/SimpleFormActions');
-var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
+var SimpleFormStore = require('stores/SimpleFormStore')
+var SimpleFormActions = require('actions/SimpleFormActions')
+var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
 
 var SimpleFormComponent = React.createClass({
   propTypes: {
@@ -36,7 +36,7 @@ var SimpleFormComponent = React.createClass({
       onSmallItemClick: _.noop,
       smallIDCouldClick: false,
       smallIDBaseUrl: ''
-    };
+    }
   },
 
   getInitialState: function () {
@@ -45,7 +45,7 @@ var SimpleFormComponent = React.createClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     // FIXME be more specific
-    return nextState.store == this.state.store;
+    return nextState.store == this.state.store
   },
 
   componentWillMount: function () {
@@ -60,17 +60,17 @@ var SimpleFormComponent = React.createClass({
 
   _onClick: function (value) {
     if (this.props.onClick != null) {
-      this.props.onClick.call(this, this.refs.selectBox.getDOMNode().value, value);
+      this.props.onClick.call(this, this.refs.selectBox.getDOMNode().value, value)
     }
   },
 
   render: function () {
-    var self = this;
-    var contentType = this.props.contentType;
-    var componentTitle = this.props.componentTitle;
+    var self = this
+    var contentType = this.props.contentType
+    var componentTitle = this.props.componentTitle
     var data = this.state.store.componentData
 
-    var componentDataExists = _.has(data, contentType);
+    var componentDataExists = _.has(data, contentType)
 
     if (!componentDataExists) {
       return <div>Loading Form Component </div>
@@ -84,7 +84,7 @@ var SimpleFormComponent = React.createClass({
       border: '1px dashed #000000',
       width: '90%',
       padding: '10px',
-    };
+    }
 
     var rowLi = rowData.map(row => {
       let link = this.props.smallIDCouldClick ?
@@ -93,7 +93,7 @@ var SimpleFormComponent = React.createClass({
             {row.displayId}
           </a>
         ) :
-        (<span>{row.displayId}</span>);
+        (<span>{row.displayId}</span>)
 
       return (
         <li>
@@ -103,9 +103,9 @@ var SimpleFormComponent = React.createClass({
           <span onClick={self.props.onSmallItemClick.bind(row, row.id)} className='fa fa-fw fa-times clickable'></span>}
         </li>
       )
-    });
+    })
 
-    var componentForm;
+    var componentForm
     if (contentType == 'indicator_tag') {
       componentForm = (
         <div>
@@ -135,7 +135,7 @@ var SimpleFormComponent = React.createClass({
           </IndicatorDropdownMenu>
         </form>
       )
-    };
+    }
 
     return <div style={formComponentStyle}>
       <h4> {componentTitle} </h4>
@@ -144,8 +144,8 @@ var SimpleFormComponent = React.createClass({
         {rowLi}
       </ul>
       {componentForm}
-    </div>;
+    </div>
   }
 })
 
-module.exports = SimpleFormComponent;
+module.exports = SimpleFormComponent

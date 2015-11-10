@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var api = require('data/api');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var api = require('data/api')
+var Reflux = require('reflux')
 
 var SubmissionModalStore = Reflux.createStore({
 
@@ -12,9 +12,9 @@ var SubmissionModalStore = Reflux.createStore({
     getSubmission: function (id) {
         return api.submission(id)
             .then(response => {
-                return response.objects[0];
-            });
+                return response.objects[0]
+            })
     }
-});
+})
 
-module.exports = SubmissionModalStore;
+module.exports = SubmissionModalStore

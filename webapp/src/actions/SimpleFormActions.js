@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var Reflux = require('reflux');
+var Reflux = require('reflux')
 
 module.exports = Reflux.createActions([
   "currentIndicatorPromise",
@@ -16,4 +16,4 @@ module.exports = Reflux.createActions([
   "initIndicatorToCalc",
   "refreshTags",
   "refreshCalculation"
-]);
+])

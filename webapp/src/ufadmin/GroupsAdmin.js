@@ -1,5 +1,5 @@
-var React = require('react');
-var _ = require('lodash');
+var React = require('react')
+var _ = require('lodash')
 
 var {
   Datascope, LocalDatascope,
@@ -7,26 +7,26 @@ var {
   Paginator,
   SearchBar,
   FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope');
+  } = require('react-datascope')
 
-var api = require('../data/api');
+var api = require('../data/api')
 
-var AdminPage = require('./AdminPage');
+var AdminPage = require('./AdminPage')
 
 // display rules for datascope fields
-const checkmarkRenderer = (val) => val ? "✓" : "";
+const checkmarkRenderer = (val) => val ? "✓" : ""
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/datapoints/groups/update/${id}`}>Edit Role</a>;
+      return <a href={`/datapoints/groups/update/${id}`}>Edit Role</a>
     }
   },
   name: {title: "Name", name: "name"}
-};
+}
 
-const fieldNamesOnTable = ['name', 'edit_link'];
+const fieldNamesOnTable = ['name', 'edit_link']
 
 var GroupsAdmin = React.createClass({
   render() {
@@ -36,7 +36,7 @@ var GroupsAdmin = React.createClass({
           fieldNames={['name']}
           placeholder="Search roles ..."
           />
-      </div>;
+      </div>
 
     return <AdminPage
       title="Roles"
@@ -52,6 +52,6 @@ var GroupsAdmin = React.createClass({
       </SimpleDataTable>
     </AdminPage>
   }
-});
+})
 
-module.exports = GroupsAdmin;
+module.exports = GroupsAdmin
