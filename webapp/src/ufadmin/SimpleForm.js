@@ -50,31 +50,27 @@ var SimpleForm = React.createClass({
 
   addTagToIndicator: function (tag_id) {
     var mainID = this.props.params.id
-    if (mainID === null)
-      return
+    if (mainID === null) return
     SimpleFormActions.addTagToIndicator(mainID, tag_id)
   },
 
   addCalculationToIndicator: function (typeInfo, indicator_id) {
     var mainID = this.props.params.id
-    if (mainID === null)
-      return
+    if (mainID === null) return
 
     SimpleFormActions.addCalculationToIndicator(mainID, indicator_id, typeInfo)
   },
 
   removeCalculationFromIndicator: function (id) {
     var mainID = this.props.params.id
-    if (mainID === null)
-      return
+    if (mainID === null) return
 
     SimpleFormActions.removeCalculationFromIndicator(mainID, id)
   },
 
   removeTagFromIndicator: function (id) {
     var mainID = this.props.params.id
-    if (mainID === null)
-      return
+    if (mainID === null) return
     SimpleFormActions.removeTagFromIndicator(mainID, id)
   },
 

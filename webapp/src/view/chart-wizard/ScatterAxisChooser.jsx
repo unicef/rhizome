@@ -49,8 +49,7 @@ let ScatterAxisChooser = React.createClass({
         if (!hasSelected && selected) hasSelected = true
         return <option value={indicator.id} selected={selected}>{indicator.name}</option>
       })
-      if (!hasSelected && self.props.indicatorArray.length > 0)
-        updateXAxis(self.props.indicatorArray[0].id)
+      if (!hasSelected && self.props.indicatorArray.length > 0) updateXAxis(self.props.indicatorArray[0].id)
       return result
     }
 

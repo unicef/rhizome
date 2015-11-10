@@ -109,9 +109,9 @@ var Dashboard = React.createClass({
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
-        if (state.dashboard.builtin)
+        if (state.dashboard.builtin) {
           DataActions.fetch(this.state.campaign, this.state.location, q)
-        else{
+        } else {
           DataActions.fetchForChart(this.state.campaign, this.state.location,
             this.state.allCampaigns, this.state.locations, this.state.dashboard)
         }

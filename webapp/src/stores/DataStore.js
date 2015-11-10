@@ -118,14 +118,12 @@ var DataStore = Reflux.createStore({
     var promises = _.map(dashboard.charts, function (def) {
       if (def.campaignValue) {
         var chartCampaign = _.indexBy(campaigns, 'id')[def.campaignValue]
-        if (chartCampaign !== null)
-          campaign = chartCampaign
+        if (chartCampaign !== null) campaign = chartCampaign
       }
 
       if (def.locationValue) {
         var chartLocation = _.indexBy(locations, 'id')[def.locationValue]
-        if (chartLocation !== null)
-          location = chartLocation
+        if (chartLocation !== null) location = chartLocation
       }
 
       var m = moment(campaign.start_date, 'YYYY-MM-DD')

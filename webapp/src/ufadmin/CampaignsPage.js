@@ -23,8 +23,7 @@ var CampaignsPage = (function () {
 
         var date_value = original_dom.value
         var set_date_value = null
-        if (date_value !== null && date_value !== '')
-          set_date_value = moment(date_value).toDate()
+        if (date_value !== null && date_value !== '') set_date_value = moment(date_value).toDate()
 
         var datePickerProps = {
           date: set_date_value,
