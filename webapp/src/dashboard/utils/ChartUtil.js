@@ -70,7 +70,7 @@ function preparePolioCasesData (original) {
     newCases = _.get(
       _.find(
         original.data,
-        function (d) { return d.campaign.start_date.getTime() === m.valueOf()}),
+        function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
       'value')
   }
 

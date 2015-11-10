@@ -186,7 +186,7 @@ module.exports = {
           aspect: 2.664831804,
           values: _.property('values'),
           x: _.property('campaign.start_date'),
-          xFormat: function (d) { return moment(d).format('MMM YYYY')},
+          xFormat: function (d) { return moment(d).format('MMM YYYY') },
           y: _.property('value')
         }
       var chartData =  _groupBySeries(data, groups, groupBy)
@@ -200,7 +200,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null}
       }
-      var total = _(data).map(function (n) { return n.value}).sum()
+      var total = _(data).map(function (n) { return n.value }).sum()
       var chartOptions = {
           domain: _.constant([0, total]),
           name: d => _.get(idx, '[' + d.indicator + '].name', ''),
@@ -265,7 +265,7 @@ module.exports = {
                       var start = d.campaign.start_date
                       return moment(start).startOf('month').toDate().getTime()
                       },
-        xFormat: function (d) { return moment(d).format('MMM YYYY')}
+        xFormat: function (d) { return moment(d).format('MMM YYYY') }
       }
       return { options: chartOptions, data: chartData}
     })
@@ -290,7 +290,7 @@ module.exports = {
       var range = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
-        .filter(function (d) { return d.indicator === yAxis})
+        .filter(function (d) { return d.indicator === yAxis })
         .pluck('value')
         .value()
       )
