@@ -3,7 +3,7 @@
 var Reflux = require('reflux')
 
 module.exports = Reflux.createActions([
-    'getData',
-    'setDocConfig',
-    'transformUpload'
+  'getData',
+  'setDocConfig',
+  'transformUpload'
 ])

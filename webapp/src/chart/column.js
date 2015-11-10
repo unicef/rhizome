@@ -201,7 +201,7 @@ _.extend(ColumnChart.prototype, {
         'dy': -4
       })
 
-       var fmt = _.flow(options.y, options.yFormat)
+    var fmt = _.flow(options.y, options.yFormat)
     var labels = _(data)
       .map(function (s) {
         return _.assign({},
@@ -253,7 +253,7 @@ _.extend(ColumnChart.prototype, {
       .style({
         'text-anchor': 'end',
         'fill': '#999999'
-        })
+      })
       .text(function (d) { return d })
 
     var timeout = null
