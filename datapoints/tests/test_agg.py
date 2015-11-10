@@ -483,3 +483,120 @@ class AggRefreshTestCase(TestCase):
         ## test SUM calculation
         target_value = (x-y) / x
         self.assertEqual(round(calc_value,4),round(target_value,4))
+
+    def test_recursive_sum(self):
+        '''
+        Consider the case in which we have "number of missed children" which is
+        the sum of "missed children due to absence", "missed children due to
+        refusal", and "missed children due to child absence."
+
+        Now consider that "missed children due to refusal" is also generated
+        from the sum of "refusal due to religious reasons", "refusal due to
+        too many rounds", "refusla due to - unhappy with team " (see more here:
+        http://rhizome.work/ufadmin/manage/indicator/264).
+
+        There are two levels here and this test aims to cover this use case.
+        '''
+
+        self.set_up()
+        campaign_id, location_id = 111,12910
+
+        parent_indicator = Indicator.objects.create(
+            name = 'Number of Avoidable Deaths',
+            short_name = 'Number of Avoidable Deaths',
+            data_format = 'int'
+        )
+
+        sub_indicator_1 = Indicator.objects.create(
+            name = 'Number of Deaths due to Conflict',
+            short_name = 'Number of Deaths due to Conflict',
+            data_format = 'int'
+        )
+        sub_sub_indicator_1 = Indicator.objects.create(
+            name = 'Number Conflict Deaths - Children',
+            short_name = 'Conflict Deaths - Children',
+            data_format = 'int'
+        )
+
+        sub_sub_indicator_2 = Indicator.objects.create(
+            name = 'Number of Adult Civilian Deaths',
+            short_name = 'Number of Adult Civilian Deaths',
+            data_format = 'int'
+        )
+
+        sub_sub_indicator_3 = Indicator.objects.create(
+            name = 'Number of Conflict Deaths - Militants',
+            short_name = 'Conflict Deaths - Militants',
+            data_format = 'int'
+        )
+
+        sub_indicator_2 = Indicator.objects.create(
+            name = 'Number of Deaths due to Malaria',
+            short_name = 'Number of Deaths due to Malaria',
+            data_format = 'int'
+        )
+
+        sub_indicator_3 = Indicator.objects.create(
+            name = 'Number of Deaths due to Hunger',
+            short_name = 'Number of Deaths due to Hunger',
+            data_format = 'int'
+        )
+
+        ## FOR SUM OF PARTS CALUCLATIONS ##
+        indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_1.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_2.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_3.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+
+        ## 2nd layer of indicator calculation ##
+        sub_indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = sub_indicator_1.id,
+            indicator_component_id = sub_sub_indicator_1.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        sub_indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = sub_indicator_1.id,
+            indicator_component_id = sub_sub_indicator_2.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        sub_indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = sub_indicator_1.id,
+            indicator_component_id = sub_sub_indicator_3.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+
+        ## create all the datapoints ##
+
+        values_to_insert = {
+            sub_indicator_2.id: 22,
+            sub_indicator_3.id: 33,
+            sub_sub_indicator_1.id: 33,
+            sub_sub_indicator_2.id: 44,
+            sub_sub_indicator_3.id: 55,
+        }
+
+        for k,v in values_to_insert.iteritems():
+            self.create_datapoint(location_id, campaign_id, k, v)
+
+        ar = AggRefresh()
+
+        parent_indicator_target_value = sum(values_to_insert.values())
+        parent_indicator_1_actual_value = DataPointComputed.objects.get(
+            location_id = location_id,
+            campaign_id = campaign_id,
+            indicator_id = parent_indicator,
+        ).value
+
+        self.assertEqual(parent_indicator_1_actual_value,\
+            parent_indicator_target_value)
