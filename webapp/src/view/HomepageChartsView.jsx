@@ -1,12 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
 var React = require('react')
 var Reflux = require('reflux')
 
 var HomepageChartsSection = require('view/HomepageChartsSection.jsx')
 var HomepageDashboardsStore = require('stores/HomepageDashboardsStore')
-var HomepageDashboardsActions = require('actions/HomepageDashboardsActions')
 
 var HomepageChartsView = React.createClass({
     mixins: [

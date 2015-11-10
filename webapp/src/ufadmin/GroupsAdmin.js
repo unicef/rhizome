@@ -1,5 +1,4 @@
 var React = require('react')
-var _ = require('lodash')
 
 var {
   Datascope, LocalDatascope,
@@ -8,8 +7,6 @@ var {
   SearchBar,
   FilterPanel, FilterDateRange, FilterInputRadio
   } = require('react-datascope')
-
-var api = require('../data/api')
 
 var AdminPage = require('./AdminPage')
 

@@ -1,6 +1,5 @@
 'use strict'
-var _ = require('lodash')
-var moment = require('moment')
+
 var api = require('data/api')
 var React = require('react')
 var page = require('page')
@@ -103,8 +102,6 @@ var SimpleForm = React.createClass({
   },
 
   render: function () {
-    var tag_form_data
-    var calc_form_data = {}
     var objectId = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject

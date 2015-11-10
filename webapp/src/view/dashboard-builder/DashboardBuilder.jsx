@@ -2,9 +2,7 @@
 
 var _ = require('lodash')
 var React = require('react')
-var DragDropMixin = require('react-dnd').DragDropMixin
 var Reflux = require('reflux/src')
-var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
 var ChartWizard = require('view/chart-wizard/ChartWizard.jsx')
 
 var dashboardInit = require('data/dashboardInit')
@@ -208,12 +206,10 @@ module.exports = React.createClass({
       )
     }
 
-    var self = this
     var campaign = this.state.dashboardStore.campaign
     var dashboardDef = this.state.store.dashboard
     var loading = this.state.dashboardStore.loading
     var location = this.state.dashboardStore.location
-    var dashboardName = _.get(dashboardDef, 'title', '')
 
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,

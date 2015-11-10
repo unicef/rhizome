@@ -1,5 +1,4 @@
 import React from 'react'
-import Reflux from 'reflux'
 import _ from 'lodash'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 

@@ -1,41 +1,40 @@
 'use strict'
 
 var _ = require('lodash')
-var moment = require('moment')
 var React = require('react')
 var Reflux = require('reflux')
 
 var NavigationStore = require('stores/NavigationStore')
 var PermissionStore = require('stores/PermissionStore')
 
-function _loadCampaigns (campaigns, offices) {
-  var recent = _(campaigns)
-    .each(function (campaign, i) {
-      campaign.office = offices[campaign.office_id]
-    })
-    .sortBy('start_date')
-    .reverse()
-    .value()
+// function _loadCampaigns (campaigns, offices) {
+//   var recent = _(campaigns)
+//     .each(function (campaign, i) {
+//       campaign.office = offices[campaign.office_id]
+//     })
+//     .sortBy('start_date')
+//     .reverse()
+//     .value()
 
-  // jshint validthis: true
-  this.setState({ campaigns : recent })
-}
+//   // jshint validthis: true
+//   this.setState({ campaigns : recent })
+// }
 
-function _loadDocuments (documents) {
-  var recent = _.take(documents, 5)
+// function _loadDocuments (documents) {
+//   var recent = _.take(documents, 5)
 
-  this.setState({ uploads : recent })
-}
+//   this.setState({ uploads : recent })
+// }
 
-function _includeDashboard (dashboard, office) {
-  var slug = dashboard.slug
-  var offices = dashboard.offices
+// function _includeDashboard (dashboard, office) {
+//   var slug = dashboard.slug
+//   var offices = dashboard.offices
 
-  return (slug !== 'management-dashboard' &&
-    slug !== 'district' &&
-    (_.isEmpty(offices) || offices.indexOf(office) > -1)
-  )
-}
+//   return (slug !== 'management-dashboard' &&
+//     slug !== 'district' &&
+//     (_.isEmpty(offices) || offices.indexOf(office) > -1)
+//   )
+// }
 
 function _dashboardSelect (dashboards, campaign) {
   if (_.isEmpty(dashboards)) {
