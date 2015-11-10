@@ -180,7 +180,6 @@ var CustomDashboard = React.createClass({
             {addChart}
           </div>
         )
-        break
       default: // Any others
         return (
           <div className='row cd-charts'>
@@ -188,7 +187,6 @@ var CustomDashboard = React.createClass({
             {addChart}
           </div>
         )
-        break
     }
 
     return (

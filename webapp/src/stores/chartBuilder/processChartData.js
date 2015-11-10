@@ -176,8 +176,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null }
       }
-      if (!lower) // set the lower bound from the lowest datapoint value
-      {
+      if (!lower) { // set the lower bound from the lowest datapoint value
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)
       }
@@ -242,8 +241,7 @@ module.exports = {
       if (!data || data.length === 0) {
         return { options: null, data: null }
       }
-      if (!lower) // set the lower bound from the lowest datapoint value
-      {
+      if (!lower) { // set the lower bound from the lowest datapoint value
         var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
         lower = moment(_.first(sortedDates).campaign.start_date)
       }
