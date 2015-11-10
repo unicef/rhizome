@@ -16,7 +16,7 @@ var processChartData = require('./chartBuilder/processChartData')
 function melt(data,indicatorArray) {
     var dataset = data.objects
     var baseIndicators = _.map(indicatorArray, function (indicator) {
-        return {indicator:indicator+'',value:0}
+        return { indicator:indicator+'',value:0}
     })
     var o = _(dataset)
         .map(function (d) {
@@ -92,12 +92,12 @@ function _columnData(data, groups, groupBy) {
        }
     })
     var baseGroup = _.map(largestGroup, function (group) {
-        return {campaign:group.campaign,
+        return { campaign:group.campaign,
                 value:0,y:0,y0:0}
     })
     _.each(columnData, function (series) {
 
-       var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{location:series.values[0].location,indicator:series.values[0].indicator}))
+       var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{ location:series.values[0].location,indicator:series.values[0].indicator}))
        series.values = _.assign(baseGroupValues,_.cloneDeep(series.values))
     })
 
@@ -143,19 +143,19 @@ module.exports = Reflux.createStore({
         locationList:[],
         indicatorList:[],
         campaignList:[],
-        indicatorsSelected:[],//[{description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
-        campaignSelected:{office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-        locationSelected:{parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{id:null,title:null},
+        indicatorsSelected:[],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal",name: "% missed children due to refusal"}],
+        campaignSelected:{ office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
+        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id:null,title:null},
         aggregatedlocations:[],
         title: "",
         description: "",
-        locationRadios:[{value:"selected",title:"Selected location only"},{value:"type",title:"locations with the same type"},{value:"sublocations",title:"Sublocations 1 level below selected"}],
+        locationRadios:[{ value:"selected",title:"Selected location only"},{ value:"type",title:"locations with the same type"},{ value:"sublocations",title:"Sublocations 1 level below selected"}],
         locationRadioValue: 2,
-        groupByRadios:[{value:"indicator",title:"Indicators"},{value:"location",title:"locations"}],
+        groupByRadios:[{ value:"indicator",title:"Indicators"},{ value:"location",title:"locations"}],
         groupByRadioValue: 1,
         timeRadios:function () {
                     var self = this
-                    var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}]
+                    var radios = [{ value:"allTime",title:"All Time"},{ value:"pastYear",title:"Past Year"},{ value:"3Months",title:"Past 3 Months"},{ value:"current",title:"Current Campaign"}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if(timeRadios.length -1 < this.timeRadioValue)
                     {
@@ -276,7 +276,7 @@ module.exports = Reflux.createStore({
         this.getChartData()
     },
     onRemoveIndicatorSelection: function (id) {
-      _.remove(this.data.indicatorsSelected,{id:id})
+      _.remove(this.data.indicatorsSelected,{ id:id})
       this.trigger(this.data)
       this.getChartData()
     },
@@ -346,13 +346,13 @@ module.exports = Reflux.createStore({
        this.data.yAxis = chartDef.y
        this.data.id = chartDef.id
 
-       this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type})
+       this.data.selectedChart = _.findIndex(this.data.chartTypes,{ name:chartDef.type})
        this.data.indicatorsSelected = _.map(chartDef.indicators, function (id) {
           return self._indicatorIndex[id]
        })
        this.data.title = chartDef.title
-       this.data.locationRadioValue = _.findIndex(this.data.locationRadios,{value:chartDef.locations})
-       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{value:chartDef.groupBy})
+       this.data.locationRadioValue = _.findIndex(this.data.locationRadios,{ value:chartDef.locations})
+       this.data.groupByRadioValue = _.findIndex(this.data.groupByRadios,{ value:chartDef.groupBy})
        this.data.formatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'yFormat', ',.0f') })
        this.data.xFormatRadioValue = _.findIndex(this.data.formatRadios(), { value: _.get(chartDef, 'xFormat', ',.0f') })
 
@@ -371,7 +371,7 @@ module.exports = Reflux.createStore({
 
        // Ensure non-negative value for timeRadioValue because findIndex might
        // return -1 if it can't find the timeValue in the array of options
-       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{value:timeValue}), 0)
+       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(),{ value:timeValue}), 0)
        this.trigger(this.data)
     },
     resetChartDef:function () {
@@ -395,15 +395,15 @@ module.exports = Reflux.createStore({
         {
            if(locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
            {
-             locations = _.filter(this.locationIndex, {location_type_id:locationSelected.location_type_id,office_id:locationSelected.office_id})
+             locations = _.filter(this.locationIndex, { location_type_id:locationSelected.location_type_id,office_id:locationSelected.office_id})
            }
            else {
-             locations = _.filter(this._locationIndex, {location_type_id:this.data.locationSelected.location_type_id})
+             locations = _.filter(this._locationIndex, { location_type_id:this.data.locationSelected.location_type_id})
            }
         }
         else if(locationRadioValue === "sublocations")
         {
-           locations = _.filter(this._locationIndex, {parent_location_id:locationSelected.id})
+           locations = _.filter(this._locationIndex, { parent_location_id:locationSelected.id})
         }
         this.data.aggregatedLocations = locations
         if(this.canFetchChartData())

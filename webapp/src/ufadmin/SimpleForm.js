@@ -116,7 +116,7 @@ var SimpleForm = React.createClass({
     var formData = this.state.store.formData
 
     // TODO -> pull this from the DB
-    var formSettings = {'form': true, fields: {'tag_name': {type: 'string', editing: false}}}
+    var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false}}}
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {
@@ -174,7 +174,7 @@ var SimpleForm = React.createClass({
         <ReactJson value={formData} settings={formSettings} ref="form_data"/>
         {additionalFormComponents}
         <br></br>
-        <button className="tiny" style={{textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
+        <button className="tiny" style={{ textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
       </div>)
 
     var baseFormSuccess = ''

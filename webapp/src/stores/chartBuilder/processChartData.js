@@ -10,7 +10,7 @@ var util   = require('util/data')
 function melt(data,indicatorArray) {
   var dataset = data.objects
   var baseIndicators = _.map(indicatorArray, function (indicator) {
-    return {indicator:indicator+'',value:0}
+    return { indicator:indicator+'',value:0}
   })
   var o = _(dataset)
     .map(function (d) {
@@ -89,7 +89,7 @@ function _columnData(data, groups, groupBy) {
      _.each(baseCampaigns, function (baseCampaign,index) {
          if(!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
          {
-           series.values.splice(index,0,{campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
+           series.values.splice(index,0,{ campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
          }
      })
      series.values =  _.sortBy(series.values,_.method('campaign.start_date.getTime'))
@@ -179,7 +179,7 @@ module.exports = {
   processLineChart:function (dataPromise,lower,upper,groups,groupBy) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
-        return {options: null, data: null}
+        return { options: null, data: null}
       }
       if(!lower) //set the lower bound from the lowest datapoint value
       {
@@ -195,7 +195,7 @@ module.exports = {
           y: _.property('value'),
         }
       var chartData =  _groupBySeries(data, groups,groupBy)
-        return {options:chartOptions,data:chartData}
+        return { options:chartOptions,data:chartData}
     })
   },
   processPieChart:function (dataPromise, indicators) {
@@ -203,7 +203,7 @@ module.exports = {
 
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
-        return {options: null, data: null}
+        return { options: null, data: null}
       }
       var total = _(data).map(function (n) { return n.value}).sum()
       var chartOptions = {
@@ -216,7 +216,7 @@ module.exports = {
             left   : 0
           }
         }
-      return {options:chartOptions,data:data}
+      return { options:chartOptions,data:data}
     })
   },
   processChoroplethMap:function (dataPromise,locations) {
@@ -231,7 +231,7 @@ module.exports = {
         border: border.objects.features
       }
       if (!data || data.length === 0) {
-        return {options: chartOptions, data: border.objects.features}
+        return { options: chartOptions, data: border.objects.features}
       }
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
@@ -239,13 +239,13 @@ module.exports = {
           properties : { value : _.get(location, 'value') }
         })
       })
-      return {options:chartOptions,data:chartData}
+      return { options:chartOptions,data:chartData}
     }))
   },
   processColumnChart: function (dataPromise,lower,upper,groups,groupBy) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
-        return {options: null, data: null}
+        return { options: null, data: null}
       }
       if(!lower) //set the lower bound from the lowest datapoint value
       {
@@ -272,7 +272,7 @@ module.exports = {
                       },
         xFormat: function (d) { return moment(d).format('MMM YYYY')}
       }
-      return {options:chartOptions,data:chartData}
+      return { options:chartOptions,data:chartData}
 
     })
   },
@@ -282,7 +282,7 @@ module.exports = {
 
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
-        return {options: null, data: null}
+        return { options: null, data: null}
       }
       var domain = d3.extent(_(data.objects)
         .pluck('indicators')
@@ -327,13 +327,13 @@ module.exports = {
         xLabel      : 'Caregiver Awareness',
         yLabel      : 'Missed Children'
       }
-      return {options:chartOptions,data:chartData}
+      return { options:chartOptions,data:chartData}
     })
   },
   processBarChart: function (dataPromise,locations,indicators,xAxis,yAxis) {
       return dataPromise.then(function (data) {
         if (!data || data.length === 0) {
-          return {options: null, data: null}
+          return { options: null, data: null}
         }
         var indicatorsIndex = _.indexBy(indicators, 'id')
         var locationsIndex = _.indexBy(locations, 'id')
@@ -358,7 +358,7 @@ module.exports = {
           xFormat : d3.format('%')
         }
         var chartData = _barData(datapoints, _.pluck(indicators,'id'), locationMapping, _getIndicator)
-        return {options:chartOptions,data:chartData}
+        return { options:chartOptions,data:chartData}
       })
   }
 }

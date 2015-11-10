@@ -58,7 +58,7 @@ var SimpleFormStore = Reflux.createStore({
     var api_fn = fnLookup[content_type]
 
     Promise.all([
-      api_fn({id: self.data.objectId}, null, {'cache-control': 'no-cache'}),
+      api_fn({ id: self.data.objectId}, null, {'cache-control': 'no-cache'}),
     ])
       .then(_.spread(function (apiResponse) {
 
@@ -76,13 +76,13 @@ var SimpleFormStore = Reflux.createStore({
   },
 
   onAddTagToIndicator: function (indicator_id, tag_id) {
-    api.set_indicator_to_tag({indicator_id: indicator_id, indicator_tag_id: tag_id}).then(function (response) {
+    api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id}).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
     })
   },
 
   onRemoveTagFromIndicator: function (indicator_id, id) {
-    api.remove_indicator_from_tag({id: id}).then(function (response) {
+    api.remove_indicator_from_tag({ id: id}).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
     })
   },
@@ -98,7 +98,7 @@ var SimpleFormStore = Reflux.createStore({
   },
 
   onRemoveCalculationFromIndicator: function (indicator_id, id) {
-    api.remove_calc_from_indicator({id: id}).then(function (response) {
+    api.remove_calc_from_indicator({ id: id}).then(function (response) {
       SimpleFormActions.refreshCalculation(indicator_id)
     })
   },
@@ -109,7 +109,7 @@ var SimpleFormStore = Reflux.createStore({
 
   onRefreshTags: function (indicator_id) {
     var self = this
-    api.indicator_to_tag({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_tag) {
+    api.indicator_to_tag({ indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_tag) {
       var indicatorTags = _.map(indicator_to_tag.objects, function (row) {
         return {'id': row.id, displayId: row.id, 'display': row.indicator_tag__tag_name}
       })
@@ -121,7 +121,7 @@ var SimpleFormStore = Reflux.createStore({
 
   onRefreshCalculation: function (indicator_id) {
     var self = this
-    api.indicator_to_calc({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_calc) {
+    api.indicator_to_calc({ indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}).then(function (indicator_to_calc) {
       var indicatorCalcList = _.map(indicator_to_calc.objects, function (row) {
         return {
           'id': row.id,
@@ -139,7 +139,7 @@ var SimpleFormStore = Reflux.createStore({
     var self = this
 
     Promise.all(
-      [api.indicator_to_calc({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}),
+      [api.indicator_to_calc({ indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}),
         api.indicatorsTree()]
     )
       .then(_.spread(function (indicator_to_calc, indicators) {
@@ -164,7 +164,7 @@ var SimpleFormStore = Reflux.createStore({
     var self = this
 
     Promise.all(
-      [api.indicator_to_tag({indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}),
+      [api.indicator_to_tag({ indicator_id: indicator_id}, null, {'cache-control': 'no-cache'}),
         api.tagTree({}, null, {'cache-control': 'no-cache'})] // cache_control
     )
       .then(_.spread(function (indicator_to_tag, tag_tree) {
