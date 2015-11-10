@@ -4,32 +4,32 @@ var _ = require('lodash')
 var React = require('react')
 
 var TitleMenu = React.createClass({
-  mixins : [
+  mixins: [
     require('mixin/MenuControl')
   ],
 
-  propTypes : {
-    className  : React.PropTypes.string,
-    text       : React.PropTypes.string.isRequired,
+  propTypes: {
+    className: React.PropTypes.string,
+    text: React.PropTypes.string.isRequired,
 
-    icon       : React.PropTypes.string,
-    searchable : React.PropTypes.bool,
-    onSearch   : React.PropTypes.func
+    icon: React.PropTypes.string,
+    searchable: React.PropTypes.bool,
+    onSearch: React.PropTypes.func
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      icon : 'fa-bars'
+      icon: 'fa-bars'
     }
   },
 
-  componentWillReceiveProps : function (nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     if (nextProps.text !== this.props.text) {
-      this.setState({ open : false })
+      this.setState({ open: false })
     }
   },
 
-  render : function () {
+  render: function () {
     return (
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
         {this.props.text.toUpperCase()}

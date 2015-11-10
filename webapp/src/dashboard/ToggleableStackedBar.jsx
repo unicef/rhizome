@@ -7,26 +7,26 @@ var React = require('react')
 var Chart = require('component/Chart.jsx')
 
 var ToggleableStackedBar = React.createClass({
-  propTypes : {
-    data    : React.PropTypes.array.isRequired,
-    title   : React.PropTypes.string.isRequired,
+  propTypes: {
+    data: React.PropTypes.array.isRequired,
+    title: React.PropTypes.string.isRequired,
 
-    options : React.PropTypes.object,
-    loading : React.PropTypes.bool
+    options: React.PropTypes.object,
+    loading: React.PropTypes.bool
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      offset : 'zero'
+      offset: 'zero'
     }
   },
 
-  render : function () {
+  render: function () {
     var name = _.kebabCase(this.props.title)
     var props = _.omit(this.props, 'title', 'options')
     var options = _.assign({}, this.props.options, {
-      offset  : this.state.offset,
-      xFormat : d3.format(this.state.offset === 'expand' ? '%' : 'n')
+      offset: this.state.offset,
+      xFormat: d3.format(this.state.offset === 'expand' ? '%' : 'n')
     })
 
     return (
@@ -59,8 +59,8 @@ var ToggleableStackedBar = React.createClass({
     )
   },
 
-  onOffsetChange : function (evt) {
-    this.setState({ offset : evt.currentTarget.value })
+  onOffsetChange: function (evt) {
+    this.setState({ offset: evt.currentTarget.value })
   }
 })
 

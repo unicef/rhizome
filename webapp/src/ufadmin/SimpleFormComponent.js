@@ -108,8 +108,7 @@ var SimpleFormComponent = React.createClass({
           <IndicatorTagDropdownMenu
             tag_tree={dropDownData}
             text='Add Tag'
-            sendValue={this.props.onClick}>
-          </IndicatorTagDropdownMenu>
+            sendValue={this.props.onClick} />
         </div>
       )
     } else if (contentType === 'indicator_calc') {
@@ -126,8 +125,7 @@ var SimpleFormComponent = React.createClass({
           <IndicatorDropdownMenu
             text='Add Component'
             indicators={dropDownData}
-            sendValue={this._onClick}>
-          </IndicatorDropdownMenu>
+            sendValue={this._onClick} />
         </form>
       )
     }

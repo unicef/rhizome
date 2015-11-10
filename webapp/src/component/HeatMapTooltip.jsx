@@ -7,24 +7,24 @@ var React = require('react')
 var Chart = require('component/Chart.jsx')
 
 var HeatMapTooltip = React.createClass({
-  propTypes : {
-    column    : React.PropTypes.string.isRequired,
-    data      : React.PropTypes.array.isRequired,
-    indicator : React.PropTypes.object.isRequired,
-    row       : React.PropTypes.string.isRequired,
-    value     : React.PropTypes.number.isRequired,
-    total     : React.PropTypes.number.isRequired,
+  propTypes: {
+    column: React.PropTypes.string.isRequired,
+    data: React.PropTypes.array.isRequired,
+    indicator: React.PropTypes.object.isRequired,
+    row: React.PropTypes.string.isRequired,
+    value: React.PropTypes.number.isRequired,
+    total: React.PropTypes.number.isRequired,
 
-    format    : React.PropTypes.func
+    format: React.PropTypes.func
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      format : d3.format('n')
+      format: d3.format('n')
     }
   },
 
-  render : function () {
+  render: function () {
     var fmt = this.props.format
     var bounds = this.props.indicator.bound_json
     var value = this.props.value
@@ -48,8 +48,8 @@ var HeatMapTooltip = React.createClass({
         <span>
           <h6>Targets</h6>
           <table className='indicator-ranges' style={{
-            float  : 'left',
-            margin : '0 1em 0 0'
+            float: 'left',
+            margin: '0 1em 0 0'
           }}>
             {rows}
           </table>
@@ -64,11 +64,11 @@ var HeatMapTooltip = React.createClass({
       .size()
 
     var chartOptions = {
-      className  : d => _.inRange(value, d.x, d.x + d.dx) ? 'current' : null,
-      yAxisTitle : 'Number of Districts',
-      width      : 120 * 1.618,
-      height     : 120,
-      format     : fmt
+      className: d => _.inRange(value, d.x, d.x + d.dx) ? 'current' : null,
+      yAxisTitle: 'Number of Districts',
+      width: 120 * 1.618,
+      height: 120,
+      format: fmt
     }
 
     return (

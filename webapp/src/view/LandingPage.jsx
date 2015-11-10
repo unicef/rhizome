@@ -17,13 +17,13 @@ var PermissionStore = require('stores/PermissionStore')
 //     .value()
 
 //   // jshint validthis: true
-//   this.setState({ campaigns : recent })
+//   this.setState({ campaigns: recent })
 // }
 
 // function _loadDocuments (documents) {
 //   var recent = _.take(documents, 5)
 
-//   this.setState({ uploads : recent })
+//   this.setState({ uploads: recent })
 // }
 
 // function _includeDashboard (dashboard, office) {
@@ -92,14 +92,14 @@ function _uploadRow (upload, i) {
 }
 
 module.exports = React.createClass({
-  mixins : [
+  mixins: [
     Reflux.connect(NavigationStore)
   ],
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      visibleCampaigns : 6,
-      visibleUploads   : 5
+      visibleCampaigns: 6,
+      visibleUploads: 5
     }
   },
 
@@ -108,7 +108,7 @@ module.exports = React.createClass({
     e.preventDefault()
   },
 
-  render : function () {
+  render: function () {
     var campaigns
     if (_.isFinite(this.state.visibleCampaigns)) {
       campaigns = _(this.state.campaigns)

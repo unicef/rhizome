@@ -44,7 +44,7 @@ module.exports = React.createClass({
     this.getCustomDashboards()
   },
 
-  render : function () {
+  render: function () {
     var self = this
     var rows = self.state.customDashboards
     if (_.isNull(rows)) {

@@ -6,23 +6,23 @@ var React = require('react')
 var dom = require('util/dom')
 
 var Tooltip = React.createClass({
-  propTypes : {
-    top  : React.PropTypes.number.isRequired,
-    left : React.PropTypes.number.isRequired
+  propTypes: {
+    top: React.PropTypes.number.isRequired,
+    left: React.PropTypes.number.isRequired
   },
 
-  getInitialState : function () {
+  getInitialState: function () {
     return {
-      align  : 'left',
-      orient : 'top'
+      align: 'left',
+      orient: 'top'
     }
   },
 
-  shouldComponentUpdate : function (nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     return !(_.isEqual(this.props, nextProps) && _.isEqual(this.state, nextState))
   },
 
-  render : function () {
+  render: function () {
     var position = {}
 
     if (this.state.align === 'left') {
@@ -44,21 +44,21 @@ var Tooltip = React.createClass({
     )
   },
 
-  componentDidUpdate : function () {
+  componentDidUpdate: function () {
     this._reposition()
   },
 
-  componentDidMount : function () {
+  componentDidMount: function () {
     window.requestAnimationFrame(this._reposition)
   },
 
-  _reposition : function () {
+  _reposition: function () {
     if (!this.isMounted()) {
       return
     }
 
     var el = dom.dimensions(React.findDOMNode(this))
-    var state = { align : 'left', orient : 'top' }
+    var state = { align: 'left', orient: 'top' }
 
     if (this.props.left - window.pageXOffset > window.innerWidth / 2) {
       // state.align = 'right' // fix the tooltip position incorrect issue.

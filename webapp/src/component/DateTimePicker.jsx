@@ -9,7 +9,7 @@ var DateRangePicker = React.createClass({
   propTypes: {
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
-    sendValue : React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired
   },
 
   getInitialState: function () {

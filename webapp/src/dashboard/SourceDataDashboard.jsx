@@ -26,7 +26,7 @@ var {
   } = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
-  mixins : [
+  mixins: [
     Reflux.connect(SourceDataDashboardStore)
   ],
 
@@ -161,8 +161,7 @@ var SourceDataDashboard = React.createClass({
       doc_id={doc_id}
       doc_tab={doc_tab}
       campaign={campaign}
-      datascopeFilters={datascopeFilters}
-      >
+      datascopeFilters={datascopeFilters}>
       <Paginator />
       <SimpleDataTable>
         {table_definition[doc_tab]['fields'].map(fieldName => {
@@ -174,16 +173,14 @@ var SourceDataDashboard = React.createClass({
     var docForm
     var review_breakdown
     if (doc_tab === 'doc_index') {
-      docForm = <div><DocForm></DocForm></div>
+      docForm = <div><DocForm /></div>
       review_breakdown = ''
     } else {
       docForm = ''
       review_breakdown = <DocOverview
         key={table_key + 'breakdown'}
         loading={loading}
-        doc_id={doc_id}
-        >
-      </DocOverview>
+        doc_id={doc_id} />
     }
 
     var page_title = doc_obj.doc_title + ' - ' + doc_tab

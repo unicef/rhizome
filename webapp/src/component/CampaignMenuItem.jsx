@@ -6,13 +6,13 @@ var React = require('react')
 var moment = require('moment')
 
 var CampaignMenuItem = React.createClass({
-  propTypes : {
-    sendValue  : React.PropTypes.func.isRequired,
-    campaign   : React.PropTypes.object.isRequired
+  propTypes: {
+    sendValue: React.PropTypes.func.isRequired,
+    campaign: React.PropTypes.object.isRequired
   },
 
-  statics : {
-    fromArray : function (arr, sendValue) {
+  statics: {
+    fromArray: function (arr, sendValue) {
       return arr.map(function (campaign) {
         return (
           <CampaignMenuItem
@@ -23,7 +23,7 @@ var CampaignMenuItem = React.createClass({
     }
   },
 
-  render : function () {
+  render: function () {
     var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)'
     var date = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
 
@@ -36,7 +36,7 @@ var CampaignMenuItem = React.createClass({
     )
   },
 
-  _onClick : function () {
+  _onClick: function () {
     this.props.sendValue(this.props.campaign.id)
   }
 

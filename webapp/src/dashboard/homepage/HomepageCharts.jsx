@@ -52,14 +52,14 @@ var HomepageCharts = React.createClass({
     charts.push(
       <div id='polio-cases-ytd'>
         {polioCasesData.title}
-        <div style={{ position : 'relative' }}>
+        <div style={{ position: 'relative' }}>
           {polioCasesData.newCaseLabel}
           <YtDChart
             data={polioCasesData.data}
             loading={loading}
             options={{
-              color  : _.flow(_.property('name'), polioCasesData.colors),
-              aspect  : 1,
+              color: _.flow(_.property('name'), polioCasesData.colors),
+              aspect: 1,
               width: 390,
               height: 390
             }} />
@@ -74,9 +74,9 @@ var HomepageCharts = React.createClass({
         data={missedChildrenData.missedChildrenMap}
         loading={loading}
         options={{
-          domain  : _.constant([0, 0.1]),
-          value   : _.property('properties[475]'),
-          yFormat : d3.format('%'),
+          domain: _.constant([0, 0.1]),
+          value: _.property('properties[475]'),
+          yFormat: d3.format('%'),
           width: 390,
           height: 390
         }}
@@ -90,11 +90,11 @@ var HomepageCharts = React.createClass({
         <Chart type='AreaChart' data={missedChildrenData.missed}
           loading={loading}
           options={{
-            aspect  : 1,
-            domain  : _.constant(missedChildrenData.missedScale),
-            x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-            xFormat : d => moment(d).format('MMM YYYY'),
-            yFormat : d3.format(',.1%'),
+            aspect: 1,
+            domain: _.constant(missedChildrenData.missedScale),
+            x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+            xFormat: d => moment(d).format('MMM YYYY'),
+            yFormat: d3.format(',.1%'),
             width: 390,
             height: 390
           }}
@@ -108,14 +108,14 @@ var HomepageCharts = React.createClass({
           data={underImmunizedData.data}
           loading={loading}
           options={{
-            aspect  : 1,
-            color   : underImmunizedData.color,
-            domain  : _.constant(underImmunizedData.immunityScale),
-            values  : _.property('values'),
-            x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf() },
-            xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
-            y0      : _.property('y0'),
-            yFormat : d3.format('%'),
+            aspect: 1,
+            color: underImmunizedData.color,
+            domain: _.constant(underImmunizedData.immunityScale),
+            values: _.property('values'),
+            x: function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf() },
+            xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
+            y0: _.property('y0'),
+            yFormat: d3.format('%'),
             width: 390,
             height: 390
           }}

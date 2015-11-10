@@ -29,7 +29,7 @@ module.exports = {
           },
           email: {
             title: 'email',
-            default: "",
+            default: '',
             maxLength: 75,
             editable: true,
             type: 'string',
@@ -40,7 +40,7 @@ module.exports = {
             }
           },
           first_name: {
-            default: "",
+            default: '',
             maxLength: 30,
             title: 'first_name',
             editable: true,
@@ -132,7 +132,7 @@ module.exports = {
             }
           },
           last_name: {
-            default: "",
+            default: '',
             maxLength: 30,
             title: 'last_name',
             editable: true,
@@ -144,7 +144,7 @@ module.exports = {
             }
           },
           password: {
-            default: "",
+            default: '',
             maxLength: 128,
             title: 'password',
             editable: true,
@@ -156,7 +156,7 @@ module.exports = {
             }
           },
           user_permissions: {
-            default: "",
+            default: '',
             maxLength: null,
             title: 'user_permissions',
             editable: true,
@@ -168,7 +168,7 @@ module.exports = {
             }
           },
           username: {
-            default: "",
+            default: '',
             maxLength: 30,
             title: 'username',
             editable: true,

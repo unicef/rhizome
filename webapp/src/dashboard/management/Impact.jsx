@@ -7,19 +7,19 @@ var PolioCasesYTD = require('dashboard/management/PolioCasesYTD.jsx')
 var ImmunityGap = require('dashboard/management/ImmunityGap.jsx')
 
 var Impact = React.createClass({
-  propTypes : {
-    campaign : React.PropTypes.object,
-    data     : React.PropTypes.object,
-    loading  : React.PropTypes.bool
+  propTypes: {
+    campaign: React.PropTypes.object,
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var data = this.props.data
     var campaign = this.props.campaign
     var loading = this.props.loading

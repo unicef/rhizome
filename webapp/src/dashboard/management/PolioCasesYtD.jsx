@@ -7,19 +7,19 @@ var React = require('react')
 var YtDChart = require('component/YtDChart.jsx')
 
 module.exports = React.createClass({
-  propTypes : {
-    campaign : React.PropTypes.object,
-    data     : React.PropTypes.array
+  propTypes: {
+    campaign: React.PropTypes.object,
+    data: React.PropTypes.array
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      data     : [],
-      loading  : false
+      data: [],
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var campaign = this.props.campaign
     var year = ''
     var month = ''
@@ -65,13 +65,13 @@ module.exports = React.createClass({
     return (
       <div id='polio-cases-ytd'>
         {title}
-        <div style={{ position : 'relative' }}>
+        <div style={{ position: 'relative' }}>
           {newCaseLabel}
           <YtDChart id='polio-cases-ytd'
             data={this.props.data}
             loading={loading}
             options={{
-              aspect  : 2.26
+              aspect: 2.26
             }} />
         </div>
       </div>

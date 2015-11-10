@@ -25,32 +25,32 @@ function donutLabel (data, labelText) { // FIXME this is repeated in odk/overvie
 }
 
 var Overview = React.createClass({
-  propTypes : {
-    data : React.PropTypes.object.isRequired,
-    loading : React.PropTypes.bool
+  propTypes: {
+    data: React.PropTypes.object.isRequired,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var loading = this.props.loading
     var data = this.props.data
     var monitoring = _.pick(data, 'inside', 'outside', 'caregiverAwareness',
       'insideMonitoring', 'outsideMonitoring')
 
     var options = {
-      values  : _.identity,
-      x       : _.property('value'),
-      xFormat : d3.format('%'),
-      y       : _.property('indicator.short_name')
+      values: _.identity,
+      x: _.property('value'),
+      xFormat: d3.format('%'),
+      y: _.property('indicator.short_name')
     }
 
     var headerStyle = {
-      marginLeft : '80px'
+      marginLeft: '80px'
     }
 
     return (

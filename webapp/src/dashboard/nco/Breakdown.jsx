@@ -12,40 +12,40 @@ function prep (data) {
     .filter(v => _(v).pluck('value').some(_.isFinite))
     .flatten()
     .groupBy('indicator.short_name')
-    .map((v, n) => { return { name : n, values : v } })
+    .map((v, n) => { return { name: n, values: v } })
     .value()
 }
 
 var Breakdown = React.createClass({
-  propTypes : {
-    data    : React.PropTypes.object.isRequired,
-    loading : React.PropTypes.bool
+  propTypes: {
+    data: React.PropTypes.object.isRequired,
+    loading: React.PropTypes.bool
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      loading : false
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var data = this.props.data
     var loading = this.props.loading
 
     var options = {
-      x : _.property('value'),
-      y : _.property('location.name'),
-      margin : {
-        top    : 0,
-        right  : 80,
-        bottom : 18,
-        left   : 80
+      x: _.property('value'),
+      y: _.property('location.name'),
+      margin: {
+        top: 0,
+        right: 80,
+        bottom: 18,
+        left: 80
       }
     }
 
     var groupedOptions = _.assign({
-      barHeight : 7,
-      padding   : 0.2
+      barHeight: 7,
+      padding: 0.2
     }, options)
 
     return (

@@ -123,11 +123,11 @@ var Performance = React.createClass({
             <Chart type='AreaChart' data={missed}
                    loading={loading}
                    options={{
-                     aspect  : 2.26,
-                     domain  : _.constant([lower.valueOf(), upper.valueOf()]),
-                     x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                     xFormat : d => moment(d).format('MMM YYYY'),
-                     yFormat : d3.format(',.1%')
+                     aspect: 2.26,
+                     domain: _.constant([lower.valueOf(), upper.valueOf()]),
+                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                     xFormat: d => moment(d).format('MMM YYYY'),
+                     yFormat: d3.format(',.1%')
                    }} />
           </section>
 
@@ -137,12 +137,12 @@ var Performance = React.createClass({
                    data={conversions}
                    loading={loading}
                    options={{
-                     aspect  : 2.26,
-                     domain  : _.constant([lower.toDate(), upper.toDate()]),
-                     range   : _.constant([0, 1]),
-                     x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                     xFormat : d => moment(d).format('MMM YYYY'),
-                     yFormat : pct
+                     aspect: 2.26,
+                     domain: _.constant([lower.toDate(), upper.toDate()]),
+                     range: _.constant([0, 1]),
+                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                     xFormat: d => moment(d).format('MMM YYYY'),
+                     yFormat: pct
                    }} />
           </section>
         </div>
@@ -153,11 +153,11 @@ var Performance = React.createClass({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-                   aspect  : 0.555,
-                   domain  : _.constant([0, 0.1]),
-                   value   : _.property('properties[475]'),
-                   yFormat : pct,
-                   onClick : d => { DashboardActions.navigate({ location : d }) }
+                   aspect: 0.555,
+                   domain: _.constant([0, 0.1]),
+                   value: _.property('properties[475]'),
+                   yFormat: pct,
+                   onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </section>
 
@@ -172,9 +172,9 @@ var Performance = React.createClass({
             name={_.property('[0].title')}
             data={transitPoints}
             options={{
-              domain  : _.constant([0, 1]),
-              size    : 24,
-              palette : colors
+              domain: _.constant([0, 1]),
+              size: 24,
+              palette: colors
             }}
             emptyText='No transit point data available'/>
         </section>

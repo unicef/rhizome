@@ -6,23 +6,23 @@ var React = require('react')
 var Chart = require('component/Chart.jsx')
 
 var PieChartList = React.createClass({
-  propTypes : {
-    data      : React.PropTypes.array.isRequired,
-    keyPrefix : React.PropTypes.string.isRequired,
-    options   : React.PropTypes.object,
-    name      : React.PropTypes.func,
-    emptyText : React.PropTypes.string
+  propTypes: {
+    data: React.PropTypes.array.isRequired,
+    keyPrefix: React.PropTypes.string.isRequired,
+    options: React.PropTypes.object,
+    name: React.PropTypes.func,
+    emptyText: React.PropTypes.string
   },
 
-  getDefaultProps : function () {
+  getDefaultProps: function () {
     return {
-      name      : _.property('indicator.short_name'),
-      emptyText : 'No data',
-      loading   : false
+      name: _.property('indicator.short_name'),
+      emptyText: 'No data',
+      loading: false
     }
   },
 
-  render : function () {
+  render: function () {
     var loading = this.props.loading
 
     var pies = _.map(this.props.data, (d, i) => (
