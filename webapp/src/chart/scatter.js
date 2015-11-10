@@ -10,135 +10,135 @@ var Tooltip = require('component/Tooltip.jsx')
 var palette = require('colors')
 
 var defaults = {
-    hoverRadius: 5,
-    radius: 3,
-    x: _.property('x'),
-    xFormat: d3.format('n'),
-    xScale: d3.scale.linear,
-    y: _.property('y'),
-    yFormat: d3.format('n'),
-    yScale: d3.scale.linear,
+  hoverRadius: 5,
+  radius: 3,
+  x: _.property('x'),
+  xFormat: d3.format('n'),
+  xScale: d3.scale.linear,
+  y: _.property('y'),
+  yFormat: d3.format('n'),
+  yScale: d3.scale.linear,
 
-    margin: {
-        top: 0,
-        right: 0,
-        bottom: 24,
-        left: 24
-    }
+  margin: {
+    top: 0,
+    right: 0,
+    bottom: 24,
+    left: 24
+  }
 }
 
 function ScatterPlot () {}
 
 _.extend(ScatterPlot.prototype, {
-    defaults: defaults,
+  defaults: defaults,
 
-    update: function (data, options) {
+  update: function (data, options) {
     var self = this
 
-        options = _.assign(this._options, options)
-        var margin = options.margin
+    options = _.assign(this._options, options)
+    var margin = options.margin
 
-        var svg = this._svg
-        var w = this._width - margin.left - margin.right
-        var h = this._height - margin.top - margin.bottom
+    var svg = this._svg
+    var w = this._width - margin.left - margin.right
+    var h = this._height - margin.top - margin.bottom
 
-        var domain = _.isFunction(options.domain)
-          ? options.domain(data)
-          : d3.extent(_.map(data, options.x))
+    var domain = _.isFunction(options.domain)
+      ? options.domain(data)
+      : d3.extent(_.map(data, options.x))
 
-        var xScale = options.xScale()
-            .domain(domain)
-            .range([0, w])
-            .nice()
+    var xScale = options.xScale()
+      .domain(domain)
+      .range([0, w])
+      .nice()
 
-        var x = function (d) { return xScale(options.x(d)) }
+    var x = function (d) { return xScale(options.x(d)) }
 
-        var range = _.isFunction(options.range)
-          ? options.range(data)
-          : d3.extent(_.map(data, options.y))
+    var range = _.isFunction(options.range)
+      ? options.range(data)
+      : d3.extent(_.map(data, options.y))
 
-        var yScale = options.yScale()
-            .domain(range)
-            .range([h, 0])
-            .nice()
+    var yScale = options.yScale()
+      .domain(range)
+      .range([h, 0])
+      .nice()
 
-        var y = function (d) { return yScale(options.y(d)) }
+    var y = function (d) { return yScale(options.y(d)) }
 
-        var point = svg.select('.data').selectAll('.point').data(data, function (d, i) {
-            return d.hasOwnProperty('id') ? d.id : i
-        })
+    var point = svg.select('.data').selectAll('.point').data(data, function (d, i) {
+      return d.hasOwnProperty('id') ? d.id : i
+    })
 
-        var attrs = {
-            'cx': x,
-            'cy': y,
-            'r': options.radius
-        }
+    var attrs = {
+      'cx': x,
+      'cy': y,
+      'r': options.radius
+    }
 
-        point.enter()
-            .append('circle')
-            .attr('class', 'point')
-            .attr(attrs)
+    point.enter()
+      .append('circle')
+      .attr('class', 'point')
+      .attr(attrs)
 
-        point
-            .style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'default')
-            .on('click', function (d, i) {
-                _.get(options, 'onClick', _.noop)(d, i, this)
-            })
-            .on('mouseover', function (d, i) {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .ease('elastic')
-                    .attr('r', options.hoverRadius)
+    point
+      .style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'default')
+      .on('click', function (d, i) {
+        _.get(options, 'onClick', _.noop)(d, i, this)
+      })
+      .on('mouseover', function (d, i) {
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .ease('elastic')
+          .attr('r', options.hoverRadius)
 
-                self._onMouseMove(d, i)
-            })
-            .on('mouseout', function (d, i) {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .ease('elastic')
-                    .attr('r', options.radius)
+        self._onMouseMove(d, i)
+      })
+      .on('mouseout', function (d, i) {
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .ease('elastic')
+          .attr('r', options.radius)
 
-                self._onMouseOut(d, i, this)
-            })
+        self._onMouseOut(d, i, this)
+      })
 
-        point.transition()
-            .duration(300)
-            .style('fill', palette[0])
-            .attr(attrs)
+    point.transition()
+      .duration(300)
+      .style('fill', palette[0])
+      .attr(attrs)
 
-        point.exit()
-            .transition()
-            .duration(300)
-            .attr('r', 0)
-            .remove()
+    point.exit()
+      .transition()
+      .duration(300)
+      .attr('r', 0)
+      .remove()
 
-        var xAxis = d3.svg.axis()
-            .scale(xScale)
-            .tickFormat(options.xFormat)
-            .tickSize(-h)
-            .tickPadding(5)
-            .ticks(5)
-            .orient('bottom')
+    var xAxis = d3.svg.axis()
+      .scale(xScale)
+      .tickFormat(options.xFormat)
+      .tickSize(-h)
+      .tickPadding(5)
+      .ticks(5)
+      .orient('bottom')
 
-        svg.select('.x.axis')
-            .transition()
-            .duration(300)
-            .call(xAxis)
+    svg.select('.x.axis')
+      .transition()
+      .duration(300)
+      .call(xAxis)
 
-        var yAxis = d3.svg.axis()
-            .scale(yScale)
-            .tickFormat(options.yFormat)
-            .tickSize(-w)
-            .ticks(5)
-            .orient('left')
+    var yAxis = d3.svg.axis()
+      .scale(yScale)
+      .tickFormat(options.yFormat)
+      .tickSize(-w)
+      .ticks(5)
+      .orient('left')
 
-        svg.select('.y.axis')
-            .transition()
-            .duration(300)
-            .call(yAxis)
-    },
+    svg.select('.y.axis')
+      .transition()
+      .duration(300)
+      .call(yAxis)
+  },
 
   _onMouseMove: function (d) {
     var evt = d3.event
@@ -150,9 +150,9 @@ _.extend(ScatterPlot.prototype, {
 
     var render = function () {
       return React.createElement(
-        Tooltip,
-        { left: evt.pageX + 2, top: evt.pageY + 2 },
-        name
+      Tooltip,
+      { left: evt.pageX + 2, top: evt.pageY + 2 },
+      name
       )
     }
 
