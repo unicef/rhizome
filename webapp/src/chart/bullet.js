@@ -126,6 +126,16 @@ _.extend(BulletChart.prototype, {
       'height': h + margin.top + margin.bottom
     });
 
+    svg.select('.data').
+      call(qualitativeAxis()
+        .height(h + margin.top + margin.bottom)
+        .scale(xScale)
+        .threshold(d3.scale.threshold()
+          .domain(options.thresholds)
+          .range(options.targets)
+      )
+    );
+
     var g = svg.select('.data')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -160,27 +170,6 @@ _.extend(BulletChart.prototype, {
       .duration(500)
       .attr('width', width);
     value.exit().remove();
-
-    // Draw comparitive measure
-    var measure = bar.selectAll('.comparative-measure')
-      .data(function (d) {
-        var v = options.value(d);
-        var m = options.marker(d);
-        return _.isFinite(v) && _.isFinite(m) ? [d] : [];
-      });
-
-    var measureHeight = yScale.rangeBand() * 0.1;
-
-    var initAttr = {
-      'class': 'comparative-measure',
-      'width': 3,
-      'height': yScale.rangeBand() - measureHeight,
-      'y': measureHeight / 2
-    };
-
-    measure.enter().append('rect').attr(initAttr).style('fill', '#FFFFFF');
-    measure.attr(initAttr).attr('x', x);
-    measure.exit().remove();
 
     var label = bar.selectAll('.label')
       .data(function (d) {
