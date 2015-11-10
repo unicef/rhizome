@@ -378,8 +378,6 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        dp_list = [dp_1.id,dp_2.id,dp_3.id]
-
         cr = AggRefresh()
 
         calc_value_sum = DataPointComputed.objects.get(

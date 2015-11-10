@@ -43,7 +43,7 @@ class AggRefresh(object):
         table as well as the start / end time.
         '''
 
-        self.dp_columns =['indicator_id','campaign_id', 'location_id',\
+        self.dp_columns =['location_id','indicator_id','campaign_id',\
             'value','cache_job_id']
 
         self.dwc_batch, self.dwc_tuple_dict = [],{}
@@ -171,7 +171,7 @@ class AggRefresh(object):
         ## the order of these calculations defines their priority, meaning
         ## since raw data is the last calculation, this will override all else
         self.sum_of_parts()
-        # self.part_over_whole()
+        self.part_over_whole()
         self.part_of_difference()
         self.raw_data()
 
@@ -190,21 +190,12 @@ class AggRefresh(object):
 
     def build_dp_df(self,indicator_id_list):
 
-        dp_df = DataFrame(list(DataPoint.objects.all()\
+        dp_df = DataFrame(list(AggDataPoint.objects.all()\
             .filter(indicator_id__in = indicator_id_list\
                 .unique(),campaign_id = self.campaign_id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         return dp_df
-
-    def build_calc_df(self,calc_list):
-
-        calc_df = DataFrame(list(CalculatedIndicatorComponent.objects\
-            .filter(calculation__in= calc_list)\
-            .values_list('indicator_id','indicator_component_id','calculation'))\
-                ,columns=['calc_indicator_id','indicator_component_id','calc'])
-
-        return calc_df
 
     def join_dp_to_calc(self, calc_df, dp_df):
         '''
@@ -241,47 +232,58 @@ class AggRefresh(object):
         dp_df = self.build_dp_df(calc_df['indicator_component_id'])
 
         ## now join the above dataframe on itself to set up the calculation ##
-        prepped_for_calc_df = self.join_dp_to_calc(calc_df, dp_df)
+        dp_df_with_calc = self.join_dp_to_calc(calc_df, dp_df)
 
-        # ...
+        ## take the sum of all of the component indicators ##
+        grouped_df = DataFrame(dp_df_with_calc.merge(dp_df_with_calc)\
+            .groupby(['location_id','calc_indicator_id','campaign_id',])\
+            ['value'].sum())
+
+        for ix, row_data in grouped_df.iterrows():
+            self.dwc_tuple_dict[ix] = row_data.value
 
     def part_over_whole(self):
+        '''
+        This calculation is dependent on the "sum_of_parts" calculation, so in
+        addition to the datapoint_df, we need to get the newly computed
+        datapoints from the previous calculation ( dependent_calculation_dp_df )
+        '''
 
-        raw_qs = AggDataPoint.objects.raw('''
+        calc_df = self.build_calc_df(['PART','WHOLE'])
 
-        SELECT DISTINCT
-             x.id
-            ,part.indicator_id
-            ,d_part.location_id
-            ,d_part.campaign_id
-            ,d_part.value / NULLIF(d_whole.value,0) as value
-            ,d_part.cache_job_id
-        FROM calculated_indicator_component part
-        INNER JOIN (
-            SELECT id from agg_datapoint LIMIT 1
-            ) x ON 1=1
-        INNER JOIN calculated_indicator_component whole
-            ON part.indicator_id = whole.indicator_id
-            AND whole.calculation = 'WHOLE'
-            AND part.calculation = 'PART'
-        INNER JOIN _tmp_calc_datapoint d_part
-            ON part.indicator_component_id = d_part.indicator_id
-        INNER JOIN _tmp_calc_datapoint d_whole
-            ON whole.indicator_component_id = d_whole.indicator_id
-            AND d_part.campaign_id = d_whole.campaign_id
-            AND d_part.location_id = d_whole.location_id
-        WHERE NOT EXISTS (
-            SELECT 1 FROM _tmp_calc_datapoint tcd
-            WHERE tcd.campaign_id = d_part.campaign_id
-            AND tcd.location_id = d_part.location_id
-            AND tcd.indicator_id = part.indicator_id
-        );
+        ## get the datapoints for the above indicator_ids ##
+        dp_df = self.build_dp_df(calc_df['indicator_component_id'])
 
-        ''')
+        ## now get a dataframe (dependent_calculation_dp_df) that represents ##
+        ## the newly calculated data.  This is necessary because the ##
+        ## denominator for the part/whole calculation is often a SUM ##
+        dwc_list_of_list = [[k[0],k[1],k[2],v,self.cache_job.id] for k,v in\
+            self.dwc_tuple_dict.iteritems()]
+        dependent_calculation_dp_df = DataFrame(dwc_list_of_list,columns=\
+            self.dp_columns)
+        unioned_dp_df = pd.concat([dp_df,dependent_calculation_dp_df])
 
-        for row in raw_qs:
-            uq_tuple = (row.location_id, row.indicator_id, row.campaign_id)
-            self.dwc_tuple_dict[uq_tuple] = row.value
+        ## add the calculation metadata to the df
+        dp_df_with_calc = self.join_dp_to_calc(calc_df, unioned_dp_df)
+
+        ## now join the above dataframe on itself to set up the calculation ##
+        prepped_for_calc_df = dp_df_with_calc.merge(dp_df_with_calc,\
+            on=['location_id','campaign_id','calc_indicator_id'])
+
+        ## iterate through the dataframe, perform the calculation and add
+        ## to the dwc_tuple_dict.  ( this could use some clean up )
+        for ix, row_data in prepped_for_calc_df.iterrows():
+
+            if row_data.calc_x == 'PART' \
+                and row_data.calc_y == 'WHOLE':
+
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
+                    row_data.campaign_id)
+
+                ## this one line is where the calculation happens ##
+                calculated_value = (row_data.value_x / row_data.value_y)
+
+                self.dwc_tuple_dict[row_tuple] = calculated_value
 
 
     def part_of_difference(self):
