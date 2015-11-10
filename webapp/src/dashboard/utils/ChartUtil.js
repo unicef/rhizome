@@ -88,7 +88,7 @@ function preparePolioCasesData(original) {
     newCaseLabel = (
       <div id='new-polio-cases'
            style={{
-            position :'absolute',
+            position: 'absolute',
             color: '#D84E43'
           }}>{newCases} new case{plural}</div>
     )

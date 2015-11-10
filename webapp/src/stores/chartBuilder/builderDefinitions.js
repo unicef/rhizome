@@ -16,13 +16,13 @@ export default {
   times: [
     {
       value: 'all',
-      title:'All Time',
+      title: 'All Time',
       getLower: start => { return null },
       json: null
     },
     {
       value: '1year',
-      title:'Past Year',
+      title: 'Past Year',
       getLower: start => { return start.clone().startOf('month').subtract(1,'year') },
       json: { years: 1}
     },
