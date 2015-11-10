@@ -131,7 +131,7 @@ module.exports = React.createClass({
     var hideHelp = this.props.hideHelp;
     var data = this.props.data;
     var loading = this.props.loading;
-    var dataColorRange = ['#D95449', '#7A909E', '#39B0D1'];
+    var dataColorRange =  ['#DB5344', '#79909F', '#2FB0D3'];
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6'];
 
     var charts = _(this.props.indicators)
