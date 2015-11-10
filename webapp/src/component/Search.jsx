@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-var React = require('react');
+var React = require('react')
 
-var dom = require('util/dom');
+var dom = require('util/dom')
 
 var Search = React.createClass({
   propTypes : {
@@ -16,13 +16,13 @@ var Search = React.createClass({
     return {
       autoFocus : false,
       onBlur    : function () {} // noop
-    };
+    }
   },
 
   getInitialState : function () {
     return {
       pattern : ''
-    };
+    }
   },
 
   render : function () {
@@ -32,7 +32,7 @@ var Search = React.createClass({
           <i className='fa fa-times-circle'></i>
         </a>
       ) :
-      null;
+      null
 
     return (
       <div style={{ position : 'relative' }} role='search'>
@@ -42,41 +42,41 @@ var Search = React.createClass({
           value={this.state.pattern} />
         {clear}
       </div>
-    );
+    )
   },
 
   componentDidMount : function () {
     if (this.props.autoFocus) {
-      this._focus();
+      this._focus()
     }
   },
 
   _setPattern : function (e) {
-    this.props.onChange(e.target.value);
-    this.setState({ pattern : e.target.value });
+    this.props.onChange(e.target.value)
+    this.setState({ pattern : e.target.value })
   },
 
   _clear : function () {
-    this.props.onChange('');
-    this.setState({ pattern : '' });
-    this._focus();
+    this.props.onChange('')
+    this.setState({ pattern : '' })
+    this._focus()
   },
 
   _focus : function () {
-    React.findDOMNode(this.refs.input).focus();
+    React.findDOMNode(this.refs.input).focus()
   },
 
   _onBlur : function () {
-    var self = this;
+    var self = this
 
     window.setTimeout(function () {
       if (dom.parentOf(React.findDOMNode(self), document.activeElement)) {
         self._focus()
       } else {
-        self.props.onBlur();
+        self.props.onBlur()
       }
-    }, 150);
+    }, 150)
   }
-});
+})
 
-module.exports = Search;
+module.exports = Search

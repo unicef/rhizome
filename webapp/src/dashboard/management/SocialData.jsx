@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var DonutChart = require('component/DonutChart.jsx');
+var DonutChart = require('component/DonutChart.jsx')
 
 var indicatorForCampaign = function (campaign, indicator) {
-  return d => d.campaign.id === campaign && d.indicator.id === indicator;
-};
+  return d => d.campaign.id === campaign && d.indicator.id === indicator
+}
 
 var SocialData = React.createClass({
   propTypes: {
@@ -17,31 +17,31 @@ var SocialData = React.createClass({
   },
 
   render: function () {
-    var campaign = this.props.campaign;
-    var loading = this.props.loading;
+    var campaign = this.props.campaign
+    var loading = this.props.loading
 
     var data = _.filter(this.props.data,
-        d => d.campaign.id === campaign.id && _.isFinite(d.value));
+        d => d.campaign.id === campaign.id && _.isFinite(d.value))
 
-    var social = _.find(data, indicatorForCampaign(campaign.id, 28));
-    var microplans = _.find(data, indicatorForCampaign(campaign.id, 27));
+    var social = _.find(data, indicatorForCampaign(campaign.id, 28))
+    var microplans = _.find(data, indicatorForCampaign(campaign.id, 27))
 
-    var num = _.get(social, 'value');
-    var den = _.get(microplans, 'value');
+    var num = _.get(social, 'value')
+    var den = _.get(microplans, 'value')
 
-    var microText = '';
-    var socialData;
+    var microText = ''
+    var socialData
 
     if (_.isFinite(num) && _.isFinite(den)) {
-      microText = num + ' / ' + den + ' microplans incorporate social data';
-      socialData = [{value: num / den}];
+      microText = num + ' / ' + den + ' microplans incorporate social data'
+      socialData = [{value: num / den}]
     }
 
     var planLabel = function (d) {
-      var fmt = d3.format('%');
-      var v = _.get(d, '[0].value', '');
-      return fmt(v);
-    };
+      var fmt = d3.format('%')
+      var v = _.get(d, '[0].value', '')
+      return fmt(v)
+    }
 
     return (
       <div className="row">
@@ -58,8 +58,8 @@ var SocialData = React.createClass({
           {microText}
         </div>
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = SocialData;
+module.exports = SocialData

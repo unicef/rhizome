@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var React = require('react');
+var React = require('react')
 
 var HomepageCarouselDecorators = [
   {
@@ -44,8 +44,8 @@ var HomepageCarouselDecorators = [
   {
     component: React.createClass({
       render() {
-        var self = this;
-        var indexes = this.getIndexes(self.props.slideCount, self.props.slidesToScroll);
+        var self = this
+        var indexes = this.getIndexes(self.props.slideCount, self.props.slidesToScroll)
         return (
           <ul style={self.getListStyles()}>
             {
@@ -55,7 +55,7 @@ var HomepageCarouselDecorators = [
                     <button
                       style={self.getButtonStyles(self.props.currentSlide === index)}
                       onClick={self.props.goToSlide.bind(null, index)}>
-                      &bull;
+                      &bull
                     </button>
                   </li>
                 )
@@ -65,11 +65,11 @@ var HomepageCarouselDecorators = [
         )
       },
       getIndexes(count, inc) {
-        var arr = [];
+        var arr = []
         for (var i = 0; i < count; i += inc) {
-          arr.push(i);
+          arr.push(i)
         }
-        return arr;
+        return arr
       },
       getListStyles() {
         return {
@@ -100,7 +100,7 @@ var HomepageCarouselDecorators = [
     }),
     position: 'BottomCenter'
   }
-];
+]
 
-module.exports = HomepageCarouselDecorators;
+module.exports = HomepageCarouselDecorators
 

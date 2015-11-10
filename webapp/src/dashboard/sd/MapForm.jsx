@@ -1,19 +1,19 @@
-var _ = require('lodash');
-var moment = require('moment');
-var React = require('react');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var moment = require('moment')
+var React = require('react')
+var Reflux = require('reflux')
 
-var RegionTitleMenu = require('component/RegionTitleMenu');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
+var RegionTitleMenu = require('component/RegionTitleMenu')
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
+var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx')
 
-var MapFormStore = require('stores/MapFormStore');
-var Modal = require('react-modal');
+var MapFormStore = require('stores/MapFormStore')
+var Modal = require('react-modal')
 
-var appElement = document.getElementById('main');
+var appElement = document.getElementById('main')
 
-Modal.setAppElement(appElement);
-Modal.injectCSS();
+Modal.setAppElement(appElement)
+Modal.injectCSS()
 
 const {
     Datascope, LocalDatascope,
@@ -22,7 +22,7 @@ const {
     Paginator,
     SearchBar,
     FilterPanel, FilterDateRange, FilterInputRadio
-    } = require('react-datascope');
+    } = require('react-datascope')
 
 
 var MapForm = React.createClass({
@@ -40,7 +40,7 @@ var MapForm = React.createClass({
     },
 
     openModal: function () {
-        var self = this;
+        var self = this
         MapFormStore.getSourceMap({id: this.props.source_object_map_id}).then(function (data) {
             self.setState(
                 {
@@ -48,24 +48,24 @@ var MapForm = React.createClass({
                     content_type: data.content_type,
                     master_object_id: data.master_object_id,
                     modalIsOpen: true
-                });
-        });
+                })
+        })
     },
 
     closeModal: function () {
-        this.props.onModalClose();
-        this.setState({modalIsOpen: false, content_type: null});
+        this.props.onModalClose()
+        this.setState({modalIsOpen: false, content_type: null})
     },
 
     postMetaMap: function (masterObjectId) {
-        var self = this;
+        var self = this
         MapFormStore.updateMetaMap({
             id: this.props.source_object_map_id,
             master_object_id: masterObjectId,
             mapped_by_id: 1 // FIXME
         }).then(function (data) {
-            self.setState({master_object_id: data});
-        });
+            self.setState({master_object_id: data})
+        })
     },
 
     renderDropDown: function (content_type) {
@@ -74,7 +74,7 @@ var MapForm = React.createClass({
             return <div><RegionTitleMenu
                 locations={this.props.locations}
                 selected={defaultSelected}
-                sendValue={this.postMetaMap}/></div>;
+                sendValue={this.postMetaMap}/></div>
         }
         if (content_type == 'indicator') {
             return <div>
@@ -82,7 +82,7 @@ var MapForm = React.createClass({
                     text='Map Indicator'
                     indicators={this.props.indicators}
                     sendValue={this.postMetaMap}>
-                </IndicatorDropdownMenu></div>;
+                </IndicatorDropdownMenu></div>
         }
         if (content_type == 'campaign') {
           var office = {
@@ -101,14 +101,14 @@ var MapForm = React.createClass({
                   campaigns={campaigns}
                   sendValue={this.postMetaMap}>
               </CampaignDropdownMenu>
-          </div>;
+          </div>
         }
     },
 
 
     render: function () {
         var sourceObjectMapId = this.props.source_object_map_id
-        var modalStyle = {width: 400, height: 300, marginLeft: 400};
+        var modalStyle = {width: 400, height: 300, marginLeft: 400}
         return <div>
             <button className="tiny" onClick={this.openModal}> map!</button>
             <Modal
@@ -127,6 +127,6 @@ var MapForm = React.createClass({
             </Modal></div>
 
     },
-});
+})
 
-module.exports = MapForm;
+module.exports = MapForm

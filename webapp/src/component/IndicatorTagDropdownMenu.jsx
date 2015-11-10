@@ -1,36 +1,36 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var React  = require('react');
-var moment = require('moment');
+var _      = require('lodash')
+var React  = require('react')
+var moment = require('moment')
 
-var DropdownMenu     = require('component/DropdownMenu.jsx');
-var MenuItem         = require('component/MenuItem.jsx');
+var DropdownMenu     = require('component/DropdownMenu.jsx')
+var MenuItem         = require('component/MenuItem.jsx')
 
 function findMatches(item, re) {
-  var matches = [];
+  var matches = []
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, { filtered : true }));
+    matches.push(_.assign({}, item, { filtered : true }))
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
     _.each(item.children, function (child) {
-      matches = matches.concat(findMatches(child, re));
+      matches = matches.concat(findMatches(child, re))
     })
   }
 
-  return matches;
-};
+  return matches
+}
 
 function filterMenu(items, pattern) {
   if (_.size(pattern) < 3) {
-    return items;
+    return items
   }
 
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
-  return _(items).map(match).flatten().value();
+  return _(items).map(match).flatten().value()
 }
 
 var IndicatorTagDropdownMenu = React.createClass({
@@ -44,22 +44,22 @@ var IndicatorTagDropdownMenu = React.createClass({
   getInitialState : function () {
     return {
       pattern : ''
-    };
+    }
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    return nextProps.text !== this.props.text;
+    return nextProps.text !== this.props.text
   },
 
   render : function () {
-    var self = this;
+    var self = this
 
     if (this.props.tag_tree.length === 0) {
-      return (<button className="tiny"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>);
+      return (<button className="tiny"><i className="fa fa-spinner fa-spin"></i> Loading Tags...</button>)
     }
 
-    var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue);
-    var props = _.omit(this.props, 'tag_tree', 'sendValue');
+    var tag_tree = MenuItem.fromArray(filterMenu(this.props.tag_tree, this.state.pattern), self.props.sendValue)
+    var props = _.omit(this.props, 'tag_tree', 'sendValue')
     var selected_name = this.props.text; // this is a name not an object!
 
     return (
@@ -70,12 +70,12 @@ var IndicatorTagDropdownMenu = React.createClass({
         {...props}>
         {tag_tree}
       </DropdownMenu>
-    );
+    )
   },
 
   _setPattern : function (value) {
     this.setState({ pattern : value })
   }
-});
+})
 
-module.exports = IndicatorTagDropdownMenu;
+module.exports = IndicatorTagDropdownMenu

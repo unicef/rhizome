@@ -1,12 +1,12 @@
-var _ = require('lodash');
-var Reflux = require('reflux');
-var React = require('react');
+var _ = require('lodash')
+var Reflux = require('reflux')
+var React = require('react')
 
-var DropdownMenu = require('component/DropdownMenu.jsx');
-var NavigationStore = require('stores/NavigationStore');
+var DropdownMenu = require('component/DropdownMenu.jsx')
+var NavigationStore = require('stores/NavigationStore')
 
-var DocOverviewActions = require('actions/DocOverviewActions');
-var DocOverviewStore = require('stores/DocOverviewStore');
+var DocOverviewActions = require('actions/DocOverviewActions')
+var DocOverviewStore = require('stores/DocOverviewStore')
 
 var DocOverview = React.createClass({
   mixins: [
@@ -22,7 +22,7 @@ var DocOverview = React.createClass({
   getDefaultProps: function () {
     return {
       loading: false
-    };
+    }
   },
 
   getInitialState: function () {
@@ -33,7 +33,7 @@ var DocOverview = React.createClass({
       doc_deets: null,
       isRefreshing: false,
       isProcessing: false
-    };
+    }
   },
 
   componentWillMount: function (nextProps, nextState) {
@@ -43,25 +43,25 @@ var DocOverview = React.createClass({
 
   componentWillUpdate: function (nextProps, nextState) {
     if (nextProps.doc_id != this.props.doc_id) {
-      return;
+      return
     }
     if (nextProps.doc_deets != this.props.doc_deets) {
-      return;
+      return
     }
   },
 
   pullDocDetailTypes: function () {
-    DocOverviewActions.getDocDetailTypes();
+    DocOverviewActions.getDocDetailTypes()
   },
 
   refreshMaster: function () {
-    var self = this;
-    DocOverviewActions.refreshMaster({document_id: self.props.doc_id});
+    var self = this
+    DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
   },
 
   queueReprocess: function () {
-    var self = this;
-    DocOverviewActions.queueReprocess({document_id: self.props.doc_id});
+    var self = this
+    DocOverviewActions.queueReprocess({document_id: self.props.doc_id})
   },
 
   renderLoading() {
@@ -69,11 +69,11 @@ var DocOverview = React.createClass({
   },
 
   render() {
-    var doc_id = this.props.doc_id;
-    var doc_tab = this.props.doc_tab;
-    var doc_deets = this.state.doc_deets;
+    var doc_id = this.props.doc_id
+    var doc_tab = this.props.doc_tab
+    var doc_deets = this.state.doc_deets
 
-    if (!doc_deets) return this.renderLoading();
+    if (!doc_deets) return this.renderLoading()
 
     var refresh_master_btn = <div>
       <p>
@@ -87,9 +87,9 @@ var DocOverview = React.createClass({
       </p>
     </div>
 
-    var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id');
+    var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id')
 
-    var rows = [];
+    var rows = []
     for (var i = 0; i < doc_deets.length; i++) {
       var doc_detail = doc_deets[i]
       rows.push(<li>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name}
@@ -103,6 +103,6 @@ var DocOverview = React.createClass({
       {refresh_master_btn}
     </div>
   }
-});
+})
 
-module.exports = DocOverview;
+module.exports = DocOverview

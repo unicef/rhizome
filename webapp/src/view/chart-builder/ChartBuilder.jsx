@@ -1,50 +1,50 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
-var moment = require('moment');
+var _ = require('lodash')
+var React = require('react')
+var Reflux = require('reflux')
+var moment = require('moment')
 
-var DropdownMenu = require('component/DropdownMenu.jsx');
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var Chart = require('component/Chart.jsx');
-var ChartBuilderActions = require('actions/ChartBuilderActions');
-var ChartBuilderStore = require("stores/ChartBuilderStore");
-var ChartSelect = require('./ChartSelect.jsx');
-var List = require('component/list/List.jsx');
-var MenuItem = require('component/MenuItem.jsx');
-var RadioGroup = require('component/radio-group/RadioGroup.jsx');
-var TitleInput = require('component/TitleInput.jsx');
+var DropdownMenu = require('component/DropdownMenu.jsx')
+var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx')
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
+var Chart = require('component/Chart.jsx')
+var ChartBuilderActions = require('actions/ChartBuilderActions')
+var ChartBuilderStore = require("stores/ChartBuilderStore")
+var ChartSelect = require('./ChartSelect.jsx')
+var List = require('component/list/List.jsx')
+var MenuItem = require('component/MenuItem.jsx')
+var RadioGroup = require('component/radio-group/RadioGroup.jsx')
+var TitleInput = require('component/TitleInput.jsx')
 
 function findMatches(item, re) {
-  var matches = [];
+  var matches = []
 
   if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, {filtered: true}));
+    matches.push(_.assign({}, item, {filtered: true}))
   }
 
   if (!_.isEmpty(_.get(item, 'children'))) {
     _.each(item.children, function (child) {
-      matches = matches.concat(findMatches(child, re));
+      matches = matches.concat(findMatches(child, re))
     })
   }
 
-  return matches;
-};
+  return matches
+}
 
 function filterMenu(items, pattern) {
   if (_.size(pattern) < 3) {
-    return items;
+    return items
   }
 
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'));
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
-  return _(items).map(match).flatten().value();
+  return _(items).map(match).flatten().value()
 }
 
 function campaignDisplayFormat(campaign) {
-  return moment(campaign.start_date).format('MMMM YYYY');
+  return moment(campaign.start_date).format('MMMM YYYY')
 }
 
 module.exports = React.createClass({
@@ -59,68 +59,68 @@ module.exports = React.createClass({
         this.props.chartDef,
         this.props.location,
         this.props.campaign
-      );
-    this.props.chartDef && this.setState({title: this.props.chartDef.title});
+      )
+    this.props.chartDef && this.setState({title: this.props.chartDef.title})
   },
   _updateTitle: function (newText) {
-    //this.setState({title:e.currentTarget.value});
+    //this.setState({title:e.currentTarget.value})
 
-    //clearTimeout(this.timer);
+    //clearTimeout(this.timer)
     //this.timer = setTimeout(function(){
-    ChartBuilderActions.updateTitle(newText);
-    // }.bind(this), 1000);
+    ChartBuilderActions.updateTitle(newText)
+    // }.bind(this), 1000)
   },
 
   _updateDescription: function (e) {
-    ChartBuilderActions.updateDescription(e.target.value);
+    ChartBuilderActions.updateDescription(e.target.value)
   },
 
   _updateFilter: function (filterFor, pattern) {
-    var state = {};
+    var state = {}
 
-    state[filterFor + 'Filter'] = pattern;
+    state[filterFor + 'Filter'] = pattern
 
-    this.setState(state);
+    this.setState(state)
   },
   _updateXAxis: function (e) {
-    ChartBuilderActions.selectXAxis(parseInt(e.target.value));
+    ChartBuilderActions.selectXAxis(parseInt(e.target.value))
   },
   _updateYAxis: function (e) {
-    ChartBuilderActions.selectYAxis(parseInt(e.target.value));
+    ChartBuilderActions.selectYAxis(parseInt(e.target.value))
   },
   setFilter: function (filterFor, pattern) {
-    var state = {};
-    state[filterFor + 'Filter'] = pattern;
+    var state = {}
+    state[filterFor + 'Filter'] = pattern
 
-    this.setState(state);
+    this.setState(state)
   },
   createChart: function () {
-    this.props.callback(this.state.store.chartDefinition());
+    this.props.callback(this.state.store.chartDefinition())
   },
 
   render: function () {
 
     var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name}
-                   data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions}/>;
-    var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>);
-    var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>);
+                   data={this.state.store.chartData} id="custom-chart" options={this.state.store.chartOptions}/>
+    var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>)
+    var loadingDiv = (<div className="loading-div"><i className="fa fa-spinner fa-spin fa-5x"></i></div>)
 
 
     var campaignSelection = !!this.state.store.campaignSelected ?
       campaignDisplayFormat(this.state.store.campaignSelected) :
-      'Select Campaign';
+      'Select Campaign'
 
     var locationSelection = !!this.state.store.locationSelected ?
       this.state.store.locationSelected.name :
-      'Select location';
+      'Select location'
 
     var locations = MenuItem.fromArray(
       filterMenu(this.state.store.locationList, this.state.locationFilter),
-      ChartBuilderActions.addLocationSelection);
+      ChartBuilderActions.addLocationSelection)
 
     var axisOptions = this.state.store.indicatorsSelected.map(function (indicator, index) {
-      return <option key={indicator.id} value={index}>{indicator.name}</option>;
-    });
+      return <option key={indicator.id} value={index}>{indicator.name}</option>
+    })
 
     /*  <div className="titleDiv" onChange={this._updateDescription}>Description</div>
      <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
@@ -144,12 +144,12 @@ module.exports = React.createClass({
          onClick={this.createChart}>{this.props.chartDef ? "Update Chart" : "Create Chart"}</a>
       <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
 
-    </div>);
+    </div>)
     var groupBy = (<div className="grouping">
       <div className="titleDiv">Group By</div>
       <RadioGroup name="groupby" horizontal={true} value={this.state.store.groupByRadioValue}
                   values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio}/>
-    </div>);
+    </div>)
     var chooseAxis = (<div className="grouping">
       <div>
         <div className="titleDiv">X Axis</div>
@@ -157,14 +157,14 @@ module.exports = React.createClass({
       <div>
         <div className="titleDiv">Y Axis</div>
         <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
-    </div>);
+    </div>)
     var formatXAxis = (
       <div className="grouping">
         <div className="titleDiv">X Format</div>
         <RadioGroup name="xFormat" horizontal={true} value={this.state.store.xFormatRadioValue}
                     values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio}/>
       </div>
-    );
+    )
     var rightPage = (<div className="right-page">
         <ChartSelect charts={this.state.store.chartTypes} value={this.state.store.selectedChart}
                      onChange={ChartBuilderActions.selectChart}/>
@@ -217,7 +217,7 @@ module.exports = React.createClass({
           </div>
         </div>
       </div>
-    );
+    )
 
     return (<form className="inline">
         <div className="visualization-builder-container">
@@ -225,6 +225,6 @@ module.exports = React.createClass({
           {rightPage}
         </div>
       </form>
-    );
+    )
   }
-});
+})

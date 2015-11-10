@@ -1,29 +1,29 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 var api = require('data/api.js')
-var moment = require('moment');
-var page = require('page');
-var Reflux = require('reflux');
+var moment = require('moment')
+var page = require('page')
+var Reflux = require('reflux')
 
-var NavigationStore = require('stores/NavigationStore');
-var ReviewTable = require('dashboard/sd/ReviewTable.js');
-var DocOverview = require('dashboard/sd/DocOverview.jsx');
-var DocForm = require('dashboard/sd/DocForm.jsx');
-var SourceDataDashboardStore = require('stores/SourceDataDashboardStore');
-var SourceDataDashboardAction = require('actions/SourceDataDashboardActions');
+var NavigationStore = require('stores/NavigationStore')
+var ReviewTable = require('dashboard/sd/ReviewTable.js')
+var DocOverview = require('dashboard/sd/DocOverview.jsx')
+var DocForm = require('dashboard/sd/DocForm.jsx')
+var SourceDataDashboardStore = require('stores/SourceDataDashboardStore')
+var SourceDataDashboardAction = require('actions/SourceDataDashboardActions')
 
-var TitleMenu = require('component/TitleMenu.jsx');
-var MenuItem = require('component/MenuItem.jsx');
-var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
+var TitleMenu = require('component/TitleMenu.jsx')
+var MenuItem = require('component/MenuItem.jsx')
+var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup')
 
 var {
     Datascope, LocalDatascope,
     SimpleDataTable, SimpleDataTableColumn,
     Paginator, SearchBar,
     FilterPanel, FilterDateRange
-    } = require('react-datascope');
+    } = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
     mixins : [
@@ -48,26 +48,26 @@ var SourceDataDashboard = React.createClass({
     },
 
     componentWillMount: function (nextProps, nextState) {
-        var data = SourceDataDashboardAction.getDocObj(this.props.doc_id);
-        this.setState({doc_obj: data.doc_obj});
+        var data = SourceDataDashboardAction.getDocObj(this.props.doc_id)
+        this.setState({doc_obj: data.doc_obj})
     },
 
     componentWillUpdate: function (nextProps, nextState) {
         if (nextProps.doc_id != this.props.doc_id) {
-            return;
+            return
         }
     },
 
 
     render: function () {
-        var loading = this.props.loading;
-        var campaign = this.props.campaign;
-        var location = this.props.location;
-        var loading = this.props.loading;
-        var doc_id = this.props.doc_id;
+        var loading = this.props.loading
+        var campaign = this.props.campaign
+        var location = this.props.location
+        var loading = this.props.loading
+        var doc_id = this.props.doc_id
         var doc_tab = this.props.doc_tab
 
-        var doc_obj = this.state.doc_obj;
+        var doc_obj = this.state.doc_obj
 
         if (!doc_obj) {
             return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
@@ -83,18 +83,18 @@ var SourceDataDashboard = React.createClass({
                 return {
                     title: d.doc_title,
                     value: d.id
-                };
+                }
             }),
-            this._setDocId);
+            this._setDocId)
 
         var doc_tabs = MenuItem.fromArray(
             _.map(['viewraw', 'mapping', 'validate', 'results', 'doc_index'], d => {
                 return {
                     title: d,
                     value: d
-                };
+                }
             }),
-            this._setDocTab);
+            this._setDocTab)
 
         // navigation to set doc-id and doc-processor //
         var review_nav =
@@ -112,7 +112,7 @@ var SourceDataDashboard = React.createClass({
                     </TitleMenu>
                 </div>
 
-            </div>;
+            </div>
 
         const table_definition = {
             'viewraw': {
@@ -141,7 +141,7 @@ var SourceDataDashboard = React.createClass({
                 'fields': ['indicator_id', 'indicator__short_name', 'value'],
                 'search_fields': ['indicator_id', 'indicator__short_name', 'value'],
             },
-        };
+        }
 
 
         var search_fields = table_definition[doc_tab]['search_fields']
@@ -151,9 +151,9 @@ var SourceDataDashboard = React.createClass({
                     fieldNames={search_fields}
                     placeholder="search ..."
                     />
-            </div>;
+            </div>
 
-        var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab;
+        var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
         // data table //
         var review_table = <ReviewTable
             title='sample title'
@@ -177,16 +177,16 @@ var SourceDataDashboard = React.createClass({
 
         if (doc_tab == 'doc_index') {
             var docForm = <div><DocForm></DocForm></div>
-            var review_breakdown = '';
+            var review_breakdown = ''
         }
         else {
-            var docForm = '';
+            var docForm = ''
             var review_breakdown = <DocOverview
                 key={table_key + 'breakdown'}
                 loading={loading}
                 doc_id={doc_id}
                 >
-            </DocOverview>;
+            </DocOverview>
         }
 
         var page_title = doc_obj.doc_title + ' - ' + doc_tab
@@ -205,32 +205,32 @@ var SourceDataDashboard = React.createClass({
                         {review_breakdown}
                     </div>
                 </div>
-            </div>);
+            </div>)
     },
 
     _setDocId: function (doc_id) {
-        this._navigate({doc_id: doc_id});
-        this.forceUpdate();
+        this._navigate({doc_id: doc_id})
+        this.forceUpdate()
     },
 
     _setDocTab: function (doc_tab) {
-        this._navigate({doc_tab: doc_tab});
-        this.forceUpdate();
+        this._navigate({doc_tab: doc_tab})
+        this.forceUpdate()
     },
 
     _navigate: function (params) {
-        var slug = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-        var location = _.get(params, 'location', this.props.location.name);
-        var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-        var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab);
-        var doc_id = _.get(params, 'doc_id', this.props.doc_id);
+        var slug = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title))
+        var location = _.get(params, 'location', this.props.location.name)
+        var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+        var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab)
+        var doc_id = _.get(params, 'doc_id', this.props.doc_id)
 
         if (_.isNumber(location)) {
-            location = _.find(this.state.locations, r => r.id === location).name;
+            location = _.find(this.state.locations, r => r.id === location).name
         }
 
-        page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id);
+        page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id)
     }
-});
+})
 
-module.exports = SourceDataDashboard;
+module.exports = SourceDataDashboard

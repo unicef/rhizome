@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var moment = require('moment');
-var React  = require('react');
+var _      = require('lodash')
+var moment = require('moment')
+var React  = require('react')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
 module.exports = React.createClass({
   propTypes : {
@@ -17,11 +17,11 @@ module.exports = React.createClass({
     return {
       data    : [],
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading = this.props.loading;
+    var loading = this.props.loading
 
     var series = _(this.props.data)
       .groupBy(_.method('campaign.start_date.getFullYear'))
@@ -34,7 +34,7 @@ module.exports = React.createClass({
               return {
                 month : Number(month),
                 value : _(d).pluck('value').sum()
-              };
+              }
             })
             .sortBy('month')
             .transform(function (result, d) {
@@ -44,20 +44,20 @@ module.exports = React.createClass({
                 value : d.value,
                 x     : moment({ M : d.month}).toDate(),
                 total : _.get(_.last(result), 'total', 0) + _.get(d, 'value', 0)
-              };
+              }
 
-              result.push(o);
+              result.push(o)
 
-              return result;
+              return result
             })
             .value()
-        };
+        }
       })
       .sortBy('name')
-      .value();
+      .value()
 
     // Convert a 2-digit month number to a 3-character month name
-    var fmtMonth = function (d) { return moment(d, 'MM').format('MMM'); };
+    var fmtMonth = function (d) { return moment(d, 'MM').format('MMM'); }
 
     var props = _.merge({},
       _.omit(this.props, 'id', 'data'), {
@@ -69,10 +69,10 @@ module.exports = React.createClass({
           xFormat : d3.time.format('%b'),
           y       : _.property('total')
         }
-      });
+      })
 
     return (
       <Chart type="LineChart" {...props} />
-    );
+    )
   }
 })

@@ -1,14 +1,14 @@
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var React = require('react')
+var Reflux = require('reflux')
 
-var TitleMenu = require('component/TitleMenu.jsx');
-var MenuItem = require('component/MenuItem.jsx');
-var FileInput = require('react-file-input');
-var Dropzone = require('react-dropzone');
+var TitleMenu = require('component/TitleMenu.jsx')
+var MenuItem = require('component/MenuItem.jsx')
+var FileInput = require('react-file-input')
+var Dropzone = require('react-dropzone')
 
-var DocFormActions = require('actions/DocFormActions');
-var DocFormStore = require('stores/DocFormStore');
+var DocFormActions = require('actions/DocFormActions')
+var DocFormStore = require('stores/DocFormStore')
 
 
 var DocForm = React.createClass({
@@ -30,7 +30,7 @@ var DocForm = React.createClass({
             doc_detail_meta: null,
             doc_is_refreshed: false,
             new_doc_title: null,
-        };
+        }
     },
 
     onDrop: function (files) {
@@ -39,24 +39,24 @@ var DocForm = React.createClass({
 
     // prevent form from submitting; we are going to capture the file contents
     handleSubmit: function (e) {
-        e.preventDefault();
+        e.preventDefault()
     },
 
     // when a file is passed to the input field, retrieve the contents as a
     // base64-encoded data URI and save it to the component's state
     handleFile: function (file) {
-        var self = this;
+        var self = this
 
-        var reader = new FileReader();
+        var reader = new FileReader()
 
         reader.onload = function (upload) {
-            DocFormActions.getData(file, upload);
+            DocFormActions.getData(file, upload)
         }
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file)
     },
 
     setDocConfig: function (config_type, config_val) {
-        var self = this;
+        var self = this
         var doc_detail_type_lookup = {}
 
         var doc_detail_meta = self.state.doc_detail_meta
@@ -70,12 +70,12 @@ var DocForm = React.createClass({
             document_id: self.state.created_doc_id,
             doc_detail_type_id: doc_detail_type_id,
             doc_detail_value: config_val
-        }, config_type);
+        }, config_type)
     },
 
     syncDocData: function (config_val) {
-        var self = this;
-        DocFormActions.transformUpload({document_id: self.state.created_doc_id});
+        var self = this
+        DocFormActions.transformUpload({document_id: self.state.created_doc_id})
     },
 
     buildHeaderList: function (config_type) {
@@ -86,9 +86,9 @@ var DocForm = React.createClass({
                 return {
                     title: d.replace('"', ''),
                     value: d.replace('"', ''),
-                };
+                }
             }),
-            this.setDocConfig.bind('config_type', config_type));
+            this.setDocConfig.bind('config_type', config_type))
     },
 
     // return the structure to display and bind the onChange, onSubmit handlers
@@ -140,7 +140,7 @@ var DocForm = React.createClass({
 
 
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
-            var next_link = "/datapoints/source-data/Nigeria/2015/06/viewraw/" + this.state.created_doc_id;
+            var next_link = "/datapoints/source-data/Nigeria/2015/06/viewraw/" + this.state.created_doc_id
             // FIXME ^^
             var reviewBtn = <a href={next_link} className="button"> Review Upload</a>
         }
@@ -153,13 +153,13 @@ var DocForm = React.createClass({
             width: '50%',
             padding: '10px',
             border: '2px dashed #0087F7',
-        };
+        }
 
         var dropZoneStyle = {
             minHeight: '100px',
             padding: '54px 54px',
             marginRight: '150px',
-        };
+        }
 
         // since JSX is case sensitive, be sure to use 'encType'
         return (<div style={divZoneStyle}>
@@ -169,9 +169,9 @@ var DocForm = React.createClass({
             {fileConfigForm}
             {refreshBtn}
             {reviewBtn}
-        </div>);
+        </div>)
     },
-});
+})
 
 
-module.exports = DocForm;
+module.exports = DocForm

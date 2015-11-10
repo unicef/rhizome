@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _     = require('lodash')
+var React = require('react')
 
-var Chart      = require('component/Chart.jsx');
-var DonutChart = require('component/DonutChart.jsx');
-var Monitoring = require('dashboard/nco/Monitoring.jsx');
+var Chart      = require('component/Chart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
+var Monitoring = require('dashboard/nco/Monitoring.jsx')
 
 var ODKMap = React.createClass({
   propTypes : {
@@ -16,14 +16,14 @@ var ODKMap = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading    = this.props.loading;
-    var data       = this.props.data;
+    var loading    = this.props.loading
+    var data       = this.props.data
 
-    var missedChildrenMap = data.nonCompliance;
+    var missedChildrenMap = data.nonCompliance
 
     return <div className='row'>
         <h4> Missed Children</h4>
@@ -37,6 +37,6 @@ var ODKMap = React.createClass({
           }} />
         </div>
   }
-});
+})
 
-module.exports = ODKMap;
+module.exports = ODKMap

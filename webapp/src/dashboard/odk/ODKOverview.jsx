@@ -1,24 +1,24 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _     = require('lodash')
+var React = require('react')
 
-var Chart      = require('component/Chart.jsx');
-var DonutChart = require('component/DonutChart.jsx');
-var Monitoring = require('dashboard/nco/Monitoring.jsx');
+var Chart      = require('component/Chart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
+var Monitoring = require('dashboard/nco/Monitoring.jsx')
 
 function donutLabel(data, labelText) { // FIXME this is repeated in nco/overview
-  var value = _.get(data, '[0].value');
+  var value = _.get(data, '[0].value')
 
   if (!_.isFinite(value)) {
-    return;
+    return
   }
 
-  var fmt   = d3.format('%');
-  var label;
+  var fmt   = d3.format('%')
+  var label
 
   if (labelText) {
-    label = (<span><br /><label>{labelText}</label></span>);
+    label = (<span><br /><label>{labelText}</label></span>)
   }
 
   return (<span>{fmt(value)}{label}</span>)
@@ -33,12 +33,12 @@ var ODKOverview = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading    = this.props.loading;
-    var data       = this.props.data;
+    var loading    = this.props.loading
+    var data       = this.props.data
 
     var options = {
       innerRadius : 0.6,
@@ -46,7 +46,7 @@ var ODKOverview = React.createClass({
       labelStyle  : {
         lineHeight : 1
       }
-    };
+    }
 
     var data_coverage_donut = <div>
         <div className='small-12 columns'>
@@ -65,6 +65,6 @@ var ODKOverview = React.createClass({
       <div>{data_coverage_donut}</div>
     </div>
   }
-});
+})
 
-module.exports = ODKOverview;
+module.exports = ODKOverview

@@ -1,30 +1,30 @@
-'use strict';
+'use strict'
 
-var React = require('react');
-var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx');
+var React = require('react')
+var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx')
 
 var HomepageChartsSection = React.createClass({
     getManagementDashboardUrl: function() {
-      var [year, month] = this.props.date.split('-');
-      return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`;
+      var [year, month] = this.props.date.split('-')
+      return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
     },
 
     getDistrictSummaryUrl: function() {
-      var [year, month] = this.props.date.split('-');
-      return `/datapoints/district-dashboard/${this.props.location}/${year}/${month}`;
+      var [year, month] = this.props.date.split('-')
+      return `/datapoints/district-dashboard/${this.props.location}/${year}/${month}`
     },
 
     getNGACampaignMonitoringUrl: function() {
-      var [year, month] = this.props.date.split('-');
-      return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`;
+      var [year, month] = this.props.date.split('-')
+      return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
     },
 
 
     render: function () {
-        var dashboard = React.createElement(HomepageCharts, this.props.data);
-        var chartId = `${this.props.location.toLowerCase()}-chart`;
+        var dashboard = React.createElement(HomepageCharts, this.props.data)
+        var chartId = `${this.props.location.toLowerCase()}-chart`
 
-        var controls;
+        var controls
         if(this.props.location === 'Nigeria') {
             controls =
               <div className="chart-button-group">
@@ -63,8 +63,8 @@ var HomepageChartsSection = React.createClass({
                 </div>
 
             </div>
-        );
+        )
     }
-});
+})
 
-module.exports = HomepageChartsSection;
+module.exports = HomepageChartsSection

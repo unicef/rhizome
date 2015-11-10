@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var moment = require('moment');
+var moment = require('moment')
 
 var CampaignMenuItem = React.createClass({
   propTypes : {
@@ -18,14 +18,14 @@ var CampaignMenuItem = React.createClass({
           <CampaignMenuItem
             campaign={campaign}
             sendValue={sendValue} />
-        );
-      });
+        )
+      })
     }
   },
 
   render : function () {
-    var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)';
-    var date = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMMM YYYY');
+    var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)'
+    var date = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
 
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>
@@ -33,13 +33,13 @@ var CampaignMenuItem = React.createClass({
           {this.props.campaign.slug} {percentageComplete}
         </a>
       </li>
-    );
+    )
   },
 
   _onClick : function () {
-    this.props.sendValue(this.props.campaign.id);
+    this.props.sendValue(this.props.campaign.id)
   }
 
-});
+})
 
-module.exports = CampaignMenuItem;
+module.exports = CampaignMenuItem

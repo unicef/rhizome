@@ -1,4 +1,4 @@
-var React  = require('react');
+var React  = require('react')
 
 module.exports = React.createClass({
   propTypes: {
@@ -7,10 +7,10 @@ module.exports = React.createClass({
   	onChange: React.PropTypes.func.isRequired,
   },
   _handleChange: function(event){
-    this.props.onChange(event.target.value);
+    this.props.onChange(event.target.value)
   },
   render: function(){
-      var self = this;
+      var self = this
       var chartBoxes = this.props.charts.map(function(chart, index){
         return (
           <div key={chart.name} className={"chart-box-wrapper " + (chart.name == self.props.value ? "active" : '')}>
@@ -19,8 +19,8 @@ module.exports = React.createClass({
               {chart.name}
 	          </div>
 	        </div>
-        );
-      });
-      return (<div className="chart-select">{chartBoxes}</div>);
+        )
+      })
+      return (<div className="chart-select">{chartBoxes}</div>)
   }
-});
+})

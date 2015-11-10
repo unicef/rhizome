@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _     = require('lodash')
+var React = require('react')
 
-var Chart      = require('component/Chart.jsx');
-var DonutChart = require('component/DonutChart.jsx');
-var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx');
+var Chart      = require('component/Chart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
+var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx')
 
 function prep (data) {
   return _(data)
@@ -14,7 +14,7 @@ function prep (data) {
     .flatten()
     .groupBy('indicator.short_name')
     .map((v, n) => { return { name : n, values : v }; })
-    .value();
+    .value()
 }
 
 var ODKBreakdown = React.createClass({
@@ -26,12 +26,12 @@ var ODKBreakdown = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading    = this.props.loading;
-    var data       = this.props.data;
+    var loading    = this.props.loading
+    var data       = this.props.data
 
     var options = {
       x : _.property('value'),
@@ -42,7 +42,7 @@ var ODKBreakdown = React.createClass({
         bottom : 18,
         left   : 80
       }
-    };
+    }
 
     return <div>
         <div className='row'>
@@ -87,6 +87,6 @@ var ODKBreakdown = React.createClass({
     </div>
     </div>
   }
-});
+})
 
-module.exports = ODKBreakdown;
+module.exports = ODKBreakdown

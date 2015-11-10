@@ -1,15 +1,15 @@
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var React = require('react')
+var Reflux = require('reflux')
 
-var RegionTitleMenu = require('component/RegionTitleMenu');
-var Modal = require('react-modal');
+var RegionTitleMenu = require('component/RegionTitleMenu')
+var Modal = require('react-modal')
 
-var SubmissionModalStore = require('stores/SubmissionModalStore');
+var SubmissionModalStore = require('stores/SubmissionModalStore')
 
-var appElement = document.getElementById('main');
-Modal.setAppElement(appElement);
-Modal.injectCSS();
+var appElement = document.getElementById('main')
+Modal.setAppElement(appElement)
+Modal.injectCSS()
 
 var SubmissionModal = React.createClass({
     propTypes: {
@@ -26,28 +26,28 @@ var SubmissionModal = React.createClass({
 
     openModal: function () {
         SubmissionModalStore.getSubmission({id: this.props.source_submission_id}).then(data => {
-            this.setState({submission_data: data, modalIsOpen: true});
-        });
+            this.setState({submission_data: data, modalIsOpen: true})
+        })
     },
 
     closeModal: function () {
-        this.setState({modalIsOpen: false});
+        this.setState({modalIsOpen: false})
     },
 
     render: function () {
         var source_submission_id = this.props.source_submission_id
-        var modalStyle = {width: 650, height: 500, marginLeft: 400};
+        var modalStyle = {width: 650, height: 500, marginLeft: 400}
 
-        var submission_data = [];
+        var submission_data = []
         if (this.state.modalIsOpen &&
             this.state.submission_data != null &&
             this.state.submission_data.submission_json != null
         ) {
-            var submission_json = this.state.submission_data.submission_json;
+            var submission_json = this.state.submission_data.submission_json
             _.forIn(submission_json, function (value, key) {
                 submission_data.push(<li><b>{key}</b> : {value} </li>)
-            });
-        };
+            })
+        }
 
         return <div>
             <button
@@ -66,6 +66,6 @@ var SubmissionModal = React.createClass({
         </div>
 
     },
-});
+})
 
-module.exports = SubmissionModal;
+module.exports = SubmissionModal

@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var React  = require('react');
-var moment = require('moment');
+var _      = require('lodash')
+var React  = require('react')
+var moment = require('moment')
 
-var Impact             = require('dashboard/management/Impact.jsx');
-var Performance        = require('dashboard/management/Performance.jsx');
-var Access             = require('dashboard/management/Access.jsx');
-var SocialData         = require('dashboard/management/SocialData.jsx');
-var BulletChartSection = require('./BulletChartSection.jsx');
-var DonutChart   = require('component/DonutChart.jsx');
+var Impact             = require('dashboard/management/Impact.jsx')
+var Performance        = require('dashboard/management/Performance.jsx')
+var Access             = require('dashboard/management/Access.jsx')
+var SocialData         = require('dashboard/management/SocialData.jsx')
+var BulletChartSection = require('./BulletChartSection.jsx')
+var DonutChart   = require('component/DonutChart.jsx')
 
 var ManagementDashboard = React.createClass({
   propTypes : {
@@ -26,42 +26,42 @@ var ManagementDashboard = React.createClass({
     return {
       data    : [],
       loading : true
-    };
+    }
   },
 
   render : function () {
-    var campaign   = this.props.campaign;
-    var printDate  = moment(campaign.start_date).format('MMM YYYY');
-    var data       = this.props.data;
-    var indicators = _.indexBy(this.props.indicators, 'id');
-    var loading    = this.props.loading;
-    var location     = _.get(this.props, 'location.name', '');
+    var campaign   = this.props.campaign
+    var printDate  = moment(campaign.start_date).format('MMM YYYY')
+    var data       = this.props.data
+    var indicators = _.indexBy(this.props.indicators, 'id')
+    var loading    = this.props.loading
+    var location     = _.get(this.props, 'location.name', '')
 
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
       .transform(function (result, charts, sectionName) {
-        var section = {};
+        var section = {}
         _.each(charts, (c, i) => {
-          section[_.camelCase(_.get(c, 'title', i))] = _.map(c.indicators, ind => indicators[ind]);
-        });
-        result[sectionName] = section;
+          section[_.camelCase(_.get(c, 'title', i))] = _.map(c.indicators, ind => indicators[ind])
+        })
+        result[sectionName] = section
       })
-      .value();
+      .value()
 
     if (data.__none__.supply.length != 0) {
       _.filter(data.__none__.supply, d => {
         if (_.isEqual(d.indicator.id, 194)) {
-          d.indicator.short_name = 'On-Time OPV Supply';
+          d.indicator.short_name = 'On-Time OPV Supply'
           if (!_.isNull(d.value)) {
-            d.value = 1 - d.value;
+            d.value = 1 - d.value
           }
           _.filter(d.indicator.bound_json, s => {
-              var tmpMaxVal = Math.round((1 - s.mn_val)*1000)/1000;
-              s.mn_val = Math.round((1 - s.mx_val)*1000)/1000;
-              s.mx_val = tmpMaxVal;
-          });
+              var tmpMaxVal = Math.round((1 - s.mn_val)*1000)/1000
+              s.mn_val = Math.round((1 - s.mx_val)*1000)/1000
+              s.mx_val = tmpMaxVal
+          })
         }
-      });
+      })
     }
 
     return (
@@ -122,8 +122,8 @@ var ManagementDashboard = React.createClass({
         </div>
 
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = ManagementDashboard;
+module.exports = ManagementDashboard

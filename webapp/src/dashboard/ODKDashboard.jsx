@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
-var ODKOverview = require('dashboard/odk/ODKOverview.jsx');
-var ODKMap = require('dashboard/odk/ODKmap.jsx');
-var ODKBreakdown = require('dashboard/odk/ODKBreakdown.jsx');
+var _     = require('lodash')
+var React = require('react')
+var ODKOverview = require('dashboard/odk/ODKOverview.jsx')
+var ODKMap = require('dashboard/odk/ODKmap.jsx')
+var ODKBreakdown = require('dashboard/odk/ODKBreakdown.jsx')
 
 var NCODashboard = React.createClass({
   propTypes : {
@@ -18,12 +18,12 @@ var NCODashboard = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var data    = this.props.data;
-    var loading = this.props.loading;
+    var data    = this.props.data
+    var loading = this.props.loading
 
     console.log('THIS IS THE DATA')
     console.log(data)
@@ -53,8 +53,8 @@ var NCODashboard = React.createClass({
         </section>
 
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = NCODashboard;
+module.exports = NCODashboard

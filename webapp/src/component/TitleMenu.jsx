@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
 var TitleMenu = React.createClass({
   mixins : [
@@ -20,12 +20,12 @@ var TitleMenu = React.createClass({
   getDefaultProps : function () {
     return {
       icon : 'fa-bars',
-    };
+    }
   },
 
   componentWillReceiveProps : function (nextProps) {
     if (nextProps.text !== this.props.text) {
-      this.setState({ open : false });
+      this.setState({ open : false })
     }
   },
 
@@ -37,9 +37,9 @@ var TitleMenu = React.createClass({
           <i className={'fa fa-stack-1x ' + this.props.icon}></i>
         </a>
       </div>
-    );
+    )
   }
 
-});
+})
 
-module.exports = TitleMenu;
+module.exports = TitleMenu

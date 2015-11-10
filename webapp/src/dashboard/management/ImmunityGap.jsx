@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var React  = require('react');
-var moment = require('moment');
+var _      = require('lodash')
+var React  = require('react')
+var moment = require('moment')
 
-var Chart = require('component/Chart.jsx');
-var ChartUtil = require('../utils/ChartUtil.js');
+var Chart = require('component/Chart.jsx')
+var ChartUtil = require('../utils/ChartUtil.js')
 
 
 var ImmunityGap = React.createClass({
@@ -15,12 +15,12 @@ var ImmunityGap = React.createClass({
   },
 
   render : function () {
-    var loading = this.props.loading;
+    var loading = this.props.loading
 
     var immunityGapData = ChartUtil.prepareUnderImmunizedData({
       data: this.props.data,
       campaign: this.props.campaign
-    });
+    })
 
     return (
       <div>
@@ -39,8 +39,8 @@ var ImmunityGap = React.createClass({
             yFormat : d3.format(',%')
           }} />
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = ImmunityGap;
+module.exports = ImmunityGap

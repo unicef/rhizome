@@ -1,4 +1,4 @@
-var React  = require('react');
+var React  = require('react')
 
 module.exports = React.createClass({
   propTypes: {
@@ -11,10 +11,10 @@ module.exports = React.createClass({
   getDefaultProps: function() {
     return {
       horizontal: false
-    };
+    }
   },
   _handleChange: function(event) {
-    this.props.onChange(event.target.value);
+    this.props.onChange(event.target.value)
   },
   render: function() {
     var radios = this.props.values.map((radio,index) => {
@@ -27,11 +27,11 @@ module.exports = React.createClass({
           <label htmlFor={radio.value}>{radio.title}</label>
         </div>
       )
-    });
+    })
     return (
       <div className="radio-group-container">
         <h4>{this.props.title}</h4>
         {radios}
-      </div>);
+      </div>)
   }
-});
+})

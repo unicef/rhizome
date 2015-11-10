@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var React = require('react')
+var Reflux = require('reflux')
 
-var NavMenu = require('component/NavMenu.jsx');
-var NavMenuItem = require('component/NavMenuItem.jsx');
-var NavigationStore = require('stores/NavigationStore');
-var MenuControl = require('mixin/MenuControl');
+var NavMenu = require('component/NavMenu.jsx')
+var NavMenuItem = require('component/NavMenuItem.jsx')
+var NavigationStore = require('stores/NavigationStore')
+var MenuControl = require('mixin/MenuControl')
 
 module.exports = React.createClass({
   mixins: [
@@ -16,21 +16,21 @@ module.exports = React.createClass({
   ],
 
   render : function () {
-    var dashboards = this.state.dashboards;
+    var dashboards = this.state.dashboards
 
     var builtins = NavMenuItem.fromArray(_(dashboards)
         .filter(d=>(d.builtin && d.id!=-4 && d.title.indexOf('Homepage')===-1))
         .map(function(d) {
           return _.assign({
             key: 'dashboard-nav-' + d.id
-          }, d);
+          }, d)
         })
         .value()
-      );
+      )
 
     if (!_.isUndefined(dashboards)) {
       if (dashboards.length > 14) {
-        dashboards = _.slice(dashboards, 0, 14);
+        dashboards = _.slice(dashboards, 0, 14)
       }
     }
 
@@ -39,10 +39,10 @@ module.exports = React.createClass({
       .map(function(d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
-        }, d);
+        }, d)
       })
       .value()
-    );
+    )
 
     return (
       <ul className="dashboards-nav">
@@ -70,6 +70,6 @@ module.exports = React.createClass({
           </a>
         </li>
       </ul>
-    );
+    )
   }
-});
+})
