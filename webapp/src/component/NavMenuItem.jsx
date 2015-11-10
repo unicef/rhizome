@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
 var NavMenuItem = React.createClass({
   propTypes : {
@@ -13,7 +13,7 @@ var NavMenuItem = React.createClass({
       return _.map(arr, function (item) {
         return (
           <NavMenuItem key={item.key} href={item.href}>{item.title}</NavMenuItem>
-        );
+        )
       })
     }
   },
@@ -25,8 +25,8 @@ var NavMenuItem = React.createClass({
           {this.props.children}
         </a>
       </li>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = NavMenuItem;
+module.exports = NavMenuItem

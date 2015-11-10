@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
+var _ = require('lodash')
+var React = require('react')
+var Reflux = require('reflux')
 
-var NavMenu = require('component/NavMenu.jsx');
-var NavMenuItem = require('component/NavMenuItem.jsx');
-var NavigationStore = require('stores/NavigationStore');
-var PermissionStore = require('stores/PermissionStore');
+var NavMenu = require('component/NavMenu.jsx')
+var NavMenuItem = require('component/NavMenuItem.jsx')
+var NavigationStore = require('stores/NavigationStore')
+var PermissionStore = require('stores/PermissionStore')
 
 var Navigation = React.createClass({
   mixins: [
@@ -17,13 +17,13 @@ var Navigation = React.createClass({
   render : function () {
     var dashboards = NavMenuItem.fromArray(_(this.state.dashboards)
       .filter(d => d.builtin)
-      .map(function(d) {
+      .map(function (d) {
         return _.assign({
           key: 'dashboard-nav-' + d.id
-        }, d);
+        }, d)
       })
       .value()
-    );
+    )
 
       var formLink = <NavMenuItem href='/datapoints/entry'>Enter Data via Form</NavMenuItem>
       var uploadLink = <NavMenuItem href='/datapoints/source-data'>Upload Data via CSV File</NavMenuItem>
@@ -35,8 +35,7 @@ var Navigation = React.createClass({
               {uploadLink}
             </NavMenu>
           </li>
-        );
-
+        )
 
     var manage = (
         <li>
@@ -44,7 +43,7 @@ var Navigation = React.createClass({
             <i className='fa fa-cogs'></i>&ensp;Manage System
           </a>
         </li>
-      );
+      )
 
     return (
       <nav>
@@ -82,8 +81,8 @@ var Navigation = React.createClass({
           </li>
         </ul>
       </nav>
-    );
+    )
   }
-});
+})
 
-module.exports = Navigation;
+module.exports = Navigation

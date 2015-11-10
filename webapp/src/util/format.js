@@ -1,25 +1,26 @@
-'use strict';
+'use strict'
 
-var moment = require('moment');
+var d3 = require('d3')
+var moment = require('moment')
 
-function general(value) {
-  var mantissa = Math.abs(value) - Math.floor(Math.abs(value));
-  var fmt = d3.format(mantissa > 0 ? '.4f' : 'n');
+function general (value) {
+  var mantissa = Math.abs(value) - Math.floor(Math.abs(value))
+  var fmt = d3.format(mantissa > 0 ? '.4f' : 'n')
 
-  return fmt(value);
+  return fmt(value)
 }
 
-function timeAxis(value) {
-	var m = moment(value);
+function timeAxis (value) {
+    var m = moment(value)
 
-	if (m.month() === 0) {
-		return m.format('YYYY');
-	}
+    if (m.month() === 0) {
+        return m.format('YYYY')
+    }
 
-	return m.format('MMM');
+    return m.format('MMM')
 }
 
 module.exports = {
-  general  : general,
-  timeAxis : timeAxis,
-};
+  general: general,
+  timeAxis: timeAxis
+}

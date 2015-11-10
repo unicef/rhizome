@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var Chart                = require('component/Chart.jsx');
-var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx');
+var Chart = require('component/Chart.jsx')
+var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx')
 
 function prep (data) {
   return _(data)
@@ -12,8 +12,8 @@ function prep (data) {
     .filter(v => _(v).pluck('value').some(_.isFinite))
     .flatten()
     .groupBy('indicator.short_name')
-    .map((v, n) => { return { name : n, values : v }; })
-    .value();
+    .map((v, n) => { return { name : n, values : v } })
+    .value()
 }
 
 var Breakdown = React.createClass({
@@ -25,12 +25,12 @@ var Breakdown = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var data    = this.props.data;
-    var loading = this.props.loading;
+    var data = this.props.data
+    var loading = this.props.loading
 
     var options = {
       x : _.property('value'),
@@ -46,7 +46,7 @@ var Breakdown = React.createClass({
     var groupedOptions = _.assign({
       barHeight : 7,
       padding   : 0.2
-    }, options);
+    }, options)
 
     return (
       <div>
@@ -113,9 +113,9 @@ var Breakdown = React.createClass({
         </div>
 
       </div>
-    );
-  },
+    )
+  }
 
-});
+})
 
-module.exports = Breakdown;
+module.exports = Breakdown

@@ -1,10 +1,8 @@
 import React from 'react'
-import Reflux from 'reflux'
 import _ from 'lodash'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 let ScatterAxisChooser = React.createClass({
-
   propTypes: {
     indicatorArray: React.PropTypes.array,
     xAxisValue: React.PropTypes.number,
@@ -33,15 +31,15 @@ let ScatterAxisChooser = React.createClass({
     }
   },
 
-  _updateXAxis(e){
-    this.props.onXAxisChange(parseInt(e.target.value))
+  _updateXAxis (e) {
+    this.props.onXAxisChange(parseInt(e.target.value, 10))
   },
 
-  _updateYAxis(e){
-    this.props.onYAxisChange(parseInt(e.target.value))
+  _updateYAxis (e) {
+    this.props.onYAxisChange(parseInt(e.target.value, 10))
   },
 
-  render() {
+  render () {
     let self = this
     let axisOptions = function (selectedValue, updateXAxis) {
       var hasSelected = false
@@ -50,17 +48,16 @@ let ScatterAxisChooser = React.createClass({
         if (!hasSelected && selected) hasSelected = true
         return <option value={indicator.id} selected={selected}>{indicator.name}</option>
       })
-      if (!hasSelected && self.props.indicatorArray.length > 0)
-        updateXAxis(self.props.indicatorArray[0].id)
+      if (!hasSelected && self.props.indicatorArray.length > 0) updateXAxis(self.props.indicatorArray[0].id)
       return result
     }
 
     return (
       <div>
-        <RadioGroup name="xFormat" title='X Format: '
+        <RadioGroup name='xFormat' title='X Format: '
           value={this.props.xFormatValue}
           values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
-        <RadioGroup name="yFormat" title='Y Format: '
+        <RadioGroup name='yFormat' title='Y Format: '
           value={this.props.yFormatValue}
           values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
         <div>

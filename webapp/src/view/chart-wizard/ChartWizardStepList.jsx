@@ -6,7 +6,7 @@ let ChartWizardStepList = React.createClass({
     onToggle: React.PropTypes.func
   },
 
-  render() {
+  render () {
     let children = this.props.children.map((item, idx) => {
       return React.addons.cloneWithProps(item, {
         onToggle: this.props.onToggle,

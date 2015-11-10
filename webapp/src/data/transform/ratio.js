@@ -1,5 +1,5 @@
 
-var _ = require('lodash');
+var _ = require('lodash')
 
 /**
  * Convert an array of indicators to a single ratio.
@@ -9,49 +9,49 @@ var _ = require('lodash');
  *
  * @returns a new array containing the ratio in the value property of each object.
  */
-module.exports = function ratio(numerator, denominator) {
-	'use strict';
+module.exports = function ratio (numerator, denominator) {
+    'use strict'
 
-	if (!(numerator instanceof Array)) {
-		numerator = [numerator];
-	}
+    if (!(numerator instanceof Array)) {
+        numerator = [numerator]
+    }
 
-	function model(data) {
-		var collection = [];
+    function model (data) {
+        var collection = []
 
-		for (var j = numerator.length - 1; j >= 0; --j) {
-			var series = [];
+        for (var j = numerator.length - 1 j >= 0 --j) {
+            var series = []
 
-			for (var i = data.length - 1; i >= 0; i--) {
-				var row        = data[i];
-				var indicators = _.indexBy(row.indicators, 'indicator');
-				var n, d;
+            for (var i = data.length - 1 i >= 0 i--) {
+                var row = data[i]
+                var indicators = _.indexBy(row.indicators, 'indicator')
+                var n, d
 
-				try {
-					n = Number(indicators[numerator[j]].value);
-				} catch (e) {
-					n = 0;
-				}
+                try {
+                    n = Number(indicators[numerator[j]].value)
+                } catch (e) {
+                    n = 0
+                }
 
-				try {
-					d = Number(indicators[denominator].value);
-				} catch (e) {
-					d = 0;
-				}
+                try {
+                    d = Number(indicators[denominator].value)
+                } catch (e) {
+                    d = 0
+                }
 
-				series.push({
-					location    : row.location,
-					campaign  : row.campaign,
-					indicators: row.indicators,
-					value     : n / d
-				});
-			}
+                series.push({
+                    location: row.location,
+                    campaign: row.campaign,
+                    indicators: row.indicators,
+                    value: n / d
+                })
+            }
 
-			collection.push(series);
-		}
+            collection.push(series)
+        }
 
-		return collection;
-	}
+        return collection
+    }
 
-	return model;
-};
+    return model
+}

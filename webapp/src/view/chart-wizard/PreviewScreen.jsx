@@ -5,10 +5,10 @@ let PreviewScreen = React.createClass({
     isLoading: React.PropTypes.bool
   },
 
-  render() {
+  render () {
     let loading = (
-      <div className="loading">
-        <i className="fa fa-spinner fa-spin fa-5x"></i>
+      <div className='loading'>
+        <i className='fa fa-spinner fa-spin fa-5x'></i>
         <div>Loading</div>
       </div>
     )

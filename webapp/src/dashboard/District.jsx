@@ -1,23 +1,23 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var Layer = require('react-layer');
+var _ = require('lodash')
+var React = require('react')
+var Layer = require('react-layer')
 
-var Chart = require('component/Chart.jsx');
-var HeatMapTooltip = require('component/HeatMapTooltip.jsx');
-var Tooltip = require('component/Tooltip.jsx');
+var Chart = require('component/Chart.jsx')
+var HeatMapTooltip = require('component/HeatMapTooltip.jsx')
+var Tooltip = require('component/Tooltip.jsx')
 
-var DashboardActions = require('actions/DashboardActions');
+var DashboardActions = require('actions/DashboardActions')
 
-var formatUtil = require('util/format');
-var legend = require('chart/renderer/legend');
+var formatUtil = require('util/format')
+var legend = require('chart/renderer/legend')
 
 var District = React.createClass({
   getInitialState: function () {
     return {
-      showEmpty: false
-    };
+      showEmpty : false
+    }
   },
 
   render: function () {
@@ -25,11 +25,11 @@ var District = React.createClass({
     var indicators = _(this.props.indicators)
       .indexBy('id')
       .mapValues(ind => !_.isEmpty(ind.bound_json))
-      .value();
+      .value()
 
     // List of indicator definitions based on the hash of indicator IDs who
     // have bounds defined
-    var indicatorList = _.filter(this.props.indicators, ind => indicators[ind.id]);
+    var indicatorList = _.filter(this.props.indicators, ind => indicators[ind.id])
 
     // Map indicator IDs to a d3 threshold scale for determining into what
     // target range a value falls for a given indicator
@@ -39,28 +39,28 @@ var District = React.createClass({
         var bounds = _(ind.bound_json)
           .reject(b => b.bound_name === 'invalid')
           .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
-          .sortBy('1');
+          .sortBy('1')
 
-        var extents = bounds.pluck('1').slice(1).value();
-        var names = bounds.pluck('0').value();
+        var extents = bounds.pluck('1').slice(1).value()
+        var names = bounds.pluck('0').value()
 
         return d3.scale.threshold()
           .domain(extents)
-          .range(names);
+          .range(names)
       })
-      .value();
+      .value()
 
     // Scale for coloring based on pre-defined values
     var scale = d3.scale.ordinal()
       .domain(['bad', 'ok', 'good'])
-      .range(['#DB5344', '#79909F', '#2FB0D3']);
+      .range(['#DB5344', '#79909F', '#2FB0D3'])
 
     var lgnd = legend()
       .size(14)
       .scale(d3.scale.ordinal()
         .domain(['bad', 'ok', 'good'])
         .range(['#DB5344', '#79909F', '#2FB0D3'])
-    );
+      )
 
     // Clean the data by first removing any data whose values are not finite -
     // i.e. undefined - or whose indicators have no target bounds defined, then
@@ -71,7 +71,7 @@ var District = React.createClass({
         values: _.filter(s.values, d => indicators[d.indicator.id] && _.isFinite(d.value))
       }))
       .reject(s => _.isEmpty(s.values))
-      .value();
+      .value()
 
     // Hash indicator IDs to a boolean indicating whether that column is
     // non-empty (true) or empty (false)
@@ -80,13 +80,13 @@ var District = React.createClass({
       .flatten()
       .groupBy('indicator.id')
       .mapValues(v => _(v).pluck('value').some(_.isFinite))
-      .value();
+      .value()
 
     // Determine what headers are shown based on whether or not the "Show empty
     // columns" checkbox is on
-    var headers = this.state.showEmpty ?
-      indicatorList :
-      _.filter(indicatorList, i => visible[i.id]);
+    var headers = this.state.showEmpty
+      ? indicatorList
+      : _.filter(indicatorList, i => visible[i.id])
 
     var options = {
       cellSize: 36,
@@ -100,7 +100,7 @@ var District = React.createClass({
       onColumnHeadOut: this._onHeaderOut,
       onClick: this._onlocationClick,
       onRowClick: this._onlocationClick
-    };
+    }
 
     return (
       <div id='district-dashboard'>
@@ -124,44 +124,44 @@ var District = React.createClass({
           </div>
         </div>
       </div>
-    );
+    )
   },
 
   componentWillUnmount: function () {
     if (this.tip) {
-      this.tip.destroy();
+      this.tip.destroy()
     }
 
     if (this.timer) {
-      window.clearTimeout(this.time);
+      window.clearTimeout(this.time)
     }
   },
 
-  _setShowEmpty: function (evt) {
-    this.setState({showEmpty: evt.target.checked});
+  _setShowEmpty : function (evt) {
+    this.setState({ showEmpty : evt.target.checked })
   },
 
   _onMouseMove: function (d) {
     if (this.timer) {
-      window.clearTimeout(this.timer);
-      this.timer = null;
+      window.clearTimeout(this.timer)
+      this.timer = null
     }
 
-    var column = d.indicator.short_name;
+    var column = d.indicator.short_name
     var data = _(this.props.data['district-heat-map'])
       .pluck('values')
       .flatten()
       .filter(datum => datum.indicator.short_name === column)
-      .clone();
+      .clone()
 
-    var evt = d3.event;
+    var evt = d3.event
     var total = _(this.props.data['district-heat-map'])
       .map(s => ({
         name: s.name,
         values: _.filter(s.values, d => _.isFinite(d.value))
       }))
       .reject(s => _.isEmpty(s.values))
-      .size();
+      .size()
 
     var render = function () {
       var tip = React.createElement(HeatMapTooltip, {
@@ -172,44 +172,44 @@ var District = React.createClass({
         indicator: d.indicator,
         row: d.location.name,
         value: d.value
-      });
+      })
 
       return React.createElement(Tooltip, {
         left: evt.pageX,
         top: evt.pageY
-      }, tip);
-    };
-
-    if (!this.tip) {
-      this.tip = new Layer(document.body, render);
-    } else {
-      this.tip._render = render;
+      }, tip)
     }
 
-    this.tip.render();
+    if (!this.tip) {
+      this.tip = new Layer(document.body, render)
+    } else {
+      this.tip._render = render
+    }
+
+    this.tip.render()
   },
 
   _onMouseOut: function (d) {
     if (this.tip && !this.timer) {
-      var self = this;
+      var self = this
 
       this.timer = window.setTimeout(function () {
-        self.tip.destroy();
-        self.tip = null;
-        self.timer = null;
-      }, 200);
+        self.tip.destroy()
+        self.tip = null
+        self.timer = null
+      }, 200)
     }
   },
 
   _onHeaderOver: function (d) {
-    var indicator = _.find(this.props.indicators, ind => ind.short_name === d);
+    var indicator = _.find(this.props.indicators, ind => ind.short_name === d)
 
     if (this.timer) {
-      window.clearTimeout(this.timer);
-      this.timer = null;
+      window.clearTimeout(this.timer)
+      this.timer = null
     }
 
-    var evt = d3.event;
+    var evt = d3.event
 
     var render = function () {
       return (
@@ -220,27 +220,27 @@ var District = React.createClass({
             <p>{indicator.description}</p>
           </div>
         </Tooltip>
-      );
-    };
-
-    if (!this.tip) {
-      this.tip = new Layer(document.body, render);
-    } else {
-      this.tip._render = render;
+      )
     }
 
-    this.tip.render();
+    if (!this.tip) {
+      this.tip = new Layer(document.body, render)
+    } else {
+      this.tip._render = render
+    }
+
+    this.tip.render()
   },
 
   _onHeaderOut: function () {
     if (this.tip) {
-      this.tip.destroy();
-      this.tip = null;
+      this.tip.destroy()
+      this.tip = null
     }
 
     if (this.timer) {
-      window.clearTimeout(this.timer);
-      this.timer = null;
+      window.clearTimeout(this.timer)
+      this.timer = null
     }
   },
 
@@ -248,10 +248,10 @@ var District = React.createClass({
     var params = {
       dashboard: 'management-dashboard',
       location: _.isString(d) ? d : d.location.name
-    };
+    }
 
-    DashboardActions.navigate(params);
+    DashboardActions.navigate(params)
   }
-});
+})
 
-module.exports = District;
+module.exports = District

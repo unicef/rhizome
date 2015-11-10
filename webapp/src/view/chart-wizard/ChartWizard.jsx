@@ -33,7 +33,7 @@ const defaultChartDef = {
   yFormat: ',.0f'
 }
 
-function filterMenu(items, pattern) {
+function filterMenu (items, pattern) {
   if (!pattern || pattern.length < 3) {
     return items
   }
@@ -43,7 +43,7 @@ function filterMenu(items, pattern) {
   return _(items).map(match).flatten().value()
 }
 
-function findMatches(item, re) {
+function findMatches (item, re) {
   let matches = []
 
   if (re.test(_.get(item, 'title'))) {
@@ -59,7 +59,7 @@ function findMatches(item, re) {
   return matches
 }
 
-function findChartType(type) {
+function findChartType (type) {
   return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
 }
 
@@ -71,34 +71,34 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
-  getInitialState() {
+  getInitialState () {
     return {
       refer: 'location'
     }
   },
 
-  componentDidMount() {
+  componentDidMount () {
     this.chartDef = this.props.chartDef || defaultChartDef
     ChartWizardActions.initialize(this.chartDef)
   },
 
-  saveChart() {
+  saveChart () {
     ChartWizardActions.saveChart(this.props.save)
   },
 
-  toggleStep(refer) {
+  toggleStep (refer) {
     this.setState({
       refer: refer
     })
   },
 
-  setLocationSearch(pattern) {
+  setLocationSearch (pattern) {
     this.setState({
       locationSearch: pattern
     })
   },
 
-  render() {
+  render () {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
     let locationStep = (
@@ -193,8 +193,8 @@ let ChartWizard = React.createClass({
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
-        {findChartType(this.state.data.chartDef.type).chooseAxis ?
-          (
+        {findChartType(this.state.data.chartDef.type).chooseAxis
+          ? (
             <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
               xFormatValue={this.state.data.xFormatValue}
               onXFormatChange={ChartWizardActions.changeXFormatRadio}
@@ -206,8 +206,8 @@ let ChartWizard = React.createClass({
               onXAxisChange={ChartWizardActions.changeXAxis}
               onYAxisChange={ChartWizardActions.changeYAxis}
             />
-          ) :
-          (
+          )
+          : (
             <RadioGroup name='format' title='Format: '
               value={this.state.data.yFormatValue}
               values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
@@ -259,9 +259,9 @@ let ChartWizard = React.createClass({
           </ChartWizardStep>
         </ChartWizardStepList>
         <PreviewScreen isLoading={this.state.data.isLoading}>
-          {this.state.data.canDisplayChart ?
-            chart :
-            (<div className='empty'>No Data</div>)
+          {this.state.data.canDisplayChart
+            ? chart
+            : (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
         <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>

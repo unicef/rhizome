@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var d3 = require('d3');
-var moment = require('moment');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var moment = require('moment')
+var React = require('react')
 
-var browser = require('util/browser');
-var colors = require('colors');
-var data = require('util/data');
-var format = require('util/format');
-var hoverLine = require('chart/behavior/hover-line');
-var label = require('chart/renderer/label');
+var browser = require('util/browser')
+var colors = require('colors')
+var data = require('util/data')
+var format = require('util/format')
+var hoverLine = require('chart/behavior/hover-line')
+var label = require('chart/renderer/label')
 
 var DEFAULTS = {
   margin: {
@@ -26,36 +26,35 @@ var DEFAULTS = {
   xFormat: format.timeAxis,
   y: _.property('value'),
   yFormat: d3.format(',d')
-};
+}
 
-function LineChart() {
+function LineChart () {
 }
 
 _.extend(LineChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-
-    ////remove the null value in each series
-    //trello #427
-    //management-dashboard-conversion-rates-line-chart issue
+    // //remove the null value in each series
+    // trello #427
+    // management-dashboard-conversion-rates-line-chart issue
 
     series = _(series).each(serie => {
       serie.values = _(serie.values).reject(item => {
-        return item.value == null;
-      }).value();
-    }).value();
+        return item.value === null
+      }).value()
+    }).value()
 
-    options = _.assign(this._options, options);
+    options = _.assign(this._options, options)
 
     var margin = options.margin
 
-    var svg = this._svg;
-    var width = this._width - margin.left - margin.right;
-    var height = this._height - margin.top - margin.bottom;
+    var svg = this._svg
+    var width = this._width - margin.left - margin.right
+    var height = this._height - margin.top - margin.bottom
 
-    var dataColor = options.color;
-    var colorRange = ['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc'];
+    var dataColor = options.color
+    var colorRange = ['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc']
 
     if (!_.isFunction(dataColor)) {
       var dataColorScale = d3.scale.ordinal()
@@ -64,97 +63,97 @@ _.extend(LineChart.prototype, {
           .uniq()
           .sortBy()
           .value())
-        .range(colorRange);
+        .range(colorRange)
 
-      dataColor = _.flow(options.seriesName, dataColorScale);
+      dataColor = _.flow(options.seriesName, dataColorScale)
     }
 
-    var domain = _.isFunction(options.domain) ?
-      options.domain(series) :
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.x)
-        .value());
+    var domain = _.isFunction(options.domain)
+      ? options.domain(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.x)
+          .value())
 
     var xScale = d3.time.scale()
       .domain(domain)
-      .range([0, width]);
+      .range([0, width])
 
     var dataXScale = d3.time.scale()
       .domain(domain)
-      .range([30, width]);
+      .range([30, width])
 
-    var range = _.isFunction(options.range) ?
-      options.range(series) :
-      d3.extent(_(series)
-        .map(options.values)
-        .flatten()
-        .map(options.y)
-        .value());
+    var range = _.isFunction(options.range)
+      ? options.range(series)
+      : d3.extent(_(series)
+          .map(options.values)
+          .flatten()
+          .map(options.y)
+          .value())
 
-    range[0] = Math.min(range[0], 0);
+    range[0] = Math.min(range[0], 0)
 
     var yScale = options.scale()
       .domain(range)
-      .range([height, 0]);
+      .range([height, 0])
 
-    var x = _.flow(options.x, dataXScale);
-    var y = _.flow(options.y, yScale);
+    var x = _.flow(options.x, dataXScale)
+    var y = _.flow(options.y, yScale)
 
     var g = svg.select('.data')
       .selectAll('.series')
-      .data(series, options.seriesName);
+      .data(series, options.seriesName)
 
     g.enter()
       .append('g')
-      .attr('class', 'series');
+      .attr('class', 'series')
 
     g.style({
       'fill': dataColor,
       'stroke': dataColor
-    });
+    })
 
-    g.exit().remove();
+    g.exit().remove()
 
     var path = g.selectAll('path')
       .data(function (d) {
-        return [options.values(d)];
-      });
+        return [options.values(d)]
+      })
 
-    path.enter().append('path');
+    path.enter().append('path')
 
     path.transition()
       .duration(500)
-      .attr('d', d3.svg.line().x(x).y(y));
+      .attr('d', d3.svg.line().x(x).y(y))
 
-    g.selectAll('line').data(options.values);
+    g.selectAll('line').data(options.values)
 
     var labels = _(series)
       .map(function (d) {
-        var last = _.max(options.values(d), options.x);
-        var v = options.y(last);
+        var last = _.max(options.values(d), options.x)
+        var v = options.y(last)
 
         return {
           text: options.seriesName(d) + ' ' + options.yFormat(v),
           x: x(last),
           y: y(last),
           defined: _.isFinite(v)
-        };
+        }
       })
       .filter('defined')
       .sortBy('y')
-      .value();
+      .value()
 
     var legendColorScale = d3.scale.ordinal()
         .domain(_(labels)
-        .map(function(d) {return d.text})
+        .map(function (d) { return d.text })
         .uniq()
         .sortBy()
         .value())
-        .range(colorRange);
+        .range(colorRange)
 
-    var legendColor = _.flow(function(d) {return d.text}, legendColorScale);
+    var legendColor = _.flow(function (d) { return d.text }, legendColorScale)
 
     svg.select('.annotation').selectAll('.series.label')
       .data(labels)
@@ -163,7 +162,7 @@ _.extend(LineChart.prototype, {
         .width(width)
         .height(height)
         .align(false)
-        .scale(legendColor));
+        .scale(legendColor))
 
     // Set up the hover interaction
     svg.attr('class', 'line')
@@ -182,12 +181,12 @@ _.extend(LineChart.prototype, {
         .colorRange(colorRange)
         .datapoints(_(series).map(function (s) {
           // Set the series name on each datapoint for easy retrieval
-          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)));
+          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
         })
           .flatten()
           .value()
       )
-    );
+    )
 
     var gx = svg.select('.x.axis')
       .call(d3.svg.axis()
@@ -195,26 +194,25 @@ _.extend(LineChart.prototype, {
         .outerTickSize(0)
         .ticks(4)
         .scale(dataXScale)
-        .orient('bottom'));
-
+        .orient('bottom'))
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(options.yFormat)
         .tickSize(width)
         .ticks(3)
         .scale(yScale)
-        .orient('right'));
+        .orient('right'))
 
     gy.selectAll('text')
       .attr({
         'x': 4,
         'dy': -4
-      });
+      })
 
     gy.selectAll('g').classed('minor', function (d) {
-      return d !== range[0];
-    });
+      return d !== range[0]
+    })
   }
-});
+})
 
-module.exports = LineChart;
+module.exports = LineChart

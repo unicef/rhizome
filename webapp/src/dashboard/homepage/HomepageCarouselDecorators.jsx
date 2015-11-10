@@ -1,20 +1,20 @@
-'use strict';
+'use strict'
 
-var React = require('react');
+var React = require('react')
 
 var HomepageCarouselDecorators = [
   {
     component: React.createClass({
-      render() {
+      render () {
         return (
-            <div className="navigator-button"
+            <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide === 0)}
                  onClick={this.props.previousSlide}>
-              <i className="fa fa-chevron-left"></i>
+              <i className='fa fa-chevron-left'></i>
             </div>
         )
       },
-      getButtonStyles(disabled) {
+      getButtonStyles (disabled) {
         return {
           opacity: disabled ? 0.3 : 0.7
         }
@@ -24,16 +24,16 @@ var HomepageCarouselDecorators = [
   },
   {
     component: React.createClass({
-      render() {
+      render () {
         return (
-            <div className="navigator-button"
+            <div className='navigator-button'
                  style={this.getButtonStyles(this.props.currentSlide + this.props.slidesToScroll >= this.props.slideCount)}
                  onClick={this.props.nextSlide}>
-              <i className="fa fa-chevron-right"></i>
+              <i className='fa fa-chevron-right'></i>
             </div>
         )
       },
-      getButtonStyles(disabled) {
+      getButtonStyles (disabled) {
         return {
           opacity: disabled ? 0.3 : 0.7
         }
@@ -43,19 +43,19 @@ var HomepageCarouselDecorators = [
   },
   {
     component: React.createClass({
-      render() {
-        var self = this;
-        var indexes = this.getIndexes(self.props.slideCount, self.props.slidesToScroll);
+      render () {
+        var self = this
+        var indexes = this.getIndexes(self.props.slideCount, self.props.slidesToScroll)
         return (
           <ul style={self.getListStyles()}>
             {
-              indexes.map(function(index) {
+              indexes.map(function (index) {
                 return (
                   <li style={self.getListItemStyles()} key={index}>
                     <button
                       style={self.getButtonStyles(self.props.currentSlide === index)}
                       onClick={self.props.goToSlide.bind(null, index)}>
-                      &bull;
+                      &bull
                     </button>
                   </li>
                 )
@@ -64,14 +64,14 @@ var HomepageCarouselDecorators = [
           </ul>
         )
       },
-      getIndexes(count, inc) {
-        var arr = [];
+      getIndexes (count, inc) {
+        var arr = []
         for (var i = 0; i < count; i += inc) {
-          arr.push(i);
+          arr.push(i)
         }
-        return arr;
+        return arr
       },
-      getListStyles() {
+      getListStyles () {
         return {
           position: 'relative',
           margin: 0,
@@ -79,13 +79,13 @@ var HomepageCarouselDecorators = [
           padding: 0
         }
       },
-      getListItemStyles() {
+      getListItemStyles () {
         return {
           listStyleType: 'none',
           display: 'inline-block'
         }
       },
-      getButtonStyles(active) {
+      getButtonStyles (active) {
         return {
           border: 0,
           background: 'transparent',
@@ -100,7 +100,7 @@ var HomepageCarouselDecorators = [
     }),
     position: 'BottomCenter'
   }
-];
+]
 
-module.exports = HomepageCarouselDecorators;
+module.exports = HomepageCarouselDecorators
 

@@ -1,17 +1,17 @@
-var _ = require('lodash');
+var _ = require('lodash')
 
-module.exports = function facet(get) {
-	'use strict';
+module.exports = function facet (get) {
+    'use strict'
 
-	if (typeof get !== 'function') {
-		get = function (o) {
-			return o[get];
-		};
-	}
+    if (typeof get !== 'function') {
+        get = function (o) {
+            return o[get]
+        }
+    }
 
-	function transform(data) {
-		return _.values(_.groupBy(data, get));
-	}
+    function transform (data) {
+        return _.values(_.groupBy(data, get))
+    }
 
-	return transform;
-};
+    return transform
+}

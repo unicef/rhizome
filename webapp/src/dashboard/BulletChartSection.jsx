@@ -1,21 +1,22 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var Layer = require('react-layer');
-var React = require('react');
-var moment = require('moment');
+var _ = require('lodash')
+var d3 = require('d3')
+var Layer = require('react-layer')
+var React = require('react')
+var moment = require('moment')
 
-var Chart = require('component/Chart.jsx');
-var Tooltip = require('component/Tooltip.jsx');
+var Chart = require('component/Chart.jsx')
+var Tooltip = require('component/Tooltip.jsx')
 
-function _domain(data) {
+function _domain (data) {
   var lower = _(data)
     .pluck('indicator.bound_json')
     .flatten()
     .pluck('mn_val')
     .uniq()
     .filter(_.isFinite)
-    .min();
+    .min()
 
   var upper = _(data)
     .pluck('indicator.bound_json')
@@ -23,51 +24,51 @@ function _domain(data) {
     .pluck('mx_val')
     .uniq()
     .filter(_.isFinite)
-    .max();
+    .max()
 
-  return [Math.min(lower, 0), Math.max(upper, _(data).flatten().pluck('value').max(), 1)];
+  return [Math.min(lower, 0), Math.max(upper, _(data).flatten().pluck('value').max(), 1)]
 }
 
-function _matchCampaign(datapoint, campaign) {
+function _matchCampaign (datapoint, campaign) {
   return _.result(datapoint, 'campaign.start_date.getTime') ===
-    moment(campaign.start_date, 'YYYY-MM-DD').valueOf();
+    moment(campaign.start_date, 'YYYY-MM-DD').valueOf()
 }
 
-function _value(data, campaign) {
+function _value (data, campaign) {
   return _.get(
     _(data)
       .filter(_.partial(_matchCampaign, _, campaign))
       .first(),
-    'value');
+    'value')
 }
 
-function _marker(data, campaign) {
+function _marker (data, campaign) {
   var hx = _(data)
     .reject(_.partial(_matchCampaign, _, campaign))
     .pluck('value')
     .filter(_.isFinite)
-    .value();
+    .value()
 
-  return _.sum(hx) / hx.length;
+  return _.sum(hx) / hx.length
 }
 
-function _targetRanges(indicator) {
+function _targetRanges (indicator) {
   var targets = _(_.get(indicator, 'bound_json'))
     .map(function (bound) {
-      var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity;
-      var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity;
+      var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity
+      var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity
 
       return _.assign({}, bound, {
         mn_val: lower,
         mx_val: upper
-      });
+      })
     })
     .filter(function (bound) {
-      // FIXME: Temporary fix to filter out the "invalid" ranges
-      return _.isFinite(bound.mn_val) && _.isFinite(bound.mx_val);
+      // FIXME: Temporary fix to filter out the 'invalid' ranges
+      return _.isFinite(bound.mn_val) && _.isFinite(bound.mx_val)
     })
     .sortBy('mn_val')
-    .value();
+    .value()
 
   var boundaries = _(targets)
     .map(function (bound) {
@@ -78,36 +79,34 @@ function _targetRanges(indicator) {
     .slice(1, -1)
     .value()
 
-  return [_.pluck(targets, 'bound_name'), boundaries];
+  return [_.pluck(targets, 'bound_name'), boundaries]
 }
 
-function _fill(data, campaign, targets, colorRange) {
+function _fill (data, campaign, targets, colorRange) {
   var color = d3.scale.ordinal()
     .domain(['bad', 'ok', 'good'])
-    .range(colorRange);
+    .range(colorRange)
 
   var scale = d3.scale.threshold()
     .domain(targets[1])
-    .range(targets[0]);
+    .range(targets[0])
 
-  return color(scale(_value(data, campaign)));
+  return color(scale(_value(data, campaign)))
 }
 
-function _valueText(value, targets) {
-  var threshold = targets[1];
-  var target = targets[0];
+function _valueText (value, targets) {
+  var threshold = targets[1]
+  var target = targets[0]
   if (!_.isNull(value) && _.isFinite(value)) {
     if (value < threshold[0]) {
-      return target[0];
-    }
-    else if (value >= threshold[0] && value < threshold[1]) {
-      return target[1];
-    }
-    else {
-      return target[2];
+      return target[0]
+    } else if (value >= threshold[0] && value < threshold[1]) {
+      return target[1]
+    } else {
+      return target[2]
     }
   }
-  return '';
+  return ''
 }
 
 module.exports = React.createClass({
@@ -116,27 +115,27 @@ module.exports = React.createClass({
     indicators: React.PropTypes.array.isRequired,
 
     cols: React.PropTypes.number,
-    data: React.PropTypes.array,
+    data: React.PropTypes.array
   },
 
   getDefaultProps: function () {
     return {
-      cols: 1,
-    };
+      cols: 1
+    }
   },
 
   render: function () {
-    var campaign = this.props.campaign;
-    var showHelp = this.props.showHelp;
-    var hideHelp = this.props.hideHelp;
-    var data = this.props.data;
-    var loading = this.props.loading;
-    var dataColorRange =  ['#DB5344', '#79909F', '#2FB0D3'];
-    var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6'];
+    var campaign = this.props.campaign
+    var showHelp = this.props.showHelp
+    var hideHelp = this.props.hideHelp
+    var data = this.props.data
+    var loading = this.props.loading
+    var dataColorRange =  ['#DB5344', '#79909F', '#2FB0D3']
+    var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
 
     var charts = _(this.props.indicators)
       .map((indicator, i) => {
-        var targets = _targetRanges(indicator);
+        var targets = _targetRanges(indicator)
 
         var options = {
           domain: _domain,
@@ -151,26 +150,26 @@ module.exports = React.createClass({
           thresholds: targets[1],
           targets: targets[0],
           valueText: _.partial(_valueText, _, targets)
-        };
+        }
 
-        var title = _.get(indicator, 'short_name');
+        var title = _.get(indicator, 'short_name')
 
         var chartData = _(data)
           .filter(d => d.indicator.id === indicator.id)
           .groupBy(options.y) // There could coneivably be multiple bars in the chart
           .values()
-          .value();
+          .value()
 
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
             <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
             <Chart type='BulletChart' loading={loading} data={chartData} options={options}/>
           </li>
-        );
+        )
       })
-      .value();
+      .value()
 
-    return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>);
+    return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>)
   },
 
   _showHelp: function (indicator, evt) {
@@ -181,22 +180,22 @@ module.exports = React.createClass({
 
           <p>{indicator.description}</p>
         </Tooltip>
-      );
+      )
     }
 
     if (this.layer) {
-      this.layer._render = render;
+      this.layer._render = render
     } else {
-      this.layer = new Layer(document.body, render);
+      this.layer = new Layer(document.body, render)
     }
 
-    this.layer.render();
+    this.layer.render()
   },
 
   _hideHelp: function () {
     if (this.layer) {
-      this.layer.destroy();
-      this.layer = null;
+      this.layer.destroy()
+      this.layer = null
     }
   }
-});
+})

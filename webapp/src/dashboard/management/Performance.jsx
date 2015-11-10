@@ -1,26 +1,25 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var d3 = require('d3');
-var moment = require('moment');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var moment = require('moment')
+var React = require('react')
 
-var Chart = require('component/Chart.jsx');
-var PieChartList = require('component/PieChartList.jsx');
+var Chart = require('component/Chart.jsx')
+var PieChartList = require('component/PieChartList.jsx')
 
-var DashboardActions = require('actions/DashboardActions');
+var DashboardActions = require('actions/DashboardActions')
 
 var series = function (values, name) {
   return {
     name: name,
     values: _.sortBy(values, _.result('campaign.start_date.getTime'))
-  };
-};
+  }
+}
 
 var indicatorForCampaign = function (campaign, indicator) {
-  return d => d.campaign.id === campaign && d.indicator.id === indicator;
-};
-
+  return d => d.campaign.id === campaign && d.indicator.id === indicator
+}
 
 var Performance = React.createClass({
   propTypes: {
@@ -33,7 +32,7 @@ var Performance = React.createClass({
     return {
       data: [],
       loading: false
-    };
+    }
   },
 
   generateMissedChildrenChartData: function (originalData) {
@@ -42,75 +41,75 @@ var Performance = React.createClass({
       .offset('zero')
       .values(_.property('values'))
       .x(_.property('campaign.start_date'))
-      .y(_.property('value'));
+      .y(_.property('value'))
 
-    var missed;
+    var missed
     try {
       missed = _(originalData)
         .groupBy('indicator.short_name')
         .map(series)
         .thru(stack)
-        .value();
+        .value()
     } catch (err) {
-      console.error(err);
-      console.log(`Data error in ${originalData}`);
-      missed = [];
+      console.error(err)
+      console.log(`Data error in ${originalData}`)
+      missed = []
     }
 
-    return missed;
+    return missed
   },
 
   render: function () {
-    var data = this.props.data;
-    var campaign = this.props.campaign;
-    var upper = moment(campaign.start_date, 'YYYY-MM-DD');
-    var lower = upper.clone().startOf('month').subtract(1, 'year');
-    var loading = this.props.loading;
-    var location = this.props.location;
-    var colors = ['#377EA4','#B6D0D4'];
+    var data = this.props.data
+    var campaign = this.props.campaign
+    var upper = moment(campaign.start_date, 'YYYY-MM-DD')
+    var lower = upper.clone().startOf('month').subtract(1, 'year')
+    var loading = this.props.loading
+    var location = this.props.location
+    var colors = ['#377EA4', '#B6D0D4']
 
-    var missed = this.generateMissedChildrenChartData(data.missedChildren);
+    var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
-    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date');
+    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date')
     var conversions = _(sortedConversions)
       .groupBy('indicator.short_name')
       .map(series)
-      .value();
+      .value()
 
-    var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value');
+    var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value')
 
     if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
-      var num = d3.format('n');
+      var num = d3.format('n')
 
       vaccinated = (
         <p><strong>{num(vaccinated)}</strong> children vaccinated at transit points.</p>
-      );
+      )
     } else {
-      vaccinated = (<p>No vaccination data.</p>);
+      vaccinated = (<p>No vaccination data.</p>)
     }
 
-    var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value');
-    var inPlace = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value');
-    var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value');
+    var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value')
+    var inPlace = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value')
+    var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value')
 
-    var transitPoints = [];
+    var transitPoints = []
     if ((!_.any([inPlace, planned], _.isUndefined)) && (!_.any([inPlace, planned], _.isNull))) {
       transitPoints.push([{
         title: inPlace + ' / ' + planned + ' in place',
         value: inPlace / planned
-      }]);
+      }])
     }
 
     if ((!_.any([withSM, inPlace], _.isUndefined)) && (!_.any([withSM, inPlace], _.isNull))) {
       transitPoints.push([{
         title: withSM + ' / ' + inPlace + ' have a social mobilizer',
         value: withSM / inPlace
-      }]);
+      }])
     }
 
-    var pct = d3.format('%');
+    var pct = d3.format('%')
 
-    var missedChildrenMap = data.missedChildrenByProvince;
+    var missedChildrenMap = data.missedChildrenByProvince
 
     return (
       <div>
@@ -179,8 +178,8 @@ var Performance = React.createClass({
             emptyText='No transit point data available'/>
         </section>
       </div>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = Performance;
+module.exports = Performance

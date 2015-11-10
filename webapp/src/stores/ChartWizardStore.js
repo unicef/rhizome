@@ -33,20 +33,20 @@ let ChartWizardStore = Reflux.createStore({
     chartDef: {}
   },
 
-  filterCampaignByLocation(campaigns, location) {
+  filterCampaignByLocation (campaigns, location) {
     return campaigns.filter(campaign => {
       return campaign.office_id === location.office_id
     })
   },
 
-  filterTimeRangeByChartType(timeRanges, chartType) {
-    let expectTimes = _.find(builderDefinitions.charts, {name: chartType}).timeRadios
+  filterTimeRangeByChartType (timeRanges, chartType) {
+    let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
     return timeRanges.filter(time => {
       return _.includes(expectTimes, time.value)
     })
   },
 
-  filterChartTypeByIndicator() {
+  filterChartTypeByIndicator () {
     api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
       let availableCharts = res.objects.map(chart => {
         return chart.name
@@ -61,35 +61,34 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
-  applyChartDef(chartDef) {
-    this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, {value: chartDef.locations}), 0)
+  applyChartDef (chartDef) {
+    this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, {value: chartDef.groupBy}), 0)
-    this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, {json: chartDef.timeRange}), 0)
-    this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, {value: chartDef.yFormat}), 0)
-    this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, {value: chartDef.xFormat}), 0)
+    this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
+    this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
+    this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
+    this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
   },
 
-  integrateChartOption(chartOption) {
+  integrateChartOption (chartOption) {
     if (!chartOption.yFormat) {
       chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
     }
-    if(!chartOption.xFormat){
+    if (!chartOption.xFormat) {
       chartOption.xFormat = d3.format(builderDefinitions.formats[this.data.xFormatValue].value)
     }
     return chartOption
   },
 
-  getInitialState() {
+  getInitialState () {
     return this.data
   },
 
-  onInitialize(chartDef) {
+  onInitialize (chartDef) {
     this.data.chartDef = _.clone(chartDef)
 
     Promise.all([api.locations(), api.campaign(), api.office()])
       .then(([locations, campaigns, offices]) => {
-
         this.locationIndex = _.indexBy(locations.objects, 'id')
         this.data.locationList = _(locations.objects)
           .map(location => {
@@ -105,9 +104,9 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue] ?
-          this.locationIndex[chartDef.locationValue]:
-          this.locationIndex[this.data.locationList[0].value]
+        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue]
+          ? this.locationIndex[chartDef.locationValue]
+          : this.locationIndex[this.data.locationList[0].value]
 
         let officeId = this.data.location.office_id
 
@@ -127,23 +126,23 @@ let ChartWizardStore = Reflux.createStore({
               'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
               'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
               'office': officeIndex[campaign.office_id]
-            });
+            })
           })
           .sortBy(_.method('start_date.getTime'))
           .reverse()
           .value()
-
 
         this.campaignIndex = _.indexBy(this.campaignList, 'id')
         this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
         this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
         this.data.chartTypeFilteredList = builderDefinitions.charts
 
-        if(chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]){
+        if (chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
           this.data.campaign = this.campaignIndex[chartDef.campaignValue]
-        }
-        else{
-          this.data.campaign = this.data.campaignFilteredList.length > 0 ? this.campaignIndex[this.data.campaignFilteredList[0].id] : null
+        } else{
+          this.data.campaign = this.data.campaignFilteredList.length > 0
+            ? this.campaignIndex[this.data.campaignFilteredList[0].id]
+            : null
         }
 
         if (this.data.indicatorSelected.length > 0) {
@@ -156,11 +155,11 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
-  onEditTitle(value) {
+  onEditTitle (value) {
     this.data.chartDef.title = value
   },
 
-  onAddLocation(index) {
+  onAddLocation (index) {
     this.data.location = this.locationIndex[index]
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
 
@@ -197,12 +196,12 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onAddCampaign(index) {
+  onAddCampaign (index) {
     this.data.campaign = this.campaignIndex[index]
     this.previewChart()
   },
 
-  onChangeChart(value) {
+  onChangeChart (value) {
     this.data.chartDef.type = value
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
@@ -216,43 +215,43 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onChangeGroupRadio(value) {
+  onChangeGroupRadio (value) {
     this.data.groupByValue = value
     this.previewChart()
   },
 
-  onChangeLocationLevelRadio(value) {
+  onChangeLocationLevelRadio (value) {
     this.data.locationLevelValue = value
     this.data.locationSelected = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
-  onChangeTimeRadio(value) {
+  onChangeTimeRadio (value) {
     this.data.timeValue = value
     this.previewChart()
   },
 
-  onChangeYFormatRadio(value) {
+  onChangeYFormatRadio (value) {
     this.data.yFormatValue = value
     this.previewChart()
   },
 
-  onChangeXFormatRadio(value) {
+  onChangeXFormatRadio (value) {
     this.data.xFormatValue = value
     this.previewChart()
   },
 
-  onChangeXAxis(value){
+  onChangeXAxis (value) {
     this.data.chartDef.x = value
     this.previewChart()
   },
 
-  onChangeYAxis(value){
+  onChangeYAxis (value) {
     this.data.chartDef.y = value
     this.previewChart()
   },
 
-  onSaveChart(callback) {
+  onSaveChart (callback) {
     callback(
       _.merge(
         this.data.chartDef,
@@ -274,7 +273,7 @@ let ChartWizardStore = Reflux.createStore({
     )
   },
 
-  previewChart() {
+  previewChart () {
     if (!this.data.indicatorSelected.length) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
@@ -321,7 +320,7 @@ let ChartWizardStore = Reflux.createStore({
       }
       this.data.isLoading = false
       this.trigger(this.data)
-    });
+    })
   }
 })
 

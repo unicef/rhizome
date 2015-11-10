@@ -1,60 +1,59 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
+var _ = require('lodash')
 
 module.exports = {
+    replace: true,
+    inherit: true,
+    template: require('./menuItem.html'),
 
-	replace  : true,
-	inherit  : true,
-	template : require('./menuItem.html'),
+    data: function () {
+        return {
+            title: '',
+            children: [],
+            open: false,
+            depth: 0
+        }
+    },
 
-	data : function () {
-		return {
-			title    : '',
-			children : [],
-			open     : false,
-			depth    : 0
-		};
-	},
+    computed: {
+        hasChildren: function () {
+            return !this.filtered && _.isArray(this.children) && this.children.length > 0
+        },
 
-	computed : {
-		hasChildren : function () {
-			return !this.filtered && _.isArray(this.children) && this.children.length > 0;
-		},
+        showChildren: function () {
+            return this.hasChildren && this.open
+        },
 
-		showChildren : function () {
-			return this.hasChildren && this.open;
-		},
+        style: function () {
+            // FIXME: It's unfortunate to hard-code the padding amounts. It would be
+            // way cooler to interrogate the CSS for the object to determine
+            // these values, or use
 
-		style : function () {
-			// FIXME: It's unfortunate to hard-code the padding amounts. It would be
-			// way cooler to interrogate the CSS for the object to determine
-			// these values, or use
+            if (this.filter) {
+                return {
+                    'padding-left': '5px'
+                }
+            }
 
-			if (this.filter) {
-				return {
-					'padding-left' : '5px',
-				};
-			}
+            return {
+                'padding-left': (5 + (17 * this.depth)) + 'px'
+            }
+        }
+    },
 
-			return {
-				'padding-left' : (5 + (17 * this.depth)) + 'px'
-			};
-		}
-	},
+    methods: {
+        onClick: function (event, data) {
+            event.preventDefault()
+            this.$dispatch(this.changeEvent, data)
+            this.open = false
+        },
 
-	methods : {
-		onClick : function (event, data) {
-			event.preventDefault();
-			this.$dispatch(this.changeEvent, data);
-			this.open = false;
-		},
+        toggleChildren: function (evt) {
+            evt.stopPropagation()
 
-		toggleChildren : function (evt) {
-			evt.stopPropagation();
+            this.open = !this.open
+        }
+    }
 
-			this.open = !this.open;
-		}
-	}
-
-};
+}

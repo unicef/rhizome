@@ -1,5 +1,5 @@
-var React = require('react');
-var _ = require('lodash');
+var React = require('react')
+var _ = require('lodash')
 
 var MenuItem = React.createClass({
   propTypes: {
@@ -17,7 +17,7 @@ var MenuItem = React.createClass({
   statics: {
     fromArray: function (arr, sendValue, depth) {
       if (!_.isFinite(depth)) {
-        depth = 0;
+        depth = 0
       }
 
       return arr.map(item => {
@@ -28,8 +28,8 @@ var MenuItem = React.createClass({
             sendValue={sendValue}
             {...item}>
           </MenuItem>
-        );
-      });
+        )
+      })
     }
   },
 
@@ -38,54 +38,54 @@ var MenuItem = React.createClass({
       depth: 0,
       filtered: false,
       displayTitle: null
-    };
+    }
   },
 
   getInitialState: function () {
-    return {open: false};
+    return {open: false}
   },
 
   _toggleChildren: function (e) {
-    e.stopPropagation();
-    this.setState({open: !this.state.open});
+    e.stopPropagation()
+    this.setState({open: !this.state.open})
   },
 
   _handleClick: function (e) {
     if (!this.props.noValue) {
-      this.props.sendValue(this.props.value);
+      this.props.sendValue(this.props.value)
     } else {
-      this._toggleChildren(e);
+      this._toggleChildren(e)
     }
   },
 
   render: function () {
-    var self = this;
-    //COMPUTED PROPERTIES
-    var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0;
-    var itemStyle = {'paddingLeft': (this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px')};
+    var self = this
+    // COMPUTED PROPERTIES
+    var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0
+    var itemStyle = {'paddingLeft': (this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px')}
 
-    var children = null;
+    var children = null
     if (this.props.children && this.state.open) {
       children = MenuItem.fromArray(
         this.props.children,
         this.props.sendValue,
-        this.props.depth + 1);
+        this.props.depth + 1)
     }
 
-    var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : '';
-    var title = prefix + (this.props.displayTitle == null ? this.props.title : this.props.displayTitle);
+    var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
+    var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
 
     return (
       <li>
         <a
-          role="menuitem"
+          role='menuitem'
           onClick={this._handleClick}
           style={itemStyle}
-          className={(hasChildren?"folder":null)}
+          className={hasChildren ? 'folder' : null}
           tabIndex='-1'>
 
           <i
-            className={"fa fa-lg fa-fw " + (this.state.open?"fa-caret-down":"fa-caret-right")}
+            className={'fa fa-lg fa-fw ' + (this.state.open ? 'fa-caret-down' : 'fa-caret-right')}
             onClick={this._toggleChildren}></i>
 
           {title}
@@ -95,8 +95,8 @@ var MenuItem = React.createClass({
           {children}
         </div>
       </li>
-    );
+    )
   }
-});
+})
 
-module.exports = MenuItem;
+module.exports = MenuItem

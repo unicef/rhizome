@@ -1,59 +1,59 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var d3 = require('d3');
-var React = require('react');
-var moment = require('moment');
+var _ = require('lodash')
+var d3 = require('d3')
+var React = require('react')
+var moment = require('moment')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
-function getOptions(chart, campaign, data) {
-  var opts = {};
+function getOptions (chart, campaign, data) {
+  var opts = {}
 
   if (chart.hasOwnProperty('yFormat')) {
-    opts.yFormat = _.isString(chart.yFormat) ? d3.format(chart.yFormat) : chart.xFormat;
+    opts.yFormat = _.isString(chart.yFormat) ? d3.format(chart.yFormat) : chart.xFormat
   }
 
   switch (chart.type) {
     case 'ScatterChart':
-      opts.x = _.property('[' + chart.indicators[0] + ']');
-      opts.y = _.property('[' + chart.indicators[1] + ']');
+      opts.x = _.property('[' + chart.indicators[0] + ']')
+      opts.y = _.property('[' + chart.indicators[1] + ']')
 
       // Only scatter charts should be providing custom formatting for
       // the x-axis
       if (chart.hasOwnProperty('xFormat')) {
-        opts.xFormat = _.isString(chart.xFormat) ? d3.format(chart.xFormat) : chart.xFormat;
+        opts.xFormat = _.isString(chart.xFormat) ? d3.format(chart.xFormat) : chart.xFormat
       }
 
-      break;
+      break
 
     case 'ChoroplethMap':
-      opts.value = _.property('.properties[' + chart.indicators[0] + ']');
-      break;
+      opts.value = _.property('.properties[' + chart.indicators[0] + ']')
+      break
 
     case 'BarChart':
-      opts.y = _.property((chart.groupBy === 'indicator') ?
-        'location.name' :
-        'indicator.short_name'
-      );
+      opts.y = _.property((chart.groupBy === 'indicator')
+        ? 'location.name'
+        : 'indicator.short_name'
+      )
 
-      opts.xFormat = opts.yFormat;
-      opts.yFormat = String;
-      break;
+      opts.xFormat = opts.yFormat
+      opts.yFormat = String
+      break
 
     case 'ColumnChart':
-      var upper = moment(campaign.start_date);
-      var lower = upper.clone().subtract(chart.timeRange);
+      var upper = moment(campaign.start_date)
+      var lower = upper.clone().subtract(chart.timeRange)
 
       opts.domain = _.constant(_.map(d3.time.scale()
             .domain([lower.valueOf(), upper.valueOf()])
             .ticks(d3.time.month, 1),
           _.method('getTime')
-        ));
+        ))
 
-      opts.x = d => moment(d.campaign.start_date).valueOf();
-      opts.xFormat = d => moment(d).format('MMM YY');
-      break;
+      opts.x = d => moment(d.campaign.start_date).valueOf()
+      opts.xFormat = d => moment(d).format('MMM YY')
+      break
 
     case 'PieChart':
       opts.margin = {
@@ -61,15 +61,15 @@ function getOptions(chart, campaign, data) {
         right  : 80,
         bottom : 0,
         left   : 0
-      };
+      }
 
-      break;
+      break
 
     default:
-      break;
+      break
   }
 
-  return opts;
+  return opts
 }
 
 var CustomDashboard = React.createClass({
@@ -90,24 +90,24 @@ var CustomDashboard = React.createClass({
       onEditChart   : _.noop,
       onMoveForward : _.noop,
       onMoveBackward: _.noop
-    };
+    }
   },
 
   render : function () {
-    var numCharts = this.props.dashboard.charts.length;
+    var numCharts = this.props.dashboard.charts.length
 
-    var data     = this.props.data;
-    var loading  = this.props.loading;
-    var campaign = this.props.campaign;
-    var editable = this.props.editable;
+    var data = this.props.data
+    var loading = this.props.loading
+    var campaign = this.props.campaign
+    var editable = this.props.editable
 
     var charts = _.map(this.props.dashboard.charts, (chart, i) => {
-      var title  = chart.title;
-      var key    = _.get(chart, 'id', _.kebabCase(title));
-      var id     = _.get(chart, 'id', _.camelCase(title));
-      var series = data[id];
+      var title = chart.title
+      var key = _.get(chart, 'id', _.kebabCase(title))
+      var id = _.get(chart, 'id', _.camelCase(title))
+      var series = data[id]
 
-      var controls;
+      var controls
       if (editable) {
         controls = (
           <div className='button-bar' style={{float : 'right'}}>
@@ -124,24 +124,24 @@ var CustomDashboard = React.createClass({
               <i className='fa fa-icon fa-pencil fa-fw'></i>
             </span>
           </div>
-        );
+        )
       }
 
       let cols = ''
       switch(this.props.dashboard.layout) {
         case 1: // Single
           cols = 'small-12 end columns'
-          break;
+          break
         case 3: // Triptych
-          cols   = chart.type === 'BarChart' ?
-            'small-10 end columns' :
-            'medium-4 columns end cd-chart-size';
-          break;
+          cols = chart.type === 'BarChart'
+            ? 'small-10 end columns'
+            : 'medium-4 columns end cd-chart-size'
+          break
         default: // Default (Basic)
-          break;
+          break
       }
 
-      var options = getOptions(chart, campaign, data);
+      var options = getOptions(chart, campaign, data)
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
@@ -149,8 +149,8 @@ var CustomDashboard = React.createClass({
           <Chart type={chart.type} data={series} options={options}
             loading={loading} />
         </div>
-      );
-    });
+      )
+    })
 
     var addChart
     switch(this.props.dashboard.layout) {
@@ -179,23 +179,22 @@ var CustomDashboard = React.createClass({
             </div>
             {addChart}
           </div>
-        );
-        break;
+        )
+        break
       default: // Any others
         return (
           <div className='row cd-charts'>
             {charts}
             {addChart}
           </div>
-        );
-        break;
+        )
+        break
     }
 
     return (
       <div className='row cd-charts'>{charts} {addChart}</div>
-    );
+    )
+  }
+})
 
-  },
-});
-
-module.exports = CustomDashboard;
+module.exports = CustomDashboard

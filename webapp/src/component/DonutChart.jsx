@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
 var DonutChart = React.createClass({
   propTypes: {
@@ -18,16 +18,16 @@ var DonutChart = React.createClass({
       label: _.noop,
       labelStyle: {},
       loading: false
-    };
+    }
   },
 
   render: function () {
-    var props = _.omit(this.props, 'label', 'labelStyle');
-    var labelText = this.props.label(this.props.data);
-    var label;
+    var props = _.omit(this.props, 'label', 'labelStyle')
+    var labelText = this.props.label(this.props.data)
+    var label
 
     if (!_.isEmpty(labelText)) {
-      label = (<p className='donut-label' style={this.props.labelStyle}>{labelText}</p>);
+      label = (<p className='donut-label' style={this.props.labelStyle}>{labelText}</p>)
     }
 
     return (
@@ -35,8 +35,8 @@ var DonutChart = React.createClass({
         <Chart type='PieChart' {...props} />
         {label}
       </div>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = DonutChart;
+module.exports = DonutChart

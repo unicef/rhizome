@@ -1,12 +1,10 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var Reflux = require('reflux');
+var React = require('react')
+var Reflux = require('reflux')
 
-var HomepageChartsSection = require('view/HomepageChartsSection.jsx');
-var HomepageDashboardsStore = require('stores/HomepageDashboardsStore');
-var HomepageDashboardsActions = require('actions/HomepageDashboardsActions');
+var HomepageChartsSection = require('view/HomepageChartsSection.jsx')
+var HomepageDashboardsStore = require('stores/HomepageDashboardsStore')
 
 var HomepageChartsView = React.createClass({
     mixins: [
@@ -14,7 +12,7 @@ var HomepageChartsView = React.createClass({
         Reflux.connect(HomepageDashboardsStore, 'dashboards')
     ],
 
-    getInitialState: function() {
+    getInitialState: function () {
       return {
         dashboards: []
       }
@@ -25,7 +23,7 @@ var HomepageChartsView = React.createClass({
           var style = {
               fontSize: '2rem',
               zIndex: 9999
-          };
+          }
 
           return (
               <div style={style} className='overlay'>
@@ -33,28 +31,27 @@ var HomepageChartsView = React.createClass({
                       <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
                   </div>
               </div>
-          );
+          )
       }
 
-      var list = [];
-      this.state.dashboards.dashboards.forEach(function(item) {
-
+      var list = []
+      this.state.dashboards.dashboards.forEach(function (item) {
         var dashboardProps = {
             campaign: item.campaign,
             data: item.data,
             indicators: item.indicators,
             location: item.location
-        };
+        }
 
-	      list.push(<HomepageChartsSection location={item.location} date={item.date} data={dashboardProps} />);
-	    });
+        list.push(<HomepageChartsSection location={item.location} date={item.date} data={dashboardProps} />)
+      })
 
       return (
           <div>
             {list}
           </div>
-      );
+      )
     }
-});
+})
 
-module.exports = HomepageChartsView;
+module.exports = HomepageChartsView

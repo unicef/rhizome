@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var React = require('react');
+var React = require('react')
 
 var DropdownMenu = React.createClass({
   mixins : [
@@ -23,29 +23,29 @@ var DropdownMenu = React.createClass({
 
   componentWillReceiveProps : function (nextProps) {
     if (!this.multi && nextProps.text !== this.props.text) {
-      this.setState({ open : false });
+      this.setState({ open : false })
     }
   },
 
   render : function () {
-    var icon = this.props.icon ?
-      (<i className={['fa', this.props.icon, this.props.size].join(' ')} />) :
-      null;
+    var icon = this.props.icon
+      ? (<i className={['fa', this.props.icon, this.props.size].join(' ')} />)
+      : null
 
-    var classes = 'menu-button';
+    var classes = 'menu-button'
 
     if (this.state.open) {
-      classes += ' open';
+      classes += ' open'
     }
 
     return (
       <span className={classes}>
-        <a className="button" role="button" onClick={this._toggleMenu}>
+        <a className='button' role='button' onClick={this._toggleMenu}>
           {icon} {this.props.text}
         </a>
       </span>
-    );
+    )
   }
-});
+})
 
-module.exports = DropdownMenu;
+module.exports = DropdownMenu

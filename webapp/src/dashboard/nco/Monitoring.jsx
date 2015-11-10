@@ -1,24 +1,24 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
-var d3    = require('d3');
+var _ = require('lodash')
+var React = require('react')
+var d3 = require('d3')
 
-var DonutChart = require('component/DonutChart.jsx');
-var Chart      = require('component/Chart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
+var Chart = require('component/Chart.jsx')
 
-function donutLabel(data, labelText) {
-  var value = _.get(data, '[0].value');
+function donutLabel (data, labelText) {
+  var value = _.get(data, '[0].value')
 
   if (!_.isFinite(value)) {
-    return;
+    return
   }
 
-  var fmt   = d3.format('%');
-  var label;
+  var fmt = d3.format('%')
+  var label
 
   if (labelText) {
-    label = (<span><br /><label>{labelText}</label></span>);
+    label = (<span><br /><label>{labelText}</label></span>)
   }
 
   return (<span>{fmt(value)}{label}</span>)
@@ -32,12 +32,12 @@ var Monitoring = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading = this.props.loading;
-    var data    = this.props.data;
+    var loading = this.props.loading
+    var data = this.props.data
 
     var options = {
       innerRadius : 0.6,
@@ -45,38 +45,38 @@ var Monitoring = React.createClass({
       labelStyle  : {
         lineHeight : 1
       }
-    };
+    }
 
     var inside = _(data.insideMonitoring)
       .groupBy('location.name')
       .map(values => _.transform(values, (result, d) => {
-        _.defaults(result, _.omit(d, 'indicator', 'value'));
-        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
+        _.defaults(result, _.omit(d, 'indicator', 'value'))
+        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value
       }, {}))
       .omit('indicator', 'value')
       .filter(d => _.isFinite(d.x) && _.isFinite(d.y))
-      .value();
+      .value()
 
     var outside = _(data.outsideMonitoring)
       .groupBy('location.name')
       .map(values => _.transform(values, (result, d) => {
-        _.defaults(result, _.omit(d, 'indicator', 'value'));
-        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value;
+        _.defaults(result, _.omit(d, 'indicator', 'value'))
+        result[d.indicator.id === 276 ? 'x' : 'y'] = d.value
       }, {}))
       .omit('indicator', 'value')
       .filter(d => _.isFinite(d.x) && _.isFinite(d.y))
-      .value();
+      .value()
 
-    var union = _(data.insideMonitoring.concat(data.outsideMonitoring));
+    var union = _(data.insideMonitoring.concat(data.outsideMonitoring))
     var domain = d3.extent(union
       .filter(d => d.indicator.id === 276)
       .pluck('value')
-      .value());
+      .value())
 
     var range = d3.extent(union
       .filter(d => _.includes([274,272], d.indicator.id))
       .pluck('value')
-      .value());
+      .value())
 
     var scatter = {
       aspect  : 1.7,
@@ -86,12 +86,12 @@ var Monitoring = React.createClass({
       xLabel  : 'Caregiver Awareness',
       yFormat : d3.format('%'),
       yLabel  : 'Missed Children'
-    };
+    }
 
     // Match the scatter plot's left margin for nicer header alignment
     var headerStyle = {
       marginLeft: '24px'
-    };
+    }
 
     return (
       <div className='row'>
@@ -152,9 +152,9 @@ var Monitoring = React.createClass({
         </div>
 
       </div>
-    );
+    )
   }
 
-});
+})
 
-module.exports = Monitoring;
+module.exports = Monitoring

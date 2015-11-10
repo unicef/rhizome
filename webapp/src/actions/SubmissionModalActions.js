@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-var Reflux = require('reflux');
+var Reflux = require('reflux')
 
 module.exports = Reflux.createActions([
-    "getSubmission"
-]);
+    'getSubmission'
+])

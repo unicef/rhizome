@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var Overview  = require('dashboard/nco/Overview.jsx');
-var Breakdown = require('dashboard/nco/Breakdown.jsx');
+var Overview = require('dashboard/nco/Overview.jsx')
+var Breakdown = require('dashboard/nco/Breakdown.jsx')
 
 var NCODashboard = React.createClass({
   propTypes : {
@@ -18,12 +18,12 @@ var NCODashboard = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var data    = this.props.data;
-    var loading = this.props.loading;
+    var data = this.props.data
+    var loading = this.props.loading
 
     return (
       <div id='nco-dashboard'>
@@ -47,8 +47,8 @@ var NCODashboard = React.createClass({
           <Breakdown data={data.breakdown} loading={loading} />
         </section>
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = NCODashboard;
+module.exports = NCODashboard

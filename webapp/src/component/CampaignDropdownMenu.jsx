@@ -1,14 +1,14 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var React  = require('react');
-var moment = require('moment');
+var _ = require('lodash')
+var React = require('react')
+var moment = require('moment')
 
-var DropdownMenu     = require('component/DropdownMenu.jsx');
-var CampaignMenuItem = require('component/CampaignMenuItem.jsx');
+var DropdownMenu = require('component/DropdownMenu.jsx')
+var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
 
-function searchValue(campaign) {
-  var m = moment(campaign.start_date);
+function searchValue (campaign) {
+  var m = moment(campaign.start_date)
 
   // Include several possible date formats for matching against
   return [
@@ -30,8 +30,8 @@ function searchValue(campaign) {
     m.format('YY/MM'),
     m.format('MM/YY'),
     m.format('YY/M'),
-    m.format('M/YY'),
-  ].join(' ');
+    m.format('M/YY')
+  ].join(' ')
 }
 
 var CampaignDropdownMenu = React.createClass({
@@ -43,17 +43,17 @@ var CampaignDropdownMenu = React.createClass({
   getInitialState : function () {
     return {
       pattern : ''
-    };
+    }
   },
 
   render : function () {
-    var re = new RegExp(this.state.pattern, 'i');
+    var re = new RegExp(this.state.pattern, 'i')
 
     // If the pattern is longer than two characters, filter the list with it,
     // otherwise, return true to include all campaigns in the dropdown
-    var filterCampaigns = !_.isEmpty(this.state.pattern)?
-      _.flow(searchValue, function (v) { return re.test(v); }) :
-      _.constant(true);
+    var filterCampaigns = !_.isEmpty(this.state.pattern)
+      ? _.flow(searchValue, function (v) { return re.test(v) })
+      : _.constant(true)
 
     var campaigns = _(this.props.campaigns)
       .filter(filterCampaigns)
@@ -63,11 +63,11 @@ var CampaignDropdownMenu = React.createClass({
         return (
           <CampaignMenuItem campaign={campaign}
             sendValue={this.props.sendValue} />
-        );
+        )
       })
-      .value();
+      .value()
 
-    var props = _.omit(this.props, 'campaigns', 'sendValue');
+    var props = _.omit(this.props, 'campaigns', 'sendValue')
 
     return (
       <DropdownMenu icon='fa-calendar'
@@ -78,12 +78,12 @@ var CampaignDropdownMenu = React.createClass({
         {campaigns}
 
       </DropdownMenu>
-    );
+    )
   },
 
   _setPattern : function (value) {
     this.setState({ pattern : value })
   }
-});
+})
 
-module.exports = CampaignDropdownMenu;
+module.exports = CampaignDropdownMenu

@@ -1,9 +1,10 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var React = require('react')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
 var ToggleableStackedBar = React.createClass({
   propTypes : {
@@ -17,21 +18,21 @@ var ToggleableStackedBar = React.createClass({
   getInitialState : function () {
     return {
       offset : 'zero'
-    };
+    }
   },
 
   render : function () {
-    var name    = _.kebabCase(this.props.title);
-    var props   = _.omit(this.props, 'title', 'options');
+    var name = _.kebabCase(this.props.title)
+    var props = _.omit(this.props, 'title', 'options')
     var options = _.assign({}, this.props.options, {
       offset  : this.state.offset,
       xFormat : d3.format(this.state.offset === 'expand' ? '%' : 'n')
-    });
+    })
 
     return (
       <div>
         <h4>
-          <a name={name}>{this.props.title}</a>&ensp;
+          <a name={name}>{this.props.title}</a>&ensp
           <div className='medium inline'>
             <label>
               <input
@@ -55,12 +56,12 @@ var ToggleableStackedBar = React.createClass({
         </h4>
         <Chart type='BarChart' options={options} {...props} />
       </div>
-    );
+    )
   },
 
   onOffsetChange : function (evt) {
-    this.setState({ offset : evt.currentTarget.value });
+    this.setState({ offset : evt.currentTarget.value })
   }
-});
+})
 
-module.exports = ToggleableStackedBar;
+module.exports = ToggleableStackedBar

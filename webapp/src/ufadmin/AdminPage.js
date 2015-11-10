@@ -1,5 +1,5 @@
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 const {
   Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
@@ -7,12 +7,11 @@ const {
   Paginator,
   SearchBar,
   FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope');
+  } = require('react-datascope')
 
-var parseSchema = require('./utils/parseSchema');
+var parseSchema = require('./utils/parseSchema')
 
 var AdminPage = React.createClass({
-
   propTypes: {
     title: React.PropTypes.string.isRequired,
     getData: React.PropTypes.func.isRequired
@@ -28,55 +27,50 @@ var AdminPage = React.createClass({
 
   componentWillMount: function () {
     this.props.getData(null, null, {'cache-control': 'no-cache'}).then(response => {
-      var schema = parseSchema(response);
-      if (this.props.schema != null) {
-        var schemaSetting = this.props.schema;
+      var schema = parseSchema(response)
+      if (this.props.schema !== null) {
+        var schemaSetting = this.props.schema
         _.each(schemaSetting, function (item, key) {
-          schema.items.properties[key].type = item.type;
-          schema.items.properties[key].format = item.format;
-        });
+          schema.items.properties[key].type = item.type
+          schema.items.properties[key].format = item.format
+        })
       }
       this.setState({
         schema: schema,
-        data: response.objects,
-      });
-    });
+        data: response.objects
+      })
+    })
   },
 
-  onToggleFilterContainer() {
-    this.setState(prevState => ({areFiltersVisible: !prevState.areFiltersVisible}));
+  onToggleFilterContainer () {
+    this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible }))
   },
 
-  render() {
+  render () {
     // render loading indicator until data has loaded
-    var isLoaded = _.isArray(this.state.data) && this.state.schema;
-    if (!isLoaded) return this.renderLoading();
+    var isLoaded = _.isArray(this.state.data) && this.state.schema
+    if (!isLoaded) return this.renderLoading()
 
-    var {data, schema} = this.state;
+    var {data, schema} = this.state
 
-    // make the "Create X" button if we have a creation URL
-    var createUrl = '/datapoints/users/create/';
-    if (this.props.title == "Campaigns")
-      createUrl = '/datapoints/campaigns/create/';
-    if (this.props.title == "locations")
-      createUrl = '/datapoints/locations/create/';
-    else if (this.props.title == "Roles")
-      createUrl = '/datapoints/groups/create/';
-    else if (this.props.title == "Indicators")
-      createUrl = "/ufadmin/manage/indicator/";
-    else if (this.props.title == "Tags")
-      createUrl = "/ufadmin/manage/indicator_tag/";
+    // make the 'Create X' button if we have a creation URL
+    var createUrl = '/datapoints/users/create/'
+    if (this.props.title === 'Campaigns') createUrl = '/datapoints/campaigns/create/'
+    if (this.props.title === 'locations') createUrl = '/datapoints/locations/create/'
+    else if (this.props.title === 'Roles') createUrl = '/datapoints/groups/create/'
+    else if (this.props.title === 'Indicators') createUrl = '/ufadmin/manage/indicator/'
+    else if (this.props.title === 'Tags') createUrl = '/ufadmin/manage/indicator_tag/'
 
-
-    // strip the "s" from the end of plural title
-    var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title;
-    var createButton = createUrl ?
-      <div className="ufadmin-create-button">
-        <a className="button" href={createUrl}>Create {titleSingular}</a>
-      </div> : null;
+    // strip the 's' from the end of plural title
+    var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
+    var createButton = createUrl
+      ? <div className='ufadmin-create-button'>
+          <a className='button' href={createUrl}>Create {titleSingular}</a>
+        </div>
+      : null
 
     return <div>
-      <h2 className="ufadmin-page-heading">{this.props.title} Admin Page</h2>
+      <h2 className='ufadmin-page-heading'>{this.props.title} Admin Page</h2>
 
       {createButton}
 
@@ -91,57 +85,57 @@ var AdminPage = React.createClass({
       </LocalDatascope>
     </div>
   },
-  renderLoading() {
+
+  renderLoading () {
     return <div className='admin-loading'>Loading...</div>
   },
 
-  renderOriginalFilters(){
+  renderOriginalFilters () {
+    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
+    var { areFiltersVisible } = this.state
 
-    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
-    var { areFiltersVisible } = this.state;
+    return <div className='ufadmin-filters-container'>
+      <div className='ufadmin-show-filters' onClick={this.onToggleFilterContainer}>
 
-    return <div className="ufadmin-filters-container">
-      <div className="ufadmin-show-filters" onClick={this.onToggleFilterContainer}>
-
-        {areFiltersVisible ?
-          <span>
-						<ClearQueryLink>
-              Filter results {filterExpander}
-            </ClearQueryLink>
-						<span onClick={e => {e.stopPropagation()}}>
-							<ClearQueryLink>
-                <a className='admin-clear-filters'>Clear filters</a>
+        {areFiltersVisible
+          ? <span>
+              <ClearQueryLink>
+                Filter results {filterExpander}
               </ClearQueryLink>
-						</span>
-					</span>
-          :
-          <span>Filter results {filterExpander}</span>
+              <span onClick={e => { e.stopPropagation() }}>
+                <ClearQueryLink>
+                  <a className='admin-clear-filters'>Clear filters</a>
+                </ClearQueryLink>
+              </span>
+            </span>
+          : <span>Filter results {filterExpander}</span>
         }
       </div>
 
-
-      {areFiltersVisible ?
-        <div className="ufadmin-filters-content">
-          {this.props.datascopeFilters}
-        </div>
-        : null}
+      {areFiltersVisible
+        ? <div className='ufadmin-filters-content'>
+            {this.props.datascopeFilters}
+          </div>
+        : null
+      }
     </div>
   },
 
-  renderFilters() {
-    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]';
-    var { areFiltersVisible } = this.state;
-    return areFiltersVisible ? <div className="row">
-      <div className="medium-7 columns">
-      </div>
-      <div className="medium-5 columns">
-        <div className="ufadmin-filters-content">
-          {this.props.datascopeFilters}
+  renderFilters () {
+    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
+    var { areFiltersVisible } = this.state
+    return areFiltersVisible
+      ? <div className='row'>
+          <div className='medium-7 columns'>
+          </div>
+          <div className='medium-5 columns'>
+            <div className='ufadmin-filters-content'>
+              {this.props.datascopeFilters}
+            </div>
+          </div>
         </div>
-      </div>
-    </div> : null;
+      : null
   }
-});
+})
 
-
-module.exports = AdminPage;
+module.exports = AdminPage

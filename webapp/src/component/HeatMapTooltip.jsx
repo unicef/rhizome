@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var d3    = require('d3');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var React = require('react')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
 var HeatMapTooltip = React.createClass({
   propTypes : {
@@ -15,21 +15,20 @@ var HeatMapTooltip = React.createClass({
     value     : React.PropTypes.number.isRequired,
     total     : React.PropTypes.number.isRequired,
 
-    format    : React.PropTypes.func,
+    format    : React.PropTypes.func
   },
 
   getDefaultProps : function () {
     return {
-      format : d3.format('n'),
-    };
+      format : d3.format('n')
+    }
   },
 
-
   render : function () {
-    var fmt    = this.props.format;
-    var bounds = this.props.indicator.bound_json;
-    var value  = this.props.value;
-    var targets;
+    var fmt = this.props.format
+    var bounds = this.props.indicator.bound_json
+    var value = this.props.value
+    var targets
 
     if (!_.isEmpty(bounds)) {
       var rows = _(bounds)
@@ -43,7 +42,7 @@ var HeatMapTooltip = React.createClass({
             <td>{fmt(b.mx_val)}</td>
           </tr>
         ))
-        .value();
+        .value()
 
       targets = (
         <span>
@@ -55,14 +54,14 @@ var HeatMapTooltip = React.createClass({
             {rows}
           </table>
         </span>
-      );
+      )
     }
 
-    var data = this.props.data;
+    var data = this.props.data
     var reported = _(data)
       .pluck('value')
       .filter(_.isFinite)
-      .size();
+      .size()
 
     var chartOptions = {
       className  : d => _.inRange(value, d.x, d.x + d.dx) ? 'current' : null,
@@ -70,7 +69,7 @@ var HeatMapTooltip = React.createClass({
       width      : 120 * 1.618,
       height     : 120,
       format     : fmt
-    };
+    }
 
     return (
       <div>
@@ -88,8 +87,8 @@ var HeatMapTooltip = React.createClass({
           {reported} / {this.props.total} locations reported values for {this.props.column}.
         </p>
       </div>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = HeatMapTooltip;
+module.exports = HeatMapTooltip

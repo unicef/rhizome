@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-var _      = require('lodash');
-var React  = require('react');
-var moment = require('moment');
+var _ = require('lodash')
+var React = require('react')
+var moment = require('moment')
 
-var TitleMenu        = require('component/TitleMenu.jsx');
-var CampaignMenuItem = require('component/CampaignMenuItem.jsx');
+var TitleMenu = require('component/TitleMenu.jsx')
+var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
 
 var CampaignTitleMenu = React.createClass({
   propTypes : {
@@ -16,8 +16,8 @@ var CampaignTitleMenu = React.createClass({
   },
 
   render : function () {
-    var campaigns = CampaignMenuItem.fromArray(this.props.campaigns, this.props.sendValue);
-    var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY');
+    var campaigns = CampaignMenuItem.fromArray(this.props.campaigns, this.props.sendValue)
+    var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
 
     return (
       <TitleMenu
@@ -25,8 +25,8 @@ var CampaignTitleMenu = React.createClass({
         text={startDate}>
         {campaigns}
       </TitleMenu>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = CampaignTitleMenu;
+module.exports = CampaignTitleMenu

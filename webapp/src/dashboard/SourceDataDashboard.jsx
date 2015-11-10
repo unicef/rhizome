@@ -1,29 +1,29 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 var api = require('data/api.js')
-var moment = require('moment');
-var page = require('page');
-var Reflux = require('reflux');
+var moment = require('moment')
+var page = require('page')
+var Reflux = require('reflux')
 
-var NavigationStore = require('stores/NavigationStore');
-var ReviewTable = require('dashboard/sd/ReviewTable.js');
-var DocOverview = require('dashboard/sd/DocOverview.jsx');
-var DocForm = require('dashboard/sd/DocForm.jsx');
-var SourceDataDashboardStore = require('stores/SourceDataDashboardStore');
-var SourceDataDashboardAction = require('actions/SourceDataDashboardActions');
+var NavigationStore = require('stores/NavigationStore')
+var ReviewTable = require('dashboard/sd/ReviewTable.js')
+var DocOverview = require('dashboard/sd/DocOverview.jsx')
+var DocForm = require('dashboard/sd/DocForm.jsx')
+var SourceDataDashboardStore = require('stores/SourceDataDashboardStore')
+var SourceDataDashboardAction = require('actions/SourceDataDashboardActions')
 
-var TitleMenu = require('component/TitleMenu.jsx');
-var MenuItem = require('component/MenuItem.jsx');
-var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
+var TitleMenu = require('component/TitleMenu.jsx')
+var MenuItem = require('component/MenuItem.jsx')
+var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup')
 
 var {
     Datascope, LocalDatascope,
     SimpleDataTable, SimpleDataTableColumn,
     Paginator, SearchBar,
     FilterPanel, FilterDateRange
-    } = require('react-datascope');
+    } = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
     mixins : [
@@ -48,34 +48,31 @@ var SourceDataDashboard = React.createClass({
     },
 
     componentWillMount: function (nextProps, nextState) {
-        var data = SourceDataDashboardAction.getDocObj(this.props.doc_id);
-        this.setState({doc_obj: data.doc_obj});
+        var data = SourceDataDashboardAction.getDocObj(this.props.doc_id)
+        this.setState({doc_obj: data.doc_obj})
     },
 
     componentWillUpdate: function (nextProps, nextState) {
-        if (nextProps.doc_id != this.props.doc_id) {
-            return;
+        if (nextProps.doc_id !== this.props.doc_id) {
+            return
         }
     },
 
-
     render: function () {
-        var loading = this.props.loading;
-        var campaign = this.props.campaign;
-        var location = this.props.location;
-        var loading = this.props.loading;
-        var doc_id = this.props.doc_id;
+        var loading = this.props.loading
+        var campaign = this.props.campaign
+        var location = this.props.location
+        var doc_id = this.props.doc_id
         var doc_tab = this.props.doc_tab
 
-        var doc_obj = this.state.doc_obj;
+        var doc_obj = this.state.doc_obj
 
         if (!doc_obj) {
             return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
         }
 
-
         if (!doc_tab) {
-            var doc_tab = 'doc_index'
+            doc_tab = 'doc_index'
         }
 
         var docItems = MenuItem.fromArray(
@@ -83,77 +80,76 @@ var SourceDataDashboard = React.createClass({
                 return {
                     title: d.doc_title,
                     value: d.id
-                };
+                }
             }),
-            this._setDocId);
+            this._setDocId)
 
         var doc_tabs = MenuItem.fromArray(
             _.map(['viewraw', 'mapping', 'validate', 'results', 'doc_index'], d => {
                 return {
                     title: d,
                     value: d
-                };
+                }
             }),
-            this._setDocTab);
+            this._setDocTab)
 
         // navigation to set doc-id and doc-processor //
         var review_nav =
-            <div className="admin-container">
-                <h1 className="admin-header"></h1>
+            <div className='admin-container'>
+                <h1 className='admin-header'></h1>
 
-                <div className="row">
+                <div className='row'>
                     <TitleMenu text={doc_obj.doc_title}>
                         {docItems}
                     </TitleMenu>
                 </div>
-                <div className="row">
+                <div className='row'>
                     <TitleMenu text={doc_tab}>
                         {doc_tabs}
                     </TitleMenu>
                 </div>
 
-            </div>;
+            </div>
 
         const table_definition = {
             'viewraw': {
                 'meta_fn': api.submissionMeta,
                 'data_fn': api.submission,
-                'fields': ['id',  'location_code', 'campaign_code', 'edit_link'],
-                'search_fields': ['id',  'location_code', 'campaign_code'],
+                'fields': ['id', 'location_code', 'campaign_code', 'edit_link'],
+                'search_fields': ['id', 'location_code', 'campaign_code']
             },
             'doc_index': {
                 'data_fn': api.source_doc,
-                'fields': ['id', 'doc_title','created_at','edit_link'],
-                'search_fields': ['id', 'doc_title'],
+                'fields': ['id', 'doc_title', 'created_at', 'edit_link'],
+                'search_fields': ['id', 'doc_title']
             },
             'mapping': {
                 'data_fn': api.docMap,
                 'fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
-                'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name'],
+                'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name']
             },
             'validate': {
                 'data_fn': api.docDatapoint,
                 'fields': ['id', 'document_id', 'location_id', 'indicator_id', 'campaign_id', 'value', 'edit_link'],
-                'search_fields': ['location_id', 'indicator_id', 'campaign_id'],
+                'search_fields': ['location_id', 'indicator_id', 'campaign_id']
             },
             'results': {
                 'data_fn': api.docResults,
                 'fields': ['indicator_id', 'indicator__short_name', 'value'],
-                'search_fields': ['indicator_id', 'indicator__short_name', 'value'],
-            },
-        };
-
+                'search_fields': ['indicator_id', 'indicator__short_name', 'value']
+            }
+        }
 
         var search_fields = table_definition[doc_tab]['search_fields']
         var datascopeFilters =
             <div>
                 <SearchBar
                     fieldNames={search_fields}
-                    placeholder="search ..."
+                    placeholder='search ...'
                     />
-            </div>;
+            </div>
 
-        var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab;
+        var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
         // data table //
         var review_table = <ReviewTable
             title='sample title'
@@ -175,18 +171,19 @@ var SourceDataDashboard = React.createClass({
             </SimpleDataTable>
         </ReviewTable>
 
-        if (doc_tab == 'doc_index') {
-            var docForm = <div><DocForm></DocForm></div>
-            var review_breakdown = '';
-        }
-        else {
-            var docForm = '';
-            var review_breakdown = <DocOverview
+        var docForm
+        var review_breakdown
+        if (doc_tab === 'doc_index') {
+            docForm = <div><DocForm></DocForm></div>
+            review_breakdown = ''
+        } else {
+            docForm = ''
+            review_breakdown = <DocOverview
                 key={table_key + 'breakdown'}
                 loading={loading}
                 doc_id={doc_id}
                 >
-            </DocOverview>;
+            </DocOverview>
         }
 
         var page_title = doc_obj.doc_title + ' - ' + doc_tab
@@ -194,43 +191,43 @@ var SourceDataDashboard = React.createClass({
         return (
             <div>
                 {docForm}
-                <div className="row">
-                    <div id="popUp"></div>
-                    <div className="medium-9 columns">
-                        <h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{page_title} </h2>
+                <div className='row'>
+                    <div id='popUp'></div>
+                    <div className='medium-9 columns'>
+                        <h2 style={{ textAlign: 'center' }} className='ufadmin-page-heading'>{page_title} </h2>
                         {review_table}
                     </div>
-                    <div className="medium-3 columns">
+                    <div className='medium-3 columns'>
                         {review_nav}
                         {review_breakdown}
                     </div>
                 </div>
-            </div>);
+            </div>)
     },
 
     _setDocId: function (doc_id) {
-        this._navigate({doc_id: doc_id});
-        this.forceUpdate();
+        this._navigate({doc_id: doc_id})
+        this.forceUpdate()
     },
 
     _setDocTab: function (doc_tab) {
-        this._navigate({doc_tab: doc_tab});
-        this.forceUpdate();
+        this._navigate({doc_tab: doc_tab})
+        this.forceUpdate()
     },
 
     _navigate: function (params) {
-        var slug = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title));
-        var location = _.get(params, 'location', this.props.location.name);
-        var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'));
-        var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab);
-        var doc_id = _.get(params, 'doc_id', this.props.doc_id);
+        var slug = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title))
+        var location = _.get(params, 'location', this.props.location.name)
+        var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+        var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab)
+        var doc_id = _.get(params, 'doc_id', this.props.doc_id)
 
         if (_.isNumber(location)) {
-            location = _.find(this.state.locations, r => r.id === location).name;
+            location = _.find(this.state.locations, r => r.id === location).name
         }
 
-        page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id);
+        page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id)
     }
-});
+})
 
-module.exports = SourceDataDashboard;
+module.exports = SourceDataDashboard

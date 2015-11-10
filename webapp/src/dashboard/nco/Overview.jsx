@@ -1,23 +1,24 @@
-'use strict';
+'use strict'
 
-var _     = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var React = require('react')
 
-var Chart      = require('component/Chart.jsx');
-var Monitoring = require('dashboard/nco/Monitoring.jsx');
+var Chart = require('component/Chart.jsx')
+var Monitoring = require('dashboard/nco/Monitoring.jsx')
 
-function donutLabel(data, labelText) { // FIXME this is repeated in odk/overview
-  var value = _.get(data, '[0].value');
+function donutLabel (data, labelText) { // FIXME this is repeated in odk/overview
+  var value = _.get(data, '[0].value')
 
   if (!_.isFinite(value)) {
-    return;
+    return
   }
 
-  var fmt   = d3.format('%');
-  var label;
+  var fmt = d3.format('%')
+  var label
 
   if (labelText) {
-    label = (<span><br /><label>{labelText}</label></span>);
+    label = (<span><br /><label>{labelText}</label></span>)
   }
 
   return (<span>{fmt(value)}{label}</span>)
@@ -32,25 +33,25 @@ var Overview = React.createClass({
   getDefaultProps : function () {
     return {
       loading : false
-    };
+    }
   },
 
   render : function () {
-    var loading    = this.props.loading;
-    var data       = this.props.data;
+    var loading = this.props.loading
+    var data = this.props.data
     var monitoring = _.pick(data, 'inside', 'outside', 'caregiverAwareness',
-      'insideMonitoring', 'outsideMonitoring');
+      'insideMonitoring', 'outsideMonitoring')
 
     var options = {
       values  : _.identity,
       x       : _.property('value'),
       xFormat : d3.format('%'),
       y       : _.property('indicator.short_name')
-    };
+    }
 
     var headerStyle = {
       marginLeft : '80px'
-    };
+    }
 
     return (
       <div>
@@ -116,8 +117,8 @@ var Overview = React.createClass({
           </div>
         </div>
       </div>
-    );
-  },
-});
+    )
+  }
+})
 
-module.exports = Overview;
+module.exports = Overview

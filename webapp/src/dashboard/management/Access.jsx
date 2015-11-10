@@ -1,12 +1,13 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
-var moment = require('moment');
+var _ = require('lodash')
+var d3 = require('d3')
+var React = require('react')
+var moment = require('moment')
 
-var Chart = require('component/Chart.jsx');
-var DonutChart = require('component/DonutChart.jsx');
-var PieChartList = require('component/PieChartList.jsx');
+var Chart = require('component/Chart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
+var PieChartList = require('component/PieChartList.jsx')
 
 var Access = React.createClass({
   propTypes: {
@@ -16,47 +17,47 @@ var Access = React.createClass({
   },
 
   render: function () {
-    var data = this.props.data;
-    var campaign = this.props.campaign;
-    var loading = this.props.loading;
+    var data = this.props.data
+    var campaign = this.props.campaign
+    var loading = this.props.loading
 
     var inaccessible = _(data.numberOfInaccessibleChildren)
       .sortBy(_.method('campaign.start_date.getTime'))
       .groupBy('indicator.short_name')
       .map(function (values, name) {
-        return {name: name, values: values};
+        return {name: name, values: values}
       })
-      .value();
+      .value()
 
     var reasons = _(data.inaccessibilityBreakdown)
       .filter(d => {
         return d.campaign.id === campaign.id &&
           _.isFinite(d.value) &&
-          d.value >= 0.01;
+          d.value >= 0.01
       })
       .sortBy(_.property('value'))
       .reverse()
       .map(d => [d])
-      .value();
+      .value()
 
     var pieChartName = function (d) {
       return d3.format('%')(d[0].value) + ' ' +
-        _.trimLeft(d[0].indicator.short_name, '% ');
-    };
+        _.trimLeft(d[0].indicator.short_name, '% ')
+    }
 
     var plans = _.filter(data.districtsWithAccessPlans,
-        d => d.campaign.id === campaign.id && _.isFinite(d.value));
+        d => d.campaign.id === campaign.id && _.isFinite(d.value))
 
     var planLabel = function (d) {
-      var fmt = d3.format('%');
-      var v = _.get(d, '[0].value', '');
+      var fmt = d3.format('%')
+      var v = _.get(d, '[0].value', '')
 
-      return fmt(v);
-    };
+      return fmt(v)
+    }
 
     var m = moment(this.props.campaign.start_date, 'YYYY-MM-DD')
-    var lower = m.clone().startOf('month').subtract(1, 'year');
-    var upper = m.clone().endOf('month');
+    var lower = m.clone().startOf('month').subtract(1, 'year')
+    var upper = m.clone().endOf('month')
 
     var chartOptions = {
       aspect: 2.26,
@@ -65,11 +66,11 @@ var Access = React.createClass({
       x: _.property('campaign.start_date'),
       y: _.property('value'),
       yFormat: d3.format(',.0f')
-    };
+    }
 
     return (
-      <div className="row">
-        <div className="medium-4 columns">
+      <div className='row'>
+        <div className='medium-4 columns'>
           <h4>Number of Inaccessible Children</h4>
           <Chart type='AreaChart' data={inaccessible}
                  loading={loading}
@@ -101,8 +102,8 @@ var Access = React.createClass({
         </div>
 
       </div>
-    );
+    )
   }
-});
+})
 
-module.exports = Access;
+module.exports = Access

@@ -1,12 +1,11 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var api = require('data/api');
-var Reflux = require('reflux');
-var parseSchema = require('ufadmin/utils/parseSchema');
+var _ = require('lodash')
+var api = require('data/api')
+var Reflux = require('reflux')
+var parseSchema = require('ufadmin/utils/parseSchema')
 
 var ReviewTableStore = Reflux.createStore({
-
     listenables: [require('actions/ReviewTableActions')],
 
     init: function () {
@@ -14,57 +13,53 @@ var ReviewTableStore = Reflux.createStore({
             data: null,
             schema: null,
             query: {},
-            loading: false,
-        };
+            loading: false
+        }
     },
 
     onGetData: function (request, fields, docTab) {
-        var self = this;
-        if (docTab == "viewraw") {
+        var self = this
+        if (docTab === 'viewraw') {
             api.submission(request, null, {'cache-control': 'no-cache'}).then(response => {
-                self.data.schema = parseSchema(fields);
-                self.data.data = response.objects;
-                self.trigger(self.data);
-            });
-        }
-        else if (docTab == "doc_index") {
+                self.data.schema = parseSchema(fields)
+                self.data.data = response.objects
+                self.trigger(self.data)
+            })
+        } else if (docTab === 'doc_index') {
             api.source_doc(request, null, {'cache-control': 'no-cache'}).then(response => {
-                self.data.schema = parseSchema(fields);
-                self.data.data = response.objects;
-                self.trigger(self.data);
-            });
-        }
-        else if (docTab == "mapping") {
+                self.data.schema = parseSchema(fields)
+                self.data.data = response.objects
+                self.trigger(self.data)
+            })
+        } else if (docTab === 'mapping') {
             api.docMap(request, null, {'cache-control': 'no-cache'}).then(response => {
-                self.data.schema = parseSchema(fields);
-                self.data.data = response.objects;
-                self.trigger(self.data);
-            });
-        }
-        else if (docTab == "validate") {
+                self.data.schema = parseSchema(fields)
+                self.data.data = response.objects
+                self.trigger(self.data)
+            })
+        } else if (docTab === 'validate') {
             api.docDatapoint(request, null, {'cache-control': 'no-cache'}).then(response => {
-                self.data.schema = parseSchema(fields);
-                self.data.data = response.objects;
-                self.trigger(self.data);
-            });
-        }
-        else {
-            //results
+                self.data.schema = parseSchema(fields)
+                self.data.data = response.objects
+                self.trigger(self.data)
+            })
+        } else {
+            // results
             api.docResults(request, null, {'cache-control': 'no-cache'}).then(response => {
-                self.data.schema = parseSchema(fields);
-                self.data.data = response.objects;
-                self.trigger(self.data);
-            });
+                self.data.schema = parseSchema(fields)
+                self.data.data = response.objects
+                self.trigger(self.data)
+            })
         }
     },
 
     onGetIndicators: function () {
-        var self = this;
+        var self = this
         api.indicatorsTree().then(indicators => {
-            self.data.indicators = indicators;
-            self.trigger(self.data);
-        });
+            self.data.indicators = indicators
+            self.trigger(self.data)
+        })
     }
-});
+})
 
-module.exports = ReviewTableStore;
+module.exports = ReviewTableStore

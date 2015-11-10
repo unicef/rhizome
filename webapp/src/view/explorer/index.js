@@ -1,16 +1,15 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var d3 = require('d3');
-var moment = require('moment');
-var React = require('react');
+var _ = require('lodash')
+var d3 = require('d3')
+var moment = require('moment')
+var React = require('react')
 
-var api = require('../../data/api');
-var Dropdown = require('../../component/dropdown');
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx');
-var List = require('component/list/List.jsx');
-var DateRangePicker = require('component/DateTimePicker.jsx');
-
+var api = require('../../data/api')
+var Dropdown = require('../../component/dropdown')
+var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
+var List = require('component/list/List.jsx')
+var DateRangePicker = require('component/DateTimePicker.jsx')
 
 module.exports = {
   template: require('./template.html'),
@@ -34,11 +33,11 @@ module.exports = {
         start: '',
         end: ''
       }
-    };
+    }
   },
 
   attached: function () {
-    var self = this;
+    var self = this
 
     this._locations = new Dropdown({
       el: '#locations',
@@ -48,15 +47,15 @@ module.exports = {
         'name': 'title',
         'id': 'value'
       }
-    });
+    })
 
     this._locations.$on('dropdown-value-changed', function (items) {
-      self.locations = _.values(items);
-    });
+      self.locations = _.values(items)
+    })
 
     this.$on('page-changed', function (data) {
-      this.refresh(data);
-    });
+      this.refresh(data)
+    })
 
     // render indicator dropdown
     api.indicatorsTree()
@@ -65,185 +64,181 @@ module.exports = {
           indicators: response.objects,
           text: 'Choose Indicators',
           sendValue: self.updateIndicatorSelection
-        };
-        self.indicatorMap = _.indexBy(response.flat, 'id');
-        self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"));
-      });
+        }
+        self.indicatorMap = _.indexBy(response.flat, 'id')
+        self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById('indicatorSelector'))
+      })
 
     var dateRangePickerProps = {
       start: self.campaign.start,
       end: self.campaign.end,
       sendValue: self.updateDateRangePicker
-    };
-    React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById("dateRangePicker"));
+    }
+    React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById('dateRangePicker'))
   },
 
   computed: {
     hasSelection: function () {
-      return this.locations.length > 0 && this.indicators.length > 0;
+      return this.locations.length > 0 && this.indicators.length > 0
     }
   },
 
   methods: {
-
     renderIndicatorList: function () {
       var listProps = {
         items: this.indicators,
         removeItem: this.removeIndicatorFromSelection
-      };
-      React.render(React.createElement(List, listProps), document.getElementById("indicatorList"));
+      }
+      React.render(React.createElement(List, listProps), document.getElementById('indicatorList'))
     },
 
     updateIndicatorSelection: function (id) {
-      this.indicators.push(this.indicatorMap[id]);
-      this.renderIndicatorList();
+      this.indicators.push(this.indicatorMap[id])
+      this.renderIndicatorList()
     },
 
     removeIndicatorFromSelection: function (id) {
       _.remove(this.indicators, function (d) {
-        return d.id === id;
-      });
-      this.renderIndicatorList();
+        return d.id === id
+      })
+      this.renderIndicatorList()
     },
 
     updateDateRangePicker: function (key, value) {
-      this.campaign[key] = value;
+      this.campaign[key] = value
     },
 
     refresh: function (pagination) {
       if (!this.hasSelection) {
-        return;
+        return
       }
 
+      var self = this
 
-      debugger;
-      var self = this;
-
-      var locationNames = _.indexBy(this.locations, 'value');
-      var locations = _.map(this.locations, 'value');
-      var options = {indicator__in: []};
+      var locationNames = _.indexBy(this.locations, 'value')
+      var locations = _.map(this.locations, 'value')
+      var options = { indicator__in: [] }
       var columns = [{
         prop: 'location',
         display: 'location',
         format: function (v) {
-          return locationNames[v].title;
+          return locationNames[v].title
         }
       }, {
         prop: 'campaign',
         display: 'Campaign'
-      }];
+      }]
 
       if (locations.length > 0) {
-        options.location__in = locations;
+        options.location__in = locations
       }
 
       if (this.campaign.start) {
-        options.campaign_start = this.campaign.start;
+        options.campaign_start = this.campaign.start
       }
 
       if (this.campaign.end) {
-        options.campaign_end = this.campaign.end;
+        options.campaign_end = this.campaign.end
       }
 
       this.indicators.forEach(function (indicator) {
-        options.indicator__in.push(indicator.value);
+        options.indicator__in.push(indicator.value)
         columns.push({
           prop: indicator.value,
           display: indicator.title,
           classes: 'numeric',
           format: function (v) {
             if (_.isFinite(v)) {
-              var fmt = d3.format('n');
+              var fmt = d3.format('n')
               if (Math.abs(v) < 1 && v !== 0) {
-                fmt = d3.format('.4f');
+                fmt = d3.format('.4f')
               }
 
-              return fmt(v);
+              return fmt(v)
             }
 
-            return '';
+            return ''
           }
-        });
-      });
+        })
+      })
 
-      _.defaults(options, pagination, _.omit(this.pagination, 'total_count'));
+      _.defaults(options, pagination, _.omit(this.pagination, 'total_count'))
 
-
-      this.table.rows = [];
-      this.table.columns = columns;
-      this.table.loading = true;
+      this.table.rows = []
+      this.table.columns = columns
+      this.table.loading = true
 
       api.datapoints(options).then(function (data) {
-        self.table.loading = false;
+        self.table.loading = false
 
-        _.assign(self.pagination, _.pick(data.meta, 'limit', 'offset', 'total_count'));
+        _.assign(self.pagination, _.pick(data.meta, 'limit', 'offset', 'total_count'))
 
         if (!data.objects || data.objects.length < 1) {
-          return;
+          return
         }
 
         var datapoints = data.objects.map(function (v) {
-          var d = _.pick(v, 'location');
+          var d = _.pick(v, 'location')
 
-          d.campaign = moment(v.campaign.start_date).format('MMM YYYY');
+          d.campaign = moment(v.campaign.start_date).format('MMM YYYY')
 
           v.indicators.forEach(function (ind) {
-            d[ind.indicator] = ind.value;
-          });
+            d[ind.indicator] = ind.value
+          })
 
-          return d;
-        });
+          return d
+        })
 
-        self.table.rows = datapoints;
-      });
+        self.table.rows = datapoints
+      })
     },
 
     download: function () {
       if (!this.hasSelection) {
-        return;
+        return
       }
 
-      this.downloading = true;
+      this.downloading = true
 
-      var indicators = _.map(this.indicators, 'value');
-      var locations = _.map(this.locations, 'value');
+      var indicators = _.map(this.indicators, 'value')
+      var locations = _.map(this.locations, 'value')
       var query = {
-        'format': 'csv',
-      };
+        'format': 'csv'
+      }
 
       if (indicators.length < 1) {
-        this.$data.src = '';
-        return;
+        this.$data.src = ''
+        return
       }
 
-      query.indicator__in = indicators;
+      query.indicator__in = indicators
       if (locations.length > 0) {
-        query.location__in = locations;
+        query.location__in = locations
       }
 
       if (this.campaign.start) {
-        query.campaign_start = this.campaign.start;
+        query.campaign_start = this.campaign.start
       }
 
       if (this.campaign.end) {
-        query.campaign_end = this.campaign.end;
+        query.campaign_end = this.campaign.end
       }
 
-      this.$set('src', api.datapoints.toString(query));
+      this.$set('src', api.datapoints.toString(query))
     },
 
     previous: function () {
       if (this.pagination.offset < 1) {
-        return;
+        return
       }
 
-      this.pagination.offset = Math.max(0, this.pagination.offset - this.pagination.limit);
-      this.refresh();
+      this.pagination.offset = Math.max(0, this.pagination.offset - this.pagination.limit)
+      this.refresh()
     },
 
     next: function () {
-      this.pagination.offset += this.pagination.limit;
-      this.refresh();
+      this.pagination.offset += this.pagination.limit
+      this.refresh()
     }
   }
-};
+}

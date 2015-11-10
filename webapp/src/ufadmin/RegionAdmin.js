@@ -1,48 +1,49 @@
-var React = require('react');
-var _ = require('lodash');
+'use strict'
+
+var React = require('react')
 var {
   Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator,
   SearchBar,
   FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope');
+  } = require('react-datascope')
 
-var api = require('../data/api');
+var api = require('../data/api')
 
-var AdminPage = require('./AdminPage');
+var AdminPage = require('./AdminPage')
 
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/datapoints/locations/update/${id}`}>Edit location</a>;
+      return <a href={`/datapoints/locations/update/${id}`}>Edit location</a>
     }
   },
-  id: {title: "ID", name: "id"},
-  name: {title: 'Name', name: 'name'},
-  created_at: {title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a'}
-};
+  id: { title: 'ID', name: 'id' },
+  name: { title: 'Name', name: 'name' },
+  created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
+}
 
 const schema = {
-  created_at: {type: "string", format: 'date-time'},
-};
+  created_at: { type: 'string', format: 'date-time' }
+}
 
-const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link'];
+const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link']
 
 var RegionAdmin = React.createClass({
-  render() {
+  render () {
     var datascopeFilters =
       <div>
         <SearchBar
           fieldNames={['name']}
-          placeholder="Search locations ..."
+          placeholder='Search locations ...'
           />
-      </div>;
+      </div>
 
     return <AdminPage
-      title="locations"
+      title='locations'
       getData={api.locations}
       datascopeFilters={datascopeFilters}
       fields={fields}
@@ -56,6 +57,6 @@ var RegionAdmin = React.createClass({
       </SimpleDataTable>
     </AdminPage>
   }
-});
+})
 
-module.exports = RegionAdmin;
+module.exports = RegionAdmin

@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-var _ = require('lodash');
-var React = require('react');
+var _ = require('lodash')
+var React = require('react')
 
-var Chart = require('component/Chart.jsx');
+var Chart = require('component/Chart.jsx')
 
 var PieChartList = React.createClass({
   propTypes : {
@@ -11,19 +11,19 @@ var PieChartList = React.createClass({
     keyPrefix : React.PropTypes.string.isRequired,
     options   : React.PropTypes.object,
     name      : React.PropTypes.func,
-    emptyText : React.PropTypes.string,
+    emptyText : React.PropTypes.string
   },
 
   getDefaultProps : function () {
     return {
       name      : _.property('indicator.short_name'),
       emptyText : 'No data',
-      loading   : false,
-    };
+      loading   : false
+    }
   },
 
   render : function () {
-    var loading = this.props.loading;
+    var loading = this.props.loading
 
     var pies = _.map(this.props.data, (d, i) => (
         <tr key={this.props.keyPrefix + '-' + i}>
@@ -31,17 +31,17 @@ var PieChartList = React.createClass({
           <td>{this.props.name(d)}</td>
         </tr>
       )
-    );
+    )
 
     if (_.isEmpty(pies)) {
-      pies = (<tr><td>{this.props.emptyText}</td></tr>);
+      pies = (<tr><td>{this.props.emptyText}</td></tr>)
     }
 
     return (
       <table className='pie-charts'>{pies}</table>
-    );
-  },
+    )
+  }
 
-});
+})
 
-module.exports = PieChartList;
+module.exports = PieChartList
