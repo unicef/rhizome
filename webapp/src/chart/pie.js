@@ -55,11 +55,11 @@ _.extend(PieChart.prototype, {
     this.update(data);
   },
 
-  update: function (data, options) {
+  update: function (values, options) {
     options = _.assign(this._options, options);
     var margin = options.margin;
 
-    data = _(data)
+    values = _(values)
       .filter(d => {
         var v = options.value(d);
         return _.isFinite(v) && v > 0;
@@ -67,6 +67,14 @@ _.extend(PieChart.prototype, {
       .sortBy(options.value)
       .reverse()
       .value();
+
+    var data = [{value: 0}, {value: 0}];
+    if (!_.isNull(values[0]) && !_.isUndefined(values[0])) {
+      if (!_.isNull(values[0].value) && !_.isUndefined(values[0].value)) {
+        data[0].value = Math.round(values[0].value * 100) / 100;
+        data[1].value = 1 - data[0].value;
+      }
+    }
 
     var w = this._width - margin.left - margin.right;
     var h = this._height - margin.top - margin.bottom;
@@ -113,8 +121,8 @@ _.extend(PieChart.prototype, {
         d.endAngle = scale(y0 + y);
       });
 
-    var colorScale = colors.scale(_.map(data, options.name), options.palette);
-    var fill = _.flow(options.name, colorScale);
+    var colorScale = colors.scale(_.map(data, options.value), options.palette);
+    var fill = _.flow(options.value, colorScale);
 
     var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)));
 
