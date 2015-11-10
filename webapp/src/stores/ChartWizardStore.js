@@ -152,7 +152,7 @@ let ChartWizardStore = Reflux.createStore({
         this.applyChartDef(chartDef)
 
         this.previewChart()
-    })
+      })
   },
 
   onEditTitle (value) {

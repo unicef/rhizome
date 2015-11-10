@@ -154,9 +154,12 @@ var SimpleForm = React.createClass({
 
     var idInfo = ''
     if (this.state.store.objectId !== -1) {
-         idInfo = (<div>
-         <h5>id: {this.state.store.objectId} </h5>
-         <br></br></div>)
+      idInfo = (
+        <div>
+         <h5>id: {this.state.store.objectId}</h5>
+         <br />
+        </div>
+      )
     }
 
     var base_form = (

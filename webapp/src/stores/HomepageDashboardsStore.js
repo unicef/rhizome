@@ -155,94 +155,93 @@ var HomepageDashboardsStore = Reflux.createStore({
 
   onFetchDashboards: function ( ) {
     var dashboardDefs = [
-          {
-            name: 'homepage-afghanistan',
-            date: '2015-03',
-            location: 'Afghanistan'
-          },
-          {
-            name: 'homepage-pakistan',
-            date: '2015-03',
-            location: 'Pakistan'
-          },
-          {
-            name: 'homepage-nigeria',
-            date: '2015-03',
-            location: 'Nigeria'
-          }
-        ]
+      {
+        name: 'homepage-afghanistan',
+        date: '2015-03',
+        location: 'Afghanistan'
+      },
+      {
+        name: 'homepage-pakistan',
+        date: '2015-03',
+        location: 'Pakistan'
+      },
+      {
+        name: 'homepage-nigeria',
+        date: '2015-03',
+        location: 'Nigeria'
+      }
+    ]
 
     Promise.all([
-        RegionStore.getlocationsPromise(),
-        RegionStore.getLocationTypesPromise(),
-        CampaignStore.getCampaignsPromise(),
-        IndicatorStore.getIndicatorsPromise(),
-        this.countriesPromise()
-      ])
-      .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
-        var partialPrepare = _.partial((dashboard) => {
-          return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
+      RegionStore.getlocationsPromise(),
+      RegionStore.getLocationTypesPromise(),
+      CampaignStore.getCampaignsPromise(),
+      IndicatorStore.getIndicatorsPromise(),
+      this.countriesPromise()
+    ])
+    .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
+      var partialPrepare = _.partial((dashboard) => {
+        return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
+      })
+
+      var enhanced = dashboardDefs
+        .map(this.getDashboardByName)
+        .map(partialPrepare)
+
+      var partialDashboardInit = _.partial((country, data) => {
+        var dashboardDef = _.find(enhanced, (item) => {
+          return country === item.location.name.toLowerCase()
         })
 
-        var enhanced = dashboardDefs
-          .map(this.getDashboardByName)
-          .map(partialPrepare)
+        return _.extend({
+          campaign: dashboardDef.campaign,
+          location: dashboardDef.location,
+          indicators: indicators
+        },
+        _.pick(dashboardDef.dashboard, ['location', 'date']), {
+          data: dashboardInit(
+            dashboardDef.dashboard,
+            data.data,
+            dashboardDef.location,
+            dashboardDef.campaign,
+            locations,
+            campaigns,
+            indicators,
+            data.features
+          )
+        })
+      })
 
-        var partialDashboardInit = _.partial((country, data) => {
-          var dashboardDef = _.find(enhanced, (item) => {
-            return country === item.location.name.toLowerCase()
+      var queries = enhanced
+        .map(this.fetchData)
+
+      Promise.all(queries).then(_.spread((d1, d2, d3) => {
+        var dashboards = _.zip([d1, d2, d3], countries)
+          .map((item) => {
+            return {
+              data: item[0],
+              features: _(item[1].objects.features).flatten().value()
+            }
+          }).map((item) => {
+            return {
+              data: _(item.data)
+              .pluck('objects')
+              .flatten()
+              .sortBy(_.method('campaign.start_date.getTime'))
+              .map(this.melt)
+              .flatten()
+              .value(),
+              features: item.features
+            }
+          }).map(function (item) {
+            var country = item.data[0].campaign.slug.split('-')[0]
+            return partialDashboardInit(country, item)
           })
-
-          return _.extend({
-              campaign: dashboardDef.campaign,
-              location: dashboardDef.location,
-              indicators: indicators
-            },
-            _.pick(dashboardDef.dashboard, ['location', 'date']),
-            {
-              data: dashboardInit(
-                dashboardDef.dashboard,
-                data.data,
-                dashboardDef.location,
-                dashboardDef.campaign,
-                locations,
-                campaigns,
-                indicators,
-                data.features
-              )
-            })
+        this.trigger({
+          dashboards: dashboards
         })
-
-        var queries = enhanced
-          .map(this.fetchData)
-
-        Promise.all(queries).then(_.spread((d1, d2, d3) => {
-            var dashboards = _.zip([d1, d2, d3], countries)
-              .map((item) => {
-                return {
-                  data: item[0],
-                  features: _(item[1].objects.features).flatten().value()
-                }
-              }).map((item) => {
-                return {
-                  data: _(item.data)
-                  .pluck('objects')
-                  .flatten()
-                  .sortBy(_.method('campaign.start_date.getTime'))
-                  .map(this.melt)
-                  .flatten()
-                  .value(),
-                  features: item.features
-                }
-              }).map(function (item) {
-                var country = item.data[0].campaign.slug.split('-')[0]
-                return partialDashboardInit(country, item)
-              })
-            this.trigger({
-              dashboards: dashboards
-            })
-          }))
       }))
+    }))
   },
 
   getQueriesByIndicators: function (indicators) {

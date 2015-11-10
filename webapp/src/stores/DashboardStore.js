@@ -14,30 +14,30 @@ var DashboardStore = Reflux.createStore({
     this.loaded = true
     this.indicators = {}
     Promise.all([
-        RegionStore.getlocationsPromise(),
-        RegionStore.getLocationTypesPromise(),
-        CampaignStore.getCampaignsPromise()
-      ])
-      .then(_.spread((locations, locationsTypes, campaigns) => {
-        this.locations = locations
-        this.campaigns = campaigns
+      RegionStore.getlocationsPromise(),
+      RegionStore.getLocationTypesPromise(),
+      CampaignStore.getCampaignsPromise()
+    ])
+    .then(_.spread((locations, locationsTypes, campaigns) => {
+      this.locations = locations
+      this.campaigns = campaigns
 
-        var locationIdx = _.indexBy(locations, 'id')
-        var types = _.indexBy(locationsTypes, 'id')
+      var locationIdx = _.indexBy(locations, 'id')
+      var types = _.indexBy(locationsTypes, 'id')
 
-        _.each(this.locations, function (r) {
-          r.location_type = _.get(types[r.location_type_id], 'name')
-          r.parent = locationIdx[r.parent_location_id]
-        })
+      _.each(this.locations, function (r) {
+        r.location_type = _.get(types[r.location_type_id], 'name')
+        r.parent = locationIdx[r.parent_location_id]
+      })
 
-        this.loaded = true
+      this.loaded = true
 
-        this.trigger({
-          loaded: this.loaded,
-          locations: this.locations,
-          campaigns: this.campaigns
-        })
-      }))
+      this.trigger({
+        loaded: this.loaded,
+        locations: this.locations,
+        campaigns: this.campaigns
+      })
+    }))
   },
 
   getQueries: function () {
@@ -89,9 +89,9 @@ var DashboardStore = Reflux.createStore({
       .last()
 
     if (dashboard) {
-       var hasMap = _(dashboard.charts)
-      .pluck('type')
-      .any(t => _.endsWith(t, 'Map'))
+      var hasMap = _(dashboard.charts)
+        .pluck('type')
+        .any(t => _.endsWith(t, 'Map'))
     }
 
     this.trigger({
@@ -116,24 +116,24 @@ var DashboardStore = Reflux.createStore({
     this.date = definition.date || this.date
 
     Promise.all([
-        RegionStore.getlocationsPromise(),
-        RegionStore.getLocationTypesPromise(),
-        CampaignStore.getCampaignsPromise()
-      ])
-      .then(_.spread((locations, locationsTypes, campaigns) => {
-        this.locations = locations
-        this.campaigns = campaigns
+      RegionStore.getlocationsPromise(),
+      RegionStore.getLocationTypesPromise(),
+      CampaignStore.getCampaignsPromise()
+    ])
+    .then(_.spread((locations, locationsTypes, campaigns) => {
+      this.locations = locations
+      this.campaigns = campaigns
 
-        var locationIdx = _.indexBy(locations, 'id')
-        var types = _.indexBy(locationsTypes, 'id')
+      var locationIdx = _.indexBy(locations, 'id')
+      var types = _.indexBy(locationsTypes, 'id')
 
-        _.each(this.locations, function (r) {
-          r.location_type = _.get(types[r.location_type_id], 'name')
-          r.parent = locationIdx[r.parent_location_id]
-        })
+      _.each(this.locations, function (r) {
+        r.location_type = _.get(types[r.location_type_id], 'name')
+        r.parent = locationIdx[r.parent_location_id]
+      })
 
-        this.setDashboardInternal(dashboard)
-      }))
+      this.setDashboardInternal(dashboard)
+    }))
   },
 
   onSetlocation: function (id) {
