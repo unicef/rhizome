@@ -147,13 +147,13 @@ _.extend(LineChart.prototype, {
 
     var legendColorScale = d3.scale.ordinal()
         .domain(_(labels)
-        .map(function (d) {return d.text})
+        .map(function (d) { return d.text })
         .uniq()
         .sortBy()
         .value())
         .range(colorRange)
 
-    var legendColor = _.flow(function (d) {return d.text}, legendColorScale)
+    var legendColor = _.flow(function (d) { return d.text }, legendColorScale)
 
     svg.select('.annotation').selectAll('.series.label')
       .data(labels)

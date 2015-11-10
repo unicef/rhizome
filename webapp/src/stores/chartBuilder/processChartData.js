@@ -70,7 +70,7 @@ function _columnData (data, groups, groupBy) {
   var baseCampaigns = []
   _.each(columnData, function (series) {
      _.each(series.values, function (value) { // build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
-       if (!_.find(baseCampaigns, function (campaign) {return campaign.id === value.campaign.id})) {
+       if (!_.find(baseCampaigns, function (campaign) { return campaign.id === value.campaign.id })) {
          baseCampaigns.push(value.campaign)
        }
      })
@@ -83,7 +83,7 @@ function _columnData (data, groups, groupBy) {
   var baseCampaigns = _.sortBy(baseCampaigns, _.method('campaign.start_date.getTime'))
   _.each(columnData, function (series) {
      _.each(baseCampaigns, function (baseCampaign, index) {
-         if (!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id})) {
+         if (!_.find(series.values, function (value) { return value.campaign.id === baseCampaign.id })) {
            series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
          }
      })
@@ -217,7 +217,7 @@ module.exports = {
   processChoroplethMap: function (dataPromise, locations) {
     var locationsIndex = _.indexBy(locations, 'id')
 
-    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) {return location.id}) })])
+    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) })])
     .then(_.spread(function (data, border) {
       var index = _.indexBy(data, 'location')
       var chartOptions = {

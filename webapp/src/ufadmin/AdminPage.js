@@ -102,7 +102,7 @@ var AdminPage = React.createClass({
               <ClearQueryLink>
                 Filter results {filterExpander}
               </ClearQueryLink>
-              <span onClick={e => {e.stopPropagation()}}>
+              <span onClick={e => { e.stopPropagation() }}>
                 <ClearQueryLink>
                   <a className='admin-clear-filters'>Clear filters</a>
                 </ClearQueryLink>

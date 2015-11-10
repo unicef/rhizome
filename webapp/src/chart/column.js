@@ -328,7 +328,7 @@ _.extend(ColumnChart.prototype, {
             })
           }
         })
-        .each(item => {item.y = 0 })
+        .each(item => { item.y = 0 })
         .reverse()
         .value()
 

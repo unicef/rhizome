@@ -310,16 +310,16 @@ function hoverLine () {
 
     var colorScale = d3.scale.ordinal()
         .domain(_(labelData)
-        .map(function (d)  {return d.text})
+        .map(function (d)  { return d.text })
         .uniq()
         .sortBy()
         .value())
         .range(colorRange)
 
-    var color = _.flow(function (d) {return d.text}, colorScale)
+    var color = _.flow(function (d) { return d.text }, colorScale)
 
         labelGroup.selectAll('.hover.label')
-            .data(function (d) {return d})
+            .data(function (d) { return d })
             .call(label().addClass('hover').width(width).height(height).scale(color))
 
             // Determine the label orientation based on the bounding box. We prefer
