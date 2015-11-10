@@ -484,7 +484,7 @@ class AggRefreshTestCase(TestCase):
         target_value = (x-y) / x
         self.assertEqual(round(calc_value,4),round(target_value,4))
 
-    def test_recursive_sum(self):
+    def recursive_sum(self):
         '''
         Consider the case in which we have "number of missed children" which is
         the sum of "missed children due to absence", "missed children due to

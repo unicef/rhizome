@@ -208,6 +208,13 @@ class AggRefresh(object):
 
         return dp_df_with_calc
 
+    def build_recursive_sum_calc_df(self, initial_calc_df):
+        '''
+        TO DO -- handle test_recursive_sum test case
+        '''
+
+        return initial_calc_df
+
     def raw_data(self):
         '''
         Add the raw indicator data to the tuple dict.  This happens last so
@@ -226,7 +233,13 @@ class AggRefresh(object):
         '''
 
         ## get the indicator_ids we need to make the calculation ##
-        calc_df = self.build_calc_df(['PART_TO_BE_SUMMED'])
+        initial_calc_df = self.build_calc_df(['PART_TO_BE_SUMMED'])
+
+        ## handle recursive calculations ( see spec.rst link above ) ##
+        calc_df = self.build_recursive_sum_calc_df(initial_calc_df)
+
+        self_join_calc_df = calc_df.merge(calc_df, left_on =\
+            'indicator_component_id',right_on='calc_indicator_id',how='left')
 
         ## get the datapoints for the above indicator_ids ##
         dp_df = self.build_dp_df(calc_df['indicator_component_id'])
