@@ -77,7 +77,7 @@ module.exports = Reflux.createStore({
         var self = this
         api.group_permissionUpsert({ group_id: self.data.groupId, indicator_id: value, id: '' })
             .then(function (response) {
-                _.remove(self.data.indicatorsSelected, { id: value})
+                _.remove(self.data.indicatorsSelected, { id: value })
                 self.trigger(self.data)             
             })
     },

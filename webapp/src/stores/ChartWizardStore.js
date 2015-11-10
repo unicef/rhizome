@@ -39,7 +39,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   filterTimeRangeByChartType(timeRanges, chartType) {
-    let expectTimes = _.find(builderDefinitions.charts, { name: chartType}).timeRadios
+    let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
     return timeRanges.filter(time => {
       return _.includes(expectTimes, time.value)
     })
@@ -110,7 +110,7 @@ let ChartWizardStore = Reflux.createStore({
 
         let officeId = this.data.location.office_id
 
-        api.indicatorsTree({ office_id: officeId}).then(indicators => {
+        api.indicatorsTree({ office_id: officeId }).then(indicators => {
           this.indicatorIndex = _.indexBy(indicators.flat, 'id')
           this.data.indicatorList = _.sortBy(indicators.objects, 'title')
           this.data.indicatorSelected = chartDef.indicators.map(id => {
@@ -187,7 +187,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onRemoveIndicator(id) {
-    _.remove(this.data.indicatorSelected, { id: id})
+    _.remove(this.data.indicatorSelected, { id: id })
     if (this.data.indicatorSelected.length ===  0) {
       this.data.chartTypeFilteredList = builderDefinitions.charts
     }

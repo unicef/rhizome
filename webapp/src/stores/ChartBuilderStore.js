@@ -275,7 +275,7 @@ module.exports = Reflux.createStore({
         this.getChartData()
     },
     onRemoveIndicatorSelection: function (id) {
-      _.remove(this.data.indicatorsSelected, { id: id})
+      _.remove(this.data.indicatorsSelected, { id: id })
       this.trigger(this.data)
       this.getChartData()
     },
@@ -370,7 +370,7 @@ module.exports = Reflux.createStore({
 
        // Ensure non-negative value for timeRadioValue because findIndex might
        // return -1 if it can't find the timeValue in the array of options
-       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(), { value: timeValue}), 0)
+       this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(), { value: timeValue }), 0)
        this.trigger(this.data)
     },
     resetChartDef:function () {

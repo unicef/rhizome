@@ -103,7 +103,7 @@ var SimpleForm = React.createClass({
 
   setParentTag: function (e) {
     var extraFormData = {'parent_tag_id': e}
-    this.setState({'extraFormData': extraFormData})
+    this.setState({'extraFormData': extraFormData })
   },
 
   render: function () {

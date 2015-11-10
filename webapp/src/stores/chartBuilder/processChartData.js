@@ -89,7 +89,7 @@ function _columnData(data, groups, groupBy) {
      _.each(baseCampaigns, function (baseCampaign, index) {
          if(!_.find(series.values, function (value) {return value.campaign.id === baseCampaign.id}))
          {
-           series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0})
+           series.values.splice(index, 0, { campaign: baseCampaign, location: series.values[0].location, indicator: series.values[0].indicator, value: 0 })
          }
      })
      series.values =  _.sortBy(series.values, _.method('campaign.start_date.getTime'))

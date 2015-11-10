@@ -76,13 +76,13 @@ var SimpleFormStore = Reflux.createStore({
   },
 
   onAddTagToIndicator: function (indicator_id, tag_id) {
-    api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id}).then(function (response) {
+    api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
     })
   },
 
   onRemoveTagFromIndicator: function (indicator_id, id) {
-    api.remove_indicator_from_tag({ id: id}).then(function (response) {
+    api.remove_indicator_from_tag({ id: id }).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
     })
   },
@@ -98,7 +98,7 @@ var SimpleFormStore = Reflux.createStore({
   },
 
   onRemoveCalculationFromIndicator: function (indicator_id, id) {
-    api.remove_calc_from_indicator({ id: id}).then(function (response) {
+    api.remove_calc_from_indicator({ id: id }).then(function (response) {
       SimpleFormActions.refreshCalculation(indicator_id)
     })
   },
