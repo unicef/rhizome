@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('source_data', '0003_update_source_submission_details'),
+        ('source_data', '0002_migrate_submission_campaign_and_location'),
     ]
 
     operations = [

@@ -1,21 +1,10 @@
-import json
-from subprocess import call
-from pprint import pprint
-from os import path
-
-from django.db import transaction
-from django.test import TransactionTestCase, TestCase
 from django.contrib.auth.models import User
-from tastypie.test import ResourceTestCase
-from django.test import Client
-from django.core.management import call_command
-from django.db import migrations
-
-# from django.conf.test_settings import PROJECT_ROOT
 from pandas import read_csv, notnull
+from django.test import TestCase
 
 from datapoints.models import *
-from source_data.models import *
+from source_data.models import ProcessStatus, Document, SourceSubmission
+
 from datapoints.agg_tasks import AggRefresh
 from datapoints.cache_meta import cache_location_tree
 

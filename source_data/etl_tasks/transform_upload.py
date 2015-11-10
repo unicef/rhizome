@@ -1,15 +1,10 @@
 from pandas import read_csv
 from pandas import notnull
 import json
-from pprint import pprint
 
 from django.conf import settings
-from django.db import transaction
-from pandas.io.excel import read_excel
-from bulk_update.helper import bulk_update
 
-from source_data.models import *
-from datapoints.models import DataPoint
+from source_data.models import * 
 
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"

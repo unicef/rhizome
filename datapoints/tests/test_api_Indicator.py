@@ -1,14 +1,8 @@
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 
-from datapoints.models import Indicator, IndicatorTag, CustomDashboard, CustomChart, CalculatedIndicatorComponent, \
-    IndicatorToTag
-from source_data.models import Document
-from tastypie.test import TestApiClient
-
-import json
+from datapoints.models import Indicator, IndicatorTag, \
+    CalculatedIndicatorComponent,IndicatorToTag
 
 
 class IndicatorResourceTest(ResourceTestCase):
@@ -148,4 +142,3 @@ class IndicatorResourceTest(ResourceTestCase):
                                     data=post_data, authentication=self.get_credentials())
 
         self.assertEqual(Indicator.objects.count(), 1)
-        

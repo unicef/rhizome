@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json
 
 from django.db import models, migrations
-from datapoints.models import CustomDashboard, CustomChart
 import jsonfield.fields
 
 

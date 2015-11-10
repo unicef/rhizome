@@ -1,10 +1,6 @@
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from datapoints.models import CustomDashboard, CustomChart
-from source_data.models import Document
-from tastypie.test import TestApiClient
 
 import json
 

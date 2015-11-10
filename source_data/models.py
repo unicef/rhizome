@@ -1,12 +1,10 @@
 import hashlib
 import random
-import json
 
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
-from datapoints.models import Indicator, Location, Campaign
 from jsonfield import JSONField
 
     ###################
@@ -139,7 +137,7 @@ class SourceSubmission(models.Model):
     campaign_code = models.CharField(max_length=1000)
     location_code = models.CharField(max_length=1000)
     location_display = models.CharField(max_length=1000)
-    location = models.ForeignKey('datapoints.location', null=True)
+    location = models.ForeignKey('datapoints.Location', null=True)
     campaign = models.ForeignKey('datapoints.Campaign', null=True)
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)

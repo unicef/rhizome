@@ -5,7 +5,7 @@ from pandas import DataFrame, pivot_table, notnull
 from tastypie import fields
 from tastypie import http
 from tastypie.exceptions import ImmediateHttpResponse
-from tastypie.utils.mime import determine_format, build_content_type
+from tastypie.utils.mime import build_content_type
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User

@@ -4,11 +4,6 @@ from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from datapoints.models import CacheJob, Office, Indicator, Location, LocationType, \
     DataPointComputed, CampaignType, Campaign
-from source_data.models import Document
-from tastypie.test import TestApiClient
-
-import json
-
 
 class DataPointResourceTest(ResourceTestCase):
     def setUp(self):

@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 import StringIO
 import urlparse
 

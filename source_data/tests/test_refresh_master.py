@@ -1,5 +1,3 @@
-import hashlib
-import random
 import json
 
 from django.test import TestCase

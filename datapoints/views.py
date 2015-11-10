@@ -1,27 +1,13 @@
-import json
-from pprint import pprint
-import datetime
-from datetime import date
-
-import re
-import itertools
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse, resolve
-from django.core.exceptions import ObjectDoesNotExist
-from django.core import serializers
 from django.views import generic
-from django.views.decorators.cache import cache_control as django_cache_control
 from django.contrib.auth.models import User, Group
-from django.contrib.auth.decorators import login_required
 
 from django.template import RequestContext
-from django.db import models, migrations
 
-from pandas import read_csv
 from pandas import DataFrame
-from functools import partial
 
 from datapoints.models import *
 from datapoints.forms import *

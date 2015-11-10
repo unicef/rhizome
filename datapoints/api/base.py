@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from tastypie.authorization import Authorization
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, \
     MultiAuthentication
-from tastypie.resources import ModelResource, Resource, ALL
+from tastypie.resources import ModelResource, Resource
 from tastypie.cache import SimpleCache
 from tastypie import http
 
@@ -16,10 +16,8 @@ except ImportError:
     def csrf_exempt(func):
         return func
 
-from datapoints.models import LocationType, Location, LocationPermission, \
-    LocationTree
-from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
-
+from datapoints.models import LocationType, Location
+from datapoints.api.serialize import CustomSerializer
 
 class DataPointsException(Exception):
     defaultMessage = "Sorry, this request could not be processed."

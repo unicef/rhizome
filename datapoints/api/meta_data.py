@@ -1,24 +1,13 @@
 import json
 import base64
 import time
-import traceback
 
 from tastypie.resources import ALL
 from tastypie import fields
-from tastypie.bundle import Bundle
-from tastypie.resources import Resource
 
-from tastypie.authentication import Authentication
-from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, \
-    MultiAuthentication
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
-from django.core import serializers
-from django.utils.html import escape
-from django.http import QueryDict
-from django.utils.html import escape
-from django.utils.datastructures import MultiValueDictKeyError
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import *

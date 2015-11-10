@@ -4,14 +4,11 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
-from django.views.generic.base import RedirectView
 from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
-from datapoints.views import debug
-from datapoints import views
 
 from tastypie.api import Api
 

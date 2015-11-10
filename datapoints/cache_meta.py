@@ -1,13 +1,3 @@
-import traceback
-import json
-from django.conf import settings
-
-import pandas as pd
-from pandas import DataFrame, read_sql
-from pandas.tools.pivot import pivot_table
-from pprint import pprint
-
-from django.contrib.auth.models import User
 from datapoints.models import *
 from source_data.models import SourceObjectMap
 
