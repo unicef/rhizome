@@ -175,10 +175,10 @@ var HomepageDashboardsStore = Reflux.createStore({
     Promise.all([
         RegionStore.getlocationsPromise(),
         RegionStore.getLocationTypesPromise(),
-	    	CampaignStore.getCampaignsPromise(),
+        CampaignStore.getCampaignsPromise(),
         IndicatorStore.getIndicatorsPromise(),
         this.countriesPromise()
-    	])
+      ])
       .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
         var partialPrepare = _.partial((dashboard) => {
           return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
