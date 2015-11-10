@@ -111,13 +111,15 @@ let ChartWizard = React.createClass({
           onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'indicator')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'first-indicator')}>Next</span>
       </div>
     )
 
     let firstIndicatorStep = (
       <div>
-        <p className='chart-wizard__para'>Which indicators will be included in the new chart?</p>
+        <p className='chart-wizard__para'>
+          Please choose the first indicator you would like to show in the chart. You may also choose more indicators later.
+        </p>
         <IndicatorDropdownMenu
           text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || 'Add Indicators'}
           icon='fa-plus'
@@ -156,6 +158,20 @@ let ChartWizard = React.createClass({
         <RadioGroup name='time' title='Time Range'
           value={this.state.data.timeValue}
           values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
+        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'other-indicator')}>Next</span>
+      </div>
+    )
+
+    let otherIndicatorStep = (
+      <div>
+        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
+        <IndicatorDropdownMenu
+          text='Add Indicators'
+          icon='fa-plus'
+          indicators={this.state.data.indicatorList}
+          sendValue={ChartWizardActions.addIndicator}>
+        </IndicatorDropdownMenu>
+        <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'option')}>Next</span>
       </div>
     )
@@ -223,7 +239,7 @@ let ChartWizard = React.createClass({
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='indicator'>
+          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
             {firstIndicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
@@ -232,10 +248,13 @@ let ChartWizard = React.createClass({
           <ChartWizardStep title='4. Select Time Range' refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='5. Customise Options' refer='option'>
+          <ChartWizardStep title='5. Select Additional Indicators' refer='other-indicator'>
+            {otherIndicatorStep}
+          </ChartWizardStep>
+          <ChartWizardStep title='6. Customise Options' refer='option'>
             {optionStep}
           </ChartWizardStep>
-          <ChartWizardStep title='6. Preview' refer='preview'>
+          <ChartWizardStep title='7. Preview' refer='preview'>
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>

@@ -15,6 +15,7 @@ let ChartWizardStore = Reflux.createStore({
   data: {
     indicatorList: [],
     indicatorSelected: [],
+    indicatorFilteredList: [],
     locationList: [],
     locationSelected: null,
     campaignFilteredList: [],
@@ -110,7 +111,7 @@ let ChartWizardStore = Reflux.createStore({
 
         let officeId = this.data.location.office_id
 
-        api.indicatorsTree({ office_id: officeId}).then(indicators => {
+        api.indicatorsTree({ office_id: officeId }).then(indicators => {
           this.indicatorIndex = _.indexBy(indicators.flat, 'id')
           this.data.indicatorList = _.sortBy(indicators.objects, 'title')
           this.data.indicatorSelected = chartDef.indicators.map(id => {
@@ -187,17 +188,11 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddIndicator(index) {
     this.data.indicatorSelected.push(this.indicatorIndex[index])
-    if (this.data.indicatorSelected.length === 1) {
-      this.filterChartTypeByIndicator()
-    }
     this.previewChart()
   },
 
   onRemoveIndicator(id) {
     _.remove(this.data.indicatorSelected, {id: id})
-    if (this.data.indicatorSelected.length ===  0) {
-      this.data.chartTypeFilteredList = builderDefinitions.charts
-    }
     this.previewChart()
   },
 
