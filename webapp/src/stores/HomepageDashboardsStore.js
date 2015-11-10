@@ -224,7 +224,7 @@ var HomepageDashboardsStore = Reflux.createStore({
                 }
               }).map((item) => {
                 return {
-                  data:_(item.data)
+                  data: _(item.data)
                   .pluck('objects')
                   .flatten()
                   .sortBy(_.method('campaign.start_date.getTime'))

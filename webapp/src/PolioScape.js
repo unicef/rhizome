@@ -57,7 +57,7 @@ module.exports = {
         new Vue({
             el: el,
             components: { 'uf-user-account': require('./view/user-account') },
-            data:{'user_id': user_id}
+            data: {'user_id': user_id}
         })
     },
     LandingPage: function (el) {

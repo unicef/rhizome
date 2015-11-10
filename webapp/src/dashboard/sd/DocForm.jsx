@@ -161,7 +161,7 @@ var DocForm = React.createClass({
         // since JSX is case sensitive, be sure to use 'encType'
         return (<div style={divZoneStyle}>
             <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-                <div style={{textAlign:'center'}}>Click here, or Drag a File to Upload New Data!</div>
+                <div style={{textAlign: 'center'}}>Click here, or Drag a File to Upload New Data!</div>
             </Dropzone>
             {fileConfigForm}
             {refreshBtn}

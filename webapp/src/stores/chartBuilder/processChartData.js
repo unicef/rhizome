@@ -152,7 +152,7 @@ function _getIndicator (d) {
 }
 
 module.exports = {
-  init:function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
+  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
     var indicatorArray = _.map(indicators, _.property('id'))
     var meltPromise = dataPromise.then(function (data) {
       return melt(data, indicatorArray)
@@ -171,7 +171,7 @@ module.exports = {
      return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
     }
   },
-  processLineChart:function (dataPromise, lower, upper, groups, groupBy) {
+  processLineChart: function (dataPromise, lower, upper, groups, groupBy) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null}
@@ -193,7 +193,7 @@ module.exports = {
         return { options: chartOptions, data: chartData}
     })
   },
-  processPieChart:function (dataPromise, indicators) {
+  processPieChart: function (dataPromise, indicators) {
     var idx = _.indexBy(indicators, 'id')
 
     return dataPromise.then(function (data) {
@@ -214,7 +214,7 @@ module.exports = {
       return { options: chartOptions, data: data}
     })
   },
-  processChoroplethMap:function (dataPromise, locations) {
+  processChoroplethMap: function (dataPromise, locations) {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) {return location.id}) })])

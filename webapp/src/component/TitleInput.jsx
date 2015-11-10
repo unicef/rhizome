@@ -1,7 +1,7 @@
 var React = require('react')
 
 module.exports = React.createClass({
-    getInitialState:function (){
+    getInitialState: function (){
       return {
         text: this.props.initialText
       }

@@ -83,7 +83,7 @@ function _columnData (data, groups, groupBy) {
     })
     var baseGroup = _.map(largestGroup, function (group) {
         return { campaign: group.campaign,
-                value:0, y: 0, y0: 0}
+                value: 0, y: 0, y0: 0}
     })
     _.each(columnData, function (series) {
        var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length), { location: series.values[0].location, indicator: series.values[0].indicator}))
@@ -103,19 +103,19 @@ function _columnData (data, groups, groupBy) {
 function formatTimeRange (val) {
     switch (val) {
         case 'pastYear':
-            return {'years':1}
+            return {'years': 1}
             break
         case '3Months':
-            return {'months':2}
+            return {'months': 2}
             break
         case 'current':
-            return {'months':0}
+            return {'months': 0}
             break
         case 'allTime':
             return null
             break
         default:
-            return {'months':0}
+            return {'months': 0}
             break
     }
 }
@@ -133,18 +133,18 @@ module.exports = Reflux.createStore({
         indicatorList: [],
         campaignList: [],
         indicatorsSelected: [],// [{ description: '% missed children due to refusal', short_name: 'Refused', indicator_bounds: [], id: 166, slug: '-missed-children-due-to-refusal', name: '% missed children due to refusal'}],
-        campaignSelected:{ office_id: 2, start_date: '2014-02-01', id: 137, end_date: '2014-02-01', slug: 'afghanistan-february-2014'},
-        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: 'Nigeria'},// { id: null, title: null},
+        campaignSelected: { office_id: 2, start_date: '2014-02-01', id: 137, end_date: '2014-02-01', slug: 'afghanistan-february-2014'},
+        locationSelected: { parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: 'Nigeria'},// { id: null, title: null},
         aggregatedlocations: [],
         title: "",
         description: "",
-        locationRadios: [{ value: 'selected', title:'Selected location only'}, { value: 'type', title:'locations with the same type'}, { value: 'sublocations', title:'Sublocations 1 level below selected'}],
+        locationRadios: [{ value: 'selected', title: 'Selected location only'}, { value: 'type', title: 'locations with the same type'}, { value: 'sublocations', title: 'Sublocations 1 level below selected'}],
         locationRadioValue: 2,
-        groupByRadios: [{ value: 'indicator', title:'Indicators'}, { value: 'location', title:'locations'}],
+        groupByRadios: [{ value: 'indicator', title: 'Indicators'}, { value: 'location', title: 'locations'}],
         groupByRadioValue: 1,
-        timeRadios:function () {
+        timeRadios: function () {
                     var self = this
-                    var radios = [{ value: 'allTime', title:'All Time'}, { value: 'pastYear', title:'Past Year'}, { value: '3Months', title:'Past 3 Months'}, { value: 'current', title:'Current Campaign'}]
+                    var radios = [{ value: 'allTime', title: 'All Time'}, { value: 'pastYear', title: 'Past Year'}, { value: '3Months', title: 'Past 3 Months'}, { value: 'current', title: 'Current Campaign'}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value) > -1 })
                     if (timeRadios.length - 1 < this.timeRadioValue) {
                       this.timeRadioValue = 0
@@ -166,33 +166,33 @@ module.exports = Reflux.createStore({
     },
     formatRadioValue: 0,
     xFormatRadioValue: 0,
-        timeRadioValue:2,
-        chartTypes:require('./chartBuilder/builderDefinitions'),
-        selectedChart:0,
+        timeRadioValue: 2,
+        chartTypes: require('./chartBuilder/builderDefinitions'),
+        selectedChart: 0,
         chartData: [],
         chartOptions: chartOptions,
-        canDisplayChart:canDisplayChart,
-        canDisplayChartReason:canDisplayChartReason,
-        xAxis:0,
-        yAxis:0,
-        loading:false,
-        chartDefinition:function () {
+        canDisplayChart: canDisplayChart,
+        canDisplayChartReason: canDisplayChartReason,
+        xAxis: 0,
+        yAxis: 0,
+        loading: false,
+        chartDefinition: function () {
       var formatOpts = this.formatRadios()
       var xFormat = formatOpts[this.xFormatRadioValue].value
       var yFormat = formatOpts[this.formatRadioValue].value
 
             return {
-                title: this.title,
-                type: this.chartTypes[this.selectedChart].name,
-                indicators:_.map(this.indicatorsSelected, _.property('id')),
-                locations:this.locationRadios[this.locationRadioValue].value,
-                groupBy:this.groupByRadios[this.groupByRadioValue].value,
-                x:this.xAxis,
-                y:this.yAxis,
-        xFormat: xFormat,
-        yFormat: yFormat,
-                timeRange:formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
-                id:this.id
+              title: this.title,
+              type: this.chartTypes[this.selectedChart].name,
+              indicators: _.map(this.indicatorsSelected, _.property('id')),
+              locations: this.locationRadios[this.locationRadioValue].value,
+              groupBy: this.groupByRadios[this.groupByRadioValue].value,
+              x: this.xAxis,
+              y: this.yAxis,
+              xFormat: xFormat,
+              yFormat: yFormat,
+              timeRange: formatTimeRange(this.timeRadios()[this.timeRadioValue].value),
+              id: this.id
             }
         }
     },
@@ -267,25 +267,25 @@ module.exports = Reflux.createStore({
       this.trigger(this.data)
       this.getChartData()
     },
-    onUpdateTitle:function (value) {
+    onUpdateTitle: function (value) {
        this.data.title = value
        // this.trigger(this.data)
     },
-    onUpdateDescription:function (value) {
+    onUpdateDescription: function (value) {
        this.data.description = value
        this.trigger(this.data)
     },
-    onSelectShowLocationRadio:function (value) {
+    onSelectShowLocationRadio: function (value) {
        this.data.locationRadioValue = value
        this.trigger(this.data)
        this.aggregateLocations()
     },
-    onSelectGroupByRadio:function (value) {
+    onSelectGroupByRadio: function (value) {
        this.data.groupByRadioValue = value
        this.trigger(this.data)
        this.getChartData()
     },
-    onSelectTimeRadio:function (value) {
+    onSelectTimeRadio: function (value) {
        this.data.timeRadioValue = value
        this.trigger(this.data)
        this.getChartData()
@@ -327,7 +327,7 @@ module.exports = Reflux.createStore({
         this.data.yAxis = value
         this.getChartData()
     },
-    applyChartDef:function (chartDef) {
+    applyChartDef: function (chartDef) {
        var self = this
        this.data.xAxis = chartDef.x
        this.data.yAxis = chartDef.y
@@ -361,7 +361,7 @@ module.exports = Reflux.createStore({
        this.data.timeRadioValue = Math.max(_.findIndex(this.data.timeRadios(), { value: timeValue }), 0)
        this.trigger(this.data)
     },
-    resetChartDef:function () {
+    resetChartDef: function () {
        this.data.selectedChart = 0
        this.data.indicatorsSelected = []
        this.data.title = ''

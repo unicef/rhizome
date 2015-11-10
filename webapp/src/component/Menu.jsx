@@ -58,7 +58,7 @@ module.exports = React.createClass({
 
   _onResize : function () {
     var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
-    var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height:0})
+    var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height: 0})
 
     // Compute offset relative to the viewport
     var x = this.props.x - window.pageXOffset
