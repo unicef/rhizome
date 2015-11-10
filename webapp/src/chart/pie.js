@@ -52,8 +52,6 @@ _.extend(PieChart.prototype, {
       .append('g').attr('class', 'data')
       .append('path').attr('class', 'bg');
 
-    g.append('g').attr('class', 'legend');
-
     this.update(data);
   },
 
@@ -156,14 +154,6 @@ _.extend(PieChart.prototype, {
       });
 
     slice.exit().remove();
-
-    //if (data.length > 1) {
-    //  svg.select('.legend')
-    //    .attr('transform', 'translate(' + (w + 4) +',0)')
-    //    .call(legend().scale(colorScale));
-    //} else {
-    //  svg.select('.legend').selectAll('g').remove();
-    //}
   }
 });
 
