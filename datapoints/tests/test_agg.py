@@ -16,7 +16,8 @@ from pandas import read_csv, notnull
 
 from datapoints.models import *
 from source_data.models import *
-from datapoints.agg_tasks import AggRefresh, cache_location_tree
+from datapoints.agg_tasks import AggRefresh
+from datapoints.cache_meta import cache_location_tree
 
 
 class AggRefreshTestCase(TestCase):

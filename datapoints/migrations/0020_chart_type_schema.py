@@ -41,25 +41,4 @@ class Migration(migrations.Migration):
             name='charttypetoindicator',
             unique_together=set([('indicator', 'chart_type')]),
         ),
-        migrations.RunSQL('''
-
-        INSERT INTO chart_type
-        -- seed the chart type table --
-        (name)
-        SELECT 'line' UNION ALL
-        SELECT 'bar' UNION ALL
-        SELECT 'column' UNION ALL
-        SELECT 'map' UNION ALL
-        SELECT 'scatter' UNION ALL
-        SELECT 'matrix';
-
-        INSERT INTO chart_type_to_indicator
-        (chart_type_id, indicator_id)
-        -- seed the chart type table --
-        SELECT ct.id, ind.id
-        FROM chart_type ct
-        INNER JOIN indicator ind
-        on 1=1;
-
-        ''')
     ]

@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
 
     dependencies = [
-        ('datapoints', '0014_indicator_bound'),
+        ('datapoints', '0003_load_base_metadata'),
     ]
 
     operations = [
