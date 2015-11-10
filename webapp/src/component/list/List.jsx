@@ -16,6 +16,6 @@ module.exports = React.createClass({
                         </a>
                     </li>)
         })
-        return <ul className="list">{listItems}</ul>
+        return <ul className='list'>{listItems}</ul>
     }
 })

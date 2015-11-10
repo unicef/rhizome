@@ -18,7 +18,7 @@ const fields = {
             return <a href={`/ufadmin/manage/indicator_tag/${id}`}>Edit Tags</a>
         }
     },
-    id: { title: "ID", name: "id"},
+    id: { title: 'ID', name: 'id'},
   tag_name: { title: "Tag Name", name: 'tag_name'},
   parent_tag_id: { title: 'Parent Tag Id', name: 'parent_tag_id'},
   parent_tag__tag_name: { title: 'Parent Tag Name', name: 'parent_tag__tag_name'}
@@ -39,7 +39,7 @@ var TagsAdmin = React.createClass({
             </div>
 
         return <AdminPage
-            title="Tags"
+            title='Tags'
             getData={api.get_indicator_tag}
             datascopeFilters={datascopeFilters}
             fields={fields}

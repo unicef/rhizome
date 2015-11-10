@@ -170,10 +170,10 @@ var SimpleForm = React.createClass({
       <div>
         <h2>Manage Admin Page</h2>
         {idInfo}
-        <ReactJson value={formData} settings={formSettings} ref="form_data"/>
+        <ReactJson value={formData} settings={formSettings} ref='form_data'/>
         {additionalFormComponents}
         <br></br>
-        <button className="tiny" style={{ textAlign: "right"}} onClick={ this.onSubmit }>Save</button>
+        <button className='tiny' style={{ textAlign: 'right'}} onClick={ this.onSubmit }>Save</button>
       </div>)
 
     var baseFormSuccess = ''
@@ -216,7 +216,7 @@ var SimpleForm = React.createClass({
     }
 
     return (
-      <div className="row">
+      <div className='row'>
         <div className="small-8 columns">
           {base_form}
           <div>{baseFormSuccess}</div>

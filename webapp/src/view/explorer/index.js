@@ -66,7 +66,7 @@ module.exports = {
           sendValue: self.updateIndicatorSelection
         }
         self.indicatorMap = _.indexBy(response.flat, 'id')
-        self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById("indicatorSelector"))
+        self.indicatorDropdown = React.render(React.createElement(IndicatorDropdownMenu, ddProps), document.getElementById('indicatorSelector'))
       })
 
     var dateRangePickerProps = {
@@ -74,7 +74,7 @@ module.exports = {
       end: self.campaign.end,
       sendValue: self.updateDateRangePicker
     }
-    React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById("dateRangePicker"))
+    React.render(React.createElement(DateRangePicker, dateRangePickerProps), document.getElementById('dateRangePicker'))
   },
 
   computed: {
@@ -89,7 +89,7 @@ module.exports = {
         items: this.indicators,
         removeItem: this.removeIndicatorFromSelection
       }
-      React.render(React.createElement(List, listProps), document.getElementById("indicatorList"))
+      React.render(React.createElement(List, listProps), document.getElementById('indicatorList'))
     },
 
     updateIndicatorSelection: function (id) {

@@ -6,15 +6,15 @@ var Reflux = require('reflux')
 // Thus the flow is: User interaction -> component calls action -> store reacts and triggers -> components update
 
 module.exports = Reflux.createActions([
-  "initialize",
-  "updateChart",
-  "addChart",
-  "addDashboard",
-  "updateTitle",
-  "removeChart",
-  "moveForward",
-  "moveBackward",
-  "updateDescription",
-  "deleteDashboard",
-  "changeLayout"
+  'initialize',
+  'updateChart',
+  'addChart',
+  'addDashboard',
+  'updateTitle',
+  'removeChart',
+  'moveForward',
+  'moveBackward',
+  'updateDescription',
+  'deleteDashboard',
+  'changeLayout'
 ])

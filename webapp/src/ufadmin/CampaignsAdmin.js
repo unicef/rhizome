@@ -19,7 +19,7 @@ const fields = {
       return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>
     }
   },
-  id: { title: "ID", name: "id"},
+  id: { title: 'ID', name: 'id'},
   slug: { title: "Display Name", name: 'slug'},
   start_date: { title: 'Start Date', name: 'start_date'},
   end_date: { title: 'End Date', name: 'end_date'},
@@ -27,7 +27,7 @@ const fields = {
 }
 
 const schema = {
-  created_at: { type: "string", format: 'date-time'},
+  created_at: { type: 'string', format: 'date-time'},
 }
 
 const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link']
@@ -43,7 +43,7 @@ var CampaignsAdmin = React.createClass({
       </div>
 
     return <AdminPage
-      title="Campaigns"
+      title='Campaigns'
       getData={api.campaign}
       schema={schema}
       datascopeFilters={datascopeFilters}

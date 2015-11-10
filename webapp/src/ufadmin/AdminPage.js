@@ -55,22 +55,22 @@ var AdminPage = React.createClass({
 
     // make the "Create X" button if we have a creation URL
     var createUrl = '/datapoints/users/create/'
-    if (this.props.title === "Campaigns")
+    if (this.props.title === 'Campaigns')
       createUrl = '/datapoints/campaigns/create/'
-    if (this.props.title === "locations")
+    if (this.props.title === 'locations')
       createUrl = '/datapoints/locations/create/'
-    else if (this.props.title === "Roles")
+    else if (this.props.title === 'Roles')
       createUrl = '/datapoints/groups/create/'
-    else if (this.props.title === "Indicators")
+    else if (this.props.title === 'Indicators')
       createUrl = "/ufadmin/manage/indicator/"
-    else if (this.props.title === "Tags")
+    else if (this.props.title === 'Tags')
       createUrl = "/ufadmin/manage/indicator_tag/"
 
-    // strip the "s" from the end of plural title
+    // strip the 's' from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
     var createButton = createUrl
       ? <div className="ufadmin-create-button">
-          <a className="button" href={createUrl}>Create {titleSingular}</a>
+          <a className='button' href={createUrl}>Create {titleSingular}</a>
         </div>
       : null
 
@@ -129,7 +129,7 @@ var AdminPage = React.createClass({
     var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
     return areFiltersVisible
-      ? <div className="row">
+      ? <div className='row'>
           <div className="medium-7 columns">
           </div>
           <div className="medium-5 columns">

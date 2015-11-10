@@ -2,24 +2,24 @@ module.exports = {
     schemas: {
         users: {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            title: "Users",
-            type: "array",
+            title: 'Users',
+            type: 'array',
 
-            "defaultSortField": "last_name",
-            "defaultSortDirection": "asc",
-            "primaryKey": "id",
+            'defaultSortField': 'last_name',
+            'defaultSortDirection': 'asc',
+            'primaryKey': 'id',
 
             items: {
-                title: "User",
-                type: "object",
+                title: 'User',
+                type: 'object',
 
                 properties: {
                     date_joined: {
-                        title: "date_joined",
+                        title: 'date_joined',
                         default: "2015-05-15 02:09:53.567367+00:00",
                         maxLength: null,
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         format: 'date-time',
                         display: {
                             weightForm: 3,
@@ -28,11 +28,11 @@ module.exports = {
                         }
                     },
                     email: {
-                        title: "email",
+                        title: 'email',
                         default: "",
                         maxLength: 75,
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         display: {
                             weightForm: 5,
                             on_table: true,
@@ -42,9 +42,9 @@ module.exports = {
                     first_name: {
                         default: "",
                         maxLength: 30,
-                        title: "first_name",
+                        title: 'first_name',
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         display: {
                             weightForm: 6,
                             on_table: true,
@@ -53,9 +53,9 @@ module.exports = {
                     },
                     groups: {
                         maxLength: null,
-                        title: "groups",
+                        title: 'groups',
                         editable: true,
-                        type: "list",
+                        type: 'list',
                         display: {
                             weightForm: 7,
                             on_table: true,
@@ -71,11 +71,11 @@ module.exports = {
                         }
                     },
                     id: {
-                        default: "None",
+                        default: 'None',
                         maxLength: null,
-                        title: "id",
+                        title: 'id',
                         editable: true,
-                        type: "number",
+                        type: 'number',
                         display: {
                             weightForm: 9,
                             on_table: true,
@@ -83,11 +83,11 @@ module.exports = {
                         }
                     },
                     is_active: {
-                        default: "True",
+                        default: 'True',
                         maxLength: null,
-                        title: "is_active",
+                        title: 'is_active',
                         editable: true,
-                        type: "boolean",
+                        type: 'boolean',
                         display: {
                             weightForm: 11,
                             on_table: true,
@@ -95,11 +95,11 @@ module.exports = {
                         }
                     },
                     is_staff: {
-                        default: "False",
+                        default: 'False',
                         maxLength: null,
-                        title: "is_staff",
+                        title: 'is_staff',
                         editable: true,
-                        type: "boolean",
+                        type: 'boolean',
                         display: {
                             weightForm: 12,
                             on_table: true,
@@ -107,11 +107,11 @@ module.exports = {
                         }
                     },
                     is_superuser: {
-                        default: "False",
+                        default: 'False',
                         maxLength: null,
-                        title: "is_superuser",
+                        title: 'is_superuser',
                         editable: true,
-                        type: "boolean",
+                        type: 'boolean',
                         display: {
                             weightForm: 13,
                             on_table: true,
@@ -121,9 +121,9 @@ module.exports = {
                     last_login: {
                         default: "2015-05-15 02:09:53.567582+00:00",
                         maxLength: null,
-                        title: "last_login",
+                        title: 'last_login',
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         format: "date-time",
                         display: {
                             weightForm: 14,
@@ -134,9 +134,9 @@ module.exports = {
                     last_name: {
                         default: "",
                         maxLength: 30,
-                        title: "last_name",
+                        title: 'last_name',
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         display: {
                             weightForm: 15,
                             on_table: true,
@@ -146,9 +146,9 @@ module.exports = {
                     password: {
                         default: "",
                         maxLength: 128,
-                        title: "password",
+                        title: 'password',
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         display: {
                             weightForm: 17,
                             on_table: true,
@@ -158,9 +158,9 @@ module.exports = {
                     user_permissions: {
                         default: "",
                         maxLength: null,
-                        title: "user_permissions",
+                        title: 'user_permissions',
                         editable: true,
-                        type: "list",
+                        type: 'list',
                         display: {
                             weightForm: 21,
                             on_table: true,
@@ -170,9 +170,9 @@ module.exports = {
                     username: {
                         default: "",
                         maxLength: 30,
-                        title: "username",
+                        title: 'username',
                         editable: true,
-                        type: "string",
+                        type: 'string',
                         display: {
                             weightForm: 22,
                             on_table: true,

@@ -112,7 +112,7 @@ var ManagementDashboard = React.createClass({
           <div className="medium-4 columns">
             <h3>Inaccessible Children</h3>
             <Access data={data.access} campaign={campaign} indicators={indicators} loading={loading} />
-            <div className="row">
+            <div className='row'>
               <div className="medium-4 columns right">
                 <h3>Microplan Social Data Usage</h3>
                 <SocialData data={data.__none__.microplans} campaign={campaign} loading={loading} />

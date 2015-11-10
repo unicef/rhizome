@@ -23,7 +23,7 @@ const fields = {
       return <a href={`/datapoints/groups/update/${id}`}>Edit Role</a>
     }
   },
-  name: { title: "Name", name: "name"}
+  name: { title: 'Name', name: 'name'}
 }
 
 const fieldNamesOnTable = ['name', 'edit_link']
@@ -39,7 +39,7 @@ var GroupsAdmin = React.createClass({
       </div>
 
     return <AdminPage
-      title="Roles"
+      title='Roles'
       getData={api.groups}
       datascopeFilters={datascopeFilters}
       fields={fields}

@@ -161,17 +161,17 @@ module.exports = {
     var meltPromise = dataPromise.then(function (data) {
       return melt(data, indicatorArray)
     })
-    if (chartType=="LineChart") {
+    if (chartType=='LineChart') {
      return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
-    } else if (chartType=="PieChart") {
+    } else if (chartType=='PieChart') {
      return this.processPieChart(meltPromise, indicators)
-    } else if (chartType=="ChoroplethMap") {
+    } else if (chartType=='ChoroplethMap') {
      return this.processChoroplethMap(meltPromise, locations)
-    } else if (chartType=="ColumnChart") {
+    } else if (chartType=='ColumnChart') {
      return this.processColumnChart(meltPromise, lower, upper, groups, groupBy)
-    } else if (chartType=="ScatterChart") {
+    } else if (chartType=='ScatterChart') {
      return this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis)
-    } else if (chartType=="BarChart") {
+    } else if (chartType=='BarChart') {
      return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
     }
   },

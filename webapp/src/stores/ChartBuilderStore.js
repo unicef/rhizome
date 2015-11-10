@@ -106,20 +106,20 @@ function _columnData(data, groups, groupBy) {
 
 function formatTimeRange (val) {
     switch (val) {
-        case "pastYear":
-            return {"years":1}
+        case 'pastYear':
+            return {'years':1}
             break
-        case "3Months":
-            return {"months":2}
+        case '3Months':
+            return {'months':2}
             break
-        case "current":
-            return {"months":0}
+        case 'current':
+            return {'months':0}
             break
-        case "allTime":
+        case 'allTime':
             return null
             break
         default:
-            return {"months":0}
+            return {'months':0}
             break
     }
 }
@@ -136,19 +136,19 @@ module.exports = Reflux.createStore({
         locationList: [],
         indicatorList: [],
         campaignList: [],
-        indicatorsSelected: [],//[{ description: "% missed children due to refusal", short_name: "Refused", indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
+        indicatorsSelected: [],//[{ description: "% missed children due to refusal", short_name: 'Refused', indicator_bounds: [], id: 166, slug: "-missed-children-due-to-refusal", name: "% missed children due to refusal"}],
         campaignSelected:{ office_id: 2, start_date: "2014-02-01", id: 137, end_date: "2014-02-01", slug: "afghanistan-february-2014"},
-        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: "Nigeria"},//{ id: null, title: null},
+        locationSelected:{ parent_location_id: null, office_id: 1, location_type_id: 1, id: 12907, name: 'Nigeria'},//{ id: null, title: null},
         aggregatedlocations: [],
         title: "",
         description: "",
-        locationRadios: [{ value: "selected", title:"Selected location only"}, { value: "type", title:"locations with the same type"}, { value: "sublocations", title:"Sublocations 1 level below selected"}],
+        locationRadios: [{ value: 'selected', title:"Selected location only"}, { value: 'type', title:"locations with the same type"}, { value: 'sublocations', title:"Sublocations 1 level below selected"}],
         locationRadioValue: 2,
-        groupByRadios: [{ value: "indicator", title:"Indicators"}, { value: "location", title:"locations"}],
+        groupByRadios: [{ value: 'indicator', title:'Indicators'}, { value: 'location', title:'locations'}],
         groupByRadioValue: 1,
         timeRadios:function () {
                     var self = this
-                    var radios = [{ value: "allTime", title:"All Time"}, { value: "pastYear", title:"Past Year"}, { value: "3Months", title:"Past 3 Months"}, { value: "current", title:"Current Campaign"}]
+                    var radios = [{ value: 'allTime', title:"All Time"}, { value: 'pastYear', title:"Past Year"}, { value: '3Months', title:"Past 3 Months"}, { value: 'current', title:"Current Campaign"}]
                     var timeRadios = _.filter(radios, function (radio) { return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if (timeRadios.length -1 < this.timeRadioValue)
                     {
@@ -353,13 +353,13 @@ module.exports = Reflux.createStore({
        var timeValue
 
        if (timeString=='{"months":2}') {
-       timeValue = "3Months"
+       timeValue = '3Months'
        } else if (timeString=='{"years":1}') {
-       timeValue = "pastYear"
+       timeValue = 'pastYear'
        } else if (timeString=='{"months":0}') {
-       timeValue = "current"
+       timeValue = 'current'
        } else {
-        timeValue = "allTime"
+        timeValue = 'allTime'
        }
 
        // Ensure non-negative value for timeRadioValue because findIndex might
@@ -380,18 +380,18 @@ module.exports = Reflux.createStore({
         var locations
         var locationSelected = this.data.locationSelected
         var locationRadioValue = this.data.locationRadios[this.data.locationRadioValue].value
-        if (locationRadioValue === "selected")
+        if (locationRadioValue === 'selected')
         {
            locations = [locationSelected]
-        } else if (locationRadioValue === "type")
+        } else if (locationRadioValue === 'type')
         {
-           if (locationSelected.parent_location_id && locationSelected.parent_location_id != "None")
+           if (locationSelected.parent_location_id && locationSelected.parent_location_id != 'None')
            {
              locations = _.filter(this.locationIndex, { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id})
            } else {
              locations = _.filter(this._locationIndex, { location_type_id: this.data.locationSelected.location_type_id})
            }
-        } else if (locationRadioValue === "sublocations")
+        } else if (locationRadioValue === 'sublocations')
         {
            locations = _.filter(this._locationIndex, { parent_location_id: locationSelected.id})
         }
@@ -412,13 +412,13 @@ module.exports = Reflux.createStore({
     //Since upper is always the end of the month for the given campaign, it doesn't need it's on compute function, but the lower bound changes based on the time radios the are selected
     getLower:  function (start) {
         var range = this.data.timeRadios()[this.data.timeRadioValue].value
-        if (range=="current") {
+        if (range=='current') {
             return start.clone().startOf('month')
-        } else if (range=="3Months") {
+        } else if (range=='3Months') {
             return start.clone().startOf('month').subtract(3, 'month')
-        } else if (range=="pastYear") {
+        } else if (range=='pastYear') {
             return start.clone().startOf('month').subtract(1, 'year')
-        } else if (range=="allTime") {
+        } else if (range=='allTime') {
             return null
         }
     },

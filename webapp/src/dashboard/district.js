@@ -46,7 +46,7 @@ function _heatmapColumns(indicators, order) {
 
 /**
  * @private
- * Convert "NULL" strings on a bound definition to +/- Infinity
+ * Convert 'NULL' strings on a bound definition to +/- Infinity
  *
  * Create a new object with non-number properties replaced by +/- Infinity.
  * mn_val is replaced by -Infinity, and mx_val is replaced by Infinity, if

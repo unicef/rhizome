@@ -142,7 +142,7 @@ var DocForm = React.createClass({
         if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
             var next_link = "/datapoints/source-data/Nigeria/2015/06/viewraw/" + this.state.created_doc_id
             // FIXME ^^
-            var reviewBtn = <a href={next_link} className="button"> Review Upload</a>
+            var reviewBtn = <a href={next_link} className='button'> Review Upload</a>
         }
         else {
             var reviewBtn = ''
@@ -164,7 +164,7 @@ var DocForm = React.createClass({
         // since JSX is case sensitive, be sure to use 'encType'
         return (<div style={divZoneStyle}>
             <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-                <div style={{textAlign:"center"}}>Click here, or Drag a File to Upload New Data!</div>
+                <div style={{textAlign:'center'}}>Click here, or Drag a File to Upload New Data!</div>
             </Dropzone>
             {fileConfigForm}
             {refreshBtn}

@@ -118,13 +118,13 @@ var SimpleFormComponent = React.createClass({
     } else if (contentType === 'indicator_calc') {
       componentForm = (
         <form>
-          <select ref="selectBox">
-            <option value="PART_TO_BE_SUMMED">PART_TO_BE_SUMMED</option>
-            <option value="PART_OF_DIFFERENCE">PART_OF_DIFFERENCE</option>
-            <option value="WHOLE_OF_DIFFERENCE">WHOLE_OF_DIFFERENCE</option>
-            <option value="PART">PART</option>
-            <option value="WHOLE">WHOLE</option>
-            <option value="WHOLE_OF_DIFFERENCE_DENOMINATOR">WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
+          <select ref='selectBox'>
+            <option value='PART_TO_BE_SUMMED'>PART_TO_BE_SUMMED</option>
+            <option value='PART_OF_DIFFERENCE'>PART_OF_DIFFERENCE</option>
+            <option value='WHOLE_OF_DIFFERENCE'>WHOLE_OF_DIFFERENCE</option>
+            <option value='PART'>PART</option>
+            <option value='WHOLE'>WHOLE</option>
+            <option value='WHOLE_OF_DIFFERENCE_DENOMINATOR'>WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
           </select>
           <IndicatorDropdownMenu
             text='Add Component'

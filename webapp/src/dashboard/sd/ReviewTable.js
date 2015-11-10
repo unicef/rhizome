@@ -47,7 +47,7 @@ var ReviewTable = React.createClass({
 
     validateForm: function (id) {
         // onclick post to api //
-        return <input type="checkbox" checked/>
+        return <input type='checkbox' checked/>
     },
 
     _callApi: function () {
@@ -152,7 +152,7 @@ var ReviewTable = React.createClass({
         var { areFiltersVisible } = this.state
 
         return (
-          <div className="row">
+          <div className='row'>
             <div className="medium-7 columns">
             </div>
             <div className="medium-5 columns">

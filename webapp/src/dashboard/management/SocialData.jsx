@@ -44,7 +44,7 @@ var SocialData = React.createClass({
     }
 
     return (
-      <div className="row">
+      <div className='row'>
         <div className="medium-4 columns">
           <DonutChart data={socialData} label={planLabel}
                       loading={loading}

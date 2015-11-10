@@ -254,19 +254,19 @@ _.extend(ColumnChart.prototype, {
       .data(legendText)
       .enter().append('g')
       .attr('class', 'series')
-      .attr("transform", function (d, i) { return "translate(0," + i * 15 + ")" })
+      .attr('transform', function (d, i) { return "translate(0," + i * 15 + ")" })
 
     legend.append('rect')
-      .attr("x", w-15)
-      .attr("y", -25)
-      .attr("width", 10)
-      .attr("height", 10)
-      .style("fill", fillColor)
+      .attr('x', w-15)
+      .attr('y', -25)
+      .attr('width', 10)
+      .attr('height', 10)
+      .style('fill', fillColor)
 
-    legend.append("text")
-      .attr("x", w-20)
-      .attr("y", -25)
-      .attr("dy", "0.85em")
+    legend.append('text')
+      .attr('x', w-20)
+      .attr('y', -25)
+      .attr('dy', "0.85em")
       .style({
         "text-anchor": 'end',
         'fill': '#999999'

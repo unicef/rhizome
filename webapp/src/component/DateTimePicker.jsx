@@ -44,7 +44,7 @@ var DateRangePicker = React.createClass({
         return (
                 <div>
                 {dateTimePicker(this.state.start, 'start')}
-                        <div class="centered">to</div>
+                        <div class='centered'>to</div>
                 {dateTimePicker(this.state.end, 'end')}
                 </div>
         )

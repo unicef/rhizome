@@ -13,14 +13,14 @@ var AdminApp = React.createClass({
 
         return <div className="admin-container">
             <ul className="admin-nav">
-                <li><Link to="manage" params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
-                <li><Link to="manage" params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
-                <li><Link to="users">Users</Link></li>
-                <li><Link to="roles">Roles</Link></li>
-                <li><Link to="locations">locations</Link></li>
-                <li><Link to="campaigns">Campaigns</Link></li>
-                <li><Link to="indicators">Indicators</Link></li>
-                <li><Link to="tags">Tags</Link></li>
+                <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
+                <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
+                <li><Link to='users'>Users</Link></li>
+                <li><Link to='roles'>Roles</Link></li>
+                <li><Link to='locations'>locations</Link></li>
+                <li><Link to='campaigns'>Campaigns</Link></li>
+                <li><Link to='indicators'>Indicators</Link></li>
+                <li><Link to='tags'>Tags</Link></li>
             </ul>
             <RouteHandler/>
         </div>
@@ -28,14 +28,14 @@ var AdminApp = React.createClass({
 })
 
 var routes = (
-        <Route name="app" path="/ufadmin/" handler={AdminApp}>
-            <Route name="manage" path="/ufadmin/manage/:contentType/:id?" handler={SimpleForm}/>
-            <Route name="users" handler={require('./UsersAdmin')} />
-            <Route name="roles" handler={require('./GroupsAdmin')} />
-            <Route name="locations" handler={require('./RegionAdmin')} />
-            <Route name="campaigns" handler={require('./CampaignsAdmin')} />
-            <Route name="indicators" handler={require('./IndicatorsAdmin')} />
-            <Route name="tags" handler={require('./TagsAdmin')} />
+        <Route name='app' path="/ufadmin/" handler={AdminApp}>
+            <Route name='manage' path="/ufadmin/manage/:contentType/:id?" handler={SimpleForm}/>
+            <Route name='users' handler={require('./UsersAdmin')} />
+            <Route name='roles' handler={require('./GroupsAdmin')} />
+            <Route name='locations' handler={require('./RegionAdmin')} />
+            <Route name='campaigns' handler={require('./CampaignsAdmin')} />
+            <Route name='indicators' handler={require('./IndicatorsAdmin')} />
+            <Route name='tags' handler={require('./TagsAdmin')} />
     </Route>
 )
 

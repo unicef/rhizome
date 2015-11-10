@@ -57,10 +57,10 @@ let ScatterAxisChooser = React.createClass({
 
     return (
       <div>
-        <RadioGroup name="xFormat" title='X Format: '
+        <RadioGroup name='xFormat' title='X Format: '
           value={this.props.xFormatValue}
           values={this.props.formatValues} onChange={this.props.onXFormatChange}/>
-        <RadioGroup name="yFormat" title='Y Format: '
+        <RadioGroup name='yFormat' title='Y Format: '
           value={this.props.yFormatValue}
           values={this.props.formatValues} onChange={this.props.onYFormatChange}/>
         <div>

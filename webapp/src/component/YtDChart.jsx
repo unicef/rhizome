@@ -72,7 +72,7 @@ module.exports = React.createClass({
       })
 
     return (
-      <Chart type="LineChart" {...props} />
+      <Chart type='LineChart' {...props} />
     )
   }
 })

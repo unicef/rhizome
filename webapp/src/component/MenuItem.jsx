@@ -78,10 +78,10 @@ var MenuItem = React.createClass({
     return (
       <li>
         <a
-          role="menuitem"
+          role='menuitem'
           onClick={this._handleClick}
           style={itemStyle}
-          className={(hasChildren?"folder":null)}
+          className={(hasChildren?'folder':null)}
           tabIndex='-1'>
 
           <i

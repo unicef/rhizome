@@ -26,10 +26,10 @@ let LayoutOptions = React.createClass({
                   <img src={radio.src} alt="" />
                   <h3> {radio.name} </h3>
                 </label>
-                <input type="radio"
+                <input type='radio'
                  name={radio.name}
                  value={radio.value}
-                 checked={self.props.value == radio.value ? "checked" : false}
+                 checked={self.props.value == radio.value ? 'checked' : false}
                  onChange={self._handleChange.bind(radio)}
                  id={radioID} />
               </div>

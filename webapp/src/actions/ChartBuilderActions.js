@@ -6,20 +6,20 @@ var Reflux = require('reflux')
 // Thus the flow is: User interaction -> component calls action -> store reacts and triggers -> components update
 
 module.exports = Reflux.createActions([
-  "addIndicatorSelection",
-  "removeIndicatorSelection",
-  "updateTitle",
-  "updateDescription",
-  "selectShowLocationRadio",
-  "selectGroupByRadio",
-  "selectTimeRadio",
-  "selectXFormatRadio",
-  "selectFormatRadio",
-  "selectChart",
-  "addCampaignSelection",
-  "addLocationSelection",
-  "selectXAxis",
-  "selectYAxis",
-  "createChart",
-  "initialize"
+  'addIndicatorSelection',
+  'removeIndicatorSelection',
+  'updateTitle',
+  'updateDescription',
+  'selectShowLocationRadio',
+  'selectGroupByRadio',
+  'selectTimeRadio',
+  'selectXFormatRadio',
+  'selectFormatRadio',
+  'selectChart',
+  'addCampaignSelection',
+  'addLocationSelection',
+  'selectXAxis',
+  'selectYAxis',
+  'createChart',
+  'initialize'
 ])

@@ -63,7 +63,7 @@ function _targetRanges(indicator) {
       })
     })
     .filter(function (bound) {
-      // FIXME: Temporary fix to filter out the "invalid" ranges
+      // FIXME: Temporary fix to filter out the 'invalid' ranges
       return _.isFinite(bound.mn_val) && _.isFinite(bound.mx_val)
     })
     .sortBy('mn_val')

@@ -243,7 +243,7 @@ var Dashboard = React.createClass({
   },
 
   render: function () {
-    // console.log("RENDER", this.state.location)
+    // console.log('RENDER', this.state.location)
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize: '2rem',
@@ -338,7 +338,7 @@ var Dashboard = React.createClass({
 
     var settingFilter = ''
     if (dashboardDef.builtin === true){
-      settingFilter = (<div className="row">
+      settingFilter = (<div className='row'>
         <div className="medium-4 columns">
           <CampaignTitleMenu
             campaigns={campaigns}

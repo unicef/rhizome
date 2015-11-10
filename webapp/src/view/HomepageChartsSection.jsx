@@ -55,7 +55,7 @@ var HomepageChartsSection = React.createClass({
         return (
             <div>
                 <div className="large-4 columns chart-container" id={chartId}>
-                    <div className="chart">
+                    <div className='chart'>
                         <h5>{this.props.location}</h5>
                         {dashboard}
                         {controls}

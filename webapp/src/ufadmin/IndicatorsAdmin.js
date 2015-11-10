@@ -18,7 +18,7 @@ const fields = {
       return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>
     }
   },
-  id: { title: "ID", name: "id"},
+  id: { title: 'ID', name: 'id'},
   short_name: { title: 'Short Name', name: 'short_name'},
   name: { title: 'Name', name: 'name'},
   description: { title: 'Description', name: 'description'}
@@ -39,7 +39,7 @@ var IndicatorsAdmin = React.createClass({
       </div>
 
     return <AdminPage
-      title="Indicators"
+      title='Indicators'
       getData={api.get_basic_indicator}
       datascopeFilters={datascopeFilters}
       fields={fields}

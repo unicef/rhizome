@@ -17,7 +17,7 @@ module.exports = React.createClass({
     },
     render: function(){
       return (
-        <input type="text" className={this.props.class} value={this.state.text} onChange={this._updateText}/>
+        <input type='text' className={this.props.class} value={this.state.text} onChange={this._updateText}/>
       )
     }
   })

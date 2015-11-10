@@ -110,7 +110,7 @@ var MapForm = React.createClass({
         var sourceObjectMapId = this.props.source_object_map_id
         var modalStyle = {width: 400, height: 300, marginLeft: 400}
         return <div>
-            <button className="tiny" onClick={this.openModal}> map!</button>
+            <button className='tiny' onClick={this.openModal}> map!</button>
             <Modal
                 style={modalStyle}
                 isOpen={this.state.modalIsOpen}

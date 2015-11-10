@@ -101,15 +101,15 @@ module.exports = React.createClass({
       null
 
     return (
-      <div className="menu" style={position} tabIndex='-1' onBlur={this.onBlur}>
+      <div className='menu' style={position} tabIndex='-1' onBlur={this.onBlur}>
         <div className={this.state.orientation + " container"}
           style={containerStyle}
-          ref="menu">
+          ref='menu'>
 
-          <div className="background">
-            <div className="arrow"></div>
+          <div className='background'>
+            <div className='arrow'></div>
             {search}
-            <ul ref="itemlist" style={itemlistStyle}>
+            <ul ref='itemlist' style={itemlistStyle}>
               {this.props.children}
             </ul>
           </div>

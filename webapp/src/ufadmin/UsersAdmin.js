@@ -13,7 +13,7 @@ const AdminPage = require('./AdminPage')
 const api = require('../data/api')
 
 // display rules for datascope fields
-const yesNoRenderer = (val) => val ? "Yes" : "No"
+const yesNoRenderer = (val) => val ? 'Yes' : 'No'
 const checkmarkRenderer = (val) => val ? "✓" : ""
 const fields = {
   edit_link: {
@@ -25,16 +25,16 @@ const fields = {
   is_staff: { title: "staff?", renderer: checkmarkRenderer},
   is_superuser: { title: "superuser?", renderer: checkmarkRenderer},
   date_joined: { format: 'MMM D YYYY'},
-  id: { title: "ID", name: "id"},
-  username: { title: "User Name", name: "username"},
-  first_name: { title: "First Name", name: "first_name"},
-  last_name: { title: "Last Name", name: "last_name"},
-  email: { title: "Email", name: "email"},
+  id: { title: 'ID', name: 'id'},
+  username: { title: "User Name", name: 'username'},
+  first_name: { title: "First Name", name: 'first_name'},
+  last_name: { title: "Last Name", name: 'last_name'},
+  email: { title: 'Email', name: 'email'},
   last_login: { title: 'Last Login', name: 'last_login', format: 'MMM D YYYY, h:mm a'}
 }
 
 const schema = {
-  last_login: { type: "string", format: 'date-time'},
+  last_login: { type: 'string', format: 'date-time'},
 }
 
 const fieldNamesOnTable = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'edit_link']
@@ -57,7 +57,7 @@ const UsersAdmin = React.createClass({
       </div>
 
     return <AdminPage
-      title="Users"
+      title='Users'
       getData={api.users}
       fields={fields}
       schema={schema}

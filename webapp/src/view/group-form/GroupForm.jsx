@@ -72,26 +72,26 @@ module.exports = React.createClass({
 
                 <h2>Edit Role</h2>
 
-                <div className="row">
+                <div className='row'>
                     <div className="columns small-4 left-box">
                         <h4>Role Name</h4>
                     </div>
                     <div className="columns small-8 right-box">
-                        <input id="role_name" type="text" value={this.state.store.groupName} onChange={this.updateName} />
+                        <input id='role_name' type='text' value={this.state.store.groupName} onChange={this.updateName} />
                     </div>
                 </div>
 
-                <div className="row">
+                <div className='row'>
                     <div className="columns small-4 left-box">
                     </div>
                     <div className="columns small-8 right-box">
-                        <button type="submit" className={saveClasses} onClick={this.submitForm}>{saveText}</button>
+                        <button type='submit' className={saveClasses} onClick={this.submitForm}>{saveText}</button>
                     </div>
                 </div>
 
                 <hr />
 
-                <div className="row">
+                <div className='row'>
                     <div className="columns small-4 left-box">
                         <h4>Indicator Permissions</h4>
                         <p>Changes will be saved as you make them.</p>

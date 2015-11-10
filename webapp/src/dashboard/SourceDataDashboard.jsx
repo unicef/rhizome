@@ -101,12 +101,12 @@ var SourceDataDashboard = React.createClass({
             <div className="admin-container">
                 <h1 className="admin-header"></h1>
 
-                <div className="row">
+                <div className='row'>
                     <TitleMenu text={doc_obj.doc_title}>
                         {docItems}
                     </TitleMenu>
                 </div>
-                <div className="row">
+                <div className='row'>
                     <TitleMenu text={doc_tab}>
                         {doc_tabs}
                     </TitleMenu>
@@ -194,8 +194,8 @@ var SourceDataDashboard = React.createClass({
         return (
             <div>
                 {docForm}
-                <div className="row">
-                    <div id="popUp"></div>
+                <div className='row'>
+                    <div id='popUp'></div>
                     <div className="medium-9 columns">
                         <h2 style={{ textAlign: 'center' }} className="ufadmin-page-heading">{page_title} </h2>
                         {review_table}

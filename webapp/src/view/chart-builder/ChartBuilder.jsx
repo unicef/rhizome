@@ -48,7 +48,7 @@ function campaignDisplayFormat(campaign) {
 }
 
 module.exports = React.createClass({
-  mixins: [Reflux.connect(ChartBuilderStore, "store")],
+  mixins: [Reflux.connect(ChartBuilderStore, 'store')],
   getInitialState: function () {
     return {
       title: ''
@@ -122,14 +122,14 @@ module.exports = React.createClass({
       return <option key={indicator.id} value={index}>{indicator.name}</option>
     })
 
-    /*  <div className="titleDiv" onChange={this._updateDescription}>Description</div>
+    /*  <div className='titleDiv' onChange={this._updateDescription}>Description</div>
      <textarea value={this.state.store.description} onChange={this._updateDescription}></textarea> */
 
     var leftPage = (<div className="left-page">
-      <div className="titleDiv">Title</div>
-      <TitleInput class="descriptionField" initialText={this.state.title} save={this._updateTitle}/>
+      <div className='titleDiv'>Title</div>
+      <TitleInput class='descriptionField' initialText={this.state.title} save={this._updateTitle}/>
 
-      <div className="titleDiv">Indicators</div>
+      <div className='titleDiv'>Indicators</div>
 
       <IndicatorDropdownMenu
         text='Add Indicators'
@@ -145,23 +145,23 @@ module.exports = React.createClass({
       <a href="#" onClick={this.props.cancel}>Cancel without saving chart</a>
 
     </div>)
-    var groupBy = (<div className="grouping">
-      <div className="titleDiv">Group By</div>
-      <RadioGroup name="groupby" horizontal={true} value={this.state.store.groupByRadioValue}
+    var groupBy = (<div className='grouping'>
+      <div className='titleDiv'>Group By</div>
+      <RadioGroup name='groupby' horizontal={true} value={this.state.store.groupByRadioValue}
                   values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio}/>
     </div>)
-    var chooseAxis = (<div className="grouping">
+    var chooseAxis = (<div className='grouping'>
       <div>
-        <div className="titleDiv">X Axis</div>
+        <div className='titleDiv'>X Axis</div>
         <select className="medium-6" onChange={this._updateXAxis}>{axisOptions}</select></div>
       <div>
-        <div className="titleDiv">Y Axis</div>
+        <div className='titleDiv'>Y Axis</div>
         <select className="medium-6" onChange={this._updateYAxis}>{axisOptions}</select></div>
     </div>)
     var formatXAxis = (
-      <div className="grouping">
-        <div className="titleDiv">X Format</div>
-        <RadioGroup name="xFormat" horizontal={true} value={this.state.store.xFormatRadioValue}
+      <div className='grouping'>
+        <div className='titleDiv'>X Format</div>
+        <RadioGroup name='xFormat' horizontal={true} value={this.state.store.xFormatRadioValue}
                     values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio}/>
       </div>
     )
@@ -171,29 +171,29 @@ module.exports = React.createClass({
 
         <div className="chart-options-container">
           {this.state.store.chartTypes[this.state.store.selectedChart].groupBy ? groupBy : null}
-          <div className="grouping">
-            <div className="titleDiv">Show</div>
-            <RadioGroup name="show" horizontal={true} value={this.state.store.locationRadioValue}
+          <div className='grouping'>
+            <div className='titleDiv'>Show</div>
+            <RadioGroup name='show' horizontal={true} value={this.state.store.locationRadioValue}
                         values={this.state.store.locationRadios} onChange={ChartBuilderActions.selectShowLocationRadio}/>
           </div>
-          <div className="grouping">
-            <div className="titleDiv">Time Span</div>
-            <RadioGroup name="time" horizontal={true} value={this.state.store.timeRadioValue}
+          <div className='grouping'>
+            <div className='titleDiv'>Time Span</div>
+            <RadioGroup name='time' horizontal={true} value={this.state.store.timeRadioValue}
                         values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio}/>
           </div>
           {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? formatXAxis : null}
-          <div className="grouping">
-            <div className="titleDiv">
+          <div className='grouping'>
+            <div className='titleDiv'>
               {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? 'Y ' : null}Format
             </div>
-            <RadioGroup name="format" horizontal={true} value={this.state.store.formatRadioValue}
+            <RadioGroup name='format' horizontal={true} value={this.state.store.formatRadioValue}
                         values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectFormatRadio}/>
           </div>
           {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? chooseAxis : null}
         </div>
         <div className="chart-container">
-          <div className="grouping">
-            <div className="titleDiv">Preview</div>
+          <div className='grouping'>
+            <div className='titleDiv'>Preview</div>
             <div className="preview-section">
               <div className="dropdown-wrapper">
                 <CampaignDropdownMenu
@@ -219,7 +219,7 @@ module.exports = React.createClass({
       </div>
     )
 
-    return (<form className="inline">
+    return (<form className='inline'>
         <div className="visualization-builder-container">
           {leftPage}
           {rightPage}

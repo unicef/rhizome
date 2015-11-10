@@ -40,7 +40,7 @@ var ButtonMenu = React.createClass({
 
     return (
       <span className={classes}>
-        <a className="button" role="button" onClick={this._toggleMenu}>
+        <a className='button' role='button' onClick={this._toggleMenu}>
           {icon} {this.props.text}
         </a>
       </span>

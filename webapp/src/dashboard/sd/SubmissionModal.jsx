@@ -51,7 +51,7 @@ var SubmissionModal = React.createClass({
 
         return <div>
             <button
-                className="tiny"
+                className='tiny'
                 onClick={this.openModal}
                 > view raw data!
             </button>

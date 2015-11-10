@@ -34,9 +34,9 @@ var moment = require('moment')
 window.perf = React.addons.Perf
 
 module.exports = React.createClass({
-  mixins: [Reflux.connect(DashboardBuilderStore, "store"),
-    Reflux.connect(DataStore, "dataStore"),
-    Reflux.connect(DashboardStore, "dashboardStore"),
+  mixins: [Reflux.connect(DashboardBuilderStore, 'store'),
+    Reflux.connect(DataStore, 'dataStore'),
+    Reflux.connect(DashboardStore, 'dashboardStore'),
     Reflux.ListenerMixin
   ],
   componentWillMount: function () {
@@ -181,7 +181,7 @@ module.exports = React.createClass({
         <h1>Create a New Custom Dashboard</h1>
 
         <div className="cd-title small-12">Dashboard Title</div>
-        <input type="text"
+        <input type='text'
                className="description small-12"
                value={this.state.title}
                onChange={this._updateNewTitle}
@@ -278,7 +278,7 @@ module.exports = React.createClass({
 
     var settingFilter = ''
     if (dashboardDef.builtin === true) {
-      settingFilter = (<div className="row">
+      settingFilter = (<div className='row'>
         <div className='large-6 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
@@ -311,13 +311,13 @@ module.exports = React.createClass({
           <div className="large-6 columns">
             <div className="large-6 columns cd-header-title">Dashboard Title</div>
             <div className="large-6 columns">
-              <TitleInput class="description" initialText={this.state.title} save={this._updateTitle}/>
+              <TitleInput class='description' initialText={this.state.title} save={this._updateTitle}/>
             </div>
           </div>
         </form>
         {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className="cd-footer">
-          <div className="row">
+          <div className='row'>
             <div className="large-2 columns">
               <button className="cd-button"
                       onClick={this.newChart}
@@ -330,7 +330,7 @@ module.exports = React.createClass({
                 <div className="description-text">Description&ensp;:</div>
               </div>
               <div className="large-5 columns">
-                <TitleInput class="description" initialText={this.state.description}
+                <TitleInput class='description' initialText={this.state.description}
                             save={this._updateDescription}/>
               </div>
               <div className="large-5 columns">

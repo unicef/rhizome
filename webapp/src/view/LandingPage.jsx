@@ -150,7 +150,7 @@ module.exports = React.createClass({
       }
 
       var dataEntry = (
-          <div className="row">
+          <div className='row'>
             <div className="medium-4 columns">
               <h2>Enter Data</h2>
               {data_entry_button}
@@ -163,7 +163,7 @@ module.exports = React.createClass({
                 <tbody>{uploads}</tbody>
                 <tfoot>
                   <tr>
-                    <td className="more" colSpan="3">
+                    <td className='more' colSpan='3'>
                       <a href="/source_data/document_index/">see all uploads</a>
                     </td>
                   </tr>
@@ -176,13 +176,13 @@ module.exports = React.createClass({
     }
 
     return (
-      <div className="row">
+      <div className='row'>
         <div className="medium-9 columns">
 
-          <div className="row">
+          <div className='row'>
             <div className="small-12 columns">
 
-              <p className="pageWelcome">
+              <p className='pageWelcome'>
                 Welcome to UNICEF&rsquo;s Polio Eradication data portal.
               </p>
 
@@ -191,7 +191,7 @@ module.exports = React.createClass({
                 <tbody>{campaigns}</tbody>
                 <tfoot>
                   <tr>
-                    <td className="more" colSpan="6">
+                    <td className='more' colSpan='6'>
                       <a href="#" onClick={this.showAllCampaigns}>see all campaigns</a>
                     </td>
                   </tr>
