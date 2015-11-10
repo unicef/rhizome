@@ -9,6 +9,7 @@ from decorator_include import decorator_include
 
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
+from datapoints import views
 
 from tastypie.api import Api
 

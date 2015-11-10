@@ -42,34 +42,6 @@ urlpatterns = [
     url(r'^campaigns/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
         name='update_campaign'),
 
-        #############
-        ## locationS ##
-        #############
-
-    ## CREATE ##
-    url(r'^locations/create/$', views.LocationCreateView.as_view(),
-        name='create_location'),
-
-    ## UPDATE ##
-    url(r'^locations/update/(?P<pk>[0-9]+)/$', views.LocationUpdateView.as_view(),
-        name='update_location'),
-
-
-        ################
-        ## INDICATORS ##
-        ################
-
-    ## simple form ##
-
-
-    # ## CREATE ##
-    url(r'^indicators/create/$', views.IndicatorCreateView.as_view(),\
-        name='create_indicator'),
-    #
-    ## UPDATE ##
-    url(r'^indicators/update/(?P<pk>[0-9]+)/$',\
-        views.IndicatorEditView.as_view(),name='update_indicator'),
-
         ###############
         #### USER  ####
         ###############
@@ -85,15 +57,6 @@ urlpatterns = [
         ###############
         #### GROUP  ####
         ###############
-
-    ## CREATE ##
-    url(r'^groups/create/$', views.GroupCreateView.as_view(),
-        name='create_group'),
-
-    # ## UPDATE ##
-    url(r'^groups/update/(?P<pk>[0-9]+)/$', views.GroupEditView.as_view(),
-        name='group_update'),
-
 
     ########################################
     ## CACHING VALIDATION AND PERMISSIONS ##

@@ -18,7 +18,6 @@ var AdminApp = React.createClass({
         <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
         <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
         <li><Link to='users'>Users</Link></li>
-        <li><Link to='roles'>Roles</Link></li>
         <li><Link to='locations'>locations</Link></li>
         <li><Link to='campaigns'>Campaigns</Link></li>
         <li><Link to='indicators'>Indicators</Link></li>
@@ -33,7 +32,6 @@ var routes = (
     <Route name='app' path='/ufadmin/' handler={AdminApp}>
       <Route name='manage' path='/ufadmin/manage/:contentType/:id?' handler={SimpleForm}/>
       <Route name='users' handler={require('./UsersAdmin')} />
-      <Route name='roles' handler={require('./GroupsAdmin')} />
       <Route name='locations' handler={require('./RegionAdmin')} />
       <Route name='campaigns' handler={require('./CampaignsAdmin')} />
       <Route name='indicators' handler={require('./IndicatorsAdmin')} />

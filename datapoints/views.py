@@ -130,39 +130,6 @@ def refresh_metadata(request):
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
-class GroupCreateView(PermissionRequiredMixin, generic.CreateView):
-    model = Group
-    template_name = 'group_create.html'
-
-    form_class = GroupForm
-
-    def form_valid(self, form):
-        new_group = form.save()
-
-        return HttpResponseRedirect(reverse('datapoints:create_group', \
-                                            kwargs={'pk': new_group.id}))
-
-
-class GroupEditView(PermissionRequiredMixin, generic.UpdateView):
-    model = Group
-    template_name = 'group_update.html'
-
-    form_class = GroupForm
-
-    def get_success_url(self):
-        requested_group_id = self.get_object().id
-
-        return reverse_lazy('datapoints:group_update', kwargs={'pk':
-                                                                   requested_group_id})
-
-    def get_context_data(self, **kwargs):
-        context = super(GroupEditView, self).get_context_data(**kwargs)
-        group_obj = self.get_object()
-        context['group_id'] = group_obj.id
-
-        return context
-
-
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User
     template_name = 'user_create.html'
