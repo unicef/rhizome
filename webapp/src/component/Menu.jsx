@@ -25,12 +25,12 @@ module.exports = React.createClass({
   },
 
   getInitialState: function (){
-     return {
-       maxHeight   : 'none',
-       marginLeft  : 0,
-       orientation : 'center',
-       pattern     : ''
-     }
+    return {
+      maxHeight   : 'none',
+      marginLeft  : 0,
+      orientation : 'center',
+      pattern     : ''
+    }
   },
 
   componentDidMount: function (){
