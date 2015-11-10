@@ -9,7 +9,7 @@ var util   = require('util/data')
 
 function melt(data,indicatorArray) {
   var dataset = data.objects
-  var baseIndicators = _.map(indicatorArray,function(indicator){
+  var baseIndicators = _.map(indicatorArray, function(indicator){
     return {indicator:indicator+'',value:0}
   })
   var o = _(dataset)
@@ -55,7 +55,7 @@ function value(datapoint) {
 var tooltipDiv = document.createElement('div') //Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv)
 function nullValuesToZero(values){
-  _.each(values,function(value){
+  _.each(values, function(value){
     if(_.isNull(value.value))
     {
       value.value = 0
@@ -70,14 +70,14 @@ function _columnData(data, groups, groupBy) {
     .map(_.partialRight(seriesObject, groups))
     .value()
   var baseCampaigns = []
-  _.each(columnData,function(series){
-     _.each(series.values,function(value){ //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
-       if(!_.find(baseCampaigns,function(campaign){return campaign.id==value.campaign.id}))
+  _.each(columnData, function(series){
+     _.each(series.values, function(value){ //build the base campaign array that includes all campaigns present in any datapoint, used to fill in missing values so the stacked chart doesn't have gaps
+       if(!_.find(baseCampaigns, function(campaign){return campaign.id==value.campaign.id}))
        {
          baseCampaigns.push(value.campaign)
        }
      })
-     _.each(series.values,function(val){ //replace all null values with 0, caused d3 rect rendering errors in the chart
+     _.each(series.values, function(val){ //replace all null values with 0, caused d3 rect rendering errors in the chart
       if(_.isNull(val.value))
       {
         val.value = 0
@@ -85,9 +85,9 @@ function _columnData(data, groups, groupBy) {
      })
   })
   var baseCampaigns = _.sortBy(baseCampaigns,_.method('campaign.start_date.getTime'))
-  _.each(columnData,function(series){
-     _.each(baseCampaigns,function(baseCampaign,index){
-         if(!_.find(series.values,function(value){return value.campaign.id === baseCampaign.id}))
+  _.each(columnData, function(series){
+     _.each(baseCampaigns, function(baseCampaign,index){
+         if(!_.find(series.values, function(value){return value.campaign.id === baseCampaign.id}))
          {
            series.values.splice(index,0,{campaign:baseCampaign,location:series.values[0].location,indicator:series.values[0].indicator,value:0})
          }

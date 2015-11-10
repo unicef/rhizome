@@ -23,7 +23,7 @@ module.exports = {
       api.groups().then(function(response){
          var groups = response.objects//
          api.user_groups({'user':self.$parent.$data.user_id}).then(function(data){
-             _.forEach(groups,function(group){
+             _.forEach(groups, function(group){
 
                group.active = _.some(data.objects,{'group_id':group.id})
 
@@ -99,9 +99,9 @@ module.exports = {
 
         api.location_permission( {user:this.$parent.$data.user_id}).then(function(data){
           var locations = data.objects
-           _.forEach(locations,function(location){
+           _.forEach(locations, function(location){
                location.name = self.location_map[location.location_id].name
-               location.canEnter = location.read_write=='w'
+               location.canEnter = location.read_write === 'w'
            })
           self.$set('location_permissions',locations)
           self.$set('locationalAccessLoading',false)

@@ -183,7 +183,7 @@ var DashboardBuilderStore = Reflux.createStore({
       else {
         alert("There was an error saving your chart")
       }
-    },function(response){
+    }, function(response){
       alert(response.msg)
     })
   },

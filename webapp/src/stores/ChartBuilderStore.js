@@ -15,7 +15,7 @@ var processChartData = require('./chartBuilder/processChartData')
 
 function melt(data,indicatorArray) {
     var dataset = data.objects
-    var baseIndicators = _.map(indicatorArray,function(indicator){
+    var baseIndicators = _.map(indicatorArray, function(indicator){
         return {indicator:indicator+'',value:0}
     })
     var o = _(dataset)
@@ -85,17 +85,17 @@ function _columnData(data, groups, groupBy) {
         .map(_.partialRight(seriesObject, groups))
         .value()
     var largestGroup = []
-    _.each(columnData,function(series){
+    _.each(columnData, function(series){
        if(series.values.length > largestGroup.length)
        {
          largestGroup = series.values
        }
     })
-    var baseGroup = _.map(largestGroup,function(group){
+    var baseGroup = _.map(largestGroup, function(group){
         return {campaign:group.campaign,
                 value:0,y:0,y0:0}
     })
-    _.each(columnData,function(series){
+    _.each(columnData, function(series){
 
        var baseGroupValues = _.merge(_.cloneDeep(baseGroup),_.fill(Array(baseGroup.length),{location:series.values[0].location,indicator:series.values[0].indicator}))
        series.values = _.assign(baseGroupValues,_.cloneDeep(series.values))
@@ -156,7 +156,7 @@ module.exports = Reflux.createStore({
         timeRadios:function(){
                     var self = this
                     var radios = [{value:"allTime",title:"All Time"},{value:"pastYear",title:"Past Year"},{value:"3Months",title:"Past 3 Months"},{value:"current",title:"Current Campaign"}]
-                    var timeRadios = _.filter(radios,function(radio){ return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
+                    var timeRadios = _.filter(radios, function(radio){ return self.chartTypes[self.selectedChart].timeRadios.indexOf(radio.value)>-1 })
                     if(timeRadios.length -1 < this.timeRadioValue)
                     {
                       this.timeRadioValue = 0
@@ -347,7 +347,7 @@ module.exports = Reflux.createStore({
        this.data.id = chartDef.id
 
        this.data.selectedChart = _.findIndex(this.data.chartTypes,{name:chartDef.type})
-       this.data.indicatorsSelected = _.map(chartDef.indicators,function(id){
+       this.data.indicatorsSelected = _.map(chartDef.indicators, function(id){
           return self._indicatorIndex[id]
        })
        this.data.title = chartDef.title
