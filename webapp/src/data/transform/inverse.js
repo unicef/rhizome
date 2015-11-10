@@ -1,9 +1,9 @@
 module.exports = function inverse () {
-    'use strict'
+  'use strict'
 
-    function transform (data) {
-        data.value = 1 - data.value
-    }
+  function transform (data) {
+    data.value = 1 - data.value
+  }
 
-    return transform
+  return transform
 }

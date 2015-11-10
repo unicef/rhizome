@@ -7,11 +7,11 @@ var _ = require('lodash')
  * method of a Promise.
  */
 module.exports = function map (fn) {
-    'use strict'
+  'use strict'
 
-    function transform (data) {
-        return _.map(data, fn)
-    }
+  function transform (data) {
+    return _.map(data, fn)
+  }
 
-    return transform
+  return transform
 }

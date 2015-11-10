@@ -214,15 +214,15 @@ function dashboardInit(dashboard, data, location, campaign, locationList, campai
       : 'location.id'
 
     if (chart.locationValue) {
-        var chartLocation = locationsById[chart.locationValue]
-        if (chartLocation) location = chartLocation
+      var chartLocation = locationsById[chart.locationValue]
+      if (chartLocation) location = chartLocation
     } else {
       location = selectedLocation
     }
 
     if (chart.campaignValue) {
-        var chartCampaign = campaignsById[chart.campaignValue]
-        if (chartCampaign) campaign = chartCampaign
+      var chartCampaign = campaignsById[chart.campaignValue]
+      if (chartCampaign) campaign = chartCampaign
     } else{
       campaign = selectedCampaign
     }

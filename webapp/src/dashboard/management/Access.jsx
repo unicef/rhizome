@@ -84,9 +84,9 @@ var Access = React.createClass({
                         data={reasons}
                         name={pieChartName}
                         options={{
-                domain  : _.constant([0, 1]),
-                size    : 24
-              }}/>
+                          domain  : _.constant([0, 1]),
+                          size    : 24
+                        }} />
         </div>
 
         <div className='medium-2 columns'>
@@ -95,10 +95,10 @@ var Access = React.createClass({
           <DonutChart data={plans} label={planLabel}
                       loading={loading}
                       options={{
-                innerRadius : 0.3,
-                outerRadius : 0.5,
-                domain      : _.constant([0, 1])
-              }}/>
+                        innerRadius : 0.3,
+                        outerRadius : 0.5,
+                        domain      : _.constant([0, 1])
+                      }} />
         </div>
 
       </div>
