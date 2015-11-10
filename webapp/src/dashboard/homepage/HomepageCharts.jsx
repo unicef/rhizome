@@ -76,7 +76,7 @@ var HomepageCharts = React.createClass({
         options={{
           domain  : _.constant([0, 0.1]),
           value   : _.property('properties[475]'),
-          yFormat : d3.format(',.1%'),
+          yFormat : d3.format('%'),
           width: 390,
           height: 390
         }}
@@ -87,11 +87,10 @@ var HomepageCharts = React.createClass({
     charts.push(
       <div>
         <h4 className="chart-title">Missed children, trend</h4>
-        <Chart type='ColumnChart' data={missedChildrenData.missed}
+        <Chart type='AreaChart' data={missedChildrenData.missed}
           loading={loading}
           options={{
             aspect  : 1,
-            color   : _.flow(_.property('name'), d3.scale.ordinal().range(colors)),
             domain  : _.constant(missedChildrenData.missedScale),
             x       : d => moment(d.campaign.start_date).startOf('month').valueOf(),
             xFormat : d => moment(d).format('MMM YYYY'),
@@ -116,7 +115,7 @@ var HomepageCharts = React.createClass({
             x       : function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf(); },
             xFormat : function (d) { return moment(d).format('[Q]Q [ ]YYYY'); },
             y0      : _.property('y0'),
-            yFormat : d3.format(',.1%'),
+            yFormat : d3.format('%'),
             width: 390,
             height: 390
           }}
