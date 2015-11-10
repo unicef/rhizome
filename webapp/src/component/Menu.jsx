@@ -1,5 +1,5 @@
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 
 var Search = require('component/Search.jsx')
 
@@ -57,7 +57,7 @@ module.exports = React.createClass({
   },
 
 	_onResize : function () {
-    var menu  = dom.dimensions(React.findDOMNode(this.refs.menu))
+    var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
     var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height:0})
 
     // Compute offset relative to the viewport
@@ -66,18 +66,18 @@ module.exports = React.createClass({
 
     // Default position is centered
     var orientation = 'center'
-    var marginLeft  = -menu.width / 2
+    var marginLeft = -menu.width / 2
 
     // Calculate the edges based on a centered menu
 		var rightEdge = x + (menu.width / 2)
-		var leftEdge  = x - (menu.width / 2)
+		var leftEdge = x - (menu.width / 2)
 
 		if (menu.width > window.innerWidth || leftEdge < 0) {
       orientation = 'left'
-      marginLeft  = 0
+      marginLeft = 0
 		} else if (rightEdge > window.innerWidth) {
       orientation = 'right'
-      marginLeft  = 0
+      marginLeft = 0
 		}
 
     this.setState({
@@ -88,7 +88,7 @@ module.exports = React.createClass({
 	},
 
 	render: function(){
-    var itemlistStyle  = { maxHeight : this.state.maxHeight }
+    var itemlistStyle = { maxHeight : this.state.maxHeight }
     var containerStyle = { marginLeft : this.state.marginLeft }
     var position = {
       position : 'absolute',

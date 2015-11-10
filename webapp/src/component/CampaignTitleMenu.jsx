@@ -1,10 +1,10 @@
 'use strict'
 
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 var moment = require('moment')
 
-var TitleMenu        = require('component/TitleMenu.jsx')
+var TitleMenu = require('component/TitleMenu.jsx')
 var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
 
 var CampaignTitleMenu = React.createClass({

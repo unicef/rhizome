@@ -1,9 +1,9 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 
-var Overview  = require('dashboard/nco/Overview.jsx')
+var Overview = require('dashboard/nco/Overview.jsx')
 var Breakdown = require('dashboard/nco/Breakdown.jsx')
 
 var NCODashboard = React.createClass({
@@ -22,7 +22,7 @@ var NCODashboard = React.createClass({
   },
 
   render : function () {
-    var data    = this.props.data
+    var data = this.props.data
     var loading = this.props.loading
 
     return (

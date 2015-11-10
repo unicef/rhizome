@@ -1,6 +1,6 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 
 var Chart = require('component/Chart.jsx')
@@ -21,8 +21,8 @@ var ToggleableStackedBar = React.createClass({
   },
 
   render : function () {
-    var name    = _.kebabCase(this.props.title)
-    var props   = _.omit(this.props, 'title', 'options')
+    var name = _.kebabCase(this.props.title)
+    var props = _.omit(this.props, 'title', 'options')
     var options = _.assign({}, this.props.options, {
       offset  : this.state.offset,
       xFormat : d3.format(this.state.offset === 'expand' ? '%' : 'n')

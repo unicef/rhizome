@@ -1,9 +1,9 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 
-var Chart                = require('component/Chart.jsx')
+var Chart = require('component/Chart.jsx')
 var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx')
 
 function prep (data) {
@@ -29,7 +29,7 @@ var Breakdown = React.createClass({
   },
 
   render : function () {
-    var data    = this.props.data
+    var data = this.props.data
     var loading = this.props.loading
 
     var options = {

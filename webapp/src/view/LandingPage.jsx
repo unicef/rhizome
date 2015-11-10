@@ -1,8 +1,8 @@
 'use strict'
 
-var _      = require('lodash')
+var _ = require('lodash')
 var moment = require('moment')
-var React  = require('react')
+var React = require('react')
 var Reflux = require('reflux')
 
 var NavigationStore = require('stores/NavigationStore')
@@ -28,7 +28,7 @@ function _loadDocuments(documents) {
 }
 
 function _includeDashboard(dashboard, office) {
-  var slug    = dashboard.slug
+  var slug = dashboard.slug
   var offices = dashboard.offices
 
   return (slug !== 'management-dashboard' &&

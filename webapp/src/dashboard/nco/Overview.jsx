@@ -1,9 +1,9 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 
-var Chart      = require('component/Chart.jsx')
+var Chart = require('component/Chart.jsx')
 var Monitoring = require('dashboard/nco/Monitoring.jsx')
 
 function donutLabel(data, labelText) { // FIXME this is repeated in odk/overview
@@ -13,7 +13,7 @@ function donutLabel(data, labelText) { // FIXME this is repeated in odk/overview
     return
   }
 
-  var fmt   = d3.format('%')
+  var fmt = d3.format('%')
   var label
 
   if (labelText) {
@@ -36,8 +36,8 @@ var Overview = React.createClass({
   },
 
   render : function () {
-    var loading    = this.props.loading
-    var data       = this.props.data
+    var loading = this.props.loading
+    var data = this.props.data
     var monitoring = _.pick(data, 'inside', 'outside', 'caregiverAwareness',
       'insideMonitoring', 'outsideMonitoring')
 

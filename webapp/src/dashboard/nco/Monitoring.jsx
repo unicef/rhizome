@@ -1,11 +1,11 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
-var d3    = require('d3')
+var d3 = require('d3')
 
 var DonutChart = require('component/DonutChart.jsx')
-var Chart      = require('component/Chart.jsx')
+var Chart = require('component/Chart.jsx')
 
 function donutLabel(data, labelText) {
   var value = _.get(data, '[0].value')
@@ -14,7 +14,7 @@ function donutLabel(data, labelText) {
     return
   }
 
-  var fmt   = d3.format('%')
+  var fmt = d3.format('%')
   var label
 
   if (labelText) {
@@ -37,7 +37,7 @@ var Monitoring = React.createClass({
 
   render : function () {
     var loading = this.props.loading
-    var data    = this.props.data
+    var data = this.props.data
 
     var options = {
       innerRadius : 0.6,

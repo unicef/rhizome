@@ -57,7 +57,7 @@ var Tooltip = React.createClass({
       return
     }
 
-    var el    = dom.dimensions(React.findDOMNode(this))
+    var el = dom.dimensions(React.findDOMNode(this))
     var state = { align : 'left', orient : 'top' }
 
     if (this.props.left - window.pageXOffset > window.innerWidth / 2) {

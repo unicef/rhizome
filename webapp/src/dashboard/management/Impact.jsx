@@ -1,10 +1,10 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 
 var PolioCasesYTD = require('dashboard/management/PolioCasesYTD.jsx')
-var ImmunityGap   = require('dashboard/management/ImmunityGap.jsx')
+var ImmunityGap = require('dashboard/management/ImmunityGap.jsx')
 
 var Impact = React.createClass({
 
@@ -21,9 +21,9 @@ var Impact = React.createClass({
   },
 
   render : function () {
-    var data     = this.props.data
+    var data = this.props.data
     var campaign = this.props.campaign
-    var loading  = this.props.loading
+    var loading = this.props.loading
 
     return (
       <div className='medium-2 columns'>

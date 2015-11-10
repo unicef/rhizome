@@ -1,7 +1,7 @@
 'use strict'
 
-var _     = require('lodash')
-var d3    = require('d3')
+var _ = require('lodash')
+var d3 = require('d3')
 var React = require('react')
 
 var Chart = require('component/Chart.jsx')
@@ -26,9 +26,9 @@ var HeatMapTooltip = React.createClass({
 
 
   render : function () {
-    var fmt    = this.props.format
+    var fmt = this.props.format
     var bounds = this.props.indicator.bound_json
-    var value  = this.props.value
+    var value = this.props.value
     var targets
 
     if (!_.isEmpty(bounds)) {

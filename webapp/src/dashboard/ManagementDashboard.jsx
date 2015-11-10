@@ -1,15 +1,15 @@
 'use strict'
 
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 var moment = require('moment')
 
-var Impact             = require('dashboard/management/Impact.jsx')
-var Performance        = require('dashboard/management/Performance.jsx')
-var Access             = require('dashboard/management/Access.jsx')
-var SocialData         = require('dashboard/management/SocialData.jsx')
+var Impact = require('dashboard/management/Impact.jsx')
+var Performance = require('dashboard/management/Performance.jsx')
+var Access = require('dashboard/management/Access.jsx')
+var SocialData = require('dashboard/management/SocialData.jsx')
 var BulletChartSection = require('./BulletChartSection.jsx')
-var DonutChart   = require('component/DonutChart.jsx')
+var DonutChart = require('component/DonutChart.jsx')
 
 var ManagementDashboard = React.createClass({
   propTypes : {
@@ -30,12 +30,12 @@ var ManagementDashboard = React.createClass({
   },
 
   render : function () {
-    var campaign   = this.props.campaign
-    var printDate  = moment(campaign.start_date).format('MMM YYYY')
-    var data       = this.props.data
+    var campaign = this.props.campaign
+    var printDate = moment(campaign.start_date).format('MMM YYYY')
+    var data = this.props.data
     var indicators = _.indexBy(this.props.indicators, 'id')
-    var loading    = this.props.loading
-    var location     = _.get(this.props, 'location.name', '')
+    var loading = this.props.loading
+    var location = _.get(this.props, 'location.name', '')
 
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')

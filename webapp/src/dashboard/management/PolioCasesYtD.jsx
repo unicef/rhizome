@@ -1,8 +1,8 @@
 'use strict'
 
-var _      = require('lodash')
+var _ = require('lodash')
 var moment = require('moment')
-var React  = require('react')
+var React = require('react')
 
 var YtDChart = require('component/YtDChart.jsx')
 
@@ -20,16 +20,16 @@ module.exports = React.createClass({
   },
 
   render : function () {
-    var campaign   = this.props.campaign
-    var year       = ''
-    var month      = ''
+    var campaign = this.props.campaign
+    var year = ''
+    var month = ''
     var totalCases = null
-    var newCases   = null
-    var loading    = this.props.loading
+    var newCases = null
+    var loading = this.props.loading
 
     if (campaign) {
       var m = moment(campaign.start_date, 'YYYY-MM-DD')
-      year  = m.format('YYYY')
+      year = m.format('YYYY')
       month = m.format('MMM')
 
       // Sum all of the reported Polio cases for the year

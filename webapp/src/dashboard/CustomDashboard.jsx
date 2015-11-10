@@ -96,15 +96,15 @@ var CustomDashboard = React.createClass({
   render : function () {
     var numCharts = this.props.dashboard.charts.length
 
-    var data     = this.props.data
-    var loading  = this.props.loading
+    var data = this.props.data
+    var loading = this.props.loading
     var campaign = this.props.campaign
     var editable = this.props.editable
 
     var charts = _.map(this.props.dashboard.charts, (chart, i) => {
-      var title  = chart.title
-      var key    = _.get(chart, 'id', _.kebabCase(title))
-      var id     = _.get(chart, 'id', _.camelCase(title))
+      var title = chart.title
+      var key = _.get(chart, 'id', _.kebabCase(title))
+      var id = _.get(chart, 'id', _.camelCase(title))
       var series = data[id]
 
       var controls
@@ -133,7 +133,7 @@ var CustomDashboard = React.createClass({
           cols = 'small-12 end columns'
           break
         case 3: // Triptych
-          cols   = chart.type === 'BarChart' ?
+          cols = chart.type === 'BarChart' ?
             'small-10 end columns' :
             'medium-4 columns end cd-chart-size'
           break

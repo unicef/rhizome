@@ -1,13 +1,13 @@
 'use strict'
 
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 var Reflux = require('reflux')
 
-var GroupFormStore        = require('stores/GroupFormStore')
-var GroupFormActions      = require('actions/GroupFormActions')
+var GroupFormStore = require('stores/GroupFormStore')
+var GroupFormActions = require('actions/GroupFormActions')
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
-var List                  = require('component/list/List.jsx')
+var List = require('component/list/List.jsx')
 
 module.exports = React.createClass({
 

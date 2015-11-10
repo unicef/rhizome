@@ -1,7 +1,7 @@
 'use strict'
 
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 var Reflux = require('reflux')
 
 var api = require('data/api')

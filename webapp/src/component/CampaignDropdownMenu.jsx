@@ -1,10 +1,10 @@
 'use strict'
 
-var _      = require('lodash')
-var React  = require('react')
+var _ = require('lodash')
+var React = require('react')
 var moment = require('moment')
 
-var DropdownMenu     = require('component/DropdownMenu.jsx')
+var DropdownMenu = require('component/DropdownMenu.jsx')
 var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
 
 function searchValue(campaign) {

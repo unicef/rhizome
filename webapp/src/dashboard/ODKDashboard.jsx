@@ -1,6 +1,6 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 var ODKOverview = require('dashboard/odk/ODKOverview.jsx')
 var ODKMap = require('dashboard/odk/ODKmap.jsx')
@@ -22,7 +22,7 @@ var NCODashboard = React.createClass({
   },
 
   render : function () {
-    var data    = this.props.data
+    var data = this.props.data
     var loading = this.props.loading
 
     console.log('THIS IS THE DATA')

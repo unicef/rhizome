@@ -1,17 +1,17 @@
 'use strict'
 
-var _     = require('lodash')
+var _ = require('lodash')
 var React = require('react')
 var Layer = require('react-layer')
 
-var Chart          = require('component/Chart.jsx')
+var Chart = require('component/Chart.jsx')
 var HeatMapTooltip = require('component/HeatMapTooltip.jsx')
-var Tooltip        = require('component/Tooltip.jsx')
+var Tooltip = require('component/Tooltip.jsx')
 
 var DashboardActions = require('actions/DashboardActions')
 
 var formatUtil = require('util/format')
-var legend     = require('chart/renderer/legend')
+var legend = require('chart/renderer/legend')
 
 var District = React.createClass({
   getInitialState : function () {
@@ -42,7 +42,7 @@ var District = React.createClass({
           .sortBy('1')
 
         var extents = bounds.pluck('1').slice(1).value()
-        var names   = bounds.pluck('0').value()
+        var names = bounds.pluck('0').value()
 
         return d3.scale.threshold()
           .domain(extents)
@@ -154,7 +154,7 @@ var District = React.createClass({
       .filter(datum => datum.indicator.short_name === column)
       .clone()
 
-    var evt   = d3.event
+    var evt = d3.event
     var total = _(this.props.data['district-heat-map'])
       .map(s => ({
         name : s.name,
@@ -195,7 +195,7 @@ var District = React.createClass({
 
       this.timer = window.setTimeout(function () {
         self.tip.destroy()
-        self.tip   = null
+        self.tip = null
         self.timer = null
       }, 200)
     }

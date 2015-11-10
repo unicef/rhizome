@@ -1,8 +1,8 @@
 'use strict'
 
-var _      = require('lodash')
+var _ = require('lodash')
 var moment = require('moment')
-var React  = require('react')
+var React = require('react')
 
 var Chart = require('component/Chart.jsx')
 
