@@ -193,6 +193,7 @@ var DashboardBuilderStore = Reflux.createStore({
       description: this.data.dashboardDescription,
       title: this.data.dashboardTitle,
       default_office_id: null,
+      layout: this.data.layout,
       dashboard_json: JSON.stringify(this.data.dashboard.charts)
     };
     api.save_dashboard(data).then(function (response) {

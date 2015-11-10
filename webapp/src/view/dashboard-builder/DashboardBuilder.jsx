@@ -294,6 +294,15 @@ module.exports = React.createClass({
         </div>
       </div>);
     }
+    var showAddChartButton = () => {
+      let layout = this.state.store.dashboard.layout
+      let numCharts = this.state.store.dashboard.charts.length
+      return (
+        (layout === 1 && !numCharts) ||
+        (layout === 2 && numCharts < 8) ||
+        (layout === 3 && numCharts < 3)
+      )
+    }
     var dashboardBuilderContainer = (
       <div>
         <form className='inline no-print row cd-bg-color'>
@@ -313,9 +322,7 @@ module.exports = React.createClass({
             <div className="large-2 columns">
               <button className="cd-button"
                       onClick={this.newChart}
-                      style={{visibility: (this.state.store.dashboard.layout === 1 && this.state.store.dashboard.charts.length
-                                        ? 'hidden'
-                                        : 'visible')}}>
+                      style={{visibility: (showAddChartButton() ? 'visible': 'hidden')}}>
                 <span> <i className='fa fa-icon fa-fw fa-plus' /> Add Chart </span>
               </button>
             </div>

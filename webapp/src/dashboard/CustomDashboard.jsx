@@ -127,18 +127,17 @@ var CustomDashboard = React.createClass({
         );
       }
 
-      var cols
+      let cols = ''
       switch(this.props.dashboard.layout) {
         case 1: // Single
           cols = 'small-12 end columns'
           break;
         case 3: // Triptych
-
-          break;
-        default: // Default
           cols   = chart.type === 'BarChart' ?
             'small-10 end columns' :
             'medium-4 columns end cd-chart-size';
+          break;
+        default: // Default (Basic)
           break;
       }
 
@@ -153,11 +152,49 @@ var CustomDashboard = React.createClass({
       );
     });
 
-    var addChart;
+    var addChart
+    switch(this.props.dashboard.layout) {
+      case 2: // Default (Basic)
+        return (
+          <div className='layout-basic'>
+            <div className='row'>
+              <div className='medium-6 columns'>
+                <div className='row'>
+                  <div className='medium-6 columns'>{charts[0]}</div>
+                  <div className='medium-6 columns'>{charts[1]}</div>
+                </div>
+                <div className='row'>
+                  <div className='medium-6 columns'>{charts[2]}</div>
+                  <div className='medium-6 columns'>{charts[3]}</div>
+                </div>
+              </div>
+              <div className='medium-6 columns'>
+                <div>{charts[4]}</div>
+              </div>
+            </div>
+            <div className='row'>
+              <div className='medium-4 columns'>{charts[5]}</div>
+              <div className='medium-4 columns'>{charts[6]}</div>
+              <div className='medium-4 columns'>{charts[7]}</div>
+            </div>
+            {addChart}
+          </div>
+        );
+        break;
+      default: // Any others
+        return (
+          <div className='row cd-charts'>
+            {charts}
+            {addChart}
+          </div>
+        );
+        break;
+    }
 
     return (
       <div className='row cd-charts'>{charts} {addChart}</div>
     );
+
   },
 });
 

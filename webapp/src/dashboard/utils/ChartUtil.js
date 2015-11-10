@@ -121,11 +121,7 @@ function prepareMissedChildrenData(original) {
 
   var missed = generateMissedChildrenChartData(data.missedChildren);
 
-  var missedScale = _.map(d3.time.scale()
-      .domain([lower.valueOf(), upper.valueOf()])
-      .ticks(d3.time.month, 1),
-    _.method('getTime')
-  );
+  var missedScale = [lower.valueOf(), upper.valueOf()];
 
   var missedChildrenMap = data.missedChildrenByProvince;
 

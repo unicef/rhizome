@@ -171,6 +171,28 @@ _.extend(BulletChart.prototype, {
       .attr('width', width);
     value.exit().remove();
 
+     // Draw comparitive measure
+    var measure = bar.selectAll('.comparative-measure')
+      .data(function (d) {
+        var v = options.value(d);
+        var m = options.marker(d);
+        return _.isFinite(v) && _.isFinite(m) ? [d] : [];
+      });
+
+    var measureHeight = yScale.rangeBand() * 0.5;
+
+    var initAttr = {
+      'class': 'comparative-measure',
+      'width': 3,
+      'height': yScale.rangeBand() + measureHeight,
+      'y'    : -measureHeight / 2
+    };
+
+    measure.enter().append('rect').attr(initAttr)
+      .style('fill', 'inherit');
+    measure.attr(initAttr).attr('x', x);
+    measure.exit().remove();
+
     var label = bar.selectAll('.label')
       .data(function (d) {
         var v = options.value(d);
