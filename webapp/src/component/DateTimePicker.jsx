@@ -7,7 +7,6 @@ var React = require('react')
 var DateTimePicker = require('react-widgets/lib/DateTimePicker')
 
 var DateRangePicker = React.createClass({
-
     propTypes: {
         start: React.PropTypes.object.isRequired,
         end: React.PropTypes.object.isRequired,

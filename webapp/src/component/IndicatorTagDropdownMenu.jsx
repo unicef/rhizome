@@ -34,7 +34,6 @@ function filterMenu(items, pattern) {
 }
 
 var IndicatorTagDropdownMenu = React.createClass({
-
   propTypes : {
     tag_tree : React.PropTypes.array.isRequired,
     text: React.PropTypes.string.isRequired,

@@ -99,7 +99,6 @@ module.exports = React.createClass({
   },
 
   render: function () {
-
     var chart = <Chart type={this.state.store.chartTypes[this.state.store.selectedChart].name}
                    data={this.state.store.chartData} id='custom-chart' options={this.state.store.chartOptions}/>
     var canDisplayChartReason = (<div>{this.state.store.canDisplayChartReason()}</div>)

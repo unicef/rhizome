@@ -3,7 +3,6 @@
 import React from 'react'
 
 let LayoutOptions = React.createClass({
-
   propTypes: {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,

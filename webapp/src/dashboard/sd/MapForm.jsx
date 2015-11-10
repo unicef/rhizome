@@ -26,7 +26,6 @@ const {
 
 
 var MapForm = React.createClass({
-
     propTypes: {
         source_object_map_id: React.PropTypes.number.isRequired,
         source_object_code: React.PropTypes.string.isRequired,

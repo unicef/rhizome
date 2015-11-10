@@ -122,7 +122,6 @@ module.exports = React.createClass({
 
     // data entry section, according to permissions
     if (PermissionStore.userHasPermission('upload_csv') || PermissionStore.userHasPermission('data_entry_form')) {
-
       var csv_upload_button = ''
       if (PermissionStore.userHasPermission('upload_csv')) {
         csv_upload_button = (

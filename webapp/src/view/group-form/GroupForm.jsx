@@ -10,7 +10,6 @@ var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
 var List = require('component/list/List.jsx')
 
 module.exports = React.createClass({
-
     mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
     componentWillMount: function() {
@@ -28,7 +27,6 @@ module.exports = React.createClass({
     },
 
     render: function() {
-
         var indicators = (<strong>This role cannot enter data for any indicators.</strong>)
         if (this.state.store.indicatorsSelected.length > 0) {
             indicators = (<div><strong>This role can enter data for the following indicators:</strong>

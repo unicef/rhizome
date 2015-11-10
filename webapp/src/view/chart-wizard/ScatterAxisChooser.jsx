@@ -4,7 +4,6 @@ import _ from 'lodash'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 let ScatterAxisChooser = React.createClass({
-
   propTypes: {
     indicatorArray: React.PropTypes.array,
     xAxisValue: React.PropTypes.number,

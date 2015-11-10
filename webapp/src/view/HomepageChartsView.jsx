@@ -38,7 +38,6 @@ var HomepageChartsView = React.createClass({
 
       var list = []
       this.state.dashboards.dashboards.forEach(function(item) {
-
         var dashboardProps = {
             campaign: item.campaign,
             data: item.data,

@@ -7,7 +7,6 @@ var PolioCasesYTD = require('dashboard/management/PolioCasesYTD.jsx')
 var ImmunityGap = require('dashboard/management/ImmunityGap.jsx')
 
 var Impact = React.createClass({
-
   propTypes : {
     campaign : React.PropTypes.object,
     data     : React.PropTypes.object,

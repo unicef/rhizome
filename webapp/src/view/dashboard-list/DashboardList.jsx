@@ -22,7 +22,6 @@ var _tableRow = function(row) {
 var NavigationStore = require('stores/NavigationStore')
 
 module.exports = React.createClass({
-
   mixins: [
     Reflux.connect(NavigationStore, 'store')
   ],

@@ -37,7 +37,6 @@ function filterMenu(items, pattern) {
 }
 
 var IndicatorDropdownMenu = React.createClass({
-
   propTypes: {
     indicators: React.PropTypes.array.isRequired,
     sendValue: React.PropTypes.func.isRequired
